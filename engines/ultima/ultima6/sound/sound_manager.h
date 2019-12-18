@@ -32,13 +32,14 @@
 
 #ifndef ULTIMA6_SOUND_SOUND_MANAGER_H
 #define ULTIMA6_SOUND_SOUND_MANAGER_H
-#include "Sound.h"
-#include "Song.h"
+#include "ultima/ultima6/sound/sound.h"
+#include "ultima/ultima6/sound/song.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "NuvieIOFile.h"
-#include "sdl-mixer.h"
-#include "sfx.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/sound/sfx.h"
+#include "audio/mixer.h"
+//#include "sdl-mixer.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -48,6 +49,7 @@ namespace Ultima6 {
 
 class SfxManager;
 class CEmuopl;
+class SdlMixerManager;
 
 typedef struct {
 	SfxIdType sfx_id;
@@ -134,7 +136,7 @@ private:
 
 	map<int, SoundCollection *> m_TileSampleMap;
 	map<int, SoundCollection *> m_ObjectSampleMap;
-	map<string, SoundCollection *> m_MusicMap;
+	map<Common::String, SoundCollection *> m_MusicMap;
 	list<Sound *> m_Songs;
 	list<Sound *> m_Samples;
 	Configuration *m_Config;

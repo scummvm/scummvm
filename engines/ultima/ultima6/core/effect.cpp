@@ -20,28 +20,28 @@
  *
  */
 
-#include <cstring>
+//#include <cstring>
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "Game.h"
+#include "ultima/ultima6/core/game.h"
 
-#include "Actor.h"
-#include "Map.h"
-#include "Party.h"
-#include "Script.h"
-#include "AnimManager.h"
-#include "MapWindow.h"
-#include "TileManager.h"
-#include "GameClock.h"
-#include "EffectManager.h"
-#include "UseCode.h"
-#include "MsgScroll.h"
-#include "ActorManager.h"
-#include "SoundManager.h"
-#include "U6objects.h"
-#include "Effect.h"
-#include "Player.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/map.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/core/anim_manager.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/tile_manager.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/core/effect_manager.h"
+#include "ultima/ultima6/usecode/usecode.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/sound/sound_manager.h"
+#include "ultima/ultima6/core/u6_objects.h"
+#include "ultima/ultima6/core/effect.h"
+#include "ultima/ultima6/core/player.h"
 
-#include <cassert>
+//#include <cassert>
 
 namespace Ultima {
 namespace Ultima6 {
@@ -968,10 +968,8 @@ void FadeEffect::init(FadeType fade, FadeDirection dir, uint32 color, Graphics::
 	fade_from = NULL;
 	fade_iterations = 0;
 	if (capture) {
-		fade_from = SDL_CreateRGBSurface(SDL_SWSURFACE, capture->w, capture->h,
-		                                 capture->format->BitsPerPixel, 0, 0, 0, 0);
-		for (uint32 p = 0, pixels = (capture->w * capture->h); p < pixels; p++)
-			((uint8 *)fade_from->pixels)[p] = ((uint8 *)capture->pixels)[p];
+		fade_from = new Graphics::ManagedSurface(capture->w, capture->h, capture->format);
+		fade_from->blitFrom(*capture);
 	}
 
 	if (fade_type == FADE_PIXELATED || fade_type == FADE_PIXELATED_ONTOP) {
@@ -1012,7 +1010,7 @@ void FadeEffect::init_pixelated_fade() {
 			if (fade_from) { // fade from captured surface to transparent
 				// put surface on transparent background (not checked)
 				fillret = SDL_FillRect(overlay, NULL, uint32(TRANSPARENT_COLOR));
-				Common::Rect overlay_rect = { (Sint16)fade_x, (Sint16)fade_y, 0, 0 };
+				Common::Rect overlay_rect = { (int16)fade_x, (int16)fade_y, 0, 0 };
 				fillret = SDL_BlitSurface(fade_from, NULL,
 				                          overlay, &overlay_rect);
 			} else // fade from transparent to color
@@ -1074,12 +1072,12 @@ uint16 FadeEffect::callback(uint16 msg, CallBack *caller, void *data) {
  * Returns true if a free pixel was found and set as rnum.
  */
 // FIXME: this probably doesn't work because it only handles 8bpp
-inline bool FadeEffect::find_free_pixel(uint32 &rnum, uint32 pixel_count) {
+inline bool FadeEffect::find_free_pixel(uint32 &rnum, uint32 pixelCount) {
 	uint8 scan_color = (fade_dir == FADE_OUT) ? TRANSPARENT_COLOR
 	                   : pixelated_color;
-	uint8 *pixels = (uint8 *)(overlay->pixels);
+	const uint8 *pixels = (const uint8 *)(overlay->getPixels());
 
-	for (uint32 p = rnum; p < pixel_count; p++) // check all pixels after rnum
+	for (uint32 p = rnum; p < pixelCount; p++) // check all pixels after rnum
 		if (pixels[p] == scan_color) {
 			rnum = p;
 			return (true);
@@ -1115,8 +1113,9 @@ inline uint32 FadeEffect::get_random_pixel(uint16 center_thresh) {
  * Returns true when the overlay is completely colored.
  */
 bool FadeEffect::pixelated_fade_core(uint32 pixels_to_check, sint16 fade_to) {
-	uint8 *pixels = (uint8 *)(overlay->pixels);
-	uint8 *from_pixels = fade_from ? (uint8 *)(fade_from->pixels) : NULL;
+	Graphics::Surface s = overlay->getSubArea(Common::Rect(0, 0, overlay->w, overlay->h));
+	uint8 *pixels = (uint8 *)s.getPixels();
+	const uint8 *from_pixels = fade_from ? (const uint8 *)(fade_from->getPixels()) : NULL;
 	uint32 p = 0; // scan counter
 	uint32 rnum = 0; // pixel index
 	uint32 colored = 0; // number of pixels that get colored
@@ -1152,8 +1151,9 @@ bool FadeEffect::pixelated_fade_core(uint32 pixels_to_check, sint16 fade_to) {
 		if (fade_to >= 0)
 			SDL_FillRect(overlay, NULL, (uint32)fade_to);
 		else { // Note: assert(fade_from) if(fade_to < 0)
-			Common::Rect fade_from_rect = { 0, 0, (Uint16)fade_from->w, (Uint16)fade_from->h };
-			Common::Rect overlay_rect = { (Sint16)fade_x, (Sint16)fade_y, (Uint16)fade_from->w, (Uint16)fade_from->h };
+			Common::Rect fade_from_rect = { 0, 0, (int16)fade_from->w, (int16)fade_from->h };
+			Common::Rect overlay_rect = { (int16)fade_x, (int16)fade_y,
+				(int16)(fade_x + fade_from->w), (int16)(fade_y + fade_from->h) };
 			SDL_BlitSurface(fade_from, &fade_from_rect, overlay, &overlay_rect);
 		}
 		return (true);
@@ -1548,7 +1548,9 @@ uint16 XorEffect::callback(uint16 msg, CallBack *caller, void *data) {
 
 /* Do binary-xor on each pixel of the mapwindow image.*/
 void XorEffect::xor_capture(uint8 mod) {
-	uint8 *pixels = (uint8 *)(capture->pixels);
+	Graphics::Surface s = capture->getSubArea(Common::Rect(0, 0, capture->w, capture->h));
+
+	uint8 *pixels = (uint8 *)s.getPixels();
 	for (int p = 0; p < (capture->w * capture->h); p++)
 		pixels[p] ^= mod;
 }
@@ -1609,7 +1611,8 @@ uint16 U6WhitePotionEffect::callback(uint16 msg, CallBack *caller, void *data) {
 
 /* Do binary-xor on each pixel of the mapwindow image.*/
 void U6WhitePotionEffect::xor_capture(uint8 mod) {
-	uint8 *pixels = (uint8 *)(capture->pixels);
+	Graphics::Surface s = capture->getSubArea(Common::Rect(0, 0, capture->w, capture->h));
+	uint8 *pixels = (uint8 *)s.getPixels();
 	for (int p = 0; p < (capture->w * capture->h); p++)
 		pixels[p] ^= mod;
 }
@@ -1780,7 +1783,8 @@ void PeerEffect::fill_buffer(uint8 *mapbuffer, uint16 x, uint16 y) {
 }
 
 inline void PeerEffect::blit_tile(uint16 x, uint16 y, uint8 c) {
-	uint8 *pixels = (uint8 *)overlay->pixels;
+	Graphics::Surface s = overlay->getSubArea(Common::Rect(0, 0, overlay->w, overlay->h));
+	uint8 *pixels = (uint8 *)s.getPixels();
 	for (int j = 0; j < PEER_TILEW && j < overlay->h; j++)
 		for (int i = 0; i < PEER_TILEW && i < overlay->w; i++) {
 			if (peer_tile[i * PEER_TILEW + j] != tile_trans)

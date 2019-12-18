@@ -20,21 +20,21 @@
  *
  */
 
-#include <math.h>
+//#include <math.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6Lib_n.h"
-#include "NuvieIO.h"
-#include "NuvieIOFile.h"
-#include "U6Lzw.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
+#include "ultima/ultima6/files/nuvie_io.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/files/u6_lzw.h"
 #include "ultima/ultima6/misc/u6_line_walker.h"
-#include "GamePalette.h"
+#include "ultima/ultima6/screen/game_palette.h"
 
-#include "SoundManager.h"
-#include "Font.h"
-#include "WOUFont.h"
-#include "Cursor.h"
-#include "Keys.h"
+#include "ultima/ultima6/sound/sound_manager.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "WOUultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/core/cursor.h"
+#include "ultima/ultima6/keybinding/keys.h"
 
 #include "ScriptCutscene.h"
 
@@ -983,7 +983,7 @@ static int nscript_get_mouse_y(lua_State *L) {
 }
 
 static int nscript_input_poll(lua_State *L) {
-	SDL_Event event;
+	Common::Event event;
 	bool poll_mouse_motion;
 	if (lua_isnil(L, 1))
 		poll_mouse_motion = false;
@@ -1002,11 +1002,11 @@ static int nscript_input_poll(lua_State *L) {
 		}
 #endif
 		if (event.type == SDL_KEYDOWN) {
-			SDL_Keysym key = event.key.keysym;
+			Common::KeyState key = event.key.keysym;
 			if ((((key.mod & KMOD_CAPS) == KMOD_CAPS && (key.mod & KMOD_SHIFT) == 0) || ((key.mod & KMOD_CAPS) == 0 && (key.mod & KMOD_SHIFT)))
 			        && key.sym >= SDLK_a && key.sym <= SDLK_z)
-				key.sym = (SDL_Keycode)(key.sym - 32);
-			if (key.sym > 0xFF || !isprint((char)key.sym) || (key.mod & KMOD_ALT) || (key.mod & KMOD_CTRL) || (key.mod & KMOD_GUI)) {
+				key.sym = (Common::KeyCode)(key.sym - 32);
+			if (key.sym > 0xFF || !Common::isPrint((char)key.sym) || (key.mod & KMOD_ALT) || (key.mod & KMOD_CTRL) || (key.mod & KMOD_GUI)) {
 				ActionType a = keybinder->get_ActionType(key);
 				switch (keybinder->GetActionKeyType(a)) {
 				case WEST_KEY:

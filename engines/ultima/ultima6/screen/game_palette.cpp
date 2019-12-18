@@ -20,19 +20,19 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
 
-#include "SDL.h"
+
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "NuvieIOFile.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "Screen.h"
-#include "Dither.h"
-#include "GamePalette.h"
+#include "ultima/ultima6/screen/screen.h"
+#include "ultima/ultima6/screen/dither.h"
+#include "ultima/ultima6/screen/game_palette.h"
 
 namespace Ultima {
 namespace Ultima6 {

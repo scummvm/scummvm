@@ -20,30 +20,30 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "Game.h"
-#include "Actor.h"
-#include "MapWindow.h"
-#include "Map.h"
-#include "Party.h"
-#include "Event.h"
-#include "UseCode.h"
-#include "U6objects.h"
-#include "U6WorkTypes.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/map.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/usecode/usecode.h"
+#include "ultima/ultima6/core/u6_objects.h"
+#include "ultima/ultima6/actors/u6_work_types.h"
 #include "ultima/ultima6/misc/u6_llist.h"
-#include "MsgScroll.h"
-#include "GameClock.h"
-#include "CommandBar.h"
-#include "ViewManager.h"
-#include "PartyView.h"
-#include "ActorManager.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/core/command_bar.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/views/party_view.h"
+#include "ultima/ultima6/actors/actor_manager.h"
 // FIXME: effects use timers, not the other way around (make a movement effect?)
-#include "EffectManager.h"
-#include "Effect.h"
+#include "ultima/ultima6/core/effect_manager.h"
+#include "ultima/ultima6/core/effect.h"
 
-#include "TimedEvent.h"
+#include "ultima/ultima6/core/timed_event.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -128,7 +128,7 @@ bool TimeQueue::call_timer(uint32 now) {
 	if (tevent->repeat_count != 0) { // repeat! same delay, add time
 		// use updated time so it isn't repeated too soon
 		tevent->set_time();
-//            tevent->time = clock->get_ticks() + tevent->delay;
+//            tevent->time = _clock->get_ticks() + tevent->delay;
 //            tevent->time = now + tevent->delay;
 		add_timer(tevent);
 		if (tevent->repeat_count > 0) // don't reduce count if infinite (-1)
@@ -194,9 +194,9 @@ void TimedEvent::dequeue() {
 /* Add delay to current time and set absolute time.
  */
 void TimedEvent::set_time() {
-	GameClock *clock = Game::get_game()->get_clock();
-	time = delay + (real_time ? clock->get_ticks()
-	                : clock->get_game_ticks());
+	GameClock *_clock = Game::get_game()->get_clock();
+	time = delay + (real_time ? _clock->get_ticks()
+	                : _clock->get_game_ticks());
 
 }
 
@@ -545,7 +545,7 @@ GameTimedCallback::GameTimedCallback(CallBack *t, void *d, uint32 wait_time, boo
 #define TIMEADVANCE_PER_SECOND 1000 /* frequency of timer calls */
 TimedAdvance::TimedAdvance(uint8 hours, uint16 r)
 	: TimedCallback(NULL, NULL, 1000 / TIMEADVANCE_PER_SECOND, true),
-	  clock(Game::get_game()->get_clock()),
+	  _clock(Game::get_game()->get_clock()),
 	  minutes_this_hour(0), minutes(0) {
 	init(hours * 60, r);
 }
@@ -555,21 +555,21 @@ TimedAdvance::TimedAdvance(uint8 hours, uint16 r)
  */
 TimedAdvance::TimedAdvance(std::string timestring, uint16 r)
 	: TimedCallback(NULL, NULL, 1000 / TIMEADVANCE_PER_SECOND, true),
-	  clock(Game::get_game()->get_clock()),
+	  _clock(Game::get_game()->get_clock()),
 	  minutes_this_hour(0), minutes(0) {
 	uint8 hour = 0, minute = 0;
 
 	get_time_from_string(hour, minute, timestring); // set stop time
 
 	// set number of hours and minutes to advance
-	uint16 advance_h = (clock->get_hour() == hour) ? 24
-	                   : (clock->get_hour() < hour) ? (hour - clock->get_hour())
-	                   : (24 - (clock->get_hour() - hour));
+	uint16 advance_h = (_clock->get_hour() == hour) ? 24
+	                   : (_clock->get_hour() < hour) ? (hour - _clock->get_hour())
+	                   : (24 - (_clock->get_hour() - hour));
 	uint16 advance_m;
-	if (clock->get_minute() <= minute)
-		advance_m = minute - clock->get_minute();
+	if (_clock->get_minute() <= minute)
+		advance_m = minute - _clock->get_minute();
 	else {
-		advance_m = (60 - (clock->get_minute() - minute));
+		advance_m = (60 - (_clock->get_minute() - minute));
 		if (advance_h > 0)
 			advance_h -= 1;
 		else
@@ -584,9 +584,9 @@ TimedAdvance::TimedAdvance(std::string timestring, uint16 r)
 void TimedAdvance::init(uint16 min, uint16 r) {
 	advance = min;
 	rate = r;
-	prev_evtime = clock->get_ticks();
+	prev_evtime = _clock->get_ticks();
 	DEBUG(0, LEVEL_DEBUGGING, "TimedAdvance(): %02d:%02d + %02d:%02d (rate=%d)\n",
-	      clock->get_hour(), clock->get_minute(), advance / 60, advance % 60, rate);
+	      _clock->get_hour(), _clock->get_minute(), advance / 60, advance % 60, rate);
 }
 
 
@@ -601,7 +601,7 @@ void TimedAdvance::timed(uint32 evtime) {
 	prev_evtime = evtime;
 
 	for (uint32 m = 0; m < minutes_per_fraction; m++) {
-		clock->inc_minute();
+		_clock->inc_minute();
 		minutes += 1;
 		if (++minutes_this_hour > 59) {
 			minutes_this_hour = 0;
@@ -616,7 +616,7 @@ void TimedAdvance::timed(uint32 evtime) {
 		message(MESG_TIMED, &evtime);
 
 	if (time_passed()) {
-		DEBUG(0, LEVEL_DEBUGGING, "~TimedAdvance(): now %02d:%02d\n", clock->get_hour(), clock->get_minute());
+		DEBUG(0, LEVEL_DEBUGGING, "~TimedAdvance(): now %02d:%02d\n", _clock->get_hour(), _clock->get_minute());
 		if (callback_target && !hour_passed) // make sure to call target
 			message(MESG_TIMED, &evtime);
 		stop(); // done
@@ -635,10 +635,10 @@ bool TimedAdvance::time_passed() {
  */
 void TimedAdvance::get_time_from_string(uint8 &hour, uint8 &minute, std::string timestring) {
 	char *hour_s = NULL, *minute_s = NULL;
-	hour_s = strdup(timestring.c_str());
+	hour_s = scumm_strdup(timestring.c_str());
 	for (uint32 c = 0; c < strlen(hour_s); c++)
 		if (hour_s[c] == ':') { // get minutes
-			minute_s = strdup(&hour_s[c + 1]);
+			minute_s = scumm_strdup(&hour_s[c + 1]);
 			hour_s[c] = '\0';
 			break;
 		}

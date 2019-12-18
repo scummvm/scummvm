@@ -20,13 +20,13 @@
  *
  */
 
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
+//#include <cstdio>
+//#include <cstdlib>
+//#include <cstring>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "NuvieIO.h"
+#include "ultima/ultima6/files/nuvie_io.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -210,6 +210,19 @@ uint32 NuvieIOBuffer::write(NuvieIO *src) {
 void NuvieIOBuffer::seek(uint32 new_pos) {
 	if (data && new_pos < size)
 		pos = new_pos;
+}
+
+char *strgets(char *str, int n, Common::ReadStream *stream) {
+	int count = 0;
+	char c;
+
+	while (!stream->eos() && (count < (n - 1)) && (c = stream->readByte()) != '\n') {
+		str[count] = c;
+		++count;
+	}
+
+	str[count] = '\0';
+	return count ? str : nullptr;
 }
 
 } // End of namespace Ultima6

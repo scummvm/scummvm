@@ -20,19 +20,19 @@
  *
  */
 
-#include <stdlib.h>
-#include <cmath>
-#include <misc/ultima/ultima6/misc/u6_misc.h>
-#include <misc/SDLUtils.h>
+//#include <stdlib.h>
+//#include <cmath>
+//#include <misc/ultima/ultima6/misc/u6_misc.h>
+//#include <misc/SDLultima/ultima6/keybinding/utils.h>
 
-#include "GUI_font.h"
-#include "GUI_loadimage.h"
+#include "ultima/ultima6/gui/gui_font.h"
+#include "ultima/ultima6/gui/gui_loadimage.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
 /* use default 8x8 font */
-GUI_Font::GUI_Font(Uint8 fontType) {
+GUI_Font::GUI_Font(uint8 fontType) {
 	Graphics::ManagedSurface *temp;
 
 	w_data = NULL;
@@ -107,12 +107,12 @@ void GUI_Font::SetTransparency(int on) {
 }
 
 /* determine foreground and background color values RGB*/
-void GUI_Font::SetColoring(Uint8 fr, Uint8 fg, Uint8 fb, Uint8 br, Uint8 bg, Uint8 bb) {
+void GUI_Font::SetColoring(uint8 fr, uint8 fg, uint8 fb, uint8 br, uint8 bg, uint8 bb) {
 	SDL_Color colors[3] = {{br, bg, bb, 0}, {fr, fg, fb, 0}};
 	SDL_SetColors(fontStore, colors, 0, 2);
 }
 
-void GUI_Font::SetColoring(Uint8 fr, Uint8 fg, Uint8 fb, Uint8 fr1, Uint8 fg1, Uint8 fb1, Uint8 br, Uint8 bg, Uint8 bb) {
+void GUI_Font::SetColoring(uint8 fr, uint8 fg, uint8 fb, uint8 fr1, uint8 fg1, uint8 fb1, uint8 br, uint8 bg, uint8 bb) {
 	SDL_Color colors[4] = {{br, bg, bb, 0}, {fr, fg, fb, 0}, {fr1, fg1, fb1, 0}};
 	SDL_SetColors(fontStore, colors, 0, 3);
 }
@@ -121,7 +121,7 @@ void GUI_Font::SetColoring(Uint8 fr, Uint8 fg, Uint8 fb, Uint8 fr1, Uint8 fg1, U
 void GUI_Font::TextOut(Graphics::ManagedSurface *context, int x, int y, const char *text, int line_wrap) {
 	int i;
 	int j;
-	Uint8 ch;
+	uint8 ch;
 	Common::Rect src;
 	Common::Rect dst;
 

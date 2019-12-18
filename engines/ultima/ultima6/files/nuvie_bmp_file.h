@@ -24,9 +24,9 @@
 #define ULTIMA6_FILES_NUVIE_BMP_FILE_H
 
 #include "ultima/shared/std/string.h"
-#include "SDL.h"
-#include "NuvieIOFile.h"
-#include "TileManager.h"
+
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/core/tile_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {

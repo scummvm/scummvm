@@ -23,12 +23,9 @@
 #ifndef ULTIMA6_CORE_CONVERSE_SPEECH_H
 #define ULTIMA6_CORE_CONVERSE_SPEECH_H
 
-#include <cstdio>
+#include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
-#include <list>
-
-#include "SDL.h"
-#include "mixer.h"
+#include "audio/mixer.h"
 
 namespace Ultima {
 namespace Ultima6 {

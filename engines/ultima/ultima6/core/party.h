@@ -24,9 +24,9 @@
 #define ULTIMA6_CORE_PARTY_H
 
 #include "ultima/shared/std/string.h"
-//#include <cassert>
-#include "ObjManager.h"
-#include "Map.h"
+////#include <cassert>
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/core/map.h"
 
 namespace Ultima {
 namespace Ultima6 {

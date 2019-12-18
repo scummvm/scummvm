@@ -24,7 +24,7 @@
 #ifndef ULTIMA6_SOUND_SAMPLE_H
 #define ULTIMA6_SOUND_SAMPLE_H
 
-#include "Sound.h"
+#include "ultima/ultima6/sound/sound.h"
 
 namespace Ultima {
 namespace Ultima6 {

@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "GUI.h"
-#include "GUI_widget.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_widget.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -318,11 +318,11 @@ GUI_status GUI_Widget::Idle(void) {
    or not the event should be passed on to other widgets.
    These are called by the default HandleEvent function.
 */
-GUI_status GUI_Widget::KeyDown(SDL_Keysym key) {
+GUI_status GUI_Widget::KeyDown(Common::KeyState key) {
 	return (GUI_PASS);
 }
 
-GUI_status GUI_Widget::KeyUp(SDL_Keysym key) {
+GUI_status GUI_Widget::KeyUp(Common::KeyState key) {
 	return (GUI_PASS);
 }
 
@@ -335,7 +335,7 @@ GUI_status GUI_Widget::MouseUp(int x, int y, int button) {
 }
 
 
-GUI_status GUI_Widget::MouseMotion(int x, int y, Uint8 state) {
+GUI_status GUI_Widget::MouseMotion(int x, int y, uint8 state) {
 	return (GUI_PASS);
 }
 
@@ -347,7 +347,7 @@ GUI_status GUI_Widget::MouseWheel(sint32 x, sint32 y) {
    This function gets raw SDL events from the GUI.
  */
 // Idle and HandleEvent produce delayed clicks. Don't override if using those. -- SB-X
-GUI_status GUI_Widget::HandleEvent(const SDL_Event *event) {
+GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 	if (status == WIDGET_HIDDEN) //we don't care for events if we are hidden.
 		return GUI_PASS;
 
@@ -423,7 +423,7 @@ GUI_status GUI_Widget::HandleEvent(const SDL_Event *event) {
 	break;
 	case SDL_MOUSEMOTION: {
 		int x, y;
-		Uint8 state;
+		uint8 state;
 		x = event->motion.x;
 		y = event->motion.y;
 		state = event->motion.state;
@@ -504,13 +504,13 @@ GUI_status GUI_Widget::MouseDouble(int x, int y, int button) {
 
 /* Mouse cursor passed out of the widget area.
  */
-GUI_status GUI_Widget::MouseEnter(Uint8 state) {
+GUI_status GUI_Widget::MouseEnter(uint8 state) {
 	return (GUI_PASS);
 }
 
 /* Mouse cursor passed into the widget area.
  */
-GUI_status GUI_Widget::MouseLeave(Uint8 state) {
+GUI_status GUI_Widget::MouseLeave(uint8 state) {
 	return (GUI_PASS);
 }
 

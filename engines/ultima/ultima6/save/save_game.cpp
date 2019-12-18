@@ -20,37 +20,37 @@
  *
  */
 
-#include <list>
-#include <cassert>
+//#include <list>
+//#include <cassert>
 
-#include "SDL.h"
+
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "NuvieIO.h"
-#include "NuvieIOFile.h"
-#include "U6Lzw.h"
-#include "GUI.h"
-#include "Console.h"
-#include "SaveGame.h"
+#include "ultima/ultima6/files/nuvie_io.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/files/u6_lzw.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/core/console.h"
+#include "Saveultima/ultima6/core/game.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "Game.h"
-#include "ObjManager.h"
-#include "Objlist.h"
-#include "ActorManager.h"
-#include "EggManager.h"
-#include "Actor.h"
-#include "ViewManager.h"
-#include "MapWindow.h"
-#include "MsgScroll.h"
-#include "Party.h"
-#include "Player.h"
-#include "Portrait.h"
-#include "GameClock.h"
-#include "CommandBar.h"
-#include "Weather.h"
-#include "Script.h"
-#include "Event.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/save/obj_list.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/core/egg_manager.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/portraits/portrait.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/core/command_bar.h"
+#include "ultima/ultima6/core/weather.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/core/event.h"
 
 namespace Ultima {
 namespace Ultima6 {

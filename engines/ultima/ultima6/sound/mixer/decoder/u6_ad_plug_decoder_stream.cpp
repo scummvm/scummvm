@@ -19,9 +19,9 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "NuvieIO.h"
-#include "U6Lib_n.h"
-#include "U6Lzw.h"
+#include "ultima/ultima6/files/nuvie_io.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
+#include "ultima/ultima6/files/u6_lzw.h"
 
 #include "U6AdPlugDecoderStream.h"
 

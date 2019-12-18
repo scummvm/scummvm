@@ -20,47 +20,46 @@
  *
  */
 
-#include <cassert>
-#include <cstring>
-#include "SDL.h"
+//#include <cassert>
+//#include <cstring>
+
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "Game.h"
-#include "GameClock.h"
-#include "MapWindow.h"
-#include "MsgScroll.h"
-#include "ActorManager.h"
-#include "Actor.h"
-#include "Converse.h"
-#include "Player.h"
-#include "Party.h"
-#include "Book.h"
-#include "ViewManager.h"
-#include "PortraitView.h"
-#include "TimedEvent.h"
-#include "InventoryView.h"
-#include "PartyView.h"
-#include "ActorView.h"
-#include "CommandBar.h"
-#include "Event.h"
-#include "U6objects.h"
-#include "Effect.h"
-#include "EffectManager.h"
-#include "NuvieIOFile.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/converse.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/core/book.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/views/portrait_view.h"
+#include "ultima/ultima6/core/timed_event.h"
+#include "ultima/ultima6/views/inventory_view.h"
+#include "ultima/ultima6/views/party_view.h"
+#include "ultima/ultima6/views/actor_view.h"
+#include "ultima/ultima6/core/command_bar.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/u6_objects.h"
+#include "ultima/ultima6/core/effect.h"
+#include "ultima/ultima6/core/effect_manager.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
 
-#include "SaveManager.h"
-#include "Magic.h"
+#include "ultima/ultima6/save/save_manager.h"
+#include "ultima/ultima6/core/magic.h"
+#include "ultima/ultima6/gui/gui_yes_no_dialog.h"
+#include "ultima/ultima6/menus/game_menu_dialog.h"
+#include "ultima/ultima6/views/inventory_widget.h"
+#include "ultima/ultima6/keybinding/keys.h"
+#include "ultima/ultima6/views/spell_view.h"
+#include "ultima/ultima6/core/fps_counter.h"
 
-#include "GUI_YesNoDialog.h"
-#include "GameMenuDialog.h"
-
-#include "views/InventoryWidget.h"
-#include "Keys.h"
-#include "SpellView.h"
-
-#include "FpsCounter.h"
+#include "common/system.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -173,8 +172,8 @@ bool Event::update() {
 	game_time_queue->call_timers(clock->get_game_ticks());
 
 	// polled
-	SDL_Event event;
-	while (SDL_PollEvent(&event)) {
+	Common::Event event;
+	while (g_system->getEventManager().pollEvent(&event)) {
 		idle = false;
 		switch (gui->HandleEvent(&event)) {
 		case GUI_PASS :
@@ -202,14 +201,14 @@ bool Event::update() {
 	return true;
 }
 
-bool Event::handleSDL_KEYDOWN(const SDL_Event *event) {
+bool Event::handleSDL_KEYDOWN(const Common::Event *event) {
 	// when casting the magic class will handle keyboard events
 	if (mode == KEYINPUT_MODE) {
-		SDL_Keycode sym = event->key.keysym.sym;
+		Common::KeyCode sym = event->key.keysym.sym;
 		ActionKeyType action_key_type = OTHER_KEY;
 
-		if (!((magic->is_selecting_spell() && ((sym >= SDLK_a && sym <= SDLK_z) || sym == SDLK_BACKSPACE)) ||
-		        ((magic->is_waiting_for_location() || last_mode == USE_MODE) && sym >= SDLK_1 && sym <= SDLK_9))) {
+		if (!((magic->is_selecting_spell() && ((sym >= Common::KEYCODE_a && sym <= Common::KEYCODE_z) || sym == Common::KEYCODE_BACKSPACE)) ||
+		        ((magic->is_waiting_for_location() || last_mode == USE_MODE) && sym >= Common::KEYCODE_1 && sym <= Common::KEYCODE_9))) {
 			ActionType a = keybinder->get_ActionType(event->key.keysym);
 			action_key_type = keybinder->GetActionKeyType(a);
 			switch (action_key_type) {
@@ -230,58 +229,58 @@ bool Event::handleSDL_KEYDOWN(const SDL_Event *event) {
 		return true;
 	}
 
-	SDL_Keymod mods = SDL_GetModState();
+	byte mods = event->kbd.flags;
 	// alt-code input
-	if (mods & KMOD_ALT) {
+	if (mods & Common::KBD_ALT) {
 		if (mode == MOVE_MODE)
 			switch (event->key.keysym.sym) {
-			case SDLK_KP_0:
-			case SDLK_0:
+			case Common::KEYCODE_KP0:
+			case Common::KEYCODE_0:
 				alt_code_str[alt_code_len++] = '0';
 				break;
 
-			case SDLK_KP_1:
-			case SDLK_1:
+			case Common::KEYCODE_KP1:
+			case Common::KEYCODE_1:
 				alt_code_str[alt_code_len++] = '1';
 				break;
 
-			case SDLK_KP_2:
-			case SDLK_2:
+			case Common::KEYCODE_KP2:
+			case Common::KEYCODE_2:
 				alt_code_str[alt_code_len++] = '2';
 				break;
 
-			case SDLK_KP_3:
-			case SDLK_3:
+			case Common::KEYCODE_KP3:
+			case Common::KEYCODE_3:
 				alt_code_str[alt_code_len++] = '3';
 				break;
 
-			case SDLK_KP_4:
-			case SDLK_4:
+			case Common::KEYCODE_KP4:
+			case Common::KEYCODE_4:
 				alt_code_str[alt_code_len++] = '4';
 				break;
 
-			case SDLK_KP_5:
-			case SDLK_5:
+			case Common::KEYCODE_KP5:
+			case Common::KEYCODE_5:
 				alt_code_str[alt_code_len++] = '5';
 				break;
 
-			case SDLK_KP_6:
-			case SDLK_6:
+			case Common::KEYCODE_KP6:
+			case Common::KEYCODE_6:
 				alt_code_str[alt_code_len++] = '6';
 				break;
 
-			case SDLK_KP_7:
-			case SDLK_7:
+			case Common::KEYCODE_KP7:
+			case Common::KEYCODE_7:
 				alt_code_str[alt_code_len++] = '7';
 				break;
 
-			case SDLK_KP_8:
-			case SDLK_8:
+			case Common::KEYCODE_KP8:
+			case Common::KEYCODE_8:
 				alt_code_str[alt_code_len++] = '8';
 				break;
 
-			case SDLK_KP_9:
-			case SDLK_9:
+			case Common::KEYCODE_KP9:
+			case Common::KEYCODE_9:
 				alt_code_str[alt_code_len++] = '9';
 				break;
 			default:
@@ -305,7 +304,7 @@ bool Event::handleSDL_KEYDOWN(const SDL_Event *event) {
 
 void Event::target_spell() {
 	input.type = EVENTINPUT_KEY;
-	input.key = SDLK_RETURN; // only needed to overwrite old value so it isn't a number or backspace
+	input.key = Common::KEYCODE_RETURN; // only needed to overwrite old value so it isn't a number or backspace
 	input.action_key_type = DO_ACTION_KEY;
 	message(CB_DATA_READY, (char *) &input);
 	callback_target = 0;
@@ -321,27 +320,24 @@ void Event::close_spellbook() {
 	cancelAction();
 }
 
-bool Event::handleEvent(const SDL_Event *event) {
+bool Event::handleEvent(const Common::Event *event) {
 	if (game->user_paused())
 		return true;
 
 	switch (event->type) {
-	case SDL_MOUSEMOTION:
+	case Common::EVENT_MOUSEMOVE:
 		break;
-	case SDL_MOUSEBUTTONDOWN:
-		break;
-	case SDL_KEYUP:
-		if (event->key.keysym.sym == SDLK_RALT
-		        || event->key.keysym.sym == SDLK_LALT) {
+	case Common::EVENT_KEYUP:
+		if (event->kbd.flags & Common::KBD_ALT) {
 			clear_alt_code();
 		}
 		break;
 
-	case SDL_KEYDOWN:
+	case Common::EVENT_KEYDOWN:
 		handleSDL_KEYDOWN(event);
 		break;
 
-	case SDL_QUIT :
+	case Common::EVENT_QUIT:
 		quitDialog();
 		break;
 
@@ -2383,7 +2379,7 @@ void Event::alt_code_teleport_menu(uint32 selection) {
 
 void Event::wait() {
 	if (!ignore_timeleft)
-		SDL_Delay(TimeLeft());
+		g_system->delayMillis(TimeLeft());
 }
 
 //Protected

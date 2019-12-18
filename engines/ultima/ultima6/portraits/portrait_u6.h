@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_PORTRAIT_PORTRAIT_U6_H
 #define ULTIMA6_PORTRAIT_PORTRAIT_U6_H
 
-#include "Portrait.h"
-#include "U6Lib_n.h"
+#include "ultima/ultima6/portraits/portrait.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
 
 namespace Ultima {
 namespace Ultima6 {

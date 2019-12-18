@@ -20,12 +20,9 @@
  *
  */
 
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <time.h>
-#include <nuvieDefs.h>
-//#include "Console.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
+#include "common/str.h"
+#include "common/textconsole.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -47,12 +44,6 @@ DebugLevelType debug(const char *func, const char *file, const int line, const b
 //  shorter, because spammy enough as is.
 	static const char *DebugLevelNames[] = { "!", "A", "C", "E", "W", "N", "I", "D" };
 	static DebugLevelType CurrentDebugLevel = LEVEL_DEBUGGING;
-
-	va_list ap;
-	time_t now;
-	struct tm ts;
-	char buf[128];
-	va_start(ap, format);
 
 	if (format == NULL) {
 		CurrentDebugLevel = level;
@@ -76,32 +67,25 @@ DebugLevelType debug(const char *func, const char *file, const int line, const b
 		return CurrentDebugLevel;    // Don't call ourselves here to log something like 'message suppressed'
 	}
 	if (!no_header) {
-		time(&now);
-		ts = *localtime(&now);
-#ifdef _MSC_VER
-		strftime(buf, 128, "%Y-%m-%d %H:%M:%S", &ts);
-#else
-		strftime(buf, 128, "%s", &ts);
-#endif
-		fprintf(stderr, "<");
-#ifndef WITHOUT_DEBUG_TIMESTAMP_IN_HEADER
-		fprintf(stderr, "%s ", buf);
-#endif
 #ifndef WITHOUT_DEBUG_LEVEL_IN_HEADER
-		fprintf(stderr, "[%s] ", DebugLevelNames[(unsigned char)level]);
+		::debugN("[%s] ", DebugLevelNames[(unsigned char)level]);
 #endif
 #ifndef WITHOUT_DEBUG_FUNC_IN_HEADER
-		fprintf(stderr, "%s ", func);
+		::debugN("%s ", func);
 #endif
 #ifndef WITHOUT_DEBUG_FILE_LINE_IN_HEADER
-		fprintf(stderr, "%s:%d", file, line);
+		::debugN("%s:%d", file, line);
 #endif
-		fprintf(stderr, "> ");
+		::debugN("> ");
 #ifndef WITHOUT_DEBUG_NEWLINE_IN_HEADER
-		fprintf(stderr, "\n");
+		::debugN("\n");
 #endif
 	}
-	vfprintf(stderr, format, ap);
+	
+	va_list ap;
+	va_start(ap, format);
+	Common::String buf = Common::String::vformat(format, ap);
+	::debugN("%s", buf.c_str());
 	va_end(ap);
 
 	return CurrentDebugLevel;

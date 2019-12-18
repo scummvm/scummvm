@@ -23,8 +23,8 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "GameSelect.h"
-#include "Console.h"
+#include "ultima/ultima6/core/game_select.h"
+#include "ultima/ultima6/core/console.h"
 
 namespace Ultima {
 namespace Ultima6 {

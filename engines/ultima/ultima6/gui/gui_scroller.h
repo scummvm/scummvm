@@ -23,10 +23,10 @@
 #ifndef ULTIMA6_GUI_GUI_SCROLLER_H
 #define ULTIMA6_GUI_GUI_SCROLLER_H
 
-#include "SDL.h"
 
-#include "GUI_widget.h"
-#include "Screen.h"
+
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/screen/screen.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -35,7 +35,7 @@ class GUI_ScrollBar;
 
 class GUI_Scroller : public GUI_Widget {
 
-	Uint8 R, G, B;
+	uint8 R, G, B;
 	uint32 bg_color;
 	uint16 row_height;
 	uint16 rows_per_page;
@@ -45,7 +45,7 @@ class GUI_Scroller : public GUI_Widget {
 
 public:
 	/* Passed the area, color and shape */
-	GUI_Scroller(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b, uint16 r_height);
+	GUI_Scroller(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, uint16 r_height);
 
 	/* Map the color to the display */
 	virtual void SetDisplay(Screen *s);
@@ -63,7 +63,7 @@ public:
 	/* events, used for dragging the area. */
 	GUI_status MouseDown(int x, int y, int button);
 	GUI_status MouseUp(int x, int y, int button);
-	GUI_status MouseMotion(int x, int y, Uint8 state);
+	GUI_status MouseMotion(int x, int y, uint8 state);
 	GUI_status MouseWheel(sint32 x, sint32 y);
 
 protected:

@@ -25,16 +25,16 @@
  *  Includes
  * ==========
  */
-#include <string.h>
-#include <stdlib.h>
-#include "SDL.h"
-#include "SDL_endian.h"
+//#include <string.h>
+//#include <stdlib.h>
+
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6Lzw.h"
-#include "U6Lib_n.h"
-#include "NuvieIO.h"
-#include "U6Shape.h"
+#include "ultima/ultima6/files/u6_lzw.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
+#include "ultima/ultima6/files/nuvie_io.h"
+#include "ultima/ultima6/files/u6_shape.h"
+#include "common/endian.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -201,14 +201,14 @@ bool U6Shape::load(unsigned char *buf) {
 	data = buf;
 
 	/* Size and hot point. */
-	width = SDL_SwapLE16(*(uint16 *)data);
+	width = READ_LE_UINT16(data);
 	data += 2;
-	width += hotx = SDL_SwapLE16(*(uint16 *)data);
+	width += hotx = READ_LE_UINT16(data);
 	data += 2;
 
-	height = hoty = SDL_SwapLE16(*(uint16 *)data);
+	height = hoty = READ_LE_UINT16(data);
 	data += 2;
-	height += SDL_SwapLE16(*(uint16 *)data);
+	height += READ_LE_UINT16(data);
 	data += 2;
 
 	width++;
@@ -223,14 +223,14 @@ bool U6Shape::load(unsigned char *buf) {
 	memset(raw, 255, width * height);
 
 	/* Get the pixel data. */
-	while ((num_pixels = SDL_SwapLE16(*(uint16 *)data)) != 0) {
+	while ((num_pixels = READ_LE_UINT16(data)) != 0) {
 
 		data += 2;
 
 		/* Coordinates relative to hot spot. */
-		xpos = SDL_SwapLE16(*(uint16 *)data);
+		xpos = READ_LE_UINT16(data);
 		data += 2;
-		ypos = SDL_SwapLE16(*(uint16 *)data);
+		ypos = READ_LE_UINT16(data);
 		data += 2;
 
 		if (((hotx + xpos) >= width) || ((hoty + ypos) >= height)) {
@@ -340,11 +340,17 @@ unsigned char *U6Shape::get_data() {
 Graphics::ManagedSurface *U6Shape::get_shape_surface() {
 	if (raw == NULL)
 		return NULL;
-	/* NOT REACHED */
 
-	return SDL_CreateRGBSurfaceFrom(raw, width, height, 8, width, 0, 0, 0, 0);
+	// Create the surface
+	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface(width, height,
+		Graphics::PixelFormat::createFormatCLUT8());
+
+	// Copy the raw pixels into it
+	byte *dest = (byte *)surface->getPixels();
+	Common::copy(raw, raw + width * height, dest);
+
+	return surface;
 }
-
 
 /*
  * ====================================================

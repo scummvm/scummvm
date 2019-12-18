@@ -21,72 +21,41 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-
-#include "NuvieIOFile.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-NuvieIOFile::NuvieIOFile(): NuvieIO() {
-	fp = NULL;
-}
-
-NuvieIOFile::~NuvieIOFile() {
+NuvieIOFileRead::~NuvieIOFileRead() {
 	close();
 }
 
-bool NuvieIOFile::openWithMode(const char *filename, const char *mode) {
-	if (fp) //We already have a file open lets bail.
+bool NuvieIOFileRead::open(const Common::String &filename) {
+	if (_file.isOpen()) //We already have a file open lets bail.
 		return false;
 
-	fp = fopen(filename, mode);
-
-	if (fp == NULL) {
-		DEBUG(0, LEVEL_ERROR, "Failed opening '%s'\n", filename);
+	if (!_file.open(filename)) {
+		DEBUG(0, LEVEL_ERROR, "Failed opening '%s'\n", filename.c_str());
 		return false;
 	}
 
-	size = get_filesize();
+	size = _file.size();
 	pos = 0;
 
 	return true;
 }
 
-void NuvieIOFile::close() {
-	if (fp != NULL)
-		fclose(fp);
-
-	fp = NULL;
-
+void NuvieIOFileRead::close() {
+	_file.close();
 	NuvieIO::close();
 }
 
-uint32 NuvieIOFile::get_filesize() {
-	uint32 file_length;
-
-	fseek(fp, 0, SEEK_END);
-	file_length = (uint32)ftell(fp);
-	fseek(fp, pos, SEEK_SET);
-
-	return file_length;
-}
-
-void NuvieIOFile::seek(uint32 new_pos) {
-	if (fp && new_pos <= size) {
-		fseek(fp, new_pos, SEEK_SET);
+void NuvieIOFileRead::seek(uint32 new_pos) {
+	if (_file.isOpen() && new_pos <= size) {
+		_file.seek(new_pos);
 		pos = new_pos;
 	}
-
-	return;
 }
-
-//NuvieIOFileRead methods
-//
-
-bool NuvieIOFileRead::open(const char *filename) {
-	return openWithMode(filename, "rb");
-}
-
 
 uint8 NuvieIOFileRead::read1() {
 	if (pos >= size)
@@ -94,46 +63,31 @@ uint8 NuvieIOFileRead::read1() {
 
 	pos++;
 
-	return (fgetc(fp));
+	return _file.readByte();
 }
 
 uint16 NuvieIOFileRead::read2() {
-	unsigned char b0, b1;
-
 	if (pos > size - 2)
 		return 0;
 
 	pos += 2;
-
-	b0 = fgetc(fp);
-	b1 = fgetc(fp);
-
-	return (b0 + (b1 << 8));
+	return _file.readUint16LE();
 }
 
 uint32 NuvieIOFileRead::read4() {
-	unsigned char b0, b1, b2, b3;
 	if (pos > size - 4)
 		return 0;
 
 	pos += 4;
-
-	b0 = fgetc(fp);
-	b1 = fgetc(fp);
-	b2 = fgetc(fp);
-	b3 = fgetc(fp);
-
-	return (b0 + (b1 << 8) + (b2 << 16) + (b3 << 24));
+	return _file.readUint32LE();
 }
 
 bool NuvieIOFileRead::readToBuf(unsigned char *buf, uint32 buf_size) {
 	if (pos + buf_size > size)
 		return false;
 
-	fread(buf, 1, buf_size, fp); // FIX for partial read.
-
+	_file.read(buf, buf_size);
 	pos += buf_size;
-
 	return true;
 }
 
@@ -142,17 +96,42 @@ bool NuvieIOFileRead::readToBuf(unsigned char *buf, uint32 buf_size) {
 // NuvieIOFileWrite
 //
 
-bool NuvieIOFileWrite::open(const char *filename) {
-	return openWithMode(filename, "wb");
+NuvieIOFileWrite::~NuvieIOFileWrite() {
+	close();
+}
+
+bool NuvieIOFileWrite::open(const Common::String &filename) {
+	if (_file.isOpen()) //We already have a file open lets bail.
+		return false;
+
+	if (!_file.open(filename)) {
+		DEBUG(0, LEVEL_ERROR, "Failed opening '%s'\n", filename.c_str());
+		return false;
+	}
+
+	size = _file.size();
+	pos = 0;
+
+	return true;
+}
+
+void NuvieIOFileWrite::close() {
+	_file.close();
+}
+
+void NuvieIOFileWrite::seek(uint32 new_pos) {
+	if (_file.isOpen() && new_pos <= size) {
+		_file.seek(new_pos);
+		pos = new_pos;
+	}
 }
 
 bool NuvieIOFileWrite::write1(uint8 src) {
-	if (fp == NULL) // || pos >= size-1)
+	if (!_file.isOpen())
 		return false;
 
-	fputc(src, fp);
-
-	pos++;
+	_file.writeByte(src);
+	++pos;
 
 	if (pos > size)
 		size = pos;
@@ -161,12 +140,10 @@ bool NuvieIOFileWrite::write1(uint8 src) {
 }
 
 bool NuvieIOFileWrite::write2(uint16 src) {
-	if (fp == NULL) // || pos >= size-2)
+	if (!_file.isOpen())
 		return false;
 
-	fputc((uint8)(src & 0xff), fp);
-	fputc((uint8)((src >> 8) & 0xff), fp);
-
+	_file.writeUint16LE(src);
 	pos += 2;
 
 	if (pos > size)
@@ -176,14 +153,10 @@ bool NuvieIOFileWrite::write2(uint16 src) {
 }
 
 bool NuvieIOFileWrite::write4(uint32 src) {
-	if (fp == NULL) // || pos >= size-4)
+	if (!_file.isOpen())
 		return false;
 
-	fputc((uint8)(src & 0xff), fp);
-	fputc((uint8)((src >> 8) & 0xff), fp);
-	fputc((uint8)((src >> 16) & 0xff), fp);
-	fputc((uint8)((src >> 24) & 0xff), fp);
-
+	_file.writeUint32LE(src);
 	pos += 4;
 
 	if (pos > size)
@@ -193,15 +166,14 @@ bool NuvieIOFileWrite::write4(uint32 src) {
 }
 
 uint32 NuvieIOFileWrite::writeBuf(const unsigned char *src, uint32 src_size) {
-	if (fp == NULL) // || pos + src_size > size)
-		return (0);
+	if (!_file.isOpen())
+		return false;
 
 	pos += src_size;
-
 	if (pos > size)
 		size = pos;
 
-	return (fwrite(src, sizeof(unsigned char), src_size, fp));
+	return (_file.write(src, src_size));
 }
 
 uint32 NuvieIOFileWrite::write(NuvieIO *src) {

@@ -21,10 +21,10 @@
  */
 
 #include "ultima/shared/std/string.h"
-#include <map>
+//#include <map>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "mixer.h"
+#include "audio/mixer.h"
 #include "decoder/AdLibSfxStream.h"
 #include "AdLibSfxManager.h"
 

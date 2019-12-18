@@ -21,12 +21,12 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+//#include <config.h>
 #endif
 
 #if defined(MACOSX) || defined(GP2X)
 
-#include <assert.h>
+//#include <assert.h>
 #include "doublebuffersdl-mixer.h"
 
 DoubleBufferSDLMixerManager::DoubleBufferSDLMixerManager()

@@ -22,18 +22,18 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "GUI_button.h"
+#include "ultima/ultima6/gui/gui_button.h"
 
-#include "Script.h"
-#include "View.h"
-#include "Actor.h"
-#include "Party.h"
-#include "Portrait.h"
-#include "ActorView.h"
-#include "Font.h"
-#include "Player.h"
-#include "Event.h"
-#include "Keys.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/views/view.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/portraits/portrait.h"
+#include "ultima/ultima6/views/actor_view.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -284,7 +284,7 @@ GUI_status ActorView::MouseDown(int x, int y, int button) {
 
 /* Move the cursor around and use command icons.
  */
-GUI_status ActorView::KeyDown(SDL_Keysym key) {
+GUI_status ActorView::KeyDown(Common::KeyState key) {
 	if (!show_cursor) // FIXME: don't rely on show_cursor to get/pass focus
 		return (GUI_PASS);
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();

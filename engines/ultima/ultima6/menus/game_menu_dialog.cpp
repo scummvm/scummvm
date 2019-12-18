@@ -22,21 +22,21 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "GUI.h"
-#include "GUI_types.h"
-#include "GUI_button.h"
-#include "GUI_CallBack.h"
-#include "GUI_area.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_types.h"
+#include "ultima/ultima6/gui/gui_button.h"
+#include "ultima/ultima6/gui/gui_CallBack.h"
+#include "ultima/ultima6/gui/gui_area.h"
 
-#include "GUI_Dialog.h"
-#include "GameMenuDialog.h"
+#include "ultima/ultima6/gui/gui_Dialog.h"
+#include "ultima/ultima6/menus/game_menu_dialog.h"
 #include "VideoDialog.h"
 #include "AudioDialog.h"
 #include "GameplayDialog.h"
 #include "InputDialog.h"
 #include "CheatsDialog.h"
-#include "Event.h"
-#include "Keys.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -113,7 +113,7 @@ GUI_status GameMenuDialog::close_dialog() {
 	return GUI_YUM;
 }
 
-GUI_status GameMenuDialog::KeyDown(SDL_Keysym key) {
+GUI_status GameMenuDialog::KeyDown(Common::KeyState key) {
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 

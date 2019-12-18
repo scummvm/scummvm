@@ -21,23 +21,23 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+//#include <config.h>
 #endif
 
-#include <time.h>
-#include <cstdlib>
+//#include <time.h>
+//#include <cstdlib>
 
-#include "SDL.h"
+
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "Console.h"
+#include "ultima/ultima6/core/console.h"
 #include "nuvie.h"
 
 #include "main.h"
 
 #ifdef MACOSX
-#include <CoreFoundation/CoreFoundation.h>
-#include <XCodeBuild/main.cpp>
+//#include <CoreFoundation/CoreFoundation.h>
+//#include <XCodeBuild/main.cpp>
 int nuvieMain(int argc, char **argv)
 #else
 int main(int argc, char **argv)

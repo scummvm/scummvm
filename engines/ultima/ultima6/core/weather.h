@@ -24,8 +24,8 @@
 #define ULTIMA6_CORE_WEATHER_H
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "CallBack.h"
-#include "Map.h"
+#include "ultima/ultima6/misc/call_back.h"
+#include "ultima/ultima6/core/map.h"
 
 namespace Ultima {
 namespace Ultima6 {

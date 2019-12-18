@@ -23,11 +23,11 @@
 #ifndef ULTIMA6_CORE_TIMED_EVENT_H
 #define ULTIMA6_CORE_TIMED_EVENT_H
 
-#include <list>
+//#include <list>
 #include "ultima/shared/std/string.h"
-#include <cstdio>
-#include "CallBack.h"
-#include "ObjManager.h"
+//#include <cstdio>
+#include "ultima/ultima6/misc/call_back.h"
+#include "ultima/ultima6/core/obj_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -235,7 +235,7 @@ public:
  * hour from the start time, up to and including the stop time.
  */
 class TimedAdvance : public TimedCallback {
-	GameClock *clock;
+	GameClock *_clock;
 	uint16 advance; // minutes requested
 	uint8 minutes_this_hour;
 protected:

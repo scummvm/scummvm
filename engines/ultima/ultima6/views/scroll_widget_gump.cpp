@@ -21,24 +21,24 @@
  */
 
 #include "ultima/shared/std/string.h"
-#include <cctype>
-#include <iostream>
+//#include <cctype>
+//#include <iostream>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "FontManager.h"
-#include "Font.h"
-#include "GamePalette.h"
-#include "GUI.h"
-#include "MsgScroll.h"
-#include "Portrait.h"
-#include "Player.h"
-#include "ConvFont.h"
+#include "ultima/ultima6/fonts/font_manager.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/screen/game_palette.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/portraits/portrait.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/fonts/conv_font.h"
 #include "ScrollWidgetGump.h"
-#include "ActorManager.h"
-#include "TimedEvent.h"
-#include "Keys.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/core/timed_event.h"
+#include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -149,7 +149,7 @@ void ScrollWidgetGump::Display(bool full_redraw) {
 	screen->update(area.x, area.y, area.w, area.h);
 }
 
-GUI_status ScrollWidgetGump::KeyDown(SDL_Keysym key) {
+GUI_status ScrollWidgetGump::KeyDown(Common::KeyState key) {
 	ScrollEventType event = SCROLL_ESCAPE;
 
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();

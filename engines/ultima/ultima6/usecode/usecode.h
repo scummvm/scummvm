@@ -24,10 +24,10 @@
 #define ULTIMA6_USECODE_USECODE_H
 
 #include "ultima/shared/std/string.h"
-#include "CallBack.h"
-#include "MapEntity.h"
-#include "ObjManager.h"
-#include "Player.h"
+#include "ultima/ultima6/misc/call_back.h"
+#include "ultima/ultima6/misc/map_entity.h"
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/core/player.h"
 
 namespace Ultima {
 namespace Ultima6 {

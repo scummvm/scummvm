@@ -20,7 +20,7 @@
  *
  */
 
-#include "Map.h"
+#include "ultima/ultima6/core/map.h"
 #include "DirFinder.h"
 #include "SeekPath.h"
 

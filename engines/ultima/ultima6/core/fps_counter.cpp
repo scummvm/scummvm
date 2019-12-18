@@ -20,25 +20,24 @@
  *
  */
 
-#include <cassert>
-#include <string.h>
-#include "SDL.h"
+//#include <cassert>
+//#include <string.h>
+
 
 #include "ultima/ultima6/conf/configuration.h"
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Game.h"
-#include "Screen.h"
-#include "FontManager.h"
-#include "Font.h"
-#include "FpsCounter.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/screen/screen.h"
+#include "ultima/ultima6/fonts/font_manager.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/core/fps_counter.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
 using std::string;
-
 
 FpsCounter::FpsCounter(Game *g) : GUI_Widget(NULL) {
 	game = g;
@@ -65,10 +64,10 @@ void FpsCounter::Display(bool full_redraw) {
 //    if(full_redraw || update_display || game->is_new_style())
 	{
 //        update_display = false;
-		screen->fill(0, area.x, area.y, area.w, area.h);
-		font->drawString(screen, fps_string, area.x, area.y);
+		screen->fill(0, area.left, area.top, area.width(), area.height());
+		font->drawString(screen, fps_string, area.left, area.top);
 
-		screen->update(area.x, area.y, area.w, area.h);
+		screen->update(area.left, area.top, area.width(), area.height());
 	}
 }
 

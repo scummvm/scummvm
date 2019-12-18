@@ -20,19 +20,19 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 
-#include <math.h>
+//#include <math.h>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "NuvieBmpFile.h"
-#include "Player.h"
-#include "Weather.h"
-#include "GameClock.h"
+#include "ultima/ultima6/files/nuvie_bmp_file.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/weather.h"
+#include "ultima/ultima6/core/game_clock.h"
 #include "SunMoonRibbon.h"
 
-#include "GUI.h"
+#include "ultima/ultima6/gui/gui.h"
 
 namespace Ultima {
 namespace Ultima6 {

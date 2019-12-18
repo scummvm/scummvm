@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_VIEWS_ACTOR_VIEW_H
 #define ULTIMA6_VIEWS_ACTOR_VIEW_H
 
-#include "View.h"
+#include "ultima/ultima6/views/view.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -70,7 +70,7 @@ protected:
 	void display_actor_stats();
 	bool in_party;
 	GUI_status MouseDown(int x, int y, int button);
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 	GUI_status MouseWheel(sint32 x, sint32 y);
 	void update_cursor();
 	void select_button();

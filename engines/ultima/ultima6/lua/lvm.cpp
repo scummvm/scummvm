@@ -5,9 +5,9 @@
 */
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
 
 #define lvm_c
 #define LUA_CORE

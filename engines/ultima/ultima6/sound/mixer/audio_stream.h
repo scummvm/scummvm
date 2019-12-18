@@ -28,9 +28,9 @@
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "types.h"
+#include "ultima/ultima6/sound/mixer/types.h"
 
-#include "timestamp.h"
+#include "ultima/ultima6/sound/mixer/timestamp.h"
 
 
 namespace Audio {

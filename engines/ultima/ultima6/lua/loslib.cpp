@@ -5,11 +5,11 @@
 */
 
 
-#include <errno.h>
-#include <locale.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
+//#include <errno.h>
+//#include <locale.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#include <time.h>
 
 #define loslib_c
 #define LUA_LIB
@@ -43,7 +43,7 @@
 ** uses mkstemp.
 */
 #if defined(LUA_USE_MKSTEMP)
-#include <unistd.h>
+//#include <unistd.h>
 #define LUA_TMPNAMBUFSIZE   32
 #define lua_tmpnam(b,e) { \
 		strcpy(b, "/tmp/lua_XXXXXX"); \

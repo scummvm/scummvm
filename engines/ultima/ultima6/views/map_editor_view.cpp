@@ -22,14 +22,14 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "GUI.h"
-#include "GUI_button.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_button.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "Map.h"
-#include "MapWindow.h"
-#include "ViewManager.h"
+#include "ultima/ultima6/core/map.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/views/view_manager.h"
 #include "MapEditorView.h"
-#include "Keys.h"
+#include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -114,7 +114,7 @@ void MapEditorView::Display(bool full_redraw) {
 	screen->update(area.x, area.y, area.w, area.h);
 }
 
-GUI_status MapEditorView::KeyDown(SDL_Keysym key) {
+GUI_status MapEditorView::KeyDown(Common::KeyState key) {
 	MapCoord loc;
 	uint16 *roof_data;
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
@@ -123,7 +123,7 @@ GUI_status MapEditorView::KeyDown(SDL_Keysym key) {
 
 	// alt input
 	if (key.mod & KMOD_ALT) {
-		SDL_Keysym key_without_alt = key; // need to see what action is without alt
+		Common::KeyState key_without_alt = key; // need to see what action is without alt
 		uint16 mod_without_alt = key_without_alt.mod; // this and next 2 lines are due SDL_Keymod not wanting to do the bitwise ~ operation
 		mod_without_alt &= ~KMOD_ALT;
 		key_without_alt.mod = (SDL_Keymod)mod_without_alt;
@@ -273,7 +273,7 @@ GUI_status MapEditorView::MouseUp(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status MapEditorView::MouseMotion(int x, int y, Uint8 state) {
+GUI_status MapEditorView::MouseMotion(int x, int y, uint8 state) {
 	return GUI_YUM;
 }
 

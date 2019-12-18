@@ -20,15 +20,15 @@
  *
  */
 
-#include <stdio.h>
+//#include <stdio.h>
 
 #include "ultima/shared/std/string.h"
-#include <cctype>
+//#include <cctype>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "Screen.h"
-#include "ConvFont.h"
+#include "ultima/ultima6/screen/screen.h"
+#include "ultima/ultima6/fonts/conv_font.h"
 
 namespace Ultima {
 namespace Ultima6 {

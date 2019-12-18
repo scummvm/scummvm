@@ -20,10 +20,10 @@
  *
  */
 
-#include <string.h>
+//#include <string.h>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "GUI_loadimage.h"
+#include "ultima/ultima6/gui/gui_loadimage.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -33,13 +33,13 @@ namespace Ultima6 {
 /*                                                                      */
 /************************************************************************/
 
-Graphics::ManagedSurface *GUI_LoadImage(int w, int h, Uint8 *pal, Uint8 *data) {
+Graphics::ManagedSurface *GUI_LoadImage(int w, int h, uint8 *pal, uint8 *data) {
 	Graphics::ManagedSurface *image;
 
 	image = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, 0, 0, 0, 0);
 	if (image) {
 		for (int row = 0; row < h; ++row) {
-			memcpy((Uint8 *)image->pixels + row * image->pitch,
+			memcpy((uint8 *)image->pixels + row * image->pitch,
 			       data, w);
 			data += w;
 		}
@@ -84,7 +84,7 @@ Graphics::ManagedSurface *GUI_FontGump(void) {
 	return (the_font_gump);
 }
 
-Uint8 *GUI_FontGumpWData(void) {
+uint8 *GUI_FontGumpWData(void) {
 	return font_gump_w_data;
 }
 

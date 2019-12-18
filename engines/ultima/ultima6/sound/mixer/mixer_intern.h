@@ -25,7 +25,7 @@
 
 //#include "common/scummsys.h"
 #include "mutex.h"
-#include "mixer.h"
+#include "audio/mixer.h"
 
 namespace Audio {
 

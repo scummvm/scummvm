@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "Actor.h"
+#include "ultima/ultima6/actors/actor.h"
 #include "Path.h"
 #include "ActorPathFinder.h"
 

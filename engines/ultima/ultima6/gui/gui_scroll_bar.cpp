@@ -20,13 +20,13 @@
  *
  */
 
-#include <cmath>
+//#include <cmath>
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "GUI.h"
-#include "GUI_button.h"
-#include "GUI_ScrollBar.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_button.h"
+#include "ultima/ultima6/gui/gui_ScrollBar.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -250,7 +250,7 @@ GUI_status GUI_ScrollBar::MouseUp(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_ScrollBar::MouseMotion(int x, int y, Uint8 state) {
+GUI_status GUI_ScrollBar::MouseMotion(int x, int y, uint8 state) {
 	int new_slider_y;
 
 	if (!drag)

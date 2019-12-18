@@ -23,11 +23,21 @@
 #ifndef ULTIMA6_MISC_SDL_COMPAT_H
 #define ULTIMA6_MISC_SDL_COMPAT_H
 
+#include "graphics/managed_surface.h"
+
+extern uint32 SDL_GetTicks();
+extern void SDL_FreeSurface(Graphics::ManagedSurface *&s);
+extern void SDL_ShowCursor(bool show);
+extern uint32 SDL_MapRGB(Graphics::PixelFormat &format, byte r, byte g, byte b);
+extern int SDL_BlitSurface(Graphics::ManagedSurface *src, const Common::Rect *srcrect,
+	Graphics::ManagedSurface *dst, Common::Rect *dstrect);
+extern int SDL_FillRect(Graphics::ManagedSurface *surf, Common::Rect *rect, uint color);
+
 #if 0
 #define SDLK_UNKNOWN SDLK_LAST
-#define SDL_Keycode SDLKey
+#define Common::KeyCode SDLKey
 #define SDL_Keymod SDLMod
-#define SDL_Keysym SDL_keysym
+#define Common::KeyState SDL_keysym
 #define KMOD_GUI KMOD_META
 #define SDL_JoystickNameForIndex SDL_JoystickName
 #define SDL_Window void

@@ -23,15 +23,15 @@
 #ifndef ULTIMA6_CORE_CONVERSE_H
 #define ULTIMA6_CORE_CONVERSE_H
 
-#include <cstdio>
+//#include <cstdio>
 #include "ultima/shared/std/string.h"
-#include <stack>
+//#include <stack>
 #include "ultima/shared/std/containers.h"
 
-#include "Actor.h"
-#include "MsgScroll.h"
-#include "U6Lib_n.h"
-#include "View.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
+#include "ultima/ultima6/views/view.h"
 
 namespace Ultima {
 namespace Ultima6 {

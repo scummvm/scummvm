@@ -23,12 +23,12 @@
 #ifndef ULTIMA6_CORE_CONSOLE_H
 #define ULTIMA6_CORE_CONSOLE_H
 
-#include <stdarg.h>
+//#include <stdarg.h>
 
-#include "SDL.h"
 
-#include "GUI_Console.h"
-#include "Screen.h"
+
+#include "ultima/ultima6/gui/gui_console.h"
+#include "ultima/ultima6/screen/screen.h"
 #include "ultima/ultima6/conf/configuration.h"
 
 namespace Ultima {

@@ -20,16 +20,16 @@
  *
  */
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
+//#include <ctype.h>
+//#include <stdlib.h>
+//#include <string.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "NuvieIOFile.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
 
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6Lib_n.h"
-#include "U6Lzw.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
+#include "ultima/ultima6/files/u6_lzw.h"
 
 #include "Look.h"
 
@@ -129,12 +129,12 @@ const char *Look::get_description(uint16 tile_num, bool *plural) {
 	desc = look_tbl[tile_num];
 
 	len = strlen(desc);
-
+ 
 	for (i = 0, j = 0; i < len;) {
 		if (desc[i] == '\\' || desc[i] == '/') {
 			has_plural = true;
 			c = desc[i];
-			for (i++; isalpha(desc[i]) && i < len; i++) {
+			for (i++; Common::isAlpha(desc[i]) && i < len; i++) {
 
 				if ((*plural && c == '\\') || (!*plural && c == '/')) {
 					desc_buf[j] = desc[i];

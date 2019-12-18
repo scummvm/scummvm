@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_VIEWS_INVENTORY_FONT_H
 #define ULTIMA6_VIEWS_INVENTORY_FONT_H
 
-#include "View.h"
+#include "ultima/ultima6/views/view.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -47,11 +47,11 @@ public:
 	/* events, used for dragging the area. */
 	GUI_status MouseDown(int x, int y, int button);
 	GUI_status MouseUp(int x, int y, int button);
-	GUI_status MouseMotion(int x, int y, Uint8 state);
+	GUI_status MouseMotion(int x, int y, uint8 state);
 	void MoveRelative(int dx, int dy);
 
 protected:
-	void set_bg_color_key(Uint8 r, Uint8 g, Uint8 b);
+	void set_bg_color_key(uint8 r, uint8 g, uint8 b);
 	void force_full_redraw_if_needed();
 };
 

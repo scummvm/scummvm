@@ -23,15 +23,15 @@
  *
  */
 
-#include <stdlib.h>
-#include <string.h>
+//#include <stdlib.h>
+//#include <string.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "types.h"
+#include "ultima/ultima6/sound/mixer/types.h"
 #include "decoder/wave/endian.h"
 #include "decoder/wave/memstream.h"
 
 #include "audiostream.h"
-#include "mixer.h"
+#include "audio/mixer.h"
 #include "decoder/wave/raw.h"
 
 #ifdef MIN

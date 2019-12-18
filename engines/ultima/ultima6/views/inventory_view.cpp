@@ -20,23 +20,23 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "Screen.h"
+#include "ultima/ultima6/screen/screen.h"
 #include "ultima/ultima6/misc/u6_llist.h"
-#include "GUI_button.h"
+#include "ultima/ultima6/gui/gui_button.h"
 #include "DollWidget.h"
 #include "InventoryWidget.h"
-#include "InventoryView.h"
-#include "Party.h"
-#include "Font.h"
-#include "Actor.h"
-#include "Event.h"
-#include "MapWindow.h"
-#include "UseCode.h"
-#include "ViewManager.h"
-#include "Keys.h"
+#include "ultima/ultima6/views/inventory_view.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/usecode/usecode.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -319,7 +319,7 @@ void InventoryView::display_combat_mode() {
 /* Move the cursor around, ready or unready objects, select objects, switch
  * to container view, use command icons.
  */
-GUI_status InventoryView::KeyDown(SDL_Keysym key) {
+GUI_status InventoryView::KeyDown(Common::KeyState key) {
 	if (!show_cursor) // FIXME: don't rely on show_cursor to get/pass focus
 		return (GUI_PASS);
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();

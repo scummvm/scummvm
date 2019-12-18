@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_SAVE_SAVE_SLOT_H
 #define ULTIMA6_SAVE_SAVE_SLOT_H
 
-#include "GUI_widget.h"
-#include "GUI_types.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/gui_types.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -78,7 +78,7 @@ public:
 
 	void Display(bool full_redraw);
 
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 	GUI_status MouseDown(int x, int y, int button);
 	GUI_status MouseUp(int x, int y, int button);
 	GUI_status MouseWheel(sint32 x, sint32 y);

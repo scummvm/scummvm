@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_GUI_GUI_TEXT_INPUT_H
 #define ULTIMA6_GUI_GUI_TEXT_INPUT_H
 
-#include "GUI_text.h"
+#include "ultima/ultima6/gui/gui_text.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -46,14 +46,14 @@ protected:
 
 public:
 
-	GUI_TextInput(int x, int y, Uint8 r, Uint8 g, Uint8 b,
+	GUI_TextInput(int x, int y, uint8 r, uint8 g, uint8 b,
 	              char *str, GUI_Font *gui_font, uint16 width, uint16 height, GUI_CallBack *callback);
 	~GUI_TextInput();
 
 	void release_focus();
 
 	GUI_status MouseUp(int x, int y, int button);
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 
 	void add_char(char c);
 	void remove_char();

@@ -20,37 +20,38 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/misc/u6_llist.h"
-#include "Actor.h"
-#include "ActorManager.h"
-#include "ViewManager.h"
-#include "MapWindow.h"
-#include "Event.h"
-#include "MsgScroll.h"
-#include "MsgScrollNewUI.h"
-#include "Effect.h" /* for initial fade-in */
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/core/msg_scroll_new_ui.h"
+#include "ultima/ultima6/core/effect.h" /* for initial fade-in */
+#include "ultima/ultima6/core/tile_manager.h"
+#include "ultima/ultima6/sound/sound_manager.h"
 
-#include "SoundManager.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/screen/game_palette.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/core/weather.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/core/u6_objects.h"
+#include "ultima/ultima6/core/command_bar.h"
+#include "ultima/ultima6/views/actor_view.h"
+#include "ultima/ultima6/views/inventory_view.h"
+#include "ultima/ultima6/core/background.h"
+#include "ultima/ultima6/keybinding/keys.h"
 
-#include "GUI.h"
-#include "GameClock.h"
-#include "GamePalette.h"
-#include "Party.h"
-#include "Weather.h"
-#include "Script.h"
-#include "U6objects.h"
-#include "CommandBar.h"
-#include "ActorView.h"
-#include "InventoryView.h"
-#include "Background.h"
-#include "Keys.h"
-
-namespace Ultiam6 {
+namespace Ultima {
+namespace Ultima6 {
 
 #define USE_BUTTON 1 /* FIXME: put this in a common location */
 #define WALK_BUTTON 3
@@ -236,8 +237,8 @@ bool MapWindow::init(TileManager *tm, ObjManager *om, ActorManager *am) {
 	cursor_tile = tile_manager->get_cursor_tile();
 	use_tile = tile_manager->get_use_tile();
 
-	area.x = offset_x;
-	area.y = offset_y;
+	area.left = offset_x;
+	area.top = offset_y;
 
 	set_windowSize(map_w, map_h);
 
@@ -266,8 +267,8 @@ void MapWindow::set_use_left_clicks() {
 bool MapWindow::set_windowSize(uint16 width, uint16 height) {
 	win_width = width;
 	win_height = height;
-	area.w = win_width * 16;
-	area.h = win_height * 16;
+	area.setWidth(win_width * 16);
+	area.setHeight(win_height * 16);
 
 // We make the temp map +1 bigger on the top and left edges
 // and +2 bigger on the bottom and right edges
@@ -291,24 +292,24 @@ bool MapWindow::set_windowSize(uint16 width, uint16 height) {
 // if(surface->init(win_width*16,win_height*16) == false)
 //   return false;
 	if (game->is_orig_style()) {
-		clip_rect.x = area.x + 8;
-		clip_rect.w = (win_width - 1) * 16;
-		clip_rect.h = (win_height - 1) * 16;
+		clip_rect.left = area.left + 8;
+		clip_rect.setWidth((win_width - 1) * 16);
+		clip_rect.setHeight((win_height - 1) * 16);
 
 		if (game_type == NUVIE_GAME_U6)
-			clip_rect.y = area.y + 8;
+			clip_rect.top = area.top + 8;
 		else {
-			clip_rect.y = area.y + 16;
-			clip_rect.h -= 16;
+			clip_rect.top = area.top + 16;
+			clip_rect.bottom -= 16;
 		}
 	} else {
-		clip_rect.x = game->get_game_x_offset();
-		clip_rect.y = game->get_game_y_offset();
+		clip_rect.left = game->get_game_x_offset();
+		clip_rect.top = game->get_game_y_offset();
 		if (game->is_original_plus_cutoff_map())
-			clip_rect.w = game->get_game_width() - border_width - 1;
+			clip_rect.setWidth(game->get_game_width() - border_width - 1);
 		else
-			clip_rect.w = game->get_game_width();
-		clip_rect.h = game->get_game_height();
+			clip_rect.setWidth(game->get_game_width());
+		clip_rect.setHeight(game->get_game_height());
 	}
 	anim_manager->set_area(clip_rect);
 
@@ -679,13 +680,13 @@ void MapWindow::update() {
 	        && keybinder->get_next_joy_repeat_time() < clock->get_ticks())
 // !game->user_paused(), !game->get_view_manager()->gumps_are_active() - I don't think these are needed but may need them later
 	{
-		SDL_Keycode key;
+		Common::KeyCode key;
 		if (keybinder->is_hat_repeating())
 			key = keybinder->get_key_from_joy_hat_button(SDL_JoystickGetHat(keybinder->get_joystick(), 0));
 		else
 			key = keybinder->get_key_from_joy_walk_axes();
 		if (key != SDLK_UNKNOWN) {
-			SDL_Event sdl_event;
+			Common::Event sdl_event;
 			sdl_event.type = SDL_KEYDOWN;
 			sdl_event.key.keysym.sym = key;
 			sdl_event.key.keysym.mod = KMOD_NONE;
@@ -865,7 +866,7 @@ void MapWindow::Display(bool full_redraw) {
 
 	for (i = 0; i < win_height; i++) {
 		for (j = 0; j < win_width; j++) {
-			sint16 draw_x = area.x + (j * 16), draw_y = area.y + (i * 16);
+			sint16 draw_x = area.left + (j * 16), draw_y = area.top + (i * 16);
 			//draw_x -= (cur_x_add <= draw_x) ? cur_x_add : draw_x;
 			//draw_y -= (cur_y_add <= draw_y) ? cur_y_add : draw_y;
 			draw_x -= cur_x_add;
@@ -904,22 +905,22 @@ void MapWindow::Display(bool full_redraw) {
 	}
 
 	if (show_cursor) {
-		screen->blit(area.x + cursor_x * 16, area.y + cursor_y * 16, (unsigned char *)cursor_tile->data, 8, 16, 16, 16, true, &clip_rect);
+		screen->blit(area.left + cursor_x * 16, area.top + cursor_y * 16, (unsigned char *)cursor_tile->data, 8, 16, 16, 16, true, &clip_rect);
 	}
 
 	if (show_use_cursor) {
-		screen->blit(area.x + cursor_x * 16, area.y + cursor_y * 16, (unsigned char *)use_tile->data, 8, 16, 16, 16, true, &clip_rect);
+		screen->blit(area.left + cursor_x * 16, area.top + cursor_y * 16, (unsigned char *)use_tile->data, 8, 16, 16, 16, true, &clip_rect);
 	}
 
 // screen->fill(0,8,8,win_height*16-16,win_height*16-16);
 
-	screen->blitalphamap8(area.x, area.y, &clip_rect);
+	screen->blitalphamap8(area.left, area.top, &clip_rect);
 
 	if (game->get_clock()->get_timer(GAMECLOCK_TIMER_U6_INFRAVISION) != 0)
 		drawActors();
 
 	if (overlay && overlay_level == MAP_OVERLAY_DEFAULT)
-		screen->blit(area.x, area.y, (unsigned char *)(overlay->pixels), overlay->format->BitsPerPixel, overlay->w, overlay->h, overlay->pitch, true, &clip_rect);
+		screen->blit(area.left, area.top, (unsigned char *)(overlay->pixels), overlay->format->BitsPerPixel, overlay->w, overlay->h, overlay->pitch, true, &clip_rect);
 
 	drawAnims(true);
 
@@ -927,17 +928,17 @@ void MapWindow::Display(bool full_redraw) {
 		create_thumbnail();
 
 	if (is_wizard_eye_mode()) {
-		uint16 we_x = mousecenter_x * 16 + area.x;
+		uint16 we_x = mousecenter_x * 16 + area.left;
 		if (game->is_original_plus_full_map())
 			we_x -= ((map_center_xoff + 1) / 2) * 16;
-		screen->blit(we_x, mousecenter_y * 16 + area.y, (unsigned char *)wizard_eye_info.eye_tile->data, 8, 16, 16, 16, true, &clip_rect);
+		screen->blit(we_x, mousecenter_y * 16 + area.top, (unsigned char *)wizard_eye_info.eye_tile->data, 8, 16, 16, 16, true, &clip_rect);
 	}
 
 	if (game->is_orig_style())
 		drawBorder();
 
 	if (overlay && overlay_level == MAP_OVERLAY_ONTOP)
-		screen->blit(area.x, area.y, (unsigned char *)(overlay->pixels), overlay->format->BitsPerPixel, overlay->w, overlay->h, overlay->pitch, true, &clip_rect);
+		screen->blit(area.left, area.top, (unsigned char *)(overlay->pixels), overlay->format->BitsPerPixel, overlay->w, overlay->h, overlay->pitch, true, &clip_rect);
 
 // ptr = (unsigned char *)screen->get_pixels();
 // ptr += 8 * screen->get_pitch() + 8;
@@ -945,7 +946,7 @@ void MapWindow::Display(bool full_redraw) {
 // screen->blit(8,8,ptr,8,(win_width-1) * 16,(win_height-1) * 16, win_width * 16, false);
 
 	if (game->is_orig_style())
-		screen->update(area.x + 8, area.y + 8, win_width * 16 - 16, win_height * 16 - 16);
+		screen->update(area.left + 8, area.top + 8, win_width * 16 - 16, win_height * 16 - 16);
 	else if (game->is_original_plus_cutoff_map())
 		screen->update(Game::get_game()->get_game_x_offset(), Game::get_game()->get_game_y_offset(), game->get_game_width() - border_width - 1, game->get_game_height());
 	else
@@ -1163,8 +1164,8 @@ inline void MapWindow::drawTile(Tile *tile, uint16 x, uint16 y, bool toptile,
 	   {
 	    TileInfo ti;
 	    ti.t=tile;
-	    ti.x=x;
-	    ti.y=y;
+	    ti.left=x;
+	    ti.top=y;
 	    m_ViewableObjTiles.push_back(ti);
 	   }
 	*/
@@ -1214,11 +1215,11 @@ inline void MapWindow::drawTopTile(Tile *tile, uint16 x, uint16 y, bool toptile)
 	if (toptile) {
 		if (tile->toptile)
 //        screen->blit(x*16,y*16,tile->data,8,16,16,16,tile->transparent,&clip_rect);
-			screen->blit(area.x + (x * 16) - cur_x_add, area.y + (y * 16) - cur_y_add, tile->data, 8, 16, 16, 16, tile->transparent, &clip_rect);
+			screen->blit(area.left + (x * 16) - cur_x_add, area.top + (y * 16) - cur_y_add, tile->data, 8, 16, 16, 16, tile->transparent, &clip_rect);
 	} else {
 		if (!tile->toptile)
 //        screen->blit(x*16,y*16,tile->data,8,16,16,16,tile->transparent,&clip_rect);
-			screen->blit(area.x + (x * 16) - cur_x_add, area.y + (y * 16) - cur_y_add, tile->data, 8, 16, 16, 16, tile->transparent, &clip_rect);
+			screen->blit(area.left + (x * 16) - cur_x_add, area.top + (y * 16) - cur_y_add, tile->data, 8, 16, 16, 16, tile->transparent, &clip_rect);
 	}
 }
 
@@ -1286,13 +1287,13 @@ void MapWindow::drawRoofs() {
 		for (uint16 i = 0; i < win_height; i++) {
 			for (uint16 j = 0; j < win_width; j++) {
 				if (roof_map_ptr[j] != 0) {
-					dst.x = area.x + (j * 16);
-					dst.y = area.y + (i * 16);
-					dst.x -= cur_x_add;
-					dst.y -= cur_y_add;
+					dst.left = area.left + (j * 16);
+					dst.top = area.top + (i * 16);
+					dst.left -= cur_x_add;
+					dst.top -= cur_y_add;
 
-					src.x = (roof_map_ptr[j] % MAPWINDOW_ROOFTILES_IMG_W) * 16;
-					src.y = (roof_map_ptr[j] / MAPWINDOW_ROOFTILES_IMG_W) * 16;
+					src.left = (roof_map_ptr[j] % MAPWINDOW_ROOFTILES_IMG_W) * 16;
+					src.top = (roof_map_ptr[j] / MAPWINDOW_ROOFTILES_IMG_W) * 16;
 
 					if (orig_style) {
 						src.w = 16;
@@ -1301,9 +1302,9 @@ void MapWindow::drawRoofs() {
 						dst.h = 16;
 
 						if (i == 0) {
-							src.y += 8;
+							src.top += 8;
 							src.h = 8;
-							dst.y += 8;
+							dst.top += 8;
 							dst.h = 8;
 						} else if (i == win_height - 1) {
 							src.h = 8;
@@ -1311,9 +1312,9 @@ void MapWindow::drawRoofs() {
 						}
 
 						if (j == 0) {
-							src.x += 8;
+							src.left += 8;
 							src.w = 8;
-							dst.x += 8;
+							dst.left += 8;
 							dst.w = 8;
 						} else if (j == win_width - 1) {
 							src.w = 8;
@@ -1322,8 +1323,8 @@ void MapWindow::drawRoofs() {
 						SDL_BlitSurface(roof_tiles, &src, surface, &dst);
 					} else {
 						unsigned char *ptr = (unsigned char *)roof_tiles->pixels;
-						ptr += src.x + src.y * 80;
-						screen->blit(dst.x, dst.y, ptr, 8, 16, 16, 80, true, &clip_rect);
+						ptr += src.left + src.top * 80;
+						screen->blit(dst.left, dst.top, ptr, 8, 16, 16, 80, true, &clip_rect);
 					}
 				}
 			}
@@ -1344,8 +1345,8 @@ void MapWindow::drawRain() {
 		uint16 x;
 		uint16 y;
 		if (game->is_orig_style()) {
-			x = area.x + NUVIE_RAND() % ((win_width - 1) * 16 - 2) + 8;
-			y = area.y + NUVIE_RAND() % ((win_height - 1) * 16 - 2) + 8;
+			x = area.left + NUVIE_RAND() % ((win_width - 1) * 16 - 2) + 8;
+			y = area.top + NUVIE_RAND() % ((win_height - 1) * 16 - 2) + 8;
 		} else {
 			if (game->is_original_plus_cutoff_map())
 				x = game->get_game_x_offset() + NUVIE_RAND() % (game->get_game_width() - border_width - 2);
@@ -1369,8 +1370,8 @@ void MapWindow::AddMapTileToVisibleList(uint16 tile_num, uint16 x, uint16 y) {
 	        y < tmp_map_height - TMP_MAP_BORDER) {
 		TileInfo ti;
 		ti.t = tile_manager->get_tile(tile_num);
-		ti.x = (uint16)(x - TMP_MAP_BORDER);
-		ti.y = (uint16)(y - TMP_MAP_BORDER);
+		ti.left = (uint16)(x - TMP_MAP_BORDER);
+		ti.top = (uint16)(y - TMP_MAP_BORDER);
 		m_ViewableMapTiles.push_back(ti);
 	}
 }
@@ -1378,7 +1379,7 @@ void MapWindow::AddMapTileToVisibleList(uint16 tile_num, uint16 x, uint16 y) {
 void MapWindow::drawGrid() {
 	for (uint16 i = 0; i < win_height; i++) {
 		for (uint16 j = 0; j < win_width; j++) {
-			screen->blit(area.x + (j * 16) - cur_x_add, area.y + (i * 16) - cur_y_add, (unsigned char *)grid_tile.data, 8, 16, 16, 16, true);
+			screen->blit(area.left + (j * 16) - cur_x_add, area.top + (i * 16) - cur_y_add, (unsigned char *)grid_tile.data, 8, 16, 16, 16, true);
 		}
 	}
 }
@@ -1784,7 +1785,7 @@ CanDropOrMoveMsg MapWindow::can_drop_or_move_obj(uint16 x, uint16 y, Actor *acto
 
 	uint8 lt_flags;
 	lt_flags = (game_type == NUVIE_GAME_U6) ? LT_HitMissileBoundary : 0; //FIXME this probably isn't quite right for MD/SE
-	if (map->lineTest(actor_loc.x, actor_loc.y, x, y, actor_loc.z, lt_flags, lt, 0, obj)) {
+	if (map->lineTest(actor_loc.left, actor_loc.top, x, y, actor_loc.z, lt_flags, lt, 0, obj)) {
 		MapCoord hit_loc = MapCoord(lt.hit_x, lt.hit_y, lt.hit_level);
 		if (obj_loc.distance(target_loc) != 1 || hit_loc.distance(target_loc) != 1) {
 			if (lt.hitObj && target_loc == hit_loc) {
@@ -1892,8 +1893,8 @@ bool MapWindow::drag_accept_drop(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "MapWindow::drag_accept_drop()\n");
 	uint16 map_width;
 
-	x -= area.x;
-	y -= area.y;
+	x -= area.left;
+	y -= area.top;
 
 	x /= 16;
 	y /= 16;
@@ -1970,8 +1971,8 @@ void MapWindow::drag_perform_drop(int x, int y, int message, void *data) {
 	Event *event = game->get_event();
 	uint16 map_width = map->get_width(cur_level);
 
-	x -= area.x;
-	y -= area.y;
+	x -= area.left;
+	y -= area.top;
 
 	if (message == GUI_DRAG_OBJ) {
 		x = (cur_x + x / 16) % map_width;
@@ -2099,7 +2100,7 @@ GUI_status MapWindow::MouseDelayed(int x, int y, int button) {
 	}
 	game->get_scroll()->display_string("Look-");
 	event->set_mode(LOOK_MODE);
-	event->lookAtCursor(true, original_obj_loc.x, original_obj_loc.y, original_obj_loc.z, look_obj, look_actor);
+	event->lookAtCursor(true, original_obj_loc.left, original_obj_loc.top, original_obj_loc.z, look_obj, look_actor);
 	look_obj = NULL;
 	look_actor = NULL;
 
@@ -2234,7 +2235,7 @@ GUI_status MapWindow::MouseUp(int x, int y, int button) {
 	return  GUI_PASS;
 }
 
-GUI_status  MapWindow::MouseMotion(int x, int y, Uint8 state) {
+GUI_status  MapWindow::MouseMotion(int x, int y, uint8 state) {
 //	Event *event = game->get_event();
 	Tile    *tile;
 
@@ -2298,7 +2299,7 @@ void    MapWindow::drag_drop_failed(int x, int y, int message, void *data) {
 }
 
 // this does nothing
-GUI_status MapWindow::KeyDown(SDL_Keysym key) {
+GUI_status MapWindow::KeyDown(Common::KeyState key) {
 	if (is_wizard_eye_mode()) {
 		KeyBinder *keybinder = Game::get_game()->get_keybinder();
 		ActionType a = keybinder->get_ActionType(key);
@@ -2372,8 +2373,8 @@ void MapWindow::select_target(int x, int y) {
 }
 
 void MapWindow::mouseToWorldCoords(int mx, int my, int &wx, int &wy) {
-	int x = mx - area.x;
-	int y = my - area.y;
+	int x = mx - area.left;
+	int y = my - area.top;
 
 	int map_width = map->get_width(cur_level);
 
@@ -2452,8 +2453,8 @@ void MapWindow::get_movement_direction(uint16 mx, uint16 my, sint16 &rel_x, sint
 	if (game->is_original_plus_full_map() && game->get_event()->get_mode() != INPUT_MODE)
 		cent_x -= (map_center_xoff + 1) / 2; // player is off center
 
-	mx = (mx - area.x) / 16;
-	my = (my - area.y) / 16;
+	mx = (mx - area.left) / 16;
+	my = (my - area.top) / 16;
 	uint16 dist_x = abs(mx - cent_x), dist_y = abs(my - cent_y);
 
 	rel_x = rel_y = 0;
@@ -2520,7 +2521,7 @@ void MapWindow::get_movement_direction(uint16 mx, uint16 my, sint16 &rel_x, sint
 
 
 /* Revert mouse cursor to normal arrow. Stop walking. */
-GUI_status MapWindow::MouseLeave(Uint8 state) {
+GUI_status MapWindow::MouseLeave(uint8 state) {
 	if (game_type == NUVIE_GAME_MD) // magnifying glass - pointer 0 should be used too for some areas
 		game->set_mouse_pointer(1);
 	else
@@ -2549,8 +2550,8 @@ void MapWindow::create_thumbnail() {
 	src_rect.w = MAPWINDOW_THUMBNAIL_SIZE * MAPWINDOW_THUMBNAIL_SCALE;
 	src_rect.h = src_rect.w;
 
-	src_rect.x = area.x + win_width * 8 - (src_rect.w / 2); // area.x + (win_width * 16) / 2 - 120 / 2
-	src_rect.y = area.y + win_height * 8 - (src_rect.h / 2); // area.y + (win_height * 16) / 2 - 120 / 2
+	src_rect.left = area.left + win_width * 8 - (src_rect.w / 2); // area.left + (win_width * 16) / 2 - 120 / 2
+	src_rect.top = area.top + win_height * 8 - (src_rect.h / 2); // area.top + (win_height * 16) / 2 - 120 / 2
 
 	thumbnail = screen->copy_area(&src_rect, MAPWINDOW_THUMBNAIL_SCALE); //scale down x3
 
@@ -2575,7 +2576,7 @@ Graphics::ManagedSurface *MapWindow::get_sdl_surface() {
 Graphics::ManagedSurface *MapWindow::get_sdl_surface(uint16 x, uint16 y, uint16 w, uint16 h) {
 	Graphics::ManagedSurface *new_surface = NULL;
 	unsigned char *screen_area;
-	Common::Rect copy_area = { (Sint16)(area.x + x), (Sint16)(area.y + y), w, h };
+	Common::Rect copy_area = { (Sint16)(area.left + x), (Sint16)(area.top + y), w, h };
 
 	GUI::get_gui()->Display();
 	screen_area = screen->copy_area(&copy_area);
@@ -2609,7 +2610,7 @@ bool MapWindow::in_town() {
 
 	for (std::vector<TileInfo>::iterator ti = m_ViewableMapTiles.begin();
 	        ti != m_ViewableMapTiles.end(); ti++)
-		if (MapCoord((*ti).x + cur_x, (*ti).y + cur_y, cur_level).distance(player_loc) <= 5 && // make sure tile is close enough
+		if (MapCoord((*ti).left + cur_x, (*ti).top + cur_y, cur_level).distance(player_loc) <= 5 && // make sure tile is close enough
 		        ((*ti).t->flags1 & TILEFLAG_WALL) && ((*ti).t->flags1 & TILEFLAG_WALL_MASK)) { //only wall tiles with wall direction bits set.
 			return true;
 		}
@@ -2624,10 +2625,10 @@ void MapWindow::wizard_eye_start(MapCoord location, uint16 duration, CallBack *c
 	wizard_eye_info.prev_y = cur_y;
 
 	set_x_ray_view(X_RAY_ON);
-	sint16 map_x = location.x - (win_width / 2);
+	sint16 map_x = location.left - (win_width / 2);
 	if (game->is_original_plus_full_map())
 		map_x += ((map_center_xoff + 1) / 2);
-	moveMap(map_x, location.y - (win_height / 2) , cur_level); // FIXME - map should already be centered on the caster so why are we doing this?
+	moveMap(map_x, location.top - (win_height / 2) , cur_level); // FIXME - map should already be centered on the caster so why are we doing this?
 	grab_focus();
 }
 

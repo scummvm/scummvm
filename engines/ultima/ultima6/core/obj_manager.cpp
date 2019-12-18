@@ -20,24 +20,24 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "ultima/ultima6/conf/configuration.h"
 
-#include "ActorManager.h"
-#include "EggManager.h"
-#include "TileManager.h"
-#include "ObjManager.h"
-#include "UseCode.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/core/egg_manager.h"
+#include "ultima/ultima6/core/tile_manager.h"
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/usecode/usecode.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6objects.h"
+#include "ultima/ultima6/core/u6_objects.h"
 #include "ultima/ultima6/misc/u6_llist.h"
-#include "NuvieIOFile.h"
-#include "Game.h"
-#include "MapWindow.h"
-#include "Script.h"
-#include "MsgScroll.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/core/msg_scroll.h"
 
 namespace Ultima {
 namespace Ultima6 {

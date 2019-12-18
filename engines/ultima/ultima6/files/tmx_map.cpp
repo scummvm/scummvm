@@ -20,11 +20,11 @@
  *
  */
 
-#include "TileManager.h"
-#include "Map.h"
-#include "ObjManager.h"
+#include "ultima/ultima6/core/tile_manager.h"
+#include "ultima/ultima6/core/map.h"
+#include "ultima/ultima6/core/obj_manager.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "TMXMap.h"
+#include "ultima/ultima6/files/tmx_map.h"
 
 namespace Ultima {
 namespace Ultima6 {

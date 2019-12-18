@@ -23,7 +23,7 @@
 #ifndef H_ADPLUG_U6M
 #define H_ADPLUG_U6M
 
-#include <stack>
+//#include <stack>
 
 #include "adplug_player.h"
 

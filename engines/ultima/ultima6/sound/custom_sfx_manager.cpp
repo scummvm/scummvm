@@ -20,15 +20,15 @@
  *
  */
 
-#include <string.h>
-#include <map>
+//#include <string.h>
+//#include <map>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "mixer.h"
+#include "audio/mixer.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "NuvieIO.h"
-#include "NuvieIOFile.h"
+#include "ultima/ultima6/files/nuvie_io.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
 #include "decoder/wave/stdiostream.h"
 #include "CustomSfxManager.h"
 

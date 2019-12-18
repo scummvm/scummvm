@@ -20,36 +20,36 @@
  *
  */
 
-#include <cassert>
-#include <cstring>
-//#include <iostream>
-#include "SDL.h"
+//#include <cassert>
+//#include <cstring>
+////#include <iostream>
+
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Party.h"
-#include "MsgScroll.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/core/msg_scroll.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "NuvieIOFile.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
 
-#include "UseCode.h"
+#include "ultima/ultima6/usecode/usecode.h"
 
-#include "GUI.h"
-#include "GUI_YesNoDialog.h"
-#include "Console.h"
-#include "Actor.h"
-#include "ActorManager.h"
-#include "ObjManager.h"
-#include "ViewManager.h"
-#include "SpellView.h"
-#include "SoundManager.h"
-#include "U6objects.h"
-#include "Magic.h"
-#include "Game.h"
-#include "GameClock.h"
-#include "misc/ultima/ultima6/misc/u6_llist.h"
-#include "Effect.h"
-#include "Weather.h"
-#include "Script.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_yes_no_dialog.h"
+#include "ultima/ultima6/core/console.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/views/spell_view.h"
+#include "ultima/ultima6/sound/sound_manager.h"
+#include "ultima/ultima6/core/u6_objects.h"
+#include "ultima/ultima6/core/magic.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/misc/u6_llist.h"
+#include "ultima/ultima6/core/effect.h"
+#include "ultima/ultima6/core/weather.h"
+#include "ultima/ultima6/script/script.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -300,7 +300,7 @@ bool Magic::cast() {
 void Magic::display_spell_incantation(uint8 index) {
 	string incantation_str;
 	for (uint8 i = 0; spell[index]->invocation[i] != '\0'; i++)
-		incantation_str += syllable[spell[index]->invocation[i] - SDLK_a];
+		incantation_str += syllable[spell[index]->invocation[i] - Common::KEYCODE_a];
 
 	incantation_str.erase(incantation_str.size() - 1); // get rid of extra space at the end
 	event->scroll->display_string(incantation_str);
@@ -459,20 +459,20 @@ uint16 Magic::callback(uint16 msg, CallBack *caller, void *data) {
 	if (msg == CB_DATA_READY) {
 		if (event->input.type != EVENTINPUT_KEY)
 			return 0;
-		SDL_Keycode sym = event->input.key;
+		Common::KeyCode sym = event->input.key;
 
 		if (state == MAGIC_STATE_SELECT_SPELL) {
-			if (sym >= SDLK_a && sym <= SDLK_z) {
+			if (sym >= Common::KEYCODE_a && sym <= Common::KEYCODE_z) {
 				if (cast_buffer_len < 4) {
 					cast_buffer_str[cast_buffer_len++] = sym;
-					event->scroll->display_string(syllable[sym - SDLK_a]);
+					event->scroll->display_string(syllable[sym - Common::KEYCODE_a]);
 					return 1; // handled the event
 				}
 				return 1; // handled the event
-			} else if (sym == SDLK_BACKSPACE) {
+			} else if (sym == Common::KEYCODE_BACKSPACE) {
 				if (cast_buffer_len > 0) {
 					cast_buffer_len--; // back up a syllable FIXME, doesn't handle automatically inserted newlines, so we need to keep track more. (THAT SHOULD BE DONE BY MSGSCROLL)
-					size_t len = strlen(syllable[cast_buffer_str[cast_buffer_len] - SDLK_a]);
+					size_t len = strlen(syllable[cast_buffer_str[cast_buffer_len] - Common::KEYCODE_a]);
 					while (len--) event->scroll->remove_char();
 					event->scroll->Display(true);
 					return 1; // handled the event
@@ -481,7 +481,7 @@ uint16 Magic::callback(uint16 msg, CallBack *caller, void *data) {
 			}
 		} // MAGIC_STATE_SELECT_SPELL
 		if (state == MAGIC_STATE_ACQUIRE_TARGET) {
-			if (sym >= SDLK_1 && sym <= SDLK_9) {
+			if (sym >= Common::KEYCODE_1 && sym <= Common::KEYCODE_9) {
 				cast();//event->player->get_party()->get_actor(sym - 48-1));
 				event->cancel_key_redirect();
 				return 1; // handled the event

@@ -28,11 +28,11 @@
  * improvements over the original code were made.
  */
 
-#include <assert.h>
-#include <cstdlib>
+//#include <assert.h>
+//#include <cstdlib>
 #include "audiostream.h"
 #include "rate.h"
-#include "mixer.h"
+#include "audio/mixer.h"
 #include "frac.h"
 //#include "common/util.h"
 

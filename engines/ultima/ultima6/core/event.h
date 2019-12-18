@@ -23,16 +23,13 @@
 #ifndef ULTIMA6_CORE_EVENT_H
 #define ULTIMA6_CORE_EVENT_H
 
-#include <list>
+#include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
+#include "ultima/ultima6/script/script.h"
 
-#include <SDL.h>
-#include <script/Script.h>
-
-#include "ObjManager.h"
-//#include "GUI_CallBack.h"
-#include "CallBack.h"
-#include "KeysEnum.h"
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/misc/call_back.h"
+#include "ultima/ultima6/keybinding/keys_enum.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -96,7 +93,7 @@ struct EventInput_s {
 	uint8 type; // 0=loc,1=key,2=str,3=obj,4=actor
 //    union
 //    {
-	SDL_Keycode key; // last key entered, if capturing input
+	Common::KeyCode key; // last key entered, if capturing input
 	ActionKeyType action_key_type; // last ActionKeyType entered if capturing input
 	MapCoord *loc; // target location, or direction if relative ???
 	std::string *str; // ???
@@ -136,7 +133,7 @@ class Event : public CallBack {
 	KeyBinder *keybinder;
 	GUI_Dialog *gamemenu_dialog;
 
-	SDL_Event event;
+	Common::Event event;
 	EventMode mode, last_mode;
 	EventInput input; // collected/received input (of any type)
 // std::vector<EventMode> mode_stack; // current mode is at the end of the list
@@ -202,7 +199,7 @@ public:
 	bool cursor_mode;
 	void update_timers();
 	bool update();
-	bool handleEvent(const SDL_Event *event);
+	bool handleEvent(const Common::Event *event);
 	void request_input(CallBack *caller, void *user_data = NULL);
 	void target_spell();
 	void close_spellbook();
@@ -368,7 +365,7 @@ protected:
 	inline uint32 TimeLeft();
 
 	uint16 callback(uint16 msg, CallBack *caller, void *data);
-	bool handleSDL_KEYDOWN(const SDL_Event *event);
+	bool handleSDL_KEYDOWN(const Common::Event *event);
 	const char *print_mode(EventMode mode);
 	void try_next_attack();
 

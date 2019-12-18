@@ -24,20 +24,18 @@
 #define ULTIMA6_ACTORS_ACTOR_H
 
 #include "ultima/shared/std/containers.h"
-#include <list>
 #include "ultima/shared/std/string.h"
-#include <map>
+#include "ultima/ultima6/misc/actor_list.h"
+#include "ultima/ultima6/core/map.h"
+#include "ultima/ultima6/core/obj_manager.h"
+
+namespace Ultima {
+namespace Ultima6 {
 
 using std::map;
 using std::list;
 using std::string;
 using std::vector;
-#include "ActorList.h"
-#include "Map.h"
-#include "ObjManager.h"
-
-namespace Ultima {
-namespace Ultima6 {
 
 #define ACTOR_NO_READIABLE_LOCATION -1
 #define ACTOR_HEAD   0
@@ -650,7 +648,7 @@ public:
 	virtual bool can_carry_object(Obj *obj);
 
 	virtual uint8 get_object_readiable_location(Obj *obj);
-	virtual const CombatType *get_object_combat_type(uint16 obj_n) {
+	virtual const CombatType *get_object_combat_type(uint16 objN) {
 		return NULL;
 	}
 

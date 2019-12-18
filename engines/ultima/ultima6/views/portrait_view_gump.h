@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_VIEWS_PORTRAIT_VIEW_GUMP_H
 #define ULTIMA6_VIEWS_PORTRAIT_VIEW_GUMP_H
 
-#include "DraggableView.h"
+#include "ultima/ultima6/views/draggable_view.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -69,7 +69,7 @@ protected:
 	void set_actor(Actor *a);
 	void left_arrow();
 	void right_arrow();
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 	GUI_status set_cursor_pos(gumpCursorPos pos);
 };
 

@@ -20,9 +20,9 @@
  *
  */
 
-#include <stdlib.h>
+//#include <stdlib.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6Lzw.h"
+#include "ultima/ultima6/files/u6_lzw.h"
 
 #include "u6m.h"
 

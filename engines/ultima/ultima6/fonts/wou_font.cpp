@@ -20,21 +20,21 @@
  *
  */
 
-#include <stdio.h>
+//#include <stdio.h>
 
-#include <string.h>
-#include <cctype>
+//#include <string.h>
+//#include <cctype>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "ultima/ultima6/conf/configuration.h"
 
-#include "Screen.h"
-#include "U6Lzw.h"
-#include "U6Shape.h"
+#include "ultima/ultima6/screen/screen.h"
+#include "ultima/ultima6/files/u6_lzw.h"
+#include "ultima/ultima6/files/u6_shape.h"
 
-#include "WOUFont.h"
-#include "Game.h"
+#include "WOUultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/core/game.h"
 
 namespace Ultima {
 namespace Ultima6 {

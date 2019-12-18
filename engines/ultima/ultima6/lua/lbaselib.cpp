@@ -6,10 +6,10 @@
 
 
 
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+//#include <ctype.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
 
 #define lbaselib_c
 #define LUA_LIB
@@ -66,15 +66,15 @@ static int luaB_tonumber(lua_State *L) {
 			s++;    /* handle signal */
 			neg = 1;
 		} else if (*s == '+') s++;
-		if (isalnum((unsigned char)*s)) {
+		if (Common::isAlnum((unsigned char)*s)) {
 			lua_Number n = 0;
 			do {
-				int digit = (isdigit((unsigned char) * s)) ? *s - '0'
+				int digit = (Common::isDigit((unsigned char) * s)) ? *s - '0'
 				            : toupper((unsigned char) * s) - 'A' + 10;
 				if (digit >= base) break;  /* invalid numeral; force a fail */
 				n = n * (lua_Number)base + (lua_Number)digit;
 				s++;
-			} while (isalnum((unsigned char)*s));
+			} while (Common::isAlnum((unsigned char)*s));
 			s += strspn(s, SPACECHARS);  /* skip trailing spaces */
 			if (s == e) {  /* no invalid trailing characters? */
 				lua_pushnumber(L, (neg) ? -n : n);

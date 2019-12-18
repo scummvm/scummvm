@@ -20,16 +20,16 @@
  *
  */
 
-#include <cstdio>
+//#include <cstdio>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "GUI_DragArea.h"
-#include "GUI_DragManager.h"
+#include "ultima/ultima6/gui/gui_drag_area.h"
+#include "ultima/ultima6/gui/gui_drag_manager.h"
 
-#include "Game.h"  // -+- Included so we can set WAIT_MODE while dragging.
-#include "Event.h" // /
-#include "MsgScroll.h"
+#include "ultima/ultima6/core/game.h"  // -+- Included so we can set WAIT_MODE while dragging.
+#include "ultima/ultima6/core/event.h" // /
+#include "ultima/ultima6/core/msg_scroll.h"
 
 namespace Ultima {
 namespace Ultima6 {

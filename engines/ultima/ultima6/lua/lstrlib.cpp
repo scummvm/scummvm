@@ -5,11 +5,11 @@
 */
 
 
-#include <ctype.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+//#include <ctype.h>
+//#include <stddef.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
 
 #define lstrlib_c
 #define LUA_LIB
@@ -269,13 +269,13 @@ static int match_class(int c, int cl) {
 	int res;
 	switch (tolower(cl)) {
 	case 'a' :
-		res = isalpha(c);
+		res = Common::isAlpha(c);
 		break;
 	case 'c' :
 		res = iscntrl(c);
 		break;
 	case 'd' :
-		res = isdigit(c);
+		res = Common::isDigit(c);
 		break;
 	case 'g' :
 		res = isgraph(c);
@@ -287,13 +287,13 @@ static int match_class(int c, int cl) {
 		res = ispunct(c);
 		break;
 	case 's' :
-		res = isspace(c);
+		res = Common::isSpace(c);
 		break;
 	case 'u' :
 		res = isupper(c);
 		break;
 	case 'w' :
-		res = isalnum(c);
+		res = Common::isAlnum(c);
 		break;
 	case 'x' :
 		res = isxdigit(c);
@@ -723,7 +723,7 @@ static void add_s(MatchState *ms, luaL_Buffer *b, const char *s,
 			luaL_addchar(b, news[i]);
 		else {
 			i++;  /* skip ESC */
-			if (!isdigit(uchar(news[i]))) {
+			if (!Common::isDigit(uchar(news[i]))) {
 				if (news[i] != L_ESC)
 					luaL_error(ms->L, "invalid use of " LUA_QL("%c")
 					           " in replacement string", L_ESC);
@@ -878,7 +878,7 @@ static void addquoted(lua_State *L, luaL_Buffer *b, int arg) {
 			luaL_addchar(b, *s);
 		} else if (*s == '\0' || iscntrl(uchar(*s))) {
 			char buff[10];
-			if (!isdigit(uchar(*(s + 1))))
+			if (!Common::isDigit(uchar(*(s + 1))))
 				sprintf(buff, "\\%d", (int)uchar(*s));
 			else
 				sprintf(buff, "\\%03d", (int)uchar(*s));
@@ -895,14 +895,14 @@ static const char *scanformat(lua_State *L, const char *strfrmt, char *form) {
 	while (*p != '\0' && strchr(FLAGS, *p) != NULL) p++;  /* skip flags */
 	if ((size_t)(p - strfrmt) >= sizeof(FLAGS) / sizeof(char))
 		luaL_error(L, "invalid format (repeated flags)");
-	if (isdigit(uchar(*p))) p++;  /* skip width */
-	if (isdigit(uchar(*p))) p++;  /* (2 digits at most) */
+	if (Common::isDigit(uchar(*p))) p++;  /* skip width */
+	if (Common::isDigit(uchar(*p))) p++;  /* (2 digits at most) */
 	if (*p == '.') {
 		p++;
-		if (isdigit(uchar(*p))) p++;  /* skip precision */
-		if (isdigit(uchar(*p))) p++;  /* (2 digits at most) */
+		if (Common::isDigit(uchar(*p))) p++;  /* skip precision */
+		if (Common::isDigit(uchar(*p))) p++;  /* (2 digits at most) */
 	}
-	if (isdigit(uchar(*p)))
+	if (Common::isDigit(uchar(*p)))
 		luaL_error(L, "invalid format (width or precision too long)");
 	*(form++) = '%';
 	memcpy(form, strfrmt, (p - strfrmt + 1) * sizeof(char));

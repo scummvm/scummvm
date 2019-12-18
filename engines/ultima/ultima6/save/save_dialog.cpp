@@ -20,24 +20,24 @@
  *
  */
 
-#include "SDL.h"
+
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "GUI.h"
-#include "GUI_types.h"
-#include "GUI_button.h"
-#include "GUI_text.h"
-#include "GUI_Scroller.h"
-#include "GUI_CallBack.h"
-#include "GUI_area.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_types.h"
+#include "ultima/ultima6/gui/gui_button.h"
+#include "ultima/ultima6/gui/gui_text.h"
+#include "ultima/ultima6/gui/gui_Scroller.h"
+#include "ultima/ultima6/gui/gui_CallBack.h"
+#include "ultima/ultima6/gui/gui_area.h"
 
-#include "GUI_Dialog.h"
+#include "ultima/ultima6/gui/gui_Dialog.h"
 #include "SaveSlot.h"
 #include "SaveDialog.h"
-#include "NuvieFileList.h"
-#include "Keys.h"
-#include "Event.h"
-#include "Console.h"
+#include "ultima/ultima6/files/nuvie_file_list.h"
+#include "ultima/ultima6/keybinding/keys.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/console.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -218,7 +218,7 @@ GUI_status SaveDialog::MouseDown(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status SaveDialog::KeyDown(SDL_Keysym key) {
+GUI_status SaveDialog::KeyDown(Common::KeyState key) {
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 
@@ -290,7 +290,7 @@ GUI_status SaveDialog::KeyDown(SDL_Keysym key) {
 		uint16 x = cursor_x * screen->get_scale_factor();
 		uint16 y = (cursor_y + 8) * screen->get_scale_factor();
 
-		SDL_Event fake_event;
+		Common::Event fake_event;
 		fake_event.button.x = x;
 		fake_event.button.y = y;
 		fake_event.type = fake_event.button.type = SDL_MOUSEBUTTONDOWN;

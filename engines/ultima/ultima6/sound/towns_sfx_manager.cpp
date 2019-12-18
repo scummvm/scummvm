@@ -23,11 +23,11 @@
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "mixer.h"
-#include "U6Lzw.h"
-#include "NuvieIO.h"
-#include "NuvieIOFile.h"
-#include "U6Lib_n.h"
+#include "audio/mixer.h"
+#include "ultima/ultima6/files/u6_lzw.h"
+#include "ultima/ultima6/files/nuvie_io.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
 #include "TownsSfxManager.h"
 
 namespace Ultima {

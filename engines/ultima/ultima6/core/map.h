@@ -23,10 +23,10 @@
 #ifndef ULTIMA6_CORE_MAP_H
 #define ULTIMA6_CORE_MAP_H
 
-#include <cstdlib>
+//#include <cstdlib>
 #include "ultima/shared/std/string.h"
 
-#include "ObjManager.h"
+#include "ultima/ultima6/core/obj_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {

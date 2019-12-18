@@ -20,17 +20,17 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Event.h"
-#include "GUI.h"
-#include "GUI_button.h"
-#include "Magic.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_button.h"
+#include "ultima/ultima6/core/magic.h"
 
 #include "SpellViewGump.h"
-#include "MapWindow.h"
-#include "NuvieBmpFile.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/files/nuvie_bmp_file.h"
 
 namespace Ultima {
 namespace Ultima6 {

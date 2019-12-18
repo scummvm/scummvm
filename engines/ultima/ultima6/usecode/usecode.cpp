@@ -20,17 +20,17 @@
  *
  */
 
-#include <cstring>
+//#include <cstring>
 #include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "ultima/ultima6/misc/u6_llist.h"
-#include "MsgScroll.h"
-#include "ActorManager.h"
-#include "Actor.h"
-#include "UseCode.h"
-#include "MapWindow.h"
-#include "Script.h"
-#include "Event.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/usecode/usecode.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/core/event.h"
 
 namespace Ultima {
 namespace Ultima6 {

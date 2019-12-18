@@ -24,7 +24,7 @@
 #define ULTIMA6_FILES_TMX_MAP_H
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "NuvieIOFile.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
 
 namespace Ultima {
 namespace Ultima6 {

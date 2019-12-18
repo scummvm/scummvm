@@ -21,23 +21,20 @@
  */
 
 #include "ultima/shared/std/string.h"
-#include <cctype>
-#include <iostream>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "FontManager.h"
-#include "Font.h"
-#include "GamePalette.h"
-#include "GUI.h"
-#include "MsgScroll.h"
-#include "Portrait.h"
-#include "Player.h"
-#include "ConvFont.h"
-#include "MsgScrollNewUI.h"
-#include "ActorManager.h"
-#include "TimedEvent.h"
+#include "ultima/ultima6/fonts/font_manager.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/screen/game_palette.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/portraits/portrait.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/fonts/conv_font.h"
+#include "ultima/ultima6/core/msg_scroll_new_ui.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/core/timed_event.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -190,7 +187,7 @@ uint16 MsgScrollNewUI::callback(uint16 msg, CallBack *caller, void *data) {
 void MsgScrollNewUI::Display(bool full_redraw) {
 	MsgText *token;
 
-	uint16 y = area.y + 4;
+	uint16 y = area.top + 4;
 	uint16 total_length = 0;
 	std::list<MsgLine *>::iterator iter;
 
@@ -208,20 +205,20 @@ void MsgScrollNewUI::Display(bool full_redraw) {
 		if (i + position < (msg_buf.size() - 1) || (iter1 != msg_line->text.end() && ((*iter)->total_length != 0))) {
 			if (bg_color != 255) {
 				if (solid_bg)
-					screen->fill(bg_color, area.x, y + (i == 0 ? -4 : 4), scroll_width * 7 + 8, (i == 0 ? 18 : 10));
+					screen->fill(bg_color, area.left, y + (i == 0 ? -4 : 4), scroll_width * 7 + 8, (i == 0 ? 18 : 10));
 				else
-					screen->stipple_8bit(bg_color, area.x, y + (i == 0 ? -4 : 4), scroll_width * 7 + 8, (i == 0 ? 18 : 10));
+					screen->stipple_8bit(bg_color, area.left, y + (i == 0 ? -4 : 4), scroll_width * 7 + 8, (i == 0 ? 18 : 10));
 			}
 
 			if (border_color != 255) {
-				screen->fill(border_color, area.x, y + (i == 0 ? -4 : 4), 1, (i == 0 ? 18 : 10));
-				screen->fill(border_color, area.x + scroll_width * 7 + 7, y + (i == 0 ? -4 : 4), 1, (i == 0 ? 18 : 10));
+				screen->fill(border_color, area.left, y + (i == 0 ? -4 : 4), 1, (i == 0 ? 18 : 10));
+				screen->fill(border_color, area.left + scroll_width * 7 + 7, y + (i == 0 ? -4 : 4), 1, (i == 0 ? 18 : 10));
 			}
 
 			for (total_length = 0; iter1 != msg_line->text.end() ; iter1++) {
 				token = *iter1;
 
-				total_length += token->font->drawString(screen, token->s.c_str(), area.x + 4 + 4 + total_length, y + 4, 0, 0); //FIX for hardcoded font height
+				total_length += token->font->drawString(screen, token->s.c_str(), area.left + 4 + 4 + total_length, y + 4, 0, 0); //FIX for hardcoded font height
 			}
 			y += 10;
 		}
@@ -229,8 +226,8 @@ void MsgScrollNewUI::Display(bool full_redraw) {
 	}
 	if (input_char != 0)
 		font->drawChar(screen, get_char_from_input_char(), total_length + 8, y - 6);
-	if (border_color != 255 && y != area.y + 4) {
-		screen->fill(border_color, area.x, y + 4, scroll_width * 7 + 8, 1); //draw bottom border
+	if (border_color != 255 && y != area.top + 4) {
+		screen->fill(border_color, area.left, y + 4, scroll_width * 7 + 8, 1); //draw bottom border
 	}
 	/* Debug
 	    char buf[10];
@@ -239,10 +236,10 @@ void MsgScrollNewUI::Display(bool full_redraw) {
 	    snprintf(buf, 10, "%d", (int)msg_buf.size());
 	    font_normal->drawString(screen, buf, 160, 20);
 	*/
-	screen->update(area.x, area.y, scroll_width * 7 + 8, scroll_height * 10 + 8);
+	screen->update(area.left, area.top, scroll_width * 7 + 8, scroll_height * 10 + 8);
 }
 
-GUI_status MsgScrollNewUI::KeyDown(SDL_Keysym key) {
+GUI_status MsgScrollNewUI::KeyDown(Common::KeyState key) {
 	ScrollEventType event = SCROLL_ESCAPE;
 	/*
 	    switch(key.sym)

@@ -23,11 +23,11 @@
 #ifndef ULTIMA6_CORE_OBJ_MANAGER_H
 #define ULTIMA6_CORE_OBJ_MANAGER_H
 
-#include <list>
-#include <cstring>
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima6/misc/iavl_tree.h"
-#include "TileManager.h"
+#include "ultima/ultima6/core/tile_manager.h"
 #include "ultima/ultima6/misc/u6_llist.h"
+#include "ultima/ultima6/core/obj.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -62,8 +62,6 @@ class Actor;
 #define OBJ_SEARCH_TOP true
 #define OBJ_INCLUDE_IGNORED true
 #define OBJ_EXCLUDE_IGNORED false
-
-#include "Obj.h"
 
 struct ObjTreeNode {
 	iAVLKey key;

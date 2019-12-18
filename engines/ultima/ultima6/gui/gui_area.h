@@ -25,8 +25,8 @@
 #ifndef ULTIMA6_GUI_GUI_AREA_H
 #define ULTIMA6_GUI_GUI_AREA_H
 
-#include "GUI_widget.h"
-#include "Screen.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/screen/screen.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -38,11 +38,11 @@ class GUI_Area : public GUI_Widget {
 
 public:
 	/* Passed the area, color and shape */
-	GUI_Area(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b, int aShape = AREA_ANGULAR);
+	GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, int aShape = AREA_ANGULAR);
 
 	/* Passed the area, color, frame color, frame thickness and shape */
-	GUI_Area(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b,
-	         Uint8 fr, Uint8 fg, Uint8 fb, int fthick, int aShape = AREA_ANGULAR);
+	GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b,
+	         uint8 fr, uint8 fg, uint8 fb, int fthick, int aShape = AREA_ANGULAR);
 
 	/* Map the color to the display */
 	virtual void SetDisplay(Screen *s);
@@ -52,14 +52,14 @@ public:
 
 
 protected:
-	Uint8 R, G, B;
+	uint8 R, G, B;
 	uint32 color;
 
 	/* flag */
 	int useFrame;
 
 	/* frame color values */
-	Uint8 fR, fG, fB;
+	uint8 fR, fG, fB;
 	uint32 frameColor;
 
 	/* remember me */

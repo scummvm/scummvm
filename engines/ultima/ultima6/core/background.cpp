@@ -20,18 +20,17 @@
  *
  */
 
-#include <ctype.h>
+//#include <ctype.height()>
 #include "ultima/shared/std/string.h"
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6Lib_n.h"
-#include "U6Bmp.h"
-#include "Dither.h"
-#include "Background.h"
-#include "MapWindow.h"
-#include "GUI.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
+#include "ultima/ultima6/files/u6_bmp.h"
+#include "ultima/ultima6/screen/dither.h"
+#include "ultima/ultima6/core/background.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/gui.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -103,21 +102,21 @@ void Background::Display(bool full_redraw) {
 	if (full_redraw || update_display || Game::get_game()->is_original_plus_full_map()) {
 		if (Game::get_game()->is_original_plus()) {
 			if (Game::get_game()->is_original_plus_cutoff_map())
-				screen->clear(area.x, area.y, area.w, area.h, NULL);
+				screen->clear(area.left, area.top, area.width(), area.height(), NULL);
 			else if (full_redraw || update_display) { // need to clear null background when we have a game size smaller than the screen
 				uint16 game_width = Game::get_game()->get_game_width();
 				uint16 game_height = Game::get_game()->get_game_height();
 				if (x_off > 0) { // centered
-					screen->clear(area.x, area.y, x_off, area.h, NULL); // left side
-					screen->clear(x_off + game_width, area.y, x_off, area.h, NULL); // right side
-				} else if (area.w > game_width) { // upper_left position
-					screen->clear(game_width, area.y, area.w - game_width, area.h, NULL); // right side
+					screen->clear(area.left, area.top, x_off, area.height(), NULL); // left side
+					screen->clear(x_off + game_width, area.top, x_off, area.height(), NULL); // right side
+				} else if (area.width() > game_width) { // upper_left position
+					screen->clear(game_width, area.top, area.width() - game_width, area.height(), NULL); // right side
 				}
 				if (y_off > 0) { // centered
-					screen->clear(area.x, area.y, area.w, y_off, NULL); // top
-					screen->clear(area.x, y_off + game_height, area.w, y_off, NULL); // bottom
-				} else if (area.h > game_height) { // upper_left position
-					screen->clear(area.x, game_height, area.w, area.h - game_height, NULL); // bottom
+					screen->clear(area.left, area.top, area.width(), y_off, NULL); // top
+					screen->clear(area.left, y_off + game_height, area.width(), y_off, NULL); // bottom
+				} else if (area.height() > game_height) { // upper_left position
+					screen->clear(area.left, game_height, area.width(), area.height() - game_height, NULL); // bottom
 				}
 			}
 			unsigned char *ptr = background->get_data();
@@ -132,12 +131,12 @@ void Background::Display(bool full_redraw) {
 				screen->blit(left_bg_x_off, y_off, ptr, 8, border_width, bg_h, bg_w, true);
 			}
 		} else {
-			screen->clear(area.x, area.y, area.w, area.h, NULL);
+			screen->clear(area.left, area.top, area.width(), area.height(), NULL);
 			if (Game::get_game()->is_orig_style())
 				screen->blit(x_off, y_off, background->get_data(), 8,  bg_w, bg_h, bg_w, true);
 		}
 		update_display = false;
-		screen->update(0, 0, area.w, area.h);
+		screen->update(0, 0, area.width(), area.height());
 	}
 
 	return;

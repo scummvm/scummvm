@@ -18,9 +18,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-#include <cstdio>
+//#include <cstdio>
 #include "ultima/shared/std/string.h"
-#include <list>
+//#include <list>
 
 #include "audiostream.h"
 #include "decoder/PCSpeaker.h"

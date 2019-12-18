@@ -23,12 +23,12 @@
 #ifndef ULTIMA6_GUI_GUI_CONSOLE_H
 #define ULTIMA6_GUI_GUI_CONSOLE_H
 
-#include "SDL.h"
 
-#include "GUI_widget.h"
-#include "GUI_types.h"
-#include "GUI_font.h"
-#include "Screen.h"
+
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/gui_types.h"
+#include "ultima/ultima6/gui/gui_font.h"
+#include "ultima/ultima6/screen/screen.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -54,7 +54,7 @@ public:
 	/* events, used for dragging the area. */
 	GUI_status MouseDown(int x, int y, int button);
 	GUI_status MouseUp(int x, int y, int button);
-	GUI_status MouseMotion(int x, int y, Uint8 state);
+	GUI_status MouseMotion(int x, int y, uint8 state);
 
 	virtual void AddLine(std::string line);
 

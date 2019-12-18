@@ -22,14 +22,14 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Party.h"
-#include "GamePalette.h"
-#include "ViewManager.h"
-#include "View.h"
-#include "Actor.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/screen/game_palette.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/views/view.h"
+#include "ultima/ultima6/actors/actor.h"
 
-#include "GUI_widget.h"
-#include "GUI_button.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/gui_button.h"
 
 namespace Ultima {
 namespace Ultima6 {

@@ -20,11 +20,11 @@
  *
  */
 
-#include <string.h>
-#include <assert.h>
+//#include <string.h>
+//#include <assert.h>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "GUI_TextToggleButton.h"
+#include "ultima/ultima6/gui/gui_TextToggleButton.h"
 
 namespace Ultima {
 namespace Ultima6 {

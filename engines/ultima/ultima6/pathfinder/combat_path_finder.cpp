@@ -20,7 +20,7 @@
  *
  */
 
-#include "Actor.h"
+#include "ultima/ultima6/actors/actor.h"
 #include "CombatPathFinder.h"
 
 namespace Ultima {

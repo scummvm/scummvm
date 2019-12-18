@@ -25,7 +25,7 @@
 
 #include "ultima/shared/std/string.h"
 
-#include "U6Shape.h"
+#include "ultima/ultima6/files/u6_shape.h"
 
 namespace Ultima {
 namespace Ultima6 {

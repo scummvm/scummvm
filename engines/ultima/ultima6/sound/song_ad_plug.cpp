@@ -27,7 +27,7 @@
 #include "adplug/u6m.h"
 
 #include "SongAdPlug.h"
-#include "SoundManager.h"
+#include "ultima/ultima6/sound/sound_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {

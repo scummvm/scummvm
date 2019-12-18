@@ -23,11 +23,11 @@
 #ifndef ULTIMA6_CORE_MSG_SCROLL_NEW_UI_H
 #define ULTIMA6_CORE_MSG_SCROLL_NEW_UI_H
 
-#include "CallBack.h"
-#include "GUI_widget.h"
-#include <stdarg.h>
+#include "ultima/ultima6/misc/call_back.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+//#include <stdarg.h>
 
-#include <list>
+//#include <list>
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 
@@ -83,7 +83,7 @@ public:
 	void set_font(uint8 font_type);
 	bool is_garg_font();
 
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 	GUI_status MouseDown(int x, int y, int button);
 
 	void move_scroll_down() {

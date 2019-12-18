@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_VIEWS_VIEW_H
 #define ULTIMA6_VIEWS_VIEW_H
 
-#include "GUI_widget.h"
+#include "ultima/ultima6/gui/gui_widget.h"
 
 namespace Ultima {
 namespace Ultima6 {

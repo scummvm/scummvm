@@ -22,10 +22,10 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Event.h"
-#include "GUI.h"
-#include "FontManager.h"
-#include "ViewManager.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/fonts/font_manager.h"
+#include "ultima/ultima6/views/view_manager.h"
 #include "ScrollWidgetGump.h"
 #include "ScrollViewGump.h"
 
@@ -106,7 +106,7 @@ GUI_status ScrollViewGump::MouseDown(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status ScrollViewGump::KeyDown(SDL_Keysym key) {
+GUI_status ScrollViewGump::KeyDown(Common::KeyState key) {
 	if (scroll_widget->KeyDown(key) != GUI_YUM) {
 		Game::get_game()->get_view_manager()->close_gump(this);
 	}

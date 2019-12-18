@@ -26,7 +26,7 @@
 #ifndef COMMON_MEMSTREAM_H
 #define COMMON_MEMSTREAM_H
 
-#include <stdlib.h>
+//#include <stdlib.h>
 #include "decoder/wave/stream.h"
 
 namespace Common {

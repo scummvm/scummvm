@@ -20,18 +20,18 @@
  *
  */
 
-#include <stdio.h>
+//#include <stdio.h>
 
 #include "ultima/shared/std/string.h"
-#include <cctype>
+//#include <cctype>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "NuvieIOFile.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
 #include "ultima/ultima6/conf/configuration.h"
 
-#include "Screen.h"
+#include "ultima/ultima6/screen/screen.h"
 
-#include "BMPFont.h"
+#include "BMPultima/ultima6/fonts/font.h"
 
 namespace Ultima {
 namespace Ultima6 {

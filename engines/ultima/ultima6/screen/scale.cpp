@@ -22,7 +22,7 @@
 
 //#include "common_types.h"
 //#include "Application.h"
-#include <cstring>
+//#include <cstring>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/misc.h"

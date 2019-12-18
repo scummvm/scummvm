@@ -23,10 +23,10 @@
 #ifndef ULTIMA6_SCRIPT_SCRIPT_CUTSCENE_H
 #define ULTIMA6_SCRIPT_SCRIPT_CUTSCENE_H
 
-#include "GUI.h"
-#include "GUI_widget.h"
-#include "U6Shape.h"
-#include "WOUFont.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/files/u6_shape.h"
+#include "WOUultima/ultima6/fonts/font.h"
 #include "ultima/ultima6/conf/configuration.h"
 
 namespace Ultima {

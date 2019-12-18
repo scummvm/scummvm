@@ -20,26 +20,26 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 // FIX need to subclass this class for U6, MD & SE
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6Lib_n.h"
-#include "U6Shape.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
+#include "ultima/ultima6/files/u6_shape.h"
 
-#include "MsgScroll.h"
-#include "Event.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/core/event.h"
 
-#include "Actor.h"
-#include "ActorManager.h"
-#include "GamePalette.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/screen/game_palette.h"
 #include "DollWidget.h"
-#include "CommandBar.h"
-#include "MapWindow.h"
-#include "Player.h"
-#include "ViewManager.h"
-#include "NuvieBmpFile.h"
+#include "ultima/ultima6/core/command_bar.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/files/nuvie_bmp_file.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -426,7 +426,7 @@ GUI_status DollWidget::MouseClick(int x, int y, int button) {
 	return (MouseUp(x, y, button));
 }
 
-GUI_status DollWidget::MouseMotion(int x, int y, Uint8 state) {
+GUI_status DollWidget::MouseMotion(int x, int y, uint8 state) {
 	Tile *tile;
 
 	if (selected_obj && !dragging && Game::get_game()->is_dragging_enabled()) {

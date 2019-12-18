@@ -20,44 +20,44 @@
  *
  */
 
-#include <cstdlib>
-#include <cassert>
-#include <cstdio>
+//#include <cstdlib>
+//#include <cassert>
+//#include <cstdio>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "MapEntity.h"
+#include "ultima/ultima6/misc/map_entity.h"
 
-#include "Game.h"
-#include "View.h"
-#include "ViewManager.h"
-#include "ActorManager.h"
-#include "Actor.h"
-#include "U6Actor.h"
-#include "Party.h"
-#include "Player.h"
-#include "MsgScroll.h"
-#include "Map.h"
-#include "GameClock.h"
-#include "Book.h"
-#include "Event.h"
-#include "MapWindow.h"
-#include "TimedEvent.h"
-#include "EggManager.h"
-#include "AnimManager.h"
-#include "SoundManager.h"
-#include "Effect.h"
-#include "Weather.h"
-#include "Script.h"
-#include "Keys.h"
-#include "Background.h"
-#include "CommandBar.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/views/view.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "U6ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/core/map.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/core/book.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/timed_event.h"
+#include "ultima/ultima6/core/egg_manager.h"
+#include "ultima/ultima6/core/anim_manager.h"
+#include "ultima/ultima6/sound/sound_manager.h"
+#include "ultima/ultima6/core/effect.h"
+#include "ultima/ultima6/core/weather.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/keybinding/keys.h"
+#include "ultima/ultima6/core/background.h"
+#include "ultima/ultima6/core/command_bar.h"
 
-#include "U6UseCode.h"
+#include "ultima/ultima6/usecode/u6_usecode.h"
 #include "U6ObjectTypes.h"
-#include "U6WorkTypes.h"
+#include "ultima/ultima6/actors/u6_work_types.h"
 
-#include <math.h> // floorf (used in part which I think ought to be moved out of here)
+//#include <math.h> // floorf (used in part which I think ought to be moved out of here)
 
 namespace Ultima {
 namespace Ultima6 {
@@ -1548,7 +1548,7 @@ bool U6UseCode::play_instrument(Obj *obj, UseCodeEvent ev) {
 	                       : (obj->obj_n == OBJ_U6_XYLOPHONE) ? "xylophone"
 	                       : "musical instrument";
 	if (items.data_ref) {
-		SDL_Keycode key = ((EventInput *)items.data_ref)->key;
+		Common::KeyCode key = ((EventInput *)items.data_ref)->key;
 		ActionKeyType key_type = ((EventInput *)items.data_ref)->action_key_type;
 		if (key == SDLK_0) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 0\n", musicmsg);
 		if (key == SDLK_1) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 1\n", musicmsg);

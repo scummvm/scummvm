@@ -20,7 +20,7 @@
  *
  */
 
-#include "WOUActor.h"
+#include "WOUultima/ultima6/actors/actor.h"
 
 namespace Ultima {
 namespace Ultima6 {

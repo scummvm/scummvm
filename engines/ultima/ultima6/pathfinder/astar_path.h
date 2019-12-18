@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_PATHFINDER_ASTAR_PATH_H
 #define ULTIMA6_PATHFINDER_ASTAR_PATH_H
 
-#include <list>
-#include "Map.h"
+//#include <list>
+#include "ultima/ultima6/core/map.h"
 #include "Path.h"
 
 namespace Ultima {

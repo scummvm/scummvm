@@ -20,25 +20,25 @@
  *
  */
 
-#include <list>
-#include <cassert>
-#include <cmath>
+//#include <list>
+//#include <cassert>
+//#include <cmath>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "CallBack.h"
+#include "ultima/ultima6/misc/call_back.h"
 
-#include "NuvieIO.h"
+#include "ultima/ultima6/files/nuvie_io.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/misc/u6_llist.h"
-#include "Weather.h"
-#include "Game.h"
-#include "GameClock.h"
-#include "Objlist.h"
-#include "TimedEvent.h"
-#include "ViewManager.h"
-#include "MapWindow.h"
-#include "Map.h"
-#include "Script.h"
+#include "ultima/ultima6/core/weather.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/save/obj_list.h"
+#include "ultima/ultima6/core/timed_event.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/map.h"
+#include "ultima/ultima6/script/script.h"
 
 namespace Ultima {
 namespace Ultima6 {

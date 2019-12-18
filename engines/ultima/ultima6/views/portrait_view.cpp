@@ -26,18 +26,18 @@
 
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6Lib_n.h"
-#include "U6Shape.h"
+#include "ultima/ultima6/files/u6_lib_n.h"
+#include "ultima/ultima6/files/u6_shape.h"
 
-#include "Game.h"
-#include "Actor.h"
-#include "Portrait.h"
-#include "Font.h"
-#include "ViewManager.h"
-#include "MsgScroll.h"
-#include "GUI.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/portraits/portrait.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/gui/gui.h"
 #include "DollWidget.h"
-#include "PortraitView.h"
+#include "ultima/ultima6/views/portrait_view.h"
 #include "SunMoonStripWidget.h"
 
 namespace Ultima {
@@ -211,7 +211,7 @@ void PortraitView::display_name(uint16 y_offset) {
 /* On any input return to previous status view if waiting.
  * Returns true if event was used.
  */
-GUI_status PortraitView::HandleEvent(const SDL_Event *event) {
+GUI_status PortraitView::HandleEvent(const Common::Event *event) {
 	if (waiting
 	        && (event->type == SDL_MOUSEBUTTONDOWN || event->type == SDL_KEYDOWN)) {
 		if (Game::get_game()->is_new_style())

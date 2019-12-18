@@ -4,7 +4,7 @@
 ** See Copyright Notice in lua.h
 */
 
-#include <stddef.h>
+//#include <stddef.h>
 
 #define ldump_c
 #define LUA_CORE

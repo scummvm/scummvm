@@ -23,9 +23,9 @@
 #ifndef ULTIMA6_SCREEN_GAME_PALETTE_H
 #define ULTIMA6_SCREEN_GAME_PALETTE_H
 
-#include "Screen.h"
+#include "ultima/ultima6/screen/screen.h"
 
-#include "SDL.h"
+
 
 namespace Ultima {
 namespace Ultima6 {

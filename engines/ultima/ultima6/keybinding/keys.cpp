@@ -20,22 +20,22 @@
  *
  */
 
-#include <iostream>
+//#include <iostream>
 
 #include "SDL_keyboard.h"
-#include "Keys.h"
+#include "ultima/ultima6/keybinding/keys.h"
 #include "KeyActions.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "Game.h"
+#include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/conf/xml_tree.h"
-#include "Player.h"
-#include "Event.h"
-#include "Utils.h"
-#include "MsgScroll.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/keybinding/utils.h"
+#include "ultima/ultima6/core/msg_scroll.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Console.h"
-#include "Effect.h"
+#include "ultima/ultima6/core/console.h"
+#include "ultima/ultima6/core/effect.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -45,7 +45,7 @@ using std::atoi;
 using std::cerr;
 using std::endl;
 using std::ifstream;
-using std::isspace;
+using std::Common::isSpace;
 using std::strchr;
 using std::string;
 using std::strlen;
@@ -56,7 +56,7 @@ public:
 	string  whitespace;
 	Chardata() {
 		for (size_t i = 0; i < 256; i++)
-			if (isspace(i))
+			if (Common::isSpace(i))
 				whitespace += static_cast<char>(i);
 	}
 } chardata;
@@ -149,8 +149,8 @@ const struct Action {
 
 const struct {
 	const char *s;
-	SDL_Keycode k;
-} SDL_KeycodeStringTable[] = {
+	Common::KeyCode k;
+} Common::KeyCodeStringTable[] = {
 	{"LCTRL",     SDLK_LCTRL},
 	{"RCTRL",     SDLK_RCTRL},
 	{"LALT",      SDLK_LALT},
@@ -271,7 +271,7 @@ const struct {
 };
 
 
-typedef std::map<std::string, SDL_Keycode> ParseKeyMap;
+typedef std::map<std::string, Common::KeyCode> ParseKeyMap;
 typedef std::map<std::string, const Action *> ParseActionMap;
 
 static ParseKeyMap keys;
@@ -377,9 +377,9 @@ KeyBinder::KeyBinder(Configuration *config) {
 KeyBinder::~KeyBinder() {
 }
 
-void KeyBinder::AddKeyBinding(SDL_Keycode key, int mod, const Action *action,
+void KeyBinder::AddKeyBinding(Common::KeyCode key, int mod, const Action *action,
                               int nparams, int *params) {
-	SDL_Keysym k;
+	Common::KeyState k;
 	ActionType a;
 
 #if SDL_VERSION_ATLEAST(1, 3, 0)
@@ -399,7 +399,7 @@ void KeyBinder::AddKeyBinding(SDL_Keycode key, int mod, const Action *action,
 	bindings[k] = a;
 }
 
-ActionType KeyBinder::get_ActionType(SDL_Keysym key) {
+ActionType KeyBinder::get_ActionType(Common::KeyState key) {
 	KeyMap::iterator sdlkey_index = get_sdlkey_index(key);
 	if (sdlkey_index == bindings.end()) {
 		ActionType actionType = {&doNothingAction, {0}};
@@ -425,8 +425,8 @@ bool KeyBinder::DoAction(ActionType const &a) const {
 	return true;
 }
 
-KeyMap::iterator KeyBinder::get_sdlkey_index(SDL_Keysym keysym) {
-	SDL_Keysym key = keysym;
+KeyMap::iterator KeyBinder::get_sdlkey_index(Common::KeyState keysym) {
+	Common::KeyState key = keysym;
 	key.mod = KMOD_NONE;
 	if (keysym.mod & KMOD_SHIFT)
 		key.mod = (SDL_Keymod)(key.mod | KMOD_SHIFT);
@@ -444,8 +444,8 @@ KeyMap::iterator KeyBinder::get_sdlkey_index(SDL_Keysym keysym) {
 	return bindings.find(key);
 }
 
-bool KeyBinder::HandleEvent(const SDL_Event *ev) {
-	SDL_Keysym key = ev->key.keysym;
+bool KeyBinder::HandleEvent(const Common::Event *ev) {
+	Common::KeyState key = ev->key.keysym;
 	KeyMap::iterator sdlkey_index;
 
 	if (ev->type != SDL_KEYDOWN)
@@ -529,7 +529,7 @@ static void skipspace(string &s) {
 
 void KeyBinder::ParseLine(char *line) {
 	size_t i;
-	SDL_Keysym k;
+	Common::KeyState k;
 	ActionType a;
 	k.sym      = SDLK_UNKNOWN;
 	k.mod      = KMOD_NONE;
@@ -547,7 +547,7 @@ void KeyBinder::ParseLine(char *line) {
 	u = to_uppercase(u);
 
 	// get key
-	while (s.length() && !isspace(s[0])) {
+	while (s.length() && !Common::isSpace(s[0])) {
 		// check modifiers
 		if (u.substr(0, 4) == "ALT-") {
 			k.mod = (SDL_Keymod)(k.mod | KMOD_ALT);
@@ -573,12 +573,12 @@ void KeyBinder::ParseLine(char *line) {
 				cerr << "Keybinder: parse error in line: " << s << endl;
 				return;
 			} else if (t.length() == 1) {
-				// translate 1-letter keys straight to SDL_Keycode
+				// translate 1-letter keys straight to Common::KeyCode
 				char c = t[0];
 				if (c >= 33 && c <= 122 && c != 37) {
 					if (c >= 'A' && c <= 'Z')
 						c += 32; // need lowercase
-					k.sym = static_cast<SDL_Keycode>(c);
+					k.sym = static_cast<Common::KeyCode>(c);
 				} else {
 					cerr << "Keybinder: unsupported key: " << keycode << endl;
 				}
@@ -742,8 +742,8 @@ void KeyBinder::LoadFromPatch() { // FIXME default should probably be system spe
 // codes used in keybindings-files. (use uppercase here)
 void KeyBinder::FillParseMaps() {
 	int i;  // For MSVC
-	for (i = 0; strlen(SDL_KeycodeStringTable[i].s) > 0; i++)
-		keys[SDL_KeycodeStringTable[i].s] = SDL_KeycodeStringTable[i].k;
+	for (i = 0; strlen(Common::KeyCodeStringTable[i].s) > 0; i++)
+		keys[Common::KeyCodeStringTable[i].s] = Common::KeyCodeStringTable[i].k;
 
 	for (i = 0; strlen(NuvieActions[i].s) > 0; i++)
 		actions[NuvieActions[i].s] = &(NuvieActions[i]);
@@ -838,7 +838,7 @@ uint16 KeyBinder::get_y_axis_deadzone(joy_axes_pairs axes_pair) {
 	}
 }
 
-SDL_Keycode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating) {
+Common::KeyCode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating) {
 	joy_axes_pairs axes_pair =  get_axes_pair(axis);
 
 	if (axes_pair == UNHANDLED_AXES_PAIR) // joystick NULL check doesn't seem to be needed - It is also checked before tring to repeat
@@ -993,7 +993,7 @@ SDL_Keycode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating) {
 	}
 }
 
-SDL_Keycode KeyBinder::get_key_from_joy_button(uint8 button) {
+Common::KeyCode KeyBinder::get_key_from_joy_button(uint8 button) {
 	switch (button) {
 	case 0:
 		return JOY0;
@@ -1040,14 +1040,14 @@ SDL_Keycode KeyBinder::get_key_from_joy_button(uint8 button) {
 	}
 }
 
-SDL_Keycode KeyBinder::get_key_from_joy_hat(SDL_JoyHatEvent jhat) {
+Common::KeyCode KeyBinder::get_key_from_joy_hat(SDL_JoyHatEvent jhat) {
 //	if(jhat.which == 0) // only handling one jhat for now and some devices don't start at 0
 	return get_key_from_joy_hat_button(jhat.value);
 //	else
 //		return SDLK_UNKNOWN; // unhandled hat
 }
 
-SDL_Keycode KeyBinder::get_key_from_joy_hat_button(uint8 hat_button) {
+Common::KeyCode KeyBinder::get_key_from_joy_hat_button(uint8 hat_button) {
 	if (repeat_hat)
 		next_joy_repeat_time = SDL_GetTicks() + joy_repeat_delay;
 	switch (hat_button) {
@@ -1072,7 +1072,7 @@ SDL_Keycode KeyBinder::get_key_from_joy_hat_button(uint8 hat_button) {
 	}
 }
 
-SDL_Keycode KeyBinder::get_key_from_joy_events(SDL_Event *event) {
+Common::KeyCode KeyBinder::get_key_from_joy_events(Common::Event *event) {
 	if (event->type == SDL_JOYBUTTONUP)
 		return get_key_from_joy_button(event->jbutton.button);
 	else if (event->type == SDL_JOYHATMOTION)
@@ -1127,7 +1127,7 @@ void KeyBinder::init_joystick(sint8 joy_num) {
 
 #endif /* HAVE_JOYSTICK_SUPPORT */
 
-char get_ascii_char_from_keysym(SDL_Keysym keysym) {
+char get_ascii_char_from_keysym(Common::KeyState keysym) {
 	char ascii = 0;
 	if (keysym.sym < 128) {
 		ascii = (char) keysym.sym;

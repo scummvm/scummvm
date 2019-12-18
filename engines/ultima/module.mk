@@ -11,6 +11,16 @@ MODULE_OBJS += \
 	ultima6/conf/misc.o \
 	ultima6/conf/xml_node.o \
 	ultima6/conf/xml_tree.o \
+	ultima6/files/nuvie_bmp_file.o \
+	ultima6/files/nuvie_file_list.o \
+	ultima6/files/nuvie_io.o \
+	ultima6/files/nuvie_io_file.o \
+	ultima6/files/tmx_map.o \
+	ultima6/files/u6_bmp.o \
+	ultima6/files/u6_lib_n.o \
+	ultima6/files/u6_lzw.o \
+	ultima6/files/u6_shape.o \
+	ultima6/misc/sdl_compat.o \
 	ultima6/misc/iavl_tree.o \
 	ultima6/misc/u6_line_walker.o \
 	ultima6/misc/u6_list.o \

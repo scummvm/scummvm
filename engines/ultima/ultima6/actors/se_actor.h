@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_ACTORS_SE_ACTOR_H
 #define ULTIMA6_ACTORS_SE_ACTOR_H
 
-#include "WOUActor.h"
-#include "ActorList.h"
+#include "WOUultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/misc/actor_list.h"
 
 namespace Ultima {
 namespace Ultima6 {

@@ -23,10 +23,10 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 
-#include "GUI.h"
+#include "ultima/ultima6/gui/gui.h"
 #include "ContainerWidgetGump.h"
-#include "Keys.h"
-#include "ViewManager.h"
+#include "ultima/ultima6/keybinding/keys.h"
+#include "ultima/ultima6/views/view_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -153,7 +153,7 @@ void ContainerWidgetGump::cursor_down() {
 	}
 }
 
-GUI_status ContainerWidgetGump::KeyDown(SDL_Keysym key) {
+GUI_status ContainerWidgetGump::KeyDown(Common::KeyState key) {
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 

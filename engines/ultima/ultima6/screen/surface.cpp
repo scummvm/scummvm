@@ -20,12 +20,12 @@
  *
  */
 
-#include <cstdlib>
+//#include <cstdlib>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "Surface.h"
-#include "SDL.h"
+
 
 #ifdef WANT_OPENGL
 #include "OpenGL.h"
@@ -100,9 +100,9 @@ RenderSurface::~RenderSurface() {
 }
 
 //
-// Set the buffer format from SDL_PixelFormat
+// Set the buffer format from Graphics::PixelFormat
 //
-void RenderSurface::set_format(const SDL_PixelFormat *fmt) {
+void RenderSurface::set_format(const Graphics::PixelFormat *fmt) {
 	bits_per_pixel = fmt->BitsPerPixel;
 	bytes_per_pixel = fmt->BytesPerPixel;
 

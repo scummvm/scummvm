@@ -20,23 +20,23 @@
  *
  */
 
-//#include "SDL.h"
+//
 #include "ultima/ultima6/core/nuvie_defs.h"
 
 #ifdef HAVE_JOYSTICK_SUPPORT
-#include "GUI.h"
-#include "GUI_types.h"
-#include "GUI_button.h"
-#include "GUI_text.h"
-#include "GUI_TextToggleButton.h"
-#include "GUI_CallBack.h"
-#include "GUI_area.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_types.h"
+#include "ultima/ultima6/gui/gui_button.h"
+#include "ultima/ultima6/gui/gui_text.h"
+#include "ultima/ultima6/gui/gui_TextToggleButton.h"
+#include "ultima/ultima6/gui/gui_CallBack.h"
+#include "ultima/ultima6/gui/gui_area.h"
 
-#include "GUI_Dialog.h"
+#include "ultima/ultima6/gui/gui_Dialog.h"
 #include "JoystickDialog.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "Keys.h"
-//#include <math.h>
+#include "ultima/ultima6/keybinding/keys.h"
+////#include <math.h>
 
 namespace Ultima {
 namespace Ultima6 {
@@ -157,7 +157,7 @@ GUI_status JoystickDialog::close_dialog() {
 	return GUI_YUM;
 }
 
-GUI_status JoystickDialog::KeyDown(SDL_Keysym key) {
+GUI_status JoystickDialog::KeyDown(Common::KeyState key) {
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 
@@ -212,7 +212,7 @@ GUI_status JoystickDialog::KeyDown(SDL_Keysym key) {
 	}
 	return GUI_YUM;
 }
-#include <cassert>
+//#include <cassert>
 GUI_status JoystickDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 	if (caller == (GUI_CallBack *)cancel_button) {
 		return close_dialog();

@@ -20,29 +20,27 @@
  *
  */
 
-#include <cassert>
-#include "SDL.h"
-
 #include "ultima/ultima6/conf/configuration.h"
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Game.h"
-#include "Screen.h"
-#include "Event.h"
-#include "TileManager.h"
-#include "Font.h"
-#include "FontManager.h"
-#include "GameClock.h"
-#include "GamePalette.h"
-#include "CommandBarNewUI.h"
-#include "Weather.h"
-#include "Party.h"
-#include "Player.h"
-#include "Objlist.h"
-#include "NuvieIO.h"
-#include "Background.h"
-#include "Keys.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/screen/screen.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/tile_manager.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/fonts/font_manager.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/screen/game_palette.h"
+#include "ultima/ultima6/core/command_bar_new_ui.h"
+#include "ultima/ultima6/core/weather.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/save/obj_list.h"
+#include "ultima/ultima6/files/nuvie_io.h"
+#include "ultima/ultima6/core/background.h"
+#include "ultima/ultima6/keybinding/keys.h"
+#include "common/events.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -112,8 +110,8 @@ CommandBarNewUI::CommandBarNewUI(Game *g) : CommandBar() {
 	uint8 command_height = btn_size * icon_h + text_height;
 
 	Init(NULL, (map_width - command_width) / 2 + x_off, (map_height - command_height) / 2 + y_off, 0, 0);
-	area.w = command_width; // space for 5x3 icons
-	area.h = command_height;
+	area.setWidth(command_width); // space for 5x3 icons
+	area.setHeight(command_height);
 
 	event = NULL; // it's not set yet
 
@@ -141,8 +139,8 @@ CommandBarNewUI::~CommandBarNewUI() {
 
 GUI_status CommandBarNewUI::MouseDown(int x, int y, int button) {
 	if (HitRect(x, y)) {
-		x -= area.x;
-		y -= area.y;
+		x -= area.left;
+		y -= area.right;
 
 		if (y >= icon_y_offset) {
 			uint8 pos = ((y - icon_y_offset) / btn_size) * icon_w;
@@ -166,8 +164,8 @@ GUI_status CommandBarNewUI::MouseUp(int x, int y, int button) {
 	/*
 	    if(HitRect(x, y))
 	    {
-	        x -= area.x;
-	        y -= area.y;
+	        x -= area.left;
+	        y -= area.top;
 
 	        if(y >= icon_y_offset && y < icon_y_offset + icon_h * btn_size)
 	        {
@@ -179,7 +177,7 @@ GUI_status CommandBarNewUI::MouseUp(int x, int y, int button) {
 	return (GUI_YUM);
 }
 
-GUI_status CommandBarNewUI::KeyDown(SDL_Keysym key) {
+GUI_status CommandBarNewUI::KeyDown(Common::KeyState key) {
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 
@@ -236,39 +234,39 @@ GUI_status CommandBarNewUI::KeyDown(SDL_Keysym key) {
 }
 
 void CommandBarNewUI::Display(bool full_redraw) {
-	Screen *screen = game->get_screen();
+	Screen *scr = game->get_screen();
 
 	//if(full_redraw || update_display)
 	// {
 	update_display = false;
 	if (game->get_game_type() == NUVIE_GAME_U6) {
-		//screen->fill(bg_color, area.x, area.y, area.w, area.h);
+		//scr->fill(bg_color, area.left, area.top, area.width(), area.height());
 		if (!game->is_orig_style()) {
 			//display_information();
 			string infostring(game->get_clock()->get_date_string());
 			infostring += " Wind:";
 			infostring += wind;
-			font->drawString(screen, infostring.c_str(), area.x - 13, area.y); // sort of center
+			font->drawString(scr, infostring.c_str(), area.left - 13, area.top); // sort of center
 		}
 	}
 	uint8 i = 0;
 	for (uint8 y = 0; y < icon_h; y++) {
 		for (uint8 x = 0; x < icon_w && i < num_icons; x++, i++) {
-			screen->blit(area.x + x * btn_size, icon_y_offset + area.y + y * btn_size, icon[i]->data, 8, 16, 16, 16);
+			scr->blit(area.left + x * btn_size, icon_y_offset + area.top + y * btn_size, icon[i]->data, 8, 16, 16, 16);
 			if (i == cur_pos) {
-				screen->stipple_8bit(SELECTED_COLOR, area.x + x * btn_size, icon_y_offset + area.y + y * btn_size, 16, 16);
+				scr->stipple_8bit(SELECTED_COLOR, area.left + x * btn_size, icon_y_offset + area.top + y * btn_size, 16, 16);
 			}
 		}
 	}
 	if (game->get_game_type() == NUVIE_GAME_U6) { // FIXME use new icon instead
-		font->drawString(screen, "QS", area.x + 2 + btn_size, icon_y_offset + area.y + 2 * btn_size + 4);
-		font->drawString(screen, "QL", area.x + 2 + 2 * btn_size, icon_y_offset + area.y + 2 * btn_size + 4);
+		font->drawString(scr, "QS", area.left + 2 + btn_size, icon_y_offset + area.top + 2 * btn_size + 4);
+		font->drawString(scr, "QL", area.left + 2 + 2 * btn_size, icon_y_offset + area.top + 2 * btn_size + 4);
 	}
-	font->drawString(screen, get_command_name(cur_pos), area.x, area.y + icon_y_offset + icon_h * btn_size);
+	font->drawString(scr, get_command_name(cur_pos), area.left, area.top + icon_y_offset + icon_h * btn_size);
 	if (game->get_game_type() == NUVIE_GAME_U6 && !game->is_orig_style())
-		screen->update(area.x - 13, area.y, area.w + 26, area.h); // need to have edges of text update
+		scr->update(area.left - 13, area.top, area.width() + 26, area.height()); // need to have edges of text update
 	else
-		screen->update(area.x, area.y, area.w, area.h);
+		scr->update(area.left, area.top, area.width(), area.height());
 	//  }
 }
 
@@ -285,7 +283,7 @@ void CommandBarNewUI::display_information()
     string infostring(game->get_clock()->get_date_string());
     infostring += " Wind:";
     infostring += wind;
-    text->drawString(screen, infostring.c_str(), area.x + 8, area.y, 0);
+    text->drawString(screen, infostring.c_str(), area.left + 8, area.top, 0);
 }
 */
 

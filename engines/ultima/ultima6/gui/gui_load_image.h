@@ -35,7 +35,7 @@ namespace Ultima6 {
  */
 /************************************************************************/
 
-extern Graphics::ManagedSurface *GUI_LoadImage(int w, int h, Uint8 *pal, Uint8 *data);
+extern Graphics::ManagedSurface *GUI_LoadImage(int w, int h, uint8 *pal, uint8 *data);
 
 /* Load the internal 8x8 font and return the associated font surface */
 extern Graphics::ManagedSurface *GUI_DefaultFont(void);
@@ -44,7 +44,7 @@ extern Graphics::ManagedSurface *GUI_Font6x8(void);
 
 extern Graphics::ManagedSurface *GUI_FontGump(void);
 
-extern Uint8 *GUI_FontGumpWData(void);
+extern uint8 *GUI_FontGumpWData(void);
 
 } // End of namespace Ultima6
 } // End of namespace Ultima

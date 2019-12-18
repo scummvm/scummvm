@@ -23,10 +23,10 @@
 #ifndef ULTIMA6_GUI_GUI_SCROLLBAR_H
 #define ULTIMA6_GUI_GUI_SCROLLBAR_H
 
-#include "SDL.h"
 
-#include "GUI_widget.h"
-#include "Screen.h"
+
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/screen/screen.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -81,7 +81,7 @@ public:
 	/* events, used for dragging the area. */
 	GUI_status MouseDown(int x, int y, int button);
 	GUI_status MouseUp(int x, int y, int button);
-	GUI_status MouseMotion(int x, int y, Uint8 state);
+	GUI_status MouseMotion(int x, int y, uint8 state);
 	GUI_status MouseWheel(sint32 x, sint32 y);
 
 protected:

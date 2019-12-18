@@ -22,9 +22,9 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "Game.h"
-#include "ObjManager.h"
-#include "UseCode.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/usecode/usecode.h"
 #include "U6AStarPath.h"
 
 namespace Ultima {

@@ -23,9 +23,9 @@
 #ifndef ULTIMA6_GUI_GUI_FONT_H
 #define ULTIMA6_GUI_GUI_FONT_H
 
-#include <string.h>
+//#include <string.h>
 
-#include "SDL.h"
+
 
 namespace Ultima {
 namespace Ultima6 {
@@ -38,7 +38,7 @@ class GUI_Font {
 
 public:
 	/* use default 8x8 font */
-	GUI_Font(Uint8 fontType = GUI_FONT_DEFAULT);
+	GUI_Font(uint8 fontType = GUI_FONT_DEFAULT);
 
 	/* open named BMP file */
 	GUI_Font(char *name);
@@ -55,9 +55,9 @@ public:
 	virtual void SetTransparency(int on);
 
 	/* determine foreground and background color values RGB*/
-	virtual void SetColoring(Uint8 fr, Uint8 fg, Uint8 fb, Uint8 br = 255, Uint8 bg = 255, Uint8 bb = 255);
+	virtual void SetColoring(uint8 fr, uint8 fg, uint8 fb, uint8 br = 255, uint8 bg = 255, uint8 bb = 255);
 	/* Two color font */
-	virtual void SetColoring(Uint8 fr, Uint8 fg, Uint8 fb, Uint8 fr1, Uint8 fg1, Uint8 fb1, Uint8 br, Uint8 bg, Uint8 bb);
+	virtual void SetColoring(uint8 fr, uint8 fg, uint8 fb, uint8 fr1, uint8 fg1, uint8 fb1, uint8 br, uint8 bg, uint8 bb);
 
 	/* yields the pixel height of a single character */
 	inline virtual int CharHeight() {
@@ -89,7 +89,7 @@ protected:
 	/* dimensions */
 	int charh, charw;
 
-	Uint8 *w_data;
+	uint8 *w_data;
 };
 
 } // End of namespace Ultima6

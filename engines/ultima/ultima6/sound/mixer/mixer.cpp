@@ -22,8 +22,8 @@
 
 //#include "common/util.h"
 //#include "common/system.h"
-#include <assert.h>
-#include <string.h>
+//#include <assert.h>
+//#include <string.h>
 #include "mixer_intern.h"
 #include "rate.h"
 #include "audiostream.h"

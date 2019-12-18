@@ -20,10 +20,10 @@
  *
  */
 
-#include <assert.h>
-#include <string.h>
+//#include <assert.h>
+//#include <string.h>
 
-#include "SDL.h"
+
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "sdl-mixer.h"
 //#include "common/system.h"

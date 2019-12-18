@@ -20,8 +20,8 @@
  *
  */
 
-#include <assert.h>
-#include "timestamp.h"
+//#include <assert.h>
+#include "ultima/ultima6/sound/mixer/timestamp.h"
 //#include "algorithm.h"
 
 namespace Common {

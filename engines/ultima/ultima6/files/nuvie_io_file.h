@@ -23,75 +23,53 @@
 #ifndef ULTIMA6_FILES_NUVIE_IO_FILE_H
 #define ULTIMA6_FILES_NUVIE_IO_FILE_H
 
-#include <stdio.h>
 #include "ultima/shared/std/string.h"
-
-#include "NuvieIO.h"
+#include "ultima/ultima6/files/nuvie_io.h"
+#include "common/file.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
 class NuvieIOFile : public NuvieIO {
-protected:
-	FILE *fp;
-
 public:
+	NuvieIOFile() {}
+	virtual ~NuvieIOFile() {}
 
-	NuvieIOFile();
-	virtual ~NuvieIOFile();
-
-	virtual bool open(const char *filename) {
+	virtual bool open(const Common::String &filename) {
 		return false;
 	};
-	bool open(std::string filename) {
-		return open(filename.c_str());
-	};
-
-	void close();
-
-	void seek(uint32 new_pos);
-
-protected:
-	bool openWithMode(const char *filename, const char *mode);
-	uint32 get_filesize();
 };
 
 class NuvieIOFileRead : public NuvieIOFile {
-protected:
-
+private:
+	Common::File _file;
 public:
+	virtual ~NuvieIOFileRead();
+	virtual bool open(const Common::String &filename) override;
+	virtual void close() override;
+	virtual void seek(uint32 new_pos) override;
 
-	// NuvieIOFileRead();
-	// virtual ~NuvieIOFileRead();
+	virtual uint8 read1() override;
+	virtual uint16 read2() override;
+	virtual uint32 read4() override;
 
-	bool open(const char *filename);
-	bool open(std::string filename) {
-		return open(filename.c_str());
-	};
-
-	uint8 read1();
-	uint16 read2();
-	uint32 read4();
-
-	bool readToBuf(unsigned char *buf, uint32 buf_size);
+	virtual bool readToBuf(unsigned char *buf, uint32 buf_size) override;
 };
 
-class NuvieIOFileWrite : public NuvieIOFileRead {
-
+class NuvieIOFileWrite : public NuvieIOFile {
+private:
+	Common::DumpFile _file;
 public:
-
-	// NuvieIOFileRead();
-	// virtual ~NuvieIOFileRead();
-
-	bool open(const char *filename);
-	bool open(std::string filename) {
-		return open(filename.c_str());
-	};
+	virtual ~NuvieIOFileWrite();
+	virtual bool open(const Common::String &filename) override;
+	virtual void close() override;
+	virtual void seek(uint32 new_pos) override;
 
 	bool write1(uint8 src);
 	bool write2(uint16 src);
 	bool write4(uint32 src);
-	virtual uint32 writeBuf(const unsigned char *src, uint32 src_size);
+	
+	virtual uint32 writeBuf(const unsigned char *src, uint32 src_size) override;
 	uint32 write(NuvieIO *src);
 
 };

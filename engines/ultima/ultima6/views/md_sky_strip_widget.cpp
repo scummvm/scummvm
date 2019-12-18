@@ -20,17 +20,17 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 
-#include <math.h>
+//#include <math.h>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "GameClock.h"
-#include "U6Shape.h"
-#include "Player.h"
-#include "MDSkyStripWidget.h"
+#include "ultima/ultima6/core/game_clock.h"
+#include "ultima/ultima6/files/u6_shape.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/views/md_sky_strip_widget.h"
 
 namespace Ultima {
 namespace Ultima6 {

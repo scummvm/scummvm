@@ -20,9 +20,9 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Map.h"
+#include "ultima/ultima6/core/map.h"
 #include "Path.h"
 
 namespace Ultima {

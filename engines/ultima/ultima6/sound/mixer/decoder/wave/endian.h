@@ -26,7 +26,7 @@
 #ifndef COMMON_ENDIAN_H
 #define COMMON_ENDIAN_H
 
-#include <SDL.h>
+//#include <SDL.h>
 //#include "common/scummsys.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 

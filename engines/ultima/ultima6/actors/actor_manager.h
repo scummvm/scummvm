@@ -24,9 +24,9 @@
 #define ULTIMA6_ACTORS_ACTOR_MANAGER_H
 
 #include "ultima/shared/std/string.h"
-#include <set>
-#include "ObjManager.h"
-#include "ActorList.h"
+//#include <set>
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/misc/actor_list.h"
 
 namespace Ultima {
 namespace Ultima6 {

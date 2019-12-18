@@ -25,7 +25,7 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "mixer.h"
+#include "audio/mixer.h"
 #include "decoder/wave/wave.h"
 #include "SfxManager.h"
 #include "audiostream.h"

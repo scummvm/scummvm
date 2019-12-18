@@ -20,22 +20,22 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Event.h"
-#include "GUI.h"
-#include "GUI_button.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_button.h"
 
-#include "U6objects.h"
-#include "Party.h"
-#include "Actor.h"
-#include "Font.h"
-#include "ViewManager.h"
-#include "FontManager.h"
+#include "ultima/ultima6/core/u6_objects.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/fonts/font_manager.h"
 #include "ContainerWidgetGump.h"
 #include "ContainerViewGump.h"
-#include "Keys.h"
+#include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -341,7 +341,7 @@ GUI_status ContainerViewGump::callback(uint16 msg, GUI_CallBack *caller, void *d
 	return GUI_PASS;
 }
 
-GUI_status ContainerViewGump::KeyDown(SDL_Keysym key) {
+GUI_status ContainerViewGump::KeyDown(Common::KeyState key) {
 	if (left_arrow_button && left_arrow_button->Status() == WIDGET_VISIBLE) { // okay to change member number
 		KeyBinder *keybinder = Game::get_game()->get_keybinder();
 		ActionType a = keybinder->get_ActionType(key);

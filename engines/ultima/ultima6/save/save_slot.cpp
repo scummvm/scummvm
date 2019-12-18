@@ -20,26 +20,26 @@
  *
  */
 
-#include "SDL.h"
+
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 
-#include "GUI.h"
-#include "GUI_types.h"
-#include "GUI_text.h"
-#include "GUI_TextInput.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_types.h"
+#include "ultima/ultima6/gui/gui_text.h"
+#include "ultima/ultima6/gui/gui_TextInput.h"
 
-#include "GUI_CallBack.h"
+#include "ultima/ultima6/gui/gui_CallBack.h"
 
-#include "Game.h"
-#include "NuvieIOFile.h"
-#include "MapWindow.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/ultima6/core/map_window.h"
 
-#include "SaveGame.h"
+#include "Saveultima/ultima6/core/game.h"
 #include "SaveSlot.h"
-#include "SaveManager.h"
+#include "ultima/ultima6/save/save_manager.h"
 #include "SaveDialog.h"
-#include "GUI_Scroller.h"
+#include "ultima/ultima6/gui/gui_Scroller.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -183,7 +183,7 @@ void SaveSlot::Display(bool full_redraw) {
 
 }
 
-GUI_status SaveSlot::KeyDown(SDL_Keysym key) {
+GUI_status SaveSlot::KeyDown(Common::KeyState key) {
 
 //if(key.sym == SDLK_ESCAPE)
 //  return GUI_YUM;

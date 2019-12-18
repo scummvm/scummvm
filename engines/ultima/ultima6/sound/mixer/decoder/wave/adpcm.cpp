@@ -23,8 +23,8 @@
  *
  */
 
-#include <assert.h>
-#include <string.h>
+//#include <assert.h>
+//#include <string.h>
 #include "decoder/wave/endian.h"
 
 #include "decoder/wave/adpcm.h"

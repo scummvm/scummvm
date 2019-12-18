@@ -20,28 +20,24 @@
  *
  */
 
-#include <cstdlib>
-#include <cctype>
-#include <cstring>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "Game.h"
+#include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6Lzw.h"
-#include "Player.h"
-#include "Party.h"
-#include "ViewManager.h"
-#include "ActorManager.h"
-#include "SoundManager.h"
-#include "Event.h"
-#include "MapWindow.h"
-#include "ConverseInterpret.h"
-#include "ConverseSpeech.h"
-#include "ConverseGump.h"
-#include "Converse.h"
-#include "GUI.h"
-#include "Background.h"
+#include "ultima/ultima6/files/u6_lzw.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/sound/sound_manager.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/converse_interpret.h"
+#include "ultima/ultima6/core/converse_speech.h"
+#include "ultima/ultima6/core/converse_gump.h"
+#include "ultima/ultima6/core/converse.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/core/background.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -183,10 +179,10 @@ void Converse::load_conv(const std::string &convfilename) {
 uint32 Converse::get_script_num(uint8 a) {
 	if (gametype == NUVIE_GAME_U6) {
 		if (a > 200) { // (quick fix for U6: anything over 200 is a temporary npc)
-			Actor *npc = actors->get_actor(a);
-			if (npc->get_obj_n() == 373) // OBJ_U6_WISP
+			Actor *npcP = actors->get_actor(a);
+			if (npcP->get_obj_n() == 373) // OBJ_U6_WISP
 				a = 201;
-			else if (npc->get_obj_n() == 382) // OBJ_U6_GUARD
+			else if (npcP->get_obj_n() == 382) // OBJ_U6_GUARD
 				a = 202;
 		}
 		//else if(a == 188)  // U6: temp. fix for shrines
@@ -470,7 +466,7 @@ const char *Converse::get_svar(uint8 varnum) {
  */
 void Converse::set_svar(uint8 varnum, const char *set) {
 	if (varnum <= U6TALK_VAR__LAST_)
-		variables[varnum].sv = strdup(set);
+		variables[varnum].sv = scumm_strdup(set);
 }
 
 
@@ -547,7 +543,7 @@ void Converse::poll_input(const char *allowed, bool nonblock) {
 	if (allowed_input)
 		free(allowed_input);
 	allowed_input = NULL;
-	allowed_input = (allowed && strlen(allowed)) ? strdup(allowed) : NULL;
+	allowed_input = (allowed && strlen(allowed)) ? scumm_strdup(allowed) : NULL;
 
 	scroll->set_input_mode(true, allowed_input, nonblock);
 	need_input = true;

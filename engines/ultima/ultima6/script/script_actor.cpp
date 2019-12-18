@@ -20,20 +20,20 @@
  *
  */
 
-#include <actors/Actor.h>
+//#include <actors/ultima/ultima6/actors/actor.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 
-#include "ScriptActor.h"
-#include "Player.h"
-#include "Game.h"
-#include "Effect.h"
-#include "ActorManager.h"
-#include "Actor.h"
-#include "ViewManager.h"
-#include "Converse.h"
-#include "UseCode.h"
-#include "PortraitView.h"
+#include "Scriptultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/player.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/effect.h"
+#include "ultima/ultima6/actors/actor_manager.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/core/converse.h"
+#include "ultima/ultima6/usecode/usecode.h"
+#include "ultima/ultima6/views/portrait_view.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -1120,7 +1120,7 @@ static int nscript_actor_kill(lua_State *L) {
 
 /***
 Call the C++ Actor::hit() method
-@function Actor.hit
+@function ultima/ultima6/actors/actor.hit
 @tparam Actor actor
 @int damage
 @within Actor
@@ -1322,7 +1322,7 @@ static int nscript_actor_show_portrait(lua_State *L) {
 /***
 Hide the actor's portrait.
 The party view is shown if in original UI mode.
-@function Actor.hide_portrait
+@function ultima/ultima6/actors/actor.hide_portrait
 @tparam Actor actor
 @within Actor
  */

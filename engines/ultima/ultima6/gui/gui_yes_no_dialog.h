@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_GUI_GUI_YES_NO_DIALOG_H
 #define ULTIMA6_GUI_GUI_YES_NO_DIALOG_H
 
-#include "GUI_Dialog.h"
+#include "ultima/ultima6/gui/gui_Dialog.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -51,7 +51,7 @@ public:
 
 	~GUI_YesNoDialog();
 
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
 };

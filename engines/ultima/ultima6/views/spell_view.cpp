@@ -20,30 +20,30 @@
  *
  */
 
-#include <cassert>
+//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "Screen.h"
+#include "ultima/ultima6/screen/screen.h"
 #include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "U6Bmp.h"
-#include "GUI.h"
-#include "GUI_button.h"
+#include "ultima/ultima6/files/u6_bmp.h"
+#include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/gui/gui_button.h"
 #include "DollWidget.h"
 #include "InventoryWidget.h"
-#include "SpellView.h"
-#include "Party.h"
-#include "Font.h"
-#include "Actor.h"
-#include "Event.h"
-#include "MapWindow.h"
-#include "MsgScroll.h"
-#include "UseCode.h"
-#include "ViewManager.h"
-#include "Script.h"
-#include "U6objects.h"
-#include "Magic.h"
-#include "Keys.h"
+#include "ultima/ultima6/views/spell_view.h"
+#include "ultima/ultima6/core/party.h"
+#include "ultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/usecode/usecode.h"
+#include "ultima/ultima6/views/view_manager.h"
+#include "ultima/ultima6/script/script.h"
+#include "ultima/ultima6/core/u6_objects.h"
+#include "ultima/ultima6/core/magic.h"
+#include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -355,7 +355,7 @@ void SpellView::event_mode_select_spell() {
 
 /* Move the cursor around
  */
-GUI_status SpellView::KeyDown(SDL_Keysym key) {
+GUI_status SpellView::KeyDown(Common::KeyState key) {
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 

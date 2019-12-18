@@ -23,7 +23,8 @@
 #ifndef ULTIMA6_CORE_FPS_COUNTER_H
 #define ULTIMA6_CORE_FPS_COUNTER_H
 
-#include "GUI_widget.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/fonts/font.h"
 
 namespace Ultima {
 namespace Ultima6 {

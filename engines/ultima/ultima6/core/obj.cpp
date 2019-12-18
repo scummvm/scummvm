@@ -20,13 +20,13 @@
  *
  */
 
-#include <string.h>
+//#include <string.h>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 
-#include "ObjManager.h"
-#include "Game.h"
-#include "U6objects.h"
+#include "ultima/ultima6/core/obj_manager.h"
+#include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/core/u6_objects.h"
 
 namespace Ultima {
 namespace Ultima6 {

@@ -4,10 +4,10 @@
 ** See Copyright Notice in lua.h
 */
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+//#include <stdarg.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
 
 #define lobject_c
 #define LUA_CORE
@@ -97,14 +97,14 @@ lua_Number luaO_arith(int op, lua_Number v1, lua_Number v2) {
 
 
 int luaO_hexavalue(int c) {
-	if (lisdigit(c)) return c - '0';
+	if (lCommon::isDigit(c)) return c - '0';
 	else return ltolower(c) - 'a' + 10;
 }
 
 
 #if !defined(lua_strx2number)
 
-#include <math.h>
+//#include <math.h>
 
 
 static int isneg(const char **s) {
@@ -153,9 +153,9 @@ static lua_Number lua_strx2number(const char *s, char **endptr) {
 		int neg1;
 		s++;  /* skip 'p' */
 		neg1 = isneg(&s);  /* signal */
-		if (!lisdigit(cast_uchar(*s)))
+		if (!lCommon::isDigit(cast_uchar(*s)))
 			goto ret;  /* must have at least one digit */
-		while (lisdigit(cast_uchar(*s)))  /* read exponent */
+		while (lCommon::isDigit(cast_uchar(*s)))  /* read exponent */
 			exp1 = exp1 * 10 + *(s++) - '0';
 		if (neg1) exp1 = -exp1;
 		e += exp1;

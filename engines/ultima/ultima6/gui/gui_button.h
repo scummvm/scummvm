@@ -25,8 +25,8 @@
 #ifndef ULTIMA6_GUI_GUI_BUTTON_H
 #define ULTIMA6_GUI_GUI_BUTTON_H
 
-#include "GUI_widget.h"
-#include "GUI_font.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/gui_font.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -51,15 +51,15 @@ class GUI_CallBack;
 /* color constants */
 
 // Button face color
-const Uint8 BF_R = 183, BF_G = 185, BF_B = 150;
+const uint8 BF_R = 183, BF_G = 185, BF_B = 150;
 // Button light color
-const Uint8 BL_R = 245, BL_G = 247, BL_B = 201;
+const uint8 BL_R = 245, BL_G = 247, BL_B = 201;
 // Button shadow color
-const Uint8 BS_R = 115, BS_G = 116, BS_B = 94;
+const uint8 BS_R = 115, BS_G = 116, BS_B = 94;
 // 2D Button inverse text color
-const Uint8 BI1_R = 255, BI1_G = 255, BI1_B = 255;
+const uint8 BI1_R = 255, BI1_G = 255, BI1_B = 255;
 // 2D Button inverse background color
-const Uint8 BI2_R = 0, BI2_G = 0, BI2_B = 0;
+const uint8 BI2_R = 0, BI2_G = 0, BI2_B = 0;
 
 #define GUI_BUTTON_DONT_FREE_SURFACES false
 
@@ -95,7 +95,7 @@ public:
 	/* Mouse hits activate us */
 	virtual GUI_status MouseDown(int x, int y, int button);
 	virtual GUI_status MouseUp(int x, int y, int button);
-	virtual GUI_status MouseMotion(int x, int y, Uint8 state);
+	virtual GUI_status MouseMotion(int x, int y, uint8 state);
 
 	/* Clickable or not ... */
 	virtual void Disable();

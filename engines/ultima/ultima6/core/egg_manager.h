@@ -24,9 +24,9 @@
 #define ULTIMA6_CORE_EGG_MANAGER_H
 
 #include "ultima/shared/std/string.h"
-#include <list>
+//#include <list>
 
-#include "ObjManager.h"
+#include "ultima/ultima6/core/obj_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {

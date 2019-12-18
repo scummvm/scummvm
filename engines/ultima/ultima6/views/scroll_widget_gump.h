@@ -23,13 +23,13 @@
 #ifndef ULTIMA6_VIEWS_SCROLL_WIDGET_GUMP_H
 #define ULTIMA6_VIEWS_SCROLL_WIDGET_GUMP_H
 
-#include "CallBack.h"
-#include "GUI_widget.h"
-#include "MsgScroll.h"
-#include "Font.h"
-#include <stdarg.h>
+#include "ultima/ultima6/misc/call_back.h"
+#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/fonts/font.h"
+//#include <stdarg.h>
 
-#include <list>
+//#include <list>
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 
@@ -91,7 +91,7 @@ public:
 
 	bool can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token);
 
-	GUI_status KeyDown(SDL_Keysym key);
+	GUI_status KeyDown(Common::KeyState key);
 	GUI_status MouseDown(int x, int y, int button);
 	GUI_status MouseUp(int x, int y, int button) {
 		return GUI_YUM;    // otherwise we do Msgscroll::MouseUp
