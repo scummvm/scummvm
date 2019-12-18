@@ -91,7 +91,6 @@
 #include "ultima/ultima8/world/actors/actor_bark_notify_process.h" // guess
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
-#include "ultima/ultima8/world/missile_process.h"
 #include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
@@ -366,8 +365,6 @@ void Ultima8Engine::startup() {
 		ProcessLoader<PathfinderProcess>::load);
 	kernel->addProcessLoader("SpriteProcess",
 		ProcessLoader<SpriteProcess>::load);
-	kernel->addProcessLoader("MissileProcess",
-		ProcessLoader<MissileProcess>::load);
 	kernel->addProcessLoader("CameraProcess",
 		ProcessLoader<CameraProcess>::load);
 	kernel->addProcessLoader("MusicProcess",
