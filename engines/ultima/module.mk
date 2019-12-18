@@ -397,7 +397,6 @@ MODULE_OBJS += \
 	ultima8/world/item_sorter.o \
 	ultima8/world/map.o \
 	ultima8/world/map_glob.o \
-	ultima8/world/missile_process.o \
 	ultima8/world/missile_tracker.o \
 	ultima8/world/monster_egg.o \
 	ultima8/world/split_item_process.o \
