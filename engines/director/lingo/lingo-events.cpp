@@ -132,7 +132,7 @@ void Lingo::primaryEventHandler(LEvent event) {
 	}
 #ifdef DEBUG_DONTPASSEVENT
 	// #define DEBUG_DONTPASSEVENT to simulate raising of the dontPassEvent flag
-	g_lingo->_dontPassEvent = true;
+	_dontPassEvent = true;
 	debugC(3, kDebugLingoExec, "STUB: primaryEventHandler raising dontPassEvent");
 #else
 	debugC(3, kDebugLingoExec, "STUB: primaryEventHandler not raising dontPassEvent");
@@ -157,8 +157,8 @@ void Lingo::processInputEvent(LEvent event) {
 
 	primaryEventHandler(event);
 
-	if (g_lingo->_dontPassEvent) {
-		g_lingo->_dontPassEvent = false;
+	if (_dontPassEvent) {
+		_dontPassEvent = false;
 
 		return;
 	}
@@ -166,23 +166,23 @@ void Lingo::processInputEvent(LEvent event) {
 	if (_vm->getVersion() > 3) {
 		if (true) {
 			// TODO: Check whether occurring over a sprite
-			g_lingo->processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
+			processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_scriptId);
 		}
-		g_lingo->processEvent(event, kCastScript, currentFrame->_sprites[spriteId]->_castId);
-		g_lingo->processEvent(event, kFrameScript, score->_frames[score->getCurrentFrame()]->_actionId);
+		processEvent(event, kCastScript, currentFrame->_sprites[spriteId]->_castId);
+		processEvent(event, kFrameScript, score->_frames[score->getCurrentFrame()]->_actionId);
 		// TODO: Is the kFrameScript call above correct?
 	} else if (event == kEventMouseUp) {
 		// Frame script overrides sprite script
 		if (!currentFrame->_sprites[spriteId]->_scriptId) {
-			g_lingo->processEvent(kEventNone, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + 1024);
-			g_lingo->processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + 1024);
+			processEvent(kEventNone, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + 1024);
+			processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + 1024);
 		} else {
-			g_lingo->processEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId);
+			processEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId);
 		}
 	}
 	if (event == kEventKeyDown) {
 		// TODO: is the above condition necessary or useful?
-		g_lingo->processEvent(event, kGlobalScript, 0);
+		processEvent(event, kGlobalScript, 0);
 	}
 
 	runMovieScript(event);
@@ -218,8 +218,8 @@ void Lingo::processFrameEvent(LEvent event) {
 		primaryEventHandler(event);
 	}
 
-	if (g_lingo->_dontPassEvent) {
-		g_lingo->_dontPassEvent = false;
+	if (_dontPassEvent) {
+		_dontPassEvent = false;
 
 		return;
 	}
@@ -244,7 +244,8 @@ void Lingo::processGenericEvent(LEvent event) {
 		id = 0;
 	else
 		warning("STUB: processGenericEvent called for something else than kEventStart or kEventPrepareMovie, additional logic probably needed");
-	g_lingo->processEvent(event, kMovieScript, id);
+
+	processEvent(event, kMovieScript, id);
 }
 
 void Lingo::processSpriteEvent(LEvent event) {
@@ -254,7 +255,7 @@ void Lingo::processSpriteEvent(LEvent event) {
 		// TODO: Check if this is also possibly a kSpriteScript?
 		for (uint16 i = 0; i < CHANNEL_COUNT; i++)
 			if (currentFrame->_sprites[i]->_enabled)
-				g_lingo->processEvent(event, kCastScript, currentFrame->_sprites[i]->_scriptId);
+				processEvent(event, kCastScript, currentFrame->_sprites[i]->_scriptId);
 
 	} else {
 		warning("STUB: processSpriteEvent called for something else than kEventBeginSprite, additional logic probably needed");
