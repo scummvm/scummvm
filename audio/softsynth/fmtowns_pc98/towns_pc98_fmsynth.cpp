@@ -1173,7 +1173,7 @@ int TownsPC98_FmSynth::readBuffer(int16 *buffer, const int numSamples) {
 
 					_timers[i].enabled = _registers[0x27][0] & (4 << i);
 				}
-				render = MIN(render, _timers[i].smpTillCb);
+				render = MIN<int>(render, _timers[i].smpTillCb);
 			}
 		}
 
