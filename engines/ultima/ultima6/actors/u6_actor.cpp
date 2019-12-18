@@ -28,8 +28,8 @@
 
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/usecode/u6_usecode.h"
-#include "SchedPathFinder.h"
-#include "U6AStarPath.h"
+#include "ultima/ultima6/pathfinder/sched_path_finder.h"
+#include "ultima/ultima6/pathfinder/u6_astar_path.h"
 #include "ultima/ultima6/core/msg_scroll.h"
 #include "U6ultima/ultima6/actors/actor.h"
 
@@ -40,7 +40,7 @@
 #include "ultima/ultima6/core/converse.h"
 #include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/core/effect.h"
-#include "CombatPathFinder.h"
+#include "ultima/ultima6/pathfinder/combat_path_finder.h"
 
 #include "U6ActorTypes.h"
 #include "ultima/ultima6/actors/u6_work_types.h"

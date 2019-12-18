@@ -21,8 +21,8 @@
  */
 
 #include "ultima/ultima6/core/map.h"
-#include "DirFinder.h"
-#include "SeekPath.h"
+#include "ultima/ultima6/pathfinder/dir_finder.h"
+#include "ultima/ultima6/pathfinder/seek_path.h"
 
 namespace Ultima {
 namespace Ultima6 {

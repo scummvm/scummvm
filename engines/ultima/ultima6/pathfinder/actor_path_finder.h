@@ -23,8 +23,8 @@
 #ifndef ULTIMA6_PATHFINDER_ACTOR_PATH_FINDER_H
 #define ULTIMA6_PATHFINDER_ACTOR_PATH_FINDER_H
 
-#include "PathFinder.h"
-#include "DirFinder.h"
+#include "ultima/ultima6/pathfinder/path_finder.h"
+#include "ultima/ultima6/pathfinder/dir_finder.h"
 
 namespace Ultima {
 namespace Ultima6 {

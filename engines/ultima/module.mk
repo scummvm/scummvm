@@ -24,7 +24,17 @@ MODULE_OBJS += \
 	ultima6/misc/iavl_tree.o \
 	ultima6/misc/u6_line_walker.o \
 	ultima6/misc/u6_list.o \
-	ultima6/misc/u6_misc.o
+	ultima6/misc/u6_misc.o \
+	ultima6/pathfinder/actor_path_finder.o \
+	ultima6/pathfinder/astar_path.o \
+	ultima6/pathfinder/combat_path_finder.o \
+	ultima6/pathfinder/dir_finder.o \
+	ultima6/pathfinder/party_path_finder.o \
+	ultima6/pathfinder/path.o \
+	ultima6/pathfinder/path_finder.o \
+	ultima6/pathfinder/sched_path_finder.o \
+	ultima6/pathfinder/seek_path.o \
+	ultima6/pathfinder/u6_astar_path.o
 endif
 
 ifdef ENABLE_ULTIMA8

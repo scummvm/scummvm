@@ -24,7 +24,7 @@
 #define ULTIMA6_PATHFINDER_SEEK_PATH_H
 
 #include "ultima/shared/std/containers.h"
-#include "Path.h"
+#include "ultima/ultima6/pathfinder/path.h"
 
 namespace Ultima {
 namespace Ultima6 {
