@@ -82,6 +82,8 @@ static void traceAltInfo(CONTEXT, AltInfo *alt) {
 		CALL2(traceInstanceAndItsClass, globalParameters[alt->parameter - 1].instance, alt->_class)
 		break;
 	}
+	default:
+		break;
 	}
 }
 
@@ -128,6 +130,7 @@ static void traceVerbExecution(CONTEXT, AltInfo *alt) {
 			printf(" (AFTER)");
 			break;
 		case Q_DEFAULT:
+		default:
 			break;
 		}
 		printf(":>\n");
