@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "GUI.h"
 #include "GUI_button.h"
 #include "ultima/ultima6/conf/configuration.h"
@@ -84,7 +84,7 @@ bool MapEditorView::init(Screen *tmp_screen, void *view_manager, uint16 x, uint1
 }
 
 void MapEditorView::Display(bool full_redraw) {
-	SDL_Rect src, dst;
+	Common::Rect src, dst;
 	src.w = 16;
 	src.h = 16;
 	dst.w = 16;

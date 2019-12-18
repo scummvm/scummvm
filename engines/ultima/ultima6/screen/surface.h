@@ -28,14 +28,14 @@
 namespace Ultima {
 namespace Ultima6 {
 
-struct SDL_Surface;
+struct Graphics::ManagedSurface;
 struct SDL_PixelFormat;
 class OpenGL;
 
 class RenderSurface {
 	uint8   *buffer;                // If the buffer is created, this is it
 	uint16  *zbuffer_priv;
-	SDL_Surface *sdl_surface;
+	Graphics::ManagedSurface *sdl_surface;
 public:
 	OpenGL  *opengl;                // OpenGL surface
 
@@ -72,7 +72,7 @@ public:
 	RenderSurface(uint32 width, uint32 height, uint32 bpp, sint32 gb = 0);
 
 	// Constructor for sdl surface
-	RenderSurface(SDL_Surface *surf);
+	RenderSurface(Graphics::ManagedSurface *surf);
 
 	// Constructor for opengl surface
 	RenderSurface(OpenGL *ogl);
@@ -132,7 +132,7 @@ public:
 
 	//FIX virtual void display8(uint8 *buf, int x, int y) = 0;
 
-	SDL_Surface *get_sdl_surface();
+	Graphics::ManagedSurface *get_sdl_surface();
 	const unsigned char *get_pixels();
 
 private:
@@ -147,7 +147,7 @@ private:
 
 RenderSurface *CreateRenderSurface(uint32 width, uint32 height, uint32 bpp, uint8 *p);
 RenderSurface *CreateRenderSurface(uint32 width, uint32 height, uint32 bpp, sint32 gb = 0);
-RenderSurface *CreateRenderSurface(SDL_Surface *surf);
+RenderSurface *CreateRenderSurface(Graphics::ManagedSurface *surf);
 RenderSurface *CreateRenderSurface(OpenGL *ogl);
 
 } // End of namespace Ultima6

@@ -38,7 +38,7 @@
 typedef enum { AXES_PAIR1, AXES_PAIR2, AXES_PAIR3, AXES_PAIR4, UNHANDLED_AXES_PAIR } joy_axes_pairs;
 #endif
 
-#include <vector>
+#include "ultima/shared/std/containers.h"
 #include <map>
 #include "ultima/shared/std/string.h"
 

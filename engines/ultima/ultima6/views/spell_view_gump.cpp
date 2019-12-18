@@ -22,7 +22,7 @@
 
 #include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "Event.h"
 #include "GUI.h"
 #include "GUI_button.h"
@@ -59,7 +59,7 @@ bool SpellViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint1
 	std::string imagefile;
 	std::string path;
 
-	SDL_Surface *image, *image1;
+	Graphics::ManagedSurface *image, *image1;
 
 	build_path(datadir, "images", path);
 	datadir = path;
@@ -132,11 +132,11 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 	for (i = 0; i < count; i++) {
 		sprintf(filename, "spellbook_spell_%03d.bmp", cur_spells[i]);
 		build_path(datadir, filename, imagefile);
-		SDL_Surface *spell_image = bmp.getSdlSurface32(imagefile);
+		Graphics::ManagedSurface *spell_image = bmp.getSdlSurface32(imagefile);
 		if (spell_image == NULL) {
 			DEBUG(0, LEVEL_ERROR, "Failed to load %s from '%s' directory\n", filename, datadir.c_str());
 		} else {
-			SDL_Rect dst;
+			Common::Rect dst;
 
 			dst.w = 58;
 			dst.h = 13;
@@ -164,9 +164,9 @@ void SpellViewGump::loadCircleString(std::string datadir) {
 	sprintf(filename, "%d.bmp", level);
 	build_path(datadir, filename, imagefile);
 
-	SDL_Surface *s = bmp.getSdlSurface32(imagefile);
+	Graphics::ManagedSurface *s = bmp.getSdlSurface32(imagefile);
 	if (s != NULL) {
-		SDL_Rect dst;
+		Common::Rect dst;
 		dst.x = 70;
 		dst.y = 7;
 		dst.w = 4;
@@ -193,9 +193,9 @@ void SpellViewGump::loadCircleSuffix(std::string datadir, std::string image) {
 	std::string imagefile;
 
 	build_path(datadir, image, imagefile);
-	SDL_Surface *s = bmp.getSdlSurface32(imagefile);
+	Graphics::ManagedSurface *s = bmp.getSdlSurface32(imagefile);
 	if (s != NULL) {
-		SDL_Rect dst;
+		Common::Rect dst;
 		dst.x = 75;
 		dst.y = 7;
 		dst.w = 7;
@@ -223,7 +223,7 @@ void SpellViewGump::printSpellQty(uint8 spell_num, uint16 x, uint16 y) {
 void SpellViewGump::Display(bool full_redraw) {
 //display_level_text();
 //display_spell_list_text();
-	SDL_Rect dst;
+	Common::Rect dst;
 	dst = area;
 	dst.w = 162;
 	dst.h = 108;
@@ -321,7 +321,7 @@ GUI_status SpellViewGump::MouseDown(int x, int y, int button) {
 	bool can_target = true; // maybe put this check into GUI_widget
 	if (HitRect(x, y)) {
 		if (bg_image) {
-			Uint32 pixel = sdl_getpixel(bg_image, x - area.x, y - area.y);
+			uint32 pixel = sdl_getpixel(bg_image, x - area.x, y - area.y);
 			if (pixel != bg_color_key)
 				can_target = false;
 		} else

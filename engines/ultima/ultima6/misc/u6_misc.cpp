@@ -20,18 +20,14 @@
  *
  */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <dirent.h>
-
-#include <cstdio>
-#include <cstdlib>
-#include <string.h>
-#include <vector>
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/misc.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/conf/configuration.h"
+#include "common/file.h"
+#include "common/fs.h"
+#include "common/str.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -42,8 +38,7 @@ bool find_casesensitive_path(std::string path, std::string filename, std::string
 bool find_path(std::string path, std::string &dir_str);
 
 void Tokenise(const std::string &str, std::vector<std::string> &tokens, char delimiter = ' ') {
-	std::string delimiters = string();
-	delimiters = delimiter;
+	std::string delimiters(delimiter);
 
 	// Skip delimiters at beginning.
 	string::size_type lastPos = str.find_first_not_of(delimiters, 0);
@@ -95,18 +90,7 @@ void config_get_path(Configuration *config, std::string filename, std::string &p
 
 	tmp_path = game_dir + filename;
 
-	struct stat s;
-
-	if (stat(tmp_path.c_str(), &s) == 0) {
-		path = tmp_path;
-		return;
-	}
-
-	find_casesensitive_path(game_dir, filename, tmp_path);
-
 	path = tmp_path;
-
-	return;
 }
 
 bool find_casesensitive_path(std::string path, std::string filename, std::string &new_path) {
@@ -120,7 +104,7 @@ bool find_casesensitive_path(std::string path, std::string filename, std::string
 	for (dir_iter = directories.begin(); dir_iter != directories.end();) {
 		string dir = *dir_iter;
 
-		printf("%s, ", dir.c_str());
+		::debug("%s, ", dir.c_str());
 
 		if (find_path(tmp_path, dir) == false)
 			return false;
@@ -135,11 +119,14 @@ bool find_casesensitive_path(std::string path, std::string filename, std::string
 
 	new_path = tmp_path;
 
-	printf("\nproper path = %s\n", new_path.c_str());
+	::debug("\nproper path = %s", new_path.c_str());
 	return true;
 }
 
 bool find_path(std::string path, std::string &dir_str) {
+	dir_str = path;
+	return true;
+#if 0
 	DIR *dir;
 	struct dirent *item;
 
@@ -148,14 +135,15 @@ bool find_path(std::string path, std::string &dir_str) {
 		return false;
 
 	for (item = readdir(dir); item != NULL; item = readdir(dir)) {
-		printf("trying %s, want %s\n", item->d_name, dir_str.c_str());
-		if (strlen(item->d_name) == dir_str.length() && strcasecmp(item->d_name, dir_str.c_str()) == 0) {
+		debug("trying %s, want %s\n", item->d_name, dir_str.c_str());
+		if (strlen(item->d_name) == dir_str.length() && Common::scumm_stricmp(item->d_name, dir_str.c_str()) == 0) {
 			dir_str = item->d_name;
 			return true;
 		}
 	}
 
 	return false;
+#endif
 }
 
 void stringToUpper(std::string &str) {
@@ -171,6 +159,7 @@ void stringToLower(std::string &str) {
 }
 
 int mkdir_recursive(std::string path, int mode) {
+#ifdef TODO
 	vector<string> directories;
 	string tmp_path;
 
@@ -184,7 +173,7 @@ int mkdir_recursive(std::string path, int mode) {
 	for (dir_iter = directories.begin(); dir_iter != directories.end();) {
 		string dir = *dir_iter;
 
-		printf("%s, ", dir.c_str());
+		debug("%s, ", dir.c_str());
 
 		tmp_path += dir;
 		tmp_path += U6PATH_DELIMITER;
@@ -201,6 +190,9 @@ int mkdir_recursive(std::string path, int mode) {
 	}
 
 	return 0;
+#else
+	error("TODO");
+#endif
 }
 
 //return the uint8 game_type from a char string
@@ -245,24 +237,12 @@ bool has_fmtowns_support(Configuration *config) {
 }
 
 bool directory_exists(const char *directory) {
-	struct stat sb;
-
-	if (stat(directory, &sb) != 0)
-		return false;
-
-	if (!(sb.st_mode | S_IFDIR))
-		return false;
-
-	return true;
+	Common::FSNode dir(directory);
+	return dir.exists();
 }
 
 bool file_exists(const char *path) {
-	FILE *f = fopen(path, "rb");
-	if (f == NULL)
-		return false;
-
-	fclose(f);
-	return true;
+	return Common::File::exists(path);
 }
 
 void print_b(DebugLevelType level, uint8 num) {
@@ -323,26 +303,26 @@ void print_flags(DebugLevelType level, uint8 num, const char *f[8]) {
 /* Where rect1 and rect2 merge, subtract and copy that rect to sub_rect.
  * Returns false if the rectangles don't intersect.
  */
-bool subtract_rect(SDL_Rect *rect1, SDL_Rect *rect2, SDL_Rect *sub_rect) {
-	uint16 rect1_x2 = rect1->x + rect1->w, rect1_y2 = rect1->y + rect1->h;
-	uint16 rect2_x2 = rect2->x + rect2->w, rect2_y2 = rect2->y + rect2->h;
+bool subtract_rect(Common::Rect *rect1, Common::Rect *rect2, Common::Rect *sub_rect) {
+	uint16 rect1_x2 = rect1->right, rect1_y2 = rect1->bottom;
+	uint16 rect2_x2 = rect2->right, rect2_y2 = rect2->bottom;
 	uint16 x1, x2, y1, y2;
 
-	if (line_in_rect(rect1->x, rect1->y, rect1_x2, rect1->y, rect2)
-	        || line_in_rect(rect1_x2, rect1->y, rect1_x2, rect1_y2, rect2)
-	        || line_in_rect(rect1->x, rect1->y, rect1->x, rect1_y2, rect2)
-	        || line_in_rect(rect1->x, rect1_y2, rect1_x2, rect1_y2, rect2)) {
-		x1 = rect2->x >= rect1->x ? rect2->x : rect1->x;
-		y1 = rect2->y >= rect1->y ? rect2->y : rect1->y;
+	if (line_in_rect(rect1->left, rect1->top, rect1_x2, rect1->top, rect2)
+	        || line_in_rect(rect1_x2, rect1->top, rect1_x2, rect1_y2, rect2)
+	        || line_in_rect(rect1->left, rect1->top, rect1->left, rect1_y2, rect2)
+	        || line_in_rect(rect1->left, rect1_y2, rect1_x2, rect1_y2, rect2)) {
+		x1 = rect2->left >= rect1->left ? rect2->left : rect1->left;
+		y1 = rect2->top >= rect1->top ? rect2->top : rect1->top;
 		x2 = rect2_x2 <= rect1_x2 ? rect2_x2 : rect1_x2;
 		y2 = rect2_y2 <= rect1_y2 ? rect2_y2 : rect1_y2;
 	} else
 		return (false);
 	if (sub_rect) { // you can perform test without returning a subtraction
-		sub_rect->x = x1;
-		sub_rect->y = y1;
-		sub_rect->w = x2 - x1;
-		sub_rect->h = y2 - y1;
+		sub_rect->left = x1;
+		sub_rect->top = y1;
+		sub_rect->setWidth(x2 - x1);
+		sub_rect->setHeight(y2 - y1);
 	}
 	return (true);
 }
@@ -684,7 +664,7 @@ void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, ui
 }
 
 bool string_i_compare(const std::string &s1, const std::string &s2) {
-	return strcasecmp(s1.c_str(), s2.c_str()) == 0;
+	return scumm_stricmp(s1.c_str(), s2.c_str()) == 0;
 }
 
 void *nuvie_realloc(void *ptr, size_t size) {
@@ -695,10 +675,10 @@ void *nuvie_realloc(void *ptr, size_t size) {
 }
 
 
-Uint32 sdl_getpixel(SDL_Surface *surface, int x, int y) {
-	int bpp = surface->format->BytesPerPixel;
+uint32 sdl_getpixel(Graphics::ManagedSurface *surface, int x, int y) {
+	int bpp = surface->format.bytesPerPixel;
 	/* Here p is the address to the pixel we want to retrieve */
-	Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+	byte *p = (byte *)surface->getBasePtr(x, y);
 
 	switch (bpp) {
 	case 1:
@@ -706,18 +686,15 @@ Uint32 sdl_getpixel(SDL_Surface *surface, int x, int y) {
 		break;
 
 	case 2:
-		return *(Uint16 *)p;
+		return *(uint16 *)p;
 		break;
 
 	case 3:
-		if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-			return p[0] << 16 | p[1] << 8 | p[2];
-		else
-			return p[0] | p[1] << 8 | p[2] << 16;
+		error("TODO: RGB24 unsupported");
 		break;
 
 	case 4:
-		return *(Uint32 *)p;
+		return *(uint32 *)p;
 		break;
 
 	default:
@@ -770,7 +747,8 @@ void scale_rect_8bit(unsigned char *Source, unsigned char *Target, int SrcWidth,
 }
 
 bool has_file_extension(const char *filename, const char *extension) {
-	if (strlen(filename) > strlen(extension) && strcasecmp((const char *)&filename[strlen(filename) - 4], extension) == 0)
+	if (strlen(filename) > strlen(extension) &&
+			scumm_stricmp((const char *)&filename[strlen(filename) - 4], extension) == 0)
 		return true;
 
 	return false;

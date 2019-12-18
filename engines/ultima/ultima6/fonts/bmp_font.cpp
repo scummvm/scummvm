@@ -113,8 +113,8 @@ uint16 BMPFont::getCharWidth(uint8 c) {
 
 uint16 BMPFont::drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
                          uint8 color) {
-	SDL_Rect src;
-	SDL_Rect dst;
+	Common::Rect src;
+	Common::Rect dst;
 
 	if (dual_font_mode) {
 		if (char_num == '<') {

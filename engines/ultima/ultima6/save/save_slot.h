@@ -54,7 +54,7 @@ protected:
 	std::string filename;
 	std::string save_description;
 
-	SDL_Surface *thumbnail;
+	Graphics::ManagedSurface *thumbnail;
 
 	GUI_TextInput *textinput_widget;
 

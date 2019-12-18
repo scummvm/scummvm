@@ -33,11 +33,11 @@ namespace Ultima6 {
 
 /* the check marks bitmap */
 //#include "the_checker.h"
-SDL_Surface *checkmarks = NULL;
+Graphics::ManagedSurface *checkmarks = NULL;
 
 
-GUI_Button:: GUI_Button(void *data, int x, int y, SDL_Surface *image,
-                        SDL_Surface *image2, GUI_CallBack *callback, bool free_surfaces)
+GUI_Button:: GUI_Button(void *data, int x, int y, Graphics::ManagedSurface *image,
+                        Graphics::ManagedSurface *image2, GUI_CallBack *callback, bool free_surfaces)
 	: GUI_Widget(data, x, y, image->w, image->h) {
 	callback_object = callback;
 
@@ -151,7 +151,7 @@ void GUI_Button::ChangeTextButton(int x, int y, int w, int h, const char *text, 
 
 /* Show the widget  */
 void GUI_Button:: Display(bool full_redraw) {
-	SDL_Rect src, dest = area;
+	Common::Rect src, dest = area;
 
 	if (button) {
 		if ((button2 != NULL) && ((pressed[0]) == 1 || is_highlighted))
@@ -210,7 +210,7 @@ void GUI_Button:: Display(bool full_redraw) {
 						pointer += 6;
 						break;
 					case 4:
-						*((Uint32 *)(pointer)) = (Uint32)pixel;
+						*((uint32 *)(pointer)) = (uint32)pixel;
 						pointer += 8;
 						break;
 					}
@@ -275,23 +275,23 @@ void GUI_Button::Enable(int flag) {
 	Redraw();
 }
 
-SDL_Surface *GUI_Button::CreateTextButtonImage(int style, const char *text, int alignment) {
-	SDL_Rect fillrect;
+Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const char *text, int alignment) {
+	Common::Rect fillrect;
 	int th, tw;
 	int tx = 0, ty = 0;
 	char *duptext = 0;
 
-//  SDL_Surface *img=SDL_AllocSurface(SDL_SWSURFACE,area.w,area.h,
+//  Graphics::ManagedSurface *img=SDL_AllocSurface(SDL_SWSURFACE,area.w,area.h,
 //				    16,31 << 11,63 << 5,31,0);
-	SDL_Surface *img = SDL_CreateRGBSurface(SDL_SWSURFACE, area.w, area.h,
+	Graphics::ManagedSurface *img = SDL_CreateRGBSurface(SDL_SWSURFACE, area.w, area.h,
 	                                        16, 31 << 11, 63 << 5, 31, 0);
 
 	if (img == NULL) return NULL;
 
-	Uint32 color1 = SDL_MapRGB(img->format, BL_R, BL_G, BL_B);
-	Uint32 color2 = SDL_MapRGB(img->format, BS_R, BS_G, BS_B);
-	Uint32 color3 = SDL_MapRGB(img->format, BF_R, BF_G, BF_B);
-	Uint32 color4 = SDL_MapRGB(img->format, BI2_R, BI2_G, BI2_B);
+	uint32 color1 = SDL_MapRGB(img->format, BL_R, BL_G, BL_B);
+	uint32 color2 = SDL_MapRGB(img->format, BS_R, BS_G, BS_B);
+	uint32 color3 = SDL_MapRGB(img->format, BF_R, BF_G, BF_B);
+	uint32 color4 = SDL_MapRGB(img->format, BI2_R, BI2_G, BI2_B);
 
 
 	buttonFont->SetColoring(0, 0, 0);

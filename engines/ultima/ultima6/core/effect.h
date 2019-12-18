@@ -421,14 +421,14 @@ protected:
 
 	MapWindow *map_window;
 	Screen *screen; // for PIXELATED, the overlay is blitted to the screen...
-	SDL_Rect *viewport; // ...at the MapWindow coordinates set here
-	SDL_Surface *overlay; // this is what gets blitted
+	Common::Rect *viewport; // ...at the MapWindow coordinates set here
+	Graphics::ManagedSurface *overlay; // this is what gets blitted
 
 	FadeType fade_type; // PIXELATED[_ONTOP] or CIRCLE
 	FadeDirection fade_dir; // IN (removing color) or OUT (adding color)
 	uint32 fade_speed; // meaning of this depends on fade_type
 	uint8 pixelated_color; // color from palette that is being faded to/from
-	SDL_Surface *fade_from; // image being faded from or to (or NULL if coloring)
+	Graphics::ManagedSurface *fade_from; // image being faded from or to (or NULL if coloring)
 	uint16 fade_x, fade_y; // start fade from this point (to fade_from size)
 
 	uint32 evtime, prev_evtime; // time of last message to callback()
@@ -437,8 +437,8 @@ protected:
 
 public:
 	FadeEffect(FadeType fade, FadeDirection dir, uint32 color = 0, uint32 speed = 0);
-	FadeEffect(FadeType fade, FadeDirection dir, SDL_Surface *capture, uint32 speed = 0);
-	FadeEffect(FadeType fade, FadeDirection dir, SDL_Surface *capture, uint16 x, uint16 y, uint32 speed = 0);
+	FadeEffect(FadeType fade, FadeDirection dir, Graphics::ManagedSurface *capture, uint32 speed = 0);
+	FadeEffect(FadeType fade, FadeDirection dir, Graphics::ManagedSurface *capture, uint16 x, uint16 y, uint32 speed = 0);
 	~FadeEffect();
 	virtual uint16 callback(uint16 msg, CallBack *caller, void *data);
 
@@ -450,7 +450,7 @@ public:
 	void delete_self();
 
 protected:
-	void init(FadeType fade, FadeDirection dir, uint32 color, SDL_Surface *capture, uint16 x, uint16 y, uint32 speed);
+	void init(FadeType fade, FadeDirection dir, uint32 color, Graphics::ManagedSurface *capture, uint16 x, uint16 y, uint32 speed);
 	void init_pixelated_fade();
 	void init_circle_fade();
 
@@ -548,7 +548,7 @@ protected:
 class XorEffect : public TimedEffect {
 	MapWindow *map_window;
 	uint32 length;
-	SDL_Surface *capture; // this is what gets blitted
+	Graphics::ManagedSurface *capture; // this is what gets blitted
 
 	void xor_capture(uint8 mod);
 	void init_effect();
@@ -569,7 +569,7 @@ class U6WhitePotionEffect : public TimedEffect {
 	MapWindow *map_window;
 	uint8 state; // 0=start, 1=eff1, 2=eff2, 3=x-ray, 4=complete
 	uint32 start_length, eff1_length, eff2_length, xray_length;
-	SDL_Surface *capture; // this is what gets blitted
+	Graphics::ManagedSurface *capture; // this is what gets blitted
 	Obj *potion; // allows effect to call usecode and delete object
 
 	void xor_capture(uint8 mod);
@@ -655,7 +655,7 @@ const uint8 peer_tile[PEER_TILEW * PEER_TILEW] = {
  */
 class PeerEffect : public PauseEffect {
 	MapWindow *map_window;
-	SDL_Surface *overlay; // this is what gets blitted
+	Graphics::ManagedSurface *overlay; // this is what gets blitted
 	Obj *gem; // allows effect to call usecode and delete object
 	MapCoord area; // area to display (top-left corner)
 	uint8 tile_trans; // peer_tile transparency mask (0 or 1)

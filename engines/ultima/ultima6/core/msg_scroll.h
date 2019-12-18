@@ -43,7 +43,7 @@
 #define MSGSCROLL_NO_MAP_DISPLAY false
 
 #include <list>
-#include <vector>
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima6 {

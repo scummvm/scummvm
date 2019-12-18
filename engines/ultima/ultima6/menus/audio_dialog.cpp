@@ -38,7 +38,7 @@
 #include "Keys.h"
 #include "Party.h"
 #include "Converse.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include <math.h>
 
 namespace Ultima {

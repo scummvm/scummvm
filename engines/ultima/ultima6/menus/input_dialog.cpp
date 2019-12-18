@@ -39,7 +39,7 @@
 #include "PartyView.h"
 #include "ViewManager.h"
 #include "CommandBarNewUI.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "Keys.h"
 
 namespace Ultima {

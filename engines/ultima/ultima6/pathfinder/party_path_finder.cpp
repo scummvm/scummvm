@@ -21,8 +21,8 @@
  */
 
 #include <cassert>
-#include <vector>
-#include "U6misc.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "Actor.h"
 #include "Party.h"
 #include "SeekPath.h"

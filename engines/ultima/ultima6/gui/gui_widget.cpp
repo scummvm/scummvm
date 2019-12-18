@@ -197,7 +197,7 @@ GUI_Widget:: SetRect(int x, int y, int w, int h) {
 	}
 }
 void
-GUI_Widget:: SetRect(SDL_Rect **bounds) {
+GUI_Widget:: SetRect(Common::Rect **bounds) {
 	int minx, maxx;
 	int miny, maxy;
 	int i, v;
@@ -235,7 +235,7 @@ int GUI_Widget::HitRect(int x, int y) {
 	return (HitRect(x, y, area));
 }
 
-int GUI_Widget::HitRect(int x, int y, SDL_Rect &rect) {
+int GUI_Widget::HitRect(int x, int y, Common::Rect &rect) {
 	int hit;
 
 	hit = 1;

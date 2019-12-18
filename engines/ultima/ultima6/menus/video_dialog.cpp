@@ -30,7 +30,7 @@
 #include "GUI_TextToggleButton.h"
 #include "GUI_CallBack.h"
 #include "GUI_area.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "Dither.h"
 #include "Scale.h"
 #include "Screen.h"

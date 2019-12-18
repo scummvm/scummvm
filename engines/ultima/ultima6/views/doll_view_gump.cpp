@@ -22,7 +22,7 @@
 
 #include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "Event.h"
 #include "GUI.h"
 #include "GUI_button.h"
@@ -75,7 +75,7 @@ bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16
 	std::string imagefile;
 	std::string path;
 
-	SDL_Surface *image, *image1;
+	Graphics::ManagedSurface *image, *image1;
 
 	build_path(datadir, "images", path);
 	datadir = path;
@@ -139,7 +139,7 @@ bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16
 	return true;
 }
 
-void DollViewGump::setColorKey(SDL_Surface *image) {
+void DollViewGump::setColorKey(Graphics::ManagedSurface *image) {
 	if (image) {
 		bg_color_key = SDL_MapRGB(image->format, 0xf1, 0x0f, 0xc4);
 		SDL_SetColorKey(image, SDL_TRUE, bg_color_key);
@@ -236,7 +236,7 @@ GUI_status DollViewGump::set_cursor_pos(gumpCursorPos pos) {
 void DollViewGump::Display(bool full_redraw) {
 //display_level_text();
 //display_spell_list_text();
-	SDL_Rect dst;
+	Common::Rect dst;
 	dst = area;
 	dst.w = 108;
 	dst.h = 136;

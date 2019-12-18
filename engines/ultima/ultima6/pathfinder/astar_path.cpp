@@ -20,7 +20,7 @@
  *
  */
 
-#include <vector>
+#include "ultima/shared/std/containers.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "DirFinder.h"
 #include "AStarPath.h"

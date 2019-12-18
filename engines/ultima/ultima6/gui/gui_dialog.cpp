@@ -23,7 +23,7 @@
 #include <cmath>
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "GUI.h"
 #include "GUI_Dialog.h"
 
@@ -81,8 +81,8 @@ void GUI_Dialog::SetDisplay(Screen *s) {
 void
 GUI_Dialog:: Display(bool full_redraw) {
 	int i;
-	SDL_Rect framerect;
-	SDL_Rect src, dst;
+	Common::Rect framerect;
+	Common::Rect src, dst;
 
 	if (old_x != area.x || old_y != area.y) {
 		if (backingstore) {

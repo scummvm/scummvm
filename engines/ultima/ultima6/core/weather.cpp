@@ -28,8 +28,8 @@
 #include "CallBack.h"
 
 #include "NuvieIO.h"
-#include "U6misc.h"
-#include "U6LList.h"
+#include "ultima/ultima6/misc/u6_misc.h"
+#include "ultima/ultima6/misc/u6_llist.h"
 #include "Weather.h"
 #include "Game.h"
 #include "GameClock.h"

@@ -32,7 +32,7 @@ class Configuration;
 class Screen;
 
 class BMPFont : public Font {
-	SDL_Surface *sdl_font_data;
+	Graphics::ManagedSurface *sdl_font_data;
 	uint8 *font_width_data;
 
 	uint16 char_w, char_h;

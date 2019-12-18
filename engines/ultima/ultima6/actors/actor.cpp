@@ -24,8 +24,8 @@
 #include <cstdlib>
 #include <cmath>
 #include <cassert>
-#include "U6misc.h"
-#include "U6LList.h"
+#include "ultima/ultima6/misc/u6_misc.h"
+#include "ultima/ultima6/misc/u6_llist.h"
 #include "Game.h"
 #include "GameClock.h"
 #include "MapWindow.h"

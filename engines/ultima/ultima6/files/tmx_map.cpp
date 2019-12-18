@@ -23,7 +23,7 @@
 #include "TileManager.h"
 #include "Map.h"
 #include "ObjManager.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "TMXMap.h"
 
 namespace Ultima {

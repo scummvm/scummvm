@@ -22,7 +22,7 @@
 
 #include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6LList.h"
+#include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/conf/configuration.h"
 
 #include "GUI.h"

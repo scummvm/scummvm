@@ -24,8 +24,8 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "Screen.h"
-#include "U6LList.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_llist.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "U6Bmp.h"
 #include "GUI.h"
 #include "GUI_button.h"
@@ -330,8 +330,8 @@ uint16 SpellView::get_available_spell_count(Spell *s) {
 
 void SpellView::add_command_icons(Screen *tmp_screen, void *view_manager) {
 	Tile *tile;
-	SDL_Surface *button_image;
-	SDL_Surface *button_image2;
+	Graphics::ManagedSurface *button_image;
+	Graphics::ManagedSurface *button_image2;
 
 	tile = tile_manager->get_tile(412); //left arrow icon
 	button_image = tmp_screen->create_sdl_surface_from(tile->data, 8, 16, 16, 16);

@@ -31,7 +31,7 @@
 #include "TimedEvent.h"
 #include "CallBack.h"
 #include "MapEntity.h"
-#include "U6LineWalker.h"
+#include "ultima/ultima6/misc/u6_line_walker.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -57,7 +57,7 @@ typedef std::list<NuvieAnim *>::iterator AnimIterator;
 class AnimManager {
 	MapWindow *map_window;
 	Screen *viewsurf;
-	SDL_Rect viewport; // clip anims to location
+	Common::Rect viewport; // clip anims to location
 	std::list<NuvieAnim *> anim_list; // in paint order
 	uint32 next_id;
 
@@ -69,7 +69,7 @@ class AnimManager {
 	AnimIterator get_anim_iterator(uint32 anim_id);
 
 public:
-	AnimManager(sint16 x, sint16 y, Screen *screen = NULL, SDL_Rect *clipto = NULL);
+	AnimManager(sint16 x, sint16 y, Screen *screen = NULL, Common::Rect *clipto = NULL);
 	~AnimManager() {
 		destroy_all();
 	}
@@ -83,7 +83,7 @@ public:
 	void set_surface(Screen *screen) {
 		viewsurf = screen;
 	}
-	void set_area(SDL_Rect clipto)  {
+	void set_area(Common::Rect clipto)  {
 		viewport = clipto;
 	}
 	void set_tile_pitch(uint8 p)     {

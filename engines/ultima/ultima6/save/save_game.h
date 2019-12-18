@@ -55,7 +55,7 @@ struct SaveHeader {
 	uint16 level;
 	uint16 exp;
 
-	SDL_Surface *thumbnail;
+	Graphics::ManagedSurface *thumbnail;
 	unsigned char *thumbnail_data;
 
 	SaveHeader() {

@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_MISC_CALLBACK_H
 #define ULTIMA6_MISC_CALLBACK_H
 
-#include <cstdio>
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Ultima6 {

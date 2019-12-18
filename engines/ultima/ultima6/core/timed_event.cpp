@@ -32,7 +32,7 @@
 #include "UseCode.h"
 #include "U6objects.h"
 #include "U6WorkTypes.h"
-#include "U6LList.h"
+#include "ultima/ultima6/misc/u6_llist.h"
 #include "MsgScroll.h"
 #include "GameClock.h"
 #include "CommandBar.h"
@@ -384,7 +384,7 @@ void TimedPartyMove::hide_actor(Actor *person) {
  */
 void TimedPartyMove::change_location() {
 	EffectManager *effect_mgr = Game::get_game()->get_effect_manager();
-	SDL_Surface *mapwindow_capture = NULL;
+	Graphics::ManagedSurface *mapwindow_capture = NULL;
 	if (wait_for_effect != 1) {
 		bool is_moongate = moongate != NULL;
 		if (moongate && moongate->obj_n == OBJ_U6_RED_GATE) { // leave blue moongates

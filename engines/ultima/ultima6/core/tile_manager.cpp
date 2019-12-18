@@ -34,7 +34,7 @@
 #include "Game.h"
 #include "GamePalette.h"
 #include "Dither.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "Look.h"
 #include "GameClock.h"
 #include "SaveManager.h"

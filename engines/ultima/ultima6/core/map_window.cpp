@@ -24,8 +24,8 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "ultima/ultima6/conf/configuration.h"
-#include "U6misc.h"
-#include "U6LList.h"
+#include "ultima/ultima6/misc/u6_misc.h"
+#include "ultima/ultima6/misc/u6_llist.h"
 #include "Actor.h"
 #include "ActorManager.h"
 #include "ViewManager.h"
@@ -1276,7 +1276,7 @@ void MapWindow::drawRoofs() {
 
 	uint16 *roof_map_ptr = map->get_roof_data(cur_level);
 
-	SDL_Rect src, dst;
+	Common::Rect src, dst;
 	src.w = 16;
 	src.h = 16;
 	dst.w = 16;
@@ -2544,7 +2544,7 @@ unsigned char *MapWindow::make_thumbnail() {
 }
 
 void MapWindow::create_thumbnail() {
-	SDL_Rect src_rect;
+	Common::Rect src_rect;
 
 	src_rect.w = MAPWINDOW_THUMBNAIL_SIZE * MAPWINDOW_THUMBNAIL_SCALE;
 	src_rect.h = src_rect.w;
@@ -2568,14 +2568,14 @@ void MapWindow::free_thumbnail() {
 
 
 /* Returns a new 8bit copy of the mapwindow as displayed. Caller must free it. */
-SDL_Surface *MapWindow::get_sdl_surface() {
+Graphics::ManagedSurface *MapWindow::get_sdl_surface() {
 	return (get_sdl_surface(0, 0, area.w, area.h));
 }
 
-SDL_Surface *MapWindow::get_sdl_surface(uint16 x, uint16 y, uint16 w, uint16 h) {
-	SDL_Surface *new_surface = NULL;
+Graphics::ManagedSurface *MapWindow::get_sdl_surface(uint16 x, uint16 y, uint16 w, uint16 h) {
+	Graphics::ManagedSurface *new_surface = NULL;
 	unsigned char *screen_area;
-	SDL_Rect copy_area = { (Sint16)(area.x + x), (Sint16)(area.y + y), w, h };
+	Common::Rect copy_area = { (Sint16)(area.x + x), (Sint16)(area.y + y), w, h };
 
 	GUI::get_gui()->Display();
 	screen_area = screen->copy_area(&copy_area);
@@ -2589,7 +2589,7 @@ SDL_Surface *MapWindow::get_sdl_surface(uint16 x, uint16 y, uint16 w, uint16 h) 
 }
 
 /* Returns the overlay surface. A new 8bit overlay is created if necessary. */
-SDL_Surface *MapWindow::get_overlay() {
+Graphics::ManagedSurface *MapWindow::get_overlay() {
 	if (!overlay)
 		overlay = SDL_CreateRGBSurface(SDL_SWSURFACE, area.w, area.h,
 		                               8, 0, 0, 0, 0);
@@ -2597,7 +2597,7 @@ SDL_Surface *MapWindow::get_overlay() {
 }
 
 /* Set the overlay surface. The current overlay is deleted if necessary. */
-void MapWindow::set_overlay(SDL_Surface *surfpt) {
+void MapWindow::set_overlay(Graphics::ManagedSurface *surfpt) {
 	if (overlay && (overlay != surfpt))
 		SDL_FreeSurface(overlay);
 	overlay = surfpt;

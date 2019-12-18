@@ -85,7 +85,7 @@ struct CSSprite {
 	uint8 opacity;
 	CSImage *image;
 	bool visible;
-	SDL_Rect clip_rect;
+	Common::Rect clip_rect;
 	std::string text;
 	uint16 text_color;
 	uint8 text_align;
@@ -123,7 +123,7 @@ private:
 	uint8 *palette;
 	SoundManager *sound_manager;
 	WOUFont *font;
-	SDL_Rect clip_rect;
+	Common::Rect clip_rect;
 	uint16 x_off, y_off;
 	uint32 next_time;
 	uint32 loop_interval;

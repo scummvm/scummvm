@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_CORE_EFFECT_MANAGER_H
 #define ULTIMA6_CORE_EFFECT_MANAGER_H
 
-#include <vector>
+#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Ultima6 {

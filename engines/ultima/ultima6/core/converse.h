@@ -26,7 +26,7 @@
 #include <cstdio>
 #include "ultima/shared/std/string.h"
 #include <stack>
-#include <vector>
+#include "ultima/shared/std/containers.h"
 
 #include "Actor.h"
 #include "MsgScroll.h"

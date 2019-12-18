@@ -34,7 +34,7 @@ class MapWindow;
 
 class MapEditorView: public View {
 private:
-	SDL_Surface *roof_tiles;
+	Graphics::ManagedSurface *roof_tiles;
 	MapWindow *map_window;
 	uint16 selectedTile;
 	uint16 tile_offset;

@@ -35,7 +35,7 @@
 #include "GameplayDialog.h"
 #include "Party.h"
 #include "Script.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "Converse.h"
 #include "ConverseGump.h"
 #include "ultima/ultima6/conf/configuration.h"

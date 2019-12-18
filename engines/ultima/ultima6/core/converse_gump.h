@@ -28,7 +28,7 @@
 #include <stdarg.h>
 
 #include <list>
-#include <vector>
+#include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 
 namespace Ultima {

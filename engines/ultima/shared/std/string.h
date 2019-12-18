@@ -68,6 +68,16 @@ public:
 	size_t length() const { return size(); }
 
 	/**
+	 * Assign a new string
+	 */
+	void assign(const char *s) {
+		*this = s;
+	}
+	void assign(const string &s) {
+		*this = s;
+	}
+
+	/**
 	 * String square brackets allows modifying characters
 	 */
 	char &operator[](size_t idx) {
@@ -100,11 +110,13 @@ public:
 	 * Does a find for the passed string
 	 */
 	size_t find(const char *s) const;
+	size_t find(const string &s) const { return find(s.c_str()); }
 
 	/**
 	 * Does a reverse find for the passed string
 	 */
 	size_t rfind(const char *s) const;
+	size_t rfind(const string &s) const { return rfind(s.c_str()); }
 
 	/**
 	 * Does a reverse find for a passed character
@@ -120,6 +132,9 @@ public:
 	 * Find first character in the string that's any character of the passed string
 	 */
 	size_t find_first_of(const char *chars, size_t pos = 0) const;
+	size_t find_first_of(const string &chars, size_t pos = 0) const {
+		return find_first_of(chars.c_str(), pos);
+	}
 
 	/**
 	 * Find first character in the string that's not the specified character
@@ -130,6 +145,9 @@ public:
 	 * Find first character in the string that's not any character of the passed string
 	 */
 	size_t find_first_not_of(const char *chars, size_t pos = 0) const;
+	size_t find_first_not_of(const string &chars, size_t pos = 0) const {
+		return find_first_not_of(chars.c_str(), pos);
+	}
 
 	/**
 	 * Find the last character in the string that's not the specified character
@@ -140,6 +158,9 @@ public:
 	 * Find the last character in the string that's not in any of the passed characters
 	 */
 	size_t find_last_not_of(const char *chars) const;
+	size_t find_last_not_of(const string &chars) const {
+		return find_last_not_of(chars.c_str());
+	}
 
 	/**
 	 * Return a substring of this string

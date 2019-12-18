@@ -26,7 +26,7 @@
 #include "SDL.h"
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "NuvieIO.h"
 #include "NuvieIOFile.h"
 #include "U6Lzw.h"

@@ -10,7 +10,11 @@ MODULE_OBJS += \
 	ultima6/conf/configuration.o \
 	ultima6/conf/misc.o \
 	ultima6/conf/xml_node.o \
-	ultima6/conf/xml_tree.o
+	ultima6/conf/xml_tree.o \
+	ultima6/misc/iavl_tree.o \
+	ultima6/misc/u6_line_walker.o \
+	ultima6/misc/u6_list.o \
+	ultima6/misc/u6_misc.o
 endif
 
 ifdef ENABLE_ULTIMA8

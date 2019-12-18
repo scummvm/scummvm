@@ -23,7 +23,7 @@
 #include <cmath>
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "GUI.h"
 #include "GUI_button.h"
 #include "GUI_ScrollBar.h"
@@ -71,7 +71,7 @@ GUI_ScrollBar::GUI_ScrollBar(int x, int y, int h, GUI_CallBack *callback)
 void GUI_ScrollBar::loadButtons() {
 	std::string datadir = GUI::get_gui()->get_data_dir();
 	std::string imagefile;
-	SDL_Surface *image, *image1;
+	Graphics::ManagedSurface *image, *image1;
 
 	build_path(datadir, "ScrollBarUp_1.bmp", imagefile);
 	image = SDL_LoadBMP(imagefile.c_str());
@@ -117,8 +117,8 @@ void GUI_ScrollBar::set_slider_position(float percentage) {
 
 /* Show the widget  */
 void GUI_ScrollBar::Display(bool full_redraw) {
-	SDL_Rect framerect;
-// SDL_Rect src, dst;
+	Common::Rect framerect;
+// Common::Rect src, dst;
 
 	if (slider_y > 0) {
 		framerect.x = area.x;
@@ -186,7 +186,7 @@ void GUI_ScrollBar::Display(bool full_redraw) {
 }
 
 inline void GUI_ScrollBar::DisplaySlider() {
-	SDL_Rect rect;
+	Common::Rect rect;
 
 	rect.x = area.x;
 	rect.y = area.y + button_height + slider_y;

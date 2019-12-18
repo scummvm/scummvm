@@ -135,8 +135,8 @@ void ActorView::add_command_icons(Screen *tmp_screen, void *view_manager) {
 	int x_off = 0; // U6 and MD
 	int y = 80; // U6
 	Tile *tile;
-	SDL_Surface *button_image;
-	SDL_Surface *button_image2;
+	Graphics::ManagedSurface *button_image;
+	Graphics::ManagedSurface *button_image2;
 
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_SE) {
 		x_off = 1;

@@ -28,7 +28,7 @@
 #include "Font.h"
 
 #include <list>
-#include <vector>
+#include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 
 namespace Ultima {
@@ -107,7 +107,7 @@ protected:
 
 private:
 
-	SDL_Surface *bg_image;
+	Graphics::ManagedSurface *bg_image;
 };
 
 } // End of namespace Ultima6

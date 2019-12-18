@@ -282,7 +282,7 @@ void GUI_TextInput::SetDisplay(Screen *s) {
 
 /* Show the widget  */
 void GUI_TextInput:: Display(bool full_redraw) {
-	SDL_Rect r;
+	Common::Rect r;
 
 	if (full_redraw && focused) {
 		r = area;
@@ -297,7 +297,7 @@ void GUI_TextInput:: Display(bool full_redraw) {
 }
 
 void GUI_TextInput::display_cursor() {
-	SDL_Rect r;
+	Common::Rect r;
 	uint16 x, y;
 	uint16 cw, ch;
 

@@ -41,8 +41,8 @@ protected:
 
 	GUI_CallBack *callback_object;
 
-	Uint32 cursor_color;
-	Uint32 selected_bgcolor;
+	uint32 cursor_color;
+	uint32 selected_bgcolor;
 
 public:
 

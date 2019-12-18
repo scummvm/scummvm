@@ -29,8 +29,8 @@
 
 #include "Actor.h"
 #include "ActorManager.h"
-#include "U6misc.h"
-#include "U6LList.h"
+#include "ultima/ultima6/misc/u6_misc.h"
+#include "ultima/ultima6/misc/u6_llist.h"
 #include "SaveManager.h"
 #include "NuvieIOFile.h"
 #include "NuvieFileList.h"

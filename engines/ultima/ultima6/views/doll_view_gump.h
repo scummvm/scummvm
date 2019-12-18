@@ -57,7 +57,7 @@ class DollViewGump : public DraggableView {
 	gumpCursorPos cursor_pos;
 	uint8 cursor_xoff, cursor_yoff;
 
-	SDL_Surface *actor_doll;
+	Graphics::ManagedSurface *actor_doll;
 
 public:
 	DollViewGump(Configuration *cfg);
@@ -95,7 +95,7 @@ protected:
 private:
 
 	void activate_combat_button();
-	void setColorKey(SDL_Surface *image);
+	void setColorKey(Graphics::ManagedSurface *image);
 	GUI_status set_cursor_pos(gumpCursorPos pos);
 	GUI_status moveCursorRelative(uint8 direction);
 	GUI_status KeyDown(SDL_Keysym key);

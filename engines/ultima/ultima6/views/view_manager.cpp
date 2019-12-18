@@ -23,7 +23,7 @@
 #include <math.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 
 #include "GUI.h"
 
@@ -548,7 +548,7 @@ std::string ViewManager::getDollDataDirString() {
 	return DollDataDirString;
 }
 
-SDL_Surface *ViewManager::loadAvatarDollImage(SDL_Surface *avatar_doll, bool orig) {
+Graphics::ManagedSurface *ViewManager::loadAvatarDollImage(Graphics::ManagedSurface *avatar_doll, bool orig) {
 	char filename[17]; //avatar_nn_nn.bmp\0
 	std::string imagefile;
 	uint8 portrait_num = Game::get_game()->get_portrait()->get_avatar_portrait_num();
@@ -569,7 +569,7 @@ SDL_Surface *ViewManager::loadAvatarDollImage(SDL_Surface *avatar_doll, bool ori
 	return avatar_doll;
 }
 
-SDL_Surface *ViewManager::loadCustomActorDollImage(SDL_Surface *actor_doll, uint8 actor_num, bool orig) {
+Graphics::ManagedSurface *ViewManager::loadCustomActorDollImage(Graphics::ManagedSurface *actor_doll, uint8 actor_num, bool orig) {
 	char filename[17]; //actor_nn_nnn.bmp\0
 	std::string imagefile;
 
@@ -591,7 +591,7 @@ SDL_Surface *ViewManager::loadCustomActorDollImage(SDL_Surface *actor_doll, uint
 	return actor_doll;
 }
 
-SDL_Surface *ViewManager::loadGenericDollImage(bool orig) {
+Graphics::ManagedSurface *ViewManager::loadGenericDollImage(bool orig) {
 	char filename[14]; //avatar_nn.bmp\0
 	std::string imagefile;
 

@@ -31,7 +31,7 @@
 #include "ActorManager.h"
 #include "Actor.h"
 #include "PortraitMD.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "Objlist.h"
 #include "Script.h"
 

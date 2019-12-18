@@ -30,7 +30,7 @@
 #include "SDL.h"
 #include "SDL_endian.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "U6Lzw.h"
 #include "U6Lib_n.h"
 #include "NuvieIO.h"
@@ -330,14 +330,14 @@ unsigned char *U6Shape::get_data() {
 
 /*
  * ============================================
- *  SDL_Surface *U6Shape::get_shape_surface();
+ *  Graphics::ManagedSurface *U6Shape::get_shape_surface();
  * ============================================
  *
- * Returns a SDL_Surface representing the shape
+ * Returns a Graphics::ManagedSurface representing the shape
  * or NULL on failure. NOTE! user must free this
  * data.
  */
-SDL_Surface *U6Shape::get_shape_surface() {
+Graphics::ManagedSurface *U6Shape::get_shape_surface() {
 	if (raw == NULL)
 		return NULL;
 	/* NOT REACHED */

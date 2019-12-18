@@ -25,7 +25,7 @@
 //#include <iostream>
 #include "SDL.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "U6misc.h"
+#include "ultima/ultima6/misc/u6_misc.h"
 #include "Party.h"
 #include "MsgScroll.h"
 #include "ultima/ultima6/conf/configuration.h"
@@ -46,7 +46,7 @@
 #include "Magic.h"
 #include "Game.h"
 #include "GameClock.h"
-#include "misc/U6LList.h"
+#include "misc/ultima/ultima6/misc/u6_llist.h"
 #include "Effect.h"
 #include "Weather.h"
 #include "Script.h"

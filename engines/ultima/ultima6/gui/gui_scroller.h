@@ -36,7 +36,7 @@ class GUI_ScrollBar;
 class GUI_Scroller : public GUI_Widget {
 
 	Uint8 R, G, B;
-	Uint32 bg_color;
+	uint32 bg_color;
 	uint16 row_height;
 	uint16 rows_per_page;
 	uint16 num_rows;

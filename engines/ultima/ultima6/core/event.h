@@ -164,7 +164,7 @@ class Event : public CallBack {
 	bool looking_at_spellbook;
 	bool direction_selects_target;
 
-	Uint32 fps_timestamp;
+	uint32 fps_timestamp;
 	uint16 fps_counter;
 	FpsCounter *fps_counter_widget;
 	ScriptThread *scriptThread;
@@ -365,7 +365,7 @@ public:
 	   that we don't need to check for WAIT mode in all of them. */
 protected:
 
-	inline Uint32 TimeLeft();
+	inline uint32 TimeLeft();
 
 	uint16 callback(uint16 msg, CallBack *caller, void *data);
 	bool handleSDL_KEYDOWN(const SDL_Event *event);

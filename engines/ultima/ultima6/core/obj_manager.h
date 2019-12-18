@@ -25,9 +25,9 @@
 
 #include <list>
 #include <cstring>
-#include "iAVLTree.h"
+#include "ultima/ultima6/misc/iavl_tree.h"
 #include "TileManager.h"
-#include "U6LList.h"
+#include "ultima/ultima6/misc/u6_llist.h"
 
 namespace Ultima {
 namespace Ultima6 {

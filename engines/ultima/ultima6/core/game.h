@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_CORE_GAME_H
 #define ULTIMA6_CORE_GAME_H
 
-#include <vector>
+#include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 
 namespace Ultima {
