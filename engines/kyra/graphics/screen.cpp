@@ -178,12 +178,6 @@ bool Screen::init() {
 				_fonts[FID_SJIS_TEXTMODE_FNT] = new SJISFont(_sjisFontShared, _sjisInvisibleColor, true, false, 0);
 			else
 				_fonts[FID_SJIS_FNT] = new SJISFont(_sjisFontShared, _sjisInvisibleColor, false, _vm->game() != GI_LOL && _vm->game() != GI_EOB2, _vm->game() == GI_LOL ? 1 : 0);
-
-			if (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) {
-				assert(_fonts[FID_SJIS_FNT]);
-				_fonts[FID_SJIS_FNT]->setStyle(Font::kFSFat);
-				_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(_sjisFontShared);
-			}
 		}
 	}
 

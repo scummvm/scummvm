@@ -93,6 +93,9 @@ bool Screen_EoB::init() {
 			_convertHiColorBuffer = new uint8[SCREEN_H * SCREEN_W];
 			enableHiColorMode(true);			
 			loadFont(FID_SJIS_SMALL_FNT, "FONT.DMP");
+			assert(_fonts[FID_SJIS_FNT]);
+			_fonts[FID_SJIS_FNT]->setStyle(Font::kFSFat);
+			_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(_sjisFontShared);
 		} else if (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98) {
 			loadFont(FID_SJIS_SMALL_FNT, "FONT12.FNT");
 			_fonts[FID_SJIS_FNT] = new SJISFontEoB1PC98(_sjisFontShared, 12, _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp));
