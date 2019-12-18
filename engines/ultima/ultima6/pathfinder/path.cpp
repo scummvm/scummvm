@@ -20,10 +20,9 @@
  *
  */
 
-//#include <cassert>
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/core/map.h"
-#include "Path.h"
+#include "ultima/ultima6/pathfinder/path.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -91,10 +90,10 @@ bool Path::have_path() {
 	return (path && step_count > 0);
 }
 
-void Path::get_path(MapCoord **path_start, uint32 &path_size) {
+void Path::get_path(MapCoord **path_start, uint32 &pathSize) {
 	if (path_start)
 		*path_start = path;
-	path_size = step_count;
+	pathSize = step_count;
 }
 
 /* Increases path size in blocks and adds a step to the end of the path. */

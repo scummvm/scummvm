@@ -20,8 +20,8 @@
  *
  */
 
-#include "Path.h"
-#include "PathFinder.h"
+#include "ultima/ultima6/pathfinder/path.h"
+#include "ultima/ultima6/pathfinder/path_finder.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -81,8 +81,8 @@ void PathFinder::set_start(const MapCoord &s) {
 bool PathFinder::is_path_clear() {
 	uint32 num_steps = search->get_num_steps();
 	for (unsigned int n = 0; n < num_steps; n++) {
-		MapCoord loc = search->get_step(n);
-		if (!check_loc(loc))
+		MapCoord pos = search->get_step(n);
+		if (!check_loc(pos))
 			return false;
 	}
 	return true;

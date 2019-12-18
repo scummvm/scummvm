@@ -20,13 +20,11 @@
  *
  */
 
-//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/core/map.h"
-#include "Path.h"
-#include "SchedPathFinder.h"
+#include "ultima/ultima6/pathfinder/path.h"
+#include "ultima/ultima6/pathfinder/sched_path_finder.h"
 
 namespace Ultima {
 namespace Ultima6 {

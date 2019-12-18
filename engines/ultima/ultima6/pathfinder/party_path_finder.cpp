@@ -25,8 +25,8 @@
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/core/party.h"
-#include "SeekPath.h"
-#include "ActorPathFinder.h"
+#include "ultima/ultima6/pathfinder/seek_path.h"
+#include "ultima/ultima6/pathfinder/actor_path_finder.h"
 #include "ultima/ultima6/pathfinder/party_path_finder.h"
 
 namespace Ultima {

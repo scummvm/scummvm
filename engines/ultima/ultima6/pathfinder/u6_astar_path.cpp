@@ -21,11 +21,10 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/core/obj_manager.h"
 #include "ultima/ultima6/usecode/usecode.h"
-#include "U6AStarPath.h"
+#include "ultima/ultima6/pathfinder/u6_astar_path.h"
 
 namespace Ultima {
 namespace Ultima6 {

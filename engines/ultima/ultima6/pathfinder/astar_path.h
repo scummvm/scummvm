@@ -25,7 +25,7 @@
 
 //#include <list>
 #include "ultima/ultima6/core/map.h"
-#include "Path.h"
+#include "ultima/ultima6/pathfinder/path.h"
 
 namespace Ultima {
 namespace Ultima6 {

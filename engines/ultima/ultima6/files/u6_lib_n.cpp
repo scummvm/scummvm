@@ -430,13 +430,13 @@ void U6Lib_n::write_header() {
 	if (game_type == NUVIE_GAME_U6)
 		return;
 
-	uint32 filesize = 4 + num_offsets * lib_size;
+	uint32 totalSize = 4 + num_offsets * lib_size;
 
 	for (int i = 0; i < num_offsets; i++) {
-		filesize += items[i].size;
+		totalSize += items[i].size;
 	}
 
-	data->write4(filesize);
+	data->write4(totalSize);
 }
 
 /* Write the library index. (the 2 or 4 byte offsets before the data)

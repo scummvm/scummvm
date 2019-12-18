@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima6/actors/actor.h"
-#include "CombatPathFinder.h"
+#include "ultima/ultima6/pathfinder/combat_path_finder.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -53,23 +53,23 @@ bool CombatPathFinder::reached_goal() {
 	return true;
 }
 
-bool CombatPathFinder::set_flee_mode(Actor *actor) {
+bool CombatPathFinder::set_flee_mode(Actor *targetActor) {
 	target_mode = PATHFINDER_FLEE;
-	target = actor;
+	target = targetActor;
 	update_location();
 	return true;
 }
 
-bool CombatPathFinder::set_chase_mode(Actor *actor) {
+bool CombatPathFinder::set_chase_mode(Actor *targetActor) {
 	target_mode = PATHFINDER_CHASE;
-	target = actor;
+	target = targetActor;
 	update_location();
 	return true;
 }
 
-bool CombatPathFinder::set_mode(CombatPathFinderMode mode, Actor *actor) {
+bool CombatPathFinder::set_mode(CombatPathFinderMode mode, Actor *targetActor) {
 	target_mode = mode;
-	target = actor;
+	target = targetActor;
 	return true;
 }
 

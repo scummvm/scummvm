@@ -23,7 +23,7 @@
 #include "MDultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/core/game_clock.h"
-#include "DirFinder.h"
+#include "ultima/ultima6/pathfinder/dir_finder.h"
 
 namespace Ultima {
 namespace Ultima6 {

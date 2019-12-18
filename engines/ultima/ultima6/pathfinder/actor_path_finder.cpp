@@ -22,8 +22,8 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/actors/actor.h"
-#include "Path.h"
-#include "ActorPathFinder.h"
+#include "ultima/ultima6/pathfinder/path.h"
+#include "ultima/ultima6/pathfinder/actor_path_finder.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -72,29 +72,29 @@ void ActorPathFinder::get_closest_dir(MapCoord &rel_step) {
 	else if (dx < dy) rel_step.sx = 0;
 }
 
-bool ActorPathFinder::check_loc(const MapCoord &loc) {
-	return actor->check_move(loc.x, loc.y, loc.z);
+bool ActorPathFinder::check_loc(const MapCoord &mapLoc) {
+	return actor->check_move(mapLoc.x, mapLoc.y, mapLoc.z);
 }
 
 /* Find a move from actor to g, starting with rel_step. Replace
  * rel_step with the result. */
 bool ActorPathFinder::search_towards_target(const MapCoord &g, MapCoord &rel_step) {
-	MapCoord loc = actor->get_location();
+	MapCoord mapLoc = actor->get_location();
 	MapCoord ccw_rel_step = rel_step, cw_rel_step = rel_step;
-	if (check_dir(loc, rel_step)) // check original direction
+	if (check_dir(mapLoc, rel_step)) // check original direction
 		return true;
-	bool try_ccw = check_dir_and_distance(loc, g, ccw_rel_step, -1); // check adjacent directions
-	bool try_cw = check_dir_and_distance(loc, g, cw_rel_step, 1);
-	if (!try_ccw) try_ccw = check_dir_and_distance(loc, g, ccw_rel_step, -2); // check perpendicular directions
-	if (!try_cw) try_cw = check_dir_and_distance(loc, g, cw_rel_step, 2);
+	bool try_ccw = check_dir_and_distance(mapLoc, g, ccw_rel_step, -1); // check adjacent directions
+	bool try_cw = check_dir_and_distance(mapLoc, g, cw_rel_step, 1);
+	if (!try_ccw) try_ccw = check_dir_and_distance(mapLoc, g, ccw_rel_step, -2); // check perpendicular directions
+	if (!try_cw) try_cw = check_dir_and_distance(mapLoc, g, cw_rel_step, 2);
 	if (!try_ccw && !try_cw)
 		return false;
 	rel_step = ccw_rel_step;
 	if (!try_ccw) rel_step = cw_rel_step;
 	else if (!try_cw) rel_step = ccw_rel_step;
 	else { // both valid, use closest
-		MapCoord ccw_step = loc.abs_coords(ccw_rel_step.sx, ccw_rel_step.sy);
-		MapCoord cw_step = loc.abs_coords(cw_rel_step.sx, cw_rel_step.sy);
+		MapCoord ccw_step = mapLoc.abs_coords(ccw_rel_step.sx, ccw_rel_step.sy);
+		MapCoord cw_step = mapLoc.abs_coords(cw_rel_step.sx, cw_rel_step.sy);
 		MapCoord target(g);
 		if (cw_step.distance(target) < ccw_step.distance(target))
 			rel_step = cw_rel_step;
@@ -103,11 +103,11 @@ bool ActorPathFinder::search_towards_target(const MapCoord &g, MapCoord &rel_ste
 }
 
 // check rotated dir, and copy results to rel_step if neighbor is passable
-bool ActorPathFinder::check_dir_and_distance(MapCoord loc, MapCoord g, MapCoord &rel_step, sint8 rotate) {
+bool ActorPathFinder::check_dir_and_distance(MapCoord mapLoc, MapCoord g, MapCoord &rel_step, sint8 rotate) {
 	MapCoord rel_step_2 = rel_step;
-	if (check_dir(loc, rel_step_2, rotate)) {
-		MapCoord neighbor = loc.abs_coords(rel_step_2.sx, rel_step_2.sy);
-		if (neighbor.distance(g) <= loc.distance(g)) {
+	if (check_dir(mapLoc, rel_step_2, rotate)) {
+		MapCoord neighbor = mapLoc.abs_coords(rel_step_2.sx, rel_step_2.sy);
+		if (neighbor.distance(g) <= mapLoc.distance(g)) {
 			rel_step = rel_step_2;
 			return true;
 		}
@@ -116,10 +116,10 @@ bool ActorPathFinder::check_dir_and_distance(MapCoord loc, MapCoord g, MapCoord 
 }
 
 // new direction is copied to rel if true
-bool ActorPathFinder::check_dir(const MapCoord &loc, MapCoord &rel, sint8 rot) {
+bool ActorPathFinder::check_dir(const MapCoord &mapLoc, MapCoord &rel, sint8 rot) {
 	sint8 xdir = rel.sx, ydir = rel.sy;
 	get_adjacent_dir(xdir, ydir, rot);
-	MapCoord new_loc = MapCoord(loc).abs_coords(xdir, ydir);
+	MapCoord new_loc = MapCoord(mapLoc).abs_coords(xdir, ydir);
 	if (check_loc(new_loc)) {
 		rel.sx = xdir;
 		rel.sy = ydir;
