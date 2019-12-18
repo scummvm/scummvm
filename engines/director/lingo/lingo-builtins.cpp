@@ -1319,6 +1319,8 @@ void Lingo::b_installMenu(int nargs) {
 			if (!command.empty()) {
 				handlers += g_lingo->genMenuHandler(&commandId, command);
 				submenuText += Common::String::format("[%d];", commandId);
+			} else {
+				submenuText += ';';
 			}
 		}
 
