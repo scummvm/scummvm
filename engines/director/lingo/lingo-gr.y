@@ -94,10 +94,10 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG BLTINARGLIST TWOWORDBUILTIN
 %token<s> FBLTIN FBLTINNOARGS FBLTINONEARG FBLTINARGLIST RBLTIN RBLTINONEARG
 %token<s> ID STRING HANDLER SYMBOL
-%token<s> ENDCLAUSE tPLAYACCEL
+%token<s> ENDCLAUSE tPLAYACCEL tMETHOD
 %token tDOWN tELSE tELSIF tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
-%token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN tPLAY tDONE tINSTANCE
+%token tWITH tWHILE tNLELSE tFACTORY tOPEN tPLAY tDONE tINSTANCE
 %token tGE tLE tEQ tNEQ tAND tOR tNOT tMOD
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS tCHAR tITEM tLINE tWORD
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
@@ -529,12 +529,12 @@ defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
 			g_lingo->define(*$2, $4, $5);
 			g_lingo->_indef = false; }
 	| tFACTORY ID	{ g_lingo->codeFactory(*$2); }
-	| tMETHOD ID { g_lingo->_indef = true; }
+	| tMETHOD { g_lingo->_indef = true; }
 		begin argdef '\n' argstore stmtlist 		{
 			g_lingo->code1(g_lingo->c_procret);
-			g_lingo->define(*$2, $4, $5 + 1, &g_lingo->_currentFactory);
+			g_lingo->define(*$1, $3, $4 + 1, &g_lingo->_currentFactory);
 			g_lingo->_indef = false; }
-	| on begin  argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
+	| on begin argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
 		g_lingo->code1(g_lingo->c_procret);
 		g_lingo->define(*$1, $2, $3);
 		g_lingo->_indef = false;

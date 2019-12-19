@@ -132,7 +132,17 @@ whitespace [\t ]
 (?i:line)		{ count(); return tLINE; }
 (?i:loop)		{ count(); return checkImmediate(tLOOP); }
 (?i:macro)		{ count(); return tMACRO; }
-(?i:method)		{ count(); return tMETHOD; }
+(?i:method)([\t ]*{identifier})		{
+		count();
+
+		const char *ptr = &yytext[6]; // Skip 'method '
+		while (*ptr == ' ' || *ptr == '\t')
+			ptr++;
+
+		yylval.s = new Common::String(ptr);
+
+		return tMETHOD;
+	}
 (?i:mod)		{ count(); return tMOD; }
 (?i:movie)		{ count(); return tMOVIE; }
 (?i:next)		{ count(); return tNEXT; }

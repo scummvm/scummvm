@@ -72,32 +72,32 @@
      SYMBOL = 288,
      ENDCLAUSE = 289,
      tPLAYACCEL = 290,
-     tDOWN = 291,
-     tELSE = 292,
-     tELSIF = 293,
-     tEXIT = 294,
-     tFRAME = 295,
-     tGLOBAL = 296,
-     tGO = 297,
-     tIF = 298,
-     tINTO = 299,
-     tLOOP = 300,
-     tMACRO = 301,
-     tMOVIE = 302,
-     tNEXT = 303,
-     tOF = 304,
-     tPREVIOUS = 305,
-     tPUT = 306,
-     tREPEAT = 307,
-     tSET = 308,
-     tTHEN = 309,
-     tTO = 310,
-     tWHEN = 311,
-     tWITH = 312,
-     tWHILE = 313,
-     tNLELSE = 314,
-     tFACTORY = 315,
-     tMETHOD = 316,
+     tMETHOD = 291,
+     tDOWN = 292,
+     tELSE = 293,
+     tELSIF = 294,
+     tEXIT = 295,
+     tFRAME = 296,
+     tGLOBAL = 297,
+     tGO = 298,
+     tIF = 299,
+     tINTO = 300,
+     tLOOP = 301,
+     tMACRO = 302,
+     tMOVIE = 303,
+     tNEXT = 304,
+     tOF = 305,
+     tPREVIOUS = 306,
+     tPUT = 307,
+     tREPEAT = 308,
+     tSET = 309,
+     tTHEN = 310,
+     tTO = 311,
+     tWHEN = 312,
+     tWITH = 313,
+     tWHILE = 314,
+     tNLELSE = 315,
+     tFACTORY = 316,
      tOPEN = 317,
      tPLAY = 318,
      tDONE = 319,
@@ -165,32 +165,32 @@
 #define SYMBOL 288
 #define ENDCLAUSE 289
 #define tPLAYACCEL 290
-#define tDOWN 291
-#define tELSE 292
-#define tELSIF 293
-#define tEXIT 294
-#define tFRAME 295
-#define tGLOBAL 296
-#define tGO 297
-#define tIF 298
-#define tINTO 299
-#define tLOOP 300
-#define tMACRO 301
-#define tMOVIE 302
-#define tNEXT 303
-#define tOF 304
-#define tPREVIOUS 305
-#define tPUT 306
-#define tREPEAT 307
-#define tSET 308
-#define tTHEN 309
-#define tTO 310
-#define tWHEN 311
-#define tWITH 312
-#define tWHILE 313
-#define tNLELSE 314
-#define tFACTORY 315
-#define tMETHOD 316
+#define tMETHOD 291
+#define tDOWN 292
+#define tELSE 293
+#define tELSIF 294
+#define tEXIT 295
+#define tFRAME 296
+#define tGLOBAL 297
+#define tGO 298
+#define tIF 299
+#define tINTO 300
+#define tLOOP 301
+#define tMACRO 302
+#define tMOVIE 303
+#define tNEXT 304
+#define tOF 305
+#define tPREVIOUS 306
+#define tPUT 307
+#define tREPEAT 308
+#define tSET 309
+#define tTHEN 310
+#define tTO 311
+#define tWHEN 312
+#define tWITH 313
+#define tWHILE 314
+#define tNLELSE 315
+#define tFACTORY 316
 #define tOPEN 317
 #define tPLAY 318
 #define tDONE 319
