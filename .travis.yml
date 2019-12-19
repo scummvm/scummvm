@@ -66,9 +66,12 @@ matrix:
         - sudo ln -s $(which ccache) /usr/lib/ccache/clang++
     - os: osx
       compiler: clang
-      cache:
+      cache: ccache
         directories:
           - $HOME/Library/Caches/Homebrew
+      before_script:
+        - sudo ln -s $(which ccache) /usr/lib/ccache/clang
+        - sudo ln -s $(which ccache) /usr/lib/ccache/clang++
       before_cache:
         - brew cleanup
 
