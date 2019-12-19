@@ -103,8 +103,8 @@ void GUI_Widget:: Delete(void) {
 void GUI_Widget::MoveRelative(int dx, int dy) {
 	std::list<GUI_Widget *>::iterator child;
 
-	area.x += dx;
-	area.y += dy;
+	area.left += dx;
+	area.top += dy;
 
 	for (child = children.begin(); child != children.end(); child++)
 		(*child)->MoveRelative(dx, dy);
@@ -115,11 +115,11 @@ void GUI_Widget::MoveRelative(int dx, int dy) {
 void GUI_Widget::Move(int new_x, int new_y) {
 	std::list<GUI_Widget *>::iterator child;
 
-	area.x = new_x + offset_x;
-	area.y = new_y + offset_y;
+	area.left = new_x + offset_x;
+	area.top = new_y + offset_y;
 
 	for (child = children.begin(); child != children.end(); child++)
-		(*child)->Move(area.x, area.y);
+		(*child)->Move(area.left, area.top);
 
 	return;
 }
@@ -127,14 +127,14 @@ void GUI_Widget::Move(int new_x, int new_y) {
 void GUI_Widget::MoveRelativeToParent(int dx, int dy) {
 	std::list<GUI_Widget *>::iterator child;
 
-	area.x = (area.x - offset_x) + dx;
-	area.y = (area.y - offset_y) + dy;
+	area.left = (area.left - offset_x) + dx;
+	area.top = (area.top - offset_y) + dy;
 
 	offset_x = dx;
 	offset_y = dy;
 
 	for (child = children.begin(); child != children.end(); child++)
-		(*child)->Move(area.x, area.y);
+		(*child)->Move(area.left, area.top);
 
 	return;
 }
@@ -163,8 +163,8 @@ void GUI_Widget::PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) {
 	if (screen != NULL)
 		return;
 
-	area.x = x + offset_x;
-	area.y = y + offset_y;
+	area.left = x + offset_x;
+	area.top = y + offset_y;
 
 	gui_drag_manager = dm;
 
@@ -172,7 +172,7 @@ void GUI_Widget::PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) {
 
 	/* place our children relative to ourself */
 	for (child = children.begin(); child != children.end(); child++)
-		(*child)->PlaceOnScreen(screen, dm, area.x, area.y);
+		(*child)->PlaceOnScreen(screen, dm, area.left, area.top);
 	return;
 }
 
@@ -187,13 +187,13 @@ GUI_Widget:: Status(void) {
  */
 void
 GUI_Widget:: SetRect(int x, int y, int w, int h) {
-	area.x = x;
-	area.y = y;
+	area.left = x;
+	area.top = y;
 	if (w >= 0) {
-		area.w = w;
+		area.width() = w;
 	}
 	if (h >= 0) {
-		area.h = h;
+		area.height() = h;
 	}
 }
 void
@@ -318,7 +318,7 @@ GUI_status GUI_Widget::Idle(void) {
    or not the event should be passed on to other widgets.
    These are called by the default HandleEvent function.
 */
-GUI_status GUI_Widget::KeyDown(Common::KeyState key) {
+GUI_status GUI_Widget::KeyDown(const Common::KeyState &key) {
 	return (GUI_PASS);
 }
 
@@ -326,11 +326,11 @@ GUI_status GUI_Widget::KeyUp(Common::KeyState key) {
 	return (GUI_PASS);
 }
 
-GUI_status GUI_Widget::MouseDown(int x, int y, int button) {
+GUI_status GUI_Widget::MouseDown(int x, int y, MouseButton button) {
 	return (GUI_PASS);
 }
 
-GUI_status GUI_Widget::MouseUp(int x, int y, int button) {
+GUI_status GUI_Widget::MouseUp(int x, int y, MouseButton button) {
 	return (GUI_PASS);
 }
 
@@ -492,13 +492,13 @@ void GUI_Widget::drag_perform_drop(int x, int y, int message, void *data) {
 
 /* Mouse button was pressed and released over the widget.
  */
-GUI_status GUI_Widget::MouseClick(int x, int y, int button) {
+GUI_status GUI_Widget::MouseClick(int x, int y, MouseButton button) {
 	return (GUI_PASS);
 }
 
 /* Mouse button was clicked twice over the widget, within a certain time period.
  */
-GUI_status GUI_Widget::MouseDouble(int x, int y, int button) {
+GUI_status GUI_Widget::MouseDouble(int x, int y, MouseButton button) {
 	return (GUI_PASS);
 }
 
@@ -593,13 +593,13 @@ GUI_status GUI_Widget::try_mouse_delayed() {
 
 // like a MouseClick but called only after waiting for MouseDouble, if
 // wait_for_mouseclick(button) was called
-GUI_status GUI_Widget::MouseDelayed(int x, int y, int button) {
+GUI_status GUI_Widget::MouseDelayed(int x, int y, MouseButton button) {
 	return (GUI_PASS);
 }
 
 // like a MouseDown but called only after waiting for MouseUp, if
 // wait_for_mousedown(button) was called
-GUI_status GUI_Widget::MouseHeld(int x, int y, int button) {
+GUI_status GUI_Widget::MouseHeld(int x, int y, MouseButton button) {
 	return (GUI_PASS);
 }
 

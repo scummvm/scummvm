@@ -62,10 +62,10 @@ void GUI_Console:: Display(bool full_redraw) {
 
 	uint16 i = 0;
 	for (std::list<std::string>::iterator it = data.begin(); it != data.end(); it++) {
-		font->TextOut(surface, area.x, area.y + i * font->CharHeight(), (*it).c_str(), false);
+		font->TextOut(surface, area.left, area.top + i * font->CharHeight(), (*it).c_str(), false);
 		i++;
 	}
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 
 	return;
 }
@@ -88,7 +88,7 @@ void GUI_Console::AddLine(std::string line) {
 		data.pop_front();
 }
 
-GUI_status GUI_Console::MouseDown(int x, int y, int button) {
+GUI_status GUI_Console::MouseDown(int x, int y, MouseButton button) {
 
 
 //grab_focus();
@@ -96,7 +96,7 @@ GUI_status GUI_Console::MouseDown(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_Console::MouseUp(int x, int y, int button) {
+GUI_status GUI_Console::MouseUp(int x, int y, MouseButton button) {
 
 // release_focus();
 

@@ -51,7 +51,7 @@ public:
 
 	~GUI_YesNoDialog();
 
-	GUI_status KeyDown(Common::KeyState key);
+	GUI_status KeyDown(const Common::KeyState &key);
 
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
 };

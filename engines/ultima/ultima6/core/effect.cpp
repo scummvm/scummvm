@@ -1727,18 +1727,18 @@ void PeerEffect::peer() {
 	if (overlay->h > 48 * PEER_TILEW) h = 48 * PEER_TILEW;
 
 	MapCoord player_loc = game->get_player()->get_actor()->get_location();
-	uint16 cx = player_loc.x - area.x; // rough center of area
-	uint16 cy = player_loc.y - area.y;
-	area.x %= map_pitch; // we have to wrap here because we use a map buffer
-	area.y %= map_pitch;
+	uint16 cx = player_loc.x - area.left; // rough center of area
+	uint16 cy = player_loc.y - area.top;
+	area.left %= map_pitch; // we have to wrap here because we use a map buffer
+	area.top %= map_pitch;
 	uint8 *mapbuffer = new uint8[48 * 48]; // array of tile types/colors
 	memset(mapbuffer, 0x00, sizeof(uint8) * 48 * 48); // fill with black
 	fill_buffer(mapbuffer, cx, cy);
 
 	for (int x = 0; x < w; x += PEER_TILEW)
 		for (int y = 0; y < h; y += PEER_TILEW) {
-			uint16 wx = area.x + x / PEER_TILEW, wy = area.y + y / PEER_TILEW;
-			uint8 tile_type = mapbuffer[(wy - area.y) * 48 + (wx - area.x)];
+			uint16 wx = area.left + x / PEER_TILEW, wy = area.top + y / PEER_TILEW;
+			uint8 tile_type = mapbuffer[(wy - area.top) * 48 + (wx - area.left)];
 			blit_tile(x, y, tile_type);
 			if (tile_type != 0x00) {
 				Actor *actor = game->get_actor_manager()->get_actor(wx, wy, area.z);
@@ -1751,7 +1751,7 @@ void PeerEffect::peer() {
 }
 
 void PeerEffect::fill_buffer(uint8 *mapbuffer, uint16 x, uint16 y) {
-	uint16 wx = area.x + x, wy = area.y + y;
+	uint16 wx = area.left + x, wy = area.top + y;
 	uint8 *tile = &mapbuffer[y * 48 + x];
 
 	if (*tile != 0x00)
@@ -1794,12 +1794,12 @@ inline void PeerEffect::blit_tile(uint16 x, uint16 y, uint8 c) {
 
 inline void PeerEffect::blit_actor(Actor *actor) {
 	tile_trans = 1;
-	blit_tile((actor->get_location().x - area.x)*PEER_TILEW,
-	          (actor->get_location().y - area.y)*PEER_TILEW, 0x0F);
+	blit_tile((actor->get_location().x - area.left)*PEER_TILEW,
+	          (actor->get_location().y - area.top)*PEER_TILEW, 0x0F);
 	tile_trans = 0;
 	if (game->get_player()->get_actor() == actor)
-		blit_tile((actor->get_location().x - area.x)*PEER_TILEW,
-		          (actor->get_location().y - area.y)*PEER_TILEW, 0x0F);
+		blit_tile((actor->get_location().x - area.left)*PEER_TILEW,
+		          (actor->get_location().y - area.top)*PEER_TILEW, 0x0F);
 }
 
 inline uint8 PeerEffect::get_tilemap_type(uint16 wx, uint16 wy, uint8 wz) {

@@ -27,7 +27,7 @@
 
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/screen/game_palette.h"
-#include "InventoryWidget.h"
+#include "ultima/ultima6/views/inventory_widget.h"
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/fonts/font.h"
 #include "ultima/ultima6/core/game_clock.h"
@@ -39,7 +39,7 @@
 #include "ultima/ultima6/core/player.h"
 #include "ultima/ultima6/core/command_bar.h"
 
-#include "Inventoryultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/views/inventory_font.h"
 #include "ultima/ultima6/views/view_manager.h"
 
 namespace Ultima {
@@ -136,22 +136,22 @@ void InventoryWidget::set_prev_container() {
 
 void InventoryWidget::Display(bool full_redraw) {
 	if (full_redraw || update_display) {
-//   screen->fill(bg_color, area.x, area.y, area.w, area.h);
+//   screen->fill(bg_color, area.left, area.top, area.width(), area.height());
 		display_inventory_container();
 		if (Game::get_game()->get_game_type() == NUVIE_GAME_U6)
 			display_arrows();
 	}
-	//screen->blit(area.x+40,area.y+16,portrait_data,8,56,64,56,false);
+	//screen->blit(area.left+40,area.top+16,portrait_data,8,56,64,56,false);
 
 //clear the screen first inventory icons, 4 x 3 tiles
-// screen->fill(bg_color, area.x +objlist_offset_x, area.y + objlist_offset_y, 16 * 4, 16 * 3); // doesn't seem to be needed
+// screen->fill(bg_color, area.left +objlist_offset_x, area.top + objlist_offset_y, 16 * 4, 16 * 3); // doesn't seem to be needed
 	display_inventory_list();
 
 	if (full_redraw || update_display) {
 		update_display = false;
-		screen->update(area.x, area.y, area.w, area.h);
+		screen->update(area.left, area.top, area.width(), area.height());
 	} else {
-		screen->update(area.x + objlist_offset_x, area.y + 16, area.w - objlist_offset_x, area.h - 16); // update only the inventory list
+		screen->update(area.left + objlist_offset_x, area.top + 16, area.width() - objlist_offset_x, area.height() - 16); // update only the inventory list
 	}
 
 }
@@ -164,7 +164,7 @@ void InventoryWidget::display_inventory_container() {
 	else // display container object
 		tile = tile_manager->get_tile(obj_manager->get_obj_tile_num(container_obj) + container_obj->frame_n);
 
-	screen->blit(area.x + icon_x, area.y, tile->data, 8, 16, 16, 16, true);
+	screen->blit(area.left + icon_x, area.top, tile->data, 8, 16, 16, 16, true);
 
 	return;
 }
@@ -221,18 +221,18 @@ void InventoryWidget::display_inventory_list() {
 
 			//tile = tile_manager->get_tile(actor->indentory_tile());
 			if (tile == empty_tile)
-				screen->blit((area.x + objlist_offset_x) + j * 16, area.y + objlist_offset_y + i * 16, (unsigned char *)empty_tile->data, 8, 16, 16, 16, true);
+				screen->blit((area.left + objlist_offset_x) + j * 16, area.top + objlist_offset_y + i * 16, (unsigned char *)empty_tile->data, 8, 16, 16, 16, true);
 			if (tile != empty_tile) {
 				//draw qty string for stackable items
 				if (obj_manager->is_stackable(obj))
-					display_qty_string((area.x + objlist_offset_x) + j * 16, area.y + objlist_offset_y + i * 16, obj->qty);
+					display_qty_string((area.left + objlist_offset_x) + j * 16, area.top + objlist_offset_y + i * 16, obj->qty);
 
 				//draw special char for Keys.
 				if (game_type == NUVIE_GAME_U6 && obj->obj_n == 64)
-					display_special_char((area.x + objlist_offset_x) + j * 16, area.y + objlist_offset_y + i * 16, obj->quality);
+					display_special_char((area.left + objlist_offset_x) + j * 16, area.top + objlist_offset_y + i * 16, obj->quality);
 			}
 
-			screen->blit((area.x + objlist_offset_x) + j * 16, area.y + objlist_offset_y + i * 16, (unsigned char *)tile->data, 8, 16, 16, 16, true);
+			screen->blit((area.left + objlist_offset_x) + j * 16, area.top + objlist_offset_y + i * 16, (unsigned char *)tile->data, 8, 16, 16, 16, true);
 		}
 	}
 }
@@ -274,17 +274,17 @@ void InventoryWidget::display_arrows() {
 		row_offset = 0;
 
 	if (row_offset > 0) //display top arrow
-		font->drawChar(screen, 24, area.x, area.y + 16);
+		font->drawChar(screen, 24, area.left, area.top + 16);
 
 	if (num_objects - row_offset * 4 > 12) //display bottom arrow
-		font->drawChar(screen, 25, area.x, area.y + 3 * 16 + 8);
+		font->drawChar(screen, 25, area.left, area.top + 3 * 16 + 8);
 }
 
-GUI_status InventoryWidget::MouseDown(int x, int y, int button) {
+GUI_status InventoryWidget::MouseDown(int x, int y, MouseButton button) {
 	Event *event = Game::get_game()->get_event();
 	CommandBar *command_bar = Game::get_game()->get_command_bar();
-	x -= area.x;
-	y -= area.y;
+	x -= area.left;
+	y -= area.top;
 
 	if (y < 17)
 		return GUI_PASS;
@@ -363,13 +363,14 @@ Obj *InventoryWidget::get_obj_at_location(int x, int y) {
 }
 
 GUI_status InventoryWidget::MouseWheel(sint32 x, sint32 y) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if 0
+//if SDL_VERSION_ATLEAST(2, 0, 0)
 	int xpos, ypos;
 	screen->get_mouse_location(&xpos, &ypos);
 
-	xpos -= area.x;
-	ypos -= area.y;
-	if (xpos < 0 || ypos > area.y + area.h - 10)
+	xpos -= area.left;
+	ypos -= area.top;
+	if (xpos < 0 || ypos > area.top + area.height() - 10)
 		return GUI_PASS; // goes to InventoryView
 #endif
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_U6) {
@@ -386,14 +387,14 @@ GUI_status InventoryWidget::MouseWheel(sint32 x, sint32 y) {
 }
 
 // change container, ready/unready object, activate arrows
-GUI_status InventoryWidget::MouseUp(int x, int y, int button) {
+GUI_status InventoryWidget::MouseUp(int x, int y, MouseButton button) {
 
 	CommandBar *command_bar = Game::get_game()->get_command_bar();
 
 	if (button == USE_BUTTON || (button == ACTION_BUTTON
 	                             && command_bar->get_selected_action() > 0)) { // Exclude attack mode too
-		x -= area.x;
-		y -= area.y;
+		x -= area.left;
+		y -= area.top;
 		if (x >= icon_x && x <= icon_x + 15 && // hit top icon either actor or container
 		        y >= 0 && y <= 15) {
 			Event *event = Game::get_game()->get_event();
@@ -518,8 +519,8 @@ bool InventoryWidget::drag_accept_drop(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "InventoryWidget::drag_accept_drop()\n");
 	if (message == GUI_DRAG_OBJ) {
 		Obj *obj = (Obj *)data;
-		x -= area.x;
-		y -= area.y;
+		x -= area.left;
+		y -= area.top;
 		if (target_obj == NULL) { //we need to check this so we don't screw up target_obj on subsequent calls
 			if (drag_set_target_obj(x, y) == false) {
 				DEBUG(0, LEVEL_WARNING, "InventoryWidget: Didn't hit any widget object targets!\n");
@@ -574,8 +575,8 @@ void InventoryWidget::drag_perform_drop(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "InventoryWidget::drag_perform_drop()\n");
 	Obj *obj;
 
-	x -= area.x;
-	y -= area.y;
+	x -= area.left;
+	y -= area.top;
 
 	if (message == GUI_DRAG_OBJ) {
 		DEBUG(0, LEVEL_DEBUGGING, "Drop into inventory.\n");
@@ -650,7 +651,7 @@ void InventoryWidget::try_click() {
 }
 
 /* Use object. */
-GUI_status InventoryWidget::MouseDouble(int x, int y, int button) {
+GUI_status InventoryWidget::MouseDouble(int x, int y, MouseButton button) {
 	// we have to check if double-clicks are allowed here, since we use single-clicks
 	if (!Game::get_game()->get_map_window()->is_doubleclick_enabled())
 		return (GUI_PASS);
@@ -668,12 +669,12 @@ GUI_status InventoryWidget::MouseDouble(int x, int y, int button) {
 	return (GUI_PASS);
 }
 
-GUI_status InventoryWidget::MouseClick(int x, int y, int button) {
+GUI_status InventoryWidget::MouseClick(int x, int y, MouseButton button) {
 	return (MouseUp(x, y, button));
 }
 
 // change container, ready/unready object, activate arrows
-GUI_status InventoryWidget::MouseDelayed(int x, int y, int button) {
+GUI_status InventoryWidget::MouseDelayed(int x, int y, MouseButton button) {
 	if (ready_obj)
 		try_click();
 	return GUI_PASS;

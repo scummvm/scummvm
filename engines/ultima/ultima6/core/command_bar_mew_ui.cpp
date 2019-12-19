@@ -137,7 +137,7 @@ CommandBarNewUI::~CommandBarNewUI() {
 
 
 
-GUI_status CommandBarNewUI::MouseDown(int x, int y, int button) {
+GUI_status CommandBarNewUI::MouseDown(int x, int y, MouseButton button) {
 	if (HitRect(x, y)) {
 		x -= area.left;
 		y -= area.right;
@@ -160,7 +160,7 @@ GUI_status CommandBarNewUI::MouseDown(int x, int y, int button) {
 	return (GUI_YUM);
 }
 
-GUI_status CommandBarNewUI::MouseUp(int x, int y, int button) {
+GUI_status CommandBarNewUI::MouseUp(int x, int y, MouseButton button) {
 	/*
 	    if(HitRect(x, y))
 	    {
@@ -177,7 +177,7 @@ GUI_status CommandBarNewUI::MouseUp(int x, int y, int button) {
 	return (GUI_YUM);
 }
 
-GUI_status CommandBarNewUI::KeyDown(Common::KeyState key) {
+GUI_status CommandBarNewUI::KeyDown(const Common::KeyState &key) {
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 

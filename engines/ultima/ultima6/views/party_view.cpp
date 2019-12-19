@@ -37,7 +37,7 @@
 #include "ultima/ultima6/core/command_bar.h"
 #include "ultima/ultima6/usecode/usecode.h"
 #include "ultima/ultima6/core/map_window.h"
-#include "SunMoonStripWidget.h"
+#include "ultima/ultima6/views/sun_moon_strip_widget.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -68,16 +68,16 @@ bool PartyView::init(void *vm, uint16 x, uint16 y, Font *f, Party *p, Player *pl
 // PartyView is 8px wider than other Views, for the arrows
 // ...and 3px taller, for the sky (SB-X)
 	if (U6)
-		SetRect(area.x, area.y, area.w + 8, area.h + 3);
+		SetRect(area.left, area.top, area.width() + 8, area.height() + 3);
 	else
-		SetRect(area.x, area.y, area.w, area.h);
+		SetRect(area.left, area.top, area.width(), area.height());
 
 	view_manager = vm;
 	player = pl;
 
 	if (U6) {
 		sun_moon_widget = new SunMoonStripWidget(player, tile_manager);
-		sun_moon_widget->init(area.x, area.y);
+		sun_moon_widget->init(area.left, area.top);
 		AddWidget(sun_moon_widget);
 	}
 
@@ -91,9 +91,9 @@ GUI_status PartyView::MouseWheel(sint32 x, sint32 y) {
 	int xpos, ypos;
 	screen->get_mouse_location(&xpos, &ypos);
 
-	xpos -= area.x;
-	ypos -= area.y;
-	if (xpos < 0 || ypos > area.y + area.h - 6)
+	xpos -= area.left;
+	ypos -= area.top;
+	if (xpos < 0 || ypos > area.top + area.height() - 6)
 		return GUI_PASS; // goes to MsgScrollw
 #endif
 	if (y > 0) {
@@ -108,9 +108,9 @@ GUI_status PartyView::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status PartyView::MouseUp(int x, int y, int button) {
-	x -= area.x;
-	y -= area.y;
+GUI_status PartyView::MouseUp(int x, int y, MouseButton button) {
+	x -= area.left;
+	y -= area.top;
 
 	if (y < 18 && U6) // clicked on skydisplay
 		return GUI_PASS;
@@ -162,8 +162,8 @@ GUI_status PartyView::MouseUp(int x, int y, int button) {
 		}
 		if ((party_view_targeting || (button == ACTION_BUTTON
 		                              && command_bar->get_selected_action() > 0)) && event->can_target_icon()) {
-			x += area.x;
-			y += area.y;
+			x += area.left;
+			y += area.top;
 			Actor *actor = get_actor(x, y);
 			if (actor) {
 				event->select_actor(actor);
@@ -181,8 +181,8 @@ GUI_status PartyView::MouseUp(int x, int y, int button) {
 }
 
 Actor *PartyView::get_actor(int x, int y) {
-	x -= area.x;
-	y -= area.y;
+	x -= area.left;
+	y -= area.top;
 
 	uint8 party_size = party->get_party_size();
 	int rowH = 16;
@@ -286,7 +286,7 @@ void PartyView::Display(bool full_redraw) {
 		if (MD)
 			fill_md_background(bg_color, area);
 		else
-			screen->fill(bg_color, area.x, area.y, area.w, area.h);
+			screen->fill(bg_color, area.left, area.top, area.width(), area.height());
 		//if(U6)
 		// display_sun_moon_strip();
 
@@ -316,18 +316,18 @@ void PartyView::Display(bool full_redraw) {
 				y_offset = 6;
 				GameClock *clock = Game::get_game()->get_clock();
 				if (clock->get_purple_berry_counter(actor->get_actor_num()) > 0) {
-					screen->blit(area.x + x_offset + 16, area.y + y_offset + (i - row_offset)*rowH, tile_manager->get_tile(TILE_MD_PURPLE_BERRY_MARKER)->data, 8, 16, 16, 16, true);
+					screen->blit(area.left + x_offset + 16, area.top + y_offset + (i - row_offset)*rowH, tile_manager->get_tile(TILE_MD_PURPLE_BERRY_MARKER)->data, 8, 16, 16, 16, true);
 				}
 				if (clock->get_green_berry_counter(actor->get_actor_num()) > 0) {
-					screen->blit(area.x + x_offset + 32, area.y + y_offset + (i - row_offset)*rowH, tile_manager->get_tile(TILE_MD_GREEN_BERRY_MARKER)->data, 8, 16, 16, 16, true);
+					screen->blit(area.left + x_offset + 32, area.top + y_offset + (i - row_offset)*rowH, tile_manager->get_tile(TILE_MD_GREEN_BERRY_MARKER)->data, 8, 16, 16, 16, true);
 				}
 				if (clock->get_brown_berry_counter(actor->get_actor_num()) > 0) {
-					screen->blit(area.x + x_offset + 32, area.y + y_offset + (i - row_offset)*rowH, tile_manager->get_tile(TILE_MD_BROWN_BERRY_MARKER)->data, 8, 16, 16, 16, true);
+					screen->blit(area.left + x_offset + 32, area.top + y_offset + (i - row_offset)*rowH, tile_manager->get_tile(TILE_MD_BROWN_BERRY_MARKER)->data, 8, 16, 16, 16, true);
 				}
 
 			}
 
-			screen->blit(area.x + x_offset, area.y + y_offset + (i - row_offset)*rowH, actor_tile->data, 8, 16, 16, 16, true);
+			screen->blit(area.left + x_offset, area.top + y_offset + (i - row_offset)*rowH, actor_tile->data, 8, 16, 16, 16, true);
 			actor_name = party->get_actor_name(i);
 
 			if (SE) {
@@ -337,7 +337,7 @@ void PartyView::Display(bool full_redraw) {
 			if (MD)
 				y_offset = -3;
 			// FIXME: Martian Dreams text is somewhat center aligned
-			font->drawString(screen, actor_name, area.x + x_offset + 24, area.y + y_offset + (i - row_offset) * rowH + 8);
+			font->drawString(screen, actor_name, area.left + x_offset + 24, area.top + y_offset + (i - row_offset) * rowH + 8);
 			sprintf(hp_string, "%3d", actor->get_hp());
 			hp_text_color = actor->get_hp_text_color();
 			if (SE) {
@@ -348,10 +348,10 @@ void PartyView::Display(bool full_redraw) {
 				x_offset = -16;
 				y_offset = 14;
 			}
-			font->drawString(screen, hp_string, strlen(hp_string), area.x + x_offset + 112, area.y + y_offset + (i - row_offset) * rowH, hp_text_color, 0);
+			font->drawString(screen, hp_string, strlen(hp_string), area.left + x_offset + 112, area.top + y_offset + (i - row_offset) * rowH, hp_text_color, 0);
 		}
 		DisplayChildren(full_redraw);
-		screen->update(area.x, area.y, area.w, area.h);
+		screen->update(area.left, area.top, area.width(), area.height());
 	}
 
 	return;
@@ -390,11 +390,11 @@ void PartyView::display_arrows() {
 		row_offset = 0;
 
 	if ((party_size - row_offset) > max_party_size) // display bottom arrow
-		font->drawChar(screen, 25, area.x - x_offset, area.y + 90 + y_offset);
+		font->drawChar(screen, 25, area.left - x_offset, area.top + 90 + y_offset);
 	if (MD)
 		y_offset = 3;
 	if (row_offset > 0) // display top arrow
-		font->drawChar(screen, 24, area.x - x_offset, area.y + 18 - y_offset);
+		font->drawChar(screen, 24, area.left - x_offset, area.top + 18 - y_offset);
 }
 // </SB-X>
 

@@ -196,7 +196,7 @@ void GUI::Display() {
 	for (i = 0; i < numwidgets; ++i) {
 		if (widgets[i]->Status() == WIDGET_VISIBLE) {
 			widgets[i]->Display(complete_redraw);
-			//screen->update(widgets[i]->area.x,widgets[i]->area.y,widgets[i]->area.w,widgets[i]->area.h);
+			//screen->update(widgets[i]->area.left,widgets[i]->area.top,widgets[i]->area.width(),widgets[i]->area.height());
 		}
 	}
 	//SDL_UpdateRect(screen, 0, 0, 0, 0);
@@ -276,13 +276,13 @@ GUI:: HandleEvent(Common::Event *event) {
 #ifdef HAVE_JOYSTICK_SUPPORT
 		if (event->type >= SDL_JOYAXISMOTION && event->type <= SDL_JOYBUTTONUP) {
 			event->key.keysym.sym = Game::get_game()->get_keybinder()->get_key_from_joy_events(event);
-			if (event->key.keysym.sym == SDLK_UNKNOWN) { // isn't mapped, is in deadzone, or axis didn't return to center before moving again
+			if (event->key.keysym.sym == Common::KEYCODE_UNKNOWN) { // isn't mapped, is in deadzone, or axis didn't return to center before moving again
 				HandleStatus(status);
 				CleanupDeletedWidgets(status != GUI_QUIT);
 				return status; // pretend nothing happened
 			}
 			event->type = SDL_KEYDOWN;
-			event->key.keysym.mod = KMOD_NONE;
+			event->key.keysym.mod = Common::KBD_NONE;
 		}
 #endif
 		switch (event->type) {

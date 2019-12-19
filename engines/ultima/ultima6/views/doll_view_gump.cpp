@@ -31,9 +31,9 @@
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/views/view_manager.h"
 
-#include "ContainerViewGump.h"
-#include "DollWidget.h"
-#include "DollViewGump.h"
+#include "ultima/ultima6/views/container_view_gump.h"
+#include "ultima/ultima6/views/doll_widget.h"
+#include "ultima/ultima6/views/doll_view_gump.h"
 #include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
@@ -61,7 +61,7 @@ DollViewGump::~DollViewGump() {
 bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Actor *a, Font *f, Party *p, TileManager *tm, ObjManager *om) {
 	View::init(x, y, f, p, tm, om);
 
-	SetRect(area.x, area.y, 108, 136);
+	SetRect(area.left, area.top, 108, 136);
 
 	actor = a;
 	is_avatar = actor->is_avatar();
@@ -142,7 +142,8 @@ bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16
 void DollViewGump::setColorKey(Graphics::ManagedSurface *image) {
 	if (image) {
 		bg_color_key = SDL_MapRGB(image->format, 0xf1, 0x0f, 0xc4);
-		SDL_SetColorKey(image, SDL_TRUE, bg_color_key);
+		//SDL_SetColorKey(image, SDL_TRUE, bg_color_key);
+		::error("TODO: transparency");
 	}
 }
 
@@ -238,27 +239,26 @@ void DollViewGump::Display(bool full_redraw) {
 //display_spell_list_text();
 	Common::Rect dst;
 	dst = area;
-	dst.w = 108;
-	dst.h = 136;
+	dst.setWidth(108);
+	dst.setHeight(136);
 	SDL_BlitSurface(bg_image, NULL, surface, &dst);
 
 	if (actor_doll) {
-		dst.x += 45;
-		dst.y += 32;
+		dst.translate(45, 32);
 		SDL_BlitSurface(actor_doll, NULL, surface, &dst);
 	}
 
 	uint8 w = font->get_center(actor->get_name(), 58);
-	font->TextOut(screen->get_sdl_surface(), area.x + 29 + w, area.y + 7, actor->get_name());
+	font->TextOut(screen->get_sdl_surface(), area.left + 29 + w, area.top + 7, actor->get_name());
 
 	displayEquipWeight();
 
 	DisplayChildren(full_redraw);
 	displayCombatMode();
 	if (show_cursor)
-		screen->blit(area.x + cursor_xoff, area.y + cursor_yoff, (unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
+		screen->blit(area.left + cursor_xoff, area.top + cursor_yoff, (unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
 	update_display = false;
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 
 	return;
 }
@@ -269,10 +269,10 @@ void DollViewGump::displayEquipWeight() {
 	char string[4]; //nnn\0
 
 	snprintf(string, 4, "%u", equip_weight);
-	font->TextOut(screen->get_sdl_surface(), area.x + ((equip_weight > 9) ? 59 : 64), area.y + 82, string);
+	font->TextOut(screen->get_sdl_surface(), area.left + ((equip_weight > 9) ? 59 : 64), area.top + 82, string);
 
 	snprintf(string, 4, "%u", strength);
-	font->TextOut(screen->get_sdl_surface(), area.x + ((strength > 9) ? 76 : 81), area.y + 82, string);
+	font->TextOut(screen->get_sdl_surface(), area.left + ((strength > 9) ? 76 : 81), area.top + 82, string);
 }
 
 void DollViewGump::displayCombatMode() {
@@ -287,7 +287,7 @@ void DollViewGump::displayCombatMode() {
 	else // SE
 		text = combat_mode_tbl_se[index];
 	uint8 c = font->get_center(text, 55);
-	font->TextOut(screen->get_sdl_surface(), area.x + 36 + c, area.y + 97, text);
+	font->TextOut(screen->get_sdl_surface(), area.left + 36 + c, area.top + 97, text);
 }
 
 void DollViewGump::left_arrow() {
@@ -591,9 +591,9 @@ GUI_status DollViewGump::moveCursorRelative(uint8 direction) {
 	}
 }
 
-GUI_status DollViewGump::KeyDown(Common::KeyState key) {
+GUI_status DollViewGump::KeyDown(const Common::KeyState &key) {
 // I was restricting numpad keys when in numlock but there shouldn't be any needed number input
-//	bool numlock = (key.mod & KMOD_NUM); // SDL doesn't get the proper num lock state in Windows
+//	bool numlock = (key.flags & Common::KBD_NUM); // SDL doesn't get the proper num lock state in Windows
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 
@@ -680,11 +680,11 @@ GUI_status DollViewGump::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status DollViewGump::MouseDown(int x, int y, int button) {
+GUI_status DollViewGump::MouseDown(int x, int y, MouseButton button) {
 	return DraggableView::MouseDown(x, y, button);
 }
 
-GUI_status DollViewGump::MouseUp(int x, int y, int button) {
+GUI_status DollViewGump::MouseUp(int x, int y, MouseButton button) {
 	return DraggableView::MouseUp(x, y, button);
 }
 

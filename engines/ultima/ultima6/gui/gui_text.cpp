@@ -62,8 +62,8 @@ GUI_Text:: GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, const char *str, GU
 
 	font->TextExtent(text, &w, &h, max_width);
 
-	area.w = w;
-	area.h = h;
+	area.width() = w;
+	area.height() = h;
 }
 
 GUI_Text::~GUI_Text() {
@@ -79,7 +79,7 @@ void
 GUI_Text:: Display(bool full_redraw) {
 	font->SetTransparency(1);
 	font->SetColoring(R, G, B);
-	font->TextOut(surface, area.x, area.y, text, max_width);
+	font->TextOut(surface, area.left, area.top, text, max_width);
 
 	DisplayChildren();
 }

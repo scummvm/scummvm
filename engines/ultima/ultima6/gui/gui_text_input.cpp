@@ -50,8 +50,8 @@ GUI_TextInput:: GUI_TextInput(int x, int y, uint8 r, uint8 g, uint8 b, char *str
 	pos = strlen(text);
 	length = pos;
 
-	area.w = max_width * font->CharWidth();
-	area.h = max_height * font->CharHeight();
+	area.width() = max_width * font->CharWidth();
+	area.height() = max_height * font->CharHeight();
 }
 
 GUI_TextInput::~GUI_TextInput() {
@@ -64,7 +64,7 @@ void GUI_TextInput::release_focus() {
 // SDL_EnableUNICODE(0); //disable unicode.
 }
 
-GUI_status GUI_TextInput::MouseUp(int x, int y, int button) {
+GUI_status GUI_TextInput::MouseUp(int x, int y, MouseButton button) {
 // if(button == SDL_BUTTON_WHEELUP || button == SDL_BUTTON_WHEELDOWN)
 //   return GUI_PASS;
 //release focus if we click outside the text box.
@@ -80,84 +80,84 @@ GUI_status GUI_TextInput::MouseUp(int x, int y, int button) {
 	return (GUI_PASS);
 }
 
-GUI_status GUI_TextInput::KeyDown(Common::KeyState key) {
+GUI_status GUI_TextInput::KeyDown(const Common::KeyState &key) {
 	char ascii = get_ascii_char_from_keysym(key);
 
 	if (!focused)
 		return GUI_PASS;
 
 
-	if (!Common::isPrint(ascii) && key.sym != SDLK_BACKSPACE) {
+	if (!Common::isPrint(ascii) && key.keycode != Common::KEYCODE_BACKSPACE) {
 		KeyBinder *keybinder = Game::get_game()->get_keybinder();
 		ActionType a = keybinder->get_ActionType(key);
 		switch (keybinder->GetActionKeyType(a)) {
 		case NORTH_KEY:
-			key.sym = SDLK_UP;
+			key.keycode = Common::KEYCODE_UP;
 			break;
 		case SOUTH_KEY:
-			key.sym = SDLK_DOWN;
+			key.keycode = Common::KEYCODE_DOWN;
 			break;
 		case WEST_KEY:
-			key.sym = SDLK_LEFT;
+			key.keycode = Common::KEYCODE_LEFT;
 			break;
 		case EAST_KEY:
-			key.sym = SDLK_RIGHT;
+			key.keycode = Common::KEYCODE_RIGHT;
 			break;
 		case TOGGLE_CURSOR_KEY:
 			release_focus();
 			return GUI_PASS; // can tab through to SaveDialog
 		case DO_ACTION_KEY:
-			key.sym = SDLK_RETURN;
+			key.keycode = Common::KEYCODE_RETURN;
 			break;
 		case CANCEL_ACTION_KEY:
-			key.sym = SDLK_ESCAPE;
+			key.keycode = Common::KEYCODE_ESCAPE;
 			break;
 		case HOME_KEY:
-			key.sym = SDLK_HOME;
+			key.keycode = Common::KEYCODE_HOME;
 		case END_KEY:
-			key.sym = SDLK_END;
+			key.keycode = Common::KEYCODE_END;
 		default :
 			if (keybinder->handle_always_available_keys(a)) return GUI_YUM;
 			break;
 		}
 	}
 
-	switch (key.sym) {
-	case SDLK_LSHIFT   :
-	case SDLK_RSHIFT   :
-	case SDLK_LCTRL    :
-	case SDLK_RCTRL    :
-	case SDLK_CAPSLOCK :
+	switch (key.keycode) {
+	case Common::KEYCODE_LSHIFT   :
+	case Common::KEYCODE_RSHIFT   :
+	case Common::KEYCODE_LCTRL    :
+	case Common::KEYCODE_RCTRL    :
+	case Common::KEYCODE_CAPSLOCK :
 		break;
 
-	case SDLK_KP_ENTER:
-	case SDLK_RETURN :
+	case Common::KEYCODE_KP_ENTER:
+	case Common::KEYCODE_RETURN :
 		if (callback_object)
 			callback_object->callback(TEXTINPUT_CB_TEXT_READY, this, text);
-	case SDLK_ESCAPE :
+	case Common::KEYCODE_ESCAPE :
 		release_focus();
 		break;
 
-	case SDLK_HOME :
+	case Common::KEYCODE_HOME :
 		pos = 0;
 		break;
-	case SDLK_END  :
+	case Common::KEYCODE_END  :
 		pos = length;
 		break;
 
-	case SDLK_KP_4  :
-	case SDLK_LEFT :
+	case Common::KEYCODE_KP_4  :
+	case Common::KEYCODE_LEFT :
 		if (pos > 0)
 			pos--;
 		break;
 
-	case SDLK_KP_6   :
-	case SDLK_RIGHT :
+	case Common::KEYCODE_KP_6   :
+	case Common::KEYCODE_RIGHT :
 		if (pos < length)
 			pos++;
 		break;
 
-	case SDLK_DELETE    :
+	case Common::KEYCODE_DELETE    :
 		if (pos < length) { //delete the character to the right of the cursor
 			pos++;
 			remove_char();
@@ -165,12 +165,12 @@ GUI_status GUI_TextInput::KeyDown(Common::KeyState key) {
 		}
 		break;
 
-	case SDLK_BACKSPACE :
+	case Common::KEYCODE_BACKSPACE :
 		remove_char();
 		break; //delete the character to the left of the cursor
 
-	case SDLK_UP :
-	case SDLK_KP_8 :
+	case Common::KEYCODE_UP :
+	case Common::KEYCODE_KP_8 :
 		if (pos == length) {
 			if (length + 1 > max_width * max_height)
 				break;
@@ -191,8 +191,8 @@ GUI_status GUI_TextInput::KeyDown(Common::KeyState key) {
 			text[pos]++;
 		break;
 
-	case SDLK_KP_2 :
-	case SDLK_DOWN :
+	case Common::KEYCODE_KP_2 :
+	case Common::KEYCODE_DOWN :
 		if (pos == length) {
 			if (length + 1 > max_width * max_height)
 				break;
@@ -307,8 +307,8 @@ void GUI_TextInput::display_cursor() {
 	cw = font->CharWidth();
 	ch = font->CharHeight();
 
-	r.x = area.x + x * cw;
-	r.y = area.y + y * ch;
+	r.x = area.left + x * cw;
+	r.y = area.top + y * ch;
 	r.w = 1;
 	r.h = ch;
 

@@ -26,8 +26,8 @@
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/fonts/font_manager.h"
 #include "ultima/ultima6/views/view_manager.h"
-#include "ScrollWidgetGump.h"
-#include "ScrollViewGump.h"
+#include "ultima/ultima6/views/scroll_widget_gump.h"
+#include "ultima/ultima6/views/scroll_view_gump.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -51,7 +51,7 @@ bool ScrollViewGump::init(Screen *tmp_screen, void *view_manager, Font *f, Party
 	y_off += (Game::get_game()->get_game_height() - SIGN_BG_H) / 2;
 
 	View::init(x_off, y_off, f, p, tm, om);
-	SetRect(area.x, area.y, SIGN_BG_W, SIGN_BG_H);
+	SetRect(area.left, area.top, SIGN_BG_W, SIGN_BG_H);
 	/*
 	    std::string datadir = GUI::get_gui()->get_data_dir();
 	    std::string imagefile;
@@ -86,27 +86,27 @@ void ScrollViewGump::Display(bool full_redraw) {
 	dst = area;
 	SDL_BlitSurface(bg_image, NULL, surface, &dst);
 	*/
-	screen->fill(26, area.x, area.y, area.w, area.h);
+	screen->fill(26, area.left, area.top, area.width(), area.height());
 	DisplayChildren(full_redraw);
 
-//font->TextOut(screen->get_sdl_surface(), area.x + 29, area.y + 6, "This is a test sign");
+//font->TextOut(screen->get_sdl_surface(), area.left + 29, area.top + 6, "This is a test sign");
 
-//font->drawString(screen, sign_text, strlen(sign_text), area.x + (area.w - font->getStringWidth(sign_text)) / 2, area.y + (area.h - 19) / 2, 0, 0);
+//font->drawString(screen, sign_text, strlen(sign_text), area.left + (area.width() - font->getStringWidth(sign_text)) / 2, area.top + (area.height() - 19) / 2, 0, 0);
 	update_display = false;
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 
 
 	return;
 }
 
-GUI_status ScrollViewGump::MouseDown(int x, int y, int button) {
+GUI_status ScrollViewGump::MouseDown(int x, int y, MouseButton button) {
 	if (scroll_widget->MouseDown(x, y, button) != GUI_YUM) {
 		Game::get_game()->get_view_manager()->close_gump(this);
 	}
 	return GUI_YUM;
 }
 
-GUI_status ScrollViewGump::KeyDown(Common::KeyState key) {
+GUI_status ScrollViewGump::KeyDown(const Common::KeyState &key) {
 	if (scroll_widget->KeyDown(key) != GUI_YUM) {
 		Game::get_game()->get_view_manager()->close_gump(this);
 	}

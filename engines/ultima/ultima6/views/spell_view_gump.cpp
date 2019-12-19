@@ -28,7 +28,7 @@
 #include "ultima/ultima6/gui/gui_button.h"
 #include "ultima/ultima6/core/magic.h"
 
-#include "SpellViewGump.h"
+#include "ultima/ultima6/views/spell_view_gump.h"
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/files/nuvie_bmp_file.h"
 
@@ -53,7 +53,7 @@ SpellViewGump::~SpellViewGump() {
 bool SpellViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om) {
 	View::init(x, y, f, p, tm, om);
 
-	SetRect(area.x, area.y, 162, 108);
+	SetRect(area.left, area.top, 162, 108);
 
 	std::string datadir = GUI::get_gui()->get_data_dir();
 	std::string imagefile;
@@ -138,17 +138,17 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 		} else {
 			Common::Rect dst;
 
-			dst.w = 58;
-			dst.h = 13;
-
 			uint8 base = (level - 1) * 16;
-
 			uint8 spell = cur_spells[i] - base;
-			dst.x = ((spell < 5) ? 25 : 88);
-			dst.y = 18 + (spell % 5) * 14;
+
+			dst.left = ((spell < 5) ? 25 : 88);
+			dst.top = 18 + (spell % 5) * 14;
+			dst.setWidth(58);
+			dst.setHeight(13);
+
 			SDL_BlitSurface(spell_image, NULL, bg_image, &dst);
 			SDL_FreeSurface(spell_image);
-			printSpellQty(cur_spells[i], dst.x + ((spell < 5) ? 50 : 48), dst.y);
+			printSpellQty(cur_spells[i], dst.left + ((spell < 5) ? 50 : 48), dst.top);
 		}
 	}
 
@@ -167,10 +167,7 @@ void SpellViewGump::loadCircleString(std::string datadir) {
 	Graphics::ManagedSurface *s = bmp.getSdlSurface32(imagefile);
 	if (s != NULL) {
 		Common::Rect dst;
-		dst.x = 70;
-		dst.y = 7;
-		dst.w = 4;
-		dst.h = 6;
+		dst = Common::Rect(70, 7, 74, 13);
 		SDL_BlitSurface(s, NULL, bg_image, &dst);
 	}
 
@@ -196,20 +193,17 @@ void SpellViewGump::loadCircleSuffix(std::string datadir, std::string image) {
 	Graphics::ManagedSurface *s = bmp.getSdlSurface32(imagefile);
 	if (s != NULL) {
 		Common::Rect dst;
-		dst.x = 75;
-		dst.y = 7;
-		dst.w = 7;
-		dst.h = 6;
+		dst = Common::Rect(75, 7, 82, 13);
 		SDL_BlitSurface(s, NULL, bg_image, &dst);
 	}
 }
 
 
-void SpellViewGump::printSpellQty(uint8 spell_num, uint16 x, uint16 y) {
+void SpellViewGump::printSpellQty(uint8 spellNum, uint16 x, uint16 y) {
 	Magic *m = Game::get_game()->get_magic();
 	char num_str[4];
 
-	Spell *spell = m->get_spell((uint8)spell_num);
+	Spell *spell = m->get_spell((uint8)spellNum);
 
 	uint16 qty = get_available_spell_count(spell);
 	snprintf(num_str, 3, "%d", qty);
@@ -225,8 +219,8 @@ void SpellViewGump::Display(bool full_redraw) {
 //display_spell_list_text();
 	Common::Rect dst;
 	dst = area;
-	dst.w = 162;
-	dst.h = 108;
+	dst.setWidth(162);
+	dst.setHeight(108);
 	SDL_BlitSurface(bg_image, NULL, surface, &dst);
 
 	DisplayChildren(full_redraw);
@@ -237,10 +231,10 @@ void SpellViewGump::Display(bool full_redraw) {
 		spell = 0;
 
 	spell = spell % 16;
-	screen->fill(248, area.x + ((spell < 5) ? 75 : 136), area.y + 18 + 7 + (spell % 5) * 14, 10, 1);
+	screen->fill(248, area.left + ((spell < 5) ? 75 : 136), area.top + 18 + 7 + (spell % 5) * 14, 10, 1);
 
 	update_display = false;
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 
 	return;
 }
@@ -269,8 +263,8 @@ void SpellViewGump::close_spellbook() {
 }
 
 sint16 SpellViewGump::getSpell(int x, int y) {
-	int localy = y - area.y;
-	int localx = x - area.x;
+	int localy = y - area.top;
+	int localx = x - area.left;
 
 	localy += 3; //align the pointer in the center of the crosshair cursor.
 	localx += 3;
@@ -305,8 +299,8 @@ GUI_status SpellViewGump::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status SpellViewGump::MouseDown(int x, int y, int button) {
-	if (SDL_BUTTON(button) & SDL_BUTTON_RMASK) {
+GUI_status SpellViewGump::MouseDown(int x, int y, MouseButton button) {
+	if (button == BUTTON_RIGHT) {
 		close_spellbook();
 		return GUI_YUM;
 	}
@@ -321,7 +315,7 @@ GUI_status SpellViewGump::MouseDown(int x, int y, int button) {
 	bool can_target = true; // maybe put this check into GUI_widget
 	if (HitRect(x, y)) {
 		if (bg_image) {
-			uint32 pixel = sdl_getpixel(bg_image, x - area.x, y - area.y);
+			uint32 pixel = sdl_getpixel(bg_image, x - area.left, y - area.top);
 			if (pixel != bg_color_key)
 				can_target = false;
 		} else
@@ -345,7 +339,7 @@ GUI_status SpellViewGump::MouseDown(int x, int y, int button) {
 	return DraggableView::MouseDown(x, y, button);
 }
 
-GUI_status SpellViewGump::MouseUp(int x, int y, int button) {
+GUI_status SpellViewGump::MouseUp(int x, int y, MouseButton button) {
 	sint16 spell = getSpell(x, y);
 
 	if (spell != -1 && spell == selected_spell) {

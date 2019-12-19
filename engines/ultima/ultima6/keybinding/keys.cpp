@@ -151,59 +151,59 @@ const struct {
 	const char *s;
 	Common::KeyCode k;
 } Common::KeyCodeStringTable[] = {
-	{"LCTRL",     SDLK_LCTRL},
-	{"RCTRL",     SDLK_RCTRL},
-	{"LALT",      SDLK_LALT},
-	{"RALT",      SDLK_RALT},
-	{"LSHIFT",    SDLK_LSHIFT},
-	{"RSHIFT",    SDLK_RSHIFT},
-	{"BACKSPACE", SDLK_BACKSPACE},
-	{"TAB",       SDLK_TAB},
-	{"ENTER",     SDLK_RETURN},
-	{"PAUSE",     SDLK_PAUSE},
-	{"ESC",       SDLK_ESCAPE},
-	{"SPACE",     SDLK_SPACE},
-	{"DEL",       SDLK_DELETE},
-	{"KP0",       SDLK_KP_0},
-	{"KP1",       SDLK_KP_1},
-	{"KP2",       SDLK_KP_2},
-	{"KP3",       SDLK_KP_3},
-	{"KP4",       SDLK_KP_4},
-	{"KP5",       SDLK_KP_5},
-	{"KP6",       SDLK_KP_6},
-	{"KP7",       SDLK_KP_7},
-	{"KP8",       SDLK_KP_8},
-	{"KP9",       SDLK_KP_9},
-	{"KP.",       SDLK_KP_PERIOD},
-	{"KP/",       SDLK_KP_DIVIDE},
-	{"KP*",       SDLK_KP_MULTIPLY},
-	{"KP-",       SDLK_KP_MINUS},
-	{"KP+",       SDLK_KP_PLUS},
-	{"KP_ENTER",  SDLK_KP_ENTER},
-	{"UP",        SDLK_UP},
-	{"DOWN",      SDLK_DOWN},
-	{"RIGHT",     SDLK_RIGHT},
-	{"LEFT",      SDLK_LEFT},
-	{"INSERT",    SDLK_INSERT},
-	{"HOME",      SDLK_HOME},
-	{"END",       SDLK_END},
-	{"PAGEUP",    SDLK_PAGEUP},
-	{"PAGEDOWN",  SDLK_PAGEDOWN},
-	{"F1",        SDLK_F1},
-	{"F2",        SDLK_F2},
-	{"F3",        SDLK_F3},
-	{"F4",        SDLK_F4},
-	{"F5",        SDLK_F5},
-	{"F6",        SDLK_F6},
-	{"F7",        SDLK_F7},
-	{"F8",        SDLK_F8},
-	{"F9",        SDLK_F9},
-	{"F10",       SDLK_F10},
-	{"F11",       SDLK_F11},
-	{"F12",       SDLK_F12},
-	{"F13",       SDLK_F13},
-	{"F14",       SDLK_F14},
-	{"F15",       SDLK_F15},
+	{"LCTRL",     Common::KEYCODE_LCTRL},
+	{"RCTRL",     Common::KEYCODE_RCTRL},
+	{"LALT",      Common::KEYCODE_LALT},
+	{"RALT",      Common::KEYCODE_RALT},
+	{"LSHIFT",    Common::KEYCODE_LSHIFT},
+	{"RSHIFT",    Common::KEYCODE_RSHIFT},
+	{"BACKSPACE", Common::KEYCODE_BACKSPACE},
+	{"TAB",       Common::KEYCODE_TAB},
+	{"ENTER",     Common::KEYCODE_RETURN},
+	{"PAUSE",     Common::KEYCODE_PAUSE},
+	{"ESC",       Common::KEYCODE_ESCAPE},
+	{"SPACE",     Common::KEYCODE_SPACE},
+	{"DEL",       Common::KEYCODE_DELETE},
+	{"KP0",       Common::KEYCODE_KP_0},
+	{"KP1",       Common::KEYCODE_KP_1},
+	{"KP2",       Common::KEYCODE_KP_2},
+	{"KP3",       Common::KEYCODE_KP_3},
+	{"KP4",       Common::KEYCODE_KP_4},
+	{"KP5",       Common::KEYCODE_KP_5},
+	{"KP6",       Common::KEYCODE_KP_6},
+	{"KP7",       Common::KEYCODE_KP_7},
+	{"KP8",       Common::KEYCODE_KP_8},
+	{"KP9",       Common::KEYCODE_KP_9},
+	{"KP.",       Common::KEYCODE_KP_PERIOD},
+	{"KP/",       Common::KEYCODE_KP_DIVIDE},
+	{"KP*",       Common::KEYCODE_KP_MULTIPLY},
+	{"KP-",       Common::KEYCODE_KP_MINUS},
+	{"KP+",       Common::KEYCODE_KP_PLUS},
+	{"KP_ENTER",  Common::KEYCODE_KP_ENTER},
+	{"UP",        Common::KEYCODE_UP},
+	{"DOWN",      Common::KEYCODE_DOWN},
+	{"RIGHT",     Common::KEYCODE_RIGHT},
+	{"LEFT",      Common::KEYCODE_LEFT},
+	{"INSERT",    Common::KEYCODE_INSERT},
+	{"HOME",      Common::KEYCODE_HOME},
+	{"END",       Common::KEYCODE_END},
+	{"PAGEUP",    Common::KEYCODE_PAGEUP},
+	{"PAGEDOWN",  Common::KEYCODE_PAGEDOWN},
+	{"F1",        Common::KEYCODE_F1},
+	{"F2",        Common::KEYCODE_F2},
+	{"F3",        Common::KEYCODE_F3},
+	{"F4",        Common::KEYCODE_F4},
+	{"F5",        Common::KEYCODE_F5},
+	{"F6",        Common::KEYCODE_F6},
+	{"F7",        Common::KEYCODE_F7},
+	{"F8",        Common::KEYCODE_F8},
+	{"F9",        Common::KEYCODE_F9},
+	{"F10",       Common::KEYCODE_F10},
+	{"F11",       Common::KEYCODE_F11},
+	{"F12",       Common::KEYCODE_F12},
+	{"F13",       Common::KEYCODE_F13},
+	{"F14",       Common::KEYCODE_F14},
+	{"F15",       Common::KEYCODE_F15},
 #ifdef HAVE_JOYSTICK_SUPPORT
 // hackishly map joystick buttons to unused keyboard syms
 	{"JOY_UP",            JOY_UP},
@@ -267,7 +267,7 @@ const struct {
 	{"JOY18",             JOY18},
 	{"JOY19",             JOY19},
 #endif /* HAVE_JOYSTICK_SUPPORT */
-	{"", SDLK_UNKNOWN} // terminator
+	{"", Common::KEYCODE_UNKNOWN} // terminator
 };
 
 
@@ -427,18 +427,18 @@ bool KeyBinder::DoAction(ActionType const &a) const {
 
 KeyMap::iterator KeyBinder::get_sdlkey_index(Common::KeyState keysym) {
 	Common::KeyState key = keysym;
-	key.mod = KMOD_NONE;
-	if (keysym.mod & KMOD_SHIFT)
-		key.mod = (SDL_Keymod)(key.mod | KMOD_SHIFT);
-	if (keysym.mod & KMOD_CTRL)
-		key.mod = (SDL_Keymod)(key.mod | KMOD_CTRL);
+	key.flags = Common::KBD_NONE;
+	if (keysym.mod & Common::KBD_SHIFT)
+		key.flags = (SDL_Keymod)(key.flags | Common::KBD_SHIFT);
+	if (keysym.mod & Common::KBD_CTRL)
+		key.flags = (SDL_Keymod)(key.flags | Common::KBD_CTRL);
 #if defined(MACOS) || defined(MACOSX)
 	// map Meta to Alt on MacOS
-	if (keysym.mod & KMOD_GUI)
-		key.mod = (SDL_Keymod)(key.mod | KMOD_ALT);
+	if (keysym.mod & Common::KBD_GUI)
+		key.flags = (SDL_Keymod)(key.flags | Common::KBD_ALT);
 #else
-	if (keysym.mod & KMOD_ALT)
-		key.mod = (SDL_Keymod)(key.mod | KMOD_ALT);
+	if (keysym.mod & Common::KBD_ALT)
+		key.flags = (SDL_Keymod)(key.flags | Common::KBD_ALT);
 #endif
 
 	return bindings.find(key);
@@ -455,8 +455,8 @@ bool KeyBinder::HandleEvent(const Common::Event *ev) {
 	if (sdlkey_index != bindings.end())
 		return DoAction((*sdlkey_index).second);
 
-	if (ev->key.keysym.sym != SDLK_LALT && ev->key.keysym.sym != SDLK_RALT
-	        && ev->key.keysym.sym != SDLK_LCTRL && ev->key.keysym.sym != SDLK_RCTRL) {
+	if (ev->key.keysym.sym != Common::KEYCODE_LALT && ev->key.keysym.sym != Common::KEYCODE_RALT
+	        && ev->key.keysym.sym != Common::KEYCODE_LCTRL && ev->key.keysym.sym != Common::KEYCODE_RCTRL) {
 		handle_wrong_key_pressed();
 	}
 	return false;
@@ -531,8 +531,8 @@ void KeyBinder::ParseLine(char *line) {
 	size_t i;
 	Common::KeyState k;
 	ActionType a;
-	k.sym      = SDLK_UNKNOWN;
-	k.mod      = KMOD_NONE;
+	k.sym      = Common::KEYCODE_UNKNOWN;
+	k.mod      = Common::KBD_NONE;
 	string s = line, u;
 	string d, desc, keycode;
 	bool show;
@@ -550,15 +550,15 @@ void KeyBinder::ParseLine(char *line) {
 	while (s.length() && !Common::isSpace(s[0])) {
 		// check modifiers
 		if (u.substr(0, 4) == "ALT-") {
-			k.mod = (SDL_Keymod)(k.mod | KMOD_ALT);
+			k.mod = (SDL_Keymod)(k.mod | Common::KBD_ALT);
 			s.erase(0, 4);
 			u.erase(0, 4);
 		} else if (u.substr(0, 5) == "CTRL-") {
-			k.mod = (SDL_Keymod)(k.mod | KMOD_CTRL);
+			k.mod = (SDL_Keymod)(k.mod | Common::KBD_CTRL);
 			s.erase(0, 5);
 			u.erase(0, 5);
 		} else if (u.substr(0, 6) == "SHIFT-") {
-			k.mod = (SDL_Keymod)(k.mod | KMOD_SHIFT);
+			k.mod = (SDL_Keymod)(k.mod | Common::KBD_SHIFT);
 			s.erase(0, 6);
 			u.erase(0, 6);
 		} else {
@@ -596,7 +596,7 @@ void KeyBinder::ParseLine(char *line) {
 		}
 	}
 
-	if (k.sym == SDLK_UNKNOWN) {
+	if (k.sym == Common::KEYCODE_UNKNOWN) {
 		cerr << "Keybinder: parse error in line: " << s << endl;
 		return;
 	}
@@ -649,16 +649,16 @@ void KeyBinder::ParseLine(char *line) {
 
 	if (show) {
 		desc = "";
-		if (k.mod & KMOD_CTRL)
+		if (k.mod & Common::KBD_CTRL)
 			desc += "Ctrl-";
 #if defined(MACOS) || defined(MACOSX)
-		if (k.mod & KMOD_ALT)
+		if (k.mod & Common::KBD_ALT)
 			desc += "Cmd-";
 #else
-		if (k.mod & KMOD_ALT)
+		if (k.mod & Common::KBD_ALT)
 			desc += "Alt-";
 #endif
-		if (k.mod & KMOD_SHIFT)
+		if (k.mod & Common::KBD_SHIFT)
 			desc += "Shift-";
 		if (keycode == "`")
 			desc += "grave";
@@ -842,7 +842,7 @@ Common::KeyCode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating
 	joy_axes_pairs axes_pair =  get_axes_pair(axis);
 
 	if (axes_pair == UNHANDLED_AXES_PAIR) // joystick NULL check doesn't seem to be needed - It is also checked before tring to repeat
-		return SDLK_UNKNOWN;
+		return Common::KEYCODE_UNKNOWN;
 	sint8 xoff = 0;
 	sint8 yoff = 0;
 	int xaxis, yaxis;
@@ -865,7 +865,7 @@ Common::KeyCode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating
 		yaxis = y_axis4;
 		break;
 	default:
-		return SDLK_UNKNOWN; // shouldn't happen
+		return Common::KEYCODE_UNKNOWN; // shouldn't happen
 	}
 
 	if (xaxis != 255 && abs(SDL_JoystickGetAxis(joystick, xaxis)) > get_x_axis_deadzone(axes_pair))
@@ -879,9 +879,9 @@ Common::KeyCode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating
 			next_axes_pair_update = 0; // centered so okay to reset
 			if (!repeat_hat)
 				next_joy_repeat_time = SDL_GetTicks() + joy_repeat_delay;
-			return SDLK_UNKNOWN;
+			return Common::KEYCODE_UNKNOWN;
 		} else if ((repeating && next_joy_repeat_time > SDL_GetTicks()) || (!repeating && next_axes_pair_update > SDL_GetTicks())) // don't repeat too fast
-			return SDLK_UNKNOWN;
+			return Common::KEYCODE_UNKNOWN;
 
 		next_axes_pair_update = SDL_GetTicks() + pair1_delay;
 		if (!repeat_hat)
@@ -904,14 +904,14 @@ Common::KeyCode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating
 		case NUVIE_DIR_NW:
 			return JOY_LEFTUP;
 		default:
-			return SDLK_UNKNOWN; // shouldn't happen
+			return Common::KEYCODE_UNKNOWN; // shouldn't happen
 		}
 	} else if (axes_pair == AXES_PAIR2) {
 		if (dir == NUVIE_DIR_NONE) {
 			next_axes_pair2_update = 0; // centered so okay to reset
-			return SDLK_UNKNOWN;
+			return Common::KEYCODE_UNKNOWN;
 		} else if (next_axes_pair2_update > SDL_GetTicks()) // don't repeat too fast
-			return SDLK_UNKNOWN;
+			return Common::KEYCODE_UNKNOWN;
 		else
 			next_axes_pair2_update = SDL_GetTicks() + pair2_delay;
 		switch (dir) {
@@ -932,14 +932,14 @@ Common::KeyCode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating
 		case NUVIE_DIR_NW:
 			return JOY_LEFTUP2;
 		default:
-			return SDLK_UNKNOWN; // shouldn't happen
+			return Common::KEYCODE_UNKNOWN; // shouldn't happen
 		}
 	} else if (axes_pair == AXES_PAIR3) {
 		if (dir == NUVIE_DIR_NONE) {
 			next_axes_pair3_update = 0; // centered so okay to reset
-			return SDLK_UNKNOWN;
+			return Common::KEYCODE_UNKNOWN;
 		} else if (next_axes_pair3_update > SDL_GetTicks()) // don't repeat too fast
-			return SDLK_UNKNOWN;
+			return Common::KEYCODE_UNKNOWN;
 		else
 			next_axes_pair3_update = SDL_GetTicks() + pair3_delay;
 		switch (dir) {
@@ -960,14 +960,14 @@ Common::KeyCode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating
 		case NUVIE_DIR_NW:
 			return JOY_LEFTUP3;
 		default:
-			return SDLK_UNKNOWN; // shouldn't happen
+			return Common::KEYCODE_UNKNOWN; // shouldn't happen
 		}
 	} else { // AXES_PAIR4
 		if (dir == NUVIE_DIR_NONE) {
 			next_axes_pair4_update = 0; // centered so okay to reset
-			return SDLK_UNKNOWN;
+			return Common::KEYCODE_UNKNOWN;
 		} else if (next_axes_pair4_update > SDL_GetTicks()) // don't repeat too fast
-			return SDLK_UNKNOWN;
+			return Common::KEYCODE_UNKNOWN;
 
 		next_axes_pair4_update = SDL_GetTicks() + pair4_delay;
 		switch (dir) {
@@ -988,7 +988,7 @@ Common::KeyCode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating
 		case NUVIE_DIR_NW:
 			return JOY_LEFTUP4;
 		default:
-			return SDLK_UNKNOWN; // shouldn't happen
+			return Common::KEYCODE_UNKNOWN; // shouldn't happen
 		}
 	}
 }
@@ -1036,7 +1036,7 @@ Common::KeyCode KeyBinder::get_key_from_joy_button(uint8 button) {
 	case 19:
 		return JOY19;
 	default:
-		return SDLK_UNKNOWN; // unhandled button
+		return Common::KEYCODE_UNKNOWN; // unhandled button
 	}
 }
 
@@ -1044,7 +1044,7 @@ Common::KeyCode KeyBinder::get_key_from_joy_hat(SDL_JoyHatEvent jhat) {
 //	if(jhat.which == 0) // only handling one jhat for now and some devices don't start at 0
 	return get_key_from_joy_hat_button(jhat.value);
 //	else
-//		return SDLK_UNKNOWN; // unhandled hat
+//		return Common::KEYCODE_UNKNOWN; // unhandled hat
 }
 
 Common::KeyCode KeyBinder::get_key_from_joy_hat_button(uint8 hat_button) {
@@ -1068,7 +1068,7 @@ Common::KeyCode KeyBinder::get_key_from_joy_hat_button(uint8 hat_button) {
 	case SDL_HAT_LEFTDOWN:
 		return JOY_HAT_LEFTDOWN;
 	default:
-		return SDLK_UNKNOWN; // center or unhandled position
+		return Common::KEYCODE_UNKNOWN; // center or unhandled position
 	}
 }
 
@@ -1080,7 +1080,7 @@ Common::KeyCode KeyBinder::get_key_from_joy_events(Common::Event *event) {
 	else if (event->type == SDL_JOYAXISMOTION)
 		return get_key_from_joy_axis_motion(event->jaxis.axis, false);
 	else
-		return SDLK_UNKNOWN;
+		return Common::KEYCODE_UNKNOWN;
 }
 
 void KeyBinder::init_joystick(sint8 joy_num) {
@@ -1131,7 +1131,7 @@ char get_ascii_char_from_keysym(Common::KeyState keysym) {
 	char ascii = 0;
 	if (keysym.sym < 128) {
 		ascii = (char) keysym.sym;
-		if (ascii >= 97 && ascii <= 122 && keysym.mod & (KMOD_SHIFT | KMOD_CAPS)) {
+		if (ascii >= 97 && ascii <= 122 && keysym.mod & (Common::KBD_SHIFT | Common::KBD_CAPS)) {
 			ascii -= 32;
 		}
 	}

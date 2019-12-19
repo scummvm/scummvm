@@ -58,8 +58,8 @@ GUI_YesNoDialog::GUI_YesNoDialog(GUI *gui, int x, int y, int w, int h, const cha
 GUI_YesNoDialog::~GUI_YesNoDialog() {
 }
 
-GUI_status GUI_YesNoDialog::KeyDown(Common::KeyState key) {
-	if (key.sym == SDLK_y)
+GUI_status GUI_YesNoDialog::KeyDown(const Common::KeyState &key) {
+	if (key.keycode == Common::KEYCODE_y)
 		return yes_callback_object->callback(YESNODIALOG_CB_YES, this, this);
 
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();

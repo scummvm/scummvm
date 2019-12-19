@@ -169,19 +169,19 @@ public:
 	   or not the event should be passed on to other widgets.
 	   These are called by the default HandleEvent function.
 	*/
-	virtual GUI_status KeyDown(Common::KeyState key);
+	virtual GUI_status KeyDown(const Common::KeyState &key);
 	virtual GUI_status KeyUp(Common::KeyState key);
-	virtual GUI_status MouseDown(int x, int y, int button);
-	virtual GUI_status MouseUp(int x, int y, int button);
+	virtual GUI_status MouseDown(int x, int y, MouseButton button);
+	virtual GUI_status MouseUp(int x, int y, MouseButton button);
 	virtual GUI_status MouseMotion(int x, int y, uint8 state);
 	virtual GUI_status MouseWheel(sint32 x, sint32 y);
 	// <SB-X>
 	virtual GUI_status MouseEnter(uint8 state);
 	virtual GUI_status MouseLeave(uint8 state);
-	virtual GUI_status MouseClick(int x, int y, int button);
-	virtual GUI_status MouseDouble(int x, int y, int button);
-	virtual GUI_status MouseDelayed(int x, int y, int button);
-	virtual GUI_status MouseHeld(int x, int y, int button);
+	virtual GUI_status MouseClick(int x, int y, MouseButton button);
+	virtual GUI_status MouseDouble(int x, int y, MouseButton button);
+	virtual GUI_status MouseDelayed(int x, int y, MouseButton button);
+	virtual GUI_status MouseHeld(int x, int y, MouseButton button);
 	// </SB-X>
 
 	bool drag_accept_drop(int x, int y, int message, void *data);

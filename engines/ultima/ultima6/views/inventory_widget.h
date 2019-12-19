@@ -25,7 +25,7 @@
 
 #include "ultima/ultima6/gui/gui_widget.h"
 #include "ultima/ultima6/core/obj_manager.h"
-#include "InventoryMessage.h"
+#include "ultima/ultima6/views/inventory_message.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -83,12 +83,12 @@ public:
 	}
 	void Display(bool full_redraw);
 
-	virtual GUI_status MouseDown(int x, int y, int button);
-	virtual GUI_status MouseUp(int x, int y, int button);
+	virtual GUI_status MouseDown(int x, int y, MouseButton button);
+	virtual GUI_status MouseUp(int x, int y, MouseButton button);
 	virtual GUI_status MouseMotion(int x, int y, uint8 state);
-	GUI_status MouseDouble(int x, int y, int button);
-	GUI_status MouseClick(int x, int y, int button);
-	GUI_status MouseDelayed(int x, int y, int button);
+	GUI_status MouseDouble(int x, int y, MouseButton button);
+	GUI_status MouseClick(int x, int y, MouseButton button);
+	GUI_status MouseDelayed(int x, int y, MouseButton button);
 	GUI_status MouseWheel(sint32 x, sint32 y);
 	void drag_drop_success(int x, int y, int message, void *data);
 	void drag_drop_failed(int x, int y, int message, void *data);

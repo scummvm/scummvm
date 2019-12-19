@@ -84,25 +84,25 @@ GUI_Dialog:: Display(bool full_redraw) {
 	Common::Rect framerect;
 	Common::Rect src, dst;
 
-	if (old_x != area.x || old_y != area.y) {
+	if (old_x != area.left || old_y != area.top) {
 		if (backingstore) {
 			screen->restore_area(backingstore, &backingstore_rect, NULL, NULL, false);
 			screen->update(backingstore_rect.x, backingstore_rect.y, backingstore_rect.w, backingstore_rect.h);
 		}
 
-		backingstore_rect.x = area.x; // cursor must be drawn LAST for this to work
-		backingstore_rect.y = area.y;
+		backingstore_rect.x = area.left; // cursor must be drawn LAST for this to work
+		backingstore_rect.y = area.top;
 
 		backingstore = screen->copy_area(&backingstore_rect, backingstore);
 
-		old_x = area.x;
-		old_y = area.y;
+		old_x = area.left;
+		old_y = area.top;
 	}
 
-	framerect.x = area.x + 8;
-	framerect.y = area.y + 8;
-	framerect.w = area.w - 16;
-	framerect.h = area.h - 16;
+	framerect.x = area.left + 8;
+	framerect.y = area.top + 8;
+	framerect.w = area.width() - 16;
+	framerect.h = area.height() - 16;
 	SDL_FillRect(surface, &framerect, bg_color);
 
 // Draw border corners
@@ -112,54 +112,54 @@ GUI_Dialog:: Display(bool full_redraw) {
 	dst.h = 8;
 	SDL_BlitSurface(border[0], NULL, surface, &dst);
 
-	dst.x = area.x + area.w - 8;
-	dst.y = area.y;
+	dst.x = area.left + area.width() - 8;
+	dst.y = area.top;
 	dst.w = 8;
 	dst.h = 8;
 	SDL_BlitSurface(border[2], NULL, surface, &dst);
 
-	dst.x = area.x + area.w - 8;
-	dst.y = area.y + area.h - 8;
+	dst.x = area.left + area.width() - 8;
+	dst.y = area.top + area.height() - 8;
 	dst.w = 8;
 	dst.h = 8;
 	SDL_BlitSurface(border[4], NULL, surface, &dst);
 
-	dst.x = area.x;
-	dst.y = area.y + area.h - 8;
+	dst.x = area.left;
+	dst.y = area.top + area.height() - 8;
 	dst.w = 8;
 	dst.h = 8;
 	SDL_BlitSurface(border[6], NULL, surface, &dst);
 
 // Draw top and bottom border lines
 
-	for (i = area.x + 8; i < area.x + area.w - 24; i += 16) {
+	for (i = area.left + 8; i < area.left + area.width() - 24; i += 16) {
 		dst.x = i;
-		dst.y = area.y;
+		dst.y = area.top;
 		dst.w = 16;
 		dst.h = 8;
 		SDL_BlitSurface(border[1], NULL, surface, &dst);
 
 		dst.x = i;
-		dst.y = area.y + area.h - 8;
+		dst.y = area.top + area.height() - 8;
 		dst.w = 16;
 		dst.h = 8;
 		SDL_BlitSurface(border[5], NULL, surface, &dst);
 	}
 
-	if (i < area.x + area.w - 8) { // draw partial border images
+	if (i < area.left + area.width() - 8) { // draw partial border images
 		src.x = 0;
 		src.y = 0;
-		src.w = area.x + area.w - 8 - i;
+		src.w = area.left + area.width() - 8 - i;
 		src.h = 8;
 
 		dst.x = i;
-		dst.y = area.y;
+		dst.y = area.top;
 		dst.w = src.w;
 		dst.h = 8;
 		SDL_BlitSurface(border[1], &src, surface, &dst);
 
 		dst.x = i;
-		dst.y = area.y + area.h - 8;
+		dst.y = area.top + area.height() - 8;
 		dst.w = src.w;
 		dst.h = 8;
 		SDL_BlitSurface(border[5], &src, surface, &dst);
@@ -168,33 +168,33 @@ GUI_Dialog:: Display(bool full_redraw) {
 // Draw left and right sides
 
 
-	for (i = area.y + 8; i < area.y + area.h - 24; i += 16) {
-		dst.x = area.x;
+	for (i = area.top + 8; i < area.top + area.height() - 24; i += 16) {
+		dst.x = area.left;
 		dst.y = i;
 		dst.w = 8;
 		dst.h = 16;
 		SDL_BlitSurface(border[7], NULL, surface, &dst);
 
-		dst.x = area.x + area.w - 8;
+		dst.x = area.left + area.width() - 8;
 		dst.y = i;
 		dst.w = 8;
 		dst.h = 16;
 		SDL_BlitSurface(border[3], NULL, surface, &dst);
 	}
 
-	if (i < area.y + area.h - 8) { // draw partial border images
+	if (i < area.top + area.height() - 8) { // draw partial border images
 		src.x = 0;
 		src.y = 0;
 		src.w = 8;
-		src.h = area.y + area.h - 8 - i;
+		src.h = area.top + area.height() - 8 - i;
 
-		dst.x = area.x;
+		dst.x = area.left;
 		dst.y = i;
 		dst.w = 8;
 		dst.h = src.h;
 		SDL_BlitSurface(border[7], &src, surface, &dst);
 
-		dst.x = area.x + area.w - 8;
+		dst.x = area.left + area.width() - 8;
 		dst.y = i;
 		dst.w = 8;
 		dst.h = src.h;
@@ -203,12 +203,12 @@ GUI_Dialog:: Display(bool full_redraw) {
 
 	DisplayChildren();
 
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 
 	return;
 }
 
-GUI_status GUI_Dialog::MouseDown(int x, int y, int button) {
+GUI_status GUI_Dialog::MouseDown(int x, int y, MouseButton button) {
 	drag = can_drag;
 	button_x = x;
 	button_y = y;
@@ -218,7 +218,7 @@ GUI_status GUI_Dialog::MouseDown(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_Dialog::MouseUp(int x, int y, int button) {
+GUI_status GUI_Dialog::MouseUp(int x, int y, MouseButton button) {
 	drag = false;
 
 	release_focus();
@@ -245,20 +245,20 @@ GUI_status GUI_Dialog::MouseMotion(int x, int y, uint8 state) {
 }
 
 void GUI_Dialog::MoveRelative(int dx, int dy) {
-	int new_x = area.x + dx;
+	int new_x = area.left + dx;
 
 	if (new_x < 0) {
-		dx = -area.x;
-	} else if (new_x + area.w > screen->get_width()) {
-		dx = screen->get_width() - (area.x + area.w);
+		dx = -area.left;
+	} else if (new_x + area.width() > screen->get_width()) {
+		dx = screen->get_width() - (area.left + area.width());
 	}
 
-	int new_y = area.y + dy;
+	int new_y = area.top + dy;
 
 	if (new_y < 0) {
-		dy = -area.y;
-	} else if (new_y + area.h > screen->get_height()) {
-		dy = screen->get_height() - (area.y + area.h);
+		dy = -area.top;
+	} else if (new_y + area.height() > screen->get_height()) {
+		dy = screen->get_height() - (area.top + area.height());
 	}
 
 	GUI_Widget::MoveRelative(dx, dy);

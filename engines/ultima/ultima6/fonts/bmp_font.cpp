@@ -31,7 +31,7 @@
 
 #include "ultima/ultima6/screen/screen.h"
 
-#include "BMPultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/fonts/bmp_font.h"
 
 namespace Ultima {
 namespace Ultima6 {

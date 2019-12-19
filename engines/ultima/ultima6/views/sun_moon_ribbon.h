@@ -23,8 +23,10 @@
 #ifndef ULTIMA6_VIEWS_SUN_MOON_RIBBON_H
 #define ULTIMA6_VIEWS_SUN_MOON_RIBBON_H
 
-#include "SunMoonStripWidget.h"
+#include "ultima/ultima6/views/sun_moon_strip_widget.h"
 
+namespace Ultima {
+namespace Ultima6 {
 
 class SunMoonRibbon : public SunMoonStripWidget {
 
@@ -41,7 +43,7 @@ public:
 	void init(Screen *screen);
 	void Display(bool full_redraw);
 
-	GUI_status MouseDown(int x, int y, int button);
+	GUI_status MouseDown(int x, int y, MouseButton button);
 
 
 	void extend() {

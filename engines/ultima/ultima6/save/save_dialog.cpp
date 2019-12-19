@@ -214,11 +214,11 @@ GUI_status SaveDialog::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status SaveDialog::MouseDown(int x, int y, int button) {
+GUI_status SaveDialog::MouseDown(int x, int y, MouseButton button) {
 	return GUI_YUM;
 }
 
-GUI_status SaveDialog::KeyDown(Common::KeyState key) {
+GUI_status SaveDialog::KeyDown(const Common::KeyState &key) {
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 

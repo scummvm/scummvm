@@ -586,7 +586,7 @@ void ConverseGump::Display(bool full_redraw) {
 }
 
 
-GUI_status ConverseGump::KeyDown(Common::KeyState key) {
+GUI_status ConverseGump::KeyDown(const Common::KeyState &key) {
 	char ascii = get_ascii_char_from_keysym(key);
 
 	if (page_break || !is_talking()) {
@@ -707,7 +707,7 @@ GUI_status ConverseGump::KeyDown(Common::KeyState key) {
 	return GUI_YUM;
 }
 
-GUI_status ConverseGump::MouseUp(int x, int y, int button) {
+GUI_status ConverseGump::MouseUp(int x, int y, MouseButton button) {
 	std::string token_str;
 
 	if (page_break || !is_talking()) { // any click == scroll-to-end

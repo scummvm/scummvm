@@ -95,8 +95,8 @@ void SchedPathFinder::actor_moved() {
 }
 
 /* Don't bother moving around other actors. They will probably move soon. */
-bool SchedPathFinder::check_loc(const MapCoord &loc) {
-	return actor->check_move(loc.x, loc.y, loc.z, ACTOR_IGNORE_OTHERS);
+bool SchedPathFinder::check_loc(const MapCoord &locPos) {
+	return actor->check_move(locPos.x, locPos.y, locPos.z, ACTOR_IGNORE_OTHERS);
 }
 
 } // End of namespace Ultima6

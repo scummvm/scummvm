@@ -35,7 +35,7 @@
 #include "ultima/ultima6/portraits/portrait.h"
 #include "ultima/ultima6/core/player.h"
 #include "ultima/ultima6/fonts/conv_font.h"
-#include "ScrollWidgetGump.h"
+#include "ultima/ultima6/views/scroll_widget_gump.h"
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/core/timed_event.h"
 #include "ultima/ultima6/keybinding/keys.h"
@@ -110,15 +110,15 @@ void ScrollWidgetGump::display_string(std::string s) {
 void ScrollWidgetGump::Display(bool full_redraw) {
 	MsgText *token;
 
-	uint16 y = area.y + 4;
+	uint16 y = area.top + 4;
 	std::list<MsgLine *>::iterator iter;
 
 	if (show_up_arrow) {
-		font_normal->drawChar(screen, FONT_UP_ARROW_CHAR, area.x + SCROLLWIDGETGUMP_W - 8, area.y + 4);
+		font_normal->drawChar(screen, FONT_UP_ARROW_CHAR, area.left + SCROLLWIDGETGUMP_W - 8, area.top + 4);
 	}
 
 	if (show_down_arrow) {
-		font_normal->drawChar(screen, FONT_DOWN_ARROW_CHAR, area.x + SCROLLWIDGETGUMP_W - 8, area.y + SCROLLWIDGETGUMP_H - 8);
+		font_normal->drawChar(screen, FONT_DOWN_ARROW_CHAR, area.left + SCROLLWIDGETGUMP_W - 8, area.top + SCROLLWIDGETGUMP_H - 8);
 	}
 
 	iter = msg_buf.begin();
@@ -132,24 +132,24 @@ void ScrollWidgetGump::Display(bool full_redraw) {
 		iter1 = msg_line->text.begin();
 
 		//if not last record or if last record is not an empty line.
-		if (i + position < (msg_buf.size() - 1) || (iter1 != msg_line->text.end() && ((*iter)->total_length != 0))) {
-			//screen->fill(26, area.x, y + (i==0?-4:4), scroll_width * 7 + 8, (i==0?18:10));
+		if (i + position < ((int)msg_buf.size() - 1) || (iter1 != msg_line->text.end() && ((*iter)->total_length != 0))) {
+			//screen->fill(26, area.left, y + (i==0?-4:4), scroll_width * 7 + 8, (i==0?18:10));
 
 
 			for (uint16 total_length = 0; iter1 != msg_line->text.end() ; iter1++) {
 				token = *iter1;
 
-				total_length += token->font->drawString(screen, token->s.c_str(), area.x + 4 + 4 + total_length, y + 4, font_color, font_highlight); //FIX for hardcoded font height
+				total_length += token->font->drawString(screen, token->s.c_str(), area.left + 4 + 4 + total_length, y + 4, font_color, font_highlight); //FIX for hardcoded font height
 			}
 			y += 10;
 		}
 
 	}
 
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 }
 
-GUI_status ScrollWidgetGump::KeyDown(Common::KeyState key) {
+GUI_status ScrollWidgetGump::KeyDown(const Common::KeyState &key) {
 	ScrollEventType event = SCROLL_ESCAPE;
 
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
@@ -198,13 +198,13 @@ GUI_status ScrollWidgetGump::MouseWheel(sint32 x, sint32 y) {
 	return scroll_movement_event(event);
 }
 
-GUI_status ScrollWidgetGump::MouseDown(int x, int y, int button) {
+GUI_status ScrollWidgetGump::MouseDown(int x, int y, MouseButton button) {
 	ScrollEventType event = SCROLL_ESCAPE;
 
 	switch (button) {
-	case SDL_BUTTON_LEFT : {
-		x -= area.x;
-		y -= area.y;
+	case BUTTON_LEFT : {
+		x -= area.left;
+		y -= area.top;
 		if (HitRect(x, y, arrow_up_rect[0]))
 			event = SCROLL_UP;
 		else if (HitRect(x, y, arrow_down_rect[0]))
@@ -234,12 +234,12 @@ GUI_status ScrollWidgetGump::scroll_movement_event(ScrollEventType event) {
 
 	case SCROLL_DOWN :
 		//timer = new TimedCallback(this, NULL, 2000);
-		if (page_break && position + scroll_height >= msg_buf.size()) {
-			if (position + scroll_height == msg_buf.size()) // break was just off the page so advance text
+		if (page_break && position + scroll_height >= (int)msg_buf.size()) {
+			if (position + scroll_height == (int)msg_buf.size()) // break was just off the page so advance text
 				position++;
 			process_page_break();
 			update_arrows();
-		} else if (position + scroll_height < msg_buf.size()) {
+		} else if (position + scroll_height < (int)msg_buf.size()) {
 			position++;
 			update_arrows();
 		}
@@ -251,9 +251,9 @@ GUI_status ScrollWidgetGump::scroll_movement_event(ScrollEventType event) {
 		}
 		return GUI_YUM;
 	case SCROLL_PAGE_DOWN:
-		if (position + scroll_height < msg_buf.size() || page_break) {
-			if (position + scroll_height >= msg_buf.size())
-				position = msg_buf.size();
+		if (position + scroll_height < (int)msg_buf.size() || page_break) {
+			if (position + scroll_height >= (int)msg_buf.size())
+				position = (int)msg_buf.size();
 			else {
 				position += scroll_height;
 				update_arrows();
@@ -273,8 +273,8 @@ GUI_status ScrollWidgetGump::scroll_movement_event(ScrollEventType event) {
 		}
 		return GUI_YUM;
 	case SCROLL_TO_END :
-		if (position + scroll_height < msg_buf.size() || page_break) {
-			while (position + scroll_height < msg_buf.size() || page_break) {
+		if (position + scroll_height < (int)msg_buf.size() || page_break) {
+			while (position + scroll_height < (int)msg_buf.size() || page_break) {
 				if (page_break)
 					process_page_break();
 				else // added else just in case noting is added to the buffer
@@ -299,7 +299,7 @@ void ScrollWidgetGump::update_arrows() {
 		show_up_arrow = true;
 	}
 
-	if (position + scroll_height < msg_buf.size() || page_break) {
+	if (position + scroll_height < (int)msg_buf.size() || page_break) {
 		show_down_arrow = true;
 	} else {
 		show_down_arrow = false;

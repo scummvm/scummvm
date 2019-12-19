@@ -33,8 +33,8 @@
 #include "ultima/ultima6/fonts/font.h"
 #include "ultima/ultima6/views/view_manager.h"
 #include "ultima/ultima6/fonts/font_manager.h"
-#include "ContainerWidgetGump.h"
-#include "ContainerViewGump.h"
+#include "ultima/ultima6/views/container_widget_gump.h"
+#include "ultima/ultima6/views/container_view_gump.h"
 #include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
@@ -130,11 +130,11 @@ void ContainerViewGump::init_backpack(std::string datadir, bool extend_area_w) {
 
 	bg_image = SDL_LoadBMP(imagefile.c_str());
 
-	doll_button = loadButton(datadir, "cont_doll", area.x + 18, area.y + bg_image->h);
-	left_arrow_button = loadButton(datadir, "cont_left", area.x + 18 + 11, area.y + bg_image->h);
-	right_arrow_button = loadButton(datadir, "cont_right", area.x + 18 + 22, area.y + bg_image->h);
+	doll_button = loadButton(datadir, "cont_doll", area.left + 18, area.top + bg_image->h);
+	left_arrow_button = loadButton(datadir, "cont_left", area.left + 18 + 11, area.top + bg_image->h);
+	right_arrow_button = loadButton(datadir, "cont_right", area.left + 18 + 22, area.top + bg_image->h);
 
-	SetRect(area.x, area.y, bg_image->w, bg_image->h + 16); //111, 101);
+	SetRect(area.left, area.top, bg_image->w, bg_image->h + 16); //111, 101);
 
 	container_widget = new ContainerWidgetGump(config, this);
 	container_widget_y_offset = CONTAINER_WIDGET_OFFSET;
@@ -142,7 +142,7 @@ void ContainerViewGump::init_backpack(std::string datadir, bool extend_area_w) {
 
 	AddWidget(container_widget);
 	if (extend_area_w) // text extends beyond the gump
-		area.w += 4;
+		area.right += 4;
 }
 
 void ContainerViewGump::init_chest(std::string datadir) {
@@ -160,7 +160,7 @@ void ContainerViewGump::init_chest(std::string datadir) {
 
 	bg_image = SDL_LoadBMP(imagefile.c_str());
 
-	SetRect(area.x, area.y, bg_image->w, bg_image->h + 16); //111, 101);
+	SetRect(area.left, area.top, bg_image->w, bg_image->h + 16); //111, 101);
 
 	container_widget = new ContainerWidgetGump(config, this);
 	container_widget_y_offset = CONTAINER_WIDGET_OFFSET - 1;
@@ -184,7 +184,7 @@ void ContainerViewGump::init_crate(std::string datadir) {
 
 	bg_image = SDL_LoadBMP(imagefile.c_str());
 
-	SetRect(area.x, area.y, bg_image->w, bg_image->h);
+	SetRect(area.left, area.top, bg_image->w, bg_image->h);
 
 	container_widget = new ContainerWidgetGump(config, this);
 	container_widget_y_offset = 10;
@@ -208,7 +208,7 @@ void ContainerViewGump::init_barrel(std::string datadir) {
 
 	bg_image = SDL_LoadBMP(imagefile.c_str());
 
-	SetRect(area.x, area.y, bg_image->w, bg_image->h);
+	SetRect(area.left, area.top, bg_image->w, bg_image->h);
 
 	container_widget = new ContainerWidgetGump(config, this);
 	container_widget_y_offset = 24;
@@ -232,7 +232,7 @@ void ContainerViewGump::init_corpse(std::string datadir, std::string bg_filename
 
 	bg_image = SDL_LoadBMP(imagefile.c_str());
 
-	SetRect(area.x, area.y, bg_image->w, bg_image->h);
+	SetRect(area.left, area.top, bg_image->w, bg_image->h);
 
 	container_widget = new ContainerWidgetGump(config, this);
 	container_widget_y_offset = 26;
@@ -280,11 +280,11 @@ void ContainerViewGump::Display(bool full_redraw) {
 	DisplayChildren(full_redraw);
 
 	if (actor) {
-		font->drawString(screen, actor->get_name(), area.x + 18, area.y + 2, 15, 15);
+		font->drawString(screen, actor->get_name(), area.left + 18, area.top + 2, 15, 15);
 		display_inventory_weight();
 	}
 	update_display = false;
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 
 	return;
 }
@@ -295,7 +295,7 @@ void ContainerViewGump::display_inventory_weight() {
 	char string[11]; //I:nnn/nnns\0
 
 	snprintf(string, 10, "I:%u/%us", equip_weight, strength * 2);
-	font->drawString(screen, string, area.x + (container_obj ? 18 : 18 + 34), area.y + bg_image->h + 2, 15, 15);
+	font->drawString(screen, string, area.left + (container_obj ? 18 : 18 + 34), area.top + bg_image->h + 2, 15, 15);
 }
 
 void ContainerViewGump::left_arrow() {
@@ -341,7 +341,7 @@ GUI_status ContainerViewGump::callback(uint16 msg, GUI_CallBack *caller, void *d
 	return GUI_PASS;
 }
 
-GUI_status ContainerViewGump::KeyDown(Common::KeyState key) {
+GUI_status ContainerViewGump::KeyDown(const Common::KeyState &key) {
 	if (left_arrow_button && left_arrow_button->Status() == WIDGET_VISIBLE) { // okay to change member number
 		KeyBinder *keybinder = Game::get_game()->get_keybinder();
 		ActionType a = keybinder->get_ActionType(key);
@@ -366,10 +366,10 @@ GUI_status ContainerViewGump::KeyDown(Common::KeyState key) {
 		}
 	}
 	/* moved into container widget
-	switch(key.sym)
+	switch(key.keycode)
 	    {
-	        case SDLK_RETURN:
-	        case SDLK_KP_ENTER:
+	        case Common::KEYCODE_RETURN:
+	        case Common::KEYCODE_KP_ENTER:
 
 	            return GUI_YUM;
 	        default:
@@ -382,7 +382,7 @@ GUI_status ContainerViewGump::KeyDown(Common::KeyState key) {
 GUI_status ContainerViewGump::MouseWheel(sint32 x, sint32 y) {
 	int xpos, ypos;
 	screen->get_mouse_location(&xpos, &ypos);
-	ypos -= area.y;
+	ypos -= area.top;
 
 	if (ypos >= container_widget_y_offset && ypos < container_widget_y_offset + container_widget->H()) {
 		if (y > 0) {
@@ -402,11 +402,11 @@ GUI_status ContainerViewGump::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status ContainerViewGump::MouseDown(int x, int y, int button) {
+GUI_status ContainerViewGump::MouseDown(int x, int y, MouseButton button) {
 	return DraggableView::MouseDown(x, y, button);
 }
 
-GUI_status ContainerViewGump::MouseUp(int x, int y, int button) {
+GUI_status ContainerViewGump::MouseUp(int x, int y, MouseButton button) {
 	return DraggableView::MouseUp(x, y, button);
 }
 

@@ -84,7 +84,7 @@ public:
 
 	void Display(bool full_redraw);
 	void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y);
-	GUI_status KeyDown(Common::KeyState key);
+	GUI_status KeyDown(const Common::KeyState &key);
 	void simulate_CB_callback();
 	bool is_picking_pocket() {
 		return picking_pocket;
@@ -102,7 +102,7 @@ protected:
 	void update_cursor();
 	void hide_buttons();
 	void show_buttons();
-	GUI_status MouseDown(int x, int y, int button);
+	GUI_status MouseDown(int x, int y, MouseButton button);
 	GUI_status MouseWheel(sint32 x, sint32 y);
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
 };

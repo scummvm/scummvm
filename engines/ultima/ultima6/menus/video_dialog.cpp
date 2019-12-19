@@ -350,7 +350,7 @@ GUI_status VideoDialog::close_dialog() {
 	return GUI_YUM;
 }
 
-GUI_status VideoDialog::KeyDown(Common::KeyState key) {
+GUI_status VideoDialog::KeyDown(const Common::KeyState &key) {
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 

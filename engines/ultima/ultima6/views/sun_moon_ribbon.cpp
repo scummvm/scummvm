@@ -30,8 +30,7 @@
 #include "ultima/ultima6/core/player.h"
 #include "ultima/ultima6/core/weather.h"
 #include "ultima/ultima6/core/game_clock.h"
-#include "SunMoonRibbon.h"
-
+#include "ultima/ultima6/views/sun_moon_ribbon.h"
 #include "ultima/ultima6/gui/gui.h"
 
 namespace Ultima {
@@ -55,8 +54,11 @@ SunMoonRibbon::~SunMoonRibbon() {
 }
 
 
-void SunMoonRibbon::init(Screen *screen) {
-	GUI_Widget::Init(NULL, Game::get_game()->get_game_x_offset() + Game::get_game()->get_game_width() - SUNMOON_RIBBON_TOTAL_WIDTH, Game::get_game()->get_game_y_offset(), SUNMOON_RIBBON_TOTAL_WIDTH, SUNMOON_RIBBON_HEIGHT);
+void SunMoonRibbon::init(Screen *) {
+	GUI_Widget::Init(NULL, Game::get_game()->get_game_x_offset()
+		+ Game::get_game()->get_game_width() - SUNMOON_RIBBON_TOTAL_WIDTH,
+		Game::get_game()->get_game_y_offset(),
+		SUNMOON_RIBBON_TOTAL_WIDTH,SUNMOON_RIBBON_HEIGHT);
 
 	loadBgImage(0);
 }
@@ -82,8 +84,12 @@ void SunMoonRibbon::loadBgImage(uint8 num) {
 		SDL_FreeSurface(bg_data);
 	bg_data = bmp.getSdlSurface32(imagefile);
 
+#ifdef TODO
 	uint32 bg_color_key = SDL_MapRGB(bg_data->format, 0xb3, 0x94, 0x78);
 	SDL_SetColorKey(bg_data, SDL_TRUE, bg_color_key);
+#else
+	::error("TODO: transparency");
+#endif
 }
 
 void SunMoonRibbon::Display(bool full_redraw) {
@@ -147,23 +153,20 @@ void SunMoonRibbon::display_sun_moon(Tile *tile, uint8 pos) {
 		{ SUNMOON_RIBBON_WIDTH - 14 * 3, 7 }
 	};
 
-	uint16 x = area.x + skypos[pos].x - 10, y = area.y + skypos[pos].y;
+	uint16 x = area.left + skypos[pos].x - 10, y = area.top + skypos[pos].y;
 
-	screen->blit(x, y, tile->data, 8 , 16, area.h - skypos[pos].y > 16 ? 16 : area.h - skypos[pos].y, 16, true);
+	screen->blit(x, y, tile->data, 8 , 16, area.height() - skypos[pos].y > 16 ? 16 : area.height() - skypos[pos].y, 16, true);
 }
 
 void SunMoonRibbon::display_surface_strip() {
 	Common::Rect src;
 	Common::Rect dest;
 
-	src.x = 0;
-	src.y = 0;
-	src.w = SUNMOON_RIBBON_WIDTH;
-	src.h = SUNMOON_RIBBON_HEIGHT;
+	src = Common::Rect(SUNMOON_RIBBON_WIDTH, SUNMOON_RIBBON_HEIGHT);
 
 	dest = area;
-	dest.w = SUNMOON_RIBBON_WIDTH;
-	dest.h = SUNMOON_RIBBON_HEIGHT;
+	dest.setWidth(SUNMOON_RIBBON_WIDTH);
+	dest.setHeight(SUNMOON_RIBBON_HEIGHT);
 
 	SDL_BlitSurface(bg_data, &src, surface, &dest);
 
@@ -175,7 +178,7 @@ void SunMoonRibbon::display_surface_strip() {
 	if (!eclipse)
 		display_moons(clock->get_day(), clock->get_hour());
 
-	src.x = SUNMOON_RIBBON_WIDTH + weather->get_wind_dir() * SUNMOON_RIBBON_DIR_WIDTH;
+	src.left = SUNMOON_RIBBON_WIDTH + weather->get_wind_dir() * SUNMOON_RIBBON_DIR_WIDTH;
 	uint8 dir;
 	if (weather->is_displaying_from_wind_dir()) { // points dir wind is coming from
 		const uint8 from_wind_pos[] = { 1, 3, 5, 7, 2, 4, 6, 8, 0 };
@@ -184,47 +187,44 @@ void SunMoonRibbon::display_surface_strip() {
 		const uint8 to_wind_pos[] = { 5, 7, 1, 3, 6, 8, 2, 4, 0 };
 		dir = to_wind_pos[weather->get_wind_dir()];
 	}
-	src.x = SUNMOON_RIBBON_WIDTH + dir * SUNMOON_RIBBON_DIR_WIDTH;
-	src.y = 0;
-	src.w = SUNMOON_RIBBON_DIR_WIDTH;
-	src.h = SUNMOON_RIBBON_HEIGHT;
+	src.left = SUNMOON_RIBBON_WIDTH + dir * SUNMOON_RIBBON_DIR_WIDTH;
+	src.top = 0;
+	src.setWidth(SUNMOON_RIBBON_DIR_WIDTH);
+	src.setHeight(SUNMOON_RIBBON_HEIGHT);
 
 	dest = area;
-	dest.x = area.x + SUNMOON_RIBBON_WIDTH;
-	dest.w = SUNMOON_RIBBON_DIR_WIDTH;
-	dest.h = SUNMOON_RIBBON_HEIGHT;
+	dest.left = area.left + SUNMOON_RIBBON_WIDTH;
+	dest.setWidth(SUNMOON_RIBBON_DIR_WIDTH);
+	dest.setHeight(SUNMOON_RIBBON_HEIGHT);
 
 	SDL_BlitSurface(bg_data, &src, surface, &dest);
 
 
 
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 }
 
 void SunMoonRibbon::display_dungeon_strip() {
 	Common::Rect src;
 	Common::Rect dest;
 
-	src.x = 0;
-	src.y = 0;
-	src.w = SUNMOON_RIBBON_END_WIDTH;
-	src.h = SUNMOON_RIBBON_HEIGHT;
+	src = Common::Rect(SUNMOON_RIBBON_END_WIDTH, SUNMOON_RIBBON_HEIGHT);
 
-	dest.x = area.x + SUNMOON_RIBBON_TOTAL_WIDTH - SUNMOON_RIBBON_END_WIDTH;
-	dest.y = area.y;
-	dest.w = SUNMOON_RIBBON_END_WIDTH;
-	dest.h = SUNMOON_RIBBON_HEIGHT;
+	dest.left = area.left + SUNMOON_RIBBON_TOTAL_WIDTH - SUNMOON_RIBBON_END_WIDTH;
+	dest.top = area.top;
+	dest.setWidth(SUNMOON_RIBBON_END_WIDTH);
+	dest.setHeight(SUNMOON_RIBBON_HEIGHT);
 
 	SDL_BlitSurface(bg_data, &src, surface, &dest);
-	screen->update(dest.x, dest.y, dest.w, dest.h);
+	screen->update(dest.left, dest.top, dest.width(), dest.height());
 }
 
-GUI_status SunMoonRibbon::MouseDown(int x, int y, int button) {
+GUI_status SunMoonRibbon::MouseDown(int x, int y, MouseButton button) {
 	Common::Rect rect = area;
 
 	if (retracted) {
-		rect.x = area.x + SUNMOON_RIBBON_TOTAL_WIDTH - SUNMOON_RIBBON_END_WIDTH;
-		rect.w = SUNMOON_RIBBON_END_WIDTH;
+		rect.left = area.left + SUNMOON_RIBBON_TOTAL_WIDTH - SUNMOON_RIBBON_END_WIDTH;
+		rect.setWidth(SUNMOON_RIBBON_END_WIDTH);
 		if (HitRect(x, y, rect)) {
 			retracted = false;
 			return GUI_YUM;
