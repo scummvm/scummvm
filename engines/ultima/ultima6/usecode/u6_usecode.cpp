@@ -20,9 +20,6 @@
  *
  */
 
-//#include <cstdlib>
-//#include <cassert>
-//#include <cstdio>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/misc/u6_misc.h"
@@ -33,7 +30,7 @@
 #include "ultima/ultima6/views/view_manager.h"
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/actors/actor.h"
-#include "U6ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/actors/u6_actor.h"
 #include "ultima/ultima6/core/party.h"
 #include "ultima/ultima6/core/player.h"
 #include "ultima/ultima6/core/msg_scroll.h"
@@ -54,7 +51,7 @@
 #include "ultima/ultima6/core/command_bar.h"
 
 #include "ultima/ultima6/usecode/u6_usecode.h"
-#include "U6ObjectTypes.h"
+#include "ultima/ultima6/usecode/u6_object_types.h"
 #include "ultima/ultima6/actors/u6_work_types.h"
 
 //#include <math.h> // floorf (used in part which I think ought to be moved out of here)
@@ -740,7 +737,7 @@ bool U6UseCode::use_rune(Obj *obj, UseCodeEvent ev) {
 		char *mantra = new char[items.string_ref->size() + 1];
 		strcpy(mantra, items.string_ref->c_str());
 
-		if (strcasecmp(mantra,  mantras[rune_obj_offset]) == 0) {
+		if (scumm_stricmp(mantra,  mantras[rune_obj_offset]) == 0) {
 			// find the matching force field for this shrine. match rune offset against force field quality
 			force_field = obj_manager->find_obj(player_location.z, OBJ_U6_FORCE_FIELD, rune_obj_offset);
 
@@ -1396,9 +1393,9 @@ bool U6UseCode::use_fountain(Obj *obj, UseCodeEvent ev) {
 			bool wished_for_food = false;
 			char *wish = (char *)malloc(items.string_ref->size() + 1);
 			strcpy(wish, items.string_ref->c_str());
-			if (strcasecmp(wish, "Food") == 0 || strcasecmp(wish, "Mutton") == 0
-			        || strcasecmp(wish, "Wine") == 0 || strcasecmp(wish, "Fruit") == 0
-			        || strcasecmp(wish, "Mead") == 0)
+			if (scumm_stricmp(wish, "Food") == 0 || scumm_stricmp(wish, "Mutton") == 0
+			        || scumm_stricmp(wish, "Wine") == 0 || scumm_stricmp(wish, "Fruit") == 0
+			        || scumm_stricmp(wish, "Mead") == 0)
 				wished_for_food = true;
 			free(wish);
 			if (!wished_for_food) {
@@ -1479,7 +1476,7 @@ bool U6UseCode::use_crystal_ball(Obj *obj, UseCodeEvent ev) {
 	scroll->cancel_input_request();
 	if (ev == USE_EVENT_USE) {
 		actor = items.actor_ref;
-		if (NUVIE_RAND() % 30 < (45 - actor->get_intelligence()) / 2) { //use crystal ball saving roll.
+		if ((int)NUVIE_RAND() % 30 < (45 - actor->get_intelligence()) / 2) { //use crystal ball saving roll.
 			game->get_script()->call_actor_hit(actor, (NUVIE_RAND() % 10) + 1, SCRIPT_DISPLAY_HIT_MSG);
 			scroll->display_string("\n");
 			scroll->display_prompt();
@@ -1550,16 +1547,16 @@ bool U6UseCode::play_instrument(Obj *obj, UseCodeEvent ev) {
 	if (items.data_ref) {
 		Common::KeyCode key = ((EventInput *)items.data_ref)->key;
 		ActionKeyType key_type = ((EventInput *)items.data_ref)->action_key_type;
-		if (key == SDLK_0) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 0\n", musicmsg);
-		if (key == SDLK_1) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 1\n", musicmsg);
-		if (key == SDLK_2) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 2\n", musicmsg);
-		if (key == SDLK_3) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 3\n", musicmsg);
-		if (key == SDLK_4) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 4\n", musicmsg);
-		if (key == SDLK_5) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 5\n", musicmsg);
-		if (key == SDLK_6) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 6\n", musicmsg);
-		if (key == SDLK_7) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 7\n", musicmsg);
-		if (key == SDLK_8) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 8\n", musicmsg);
-		if (key == SDLK_9) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 9\n", musicmsg);
+		if (key == Common::KEYCODE_0) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 0\n", musicmsg);
+		if (key == Common::KEYCODE_1) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 1\n", musicmsg);
+		if (key == Common::KEYCODE_2) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 2\n", musicmsg);
+		if (key == Common::KEYCODE_3) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 3\n", musicmsg);
+		if (key == Common::KEYCODE_4) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 4\n", musicmsg);
+		if (key == Common::KEYCODE_5) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 5\n", musicmsg);
+		if (key == Common::KEYCODE_6) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 6\n", musicmsg);
+		if (key == Common::KEYCODE_7) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 7\n", musicmsg);
+		if (key == Common::KEYCODE_8) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 8\n", musicmsg);
+		if (key == Common::KEYCODE_9) DEBUG(0, LEVEL_WARNING, "FIXME: %s: modulate 9\n", musicmsg);
 		return (key_type != DO_ACTION_KEY && key_type != CANCEL_ACTION_KEY);
 	} else
 		game->get_event()->key_redirect(this, obj);
@@ -1692,7 +1689,7 @@ bool U6UseCode::lock_pick_dex_check() {
 			dex -= 3;
 	}
 
-	if (NUVIE_RAND() % 30 < (45 - dex) / 2)
+	if ((int)NUVIE_RAND() % 30 < (45 - dex) / 2)
 		return true;
 
 	return false;
@@ -1795,12 +1792,12 @@ bool U6UseCode::use_boat(Obj *obj, UseCodeEvent ev) {
 		ship_actor->get_location(&lx, &ly, &lz); //retrieve actor position for land check.
 
 		if (use_boat_find_land(&lx, &ly, &lz)) { //we must be next to land to disembark
-			Obj *obj = ship_actor->make_obj();
-			obj->qty = ship_actor->get_hp(); // Hull Strength
+			Obj *objP = ship_actor->make_obj();
+			objP->qty = ship_actor->get_hp(); // Hull Strength
 
 			party->exit_vehicle(lx, ly, lz);
 
-			obj_manager->add_obj(obj);
+			obj_manager->add_obj(objP);
 		} else {
 			scroll->display_string("\nOnly next to land.\n");
 			return true;
@@ -2068,7 +2065,7 @@ bool U6UseCode::use_balloon(Obj *obj, UseCodeEvent ev) {
 		balloon_actor->get_location(&lx, &ly, &lz); //retrieve actor position for land check.
 
 		if (use_boat_find_land(&lx, &ly, &lz)) { //we must be next to land to disembark
-			Obj *obj;
+			Obj *objP;
 
 			party->show();
 			balloon_actor->hide();
@@ -2081,9 +2078,9 @@ bool U6UseCode::use_balloon(Obj *obj, UseCodeEvent ev) {
 			balloon_actor->init();
 			balloon_actor->move(0, 0, 0, ACTOR_FORCE_MOVE);
 
-			obj = new_obj(OBJ_U6_BALLOON, 0, lx, ly, lz);
-			obj->status |= OBJ_STATUS_OK_TO_TAKE;
-			obj_manager->add_obj(obj, OBJ_ADD_TOP);
+			objP = new_obj(OBJ_U6_BALLOON, 0, lx, ly, lz);
+			objP->status |= OBJ_STATUS_OK_TO_TAKE;
+			obj_manager->add_obj(objP, OBJ_ADD_TOP);
 		} else {
 			scroll->display_string("\nOnly next to land.\n");
 			return true;
@@ -2550,8 +2547,8 @@ bool U6UseCode::enter_dungeon(Obj *obj, UseCodeEvent ev) {
 
 	// don't activate if autowalking from linking exit
 	if ((ev == USE_EVENT_PASS || ev == USE_EVENT_USE) && items.actor_ref == player->get_actor() && !party->get_autowalk()) {
-		ActorManager *actor_manager = Game::get_game()->get_actor_manager();
-		if (obj->quality != 0 && party->contains_actor(3) && actor_manager->get_actor(3)->is_alive()) {
+		ActorManager *actorMan = Game::get_game()->get_actor_manager();
+		if (obj->quality != 0 && party->contains_actor(3) && actorMan->get_actor(3)->is_alive()) {
 			// scroll->printf("%s says, \"This is the %s%s.\"\n\n",blah->name, prefix, dungeon_name);
 			scroll->display_string("Shamino says, \"This is the ");
 			scroll->display_string(prefix);
@@ -2570,12 +2567,12 @@ bool U6UseCode::enter_dungeon(Obj *obj, UseCodeEvent ev) {
 		else
 			z -= 1;
 
-		MapCoord exit(x, y, z);
+		MapCoord exitPos(x, y, z);
 //        if(obj->obj_n == OBJ_U6_HOLE) // fall down hole faster
-//            party->walk(&entrance, &exit, 100);
+//            party->walk(&entrance, &exitPos, 100);
 //        else
-//            party->walk(&entrance, &exit);
-		party->walk(&entrance, &exit, 100);
+//            party->walk(&entrance, &exitPos);
+		party->walk(&entrance, &exitPos, 100);
 		game->get_weather()->set_wind_dir(NUVIE_DIR_NONE);
 		return (true);
 	} else if ((ev == USE_EVENT_PASS || ev == USE_EVENT_USE) && party->get_autowalk()) // party can use now
@@ -2590,7 +2587,7 @@ bool U6UseCode::enter_moongate(Obj *obj, UseCodeEvent ev) {
 	 */
 	uint16 x = obj->x, y = obj->y;
 	uint8 z = obj->z;
-	MapCoord exit(0, 0, 0);
+	MapCoord exitPos(0, 0, 0);
 
 	if (party->is_in_vehicle())
 		return true;
@@ -2603,7 +2600,7 @@ bool U6UseCode::enter_moongate(Obj *obj, UseCodeEvent ev) {
 		return (true);
 	}
 
-	// don't activate if autowalking from linking exit
+	// don't activate if autowalking from linking exitPos
 	if (ev == USE_EVENT_PASS && items.actor_ref == player->get_actor() && !party->get_autowalk()) {
 		if (obj->obj_n == OBJ_U6_RED_GATE) {
 			if (obj->quality > 25) {
@@ -2620,7 +2617,7 @@ bool U6UseCode::enter_moongate(Obj *obj, UseCodeEvent ev) {
 				y = red_moongate_tbl[obj->quality].y;
 				z = red_moongate_tbl[obj->quality].z;
 			}
-			exit = MapCoord(x, y, z);
+			exitPos = MapCoord(x, y, z);
 		} else if (obj->obj_n == OBJ_U6_MOONGATE) {
 			// FIXME: Duplication from PartyView, this ought to be separated
 			/* we don't care if the moons are in the sky,
@@ -2640,16 +2637,16 @@ bool U6UseCode::enter_moongate(Obj *obj, UseCodeEvent ev) {
 			uint8 absFelucca = abs(posFelucca - 12);
 			if (absTrammel < absFelucca) {
 				// Trammel wins.
-				exit = weather->get_moonstone(8 - phaseTrammel);
+				exitPos = weather->get_moonstone(8 - phaseTrammel);
 			} else {
 				// Feluccality!
-				exit = weather->get_moonstone(8 - phaseFelucca);
+				exitPos = weather->get_moonstone(8 - phaseFelucca);
 			}
-			if (exit.x == 0 && exit.y == 0 && exit.z == 0) {
-				exit = MapCoord(x, y, z); // stay put.
+			if (exitPos.x == 0 && exitPos.y == 0 && exitPos.z == 0) {
+				exitPos = MapCoord(x, y, z); // stay put.
 			}
 		}
-		party->walk(obj, &exit);
+		party->walk(obj, &exitPos);
 		return (true);
 	} else if (ev == USE_EVENT_PASS && party->get_autowalk()) // party can use now
 		if (party->contains_actor(items.actor_ref))

@@ -20,9 +20,7 @@
  *
  */
 
-//#include <cstring>
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/core/msg_scroll.h"
 #include "ultima/ultima6/actors/actor_manager.h"
