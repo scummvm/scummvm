@@ -20,16 +20,12 @@
  *
  */
 
-//#include "common_types.h"
-//#include "Application.h"
-//#include <cstring>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/misc.h"
-#include "Scale.h"
-#include "Surface.h"
+#include "ultima/ultima6/screen/scale.h"
+#include "ultima/ultima6/screen/surface.h"
 // Include all the Template Scaler Code
-#include "Scale.inl"
+#include "ultima/ultima6/screen/scale.inl"
 
 namespace Ultima {
 namespace Ultima6 {

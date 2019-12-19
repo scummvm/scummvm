@@ -432,7 +432,7 @@ void U6Lib_n::write_header() {
 
 	uint32 totalSize = 4 + num_offsets * lib_size;
 
-	for (int i = 0; i < num_offsets; i++) {
+	for (uint i = 0; i < num_offsets; i++) {
 		totalSize += items[i].size;
 	}
 

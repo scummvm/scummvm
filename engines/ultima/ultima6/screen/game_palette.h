@@ -25,8 +25,6 @@
 
 #include "ultima/ultima6/screen/screen.h"
 
-
-
 namespace Ultima {
 namespace Ultima6 {
 
