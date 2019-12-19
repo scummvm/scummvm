@@ -78,11 +78,8 @@ Sound *SoundList::getSoundItemById(int id) {
 
 Sound::Sound() :
 	_id(0),
-	_directSoundBuffer(0),
-	_directSoundBuffers(),
 	_soundData(nullptr),
 	_handle(new Audio::SoundHandle()),
-	_volume(100),
 	_objectId(0) {}
 
 Sound::~Sound() {
