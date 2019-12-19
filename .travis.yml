@@ -70,9 +70,6 @@ matrix:
         directories:
           - $HOME/Library/Caches/Homebrew
         ccache: true
-      before_script:
-        - sudo ln -s $(which ccache) /usr/lib/ccache/clang
-        - sudo ln -s $(which ccache) /usr/lib/ccache/clang++
       before_cache:
         - brew cleanup
 
