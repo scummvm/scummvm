@@ -447,6 +447,7 @@ void EoBCoreEngine::drawDoor(int index) {
 
 void EoBCoreEngine::drawMonsters(int index) {
 	static const uint8 distMap[] = { 2, 1, 0, 4 };
+	// SEGA: 2, 1, 0, 3 ??
 	static const uint8 yAdd[] = { 20, 12, 4, 4, 2, 0, 0 };
 
 	int blockDistance = distMap[_dscDimMap[index]];

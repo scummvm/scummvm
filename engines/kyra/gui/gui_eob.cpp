@@ -2781,8 +2781,8 @@ int GUI_EoB::checkKatakanaSelection() {
 			int lineOffs = (y - 112) >> 4;
 			int column = (x - 152) >> 2;
 
-			_csjis[0] = _vm->_katakanaLines[_currentKanaPage * 4 + lineOffs][column];
-			_csjis[1] = _vm->_katakanaLines[_currentKanaPage * 4 + lineOffs][column + 1];
+			_csjis[0] = _vm->_textInputCharacterLines[_currentKanaPage * 4 + lineOffs][column];
+			_csjis[1] = _vm->_textInputCharacterLines[_currentKanaPage * 4 + lineOffs][column + 1];
 
 			if (_csjis[0] != '\x81' || _csjis[1] != '\x40') {
 				highlight = lineOffs << 8 | column;
@@ -2795,11 +2795,11 @@ int GUI_EoB::checkKatakanaSelection() {
 
 	if (highlight == -1) {
 		for (int i = 0; i < 3; i++) {
-			if (!_vm->posWithinRect(mousePos.x, mousePos.y, kanaSelXCrds[i], 176, kanaSelXCrds[i] + _screen->getTextWidth(_vm->_katakanaSelectStrings[i]), 184))
+			if (!_vm->posWithinRect(mousePos.x, mousePos.y, kanaSelXCrds[i], 176, kanaSelXCrds[i] + _screen->getTextWidth(_vm->_textInputSelectStrings[i]), 184))
 				continue;
 
 			highlight = 0x400 | i;
-			_screen->printShadedText(_vm->_katakanaSelectStrings[i], kanaSelXCrds[i], 176, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(_vm->_textInputSelectStrings[i], kanaSelXCrds[i], 176, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
 			i = 3;
 		}
 	}
@@ -2815,11 +2815,11 @@ int GUI_EoB::checkKatakanaSelection() {
 
 	if (_menuCur != -1) {
 		if (_menuCur & 0x400) {
-			_screen->printShadedText(_vm->_katakanaSelectStrings[_menuCur & 3], kanaSelXCrds[_menuCur & 3], 176, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(_vm->_textInputSelectStrings[_menuCur & 3], kanaSelXCrds[_menuCur & 3], 176, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 		} else {
 			char osjis[3];
-			osjis[0] = _vm->_katakanaLines[_currentKanaPage * 4 + (_menuCur >> 8)][_menuCur & 0xFF];
-			osjis[1] = _vm->_katakanaLines[_currentKanaPage * 4 + (_menuCur >> 8)][(_menuCur & 0xFF) + 1];
+			osjis[0] = _vm->_textInputCharacterLines[_currentKanaPage * 4 + (_menuCur >> 8)][_menuCur & 0xFF];
+			osjis[1] = _vm->_textInputCharacterLines[_currentKanaPage * 4 + (_menuCur >> 8)][(_menuCur & 0xFF) + 1];
 			osjis[2] = 0;
 			_screen->printShadedText(osjis, 152 + ((_menuCur & 0xFF) << 2), 112 + ((_menuCur >> 4) & ~0x0F), _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 		}
@@ -2859,11 +2859,11 @@ void GUI_EoB::printKatakanaOptions(int page) {
 	_currentKanaPage = page;
 	_screen->copyRegion(160, 44, 144, 108, 160, 84, 2, 0, Screen::CR_NO_P_CHECK);
 	for (int i = 0; i < 4; i++)
-		_screen->printShadedText(_vm->_katakanaLines[page * 4 + i], 152, (i << 4) + 112, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printShadedText(_vm->_textInputCharacterLines[page * 4 + i], 152, (i << 4) + 112, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 
 	static uint16 kanaSelCrds[] = { 224, 272, 186 };
 	for (int i = 0; i < 3; i++)
-		_screen->printShadedText(_vm->_katakanaSelectStrings[i], kanaSelCrds[i], 176, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printShadedText(_vm->_textInputSelectStrings[i], kanaSelCrds[i], 176, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 }
 
 void GUI_EoB::transferWaitBox() {

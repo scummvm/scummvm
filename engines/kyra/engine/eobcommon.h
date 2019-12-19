@@ -1169,8 +1169,8 @@ protected:
 	const char *_errorSlotNoNameString;
 	const char *_menuOkString;
 	const char *const *_2431Strings;
-	const char *const *_katakanaLines;
-	const char *const *_katakanaSelectStrings;
+	const char *const *_textInputCharacterLines;
+	const char *const *_textInputSelectStrings;
 	const char *const *_menuStringsTransfer;
 	const char *const *_transferStringsScummVM;
 	const char *const *_menuStringsSpec;

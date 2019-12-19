@@ -351,6 +351,9 @@ void EoBCoreEngine::initStaticResource() {
 	_characterStatusStrings12 = _staticres->loadStrings(kEoBBaseCharStatusStrings12, temp);
 	_characterStatusStrings13 = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEoBBaseCharStatusStrings132 : kEoBBaseCharStatusStrings131, temp);
 
+	_textInputCharacterLines = _staticres->loadStrings(kEoBBaseTextInputCharacterLines, temp);
+	_textInputSelectStrings = _staticres->loadStrings(kEoBBaseTextInputSelectStrings, temp);
+
 	_levelGainStrings = _staticres->loadStrings(kEoBBaseLevelGainStrings, temp);
 	for (int i = 0; i < 5; i++)
 		_expRequirementTables[i] = _staticres->loadRawDataBe32(kEoBBaseExperienceTable0 + i, temp);
@@ -1466,8 +1469,6 @@ void DarkMoonEngine::initStaticResource() {
 
 	_utilMenuStrings = _staticres->loadStrings(kEoB2UtilMenuStrings, temp);
 	_2431Strings = _staticres->loadStrings(kEoB2Config2431Strings, temp);
-	_katakanaLines = _staticres->loadStrings(kEoB2KatakanaLines, temp);
-	_katakanaSelectStrings = _staticres->loadStrings(kEoB2KanaSelectStrings, temp);
 
 	_ascii2SjisTables = _staticres->loadStrings(kEoB2Ascii2SjisTables, temp);
 	_ascii2SjisTables2 = _staticres->loadStrings(kEoB2Ascii2SjisTables2, temp);

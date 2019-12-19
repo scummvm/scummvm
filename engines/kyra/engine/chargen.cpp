@@ -1180,9 +1180,11 @@ int CharacterGenerator::getMinHp(int cclass, int constitution, int level1, int l
 
 void CharacterGenerator::finish() {
 	_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
-	int cp = _screen->setCurPage(2);
-	_screen->printShadedText(_chargenEnterGameStrings[0], (_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 184 : 168, 32, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
-	_screen->setCurPage(cp);
+	if (_chargenEnterGameStrings) {
+		int cp = _screen->setCurPage(2);
+		_screen->printShadedText(_chargenEnterGameStrings[0], (_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 184 : 168, 32, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->setCurPage(cp);
+	}
 	_screen->copyRegion(160, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 
