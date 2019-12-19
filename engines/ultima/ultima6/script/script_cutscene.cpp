@@ -32,11 +32,13 @@
 
 #include "ultima/ultima6/sound/sound_manager.h"
 #include "ultima/ultima6/fonts/font.h"
-#include "WOUultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/fonts/wou_font.h"
 #include "ultima/ultima6/core/cursor.h"
 #include "ultima/ultima6/keybinding/keys.h"
+#include "ultima/ultima6/script/script_cutscene.h"
 
-#include "ScriptCutscene.h"
+#include "common/lua/lauxlib.h"
+#include "common/system.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -642,22 +644,22 @@ static int nscript_sprite_set(lua_State *L) {
 	}
 
 	if (!strcmp(key, "clip_x")) {
-		sprite->clip_rect.x = lua_tointeger(L, 3) + cutScene->get_x_off();
+		sprite->clip_rect.left = lua_tointeger(L, 3) + cutScene->get_x_off();
 		return 0;
 	}
 
 	if (!strcmp(key, "clip_y")) {
-		sprite->clip_rect.y = lua_tointeger(L, 3) + cutScene->get_y_off();
+		sprite->clip_rect.top = lua_tointeger(L, 3) + cutScene->get_y_off();
 		return 0;
 	}
 
 	if (!strcmp(key, "clip_w")) {
-		sprite->clip_rect.w = lua_tointeger(L, 3);
+		sprite->clip_rect.setWidth(lua_tointeger(L, 3));
 		return 0;
 	}
 
 	if (!strcmp(key, "clip_h")) {
-		sprite->clip_rect.h = lua_tointeger(L, 3);
+		sprite->clip_rect.setHeight(lua_tointeger(L, 3));
 		return 0;
 	}
 	if (!strcmp(key, "text")) {
@@ -989,24 +991,27 @@ static int nscript_input_poll(lua_State *L) {
 		poll_mouse_motion = false;
 	else
 		poll_mouse_motion = lua_toboolean(L, 1);
-	while (SDL_PollEvent(&event)) {
+	
+	while (g_system->getEventManager()->pollEvent(event)) {
 		//FIXME do something here.
 		KeyBinder *keybinder = Game::get_game()->get_keybinder();
 #ifdef HAVE_JOYSTICK_SUPPORT
 		if (event.type >= SDL_JOYAXISMOTION && event.type <= SDL_JOYBUTTONUP) {
 			event.key.keysym.sym = keybinder->get_key_from_joy_events(&event);
-			if (event.key.keysym.sym == SDLK_UNKNOWN) // make sure button isn't mapped or is in deadzone
+			if (event.key.keysym.sym == Common::KEYCODE_UNKNOWN) // make sure button isn't mapped or is in deadzone
 				return 0; // pretend nothing happened
 			event.type = SDL_KEYDOWN;
-			event.key.keysym.mod = KMOD_NONE;
+			event.key.keysym.mod = Common::KBD_NONE;
 		}
 #endif
-		if (event.type == SDL_KEYDOWN) {
-			Common::KeyState key = event.key.keysym;
-			if ((((key.mod & KMOD_CAPS) == KMOD_CAPS && (key.mod & KMOD_SHIFT) == 0) || ((key.mod & KMOD_CAPS) == 0 && (key.mod & KMOD_SHIFT)))
-			        && key.sym >= SDLK_a && key.sym <= SDLK_z)
-				key.sym = (Common::KeyCode)(key.sym - 32);
-			if (key.sym > 0xFF || !Common::isPrint((char)key.sym) || (key.mod & KMOD_ALT) || (key.mod & KMOD_CTRL) || (key.mod & KMOD_GUI)) {
+		if (event.type == Common::EVENT_KEYDOWN) {
+			Common::KeyState key = event.kbd;
+
+			if ((((key.flags & Common::KBD_CAPS) == Common::KBD_CAPS
+					&& (key.flags & Common::KBD_SHIFT) == 0) || ((key.flags & Common::KBD_CAPS) == 0 && (key.flags & Common::KBD_SHIFT)))
+			        && key.keycode >= Common::KEYCODE_a && key.keycode <= Common::KEYCODE_z)
+				key.keycode = (Common::KeyCode)(key.keycode - 32);
+			if (key.keycode > 0xFF || !Common::isPrint((char)key.keycode) || (key.flags & Common::KBD_ALT) || (key.flags & Common::KBD_CTRL)) {
 				ActionType a = keybinder->get_ActionType(key);
 				switch (keybinder->GetActionKeyType(a)) {
 				case WEST_KEY:
@@ -1022,24 +1027,24 @@ static int nscript_input_poll(lua_State *L) {
 					lua_pushinteger(L, INPUT_KEY_UP);
 					return 1;
 				case CANCEL_ACTION_KEY:
-					key.sym = SDLK_ESCAPE;
+					key.keycode = Common::KEYCODE_ESCAPE;
 					break;
 				case DO_ACTION_KEY:
-					key.sym = SDLK_RETURN;
+					key.keycode = Common::KEYCODE_RETURN;
 					break;
 				default:
 					if (keybinder->handle_always_available_keys(a)) return 0;
 					break;
 				}
 			}
-			lua_pushinteger(L, key.sym);
+			lua_pushinteger(L, key.keycode);
 			return 1;
 		}
-		if (event.type == SDL_MOUSEBUTTONDOWN) {
+		if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
 			lua_pushinteger(L, 0);
 			return 1;
 		}
-		if (poll_mouse_motion && event.type == SDL_MOUSEMOTION) {
+		if (poll_mouse_motion && event.type == Common::EVENT_MOUSEMOVE) {
 			lua_pushinteger(L, 1);
 			return 1;
 		}
@@ -1077,11 +1082,7 @@ ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : G
 
 	GUI_Widget::Init(NULL, 0, 0, g->get_width(), g->get_height());
 
-	clip_rect.x = x_off;
-	clip_rect.y = y_off;
-	clip_rect.w = 320;
-	clip_rect.h = 200;
-
+	clip_rect = Common::Rect(x_off, y_off, x_off + 320, y_off + 200);
 	screen = g->get_screen();
 	gui->AddWidget(this);
 	Hide();
@@ -1099,24 +1100,24 @@ ScriptCutscene::ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm) : G
 	}
 	//FIXME load other fonts for MD / SE if needed here.
 	if (game_type == NUVIE_GAME_SE) {
-		std::string path;
+		std::string filePath;
 		U6Lib_n lib_file;
 
-		config_get_path(config, "savage.fnt", path);
+		config_get_path(config, "savage.fnt", filePath);
 
-		lib_file.open(path, 4, NUVIE_GAME_SE); //can be either SE or MD just as long as it isn't set to U6 type.
+		lib_file.open(filePath, 4, NUVIE_GAME_SE); //can be either SE or MD just as long as it isn't set to U6 type.
 
 		unsigned char *buf = lib_file.get_item(0);
 		font->initWithBuffer(buf, lib_file.get_item_size(0)); //buf will be freed by ~Font()
 	}
 
 	if (game_type == NUVIE_GAME_MD) {
-		std::string path;
+		std::string filePath;
 		U6Lib_n lib_file;
 
-		config_get_path(config, "fonts.lzc", path);
+		config_get_path(config, "fonts.lzc", filePath);
 
-		lib_file.open(path, 4, NUVIE_GAME_MD);
+		lib_file.open(filePath, 4, NUVIE_GAME_MD);
 
 		unsigned char *buf = lib_file.get_item(0);
 		font->initWithBuffer(buf, lib_file.get_item_size(0)); //buf will be freed by ~Font()
@@ -1136,7 +1137,7 @@ ScriptCutscene::~ScriptCutscene() {
 }
 
 bool ScriptCutscene::is_lzc(const char *filename) {
-	if (strlen(filename) > 4 && strcasecmp((const char *)&filename[strlen(filename) - 4], ".lzc") == 0)
+	if (strlen(filename) > 4 && scumm_stricmp((const char *)&filename[strlen(filename) - 4], ".lzc") == 0)
 		return true;
 
 	return false;
@@ -1191,13 +1192,13 @@ CSImage *ScriptCutscene::load_image(const char *filename, int idx, int sub_idx) 
 	if (idx >= 0) {
 		U6Lzw lzw;
 
-		U6Lib_n lib_n;
+		U6Lib_n libN;
 		uint32 decomp_size;
 		unsigned char *buf = lzw.decompress_file(path.c_str(), decomp_size);
 		NuvieIOBuffer io;
 		io.open(buf, decomp_size, false);
-		if (lib_n.open(&io, 4, NUVIE_GAME_MD)) {
-			if (shp->load(&lib_n, (uint32)idx)) {
+		if (libN.open(&io, 4, NUVIE_GAME_MD)) {
+			if (shp->load(&libN, (uint32)idx)) {
 				image = new CSImage(shp);
 			}
 		}
@@ -1516,9 +1517,9 @@ void ScriptCutscene::update() {
 	}
 
 	if (rotate_game_palette) {
-		GamePalette *palette = Game::get_game()->get_palette();
-		if (palette) {
-			palette->rotatePalette();
+		GamePalette *pal = Game::get_game()->get_palette();
+		if (pal) {
+			pal->rotatePalette();
 		}
 	}
 	gui->Display();
@@ -1536,7 +1537,7 @@ void ScriptCutscene::wait() {
 
 	uint32 delay = next_time - now;
 	next_time += loop_interval;
-	SDL_Delay(delay);
+	g_system->delayMillis(delay);
 }
 
 /* Show the widget  */
@@ -1546,7 +1547,7 @@ void ScriptCutscene::Display(bool full_redraw) {
 
 	if (solid_bg) {
 		if (full_redraw)
-			screen->fill(bg_color, 0, 0, area.w, area.h);
+			screen->fill(bg_color, 0, 0, area.width(), area.height());
 		else
 			screen->fill(bg_color, x_off, y_off, 320, 200);
 	}
@@ -1560,7 +1561,7 @@ void ScriptCutscene::Display(bool full_redraw) {
 					s->image->shp->get_size(&w, &h);
 					uint16 x, y;
 					s->image->shp->get_hot_point(&x, &y);
-					screen->blit(x_off + s->x - x, y_off + s->y - y, s->image->shp->get_data(), 8, w, h, w, true, s->clip_rect.w != 0 ? &s->clip_rect : &clip_rect, s->opacity);
+					screen->blit(x_off + s->x - x, y_off + s->y - y, s->image->shp->get_data(), 8, w, h, w, true, s->clip_rect.width() != 0 ? &s->clip_rect : &clip_rect, s->opacity);
 				}
 
 				if (s->text.length() > 0) {
@@ -1586,7 +1587,7 @@ void ScriptCutscene::Display(bool full_redraw) {
 		cursor->display();
 
 	if (full_redraw)
-		screen->update(0, 0, area.w, area.h);
+		screen->update(0, 0, area.width(), area.height());
 	else
 		screen->update(x_off, y_off, 320, 200);
 }

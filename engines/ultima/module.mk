@@ -47,7 +47,10 @@ MODULE_OBJS += \
 	ultima6/screen/game_palette.o \
 	ultima6/screen/scale.o \
 	ultima6/screen/screen.o \
-	ultima6/screen/surface.o
+	ultima6/screen/surface.o \
+	ultima6/script/script.o \
+	ultima6/script/script_actor.o \
+	ultima6/script/script_cutscene.o
 endif
 
 ifdef ENABLE_ULTIMA8

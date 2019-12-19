@@ -26,8 +26,10 @@
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_widget.h"
 #include "ultima/ultima6/files/u6_shape.h"
-#include "WOUultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/fonts/wou_font.h"
 #include "ultima/ultima6/conf/configuration.h"
+
+#include "common/lua/lua.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -36,8 +38,6 @@ class SoundManager;
 class Font;
 class U6LineWalker;
 class Cursor;
-
-#include "lua.hpp"
 
 class CSImage {
 public:
@@ -96,10 +96,7 @@ struct CSSprite {
 		opacity = 255;
 		image = NULL;
 		visible = false;
-		clip_rect.x = 0;
-		clip_rect.y = 0;
-		clip_rect.w = 0;
-		clip_rect.h = 0;
+		clip_rect = Common::Rect();
 		text = "";
 		text_color = 0xffff;
 		text_align = 0;
