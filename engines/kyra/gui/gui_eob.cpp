@@ -2293,6 +2293,7 @@ void GUI_EoB::runCampMenu() {
 			case 0x800D:
 				if (_vm->gameFlags().platform == Common::kPlatformPC98) {
 					_vm->_configMusic ^= true;
+					_vm->writeSettings();
 					if (_vm->_configMusic)
 						_vm->snd_playSong(_vm->_currentLevel + 1);
 					else

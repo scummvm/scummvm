@@ -636,11 +636,11 @@ void EoBCoreEngine::registerDefaultSettings() {
 void EoBCoreEngine::readSettings() {
 	_configHpBarGraphs = ConfMan.getBool("hpbargraphs");
 	_configMouseBtSwap = ConfMan.getBool("mousebtswap");
-	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
-	_configMusic = _configSounds ? 1 : 0;
+	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;	
+	_configMusic = (_flags.platform == Common::kPlatformPC98) ? (ConfMan.getBool("music_mute") ? 0 : 1) : (_configSounds ? 1 : 0);
 
 	if (_sound) {
-		_sound->enableMusic(_configSounds ? 1 : 0);
+		_sound->enableMusic(_configMusic);
 		_sound->enableSFX(_configSounds);
 	}
 }
@@ -649,11 +649,17 @@ void EoBCoreEngine::writeSettings() {
 	ConfMan.setBool("hpbargraphs", _configHpBarGraphs);
 	ConfMan.setBool("mousebtswap", _configMouseBtSwap);
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
+	if (_flags.platform == Common::kPlatformPC98)
+		ConfMan.setBool("music_mute", _configMusic == 0);
 
 	if (_sound) {
-		if (!_configSounds)
+		if (_flags.platform == Common::kPlatformPC98) {
+			if (!_configMusic)
+				snd_playSong(0);
+		} else if (!_configSounds) {
 			_sound->haltTrack();
-		_sound->enableMusic(_configSounds ? 1 : 0);
+		}
+		_sound->enableMusic(_configMusic);
 		_sound->enableSFX(_configSounds);
 	}
 
