@@ -348,8 +348,8 @@ void SpellView::add_command_icons(Screen *tmp_screen, void *view_manager) {
 }
 
 void SpellView::event_mode_select_spell() {
-	sint16 spell_num = get_selected_spell();
-	Game::get_game()->get_event()->select_spell_num(spell_num);
+	sint16 spellNum = get_selected_spell();
+	Game::get_game()->get_event()->select_spell_num(spellNum);
 	release_focus();
 }
 
