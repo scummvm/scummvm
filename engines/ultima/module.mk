@@ -52,7 +52,30 @@ MODULE_OBJS += \
 	ultima6/script/script_actor.o \
 	ultima6/script/script_cutscene.o \
 	ultima6/usecode/u6_usecode.o \
-	ultima6/usecode/usecode.o
+	ultima6/usecode/usecode.o \
+	ultima6/views/actor_view.o \
+	ultima6/views/container_view_gump.o \
+	ultima6/views/container_widget.o \
+	ultima6/views/container_widget_gump.o \
+	ultima6/views/doll_view_gump.o \
+	ultima6/views/doll_widget.o \
+	ultima6/views/draggable_view.o \
+	ultima6/views/inventory_view.o \
+	ultima6/views/inventory_widget.o \
+	ultima6/views/map_editor_view.o \
+	ultima6/views/md_sky_strip_widget.o \
+	ultima6/views/party_view.o \
+	ultima6/views/portrait_view.o \
+	ultima6/views/portrait_view_gump.o \
+	ultima6/views/scroll_view_gump.o \
+	ultima6/views/scroll_widget_gump.o \
+	ultima6/views/sign_view_gump.o \
+	ultima6/views/spell_view.o \
+	ultima6/views/spell_view_gump.o \
+	ultima6/views/sun_moon_ribbon.o \
+	ultima6/views/sun_moon_strip_widget.o \
+	ultima6/views/vew.o \
+	ultima6/views/view_manager.o
 endif
 
 ifdef ENABLE_ULTIMA8

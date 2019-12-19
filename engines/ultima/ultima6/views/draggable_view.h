@@ -24,6 +24,7 @@
 #define ULTIMA6_VIEWS_INVENTORY_FONT_H
 
 #include "ultima/ultima6/views/view.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -45,8 +46,8 @@ public:
 	virtual ~DraggableView();
 
 	/* events, used for dragging the area. */
-	GUI_status MouseDown(int x, int y, int button);
-	GUI_status MouseUp(int x, int y, int button);
+	GUI_status MouseDown(int x, int y, MouseButton button);
+	GUI_status MouseUp(int x, int y, MouseButton button);
 	GUI_status MouseMotion(int x, int y, uint8 state);
 	void MoveRelative(int dx, int dy);
 

@@ -713,7 +713,7 @@ void MsgScroll::process_page_break() {
 /* Take input from the main event handler and do something with it
  * if necessary.
  */
-GUI_status MsgScroll::KeyDown(Common::KeyState key) {
+GUI_status MsgScroll::KeyDown(const Common::KeyState &key) {
 	char ascii = get_ascii_char_from_keysym(key);
 
 	if (page_break == false && input_mode == false)
@@ -872,7 +872,7 @@ GUI_status MsgScroll::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status MsgScroll::MouseUp(int x, int y, int button) {
+GUI_status MsgScroll::MouseUp(int x, int y, MouseButton button) {
 	uint16 i;
 	std::string token_str;
 

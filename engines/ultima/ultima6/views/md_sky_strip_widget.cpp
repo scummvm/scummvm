@@ -64,12 +64,12 @@ void MDSkyStripWidget::Display(bool full_redraw) {
 		if (z == 0) {
 			display_surface();
 		} else if (z == 1) {
-			screen->fill(0, area.x, area.y, area.w, area.h);
+			screen->fill(0, area.left, area.top, area.width(), area.height());
 		} else {
-			screen->fill(7, area.x, area.y, area.w, area.h);
+			screen->fill(7, area.left, area.top, area.width(), area.height());
 		}
 
-		screen->update(area.x, area.y, area.w, area.h);
+		screen->update(area.left, area.top, area.width(), area.height());
 	}
 
 }
@@ -87,7 +87,7 @@ void MDSkyStripWidget::display_surface() {
 
 	shp_data += hour * 16 + (minute / 15) * 4;
 
-	screen->blit(area.x, area.y, shp_data, 8, area.w, area.h, w, false);
+	screen->blit(area.left, area.top, shp_data, 8, area.width(), area.height(), w, false);
 }
 
 } // End of namespace Ultima6

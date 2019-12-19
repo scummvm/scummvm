@@ -28,7 +28,7 @@
 #include "ultima/ultima6/core/map.h"
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/views/view_manager.h"
-#include "MapEditorView.h"
+#include "ultima/ultima6/views/map_editor_view.h"
 #include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
@@ -51,7 +51,7 @@ MapEditorView::~MapEditorView() {
 bool MapEditorView::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om) {
 	View::init(x, y, f, p, tm, om);
 
-	SetRect(area.x, area.y, 90, 200);
+	SetRect(area.left, area.top, 90, 200);
 	bg_color = 119;
 
 	std::string datadir = GUI::get_gui()->get_data_dir();
@@ -84,13 +84,8 @@ bool MapEditorView::init(Screen *tmp_screen, void *view_manager, uint16 x, uint1
 }
 
 void MapEditorView::Display(bool full_redraw) {
-	Common::Rect src, dst;
-	src.w = 16;
-	src.h = 16;
-	dst.w = 16;
-	dst.h = 16;
-
-	screen->fill(bg_color, area.x, area.y, area.w, area.h);
+	Common::Rect src(0, 0, 16, 16), dst(0, 0, 16, 16);
+	screen->fill(bg_color, area.left, area.top, area.width(), area.height());
 
 	DisplayChildren(full_redraw);
 
@@ -98,23 +93,23 @@ void MapEditorView::Display(bool full_redraw) {
 
 	for (int i = 0; i < TILES_H; i++) {
 		for (int j = 0; j < TILES_W; j++) {
-			dst.x = area.x + 3 + (j * 17);
-			dst.y = area.y + 16 + (i * 17);
+			dst.left = area.left + 3 + (j * 17);
+			dst.top = area.top + 16 + (i * 17);
 
-			src.x = (tile_num % MAPWINDOW_ROOFTILES_IMG_W) * 16;
-			src.y = (tile_num / MAPWINDOW_ROOFTILES_IMG_W) * 16;
+			src.left = (tile_num % MAPWINDOW_ROOFTILES_IMG_W) * 16;
+			src.top = (tile_num / MAPWINDOW_ROOFTILES_IMG_W) * 16;
 
 			if (tile_num == selectedTile)
-				screen->fill(15, dst.x - 1, dst.y - 1, 18, 18);
+				screen->fill(15, dst.left - 1, dst.top - 1, 18, 18);
 
 			SDL_BlitSurface(roof_tiles, &src, surface, &dst);
 			tile_num++;
 		}
 	}
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 }
 
-GUI_status MapEditorView::KeyDown(Common::KeyState key) {
+GUI_status MapEditorView::KeyDown(const Common::KeyState &key) {
 	MapCoord loc;
 	uint16 *roof_data;
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
@@ -122,11 +117,11 @@ GUI_status MapEditorView::KeyDown(Common::KeyState key) {
 	ActionKeyType action_type = keybinder->GetActionKeyType(a);
 
 	// alt input
-	if (key.mod & KMOD_ALT) {
+	if (key.flags & Common::KBD_ALT) {
 		Common::KeyState key_without_alt = key; // need to see what action is without alt
-		uint16 mod_without_alt = key_without_alt.mod; // this and next 2 lines are due SDL_Keymod not wanting to do the bitwise ~ operation
-		mod_without_alt &= ~KMOD_ALT;
-		key_without_alt.mod = (SDL_Keymod)mod_without_alt;
+		byte mod_without_flags = key_without_alt.flags; // this and next 2 lines are due SDL_Keymod not wanting to do the bitwise ~ operation
+		mod_without_flags &= ~Common::KBD_ALT;
+		key_without_alt.flags = mod_without_flags;
 		ActionType action_without_alt = keybinder->get_ActionType(key_without_alt);
 
 		if (keybinder->GetActionKeyType(action_without_alt) <= SOUTH_WEST_KEY)
@@ -171,11 +166,11 @@ GUI_status MapEditorView::KeyDown(Common::KeyState key) {
 		default:
 			break;
 		}
-	} else if (key.mod == KMOD_NONE) {
-		if (key.sym == SDLK_g) {
+	} else if (key.flags == 0) {
+		if (key.keycode == Common::KEYCODE_g) {
 			toggleGrid();
 			return GUI_YUM;
-		} else if (key.sym == SDLK_s) {
+		} else if (key.keycode == Common::KEYCODE_s) {
 			Game::get_game()->get_game_map()->saveRoofData();
 			return GUI_YUM;
 		}
@@ -244,21 +239,21 @@ GUI_status MapEditorView::KeyDown(Common::KeyState key) {
 	return (GUI_YUM);
 }
 
-GUI_status MapEditorView::MouseDown(int x, int y, int button) {
+GUI_status MapEditorView::MouseDown(int x, int y, MouseButton button) {
 
 	return GUI_YUM;
 }
 
-GUI_status MapEditorView::MouseUp(int x, int y, int button) {
+GUI_status MapEditorView::MouseUp(int x, int y, MouseButton button) {
 
-	if (SDL_BUTTON(button) & SDL_BUTTON_RMASK) {
+	if (button == BUTTON_RIGHT) {
 		//Game::get_game()->get_view_manager()->close_gump(this);
 		close_view();
 		GUI::get_gui()->removeWidget((GUI_Widget *)this);
 	} else if (HitRect(x, y)) {
-		x -= area.x;
+		x -= area.left;
 		x -= 3;
-		y -= area.y;
+		y -= area.top;
 		y -= 16;
 		selectedTile = tile_offset + (y / 17) * TILES_W + (x / 17);
 	} else {

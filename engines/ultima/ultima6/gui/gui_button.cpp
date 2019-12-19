@@ -126,13 +126,13 @@ GUI_Button::~GUI_Button() {
 /* Resize/reposition/change text */
 void GUI_Button::ChangeTextButton(int x, int y, int w, int h, const char *text, int alignment) {
 	if (x >= 0)
-		area.x = x;
+		area.left = x;
 	if (y >= 0)
-		area.y = y;
+		area.top = y;
 	if (w >= 0)
-		area.w = w;
+		area.width() = w;
 	if (h >= 0)
-		area.h = h;
+		area.height() = h;
 
 	if (freebutton) {
 		if (button)
@@ -166,7 +166,7 @@ void GUI_Button:: Display(bool full_redraw) {
 		      {
 		        buttonFont->SetTransparency(1);
 		        buttonFont->SetColoring(255,0,0);
-		        buttonFont->TextOut(surface,area.x+4,area.y+4,textmark);
+		        buttonFont->TextOut(surface,area.left+4,area.top+4,textmark);
 		      }
 		*/
 
@@ -186,9 +186,9 @@ void GUI_Button:: Display(bool full_redraw) {
 		uint8 bytepp = surface->format->BytesPerPixel;
 
 		if (!SDL_LockSurface(surface)) {
-			for (int y = 0; y < area.h; y += 2) {
-				pointer = (uint8 *)surface->pixels + surface->pitch * (area.y + y) + (area.x * bytepp);
-				for (int x = 0; x<area.w >> 1; x++) {
+			for (int y = 0; y < area.height(); y += 2) {
+				pointer = (uint8 *)surface->pixels + surface->pitch * (area.top + y) + (area.left * bytepp);
+				for (int x = 0; x<area.width() >> 1; x++) {
 					switch (bytepp) {
 					case 1:
 						*((uint8 *)(pointer)) = (uint8)pixel;
@@ -224,7 +224,7 @@ void GUI_Button:: Display(bool full_redraw) {
 }
 
 /* Mouse hits activate us */
-GUI_status GUI_Button:: MouseDown(int x, int y, int button) {
+GUI_status GUI_Button:: MouseDown(int x, int y, MouseButton button) {
 //	if(button == SDL_BUTTON_WHEELUP || button == SDL_BUTTON_WHEELDOWN)
 //	  return GUI_PASS;
 	if (enabled && (button == 1 || button == 3)) {
@@ -234,7 +234,7 @@ GUI_status GUI_Button:: MouseDown(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_Button::MouseUp(int x, int y, int button) {
+GUI_status GUI_Button::MouseUp(int x, int y, MouseButton button) {
 //	if (button==SDL_BUTTON_WHEELUP || button==SDL_BUTTON_WHEELDOWN)
 //		return GUI_PASS;
 	if ((button == 1 || button == 3) && (pressed[0])) {
@@ -244,7 +244,7 @@ GUI_status GUI_Button::MouseUp(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_Button::Activate_button(int x, int y, int button) {
+GUI_status GUI_Button::Activate_button(int x, int y, MouseButton button) {
 	if (x >= 0 && y >= 0) {
 		if (callback_object && callback_object->callback(BUTTON_CB, this, widget_data) == GUI_QUIT)
 			return GUI_QUIT;
@@ -281,9 +281,9 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 	int tx = 0, ty = 0;
 	char *duptext = 0;
 
-//  Graphics::ManagedSurface *img=SDL_AllocSurface(SDL_SWSURFACE,area.w,area.h,
+//  Graphics::ManagedSurface *img=SDL_AllocSurface(SDL_SWSURFACE,area.width(),area.height(),
 //				    16,31 << 11,63 << 5,31,0);
-	Graphics::ManagedSurface *img = SDL_CreateRGBSurface(SDL_SWSURFACE, area.w, area.h,
+	Graphics::ManagedSurface *img = SDL_CreateRGBSurface(SDL_SWSURFACE, area.width(), area.height(),
 	                                        16, 31 << 11, 63 << 5, 31, 0);
 
 	if (img == NULL) return NULL;
@@ -297,15 +297,15 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 	buttonFont->SetColoring(0, 0, 0);
 	buttonFont->SetTransparency(1);
 	buttonFont->TextExtent(text, &tw, &th);
-	if (tw > (area.w - (4 + is_checkable * 16))) {
-		int n = (area.w - (4 + is_checkable * 16)) / buttonFont->CharWidth();
+	if (tw > (area.width() - (4 + is_checkable * 16))) {
+		int n = (area.width() - (4 + is_checkable * 16)) / buttonFont->CharWidth();
 		duptext = new char[n + 1];
 		strncpy(duptext, text, n);
 		duptext[n] = 0;
 		text = duptext;
 		buttonFont->TextExtent(text, &tw, &th);
 	}
-	if (th > (area.h - 4)) {
+	if (th > (area.height() - 4)) {
 		text = "";
 	}
 	switch (alignment) {
@@ -313,64 +313,64 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 		tx = 4 + (is_checkable * 16);
 		break;
 	case BUTTON_TEXTALIGN_CENTER:
-		tx = (area.w - tw) >> 1;
+		tx = (area.width() - tw) >> 1;
 		break;
 	case BUTTON_TEXTALIGN_RIGHT:
-		tx = area.w - 5 - tw;
+		tx = area.width() - 5 - tw;
 		break;
 	}
-	ty = (area.h - th) >> 1;
+	ty = (area.height() - th) >> 1;
 
 	switch (style) {
 	case BUTTON3D_UP:
 		fillrect.x = 0;
 		fillrect.y = 0;
-		fillrect.w = area.w;
+		fillrect.w = area.width();
 		fillrect.h = 2;
 		SDL_FillRect(img, &fillrect, color1);
-		fillrect.y = area.h - 2;
+		fillrect.y = area.height() - 2;
 		SDL_FillRect(img, &fillrect, color2);
 		fillrect.x = 0;
 		fillrect.y = 0;
 		fillrect.w = 2;
-		fillrect.h = area.h;
+		fillrect.h = area.height();
 		SDL_FillRect(img, &fillrect, color1);
-		fillrect.x = area.w - 2;
+		fillrect.x = area.width() - 2;
 		SDL_FillRect(img, &fillrect, color2);
 		fillrect.h = 1;
 		fillrect.w = 1;
 		SDL_FillRect(img, &fillrect, color1);
 		fillrect.x = 1;
-		fillrect.y = area.h - 1;
+		fillrect.y = area.height() - 1;
 		SDL_FillRect(img, &fillrect, color2);
 		fillrect.x = 2;
 		fillrect.y = 2;
-		fillrect.w = area.w - 4;
-		fillrect.h = area.h - 4;
+		fillrect.w = area.width() - 4;
+		fillrect.h = area.height() - 4;
 		SDL_FillRect(img, &fillrect, color3);
 		buttonFont->TextOut(img, tx, ty, text);
 		break;
 	case BUTTON3D_DOWN:
 		fillrect.x = 0;
 		fillrect.y = 0;
-		fillrect.w = area.w;
-		fillrect.h = area.h;
+		fillrect.w = area.width();
+		fillrect.h = area.height();
 		SDL_FillRect(img, &fillrect, color3);
 		buttonFont->TextOut(img, tx + 1, ty + 1, text);
 		break;
 	case BUTTON2D_UP:
 		fillrect.x = 0;
 		fillrect.y = 0;
-		fillrect.w = area.w;
-		fillrect.h = area.h;
+		fillrect.w = area.width();
+		fillrect.h = area.height();
 		SDL_FillRect(img, &fillrect, color3);
 		buttonFont->TextOut(img, tx, ty, text);
 		break;
 	case BUTTON2D_DOWN:
 		fillrect.x = 0;
 		fillrect.y = 0;
-		fillrect.w = area.w;
-		fillrect.h = area.h;
+		fillrect.w = area.width();
+		fillrect.h = area.height();
 		SDL_FillRect(img, &fillrect, color4);
 		buttonFont->SetTransparency(0);
 		buttonFont->SetColoring(BI1_R, BI1_G, BI1_B, BI2_R, BI2_G, BI2_B);

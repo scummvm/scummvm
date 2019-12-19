@@ -61,13 +61,14 @@ DraggableView::~DraggableView() {
 void DraggableView::set_bg_color_key(uint8 r, uint8 g, uint8 b) {
 	if (bg_image) {
 		bg_color_key = SDL_MapRGB(bg_image->format, 0, 0x70, 0xfc);
-		SDL_SetColorKey(bg_image, SDL_TRUE, bg_color_key);
+		//SDL_SetColorKey(bg_image, SDL_TRUE, bg_color_key);
+		::error("TODO: work around transparency");
 	}
 }
 
-GUI_status DraggableView::MouseDown(int x, int y, int button) {
+GUI_status DraggableView::MouseDown(int x, int y, MouseButton button) {
 	if (bg_image && HitRect(x, y)) {
-		uint32 pixel = sdl_getpixel(bg_image, x - area.x, y - area.y);
+		uint32 pixel = sdl_getpixel(bg_image, x - area.left, y - area.top);
 		if (pixel == bg_color_key) {
 			return GUI_PASS;
 		}
@@ -85,11 +86,11 @@ GUI_status DraggableView::MouseDown(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status DraggableView::MouseUp(int x, int y, int button) {
+GUI_status DraggableView::MouseUp(int x, int y, MouseButton button) {
 	drag = false;
 
 	release_focus();
-	if (SDL_BUTTON(button) & SDL_BUTTON_RMASK) {
+	if (button == BUTTON_RIGHT) {
 		Game::get_game()->get_view_manager()->close_gump(this);
 	}
 	return GUI_YUM;
@@ -116,28 +117,28 @@ GUI_status DraggableView::MouseMotion(int x, int y, uint8 state) {
 void DraggableView::force_full_redraw_if_needed() {
 	if (need_full_redraw_when_moved) {
 		if (always_need_full_redraw_when_moved // or over background
-		        || (area.x + area.w > Game::get_game()->get_game_width() + Game::get_game()->get_game_x_offset()
-		            || area.x < Game::get_game()->get_game_x_offset() || area.y < Game::get_game()->get_game_y_offset()
-		            || area.y + area.h > Game::get_game()->get_game_height() + Game::get_game()->get_game_y_offset()))
+		        || (area.right > Game::get_game()->get_game_width() + Game::get_game()->get_game_x_offset()
+		            || area.left < Game::get_game()->get_game_x_offset() || area.top < Game::get_game()->get_game_y_offset()
+		            || area.bottom > Game::get_game()->get_game_height() + Game::get_game()->get_game_y_offset()))
 			GUI::get_gui()->force_full_redraw();
 	}
 }
 
 void DraggableView::MoveRelative(int dx, int dy) {
-	int new_x = area.x + dx;
+	int new_x = area.left + dx;
 
 	if (new_x < 0) {
-		dx = -area.x;
-	} else if (new_x + area.w > screen->get_width()) {
-		dx = screen->get_width() - (area.x + area.w);
+		dx = -area.left;
+	} else if (new_x + area.width() > screen->get_width()) {
+		dx = screen->get_width() - (area.left + area.width());
 	}
 
-	int new_y = area.y + dy;
+	int new_y = area.top + dy;
 
 	if (new_y < 0) {
-		dy = -area.y;
-	} else if (new_y + area.h > screen->get_height()) {
-		dy = screen->get_height() - (area.y + area.h);
+		dy = -area.top;
+	} else if (new_y + area.height() > screen->get_height()) {
+		dy = screen->get_height() - (area.top + area.height());
 	}
 
 	force_full_redraw_if_needed(); // needs to happen before the move

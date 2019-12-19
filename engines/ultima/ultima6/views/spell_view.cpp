@@ -29,8 +29,8 @@
 #include "ultima/ultima6/files/u6_bmp.h"
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_button.h"
-#include "DollWidget.h"
-#include "InventoryWidget.h"
+#include "ultima/ultima6/views/doll_widget.h"
+#include "ultima/ultima6/views/inventory_widget.h"
 #include "ultima/ultima6/views/spell_view.h"
 #include "ultima/ultima6/core/party.h"
 #include "ultima/ultima6/fonts/font.h"
@@ -74,7 +74,7 @@ SpellView::~SpellView() {
 bool SpellView::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om) {
 	View::init(x, y, f, p, tm, om);
 
-	SetRect(area.x, area.y, NEWMAGIC_BMP_W, NEWMAGIC_BMP_H + 16);
+	SetRect(area.left, area.top, NEWMAGIC_BMP_W, NEWMAGIC_BMP_H + 16);
 	string filename;
 
 	config_get_path(config, "newmagic.bmp", filename);
@@ -117,9 +117,9 @@ void SpellView::set_spell_caster(Actor *actor, Obj *s_container, bool eventMode)
 
 void SpellView::Display(bool full_redraw) {
 	if (full_redraw || update_display) {
-		screen->fill(bg_color, area.x, area.y + NEWMAGIC_BMP_H, area.w, area.h - NEWMAGIC_BMP_H);
+		screen->fill(bg_color, area.left, area.top + NEWMAGIC_BMP_H, area.width(), area.height() - NEWMAGIC_BMP_H);
 
-		screen->blit(area.x, area.y, background->get_data(), 8,  NEWMAGIC_BMP_W, NEWMAGIC_BMP_H, NEWMAGIC_BMP_W, true);
+		screen->blit(area.left, area.top, background->get_data(), 8,  NEWMAGIC_BMP_W, NEWMAGIC_BMP_H, NEWMAGIC_BMP_W, true);
 	}
 
 	display_level_text();
@@ -128,11 +128,11 @@ void SpellView::Display(bool full_redraw) {
 	DisplayChildren(full_redraw);
 #if 1 // FIXME: This shouldn't need to be in the loop
 	update_buttons(); // It doesn't seem to hurt speed though
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 #else
 	if (full_redraw || update_display) {
 		update_display = false;
-		screen->update(area.x, area.y, area.w, area.h);
+		screen->update(area.left, area.top, area.width(), area.height());
 	}
 #endif
 	return;
@@ -270,8 +270,8 @@ GUI_status SpellView::move_down() {
 }
 
 void SpellView::display_level_text() {
-	font->drawString(screen, circle_num_tbl[level - 1], area.x + 96 + 8, area.y + NEWMAGIC_BMP_H);
-	font->drawString(screen, "level", area.x + 96, area.y + NEWMAGIC_BMP_H + 8);
+	font->drawString(screen, circle_num_tbl[level - 1], area.left + 96 + 8, area.top + NEWMAGIC_BMP_H);
+	font->drawString(screen, "level", area.left + 96, area.top + NEWMAGIC_BMP_H + 8);
 	return;
 }
 
@@ -286,9 +286,9 @@ void SpellView::display_spell_list_text() {
 		index = 0;
 
 	for (uint8 i = 0; i < num_spells_per_page; i++) {
-		sint16 spell_num = cur_spells[i + index];
-		if (spell_num != -1) {
-			Spell *spell = m->get_spell((uint8)spell_num);
+		sint16 spellNum = cur_spells[i + index];
+		if (spellNum != -1) {
+			Spell *spell = m->get_spell((uint8)spellNum);
 
 			display_spell_text(spell, i, spell_container->quality);
 		}
@@ -299,12 +299,12 @@ void SpellView::display_spell_text(Spell *spell, uint16 line_num, uint8 selected
 	char num_str[4];
 	line_num++;
 
-	font->drawString(screen, spell->name, area.x + 16, area.y + (line_num * 8));
+	font->drawString(screen, spell->name, area.left + 16, area.top + (line_num * 8));
 	snprintf(num_str, 3, "%d", get_available_spell_count(spell));
-	font->drawString(screen, num_str, area.x + NEWMAGIC_BMP_W - 24, area.y + (line_num * 8));
+	font->drawString(screen, num_str, area.left + NEWMAGIC_BMP_W - 24, area.top + (line_num * 8));
 
 	if (spell->num == selected_spell)
-		font->drawChar(screen, 26, area.x + 8, area.y + (line_num * 8));
+		font->drawChar(screen, 26, area.left + 8, area.top + (line_num * 8));
 
 	return;
 }
@@ -355,7 +355,7 @@ void SpellView::event_mode_select_spell() {
 
 /* Move the cursor around
  */
-GUI_status SpellView::KeyDown(Common::KeyState key) {
+GUI_status SpellView::KeyDown(const Common::KeyState &key) {
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 
@@ -425,9 +425,9 @@ GUI_status SpellView::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status SpellView::MouseDown(int x, int y, int button) {
-	y -= area.y;
-	x -= area.x;
+GUI_status SpellView::MouseDown(int x, int y, MouseButton button) {
+	y -= area.top;
+	x -= area.left;
 	Event *event = Game::get_game()->get_event();
 	bool selecting_spell_target, canceling_spell, doing_nothing;
 	if (Game::get_game()->is_original_plus()) {
@@ -443,7 +443,7 @@ GUI_status SpellView::MouseDown(int x, int y, int button) {
 		doing_nothing = (y < 8 || y > 71 || x < 16 || x > 134);
 	}
 
-	if (button == SDL_BUTTON_RIGHT)
+	if (button == BUTTON_RIGHT)
 		return cancel_spell();
 
 	if (selecting_spell_target) { // cast selected spell on the map
@@ -454,8 +454,8 @@ GUI_status SpellView::MouseDown(int x, int y, int button) {
 
 		event->target_spell();
 		if (event->get_mode() == INPUT_MODE) {
-			y += area.y;
-			x += area.x;
+			y += area.top;
+			x += area.left;
 			Game::get_game()->get_map_window()->select_target(x, y);
 		}
 		return GUI_YUM;

@@ -1144,7 +1144,7 @@ bool ScriptCutscene::is_lzc(const char *filename) {
 }
 
 CSImage *ScriptCutscene::load_image_from_lzc(std::string filename, uint16 idx, uint16 sub_idx) {
-	CSImage *image;
+	CSImage *image = nullptr;
 	U6Lib_n lib_n;
 	unsigned char *buf = NULL;
 

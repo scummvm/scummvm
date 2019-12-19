@@ -24,7 +24,10 @@
 #define ULTIMA6_MISC_SDL_COMPAT_H
 
 #include "common/system.h"
+#include "common/file.h"
+#include "common/textconsole.h"
 #include "graphics/managed_surface.h"
+#include "image/bmp.h"
 
 uint32 SDL_GetTicks() {
 	return g_system->getMillis();
@@ -68,28 +71,43 @@ void SDL_UpdateRects(Graphics::ManagedSurface *surf, int count, Common::Rect *re
 			rects->width(), rects->height());
 }
 
+Graphics::ManagedSurface *SDL_LoadBMP(const char *filename) {
+	Common::File f;
+	Image::BitmapDecoder decoder;
+	
+	if (!f.open(filename))
+		error("Could not open file - %s", filename);
+	if (!decoder.loadStream(f))
+		error("Could not load bitmap - %s", filename);
+	
+	const Graphics::Surface *src = decoder.getSurface();
+	Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(src->w, src->h, src->format);
+	dest->blitFrom(*src);
+
+	return dest;
+}
 
 #if 0
-#define SDLK_UNKNOWN SDLK_LAST
+#define Common::KEYCODE_UNKNOWN Common::KEYCODE_LAST
 #define Common::KeyCode SDLKey
 #define SDL_Keymod SDLMod
 #define Common::KeyState SDL_keysym
-#define KMOD_GUI KMOD_META
+#define Common::KBD_GUI Common::KBD_META
 #define SDL_JoystickNameForIndex SDL_JoystickName
 #define SDL_Window void
 #define SDL_Renderer void
 #define SDL_Texture void
 
-#define SDLK_KP_0 SDLK_KP0
-#define SDLK_KP_1 SDLK_KP1
-#define SDLK_KP_2 SDLK_KP2
-#define SDLK_KP_3 SDLK_KP3
-#define SDLK_KP_4 SDLK_KP4
-#define SDLK_KP_5 SDLK_KP5
-#define SDLK_KP_6 SDLK_KP6
-#define SDLK_KP_7 SDLK_KP7
-#define SDLK_KP_8 SDLK_KP8
-#define SDLK_KP_9 SDLK_KP9
+#define Common::KEYCODE_KP_0 Common::KEYCODE_KP0
+#define Common::KEYCODE_KP_1 Common::KEYCODE_KP1
+#define Common::KEYCODE_KP_2 Common::KEYCODE_KP2
+#define Common::KEYCODE_KP_3 Common::KEYCODE_KP3
+#define Common::KEYCODE_KP_4 Common::KEYCODE_KP4
+#define Common::KEYCODE_KP_5 Common::KEYCODE_KP5
+#define Common::KEYCODE_KP_6 Common::KEYCODE_KP6
+#define Common::KEYCODE_KP_7 Common::KEYCODE_KP7
+#define Common::KEYCODE_KP_8 Common::KEYCODE_KP8
+#define Common::KEYCODE_KP_9 Common::KEYCODE_KP9
 
 #define SDL_CreateThread(x, y, z) SDL_CreateThread(x, z)
 

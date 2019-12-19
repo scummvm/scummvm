@@ -239,13 +239,13 @@ void MsgScrollNewUI::Display(bool full_redraw) {
 	screen->update(area.left, area.top, scroll_width * 7 + 8, scroll_height * 10 + 8);
 }
 
-GUI_status MsgScrollNewUI::KeyDown(Common::KeyState key) {
+GUI_status MsgScrollNewUI::KeyDown(const Common::KeyState &key) {
 	ScrollEventType event = SCROLL_ESCAPE;
 	/*
-	    switch(key.sym)
+	    switch(key.keycode)
 	    {
-	    case SDLK_PAGEDOWN: if(input_mode) event = SCROLL_DOWN; break;
-	    case SDLK_PAGEUP: if(input_mode) event = SCROLL_UP; break;
+	    case Common::KEYCODE_PAGEDOWN: if(input_mode) event = SCROLL_DOWN; break;
+	    case Common::KEYCODE_PAGEUP: if(input_mode) event = SCROLL_UP; break;
 	    default : break;
 	    }
 	*/
@@ -255,7 +255,7 @@ GUI_status MsgScrollNewUI::KeyDown(Common::KeyState key) {
 	return MsgScroll::KeyDown(key);
 }
 
-GUI_status MsgScrollNewUI::MouseDown(int x, int y, int button) {
+GUI_status MsgScrollNewUI::MouseDown(int x, int y, MouseButton button) {
 	ScrollEventType event = SCROLL_ESCAPE;
 
 	return scroll_movement_event(event);

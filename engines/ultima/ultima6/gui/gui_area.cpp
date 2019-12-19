@@ -72,11 +72,11 @@ void GUI_Area::Display(bool full_redraw) {
 	switch (shape) {
 	case AREA_ROUND:
 
-		r1 = area.w >> 1;
-		r2 = area.h >> 1;
-		x0 = area.x + r1;
-		y0 = area.y + r2;
-		for (x = area.x; x < area.x + area.w; x++) {
+		r1 = area.width() >> 1;
+		r2 = area.height() >> 1;
+		x0 = area.left + r1;
+		y0 = area.top + r2;
+		for (x = area.left; x < area.left + area.width(); x++) {
 			dy = (int)((double) r2 * sin(acos((double)(x - x0) / (double) r1)));
 			framerect.x = x;
 			framerect.y = y0 - dy;
@@ -84,7 +84,7 @@ void GUI_Area::Display(bool full_redraw) {
 			framerect.h = dy << 1;
 			SDL_FillRect(surface, &framerect, color);
 			if (useFrame) {
-				if ((x == area.x) || (x == area.x + area.w - 1)) {
+				if ((x == area.left) || (x == area.left + area.width() - 1)) {
 					SDL_FillRect(surface, &framerect, frameColor);
 				}
 				framerect.h = frameThickness;
@@ -99,8 +99,8 @@ void GUI_Area::Display(bool full_redraw) {
 		        if (useFrame)
 		        {
 		          GUI_FillEllipse(screen,&framerect,frameColor);
-		          area.x+=frameThickness; area.w-=frameThickness << 1;
-		          area.y+=frameThickness; area.h-=frameThickness << 1;
+		          area.left+=frameThickness; area.width()-=frameThickness << 1;
+		          area.top+=frameThickness; area.height()-=frameThickness << 1;
 		        }
 		        GUI_FillEllipse(screen,&framerect,color);
 		*/
@@ -117,14 +117,14 @@ void GUI_Area::Display(bool full_redraw) {
 			SDL_FillRect(surface, &framerect, frameColor);
 			framerect = area;
 			framerect.h = frameThickness;
-			framerect.y += area.h - frameThickness;
+			framerect.y += area.height() - frameThickness;
 			SDL_FillRect(surface, &framerect, frameColor);
 			framerect = area;
 			framerect.w = frameThickness;
 			SDL_FillRect(surface, &framerect, frameColor);
 			framerect = area;
 			framerect.w = frameThickness;
-			framerect.x += area.w - frameThickness;
+			framerect.x += area.width() - frameThickness;
 			SDL_FillRect(surface, &framerect, frameColor);
 		}
 		break;
@@ -132,7 +132,7 @@ void GUI_Area::Display(bool full_redraw) {
 
 	DisplayChildren();
 
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 
 	return;
 }

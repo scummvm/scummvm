@@ -27,7 +27,7 @@
 
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/screen/game_palette.h"
-#include "ContainerWidget.h"
+#include "ultima/ultima6/views/container_widget.h"
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/core/game_clock.h"
 #include "ultima/ultima6/core/event.h"
@@ -39,7 +39,7 @@
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/script/script.h"
 
-#include "Inventoryultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/views/inventory_font.h"
 #include "ultima/ultima6/views/view_manager.h"
 
 namespace Ultima {
@@ -113,11 +113,11 @@ void ContainerWidget::set_actor(Actor *a) {
 void ContainerWidget::Display(bool full_redraw) {
 	if (fill_bg) {
 		//clear the screen first inventory icons, 4 x 3 tiles
-		screen->fill(bg_color, area.x, area.y, area.w, area.h);
+		screen->fill(bg_color, area.left, area.top, area.width(), area.height());
 	}
 	display_inventory_list();
 
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 }
 
 
@@ -166,18 +166,18 @@ void ContainerWidget::display_inventory_list() {
 
 			//tile = tile_manager->get_tile(actor->indentory_tile());
 
-			screen->blit(area.x + j * 16, area.y + i * 16, (unsigned char *)empty_tile->data, 8, 16, 16, 16, true);
+			screen->blit(area.left + j * 16, area.top + i * 16, (unsigned char *)empty_tile->data, 8, 16, 16, 16, true);
 			if (tile != empty_tile) {
 				//draw qty string for stackable items
 				if (obj_manager->is_stackable(obj))
-					display_qty_string(area.x + j * 16, area.y + i * 16, obj->qty);
+					display_qty_string(area.left + j * 16, area.top + i * 16, obj->qty);
 
 				//draw special char for Keys.
 				if (game_type == NUVIE_GAME_U6 && obj->obj_n == 64)
-					display_special_char(area.x + j * 16, area.y + i * 16, obj->quality);
+					display_special_char(area.left + j * 16, area.top + i * 16, obj->quality);
 			}
 
-			screen->blit(area.x + j * 16, area.y + i * 16, (unsigned char *)tile->data, 8, 16, 16, 16, true);
+			screen->blit(area.left + j * 16, area.top + i * 16, (unsigned char *)tile->data, 8, 16, 16, 16, true);
 		}
 	}
 }
@@ -204,11 +204,11 @@ void ContainerWidget::display_special_char(uint16 x, uint16 y, uint8 quality) {
 	screen->blitbitmap(x + 6, y + 11, inventory_font[quality + 9], 3, 5, obj_font_color, bg_color);
 }
 
-GUI_status ContainerWidget::MouseDown(int x, int y, int button) {
+GUI_status ContainerWidget::MouseDown(int x, int y, MouseButton button) {
 //Event *event = Game::get_game()->get_event();
 //MsgScroll *scroll = Game::get_game()->get_scroll();
-	x -= area.x;
-	y -= area.y;
+	x -= area.left;
+	y -= area.top;
 
 // ABOEING
 	if (/*actor && */(button == USE_BUTTON || button == ACTION_BUTTON || button == DRAG_BUTTON)) {
@@ -266,10 +266,10 @@ Obj *ContainerWidget::get_obj_at_location(int x, int y) {
 }
 
 // change container, ready/unready object, activate arrows
-GUI_status ContainerWidget::MouseUp(int x, int y, int button) {
+GUI_status ContainerWidget::MouseUp(int x, int y, MouseButton button) {
 	if (button == USE_BUTTON) {
-		x -= area.x;
-		y -= area.y;
+		x -= area.left;
+		y -= area.top;
 
 		if (selected_obj) {
 			// only act now if objects can't be used with DoubleClick
@@ -366,8 +366,8 @@ bool ContainerWidget::drag_accept_drop(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "ContainerWidget::drag_accept_drop()\n");
 	if (message == GUI_DRAG_OBJ) {
 		Obj *obj = (Obj *)data;
-		x -= area.x;
-		y -= area.y;
+		x -= area.left;
+		y -= area.top;
 		if (target_obj == NULL) { //we need to check this so we don't screw up target_obj on subsequent calls
 			if (drag_set_target_obj(x, y) == false) {
 				DEBUG(0, LEVEL_WARNING, "ContainerWidget: Didn't hit any widget object targets!\n");
@@ -434,8 +434,8 @@ void ContainerWidget::drag_perform_drop(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "ContainerWidget::drag_perform_drop()\n");
 	Obj *obj;
 
-	x -= area.x;
-	y -= area.y;
+	x -= area.left;
+	y -= area.top;
 
 	if (message == GUI_DRAG_OBJ) {
 		DEBUG(0, LEVEL_DEBUGGING, "Drop into inventory.\n");
@@ -535,7 +535,7 @@ void ContainerWidget::try_click() {
 }
 
 /* Use object. */
-GUI_status ContainerWidget::MouseDouble(int x, int y, int button) {
+GUI_status ContainerWidget::MouseDouble(int x, int y, MouseButton button) {
 	// we have to check if double-clicks are allowed here, since we use single-clicks
 	if (!Game::get_game()->get_map_window()->is_doubleclick_enabled())
 		return (GUI_PASS);
@@ -552,12 +552,12 @@ GUI_status ContainerWidget::MouseDouble(int x, int y, int button) {
 	return (GUI_PASS);
 }
 
-GUI_status ContainerWidget::MouseClick(int x, int y, int button) {
+GUI_status ContainerWidget::MouseClick(int x, int y, MouseButton button) {
 	return (MouseUp(x, y, button));
 }
 
 // change container, ready/unready object, activate arrows
-GUI_status ContainerWidget::MouseDelayed(int x, int y, int button) {
+GUI_status ContainerWidget::MouseDelayed(int x, int y, MouseButton button) {
 	if (ready_obj)
 		try_click();
 	return GUI_PASS;

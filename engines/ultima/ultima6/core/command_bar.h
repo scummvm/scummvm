@@ -73,7 +73,7 @@ public:
 	virtual bool init_buttons();
 
 	virtual void Display(bool full_redraw);
-	virtual GUI_status MouseDown(int x, int y, int button);
+	virtual GUI_status MouseDown(int x, int y, MouseButton button);
 	void update() {
 		update_display = true;
 	}

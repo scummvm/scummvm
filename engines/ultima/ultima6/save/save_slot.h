@@ -78,9 +78,9 @@ public:
 
 	void Display(bool full_redraw);
 
-	GUI_status KeyDown(Common::KeyState key);
-	GUI_status MouseDown(int x, int y, int button);
-	GUI_status MouseUp(int x, int y, int button);
+	GUI_status KeyDown(const Common::KeyState &key);
+	GUI_status MouseDown(int x, int y, MouseButton button);
+	GUI_status MouseUp(int x, int y, MouseButton button);
 	GUI_status MouseWheel(sint32 x, sint32 y);
 
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);

@@ -34,7 +34,7 @@
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/screen/game_palette.h"
-#include "DollWidget.h"
+#include "ultima/ultima6/views/doll_widget.h"
 #include "ultima/ultima6/core/command_bar.h"
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/core/player.h"
@@ -181,10 +181,14 @@ void DollWidget::free_doll_shapes() {
 }
 
 void DollWidget::setColorKey(Graphics::ManagedSurface *image) {
+#ifdef TODO
 	if (image) {
 		uint32 bg_color_key = SDL_MapRGB(image->format, 0xf1, 0x0f, 0xc4);
 		SDL_SetColorKey(image, SDL_TRUE, bg_color_key);
 	}
+#else
+	::error("TODO: transparency");
+#endif
 }
 
 void DollWidget::set_actor(Actor *a) {
@@ -213,11 +217,7 @@ void DollWidget::set_actor(Actor *a) {
 				NuvieBmpFile bmp;
 				doll_bg = bmp.getSdlSurface32(imagefile);
 				if (doll_bg) {
-					Common::Rect dst;
-					dst.w = 27;
-					dst.h = 30;
-					dst.x = 3;
-					dst.y = 1;
+					Common::Rect dst(3, 1, 30, 31);
 					SDL_BlitSurface(actor_doll, NULL, doll_bg, &dst);
 					setColorKey(doll_bg);
 				}
@@ -270,7 +270,7 @@ void DollWidget::Display(bool full_redraw) {
 
 	if (actor != NULL)
 		display_doll();
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 //  }
 
 }
@@ -279,10 +279,9 @@ inline void DollWidget::display_new_doll() {
 	if (doll_bg) {
 		Common::Rect dst;
 		dst = area;
-		dst.w = 33;
-		dst.h = 33;
-		dst.x += 15;
-		dst.y += 15;
+		dst.translate(15, 15);
+		dst.setWidth(33);
+		dst.setHeight(33);
 		SDL_BlitSurface(doll_bg, NULL, surface, &dst);
 	}
 }
@@ -302,17 +301,17 @@ inline void DollWidget::display_old_doll() {
 		else
 			tilenum = 400;
 	}
-//	 screen->fill(bg_color, area.x, area.y, area.w, area.h); // should be taken care of by the main view
+//	 screen->fill(bg_color, area.left, area.top, area.width(), area.height()); // should be taken care of by the main view
 	for (i = 0; i < 2; i++) {
 		for (j = 0; j < 2; j++) { // draw doll
 			tile = tile_manager->get_tile(tilenum + i * 2 + j);
-			screen->blit(area.x + 16 + j * 16, area.y + 16 + i * 16, tile->data, 8, 16, 16, 16, true);
+			screen->blit(area.left + 16 + j * 16, area.top + 16 + i * 16, tile->data, 8, 16, 16, 16, true);
 		}
 	}
 	if (md_doll_shp) {
 		uint16 w, h;
 		md_doll_shp->get_size(&w, &h);
-		screen->blit(area.x + 20, area.y + 18, md_doll_shp->get_data(), 8, w, h, w, true);
+		screen->blit(area.left + 20, area.top + 18, md_doll_shp->get_data(), 8, w, h, w, true);
 	}
 }
 
@@ -323,17 +322,17 @@ inline void DollWidget::display_doll() {
 		else
 			display_old_doll();
 	}
-	display_readied_object(ACTOR_NECK, area.x, (area.y + 8) + 0 * 16, actor, empty_tile);
-	display_readied_object(ACTOR_BODY, area.x + 3 * 16, (area.y + 8) + 0 * 16, actor, empty_tile);
+	display_readied_object(ACTOR_NECK, area.left, (area.top + 8) + 0 * 16, actor, empty_tile);
+	display_readied_object(ACTOR_BODY, area.left + 3 * 16, (area.top + 8) + 0 * 16, actor, empty_tile);
 
-	display_readied_object(ACTOR_ARM, area.x, (area.y + 8) + 1 * 16, actor, empty_tile);
-	display_readied_object(ACTOR_ARM_2, area.x + 3 * 16, (area.y + 8) + 1 * 16, actor, actor->is_double_handed_obj_readied() ? blocked_tile : empty_tile);
+	display_readied_object(ACTOR_ARM, area.left, (area.top + 8) + 1 * 16, actor, empty_tile);
+	display_readied_object(ACTOR_ARM_2, area.left + 3 * 16, (area.top + 8) + 1 * 16, actor, actor->is_double_handed_obj_readied() ? blocked_tile : empty_tile);
 
-	display_readied_object(ACTOR_HAND, area.x, (area.y + 8) + 2 * 16, actor, empty_tile);
-	display_readied_object(ACTOR_HAND_2, area.x + 3 * 16, (area.y + 8) + 2 * 16, actor, empty_tile);
+	display_readied_object(ACTOR_HAND, area.left, (area.top + 8) + 2 * 16, actor, empty_tile);
+	display_readied_object(ACTOR_HAND_2, area.left + 3 * 16, (area.top + 8) + 2 * 16, actor, empty_tile);
 
-	display_readied_object(ACTOR_HEAD, area.x + 16 + 8, area.y, actor, empty_tile);
-	display_readied_object(ACTOR_FOOT, area.x + 16 + 8, area.y + 3 * 16, actor, empty_tile);
+	display_readied_object(ACTOR_HEAD, area.left + 16 + 8, area.top, actor, empty_tile);
+	display_readied_object(ACTOR_FOOT, area.left + 16 + 8, area.top + 3 * 16, actor, empty_tile);
 
 	return;
 }
@@ -356,12 +355,12 @@ inline void DollWidget::display_readied_object(uint8 location, uint16 x, uint16 
 
 // when no action is pending the Use button may be used to start dragging,
 // otherwise it has the same effect as ENTER (using InventoryView's callback)
-GUI_status DollWidget::MouseDown(int x, int y, int button) {
+GUI_status DollWidget::MouseDown(int x, int y, MouseButton button) {
 	Event *event = Game::get_game()->get_event();
 	uint8 location;
 	Obj *obj;
-	x -= area.x;
-	y -= area.y;
+	x -= area.left;
+	y -= area.top;
 
 	CommandBar *command_bar = Game::get_game()->get_command_bar();
 	if (button == ACTION_BUTTON && event->get_mode() == MOVE_MODE
@@ -405,7 +404,7 @@ GUI_status DollWidget::MouseDown(int x, int y, int button) {
 }
 
 // un-ready selected item
-GUI_status DollWidget::MouseUp(int x, int y, int button) {
+GUI_status DollWidget::MouseUp(int x, int y, MouseButton button) {
 	Event *event = Game::get_game()->get_event();
 
 // only act now if double-click is disabled
@@ -422,7 +421,7 @@ GUI_status DollWidget::MouseUp(int x, int y, int button) {
 	return GUI_PASS;
 }
 
-GUI_status DollWidget::MouseClick(int x, int y, int button) {
+GUI_status DollWidget::MouseClick(int x, int y, MouseButton button) {
 	return (MouseUp(x, y, button));
 }
 
@@ -492,8 +491,8 @@ void DollWidget::drag_perform_drop(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "DollWidget::drag_perform_drop()\n");
 	Obj *obj;
 
-	x -= area.x;
-	y -= area.y;
+	x -= area.left;
+	y -= area.top;
 
 	if (message == GUI_DRAG_OBJ) {
 		DEBUG(0, LEVEL_DEBUGGING, "Ready item.\n");
@@ -549,7 +548,7 @@ void DollWidget::drag_draw(int x, int y, int message, void *data) {
 
 /* Use object.
  */
-GUI_status DollWidget::MouseDouble(int x, int y, int button) {
+GUI_status DollWidget::MouseDouble(int x, int y, MouseButton button) {
 	// we have to check if double-clicks are allowed here, since we use single-clicks
 	if (!Game::get_game()->get_map_window()->is_doubleclick_enabled())
 		return (GUI_PASS);
@@ -568,7 +567,7 @@ GUI_status DollWidget::MouseDouble(int x, int y, int button) {
 }
 
 // change container, ready/unready object, activate arrows
-GUI_status DollWidget::MouseDelayed(int x, int y, int button) {
+GUI_status DollWidget::MouseDelayed(int x, int y, MouseButton button) {
 	Event *event = Game::get_game()->get_event();
 	if (unready_obj) {
 		event->unready(unready_obj);

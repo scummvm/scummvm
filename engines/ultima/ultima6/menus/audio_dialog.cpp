@@ -186,7 +186,7 @@ GUI_status AudioDialog::close_dialog() {
 	return GUI_YUM;
 }
 
-GUI_status AudioDialog::KeyDown(Common::KeyState key) {
+GUI_status AudioDialog::KeyDown(const Common::KeyState &key) {
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 

@@ -113,7 +113,7 @@ GUI_status GameMenuDialog::close_dialog() {
 	return GUI_YUM;
 }
 
-GUI_status GameMenuDialog::KeyDown(Common::KeyState key) {
+GUI_status GameMenuDialog::KeyDown(const Common::KeyState &key) {
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 

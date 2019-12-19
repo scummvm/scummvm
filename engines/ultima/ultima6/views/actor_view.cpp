@@ -21,9 +21,7 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/gui/gui_button.h"
-
 #include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/views/view.h"
 #include "ultima/ultima6/actors/actor.h"
@@ -112,15 +110,15 @@ void ActorView::Display(bool full_redraw) {
 		update_display = false;
 		if (MD) {
 			fill_md_background(bg_color, area);
-			screen->blit(area.x + 1, area.y + 16, portrait_data, 8, portrait->get_portrait_width(), portrait->get_portrait_height(), portrait->get_portrait_width(), true);
+			screen->blit(area.left + 1, area.top + 16, portrait_data, 8, portrait->get_portrait_width(), portrait->get_portrait_height(), portrait->get_portrait_width(), true);
 		} else {
-			screen->fill(bg_color, area.x, area.y, area.w, area.h);
-			screen->blit(area.x, area.y + 8, portrait_data, 8, portrait->get_portrait_width(), portrait->get_portrait_height(), portrait->get_portrait_width(), false);
+			screen->fill(bg_color, area.left, area.top, area.width(), area.height());
+			screen->blit(area.left, area.top + 8, portrait_data, 8, portrait->get_portrait_width(), portrait->get_portrait_height(), portrait->get_portrait_width(), false);
 		}
 		display_name();
 		display_actor_stats();
 		DisplayChildren(); //draw buttons
-		screen->update(area.x, area.y, area.w, area.h);
+		screen->update(area.left, area.top, area.width(), area.height());
 	}
 
 	if (show_cursor && cursor_tile != NULL) {
@@ -189,7 +187,7 @@ void ActorView::display_name() {
 	if (name == NULL)
 		return;
 
-	font->drawString(screen, name, area.x + ((136) - strlen(name) * 8) / 2, area.y + y_off);
+	font->drawString(screen, name, area.left + ((136) - strlen(name) * 8) / 2, area.top + y_off);
 
 	return;
 }
@@ -216,58 +214,59 @@ void ActorView::display_actor_stats() {
 	hp_text_color = actor->get_hp_text_color();
 
 	sprintf(buf, "%d", Game::get_game()->get_script()->call_actor_str_adj(actor)); //actor->get_strength());
-	uint8 str_len = font->drawString(screen, "STR:", area.x + 5 * 16 + x_off, area.y + y_off + 16);
-	font->drawString(screen, buf, area.x + 5 * 16 + x_off + str_len, area.y + y_off + 16, actor->get_str_text_color(), 0);
+	uint8 str_len = font->drawString(screen, "STR:", area.left + 5 * 16 + x_off, area.top + y_off + 16);
+	font->drawString(screen, buf, area.left + 5 * 16 + x_off + str_len, area.top + y_off + 16, actor->get_str_text_color(), 0);
 
 	sprintf(buf, "%d", Game::get_game()->get_script()->call_actor_dex_adj(actor));
-	str_len = font->drawString(screen, "DEX:", area.x + 5 * 16 + x_off, area.y + y_off + 16 + 8);
-	font->drawString(screen, buf, area.x + 5 * 16 + x_off + str_len, area.y + y_off + 16 + 8, actor->get_dex_text_color(), 0);
+	str_len = font->drawString(screen, "DEX:", area.left + 5 * 16 + x_off, area.top + y_off + 16 + 8);
+	font->drawString(screen, buf, area.left + 5 * 16 + x_off + str_len, area.top + y_off + 16 + 8, actor->get_dex_text_color(), 0);
 
 	sprintf(buf, "INT:%d", Game::get_game()->get_script()->call_actor_int_adj(actor));
-	font->drawString(screen, buf, area.x + 5 * 16 + x_off, area.y + y_off + 16 + 2 * 8);
+	font->drawString(screen, buf, area.left + 5 * 16 + x_off, area.top + y_off + 16 + 2 * 8);
 
 	if (MD || Game::get_game()->get_game_type() == NUVIE_GAME_SE) {
 		sprintf(buf, "%3d", actor->get_hp());
-		str_len = font->drawString(screen, "HP:", area.x + 5 * 16 + x_off, area.y + y_off + 16 + 3 * 8);
-		font->drawString(screen, buf, strlen(buf), area.x + 5 * 16 + x_off + str_len, area.y + y_off + 16 + 3 * 8, hp_text_color, 0);
+		str_len = font->drawString(screen, "HP:", area.left + 5 * 16 + x_off, area.top + y_off + 16 + 3 * 8);
+		font->drawString(screen, buf, strlen(buf), area.left + 5 * 16 + x_off + str_len, area.top + y_off + 16 + 3 * 8, hp_text_color, 0);
 
 		sprintf(buf, "HM:%3d", actor->get_maxhp());
-		font->drawString(screen, buf, area.x + 5 * 16 + x_off, area.y + y_off + 16 + 4 * 8);
+		font->drawString(screen, buf, area.left + 5 * 16 + x_off, area.top + y_off + 16 + 4 * 8);
 
 		sprintf(buf, "Lev:%2d", actor->get_level());
-		font->drawString(screen, buf, area.x + 5 * 16 + x_off, area.y + y_off + 16 + 5 * 8);
+		font->drawString(screen, buf, area.left + 5 * 16 + x_off, area.top + y_off + 16 + 5 * 8);
 
-		font->drawString(screen, "Exper:", area.x + 5 * 16 + x_off, area.y + y_off + 16 + 6 * 8);
+		font->drawString(screen, "Exper:", area.left + 5 * 16 + x_off, area.top + y_off + 16 + 6 * 8);
 		sprintf(buf, "%6d", actor->get_exp());
-		font->drawString(screen, buf, area.x + 5 * 16 + x_off, area.y + y_off + 16 + 7 * 8);
+		font->drawString(screen, buf, area.left + 5 * 16 + x_off, area.top + y_off + 16 + 7 * 8);
 		return;
 	}
 
-	font->drawString(screen, "Magic", area.x + 5 * 16, area.y + 16 + 4 * 8);
+	font->drawString(screen, "Magic", area.left + 5 * 16, area.top + 16 + 4 * 8);
 	sprintf(buf, "%d/%d", actor->get_magic(), actor->get_maxmagic());
-	font->drawString(screen, buf, area.x + 5 * 16, area.y + 16 + 5 * 8);
+	font->drawString(screen, buf, area.left + 5 * 16, area.top + 16 + 5 * 8);
 
-	font->drawString(screen, "Health", area.x + 5 * 16, area.y + 16 + 6 * 8);
+	font->drawString(screen, "Health", area.left + 5 * 16, area.top + 16 + 6 * 8);
 	sprintf(buf, "%3d", actor->get_hp());
-	font->drawString(screen, buf, strlen(buf), area.x + 5 * 16, area.y + 16 + 7 * 8, hp_text_color, 0);
+	font->drawString(screen, buf, strlen(buf), area.left + 5 * 16, area.top + 16 + 7 * 8, hp_text_color, 0);
 	sprintf(buf, "   /%d", actor->get_maxhp());
-	font->drawString(screen, buf, area.x + 5 * 16, area.y + 16 + 7 * 8);
+	font->drawString(screen, buf, area.left + 5 * 16, area.top + 16 + 7 * 8);
 
-	font->drawString(screen, "Lev/Exp", area.x + 5 * 16, area.y + 16 + 8 * 8);
+	font->drawString(screen, "Lev/Exp", area.left + 5 * 16, area.top + 16 + 8 * 8);
 	sprintf(buf, "%d/%d", actor->get_level(), actor->get_exp());
-	font->drawString(screen, buf, area.x + 5 * 16, area.y + 16 + 9 * 8);
+	font->drawString(screen, buf, area.left + 5 * 16, area.top + 16 + 9 * 8);
 
 	return;
 }
 
 GUI_status ActorView::MouseWheel(sint32 x, sint32 y) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+//if SDL_VERSION_ATLEAST(2, 0, 0)
+#if 0
 	int xpos, ypos;
 	screen->get_mouse_location(&xpos, &ypos);
 
-	xpos -= area.x;
-	ypos -= area.y;
-	if (xpos < 0 || ypos > area.y + area.h - 7)
+	xpos -= area.left;
+	ypos -= area.top;
+	if (xpos < 0 || ypos > area.top + area.height() - 7)
 		return GUI_PASS; // goes to MsgScroll
 #endif
 	if (y > 0) {
@@ -278,13 +277,13 @@ GUI_status ActorView::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status ActorView::MouseDown(int x, int y, int button) {
+GUI_status ActorView::MouseDown(int x, int y, MouseButton button) {
 	return GUI_PASS;
 }
 
 /* Move the cursor around and use command icons.
  */
-GUI_status ActorView::KeyDown(Common::KeyState key) {
+GUI_status ActorView::KeyDown(const Common::KeyState &key) {
 	if (!show_cursor) // FIXME: don't rely on show_cursor to get/pass focus
 		return (GUI_PASS);
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
@@ -327,9 +326,9 @@ void ActorView::moveCursorToButton(sint8 button_num) {
  */
 void ActorView::update_cursor() {
 	cursor_pos.px = ((cursor_pos.x + 1) * 16) - 16;
-	cursor_pos.py = party_button->area.y;
-	cursor_pos.px += area.x;
-	//cursor_pos.py += area.y;
+	cursor_pos.py = party_button->area.top;
+	cursor_pos.px += area.left;
+	//cursor_pos.py += area.top;
 }
 
 void ActorView::set_show_cursor(bool state) {

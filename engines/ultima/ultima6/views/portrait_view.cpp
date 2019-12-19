@@ -36,9 +36,9 @@
 #include "ultima/ultima6/views/view_manager.h"
 #include "ultima/ultima6/core/msg_scroll.h"
 #include "ultima/ultima6/gui/gui.h"
-#include "DollWidget.h"
+#include "ultima/ultima6/views/doll_widget.h"
 #include "ultima/ultima6/views/portrait_view.h"
-#include "SunMoonStripWidget.h"
+#include "ultima/ultima6/views/sun_moon_strip_widget.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -121,37 +121,37 @@ void PortraitView::load_background(const char *f, uint8 lib_offset) {
 void PortraitView::Display(bool full_redraw) {
 
 	if (Game::get_game()->is_new_style() || Game::get_game()->is_original_plus_full_map())
-		screen->fill(bg_color, area.x, area.y, area.w, area.h);
+		screen->fill(bg_color, area.left, area.top, area.width(), area.height());
 	if (portrait_data != NULL/* && (full_redraw || update_display)*/) {
 		update_display = false;
 		if (gametype == NUVIE_GAME_U6) {
 			if (display_doll)
-				screen->blit(area.x + 72, area.y + 16, portrait_data, 8, portrait_width, portrait_height, portrait_width, false);
+				screen->blit(area.left + 72, area.top + 16, portrait_data, 8, portrait_width, portrait_height, portrait_width, false);
 			else
-				screen->blit(area.x + (area.w - portrait_width) / 2, area.y + (area.h - portrait_height) / 2, portrait_data, 8, portrait_width, portrait_height, portrait_width, true);
+				screen->blit(area.left + (area.width() - portrait_width) / 2, area.top + (area.height() - portrait_height) / 2, portrait_data, 8, portrait_width, portrait_height, portrait_width, true);
 			display_name(80);
 		} else if (gametype == NUVIE_GAME_MD) {
 			uint16 w, h;
 			bg_data->get_size(&w, &h);
-			screen->blit(area.x, area.y - 2, bg_data->get_data(), 8, w, h, w, true);
+			screen->blit(area.left, area.top - 2, bg_data->get_data(), 8, w, h, w, true);
 
-			screen->blit(area.x + (area.w - portrait_width) / 2, area.y + 6, portrait_data, 8, portrait_width, portrait_height, portrait_width, true);
+			screen->blit(area.left + (area.width() - portrait_width) / 2, area.top + 6, portrait_data, 8, portrait_width, portrait_height, portrait_width, true);
 			display_name(100);
 		} else if (gametype == NUVIE_GAME_SE) {
 			uint16 w, h;
 			bg_data->get_size(&w, &h);
-			screen->blit(area.x, area.y, bg_data->get_data(), 8, w, h, w, true);
+			screen->blit(area.left, area.top, bg_data->get_data(), 8, w, h, w, true);
 
-			screen->blit(area.x + (area.w - portrait_width) / 2 + 1, area.y + 1, portrait_data, 8, portrait_width, portrait_height, portrait_width, true);
+			screen->blit(area.left + (area.width() - portrait_width) / 2 + 1, area.top + 1, portrait_data, 8, portrait_width, portrait_height, portrait_width, true);
 			display_name(98);
 		}
 	}
 	if (show_cursor && gametype == NUVIE_GAME_U6) { // FIXME: should we be using scroll's drawCursor?
-		screen->fill(bg_color, area.x, area.y + area.h - 8, 8, 8);
-		Game::get_game()->get_scroll()->drawCursor(area.x, area.y + area.h - 8);
+		screen->fill(bg_color, area.left, area.top + area.height() - 8, 8, 8);
+		Game::get_game()->get_scroll()->drawCursor(area.left, area.top + area.height() - 8);
 	}
 	DisplayChildren(full_redraw);
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 }
 
 bool PortraitView::set_portrait(Actor *actor, const char *name) {
@@ -191,7 +191,7 @@ bool PortraitView::set_portrait(Actor *actor, const char *name) {
 		name_string->assign(name);
 
 	if (screen)
-		screen->fill(bg_color, area.x, area.y, area.w, area.h);
+		screen->fill(bg_color, area.left, area.top, area.width(), area.height());
 
 	Redraw();
 	return true;
@@ -202,7 +202,7 @@ void PortraitView::display_name(uint16 y_offset) {
 
 	name = name_string->c_str();
 
-	font->drawString(screen, name, area.x + (area.w - strlen(name) * 8) / 2, area.y + y_offset);
+	font->drawString(screen, name, area.left + (area.width() - strlen(name) * 8) / 2, area.top + y_offset);
 
 	return;
 }
@@ -212,8 +212,12 @@ void PortraitView::display_name(uint16 y_offset) {
  * Returns true if event was used.
  */
 GUI_status PortraitView::HandleEvent(const Common::Event *event) {
-	if (waiting
-	        && (event->type == SDL_MOUSEBUTTONDOWN || event->type == SDL_KEYDOWN)) {
+	if (waiting && (
+			event->type == Common::EVENT_LBUTTONDOWN
+			|| event->type == Common::EVENT_RBUTTONDOWN
+			|| event->type == Common::EVENT_MBUTTONDOWN
+			|| event->type == Common::EVENT_KEYDOWN)
+	) {
 		if (Game::get_game()->is_new_style())
 			this->Hide();
 		else // FIXME revert to previous status view

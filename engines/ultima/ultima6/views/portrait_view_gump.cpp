@@ -31,8 +31,8 @@
 #include "ultima/ultima6/portraits/portrait.h"
 #include "ultima/ultima6/views/view_manager.h"
 
-#include "ContainerWidgetGump.h"
-#include "PortraitViewGump.h"
+#include "ultima/ultima6/views/container_widget_gump.h"
+#include "ultima/ultima6/views/portrait_view_gump.h"
 #include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {
@@ -61,7 +61,7 @@ PortraitViewGump::~PortraitViewGump() {
 bool PortraitViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om, Portrait *por, Actor *a) {
 	View::init(x, y, f, p, tm, om);
 
-	SetRect(area.x, area.y, 188, 91);
+	SetRect(area.left, area.top, 188, 91);
 
 	portrait = por;
 	set_actor(a);
@@ -144,61 +144,61 @@ void PortraitViewGump::Display(bool full_redraw) {
 	SDL_BlitSurface(bg_image, NULL, surface, &dst);
 
 	DisplayChildren(full_redraw);
-	screen->blit(area.x + 25, area.y + 17, portrait_data, 8, portrait->get_portrait_width(), portrait->get_portrait_height(), portrait->get_portrait_width(), false);
+	screen->blit(area.left + 25, area.top + 17, portrait_data, 8, portrait->get_portrait_width(), portrait->get_portrait_height(), portrait->get_portrait_width(), false);
 
 	int w, h;
 	w = font->get_center(actor->get_name(), 138);
 
 	font->SetColoring(0x08, 0x08, 0x08, 0x80, 0x58, 0x30, 0x00, 0x00, 0x00);
 
-	font->TextOut(screen->get_sdl_surface(), area.x + 29 + w, area.y + 6, actor->get_name());
+	font->TextOut(screen->get_sdl_surface(), area.left + 29 + w, area.top + 6, actor->get_name());
 
 	snprintf(buf, 5, "%d", actor->get_strength());
 	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.x + 170 - w, area.y + 18, buf);
+	font->TextOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 18, buf);
 
 	snprintf(buf, 5, "%d", actor->get_dexterity());
 	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.x + 170 - w, area.y + 27, buf);
+	font->TextOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 27, buf);
 
 	snprintf(buf, 5, "%d", actor->get_intelligence());
 	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.x + 170 - w, area.y + 36, buf);
+	font->TextOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 36, buf);
 
 	font->SetColoring(0x6c, 0x00, 0x00, 0xbc, 0x34, 0x00, 0x00, 0x00, 0x00);
 
 	snprintf(buf, 5, "%d", actor->get_magic());
 	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.x + 142 - w, area.y + 55, buf);
+	font->TextOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 55, buf);
 
 	snprintf(buf, 5, "%d", actor->get_maxmagic());
 	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.x + 170 - w, area.y + 55, buf);
+	font->TextOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 55, buf);
 
 	font->SetColoring(0x00, 0x3c, 0x70, 0x74, 0x74, 0x74, 0x00, 0x00, 0x00);
 
 	snprintf(buf, 5, "%d", actor->get_hp());
 	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.x + 142 - w, area.y + 64, buf);
+	font->TextOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 64, buf);
 
 	snprintf(buf, 5, "%d", actor->get_maxhp());
 	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.x + 170 - w, area.y + 64, buf);
+	font->TextOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 64, buf);
 
 	font->SetColoring(0xa8, 0x28, 0x00, 0xa8, 0x54, 0x00, 0x00, 0x00, 0x00);
 
 	snprintf(buf, 5, "%d", actor->get_level());
 	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.x + 142 - w, area.y + 73, buf);
+	font->TextOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 73, buf);
 
 	snprintf(buf, 5, "%d", actor->get_exp());
 	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.x + 170 - w, area.y + 73, buf);
+	font->TextOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 73, buf);
 
 	if (show_cursor)
-		screen->blit(area.x + cursor_xoff, area.y + cursor_yoff, (unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
+		screen->blit(area.left + cursor_xoff, area.top + cursor_yoff, (unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
 	update_display = false;
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 
 
 	return;
@@ -235,7 +235,7 @@ GUI_status PortraitViewGump::callback(uint16 msg, GUI_CallBack *caller, void *da
 	return GUI_PASS;
 }
 
-GUI_status PortraitViewGump::KeyDown(Common::KeyState key) {
+GUI_status PortraitViewGump::KeyDown(const Common::KeyState &key) {
 //	I was checking for numlock but probably don't need to
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
@@ -296,7 +296,7 @@ GUI_status PortraitViewGump::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status PortraitViewGump::MouseDown(int x, int y, int button) {
+GUI_status PortraitViewGump::MouseDown(int x, int y, MouseButton button) {
 	return DraggableView::MouseDown(x, y, button);
 }
 

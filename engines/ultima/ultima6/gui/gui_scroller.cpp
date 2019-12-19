@@ -43,7 +43,7 @@ GUI_Scroller::GUI_Scroller(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b
 	rows_per_page = h / row_height;
 	num_rows = 0;
 	disp_offset = 0;
-	scroll_bar = new GUI_ScrollBar(area.w - SCROLLBAR_WIDTH, 0, area.h, (GUI_CallBack *)this);
+	scroll_bar = new GUI_ScrollBar(area.width() - SCROLLBAR_WIDTH, 0, area.height(), (GUI_CallBack *)this);
 
 	GUI_Widget::AddWidget(scroll_bar); // we call the GUI_Widget::AddWidget method our method is for scroller container items.
 }
@@ -93,7 +93,7 @@ void GUI_Scroller::update_viewport(bool update_slider) {
 		if (i < disp_offset || i >= disp_offset + rows_per_page)
 			(*child)->Hide();
 		else {
-			(*child)->Move(area.x, area.y + (i - disp_offset) * row_height);
+			(*child)->Move(area.left, area.top + (i - disp_offset) * row_height);
 			(*child)->Show();
 		}
 	}
@@ -112,18 +112,18 @@ void GUI_Scroller:: Display(bool full_redraw) {
 
 	DisplayChildren();
 
-// screen->update(area.x,area.y,area.w,area.h);
+// screen->update(area.left,area.top,area.width(),area.height());
 
 	return;
 }
 
-GUI_status GUI_Scroller::MouseDown(int x, int y, int button) {
+GUI_status GUI_Scroller::MouseDown(int x, int y, MouseButton button) {
 //grab_focus();
 
 	return GUI_YUM;
 }
 
-GUI_status GUI_Scroller::MouseUp(int x, int y, int button) {
+GUI_status GUI_Scroller::MouseUp(int x, int y, MouseButton button) {
 
 // release_focus();
 

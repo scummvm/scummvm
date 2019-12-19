@@ -25,7 +25,7 @@
 
 #include "ultima/ultima6/gui/gui_widget.h"
 #include "ultima/ultima6/core/obj_manager.h"
-#include "ContainerWidget.h"
+#include "ultima/ultima6/views/container_widget.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -51,7 +51,7 @@ public:
 	bool init(Actor *a, uint16 x, uint16 y, uint8 Cols, uint8 Rows, TileManager *tm, ObjManager *om, Font *f, uint8 check_xoff, uint8 check_yoff);
 
 	void Display(bool full_redraw);
-	GUI_status KeyDown(Common::KeyState key);
+	GUI_status KeyDown(const Common::KeyState &key);
 
 	virtual void set_actor(Actor *a);
 private:

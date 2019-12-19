@@ -28,7 +28,7 @@
 #include "ultima/ultima6/core/player.h"
 #include "ultima/ultima6/core/weather.h"
 #include "ultima/ultima6/core/game_clock.h"
-#include "SunMoonStripWidget.h"
+#include "ultima/ultima6/views/sun_moon_strip_widget.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -58,7 +58,7 @@ void SunMoonStripWidget::Display(bool full_redraw) {
 	else
 		display_dungeon_strip();
 
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 //  }
 
 }
@@ -78,7 +78,7 @@ void SunMoonStripWidget::display_surface_strip() {
 
 	for (i = 0; i < 9; i++) {
 		tile = tile_manager->get_tile(352 + i);
-		screen->blit(area.x + 8 + i * 16, area.y, tile->data, 8, 16, 16, 16, true);
+		screen->blit(area.left + 8 + i * 16, area.top, tile->data, 8, 16, 16, 16, true);
 	}
 
 	return;
@@ -89,16 +89,16 @@ void SunMoonStripWidget::display_dungeon_strip() {
 	Tile *tile;
 
 	tile = tile_manager->get_tile(372);
-	screen->blit(area.x + 8, area.y, tile->data, 8, 16, 16, 16, true);
+	screen->blit(area.left + 8, area.top, tile->data, 8, 16, 16, 16, true);
 
 	tile = tile_manager->get_tile(373);
 
 	for (i = 1; i < 8; i++) {
-		screen->blit(area.x + 8 + i * 16, area.y, tile->data, 8, 16, 16, 16, true);
+		screen->blit(area.left + 8 + i * 16, area.top, tile->data, 8, 16, 16, 16, true);
 	}
 
 	tile = tile_manager->get_tile(374);
-	screen->blit(area.x + 8 + 7 * 16 + 8, area.y, tile->data, 8, 16, 16, 16, true);
+	screen->blit(area.left + 8 + 7 * 16 + 8, area.top, tile->data, 8, 16, 16, 16, true);
 
 	return;
 }
@@ -125,7 +125,7 @@ void SunMoonStripWidget::display_sun_moon(Tile *tile, uint8 pos) {
 	};
 
 	int height = 16;
-	uint16 x = area.x + skypos[pos].x, y = area.y + skypos[pos].y;
+	uint16 x = area.left + skypos[pos].x, y = area.top + skypos[pos].y;
 	if (skypos[pos].y == 6) // goes through the bottom if not reduced
 		height = 10;
 	screen->blit(x, y, tile->data, 8 , 16, height, 16, true);

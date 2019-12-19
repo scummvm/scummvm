@@ -61,7 +61,7 @@ GUI_ScrollBar::GUI_ScrollBar(int x, int y, int h, GUI_CallBack *callback)
 
 	loadButtons();
 
-	track_length = area.h - 2 * button_height;
+	track_length = area.height() - 2 * button_height;
 	slider_length = track_length / 2;
 	slider_y = 5;
 
@@ -88,7 +88,7 @@ void GUI_ScrollBar::loadButtons() {
 
 	button_height = image->h;
 
-	down_button = new GUI_Button(NULL, 0, area.h - button_height, image, image1, this);
+	down_button = new GUI_Button(NULL, 0, area.height() - button_height, image, image1, this);
 	this->AddWidget(down_button);
 
 	return;
@@ -121,27 +121,27 @@ void GUI_ScrollBar::Display(bool full_redraw) {
 // Common::Rect src, dst;
 
 	if (slider_y > 0) {
-		framerect.x = area.x;
-		framerect.y = area.y + button_height;
+		framerect.x = area.left;
+		framerect.y = area.top + button_height;
 		framerect.w = SCROLLBAR_WIDTH;
 		framerect.h = slider_y;
 		SDL_FillRect(surface, &framerect, track_base_c);
 
 		// Draw Border
-		framerect.x = area.x;
-		framerect.y = area.y + button_height;
+		framerect.x = area.left;
+		framerect.y = area.top + button_height;
 		framerect.w = SCROLLBAR_WIDTH;
 		framerect.h = 1;
 		SDL_FillRect(surface, &framerect, track_border_c);
 
-		framerect.x = area.x;
-		framerect.y = area.y + button_height;
+		framerect.x = area.left;
+		framerect.y = area.top + button_height;
 		framerect.w = 1;
 		framerect.h = slider_y;
 		SDL_FillRect(surface, &framerect, track_border_c);
 
-		framerect.x = area.x + SCROLLBAR_WIDTH - 1;
-		framerect.y = area.y + button_height;
+		framerect.x = area.left + SCROLLBAR_WIDTH - 1;
+		framerect.y = area.top + button_height;
 		framerect.w = 1;
 		framerect.h = slider_y;
 		SDL_FillRect(surface, &framerect, track_border_c);
@@ -151,27 +151,27 @@ void GUI_ScrollBar::Display(bool full_redraw) {
 	DisplaySlider();
 
 	if (slider_y + slider_length < track_length) {
-		framerect.x = area.x;
-		framerect.y = area.y + button_height + slider_y + slider_length;
+		framerect.x = area.left;
+		framerect.y = area.top + button_height + slider_y + slider_length;
 		framerect.w = SCROLLBAR_WIDTH;
 		framerect.h = track_length - (slider_y + slider_length);
 		SDL_FillRect(surface, &framerect, track_base_c);
 
 		// Draw Border
-		framerect.x = area.x;
-		framerect.y = area.y + area.h - button_height - 1;
+		framerect.x = area.left;
+		framerect.y = area.top + area.height() - button_height - 1;
 		framerect.w = SCROLLBAR_WIDTH;
 		framerect.h = 1;
 		SDL_FillRect(surface, &framerect, track_border_c);
 
-		framerect.x = area.x;
-		framerect.y = area.y + button_height + slider_y + slider_length;
+		framerect.x = area.left;
+		framerect.y = area.top + button_height + slider_y + slider_length;
 		framerect.w = 1;
 		framerect.h = track_length - slider_y - slider_length;
 		SDL_FillRect(surface, &framerect, track_border_c);
 
-		framerect.x = area.x + SCROLLBAR_WIDTH - 1;
-		framerect.y = area.y + button_height + slider_y + slider_length;
+		framerect.x = area.left + SCROLLBAR_WIDTH - 1;
+		framerect.y = area.top + button_height + slider_y + slider_length;
 		framerect.w = 1;
 		framerect.h = track_length - slider_y - slider_length;
 		SDL_FillRect(surface, &framerect, track_border_c);
@@ -180,7 +180,7 @@ void GUI_ScrollBar::Display(bool full_redraw) {
 
 	DisplayChildren();
 
-	screen->update(area.x, area.y, area.w, area.h);
+	screen->update(area.left, area.top, area.width(), area.height());
 
 	return;
 }
@@ -188,32 +188,32 @@ void GUI_ScrollBar::Display(bool full_redraw) {
 inline void GUI_ScrollBar::DisplaySlider() {
 	Common::Rect rect;
 
-	rect.x = area.x;
-	rect.y = area.y + button_height + slider_y;
+	rect.x = area.left;
+	rect.y = area.top + button_height + slider_y;
 	rect.w = SCROLLBAR_WIDTH;
 	rect.h = slider_length;
 	SDL_FillRect(surface, &rect, slider_base_c);
 
-	rect.x = area.x;
-	rect.y = area.y + button_height + slider_y;
+	rect.x = area.left;
+	rect.y = area.top + button_height + slider_y;
 	rect.w = 1;
 	rect.h = slider_length - 1;
 	SDL_FillRect(surface, &rect, slider_highlight_c);
 
-	rect.x = area.x + 1;
-	rect.y = area.y + button_height + slider_y;
+	rect.x = area.left + 1;
+	rect.y = area.top + button_height + slider_y;
 	rect.w = SCROLLBAR_WIDTH - 1;
 	rect.h = 1;
 	SDL_FillRect(surface, &rect, slider_highlight_c);
 
-	rect.x = area.x + SCROLLBAR_WIDTH - 1;
-	rect.y = area.y + button_height + slider_y;
+	rect.x = area.left + SCROLLBAR_WIDTH - 1;
+	rect.y = area.top + button_height + slider_y;
 	rect.w = 1;
 	rect.h = slider_length;
 	SDL_FillRect(surface, &rect, slider_shadow_c);
 
-	rect.x = area.x;
-	rect.y = area.y + button_height + slider_y + slider_length - 1;
+	rect.x = area.left;
+	rect.y = area.top + button_height + slider_y + slider_length - 1;
 	rect.w = SCROLLBAR_WIDTH - 1;
 	rect.h = 1;
 	SDL_FillRect(surface, &rect, slider_shadow_c);
@@ -229,12 +229,12 @@ GUI_status GUI_ScrollBar::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_ScrollBar::MouseDown(int x, int y, int button) {
-	if (y >= area.y + button_height + slider_y && y <= area.y + button_height + slider_y + slider_length) {
+GUI_status GUI_ScrollBar::MouseDown(int x, int y, MouseButton button) {
+	if (y >= area.top + button_height + slider_y && y <= area.top + button_height + slider_y + slider_length) {
 		drag = true;
-		slider_click_offset = y - area.y - button_height - slider_y;
+		slider_click_offset = y - area.top - button_height - slider_y;
 		grab_focus();
-	} else if (y < area.y + button_height + slider_y)
+	} else if (y < area.top + button_height + slider_y)
 		callback_object->callback(SCROLLBAR_CB_PAGE_UP, this, NULL);
 	else
 		callback_object->callback(SCROLLBAR_CB_PAGE_DOWN, this, NULL);
@@ -242,7 +242,7 @@ GUI_status GUI_ScrollBar::MouseDown(int x, int y, int button) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_ScrollBar::MouseUp(int x, int y, int button) {
+GUI_status GUI_ScrollBar::MouseUp(int x, int y, MouseButton button) {
 	drag = false;
 
 	release_focus();
@@ -256,7 +256,7 @@ GUI_status GUI_ScrollBar::MouseMotion(int x, int y, uint8 state) {
 	if (!drag)
 		return GUI_PASS;
 
-	new_slider_y = y - slider_click_offset - (area.y + button_height);
+	new_slider_y = y - slider_click_offset - (area.top + button_height);
 
 	if (move_slider(new_slider_y)) {
 		send_slider_moved_msg();

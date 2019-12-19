@@ -26,8 +26,8 @@
 #include "ultima/ultima6/screen/screen.h"
 #include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/gui/gui_button.h"
-#include "DollWidget.h"
-#include "InventoryWidget.h"
+#include "ultima/ultima6/views/doll_widget.h"
+#include "ultima/ultima6/views/inventory_widget.h"
 #include "ultima/ultima6/views/inventory_view.h"
 #include "ultima/ultima6/core/party.h"
 #include "ultima/ultima6/fonts/font.h"
@@ -157,7 +157,7 @@ void InventoryView::Display(bool full_redraw) {
 		if (MD)
 			fill_md_background(lock_actor ? 7 : bg_color, area);
 		else
-			screen->fill(bg_color, area.x, area.y, area.w, area.h);
+			screen->fill(bg_color, area.left, area.top, area.width(), area.height());
 
 		if (is_party_member)
 			display_combat_mode();
@@ -169,7 +169,7 @@ void InventoryView::Display(bool full_redraw) {
 
 	if (full_redraw || update_display) {
 		update_display = false;
-		screen->update(area.x, area.y, area.w, area.h);
+		screen->update(area.left, area.top, area.width(), area.height());
 	}
 
 	if (show_cursor && cursor_tile != NULL) {
@@ -195,7 +195,7 @@ void InventoryView::display_name() {
 	if (name == NULL)
 		return;
 
-	font->drawString(screen, name, area.x + ((136) - strlen(name) * 8) / 2, area.y + y_off);
+	font->drawString(screen, name, area.left + ((136) - strlen(name) * 8) / 2, area.top + y_off);
 
 	return;
 }
@@ -268,13 +268,13 @@ void InventoryView::display_inventory_weights() {
 	equip_weight = vm->get_display_weight(actor->get_inventory_equip_weight());
 
 	snprintf(string, 9, "E:%u/%us", equip_weight, strength);
-	font->drawString(screen, string, area.x, area.y + 72);
+	font->drawString(screen, string, area.left, area.top + 72);
 
 	snprintf(string, 9, "I:%u/%us", inv_weight, strength * 2);
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_U6)
-		font->drawString(screen, string, area.x + 4 * 16 + 8, area.y + 72);
+		font->drawString(screen, string, area.left + 4 * 16 + 8, area.top + 72);
 	else
-		font->drawString(screen, string, area.x, area.y + 80);
+		font->drawString(screen, string, area.left, area.top + 80);
 }
 
 void InventoryView::display_combat_mode() {
@@ -293,33 +293,33 @@ void InventoryView::display_combat_mode() {
 				tile = tile_manager->get_tile(284);
 			else
 				tile = tile_manager->get_tile(364);
-			screen->blit(area.x + 4 * 16, area.y + y_off, tile->data, 8, 16, 16, 16, true);
+			screen->blit(area.left + 4 * 16, area.top + y_off, tile->data, 8, 16, 16, 16, true);
 		}
 		if (MD) // combat text background
 			tile = tile_manager->get_tile(286);
 		else // SE
 			tile = tile_manager->get_tile(366);
-		screen->blit(area.x + 5 * 16, area.y + y_off, tile->data, 8, 16, 16, 16, true);
-		screen->blit(area.x + 6 * 16, area.y + y_off, tile->data, 8, 16, 16, 16, true); // reuse
+		screen->blit(area.left + 5 * 16, area.top + y_off, tile->data, 8, 16, 16, 16, true);
+		screen->blit(area.left + 6 * 16, area.top + y_off, tile->data, 8, 16, 16, 16, true); // reuse
 
 		if (MD) // last combat text background
 			tile = tile_manager->get_tile(287);
 		else
 			tile = tile_manager->get_tile(368);
-		screen->blit(area.x + 7 * 16, area.y + y_off, tile->data, 8, 16, 16, 16, true);
+		screen->blit(area.left + 7 * 16, area.top + y_off, tile->data, 8, 16, 16, 16, true);
 
 		if (MD)
-			font->drawString(screen, combat_mode_tbl_md[index], area.x + 5 * 16, area.y + 101);
+			font->drawString(screen, combat_mode_tbl_md[index], area.left + 5 * 16, area.top + 101);
 		else
-			font->drawString(screen, combat_mode_tbl_se[index], area.x + 5 * 16, area.y + 98);
+			font->drawString(screen, combat_mode_tbl_se[index], area.left + 5 * 16, area.top + 98);
 	} else
-		font->drawString(screen, combat_mode_tbl[index], area.x + 5 * 16, area.y + 88);
+		font->drawString(screen, combat_mode_tbl[index], area.left + 5 * 16, area.top + 88);
 }
 
 /* Move the cursor around, ready or unready objects, select objects, switch
  * to container view, use command icons.
  */
-GUI_status InventoryView::KeyDown(Common::KeyState key) {
+GUI_status InventoryView::KeyDown(const Common::KeyState &key) {
 	if (!show_cursor) // FIXME: don't rely on show_cursor to get/pass focus
 		return (GUI_PASS);
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
@@ -499,26 +499,26 @@ void InventoryView::update_cursor() {
 	switch (cursor_pos.area) {
 	case INVAREA_LIST:
 		if (gametype == NUVIE_GAME_U6) {
-			cursor_pos.px = area.x + (4 * 16 + 8) + cursor_pos.x * 16;
+			cursor_pos.px = area.left + (4 * 16 + 8) + cursor_pos.x * 16;
 		} else {
-			cursor_pos.px = inventory_widget->area.x + cursor_pos.x * 16;
+			cursor_pos.px = inventory_widget->area.left + cursor_pos.x * 16;
 		}
-		cursor_pos.py = area.y + 16 + 8 + cursor_pos.y * 16;
+		cursor_pos.py = area.top + 16 + 8 + cursor_pos.y * 16;
 		break;
 	case INVAREA_TOP:
-		cursor_pos.px = inventory_widget->area.x + (gametype == NUVIE_GAME_U6 ? 32 : (inventory_widget->area.w - 16) / 2);
-		cursor_pos.py = inventory_widget->area.y;
+		cursor_pos.px = inventory_widget->area.left + (gametype == NUVIE_GAME_U6 ? 32 : (inventory_widget->area.width() - 16) / 2);
+		cursor_pos.py = inventory_widget->area.top;
 		break;
 	case INVAREA_DOLL:
 		ready_loc = doll_widget->get_item_hit_rect(cursor_pos.x);
-		cursor_pos.px = ready_loc->x + doll_widget->area.x;
-		cursor_pos.py = ready_loc->y + doll_widget->area.y;
+		cursor_pos.px = ready_loc->left + doll_widget->area.left;
+		cursor_pos.py = ready_loc->top + doll_widget->area.top;
 		break;
 	case INVAREA_COMMAND:
 		cursor_pos.px = ((cursor_pos.x + 1) * 16) - 16;
-		cursor_pos.py = left_button->area.y; //80;
-		cursor_pos.px += area.x;
-		//cursor_pos.py += area.y;
+		cursor_pos.py = left_button->area.top; //80;
+		cursor_pos.px += area.left;
+		//cursor_pos.py += area.top;
 		break;
 	}
 }
@@ -553,8 +553,8 @@ void InventoryView::show_buttons() {
  */
 Obj *InventoryView::get_objAtCursor() {
 	// emulate mouse; use center of cursor
-	uint32 hit_x = cursor_pos.px + 8 - inventory_widget->area.x,
-	       hit_y = cursor_pos.py + 8 - inventory_widget->area.y;
+	uint32 hit_x = cursor_pos.px + 8 - inventory_widget->area.left,
+	       hit_y = cursor_pos.py + 8 - inventory_widget->area.top;
 	if (cursor_pos.area == INVAREA_LIST)
 		return (inventory_widget->get_obj_at_location(hit_x, hit_y));
 	else if (cursor_pos.area == INVAREA_DOLL)
@@ -644,7 +644,7 @@ bool InventoryView::select_obj(Obj *obj) {
 	return false;
 }
 
-GUI_status InventoryView::MouseDown(int x, int y, int button) {
+GUI_status InventoryView::MouseDown(int x, int y, MouseButton button) {
 	return GUI_PASS;
 }
 
@@ -656,10 +656,11 @@ GUI_status InventoryView::MouseWheel(sint32 x, sint32 y) {
 	int xpos, ypos;
 	screen->get_mouse_location(&xpos, &ypos);
 
-	xpos -= area.x;
-	ypos -= area.y;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	bool wheel_range = (xpos >= 0 && ypos < area.y + area.h - 6);
+	xpos -= area.left;
+	ypos -= area.top;
+#if 0
+	//if SDL_VERSION_ATLEAST(2, 0, 0)
+	bool wheel_range = (xpos >= 0 && ypos < area.top + area.height() - 6);
 #else
 	bool wheel_range = (xpos < 64 || ypos > 78);
 #endif

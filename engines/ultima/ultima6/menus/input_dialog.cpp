@@ -180,7 +180,7 @@ GUI_status InputDialog::close_dialog() {
 	return GUI_YUM;
 }
 
-GUI_status InputDialog::KeyDown(Common::KeyState key) {
+GUI_status InputDialog::KeyDown(const Common::KeyState &key) {
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
 

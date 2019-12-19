@@ -685,11 +685,11 @@ void MapWindow::update() {
 			key = keybinder->get_key_from_joy_hat_button(SDL_JoystickGetHat(keybinder->get_joystick(), 0));
 		else
 			key = keybinder->get_key_from_joy_walk_axes();
-		if (key != SDLK_UNKNOWN) {
+		if (key != Common::KEYCODE_UNKNOWN) {
 			Common::Event sdl_event;
 			sdl_event.type = SDL_KEYDOWN;
 			sdl_event.key.keysym.sym = key;
-			sdl_event.key.keysym.mod = KMOD_NONE;
+			sdl_event.key.keysym.mod = Common::KBD_NONE;
 			if (GUI::get_gui()->HandleEvent(&sdl_event) == GUI_PASS)
 				event->handleEvent(&sdl_event);
 		}
@@ -2082,7 +2082,7 @@ GUI_status MapWindow::Idle(void) {
 
 
 // single-click (press and release button)
-GUI_status MapWindow::MouseClick(int x, int y, int button) {
+GUI_status MapWindow::MouseClick(int x, int y, MouseButton button) {
 	if (button == USE_BUTTON && look_on_left_click) {
 		wait_for_mouseclick(button); // see MouseDelayed
 	}
@@ -2090,7 +2090,7 @@ GUI_status MapWindow::MouseClick(int x, int y, int button) {
 }
 
 // single-click; waited for double-click
-GUI_status MapWindow::MouseDelayed(int x, int y, int button) {
+GUI_status MapWindow::MouseDelayed(int x, int y, MouseButton button) {
 	Event *event = game->get_event();
 	if (!looking || game->user_paused() || event->cursor_mode
 	        || (event->get_mode() != MOVE_MODE && event->get_mode() != EQUIP_MODE)) {
@@ -2108,7 +2108,7 @@ GUI_status MapWindow::MouseDelayed(int x, int y, int button) {
 }
 
 // MouseDown; waited for MouseUp
-GUI_status MapWindow::MouseHeld(int x, int y, int button) {
+GUI_status MapWindow::MouseHeld(int x, int y, MouseButton button) {
 	looking = false;
 	if (walk_with_left_button)
 		set_walking(true);
@@ -2116,7 +2116,7 @@ GUI_status MapWindow::MouseHeld(int x, int y, int button) {
 }
 
 // double-click
-GUI_status MapWindow::MouseDouble(int x, int y, int button) {
+GUI_status MapWindow::MouseDouble(int x, int y, MouseButton button) {
 	Event *event = game->get_event();
 
 	// only USE if not doing anything in event
@@ -2146,7 +2146,7 @@ GUI_status MapWindow::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status MapWindow::MouseDown(int x, int y, int button) {
+GUI_status MapWindow::MouseDown(int x, int y, MouseButton button) {
 	//DEBUG(0,LEVEL_DEBUGGING,"MapWindow::MouseDown, button = %i\n", button);
 	Event *event = game->get_event();
 	Actor *player = actor_manager->get_player();
@@ -2224,7 +2224,7 @@ GUI_status MapWindow::MouseDown(int x, int y, int button) {
 	return  GUI_PASS;
 }
 
-GUI_status MapWindow::MouseUp(int x, int y, int button) {
+GUI_status MapWindow::MouseUp(int x, int y, MouseButton button) {
 	// cancel dragging and movement no matter what button is released
 	if (selected_obj) {
 		selected_obj = NULL;
@@ -2299,7 +2299,7 @@ void    MapWindow::drag_drop_failed(int x, int y, int message, void *data) {
 }
 
 // this does nothing
-GUI_status MapWindow::KeyDown(Common::KeyState key) {
+GUI_status MapWindow::KeyDown(const Common::KeyState &key) {
 	if (is_wizard_eye_mode()) {
 		KeyBinder *keybinder = Game::get_game()->get_keybinder();
 		ActionType a = keybinder->get_ActionType(key);
@@ -2570,7 +2570,7 @@ void MapWindow::free_thumbnail() {
 
 /* Returns a new 8bit copy of the mapwindow as displayed. Caller must free it. */
 Graphics::ManagedSurface *MapWindow::get_sdl_surface() {
-	return (get_sdl_surface(0, 0, area.w, area.h));
+	return (get_sdl_surface(0, 0, area.width(), area.height()));
 }
 
 Graphics::ManagedSurface *MapWindow::get_sdl_surface(uint16 x, uint16 y, uint16 w, uint16 h) {
@@ -2592,7 +2592,7 @@ Graphics::ManagedSurface *MapWindow::get_sdl_surface(uint16 x, uint16 y, uint16 
 /* Returns the overlay surface. A new 8bit overlay is created if necessary. */
 Graphics::ManagedSurface *MapWindow::get_overlay() {
 	if (!overlay)
-		overlay = SDL_CreateRGBSurface(SDL_SWSURFACE, area.w, area.h,
+		overlay = SDL_CreateRGBSurface(SDL_SWSURFACE, area.width(), area.height(),
 		                               8, 0, 0, 0, 0);
 	return (overlay);
 }
