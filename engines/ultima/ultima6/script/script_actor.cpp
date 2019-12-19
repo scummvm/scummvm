@@ -20,11 +20,11 @@
  *
  */
 
-//#include <actors/ultima/ultima6/actors/actor.h>
+#include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 
-#include "Scriptultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/script/script_actor.h"
 #include "ultima/ultima6/core/player.h"
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/core/effect.h"
@@ -34,6 +34,8 @@
 #include "ultima/ultima6/core/converse.h"
 #include "ultima/ultima6/usecode/usecode.h"
 #include "ultima/ultima6/views/portrait_view.h"
+
+#include "common/lua/lauxlib.h"
 
 namespace Ultima {
 namespace Ultima6 {

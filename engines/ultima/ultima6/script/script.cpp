@@ -20,9 +20,6 @@
  *
  */
 
-//#include <list>
-//#include <stack>
-//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
@@ -47,15 +44,15 @@
 #include "ultima/ultima6/core/cursor.h"
 
 #include "ultima/ultima6/script/script.h"
-#include "Scriptultima/ultima6/actors/actor.h"
-#include "ScriptCutscene.h"
+#include "ultima/ultima6/script/script_actor.h"
+#include "ultima/ultima6/script/script_cutscene.h"
 #include "ultima/ultima6/core/magic.h"
 #include "ultima/ultima6/files/tmx_map.h"
-
-//#include <math.h>
 #include "ultima/ultima6/files/u6_lib_n.h"
 
-#include "lua.hpp"
+#include "common/lua/lua.h"
+#include "common/lua/lauxlib.h"
+#include "common/lua/lualib.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -160,7 +157,7 @@ static int nscript_obj_removefromengine(lua_State *L);
 
 static int nscript_container_remove_obj(lua_State *L);
 
-static const struct luaL_Reg nscript_objlib_f[] = {
+static const luaL_Reg nscript_objlib_f[] = {
 	{ "new", nscript_obj_newobj },
 	{ "moveToMap", nscript_obj_movetomap },
 	{ "moveToInv", nscript_obj_movetoinv },
@@ -171,7 +168,7 @@ static const struct luaL_Reg nscript_objlib_f[] = {
 
 	{ NULL, NULL }
 };
-static const struct luaL_Reg nscript_objlib_m[] = {
+static const luaL_Reg nscript_objlib_m[] = {
 	{ "__index", nscript_obj_get },
 	{ "__newindex", nscript_obj_set },
 	{ "__gc", nscript_obj_gc },
@@ -470,7 +467,7 @@ uint8 ScriptThread::resume_with_nil() {
 
 uint8 ScriptThread::resume(int narg) {
 	const char *s;
-	int ret = lua_resume(L, NULL, narg);
+	int ret = lua_resume(L, narg);
 
 	state = NUVIE_SCRIPT_ERROR;
 
@@ -933,8 +930,8 @@ void Script::seed_random() {
 	return;
 }
 
-bool Script::run_script(const char *script) {
-	if (luaL_dostring(L, script) != 0) {
+bool Script::run_script(const char *scriptStr) {
+	if (luaL_dostring(L, scriptStr) != 0) {
 		DEBUG(0, LEVEL_ERROR, "Script Error: %s\n", luaL_checkstring(L, -1));
 		return false;
 	}
@@ -948,7 +945,8 @@ bool Script::play_cutscene(const char *script_file) {
 	script_file_path += script_file;
 
 	ConsoleHide();
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
+//if !SDL_VERSION_ATLEAST(2, 0, 0)
+#if 0
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY / 2, SDL_DEFAULT_REPEAT_INTERVAL * 2);
 #endif
 
@@ -1277,7 +1275,7 @@ bool Script::call_magic_get_spell_list(Spell **spell_list) {
 		lua_gettable(L, -2);
 
 		if (!lua_istable(L, -1)) { //we've hit the end of our targets
-			printf("end = %d", i);
+			::debug("end = %d", i);
 			lua_pop(L, 1);
 			break;
 		}
@@ -1294,7 +1292,7 @@ bool Script::call_magic_get_spell_list(Spell **spell_list) {
 
 		if (num < 256 && spell_list[num] == NULL) {
 			spell_list[num] = new Spell((uint8)num, (const char *)name, (const char *)invocation, re);
-			printf("num = %d, reagents = %d, name = %s invocation = %s\n", num, re, name, invocation);
+			::debug("num = %d, reagents = %d, name = %s invocation = %s\n", num, re, name, invocation);
 		}
 
 		lua_pop(L, 1);
@@ -1542,7 +1540,12 @@ uint16 Script::call_get_tile_to_object_mapping(uint16 tile_n) {
 	lua_getglobal(L, "get_tile_to_object_mapping");
 	lua_pushnumber(L, (lua_Number)tile_n);
 	call_function("get_tile_to_object_mapping", 1, 1);
+	
+#ifdef TODO
 	return (lua_tounsigned(L, -1));
+#else
+	return 0;
+#endif
 }
 
 bool Script::call_is_tile_object(uint16 obj_n) {
@@ -1565,13 +1568,13 @@ ScriptThread *Script::new_thread(const char *scriptfile) {
 	return t;
 }
 
-ScriptThread *Script::new_thread_from_string(const char *script) {
+ScriptThread *Script::new_thread_from_string(const char *scriptStr) {
 	ScriptThread *t = NULL;
 	lua_State *s;
 
 	s = lua_newthread(L);
 
-	if (luaL_loadbuffer(s, script, strlen(script), "nuvie") != 0)
+	if (luaL_loadbuffer(s, scriptStr, strlen(scriptStr), "nuvie") != 0)
 		return NULL;
 
 	t = new ScriptThread(s, 0);
@@ -2272,7 +2275,7 @@ static int nscript_u6link_gc(lua_State *L) {
 
 	releaseU6Link(link);
 
-	printf("U6Link garbage collector!!");
+	::debug("U6Link garbage collector!!");
 	return 0;
 }
 
@@ -2320,7 +2323,7 @@ static int nscript_print(lua_State *L) {
 	if (scroll) {
 		scroll->display_string(string);
 	} else {
-		printf("%s", string);
+		::debug("%s", string);
 	}
 	return 0;
 }
@@ -3503,7 +3506,7 @@ static int nscript_projectile_anim_multi(lua_State *L) {
 		lua_gettable(L, -2);
 
 		if (!lua_istable(L, -1)) { //we've hit the end of our targets
-			printf("end = %d", i);
+			::debug("end = %d", i);
 			lua_pop(L, 1);
 			break;
 		}
@@ -3777,7 +3780,7 @@ static int nscript_play_sfx(lua_State *L) {
 	bool play_mode = SFX_PLAY_SYNC;
 	uint16 sfx_id = (uint16)luaL_checkinteger(L, 1);
 	if (lua_gettop(L) > 1) {
-		if (lua_toboolean(L, 2) == true)
+		if (lua_toboolean(L, 2) != 0 /*== true*/)
 			play_mode = SFX_PLAY_ASYNC;
 	}
 
@@ -4599,7 +4602,7 @@ static int nscript_load_text_from_lzc(lua_State *L) {
 		return 0;
 	}
 	int idx = lua_tointeger(L, 2);
-	if (idx >= lib_n.get_num_items()) {
+	if (idx >= (int)lib_n.get_num_items()) {
 		return 0;
 	}
 
