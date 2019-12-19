@@ -132,7 +132,7 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const bool bottomUp) {
+bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input) {
 #ifdef SCUMM_LITTLE_ENDIAN
 	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
 #else
@@ -170,16 +170,9 @@ bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const bo
 	out.writeUint32LE(0);
 
 
-	if (bottomUp) {
-		for (uint y = 0; y < surface->h; ++y) {
-			out.write((const void *)surface->getBasePtr(0, y), dstPitch);
-			out.write(&padding, extraDataLength);
-		}
-	} else {
-		for (uint y = surface->h; y-- > 0;) {
-			out.write((const void *)surface->getBasePtr(0, y), dstPitch);
-			out.write(&padding, extraDataLength);
-		}
+	for (uint y = surface->h; y-- > 0;) {
+		out.write((const void *)surface->getBasePtr(0, y), dstPitch);
+		out.write(&padding, extraDataLength);
 	}
 
 	// free tmp surface

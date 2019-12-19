@@ -78,11 +78,8 @@ private:
 
 /**
  * Outputs a compressed PNG stream of the given input surface.
- *
- * @param bottomUp Flip the vertical axis so pixel data is drawn from the
- * bottom up, instead of from the top down.
  */
-bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bool bottomUp = false);
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input);
 
 } // End of namespace Image
 
