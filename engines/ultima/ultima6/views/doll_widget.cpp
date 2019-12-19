@@ -337,16 +337,16 @@ inline void DollWidget::display_doll() {
 	return;
 }
 
-inline void DollWidget::display_readied_object(uint8 location, uint16 x, uint16 y, Actor *actor, Tile *empty_tile) {
+inline void DollWidget::display_readied_object(uint8 location, uint16 x, uint16 y, Actor *theActor, Tile *emptyTile) {
 	Obj *obj;
 	Tile *tile;
 
-	obj = actor->inventory_get_readied_object(location);
+	obj = theActor->inventory_get_readied_object(location);
 
 	if (obj)
 		tile = tile_manager->get_tile(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n);
 	else
-		tile = empty_tile;
+		tile = emptyTile;
 
 	screen->blit(x, y, tile->data, 8, 16, 16, 16, true);
 

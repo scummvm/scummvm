@@ -68,7 +68,7 @@ public:
 	}
 	bool next_party_member();
 	bool prev_party_member();
-	void fill_md_background(uint8 color, Common::Rect area);
+	void fill_md_background(uint8 color, const Common::Rect &r);
 	void set_combat_mode(Actor *actor);
 	uint8 get_combat_mode_index(Actor *actor);
 

@@ -116,17 +116,17 @@ bool View::prev_party_member() {
 	return false;
 }
 
-void View::fill_md_background(uint8 color, Common::Rect area) {
+void View::fill_md_background(uint8 color, const Common::Rect &r) {
 	Screen *screen = Game::get_game()->get_screen();
-	screen->fill(color, area.left + 1, area.top + 9, 1, 1); // left pillar
-	screen->fill(color, area.left + 2, area.top + 6, 1, 4); // left pillar
-	screen->fill(color, area.left + 3, area.top + 3, 1, 11); // left pillar
-	screen->fill(color, area.left + area.width() - 2, area.top + 9, 1, 1); // right pillar
-	screen->fill(color, area.left + area.width() - 3, area.top + 6, 1, 4); // right pillar
-	screen->fill(color, area.left + area.width() - 4, area.top + 3, 1, 11); // right pillar
-	screen->fill(color, area.left + 4, area.top, area.width() - 8, 15); // top center
-	screen->fill(color, area.left, area.top + 14, area.width(), area.height() - 14); // bottom
-	//screen->fill(15, area.left, area.top, area.width(), area.height()); // bottom
+	screen->fill(color, r.left + 1, r.top + 9, 1, 1); // left pillar
+	screen->fill(color, r.left + 2, r.top + 6, 1, 4); // left pillar
+	screen->fill(color, r.left + 3, r.top + 3, 1, 11); // left pillar
+	screen->fill(color, r.left + r.width() - 2, r.top + 9, 1, 1); // right pillar
+	screen->fill(color, r.left + r.width() - 3, r.top + 6, 1, 4); // right pillar
+	screen->fill(color, r.left + r.width() - 4, r.top + 3, 1, 11); // right pillar
+	screen->fill(color, r.left + 4, r.top, r.width() - 8, 15); // top center
+	screen->fill(color, r.left, r.top + 14, r.width(), r.height() - 14); // bottom
+	//screen->fill(15, r.left, r.top, r.width(), r.height()); // bottom
 
 }
 

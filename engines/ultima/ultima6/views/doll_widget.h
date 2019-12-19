@@ -88,7 +88,7 @@ protected:
 	void display_doll();
 	void display_old_doll();
 	void display_new_doll();
-	void display_readied_object(uint8 location, uint16 x, uint16 y, Actor *actor, Tile *empty_tile);
+	void display_readied_object(uint8 location, uint16 x, uint16 y, Actor *actor, Tile *emptyTile);
 
 private:
 
