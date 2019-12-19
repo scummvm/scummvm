@@ -20,12 +20,6 @@
  *
  */
 
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-
-
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
@@ -125,7 +119,6 @@ bool GamePalette::loadPaletteIntoBuffer(unsigned char *pal) {
 	unsigned char *buf;
 	uint8 *pal_ptr;
 	std::string game_name, game_id, pal_name;
-	uint8 dither_mode;
 
 	config->value("config/GameName", game_name);
 	config->value("config/GameID", game_id);

@@ -32,7 +32,7 @@
 #include "ultima/ultima6/gui/gui_area.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/screen/dither.h"
-#include "Scale.h"
+#include "ultima/ultima6/screen/scale.h"
 #include "ultima/ultima6/screen/screen.h"
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/gui/gui_Dialog.h"

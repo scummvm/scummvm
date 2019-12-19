@@ -133,6 +133,8 @@ public:
 	Graphics::ManagedSurface *get_sdl_surface();
 	const unsigned char *get_pixels();
 
+	static Graphics::ManagedSurface *createSurface(int w, int h, int rMask, int gMask,
+		int bMask, int rShift, int gShift, int bShift);
 private:
 
 	// Draw Lines

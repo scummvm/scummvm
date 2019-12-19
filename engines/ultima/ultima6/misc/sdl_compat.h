@@ -32,6 +32,8 @@ extern uint32 SDL_MapRGB(Graphics::PixelFormat &format, byte r, byte g, byte b);
 extern int SDL_BlitSurface(Graphics::ManagedSurface *src, const Common::Rect *srcrect,
 	Graphics::ManagedSurface *dst, Common::Rect *dstrect);
 extern int SDL_FillRect(Graphics::ManagedSurface *surf, Common::Rect *rect, uint color);
+extern void SDL_UpdateRect(Graphics::ManagedSurface *surf, int x, int y, int w, int h);
+extern void SDL_UpdateRects(Graphics::ManagedSurface *surf, int count, Common::Rect *rects);
 
 #if 0
 #define SDLK_UNKNOWN SDLK_LAST

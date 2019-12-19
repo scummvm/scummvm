@@ -54,6 +54,20 @@ int SDL_FillRect(Graphics::ManagedSurface *surf, Common::Rect *rect, uint color)
 	return 0;
 }
 
+void SDL_UpdateRect(Graphics::ManagedSurface *surf, int x, int y, int w, int h) {
+	Common::Rect r(x, y, x + w, y + h);
+	if (r.isEmpty())
+		r = Common::Rect(0, 0, surf->w, surf->h);
+
+	g_system->copyRectToScreen(surf->getPixels(), surf->pitch, r.left, r.top, r.width(), r.height());
+}
+
+void SDL_UpdateRects(Graphics::ManagedSurface *surf, int count, Common::Rect *rects) {
+	while (count-- > 0)
+		g_system->copyRectToScreen(surf->getPixels(), surf->pitch, rects->left, rects->top,
+			rects->width(), rects->height());
+}
+
 
 #if 0
 #define SDLK_UNKNOWN SDLK_LAST

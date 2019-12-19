@@ -42,7 +42,12 @@ MODULE_OBJS += \
 	ultima6/save/save_dialog.o \
 	ultima6/save/save_game.o \
 	ultima6/save/save_manager.o \
-	ultima6/save/save_slot.o
+	ultima6/save/save_slot.o \
+	ultima6/screen/dither.o \
+	ultima6/screen/game_palette.o \
+	ultima6/screen/scale.o \
+	ultima6/screen/screen.o \
+	ultima6/screen/surface.o
 endif
 
 ifdef ENABLE_ULTIMA8

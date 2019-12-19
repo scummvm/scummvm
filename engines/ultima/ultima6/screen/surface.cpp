@@ -20,16 +20,9 @@
  *
  */
 
-//#include <cstdlib>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
-
-#include "Surface.h"
-
-
-#ifdef WANT_OPENGL
-#include "OpenGL.h"
-#endif
+#include "ultima/ultima6/screen/surface.h"
+#include "common/algorithm.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -56,7 +49,7 @@ RenderSurface::RenderSurface() : buffer(0), zbuffer_priv(0), sdl_surface(NULL), 
 }
 
 // Constructor for custom buffer
-RenderSurface::RenderSurface(uint32 width, uint32 height, uint32 bpp, uint8 *p) : buffer(0), zbuffer_priv(0), sdl_surface(NULL), opengl(0),
+RenderSurface::RenderSurface(uint32 width, uint32 height, uint32 bpp, byte *p) : buffer(0), zbuffer_priv(0), sdl_surface(NULL), opengl(0),
 	bytes_per_pixel(bpp / 8), bits_per_pixel(bpp),
 	pixels(p), zbuffer(0), w(width), h(height), pitch(width),
 	gl(0), gr(width), gt(0), gb(height), lock_count(0) {
@@ -81,9 +74,9 @@ RenderSurface::RenderSurface(uint32 width, uint32 height, uint32 bpp, sint32 gua
 // Constructor for sdl surface
 RenderSurface::RenderSurface(Graphics::ManagedSurface *surf) : buffer(0), zbuffer_priv(0), sdl_surface(NULL), opengl(0),
 	bytes_per_pixel(0), bits_per_pixel(0),
-	pixels((uint8 *) surf->pixels), zbuffer(0), w(surf->w), h(surf->h), pitch(surf->pitch),
+	pixels((byte *)surf->getPixels()), zbuffer(0), w(surf->w), h(surf->h), pitch(surf->pitch),
 	gl(0), gr(surf->w), gt(0), gb(surf->h), lock_count(0) {
-	set_format(surf->format);
+	set_format(&surf->format);
 }
 
 // Constructor for opengl surface
@@ -103,21 +96,21 @@ RenderSurface::~RenderSurface() {
 // Set the buffer format from Graphics::PixelFormat
 //
 void RenderSurface::set_format(const Graphics::PixelFormat *fmt) {
-	bits_per_pixel = fmt->BitsPerPixel;
-	bytes_per_pixel = fmt->BytesPerPixel;
+	bits_per_pixel = fmt->bytesPerPixel * 8;
+	bytes_per_pixel = fmt->bytesPerPixel;
 
-	Rloss = fmt->Rloss;
-	Gloss = fmt->Gloss;
-	Bloss = fmt->Bloss;
+	Rloss = fmt->rLoss;
+	Gloss = fmt->gLoss;
+	Bloss = fmt->bLoss;
 	Rloss16 = Rloss + 8;
 	Gloss16 = Gloss + 8;
 	Bloss16 = Bloss + 8;
-	Rshift = fmt->Rshift;
-	Gshift = fmt->Gshift;
-	Bshift = fmt->Bshift;
-	Rmask = fmt->Rmask;
-	Gmask = fmt->Gmask;
-	Bmask = fmt->Bmask;
+	Rshift = fmt->rShift;
+	Gshift = fmt->gShift;
+	Bshift = fmt->bShift;
+	Rmask = fmt->rMax();
+	Gmask = fmt->gMax();
+	Bmask = fmt->bMax();
 
 	// RGB 565
 	if (Rmask == 0xf800 && Gmask == 0x7e0 && Bmask == 0x1f)
@@ -263,7 +256,7 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 
 	uint16 *pixptr = (uint16 *)(pixels + pitch * sy + sx * 2);
 	uint16 *pixend = (uint16 *)(pixels + pitch * ey + ex * 2);
-	int pitch = this->pitch * yinc / 2;
+	int pitch_ = this->pitch * yinc / 2;
 
 	int cury = sy;
 	int curx = sx;
@@ -287,7 +280,7 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 		// start is below end
 		while (pixptr != pixend) {
 			if (no_clip || (cury >= 0 && cury < height)) *pixptr = col32;
-			pixptr += pitch;
+			pixptr += pitch_;
 			cury += yinc;
 		}
 	}
@@ -317,7 +310,7 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 			// Need to work out if we need to change line
 			if (ycounter > LINE_FRACTION) {
 				ycounter -= LINE_FRACTION;
-				pixptr += pitch;
+				pixptr += pitch_;
 				cury  += yinc;
 			}
 		}
@@ -331,7 +324,7 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 		for (; ;) {
 			if ((no_clip || (cury >= 0 && cury < height && curx >= 0 && curx < width)))
 				*pixptr = col32;
-			pixptr += pitch;
+			pixptr += pitch_;
 			if (cury == ey) break;
 			cury  += yinc;
 			xcounter += fraction;
@@ -381,7 +374,7 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 
 	uint32 *pixptr = (uint32 *)(pixels + pitch * sy + sx * 4);
 	uint32 *pixend = (uint32 *)(pixels + pitch * ey + ex * 4);
-	int pitch = this->pitch * yinc / 4;
+	int pitch_ = this->pitch * yinc / 4;
 
 	int cury = sy;
 	int curx = sx;
@@ -405,7 +398,7 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 		// start is below end
 		while (pixptr != pixend) {
 			if (no_clip || (cury >= 0 && cury < height)) *pixptr = col32;
-			pixptr += pitch;
+			pixptr += pitch_;
 			cury += yinc;
 		}
 	}
@@ -435,7 +428,7 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 			// Need to work out if we need to change line
 			if (ycounter > LINE_FRACTION) {
 				ycounter -= LINE_FRACTION;
-				pixptr += pitch;
+				pixptr += pitch_;
 				cury  += yinc;
 			}
 		}
@@ -449,7 +442,7 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 		for (; ;) {
 			if ((no_clip || (cury >= 0 && cury < height && curx >= 0 && curx < width)))
 				*pixptr = col32;
-			pixptr += pitch;
+			pixptr += pitch_;
 			if (cury == ey) break;
 			cury  += yinc;
 			xcounter += fraction;
@@ -493,7 +486,7 @@ void RenderSurface::create_zbuffer() {
 	zbuffer = zbuffer_priv = new uint16[pitch * h];
 }
 
-RenderSurface *CreateRenderSurface(uint32 width, uint32 height, uint32 bpp, uint8 *p) {
+RenderSurface *CreateRenderSurface(uint32 width, uint32 height, uint32 bpp, byte *p) {
 	return new RenderSurface(width, height, bpp, p);
 }
 
@@ -510,9 +503,33 @@ RenderSurface *CreateRenderSurface(OpenGL *ogl) {
 	return new RenderSurface(ogl);
 }
 
+static int getBits(uint mask) {
+	int count = 0;
+	for (; mask; mask >>= 1)
+		++count;
+	return count;
+}
+
+Graphics::ManagedSurface *createSurface(int w, int h, int rMask, int gMask,
+		int bMask, int rShift, int gShift, int bShift) {
+	int rBits = getBits(rMask), gBits = getBits(gMask), bBits = getBits(bMask);
+	int bytesPerPixel = (rBits + gBits + bBits + 7) / 8;
+
+	return new Graphics::ManagedSurface(w, h,
+		Graphics::PixelFormat(bytesPerPixel, rBits, gBits, bBits, 0,
+			rShift, gShift, bShift, 0));
+}
+
+
 Graphics::ManagedSurface *RenderSurface::get_sdl_surface() {
-	if (sdl_surface == NULL)
-		sdl_surface = SDL_CreateRGBSurfaceFrom(pixels, w, h, bits_per_pixel, pitch, Rmask, Gmask, Bmask, 0);
+	if (sdl_surface == NULL) {
+		sdl_surface = new Graphics::ManagedSurface(w, h,
+			Graphics::PixelFormat(bytes_per_pixel, getBits(Rmask), getBits(Gmask),
+				getBits(Bmask), 0, Rshift, Gshift, Bshift, 0));
+
+		byte *dest = (byte *)sdl_surface->getPixels();
+		Common::copy(pixels, pixels + (sdl_surface->pitch * sdl_surface->h), dest);
+	}
 
 	return sdl_surface;
 }

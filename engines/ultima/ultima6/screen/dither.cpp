@@ -20,10 +20,6 @@
  *
  */
 
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
 #include "ultima/ultima6/misc/u6_misc.h"

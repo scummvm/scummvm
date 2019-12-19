@@ -28,8 +28,8 @@
 
 
 #include "ultima/ultima6/core/game.h"
-#include "Surface.h"
-#include "Scale.h"
+#include "ultima/ultima6/screen/surface.h"
+#include "ultima/ultima6/screen/scale.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -99,12 +99,12 @@ public:
 	bool rotate_palette(uint8 pos, uint8 length);
 	bool clear(sint16 x, sint16 y, sint16 w, sint16 h, Common::Rect *clip_rect = NULL);
 	void *get_pixels();
-	const unsigned char *get_surface_pixels() {
+	const byte *get_surface_pixels() {
 		return (surface->get_pixels());
 	}
 	uint16 get_pitch();
-	Graphics::ManagedSurface *create_sdl_surface_from(unsigned char *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch);
-	Graphics::ManagedSurface *create_sdl_surface_8(unsigned char *src_buf, uint16 src_w, uint16 src_h);
+	Graphics::ManagedSurface *create_sdl_surface_from(byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch);
+	Graphics::ManagedSurface *create_sdl_surface_8(byte *src_buf, uint16 src_w, uint16 src_h);
 	uint16 get_bpp();
 	int get_scale_factor() {
 		return scale_factor;
@@ -156,10 +156,10 @@ public:
 
 	bool initScaler();
 
-	unsigned char *copy_area(Common::Rect *area = NULL, unsigned char *buf = NULL);
-	unsigned char *copy_area(Common::Rect *area, uint16 down_scale);
+	byte *copy_area(Common::Rect *area = NULL, byte *buf = NULL);
+	byte *copy_area(Common::Rect *area, uint16 down_scale);
 
-	void restore_area(unsigned char *pixels, Common::Rect *area = NULL, unsigned char *target = NULL, Common::Rect *target_area = NULL, bool free_src = true);
+	void restore_area(byte *pixels, Common::Rect *area = NULL, byte *target = NULL, Common::Rect *target_area = NULL, bool free_src = true);
 
 	void draw_line(int sx, int sy, int ex, int ey, uint8 color);
 
@@ -184,23 +184,23 @@ protected:
 	inline uint16 blendpixel16(uint16 p, uint16 p1, uint8 opacity);
 	inline uint32 blendpixel32(uint32 p, uint32 p1, uint8 opacity);
 
-	inline bool blit16(uint16 dest_x, uint16 dest_y, unsigned char *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans);
-	inline bool blit16WithOpacity(uint16 dest_x, uint16 dest_y, unsigned char *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans, uint8 opacity);
+	inline bool blit16(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans);
+	inline bool blit16WithOpacity(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans, uint8 opacity);
 
-	inline bool blit32(uint16 dest_x, uint16 dest_y, unsigned char *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans);
-	inline bool blit32WithOpacity(uint16 dest_x, uint16 dest_y, unsigned char *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans, uint8 opacity);
+	inline bool blit32(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans);
+	inline bool blit32WithOpacity(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans, uint8 opacity);
 
-	inline void blitbitmap16(uint16 dest_x, uint16 dest_y, const unsigned char *src_buf, uint16 src_w, uint16 src_h, uint8 fg_color, uint8 bg_color);
+	inline void blitbitmap16(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_w, uint16 src_h, uint8 fg_color, uint8 bg_color);
 
-	inline void blitbitmap32(uint16 dest_x, uint16 dest_y, const unsigned char *src_buf, uint16 src_w, uint16 src_h, uint8 fg_color, uint8 bg_color);
+	inline void blitbitmap32(uint16 dest_x, uint16 dest_y, const byte *src_buf, uint16 src_w, uint16 src_h, uint8 fg_color, uint8 bg_color);
 
-	unsigned char *copy_area16(Common::Rect *area, uint16 down_scale);
-	unsigned char *copy_area32(Common::Rect *area, uint16 down_scale);
+	byte *copy_area16(Common::Rect *area, uint16 down_scale);
+	byte *copy_area32(Common::Rect *area, uint16 down_scale);
 
-	unsigned char *copy_area16(Common::Rect *area, unsigned char *buf);
-	unsigned char *copy_area32(Common::Rect *area, unsigned char *buf);
-	void restore_area16(unsigned char *pixels, Common::Rect *area, unsigned char *target = NULL, Common::Rect *target_area = NULL, bool free_src = true);
-	void restore_area32(unsigned char *pixels, Common::Rect *area, unsigned char *target = NULL, Common::Rect *target_area = NULL, bool free_src = true);
+	byte *copy_area16(Common::Rect *area, byte *buf);
+	byte *copy_area32(Common::Rect *area, byte *buf);
+	void restore_area16(byte *pixels, Common::Rect *area, byte *target = NULL, Common::Rect *target_area = NULL, bool free_src = true);
+	void restore_area32(byte *pixels, Common::Rect *area, byte *target = NULL, Common::Rect *target_area = NULL, bool free_src = true);
 
 	void set_screen_mode();
 	bool try_scaler(int w, int h, uint32 flags, int hwdepth);
