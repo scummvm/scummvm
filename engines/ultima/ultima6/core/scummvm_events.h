@@ -20,22 +20,32 @@
  *
  */
 
-#ifndef ULTIMA6_MISC_SDL_COMPAT_H
-#define ULTIMA6_MISC_SDL_COMPAT_H
+#ifndef ULTIMA6_CORE_SCUMMVM_EVENTS_H
+#define ULTIMA6_CORE_SCUMMVM_EVENTS_H
 
-#include "graphics/managed_surface.h"
+#include "common/events.h"
+
+namespace Ultima {
+namespace Ultima6 {
 
 enum MouseButton { BUTTON_LEFT = 1, BUTTON_RIGHT = 2, BUTTON_MIDDLE = 3 };
 
-extern uint32 SDL_GetTicks();
-extern void SDL_FreeSurface(Graphics::ManagedSurface *&s);
-extern void SDL_ShowCursor(bool show);
-extern uint32 SDL_MapRGB(Graphics::PixelFormat &format, byte r, byte g, byte b);
-extern int SDL_BlitSurface(Graphics::ManagedSurface *src, const Common::Rect *srcrect,
-	Graphics::ManagedSurface *dst, Common::Rect *dstrect);
-extern int SDL_FillRect(Graphics::ManagedSurface *surf, Common::Rect *rect, uint color);
-extern void SDL_UpdateRect(Graphics::ManagedSurface *surf, int x, int y, int w, int h);
-extern void SDL_UpdateRects(Graphics::ManagedSurface *surf, int count, Common::Rect *rects);
-extern Graphics::ManagedSurface *SDL_LoadBMP(const char *filename);
+inline bool isMouseDown(Common::EventType type) {
+	return type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_RBUTTONDOWN
+		|| type == Common::EVENT_MBUTTONDOWN;
+}
+
+inline bool isMouseUp(Common::EventType type) {
+	return type == Common::EVENT_LBUTTONUP || type == Common::EVENT_RBUTTONUP
+		|| type == Common::EVENT_MBUTTONUP;
+}
+
+inline bool shouldQuit() {
+	// TODO
+	return false;
+}
+
+} // End of namespace Ultima6
+} // End of namespace Ultima
 
 #endif
