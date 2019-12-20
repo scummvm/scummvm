@@ -326,23 +326,21 @@ bool Lingo::isInArgStack(Common::String *s) {
 }
 
 void Lingo::codeArg(Common::String *s) {
-	_argstack.push_back(s);
+	_argstack.push_back(new Common::String(*s));
+}
+
+void Lingo::clearArgStack() {
+	for (int i = 0; i < _argstack.size(); i++)
+		delete _argstack[i];
+
+	_argstack.clear();
 }
 
 void Lingo::codeArgStore() {
-	while (true) {
-		if (_argstack.empty()) {
-			break;
-		}
-
-		Common::String *arg = _argstack.back();
-		_argstack.pop_back();
-
+	for (int i = _argstack.size() - 1; i >= 0; i--) {
 		code1(c_varpush);
-		codeString(arg->c_str());
+		codeString(_argstack[i]->c_str());
 		code1(c_assign);
-
-		delete arg;
 	}
 }
 

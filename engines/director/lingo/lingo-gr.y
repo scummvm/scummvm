@@ -527,16 +527,19 @@ defn: tMACRO ID { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear
 		begin argdef '\n' argstore stmtlist 		{
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5);
+			g_lingo->clearArgStack();
 			g_lingo->_indef = kStateNone; }
 	| tFACTORY ID	{ g_lingo->codeFactory(*$2); }
 	| tMETHOD { g_lingo->_indef = kStateInArgs; }
 		begin argdef '\n' argstore stmtlist 		{
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$1, $3, $4 + 1, &g_lingo->_currentFactory);
+			g_lingo->clearArgStack();
 			g_lingo->_indef = kStateNone; }
 	| on begin argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
 		g_lingo->code1(g_lingo->c_procret);
 		g_lingo->define(*$1, $2, $3);
+		g_lingo->clearArgStack();
 		g_lingo->_indef = kStateNone;
 		g_lingo->_ignoreMe = false;
 
@@ -545,6 +548,7 @@ defn: tMACRO ID { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear
 		g_lingo->code1(g_lingo->c_procret);
 		g_lingo->define(*$1, $2, $3);
 		g_lingo->_indef = kStateNone;
+		g_lingo->clearArgStack();
 		g_lingo->_ignoreMe = false; }
 
 on:  tON ID { $$ = $2; g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }

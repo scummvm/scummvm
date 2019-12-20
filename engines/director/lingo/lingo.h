@@ -561,6 +561,7 @@ public:
 
 public:
 	bool isInArgStack(Common::String *s);
+	void clearArgStack();
 
 public:
 	ScriptType _currentScriptType;
