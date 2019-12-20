@@ -383,7 +383,9 @@ void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
 	auto key = ((realId & 0xfu) << 1u | 0x40u);
 
 	// TODO: Volume
-	vabSound->playSound(program, key);
+	if (!_vm->_mixer->isSoundHandleActive(_sfxHandle)) {
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, vabSound->getAudioStream(program, key));
+	}
 }
 
 void SoundManager::stopSound(uint16 soundId, uint16 volumeId) {
@@ -391,6 +393,7 @@ void SoundManager::stopSound(uint16 soundId, uint16 volumeId) {
 
 	auto vabId = getVabFromSoundId(soundId);
 	// TODO: Actually stop sound
+	_vm->_mixer->stopHandle(_sfxHandle);
 }
 
 uint16 SoundManager::getVabFromSoundId(uint16 soundId) {
