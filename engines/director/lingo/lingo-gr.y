@@ -46,6 +46,9 @@
 
 %debug
 
+// %glr-parser
+// %defines "engines/director/lingo/lingo-gr.h"
+
 %{
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
