@@ -36,6 +36,7 @@ public:
 	virtual ~BigfileArchive();
 
 	byte *load(const char *filename, uint32 &dataSize);
+	bool doesFileExist(const char *filename);
 };
 
 } // End of namespace dragons
