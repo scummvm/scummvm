@@ -1387,11 +1387,11 @@ YY_RULE_SETUP
 			field = Common::String::format("%d%s", g_lingo->_theEntities[ptr]->entity, field.c_str());
 
 			if (!g_lingo->_theEntityFields.contains(field)) {
-				error("Unhandled the field %s", ptr);
+				error("LEXER: Unhandled the field %s", ptr);
 			}
 
 			if (g_lingo->_theEntityFields[field]->entity != g_lingo->_theEntities[ptr]->entity)
-				error("Unsupported field '%s' for entity '%s'", field.c_str(), ptr);
+				error("LEXER: Unsupported field '%s' for entity '%s'", field.c_str(), ptr);
 
 			yylval.e[0] = g_lingo->_theEntities[ptr]->entity;
 			yylval.e[1] = g_lingo->_theEntityFields[field]->field;
@@ -1402,7 +1402,7 @@ YY_RULE_SETUP
 				return THEENTITY;
 		}
 
-		warning("Unhandled the entity %s", ptr);
+		warning("LEXER: Unhandled the entity %s", ptr);
 	}
 	YY_BREAK
 case 52:
@@ -1425,11 +1425,11 @@ YY_RULE_SETUP
 		field = Common::String::format("%d%s", g_lingo->_theEntities[ptr]->entity, field.c_str());
 
 		if (!g_lingo->_theEntityFields.contains(field)) {
-			error("Unhandled the field %s", ptr);
+			error("LEXER: Unhandled the field %s", ptr);
 		}
 
 		if (g_lingo->_theEntityFields[field]->entity != g_lingo->_theEntities[ptr]->entity)
-			error("Unsupported field '%s' for entity '%s'", field.c_str(), ptr);
+			error("LEXER: Unsupported field '%s' for entity '%s'", field.c_str(), ptr);
 
 		yylval.e[0] = g_lingo->_theEntities[ptr]->entity;
 		yylval.e[1] = g_lingo->_theEntityFields[field]->field;
@@ -1460,7 +1460,7 @@ YY_RULE_SETUP
 				return THEENTITY;
 		}
 
-		warning("Unhandled the entity %s", ptr);
+		warning("LEXER: Unhandled the entity %s", ptr);
 	}
 	YY_BREAK
 case 54:
