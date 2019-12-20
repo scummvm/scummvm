@@ -74,6 +74,12 @@ enum LEvent {
 	kEventStart
 };
 
+enum LexerDefineState {
+	kStateNone,
+	kStateInDef,
+	kStateInArgs
+};
+
 typedef void (*inst)(void);
 #define	STOP (inst)0
 #define ENTITY_INDEX(t,id) ((t) * 100000 + (id))
@@ -560,7 +566,7 @@ public:
 	uint16 _currentScriptFunction;
 	ScriptData *_currentScript;
 	bool _returning;
-	bool _indef;
+	LexerDefineState _indef;
 	bool _ignoreMe;
 	bool _immediateMode;
 

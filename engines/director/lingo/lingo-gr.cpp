@@ -2775,7 +2775,7 @@ yyreduce:
 
   case 133:
 #line 526 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); ;}
+    { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear(); ;}
     break;
 
   case 134:
@@ -2783,7 +2783,7 @@ yyreduce:
     {
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*(yyvsp[(2) - (8)].s), (yyvsp[(4) - (8)].code), (yyvsp[(5) - (8)].narg));
-			g_lingo->_indef = false; ;}
+			g_lingo->_indef = kStateNone; ;}
     break;
 
   case 135:
@@ -2793,7 +2793,7 @@ yyreduce:
 
   case 136:
 #line 532 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->_indef = true; ;}
+    { g_lingo->_indef = kStateInArgs; ;}
     break;
 
   case 137:
@@ -2801,7 +2801,7 @@ yyreduce:
     {
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*(yyvsp[(1) - (7)].s), (yyvsp[(3) - (7)].code), (yyvsp[(4) - (7)].narg) + 1, &g_lingo->_currentFactory);
-			g_lingo->_indef = false; ;}
+			g_lingo->_indef = kStateNone; ;}
     break;
 
   case 138:
@@ -2809,7 +2809,7 @@ yyreduce:
     {	// D3
 		g_lingo->code1(g_lingo->c_procret);
 		g_lingo->define(*(yyvsp[(1) - (8)].s), (yyvsp[(2) - (8)].code), (yyvsp[(3) - (8)].narg));
-		g_lingo->_indef = false;
+		g_lingo->_indef = kStateNone;
 		g_lingo->_ignoreMe = false;
 
 		checkEnd((yyvsp[(7) - (8)].s), (yyvsp[(1) - (8)].s)->c_str(), false); ;}
@@ -2820,13 +2820,13 @@ yyreduce:
     {	// D4. No 'end' clause
 		g_lingo->code1(g_lingo->c_procret);
 		g_lingo->define(*(yyvsp[(1) - (6)].s), (yyvsp[(2) - (6)].code), (yyvsp[(3) - (6)].narg));
-		g_lingo->_indef = false;
+		g_lingo->_indef = kStateNone;
 		g_lingo->_ignoreMe = false; ;}
     break;
 
   case 140:
 #line 550 "engines/director/lingo/lingo-gr.y"
-    { (yyval.s) = (yyvsp[(2) - (2)].s); g_lingo->_indef = true; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; ;}
+    { (yyval.s) = (yyvsp[(2) - (2)].s); g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; ;}
     break;
 
   case 141:
@@ -2851,7 +2851,7 @@ yyreduce:
 
   case 148:
 #line 563 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->codeArgStore(); ;}
+    { g_lingo->codeArgStore(); g_lingo->_indef = kStateInDef; ;}
     break;
 
   case 149:

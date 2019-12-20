@@ -523,36 +523,36 @@ playfunc: tPLAY tDONE			{ g_lingo->code1(g_lingo->c_playdone); }
 //
 // See also:
 //   on keyword
-defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
+defn: tMACRO ID { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear(); }
 		begin argdef '\n' argstore stmtlist 		{
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5);
-			g_lingo->_indef = false; }
+			g_lingo->_indef = kStateNone; }
 	| tFACTORY ID	{ g_lingo->codeFactory(*$2); }
-	| tMETHOD { g_lingo->_indef = true; }
+	| tMETHOD { g_lingo->_indef = kStateInArgs; }
 		begin argdef '\n' argstore stmtlist 		{
 			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$1, $3, $4 + 1, &g_lingo->_currentFactory);
-			g_lingo->_indef = false; }
+			g_lingo->_indef = kStateNone; }
 	| on begin argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
 		g_lingo->code1(g_lingo->c_procret);
 		g_lingo->define(*$1, $2, $3);
-		g_lingo->_indef = false;
+		g_lingo->_indef = kStateNone;
 		g_lingo->_ignoreMe = false;
 
 		checkEnd($7, $1->c_str(), false); }
 	| on begin argdef '\n' argstore stmtlist {	// D4. No 'end' clause
 		g_lingo->code1(g_lingo->c_procret);
 		g_lingo->define(*$1, $2, $3);
-		g_lingo->_indef = false;
+		g_lingo->_indef = kStateNone;
 		g_lingo->_ignoreMe = false; }
 
-on:  tON ID { $$ = $2; g_lingo->_indef = true; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
+on:  tON ID { $$ = $2; g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
 
 argdef:  /* nothing */ 		{ $$ = 0; }
 	| ID					{ g_lingo->codeArg($1); $$ = 1; }
 	| argdef ',' ID			{ g_lingo->codeArg($3); $$ = $1 + 1; }
-	| argdef '\n' ',' ID		{ g_lingo->codeArg($4); $$ = $1 + 1; }
+	| argdef '\n' ',' ID	{ g_lingo->codeArg($4); $$ = $1 + 1; }
 	;
 
 endargdef:	/* nothing */
@@ -560,7 +560,7 @@ endargdef:	/* nothing */
 	| endargdef ',' ID
 	;
 
-argstore:	  /* nothing */		{ g_lingo->codeArgStore(); }
+argstore:	  /* nothing */		{ g_lingo->codeArgStore(); g_lingo->_indef = kStateInDef; }
 	;
 
 
