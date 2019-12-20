@@ -117,16 +117,16 @@ bool View::prev_party_member() {
 }
 
 void View::fill_md_background(uint8 color, const Common::Rect &r) {
-	Screen *screen = Game::get_game()->get_screen();
-	screen->fill(color, r.left + 1, r.top + 9, 1, 1); // left pillar
-	screen->fill(color, r.left + 2, r.top + 6, 1, 4); // left pillar
-	screen->fill(color, r.left + 3, r.top + 3, 1, 11); // left pillar
-	screen->fill(color, r.left + r.width() - 2, r.top + 9, 1, 1); // right pillar
-	screen->fill(color, r.left + r.width() - 3, r.top + 6, 1, 4); // right pillar
-	screen->fill(color, r.left + r.width() - 4, r.top + 3, 1, 11); // right pillar
-	screen->fill(color, r.left + 4, r.top, r.width() - 8, 15); // top center
-	screen->fill(color, r.left, r.top + 14, r.width(), r.height() - 14); // bottom
-	//screen->fill(15, r.left, r.top, r.width(), r.height()); // bottom
+	Screen *scr = Game::get_game()->get_screen();
+	scr->fill(color, r.left + 1, r.top + 9, 1, 1); // left pillar
+	scr->fill(color, r.left + 2, r.top + 6, 1, 4); // left pillar
+	scr->fill(color, r.left + 3, r.top + 3, 1, 11); // left pillar
+	scr->fill(color, r.left + r.width() - 2, r.top + 9, 1, 1); // right pillar
+	scr->fill(color, r.left + r.width() - 3, r.top + 6, 1, 4); // right pillar
+	scr->fill(color, r.left + r.width() - 4, r.top + 3, 1, 11); // right pillar
+	scr->fill(color, r.left + 4, r.top, r.width() - 8, 15); // top center
+	scr->fill(color, r.left, r.top + 14, r.width(), r.height() - 14); // bottom
+	//scr->fill(15, r.left, r.top, r.width(), r.height()); // bottom
 
 }
 
