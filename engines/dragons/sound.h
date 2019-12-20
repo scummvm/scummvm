@@ -62,6 +62,7 @@ private:
 	VabSound* _vabGlob;
 
 	Audio::SoundHandle _speechHandle;
+	Audio::SoundHandle _sfxHandle;
 
 private:
 	void SomeInitSound_FUN_8003f64c();
