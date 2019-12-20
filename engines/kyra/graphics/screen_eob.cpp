@@ -98,7 +98,7 @@ bool Screen_EoB::init() {
 			_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(_sjisFontShared);
 		} else if (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98) {
 			loadFont(FID_SJIS_SMALL_FNT, "FONT12.FNT");
-			_fonts[FID_SJIS_FNT] = new SJISFontEoB1PC98(_sjisFontShared, 12, _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp));
+			_fonts[FID_SJIS_FNT] = new SJISFontEoB1PC98(_sjisFontShared, /*12,*/ _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp));
 		}
 
 		if (_vm->gameFlags().useHiRes && _renderMode == Common::kRenderEGA) {
@@ -2564,8 +2564,8 @@ void AmigaDOSFont::selectMode(int mode) {
 	_last = _content[mode].data->lastChar;
 }
 
-SJISFontEoB1PC98::SJISFontEoB1PC98(Common::SharedPtr<Graphics::FontSJIS> &font, uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2)	: SJISFont(font, 0, false, false, 0),
-	_shadowColor(shadowColor), _convTable1(convTable1), _convTable2(convTable2), _defaultConv(true) {
+SJISFontEoB1PC98::SJISFontEoB1PC98(Common::SharedPtr<Graphics::FontSJIS> &font, /*uint8 shadowColor,*/ const uint16 *convTable1, const uint16 *convTable2)	: SJISFont(font, 0, false, false, 0),
+	/*_shadowColor(shadowColor),*/ _convTable1(convTable1), _convTable2(convTable2), _defaultConv(true) {
 	assert(_convTable1);
 	assert(_convTable2);
 }

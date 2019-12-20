@@ -278,7 +278,7 @@ private:
 */
 class SJISFontEoB1PC98 : public SJISFont {
 public:
-	SJISFontEoB1PC98(Common::SharedPtr<Graphics::FontSJIS> &font, uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2);
+	SJISFontEoB1PC98(Common::SharedPtr<Graphics::FontSJIS> &font, /*uint8 shadowColor,*/ const uint16 *convTable1, const uint16 *convTable2);
 	virtual ~SJISFontEoB1PC98() {}
 	virtual int getCharWidth(uint16 c) const;
 	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;
@@ -287,7 +287,7 @@ private:
 	uint16 convert(uint16 c) const;
 	const uint16 *_convTable1, *_convTable2;
 	bool _defaultConv;
-	uint8 _shadowColor;
+	/*uint8 _shadowColor;*/
 };
 
 /**
