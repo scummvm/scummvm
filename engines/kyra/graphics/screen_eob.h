@@ -39,6 +39,7 @@ public:
 
 	void setClearScreenDim(int dim);
 	void clearCurDim();
+	void clearCurDimOvl(int pageNum);
 
 	void setMouseCursor(int x, int y, const byte *shape);
 	void setMouseCursor(int x, int y, const byte *shape, const uint8 *ovl);
