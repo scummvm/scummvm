@@ -89,9 +89,9 @@ namespace Dragons {
 		assert(program < _header.numVAG);
 		// TODO
 		uint16 vagID = 0;
-		for (int i = 0; i < _header.numPrograms * 16; i++) {
-			if (_toneAttrs[i].prog == program) {
-				vagID = _toneAttrs[i].vag;
+		for (int i = 0; i < _programAttrs[program].tones; i++) {
+			if (_toneAttrs[i].prog == program && _toneAttrs[i].min == key && _toneAttrs[i].max == key) {
+				vagID = _toneAttrs[i].vag - 1;
 			}
 		}
 		debug("Playing program %d, numTones: %d, key %d vagID %d, vagOffset: %x, size: %x", program, _programAttrs[program].tones, key, vagID, _vagOffsets[vagID], _vagSizes[vagID]);

@@ -411,13 +411,15 @@ void SoundManager::loadMsf(uint32 sceneId) {
 	char msfFileName[] = "XXXX.MSF";
 	memcpy(msfFileName, _dragonRMS->getSceneName(sceneId), 4);
 
-	uint32 msfSize;
-	byte *msfData = _bigFileArchive->load(msfFileName, msfSize);
+	if (_bigFileArchive->doesFileExist(msfFileName)) {
+		uint32 msfSize;
+		byte *msfData = _bigFileArchive->load(msfFileName, msfSize);
 
-	auto *msfStream = new Common::MemoryReadStream(msfData, msfSize, DisposeAfterUse::YES);
+		auto *msfStream = new Common::MemoryReadStream(msfData, msfSize, DisposeAfterUse::YES);
 
-	delete _vabMusx;
-	_vabMusx = new VabSound(msfStream, _vm);
+		delete _vabMusx;
+		_vabMusx = new VabSound(msfStream, _vm);
+	}
 }
 
 } // End of namespace Dragons

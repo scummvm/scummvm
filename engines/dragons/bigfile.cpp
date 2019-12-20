@@ -633,7 +633,7 @@ BigfileArchive::~BigfileArchive() {
 byte *BigfileArchive::load(const char *filename, uint32 &dataSize) {
 	uint32 id = getResourceId(filename);
 	if (id >= TOTAL_FILES) {
-		error("Invalid resourceID");
+		error("Invalid resourceID for input filename: %s", filename);
 	}
 
 	dataSize = fileInfo[id].size;
@@ -646,6 +646,10 @@ byte *BigfileArchive::load(const char *filename, uint32 &dataSize) {
 	return buf;
 }
 
+bool BigfileArchive::doesFileExist(const char *filename) {
+	uint32 id = getResourceId(filename);
+	return (id < TOTAL_FILES);
+}
 
 
 } // End of namespace Illusions
