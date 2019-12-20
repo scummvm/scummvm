@@ -1538,6 +1538,15 @@ YY_RULE_SETUP
 		if (g_lingo->_ignoreMe && yylval.s->equalsIgnoreCase("me"))
 			return ID;
 
+		// When we are defining arguments, allow any string
+		if (g_lingo->_indef == kStateInArgs)
+			return ID;
+
+		// First of all, match against argument list
+		if (g_lingo->_indef == kStateInDef)
+			if (g_lingo->isInArgStack(yylval.s))
+				return ID;
+
 		if (g_lingo->_twoWordBuiltins.contains(yytext))
 			return TWOWORDBUILTIN;
 
@@ -1579,41 +1588,41 @@ YY_RULE_SETUP
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 336 "engines/director/lingo/lingo-lex.l"
+#line 345 "engines/director/lingo/lingo-lex.l"
 { count(); yylval.f = atof(yytext); return FLOAT; }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 337 "engines/director/lingo/lingo-lex.l"
+#line 346 "engines/director/lingo/lingo-lex.l"
 { count(); yylval.i = strtol(yytext, NULL, 10); return INT; }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 338 "engines/director/lingo/lingo-lex.l"
+#line 347 "engines/director/lingo/lingo-lex.l"
 { count(); return *yytext; }
 	YY_BREAK
 case 71:
 /* rule 71 can match eol */
 YY_RULE_SETUP
-#line 339 "engines/director/lingo/lingo-lex.l"
+#line 348 "engines/director/lingo/lingo-lex.l"
 { count(); return '\n'; }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 340 "engines/director/lingo/lingo-lex.l"
+#line 349 "engines/director/lingo/lingo-lex.l"
 { count(); yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 341 "engines/director/lingo/lingo-lex.l"
+#line 350 "engines/director/lingo/lingo-lex.l"
 { count(); }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 343 "engines/director/lingo/lingo-lex.l"
+#line 352 "engines/director/lingo/lingo-lex.l"
 ECHO;
 	YY_BREAK
-#line 1617 "engines/director/lingo/lingo-lex.cpp"
+#line 1626 "engines/director/lingo/lingo-lex.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2573,7 +2582,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 343 "engines/director/lingo/lingo-lex.l"
+#line 352 "engines/director/lingo/lingo-lex.l"
 
 
 

@@ -317,6 +317,14 @@ int Lingo::codeArray(int arraySize) {
 	return _currentScript->size();
 }
 
+bool Lingo::isInArgStack(Common::String *s) {
+	for (int i = 0; i < _argstack.size(); i++)
+		if (_argstack[i]->equalsIgnoreCase(*s))
+			return true;
+
+	return false;
+}
+
 void Lingo::codeArg(Common::String *s) {
 	_argstack.push_back(s);
 }

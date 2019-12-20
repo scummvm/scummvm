@@ -295,6 +295,15 @@ whitespace [\t ]
 		if (g_lingo->_ignoreMe && yylval.s->equalsIgnoreCase("me"))
 			return ID;
 
+		// When we are defining arguments, allow any string
+		if (g_lingo->_indef == kStateInArgs)
+			return ID;
+
+		// First of all, match against argument list
+		if (g_lingo->_indef == kStateInDef)
+			if (g_lingo->isInArgStack(yylval.s))
+				return ID;
+
 		if (g_lingo->_twoWordBuiltins.contains(yytext))
 			return TWOWORDBUILTIN;
 

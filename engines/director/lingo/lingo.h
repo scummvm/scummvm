@@ -560,6 +560,9 @@ public:
 	Datum getTheCast(Datum &id, int field);
 
 public:
+	bool isInArgStack(Common::String *s);
+
+public:
 	ScriptType _currentScriptType;
 	uint16 _currentEntityId;
 	ScriptContext *_currentScriptContext;
