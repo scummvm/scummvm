@@ -138,11 +138,12 @@ MODULE_OBJS += \
 	ultima6/sound/adplug/mid.o \
 	ultima6/sound/adplug/opl_class.o \
 	ultima6/sound/adplug/u6m.o \
-	ultima6/sound/mixer/decoder/adlib_sfx_stream.o \
-	ultima6/sound/mixer/decoder/fm_towns_decoder_stream.o \
-	ultima6/sound/mixer/decoder/pc_speaker.o \
-	ultima6/sound/mixer/decoder/pc_speaker_stream.o \
-	ultima6/sound/mixer/decoder/u6_adplug_decoder_stream.o \
+	ultima6/sound/decoder/adlib_sfx_stream.o \
+	ultima6/sound/decoder/fm_towns_decoder_stream.o \
+	ultima6/sound/decoder/pc_speaker.o \
+	ultima6/sound/decoder/pc_speaker_stream.o \
+	ultima6/sound/decoder/random_collection_audio_stream.o \
+	ultima6/sound/decoder/u6_adplug_decoder_stream.o \
 	ultima6/usecode/u6_usecode.o \
 	ultima6/usecode/usecode.o \
 	ultima6/views/actor_view.o \

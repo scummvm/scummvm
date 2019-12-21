@@ -22,7 +22,7 @@
 
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "ultima/ultima6/sound/mixer/decoder/adlib_sfx_stream.h"
+#include "ultima/ultima6/sound/decoder/adlib_sfx_stream.h"
 #include "ultima/ultima6/sound/adlib_sfx_manager.h"
 #include "audio/mixer.h"
 

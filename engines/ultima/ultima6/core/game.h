@@ -25,6 +25,7 @@
 
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Ultima6 {

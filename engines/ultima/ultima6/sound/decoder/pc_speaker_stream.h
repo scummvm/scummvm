@@ -24,7 +24,7 @@
 #define ULTIMA6_SOUND_MIXER_DECODER_PC_SPEAKER_STREAM_H
 
 #include "ultima/shared/std/string.h"
-#include "ultima/ultima6/sound/mixer/decoder/pc_speaker.h"
+#include "ultima/ultima6/sound/decoder/pc_speaker.h"
 #include "audio/audiostream.h"
 
 namespace Ultima {

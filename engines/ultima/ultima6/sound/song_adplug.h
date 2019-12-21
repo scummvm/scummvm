@@ -25,7 +25,7 @@
 
 #include "audio/mixer.h"
 #include "ultima/ultima6/sound/song.h"
-#include "ultima/ultima6/sound/mixer/decoder/u6_adplug_decoder_stream.h"
+#include "ultima/ultima6/sound/decoder/u6_adplug_decoder_stream.h"
 
 namespace Ultima {
 namespace Ultima6 {

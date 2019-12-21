@@ -20,7 +20,8 @@
  *
  */
 
-#include "ultima/ultima6/sound/mixer/random_collection_audio_stream.h"
+#include "ultima/ultima6/sound/decoder/random_collection_audio_stream.h"
+#include "ultima/ultima6/core/game.h"
 #include "audio/audiostream.h"
 #include "common/mutex.h"
 #include "audio/mixer.h"
@@ -53,13 +54,13 @@ private:
 	/**
 	 * An array of audio streams.
 	 */
-	std::vector<RewindableAudioStream *> _streams;
+	std::vector<Audio::RewindableAudioStream *> _streams;
 
 	DisposeAfterUse::Flag _disposeAfterUse;
 
-	RewindableAudioStream *_currentStream;
+	Audio::RewindableAudioStream *_currentStream;
 public:
-	RandomCollectionAudioStreamImpl(int rate, bool stereo, std::vector<RewindableAudioStream *> streams, DisposeAfterUse::Flag disposeAfterUse)
+	RandomCollectionAudioStreamImpl(int rate, bool stereo, std::vector<Audio::RewindableAudioStream *> streams, DisposeAfterUse::Flag disposeAfterUse)
 		: _rate(rate), _stereo(stereo), _finished(false), _streams(streams), _disposeAfterUse(disposeAfterUse) {
 		if (_streams.size() > 0)
 			_currentStream = _streams[NUVIE_RAND() % _streams.size()];
@@ -70,7 +71,7 @@ public:
 	~RandomCollectionAudioStreamImpl();
 
 	// Implement the AudioStream API
-	virtual int readBuffer(sint16 *buffer, const int numSamples);
+	virtual int readBuffer(int16 *buffer, const int numSamples);
 	virtual bool isStereo() const {
 		return _stereo;
 	}
@@ -98,7 +99,7 @@ RandomCollectionAudioStreamImpl::~RandomCollectionAudioStreamImpl() {
 	}
 }
 
-int RandomCollectionAudioStreamImpl::readBuffer(sint16 *buffer, const int numSamples) {
+int RandomCollectionAudioStreamImpl::readBuffer(int16 *buffer, const int numSamples) {
 	int samplesDecoded = 0;
 
 	if (_currentStream) {
@@ -109,8 +110,8 @@ int RandomCollectionAudioStreamImpl::readBuffer(sint16 *buffer, const int numSam
 				_currentStream->rewind();
 
 				//pseudo random we don't want to play the same stream twice in a row.
-				sint32 idx = NUVIE_RAND() % _streams.size();
-				RewindableAudioStream *tmp = _streams[idx];
+				int32 idx = NUVIE_RAND() % _streams.size();
+				Audio::RewindableAudioStream *tmp = _streams[idx];
 				if (_currentStream == tmp) {
 					idx = (idx + (NUVIE_RAND() % 1 == 1 ? 1 : _streams.size() - 1)) % _streams.size();
 					_currentStream = _streams[idx];
@@ -124,7 +125,8 @@ int RandomCollectionAudioStreamImpl::readBuffer(sint16 *buffer, const int numSam
 	return samplesDecoded;
 }
 
-RandomCollectionAudioStream *makeRandomCollectionAudioStream(int rate, bool stereo, std::vector<RewindableAudioStream *> streams, DisposeAfterUse::Flag disposeAfterUse) {
+RandomCollectionAudioStream *makeRandomCollectionAudioStream(int rate, bool stereo,
+		std::vector<Audio::RewindableAudioStream *> streams, DisposeAfterUse::Flag disposeAfterUse) {
 	return new RandomCollectionAudioStreamImpl(rate, stereo, streams, disposeAfterUse);
 }
 

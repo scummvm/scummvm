@@ -21,7 +21,7 @@
 #include "ultima/ultima6/sound/adplug/opl_class.h"
 #include "ultima/ultima6/sound/origin_fx_adib_driver.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "ultima/ultima6/sound/mixer/decoder/adlib_sfx_stream.h"
+#include "ultima/ultima6/sound/decoder/adlib_sfx_stream.h"
 
 namespace Ultima {
 namespace Ultima6 {

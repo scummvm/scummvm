@@ -23,6 +23,7 @@
 #ifndef ULTIMA6_SOUND_MIXER_RANDOM_COLLECTION_AUDIO_STREAM_H
 #define ULTIMA6_SOUND_MIXER_RANDOM_COLLECTION_AUDIO_STREAM_H
 
+#include "ultima/shared/std/containers.h"
 #include "audio/audiostream.h"
 
 namespace Ultima {
