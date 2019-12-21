@@ -7646,6 +7646,40 @@ static const uint16 phant1WineCaskHotspotPatch[] = {
 	PATCH_END
 };
 
+// The darkroom in the chapter 7 chase, room 45950, has a bug which deletes the
+//  chase history file and leaves the game in a state that can't be completed.
+//
+// Every action during the chase is written to chase.dat in order to support the
+//  review feature which plays back the entire sequence. rm45950:init tests
+//  several conditions to see how it should initialize the file. If a previous
+//  chase.dat exists and the current game was initially started in chapter 7
+//  then an unusual code path is taken which fails to clear flag 134. This flag
+//  tells the room that the chase is starting. Upon returning for the book with
+//  this flag incorrectly set, rm45950:init deletes chase.dat and all history is
+//  lost. Upon playback, items obtained prior to the darkroom will be skipped
+//  and become unobtainable, such as the glass shard.
+//
+// We fix this by clearing flag 134 in the unusual code path so that room 45950
+//  never tries to initialize the chase history upon returning.
+//
+// Applies to: All versions
+// Responsible method: rm45950:init
+static const uint16 phant1DeleteChaseFileSignature[] = {
+	0x32, SIG_UINT16(0x0148),       // jmp 0148 [ end of method ]
+	SIG_ADDTOOFFSET(+0x36),
+	0x78,                           // push1
+	0x38, SIG_MAGICDWORD,           // pushi 0086
+	      SIG_UINT16(0x0086),
+	0x45, 0x02, SIG_UINT16(0x0002), // callb proc0_2 [ clear flag 134 ]
+	0x32, SIG_UINT16(0x0107),       // jmp 0107 [ end of method ]
+	SIG_END
+};
+
+static const uint16 phant1DeleteChaseFilePatch[] = {
+	0x32, PATCH_UINT16(0x0036),     // jmp 0036 [ clear flag 134 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,    23, "make cursor red after clicking quit",         1, phant1RedQuitCursorSignature,    phant1RedQuitCursorPatch },
@@ -7653,6 +7687,7 @@ static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,  1111, "ignore audio settings from save game",        1, phant1SavedVolumeSignature,      phant1SavedVolumePatch },
 	{  true, 20200, "fix broken rat init in sEnterFromAlcove",     1, phant1RatSignature,              phant1RatPatch },
 	{  true, 20200, "fix chapter 5 wine cask hotspot",             1, phant1WineCaskHotspotSignature,  phant1WineCaskHotspotPatch },
+	{  true, 45950, "fix chase file deletion",                     1, phant1DeleteChaseFileSignature,  phant1DeleteChaseFilePatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
