@@ -20,7 +20,7 @@
  *
  */
 
-#include "opl.h"
+#include "ultima/ultima6/sound/adplug/opl.h"
 
 class CSilentopl: public Copl {
 public:

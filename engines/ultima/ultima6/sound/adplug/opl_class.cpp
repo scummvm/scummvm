@@ -20,13 +20,11 @@
  *
  */
 
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-//#include <stdarg.h>
-//#include <math.h>
-#include "OplClass.h"
+#include "ultima/ultima6/sound/adplug/opl_class.h"
+#include "common/scummsys.h"
 
+namespace Ultima {
+namespace Ultima6 {
 
 #ifndef PI
 #define PI 3.14159265358979323846
@@ -414,8 +412,6 @@ void OplClass::update(short *buf, int samples) {
 			}
 	} else {
 		short *tempbuf = new short[stereo ? samples * 2 : samples];
-		int i;
-
 		YM3812UpdateOne(0, tempbuf, samples);
 
 		if (stereo)
@@ -1235,36 +1231,36 @@ void OplClass::OPLWriteReg(FM_OPL *OPL, int r, int v) {
 			if (OPL->rhythm & 0x20) {
 				/* BD key on/off */
 				if (v & 0x10) {
-					FM_KEYON(&OPL->P_CH[6].SLOT[SLOT1], 2);
-					FM_KEYON(&OPL->P_CH[6].SLOT[SLOT2], 2);
+					FM_KEYON(&OPL->P_CH[6].SLOT[SLOT1], 2U);
+					FM_KEYON(&OPL->P_CH[6].SLOT[SLOT2], 2U);
 				} else {
-					FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT1], ~2);
-					FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT2], ~2);
+					FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT1], ~2U);
+					FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT2], ~2U);
 				}
 				/* HH key on/off */
-				if (v & 0x01) FM_KEYON(&OPL->P_CH[7].SLOT[SLOT1], 2);
-				else       FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT1], ~2);
+				if (v & 0x01) FM_KEYON(&OPL->P_CH[7].SLOT[SLOT1], 2U);
+				else       FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT1], ~2U);
 				/* SD key on/off */
-				if (v & 0x08) FM_KEYON(&OPL->P_CH[7].SLOT[SLOT2], 2);
-				else       FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT2], ~2);
+				if (v & 0x08) FM_KEYON(&OPL->P_CH[7].SLOT[SLOT2], 2U);
+				else       FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT2], ~2U);
 				/* TOM key on/off */
-				if (v & 0x04) FM_KEYON(&OPL->P_CH[8].SLOT[SLOT1], 2);
-				else       FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT1], ~2);
+				if (v & 0x04) FM_KEYON(&OPL->P_CH[8].SLOT[SLOT1], 2U);
+				else       FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT1], ~2U);
 				/* TOP-CY key on/off */
-				if (v & 0x02) FM_KEYON(&OPL->P_CH[8].SLOT[SLOT2], 2);
-				else       FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT2], ~2);
+				if (v & 0x02U) FM_KEYON(&OPL->P_CH[8].SLOT[SLOT2], 2U);
+				else       FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT2], ~2U);
 			} else {
 				/* BD key off */
-				FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT1], ~2);
-				FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT2], ~2);
+				FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT1], ~2U);
+				FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT2], ~2U);
 				/* HH key off */
-				FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT1], ~2);
+				FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT1], ~2U);
 				/* SD key off */
-				FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT2], ~2);
+				FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT2], ~2U);
 				/* TOM key off */
-				FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT1], ~2);
+				FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT1], ~2U);
 				/* TOP-CY off */
-				FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT2], ~2);
+				FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT2], ~2U);
 			}
 			return;
 		}
@@ -1279,11 +1275,11 @@ void OplClass::OPLWriteReg(FM_OPL *OPL, int r, int v) {
 			block_fnum = ((v & 0x1f) << 8) | (CH->block_fnum & 0xff);
 
 			if (v & 0x20) {
-				FM_KEYON(&CH->SLOT[SLOT1], 1);
-				FM_KEYON(&CH->SLOT[SLOT2], 1);
+				FM_KEYON(&CH->SLOT[SLOT1], 1U);
+				FM_KEYON(&CH->SLOT[SLOT2], 1U);
 			} else {
-				FM_KEYOFF(&CH->SLOT[SLOT1], ~1);
-				FM_KEYOFF(&CH->SLOT[SLOT2], ~1);
+				FM_KEYOFF(&CH->SLOT[SLOT1], ~1U);
+				FM_KEYOFF(&CH->SLOT[SLOT2], ~1U);
 			}
 		}
 		/* update */
@@ -1635,4 +1631,5 @@ void OplClass::YM3812UpdateOne(int which, INT16 *buffer, int length) {
 }
 #endif /* BUILD_YM3812 */
 
-
+} // End of namespace Ultima6
+} // End of namespace Ultima

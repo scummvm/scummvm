@@ -20,8 +20,11 @@
  *
  */
 
-#include "adplug_player.h"
-#include "silentopl.h"
+#include "ultima/ultima6/sound/adplug/adplug_player.h"
+#include "ultima/ultima6/sound/adplug/silent_opl.h"
+
+namespace Ultima {
+namespace Ultima6 {
 
 /***** CPlayer *****/
 
@@ -64,3 +67,6 @@ void CPlayer::seek(unsigned long ms) {
 	while (pos < ms && update())      // seek to new position
 		pos += 1000 / getrefresh();
 }
+
+} // End of namespace Ultima6
+} // End of namespace Ultima

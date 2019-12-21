@@ -20,20 +20,19 @@
  *
  */
 
-//#include <stdlib.h>
-//#include <stdio.h>
-//#include <math.h>
-//#include <string.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/files/u6_lib_n.h"
 #include "ultima/ultima6/core/game.h"
-#include "OriginFXAdLibDriver.h"
-#include "mid.h"
+#include "ultima/ultima6/sound/origin_fx_adib_driver.h"
+#include "ultima/ultima6/sound/adplug/mid.h"
+
+namespace Ultima {
+namespace Ultima6 {
 
 //#define TESTING
 #ifdef TESTING
-#define midiprintf printf
+#define midiprintf debug
 #else
 void CmidPlayer::midiprintf(const char *format, ...) {
 }
@@ -73,9 +72,9 @@ CmidPlayer::~CmidPlayer() {
 	delete origin_fx_driver;
 }
 
-unsigned char CmidPlayer::datalook(long pos) {
-	if (pos < 0 || pos >= flen) return (0);
-	return (data[pos]);
+unsigned char CmidPlayer::datalook(long pos_) {
+	if (pos_ < 0 || pos_ >= flen) return (0);
+	return (data[pos_]);
 }
 
 unsigned long CmidPlayer::getnexti(unsigned long num) {
@@ -224,7 +223,7 @@ bool CmidPlayer::update() {
 				//  This is to do implied MIDI events. aka 'Running Status'
 				if (v < 0x80) {
 					v = track[curtrack].pv;
-					printf("Running status [%2X]\n", (unsigned int)v);
+					debug("Running status [%2X]\n", (unsigned int)v);
 					pos--;
 				} else {
 					if (v >= 0xf0 && v < 0xf9) {
@@ -347,13 +346,13 @@ bool CmidPlayer::update() {
 						break;
 					case 0xfe:
 						i = getnext(1);
-						//printf("FE %02X pos=%d\n",i, (int)pos);//(unsigned int)getnext(1),(unsigned int)getnext(1));
+						//debug("FE %02X pos=%d\n",i, (int)pos);//(unsigned int)getnext(1),(unsigned int)getnext(1));
 						getnext(2);
 						if (i == 0) {
-							//printf(" %02X",(unsigned int)getnext(1));
+							//debug(" %02X",(unsigned int)getnext(1));
 							//getnext(1);
 						}
-						//printf("\n");
+						//debug("\n");
 						if (i != 3) {
 							origin_fx_driver->control_mode_change(c, 0x7b, 0);
 						}
@@ -374,12 +373,12 @@ bool CmidPlayer::update() {
 							for (i = 0; i < l; i++)
 								midiprintf("%c", (unsigned char)getnext(1));
 						} else if (v == 0x6) {
-							printf("Marker: ");
+							debug("Marker: ");
 							for (i = 0; i < l; i++) {
 								//midiprintf ("%c",(unsigned char)getnext(1));
-								printf("%c", (unsigned char)getnext(1));
+								debug("%c", (unsigned char)getnext(1));
 							}
-							printf("\n");
+							debug("\n");
 						} else {
 							for (i = 0; i < l; i++)
 								midiprintf("%2X ", (unsigned int)getnext(1));
@@ -416,12 +415,12 @@ bool CmidPlayer::update() {
 		        for(i=0;i<16;i++)
 		        {
 		            if(current_status[i] == 0)
-		                printf("--");
+		                debug("--");
 		            else
-		                printf("%02X", current_status[i]);
-		            printf(" ");
+		                debug("%02X", current_status[i]);
+		            debug(" ");
 		        }
-		        printf("\n");
+		        debug("\n");
 		*/
 		ret = 0; //end of song.
 		iwait = 0;
@@ -566,3 +565,6 @@ std::string CmidPlayer::gettype() {
 		return std::string("MIDI unknown");
 	}
 }
+
+} // End of namespace Ultima6
+} // End of namespace Ultima

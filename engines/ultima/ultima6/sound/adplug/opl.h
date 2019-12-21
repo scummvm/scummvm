@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef H_ADPLUG_OPL
-#define H_ADPLUG_OPL
+#ifndef ULTIMA6_SOUND_ADPLUG_OPL
+#define ULTIMA6_SOUND_ADPLUG_OPL
 
 class Copl {
 public:
