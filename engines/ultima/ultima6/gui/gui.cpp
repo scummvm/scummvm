@@ -246,8 +246,7 @@ GUI:: HandleEvent(Common::Event *event) {
 		}
 	}
 
-#if 0
-//if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (event->type == SDL_MOUSEBUTTONDOWN || event->type == SDL_MOUSEBUTTONUP) {
 		SDL_GetMouseState(&event->mouse.x, &event->mouse.y);
 		screen->scale_sdl_window_coords(&event->mouse.x, &event->mouse.y);

@@ -59,15 +59,15 @@ void FpsCounter::setFps(float fps) {
 }
 
 void FpsCounter::Display(bool full_redraw) {
-	Screen *screen = game->get_screen();
+	Screen *scr = game->get_screen();
 
 //    if(full_redraw || update_display || game->is_new_style())
 	{
 //        update_display = false;
-		screen->fill(0, area.left, area.top, area.width(), area.height());
-		font->drawString(screen, fps_string, area.left, area.top);
+		scr->fill(0, area.left, area.top, area.width(), area.height());
+		font->drawString(scr, fps_string, area.left, area.top);
 
-		screen->update(area.left, area.top, area.width(), area.height());
+		scr->update(area.left, area.top, area.width(), area.height());
 	}
 }
 

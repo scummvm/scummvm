@@ -867,7 +867,7 @@ void Party::rest_sleep(uint8 hours, sint16 guard) {
 }
 
 bool Party::can_rest(std::string &err_str) {
-	Map *map = game->get_game_map();
+	Map *map_ = game->get_game_map();
 	Player *player = game->get_player();
 	Actor *pActor = player->get_actor();
 	MapCoord loc = pActor->get_location();
@@ -905,7 +905,7 @@ bool Party::can_rest(std::string &err_str) {
 		delete all_actors;
 	} else if (!player->in_party_mode())
 		err_str = "-Not in solo mode!";
-	else if (!is_in_vehicle() && !map->is_passable(loc.x - 1, loc.y - 1, loc.x + 1, loc.y + 1, loc.z)
+	else if (!is_in_vehicle() && !map_->is_passable(loc.x - 1, loc.y - 1, loc.x + 1, loc.y + 1, loc.z)
 	         && Game::get_game()->get_game_type() != NUVIE_GAME_SE)
 		err_str = "-Not enough room!"; // FIXME: for ships the original checks all squares around the ship. Do we really need this?
 	else if (is_horsed())

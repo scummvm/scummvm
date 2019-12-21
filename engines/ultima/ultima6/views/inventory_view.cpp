@@ -658,8 +658,7 @@ GUI_status InventoryView::MouseWheel(sint32 x, sint32 y) {
 
 	xpos -= area.left;
 	ypos -= area.top;
-#if 0
-	//if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool wheel_range = (xpos >= 0 && ypos < area.top + area.height() - 6);
 #else
 	bool wheel_range = (xpos < 64 || ypos > 78);

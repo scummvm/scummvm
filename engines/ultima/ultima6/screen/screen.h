@@ -44,8 +44,7 @@ class Screen {
 	Configuration *config;
 	Graphics::ManagedSurface *sdl_surface;
 	RenderSurface *surface;
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_Window *sdlWindow;
 	SDL_Renderer *sdlRenderer;
 	SDL_Texture *sdlTexture;
@@ -165,8 +164,7 @@ public:
 
 	void get_mouse_location(sint32 *x, sint32 *y);
 
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	void scale_sdl_window_coords(sint32 *x, sint32 *y);
 #endif
 
@@ -205,16 +203,14 @@ protected:
 	void set_screen_mode();
 	bool try_scaler(int w, int h, uint32 flags, int hwdepth);
 
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool SDL_VideoModeOK(int scaled_width, int scaled_height, int bbp, int flags);
 #endif
 
 private:
 	int get_screen_bpp();
 
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool init_sdl2_window(uint16 scale);
 	bool create_sdl_surface_and_texture(sint32 w, sint32 h, uint32 format);
 #else

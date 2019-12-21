@@ -78,7 +78,6 @@ bool VideoDialog::init() {
 	only2x_button = NULL;
 	scale_button = scaler_button = scale_win_button = scaler_win_button = NULL;
 
-	//if SDL_VERSION_ATLEAST(2, 0, 0)
 	no_fullscreen = false;
 
 #else

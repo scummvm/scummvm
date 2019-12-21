@@ -28,6 +28,8 @@
 namespace Ultima {
 namespace Ultima6 {
 
+Events *Events::g_events;
+
 Events::Events() : _buttonsDown(0) {
 	g_events = this;
 }
@@ -47,10 +49,15 @@ void Events::setButtonDown(MouseButton button, bool isDown) {
 
 bool Events::pollEvent(Common::Event &event) {
 	if (g_system->getEventManager()->pollEvent(event)) {
-		if (isMouseDownEvent(event.type))
+		if (isMouseDownEvent(event.type)) {
 			setButtonDown(whichButton(event.type), true);
-		else if (isMouseUpEvent(event.type))
+			_mousePos = event.mouse;
+		} else if (isMouseUpEvent(event.type)) {
 			setButtonDown(whichButton(event.type), false);
+			_mousePos = event.mouse;
+		} else if (event.type == Common::EVENT_MOUSEMOVE) {
+			_mousePos = event.mouse;
+		}
 
 		return true;
 	}

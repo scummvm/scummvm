@@ -115,7 +115,7 @@ ObjManager::~ObjManager() {
 	for (i = 0; i < 5; i++)
 		iAVLFreeTree(dungeon[i], clean_obj_tree_node);
 
-	for (uint16 i = 0; i < 256; i++) {
+	for (i = 0; i < 256; i++) {
 		if (actor_inventories[i]) {
 			delete actor_inventories[i];
 		}
@@ -1445,17 +1445,19 @@ inline bool ObjManager::is_corpse(Obj *obj) {
 			break;
 		}
 	} else if (game_type == NUVIE_GAME_SE) {
+		/* TODO - add SE body obj numbers
 		switch (obj->obj_n) {
-		// TODO - add SE body obj numbers
 		default:
 			break;
 		}
+		*/
 	} else { // MD
+		/* TODO - add MD body obj numbers
 		switch (obj->obj_n) {
-		// TODO - add MD body obj numbers
 		default:
 			break;
 		}
+		*/
 	}
 	return false;
 }

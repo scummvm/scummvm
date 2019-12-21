@@ -95,7 +95,7 @@ int SDL_SetColorKey(Graphics::ManagedSurface *surface, int flag, uint32 key) {
 	return 0;
 }
 
-int SDL_SetColors(Graphics::ManagedSurface *surface, const byte *colors, int firstcolor, int ncolors) {
+int SDL_SetColors(Graphics::ManagedSurface *surface, SDL_Color *colors, int firstcolor, int ncolors) {
 	surface->setPalette(colors, firstcolor, ncolors);
 	return 0;
 }
@@ -120,8 +120,10 @@ int SDL_UnlockSurface(Graphics::ManagedSurface *surface) {
 
 Graphics::ManagedSurface *SDL_ConvertSurface(Graphics::ManagedSurface *src,
 		const Graphics::PixelFormat &fmt, uint32 flags) {
-	::error("TODO: SDL_ConvertSurface");
-	return nullptr;
+	Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(src->w, src->h, fmt);
+	dest->blitFrom(*src);
+
+	return dest;
 }
 
 } // End of namespace Ultima6
