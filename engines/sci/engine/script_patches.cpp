@@ -7680,6 +7680,57 @@ static const uint16 phant1DeleteChaseFilePatch[] = {
 	PATCH_END
 };
 
+// Quitting ScummVM, returning to the launcher, or terminating the game in any
+//  way outside of the game's menus during the chapter 7 chase leaves the saved
+//  game in a broken state which will crash ScummVM when loaded. The chase was
+//  programmed with the expectation that it could never end under unexpected
+//  circumstances, which is a bold stance for a Sierra game.
+//
+// Each saved game consists of the file phantsg.#, and once the chase beings, an
+//  additional chase file that records all actions for playback. This is named
+//  chase.dat when the chase is running and chasedun.# when it isn't. The file
+//  is renamed when transitioning to and from the main menu. The existence of
+//  chasedun.# tells the main menu that it should put the game in the chapter 7
+//  section. All of this depends on the chase formally ending through scripts
+//  that can restore the file name. If the game terminates without this cleanup
+//  then the chase file is never renamed and can't be associated with its slot.
+//  The save will then be incorrectly demoted to a non-chapter 7 save. Upon
+//  attempting to load this broken save, a chase script will attempt to play the
+//  missing chase.dat, seek beyond the beginning, and fail an assertion in a
+//  stream class. This never picks up the chase.dat from the previous run due to
+//  a startup script which deletes stray chase.dat files.
+//
+// We fix this by copying chasedun.# to chase.dat instead of renaming it. This
+//  leaves the original file intact along with phantsg.# in case the game
+//  terminates without the scripts getting a chance to cleanup the file system.
+//  This patch is currently the only known caller of kFileIOCopy.
+//
+// Applies to: All versions
+// Responsible method: Exported procedure #6 in script 45951
+static const uint16 phant1CopyChaseFileSignature[] = {
+	0x39, 0x03,                     // pushi 03
+	0x39, 0x0b,                     // pushi 0b [ kFileIORename ]
+	0x39, SIG_SELECTOR8(data),      // pushi data
+	0x76,                           // push0
+	0x85, 0x00,                     // lat 00
+	0x4a, SIG_UINT16(0x0004),       // send 04 [ temp0 data? ]
+	0x36,                           // push    [ "chasedun.#" ]
+	0x39, SIG_MAGICDWORD,           // pushi data
+	      SIG_SELECTOR8(data),
+	0x76,                           // push0
+	0x85, 0x02,                     // lat 02
+	0x4a, SIG_UINT16(0x0004),       // send 04 [ temp2 data? ]
+	0x36,                           // push    [ "chase.dat" ]
+    0x43, 0x5d, SIG_UINT16(0x0006), // callk FileIO 06
+	SIG_END
+};
+
+static const uint16 phant1CopyChaseFilePatch[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x39, 0x0c,                     // pushi 0c [ kFileIOCopy ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,    23, "make cursor red after clicking quit",         1, phant1RedQuitCursorSignature,    phant1RedQuitCursorPatch },
@@ -7688,6 +7739,7 @@ static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true, 20200, "fix broken rat init in sEnterFromAlcove",     1, phant1RatSignature,              phant1RatPatch },
 	{  true, 20200, "fix chapter 5 wine cask hotspot",             1, phant1WineCaskHotspotSignature,  phant1WineCaskHotspotPatch },
 	{  true, 45950, "fix chase file deletion",                     1, phant1DeleteChaseFileSignature,  phant1DeleteChaseFilePatch },
+	{  true, 45951, "copy chase file instead of rename",           1, phant1CopyChaseFileSignature,    phant1CopyChaseFilePatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
