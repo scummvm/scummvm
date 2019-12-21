@@ -25,7 +25,6 @@
 #ifndef ULTIMA6_GUI_GUI_H
 #define ULTIMA6_GUI_GUI_H
 
-
 #include "ultima/ultima6/gui/gui_status.h"
 #include "ultima/ultima6/gui/gui_drag_manager.h"
 #include "ultima/ultima6/gui/gui_widget.h"

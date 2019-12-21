@@ -312,7 +312,7 @@ void GameMapGump::OnMouseClick(int button, int mx, int my) {
 	case BUTTON_LEFT: {
 		if (avatar->isInCombat()) break;
 
-		if (Mouse::get_instance()->isMouseDown(BUTTON_RIGHT)) break;
+		if (Mouse::get_instance()->isMouseDownEvent(BUTTON_RIGHT)) break;
 
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << std::endl;
@@ -380,7 +380,7 @@ void GameMapGump::OnMouseDouble(int button, int mx, int my) {
 	case BUTTON_LEFT: {
 		if (avatar->isInCombat()) break;
 
-		if (Mouse::get_instance()->isMouseDown(BUTTON_RIGHT)) break;
+		if (Mouse::get_instance()->isMouseDownEvent(BUTTON_RIGHT)) break;
 
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << std::endl;

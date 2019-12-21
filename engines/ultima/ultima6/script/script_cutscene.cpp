@@ -992,7 +992,7 @@ static int nscript_input_poll(lua_State *L) {
 	else
 		poll_mouse_motion = lua_toboolean(L, 1);
 	
-	while (g_system->getEventManager()->pollEvent(event)) {
+	while (Events::get()->pollEvent(event)) {
 		//FIXME do something here.
 		KeyBinder *keybinder = Game::get_game()->get_keybinder();
 #ifdef HAVE_JOYSTICK_SUPPORT

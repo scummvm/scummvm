@@ -26,8 +26,8 @@
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_widget.h"
-#include "ultima/ultima6/gui/gui_ScrollBar.h"
-#include "ultima/ultima6/gui/gui_Scroller.h"
+#include "ultima/ultima6/gui/gui_scroll_bar.h"
+#include "ultima/ultima6/gui/gui_scroller.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -106,7 +106,7 @@ void GUI_Scroller:: Display(bool full_redraw) {
 	Common::Rect framerect;
 
 	framerect = area;
-	framerect.w -= SCROLLBAR_WIDTH;
+	framerect.right -= SCROLLBAR_WIDTH;
 
 	SDL_FillRect(surface, &framerect, bg_color);
 

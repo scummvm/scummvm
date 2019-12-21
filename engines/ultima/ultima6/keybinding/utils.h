@@ -23,21 +23,18 @@
 #ifndef ULTIMA6_KEYBINDING_UTILS_H
 #define ULTIMA6_KEYBINDING_UTILS_H
 
-//#include <fstream>
 #include "ultima/shared/std/string.h" // exception handling include
+#include "common/stream.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-bool openFile
-(
-    Common::ReadStream *in,          // Input stream to open.
-    const char *fname           // May be converted to upper-case.
+bool openFile(
+    Common::ReadStream *&in,    // Input stream to open.
+    const char *fname           // Filename
 );
 
-bool fileExists(
-    const char *fname
-);
+extern bool fileExists(const char *fname);
 
 /*
  *  File errors

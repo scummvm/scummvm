@@ -236,24 +236,21 @@ GUI:: HandleEvent(Common::Event *event) {
 	GUI_status status = GUI_PASS;
 
 	if (screen_scale_factor != 1) {
-		if (event->type == SDL_MOUSEBUTTONDOWN || event->type == SDL_MOUSEBUTTONUP) {
-			event->button.x /= screen_scale_factor;
-			event->button.y /= screen_scale_factor;
+		if (isMouseDownEvent(event->type) || isMouseUpEvent(event->type)) {
+			event->mouse.x /= screen_scale_factor;
+			event->mouse.y /= screen_scale_factor;
 		}
-		if (event->type == SDL_MOUSEMOTION) {
-			event->motion.x /= screen_scale_factor;
-			event->motion.y /= screen_scale_factor;
-
-			event->motion.xrel /= screen_scale_factor;
-			event->motion.yrel /= screen_scale_factor;
-
+		if (event->type == Common::EVENT_MOUSEMOVE) {
+			event->mouse.x /= screen_scale_factor;
+			event->mouse.y /= screen_scale_factor;
 		}
 	}
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if 0
+//if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (event->type == SDL_MOUSEBUTTONDOWN || event->type == SDL_MOUSEBUTTONUP) {
-		SDL_GetMouseState(&event->button.x, &event->button.y);
-		screen->scale_sdl_window_coords(&event->button.x, &event->button.y);
+		SDL_GetMouseState(&event->mouse.x, &event->mouse.y);
+		screen->scale_sdl_window_coords(&event->mouse.x, &event->mouse.y);
 	}
 	if (event->type == SDL_MOUSEMOTION) {
 		SDL_GetMouseState(&event->motion.x, &event->motion.y);
@@ -262,10 +259,10 @@ GUI:: HandleEvent(Common::Event *event) {
 #endif
 
 	if (dragging) { //&& !block_input)
-		if (event->type == SDL_MOUSEBUTTONUP) { //FIX for button up that doesn't hit a widget.
+		if (isMouseUpEvent(event->type)) { //FIX for button up that doesn't hit a widget.
 			for (hit = false, i = numwidgets - 1; (i >= 0) && (hit == false); --i) {
-				if (widgets[i]->Status() == WIDGET_VISIBLE && widgets[i]->is_drop_target() && widgets[i]->HitRect(event->button.x, event->button.y)) {
-					gui_drag_manager->drop((GUI_DragArea *)widgets[i], event->button.x, event->button.y);
+				if (widgets[i]->Status() == WIDGET_VISIBLE && widgets[i]->is_drop_target() && widgets[i]->HitRect(event->mouse.x, event->mouse.y)) {
+					gui_drag_manager->drop((GUI_DragArea *)widgets[i], event->mouse.x, event->mouse.y);
 					dragging = false;
 					Display(); // redraw the widget to get rid of the drop graphic.
 					break;
@@ -293,14 +290,17 @@ GUI:: HandleEvent(Common::Event *event) {
 
 		/* Keyboard and mouse events go to widgets */
 
-		case SDL_MOUSEMOTION:
-		case SDL_MOUSEBUTTONDOWN:
-		case SDL_MOUSEBUTTONUP:
-		case SDL_KEYDOWN:
-		case SDL_KEYUP:
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		case SDL_MOUSEWHEEL:
-#endif
+		case Common::EVENT_MOUSEMOVE:
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_MBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
+		case Common::EVENT_MBUTTONUP:
+		case Common::EVENT_KEYDOWN:
+		case Common::EVENT_KEYUP:
+		case Common::EVENT_WHEELDOWN:
+		case Common::EVENT_WHEELUP:
 //			 /* Go through widgets, topmost first */
 //			 status = GUI_PASS;
 //			 for (i=numwidgets-1; (i>=0)&&(status==GUI_PASS); --i) {

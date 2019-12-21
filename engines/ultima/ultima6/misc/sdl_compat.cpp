@@ -20,14 +20,17 @@
  *
  */
 
-#ifndef ULTIMA6_MISC_SDL_COMPAT_H
-#define ULTIMA6_MISC_SDL_COMPAT_H
-
+#include "ultima/ultima6/misc/sdl_compat.h"
+#include "ultima/ultima6/core/events.h"
 #include "common/system.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "graphics/managed_surface.h"
 #include "image/bmp.h"
+
+namespace Ultima {
+namespace Ultima6 {
 
 uint32 SDL_GetTicks() {
 	return g_system->getMillis();
@@ -87,32 +90,39 @@ Graphics::ManagedSurface *SDL_LoadBMP(const char *filename) {
 	return dest;
 }
 
-#if 0
-#define Common::KEYCODE_UNKNOWN Common::KEYCODE_LAST
-#define Common::KeyCode SDLKey
-#define SDL_Keymod SDLMod
-#define Common::KeyState SDL_keysym
-#define Common::KBD_GUI Common::KBD_META
-#define SDL_JoystickNameForIndex SDL_JoystickName
-#define SDL_Window void
-#define SDL_Renderer void
-#define SDL_Texture void
+int SDL_SetColorKey(Graphics::ManagedSurface *surface, int flag, uint32 key) {
+	surface->setTransparentColor(key);
+	return 0;
+}
 
-#define Common::KEYCODE_KP_0 Common::KEYCODE_KP0
-#define Common::KEYCODE_KP_1 Common::KEYCODE_KP1
-#define Common::KEYCODE_KP_2 Common::KEYCODE_KP2
-#define Common::KEYCODE_KP_3 Common::KEYCODE_KP3
-#define Common::KEYCODE_KP_4 Common::KEYCODE_KP4
-#define Common::KEYCODE_KP_5 Common::KEYCODE_KP5
-#define Common::KEYCODE_KP_6 Common::KEYCODE_KP6
-#define Common::KEYCODE_KP_7 Common::KEYCODE_KP7
-#define Common::KEYCODE_KP_8 Common::KEYCODE_KP8
-#define Common::KEYCODE_KP_9 Common::KEYCODE_KP9
+int SDL_SetColors(Graphics::ManagedSurface *surface, const byte *colors, int firstcolor, int ncolors) {
+	surface->setPalette(colors, firstcolor, ncolors);
+	return 0;
+}
 
-#define SDL_CreateThread(x, y, z) SDL_CreateThread(x, z)
+int SDL_WaitEvent(Common::Event *event) {
+	while (!Events::get()->pollEvent(*event))
+		g_system->delayMillis(5);
+	return 0;
+}
 
-#define SDL_TRUE SDL_SRCCOLORKEY
-#else
+int SDL_PollEvent(Common::Event *event) {
+	return Events::get()->pollEvent(*event);
+}
 
-#endif
-#endif
+int SDL_LockSurface(Graphics::ManagedSurface *surface) {
+	return 0;
+}
+
+int SDL_UnlockSurface(Graphics::ManagedSurface *surface) {
+	return 0;
+}
+
+Graphics::ManagedSurface *SDL_ConvertSurface(Graphics::ManagedSurface *src,
+		const Graphics::PixelFormat &fmt, uint32 flags) {
+	::error("TODO: SDL_ConvertSurface");
+	return nullptr;
+}
+
+} // End of namespace Ultima6
+} // End of namespace Ultima

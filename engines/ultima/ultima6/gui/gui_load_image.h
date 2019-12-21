@@ -23,6 +23,8 @@
 #ifndef ULTIMA6_GUI_GUI_LOAD_IMAGE_H
 #define ULTIMA6_GUI_GUI_LOAD_IMAGE_H
 
+#include "graphics/managed_surface.h"
+
 namespace Ultima {
 namespace Ultima6 {
 

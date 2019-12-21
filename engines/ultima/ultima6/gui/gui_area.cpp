@@ -78,18 +78,18 @@ void GUI_Area::Display(bool full_redraw) {
 		y0 = area.top + r2;
 		for (x = area.left; x < area.left + area.width(); x++) {
 			dy = (int)((double) r2 * sin(acos((double)(x - x0) / (double) r1)));
-			framerect.x = x;
-			framerect.y = y0 - dy;
-			framerect.w = 1;
-			framerect.h = dy << 1;
+			framerect.left = x;
+			framerect.top = y0 - dy;
+			framerect.setWidth(1);
+			framerect.setHeight(dy << 1);
 			SDL_FillRect(surface, &framerect, color);
 			if (useFrame) {
 				if ((x == area.left) || (x == area.left + area.width() - 1)) {
 					SDL_FillRect(surface, &framerect, frameColor);
 				}
-				framerect.h = frameThickness;
+				framerect.setHeight(frameThickness);
 				SDL_FillRect(surface, &framerect, frameColor);
-				framerect.y = y0 + dy - frameThickness;
+				framerect.top = y0 + dy - frameThickness;
 				SDL_FillRect(surface, &framerect, frameColor);
 			}
 		}
@@ -113,18 +113,18 @@ void GUI_Area::Display(bool full_redraw) {
 		/* draw frame */
 		if (useFrame) {
 			framerect = area;
-			framerect.h = frameThickness;
+			framerect.setHeight(frameThickness);
 			SDL_FillRect(surface, &framerect, frameColor);
 			framerect = area;
-			framerect.h = frameThickness;
-			framerect.y += area.height() - frameThickness;
+			framerect.setHeight(frameThickness);
+			framerect.top += area.height() - frameThickness;
 			SDL_FillRect(surface, &framerect, frameColor);
 			framerect = area;
-			framerect.w = frameThickness;
+			framerect.setWidth(frameThickness);
 			SDL_FillRect(surface, &framerect, frameColor);
 			framerect = area;
-			framerect.w = frameThickness;
-			framerect.x += area.width() - frameThickness;
+			framerect.setWidth(frameThickness);
+			framerect.left += area.width() - frameThickness;
 			SDL_FillRect(surface, &framerect, frameColor);
 		}
 		break;

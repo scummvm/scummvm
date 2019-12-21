@@ -135,7 +135,7 @@ public:
 	//! set current mouse cursor location
 	void setMouseCoords(int mx, int my);
 
-	bool isMouseDown(MouseButton button);
+	bool isMouseDownEvent(MouseButton button);
 
 	//! remove all existing cursors
 	void popAllCursors();

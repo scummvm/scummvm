@@ -26,7 +26,7 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/gui/gui_button.h"
-#include "ultima/ultima6/gui/gui_loadimage.h"
+#include "ultima/ultima6/gui/gui_load_image.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -130,9 +130,9 @@ void GUI_Button::ChangeTextButton(int x, int y, int w, int h, const char *text, 
 	if (y >= 0)
 		area.top = y;
 	if (w >= 0)
-		area.width() = w;
+		area.setWidth(w);
 	if (h >= 0)
-		area.height() = h;
+		area.setHeight(h);
 
 	if (freebutton) {
 		if (button)
@@ -170,24 +170,24 @@ void GUI_Button:: Display(bool full_redraw) {
 		      }
 		*/
 
-		src.x = 8 - (checked * 8);
-		src.y = 0;
-		src.w = 8;
-		src.h = 10;
-		dest.x += 4;
-		dest.y += 4;
-		dest.w = 8;
-		dest.h = 10;
+		src.left = 8 - (checked * 8);
+		src.top = 0;
+		src.setWidth(8);
+		src.setHeight(10);
+		dest.left += 4;
+		dest.top += 4;
+		dest.setWidth(8);
+		dest.setHeight(10);
 		SDL_BlitSurface(checkmarks, &src, surface, &dest);
 	}
 	if (!enabled) {
 		uint8 *pointer;
 		int pixel = SDL_MapRGB(surface->format, 0, 0, 0);;
-		uint8 bytepp = surface->format->BytesPerPixel;
+		uint8 bytepp = surface->format.bytesPerPixel;
 
 		if (!SDL_LockSurface(surface)) {
 			for (int y = 0; y < area.height(); y += 2) {
-				pointer = (uint8 *)surface->pixels + surface->pitch * (area.top + y) + (area.left * bytepp);
+				pointer = (uint8 *)surface->getPixels() + surface->pitch * (area.top + y) + (area.left * bytepp);
 				for (int x = 0; x<area.width() >> 1; x++) {
 					switch (bytepp) {
 					case 1:
@@ -195,18 +195,18 @@ void GUI_Button:: Display(bool full_redraw) {
 						pointer += 2;
 						break;
 					case 2:
-						*((Uint16 *)(pointer)) = (Uint16)pixel;
+						*((uint16 *)(pointer)) = (uint16)pixel;
 						pointer += 4;
 						break;
 					case 3:  /* Format/endian independent */
 						uint8 r, g, b;
 
-						r = (pixel >> surface->format->Rshift) & 0xFF;
-						g = (pixel >> surface->format->Gshift) & 0xFF;
-						b = (pixel >> surface->format->Bshift) & 0xFF;
-						*((pointer) + surface->format->Rshift / 8) = r;
-						*((pointer) + surface->format->Gshift / 8) = g;
-						*((pointer) + surface->format->Bshift / 8) = b;
+						r = (pixel >> surface->format.rShift) & 0xFF;
+						g = (pixel >> surface->format.gShift) & 0xFF;
+						b = (pixel >> surface->format.bShift) & 0xFF;
+						*((pointer) + surface->format.rShift / 8) = r;
+						*((pointer) + surface->format.gShift / 8) = g;
+						*((pointer) + surface->format.bShift / 8) = b;
 						pointer += 6;
 						break;
 					case 4:
@@ -224,27 +224,27 @@ void GUI_Button:: Display(bool full_redraw) {
 }
 
 /* Mouse hits activate us */
-GUI_status GUI_Button:: MouseDown(int x, int y, MouseButton button) {
-//	if(button == SDL_BUTTON_WHEELUP || button == SDL_BUTTON_WHEELDOWN)
+GUI_status GUI_Button:: MouseDown(int x, int y, MouseButton btn) {
+//	if(btn == SDL_BUTTON_WHEELUP || btn == SDL_BUTTON_WHEELDOWN)
 //	  return GUI_PASS;
-	if (enabled && (button == 1 || button == 3)) {
+	if (enabled && (btn == BUTTON_LEFT || btn == BUTTON_RIGHT)) {
 		pressed[0] = 1;
 		Redraw();
 	}
 	return GUI_YUM;
 }
 
-GUI_status GUI_Button::MouseUp(int x, int y, MouseButton button) {
-//	if (button==SDL_BUTTON_WHEELUP || button==SDL_BUTTON_WHEELDOWN)
+GUI_status GUI_Button::MouseUp(int x, int y, MouseButton btn) {
+//	if (btn==SDL_BUTTON_WHEELUP || btn==SDL_BUTTON_WHEELDOWN)
 //		return GUI_PASS;
-	if ((button == 1 || button == 3) && (pressed[0])) {
+	if ((btn == BUTTON_LEFT || btn == BUTTON_RIGHT) && (pressed[0])) {
 		pressed[0] = 0;
-		return Activate_button(x, y, button);
+		return Activate_button(x, y, btn);
 	}
 	return GUI_YUM;
 }
 
-GUI_status GUI_Button::Activate_button(int x, int y, MouseButton button) {
+GUI_status GUI_Button::Activate_button(int x, int y, MouseButton btn) {
 	if (x >= 0 && y >= 0) {
 		if (callback_object && callback_object->callback(BUTTON_CB, this, widget_data) == GUI_QUIT)
 			return GUI_QUIT;
@@ -281,12 +281,11 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 	int tx = 0, ty = 0;
 	char *duptext = 0;
 
-//  Graphics::ManagedSurface *img=SDL_AllocSurface(SDL_SWSURFACE,area.width(),area.height(),
-//				    16,31 << 11,63 << 5,31,0);
-	Graphics::ManagedSurface *img = SDL_CreateRGBSurface(SDL_SWSURFACE, area.width(), area.height(),
-	                                        16, 31 << 11, 63 << 5, 31, 0);
+	Graphics::ManagedSurface *img = new Graphics::ManagedSurface(area.width(), area.height(),
+		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 
-	if (img == NULL) return NULL;
+	if (img == NULL)
+		return NULL;
 
 	uint32 color1 = SDL_MapRGB(img->format, BL_R, BL_G, BL_B);
 	uint32 color2 = SDL_MapRGB(img->format, BS_R, BS_G, BS_B);
@@ -323,54 +322,54 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 
 	switch (style) {
 	case BUTTON3D_UP:
-		fillrect.x = 0;
-		fillrect.y = 0;
-		fillrect.w = area.width();
-		fillrect.h = 2;
+		fillrect.left = 0;
+		fillrect.top = 0;
+		fillrect.setWidth(area.width());
+		fillrect.setHeight(2);
 		SDL_FillRect(img, &fillrect, color1);
-		fillrect.y = area.height() - 2;
+		fillrect.top = area.height() - 2;
 		SDL_FillRect(img, &fillrect, color2);
-		fillrect.x = 0;
-		fillrect.y = 0;
-		fillrect.w = 2;
-		fillrect.h = area.height();
+		fillrect.left = 0;
+		fillrect.top = 0;
+		fillrect.setWidth(2);
+		fillrect.setHeight(area.height());
 		SDL_FillRect(img, &fillrect, color1);
-		fillrect.x = area.width() - 2;
+		fillrect.left = area.width() - 2;
 		SDL_FillRect(img, &fillrect, color2);
-		fillrect.h = 1;
-		fillrect.w = 1;
+		fillrect.setHeight(1);
+		fillrect.setWidth(1);
 		SDL_FillRect(img, &fillrect, color1);
-		fillrect.x = 1;
-		fillrect.y = area.height() - 1;
+		fillrect.left = 1;
+		fillrect.top = area.height() - 1;
 		SDL_FillRect(img, &fillrect, color2);
-		fillrect.x = 2;
-		fillrect.y = 2;
-		fillrect.w = area.width() - 4;
-		fillrect.h = area.height() - 4;
+		fillrect.left = 2;
+		fillrect.top = 2;
+		fillrect.setWidth(area.width() - 4);
+		fillrect.setHeight(area.height() - 4);
 		SDL_FillRect(img, &fillrect, color3);
 		buttonFont->TextOut(img, tx, ty, text);
 		break;
 	case BUTTON3D_DOWN:
-		fillrect.x = 0;
-		fillrect.y = 0;
-		fillrect.w = area.width();
-		fillrect.h = area.height();
+		fillrect.left = 0;
+		fillrect.top = 0;
+		fillrect.setWidth(area.width());
+		fillrect.setHeight(area.height());
 		SDL_FillRect(img, &fillrect, color3);
 		buttonFont->TextOut(img, tx + 1, ty + 1, text);
 		break;
 	case BUTTON2D_UP:
-		fillrect.x = 0;
-		fillrect.y = 0;
-		fillrect.w = area.width();
-		fillrect.h = area.height();
+		fillrect.left = 0;
+		fillrect.top = 0;
+		fillrect.setWidth(area.width());
+		fillrect.setHeight(area.height());
 		SDL_FillRect(img, &fillrect, color3);
 		buttonFont->TextOut(img, tx, ty, text);
 		break;
 	case BUTTON2D_DOWN:
-		fillrect.x = 0;
-		fillrect.y = 0;
-		fillrect.w = area.width();
-		fillrect.h = area.height();
+		fillrect.left = 0;
+		fillrect.top = 0;
+		fillrect.setWidth(area.width());
+		fillrect.setHeight(area.height());
 		SDL_FillRect(img, &fillrect, color4);
 		buttonFont->SetTransparency(0);
 		buttonFont->SetColoring(BI1_R, BI1_G, BI1_B, BI2_R, BI2_G, BI2_B);

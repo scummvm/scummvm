@@ -42,8 +42,8 @@ GUI_Dialog::GUI_Dialog(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, bo
 	button_x = button_y = 0;
 	old_x = old_y = -1;
 	backingstore = NULL;
-	backingstore_rect.w = w;
-	backingstore_rect.h = h;
+	backingstore_rect.setWidth(w);
+	backingstore_rect.setHeight(h);
 	loadBorderImages();
 }
 
@@ -87,11 +87,12 @@ GUI_Dialog:: Display(bool full_redraw) {
 	if (old_x != area.left || old_y != area.top) {
 		if (backingstore) {
 			screen->restore_area(backingstore, &backingstore_rect, NULL, NULL, false);
-			screen->update(backingstore_rect.x, backingstore_rect.y, backingstore_rect.w, backingstore_rect.h);
+			screen->update(backingstore_rect.left, backingstore_rect.top,
+				backingstore_rect.width(), backingstore_rect.height());
 		}
 
-		backingstore_rect.x = area.left; // cursor must be drawn LAST for this to work
-		backingstore_rect.y = area.top;
+		backingstore_rect.left = area.left; // cursor must be drawn LAST for this to work
+		backingstore_rect.top = area.top;
 
 		backingstore = screen->copy_area(&backingstore_rect, backingstore);
 
@@ -99,69 +100,67 @@ GUI_Dialog:: Display(bool full_redraw) {
 		old_y = area.top;
 	}
 
-	framerect.x = area.left + 8;
-	framerect.y = area.top + 8;
-	framerect.w = area.width() - 16;
-	framerect.h = area.height() - 16;
+	framerect = area;
+	framerect.grow(-8);
 	SDL_FillRect(surface, &framerect, bg_color);
 
 // Draw border corners
 
 	dst = area;
-	dst.w = 8;
-	dst.h = 8;
+	dst.setWidth(8);
+	dst.setHeight(8);
 	SDL_BlitSurface(border[0], NULL, surface, &dst);
 
-	dst.x = area.left + area.width() - 8;
-	dst.y = area.top;
-	dst.w = 8;
-	dst.h = 8;
+	dst.left = area.left + area.width() - 8;
+	dst.top = area.top;
+	dst.setWidth(8);
+	dst.setHeight(8);
 	SDL_BlitSurface(border[2], NULL, surface, &dst);
 
-	dst.x = area.left + area.width() - 8;
-	dst.y = area.top + area.height() - 8;
-	dst.w = 8;
-	dst.h = 8;
+	dst.left = area.left + area.width() - 8;
+	dst.top = area.top + area.height() - 8;
+	dst.setWidth(8);
+	dst.setHeight(8);
 	SDL_BlitSurface(border[4], NULL, surface, &dst);
 
-	dst.x = area.left;
-	dst.y = area.top + area.height() - 8;
-	dst.w = 8;
-	dst.h = 8;
+	dst.left = area.left;
+	dst.top = area.top + area.height() - 8;
+	dst.setWidth(8);
+	dst.setHeight(8);
 	SDL_BlitSurface(border[6], NULL, surface, &dst);
 
 // Draw top and bottom border lines
 
 	for (i = area.left + 8; i < area.left + area.width() - 24; i += 16) {
-		dst.x = i;
-		dst.y = area.top;
-		dst.w = 16;
-		dst.h = 8;
+		dst.left = i;
+		dst.top = area.top;
+		dst.setWidth(16);
+		dst.setHeight(8);
 		SDL_BlitSurface(border[1], NULL, surface, &dst);
 
-		dst.x = i;
-		dst.y = area.top + area.height() - 8;
-		dst.w = 16;
-		dst.h = 8;
+		dst.left = i;
+		dst.top = area.top + area.height() - 8;
+		dst.setWidth(16);
+		dst.setHeight(8);
 		SDL_BlitSurface(border[5], NULL, surface, &dst);
 	}
 
 	if (i < area.left + area.width() - 8) { // draw partial border images
-		src.x = 0;
-		src.y = 0;
-		src.w = area.left + area.width() - 8 - i;
-		src.h = 8;
+		src.left = 0;
+		src.top = 0;
+		src.setWidth(area.left + area.width() - 8 - i);
+		src.setHeight(8);
 
-		dst.x = i;
-		dst.y = area.top;
-		dst.w = src.w;
-		dst.h = 8;
+		dst.left = i;
+		dst.top = area.top;
+		dst.setWidth(src.width());
+		dst.setHeight(8);
 		SDL_BlitSurface(border[1], &src, surface, &dst);
 
-		dst.x = i;
-		dst.y = area.top + area.height() - 8;
-		dst.w = src.w;
-		dst.h = 8;
+		dst.left = i;
+		dst.top = area.top + area.height() - 8;
+		dst.setWidth(src.width());
+		dst.setHeight(8);
 		SDL_BlitSurface(border[5], &src, surface, &dst);
 	}
 
@@ -169,35 +168,35 @@ GUI_Dialog:: Display(bool full_redraw) {
 
 
 	for (i = area.top + 8; i < area.top + area.height() - 24; i += 16) {
-		dst.x = area.left;
-		dst.y = i;
-		dst.w = 8;
-		dst.h = 16;
+		dst.left = area.left;
+		dst.top = i;
+		dst.setWidth(8);
+		dst.setHeight(16);
 		SDL_BlitSurface(border[7], NULL, surface, &dst);
 
-		dst.x = area.left + area.width() - 8;
-		dst.y = i;
-		dst.w = 8;
-		dst.h = 16;
+		dst.left = area.left + area.width() - 8;
+		dst.top = i;
+		dst.setWidth(8);
+		dst.setHeight(16);
 		SDL_BlitSurface(border[3], NULL, surface, &dst);
 	}
 
 	if (i < area.top + area.height() - 8) { // draw partial border images
-		src.x = 0;
-		src.y = 0;
-		src.w = 8;
-		src.h = area.top + area.height() - 8 - i;
+		src.left = 0;
+		src.top = 0;
+		src.setWidth(8);
+		src.setHeight(area.top + area.height() - 8 - i);
 
-		dst.x = area.left;
-		dst.y = i;
-		dst.w = 8;
-		dst.h = src.h;
+		dst.left = area.left;
+		dst.top = i;
+		dst.setWidth(8);
+		dst.setHeight(src.height());
 		SDL_BlitSurface(border[7], &src, surface, &dst);
 
-		dst.x = area.left + area.width() - 8;
-		dst.y = i;
-		dst.w = 8;
-		dst.h = src.h;
+		dst.left = area.left + area.width() - 8;
+		dst.top = i;
+		dst.setWidth(8);
+		dst.setHeight(src.height());
 		SDL_BlitSurface(border[3], &src, surface, &dst);
 	}
 

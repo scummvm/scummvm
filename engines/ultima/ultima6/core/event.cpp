@@ -173,7 +173,7 @@ bool Event::update() {
 
 	// polled
 	Common::Event event;
-	while (g_system->getEventManager().pollEvent(&event)) {
+	while (Events::get()->pollEvent(&event)) {
 		idle = false;
 		switch (gui->HandleEvent(&event)) {
 		case GUI_PASS :
