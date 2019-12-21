@@ -411,14 +411,14 @@ GUI_status VideoDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 #endif /* !SCALER_AND_SCALE_CANNOT_BE_CHANGED */
 	} else if (caller == (GUI_CallBack *)save_button) {
 		Game *game = Game::get_game();
-		Screen *screen = Game::get_game()->get_screen();
+		Screen *scr = Game::get_game()->get_screen();
 		Configuration *config = Game::get_game()->get_config();
-		bool fullscreen = fullscreen_button ? fullscreen_button->GetSelection() : screen->is_fullscreen();
+		bool fullscreen = fullscreen_button ? fullscreen_button->GetSelection() : scr->is_fullscreen();
 #if SCALER_AND_SCALE_CANNOT_BE_CHANGED
-		if (fullscreen != screen->is_fullscreen())
-			screen->toggle_fullscreen();
+		if (fullscreen != scr->is_fullscreen())
+			scr->toggle_fullscreen();
 		bool non_square_pixels = non_square_pixels_button ? (bool)non_square_pixels_button->GetSelection() : false;
-		screen->set_non_square_pixels(non_square_pixels);
+		scr->set_non_square_pixels(non_square_pixels);
 #else
 		// scaler
 		int scaler;
@@ -426,7 +426,7 @@ GUI_status VideoDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 			scaler = scaler_button->GetSelection();
 		else
 			scaler = scaler_win_button->GetSelection();
-		config->set("config/video/scale_method", screen->get_scaler_reg()->GetNameForIndex(scaler));
+		config->set("config/video/scale_method", scr->get_scaler_reg()->GetNameForIndex(scaler));
 		// scale
 		int scale;
 		if (fullscreen)
@@ -454,7 +454,7 @@ GUI_status VideoDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 				iv->set_party_member(iv->get_party_member_num());
 		}
 		// tile_lighting_b
-		if (old_use_tile_lighting != tile_lighting_b->GetSelection()) {
+		if (old_use_tile_lighting != (bool)tile_lighting_b->GetSelection()) {
 			config->set(config_get_game_key(config) + "/map_tile_lighting", tile_lighting_b->GetSelection() ? "yes" : "no");
 			game->get_map_window()->using_map_tile_lighting = tile_lighting_b->GetSelection() == 1;
 			game->get_map_window()->updateAmbience();
