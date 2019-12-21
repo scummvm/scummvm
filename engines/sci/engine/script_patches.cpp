@@ -7731,6 +7731,45 @@ static const uint16 phant1CopyChaseFilePatch[] = {
 	PATCH_END
 };
 
+// During the chase, the west exit in room 46980 has incorrect logic which kills
+//  the player if they went to the crypt with the crucifix, among other bugs.
+//
+// Room 46980 takes place in the chapel and connects the secret passages to the
+//  crypt. The player initially enters from the west and the crypt is to the
+//  east. The west exit has incorrect logic with several consequences, but the
+//  harshest is that if the player came from the crypt without beads then Don is
+//  waiting for them. This is wrong because if the player has the crucifix then
+//  there are no beads in the game, and also because Don is still in the crypt
+//  where the player pushed a statue on him in the previous room.
+//
+// Sierra eventually fixed this by removing the beads from the equation and
+//  swapping the transposed previous room test, but the fix only appears in the
+//  Italian version, which was the final CD release. We replace the incorrect
+//  logic with Sierra's final version.
+//
+// Applies to: All versions except Italian
+// Responsible method: westExit:doVerb
+static const uint16 phant1ChapelWestExitSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(has),      // pushi has
+	0x78,                           // push1
+	0x39, 0x0f,                     // pushi 0f
+	0x81, 0x00,                     // lag 00
+	0x4a, SIG_UINT16(0x0006),       // send 06 [ ego has: 15 ]
+	0x2f, 0x06,                     // bt 06
+	0x89, 0x0c,                     // lsg 0c
+	0x34, SIG_UINT16(0xb680),       // ldi b680
+	0x1a,                           // eq? [ previous room == 46720 ]
+	SIG_END
+};
+
+static const uint16 phant1ChapelWestExitPatch[] = {
+	0x32, PATCH_UINT16(0x000a),     // jmp 000a [ skip inventory check ]
+	PATCH_ADDTOOFFSET(+15),
+	0x1c,                           // ne? [ previous room != 46720 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,    23, "make cursor red after clicking quit",         1, phant1RedQuitCursorSignature,    phant1RedQuitCursorPatch },
@@ -7740,6 +7779,7 @@ static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true, 20200, "fix chapter 5 wine cask hotspot",             1, phant1WineCaskHotspotSignature,  phant1WineCaskHotspotPatch },
 	{  true, 45950, "fix chase file deletion",                     1, phant1DeleteChaseFileSignature,  phant1DeleteChaseFilePatch },
 	{  true, 45951, "copy chase file instead of rename",           1, phant1CopyChaseFileSignature,    phant1CopyChaseFilePatch },
+	{  true, 46980, "fix chapel chase west exit",                  1, phant1ChapelWestExitSignature,   phant1ChapelWestExitPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
