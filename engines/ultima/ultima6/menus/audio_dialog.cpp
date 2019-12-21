@@ -22,7 +22,6 @@
 
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_types.h"
 #include "ultima/ultima6/gui/gui_button.h"
@@ -30,16 +29,14 @@
 #include "ultima/ultima6/gui/gui_text_toggle_button.h"
 #include "ultima/ultima6/gui/gui_callback.h"
 #include "ultima/ultima6/gui/gui_area.h"
-
-#include "ultima/ultima6/gui/gui_Dialog.h"
-#include "AudioDialog.h"
+#include "ultima/ultima6/gui/gui_dialog.h"
+#include "ultima/ultima6/menus/audio_dialog.h"
 #include "ultima/ultima6/sound/sound_manager.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/keybinding/keys.h"
 #include "ultima/ultima6/core/party.h"
 #include "ultima/ultima6/core/converse.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-//#include <math.h>
 
 namespace Ultima {
 namespace Ultima6 {
@@ -249,10 +246,10 @@ GUI_status AudioDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 			config->set("config/audio/sfx_volume", sfxVol);
 		}
 
-		if (music_button->GetSelection() != sm->is_music_enabled())
+		if ((bool)music_button->GetSelection() != sm->is_music_enabled())
 			sm->set_music_enabled(music_button->GetSelection());
 		config->set("config/audio/enable_music", music_button->GetSelection() ? "yes" : "no");
-		if (sfx_button->GetSelection() != sm->is_sfx_enabled())
+		if ((bool)sfx_button->GetSelection() != sm->is_sfx_enabled())
 			sm->set_sfx_enabled(sfx_button->GetSelection());
 
 		Party *party = Game::get_game()->get_party();
@@ -269,7 +266,7 @@ GUI_status AudioDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 		config->set("config/audio/stop_music_on_group_change", group_b->GetSelection() ? "yes" : "no");
 
 		config->set("config/audio/enable_sfx", sfx_button->GetSelection() ? "yes" : "no");
-		if (audio_button->GetSelection() != sm->is_audio_enabled())
+		if ((bool)audio_button->GetSelection() != sm->is_audio_enabled())
 			sm->set_audio_enabled(audio_button->GetSelection());
 		config->set("config/audio/enabled", audio_button->GetSelection() ? "yes" : "no");
 

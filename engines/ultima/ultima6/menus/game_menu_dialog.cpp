@@ -21,20 +21,18 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_types.h"
 #include "ultima/ultima6/gui/gui_button.h"
 #include "ultima/ultima6/gui/gui_callback.h"
 #include "ultima/ultima6/gui/gui_area.h"
-
-#include "ultima/ultima6/gui/gui_Dialog.h"
+#include "ultima/ultima6/gui/gui_dialog.h"
 #include "ultima/ultima6/menus/game_menu_dialog.h"
-#include "VideoDialog.h"
-#include "AudioDialog.h"
-#include "GameplayDialog.h"
-#include "InputDialog.h"
-#include "CheatsDialog.h"
+#include "ultima/ultima6/menus/video_dialog.h"
+#include "ultima/ultima6/menus/audio_dialog.h"
+#include "ultima/ultima6/menus/gameplay_dialog.h"
+#include "ultima/ultima6/menus/input_dialog.h"
+#include "ultima/ultima6/menus/cheats_dialog.h"
 #include "ultima/ultima6/core/event.h"
 #include "ultima/ultima6/keybinding/keys.h"
 

@@ -31,7 +31,7 @@
 #include "ultima/ultima6/gui/gui_callback.h"
 #include "ultima/ultima6/gui/gui_area.h"
 
-#include "ultima/ultima6/gui/gui_Dialog.h"
+#include "ultima/ultima6/gui/gui_dialog.h"
 #include "ultima/ultima6/save/save_slot.h"
 #include "ultima/ultima6/save/save_dialog.h"
 #include "ultima/ultima6/files/nuvie_file_list.h"

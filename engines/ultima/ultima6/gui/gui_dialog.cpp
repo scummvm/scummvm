@@ -25,7 +25,7 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/gui/gui.h"
-#include "ultima/ultima6/gui/gui_Dialog.h"
+#include "ultima/ultima6/gui/gui_dialog.h"
 
 namespace Ultima {
 namespace Ultima6 {

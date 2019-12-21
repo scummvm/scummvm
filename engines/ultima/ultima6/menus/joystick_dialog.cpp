@@ -20,10 +20,9 @@
  *
  */
 
-//
-#include "ultima/ultima6/core/nuvie_defs.h"
-
 #ifdef HAVE_JOYSTICK_SUPPORT
+
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_types.h"
 #include "ultima/ultima6/gui/gui_button.h"
@@ -32,7 +31,7 @@
 #include "ultima/ultima6/gui/gui_callback.h"
 #include "ultima/ultima6/gui/gui_area.h"
 
-#include "ultima/ultima6/gui/gui_Dialog.h"
+#include "ultima/ultima6/gui/gui_dialog.h"
 #include "JoystickDialog.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/keybinding/keys.h"
@@ -253,7 +252,8 @@ GUI_status JoystickDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 
 	return GUI_PASS;
 }
-#endif /* HAVE_JOYSTICK_SUPPORT */
 
 } // End of namespace Ultima6
 } // End of namespace Ultima
+
+#endif

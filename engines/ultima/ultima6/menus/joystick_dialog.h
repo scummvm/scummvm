@@ -24,7 +24,7 @@
 #define ULTIMA6_MENUS_JOYSTICK_DIALOG_H
 #ifdef HAVE_JOYSTICK_SUPPORT
 
-#include "ultima/ultima6/gui/gui_Dialog.h"
+#include "ultima/ultima6/gui/gui_dialog.h"
 
 namespace Ultima {
 namespace Ultima6 {

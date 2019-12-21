@@ -22,7 +22,6 @@
 
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_types.h"
 #include "ultima/ultima6/gui/gui_button.h"
@@ -30,9 +29,8 @@
 #include "ultima/ultima6/gui/gui_text_toggle_button.h"
 #include "ultima/ultima6/gui/gui_callback.h"
 #include "ultima/ultima6/gui/gui_area.h"
-
-#include "ultima/ultima6/gui/gui_Dialog.h"
-#include "InputDialog.h"
+#include "ultima/ultima6/gui/gui_dialog.h"
+#include "ultima/ultima6/menus/input_dialog.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/core/event.h"
 #include "ultima/ultima6/core/map_window.h"

@@ -22,7 +22,6 @@
 
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_types.h"
 #include "ultima/ultima6/gui/gui_button.h"
@@ -35,8 +34,8 @@
 #include "ultima/ultima6/screen/scale.h"
 #include "ultima/ultima6/screen/screen.h"
 #include "ultima/ultima6/core/map_window.h"
-#include "ultima/ultima6/gui/gui_Dialog.h"
-#include "VideoDialog.h"
+#include "ultima/ultima6/gui/gui_dialog.h"
+#include "ultima/ultima6/menus/video_dialog.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/views/view_manager.h"
 #include "ultima/ultima6/views/inventory_view.h"
@@ -72,47 +71,45 @@ bool VideoDialog::init() {
 	GUI *gui = GUI::get_gui();
 	GUI_Font *font = gui->get_font();
 	Game *game = Game::get_game();
-	Screen *screen = game->get_screen();
-	uint16 bpp = screen->get_bpp();
-	uint16 scr_width = screen->get_width();
-	uint16 scr_height = screen->get_height();
+	Screen *scr = game->get_screen();
 	const char *const yesno_text[] = { "no", "yes" };
 #define SCALER_AND_SCALE_CANNOT_BE_CHANGED 1 // FIXME need to be able to change these in game -- they also haven't been updated for keyboard controls and the size of the gump isn't right
 #if SCALER_AND_SCALE_CANNOT_BE_CHANGED
 	only2x_button = NULL;
 	scale_button = scaler_button = scale_win_button = scaler_win_button = NULL;
-	int scale = screen->get_scale_factor();
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+
+	//if SDL_VERSION_ATLEAST(2, 0, 0)
 	no_fullscreen = false;
-#else
-	no_fullscreen = !SDL_VideoModeOK(scr_width * scale, scr_height * scale, bpp, SDL_FULLSCREEN);
-#endif
 
 #else
+	uint16 scrWidth = scr->get_width();
+	uint16 scrHeight = scr->get_height();
+	uint16 bpp = scr->get_bpp();
+
 	int textY[] = { 11, 24, 37, 50, 63 , 76, 89, 102, 115, 128, 141 };
 	int buttonY[] = { 9, 22, 35, 48, 61, 74, 87, 100, 113, 126, 139, 152 };
 // scaler
-	int num_scalers = screen->get_scaler_reg()->GetNumScalers();
+	int num_scalers = scr->get_scaler_reg()->GetNumScalers();
 	const char *scaler_text[num_scalers];
 	for (int i = 0; i <= num_scalers; i++)
-		scaler_text[i] = screen->get_scaler_reg()->GetNameForIndex(i);
+		scaler_text[i] = scr->get_scaler_reg()->GetNameForIndex(i);
 
 	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[0], 0, 0, 0, "Scaler:", font);
 	AddWidget(widget);
 // scaler(fullscreen)
 	int num_scalers_fullscreen, fullscreen_scaler_selection;
-	bool no_only2x_scalers = !SDL_VideoModeOK(scr_width * 2, scr_height * 2, bpp, SDL_FULLSCREEN);
+	bool no_only2x_scalers = !SDL_VideoModeOK(scrWidth * 2, scrHeight * 2, bpp, SDL_FULLSCREEN);
 	if (no_only2x_scalers) {
 		num_scalers_fullscreen = 2;
-		fullscreen_scaler_selection = (screen->get_scaler_index() == 1) ? 1 : 0;
+		fullscreen_scaler_selection = (scr->get_scaler_index() == 1) ? 1 : 0;
 	} else {
 		num_scalers_fullscreen = num_scalers;
-		fullscreen_scaler_selection = screen->get_scaler_index();
+		fullscreen_scaler_selection = scr->get_scaler_index();
 	}
 	scaler_button = new GUI_TextToggleButton(this, colX[2], buttonY[0], 208, height, scaler_text, num_scalers_fullscreen, fullscreen_scaler_selection, font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(scaler_button);
 // scaler (windowed)
-	scaler_win_button = new GUI_TextToggleButton(this, colX[2], buttonY[0], 208, height, scaler_text, num_scalers, screen->get_scaler_index(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
+	scaler_win_button = new GUI_TextToggleButton(this, colX[2], buttonY[0], 208, height, scaler_text, num_scalers, scr->get_scaler_index(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(scaler_win_button);
 // scale
 	widget = (GUI_Widget *) new GUI_Text(colX[0], textY[1], 0, 0, 0, "Scale:", gui->get_font());
@@ -126,7 +123,7 @@ bool VideoDialog::init() {
 	scale_win_text[5] = "6";
 	scale_win_text[6] = "7";
 	scale_win_text[7] = "8";
-	int scale = screen->get_scale_factor();
+	int scale = scr->get_scale_factor();
 	char buff [4];
 	itoa(scale, buff, 10);  // write current scale to buff
 // scale (fullscreen)
@@ -135,7 +132,7 @@ bool VideoDialog::init() {
 	int scale_selection = 9;
 
 	for (int i = 1; i < 9; i++) {
-		if (SDL_VideoModeOK(scr_width * i, scr_height * i, bpp, SDL_FULLSCREEN)) {
+		if (SDL_VideoModeOK(scrWidth * i, scrHeight * i, bpp, SDL_FULLSCREEN)) {
 			scale_text[num_scale] = scale_win_text[i - 1];
 			if (i == scale)
 				scale_selection = num_scale;
@@ -143,7 +140,7 @@ bool VideoDialog::init() {
 		}
 	}
 	if (scale_selection == 9) { // current scale is greater than 8 (or wasn't returned as okay)
-		if (screen->is_fullscreen() || (scale > 8 && SDL_VideoModeOK(scr_width * scale, scr_height * scale, bpp, SDL_FULLSCREEN))) {
+		if (scr->is_fullscreen() || (scale > 8 && SDL_VideoModeOK(scrWidth * scale, scrHeight * scale, bpp, SDL_FULLSCREEN))) {
 			scale_selection = num_scale;
 			scaler_text[num_scale] = buff; // current scale
 			num_scale++;
@@ -177,10 +174,10 @@ bool VideoDialog::init() {
 	only2x_button = new GUI_Button(this, colX[3], buttonY[1], 70, height, "2x only", font, BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(only2x_button);
 // fullscreen_toggle
-	fullscreen_button = new GUI_TextToggleButton(this, colX[4], buttonY[2], yesno_width, height, yesno_text, 2, screen->is_fullscreen(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
+	fullscreen_button = new GUI_TextToggleButton(this, colX[4], buttonY[2], yesno_width, height, yesno_text, 2, scr->is_fullscreen(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(fullscreen_button);
 
-	if (no_fullscreen && !screen->is_fullscreen()) {
+	if (no_fullscreen && !scr->is_fullscreen()) {
 		fullscreen_button->Hide();
 	} else {
 		widget = (GUI_Widget *) new GUI_Text(colX[0], textY[2], 0, 0, 0, "Fullscreen:", gui->get_font());
@@ -191,17 +188,17 @@ bool VideoDialog::init() {
 	bool first_index = true;
 #if SCALER_AND_SCALE_CANNOT_BE_CHANGED
 // fullscreen_toggle
-	if (!no_fullscreen || screen->is_fullscreen()) {
+	if (!no_fullscreen || scr->is_fullscreen()) {
 		widget = (GUI_Widget *) new GUI_Text(colX[0], textY, 0, 0, 0, "Fullscreen:", gui->get_font());
 		AddWidget(widget);
 
-		fullscreen_button = new GUI_TextToggleButton(this, colX[4], buttonY, yesno_width, height, yesno_text, 2, screen->is_fullscreen(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
+		fullscreen_button = new GUI_TextToggleButton(this, colX[4], buttonY, yesno_width, height, yesno_text, 2, scr->is_fullscreen(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(fullscreen_button);
 		button_index[last_index] = fullscreen_button;
 
 		widget = (GUI_Widget *) new GUI_Text(colX[0], textY += row_h, 0, 0, 0, "Non-square pixels:", gui->get_font());
 		AddWidget(widget);
-		non_square_pixels_button = new GUI_TextToggleButton(this, colX[4], buttonY += row_h, yesno_width, height, yesno_text, 2, screen->is_non_square_pixels(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
+		non_square_pixels_button = new GUI_TextToggleButton(this, colX[4], buttonY += row_h, yesno_width, height, yesno_text, 2, scr->is_non_square_pixels(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 		AddWidget(non_square_pixels_button);
 		button_index[last_index += 1] = non_square_pixels_button;
 
@@ -246,7 +243,7 @@ bool VideoDialog::init() {
 	widget = (GUI_Widget *) new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Lighting mode:", gui->get_font());
 	AddWidget(widget);
 	const char *const lighting_text[] = { "none", "smooth", "original" };
-	lighting_button = new GUI_TextToggleButton(this, colX[3], buttonY += row_h * 3, 70, height, lighting_text, 3, screen->get_old_lighting_style(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
+	lighting_button = new GUI_TextToggleButton(this, colX[3], buttonY += row_h * 3, 70, height, lighting_text, 3, scr->get_old_lighting_style(), font, BUTTON_TEXTALIGN_CENTER, this, 0);
 	AddWidget(lighting_button);
 	button_index[last_index += 1] = lighting_button;
 // sprites (needs reset)
@@ -302,11 +299,11 @@ void VideoDialog::rebuild_buttons(bool init) {
 #endif
 	int scaler;
 	bool fullscreen;
-	Screen *screen = Game::get_game()->get_screen();
+	Screen *scr = Game::get_game()->get_screen();
 
 	if (init) {
-		scaler = screen->get_scaler_index();
-		fullscreen = screen->is_fullscreen();
+		scaler = scr->get_scaler_index();
+		fullscreen = scr->is_fullscreen();
 	} else {
 		fullscreen = fullscreen_button->GetSelection();
 		if (fullscreen)

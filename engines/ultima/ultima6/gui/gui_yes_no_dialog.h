@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_GUI_GUI_YES_NO_DIALOG_H
 #define ULTIMA6_GUI_GUI_YES_NO_DIALOG_H
 
-#include "ultima/ultima6/gui/gui_Dialog.h"
+#include "ultima/ultima6/gui/gui_dialog.h"
 
 namespace Ultima {
 namespace Ultima6 {
