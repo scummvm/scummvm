@@ -23,6 +23,8 @@
 #ifndef ULTIMA6_SOUND_ADPLUG_FM_OPL_H
 #define ULTIMA6_SOUND_ADPLUG_FM_OPL_H
 
+#include "common/scummsys.h"
+
 namespace Ultima {
 namespace Ultima6 {
 
@@ -36,22 +38,11 @@ namespace Ultima6 {
 /* select output bits size of output : 8 or 16 */
 #define OPL_SAMPLE_BITS 16
 
-/* compiler dependence */
-#ifndef OSD_CPU_H
-#define OSD_CPU_H
-typedef unsigned char   UINT8;   /* unsigned  8bit */
-typedef unsigned short  UINT16;  /* unsigned 16bit */
-typedef unsigned int    UINT32;  /* unsigned 32bit */
-typedef signed char     INT8;    /* signed  8bit   */
-typedef signed short    INT16;   /* signed 16bit   */
-typedef signed int      INT32;   /* signed 32bit   */
-#endif
-
 #if (OPL_SAMPLE_BITS==16)
-typedef INT16 OPLSAMPLE;
+typedef int16 OPLSAMPLE;
 #endif
 #if (OPL_SAMPLE_BITS==8)
-typedef INT8 OPLSAMPLE;
+typedef int8 OPLSAMPLE;
 #endif
 
 
@@ -70,7 +61,7 @@ void YM3812ResetChip(int which);
 int  YM3812Write(int which, int a, int v);
 unsigned char YM3812Read(int which, int a);
 int  YM3812TimerOver(int which, int c);
-void YM3812UpdateOne(int which, INT16 *buffer, int length);
+void YM3812UpdateOne(int which, int16 *buffer, int length);
 
 void YM3812SetTimerHandler(int which, OPL_TIMERHANDLER TimerHandler, int channelOffset);
 void YM3812SetIRQHandler(int which, OPL_IRQHANDLER IRQHandler, int param);
@@ -102,7 +93,7 @@ int  YM3526TimerOver(int which, int c);
 ** '*buffer' is the output buffer pointer
 ** 'length' is the number of samples that should be generated
 */
-void YM3526UpdateOne(int which, INT16 *buffer, int length);
+void YM3526UpdateOne(int which, int16 *buffer, int length);
 
 void YM3526SetTimerHandler(int which, OPL_TIMERHANDLER TimerHandler, int channelOffset);
 void YM3526SetIRQHandler(int which, OPL_IRQHANDLER IRQHandler, int param);
@@ -131,7 +122,7 @@ void Y8950ResetChip(int which);
 int  Y8950Write(int which, int a, int v);
 unsigned char Y8950Read(int which, int a);
 int  Y8950TimerOver(int which, int c);
-void Y8950UpdateOne(int which, INT16 *buffer, int length);
+void Y8950UpdateOne(int which, int16 *buffer, int length);
 
 void Y8950SetTimerHandler(int which, OPL_TIMERHANDLER TimerHandler, int channelOffset);
 void Y8950SetIRQHandler(int which, OPL_IRQHANDLER IRQHandler, int param);
