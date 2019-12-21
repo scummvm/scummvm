@@ -20,12 +20,11 @@
  *
  */
 
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-//#include <stdarg.h>
-//#include <math.h>
-#include "fmopl.h"
+#include "ultima/ultima6/sound/adplug/fm_opl.h"
+#include "common/scummsys.h"
+
+namespace Ultima {
+namespace Ultima6 {
 
 #ifndef PI
 #define PI 3.14159265358979323846
@@ -638,7 +637,7 @@ INLINE void advance_lfo(FM_OPL *OPL)
 	/* LFO */
 	OPL->lfo_am_cnt += OPL->lfo_am_inc;
 	if (OPL->lfo_am_cnt >= (LFO_AM_TAB_ELEMENTS<<LFO_SH) )	/* lfo_am_table is 210 elements long */
-		OPL->lfo_am_cnt -= (LFO_AM_TAB_ELEMENTS<<LFO_SH);
+		OPL->lfo_am_cnt -= (uint32)(LFO_AM_TAB_ELEMENTS<<LFO_SH);
 
 	tmp = lfo_am_table[ OPL->lfo_am_cnt >> LFO_SH ];
 
@@ -699,7 +698,7 @@ INLINE void advancex(FM_OPL *OPL)
 				{
 					op->volume += eg_inc[op->eg_sel_dr + ((OPL->eg_cnt>>op->eg_sh_dr)&7)];
 
-					if ( op->volume >= op->sl )
+					if ( op->volume >= (int32)op->sl )
 						op->state = EG_SUS;
 
 				}
@@ -1545,40 +1544,40 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 				/* BD key on/off */
 				if(v&0x10)
 				{
-					FM_KEYON (&OPL->P_CH[6].SLOT[SLOT1], 2);
-					FM_KEYON (&OPL->P_CH[6].SLOT[SLOT2], 2);
+					FM_KEYON (&OPL->P_CH[6].SLOT[SLOT1], 2U);
+					FM_KEYON (&OPL->P_CH[6].SLOT[SLOT2], 2U);
 				}
 				else
 				{
-					FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT1],~2);
-					FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT2],~2);
+					FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT1],~2U);
+					FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT2],~2U);
 				}
 				/* HH key on/off */
-				if(v&0x01) FM_KEYON (&OPL->P_CH[7].SLOT[SLOT1], 2);
-				else       FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT1],~2);
+				if(v&0x01) FM_KEYON (&OPL->P_CH[7].SLOT[SLOT1], 2U);
+				else       FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT1],~2U);
 				/* SD key on/off */
-				if(v&0x08) FM_KEYON (&OPL->P_CH[7].SLOT[SLOT2], 2);
-				else       FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT2],~2);
+				if(v&0x08) FM_KEYON (&OPL->P_CH[7].SLOT[SLOT2], 2U);
+				else       FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT2],~2U);
 				/* TOM key on/off */
-				if(v&0x04) FM_KEYON (&OPL->P_CH[8].SLOT[SLOT1], 2);
-				else       FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT1],~2);
+				if(v&0x04) FM_KEYON (&OPL->P_CH[8].SLOT[SLOT1], 2U);
+				else       FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT1],~2U);
 				/* TOP-CY key on/off */
-				if(v&0x02) FM_KEYON (&OPL->P_CH[8].SLOT[SLOT2], 2);
-				else       FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT2],~2);
+				if(v&0x02) FM_KEYON (&OPL->P_CH[8].SLOT[SLOT2], 2U);
+				else       FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT2],~2U);
 			}
 			else
 			{
 				/* BD key off */
-				FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT1],~2);
-				FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT2],~2);
+				FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT1],~2U);
+				FM_KEYOFF(&OPL->P_CH[6].SLOT[SLOT2],~2U);
 				/* HH key off */
-				FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT1],~2);
+				FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT1],~2U);
 				/* SD key off */
-				FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT2],~2);
+				FM_KEYOFF(&OPL->P_CH[7].SLOT[SLOT2],~2U);
 				/* TOM key off */
-				FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT1],~2);
+				FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT1],~2U);
 				/* TOP-CY off */
-				FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT2],~2);
+				FM_KEYOFF(&OPL->P_CH[8].SLOT[SLOT2],~2U);
 			}
 			return;
 		}
@@ -1595,17 +1594,17 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 
 			if(v&0x20)
 			{
-				FM_KEYON (&CH->SLOT[SLOT1], 1);
-				FM_KEYON (&CH->SLOT[SLOT2], 1);
+				FM_KEYON (&CH->SLOT[SLOT1], 1U);
+				FM_KEYON (&CH->SLOT[SLOT2], 1U);
 			}
 			else
 			{
-				FM_KEYOFF(&CH->SLOT[SLOT1],~1);
-				FM_KEYOFF(&CH->SLOT[SLOT2],~1);
+				FM_KEYOFF(&CH->SLOT[SLOT1],~1U);
+				FM_KEYOFF(&CH->SLOT[SLOT2],~1U);
 			}
 		}
 		/* update */
-		if(CH->block_fnum != block_fnum)
+		if(CH->block_fnum != (uint32)block_fnum)
 		{
 			UINT8 block  = block_fnum >> 10;
 
@@ -1774,7 +1773,7 @@ static FM_OPL *OPLCreate(int type, int clock, int rate)
 #endif
 
 	/* allocate memory block */
-	ptr = malloc(state_size);
+	ptr = (char *)malloc(state_size);
 
 	if (ptr==NULL)
 		return NULL;
@@ -1889,13 +1888,13 @@ static unsigned char OPLRead(FM_OPL *OPL,int a)
 /* CSM Key Controll */
 INLINE void CSMKeyControll(OPL_CH *CH)
 {
-	FM_KEYON (&CH->SLOT[SLOT1], 4);
-	FM_KEYON (&CH->SLOT[SLOT2], 4);
+	FM_KEYON (&CH->SLOT[SLOT1], 4U);
+	FM_KEYON (&CH->SLOT[SLOT2], 4U);
 
 	/* The key off should happen exactly one sample later - not implemented correctly yet */
 
-	FM_KEYOFF(&CH->SLOT[SLOT1], ~4);
-	FM_KEYOFF(&CH->SLOT[SLOT2], ~4);
+	FM_KEYOFF(&CH->SLOT[SLOT1], ~4U);
+	FM_KEYOFF(&CH->SLOT[SLOT2], ~4U);
 }
 
 
@@ -2403,3 +2402,5 @@ void Y8950SetKeyboardHandler(int which,OPL_PORTHANDLER_W KeyboardHandler_w,OPL_P
 
 #endif
 
+} // End of namespace Ultima6
+} // End of namespace Ultima

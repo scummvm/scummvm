@@ -135,6 +135,7 @@ MODULE_OBJS += \
 	ultima6/sound/towns_sfx_manager.o \
 	ultima6/sound/adplug/adplug_player.o \
 	ultima6/sound/adplug/emu_opl.o \
+	ultima6/sound/adplug/fm_opl.o \
 	ultima6/sound/adplug/mid.o \
 	ultima6/sound/adplug/opl_class.o \
 	ultima6/sound/adplug/u6m.o \
