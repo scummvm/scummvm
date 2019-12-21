@@ -1001,7 +1001,8 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		// Convert the message, and skip a few remaining 0xFF codes (they
 		// occur in FT; subtype 10, which is used for the speech associated
 		// with the string).
-		byte buf[384] = {0};
+		byte buf[384];
+		memset(buf, 0, sizeof(buf));
 		convertMessageToString(msg, buf, sizeof(buf));
 		msg = buf;
 		while (*msg == 0xFF)
