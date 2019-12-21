@@ -7774,9 +7774,70 @@ static const uint16 phant1ChapelWestExitPatch[] = {
 	PATCH_END
 };
 
+// The censorship for videos 1920 and 2020 are out of sync and the latter has
+//  an incorrect coordinate. The frame numbers for the blobs are wrong and so
+//  they appear during normal frames but not during the gore. These videos play
+//  in room 40100 when attempting to open or unbar the door. We fix the frame
+//  numbers to be in sync with the videos and use the correct coordinate from
+//  video 1920 which has the same censored frames.
+//
+// Applies to: All versions
+// Responsible method: myList:init
+static const uint16 phant1Video1920CensorSignature[] = {
+	0x38, SIG_UINT16(0x00dd),       // pushi 221 [ blob 1 start frame ]
+	SIG_ADDTOOFFSET(+43),
+	0x39, SIG_MAGICDWORD, 0xff,     // pushi -1
+	0x38, SIG_UINT16(0x00e1),       // pushi 225 [ blob 1 end frame ]
+	SIG_ADDTOOFFSET(+20),
+	0x38, SIG_UINT16(0x00fb),       // pushi 251 [ blob 2 start frame ]
+	SIG_ADDTOOFFSET(+46),
+	0x38, SIG_UINT16(0x0117),       // pushi 279 [ blob 2 end frame ]
+	SIG_END
+};
+
+static const uint16 phant1Video1920CensorPatch[] = {
+	0x38, PATCH_UINT16(0x00c6),     // pushi 198 [ blob 1 start frame ]
+	PATCH_ADDTOOFFSET(+45),
+	0x38, PATCH_UINT16(0x00ca),     // pushi 202 [ blob 1 end frame ]
+	PATCH_ADDTOOFFSET(+20),
+	0x38, PATCH_UINT16(0x00e4),     // pushi 228 [ blob 2 start frame ]
+	PATCH_ADDTOOFFSET(+46),
+	0x38, PATCH_UINT16(0x00fe),     // pushi 254 [ blob 2 end frame ]
+	PATCH_END
+};
+
+static const uint16 phant1Video2020CensorSignature[] = {
+	0x38, SIG_UINT16(0x014f),       // pushi 335 [ blob 1 start frame ]
+	SIG_ADDTOOFFSET(+18),
+	0x38, SIG_UINT16(0x0090),       // pushi 144 [ blob 1 left coordinate ]
+	SIG_ADDTOOFFSET(+23),
+	0x39, SIG_MAGICDWORD, 0xff,     // pushi -1
+	0x38, SIG_UINT16(0x0153),       // pushi 339 [ blob 1 end frame ]
+	SIG_ADDTOOFFSET(+20),
+	0x38, SIG_UINT16(0x0160),       // pushi 352 [ blob 2 start frame ]
+	SIG_ADDTOOFFSET(+46),
+	0x38, SIG_UINT16(0x016a),       // pushi 362 [ blob 2 end frame ]
+	SIG_END
+};
+
+static const uint16 phant1Video2020CensorPatch[] = {
+	0x38, PATCH_UINT16(0x012f),     // pushi 303 [ blob 1 start frame ]
+	PATCH_ADDTOOFFSET(+18),
+	0x38, PATCH_UINT16(0x0042),     // pushi 66  [ blob 1 left coordinate ]
+	PATCH_ADDTOOFFSET(+25),
+	0x38, PATCH_UINT16(0x0133),     // pushi 307 [ blob 1 end frame ]
+	PATCH_ADDTOOFFSET(+20),
+	0x38, PATCH_UINT16(0x014c),     // pushi 332 [ blob 2 start frame ]
+	PATCH_ADDTOOFFSET(+46),
+	0x38, PATCH_UINT16(0x0168),     // pushi 360 [ blob 2 end frame ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,    23, "make cursor red after clicking quit",         1, phant1RedQuitCursorSignature,    phant1RedQuitCursorPatch },
+	{  true,    26, "fix video 1920 censorship",                   1, phant1Video1920CensorSignature,  phant1Video1920CensorPatch },
+	{  true,    26, "fix video 2020 censorship",                   1, phant1Video2020CensorSignature,  phant1Video2020CensorPatch },
 	{  true,   901, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,  1111, "ignore audio settings from save game",        1, phant1SavedVolumeSignature,      phant1SavedVolumePatch },
 	{  true, 20200, "fix broken rat init in sEnterFromAlcove",     1, phant1RatSignature,              phant1RatPatch },
