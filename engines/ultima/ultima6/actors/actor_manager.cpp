@@ -20,9 +20,6 @@
  *
  */
 
-//#include <cassert>
-//#include <sstream>
-//#include <cstdlib>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/conf/configuration.h"
@@ -30,9 +27,9 @@
 #include "ultima/ultima6/save/obj_list.h"
 
 #include "ultima/ultima6/actors/actor.h"
-#include "U6ultima/ultima6/actors/actor.h"
-#include "SEultima/ultima6/actors/actor.h"
-#include "MDultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/actors/u6_actor.h"
+#include "ultima/ultima6/actors/se_actor.h"
+#include "ultima/ultima6/actors/md_actor.h"
 #include "ultima/ultima6/actors/u6_work_types.h"
 #include "ultima/ultima6/core/tile_manager.h"
 #include "ultima/ultima6/misc/u6_llist.h"
@@ -1049,7 +1046,7 @@ ActorList *ActorManager::sort_nearest(ActorList *list, uint16 x, uint16 y, uint8
 	struct Actor::cmp_distance_to_loc cmp_func; // comparison function object
 	MapCoord loc(x, y, z);
 	cmp_func(loc); // set location in function object
-	sort(list->begin(), list->end(), cmp_func);
+	Common::sort(list->begin(), list->end(), cmp_func);
 
 	ActorIterator a = list->begin();
 	while (a != list->end())

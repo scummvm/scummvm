@@ -20,10 +20,7 @@
  *
  */
 
-#include "ultima/ultima6/core/nuvie_defs.h" /* include before cmath to get roundf() */
-//#include <cstdlib>
-//#include <cmath>
-//#include <cassert>
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/core/game.h"
@@ -41,7 +38,9 @@
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/core/event.h"
-#include "U6ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/actors/u6_actor.h"
+#include "ultima/shared/std/containers.h"
+#include "ultima/shared/std/misc.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -217,7 +216,7 @@ uint16 Actor::get_custom_tile_num(uint16 obj_num) {
 		std::map<uint16, uint16>::iterator it;
 		it = custom_tile_tbl->find(obj_num);
 		if (it != custom_tile_tbl->end()) {
-			return it->second;
+			return it->_value;
 		}
 	}
 
@@ -702,8 +701,8 @@ U6LList *Actor::get_inventory_list() {
 }
 
 
-bool Actor::inventory_has_object(uint16 obj_n, uint8 qual, bool match_quality, uint8 frame_n, bool match_frame_n) {
-	if (inventory_get_object(obj_n, qual, match_quality, frame_n, match_frame_n))
+bool Actor::inventory_has_object(uint16 objN, uint8 qual, bool match_quality, uint8 frameN, bool match_frame_n) {
+	if (inventory_get_object(objN, qual, match_quality, frameN, match_frame_n))
 		return (true);
 	return (false);
 }
@@ -731,7 +730,7 @@ uint32 Actor::inventory_count_objects(bool inc_readied_objects) {
 /* Returns the number of objects in the actor's inventory with matching object
  * number and quality.
  */
-uint32 Actor::inventory_count_object(uint16 obj_n) {
+uint32 Actor::inventory_count_object(uint16 objN) {
 	uint32 qty = 0;
 	U6Link *link = 0;
 	Obj *obj = 0;
@@ -740,7 +739,7 @@ uint32 Actor::inventory_count_object(uint16 obj_n) {
 	for (link = inv->start(); link != NULL; link = link->next) {
 		obj = (Obj *)link->data;
 		if (obj)
-			qty += obj->get_total_qty(obj_n);
+			qty += obj->get_total_qty(objN);
 	}
 
 	return (qty);
@@ -749,7 +748,7 @@ uint32 Actor::inventory_count_object(uint16 obj_n) {
 
 /* Returns object descriptor of object in the actor's inventory, or NULL if no
  * matching object is found. */
-Obj *Actor::inventory_get_object(uint16 obj_n, uint8 qual, bool match_quality, uint8 frame_n, bool match_frame_n) {
+Obj *Actor::inventory_get_object(uint16 objN, uint8 qual, bool match_quality, uint8 frameN, bool match_frame_n) {
 	U6LList *inventory;
 	U6Link *link;
 	Obj *obj;
@@ -757,10 +756,11 @@ Obj *Actor::inventory_get_object(uint16 obj_n, uint8 qual, bool match_quality, u
 	inventory = get_inventory_list();
 	for (link = inventory->start(); link != NULL; link = link->next) {
 		obj = (Obj *)link->data;
-		if (obj->obj_n == obj_n && (match_quality == false || obj->quality == qual) && (match_frame_n == false || obj->frame_n == frame_n)) //FIXME should qual = 0 be an all quality search!?
+		if (obj->obj_n == objN && (match_quality == false || obj->quality == qual)
+				&& (match_frame_n == false || obj->frame_n == frameN)) //FIXME should qual = 0 be an all quality search!?
 			return (obj);
 		else if (obj->has_container()) {
-			if ((obj = obj->find_in_container(obj_n, qual, match_quality)))
+			if ((obj = obj->find_in_container(objN, qual, match_quality)))
 				return (obj);
 		}
 	}
@@ -820,18 +820,18 @@ bool Actor::inventory_add_object(Obj *obj, Obj *container, bool stack) {
 
 /* Stacks the new object with existing objects if possible.
    Returns a pointer to the new object in inventory. */
-Obj *Actor::inventory_new_object(uint16 obj_n, uint32 qty, uint8 quality) {
+Obj *Actor::inventory_new_object(uint16 objN, uint32 qty, uint8 quality) {
 	Obj *obj = 0;
-	uint8 frame_n = 0;
+	uint8 frameN = 0;
 
-	if (obj_n >= 1024) {
-		frame_n = (uint8)floorf(obj_n / 1024);
-		obj_n -= frame_n * 1024;
+	if (objN >= 1024) {
+		frameN = (uint8)floorf(objN / 1024);
+		objN -= frameN * 1024;
 	}
 
 	obj = new Obj;
-	obj->obj_n = obj_n;
-	obj->frame_n = frame_n;
+	obj->obj_n = objN;
+	obj->frame_n = frameN;
 	obj->quality = quality;
 	obj->qty = obj_manager->is_stackable(obj) ? 1 : 0; // stackable objects must have a quantity
 	if (qty > 1) // this will combine with others, only if object is stackable
@@ -839,17 +839,17 @@ Obj *Actor::inventory_new_object(uint16 obj_n, uint32 qty, uint8 quality) {
 			inventory_add_object(obj_manager->copy_obj(obj), NULL);
 		}
 	inventory_add_object(obj, NULL);
-	return inventory_get_object(obj_n, quality);
+	return inventory_get_object(objN, quality);
 }
 
 /* Delete `qty' objects of type from inventory (or from a container).
  * Returns the number removed (may be less than requested). */
-uint32 Actor::inventory_del_object(uint16 obj_n, uint32 qty, uint8 quality) {
+uint32 Actor::inventory_del_object(uint16 objN, uint32 qty, uint8 quality) {
 	Obj *obj;
 	uint16 oqty = 0;
 	uint32 deleted = 0;
 
-	while ((obj = inventory_get_object(obj_n, quality, false))
+	while ((obj = inventory_get_object(objN, quality, false))
 	        && (deleted < qty)) {
 		oqty = obj->qty == 0 ? 1 : obj->qty;
 		if (oqty <= (qty - deleted)) {
@@ -943,10 +943,10 @@ float Actor::get_inventory_equip_weight() {
 
 /* Can the actor carry a new object of this type?
  */
-bool Actor::can_carry_object(uint16 obj_n, uint32 qty) {
+bool Actor::can_carry_object(uint16 objN, uint32 qty) {
 	if (Game::get_game()->using_hackmove())
 		return true;
-	float obj_weight = obj_manager->get_obj_weight(obj_n);
+	float obj_weight = obj_manager->get_obj_weight(objN);
 	if (qty) obj_weight *= qty;
 	return (can_carry_weight(obj_weight));
 }
@@ -1475,9 +1475,9 @@ bool Actor::push(Actor *pusher, uint8 where) {
 		const uint16 square = 1;
 		if (this->push(pusher, ACTOR_PUSH_FORWARD))
 			return (true); // prefer forward push
-		for (uint16 x = (from.x - square); x <= (from.x + square); x += square)
-			for (uint16 y = (from.y - square); y <= (from.y + square); y += square)
-				if (x != from.x && y != from.y && move(x, y, from.z))
+		for (uint16 xp = (from.x - square); xp <= (from.x + square); xp += square)
+			for (uint16 yp = (from.y - square); yp <= (from.y + square); yp += square)
+				if (xp != from.x && yp != from.y && move(xp, yp, from.z))
 					return (true);
 	} else if (where == ACTOR_PUSH_FORWARD) { // move away from pusher
 		MapCoord from(get_location());
@@ -1692,9 +1692,9 @@ void Actor::subtract_light(uint8 val) {
 			break;
 		}
 	light = 0; // change to next highest light source
-	for (unsigned int l = 0; l < light_source.size(); l++)
-		if (light_source[l] > light)
-			light = light_source[l];
+	for (unsigned int lCtr = 0; lCtr < light_source.size(); lCtr++)
+		if (light_source[lCtr] > light)
+			light = light_source[lCtr];
 }
 
 void Actor::set_moves_left(sint8 val) {
@@ -1740,11 +1740,11 @@ void Actor::print() {
 	DEBUG(1, LEVEL_INFORMATIONAL, "obj_n: %03d    frame_n: %d\n", actor->obj_n, actor->frame_n);
 	DEBUG(1, LEVEL_INFORMATIONAL, "base_obj_n: %03d    old_frame_n: %d\n", actor->base_obj_n, actor->old_frame_n);
 
-	uint8 direction = actor->direction;
-	DEBUG(1, LEVEL_INFORMATIONAL, "direction: %d (%s)\n", direction, (direction == NUVIE_DIR_N) ? "north" :
-	      (direction == NUVIE_DIR_E) ? "east" :
-	      (direction == NUVIE_DIR_S) ? "south" :
-	      (direction == NUVIE_DIR_W) ? "west" : "???");
+	uint8 dir = actor->direction;
+	DEBUG(1, LEVEL_INFORMATIONAL, "direction: %d (%s)\n", dir, (dir == NUVIE_DIR_N) ? "north" :
+	      (dir == NUVIE_DIR_E) ? "east" :
+	      (dir == NUVIE_DIR_S) ? "south" :
+	      (dir == NUVIE_DIR_W) ? "west" : "???");
 	DEBUG(1, LEVEL_INFORMATIONAL, "walk_frame: %d\n", actor->walk_frame);
 
 	DEBUG(1, LEVEL_INFORMATIONAL, "can_move: %s\n", actor->can_move ? "true" : "false");
@@ -1769,10 +1769,10 @@ void Actor::print() {
 
 	DEBUG(1, LEVEL_INFORMATIONAL, "alignment: %s (%d)\n", get_actor_alignment_str(actor->get_alignment()), actor->get_alignment());
 
-	uint8 combat_mode = actor->combat_mode;
+	uint8 combatMode = actor->combat_mode;
 	wt_string = get_worktype_string(actor->combat_mode);
 	if (!wt_string) wt_string = "???";
-	DEBUG(1, LEVEL_INFORMATIONAL, "combat_mode: %d %s\n", combat_mode, wt_string);
+	DEBUG(1, LEVEL_INFORMATIONAL, "combat_mode: %d %s\n", combatMode, wt_string);
 
 	DEBUG(1, LEVEL_INFORMATIONAL, "Object flags: ");
 	print_b(LEVEL_INFORMATIONAL, actor->obj_flags);
@@ -1851,13 +1851,13 @@ void Actor::set_invisible(bool invisible) {
 	}
 }
 
-sint8 Actor::count_readied_objects(sint32 obj_n, sint16 frame_n, sint16 quality) {
+sint8 Actor::count_readied_objects(sint32 objN, sint16 frameN, sint16 quality) {
 	sint8 count = 0;
 	for (int o = 0; o < ACTOR_MAX_READIED_OBJECTS; o++) {
 		if (readied_objects[o] == 0) continue;
-		if (obj_n == -1
-		        || (readied_objects[o]->obj->obj_n == obj_n
-		            && (frame_n == -1 || frame_n == readied_objects[o]->obj->frame_n)
+		if (objN == -1
+		        || (readied_objects[o]->obj->obj_n == objN
+		            && (frameN == -1 || frameN == readied_objects[o]->obj->frame_n)
 		            && (quality == -1 || quality == readied_objects[o]->obj->quality)))
 			++count;
 	}
@@ -1900,7 +1900,7 @@ Obj *Actor::find_body() {
 	Party *party;
 	Actor *actor;
 	Obj *body_obj = NULL;
-	uint8 level;
+	uint8 lvl;
 
 	party = Game::get_game()->get_party();
 	actor = party->who_has_obj(339, id_n, true);
@@ -1909,18 +1909,18 @@ Obj *Actor::find_body() {
 		return actor->inventory_get_object(339, id_n, OBJ_MATCH_QUALITY);
 
 	// try to find on map.
-	for (level = 0; level < 5 && body_obj == NULL; level++)
-		body_obj = obj_manager->find_obj(level, 339, id_n);
+	for (lvl = 0; lvl < 5 && body_obj == NULL; lvl++)
+		body_obj = obj_manager->find_obj(lvl, 339, id_n);
 
 	return body_obj;
 }
 
 /* Change actor type. */
-bool Actor::morph(uint16 obj_n) {
+bool Actor::morph(uint16 objN) {
 	uint8 old_dir = get_direction(); // FIXME: this should get saved through init_from_obj()
 
 	Obj *actor_obj = make_obj();
-	actor_obj->obj_n = obj_n;
+	actor_obj->obj_n = objN;
 	actor_obj->frame_n = 0;
 	init_from_obj(actor_obj);
 	set_dead_flag(false);
@@ -1966,7 +1966,7 @@ void Actor::set_custom_tile_num(uint16 obj_num, uint16 tile_num) {
 		custom_tile_tbl = new std::map<uint16, uint16>();
 	}
 
-	custom_tile_tbl->insert(std::pair<uint16, uint16>(obj_num, tile_num));
+	(*custom_tile_tbl)[obj_num] = tile_num;
 }
 
 } // End of namespace Ultima6

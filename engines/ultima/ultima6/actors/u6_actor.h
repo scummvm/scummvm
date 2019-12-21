@@ -97,7 +97,7 @@ public:
 	}
 
 	uint8 get_object_readiable_location(Obj *obj);
-	const CombatType *get_object_combat_type(uint16 obj_n);
+	const CombatType *get_object_combat_type(uint16 objN);
 	ActorTileType get_tile_type() {
 		return (actor_type->tile_type);
 	}

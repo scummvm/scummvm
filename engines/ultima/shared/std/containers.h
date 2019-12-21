@@ -138,6 +138,15 @@ public:
 	}
 
 	/**
+	 * Inserts a range of items
+	 */
+	void insert(iterator first, iterator last) {
+		for (; first != last; ++first)
+			_items.push_back(*first);
+		Common::sort(begin(), end(), _comparitor);
+	}
+
+	/**
 	 * Swaps a set
 	 */
 	void swap(set<T> &arr) {
