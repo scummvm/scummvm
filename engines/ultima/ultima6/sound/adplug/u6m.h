@@ -24,6 +24,7 @@
 #define ULTIMA6_SOUND_ADPLUG_U6M
 
 #include "ultima/ultima6/sound/adplug/adplug_player.h"
+#include "common/stack.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -78,7 +79,7 @@ protected:
 	int song_pos;               // current offset within the song
 	int loop_position;          // position of the loop point
 	int read_delay;             // delay (in timer ticks) before further song data is read
-	std::stack<subsong_info> subsong_stack;
+	Common::Stack<subsong_info> subsong_stack;
 
 	int instrument_offsets[9];  // offsets of the adlib instrument data
 	// vibrato ("vb")

@@ -126,6 +126,11 @@ MODULE_OBJS += \
 	ultima6/script/script_actor.o \
 	ultima6/script/script_cutscene.o \
 	ultima6/sound/sound_manager.o \
+	ultima6/sound/adplug/adplug_player.o \
+	ultima6/sound/adplug/emu_opl.o \
+	ultima6/sound/adplug/mid.o \
+	ultima6/sound/adplug/opl_class.o \
+	ultima6/sound/adplug/u6m.o \
 	ultima6/usecode/u6_usecode.o \
 	ultima6/usecode/usecode.o \
 	ultima6/views/actor_view.o \

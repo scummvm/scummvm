@@ -20,7 +20,11 @@
  *
  */
 
-#include "emuopl.h"
+#include "ultima/ultima6/sound/adplug/emu_opl.h"
+#include "ultima/ultima6/sound/adplug/fm_opl.h"
+
+namespace Ultima {
+namespace Ultima6 {
 
 CEmuopl::CEmuopl(int rate, bool bit16, bool usestereo)
 	: use16bit(bit16), stereo(usestereo), oplRate(rate) {
@@ -44,7 +48,6 @@ void CEmuopl::update(short *buf, int samples) {
 			}
 	} else {
 		short *tempbuf = new short[stereo ? samples * 2 : samples];
-		int i;
 
 		YM3812UpdateOne(0, tempbuf, samples);
 
@@ -69,3 +72,6 @@ void CEmuopl::write(int reg, int val) {
 void CEmuopl::init() {
 	YM3812ResetChip(0);
 }
+
+} // End of namespace Ultima6
+} // End of namespace Ultima

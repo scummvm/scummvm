@@ -20,11 +20,13 @@
  *
  */
 
-#ifndef __FMOPL1_H_
-#define __FMOPL1_H_
+#ifndef ULTIMA6_SOUND_ADPLUG_OPL_CLASS_H
+#define ULTIMA6_SOUND_ADPLUG_OPL_CLASS_H
 
-#include<stdlib.h>
-#include "opl.h"
+#include "ultima/ultima6/sound/adplug/opl.h"
+
+namespace Ultima {
+namespace Ultima6 {
 
 #define HAS_YM3812  1
 
@@ -255,5 +257,7 @@ private:
 	inline void OPL_CALC_RH(OPL_CH *CH, unsigned int noise);
 };
 
+} // End of namespace Ultima6
+} // End of namespace Ultima
 
 #endif
