@@ -27,7 +27,7 @@
 #include "ultima/ultima6/gui/gui_button.h"
 #include "ultima/ultima6/gui/gui_text.h"
 
-#include "ultima/ultima6/gui/gui_Dialog.h"
+#include "ultima/ultima6/gui/gui_dialog.h"
 #include "ultima/ultima6/gui/gui_yes_no_dialog.h"
 #include "ultima/ultima6/keybinding/keys.h"
 

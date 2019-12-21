@@ -51,6 +51,13 @@ MODULE_OBJS += \
 	ultima6/keybinding/keys.o \
 	ultima6/keybinding/key_actions.o \
 	ultima6/keybinding/utils.o \
+	ultima6/menus/audio_dialog.o \
+	ultima6/menus/cheats_dialog.o \
+	ultima6/menus/gameplay_dialog.o \
+	ultima6/menus/game_menu_dialog.o \
+	ultima6/menus/input_dialog.o \
+	ultima6/menus/joystick_dialog.o \
+	ultima6/menus/video_dialog.o \
 	ultima6/misc/sdl_compat.o \
 	ultima6/misc/iavl_tree.o \
 	ultima6/misc/u6_line_walker.o \
