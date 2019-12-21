@@ -27,6 +27,9 @@
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/translation.h"
+#ifdef ENABLE_ULTIMA6
+#include "ultima/ultima6/ultima6.h"
+#endif
 #ifdef ENABLE_ULTIMA8
 #include "ultima/ultima8/ultima8.h"
 #endif
@@ -68,6 +71,11 @@ bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 	const Ultima::UltimaGameDescription *gd = (const Ultima::UltimaGameDescription *)desc;
 	if (gd) {
 		switch (gd->gameId) {
+#ifdef ENABLE_ULTIMA6
+		case Ultima::GAME_ULTIMA6:
+			*engine = new Ultima::Ultima6::Ultima6Engine(syst, gd);
+			break;
+#endif
 #ifdef ENABLE_ULTIMA8
 		case Ultima::GAME_ULTIMA8:
 			*engine = new Ultima::Ultima8::Ultima8Engine(syst, gd);

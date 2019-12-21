@@ -7,6 +7,7 @@ MODULE_OBJS := \
 
 ifdef ENABLE_ULTIMA6
 MODULE_OBJS += \
+	ultima6/ultima6.o \
 	ultima6/actors/actor.o \
 	ultima6/actors/actor_manager.o \
 	ultima6/actors/md_actor.o \
