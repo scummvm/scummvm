@@ -20,35 +20,31 @@
  *
  */
 
-#ifndef __Nuvie_h__
-#define __Nuvie_h__
+#ifndef ULTIMA6_ULTIMA6_H
+#define ULTIMA6_ULTIMA6_H
 
+#include "ultima/detection.h"
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/conf/configuration.h"
+#include "common/random.h"
+#include "engines/engine.h"
 
 namespace Ultima {
+namespace Ultima6 {
 
 class Screen;
 class Script;
 class Game;
 
-class Nuvie {
+class Ultima6Engine : public Engine {
+private:
+	const Ultima::UltimaGameDescription *_gameDescription;
 	Configuration *config;
 	Screen *screen;
 	Script *script;
 	Game *game;
-
-public:
-
-	Nuvie();
-	~Nuvie();
-
-
-	bool init(int argc, char **argv);
-	bool play();
-
+	Common::RandomSource _randomSource;
 protected:
-
 	bool initConfig();
 	const char *getConfigPathWin32();
 	void SharedDefaultConfigValues();
@@ -62,9 +58,17 @@ protected:
 	bool checkDataDir();
 
 	bool playIntro();
+public:
+	Ultima6Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
+	~Ultima6Engine();
+
+	/**
+	 * Play the game
+	 */
+	virtual Common::Error run() override;
 };
 
-} // End of namespace Ultima8
+} // End of namespace Ultima6
+} // End of namespace Ultima
 
-#endif /* __Nuvie_h__ */
-
+#endif

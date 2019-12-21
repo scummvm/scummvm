@@ -20,18 +20,7 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-//#include <config.h>
-#endif
-
-//#include <sys/stat.h>
-//#include <sys/types.h>
-
-//#include <stdlib.h>
-//#include <string.h>
-
-
-
+#include "ultima/ultima6/ultima6.h"
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
@@ -45,23 +34,15 @@
 #include "ultima/ultima6/core/console.h"
 #include "ultima/ultima6/sound/sound_manager.h"
 
-#include "nuvie.h"
-
-#ifdef WIN32
-#define WIN32_LEAN_AND_MEAN
-//#include <windows.h>
-#endif
-
 namespace Ultima {
+namespace Ultima6 {
 
-Nuvie::Nuvie() {
-	config = NULL;
-	screen = NULL;
-	script = NULL;
-	game = NULL;
+Ultima6Engine::Ultima6Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
+		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima6"),
+		config(nullptr), screen(nullptr), script(nullptr), game(nullptr) {
 }
 
-Nuvie::~Nuvie() {
+Ultima6Engine::~Ultima6Engine() {
 	if (config != NULL)
 		delete config;
 
@@ -75,8 +56,8 @@ Nuvie::~Nuvie() {
 		delete game;
 }
 
-
-bool Nuvie::init(int argc, char **argv) {
+#ifdef TODO
+bool Ultima6Engine::init(int argc, char **argv) {
 	GameSelect *game_select;
 	uint8 game_type;
 	bool play_ending = false;
@@ -189,128 +170,40 @@ bool Nuvie::init(int argc, char **argv) {
 
 	return true;
 }
+#endif
 
-bool Nuvie::play() {
-
+Common::Error Ultima6Engine::run() {
 	if (game)
 		game->play();
 
-	return true;
+	return Common::kNoError;
 }
 
-const char *Nuvie::getConfigPathWin32() {
+const char *Ultima6Engine::getConfigPathWin32() {
 	static char configFile[MAXPATHLEN];
 	configFile[0] = '\0';
-#ifdef WIN32
 
-	OSVERSIONINFO win32OsVersion;
-	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
-	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&win32OsVersion);
-	// Check for non-9X version of Windows.
-	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
-		// Use the Application Data directory of the user profile.
-		if (win32OsVersion.dwMajorVersion >= 5) {
-			if (!GetEnvironmentVariable("APPDATA", configFile, sizeof(configFile)))
-				DEBUG(0, LEVEL_ERROR, "Unable to access application data directory\n");
-
-		} else {
-			if (!GetEnvironmentVariable("USERPROFILE", configFile, sizeof(configFile)))
-				DEBUG(0, LEVEL_ERROR, "Unable to access user profile directory\n");
-
-			strcat(configFile, "\\Application Data");
-
-			// If the directory already exists (as it should in most cases),
-			// we don't want to fail, but we need to stop on other errors (such as ERROR_PATH_NOT_FOUND)
-			if (!CreateDirectory(configFile, NULL)) {
-				if (GetLastError() != ERROR_ALREADY_EXISTS)
-					DEBUG(0, LEVEL_ERROR, "Cannot create Application data folder\n");
-			}
-		}
-
-		strcat(configFile, "\\Nuvie");
-		if (!CreateDirectory(configFile, NULL)) {
-			if (GetLastError() != ERROR_ALREADY_EXISTS)
-				DEBUG(0, LEVEL_ERROR, "Cannot create Nuvie application data folder\n");
-		}
-
-		strcat(configFile, "\\" "nuvie.cfg");
-	}
-#endif
 	return configFile;
 }
 
-bool Nuvie::initConfig() {
+bool Ultima6Engine::initConfig() {
 	std::string config_path;
-
 
 	config = new Configuration();
 
-#ifdef WIN32
 	const char *configFilePath = getConfigPathWin32();
 	config_path.assign(configFilePath);
 	if (loadConfigFile(config_path))
 		return true;
-#endif
 
-#ifndef WIN32
-// ~/.nuvierc
-
-	char *home_env = getenv("HOME");
-	if (home_env != NULL) {
-		config_path.assign(home_env);
-		// config_path.append(U6PATH_DELIMITER);
-		config_path.append("/.nuvierc");
-
-		if (loadConfigFile(config_path))
-			return true;
-
-#ifdef MACOSX
-		config_path.assign(home_env);
-		config_path.append("/Library/Preferences/Nuvie Preferences");
-
-		if (loadConfigFile(config_path))
-			return true;
-#endif
-
-	}
-#endif
-
-// nuvie.cfg in the working dir
-
+	// nuvie.cfg in the working dir
 	config_path.assign("nuvie.cfg");
 
 	if (loadConfigFile(config_path))
 		return true;
 
-#ifndef WIN32
-// standard share locations
-
-	config_path.assign("/usr/local/share/nuvie/nuvie.cfg");
-
-	if (loadConfigFile(config_path))
-		return true;
-
-	config_path.assign("/usr/share/nuvie/nuvie.cfg");
-
-	if (loadConfigFile(config_path))
-		return true;
-#endif
-
-#ifdef MACOSX
-	if (home_env != NULL) {
-		if (initDefaultConfigMacOSX(home_env))
-			return true;
-	}
-#endif
-
-#ifdef WIN32
 	if (initDefaultConfigWin32())
 		return true;
-#else //Unix
-	if (home_env != NULL && initDefaultConfigUnix(home_env))
-		return true;
-#endif
 
 	delete config;
 	config = NULL;
@@ -318,7 +211,7 @@ bool Nuvie::initConfig() {
 	return false;
 }
 
-void Nuvie::SharedDefaultConfigValues() {
+void Ultima6Engine::SharedDefaultConfigValues() {
 	config->set("config/loadgame", "ultima6");
 	config->set("config/datadir", "./data");
 	config->set("config/keys", "(default)");
@@ -427,13 +320,9 @@ void Nuvie::SharedDefaultConfigValues() {
 
 /* Should be safe default video settings
  */
-void Nuvie::set_safe_video_settings() {
+void Ultima6Engine::set_safe_video_settings() {
 	config->set("config/video/scale_method", "point");
 
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-		DEBUG(0, LEVEL_ERROR, "Couldn't initialize SDL_VIDEO!\n");
-		exit(EXIT_FAILURE);
-	}
 	config->set("config/video/scale_factor", "1");
 
 //FIXME SDL2    const SDL_VideoInfo *vinfo = SDL_GetVideoInfo();
@@ -446,7 +335,6 @@ void Nuvie::set_safe_video_settings() {
 //		else // portable with small screen
 //			config->set("config/video/scale_factor", "1");
 //	}
-	SDL_Quit();
 
 	config->set("config/video/fullscreen", "no");
 	config->set("config/video/non_square_pixels", "no");
@@ -456,7 +344,7 @@ void Nuvie::set_safe_video_settings() {
 	config->set("config/video/game_height", 200);
 }
 
-bool Nuvie::initDefaultConfigWin32() {
+bool Ultima6Engine::initDefaultConfigWin32() {
 	const unsigned char cfg_stub[] = "<config></config>";
 	std::string config_path("./nuvie.cfg");
 
@@ -489,7 +377,7 @@ bool Nuvie::initDefaultConfigWin32() {
 	return true;
 }
 
-bool Nuvie::initDefaultConfigMacOSX(const char *home_env) {
+bool Ultima6Engine::initDefaultConfigMacOSX(const char *home_env) {
 	const unsigned char cfg_stub[] = "<config></config>";
 	std::string config_path;
 	std::string home(home_env);
@@ -523,7 +411,7 @@ bool Nuvie::initDefaultConfigMacOSX(const char *home_env) {
 	return true;
 }
 
-bool Nuvie::initDefaultConfigUnix(const char *home_env) {
+bool Ultima6Engine::initDefaultConfigUnix(const char *home_env) {
 	const unsigned char cfg_stub[] = "<config></config>";
 	std::string config_path;
 	std::string home(home_env);
@@ -557,11 +445,10 @@ bool Nuvie::initDefaultConfigUnix(const char *home_env) {
 	return true;
 }
 
-bool Nuvie::loadConfigFile(std::string filename, bool readOnly) {
-	struct stat sb;
+bool Ultima6Engine::loadConfigFile(std::string filename, bool readOnly) {
 	DEBUG(0, LEVEL_INFORMATIONAL, "Loading Config from '%s': ", filename.c_str());
 
-	if (stat(filename.c_str(), &sb) == 0) {
+	if (Common::File::exists(filename)) {
 		if (config->readConfigFile(filename, "config", readOnly) == true) {
 			DEBUG(1, LEVEL_INFORMATIONAL, "Done.\n");
 			return true;
@@ -573,7 +460,7 @@ bool Nuvie::loadConfigFile(std::string filename, bool readOnly) {
 	return false;
 }
 
-void Nuvie::assignGameConfigValues(uint8 game_type) {
+void Ultima6Engine::assignGameConfigValues(uint8 game_type) {
 	std::string game_name, game_id;
 
 	config->set("config/GameType", game_type);
@@ -599,50 +486,24 @@ void Nuvie::assignGameConfigValues(uint8 game_type) {
 	return;
 }
 
-bool Nuvie::checkGameDir(uint8 game_type) {
+bool Ultima6Engine::checkGameDir(uint8 game_type) {
 	std::string path;
 
 	config_get_path(config, "", path);
 	ConsoleAddInfo("gamedir: \"%s\"", path.c_str());
 
-#ifndef WIN32
-	struct stat sb;
-
-	if (stat(path.c_str(), &sb) == 0 && sb.st_mode & S_IFDIR) {
-		return true;
-	}
-
-	ConsoleAddError("Cannot open gamedir!");
-	ConsoleAddError("\"" + path + "\"");
-
-	return false;
-#endif
-
 	return true;
 }
 
-bool Nuvie::checkDataDir() {
+bool Ultima6Engine::checkDataDir() {
 	std::string path;
 	config->value("config/datadir", path, "");
 	ConsoleAddInfo("datadir: \"%s\"", path.c_str());
 
-#ifndef WIN32
-	struct stat sb;
-
-	if (stat(path.c_str(), &sb) == 0 && sb.st_mode & S_IFDIR) {
-		return true;
-	}
-
-	ConsoleAddError("Cannot open datadir!");
-	ConsoleAddError("\"" + path + "\"");
-
-	return false;
-#endif
-
 	return true;
 }
 
-bool Nuvie::playIntro() {
+bool Ultima6Engine::playIntro() {
 	bool skip_intro;
 
 	string key = config_get_game_key(config);
@@ -664,4 +525,5 @@ bool Nuvie::playIntro() {
 	return false;
 }
 
-} // End of namespace Ultima8
+} // End of namespace Ultima6
+} // End of namespace Ultima
