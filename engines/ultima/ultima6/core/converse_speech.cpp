@@ -203,10 +203,10 @@ inline sint16 ConverseSpeech::convert_sample(uint16 raw_sample) {
 }
 
 void ConverseSpeech::wav_init_header(NuvieIOBuffer *wav_buffer, uint32 audio_length) {
-	wav_buffer->writeBuf((unsigned char *)"RIFF", 4);
+	wav_buffer->writeBuf((const unsigned char *)"RIFF", 4);
 	wav_buffer->write4(36 + audio_length * 2); //length of RIFF chunk
-	wav_buffer->writeBuf((unsigned char *)"WAVE", 4);
-	wav_buffer->writeBuf((unsigned char *)"fmt ", 4);
+	wav_buffer->writeBuf((const unsigned char *)"WAVE", 4);
+	wav_buffer->writeBuf((const unsigned char *)"fmt ", 4);
 	wav_buffer->write4(16); // length of format chunk
 	wav_buffer->write2(1); // PCM encoding
 	wav_buffer->write2(1); // mono
@@ -215,7 +215,7 @@ void ConverseSpeech::wav_init_header(NuvieIOBuffer *wav_buffer, uint32 audio_len
 	wav_buffer->write2(2); // BlockAlign
 	wav_buffer->write2(16); // Bits per sample
 
-	wav_buffer->writeBuf((unsigned char *)"data", 4);
+	wav_buffer->writeBuf((const unsigned char *)"data", 4);
 	wav_buffer->write4(audio_length * 2); // length of data chunk
 
 	return;

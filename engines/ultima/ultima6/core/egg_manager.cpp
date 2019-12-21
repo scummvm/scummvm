@@ -20,11 +20,8 @@
  *
  */
 
-//#include <list>
-//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/core/tile_manager.h"
 #include "ultima/ultima6/actors/actor_manager.h"
@@ -66,11 +63,10 @@ EggManager::~EggManager() {
 }
 
 void EggManager::clean(bool keep_obj) {
-	Egg *egg;
 	std::list<Egg *>::iterator egg_iter;
 
 	for (egg_iter = egg_list.begin(); egg_iter != egg_list.end();) {
-		egg = *egg_iter;
+		//egg = *egg_iter;
 
 		// eggs are always on the map now.
 		// if(keep_obj == false)

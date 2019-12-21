@@ -78,13 +78,14 @@ void TMXMap::writeRoofTileset(uint8 level) {
 	free(buf);
 }
 
-void TMXMap::writeLayer(NuvieIOFileWrite *tmx, uint16 sideLength, std::string layerName, uint16 gidOffset, uint16 bitsPerTile, unsigned char *data) {
+void TMXMap::writeLayer(NuvieIOFileWrite *tmx, uint16 sideLength, std::string layerName,
+		uint16 gidOffset, uint16 bitsPerTile, const unsigned char *data) {
 	std::string slen = sint32ToString((sint32)sideLength);
 	std::string header = " <layer name=\"" + layerName + "\" width=\"" + slen + "\" height=\""
 	                     + slen + "\">\n";
 	header += "  <data encoding=\"csv\">\n";
 
-	tmx->writeBuf((unsigned char *) header.c_str(), header.length());
+	tmx->writeBuf((const unsigned char *)header.c_str(), header.length());
 
 	char buf[5]; // 'nnnn\0'
 
@@ -98,7 +99,7 @@ void TMXMap::writeLayer(NuvieIOFileWrite *tmx, uint16 sideLength, std::string la
 				gid = ((uint16 *)data)[my * sideLength + mx] + 1 + gidOffset;
 			}
 			snprintf(buf, sizeof(buf), "%d", gid);
-			tmx->writeBuf((unsigned char *)buf, strlen(buf));
+			tmx->writeBuf((const unsigned char *)buf, strlen(buf));
 			if (mx < sideLength - 1 || my < sideLength - 1) { //don't write comma after last element in the array.
 				tmx->write1(',');
 			}
@@ -109,19 +110,19 @@ void TMXMap::writeLayer(NuvieIOFileWrite *tmx, uint16 sideLength, std::string la
 	std::string footer = "  </data>\n";
 	footer += " </layer>\n";
 
-	tmx->writeBuf((unsigned char *)footer.c_str(), footer.length());
+	tmx->writeBuf((const unsigned char *)footer.c_str(), footer.length());
 }
 
 void TMXMap::writeObjectLayer(NuvieIOFileWrite *tmx, uint8 level) {
 	std::string xml = "<objectgroup name=\"Object Layer\">\n";
-	tmx->writeBuf((unsigned char *)xml.c_str(), xml.length());
+	tmx->writeBuf((const unsigned char *)xml.c_str(), xml.length());
 
 	writeObjects(tmx, level, true, false);
 	writeObjects(tmx, level, false, false);
 	writeObjects(tmx, level, false, true);
 
 	xml = "</objectgroup>\n";
-	tmx->writeBuf((unsigned char *)xml.c_str(), xml.length());
+	tmx->writeBuf((const unsigned char *)xml.c_str(), xml.length());
 }
 
 bool TMXMap::canDrawTile(Tile *t, bool forceLower, bool toptile) {
@@ -183,7 +184,7 @@ void TMXMap::writeObjects(NuvieIOFileWrite *tmx, uint8 level, bool forceLower, b
 					if (t->dbl_width && t->dbl_height) {
 						s += writeObjectTile(obj, " -x,-y", t->tile_num - 3, x - 1, y - 1, forceLower, toptiles);
 					}
-					tmx->writeBuf((unsigned char *)s.c_str(), s.length());
+					tmx->writeBuf((const unsigned char *)s.c_str(), s.length());
 				}
 			}
 		}
@@ -219,20 +220,20 @@ bool TMXMap::exportMapLevel(uint8 level) {
 		header += " </tileset>\n";
 	}
 
-	tmx.writeBuf((unsigned char *) header.c_str(), header.length());
+	tmx.writeBuf((const unsigned char *)header.c_str(), header.length());
 
 	writeLayer(&tmx, width, "BaseLayer", 0, 8, mapdata);
 
 	writeObjectLayer(&tmx, level);
 
 	if (map->get_roof_data(level) != NULL) {
-		writeLayer(&tmx, width, "RoofLayer", 2047, 16, (unsigned char *)map->get_roof_data(level));
+		writeLayer(&tmx, width, "RoofLayer", 2047, 16, (const unsigned char *)map->get_roof_data(level));
 	}
 
 	std::string footer = "</map>\n";
 
 
-	tmx.writeBuf((unsigned char *)footer.c_str(), footer.length());
+	tmx.writeBuf((const unsigned char *)footer.c_str(), footer.length());
 
 
 

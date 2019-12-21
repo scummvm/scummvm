@@ -1246,7 +1246,7 @@ void Actor::loadSchedule(unsigned char *sched_data, uint16 num) {
 //FIX for day_of_week
 
 bool Actor::updateSchedule(uint8 hour, bool teleport) {
-	uint8 day_of_week;
+	//uint8 day_of_week;
 	uint16 new_pos;
 
 	if (is_alive() == false //don't update schedule for dead actors.
@@ -1255,7 +1255,7 @@ bool Actor::updateSchedule(uint8 hour, bool teleport) {
 		return false;
 
 //hour = clock->get_hour();
-	day_of_week = clock->get_day_of_week();
+//	day_of_week = clock->get_day_of_week();
 
 	new_pos = getSchedulePos(hour);
 

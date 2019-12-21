@@ -450,7 +450,7 @@ void Event::cancel_key_redirect() {
 
 /* Switch focus to PortraitView, display a portrait, and wait for user input. */
 void Event::display_portrait(Actor *actor, const char *name) {
-	view_manager->set_portrait_mode(actor, (char *) name);
+	view_manager->set_portrait_mode(actor, name);
 	view_manager->get_portrait_view()->set_waiting(true);
 }
 

@@ -156,7 +156,7 @@ void GUI_Font:: TextExtent(const char *text, int *w, int *h, int line_wrap) {
 		//FIXME we're not handling line_wrap properly for variable width fonts!
 		*w = 0;
 		for (int i = 0; i < len; i++) {
-			*w += w_data[text[i]];
+			*w += w_data[(byte)text[i]];
 		}
 	} else {
 		if (line_wrap && len > line_wrap)

@@ -39,7 +39,7 @@
 #include "ultima/ultima6/save/save_slot.h"
 #include "ultima/ultima6/save/save_manager.h"
 #include "ultima/ultima6/save/save_dialog.h"
-#include "ultima/ultima6/gui/gui_Scroller.h"
+#include "ultima/ultima6/gui/gui_scroller.h"
 
 namespace Ultima {
 namespace Ultima6 {

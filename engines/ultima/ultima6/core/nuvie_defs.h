@@ -112,10 +112,7 @@ extern void u6debug(bool no_header, const DebugLevelType level, const char *form
 
 #define MAXPATHLEN 256
 
-#define nuprint(...) Game::get_game()->get_scroll()->printf(__VA_ARGS__)
-/*#define nuprint(T) Game::get_game()->get_scroll()->display_string(T)*/
-/*#define nuprint(T) Game::get_game()->get_scroll()->display_string(T); \
-                     Game::get_game()->get_scroll()->display_string("\n");*/
+#define nuprint Game::get_game()->get_scroll()->print
 
 } // End of namespace Ultima6
 } // End of namespace Ultima

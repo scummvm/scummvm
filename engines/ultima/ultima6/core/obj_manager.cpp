@@ -20,11 +20,8 @@
  *
  */
 
-//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/conf/configuration.h"
-
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/core/egg_manager.h"
 #include "ultima/ultima6/core/tile_manager.h"
@@ -50,7 +47,7 @@ static const int obj_egg_table[5] = {0,   // NUVIE_GAME_NONE
                                     };  // NUVIE_GAME_SE
 
 static iAVLKey get_iAVLKey(const void *item) {
-	return ((ObjTreeNode *)item)->key;
+	return ((const ObjTreeNode *)item)->key;
 }
 
 ObjManager::ObjManager(Configuration *cfg, TileManager *tm, EggManager *em) {
@@ -211,6 +208,8 @@ bool ObjManager::load_super_chunk(NuvieIO *chunk_buf, uint8 level, uint8 chunk_o
 		//print_obj(obj,false);
 	}
 
+	// Unused variable
+	(void)obj_tree;
 
 	delete list;
 

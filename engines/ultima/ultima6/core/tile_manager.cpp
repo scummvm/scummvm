@@ -20,12 +20,8 @@
  *
  */
 
-//#include <cmath>
-//#include <cstdlib>
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/conf/configuration.h"
-
 #include "ultima/ultima6/core/console.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
 #include "ultima/ultima6/files/nuvie_bmp_file.h"
@@ -35,7 +31,7 @@
 #include "ultima/ultima6/screen/game_palette.h"
 #include "ultima/ultima6/screen/dither.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "Look.h"
+#include "ultima/ultima6/core/look.h"
 #include "ultima/ultima6/core/game_clock.h"
 #include "ultima/ultima6/save/save_manager.h"
 #include "ultima/ultima6/core/tile_manager.h"
@@ -692,7 +688,7 @@ void TileManager::get_rotated_tile(Tile *tileP, Tile *dest_tile, float rotate, u
 	int32 const src_pitch = 16;
 	int32 const dst_pitch = 16;
 	uint8 const *src_row = (uint8 *)&tileP->data;
-	uint8 const *dst_pixels = (uint8 *)&dest_tile->data;
+	uint8 *dst_pixels = (uint8 *)&dest_tile->data;
 	uint8 *dst_row;
 
 	if (src_y_offset > 0 && src_y_offset < 16) { //shift source down before rotating. This is used by bolt and arrow tiles.

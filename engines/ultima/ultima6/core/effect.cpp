@@ -1010,9 +1010,8 @@ void FadeEffect::init_pixelated_fade() {
 			if (fade_from) { // fade from captured surface to transparent
 				// put surface on transparent background (not checked)
 				fillret = SDL_FillRect(overlay, NULL, uint32(TRANSPARENT_COLOR));
-				Common::Rect overlay_rect = { (int16)fade_x, (int16)fade_y, 0, 0 };
-				fillret = SDL_BlitSurface(fade_from, NULL,
-				                          overlay, &overlay_rect);
+				Common::Rect overlay_rect(fade_x, fade_y, fade_x, fade_y);
+				fillret = SDL_BlitSurface(fade_from, NULL, overlay, &overlay_rect);
 			} else // fade from transparent to color
 				fillret = SDL_FillRect(overlay, NULL, uint32(TRANSPARENT_COLOR));
 		} else {
@@ -1151,9 +1150,8 @@ bool FadeEffect::pixelated_fade_core(uint32 pixels_to_check, sint16 fade_to) {
 		if (fade_to >= 0)
 			SDL_FillRect(overlay, NULL, (uint32)fade_to);
 		else { // Note: assert(fade_from) if(fade_to < 0)
-			Common::Rect fade_from_rect = { 0, 0, (int16)fade_from->w, (int16)fade_from->h };
-			Common::Rect overlay_rect = { (int16)fade_x, (int16)fade_y,
-				(int16)(fade_x + fade_from->w), (int16)(fade_y + fade_from->h) };
+			Common::Rect fade_from_rect(fade_from->w, (int16)fade_from->h);
+			Common::Rect overlay_rect(fade_x, fade_y, fade_x + fade_from->w, fade_y + fade_from->h);
 			SDL_BlitSurface(fade_from, &fade_from_rect, overlay, &overlay_rect);
 		}
 		return (true);

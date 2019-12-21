@@ -20,8 +20,6 @@
  *
  */
 
-//#include <iostream>
-
 #include "ultima/ultima6/keybinding/keys.h"
 #include "ultima/ultima6/keybinding/key_actions.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
@@ -140,7 +138,7 @@ Action NuvieActions[] = {
 };
 
 struct KeycodeString {
-	const char *const s;
+	const char *s;
 	Common::KeyCode k;
 };
 const KeycodeString StringTable[] = {
