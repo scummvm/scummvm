@@ -37,7 +37,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-Ultima6Engine *Ultima6Engine::g_engine;
+Ultima6Engine *g_engine;
 
 Ultima6Engine::Ultima6Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima6"),

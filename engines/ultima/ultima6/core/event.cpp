@@ -20,10 +20,6 @@
  *
  */
 
-//#include <cassert>
-//#include <cstring>
-
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/conf/configuration.h"
@@ -58,7 +54,6 @@
 #include "ultima/ultima6/keybinding/keys.h"
 #include "ultima/ultima6/views/spell_view.h"
 #include "ultima/ultima6/core/fps_counter.h"
-
 #include "common/system.h"
 
 namespace Ultima {
@@ -172,12 +167,12 @@ bool Event::update() {
 	game_time_queue->call_timers(clock->get_game_ticks());
 
 	// polled
-	Common::Event event;
-	while (Events::get()->pollEvent(&event)) {
+	Common::Event evt;
+	while (Events::get()->pollEvent(evt)) {
 		idle = false;
-		switch (gui->HandleEvent(&event)) {
+		switch (gui->HandleEvent(&evt)) {
 		case GUI_PASS :
-			if (handleEvent(&event) == false) {
+			if (handleEvent(&evt) == false) {
 				game->quit();
 				return false;
 			}
@@ -201,39 +196,39 @@ bool Event::update() {
 	return true;
 }
 
-bool Event::handleSDL_KEYDOWN(const Common::Event *event) {
+bool Event::handleSDL_KEYDOWN(const Common::Event *event_) {
 	// when casting the magic class will handle keyboard events
 	if (mode == KEYINPUT_MODE) {
-		Common::KeyCode sym = event->key.keysym.sym;
+		Common::KeyCode sym = event_->kbd.keycode;
 		ActionKeyType action_key_type = OTHER_KEY;
 
 		if (!((magic->is_selecting_spell() && ((sym >= Common::KEYCODE_a && sym <= Common::KEYCODE_z) || sym == Common::KEYCODE_BACKSPACE)) ||
 		        ((magic->is_waiting_for_location() || last_mode == USE_MODE) && sym >= Common::KEYCODE_1 && sym <= Common::KEYCODE_9))) {
-			ActionType a = keybinder->get_ActionType(event->key.keysym);
+			ActionType a = keybinder->get_ActionType(event_->kbd);
 			action_key_type = keybinder->GetActionKeyType(a);
-			switch (action_key_type) {
-			default:
+			//switch (action_key_type) {
+			//default:
 				if (keybinder->handle_always_available_keys(a)) return true;
-				break;
-			}
+			//	break;
+			//}
 		}
 		input.type = EVENTINPUT_KEY;
 		input.key = sym;
 		input.action_key_type = action_key_type;
-		// callback should return a true value if it handled the event
+		// callback should return a true value if it handled the event_
 		if (action_key_type != CANCEL_ACTION_KEY && message(CB_DATA_READY, (char *) &input))
 			return true;
 		callback_target = 0;
 		endAction(); // no more keys for you! (end KEYINPUT_MODE)
-		keybinder->HandleEvent(event);
+		keybinder->HandleEvent(event_);
 		return true;
 	}
 
-	byte mods = event->kbd.flags;
+	byte mods = event_->kbd.flags;
 	// alt-code input
 	if (mods & Common::KBD_ALT) {
 		if (mode == MOVE_MODE)
-			switch (event->key.keysym.sym) {
+			switch (event_->kbd.keycode) {
 			case Common::KEYCODE_KP0:
 			case Common::KEYCODE_0:
 				alt_code_str[alt_code_len++] = '0';
@@ -284,7 +279,7 @@ bool Event::handleSDL_KEYDOWN(const Common::Event *event) {
 				alt_code_str[alt_code_len++] = '9';
 				break;
 			default:
-				keybinder->HandleEvent(event);
+				keybinder->HandleEvent(event_);
 				return true;
 			}
 		if (alt_code_len != 0) {
@@ -297,7 +292,7 @@ bool Event::handleSDL_KEYDOWN(const Common::Event *event) {
 		return true;
 	}
 
-	keybinder->HandleEvent(event);
+	keybinder->HandleEvent(event_);
 
 	return true;
 }
@@ -320,21 +315,21 @@ void Event::close_spellbook() {
 	cancelAction();
 }
 
-bool Event::handleEvent(const Common::Event *event) {
+bool Event::handleEvent(const Common::Event *event_) {
 	if (game->user_paused())
 		return true;
 
-	switch (event->type) {
+	switch (event_->type) {
 	case Common::EVENT_MOUSEMOVE:
 		break;
 	case Common::EVENT_KEYUP:
-		if (event->kbd.flags & Common::KBD_ALT) {
+		if (event_->kbd.flags & Common::KBD_ALT) {
 			clear_alt_code();
 		}
 		break;
 
 	case Common::EVENT_KEYDOWN:
-		handleSDL_KEYDOWN(event);
+		handleSDL_KEYDOWN(event_);
 		break;
 
 	case Common::EVENT_QUIT:
@@ -2844,12 +2839,12 @@ bool Event::rest() {
 
 /* Get hours to Rest, or number of party member who will guard. These must be
    entered in order. */
-bool Event::rest_input(uint16 input) {
+bool Event::rest_input(uint16 input_) {
 	Party *party = player->get_party();
 	scroll->set_input_mode(false);
 	scroll->display_string("\n");
 	if (rest_time == 0) {
-		rest_time = input;
+		rest_time = input_;
 		if (rest_time == 0) {
 			endAction(true);
 			return false;
@@ -2862,7 +2857,7 @@ bool Event::rest_input(uint16 input) {
 			party->rest_gather(); // nobody can guard; start now
 		}
 	} else {
-		rest_guard = input;
+		rest_guard = input_;
 		if (rest_guard > party->get_party_size())
 			rest_guard = 0;
 		if (rest_guard == 0)
@@ -3674,8 +3669,8 @@ static const char eventModeStrings[][17] = {
 	"SCRIPT_MODE"
 };
 
-const char *Event::print_mode(EventMode mode) {
-	return eventModeStrings[mode];
+const char *Event::print_mode(EventMode mode_) {
+	return eventModeStrings[mode_];
 }
 
 bool Event::can_target_icon() {

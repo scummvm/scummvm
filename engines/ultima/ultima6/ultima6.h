@@ -38,7 +38,6 @@ class Game;
 
 class Ultima6Engine : public Engine {
 private:
-	static Ultima6Engine *g_engine;
 	const Ultima::UltimaGameDescription *_gameDescription;
 	Configuration *config;
 	Screen *screen;
@@ -73,6 +72,8 @@ public:
 	 */
 	uint getRandomNumber(uint maxVal) { return _randomSource.getRandomNumber(maxVal); }
 };
+
+extern Ultima6Engine *g_engine;
 
 } // End of namespace Ultima6
 } // End of namespace Ultima

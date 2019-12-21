@@ -114,7 +114,7 @@ void ConsolePause() {
 	bool waiting = true;
 	for (; waiting;) {
 		while (!SDL_PollEvent(&event)) {
-			if (event.type == SDL_KEYDOWN || event.type == SDL_QUIT) {
+			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_QUIT) {
 				waiting = false;
 				break;
 			}

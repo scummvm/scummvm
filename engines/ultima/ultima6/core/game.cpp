@@ -23,13 +23,10 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/core/console.h"
 #include "ultima/ultima6/screen/dither.h"
-
 #include "ultima/ultima6/sound/sound_manager.h"
-
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/screen/screen.h"
@@ -62,7 +59,6 @@
 
 #include "ultima/ultima6/usecode/usecode.h"
 #include "ultima/ultima6/usecode/u6_usecode.h"
-
 #include "ultima/ultima6/core/cursor.h"
 #include "ultima/ultima6/save/save_manager.h"
 #include "ultima/ultima6/core/weather.h"
@@ -70,6 +66,7 @@
 #include "ultima/ultima6/keybinding/keys.h"
 #include "ultima/ultima6/keybinding/utils.h"
 #include "ultima/ultima6/core/game.h"
+#include "ultima/ultima6/ultima6.h"
 
 #include "common/system.h"
 
@@ -686,10 +683,10 @@ void Game::update_once(bool process_gui_input, bool run_converse) {
 
 	event->update_timers();
 
-	Common::Event event;
-	while (Events::get()->pollEvent(event)) {
+	Common::Event evt;
+	while (Events::get()->pollEvent(evt)) {
 		if (process_gui_input)
-			gui->HandleEvent(&event);
+			gui->HandleEvent(&evt);
 	}
 
 	if (clock->get_timer(GAMECLOCK_TIMER_U6_TIME_STOP) == 0) {

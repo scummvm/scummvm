@@ -18,7 +18,42 @@ MODULE_OBJS += \
 	ultima6/conf/misc.o \
 	ultima6/conf/xml_node.o \
 	ultima6/conf/xml_tree.o \
+	ultima6/core/anim_manager.o \
+	ultima6/core/background.o \
+	ultima6/core/book.o \
+	ultima6/core/command_bar.o \
+	ultima6/core/command_bar_mew_ui.o \
+	ultima6/core/console.o \
+	ultima6/core/converse.o \
+	ultima6/core/converse_gump.o \
+	ultima6/core/converse_gump_wou.o \
+	ultima6/core/converse_interpret.o \
+	ultima6/core/converse_speech.o \
+	ultima6/core/cursor.o \
+	ultima6/core/debug.o \
+	ultima6/core/effect.o \
+	ultima6/core/effect_manager.o \
+	ultima6/core/egg_manager.o \
+	ultima6/core/event.o \
 	ultima6/core/events.o \
+	ultima6/core/fps_counter.o \
+	ultima6/core/game.o \
+	ultima6/core/game_clock.o \
+	ultima6/core/game_select.o \
+	ultima6/core/look.o \
+	ultima6/core/magic.o \
+	ultima6/core/map.o \
+	ultima6/core/map_window.o \
+	ultima6/core/msg_scroll.o \
+	ultima6/core/msg_scroll_new_ui.o \
+	ultima6/core/nuvie_defs.o \
+	ultima6/core/obj.o \
+	ultima6/core/obj_manager.o \
+	ultima6/core/party.o \
+	ultima6/core/player.o \
+	ultima6/core/tile_manager.o \
+	ultima6/core/timed_event.o \
+	ultima6/core/weather.o \
 	ultima6/files/nuvie_bmp_file.o \
 	ultima6/files/nuvie_file_list.o \
 	ultima6/files/nuvie_io.o \
