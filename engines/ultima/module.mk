@@ -27,6 +27,12 @@ MODULE_OBJS += \
 	ultima6/files/u6_lib_n.o \
 	ultima6/files/u6_lzw.o \
 	ultima6/files/u6_shape.o \
+	ultima6/fonts/bmp_font.o \
+	ultima6/fonts/conv_font.o \
+	ultima6/fonts/font.o \
+	ultima6/fonts/font_manager.o \
+	ultima6/fonts/u6_font.o \
+	ultima6/fonts/wou_font.o \
 	ultima6/gui/gui.o \
 	ultima6/gui/gui_area.o \
 	ultima6/gui/gui_button.o \

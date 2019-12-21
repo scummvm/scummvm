@@ -20,11 +20,8 @@
  *
  */
 
-//#include <stdlib.h>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
 #include "ultima/ultima6/files/u6_lib_n.h"
@@ -32,8 +29,8 @@
 #include "ultima/ultima6/fonts/font_manager.h"
 #include "ultima/ultima6/fonts/font.h"
 #include "ultima/ultima6/fonts/conv_font.h"
-#include "U6ultima/ultima6/fonts/font.h"
-#include "WOUultima/ultima6/fonts/font.h"
+#include "ultima/ultima6/fonts/u6_font.h"
+#include "ultima/ultima6/fonts/wou_font.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 
 namespace Ultima {
