@@ -273,7 +273,7 @@ GUI:: HandleEvent(Common::Event *event) {
 #ifdef HAVE_JOYSTICK_SUPPORT
 		if (event->type >= SDL_JOYAXISMOTION && event->type <= SDL_JOYBUTTONUP) {
 			event->key.keysym.sym = Game::get_game()->get_keybinder()->get_key_from_joy_events(event);
-			if (event->key.keysym.sym == Common::KEYCODE_UNKNOWN) { // isn't mapped, is in deadzone, or axis didn't return to center before moving again
+			if (event->key.keysym.sym == Common::KEYCODE_INVALID) { // isn't mapped, is in deadzone, or axis didn't return to center before moving again
 				HandleStatus(status);
 				CleanupDeletedWidgets(status != GUI_QUIT);
 				return status; // pretend nothing happened
