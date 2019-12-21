@@ -18,7 +18,7 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "ultima/ultima6/sound/mixer/decoder/pc_speaker_stream.h"
+#include "ultima/ultima6/sound/decoder/pc_speaker_stream.h"
 #include "ultima/ultima6/core/game.h"
 
 namespace Ultima {

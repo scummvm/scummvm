@@ -19,7 +19,8 @@
  *
  */
 
-#include "ultima/ultima6/sound/mixer/random_collection_audio_stream.h"
+#include "ultima/ultima6/sound/decoder/random_collection_audio_stream.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima6 {
