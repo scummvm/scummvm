@@ -125,6 +125,7 @@ MODULE_OBJS += \
 	ultima6/script/script.o \
 	ultima6/script/script_actor.o \
 	ultima6/script/script_cutscene.o \
+	ultima6/sound/sound_manager.o \
 	ultima6/usecode/u6_usecode.o \
 	ultima6/usecode/usecode.o \
 	ultima6/views/actor_view.o \

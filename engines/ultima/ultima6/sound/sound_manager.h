@@ -20,7 +20,8 @@
  *
  */
 
-//notes: this file should be moved to the nuvie main directory instead of sound.
+#ifndef ULTIMA6_SOUND_SOUND_MANAGER_H
+#define ULTIMA6_SOUND_SOUND_MANAGER_H
 
 //priorities:
 //todo:
@@ -30,8 +31,6 @@
 //-make samples fade in & out according to distance
 //-try and use original .m files
 
-#ifndef ULTIMA6_SOUND_SOUND_MANAGER_H
-#define ULTIMA6_SOUND_SOUND_MANAGER_H
 #include "ultima/ultima6/sound/sound.h"
 #include "ultima/ultima6/sound/song.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
@@ -39,7 +38,6 @@
 #include "ultima/ultima6/files/nuvie_io_file.h"
 #include "ultima/ultima6/sound/sfx.h"
 #include "audio/mixer.h"
-//#include "sdl-mixer.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -49,16 +47,15 @@ namespace Ultima6 {
 
 class SfxManager;
 class CEmuopl;
-class SdlMixerManager;
 
-typedef struct {
+struct SoundManagerSfx {
 	SfxIdType sfx_id;
 	Audio::SoundHandle handle;
-} SoundManagerSfx;
+} ;
 
 class SoundManager {
 public:
-	SoundManager();
+	SoundManager(Audio::Mixer *mixer);
 	~SoundManager();
 
 	bool nuvieStartup(Configuration *config);
@@ -134,9 +131,11 @@ private:
 
 	uint16 RequestObjectSfxId(uint16 obj_n);
 
-	map<int, SoundCollection *> m_TileSampleMap;
-	map<int, SoundCollection *> m_ObjectSampleMap;
-	map<Common::String, SoundCollection *> m_MusicMap;
+	typedef map<int, SoundCollection *> IntCollectionMap;
+	typedef map<Common::String, SoundCollection *> StringCollectionMap;
+	IntCollectionMap m_TileSampleMap;
+	IntCollectionMap m_ObjectSampleMap;
+	StringCollectionMap m_MusicMap;
 	list<Sound *> m_Songs;
 	list<Sound *> m_Samples;
 	Configuration *m_Config;
@@ -153,7 +152,7 @@ private:
 	uint8 music_volume;
 	uint8 sfx_volume;
 
-	SdlMixerManager *mixer;
+	Audio::Mixer *_mixer;
 	SfxManager *m_SfxManager;
 
 	CEmuopl *opl;

@@ -20,35 +20,31 @@
  *
  */
 
-#ifndef ULTIMA6_SOUND_ADPLUG_EMU_OPL_H
-#define ULTIMA6_SOUND_ADPLUG_EMU_OPL_H
+#ifndef ULTIMA6_SOUND_MIXER_RANDOM_COLLECTION_AUDIO_STREAM_H
+#define ULTIMA6_SOUND_MIXER_RANDOM_COLLECTION_AUDIO_STREAM_H
 
-#include "ultima/ultima6/sound/adplug/opl.h"
-#include "audio/fmopl.h"
+#include "audio/audiostream.h"
 
 namespace Ultima {
 namespace Ultima6 {
+namespace U6Audio {
 
-class CEmuopl: public Copl {
+class RandomCollectionAudioStream : public Audio::AudioStream {
 public:
-	CEmuopl(int rate, bool bit16, bool usestereo);  // rate = sample rate
-	virtual ~CEmuopl();
-
-	int getRate() {
-		return oplRate;
-	}
-
-	void update(short *buf, int samples);   // fill buffer
-
-	// template methods
-	void write(int reg, int val);
-	void init();
-
-private:
-	bool    use16bit, stereo;
-	int oplRate;
+	/**
+	 * Mark this stream as finished. That is, signal that no further data
+	 * will be queued to it. Only after this has been done can this
+	 * stream ever 'end'.
+	 */
+	virtual void finish() = 0;
 };
 
+/**
+ * Factory function for an QueuingAudioStream.
+ */
+RandomCollectionAudioStream *makeRandomCollectionAudioStream(int rate, bool stereo, std::vector<Audio::RewindableAudioStream *>streams, DisposeAfterUse::Flag disposeAfterUse);
+
+} // End of namespace U6Audio
 } // End of namespace Ultima6
 } // End of namespace Ultima
 

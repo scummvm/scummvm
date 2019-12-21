@@ -18,12 +18,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-//#include <cstdio>
-#include "ultima/shared/std/string.h"
-//#include <list>
 
+#include "ultima/ultima6/sound/mixer/random_collection_audio_stream.h"
 
-#include "audiostream.h"
+namespace Ultima {
+namespace Ultima6 {
+
 class U6Lib_n;
 class U6Lzw;
 class NuvieIOBuffer;
@@ -80,4 +80,7 @@ protected:
 
 };
 
-#endif /* __FMtownsDecoderStream_h__ */
+} // End of namespace Ultima6
+} // End of namespace Ultima
+
+#endif

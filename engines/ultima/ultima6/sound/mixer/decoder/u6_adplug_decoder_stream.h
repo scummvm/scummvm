@@ -1,5 +1,3 @@
-#ifndef __U6AdPlugDecoderStream_h__
-#define __U6AdPlugDecoderStream_h__
 /* Created by Eric Fry
  * Copyright (C) 2011 The Nuvie Team
  *
@@ -18,21 +16,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-//#include <cstdio>
+
+#ifndef ULTIMA6_SOUND_ADPLUG_ADPLUG_DECODER_STREAM_H
+#define ULTIMA6_SOUND_ADPLUG_ADPLUG_DECODER_STREAM_H
+
 #include "ultima/shared/std/string.h"
-//#include <list>
+#include "ultima/ultima6/sound/adplug/emu_opl.h"
+#include "ultima/ultima6/sound/adplug/opl.h"
+#include "ultima/ultima6/sound/adplug/u6m.h"
+#include "ultima/ultima6/sound/adplug/mid.h"
+#include "audio/audiostream.h"
 
-
-#include "audiostream.h"
-#include "emuopl.h"
-#include "u6m.h"
-#include "mid.h"
+namespace Ultima {
+namespace Ultima6 {
 
 class U6Lib_n;
 class U6Lzw;
 class NuvieIOBuffer;
-
-
 using std::string;
 
 class U6AdPlugDecoderStream : public Audio::RewindableAudioStream {
@@ -89,4 +89,7 @@ protected:
 	bool is_midi_track;
 };
 
-#endif /* __U6AdPlugDecoderStream_h__ */
+} // End of namespace Ultima6
+} // End of namespace Ultima
+
+#endif
