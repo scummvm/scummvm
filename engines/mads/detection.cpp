@@ -81,6 +81,10 @@ static const PlainGameDescriptor MADSGames[] = {
 #define GAMEOPTION_NAUGHTY_MODE        GUIO_GAMEOPTIONS4
 //#define GAMEOPTION_GRAPHICS_DITHERING  GUIO_GAMEOPTIONS5
 
+#ifdef USE_TTS
+#define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS5
+#endif
+
 #include "mads/detection_tables.h"
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -133,6 +137,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			true
 		}
 	},*/
+
+	#ifdef USE_TTS
+	{
+		GAMEOPTION_TTS_NARRATOR,
+		{
+			_s("TTS Narrator"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_narrator",
+			false
+		}
+	},
+	#endif
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
