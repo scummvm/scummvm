@@ -106,55 +106,55 @@ static const int slot_array[32] = {
 /* table is 3dB/octave , DV converts this into 6dB/octave */
 /* 0.1875 is bit 0 weight of the envelope counter (volume) expressed in the 'decibel' scale */
 #define DV (0.1875/2.0)
-static const UINT32 ksl_tab[8 * 16] = {
+static const uint32 ksl_tab[8 * 16] = {
 	/* OCT 0 */
-	(UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV),
-	(UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV),
-	(UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV),
-	(UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV),
+	(uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV),
+	(uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV),
+	(uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV),
+	(uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV),
 	/* OCT 1 */
-	(UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV),
-	(UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV),
-	(UINT32)(0.000 / DV), (UINT32)(0.750 / DV), (UINT32)(1.125 / DV), (UINT32)(1.500 / DV),
-	(UINT32)(1.875 / DV), (UINT32)(2.250 / DV), (UINT32)(2.625 / DV), (UINT32)(3.000 / DV),
+	(uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV),
+	(uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV),
+	(uint32)(0.000 / DV), (uint32)(0.750 / DV), (uint32)(1.125 / DV), (uint32)(1.500 / DV),
+	(uint32)(1.875 / DV), (uint32)(2.250 / DV), (uint32)(2.625 / DV), (uint32)(3.000 / DV),
 	/* OCT 2 */
-	(UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV),
-	(UINT32)(0.000 / DV), (UINT32)(1.125 / DV), (UINT32)(1.875 / DV), (UINT32)(2.625 / DV),
-	(UINT32)(3.000 / DV), (UINT32)(3.750 / DV), (UINT32)(4.125 / DV), (UINT32)(4.500 / DV),
-	(UINT32)(4.875 / DV), (UINT32)(5.250 / DV), (UINT32)(5.625 / DV), (UINT32)(6.000 / DV),
+	(uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV),
+	(uint32)(0.000 / DV), (uint32)(1.125 / DV), (uint32)(1.875 / DV), (uint32)(2.625 / DV),
+	(uint32)(3.000 / DV), (uint32)(3.750 / DV), (uint32)(4.125 / DV), (uint32)(4.500 / DV),
+	(uint32)(4.875 / DV), (uint32)(5.250 / DV), (uint32)(5.625 / DV), (uint32)(6.000 / DV),
 	/* OCT 3 */
-	(UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(1.875 / DV),
-	(UINT32)(3.000 / DV), (UINT32)(4.125 / DV), (UINT32)(4.875 / DV), (UINT32)(5.625 / DV),
-	(UINT32)(6.000 / DV), (UINT32)(6.750 / DV), (UINT32)(7.125 / DV), (UINT32)(7.500 / DV),
-	(UINT32)(7.875 / DV), (UINT32)(8.250 / DV), (UINT32)(8.625 / DV), (UINT32)(9.000 / DV),
+	(uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(1.875 / DV),
+	(uint32)(3.000 / DV), (uint32)(4.125 / DV), (uint32)(4.875 / DV), (uint32)(5.625 / DV),
+	(uint32)(6.000 / DV), (uint32)(6.750 / DV), (uint32)(7.125 / DV), (uint32)(7.500 / DV),
+	(uint32)(7.875 / DV), (uint32)(8.250 / DV), (uint32)(8.625 / DV), (uint32)(9.000 / DV),
 	/* OCT 4 */
-	(UINT32)(0.000 / DV), (UINT32)(0.000 / DV), (UINT32)(3.000 / DV), (UINT32)(4.875 / DV),
-	(UINT32)(6.000 / DV), (UINT32)(7.125 / DV), (UINT32)(7.875 / DV), (UINT32)(8.625 / DV),
-	(UINT32)(9.000 / DV), (UINT32)(9.750 / DV), (UINT32)(10.125 / DV), (UINT32)(10.500 / DV),
-	(UINT32)(10.875 / DV), (UINT32)(11.250 / DV), (UINT32)(11.625 / DV), (UINT32)(12.000 / DV),
+	(uint32)(0.000 / DV), (uint32)(0.000 / DV), (uint32)(3.000 / DV), (uint32)(4.875 / DV),
+	(uint32)(6.000 / DV), (uint32)(7.125 / DV), (uint32)(7.875 / DV), (uint32)(8.625 / DV),
+	(uint32)(9.000 / DV), (uint32)(9.750 / DV), (uint32)(10.125 / DV), (uint32)(10.500 / DV),
+	(uint32)(10.875 / DV), (uint32)(11.250 / DV), (uint32)(11.625 / DV), (uint32)(12.000 / DV),
 	/* OCT 5 */
-	(UINT32)(0.000 / DV), (UINT32)(3.000 / DV), (UINT32)(6.000 / DV), (UINT32)(7.875 / DV),
-	(UINT32)(9.000 / DV), (UINT32)(10.125 / DV), (UINT32)(10.875 / DV), (UINT32)(11.625 / DV),
-	(UINT32)(12.000 / DV), (UINT32)(12.750 / DV), (UINT32)(13.125 / DV), (UINT32)(13.500 / DV),
-	(UINT32)(13.875 / DV), (UINT32)(14.250 / DV), (UINT32)(14.625 / DV), (UINT32)(15.000 / DV),
+	(uint32)(0.000 / DV), (uint32)(3.000 / DV), (uint32)(6.000 / DV), (uint32)(7.875 / DV),
+	(uint32)(9.000 / DV), (uint32)(10.125 / DV), (uint32)(10.875 / DV), (uint32)(11.625 / DV),
+	(uint32)(12.000 / DV), (uint32)(12.750 / DV), (uint32)(13.125 / DV), (uint32)(13.500 / DV),
+	(uint32)(13.875 / DV), (uint32)(14.250 / DV), (uint32)(14.625 / DV), (uint32)(15.000 / DV),
 	/* OCT 6 */
-	(UINT32)(0.000 / DV), (UINT32)(6.000 / DV), (UINT32)(9.000 / DV), (UINT32)(10.875 / DV),
-	(UINT32)(12.000 / DV), (UINT32)(13.125 / DV), (UINT32)(13.875 / DV), (UINT32)(14.625 / DV),
-	(UINT32)(15.000 / DV), (UINT32)(15.750 / DV), (UINT32)(16.125 / DV), (UINT32)(16.500 / DV),
-	(UINT32)(16.875 / DV), (UINT32)(17.250 / DV), (UINT32)(17.625 / DV), (UINT32)(18.000 / DV),
+	(uint32)(0.000 / DV), (uint32)(6.000 / DV), (uint32)(9.000 / DV), (uint32)(10.875 / DV),
+	(uint32)(12.000 / DV), (uint32)(13.125 / DV), (uint32)(13.875 / DV), (uint32)(14.625 / DV),
+	(uint32)(15.000 / DV), (uint32)(15.750 / DV), (uint32)(16.125 / DV), (uint32)(16.500 / DV),
+	(uint32)(16.875 / DV), (uint32)(17.250 / DV), (uint32)(17.625 / DV), (uint32)(18.000 / DV),
 	/* OCT 7 */
-	(UINT32)(0.000 / DV), (UINT32)(9.000 / DV), (UINT32)(12.000 / DV), (UINT32)(13.875 / DV),
-	(UINT32)(15.000 / DV), (UINT32)(16.125 / DV), (UINT32)(16.875 / DV), (UINT32)(17.625 / DV),
-	(UINT32)(18.000 / DV), (UINT32)(18.750 / DV), (UINT32)(19.125 / DV), (UINT32)(19.500 / DV),
-	(UINT32)(19.875 / DV), (UINT32)(20.250 / DV), (UINT32)(20.625 / DV), (UINT32)(21.000 / DV)
+	(uint32)(0.000 / DV), (uint32)(9.000 / DV), (uint32)(12.000 / DV), (uint32)(13.875 / DV),
+	(uint32)(15.000 / DV), (uint32)(16.125 / DV), (uint32)(16.875 / DV), (uint32)(17.625 / DV),
+	(uint32)(18.000 / DV), (uint32)(18.750 / DV), (uint32)(19.125 / DV), (uint32)(19.500 / DV),
+	(uint32)(19.875 / DV), (uint32)(20.250 / DV), (uint32)(20.625 / DV), (uint32)(21.000 / DV)
 
 };
 #undef DV
 
 /* sustain level table (3dB per step) */
 /* 0 - 15: 0, 3, 6, 9,12,15,18,21,24,27,30,33,36,39,42,93 (dB)*/
-#define SC(db) (UINT32) ( db * (2.0/ENV_STEP) )
-static const UINT32 sl_tab[16] = {
+#define SC(db) (uint32) ( db * (2.0/ENV_STEP) )
+static const uint32 sl_tab[16] = {
 	SC(0), SC(1), SC(2), SC(3), SC(4), SC(5), SC(6), SC(7),
 	SC(8), SC(9), SC(10), SC(11), SC(12), SC(13), SC(14), SC(31)
 };
@@ -270,10 +270,10 @@ static const unsigned char eg_rate_shift[16 + 64 + 16] = { /* Envelope Generator
 
 /* multiple table */
 #define ML 2
-static const UINT8 mul_tab[16] = {
+static const uint8 mul_tab[16] = {
 	/* 1/2, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,10,12,12,15,15 */
-	(UINT8)(0.50 * ML), (UINT8)(0.00 * ML), (UINT8)(0.00 * ML), (UINT8)(0.00 * ML), (UINT8)(4.00 * ML), (UINT8)(0.00 * ML), (UINT8)(6.00 * ML), (UINT8)(7.00 * ML),
-	(UINT8)(8.00 * ML), (UINT8)(9.00 * ML), (UINT8)(10.00 * ML), (UINT8)(10.00 * ML), (UINT8)(12.00 * ML), (UINT8)(12.00 * ML), (UINT8)(15.00 * ML), (UINT8)(15.00 * ML)
+	(uint8)(0.50 * ML), (uint8)(0.00 * ML), (uint8)(0.00 * ML), (uint8)(0.00 * ML), (uint8)(4.00 * ML), (uint8)(0.00 * ML), (uint8)(6.00 * ML), (uint8)(7.00 * ML),
+	(uint8)(8.00 * ML), (uint8)(9.00 * ML), (uint8)(10.00 * ML), (uint8)(10.00 * ML), (uint8)(12.00 * ML), (uint8)(12.00 * ML), (uint8)(15.00 * ML), (uint8)(15.00 * ML)
 };
 #undef ML
 
@@ -299,7 +299,7 @@ static const UINT8 mul_tab[16] = {
 
 #define LFO_AM_TAB_ELEMENTS 210
 
-static const UINT8 lfo_am_table[LFO_AM_TAB_ELEMENTS] = {
+static const uint8 lfo_am_table[LFO_AM_TAB_ELEMENTS] = {
 	0, 0, 0, 0, 0, 0, 0,
 	1, 1, 1, 1,
 	2, 2, 2, 2,
@@ -355,7 +355,7 @@ static const UINT8 lfo_am_table[LFO_AM_TAB_ELEMENTS] = {
 };
 
 /* LFO Phase Modulation table (verified on real YM3812) */
-static const INT8 lfo_pm_table[8 * 8 * 2] = {
+static const int8 lfo_pm_table[8 * 8 * 2] = {
 
 	/* FNUM2/FNUM = 00 0xxxxxxx (0x0000) */
 	0, 0, 0, 0, 0, 0, 0, 0, /*LFO PM depth = 0*/
@@ -484,12 +484,12 @@ INLINE void OPL_STATUSMASK_SET(FM_OPL *OPL, int flag) {
 
 /* advance LFO to next sample */
 INLINE void OplClass::advance_lfo(FM_OPL *OPL) {
-	UINT8 tmp;
+	uint8 tmp;
 
 	/* LFO */
 	OPL->lfo_am_cnt += OPL->lfo_am_inc;
-	if (OPL->lfo_am_cnt >= (UINT32)(LFO_AM_TAB_ELEMENTS << LFO_SH)) /* lfo_am_table is 210 elements long */
-		OPL->lfo_am_cnt -= (LFO_AM_TAB_ELEMENTS << LFO_SH);
+	if (OPL->lfo_am_cnt >= (uint32)(LFO_AM_TAB_ELEMENTS << LFO_SH)) /* lfo_am_table is 210 elements long */
+		OPL->lfo_am_cnt -= (uint32)(LFO_AM_TAB_ELEMENTS << LFO_SH);
 
 	tmp = lfo_am_table[ OPL->lfo_am_cnt >> LFO_SH ];
 
@@ -542,7 +542,7 @@ INLINE void OplClass::advancex(FM_OPL *OPL) {
 				if (!(OPL->eg_cnt & ((1 << op->eg_sh_dr) - 1))) {
 					op->volume += eg_inc[op->eg_sel_dr + ((OPL->eg_cnt >> op->eg_sh_dr) & 7)];
 
-					if (op->volume >= (INT32)op->sl)
+					if (op->volume >= (int32)op->sl)
 						op->state = EG_SUS;
 
 				}
@@ -592,7 +592,7 @@ INLINE void OplClass::advancex(FM_OPL *OPL) {
 
 		/* Phase Generator */
 		if (op->vib) {
-			UINT8 block;
+			uint8 block;
 			unsigned int block_fnum = CH->block_fnum;
 
 			unsigned int fnum_lfo   = (block_fnum & 0x0380) >> 7;
@@ -627,7 +627,7 @@ INLINE void OplClass::advancex(FM_OPL *OPL) {
 	OPL->noise_p &= FREQ_MASK;
 	while (i) {
 		/*
-		UINT32 j;
+		uint32 j;
 		j = ( (OPL->noise_rng) ^ (OPL->noise_rng>>14) ^ (OPL->noise_rng>>15) ^ (OPL->noise_rng>>22) ) & 1;
 		OPL->noise_rng = (j<<22) | (OPL->noise_rng>>1);
 		*/
@@ -648,8 +648,8 @@ INLINE void OplClass::advancex(FM_OPL *OPL) {
 }
 
 
-INLINE signed int OplClass::op_calc(UINT32 phase, unsigned int env, signed int pm, unsigned int wave_tab) {
-	UINT32 p;
+INLINE signed int OplClass::op_calc(uint32 phase, unsigned int env, signed int pm, unsigned int wave_tab) {
+	uint32 p;
 
 	p = (env << 4) + sin_tab[wave_tab + ((((signed int)((phase & ~FREQ_MASK) + (pm << 16))) >> FREQ_SH) & SIN_MASK) ];
 
@@ -658,9 +658,9 @@ INLINE signed int OplClass::op_calc(UINT32 phase, unsigned int env, signed int p
 	return tl_tab[p];
 }
 
-INLINE signed int OplClass::op_calc1(UINT32 phase, unsigned int env, signed int pm, unsigned int wave_tab) {
-	UINT32 p;
-	INT32  i;
+INLINE signed int OplClass::op_calc1(uint32 phase, unsigned int env, signed int pm, unsigned int wave_tab) {
+	uint32 p;
+	int32  i;
 
 	i = (phase & ~FREQ_MASK) + pm;
 
@@ -676,7 +676,7 @@ INLINE signed int OplClass::op_calc1(UINT32 phase, unsigned int env, signed int 
 }
 
 
-#define volume_calc(OP) ((OP)->TLL + ((UINT32)(OP)->volume) + (LFO_AM & (OP)->AMmask))
+#define volume_calc(OP) ((OP)->TLL + ((uint32)(OP)->volume) + (LFO_AM & (OP)->AMmask))
 
 /* calculate output */
 INLINE void OplClass::OPL_CALC_CH(OPL_CH *CH) {
@@ -817,7 +817,7 @@ INLINE void OplClass::OPL_CALC_RH(OPL_CH *CH, unsigned int noise) {
 
 		/* when res1 = 0 phase = 0x000 | 0xd0; */
 		/* when res1 = 1 phase = 0x200 | (0xd0>>2); */
-		UINT32 phase = res1 ? (0x200 | (0xd0 >> 2)) : 0xd0;
+		uint32 phase = res1 ? (0x200 | (0xd0 >> 2)) : 0xd0;
 
 		/* enable gate based on frequency of operator 2 in channel 8 */
 		unsigned char bit5e = ((SLOT8_2->Cnt >> FREQ_SH) >> 5) & 1;
@@ -855,7 +855,7 @@ INLINE void OplClass::OPL_CALC_RH(OPL_CH *CH, unsigned int noise) {
 
 		/* when bit8 = 0 phase = 0x100; */
 		/* when bit8 = 1 phase = 0x200; */
-		UINT32 phase = bit8 ? 0x200 : 0x100;
+		uint32 phase = bit8 ? 0x200 : 0x100;
 
 		/* Noise bit XOR'es phase by 0x100 */
 		/* when noisebit = 0 pass the phase from calculation above */
@@ -884,7 +884,7 @@ INLINE void OplClass::OPL_CALC_RH(OPL_CH *CH, unsigned int noise) {
 
 		/* when res1 = 0 phase = 0x000 | 0x100; */
 		/* when res1 = 1 phase = 0x200 | 0x100; */
-		UINT32 phase = res1 ? 0x300 : 0x100;
+		uint32 phase = res1 ? 0x300 : 0x100;
 
 		/* enable gate based on frequency of operator 2 in channel 8 */
 		unsigned char bit5e = ((SLOT8_2->Cnt >> FREQ_SH) >> 5) & 1;
@@ -1014,7 +1014,7 @@ static void OPL_initalize(FM_OPL *OPL) {
 	/* make fnumber -> increment counter table */
 	for (i = 0 ; i < 1024 ; i++) {
 		/* opn phase increment counter = 20bit */
-		OPL->fn_tab[i] = (UINT32)((double)i * 64 * OPL->freqbase * (1 << (FREQ_SH - 10))); /* -10 because chip works with 10.10 fixed point, while we use 16.16 */
+		OPL->fn_tab[i] = (uint32)((double)i * 64 * OPL->freqbase * (1 << (FREQ_SH - 10))); /* -10 because chip works with 10.10 fixed point, while we use 16.16 */
 	}
 
 
@@ -1036,7 +1036,7 @@ static void OPL_initalize(FM_OPL *OPL) {
 
 }
 
-INLINE void FM_KEYON(OPL_SLOT *SLOT, UINT32 key_set) {
+INLINE void FM_KEYON(OPL_SLOT *SLOT, uint32 key_set) {
 	if (!SLOT->key) {
 		/* restart Phase Generator */
 		SLOT->Cnt = 0;
@@ -1046,7 +1046,7 @@ INLINE void FM_KEYON(OPL_SLOT *SLOT, UINT32 key_set) {
 	SLOT->key |= key_set;
 }
 
-INLINE void FM_KEYOFF(OPL_SLOT *SLOT, UINT32 key_clr) {
+INLINE void FM_KEYOFF(OPL_SLOT *SLOT, uint32 key_clr) {
 	if (SLOT->key) {
 		SLOT->key &= key_clr;
 
@@ -1175,8 +1175,8 @@ void OplClass::OPLWriteReg(FM_OPL *OPL, int r, int v) {
 				OPL_STATUS_RESET(OPL, 0x7f);
 			} else {
 				/* set IRQ mask ,timer enable*/
-				UINT8 st1 = v & 1;
-				UINT8 st2 = (v >> 1) & 1;
+				uint8 st1 = v & 1;
+				uint8 st2 = (v >> 1) & 1;
 				/* IRQRST,T1MSK,t2MSK,EOSMSK,BRMSK,x,ST2,ST1 */
 				OPL_STATUS_RESET(OPL, v & 0x78);
 				OPL_STATUSMASK_SET(OPL, ((~v) & 0x78) | 0x01);
@@ -1283,8 +1283,8 @@ void OplClass::OPLWriteReg(FM_OPL *OPL, int r, int v) {
 			}
 		}
 		/* update */
-		if (CH->block_fnum != (UINT32)block_fnum) {
-			UINT8 block  = block_fnum >> 10;
+		if (CH->block_fnum != (uint32)block_fnum) {
+			uint8 block  = block_fnum >> 10;
 
 			CH->block_fnum = block_fnum;
 
@@ -1474,13 +1474,13 @@ static unsigned char OPLRead(FM_OPL *OPL, int a) {
 
 /* CSM Key Controll */
 INLINE void CSMKeyControll(OPL_CH *CH) {
-	FM_KEYON(&CH->SLOT[SLOT1], 4);
-	FM_KEYON(&CH->SLOT[SLOT2], 4);
+	FM_KEYON(&CH->SLOT[SLOT1], 4U);
+	FM_KEYON(&CH->SLOT[SLOT2], 4U);
 
 	/* The key off should happen exactly one sample later - not implemented correctly yet */
 
-	FM_KEYOFF(&CH->SLOT[SLOT1], ~4);
-	FM_KEYOFF(&CH->SLOT[SLOT2], ~4);
+	FM_KEYOFF(&CH->SLOT[SLOT1], ~4U);
+	FM_KEYOFF(&CH->SLOT[SLOT2], ~4U);
 }
 
 
@@ -1574,9 +1574,9 @@ void OplClass::YM3812SetUpdateHandler(int which, OPL_UPDATEHANDLER UpdateHandler
 ** '*buffer' is the output buffer pointer
 ** 'length' is the number of samples that should be generated
 */
-void OplClass::YM3812UpdateOne(int which, INT16 *buffer, int length) {
+void OplClass::YM3812UpdateOne(int which, int16 *buffer, int length) {
 	FM_OPL      *OPL = OPL_YM3812[which];
-	UINT8       rhythm = OPL->rhythm & 0x20;
+	uint8       rhythm = OPL->rhythm & 0x20;
 	OPLSAMPLE   *buf = buffer;
 	int i;
 

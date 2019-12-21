@@ -41,19 +41,19 @@ namespace Ultima6 {
 /* compiler dependence */
 #ifndef OSD_CPU_H
 #define OSD_CPU_H
-typedef unsigned char   UINT8;   /* unsigned  8bit */
+typedef unsigned char   uint8;   /* unsigned  8bit */
 typedef unsigned short  UINT16;  /* unsigned 16bit */
-typedef unsigned int    UINT32;  /* unsigned 32bit */
-typedef signed char     INT8;    /* signed  8bit   */
-typedef signed short    INT16;   /* signed 16bit   */
-typedef signed int      INT32;   /* signed 32bit   */
+typedef unsigned int    uint32;  /* unsigned 32bit */
+typedef signed char     int8;    /* signed  8bit   */
+typedef signed short    int16;   /* signed 16bit   */
+typedef signed int      int32;   /* signed 32bit   */
 #endif
 
 #if (OPL_SAMPLE_BITS==16)
-typedef INT16 OPLSAMPLE;
+typedef int16 OPLSAMPLE;
 #endif
 #if (OPL_SAMPLE_BITS==8)
-typedef INT8 OPLSAMPLE;
+typedef int8 OPLSAMPLE;
 #endif
 
 
@@ -66,42 +66,42 @@ typedef unsigned char (*OPL_PORTHANDLER_R)(int param);
 /* Saving is necessary for member of the 'R' mark for suspend/resume */
 
 typedef struct {
-	UINT32  ar;         /* attack rate: AR<<2           */
-	UINT32  dr;         /* decay rate:  DR<<2           */
-	UINT32  rr;         /* release rate:RR<<2           */
-	UINT8   KSR;        /* key scale rate               */
-	UINT8   ksl;        /* keyscale level               */
-	UINT8   ksr;        /* key scale rate: kcode>>KSR   */
-	UINT8   mul;        /* multiple: mul_tab[ML]        */
+	uint32  ar;         /* attack rate: AR<<2           */
+	uint32  dr;         /* decay rate:  DR<<2           */
+	uint32  rr;         /* release rate:RR<<2           */
+	uint8   KSR;        /* key scale rate               */
+	uint8   ksl;        /* keyscale level               */
+	uint8   ksr;        /* key scale rate: kcode>>KSR   */
+	uint8   mul;        /* multiple: mul_tab[ML]        */
 
 	/* Phase Generator */
-	UINT32  Cnt;        /* frequency counter            */
-	UINT32  Incr;       /* frequency counter step       */
-	UINT8   FB;         /* feedback shift value         */
-	INT32   *connect1;  /* slot1 output pointer         */
-	INT32   op1_out[2]; /* slot1 output for feedback    */
-	UINT8   CON;        /* connection (algorithm) type  */
+	uint32  Cnt;        /* frequency counter            */
+	uint32  Incr;       /* frequency counter step       */
+	uint8   FB;         /* feedback shift value         */
+	int32   *connect1;  /* slot1 output pointer         */
+	int32   op1_out[2]; /* slot1 output for feedback    */
+	uint8   CON;        /* connection (algorithm) type  */
 
 	/* Envelope Generator */
-	UINT8   eg_type;    /* percussive/non-percussive mode */
-	UINT8   state;      /* phase type                   */
-	UINT32  TL;         /* total level: TL << 2         */
-	INT32   TLL;        /* adjusted now TL              */
-	INT32   volume;     /* envelope counter             */
-	UINT32  sl;         /* sustain level: sl_tab[SL]    */
+	uint8   eg_type;    /* percussive/non-percussive mode */
+	uint8   state;      /* phase type                   */
+	uint32  TL;         /* total level: TL << 2         */
+	int32   TLL;        /* adjusted now TL              */
+	int32   volume;     /* envelope counter             */
+	uint32  sl;         /* sustain level: sl_tab[SL]    */
 
-	UINT8   eg_sh_ar;   /* (attack state)               */
-	UINT8   eg_sel_ar;  /* (attack state)               */
-	UINT8   eg_sh_dr;   /* (decay state)                */
-	UINT8   eg_sel_dr;  /* (decay state)                */
-	UINT8   eg_sh_rr;   /* (release state)              */
-	UINT8   eg_sel_rr;  /* (release state)              */
+	uint8   eg_sh_ar;   /* (attack state)               */
+	uint8   eg_sel_ar;  /* (attack state)               */
+	uint8   eg_sh_dr;   /* (decay state)                */
+	uint8   eg_sel_dr;  /* (decay state)                */
+	uint8   eg_sh_rr;   /* (release state)              */
+	uint8   eg_sel_rr;  /* (release state)              */
 
-	UINT32  key;        /* 0 = KEY OFF, >0 = KEY ON     */
+	uint32  key;        /* 0 = KEY OFF, >0 = KEY ON     */
 
 	/* LFO */
-	UINT32  AMmask;     /* LFO Amplitude Modulation enable mask */
-	UINT8   vib;        /* LFO Phase Modulation enable flag (active high)*/
+	uint32  AMmask;     /* LFO Amplitude Modulation enable mask */
+	uint8   vib;        /* LFO Phase Modulation enable flag (active high)*/
 
 	/* waveform select */
 	unsigned int wavetable;
@@ -110,10 +110,10 @@ typedef struct {
 typedef struct {
 	OPL_SLOT SLOT[2];
 	/* phase generator state */
-	UINT32  block_fnum; /* block+fnum                   */
-	UINT32  fc;         /* Freq. Increment base         */
-	UINT32  ksl_base;   /* KeyScaleLevel Base step      */
-	UINT8   kcode;      /* key code (for key scaling)   */
+	uint32  block_fnum; /* block+fnum                   */
+	uint32  fc;         /* Freq. Increment base         */
+	uint32  ksl_base;   /* KeyScaleLevel Base step      */
+	uint8   kcode;      /* key code (for key scaling)   */
 } OPL_CH;
 
 /* OPL state */
@@ -121,31 +121,31 @@ typedef struct fm_opl_f {
 	/* FM channel slots */
 	OPL_CH  P_CH[9];                /* OPL/OPL2 chips have 9 channels*/
 
-	UINT32  eg_cnt;                 /* global envelope generator counter    */
-	UINT32  eg_timer;               /* global envelope generator counter works at frequency = chipclock/72 */
-	UINT32  eg_timer_add;           /* step of eg_timer                     */
-	UINT32  eg_timer_overflow;      /* envelope generator timer overlfows every 1 sample (on real chip) */
+	uint32  eg_cnt;                 /* global envelope generator counter    */
+	uint32  eg_timer;               /* global envelope generator counter works at frequency = chipclock/72 */
+	uint32  eg_timer_add;           /* step of eg_timer                     */
+	uint32  eg_timer_overflow;      /* envelope generator timer overlfows every 1 sample (on real chip) */
 
-	UINT8   rhythm;                 /* Rhythm mode                  */
+	uint8   rhythm;                 /* Rhythm mode                  */
 
-	UINT32  fn_tab[1024];           /* fnumber->increment counter   */
+	uint32  fn_tab[1024];           /* fnumber->increment counter   */
 
 	/* LFO */
-	UINT8   lfo_am_depth;
-	UINT8   lfo_pm_depth_range;
-	UINT32  lfo_am_cnt;
-	UINT32  lfo_am_inc;
-	UINT32  lfo_pm_cnt;
-	UINT32  lfo_pm_inc;
+	uint8   lfo_am_depth;
+	uint8   lfo_pm_depth_range;
+	uint32  lfo_am_cnt;
+	uint32  lfo_am_inc;
+	uint32  lfo_pm_cnt;
+	uint32  lfo_pm_inc;
 
-	UINT32  noise_rng;              /* 23 bit noise shift register  */
-	UINT32  noise_p;                /* current noise 'phase'        */
-	UINT32  noise_f;                /* current noise period         */
+	uint32  noise_rng;              /* 23 bit noise shift register  */
+	uint32  noise_p;                /* current noise 'phase'        */
+	uint32  noise_f;                /* current noise period         */
 
-	UINT8   wavesel;                /* waveform select enable flag  */
+	uint8   wavesel;                /* waveform select enable flag  */
 
 	int     T[2];                   /* timer counters               */
-	UINT8   st[2];                  /* timer enable                 */
+	uint8   st[2];                  /* timer enable                 */
 
 	/* external event callback handlers */
 	OPL_TIMERHANDLER  TimerHandler; /* TIMER handler                */
@@ -155,11 +155,11 @@ typedef struct fm_opl_f {
 	OPL_UPDATEHANDLER UpdateHandler;/* stream update handler        */
 	int UpdateParam;                /* stream update parameter      */
 
-	UINT8 type;                     /* chip type                    */
-	UINT8 address;                  /* address register             */
-	UINT8 status;                   /* status flag                  */
-	UINT8 statusmask;               /* status mask                  */
-	UINT8 mode;                     /* Reg.08 : CSM,notesel,etc.    */
+	uint8 type;                     /* chip type                    */
+	uint8 address;                  /* address register             */
+	uint8 status;                   /* status flag                  */
+	uint8 statusmask;               /* status mask                  */
+	uint8 mode;                     /* Reg.08 : CSM,notesel,etc.    */
 
 	int clock;                      /* master clock  (Hz)           */
 	int rate;                       /* sampling rate (Hz)           */
@@ -205,8 +205,8 @@ private:
 	signed int phase_modulation;        /* phase modulation input (SLOT 2) */
 	signed int output[1];
 
-	UINT32  LFO_AM;
-	INT32   LFO_PM;
+	uint32  LFO_AM;
+	int32   LFO_PM;
 
 	bool    use16bit, stereo;
 	int oplRate;
@@ -234,7 +234,7 @@ private:
 	int  YM3812Write(int which, int a, int v);
 	unsigned char YM3812Read(int which, int a);
 	int  YM3812TimerOver(int which, int c);
-	void YM3812UpdateOne(int which, INT16 *buffer, int length);
+	void YM3812UpdateOne(int which, int16 *buffer, int length);
 
 	void YM3812SetTimerHandler(int which, OPL_TIMERHANDLER TimerHandler, int channelOffset);
 	void YM3812SetIRQHandler(int which, OPL_IRQHANDLER IRQHandler, int param);
@@ -251,8 +251,8 @@ private:
 
 	inline void advance_lfo(FM_OPL *OPL);
 	inline void advancex(FM_OPL *OPL);
-	inline signed int op_calc(UINT32 phase, unsigned int env, signed int pm, unsigned int wave_tab);
-	inline signed int op_calc1(UINT32 phase, unsigned int env, signed int pm, unsigned int wave_tab);
+	inline signed int op_calc(uint32 phase, unsigned int env, signed int pm, unsigned int wave_tab);
+	inline signed int op_calc1(uint32 phase, unsigned int env, signed int pm, unsigned int wave_tab);
 	inline void OPL_CALC_CH(OPL_CH *CH);
 	inline void OPL_CALC_RH(OPL_CH *CH, unsigned int noise);
 };
