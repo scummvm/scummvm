@@ -62,7 +62,11 @@ static const PlainGameDescriptor sherlockGames[] = {
 #define GAMEOPTION_HELP_STYLE		GUIO_GAMEOPTIONS3
 #define GAMEOPTION_PORTRAITS_ON		GUIO_GAMEOPTIONS4
 #define GAMEOPTION_WINDOW_STYLE		GUIO_GAMEOPTIONS5
-#define GAMEOPTION_TRANSPARENT_WINDOWS		GUIO_GAMEOPTIONS6
+#define GAMEOPTION_TRANSPARENT_WINDOWS	GUIO_GAMEOPTIONS6
+
+#ifdef USE_TTS
+#define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS7
+#endif
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -125,6 +129,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+#ifdef USE_TTS
+	{
+		GAMEOPTION_TTS_NARRATOR,
+		{
+			_s("TTS Narrator"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_narrator",
+			false
+		}
+	},
+#endif
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
