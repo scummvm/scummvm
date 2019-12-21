@@ -152,14 +152,7 @@ void ScummEngine_v6::drawBlastTexts() {
 		_charset->setCurID(_blastTextQueue[i].charset);
 
 		if (_game.version >= 7 && (_language == Common::HE_ISR || true)) {
-			byte rev[384] = {0};
-			int lens = strlen((const char *)buf);
-
-			for (int l = 0; l < lens; l++) {
-				rev[l] = buf[lens - l - 1];
-			}
-			rev[lens] = '\0';
-			strcpy((char *)buf, (const char *)rev);
+			fakeBidiString((char *)buf, false);
 		}
 
 		do {
@@ -186,7 +179,7 @@ void ScummEngine_v6::drawBlastTexts() {
 				// Some localizations may override colors
 				// See credits in Chinese COMI
 				if (_game.id == GID_CMI &&	_language == Common::ZH_TWN &&
-				      c == '^' && (buf == _blastTextQueue[i].text + 1)) {
+					  c == '^' && (buf == _blastTextQueue[i].text + 1)) {
 					if (*buf == 'c') {
 						int color = buf[3] - '0' + 10 *(buf[2] - '0');
 						_charset->setColor(color);
@@ -468,6 +461,88 @@ bool ScummEngine::newLine() {
 	return true;
 }
 
+void ScummEngine::fakeBidiString(char *ltext, bool ignoreVerb) {
+	int ll = 0;
+	if (_game.id == GID_INDY4 && ltext[ll] == 127) {
+		ll++;
+	}
+	while (ltext[ll] == -1) {
+		ll += 4;
+	}
+	int ipos = 0;
+	int start = 0;
+	char* text = ltext + ll;
+	char* current = text;
+	while(1) {
+		if (*current == 13 || *current == 0 || *current == -1 || *current == -2) {
+
+			// ignore the line break for verbs texts
+			if (ignoreVerb && (*(current + 1) ==  8)) {
+				*(current + 1) = *current;
+				*current = 8;
+				ipos += 2;
+				current += 2;
+				continue;
+			}
+
+			char buff[384];
+			memset(buff, 0, sizeof(buff));
+			char stack[384];
+			memset(stack, 0, sizeof(stack));
+
+			int sthead = 0;
+			char last = '\0';
+			for (int j = 0; j < ipos; j++) {
+				char *curr = text + start + ipos - j - 1;
+				if (Common::isDigit(*curr)
+						|| (*curr == ',' && j + 1 < ipos && Common::isDigit(*(curr - 1)) && Common::isDigit(last))
+						|| (*curr == '-' && (j + 1 == ipos || Common::isSpace(*(curr - 1))) && Common::isDigit(last))) {
+					++sthead;
+					stack[sthead] = *curr;
+				} else {
+					while (sthead > 0) {
+						buff[j - sthead] = stack[sthead];
+						--sthead;
+					}
+					buff[j] = *curr;
+				}
+				last = *curr;
+			}
+			while (sthead > 0) {
+				buff[ipos - sthead] = stack[sthead];
+				--sthead;
+			}
+			memcpy(text + start, buff, ipos);
+			start += ipos + 1;
+			ipos = -1;
+			if (*current == -1 || *current == -2) {
+				current++;
+				if (*current == 3 || *current == 2) {
+					break;
+				}
+				if (*current == 0x0A || *current == 0x0C) {
+					start += 2;
+					current += 2;
+				}
+				start++;
+				ipos++;
+				current++;
+				continue;
+			}
+		}
+		if (*current) {
+			ipos++;
+			current++;
+			continue;
+		}
+		break;
+	}
+	if (!ignoreVerb && _game.id == GID_INDY4 && ltext[0] == 127) {
+		ltext[start + ipos + ll] = (char) 128;
+		ltext[start + ipos + ll + 1] = '\0';
+	}
+}
+
 void ScummEngine::CHARSET_1() {
 	Actor *a;
 #ifdef ENABLE_SCUMM_7_8
@@ -556,7 +631,7 @@ void ScummEngine::CHARSET_1() {
 		return;
 
 	if ((_game.version <= 6 && _haveMsg == 1) ||
-	    (_game.version == 7 && _haveMsg != 1)) {
+		(_game.version == 7 && _haveMsg != 1)) {
 
 		if (_game.heversion >= 60) {
 			if (_sound->isSoundRunning(1) == 0)
@@ -621,78 +696,7 @@ void ScummEngine::CHARSET_1() {
 	int c = 0;
 
 	if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
-		int ll = 0;
-		char* ltext = (char*)_charsetBuffer + _charsetBufPos;
-		if (_game.id == GID_INDY4 && ltext[ll] == 127) {
-			ll++;
-		}
-		while (ltext[ll] == -1) {
-			ll += 4;
-		}
-
-		int i = 0;
-		int start = 0;
-		char* text = ltext + ll;
-
-		char* current = text;
-		while(1) {
-			if (*current == 13 || *current == 0 || *current == -1 || *current == -2) {
-				// ignore the line break for verbs texts
-				if (*(current + 1) ==  8) {
-					*(current + 1) = *current;
-					*current = 8;
-					i += 2;
-					current += 2;
-					continue;
-				}
-
-				char buf[384] = {0};
-				char stack[384] = {0};
-				int sthead = 0;
-				for (int j = 0; j < i; j++) {
-					// buf[j] = text[start + i - j - 1];
-					char curr = text[start + i - j - 1];
-					if (curr > '9' || curr < '0') {
-						while (sthead > 0) {
-							buf[j - sthead] = stack[sthead];
-							--sthead;
-						}
-						buf[j] = curr;
-					} else {
-						++sthead;
-						stack[sthead] = curr;
-					}
-				}
-				while (sthead > 0) {
-					buf[i - sthead] = stack[sthead];
-					--sthead;
-				}
-				memcpy(text + start, buf, i);
-				start += i + 1;
-				i = -1;
-
-				if (*current == -1 || *current == -2) {
-					current++;
-					if (*current == 3 || *current == 2) {
-						break;
-					}
-					if (*current == 0x0A || *current == 0x0C) {
-						start += 2;
-						current += 2;
-					}
-					start++;
-					i++;
-					current++;
-					continue;
-				}
-			}
-			if (*current) {
-				i++;
-				current++;
-				continue;
-			}
-			break;
-		}
+		fakeBidiString((char *)_charsetBuffer + _charsetBufPos, true);
 	}
 
 	while (handleNextCharsetCode(a, &c)) {
@@ -965,71 +969,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	convertMessageToString(msg, buf, sizeof(buf));
 
 	if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
-		int ll = 0;
-		char* ltext = (char*)buf;
-		if (_game.id == GID_INDY4 && ltext[ll] == 127) {
-			ll++;
-		}
-		while (ltext[ll] == -1) {
-			ll += 4;
-		}
-		int pos = 0;
-		int start = 0;
-		char* text = (char*)ltext + ll;
-		char* current = text;
-		while(1) {
-			if (*current == 13 || *current == 0 || *current == -1 || *current == -2) {
-				char buff[384] = {0};
-				char stack[384] = {0};
-				int sthead = 0;
-				for (int j = 0; j < pos; j++) {
-					char curr = text[start + pos - j - 1];
-					if (curr > '9' || curr < '0') {
-						while (sthead > 0) {
-							buff[j - sthead] = stack[sthead];
-							--sthead;
-						}
-						buff[j] = curr;
-					} else {
-						++sthead;
-						stack[sthead] = curr;
-					}
-				}
-				while (sthead > 0) {
-					buff[pos - sthead] = stack[sthead];
-					--sthead;
-				}
-				memcpy(text + start, buff, pos);
-				start += pos + 1;
-				pos = -1;
-				if (*current == -1 || *current == -2) {
-					current++;
-					if (*current == 3 || *current == 2) {
-						break;
-					}
-					if (*current == 0x0A || *current == 0x0C) {
-						start += 2;
-						current += 2;
-					}
-					start++;
-					pos++;
-					current++;
-					continue;
-				}
-			}
-			if (*current) {			
-				pos++;
-				current++;
-				continue;
-			}
-			break;
-		}
-
-		if (_game.id == GID_INDY4 && ltext[0] == 127) {
-			buf[start + pos + ll] = 128;
-			buf[start + pos + ll + 1] = '\0';
-		}
-
+		fakeBidiString((char *)buf, false);
 	}
 
 	_charset->_top = _string[a].ypos + _screenTop;

@@ -1214,6 +1214,7 @@ protected:
 	virtual void CHARSET_1();
 	bool newLine();
 	void drawString(int a, const byte *msg);
+	void fakeBidiString(char *ltext, bool ignoreVerb);
 	void debugMessage(const byte *msg);
 	void showMessageDialog(const byte *msg);
 
