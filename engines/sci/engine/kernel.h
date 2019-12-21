@@ -725,6 +725,7 @@ reg_t kFileIOFindFirst(EngineState *s, int argc, reg_t *argv);
 reg_t kFileIOFindNext(EngineState *s, int argc, reg_t *argv);
 reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv);
 reg_t kFileIORename(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOCopy(EngineState *s, int argc, reg_t *argv);
 #ifdef ENABLE_SCI32
 reg_t kFileIOReadByte(EngineState *s, int argc, reg_t *argv);
 reg_t kFileIOWriteByte(EngineState *s, int argc, reg_t *argv);

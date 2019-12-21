@@ -322,6 +322,7 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 	{ SIG_SCIALL,          9, MAP_CALL(FileIOFindNext),            "r",                    NULL },
 	{ SIG_SCIALL,         10, MAP_CALL(FileIOExists),              "r",                    NULL },
 	{ SIG_SINCE_SCI11,    11, MAP_CALL(FileIORename),              "rr",                   NULL },
+	{ SIG_SINCE_SCI11,    12, MAP_CALL(FileIOCopy),                "rr",                   NULL },
 #ifdef ENABLE_SCI32
 	{ SIG_SINCE_SCI21MID, 13, MAP_CALL(FileIOReadByte),            "i",                    NULL },
 	{ SIG_SINCE_SCI21MID, 14, MAP_CALL(FileIOWriteByte),           "ii",                   NULL },
