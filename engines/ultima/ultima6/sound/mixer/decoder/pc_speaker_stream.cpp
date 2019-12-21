@@ -17,13 +17,12 @@
  *
  */
 
-//#include <math.h>
-//#include <stdlib.h>
-//#include <string.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/sound/mixer/decoder/pc_speaker_stream.h"
+#include "ultima/ultima6/core/game.h"
 
-#include "PCSpeakerStream.h"
-
+namespace Ultima {
+namespace Ultima6 {
 
 PCSpeakerFreqStream::PCSpeakerFreqStream(uint32 freq, uint16 d) {
 	frequency = freq;
@@ -424,3 +423,6 @@ Audio::AudioStream *makePCSpeakerEarthQuakeSfxStream(uint32 rate) {
 
 	return stream;
 }
+
+} // End of namespace Ultima6
+} // End of namespace Ultima
