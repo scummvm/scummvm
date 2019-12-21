@@ -20,33 +20,45 @@
  *
  */
 
-#ifndef ULTIMA6_SOUND_ADPLUG_EMU_OPL_H
-#define ULTIMA6_SOUND_ADPLUG_EMU_OPL_H
+#ifndef ULTIMA6_SOUND_SONG_ADPLUG_H
+#define ULTIMA6_SOUND_SONG_ADPLUG_H
 
-#include "ultima/ultima6/sound/adplug/opl.h"
-#include "audio/fmopl.h"
+#include "audio/mixer.h"
+#include "ultima/ultima6/sound/song.h"
+#include "decoder/U6AdPlugDecoderStream.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-class CEmuopl: public Copl {
+class CEmuopl;
+
+class SongAdPlug : public Song {
 public:
-	CEmuopl(int rate, bool bit16, bool usestereo);  // rate = sample rate
-	virtual ~CEmuopl();
+	uint16 samples_left;
 
-	int getRate() {
-		return oplRate;
+	SongAdPlug(Audio::Mixer *m, CEmuopl *o);
+	~SongAdPlug();
+	bool Init(const char *filename) {
+		return Init(filename, 0);
 	}
-
-	void update(short *buf, int samples);   // fill buffer
-
-	// template methods
-	void write(int reg, int val);
-	void init();
+	bool Init(const char *filename, uint16 song_num);
+	bool Play(bool looping = false);
+	bool Stop();
+	bool SetVolume(uint8 volume);
+	bool FadeOut(float seconds) {
+		return false;
+	}
+	CEmuopl *get_opl() {
+		return opl;
+	};
 
 private:
-	bool    use16bit, stereo;
-	int oplRate;
+	Audio::Mixer *mixer;
+	CEmuopl *opl;
+	U6AdPlugDecoderStream *stream;
+	Audio::SoundHandle handle;
+
+
 };
 
 } // End of namespace Ultima6

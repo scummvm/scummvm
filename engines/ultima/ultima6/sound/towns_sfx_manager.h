@@ -25,10 +25,10 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
+#include "ultima/ultima6/sound/mixer/decoder/fm_towns_decoder_stream.h"
+#include "ultima/ultima6/sound/sfx_manager.h"
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "decoder/FMtownsDecoderStream.h"
-#include "SfxManager.h"
-#include "audiostream.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -52,7 +52,7 @@ public:
 private:
 	std::string sounds2dat_filepath;
 	TownsSampleData sounds1_dat[TOWNS_SFX_SOUNDS1_SIZE];
-	Audio::RandomCollectionAudioStream *fireStream;
+	U6Audio::RandomCollectionAudioStream *fireStream;
 
 	void loadSound1Dat();
 	void playSoundSample(uint8 sample_num, Audio::SoundHandle *looping_handle, uint8 volume);

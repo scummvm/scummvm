@@ -26,8 +26,8 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "audio/mixer.h"
-#include "SfxManager.h"
-#include "audiostream.h"
+#include "ultima/ultima6/sound/sfx_manager.h"
+#include "audio/audiostream.h"
 
 namespace Ultima {
 namespace Ultima6 {

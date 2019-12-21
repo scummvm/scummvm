@@ -20,7 +20,10 @@
  *
  */
 
-#include "adplug_player.h"
+#include "ultima/ultima6/sound/adplug/adplug_player.h"
+
+namespace Ultima {
+namespace Ultima6 {
 
 class OriginFXAdLibDriver;
 
@@ -108,3 +111,6 @@ private:
 public:
 	void interrupt_vector();
 };
+
+} // End of namespace Ultima6
+} // End of namespace Ultima

@@ -20,12 +20,14 @@
  *
  */
 
-#ifndef H_ADPLUG_PLAYER
-#define H_ADPLUG_PLAYER
+#ifndef ULTIMA6_SOUND_ADPLUG_ADPLUG_PLAYER
+#define ULTIMA6_SOUND_ADPLUG_ADPLUG_PLAYER
 
 #include "ultima/shared/std/string.h"
+#include "ultima/ultima6/sound/adplug/opl.h"
 
-#include "opl.h"
+namespace Ultima {
+namespace Ultima6 {
 
 class CPlayer {
 public:
@@ -87,5 +89,8 @@ protected:
 	static const unsigned short note_table[12]; // standard adlib note table
 	static const unsigned char op_table[9];     // the 9 operators as expected by the OPL2
 };
+
+} // End of namespace Ultima6
+} // End of namespace Ultima
 
 #endif

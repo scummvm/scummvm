@@ -20,12 +20,13 @@
  *
  */
 
-#ifndef H_ADPLUG_U6M
-#define H_ADPLUG_U6M
+#ifndef ULTIMA6_SOUND_ADPLUG_U6M
+#define ULTIMA6_SOUND_ADPLUG_U6M
 
-//#include <stack>
+#include "ultima/ultima6/sound/adplug/adplug_player.h"
 
-#include "adplug_player.h"
+namespace Ultima {
+namespace Ultima6 {
 
 class Cu6mPlayer: public CPlayer {
 public:
@@ -128,5 +129,8 @@ protected:
 	void out_adlib_opcell(int channel, bool carrier, unsigned char adlib_register, unsigned char out_byte);
 
 };
+
+} // End of namespace Ultima6
+} // End of namespace Ultima
 
 #endif

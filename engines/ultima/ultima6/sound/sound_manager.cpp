@@ -27,34 +27,31 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/core/u6_objects.h"
-#include "emuopl.h"
 #include "ultima/ultima6/sound/sound_manager.h"
-#include "SongAdPlug.h"
-#include "Sample.h"
-//#include <algorithm>
-//#include <cmath>
-
+#include "ultima/ultima6/sound/adplug/emu_opl.h"
+#include "ultima/ultima6/sound/song_ad_plug.h"
+#include "ultima/ultima6/sound/sample.h"
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/core/player.h"
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/core/effect.h"
-
+#include "ultima/ultima6/sound/adplug/emu_opl.h"
+#include "ultima/ultima6/sound/adlib_sfx_manager.h"
+#include "ultima/ultima6/sound/pc_speaker_sfx_manager.h"
+#include "ultima/ultima6/sound/towns_sfx_manager.h"
+#include "ultima/ultima6/sound/custom_sfx_manager.h"
 #include "audio/mixer.h"
-#include "doublebuffersdl-mixer.h"
-#include "decoder/FMtownsDecoderStream.h"
-
-#include "AdLibSfxManager.h"
-#include "PCSpeakerSfxManager.h"
-#include "TownsSfxManager.h"
-#include "CustomSfxManager.h"
+//#include "doublebuffersdl-mixer.h"
+//#include "decoder/FMtownsDecoderStream.h"
+#include "common/algorithm.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-typedef struct { // obj sfx lookup
+struct ObjSfxLookup { // obj sfx lookup
 	uint16 obj_n;
 	SfxIdType sfx_id;
-} ObjSfxLookup;
+};
 
 #define SOUNDMANANGER_OBJSFX_TBL_SIZE 5
 
@@ -74,7 +71,7 @@ void musicFinished() {
 	SoundManager::g_MusicFinished = true;
 }
 
-SoundManager::SoundManager() {
+SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
 	m_pCurrentSong = NULL;
 	m_CurrentGroup = "";
 	g_MusicFinished = true;
@@ -85,19 +82,9 @@ SoundManager::SoundManager() {
 
 	m_Config = NULL;
 	m_SfxManager = NULL;
-	mixer = NULL;
 
 	opl = NULL;
 }
-
-// function object to delete map<T, SoundCollection *> items
-template <typename T>
-class SoundCollectionMapDeleter {
-public:
-	void operator()(const std::pair<T, SoundCollection *> &mapEntry) {
-		delete mapEntry.second;
-	}
-};
 
 SoundManager::~SoundManager() {
 	//thanks to wjp for this one
@@ -112,12 +99,15 @@ SoundManager::~SoundManager() {
 
 	delete opl;
 
-	std::for_each(m_ObjectSampleMap.begin(), m_ObjectSampleMap.end(), SoundCollectionMapDeleter<int>());
-	std::for_each(m_TileSampleMap.begin(), m_TileSampleMap.end(), SoundCollectionMapDeleter<int>());
-	std::for_each(m_MusicMap.begin(), m_MusicMap.end(), SoundCollectionMapDeleter<string>());
+	for (IntCollectionMap::iterator it = m_ObjectSampleMap.begin(); it != m_ObjectSampleMap.end(); ++it)
+		delete it->_value;
+	for (IntCollectionMap::iterator it = m_TileSampleMap.begin(); it != m_TileSampleMap.end(); ++it)
+		delete it->_value;
+	for (StringCollectionMap::iterator it = m_MusicMap.begin(); it != m_MusicMap.end(); ++it)
+		delete it->_value;
 
 	if (audio_enabled)
-		mixer->suspendAudio();
+		_mixer->stopAll();
 
 }
 
@@ -200,17 +190,7 @@ bool SoundManager::nuvieStartup(Configuration *config) {
 }
 
 bool SoundManager::initAudio() {
-
-#ifdef MACOSX
-	mixer = new DoubleBufferSDLMixerManager();
-#else
-	mixer = new SdlMixerManager();
-#endif
-
-	mixer->init();
-
-	opl = new CEmuopl(mixer->getOutputRate(), true, true); // 16bit stereo
-
+	opl = new CEmuopl(_mixer->getOutputRate(), true, true);
 	return true;
 }
 
@@ -220,43 +200,43 @@ bool SoundManager::LoadNativeU6Songs() {
 	string filename;
 
 	config_get_path(m_Config, "brit.m", filename);
-	song = new SongAdPlug(mixer->getMixer(), opl);
+	song = new SongAdPlug(_mixer, opl);
 // loadSong(song, filename.c_str());
 	loadSong(song, filename.c_str(), "Rule Britannia");
 	groupAddSong("random", song);
 
 	config_get_path(m_Config, "forest.m", filename);
-	song = new SongAdPlug(mixer->getMixer(), opl);
+	song = new SongAdPlug(_mixer, opl);
 	loadSong(song, filename.c_str(), "Wanderer (Forest)");
 	groupAddSong("random", song);
 
 	config_get_path(m_Config, "stones.m", filename);
-	song = new SongAdPlug(mixer->getMixer(), opl);
+	song = new SongAdPlug(_mixer, opl);
 	loadSong(song, filename.c_str(), "Stones");
 	groupAddSong("random", song);
 
 	config_get_path(m_Config, "ultima.m", filename);
-	song = new SongAdPlug(mixer->getMixer(), opl);
+	song = new SongAdPlug(_mixer, opl);
 	loadSong(song, filename.c_str(), "Ultima VI Theme");
 	groupAddSong("random", song);
 
 	config_get_path(m_Config, "engage.m", filename);
-	song = new SongAdPlug(mixer->getMixer(), opl);
+	song = new SongAdPlug(_mixer, opl);
 	loadSong(song, filename.c_str(), "Engagement and Melee");
 	groupAddSong("combat", song);
 
 	config_get_path(m_Config, "hornpipe.m", filename);
-	song = new SongAdPlug(mixer->getMixer(), opl);
+	song = new SongAdPlug(_mixer, opl);
 	loadSong(song, filename.c_str(), "Captain Johne's Hornpipe");
 	groupAddSong("boat", song);
 
 	config_get_path(m_Config, "gargoyle.m", filename);
-	song = new SongAdPlug(mixer->getMixer(), opl);
+	song = new SongAdPlug(_mixer, opl);
 	loadSong(song, filename.c_str(), "Audchar Gargl Zenmur");
 	groupAddSong("gargoyle", song);
 
 	config_get_path(m_Config, "dungeon.m", filename);
-	song = new SongAdPlug(mixer->getMixer(), opl);
+	song = new SongAdPlug(_mixer, opl);
 	loadSong(song, filename.c_str(), "Dungeon");
 	groupAddSong("dungeon", song);
 
@@ -327,16 +307,16 @@ bool SoundManager::groupAddSong(const char *group, Song *song) {
 	if (song != NULL) {
 		//we have a valid song
 		SoundCollection *psc;
-		std::map < string, SoundCollection * >::iterator it;
+		std::map <Common::String, SoundCollection * >::iterator it;
 		it = m_MusicMap.find(group);
 		if (it == m_MusicMap.end()) {
 			//is there already a collection for this entry?
-			psc = new SoundCollection;        //no, create a new sound collection
-			psc->m_Sounds.push_back(song);     //add this sound to the collection
-			m_MusicMap.insert(std::make_pair(group, psc));  //insert this pair into the map
+			psc = new SoundCollection();	// no, create a new sound collection
+			psc->m_Sounds.push_back(song);	// add this sound to the collection
+			m_MusicMap[group] = psc;		// insert this pair into the map
 		} else {
-			psc = (*it).second;       //yes, get the existing
-			psc->m_Sounds.push_back(song);     //add this sound to the collection
+			psc = (*it)._value;				// yes, get the existing
+			psc->m_Sounds.push_back(song);	// add this sound to the collection
 		}
 	}
 
@@ -487,14 +467,14 @@ bool SoundManager::LoadSfxManager(string sfx_style) {
 	}
 
 	if (sfx_style == "pcspeaker") {
-		m_SfxManager = new PCSpeakerSfxManager(m_Config, mixer->getMixer());
+		m_SfxManager = new PCSpeakerSfxManager(m_Config, _mixer);
 	}
 	if (sfx_style == "adlib") {
-		m_SfxManager = new AdLibSfxManager(m_Config, mixer->getMixer());
+		m_SfxManager = new AdLibSfxManager(m_Config, _mixer);
 	} else if (sfx_style == "towns") {
-		m_SfxManager = new TownsSfxManager(m_Config, mixer->getMixer());
+		m_SfxManager = new TownsSfxManager(m_Config, _mixer);
 	} else if (sfx_style == "custom") {
-		m_SfxManager = new CustomSfxManager(m_Config, mixer->getMixer());
+		m_SfxManager = new CustomSfxManager(m_Config, _mixer);
 	}
 //FIXME what to do if unknown sfx_style is entered in config file.
 	return true;
@@ -539,7 +519,7 @@ void SoundManager::musicPlay(const char *filename, uint16 song_num) {
 		return;
 
 	config_get_path(m_Config, filename, path);
-	SongAdPlug *song = new SongAdPlug(mixer->getMixer(), opl);
+	SongAdPlug *song = new SongAdPlug(_mixer, opl);
 	song->Init(path.c_str(), song_num);
 
 	musicStop();
@@ -601,7 +581,7 @@ void SoundManager::update_map_sfx() {
 				if (volumeLevels[sfx_id] < vol)
 					volumeLevels[sfx_id] = vol;
 			} else {
-				volumeLevels.insert(std::make_pair(sfx_id, vol));
+				volumeLevels[sfx_id] = vol;
 			}
 			//add to currently active list
 			currentlyActiveSounds.push_back(sfx_id);
@@ -664,16 +644,16 @@ void SoundManager::update_map_sfx() {
 	std::list < SoundManagerSfx >::iterator it;
 	it = m_ActiveSounds.begin();
 	while (it != m_ActiveSounds.end()) {
-		std::vector < SfxIdType >::iterator fit;
+		std::vector<SfxIdType>::iterator fit;
 		SoundManagerSfx sfx = (*it);
-		fit = std::find(currentlyActiveSounds.begin(), currentlyActiveSounds.end(), sfx.sfx_id);          //is the sound in the new active list?
+		fit = Common::find(currentlyActiveSounds.begin(), currentlyActiveSounds.end(), sfx.sfx_id);          //is the sound in the new active list?
 		if (fit == currentlyActiveSounds.end()) {
 			//its not, stop this sound from playing.
 			//sfx_id->Stop ();
-			mixer->getMixer()->stopHandle(sfx.handle);
+			_mixer->stopHandle(sfx.handle);
 			it = m_ActiveSounds.erase(it);
 		} else {
-			mixer->getMixer()->setChannelVolume(sfx.handle, (uint8)(volumeLevels[sfx.sfx_id] * (sfx_volume / 255.0f) * 255.0f));
+			_mixer->setChannelVolume(sfx.handle, (uint8)(volumeLevels[sfx.sfx_id] * (sfx_volume / 255.0f) * 255.0f));
 			it++;
 		}
 	}
@@ -726,7 +706,7 @@ Sound *SoundManager::RequestTileSound(int id) {
 	it = m_TileSampleMap.find(id);
 	if (it != m_TileSampleMap.end()) {
 		SoundCollection *psc;
-		psc = (*it).second;
+		psc = (*it)._value;
 		return psc->Select();
 	}
 	return NULL;
@@ -737,7 +717,7 @@ Sound *SoundManager::RequestObjectSound(int id) {
 	it = m_ObjectSampleMap.find(id);
 	if (it != m_ObjectSampleMap.end()) {
 		SoundCollection *psc;
-		psc = (*it).second;
+		psc = (*it)._value;
 		return psc->Select();
 	}
 	return NULL;
@@ -755,11 +735,11 @@ uint16 SoundManager::RequestObjectSfxId(uint16 obj_n) {
 }
 
 Sound *SoundManager::RequestSong(string group) {
-	std::map < string, SoundCollection * >::iterator it;
+	std::map<Common::String, SoundCollection * >::iterator it;
 	it = m_MusicMap.find(group);
 	if (it != m_MusicMap.end()) {
 		SoundCollection *psc;
-		psc = (*it).second;
+		psc = (*it)._value;
 		return psc->Select();
 	}
 	return NULL;
@@ -768,17 +748,16 @@ Sound *SoundManager::RequestSong(string group) {
 Audio::SoundHandle SoundManager::playTownsSound(std::string filename, uint16 sample_num) {
 	FMtownsDecoderStream *stream = new FMtownsDecoderStream(filename, sample_num);
 	Audio::SoundHandle handle;
-	mixer->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, -1, music_volume);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, -1, music_volume);
 
 	return handle;
 }
 
 bool SoundManager::isSoundPLaying(Audio::SoundHandle handle) {
-	return mixer->getMixer()->isSoundHandleActive(handle);
+	return _mixer->isSoundHandleActive(handle);
 }
 
 bool SoundManager::playSfx(uint16 sfx_id, bool async) {
-
 	if (m_SfxManager == NULL || audio_enabled == false || sfx_enabled == false)
 		return false;
 
