@@ -121,8 +121,7 @@ bool Screen::init() {
 
 	set_screen_mode();
 
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 255);
 	SDL_RenderClear(sdlRenderer);
 	SDL_RenderPresent(sdlRenderer);
@@ -1201,8 +1200,7 @@ void Screen::update() {
 		              scale_factor);
 	}
 
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_UpdateTexture(sdlTexture, NULL, sdl_surface->pixels, sdl_surface->pitch);
 	SDL_RenderClear(sdlRenderer);
 	SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
@@ -1266,8 +1264,7 @@ void Screen::update(sint32 x, sint32 y, uint16 w, uint16 h) {
 }
 
 void Screen::preformUpdate() {
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_UpdateTexture(sdlTexture, NULL, sdl_surface->pixels, sdl_surface->pitch);
 	SDL_RenderClear(sdlRenderer);
 	SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
@@ -1296,16 +1293,14 @@ bool Screen::initScaler() {
 	return true;
 }
 
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 bool Screen::SDL_VideoModeOK(int scaled_width, int scaled_height, int bpp, int flags) {
 	return (bpp == get_screen_bpp());
 }
 #endif
 
 int Screen::get_screen_bpp() {
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_DisplayMode mode;
 	if (SDL_GetDisplayMode(0, 0, &mode) != 0) {
 		return 0;
@@ -1319,8 +1314,7 @@ int Screen::get_screen_bpp() {
 #endif
 }
 
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 bool Screen::init_sdl2_window(uint16 scale) {
 	uint32 win_width = width;
 	uint32 win_height = height;
@@ -1393,49 +1387,21 @@ void Screen::set_screen_mode() {
 }
 
 bool Screen::toggle_fullscreen() {
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	return set_fullscreen(!fullscreen);
 #else
 	return sdl1_toggle_fullscreen();
 #endif
 }
 
-//if !SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 bool Screen::sdl1_toggle_fullscreen() {
-	uint32 flags = sdl_surface->flags;
-	int scaled_height = height * scale_factor;
-	int scaled_width = width * scale_factor;
-	if (fullscreen) {
-		flags &= ~(SDL_HWSURFACE | SDL_DOUBLEBUF);
-		flags &= ~SDL_FULLSCREEN;
-		flags |= SDL_SWSURFACE;
-	} else {
-		flags |= SDL_FULLSCREEN;
-		if (SDL_GetVideoInfo()->height()w_available && doubleBuffer)
-			flags |= SDL_HWSURFACE | SDL_DOUBLEBUF;
-	}
-	uint8 bpp = get_sdl_surface()->format->BitsPerPixel;
-
-	if (!SDL_VideoModeOK(scaled_width, scaled_height, bpp, flags)) {
-		if (!fullscreen) { // try software
-			flags &= ~(SDL_HWSURFACE | SDL_DOUBLEBUF);
-			flags |= SDL_SWSURFACE;
-		}
-		if (!SDL_VideoModeOK(scaled_width, scaled_height, bpp, flags)) {
-			DEBUG(0, LEVEL_ERROR, "Couldn't toggle to %\n", fullscreen ? "a window" : "fullscreen");
-			return false;
-		}
-	}
-	fullscreen = !fullscreen;
-	return SDL_SetVideoMode(scaled_width, scaled_height, bpp, flags);
+	return false;
 }
 #endif
 
 bool Screen::set_fullscreen(bool value) {
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	fullscreen = value;
 	uint32 windowFlags = SDL_GetWindowFlags(sdlWindow);
 
@@ -1460,8 +1426,7 @@ bool Screen::set_fullscreen(bool value) {
 }
 
 bool Screen::try_scaler(int w, int h, uint32 flags, int hwdepth) {
-#if 0
-	//if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 
 	if (scaler_index == 0) //point scaler
 		return false;
@@ -1849,11 +1814,12 @@ void Screen::draw_line(int sx, int sy, int ex, int ey, uint8 color) {
 
 
 void Screen::get_mouse_location(sint32 *x, sint32 *y) {
-	error("TODO: get mouse pos");
+	Common::Point pt = Events::get()->getMousePos();
+	*x = pt.x;
+	*y = pt.y;
 }
 
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 void Screen::scale_sdl_window_coords(sint32 *mx, sint32 *my) {
 	if (fullscreen) {
 		float sx, sy;
@@ -1883,8 +1849,7 @@ void Screen::scale_sdl_window_coords(sint32 *mx, sint32 *my) {
 #endif
 
 void Screen::set_non_square_pixels(bool value) {
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (value == non_square_pixels)
 		return;
 

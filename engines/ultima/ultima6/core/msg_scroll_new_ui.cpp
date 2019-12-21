@@ -202,7 +202,7 @@ void MsgScrollNewUI::Display(bool full_redraw) {
 		iter1 = msg_line->text.begin();
 
 		//if not last record or if last record is not an empty line.
-		if (i + position < (msg_buf.size() - 1) || (iter1 != msg_line->text.end() && ((*iter)->total_length != 0))) {
+		if (i + position < ((int)msg_buf.size() - 1) || (iter1 != msg_line->text.end() && ((*iter)->total_length != 0))) {
 			if (bg_color != 255) {
 				if (solid_bg)
 					screen->fill(bg_color, area.left, y + (i == 0 ? -4 : 4), scroll_width * 7 + 8, (i == 0 ? 18 : 10));
@@ -289,7 +289,7 @@ GUI_status MsgScrollNewUI::scroll_movement_event(ScrollEventType event) {
 MsgLine *MsgScrollNewUI::add_new_line() {
 	MsgLine *line = MsgScroll::add_new_line();
 
-	if (position + scroll_height < msg_buf.size()) {
+	if (position + scroll_height < (uint16)msg_buf.size()) {
 		position++;
 	} else if (position + scroll_height > scrollback_height) {
 		position--;

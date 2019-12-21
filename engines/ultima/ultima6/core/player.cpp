@@ -165,9 +165,9 @@ bool Player::save(NuvieIO *objlist) {
 Actor *Player::find_actor() {
 
 	for (uint32 p = 0; p < ACTORMANAGER_MAX_ACTORS; p++) {
-		Actor *actor = actor_manager->get_actor(p);
-		if (actor->get_worktype() == 0x02 && actor->is_immobile() == false) // WT_U6_PLAYER
-			return (actor);
+		Actor *theActor = actor_manager->get_actor(p);
+		if (theActor->get_worktype() == 0x02 && theActor->is_immobile() == false) // WT_U6_PLAYER
+			return (theActor);
 	}
 
 	sint8 party_leader = party->get_leader();
@@ -607,6 +607,9 @@ bool Player::weapon_can_hit(uint16 x, uint16 y) {
 }
 
 void Player::attack_select_init(bool use_attack_text) {
+	uint16 x, y;
+	uint8 z;
+
 	current_weapon = ACTOR_NO_READIABLE_LOCATION;
 
 	if (attack_select_next_weapon(false, use_attack_text) == false)
@@ -621,8 +624,6 @@ void Player::attack_select_init(bool use_attack_text) {
 	case TARGET_ACTOR :
 		target_actor = actor_manager->get_actor(target.actor_num);
 		uint16 target_x, target_y;
-		uint16 x, y;
-		uint8 z;
 		map_window->get_pos(&x, &y, &z);
 		target_x = x;
 		target_y = y;
@@ -635,8 +636,6 @@ void Player::attack_select_init(bool use_attack_text) {
 
 	case TARGET_LOCATION :
 		if (target.loc.z == actor->get_z() && weapon_can_hit(target.loc.x, target.loc.y)) {
-			uint16 x, y;
-			uint8 z;
 			map_window->get_pos(&x, &y, &z);
 			map_window->moveCursor(target.loc.x - x, target.loc.y - y);
 		} else {

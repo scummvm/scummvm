@@ -259,8 +259,7 @@ void ActorView::display_actor_stats() {
 }
 
 GUI_status ActorView::MouseWheel(sint32 x, sint32 y) {
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	int xpos, ypos;
 	screen->get_mouse_location(&xpos, &ypos);
 

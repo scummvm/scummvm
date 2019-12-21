@@ -456,8 +456,8 @@ void TimedPartyMoveToVehicle::timed(uint32 evtime) {
 		// not at boat location
 		if (loc != *dest) {
 			// offscreen (or timed out), teleport to target
-			MapWindow *map_window = Game::get_game()->get_map_window();
-			if (!map_window->in_window(loc.x, loc.y, loc.z) || moves_left == 0)
+			MapWindow *mapWindow = Game::get_game()->get_map_window();
+			if (!mapWindow->in_window(loc.x, loc.y, loc.z) || moves_left == 0)
 				person->move(dest->x, dest->y, dest->z, ACTOR_FORCE_MOVE);
 			else // keep walking
 				person->pathfind_to(*dest);

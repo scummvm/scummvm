@@ -510,7 +510,7 @@ static int getBits(uint mask) {
 	return count;
 }
 
-Graphics::ManagedSurface *createSurface(int w, int h, int rMask, int gMask,
+Graphics::ManagedSurface *RenderSurface::createSurface(int w, int h, int rMask, int gMask,
 		int bMask, int rShift, int gShift, int bShift) {
 	int rBits = getBits(rMask), gBits = getBits(gMask), bBits = getBits(bMask);
 	int bytesPerPixel = (rBits + gBits + bBits + 7) / 8;

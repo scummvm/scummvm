@@ -363,8 +363,7 @@ Obj *InventoryWidget::get_obj_at_location(int x, int y) {
 }
 
 GUI_status InventoryWidget::MouseWheel(sint32 x, sint32 y) {
-#if 0
-//if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	int xpos, ypos;
 	screen->get_mouse_location(&xpos, &ypos);
 

@@ -26,18 +26,17 @@
 #include "ultima/ultima6/core/events.h"
 #include "graphics/managed_surface.h"
 
+namespace Ultima {
+namespace Ultima6 {
+
 #define SDL_TRUE 1
 #define SDL_FALSE 0
 
 #define SDL_SWSURFACE 0
+#define SDL_VERSION_ATLEAST(A, B, C) false
 
-
-struct SDL_Color {
-	byte r;
-	byte g;
-	byte b;
-	byte a;
-};
+typedef uint32 SDL_Color;
+#define MAKE_COLOR(r, g, b, a) (((uint32)r) | (((uint32)g) << 8) | (((uint32)b) << 16) | (((uint32)a) << 24))
 
 extern uint32 SDL_GetTicks();
 extern void SDL_FreeSurface(Graphics::ManagedSurface *&s);
@@ -57,5 +56,8 @@ extern int SDL_LockSurface(Graphics::ManagedSurface *surface);
 extern int SDL_UnlockSurface(Graphics::ManagedSurface *surface);
 extern Graphics::ManagedSurface *SDL_ConvertSurface(Graphics::ManagedSurface *src,
 	const Graphics::PixelFormat &fmt, uint32 flags);
+
+} // End of namespace Ultima6
+} // End of namespace Ultima
 
 #endif

@@ -442,8 +442,7 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 		}
 	}
 	break;
-//if SDL_VERSION_ATLEAST(2, 0, 0)
-#if 0
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	case SDL_MOUSEWHEEL: {
 		return MouseWheel(event->wheel.x, event->wheel.y);
 	}

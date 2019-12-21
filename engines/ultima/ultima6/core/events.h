@@ -39,6 +39,7 @@ class Events {
 private:
 	static Events *g_events;
 	uint8  _buttonsDown;
+	Common::Point _mousePos;
 
 	/**
 	 * Sets whether a given button is depressed
@@ -71,6 +72,11 @@ public:
 	 * Returns the mouse buttons states
 	 */
 	byte getButtonState() const { return _buttonsDown; }
+
+	/**
+	 * Returns the mouse position
+	 */
+	Common::Point getMousePos() const { return _mousePos; }
 
 	/**
 	 * Poll for any pending events
