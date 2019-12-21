@@ -49,7 +49,7 @@ AvatarGravityProcess::AvatarGravityProcess(MainActor *avatar, int gravity_)
 }
 
 void AvatarGravityProcess::run() {
-	if (!Mouse::get_instance()->isMouseDown(BUTTON_RIGHT)) {
+	if (!Mouse::get_instance()->isMouseDownEvent(BUTTON_RIGHT)) {
 		// right mouse button not down, so fall normally
 
 		GravityProcess::run();

@@ -64,8 +64,8 @@ void GUI_Widget::Init(void *data, int x, int y, int w, int h) {
 
 	update_display = true;
 	set_accept_mouseclick(false); // initializes mouseclick time; SB-X
-	delayed_button = 0; // optional mouseclick-delay; SB-X
-	held_button = 0; // optional mousedown-delay; SB-X
+	delayed_button = BUTTON_NONE; // optional mouseclick-delay; SB-X
+	held_button = BUTTON_NONE; // optional mousedown-delay; SB-X
 	mouse_moved = false;
 
 	int mx = 0, my = 0;
@@ -177,27 +177,18 @@ void GUI_Widget::PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) {
 }
 
 /* Report status to GUI */
-int
-GUI_Widget:: Status(void) {
+int GUI_Widget:: Status(void) {
 	return (status);
 }
 
 /* Set the bounds of the widget.
    If 'w' or 'h' is -1, that parameter will not be changed.
  */
-void
-GUI_Widget:: SetRect(int x, int y, int w, int h) {
-	area.left = x;
-	area.top = y;
-	if (w >= 0) {
-		area.width() = w;
-	}
-	if (h >= 0) {
-		area.height() = h;
-	}
+void GUI_Widget:: SetRect(int x, int y, int w, int h) {
+	area = Common::Rect(x, y, x + w, y + h);
 }
-void
-GUI_Widget:: SetRect(Common::Rect **bounds) {
+
+void GUI_Widget:: SetRect(Common::Rect **bounds) {
 	int minx, maxx;
 	int miny, maxy;
 	int i, v;
@@ -205,11 +196,11 @@ GUI_Widget:: SetRect(Common::Rect **bounds) {
 	maxx = 0;
 	maxy = 0;
 	for (i = 0; bounds[i]; ++i) {
-		v = (bounds[i]->x + bounds[i]->w - 1);
+		v = (bounds[i]->right - 1);
 		if (maxx < v) {
 			maxx = v;
 		}
-		v = (bounds[i]->y + bounds[i]->h - 1);
+		v = (bounds[i]->bottom - 1);
 		if (maxy < v) {
 			maxy = v;
 		}
@@ -217,11 +208,11 @@ GUI_Widget:: SetRect(Common::Rect **bounds) {
 	minx = maxx;
 	miny = maxy;
 	for (i = 0; bounds[i]; ++i) {
-		v = bounds[i]->x;
+		v = bounds[i]->left;
 		if (minx > v) {
 			minx = v;
 		}
-		v = bounds[i]->y;
+		v = bounds[i]->top;
 		if (miny > v) {
 			miny = v;
 		}
@@ -239,8 +230,8 @@ int GUI_Widget::HitRect(int x, int y, Common::Rect &rect) {
 	int hit;
 
 	hit = 1;
-	if ((x < rect.x) || (x >= (rect.x + rect.w)) ||
-	        (y < rect.y) || (y >= (rect.y + rect.h))) {
+	if ((x < rect.left) || (x >= rect.right) ||
+	        (y < rect.top) || (y >= rect.bottom)) {
 		hit = 0;
 	}
 	return (hit);
@@ -303,9 +294,9 @@ GUI_status GUI_Widget::Idle(void) {
 		std::list<GUI_Widget *>::iterator child;
 		/* idle our children */
 		for (child = children.begin(); child != children.end(); child++) {
-			GUI_status status = (*child)->Idle();
-			if (status != GUI_PASS)
-				return (status);
+			GUI_status idleStatus = (*child)->Idle();
+			if (idleStatus != GUI_PASS)
+				return (idleStatus);
 		}
 	}
 	if (delayed_button != 0 || held_button != 0)
@@ -356,50 +347,55 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 
 		/* handle our children */
 		for (child = children.begin(); child != children.end(); child++) {
-			GUI_status status = (*child)->HandleEvent(event);
-			if (status != GUI_PASS)
-				return status;
+			GUI_status status_ = (*child)->HandleEvent(event);
+			if (status_ != GUI_PASS)
+				return status_;
 		}
 	}
 
 	if (delayed_button != 0 || held_button != 0) {
-		GUI_status status = try_mouse_delayed();
-		if (status != GUI_PASS)
-			return status;
+		GUI_status status_ = try_mouse_delayed();
+		if (status_ != GUI_PASS)
+			return status_;
 	}
 
 	switch (event->type) {
-	case SDL_KEYDOWN: {
-		return (KeyDown(event->key.keysym));
-	}
-	break;
-	case SDL_KEYUP: {
-		return (KeyUp(event->key.keysym));
-	}
-	break;
-	case SDL_MOUSEBUTTONDOWN: {
-		int x, y, button;
-		x = event->button.x;
-		y = event->button.y;
-		button = event->button.button;
+	case Common::EVENT_KEYDOWN:
+		return (KeyDown(event->kbd.keycode));
+		break;
+	case Common::EVENT_KEYUP:
+		return (KeyUp(event->kbd.keycode));
+		break;
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_MBUTTONDOWN: {
+		int x, y;
+		MouseButton button;
+		x = event->mouse.x;
+		y = event->mouse.y;
+		button = whichButton(event->type);
 		if (focused || HitRect(x, y)) {
 			set_mousedown(SDL_GetTicks(), button);
 
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
+//if !SDL_VERSION_ATLEAST(2, 0, 0)
+#if 0
 			if (button == SDL_BUTTON_WHEELUP)
 				return MouseWheel(0, 1);
 			else if (button == SDL_BUTTON_WHEELDOWN)
 				return MouseWheel(0, -1);
 #endif
-			return (MouseDown(x, y, button));
+			return(MouseDown(x, y, button));
 		}
+		break;
 	}
-	break;
-	case SDL_MOUSEBUTTONUP: {
-		int x, y, button;
-		x = event->button.x;
-		y = event->button.y;
-		button = event->button.button;
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONUP:
+	case Common::EVENT_MBUTTONUP: {
+		int x, y;
+		MouseButton button;
+		x = event->mouse.x;
+		y = event->mouse.y;
+		button = whichButton(event->type);
 		if (focused || HitRect(x, y))  {
 			int rel_time = SDL_GetTicks();
 			int last_rel_time = get_mouseup(button);
@@ -419,15 +415,16 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 			set_mouseup(0, button);
 			return (MouseUp(-1, -1, button));
 		}
+		break;
 	}
-	break;
-	case SDL_MOUSEMOTION: {
+
+	case Common::EVENT_MOUSEMOVE: {
 		int x, y;
 		uint8 state;
-		x = event->motion.x;
-		y = event->motion.y;
-		state = event->motion.state;
-		if (event->button.button > 0) // mousemotion resets Click
+		x = event->mouse.x;
+		y = event->mouse.y;
+		state = Events::get()->getButtonState();
+		if (state > 0) // mousemotion resets Click
 			mouse_moved = true;
 		if (focused || HitRect(x, y)) {
 			if (!mouse_over) {
@@ -445,7 +442,8 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 		}
 	}
 	break;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+//if SDL_VERSION_ATLEAST(2, 0, 0)
+#if 0
 	case SDL_MOUSEWHEEL: {
 		return MouseWheel(event->wheel.x, event->wheel.y);
 	}
@@ -572,18 +570,18 @@ GUI_status GUI_Widget::try_mouse_delayed() {
 	int time_to_click = SDL_GetTicks() - mouseup_time;
 
 	if (mousedown_time != 0 && time_to_hold >= GUI::mouseclick_delay) {
-		int button = held_button;
+		MouseButton button = held_button;
 		int x, y; // position isn't saved anywhere so we get it here
 		screen->get_mouse_location(&x, &y); // hopefully it hasn't changed since MouseDown
-		held_button = 0; // no need to clear mousedown time, MouseUp does that
+		held_button = BUTTON_NONE; // no need to clear mousedown time, MouseUp does that
 		return (MouseHeld(x, y, button));
 	}
 
 	if (mouseup_time != 0 && time_to_click >= GUI::mouseclick_delay) {
-		int button = delayed_button;
+		MouseButton button = delayed_button;
 		int x, y; // position isn't saved anywhere so we get it here
 		screen->get_mouse_location(&x, &y); // hopefully it hasn't changed since MouseClick/MouseUp
-		delayed_button = 0;
+		delayed_button = BUTTON_NONE;
 		// before a Double or Delayed click, mouseup time is reset
 		set_mouseup(0, button);
 		return (MouseDelayed(x, y, button));

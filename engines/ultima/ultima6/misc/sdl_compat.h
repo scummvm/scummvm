@@ -23,9 +23,21 @@
 #ifndef ULTIMA6_MISC_SDL_COMPAT_H
 #define ULTIMA6_MISC_SDL_COMPAT_H
 
+#include "ultima/ultima6/core/events.h"
 #include "graphics/managed_surface.h"
 
-enum MouseButton { BUTTON_LEFT = 1, BUTTON_RIGHT = 2, BUTTON_MIDDLE = 3 };
+#define SDL_TRUE 1
+#define SDL_FALSE 0
+
+#define SDL_SWSURFACE 0
+
+
+struct SDL_Color {
+	byte r;
+	byte g;
+	byte b;
+	byte a;
+};
 
 extern uint32 SDL_GetTicks();
 extern void SDL_FreeSurface(Graphics::ManagedSurface *&s);
@@ -37,5 +49,13 @@ extern int SDL_FillRect(Graphics::ManagedSurface *surf, Common::Rect *rect, uint
 extern void SDL_UpdateRect(Graphics::ManagedSurface *surf, int x, int y, int w, int h);
 extern void SDL_UpdateRects(Graphics::ManagedSurface *surf, int count, Common::Rect *rects);
 extern Graphics::ManagedSurface *SDL_LoadBMP(const char *filename);
+extern int SDL_SetColorKey(Graphics::ManagedSurface *surface, int flag, uint32 key);
+extern int SDL_SetColors(Graphics::ManagedSurface *surface, SDL_Color *colors, int firstcolor, int ncolors);
+extern int SDL_WaitEvent(Common::Event *event);
+extern int SDL_PollEvent(Common::Event *event);
+extern int SDL_LockSurface(Graphics::ManagedSurface *surface);
+extern int SDL_UnlockSurface(Graphics::ManagedSurface *surface);
+extern Graphics::ManagedSurface *SDL_ConvertSurface(Graphics::ManagedSurface *src,
+	const Graphics::PixelFormat &fmt, uint32 flags);
 
 #endif

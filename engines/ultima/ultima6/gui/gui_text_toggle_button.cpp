@@ -20,11 +20,8 @@
  *
  */
 
-//#include <string.h>
-//#include <assert.h>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "ultima/ultima6/gui/gui_TextToggleButton.h"
+#include "ultima/ultima6/gui/gui_text_toggle_button.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -59,16 +56,16 @@ GUI_TextToggleButton::~GUI_TextToggleButton() {
 	texts = 0;
 }
 
-GUI_status GUI_TextToggleButton::MouseUp(int x, int y, MouseButton button) {
-	if ((button == 1 || button == 3) && (pressed[0])) {
+GUI_status GUI_TextToggleButton::MouseUp(int x, int y, MouseButton button_) {
+	if ((button_ == 1 || button_ == 3) && (pressed[0])) {
 		pressed[0] = 0;
-		return Activate_button(x, y, button);
+		return Activate_button(x, y, button_);
 	}
-	return GUI_Button::MouseUp(x, y, button);
+	return GUI_Button::MouseUp(x, y, button_);
 }
 
-GUI_status GUI_TextToggleButton::Activate_button(int x, int y, MouseButton button) {
-	selection = (selection + (button == 1 ? 1 : -1)) % count;
+GUI_status GUI_TextToggleButton::Activate_button(int x, int y, MouseButton button_) {
+	selection = (selection + (button_ == BUTTON_LEFT ? 1 : -1)) % count;
 	if (selection < 0)
 		selection = count - 1;
 

@@ -11,6 +11,7 @@ MODULE_OBJS += \
 	ultima6/conf/misc.o \
 	ultima6/conf/xml_node.o \
 	ultima6/conf/xml_tree.o \
+	ultima6/core/events.o \
 	ultima6/files/nuvie_bmp_file.o \
 	ultima6/files/nuvie_file_list.o \
 	ultima6/files/nuvie_io.o \
@@ -20,6 +21,21 @@ MODULE_OBJS += \
 	ultima6/files/u6_lib_n.o \
 	ultima6/files/u6_lzw.o \
 	ultima6/files/u6_shape.o \
+	ultima6/gui/gui.o \
+	ultima6/gui/gui_area.o \
+	ultima6/gui/gui_button.o \
+	ultima6/gui/gui_console.o \
+	ultima6/gui/gui_dialog.o \
+	ultima6/gui/gui_drag_manager.o \
+	ultima6/gui/gui_font.o \
+	ultima6/gui/gui_load_image.o \
+	ultima6/gui/gui_scroller.o \
+	ultima6/gui/gui_scroll_bar.o \
+	ultima6/gui/gui_text.o \
+	ultima6/gui/gui_text_input.o \
+	ultima6/gui/gui_text_toggle_button.o \
+	ultima6/gui/gui_widget.o \
+	ultima6/gui/gui_yes_no_dialog.o \
 	ultima6/misc/sdl_compat.o \
 	ultima6/misc/iavl_tree.o \
 	ultima6/misc/u6_line_walker.o \

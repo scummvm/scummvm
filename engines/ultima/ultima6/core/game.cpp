@@ -687,7 +687,7 @@ void Game::update_once(bool process_gui_input, bool run_converse) {
 	event->update_timers();
 
 	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
+	while (Events::get()->pollEvent(event)) {
 		if (process_gui_input)
 			gui->HandleEvent(&event);
 	}

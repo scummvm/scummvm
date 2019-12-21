@@ -181,14 +181,10 @@ void DollWidget::free_doll_shapes() {
 }
 
 void DollWidget::setColorKey(Graphics::ManagedSurface *image) {
-#ifdef TODO
 	if (image) {
 		uint32 bg_color_key = SDL_MapRGB(image->format, 0xf1, 0x0f, 0xc4);
 		SDL_SetColorKey(image, SDL_TRUE, bg_color_key);
 	}
-#else
-	::error("TODO: transparency");
-#endif
 }
 
 void DollWidget::set_actor(Actor *a) {

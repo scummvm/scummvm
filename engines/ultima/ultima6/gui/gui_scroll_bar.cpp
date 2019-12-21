@@ -26,7 +26,7 @@
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_button.h"
-#include "ultima/ultima6/gui/gui_ScrollBar.h"
+#include "ultima/ultima6/gui/gui_scroll_bar.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -121,29 +121,29 @@ void GUI_ScrollBar::Display(bool full_redraw) {
 // Common::Rect src, dst;
 
 	if (slider_y > 0) {
-		framerect.x = area.left;
-		framerect.y = area.top + button_height;
-		framerect.w = SCROLLBAR_WIDTH;
-		framerect.h = slider_y;
+		framerect.left = area.left;
+		framerect.top = area.top + button_height;
+		framerect.setWidth(SCROLLBAR_WIDTH);
+		framerect.setHeight(slider_y);
 		SDL_FillRect(surface, &framerect, track_base_c);
 
 		// Draw Border
-		framerect.x = area.left;
-		framerect.y = area.top + button_height;
-		framerect.w = SCROLLBAR_WIDTH;
-		framerect.h = 1;
+		framerect.left = area.left;
+		framerect.top = area.top + button_height;
+		framerect.setHeight(SCROLLBAR_WIDTH);
+		framerect.setHeight(1);
 		SDL_FillRect(surface, &framerect, track_border_c);
 
-		framerect.x = area.left;
-		framerect.y = area.top + button_height;
-		framerect.w = 1;
-		framerect.h = slider_y;
+		framerect.left = area.left;
+		framerect.top = area.top + button_height;
+		framerect.setWidth(1);
+		framerect.setHeight(slider_y);
 		SDL_FillRect(surface, &framerect, track_border_c);
 
-		framerect.x = area.left + SCROLLBAR_WIDTH - 1;
-		framerect.y = area.top + button_height;
-		framerect.w = 1;
-		framerect.h = slider_y;
+		framerect.left = area.left + SCROLLBAR_WIDTH - 1;
+		framerect.top = area.top + button_height;
+		framerect.setWidth(1);
+		framerect.setHeight(slider_y);
 		SDL_FillRect(surface, &framerect, track_border_c);
 
 	}
@@ -151,29 +151,29 @@ void GUI_ScrollBar::Display(bool full_redraw) {
 	DisplaySlider();
 
 	if (slider_y + slider_length < track_length) {
-		framerect.x = area.left;
-		framerect.y = area.top + button_height + slider_y + slider_length;
-		framerect.w = SCROLLBAR_WIDTH;
-		framerect.h = track_length - (slider_y + slider_length);
+		framerect.left = area.left;
+		framerect.top = area.top + button_height + slider_y + slider_length;
+		framerect.setWidth(SCROLLBAR_WIDTH);
+		framerect.setHeight(track_length - (slider_y + slider_length));
 		SDL_FillRect(surface, &framerect, track_base_c);
 
 		// Draw Border
-		framerect.x = area.left;
-		framerect.y = area.top + area.height() - button_height - 1;
-		framerect.w = SCROLLBAR_WIDTH;
-		framerect.h = 1;
+		framerect.left = area.left;
+		framerect.top = area.top + area.height() - button_height - 1;
+		framerect.setWidth(SCROLLBAR_WIDTH);
+		framerect.setHeight(1);
 		SDL_FillRect(surface, &framerect, track_border_c);
 
-		framerect.x = area.left;
-		framerect.y = area.top + button_height + slider_y + slider_length;
-		framerect.w = 1;
-		framerect.h = track_length - slider_y - slider_length;
+		framerect.left = area.left;
+		framerect.top = area.top + button_height + slider_y + slider_length;
+		framerect.setWidth(1);
+		framerect.setHeight(track_length - slider_y - slider_length);
 		SDL_FillRect(surface, &framerect, track_border_c);
 
-		framerect.x = area.left + SCROLLBAR_WIDTH - 1;
-		framerect.y = area.top + button_height + slider_y + slider_length;
-		framerect.w = 1;
-		framerect.h = track_length - slider_y - slider_length;
+		framerect.left = area.left + SCROLLBAR_WIDTH - 1;
+		framerect.top = area.top + button_height + slider_y + slider_length;
+		framerect.setWidth(1);
+		framerect.setHeight(track_length - slider_y - slider_length);
 		SDL_FillRect(surface, &framerect, track_border_c);
 
 	}
@@ -188,34 +188,34 @@ void GUI_ScrollBar::Display(bool full_redraw) {
 inline void GUI_ScrollBar::DisplaySlider() {
 	Common::Rect rect;
 
-	rect.x = area.left;
-	rect.y = area.top + button_height + slider_y;
-	rect.w = SCROLLBAR_WIDTH;
-	rect.h = slider_length;
+	rect.left = area.left;
+	rect.top = area.top + button_height + slider_y;
+	rect.setWidth(SCROLLBAR_WIDTH);
+	rect.setHeight(slider_length);
 	SDL_FillRect(surface, &rect, slider_base_c);
 
-	rect.x = area.left;
-	rect.y = area.top + button_height + slider_y;
-	rect.w = 1;
-	rect.h = slider_length - 1;
+	rect.left = area.left;
+	rect.top = area.top + button_height + slider_y;
+	rect.setWidth(1);
+	rect.setHeight(slider_length - 1);
 	SDL_FillRect(surface, &rect, slider_highlight_c);
 
-	rect.x = area.left + 1;
-	rect.y = area.top + button_height + slider_y;
-	rect.w = SCROLLBAR_WIDTH - 1;
-	rect.h = 1;
+	rect.left = area.left + 1;
+	rect.top = area.top + button_height + slider_y;
+	rect.setWidth(SCROLLBAR_WIDTH - 1);
+	rect.setHeight(1);
 	SDL_FillRect(surface, &rect, slider_highlight_c);
 
-	rect.x = area.left + SCROLLBAR_WIDTH - 1;
-	rect.y = area.top + button_height + slider_y;
-	rect.w = 1;
-	rect.h = slider_length;
+	rect.left = area.left + SCROLLBAR_WIDTH - 1;
+	rect.top = area.top + button_height + slider_y;
+	rect.setWidth(1);
+	rect.setHeight(slider_length);
 	SDL_FillRect(surface, &rect, slider_shadow_c);
 
-	rect.x = area.left;
-	rect.y = area.top + button_height + slider_y + slider_length - 1;
-	rect.w = SCROLLBAR_WIDTH - 1;
-	rect.h = 1;
+	rect.left = area.left;
+	rect.top = area.top + button_height + slider_y + slider_length - 1;
+	rect.setWidth(SCROLLBAR_WIDTH - 1);
+	rect.setHeight(1);
 	SDL_FillRect(surface, &rect, slider_shadow_c);
 
 }

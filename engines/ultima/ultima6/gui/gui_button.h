@@ -113,7 +113,7 @@ public:
 	virtual void set_highlighted(bool val) {
 		is_highlighted = val;
 	}
-	virtual GUI_status Activate_button(int x = 0, int y = 0, int button = 1);
+	virtual GUI_status Activate_button(int x = 0, int y = 0, MouseButton button = BUTTON_LEFT);
 
 protected:
 	/* yields an appropriate image */

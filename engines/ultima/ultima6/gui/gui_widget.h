@@ -73,8 +73,8 @@ protected:
 	unsigned int mouseup[3]; /* for 3 buttons */
 	unsigned int mousedown[3]; /* waiting for MouseUp */
 	bool accept_mouseclick[3]; /* which buttons can be [double]clicked */
-	unsigned int delayed_button; /* a MouseClick can be delayed on one button; 0=none */
-	unsigned int held_button; /* a MouseDown can be delayed on one button; 0=none */
+	MouseButton delayed_button; /* a MouseClick can be delayed on one button; 0=none */
+	MouseButton held_button; /* a MouseDown can be delayed on one button; 0=none */
 	bool mouse_moved; /* true if mouse moves while button is pressed */
 
 	bool mouse_over; // initialized here; toggled by GUI
@@ -236,10 +236,12 @@ protected:
 		else return (0);
 	}
 	void wait_for_mouseclick(int button) {
-		if (button >= 0 && button < 4) delayed_button = button;
+		if (button >= BUTTON_NONE && button < BUTTON_MIDDLE)
+			delayed_button = (MouseButton)button;
 	}
 	void wait_for_mousedown(int button) {
-		if (button >= 0 && button < 4) held_button = button;
+		if (button >= BUTTON_NONE && button <= BUTTON_MIDDLE)
+			held_button = (MouseButton)button;
 	}
 	virtual GUI_status try_mouse_delayed();
 };

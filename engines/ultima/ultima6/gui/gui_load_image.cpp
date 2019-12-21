@@ -20,10 +20,9 @@
  *
  */
 
-//#include <string.h>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "ultima/ultima6/gui/gui_loadimage.h"
+#include "ultima/ultima6/gui/gui_load_image.h"
+#include "ultima/ultima6/gui/the_font.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -34,30 +33,25 @@ namespace Ultima6 {
 /************************************************************************/
 
 Graphics::ManagedSurface *GUI_LoadImage(int w, int h, uint8 *pal, uint8 *data) {
-	Graphics::ManagedSurface *image;
+	Graphics::ManagedSurface *image = new Graphics::ManagedSurface(w, h,
+		Graphics::PixelFormat::createFormatCLUT8());
 
-	image = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, 0, 0, 0, 0);
 	if (image) {
 		for (int row = 0; row < h; ++row) {
-			memcpy((uint8 *)image->pixels + row * image->pitch,
-			       data, w);
+			memcpy((uint8 *)image->getBasePtr(0, row), data, w);
 			data += w;
 		}
-		for (int i = 0; i < 256; ++i) {
-			image->format->palette->colors[i].r = *pal++;
-			image->format->palette->colors[i].g = *pal++;
-			image->format->palette->colors[i].b = *pal++;
-		}
+
+		image->setPalette(pal, 0, 256);
 	}
-	return (image);
+
+	return image;
 }
 
 /************************************************************************/
 /* C functions for default font support                                 */
 /*                                                                      */
 /************************************************************************/
-
-#include "the_font.h"
 
 static Graphics::ManagedSurface *the_font = NULL;
 static Graphics::ManagedSurface *the_font_6x8 = NULL;

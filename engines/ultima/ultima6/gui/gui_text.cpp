@@ -62,8 +62,8 @@ GUI_Text:: GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, const char *str, GU
 
 	font->TextExtent(text, &w, &h, max_width);
 
-	area.width() = w;
-	area.height() = h;
+	area.setWidth(w);
+	area.setHeight(h);
 }
 
 GUI_Text::~GUI_Text() {

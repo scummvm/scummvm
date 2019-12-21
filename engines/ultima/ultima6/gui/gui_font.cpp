@@ -20,13 +20,11 @@
  *
  */
 
-//#include <stdlib.h>
-//#include <cmath>
-//#include <misc/ultima/ultima6/misc/u6_misc.h>
-//#include <misc/SDLultima/ultima6/keybinding/utils.h>
-
+#include "ultima/ultima6/misc/u6_misc.h"
+#include "ultima/ultima6/keybinding/utils.h"
 #include "ultima/ultima6/gui/gui_font.h"
-#include "ultima/ultima6/gui/gui_loadimage.h"
+#include "ultima/ultima6/gui/gui_load_image.h"
+#include "common/textconsole.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -62,8 +60,7 @@ GUI_Font::GUI_Font(char *name) {
 		freefont = 1;
 	} else {
 		freefont = 0;
-		DEBUG(0, LEVEL_EMERGENCY, "Could not load font.\n");
-		exit(1);
+		::error("Could not load font");
 	}
 	SetTransparency(1);
 	w_data = NULL;
@@ -125,10 +122,10 @@ void GUI_Font::TextOut(Graphics::ManagedSurface *context, int x, int y, const ch
 	Common::Rect src;
 	Common::Rect dst;
 
-	src.w = charw;
-	src.h = charh - 1;
-	dst.w = charw;
-	dst.h = charh - 1;
+	src.setWidth(charw);
+	src.setHeight(charh - 1);
+	dst.setWidth(charw);
+	dst.setHeight(charh - 1);
 	i = 0;
 	j = 0;
 	while ((ch = text[i])) { // single "=" is correct!
@@ -137,15 +134,15 @@ void GUI_Font::TextOut(Graphics::ManagedSurface *context, int x, int y, const ch
 			y += charh;
 		}
 
-		src.x = (ch % 16) * charw;
-		src.y = (ch / 16) * charh;
+		src.moveTo((ch % 16) * charw, (ch / 16) * charh);
 		if (w_data) {
-			dst.x = x;
-			dst.w = w_data[ch];
-			x += dst.w;
+			dst.left = x;
+			dst.setWidth(w_data[ch]);
+			x += dst.width();
 		} else
-			dst.x = x + (j * charw);
-		dst.y = y;
+			dst.moveTo(x + (j * charw), dst.top);
+
+		dst.top = y;
 		SDL_BlitSurface(fontStore, &src, context, &dst);
 		i++;
 		j++;

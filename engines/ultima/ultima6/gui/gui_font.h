@@ -23,9 +23,7 @@
 #ifndef ULTIMA6_GUI_GUI_FONT_H
 #define ULTIMA6_GUI_GUI_FONT_H
 
-//#include <string.h>
-
-
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Ultima6 {

@@ -50,8 +50,8 @@ GUI_TextInput:: GUI_TextInput(int x, int y, uint8 r, uint8 g, uint8 b, char *str
 	pos = strlen(text);
 	length = pos;
 
-	area.width() = max_width * font->CharWidth();
-	area.height() = max_height * font->CharHeight();
+	area.setWidth(max_width * font->CharWidth());
+	area.setHeight(max_height * font->CharHeight());
 }
 
 GUI_TextInput::~GUI_TextInput() {
@@ -80,7 +80,8 @@ GUI_status GUI_TextInput::MouseUp(int x, int y, MouseButton button) {
 	return (GUI_PASS);
 }
 
-GUI_status GUI_TextInput::KeyDown(const Common::KeyState &key) {
+GUI_status GUI_TextInput::KeyDown(const Common::KeyState &keyState) {
+	Common::KeyState key = keyState;
 	char ascii = get_ascii_char_from_keysym(key);
 
 	if (!focused)
@@ -123,36 +124,36 @@ GUI_status GUI_TextInput::KeyDown(const Common::KeyState &key) {
 	}
 
 	switch (key.keycode) {
-	case Common::KEYCODE_LSHIFT   :
-	case Common::KEYCODE_RSHIFT   :
-	case Common::KEYCODE_LCTRL    :
-	case Common::KEYCODE_RCTRL    :
-	case Common::KEYCODE_CAPSLOCK :
+	case Common::KEYCODE_LSHIFT:
+	case Common::KEYCODE_RSHIFT:
+	case Common::KEYCODE_LCTRL:
+	case Common::KEYCODE_RCTRL:
+	case Common::KEYCODE_CAPSLOCK:
 		break;
 
 	case Common::KEYCODE_KP_ENTER:
-	case Common::KEYCODE_RETURN :
+	case Common::KEYCODE_RETURN:
 		if (callback_object)
 			callback_object->callback(TEXTINPUT_CB_TEXT_READY, this, text);
 	case Common::KEYCODE_ESCAPE :
 		release_focus();
 		break;
 
-	case Common::KEYCODE_HOME :
+	case Common::KEYCODE_HOME:
 		pos = 0;
 		break;
-	case Common::KEYCODE_END  :
+	case Common::KEYCODE_END:
 		pos = length;
 		break;
 
-	case Common::KEYCODE_KP_4  :
-	case Common::KEYCODE_LEFT :
+	case Common::KEYCODE_KP4:
+	case Common::KEYCODE_LEFT:
 		if (pos > 0)
 			pos--;
 		break;
 
-	case Common::KEYCODE_KP_6   :
-	case Common::KEYCODE_RIGHT :
+	case Common::KEYCODE_KP6:
+	case Common::KEYCODE_RIGHT:
 		if (pos < length)
 			pos++;
 		break;
@@ -169,8 +170,8 @@ GUI_status GUI_TextInput::KeyDown(const Common::KeyState &key) {
 		remove_char();
 		break; //delete the character to the left of the cursor
 
-	case Common::KEYCODE_UP :
-	case Common::KEYCODE_KP_8 :
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
 		if (pos == length) {
 			if (length + 1 > max_width * max_height)
 				break;
@@ -191,8 +192,8 @@ GUI_status GUI_TextInput::KeyDown(const Common::KeyState &key) {
 			text[pos]++;
 		break;
 
-	case Common::KEYCODE_KP_2 :
-	case Common::KEYCODE_DOWN :
+	case Common::KEYCODE_KP2:
+	case Common::KEYCODE_DOWN:
 		if (pos == length) {
 			if (length + 1 > max_width * max_height)
 				break;
@@ -221,8 +222,6 @@ GUI_status GUI_TextInput::KeyDown(const Common::KeyState &key) {
 			add_char(ascii);
 		break;
 	}
-
-
 
 	return (GUI_YUM);
 }
@@ -307,10 +306,10 @@ void GUI_TextInput::display_cursor() {
 	cw = font->CharWidth();
 	ch = font->CharHeight();
 
-	r.x = area.left + x * cw;
-	r.y = area.top + y * ch;
-	r.w = 1;
-	r.h = ch;
+	r.left = area.left + x * cw;
+	r.top = area.top + y * ch;
+	r.setWidth(1);
+	r.setHeight(ch);
 
 	SDL_FillRect(surface, &r, cursor_color);
 

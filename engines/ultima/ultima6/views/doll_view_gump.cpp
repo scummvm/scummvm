@@ -142,8 +142,7 @@ bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16
 void DollViewGump::setColorKey(Graphics::ManagedSurface *image) {
 	if (image) {
 		bg_color_key = SDL_MapRGB(image->format, 0xf1, 0x0f, 0xc4);
-		//SDL_SetColorKey(image, SDL_TRUE, bg_color_key);
-		::error("TODO: transparency");
+		SDL_SetColorKey(image, SDL_TRUE, bg_color_key);
 	}
 }
 

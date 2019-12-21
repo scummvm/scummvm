@@ -61,8 +61,7 @@ DraggableView::~DraggableView() {
 void DraggableView::set_bg_color_key(uint8 r, uint8 g, uint8 b) {
 	if (bg_image) {
 		bg_color_key = SDL_MapRGB(bg_image->format, 0, 0x70, 0xfc);
-		//SDL_SetColorKey(bg_image, SDL_TRUE, bg_color_key);
-		::error("TODO: work around transparency");
+		SDL_SetColorKey(bg_image, SDL_TRUE, bg_color_key);
 	}
 }
 

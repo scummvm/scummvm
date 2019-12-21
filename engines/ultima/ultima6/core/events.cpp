@@ -20,32 +20,68 @@
  *
  */
 
-#ifndef ULTIMA6_CORE_SCUMMVM_EVENTS_H
-#define ULTIMA6_CORE_SCUMMVM_EVENTS_H
-
-#include "common/events.h"
+#include "ultima/ultima6/core/events.h"
+#include "common/algorithm.h"
+#include "common/system.h"
+#include "engines/engine.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-enum MouseButton { BUTTON_LEFT = 1, BUTTON_RIGHT = 2, BUTTON_MIDDLE = 3 };
+Events::Events() : _buttonsDown(0) {
+	g_events = this;
+}
 
-inline bool isMouseDown(Common::EventType type) {
+Events::~Events() {
+	g_events = nullptr;
+}
+
+void Events::setButtonDown(MouseButton button, bool isDown) {
+	assert(button != BUTTON_NONE);
+	if (isDown)
+		_buttonsDown |= 1 << ((int)button - 1);
+	else
+		_buttonsDown &= ~(1 << ((int)button - 1));
+}
+
+
+bool Events::pollEvent(Common::Event &event) {
+	if (g_system->getEventManager()->pollEvent(event)) {
+		if (isMouseDownEvent(event.type))
+			setButtonDown(whichButton(event.type), true);
+		else if (isMouseUpEvent(event.type))
+			setButtonDown(whichButton(event.type), false);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool isMouseDownEvent(Common::EventType type) {
 	return type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_RBUTTONDOWN
 		|| type == Common::EVENT_MBUTTONDOWN;
 }
 
-inline bool isMouseUp(Common::EventType type) {
+bool isMouseUpEvent(Common::EventType type) {
 	return type == Common::EVENT_LBUTTONUP || type == Common::EVENT_RBUTTONUP
 		|| type == Common::EVENT_MBUTTONUP;
 }
 
-inline bool shouldQuit() {
-	// TODO
-	return false;
+MouseButton whichButton(Common::EventType type) {
+	if (type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_LBUTTONUP)
+		return BUTTON_LEFT;
+	else if (type == Common::EVENT_RBUTTONDOWN || type == Common::EVENT_RBUTTONUP)
+		return BUTTON_RIGHT;
+	else if (type == Common::EVENT_MBUTTONDOWN || type == Common::EVENT_MBUTTONUP)
+		return BUTTON_MIDDLE;
+	else
+		return BUTTON_NONE;
+}
+
+bool shouldQuit() {
+	return g_engine->shouldQuit();
 }
 
 } // End of namespace Ultima6
 } // End of namespace Ultima
-
-#endif
