@@ -7575,12 +7575,84 @@ static const uint16 phant1RedQuitCursorPatch[] = {
 	PATCH_END
 };
 
+// In chapter 5, the wine casks in room 20200 shimmer to indicate that they have
+//  a video to play but a script bug usually prevents them from being clicked.
+//  The code that determines whether to set a hotspot on the "spikot" object
+//  is incomplete and out of sync with the code that displays the shimmer and
+//  determines which script to run when the casks are clicked. As a result, the
+//  shimmering casks can't be clicked in chapter 5 if their contents were tasted
+//  in an earlier act. In chapter 6 the shimmering casks can be clicked again.
+//
+// We fix this by rewriting the logic that sets the hotspot to match the rest of
+//  the code in the room. The casks can now always be clicked when they shimmer.
+//  To make room we remove a call to approachVerbs: 0 as that has no effect.
+//
+// Applies to: All versions
+// Responsible method: rm20200:init
+static const uint16 phant1WineCaskHotspotSignature[] = {
+	0x89, 0x6a,                           // lsg 6a
+	0x35, 0x06,                           // ldi 06
+	0x1a,                                 // eq? [ is chapter 6? ]
+	0x31, 0x09,                           // bnt 09
+	SIG_MAGICDWORD,
+	0x78,                                 // push1
+	0x38, SIG_UINT16(0x00d8),             // pushi 00d8 [ flag 216 ]
+	0x45, 0x03, SIG_UINT16(0x0002),       // callb proc0_3 [ seen barrel video? ]
+	0x18,                                 // not
+	0x2f, 0x0f,                           // bt 0f
+	0x89, 0x6a,                           // lsg 6a 
+	0x35, 0x06,                           // ldi 06
+	0x1c,                                 // ne? [ is not chapter 6? ]
+	0x31, 0x21,                           // bnt 21 [ skip hotspot ]
+	0x78,                                 // push1
+	0x39, 0x1d,                           // pushi 1d [ flag 29 ]
+	0x45, 0x03, SIG_UINT16(0x0002),       // callb proc0_3 [ tasted wine? ]
+	0x18,                                 // not
+	0x31, 0x17,                           // bnt 17 [ skip hotspot ]
+	0x38, SIG_SELECTOR16(init),           // pushi init
+	0x76,                                 // push0
+	0x38, SIG_SELECTOR16(approachVerbs),  // pushi approachVerbs
+	0x78,                                 // push1
+	0x76,                                 // push0
+	SIG_ADDTOOFFSET(+11),
+	0x4a, SIG_UINT16(0x0012),             // send 12 [ spikot init: approachVerbs: 0 ... ]
+	SIG_END
+};
+
+static const uint16 phant1WineCaskHotspotPatch[] = {
+	0x78,                                 // push1
+	0x38, PATCH_UINT16(0x00d8),           // pushi 00d8 [ flag 216 ]
+	0x45, 0x03, PATCH_UINT16(0x0002),     // callb proc0_3 [ seen barrel video? ]
+	0x2f, 0x30,                           // bt 30 [ skip hotspot ]
+	0x39, 0x06,                           // pushi 06
+	0x81, 0x6a,                           // lag 6a
+	0x04,                                 // sub
+	0x31, 0x17,                           // bnt 17 [ show hotspot if chapter 6 ]
+	0x78,                                 // push1
+	0x1a,                                 // eq?
+	0x31, 0x0a,                           // bnt 0a [ skip mirror test if not chapter 5 ]
+	0x78,                                 // push1
+	0x38, PATCH_UINT16(0x0123),           // pushi 0123 [ flag 291 ]
+	0x45, 0x03, PATCH_UINT16(0x0002),     // callb proc0_3 [ seen mirror video? ]
+	0x2f, 0x09,                           // bt 09 [ set hotspot ]
+	0x78,                                 // push1
+	0x39, 0x1d,                           // pushi 1d [ flag 29 ]
+	0x45, 0x03, PATCH_UINT16(0x0002),     // callb proc0_3 [ tasted wine? ]
+	0x2f, 0x12,                           // bt 12 [ skip hotspot ]
+	0x38, PATCH_SELECTOR16(init),         // pushi init
+	0x76,                                 // push0
+	PATCH_ADDTOOFFSET(+11),
+	0x4a, PATCH_UINT16(0x000c),           // send 0c [ spikot init: ... ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,    23, "make cursor red after clicking quit",         1, phant1RedQuitCursorSignature,    phant1RedQuitCursorPatch },
 	{  true,   901, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,  1111, "ignore audio settings from save game",        1, phant1SavedVolumeSignature,      phant1SavedVolumePatch },
 	{  true, 20200, "fix broken rat init in sEnterFromAlcove",     1, phant1RatSignature,              phant1RatPatch },
+	{  true, 20200, "fix chapter 5 wine cask hotspot",             1, phant1WineCaskHotspotSignature,  phant1WineCaskHotspotPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
