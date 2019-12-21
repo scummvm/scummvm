@@ -20,7 +20,7 @@
  *
  */
 
-#include "KeyActions.h"
+#include "ultima/ultima6/keybinding/key_actions.h"
 #include "ultima/ultima6/keybinding/keys.h"
 #include "ultima/ultima6/core/event.h"
 #include "ultima/ultima6/core/game.h"

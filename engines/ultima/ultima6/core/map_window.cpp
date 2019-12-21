@@ -685,7 +685,7 @@ void MapWindow::update() {
 			key = keybinder->get_key_from_joy_hat_button(SDL_JoystickGetHat(keybinder->get_joystick(), 0));
 		else
 			key = keybinder->get_key_from_joy_walk_axes();
-		if (key != Common::KEYCODE_UNKNOWN) {
+		if (key != Common::KEYCODE_INVALID) {
 			Common::Event sdl_event;
 			sdl_event.type = SDL_KEYDOWN;
 			sdl_event.key.keysym.sym = key;

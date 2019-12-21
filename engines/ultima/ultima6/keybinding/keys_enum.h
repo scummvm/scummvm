@@ -27,7 +27,7 @@ namespace Ultima {
 namespace Ultima6 {
 
 // FIXME - I needed to reduce includes. Maybe use C++11 enum class in the future
-typedef enum {
+enum ActionKeyType {
 	WEST_KEY = 0,
 	EAST_KEY,
 	NORTH_KEY,
@@ -55,7 +55,7 @@ typedef enum {
 	HOME_KEY,
 	END_KEY,
 	OTHER_KEY
-} ActionKeyType;
+};
 
 } // End of namespace Ultima6
 } // End of namespace Ultima

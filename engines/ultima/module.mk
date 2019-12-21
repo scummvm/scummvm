@@ -48,6 +48,9 @@ MODULE_OBJS += \
 	ultima6/gui/gui_text_toggle_button.o \
 	ultima6/gui/gui_widget.o \
 	ultima6/gui/gui_yes_no_dialog.o \
+	ultima6/keybinding/keys.o \
+	ultima6/keybinding/key_actions.o \
+	ultima6/keybinding/utils.o \
 	ultima6/misc/sdl_compat.o \
 	ultima6/misc/iavl_tree.o \
 	ultima6/misc/u6_line_walker.o \

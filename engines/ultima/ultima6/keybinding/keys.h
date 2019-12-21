@@ -50,8 +50,14 @@ struct ActionType {
 	int params[c_maxparams];
 };
 
-struct ltSDLkeysym {
-	bool operator()(Common::KeyState k1, Common::KeyState k2) const {
+struct Keycode_Hash {
+	uint operator()(const Common::KeyState &x) const {
+		return (uint)x.keycode & ((uint)x.flags << 24);
+	}
+};
+
+struct Keycode_EqualTo {
+	bool operator()(const Common::KeyState &k1, const Common::KeyState &k2) const {
 		if (k1.keycode == k2.keycode)
 			return k1.flags < k2.flags;
 		else
@@ -59,7 +65,7 @@ struct ltSDLkeysym {
 	}
 };
 
-typedef std::map<Common::KeyState, ActionType, ltSDLkeysym>   KeyMap;
+typedef std::map<Common::KeyState, ActionType, Keycode_Hash, Keycode_EqualTo> KeyMap;
 
 class Configuration;
 
