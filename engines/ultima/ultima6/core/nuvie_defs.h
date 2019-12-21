@@ -98,33 +98,14 @@ enum DebugLevelType {
 };
 
 #ifdef WITHOUT_DEBUG
-#define DEBUG(...)
+inline void u6debug(bool no_header, const DebugLevelType level, const char *format, ...) {}
 #else
-#define DEBUG(...) debug(__func__,__FILE__,__LINE__,__VA_ARGS__)
-DebugLevelType debug(const char *func, const char *file, const int line, const bool no_header, const DebugLevelType level, const char *format, ...);
-#endif /* WITHOUT_DEBUG */
-
-/*
-#ifndef BOOL
-typedef unsigned char BOOL;
+extern void u6debug(bool no_header, const DebugLevelType level, const char *format, ...);
 #endif
 
-#ifndef FALSE
-#define FALSE 0
-#endif
+#define DEBUG u6debug
 
-#ifndef TRUE
-#define TRUE  1
-#endif
-*/
-
-#ifndef WIN32
 #define U6PATH_DELIMITER '/'
-#else
-#define U6PATH_DELIMITER '\\'
-//#define U6PATH_DELIMITER '/' // win32 file functions work fine with /
-#endif
-
 
 #define NUVIE_RAND_MAX 0x7fffffff // POSIX: 2^(31)-1
 #define NUVIE_RAND() getRandom(NUVIE_RAND_MAX)

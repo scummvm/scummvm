@@ -37,9 +37,12 @@
 namespace Ultima {
 namespace Ultima6 {
 
+Ultima6Engine *Ultima6Engine::g_engine;
+
 Ultima6Engine::Ultima6Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima6"),
 		config(nullptr), screen(nullptr), script(nullptr), game(nullptr) {
+	g_engine = this;
 }
 
 Ultima6Engine::~Ultima6Engine() {
@@ -54,6 +57,8 @@ Ultima6Engine::~Ultima6Engine() {
 
 	if (game != NULL)
 		delete game;
+
+	g_engine = nullptr;
 }
 
 #ifdef TODO
