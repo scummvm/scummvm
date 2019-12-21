@@ -912,6 +912,25 @@ reg_t kFileIORename(EngineState *s, int argc, reg_t *argv) {
 		return SIGNAL_REG;
 }
 
+reg_t kFileIOCopy(EngineState *s, int argc, reg_t *argv) {
+	Common::String oldName = s->_segMan->getString(argv[0]);
+	Common::String newName = s->_segMan->getString(argv[1]);
+
+	oldName = g_sci->wrapFilename(oldName);
+	newName = g_sci->wrapFilename(newName);
+
+	// Phantasmagoria 1 files are small and interoperable with the
+	//  original interpreter so they aren't compressed, see file_open().
+	bool isCompressed = (g_sci->getGameId() != GID_PHANTASMAGORIA);
+
+	// SCI1.1 returns 0 on success and a DOS error code on fail. SCI32
+	// returns -1 on fail. We just return -1 for all versions.
+	if (g_sci->getSaveFileManager()->copySavefile(oldName, newName, isCompressed))
+		return NULL_REG;
+	else
+		return SIGNAL_REG;
+}
+
 #ifdef ENABLE_SCI32
 reg_t kFileIOReadByte(EngineState *s, int argc, reg_t *argv) {
 	// Read the byte into the low byte of the accumulator
