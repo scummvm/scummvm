@@ -21,12 +21,12 @@
  *
  */
 
-//#include <math.h>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
-
+#include "ultima/ultima6/sound/mixer/decoder/pc_speaker.h"
 #include "audio/mixer.h"
-#include "decoder/PCSpeaker.h"
+
+namespace Ultima {
+namespace Ultima6 {
 
 #ifndef PI
 #define PI 3.14159265358979323846
@@ -152,4 +152,6 @@ void PCSpeaker::PCSPEAKER_CallBack(sint16 *stream, const uint32 len) {
 	return;
 }
 
+} // End of namespace Ultima6
+} // End of namespace Ultima
 

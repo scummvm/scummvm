@@ -17,13 +17,14 @@
  *
  */
 
-//#include <stdlib.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/files/nuvie_io.h"
 #include "ultima/ultima6/files/u6_lib_n.h"
 #include "ultima/ultima6/files/u6_lzw.h"
+#include "ultima/ultima6/sound/mixer/decoder/fm_towns_decoder_stream.h"
 
-#include "FMtownsDecoderStream.h"
+namespace Ultima {
+namespace Ultima6 {
 
 inline sint16 convert_sample(uint16 raw_sample);
 
@@ -104,3 +105,6 @@ inline sint16 convert_sample(uint16 raw_sample) {
 
 	return sample;
 }
+
+} // End of namespace Ultima6
+} // End of namespace Ultima

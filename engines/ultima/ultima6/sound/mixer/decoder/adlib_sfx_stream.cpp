@@ -18,12 +18,13 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "OplClass.h"
-#include "OriginFXAdLibDriver.h"
+#include "ultima/ultima6/sound/adplug/opl_class.h"
+#include "ultima/ultima6/sound/origin_fx_adib_driver.h"
 #include "ultima/ultima6/conf/configuration.h"
+#include "ultima/ultima6/sound/mixer/decoder/adlib_sfx_stream.h"
 
-#include "AdLibSfxStream.h"
-
+namespace Ultima {
+namespace Ultima6 {
 
 AdLibSfxStream::AdLibSfxStream(Configuration *cfg, int rate, uint8 channel, sint8 note, uint8 velocity, uint8 program_number, uint32 d) {
 	interrupt_samples_left = 0;
@@ -83,3 +84,6 @@ int AdLibSfxStream::readBuffer(sint16 *buffer, const int numSamples) {
 //driver->play_note(8, 0x40, 0);
 	return numSamples;
 }
+
+} // End of namespace Ultima6
+} // End of namespace Ultima
