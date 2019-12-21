@@ -125,7 +125,14 @@ MODULE_OBJS += \
 	ultima6/script/script.o \
 	ultima6/script/script_actor.o \
 	ultima6/script/script_cutscene.o \
+	ultima6/sound/adlib_sfx_manager.o \
+	ultima6/sound/custom_sfx_manager.o \
+	ultima6/sound/origin_fx_adib_driver.o \
+	ultima6/sound/pc_speaker_sfx_manager.o \
+	ultima6/sound/song.o \
+	ultima6/sound/song_adplug.o \
 	ultima6/sound/sound_manager.o \
+	ultima6/sound/towns_sfx_manager.o \
 	ultima6/sound/adplug/adplug_player.o \
 	ultima6/sound/adplug/emu_opl.o \
 	ultima6/sound/adplug/mid.o \

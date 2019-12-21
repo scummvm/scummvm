@@ -21,12 +21,12 @@
  */
 
 #include "ultima/shared/std/string.h"
-//#include <map>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/sound/pc_speaker_sfx_manager.h"
+#include "ultima/ultima6/sound/mixer/decoder/adlib_sfx_stream.h"
+#include "ultima/ultima6/sound/mixer/decoder/fm_towns_decoder_stream.h"
+#include "ultima/ultima6/sound/mixer/decoder/pc_speaker_stream.h"
 #include "audio/mixer.h"
-#include "decoder/PCSpeakerStream.h"
-#include "PCSpeakerSfxManager.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -86,7 +86,18 @@ bool PCSpeakerSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *h
 	}
 
 	if (stream) {
-		sfx_duration = stream->getLengthInMsec();
+		sfx_duration = 0;
+
+		AdLibSfxStream *adlibStream = dynamic_cast<AdLibSfxStream *>(stream);
+		if (adlibStream)
+			sfx_duration = adlibStream->getLengthInMsec();
+		FMtownsDecoderStream *fmStream = dynamic_cast<FMtownsDecoderStream *>(stream);
+		if (fmStream)
+			sfx_duration = fmStream->getLengthInMsec();
+		PCSpeakerFreqStream *pcStream = dynamic_cast<PCSpeakerFreqStream *>(stream);
+		if (pcStream)
+			sfx_duration = pcStream->getLengthInMsec();
+
 		playSoundSample(stream, handle, volume);
 		return true;
 	}
@@ -98,7 +109,8 @@ void PCSpeakerSfxManager::playSoundSample(Audio::AudioStream *stream, Audio::Sou
 	Audio::SoundHandle handle;
 
 	if (looping_handle) {
-		Audio::LoopingAudioStream *looping_stream = new Audio::LoopingAudioStream((Audio::RewindableAudioStream *)stream, 0);
+		Audio::RewindableAudioStream *rwStream = dynamic_cast<Audio::RewindableAudioStream *>(stream);
+		Audio::LoopingAudioStream *looping_stream = new Audio::LoopingAudioStream(rwStream, 0);
 		mixer->playStream(Audio::Mixer::kPlainSoundType, looping_handle, looping_stream, -1, volume);
 	} else {
 		mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, -1, volume);

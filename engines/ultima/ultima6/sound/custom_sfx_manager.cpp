@@ -29,8 +29,9 @@
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/files/nuvie_io.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
-#include "decoder/wave/stdiostream.h"
-#include "CustomSfxManager.h"
+#include "ultima/ultima6/sound/custom_sfx_manager.h"
+//#include "decoder/wave/stdiostream.h"
+#include "common/file.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -73,7 +74,7 @@ bool CustomSfxManager::loadSfxMapFile(std::string cfg_filename, std::map<uint16,
 		int custom_wave_id = atoi(token2);
 
 		DEBUG(0, LEVEL_DEBUGGING, "%d : %d.wav\n", sfx_id, custom_wave_id);
-		m->insert(std::make_pair((uint16)sfx_id, custom_wave_id));
+		(*m)[sfx_id] = custom_wave_id;
 
 		token1 = strtok(NULL, seps);
 	}
@@ -92,7 +93,7 @@ bool CustomSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *hand
 
 	it = sfx_map->find((uint16)sfx_id);
 	if (it != sfx_map->end()) {
-		playSoundSample((*it).second, handle, volume);
+		playSoundSample((*it)._value, handle, volume);
 		return true;
 	}
 
@@ -109,21 +110,22 @@ void CustomSfxManager::playSoundSample(uint16 sample_num, Audio::SoundHandle *lo
 
 	build_path(custom_filepath, wavefile, filename);
 
-	Common::SeekableReadStream *readStream = StdioStream::makeFromPath(filename);
-	if (readStream == NULL) {
+	Common::File *readStream = new Common::File();
+	if (!readStream->open(filename)) {
 		DEBUG(0, LEVEL_ERROR, "Failed to open '%s'", filename.c_str());
+		delete readStream;
 		return;
 	}
 
 	stream = Audio::makeWAVStream(readStream, DisposeAfterUse::YES);
 
 	if (looping_handle) {
-		Audio::LoopingAudioStream *looping_stream = new Audio::LoopingAudioStream((Audio::RewindableAudioStream *)stream, 0);
+		Audio::RewindableAudioStream *rwStream = dynamic_cast<Audio::RewindableAudioStream *>(stream);
+		Audio::LoopingAudioStream *looping_stream = new Audio::LoopingAudioStream(rwStream, 0);
 		mixer->playStream(Audio::Mixer::kPlainSoundType, looping_handle, looping_stream, -1, volume);
 	} else {
 		mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, -1, volume);
 	}
-
 }
 
 } // End of namespace Ultima6

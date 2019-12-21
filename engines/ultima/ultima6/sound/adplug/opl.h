@@ -23,6 +23,9 @@
 #ifndef ULTIMA6_SOUND_ADPLUG_OPL
 #define ULTIMA6_SOUND_ADPLUG_OPL
 
+namespace Ultima {
+namespace Ultima6 {
+
 class Copl {
 public:
 	virtual ~Copl() {
@@ -31,5 +34,8 @@ public:
 	virtual void write(int reg, int val) = 0;   // combined register select + data write
 	virtual void init(void) = 0;                // reinitialize OPL chip
 };
+
+} // End of namespace Ultima6
+} // End of namespace Ultima
 
 #endif

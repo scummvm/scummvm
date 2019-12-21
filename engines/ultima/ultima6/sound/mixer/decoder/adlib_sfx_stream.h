@@ -1,7 +1,8 @@
-#ifndef __AdLibSfxStream_h__
-#define __AdLibSfxStream_h__
-/* Created by Eric Fry
- * Copyright (C) 2013 The Nuvie Team
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,16 +16,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-//#include <cstdio>
+
+#ifndef ULTIMA6_SOUND_MIXER_DECODER_ADLIB_SFX_STREAM_H
+#define ULTIMA6_SOUND_MIXER_DECODER_ADLIB_SFX_STREAM_H
+
 #include "ultima/shared/std/string.h"
-//#include <list>
+#include "ultima/ultima6/sound/adplug/opl_class.h"
+#include "audio/audiostream.h"
 
-
-#include "audiostream.h"
-#include "OplClass.h"
+namespace Ultima {
+namespace Ultima6 {
 
 class OriginFXAdLibDriver;
 class Configuration;
@@ -85,4 +89,7 @@ protected:
 	uint32 total_samples_played;
 };
 
-#endif /* __AdLibSfxStream_h__ */
+} // End of namespace Ultima6
+} // End of namespace Ultima
+
+#endif
