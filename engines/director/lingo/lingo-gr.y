@@ -401,7 +401,9 @@ expr: simpleexpr { $$ = $1; }
 	| tLINE expr tTO expr tOF expr		{ g_lingo->code1(g_lingo->c_lineToOf); }
 	| tWORD expr tOF expr				{ g_lingo->code1(g_lingo->c_wordOf); }
 	| tWORD expr tTO expr tOF expr		{ g_lingo->code1(g_lingo->c_wordToOf); }
-	| tME 							{ g_lingo->codeMe(nullptr, 0); }
+	| tME '(' ID ')'					{ g_lingo->codeMe($3, 0); }
+	| tME '(' ID ',' arglist ')'		{ g_lingo->codeMe($3, $5); }
+	| tME								{ g_lingo->codeMe(nullptr, 0); }
 	;
 
 reference: 	RBLTINONEARG expr		{
@@ -431,8 +433,6 @@ proc: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 		g_lingo->codeFunc($1, 1);
 		delete $1; }
 	| BLTINARGLIST nonemptyarglist			{ g_lingo->codeFunc($1, $2); }
-	| tME '(' ID ')'				{ g_lingo->codeMe($3, 0); }
-	| tME '(' ID ',' arglist ')'	{ g_lingo->codeMe($3, $5); }
 	| tOPEN expr tWITH expr	{ g_lingo->code1(g_lingo->c_open); }
 	| tOPEN expr 			{ g_lingo->code2(g_lingo->c_voidpush, g_lingo->c_open); }
 	| TWOWORDBUILTIN ID arglist	{ Common::String s(*$1); s += '-'; s += *$2; g_lingo->codeFunc(&s, $3); }
