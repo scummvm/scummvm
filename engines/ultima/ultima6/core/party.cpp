@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/files/nuvie_io.h"
 #include "ultima/ultima6/core/game.h"
@@ -461,11 +460,9 @@ MapCoord Party::get_formation_coords(uint8 m) {
 /* Update the actual locations of the party actors on the map, so that they are
  * in the proper formation. */
 void Party::follow(sint8 rel_x, sint8 rel_y) {
-#if _MSC_VER >= 1300
-	bool *try_again = (bool *)alloca(sizeof(bool) * get_party_max());
-#else
-	bool try_again[get_party_max()]; // true if a member needs to try first pass again
-#endif
+	Common::Array<bool> try_again;
+	try_again.resize(get_party_max());
+
 	sint8 leader = get_leader();
 	if (leader <= -1)
 		return;

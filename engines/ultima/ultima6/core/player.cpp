@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/files/nuvie_io.h"
@@ -225,7 +224,7 @@ void Player::set_actor(Actor *new_actor) {
 
 	prompt += ">";
 
-	scroll->set_prompt((char *)prompt.c_str());
+	scroll->set_prompt(prompt.c_str());
 }
 
 Actor *Player::get_actor() {

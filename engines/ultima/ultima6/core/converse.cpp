@@ -498,7 +498,7 @@ void Converse::show_portrait(uint8 n) {
 			views->close_current_view();
 		((ConverseGump *)scroll)->set_actor_portrait(actor);
 	} else
-		views->set_portrait_mode(actor, (char *)nameret);
+		views->set_portrait_mode(actor, nameret);
 }
 
 

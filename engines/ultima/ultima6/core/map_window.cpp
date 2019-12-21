@@ -1375,7 +1375,8 @@ void MapWindow::AddMapTileToVisibleList(uint16 tile_num, uint16 x, uint16 y) {
 void MapWindow::drawGrid() {
 	for (uint16 i = 0; i < win_height; i++) {
 		for (uint16 j = 0; j < win_width; j++) {
-			screen->blit(area.left + (j * 16) - cur_x_add, area.top + (i * 16) - cur_y_add, (byte *)grid_tile.data, 8, 16, 16, 16, true);
+			screen->blit(area.left + (j * 16) - cur_x_add, area.top + (i * 16) - cur_y_add,
+				(const byte *)grid_tile.data, 8, 16, 16, 16, true);
 		}
 	}
 }
@@ -2572,7 +2573,7 @@ Graphics::ManagedSurface *MapWindow::get_sdl_surface() {
 Graphics::ManagedSurface *MapWindow::get_sdl_surface(uint16 x, uint16 y, uint16 w, uint16 h) {
 	Graphics::ManagedSurface *new_surface = NULL;
 	byte *screen_area;
-	Common::Rect copy_area = { (int16)(area.left + x), (int16)(area.top + y), (int16)w, (int16)h };
+	Common::Rect copy_area(area.left + x, area.top + y, area.left + x + w, area.top + y + h);
 
 	GUI::get_gui()->Display();
 	screen_area = screen->copy_area(&copy_area);

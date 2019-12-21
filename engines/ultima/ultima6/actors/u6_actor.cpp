@@ -291,6 +291,9 @@ bool U6Actor::init_silver_serpent() {
 		init_new_silver_serpent();
 	}
 
+	// FIXME: Unused variable
+	(void)tmp_frame_n;
+
 	return true;
 }
 
@@ -330,13 +333,13 @@ void U6Actor::init_new_silver_serpent() {
 
 void U6Actor::gather_snake_objs_from_map(Obj *start_obj, uint16 ax, uint16 ay, uint16 az) {
 	Obj *obj;
-	uint16 px, py, pz;
+	uint16 px, py; // , pz;
 	uint16 nx, ny, nz;
 	uint8 seg_num;
 
 	px = ax;
 	py = ay;
-	pz = az;
+//	pz = az;
 
 	obj = start_obj;
 	add_surrounding_obj(obj);
@@ -394,7 +397,7 @@ void U6Actor::gather_snake_objs_from_map(Obj *start_obj, uint16 ax, uint16 ay, u
 
 		px = obj->x;
 		py = obj->y;
-		pz = obj->z;
+		//pz = obj->z;
 
 		obj = obj_manager->get_obj_of_type_from_location(OBJ_U6_SILVER_SERPENT, seg_num, id_n, nx, ny, nz);
 

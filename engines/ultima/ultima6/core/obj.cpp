@@ -20,10 +20,7 @@
  *
  */
 
-//#include <string.h>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/core/obj_manager.h"
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/core/u6_objects.h"
@@ -43,13 +40,14 @@ Obj::Obj() {
 	x = 0;
 	y = 0;
 	z = 0;
-};
+}
+
 Obj::Obj(Obj *sobj) {
 	memcpy(this, sobj, sizeof(Obj));
 
 	parent = NULL;
 	container = NULL;
-};
+}
 
 void Obj::make_container() {
 	if (container == NULL)

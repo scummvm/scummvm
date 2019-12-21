@@ -20,11 +20,7 @@
  *
  */
 
-//#include <stdarg.h>
 #include "ultima/shared/std/string.h"
-//#include <ctype.h>
-//#include <iostream>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
@@ -270,7 +266,7 @@ bool MsgScroll::init(char *player_name) {
 
 	prompt_string.append(">");
 
-	if (set_prompt((char *)prompt_string.c_str(), font) == false)
+	if (set_prompt(prompt_string.c_str(), font) == false)
 		return false;
 
 	set_input_mode(false);
