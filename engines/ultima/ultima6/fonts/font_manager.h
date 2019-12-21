@@ -24,7 +24,6 @@
 #define ULTIMA6_FONTS_FONT_MANAGER_H
 
 #include "ultima/shared/std/string.h"
-//#include <list>
 
 namespace Ultima {
 namespace Ultima6 {

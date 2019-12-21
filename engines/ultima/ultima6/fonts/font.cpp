@@ -20,19 +20,11 @@
  *
  */
 
-//#include <stdio.h>
-
-//#include <string.h>
-//#include <cctype>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/conf/configuration.h"
-
 #include "ultima/ultima6/screen/screen.h"
 #include "ultima/ultima6/files/u6_lzw.h"
 #include "ultima/ultima6/files/u6_shape.h"
-
 #include "ultima/ultima6/fonts/font.h"
 #include "ultima/ultima6/core/game.h"
 

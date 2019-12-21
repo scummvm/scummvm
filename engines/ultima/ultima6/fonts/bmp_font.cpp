@@ -20,17 +20,11 @@
  *
  */
 
-//#include <stdio.h>
-
 #include "ultima/shared/std/string.h"
-//#include <cctype>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
 #include "ultima/ultima6/conf/configuration.h"
-
 #include "ultima/ultima6/screen/screen.h"
-
 #include "ultima/ultima6/fonts/bmp_font.h"
 
 namespace Ultima {
@@ -130,15 +124,15 @@ uint16 BMPFont::drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
 		char_num += 128;
 	}
 
-	src.w = char_w;
-	src.h = char_h;
-	src.x = (char_num % 16) * char_w;
-	src.y = (char_num / 16) * char_h;
+	src.left = (char_num % 16) * char_w;
+	src.top = (char_num / 16) * char_h;
+	src.setWidth(char_w);
+	src.setHeight(char_h);
 
-	dst.w = char_w;
-	dst.h = char_h;
-	dst.x = x;
-	dst.y = y;
+	dst.left = x;
+	dst.top = y;
+	dst.setWidth(char_w);
+	dst.setHeight(char_h);
 
 	SDL_BlitSurface(sdl_font_data, &src, screen->get_sdl_surface(), &dst);
 
