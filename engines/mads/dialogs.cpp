@@ -26,6 +26,11 @@
 #include "mads/screen.h"
 #include "mads/msurface.h"
 #include "mads/nebular/dialogs_nebular.h"
+#include "common/config-manager.h"
+
+#ifdef USE_TTS
+#include "common/text-to-speech.h"
+#endif
 
 namespace MADS {
 
@@ -338,6 +343,9 @@ void TextDialog::draw() {
 
 	// Draw the text lines
 	int lineYp = _position.y + 5;
+	#ifdef USE_TTS
+	Common::String text;
+	#endif
 	for (int lineNum = 0; lineNum <= _numLines; ++lineNum) {
 		if (_lineXp[lineNum] == -1) {
 			// Draw a line across the entire dialog
@@ -353,7 +361,9 @@ void TextDialog::draw() {
 
 			if (_portrait != nullptr)
 				xp += _portrait->w + 5;
-
+			#ifdef USE_TTS
+			text += _lines[lineNum];
+			#endif
 			_font->writeString(_vm->_screen, _lines[lineNum],
 				Common::Point(xp, yp), 1);
 
@@ -367,6 +377,14 @@ void TextDialog::draw() {
 
 		lineYp += _font->getHeight() + 1;
 	}
+
+	#ifdef USE_TTS
+	if (ConfMan.getBool("tts_narrator")) {
+		Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
+		_ttsMan->stop();
+		_ttsMan->say(text.c_str());
+	}
+	#endif
 }
 
 void TextDialog::calculateBounds() {
