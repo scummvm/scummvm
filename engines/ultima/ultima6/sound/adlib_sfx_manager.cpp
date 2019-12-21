@@ -21,12 +21,10 @@
  */
 
 #include "ultima/shared/std/string.h"
-//#include <map>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/sound/mixer/decoder/adlib_sfx_stream.h"
+#include "ultima/ultima6/sound/adlib_sfx_manager.h"
 #include "audio/mixer.h"
-#include "decoder/AdLibSfxStream.h"
-#include "AdLibSfxManager.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -45,14 +43,13 @@ bool AdLibSfxManager::playSfx(SfxIdType sfx_id, uint8 volume) {
 
 
 bool AdLibSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume) {
-	Audio::AudioStream *stream = NULL;
+	AdLibSfxStream *stream = NULL;
 
 	if (sfx_id == NUVIE_SFX_SE_TICK) {
 		stream = new AdLibSfxStream(config, mixer->getOutputRate(), 17, 0x30, 0x60, 0xff, 22050);
 	} else if (sfx_id == NUVIE_SFX_EXPLOSION) {
 		stream = new AdLibSfxStream(config, mixer->getOutputRate(), 8, 0x40, 0x40, 0x7f, 22050);
 	}
-
 
 	if (stream) {
 		sfx_duration = stream->getLengthInMsec();
@@ -67,7 +64,9 @@ void AdLibSfxManager::playSoundSample(Audio::AudioStream *stream, Audio::SoundHa
 	Audio::SoundHandle handle;
 
 	if (looping_handle) {
-		Audio::LoopingAudioStream *looping_stream = new Audio::LoopingAudioStream((Audio::RewindableAudioStream *)stream, 0);
+		Audio::RewindableAudioStream *audioStream = dynamic_cast<Audio::RewindableAudioStream *>(stream);
+		assert(audioStream);
+		Audio::LoopingAudioStream *looping_stream = new Audio::LoopingAudioStream(audioStream, 0);
 		mixer->playStream(Audio::Mixer::kPlainSoundType, looping_handle, looping_stream, -1, volume);
 	} else {
 		mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, -1, volume);

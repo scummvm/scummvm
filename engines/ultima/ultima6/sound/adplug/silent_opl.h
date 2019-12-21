@@ -22,8 +22,14 @@
 
 #include "ultima/ultima6/sound/adplug/opl.h"
 
-class CSilentopl: public Copl {
+namespace Ultima {
+namespace Ultima6 {
+
+class CSilentopl : public Copl {
 public:
 	void write(int reg, int val) { };
 	void init() { };
 };
+
+} // End of namespace Ultima6
+} // End of namespace Ultima

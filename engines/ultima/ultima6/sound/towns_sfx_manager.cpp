@@ -28,7 +28,7 @@
 #include "ultima/ultima6/files/nuvie_io.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
 #include "ultima/ultima6/files/u6_lib_n.h"
-#include "TownsSfxManager.h"
+#include "ultima/ultima6/sound/towns_sfx_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -102,7 +102,7 @@ void TownsSfxManager::loadSound1Dat() {
 	streams.push_back(new FMtownsDecoderStream(sounds1_dat[7].buf, sounds1_dat[7].len));
 	streams.push_back(new FMtownsDecoderStream(sounds1_dat[8].buf, sounds1_dat[8].len));
 
-	fireStream = makeRandomCollectionAudioStream(mixer->getOutputRate(), false, streams, DisposeAfterUse::NO);
+	fireStream = U6Audio::makeRandomCollectionAudioStream(mixer->getOutputRate(), false, streams, DisposeAfterUse::NO);
 }
 
 bool TownsSfxManager::playSfx(SfxIdType sfx_id, uint8 volume) {
@@ -137,12 +137,12 @@ void TownsSfxManager::playSoundSample(uint8 sample_num, Audio::SoundHandle *loop
 	}
 
 	if (looping_handle) {
-		Audio::LoopingAudioStream *looping_stream = new Audio::LoopingAudioStream((Audio::RewindableAudioStream *)stream, 0);
+		Audio::RewindableAudioStream *rwStream = dynamic_cast<Audio::RewindableAudioStream *>(stream);
+		Audio::LoopingAudioStream *looping_stream = new Audio::LoopingAudioStream(rwStream, 0);
 		mixer->playStream(Audio::Mixer::kPlainSoundType, looping_handle, looping_stream, -1, volume);
 	} else {
 		mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, -1, volume);
 	}
-
 }
 
 } // End of namespace Ultima6

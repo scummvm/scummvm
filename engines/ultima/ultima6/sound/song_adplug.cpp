@@ -23,10 +23,9 @@
 //Mix_HookMusicFinished
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "adplug/emuopl.h"
-#include "adplug/u6m.h"
-
-#include "SongAdPlug.h"
+#include "ultima/ultima6/sound/adplug/emu_opl.h"
+#include "ultima/ultima6/sound/adplug/u6m.h"
+#include "ultima/ultima6/sound/song_adplug.h"
 #include "ultima/ultima6/sound/sound_manager.h"
 
 namespace Ultima {

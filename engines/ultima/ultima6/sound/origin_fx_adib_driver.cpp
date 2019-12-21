@@ -24,10 +24,8 @@
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/files/u6_lib_n.h"
-#include "opl.h"
-#include "OriginFXAdLibDriver.h"
-//#include <string.h>
-//#include <stdlib.h>
+#include "ultima/ultima6/sound/adplug/opl.h"
+#include "ultima/ultima6/sound/origin_fx_adib_driver.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -148,7 +146,7 @@ void OriginFXAdLibDriver::program_change(sint8 channel, uint8 program_number) {
 	unsigned char *tim_data = get_tim_data(program_number);
 	int i, j;
 
-	printf("Program change channel: %d program: %d\n", channel, program_number);
+	debug("Program change channel: %d program: %d\n", channel, program_number);
 	for (i = 0; i < 11; i++) {
 		if (adlib_ins[i].channel == channel) {
 			play_note(channel, adlib_ins[i].note, 0); //note off.
@@ -175,7 +173,7 @@ void OriginFXAdLibDriver::program_change(sint8 channel, uint8 program_number) {
 			for (j = 0; j < 13; j++) {
 				if (byte_73[j] == i) {
 					byte_73[j] = byte_73[i];
-					byte_73[i] = -1;
+					byte_73[i] = (uint8)-1;
 					break;
 				}
 			}
@@ -189,7 +187,7 @@ void OriginFXAdLibDriver::pitch_bend(uint8 channel, uint8 pitch_lsb, uint8 pitch
 	unsigned char *cur_tim_ptr = midi_chan_tim_ptr[channel];
 
 	midi_chan_pitch[channel] = ((sint16)((pitch_msb << 7) + pitch_lsb - 8192) * cur_tim_ptr[0xe]) / 256;
-	printf("pitch_bend: c=%d, pitch=%d %d,%d,%d\n", channel, midi_chan_pitch[channel], pitch_msb, pitch_lsb, cur_tim_ptr[0xe]);
+	debug("pitch_bend: c=%d, pitch=%d %d,%d,%d\n", channel, midi_chan_pitch[channel], pitch_msb, pitch_lsb, cur_tim_ptr[0xe]);
 
 	for (int i = 0; i < adlib_num_active_channels; i++) {
 		if (adlib_ins[i].byte_68 > 1 && adlib_ins[i].channel == channel) {
@@ -210,7 +208,7 @@ void OriginFXAdLibDriver::pitch_bend(uint8 channel, uint8 pitch_lsb, uint8 pitch
 
 void OriginFXAdLibDriver::control_mode_change(uint8 channel, uint8 function, uint8 value) {
 	uint8 c = channel;
-	printf("control_mode_change: c=%d, func=%2x, value=%d\n", channel, function, value);
+	debug("control_mode_change: c=%d, func=%2x, value=%d\n", channel, function, value);
 	if (c == 9) {
 		c++;
 		do {
