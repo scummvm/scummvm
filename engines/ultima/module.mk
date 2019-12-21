@@ -7,6 +7,12 @@ MODULE_OBJS := \
 
 ifdef ENABLE_ULTIMA6
 MODULE_OBJS += \
+	ultima6/actors/actor.o \
+	ultima6/actors/actor_manager.o \
+	ultima6/actors/md_actor.o \
+	ultima6/actors/se_actor.o \
+	ultima6/actors/u6_actor.o \
+	ultima6/actors/wou_actor.o \
 	ultima6/conf/configuration.o \
 	ultima6/conf/misc.o \
 	ultima6/conf/xml_node.o \

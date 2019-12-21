@@ -20,7 +20,7 @@
  *
  */
 
-#include "MDultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/actors/md_actor.h"
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/core/game_clock.h"
 #include "ultima/ultima6/pathfinder/dir_finder.h"

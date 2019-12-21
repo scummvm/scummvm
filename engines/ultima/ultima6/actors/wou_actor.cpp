@@ -20,7 +20,7 @@
  *
  */
 
-#include "WOUultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/actors/wou_actor.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -33,12 +33,12 @@ bool WOUActor::can_carry_object(Obj *obj) {
 	return Actor::can_carry_object(obj);
 }
 
-bool WOUActor::can_carry_object(uint16 obj_n, uint32 qty) {
+bool WOUActor::can_carry_object(uint16 objN, uint32 qty) {
 	if (inventory_count_objects(INV_EXCLUDE_READIED_OBJECTS) >= 16) {
 		return false;
 	}
 
-	return Actor::can_carry_object(obj_n, qty);
+	return Actor::can_carry_object(objN, qty);
 }
 
 } // End of namespace Ultima6

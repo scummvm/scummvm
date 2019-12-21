@@ -31,7 +31,7 @@
 #include "ultima/ultima6/pathfinder/sched_path_finder.h"
 #include "ultima/ultima6/pathfinder/u6_astar_path.h"
 #include "ultima/ultima6/core/msg_scroll.h"
-#include "U6ultima/ultima6/actors/actor.h"
+#include "ultima/ultima6/actors/u6_actor.h"
 
 #include "ultima/ultima6/core/party.h"
 #include "ultima/ultima6/actors/actor_manager.h"
@@ -42,7 +42,7 @@
 #include "ultima/ultima6/core/effect.h"
 #include "ultima/ultima6/pathfinder/combat_path_finder.h"
 
-#include "U6ActorTypes.h"
+#include "ultima/ultima6/actors/u6_actor_types.h"
 #include "ultima/ultima6/actors/u6_work_types.h"
 #include "ultima/ultima6/core/weather.h"
 
@@ -672,11 +672,11 @@ uint8 U6Actor::get_object_readiable_location(Obj *obj) {
 	return ACTOR_NOT_READIABLE;
 }
 
-const CombatType *U6Actor::get_object_combat_type(uint16 obj_n) {
+const CombatType *U6Actor::get_object_combat_type(uint16 objN) {
 	uint16 i;
 
 	for (i = 0; u6combat_objects[i].obj_n != OBJ_U6_NOTHING; i++) {
-		if (obj_n == u6combat_objects[i].obj_n)
+		if (objN == u6combat_objects[i].obj_n)
 			return &u6combat_objects[i];
 	}
 
@@ -1025,7 +1025,7 @@ inline void U6Actor::remove_surrounding_objs_from_map() {
 inline void U6Actor::add_surrounding_objs_to_map() {
 	std::list<Obj *>::reverse_iterator obj;
 
-	for (obj = surrounding_objects.rbegin(); obj != surrounding_objects.rend(); obj++)
+	for (obj = surrounding_objects.rbegin(); obj != surrounding_objects.rend(); ++obj)
 		obj_manager->add_obj((*obj), OBJ_ADD_TOP);
 
 	return;
@@ -1050,7 +1050,7 @@ inline void U6Actor::move_surrounding_objs_relative(sint16 rel_x, sint16 rel_y) 
 
 inline void U6Actor::move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_y) {
 	std::list<Obj *>::iterator obj;
-	uint8 old_frame_n;
+	uint8 objFrameN;
 	uint8 tmp_frame_n;
 	uint16 old_x, old_y;
 	uint16 tmp_x, tmp_y;
@@ -1091,7 +1091,7 @@ inline void U6Actor::move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_
 
 	old_pos = 2 + ((*obj)->x - old_x) + (((*obj)->y - old_y) * 2);
 
-	old_frame_n = (*obj)->frame_n;
+	objFrameN = (*obj)->frame_n;
 	(*obj)->frame_n = new_frame_n_tbl[new_pos][old_pos];
 	obj++;
 	for (; obj != surrounding_objects.end(); obj++) {
@@ -1103,13 +1103,13 @@ inline void U6Actor::move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_
 		(*obj)->y = old_y;
 
 		if (tmp_frame_n < 8) //tail, work out new tail direction
-			(*obj)->frame_n = new_tail_frame_n_tbl[tmp_frame_n][old_frame_n - 8];
+			(*obj)->frame_n = new_tail_frame_n_tbl[tmp_frame_n][objFrameN - 8];
 		else
-			(*obj)->frame_n = old_frame_n;
+			(*obj)->frame_n = objFrameN;
 
 		old_x = tmp_x;
 		old_y = tmp_y;
-		old_frame_n = tmp_frame_n;
+		objFrameN = tmp_frame_n;
 	}
 
 	return;
@@ -1405,7 +1405,7 @@ inline void U6Actor::clear_surrounding_objs_list(bool delete_objs) {
 		return;
 
 	if (delete_objs == false) {
-		surrounding_objects.resize(0);
+		surrounding_objects.clear();
 		return;
 	}
 
@@ -1420,20 +1420,20 @@ inline void U6Actor::clear_surrounding_objs_list(bool delete_objs) {
 	return;
 }
 
-inline void U6Actor::init_surrounding_obj(uint16 x, uint16 y, uint8 z, uint16 actor_obj_n, uint16 obj_frame_n) {
+inline void U6Actor::init_surrounding_obj(uint16 x_, uint16 y_, uint8 z_, uint16 actor_obj_n, uint16 objFrame_n) {
 	Obj *obj;
 
-	obj = obj_manager->get_obj_of_type_from_location(actor_obj_n, id_n, -1, x, y, z);
+	obj = obj_manager->get_obj_of_type_from_location(actor_obj_n, id_n, -1, x_, y_, z_);
 	if (obj == NULL)
-		obj = obj_manager->get_obj_of_type_from_location(actor_obj_n, 0, -1, x, y, z);
+		obj = obj_manager->get_obj_of_type_from_location(actor_obj_n, 0, -1, x_, y_, z_);
 
 	if (obj == NULL) {
 		obj = new Obj();
-		obj->x = x;
-		obj->y = y;
-		obj->z = z;
+		obj->x = x_;
+		obj->y = y_;
+		obj->z = z_;
 		obj->obj_n = actor_obj_n;
-		obj->frame_n = obj_frame_n;
+		obj->frame_n = objFrame_n;
 		obj_manager->add_obj(obj);
 	}
 
@@ -1635,24 +1635,24 @@ void U6Actor::handle_lightsource(uint8 hour) {
 	if (torch2 && torch2->obj_n != OBJ_U6_TORCH)
 		torch2 = NULL;
 	if (torch || torch2) {
-		U6UseCode *usecode = (U6UseCode *)Game::get_game()->get_usecode();
+		U6UseCode *useCode = (U6UseCode *)Game::get_game()->get_usecode();
 		if ((hour < 6 || hour > 18 || (z != 0 && z != 5)
 		        || Game::get_game()->get_weather()->is_eclipse())) {
 			if (torch && torch->frame_n == 0) {
 				if (torch->qty != 1)
 					torch->qty = 1;
-				usecode->torch(torch, USE_EVENT_USE);
+				useCode->torch(torch, USE_EVENT_USE);
 			}
 			if (torch2 && torch2->frame_n == 0) {
 				if (torch2->qty != 1)
 					torch2->qty = 1;
-				usecode->torch(torch2, USE_EVENT_USE);
+				useCode->torch(torch2, USE_EVENT_USE);
 			}
 		} else {
 			if (torch && torch->frame_n == 1)
-				usecode->torch(torch, USE_EVENT_USE);
+				useCode->torch(torch, USE_EVENT_USE);
 			if (torch2 && torch2->frame_n == 1)
-				usecode->torch(torch2, USE_EVENT_USE);
+				useCode->torch(torch2, USE_EVENT_USE);
 		}
 	}
 }

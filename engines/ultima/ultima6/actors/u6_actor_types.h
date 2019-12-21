@@ -20,6 +20,11 @@
  *
  */
 
+#ifndef ULTIMA_ULTIMA6_ACTORS_U6_ACTOR_TYPES_H
+#define ULTIMA_ULTIMA6_ACTORS_U6_ACTOR_TYPES_H
+
+#include "ultima/ultima6/actors/u6_actor.h"
+
 namespace Ultima {
 namespace Ultima6 {
 
@@ -299,3 +304,5 @@ const CombatType u6combat_objects[] = {
 
 } // End of namespace Ultima6
 } // End of namespace Ultima
+
+#endif
