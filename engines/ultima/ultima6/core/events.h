@@ -30,6 +30,8 @@ namespace Ultima6 {
 
 enum MouseButton { BUTTON_NONE = 0, BUTTON_LEFT = 1, BUTTON_RIGHT = 2, BUTTON_MIDDLE = 3 };
 
+#define BUTTON_MASK(MB) (1 << ((int)(MB) - 1))
+
 /**
  * Main system events manager
  */
@@ -54,7 +56,9 @@ public:
 	/**
 	 * Returns true if a given mouse button is pressed
 	 */
-	inline bool isButtonDown(MouseButton button) const;
+	inline bool isButtonDown(MouseButton button) const {
+		return (_buttonsDown & BUTTON_MASK(button)) != 0;
+	}
 
 	/**
 	 * Returns true if any mouse button is pressed

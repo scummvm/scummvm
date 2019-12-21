@@ -586,7 +586,8 @@ void ConverseGump::Display(bool full_redraw) {
 }
 
 
-GUI_status ConverseGump::KeyDown(const Common::KeyState &key) {
+GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
+	Common::KeyState key = keyState;
 	char ascii = get_ascii_char_from_keysym(key);
 
 	if (page_break || !is_talking()) {

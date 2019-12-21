@@ -713,7 +713,8 @@ void MsgScroll::process_page_break() {
 /* Take input from the main event handler and do something with it
  * if necessary.
  */
-GUI_status MsgScroll::KeyDown(const Common::KeyState &key) {
+GUI_status MsgScroll::KeyDown(const Common::KeyState &keyState) {
+	Common::KeyState key = keyState;
 	char ascii = get_ascii_char_from_keysym(key);
 
 	if (page_break == false && input_mode == false)

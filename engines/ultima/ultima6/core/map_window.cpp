@@ -322,9 +322,9 @@ bool MapWindow::set_windowSize(uint16 width, uint16 height) {
 
 void MapWindow::set_walk_button_mask() {
 	if (walk_with_left_button)
-		walk_button_mask = (SDL_BUTTON(USE_BUTTON) | SDL_BUTTON(WALK_BUTTON));
+		walk_button_mask = (BUTTON_MASK(USE_BUTTON) | BUTTON_MASK(WALK_BUTTON));
 	else
-		walk_button_mask = SDL_BUTTON(WALK_BUTTON);
+		walk_button_mask = BUTTON_MASK(WALK_BUTTON);
 }
 
 void MapWindow::set_show_cursor(bool state) {
@@ -650,8 +650,7 @@ void MapWindow::update() {
 	}
 
 	if (walking) {
-
-		if (SDL_GetMouseState(NULL, NULL) & walk_button_mask) {
+		if (Events::get()->getButtonState() & walk_button_mask) {
 			if (game->user_paused())
 				return;
 
@@ -851,7 +850,7 @@ void MapWindow::Display(bool full_redraw) {
 	uint16 *map_ptr;
 // uint16 map_width;
 	Tile *tile;
-//unsigned char *ptr;
+//byte *ptr;
 
 	if (lighting_update_required) {
 		createLightOverlay();
@@ -876,11 +875,11 @@ void MapWindow::Display(bool full_redraw) {
 			else {
 				if (map_ptr[j] >= 16 && map_ptr[j] < 48) { //lay down the base tile for shoreline tiles
 					tile = tile_manager->get_anim_base_tile(map_ptr[j]);
-					screen->blit(draw_x, draw_y, (unsigned char *)tile->data, 8, 16, 16, 16, tile->transparent, &clip_rect);
+					screen->blit(draw_x, draw_y, (byte *)tile->data, 8, 16, 16, 16, tile->transparent, &clip_rect);
 				}
 
 				tile = tile_manager->get_tile(map_ptr[j]);
-				screen->blit(draw_x, draw_y, (unsigned char *)tile->data, 8, 16, 16, 16, tile->transparent, &clip_rect);
+				screen->blit(draw_x, draw_y, (byte *)tile->data, 8, 16, 16, 16, tile->transparent, &clip_rect);
 
 			}
 
@@ -905,11 +904,11 @@ void MapWindow::Display(bool full_redraw) {
 	}
 
 	if (show_cursor) {
-		screen->blit(area.left + cursor_x * 16, area.top + cursor_y * 16, (unsigned char *)cursor_tile->data, 8, 16, 16, 16, true, &clip_rect);
+		screen->blit(area.left + cursor_x * 16, area.top + cursor_y * 16, (byte *)cursor_tile->data, 8, 16, 16, 16, true, &clip_rect);
 	}
 
 	if (show_use_cursor) {
-		screen->blit(area.left + cursor_x * 16, area.top + cursor_y * 16, (unsigned char *)use_tile->data, 8, 16, 16, 16, true, &clip_rect);
+		screen->blit(area.left + cursor_x * 16, area.top + cursor_y * 16, (byte *)use_tile->data, 8, 16, 16, 16, true, &clip_rect);
 	}
 
 // screen->fill(0,8,8,win_height*16-16,win_height*16-16);
@@ -920,7 +919,7 @@ void MapWindow::Display(bool full_redraw) {
 		drawActors();
 
 	if (overlay && overlay_level == MAP_OVERLAY_DEFAULT)
-		screen->blit(area.left, area.top, (unsigned char *)(overlay->pixels), overlay->format->BitsPerPixel, overlay->w, overlay->h, overlay->pitch, true, &clip_rect);
+		screen->blit(area.left, area.top, (byte *)(overlay->getPixels()), overlay->format.bpp(), overlay->w, overlay->h, overlay->pitch, true, &clip_rect);
 
 	drawAnims(true);
 
@@ -931,16 +930,16 @@ void MapWindow::Display(bool full_redraw) {
 		uint16 we_x = mousecenter_x * 16 + area.left;
 		if (game->is_original_plus_full_map())
 			we_x -= ((map_center_xoff + 1) / 2) * 16;
-		screen->blit(we_x, mousecenter_y * 16 + area.top, (unsigned char *)wizard_eye_info.eye_tile->data, 8, 16, 16, 16, true, &clip_rect);
+		screen->blit(we_x, mousecenter_y * 16 + area.top, (byte *)wizard_eye_info.eye_tile->data, 8, 16, 16, 16, true, &clip_rect);
 	}
 
 	if (game->is_orig_style())
 		drawBorder();
 
 	if (overlay && overlay_level == MAP_OVERLAY_ONTOP)
-		screen->blit(area.left, area.top, (unsigned char *)(overlay->pixels), overlay->format->BitsPerPixel, overlay->w, overlay->h, overlay->pitch, true, &clip_rect);
+		screen->blit(area.left, area.top, (byte *)(overlay->getPixels()), overlay->format.bpp(), overlay->w, overlay->h, overlay->pitch, true, &clip_rect);
 
-// ptr = (unsigned char *)screen->get_pixels();
+// ptr = (byte *)screen->get_pixels();
 // ptr += 8 * screen->get_pitch() + 8;
 
 // screen->blit(8,8,ptr,8,(win_width-1) * 16,(win_height-1) * 16, win_width * 16, false);
@@ -1277,11 +1276,8 @@ void MapWindow::drawRoofs() {
 
 	uint16 *roof_map_ptr = map->get_roof_data(cur_level);
 
-	Common::Rect src, dst;
-	src.w = 16;
-	src.h = 16;
-	dst.w = 16;
-	dst.h = 16;
+	Common::Rect src(16, 16), dst(16, 16);
+
 	if (roof_map_ptr) {
 		roof_map_ptr += cur_y * 1024 + cur_x;
 		for (uint16 i = 0; i < win_height; i++) {
@@ -1296,33 +1292,33 @@ void MapWindow::drawRoofs() {
 					src.top = (roof_map_ptr[j] / MAPWINDOW_ROOFTILES_IMG_W) * 16;
 
 					if (orig_style) {
-						src.w = 16;
-						src.h = 16;
-						dst.w = 16;
-						dst.h = 16;
+						src.setWidth(16);
+						src.setHeight(16);
+						dst.setWidth(16);
+						dst.setHeight(16);
 
 						if (i == 0) {
 							src.top += 8;
-							src.h = 8;
+							src.setHeight(8);
 							dst.top += 8;
-							dst.h = 8;
+							dst.setHeight(8);
 						} else if (i == win_height - 1) {
-							src.h = 8;
-							dst.h = 8;
+							src.setHeight(8);
+							dst.setHeight(8);
 						}
 
 						if (j == 0) {
 							src.left += 8;
-							src.w = 8;
+							src.setWidth(8);
 							dst.left += 8;
-							dst.w = 8;
+							dst.setWidth(8);
 						} else if (j == win_width - 1) {
-							src.w = 8;
-							dst.w = 8;
+							src.setWidth(8);
+							dst.setWidth(8);
 						}
 						SDL_BlitSurface(roof_tiles, &src, surface, &dst);
 					} else {
-						unsigned char *ptr = (unsigned char *)roof_tiles->pixels;
+						byte *ptr = (byte *)roof_tiles->getPixels();
 						ptr += src.left + src.top * 80;
 						screen->blit(dst.left, dst.top, ptr, 8, 16, 16, 80, true, &clip_rect);
 					}
@@ -1370,8 +1366,8 @@ void MapWindow::AddMapTileToVisibleList(uint16 tile_num, uint16 x, uint16 y) {
 	        y < tmp_map_height - TMP_MAP_BORDER) {
 		TileInfo ti;
 		ti.t = tile_manager->get_tile(tile_num);
-		ti.left = (uint16)(x - TMP_MAP_BORDER);
-		ti.top = (uint16)(y - TMP_MAP_BORDER);
+		ti.x = (uint16)(x - TMP_MAP_BORDER);
+		ti.y = (uint16)(y - TMP_MAP_BORDER);
 		m_ViewableMapTiles.push_back(ti);
 	}
 }
@@ -1379,13 +1375,13 @@ void MapWindow::AddMapTileToVisibleList(uint16 tile_num, uint16 x, uint16 y) {
 void MapWindow::drawGrid() {
 	for (uint16 i = 0; i < win_height; i++) {
 		for (uint16 j = 0; j < win_width; j++) {
-			screen->blit(area.left + (j * 16) - cur_x_add, area.top + (i * 16) - cur_y_add, (unsigned char *)grid_tile.data, 8, 16, 16, 16, true);
+			screen->blit(area.left + (j * 16) - cur_x_add, area.top + (i * 16) - cur_y_add, (byte *)grid_tile.data, 8, 16, 16, 16, true);
 		}
 	}
 }
 
 void MapWindow::generateTmpMap() {
-	unsigned char *map_ptr;
+	byte *map_ptr;
 	uint16 pitch;
 	uint16 x, y;
 	Tile *tile;
@@ -1448,7 +1444,7 @@ void MapWindow::generateTmpMap() {
 		roof_display = ROOF_DISPLAY_OFF; // hide roof if a building's floor is showing.
 }
 
-void MapWindow::boundaryFill(unsigned char *map_ptr, uint16 pitch, uint16 x, uint16 y) {
+void MapWindow::boundaryFill(byte *map_ptr, uint16 pitch, uint16 x, uint16 y) {
 	unsigned char current;
 	uint16 *ptr;
 	uint16 pos;
@@ -1785,7 +1781,7 @@ CanDropOrMoveMsg MapWindow::can_drop_or_move_obj(uint16 x, uint16 y, Actor *acto
 
 	uint8 lt_flags;
 	lt_flags = (game_type == NUVIE_GAME_U6) ? LT_HitMissileBoundary : 0; //FIXME this probably isn't quite right for MD/SE
-	if (map->lineTest(actor_loc.left, actor_loc.top, x, y, actor_loc.z, lt_flags, lt, 0, obj)) {
+	if (map->lineTest(actor_loc.x, actor_loc.y, x, y, actor_loc.z, lt_flags, lt, 0, obj)) {
 		MapCoord hit_loc = MapCoord(lt.hit_x, lt.hit_y, lt.hit_level);
 		if (obj_loc.distance(target_loc) != 1 || hit_loc.distance(target_loc) != 1) {
 			if (lt.hitObj && target_loc == hit_loc) {
@@ -1891,7 +1887,7 @@ bool MapWindow::blocked_by_wall(Actor *actor, Obj *obj) {
 
 bool MapWindow::drag_accept_drop(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "MapWindow::drag_accept_drop()\n");
-	uint16 map_width;
+	uint16 mapWidth;
 
 	x -= area.left;
 	y -= area.top;
@@ -1906,9 +1902,9 @@ bool MapWindow::drag_accept_drop(int x, int y, int message, void *data) {
 			game->get_event()->display_not_aboard_vehicle();
 			return false;
 		}
-		map_width = map->get_width(cur_level);
-		x = (cur_x + x) % map_width;
-		y = (cur_y + y) % map_width;
+		mapWidth = map->get_width(cur_level);
+		x = (cur_x + x) % mapWidth;
+		y = (cur_y + y) % mapWidth;
 
 		Obj *obj = (Obj *)data;
 		Actor *p = actor_manager->get_player();
@@ -1969,14 +1965,14 @@ bool MapWindow::drag_accept_drop(int x, int y, int message, void *data) {
 void MapWindow::drag_perform_drop(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "MapWindow::drag_perform_drop()\n");
 	Event *event = game->get_event();
-	uint16 map_width = map->get_width(cur_level);
+	uint16 mapWidth = map->get_width(cur_level);
 
 	x -= area.left;
 	y -= area.top;
 
 	if (message == GUI_DRAG_OBJ) {
-		x = (cur_x + x / 16) % map_width;
-		y = (cur_y + y / 16) % map_width;
+		x = (cur_x + x / 16) % mapWidth;
+		y = (cur_y + y / 16) % mapWidth;
 		Obj *obj = (Obj *)data;
 
 		if (obj->obj_n == OBJ_U6_LOCK_PICK && game_type == NUVIE_GAME_U6)
@@ -2100,7 +2096,7 @@ GUI_status MapWindow::MouseDelayed(int x, int y, MouseButton button) {
 	}
 	game->get_scroll()->display_string("Look-");
 	event->set_mode(LOOK_MODE);
-	event->lookAtCursor(true, original_obj_loc.left, original_obj_loc.top, original_obj_loc.z, look_obj, look_actor);
+	event->lookAtCursor(true, original_obj_loc.x, original_obj_loc.y, original_obj_loc.z, look_obj, look_actor);
 	look_obj = NULL;
 	look_actor = NULL;
 
@@ -2130,18 +2126,18 @@ GUI_status MapWindow::MouseDouble(int x, int y, MouseButton button) {
 }
 
 GUI_status MapWindow::MouseWheel(sint32 x, sint32 y) {
-	Game *game = Game::get_game();
+	Game *g = Game::get_game();
 
-	if (game->is_new_style()) {
+	if (g->is_new_style()) {
 		if (y > 0)
-			game->get_scroll()->move_scroll_up();
+			g->get_scroll()->move_scroll_up();
 		if (y < 0)
-			game->get_scroll()->move_scroll_down();
+			g->get_scroll()->move_scroll_down();
 	} else {
 		if (y > 0)
-			game->get_scroll()->page_up();
+			g->get_scroll()->page_up();
 		if (y < 0)
-			game->get_scroll()->page_down();
+			g->get_scroll()->page_down();
 	}
 	return GUI_YUM;
 }
@@ -2376,10 +2372,10 @@ void MapWindow::mouseToWorldCoords(int mx, int my, int &wx, int &wy) {
 	int x = mx - area.left;
 	int y = my - area.top;
 
-	int map_width = map->get_width(cur_level);
+	int mapWidth = map->get_width(cur_level);
 
-	wx = (cur_x + x / 16) % map_width;
-	wy = (cur_y + y / 16) % map_width;
+	wx = (cur_x + x / 16) % mapWidth;
+	wy = (cur_y + y / 16) % mapWidth;
 }
 
 void MapWindow::drag_draw(int x, int y, int message, void *data) {
@@ -2421,7 +2417,7 @@ void MapWindow::drawAnims(bool top_anims) {
 /* Set mouse pointer to a movement-arrow for walking, or a crosshair. */
 void MapWindow::update_mouse_cursor(uint32 mx, uint32 my) {
 	Event *event = game->get_event();
-	int wx, wy;
+	int wx = 0, wy = 0;
 	sint16 rel_x, rel_y;
 	uint8 mptr; // mouse-pointer is set here in get_movement_direction()
 
@@ -2533,7 +2529,7 @@ GUI_status MapWindow::MouseLeave(uint8 state) {
 	return (GUI_PASS);
 }
 
-unsigned char *MapWindow::make_thumbnail() {
+byte *MapWindow::make_thumbnail() {
 	if (thumbnail)
 		return NULL;
 
@@ -2547,11 +2543,11 @@ unsigned char *MapWindow::make_thumbnail() {
 void MapWindow::create_thumbnail() {
 	Common::Rect src_rect;
 
-	src_rect.w = MAPWINDOW_THUMBNAIL_SIZE * MAPWINDOW_THUMBNAIL_SCALE;
-	src_rect.h = src_rect.w;
+	src_rect.setWidth(MAPWINDOW_THUMBNAIL_SIZE * MAPWINDOW_THUMBNAIL_SCALE);
+	src_rect.setHeight(src_rect.width());
 
-	src_rect.left = area.left + win_width * 8 - (src_rect.w / 2); // area.left + (win_width * 16) / 2 - 120 / 2
-	src_rect.top = area.top + win_height * 8 - (src_rect.h / 2); // area.top + (win_height * 16) / 2 - 120 / 2
+	src_rect.left = area.left + win_width * 8 - (src_rect.width() / 2); // area.left + (win_width * 16) / 2 - 120 / 2
+	src_rect.top = area.top + win_height * 8 - (src_rect.height() / 2); // area.top + (win_height * 16) / 2 - 120 / 2
 
 	thumbnail = screen->copy_area(&src_rect, MAPWINDOW_THUMBNAIL_SCALE); //scale down x3
 
@@ -2575,13 +2571,13 @@ Graphics::ManagedSurface *MapWindow::get_sdl_surface() {
 
 Graphics::ManagedSurface *MapWindow::get_sdl_surface(uint16 x, uint16 y, uint16 w, uint16 h) {
 	Graphics::ManagedSurface *new_surface = NULL;
-	unsigned char *screen_area;
-	Common::Rect copy_area = { (Sint16)(area.left + x), (Sint16)(area.top + y), w, h };
+	byte *screen_area;
+	Common::Rect copy_area = { (int16)(area.left + x), (int16)(area.top + y), (int16)w, (int16)h };
 
 	GUI::get_gui()->Display();
 	screen_area = screen->copy_area(&copy_area);
 
-	new_surface = screen->create_sdl_surface_8(screen_area, copy_area.w, copy_area.h);
+	new_surface = screen->create_sdl_surface_8(screen_area, copy_area.width(), copy_area.height());
 // new_surface = screen->create_sdl_surface_from(screen_area, screen->get_bpp(),
 //                                               copy_area.w, copy_area.h,
 //                                               copy_area.w);
@@ -2592,8 +2588,9 @@ Graphics::ManagedSurface *MapWindow::get_sdl_surface(uint16 x, uint16 y, uint16 
 /* Returns the overlay surface. A new 8bit overlay is created if necessary. */
 Graphics::ManagedSurface *MapWindow::get_overlay() {
 	if (!overlay)
-		overlay = SDL_CreateRGBSurface(SDL_SWSURFACE, area.width(), area.height(),
-		                               8, 0, 0, 0, 0);
+		overlay = new Graphics::ManagedSurface(area.width(), area.height(),
+			Graphics::PixelFormat::createFormatCLUT8());
+
 	return (overlay);
 }
 
@@ -2610,7 +2607,7 @@ bool MapWindow::in_town() {
 
 	for (std::vector<TileInfo>::iterator ti = m_ViewableMapTiles.begin();
 	        ti != m_ViewableMapTiles.end(); ti++)
-		if (MapCoord((*ti).left + cur_x, (*ti).top + cur_y, cur_level).distance(player_loc) <= 5 && // make sure tile is close enough
+		if (MapCoord((*ti).x + cur_x, (*ti).y + cur_y, cur_level).distance(player_loc) <= 5 && // make sure tile is close enough
 		        ((*ti).t->flags1 & TILEFLAG_WALL) && ((*ti).t->flags1 & TILEFLAG_WALL_MASK)) { //only wall tiles with wall direction bits set.
 			return true;
 		}
@@ -2625,10 +2622,10 @@ void MapWindow::wizard_eye_start(MapCoord location, uint16 duration, CallBack *c
 	wizard_eye_info.prev_y = cur_y;
 
 	set_x_ray_view(X_RAY_ON);
-	sint16 map_x = location.left - (win_width / 2);
+	sint16 map_x = location.x - (win_width / 2);
 	if (game->is_original_plus_full_map())
 		map_x += ((map_center_xoff + 1) / 2);
-	moveMap(map_x, location.top - (win_height / 2) , cur_level); // FIXME - map should already be centered on the caster so why are we doing this?
+	moveMap(map_x, location.y - (win_height / 2) , cur_level); // FIXME - map should already be centered on the caster so why are we doing this?
 	grab_focus();
 }
 

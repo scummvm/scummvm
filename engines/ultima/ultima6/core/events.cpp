@@ -39,9 +39,9 @@ Events::~Events() {
 void Events::setButtonDown(MouseButton button, bool isDown) {
 	assert(button != BUTTON_NONE);
 	if (isDown)
-		_buttonsDown |= 1 << ((int)button - 1);
+		_buttonsDown |= BUTTON_MASK(button);
 	else
-		_buttonsDown &= ~(1 << ((int)button - 1));
+		_buttonsDown &= ~BUTTON_MASK(button);
 }
 
 
