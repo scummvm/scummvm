@@ -728,7 +728,7 @@ std::string Game::get_data_file_path(std::string datafile) {
 }
 
 uint getRandom(uint maxVal) {
-	::error("TODO");
+	return g_engine->getRandomNumber(maxVal);
 }
 
 } // End of namespace Ultima6
