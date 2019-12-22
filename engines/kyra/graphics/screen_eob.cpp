@@ -2586,6 +2586,7 @@ uint16 SJISFontEoB1PC98::convert(uint16 c) const {
 	uint8 h = c >> 8;
 
 	if (c < 128) {
+		assert(l > 31);
 		c = _convTable2[l - 32];
 	} else if (l > 160 && l < 225) {
 		bool done = false;
