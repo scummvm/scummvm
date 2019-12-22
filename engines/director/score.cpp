@@ -163,6 +163,18 @@ void Score::loadArchive() {
 		loadFontMap(*_movieArchive->getResource(MKTAG('V', 'W', 'F', 'M'), 1024));
 	}
 
+	// Try to load script context
+	if (_vm->getVersion() >= 4) {
+		Common::Array<uint16> lctx =  _movieArchive->getResourceIDList(MKTAG('L','c','t','x'));
+		if (lctx.size() > 0) {
+			debugC(2, kDebugLoading, "****** Loading %d Lctx resources", lctx.size());
+
+			for (Common::Array<uint16>::iterator iterator = lctx.begin(); iterator != lctx.end(); ++iterator) {
+				loadLingoContext(*_movieArchive->getResource(MKTAG('L','c','t','x'), *iterator));
+			}
+		}
+	}
+
 	Common::Array<uint16> vwci = _movieArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'I'));
 	if (vwci.size() > 0) {
 		debugC(2, kDebugLoading, "****** Loading %d CastInfos", vwci.size());
@@ -321,6 +333,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 		}
 	}
 }
+
 
 Score::~Score() {
 	if (_surface)
@@ -942,6 +955,48 @@ void Score::loadLingoScript(Common::SeekableSubReadStreamEndian &stream) {
 		error("Score::loadLingoScript: unsuported Director version (%d)", _vm->getVersion());
 	}
 	_movieScriptCount++;
+}
+
+void Score::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {
+	if (_vm->getVersion() >= 4) {
+		debugC(1, kDebugLingoCompile, "Add V4 script context");
+
+		if (debugChannelSet(5, kDebugLoading)) {
+			debugC(5, kDebugLoading, "Lctx header:");
+			stream.hexdump(0x2a);
+		}
+
+		_castScriptIds.clear();
+
+		stream.readUint16();
+		stream.readUint16();
+		stream.readUint16();
+		stream.readUint16();
+		stream.readUint16();
+		uint16 itemCount = stream.readUint16();
+		stream.readUint16();
+		/*uint16 itemCount2 = */ stream.readUint16();
+		uint16 itemsOffset = stream.readUint16();
+
+		stream.seek(itemsOffset);
+		for (uint16 i = 0; i < itemCount; i++) {
+			if (debugChannelSet(5, kDebugLoading)) {
+				debugC(5, kDebugLoading, "Context entry %d:", i);
+				stream.hexdump(0xc);
+			}
+
+			stream.readUint16();
+			stream.readUint16();
+			stream.readUint16();
+			uint16 index = stream.readUint16();
+			stream.readUint16();
+			stream.readUint16();
+
+			_castScriptIds.push_back(index);
+		}
+	} else {
+		error("Score::loadLingoContext: unsuported Director version (%d)", _vm->getVersion());
+	}
 }
 
 void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {

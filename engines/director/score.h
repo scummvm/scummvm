@@ -116,6 +116,7 @@ private:
 	void loadActions(Common::SeekableSubReadStreamEndian &stream);
 	void loadLingoNames(Common::SeekableSubReadStreamEndian &stream);
 	void loadLingoScript(Common::SeekableSubReadStreamEndian &stream);
+	void loadLingoContext(Common::SeekableSubReadStreamEndian &stream);
 	void loadScriptText(Common::SeekableSubReadStreamEndian &stream);
 	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);
 	void loadFontMap(Common::SeekableSubReadStreamEndian &stream);
@@ -134,6 +135,7 @@ public:
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;
 	Common::HashMap<uint16, Common::String> _fontMap;
+	Common::Array<uint16> _castScriptIds;
 	Graphics::ManagedSurface *_surface;
 	Graphics::ManagedSurface *_trailSurface;
 	Graphics::ManagedSurface *_backSurface;
