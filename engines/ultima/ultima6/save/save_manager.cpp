@@ -22,7 +22,6 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/misc/u6_misc.h"
@@ -81,22 +80,8 @@ bool SaveManager::init() {
 	config->value(savedir_key, savedir);
 
 	if (savedir.size() == 0) {
-#ifdef WIN32
 		DEBUG(0, LEVEL_WARNING, "savedir config variable not found. Using current directory for saves!\n");
 		savedir.assign("");
-#elif defined(__linux__)
-		DEBUG(0, LEVEL_WARNING, "savedir config variable not found. Using ~/.nuvie for saves.\n");
-		savedir = getenv("HOME");
-		savedir += "/.nuvie";
-		if (directory_exists(savedir.c_str()) == false && !savedir.empty()) {
-			// try to create the save dir if it doesn't exist
-			DEBUG(0, LEVEL_NOTIFICATION, "creating directory ~/.nuvie\n");
-			mkdir(savedir.c_str(), 0700);
-		}
-#else
-		DEBUG(0, LEVEL_WARNING, "savedir config variable not found. Using current directory for saves!\n");
-		savedir.assign(".");
-#endif
 	}
 
 	/*

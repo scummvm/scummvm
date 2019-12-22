@@ -268,45 +268,45 @@ static const int slot_array[32]=
 static const uint32 ksl_tab[8*16]=
 {
 	/* OCT 0 */
-	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
-	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
-	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
-	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
+	 (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV),
+	 (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV),
+	 (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV),
+	 (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV),
 	/* OCT 1 */
-	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
-	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
-	 0.000/DV, 0.750/DV, 1.125/DV, 1.500/DV,
-	 1.875/DV, 2.250/DV, 2.625/DV, 3.000/DV,
+	 (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV),
+	 (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV),
+	 (uint32)(0.000/DV), (uint32)(0.750/DV), (uint32)(1.125/DV), (uint32)(1.500/DV),
+	 (uint32)(1.875/DV), (uint32)(2.250/DV), (uint32)(2.625/DV), (uint32)(3.000/DV),
 	/* OCT 2 */
-	 0.000/DV, 0.000/DV, 0.000/DV, 0.000/DV,
-	 0.000/DV, 1.125/DV, 1.875/DV, 2.625/DV,
-	 3.000/DV, 3.750/DV, 4.125/DV, 4.500/DV,
-	 4.875/DV, 5.250/DV, 5.625/DV, 6.000/DV,
+	 (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV),
+	 (uint32)(0.000/DV), (uint32)(1.125/DV), (uint32)(1.875/DV), (uint32)(2.625/DV),
+	 (uint32)(3.000/DV), (uint32)(3.750/DV), (uint32)(4.125/DV), (uint32)(4.500/DV),
+	 (uint32)(4.875/DV), (uint32)(5.250/DV), (uint32)(5.625/DV), (uint32)(6.000/DV),
 	/* OCT 3 */
-	 0.000/DV, 0.000/DV, 0.000/DV, 1.875/DV,
-	 3.000/DV, 4.125/DV, 4.875/DV, 5.625/DV,
-	 6.000/DV, 6.750/DV, 7.125/DV, 7.500/DV,
-	 7.875/DV, 8.250/DV, 8.625/DV, 9.000/DV,
+	 (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(1.875/DV),
+	 (uint32)(3.000/DV), (uint32)(4.125/DV), (uint32)(4.875/DV), (uint32)(5.625/DV),
+	 (uint32)(6.000/DV), (uint32)(6.750/DV), (uint32)(7.125/DV), (uint32)(7.500/DV),
+	 (uint32)(7.875/DV), (uint32)(8.250/DV), (uint32)(8.625/DV), (uint32)(9.000/DV),
 	/* OCT 4 */
-	 0.000/DV, 0.000/DV, 3.000/DV, 4.875/DV,
-	 6.000/DV, 7.125/DV, 7.875/DV, 8.625/DV,
-	 9.000/DV, 9.750/DV,10.125/DV,10.500/DV,
-	10.875/DV,11.250/DV,11.625/DV,12.000/DV,
+	(uint32)(0.000/DV), (uint32)(0.000/DV), (uint32)(3.000/DV), (uint32)(4.875/DV),
+	(uint32)(6.000/DV), (uint32)(7.125/DV), (uint32)(7.875/DV), (uint32)(8.625/DV),
+	(uint32)(9.000/DV), (uint32)(9.750/DV), (uint32)(10.125/DV),(uint32)(10.500/DV),
+	(uint32)(10.875/DV),(uint32)(11.250/DV),(uint32)(11.625/DV),(uint32)(12.000/DV),
 	/* OCT 5 */
-	 0.000/DV, 3.000/DV, 6.000/DV, 7.875/DV,
-	 9.000/DV,10.125/DV,10.875/DV,11.625/DV,
-	12.000/DV,12.750/DV,13.125/DV,13.500/DV,
-	13.875/DV,14.250/DV,14.625/DV,15.000/DV,
+	(uint32)(0.000/DV), (uint32)(3.000/DV), (uint32)(6.000/DV), (uint32)(7.875/DV),
+	(uint32)(9.000/DV), (uint32)(10.125/DV),(uint32)(10.875/DV),(uint32)(11.625/DV),
+	(uint32)(12.000/DV),(uint32)(12.750/DV),(uint32)(13.125/DV),(uint32)(13.500/DV),
+	(uint32)(13.875/DV),(uint32)(14.250/DV),(uint32)(14.625/DV),(uint32)(15.000/DV),
 	/* OCT 6 */
-	 0.000/DV, 6.000/DV, 9.000/DV,10.875/DV,
-	12.000/DV,13.125/DV,13.875/DV,14.625/DV,
-	15.000/DV,15.750/DV,16.125/DV,16.500/DV,
-	16.875/DV,17.250/DV,17.625/DV,18.000/DV,
+	(uint32)(0.000/DV), (uint32)(6.000/DV), (uint32)(9.000/DV), (uint32)(10.875/DV),
+	(uint32)(12.000/DV),(uint32)(13.125/DV),(uint32)(13.875/DV),(uint32)(14.625/DV),
+	(uint32)(15.000/DV),(uint32)(15.750/DV),(uint32)(16.125/DV),(uint32)(16.500/DV),
+	(uint32)(16.875/DV),(uint32)(17.250/DV),(uint32)(17.625/DV),(uint32)(18.000/DV),
 	/* OCT 7 */
-	 0.000/DV, 9.000/DV,12.000/DV,13.875/DV,
-	15.000/DV,16.125/DV,16.875/DV,17.625/DV,
-	18.000/DV,18.750/DV,19.125/DV,19.500/DV,
-	19.875/DV,20.250/DV,20.625/DV,21.000/DV
+	(uint32)(0.000/DV), (uint32)(9.000/DV), (uint32)(12.000/DV),(uint32)(13.875/DV),
+	(uint32)(15.000/DV),(uint32)(16.125/DV),(uint32)(16.875/DV),(uint32)(17.625/DV),
+	(uint32)(18.000/DV),(uint32)(18.750/DV),(uint32)(19.125/DV),(uint32)(19.500/DV),
+	(uint32)(19.875/DV),(uint32)(20.250/DV),(uint32)(20.625/DV),(uint32)(21.000/DV)
 };
 #undef DV
 
@@ -431,8 +431,8 @@ O( 0),O( 0),O( 0),O( 0),O( 0),O( 0),O( 0),O( 0),
 #define ML 2
 static const uint8 mul_tab[16]= {
 /* 1/2, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,10,12,12,15,15 */
-   0.50*ML, 1.00*ML, 2.00*ML, 3.00*ML, 4.00*ML, 5.00*ML, 6.00*ML, 7.00*ML,
-   8.00*ML, 9.00*ML,10.00*ML,10.00*ML,12.00*ML,12.00*ML,15.00*ML,15.00*ML
+   (uint8)(0.50*ML), (uint8)(1.00*ML),(uint8)(2.00*ML), (uint8)(3.00*ML), (uint8)(4.00*ML), (uint8)(5.00*ML), (uint8)(6.00*ML), (uint8)(7.00*ML),
+   (uint8)(8.00*ML), (uint8)(9.00*ML),(uint8)(10.00*ML),(uint8)(10.00*ML),(uint8)(12.00*ML),(uint8)(12.00*ML),(uint8)(15.00*ML),(uint8)(15.00*ML)
 };
 #undef ML
 
@@ -636,7 +636,7 @@ INLINE void advance_lfo(FM_OPL *OPL)
 
 	/* LFO */
 	OPL->lfo_am_cnt += OPL->lfo_am_inc;
-	if (OPL->lfo_am_cnt >= (LFO_AM_TAB_ELEMENTS<<LFO_SH) )	/* lfo_am_table is 210 elements long */
+	if (OPL->lfo_am_cnt >= (uint32)(LFO_AM_TAB_ELEMENTS<<LFO_SH) )	/* lfo_am_table is 210 elements long */
 		OPL->lfo_am_cnt -= (uint32)(LFO_AM_TAB_ELEMENTS<<LFO_SH);
 
 	tmp = lfo_am_table[ OPL->lfo_am_cnt >> LFO_SH ];

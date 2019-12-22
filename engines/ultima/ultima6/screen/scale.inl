@@ -23,10 +23,6 @@
 #ifndef SCALE_INL_INCLUDED
 #define SCALE_INL_INCLUDED
 
-#ifndef _MSC_VER
-using std::memcpy;
-#endif
-
 namespace Ultima {
 namespace Ultima6 {
 
@@ -226,9 +222,9 @@ static void Scale_2xSaI
 		{
 			Pixel_type colorA, colorB;
 			Pixel_type colorC, colorD,
-				   colorE, colorF, colorG, colorH,
-				   colorI, colorJ, colorK, colorL,
-				   colorM, colorN, colorO, colorP;
+				colorE, colorF, colorG, colorH,
+				colorI, colorJ, colorK, colorL,
+				colorM, colorN, colorO; // , colorP;
 			Pixel_type product, product1, product2;
 
 				// Last/next-to-last row?
@@ -263,7 +259,7 @@ static void Scale_2xSaI
 			colorM = *(bP + next2_yoff - prev1_xoff);
 			colorN = *(bP + next2_yoff);
 			colorO = *(bP + next2_yoff + next1_xoff);
-			colorP = *(bP + next2_yoff + next2_xoff);
+			//colorP = *(bP + next2_yoff + next2_xoff);
 
 			if ((colorA == colorD) && (colorB != colorC))
 			{
@@ -667,11 +663,11 @@ static void Scale_SuperEagle
 		{
            Pixel_type color4, color5, color6;
            Pixel_type color1, color2, color3;
-           Pixel_type colorA0, colorA1, colorA2, colorA3,
-						colorB0, colorB1, colorB2, colorB3,
-						colorS1, colorS2;
+		   Pixel_type colorA1, colorA2; // , colorA0, colorA3,
+		   Pixel_type colorB1, colorB2; // , colorB0, colorB3,
+		   Pixel_type colorS1, colorS2;
            Pixel_type product1a, product1b,
-					 product2a, product2b;
+				product2a, product2b;
 
 			//---------------------------------------  B0 B1 B2 B3
 			//                                         4  5  6  S2
@@ -710,10 +706,10 @@ static void Scale_SuperEagle
 			else nextl1 = sline_pixels;
 
 
-            colorB0 = *(bP- prevl1 - sub1);
+            //colorB0 = *(bP- prevl1 - sub1);
             colorB1 = *(bP- prevl1);
             colorB2 = *(bP- prevl1 + add1);
-            colorB3 = *(bP- prevl1 + add1 + add2);
+            //colorB3 = *(bP- prevl1 + add1 + add2);
 
             color4 = *(bP - sub1);
             color5 = *(bP);
@@ -725,10 +721,10 @@ static void Scale_SuperEagle
             color3 = *(bP + nextl1 + add1);
             colorS1 = *(bP + nextl1 + add1 + add2);
 
-            colorA0 = *(bP + nextl1 + nextl2 - sub1);
+            //colorA0 = *(bP + nextl1 + nextl2 - sub1);
             colorA1 = *(bP + nextl1 + nextl2);
             colorA2 = *(bP + nextl1 + nextl2 + add1);
-            colorA3 = *(bP + nextl1 + nextl2 + add1 + add2);
+            //colorA3 = *(bP + nextl1 + nextl2 + add1 + add2);
 
 
 			if (color2 == color6 && color5 != color3)

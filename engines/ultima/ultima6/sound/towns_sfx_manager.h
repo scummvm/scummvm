@@ -43,8 +43,7 @@ typedef struct {
 class TownsSfxManager : public SfxManager {
 public:
 	TownsSfxManager(Configuration *cfg, Audio::Mixer *m);
-	~TownsSfxManager();
-
+	virtual ~TownsSfxManager();
 
 	bool playSfx(SfxIdType sfx_id, uint8 volume);
 	bool playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume);
@@ -56,7 +55,6 @@ private:
 
 	void loadSound1Dat();
 	void playSoundSample(uint8 sample_num, Audio::SoundHandle *looping_handle, uint8 volume);
-
 };
 
 } // End of namespace Ultima6

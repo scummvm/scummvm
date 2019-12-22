@@ -20,9 +20,7 @@
  *
  */
 
-//#include <cmath>
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/core/party.h"
 #include "ultima/ultima6/core/player.h"
@@ -126,9 +124,9 @@ GUI_status PartyView::MouseUp(int x, int y, MouseButton button) {
 		if (party_size > 7) party_size = 7;
 	} else if (party_size > 5) party_size = 5; // can only display/handle 5 at a time
 
-	Common::Rect arrow_rects_U6[2] = {{0, 18, 8, 8}, {0, 90, 8, 8}};
-	Common::Rect arrow_rects[2] = {{0, 6, 7, 8}, {0, 102, 7, 8}};
-	Common::Rect arrow_up_rect_MD[1] = {{0, 15, 7, 8}};
+	Common::Rect arrow_rects_U6[2] = { Common::Rect(0, 18, 0 + 8, 18 + 8), Common::Rect(0, 90, 0 + 8, 90 + 8) };
+	Common::Rect arrow_rects[2] = { Common::Rect(0, 6, 0 + 7, 6 + 8), Common::Rect(0, 102, 0 + 7, 102 + 8) };
+	Common::Rect arrow_up_rect_MD[1] = { Common::Rect(0, 15, 0 + 7, 15 + 8) };
 
 	if (HitRect(x, y, U6 ? arrow_rects_U6[0] : (MD ? arrow_up_rect_MD[0] : arrow_rects[0]))) { //up arrow hit rect
 		if (up_arrow())

@@ -655,7 +655,7 @@ static int nscript_actor_set(lua_State *L) {
 
 	key = lua_tostring(L, 2);
 
-	int idx = str_bsearch(actor_set_vars, sizeof(actor_set_vars) / sizeof(actor_set_vars[0]), (char *)key);
+	int idx = str_bsearch(actor_set_vars, sizeof(actor_set_vars) / sizeof(actor_set_vars[0]), (const char *)key);
 	if (idx == -1)
 		return 0;
 
@@ -834,7 +834,7 @@ static int nscript_actor_get(lua_State *L) {
 
 	key = lua_tostring(L, 2);
 
-	int idx = str_bsearch(actor_get_vars, sizeof(actor_get_vars) / sizeof(actor_get_vars[0]), (char *)key);
+	int idx = str_bsearch(actor_get_vars, sizeof(actor_get_vars) / sizeof(actor_get_vars[0]), key);
 	if (idx == -1)
 		return 0;
 

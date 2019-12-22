@@ -172,7 +172,7 @@ void ActorView::add_command_icons(Screen *tmp_screen, void *view_manager) {
 }
 
 void ActorView::display_name() {
-	char *name;
+	const char *name;
 	int y_off = 0;
 	if (MD)
 		y_off = 4;
@@ -182,7 +182,7 @@ void ActorView::display_name() {
 	if (in_party)
 		name = party->get_actor_name(cur_party_member);
 	else
-		name = (char *) Game::get_game()->get_player()->get_actor()->get_name(true);
+		name = Game::get_game()->get_player()->get_actor()->get_name(true);
 
 	if (name == NULL)
 		return;

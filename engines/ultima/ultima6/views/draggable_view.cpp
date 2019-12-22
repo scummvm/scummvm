@@ -32,8 +32,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-DraggableView::DraggableView(Configuration *config)
-	: View(config) {
+DraggableView::DraggableView(Configuration *cfg) : View(cfg) {
 	drag = false;
 	button_x = 0;
 	button_y = 0;

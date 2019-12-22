@@ -139,7 +139,7 @@ public:
 	/* Check to see if a point intersects the bounds of the widget.
 	 */
 	virtual int HitRect(int x, int y);
-	virtual int HitRect(int x, int y, Common::Rect &rect);
+	virtual int HitRect(int x, int y, const Common::Rect &rect);
 
 	/* Set the display surface for this widget */
 	virtual void SetDisplay(Screen *s);

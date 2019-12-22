@@ -164,6 +164,7 @@ const ScalerStruct ScalerRegistry::scaler_array[] = {
 		0,
 		0,
 		0,
+		0,
 		0
 	}
 };

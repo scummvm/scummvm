@@ -20,7 +20,6 @@
  *
  */
 
-//#include <math.h>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/files/u6_lib_n.h"
@@ -29,14 +28,12 @@
 #include "ultima/ultima6/files/u6_lzw.h"
 #include "ultima/ultima6/misc/u6_line_walker.h"
 #include "ultima/ultima6/screen/game_palette.h"
-
 #include "ultima/ultima6/sound/sound_manager.h"
 #include "ultima/ultima6/fonts/font.h"
 #include "ultima/ultima6/fonts/wou_font.h"
 #include "ultima/ultima6/core/cursor.h"
 #include "ultima/ultima6/keybinding/keys.h"
 #include "ultima/ultima6/script/script_cutscene.h"
-
 #include "common/lua/lauxlib.h"
 #include "common/system.h"
 

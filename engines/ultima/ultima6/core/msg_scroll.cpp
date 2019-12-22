@@ -256,7 +256,7 @@ MsgScroll::~MsgScroll() {
 
 }
 
-bool MsgScroll::init(char *player_name) {
+bool MsgScroll::init(const char *player_name) {
 	std::string prompt_string;
 
 	prompt_string.append(player_name);

@@ -35,9 +35,7 @@ namespace Ultima6 {
 class PCSpeakerSfxManager : public SfxManager {
 public:
 	PCSpeakerSfxManager(Configuration *cfg, Audio::Mixer *m);
-	~PCSpeakerSfxManager();
-
-
+	virtual ~PCSpeakerSfxManager();
 
 	bool playSfx(SfxIdType sfx_id, uint8 volume);
 	bool playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume);

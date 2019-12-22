@@ -25,7 +25,6 @@
 
 #include "ultima/ultima6/misc/call_back.h"
 #include "ultima/ultima6/gui/gui_widget.h"
-//#include <stdarg.h>
 
 #define MSGSCROLL_U6_WIDTH 17
 #define MSGSCROLL_U6_HEIGHT 10
@@ -211,7 +210,7 @@ public:
 
 	void init(Configuration *cfg, Font *f);
 
-	bool init(char *player_name);
+	bool init(const char *player_name);
 	void page_up();
 	void page_down();
 	virtual void move_scroll_down();

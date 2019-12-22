@@ -20,9 +20,7 @@
  *
  */
 
-//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/screen/screen.h"
 #include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/gui/gui_button.h"
@@ -182,16 +180,16 @@ void InventoryView::Display(bool full_redraw) {
 }
 
 void InventoryView::display_name() {
-	char *name;
+	const char *name;
 	int y_off = 0;
 	if (Game::get_game()->get_game_type() == NUVIE_GAME_SE)
 		y_off = 1;
 	if (is_party_member)
 		name = party->get_actor_name(cur_party_member);
 	else if (picking_pocket)
-		name = (char *) outside_actor->get_name();
+		name = outside_actor->get_name();
 	else
-		name = (char *) Game::get_game()->get_player()->get_actor()->get_name(true);
+		name = Game::get_game()->get_player()->get_actor()->get_name(true);
 	if (name == NULL)
 		return;
 

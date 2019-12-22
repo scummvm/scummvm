@@ -23,18 +23,14 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_types.h"
 #include "ultima/ultima6/gui/gui_text.h"
 #include "ultima/ultima6/gui/gui_text_input.h"
-
 #include "ultima/ultima6/gui/gui_callback.h"
-
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
 #include "ultima/ultima6/core/map_window.h"
-
 #include "ultima/ultima6/save/save_game.h"
 #include "ultima/ultima6/save/save_slot.h"
 #include "ultima/ultima6/save/save_manager.h"
@@ -76,7 +72,7 @@ bool SaveSlot::init(const char *directory, std::string *file) {
 		}
 	}
 
-	textinput_widget = new GUI_TextInput(MAPWINDOW_THUMBNAIL_SIZE + 2, 2, 255, 255, 255, (char *)save_description.c_str(), gui->get_font(), 26, 2, this);
+	textinput_widget = new GUI_TextInput(MAPWINDOW_THUMBNAIL_SIZE + 2, 2, 255, 255, 255, save_description.c_str(), gui->get_font(), 26, 2, this);
 	AddWidget((GUI_Widget *)textinput_widget);
 
 	return true;

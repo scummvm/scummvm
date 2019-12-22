@@ -54,6 +54,7 @@ public:
 		scale = 100;
 		refcount = 0;
 	}
+	virtual ~CSImage() {}
 
 	void setScale(uint16 percentage);
 	uint16 getScale() {
@@ -76,6 +77,7 @@ private:
 	} stars[STAR_FIELD_NUM_STARS];
 public:
 	CSStarFieldImage(U6Shape *shape);
+	virtual ~CSStarFieldImage() {}
 	virtual void updateEffect();
 };
 

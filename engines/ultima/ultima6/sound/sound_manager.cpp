@@ -20,10 +20,6 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-//#include <config.h>
-#endif
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/core/u6_objects.h"
@@ -320,7 +316,7 @@ bool SoundManager::groupAddSong(const char *group, Song *song) {
 	}
 
 	return true;
-};
+}
 
 /*
 bool SoundManager::LoadObjectSamples (string sound_dir)
@@ -742,7 +738,7 @@ Sound *SoundManager::RequestSong(string group) {
 		return psc->Select();
 	}
 	return NULL;
-};
+}
 
 Audio::SoundHandle SoundManager::playTownsSound(std::string filename, uint16 sample_num) {
 	FMtownsDecoderStream *stream = new FMtownsDecoderStream(filename, sample_num);

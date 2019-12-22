@@ -36,7 +36,7 @@ public:
 	SfxManager(Configuration *cfg, Audio::Mixer *m) : config(cfg), mixer(m) {
 		sfx_duration = 0;
 	};
-	~SfxManager() {};
+	virtual ~SfxManager() {};
 
 
 	virtual bool playSfx(SfxIdType sfx_id, uint8 volume) = 0;

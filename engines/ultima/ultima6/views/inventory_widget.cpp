@@ -20,11 +20,9 @@
  *
  */
 
-//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/conf/configuration.h"
-
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/screen/game_palette.h"
 #include "ultima/ultima6/views/inventory_widget.h"
@@ -38,7 +36,6 @@
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/core/player.h"
 #include "ultima/ultima6/core/command_bar.h"
-
 #include "ultima/ultima6/views/inventory_font.h"
 #include "ultima/ultima6/views/view_manager.h"
 
@@ -49,7 +46,10 @@ namespace Ultima6 {
 #define ACTION_BUTTON 3
 #define DRAG_BUTTON 1
 
-static Common::Rect arrow_rects[2] = {{0, 16, 8, 8}, {0, 3 * 16 + 8, 8, 8}};
+static const Common::Rect arrow_rects[2] = {
+	Common::Rect(0, 16, 0 + 8, 16 + 8),
+	Common::Rect(0, 3 * 16 + 8, 0 + 8, 3 * 16 + 8 + 8)
+};
 
 InventoryWidget::InventoryWidget(Configuration *cfg, GUI_CallBack *callback): GUI_Widget(NULL, 0, 0, 0, 0) {
 	config = cfg;
@@ -221,7 +221,7 @@ void InventoryWidget::display_inventory_list() {
 
 			//tile = tile_manager->get_tile(actor->indentory_tile());
 			if (tile == empty_tile)
-				screen->blit((area.left + objlist_offset_x) + j * 16, area.top + objlist_offset_y + i * 16, (unsigned char *)empty_tile->data, 8, 16, 16, 16, true);
+				screen->blit((area.left + objlist_offset_x) + j * 16, area.top + objlist_offset_y + i * 16, (const unsigned char *)empty_tile->data, 8, 16, 16, 16, true);
 			if (tile != empty_tile) {
 				//draw qty string for stackable items
 				if (obj_manager->is_stackable(obj))
@@ -232,7 +232,7 @@ void InventoryWidget::display_inventory_list() {
 					display_special_char((area.left + objlist_offset_x) + j * 16, area.top + objlist_offset_y + i * 16, obj->quality);
 			}
 
-			screen->blit((area.left + objlist_offset_x) + j * 16, area.top + objlist_offset_y + i * 16, (unsigned char *)tile->data, 8, 16, 16, 16, true);
+			screen->blit((area.left + objlist_offset_x) + j * 16, area.top + objlist_offset_y + i * 16, (const unsigned char *)tile->data, 8, 16, 16, 16, true);
 		}
 	}
 }

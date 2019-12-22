@@ -22,7 +22,6 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
-
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/views/container_widget_gump.h"
 #include "ultima/ultima6/keybinding/keys.h"
@@ -110,7 +109,8 @@ bool ContainerWidgetGump::init(Actor *a, uint16 x, uint16 y, uint8 Cols, uint8 R
 void ContainerWidgetGump::Display(bool full_redraw) {
 	display_inventory_list();
 	if (show_cursor) {
-		screen->blit(area.left + (cursor_x < 0 ? check_x : cursor_x * 16), area.top + (cursor_x < 0 ? check_y : cursor_y * 16), (unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
+		screen->blit(area.left + (cursor_x < 0 ? check_x : cursor_x * 16), area.top + (cursor_x < 0 ? check_y : cursor_y * 16),
+			(const unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
 	}
 	screen->update(area.left, area.top, area.width(), area.height());
 }

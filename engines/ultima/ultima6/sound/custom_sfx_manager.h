@@ -36,9 +36,7 @@ namespace Ultima6 {
 class CustomSfxManager : public SfxManager {
 public:
 	CustomSfxManager(Configuration *cfg, Audio::Mixer *m);
-	~CustomSfxManager();
-
-
+	virtual ~CustomSfxManager();
 
 	bool playSfx(SfxIdType sfx_id, uint8 volume);
 	bool playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume);
@@ -52,7 +50,6 @@ private:
 	std::string custom_filepath;
 
 	std::map<uint16, uint16> *sfx_map;
-
 };
 
 } // End of namespace Ultima6

@@ -20,9 +20,7 @@
  *
  */
 
-
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_types.h"
 #include "ultima/ultima6/gui/gui_button.h"
@@ -30,7 +28,6 @@
 #include "ultima/ultima6/gui/gui_scroller.h"
 #include "ultima/ultima6/gui/gui_callback.h"
 #include "ultima/ultima6/gui/gui_area.h"
-
 #include "ultima/ultima6/gui/gui_dialog.h"
 #include "ultima/ultima6/save/save_slot.h"
 #include "ultima/ultima6/save/save_dialog.h"
@@ -163,7 +160,7 @@ SaveDialog::~SaveDialog() {
 void SaveDialog::Display(bool full_redraw) {
 	GUI_Dialog::Display(full_redraw);
 	if (show_cursor) {
-		screen->blit(cursor_x, cursor_y, (unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
+		screen->blit(cursor_x, cursor_y, (const unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
 		screen->update(cursor_x, cursor_y, 16, 16);
 	}
 }

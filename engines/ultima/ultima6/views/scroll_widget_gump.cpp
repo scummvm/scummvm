@@ -21,9 +21,6 @@
  */
 
 #include "ultima/shared/std/string.h"
-//#include <cctype>
-//#include <iostream>
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
@@ -184,8 +181,13 @@ GUI_status ScrollWidgetGump::KeyDown(const Common::KeyState &key) {
 	return MsgScroll::KeyDown(key);
 }
 
-static Common::Rect arrow_up_rect[1] = {{SCROLLWIDGETGUMP_W - 8 - 1, 4 + 1, 7, 5}};
-static Common::Rect arrow_down_rect[1] = {{SCROLLWIDGETGUMP_W - 8 - 1, SCROLLWIDGETGUMP_H - 8 + 3, 7 , 5}};
+static Common::Rect arrow_up_rect[1] = {
+	Common::Rect(SCROLLWIDGETGUMP_W - 8 - 1, 4 + 1, SCROLLWIDGETGUMP_W - 8 - 1 + 7, 4 + 1 + 5)
+};
+static Common::Rect arrow_down_rect[1] = {
+	Common::Rect(SCROLLWIDGETGUMP_W - 8 - 1, SCROLLWIDGETGUMP_H - 8 + 3, SCROLLWIDGETGUMP_W - 8 - 1 + 7,
+		SCROLLWIDGETGUMP_H - 8 + 3 + 5)
+};
 
 GUI_status ScrollWidgetGump::MouseWheel(sint32 x, sint32 y) {
 	ScrollEventType event = SCROLL_ESCAPE;

@@ -25,12 +25,10 @@
 #include "ultima/ultima6/core/event.h"
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_button.h"
-
 #include "ultima/ultima6/core/party.h"
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/portraits/portrait.h"
 #include "ultima/ultima6/views/view_manager.h"
-
 #include "ultima/ultima6/views/container_widget_gump.h"
 #include "ultima/ultima6/views/portrait_view_gump.h"
 #include "ultima/ultima6/keybinding/keys.h"
@@ -196,7 +194,7 @@ void PortraitViewGump::Display(bool full_redraw) {
 	font->TextOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 73, buf);
 
 	if (show_cursor)
-		screen->blit(area.left + cursor_xoff, area.top + cursor_yoff, (unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
+		screen->blit(area.left + cursor_xoff, area.top + cursor_yoff, (const unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);
 	update_display = false;
 	screen->update(area.left, area.top, area.width(), area.height());
 
