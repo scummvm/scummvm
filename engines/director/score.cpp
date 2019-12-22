@@ -209,18 +209,6 @@ void Score::loadArchive() {
 		}
 	}
 
-	// Try to load compiled Lingo scripts
-	// FIXME. Disabled by default, requires --debugflags=bytecode for now
-	if (_vm->getVersion() >= 4 && debugChannelSet(-1, kDebugBytecode)) {
-		Common::Array<uint16> lscr =  _movieArchive->getResourceIDList(MKTAG('L','s','c','r'));
-		if (lscr.size() > 0) {
-			debugC(2, kDebugLoading, "****** Loading %d Lscr resources", lscr.size());
-
-			for (Common::Array<uint16>::iterator iterator = lscr.begin(); iterator != lscr.end(); ++iterator) {
-				loadLingoScript(*_movieArchive->getResource(MKTAG('L','s','c','r'), *iterator));
-			}
-		}
-	}
 
 	// Now process STXTs
 	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
@@ -759,7 +747,19 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 			ci->directory = castStrings[2];
 			ci->fileName = castStrings[3];
 			ci->type = castStrings[4];
+		}
 
+		// FIXME. Disabled by default, requires --debugflags=bytecode for now
+		if (_vm->getVersion() >= 4 && castType == kCastLingoScript && debugChannelSet(-1, kDebugBytecode)) {
+			// Try and load the compiled Lingo script associated with this cast
+			uint scriptId = (*_loadedScripts)[id]->_id - 1;
+			if (scriptId < _castScriptIds.size()) {
+				int resourceId = _castScriptIds[scriptId];
+				_lingo->addCodeV4(*_movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), resourceId), kCastScript, id);
+			} else {
+				warning("Lingo context missing a resource entry for script %d referenced in cast %d", scriptId, id);
+			}
+		} else {
 			if (!ci->script.empty()) {
 				// the script type here could be wrong!
 				if (ConfMan.getBool("dump_scripts"))
@@ -946,15 +946,6 @@ void Score::loadLingoNames(Common::SeekableSubReadStreamEndian &stream) {
 	} else {
 		error("Score::loadLingoNames: unsuported Director version (%d)", _vm->getVersion());
 	}
-}
-
-void Score::loadLingoScript(Common::SeekableSubReadStreamEndian &stream) {
-	if (_vm->getVersion() >= 4) {
-		_lingo->addCodeV4(stream, kMovieScript, _movieScriptCount);
-	} else {
-		error("Score::loadLingoScript: unsuported Director version (%d)", _vm->getVersion());
-	}
-	_movieScriptCount++;
 }
 
 void Score::loadLingoContext(Common::SeekableSubReadStreamEndian &stream) {

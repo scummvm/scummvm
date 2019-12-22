@@ -115,7 +115,6 @@ private:
 	void loadLabels(Common::SeekableSubReadStreamEndian &stream);
 	void loadActions(Common::SeekableSubReadStreamEndian &stream);
 	void loadLingoNames(Common::SeekableSubReadStreamEndian &stream);
-	void loadLingoScript(Common::SeekableSubReadStreamEndian &stream);
 	void loadLingoContext(Common::SeekableSubReadStreamEndian &stream);
 	void loadScriptText(Common::SeekableSubReadStreamEndian &stream);
 	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);
