@@ -107,6 +107,11 @@ public:
 	virtual kType getMusicType() const = 0;
 	virtual kType getSfxType() const;
 
+	// This is obviously not a real implementation. The original allows disabling digital sfx (or simply not having a suitable sound card),
+	// thus falling back to the music driver's sfx. We never supported this, since we don't even have a setting for it in the launcher.
+	// Currently, the only purpose of this function is fixing KyraEngine_HoF::o2_playFireflyScore() (bug #10877: "Sound issues in the Legend of Kyrandia 2").
+	virtual bool useDigitalSfx() const { return true; }
+
 	/**
 	 * Initializes the output device.
 	 *
