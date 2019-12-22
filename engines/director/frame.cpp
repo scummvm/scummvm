@@ -600,10 +600,10 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			} else {
 				if (!_vm->getCurrentScore()->_castTypes.contains(_sprites[i]->_castId)) {
 					if (!_vm->getSharedCastTypes()->contains(_sprites[i]->_castId)) {
-						warning("Cast id %d not found", _sprites[i]->_castId);
+						warning("Frame::renderSprites(): Cast id %d not found", _sprites[i]->_castId);
 						continue;
 					} else {
-						warning("Getting cast id %d from shared cast", _sprites[i]->_castId);
+						warning("Frame::renderSprites(): Getting cast id %d from shared cast", _sprites[i]->_castId);
 						castType = _vm->getSharedCastTypes()->getVal(_sprites[i]->_castId);
 					}
 				} else {
@@ -621,7 +621,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				renderButton(surface, i);
 			} else {
 				if (!_sprites[i]->_bitmapCast) {
-					warning("No cast ID for sprite %d", i);
+					warning("Frame::renderSprites(): No cast ID for sprite %d", i);
 					continue;
 				}
 
