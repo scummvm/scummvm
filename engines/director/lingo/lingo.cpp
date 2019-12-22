@@ -615,7 +615,21 @@ Common::String *Datum::toString() {
 		*s = Common::String::format("var: #%s", u.sym->name.c_str());
 		break;
 	case REFERENCE:
-		*s = Common::String::format("field#%d", u.i);
+		{
+			int idx = u.i;
+
+			if (!g_director->getCurrentScore()->_loadedText->contains(idx)) {
+				if (!g_director->getCurrentScore()->_loadedText->contains(idx - 1024)) {
+					warning("toString(): Unknown REFERENCE %d", idx);
+					*s = "";
+					break;
+				} else {
+					idx -= 1024;
+				}
+			}
+
+			*s = g_director->getCurrentScore()->_loadedText->getVal(idx)->_ptext;
+		}
 		break;
 	default:
 		warning("Incorrect operation toString() for type: %s", type2str());
