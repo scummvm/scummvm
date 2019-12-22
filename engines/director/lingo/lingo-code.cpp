@@ -66,7 +66,6 @@ static struct FuncDescr {
 	{ Lingo::c_floatpush,	"c_floatpush",	"f" },
 	{ Lingo::c_stringpush,	"c_stringpush",	"s" },
 	{ Lingo::c_symbolpush,	"c_symbolpush",	"s" },	// D3
-	{ Lingo::c_constpush,	"c_constpush",	"i" },
 	{ Lingo::c_namepush,	"c_namepush",	"i" },
 	{ Lingo::c_varpush,		"c_varpush",	"s" },
 	{ Lingo::c_setImmediate,"c_setImmediate","i" },
@@ -248,13 +247,6 @@ void Lingo::c_symbolpush() {
 
 	// TODO: FIXME: Must push symbol instead of string
 	g_lingo->push(Datum(new Common::String(s)));
-}
-
-void Lingo::c_constpush() {
-	Datum d;
-	int i = g_lingo->readInt();
-	d = g_lingo->_currentScriptContext->constants[i];
-	g_lingo->push(d);
 }
 
 void Lingo::c_namepush() {
