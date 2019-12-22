@@ -450,6 +450,7 @@ int CharacterGenerator::viewDeleteCharacter() {
 				if (_characters[_activeBox].name[0]) {
 					processSpecialButton(16);
 					_characters[_activeBox].name[0] = 0;
+					_characters[_activeBox].faceShape = 0;
 					processNameInput(_activeBox, _vm->guiSettings()->colors.guiColorBlack);
 					processFaceMenuSelection(_activeBox + 50);
 				}
