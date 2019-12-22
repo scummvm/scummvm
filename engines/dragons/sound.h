@@ -35,6 +35,19 @@ class DragonRMS;
 class VabSound;
 struct SpeechLocation;
 
+typedef struct Voice {
+	int16 program;
+	int16 key;
+	Audio::SoundHandle handle;
+
+	Voice() {
+		program = -1;
+		key = -1;
+	}
+} Voice;
+
+#define NUM_VOICES 25
+
 class SoundManager {
 public:
 	SoundManager(DragonsEngine *vm, BigfileArchive* bigFileArchive, DragonRMS *dragonRms);
@@ -62,7 +75,7 @@ private:
 	VabSound* _vabGlob;
 
 	Audio::SoundHandle _speechHandle;
-	Audio::SoundHandle _sfxHandle;
+	Voice _voice[NUM_VOICES];
 
 private:
 	void SomeInitSound_FUN_8003f64c();
@@ -78,6 +91,9 @@ private:
 	VabSound * loadVab(const char *headerFilename, const char *bodyFilename);
 
 	bool getSpeechLocation(uint32 talkId, struct SpeechLocation *location);
+	bool isVoicePlaying(uint16 program, uint16 key);
+	Audio::SoundHandle *getVoiceHandle(uint16 program, uint16 key);
+	void stopVoicePlaying(uint16 program, uint16 key);
 
 private:
 	class PSXAudioTrack {
