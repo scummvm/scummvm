@@ -817,7 +817,10 @@ void Lingo::c_eq() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+	if (d1.type == STRING && d2.type == STRING) {
+		d1.u.i = (*d1.u.s == *d2.u.s) ? 1 : 0;
+		d1.type = INT;
+	} else if (g_lingo->alignTypes(d1, d2) == FLOAT) {
 		d1.u.i = (d1.u.f == d2.u.f) ? 1 : 0;
 		d1.type = INT;
 	} else {
@@ -830,7 +833,10 @@ void Lingo::c_neq() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+	if (d1.type == STRING && d2.type == STRING) {
+		d1.u.i = (*d1.u.s != *d2.u.s) ? 1 : 0;
+		d1.type = INT;
+	} else if (g_lingo->alignTypes(d1, d2) == FLOAT) {
 		d1.u.i = (d1.u.f != d2.u.f) ? 1 : 0;
 		d1.type = INT;
 	} else {
