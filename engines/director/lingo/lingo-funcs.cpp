@@ -355,8 +355,11 @@ void Lingo::func_cursor(int c) {
 }
 
 void Lingo::func_beep(int repeats) {
-	for (int r = 1; r <= repeats; r++)
+	for (int r = 1; r <= repeats; r++) {
 		_vm->getSoundManager()->systemBeep();
+		if (r < repeats)
+			g_system->delayMillis(400);
+	}
 }
 
 int Lingo::func_marker(int m) 	{
