@@ -37,8 +37,7 @@ namespace Ultima6 {
 #define TILES_W 5
 #define TILES_H 10
 
-MapEditorView::MapEditorView(Configuration *config)
-	: View(config) {
+MapEditorView::MapEditorView(Configuration *cfg) : View(cfg) {
 	roof_tiles = NULL;
 	map_window = NULL;
 	up_button = NULL;

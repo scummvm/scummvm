@@ -33,21 +33,15 @@ namespace Ultima {
 namespace Ultima6 {
 
 class AdLibSfxManager : public SfxManager {
-private:
-
-
 public:
 	AdLibSfxManager(Configuration *cfg, Audio::Mixer *m);
-	~AdLibSfxManager();
-
-
+	virtual ~AdLibSfxManager();
 
 	bool playSfx(SfxIdType sfx_id, uint8 volume);
 	bool playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume);
 
 private:
 	void playSoundSample(Audio::AudioStream *stream, Audio::SoundHandle *looping_handle, uint8 volume);
-
 };
 
 } // End of namespace Ultima6

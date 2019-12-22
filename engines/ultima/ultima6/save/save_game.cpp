@@ -20,11 +20,6 @@
  *
  */
 
-//#include <list>
-//#include <cassert>
-
-
-
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/files/nuvie_io.h"
@@ -274,7 +269,7 @@ bool SaveGame::load_objlist() {
 
 	scroll->display_string("\nGame Loaded\n\n");
 
-	scroll->init((char *)player->get_name());
+	scroll->init(player->get_name());
 
 	scroll->display_prompt();
 
@@ -581,7 +576,7 @@ void SaveGame::update_objlist_for_new_game_u6() {
 	if (len > 13)
 		len = 13;
 
-	objlist.writeBuf((unsigned char *)name.c_str(), len + 1);
+	objlist.writeBuf((const unsigned char *)name.c_str(), len + 1);
 
 	objlist.seek(0x1c71); //gender
 
@@ -627,7 +622,7 @@ void SaveGame::update_objlist_for_new_game_se() {
 	if (len > 13)
 		len = 13;
 
-	objlist.writeBuf((unsigned char *)name.c_str(), len + 1);
+	objlist.writeBuf((const unsigned char *)name.c_str(), len + 1);
 
 	int str, dex, intelligence;
 	config->value("config/newgamedata/str", str, 0xf);
@@ -661,7 +656,7 @@ void SaveGame::update_objlist_for_new_game_md() {
 	if (len > 13)
 		len = 13;
 
-	objlist.writeBuf((unsigned char *)name.c_str(), len + 1);
+	objlist.writeBuf((const unsigned char *)name.c_str(), len + 1);
 
 	int str, dex, intelligence;
 	config->value("config/newgamedata/str", str, 0xf);

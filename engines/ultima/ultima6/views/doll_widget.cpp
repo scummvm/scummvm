@@ -20,14 +20,12 @@
  *
  */
 
-//#include <cassert>
 // FIX need to subclass this class for U6, MD & SE
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/files/u6_lib_n.h"
 #include "ultima/ultima6/files/u6_shape.h"
-
 #include "ultima/ultima6/core/msg_scroll.h"
 #include "ultima/ultima6/core/event.h"
 
@@ -48,17 +46,18 @@ namespace Ultima6 {
 #define ACTION_BUTTON 3
 #define DRAG_BUTTON 1
 
-static Common::Rect item_hit_rects[8] = { {24, 0, 16, 16}, // ACTOR_HEAD
-	{ 0, 8, 16, 16}, // ACTOR_NECK
-	{48, 8, 16, 16}, // ACTOR_BODY
-	{ 0, 24, 16, 16}, // ACTOR_ARM
-	{48, 24, 16, 16}, // ACTOR_ARM_2
-	{ 0, 40, 16, 16}, // ACTOR_HAND
-	{48, 40, 16, 16}, // ACTOR_HAND_2
-	{24, 48, 16, 16}
-}; // ACTOR_FOOT
+static Common::Rect item_hit_rects[8] = {
+	Common::Rect(24, 0,  24 + 16,  0 + 16), // ACTOR_HEAD
+	Common::Rect( 0, 8,   0 + 16,  8 + 16), // ACTOR_NECK
+	Common::Rect(48, 8,  48 + 16,  8 + 16), // ACTOR_BODY
+	Common::Rect( 0, 24,  0 + 16, 24 + 16), // ACTOR_ARM
+	Common::Rect(48, 24, 48 + 16, 24 + 16), // ACTOR_ARM_2
+	Common::Rect( 0, 40,  0 + 16, 40 + 16), // ACTOR_HAND
+	Common::Rect(48, 40, 48 + 16, 40 + 16), // ACTOR_HAND_2
+	Common::Rect(24, 48, 24 + 16, 48 + 16)  // ACTOR_FOOT
+}; 
 
-static const unsigned char gump_blocked_tile_data[] = {
+static const byte gump_blocked_tile_data[] = {
 	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
 	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
 	170, 170, 170, 170, 64, 178, 55, 54, 54, 55, 178, 64, 170, 170, 170, 170,
@@ -77,7 +76,7 @@ static const unsigned char gump_blocked_tile_data[] = {
 	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170
 };
 
-static const unsigned char gump_empty_tile_data[] = {
+static const byte gump_empty_tile_data[] = {
 	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
 	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
 	170, 170, 170, 170, 64, 178, 55, 54, 54, 55, 178, 64, 170, 170, 170, 170,

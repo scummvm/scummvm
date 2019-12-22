@@ -20,7 +20,6 @@
  *
  */
 
-//#include <cassert>
 #include "ultima/shared/std/containers.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/actors/actor.h"
@@ -87,7 +86,7 @@ bool PartyPathFinder::is_contiguous(uint32 member_num) {
 /* Returns in rel_x and rel_y the direction a character needs to move to get
  * closer to their target. */
 void PartyPathFinder::get_target_dir(uint32 p, sint8 &rel_x, sint8 &rel_y) {
-	MapCoord leader_loc = party->get_leader_location();
+	//MapCoord leader_loc = party->get_leader_location();
 	MapCoord target_loc = party->get_formation_coords(p);
 	MapCoord member_loc = party->get_location(p);
 
@@ -324,7 +323,7 @@ bool PartyPathFinder::try_all_directions(uint32 p, MapCoord target_loc) {
 	// now try any move possible (don't bother if already contiguous)
 	if (!is_contiguous(p))
 		for (uint32 dir = 0; dir < 8; dir++) {
-			MapCoord dest = member_loc.abs_coords(to_leader_x, to_leader_y);
+			//MapCoord dest = member_loc.abs_coords(to_leader_x, to_leader_y);
 			if (move_member(p, to_leader_x, to_leader_y))
 				return true;
 			DirFinder::get_adjacent_dir(to_leader_x, to_leader_y, rot);

@@ -96,7 +96,7 @@ void TMXMap::writeLayer(NuvieIOFileWrite *tmx, uint16 sideLength, std::string la
 			if (bitsPerTile == 8) { //base map is uint8
 				gid = (uint16)data[my * sideLength + mx] + 1 + gidOffset;
 			} else { //everything else is uint16
-				gid = ((uint16 *)data)[my * sideLength + mx] + 1 + gidOffset;
+				gid = ((const uint16 *)data)[my * sideLength + mx] + 1 + gidOffset;
 			}
 			snprintf(buf, sizeof(buf), "%d", gid);
 			tmx->writeBuf((const unsigned char *)buf, strlen(buf));

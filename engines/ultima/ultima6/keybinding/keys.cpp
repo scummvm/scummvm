@@ -52,7 +52,7 @@ public:
 typedef void(*ActionFunc)(int const *);
 
 struct Action {
-	const char *const s;
+	const char *s;
 	ActionFunc func; // called on keydown
 	const char *desc;
 	enum {
@@ -64,7 +64,7 @@ struct Action {
 	ActionKeyType action_key_type;
 };
 
-Action NuvieActions[] = {
+const Action NuvieActions[] = {
 	{ "WALK_WEST", ActionWalkWest, "Walk west", Action::normal_keys, true, WEST_KEY  },
 	{ "WALK_EAST", ActionWalkEast, "Walk east", Action::normal_keys, true, EAST_KEY },
 	{ "WALK_NORTH", ActionWalkNorth, "Walk north", Action::normal_keys, true, NORTH_KEY },

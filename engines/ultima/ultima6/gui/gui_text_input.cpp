@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-GUI_TextInput:: GUI_TextInput(int x, int y, uint8 r, uint8 g, uint8 b, char *str,
+GUI_TextInput:: GUI_TextInput(int x, int y, uint8 r, uint8 g, uint8 b, const char *str,
                               GUI_Font *gui_font, uint16 width, uint16 height, GUI_CallBack *callback)
 	: GUI_Text(x, y, r, g, b, gui_font, width) {
 	max_height = height;

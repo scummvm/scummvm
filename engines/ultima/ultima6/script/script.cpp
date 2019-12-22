@@ -126,7 +126,7 @@ struct ScriptObjRef {
 static iAVLTree *script_obj_list;
 
 static iAVLKey get_iAVLKey(const void *item) {
-	return ((ScriptObjRef *)item)->key;
+	return ((const ScriptObjRef *)item)->key;
 }
 
 static NuvieIO *g_objlist_file = NULL;
@@ -4301,7 +4301,7 @@ static int nscript_objs_at_loc(lua_State *L) {
 	if (nscript_get_location_from_args(L, &x, &y, &z) == false)
 		return 0;
 
-	if (x >= 0 &&  x < 1024 && y >= 0 && y < 1024 && z >= 0 && z <= 5) {
+	if (x < 1024 && y < 1024 && z <= 5) {
 		U6LList *obj_list = obj_manager->get_obj_list(x, y, z);
 		if (obj_list != NULL)
 			link = obj_list->start();

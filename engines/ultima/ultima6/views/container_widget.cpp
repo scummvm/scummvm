@@ -20,11 +20,9 @@
  *
  */
 
-//#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/conf/configuration.h"
-
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/screen/game_palette.h"
 #include "ultima/ultima6/views/container_widget.h"
@@ -38,7 +36,6 @@
 #include "ultima/ultima6/core/player.h"
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/script/script.h"
-
 #include "ultima/ultima6/views/inventory_font.h"
 #include "ultima/ultima6/views/view_manager.h"
 
@@ -166,7 +163,7 @@ void ContainerWidget::display_inventory_list() {
 
 			//tile = tile_manager->get_tile(actor->indentory_tile());
 
-			screen->blit(area.left + j * 16, area.top + i * 16, (unsigned char *)empty_tile->data, 8, 16, 16, 16, true);
+			screen->blit(area.left + j * 16, area.top + i * 16, (const unsigned char *)empty_tile->data, 8, 16, 16, 16, true);
 			if (tile != empty_tile) {
 				//draw qty string for stackable items
 				if (obj_manager->is_stackable(obj))
@@ -177,7 +174,7 @@ void ContainerWidget::display_inventory_list() {
 					display_special_char(area.left + j * 16, area.top + i * 16, obj->quality);
 			}
 
-			screen->blit(area.left + j * 16, area.top + i * 16, (unsigned char *)tile->data, 8, 16, 16, 16, true);
+			screen->blit(area.left + j * 16, area.top + i * 16, (const unsigned char *)tile->data, 8, 16, 16, 16, true);
 		}
 	}
 }

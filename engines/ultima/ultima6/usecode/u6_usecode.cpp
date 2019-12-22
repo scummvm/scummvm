@@ -24,7 +24,6 @@
 #include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/misc/map_entity.h"
-
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/views/view.h"
 #include "ultima/ultima6/views/view_manager.h"
@@ -49,12 +48,9 @@
 #include "ultima/ultima6/keybinding/keys.h"
 #include "ultima/ultima6/core/background.h"
 #include "ultima/ultima6/core/command_bar.h"
-
 #include "ultima/ultima6/usecode/u6_usecode.h"
 #include "ultima/ultima6/usecode/u6_object_types.h"
 #include "ultima/ultima6/actors/u6_work_types.h"
-
-//#include <math.h> // floorf (used in part which I think ought to be moved out of here)
 
 namespace Ultima {
 namespace Ultima6 {
@@ -2535,7 +2531,7 @@ bool U6UseCode::enter_dungeon(Obj *obj, UseCodeEvent ev) {
 		return true;
 
 	if (obj->quality < 21)
-		dungeon_name = (char *)u6_dungeons[obj->quality];
+		dungeon_name = u6_dungeons[obj->quality];
 	if (obj->quality >= 1 && obj->quality <= 7)
 		prefix = "dungeon ";
 	else if (obj->quality >= 9 && obj->quality <= 11)

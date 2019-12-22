@@ -226,7 +226,7 @@ int GUI_Widget::HitRect(int x, int y) {
 	return (HitRect(x, y, area));
 }
 
-int GUI_Widget::HitRect(int x, int y, Common::Rect &rect) {
+int GUI_Widget::HitRect(int x, int y, const Common::Rect &rect) {
 	int hit;
 
 	hit = 1;

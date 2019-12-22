@@ -1647,7 +1647,7 @@ byte *Screen::copy_area32(Common::Rect *area, uint16 down_scale) {
 // surface -> byte *
 // (NULL area = entire screen)
 byte *Screen::copy_area(Common::Rect *area, byte *buf) {
-	Common::Rect screen_area = { 0, 0, (int16)surface->w, (int16)surface->h };
+	Common::Rect screen_area(0, 0, surface->w, surface->h);
 	if (!area)
 		area = &screen_area;
 
@@ -1662,7 +1662,7 @@ byte *Screen::copy_area(Common::Rect *area, byte *buf) {
 // (NULL area = entire screen)
 void Screen::restore_area(byte *pixels, Common::Rect *area,
                           byte *target, Common::Rect *target_area, bool free_src) {
-	Common::Rect screen_area = { 0, 0, (int16)surface->w, (int16)surface->h };
+	Common::Rect screen_area(0, 0, surface->w, surface->h);
 	if (!area)
 		area = &screen_area;
 
@@ -1680,21 +1680,21 @@ byte *Screen::copy_area32(Common::Rect *area, byte *buf) {
 	}
 	uint32 *dest = copied;
 	uint32 *src = (uint32 *)surface->pixels;
-	uint16 src_x_off = abs(area->left);
-	uint16 src_y_off = abs(area->top);
+	uint16 src_x_off = ABS(area->left);
+	uint16 src_y_off = ABS(area->top);
 	uint16 src_w = area->width();
 	uint16 src_h = area->height();
 
 	if (area->left < 0) {
 		src_x_off = 0;
 		src_w += area->left;
-		dest += abs(area->left);
+		dest += ABS(area->left);
 	}
 
 	if (area->top < 0) {
 		src_y_off = 0;
 		src_h += area->top;
-		dest += (area->width() * abs(area->top));
+		dest += (area->width() * ABS(area->top));
 	}
 
 	if (src_x_off + src_w > (int)surface->w) {
@@ -1745,21 +1745,21 @@ byte *Screen::copy_area16(Common::Rect *area, byte *buf) {
 	}
 	uint16 *dest = copied;
 	uint16 *src = (uint16 *)surface->pixels;
-	uint16 src_x_off = abs(area->left);
-	uint16 src_y_off = abs(area->top);
+	uint16 src_x_off = ABS(area->left);
+	uint16 src_y_off = ABS(area->top);
 	uint16 src_w = area->width();
 	uint16 src_h = area->height();
 
 	if (area->left < 0) {
 		src_x_off = 0;
 		src_w += area->left;
-		dest += abs(area->left);
+		dest += ABS(area->left);
 	}
 
 	if (area->top < 0) {
 		src_y_off = 0;
 		src_h += area->top;
-		dest += (area->width() * abs(area->top));
+		dest += (area->width() * ABS(area->top));
 	}
 
 	if (src_x_off + src_w > (int)surface->w) {

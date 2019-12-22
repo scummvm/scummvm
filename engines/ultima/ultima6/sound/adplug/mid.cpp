@@ -459,6 +459,9 @@ bool CmidPlayer::update() {
 				midiprintf("stop");
 		}
 
+	// FIXME: current_status is unused?
+	(void)current_status[0];
+
 	if (ret)
 		return true;
 	else
