@@ -494,9 +494,9 @@ void ScummEngine::fakeBidiString(char *ltext, bool ignoreVerb) {
 			char last = '\0';
 			for (int j = 0; j < ipos; j++) {
 				char *curr = text + start + ipos - j - 1;
-				if (Common::isDigit(*curr)
-						|| (*curr == ',' && j + 1 < ipos && Common::isDigit(*(curr - 1)) && Common::isDigit(last))
-						|| (*curr == '-' && (j + 1 == ipos || Common::isSpace(*(curr - 1))) && Common::isDigit(last))) {
+				if (Common::isDigit(*curr) ||
+						(*curr == ',' && j + 1 < ipos && Common::isDigit(*(curr - 1)) && Common::isDigit(last)) ||
+						(*curr == '-' && (j + 1 == ipos || Common::isSpace(*(curr - 1))) && Common::isDigit(last))) {
 					++sthead;
 					stack[sthead] = *curr;
 				} else {
