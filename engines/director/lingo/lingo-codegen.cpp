@@ -214,14 +214,7 @@ void Lingo::cleanLocalVars() {
 	g_lingo->_localvars = 0;
 }
 
-Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix, int end, bool removeCode) {
-	if (prefix)
-		name = *prefix + "-" + name;
-
-	debugC(1, kDebugLingoCompile, "define(\"%s\"(len: %d), %d, %d, \"%s\", %d) entity: %d",
-			name.c_str(), _currentScript->size() - 1, start, nargs, (prefix ? prefix->c_str() : ""),
-			end, _currentEntityId);
-
+Symbol *Lingo::define(Common::String &name, int nargs, ScriptData *code) {
 	Symbol *sym = getHandler(name);
 	if (sym == NULL) { // Create variable if it was not defined
 		sym = new Symbol;
@@ -241,18 +234,9 @@ Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String
 		delete sym->u.defn;
 	}
 
-	if (end == -1)
-		end = _currentScript->size();
-
-	sym->u.defn = new ScriptData(&(*_currentScript)[start], end - start);
+	sym->u.defn = code;
 	sym->nargs = nargs;
 	sym->maxArgs = nargs;
-
-	// Now remove all defined code from the _currentScript
-	if (removeCode)
-		for (int i = end - 1; i >= start; i--) {
-			_currentScript->remove_at(i);
-		}
 
 	if (debugChannelSet(1, kDebugLingoCompile)) {
 		uint pc = 0;
@@ -263,6 +247,30 @@ Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String
 		}
 		debugC(1, kDebugLingoCompile, "<end define code>");
 	}
+
+	return sym;
+}
+
+Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix, int end, bool removeCode) {
+	if (prefix)
+		name = *prefix + "-" + name;
+
+	debugC(1, kDebugLingoCompile, "define(\"%s\"(len: %d), %d, %d, \"%s\", %d) entity: %d",
+			name.c_str(), _currentScript->size() - 1, start, nargs, (prefix ? prefix->c_str() : ""),
+			end, _currentEntityId);
+
+	if (end == -1)
+		end = _currentScript->size();
+
+	ScriptData *code = new ScriptData(&(*_currentScript)[start], end - start);
+	Symbol *sym = define(name, nargs, code);
+
+	// Now remove all defined code from the _currentScript
+	if (removeCode)
+		for (int i = end - 1; i >= start; i--) {
+			_currentScript->remove_at(i);
+		}
+
 
 	return sym;
 }

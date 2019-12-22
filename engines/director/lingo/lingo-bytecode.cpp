@@ -369,7 +369,6 @@ void Lingo::cb_v4theentityassign() {
 	}
 }
 
-
 void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id) {
 	debugC(1, kDebugLingoCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(type), id);
 
@@ -513,11 +512,11 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		_currentScriptContext->functions.push_back(new ScriptData);
 		_currentScript = _currentScriptContext->functions[_currentScriptFunction];
 
-		/*uint16 nameIndex = */stream.readUint16();
+		uint16 nameIndex = stream.readUint16();
 		stream.readUint16();
 		uint32 length = stream.readUint32();
 		uint32 startOffset = stream.readUint32();
-		/*uint16 argCount = */stream.readUint16();
+		uint16 argCount = stream.readUint16();
 		/*uint32 argOffset = */stream.readUint32();
 		/*uint16 varCount = */stream.readUint16();
 		/*uint32 varNamesOffset = */stream.readUint32();
@@ -637,6 +636,14 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			} else {
 				warning("Jump of %d from position %d is outside the function!", jump, originalJumpAddressLoc);
 			}
+		}
+
+		// Attach to handlers
+		if (nameIndex < _namelist.size()) {
+			g_lingo->define(_namelist[nameIndex], argCount, new ScriptData(&(*_currentScript)[0], _currentScript->size()));
+
+		} else {
+			warning("Function has unknown name id %d, skipping define", nameIndex);
 		}
 	}
 	free(codeStore);

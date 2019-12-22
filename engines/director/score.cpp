@@ -175,6 +175,18 @@ void Score::loadArchive() {
 		}
 	}
 
+	// Try to load script name lists
+	if (_vm->getVersion() >= 4) {
+		Common::Array<uint16> lnam =  _movieArchive->getResourceIDList(MKTAG('L','n','a','m'));
+		if (lnam.size() > 0) {
+			debugC(2, kDebugLoading, "****** Loading %d Lnam resources", lnam.size());
+
+			for (Common::Array<uint16>::iterator iterator = lnam.begin(); iterator != lnam.end(); ++iterator) {
+				loadLingoNames(*_movieArchive->getResource(MKTAG('L','n','a','m'), *iterator));
+			}
+		}
+	}
+
 	Common::Array<uint16> vwci = _movieArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'I'));
 	if (vwci.size() > 0) {
 		debugC(2, kDebugLoading, "****** Loading %d CastInfos", vwci.size());
@@ -196,19 +208,6 @@ void Score::loadArchive() {
 
 	setSpriteCasts();
 	loadSpriteImages(false);
-
-	// Try to load script name lists
-	if (_vm->getVersion() >= 4) {
-		Common::Array<uint16> lnam =  _movieArchive->getResourceIDList(MKTAG('L','n','a','m'));
-		if (lnam.size() > 0) {
-			debugC(2, kDebugLoading, "****** Loading %d Lnam resources", lnam.size());
-
-			for (Common::Array<uint16>::iterator iterator = lnam.begin(); iterator != lnam.end(); ++iterator) {
-				loadLingoNames(*_movieArchive->getResource(MKTAG('L','n','a','m'), *iterator));
-			}
-		}
-	}
-
 
 	// Now process STXTs
 	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
