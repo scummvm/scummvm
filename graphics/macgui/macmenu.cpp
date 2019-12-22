@@ -957,10 +957,10 @@ bool MacMenu::keyEvent(Common::Event &event) {
 
 bool MacMenu::mouseClick(int x, int y) {
 	if (_bbox.contains(x, y)) {
-		for (uint i = 0; i < _items.size(); i++)
+		for (uint i = 0; i < _items.size(); i++) {
 			if (_items[i]->bbox.contains(x, y)) {
 				if ((uint)_activeItem == i)
-					return false;
+					return true; // We catch the event but do not do anything
 
 				if (_activeItem != -1) { // Restore background
 					if (_items[_activeItem]->submenu != nullptr) {
@@ -984,26 +984,27 @@ bool MacMenu::mouseClick(int x, int y) {
 					_menustack.push_back(_items[_activeItem]->submenu);
 					_items[_activeItem]->submenu->highlight = -1;
 				}
-
-				if (!_menuActivated)
-					_wm->activateMenu();
-
-				_menuActivated = true;
-
-				_contentIsDirty = true;
-				_wm->setFullRefresh(true);
-
-				if (_wm->_mode & kWMModalMenuMode) {
-					draw(_wm->_screen);
-					eventLoop();
-
-					// Do not do full refresh as we took care of restoring
-					// the screen. WM is not even aware we were drawing.
-					_wm->setFullRefresh(false);
-				}
-
-				return true;
 			}
+		}
+
+		if (!_menuActivated)
+			_wm->activateMenu();
+
+		_menuActivated = true;
+
+		_contentIsDirty = true;
+		_wm->setFullRefresh(true);
+
+		if (_wm->_mode & kWMModalMenuMode) {
+			draw(_wm->_screen);
+			eventLoop();
+
+			// Do not do full refresh as we took care of restoring
+			// the screen. WM is not even aware we were drawing.
+			_wm->setFullRefresh(false);
+		}
+
+		return true;
 	}
 
 	if (!_menuActivated)
