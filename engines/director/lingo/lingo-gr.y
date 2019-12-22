@@ -406,7 +406,7 @@ expr: simpleexpr { $$ = $1; }
 	| tME								{ g_lingo->codeMe(nullptr, 0); }
 	;
 
-reference: 	RBLTINONEARG expr		{
+reference: 	RBLTINONEARG simpleexpr	{
 		g_lingo->codeFunc($1, 1);
 		delete $1; }
 	;
