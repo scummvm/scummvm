@@ -276,10 +276,17 @@ struct ColorMasks<8888> {
 		kGreenBits  = 8,
 		kBlueBits   = 8,
 
+#ifdef __3DS__ // 3DS uses RGBA8 rather than ARGB8
+		kAlphaShift = 0,
+		kRedShift   = kGreenBits+kBlueBits+kAlphaBits,
+		kGreenShift = kBlueBits+kAlphaBits,
+		kBlueShift  = kAlphaBits,
+#else
 		kAlphaShift = kRedBits+kGreenBits+kBlueBits,
 		kRedShift   = kGreenBits+kBlueBits,
 		kGreenShift = kBlueBits,
 		kBlueShift  = 0,
+#endif
 
 		kAlphaMask = ((1 << kAlphaBits) - 1) << kAlphaShift,
 		kRedMask   = ((1 << kRedBits) - 1) << kRedShift,
