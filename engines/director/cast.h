@@ -145,6 +145,7 @@ public:
 	uint16 _palinfo1, _palinfo2, _palinfo3;
 
 	Common::String _ftext;
+	Common::String _ptext;
 	void importStxt(const Stxt *stxt);
 	void importRTE(byte* text);
 	CachedMacText *_cachedMacText;

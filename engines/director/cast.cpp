@@ -215,6 +215,7 @@ void TextCast::importStxt(const Stxt *stxt) {
 	_palinfo2 = stxt->_palinfo2;
 	_palinfo3 = stxt->_palinfo3;
 	_ftext = stxt->_ftext;
+	_ptext = stxt->_ptext;
 
 	_cachedMacText->setStxt(this);
 }
@@ -223,7 +224,7 @@ void TextCast::importRTE(byte *text) 	{
 	//assert(rteList.size() == 3);
 	//child0 is probably font data.
 	//child1 is the raw text.
-	_ftext = Common::String((char*)text);
+	_ptext = _ftext = Common::String((char*)text);
 	//child2 is positional?
 }
 
@@ -232,7 +233,7 @@ void TextCast::setText(const char *text) {
 	if (_ftext.equals(text))
 		return;
 
-	_ftext = text;
+	_ptext = _ftext = text;
 
 	_cachedMacText->forceDirty();
 }
