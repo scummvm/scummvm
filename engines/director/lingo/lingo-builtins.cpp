@@ -1542,8 +1542,12 @@ void Lingo::b_union(int nargs) {
 // Sound
 ///////////////////
 void Lingo::b_beep(int nargs) {
-	Datum d = g_lingo->pop();
-	g_lingo->func_beep(d.u.i);
+	int repeat = 1;
+	if (nargs == 1) {
+		Datum d = g_lingo->pop();
+		repeat = d.u.i;
+	}
+	g_lingo->func_beep(repeat);
 }
 
 void Lingo::b_mci(int nargs) {
