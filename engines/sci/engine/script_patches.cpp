@@ -7770,6 +7770,47 @@ static const uint16 phant1ChapelWestExitPatch[] = {
 	PATCH_END
 };
 
+// When reviewing the chapter 7 chase, the game fails to reset the flag that's
+//  set when Adrian stabs Don and escapes the nursery. This can only happen once
+//  and so the stale flag causes the review feature to play the wrong animation
+//  of Don overpowering Adrian instead of Adrian stabbing Don and escaping.
+//
+// We fix this as Sierra did in the Italian version by clearing flag 18 during
+//  the chase initialization.
+//
+// Applies to: All versions except Italian
+// Responsible method: sChaseBegin:changeState(0)
+static const uint16 phant1ResetStabDonFlagSignature[] = {
+	SIG_MAGICDWORD,
+	0x78,                           // push1
+	0x38, SIG_UINT16(0x019f),       // pushi 019f
+	SIG_ADDTOOFFSET(+4),
+	0x7e, SIG_ADDTOOFFSET(+2),      // line
+	0x78,                           // push1
+	0x39, 0x7b,                     // pushi 7b
+	0x45, 0x02, SIG_UINT16(0x0002), // callb proc0_2 [ clear flag 123 ]
+	0x7e, SIG_ADDTOOFFSET(+2),      // line
+	0x89, 0x0c,                     // lsg 0c
+	0x34, SIG_UINT16(0x0384),       // ldi 0384
+	0x1a,                           // eq?
+	0x18,                           // not
+	SIG_END,
+};
+
+static const uint16 phant1ResetStabDonFlagPatch[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x78,                               // push1
+	0x39, 0x7b,                         // pushi 7b
+	0x45, 0x02, PATCH_UINT16(0x0002),   // callb proc0_2 [ clear flag 123 ]
+	0x78,                               // push1
+	0x39, 0x12,                         // pushi 12
+	0x45, 0x02, PATCH_UINT16(0x0002),	// callb proc0_2 [ clear flag 18 ]
+	0x89, 0x0c,                         // lsg 0c
+	0x34, PATCH_UINT16(0x0384),         // ldi 0384
+	0x1c,                               // ne?
+	PATCH_END
+};
+
 // The censorship for videos 1920 and 2020 are out of sync and the latter has
 //  an incorrect coordinate. The frame numbers for the blobs are wrong and so
 //  they appear during normal frames but not during the gore. These videos play
@@ -7839,6 +7880,7 @@ static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true, 20200, "fix broken rat init in sEnterFromAlcove",     1, phant1RatSignature,              phant1RatPatch },
 	{  true, 20200, "fix chapter 5 wine cask hotspot",             1, phant1WineCaskHotspotSignature,  phant1WineCaskHotspotPatch },
 	{  true, 45950, "fix chase file deletion",                     1, phant1DeleteChaseFileSignature,  phant1DeleteChaseFilePatch },
+	{  true, 45950, "reset stab don flag",                         1, phant1ResetStabDonFlagSignature, phant1ResetStabDonFlagPatch },
 	{  true, 45951, "copy chase file instead of rename",           1, phant1CopyChaseFileSignature,    phant1CopyChaseFilePatch },
 	{  true, 46980, "fix chapel chase west exit",                  1, phant1ChapelWestExitSignature,   phant1ChapelWestExitPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
