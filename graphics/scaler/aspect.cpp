@@ -205,8 +205,7 @@ void makeRectStretchable(int &x, int &y, int &w, int &h, bool interpolate) {
  * srcY + height - 1, and it should be stretched to Y coordinates srcY
  * through real2Aspect(srcY + height - 1).
  */
- 
-template<typename ColorMask>
+
 int stretch200To240Nearest(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
 	int maxDstY = real2Aspect(origSrcY + height - 1);
 	int y;
@@ -224,7 +223,6 @@ int stretch200To240Nearest(uint8 *buf, uint32 pitch, int width, int height, int 
 	return 1 + maxDstY - srcY;
 }
 
- 
 template<typename ColorMask>
 int stretch200To240Interpolated(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
 	int maxDstY = real2Aspect(origSrcY + height - 1);
@@ -262,8 +260,8 @@ int stretch200To240Interpolated(uint8 *buf, uint32 pitch, int width, int height,
 }
 
 int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY, bool interpolate) {
-	extern int gBitFormat;
 #if ASPECT_MODE != kSuperFastAndUglyAspectMode
+	extern int gBitFormat;
 	if (interpolate) {
 		if (gBitFormat == 565)
 			return stretch200To240Interpolated<Graphics::ColorMasks<565> >(buf, pitch, width, height, srcX, srcY, origSrcY);
@@ -271,10 +269,7 @@ int stretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, i
 			return stretch200To240Interpolated<Graphics::ColorMasks<555> >(buf, pitch, width, height, srcX, srcY, origSrcY);
 	} else {
 #endif
-		if (gBitFormat == 565)
-			return stretch200To240Nearest<Graphics::ColorMasks<565> >(buf, pitch, width, height, srcX, srcY, origSrcY);
-		else // gBitFormat == 555
-			return stretch200To240Nearest<Graphics::ColorMasks<555> >(buf, pitch, width, height, srcX, srcY, origSrcY);
+		return stretch200To240Nearest(buf, pitch, width, height, srcX, srcY, origSrcY);
 #if ASPECT_MODE != kSuperFastAndUglyAspectMode
 	}
 #endif
