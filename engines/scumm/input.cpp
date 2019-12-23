@@ -426,6 +426,8 @@ void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 			ConfMan.setBool("speech_mute", true);
 			ConfMan.setBool("subtitles", true);
 			break;
+		default:
+			break;
 		}
 
 		// We need to sync the current sound settings here to make sure that

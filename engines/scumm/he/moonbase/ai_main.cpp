@@ -2777,6 +2777,9 @@ int AI::getMaxCollectors(int pool) {
 
 	case 63:
 		return 2;
+
+	default:
+		break;
 	}
 
 	return 0;

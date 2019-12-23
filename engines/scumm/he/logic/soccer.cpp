@@ -601,31 +601,35 @@ int LogicHEsoccer::op_1014(int32 srcX, int32 srcY, int32 srcZ, int32 velX, int32
 		adjustedVelZ = (double)velZ * (double)vecNumerator / (double)vecDenom / 100.0;
 		break;
 	case 2:
-		// length of movement vector
-		double v15 = vectorLength((double)velX * (double)vecNumerator / (double)vecDenom, (double)velY * (double)vecNumerator / (double)vecDenom, (double)velZ * (double)vecNumerator / (double)vecDenom);
+		{
+			// length of movement vector
+			double v15 = vectorLength((double)velX * (double)vecNumerator / (double)vecDenom, (double)velY * (double)vecNumerator / (double)vecDenom, (double)velZ * (double)vecNumerator / (double)vecDenom);
 
-		if (v15 != 0.0) {
-			// add the (scaled) movement vector to the input
-			double v26 = (double)ABS(velX) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
-			srcX = (int)((double)srcX + v26);
-			double v25 = (double)ABS(velY) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
-			srcY = (int)((double)srcY + v25);
-			double v24 = (double)ABS(velZ) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
-			srcZ = (int)((double)srcZ + v24);
+			if (v15 != 0.0) {
+				// add the (scaled) movement vector to the input
+				double v26 = (double)ABS(velX) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
+				srcX = (int)((double)srcX + v26);
+				double v25 = (double)ABS(velY) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
+				srcY = (int)((double)srcY + v25);
+				double v24 = (double)ABS(velZ) * (double)vecNumerator / (double)vecDenom * 50.0 / v15;
+				srcZ = (int)((double)srcZ + v24);
+			}
+
+			// srcX = (newX / newZ) * 3869
+			startX = (double)srcX / (double)srcZ * 3869.0;
+			// srcY = (newY - (+524 * 100)) / (newZ * 3869 + (+524 * 100)
+			startY = ((double)srcY - _userDataD[524] * 100.0) / (double)srcZ * 3869.0 + _userDataD[524] * 100.0;
+			// srcZ = 3869
+			startZ = 3869.0;
+			// vectorX = (newX - srcX) / 100
+			adjustedVelX = ((double)srcX - startX) / 100.0;
+			// vectorY = (newY - srcY) / 100
+			adjustedVelY = ((double)srcY - startY) / 100.0;
+			// vectorZ = (newZ - 3869 = srcZ) / 100
+			adjustedVelZ = ((double)srcZ - 3869.0) / 100.0;
 		}
-
-		// srcX = (newX / newZ) * 3869
-		startX = (double)srcX / (double)srcZ * 3869.0;
-		// srcY = (newY - (+524 * 100)) / (newZ * 3869 + (+524 * 100)
-		startY = ((double)srcY - _userDataD[524] * 100.0) / (double)srcZ * 3869.0 + _userDataD[524] * 100.0;
-		// srcZ = 3869
-		startZ = 3869.0;
-		// vectorX = (newX - srcX) / 100
-		adjustedVelX = ((double)srcX - startX) / 100.0;
-		// vectorY = (newY - srcY) / 100
-		adjustedVelY = ((double)srcY - startY) / 100.0;
-		// vectorZ = (newZ - 3869 = srcZ) / 100
-		adjustedVelZ = ((double)srcZ - 3869.0) / 100.0;
+		break;
+	default:
 		break;
 	}
 
@@ -697,6 +701,8 @@ int LogicHEsoccer::op_1014(int32 srcX, int32 srcY, int32 srcZ, int32 velX, int32
 					setCollisionOutputData(tmpData, 8, dataArrayId, indexArrayId, (int)startX, (int)startY, (int)startZ, v46, v22, v42, v39, outData);
 					for (int i = 0; i < 10; i++)
 						_internalCollisionOutData[i] = outData[i];
+					break;
+				default:
 					break;
 			}
 		}
@@ -1039,6 +1045,8 @@ void LogicHEsoccer::getPointsForFace(int faceId, float &x1, float &y1, float &z1
 		x4 = objPoints[18];
 		y4 = objPoints[19];
 		z4 = objPoints[20];
+		break;
+	default:
 		break;
 	}
 }

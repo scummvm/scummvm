@@ -680,6 +680,8 @@ void ScummEngine_v2::checkExecVerbs() {
 		case 'l':
 			object = 3;
 			break;
+		default:
+			break;
 		}
 
 		if (object != -1) {

@@ -50,6 +50,7 @@ int32 Insane::enemyInitializer(int num, int32 actor1, int32 actor2, int32 probab
 	case EN_TORQUE:
 		return enemy8initializer(actor1, actor2, probability);
 	case -1:
+	default:
 		// nothing
 		break;
 	}
@@ -81,6 +82,7 @@ int32 Insane::enemyHandler(int num, int32 actor1, int32 actor2, int32 probabilit
 	case EN_BEN:
 		return enemyBenHandler(actor1, actor2, probability);
 	case -1:
+	default:
 		// nothing
 		break;
 	}
@@ -174,6 +176,8 @@ int32 Insane::enemy0handler(int32 actor1, int32 actor2, int32 probability) {
 						_enemyState[EN_ROTT1][4] = 1;
 						prepareScenePropScene(52, 0, 0);
 					}
+					break;
+				default:
 					break;
 				}
 			} else {
@@ -340,6 +344,8 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 						prepareScenePropScene(37, 0, 0);
 					}
 					break;
+				default:
+					break;
 				}
 			} else {
 				switch (_vm->_rnd.getRandomNumber(14)) {
@@ -492,6 +498,8 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 						_enemyState[EN_ROTT3][2] = 1;
 						prepareScenePropScene(27, 0, 0);
 					}
+					break;
+				default:
 					break;
 				}
 			} else {
@@ -664,6 +672,8 @@ int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
 						prepareScenePropScene(8, 0, 0);
 					}
 					break;
+				default:
+					break;
 				}
 				_enHdlVar[EN_VULTF1][7] = _enHdlVar[EN_VULTF1][8];
 			}
@@ -796,6 +806,8 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 						prepareScenePropScene(47, 0, 0);
 					}
 					break;
+				default:
+					break;
 				}
 			} else {
 				if (_actor[actor1].kicking) {
@@ -805,6 +817,8 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 						break;
 					case 9: // Original is 10 here which never happens
 						prepareScenePropScene(45, 0, 0);
+						break;
+					default:
 						break;
 					}
 				} else {
@@ -822,6 +836,8 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 								prepareScenePropScene(43, 0, 0);
 							}
 							break;
+						default:
+							break;
 						}
 					} else {
 						switch (_vm->_rnd.getRandomNumber(14)) {
@@ -836,6 +852,8 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 								_enemyState[EN_VULTM1][1] = 1;
 								prepareScenePropScene(40, 0, 0);
 							}
+							break;
+						default:
 							break;
 						}
 					}
@@ -937,6 +955,8 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 						prepareScenePropScene(12, 0, 0);
 					}
 					break;
+				default:
+					break;
 				}
 			else {
 				if (_actor[actor1].kicking) {
@@ -955,6 +975,8 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 						_enemyState[EN_VULTF2][1] = 1;
 						prepareScenePropScene(10, 0, 0);
 						break;
+					default:
+						break;
 					}
 				} else {
 					switch (_vm->_rnd.getRandomNumber(14)) {
@@ -969,6 +991,8 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 							_enemyState[EN_VULTF2][5] = 1;
 							prepareScenePropScene(14, 0, 0);
 						}
+						break;
+					default:
 						break;
 					}
 				}
@@ -1062,6 +1086,8 @@ int32 Insane::enemy6handler(int32 actor1, int32 actor2, int32 probability) {
 							prepareScenePropScene(22, 0, 0);
 						}
 						break;
+					default:
+						break;
 					}
 					_enHdlVar[EN_VULTM2][1] = 1;
 					goto _label1;
@@ -1100,6 +1126,8 @@ int32 Insane::enemy6handler(int32 actor1, int32 actor2, int32 probability) {
 					_enemyState[EN_VULTF1][6] = 1;
 					prepareScenePropScene(24, 0, 0);
 				}
+				break;
+			default:
 				break;
 			}
 		}
@@ -1450,6 +1478,8 @@ void Insane::actor11Reaction(int32 buttons) {
 
 		_actor[1].x += _actor[1].cursorX / 32;
 		break;
+	default:
+		break;
 	}
 
 	tmpx = _actor[1].x;
@@ -1607,6 +1637,9 @@ void Insane::setEnemyState() {
 	case INV_DUST:
 		_actor[1].weaponClass = 2;
 		_actor[1].act[2].state = 1;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1753,6 +1786,8 @@ void Insane::actor12Reaction(int32 buttons) {
 			case INV_HAND:
 				if (calcBenDamage(1, 0))
 					smlayer_startSfx(73);
+				break;
+			default:
 				break;
 			}
 			smlayer_setActorFacing(1, 2, 21, 180);
@@ -2104,6 +2139,8 @@ void Insane::actor12Reaction(int32 buttons) {
 				break;
 			case EN_VULTF2:
 				smlayer_startVoice(276);
+				break;
+			default:
 				break;
 			}
 		}

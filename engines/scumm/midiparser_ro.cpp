@@ -119,6 +119,9 @@ void MidiParser_RO::parseNextEvent (EventInfo &info) {
 		}
 		info.event = 0xFF;
 		break;
+
+	default:
+		break;
 	}
 }
 

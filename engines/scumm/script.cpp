@@ -1336,6 +1336,8 @@ void ScummEngine_v2::runInputScript(int clickArea, int val, int mode) {
 	case kInventoryClickArea:		// Inventory clicked
 		VAR(VAR_CLICK_OBJECT) = val;
 		break;
+	default:
+		break;
 	}
 
 	memset(args, 0, sizeof(args));

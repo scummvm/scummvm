@@ -186,6 +186,9 @@ int ScummEngine_v72he::readArray(int array, int idx2, int idx1) {
 
 	case kDwordArray:
 		return (int32)READ_LE_UINT32(ah->data + offset * 4);
+
+	default:
+		break;
 	}
 
 	return 0;
@@ -224,6 +227,9 @@ void ScummEngine_v72he::writeArray(int array, int idx2, int idx1, int value) {
 
 	case kDwordArray:
 		WRITE_LE_UINT32(ah->data + offset * 4, value);
+		break;
+
+	default:
 		break;
 	}
 }

@@ -179,6 +179,9 @@ void Square::Write(int Reg, byte Val) {
 		if (!Enabled)
 			Timer = 0;
 		break;
+
+	default:
+		break;
 	}
 	CheckActive();
 }
@@ -297,6 +300,9 @@ void Triangle::Write(int Reg, byte Val) {
 		if (!Enabled)
 			Timer = 0;
 		break;
+
+	default:
+		break;
 	}
 	CheckActive();
 }
@@ -394,6 +400,9 @@ void Noise::Write(int Reg, byte Val) {
 		if (!Enabled)
 			Timer = 0;
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -482,6 +491,8 @@ void APU::WriteReg(int Addr, byte Val) {
 				_square1.Write(4,Val & 0x2);
 				_triangle.Write(4,Val & 0x4);
 				_noise.Write(4,Val & 0x8);
+		break;
+	default:
 		break;
 	}
 }
@@ -1024,6 +1035,9 @@ top:
 			case 0x1B:
 				_mchan[x].envflags = 0x00;
 				_mchan[x].voldelta = -10;
+				break;
+
+			default:
 				break;
 			}
 		}

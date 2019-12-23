@@ -1542,6 +1542,8 @@ void ScummEngine_v2::o2_roomOps() {
 		}
 		_fullRedraw = true;
 		break;
+	default:
+		break;
 	}
 }
 

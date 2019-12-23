@@ -192,6 +192,8 @@ void Player_V1::parseSpeakerChunk() {
 		debug(6, "chunk 3: %d -> %d step %d",
 				_start, _end, _delta);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -239,6 +241,7 @@ void Player_V1::nextSpeakerCmd() {
 		set_mplex(_start);
 		_forced_level = -_forced_level;
 		break;
+
 	case 3:
 		_start = (_start + _delta) & 0xffff;
 		if (_start == _end) {
@@ -250,6 +253,9 @@ void Player_V1::nextSpeakerCmd() {
 		_random_lsr = lsr;
 		set_mplex((_start & lsr) | 0x180);
 		_forced_level = -_forced_level;
+		break;
+
+	default:
 		break;
 	}
 }
@@ -365,6 +371,7 @@ parse_again:
 		debug(6, "chunk 2: %d -> %d step %d",
 			  _start, _end, _delta);
 		break;
+
 	case 3:
 		set_mplex(READ_LE_UINT16(_next_chunk));
 		tmp = READ_LE_UINT16(_next_chunk + 2);
@@ -378,6 +385,9 @@ parse_again:
 		_repeat_ctr = READ_LE_UINT16(_next_chunk + 6);
 		_delta = (int16) READ_LE_UINT16(_next_chunk + 8);
 		_next_chunk += 10;
+		break;
+
+	default:
 		break;
 	}
 }
@@ -438,6 +448,8 @@ void Player_V1::nextPCjrCmd() {
 					}
 				}
 				break;
+			default:
+				break;
 			}
 		}
 		break;
@@ -485,6 +497,7 @@ void Player_V1::nextPCjrCmd() {
 		debug(7, "chunk 2: mplex %d  curve %d", _start, _forced_level);
 		_forced_level = -_forced_level;
 		break;
+
 	case 3:
 		dummy = _channels[3].volume + _delta;
 		if (dummy >= 15) {
@@ -502,6 +515,9 @@ void Player_V1::nextPCjrCmd() {
 		}
 		_delta = READ_LE_UINT16(_next_chunk);
 		_next_chunk += 2;
+		break;
+
+	default:
 		break;
 	}
 }

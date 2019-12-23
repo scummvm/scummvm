@@ -53,6 +53,8 @@ void Insane::procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	case 21:
 		iactScene21(renderBitmap, codecparam, setupsan12, setupsan13, b, size, flags, par1, par2, par3, par4);
 		break;
+	default:
+		break;
 	}
 }
 
@@ -140,6 +142,9 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			smlayer_setFluPalette(_smush_roadrsh3Rip, 0);
 			if (par5 == par6 - 1)
 				smlayer_setFluPalette(_smush_roadrashRip, 0);
+			break;
+		default:
+			break;
 		}
 		break;
 	case 7:
@@ -158,7 +163,11 @@ void Insane::iactScene1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					smlayer_startSfx(86);
 			}
 			break;
+		default:
+			break;
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -335,6 +344,8 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			else
 				setBit(par5);
 			break;
+		default:
+			break;
 		}
 		break;
 	case 6:
@@ -377,7 +388,11 @@ void Insane::iactScene4(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			_roadBranch = true;
 			_iactSceneId = par4;
 			break;
+		default:
+			break;
 		}
+		break;
+	default:
 		break;
 	}
 }
@@ -421,6 +436,8 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			else
 				setBit(par5);
 			break;
+		default:
+			break;
 		}
 		break;
 	case 6:
@@ -462,7 +479,11 @@ void Insane::iactScene6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			_roadBranch = true;
 			_iactSceneId = par4;
 			break;
+		default:
+			break;
 		}
+		break;
+	default:
 		break;
 	}
 }
@@ -508,7 +529,11 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			_objectDetected = true;
 			_mineCaveIsNear = true;
 			break;
+		default:
+			break;
 		}
+		break;
+	default:
 		break;
 	}
 }

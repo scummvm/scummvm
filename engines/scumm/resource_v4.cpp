@@ -89,6 +89,8 @@ void ScummEngine_v4::readIndexFile() {
 			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns)
 				itemsize += 32;
 			break;
+		default:
+			break;
 		}
 		_fileHandle->seek(itemsize - 8, SEEK_CUR);
 	}

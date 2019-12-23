@@ -176,6 +176,9 @@ bool IMuseInternal::isMT32(int sound) {
 			return true;
 		else
 			return false;
+
+	default:
+		break;
 	}
 
 	// Old style 'RO' has equivalent properties to 'ROL'
@@ -214,6 +217,9 @@ bool IMuseInternal::isMIDI(int sound) {
 	case MKTAG('G', 'M', 'D', ' '):
 	case MKTAG('M', 'I', 'D', 'I'): // Occurs in Sam & Max
 		return true;
+
+	default:
+		break;
 	}
 
 	// Old style 'RO' has equivalent properties to 'ROL'
@@ -255,6 +261,9 @@ bool IMuseInternal::supportsPercussion(int sound) {
 	case MKTAG('G', 'M', 'D', ' '):
 	case MKTAG('M', 'I', 'D', 'I'): // Occurs in Sam & Max
 		return true;
+
+	default:
+		break;
 	}
 
 	// Old style 'RO' has equivalent properties to 'ROL'
@@ -501,6 +510,9 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 
 	case IMuse::PROP_PC_SPEAKER:
 		_pcSpeaker = (value != 0);
+		break;
+
+	default:
 		break;
 	}
 
