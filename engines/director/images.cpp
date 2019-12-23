@@ -21,8 +21,6 @@
  */
 
 #include "common/substream.h"
-#include "common/debug.h"
-#include "common/textconsole.h"
 #include "image/codecs/bmp_raw.h"
 
 #include "director/director.h"

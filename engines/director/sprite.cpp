@@ -22,7 +22,6 @@
 
 #include "director/director.h"
 #include "director/cast.h"
-#include "director/score.h"
 #include "director/sprite.h"
 
 namespace Director {
@@ -115,13 +114,13 @@ Sprite::Sprite(const Sprite &sprite) {
 }
 
 Sprite::~Sprite() {
-	if (_bitmapCast) 
+	if (_bitmapCast)
 		delete _bitmapCast;
-	if (_shapeCast) 
+	if (_shapeCast)
 		delete _shapeCast;
-	if (_textCast) 
+	if (_textCast)
 		delete _textCast;
-	if (_buttonCast) 
+	if (_buttonCast)
 		delete _buttonCast;
 }
 

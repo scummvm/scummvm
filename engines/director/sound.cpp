@@ -21,7 +21,6 @@
  */
 
 #include "common/file.h"
-#include "common/system.h"
 
 #include "audio/decoders/wave.h"
 #include "audio/mixer.h"

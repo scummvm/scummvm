@@ -22,7 +22,6 @@
 
 #include "common/file.h"
 #include "common/str-array.h"
-#include "common/debug.h"
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"

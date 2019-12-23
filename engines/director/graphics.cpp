@@ -19,12 +19,10 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-#include "common/events.h"
 #include "common/macresman.h"
 #include "common/system.h"
 #include "engines/util.h"
 
-#include "graphics/palette.h"
 #include "graphics/fonts/macfont.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"

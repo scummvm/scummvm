@@ -21,7 +21,6 @@
  */
 
 #include "common/system.h"
-#include "common/events.h"
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"

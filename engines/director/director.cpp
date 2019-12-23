@@ -27,7 +27,6 @@
 #include "audio/mixer.h"
 
 #include "common/macresman.h"
-#include "graphics/fonts/macfont.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 

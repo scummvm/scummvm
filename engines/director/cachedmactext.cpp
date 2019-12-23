@@ -22,7 +22,6 @@
 
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactext.h"
-#include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
 #include "director/cast.h"

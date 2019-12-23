@@ -23,23 +23,17 @@
 #include "common/system.h"
 #include "common/substream.h"
 
-#include "graphics/font.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/mactext.h"
 #include "graphics/primitives.h"
-#include "image/bmp.h"
 
 #include "director/director.h"
 #include "director/cachedmactext.h"
 #include "director/cast.h"
 #include "director/frame.h"
-#include "director/images.h"
-#include "director/archive.h"
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/util.h"
-#include "director/lingo/lingo.h"
 
 namespace Director {
 

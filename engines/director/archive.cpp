@@ -22,11 +22,10 @@
 
 #include "common/file.h"
 #include "common/substream.h"
-
-#include "director/archive.h"
-#include "director/director.h"
-
 #include "common/macresman.h"
+
+#include "director/director.h"
+#include "director/archive.h"
 
 namespace Director {
 

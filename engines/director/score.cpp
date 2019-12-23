@@ -22,14 +22,11 @@
 
 #include "common/system.h"
 #include "common/config-manager.h"
-#include "common/events.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/substream.h"
 
 #include "engines/util.h"
-#include "graphics/font.h"
-#include "graphics/palette.h"
 #include "graphics/primitives.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
@@ -40,7 +37,6 @@
 #include "director/images.h"
 #include "director/score.h"
 #include "director/frame.h"
-#include "director/archive.h"
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/stxt.h"
