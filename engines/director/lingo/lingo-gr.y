@@ -98,7 +98,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<s> FBLTIN FBLTINNOARGS FBLTINONEARG FBLTINARGLIST RBLTIN RBLTINONEARG
 %token<s> ID STRING HANDLER SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL tMETHOD
-%token tDOWN tELSE tELSIF tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
+%token tDOWN tELSE tELSIF tEXIT tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tOPEN tPLAY tDONE tINSTANCE
 %token tGE tLE tEQ tNEQ tAND tOR tNOT tMOD
@@ -461,11 +461,11 @@ instancelist: ID				{ g_lingo->code1(g_lingo->c_instance); g_lingo->codeString($
 gotofunc: tGO tLOOP				{ g_lingo->code1(g_lingo->c_gotoloop); }
 	| tGO tNEXT					{ g_lingo->code1(g_lingo->c_gotonext); }
 	| tGO tPREVIOUS				{ g_lingo->code1(g_lingo->c_gotoprevious); }
-	| tGO gotoframe 			{
+	| tGO simpleexpr 			{
 		g_lingo->code1(g_lingo->c_intpush);
 		g_lingo->codeInt(1);
 		g_lingo->code1(g_lingo->c_goto); }
-	| tGO gotoframe gotomovie	{
+	| tGO simpleexpr gotomovie	{
 		g_lingo->code1(g_lingo->c_intpush);
 		g_lingo->codeInt(3);
 		g_lingo->code1(g_lingo->c_goto); }
@@ -475,20 +475,16 @@ gotofunc: tGO tLOOP				{ g_lingo->code1(g_lingo->c_gotoloop); }
 		g_lingo->code1(g_lingo->c_goto); }
 	;
 
-gotoframe: tFRAME expr
-	| expr
-	;
-
 gotomovie: tOF tMOVIE expr
 	| tMOVIE expr
 	;
 
 playfunc: tPLAY tDONE			{ g_lingo->code1(g_lingo->c_playdone); }
-	| tPLAY gotoframe 			{
+	| tPLAY simpleexpr 			{
 		g_lingo->code1(g_lingo->c_intpush);
 		g_lingo->codeInt(1);
 		g_lingo->code1(g_lingo->c_play); }
-	| tPLAY gotoframe gotomovie	{
+	| tPLAY simpleexpr gotomovie	{
 		g_lingo->code1(g_lingo->c_intpush);
 		g_lingo->codeInt(3);
 		g_lingo->code1(g_lingo->c_play); }

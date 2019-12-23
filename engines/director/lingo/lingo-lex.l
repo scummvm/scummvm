@@ -121,8 +121,8 @@ whitespace [\t ]
 	}
 (?i:factory)	{ count(); return tFACTORY; }
 (?i:exit)		{ count(); return tEXIT; }
-(?i:frame)		{ count(); return tFRAME; }
 (?i:global)		{ count(); return tGLOBAL; }
+(?i:go[\t ]+to[\t ]+frame)	{ count(); return tGO; }
 (?i:go[\t ]+to)	{ count(); return tGO; }
 (?i:go)			{ count(); return tGO; }
 (?i:instance)	{ count(); return tINSTANCE; }
@@ -151,6 +151,7 @@ whitespace [\t ]
 (?i:on)			{ count(); return tON; }		// D3
 (?i:open)		{ count(); return tOPEN; }
 (?i:or)			{ count(); return tOR; }
+(?i:play[\t ]+frame)	{ count(); return tPLAY; }
 (?i:play)		{ count(); return tPLAY; }
 (?i:playAccel)	{ count(); yylval.s = new Common::String(yytext); return tPLAYACCEL; }
 (?i:previous)	{ count(); return tPREVIOUS; }
