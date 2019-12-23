@@ -101,7 +101,7 @@ whitespace [\t ]
 (?i:if)			{ count(); return tIF; }
 (?i:else[\t ]+if)	{ count(); return tELSIF; }
 (?i:else)		{ count(); return tELSE; }
-(?i:end)([\t ]*{identifier})?	{
+(?i:end)([\t ]+{identifier})?	{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'end '
