@@ -58,4 +58,6 @@ int stretch200To240(uint8 *buf,
                     int origSrcY,
                     bool interpolate);
 
+int stretch200To240Nearest(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
+
 #endif
