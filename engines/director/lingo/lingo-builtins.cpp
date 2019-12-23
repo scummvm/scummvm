@@ -208,7 +208,7 @@ static struct BuiltinProto {
 	{ "enter",			Lingo::b_enter,			0, 0, false, 2, FBLTIN },	// D2
 	{ "false",			Lingo::b_false,			0, 0, false, 2, FBLTIN },	// D2
 	{ "quote",			Lingo::b_quote,			0, 0, false, 2, FBLTIN },	// D2
-//	{ "return",			Lingo::b_returnconst,	0, 0, false, 2, FBLTIN },	// D2 // FIXME
+	{ "scummvm_return",	Lingo::b_returnconst,	0, 0, false, 2, FBLTIN },	// D2
 	{ "tab",			Lingo::b_tab,			0, 0, false, 2, FBLTIN },	// D2
 	{ "true",			Lingo::b_true,			0, 0, false, 2, FBLTIN },	// D2
 	{ "version",		Lingo::b_version,		0, 0, false, 3, FBLTIN },	//		D3

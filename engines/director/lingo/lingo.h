@@ -190,6 +190,7 @@ public:
 
 private:
 	Common::String codePreprocessor(const char *s, bool simple = false);
+	Common::String preprocessReturn(Common::String in);
 	const char *findNextDefinition(const char *s);
 
 	// lingo-events.cpp

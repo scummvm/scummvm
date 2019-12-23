@@ -217,6 +217,10 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	}
 }
 
+bool isspecial(char c) {
+	return strchr("-+*/%%^:,()><&[]", c) != NULL;
+}
+
 static Common::String nexttok(const char *s, const char **newP = nullptr) {
 	Common::String res;
 
@@ -224,9 +228,14 @@ static Common::String nexttok(const char *s, const char **newP = nullptr) {
 	while (*s && (*s == ' ' || *s == '\t')) // If we see a whitespace
 		s++;
 
-	// Now copy everything till whitespace
-	while (*s && *s != ' ' && *s != '\t' && *s != '\n')
-		res += *s++;
+	if (Common::isAlnum(*s)) {
+		// Now copy everything till whitespace
+		while (*s && (Common::isAlnum(*s) || *s == '.'))
+			res += *s++;
+	} else {
+		while (*s && isspecial(*s))
+			res += *s++;
+	}
 
 	if (newP)
 		*newP = s;
@@ -309,27 +318,32 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 	// Preprocess if statements
 	// Here we add ' end if' at end of each statement, which lets us
 	// make the grammar very straightforward
-	Common::String line, tok;
+	Common::String line, tok, res1;
 	const char *lineStart, *prevEnd;
 	int iflevel = 0;
 
 	while (*s) {
 		line.clear();
+		res1.clear();
 
 		// Get next line
 		while (*s && *s != '\n') { // If we see a whitespace
 			if (*s == '\xc2') {
-				res += *s++;
+				res1 += *s++;
 				if (*s == '\n') {
 					line += ' ';
-					res += *s++;
+					res1 += *s++;
 				}
 			} else {
-				res += *s;
+				res1 += *s;
 				line += tolower(*s++);
 			}
 		}
 		debugC(2, kDebugLingoParse, "line: %d                         '%s'", iflevel, line.c_str());
+
+		res1 = preprocessReturn(res1);
+
+		res += res1;
 
 		if (line.size() < 4) { // If line is too small, then skip it
 			if (*s)	// copy newline symbol
@@ -453,6 +467,54 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 
 
 	debugC(2, kDebugLingoParse, "#############\n%s\n#############", res.c_str());
+
+	return res;
+}
+
+#ifndef strcasestr
+const char *strcasestr(const char *s, const char *find) {
+	char c, sc;
+	size_t len;
+
+	if ((c = *find++) != 0) {
+		c = (char)tolower((unsigned char)c);
+		len = strlen(find);
+		do {
+			do {
+				if ((sc = *s++) == 0)
+					return (NULL);
+			} while ((char)tolower((unsigned char)sc) != c);
+		} while (scumm_strnicmp(s, find, len) != 0);
+		s--;
+	}
+	return s;
+}
+#endif
+
+Common::String Lingo::preprocessReturn(Common::String in) {
+	Common::String res, prev, next;
+	const char *ptr = in.c_str();
+	const char *beg = ptr;
+
+	while ((ptr = strcasestr(beg, "return")) != NULL) {
+		res += Common::String(beg, ptr);
+
+		if (ptr == beg)
+			prev = "";
+		else
+			prev = prevtok(ptr - 1, beg);
+
+		next = nexttok(ptr + 6); // end of 'return'
+
+		if (prev.equals("&") || prev.equals("&&") || next.equals("&") || next.equals("&&")) {
+			res += "scummvm_"; // Turn it into scummvm_return
+		}
+
+		res += *ptr++; // We advance one character, so 'eturn' is left
+		beg = ptr;
+	}
+
+	res += Common::String(beg);
 
 	return res;
 }
