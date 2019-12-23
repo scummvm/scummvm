@@ -21,7 +21,6 @@
  */
 
 #include "director/lingo/lingo.h"
-#include "director/cast.h"
 #include "director/sprite.h"
 #include "director/lingo/lingo-the.h"
 

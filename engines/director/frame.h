@@ -23,8 +23,6 @@
 #ifndef DIRECTOR_FRAME_H
 #define DIRECTOR_FRAME_H
 
-#include "graphics/managed_surface.h"
-
 namespace Image {
 	class ImageDecoder;
 }

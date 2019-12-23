@@ -29,12 +29,13 @@
 
 #include "director/score.h"
 #include "director/lingo/lingo-gr.h"
-#include "director/lingo/lingo-bytecode.h"
 
 namespace Director {
 
 struct TheEntity;
 struct TheEntityField;
+struct LingoV4Bytecode;
+struct LingoV4TheEntity;
 
 enum LEvent {
 	kEventPrepareMovie,

@@ -43,10 +43,8 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
-#include "director/cast.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
-#include "director/lingo/lingo-gr.h"
 
 namespace Director {
 

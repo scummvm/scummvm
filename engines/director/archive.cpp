@@ -23,7 +23,6 @@
 #include "director/archive.h"
 #include "director/director.h"
 
-#include "common/debug.h"
 #include "common/macresman.h"
 
 namespace Director {
@@ -357,8 +356,8 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	uint32 rifxType = subStream.readUint32();
 
-	if (rifxType != MKTAG('M', 'V', '9', '3') && 
-		rifxType != MKTAG('A', 'P', 'P', 'L') && 
+	if (rifxType != MKTAG('M', 'V', '9', '3') &&
+		rifxType != MKTAG('A', 'P', 'P', 'L') &&
 		rifxType != MKTAG('M', 'C', '9', '5'))
 		return false;
 

@@ -24,9 +24,11 @@
 #define DIRECTOR_CAST_H
 
 #include "common/rect.h"
-#include "common/substream.h"
 #include "director/archive.h"
-#include "graphics/surface.h"
+
+namespace Graphics {
+struct Surface;
+}
 
 namespace Director {
 
