@@ -39,7 +39,6 @@ MODULE_OBJS += \
 	ultima6/core/fps_counter.o \
 	ultima6/core/game.o \
 	ultima6/core/game_clock.o \
-	ultima6/core/game_select.o \
 	ultima6/core/look.o \
 	ultima6/core/magic.o \
 	ultima6/core/map.o \

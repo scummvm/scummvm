@@ -29,7 +29,6 @@
 #include "ultima/ultima6/screen/screen.h"
 #include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/core/game.h"
-#include "ultima/ultima6/core/game_select.h"
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/core/console.h"
 #include "ultima/ultima6/sound/sound_manager.h"
@@ -41,82 +40,65 @@ Ultima6Engine *g_engine;
 
 Ultima6Engine::Ultima6Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima6"),
-		config(nullptr), screen(nullptr), script(nullptr), game(nullptr) {
+		_config(nullptr), _screen(nullptr), _script(nullptr), _game(nullptr) {
 	g_engine = this;
 }
 
 Ultima6Engine::~Ultima6Engine() {
-	if (config != NULL)
-		delete config;
-
-	if (screen != NULL)
-		delete screen;
-
-	if (script != NULL)
-		delete script;
-
-	if (game != NULL)
-		delete game;
+	delete _config;
+	delete _screen;
+	delete _script;
+	delete _game;
 
 	g_engine = nullptr;
 }
 
-#ifdef TODO
-bool Ultima6Engine::init(int argc, char **argv) {
-	GameSelect *game_select;
-	uint8 game_type;
-	bool play_ending = false;
-	bool show_virtue_msg = false;
-	bool reset_video = false;
+bool Ultima6Engine::initialize() {
+	uint8 gameType;
+	bool playENding = false;
+	bool showVirtueMsg = false;
+	bool resetVideo = false;
 
-	if (argc > 1) {
-		if (strcmp(argv[1], "--reset-video") == 0) {
-			reset_video = true;
-			game_type = NUVIE_GAME_NONE;
-		} else
-			game_type = get_game_type(argv[1]);
-	} else
-		game_type = NUVIE_GAME_NONE;
-
-	if (argc > 2) {
-		if (strcmp(argv[2], "--end") == 0) {
-			if (argc > 6 && strcmp(argv[3], "5") == 0) {
-				play_ending = true;
-			} else {
-				show_virtue_msg = true;
-			}
-		} else if (strcmp(argv[2], "--reset-video") == 0)
-			reset_video = true;
+	// Get which game to play
+	switch (_gameDescription->gameId) {
+	case GAME_ULTIMA6:
+		gameType = NUVIE_GAME_U6;
+		break;
+	case GAME_MARTIAN_DREAMS:
+		gameType = NUVIE_GAME_MD;
+		break;
+	case GAME_SAVAGE_EMPIRE:
+		gameType = NUVIE_GAME_SE;
+		break;
+	default:
+		error("Unknown game");
+		break;
 	}
-//find and load config file
+
+	// Find and load config file
 	if (initConfig() == false) {
 		DEBUG(0, LEVEL_ERROR, "No config file found!\n");
 		return false;
-	} else if (reset_video) {
+	} else if (resetVideo) {
 		set_safe_video_settings();
-		config->write();
+		_config->write();
 	}
-//load SDL screen and scaler if selected.
-	screen = new Screen(config);
 
-	if (screen->init() == false) {
+	// Setup screen
+	_screen = new Screen(_config);
+
+	if (_screen->init() == false) {
 		DEBUG(0, LEVEL_ERROR, "Initializing screen!\n");
 		return false;
 	}
 
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_WM_SetCaption("Nuvie", "Nuvie");
-#endif
+	GUI *gui = new GUI(_config, _screen);
 
-	GUI *gui = new GUI(config, screen);
-
-
-
-	ConsoleInit(config, screen, gui, 320, 200);
-	ConsoleAddInfo("\n Nuvie: ver 0.5 rev 1927 \n");
+	ConsoleInit(_config, _screen, gui, 320, 200);
+	ConsoleAddInfo("\n ScummVM Nuvie: ver 0.5 rev 1927 \n");
 	ConsoleAddInfo("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
 
-	if (show_virtue_msg) {
+	if (showVirtueMsg) {
 		ConsoleShow();
 		ConsoleAddInfo("");
 		ConsoleAddInfo("");
@@ -127,37 +109,29 @@ bool Ultima6Engine::init(int argc, char **argv) {
 		return false;
 	}
 
-	ConsoleAddInfo("Config file: \"%s\"", config->filename().c_str());
-	game_select = new GameSelect(config);
+	ConsoleAddInfo("Config file: \"%s\"", _config->filename().c_str());
 
-// select game from graphical menu if required
-	game_type = game_select->load(screen, game_type);
-	delete game_select;
-	if (game_type == NUVIE_GAME_NONE)
-		return false;
+	// Setup various game related config variables.
+	assignGameConfigValues(gameType);
 
-
-//setup various game related config variables.
-	assignGameConfigValues(game_type);
-
-//check for a valid path to the selected game.
-	if (checkGameDir(game_type) == false)
+	// Check for a valid path to the selected game.
+	if (checkGameDir(gameType) == false)
 		return false;
 
 	if (checkDataDir() == false)
 		return false;
 
-	SoundManager *sound_manager = new SoundManager();
-	sound_manager->nuvieStartup(config);
+	SoundManager *sound_manager = new SoundManager(_mixer);
+	sound_manager->nuvieStartup(_config);
 
-	game = new Game(config, screen, gui, game_type, sound_manager);
+	_game = new Game(_config, _screen, gui, gameType, sound_manager);
 
-	script = new Script(config, gui, sound_manager, game_type);
-	if (script->init() == false)
+	_script = new Script(_config, gui, sound_manager, gameType);
+	if (_script->init() == false)
 		return false;
 
-	if (play_ending) {
-		script->play_cutscene("/ending.lua");
+	if (playENding) {
+		_script->play_cutscene("/ending.lua");
 		return false;
 	}
 
@@ -166,8 +140,8 @@ bool Ultima6Engine::init(int argc, char **argv) {
 		return false;
 	}
 
-	if (game->loadGame(script) == false) {
-		delete game;
+	if (_game->loadGame(_script) == false) {
+		delete _game;
 		return false;
 	}
 
@@ -175,11 +149,12 @@ bool Ultima6Engine::init(int argc, char **argv) {
 
 	return true;
 }
-#endif
 
 Common::Error Ultima6Engine::run() {
-	if (game)
-		game->play();
+	if (initialize()) {
+		if (_game)
+			_game->play();
+	}
 
 	return Common::kNoError;
 }
@@ -194,7 +169,7 @@ const char *Ultima6Engine::getConfigPathWin32() {
 bool Ultima6Engine::initConfig() {
 	std::string config_path;
 
-	config = new Configuration();
+	_config = new Configuration();
 
 	const char *configFilePath = getConfigPathWin32();
 	config_path.assign(configFilePath);
@@ -210,143 +185,143 @@ bool Ultima6Engine::initConfig() {
 	if (initDefaultConfigWin32())
 		return true;
 
-	delete config;
-	config = NULL;
+	delete _config;
+	_config = NULL;
 
 	return false;
 }
 
 void Ultima6Engine::SharedDefaultConfigValues() {
-	config->set("config/loadgame", "ultima6");
-	config->set("config/datadir", "./data");
-	config->set("config/keys", "(default)");
+	_config->set("config/loadgame", "ultima6");
+	_config->set("config/datadir", "./data");
+	_config->set("config/keys", "(default)");
 
 	set_safe_video_settings();
-	config->set("config/video/game_style", "original");
-	config->set("config/video/game_position", "center");
+	_config->set("config/video/game_style", "original");
+	_config->set("config/video/game_position", "center");
 
-	config->set("config/audio/enabled", true);
-	config->set("config/audio/enable_music", true);
-	config->set("config/audio/enable_sfx", true);
-	config->set("config/audio/music_volume", 100);
-	config->set("config/audio/sfx_volume", 255);
-	config->set("config/audio/combat_changes_music", true);
-	config->set("config/audio/vehicles_change_music", true);
-	config->set("config/audio/conversations_stop_music", false); // original stopped music - maybe due to memory and disk swapping
-	config->set("config/audio/stop_music_on_group_change", true);
+	_config->set("config/audio/enabled", true);
+	_config->set("config/audio/enable_music", true);
+	_config->set("config/audio/enable_sfx", true);
+	_config->set("config/audio/music_volume", 100);
+	_config->set("config/audio/sfx_volume", 255);
+	_config->set("config/audio/combat_changes_music", true);
+	_config->set("config/audio/vehicles_change_music", true);
+	_config->set("config/audio/conversations_stop_music", false); // original stopped music - maybe due to memory and disk swapping
+	_config->set("config/audio/stop_music_on_group_change", true);
 
 #ifdef HAVE_JOYSTICK_SUPPORT
-	config->set("config/joystick/enable_joystick", false);
-	config->set("config/joystick/repeat_hat", false);
-	config->set("config/joystick/repeat_delay", 50);
+	_config->set("config/joystick/enable_joystick", false);
+	_config->set("config/joystick/repeat_hat", false);
+	_config->set("config/joystick/repeat_delay", 50);
 
 	uint8 axisx[] = { 0, 3, 4, 6 };
 	uint8 axisy[] = { 1, 2, 5, 7 };
 	std::string axes_str = "config/joystick/axes_pair";
 	std::string pair_str[] = { axes_str + "1", axes_str + "2", axes_str + "3", axes_str + "4" };
 	for (int i = 0; i < 4; i++) {
-		config->set(pair_str[i] + "/x_axis", axisx[i]);
-		config->set(pair_str[i] + "/y_axis", axisy[i]);
-		config->set(pair_str[i] + "/delay", 110);
-		config->set(pair_str[i] + "/x_deadzone", 8000);
-		config->set(pair_str[i] + "/y_deadzone", 8000);
+		_config->set(pair_str[i] + "/x_axis", axisx[i]);
+		_config->set(pair_str[i] + "/y_axis", axisy[i]);
+		_config->set(pair_str[i] + "/delay", 110);
+		_config->set(pair_str[i] + "/x_deadzone", 8000);
+		_config->set(pair_str[i] + "/y_deadzone", 8000);
 	}
 #endif
 
-	config->set("config/input/enable_doubleclick", true);
-	config->set("config/input/doubleclick_opens_containers", false);
-	config->set("config/input/party_view_targeting", false);
-	config->set("config/input/new_command_bar", false);
-	config->set("config/input/enabled_dragging", true);
-	config->set("config/input/look_on_left_click", true);
-	config->set("config/input/walk_with_left_button", true);
-	config->set("config/input/direction_selects_target", true);
-	config->set("config/input/interface", "normal");
+	_config->set("config/input/enable_doubleclick", true);
+	_config->set("config/input/doubleclick_opens_containers", false);
+	_config->set("config/input/party_view_targeting", false);
+	_config->set("config/input/new_command_bar", false);
+	_config->set("config/input/enabled_dragging", true);
+	_config->set("config/input/look_on_left_click", true);
+	_config->set("config/input/walk_with_left_button", true);
+	_config->set("config/input/direction_selects_target", true);
+	_config->set("config/input/interface", "normal");
 
-	config->set("config/general/lighting", "original");
-	config->set("config/general/dither_mode", "none");
-	config->set("config/general/enable_cursors", true);
-	config->set("config/general/show_console", true);
-	config->set("config/general/converse_gump", "default");
-	config->set("config/general/use_text_gumps", false);
-	config->set("config/general/party_formation", "standard");
+	_config->set("config/general/lighting", "original");
+	_config->set("config/general/dither_mode", "none");
+	_config->set("config/general/enable_cursors", true);
+	_config->set("config/general/show_console", true);
+	_config->set("config/general/converse_gump", "default");
+	_config->set("config/general/use_text_gumps", false);
+	_config->set("config/general/party_formation", "standard");
 
-	config->set("config/cheats/enabled", false);
-	config->set("config/cheats/enable_hackmove", false);
-	config->set("config/cheats/min_brightness", 0);
-	config->set("config/cheats/party_all_the_time", false);
+	_config->set("config/cheats/enabled", false);
+	_config->set("config/cheats/enable_hackmove", false);
+	_config->set("config/cheats/min_brightness", 0);
+	_config->set("config/cheats/party_all_the_time", false);
 // game specific settings
 	uint8 bg_color[] = { 218, 136, 216 }; // U6, MD, SE
 	uint8 border_color[] = { 220, 133, 219 }; // U6, MD, SE
 	std::string game_str[] = { "config/ultima6/", "config/martian/", "config/savage/" };
 	for (int i = 0; i < 3; i++) {
-		config->set(game_str[i] + "language", "en");
-		config->set(game_str[i] + "music", "native");
-		config->set(game_str[i] + "sfx", "native");
+		_config->set(game_str[i] + "language", "en");
+		_config->set(game_str[i] + "music", "native");
+		_config->set(game_str[i] + "sfx", "native");
 		if (i == 0) // U6
-			config->set(game_str[i] + "enable_speech", "yes");
-		config->set(game_str[i] + "skip_intro", false);
-		config->set(game_str[i] + "show_eggs", false);
+			_config->set(game_str[i] + "enable_speech", "yes");
+		_config->set(game_str[i] + "skip_intro", false);
+		_config->set(game_str[i] + "show_eggs", false);
 		if (i == 0) { // U6
-			config->set(game_str[i] + "show_stealing", false);
-			config->set(game_str[i] + "roof_mode", false);
+			_config->set(game_str[i] + "show_stealing", false);
+			_config->set(game_str[i] + "roof_mode", false);
 		}
-		config->set(game_str[i] + "use_new_dolls", false);
-		config->set(game_str[i] + "cb_position", "default");
-		config->set(game_str[i] + "show_orig_style_cb", "default");
+		_config->set(game_str[i] + "use_new_dolls", false);
+		_config->set(game_str[i] + "cb_position", "default");
+		_config->set(game_str[i] + "show_orig_style_cb", "default");
 		if (i == 0) // U6
-			config->set(game_str[i] + "cb_text_color", 115);
-		config->set(game_str[i] + "map_tile_lighting", i == 1 ? false : true); // MD has canals lit up so disable
-		config->set(game_str[i] + "custom_actor_tiles", "default");
-		config->set(game_str[i] + "converse_solid_bg", false);
-		config->set(game_str[i] + "converse_bg_color", bg_color[i]);
-		config->set(game_str[i] + "converse_width", "default");
-		config->set(game_str[i] + "converse_height", "default");
+			_config->set(game_str[i] + "cb_text_color", 115);
+		_config->set(game_str[i] + "map_tile_lighting", i == 1 ? false : true); // MD has canals lit up so disable
+		_config->set(game_str[i] + "custom_actor_tiles", "default");
+		_config->set(game_str[i] + "converse_solid_bg", false);
+		_config->set(game_str[i] + "converse_bg_color", bg_color[i]);
+		_config->set(game_str[i] + "converse_width", "default");
+		_config->set(game_str[i] + "converse_height", "default");
 		if (i == 0) { // U6
-			config->set(game_str[i] + "displayed_wind_dir", "from");
-			config->set(game_str[i] + "free_balloon_movement", false);
+			_config->set(game_str[i] + "displayed_wind_dir", "from");
+			_config->set(game_str[i] + "free_balloon_movement", false);
 		}
-		config->set(game_str[i] + "game_specific_keys", "(default)");
-		config->set(game_str[i] + "newscroll/width", 30);
-		config->set(game_str[i] + "newscroll/height", 19);
-		config->set(game_str[i] + "newscroll/solid_bg", false);
-		config->set(game_str[i] + "newscroll/bg_color", bg_color[i]);
-		config->set(game_str[i] + "newscroll/border_color", border_color[i]);
+		_config->set(game_str[i] + "game_specific_keys", "(default)");
+		_config->set(game_str[i] + "newscroll/width", 30);
+		_config->set(game_str[i] + "newscroll/height", 19);
+		_config->set(game_str[i] + "newscroll/solid_bg", false);
+		_config->set(game_str[i] + "newscroll/bg_color", bg_color[i]);
+		_config->set(game_str[i] + "newscroll/border_color", border_color[i]);
 	}
 
-//	config->set("config/newgamedata/name", "Avatar");
-//	config->set("config/newgamedata/gender", 0);
-//	config->set("config/newgamedata/portrait", 0);
-//	config->set("config/newgamedata/str", 0xf);
-//	config->set("config/newgamedata/dex", 0xf);
-//	config->set("config/newgamedata/int", 0xf);
+//	_config->set("config/newgamedata/name", "Avatar");
+//	_config->set("config/newgamedata/gender", 0);
+//	_config->set("config/newgamedata/portrait", 0);
+//	_config->set("config/newgamedata/str", 0xf);
+//	_config->set("config/newgamedata/dex", 0xf);
+//	_config->set("config/newgamedata/int", 0xf);
 
 }
 
 /* Should be safe default video settings
  */
 void Ultima6Engine::set_safe_video_settings() {
-	config->set("config/video/scale_method", "point");
+	_config->set("config/video/scale_method", "point");
 
-	config->set("config/video/scale_factor", "1");
+	_config->set("config/video/scale_factor", "1");
 
 //FIXME SDL2    const SDL_VideoInfo *vinfo = SDL_GetVideoInfo();
 //	if(!vinfo) // couldn't get display mode
-//		config->set("config/video/scale_factor", "1");
+//		_config->set("config/video/scale_factor", "1");
 //	else
 //	{
 //		if(vinfo->current_w  >= 640 && vinfo->current_h >= 400)
-//			config->set("config/video/scale_factor", "2");
+//			_config->set("config/video/scale_factor", "2");
 //		else // portable with small screen
-//			config->set("config/video/scale_factor", "1");
+//			_config->set("config/video/scale_factor", "1");
 //	}
 
-	config->set("config/video/fullscreen", "no");
-	config->set("config/video/non_square_pixels", "no");
-	config->set("config/video/screen_width", 320);
-	config->set("config/video/screen_height", 200);
-	config->set("config/video/game_width", 320);
-	config->set("config/video/game_height", 200);
+	_config->set("config/video/fullscreen", "no");
+	_config->set("config/video/non_square_pixels", "no");
+	_config->set("config/video/screen_width", 320);
+	_config->set("config/video/screen_height", 200);
+	_config->set("config/video/game_width", 320);
+	_config->set("config/video/game_height", 200);
 }
 
 bool Ultima6Engine::initDefaultConfigWin32() {
@@ -365,19 +340,19 @@ bool Ultima6Engine::initDefaultConfigWin32() {
 		return false;
 
 	SharedDefaultConfigValues();
-	config->set("config/ultima6/gamedir", "c:\\ultima6");
-	config->set("config/ultima6/townsdir", "c:\\fmtownsU6");
-	config->set("config/ultima6/savedir", "./u6_save");
-	config->set("config/ultima6/sfxdir", "./custom_sfx");
-	config->set("config/ultima6/patch_keys", "./patchkeys.txt");
-	config->set("config/martian/gamedir", "c:\\martian");
-	config->set("config/martian/savedir", "./martian_save");
-	config->set("config/martian/patch_keys", "./patchkeys.txt");
-	config->set("config/savage/gamedir", "c:\\savage");
-	config->set("config/savage/savedir", "./savage_save");
-	config->set("config/savage/patch_keys", "./patchkeys.txt");
+	_config->set("config/ultima6/gamedir", "c:\\ultima6");
+	_config->set("config/ultima6/townsdir", "c:\\fmtownsU6");
+	_config->set("config/ultima6/savedir", "./u6_save");
+	_config->set("config/ultima6/sfxdir", "./custom_sfx");
+	_config->set("config/ultima6/patch_keys", "./patchkeys.txt");
+	_config->set("config/martian/gamedir", "c:\\martian");
+	_config->set("config/martian/savedir", "./martian_save");
+	_config->set("config/martian/patch_keys", "./patchkeys.txt");
+	_config->set("config/savage/gamedir", "c:\\savage");
+	_config->set("config/savage/savedir", "./savage_save");
+	_config->set("config/savage/patch_keys", "./patchkeys.txt");
 
-	config->write();
+	_config->write();
 
 	return true;
 }
@@ -401,17 +376,17 @@ bool Ultima6Engine::initDefaultConfigMacOSX(const char *home_env) {
 		return false;
 
 	SharedDefaultConfigValues();
-	config->set("config/ultima6/gamedir", "/Library/Application Support/Nuvie Support/ultima6");
-	config->set("config/ultima6/townsdir", "/Library/Application Support/Nuvie Support/townsU6");
-	config->set("config/ultima6/savedir", home + "/Library/Application Support/Nuvie/savegames");
-	config->set("config/ultima6/sfxdir", home + "/Library/Application Support/Nuvie/custom_sfx");
-	config->set("config/ultima6/patch_keys", home + "/Library/Preferences/Nuvie Preferences/patchkeys.txt");
-	config->set("config/martian/gamedir", "/Library/Application Support/Nuvie Support/martian");
-	config->set("config/martian/patch_keys", home + "/Library/Preferences/Nuvie Preferences/patchkeys.txt");
-	config->set("config/savage/gamedir", "/Library/Application Support/Nuvie Support/savage");
-	config->set("config/savage/patch_keys", home + "/Library/Preferences/Nuvie Preferences/patchkeys.txt");
+	_config->set("config/ultima6/gamedir", "/Library/Application Support/Nuvie Support/ultima6");
+	_config->set("config/ultima6/townsdir", "/Library/Application Support/Nuvie Support/townsU6");
+	_config->set("config/ultima6/savedir", home + "/Library/Application Support/Nuvie/savegames");
+	_config->set("config/ultima6/sfxdir", home + "/Library/Application Support/Nuvie/custom_sfx");
+	_config->set("config/ultima6/patch_keys", home + "/Library/Preferences/Nuvie Preferences/patchkeys.txt");
+	_config->set("config/martian/gamedir", "/Library/Application Support/Nuvie Support/martian");
+	_config->set("config/martian/patch_keys", home + "/Library/Preferences/Nuvie Preferences/patchkeys.txt");
+	_config->set("config/savage/gamedir", "/Library/Application Support/Nuvie Support/savage");
+	_config->set("config/savage/patch_keys", home + "/Library/Preferences/Nuvie Preferences/patchkeys.txt");
 
-	config->write();
+	_config->write();
 
 	return true;
 }
@@ -435,17 +410,17 @@ bool Ultima6Engine::initDefaultConfigUnix(const char *home_env) {
 		return false;
 
 	SharedDefaultConfigValues();
-	config->set("config/ultima6/gamedir", "./ultima6");
-	config->set("config/ultima6/townsdir", "./townsU6");
-	config->set("config/ultima6/savedir", home + "/.nuvie/savegames");
-	config->set("config/ultima6/patch_keys", home + "/.nuvie/patchkeys.txt");
-	config->set("config/ultima6/sfxdir", home + "/.nuvie/custom_sfx");
-	config->set("config/martian/gamedir", "./martian");
-	config->set("config/martian/patch_keys", home + "/.nuvie/patchkeys.txt");
-	config->set("config/savage/gamedir", "./savage");
-	config->set("config/savage/patch_keys", home + "/.nuvie/patchkeys.txt");
+	_config->set("config/ultima6/gamedir", "./ultima6");
+	_config->set("config/ultima6/townsdir", "./townsU6");
+	_config->set("config/ultima6/savedir", home + "/.nuvie/savegames");
+	_config->set("config/ultima6/patch_keys", home + "/.nuvie/patchkeys.txt");
+	_config->set("config/ultima6/sfxdir", home + "/.nuvie/custom_sfx");
+	_config->set("config/martian/gamedir", "./martian");
+	_config->set("config/martian/patch_keys", home + "/.nuvie/patchkeys.txt");
+	_config->set("config/savage/gamedir", "./savage");
+	_config->set("config/savage/patch_keys", home + "/.nuvie/patchkeys.txt");
 
-	config->write();
+	_config->write();
 
 	return true;
 }
@@ -454,7 +429,7 @@ bool Ultima6Engine::loadConfigFile(std::string filename, bool readOnly) {
 	DEBUG(0, LEVEL_INFORMATIONAL, "Loading Config from '%s': ", filename.c_str());
 
 	if (Common::File::exists(filename)) {
-		if (config->readConfigFile(filename, "config", readOnly) == true) {
+		if (_config->readConfigFile(filename, "config", readOnly) == true) {
 			DEBUG(1, LEVEL_INFORMATIONAL, "Done.\n");
 			return true;
 		}
@@ -465,12 +440,12 @@ bool Ultima6Engine::loadConfigFile(std::string filename, bool readOnly) {
 	return false;
 }
 
-void Ultima6Engine::assignGameConfigValues(uint8 game_type) {
+void Ultima6Engine::assignGameConfigValues(uint8 gameType) {
 	std::string game_name, game_id;
 
-	config->set("config/GameType", game_type);
+	_config->set("config/GameType", gameType);
 
-	switch (game_type) {
+	switch (gameType) {
 	case NUVIE_GAME_U6 :
 		game_name.assign("ultima6");
 		game_id.assign("u6");
@@ -485,16 +460,16 @@ void Ultima6Engine::assignGameConfigValues(uint8 game_type) {
 		break;
 	}
 
-	config->set("config/GameName", game_name);
-	config->set("config/GameID", game_id);
+	_config->set("config/GameName", game_name);
+	_config->set("config/GameID", game_id);
 
 	return;
 }
 
-bool Ultima6Engine::checkGameDir(uint8 game_type) {
+bool Ultima6Engine::checkGameDir(uint8 gameType) {
 	std::string path;
 
-	config_get_path(config, "", path);
+	config_get_path(_config, "", path);
 	ConsoleAddInfo("gamedir: \"%s\"", path.c_str());
 
 	return true;
@@ -502,7 +477,7 @@ bool Ultima6Engine::checkGameDir(uint8 game_type) {
 
 bool Ultima6Engine::checkDataDir() {
 	std::string path;
-	config->value("config/datadir", path, "");
+	_config->value("config/datadir", path, "");
 	ConsoleAddInfo("datadir: \"%s\"", path.c_str());
 
 	return true;
@@ -511,16 +486,16 @@ bool Ultima6Engine::checkDataDir() {
 bool Ultima6Engine::playIntro() {
 	bool skip_intro;
 
-	string key = config_get_game_key(config);
+	string key = config_get_game_key(_config);
 	key.append("/skip_intro");
-	config->value(key, skip_intro, false);
+	_config->value(key, skip_intro, false);
 
 	if (skip_intro)
 		return true;
 
-	if (script->play_cutscene("/intro.lua")) {
+	if (_script->play_cutscene("/intro.lua")) {
 		bool should_quit = false;
-		config->value("config/quit", should_quit, false);
+		_config->value("config/quit", should_quit, false);
 		if (!should_quit) {
 			ConsoleHide();
 			return true;

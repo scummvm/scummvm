@@ -39,12 +39,14 @@ class Game;
 class Ultima6Engine : public Engine {
 private:
 	const Ultima::UltimaGameDescription *_gameDescription;
-	Configuration *config;
-	Screen *screen;
-	Script *script;
-	Game *game;
+	Configuration *_config;
+	Screen *_screen;
+	Script *_script;
+	Game *_game;
 	Common::RandomSource _randomSource;
-protected:
+private:
+	bool initialize();
+
 	bool initConfig();
 	const char *getConfigPathWin32();
 	void SharedDefaultConfigValues();
