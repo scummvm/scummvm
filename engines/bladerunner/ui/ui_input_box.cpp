@@ -27,6 +27,7 @@
 #include "bladerunner/time.h"
 
 #include "common/keyboard.h"
+#include "common/system.h"
 
 #include "graphics/surface.h"
 
@@ -39,6 +40,7 @@ UIInputBox::UIInputBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedC
 
 	_isVisible = true;
 	_rect = rect;
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 	_maxLength = maxLength;
 	setText(text);
@@ -77,10 +79,12 @@ const Common::String &UIInputBox::getText() {
 
 void UIInputBox::show() {
 	_isVisible = true;
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 }
 
 void UIInputBox::hide() {
 	_isVisible = false;
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 void UIInputBox::handleKeyDown(const Common::KeyState &kbd) {
