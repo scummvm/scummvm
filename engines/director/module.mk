@@ -26,6 +26,7 @@ MODULE_OBJS = \
 	lingo/lingo-events.o \
 	lingo/lingo-funcs.o \
 	lingo/lingo-lex.o \
+	lingo/lingo-preprocessor.o \
 	lingo/lingo-the.o
 
 director-grammar:
