@@ -23,6 +23,21 @@
 namespace Ultima {
 
 static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
+#ifdef ENABLE_ULTIMA6
+	{
+		{
+			"converse.a",
+			nullptr,
+			AD_ENTRY1s("converse.a", "c61f1dacde591cb39d452264e281f234", 1251108),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			0,
+			GUIO0()
+		},
+	GAME_ULTIMA6
+	},
+#endif
+
 #ifdef ENABLE_ULTIMA8
 	{
 		{
