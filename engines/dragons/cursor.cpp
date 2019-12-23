@@ -328,7 +328,7 @@ void Cursor::selectPreviousCursor() {
 		_sequenceID = 1;
 	}
 	if (_sequenceID == 2) {
-		_sequenceID = 0x10001;
+		_sequenceID = 1;
 	}
 	if (_sequenceID == -1) {
 		_sequenceID = iniItemInHand == 0 ? 4 : 5;

@@ -36,13 +36,11 @@ class VabSound;
 struct SpeechLocation;
 
 typedef struct Voice {
-	int16 program;
-	int16 key;
+	int16 soundID;
 	Audio::SoundHandle handle;
 
 	Voice() {
-		program = -1;
-		key = -1;
+		soundID = -1;
 	}
 } Voice;
 
@@ -91,9 +89,9 @@ private:
 	VabSound * loadVab(const char *headerFilename, const char *bodyFilename);
 
 	bool getSpeechLocation(uint32 talkId, struct SpeechLocation *location);
-	bool isVoicePlaying(uint16 program, uint16 key);
-	Audio::SoundHandle *getVoiceHandle(uint16 program, uint16 key);
-	void stopVoicePlaying(uint16 program, uint16 key);
+	bool isVoicePlaying(uint16 soundID);
+	Audio::SoundHandle *getVoiceHandle(uint16 soundID);
+	void stopVoicePlaying(uint16 soundID);
 
 private:
 	class PSXAudioTrack {
