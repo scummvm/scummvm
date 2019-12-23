@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-12-22 12:07+0000\n"
+"PO-Revision-Date: 2019-12-24 13:07+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -5378,18 +5378,20 @@ msgstr "OTHER: You are not wrong, boy!"
 #: dialog0157.txt:19
 msgid "OTHER: Przywołam cię za kilkanaście minut, a ty|tymczasem przyjrzyj się innemu światu!"
 msgstr ""
+"OTHER: I'll call you in a few minutes, and you|meanwhile take a look at "
+"another world!"
 
 #: dialog0158.txt:1
 msgid "HERO: Dlaczego trwało to tak długo?!..."
-msgstr ""
+msgstr "HERO: Why it took so long?!..."
 
 #: dialog0158.txt:2
 msgid "HERO: Mało nie przypłaciłem życiem twojej|opieszałości!"
-msgstr ""
+msgstr "HERO: I nearly paid for your tardiness|with my life!"
 
 #: dialog0158.txt:3
 msgid "OTHER: Przy kuflu czas szybko mija..."
-msgstr ""
+msgstr "OTHER: Time goes by quickly with a pint..."
 
 #: dialog0158.txt:4
 msgid "OTHER: Lepiej powiedz, jak było?"
@@ -5402,6 +5404,8 @@ msgstr "HERO: As soon as I get it in order in my head."
 #: dialog0158.txt:6
 msgid "HERO: Widziałem tak dziwne rzeczy, że|wszystko wydaje mi się bardziej|snem niż jawą."
 msgstr ""
+"HERO: I've seen such strange things that|everything seems to me|more like a "
+"dream than reality."
 
 #: dialog0158.txt:7
 msgid "OTHER: No to może kufelek?"
@@ -5425,11 +5429,11 @@ msgstr "HERO: I'll become a hero!"
 
 #: dialog0158.txt:12
 msgid "HERO: Będą o mnie śpiewać pieśni i układać poematy."
-msgstr ""
+msgstr "HERO: They will sing songs and compose poems about me."
 
 #: dialog0158.txt:13
 msgid "HERO: A tłum będzie sypał płatki róż pod moje stopy!"
-msgstr ""
+msgstr "HERO: And the crowd will be putting rose petals under my feet!"
 
 #: dialog0158.txt:14
 msgid "HERO: Yes!"
@@ -5537,18 +5541,20 @@ msgstr "OTHER: Years are flying by."
 #: dialog0162.txt:1
 msgid "OTHER: Na szczycie jednej ze ścian jest chyba księga,|której potrzebujemy."
 msgstr ""
+"OTHER: At the top of one of the walls there is probably|that book we need."
 
 #: dialog0162.txt:2
 msgid "OTHER: Musi zawierać potężne czary, skoro nie skruszył|jej ząb czasu."
 msgstr ""
+"OTHER: It must contain powerful spells since it stood|the ravages of time."
 
 #: dialog0163.txt:1
 msgid "OTHER: Znalazłem coś całkiem użytecznego."
-msgstr ""
+msgstr "OTHER: I just found something quite useful."
 
 #: dialog0163.txt:2
 msgid "OTHER: Czar nazywa się \"Moc Trolla\", to ci powinno|pomóc."
-msgstr ""
+msgstr "OTHER: The spell is called \"Troll's Power\", it should|help you."
 
 #: dialog0163.txt:3
 msgid "OTHER: Jak tylko wypowiesz \"Yukkakoppamakki\",|staniesz się na sekundę silny jak troll!"
@@ -5575,10 +5581,11 @@ msgstr "OTHER: Shhh! Don't waste your magic on any occasion!"
 #: dialog0164.txt:1
 msgid "HERO: Jest tak zafascynowany lekturą,|że żal przerywać."
 msgstr ""
+"HERO: He is so fascinated by reading,|that it's regretful to interrupt him."
 
 #: dialog0164.txt:2
 msgid "HERO: Było nie było, nie miał książki|w ręku od tysiąca lat."
-msgstr ""
+msgstr "HERO: Ah, whatever! I did not hold a book|for a thousand years."
 
 #: dialog0165.txt:1
 msgid "HERO: Widziałeś to śmierdzące bajoro niedaleko?"
@@ -5591,6 +5598,8 @@ msgstr "OTHER: The smell reaches even here."
 #: dialog0165.txt:3
 msgid "OTHER: Być może ktoś tu przeprowadzał eksperymenty|z magicznymi środkami chemiczno-bojowymi."
 msgstr ""
+"OTHER: Perhaps someone here was conducting|experiments with magic chemical "
+"war agents."
 
 #: dialog0165.txt:4
 msgid "OTHER: Nieudane eksperymenty, dodajmy."
@@ -5667,15 +5676,19 @@ msgstr "OTHER: You're repeating yourself. Be a man|and bite the bullet."
 
 #: dialog0168.txt:4
 msgid "OTHER: Jak nie będziesz skomlał tylko działał,|to na pewno sobie poradzisz."
-msgstr ""
+msgstr "OTHER: If you don't whine and act, you can do it."
 
 #: dialog0168.txt:5
 msgid "OTHER: Słuchaj, siedzi przed tobą ktoś,|kto przez tysiąc lat był martwy!"
 msgstr ""
+"OTHER: Listen, there is someone in front of you|who has been dead for a "
+"thousand years!"
 
 #: dialog0168.txt:6
 msgid "OTHER: Więc cuda się zdarzają, to może|i tobie się uda ukończyć grę|bez zerkania do rozwiązania."
 msgstr ""
+"OTHER: So miracles happen, maybe you can finish the game|without looking at "
+"the solution spoilers."
 
 #: dialog0168.txt:7
 msgid "OTHER: Mój drogi, porozmawiamy później."
@@ -5684,6 +5697,8 @@ msgstr "OTHER: My dear, we'll talk later."
 #: dialog0168.txt:8
 msgid "OTHER: Kiedy mam wybierać pomiędzy delektowaniem|się zimnym piwem, a uroczą konwersacją|z tobą, to zapewne wiesz, co wybieram?"
 msgstr ""
+"OTHER: When I have to choose between enjoying|a cold beer and a lovely "
+"conversation with you,|you probably know what I'll choose?"
 
 #: dialog0168.txt:9
 msgid "OTHER: Zgoda?"
@@ -5766,22 +5781,24 @@ msgstr "OTHER: ...object, but only as a helper."
 #: dialog0172.txt:10
 msgid "OTHER: Najpierw opowiedz mi, jak wygląda, to czego|mam szukać, a potem spróbujemy to znaleźć."
 msgstr ""
+"OTHER: First tell me what it looks like, what I should|look for, and then we "
+"will try to find it."
 
 #: dialog0172.txt:11
 msgid "OTHER: Muszę wiedzieć, czy to jaszczur, czy wąż,|czy jakaś magiczna cholera."
-msgstr ""
+msgstr "OTHER: I need to know if it's a lizard or a snake|or some magic crap."
 
 #: dialog0172.txt:12
 msgid "HERO: Myślałem, ze pustelnicy znają się na|przyrodzie?"
-msgstr ""
+msgstr "HERO: I thought the hermits are knowledgeable about the nature?"
 
 #: dialog0172.txt:13
 msgid "OTHER: Oczywiście. Ale na grzybkach, roślinkach,|korzonkach, wywarach..."
-msgstr ""
+msgstr "OTHER: Of course. But about mushrooms, plants,|rootlets, decoctions..."
 
 #: dialog0172.txt:14
 msgid "HERO: Wrócę, jak tylko dowiem się czegoś więcej."
-msgstr ""
+msgstr "HERO: I'll be back as soon as I know more."
 
 #: dialog0173.txt:1
 msgid "HERO: Sklep otwarty, czyżby studia nad księgą|zostały zakończone?"
@@ -5789,11 +5806,11 @@ msgstr "HERO: The store is open, have studies on the book|been completed?"
 
 #: dialog0173.txt:2
 msgid "OTHER: Ech, książę, nadal masz powietrze w głowie."
-msgstr ""
+msgstr "OTHER: Eh, prince, you still have air in your head."
 
 #: dialog0173.txt:3
 msgid "OTHER: W takim krótkim czasie można lekturę jeno|pobieżnie przekartkować."
-msgstr ""
+msgstr "OTHER: In such a short time you can only swipe|through the book."
 
 #: dialog0173.txt:4
 msgid "HERO: Znalazłeś coś ciekawego?"
@@ -5802,14 +5819,18 @@ msgstr "HERO: Did you find anything interesting?"
 #: dialog0173.txt:5
 msgid "OTHER: Okazało się, że to nie jest księga magiczna,|ale zapiski pewnego podróżnika sprzed|wieków."
 msgstr ""
+"OTHER: It turned out that this is not a magic book,|but the notes of a "
+"traveler from|centuries ago."
 
 #: dialog0173.txt:6
 msgid "OTHER: Szczegółowy opis dziwnych roślin, zaginionych|zwierząt, tajemniczych miejsc."
 msgstr ""
+"OTHER: Detailed description of strange plants, lost|animals, mysterious "
+"places."
 
 #: dialog0173.txt:7
 msgid "OTHER: Fascynująca lektura."
-msgstr "OTHER: Fascinating lecture."
+msgstr "OTHER: Fascinating reading."
 
 #: dialog0173.txt:8
 msgid "OTHER: Prawie że encyklopedia."
@@ -5892,15 +5913,15 @@ msgstr "HERO: I need to locate a certain, um,|object..."
 
 #: dialog0176.txt:3
 msgid "OTHER: Zaginione żony, dzieci, koty i psy to|moja specjalność."
-msgstr ""
+msgstr "OTHER: Missing wives, children, cats and dogs|is my specialty."
 
 #: dialog0176.txt:4
 msgid "OTHER: Tych pierwszych czasem lepiej nie odnajdywać."
-msgstr ""
+msgstr "OTHER: Sometimes it's better not to find the former ones."
 
 #: dialog0176.txt:5
 msgid "OTHER: Przez skromność nie wspomnę o..."
-msgstr ""
+msgstr "OTHER: Being modest, I will not mention..."
 
 #: dialog0176.txt:6
 msgid "HERO: Chodzi o pewnego gada."
@@ -11463,10 +11484,15 @@ msgstr ""
 #: mob.lst:43002
 msgid "wejście - Jestem u celu. Raz kozie śmierć, jak|mawiał rzeźnik."
 msgstr ""
+"exit - I'm at my destination. Man can die just once, as|one "
+"pathologoanatomist said."
 
 #: mob.lst:43003
 msgid "Lucyfer - Lucyfer. Wygląda może nie tak|przerażająco, ale...+Ci, którzy go zlekceważyli zostali|tu pewnie na zawsze.+Na godziny długie jak miesiące, miesiące|długie jak lata...+... i tak dalej."
 msgstr ""
+"Lucifer - Lucifer. It looks not so scary, but...+Those who disregarded it "
+"must have been here|forever.+For hours as long as months, months as long as "
+"years...+... and so on."
 
 #: mob.lst:50001
 msgid "Zapomniany cmentarz - "
@@ -11574,7 +11600,7 @@ msgstr "It's nice to have a "friend"|like that by your side."
 
 #: variatxt.txt:103
 msgid "No, no... na szczęście to już koniec tej|bezładnej kopaniny."
-msgstr "Well, well ... fortunately, this is the end of this|random digging."
+msgstr "Well, well... fortunately, this is the end of this|random digging."
 
 #: variatxt.txt:104
 msgid "Chciałem zobaczyć, co jest w pustym grobie,|a nie szukać ropy."
@@ -11630,23 +11656,25 @@ msgstr "I have to be faster."
 
 #: variatxt.txt:402
 msgid "Są zajęci grą, ale nie aż tak, żeby|nie przyłapać mnie na szperaniu."
-msgstr ""
+msgstr "They are busy playing, but not|so much as not to catch me rummaging."
 
 #: variatxt.txt:403
 msgid "Plecak to przesada, ale zajęci grą na|pewno nie zauważą braku tej ślicznej|książeczki..."
 msgstr ""
+"The backpack is an exaggeration, but those busy playing|the game will "
+"definitely not notice the lack of this|beautiful book..."
 
 #: variatxt.txt:404
 msgid "Ciekawe czy kiedykolwiek zauważą,|że to fałszywe kości."
-msgstr ""
+msgstr "I wonder if they'll ever see|that these are false bones."
 
 #: variatxt.txt:405
 msgid "To było żałosne..."
-msgstr ""
+msgstr "It was pathetic..."
 
 #: variatxt.txt:406
 msgid "To nie jest dobry moment."
-msgstr ""
+msgstr "This is not a good time."
 
 #: variatxt.txt:407
 msgid "Zamknięte!"
@@ -11655,54 +11683,58 @@ msgstr "Closed!"
 #: variatxt.txt:408
 msgid "Gildia to interesujący pomysł, ale|lepiej wykorzystam kastet tylko dla|swoich własnych celów."
 msgstr ""
+"The guild is an interesting idea, but I will|better use the brass knuckles "
+"only|for my own purposes."
 
 #: variatxt.txt:501
 msgid "Translokacja!"
-msgstr ""
+msgstr "Translocation!"
 
 #: variatxt.txt:502
 msgid "Dość już tych manipulacji."
-msgstr ""
+msgstr "Enough of these manipulations."
 
 #: variatxt.txt:503
 msgid "Zdobycie kufla kosztowało mnie zbyt|wiele wysiłku... Najpierw coś muszę|z nim zrobić."
 msgstr ""
+"It took me too much effort to get|the mug... First, I have to do|something "
+"with it."
 
 #: variatxt.txt:504
 msgid "Jeszcze nie teraz..."
-msgstr ""
+msgstr "Not yet..."
 
 #: variatxt.txt:505
 msgid "Najpierw mam robotę do wykonania..."
-msgstr ""
+msgstr "First I have a job to do..."
 
 #: variatxt.txt:506
 msgid "Dobra dziewczynka."
-msgstr ""
+msgstr "Good girl."
 
 #: variatxt.txt:601
 msgid "Nawet nie wiem, czy to nie jakaś zjawa...|Wygląda tak dziwnie."
-msgstr ""
+msgstr "I don't even know if this is a ghost...|It looks so weird."
 
 #: variatxt.txt:602
 msgid "Jeden z opisów pasuje jak ulał!|Łuska jest ...smocza!"
-msgstr ""
+msgstr "One of the descriptions fits perfectly!|The scale of a... dragon!"
 
 #: variatxt.txt:701
 msgid "Nikt nie odpowiada. Pewnie trwa rozruch|narzędzi tortur."
-msgstr ""
+msgstr "Nobody answers. They're probably warming up|the torture tools."
 
 #: variatxt.txt:702
 msgid "Z małej chmury duży deszcz..."
-msgstr ""
+msgstr "Big rain from a small cloud..."
 
 #: variatxt.txt:703
 msgid "Nie chcę na to patrzeć."
-msgstr ""
+msgstr "I don't want to look at it."
 
 #: variatxt.txt:704
 msgid "Może potem, jak już przetrawi..."
-msgstr ""
+msgstr "Maybe later, after it digests..."
 
 #: variatxt.txt:705
 msgid "Nie mam mu nic do powiedzenia."
@@ -11710,35 +11742,35 @@ msgstr "I have nothing to say."
 
 #: variatxt.txt:801
 msgid "Wolny jak ptak."
-msgstr ""
+msgstr "Free like a bird."
 
 #: variatxt.txt:1101
 msgid "Pfuj!"
-msgstr ""
+msgstr "Phew!"
 
 #: variatxt.txt:1401
 msgid "Jest! Lustro jak złoto!"
-msgstr ""
+msgstr "There! A mirror like gold!"
 
 #: variatxt.txt:1501
 msgid "Może i wygląda jak wykuty z kamienia|ale mój tyłek ma inne zdanie."
-msgstr ""
+msgstr "It may look like hewn from stone,|but my butt has a different opinion."
 
 #: variatxt.txt:1502
 msgid "Hmmm... Chyba zostałem przejrzany..."
-msgstr ""
+msgstr "Hmmm... I think somebody is watching me..."
 
 #: variatxt.txt:1503
 msgid "Ta droga jest już spalona."
-msgstr ""
+msgstr "That bridge is already burnt."
 
 #: variatxt.txt:1504
 msgid "Brama też jest chroniona!..."
-msgstr ""
+msgstr "The gate is also guarded!..."
 
 #: variatxt.txt:1505
 msgid "Czuje zbliżające się załamanie nerwowe..."
-msgstr ""
+msgstr "I feel an impending nervous breakdown..."
 
 #: variatxt.txt:1506
 msgid "Ha!"
@@ -11746,27 +11778,27 @@ msgstr "Ha!"
 
 #: variatxt.txt:1507
 msgid "On chyba wyczuwa ruch, a nie obraz."
-msgstr ""
+msgstr "I think he senses movement, not a picture."
 
 #: variatxt.txt:1508
 msgid "Schodzimy na dół."
-msgstr ""
+msgstr "We go downstairs."
 
 #: variatxt.txt:1509
 msgid "Zmieniłem zdanie. Możesz zeskoczyć?"
-msgstr ""
+msgstr "I changed my mind. Can you jump down?"
 
 #: variatxt.txt:1510
 msgid "Lepiej się z nimi nie zaznajamiać..."
-msgstr ""
+msgstr "It is better not to meet them..."
 
 #: variatxt.txt:1701
 msgid "Oto szkodliwe skutki nadmiernego|opalania."
-msgstr ""
+msgstr "Here are the harmful effects of excessive|tanning."
 
 #: variatxt.txt:1901
 msgid "Na wszystkich bogów..."
-msgstr ""
+msgstr "For all the gods..."
 
 #: variatxt.txt:2001
 msgid "Fiu-fiu."
@@ -11774,35 +11806,37 @@ msgstr "Fiu-fiu."
 
 #: variatxt.txt:2002
 msgid "Pewnie śni o muzyce... Nie chcę|mu przeszkadzać."
-msgstr ""
+msgstr "He probably dreams about music... I don't want|to disturb him."
 
 #: variatxt.txt:2003
 msgid "Nie mam pojęcia co z tym trzeba zrobić."
-msgstr ""
+msgstr "I have no idea what to do with it."
 
 #: variatxt.txt:2004
 msgid "Nie rozumiem, dlaczego miałbym|chałturzyć właśnie dla niego."
-msgstr ""
+msgstr "I do not understand why I should|do something just for him."
 
 #: variatxt.txt:2101
 msgid "Co za potworny smród!"
-msgstr ""
+msgstr "What a terrible smell!"
 
 #: variatxt.txt:2102
 msgid "Wszystko dookoła działo się tak wolno!"
-msgstr ""
+msgstr "Everything around was happening so slowly!"
 
 #: variatxt.txt:2103
 msgid "Nie widzę zastosowania akurat tutaj."
-msgstr ""
+msgstr "I do not see how to apply it in this spot."
 
 #: variatxt.txt:2104
 msgid "Ufff... Brudna, mokra robota..."
-msgstr ""
+msgstr "Phew... Dirty, wet work..."
 
 #: variatxt.txt:2201
 msgid "Jest wyraźnie wzruszony, lepiej nie|będę mu przeszkadzał. I tak już chyba|najwyższy czas na samodzielność."
 msgstr ""
+"He is clearly touched, I better not|disturb him. And it is probably the best|"
+"time for acting independently."
 
 #: variatxt.txt:2301
 msgid "To była tylko iluzja..."
@@ -11818,7 +11852,7 @@ msgstr ""
 
 #: variatxt.txt:2402
 msgid "Jest chyba zrośnięty z właścicielem."
-msgstr ""
+msgstr "It probably got fused with the owner."
 
 #: variatxt.txt:2403
 msgid "Zacięła się!"
@@ -11838,7 +11872,7 @@ msgstr "Map magic doesn't work..."
 
 #: variatxt.txt:2501
 msgid "Nigdy w życiu, nienawidzę pajęczyn, a tym|bardziej takich, które wyglądają na|magiczne."
-msgstr ""
+msgstr "I never hated cobwebs, let alone ones that look|magical."
 
 #: variatxt.txt:2502
 msgid "Ciepło tu jakoś."
@@ -11866,11 +11900,11 @@ msgstr "Nobody will believe that we are dead..."
 
 #: variatxt.txt:2602
 msgid "Brak jakiegoś znaku, specjalnego znaku|pochówku..."
-msgstr ""
+msgstr "No sign, no special sign of burial..."
 
 #: variatxt.txt:2801
 msgid "Moje nowe ciało jest najwyraźniej za|szerokie w ramionach"
-msgstr ""
+msgstr "My new body is obviously too wide|in my shoulders"
 
 #: variatxt.txt:2802
 msgid "Ups."
@@ -11878,11 +11912,11 @@ msgstr "Oops."
 
 #: variatxt.txt:2803
 msgid "Nie chce ryzykować kolejnego ataku."
-msgstr ""
+msgstr "I don't want to risk another attack."
 
 #: variatxt.txt:2804
 msgid "Otwór jest już wystarczająco szeroki."
-msgstr ""
+msgstr "The hole is already wide enough."
 
 #: variatxt.txt:2805
 msgid "Nie widzę potrzeby."
@@ -11894,7 +11928,7 @@ msgstr "There is nothing interesting there."
 
 #: variatxt.txt:3001
 msgid "Najpierw muszę wykorzystać sytuację|na swoją korzyść."
-msgstr ""
+msgstr "First I have to use the situation|in my favor."
 
 #: variatxt.txt:3002
 msgid "Nie działa!"
@@ -11926,7 +11960,7 @@ msgstr "Wrrrrrrrr..."
 
 #: variatxt.txt:3205
 msgid "Po co od razu się denerwować?..."
-msgstr ""
+msgstr "Why get upset right away?..."
 
 #: variatxt.txt:3206
 msgid "Nigdy. Nie znam małpiego."
@@ -11938,11 +11972,11 @@ msgstr "Girls..."
 
 #: variatxt.txt:3302
 msgid "Chyba czeka nas rozwiązanie siłowe."
-msgstr ""
+msgstr "I think we need a solution by brute force."
 
 #: variatxt.txt:3303
 msgid "Macha nią jak lekką trzcinką...|Jest dla mnie zbyt szybki."
-msgstr ""
+msgstr "He waves it like a lightweight cane...|It's too fast for me."
 
 #: variatxt.txt:3304
 msgid "Grzeczny diabełek."
@@ -11958,7 +11992,7 @@ msgstr "Valve already closed."
 
 #: variatxt.txt:3503
 msgid "Lepiej nie będę przytykać ręki|do strumienia lawy."
-msgstr ""
+msgstr "I'd better not put my hand|to the lava stream."
 
 #: variatxt.txt:3504
 msgid "Bum."
@@ -11966,7 +12000,7 @@ msgstr "Boom."
 
 #: variatxt.txt:3505
 msgid "Lepiej nie pokazywać się im na te|ich kaprawe oczka."
-msgstr ""
+msgstr "It is better not to show up in front of their|dull eyes."
 
 #: variatxt.txt:3601
 msgid "Wystarczy..."
@@ -11974,7 +12008,7 @@ msgstr "Enough..."
 
 #: variatxt.txt:3602
 msgid "Jakoś tak sama mi się ręka|poślizgnęła."
-msgstr ""
+msgstr "Somehow my hand had slipped."
 
 #: variatxt.txt:3603
 msgid "Nie przy strażniku..."
@@ -11982,7 +12016,7 @@ msgstr ""
 
 #: variatxt.txt:3604
 msgid "Ta świeca nie będzie odpowiednia."
-msgstr ""
+msgstr "This candle will not be suitable."
 
 #: variatxt.txt:3605
 msgid "Życzymy przyjemnej podróży."
@@ -11991,14 +12025,15 @@ msgstr "We wish you a pleasant journey."
 #: variatxt.txt:3606
 msgid "Nie chciałbym spotkać strażnika...|Pewnie nie darzy mnie już sympatią."
 msgstr ""
+"I don't want to bump into the guard...|He probably doesn't like me anymore."
 
 #: variatxt.txt:3607
 msgid "Tę na razie lepiej zostawię."
-msgstr ""
+msgstr "I better leave it for now."
 
 #: variatxt.txt:3608
 msgid "Najpierw lepiej odwiedzę wszystkie sale."
-msgstr ""
+msgstr "First, I'd better visit all the rooms."
 
 #: variatxt.txt:3609
 msgid "Nie przy strażniku..."
@@ -12010,7 +12045,7 @@ msgstr "Warmer right away."
 
 #: variatxt.txt:3611
 msgid "Czasami nadgorliwość może popsuć|najlepsze plany."
-msgstr ""
+msgstr "Sometimes, zeal can ruin|the best plans."
 
 #: variatxt.txt:3612
 msgid "Nie teraz."
@@ -12022,7 +12057,7 @@ msgstr "What a pity..."
 
 #: variatxt.txt:3701
 msgid "Nie mam palców z żelaza!"
-msgstr ""
+msgstr "I don't have iron fingers!"
 
 #: variatxt.txt:3702
 msgid "Jeden węgielek wystarczy."
@@ -12030,23 +12065,23 @@ msgstr "One coal is enough."
 
 #: variatxt.txt:3703
 msgid "Hmmm... Węgielek zamienił się w pył..."
-msgstr ""
+msgstr "Hmmm... The coal has turned into dust..."
 
 #: variatxt.txt:4001
 msgid "Mogę to pożyczyć na chwilę?..."
-msgstr ""
+msgstr "Can I borrow it for a moment?..."
 
 #: variatxt.txt:4002
 msgid "Nie ma to jak dobrze się|przeciągnąć."
-msgstr ""
+msgstr "There is nothing better than|stretching."
 
 #: variatxt.txt:4003
 msgid "Chyba był zbyt słabo rozgrzany."
-msgstr ""
+msgstr "I don't think it was hot enough."
 
 #: variatxt.txt:4004
 msgid "Płomień jest zbyt wątły."
-msgstr ""
+msgstr "The flame is too weak."
 
 #: variatxt.txt:4005
 msgid "Nareszcie!"
@@ -12054,23 +12089,23 @@ msgstr "Finally!"
 
 #: variatxt.txt:4006
 msgid "Nie ma sensu zabarwiać tak małej|powłoczki."
-msgstr ""
+msgstr "It makes no sense to tint such a small|coating."
 
 #: variatxt.txt:4007
 msgid "Teraz powłoka jest czarna jak...|Jak... Eeee... Hmmm..."
-msgstr ""
+msgstr "Now the coating is black as...|As... Eeeer... Hmmm..."
 
 #: variatxt.txt:4008
 msgid "Już bardziej czarna być nie może."
-msgstr ""
+msgstr "It couldn't be more black."
 
 #: variatxt.txt:4009
 msgid "Jeden różek nikogo nie oszuka."
-msgstr ""
+msgstr "One rose will not fool anyone."
 
 #: variatxt.txt:4010
 msgid "Różki wieńczą dzieło."
-msgstr ""
+msgstr "Roses crown the work."
 
 #: variatxt.txt:4011
 msgid "Nie tutaj."
@@ -12078,27 +12113,27 @@ msgstr "Not here."
 
 #: variatxt.txt:4012
 msgid "Na ich oczach?..."
-msgstr ""
+msgstr "In front of them?..."
 
 #: variatxt.txt:4013
 msgid "Na pewno się uda."
-msgstr ""
+msgstr "It will certainly work."
 
 #: variatxt.txt:4014
 msgid "E tam, na pewno się nie uda."
-msgstr ""
+msgstr "Umm, certainly it won't work."
 
 #: variatxt.txt:4101
 msgid "Proszę... Bardzo.... Gotowe..."
-msgstr ""
+msgstr "You are... Welcome.... Ready..."
 
 #: variatxt.txt:4201
 msgid "Twarde sztuki."
-msgstr ""
+msgstr "Tough stuff."
 
 #: variatxt.txt:5001
 msgid "Lepiej wrócę na znane mi tereny,|nie chcę pobłądzić."
-msgstr ""
+msgstr "I better get back to the areas I know,|I don't want to get lost."
 
 #: variatxt.txt:5002
 msgid "Tam w oddali widać jakąś samotną|chałupkę. To pewnie jakaś pustelnia."
@@ -12111,9 +12146,12 @@ msgstr "Oh! I can see an old mill in the distance."
 #: variatxt.txt:5801
 msgid "Naciśnij w odpowiednim momencie lewy przycisk myszy, by|zaatakować lub cofnąć dłonie."
 msgstr ""
+"Click the left mouse button at the right moment to attack|or withdraw your "
+"palms."
 
 #: variatxt.txt:5802
 msgid "Naciskaj szybko na przemian lewy i prawy przycisk myszki|lub klawisze 'Z' i 'X'."
 msgstr ""
+"Click rapidly the left and right mouse buttons|or press the 'Z' and 'X' keys."
 
 # Missing: 317  Extra: 0
