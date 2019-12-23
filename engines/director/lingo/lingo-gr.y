@@ -461,11 +461,11 @@ instancelist: ID				{ g_lingo->code1(g_lingo->c_instance); g_lingo->codeString($
 gotofunc: tGO tLOOP				{ g_lingo->code1(g_lingo->c_gotoloop); }
 	| tGO tNEXT					{ g_lingo->code1(g_lingo->c_gotonext); }
 	| tGO tPREVIOUS				{ g_lingo->code1(g_lingo->c_gotoprevious); }
-	| tGO simpleexpr 			{
+	| tGO expr 			{
 		g_lingo->code1(g_lingo->c_intpush);
 		g_lingo->codeInt(1);
 		g_lingo->code1(g_lingo->c_goto); }
-	| tGO simpleexpr gotomovie	{
+	| tGO expr gotomovie	{
 		g_lingo->code1(g_lingo->c_intpush);
 		g_lingo->codeInt(3);
 		g_lingo->code1(g_lingo->c_goto); }
@@ -480,11 +480,11 @@ gotomovie: tOF tMOVIE expr
 	;
 
 playfunc: tPLAY tDONE			{ g_lingo->code1(g_lingo->c_playdone); }
-	| tPLAY simpleexpr 			{
+	| tPLAY expr 			{
 		g_lingo->code1(g_lingo->c_intpush);
 		g_lingo->codeInt(1);
 		g_lingo->code1(g_lingo->c_play); }
-	| tPLAY simpleexpr gotomovie	{
+	| tPLAY expr gotomovie	{
 		g_lingo->code1(g_lingo->c_intpush);
 		g_lingo->codeInt(3);
 		g_lingo->code1(g_lingo->c_play); }
