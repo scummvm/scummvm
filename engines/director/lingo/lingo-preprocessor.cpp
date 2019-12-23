@@ -25,7 +25,7 @@
 
 namespace Director {
 
-bool isspecial(char c) {
+bool isspec(char c) {
 	return strchr("-+*/%%^:,()><&[]", c) != NULL;
 }
 
@@ -41,7 +41,7 @@ static Common::String nexttok(const char *s, const char **newP = nullptr) {
 		while (*s && (Common::isAlnum(*s) || *s == '.'))
 			res += *s++;
 	} else {
-		while (*s && isspecial(*s))
+		while (*s && isspec(*s))
 			res += *s++;
 	}
 
