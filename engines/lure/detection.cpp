@@ -67,15 +67,17 @@ static const PlainGameDescriptor lureGames[] = {
 #define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS1
 
 static const ADExtraGuiOptionsMap optionsList[] = {
-
-                GAMEOPTION_TTS_NARRATOR,
+	{
+		GAMEOPTION_TTS_NARRATOR,
 		{
 			_s("TTS Narrator"),
 			_s("Use TTS to read the descriptions (if TTS is available)"),
 			"tts_narrator",
 			false
 		}
+	},
 
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 #endif
