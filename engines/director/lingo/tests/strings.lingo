@@ -13,3 +13,7 @@ else
 end if
 
 put "That is the last line of the file." & return & "Click Done to exit." && return && "foo"
+
+if the key = Return then
+	dontPassEvent
+end if
