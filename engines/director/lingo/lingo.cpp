@@ -506,7 +506,8 @@ Common::String Lingo::preprocessReturn(Common::String in) {
 
 		next = nexttok(ptr + 6); // end of 'return'
 
-		if (prev.equals("&") || prev.equals("&&") || next.equals("&") || next.equals("&&")) {
+		if (prev.equals("&") || prev.equals("&&") || prev.equals("=") ||
+				next.equals("&") || next.equals("&&")) {
 			res += "scummvm_"; // Turn it into scummvm_return
 		}
 
@@ -515,6 +516,9 @@ Common::String Lingo::preprocessReturn(Common::String in) {
 	}
 
 	res += Common::String(beg);
+
+	if (in.size() != res.size())
+		debugC(2, kDebugLingoParse, "RETURN: in: %s\nout: %s", in.c_str(), res.c_str());
 
 	return res;
 }
