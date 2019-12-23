@@ -11,3 +11,5 @@ if z1 contains "MeÍW" then
 else
 	put "Doesn't contain"
 end if
+
+put "That is the last line of the file." & return & "Click Done to exit." && return && "foo"
