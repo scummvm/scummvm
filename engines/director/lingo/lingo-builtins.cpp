@@ -1631,7 +1631,7 @@ void Lingo::b_quote(int nargs) {
 }
 
 void Lingo::b_returnconst(int nargs) {
-	g_lingo->push(Datum(new Common::String("\r")));
+	g_lingo->push(Datum(new Common::String("\n")));
 }
 
 void Lingo::b_tab(int nargs) {
