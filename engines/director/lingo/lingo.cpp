@@ -20,12 +20,9 @@
  *
  */
 
-#include "common/archive.h"
-#include "common/file.h"
 #include "common/str-array.h"
 
 #include "director/lingo/lingo.h"
-#include "director/lingo/lingo-gr.h"
 #include "director/frame.h"
 #include "director/sprite.h"
 

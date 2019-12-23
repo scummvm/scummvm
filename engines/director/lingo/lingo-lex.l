@@ -34,6 +34,7 @@
 
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"
+#include "director/lingo/lingo-the.h"
 
 using namespace Director;
 

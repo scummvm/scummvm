@@ -27,13 +27,14 @@
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
 
-#include "director/director.h"
 #include "director/score.h"
 #include "director/lingo/lingo-gr.h"
-#include "director/lingo/lingo-the.h"
 #include "director/lingo/lingo-bytecode.h"
 
 namespace Director {
+
+struct TheEntity;
+struct TheEntityField;
 
 enum LEvent {
 	kEventPrepareMovie,
