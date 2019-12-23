@@ -389,10 +389,12 @@ void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
 	auto key = ((realId & 0xfu) << 1u | 0x40u);
 
 	// TODO: Volume
-	if (!isVoicePlaying(program, key)) {
-		Audio::SoundHandle *handle = getVoiceHandle(program, key);
-		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, vabSound->getAudioStream(program, key));
+	if (isVoicePlaying(soundId)) {
+		stopVoicePlaying(soundId);
 	}
+
+		Audio::SoundHandle *handle = getVoiceHandle(soundId);
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, vabSound->getAudioStream(program, key));
 }
 
 void SoundManager::stopSound(uint16 soundId, uint16 volumeId) {
@@ -400,11 +402,7 @@ void SoundManager::stopSound(uint16 soundId, uint16 volumeId) {
 
 //	auto vabId = getVabFromSoundId(soundId);
 
-	auto realId = soundId & 0x3fffu;
-
-	auto program = realId >> 4u;
-	auto key = ((realId & 0xfu) << 1u | 0x40u);
-	stopVoicePlaying(program, key);
+	stopVoicePlaying(soundId & ~0x4000u);
 }
 
 uint16 SoundManager::getVabFromSoundId(uint16 soundId) {
@@ -427,28 +425,27 @@ void SoundManager::loadMsf(uint32 sceneId) {
 	}
 }
 
-bool SoundManager::isVoicePlaying(uint16 program, uint16 key) {
+bool SoundManager::isVoicePlaying(uint16 soundID) {
 	for (int i = 0; i < NUM_VOICES; i++) {
-		if (_voice[i].program == program && _voice[i].key == key && _vm->_mixer->isSoundHandleActive(_voice[i].handle)) {
+		if (_voice[i].soundID == soundID && _vm->_mixer->isSoundHandleActive(_voice[i].handle)) {
 			return true;
 		}
 	}
 	return false;
 }
 
-Audio::SoundHandle *SoundManager::getVoiceHandle(uint16 program, uint16 key) {
+Audio::SoundHandle *SoundManager::getVoiceHandle(uint16 soundID) {
 	for (int i = 0; i < NUM_VOICES; i++) {
 		if (!_vm->_mixer->isSoundHandleActive(_voice[i].handle)) {
-			_voice[i].program = program;
-			_voice[i].key = key;
+			_voice[i].soundID = soundID & ~0x4000u;
 			return &_voice[i].handle;
 		}
 	}
 }
 
-void SoundManager::stopVoicePlaying(uint16 program, uint16 key) {
+void SoundManager::stopVoicePlaying(uint16 soundID) {
 	for (int i = 0; i < NUM_VOICES; i++) {
-		if (_voice[i].program == program && _voice[i].key == key) {
+		if (_voice[i].soundID == soundID) {
 			_vm->_mixer->stopHandle(_voice[i].handle);
 			return;
 		}
