@@ -326,7 +326,7 @@ int Lingo::codeArray(int arraySize) {
 }
 
 bool Lingo::isInArgStack(Common::String *s) {
-	for (int i = 0; i < _argstack.size(); i++)
+	for (uint i = 0; i < _argstack.size(); i++)
 		if (_argstack[i]->equalsIgnoreCase(*s))
 			return true;
 
@@ -338,7 +338,7 @@ void Lingo::codeArg(Common::String *s) {
 }
 
 void Lingo::clearArgStack() {
-	for (int i = 0; i < _argstack.size(); i++)
+	for (uint i = 0; i < _argstack.size(); i++)
 		delete _argstack[i];
 
 	_argstack.clear();
