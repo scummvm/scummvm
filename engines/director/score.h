@@ -25,8 +25,6 @@
 
 #include "common/hash-str.h"
 
-#include "director/types.h"
-
 namespace Graphics {
 	class ManagedSurface;
 	class Font;

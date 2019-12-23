@@ -23,6 +23,7 @@
 #include "audio/decoders/wave.h"
 #include "common/file.h"
 #include "common/macresman.h"
+#include "common/system.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 

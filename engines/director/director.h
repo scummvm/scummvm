@@ -24,15 +24,18 @@
 #define DIRECTOR_DIRECTOR_H
 
 #include "common/random.h"
+#include "common/rect.h"
 
 #include "common/hashmap.h"
 #include "engines/engine.h"
-#include "director/cast.h"
+#include "director/types.h"
 
 #define CHANNEL_COUNT 30
 
 namespace Common {
 class MacResManager;
+class SeekableReadStream;
+class SeekableSubReadStreamEndian;
 }
 
 namespace Graphics {

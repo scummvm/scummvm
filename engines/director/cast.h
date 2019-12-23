@@ -23,9 +23,6 @@
 #ifndef DIRECTOR_CAST_H
 #define DIRECTOR_CAST_H
 
-#include "common/rect.h"
-#include "common/substream.h"
-
 #include "director/archive.h"
 #include "director/types.h"
 
@@ -91,33 +88,6 @@ public:
 	byte _lineDirection;
 };
 
-enum TextType {
-	kTextTypeAdjustToFit,
-	kTextTypeScrolling,
-	kTextTypeFixed
-};
-
-enum TextAlignType {
-	kTextAlignRight = -1,
-	kTextAlignLeft,
-	kTextAlignCenter
-};
-
-enum TextFlag {
-	kTextFlagEditable,
-	kTextFlagAutoTab,
-	kTextFlagDoNotWrap
-};
-
-enum SizeType {
-	kSizeNone,
-	kSizeSmallest,
-	kSizeSmall,
-	kSizeMedium,
-	kSizeLarge,
-	kSizeLargest
-};
-
 class TextCast : public Cast {
 public:
 	TextCast(Common::ReadStreamEndian &stream, uint16 version = 2);
@@ -143,12 +113,6 @@ public:
 	void importStxt(const Stxt *stxt);
 	void importRTE(byte* text);
 	CachedMacText *_cachedMacText;
-};
-
-enum ButtonType {
-	kTypeButton,
-	kTypeCheckBox,
-	kTypeRadio
 };
 
 class ButtonCast : public TextCast {

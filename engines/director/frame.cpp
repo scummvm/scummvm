@@ -21,6 +21,8 @@
  */
 
 #include "common/system.h"
+#include "common/substream.h"
+
 #include "graphics/font.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"

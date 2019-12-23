@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/substream.h"
+
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-bytecode.h"

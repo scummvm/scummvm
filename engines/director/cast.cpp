@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/substream.h"
+
 #include "director/director.h"
 #include "director/cachedmactext.h"
 #include "director/cast.h"

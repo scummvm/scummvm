@@ -25,6 +25,7 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/substream.h"
 
 #include "engines/util.h"
 #include "graphics/font.h"
@@ -34,6 +35,7 @@
 #include "graphics/macgui/macwindowmanager.h"
 #include "image/bmp.h"
 
+#include "director/director.h"
 #include "director/cast.h"
 #include "director/images.h"
 #include "director/score.h"

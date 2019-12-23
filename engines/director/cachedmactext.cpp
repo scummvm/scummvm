@@ -25,6 +25,7 @@
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/cachedmactext.h"
 
 namespace Director {

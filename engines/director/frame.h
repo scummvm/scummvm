@@ -20,8 +20,6 @@
  *
  */
 
-#include "common/rect.h"
-
 #ifndef DIRECTOR_FRAME_H
 #define DIRECTOR_FRAME_H
 

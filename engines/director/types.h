@@ -51,6 +51,40 @@ enum ScriptType {
 	kMaxScriptType = 4	// Sync with score.cpp:45, array scriptTypes[]
 };
 
+enum TextType {
+	kTextTypeAdjustToFit,
+	kTextTypeScrolling,
+	kTextTypeFixed
+};
+
+enum TextAlignType {
+	kTextAlignRight = -1,
+	kTextAlignLeft,
+	kTextAlignCenter
+};
+
+enum TextFlag {
+	kTextFlagEditable,
+	kTextFlagAutoTab,
+	kTextFlagDoNotWrap
+};
+
+enum SizeType {
+	kSizeNone,
+	kSizeSmallest,
+	kSizeSmall,
+	kSizeMedium,
+	kSizeLarge,
+	kSizeLargest
+};
+
+enum ButtonType {
+	kTypeButton,
+	kTypeCheckBox,
+	kTypeRadio
+};
+
+
 const char *scriptType2str(ScriptType scr);
 
 } // End of namespace Director

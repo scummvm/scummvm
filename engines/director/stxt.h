@@ -23,8 +23,6 @@
 #ifndef DIRECTOR_STXT_H
 #define DIRECTOR_STXT_H
 
-#include "director/director.h"
-
 namespace Director {
 
 class Stxt {

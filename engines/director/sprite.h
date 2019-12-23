@@ -23,8 +23,6 @@
 #ifndef DIRECTOR_SPRITE_H
 #define DIRECTOR_SPRITE_H
 
-#include "common/rect.h"
-
 namespace Director {
 
 class BitmapCast;

@@ -44,6 +44,7 @@
 // THIS SOFTWARE.
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/score.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
