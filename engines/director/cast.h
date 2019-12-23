@@ -24,32 +24,24 @@
 #define DIRECTOR_CAST_H
 
 #include "common/rect.h"
+#include "common/substream.h"
+
 #include "director/archive.h"
+#include "director/types.h"
 
 namespace Graphics {
 struct Surface;
+}
+
+namespace Common {
+class SeekableReadStream;
+class ReadStreamEndian;
 }
 
 namespace Director {
 
 class Stxt;
 class CachedMacText;
-
-enum CastType {
-	kCastTypeNull = 0,
-	kCastBitmap = 1,
-	kCastFilmLoop = 2,
-	kCastText = 3,
-	kCastPalette = 4,
-	kCastPicture = 5,
-	kCastSound = 6,
-	kCastButton = 7,
-	kCastShape = 8,
-	kCastMovie = 9,
-	kCastDigitalVideo = 10,
-	kCastLingoScript = 11,
-	kCastRTE = 12
-};
 
 class Cast {
 public:
@@ -172,8 +164,6 @@ public:
 
 	uint32 _id;
 };
-
-
 
 struct CastInfo {
 	Common::String script;

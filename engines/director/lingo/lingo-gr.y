@@ -52,7 +52,9 @@
 %{
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "common/endian.h"
 #include "common/hash-str.h"
+#include "common/rect.h"
 
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"

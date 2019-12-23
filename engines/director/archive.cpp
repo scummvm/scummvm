@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/file.h"
+#include "common/substream.h"
+
 #include "director/archive.h"
 #include "director/director.h"
 

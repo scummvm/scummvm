@@ -26,9 +26,14 @@
 #include "audio/audiostream.h"
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
+#include "common/endian.h"
 
-#include "director/score.h"
+#include "director/types.h"
 #include "director/lingo/lingo-gr.h"
+
+namespace Common {
+	class SeekableSubReadStreamEndian;
+}
 
 namespace Director {
 
@@ -36,6 +41,9 @@ struct TheEntity;
 struct TheEntityField;
 struct LingoV4Bytecode;
 struct LingoV4TheEntity;
+class DirectorEngine;
+
+class Frame;
 
 enum LEvent {
 	kEventPrepareMovie,

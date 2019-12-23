@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/memstream.h"
 
 #include "engines/util.h"
@@ -34,11 +35,13 @@
 #include "image/bmp.h"
 
 #include "director/cast.h"
+#include "director/images.h"
 #include "director/score.h"
 #include "director/frame.h"
 #include "director/archive.h"
 #include "director/sound.h"
 #include "director/sprite.h"
+#include "director/stxt.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {

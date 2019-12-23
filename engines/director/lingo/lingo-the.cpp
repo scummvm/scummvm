@@ -20,9 +20,11 @@
  *
  */
 
+#include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/sprite.h"
 #include "director/lingo/lingo-the.h"
+#include "director/score.h"
 
 namespace Director {
 

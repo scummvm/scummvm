@@ -24,7 +24,6 @@
 #define DIRECTOR_DIRECTOR_H
 
 #include "common/random.h"
-#include "common/substream.h"
 
 #include "common/hashmap.h"
 #include "engines/engine.h"

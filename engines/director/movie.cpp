@@ -21,10 +21,10 @@
  */
 
 #include "common/system.h"
+#include "graphics/managed_surface.h"
 #include "video/qt_decoder.h"
 
 #include "director/movie.h"
-#include "director/score.h"
 #include "director/util.h"
 
 namespace Director {

@@ -31,6 +31,7 @@
 
 #include "director/director.h"
 #include "director/archive.h"
+#include "director/score.h"
 #include "director/sound.h"
 #include "director/lingo/lingo.h"
 

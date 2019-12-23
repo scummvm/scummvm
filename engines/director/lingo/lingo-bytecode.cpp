@@ -20,6 +20,7 @@
  *
  */
 
+#include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-bytecode.h"
 #include "director/lingo/lingo-the.h"

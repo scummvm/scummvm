@@ -32,6 +32,7 @@
 
 #include "common/str.h"
 
+#include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/lingo-the.h"

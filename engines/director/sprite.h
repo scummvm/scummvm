@@ -27,6 +27,11 @@
 
 namespace Director {
 
+class BitmapCast;
+class ButtonCast;
+class ShapeCast;
+class TextCast;
+
 enum InkType {
 	kInkTypeCopy,
 	kInkTypeTransparent,

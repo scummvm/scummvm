@@ -20,6 +20,7 @@
  *
  */
 
+#include "director/director.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {

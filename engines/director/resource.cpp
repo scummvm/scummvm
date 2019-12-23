@@ -22,12 +22,14 @@
 
 #include "common/config-manager.h"
 #include "common/macresman.h"
+#include "common/file.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
 
 #include "director/director.h"
 #include "director/archive.h"
+#include "director/score.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
 

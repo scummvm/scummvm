@@ -23,16 +23,18 @@
 #ifndef DIRECTOR_SCORE_H
 #define DIRECTOR_SCORE_H
 
-#include "common/substream.h"
-#include "common/rect.h"
-#include "director/archive.h"
-#include "director/cast.h"
-#include "director/images.h"
-#include "director/stxt.h"
+#include "common/hash-str.h"
+
+#include "director/types.h"
 
 namespace Graphics {
 	class ManagedSurface;
 	class Font;
+}
+
+namespace Common {
+	class ReadStreamEndian;
+	class SeekableSubReadStreamEndian;
 }
 
 namespace Director {
@@ -44,7 +46,14 @@ class DirectorSound;
 class Frame;
 struct Label;
 class Lingo;
+struct Resource;
 class Sprite;
+class Stxt;
+class BitmapCast;
+class ButtonCast;
+class ScriptCast;
+class ShapeCast;
+class TextCast;
 
 struct ZoomBox {
 	Common::Rect start;
@@ -54,18 +63,6 @@ struct ZoomBox {
 	uint32 startTime;
 	uint32 nextTime;
 };
-
-enum ScriptType {
-	kMovieScript = 0,
-	kSpriteScript = 1,
-	kFrameScript = 2,
-	kCastScript = 3,
-	kGlobalScript = 4,
-	kNoneScript = -1,
-	kMaxScriptType = 4	// Sync with score.cpp:45, array scriptTypes[]
-};
-
-const char *scriptType2str(ScriptType scr);
 
 class Score {
 public:

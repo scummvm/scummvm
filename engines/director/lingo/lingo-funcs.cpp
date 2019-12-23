@@ -21,11 +21,14 @@
  */
 
 #include "audio/decoders/wave.h"
+#include "common/file.h"
 #include "common/macresman.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
+#include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/score.h"
 #include "director/sound.h"
 #include "director/util.h"
 

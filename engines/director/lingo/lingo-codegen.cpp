@@ -43,6 +43,7 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
+#include "director/director.h"
 #include "director/lingo/lingo.h"
 
 #include "director/util.h"

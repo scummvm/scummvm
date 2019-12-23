@@ -23,9 +23,12 @@
 #include "common/system.h"
 #include "common/events.h"
 
+#include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/frame.h"
+#include "director/score.h"
 #include "director/sprite.h"
+#include "director/stxt.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macmenu.h"

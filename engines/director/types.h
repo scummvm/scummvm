@@ -20,28 +20,38 @@
  *
  */
 
-#ifndef DIRECTOR_MOVIE_H
-#define DIRECTOR_MOVIE_H
-
-namespace Video {
-class VideoDecoder;
-}
+#ifndef DIRECTOR_TYPES_H
+#define DIRECTOR_TYPES_H
 
 namespace Director {
 
-class DirectorEngine;
-
-class Movie {
-public:
-	Movie(Common::String fileName, DirectorEngine *vm);
-	~Movie();
-	void play(Common::Point dest);
-	void stop();
-
-private:
-	Video::VideoDecoder *_currentVideo;
-	DirectorEngine *_vm;
+enum CastType {
+	kCastTypeNull = 0,
+	kCastBitmap = 1,
+	kCastFilmLoop = 2,
+	kCastText = 3,
+	kCastPalette = 4,
+	kCastPicture = 5,
+	kCastSound = 6,
+	kCastButton = 7,
+	kCastShape = 8,
+	kCastMovie = 9,
+	kCastDigitalVideo = 10,
+	kCastLingoScript = 11,
+	kCastRTE = 12
 };
+
+enum ScriptType {
+	kMovieScript = 0,
+	kSpriteScript = 1,
+	kFrameScript = 2,
+	kCastScript = 3,
+	kGlobalScript = 4,
+	kNoneScript = -1,
+	kMaxScriptType = 4	// Sync with score.cpp:45, array scriptTypes[]
+};
+
+const char *scriptType2str(ScriptType scr);
 
 } // End of namespace Director
 
