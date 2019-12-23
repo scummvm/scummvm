@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-12-22 12:08+0000\n"
+"PO-Revision-Date: 2019-12-24 13:07+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/prince/"
 "prince/ru/>\n"
@@ -5344,7 +5344,9 @@ msgstr "OTHER: Но там наверху, за этими стенами,|та 
 
 #: dialog0162.txt:2
 msgid "OTHER: Musi zawierać potężne czary, skoro nie skruszył|jej ząb czasu."
-msgstr "OTHER: Нужно иметь большую силу, чтобы|не побеспокоить зуб времени."
+msgstr ""
+"OTHER: В ней должно бытъ сильное колдунство, ибо время|не имеет власти над "
+"ней."
 
 #: dialog0163.txt:1
 msgid "OTHER: Znalazłem coś całkiem użytecznego."
@@ -5692,7 +5694,7 @@ msgstr "OTHER: Пропавшие жены, дети, собачки и кошк
 
 #: dialog0176.txt:4
 msgid "OTHER: Tych pierwszych czasem lepiej nie odnajdywać."
-msgstr "OTHER: Первые, правда, обычно не очень хотят быть найденными."
+msgstr "OTHER: Первых, правда, обычно лучше не искать."
 
 #: dialog0176.txt:5
 msgid "OTHER: Przez skromność nie wspomnę o..."
@@ -10252,7 +10254,7 @@ msgstr "Зеркало - То, что еще не разбито"
 
 #: mob.lst:13005
 msgid "portret - Młody, przystojny, podobny do szympansa."
-msgstr " Портрет - Молодой и накачанный. Прямо шимпанзе."
+msgstr "портрет - Молодой, симпатичный, похож на шимпанзе."
 
 #: mob.lst:13006
 msgid "brzydka dziewczyna - Ponoć był taki podróżnik, który brał na|długie wyprawy najbrzydszą dziewczynę|w okolicy.+Kiedy po miesiącach pobytu na pustkowiu|dziewczyna zaczynała mu się podobać|wiedział, że czas wracać do ludzi.+Ale gdyby miał tę dziewczynę u boku...+...nigdy byśmy go już nie zobaczyli..."
@@ -11141,47 +11143,47 @@ msgstr "Люцифер - Люцифер. А выглядит он не то чт
 
 #: mob.lst:50001
 msgid "Zapomniany cmentarz - "
-msgstr "Кладбище -"
+msgstr "Кладбище - "
 
 #: mob.lst:50002
 msgid "Pustelnia - "
-msgstr "хижина отшельника -"
+msgstr "хижина отшельника - "
 
 #: mob.lst:50003
 msgid "Miasto - "
-msgstr "Городок -"
+msgstr "город - "
 
 #: mob.lst:50004
 msgid "Pan Słońce - "
-msgstr "Солнечник -"
+msgstr "солнечник - "
 
 #: mob.lst:50005
 msgid "Świątynia - "
-msgstr "Храм -"
+msgstr "храм - "
 
 #: mob.lst:50006
 msgid "Zamek Garrahan - "
-msgstr "Замок Гаррахан -"
+msgstr "замок Гаррахан - "
 
 #: mob.lst:50007
 msgid "Zamek Fjord - "
-msgstr "Замок Фьорд -"
+msgstr "замок Фьорд - "
 
 #: mob.lst:50008
 msgid "Silmaniona - "
-msgstr "Силманион -"
+msgstr "Силманион - "
 
 #: mob.lst:50009
 msgid "Kurhan - "
-msgstr "Холмы -"
+msgstr "курган - "
 
 #: mob.lst:50010
 msgid "Smocza jaskinia - "
-msgstr "Пещера дракона -"
+msgstr "пещера дракона - "
 
 #: mob.lst:50011
 msgid "Młyn - "
-msgstr "Мельница -"
+msgstr "мельница - "
 
 #: mob.lst:52001
 msgid "powrót - "
@@ -11189,7 +11191,7 @@ msgstr "выход -"
 
 #: mob.lst:52002
 msgid "powrót - "
-msgstr "выход -"
+msgstr "выход - "
 
 #: variatxt.txt:10
 msgid "Nie mogę tego użyć."
@@ -11313,7 +11315,7 @@ msgstr "Мне интересно, они догадываются, что эт�
 
 #: variatxt.txt:405
 msgid "To było żałosne..."
-msgstr "Это было ужасно..."
+msgstr "Это было жалкое зрелище..."
 
 #: variatxt.txt:406
 msgid "To nie jest dobry moment."
@@ -11457,7 +11459,7 @@ msgstr "Я не понимаю, почему я должен|ему играть
 
 #: variatxt.txt:2101
 msgid "Co za potworny smród!"
-msgstr "Это еще что такое?"
+msgstr "Что за ужасная вонь!"
 
 #: variatxt.txt:2102
 msgid "Wszystko dookoła działo się tak wolno!"
@@ -11465,7 +11467,7 @@ msgstr "Все это вокруг меня так медленно движет
 
 #: variatxt.txt:2103
 msgid "Nie widzę zastosowania akurat tutaj."
-msgstr "Я не вижу тут возможности к продвижению."
+msgstr "Я не вижу возможности применить это здесь."
 
 #: variatxt.txt:2104
 msgid "Ufff... Brudna, mokra robota..."
@@ -11765,7 +11767,7 @@ msgstr "Пожалуйста... готово."
 
 #: variatxt.txt:4201
 msgid "Twarde sztuki."
-msgstr "Крутые парни."
+msgstr "Крутые штуки."
 
 #: variatxt.txt:5001
 msgid "Lepiej wrócę na znane mi tereny,|nie chcę pobłądzić."
@@ -11785,6 +11787,7 @@ msgstr "Нажмите вовремя правую или левую кнопк�
 
 #: variatxt.txt:5802
 msgid "Naciskaj szybko na przemian lewy i prawy przycisk myszki|lub klawisze 'Z' i 'X'."
-msgstr "Быстро нажимайте правую и левую кнопки попеременно,|или кнопки М и Н."
+msgstr ""
+"Быстро нажимайте правую и левую кнопки мышки попеременно,|или кнопки М и Н."
 
 # Missing: 9  Extra: 0
