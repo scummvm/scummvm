@@ -197,7 +197,8 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._scriptId = stream->readByte();
 			sprite._spriteType = stream->readByte();
 			sprite._enabled = sprite._spriteType != 0;
-			sprite._x2 = stream->readUint16();
+			sprite._foreColor = stream->readByte();
+			sprite._backColor = stream->readByte();
 
 			sprite._flags = stream->readUint16();
 			sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
@@ -651,9 +652,9 @@ void Frame::addDrawRect(uint16 spriteId, Common::Rect &rect) {
 void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	Sprite *sp = _sprites[spriteId];
 
-	if (sp->_shapeCast == NULL) {
-		warning("Frame::renderShape(): missing shapecast in sprite id: %d", spriteId);
-		return;
+	if (sp->_shapeCast != NULL) {
+		sp->_foreColor = sp->_shapeCast->_fgCol;
+		sp->_backColor = sp->_shapeCast->_bgCol;
 	}
 
 	Common::Rect shapeRect = Common::Rect(sp->_startPoint.x,
@@ -670,9 +671,9 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		sp->_ink = kInkTypeReverse;
 	} else {
 		// No minus one on the pattern here! MacPlotData will do that for us!
-		Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), sp->_castId, 1, sp->_shapeCast->_bgCol);
+		Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), sp->_castId, 1, sp->_backColor);
 		Common::Rect fillRect(shapeRect.width(), shapeRect.height());
-		Graphics::drawFilledRect(fillRect, sp->_shapeCast->_fgCol, Graphics::macDrawPixel, &pd);
+		Graphics::drawFilledRect(fillRect, sp->_foreColor, Graphics::macDrawPixel, &pd);
 	}
 
 	if (sp->_lineSize > 0) {

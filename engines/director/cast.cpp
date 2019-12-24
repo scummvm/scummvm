@@ -257,7 +257,7 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Score::readRect(stream);
 		_pattern = stream.readUint16BE();
-		_fgCol = stream.readByte();
+		_fgCol = (stream.readByte() + 128) & 0xff; // -128 -> 0, 127 -> 256
 		_bgCol = stream.readByte();
 		_fillType = stream.readByte();
 		_lineThickness = stream.readByte();
