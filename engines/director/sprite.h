@@ -52,22 +52,6 @@ enum InkType {
 	kInkTypeDark
 };
 
-// Director v4
-enum SpriteType {
-	kInactiveSprite, // turns the sprite off
-	kBitmapSprite,
-	kRectangleSprite,
-	kRoundedRectangleSprite,
-	kOvalSprite,
-	kLineTopBottomSprite, // line from top left to bottom right
-	kLineBottomTopSprite, // line from bottom left to top right
-	kTextSprite,
-	kButtonSprite,
-	kCheckboxSprite,
-	kRadioButtonSprite,
-	kUndeterminedSprite = 16 // use castType property to examine the type of cast member associated with sprite
-};
-
 enum SpritePosition {
 	kSpritePositionUnk1 = 0,
 	kSpritePositionEnabled,

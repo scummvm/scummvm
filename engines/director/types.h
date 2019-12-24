@@ -84,6 +84,28 @@ enum ButtonType {
 	kTypeRadio
 };
 
+enum SpriteType {
+	kInactiveSprite					= 0,	// turns the sprite off
+	kBitmapSprite					= 1,
+	kRectangleSprite				= 2,	// QuickDraw
+	kRoundedRectangleSprite			= 3,	// QuickDraw
+	kOvalSprite						= 4,	// QuickDraw
+	kLineTopBottomSprite			= 5,	// line from top left to bottom right
+	kLineBottomTopSprite			= 6,	// line from bottom left to top right
+	kTextSprite						= 7,
+	kButtonSprite					= 8,
+	kCheckboxSprite					= 9,
+	kRadioButtonSprite				= 10,
+	kPictSprite						= 11,	// Cast picture
+	kOutlinedRectangleSprite		= 12,	// QuickDraw
+	kOutlinedRoundedRectangleSprite	= 13,	// QuickDraw
+	kOutlinedOvalSprite				= 14,	// QuickDraw
+	kThinkLineSprite				= 15,	// 2pt width line
+	kCastMemberSprite				= 16,	// Specified by cast member
+	kFilmLoopSpite					= 17,
+	kDirMovieSprite					= 18
+};
+
 
 const char *scriptType2str(ScriptType scr);
 

@@ -580,18 +580,19 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			if (_vm->getVersion() < 4) {
 				debugC(1, kDebugImages, "Frame::renderSprites(): Channel: %d type: %d", i, _sprites[i]->_spriteType);
 				switch (_sprites[i]->_spriteType) {
-				case 1:
+				case kBitmapSprite:
 					castType = kCastBitmap;
 					break;
-				case 2:
-				case 12: // this is actually a mouse-over shape? I don't think it's a real button.
-				case 16: // Face kit D3
+				case kRectangleSprite:
+				case kOutlinedRectangleSprite:	// this is actually a mouse-over shape? I don't think it's a real button.
+				case kCastMemberSprite: 		// Face kit D3
 					castType = kCastShape;
 					break;
-				case 7:
+				case kTextSprite:
 					castType = kCastText;
 					break;
 				default:
+					warning("Frame::renderSprites(): Unhandled sprite type %d", _sprites[i]->_spriteType);
 					break;
 				}
 			} else {
@@ -654,7 +655,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	Graphics::ManagedSurface tmpSurface;
 	tmpSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
-	if (_vm->getVersion() <= 3 && _sprites[spriteId]->_spriteType == 0x0c) {
+	if (_vm->getVersion() <= 3 && _sprites[spriteId]->_spriteType == kOutlinedRectangleSprite) {
 		tmpSurface.fillRect(Common::Rect(shapeRect.width(), shapeRect.height()), (_vm->getCurrentScore()->_currentMouseDownSpriteId == spriteId ? 0 : 0xff));
 		//tmpSurface.frameRect(Common::Rect(shapeRect.width(), shapeRect.height()), 0);
 		// TODO: don't override, work out how to display correctly.
