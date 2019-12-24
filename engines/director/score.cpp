@@ -91,6 +91,8 @@ Score::Score(DirectorEngine *vm) {
 	_stopPlay = false;
 	_stageColor = 0;
 
+	_castIDoffset = 0;
+
 	_loadedBitmaps = new Common::HashMap<int, BitmapCast *>();
 	_loadedText = new Common::HashMap<int, TextCast *>();
 	_loadedButtons = new Common::HashMap<int, ButtonCast *>();
@@ -134,12 +136,12 @@ void Score::loadArchive() {
 		debug("Movie has fonts. Loading....");
 	}
 
-	assert(_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), 1024));
-	loadFrames(*_movieArchive->getResource(MKTAG('V', 'W', 'S', 'C'), 1024));
+	assert(_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1));
+	loadFrames(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'S', 'C')));
 
 
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
-		loadConfig(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'F'), 1024));
+		loadConfig(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'C', 'F')));
 	} else {
 		// TODO: Source this from somewhere!
 		_movieRect = Common::Rect(0, 0, 640, 480);
@@ -147,21 +149,21 @@ void Score::loadArchive() {
 	}
 
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'R'), -1)) {
-		loadCastDataVWCR(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'R'), 1024));
+		_castIDoffset = _movieArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'R'))[0];
+		loadCastDataVWCR(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'R'), _castIDoffset));
+	}
+	if (_movieArchive->hasResource(MKTAG('V', 'W', 'A', 'C'), -1)) {
+		loadActions(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'A', 'C')));
 	}
 
-	if (_movieArchive->hasResource(MKTAG('V', 'W', 'A', 'C'), 1024)) {
-		loadActions(*_movieArchive->getResource(MKTAG('V', 'W', 'A', 'C'), 1024));
+	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'I'), -1)) {
+		loadFileInfo(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'F', 'I')));
 	}
 
-	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'I'), 1024)) {
-		loadFileInfo(*_movieArchive->getResource(MKTAG('V', 'W', 'F', 'I'), 1024));
-	}
-
-	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'M'), 1024)) {
+	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'M'), -1)) {
 		_vm->_wm->_fontMan->clearFontMapping();
 
-		loadFontMap(*_movieArchive->getResource(MKTAG('V', 'W', 'F', 'M'), 1024));
+		loadFontMap(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'F', 'M')));
 	}
 
 	// Try to load script context
@@ -231,7 +233,7 @@ void Score::copyCastStxts() {
 	Common::HashMap<int, TextCast *>::iterator tc;
 	for (tc = _loadedText->begin(); tc != _loadedText->end(); ++tc) {
 		uint stxtid = (_vm->getVersion() < 4) ?
-			tc->_key + 1024 :
+			tc->_key + _castIDoffset :
 			tc->_value->_children[0].index;
 		if (_loadedStxts->getVal(stxtid)) {
 			const Stxt *stxt = _loadedStxts->getVal(stxtid);
@@ -243,7 +245,7 @@ void Score::copyCastStxts() {
 	Common::HashMap<int, ButtonCast *>::iterator bc;
 	for (bc = _loadedButtons->begin(); bc != _loadedButtons->end(); ++bc) {
 		uint stxtid = (_vm->getVersion() < 4) ?
-			bc->_key + 1024 :
+			bc->_key + _castIDoffset :
 			bc->_value->_children[0].index;
 		if (_loadedStxts->getVal(stxtid)) {
 			debugC(3, "Yes to STXT: %d", stxtid);
@@ -262,7 +264,7 @@ void Score::loadSpriteImages(bool isSharedCast) {
 	for (bc = _loadedBitmaps->begin(); bc != _loadedBitmaps->end(); ++bc) {
 		if (bc->_value) {
 			uint32 tag = bc->_value->_tag;
-			uint16 imgId = bc->_key + 1024;
+			uint16 imgId = (uint16)(bc->_key + _castIDoffset);
 			BitmapCast *bitmapCast = bc->_value;
 
 			if (_vm->getVersion() >= 4 && bitmapCast->_children.size() > 0) {

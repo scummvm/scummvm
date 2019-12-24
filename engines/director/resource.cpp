@@ -275,8 +275,10 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	_sharedScore->loadConfig(*shardcst->getResource(MKTAG('V','W','C','F'), 1024));
 
-	if (getVersion() < 4)
-		_sharedScore->loadCastDataVWCR(*shardcst->getResource(MKTAG('V','W','C','R'), 1024));
+	if (getVersion() < 4) {
+		_sharedScore->_castIDoffset = shardcst->getResourceIDList(MKTAG('V', 'W', 'C', 'R'))[0];
+		_sharedScore->loadCastDataVWCR(*shardcst->getResource(MKTAG('V','W','C','R'), _sharedScore->_castIDoffset));
+	}
 
 	Common::Array<uint16> cast = shardcst->getResourceIDList(MKTAG('C','A','S','t'));
 	if (cast.size() > 0) {

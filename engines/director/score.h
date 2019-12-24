@@ -149,6 +149,8 @@ public:
 	Common::HashMap<int, ScriptCast *> *_loadedScripts;
 	Common::HashMap<int, const Stxt *> *_loadedStxts;
 
+	uint16 _castIDoffset;
+
 private:
 	uint16 _versionMinor;
 	uint16 _versionMajor;

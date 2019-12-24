@@ -59,6 +59,7 @@ public:
 	bool hasResource(uint32 tag, int id) const;
 	bool hasResource(uint32 tag, const Common::String &resName) const;
 	virtual Common::SeekableSubReadStreamEndian *getResource(uint32 tag, uint16 id);
+	Common::SeekableSubReadStreamEndian *getFirstResource(uint32 tag);
 	virtual Resource getResourceDetail(uint32 tag, uint16 id);
 	uint32 getOffset(uint32 tag, uint16 id) const;
 	uint16 findResourceID(uint32 tag, const Common::String &resName) const;

@@ -176,8 +176,8 @@ void Lingo::processInputEvent(LEvent event) {
 	} else if (event == kEventMouseUp) {
 		// Frame script overrides sprite script
 		if (!currentFrame->_sprites[spriteId]->_scriptId) {
-			processEvent(kEventNone, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + 1024);
-			processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + 1024);
+			processEvent(kEventNone, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + score->_castIDoffset);
+			processEvent(event, kSpriteScript, currentFrame->_sprites[spriteId]->_castId + score->_castIDoffset);
 		} else {
 			processEvent(kEventNone, kFrameScript, currentFrame->_sprites[spriteId]->_scriptId);
 		}

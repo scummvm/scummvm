@@ -90,6 +90,10 @@ bool Archive::hasResource(uint32 tag, const Common::String &resName) const {
 	return false;
 }
 
+Common::SeekableSubReadStreamEndian *Archive::getFirstResource(uint32 tag) {
+	return getResource(tag, getResourceIDList(tag)[0]);
+}
+
 Common::SeekableSubReadStreamEndian *Archive::getResource(uint32 tag, uint16 id) {
 	if (!_types.contains(tag))
 		error("Archive does not contain '%s' %04x", tag2str(tag), id);
