@@ -111,7 +111,7 @@ void DirectorEngine::processEvents() {
 					_keyCode = 126;
 					break;
 				default:
-					warning("Keycode: %d", _keyCode);
+					debugC(1, kDebugEvents, "processEvents(): keycode: %d", _keyCode);
 				}
 
 				_lingo->processEvent(kEventKeyDown);
