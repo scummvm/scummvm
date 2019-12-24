@@ -265,6 +265,29 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 				debugC(2, kDebugLingoParse, "second-if");
 				iflevel--;
 			}
+		} else if (tok.equals("when")) {
+			debugC(2, kDebugLingoParse, "start-when");
+
+			if (strstr(lineStart, "if") && strstr(lineStart, "then")) {
+				tok = prevtok(&line.c_str()[line.size() - 1], lineStart, &prevEnd);
+				debugC(2, kDebugLingoParse, "when-start-if <%s>", tok.c_str());
+
+				if (tok.equals("if")) {
+					debugC(2, kDebugLingoParse, "when-end-if");
+					tok = prevtok(prevEnd, lineStart);
+
+					if (tok.equals("end")) {
+						// do nothing, we open and close same line
+						debugC(2, kDebugLingoParse, "when-end-end");
+					} else {
+						res += " end if";
+					}
+				} else {
+					res += " end if";
+				}
+			}
+		} else {
+			debugC(2, kDebugLingoParse, "nothing");
 		}
 	}
 
