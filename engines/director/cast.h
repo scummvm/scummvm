@@ -60,8 +60,8 @@ public:
 	uint16 _regX;
 	uint16 _regY;
 	uint8 _flags;
-	uint16 _someFlaggyThing;
-	uint16 _unk1, _unk2;
+	uint16 _bytes;
+	uint16 _unk2;
 
 	uint16 _bitsPerPixel;
 

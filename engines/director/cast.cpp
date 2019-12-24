@@ -34,24 +34,30 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 	if (version < 4) {
 		_pitch = 0;
 		_flags = stream.readByte();
-		_someFlaggyThing = stream.readUint16();
+		_bytes = stream.readUint16();
 		_initialRect = Score::readRect(stream);
 		_boundingRect = Score::readRect(stream);
 		_regY = stream.readUint16();
 		_regX = stream.readUint16();
-		_unk1 = _unk2 = 0;
 
-		if (_someFlaggyThing & 0x8000) {
-			_unk1 = stream.readUint16();
+		if (_bytes & 0x8000) {
+			_bitsPerPixel = stream.readUint16();
 			_unk2 = stream.readUint16();
+		} else {
+			_bitsPerPixel = 1;
+			_unk2 = 0;
 		}
+
+		_pitch = _initialRect.width();
+		if (_pitch % 16)
+			_pitch += 16 - (_initialRect.width() % 16);
 	} else if (version == 4) {
 		_pitch = stream.readUint16();
 		_pitch &= 0x0fff;
 
 		_flags = 0;
-		_someFlaggyThing = 0;
-		_unk1 = _unk2 = 0;
+		_bytes = 0;
+		_unk2 = 0;
 
 		_initialRect = Score::readRect(stream);
 		_boundingRect = Score::readRect(stream);
@@ -71,6 +77,7 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 
 		warning("BitmapCast: %d bytes left", tail);
 	} else if (version == 5) {
+		_bytes = 0;
 		_pitch = 0;
 		uint16 count = stream.readUint16();
 		for (uint16 cc = 0; cc < count; cc++)

@@ -303,11 +303,11 @@ void Score::loadSpriteImages(bool isSharedCast) {
 			}
 
 			int w = bitmapCast->_initialRect.width(), h = bitmapCast->_initialRect.height();
-			debugC(4, kDebugImages, "Score::loadSpriteImages(): id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
-				imgId, w, h, bitmapCast->_flags, bitmapCast->_someFlaggyThing, bitmapCast->_unk1, bitmapCast->_unk2);
+			debugC(4, kDebugImages, "Score::loadSpriteImages(): id: %d, w: %d, h: %d, flags: %x, bytes: %x, bpp: %d unk2: %x",
+				imgId, w, h, bitmapCast->_flags, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_unk2);
 
 			if (pic != NULL && bitmapCast != NULL && w > 0 && h > 0) {
-				if (_vm->getVersion() < 4) {
+				if (_vm->getVersion() < 4 && 0) {
 					img = new BITDDecoder(w, h);
 				} else if (_vm->getVersion() < 6) {
 					img = new BITDDecoderV4(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch);
