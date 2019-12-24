@@ -65,6 +65,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_isSaveAllowed = false;
 
 	_mouseX = _mouseY = 0;
+	_asciiCodeEvents = _kbEventSkip = false;
 
 	// sets up all engine specific debug levels
 	DebugMan.addDebugChannel(kDebugLevelScriptFuncs, "ScriptFuncs", "Script function debug level");
@@ -277,13 +278,15 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				}
 			} else {
 				KeyMap::const_iterator keycode = _keyMap.find(event.kbd.keycode);
-				if (keycode != _keyMap.end()) {
+				if (_asciiCodeEvents) {
+					keys = event.kbd.ascii;
+				} else if (keycode != _keyMap.end()) {
 					keys = keycode->_value;
 					if (event.kbd.flags & Common::KBD_SHIFT)
 						keys |= 0x100;
 				} else {
 					keys = 0;
-				}
+				}				
 
 				// When we got an keypress, which we might need to handle,
 				// break the event loop and pass it to GUI code.
@@ -433,6 +436,13 @@ void KyraEngine_v1::setupKeyMap() {
 
 	_keyMap.clear();
 
+	// If we have an engine that wants ASCII codes instead of key codes, we can skip the setup of the key map.
+	// In that case we simply return the ASCII codes from the event manager. At least until I know better I
+	// trust that the ASCII codes we get from our event manager are the same identical codes. If that assumption
+	// turns out to be wrong I can still implement the original conversion method... 
+	if (_asciiCodeEvents)
+		return;
+
 	for (int i = 0; i < ARRAYSIZE(keys); i++)
 		_keyMap[keys[i].kcScummVM] = (_flags.gameID != GI_EOB1 && _flags.platform == Common::kPlatformPC98) ? keys[i].kcPC98 : ((_flags.platform == Common::kPlatformFMTowns) ? keys[i].kcFMTowns : keys[i].kcDOS);
 }
@@ -453,7 +463,7 @@ void KyraEngine_v1::updateInput() {
 			else if (event.kbd.keycode == Common::KEYCODE_q && event.kbd.hasFlags(Common::KBD_CTRL))
 				quitGame();
 			else
-				_eventList.push_back(event);
+				_eventList.push_back(Event(event, _kbEventSkip));
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -506,7 +516,6 @@ void KyraEngine_v1::resetSkipFlag(bool removeEvent) {
 		}
 	}
 }
-
 
 int KyraEngine_v1::setGameFlag(int flag) {
 	assert((flag >> 3) >= 0 && (flag >> 3) <= ARRAYSIZE(_flagsTable));
