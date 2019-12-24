@@ -168,10 +168,13 @@ Common::Error DirectorEngine::run() {
 
 	loadSharedCastsFrom(_sharedCastFile);
 
+	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nObtaining score name\n");
 	loadInitialMovie(getEXEName());
 
 	_currentScore->setArchive(_mainArchive);
-	debug(0, "Score name %s", _currentScore->getMacName().c_str());
+	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	debug(0, "@@@@   Score name '%s'", _currentScore->getMacName().c_str());
+	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	bool loop = true;
 

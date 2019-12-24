@@ -251,7 +251,9 @@ void DirectorEngine::loadMac(const Common::String movie) {
 void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	Archive *shardcst = createArchive();
 
-	debug(0, "****** Loading Shared cast '%s'", filename.c_str());
+	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());
+	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	_sharedDIB = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 	_sharedSTXT = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;

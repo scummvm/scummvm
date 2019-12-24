@@ -40,6 +40,7 @@
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/stxt.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 
 namespace Director {
@@ -511,28 +512,28 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 
 		switch (castType) {
 		case kCastBitmap:
-			debugC(3, kDebugLoading, "CastTypes id: %d BitmapCast", id);
+			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d BitmapCast", id);
 			// TODO: Work out the proper tag!
 			_loadedBitmaps->setVal(id, new BitmapCast(stream, MKTAG('B', 'I', 'T', 'D')));
 			_castTypes[id] = kCastBitmap;
 			break;
 		case kCastText:
-			debugC(3, kDebugLoading, "CastTypes id: %d TextCast", id);
+			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d TextCast", id);
 			_loadedText->setVal(id, new TextCast(stream));
 			_castTypes[id] = kCastText;
 			break;
 		case kCastShape:
-			debugC(3, kDebugLoading, "CastTypes id: %d ShapeCast", id);
+			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d ShapeCast", id);
 			_loadedShapes->setVal(id, new ShapeCast(stream));
 			_castTypes[id] = kCastShape;
 			break;
 		case kCastButton:
-			debugC(3, kDebugLoading, "CastTypes id: %d ButtonCast", id);
+			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d ButtonCast", id);
 			_loadedButtons->setVal(id, new ButtonCast(stream));
 			_castTypes[id] = kCastButton;
 			break;
 		default:
-			warning("Score::loadCastDataVWCR(): Unhandled cast type: %d [%s]", castType, tag2str(castType));
+			warning("Score::loadCastDataVWCR(): Unhandled cast id: %d(%s), type: %d, %d bytes", id, numToCastNum(id), castType, size);
 			stream.skip(size - 1);
 			break;
 		}
