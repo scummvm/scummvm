@@ -273,6 +273,8 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 		res += "\nend if";
 	}
 
+	// Make the parser happier when there is no newline at the end
+	res += '\n';
 
 	debugC(2, kDebugLingoParse, "#############\n%s\n#############", res.c_str());
 
