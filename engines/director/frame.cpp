@@ -137,7 +137,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			_soundType2 = stream->readByte();
 		} else {
 			stream->read(unk, 3);
-			warning("unk1: %x unk2: %x unk3: %x", unk[0], unk[1], unk[2]);
+			warning("Frame::readChannels(): unk1: %x unk2: %x unk3: %x", unk[0], unk[1], unk[2]);
 		}
 		_skipFrameFlag = stream->readByte();
 		_blend = stream->readByte();
@@ -150,10 +150,10 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		uint16 palette = stream->readUint16();
 
 		if (palette) {
-			warning("STUB: Palette info");
+			warning("Frame::readChannels(): STUB: Palette info");
 		}
 
-		debugC(kDebugLoading, 8, "%d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
+		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
 
 		_palette = new PaletteInfo();
 		_palette->firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
@@ -242,12 +242,12 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		}
 
 		if (sprite._castId) {
-			debugC(kDebugLoading, 4, "CH: %-3d castId: %03d(%s) (e:%d) [%x,%x, flags:%04x, %dx%d@%d,%d linesize: %d] script: %d",
+			debugC(4, kDebugLoading, "CH: %-3d castId: %03d(%s) (e:%d) [%x,%x, flags:%04x, %dx%d@%d,%d linesize: %d] script: %d",
 				i + 1, sprite._castId, numToCastNum(sprite._castId), sprite._enabled, sprite._x1, sprite._x2, sprite._flags,
 				sprite._width, sprite._height, sprite._startPoint.x, sprite._startPoint.y,
 				sprite._lineSize, sprite._scriptId);
 		} else {
-			debugC(kDebugLoading, 4, "CH: %-3d castId: 000", i + 1);
+			debugC(4, kDebugLoading, "CH: %-3d castId: 000", i + 1);
 		}
 	}
 }
@@ -315,12 +315,12 @@ void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16
 		default:
 			offset++;
 			stream.readByte();
-			debugC(kDebugLoading, "Frame::readMainChannels: Field Position %d, Finish Position %d", offset, finishPosition);
+			debugC(1, kDebugLoading, "Frame::readMainChannels: Field Position %d, Finish Position %d", offset, finishPosition);
 			break;
 		}
 	}
 
-	warning("%d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
+	debugC(1, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
 }
 
 void Frame::readPaletteInfo(Common::SeekableSubReadStreamEndian &stream) {
@@ -564,7 +564,7 @@ void Frame::playTransition(Score *score) {
 		}
 		break;
 	default:
-		warning("Unhandled transition type %d %d %d", _transType, duration, _transChunkSize);
+		warning("Frame::playTransition(): Unhandled transition type %d %d %d", _transType, duration, _transChunkSize);
 		break;
 
 	}
@@ -746,7 +746,7 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 		drawReverseSprite(targetSurface, spriteSurface, drawRect);
 		break;
 	default:
-		warning("Unhandled ink type %d", _sprites[spriteId]->_ink);
+		warning("Frame::inkBasedBlit(): Unhandled ink type %d", _sprites[spriteId]->_ink);
 		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
 		break;
 	}
@@ -778,7 +778,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	}
 
 	if (width == 0 || height == 0) {
-		warning("renderText: Requested to draw on an empty surface: %d x %d", width, height);
+		warning("Frame::renderText(): Requested to draw on an empty surface: %d x %d", width, height);
 		return;
 	}
 
