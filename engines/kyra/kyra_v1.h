@@ -290,6 +290,8 @@ protected:
 	Common::List<Event> _eventList;
 	typedef Common::HashMap<Common::KeyCode, int16, KeyCodeHash> KeyMap;
 	KeyMap _keyMap;
+	bool _asciiCodeEvents;
+	bool _kbEventSkip;
 
 	// config specific
 	virtual void registerDefaultSettings();

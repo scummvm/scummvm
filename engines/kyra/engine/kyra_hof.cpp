@@ -71,6 +71,7 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_unkHandleSceneChangeFlag = false;
 	_pathfinderFlag = 0;
 	_mouseX = _mouseY = 0;
+	_asciiCodeEvents = _kbEventSkip = true;
 
 	_nextIdleAnim = 0;
 	_lastIdleScript = -1;
@@ -453,8 +454,8 @@ void KyraEngine_HoF::runLoop() {
 			handleInput(_mouseX, _mouseY);
 		}
 
-		//if (queryGameFlag(0x1EE) && inputFlag)
-		//	sub_13B19(inputFlag);
+		if (queryGameFlag(0x1EE) && inputFlag)
+			processKeyboardSfx(inputFlag);
 
 		_system->delayMillis(10);
 	}
@@ -1191,6 +1192,15 @@ int KyraEngine_HoF::inputSceneChange(int x, int y, int unk1, int unk2) {
 
 	_pathfinderFlag = 0;
 	return refreshNPC;
+}
+
+void KyraEngine_HoF::processKeyboardSfx(int inputFlag) {
+	if ((inputFlag & 0xFF) >= ARRAYSIZE(_keyboardSounds))
+		return;
+	int16 track = _keyboardSounds[inputFlag & 0xFF];
+	if (track == -1)
+		return;
+	snd_playSoundEffect(track);
 }
 
 int KyraEngine_HoF::getCharacterWalkspeed() const {

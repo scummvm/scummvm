@@ -103,7 +103,8 @@ void KyraEngine_v2::processAnimationScript(int allowSkip, int resetChar) {
 			delay(10, true);
 
 		if (skipFlag()) {
-			resetSkipFlag();
+			if (!_kbEventSkip || _eventList.front().event.type != Common::EVENT_KEYDOWN)
+				resetSkipFlag();
 			if (allowSkip)
 				break;
 		}
