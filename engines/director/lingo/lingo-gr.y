@@ -186,6 +186,11 @@ asgn: tPUT expr tINTO ID 		{
 stmtoneliner: macro
 	| expr
 	| proc
+	;
+
+stmtonelinerwithif: macro
+	| expr
+	| proc
 	| ifoneliner
 	;
 
@@ -235,7 +240,7 @@ stmt: stmtoneliner
 		(*g_lingo->_currentScript)[$1 + 3] = body;	/* body of loop */
 		(*g_lingo->_currentScript)[$1 + 4] = inc;	/* increment */
 		(*g_lingo->_currentScript)[$1 + 5] = end; }	/* end, if cond fails */
-	| when stmtoneliner end {
+	| when stmtonelinerwithif end {
 		inst end = 0;
 		WRITE_UINT32(&end, $3 - $1);
 		g_lingo->code1(STOP);
