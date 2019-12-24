@@ -128,7 +128,7 @@ void Score::loadArchive() {
 	} else {
 		Common::SeekableSubReadStreamEndian *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
 
-		debugC(2, kDebugLoading, "****** Loading Palette");
+		debugC(2, kDebugLoading, "****** Loading Palette CLUT");
 		loadPalette(*pal);
 		g_system->getPaletteManager()->setPalette(_vm->getPalette(), 0, _vm->getPaletteColorCount());
 	}
@@ -192,7 +192,7 @@ void Score::loadArchive() {
 
 	Common::Array<uint16> vwci = _movieArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'I'));
 	if (vwci.size() > 0) {
-		debugC(2, kDebugLoading, "****** Loading %d CastInfos", vwci.size());
+		debugC(2, kDebugLoading, "****** Loading %d CastInfos VWCI", vwci.size());
 
 		for (Common::Array<uint16>::iterator iterator = vwci.begin(); iterator != vwci.end(); ++iterator)
 			loadCastInfo(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'I'), *iterator), *iterator);
@@ -278,10 +278,12 @@ void Score::loadSpriteImages(bool isSharedCast) {
 			switch (tag) {
 			case MKTAG('D', 'I', 'B', ' '):
 				if (_movieArchive->hasResource(MKTAG('D', 'I', 'B', ' '), imgId)) {
+					debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d", imgId);
 					img = new DIBDecoder();
 					img->loadStream(*_movieArchive->getResource(MKTAG('D', 'I', 'B', ' '), imgId));
 					bitmapCast->_surface = img->getSurface();
 				} else if (isSharedCast && _vm->getSharedDIB() != NULL && _vm->getSharedDIB()->contains(imgId)) {
+					debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d from shared cast", imgId);
 					img = new DIBDecoder();
 					img->loadStream(*_vm->getSharedDIB()->getVal(imgId));
 					bitmapCast->_surface = img->getSurface();
@@ -289,11 +291,12 @@ void Score::loadSpriteImages(bool isSharedCast) {
 				break;
 			case MKTAG('B', 'I', 'T', 'D'):
 				if (isSharedCast) {
-					debugC(4, kDebugImages, "Score::loadSpriteImages(): Shared cast BMP: id: %d", imgId);
+					debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d from shared cast", imgId);
 					pic = _vm->getSharedBMP()->getVal(imgId);
 					if (pic != NULL)
 						pic->seek(0); // TODO: this actually gets re-read every loop... we need to rewind it!
 				} else 	if (_movieArchive->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
+					debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d", imgId);
 					pic = _movieArchive->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
 				}
 				break;
@@ -366,7 +369,7 @@ void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
-	debugC(1, kDebugLoading, "****** Loading frames");
+	debugC(1, kDebugLoading, "****** Loading frames VWSC");
 
 	//stream.hexdump(stream.size());
 
@@ -474,7 +477,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 void Score::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
-	debugC(1, kDebugLoading, "****** Loading Config");
+	debugC(1, kDebugLoading, "****** Loading Config VWCF");
 
 	/*uint16 unk1 = */ stream.readUint16();
 	/*ver1 = */ stream.readUint16();
@@ -497,7 +500,7 @@ void Score::readVersion(uint32 rid) {
 }
 
 void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
-	debugC(1, kDebugLoading, "****** Score::loadCastDataVWCR(). start: %d, end: %d", _castArrayStart, _castArrayEnd);
+	debugC(1, kDebugLoading, "****** Loading Cast rects VWCR. start: %d, end: %d", _castArrayStart, _castArrayEnd);
 
 	for (uint16 id = _castArrayStart; id <= _castArrayEnd; id++) {
 		byte size = stream.readByte();
@@ -878,7 +881,7 @@ int Score::compareLabels(const void *a, const void *b) {
 }
 
 void Score::loadActions(Common::SeekableSubReadStreamEndian &stream) {
-	debugC(2, kDebugLoading, "****** Loading Actions");
+	debugC(2, kDebugLoading, "****** Loading Actions VWAC");
 
 	uint16 count = stream.readUint16() + 1;
 	uint32 offset = count * 4 + 2;
@@ -1099,7 +1102,7 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 	ci->fileName = getString(castStrings[3]);
 	ci->type = castStrings[4];
 
-	debugC(5, kDebugLoading, "CastInfo: name: '%s' directory: '%s', fileName: '%s', type: '%s'",
+	debugC(5, kDebugLoading, "Score::loadCastInfo(): CastInfo: name: '%s' directory: '%s', fileName: '%s', type: '%s'",
 				ci->name.c_str(), ci->directory.c_str(), ci->fileName.c_str(), ci->type.c_str());
 
 	if (!ci->name.empty())
@@ -1210,7 +1213,7 @@ Common::String Score::getString(Common::String str) {
 }
 
 void Score::loadFileInfo(Common::SeekableSubReadStreamEndian &stream) {
-	debugC(2, kDebugLoading, "****** Loading FileInfo");
+	debugC(2, kDebugLoading, "****** Loading FileInfo VWFI");
 
 	Common::Array<Common::String> fileInfoStrings = loadStrings(stream, _flags);
 	_script = fileInfoStrings[0];
@@ -1241,7 +1244,7 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 
 	uint16 count = stream.readUint16() + 1;
 
-	debugC(3, kDebugLoading, "Strings: %d entries", count);
+	debugC(3, kDebugLoading, "Score::loadStrings(): Strings: %d entries", count);
 
 	uint32 *entries = (uint32 *)calloc(count, sizeof(uint32));
 
@@ -1275,7 +1278,7 @@ void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
 	if (stream.size() == 0)
 		return;
 
-	debugC(2, kDebugLoading, "****** Loading FontMap");
+	debugC(2, kDebugLoading, "****** Loading FontMap VWFM");
 
 	uint16 count = stream.readUint16();
 	uint32 offset = (count * 2) + 2;
