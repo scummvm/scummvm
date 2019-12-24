@@ -649,27 +649,34 @@ void Frame::addDrawRect(uint16 spriteId, Common::Rect &rect) {
 }
 
 void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
-	Common::Rect shapeRect = Common::Rect(_sprites[spriteId]->_startPoint.x,
-		_sprites[spriteId]->_startPoint.y,
-		_sprites[spriteId]->_startPoint.x + _sprites[spriteId]->_width,
-		_sprites[spriteId]->_startPoint.y + _sprites[spriteId]->_height);
+	Sprite *sp = _sprites[spriteId];
+
+	if (sp->_shapeCast == NULL) {
+		warning("Frame::renderShape(): missing shapecast in sprite id: %d", spriteId);
+		return;
+	}
+
+	Common::Rect shapeRect = Common::Rect(sp->_startPoint.x,
+		sp->_startPoint.y,
+		sp->_startPoint.x + sp->_width,
+		sp->_startPoint.y + sp->_height);
 
 	Graphics::ManagedSurface tmpSurface;
 	tmpSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
-	if (_vm->getVersion() <= 3 && _sprites[spriteId]->_spriteType == kOutlinedRectangleSprite) {
+	if (_vm->getVersion() <= 3 && sp->_spriteType == kOutlinedRectangleSprite) {
 		tmpSurface.fillRect(Common::Rect(shapeRect.width(), shapeRect.height()), (_vm->getCurrentScore()->_currentMouseDownSpriteId == spriteId ? 0 : 0xff));
 		//tmpSurface.frameRect(Common::Rect(shapeRect.width(), shapeRect.height()), 0);
 		// TODO: don't override, work out how to display correctly.
-		_sprites[spriteId]->_ink = kInkTypeReverse;
+		sp->_ink = kInkTypeReverse;
 	} else {
 		// No minus one on the pattern here! MacPlotData will do that for us!
-		Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), _sprites[spriteId]->_castId, 1, _sprites[spriteId]->_backColor);
+		Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), sp->_castId, 1, sp->_shapeCast->_bgCol);
 		Common::Rect fillRect(shapeRect.width(), shapeRect.height());
-		Graphics::drawFilledRect(fillRect, _sprites[spriteId]->_foreColor, Graphics::macDrawPixel, &pd);
+		Graphics::drawFilledRect(fillRect, sp->_shapeCast->_fgCol, Graphics::macDrawPixel, &pd);
 	}
 
-	if (_sprites[spriteId]->_lineSize > 0) {
-		for (int rr = 0; rr < (_sprites[spriteId]->_lineSize - 1); rr++)
+	if (sp->_lineSize > 0) {
+		for (int rr = 0; rr < (sp->_lineSize - 1); rr++)
 			tmpSurface.frameRect(Common::Rect(rr, rr, shapeRect.width() - (rr * 2), shapeRect.height() - (rr * 2)), 0);
 	}
 

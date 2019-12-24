@@ -140,7 +140,6 @@ void Score::loadArchive() {
 	assert(_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1));
 	loadFrames(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'S', 'C')));
 
-
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
 		loadConfig(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'C', 'F')));
 	} else {
@@ -464,7 +463,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 			frame->readChannels(str);
 			delete str;
 
-			debugC(3, kDebugLoading, "Frame %d actionId: %d", _frames.size(), frame->_actionId);
+			debugC(8, kDebugLoading, "Frame %d actionId: %d", _frames.size(), frame->_actionId);
 
 			_frames.push_back(frame);
 		} else {
@@ -545,6 +544,9 @@ void Score::setSpriteCasts() {
 	for (uint16 i = 0; i < _frames.size(); i++) {
 		for (uint16 j = 0; j < _frames[i]->_sprites.size(); j++) {
 			uint16 castId = _frames[i]->_sprites[j]->_castId;
+
+			if (castId == 0)
+				continue;
 
 			if (_vm->getSharedScore() != nullptr && _vm->getSharedScore()->_loadedBitmaps->contains(castId)) {
 				_frames[i]->_sprites[j]->_bitmapCast = _vm->getSharedScore()->_loadedBitmaps->getVal(castId);

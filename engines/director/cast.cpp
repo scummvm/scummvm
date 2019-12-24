@@ -249,9 +249,11 @@ void TextCast::setText(const char *text) {
 }
 
 ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
+	byte flags, unk1;
+
 	if (version < 4) {
-		/*byte flags = */ stream.readByte();
-		/*unk1 = */ stream.readByte();
+		flags = stream.readByte();
+		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Score::readRect(stream);
 		_pattern = stream.readUint16BE();
@@ -261,8 +263,8 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
 	} else {
-		stream.readByte();
-		stream.readByte();
+		flags = stream.readByte();
+		unk1 = stream.readByte();
 
 		_initialRect = Score::readRect(stream);
 		_boundingRect = Score::readRect(stream);
@@ -275,6 +277,12 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_lineDirection = 0;
 	}
 	_modified = 0;
+
+	debugC(3, kDebugLoading, "ShapeCast: fl: %x unk1: %x type: %d pat: %d fg: %d bg: %d fill: %d thick: %d dir: %d",
+		flags, unk1, _shapeType, _pattern, _fgCol, _bgCol, _fillType, _lineThickness, _lineDirection);
+
+	if (debugChannelSet(3, kDebugLoading))
+		_initialRect.debugPrint(0, "ShapeCast: rect:");
 }
 
 ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextCast(stream, version) {

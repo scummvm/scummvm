@@ -51,6 +51,13 @@ enum ScriptType {
 	kMaxScriptType = 4	// Sync with score.cpp:45, array scriptTypes[]
 };
 
+enum ShapeType {
+	kShapeRectangle,
+	kShapeRoundRect,
+	kShapeOval,
+	kShapeLine
+};
+
 enum TextType {
 	kTextTypeAdjustToFit,
 	kTextTypeScrolling,

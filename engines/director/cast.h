@@ -68,13 +68,6 @@ public:
 	uint32 _tag;
 };
 
-enum ShapeType {
-	kShapeRectangle,
-	kShapeRoundRect,
-	kShapeOval,
-	kShapeLine
-};
-
 class ShapeCast : public Cast {
 public:
 	ShapeCast(Common::ReadStreamEndian &stream, uint16 version = 2);
