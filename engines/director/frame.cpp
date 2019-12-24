@@ -219,6 +219,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 				sprite._scriptId = stream->readUint16();
 				sprite._flags2 = stream->readByte(); // 0x40 editable, 0x80 moveable
 				sprite._unk2 = stream->readByte();
+				sprite._moveable = ((sprite._flags2 & 0x80) == 0x80);
 
 				if (_vm->getVersion() >= 5)
 					sprite._unk3 = stream->readUint32();
