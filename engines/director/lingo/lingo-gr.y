@@ -186,6 +186,7 @@ asgn: tPUT expr tINTO ID 		{
 stmtoneliner: macro
 	| expr
 	| proc
+	| ifoneliner
 	;
 
 stmt: stmtoneliner
@@ -279,6 +280,29 @@ elseifstmt: elseif expr end tTHEN stmtlist end {
 
 		g_lingo->codeLabel($1); }
 	;
+
+ifoneliner: if expr end tTHEN stmtoneliner end tELSE begin stmtoneliner end tENDIF {
+		inst then = 0, else1 = 0, end = 0;
+		WRITE_UINT32(&then, $3 - $1);
+		WRITE_UINT32(&else1, $6 - $1);
+		WRITE_UINT32(&end, $10 - $1);
+		(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
+
+		g_lingo->processIf($1, $10 - $1, $8 - $1); }
+	| if expr end tTHEN stmtoneliner end tENDIF {
+			inst then = 0, else1 = 0, end = 0;
+			WRITE_UINT32(&then, $3 - $1);
+			WRITE_UINT32(&else1, 0);
+			WRITE_UINT32(&end, $6 - $1);
+			(*g_lingo->_currentScript)[$1 + 1] = then;	/* thenpart */
+			(*g_lingo->_currentScript)[$1 + 2] = else1;	/* elsepart */
+			(*g_lingo->_currentScript)[$1 + 3] = end;	/* end, if cond fails */
+
+			g_lingo->processIf($1, $6 - $1, $6 - $1); }
+	;
+
 
 repeatwhile:	tREPEAT tWHILE		{ $$ = g_lingo->code3(g_lingo->c_repeatwhilecode, STOP, STOP); }
 	;
@@ -567,7 +591,6 @@ endargdef:	/* nothing */
 
 argstore:	  /* nothing */		{ g_lingo->codeArgStore(); g_lingo->_indef = kStateInDef; }
 	;
-
 
 macro: ID nonemptyarglist	{
 		g_lingo->code1(g_lingo->c_call);
