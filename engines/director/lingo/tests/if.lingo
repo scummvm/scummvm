@@ -121,6 +121,9 @@ else put 6
 
 if the selection = the text of cast A31 then go to frame "sEnd" else put 7 end if
 
+when keyDown then if the key = RETURN then checkField
+when keyDown then if the key = QUOTE then checkField else put "bar"
+
 macro WindowHorzP X
     set X1 = constrainH( 14, X )
     if X1 = X then return( TRUE )
