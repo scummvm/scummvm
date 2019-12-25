@@ -24,18 +24,20 @@ namespace Ultima {
 
 static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
 #ifdef ENABLE_ULTIMA6
+	// GOG Ultima 6
 	{
 		{
-			"converse.a",
+			"ultima6",
 			nullptr,
-			AD_ENTRY1s("converse.a", "c61f1dacde591cb39d452264e281f234", 1251108),
+			AD_ENTRY1s("converse.a", "5065716423ef1389e3f7b4946d815c26", 162615),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			0,
 			GUIO0()
 		},
-	GAME_ULTIMA6
+		GAME_ULTIMA6
 	},
+
 #endif
 
 #ifdef ENABLE_ULTIMA8
