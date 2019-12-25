@@ -23,6 +23,7 @@
 #include "ultima/ultima6/keybinding/keys.h"
 #include "ultima/ultima6/keybinding/key_actions.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/conf/xml_tree.h"
 #include "ultima/ultima6/core/player.h"
@@ -195,8 +196,7 @@ const KeycodeString StringTable[] = {
 	{"F13",       Common::KEYCODE_F13},
 	{"F14",       Common::KEYCODE_F14},
 	{"F15",       Common::KEYCODE_F15},
-#ifdef HAVE_JOYSTICK_SUPPORT
-// hackishly map joystick buttons to unused keyboard syms
+	// hackishly map joystick to unused keycode values
 	{"JOY_UP",            JOY_UP},
 	{"JOY_DOWN",          JOY_DOWN},
 	{"JOY_LEFT",          JOY_LEFT},
@@ -257,7 +257,6 @@ const KeycodeString StringTable[] = {
 	{"JOY17",             JOY17},
 	{"JOY18",             JOY18},
 	{"JOY19",             JOY19},
-#endif /* HAVE_JOYSTICK_SUPPORT */
 	{"", Common::KEYCODE_INVALID} // terminator
 };
 
