@@ -1339,7 +1339,14 @@ void Score::startLoop() {
 
 	_frames[_currentFrame]->prepareFrame(this);
 
-	while (!_stopPlay && _currentFrame < _frames.size()) {
+	while (!_stopPlay) {
+		if (_currentFrame >= _frames.size()) {
+			if (debugChannelSet(-1, kDebugNoLoop))
+				break;
+
+			_currentFrame = 0;
+		}
+
 		update();
 
 		if (_currentFrame < _frames.size())

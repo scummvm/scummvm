@@ -67,7 +67,8 @@ enum {
 	kDebugLingoParse		= 1 << 6,
 	kDebugLingoCompileOnly	= 1 << 7,
 	kDebugSlow				= 1 << 8,
-	kDebugBytecode			= 1 << 9
+	kDebugNoLoop			= 1 << 9,
+	kDebugBytecode			= 1 << 10
 };
 
 struct MovieReference {
