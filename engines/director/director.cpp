@@ -51,6 +51,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugText, "text", "Text rendering");
 	DebugMan.addDebugChannel(kDebugEvents, "events", "Event processing");
 	DebugMan.addDebugChannel(kDebugSlow, "slow", "Slow playback");
+	DebugMan.addDebugChannel(kDebugFast, "fast", "Fast (no delay) playback");
 	DebugMan.addDebugChannel(kDebugNoLoop, "noloop", "Do not loop the playback");
 	DebugMan.addDebugChannel(kDebugBytecode, "bytecode", "Execute Lscr bytecode");
 
