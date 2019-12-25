@@ -38,7 +38,7 @@
 #include "ultima/ultima6/save/save_slot.h"
 #include "ultima/ultima6/save/save_game.h"
 #include "ultima/ultima6/core/msg_scroll.h"
-#include "ultima/ultima6/keybinding/utils.h"
+#include "ultima/ultima6/files/utils.h"
 ////#include <direct.h>
 
 #ifdef HAVE_JOYSTICK_SUPPORT

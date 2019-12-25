@@ -27,7 +27,7 @@
 #include "ultima/ultima6/conf/xml_tree.h"
 #include "ultima/ultima6/core/player.h"
 #include "ultima/ultima6/core/event.h"
-#include "ultima/ultima6/keybinding/utils.h"
+#include "ultima/ultima6/files/utils.h"
 #include "ultima/ultima6/core/msg_scroll.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/files/nuvie_io.h"

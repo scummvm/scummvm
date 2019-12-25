@@ -33,15 +33,22 @@
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/core/console.h"
 #include "ultima/ultima6/sound/sound_manager.h"
+#include "common/translation.h"
+#include "common/unzip.h"
 
 namespace Ultima {
 namespace Ultima6 {
+
+#define DATA_FILENAME "ultima.dat"
+#define DATA_VERSION_MAJOR 1
+#define DATA_VERSION_MINOR 0
 
 Ultima6Engine *g_engine;
 
 Ultima6Engine::Ultima6Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima6"),
-		_config(nullptr), _events(nullptr), _screen(nullptr), _script(nullptr), _game(nullptr) {
+		_config(nullptr), _dataArchive(nullptr), _events(nullptr), _screen(nullptr),
+		_script(nullptr), _game(nullptr) {
 	g_engine = this;
 }
 
@@ -75,6 +82,10 @@ bool Ultima6Engine::initialize() {
 		error("Unknown game");
 		break;
 	}
+
+	// Hook up to the data archive
+	if (!loadData())
+		return false;
 
 	// Find and load config file
 	initConfig();
@@ -233,6 +244,44 @@ bool Ultima6Engine::playIntro() {
 	}
 
 	return false;
+}
+
+
+bool Ultima6Engine::loadData() {
+	Common::File f;
+
+	if (!Common::File::exists(DATA_FILENAME) ||
+		(_dataArchive = Common::makeZipArchive(DATA_FILENAME)) == 0 ||
+		!f.open("ultima8/version.txt", *_dataArchive)) {
+		delete _dataArchive;
+		GUIError(Common::String::format(_("Could not locate engine data %s"), DATA_FILENAME));
+		return false;
+	}
+
+	// Validate the version
+	char buffer[5];
+	f.read(buffer, 4);
+	buffer[4] = '\0';
+
+	int major = 0, minor = 0;
+	if (buffer[1] == '.') {
+		major = buffer[0] - '0';
+		minor = atoi(&buffer[2]);
+	}
+
+	if (major != DATA_VERSION_MAJOR || minor != DATA_VERSION_MINOR) {
+		delete _dataArchive;
+		GUIError(Common::String::format(_("Out of date engine data. Expected %d.%d, but got version %d.%d"),
+			DATA_VERSION_MAJOR, DATA_VERSION_MINOR, major, minor));
+		return false;
+	}
+
+	SearchMan.add("data", _dataArchive);
+	return true;
+}
+
+void Ultima6Engine::GUIError(const Common::String& msg) {
+	GUIErrorMessage(msg);
 }
 
 } // End of namespace Ultima6

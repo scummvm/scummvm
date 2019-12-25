@@ -26,6 +26,7 @@
 #include "ultima/detection.h"
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/conf/configuration.h"
+#include "common/archive.h"
 #include "common/random.h"
 #include "engines/engine.h"
 
@@ -46,9 +47,11 @@ private:
 	Script *_script;
 	Game *_game;
 	Common::RandomSource _randomSource;
+	Common::Archive* _dataArchive;
 private:
 	bool initialize();
 
+	bool loadData();
 	void initConfig();
 	const char *getConfigPathWin32();
 	void SharedDefaultConfigValues();
@@ -61,6 +64,8 @@ public:
 	Ultima6Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~Ultima6Engine();
 
+	void GUIError(const Common::String& msg);
+
 	/**
 	 * Play the game
 	 */
@@ -70,6 +75,11 @@ public:
 	 * Get a random number
 	 */
 	uint getRandomNumber(uint maxVal) { return _randomSource.getRandomNumber(maxVal); }
+
+	/**
+	 * Return a reference to the data archive
+	 */
+	Common::Archive* getDataArchive() const { return _dataArchive; }
 };
 
 extern Ultima6Engine *g_engine;
