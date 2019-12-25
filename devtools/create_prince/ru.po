@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-12-24 13:07+0000\n"
+"PO-Revision-Date: 2019-12-25 17:03+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/prince/"
 "prince/ru/>\n"
@@ -5826,7 +5826,7 @@ msgstr "OTHER: Но этого недостаточно, если ты хоче�
 
 #: dialog0180.txt:106
 msgid "$0: Potrzebny drugi kapeć?..."
-msgstr "$0: Второй тапочек?"
+msgstr "$0: Нужен второй тапочек?"
 
 #: dialog0180.txt:107
 msgid "$1: Gildii?"
