@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima6/ultima6.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
@@ -40,12 +41,13 @@ Ultima6Engine *g_engine;
 
 Ultima6Engine::Ultima6Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima6"),
-		_config(nullptr), _screen(nullptr), _script(nullptr), _game(nullptr) {
+		_config(nullptr), _events(nullptr), _screen(nullptr), _script(nullptr), _game(nullptr) {
 	g_engine = this;
 }
 
 Ultima6Engine::~Ultima6Engine() {
 	delete _config;
+	delete _events;
 	delete _screen;
 	delete _script;
 	delete _game;
@@ -77,7 +79,8 @@ bool Ultima6Engine::initialize() {
 	// Find and load config file
 	initConfig();
 
-	// Setup screen
+	// Setup events and screen
+	_events = new Events();
 	_screen = new Screen(_config);
 
 	if (_screen->init() == false) {
