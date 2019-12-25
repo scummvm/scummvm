@@ -31,6 +31,11 @@ namespace Ultima {
 namespace Ultima6 {
 
 Configuration::Configuration() : _configChanged(false) {
+	// Set up keys that will be stored locally, since we don't want them being
+	// written out to the ScummVM configuration
+	_localKeys["GameType"] = "";
+	_localKeys["GameName"] = "";
+	_localKeys["GameID"] = "";
 }
 
 Configuration::~Configuration() {
@@ -84,10 +89,16 @@ void Configuration::value(const std::string &key, std::string &ret,
 		}
 	}
 
-	// Check for ScummVM entry
 	assert(key.hasPrefix("config/"));
 	std::string k = key.substr(7);
 
+	// Check for local entry
+	if (_localKeys.contains(k)) {
+		ret = _localKeys[k];
+		return;
+	}
+
+	// Check for ScummVM entry
 	if (ConfMan.hasKey(k)) {
 		ret = ConfMan.get(k);
 		return;
@@ -106,10 +117,16 @@ void Configuration::value(const std::string &key, int &ret, int defaultvalue) {
 		}
 	}
 
-	// Check for ScummVM entry
 	assert(key.hasPrefix("config/"));
 	std::string k = key.substr(7);
 
+	// Check for local entry
+	if (_localKeys.contains(k)) {
+		ret = atoi(_localKeys[k].c_str());
+		return;
+	}
+
+	// Check for ScummVM key
 	if (ConfMan.hasKey(k)) {
 		ret = ConfMan.getInt(k);
 		return;
@@ -128,10 +145,13 @@ void Configuration::value(const std::string &key, bool &ret, bool defaultvalue) 
 		}
 	}
 
-	// Check for ScummVM entry
 	assert(key.hasPrefix("config/"));
 	std::string k = key.substr(7);
 
+	// Check for local entry
+	assert(!_localKeys.contains(k));
+
+	// Check for ScummVM key
 	if (ConfMan.hasKey(k)) {
 		ret = ConfMan.getBool(k);
 		return;
@@ -151,7 +171,7 @@ void Configuration::pathFromValue(const std::string &key, std::string file, std:
 	return;
 }
 
-bool Configuration::set(const std::string &key, std::string value) {
+bool Configuration::set(const std::string &key, const std::string &value) {
 	// Currently a value is written to the last writable tree with
 	// the correct root.
 
@@ -166,6 +186,11 @@ bool Configuration::set(const std::string &key, std::string value) {
 
 	assert(key.hasPrefix("config/"));
 	std::string k = key.substr(7);
+
+	if (_localKeys.contains(k)) {
+		_localKeys[k] = value;
+		return true;
+	}
 
 	ConfMan.set(k, value);
 	_configChanged = true;
@@ -194,6 +219,11 @@ bool Configuration::set(const std::string &key, int value) {
 	assert(key.hasPrefix("config/"));
 	std::string k = key.substr(7);
 
+	if (_localKeys.contains(k)) {
+		_localKeys[k] = Common::String::format("%d", value);
+		return true;
+	}
+
 	ConfMan.setInt(k, value);
 	_configChanged = true;
 
@@ -215,6 +245,7 @@ bool Configuration::set(const std::string &key, bool value) {
 
 	assert(key.hasPrefix("config/"));
 	std::string k = key.substr(7);
+	assert(!_localKeys.contains(k));
 
 	ConfMan.setBool(k, value);
 	_configChanged = true;

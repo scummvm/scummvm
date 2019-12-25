@@ -105,8 +105,6 @@ bool Ultima6Engine::initialize() {
 		return false;
 	}
 
-	ConsoleAddInfo("Config file: \"%s\"", _config->filename().c_str());
-
 	// Setup various game related config variables.
 	assignGameConfigValues(gameType);
 
