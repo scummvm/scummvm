@@ -49,7 +49,7 @@ uint32 SDL_MapRGB(Graphics::PixelFormat &format, byte r, byte g, byte b) {
 	return format.RGBToColor(r, g, b);
 }
 
-int SDL_BlitSurface(Graphics::ManagedSurface *src, const Common::Rect *srcrect,
+int SDL_BlitSurface(const Graphics::ManagedSurface *src, const Common::Rect *srcrect,
 		Graphics::ManagedSurface *dst, Common::Rect *dstrect) {
 	dst->transBlitFrom(*src, *srcrect, *dstrect, (uint)-1);
 	return 0;
@@ -91,7 +91,11 @@ Graphics::ManagedSurface *SDL_LoadBMP(const char *filename) {
 }
 
 int SDL_SetColorKey(Graphics::ManagedSurface *surface, int flag, uint32 key) {
-	surface->setTransparentColor(key);
+	if (flag)
+		surface->setTransparentColor(key);
+	else
+		surface->clearTransparentColor();
+
 	return 0;
 }
 

@@ -42,7 +42,7 @@ extern uint32 SDL_GetTicks();
 extern void SDL_FreeSurface(Graphics::ManagedSurface *&s);
 extern void SDL_ShowCursor(bool show);
 extern uint32 SDL_MapRGB(Graphics::PixelFormat &format, byte r, byte g, byte b);
-extern int SDL_BlitSurface(Graphics::ManagedSurface *src, const Common::Rect *srcrect,
+extern int SDL_BlitSurface(const Graphics::ManagedSurface *src, const Common::Rect *srcrect,
 	Graphics::ManagedSurface *dst, Common::Rect *dstrect);
 extern int SDL_FillRect(Graphics::ManagedSurface *surf, Common::Rect *rect, uint color);
 extern void SDL_UpdateRect(Graphics::ManagedSurface *surf, int x, int y, int w, int h);
