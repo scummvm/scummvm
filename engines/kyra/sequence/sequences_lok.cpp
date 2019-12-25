@@ -789,9 +789,12 @@ void KyraEngine_LoK::seq_dispelMagicAnimation() {
 	}
 	_screen->hideMouse();
 	// TODO
-	// This condition is always false. Is this a typo or a bug in the original?
-	if (_currentCharacter->sceneId == 210 && _currentCharacter->sceneId < 160)
+#if 0
+	// FIXME: This condition is always false. Is this a typo or a bug in the original?
+	if (_currentCharacter->sceneId == 210 && _currentCharacter->sceneId < 160) {
 		_currentCharacter->facing = 3;
+	}
+#endif
 	if (_malcolmFlag == 7 && _beadStateVar == 3) {
 		_beadStateVar = 6;
 		_unkEndSeqVar5 = 2;
