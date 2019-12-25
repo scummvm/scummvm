@@ -34,11 +34,8 @@ namespace Fullpipe {
 
 class Sound : public MemoryObject {
 	int _id;
-	int _directSoundBuffer;
-	int _directSoundBuffers[7];
 	byte *_soundData;
 	Audio::SoundHandle *_handle;
-	int _volume;
 
 public:
 	int16 _objectId;

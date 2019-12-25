@@ -58,19 +58,6 @@ int stretch200To240(uint8 *buf,
                     int origSrcY,
                     bool interpolate);
 
-
-/**
- * This filter (up)scales the source image vertically by a factor of 6/5.
- * For example, a 320x200 image is scaled to 320x240.
- *
- * The main difference to the code in graphics/scaler/aspect.cpp is the
- * out-of-place operation, omitting a straight blit step the sdl backend
- * does. Also, tests show unaligned access errors with the stock aspect scaler.
- */
-DECLARE_SCALER(Normal1xAspect);
-
-#ifdef USE_ARM_SCALER_ASM
-DECLARE_SCALER(Normal2xAspect);
-#endif
+int stretch200To240Nearest(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
 
 #endif

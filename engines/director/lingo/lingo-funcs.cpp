@@ -23,12 +23,13 @@
 #include "audio/decoders/wave.h"
 #include "common/file.h"
 #include "common/macresman.h"
-#include "common/util.h"
+#include "common/system.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
+#include "director/director.h"
 #include "director/lingo/lingo.h"
-#include "director/lingo/lingo-gr.h"
+#include "director/score.h"
 #include "director/sound.h"
 #include "director/util.h"
 
@@ -355,8 +356,11 @@ void Lingo::func_cursor(int c) {
 }
 
 void Lingo::func_beep(int repeats) {
-	for (int r = 0; r <= repeats; r++)
+	for (int r = 1; r <= repeats; r++) {
 		_vm->getSoundManager()->systemBeep();
+		if (r < repeats)
+			g_system->delayMillis(400);
+	}
 }
 
 int Lingo::func_marker(int m) 	{

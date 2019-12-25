@@ -617,6 +617,9 @@ void Game::syncTimers(SyncType slaveType, int slaveId, SyncType masterType, int 
 	case SYNC_PLAYER:
 		syncTime = _player._priorTimer;
 		break;
+
+	default:
+		break;
 	}
 
 
@@ -635,6 +638,10 @@ void Game::syncTimers(SyncType slaveType, int slaveId, SyncType masterType, int 
 
 	case SYNC_CLOCK:
 		error("syncTimer is trying to force _frameStartTime");
+		break;
+
+	default:
+		break;
 	}
 }
 

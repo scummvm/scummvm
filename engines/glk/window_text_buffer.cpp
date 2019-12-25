@@ -1204,6 +1204,8 @@ int TextBufferWindow::acceptScroll(uint arg) {
 		else
 			_scrollPos = 0;
 		break;
+	default:
+		break;
 	}
 
 	if (_scrollPos > _scrollMax - _height + 1)

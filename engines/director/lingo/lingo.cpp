@@ -20,13 +20,14 @@
  *
  */
 
-#include "common/archive.h"
 #include "common/file.h"
 #include "common/str-array.h"
 
+#include "director/director.h"
 #include "director/lingo/lingo.h"
-#include "director/lingo/lingo-gr.h"
+#include "director/cast.h"
 #include "director/frame.h"
+#include "director/score.h"
 #include "director/sprite.h"
 
 namespace Director {
@@ -50,7 +51,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_currentEntityId = 0;
 	_pc = 0;
 	_returning = false;
-	_indef = false;
+	_indef = kStateNone;
 	_ignoreMe = false;
 	_immediateMode = false;
 
@@ -69,6 +70,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_exitRepeat = false;
 
 	_localvars = NULL;
+
+	_dontPassEvent = false;
 
 	initEventHandlerTypes();
 
@@ -154,7 +157,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	}
 
 	// Strip comments for ease of the parser
-	Common::String codeNorm = stripComments(code);
+	Common::String codeNorm = codePreprocessor(code);
 	code = codeNorm.c_str();
 	begin = code;
 
@@ -178,8 +181,9 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 				debugC(2, kDebugLingoCompile, "<current code>");
 				uint pc = 0;
 				while (pc < _currentScript->size()) {
+					uint spc = pc;
 					Common::String instr = decodeInstruction(_currentScript, pc, &pc);
-					debugC(2, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
+					debugC(2, kDebugLingoCompile, "[%5d] %s", spc, instr.c_str());
 				}
 				debugC(2, kDebugLingoCompile, "<end code>");
 			}
@@ -206,58 +210,12 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 		debugC(2, kDebugLingoCompile, "<resulting code>");
 		uint pc = 0;
 		while (pc < _currentScript->size()) {
+			uint spc = pc;
 			Common::String instr = decodeInstruction(_currentScript, pc, &pc);
-			debugC(2, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
+			debugC(2, kDebugLingoCompile, "[%5d] %s", spc, instr.c_str());
 		}
 		debugC(2, kDebugLingoCompile, "<end code>");
 	}
-}
-
-Common::String Lingo::stripComments(const char *s) {
-	Common::String noComments;
-
-	// Strip comments
-	while (*s) {
-		if (*s == '-' && *(s + 1) == '-') { // At the end of the line we will have \0
-			while (*s && *s != '\n')
-				s++;
-		}
-
-		if (*s)
-			noComments += *s;
-
-		s++;
-	}
-
-	// Strip trailing whitespaces
-	Common::String res;
-	s = noComments.c_str();
-	while (*s) {
-		if (*s == ' ' || *s == '\t') { // If we see a whitespace
-			const char *ps = s; // Remember where we saw it
-
-			while (*ps == ' ' || *ps == '\t')	// Scan until end of whitespaces
-				ps++;
-
-			if (*ps) {	// Not end of the string
-				if (*ps == '\n') {	// If it is newline, then we continue from it
-					s = ps;
-				} else {	// It is not a newline
-					while (s != ps) {	// Add all whitespaces
-						res += *s;
-						s++;
-					}
-				}
-			}
-		}
-
-		if (*s)
-			res += *s;
-
-		s++;
-	}
-
-	return res;
 }
 
 void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
@@ -376,7 +334,7 @@ Common::String *Datum::toString() {
 		*s = Common::String::format(g_lingo->_floatPrecisionFormat.c_str(), u.f);
 		break;
 	case STRING:
-		*s = Common::String::format("\"%s\"", u.s->c_str());
+		*s = *u.s;
 		break;
 	case SYMBOL:
 		switch (u.i) {
@@ -418,7 +376,21 @@ Common::String *Datum::toString() {
 		*s = Common::String::format("var: #%s", u.sym->name.c_str());
 		break;
 	case REFERENCE:
-		*s = Common::String::format("field#%d", u.i);
+		{
+			int idx = u.i;
+
+			if (!g_director->getCurrentScore()->_loadedText->contains(idx)) {
+				if (!g_director->getCurrentScore()->_loadedText->contains(idx - 1024)) {
+					warning("toString(): Unknown REFERENCE %d", idx);
+					*s = "";
+					break;
+				} else {
+					idx -= 1024;
+				}
+			}
+
+			*s = g_director->getCurrentScore()->_loadedText->getVal(idx)->_ptext;
+		}
 		break;
 	default:
 		warning("Incorrect operation toString() for type: %s", type2str());
@@ -491,10 +463,12 @@ void Lingo::runTests() {
 			_hadError = false;
 			addCode(script, kMovieScript, counter);
 
-			if (!_hadError)
-				executeScript(kMovieScript, counter, 0);
-			else
-				debug(">> Skipping execution");
+			if (!debugChannelSet(-1, kDebugLingoCompileOnly)) {
+				if (!_hadError)
+					executeScript(kMovieScript, counter, 0);
+				else
+					debug(">> Skipping execution");
+			}
 
 			free(script);
 

@@ -96,6 +96,8 @@ bool SoundDesc::load(SoundType type, byte *data, uint32 dSize) {
 		return loadSND(data, dSize);
 	case SOUND_WAV:
 		return loadWAV(data, dSize);
+	default:
+		break;
 	}
 
 	return false;

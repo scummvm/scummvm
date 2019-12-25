@@ -162,23 +162,6 @@ bool OSystem_DS::getFeatureState(Feature f) {
 	return false;
 }
 
-const OSystem::GraphicsMode *OSystem_DS::getSupportedGraphicsModes() const {
-	return s_supportedGraphicsModes;
-}
-
-
-int OSystem_DS::getDefaultGraphicsMode() const {
-	return 0;
-}
-
-bool OSystem_DS::setGraphicsMode(int mode) {
-	return true;
-}
-
-int OSystem_DS::getGraphicsMode() const {
-	return -1;
-}
-
 void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	// For Lost in Time, the title screen is displayed in 640x400.
 	// In order to support this game, the screen mode is set, but

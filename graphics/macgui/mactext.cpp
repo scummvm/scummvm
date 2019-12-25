@@ -38,13 +38,7 @@ const Font *MacFontRun::getFont() {
 }
 
 const Common::String MacFontRun::toString() {
-	return Common::String::format("\001\015%c%c%c%c%c%c%c%c%c%c%c",
-			(fontId >> 8) & 0xff, fontId & 0xff,
-			textSlant & 0xff,
-			(fontSize >> 8) & 0xff, fontSize & 0xff,
-			(palinfo1 >> 8) & 0xff, palinfo1 & 0xff,
-			(palinfo2 >> 8) & 0xff, palinfo2 & 0xff,
-			(palinfo3 >> 8) & 0xff, palinfo3 & 0xff);
+	return Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 }
 
 MacText::~MacText() {
@@ -129,6 +123,22 @@ void MacText::setMaxWidth(int maxWidth) {
 	}
 }
 
+static const Common::U32String::value_type *readHex(uint16 *res, const Common::U32String::value_type *s, int len) {
+	*res = 0;
+
+	for (int i = 0; i < len; i++) {
+		char b = (char)*s++;
+
+		*res <<= 4;
+		if (tolower(b) > 'a')
+			*res |= tolower(b) - 'a' + 10;
+		else
+			*res |= tolower(b) - '0';
+	}
+
+	return s;
+}
+
 void MacText::splitString(Common::U32String &str) {
 	const Common::U32String::value_type *s = str.c_str();
 
@@ -148,12 +158,12 @@ void MacText::splitString(Common::U32String &str) {
 	while (*s) {
 #if DEBUG
 		for (uint i = 0; i < _textLines.size(); i++) {
-			debugN(7, "%2d ", i);
+			debugN(9, "%2d ", i);
 
 			for (uint j = 0; j < _textLines[i].chunks.size(); j++)
-				debugN(7, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].text.c_str());
+				debugN(9, "[%d] \"%s\"", _textLines[i].chunks[j].fontId, Common::toPrintable(_textLines[i].chunks[j].text.encode()).c_str());
 
-			debug(7, " --> %c %d, '%s'", (*s > 0x20 ? *s : ' '), (byte)*s, tmp.c_str());
+			debug(9, " --> %c %d, '%s'", (*s > 0x20 ? *s : ' '), (byte)*s, Common::toPrintable(tmp.encode()).c_str());
 		}
 #endif
 
@@ -161,9 +171,8 @@ void MacText::splitString(Common::U32String &str) {
 			s++;
 			if (*s == '\001') {
 				// Copy it verbatim
-			} else {
-				if (*s++ != '\015')
-					error("MacText: formatting error");
+			} else if (*s == '\015') {
+				s++;
 
 				uint16 fontId = *s++; fontId = (fontId << 8) | *s++;
 				byte textSlant = *s++;
@@ -172,7 +181,7 @@ void MacText::splitString(Common::U32String &str) {
 				uint16 palinfo2 = *s++; palinfo2 = (palinfo2 << 8) | *s++;
 				uint16 palinfo3 = *s++; palinfo3 = (palinfo3 << 8) | *s++;
 
-				debug(8, "******** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
+				debug(9, "******** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
 						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 				previousFormatting = _currentFormatting;
@@ -182,8 +191,32 @@ void MacText::splitString(Common::U32String &str) {
 					previousFormatting = _currentFormatting;
 
 				nextChunk = true;
+			} else if (*s == '\016') {
+				s++;
+
+				uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
+
+				s = readHex(&fontId, s, 4);
+				s = readHex(&textSlant, s, 2);
+				s = readHex(&fontSize, s, 4);
+				s = readHex(&palinfo1, s, 4);
+				s = readHex(&palinfo2, s, 4);
+				s = readHex(&palinfo3, s, 4);
+
+				debug(9, "******** splitString: fontId: %d, textSlant: %d, fontSize: %d, p0: %x p1: %x p2: %x",
+						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+
+				previousFormatting = _currentFormatting;
+				_currentFormatting.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+
+				if (curLine == 0 && curChunk == 0 && tmp.empty())
+					previousFormatting = _currentFormatting;
+
+				nextChunk = true;
+			} else {
+				error("MacText: formatting error, got %02x", *s);
 			}
-		} else if (*s == '\n' && prevCR) {	// trean \r\n as one
+		} else if (*s == '\n' && prevCR) {	// treat \r\n as one
 			prevCR = false;
 
 			s++;
@@ -314,7 +347,7 @@ void MacText::render(int from, int to) {
 
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			debug(5, "line %d[%d]/%d at %d,%d (%s)", i, j, xOffset, _textLines[i].chunks[j].fontId, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str());
+			debug(9, "MacText::render: line %d[%d]/%d at %d,%d (%s)", i, j, xOffset, _textLines[i].chunks[j].fontId, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str());
 
 			if (_textLines[i].chunks[j].text.empty())
 				continue;
@@ -325,12 +358,12 @@ void MacText::render(int from, int to) {
 	}
 
 	for (uint i = 0; i < _textLines.size(); i++) {
-		debugN(4, "%2d ", i);
+		debugN(9, "MacText::render: %2d ", i);
 
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++)
-			debugN(4, "[%d (%d)] \"%s\" ", _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].textSlant, _textLines[i].chunks[j].text.encode().c_str());
+			debugN(9, "[%d (%d)] \"%s\" ", _textLines[i].chunks[j].fontId, _textLines[i].chunks[j].textSlant, _textLines[i].chunks[j].text.encode().c_str());
 
-		debug(4, "%s", "");
+		debug(9, "%s", "");
 	}
 }
 
@@ -344,15 +377,22 @@ int MacText::getLineWidth(int line, bool enforce) {
 	int width = 0;
 	int height = 0;
 
+	bool hastext = false;
+
 	for (uint i = 0; i < _textLines[line].chunks.size(); i++) {
 		if (enforce)
 			_textLines[line].chunks[i].font = nullptr;
 
-		if (!_textLines[line].chunks[i].text.empty())
+		if (!_textLines[line].chunks[i].text.empty()) {
 			width += _textLines[line].chunks[i].getFont()->getStringWidth(_textLines[line].chunks[i].text);
+			hastext = true;
+		}
 
 		height = MAX(height, _textLines[line].chunks[i].getFont()->getFontHeight());
 	}
+
+	if (!hastext)
+		height -= 3;
 
 	_textLines[line].width = width;
 	_textLines[line].height = height;

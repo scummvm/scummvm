@@ -817,8 +817,8 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 
 int KyraEngine_HoF::o2_playFireflyScore(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_playFireflyScore(%p) ()", (const void *)script);
-	if (_sound->getSfxType() == Sound::kAdLib || _sound->getSfxType() == Sound::kPCSpkr ||
-			_sound->getSfxType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiGM) {
+	if ((_sound->getSfxType() == Sound::kAdLib || _sound->getSfxType() == Sound::kPCSpkr || _sound->getSfxType() == Sound::kMidiMT32 ||
+			_sound->getSfxType() == Sound::kMidiGM) && !_sound->useDigitalSfx()) {
 		snd_playWanderScoreViaMap(86, 1);
 		return 1;
 	} else {

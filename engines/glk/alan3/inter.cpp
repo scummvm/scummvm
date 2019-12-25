@@ -120,6 +120,8 @@ static void interpretIf(Aword v) {
 						return;
 					}
 					break;
+				default:
+					break;
 				}
 		}
 	}
@@ -144,6 +146,8 @@ static void interpretElse(void) {
 			case I_IF:
 				lev++;
 				break;
+			default:
+				break;
 			}
 	}
 }
@@ -167,6 +171,8 @@ static void goToLOOPEND(void) {
 				break;
 			case I_LOOP:
 				level++;
+				break;
+			default:
 				break;
 			}
 		pc++;
@@ -194,6 +200,8 @@ static void jumpBackToStartOfMatchingLOOP(void) {
 				if (level == 0) {
 					return;
 				}
+				break;
+			default:
 				break;
 			}
 	}
@@ -263,6 +271,8 @@ static void depexec(Aword v) {
 						return;
 					}
 					break;
+				default:
+					break;
 				}
 		}
 	}
@@ -294,6 +304,8 @@ static void depcase(void) {
 					pc--;
 					return;
 				}
+				break;
+			default:
 				break;
 			}
 	}
@@ -368,6 +380,8 @@ static const char *transitivityFlag(ATrans value) {
 		return "Direct";
 	case INDIRECT:
 		return "Indirect";
+	default:
+		break;
 	}
 	syserr("Unexpected transitivity");
 	return "ERROR";
@@ -386,6 +400,8 @@ static const char *printForm(SayForm form) {
 		return "No";
 	case SAY_PRONOUN:
 		return "It";
+	default:
+		break;
 	}
 	return "**Unknown!!***";
 }
@@ -1233,6 +1249,8 @@ void interpret(CONTEXT, Aaddr adr) {
 					if (traceInstructionOption)
 						printf("SUM \t%7ld\t\t\t", (long)attribute);
 					push(stack, aggregate + attribute);
+					break;
+				default:
 					break;
 				}
 				traceIntegerTopValue();

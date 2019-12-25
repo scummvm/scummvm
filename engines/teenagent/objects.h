@@ -205,7 +205,15 @@ struct Walkbox {
 	Rect rect;
 	byte sideHint[4];
 
-	Walkbox() : _base(NULL) { memset(this, 0, sizeof(Walkbox)); }
+	Walkbox() {
+		_base = nullptr;
+		type = 0;
+		orientation = 0;
+		// rect cleared by Rect constructor
+		for (uint i = 0; i < ARRAYSIZE(sideHint); i++) {
+			sideHint[i] = 0;
+		}
+	}
 	void dump(int level = 0) const;
 	void load(byte *src);
 	void save() const;

@@ -448,7 +448,7 @@ def calculateFoldHash(strFileName):
 def getSortMixFilesKey(item):
 	keyTmp = item[0] & 0xFFFFFFFF
 
-	signedKeyTmp = ctypes.c_long(keyTmp).value
+	signedKeyTmp = ctypes.c_int32(keyTmp).value
 	return signedKeyTmp
 
 def getSupportedInGameQuotesSheetsList():

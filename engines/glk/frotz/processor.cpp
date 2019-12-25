@@ -644,6 +644,8 @@ void Processor::z_sound_effect() {
 		case EFFECT_FINISH_WITH:
 			os_finish_with_sample (number);
 			break;
+		default:
+			break;
 		}
 
 		_soundLocked = false;

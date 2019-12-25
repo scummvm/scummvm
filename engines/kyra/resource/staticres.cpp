@@ -39,7 +39,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 94
+#define RESFILE_VERSION 95
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -970,7 +970,7 @@ void KyraEngine_LoK::loadMainScreen(int page) {
 		_screen->setInterfacePalette(_screen->getPalette(1), 0x3F, 0x3F, 0x3F);
 
 		// TODO: Move this to a better place
-		_screen->enableInterfacePalette(true);
+		_screen->enableDualPaletteMode(136);
 	}
 }
 

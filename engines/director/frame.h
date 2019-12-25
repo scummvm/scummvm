@@ -23,15 +23,24 @@
 #ifndef DIRECTOR_FRAME_H
 #define DIRECTOR_FRAME_H
 
-#include "graphics/managed_surface.h"
-
 namespace Image {
 	class ImageDecoder;
 }
 
+namespace Graphics {
+	class ManagedSurface;
+	struct Surface;
+}
+
+namespace Common {
+	class ReadStreamEndian;
+}
+
 namespace Director {
 
+class Score;
 class Sprite;
+class TextCast;
 
 enum {
 	kChannelDataSize = (25 * 50)
@@ -118,6 +127,7 @@ public:
 	void prepareFrame(Score *score);
 	uint16 getSpriteIDFromPos(Common::Point pos);
 	bool checkSpriteIntersection(uint16 spriteId, Common::Point pos);
+	Common::Rect *getSpriteRect(uint16 spriteId);
 
 	void executeImmediateScripts();
 

@@ -788,6 +788,8 @@ void Actor::startWalkAnim(int cmd, int angle) {
 			turnToDirection(angle);
 			startAnimActor(_standFrame);
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -1335,6 +1337,8 @@ int Actor::remapDirection(int dir, bool is_walking) {
 			return 0;
 		case 6:
 			return 180;
+		default:
+			break;
 		}
 
 		// MM v0 stores flags as a part of the mask
@@ -2398,6 +2402,8 @@ void Actor::startAnimActor(int f) {
 		case 1005:
 			f = _talkStopFrame;
 			break;
+		default:
+			break;
 		}
 
 		if (_costume != 0) {
@@ -2424,6 +2430,8 @@ void Actor::startAnimActor(int f) {
 			break;
 		case 0x3C:
 			f = _talkStopFrame;
+			break;
+		default:
 			break;
 		}
 

@@ -135,11 +135,11 @@ private:
 
 class TownsAudioInterfaceInternal : public TownsPC98_FmSynth {
 private:
-	TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver);
+	TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutex);
 public:
 	~TownsAudioInterfaceInternal();
 
-	static TownsAudioInterfaceInternal *addNewRef(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver);
+	static TownsAudioInterfaceInternal *addNewRef(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutex);
 	static void releaseRef(TownsAudioInterface *owner);
 
 	bool init();
@@ -253,9 +253,8 @@ private:
 	uint8 _outputMute[16];
 	bool _updateOutputVol;
 
-	const float _baserate;
-	uint32 _timerBase;
-	uint32 _tickLength;
+	const uint32 _tickLength;
+	const uint32 _envDuration;
 	uint32 _timer;
 
 	uint16 _musicVolume;
@@ -264,6 +263,7 @@ private:
 
 	TownsAudioInterfacePluginDriver *_drv;
 	void *_drvOwner;
+	bool _externalMutex;
 	bool _ready;
 
 	static TownsAudioInterfaceInternal *_refInstance;
@@ -275,12 +275,10 @@ private:
 	static const uint8 _fmDefaultInstrument[];
 };
 
-TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver) :
-	TownsPC98_FmSynth(mixer, kTypeTowns),
-	_fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
-	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver), _drvOwner(owner),
-	_pcmSfxChanMask(0),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
-	_outputVolumeFlags(0), _fmChanPlaying(0),
+TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutex) :
+	TownsPC98_FmSynth(mixer, kTypeTowns), _fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
+	_tickLength(0x08), _envDuration(0x30), _timer(0), _drv(driver), _drvOwner(owner), _externalMutex(externalMutex), _pcmSfxChanMask(0), _outputVolumeFlags(0),
+	_fmChanPlaying(0), _musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
 	_numReservedChannels(0), _numWaveTables(0), _updateOutputVol(false), _ready(false) {
 
 #define INTCB(x) &TownsAudioInterfaceInternal::intf_##x
@@ -398,9 +396,6 @@ TownsAudioInterfaceInternal::TownsAudioInterfaceInternal(Audio::Mixer *mixer, To
 	memset(_fmChanPitch, 0, sizeof(_fmChanPitch));
 	memset(_outputLevel, 0, sizeof(_outputLevel));
 	memset(_outputMute, 0, sizeof(_outputMute));
-
-	_timerBase = (uint32)(_baserate * 1000000.0f);
-	_tickLength = 2 * _timerBase;
 }
 
 TownsAudioInterfaceInternal::~TownsAudioInterfaceInternal() {
@@ -416,10 +411,10 @@ TownsAudioInterfaceInternal::~TownsAudioInterfaceInternal() {
 	delete[] _pcmChan;
 }
 
-TownsAudioInterfaceInternal *TownsAudioInterfaceInternal::addNewRef(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver) {
+TownsAudioInterfaceInternal *TownsAudioInterfaceInternal::addNewRef(Audio::Mixer *mixer, TownsAudioInterface *owner, TownsAudioInterfacePluginDriver *driver, bool externalMutex) {
 	_refCount++;
 	if (_refCount == 1 && _refInstance == 0)
-		_refInstance = new TownsAudioInterfaceInternal(mixer, owner, driver);
+		_refInstance = new TownsAudioInterfaceInternal(mixer, owner, driver, externalMutex);
 	else if (_refCount < 2 || _refInstance == 0)
 		error("TownsAudioInterfaceInternal::addNewRef(): Internal reference management failure");
 	else if (!_refInstance->assignPluginDriver(owner, driver))
@@ -546,8 +541,8 @@ void TownsAudioInterfaceInternal::nextTickEx(int32 *buffer, uint32 bufferSize) {
 
 	for (uint32 i = 0; i < bufferSize; i++) {
 		_timer += _tickLength;
-		while (_timer > 0x514767) {
-			_timer -= 0x514767;
+		while (_timer >= _envDuration) {
+			_timer -= _envDuration;
 
 			for (int ii = 0; ii < 8; ii++)
 				_pcmChan[ii].updateOutput();
@@ -582,16 +577,30 @@ void TownsAudioInterfaceInternal::nextTickEx(int32 *buffer, uint32 bufferSize) {
 }
 
 void TownsAudioInterfaceInternal::timerCallbackA() {
-	Common::StackLock lock(_mutex);
-	if (_drv && _ready)
+	if (_drv && _ready) {
+		int restore = 0;
+		if (_externalMutex) {
+			for (; restore < _mixerThreadLockCounter; ++restore)
+				_mutex.unlock();
+		}
 		_drv->timerCallback(0);
+		while (restore--)
+			_mutex.lock();
+	}
 }
 
 void TownsAudioInterfaceInternal::timerCallbackB() {
-	Common::StackLock lock(_mutex);
 	if (_ready) {
-		if (_drv)
+		if (_drv) {
+			int restore = 0;
+			if (_externalMutex) {
+				for (; restore < _mixerThreadLockCounter; ++restore)
+					_mutex.unlock();
+			}
 			_drv->timerCallback(1);
+			while (restore--)
+				_mutex.lock();
+		}
 		callback(80);
 	}
 }
@@ -1941,8 +1950,8 @@ void TownsAudio_WaveTable::clear() {
 	data = 0;
 }
 
-TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) {
-	_intf = TownsAudioInterfaceInternal::addNewRef(mixer, this, driver);
+TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver, bool externalMutex) {
+	_intf = TownsAudioInterfaceInternal::addNewRef(mixer, this, driver, externalMutex);
 }
 
 TownsAudioInterface::~TownsAudioInterface() {

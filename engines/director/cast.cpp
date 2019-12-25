@@ -20,10 +20,13 @@
  *
  */
 
+#include "common/substream.h"
+
 #include "director/director.h"
 #include "director/cachedmactext.h"
 #include "director/cast.h"
 #include "director/score.h"
+#include "director/stxt.h"
 
 namespace Director {
 
@@ -31,24 +34,30 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 	if (version < 4) {
 		_pitch = 0;
 		_flags = stream.readByte();
-		_someFlaggyThing = stream.readUint16();
+		_bytes = stream.readUint16();
 		_initialRect = Score::readRect(stream);
 		_boundingRect = Score::readRect(stream);
 		_regY = stream.readUint16();
 		_regX = stream.readUint16();
-		_unk1 = _unk2 = 0;
 
-		if (_someFlaggyThing & 0x8000) {
-			_unk1 = stream.readUint16();
+		if (_bytes & 0x8000) {
+			_bitsPerPixel = stream.readUint16();
 			_unk2 = stream.readUint16();
+		} else {
+			_bitsPerPixel = 1;
+			_unk2 = 0;
 		}
+
+		_pitch = _initialRect.width();
+		if (_pitch % 16)
+			_pitch += 16 - (_initialRect.width() % 16);
 	} else if (version == 4) {
 		_pitch = stream.readUint16();
 		_pitch &= 0x0fff;
 
 		_flags = 0;
-		_someFlaggyThing = 0;
-		_unk1 = _unk2 = 0;
+		_bytes = 0;
+		_unk2 = 0;
 
 		_initialRect = Score::readRect(stream);
 		_boundingRect = Score::readRect(stream);
@@ -68,6 +77,7 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 
 		warning("BitmapCast: %d bytes left", tail);
 	} else if (version == 5) {
+		_bytes = 0;
 		_pitch = 0;
 		uint16 count = stream.readUint16();
 		for (uint16 cc = 0; cc < count; cc++)
@@ -215,13 +225,16 @@ void TextCast::importStxt(const Stxt *stxt) {
 	_palinfo2 = stxt->_palinfo2;
 	_palinfo3 = stxt->_palinfo3;
 	_ftext = stxt->_ftext;
+	_ptext = stxt->_ptext;
+
+	_cachedMacText->setStxt(this);
 }
 
 void TextCast::importRTE(byte *text) 	{
 	//assert(rteList.size() == 3);
 	//child0 is probably font data.
 	//child1 is the raw text.
-	_ftext = Common::String((char*)text);
+	_ptext = _ftext = Common::String((char*)text);
 	//child2 is positional?
 }
 
@@ -230,26 +243,31 @@ void TextCast::setText(const char *text) {
 	if (_ftext.equals(text))
 		return;
 
-	_ftext = text;
+	_ptext = _ftext = text;
 
 	_cachedMacText->forceDirty();
 }
 
 ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
+	byte flags, unk1;
+
+	_ink = kInkTypeCopy;
+
 	if (version < 4) {
-		/*byte flags = */ stream.readByte();
-		/*unk1 = */ stream.readByte();
+		flags = stream.readByte();
+		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Score::readRect(stream);
 		_pattern = stream.readUint16BE();
-		_fgCol = stream.readByte();
-		_bgCol = stream.readByte();
+		_fgCol = (127 - stream.readByte()) & 0xff; // -128 -> 0, 127 -> 256
+		_bgCol = (127 - stream.readByte()) & 0xff;
 		_fillType = stream.readByte();
+		_ink = static_cast<InkType>(_fillType & 0x3f);
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
 	} else {
-		stream.readByte();
-		stream.readByte();
+		flags = stream.readByte();
+		unk1 = stream.readByte();
 
 		_initialRect = Score::readRect(stream);
 		_boundingRect = Score::readRect(stream);
@@ -262,6 +280,12 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_lineDirection = 0;
 	}
 	_modified = 0;
+
+	debugC(3, kDebugLoading, "ShapeCast: fl: %x unk1: %x type: %d pat: %d fg: %d bg: %d fill: %d thick: %d dir: %d",
+		flags, unk1, _shapeType, _pattern, _fgCol, _bgCol, _fillType, _lineThickness, _lineDirection);
+
+	if (debugChannelSet(3, kDebugLoading))
+		_initialRect.debugPrint(0, "ShapeCast: rect:");
 }
 
 ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextCast(stream, version) {

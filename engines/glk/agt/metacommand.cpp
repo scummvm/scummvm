@@ -1038,6 +1038,7 @@ int scan_metacommand(integer m_actor, int vcode,
 			/* We are doing disambiguation and reached
 			   an action token */
 			case 0:
+			default:
 				break; /* Go onto next metacommand */
 			case 1:
 				rfree(substack);

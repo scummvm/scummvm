@@ -300,6 +300,9 @@ char Script::evalExpr(int16 *pRes) {
 	case GOB_TRUE:
 		*pRes = 1;
 		break;
+
+	default:
+		break;
 	}
 
 	return type;

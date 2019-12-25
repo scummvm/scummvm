@@ -278,6 +278,9 @@ void ScummEngine::readIndexFile() {
 				_numSounds = _fileHandle->readUint16LE();
 				itemsize -= 2;
 				break;
+
+			default:
+				break;
 			}
 			_fileHandle->seek(itemsize - 8, SEEK_CUR);
 		}

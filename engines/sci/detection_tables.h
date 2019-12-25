@@ -952,6 +952,24 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
 
+	// Gabriel Knight 2 - Italian DOS/Windows (6-CDs original release, provided in Trac #11013)
+	// Executable scanning reports "2.100.002", VERSION file reports "Italian 1.0"
+	{"gk2", "", {
+		{"resmap.001", 0, "f0841f987ba7ba08adb9035f2231fa87", 2806},
+		{"ressci.001", 0, "2bca1716ae0afa602d2cb8933ea8c244", 51083193},
+		{"resmap.002", 0, "2c5362c8c6f4b913500a941a5db01d03", 1999},
+		{"ressci.002", 0, "584c20593a4e8d3740d0b4a5ce4729a2", 41865579},
+		{"resmap.003", 0, "2ee65a5560dc9fd290fd7c623ba8ac61", 1711},
+		{"ressci.003", 0, "59b597ed3550b5e175746e4f9bc8786d", 35547945},
+		{"resmap.004", 0, "9c7b26b547a8abc3b88302acbf0cec5e", 2755},
+		{"ressci.004", 0, "851d879c5c27b014ebbd8c44df6865c5", 59304672},
+		{"resmap.005", 0, "2b2da2a53b492cb944ee022658f9acc2", 2101},
+		{"ressci.005", 0, "376341973f5bb64ccf09ccf1b3119de0", 38303329},
+		{"resmap.006", 0, "fe0f9b565b2b4f69080bbcb06f658e3e", 3007},
+		{"ressci.006", 0, "4037d941aec39d2e654e20960429aefc", 61231670},
+		AD_LISTEND},
+		Common::IT_ITA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
+
 	// Gabriel Knight 2 - English Macintosh
 	// NOTE: This only contains disc 1 files (as well as the persistent file:
 	// Data1. Other discs have conflicting names :(
@@ -2907,6 +2925,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LSL7 },
 
+	// Larry 7 - Polish DOS (GOG.com release 1.01v2)
+	// Executable scanning reports "3.000.000", VERSION file reports "1.01"
+	{"lsl7", "", {
+		{"resmap.000", 0, "eae93e1b1d1ccc58b4691c371281c95d", 8188},
+		{"ressci.000", 0, "89353723488219e25589165d73ed663e", 66965678},
+		{"resource.aud", 0, "d7b26b5df5ee6766b2dbd45b427b0074", 417594676},
+		AD_LISTEND},
+		Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LSL7 },
+
 #undef GUIO_LSL7_DEMO
 #undef GUIO_LSL7
 
@@ -3208,7 +3235,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PHANTASMAGORIA },
 
 	// Phantasmagoria - English DOS (from jvprat)
-	// Executable scanning reports "2.100.002", VERSION file reports "1.100.000UK"
+	// Executable scanning reports "2.100.002", VERSION file reports "1.000.001UK"
 	{"phantasmagoria", "", {
 		{"resmap.001", 0, "416138651ea828219ca454cae18341a3", 11518},
 		{"ressci.001", 0, "3aae6559aa1df273bc542d5ac6330d75", 65844612},
@@ -3318,7 +3345,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Phantasmagoria - English DOS/Windows (GOG version) - ressci.* merged in ressci.000
 	// Windows executable scanning reports "2.100.002" - "Sep 19 1995 15:09:43"
 	// DOS executable scanning reports "2.100.002" - "Sep 19 1995 09:15:40"
-	// VERSION file reports "1.100.001UK"
+	// VERSION file reports "1.000.001UK"
 	// Supplied by littleboy in patch #3112884
 	{"phantasmagoria", "", {
 		{"ressci.000", 0, "cd5967f9b9586e3380645961c0765be3", 116822037},
@@ -3326,9 +3353,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PHANTASMAGORIA },
 
+	// Phantasmagoria - German Patch V3 externally applied to GOG English DOS/Windows version
+	{"phantasmagoria", "", {
+		{"ressci.000", 0, "cd5967f9b9586e3380645961c0765be3", 116817874},
+		{"resmap.000", 0, "59a0362e4133d4d82d546d75333813ae", 16486},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PHANTASMAGORIA },
+
 	// Phantasmagoria - English Macintosh
 	// NOTE: This only contains disc 1 files (as well as the two persistent files:
 	// Data1 and Data13. Other discs have conflicting names :(
+	// Game script sets version to "1.000.000"
 	{"phantasmagoria", "", {
 		{"Data1", 0, "0fcb42802f49edb5af60532bd7b60c4f", 14705669},
 		{"Data2", 0, "d52f612058ec78e300385df3336a4ba2", 14516712},

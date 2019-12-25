@@ -2985,6 +2985,7 @@ static void gsc_main() {
 			break;
 
 		case GAME_QUIT:
+		default:
 			is_running = FALSE;
 			break;
 		}

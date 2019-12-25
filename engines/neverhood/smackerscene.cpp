@@ -116,6 +116,8 @@ uint32 SmackerScene::handleMessage(int messageNum, const MessageParam &param, En
 	case NM_ANIMATION_STOP:
 		_playNextVideoFlag = true;
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }

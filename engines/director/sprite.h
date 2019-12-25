@@ -23,47 +23,12 @@
 #ifndef DIRECTOR_SPRITE_H
 #define DIRECTOR_SPRITE_H
 
-#include "common/rect.h"
-
 namespace Director {
 
-enum InkType {
-	kInkTypeCopy,
-	kInkTypeTransparent,
-	kInkTypeReverse,
-	kInkTypeGhost,
-	kInkTypeNotCopy,
-	kInkTypeNotTrans,
-	kInkTypeNotReverse,
-	kInkTypeNotGhost,
-	kInkTypeMatte,
-	kInkTypeMask,
-	//10-31 Not used (Lingo in a Nutshell)
-	kInkTypeBlend = 32,
-	kInkTypeAddPin,
-	kInkTypeAdd,
-	kInkTypeSubPin,
-	kInkTypeBackgndTrans,
-	kInkTypeLight,
-	kInkTypeSub,
-	kInkTypeDark
-};
-
-// Director v4
-enum SpriteType {
-	kInactiveSprite, // turns the sprite off
-	kBitmapSprite,
-	kRectangleSprite,
-	kRoundedRectangleSprite,
-	kOvalSprite,
-	kLineTopBottomSprite, // line from top left to bottom right
-	kLineBottomTopSprite, // line from bottom left to top right
-	kTextSprite,
-	kButtonSprite,
-	kCheckboxSprite,
-	kRadioButtonSprite,
-	kUndeterminedSprite = 16 // use castType property to examine the type of cast member associated with sprite
-};
+class BitmapCast;
+class ButtonCast;
+class ShapeCast;
+class TextCast;
 
 enum SpritePosition {
 	kSpritePositionUnk1 = 0,
@@ -98,8 +63,6 @@ public:
 	Sprite(const Sprite &sprite);
 	~Sprite();
 
-	byte _x1;
-	uint16 _x2;
 	uint16 _scriptId;
 	byte _flags2;  // x40 editable, 0x80 moveable
 	byte _unk2;

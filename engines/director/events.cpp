@@ -21,7 +21,8 @@
  */
 
 #include "common/system.h"
-#include "common/events.h"
+
+#include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
 #include "director/frame.h"
@@ -57,6 +58,9 @@ void DirectorEngine::processEvents() {
 
 	while (g_system->getMillis() < endTime) {
 		while (g_system->getEventManager()->pollEvent(event)) {
+			if (_wm->processEvent(event))
+				continue;
+
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 				sc->_stopPlay = true;
@@ -107,7 +111,7 @@ void DirectorEngine::processEvents() {
 					_keyCode = 126;
 					break;
 				default:
-					warning("Keycode: %d", _keyCode);
+					debugC(1, kDebugEvents, "processEvents(): keycode: %d", _keyCode);
 				}
 
 				_lingo->processEvent(kEventKeyDown);

@@ -1228,6 +1228,9 @@ uint16 Hotspots::handleInputs(int16 time, uint16 inputCount, uint16 &curInput,
 			if (curInput > 0)
 				curInput--;
 			break;
+
+		default:
+			break;
 		}
 	}
 }
@@ -1450,6 +1453,9 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		funcLeave = 0;
 
 		flags = ((uint16) kTypeClick) + (windowNum << 8) + (flags << 4);
+		break;
+
+	default:
 		break;
 	}
 

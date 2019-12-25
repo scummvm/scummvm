@@ -396,6 +396,9 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 			gobDesc->curLookDir = 4;
 			_destItemId = -1;
 			break;
+
+		default:
+			break;
 		}
 		break;
 
@@ -416,6 +419,9 @@ void Goblin_v1::movePathFind(Mult::Mult_Object *obj,
 		case 6:
 		case 0:
 			gobDesc->nextState = 19;
+			break;
+
+		default:
 			break;
 		}
 		break;
@@ -483,6 +489,9 @@ void Goblin_v1::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 		case 17:
 		case 24:
 			gobDesc->curLookDir = 6;
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -589,6 +598,9 @@ void Goblin_v1::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 			case 38:
 				_gobPositions[_currentGoblin].y++;
 				break;
+
+			default:
+				break;
 			}
 
 			if (_currentGoblin == 1) {
@@ -672,6 +684,9 @@ void Goblin_v1::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 
 			case 38:
 				_gobPositions[_currentGoblin].y++;
+				break;
+
+			default:
 				break;
 			}
 

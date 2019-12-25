@@ -267,6 +267,8 @@ bool get_token(progfile &f) {
 						s = s + '\r';
 						next_ch = '\n';
 						break;
+					default:
+						break;
 					}
 				}
 				s = s + next_ch;

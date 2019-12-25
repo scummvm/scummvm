@@ -21,19 +21,8 @@
  */
 
 #include "backends/platform/3ds/sprite.h"
+#include "common/algorithm.h"
 #include "common/util.h"
-
-static uint nextHigher2(uint v) {
-	if (v == 0)
-		return 1;
-	v--;
-	v |= v >> 1;
-	v |= v >> 2;
-	v |= v >> 4;
-	v |= v >> 8;
-	v |= v >> 16;
-	return ++v;
-}
 
 Sprite::Sprite()
 	: dirtyPixels(true)
@@ -62,8 +51,8 @@ void Sprite::create(uint16 width, uint16 height, const Graphics::PixelFormat &f)
 	actualWidth = width;
 	actualHeight = height;
 	format = f;
-	w = MAX(nextHigher2(width), 64u);
-	h = MAX(nextHigher2(height), 64u);
+	w = MAX<uint16>(Common::nextHigher2(width), 64u);
+	h = MAX<uint16>(Common::nextHigher2(height), 64u);
 	pitch = w * format.bytesPerPixel;
 	dirtyPixels = true;
 

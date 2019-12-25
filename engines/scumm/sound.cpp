@@ -1211,6 +1211,8 @@ int ScummEngine::readSoundResource(ResId idx) {
 				if (_sound->_musicType == MDT_PCSPK || _sound->_musicType == MDT_PCJR)
 					pri = 11;
 				break;
+			default:
+				break;
 			}
 
 			// We only allow SPK resources for PC Speaker and PCJr here

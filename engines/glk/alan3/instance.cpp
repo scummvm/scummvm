@@ -304,6 +304,9 @@ bool isAt(int instance, int other, ATrans trans) {
 					curr = admin[curr].location;
 			}
 			return FALSE;
+
+		default:
+			break;
 		}
 
 		syserr("Unexpected value in switch in isAt() for location");
@@ -328,6 +331,8 @@ bool isAt(int instance, int other, ATrans trans) {
 			}
 			return FALSE;
 		}
+		default:
+			break;
 		}
 		syserr("Unexpected value in switch in isAt() for non-location");
 		return FALSE;
@@ -363,6 +368,8 @@ bool isAt(int instance, int other, ATrans trans) {
 			}
 			return ok;
 		}
+		default:
+			break;
 		}
 		syserr("Unexpected value in switch in isAt() for non-location");
 		return FALSE;

@@ -31,11 +31,6 @@
 #include "backends/fs/posix/posix-fs.h"
 #include "common/textconsole.h"
 
-OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV()
-	:
-	OSystem_POSIX("/mtd_rwarea/.scummvmrc") {
-}
-
 void OSystem_SDL_SamsungTV::initBackend() {
 	// Create the savefile manager
 	if (_savefileManager == 0) {
@@ -61,6 +56,10 @@ void OSystem_SDL_SamsungTV::fatalError() {
 	delete this;
 	warning("ScummVM: Fatal internal error.");
 	for (;;) {}
+}
+
+Common::String OSystem_SDL_SamsungTV::getDefaultConfigFileName() {
+	return "/mtd_rwarea/.scummvmrc";
 }
 
 Common::String OSystem_SDL_SamsungTV::getDefaultLogFileName() {

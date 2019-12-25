@@ -346,10 +346,13 @@ const Common::String MacFontManager::getFontName(int id, int size, int slant, bo
 	if (_extraFontNames.contains(id)) {
 		n = _extraFontNames[id];
 	} else if (id < ARRAYSIZE(fontNames)) {
-		n = fontNames[id];
-	} else {
-		warning("MacFontManager: Requested font ID %d not found. Falling back to Chicago", id);
-		n = fontNames[0]; // Fallback to Chicago
+		if (fontNames[id])
+			n = fontNames[id];
+	}
+
+	if (n.empty()) {
+		warning("MacFontManager: Requested font ID %d not found. Falling back to Geneva", id);
+		n = fontNames[1]; // Fallback to Geneva
 	}
 
 	if (tryGen && slant != kMacFontRegular) {

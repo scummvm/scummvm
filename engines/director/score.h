@@ -23,16 +23,16 @@
 #ifndef DIRECTOR_SCORE_H
 #define DIRECTOR_SCORE_H
 
-#include "common/substream.h"
-#include "common/rect.h"
-#include "director/archive.h"
-#include "director/cast.h"
-#include "director/images.h"
-#include "director/stxt.h"
+#include "common/hash-str.h"
 
 namespace Graphics {
 	class ManagedSurface;
 	class Font;
+}
+
+namespace Common {
+	class ReadStreamEndian;
+	class SeekableSubReadStreamEndian;
 }
 
 namespace Director {
@@ -44,19 +44,23 @@ class DirectorSound;
 class Frame;
 struct Label;
 class Lingo;
+struct Resource;
 class Sprite;
+class Stxt;
+class BitmapCast;
+class ButtonCast;
+class ScriptCast;
+class ShapeCast;
+class TextCast;
 
-enum ScriptType {
-	kMovieScript = 0,
-	kSpriteScript = 1,
-	kFrameScript = 2,
-	kCastScript = 3,
-	kGlobalScript = 4,
-	kNoneScript = -1,
-	kMaxScriptType = 4	// Sync with score.cpp:45, array scriptTypes[]
+struct ZoomBox {
+	Common::Rect start;
+	Common::Rect end;
+	int delay;
+	int step;
+	uint32 startTime;
+	uint32 nextTime;
 };
-
-const char *scriptType2str(ScriptType scr);
 
 class Score {
 public:
@@ -77,7 +81,7 @@ public:
 	void loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream);
 	void loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id, Resource *res);
 	void loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id);
-	void setCurrentFrame(uint16 frameId) { _currentFrame = frameId; }
+	void setCurrentFrame(uint16 frameId) { _nextFrame = frameId; }
 	uint16 getCurrentFrame() { return _currentFrame; }
 	Common::String getMacName() const { return _macName; }
 	Sprite *getSpriteById(uint16 id);
@@ -94,6 +98,10 @@ public:
 	int getCurrentLabelNumber();
 	int getNextLabelNumber(int referenceFrame);
 
+	void addZoomBox(ZoomBox *box);
+	void renderZoomBox(bool redraw = false);
+	bool haveZoomBox() { return !_zoomBoxes.empty(); }
+
 private:
 	void update();
 	void readVersion(uint32 rid);
@@ -102,7 +110,7 @@ private:
 	void loadLabels(Common::SeekableSubReadStreamEndian &stream);
 	void loadActions(Common::SeekableSubReadStreamEndian &stream);
 	void loadLingoNames(Common::SeekableSubReadStreamEndian &stream);
-	void loadLingoScript(Common::SeekableSubReadStreamEndian &stream);
+	void loadLingoContext(Common::SeekableSubReadStreamEndian &stream);
 	void loadScriptText(Common::SeekableSubReadStreamEndian &stream);
 	void loadFileInfo(Common::SeekableSubReadStreamEndian &stream);
 	void loadFontMap(Common::SeekableSubReadStreamEndian &stream);
@@ -121,8 +129,10 @@ public:
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;
 	Common::HashMap<uint16, Common::String> _fontMap;
+	Common::Array<uint16> _castScriptIds;
 	Graphics::ManagedSurface *_surface;
 	Graphics::ManagedSurface *_trailSurface;
+	Graphics::ManagedSurface *_backSurface;
 	Graphics::Font *_font;
 	Archive *_movieArchive;
 	Common::Rect _movieRect;
@@ -139,6 +149,8 @@ public:
 	Common::HashMap<int, ScriptCast *> *_loadedScripts;
 	Common::HashMap<int, const Stxt *> *_loadedStxts;
 
+	uint16 _castIDoffset;
+
 private:
 	uint16 _versionMinor;
 	uint16 _versionMajor;
@@ -150,7 +162,8 @@ private:
 	byte _currentFrameRate;
 	uint16 _castArrayStart;
 	uint16 _currentFrame;
-	Common::String _currentLabel;
+	uint16 _nextFrame;
+	int _currentLabel;
 	uint32 _flags;
 	uint16 _castArrayEnd;
 	uint16 _movieScriptCount;
@@ -158,6 +171,8 @@ private:
 	Lingo *_lingo;
 	DirectorSound *_soundManager;
 	DirectorEngine *_vm;
+
+	Common::Array<ZoomBox *> _zoomBoxes;
 };
 
 } // End of namespace Director

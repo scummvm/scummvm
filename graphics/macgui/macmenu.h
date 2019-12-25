@@ -92,6 +92,7 @@ private:
 	ManagedSurface _tempSurface;
 
 private:
+	bool checkCallback(bool unicode = false);
 	const Font *getMenuFont();
 	const Common::String getAcceleratorString(MacMenuItem *item, const char *prefix);
 	void processTabs();
@@ -109,6 +110,8 @@ private:
 	bool processMenuShortCut(byte flags, uint16 ascii);
 
 	void drawSubMenuArrow(ManagedSurface *dst, int x, int y, int color);
+
+	void eventLoop();
 
 	ItemArray _items;
 

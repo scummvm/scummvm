@@ -69,6 +69,7 @@ matrix:
       cache:
         directories:
           - $HOME/Library/Caches/Homebrew
+        ccache: true
       before_cache:
         - brew cleanup
 

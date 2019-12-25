@@ -95,6 +95,8 @@ char *strip_return(char *string) {
 		case '\n':
 			string[index] = 0;
 			break;
+		default:
+			break;
 		}
 	}
 

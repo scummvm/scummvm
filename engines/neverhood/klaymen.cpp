@@ -83,6 +83,8 @@ uint32 Klaymen::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4818:
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -131,6 +133,8 @@ uint32 Klaymen::hmIdlePickEar(int messageNum, const MessageParam &param, Entity 
 			playSound(0, 0x44528AA1);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -156,6 +160,8 @@ uint32 Klaymen::hmIdleSpinHead(int messageNum, const MessageParam &param, Entity
 		if (param.asInteger() == 0x808A0008) {
 			playSound(0, 0xD948A340);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -188,6 +194,8 @@ uint32 Klaymen::hmIdleArms(int messageNum, const MessageParam &param, Entity *se
 			playSound(0, 0xD073CF14);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -209,6 +217,8 @@ uint32 Klaymen::hmIdleChest(int messageNum, const MessageParam &param, Entity *s
 		if (param.asInteger() == 0x0D2A0288) {
 			playSound(0, 0xD192A368);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -237,6 +247,8 @@ uint32 Klaymen::hmIdleHeadOff(int messageNum, const MessageParam &param, Entity 
 		} else if (param.asInteger() == 0xC0180260) {
 			playSound(0, 0x5D418366);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -347,6 +359,8 @@ uint32 Klaymen::hmPickUpTube(int messageNum, const MessageParam &param, Entity *
 			playSound(0, 0x40E5884D);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -398,6 +412,8 @@ uint32 Klaymen::hmSitInTeleporter(int messageNum, const MessageParam &param, Ent
 		if (param.asInteger() == 0x001A2832) {
 			playSound(0, 0xC0E4884C);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -539,6 +555,8 @@ uint32 Klaymen::hmLowLevel(int messageNum, const MessageParam &param, Entity *se
 			_pathPoints = NULL;
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -558,6 +576,8 @@ uint32 Klaymen::hmLowLevelAnimation(int messageNum, const MessageParam &param, E
 	switch (messageNum) {
 	case NM_ANIMATION_STOP:
 		gotoNextStateExt();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -581,6 +601,8 @@ uint32 Klaymen::hmStartAction(int messageNum, const MessageParam &param, Entity 
 		} else if (param.asInteger() == 0x2B22AA81) {
 			playSound(0, 0x0A2AA8E0);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -745,6 +767,8 @@ uint32 Klaymen::hmSneaking(int messageNum, const MessageParam &param, Entity *se
 		_x = _destX;
 		gotoNextStateExt();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -778,6 +802,8 @@ uint32 Klaymen::hmStartWalking(int messageNum, const MessageParam &param, Entity
 			playSound(0, _soundFlag ? 0x50399F64 : 0x0460E2FA);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -808,6 +834,8 @@ uint32 Klaymen::hmWalking(int messageNum, const MessageParam &param, Entity *sen
 		} else if (param.asInteger() == 0x0A2A9098) {
 			playSound(0, _soundFlag ? 0x50399F64 : 0x0460E2FA);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -900,6 +928,8 @@ uint32 Klaymen::hmLever(int messageNum, const MessageParam &param, Entity *sende
 			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -935,6 +965,8 @@ uint32 Klaymen::hmPickUpObject(int messageNum, const MessageParam &param, Entity
 			playSound(0, 0x03630300);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 
@@ -962,6 +994,8 @@ uint32 Klaymen::hmPressButton(int messageNum, const MessageParam &param, Entity 
 		} else if (param.asInteger() == 0x0A2A9098) {
 			playSound(0, 0x0A2AA8E0);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1053,6 +1087,9 @@ uint32 Klaymen::hmWalkingSmall(int messageNum, const MessageParam &param, Entity
 			playSound(0, 0x4924AAC4);
 		else if (param.asInteger() == 0x0A2A9098)
 			playSound(0, 0x0A2AA8E0);
+		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1114,6 +1151,8 @@ uint32 Klaymen::hmWalkFrontBackSmall(int messageNum, const MessageParam &param, 
 			playSound(0, 0x4924AAC4);
 		else if (param.asInteger() == 0x0A2A9098)
 			playSound(0, 0x0A2AA8E0);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1195,6 +1234,8 @@ uint32 Klaymen::hmPullReleaseCord(int messageNum, const MessageParam &param, Ent
 			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1230,6 +1271,8 @@ uint32 Klaymen::hmUseTube(int messageNum, const MessageParam &param, Entity *sen
 			playSound(0, 0x166FC6E0);
 		else if (param.asInteger() == 0x925A0C1E)
 			playSound(0, 0x40E5884D);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1380,6 +1423,8 @@ uint32 Klaymen::hmLargeStep(int messageNum, const MessageParam &param, Entity *s
 		_x = _destX;
 		gotoNextStateExt();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1420,6 +1465,8 @@ uint32 Klaymen::hmTurnToUse(int messageNum, const MessageParam &param, Entity *s
 		} else if (param.asInteger() == 0x0A2A9098) {
 			playSound(0, 0x0A2AA8E0);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1466,6 +1513,8 @@ uint32 Klaymen::hmPeekWall(int messageNum, const MessageParam &param, Entity *se
 		} else if (param.asInteger() == 0x0A2A9098) {
 			playSound(0, 0x0460E2FA);
 		}
+		break;
+	default:
 		break;
 	}
 	return hmLowLevelAnimation(messageNum, param, sender);
@@ -1570,6 +1619,8 @@ uint32 Klaymen::hmClimbLadderHalf(int messageNum, const MessageParam &param, Ent
 			playSound(0, 0x0460E2FA);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1595,6 +1646,8 @@ uint32 Klaymen::hmClimbLadderUpDown(int messageNum, const MessageParam &param, E
 					sendMessage(this, NM_SCENE_LEAVE, 0);
 			}
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1650,6 +1703,8 @@ uint32 Klaymen::hmWalkToFront(int messageNum, const MessageParam &param, Entity 
 			playSound(0, _soundFlag ? 0x50399F64 : 0x0460E2FA);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1704,6 +1759,8 @@ uint32 Klaymen::hmLandOnFeet(int messageNum, const MessageParam &param, Entity *
 			playSound(0, 0x5860C640);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1730,6 +1787,8 @@ uint32 Klaymen::hmTurnToBackToUse(int messageNum, const MessageParam &param, Ent
 		} else if (param.asInteger() == 0x0A2A9098) {
 			playSound(0, 0x0A2AA8E0);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1807,6 +1866,8 @@ uint32 Klaymen::hmMoveObjectTurn(int messageNum, const MessageParam &param, Enti
 	case NM_KLAYMEN_MOVE_OBJECT:
 		_isMoveObjectRequested = true;
 		return 0;
+	default:
+		break;
 	}
 	return hmLowLevelAnimation(messageNum, param, sender);
 }
@@ -1946,6 +2007,9 @@ uint32 Klaymen::hmInsertDisk(int messageNum, const MessageParam &param, Entity *
 		} else if (param.asInteger() == 0x0E040501) {
 			playSound(1, 0xC6A129C1);
 		}
+		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -2009,6 +2073,8 @@ void Klaymen::enterIdleAnimation(uint idleAnimation) {
 	case kIdleWonderAbout:
 		stIdleWonderAbout();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -2043,6 +2109,8 @@ uint32 Klaymen::hmJumpToGrab(int messageNum, const MessageParam &param, Entity *
 		else if (param.asInteger() == 0x88001184)
 			sendMessage(_attachedSprite, NM_MOVE_TO_FRONT, 0);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -2062,6 +2130,8 @@ uint32 Klaymen::hmFinishGrow(int messageNum, const MessageParam &param, Entity *
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x040C4C01)
 			playSound(0, 0x01E11140);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -2106,6 +2176,8 @@ uint32 Klaymen::hmJumpToGrabRelease(int messageNum, const MessageParam &param, E
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x320AC306)
 			playSound(0, 0x5860C640);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -2158,6 +2230,8 @@ uint32 Klaymen::hmTeleporterAppearDisappear(int messageNum, const MessageParam &
 		} else if (param.asInteger() == 0x4E6A0CA0) {
 			playSound(0, 0xC5B709B0);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -2223,6 +2297,8 @@ uint32 Klaymen::hmDrinkPotion(int messageNum, const MessageParam &param, Entity 
 		else if (param.asInteger() == 0x82022030)
 			playSound(0, 0x5C48C0E8);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -2255,6 +2331,8 @@ uint32 Klaymen::hmGrow(int messageNum, const MessageParam &param, Entity *sender
 			playSound(0, 0xD4C08010);
 		else if (param.asInteger() == 0x08040840)
 			setDoDeltaX(2);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -2300,6 +2378,8 @@ uint32 Klaymen::hmInsertKey(int messageNum, const MessageParam &param, Entity *s
 		} else if (param.asInteger() == 0x0E4C8141) {
 			playSound(0, 0xDC4A1280);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -2354,6 +2434,8 @@ uint32 Klaymen::hmPeekWallReturn(int messageNum, const MessageParam &param, Enti
 		} else if (param.asInteger() == 0xB613A180) {
 			playSound(0, 0x44051000);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -2433,6 +2515,8 @@ uint32 Klaymen::hmStandIdleSpecial(int messageNum, const MessageParam &param, En
 		} else if (param.asInteger() == 2) {
 			stSpitOutFall2();
 		}
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -2545,6 +2629,8 @@ uint32 Klaymen::hmMoveObject(int messageNum, const MessageParam &param, Entity *
 				SetMessageHandler(&Klaymen::hmLowLevelAnimation);
 			}
 		}
+		break;
+	default:
 		break;
 	}
 	return Klaymen::hmLowLevelAnimation(messageNum, param, sender);

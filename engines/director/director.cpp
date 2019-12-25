@@ -24,13 +24,15 @@
 #include "common/debug-channels.h"
 #include "common/error.h"
 
+#include "audio/mixer.h"
+
 #include "common/macresman.h"
-#include "graphics/fonts/macfont.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
 #include "director/archive.h"
+#include "director/score.h"
 #include "director/sound.h"
 #include "director/lingo/lingo.h"
 
@@ -43,10 +45,15 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
 	DebugMan.addDebugChannel(kDebugLingoCompile, "lingocompile", "Lingo Compilation");
 	DebugMan.addDebugChannel(kDebugLingoParse, "lingoparse", "Lingo code parsing");
+	DebugMan.addDebugChannel(kDebugLingoCompileOnly, "compileonly", "Skip Lingo code execution");
 	DebugMan.addDebugChannel(kDebugLoading, "loading", "Loading");
 	DebugMan.addDebugChannel(kDebugImages, "images", "Image drawing");
 	DebugMan.addDebugChannel(kDebugText, "text", "Text rendering");
 	DebugMan.addDebugChannel(kDebugEvents, "events", "Event processing");
+	DebugMan.addDebugChannel(kDebugSlow, "slow", "Slow playback");
+	DebugMan.addDebugChannel(kDebugFast, "fast", "Fast (no delay) playback");
+	DebugMan.addDebugChannel(kDebugNoLoop, "noloop", "Do not loop the playback");
+	DebugMan.addDebugChannel(kDebugBytecode, "bytecode", "Execute Lscr bytecode");
 
 	g_director = this;
 
@@ -122,7 +129,7 @@ Common::Error DirectorEngine::run() {
 	_macBinary = nullptr;
 	_soundManager = nullptr;
 
-	_wm = new Graphics::MacWindowManager;
+	_wm = new Graphics::MacWindowManager(Graphics::kWMModalMenuMode);
 
 	_lingo = new Lingo(this);
 	_soundManager = new DirectorSound();
@@ -163,10 +170,13 @@ Common::Error DirectorEngine::run() {
 
 	loadSharedCastsFrom(_sharedCastFile);
 
+	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nObtaining score name\n");
 	loadInitialMovie(getEXEName());
 
 	_currentScore->setArchive(_mainArchive);
-	debug(0, "Score name %s", _currentScore->getMacName().c_str());
+	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	debug(0, "@@@@   Score name '%s'", _currentScore->getMacName().c_str());
+	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	bool loop = true;
 

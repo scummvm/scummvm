@@ -22,10 +22,10 @@
 
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactext.h"
-#include "graphics/macgui/macwindowmanager.h"
 
-#include "director/cachedmactext.h"
+#include "director/director.h"
 #include "director/cast.h"
+#include "director/cachedmactext.h"
 
 namespace Director {
 
@@ -45,6 +45,10 @@ void CachedMacText::makeMacText() {
 										_textCast->_fontSize,
 										_textCast->_textSlant);
 
+	debugC(5, kDebugText, "CachedMacText::makeMacText(): font id: %d size: %d slant: %d name: %s '%s'",
+		_textCast->_fontId, _textCast->_fontSize, _textCast->_textSlant, macFont->getName().c_str(),
+		Common::toPrintable(_textCast->_ftext).c_str());
+
 	_macText = new Graphics::MacText(_textCast->_ftext,
 										_wm,
 										macFont,
@@ -54,8 +58,6 @@ void CachedMacText::makeMacText() {
 										_align,
 										1);
 	// TODO destroy me
-
-	debug(5, "CachedMacText::makeMacText(): rendering '%s'", _textCast->_ftext.c_str());
 }
 
 CachedMacText::CachedMacText(TextCast *const textCast,
@@ -66,6 +68,8 @@ CachedMacText::CachedMacText(TextCast *const textCast,
 	:
 	_surface(NULL), _macText(NULL), _width(defaultWidth), _dirty(true),
 	_textCast(textCast), _wm(wm) {
+
+	debugC(5, kDebugText, "CachedMacText::CachedMacText(): font id: %d '%s'", _textCast->_fontId, Common::toPrintable(_textCast->_ftext).c_str());
 
 	if (_width == -1)  {
 		if (version >= 4) {

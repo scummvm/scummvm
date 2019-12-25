@@ -409,6 +409,8 @@ void Player_AppleII::startSound(int nr) {
 	case 5:
 		_soundFunc = new AppleII_SoundFunction5_Noise();
 		break;
+	default:
+		break;
 	}
 	_soundFunc->init(this, _params);
 

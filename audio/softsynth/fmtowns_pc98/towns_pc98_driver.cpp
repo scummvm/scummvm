@@ -1242,6 +1242,8 @@ void TownsPC98_AudioDriver::reset() {
 	_sfxData = 0;
 
 	_pc98a->reset();
+	setMusicTempo(84);
+	setSfxTempo(654);
 
 	for (int i = 0; i < _numChanFM; i++)
 		_channels[i]->reset();
@@ -1404,13 +1406,15 @@ void TownsPC98_AudioDriver::startSoundEffect() {
 
 void TownsPC98_AudioDriver::setMusicTempo(uint8 tempo) {
 	writeReg(0, 0x26, tempo);
-	writeReg(0, 0x27, 0x33);
+	writeReg(0, 0x27, 0x3D);
+	writeReg(0, 0x27, 0x3F);
 }
 
 void TownsPC98_AudioDriver::setSfxTempo(uint16 tempo) {
 	writeReg(0, 0x24, tempo & 0xff);
 	writeReg(0, 0x25, tempo >> 8);
-	writeReg(0, 0x27, 0x33);
+	writeReg(0, 0x27, 0x3E);
+	writeReg(0, 0x27, 0x3F);
 }
 
 const uint8 TownsPC98_AudioDriver::_channelPreset[36] = {

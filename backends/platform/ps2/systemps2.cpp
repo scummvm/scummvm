@@ -792,24 +792,6 @@ void OSystem_PS2::unlockScreen(void) {
 	_screen->unlockScreen();
 }
 
-const OSystem::GraphicsMode OSystem_PS2::_graphicsMode = { NULL, NULL, 0 };
-
-const OSystem::GraphicsMode *OSystem_PS2::getSupportedGraphicsModes(void) const {
-	return &_graphicsMode;
-}
-
-bool OSystem_PS2::setGraphicsMode(int mode) {
-	return (mode == 0);
-}
-
-int OSystem_PS2::getGraphicsMode(void) const {
-	return 0;
-}
-
-int OSystem_PS2::getDefaultGraphicsMode(void) const {
-	return 0;
-}
-
 bool OSystem_PS2::pollEvent(Common::Event &event) {
 	bool res;
 

@@ -193,6 +193,9 @@ int DarkMoonEngine::mainMenu() {
 			// quit
 			menuChoice = -5;
 			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -1557,7 +1560,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 	}
 
 	_screen->enableHiColorMode(false);
-	_screen->disableDualPalettesSplitScreen();
+	_screen->disableDualPaletteMode();
 	int numColors = 256;
 
 	if (_vm->_flags.platform == Common::kPlatformAmiga) {
@@ -1801,10 +1804,8 @@ const char *const DarkmoonSequenceHelper::_palFilesFinaleAmiga[] = {
 
 void DarkMoonEngine::seq_nightmare() {
 	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
-	if (_flags.lang == Common::JA_JPN)
-		_screen->clearCurDim();
+	_screen->clearCurDimOvl(0);
 	_screen->copyRegion(0, 0, 0, 120, 176, 24, 12, 2, Screen::CR_NO_P_CHECK);
-
 	initDialogueSequence();
 	gui_drawDialogueBox();
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-11-17 09:23+0100\n"
+"POT-Creation-Date: 2019-12-14 13:24+0000\n"
 "PO-Revision-Date: 2018-08-06 21:35+0000\n"
 "Last-Translator: Erik Zubiria <zubiriaerik@hotmail.com>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -55,15 +55,15 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "Joan gora"
 
-#: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:297
+#: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:299
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
-#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:43 gui/massadd.cpp:92
+#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:39 gui/massadd.cpp:92
 #: gui/options.cpp:1825 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:392 gui/saveload-dialog.cpp:454
 #: gui/saveload-dialog.cpp:749 gui/saveload-dialog.cpp:1143
 #: gui/themebrowser.cpp:55 gui/unknown-game-dialog.cpp:49
-#: engines/engine.cpp:555 backends/events/default/default-events.cpp:190
+#: engines/engine.cpp:547 backends/events/default/default-events.cpp:190
 #: backends/events/default/default-events.cpp:212
 #: backends/platform/wii/options.cpp:48 engines/drascula/saveload.cpp:49
 #: engines/mohawk/myst_stacks/menu.cpp:284
@@ -88,7 +88,7 @@ msgstr "Aukeratu"
 msgid "Select directory where to download game data"
 msgstr "Jokoaren jaitsiera direktorioa aukeratu"
 
-#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:480 gui/launcher.cpp:198
+#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:482 gui/launcher.cpp:210
 msgid "Select directory with game data"
 msgstr "Jokoaren direktorioa aukeratu"
 
@@ -121,31 +121,25 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
-#: gui/launcher.cpp:327 gui/launcher.cpp:396 gui/launcher.cpp:453
-#: gui/options.cpp:2381 gui/options.cpp:2419
+#: gui/launcher.cpp:377 gui/launcher.cpp:398 gui/launcher.cpp:441
+#: gui/options.cpp:2383 gui/options.cpp:2421
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: backends/platform/wince/CEActionsPocket.cpp:326
-#: backends/platform/wince/CEActionsSmartphone.cpp:287
-#: backends/platform/wince/CELauncherDialog.cpp:83
 #: engines/kyra/gui/saveload_eob.cpp:569 engines/kyra/gui/saveload_eob.cpp:602
-#: engines/sci/graphics/controls32.cpp:820
+#: engines/sci/graphics/controls32.cpp:822
 msgid "Yes"
 msgstr "Bai"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
-#: gui/launcher.cpp:327 gui/launcher.cpp:396 gui/launcher.cpp:453
-#: gui/options.cpp:2381 gui/options.cpp:2419
+#: gui/launcher.cpp:377 gui/launcher.cpp:398 gui/launcher.cpp:441
+#: gui/options.cpp:2383 gui/options.cpp:2421
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: backends/platform/wince/CEActionsPocket.cpp:326
-#: backends/platform/wince/CEActionsSmartphone.cpp:287
-#: backends/platform/wince/CELauncherDialog.cpp:83
 #: engines/kyra/gui/saveload_eob.cpp:569 engines/kyra/gui/saveload_eob.cpp:602
-#: engines/sci/graphics/controls32.cpp:820
+#: engines/sci/graphics/controls32.cpp:822
 msgid "No"
 msgstr "Ez"
 
-#: gui/downloaddialog.cpp:137 gui/launcher.cpp:552
+#: gui/downloaddialog.cpp:137 gui/launcher.cpp:540
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM-k ezin izan du zehazturiko direktorioa ireki!"
 
@@ -155,17 +149,15 @@ msgid ""
 "with the same name."
 msgstr ""
 
-#: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:298
-#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:502
-#: gui/launcher.cpp:506 gui/massadd.cpp:89 gui/options.cpp:1827
-#: gui/saveload-dialog.cpp:1144 engines/engine.cpp:466 engines/engine.cpp:477
-#: backends/platform/wii/options.cpp:47
-#: backends/platform/wince/CELauncherDialog.cpp:54
-#: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
-#: engines/groovie/script.cpp:433 engines/parallaction/saveload.cpp:271
-#: engines/sci/engine/kgraphics.cpp:74 engines/sci/graphics/controls32.cpp:817
-#: engines/scumm/dialogs.cpp:189 engines/scumm/scumm.cpp:1900
-#: engines/scumm/players/player_v3m.cpp:130
+#: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:300
+#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:38 gui/launcher.cpp:490
+#: gui/launcher.cpp:494 gui/massadd.cpp:89 gui/options.cpp:1827
+#: gui/saveload-dialog.cpp:1144 engines/engine.cpp:458 engines/engine.cpp:469
+#: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
+#: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:433
+#: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:74
+#: engines/sci/graphics/controls32.cpp:819 engines/scumm/dialogs.cpp:189
+#: engines/scumm/scumm.cpp:1900 engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
 #: engines/sword1/animation.cpp:569 engines/sword1/animation.cpp:577
@@ -312,115 +304,115 @@ msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Bolumen ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:231 gui/options.cpp:1596
+#: gui/editgamedialog.cpp:233 gui/options.cpp:1596
 msgid "MIDI"
 msgstr "MIDI"
 
-#: gui/editgamedialog.cpp:234
+#: gui/editgamedialog.cpp:236
 msgid "Override global MIDI settings"
 msgstr "MIDI ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:236
+#: gui/editgamedialog.cpp:238
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "MIDI ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:246 gui/options.cpp:1606
+#: gui/editgamedialog.cpp:248 gui/options.cpp:1606
 msgid "MT-32"
 msgstr "MT-32"
 
-#: gui/editgamedialog.cpp:249
+#: gui/editgamedialog.cpp:251
 msgid "Override global MT-32 settings"
 msgstr "MT-32 ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:251
+#: gui/editgamedialog.cpp:253
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "MT-32 ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:260 gui/options.cpp:1613
+#: gui/editgamedialog.cpp:262 gui/options.cpp:1613
 msgid "Paths"
 msgstr "Bide-izenak"
 
-#: gui/editgamedialog.cpp:262 gui/options.cpp:1615
+#: gui/editgamedialog.cpp:264 gui/options.cpp:1615
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Bideak"
 
-#: gui/editgamedialog.cpp:269
+#: gui/editgamedialog.cpp:271
 msgid "Game Path:"
 msgstr "Jokoa:"
 
-#: gui/editgamedialog.cpp:271
+#: gui/editgamedialog.cpp:273
 msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Jokoa:"
 
-#: gui/editgamedialog.cpp:276 gui/options.cpp:1639
+#: gui/editgamedialog.cpp:278 gui/options.cpp:1639
 msgid "Extra Path:"
 msgstr "Gehigarriak:"
 
-#: gui/editgamedialog.cpp:276 gui/editgamedialog.cpp:278
-#: gui/editgamedialog.cpp:279
+#: gui/editgamedialog.cpp:278 gui/editgamedialog.cpp:280
+#: gui/editgamedialog.cpp:281
 msgid "Specifies path to additional data used by the game"
 msgstr "Jokoak erabiltzen duen datu gehigarrien bide-izena"
 
-#: gui/editgamedialog.cpp:278 gui/options.cpp:1641
+#: gui/editgamedialog.cpp:280 gui/options.cpp:1641
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Gehigarria:"
 
-#: gui/editgamedialog.cpp:285 gui/options.cpp:1623
+#: gui/editgamedialog.cpp:287 gui/options.cpp:1623
 msgid "Save Path:"
 msgstr "Partida gordeak:"
 
-#: gui/editgamedialog.cpp:285 gui/editgamedialog.cpp:287
-#: gui/editgamedialog.cpp:288 gui/options.cpp:1623 gui/options.cpp:1625
+#: gui/editgamedialog.cpp:287 gui/editgamedialog.cpp:289
+#: gui/editgamedialog.cpp:290 gui/options.cpp:1623 gui/options.cpp:1625
 #: gui/options.cpp:1626
 msgid "Specifies where your saved games are put"
 msgstr "Zure gordetako partidak non gordeko diren zehazten du"
 
-#: gui/editgamedialog.cpp:287 gui/options.cpp:1625
+#: gui/editgamedialog.cpp:289 gui/options.cpp:1625
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Partida gordeak:"
 
-#: gui/editgamedialog.cpp:311 gui/editgamedialog.cpp:408
-#: gui/editgamedialog.cpp:467 gui/editgamedialog.cpp:528 gui/options.cpp:1634
+#: gui/editgamedialog.cpp:313 gui/editgamedialog.cpp:410
+#: gui/editgamedialog.cpp:469 gui/editgamedialog.cpp:530 gui/options.cpp:1634
 #: gui/options.cpp:1642 gui/options.cpp:1651 gui/options.cpp:1852
 #: gui/options.cpp:1858 gui/options.cpp:1866 gui/options.cpp:1890
 #: gui/options.cpp:2018 gui/options.cpp:2024 gui/options.cpp:2031
-#: gui/options.cpp:2040 gui/options.cpp:2264 gui/options.cpp:2267
-#: gui/options.cpp:2275 gui/options.cpp:2286
+#: gui/options.cpp:2040 gui/options.cpp:2266 gui/options.cpp:2269
+#: gui/options.cpp:2277 gui/options.cpp:2288
 msgctxt "path"
 msgid "None"
 msgstr "Bat ere ez"
 
-#: gui/editgamedialog.cpp:316 gui/editgamedialog.cpp:414
-#: gui/editgamedialog.cpp:532 gui/options.cpp:1846 gui/options.cpp:2012
-#: gui/options.cpp:2270 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:318 gui/editgamedialog.cpp:416
+#: gui/editgamedialog.cpp:534 gui/options.cpp:1846 gui/options.cpp:2012
+#: gui/options.cpp:2272 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Lehenetsia"
 
-#: gui/editgamedialog.cpp:460 gui/options.cpp:2280
+#: gui/editgamedialog.cpp:462 gui/options.cpp:2282
 msgid "Select SoundFont"
 msgstr "SoundFont-a aukeratu"
 
-#: gui/editgamedialog.cpp:499
+#: gui/editgamedialog.cpp:501
 msgid "Select additional game directory"
 msgstr "Direktorio gehigarria aukeratu"
 
-#: gui/editgamedialog.cpp:512 gui/options.cpp:2199
+#: gui/editgamedialog.cpp:514 gui/options.cpp:2201
 msgid "Select directory for saved games"
 msgstr "Partida gordeen direktorioa aukeratu"
 
-#: gui/editgamedialog.cpp:518
+#: gui/editgamedialog.cpp:520
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
 
-#: gui/editgamedialog.cpp:544
+#: gui/editgamedialog.cpp:546
 msgid "This game ID is already taken. Please choose another one."
 msgstr "ID hau jada erabilia izaten ari da. Mesedez, aukeratu beste bat."
 
@@ -548,153 +540,167 @@ msgstr "Itxi"
 msgid "Mouse click"
 msgstr "Sagu-klika"
 
-#: gui/gui-manager.cpp:130 base/main.cpp:380
+#: gui/gui-manager.cpp:130 base/main.cpp:376
 msgid "Display keyboard"
 msgstr "Erakutsi teklatua"
 
-#: gui/gui-manager.cpp:134 base/main.cpp:384
+#: gui/gui-manager.cpp:134 base/main.cpp:380
 msgid "Remap keys"
 msgstr "Esleitu teklak"
 
-#: gui/gui-manager.cpp:137 base/main.cpp:387 engines/scumm/help.cpp:87
+#: gui/gui-manager.cpp:137 base/main.cpp:383 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Txandakatu pantaila osoa"
 
-#: gui/KeysDialog.cpp:41
+#: gui/KeysDialog.cpp:37
 msgid "Map"
 msgstr "Esleitu"
 
-#: gui/KeysDialog.cpp:49
+#: gui/KeysDialog.cpp:45
 msgid "Select an action and click 'Map'"
 msgstr "Aukeratu ekintza eta sakatu \"Esleitu\""
 
-#: gui/KeysDialog.cpp:80 gui/KeysDialog.cpp:102 gui/KeysDialog.cpp:141
+#: gui/KeysDialog.cpp:76 gui/KeysDialog.cpp:98 gui/KeysDialog.cpp:133
 #, c-format
 msgid "Associated key : %s"
 msgstr "Esleituriko tekla: %s"
 
-#: gui/KeysDialog.cpp:82 gui/KeysDialog.cpp:104 gui/KeysDialog.cpp:143
+#: gui/KeysDialog.cpp:78 gui/KeysDialog.cpp:100 gui/KeysDialog.cpp:135
 msgid "Associated key : none"
 msgstr "Esleituriko tekla: bat ere ez"
 
-#: gui/KeysDialog.cpp:90
+#: gui/KeysDialog.cpp:86
 msgid "Please select an action"
 msgstr "Mesedez, aukeratu ekintza bat"
 
-#: gui/KeysDialog.cpp:106
+#: gui/KeysDialog.cpp:102
 msgid "Press the key to associate"
 msgstr "Sakatu esleituko den tekla"
 
-#: gui/KeysDialog.cpp:145 gui/KeysDialog.h:36
+#: gui/KeysDialog.cpp:137 gui/KeysDialog.h:36
 msgid "Choose an action to map"
 msgstr "Aukeratu esleituko den ekintza"
 
-#: gui/launcher.cpp:142 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:142
+#: gui/launcher.cpp:144 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:142
 msgid "~Q~uit"
 msgstr "~I~rten"
 
-#: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:209
+#: gui/launcher.cpp:144 backends/platform/sdl/macosx/appmenu_osx.mm:209
 msgid "Quit ScummVM"
 msgstr "Irten ScummVM-tik"
 
-#: gui/launcher.cpp:143
+#: gui/launcher.cpp:145
 msgid "A~b~out..."
 msgstr "Ho~n~i buruz..."
 
-#: gui/launcher.cpp:143 backends/platform/sdl/macosx/appmenu_osx.mm:203
+#: gui/launcher.cpp:145 backends/platform/sdl/macosx/appmenu_osx.mm:203
 msgid "About ScummVM"
 msgstr "ScummVM-i buruz"
 
-#: gui/launcher.cpp:144
+#: gui/launcher.cpp:146
 msgid "~O~ptions..."
 msgstr "~A~ukerak..."
 
-#: gui/launcher.cpp:144
+#: gui/launcher.cpp:146
 msgid "Change global ScummVM options"
 msgstr "ScummVM-ren aukera globalak aldatu"
 
-#: gui/launcher.cpp:146
+#: gui/launcher.cpp:148
 msgid "~S~tart"
 msgstr "~H~asi"
 
-#: gui/launcher.cpp:146
+#: gui/launcher.cpp:148
 msgid "Start selected game"
 msgstr "Aukeraturiko jokora jolastu"
 
-#: gui/launcher.cpp:149
+#: gui/launcher.cpp:151
 msgid "~L~oad..."
 msgstr "~K~argatu..."
 
-#: gui/launcher.cpp:149
+#: gui/launcher.cpp:151
 msgid "Load saved game for selected game"
 msgstr "Aukeraturiko jokorako partida gordea kargatu"
 
-#: gui/launcher.cpp:154
+#: gui/launcher.cpp:153
+msgid "Record..."
+msgstr "Grabatu..."
+
+#: gui/launcher.cpp:160
 msgid "~A~dd Game..."
 msgstr "~G~ehitu..."
 
-#: gui/launcher.cpp:154 gui/launcher.cpp:161
-msgid "Hold Shift for Mass Add"
-msgstr "Shift mantendu sakaturik hainbat joko gehitzeko"
+#: gui/launcher.cpp:160 gui/launcher.cpp:170
+msgid "Add games to the list"
+msgstr ""
 
-#: gui/launcher.cpp:156
+#: gui/launcher.cpp:161
+msgid "Mass Add..."
+msgstr "Gehitu hainbat..."
+
+#: gui/launcher.cpp:165
 msgid "~E~dit Game..."
 msgstr "~E~ditatu..."
 
-#: gui/launcher.cpp:156 gui/launcher.cpp:163
+#: gui/launcher.cpp:165 gui/launcher.cpp:175
 msgid "Change game options"
 msgstr "Aldatu jokoaren aukerak"
 
-#: gui/launcher.cpp:158
+#: gui/launcher.cpp:167
 msgid "~R~emove Game"
 msgstr "~K~endu jokoa"
 
-#: gui/launcher.cpp:158 gui/launcher.cpp:165
+#: gui/launcher.cpp:167 gui/launcher.cpp:177
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Jokoa zerrendatik kendu. Jokoaren fitxategiak ez dira ezabatzen"
 
-#: gui/launcher.cpp:161
+#: gui/launcher.cpp:170
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~G~ehitu..."
 
-#: gui/launcher.cpp:163
+#: gui/launcher.cpp:171
+msgctxt "lowres"
+msgid "Mass Add..."
+msgstr "Hainbat gehitu..."
+
+#: gui/launcher.cpp:175
 msgctxt "lowres"
 msgid "~E~dit Game..."
 msgstr "~E~ditatu..."
 
-#: gui/launcher.cpp:165
+#: gui/launcher.cpp:177
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~K~endu"
 
-#: gui/launcher.cpp:173
+#: gui/launcher.cpp:185
 msgid "Search in game list"
 msgstr "Bilatu joko-zerrendan"
 
-#: gui/launcher.cpp:177 gui/launcher.cpp:783
+#: gui/launcher.cpp:189 gui/launcher.cpp:759
 msgid "Search:"
 msgstr "Bilatu:"
 
-#: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
+#: gui/launcher.cpp:213 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
 #: engines/mohawk/dialogs.cpp:162 engines/mohawk/myst.cpp:995
 #: engines/mohawk/riven.cpp:690 engines/pegasus/pegasus.cpp:355
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr "Jokoa kargatu:"
 
-#: gui/launcher.cpp:201 engines/dialogs.cpp:115
-#: backends/platform/wince/CEActionsPocket.cpp:267
-#: backends/platform/wince/CEActionsSmartphone.cpp:231
-#: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:162
-#: engines/mohawk/myst.cpp:995 engines/mohawk/riven.cpp:690
-#: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
-#: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
-#: engines/wage/saveload.cpp:748
+#: gui/launcher.cpp:213 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
+#: engines/mohawk/dialogs.cpp:162 engines/mohawk/myst.cpp:995
+#: engines/mohawk/riven.cpp:690 engines/parallaction/saveload.cpp:194
+#: engines/pegasus/pegasus.cpp:355 engines/scumm/dialogs.cpp:185
+#: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
 msgstr "Kargatu"
 
-#: gui/launcher.cpp:326
+#: gui/launcher.cpp:365
+msgid "This directory cannot be used yet, it is being downloaded into!"
+msgstr ""
+
+#: gui/launcher.cpp:376
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
@@ -702,48 +708,36 @@ msgstr ""
 "Joko detektatzaile masiboa exekutatu nahi al duzu? Honek joko kantitate "
 "handia gehitu dezake."
 
-#: gui/launcher.cpp:385
-msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
-
-#: gui/launcher.cpp:396
+#: gui/launcher.cpp:398
 msgid "Do you really want to remove this game configuration?"
 msgstr "Benetan ezabatu nahi duzu joko-konfigurazio hau?"
 
-#: gui/launcher.cpp:452
+#: gui/launcher.cpp:440
 msgid "Do you want to load saved game?"
 msgstr "Gordetako jokoa kargatu?"
 
-#: gui/launcher.cpp:502
+#: gui/launcher.cpp:490
 msgid "This game does not support loading games from the launcher."
 msgstr "Joko honek ez du uzten partidak abiarazletik kargatzen."
 
-#: gui/launcher.cpp:506
+#: gui/launcher.cpp:494
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "ScummVM-k ezin izan du aukeraturiko jokoa exekutatzeko gai den motorerik "
 "aurkitu!"
 
-#: gui/launcher.cpp:571
+#: gui/launcher.cpp:559
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM-k ezin izan du jokorik aurkitu zehazturiko direktorioan!"
 
-#: gui/launcher.cpp:586
+#: gui/launcher.cpp:574
 #, fuzzy
 msgid "Unknown variant"
 msgstr "Errore ezezaguna"
 
-#: gui/launcher.cpp:592
+#: gui/launcher.cpp:580
 msgid "Pick the game:"
 msgstr "Jokoa aukeratu:"
-
-#: gui/launcher.cpp:720
-msgid "Mass Add..."
-msgstr "Gehitu hainbat..."
-
-#: gui/launcher.cpp:722
-msgid "Record..."
-msgstr "Grabatu..."
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
@@ -1350,7 +1344,7 @@ msgstr ""
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 
-#: gui/options.cpp:1935 gui/options.cpp:2619
+#: gui/options.cpp:1935 gui/options.cpp:2621
 #, fuzzy
 msgid "<never>"
 msgstr "Inoiz ez"
@@ -1459,7 +1453,7 @@ msgstr ""
 msgid "Run local webserver"
 msgstr ""
 
-#: gui/options.cpp:1976 gui/options.cpp:2734
+#: gui/options.cpp:1976 gui/options.cpp:2736
 #, fuzzy
 msgid "Not running"
 msgstr "Jokoa exekutatzean errorea:"
@@ -1532,77 +1526,77 @@ msgid ""
 "Misc settings will be restored."
 msgstr ""
 
-#: gui/options.cpp:2206
+#: gui/options.cpp:2208
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Aukeraturiko direktorioan ezin da idatzi. Mesedez, aukeratu beste bat."
 
-#: gui/options.cpp:2215
+#: gui/options.cpp:2217
 msgid "Select directory for GUI themes"
 msgstr "Gaien direktorioa aukeratu"
 
-#: gui/options.cpp:2225
+#: gui/options.cpp:2227
 msgid "Select directory for extra files"
 msgstr "Fitxategi gehigarrien direktorioa aukeratu"
 
-#: gui/options.cpp:2236
+#: gui/options.cpp:2238
 msgid "Select directory for plugins"
 msgstr "Pluginen direktorioa aukeratu"
 
-#: gui/options.cpp:2249
+#: gui/options.cpp:2251
 #, fuzzy
 msgid "Select directory for Files Manager /root/"
 msgstr "Fitxategi gehigarrien direktorioa aukeratu"
 
-#: gui/options.cpp:2356
+#: gui/options.cpp:2358
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
 
-#: gui/options.cpp:2381
+#: gui/options.cpp:2383
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr ""
 
-#: gui/options.cpp:2390 gui/options.cpp:2428
+#: gui/options.cpp:2392 gui/options.cpp:2430
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
 
-#: gui/options.cpp:2403
+#: gui/options.cpp:2405
 msgid "Connecting..."
 msgstr ""
 
-#: gui/options.cpp:2419
+#: gui/options.cpp:2421
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr ""
 
-#: gui/options.cpp:2617 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:2619 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr ""
 
-#: gui/options.cpp:2726
+#: gui/options.cpp:2728
 #, fuzzy
 msgid "Stop server"
 msgstr "Zerbitzaria:"
 
-#: gui/options.cpp:2727
+#: gui/options.cpp:2729
 msgid "Stop local webserver"
 msgstr ""
 
-#: gui/options.cpp:2779
+#: gui/options.cpp:2781
 msgid "Storage connected."
 msgstr ""
 
-#: gui/options.cpp:2781
+#: gui/options.cpp:2783
 #, fuzzy
 msgid "Failed to connect storage."
 msgstr "Ezin izan da jokoa gorde"
 
-#: gui/options.cpp:2783
+#: gui/options.cpp:2785
 #, fuzzy
 msgid "Failed to connect storage: "
 msgstr "Ezin izan da jokoa gorde"
 
-#: gui/options.cpp:2803
+#: gui/options.cpp:2805
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -1754,30 +1748,30 @@ msgstr "Sartu deskribapena %d zirrikiturako:"
 msgid "Select a Theme"
 msgstr "Gaia aukeratu"
 
-#: gui/ThemeEngine.cpp:252
+#: gui/ThemeEngine.cpp:259
 msgid "Disabled GFX"
 msgstr "GFX desgaituta"
 
-#: gui/ThemeEngine.cpp:252
+#: gui/ThemeEngine.cpp:259
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX desgaituta"
 
-#: gui/ThemeEngine.cpp:253
+#: gui/ThemeEngine.cpp:260
 #, fuzzy
 msgid "Standard renderer"
 msgstr "Errendatzaile estandarra"
 
-#: gui/ThemeEngine.cpp:253 engines/scumm/dialogs.cpp:660
+#: gui/ThemeEngine.cpp:260 engines/scumm/dialogs.cpp:660
 msgid "Standard"
 msgstr "Estandarra"
 
-#: gui/ThemeEngine.cpp:255
+#: gui/ThemeEngine.cpp:262
 #, fuzzy
 msgid "Antialiased renderer"
 msgstr "Errendatzaile lausotua"
 
-#: gui/ThemeEngine.cpp:255
+#: gui/ThemeEngine.cpp:262
 msgid "Antialiased"
 msgstr "Lausotua"
 
@@ -1831,39 +1825,36 @@ msgstr ""
 msgid "Proceed"
 msgstr ""
 
-#: gui/widget.cpp:370 gui/widget.cpp:372 gui/widget.cpp:378 gui/widget.cpp:380
+#: gui/widget.cpp:371 gui/widget.cpp:373 gui/widget.cpp:379 gui/widget.cpp:381
 msgid "Clear value"
 msgstr "Balioa kendu"
 
-#: base/main.cpp:266
+#: base/main.cpp:262
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Motoreak ez da '%s' debug mailarekin bateragarria"
 
-#: base/main.cpp:367
+#: base/main.cpp:363
 msgid "Menu"
 msgstr "Menua"
 
-#: base/main.cpp:370 backends/platform/symbian/src/SymbianActions.cpp:45
-#: backends/platform/wince/CEActionsPocket.cpp:45
-#: backends/platform/wince/CEActionsSmartphone.cpp:46
+#: base/main.cpp:366 backends/platform/symbian/src/SymbianActions.cpp:45
 msgid "Skip"
 msgstr "Saltatu"
 
-#: base/main.cpp:373 backends/platform/symbian/src/SymbianActions.cpp:50
-#: backends/platform/wince/CEActionsPocket.cpp:42
+#: base/main.cpp:369 backends/platform/symbian/src/SymbianActions.cpp:50
 msgid "Pause"
 msgstr "Gelditu"
 
-#: base/main.cpp:376
+#: base/main.cpp:372
 msgid "Skip line"
 msgstr "Lerroa saltatu"
 
-#: base/main.cpp:599
+#: base/main.cpp:595
 msgid "Error running game:"
 msgstr "Jokoa exekutatzean errorea:"
 
-#: base/main.cpp:646
+#: base/main.cpp:642
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Ezin izan da aukeraturiko jokoa exekutatzeko gai den motorerik aurkitu"
 
@@ -2019,38 +2010,34 @@ msgstr "It~z~uli abiarazlera"
 #: engines/cge2/events.cpp:64 engines/cine/various.cpp:348
 #: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
-#: engines/glk/streams.cpp:1424 engines/gnap/menu.cpp:464
+#: engines/glk/streams.cpp:1424 engines/gnap/menu.cpp:466
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:1007
-#: engines/mohawk/riven.cpp:702 engines/neverhood/menumodule.cpp:878
+#: engines/mohawk/riven.cpp:702 engines/neverhood/menumodule.cpp:890
 #: engines/pegasus/pegasus.cpp:374 engines/sci/engine/guest_additions.cpp:682
-#: engines/sci/engine/kfile.cpp:1035 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:1036 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:291 engines/toon/toon.cpp:3344
+#: engines/toltecs/menu.cpp:291 engines/toon/toon.cpp:3358
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:758
 #: engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Gorde jokoa:"
 
 #: engines/dialogs.cpp:116 backends/platform/symbian/src/SymbianActions.cpp:44
-#: backends/platform/wince/CEActionsPocket.cpp:43
-#: backends/platform/wince/CEActionsPocket.cpp:267
-#: backends/platform/wince/CEActionsSmartphone.cpp:45
-#: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/agi/saveload.cpp:761 engines/avalanche/parser.cpp:1919
 #: engines/cge/events.cpp:72 engines/cge2/events.cpp:64
 #: engines/cine/various.cpp:348 engines/cruise/menu.cpp:212
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1424
-#: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
+#: engines/gnap/menu.cpp:466 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:163
 #: engines/mohawk/myst.cpp:1007 engines/mohawk/riven.cpp:702
-#: engines/neverhood/menumodule.cpp:878 engines/parallaction/saveload.cpp:209
+#: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:374 engines/sci/engine/guest_additions.cpp:683
-#: engines/sci/engine/kfile.cpp:1035 engines/scumm/dialogs.cpp:184
+#: engines/sci/engine/kfile.cpp:1036 engines/scumm/dialogs.cpp:184
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:291 engines/toon/toon.cpp:3344
+#: engines/toltecs/menu.cpp:291 engines/toon/toon.cpp:3358
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:758
 #: engines/zvision/file/save_manager.cpp:49
 msgid "Save"
@@ -2088,39 +2075,39 @@ msgstr "~U~tzi"
 msgid "~K~eys"
 msgstr "~T~eklak"
 
-#: engines/engine.cpp:311
+#: engines/engine.cpp:303
 #, fuzzy, c-format
 msgid "Could not switch to resolution '%dx%d'."
 msgstr "Ezin izan da aldatu bideo modura : '"
 
-#: engines/engine.cpp:320
+#: engines/engine.cpp:312
 msgid "Could not initialize color format."
 msgstr "Kolore formatua ezin izan da hasieratu."
 
-#: engines/engine.cpp:329
+#: engines/engine.cpp:321
 #, fuzzy, c-format
 msgid "Could not switch to video mode '%s'."
 msgstr "Ezin izan da aldatu bideo modura : '"
 
-#: engines/engine.cpp:337
+#: engines/engine.cpp:329
 #, fuzzy, c-format
 msgid "Could not switch to stretch mode '%s'."
 msgstr "Ezin izan da aldatu bideo modura : '"
 
-#: engines/engine.cpp:344
+#: engines/engine.cpp:336
 msgid "Could not apply aspect ratio setting."
 msgstr "Ezin izan da formatu-ratio ezarpena aplikatu."
 
-#: engines/engine.cpp:349
+#: engines/engine.cpp:341
 msgid "Could not apply fullscreen setting."
 msgstr "Ezin izan da pantaila-osoa ezarpena aplikatu."
 
-#: engines/engine.cpp:354
+#: engines/engine.cpp:346
 #, fuzzy
 msgid "Could not apply filtering setting."
 msgstr "Ezin izan da pantaila-osoa ezarpena aplikatu."
 
-#: engines/engine.cpp:462
+#: engines/engine.cpp:454
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2134,7 +2121,7 @@ msgstr ""
 "fitxategiak disko gogorrera kopiatzea.\n"
 "Jo README fitxategira xehetasunetarako."
 
-#: engines/engine.cpp:473
+#: engines/engine.cpp:465
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -2148,7 +2135,7 @@ msgstr ""
 "izateko. Jo README fitxategira\n"
 "xehetasunetarako."
 
-#: engines/engine.cpp:536
+#: engines/engine.cpp:528
 #, fuzzy, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2157,7 +2144,7 @@ msgstr ""
 "Jokoaren egoera kargatzeak huts egin du (%s)! Jo ezazu README-ra oinarrizko "
 "informaziorako eta laguntza gehiago nola jaso jakiteko."
 
-#: engines/engine.cpp:552
+#: engines/engine.cpp:544
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2167,7 +2154,7 @@ msgstr ""
 "Hori dela eta, ezegonkorra izan daiteke eta gerta daiteke gordeta izan "
 "ditzakezun partidan ez ibiltzea ScummVM-ren etorkizuneko bertsioetan."
 
-#: engines/engine.cpp:555 engines/wintermute/wintermute.cpp:165
+#: engines/engine.cpp:547 engines/wintermute/wintermute.cpp:165
 msgid "Start anyway"
 msgstr "Jolastu berdin-berdin"
 
@@ -2351,45 +2338,43 @@ msgstr "Benetan irten?"
 
 #: backends/events/default/default-events.cpp:212
 #: backends/platform/symbian/src/SymbianActions.cpp:52
-#: backends/platform/wince/CEActionsPocket.cpp:44
-#: backends/platform/wince/CEActionsSmartphone.cpp:52
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:188
 #: engines/scumm/help.cpp:83 engines/scumm/help.cpp:85
 msgid "Quit"
 msgstr "Irten"
 
-#: backends/events/gph/gph-events.cpp:391
-#: backends/events/gph/gph-events.cpp:434
-#: backends/events/openpandora/op-events.cpp:174
+#: backends/events/gph/gph-events.cpp:401
+#: backends/events/gph/gph-events.cpp:444
+#: backends/events/openpandora/op-events.cpp:185
 msgid "Touchscreen 'Tap Mode' - Left Click"
 msgstr "Ukimen-pantailako 'kolpetxo modua' - Ezker klika"
 
-#: backends/events/gph/gph-events.cpp:393
-#: backends/events/gph/gph-events.cpp:436
-#: backends/events/openpandora/op-events.cpp:176
+#: backends/events/gph/gph-events.cpp:403
+#: backends/events/gph/gph-events.cpp:446
+#: backends/events/openpandora/op-events.cpp:187
 msgid "Touchscreen 'Tap Mode' - Right Click"
 msgstr "Ukimen-pantailako 'kolpetxo modua' - Eskuin klika"
 
-#: backends/events/gph/gph-events.cpp:395
-#: backends/events/gph/gph-events.cpp:438
-#: backends/events/openpandora/op-events.cpp:178
+#: backends/events/gph/gph-events.cpp:405
+#: backends/events/gph/gph-events.cpp:448
+#: backends/events/openpandora/op-events.cpp:189
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
 msgstr "Ukimen-pantailako 'kolpetxo modua' - Flotatu (klikik ez)"
 
-#: backends/events/gph/gph-events.cpp:415
+#: backends/events/gph/gph-events.cpp:425
 msgid "Maximum Volume"
 msgstr "Bolumen maximoa"
 
-#: backends/events/gph/gph-events.cpp:417
+#: backends/events/gph/gph-events.cpp:427
 msgid "Increasing Volume"
 msgstr "Bolumena igotzen"
 
-#: backends/events/gph/gph-events.cpp:423
+#: backends/events/gph/gph-events.cpp:433
 msgid "Minimal Volume"
 msgstr "Bolumen minimoa"
 
-#: backends/events/gph/gph-events.cpp:425
+#: backends/events/gph/gph-events.cpp:435
 msgid "Decreasing Volume"
 msgstr "Bolumena jaisten"
 
@@ -2401,7 +2386,7 @@ msgstr "Klikatzea gaituta"
 msgid "Clicking Disabled"
 msgstr "Klikatzea desgaituta"
 
-#: backends/events/openpandora/op-events.cpp:180
+#: backends/events/openpandora/op-events.cpp:191
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "Ukimen-pantailako 'kolpetxo modua' - Flotatu (DPad klikak)"
 
@@ -2470,35 +2455,33 @@ msgid "Resolution: %dx%d"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:626
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2555
 msgid "Enabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa gaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:628
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2531
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2561
 msgid "Disabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa desgaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:648
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2548
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2578
 #, fuzzy
 msgid "Filtering enabled"
 msgstr "Klikatzea gaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:650
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2550
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2580
 #, fuzzy
 msgid "Filtering disabled"
 msgstr "Klikatzea desgaituta"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:678
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2579
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2609
 msgid "Stretch mode"
 msgstr ""
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:57
-#: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
-#: backends/graphics/wincesdl/wincesdl-graphics.cpp:95
 msgid "Normal (no scaling)"
 msgstr "Normala (eskalatu gabe)"
 
@@ -2511,7 +2494,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normala"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2641
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2671
 msgid "Active graphics filter:"
 msgstr "Filtro grafiko aktiboa:"
 
@@ -2767,57 +2750,57 @@ msgstr ""
 msgid "C-Pad Sensitivity:"
 msgstr "GC Pad-aren sentikortasuna:"
 
-#: backends/platform/3ds/osystem-events.cpp:148
+#: backends/platform/3ds/osystem-events.cpp:147
 msgid "Magnify Mode cannot be activated in menus."
 msgstr ""
 
-#: backends/platform/3ds/osystem-events.cpp:151
+#: backends/platform/3ds/osystem-events.cpp:150
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
 
-#: backends/platform/3ds/osystem-events.cpp:153
+#: backends/platform/3ds/osystem-events.cpp:152
 msgid "In-game resolution too small to magnify."
 msgstr ""
 
-#: backends/platform/3ds/osystem-events.cpp:159
+#: backends/platform/3ds/osystem-events.cpp:158
 msgid "Magnify Mode On. Switching to Hover Mode..."
 msgstr ""
 
-#: backends/platform/3ds/osystem-events.cpp:161
+#: backends/platform/3ds/osystem-events.cpp:160
 msgid "Magnify Mode On"
 msgstr ""
 
-#: backends/platform/3ds/osystem-events.cpp:168
+#: backends/platform/3ds/osystem-events.cpp:167
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
 msgstr ""
 
-#: backends/platform/3ds/osystem-events.cpp:170
+#: backends/platform/3ds/osystem-events.cpp:169
 msgid "Magnify Mode Off"
 msgstr ""
 
-#: backends/platform/3ds/osystem-events.cpp:178
+#: backends/platform/3ds/osystem-events.cpp:177
 #, fuzzy
 msgid "Hover Mode"
 msgstr "Gore modua"
 
-#: backends/platform/3ds/osystem-events.cpp:182
+#: backends/platform/3ds/osystem-events.cpp:181
 #, fuzzy
 msgid "Drag Mode"
 msgstr "Gore modua"
 
-#: backends/platform/3ds/osystem-events.cpp:184
+#: backends/platform/3ds/osystem-events.cpp:183
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
 msgstr ""
 
-#: backends/platform/3ds/osystem-events.cpp:237
+#: backends/platform/3ds/osystem-events.cpp:236
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
 
-#: backends/platform/3ds/osystem-events.cpp:239
+#: backends/platform/3ds/osystem-events.cpp:238
 msgid "Magnify Mode Off. Returning to Launcher..."
 msgstr ""
 
@@ -2916,8 +2899,6 @@ msgstr "Klikatzeko modua"
 #: backends/platform/maemo/maemo.cpp:211
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/tizen/form.cpp:274
-#: backends/platform/wince/CEActionsPocket.cpp:60
-#: backends/platform/wince/CEActionsSmartphone.cpp:43
 msgid "Left Click"
 msgstr "Ezker-klika"
 
@@ -2928,7 +2909,6 @@ msgstr "Erdiko klika"
 #: backends/platform/maemo/maemo.cpp:217
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/tizen/form.cpp:266
-#: backends/platform/wince/CEActionsSmartphone.cpp:44
 msgid "Right Click"
 msgstr "Eskuin-klika"
 
@@ -2994,35 +2974,28 @@ msgid "BSD License"
 msgstr ""
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
-#: backends/platform/wince/CEActionsSmartphone.cpp:39
 #: engines/glk/scott/scott.cpp:394
 msgid "Up"
 msgstr "Gora"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:39
-#: backends/platform/wince/CEActionsSmartphone.cpp:40
 #: engines/glk/scott/scott.cpp:394
 msgid "Down"
 msgstr "Behera"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: backends/platform/wince/CEActionsSmartphone.cpp:41
 msgid "Left"
 msgstr "Ezker"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: backends/platform/wince/CEActionsSmartphone.cpp:42
 msgid "Right"
 msgstr "Eskuin"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:46
-#: backends/platform/wince/CEActionsSmartphone.cpp:47
 msgid "Zone"
 msgstr "Zonaldea"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:47
-#: backends/platform/wince/CEActionsPocket.cpp:54
-#: backends/platform/wince/CEActionsSmartphone.cpp:48
 msgid "Multi Function"
 msgstr "Multifuntzioa"
 
@@ -3223,148 +3196,31 @@ msgstr "Sarearen hasieratze denbora agortu da"
 msgid "Network not initialized (%d)"
 msgstr "Sarea ez da hasieratu (%d)"
 
-#: backends/platform/wince/CEActionsPocket.cpp:46
-msgid "Hide Toolbar"
-msgstr "Tresna-barra ezkutatu"
-
-#: backends/platform/wince/CEActionsPocket.cpp:47
-msgid "Show Keyboard"
-msgstr "Teklatua erakutsi"
-
-#: backends/platform/wince/CEActionsPocket.cpp:48
-msgid "Sound on/off"
-msgstr "Soinua aktibatuta/desaktibatuta"
-
-#: backends/platform/wince/CEActionsPocket.cpp:49
-msgid "Right click"
-msgstr "Eskuin klik-a"
-
-#: backends/platform/wince/CEActionsPocket.cpp:50
-msgid "Show/Hide Cursor"
-msgstr "Kurtsorea erakutsi/ezkutatu"
-
-#: backends/platform/wince/CEActionsPocket.cpp:51
-msgid "Free look"
-msgstr "Bista librea"
-
-#: backends/platform/wince/CEActionsPocket.cpp:52
-msgid "Zoom up"
-msgstr "Zoom-a hurbildu"
-
-#: backends/platform/wince/CEActionsPocket.cpp:53
-msgid "Zoom down"
-msgstr "Zoom-a urrundu"
-
-#: backends/platform/wince/CEActionsPocket.cpp:55
-#: backends/platform/wince/CEActionsSmartphone.cpp:49
-msgid "Bind Keys"
-msgstr "Teklak esleitu"
-
-#: backends/platform/wince/CEActionsPocket.cpp:56
-msgid "Cursor Up"
-msgstr "Gora"
-
-#: backends/platform/wince/CEActionsPocket.cpp:57
-msgid "Cursor Down"
-msgstr "Behera"
-
-#: backends/platform/wince/CEActionsPocket.cpp:58
-msgid "Cursor Left"
-msgstr "Ezker"
-
-#: backends/platform/wince/CEActionsPocket.cpp:59
-msgid "Cursor Right"
-msgstr "Eskuin"
-
-#: backends/platform/wince/CEActionsPocket.cpp:267
-#: backends/platform/wince/CEActionsSmartphone.cpp:231
-msgid "Do you want to load or save the game?"
-msgstr "Jokoa kargatu edo gorde nahi duzu?"
-
-#: backends/platform/wince/CEActionsPocket.cpp:326
-#: backends/platform/wince/CEActionsSmartphone.cpp:287
-msgid "   Are you sure you want to quit ?   "
-msgstr "   Ziur irten nahi duzula?   "
-
-#: backends/platform/wince/CEActionsSmartphone.cpp:50
-msgid "Keyboard"
-msgstr "Teklatua"
-
-#: backends/platform/wince/CEActionsSmartphone.cpp:51
-msgid "Rotate"
-msgstr "Biratu"
-
-#: backends/platform/wince/CELauncherDialog.cpp:56
-msgid "Using SDL driver "
-msgstr "SDL kontrolatzailea erabiltzen "
-
-#: backends/platform/wince/CELauncherDialog.cpp:60
-msgid "Display "
-msgstr "Pantaila "
-
-#: backends/platform/wince/CELauncherDialog.cpp:83
-msgid "Do you want to perform an automatic scan ?"
-msgstr "Bilaketa automatikoa erabili nahi duzu?"
-
-#: backends/platform/wince/wince-sdl.cpp:518
-msgid "Map right click action"
-msgstr "'Eskuin klika' ekintza esleitu"
-
-#: backends/platform/wince/wince-sdl.cpp:522
-msgid "You must map a key to the 'Right Click' action to play this game"
-msgstr ""
-"'Eskuin klika' ekintza esleitu behar diozu tekla bati joko honetara jolasteko"
-
-#: backends/platform/wince/wince-sdl.cpp:531
-msgid "Map hide toolbar action"
-msgstr "'Tresna-barra ezkutatu' ekintza esleitu"
-
-#: backends/platform/wince/wince-sdl.cpp:535
-msgid "You must map a key to the 'Hide toolbar' action to play this game"
-msgstr ""
-"'Tresna-barra ezkutatu' ekintza tekla bati esleitu behar diozu joko honetara "
-"jolasteko"
-
-#: backends/platform/wince/wince-sdl.cpp:544
-msgid "Map Zoom Up action (optional)"
-msgstr "'Zoom-a urrundu' ekintza esleitu (hautazkoa)"
-
-#: backends/platform/wince/wince-sdl.cpp:547
-msgid "Map Zoom Down action (optional)"
-msgstr "'Zoom-a hurbildu' ekintza esleitu (hautazkkoa)"
-
-#: backends/platform/wince/wince-sdl.cpp:555
-msgid ""
-"Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
-msgstr ""
-"Ez ahaztu 'tresna-barra ezkutatu' ekintza tekla bati esleitzea inbentario "
-"osoa ikusteko"
-
 #: backends/updates/macosx/macosx-updates.mm:79
 msgid "Check for Updates..."
 msgstr "Eguneraketak bilatzen..."
 
-#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:971
+#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:943
 #: engines/hugo/hugo.cpp:441 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
 #: engines/supernova/supernova.cpp:461 engines/teenagent/resources.cpp:97
-#: engines/tony/tony.cpp:198 engines/toon/toon.cpp:4938
+#: engines/tony/tony.cpp:198 engines/toon/toon.cpp:4952
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr ""
 
-#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:985
+#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:957
 #: engines/hugo/hugo.cpp:452 engines/lure/lure.cpp:73
 #: engines/mortevielle/mortevielle.cpp:314 engines/supernova/supernova.cpp:466
-#: engines/tony/tony.cpp:210 engines/toon/toon.cpp:4950
+#: engines/tony/tony.cpp:210 engines/toon/toon.cpp:4964
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr ""
 
-#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:996
+#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:968
 #: engines/hugo/hugo.cpp:462 engines/lure/lure.cpp:76
 #: engines/mortevielle/mortevielle.cpp:324 engines/tony/tony.cpp:221
-#: engines/toon/toon.cpp:4961
+#: engines/toon/toon.cpp:4975
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
@@ -3471,13 +3327,13 @@ msgstr ""
 #: engines/cine/various.cpp:359 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1433
-#: engines/gnap/menu.cpp:473 engines/hugo/file.cpp:400
+#: engines/gnap/menu.cpp:475 engines/hugo/file.cpp:400
 #: engines/mads/nebular/dialogs_nebular.cpp:377
-#: engines/neverhood/menumodule.cpp:891
-#: engines/sci/engine/guest_additions.cpp:685 engines/sci/engine/kfile.cpp:1154
+#: engines/neverhood/menumodule.cpp:903
+#: engines/sci/engine/guest_additions.cpp:685 engines/sci/engine/kfile.cpp:1155
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3438
+#: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3452
 #: engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
 msgstr "Jokoa kargatu:"
@@ -3487,13 +3343,13 @@ msgstr "Jokoa kargatu:"
 #: engines/cine/various.cpp:359 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1433
-#: engines/gnap/menu.cpp:473 engines/hugo/file.cpp:400
+#: engines/gnap/menu.cpp:475 engines/hugo/file.cpp:400
 #: engines/mads/nebular/dialogs_nebular.cpp:377
-#: engines/neverhood/menumodule.cpp:891
-#: engines/sci/engine/guest_additions.cpp:686 engines/sci/engine/kfile.cpp:1154
+#: engines/neverhood/menumodule.cpp:903
+#: engines/sci/engine/guest_additions.cpp:686 engines/sci/engine/kfile.cpp:1155
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3438
+#: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3452
 #: engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
 msgstr "Kargatu"
@@ -3544,21 +3400,21 @@ msgstr ""
 msgid "A required game resource was not found"
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2153
+#: engines/bladerunner/bladerunner.cpp:2159
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2155
+#: engines/bladerunner/bladerunner.cpp:2161
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2157
+#: engines/bladerunner/bladerunner.cpp:2163
 msgid "Continue"
 msgstr ""
 
@@ -3639,7 +3495,7 @@ msgstr "Erakutsi grafikoak jokoaren paleta argia erabilita"
 msgid "[ press any key to exit ]"
 msgstr ""
 
-#: engines/glk/quetzal.cpp:144 engines/glk/quetzal.cpp:153
+#: engines/glk/quetzal.cpp:146 engines/glk/quetzal.cpp:155
 #, fuzzy
 msgid "Untitled Savegame"
 msgstr "Titulurik gabeko joko gordea"
@@ -3689,19 +3545,19 @@ msgstr "Jokoa exekutatzean errorea:"
 msgid "Error writing save file\n"
 msgstr "Jokoa exekutatzean errorea:"
 
-#: engines/glk/glulxe/glulxe.cpp:79 engines/glk/magnetic/magnetic.cpp:73
+#: engines/glk/glulxe/glulxe.cpp:79
 msgid "This is too short to be a valid Glulx file."
 msgstr ""
 
-#: engines/glk/glulxe/glulxe.cpp:84 engines/glk/magnetic/magnetic.cpp:78
+#: engines/glk/glulxe/glulxe.cpp:84
 msgid "This is not a valid Glulx file."
 msgstr ""
 
-#: engines/glk/glulxe/glulxe.cpp:91 engines/glk/magnetic/magnetic.cpp:85
+#: engines/glk/glulxe/glulxe.cpp:91
 msgid "This Glulx file is too old a version to execute."
 msgstr ""
 
-#: engines/glk/glulxe/glulxe.cpp:95 engines/glk/magnetic/magnetic.cpp:89
+#: engines/glk/glulxe/glulxe.cpp:95
 msgid "This Glulx file is too new a version to execute."
 msgstr ""
 
@@ -3919,13 +3775,13 @@ msgstr ""
 msgid "It's beyond my power to do that.\n"
 msgstr ""
 
-#: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
+#: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
 #, fuzzy
 msgid "Failed to load saved game from file."
 msgstr "Ezin izan da fitxategitik jokoa kargatu."
 
-#: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
+#: engines/gob/inter_v2.cpp:1549 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:551
 #, fuzzy
 msgid "Failed to save game to file."
@@ -4050,12 +3906,12 @@ msgid "Move Right"
 msgstr "Eskuinera irristatu"
 
 #: engines/kyra/engine/eobcommon.cpp:356 engines/kyra/engine/lol.cpp:485
-#: engines/pegasus/pegasus.cpp:2505
+#: engines/pegasus/pegasus.cpp:2507
 msgid "Turn Left"
 msgstr "Ezkerrera biratu"
 
 #: engines/kyra/engine/eobcommon.cpp:357 engines/kyra/engine/lol.cpp:486
-#: engines/pegasus/pegasus.cpp:2506
+#: engines/pegasus/pegasus.cpp:2508
 msgid "Turn Right"
 msgstr "Eskuinera biratu"
 
@@ -4174,7 +4030,7 @@ msgstr ""
 "nahi izanez gero ScummVM debug konsola ireki eta 'import_savefile'\n"
 "agindau erabili.\n"
 
-#: engines/kyra/graphics/screen_eob.cpp:2254
+#: engines/kyra/graphics/screen_eob.cpp:2258
 msgid ""
 "This AMIGA version requires the following font files:\n"
 "\n"
@@ -4188,7 +4044,7 @@ msgid ""
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
 
-#: engines/kyra/graphics/screen_eob.cpp:2262
+#: engines/kyra/graphics/screen_eob.cpp:2266
 msgid ""
 "This AMIGA version requires the following font files:\n"
 "\n"
@@ -4460,35 +4316,35 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Sartu gordetzeko fitxategi-izena"
 
-#: engines/pegasus/pegasus.cpp:2503
+#: engines/pegasus/pegasus.cpp:2505
 msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr "Gora/Zoom-a hurbildu/Mugitu aurrera/Ireki ateak"
 
-#: engines/pegasus/pegasus.cpp:2504
+#: engines/pegasus/pegasus.cpp:2506
 msgid "Down/Zoom Out"
 msgstr "Behera/Zoom-a urrundu"
 
-#: engines/pegasus/pegasus.cpp:2507
+#: engines/pegasus/pegasus.cpp:2509
 msgid "Display/Hide Inventory Tray"
 msgstr "Erakutsi/Ezkutatu inbentorioaren erretilua"
 
-#: engines/pegasus/pegasus.cpp:2508
+#: engines/pegasus/pegasus.cpp:2510
 msgid "Display/Hide Biochip Tray"
 msgstr "Erakutsi/Ezkutatu Biochip erretilua"
 
-#: engines/pegasus/pegasus.cpp:2509
+#: engines/pegasus/pegasus.cpp:2511
 msgid "Action/Select"
 msgstr "Ekintza/Aukeratu"
 
-#: engines/pegasus/pegasus.cpp:2510
+#: engines/pegasus/pegasus.cpp:2512
 msgid "Toggle Center Data Display"
 msgstr "Erakutsi/Ezkutatu Datu Zentroa"
 
-#: engines/pegasus/pegasus.cpp:2511
+#: engines/pegasus/pegasus.cpp:2513
 msgid "Display/Hide Info Screen"
 msgstr "Erakutsi/Ezkutatu informazio pantaila"
 
-#: engines/pegasus/pegasus.cpp:2512
+#: engines/pegasus/pegasus.cpp:2514
 msgid "Display/Hide Pause Menu"
 msgstr "Erakutsi/Ezkutatu pausa menua"
 
@@ -4620,16 +4476,16 @@ msgstr "Autogordetzea:"
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1300
+#: engines/sci/engine/savegame.cpp:1341
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1302
+#: engines/sci/engine/savegame.cpp:1343
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1313
+#: engines/sci/engine/savegame.cpp:1354
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
@@ -5380,19 +5236,19 @@ msgstr "Eskuinera hegan egin"
 msgid "Fly to lower right"
 msgstr "Behera eta eskuinera hegan egin"
 
-#: engines/scumm/input.cpp:578
+#: engines/scumm/input.cpp:564
 msgid "Snap scroll on"
 msgstr "Heldutako korritze barra gaituta"
 
-#: engines/scumm/input.cpp:580
+#: engines/scumm/input.cpp:566
 msgid "Snap scroll off"
 msgstr "Heldutako korritze barra desgaituta"
 
-#: engines/scumm/input.cpp:593
+#: engines/scumm/input.cpp:579
 msgid "Music volume: "
 msgstr "Musika: "
 
-#: engines/scumm/input.cpp:610
+#: engines/scumm/input.cpp:596
 msgid "Subtitle speed: "
 msgstr "Azpitit. abiadura: "
 
@@ -5630,26 +5486,26 @@ msgstr ""
 msgid "Font variant not present in '%s' engine data file."
 msgstr ""
 
-#: engines/toon/toon.cpp:222
+#: engines/toon/toon.cpp:225
 #, fuzzy, c-format
 msgid "Saved game in slot #%d "
 msgstr ""
 "Ezin da partida gorde %i zirrikituan\n"
 "\n"
 
-#: engines/toon/toon.cpp:226
+#: engines/toon/toon.cpp:229
 #, c-format
 msgid "Could not quick save into slot #%d"
 msgstr ""
 
-#: engines/toon/toon.cpp:239
+#: engines/toon/toon.cpp:242
 #, fuzzy, c-format
 msgid "Saved game #%d quick loaded"
 msgstr ""
 "Ezin da partida gorde %i zirrikituan\n"
 "\n"
 
-#: engines/toon/toon.cpp:243
+#: engines/toon/toon.cpp:246
 #, fuzzy, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "Gordetako jokoa kargatu?"
@@ -5736,6 +5592,98 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+
+#~ msgid "Hold Shift for Mass Add"
+#~ msgstr "Shift mantendu sakaturik hainbat joko gehitzeko"
+
+#~ msgid "Hide Toolbar"
+#~ msgstr "Tresna-barra ezkutatu"
+
+#~ msgid "Show Keyboard"
+#~ msgstr "Teklatua erakutsi"
+
+#~ msgid "Sound on/off"
+#~ msgstr "Soinua aktibatuta/desaktibatuta"
+
+#~ msgid "Right click"
+#~ msgstr "Eskuin klik-a"
+
+#~ msgid "Show/Hide Cursor"
+#~ msgstr "Kurtsorea erakutsi/ezkutatu"
+
+#~ msgid "Free look"
+#~ msgstr "Bista librea"
+
+#~ msgid "Zoom up"
+#~ msgstr "Zoom-a hurbildu"
+
+#~ msgid "Zoom down"
+#~ msgstr "Zoom-a urrundu"
+
+#~ msgid "Bind Keys"
+#~ msgstr "Teklak esleitu"
+
+#~ msgid "Cursor Up"
+#~ msgstr "Gora"
+
+#~ msgid "Cursor Down"
+#~ msgstr "Behera"
+
+#~ msgid "Cursor Left"
+#~ msgstr "Ezker"
+
+#~ msgid "Cursor Right"
+#~ msgstr "Eskuin"
+
+#~ msgid "Do you want to load or save the game?"
+#~ msgstr "Jokoa kargatu edo gorde nahi duzu?"
+
+#~ msgid "   Are you sure you want to quit ?   "
+#~ msgstr "   Ziur irten nahi duzula?   "
+
+#~ msgid "Keyboard"
+#~ msgstr "Teklatua"
+
+#~ msgid "Rotate"
+#~ msgstr "Biratu"
+
+#~ msgid "Using SDL driver "
+#~ msgstr "SDL kontrolatzailea erabiltzen "
+
+#~ msgid "Display "
+#~ msgstr "Pantaila "
+
+#~ msgid "Do you want to perform an automatic scan ?"
+#~ msgstr "Bilaketa automatikoa erabili nahi duzu?"
+
+#~ msgid "Map right click action"
+#~ msgstr "'Eskuin klika' ekintza esleitu"
+
+#~ msgid "You must map a key to the 'Right Click' action to play this game"
+#~ msgstr ""
+#~ "'Eskuin klika' ekintza esleitu behar diozu tekla bati joko honetara "
+#~ "jolasteko"
+
+#~ msgid "Map hide toolbar action"
+#~ msgstr "'Tresna-barra ezkutatu' ekintza esleitu"
+
+#~ msgid "You must map a key to the 'Hide toolbar' action to play this game"
+#~ msgstr ""
+#~ "'Tresna-barra ezkutatu' ekintza tekla bati esleitu behar diozu joko "
+#~ "honetara jolasteko"
+
+#~ msgid "Map Zoom Up action (optional)"
+#~ msgstr "'Zoom-a urrundu' ekintza esleitu (hautazkoa)"
+
+#~ msgid "Map Zoom Down action (optional)"
+#~ msgstr "'Zoom-a hurbildu' ekintza esleitu (hautazkkoa)"
+
+#~ msgid ""
+#~ "Don't forget to map a key to 'Hide Toolbar' action to see the whole "
+#~ "inventory"
+#~ msgstr ""
+#~ "Ez ahaztu 'tresna-barra ezkutatu' ekintza tekla bati esleitzea inbentario "
+#~ "osoa ikusteko"
 
 #, fuzzy
 #~ msgid "Saved games sync complete."
@@ -5885,10 +5833,6 @@ msgstr ""
 #~ msgstr ""
 #~ "PSX eszenak aurkitu dira, baina ScummVM RGB kolorearen euskarri gabe "
 #~ "konpilatu da"
-
-#~ msgctxt "lowres"
-#~ msgid "Mass Add..."
-#~ msgstr "Hainbat gehitu..."
 
 #~ msgid ""
 #~ "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"

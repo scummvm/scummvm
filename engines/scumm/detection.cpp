@@ -467,6 +467,8 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 				return Common::RU_RUS;
 			case 449787:	// 64f3fe479d45b52902cf88145c41d172
 				return Common::ES_ESP;
+			default:
+				break;
 			}
 		} else { // The DIG
 			switch (size) {
@@ -484,6 +486,8 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id) {
 				return Common::JA_JPN;
 			case 180730:	// 424fdd60822722cdc75356d921dad9bf
 				return Common::ZH_TWN;
+			default:
+				break;
 			}
 		}
 	}

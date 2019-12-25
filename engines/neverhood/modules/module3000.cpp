@@ -168,6 +168,8 @@ void Module3000::createScene(int sceneNum, int which) {
 	case 1008:
 		createSmackerScene(getGlobalVar(V_CANNON_SMACKER_NAME), true, true, false);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module3000::updateScene);
 	_childObject->handleUpdate();
@@ -277,6 +279,8 @@ void Module3000::updateScene() {
 		case 1008:
 			createScene(8, -1);
 			break;
+		default:
+			break;
 		}
 	} else {
 		switch (_vm->gameState().sceneNum) {
@@ -353,6 +357,8 @@ void Module3000::updateScene() {
 			if (navigationScene()->isWalkingForward() && navigationScene()->getNavigationIndex() == 0) {
 				_vm->_soundMan->setTwoSoundsPlayFlag(false);
 			}
+			break;
+		default:
 			break;
 		}
 	}
@@ -523,6 +529,8 @@ void Scene3009::update() {
 				playActionVideo();
 			}
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -629,6 +637,8 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 				setGlobalVar(V_CANNON_TURNED, 0);
 			}
 		}
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -764,6 +774,8 @@ uint32 Scene3010::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2003:
 		_boltUnlocked[param.asInteger()] = false;
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -833,6 +845,8 @@ void Scene3011::update() {
 			if (_currentSymbolIndex >= 12)
 				_currentSymbolIndex = 0;
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -849,6 +863,8 @@ uint32 Scene3011::handleMessage(int messageNum, const MessageParam &param, Entit
 		_buttonClicked = true;
 		if (_countdown == 0)
 			_countdown = 1;
+		break;
+	default:
 		break;
 	}
 	return 0;

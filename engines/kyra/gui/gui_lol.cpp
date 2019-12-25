@@ -274,7 +274,7 @@ void LoLEngine::gui_printCharacterStats(int index, int redraw, int value) {
 	if (offs)
 		_screen->copyRegion(294, y, 182 + offs, y, 18, 8, 6, _screen->_curPage, Screen::CR_NO_P_CHECK);
 
-	Screen::FontId of = (_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? _screen->setFont(Screen::FID_SJIS_FNT) : _screen->_currentFont;
+	Screen::FontId of = (_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? _screen->setFont(Screen::FID_SJIS_TEXTMODE_FNT) : _screen->_currentFont;
 	_screen->fprintString("%d", 200 + offs, y, col, 0, _flags.use16ColorMode ? 2 : 6, value);
 	_screen->setFont(of);
 }
@@ -2635,6 +2635,8 @@ int GUI_LoL::clickedMainMenu(Button *button) {
 		break;
 	case 0x4005:
 		_displayMenu = false;
+		break;
+	default:
 		break;
 	}
 	return 1;

@@ -43,10 +43,11 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
+#include "director/director.h"
 #include "director/cast.h"
+#include "director/score.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
-#include "director/lingo/lingo-gr.h"
 
 namespace Director {
 
@@ -66,7 +67,7 @@ static struct FuncDescr {
 	{ Lingo::c_floatpush,	"c_floatpush",	"f" },
 	{ Lingo::c_stringpush,	"c_stringpush",	"s" },
 	{ Lingo::c_symbolpush,	"c_symbolpush",	"s" },	// D3
-	{ Lingo::c_constpush,	"c_constpush",	"i" },
+	{ Lingo::c_namepush,	"c_namepush",	"i" },
 	{ Lingo::c_varpush,		"c_varpush",	"s" },
 	{ Lingo::c_setImmediate,"c_setImmediate","i" },
 	{ Lingo::c_assign,		"c_assign",		"" },
@@ -249,11 +250,10 @@ void Lingo::c_symbolpush() {
 	g_lingo->push(Datum(new Common::String(s)));
 }
 
-void Lingo::c_constpush() {
+void Lingo::c_namepush() {
 	Datum d;
 	int i = g_lingo->readInt();
-	d = g_lingo->_currentScriptContext->constants[i];
-	g_lingo->push(d);
+	g_lingo->push(Datum(new Common::String(g_lingo->_namelist[i])));
 }
 
 void Lingo::c_argcpush() {
@@ -810,7 +810,10 @@ void Lingo::c_eq() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+	if (d1.type == STRING && d2.type == STRING) {
+		d1.u.i = (d1.u.s->equalsIgnoreCase(*d2.u.s)) ? 1 : 0;
+		d1.type = INT;
+	} else if (g_lingo->alignTypes(d1, d2) == FLOAT) {
 		d1.u.i = (d1.u.f == d2.u.f) ? 1 : 0;
 		d1.type = INT;
 	} else {
@@ -823,7 +826,10 @@ void Lingo::c_neq() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
-	if (g_lingo->alignTypes(d1, d2) == FLOAT) {
+	if (d1.type == STRING && d2.type == STRING) {
+		d1.u.i = !(d1.u.s->equalsIgnoreCase(*d2.u.s)) ? 1 : 0;
+		d1.type = INT;
+	} else if (g_lingo->alignTypes(d1, d2) == FLOAT) {
 		d1.u.i = (d1.u.f != d2.u.f) ? 1 : 0;
 		d1.type = INT;
 	} else {
@@ -999,11 +1005,13 @@ void Lingo::c_ifcode() {
 		g_lingo->execute(elsep + savepc - 1);
 	}
 
+	// Since we do recursive calls, we want to skip behind end of the 'if'
+	// statement only once, and not after every 'end if' call
 	if (!g_lingo->_returning && !skipEnd) {
 		g_lingo->_pc = end + savepc - 1; /* next stmt */
 		debugC(8, kDebugLingoExec, "executing end");
 	} else {
-		debugC(8, kDebugLingoExec, "Skipped end");
+		debugC(8, kDebugLingoExec, "skipped end");
 	}
 }
 
@@ -1027,8 +1035,9 @@ void Lingo::c_whencode() {
 	if (debugChannelSet(1, kDebugLingoExec)) {
 		uint pc = 0;
 		while (pc < sym->u.defn->size()) {
+			uint spc = pc;
 			Common::String instr = g_lingo->decodeInstruction(sym->u.defn, pc, &pc);
-			debugC(1, kDebugLingoExec, "[%5d] %s", pc, instr.c_str());
+			debugC(1, kDebugLingoExec, "[%5d] %s", spc, instr.c_str());
 		}
 	}
 

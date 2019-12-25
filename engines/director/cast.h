@@ -23,31 +23,22 @@
 #ifndef DIRECTOR_CAST_H
 #define DIRECTOR_CAST_H
 
-#include "common/rect.h"
-#include "common/substream.h"
 #include "director/archive.h"
-#include "graphics/surface.h"
+#include "director/types.h"
+
+namespace Graphics {
+struct Surface;
+}
+
+namespace Common {
+class SeekableReadStream;
+class ReadStreamEndian;
+}
 
 namespace Director {
 
 class Stxt;
 class CachedMacText;
-
-enum CastType {
-	kCastTypeNull = 0,
-	kCastBitmap = 1,
-	kCastFilmLoop = 2,
-	kCastText = 3,
-	kCastPalette = 4,
-	kCastPicture = 5,
-	kCastSound = 6,
-	kCastButton = 7,
-	kCastShape = 8,
-	kCastMovie = 9,
-	kCastDigitalVideo = 10,
-	kCastLingoScript = 11,
-	kCastRTE = 12
-};
 
 class Cast {
 public:
@@ -69,19 +60,12 @@ public:
 	uint16 _regX;
 	uint16 _regY;
 	uint8 _flags;
-	uint16 _someFlaggyThing;
-	uint16 _unk1, _unk2;
+	uint16 _bytes;
+	uint16 _unk2;
 
 	uint16 _bitsPerPixel;
 
 	uint32 _tag;
-};
-
-enum ShapeType {
-	kShapeRectangle,
-	kShapeRoundRect,
-	kShapeOval,
-	kShapeLine
 };
 
 class ShapeCast : public Cast {
@@ -95,33 +79,7 @@ public:
 	byte _fillType;
 	byte _lineThickness;
 	byte _lineDirection;
-};
-
-enum TextType {
-	kTextTypeAdjustToFit,
-	kTextTypeScrolling,
-	kTextTypeFixed
-};
-
-enum TextAlignType {
-	kTextAlignRight = -1,
-	kTextAlignLeft,
-	kTextAlignCenter
-};
-
-enum TextFlag {
-	kTextFlagEditable,
-	kTextFlagAutoTab,
-	kTextFlagDoNotWrap
-};
-
-enum SizeType {
-	kSizeNone,
-	kSizeSmallest,
-	kSizeSmall,
-	kSizeMedium,
-	kSizeLarge,
-	kSizeLargest
+	InkType _ink;
 };
 
 class TextCast : public Cast {
@@ -145,15 +103,10 @@ public:
 	uint16 _palinfo1, _palinfo2, _palinfo3;
 
 	Common::String _ftext;
+	Common::String _ptext;
 	void importStxt(const Stxt *stxt);
 	void importRTE(byte* text);
 	CachedMacText *_cachedMacText;
-};
-
-enum ButtonType {
-	kTypeButton,
-	kTypeCheckBox,
-	kTypeRadio
 };
 
 class ButtonCast : public TextCast {
@@ -169,8 +122,6 @@ public:
 
 	uint32 _id;
 };
-
-
 
 struct CastInfo {
 	Common::String script;

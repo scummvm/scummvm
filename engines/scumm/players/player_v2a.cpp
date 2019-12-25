@@ -1401,6 +1401,8 @@ public:
 			_mod->setChannelFreq(_id | 0x100, BASE_FREQUENCY / freq);
 			_mod->setChannelVol(_id | 0x100, vol);
 			break;
+		default:
+			break;
 		}
 		_loop = (_loop + 1) & 3;
 		if (!_loop) {
@@ -1456,6 +1458,8 @@ public:
 		case 1:
 			_mod->setChannelFreq(_id | 0x100, BASE_FREQUENCY / freq);
 			_mod->setChannelVol(_id | 0x100, vol);
+			break;
+		default:
 			break;
 		}
 		_loop = (_loop + 1) & 3;
@@ -1637,6 +1641,8 @@ public:
 				_vol = 0;
 				_volmod = 16;
 			}
+			break;
+		default:
 			break;
 		}
 		return true;

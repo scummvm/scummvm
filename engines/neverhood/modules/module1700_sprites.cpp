@@ -61,6 +61,8 @@ uint32 SsScene1705Tape::handleMessage(int messageNum, const MessageParam &param,
 		setVisible(false);
 		SetMessageHandler(NULL);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -148,6 +150,8 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x483E:
 		teleporterDisappear(0xD86E4477);
+		break;
+	default:
 		break;
 	}
 	return messageResult;

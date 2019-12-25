@@ -23,8 +23,6 @@
 #ifndef DIRECTOR_STXT_H
 #define DIRECTOR_STXT_H
 
-#include "director/director.h"
-
 namespace Director {
 
 class Stxt {
@@ -33,6 +31,7 @@ public:
 
 public:
 	Common::String _ftext;
+	Common::String _ptext;
 	uint32 _fontId;
 	uint16 _fontSize;
 	TextType _textType;

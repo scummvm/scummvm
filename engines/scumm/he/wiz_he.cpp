@@ -445,6 +445,8 @@ static void decodeWizMask(uint8 *&dst, uint8 &mask, int w, int maskType) {
 			}
 		}
 		break;
+	default:
+		break;
 	}
 }
 

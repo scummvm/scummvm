@@ -35,7 +35,9 @@ enum {
 
 TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(engine), _screen(scr),
 	_lineCount(0), _printFlag(false), _lineWidth(0), _numCharsTotal(0), _allowPageBreak(true),
-	_numCharsLeft(0), _numCharsPrinted(0), _sjisTextModeLineBreak(false), _waitButtonMode(1) {
+	_numCharsLeft(0), _numCharsPrinted(0), _sjisTextModeLineBreak(false), _waitButtonMode(1),
+	_pc98TextMode(engine->gameFlags().use16ColorMode && engine->game() == GI_LOL),
+	_waitButtonFont(Screen::FID_6_FNT) {
 
 	static const uint8 amigaColorMap[16] = {
 		0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f
@@ -47,6 +49,13 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 	_currentLine = new char[85];
 	memset(_currentLine, 0, 85);
 
+	if (_pc98TextMode)
+		_waitButtonFont = Screen::FID_SJIS_TEXTMODE_FNT;
+	else if ((_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns))
+		_waitButtonFont = Screen::FID_8_FNT;
+	else if ((_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98))
+		_waitButtonFont = Screen::FID_SJIS_FNT;
+
 	_textDimData = new TextDimData[_screen->screenDimTableCount()];
 
 	for (int i = 0; i < 256; ++i)
@@ -54,6 +63,8 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		memcpy(_colorMap, amigaColorMap, 16);
+	else if (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98)
+		_colorMap[12] = 0;
 
 	for (int i = 0; i < _screen->screenDimTableCount(); i++) {
 		const ScreenDim *d = _screen->getScreenDim(i);
@@ -138,8 +149,8 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 	const ScreenDim *sd = _screen->_curDim;
 	int sdx = _screen->curDimIndex();
 
-	bool sjisTextMode = (_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
-	int sjisOffs = (sjisTextMode || _vm->game() == GI_EOB2) ? 8 : 9;
+	bool sjisTextMode = (_pc98TextMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
+	int sjisOffs = (sjisTextMode || _vm->game() != GI_LOL) ? 8 : 9;
 	Screen::FontId of = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) ? _screen->setFont(Screen::FID_8_FNT) : _screen->_currentFont;
 
 	uint16 charsPerLine = (sd->w << 3) / (_screen->getFontWidth() + _screen->_charWidth);
@@ -173,6 +184,8 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 				_currentLine[_numCharsLeft] = '\0';
 
 				_lineWidth += sjisOffs;
+				if (_vm->game() == GI_EOB1 && ((sd->w << 3) - sjisOffs) <= (_textDimData[sdx].column + _lineWidth))
+					printLine(_currentLine);
 				c = parseCommand();
 				continue;
 			}
@@ -217,6 +230,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 				_sjisTextModeLineBreak = true;
 			printLine(_currentLine);
 			_sjisTextModeLineBreak = false;
+			//_lineWidth = 0;
 			_lineCount++;
 			_textDimData[sdx].column = 0;
 			_textDimData[sdx].line++;
@@ -232,7 +246,7 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 
 		default:
 			if (_vm->game() == GI_EOB1 || _vm->game() == GI_LOL || (unsigned char)c > 30) {
-				_lineWidth += (sjisTextMode ? 4 : (_screen->_currentFont == Screen::FID_SJIS_FNT ? 9 : _screen->getCharWidth((uint8)c)));
+				_lineWidth += (sjisTextMode ? 4 : (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT ? 9 : _screen->getCharWidth((uint8)c)));
 				_currentLine[_numCharsLeft++] = c;
 				_currentLine[_numCharsLeft] = 0;
 
@@ -308,9 +322,10 @@ void TextDisplayer_rpg::readNextPara() {
 void TextDisplayer_rpg::printLine(char *str) {
 	const ScreenDim *sd = _screen->_curDim;
 	int sdx = _screen->curDimIndex();
-	bool sjisTextMode = _vm->gameFlags().lang == Common::JA_JPN && (_vm->gameFlags().use16ColorMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
+	bool sjisTextMode = _pc98TextMode && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15) ? true : false;
+	int sjisOffs = (sjisTextMode || _vm->game() != GI_LOL) ? 8 : 9;
 
-	int fh = (_screen->_currentFont == Screen::FID_SJIS_FNT) ? 9 : (_screen->getFontHeight() + _screen->_charOffset);
+	int fh = (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT) ? 9 : (_screen->getFontHeight() + _screen->_charOffset);
 	int lines = (sd->h - _screen->_charOffset) / fh;
 
 	while (_textDimData[sdx].line >= lines) {
@@ -378,7 +393,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 			for (int i = 0; i < s; ++i) {
 				uint8 cu = (uint8) str[i];
 				if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0))
-					twoByteCharOffs = 8;
+					twoByteCharOffs = (_vm->game() == GI_EOB1) ? 16 : 8;
 			}
 		}
 
@@ -400,7 +415,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 				for (strPos = 0; strPos < s; ++strPos) {
 					uint8 cu = (uint8) str[strPos];
 					if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
-						lw += 9;
+						lw += sjisOffs;
 						strPos++;
 					} else {
 						lw += _screen->getCharWidth((uint8)c);
@@ -510,7 +525,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 	str[len] = 0;
 
 	_numCharsLeft = strlen(str);
-	_lineWidth = sjisTextMode ? (_numCharsLeft << 2) : (_screen->_currentFont == Screen::FID_SJIS_FNT ? _numCharsLeft * 9 : _screen->getTextWidth(str));
+	_lineWidth = sjisTextMode ? (_numCharsLeft << 2) : (_screen->_currentFont == Screen::FID_SJIS_TEXTMODE_FNT ? _numCharsLeft * 9 : _screen->getTextWidth(str));
 
 	if (!_numCharsLeft && (_textDimData[sdx].column + twoByteCharOffs) <= (sd->w << 3))
 		return;
@@ -584,7 +599,7 @@ int TextDisplayer_rpg::clearDim(int dim) {
 void TextDisplayer_rpg::clearCurDim() {
 	int d = _screen->curDimIndex();
 	const ScreenDim *tmp = _screen->getScreenDim(d);
-	if (_vm->gameFlags().use16ColorMode) {
+	if (_pc98TextMode) {
 		_screen->fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 2, (tmp->sy + tmp->h) - 2, _textDimData[d].color2);
 	} else
 		_screen->fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1, (tmp->sy + tmp->h) - 1, _textDimData[d].color2);
@@ -598,7 +613,7 @@ void TextDisplayer_rpg::textPageBreak() {
 		SWAP(_vm->_dialogueButtonLabelColor1, _vm->_dialogueButtonLabelColor2);
 
 	int cp = _screen->setCurPage(0);
-	Screen::FontId cf = _screen->setFont((_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode) ? Screen::FID_SJIS_FNT : ((_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) ? Screen::FID_8_FNT : Screen::FID_6_FNT));
+	Screen::FontId cf = _screen->setFont(_waitButtonFont);
 
 	if (_vm->game() == GI_LOL)
 		_vm->_timer->pauseSingleTimer(11, true);
@@ -642,15 +657,14 @@ void TextDisplayer_rpg::textPageBreak() {
 		w = _vm->guiSettings()->buttons.waitWidth[_waitButtonMode];
 	}
 
-	if (_vm->gameFlags().use16ColorMode) {
+	if (_vm->game() == GI_LOL && _vm->gameFlags().use16ColorMode) {
 		_vm->gui_drawBox(x + 8, (y & ~7) - 1, 66, 10, 0xEE, 0xCC, -1);
 		_screen->printText(_pageBreakString, (x + 37 - (strlen(_pageBreakString) << 1) + 4) & ~3, (y + 2) & ~7, 0xC1, 0);
 	} else {
-		int yOffs = (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformFMTowns) ? 1 : 2;
 		_screen->set16bitShadingLevel(4);
 		_vm->gui_drawBox(x, y, w, _vm->guiSettings()->buttons.height, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 		_screen->set16bitShadingLevel(0);
-		_screen->printText(_pageBreakString, x + (w >> 1) - (_vm->screen()->getTextWidth(_pageBreakString) >> 1), y + yOffs, _vm->_dialogueButtonLabelColor1, 0);
+		_screen->printText(_pageBreakString, x + (w >> 1) - (_vm->screen()->getTextWidth(_pageBreakString) >> 1), y + _vm->guiSettings()->buttons.txtOffsY, _vm->_dialogueButtonLabelColor1, 0);
 	}
 
 	_vm->removeInputTop();
@@ -695,7 +709,7 @@ void TextDisplayer_rpg::textPageBreak() {
 	} while (loop && !_vm->shouldQuit());
 
 	_screen->set16bitShadingLevel(4);
-	if (_vm->gameFlags().use16ColorMode)
+	if (_vm->game() == GI_LOL && _vm->gameFlags().use16ColorMode)
 		_screen->fillRect(x + 8, y, x + 57, y + 9, _textDimData[_screen->curDimIndex()].color2);
 	else
 		_screen->fillRect(x, y, x + w - 1, y + _vm->guiSettings()->buttons.height - 1, _textDimData[_screen->curDimIndex()].color2);

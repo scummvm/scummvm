@@ -721,6 +721,9 @@ void Goblin::adjustDest(int16 posX, int16 posY) {
 		case 3:
 			_pressedMapY -= resDelta;
 			break;
+
+		default:
+			break;
 		}
 
 	}
@@ -1748,6 +1751,9 @@ void Goblin::animate(Mult::Mult_Object *obj) {
 		if (animData->frame >= framesCount)
 			animData->isPaused = 1;
 		break;
+
+	default:
+		break;
 	}
 
 	if ((animData->newState == -1) && (animData->frame >= framesCount)) {
@@ -1873,6 +1879,9 @@ void Goblin::updateLayer1(Mult::Mult_AnimData *animData) {
 	case 23:
 		animData->layer = 21;
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -1904,6 +1913,9 @@ void Goblin::updateLayer2(Mult::Mult_AnimData *animData) {
 
 	case 23:
 		animData->layer = 24;
+		break;
+
+	default:
 		break;
 	}
 }

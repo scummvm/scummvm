@@ -3644,6 +3644,9 @@ void Gdi::unkDecode9(byte *dst, int dstPitch, const byte *src, int height) const
 		case 2:
 			READ_N_BITS(4, run);
 			break;
+
+		default:
+			break;
 		}
 	}
 }
@@ -3704,6 +3707,9 @@ void Gdi::unkDecode11(byte *dst, int dstPitch, const byte *src, int height) cons
 			case 3:
 				inc = 1;
 				READ_N_BITS(8, color);
+				break;
+
+			default:
 				break;
 			}
 		} while (--h);
@@ -4144,6 +4150,8 @@ void ScummEngine::scrollEffect(int dir) {
 			waitForTimer(delay);
 			x += step;
 		}
+		break;
+	default:
 		break;
 	}
 }

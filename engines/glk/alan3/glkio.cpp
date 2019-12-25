@@ -121,6 +121,8 @@ void GlkIO::setStyle(int style) {
 	case QUOTE_STYLE:
 		glk_set_style(style_BlockQuote);
 		break;
+	default:
+		break;
 	}
 }
 

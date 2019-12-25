@@ -38,7 +38,7 @@ class TextCast;
 class CachedMacText {
 private:
 	int _width;
-	TextCast *const _textCast;
+	const TextCast *_textCast;
 	Graphics::MacWindowManager *_wm;
 	Graphics::MacText *_macText;
 	Graphics::TextAlign _align;
@@ -56,6 +56,8 @@ public:
 	void forceDirty();
 	const Graphics::ManagedSurface *getSurface();
 	int getLineCount();
+
+	void setStxt(const TextCast *stxt) { _textCast = stxt; forceDirty(); }
 };
 
 } // End of namespace Director

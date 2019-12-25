@@ -60,6 +60,7 @@ namespace {
 #define LOL_KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
 
 #define EOB_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB1)
+#define EOB_PC98_FLAGS FLAGS(false, false, false, false, true, true, false, false, false, Kyra::GI_EOB1)
 #define EOB2_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB2)
 #define EOB2_FMTOWNS_FLAGS FLAGS(false, false, false, false, true, false, true, false, false, Kyra::GI_EOB2)
 
@@ -1684,6 +1685,22 @@ const KYRAGameDescription adGameDescs[] = {
 			GUIO4(GUIO_NOSPEECH, GUIO_MIDIAMIGA, GUIO_RENDERAMIGA, GAMEOPTION_EOB_HPGRAPHS)
 		},
 		EOB_FLAGS
+	},
+
+	{
+		{
+			"eob",
+			0,
+			{
+				{ "BRICK3.BIN", 0, "7fb13157102accf6ddb806d5ad36c833", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::JA_JPN,
+			Common::kPlatformPC98,
+			ADGF_NO_FLAGS,
+			GUIO4(GUIO_NOSPEECH, GUIO_MIDIPC98, GUIO_RENDERPC9801, GAMEOPTION_EOB_HPGRAPHS)
+		},
+		EOB_PC98_FLAGS
 	},
 
 	{

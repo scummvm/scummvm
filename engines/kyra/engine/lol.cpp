@@ -524,7 +524,7 @@ Common::Error LoLEngine::go() {
 	// the prologue code we need to setup them manually here.
 	if (_gameToLoad != -1 && action != 3) {
 		preInit();
-		_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
+		_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
 	}
 
 	// We have three sound.dat files, one for the intro, one for the
@@ -695,7 +695,7 @@ int LoLEngine::mainMenu() {
 			{ 0, 0, 0, 0, 0 },
 			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xC1, 0xE1 },
 			{ 0xCC, 0xDD, 0xDD, 0xDD },
-			Screen::FID_SJIS_FNT, 1
+			Screen::FID_SJIS_TEXTMODE_FNT, 1
 		}
 	};
 
@@ -4191,7 +4191,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 			_screen->copyRegion(236, 16, 236 + xOffset, 16, -xOffset, 1, pageNum, pageNum, Screen::CR_NO_P_CHECK);
 
 		int cp = _screen->setCurPage(pageNum);
-		Screen::FontId of = _screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
+		Screen::FontId of = _screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_9_FNT);
 		_screen->printText(getLangString(_autoMapStrings[_currentMapLevel]), 236 + xOffset, 8, 1, 0);
 		uint16 blX = mapGetStartPosX();
 		uint16 bl = (mapGetStartPosY() << 5) + blX;
@@ -4251,7 +4251,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 		_screen->setFont(of);
 		_screen->setCurPage(cp);
 
-		of = _screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
+		of = _screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_TEXTMODE_FNT : Screen::FID_6_FNT);
 
 		int tY = 0;
 		sx = mapGetStartPosX();

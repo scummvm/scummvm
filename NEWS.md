@@ -2,6 +2,10 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 #### 2.2.0 (XXXX-XX-XX)
+
+ Kyra:
+   - Added support for the PC-98 version of Eye of the Beholder I.
+
  Xeen:
    - Fix display of gold and gem amounts on the Switch
 

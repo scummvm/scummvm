@@ -30,10 +30,6 @@
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.h"
 
-OSystem_Switch::OSystem_Switch(Common::String baseConfigName)
-	: _baseConfigName(baseConfigName) {
-}
-
 void OSystem_Switch::init() {
 	
 	// Initialze File System Factory
@@ -124,10 +120,6 @@ bool OSystem_Switch::getFeatureState(Feature f) {
 
 void OSystem_Switch::logMessage(LogMessageType::Type type, const char *message) {
 	printf("%s\n", message);
-}
-
-Common::String OSystem_Switch::getDefaultConfigFileName() {
-	return _baseConfigName;
 }
 
 Common::String OSystem_Switch::getDefaultLogFileName() {

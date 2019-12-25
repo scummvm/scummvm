@@ -273,6 +273,8 @@ void Module2200::createScene(int sceneNum, int which) {
 				createStaticScene(0x08C74886, 0x74882084);
 		}
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module2200::updateScene);
 	_childObject->handleUpdate();
@@ -450,6 +452,8 @@ void Module2200::updateScene() {
 		case 47:
 			createScene(41, 1);
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -583,6 +587,8 @@ uint32 Scene2201::handleMessage(int messageNum, const MessageParam &param, Entit
 			setMessageList(0x004B81C8);
 		}
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -679,6 +685,8 @@ uint32 Scene2202::handleMessage(int messageNum, const MessageParam &param, Entit
 			_surfacePriority = 300;
 		else
 			_surfacePriority = 500;
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -816,6 +824,8 @@ uint32 Scene2203::handleMessage(int messageNum, const MessageParam &param, Entit
 			setMessageList(0x004B83F0);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -921,6 +931,8 @@ uint32 Scene2205::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x480B:
 		setGlobalVar(V_LIGHTS_ON, getGlobalVar(V_LIGHTS_ON) ? 0 : 1);
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -1045,6 +1057,8 @@ uint32 Scene2206::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case NM_MOVE_TO_FRONT:
 		klaymenInFrontSpikes();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1255,6 +1269,8 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 			sendMessage(_klaymen, 0x2001, 0);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1271,6 +1287,8 @@ uint32 Scene2207::handleMessage2(int messageNum, const MessageParam &param, Enti
 		sendEntityMessage(_klaymen, 0x1014, _asLever);
 		setMessageList(0x004B3920);
 		setRectList(0x004B3948);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -1404,6 +1422,8 @@ uint32 Scene2208::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (param.asPoint().x <= 40 || param.asPoint().x >= 600)
 			leaveScene(0);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1529,6 +1549,8 @@ uint32 Scene2242::handleMessage(int messageNum, const MessageParam &param, Entit
 			setMessageList(0x004B3D50);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1624,6 +1646,8 @@ uint32 HallOfRecordsScene::handleMessage(int messageNum, const MessageParam &par
 		if (param.asInteger() == 0x800C6694)
 			readClickedColumn();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -1711,6 +1735,8 @@ uint32 Scene2247::handleMessage(int messageNum, const MessageParam &param, Entit
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x800C6694)
 			readClickedColumn();
+		break;
+	default:
 		break;
 	}
 	return messageResult;

@@ -437,7 +437,25 @@ struct SpeechData {
 	int playingTime;
 
 	SpeechData() {
-		memset(this, 0, sizeof(*this));
+		for (uint i = 0; i < ACTOR_SPEECH_ACTORS_MAX; i++) {
+			speechColor[i] = 0;
+			outlineColor[i] = 0;
+		}
+		speechFlags = 0;
+		for (uint i = 0; i < ACTOR_SPEECH_ACTORS_MAX; i++) {
+			strings[i] = nullptr;
+		}
+		// speechBox is initialized by Rect constructor
+		// drawRect is initialized by Rect constructor
+		stringsCount = 0;
+		slowModeCharIndex = 0;
+		for (uint i = 0; i < ACTOR_SPEECH_ACTORS_MAX; i++) {
+			actorIds[i] = 0;
+		}
+		actorsCount = 0;
+		sampleResourceId = 0;
+		playing = false;
+		playingTime = 0;
 	}
 
 	FontEffectFlags getFontFlags(int i) {

@@ -498,6 +498,9 @@ void GlkAPI::glk_stylehint_set(uint wintype, uint style, uint hint, int val) {
 		i = val > 0;
 		styles[style].font = WindowStyle::makeFont(p, b, i);
 		break;
+
+	default:
+		break;
 	}
 
 	if (wintype == wintype_TextBuffer && style == style_Normal && hint == stylehint_BackColor) {
@@ -550,6 +553,9 @@ void GlkAPI::glk_stylehint_clear(uint wintype, uint style, uint hint) {
 	case stylehint_Weight:
 	case stylehint_Oblique:
 		styles[style].font = defaults[style].font;
+		break;
+
+	default:
 		break;
 	}
 }

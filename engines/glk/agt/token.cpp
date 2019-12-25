@@ -598,6 +598,9 @@ static void obj_act(int op_, int obj) {
 	case 3: /* lock and unlock */
 		if (tnoun(obj))
 			noun[obj - first_noun].locked = (op_ == 2);
+		break;
+	default:
+		break;
 	}
 }
 

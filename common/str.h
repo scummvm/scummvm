@@ -491,6 +491,15 @@ size_t strnlen(const char *src, size_t maxSize);
  */
 #define tag2str(x)	Common::tag2string(x).c_str()
 
+/**
+ * Converts string with all non-printable characters properly escaped
+ * with use of C++ escape sequences
+ *
+ * @param src The source string.
+ * @param keepNewLines Whether keep newlines or convert them to '\n', default: true.
+ * @return The converted string.
+ */
+String toPrintable(const String &src, bool keepNewLines = true);
 
 } // End of namespace Common
 

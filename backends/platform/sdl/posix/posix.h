@@ -27,10 +27,6 @@
 
 class OSystem_POSIX : public OSystem_SDL {
 public:
-	// Let the subclasses be able to change _baseConfigName in the constructor
-	OSystem_POSIX(Common::String baseConfigName = "scummvm.ini");
-	virtual ~OSystem_POSIX() {}
-
 	virtual bool hasFeature(Feature f);
 
 	virtual bool displayLogFile();
@@ -45,13 +41,6 @@ public:
 	Common::String getScreenshotsPath() override;
 
 protected:
-	/**
-	 * Base string for creating the default path and filename for the
-	 * configuration file. This allows the Mac OS X subclass to override
-	 * the config file path and name.
-	 */
-	Common::String _baseConfigName;
-
 	virtual Common::String getDefaultConfigFileName();
 	virtual Common::String getDefaultLogFileName();
 

@@ -20,7 +20,12 @@
  *
  */
 
+#include "common/substream.h"
+
+#include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-bytecode.h"
+#include "director/lingo/lingo-the.h"
 
 namespace Director {
 
@@ -56,8 +61,8 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x41, Lingo::c_intpush, "b" },
 	{ 0x42, Lingo::c_argcpush, "b" },
 	{ 0x43, Lingo::c_argcnoretpush, "b" },
-	{ 0x44, Lingo::c_constpush, "bv" },
-	{ 0x45, Lingo::c_symbolpush, "b" },
+	// 0x44, push a constant
+	{ 0x45, Lingo::c_namepush, "b" },
 	{ 0x53, Lingo::c_jump, "jb" },
 	{ 0x54, Lingo::c_jump, "jbn" },
 	{ 0x55, Lingo::c_jumpifz, "jb" },
@@ -69,7 +74,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x81, Lingo::c_intpush, "w" },
 	{ 0x82, Lingo::c_argcpush, "w" },
 	{ 0x83, Lingo::c_argcnoretpush, "w" },
-	{ 0x84, Lingo::c_constpush, "wv" },
+	// 0x84, push a constant
 	{ 0x93, Lingo::c_jump, "jw" },
 	{ 0x94, Lingo::c_jump, "jwn" },
 	{ 0x95, Lingo::c_jumpifz, "jw" },
@@ -278,16 +283,16 @@ void Lingo::cb_v4theentitypush() {
 
 
 void Lingo::cb_v4theentitynamepush() {
-	Datum args = g_lingo->pop();
-	if ((args.type == ARGC) || (args.type == ARGCNORET)) {
-		if (args.u.i > 0) {
-			warning("cb_v4theentitynamepush: expecting argc to be 0, not %d", args.u.i);
-			for (int i = 0; i < args.u.i; i++) {
+	Datum nargs = g_lingo->pop();
+	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
+		if (nargs.u.i > 0) {
+			warning("cb_v4theentitynamepush: expecting argc to be 0, not %d", nargs.u.i);
+			for (int i = 0; i < nargs.u.i; i++) {
 				g_lingo->pop();
 			}
 		}
 	} else {
-		warning("cb_v4theentitynamepush: expecting first arg to be of type ARGC or ARGCNORET, not %s", args.type2str());
+		warning("cb_v4theentitynamepush: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
 	}
 
 	int nameId = g_lingo->readInt();
@@ -369,7 +374,6 @@ void Lingo::cb_v4theentityassign() {
 	}
 }
 
-
 void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id) {
 	debugC(1, kDebugLingoCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(type), id);
 
@@ -450,13 +454,24 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 				constant.type = STRING;
 				constant.u.s = new Common::String();
 				uint32 pointer = value;
-				while (pointer < constsStoreSize) {
+				if (pointer + 4 >= constsStoreSize) {
+					error("Constant string is too small");
+					break;
+				}
+				uint32 length = READ_BE_UINT32(&constsStore[pointer]);
+				pointer += 4;
+				uint32 end = pointer + length;
+				if (end >= constsStoreSize) {
+					error("Constant string is too large");
+					break;
+				}
+				while (pointer < end) {
 					if (constsStore[pointer] == '\r') {
-						constant.u.s += '\n';
+						*constant.u.s += '\n';
 					} else if (constsStore[pointer] == '\0') {
 						break;
 					} else {
-						constant.u.s += constsStore[pointer];
+						*constant.u.s += constsStore[pointer];
 					}
 					pointer += 1;
 				}
@@ -513,11 +528,11 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		_currentScriptContext->functions.push_back(new ScriptData);
 		_currentScript = _currentScriptContext->functions[_currentScriptFunction];
 
-		/*uint16 nameIndex = */stream.readUint16();
+		uint16 nameIndex = stream.readUint16();
 		stream.readUint16();
 		uint32 length = stream.readUint32();
 		uint32 startOffset = stream.readUint32();
-		/*uint16 argCount = */stream.readUint16();
+		uint16 argCount = stream.readUint16();
 		/*uint32 argOffset = */stream.readUint32();
 		/*uint16 varCount = */stream.readUint16();
 		/*uint32 varNamesOffset = */stream.readUint32();
@@ -549,9 +564,60 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		Common::Array<uint32> jumpList;
 		while (pointer < startOffset + length - codeStoreOffset) {
 			uint8 opcode = codeStore[pointer];
-
 			pointer += 1;
-			if (_lingoV4.contains(opcode)) {
+
+			if (opcode == 0x44 || opcode == 0x84) {
+				// push a constant
+				offsetList.push_back(_currentScript->size());
+				int arg = 0;
+				if (opcode == 0x84) {
+					arg = (uint16)READ_BE_UINT16(&codeStore[pointer]);
+					pointer += 2;
+				} else {
+					arg = (uint8)codeStore[pointer];
+					pointer += 1;
+				}
+				// remove struct size alignment
+				if (arg % 6) {
+					warning("Opcode 0x%02x arg %d not a multiple of 6!", opcode, arg);
+				}
+				arg /= 6;
+				Datum constant = _currentScriptContext->constants[arg];
+				switch (constant.type) {
+				case INT:
+					g_lingo->code1(Lingo::c_intpush);
+					break;
+				case FLOAT:
+					g_lingo->code1(Lingo::c_floatpush);
+					break;
+				case STRING:
+					g_lingo->code1(Lingo::c_stringpush);
+					break;
+				default:
+					error("Unknown constant type %d", constant.type);
+					break;
+				}
+				if (opcode == 0x84) {
+					offsetList.push_back(_currentScript->size());
+					offsetList.push_back(_currentScript->size());
+				} else {
+					offsetList.push_back(_currentScript->size());
+				}
+				switch (constant.type) {
+				case INT:
+					g_lingo->codeInt(constant.u.i);
+					break;
+				case FLOAT:
+					g_lingo->codeFloat(constant.u.f);
+					break;
+				case STRING:
+					g_lingo->codeString(constant.u.s->c_str());
+					break;
+				default:
+					error("Unknown constant type %d", constant.type);
+					break;
+				}
+			} else if (_lingoV4.contains(opcode)) {
 				offsetList.push_back(_currentScript->size());
 				g_lingo->code1(_lingoV4[opcode]->func);
 
@@ -572,13 +638,6 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 							offsetList.push_back(_currentScript->size());
 							arg = (uint16)READ_BE_UINT16(&codeStore[pointer]);
 							pointer += 2;
-							break;
-						case 'v':
-							// argument refers to a variable; remove struct size alignment
-							if (arg % 6) {
-								warning("Opcode 0x%02x arg %d not a multiple of 6!", opcode, arg);
-							}
-							arg /= 6;
 							break;
 						case 'n':
 							// argument is negative
@@ -637,6 +696,14 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			} else {
 				warning("Jump of %d from position %d is outside the function!", jump, originalJumpAddressLoc);
 			}
+		}
+
+		// Attach to handlers
+		if (nameIndex < _namelist.size()) {
+			g_lingo->define(_namelist[nameIndex], argCount, new ScriptData(&(*_currentScript)[0], _currentScript->size()));
+
+		} else {
+			warning("Function has unknown name id %d, skipping define", nameIndex);
 		}
 	}
 	free(codeStore);

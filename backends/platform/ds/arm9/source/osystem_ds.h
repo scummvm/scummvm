@@ -84,10 +84,6 @@ public:
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
-	virtual const GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
-	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
@@ -181,10 +177,6 @@ public:
 	void setGammaValue(int gamma) { _gammaValue = gamma; }
 
 	void engineDone();
-};
-
-static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{0, 0, 0},
 };
 
 #endif

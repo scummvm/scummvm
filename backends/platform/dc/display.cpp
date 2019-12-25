@@ -682,32 +682,6 @@ void OSystem_Dreamcast::copyRectToOverlay(const void *buf, int pitch,
   _overlay_dirty = true;
 }
 
-
-static const OSystem::GraphicsMode gfxmodes[] = {
-  { "default", "640x480 16bpp", 0 },
-  { NULL, NULL, 0 }
-};
-
-const OSystem::GraphicsMode *OSystem_Dreamcast::getSupportedGraphicsModes() const
-{
-  return gfxmodes;
-}
-
-int OSystem_Dreamcast::getDefaultGraphicsMode() const
-{
-  return 0;
-}
-
-bool OSystem_Dreamcast::setGraphicsMode(int mode)
-{
-  return mode == 0;
-}
-
-int OSystem_Dreamcast::getGraphicsMode() const
-{
-  return 0;
-}
-
 Graphics::Surface *OSystem_Dreamcast::lockScreen()
 {
   if (!screen)

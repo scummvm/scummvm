@@ -57,6 +57,8 @@ static void if_(Aword v) {
 					lev--;
 					if (lev == 0) return;
 					break;
+				default:
+					break;
 				}
 		}
 	}
@@ -77,6 +79,8 @@ static void else_() {
 				break;
 			case I_IF:
 				lev++;
+				break;
+			default:
 				break;
 			}
 	}
@@ -118,6 +122,8 @@ static void depexec(Aword v) {
 				case I_DEPELSE:
 					if (lev == 1) return;
 					break;
+				default:
+					break;
 				}
 		}
 }
@@ -140,6 +146,8 @@ static void depcase() {
 			case I_DEPEND:
 				lev--;
 				if (lev == 0) return;
+				break;
+			default:
 				break;
 			}
 	}

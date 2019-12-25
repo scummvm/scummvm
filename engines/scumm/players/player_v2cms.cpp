@@ -391,6 +391,9 @@ void Player_V2CMS::processChannel(Voice2 *channel) {
 	case Voice2::kEnvelopeRelease:
 		processRelease(channel);
 		break;
+
+	default:
+		break;
 	}
 }
 

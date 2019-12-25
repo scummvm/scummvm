@@ -333,6 +333,8 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 		// Set the sender's surface priority
 		setSurfacePriority(((Sprite*)sender)->getSurface(), param.asInteger());
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -540,6 +542,8 @@ uint16 Scene::convertMessageNum(uint32 messageNum) {
 		return 0x4004;
 	case 0x428D4894:
 		return 0x101A;
+	default:
+		break;
 	}
 	return 0x1000;
 }
@@ -619,6 +623,8 @@ uint32 StaticScene::handleMessage(int messageNum, const MessageParam &param, Ent
 	case NM_MOUSE_CLICK:
 		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);
+		break;
+	default:
 		break;
 	}
 	return 0;

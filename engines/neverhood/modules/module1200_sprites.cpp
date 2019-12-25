@@ -77,6 +77,8 @@ uint32 AsScene1201Tape::handleMessage(int messageNum, const MessageParam &param,
 		setVisible(false);
 		SetMessageHandler(NULL);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -108,6 +110,8 @@ uint32 AsScene1201TntManRope::handleMessage(int messageNum, const MessageParam &
 	case NM_KLAYMEN_STOP_CLIMBING:
 		startAnimation(0x928F0C10, 1, -1);
 		_newStickFrameIndex = STICK_LAST_FRAME;
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -146,6 +150,8 @@ uint32 AsScene1201RightDoor::handleMessage(int messageNum, const MessageParam &p
 		break;
 	case 0x4829:
 		stOpenDoor();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -195,6 +201,8 @@ uint32 AsScene1201KlaymenHead::handleMessage(int messageNum, const MessageParam 
 		setVisible(false);
 		gotoNextState();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -239,6 +247,8 @@ uint32 AsScene1201TntMan::handleMessage(int messageNum, const MessageParam &para
 			stMoving();
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 
@@ -249,6 +259,8 @@ uint32 AsScene1201TntMan::hmComingDown(int messageNum, const MessageParam &param
 	switch (messageNum) {
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -339,6 +351,8 @@ AsScene1201Match::AsScene1201Match(NeverhoodEngine *vm, Scene *parentScene)
 		_status = 0;
 		stIdleOnFloor();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -357,6 +371,8 @@ uint32 AsScene1201Match::hmOnDoorFrameAboutToMove(int messageNum, const MessageP
 		if (param.asInteger() == 0x86668011)
 			playSound(0);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -366,6 +382,8 @@ uint32 AsScene1201Match::hmOnDoorFrameMoving(int messageNum, const MessageParam 
 	switch (messageNum) {
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -381,6 +399,8 @@ uint32 AsScene1201Match::hmIdle(int messageNum, const MessageParam &param, Entit
 	case NM_KLAYMEN_USE_OBJECT:
 		setVisible(false);
 		setGlobalVar(V_MATCH_STATUS, 3);
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -469,6 +489,8 @@ uint32 AsScene1201Creature::hmWaiting(int messageNum, const MessageParam &param,
 	case NM_KLAYMEN_STOP_CLIMBING:
 		GotoState(&AsScene1201Creature::stPincerSnapKlaymen);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -478,6 +500,8 @@ uint32 AsScene1201Creature::hmPincerSnap(int messageNum, const MessageParam &par
 	switch (messageNum) {
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -495,6 +519,8 @@ uint32 AsScene1201Creature::hmPincerSnapKlaymen(int messageNum, const MessagePar
 		break;
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -559,6 +585,8 @@ uint32 AsScene1201LeftDoor::handleMessage(int messageNum, const MessageParam &pa
 	case NM_KLAYMEN_CLOSE_DOOR:
 		stCloseDoor();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -612,6 +640,8 @@ uint32 AsScene1202TntItem::hmShowIdle(int messageNum, const MessageParam &param,
 		_newPosition = (int)param.asInteger();
 		stChangePositionFadeOut();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -621,6 +651,8 @@ uint32 AsScene1202TntItem::hmChangePosition(int messageNum, const MessageParam &
 	switch (messageNum) {
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -722,6 +754,8 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -768,6 +802,8 @@ uint32 KmScene1201::hmMatch(int messageNum, const MessageParam &param, Entity *s
 			playSound(0, 0x44051000);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -802,6 +838,8 @@ uint32 KmScene1201::hmTumbleHeadless(int messageNum, const MessageParam &param, 
 		if (param.asInteger() == 0x000F0082) {
 			playSound(0, 0x74E2810F);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;

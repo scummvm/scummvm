@@ -189,6 +189,9 @@ void Inter_Fascination::oFascin_assign(OpFuncParams &params) {
 			else
 				WRITE_VARO_STR(dest, _vm->_game->_script->getResultStr());
 			break;
+
+		default:
+			break;
 		}
 	}
 }

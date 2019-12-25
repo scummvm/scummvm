@@ -124,26 +124,6 @@ bool OSystem_3DS::getFeatureState(OSystem::Feature f) {
 	}
 }
 
-const OSystem::GraphicsMode *
-OSystem_3DS::getSupportedGraphicsModes() const {
-	return s_graphicsModes;
-}
-
-int OSystem_3DS::getDefaultGraphicsMode() const {
-	return GFX_LINEAR;
-}
-
-bool OSystem_3DS::setGraphicsMode(int mode) {
-	return true;
-}
-
-void OSystem_3DS::resetGraphicsScale() {
-	debug("resetGraphicsScale");
-}
-
-int OSystem_3DS::getGraphicsMode() const {
-	return GFX_LINEAR;
-}
 void OSystem_3DS::initSize(uint width, uint height,
                                    const Graphics::PixelFormat *format) {
 	debug("3ds initsize w:%d h:%d", width, height);

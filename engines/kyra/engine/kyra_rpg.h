@@ -86,6 +86,7 @@ struct KyraRpgGUISettings {
 		uint8 labelColor2;
 		uint16 width;
 		uint16 height;
+		int16 txtOffsY;
 		int waitReserve;
 		uint16 waitX[2];
 		uint8 waitY[2];
@@ -213,10 +214,10 @@ protected:
 	void vcnDraw_bw_hiCol(uint8 *&dst, const uint8 *&src);
 	void vcnDraw_fw_trans_hiCol(uint8 *&dst, const uint8 *&src);
 	void vcnDraw_bw_trans_hiCol(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_fw_Amiga(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_bw_Amiga(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_fw_trans_Amiga(uint8 *&dst, const uint8 *&src);
-	void vcnDraw_bw_trans_Amiga(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_fw_planar(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_bw_planar(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_fw_trans_planar(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_bw_trans_planar(uint8 *&dst, const uint8 *&src);
 
 	typedef Common::Functor2Mem<uint8 *&, const uint8 *&, void, KyraRpgEngine> VcnDrawProc;
 	struct VcnLineDrawingMethods {
@@ -368,6 +369,7 @@ protected:
 
 	bool _dialogueField;
 	bool _dialogueFieldAmiga;
+	Screen::FontId _buttonFont;
 
 	const char *_dialogueButtonString[9];
 	const uint16 *_dialogueButtonPosX;

@@ -684,6 +684,9 @@ sc_gameref_t gs_create(sc_var_setref_t vars, sc_prop_setref_t bundle, sc_filterr
 			gs_set_event_state(game, index_, ES_AWAITING);
 			gs_set_event_time(game, index_, 0);
 			break;
+
+		default:
+			break;
 		}
 	}
 

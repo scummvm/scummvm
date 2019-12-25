@@ -85,13 +85,11 @@ Common::Error ComposerEngine::run() {
 		_queuedScripts[i]._scriptId = 0;
 	}
 
-	if (!_bookIni.loadFromFile("book.ini")) {
+	if (!loadDetectedConfigFile(_bookIni)) {
+		// Config files for Darby the Dragon are located in subdirectory
 		_directoriesToStrip = 0;
 		if (!_bookIni.loadFromFile("programs/book.ini")) {
-			// mac version?
-			if (!_bookIni.loadFromFile("Darby the Dragon.ini"))
-				if (!_bookIni.loadFromFile("Gregory.ini"))
-					error("failed to find book.ini");
+			error("failed to find book.ini");
 		}
 	}
 
@@ -112,7 +110,15 @@ Common::Error ComposerEngine::run() {
 
 	loadLibrary(0);
 
-	uint fps = atoi(getStringFromConfig("Common", "FPS").c_str());
+	uint fps;
+	if (_bookIni.hasKey("FPS", "Common"))
+		fps = atoi(getStringFromConfig("Common", "FPS").c_str());
+	else {
+		// On Macintosh version there is no FPS key
+		if (getPlatform() != Common::kPlatformMacintosh)
+			warning("there is no FPS key in book.ini. Defaulting to 8...");
+		fps = 8;
+	}
 	uint frameTime = 125; // Default to 125ms (1000/8)
 	if (fps != 0)
 		frameTime = 1000 / fps;
@@ -391,10 +397,18 @@ void ComposerEngine::loadLibrary(uint id) {
 	Common::String filename;
 	Common::String oldGroup = _bookGroup;
 	if (getGameType() == GType_ComposerV1) {
-		if (!id || _bookGroup.empty())
-			filename = getStringFromConfig("Common", "StartPage");
-		else
-			filename = getStringFromConfig(_bookGroup, Common::String::format("%d", id));
+		if (getPlatform() == Common::kPlatformMacintosh) {
+			if (!id || _bookGroup.empty())
+				filename = getStringFromConfig("splash.rsc", "100");
+			else
+				filename = getStringFromConfig(_bookGroup + ".rsc", Common::String::format("%d", id));
+		}
+		else {
+			if (!id || _bookGroup.empty())
+				filename = getStringFromConfig("Common", "StartPage");
+			else
+				filename = getStringFromConfig(_bookGroup, Common::String::format("%d", id));
+		}
 		filename = mangleFilename(filename);
 
 		// bookGroup is the basename of the path.

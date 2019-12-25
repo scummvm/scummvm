@@ -115,6 +115,8 @@ uint32 KmScene2732::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x483C:
 		GotoState(&Klaymen::stPeekInsideReturn);
 		break;
+	default:
+		break;
 	}
 	return 0;
 }

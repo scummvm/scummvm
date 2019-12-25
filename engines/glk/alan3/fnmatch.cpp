@@ -144,6 +144,8 @@ int fnmatch(const char *pattern, const char *string, int flags) {
 				break;
 			case RANGE_NOMATCH:
 				return (FNM_NOMATCH);
+			default:
+				break;
 			}
 			++string;
 			break;

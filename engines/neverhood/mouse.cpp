@@ -157,6 +157,8 @@ uint32 Mouse::handleMessage(int messageNum, const MessageParam &param, Entity *s
 		updateCursorNum();
 		updateBounds();
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -248,6 +250,8 @@ void Mouse::updateCursorNum() {
 				_mouseCursorResource.setCursorNum(3);
 			break;
 		}
+		break;
+	default:
 		break;
 	}
 

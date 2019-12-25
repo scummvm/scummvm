@@ -155,6 +155,9 @@ void Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 				sprintf(buf + i, "%s",
 						GET_VARO_STR(_vm->_game->_script->readVarIndex()));
 				break;
+
+			default:
+				break;
 			}
 			_vm->_game->_script->skip(1);
 		} else

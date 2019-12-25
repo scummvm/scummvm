@@ -26,6 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_keyboard_state.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
@@ -227,7 +228,7 @@ bool BaseKeyboardState::readKey(Common::Event *event) {
 
 	// use ASCII value if key pressed is an alphanumeric or punctuation key
 	// keys pressed on numpad are handled in next 2 blocks
-	else if (code > Common::KEYCODE_SPACE && code < Common::KEYCODE_DELETE) {
+	else if (code >= Common::KEYCODE_SPACE && code < Common::KEYCODE_DELETE) {
 		_currentCharCode = event->kbd.ascii;
 		_currentPrintable = true;
 	}
@@ -246,18 +247,22 @@ bool BaseKeyboardState::readKey(Common::Event *event) {
 	}
 
 	// use keyCodeToVKey mapping for all other events
-	// some keys are printable from those keys
-	else {
+	// in WME 1.x some of those keys are printable
+	else if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
 		_currentCharCode = keyCodeToVKey(event);
 		_currentPrintable = code == Common::KEYCODE_BACKSPACE || 
-		                    code == Common::KEYCODE_TAB || 
-		                    code == Common::KEYCODE_RETURN || 
-		                    code == Common::KEYCODE_KP_ENTER || 
-		                    code == Common::KEYCODE_ESCAPE || 
-		                    code == Common::KEYCODE_SPACE;
+							code == Common::KEYCODE_TAB || 
+							code == Common::KEYCODE_RETURN || 
+							code == Common::KEYCODE_KP_ENTER || 
+							code == Common::KEYCODE_ESCAPE;
 	}
 
-	//_currentKeyData = KeyData;
+	// use keyCodeToVKey mapping for all other events
+	// in WME_LITE all of those key are not printable
+	else {
+		_currentCharCode = keyCodeToVKey(event);
+		_currentPrintable = false;
+	}
 
 	_currentControl = isControlDown();
 	_currentAlt     = isAltDown();
@@ -417,8 +422,6 @@ uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
 		return kVkCapital;
 	case Common::KEYCODE_ESCAPE:
 		return kVkEscape;
-	case Common::KEYCODE_SPACE:
-		return kVkSpace;
 	case Common::KEYCODE_KP9:
 	case Common::KEYCODE_PAGEUP:
 		return kVkPrior;

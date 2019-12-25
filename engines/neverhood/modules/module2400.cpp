@@ -92,6 +92,8 @@ void Module2400::createScene(int sceneNum, int which) {
 		_vm->gameState().sceneNum = 9;
 		createStaticScene(0x8C020505, 0x205018C8);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module2400::updateScene);
 	_childObject->handleUpdate();
@@ -146,6 +148,8 @@ void Module2400::updateScene() {
 			break;
 		case 9:
 			createScene(2, 1);
+			break;
+		default:
 			break;
 		}
 	}
@@ -341,6 +345,8 @@ uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entit
 		_palette->addBasePalette(0x91D3A391, 0, 65, 0);
 		_palette->startFadeToPalette(12);
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -448,6 +454,8 @@ uint32 Scene2402::handleMessage(int messageNum, const MessageParam &param, Entit
 			setMessageList(0x004AF890);
 		}
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -545,6 +553,8 @@ uint32 Scene2403::handleMessage(int messageNum, const MessageParam &param, Entit
 			sendEntityMessage(_klaymen, 0x1014, _asTape);
 			setMessageList(0x004B5D98);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -656,6 +666,8 @@ uint32 Scene2406::handleMessage(int messageNum, const MessageParam &param, Entit
 			sendEntityMessage(_klaymen, 0x1014, _asKey);
 			setMessageList(0x004B77D8);
 		}
+		break;
+	default:
 		break;
 	}
 	return messageResult;

@@ -7575,12 +7575,314 @@ static const uint16 phant1RedQuitCursorPatch[] = {
 	PATCH_END
 };
 
+// In chapter 5, the wine casks in room 20200 shimmer to indicate that they have
+//  a video to play but a script bug usually prevents them from being clicked.
+//  The code that determines whether to set a hotspot on the "spikot" object
+//  is incomplete and out of sync with the code that displays the shimmer and
+//  determines which script to run when the casks are clicked. As a result, the
+//  shimmering casks can't be clicked in chapter 5 if their contents were tasted
+//  in an earlier act. In chapter 6 the shimmering casks can be clicked again.
+//
+// We fix this by rewriting the logic that sets the hotspot to match the rest of
+//  the code in the room. The casks can now always be clicked when they shimmer.
+//  To make room we remove a call to approachVerbs: 0 as that has no effect.
+//
+// Applies to: All versions
+// Responsible method: rm20200:init
+static const uint16 phant1WineCaskHotspotSignature[] = {
+	0x89, 0x6a,                           // lsg 6a
+	0x35, 0x06,                           // ldi 06
+	0x1a,                                 // eq? [ is chapter 6? ]
+	0x31, 0x09,                           // bnt 09
+	SIG_MAGICDWORD,
+	0x78,                                 // push1
+	0x38, SIG_UINT16(0x00d8),             // pushi 00d8 [ flag 216 ]
+	0x45, 0x03, SIG_UINT16(0x0002),       // callb proc0_3 [ seen barrel video? ]
+	0x18,                                 // not
+	0x2f, 0x0f,                           // bt 0f
+	0x89, 0x6a,                           // lsg 6a 
+	0x35, 0x06,                           // ldi 06
+	0x1c,                                 // ne? [ is not chapter 6? ]
+	0x31, 0x21,                           // bnt 21 [ skip hotspot ]
+	0x78,                                 // push1
+	0x39, 0x1d,                           // pushi 1d [ flag 29 ]
+	0x45, 0x03, SIG_UINT16(0x0002),       // callb proc0_3 [ tasted wine? ]
+	0x18,                                 // not
+	0x31, 0x17,                           // bnt 17 [ skip hotspot ]
+	0x38, SIG_SELECTOR16(init),           // pushi init
+	0x76,                                 // push0
+	0x38, SIG_SELECTOR16(approachVerbs),  // pushi approachVerbs
+	0x78,                                 // push1
+	0x76,                                 // push0
+	SIG_ADDTOOFFSET(+11),
+	0x4a, SIG_UINT16(0x0012),             // send 12 [ spikot init: approachVerbs: 0 ... ]
+	SIG_END
+};
+
+static const uint16 phant1WineCaskHotspotPatch[] = {
+	0x78,                                 // push1
+	0x38, PATCH_UINT16(0x00d8),           // pushi 00d8 [ flag 216 ]
+	0x45, 0x03, PATCH_UINT16(0x0002),     // callb proc0_3 [ seen barrel video? ]
+	0x2f, 0x30,                           // bt 30 [ skip hotspot ]
+	0x39, 0x06,                           // pushi 06
+	0x81, 0x6a,                           // lag 6a
+	0x04,                                 // sub
+	0x31, 0x17,                           // bnt 17 [ show hotspot if chapter 6 ]
+	0x78,                                 // push1
+	0x1a,                                 // eq?
+	0x31, 0x0a,                           // bnt 0a [ skip mirror test if not chapter 5 ]
+	0x78,                                 // push1
+	0x38, PATCH_UINT16(0x0123),           // pushi 0123 [ flag 291 ]
+	0x45, 0x03, PATCH_UINT16(0x0002),     // callb proc0_3 [ seen mirror video? ]
+	0x2f, 0x09,                           // bt 09 [ set hotspot ]
+	0x78,                                 // push1
+	0x39, 0x1d,                           // pushi 1d [ flag 29 ]
+	0x45, 0x03, PATCH_UINT16(0x0002),     // callb proc0_3 [ tasted wine? ]
+	0x2f, 0x12,                           // bt 12 [ skip hotspot ]
+	0x38, PATCH_SELECTOR16(init),         // pushi init
+	0x76,                                 // push0
+	PATCH_ADDTOOFFSET(+11),
+	0x4a, PATCH_UINT16(0x000c),           // send 0c [ spikot init: ... ]
+	PATCH_END
+};
+
+// The darkroom in the chapter 7 chase, room 45950, has a bug which deletes the
+//  chase history file and leaves the game in a state that can't be completed.
+//
+// Every action during the chase is written to chase.dat in order to support the
+//  review feature which plays back the entire sequence. rm45950:init tests
+//  several conditions to see how it should initialize the file. If a previous
+//  chase.dat exists and the current game was initially started in chapter 7
+//  then an unusual code path is taken which fails to clear flag 134. This flag
+//  tells the room that the chase is starting. Upon returning for the book with
+//  this flag incorrectly set, rm45950:init deletes chase.dat and all history is
+//  lost. Upon playback, items obtained prior to the darkroom will be skipped
+//  and become unobtainable, such as the glass shard.
+//
+// We fix this by clearing flag 134 in the unusual code path so that room 45950
+//  never tries to initialize the chase history upon returning.
+//
+// Applies to: All versions
+// Responsible method: rm45950:init
+static const uint16 phant1DeleteChaseFileSignature[] = {
+	0x32, SIG_UINT16(0x0148),       // jmp 0148 [ end of method ]
+	SIG_ADDTOOFFSET(+0x36),
+	0x78,                           // push1
+	0x38, SIG_MAGICDWORD,           // pushi 0086
+	      SIG_UINT16(0x0086),
+	0x45, 0x02, SIG_UINT16(0x0002), // callb proc0_2 [ clear flag 134 ]
+	0x32, SIG_UINT16(0x0107),       // jmp 0107 [ end of method ]
+	SIG_END
+};
+
+static const uint16 phant1DeleteChaseFilePatch[] = {
+	0x32, PATCH_UINT16(0x0036),     // jmp 0036 [ clear flag 134 ]
+	PATCH_END
+};
+
+// Quitting ScummVM, returning to the launcher, or terminating the game in any
+//  way outside of the game's menus during the chapter 7 chase leaves the saved
+//  game in a broken state which will crash ScummVM when loaded. The chase was
+//  programmed with the expectation that it could never end under unexpected
+//  circumstances, which is a bold stance for a Sierra game.
+//
+// Each saved game consists of the file phantsg.#, and once the chase beings, an
+//  additional chase file that records all actions for playback. This is named
+//  chase.dat when the chase is running and chasedun.# when it isn't. The file
+//  is renamed when transitioning to and from the main menu. The existence of
+//  chasedun.# tells the main menu that it should put the game in the chapter 7
+//  section. All of this depends on the chase formally ending through scripts
+//  that can restore the file name. If the game terminates without this cleanup
+//  then the chase file is never renamed and can't be associated with its slot.
+//  The save will then be incorrectly demoted to a non-chapter 7 save. Upon
+//  attempting to load this broken save, a chase script will attempt to play the
+//  missing chase.dat, seek beyond the beginning, and fail an assertion in a
+//  stream class. This never picks up the chase.dat from the previous run due to
+//  a startup script which deletes stray chase.dat files.
+//
+// We fix this by copying chasedun.# to chase.dat instead of renaming it. This
+//  leaves the original file intact along with phantsg.# in case the game
+//  terminates without the scripts getting a chance to cleanup the file system.
+//  This patch is currently the only known caller of kFileIOCopy.
+//
+// Applies to: All versions
+// Responsible method: Exported procedure #6 in script 45951
+static const uint16 phant1CopyChaseFileSignature[] = {
+	0x39, 0x03,                     // pushi 03
+	0x39, 0x0b,                     // pushi 0b [ kFileIORename ]
+	0x39, SIG_SELECTOR8(data),      // pushi data
+	0x76,                           // push0
+	0x85, 0x00,                     // lat 00
+	0x4a, SIG_UINT16(0x0004),       // send 04 [ temp0 data? ]
+	0x36,                           // push    [ "chasedun.#" ]
+	0x39, SIG_MAGICDWORD,           // pushi data
+	      SIG_SELECTOR8(data),
+	0x76,                           // push0
+	0x85, 0x02,                     // lat 02
+	0x4a, SIG_UINT16(0x0004),       // send 04 [ temp2 data? ]
+	0x36,                           // push    [ "chase.dat" ]
+    0x43, 0x5d, SIG_UINT16(0x0006), // callk FileIO 06
+	SIG_END
+};
+
+static const uint16 phant1CopyChaseFilePatch[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x39, 0x0c,                     // pushi 0c [ kFileIOCopy ]
+	PATCH_END
+};
+
+// During the chase, the west exit in room 46980 has incorrect logic which kills
+//  the player if they went to the crypt with the crucifix, among other bugs.
+//
+// Room 46980 takes place in the chapel and connects the secret passages to the
+//  crypt. The player initially enters from the west and the crypt is to the
+//  east. The west exit has incorrect logic with several consequences, but the
+//  harshest is that if the player came from the crypt without beads then Don is
+//  waiting for them. This is wrong because if the player has the crucifix then
+//  there are no beads in the game, and also because Don is still in the crypt
+//  where the player pushed a statue on him in the previous room.
+//
+// Sierra eventually fixed this by removing the beads from the equation and
+//  swapping the transposed previous room test, but the fix only appears in the
+//  Italian version, which was the final CD release. We replace the incorrect
+//  logic with Sierra's final version.
+//
+// Applies to: All versions except Italian
+// Responsible method: westExit:doVerb
+static const uint16 phant1ChapelWestExitSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(has),      // pushi has
+	0x78,                           // push1
+	0x39, 0x0f,                     // pushi 0f
+	0x81, 0x00,                     // lag 00
+	0x4a, SIG_UINT16(0x0006),       // send 06 [ ego has: 15 ]
+	0x2f, 0x06,                     // bt 06
+	0x89, 0x0c,                     // lsg 0c
+	0x34, SIG_UINT16(0xb680),       // ldi b680
+	0x1a,                           // eq? [ previous room == 46720 ]
+	SIG_END
+};
+
+static const uint16 phant1ChapelWestExitPatch[] = {
+	0x32, PATCH_UINT16(0x000a),     // jmp 000a [ skip inventory check ]
+	PATCH_ADDTOOFFSET(+15),
+	0x1c,                           // ne? [ previous room != 46720 ]
+	PATCH_END
+};
+
+// When reviewing the chapter 7 chase, the game fails to reset the flag that's
+//  set when Adrian stabs Don and escapes the nursery. This can only happen once
+//  and so the stale flag causes the review feature to play the wrong animation
+//  of Don overpowering Adrian instead of Adrian stabbing Don and escaping.
+//
+// We fix this as Sierra did in the Italian version by clearing flag 18 during
+//  the chase initialization.
+//
+// Applies to: All versions except Italian
+// Responsible method: sChaseBegin:changeState(0)
+static const uint16 phant1ResetStabDonFlagSignature[] = {
+	SIG_MAGICDWORD,
+	0x78,                           // push1
+	0x38, SIG_UINT16(0x019f),       // pushi 019f
+	SIG_ADDTOOFFSET(+4),
+	0x7e, SIG_ADDTOOFFSET(+2),      // line
+	0x78,                           // push1
+	0x39, 0x7b,                     // pushi 7b
+	0x45, 0x02, SIG_UINT16(0x0002), // callb proc0_2 [ clear flag 123 ]
+	0x7e, SIG_ADDTOOFFSET(+2),      // line
+	0x89, 0x0c,                     // lsg 0c
+	0x34, SIG_UINT16(0x0384),       // ldi 0384
+	0x1a,                           // eq?
+	0x18,                           // not
+	SIG_END,
+};
+
+static const uint16 phant1ResetStabDonFlagPatch[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x78,                               // push1
+	0x39, 0x7b,                         // pushi 7b
+	0x45, 0x02, PATCH_UINT16(0x0002),   // callb proc0_2 [ clear flag 123 ]
+	0x78,                               // push1
+	0x39, 0x12,                         // pushi 12
+	0x45, 0x02, PATCH_UINT16(0x0002),	// callb proc0_2 [ clear flag 18 ]
+	0x89, 0x0c,                         // lsg 0c
+	0x34, PATCH_UINT16(0x0384),         // ldi 0384
+	0x1c,                               // ne?
+	PATCH_END
+};
+
+// The censorship for videos 1920 and 2020 are out of sync and the latter has
+//  an incorrect coordinate. The frame numbers for the blobs are wrong and so
+//  they appear during normal frames but not during the gore. These videos play
+//  in room 40100 when attempting to open or unbar the door. We fix the frame
+//  numbers to be in sync with the videos and use the correct coordinate from
+//  video 1920 which has the same censored frames.
+//
+// Applies to: All versions
+// Responsible method: myList:init
+static const uint16 phant1Video1920CensorSignature[] = {
+	0x38, SIG_UINT16(0x00dd),       // pushi 221 [ blob 1 start frame ]
+	SIG_ADDTOOFFSET(+43),
+	0x39, SIG_MAGICDWORD, 0xff,     // pushi -1
+	0x38, SIG_UINT16(0x00e1),       // pushi 225 [ blob 1 end frame ]
+	SIG_ADDTOOFFSET(+20),
+	0x38, SIG_UINT16(0x00fb),       // pushi 251 [ blob 2 start frame ]
+	SIG_ADDTOOFFSET(+46),
+	0x38, SIG_UINT16(0x0117),       // pushi 279 [ blob 2 end frame ]
+	SIG_END
+};
+
+static const uint16 phant1Video1920CensorPatch[] = {
+	0x38, PATCH_UINT16(0x00c6),     // pushi 198 [ blob 1 start frame ]
+	PATCH_ADDTOOFFSET(+45),
+	0x38, PATCH_UINT16(0x00ca),     // pushi 202 [ blob 1 end frame ]
+	PATCH_ADDTOOFFSET(+20),
+	0x38, PATCH_UINT16(0x00e4),     // pushi 228 [ blob 2 start frame ]
+	PATCH_ADDTOOFFSET(+46),
+	0x38, PATCH_UINT16(0x00fe),     // pushi 254 [ blob 2 end frame ]
+	PATCH_END
+};
+
+static const uint16 phant1Video2020CensorSignature[] = {
+	0x38, SIG_UINT16(0x014f),       // pushi 335 [ blob 1 start frame ]
+	SIG_ADDTOOFFSET(+18),
+	0x38, SIG_UINT16(0x0090),       // pushi 144 [ blob 1 left coordinate ]
+	SIG_ADDTOOFFSET(+23),
+	0x39, SIG_MAGICDWORD, 0xff,     // pushi -1
+	0x38, SIG_UINT16(0x0153),       // pushi 339 [ blob 1 end frame ]
+	SIG_ADDTOOFFSET(+20),
+	0x38, SIG_UINT16(0x0160),       // pushi 352 [ blob 2 start frame ]
+	SIG_ADDTOOFFSET(+46),
+	0x38, SIG_UINT16(0x016a),       // pushi 362 [ blob 2 end frame ]
+	SIG_END
+};
+
+static const uint16 phant1Video2020CensorPatch[] = {
+	0x38, PATCH_UINT16(0x012f),     // pushi 303 [ blob 1 start frame ]
+	PATCH_ADDTOOFFSET(+18),
+	0x38, PATCH_UINT16(0x0042),     // pushi 66  [ blob 1 left coordinate ]
+	PATCH_ADDTOOFFSET(+25),
+	0x38, PATCH_UINT16(0x0133),     // pushi 307 [ blob 1 end frame ]
+	PATCH_ADDTOOFFSET(+20),
+	0x38, PATCH_UINT16(0x014c),     // pushi 332 [ blob 2 start frame ]
+	PATCH_ADDTOOFFSET(+46),
+	0x38, PATCH_UINT16(0x0168),     // pushi 360 [ blob 2 end frame ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	{  true,    23, "make cursor red after clicking quit",         1, phant1RedQuitCursorSignature,    phant1RedQuitCursorPatch },
+	{  true,    26, "fix video 1920 censorship",                   1, phant1Video1920CensorSignature,  phant1Video1920CensorPatch },
+	{  true,    26, "fix video 2020 censorship",                   1, phant1Video2020CensorSignature,  phant1Video2020CensorPatch },
 	{  true,   901, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,  1111, "ignore audio settings from save game",        1, phant1SavedVolumeSignature,      phant1SavedVolumePatch },
 	{  true, 20200, "fix broken rat init in sEnterFromAlcove",     1, phant1RatSignature,              phant1RatPatch },
+	{  true, 20200, "fix chapter 5 wine cask hotspot",             1, phant1WineCaskHotspotSignature,  phant1WineCaskHotspotPatch },
+	{  true, 45950, "fix chase file deletion",                     1, phant1DeleteChaseFileSignature,  phant1DeleteChaseFilePatch },
+	{  true, 45950, "reset stab don flag",                         1, phant1ResetStabDonFlagSignature, phant1ResetStabDonFlagPatch },
+	{  true, 45951, "copy chase file instead of rename",           1, phant1CopyChaseFileSignature,    phant1CopyChaseFilePatch },
+	{  true, 46980, "fix chapel chase west exit",                  1, phant1ChapelWestExitSignature,   phant1ChapelWestExitPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sci2BenchmarkSignature,          sci2BenchmarkPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -13976,15 +14278,23 @@ static const uint16 qfg4ChaseRepeatsPatch[] = {
 // We fix this by disposing of each cast member before painting black instead of
 //  hiding them. This hides them and terminates their motions. This exposes the
 //  previously unused 300 cycle delay, which is much longer than normal, so we
-//  also change that to 2 seconds. This is consistent with existing behavior
-//  and it's the same delay used in room 290's working version of this script.
+//  also change that to 4 seconds. This is consistent with existing behavior
+//  and close to the delay used in room 290's working version of this script.
 //  The majority of this patch is to free up the single byte needed to change
 //  the 8-bit hide selector to 16-bit dispose.
+//
+// Several rooms that sBlackOut takes place in, such as 557, have doit methods
+//  that can initiate new necrotaur motions after the cast has been disposed,
+//  which also crashes. We fix this by clearing flag 35 as each of these rooms
+//  requires it to be set to set a necrotaur motion. This is the "hunt" flag.
+//  It's okay to clear it here as it gets cleared in the dungeon.
 //
 // Applies to: All versions
 // Responsible method: sBlackOut:changeState(3)
 // Fixes bug: #11056
 static const uint16 qfg4NecrotaurBlackoutSignature[] = {
+	0x31, 0x4f,                         // bnt 4f [ next state ]
+	SIG_ADDTOOFFSET(+11),
 	SIG_MAGICDWORD,
 	0x39, SIG_SELECTOR8(hide),          // pushi hide
 	0x81, 0x05,                         // lag 05
@@ -14006,11 +14316,18 @@ static const uint16 qfg4NecrotaurBlackoutSignature[] = {
 	0x36,                               // push [ room:plane for kUpdatePlane ]
 	SIG_ADDTOOFFSET(+29),
 	0x34, SIG_UINT16(0x012c),           // ldi 012c
-	0x65,                               // aTop cycles [ cycles = 300 ]
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop cycles [ cycles = 300 ]
+	0x33, 0x1c,                         // jmp 1c [ end of method ]
+	0x3c,                               // dup
+	0x35, SIG_ADDTOOFFSET(+1),          // ldi 04 or 05
+	0x1a,                               // eq?
+	0x31, 0x16,                         // bnt 16 [ end of method ]
 	SIG_END
 };
 
 static const uint16 qfg4NecrotaurBlackoutPatch[] = {
+	0x31, 0x55,                         // bnt 55 [ next state ]
+	PATCH_ADDTOOFFSET(+11),
 	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
 	0x81, 0x05,                         // lag 05
 	0x4a, PATCH_UINT16(0x0006),         // send 06 [ cast eachElementDo: dispose ]
@@ -14023,13 +14340,18 @@ static const uint16 qfg4NecrotaurBlackoutPatch[] = {
 	0x39, PATCH_SELECTOR8(back),        // pushi back
 	0x39, 0x01,                         // pushi 01
 	0x39, 0x00,                         // pushi 00
-	0x39, PATCH_GETORIGINALBYTE(+13),   // pushi picture
+	0x39, PATCH_GETORIGINALBYTE(+26),   // pushi picture
 	0x39, 0x01,                         // pushi 01
 	0x39, 0xff,                         // pushi ff
 	0x4a, PATCH_UINT16(0x000c),         // send 0c [ room:plane back: 0 picture: -1 ]
 	PATCH_ADDTOOFFSET(+29),
-	0x34, PATCH_UINT16(0x0002),         // ldi 0002
-	0x65, PATCH_GETORIGINALBYTEADJUST(+65, +2), // aTop seconds [ seconds = 2 ]
+	0x35, 0x04,                         // ldi 04
+	0x65, PATCH_GETORIGINALBYTEADJUST(+78, +2), // aTop seconds [ seconds = 4 ]
+	0x78,                               // push1
+	0x39, 0x23,                         // pushi 23
+	0x45, 0x03, PATCH_UINT16(0x0002),   // callb proc0_3 02 [ clear flag 35 ]
+	0x3a,                               // toss
+	0x48,                               // ret
 	PATCH_END
 };
 

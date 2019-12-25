@@ -322,6 +322,8 @@ void Module2700::createScene(int sceneNum, int which) {
 		_vm->gameState().sceneNum = 31;
 		_childObject = new Scene2732(_vm, this);
 		break;
+	default:
+		break;
 	}
 	SetUpdateHandler(&Module2700::updateScene);
 	_childObject->handleUpdate();
@@ -498,6 +500,8 @@ void Module2700::updateScene() {
 		case 31:
 			createScene(28, 1);
 			break;
+		default:
+			break;
 		}
 	} else {
 		switch (_sceneNum) {
@@ -513,6 +517,8 @@ void Module2700::updateScene() {
 				_radioMusicInitialized = true;
 			}
 			break;
+		default:
+			break;
 		}
 	}
 }
@@ -525,6 +531,8 @@ uint32 Module2700::handleMessage(int messageNum, const MessageParam &param, Enti
 		_soundIndex++;
 		if (_soundIndex >= 4)
 			_soundIndex = 0;
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -616,6 +624,8 @@ uint32 Scene2701::hmRidingCar(int messageNum, const MessageParam &param, Entity 
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -633,6 +643,8 @@ uint32 Scene2701::hmCarAtHome(int messageNum, const MessageParam &param, Entity 
 		break;
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -751,6 +763,8 @@ uint32 Scene2702::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
+		break;
+	default:
 		break;
 	}
 	return 0;
@@ -903,6 +917,8 @@ uint32 Scene2703::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -1002,6 +1018,8 @@ uint32 Scene2704::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
 		break;
+	default:
+		break;
 	}
 	return 0;
 }
@@ -1082,6 +1100,8 @@ uint32 Scene2706::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
+		break;
+	default:
 		break;
 	}
 	return 0;

@@ -608,6 +608,8 @@ int Scott::getInput(int *vb, int *no) {
 			case 'i':
 				strcpy(verb, "INVENTORY");
 				break;
+			default:
+				break;
 			}
 		}
 		nc = whichWord(verb, _nouns);
@@ -721,6 +723,8 @@ int Scott::performLine(int ct) {
 			// Only seen in Brian Howarth games so far
 			if (_currentCounter != dv)
 				return 0;
+			break;
+		default:
 			break;
 		}
 		cc++;

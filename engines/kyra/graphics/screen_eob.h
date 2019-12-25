@@ -39,6 +39,7 @@ public:
 
 	void setClearScreenDim(int dim);
 	void clearCurDim();
+	void clearCurDimOvl(int pageNum);
 
 	void setMouseCursor(int x, int y, const byte *shape);
 	void setMouseCursor(int x, int y, const byte *shape, const uint8 *ovl);
@@ -90,14 +91,28 @@ public:
 	void convertToHiColor(int page);
 	void shadeRect(int x1, int y1, int x2, int y2, int shadingLevel);
 
+	// PC-98 specific
+	void selectPC98Palette(int paletteIndex, Palette &dest, int brightness = 0, bool set = false);
+	void decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize);
+	void decodePC98PlanarBitmap(uint8 *srcDstBuffer, uint8 *tmpBuffer, uint16 size = 64000);
+
+	struct PalCycleData {
+		const int8 *data;
+		uint8 delay;
+	};
+
+	void initPC98PaletteCycle(int paletteIndex, PalCycleData *data);
+	void updatePC98PaletteCycle(int brightness);
+
+	PalCycleData *_activePalCycle;
+	uint8 *_cyclePalette;
+
 	// Amiga specific
 	void loadSpecialAmigaCPS(const char *fileName, int destPage, bool isGraphics);
-
 	// This is a simple way of emulating the Amiga copper list palette magic for more than 32 colors.
 	// I use colors 32 to 63 for these extra colors (which the Amiga copper sends to the color
 	// registers on the fly at vertical beam position 120).
-	void setupDualPalettesSplitScreen(Palette &top, Palette &bottom);
-	void disableDualPalettesSplitScreen();
+	void setDualPalettes(Palette &top, Palette &bottom);
 
 private:
 	void updateDirtyRects();
@@ -128,13 +143,17 @@ private:
 	uint8 *_dsTempPage;
 	uint8 *_shpBuffer;
 	uint8 *_convertHiColorBuffer;
-	bool _dualPaletteMode;
 
 	uint16 *_cgaDitheringTables[2];
 	const uint8 *_cgaMappingDefault;
 
 	uint8 *_egaDitheringTable;
 	uint8 *_egaDitheringTempPage;
+
+	// hard coded 16 color palettes for PC98 version of EOB1
+	const uint8 *_palette16c[10];
+
+	Common::String _cpsFilePattern;
 
 	const uint16 _cursorColorKey16Bit;
 
@@ -144,12 +163,160 @@ private:
 };
 
 /**
-* SJIS Font variant used in the intro and outro of EOB II FM-Towns. It appears twice as large, since it is not rendered on the hires overlay pages
+* Implementation of the Font interface for old DOS fonts used
+* in EOB and EOB II.
+*
+*/
+class OldDOSFont : public Font {
+public:
+	OldDOSFont(Common::RenderMode mode, uint8 shadowColor);
+	virtual ~OldDOSFont();
+
+	virtual bool load(Common::SeekableReadStream &file);
+	int getHeight() const { return _height; }
+	int getWidth() const { return _width; }
+	int getCharWidth(uint16 c) const;
+	void setColorMap(const uint8 *src);
+	void set16bitColorMap(const uint16 *src) { _colorMap16bit = src; }
+	virtual void setStyle(FontStyle style) { _style = style; }
+	void drawChar(uint16 c, byte *dst, int pitch, int bpp) const;
+
+protected:
+	void unload();
+
+	FontStyle _style;
+	const uint8 *_colorMap8bit;
+	uint8 *_data;
+	uint16 *_bitmapOffsets;
+	int _width, _height;
+	int _numGlyphs;
+	uint8 _shadowColor;
+
+private:
+	void drawCharIntern(uint16 c, byte *dst, int pitch, int bpp, int col1, int col2) const;
+	virtual uint16 convert(uint16 c) const;
+	Common::RenderMode _renderMode;
+	const uint16 *_colorMap16bit;
+
+	static uint16 *_cgaDitheringTable;
+	static int _numRef;
+};
+
+/**
+ * Implementation of the Font interface for native AmigaDOS system fonts (normally to be loaded via diskfont.library)
+ */
+class Resource;
+class AmigaDOSFont : public Font {
+public:
+	AmigaDOSFont(Resource *res, bool needsLocalizedFont = false);
+	~AmigaDOSFont() { unload(); }
+
+	bool load(Common::SeekableReadStream &file);
+	int getHeight() const { return _height; }
+	int getWidth() const { return _width; }
+	int getCharWidth(uint16 c) const;
+	void setColorMap(const uint8 *src) { _colorMap = src; }
+	void drawChar(uint16 c, byte *dst, int pitch, int) const;
+
+	static void errorDialog(int index);
+
+private:
+	void unload();
+
+	struct TextFont {
+		TextFont() : data(0), bitmap(0), location(0), spacing(0), kerning(0), height(0), width(0), baseLine(0), firstChar(0), lastChar(0), modulo(0) {}
+		~TextFont() {
+			delete[] data;
+		}
+
+		uint16 height;
+		uint16 width;
+		uint16 baseLine;
+		uint8 firstChar;
+		uint8 lastChar;
+		uint16 modulo;
+		const uint8 *data;
+		const uint8 *bitmap;
+		const uint16 *location;
+		const int16 *spacing;
+		const int16 *kerning;
+	};
+
+	TextFont *loadContentFile(const Common::String fileName);
+	void selectMode(int mode);
+
+	struct FontContent {
+		FontContent() : height(0), style(0), flags(0) {}
+		~FontContent() {
+			data.reset();
+		}
+
+		Common::String contentFile;
+		Common::SharedPtr<TextFont> data;
+		uint16 height;
+		uint8 style;
+		uint8 flags;
+	};
+
+	int _width, _height;
+	uint8 _first, _last;
+	FontContent *_content;
+	uint16 _numElements;
+	uint16 _selectedElement;
+
+	const uint8 *_colorMap;
+	const uint16 _maxPathLen;
+	const bool _needsLocalizedFont;
+
+	static uint8 _errorDialogDisplayed;
+
+	Resource *_res;
+};
+
+/**
+* SJIS Font variant used in EOB I PC-98. It converts 1-byte characters into 2-byte characters and has a specific shadowing to the left.
+*/
+class SJISFontEoB1PC98 : public SJISFont {
+public:
+	SJISFontEoB1PC98(Common::SharedPtr<Graphics::FontSJIS> &font, /*uint8 shadowColor,*/ const uint16 *convTable1, const uint16 *convTable2);
+	virtual ~SJISFontEoB1PC98() {}
+	virtual int getCharWidth(uint16 c) const;
+	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;
+
+private:
+	uint16 convert(uint16 c) const;
+	const uint16 *_convTable1, *_convTable2;
+	bool _defaultConv;
+	/*uint8 _shadowColor;*/
+};
+
+/**
+* OldDOSFont variant used in EOB I PC-98. It uses the same drawing routine, but has a different loader. It contains
+* ASCII and Katakana characters and requires several conversion tables to display these. It gets drawn on the SJIS overlay.
+*/
+class Font12x12PC98 : public OldDOSFont{
+public:
+	Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable);
+	virtual ~Font12x12PC98();
+	bool usesOverlay() const { return true; }
+	int getHeight() const { return _height >> 1; }
+	int getWidth() const { return _width >> 1; }
+	int getCharWidth(uint16 c) const { return _width >> 1; };
+	virtual bool load(Common::SeekableReadStream &file);
+
+private:
+	virtual uint16 convert(uint16 c) const;
+	const uint16 *_convTable1, *_convTable2;
+	uint16 *_bmpOffs;
+};
+
+/**
+* SJIS Font variant used in the intro and outro of EOB II FM-Towns. It appears twice as large, since it is not rendered on the hires overlay pages.
 */
 class SJISFontLarge : public SJISFont {
 public:
-	SJISFontLarge(Graphics::FontSJIS *font);
-	virtual ~SJISFontLarge() { unload(); }
+	SJISFontLarge(Common::SharedPtr<Graphics::FontSJIS> &font);
+	virtual ~SJISFontLarge() {}
 
 	virtual bool usesOverlay() const { return false; }
 	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;

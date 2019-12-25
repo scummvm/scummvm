@@ -883,6 +883,9 @@ sc_bool obj_shows_initial_description(sc_gameref_t game, sc_int object) {
 		initialposition = prop_get_integer(bundle, "I<-sis", vt_key) - 3;
 		return gs_object_position(game, object) == initialposition;
 	}
+
+	default:
+		break;
 	}
 
 	/* What you talkin' 'bout, Willis? */

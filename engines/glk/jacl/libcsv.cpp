@@ -176,6 +176,8 @@ int csv_fini(struct csv_parser *p, void (*cb1)(void *, size_t, void *), void (*c
 		SUBMIT_ROW(p, -1);
 	case ROW_NOT_BEGUN: /* Already ended properly */
 		;
+	default:
+		break;
 	}
 
 	/* Reset parser */

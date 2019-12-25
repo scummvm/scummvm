@@ -328,6 +328,7 @@ private:
 	const uint16 _baseTempo;
 
 	PC98AudioCore *_pc98a;
+	Audio::Mixer *_mixer;
 	const SciVersion _version;
 };
 
@@ -1317,26 +1318,27 @@ void MidiPart_PC9801::assignFreeChannels() {
 MidiPart_PC9801 **MidiDriver_PC9801::_parts = 0;
 
 MidiDriver_PC9801::MidiDriver_PC9801(Audio::Mixer *mixer, SciVersion version)
-	: _version(version), _pc98a(0), _chan(0), _numChan(6), _internalVersion(0xFF), _ssgPatchOffset(0xFF), _patchSize(0),
+	: _mixer(mixer), _version(version), _pc98a(0), _chan(0), _numChan(6), _internalVersion(0xFF), _ssgPatchOffset(0xFF), _patchSize(0),
 	_timerProc(0), _timerProcPara(0), _baseTempo(10080), _ready(false), _isOpen(false), _masterVolume(0x0f) ,_soundOn(true), _playID(0),
 	_polyphony(9), _channelMask1(0x10), _channelMask2(0x02) {
-	_pc98a =
-#ifdef SCI_PC98_AUDIO_EXTENDED
-		new PC98AudioCore(mixer, this, kType86);
-#else
-		new PC98AudioCore(mixer, this, kType26);
-#endif
 }
 
 MidiDriver_PC9801::~MidiDriver_PC9801() {
-	_ready = false;
 	close();
-	delete _pc98a;
 }
 
 int MidiDriver_PC9801::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
+
+	if (!_pc98a) {
+		_pc98a =
+#ifdef SCI_PC98_AUDIO_EXTENDED
+		new PC98AudioCore(_mixer, this, kType86);
+#else
+		new PC98AudioCore(_mixer, this, kType26);
+#endif
+	}
 
 	if (!_ready) {
 		if (!_pc98a->init())
@@ -1413,7 +1415,8 @@ void MidiDriver_PC9801::close() {
 	bool ready = _ready;
 	_isOpen = _ready = false;
 
-	PC98AudioCore::MutexLock lock = _pc98a->stackLockMutex();
+	delete _pc98a;
+	_pc98a = 0;
 
 	if (_parts) {
 		for (int i = 0; i < 16; ++i) {
@@ -1624,8 +1627,14 @@ bool MidiDriver_PC9801::loadInstruments(const SciSpan<const uint8> &data) {
 }
 
 void MidiDriver_PC9801::updateParser() {
-	if (_timerProc)
+	if (_timerProc) {
+		// The mutex lock has to be lifted, before entering the SCI engine space. The engine has its owns mutex and the different threads
+		// will often cause an immediate lockup (each thread caught in the mutex lock of the other). I consider this safe for all realistic
+		// scenarios, since a reentry of the space guarded by the PC98 audio mutex is not possible without triggering another mutex lock.
+		// I have also rearranged the driver deconstruction appropriately.
+		PC98AudioCore::MutexLock tempUnlock = _pc98a->stackUnlockMutex();
 		_timerProc(_timerProcPara);
+	}
 }
 
 void MidiDriver_PC9801::updateChannels() {

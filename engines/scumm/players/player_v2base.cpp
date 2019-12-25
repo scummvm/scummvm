@@ -504,6 +504,9 @@ void Player_V2Base::execute_cmd(ChannelInfo *channel) {
 				if (opcode == 0)
 					goto end;
 				break;
+
+			default:
+				break;
 			}
 		} else { // opcode < 0xf8
 			for (;;) {

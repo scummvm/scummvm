@@ -51,6 +51,8 @@ bool access_xarray(XArrayType &the_xarray, int index, void *&result, AccessType 
 	case POKE_ACCESS:
 		the_xarray[index - 1] = result;
 		break;
+	default:
+		break;
 	}
 
 	return true;

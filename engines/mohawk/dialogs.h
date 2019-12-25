@@ -151,11 +151,9 @@ private:
 
 #ifdef ENABLE_RIVEN
 
-class MohawkEngine_Riven;
-
 class RivenOptionsDialog : public MohawkOptionsDialog {
 public:
-	explicit RivenOptionsDialog(MohawkEngine_Riven *vm);
+	explicit RivenOptionsDialog();
 	~RivenOptionsDialog() override;
 
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
@@ -167,8 +165,6 @@ public:
 	uint32 getTransitions() const;
 	void setTransitions(uint32 mode);
 private:
-	MohawkEngine_Riven *_vm;
-
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_waterEffectCheckbox;
 	GUI::StaticTextWidget *_transitionModeCaption;

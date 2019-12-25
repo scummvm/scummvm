@@ -56,6 +56,7 @@ public:
 	void bitBlitRects();
 
 	// AMIGA specific
+	void setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b);
 	virtual void postProcessCursor(uint8 *data, int width, int height, int pitch);
 
 protected:

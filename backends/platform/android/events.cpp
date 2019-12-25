@@ -97,7 +97,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 		switch (arg2) {
 
-		// special case. we'll only get it's up event
+		// special case. we'll only get its key-up event
 		case JKEYCODE_BACK:
 			if (_swap_menu_and_back) {
 				e.type = Common::EVENT_MAINMENU;
@@ -109,7 +109,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			}
 			return;
 
-		// special case. we'll only get it's up event
+		// special case. we'll only get its key-up event
 		case JKEYCODE_MENU:
 			if (_swap_menu_and_back) {
 				e.kbd.keycode = Common::KEYCODE_ESCAPE;
@@ -239,15 +239,15 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			break;
 		}
 
-		if (arg4 & JMETA_SHIFT)
+		if (arg4 & JMETA_SHIFT_MASK)
 			e.kbd.flags |= Common::KBD_SHIFT;
 		// JMETA_ALT is Fn on physical keyboards!
 		// when mapping this to ALT - as we know it from PC keyboards - all
 		// Fn combos will be broken (like Fn+q, which needs to end as 1 and
 		// not ALT+1). Do not want.
-		//if (arg4 & JMETA_ALT)
+		//if (arg4 & JMETA_ALT_MASK)
 		//	e.kbd.flags |= Common::KBD_ALT;
-		if (arg4 & (JMETA_SYM | JMETA_CTRL))
+		if (arg4 & (JMETA_SYM_ON | JMETA_CTRL_MASK))
 			e.kbd.flags |= Common::KBD_CTRL;
 
 		pushEvent(e);
@@ -281,7 +281,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 				// the longer the button held, the faster the pointer is
 				// TODO put these values in some option dlg?
-				int f = CLIP(arg4, 1, 8) * _dpad_scale * 100 / s;
+				int f = CLIP(arg5, 1, 8) * _dpad_scale * 100 / s;
 
 				if (arg2 == JKEYCODE_DPAD_UP || arg2 == JKEYCODE_DPAD_LEFT)
 					*c -= f;

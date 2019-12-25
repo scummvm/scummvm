@@ -92,6 +92,7 @@ void EvilFish::advance() {
 
 	switch (_state) {
 	case kStateNone:
+	default:
 		break;
 
 	case kStateSwimLeft:

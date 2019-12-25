@@ -31,7 +31,9 @@ namespace Kyra {
 
 class EoBEngine : public EoBCoreEngine {
 friend class GUI_EoB;
+friend class EoBSeqPlayerCommon;
 friend class EoBIntroPlayer;
+friend class EoBPC98FinalePlayer;
 friend class EoBAmigaFinalePlayer;
 public:
 	EoBEngine(OSystem *system, const GameFlags &flags);
@@ -48,18 +50,44 @@ private:
 	int mainMenuLoop();
 	int _menuChoiceInit;
 
+	struct RenderModePalFile {
+		int renderMode;
+		char filename[12];
+	};
+
+	struct TitleScreenConfig {
+		const Common::Platform platform;
+		const char bmpFile[12];
+		const RenderModePalFile *palFiles;
+		const int pc98PaletteID;
+		const int page;
+		const bool fade;
+		const int menu1X, menu1Y, menu1W, menu1H, menu1col1, menu1col2, menu1col3;
+		const int menu2X, menu2Y, menu2W, menu2H, menu2col1, menu2col2, menu2col3;
+		const int versionStrYOffs;
+	};
+
+	static const RenderModePalFile _renderModePalFiles[3];
+	static const TitleScreenConfig _titleConfig[3];
+	const TitleScreenConfig *_ttlCfg;
+
 	// Main loop
 	void startupNew();
 	void startupLoad();
 
 	// Intro/Outro
-	void seq_playIntro();
+	enum IntroPart {
+		kOnlyCredits = 0,
+		kOnlyIntro,
+		kCreditsAndIntro
+	};
+
+	void seq_playIntro(int part);
 	void seq_playFinale();
 	void seq_xdeath();
 
-	void boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH, int fillColor = -1);
-
 	const char *const *_finBonusStrings;
+	bool _xdth;
 
 	// characters
 	void drawNpcScene(int npcIndex);
@@ -122,6 +150,7 @@ private:
 
 	static const KyraRpgGUISettings _guiSettingsVGA;
 	static const KyraRpgGUISettings _guiSettingsEGA;
+	static const KyraRpgGUISettings _guiSettingsPC98;
 	static const KyraRpgGUISettings _guiSettingsAmiga;
 	static const KyraRpgGUISettings _guiSettingsAmigaMainMenu;
 	static const uint8 _egaDefaultPalette[];

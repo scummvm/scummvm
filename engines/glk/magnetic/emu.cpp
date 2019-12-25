@@ -1298,8 +1298,10 @@ void Magnetic::set_arg1() {
 #ifdef LOGEMU
 		out(" %X(a%.1d)", i, regnr);
 #endif
-	}
-	break;
+		}
+		break;
+	default:
+		break;
 	case 6:
 		tmp[0] = byte1;
 		tmp[1] = byte2;
@@ -1374,6 +1376,8 @@ void Magnetic::set_arg1() {
 #ifdef LOGEMU
 			out(" #%.4X", arg1i);
 #endif
+			break;
+		default:
 			break;
 		}
 		break;
@@ -1456,6 +1460,8 @@ void Magnetic::set_flags() {
 		if ((j >> 31) > 0)
 			nflag = 0xff;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1491,6 +1497,8 @@ int Magnetic::condition(type8 b) {
 		return (zflag | nflag) ^ 0xff;
 	case 15:
 		return (zflag | nflag);
+	default:
+		break;
 	}
 	return 0x00;
 }
@@ -2067,6 +2075,8 @@ type16s Magnetic::hint_input() {
 			return -3; /* Next hint */
 		case 'p':
 			return -4; /* Show parent hint list */
+		default:
+			break;
 		}
 	}
 	return 0;
@@ -2138,9 +2148,14 @@ type16 Magnetic::show_hints_text(ms_hint *hintsData, type16 index) {
 					break;
 				case -4: /* Show parent hint list */
 					return 0;
+				default:
+					break;
 				}
 			} else
 				return 0;
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -2215,6 +2230,8 @@ void Magnetic::do_line_a() {
 				case 3: /* Compass */
 					output_text(not_supported);
 					break;
+				default:
+					break;
 				}
 				break;
 
@@ -2236,6 +2253,9 @@ void Magnetic::do_line_a() {
 					}
 					break;
 				}
+				break;
+
+			default:
 				break;
 			}
 			break;
@@ -2517,6 +2537,9 @@ void Magnetic::do_line_a() {
 
 		case 34: /* Dictionary_lookup A0FF */
 			dict_lookup();
+			break;
+
+		default:
 			break;
 		}
 }

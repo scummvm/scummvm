@@ -21,10 +21,10 @@
  */
 
 #include "common/system.h"
+#include "graphics/managed_surface.h"
 #include "video/qt_decoder.h"
 
 #include "director/movie.h"
-#include "director/score.h"
 #include "director/util.h"
 
 namespace Director {
@@ -48,7 +48,7 @@ void Movie::play(Common::Point dest) {
 	while (!_currentVideo->endOfVideo()) {
 		if (_currentVideo->needsUpdate()) {
 			const Graphics::Surface *frame = _currentVideo->decodeNextFrame();
-			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, dest.x, dest.y, width, height);
+			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, dest.x, dest.y, width, height); // video playback
 			g_system->updateScreen();
 		}
 		g_system->delayMillis(10);

@@ -102,6 +102,7 @@ void BackgroundAtmosphere::getNextQueuePos() {
 	switch (_playMode) {
 
 	case Sound::kPlayModeLinear:
+	default:
 		_queuePos = (_queuePos + 1) % _queue.size();
 		break;
 

@@ -278,6 +278,9 @@ void toIso(char copy[], /* OUT - Mapped  string */
 			*c = dosMap[*o];
 		*c = '\0';
 		break;
+
+	default:
+		break;
 	}
 }
 

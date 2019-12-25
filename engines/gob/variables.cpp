@@ -272,6 +272,8 @@ VariableReference &VariableReference::operator=(uint32 value) {
 			case Variables::kVariableType32:
 				_vars->writeOff32(_offset, value);
 				break;
+			default:
+				break;
 		}
 	}
 	return *this;
@@ -286,6 +288,8 @@ VariableReference::operator uint32() {
 				return (uint32) _vars->readOff16(_offset);
 			case Variables::kVariableType32:
 				return _vars->readOff32(_offset);
+			default:
+				break;
 		}
 	}
 

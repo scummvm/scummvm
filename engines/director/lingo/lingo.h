@@ -26,14 +26,24 @@
 #include "audio/audiostream.h"
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
+#include "common/endian.h"
 
-#include "director/director.h"
-#include "director/score.h"
+#include "director/types.h"
 #include "director/lingo/lingo-gr.h"
-#include "director/lingo/lingo-the.h"
-#include "director/lingo/lingo-bytecode.h"
+
+namespace Common {
+	class SeekableSubReadStreamEndian;
+}
 
 namespace Director {
+
+struct TheEntity;
+struct TheEntityField;
+struct LingoV4Bytecode;
+struct LingoV4TheEntity;
+class DirectorEngine;
+
+class Frame;
 
 enum LEvent {
 	kEventPrepareMovie,
@@ -72,6 +82,12 @@ enum LEvent {
 	kEventMouseWithin,
 
 	kEventStart
+};
+
+enum LexerDefineState {
+	kStateNone,
+	kStateInDef,
+	kStateInArgs
 };
 
 typedef void (*inst)(void);
@@ -183,7 +199,8 @@ public:
 	void runTests();
 
 private:
-	Common::String stripComments(const char *s);
+	Common::String codePreprocessor(const char *s, bool simple = false);
+	Common::String preprocessReturn(Common::String in);
 	const char *findNextDefinition(const char *s);
 
 	// lingo-events.cpp
@@ -208,8 +225,9 @@ public:
 	void popContext();
 	Symbol *lookupVar(const char *name, bool create = true, bool putInGlobalList = false);
 	void cleanLocalVars();
+	Symbol *define(Common::String &s, int nargs, ScriptData *code);
 	Symbol *define(Common::String &s, int start, int nargs, Common::String *prefix = NULL, int end = -1, bool removeCode = true);
-	void processIf(int elselabel, int endlabel);
+	void processIf(int elselabel, int endlabel, int finalElse);
 
 	int alignTypes(Datum &d1, Datum &d2);
 
@@ -288,7 +306,7 @@ public:
 	static void c_floatpush();
 	static void c_stringpush();
 	static void c_symbolpush();
-	static void c_constpush();
+	static void c_namepush();
 	static void c_varpush();
 	static void c_argcpush();
 	static void c_argcnoretpush();
@@ -553,13 +571,17 @@ public:
 	Datum getTheCast(Datum &id, int field);
 
 public:
+	bool isInArgStack(Common::String *s);
+	void clearArgStack();
+
+public:
 	ScriptType _currentScriptType;
 	uint16 _currentEntityId;
 	ScriptContext *_currentScriptContext;
 	uint16 _currentScriptFunction;
 	ScriptData *_currentScript;
 	bool _returning;
-	bool _indef;
+	LexerDefineState _indef;
 	bool _ignoreMe;
 	bool _immediateMode;
 
@@ -592,6 +614,7 @@ public:
 private:
 	int parse(const char *code);
 	void parseMenu(const char *code);
+	Common::String genMenuHandler(int *commandId, Common::String &command);
 
 	void push(Datum d);
 	Datum pop(void);
@@ -618,7 +641,7 @@ private:
 
 	int _floatPrecision;
 
-	bool dontPassEvent;
+	bool _dontPassEvent;
 
 public:
 	void executeImmediateScripts(Frame *frame);

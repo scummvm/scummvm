@@ -1722,6 +1722,8 @@ void Insane::actor01Reaction(int32 buttons) {
 			_actor[0].tilt = 2;
 		}
 		break;
+	default:
+		break;
 	}
 
 	if (_actor[0].curFacingFlag != _actor[0].newFacingFlag) {
@@ -1885,6 +1887,9 @@ void Insane::chooseBenWeaponAnim(int buttons) {
 		case INV_DUST:
 			_actor[0].act[2].state = 0;
 			switchBenWeapon();
+			break;
+		default:
+			break;
 		}
 
 		_weaponBenJustSwitched = true;
@@ -2022,6 +2027,8 @@ void Insane::ouchSoundBen() {
 		break;
 	case 3:
 		smlayer_startVoice(98);
+		break;
+	default:
 		break;
 	}
 }

@@ -113,6 +113,7 @@ public:
 	bool cmdItem(int argc, const char **argv);
 	bool cmdRegion(int argc, const char **argv);
 	bool cmdClick(int argc, const char **argv);
+	bool cmdDifficulty(int argc, const char **argv);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	bool cmdEffect(int argc, const char **argv);
@@ -120,6 +121,7 @@ public:
 	bool cmdList(int argc, const char **argv);
 	bool cmdVk(int argc, const char **argv);
 
+	Common::String getDifficultyDescription(int difficultyValue);
 	void drawDebuggerOverlay();
 
 	void drawBBox(Vector3 start, Vector3 end, View *view, Graphics::Surface *surface, int color);

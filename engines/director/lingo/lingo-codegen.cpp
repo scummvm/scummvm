@@ -43,11 +43,9 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
+#include "director/director.h"
 #include "director/lingo/lingo.h"
-#include "common/file.h"
-#include "audio/decoders/wave.h"
 
-#include "director/lingo/lingo-gr.h"
 #include "director/util.h"
 
 namespace Director {
@@ -95,6 +93,7 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 		res = _functions[(void *)sym.u.s]->name;
 		const char *pars = _functions[(void *)sym.u.s]->proto;
 		inst i;
+		uint start = pc;
 
 		while (*pars) {
 			switch (*pars++) {
@@ -120,7 +119,7 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 					i = (*sd)[pc++];
 					int v = READ_UINT32(&i);
 
-					res += Common::String::format(" [%5d]", v);
+					res += Common::String::format(" [%5d]", v + start - 1);
 					break;
 				}
 			case 's':
@@ -213,12 +212,7 @@ void Lingo::cleanLocalVars() {
 	g_lingo->_localvars = 0;
 }
 
-Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix, int end, bool removeCode) {
-	if (prefix)
-		name = *prefix + "-" + name;
-
-	debugC(1, kDebugLingoCompile, "define(\"%s\"(len: %d), %d, %d, \"%s\", %d)", name.c_str(), _currentScript->size() - 1, start, nargs, (prefix ? prefix->c_str() : ""), end);
-
+Symbol *Lingo::define(Common::String &name, int nargs, ScriptData *code) {
 	Symbol *sym = getHandler(name);
 	if (sym == NULL) { // Create variable if it was not defined
 		sym = new Symbol;
@@ -238,12 +232,36 @@ Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String
 		delete sym->u.defn;
 	}
 
+	sym->u.defn = code;
+	sym->nargs = nargs;
+	sym->maxArgs = nargs;
+
+	if (debugChannelSet(1, kDebugLingoCompile)) {
+		uint pc = 0;
+		while (pc < sym->u.defn->size()) {
+			uint spc = pc;
+			Common::String instr = g_lingo->decodeInstruction(sym->u.defn, pc, &pc);
+			debugC(1, kDebugLingoCompile, "[%5d] %s", spc, instr.c_str());
+		}
+		debugC(1, kDebugLingoCompile, "<end define code>");
+	}
+
+	return sym;
+}
+
+Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix, int end, bool removeCode) {
+	if (prefix)
+		name = *prefix + "-" + name;
+
+	debugC(1, kDebugLingoCompile, "define(\"%s\"(len: %d), %d, %d, \"%s\", %d) entity: %d",
+			name.c_str(), _currentScript->size() - 1, start, nargs, (prefix ? prefix->c_str() : ""),
+			end, _currentEntityId);
+
 	if (end == -1)
 		end = _currentScript->size();
 
-	sym->u.defn = new ScriptData(&(*_currentScript)[start], end - start);
-	sym->nargs = nargs;
-	sym->maxArgs = nargs;
+	ScriptData *code = new ScriptData(&(*_currentScript)[start], end - start);
+	Symbol *sym = define(name, nargs, code);
 
 	// Now remove all defined code from the _currentScript
 	if (removeCode)
@@ -251,14 +269,6 @@ Symbol *Lingo::define(Common::String &name, int start, int nargs, Common::String
 			_currentScript->remove_at(i);
 		}
 
-	if (debugChannelSet(1, kDebugLingoCompile)) {
-		uint pc = 0;
-		while (pc < sym->u.defn->size()) {
-			Common::String instr = g_lingo->decodeInstruction(sym->u.defn, pc, &pc);
-			debugC(1, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
-		}
-		debugC(1, kDebugLingoCompile, "<end define code>");
-	}
 
 	return sym;
 }
@@ -313,24 +323,30 @@ int Lingo::codeArray(int arraySize) {
 	return _currentScript->size();
 }
 
+bool Lingo::isInArgStack(Common::String *s) {
+	for (uint i = 0; i < _argstack.size(); i++)
+		if (_argstack[i]->equalsIgnoreCase(*s))
+			return true;
+
+	return false;
+}
+
 void Lingo::codeArg(Common::String *s) {
-	_argstack.push_back(s);
+	_argstack.push_back(new Common::String(*s));
+}
+
+void Lingo::clearArgStack() {
+	for (uint i = 0; i < _argstack.size(); i++)
+		delete _argstack[i];
+
+	_argstack.clear();
 }
 
 void Lingo::codeArgStore() {
-	while (true) {
-		if (_argstack.empty()) {
-			break;
-		}
-
-		Common::String *arg = _argstack.back();
-		_argstack.pop_back();
-
+	for (int i = _argstack.size() - 1; i >= 0; i--) {
 		code1(c_varpush);
-		codeString(arg->c_str());
+		codeString(_argstack[i]->c_str());
 		code1(c_assign);
-
-		delete arg;
 	}
 }
 
@@ -384,13 +400,19 @@ int Lingo::codeMe(Common::String *method, int numpar) {
 
 void Lingo::codeLabel(int label) {
 	_labelstack.push_back(label);
+	debugC(4, kDebugLingoCompile, "codeLabel: Added label %d", label);
 }
 
-void Lingo::processIf(int elselabel, int endlabel) {
+void Lingo::processIf(int startlabel, int endlabel, int finalElse) {
 	inst ielse1, iend;
-	int  else1 = elselabel;
+	int  else1 = 0;
+
+	debugC(4, kDebugLingoCompile, "processIf(%d, %d, %d)", startlabel, endlabel, finalElse);
 
 	WRITE_UINT32(&iend, endlabel);
+
+	int finalElsePos = -1;
+	bool multiIf = _labelstack.size() > 1;
 
 	while (true) {
 		if (_labelstack.empty()) {
@@ -408,11 +430,25 @@ void Lingo::processIf(int elselabel, int endlabel) {
 		if (else1)
 			else1 = else1 - label;
 
+		// Store position of the last 'if', so we could set reference to the
+		// 'finalElse' part
+		if (finalElse && finalElsePos == -1) {
+			finalElsePos = label;
+		}
+
+		debugC(4, kDebugLingoCompile, "processIf: %d: %d %d", label, else1 + label, endlabel + label);
+
 		WRITE_UINT32(&ielse1, else1);
 		(*_currentScript)[label + 2] = ielse1;    /* elsepart */
 		(*_currentScript)[label + 3] = iend;      /* end, if cond fails */
 
 		else1 = label;
+	}
+
+	if (multiIf && finalElsePos != -1) {
+		debugC(4, kDebugLingoCompile, "processIf: storing %d to %d", finalElse - finalElsePos + startlabel, finalElsePos);
+		WRITE_UINT32(&ielse1, finalElse - finalElsePos + startlabel);
+		(*_currentScript)[finalElsePos + 2] = ielse1;
 	}
 }
 

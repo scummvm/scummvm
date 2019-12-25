@@ -459,6 +459,8 @@ protected:
 	EoBItemType *_itemTypes;
 	char **_itemNames;
 	uint16 _numItemNames;
+	int _numItemNamesPC98;
+	const char * const *_itemNamesPC98;
 	uint32 _partyEffectFlags;
 	Item _lastUsedItem;
 
@@ -627,6 +629,8 @@ protected:
 	int8 _currentSub;
 	Common::String _curGfxFile;
 	Common::String _curBlockFile;
+	Common::String _vcnFilePattern;
+	Common::String _vmpFilePattern;
 
 	uint32 _drawSceneTimer;
 	uint32 _flashShapeTimer;
@@ -864,6 +868,9 @@ protected:
 	const uint8 *_cgaMappingDeco;
 	const uint8 *_cgaMappingLevel[5];
 	const uint8 *_cgaLevelMappingIndex;
+
+	// hard coded 16 color palettes for PC98 version of EOB1
+	const uint8 *_palette16c[10];
 
 	bool _enableHiResDithering;
 
@@ -1132,6 +1139,7 @@ protected:
 	EoBMenuDef *_menuDefs;
 	const EoBMenuButtonDef *_menuButtonDefs;
 
+	int _prefMenuPlatformOffset;
 	bool _configMouse;
 	bool _config2431;
 

@@ -59,6 +59,8 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_envAudioTimer = 0;
 	_flashShapeTimer = 0;
 	_drawSceneTimer = 0;
+	_vcnFilePattern = "%s.VCN";
+	_vmpFilePattern = "%s.VMP";
 
 	_largeItemShapes = _smallItemShapes = _thrownItemShapes = _spellShapes = _firebeamShapes = 0;
 	_itemIconShapes = _amigaBlueItemIconShapes = _wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
@@ -82,8 +84,9 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_items = 0;
 	_itemTypes = 0;
 	_itemNames = 0;
+	_itemNamesPC98 = 0;
 	_itemInHand = -1;
-	_numItems = _numItemNames = 0;
+	_numItems = _numItemNames = _numItemNamesPC98 = 0;
 
 	_castScrollSlot = 0;
 	_currentSub = 0;
@@ -224,6 +227,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_amigaLevelSoundList1 = _amigaLevelSoundList2 = 0;
 	_amigaSoundMap = 0;
 	_amigaCurSoundFile = -1;
+	_prefMenuPlatformOffset = 0;
 	memset(_cgaMappingLevel, 0, sizeof(_cgaMappingLevel));
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
 	memset(_saveThrowTables, 0, sizeof(_saveThrowTables));
@@ -412,13 +416,17 @@ Common::Error EoBCoreEngine::init() {
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
 		_sound = new SoundTowns_Darkmoon(this, _mixer);
 	} else if (_flags.platform == Common::kPlatformPC98) {
-
+		if (_flags.gameID == GI_EOB1)
+			_sound = new SoundPC98_EoB(this, _mixer);
 	} else if (_flags.platform == Common::kPlatformAmiga) {
 		_sound = new SoundAmiga_EoB(this, _mixer);
 	}
 
 	assert(_sound);
 	_sound->init();
+
+	// This if for EOB1 PC-98 only
+	_sound->loadSfxFile("EFECT.OBJ");
 
 	// Setup volume settings (and read in all ConfigManager settings)
 	syncSoundSettings();
@@ -442,7 +450,7 @@ Common::Error EoBCoreEngine::init() {
 	assert(_inf);
 	_debugger = new Debugger_EoB(this);
 	assert(_debugger);
-
+	
 	if (_flags.platform == Common::kPlatformAmiga) {
 		if (_res->exists("EOBF6.FONT"))
 			_screen->loadFont(Screen::FID_6_FNT, "EOBF6.FONT");
@@ -559,7 +567,7 @@ Common::Error EoBCoreEngine::init() {
 Common::Error EoBCoreEngine::go() {
 	_debugger->initialize();
 	_txt->removePageBreakFlag();
-	_screen->setFont(Screen::FID_8_FNT);
+	_screen->setFont(_flags.platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 	loadItemsAndDecorationsShapes();
 	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
 
@@ -628,11 +636,11 @@ void EoBCoreEngine::registerDefaultSettings() {
 void EoBCoreEngine::readSettings() {
 	_configHpBarGraphs = ConfMan.getBool("hpbargraphs");
 	_configMouseBtSwap = ConfMan.getBool("mousebtswap");
-	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
-	_configMusic = _configSounds ? 1 : 0;
+	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;	
+	_configMusic = (_flags.platform == Common::kPlatformPC98) ? (ConfMan.getBool("music_mute") ? 0 : 1) : (_configSounds ? 1 : 0);
 
 	if (_sound) {
-		_sound->enableMusic(_configSounds ? 1 : 0);
+		_sound->enableMusic(_configMusic);
 		_sound->enableSFX(_configSounds);
 	}
 }
@@ -641,11 +649,17 @@ void EoBCoreEngine::writeSettings() {
 	ConfMan.setBool("hpbargraphs", _configHpBarGraphs);
 	ConfMan.setBool("mousebtswap", _configMouseBtSwap);
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
+	if (_flags.platform == Common::kPlatformPC98)
+		ConfMan.setBool("music_mute", _configMusic == 0);
 
 	if (_sound) {
-		if (!_configSounds)
+		if (_flags.platform == Common::kPlatformPC98) {
+			if (!_configMusic)
+				snd_playSong(0);
+		} else if (!_configSounds) {
 			_sound->haltTrack();
-		_sound->enableMusic(_configSounds ? 1 : 0);
+		}
+		_sound->enableMusic(_configMusic);
 		_sound->enableSFX(_configSounds);
 	}
 
@@ -668,7 +682,7 @@ void EoBCoreEngine::runLoop() {
 	_flashShapeTimer = 0;
 	_drawSceneTimer = _system->getMillis();
 
-	_screen->setFont(Screen::FID_6_FNT);
+	_screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 	_screen->setScreenDim(7);
 
 	_runFlag = true;
@@ -712,10 +726,10 @@ bool EoBCoreEngine::checkPartyStatus(bool handleDeath) {
 	gui_drawAllCharPortraitsWithStats();
 
 	if (checkPartyStatusExtra()) {
-		_screen->setFont(Screen::FID_8_FNT);
+		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 		gui_updateControls();
 		if (_gui->runLoadMenu(0, 0)) {
-			_screen->setFont(Screen::FID_6_FNT);
+			_screen->setFont(of);
 			return true;
 		}
 	}
@@ -1674,7 +1688,7 @@ void EoBCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 		_screen->drawClippedLine(0, 121, 319, 121, guiSettings()->colors.fill);
 		_screen->setPagePixel(0, 319, 121, 9);
 		_screen->setCurPage(cp);
-		_screen->setupDualPalettesSplitScreen(_screen->getPalette(amigaPalIndex), _screen->getPalette(7));
+		_screen->setDualPalettes(_screen->getPalette(amigaPalIndex), _screen->getPalette(7));
 		_dialogueFieldAmiga = true;
 	}
 
@@ -1713,7 +1727,7 @@ int EoBCoreEngine::runDialogue(int dialogueTextId, int numStr, ...) {
 void EoBCoreEngine::restParty_displayWarning(const char *str) {
 	int od = _screen->curDimIndex();
 	_screen->setScreenDim(7);
-	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+	Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 	_screen->setCurPage(0);
 
 	_txt->printMessage(Common::String::format("\r%s\r", str).c_str());
@@ -1730,7 +1744,7 @@ bool EoBCoreEngine::restParty_updateMonsters() {
 
 	for (int i = 0; i < 5; i++) {
 		_partyResting = true;
-		Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
+		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 		int od = _screen->curDimIndex();
 		_screen->setScreenDim(7);
 		updateMonsters(0);

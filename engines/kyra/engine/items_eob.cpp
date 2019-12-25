@@ -50,9 +50,17 @@ void EoBCoreEngine::loadItemDefs() {
 		_items[i].value = s->readSByte();
 	}
 
-	_numItemNames = s->readUint16();
-	for (int i = 0; i < _numItemNames; i++)
-		s->read(_itemNames[i], 35);
+	if (_itemNamesPC98) {
+		_numItemNames = _numItemNamesPC98;
+		for (int i = 0; i < _numItemNames; i++) {
+			assert(strlen(_itemNamesPC98[i]) < 35);
+			Common::strlcpy(_itemNames[i], _itemNamesPC98[i], 34);
+		}
+	} else {
+		_numItemNames = s->readUint16();
+		for (int i = 0; i < _numItemNames; i++)
+			s->read(_itemNames[i], 35);
+	}
 
 	delete s;
 

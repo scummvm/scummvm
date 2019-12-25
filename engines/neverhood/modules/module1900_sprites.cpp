@@ -115,6 +115,8 @@ uint32 AsScene1907Symbol::handleMessage(int messageNum, const MessageParam &para
 		} else
 			messageResult = 0;
 		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -124,6 +126,8 @@ uint32 AsScene1907Symbol::hmTryToPlugIn(int messageNum, const MessageParam &para
 	switch (messageNum) {
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -355,6 +359,9 @@ uint32 SsScene1907UpDownButton::handleMessage(int messageNum, const MessageParam
 			playSound(0);
 		}
 		messageResult = 1;
+		break;
+	default:
+		break;
 	}
 	return messageResult;
 }
@@ -396,6 +403,8 @@ uint32 AsScene1907WaterHint::hmShowing(int messageNum, const MessageParam &param
 	switch (messageNum) {
 	case NM_ANIMATION_STOP:
 		gotoNextState();
+		break;
+	default:
 		break;
 	}
 	return messageResult;
@@ -448,6 +457,8 @@ uint32 KmScene1901::xHandleMessage(int messageNum, const MessageParam &param) {
 		break;
 	case 0x4840:
 		startSpecialWalkLeft(param.asInteger());
+		break;
+	default:
 		break;
 	}
 	return 0;

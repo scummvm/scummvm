@@ -63,7 +63,6 @@ backends/graphics/opengl/opengl-graphics.cpp
 backends/graphics/openglsdl/openglsdl-graphics.cpp
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/graphics/sdl/sdl-graphics.cpp
-backends/graphics/wincesdl/wincesdl-graphics.cpp
 backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp
 backends/networking/sdl_net/handlers/createdirectoryhandler.cpp
@@ -86,8 +85,4 @@ backends/platform/symbian/src/SymbianActions.cpp
 backends/platform/tizen/form.cpp
 backends/platform/tizen/fs.cpp
 backends/platform/wii/options.cpp
-backends/platform/wince/CEActionsPocket.cpp
-backends/platform/wince/CEActionsSmartphone.cpp
-backends/platform/wince/CELauncherDialog.cpp
-backends/platform/wince/wince-sdl.cpp
 backends/updates/macosx/macosx-updates.mm

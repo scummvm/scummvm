@@ -21,23 +21,19 @@
  */
 
 #include "common/system.h"
-#include "graphics/font.h"
+#include "common/substream.h"
+
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/mactext.h"
 #include "graphics/primitives.h"
-#include "image/bmp.h"
 
 #include "director/director.h"
 #include "director/cachedmactext.h"
 #include "director/cast.h"
 #include "director/frame.h"
-#include "director/images.h"
-#include "director/archive.h"
 #include "director/score.h"
 #include "director/sprite.h"
 #include "director/util.h"
-#include "director/lingo/lingo.h"
 
 namespace Director {
 
@@ -141,7 +137,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			_soundType2 = stream->readByte();
 		} else {
 			stream->read(unk, 3);
-			warning("unk1: %x unk2: %x unk3: %x", unk[0], unk[1], unk[2]);
+			warning("Frame::readChannels(): unk1: %x unk2: %x unk3: %x", unk[0], unk[1], unk[2]);
 		}
 		_skipFrameFlag = stream->readByte();
 		_blend = stream->readByte();
@@ -154,10 +150,10 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		uint16 palette = stream->readUint16();
 
 		if (palette) {
-			warning("STUB: Palette info");
+			warning("Frame::readChannels(): STUB: Palette info");
 		}
 
-		debugC(kDebugLoading, 8, "%d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
+		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
 
 		_palette = new PaletteInfo();
 		_palette->firstColor = stream->readByte(); // for cycles. note: these start at 0x80 (for pal entry 0)!
@@ -201,7 +197,8 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._scriptId = stream->readByte();
 			sprite._spriteType = stream->readByte();
 			sprite._enabled = sprite._spriteType != 0;
-			sprite._x2 = stream->readUint16();
+			sprite._foreColor = (127 - stream->readByte()) & 0xff; // -128 -> 0, 127 -> 256
+			sprite._backColor = (127 - stream->readByte()) & 0xff;
 
 			sprite._flags = stream->readUint16();
 			sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
@@ -223,6 +220,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 				sprite._scriptId = stream->readUint16();
 				sprite._flags2 = stream->readByte(); // 0x40 editable, 0x80 moveable
 				sprite._unk2 = stream->readByte();
+				sprite._moveable = ((sprite._flags2 & 0x80) == 0x80);
 
 				if (_vm->getVersion() >= 5)
 					sprite._unk3 = stream->readUint32();
@@ -245,12 +243,13 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		}
 
 		if (sprite._castId) {
-			debugC(kDebugLoading, 4, "CH: %-3d castId: %03d(%s) (e:%d) [%x,%x, flags:%04x, %dx%d@%d,%d linesize: %d] script: %d",
-				i + 1, sprite._castId, numToCastNum(sprite._castId), sprite._enabled, sprite._x1, sprite._x2, sprite._flags,
-				sprite._width, sprite._height, sprite._startPoint.x, sprite._startPoint.y,
-				sprite._lineSize, sprite._scriptId);
+			debugC(4, kDebugLoading, "CH: %-3d castId: %03d(%s) [flags:%04x [ink: %x trails: %d line: %d], %dx%d@%d,%d type: %d fg: %d bg: %d] script: %d, flags2: %x, unk2: %x, unk3: %x",
+				i + 1, sprite._castId, numToCastNum(sprite._castId), sprite._flags,
+				sprite._ink, sprite._trails, sprite._lineSize, sprite._width, sprite._height,
+				sprite._startPoint.x, sprite._startPoint.y,
+				sprite._spriteType, sprite._foreColor, sprite._backColor, sprite._scriptId, sprite._flags2, sprite._unk2, sprite._unk3);
 		} else {
-			debugC(kDebugLoading, 4, "CH: %-3d castId: 000", i + 1);
+			debugC(4, kDebugLoading, "CH: %-3d castId: 000", i + 1);
 		}
 	}
 }
@@ -318,12 +317,12 @@ void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16
 		default:
 			offset++;
 			stream.readByte();
-			debugC(kDebugLoading, "Frame::readMainChannels: Field Position %d, Finish Position %d", offset, finishPosition);
+			debugC(1, kDebugLoading, "Frame::readMainChannels: Field Position %d, Finish Position %d", offset, finishPosition);
 			break;
 		}
 	}
 
-	warning("%d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
+	debugC(1, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
 }
 
 void Frame::readPaletteInfo(Common::SeekableSubReadStreamEndian &stream) {
@@ -398,7 +397,7 @@ void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offse
 			break;
 		}
 	}
-	warning("%03d(%d)[%x,%x,%04x,%d/%d/%d/%d]", sprite._castId, sprite._enabled, x1, x2, sprite._flags, sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height);
+	warning("Frame::readSprite(): %03d(%d)[%x,%x,%04x,%d/%d/%d/%d]", sprite._castId, sprite._enabled, x1, x2, sprite._flags, sprite._startPoint.x, sprite._startPoint.y, sprite._width, sprite._height);
 
 }
 
@@ -407,6 +406,10 @@ void Frame::prepareFrame(Score *score) {
 	renderSprites(*score->_surface, false);
 	renderSprites(*score->_trailSurface, true);
 
+	score->renderZoomBox();
+
+	_vm->_wm->draw();
+
 	if (_transType != 0)
 		// TODO Handle changing area case
 		playTransition(score);
@@ -414,6 +417,9 @@ void Frame::prepareFrame(Score *score) {
 	if (_sound1 != 0 || _sound2 != 0) {
 		playSoundChannel();
 	}
+
+	if (_vm->getCurrentScore()->haveZoomBox())
+		score->_backSurface->copyFrom(*score->_surface);
 
 	g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, score->_surface->getBounds().width(), score->_surface->getBounds().height());
 }
@@ -444,7 +450,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -460,7 +466,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -475,7 +481,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -490,7 +496,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -506,7 +512,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, score->_movieRect.height() - stepSize * i, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, score->_movieRect.height() - stepSize * i, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -522,7 +528,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, score->_movieRect.height() - stepSize * i, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -538,7 +544,7 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, score->_movieRect.width() - stepSize * i, 0, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
@@ -554,13 +560,13 @@ void Frame::playTransition(Score *score) {
 				g_system->delayMillis(stepDuration);
 				processQuitEvent();
 
-				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height());
+				g_system->copyRectToScreen(score->_surface->getPixels(), score->_surface->pitch, 0, 0, r.width(), r.height()); // transition
 				g_system->updateScreen();
 			}
 		}
 		break;
 	default:
-		warning("Unhandled transition type %d %d %d", _transType, duration, _transChunkSize);
+		warning("Frame::playTransition(): Unhandled transition type %d %d %d", _transType, duration, _transChunkSize);
 		break;
 
 	}
@@ -574,29 +580,36 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 
 			CastType castType = kCastTypeNull;
 			if (_vm->getVersion() < 4) {
-				debugC(1, kDebugImages, "Channel: %d type: %d", i, _sprites[i]->_spriteType);
+				debugC(1, kDebugImages, "Frame::renderSprites(): Channel: %d type: %d", i, _sprites[i]->_spriteType);
 				switch (_sprites[i]->_spriteType) {
-				case 1:
+				case kBitmapSprite:
 					castType = kCastBitmap;
 					break;
-				case 2:
-				case 12: // this is actually a mouse-over shape? I don't think it's a real button.
-				case 16: // Face kit D3
+				case kRectangleSprite:
+				case kRoundedRectangleSprite:
+				case kOvalSprite:
+				case kLineTopBottomSprite:
+				case kLineBottomTopSprite:
+				case kOutlinedRectangleSprite:	// this is actually a mouse-over shape? I don't think it's a real button.
+				case kOutlinedRoundedRectangleSprite:
+				case kOutlinedOvalSprite:
+				case kCastMemberSprite: 		// Face kit D3
 					castType = kCastShape;
 					break;
-				case 7:
+				case kTextSprite:
 					castType = kCastText;
 					break;
 				default:
+					warning("Frame::renderSprites(): Unhandled sprite type %d", _sprites[i]->_spriteType);
 					break;
 				}
 			} else {
 				if (!_vm->getCurrentScore()->_castTypes.contains(_sprites[i]->_castId)) {
 					if (!_vm->getSharedCastTypes()->contains(_sprites[i]->_castId)) {
-						warning("Cast id %d not found", _sprites[i]->_castId);
+						debugC(1, kDebugImages, "Frame::renderSprites(): Cast id %d not found", _sprites[i]->_castId);
 						continue;
 					} else {
-						warning("Getting cast id %d from shared cast", _sprites[i]->_castId);
+						debugC(1, kDebugImages, "Frame::renderSprites(): Getting cast id %d from shared cast", _sprites[i]->_castId);
 						castType = _vm->getSharedCastTypes()->getVal(_sprites[i]->_castId);
 					}
 				} else {
@@ -614,7 +627,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				renderButton(surface, i);
 			} else {
 				if (!_sprites[i]->_bitmapCast) {
-					warning("No cast ID for sprite %d", i);
+					warning("Frame::renderSprites(): No cast ID for sprite %d", i);
 					continue;
 				}
 
@@ -643,28 +656,59 @@ void Frame::addDrawRect(uint16 spriteId, Common::Rect &rect) {
 }
 
 void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
-	Common::Rect shapeRect = Common::Rect(_sprites[spriteId]->_startPoint.x,
-		_sprites[spriteId]->_startPoint.y,
-		_sprites[spriteId]->_startPoint.x + _sprites[spriteId]->_width,
-		_sprites[spriteId]->_startPoint.y + _sprites[spriteId]->_height);
+	Sprite *sp = _sprites[spriteId];
+
+	if (sp->_shapeCast != NULL) {
+		sp->_foreColor = sp->_shapeCast->_fgCol;
+		sp->_backColor = sp->_shapeCast->_bgCol;
+		//sp->_ink = sp->_shapeCast->_ink;
+	}
+
+	Common::Rect shapeRect = Common::Rect(sp->_startPoint.x,
+		sp->_startPoint.y,
+		sp->_startPoint.x + sp->_width,
+		sp->_startPoint.y + sp->_height);
 
 	Graphics::ManagedSurface tmpSurface;
 	tmpSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
-	if (_vm->getVersion() <= 3 && _sprites[spriteId]->_spriteType == 0x0c) {
-		tmpSurface.fillRect(Common::Rect(shapeRect.width(), shapeRect.height()), (_vm->getCurrentScore()->_currentMouseDownSpriteId == spriteId ? 0 : 0xff));
-		//tmpSurface.frameRect(Common::Rect(shapeRect.width(), shapeRect.height()), 0);
-		// TODO: don't override, work out how to display correctly.
-		_sprites[spriteId]->_ink = kInkTypeReverse;
-	} else {
-		// No minus one on the pattern here! MacPlotData will do that for us!
-		Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), _sprites[spriteId]->_castId, 1, _sprites[spriteId]->_backColor);
-		Common::Rect fillRect(shapeRect.width(), shapeRect.height());
-		Graphics::drawFilledRect(fillRect, _sprites[spriteId]->_foreColor, Graphics::macDrawPixel, &pd);
-	}
 
-	if (_sprites[spriteId]->_lineSize > 0) {
-		for (int rr = 0; rr < (_sprites[spriteId]->_lineSize - 1); rr++)
-			tmpSurface.frameRect(Common::Rect(rr, rr, shapeRect.width() - (rr * 2), shapeRect.height() - (rr * 2)), 0);
+	// No minus one on the pattern here! MacPlotData will do that for us!
+	//Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), 1, 1, sp->_backColor);
+	Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), sp->_castId, sp->_lineSize + 1, sp->_backColor);
+	Common::Rect fillRect(shapeRect.width(), shapeRect.height());
+
+	switch (sp->_spriteType) {
+	case kRectangleSprite:
+		Graphics::drawFilledRect(fillRect, sp->_foreColor, Graphics::macDrawPixel, &pd);
+		break;
+	case kRoundedRectangleSprite:
+		Graphics::drawRoundRect(fillRect, 4, sp->_foreColor, true, Graphics::macDrawPixel, &pd);
+		break;
+	case kOvalSprite:
+		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, sp->_foreColor, true, Graphics::macDrawPixel, &pd);
+		break;
+	case kLineTopBottomSprite:
+		Graphics::drawLine(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, sp->_foreColor, Graphics::macDrawPixel, &pd);
+		break;
+	case kLineBottomTopSprite:
+		Graphics::drawLine(fillRect.left, fillRect.bottom, fillRect.right, fillRect.top, sp->_foreColor, Graphics::macDrawPixel, &pd);
+		break;
+	case kOutlinedRectangleSprite:	// this is actually a mouse-over shape? I don't think it's a real button.
+		//Graphics::drawRect(fillRect, sp->_foreColor, Graphics::macDrawPixel, &pd);
+		tmpSurface.fillRect(Common::Rect(shapeRect.width(), shapeRect.height()), (_vm->getCurrentScore()->_currentMouseDownSpriteId == spriteId ? 0 : 0xff));
+		break;
+	case kOutlinedRoundedRectangleSprite:
+		Graphics::drawRoundRect(fillRect, 4, sp->_foreColor, false, Graphics::macDrawPixel, &pd);
+		break;
+	case kOutlinedOvalSprite:
+		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, sp->_foreColor, false, Graphics::macDrawPixel, &pd);
+		break;
+	case kCastMemberSprite: 		// Face kit D3
+		// FIXME. Check
+		Graphics::drawFilledRect(fillRect, sp->_foreColor, Graphics::macDrawPixel, &pd);
+		break;
+	default:
+		warning("Frame::renderShape(): Unhandled sprite type: %d", sp->_spriteType);
 	}
 
 	addDrawRect(spriteId, shapeRect);
@@ -716,6 +760,11 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 }
 
 void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, uint16 spriteId, Common::Rect drawRect) {
+	// drawRect could be bigger than the spriteSurface. Clip it
+	Common::Rect t(spriteSurface.w, spriteSurface.h);
+	t.moveTo(drawRect.left, drawRect.top);
+	drawRect.clip(t);
+
 	switch (_sprites[spriteId]->_ink) {
 	case kInkTypeCopy:
 		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
@@ -737,7 +786,7 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 		drawReverseSprite(targetSurface, spriteSurface, drawRect);
 		break;
 	default:
-		warning("Unhandled ink type %d", _sprites[spriteId]->_ink);
+		warning("Frame::inkBasedBlit(): Unhandled ink type %d", _sprites[spriteId]->_ink);
 		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
 		break;
 	}
@@ -769,13 +818,13 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	}
 
 	if (width == 0 || height == 0) {
-		warning("renderText: Requested to draw on an empty surface: %d x %d", width, height);
+		warning("Frame::renderText(): Requested to draw on an empty surface: %d x %d", width, height);
 		return;
 	}
 
 	Graphics::MacFont *macFont = new Graphics::MacFont(textCast->_fontId, textCast->_fontSize, textCast->_textSlant);
 
-	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s' text: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(*macFont).c_str(), textCast->_ftext.c_str());
+	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s' text: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(*macFont).c_str(), Common::toPrintable(textCast->_ftext).c_str());
 
 	uint16 boxShadow = (uint16)textCast->_boxShadow;
 	uint16 borderSize = (uint16)textCast->_borderSize;
@@ -943,7 +992,7 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 	}
 
 	if (whiteColor == -1) {
-		debugC(1, kDebugImages, "No white color for Matte image");
+		debugC(1, kDebugImages, "Frame::drawMatteSprite(): No white color for Matte image");
 
 		for (int yy = 0; yy < tmp.h; yy++) {
 			const byte *src = (const byte *)tmp.getBasePtr(0, yy);
@@ -996,6 +1045,14 @@ bool Frame::checkSpriteIntersection(uint16 spriteId, Common::Point pos) {
 			return true;
 
 	return false;
+}
+
+Common::Rect *Frame::getSpriteRect(uint16 spriteId) {
+	for (int dr = _drawRects.size() - 1; dr >= 0; dr--)
+		if (_drawRects[dr]->spriteId == spriteId)
+			return &_drawRects[dr]->rect;
+
+	return nullptr;
 }
 
 } // End of namespace Director

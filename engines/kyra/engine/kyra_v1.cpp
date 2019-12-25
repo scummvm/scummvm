@@ -434,7 +434,7 @@ void KyraEngine_v1::setupKeyMap() {
 	_keyMap.clear();
 
 	for (int i = 0; i < ARRAYSIZE(keys); i++)
-		_keyMap[keys[i].kcScummVM] = (_flags.platform == Common::kPlatformPC98) ? keys[i].kcPC98 : ((_flags.platform == Common::kPlatformFMTowns) ? keys[i].kcFMTowns : keys[i].kcDOS);
+		_keyMap[keys[i].kcScummVM] = (_flags.gameID != GI_EOB1 && _flags.platform == Common::kPlatformPC98) ? keys[i].kcPC98 : ((_flags.platform == Common::kPlatformFMTowns) ? keys[i].kcFMTowns : keys[i].kcDOS);
 }
 
 void KyraEngine_v1::updateInput() {
@@ -655,6 +655,9 @@ void KyraEngine_v1::setVolume(kVolumeEntry vol, uint8 value) {
 	case kVolumeSpeech:
 		ConfMan.setInt("speech_volume", convertVolumeToMixer(value));
 		break;
+
+	default:
+		break;
 	}
 
 	// Resetup mixer
@@ -678,6 +681,9 @@ uint8 KyraEngine_v1::getVolume(kVolumeEntry vol) {
 			return convertVolumeFromMixer(ConfMan.getInt("speech_volume"));
 		else
 			return 2;
+		break;
+
+	default:
 		break;
 	}
 

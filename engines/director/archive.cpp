@@ -20,11 +20,12 @@
  *
  */
 
-#include "director/archive.h"
-#include "director/director.h"
-
-#include "common/debug.h"
+#include "common/file.h"
+#include "common/substream.h"
 #include "common/macresman.h"
+
+#include "director/director.h"
+#include "director/archive.h"
 
 namespace Director {
 
@@ -87,6 +88,10 @@ bool Archive::hasResource(uint32 tag, const Common::String &resName) const {
 			return true;
 
 	return false;
+}
+
+Common::SeekableSubReadStreamEndian *Archive::getFirstResource(uint32 tag) {
+	return getResource(tag, getResourceIDList(tag)[0]);
 }
 
 Common::SeekableSubReadStreamEndian *Archive::getResource(uint32 tag, uint16 id) {
@@ -357,8 +362,8 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	uint32 rifxType = subStream.readUint32();
 
-	if (rifxType != MKTAG('M', 'V', '9', '3') && 
-		rifxType != MKTAG('A', 'P', 'P', 'L') && 
+	if (rifxType != MKTAG('M', 'V', '9', '3') &&
+		rifxType != MKTAG('A', 'P', 'P', 'L') &&
 		rifxType != MKTAG('M', 'C', '9', '5'))
 		return false;
 

@@ -133,6 +133,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("item", WRAP_METHOD(Debugger, cmdItem));
 	registerCmd("region", WRAP_METHOD(Debugger, cmdRegion));
 	registerCmd("click", WRAP_METHOD(Debugger, cmdClick));
+	registerCmd("difficulty", WRAP_METHOD(Debugger, cmdDifficulty));
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	registerCmd("effect", WRAP_METHOD(Debugger, cmdEffect));
@@ -1780,6 +1781,59 @@ bool Debugger::cmdClick(int argc, const char **argv) {
 	return true;
 }
 
+/**
+* Auxiliary function to get a descriptive string for a given difficulty value
+*/
+Common::String Debugger::getDifficultyDescription(int difficultyValue) {
+	Common::String difficultyStr;
+	switch (difficultyValue) {
+	default:
+		// fall through
+	case kGameDifficultyEasy:
+		difficultyStr = Common::String::format("Easy (%d)", kGameDifficultyEasy);
+		break;
+	case kGameDifficultyMedium:
+		difficultyStr = Common::String::format("Normal (%d)", kGameDifficultyMedium);
+		break;
+	case kGameDifficultyHard:
+		difficultyStr = Common::String::format("Hard (%d)", kGameDifficultyHard);
+		break;
+	}
+	return difficultyStr;
+}
+
+/**
+* Show or set current game's difficulty mode
+*/
+bool Debugger::cmdDifficulty(int argc, const char **argv) {
+	bool invalidSyntax = false;
+
+	if (argc == 1) {
+		debugPrintf("Current game difficulty is %s\n", getDifficultyDescription(_vm->_settings->getDifficulty()).c_str());
+	} else if (argc == 2) {
+		int difficultyID = atoi(argv[1]);
+		if (difficultyID < kGameDifficultyEasy || difficultyID > kGameDifficultyHard) {
+			debugPrintf("The difficulty value must be an integer within [0, 2]\n");
+			return true;
+		} else {
+			_vm->_settings->setDifficulty(difficultyID);
+			debugPrintf("Current game difficulty is set to %s\n", getDifficultyDescription(_vm->_settings->getDifficulty()).c_str());
+		}
+	} else {
+		invalidSyntax = true;
+	}
+
+	if (invalidSyntax) {
+		debugPrintf("Show or set current game's difficulty mode\n");
+		debugPrintf("Valid difficulty values: \n");
+		debugPrintf("0: Easy\n");
+		debugPrintf("1: Normal\n");
+		debugPrintf("2: Hard\n");
+		debugPrintf("Usage 1: %s\n", argv[0]);
+		debugPrintf("Usage 2: %s <difficulty>\n", argv[0]);
+	}
+	return true;
+}
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 bool Debugger::cmdEffect(int argc, const char **argv) {

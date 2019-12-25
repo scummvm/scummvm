@@ -595,6 +595,8 @@ void ScummEngine_v5::o5_add() {
 		case 564:
 			a -= 384;
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -736,6 +738,8 @@ void ScummEngine_v5::o5_cursorCommand() {
 			for (i = 0; i < 16; i++)
 				_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)table[i];
 		}
+		break;
+	default:
 		break;
 	}
 
@@ -933,6 +937,8 @@ void ScummEngine_v5::o5_expression() {
 			_opcode = fetchScriptByte();
 			executeOpcode(_opcode);
 			push(_scummVars[0]);
+			break;
+		default:
 			break;
 		}
 	}
@@ -1381,6 +1387,8 @@ void ScummEngine_v5::o5_matrixOps() {
 	case 4:
 		createBoxMatrix();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1786,6 +1794,8 @@ void ScummEngine_v5::o5_roomOps() {
 				case 30:
 					_townsOverrideShadowColor = 3;
 					return;
+				default:
+					break;
 				}
 			}
 #endif // DISABLE_TOWNS_DUAL_LAYER_MODE
@@ -1907,6 +1917,7 @@ void ScummEngine_v5::o5_roomOps() {
 		break;
 	default:
 		error("o5_roomOps: unknown subopcode %d", _opcode & 0x1F);
+		break;
 	}
 }
 
@@ -2199,6 +2210,7 @@ void ScummEngine_v5::o5_stringOps() {
 	case 1:											/* loadstring */
 		loadPtrToResource(rtString, getVarOrDirectByte(PARAM_1), NULL);
 		break;
+
 	case 2:											/* copystring */
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
@@ -2208,6 +2220,7 @@ void ScummEngine_v5::o5_stringOps() {
 		if (ptr)
 			loadPtrToResource(rtString, a, ptr);
 		break;
+
 	case 3:											/* set string char */
 		a = getVarOrDirectByte(PARAM_1);
 		b = getVarOrDirectByte(PARAM_2);
@@ -2239,6 +2252,9 @@ void ScummEngine_v5::o5_stringOps() {
 					ptr[i] = 0;
 			}
 		}
+		break;
+
+	default:
 		break;
 	}
 }
@@ -2321,6 +2337,8 @@ void ScummEngine_v5::o5_verbOps() {
 					vs->curRect.left -= 54;
 					vs->curRect.top += 8;
 					break;
+				default:
+					break;
 				}
 			} else	if (_game.id == GID_LOOM && _game.version == 4) {
 			// FIXME: hack loom notes into right spot
@@ -2344,6 +2362,9 @@ void ScummEngine_v5::o5_verbOps() {
 						break;
 					case 97:
 						vs->curRect.top -= 5;
+						break;
+					default:
+						break;
 					}
 				}
 			}
