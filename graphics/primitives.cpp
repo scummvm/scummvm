@@ -244,6 +244,13 @@ void drawFilledRect(Common::Rect &rect, int color, void (*plotProc)(int, int, in
 		drawHLine(rect.left, rect.right, y, color, plotProc, data);
 }
 
+void drawRect(Common::Rect &rect, int color, void (*plotProc)(int, int, int, void *), void *data) {
+	drawHLine(rect.left, rect.right, rect.top, color, plotProc, data);
+	drawHLine(rect.left, rect.right, rect.bottom, color, plotProc, data);
+	drawVLine(rect.top, rect.bottom, rect.left, color, plotProc, data);
+	drawVLine(rect.top, rect.bottom, rect.right, color, plotProc, data);
+}
+
 // http://members.chello.at/easyfilter/bresenham.html
 void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
 	if (rect.height() < rect.width()) {
