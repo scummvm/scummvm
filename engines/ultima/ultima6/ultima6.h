@@ -47,14 +47,9 @@ private:
 private:
 	bool initialize();
 
-	bool initConfig();
+	void initConfig();
 	const char *getConfigPathWin32();
 	void SharedDefaultConfigValues();
-	void set_safe_video_settings();
-	bool initDefaultConfigWin32();
-	bool initDefaultConfigMacOSX(const char *home_env);
-	bool initDefaultConfigUnix(const char *home_env);
-	bool loadConfigFile(std::string filename, bool readOnly = NUVIE_CONF_READONLY);
 	void assignGameConfigValues(uint8 game_type);
 	bool checkGameDir(uint8 game_type);
 	bool checkDataDir();
