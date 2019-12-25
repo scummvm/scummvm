@@ -251,6 +251,8 @@ void TextCast::setText(const char *text) {
 ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 	byte flags, unk1;
 
+	_ink = kInkTypeCopy;
+
 	if (version < 4) {
 		flags = stream.readByte();
 		unk1 = stream.readByte();
@@ -260,6 +262,7 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_fgCol = (127 - stream.readByte()) & 0xff; // -128 -> 0, 127 -> 256
 		_bgCol = (127 - stream.readByte()) & 0xff;
 		_fillType = stream.readByte();
+		_ink = static_cast<InkType>(_fillType & 0x3f);
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
 	} else {

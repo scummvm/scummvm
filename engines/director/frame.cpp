@@ -588,6 +588,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				case kRectangleSprite:
 				case kOutlinedRectangleSprite:	// this is actually a mouse-over shape? I don't think it's a real button.
 				case kCastMemberSprite: 		// Face kit D3
+				case kLineTopBottomSprite:
 					castType = kCastShape;
 					break;
 				case kTextSprite:
@@ -655,6 +656,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	if (sp->_shapeCast != NULL) {
 		sp->_foreColor = sp->_shapeCast->_fgCol;
 		sp->_backColor = sp->_shapeCast->_bgCol;
+		sp->_ink = sp->_shapeCast->_ink;
 	}
 
 	Common::Rect shapeRect = Common::Rect(sp->_startPoint.x,
@@ -668,7 +670,6 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		tmpSurface.fillRect(Common::Rect(shapeRect.width(), shapeRect.height()), (_vm->getCurrentScore()->_currentMouseDownSpriteId == spriteId ? 0 : 0xff));
 		//tmpSurface.frameRect(Common::Rect(shapeRect.width(), shapeRect.height()), 0);
 		// TODO: don't override, work out how to display correctly.
-		sp->_ink = kInkTypeReverse;
 	} else {
 		// No minus one on the pattern here! MacPlotData will do that for us!
 		Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), sp->_castId, 1, sp->_backColor);

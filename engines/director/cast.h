@@ -79,6 +79,7 @@ public:
 	byte _fillType;
 	byte _lineThickness;
 	byte _lineDirection;
+	InkType _ink;
 };
 
 class TextCast : public Cast {

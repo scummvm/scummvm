@@ -30,28 +30,6 @@ class ButtonCast;
 class ShapeCast;
 class TextCast;
 
-enum InkType {
-	kInkTypeCopy,
-	kInkTypeTransparent,
-	kInkTypeReverse,
-	kInkTypeGhost,
-	kInkTypeNotCopy,
-	kInkTypeNotTrans,
-	kInkTypeNotReverse,
-	kInkTypeNotGhost,
-	kInkTypeMatte,
-	kInkTypeMask,
-	//10-31 Not used (Lingo in a Nutshell)
-	kInkTypeBlend = 32,
-	kInkTypeAddPin,
-	kInkTypeAdd,
-	kInkTypeSubPin,
-	kInkTypeBackgndTrans,
-	kInkTypeLight,
-	kInkTypeSub,
-	kInkTypeDark
-};
-
 enum SpritePosition {
 	kSpritePositionUnk1 = 0,
 	kSpritePositionEnabled,

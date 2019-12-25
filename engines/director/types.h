@@ -113,6 +113,27 @@ enum SpriteType {
 	kDirMovieSprite					= 18
 };
 
+enum InkType {
+	kInkTypeCopy,
+	kInkTypeTransparent,
+	kInkTypeReverse,
+	kInkTypeGhost,
+	kInkTypeNotCopy,
+	kInkTypeNotTrans,
+	kInkTypeNotReverse,
+	kInkTypeNotGhost,
+	kInkTypeMatte,
+	kInkTypeMask,
+	//10-31 Not used (Lingo in a Nutshell)
+	kInkTypeBlend = 32,
+	kInkTypeAddPin,
+	kInkTypeAdd,
+	kInkTypeSubPin,
+	kInkTypeBackgndTrans,
+	kInkTypeLight,
+	kInkTypeSub,
+	kInkTypeDark
+};
 
 const char *scriptType2str(ScriptType scr);
 
