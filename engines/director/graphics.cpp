@@ -288,7 +288,7 @@ void DirectorEngine::testFontScaling() {
 
 			for (x = x1; x < x1 + 6; x++)
 				for (y = y1; y < y1 + 6; y++)
-					*((byte *)surface.getBasePtr(x, y)) = paletteTrans(i * 16 + j);
+					*((byte *)surface.getBasePtr(x, y)) = 255 - (i * 16 + j);
 		}
 	}
 
@@ -327,10 +327,6 @@ void DirectorEngine::testFonts() {
 	}
 
 	delete fontFile;
-}
-
-byte paletteTrans(byte c) {
-	return (0xf - (c & 0xf)) | (0xf0 - (c & 0xf0));
 }
 
 }
