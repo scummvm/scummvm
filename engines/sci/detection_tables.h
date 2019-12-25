@@ -2925,6 +2925,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LSL7 },
 
+	// Larry 7 - Polish DOS (GOG.com release 1.01v2)
+	// Executable scanning reports "3.000.000", VERSION file reports "1.01"
+	{"lsl7", "", {
+		{"resmap.000", 0, "eae93e1b1d1ccc58b4691c371281c95d", 8188},
+		{"ressci.000", 0, "89353723488219e25589165d73ed663e", 66965678},
+		{"resource.aud", 0, "d7b26b5df5ee6766b2dbd45b427b0074", 417594676},
+		AD_LISTEND},
+		Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LSL7 },
+
 #undef GUIO_LSL7_DEMO
 #undef GUIO_LSL7
 
