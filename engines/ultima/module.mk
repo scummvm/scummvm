@@ -53,6 +53,7 @@ MODULE_OBJS += \
 	ultima6/core/tile_manager.o \
 	ultima6/core/timed_event.o \
 	ultima6/core/weather.o \
+	ultima6/files/utils.o \
 	ultima6/files/nuvie_bmp_file.o \
 	ultima6/files/nuvie_file_list.o \
 	ultima6/files/nuvie_io.o \
@@ -85,7 +86,6 @@ MODULE_OBJS += \
 	ultima6/gui/gui_yes_no_dialog.o \
 	ultima6/keybinding/keys.o \
 	ultima6/keybinding/key_actions.o \
-	ultima6/keybinding/utils.o \
 	ultima6/menus/audio_dialog.o \
 	ultima6/menus/cheats_dialog.o \
 	ultima6/menus/gameplay_dialog.o \

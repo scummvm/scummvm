@@ -20,44 +20,54 @@
  *
  */
 
-#ifndef ULTIMA6_KEYBINDING_UTILS_H
-#define ULTIMA6_KEYBINDING_UTILS_H
-
-#include "ultima/shared/std/string.h" // exception handling include
-#include "common/stream.h"
+#include "ultima/shared/std/string.h"
+#include "ultima/ultima6/files/utils.h"
+#include "ultima/ultima6/ultima6.h"
+#include "common/file.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-bool openFile(
-    Common::ReadStream *&in,    // Input stream to open.
-    const char *fname           // Filename
-);
-
-extern bool fileExists(const char *fname);
+using std::string;
 
 /*
- *  File errors
+ *  Open a file for input,
+ *  trying the original name (lower case), and the upper case version
+ *  of the name.
+ *
+ *  Output: 0 if couldn't open.
  */
-#if 0
-class file_exception : public std::exception {
-	std::string  what_;
-public:
-	file_exception(const std::string &what_arg): what_(what_arg) {  }
-	const char *what() const throw () {
-		return what_.c_str();
-	}
-	virtual ~file_exception() throw() {}
-};
 
-class   file_open_exception : public file_exception {
-	static const std::string  prefix_;
-public:
-	file_open_exception(const std::string &file): file_exception("Error opening file " + file) {  }
-};
-#endif
+bool openFile(Common::ReadStream *&in, const char *fname) {
+    Common::File *f = new Common::File();
+    Common::String filename(fname);
+    bool result;
+
+    if (filename.hasPrefixIgnoreCase("./data/")) {
+        filename = "ultima6/" + Common::String(fname + 7);
+        result = f->open(filename, *g_engine->getDataArchive());
+
+    } else {
+        result = f->open(filename);
+    }
+    
+    
+    if (result) {
+		in = f;
+		return true;
+	} else {
+		delete f;
+		return false;
+	}
+}
+
+/*
+ *  See if a file exists.
+ */
+
+bool fileExists(const char *fname) {
+	return Common::File::exists(fname);
+}
 
 } // End of namespace Ultima6
 } // End of namespace Ultima
-
-#endif

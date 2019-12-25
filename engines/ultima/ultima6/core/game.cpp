@@ -64,7 +64,7 @@
 #include "ultima/ultima6/core/weather.h"
 #include "ultima/ultima6/core/book.h"
 #include "ultima/ultima6/keybinding/keys.h"
-#include "ultima/ultima6/keybinding/utils.h"
+#include "ultima/ultima6/files/utils.h"
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/ultima6.h"
 

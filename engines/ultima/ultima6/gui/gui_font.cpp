@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "ultima/ultima6/keybinding/utils.h"
+#include "ultima/ultima6/files/utils.h"
 #include "ultima/ultima6/gui/gui_font.h"
 #include "ultima/ultima6/gui/gui_load_image.h"
 #include "common/textconsole.h"

@@ -20,41 +20,23 @@
  *
  */
 
-#include "ultima/shared/std/string.h"
-#include "ultima/ultima6/keybinding/utils.h"
-#include "common/file.h"
+#ifndef ULTIMA6_FILES_UTILS_H
+#define ULTIMA6_FILES_UTILS_H
+
+#include "ultima/shared/std/string.h" // exception handling include
+#include "common/stream.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-using std::string;
+bool openFile(
+    Common::ReadStream *&in,    // Input stream to open.
+    const char *fname           // Filename
+);
 
-/*
- *  Open a file for input,
- *  trying the original name (lower case), and the upper case version
- *  of the name.
- *
- *  Output: 0 if couldn't open.
- */
-
-bool openFile(Common::ReadStream *&in, const char *fname) {
-	Common::File *f = new Common::File();
-	if (f->open(fname)) {
-		in = f;
-		return true;
-	} else {
-		delete f;
-		return false;
-	}
-}
-
-/*
- *  See if a file exists.
- */
-
-bool fileExists(const char *fname) {
-	return Common::File::exists(fname);
-}
+extern bool fileExists(const char *fname);
 
 } // End of namespace Ultima6
 } // End of namespace Ultima
+
+#endif
