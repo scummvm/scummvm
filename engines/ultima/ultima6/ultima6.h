@@ -75,11 +75,6 @@ public:
 	 * Get a random number
 	 */
 	uint getRandomNumber(uint maxVal) { return _randomSource.getRandomNumber(maxVal); }
-
-	/**
-	 * Return a reference to the data archive
-	 */
-	Common::Archive* getDataArchive() const { return _dataArchive; }
 };
 
 extern Ultima6Engine *g_engine;

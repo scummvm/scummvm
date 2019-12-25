@@ -41,24 +41,14 @@ using std::string;
 bool openFile(Common::ReadStream *&in, const char *fname) {
     Common::File *f = new Common::File();
     Common::String filename(fname);
-    bool result;
 
-    if (filename.hasPrefixIgnoreCase("./data/")) {
-        filename = "ultima6/" + Common::String(fname + 7);
-        result = f->open(filename, *g_engine->getDataArchive());
-
+    if (f->open(filename)) {
+	    in = f;
+	    return true;
     } else {
-        result = f->open(filename);
+	    delete f;
+	    return false;
     }
-    
-    
-    if (result) {
-		in = f;
-		return true;
-	} else {
-		delete f;
-		return false;
-	}
 }
 
 /*
