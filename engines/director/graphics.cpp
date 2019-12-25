@@ -281,6 +281,17 @@ void DirectorEngine::testFontScaling() {
 		x += width + 1;
 	}
 
+	for (int i = 0; i < 16; i++) {
+		for (int j = 0; j < 16; j++) {
+			int y1 = 80 + i * 7;
+			int x1 = 80 + j * 7;
+
+			for (x = x1; x < x1 + 6; x++)
+				for (y = y1; y < y1 + 6; y++)
+					*((byte *)surface.getBasePtr(x, y)) = (15 - i) * 16 + (15 - j);
+		}
+	}
+
 	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h); // testing fonts
 
 	Common::Event event;
@@ -317,6 +328,5 @@ void DirectorEngine::testFonts() {
 
 	delete fontFile;
 }
-
 
 }
