@@ -110,8 +110,9 @@ void Score::setArchive(Archive *archive) {
 		_macName = archive->getFileName();
 	}
 
-	if (archive->hasResource(MKTAG('V', 'W', 'L', 'B'), 1024)) {
-		loadLabels(*archive->getResource(MKTAG('V', 'W', 'L', 'B'), 1024));
+	// Frame Labels
+	if (archive->hasResource(MKTAG('V', 'W', 'L', 'B'), -1)) {
+		loadLabels(*archive->getFirstResource(MKTAG('V', 'W', 'L', 'B')));
 	}
 }
 
@@ -133,13 +134,16 @@ void Score::loadArchive() {
 		g_system->getPaletteManager()->setPalette(_vm->getPalette(), 0, _vm->getPaletteColorCount());
 	}
 
+	// Font Directory
 	if (_movieArchive->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {
-		debug("Movie has fonts. Loading....");
+		debug("STUB: Unhandled FOND resource");
 	}
 
+	// Score
 	assert(_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1));
 	loadFrames(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'S', 'C')));
 
+	// Configuration Information
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
 		loadConfig(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'C', 'F')));
 	} else {
@@ -148,22 +152,42 @@ void Score::loadArchive() {
 		_stageColor = 1;
 	}
 
+	// Cast Information Array
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'C', 'R'), -1)) {
 		_castIDoffset = _movieArchive->getResourceIDList(MKTAG('V', 'W', 'C', 'R'))[0];
 		loadCastDataVWCR(*_movieArchive->getResource(MKTAG('V', 'W', 'C', 'R'), _castIDoffset));
 	}
+
+	// Action list
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'A', 'C'), -1)) {
 		loadActions(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'A', 'C')));
 	}
 
+	// File Info
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'I'), -1)) {
 		loadFileInfo(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'F', 'I')));
 	}
 
+	// Font Mapping
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'M'), -1)) {
 		_vm->_wm->_fontMan->clearFontMapping();
 
 		loadFontMap(*_movieArchive->getFirstResource(MKTAG('V', 'W', 'F', 'M')));
+	}
+
+	// Pattern Tiles
+	if (_movieArchive->hasResource(MKTAG('V', 'W', 'T', 'L'), -1)) {
+		debug("STUB: Unhandled VWTL resource.");
+	}
+
+	// Time code
+	if (_movieArchive->hasResource(MKTAG('V', 'W', 't', 'c'), -1)) {
+		debug("STUB: Unhandled VWtc resource");
+	}
+
+	// External sound files
+	if (_movieArchive->hasResource(MKTAG('S', 'T', 'R', ' '), -1)) {
+		debug("STUB: Unhandled 'STR ' resource");
 	}
 
 	// Try to load script context
@@ -208,6 +232,22 @@ void Score::loadArchive() {
 			loadCastData(*stream, *iterator, &res);
 		}
 	}
+
+	// PICT resources
+	if (_movieArchive->hasResource(MKTAG('P', 'I', 'C', 'T'), -1)) {
+		debug("STUB: Unhandled 'PICT' resource");
+	}
+
+	// Sound resources
+	if (_movieArchive->hasResource(MKTAG('s', 'n', 'd', ' '), -1)) {
+		debug("STUB: Unhandled 'snd ' resource");
+	}
+
+	// Film Loop resources
+	if (_movieArchive->hasResource(MKTAG('S', 'C', 'V', 'W'), -1)) {
+		debug("STUB: Unhandled 'SCVW' resource");
+	}
+
 
 	setSpriteCasts();
 	loadSpriteImages(false);
@@ -479,17 +519,31 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 void Score::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(1, kDebugLoading, "****** Loading Config VWCF");
 
-	/*uint16 unk1 = */ stream.readUint16();
-	/*ver1 = */ stream.readUint16();
+	uint16 len = stream.readUint16();
+	uint16 ver1 = stream.readUint16();
 	_movieRect = Score::readRect(stream);
 
 	_castArrayStart = stream.readUint16();
 	_castArrayEnd = stream.readUint16();
 	_currentFrameRate = stream.readByte();
 
-	debugC(1, kDebugLoading, "Config. Framerate: %d", _currentFrameRate);
-	stream.skip(9);
+	byte lightswitch = stream.readByte();
+	uint16 unk1 = stream.readUint16();
+	uint16 commentFont = stream.readUint16();
+	uint16 commentSize = stream.readUint16();
+	uint16 commentStyle = stream.readUint16();
 	_stageColor = stream.readUint16();
+	uint16 bitdepth = stream.readUint16();
+	byte color = stream.readByte();	// boolean, color = 1, B/W = 0
+	uint16 stageColorR = stream.readUint16();
+	uint16 stageColorG = stream.readUint16();
+	uint16 stageColorB = stream.readUint16();
+
+	debugC(1, kDebugLoading, "Score::loadConfig(): len: %d, ver: %d, framerate: %d, light: %d, unk: %d, font: %d, size: %d"
+			", style: %d", len, ver1, _currentFrameRate, lightswitch, unk1, commentFont, commentSize, commentStyle);
+	debugC(1, kDebugLoading, "Score::loadConfig(): stagecolor: %d, depth: %d, color: %d, rgb: 0x%04x 0x%04x 0x%04x",
+			_stageColor, bitdepth, color, stageColorR, stageColorG, stageColorB);
+	debugC(1, kDebugLoading, "Score::loadConfig(): %d bytes left", stream.size() - stream.pos());
 }
 
 void Score::readVersion(uint32 rid) {
@@ -514,24 +568,24 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 
 		switch (castType) {
 		case kCastBitmap:
-			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d BitmapCast", id);
+			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) BitmapCast", id, numToCastNum(id));
 			// TODO: Work out the proper tag!
-			_loadedBitmaps->setVal(id, new BitmapCast(stream, MKTAG('B', 'I', 'T', 'D')));
+			_loadedBitmaps->setVal(id, new BitmapCast(stream, MKTAG('B', 'I', 'T', 'D'), _vm->getVersion()));
 			_castTypes[id] = kCastBitmap;
 			break;
 		case kCastText:
-			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d TextCast", id);
-			_loadedText->setVal(id, new TextCast(stream));
+			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) TextCast", id, numToCastNum(id));
+			_loadedText->setVal(id, new TextCast(stream, _vm->getVersion()));
 			_castTypes[id] = kCastText;
 			break;
 		case kCastShape:
-			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d ShapeCast", id);
-			_loadedShapes->setVal(id, new ShapeCast(stream));
+			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) ShapeCast", id, numToCastNum(id));
+			_loadedShapes->setVal(id, new ShapeCast(stream, _vm->getVersion()));
 			_castTypes[id] = kCastShape;
 			break;
 		case kCastButton:
-			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d ButtonCast", id);
-			_loadedButtons->setVal(id, new ButtonCast(stream));
+			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) ButtonCast", id, numToCastNum(id));
+			_loadedButtons->setVal(id, new ButtonCast(stream, _vm->getVersion()));
 			_castTypes[id] = kCastButton;
 			break;
 		default:

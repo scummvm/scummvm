@@ -129,17 +129,20 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_palinfo2 = stream.readUint16();
 		_palinfo3 = stream.readUint16();
 
+		uint32 t;
+		uint16 pad = 0;
+
 		if (version == 2) {
-			int t = stream.readUint16();
+			t = stream.readUint16();
 			if (t != 0) { // In D2 there are values
 				warning("TextCast: t: %x", t);
 			}
 
 			_initialRect = Score::readRect(stream);
-			stream.readUint16();
+			pad = stream.readUint16();
 		} else {
-			int t = stream.readUint32();
-			if (t != 0) { // In D2 there are values
+			t = stream.readUint32();
+			if (t != 0) {
 				warning("TextCast: t: %x", t);
 			}
 
@@ -161,6 +164,14 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_fontId = stream.readByte();
 		_fontSize = stream.readByte();
 		_textSlant = 0;
+
+		debugC(2, kDebugLoading, "TextCast(): flags1: %d, border: %d gutter: %d shadow: %d type: %d align: %04x",
+				_flags1, _borderSize, _gutterSize, _boxShadow, _textType, _textAlign);
+		debugC(2, kDebugLoading, "TextCast(): rgb: 0x%04x 0x%04x 0x%04x, t: %d pad: %d shadow: %d flags: %d font: %d size: %d",
+				_palinfo1, _palinfo2, _palinfo3, t, pad, _textShadow, flags, _fontId, _fontSize);
+		if (debugChannelSet(2, kDebugLoading)) {
+			_initialRect.debugPrint(2, "TextCast(): rect:");
+		}
 	} else if (version == 4) {
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());

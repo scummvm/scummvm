@@ -54,7 +54,7 @@ public:
 
 class BitmapCast : public Cast {
 public:
-	BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version = 2);
+	BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version);
 
 	uint16 _pitch;
 	uint16 _regX;
@@ -70,7 +70,7 @@ public:
 
 class ShapeCast : public Cast {
 public:
-	ShapeCast(Common::ReadStreamEndian &stream, uint16 version = 2);
+	ShapeCast(Common::ReadStreamEndian &stream, uint16 version);
 
 	ShapeType _shapeType;
 	uint16 _pattern;
@@ -84,7 +84,7 @@ public:
 
 class TextCast : public Cast {
 public:
-	TextCast(Common::ReadStreamEndian &stream, uint16 version = 2);
+	TextCast(Common::ReadStreamEndian &stream, uint16 version);
 
 	void setText(const char *text);
 
@@ -111,14 +111,14 @@ public:
 
 class ButtonCast : public TextCast {
 public:
-	ButtonCast(Common::ReadStreamEndian &stream, uint16 version = 2);
+	ButtonCast(Common::ReadStreamEndian &stream, uint16 version);
 
 	ButtonType _buttonType;
 };
 
 class ScriptCast : public Cast {
 public:
-	ScriptCast(Common::ReadStreamEndian &stream, uint16 version = 2);
+	ScriptCast(Common::ReadStreamEndian &stream, uint16 version);
 
 	uint32 _id;
 };
