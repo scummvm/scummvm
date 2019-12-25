@@ -217,6 +217,9 @@ char *strgets(char *str, int n, Common::ReadStream *stream) {
 	char c;
 
 	while (!stream->eos() && (count < (n - 1)) && (c = stream->readByte()) != '\n') {
+		if (c == '\r')
+			continue;
+
 		str[count] = c;
 		++count;
 	}
