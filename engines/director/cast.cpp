@@ -123,52 +123,51 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
 		_boxShadow = static_cast<SizeType>(stream.readByte());
-		_textType = static_cast<TextType>(stream.readByte());
+		byte pad1 = stream.readByte();
 		_textAlign = static_cast<TextAlignType>(stream.readUint16());
 		_palinfo1 = stream.readUint16();
 		_palinfo2 = stream.readUint16();
 		_palinfo3 = stream.readUint16();
 
-		uint32 t;
-		uint16 pad = 0;
+		uint32 pad2;
+		uint16 pad3;
+		uint16 pad4 = 0;
+		uint16 totalTextHeight;
+		byte flags = 0;
 
 		if (version == 2) {
-			t = stream.readUint16();
-			if (t != 0) { // In D2 there are values
-				warning("TextCast: t: %x", t);
+			pad2 = stream.readUint16();
+			if (pad2 != 0) { // In D2 there are values
+				warning("TextCast: pad2: %x", pad2);
 			}
 
 			_initialRect = Score::readRect(stream);
-			pad = stream.readUint16();
+			pad3 = stream.readUint16();
+
+			_textShadow = static_cast<SizeType>(stream.readByte());
+			flags = stream.readByte();
+			if (flags & 0x1)
+				_textFlags.push_back(kTextFlagEditable);
+			if (flags & 0x2)
+				_textFlags.push_back(kTextFlagAutoTab);
+			if (flags & 0x4)
+				_textFlags.push_back(kTextFlagDoNotWrap);
+			if (flags & 0xf8)
+				warning("Unprocessed text cast flags: %x", flags & 0xf8);
+
+			totalTextHeight = stream.readUint16();
 		} else {
-			t = stream.readUint32();
-			if (t != 0) {
-				warning("TextCast: t: %x", t);
-			}
-
+			pad2 = stream.readUint16();
 			_initialRect = Score::readRect(stream);
+			pad3 = stream.readUint16();
+			pad4 = stream.readUint16();
+			totalTextHeight = stream.readUint16();
 		}
 
-		_textShadow = static_cast<SizeType>(stream.readByte());
-		byte flags = stream.readByte();
-		if (flags & 0x1)
-			_textFlags.push_back(kTextFlagEditable);
-		if (flags & 0x2)
-			_textFlags.push_back(kTextFlagAutoTab);
-		if (flags & 0x4)
-			_textFlags.push_back(kTextFlagDoNotWrap);
-		if (flags & 0xf8)
-			warning("Unprocessed text cast flags: %x", flags & 0xf8);
-
-		// TODO: FIXME: guesswork
-		_fontId = stream.readByte();
-		_fontSize = stream.readByte();
-		_textSlant = 0;
-
-		debugC(2, kDebugLoading, "TextCast(): flags1: %d, border: %d gutter: %d shadow: %d type: %d align: %04x",
-				_flags1, _borderSize, _gutterSize, _boxShadow, _textType, _textAlign);
-		debugC(2, kDebugLoading, "TextCast(): rgb: 0x%04x 0x%04x 0x%04x, t: %d pad: %d shadow: %d flags: %d font: %d size: %d",
-				_palinfo1, _palinfo2, _palinfo3, t, pad, _textShadow, flags, _fontId, _fontSize);
+		debugC(2, kDebugLoading, "TextCast(): flags1: %d, border: %d gutter: %d shadow: %d pad1: %x align: %04x",
+				_flags1, _borderSize, _gutterSize, _boxShadow, pad1, _textAlign);
+		debugC(2, kDebugLoading, "TextCast(): rgb: 0x%04x 0x%04x 0x%04x, pad2: %x pad3: %d pad4: %d shadow: %d flags: %d totHeight: %d",
+				_palinfo1, _palinfo2, _palinfo3, pad2, pad3, pad4, _textShadow, flags, totalTextHeight);
 		if (debugChannelSet(2, kDebugLoading)) {
 			_initialRect.debugPrint(2, "TextCast(): rect:");
 		}
