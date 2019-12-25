@@ -41,7 +41,8 @@ ConvFont::~ConvFont() {
 }
 
 bool ConvFont::init(unsigned char *data, uint8 *width_data, uint16 num_c, uint16 char_offset) {
-	data_offset = char_offset;
+    assert(data && width_data);
+    data_offset = char_offset;
 	num_chars = num_c;
 
 	f_data = data;

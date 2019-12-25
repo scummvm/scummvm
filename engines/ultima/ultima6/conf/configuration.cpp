@@ -36,6 +36,9 @@ Configuration::Configuration() : _configChanged(false) {
 	_localKeys["GameType"] = "";
 	_localKeys["GameName"] = "";
 	_localKeys["GameID"] = "";
+
+	// Data for the three games comes from the ultima6/ folder in ultima.dat
+	_localKeys["datadir"] = "ultima6";
 }
 
 Configuration::~Configuration() {
