@@ -197,8 +197,8 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._scriptId = stream->readByte();
 			sprite._spriteType = stream->readByte();
 			sprite._enabled = sprite._spriteType != 0;
-			sprite._foreColor = stream->readByte();
-			sprite._backColor = stream->readByte();
+			sprite._foreColor = (stream->readByte() + 128) & 0xff;
+			sprite._backColor = (stream->readByte() + 128) & 0xff;
 
 			sprite._flags = stream->readUint16();
 			sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
@@ -243,11 +243,11 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		}
 
 		if (sprite._castId) {
-			debugC(4, kDebugLoading, "CH: %-3d castId: %03d(%s) [%x,%x, flags:%04x [ink: %x trails: %d line: %d], %dx%d@%d,%d type: %d] script: %d, flags2: %x, unk2: %x, unk3: %x",
-				i + 1, sprite._castId, numToCastNum(sprite._castId), sprite._x1, sprite._x2, sprite._flags,
+			debugC(4, kDebugLoading, "CH: %-3d castId: %03d(%s) [flags:%04x [ink: %x trails: %d line: %d], %dx%d@%d,%d type: %d fg: %d bg: %d] script: %d, flags2: %x, unk2: %x, unk3: %x",
+				i + 1, sprite._castId, numToCastNum(sprite._castId), sprite._flags,
 				sprite._ink, sprite._trails, sprite._lineSize, sprite._width, sprite._height,
 				sprite._startPoint.x, sprite._startPoint.y,
-				sprite._spriteType, sprite._scriptId, sprite._flags2, sprite._unk2, sprite._unk3);
+				sprite._spriteType, sprite._foreColor, sprite._backColor, sprite._scriptId, sprite._flags2, sprite._unk2, sprite._unk3);
 		} else {
 			debugC(4, kDebugLoading, "CH: %-3d castId: 000", i + 1);
 		}

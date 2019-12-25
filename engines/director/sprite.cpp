@@ -60,8 +60,6 @@ Sprite::Sprite() {
 	_blend = 0;
 	_lineSize = 1;
 
-	_x1 = 0;
-	_x2 = 0;
 	_scriptId = 0;
 	_flags2 = 0;
 	_unk2 = 0;
@@ -104,8 +102,6 @@ Sprite::Sprite(const Sprite &sprite) {
 	_startTime = sprite._startTime;
 	_lineSize = sprite._lineSize;
 
-	_x1 = sprite._x1;
-	_x2 = sprite._x2;
 	_scriptId = sprite._scriptId;
 	_flags2 = sprite._flags2;
 	_unk2 = sprite._unk2;
