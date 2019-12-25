@@ -26,6 +26,7 @@
 #include "ultima/shared/std/string.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/misc.h"
+#include "ultima/detection.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -36,70 +37,73 @@ class ConfigNode;
 #define NUVIE_CONF_READONLY true
 #define NUVIE_CONF_READWRITE false
 
-/*
-Configuration class.
-
-The configuration values are stored in a tree. (or a forest, technically)
-All values are stored as strings, but access functions for ints and bools
- are provided
-You should only store values in leaf nodes. (This isn't enforced everywhere,
- but contents of non-leaf nodes can disappear without warning)
-
-You can load multiple config files, which can be read-only.
-Each config file contains a single tree.
-Values in files loaded last override values in files loaded earlier.
-Values are written to the last-loaded writable config file with the right root.
- Because of this it's important to make sure the last-loaded config file with
- a given root is writable. (The idea is that you can load a system-wide config
- file first, and a user's config file after that.)
-
-*/
-
+/**
+ * Configuration class.
+ *
+ * Configuration values are stored in one of two ways -either as a standalone
+ * nuvie.cfg file, or otherwise from the ScummVM domain for the added game.
+ *
+ * WHen the nuvie.cfg file is present, it's contents are stored as an XML tree
+ * (or a forest, technically). All values are stored as strings, but access
+ * functions for ints and bools are provided
+ * You should only store values in leaf nodes. (This isn't enforced everywhere,
+ * but contents of non-leaf nodes can disappear without warning)
+ *
+ * You can load multiple config files, which can be read-only.
+ * Each config file contains a single tree.
+ * Values in files loaded last override values in files loaded earlier.
+ * Values are written to the last-loaded writable config file with the right root.
+ * Because of this it's important to make sure the last-loaded config file with
+ * a given root is writable. (The idea is that you can load a system-wide config
+ * file first, and a user's config file after that.)
+ */
 class Configuration {
+private:
+	std::vector<XMLTree*> _trees;
+	std::string _configFilename;
+    bool _configChanged;
 public:
 	Configuration();
 	~Configuration();
 
 	// read config file. Multiple files may be read. Order is important.
-	bool readConfigFile(std::string fname, std::string root,
-	                    bool readonly = false);
+	bool readConfigFile(std::string fname, std::string root, bool readonly = true);
+
+    // sets up defaults if ScummVM doesn't already have them
+    void setScummVMDefaultsIfNeeded(GameId gameType);
+
 	// write all (writable) config files
 	void write();
 	// clear everything
 	void clear();
 
-	std::string filename() {
-		return config_filename;
+	std::string filename() const {
+		return _configFilename;
 	}
 
 	// get value
-	void value(std::string key, std::string &ret, const char *defaultvalue = "");
-	void value(std::string key, int &ret, int defaultvalue = 0);
-	void value(std::string key, bool &ret, bool defaultvalue = false);
+	void value(const std::string &key, std::string &ret, const char *defaultvalue = "");
+	void value(const std::string &key, int &ret, int defaultvalue = 0);
+	void value(const std::string &key, bool &ret, bool defaultvalue = false);
 
-	void pathFromValue(std::string key, std::string file, std::string &full_path);
+	void pathFromValue(const std::string &key, std::string file, std::string &full_path);
 
 	// set value
-	bool set(std::string key, std::string value);
-	bool set(std::string key, const char *value);
-	bool set(std::string key, int value);
-	bool set(std::string key, bool value);
+	bool set(const std::string &key, std::string value);
+	bool set(const std::string &key, const char *value);
+	bool set(const std::string &key, int value);
+	bool set(const std::string &key, bool value);
 
 	// get node ref. (delete it afterwards)
-	ConfigNode *getNode(std::string key);
+	ConfigNode *getNode(const std::string &key);
 
 	// list all subkeys of a key. (no guaranteed order in result)
-	std::set<std::string> listKeys(std::string key, bool longformat = false);
+	std::set<std::string> listKeys(const std::string &key, bool longformat = false);
 
 	typedef std::pair<std::string, std::string> KeyType;
 	typedef std::vector<KeyType> KeyTypeList;
 
 	void getSubkeys(KeyTypeList &ktl, std::string basekey);
-
-private:
-
-	std::vector<XMLTree *> trees;
-	std::string config_filename;
 };
 
 } // End of namespace Ultima6
