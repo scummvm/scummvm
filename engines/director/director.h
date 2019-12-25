@@ -180,6 +180,8 @@ private:
 	void testFonts();
 };
 
+byte paletteTrans(byte c);
+
 extern DirectorEngine *g_director;
 
 } // End of namespace Director
