@@ -60,6 +60,8 @@ class ConfigNode;
 class Configuration {
 private:
 	std::vector<XMLTree*> _trees;
+    Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash,
+        Common::IgnoreCase_EqualTo> _localKeys;
 	std::string _configFilename;
     bool _configChanged;
 public:
@@ -89,7 +91,7 @@ public:
 	void pathFromValue(const std::string &key, std::string file, std::string &full_path);
 
 	// set value
-	bool set(const std::string &key, std::string value);
+	bool set(const std::string &key, const std::string &value);
 	bool set(const std::string &key, const char *value);
 	bool set(const std::string &key, int value);
 	bool set(const std::string &key, bool value);
