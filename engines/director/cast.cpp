@@ -33,7 +33,7 @@ namespace Director {
 BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version) {
 	if (version < 4) {
 		_pitch = 0;
-		_flags = stream.readByte();
+		_flags = stream.readByte();	// region: 0 - auto, 1 - matte, 2 - disabled
 		_bytes = stream.readUint16();
 		_initialRect = Score::readRect(stream);
 		_boundingRect = Score::readRect(stream);
@@ -42,10 +42,10 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 
 		if (_bytes & 0x8000) {
 			_bitsPerPixel = stream.readUint16();
-			_unk2 = stream.readUint16();
+			_clut = stream.readUint16();
 		} else {
 			_bitsPerPixel = 1;
-			_unk2 = 0;
+			_clut = 0;
 		}
 
 		_pitch = _initialRect.width();
@@ -57,7 +57,7 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 
 		_flags = 0;
 		_bytes = 0;
-		_unk2 = 0;
+		_clut = 0;
 
 		_initialRect = Score::readRect(stream);
 		_boundingRect = Score::readRect(stream);
@@ -97,6 +97,7 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 
 		_regX = 0;
 		_regY = 0;
+		_clut = 0;
 
 		stream.readUint32();
 	}
@@ -119,7 +120,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 	_palinfo1 = _palinfo2 = _palinfo3 = 0;
 
 	if (version <= 3) {
-		_flags1 = stream.readByte();
+		_flags1 = stream.readByte(); // region: 0 - auto, 1 - matte, 2 - disabled
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
 		_boxShadow = static_cast<SizeType>(stream.readByte());

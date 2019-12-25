@@ -61,7 +61,7 @@ public:
 	uint16 _regY;
 	uint8 _flags;
 	uint16 _bytes;
-	uint16 _unk2;
+	uint16 _clut;
 
 	uint16 _bitsPerPixel;
 
