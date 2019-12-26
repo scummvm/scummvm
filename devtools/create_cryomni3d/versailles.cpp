@@ -30,12 +30,12 @@
 
 // In Versailles platform doesn't seem to change anything
 #define DEFINE_FUNCS(lang) \
-    size_t writeVersailles_ALL_ ## lang ## Header(FILE *f, uint32 offset, uint32 size) { \
+    size_t writeVersailles_ALL_ ## lang ## _Header(FILE *f, uint32 offset, uint32 size) { \
         return writeGameHeader(f, VERSAILLES_GAMEID, VERSAILLES_VERSION, LANG_ ## lang, PLATFORM_ALL, \
                                offset, size); \
     } \
     \
-    size_t writeVersailles_ALL_ ## lang ## Data(FILE *f) { \
+    size_t writeVersailles_ALL_ ## lang ## _Data(FILE *f) { \
         size_t size = 0; \
         \
         assert(VERSAILLES_LOCALIZED_FILENAMES_COUNT == ARRAYSIZE(versailles ## lang ## localizedFilenames)); \
