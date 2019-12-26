@@ -242,7 +242,7 @@ bool MacFontFamily::load(Common::SeekableReadStream &stream) {
  }
 
  MacFONTFont::~MacFONTFont() {
-	delete _data._bitImage;
+	delete[] _data._bitImage;
  }
 
 bool MacFONTFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *family, int size, int style) {
