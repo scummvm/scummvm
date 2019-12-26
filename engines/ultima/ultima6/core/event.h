@@ -25,11 +25,9 @@
 
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
-#include "ultima/ultima6/script/script.h"
-
-#include "ultima/ultima6/core/obj_manager.h"
 #include "ultima/ultima6/misc/call_back.h"
 #include "ultima/ultima6/keybinding/keys_enum.h"
+#include "ultima/ultima6/core/obj_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -58,7 +56,7 @@ class ScriptThread;
 #define PUSH_FROM_PLAYER false
 #define PUSH_FROM_OBJECT true
 
-typedef enum {
+enum EventMode {
 	LOOK_MODE = 0,
 	USE_MODE,
 	GET_MODE,
@@ -77,7 +75,7 @@ typedef enum {
 	MULTIUSE_MODE,
 	KEYINPUT_MODE,
 	SCRIPT_MODE
-} EventMode;
+};
 
 extern uint32 nuvieGameCounter;
 
@@ -88,6 +86,76 @@ extern uint32 nuvieGameCounter;
 #define EVENTINPUT_OBJECT   3
 #define EVENTINPUT_MAPCOORD_DIR 4
 #define EVENTINPUT_SPELL_NUM 5
+
+enum MouseButton { BUTTON_NONE = 0, BUTTON_LEFT = 1, BUTTON_RIGHT = 2, BUTTON_MIDDLE = 3 };
+
+#define BUTTON_MASK(MB) (1 << ((int)(MB) - 1))
+
+/**
+ * Joystick actions mapped to dummy unused keycode values
+ */
+const Common::KeyCode FIRST_JOY = (Common::KeyCode)400;
+const Common::KeyCode JOY_UP = FIRST_JOY;               // PS d-pad when analog is disabled. left stick when enabled
+const Common::KeyCode JOY_DOWN = (Common::KeyCode)(FIRST_JOY + 1);
+const Common::KeyCode JOY_LEFT = (Common::KeyCode)(FIRST_JOY + 2);
+const Common::KeyCode JOY_RIGHT = (Common::KeyCode)(FIRST_JOY + 3);
+const Common::KeyCode JOY_RIGHTUP = (Common::KeyCode)(FIRST_JOY + 4);
+const Common::KeyCode JOY_RIGHTDOWN = (Common::KeyCode)(FIRST_JOY + 5);
+const Common::KeyCode JOY_LEFTUP = (Common::KeyCode)(FIRST_JOY + 6);
+const Common::KeyCode JOY_LEFTDOWN = (Common::KeyCode)(FIRST_JOY + 7);
+const Common::KeyCode JOY_UP2 = (Common::KeyCode)(FIRST_JOY + 8); // PS right stick when analog is enabled
+const Common::KeyCode JOY_DOWN2 = (Common::KeyCode)(FIRST_JOY + 9);
+const Common::KeyCode JOY_LEFT2 = (Common::KeyCode)(FIRST_JOY + 10);
+const Common::KeyCode JOY_RIGHT2 = (Common::KeyCode)(FIRST_JOY + 11);
+const Common::KeyCode JOY_RIGHTUP2 = (Common::KeyCode)(FIRST_JOY + 12);
+const Common::KeyCode JOY_RIGHTDOWN2 = (Common::KeyCode)(FIRST_JOY + 13);
+const Common::KeyCode JOY_LEFTUP2 = (Common::KeyCode)(FIRST_JOY + 14);
+const Common::KeyCode JOY_LEFTDOWN2 = (Common::KeyCode)(FIRST_JOY + 15);
+const Common::KeyCode JOY_UP3 = (Common::KeyCode)(FIRST_JOY + 16);
+const Common::KeyCode JOY_DOWN3 = (Common::KeyCode)(FIRST_JOY + 17);
+const Common::KeyCode JOY_LEFT3 = (Common::KeyCode)(FIRST_JOY + 18);
+const Common::KeyCode JOY_RIGHT3 = (Common::KeyCode)(FIRST_JOY + 19);
+const Common::KeyCode JOY_RIGHTUP3 = (Common::KeyCode)(FIRST_JOY + 20);
+const Common::KeyCode JOY_RIGHTDOWN3 = (Common::KeyCode)(FIRST_JOY + 21);
+const Common::KeyCode JOY_LEFTUP3 = (Common::KeyCode)(FIRST_JOY + 22);
+const Common::KeyCode JOY_LEFTDOWN3 = (Common::KeyCode)(FIRST_JOY + 23);
+const Common::KeyCode JOY_UP4 = (Common::KeyCode)(FIRST_JOY + 24);
+const Common::KeyCode JOY_DOWN4 = (Common::KeyCode)(FIRST_JOY + 25);
+const Common::KeyCode JOY_LEFT4 = (Common::KeyCode)(FIRST_JOY + 26);
+const Common::KeyCode JOY_RIGHT4 = (Common::KeyCode)(FIRST_JOY + 27);
+const Common::KeyCode JOY_RIGHTUP4 = (Common::KeyCode)(FIRST_JOY + 28);
+const Common::KeyCode JOY_RIGHTDOWN4 = (Common::KeyCode)(FIRST_JOY + 29);
+const Common::KeyCode JOY_LEFTUP4 = (Common::KeyCode)(FIRST_JOY + 30);
+const Common::KeyCode JOY_LEFTDOWN4 = (Common::KeyCode)(FIRST_JOY + 31);
+const Common::KeyCode JOY_HAT_UP = (Common::KeyCode)(FIRST_JOY + 32); // PS d-pad when analog is enabled
+const Common::KeyCode JOY_HAT_DOWN = (Common::KeyCode)(FIRST_JOY + 33);
+const Common::KeyCode JOY_HAT_LEFT = (Common::KeyCode)(FIRST_JOY + 34);
+const Common::KeyCode JOY_HAT_RIGHT = (Common::KeyCode)(FIRST_JOY + 35);
+const Common::KeyCode JOY_HAT_RIGHTUP = (Common::KeyCode)(FIRST_JOY + 36);
+const Common::KeyCode JOY_HAT_RIGHTDOWN = (Common::KeyCode)(FIRST_JOY + 37);
+const Common::KeyCode JOY_HAT_LEFTUP = (Common::KeyCode)(FIRST_JOY + 38);
+const Common::KeyCode JOY_HAT_LEFTDOWN = (Common::KeyCode)(FIRST_JOY + 39);
+const Common::KeyCode JOY0 = (Common::KeyCode)(FIRST_JOY + 40); // PS triangle
+const Common::KeyCode JOY1 = (Common::KeyCode)(FIRST_JOY + 41); // PS circle
+const Common::KeyCode JOY2 = (Common::KeyCode)(FIRST_JOY + 42); // PS x
+const Common::KeyCode JOY3 = (Common::KeyCode)(FIRST_JOY + 43); // PS square
+const Common::KeyCode JOY4 = (Common::KeyCode)(FIRST_JOY + 44); // PS L2
+const Common::KeyCode JOY5 = (Common::KeyCode)(FIRST_JOY + 45); // PS R2
+const Common::KeyCode JOY6 = (Common::KeyCode)(FIRST_JOY + 46); // PS L1
+const Common::KeyCode JOY7 = (Common::KeyCode)(FIRST_JOY + 47); // PS R1
+const Common::KeyCode JOY8 = (Common::KeyCode)(FIRST_JOY + 48); // PS select
+const Common::KeyCode JOY9 = (Common::KeyCode)(FIRST_JOY + 49); // PS start
+const Common::KeyCode JOY10 = (Common::KeyCode)(FIRST_JOY + 50); // PS L3 (analog must be enabled)
+const Common::KeyCode JOY11 = (Common::KeyCode)(FIRST_JOY + 51); // PS R3 (analog must be enabled)
+const Common::KeyCode JOY12 = (Common::KeyCode)(FIRST_JOY + 52);
+const Common::KeyCode JOY13 = (Common::KeyCode)(FIRST_JOY + 53);
+const Common::KeyCode JOY14 = (Common::KeyCode)(FIRST_JOY + 54);
+const Common::KeyCode JOY15 = (Common::KeyCode)(FIRST_JOY + 55);
+const Common::KeyCode JOY16 = (Common::KeyCode)(FIRST_JOY + 56);
+const Common::KeyCode JOY17 = (Common::KeyCode)(FIRST_JOY + 57);
+const Common::KeyCode JOY18 = (Common::KeyCode)(FIRST_JOY + 58);
+const Common::KeyCode JOY19 = (Common::KeyCode)(FIRST_JOY + 59);
+
 
 struct EventInput_s {
 	uint8 type; // 0=loc,1=key,2=str,3=obj,4=actor
@@ -118,6 +186,7 @@ typedef struct EventInput_s EventInput;
 
 class Event : public CallBack {
 	friend class Magic; // FIXME
+private:
 	Configuration *config;
 	GUI *gui;
 	Game *game;
@@ -165,6 +234,22 @@ class Event : public CallBack {
 	uint16 fps_counter;
 	FpsCounter *fps_counter_widget;
 	ScriptThread *scriptThread;
+
+	uint8  _buttonsDown;
+	Common::Point _mousePos;
+	static Event *g_events;
+private:
+	/**
+	 * Sets whether a given button is depressed
+	 */
+	void setButtonDown(MouseButton button, bool isDown);
+protected:
+	inline uint32 TimeLeft();
+
+	uint16 callback(uint16 msg, CallBack* caller, void* data);
+	bool handleSDL_KEYDOWN(const Common::Event* event);
+	const char* print_mode(EventMode mode);
+	void try_next_attack();
 
 public:
 	Event(Configuration *cfg);
@@ -360,16 +445,49 @@ public:
 
 	/* FIXME: Some of the above (action) functions can be removed from public, so
 	   that we don't need to check for WAIT mode in all of them. */
-protected:
 
-	inline uint32 TimeLeft();
+	   /**
+		* Gets a reference to the events manager
+		*/
+	static Event *get() { return g_events; }
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
-	bool handleSDL_KEYDOWN(const Common::Event *event);
-	const char *print_mode(EventMode mode);
-	void try_next_attack();
+	/**
+	 * Returns true if a given mouse button is pressed
+	 */
+	inline bool isButtonDown(MouseButton button) const {
+		return (_buttonsDown & BUTTON_MASK(button)) != 0;
+	}
 
+	/**
+	 * Returns true if any mouse button is pressed
+	 */
+	bool isButtonDown() const {
+		return isButtonDown(BUTTON_LEFT) || isButtonDown(BUTTON_RIGHT) || isButtonDown(BUTTON_MIDDLE);
+	}
+
+	/**
+	 * Returns the mouse buttons states
+	 */
+	byte getButtonState() const { return _buttonsDown; }
+
+	/**
+	 * Returns the mouse position
+	 */
+	static Common::Point getMousePos();
+
+	/**
+	 * Poll for any pending events
+	 */
+	bool pollEvent(Common::Event& event);
 };
+
+extern bool isMouseDownEvent(Common::EventType type);
+
+extern bool isMouseUpEvent(Common::EventType type);
+
+extern MouseButton whichButton(Common::EventType type);
+
+extern bool shouldQuit();
 
 } // End of namespace Ultima6
 } // End of namespace Ultima

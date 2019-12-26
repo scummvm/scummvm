@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_MISC_SDL_COMPAT_H
 #define ULTIMA6_MISC_SDL_COMPAT_H
 
-#include "ultima/ultima6/core/events.h"
+#include "common/events.h"
 #include "graphics/managed_surface.h"
 
 namespace Ultima {

@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima6/misc/sdl_compat.h"
-#include "ultima/ultima6/core/events.h"
+#include "ultima/ultima6/core/event.h"
 #include "common/system.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -108,13 +108,13 @@ int SDL_SetColors(Graphics::ManagedSurface *surface, SDL_Color *colors, int firs
 }
 
 int SDL_WaitEvent(Common::Event *event) {
-	while (!Events::get()->pollEvent(*event))
+	while (!Event::get()->pollEvent(*event))
 		g_system->delayMillis(5);
 	return 0;
 }
 
 int SDL_PollEvent(Common::Event *event) {
-	return Events::get()->pollEvent(*event);
+	return Event::get()->pollEvent(*event);
 }
 
 int SDL_LockSurface(Graphics::ManagedSurface *surface) {

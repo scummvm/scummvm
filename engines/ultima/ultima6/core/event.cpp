@@ -54,10 +54,15 @@
 #include "ultima/ultima6/keybinding/keys.h"
 #include "ultima/ultima6/views/spell_view.h"
 #include "ultima/ultima6/core/fps_counter.h"
+#include "ultima/ultima6/script/script.h"
+
 #include "common/system.h"
 
 namespace Ultima {
 namespace Ultima6 {
+
+Event *Event::g_events;
+static int16 mouse_x = 0, mouse_y = 0;
 
 using std::string;
 
@@ -72,8 +77,10 @@ void EventInput_s::set_loc(MapCoord c) {
 	loc = new MapCoord(c);
 }
 
-Event::Event(Configuration *cfg) {
-	config = cfg;
+Event::Event(Configuration *cfg) : config(cfg), _buttonsDown(0) {
+	g_events = this;
+	mouse_x = mouse_y = 0;
+
 	clear_alt_code();
 	active_alt_code = 0;
 	alt_code_input_num = 0;
@@ -118,6 +125,9 @@ Event::Event(Configuration *cfg) {
 }
 
 Event::~Event() {
+	g_events = nullptr;
+	mouse_x = mouse_y = 0;
+
 	delete time_queue;
 	delete game_time_queue;
 }
@@ -168,7 +178,7 @@ bool Event::update() {
 
 	// polled
 	Common::Event evt;
-	while (Events::get()->pollEvent(evt)) {
+	while (pollEvent(evt)) {
 		idle = false;
 		switch (gui->HandleEvent(&evt)) {
 		case GUI_PASS :
@@ -3805,6 +3815,66 @@ bool Event::input_really_needs_directon() {
 		return true;
 	else
 		return false;
+}
+
+
+void Event::setButtonDown(MouseButton button, bool isDown) {
+	assert(button != BUTTON_NONE);
+	if (isDown)
+		_buttonsDown |= BUTTON_MASK(button);
+	else
+		_buttonsDown &= ~BUTTON_MASK(button);
+}
+
+
+bool Event::pollEvent(Common::Event &evt) {
+	if (g_system->getEventManager()->pollEvent(evt)) {
+		if (isMouseDownEvent(evt.type)) {
+			setButtonDown(whichButton(evt.type), true);
+			mouse_x = evt.mouse.x;
+			mouse_y = evt.mouse.y;
+		} else if (isMouseUpEvent(evt.type)) {
+			setButtonDown(whichButton(evt.type), false);
+			mouse_x = evt.mouse.x;
+			mouse_y = evt.mouse.y;
+		} else if (evt.type == Common::EVENT_MOUSEMOVE) {
+			mouse_x = evt.mouse.x;
+			mouse_y = evt.mouse.y;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+Common::Point Event::getMousePos() {
+	return Common::Point(mouse_x, mouse_y);
+}
+
+bool isMouseDownEvent(Common::EventType type) {
+	return type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_RBUTTONDOWN
+		|| type == Common::EVENT_MBUTTONDOWN;
+}
+
+bool isMouseUpEvent(Common::EventType type) {
+	return type == Common::EVENT_LBUTTONUP || type == Common::EVENT_RBUTTONUP
+		|| type == Common::EVENT_MBUTTONUP;
+}
+
+MouseButton whichButton(Common::EventType type) {
+	if (type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_LBUTTONUP)
+		return BUTTON_LEFT;
+	else if (type == Common::EVENT_RBUTTONDOWN || type == Common::EVENT_RBUTTONUP)
+		return BUTTON_RIGHT;
+	else if (type == Common::EVENT_MBUTTONDOWN || type == Common::EVENT_MBUTTONUP)
+		return BUTTON_MIDDLE;
+	else
+		return BUTTON_NONE;
+}
+
+bool shouldQuit() {
+	return g_engine->shouldQuit();
 }
 
 } // End of namespace Ultima6

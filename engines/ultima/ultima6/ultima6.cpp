@@ -47,14 +47,13 @@ Ultima6Engine *g_engine;
 
 Ultima6Engine::Ultima6Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima6"),
-		_config(nullptr), _dataArchive(nullptr), _events(nullptr), _screen(nullptr),
+		_config(nullptr), _dataArchive(nullptr), _screen(nullptr),
 		_script(nullptr), _game(nullptr) {
 	g_engine = this;
 }
 
 Ultima6Engine::~Ultima6Engine() {
 	delete _config;
-	delete _events;
 	delete _screen;
 	delete _script;
 	delete _game;
@@ -90,8 +89,7 @@ bool Ultima6Engine::initialize() {
 	// Find and load config file
 	initConfig();
 
-	// Setup events and screen
-	_events = new Events();
+	// Setup screen
 	_screen = new Screen(_config);
 
 	if (_screen->init() == false) {
