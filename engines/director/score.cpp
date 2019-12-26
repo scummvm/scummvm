@@ -911,7 +911,7 @@ void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
 		stream.seek(stringPos);
 		Common::String label;
 
-		for (uint16 j = stringPos; j < nextStringPos; j++) {
+		for (uint32 j = stringPos; j < nextStringPos; j++) {
 			label += stream.readByte();
 		}
 
