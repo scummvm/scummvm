@@ -89,9 +89,13 @@ static const uint16 UTF16toWin1250[] = {
 };
 
 // Table for transferring Alt+<Key> into Polish symbols
+// Note, that 'A' and 'S' are swapped with lowercase. This is due to the fact
+// that we use Alt+a for aspect ratio correction and Alt+s for screenshot saving
+// and we do that in the SDL backend. There are no words starting with 'A' and
+// very few starting with S, thus, this is a viable compromise
 static const byte PolishAltifytoWin1250[] = {
-	'e', 0xea, 'o', 0xf3, 'a', 0xb9, 's', 0x9c, 'l', 0xb3, 'z', 0xbf, 'x', 0x9f, 'c', 0xe6, 'n', 0xF1,
-	'E', 0xca, 'O', 0xd3, 'A', 0xa5, 'S', 0x8c, 'L', 0xa3, 'Z', 0xaf, 'X', 0x8f, 'C', 0xc6, 'N', 0xD1,
+	'e', 0xea, 'o', 0xf3, 'a', 0xa5, 's', 0x8c, 'l', 0xb3, 'z', 0xbf, 'x', 0x9f, 'c', 0xe6, 'n', 0xF1,
+	'E', 0xca, 'O', 0xd3, 'A', 0xb9, 'S', 0x9c, 'L', 0xa3, 'Z', 0xaf, 'X', 0x8f, 'C', 0xc6, 'N', 0xD1,
 	0
 };
 
