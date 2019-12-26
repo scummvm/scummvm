@@ -149,10 +149,11 @@ public:
 	 */
 	Common::Point getSpawnPosition(int crewmanIndex);
 
-public:
 	byte *_rdfData;
 
 private:
+	uint16 _rdfSize;
+
 	StarTrekEngine *_vm;
 	AwayMission *_awayMission;
 

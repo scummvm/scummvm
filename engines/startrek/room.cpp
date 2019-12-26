@@ -49,6 +49,7 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm), _awayMissi
 
 	int size = rdfFile->size();
 	_rdfData = new byte[size];
+	_rdfSize = size;
 	rdfFile->read(_rdfData, size);
 	delete rdfFile;
 
@@ -279,7 +280,9 @@ Common::String Room::patchRoomMessage(const char *text) {
 
 void Room::loadOtherRoomMessages() {
 	uint16 startOffset = readRdfWord(14);
-	uint16 endOffset = readRdfWord(16);
+	// Some RDF files, lile MUDD0, contain text beyond the end offset,
+	// so we read up to the end of the file
+	uint16 endOffset = _rdfSize;	// readRdfWord(16);
 	uint16 offset = startOffset;
 	const char *validPrefixes[] = {
 		"BRI", "COM", "DEM", "FEA", "GEN", "LOV", "MUD", "SIN", "TRI", "TUG", "VEN"
