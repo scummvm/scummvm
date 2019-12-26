@@ -60,6 +60,11 @@ void CryOmni3DEngine_Versailles::drawMenuTitle(Graphics::ManagedSurface *surface
 		titleY = 80;
 		subtitleX = 283;
 		subtitleY = 80;
+	} else if (getLanguage() == Common::JA_JPN) {
+		titleX = 144;
+		titleY = 125;
+		subtitleX = 144;
+		subtitleY = 145;
 	} else if (getLanguage() == Common::ZH_TWN) {
 		titleX = 130;
 		titleY = 160;
@@ -340,6 +345,8 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 					} else if (getLanguage() == Common::ES_ESP ||
 					           getLanguage() == Common::IT_ITA) {
 						rct = Common::Rect(250, 420, 530, 465);
+					} else if (getLanguage() == Common::JA_JPN) {
+						rct = Common::Rect(245, 420, 505, 465);
 					} else {
 						rct = Common::Rect(235, 420, 505, 465);
 					}

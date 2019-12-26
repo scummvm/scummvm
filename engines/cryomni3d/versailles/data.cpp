@@ -101,8 +101,14 @@ void CryOmni3DEngine_Versailles::loadStaticData() {
 	// epigraph settings, bomb password
 	_epigraphContent = data->readString16();
 	_epigraphPassword = data->readString16();
-	_bombAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ '";
-	_bombPassword = data->readString16();
+
+	if (getLanguage() == Common::JA_JPN) {
+		_bombAlphabet = data->readString16().decode(Common::kWindows932);
+		_bombPassword = data->readString16().decode(Common::kWindows932);
+	} else {
+		_bombAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ '";
+		_bombPassword = data->readString16();
+	}
 
 	// messages, paintings titles
 	data->readString16Array16(_messages);

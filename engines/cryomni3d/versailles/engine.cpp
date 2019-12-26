@@ -292,6 +292,9 @@ void CryOmni3DEngine_Versailles::setupFonts() {
 
 		_fontManager.loadFonts(fonts, Common::kWindows950);
 		return;
+	} else if (getLanguage() == Common::JA_JPN) {
+		_fontManager.loadTTFList("FONTS_JP.LST", Common::kWindows932);
+		return;
 	} else if (getLanguage() == Common::KO_KOR) {
 		_fontManager.loadTTFList("FONTS_KR.LST", Common::kWindows949);
 		return;
@@ -688,6 +691,22 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 	fadeOutPalette();
 	if (shouldAbort()) {
 		return;
+	}
+
+	if (level == -2) {
+		if (getLanguage() == Common::JA_JPN && Common::File::exists("jvclogo.hnm")) {
+			// Display one more copyright
+			playHNM("jvclogo.hnm", Audio::Mixer::kMusicSoundType);
+			clearKeys();
+			if (shouldAbort()) {
+				return;
+			}
+
+			fadeOutPalette();
+			if (shouldAbort()) {
+				return;
+			}
+		}
 	}
 
 	// Display back cursor there once the palette has been zeroed
