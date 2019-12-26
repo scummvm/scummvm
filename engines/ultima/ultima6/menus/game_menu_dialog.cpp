@@ -33,7 +33,7 @@
 #include "ultima/ultima6/menus/gameplay_dialog.h"
 #include "ultima/ultima6/menus/input_dialog.h"
 #include "ultima/ultima6/menus/cheats_dialog.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {

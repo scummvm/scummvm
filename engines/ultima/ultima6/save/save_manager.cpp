@@ -32,7 +32,7 @@
 
 #include "ultima/ultima6/gui/gui.h"
 //#include "ultima/ultima6/core/game.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/core/console.h"
 #include "ultima/ultima6/save/save_dialog.h"
 #include "ultima/ultima6/save/save_slot.h"
@@ -149,7 +149,7 @@ bool SaveManager::load_latest_save() {
 bool SaveManager::quick_save(int save_num, bool load) {
 	if (save_num < 0 || save_num > 999)
 		return false;
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 
 	if (event->get_mode() == EQUIP_MODE)
 		event->set_mode(MOVE_MODE);

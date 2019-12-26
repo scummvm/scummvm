@@ -423,7 +423,7 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 		uint8 state;
 		x = event->mouse.x;
 		y = event->mouse.y;
-		state = Event::get()->getButtonState();
+		state = Events::get()->getButtonState();
 		if (state > 0) // mousemotion resets Click
 			mouse_moved = true;
 		if (focused || HitRect(x, y)) {

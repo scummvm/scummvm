@@ -22,7 +22,7 @@
 
 #include "ultima/ultima6/keybinding/key_actions.h"
 #include "ultima/ultima6/keybinding/keys.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/core/party.h"
 #include "ultima/ultima6/core/player.h"

@@ -49,7 +49,7 @@
 #include "ultima/ultima6/core/msg_scroll_new_ui.h"
 #include "ultima/ultima6/core/map.h"
 #include "ultima/ultima6/core/map_window.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/portraits/portrait.h"
 #include "ultima/ultima6/core/background.h"
 #include "ultima/ultima6/core/command_bar.h"
@@ -333,7 +333,7 @@ bool Game::loadGame(Script *s) {
 		magic = new Magic();
 	}
 
-	event = new Event(config);
+	event = new Events(config);
 	event->init(obj_manager, map_window, scroll, player, magic, clock, view_manager, usecode, gui, keybinder);
 	if (game_type == NUVIE_GAME_U6) {
 		magic->init(event);
@@ -688,7 +688,7 @@ void Game::update_once(bool process_gui_input, bool run_converse) {
 	event->update_timers();
 
 	Common::Event evt;
-	while (Event::get()->pollEvent(evt)) {
+	while (Events::get()->pollEvent(evt)) {
 		if (process_gui_input)
 			gui->HandleEvent(&evt);
 	}

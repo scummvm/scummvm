@@ -712,7 +712,7 @@ void DropEffect::hit_target() {
 	}
 	throw_obj = NULL; // set as dropped
 
-	// not appropriate to do "Event::endAction(true)" from here to display
+	// not appropriate to do "Events::endAction(true)" from here to display
 	// prompt, as we MUST unpause_user() in ThrowObjectEffect::hit_target, and
 	// that would be redundant and may not unpause everything if wait mode was
 	// already cancelled... so just prompt

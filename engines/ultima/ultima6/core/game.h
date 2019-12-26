@@ -53,7 +53,7 @@ class GameClock;
 class ViewManager;
 class Portrait;
 class UseCode;
-class Event;
+class Events;
 class GUI;
 class EffectManager;
 class SoundManager;
@@ -111,7 +111,7 @@ class Game {
 
 	Cursor *cursor;
 
-	Event *event;
+	Events *event;
 
 	GUI *gui;
 
@@ -126,7 +126,7 @@ class Game {
 	uint16 pause_user_count;
 	uint16 converse_gump_width;
 	uint16 min_converse_gump_width;
-	uint8 ignore_event_delay; // (stack) if non-zero, Event will not periodically wait for NUVIE_INTERVAL
+	uint8 ignore_event_delay; // (stack) if non-zero, Events will not periodically wait for NUVIE_INTERVAL
 	bool is_using_hackmove;
 	bool dragging_enabled;
 	bool cheats_enabled;
@@ -381,7 +381,7 @@ public:
 	UseCode *get_usecode()            {
 		return (usecode);
 	}
-	Event *get_event()                {
+	Events *get_event()                {
 		return (event);
 	}
 	GUI *get_gui()                    {

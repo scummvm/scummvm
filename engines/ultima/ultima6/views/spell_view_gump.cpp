@@ -23,7 +23,7 @@
 //#include <cassert>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_button.h"
 #include "ultima/ultima6/core/magic.h"
@@ -323,7 +323,7 @@ GUI_status SpellViewGump::MouseDown(int x, int y, MouseButton button) {
 	}
 
 	if (can_target) {
-		Event *event = Game::get_game()->get_event();
+		Events *event = Game::get_game()->get_event();
 		if (event->is_looking_at_spellbook()) {
 			close_spellbook();
 			return GUI_YUM;

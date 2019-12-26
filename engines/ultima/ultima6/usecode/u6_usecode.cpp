@@ -36,7 +36,7 @@
 #include "ultima/ultima6/core/map.h"
 #include "ultima/ultima6/core/game_clock.h"
 #include "ultima/ultima6/core/book.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/core/timed_event.h"
 #include "ultima/ultima6/core/egg_manager.h"

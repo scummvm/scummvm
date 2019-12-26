@@ -30,7 +30,7 @@
 #include "ultima/ultima6/views/actor_view.h"
 #include "ultima/ultima6/fonts/font.h"
 #include "ultima/ultima6/core/player.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {

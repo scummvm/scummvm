@@ -28,7 +28,7 @@
 #include "ultima/ultima6/gui/gui_drag_manager.h"
 
 #include "ultima/ultima6/core/game.h"  // -+- Included so we can set WAIT_MODE while dragging.
-#include "ultima/ultima6/core/event.h" // /
+#include "ultima/ultima6/core/events.h" // /
 #include "ultima/ultima6/core/msg_scroll.h"
 
 namespace Ultima {

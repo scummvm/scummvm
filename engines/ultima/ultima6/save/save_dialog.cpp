@@ -33,7 +33,7 @@
 #include "ultima/ultima6/save/save_dialog.h"
 #include "ultima/ultima6/files/nuvie_file_list.h"
 #include "ultima/ultima6/keybinding/keys.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/core/console.h"
 
 namespace Ultima {

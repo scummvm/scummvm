@@ -34,7 +34,7 @@ MODULE_OBJS += \
 	ultima6/core/effect.o \
 	ultima6/core/effect_manager.o \
 	ultima6/core/egg_manager.o \
-	ultima6/core/event.o \
+	ultima6/core/events.o \
 	ultima6/core/fps_counter.o \
 	ultima6/core/game.o \
 	ultima6/core/game_clock.o \

@@ -90,7 +90,7 @@ Magic::~Magic() {
 	for (uint16 index = 0; index < 256; index++) delete(spell[index]);
 }
 
-bool Magic::init(Event *evt) {
+bool Magic::init(Events *evt) {
 	event = evt;
 	return read_spell_list();
 }

@@ -32,7 +32,7 @@
 #include "ultima/ultima6/gui/gui_dialog.h"
 #include "ultima/ultima6/menus/input_dialog.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/views/party_view.h"
 #include "ultima/ultima6/views/view_manager.h"

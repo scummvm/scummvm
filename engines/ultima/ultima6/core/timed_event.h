@@ -34,7 +34,7 @@ namespace Ultima6 {
 
 class Actor;
 class CallBack;
-class Event;
+class Events;
 class GameClock;
 class MapCoord;
 class MapWindow;
@@ -75,13 +75,13 @@ public:
 #define TIMER_REALTIME true
 #define TIMER_GAMETIME false
 
-/* Event activated by a timer. Add to one of the Event time-queues to start.
+/* Events activated by a timer. Add to one of the Events time-queues to start.
  * (THERE IS ONLY ONE SET)  The timed() method is called on activation,
  * and the timer may be automatically deleted or repeated.
  */
 class TimedEvent {
 	friend class TimeQueue;
-	friend class Event;
+	friend class Events;
 protected:
 	TimeQueue *tq; // the TimeQueue; so we can add ourself
 	uint32 delay, time; // timer delay, and next absolute time to activate

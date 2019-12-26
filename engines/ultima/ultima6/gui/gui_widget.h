@@ -29,7 +29,7 @@
 #include "ultima/ultima6/gui/gui_drag_area.h"
 #include "ultima/ultima6/gui/gui_drag_manager.h"
 #include "ultima/ultima6/screen/screen.h"
-#include "ultima/ultima6/core/event.h" 
+#include "ultima/ultima6/core/events.h" 
 
 namespace Ultima {
 namespace Ultima6 {

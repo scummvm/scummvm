@@ -37,7 +37,7 @@
 #include "ultima/ultima6/core/effect.h"
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/script/script.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/actors/u6_actor.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/misc.h"

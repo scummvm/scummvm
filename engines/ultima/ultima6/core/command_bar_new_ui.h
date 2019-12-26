@@ -32,7 +32,7 @@ namespace Ultima {
 namespace Ultima6 {
 
 class NuvieIO;
-class Event;
+class Events;
 class Game;
 class GUI_Button;
 class GUI_CallBack;

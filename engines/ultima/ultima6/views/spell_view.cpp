@@ -35,7 +35,7 @@
 #include "ultima/ultima6/core/party.h"
 #include "ultima/ultima6/fonts/font.h"
 #include "ultima/ultima6/actors/actor.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/core/msg_scroll.h"
 #include "ultima/ultima6/usecode/usecode.h"
@@ -402,7 +402,7 @@ GUI_status SpellView::KeyDown(const Common::KeyState &key) {
 }
 
 GUI_status SpellView::cancel_spell() {
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	if (event->is_looking_at_spellbook()) {
 		close_look();
 		return GUI_YUM;
@@ -428,7 +428,7 @@ GUI_status SpellView::MouseWheel(sint32 x, sint32 y) {
 GUI_status SpellView::MouseDown(int x, int y, MouseButton button) {
 	y -= area.top;
 	x -= area.left;
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	bool selecting_spell_target, canceling_spell, doing_nothing;
 	if (Game::get_game()->is_original_plus()) {
 		if (Game::get_game()->is_original_plus_full_map())

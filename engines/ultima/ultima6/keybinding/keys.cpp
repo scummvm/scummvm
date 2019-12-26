@@ -26,7 +26,7 @@
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/conf/xml_tree.h"
 #include "ultima/ultima6/core/player.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/files/utils.h"
 #include "ultima/ultima6/core/msg_scroll.h"
 #include "ultima/ultima6/conf/configuration.h"

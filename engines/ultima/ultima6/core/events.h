@@ -184,7 +184,7 @@ struct EventInput_s {
 };
 typedef struct EventInput_s EventInput;
 
-class Event : public CallBack {
+class Events : public CallBack {
 	friend class Magic; // FIXME
 private:
 	Configuration *config;
@@ -237,7 +237,7 @@ private:
 
 	uint8  _buttonsDown;
 	Common::Point _mousePos;
-	static Event *g_events;
+	static Events *g_events;
 private:
 	/**
 	 * Sets whether a given button is depressed
@@ -252,8 +252,8 @@ protected:
 	void try_next_attack();
 
 public:
-	Event(Configuration *cfg);
-	virtual ~Event();
+	Events(Configuration *cfg);
+	virtual ~Events();
 
 	bool init(ObjManager *om, MapWindow *mw, MsgScroll *ms, Player *p, Magic *mg,
 	          GameClock *gc, ViewManager *vm, UseCode *uc, GUI *g, KeyBinder *kb);
@@ -309,7 +309,7 @@ public:
 	void doAction();
 	void cancelAction();
 	void endAction(bool prompt = false);
-// Send input back to Event, performing an action for the current mode.
+// Send input back to Events, performing an action for the current mode.
 	bool select_obj(Obj *obj, Actor *actor = NULL);
 	bool select_view_obj(Obj *obj, Actor *actor);
 	bool select_actor(Actor *actor);
@@ -319,7 +319,7 @@ public:
 	bool select_spell_num(sint16 spell_num);
 // bool select_obj(Obj *obj = NULL, Actor *actor = NULL);
 // bool select_obj(sint16 rel_x, sint16 rel_y);
-// There is no "select_text", as Event polls MsgScroll for new input.
+// There is no "select_text", as Events polls MsgScroll for new input.
 // Similiarly, a "select_key" is unnecessary. The following method
 // starts sending all keyboard input to 'caller'. (with the CB_DATA_READY message)
 	void key_redirect(CallBack *caller, void *user_data);
@@ -427,7 +427,7 @@ public:
 	EventInput *get_input() {
 		return &input;
 	}
-// These cursor methods are use to make sure Event knows where the cursor is
+// These cursor methods are use to make sure Events knows where the cursor is
 // when objects are selected with ENTER. (since MapWindow and InventoryView
 // may each independantly show/hide their own cursors)
 	void moveCursorToMapWindow(bool ToggleCursor = false);
@@ -449,7 +449,7 @@ public:
 	   /**
 		* Gets a reference to the events manager
 		*/
-	static Event *get() { return g_events; }
+	static Events *get() { return g_events; }
 
 	/**
 	 * Returns true if a given mouse button is pressed

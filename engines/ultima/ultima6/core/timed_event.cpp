@@ -26,7 +26,7 @@
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/core/map.h"
 #include "ultima/ultima6/core/party.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/usecode/usecode.h"
 #include "ultima/ultima6/core/u6_objects.h"
 #include "ultima/ultima6/actors/u6_work_types.h"
@@ -168,7 +168,7 @@ TimedEvent::TimedEvent(uint32 reltime, bool immediate, bool realtime)
 /* Add myself to the TimeQueue.
  */
 void TimedEvent::queue() {
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	if (tq == NULL) {
 		if (real_time)
 			tq = event->get_time_queue();

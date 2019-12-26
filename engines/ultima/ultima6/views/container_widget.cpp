@@ -28,7 +28,7 @@
 #include "ultima/ultima6/views/container_widget.h"
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/core/game_clock.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/core/msg_scroll.h"
 #include "ultima/ultima6/core/timed_event.h"
 #include "ultima/ultima6/usecode/usecode.h"
@@ -202,7 +202,7 @@ void ContainerWidget::display_special_char(uint16 x, uint16 y, uint8 quality) {
 }
 
 GUI_status ContainerWidget::MouseDown(int x, int y, MouseButton button) {
-//Event *event = Game::get_game()->get_event();
+//Events *event = Game::get_game()->get_event();
 //MsgScroll *scroll = Game::get_game()->get_scroll();
 	x -= area.left;
 	y -= area.top;
@@ -385,7 +385,7 @@ bool ContainerWidget::drag_accept_drop(int x, int y, int message, void *data) {
 				Game::get_game()->get_scroll()->message("\n\n");
 			}
 		} else if (container_owner && obj->get_actor_holding_obj() != container_owner) {
-			Event *event = Game::get_game()->get_event();
+			Events *event = Game::get_game()->get_event();
 			event->display_move_text(container_owner, obj);
 			if (!event->can_move_obj_between_actors(obj, obj->get_actor_holding_obj(), container_owner, false)) {
 				Game::get_game()->get_scroll()->message("\n\n");
@@ -489,7 +489,7 @@ void ContainerWidget::drag_draw(int x, int y, int message, void *data) {
 
 
 void ContainerWidget::try_click() {
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	UseCode *usecode = Game::get_game()->get_usecode();
 	Actor *owner = NULL;
 	if (!selected_obj)
