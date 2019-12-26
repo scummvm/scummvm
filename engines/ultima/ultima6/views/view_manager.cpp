@@ -47,7 +47,7 @@
 #include "ultima/ultima6/views/map_editor_view.h"
 #include "ultima/ultima6/core/msg_scroll.h"
 #include "ultima/ultima6/core/party.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/portraits/portrait.h"
 #include "ultima/ultima6/usecode/usecode.h"
 #include "ultima/ultima6/files/nuvie_bmp_file.h"
@@ -234,14 +234,14 @@ void ViewManager::set_portrait_mode(Actor *actor, const char *name) {
 
 void ViewManager::set_inventory_mode() {
 	set_current_view((View *)inventory_view);
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	if (event->get_mode() == EQUIP_MODE || event->get_mode() == INPUT_MODE
 	        || event->get_mode() == ATTACK_MODE)
 		inventory_view->set_show_cursor(true);
 }
 
 void ViewManager::set_party_mode() {
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	if (event->get_mode() == EQUIP_MODE)
 		event->cancelAction();
 	else if (event->get_mode() == INPUT_MODE || event->get_mode() == ATTACK_MODE)
@@ -254,7 +254,7 @@ void ViewManager::set_party_mode() {
 
 void ViewManager::set_actor_mode() {
 	set_current_view((View *)actor_view);
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	if (event->get_mode() == EQUIP_MODE || event->get_mode() == INPUT_MODE
 	        || event->get_mode() == ATTACK_MODE) {
 		actor_view->set_show_cursor(true);
@@ -514,7 +514,7 @@ GUI_status inventoryViewButtonCallback(void *data) {
 }
 
 void ViewManager::double_click_obj(Obj *obj) {
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	if (Game::get_game()->get_usecode()->is_readable(obj)) { // look at a scroll or book
 		event->set_mode(LOOK_MODE);
 		event->look(obj);

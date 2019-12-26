@@ -27,7 +27,7 @@
 #include "ultima/ultima6/files/u6_lib_n.h"
 #include "ultima/ultima6/files/u6_shape.h"
 #include "ultima/ultima6/core/msg_scroll.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/actors/actor_manager.h"
@@ -351,7 +351,7 @@ inline void DollWidget::display_readied_object(uint8 location, uint16 x, uint16 
 // when no action is pending the Use button may be used to start dragging,
 // otherwise it has the same effect as ENTER (using InventoryView's callback)
 GUI_status DollWidget::MouseDown(int x, int y, MouseButton button) {
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	uint8 location;
 	Obj *obj;
 	x -= area.left;
@@ -400,7 +400,7 @@ GUI_status DollWidget::MouseDown(int x, int y, MouseButton button) {
 
 // un-ready selected item
 GUI_status DollWidget::MouseUp(int x, int y, MouseButton button) {
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 
 // only act now if double-click is disabled
 	if (selected_obj && !Game::get_game()->get_map_window()->is_doubleclick_enabled()) {
@@ -459,7 +459,7 @@ bool DollWidget::drag_accept_drop(int x, int y, int message, void *data) {
 		}
 		if (obj->get_actor_holding_obj() != actor) {
 			if (obj->is_in_inventory()) {
-				Event *event = Game::get_game()->get_event();
+				Events *event = Game::get_game()->get_event();
 				event->display_move_text(actor, obj);
 				if (event->can_move_obj_between_actors(obj, obj->get_actor_holding_obj(), actor, false)) {
 					Game::get_game()->get_player()->subtract_movement_points(3);
@@ -547,7 +547,7 @@ GUI_status DollWidget::MouseDouble(int x, int y, MouseButton button) {
 	// we have to check if double-clicks are allowed here, since we use single-clicks
 	if (!Game::get_game()->get_map_window()->is_doubleclick_enabled())
 		return (GUI_PASS);
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	Obj *obj = selected_obj;
 
 	unready_obj = NULL;
@@ -563,7 +563,7 @@ GUI_status DollWidget::MouseDouble(int x, int y, MouseButton button) {
 
 // change container, ready/unready object, activate arrows
 GUI_status DollWidget::MouseDelayed(int x, int y, MouseButton button) {
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	if (unready_obj) {
 		event->unready(unready_obj);
 		Redraw();

@@ -139,7 +139,7 @@ const char *useCodeTypeToString(UseCodeType type);
 
 class ActorManager;
 class Configuration;
-class Event;
+class Events;
 class Game;
 class Map;
 class MsgScroll;

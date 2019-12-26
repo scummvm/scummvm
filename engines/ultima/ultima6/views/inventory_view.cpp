@@ -30,7 +30,7 @@
 #include "ultima/ultima6/core/party.h"
 #include "ultima/ultima6/fonts/font.h"
 #include "ultima/ultima6/actors/actor.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/usecode/usecode.h"
 #include "ultima/ultima6/views/view_manager.h"
@@ -565,7 +565,7 @@ Obj *InventoryView::get_objAtCursor() {
 /* Do an action with the object under the cursor, or call the function for a
    selected button. This is called when pressing ENTER. */
 void InventoryView::select_objAtCursor() {
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	ViewManager *view_manager = Game::get_game()->get_view_manager();
 	Obj *obj = get_objAtCursor();
 
@@ -609,12 +609,12 @@ void InventoryView::select_objAtCursor() {
 }
 
 
-/* Ready an object or pass it to Event. Pass NULL if an empty space is selected.
+/* Ready an object or pass it to Events. Pass NULL if an empty space is selected.
  * Returns true if the object was "used". The caller is free to handle the
  * object if false is returned.
  */
 bool InventoryView::select_obj(Obj *obj) {
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	switch (event->get_mode()) {
 	case MOVE_MODE:
 	case EQUIP_MODE: {
@@ -691,7 +691,7 @@ GUI_status InventoryView::callback(uint16 msg, GUI_CallBack *caller, void *data)
 	}
 
 	// selecting an object from InventoryWidget only works while getting input
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	if (event->get_mode() == INPUT_MODE) {
 		if (select_obj((Obj *)data))
 			return GUI_YUM;

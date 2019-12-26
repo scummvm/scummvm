@@ -29,7 +29,7 @@
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/screen/screen.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/core/tile_manager.h"
 #include "ultima/ultima6/fonts/font.h"
 #include "ultima/ultima6/fonts/font_manager.h"

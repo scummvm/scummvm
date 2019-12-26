@@ -31,7 +31,7 @@ namespace Ultima {
 namespace Ultima6 {
 
 class NuvieIO;
-class Event;
+class Events;
 class Game;
 class GUI_Button;
 class GUI_CallBack;
@@ -50,7 +50,7 @@ class U6Shape;
 class CommandBar: public GUI_Widget, public CallBack {
 protected:
 	Game *game;
-	Event *event;
+	Events *event;
 	Font *font;
 	Tile *icon[13];
 	U6Shape *background; // used to display the WoU command bar backgrounds

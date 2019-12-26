@@ -30,7 +30,7 @@
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/views/view_manager.h"
 #include "ultima/ultima6/core/map_window.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/core/msg_scroll.h"
 #include "ultima/ultima6/core/msg_scroll_new_ui.h"
 #include "ultima/ultima6/core/effect.h" /* for initial fade-in */
@@ -622,7 +622,7 @@ bool MapWindow::in_window(uint16 x, uint16 y, uint8 z) {
  */
 void MapWindow::update() {
 	GameClock *clock = game->get_clock();
-	Event *event = game->get_event();
+	Events *event = game->get_event();
 	static bool game_started = false; // set to true on the first update()
 	static uint32 last_update_time = clock->get_ticks();
 	uint32 update_time = clock->get_ticks();
@@ -650,7 +650,7 @@ void MapWindow::update() {
 	}
 
 	if (walking) {
-		if (Event::get()->getButtonState() & walk_button_mask) {
+		if (Events::get()->getButtonState() & walk_button_mask) {
 			if (game->user_paused())
 				return;
 
@@ -1965,7 +1965,7 @@ bool MapWindow::drag_accept_drop(int x, int y, int message, void *data) {
 
 void MapWindow::drag_perform_drop(int x, int y, int message, void *data) {
 	DEBUG(0, LEVEL_DEBUGGING, "MapWindow::drag_perform_drop()\n");
-	Event *event = game->get_event();
+	Events *event = game->get_event();
 	uint16 mapWidth = map->get_width(cur_level);
 
 	x -= area.left;
@@ -2088,7 +2088,7 @@ GUI_status MapWindow::MouseClick(int x, int y, MouseButton button) {
 
 // single-click; waited for double-click
 GUI_status MapWindow::MouseDelayed(int x, int y, MouseButton button) {
-	Event *event = game->get_event();
+	Events *event = game->get_event();
 	if (!looking || game->user_paused() || event->cursor_mode
 	        || (event->get_mode() != MOVE_MODE && event->get_mode() != EQUIP_MODE)) {
 		look_obj = NULL;
@@ -2114,7 +2114,7 @@ GUI_status MapWindow::MouseHeld(int x, int y, MouseButton button) {
 
 // double-click
 GUI_status MapWindow::MouseDouble(int x, int y, MouseButton button) {
-	Event *event = game->get_event();
+	Events *event = game->get_event();
 
 	// only USE if not doing anything in event
 	if (enable_doubleclick && event->get_mode() == MOVE_MODE && !is_wizard_eye_mode()) {
@@ -2145,7 +2145,7 @@ GUI_status MapWindow::MouseWheel(sint32 x, sint32 y) {
 
 GUI_status MapWindow::MouseDown(int x, int y, MouseButton button) {
 	//DEBUG(0,LEVEL_DEBUGGING,"MapWindow::MouseDown, button = %i\n", button);
-	Event *event = game->get_event();
+	Events *event = game->get_event();
 	Actor *player = actor_manager->get_player();
 	Obj *obj = get_objAtMousePos(x, y);
 
@@ -2233,7 +2233,7 @@ GUI_status MapWindow::MouseUp(int x, int y, MouseButton button) {
 }
 
 GUI_status  MapWindow::MouseMotion(int x, int y, uint8 state) {
-//	Event *event = game->get_event();
+//	Events *event = game->get_event();
 	Tile    *tile;
 
 	update_mouse_cursor((uint32)x, (uint32)y);
@@ -2417,7 +2417,7 @@ void MapWindow::drawAnims(bool top_anims) {
 
 /* Set mouse pointer to a movement-arrow for walking, or a crosshair. */
 void MapWindow::update_mouse_cursor(uint32 mx, uint32 my) {
-	Event *event = game->get_event();
+	Events *event = game->get_event();
 	int wx = 0, wy = 0;
 	sint16 rel_x, rel_y;
 	uint8 mptr; // mouse-pointer is set here in get_movement_direction()

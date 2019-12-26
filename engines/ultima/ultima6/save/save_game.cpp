@@ -45,7 +45,7 @@
 #include "ultima/ultima6/core/command_bar.h"
 #include "ultima/ultima6/core/weather.h"
 #include "ultima/ultima6/script/script.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 
 namespace Ultima {
 namespace Ultima6 {

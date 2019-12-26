@@ -572,10 +572,10 @@ void TossAnim::start() {
 }
 
 
-/* Return to normal Event timing.
+/* Return to normal Events timing.
  */
 void TossAnim::stop() {
-	if (running) { // were stop() called twice, Event might start waiting even when more animations are left
+	if (running) { // were stop() called twice, Events might start waiting even when more animations are left
 		TileAnim::stop();
 		Game::get_game()->wait_for_interval();
 	}

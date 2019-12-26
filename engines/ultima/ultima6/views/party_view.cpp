@@ -30,7 +30,7 @@
 #include "ultima/ultima6/core/weather.h"
 #include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/core/msg_scroll.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/core/command_bar.h"
 #include "ultima/ultima6/usecode/usecode.h"
@@ -150,7 +150,7 @@ GUI_status PartyView::MouseUp(int x, int y, MouseButton button) {
 		return GUI_YUM;
 
 	if (x >= x_offset) {
-		Event *event = Game::get_game()->get_event();
+		Events *event = Game::get_game()->get_event();
 		CommandBar *command_bar = Game::get_game()->get_command_bar();
 
 		if (button == ACTION_BUTTON && event->get_mode() == MOVE_MODE
@@ -213,7 +213,7 @@ bool PartyView::drag_accept_drop(int x, int y, int message, void *data) {
 		Obj *obj = (Obj *)data;
 		Actor *actor = get_actor(x, y);
 		if (actor) {
-			Event *event = Game::get_game()->get_event();
+			Events *event = Game::get_game()->get_event();
 			event->display_move_text(actor, obj);
 			if (!obj->is_in_inventory()
 			        && !Game::get_game()->get_map_window()->can_get_obj(actor, obj)) {

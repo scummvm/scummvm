@@ -1814,7 +1814,7 @@ void Screen::draw_line(int sx, int sy, int ex, int ey, uint8 color) {
 
 
 void Screen::get_mouse_location(sint32 *x, sint32 *y) {
-	Common::Point pt = Event::get()->getMousePos();
+	Common::Point pt = Events::get()->getMousePos();
 	*x = pt.x;
 	*y = pt.y;
 }

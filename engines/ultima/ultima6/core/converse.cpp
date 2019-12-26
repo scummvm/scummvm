@@ -30,7 +30,7 @@
 #include "ultima/ultima6/views/view_manager.h"
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/sound/sound_manager.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/core/converse_interpret.h"
 #include "ultima/ultima6/core/converse_speech.h"

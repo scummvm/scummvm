@@ -22,7 +22,7 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/gui_button.h"
 #include "ultima/ultima6/core/party.h"
@@ -306,7 +306,7 @@ void DollViewGump::right_arrow() {
 }
 
 GUI_status DollViewGump::callback(uint16 msg, GUI_CallBack *caller, void *data) {
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	//close gump and return control to Magic class for clean up.
 	if (event->get_mode() == ATTACK_MODE || caller == gump_button) {
 		Game::get_game()->get_view_manager()->close_gump(this);
@@ -624,7 +624,7 @@ GUI_status DollViewGump::KeyDown(const Common::KeyState &key) {
 		set_actor(party->get_actor(party->get_party_size() - 1));
 		return GUI_YUM;
 	case DO_ACTION_KEY: {
-		Event *event = Game::get_game()->get_event();
+		Events *event = Game::get_game()->get_event();
 		bool in_party = party->get_member_num(actor) >= 0;
 		if (event->get_mode() == ATTACK_MODE || cursor_pos == CURSOR_CHECK) {
 			Game::get_game()->get_view_manager()->close_gump(this);
@@ -659,7 +659,7 @@ GUI_status DollViewGump::KeyDown(const Common::KeyState &key) {
 }
 
 void DollViewGump::activate_combat_button() {
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	if (actor->is_in_party() && party->get_member_num(actor) != 0) {
 		set_combat_mode(actor);
 		update_display = true;

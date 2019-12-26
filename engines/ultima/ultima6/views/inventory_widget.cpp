@@ -29,7 +29,7 @@
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/fonts/font.h"
 #include "ultima/ultima6/core/game_clock.h"
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/core/msg_scroll.h"
 #include "ultima/ultima6/core/timed_event.h"
 #include "ultima/ultima6/usecode/usecode.h"
@@ -281,7 +281,7 @@ void InventoryWidget::display_arrows() {
 }
 
 GUI_status InventoryWidget::MouseDown(int x, int y, MouseButton button) {
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	CommandBar *command_bar = Game::get_game()->get_command_bar();
 	x -= area.left;
 	y -= area.top;
@@ -396,7 +396,7 @@ GUI_status InventoryWidget::MouseUp(int x, int y, MouseButton button) {
 		y -= area.top;
 		if (x >= icon_x && x <= icon_x + 15 && // hit top icon either actor or container
 		        y >= 0 && y <= 15) {
-			Event *event = Game::get_game()->get_event();
+			Events *event = Game::get_game()->get_event();
 
 			if (button == ACTION_BUTTON && event->get_mode() == MOVE_MODE) {
 				if (command_bar->try_selected_action() == false) // start new action
@@ -627,7 +627,7 @@ void InventoryWidget::drag_draw(int x, int y, int message, void *data) {
 }
 
 void InventoryWidget::try_click() {
-	Event *event = Game::get_game()->get_event();
+	Events *event = Game::get_game()->get_event();
 	UseCode *usecode = Game::get_game()->get_usecode();
 	if (!selected_obj)
 		selected_obj = ready_obj;

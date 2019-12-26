@@ -24,7 +24,7 @@
 #define ULTIMA6_CORE_MAGIC_H
 
 //#include <stdlib.h>
-#include "ultima/ultima6/core/event.h"
+#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/misc/call_back.h"
 
 namespace Ultima {
@@ -83,7 +83,7 @@ private:
 	Spell *spell[256]; // spell list;
 	char cast_buffer_str[26]; // buffer for spell syllables typed.
 	uint8 cast_buffer_len; // how many characters typed in the spell buffer.
-	Event *event;
+	Events *event;
 	//Actor *target_actor;
 	Obj *target_object;
 	uint8 state;
@@ -96,7 +96,7 @@ private:
 public:
 	Magic();
 	~Magic();
-	bool init(Event *evt);
+	bool init(Events *evt);
 
 	bool read_spell_list();
 	void clear_cast_buffer() {
