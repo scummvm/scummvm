@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-12-25 17:03+0000\n"
+"PO-Revision-Date: 2019-12-28 10:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/prince/"
 "prince/ru/>\n"
@@ -6158,7 +6158,10 @@ msgstr "OTHER: Например, что-нибудь с бриллиантами
 
 #: dialog0180.txt:100704
 msgid "OTHER: Że nie wspomnę o krysztale lokalizującym poborców|podatkowych i rzucającym na nich automatycznie|czar o wdzięcznej nazwie Hemoroidus Maximus."
-msgstr "OTHER: Какой-либо кристалл, что-нибудь волшебное..."
+msgstr ""
+"OTHER: Я уже молчу о кристалле, который обнаруживает|обрщиков налогов и "
+"автоматически накладывает на них|заклинание с изящным названием Геморроиус "
+"Максимус."
 
 #: dialog0180.txt:100705
 msgid "OTHER: Hmm..."
@@ -7134,11 +7137,13 @@ msgstr "OTHER: Я ни за какие деньги не сниму маски!"
 
 #: dialog0230.txt:3
 msgid "OTHER: A chyba dość głupio wyglądałabym ubrana|i w maskę i woalkę."
-msgstr "OTHER: И будешь смотреться как идиот."
+msgstr ""
+"OTHER: Хотя я думаю, что буду выглядеть довольно глупо, надев и маску и "
+"вуаль."
 
 #: dialog0230.txt:4
 msgid "HERO: A propos maski..."
-msgstr "HERO: Апропо маска."
+msgstr "HERO: Что касается маски..."
 
 #: dialog0230.txt:5
 msgid "OTHER: Cicho!"
@@ -7158,7 +7163,7 @@ msgstr "OTHER: Достаточно тебе будет говорить выс�
 
 #: dialog0230.txt:9
 msgid "HERO: <westchnienie>"
-msgstr "HERO: Уф..."
+msgstr "HERO: <вздох>"
 
 #: dialog0230.txt:10
 msgid "HERO: Wiedziałem."
