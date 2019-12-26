@@ -115,11 +115,11 @@ Game::Game(Configuration *cfg, Screen *scr, GUI *g, nuvie_game_t type, SoundMana
 	book = NULL;
 	keybinder = NULL;
 
+	_playing = true;
 	converse_gump_type = CONVERSE_GUMP_DEFAULT;
 	pause_flags = PAUSE_UNPAUSED;
 	pause_user_count = 0;
 	ignore_event_delay = 0;
-	game_play = true;
 	unlimited_casting = false;
 	god_mode_enabled = false;
 	armageddon = false;
@@ -201,6 +201,10 @@ Game::~Game() {
 	if (magic) delete magic;
 	if (book) delete book;
 	if (keybinder) delete keybinder;
+}
+
+bool Game::shouldQuit() const {
+	return !_playing || g_engine->shouldQuit();
 }
 
 bool Game::loadGame(Script *s) {
@@ -641,7 +645,7 @@ void Game::play() {
 
 	map_window->updateBlacking();
 
-	for (; game_play ;) {
+	while (!shouldQuit()) {
 		if (cursor) cursor->clear(); // restore cursor area before GUI events
 
 		event->update();

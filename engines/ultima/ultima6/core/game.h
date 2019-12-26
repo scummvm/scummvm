@@ -134,13 +134,13 @@ class Game {
 	bool god_mode_enabled;
 	bool armageddon;
 	bool ethereal;
-	bool game_play;
 	bool using_text_gumps;
 	bool open_containers; //doubleclick
 	uint8 converse_gump_type;
 	bool roof_mode;
 	bool free_balloon_movement;
 	bool force_solid_converse_bg;
+	bool _playing;
 
 public:
 
@@ -186,8 +186,10 @@ public:
 	}
 
 	void quit() {
-		game_play = false;
+		_playing = false;
 	}
+
+	bool shouldQuit() const;
 
 	bool set_mouse_pointer(uint8 ptr_num);
 	void dont_wait_for_interval();

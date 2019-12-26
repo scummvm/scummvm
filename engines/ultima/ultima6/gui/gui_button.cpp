@@ -322,54 +322,39 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 
 	switch (style) {
 	case BUTTON3D_UP:
-		fillrect.left = 0;
-		fillrect.top = 0;
-		fillrect.setWidth(area.width());
-		fillrect.setHeight(2);
+		fillrect = Common::Rect(area.width(), 2);
 		SDL_FillRect(img, &fillrect, color1);
-		fillrect.top = area.height() - 2;
+		fillrect.moveTo(0, area.height() - 2);
 		SDL_FillRect(img, &fillrect, color2);
-		fillrect.left = 0;
-		fillrect.top = 0;
-		fillrect.setWidth(2);
-		fillrect.setHeight(area.height());
+
+		fillrect = Common::Rect(2, area.height());
 		SDL_FillRect(img, &fillrect, color1);
-		fillrect.left = area.width() - 2;
+		fillrect.moveTo(area.width() - 2, 0);
 		SDL_FillRect(img, &fillrect, color2);
+
 		fillrect.setHeight(1);
 		fillrect.setWidth(1);
 		SDL_FillRect(img, &fillrect, color1);
-		fillrect.left = 1;
-		fillrect.top = area.height() - 1;
+		fillrect.moveTo(1, area.height() - 1);
 		SDL_FillRect(img, &fillrect, color2);
-		fillrect.left = 2;
-		fillrect.top = 2;
-		fillrect.setWidth(area.width() - 4);
-		fillrect.setHeight(area.height() - 4);
+
+		fillrect = Common::Rect(2, 2, area.width() - 2, area.height() - 2);
 		SDL_FillRect(img, &fillrect, color3);
+
 		buttonFont->TextOut(img, tx, ty, text);
 		break;
 	case BUTTON3D_DOWN:
-		fillrect.left = 0;
-		fillrect.top = 0;
-		fillrect.setWidth(area.width());
-		fillrect.setHeight(area.height());
+		fillrect = Common::Rect(area.width(), area.height());
 		SDL_FillRect(img, &fillrect, color3);
 		buttonFont->TextOut(img, tx + 1, ty + 1, text);
 		break;
 	case BUTTON2D_UP:
-		fillrect.left = 0;
-		fillrect.top = 0;
-		fillrect.setWidth(area.width());
-		fillrect.setHeight(area.height());
+		fillrect = Common::Rect(area.width(), area.height());
 		SDL_FillRect(img, &fillrect, color3);
 		buttonFont->TextOut(img, tx, ty, text);
 		break;
 	case BUTTON2D_DOWN:
-		fillrect.left = 0;
-		fillrect.top = 0;
-		fillrect.setWidth(area.width());
-		fillrect.setHeight(area.height());
+		fillrect = Common::Rect(area.width(), area.height());
 		SDL_FillRect(img, &fillrect, color4);
 		buttonFont->SetTransparency(0);
 		buttonFont->SetColoring(BI1_R, BI1_G, BI1_B, BI2_R, BI2_G, BI2_B);
