@@ -88,6 +88,13 @@ static const uint16 UTF16toWin1250[] = {
 	0
 };
 
+// Table for transferring Alt+<Key> into Polish symbols
+static const byte PolishAltifytoWin1250[] = {
+	'e', 0xea, 'o', 0xf3, 'a', 0xb9, 's', 0x9c, 'l', 0xb3, 'z', 0xbf, 'x', 0x9f, 'c', 0xe6, 'n', 0xF2,
+	'E', 0xca, 'O', 0xd3, 'A', 0xa5, 'S', 0x8c, 'L', 0xa3, 'Z', 0xaf, 'X', 0x8f, 'C', 0xc6, 'N', 0xD1,
+	0
+};
+
 static const SciKeyConversion keyMappings[] = {
 	{ Common::KEYCODE_UP          , kSciKeyUp       , kSciKeyUp       },
 	{ Common::KEYCODE_DOWN        , kSciKeyDown     , kSciKeyDown     },
@@ -145,6 +152,17 @@ EventManager::~EventManager() {
  * Calculates the IBM keyboard alt-key scancode of a printable character.
  */
 static int altify(char ch) {
+	if (g_sci->getLanguage() == Common::PL_POL) {
+		const byte *p = PolishAltifytoWin1250;
+
+		while (*p) {
+			if ((byte)ch == *p)
+				return *(p + 1);
+
+			p += 2;
+		}
+	}
+
 	const char c = toupper(ch);
 
 	for (int row = 0; row < ARRAYSIZE(scancodeAltifyRows); ++row) {
