@@ -897,13 +897,13 @@ void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
 	}
 
 	_labels = new Common::SortedArray<Label *>(compareLabels);
-	uint16 count = stream.readUint16();
+	uint16 count = stream.readUint16() + 1;
 	uint32 offset = count * 4 + 2;
 
 	uint16 frame = stream.readUint16();
 	uint32 stringPos = stream.readUint16() + offset;
 
-	for (uint16 i = 0; i < count; i++) {
+	for (uint16 i = 1; i < count; i++) {
 		uint16 nextFrame = stream.readUint16();
 		uint32 nextStringPos = stream.readUint16() + offset;
 		uint32 streamPos = stream.pos();
