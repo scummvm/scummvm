@@ -24,12 +24,10 @@
 #define ULTIMA6_SCREEN_SCREEN_H
 
 #include "ultima/shared/std/string.h"
-
-
-
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/screen/surface.h"
 #include "ultima/ultima6/screen/scale.h"
+#include "graphics/screen.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -42,7 +40,7 @@ class Configuration;
 
 class Screen {
 	Configuration *config;
-	Graphics::ManagedSurface *sdl_surface;
+	Graphics::Screen *sdl_surface;
 	RenderSurface *surface;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_Window *sdlWindow;
@@ -63,9 +61,6 @@ class Screen {
 	uint8 palette[768];
 	uint16 width;
 	uint16 height;
-	Common::Rect *update_rects;
-	uint16 num_update_rects;
-	uint16 max_update_rects;
 
 	Common::Rect shading_rect;
 	uint8 *shading_data;
