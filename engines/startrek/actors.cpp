@@ -670,7 +670,7 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 	while (offset != _room->getHotspotEnd()) {
 		uint16 word = _room->readRdfWord(offset);
 		if (word & 0x8000) {
-			if ((word & actionBit) && isPointInPolygon((int16 *)(_room->_rdfData + offset + 6), x, y)) {
+			if ((word & actionBit) && _room->isPointInPolygon(offset + 6, x, y)) {
 				int actorIndex = _room->readRdfWord(offset + 6);
 				_objectHasWalkPosition = true;
 				_objectWalkPosition.x = _room->readRdfWord(offset + 2);
@@ -681,7 +681,7 @@ int StarTrekEngine::findObjectAt(int x, int y) {
 			int numVertices = _room->readRdfWord(offset + 8);
 			offset = offset + 10 + numVertices * 4;
 		} else {
-			if (isPointInPolygon((int16 *)(_room->_rdfData + offset), x, y)) {
+			if (_room->isPointInPolygon(offset, x, y)) {
 				int actorIndex = _room->readRdfWord(offset);
 				return actorIndex;
 			}

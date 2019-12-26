@@ -295,15 +295,6 @@ public:
 	bool checkItemInteractionExists(int action, int activeItem, int passiveItem, int16 arg6);
 	void handleAwayMissionAction();
 
-	/**
-	 * Returns true if the given position is contained in a polygon.
-	 *
-	 * The data passed contains the following words in this order:
-	 *   * Index of polygon (unused here)
-	 *   * Number of vertices in polygon
-	 *   * For each vertex: x and y coordinates.
-	 */
-	bool isPointInPolygon(int16 *data, int16 x, int16 y);
 	void checkTouchedLoadingZone(int16 x, int16 y);
 	/**
 	 * Updates any nonzero away mission timers, and invokes ACTION_TIMER_EXPIRED when any one

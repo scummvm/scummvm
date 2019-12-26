@@ -756,4 +756,26 @@ void Room::mccoyScan(int direction, TextRef text, bool changeDirection, bool fro
 		showText(TX_SPEAKER_MCCOY, text, fromRDF);
 }
 
+bool Room::isPointInPolygon(int16 offset, int16 x, int16 y) {
+	int16 *data = (int16 *)(_rdfData + offset);
+	int16 numVertices = data[1];
+	int16 *vertData = &data[2];
+
+	for (int i = 0; i < numVertices; i++) {
+		Common::Point p1(vertData[0], vertData[1]);
+		Common::Point p2;
+		if (i == numVertices - 1) // Loop to 1st vertex
+			p2 = Common::Point(data[2], data[3]);
+		else
+			p2 = Common::Point(vertData[2], vertData[3]);
+
+		if ((p2.x - p1.x) * (y - p1.y) - (p2.y - p1.y) * (x - p1.x) < 0)
+			return false;
+
+		vertData += 2;
+	}
+
+	return true;
+}
+
 } // End of namespace StarTrek

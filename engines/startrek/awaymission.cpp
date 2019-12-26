@@ -679,32 +679,11 @@ void StarTrekEngine::handleAwayMissionAction() {
 	}
 }
 
-bool StarTrekEngine::isPointInPolygon(int16 *data, int16 x, int16 y) {
-	int16 numVertices = data[1];
-	int16 *vertData = &data[2];
-
-	for (int i = 0; i < numVertices; i++) {
-		Common::Point p1(vertData[0], vertData[1]);
-		Common::Point p2;
-		if (i == numVertices - 1) // Loop to 1st vertex
-			p2 = Common::Point(data[2], data[3]);
-		else
-			p2 = Common::Point(vertData[2], vertData[3]);
-
-		if ((p2.x - p1.x) * (y - p1.y) - (p2.y - p1.y) * (x - p1.x) < 0)
-			return false;
-
-		vertData += 2;
-	}
-
-	return true;
-}
-
 void StarTrekEngine::checkTouchedLoadingZone(int16 x, int16 y) {
 	int16 offset = _room->getFirstDoorPolygonOffset();
 
 	while (offset != _room->getDoorPolygonEndOffset()) {
-		if (isPointInPolygon((int16 *)(_room->_rdfData + offset), x, y)) {
+		if (_room->isPointInPolygon(offset, x, y)) {
 			uint16 var = _room->readRdfWord(offset);
 			if (_activeDoorWarpHotspot != var) {
 				_activeDoorWarpHotspot = var;
@@ -722,7 +701,7 @@ void StarTrekEngine::checkTouchedLoadingZone(int16 x, int16 y) {
 		offset = _room->getFirstWarpPolygonOffset();
 
 		while (offset != _room->getWarpPolygonEndOffset()) {
-			if (isPointInPolygon((int16 *)(_room->_rdfData + offset), x, y)) {
+			if (_room->isPointInPolygon(offset, x, y)) {
 				uint16 var = _room->readRdfWord(offset);
 				if (_activeWarpHotspot != var) {
 					_activeWarpHotspot = var;
