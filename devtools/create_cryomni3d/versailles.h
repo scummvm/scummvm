@@ -105,6 +105,7 @@ static char const versaillesESBombPwd[] = "NO ES PODER DE REYES EL ALCANZAR LA P
 static char const versaillesITBombPwd[] = "AI SOVRANI NON E DATO RAGGIUNGERE LA PERFEZIONE";
 
 #define VERSAILLES_MESSAGES_COUNT 146
+#define VERSAILLES_MESSAGES_COUNT_CJK 151
 #define VERSAILLES_PAINTINGS_COUNT 48
 
 static char const *const versaillesFRmessages[] = {

@@ -558,15 +558,16 @@ private:
 	IMG_CB(88003d);
 	IMG_CB(88003e);
 	IMG_CB(88003f);
-	Common::String _bombPassword;
+	Common::U32String _bombAlphabet; // For Japanese edition
+	Common::U32String _bombPassword;
 	static const uint kBombPasswordSmallLength = 40;
 	static const uint kBombPasswordMaxLength = 60;
 	static const uint16 kBombLettersPos[2][kBombPasswordMaxLength][2];
 	bool handleBomb(ZonFixedImage *fimg);
 	void drawBombLetters(Graphics::ManagedSurface &surface, const Graphics::Surface(&bmpLetters)[28],
 	                     const uint bombPasswordLength,
-	                     const unsigned char (&bombPossibilites)[kBombPasswordMaxLength][5],
-	                     const unsigned char (&bombCurrentLetters)[kBombPasswordMaxLength]);
+	                     const uint32(&bombPossibilites)[kBombPasswordMaxLength][5],
+	                     const byte(&bombCurrentLetters)[kBombPasswordMaxLength]);
 	IMG_CB(88004);
 	IMG_CB(88004b);
 #undef IMG_CB

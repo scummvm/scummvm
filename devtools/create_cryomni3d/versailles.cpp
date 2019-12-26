@@ -102,10 +102,6 @@ size_t writeVersaillesSubtitles16(FILE *fp, Subtitle const *subtitles, uint16 el
         size += writeString16(f, versailles ## lang ## EpilMsg); \
         size += writeString16(f, versailles ## lang ## EpilPwd); \
         \
-        if ((LANG_ ## lang == LANG_JA)) { \
-            assert(VERSAILLES_JA_BOMB_ALPHABET_SIZE + 1 == sizeof(versaillesJABombAlphabet)); \
-            size += writeString16(f, versaillesJABombAlphabet); \
-        } \
         size += writeString16(f, versailles ## lang ## BombPwd); \
         \
         assert(VERSAILLES_MESSAGES_COUNT_CJK == ARRAYSIZE(versailles ## lang ## messages)); \

@@ -2930,8 +2930,8 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 	bool success = false;
 	Common::RandomSource rnd("VersaillesBomb");
 	Graphics::Surface bmpLetters[28];
-	unsigned char bombPossibilites[60][5];
-	unsigned char bombCurrentLetters[60];
+	uint32 bombPossibilites[60][5];
+	byte bombCurrentLetters[60];
 	Graphics::ManagedSurface tempSurf;
 
 	const uint bombPasswordLength = _bombPassword.size();
@@ -2939,14 +2939,21 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 		error("Bomb password is too long");
 	}
 
-	loadBMPs("bomb_%02d.bmp", bmpLetters, 28);
+	uint max = _bombAlphabet.size() - 1;
+	if (getLanguage() != Common::JA_JPN) {
+		// In bitmap mode we only have 28 images
+		assert(max < 28);
+		// BUG: in game the rand is modulo 27
+		max = 26;
+		loadBMPs("bomb_%02d.bmp", bmpLetters, 28);
+	}
 	for (uint i = 0; i < bombPasswordLength; i++) {
-		bombPossibilites[i][0] = toupper(_bombPassword[i]);
+		bombPossibilites[i][0] = _bombPassword[i];
 		for (uint j = 1; j < 5; j++) {
 			bool foundSameLetter;
 			do {
 				foundSameLetter = false;
-				bombPossibilites[i][j] = rnd.getRandomNumberRng('A', 'Z');
+				bombPossibilites[i][j] = _bombAlphabet[rnd.getRandomNumber(max)];
 				for (uint k = 0; k < j; k++) {
 					if (bombPossibilites[i][k] == bombPossibilites[i][j]) {
 						foundSameLetter = true;
@@ -2989,8 +2996,8 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 				// Check if password is OK
 				success = true;
 				for (uint i = 0; i < bombPasswordLength; i++) {
-					unsigned char letterChar = bombPossibilites[i][bombCurrentLetters[i]];
-					if (letterChar != _bombPassword[i]) {
+					uint16 letterId = bombPossibilites[i][bombCurrentLetters[i]];
+					if (letterId != _bombPassword[i]) {
 						success = false;
 						break;
 					}
@@ -3122,22 +3129,33 @@ const uint16 CryOmni3DEngine_Versailles::kBombLettersPos[2][kBombPasswordMaxLeng
 
 void CryOmni3DEngine_Versailles::drawBombLetters(Graphics::ManagedSurface &surface,
         const Graphics::Surface(&bmpLetters)[28], const uint bombPasswordLength,
-        const unsigned char (&bombPossibilites)[kBombPasswordMaxLength][5],
-        const unsigned char (&bombCurrentLetters)[kBombPasswordMaxLength]) {
+        const uint32(&bombPossibilites)[kBombPasswordMaxLength][5],
+        const byte(&bombCurrentLetters)[kBombPasswordMaxLength]) {
 	uint table = bombPasswordLength <= kBombPasswordSmallLength ? 0 : 1;
-	for (uint i = 0; i < bombPasswordLength; i++) {
-		unsigned char letterChar = bombPossibilites[i][bombCurrentLetters[i]];
-		uint letterId = 0;
-		if (letterChar >= 'A' && letterChar <= 'Z') {
-			letterId = letterChar - 'A';
-		} else if (letterChar == ' ') {
-			letterId = 26;
-		} else if (letterChar == '\'') {
-			letterId = 27;
+	if (getLanguage() == Common::JA_JPN) {
+		_fontManager.setCurrentFont(1);
+		_fontManager.setTransparentBackground(true);
+		_fontManager.setForeColor(0);
+		_fontManager.setSurface(&surface);
+
+		for (uint i = 0; i < bombPasswordLength; i++) {
+			Common::Rect rct(34, 34);
+			rct.moveTo(kBombLettersPos[table][i][0], kBombLettersPos[table][i][1]);
+			surface.fillRect(rct, 239);
+
+			uint32 letter = bombPossibilites[i][bombCurrentLetters[i]];
+			Common::U32String str(&letter, 1);
+
+			_fontManager.displayStr(rct.left + (34 - _fontManager.getStrWidth(str)) / 2,
+			                        rct.top + 5, str);
 		}
-		const Graphics::Surface &letter = bmpLetters[letterId];
-		Common::Point dst(kBombLettersPos[table][i][0], kBombLettersPos[table][i][1]);
-		surface.transBlitFrom(letter, dst);
+	} else {
+		for (uint i = 0; i < bombPasswordLength; i++) {
+			uint letterId = _bombAlphabet.find(bombPossibilites[i][bombCurrentLetters[i]]);
+			const Graphics::Surface &letter = bmpLetters[letterId];
+			Common::Point dst(kBombLettersPos[table][i][0], kBombLettersPos[table][i][1]);
+			surface.transBlitFrom(letter, dst);
+		}
 	}
 }
 
