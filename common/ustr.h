@@ -188,6 +188,7 @@ public:
 	 */
 	void toUppercase();
 
+	uint32 find(value_type x, uint32 pos = 0) const;
 	uint32 find(const U32String &str, uint32 pos = 0) const;
 
 	typedef value_type *        iterator;
