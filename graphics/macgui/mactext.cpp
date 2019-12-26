@@ -392,7 +392,7 @@ int MacText::getLineWidth(int line, bool enforce) {
 	}
 
 	if (!hastext)
-		height -= 3;
+		height = height > 3 ? height - 3 : 0;
 
 	_textLines[line].width = width;
 	_textLines[line].height = height;
