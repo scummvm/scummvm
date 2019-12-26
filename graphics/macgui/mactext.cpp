@@ -335,6 +335,8 @@ void MacText::render(int from, int to) {
 	from = MAX<int>(0, from);
 	to = MIN<int>(to, _textLines.size() - 1);
 
+	int w = MIN(_maxWidth, _textMaxWidth);
+
 	// Clear the screen
 	_surface->fillRect(Common::Rect(0, _textLines[from].y, _surface->w, _textLines[to].y + getLineHeight(to)), _bgcolor);
 
@@ -352,7 +354,7 @@ void MacText::render(int from, int to) {
 			if (_textLines[i].chunks[j].text.empty())
 				continue;
 
-			_textLines[i].chunks[j].getFont()->drawString(_surface, _textLines[i].chunks[j].text, xOffset, _textLines[i].y, _maxWidth, _fgcolor);
+			_textLines[i].chunks[j].getFont()->drawString(_surface, _textLines[i].chunks[j].text, xOffset, _textLines[i].y, w, _fgcolor);
 			xOffset += _textLines[i].chunks[j].getFont()->getStringWidth(_textLines[i].chunks[j].text);
 		}
 	}
