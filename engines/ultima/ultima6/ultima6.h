@@ -33,7 +33,6 @@
 namespace Ultima {
 namespace Ultima6 {
 
-class Events;
 class Screen;
 class Script;
 class Game;
@@ -42,7 +41,6 @@ class Ultima6Engine : public Engine {
 private:
 	const Ultima::UltimaGameDescription *_gameDescription;
 	Configuration *_config;
-	Events *_events;
 	Screen *_screen;
 	Script *_script;
 	Game *_game;

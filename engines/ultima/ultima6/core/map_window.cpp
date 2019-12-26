@@ -650,7 +650,7 @@ void MapWindow::update() {
 	}
 
 	if (walking) {
-		if (Events::get()->getButtonState() & walk_button_mask) {
+		if (Event::get()->getButtonState() & walk_button_mask) {
 			if (game->user_paused())
 				return;
 

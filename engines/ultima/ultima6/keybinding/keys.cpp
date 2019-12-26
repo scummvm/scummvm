@@ -23,7 +23,6 @@
 #include "ultima/ultima6/keybinding/keys.h"
 #include "ultima/ultima6/keybinding/key_actions.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/conf/xml_tree.h"
 #include "ultima/ultima6/core/player.h"
