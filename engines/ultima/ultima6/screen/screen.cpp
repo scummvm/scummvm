@@ -29,7 +29,6 @@
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/core/background.h"
 #include "common/system.h"
-#include "graphics/screen.h"
 #include "engines/util.h"
 
 namespace Ultima {
@@ -49,7 +48,6 @@ Screen::Screen(Configuration *cfg) {
 	sdl_surface = NULL;
 	surface = NULL;
 	scaler = NULL;
-	update_rects = NULL;
 	shading_data = NULL;
 	scaler_index = 0;
 	scale_factor = 2;
@@ -71,15 +69,13 @@ Screen::Screen(Configuration *cfg) {
 	else
 		lighting_style = LIGHTING_STYLE_ORIGINAL;
 	old_lighting_style = lighting_style;
-	max_update_rects = 10;
-	num_update_rects = 0;
 	memset(shading_globe, 0, sizeof(shading_globe));
 }
 
 Screen::~Screen() {
 	delete surface;
-	if (update_rects) free(update_rects);
-	if (shading_data) free(shading_data);
+	if (shading_data)
+		free(shading_data);
 
 	for (int i = 0; i < NUM_GLOBES; i++) {
 		if (shading_globe[i])
@@ -102,10 +98,6 @@ bool Screen::init() {
 
 	width = (uint16)new_width;
 	height = (uint16)new_height;
-
-	update_rects = (Common::Rect *)malloc(sizeof(Common::Rect) * max_update_rects);
-	if (update_rects == NULL)
-		return false;
 
 	config->value("config/video/scale_method", str, "---");
 	scaler_index = scaler_reg.GetIndexForName(str);
@@ -1191,88 +1183,31 @@ uint16 Screen::get_bpp() {
 }
 
 void Screen::update() {
-	if (scaler) {
-		scaler->Scale(surface->format_type, surface->pixels,     // type, source
-		              0, 0, surface->w, surface->h,                          // x, y, w, h
-		              surface->pitch / surface->bytes_per_pixel, surface->h, // pixels/line, pixels/col
-		              sdl_surface->getPixels(),                                // dest
-		              sdl_surface->pitch / sdl_surface->format.bytesPerPixel, // destpixels/line
-		              scale_factor);
-	}
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_UpdateTexture(sdlTexture, NULL, sdl_surface->pixels, sdl_surface->pitch);
-	SDL_RenderClear(sdlRenderer);
-	SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
-	SDL_RenderPresent(sdlRenderer);
-#else
-	SDL_UpdateRect(sdl_surface, 0, 0, 0, 0);
-#endif
-
-	return;
+	sdl_surface->markAllDirty();
+	sdl_surface->update();
 }
 
 
 void Screen::update(sint32 x, sint32 y, uint16 w, uint16 h) {
-//if(scaled_surface)
-	/*
-	 if(x >= 2)
-	   x -= 2;
-	 if(y >= 2)
-	   y -= 2;
-	 if(w <= surface->w-2)
-	   w += 2;
-	 if(h <= surface->h-2)
-	   h += 2;
-	*/
-
-	if (x < 0) x = 0;
-	if (y < 0) y = 0;
+	if (x < 0)
+		x = 0;
+	if (y < 0)
+		y = 0;
 	if (x > width)
 		return;
 	if (y > height)
 		return;
-	if ((x + w) > width) w = width - x;
-	if ((y + h) > height) h = height - y;
+	if ((x + w) > width)
+		w = width - x;
+	if ((y + h) > height)
+		h = height - y;
 
-	if (scaler) {
-		scaler->Scale(surface->format_type, surface->pixels,     // type, source
-		              x, y, w, h,                            // x, y, w, h
-		              surface->pitch / surface->bytes_per_pixel, surface->h, // pixels/line, pixels/col
-		              sdl_surface->getPixels(),                                // dest
-		              sdl_surface->pitch / sdl_surface->format.bytesPerPixel, // destpixels/line
-		              scale_factor);
-	}
-
-	if (num_update_rects == max_update_rects) {
-		update_rects = (Common::Rect *)nuvie_realloc(update_rects, sizeof(Common::Rect) * (max_update_rects + 10));
-		max_update_rects += 10;
-	}
-
-	update_rects[num_update_rects].left = x * scale_factor;
-	update_rects[num_update_rects].top = y * scale_factor;
-	update_rects[num_update_rects].setWidth(w * scale_factor);
-	update_rects[num_update_rects].setHeight(h * scale_factor);
-
-	num_update_rects++;
-
-//SDL_UpdateRect(sdl_surface,x*scale_factor,y*scale_factor,w*scale_factor,h*scale_factor);
-
-//DEBUG(0,LEVEL_DEBUGGING,"update rect(%d,%d::%d,%d)\n", update_rects[num_update_rects].left, update_rects[num_update_rects].y, update_rects[num_update_rects].width(), update_rects[num_update_rects].height());
-
-	return;
+	// Get the subarea, which internally adds a dirty rect for the given area
+	sdl_surface->getSubArea(Common::Rect(x, y, x + width, y + height));
 }
 
 void Screen::preformUpdate() {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_UpdateTexture(sdlTexture, NULL, sdl_surface->pixels, sdl_surface->pitch);
-	SDL_RenderClear(sdlRenderer);
-	SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL);
-	SDL_RenderPresent(sdlRenderer);
-#else
-	SDL_UpdateRects(sdl_surface, num_update_rects, update_rects);
-#endif
-	num_update_rects = 0;
+	sdl_surface->update();
 }
 
 void Screen::lock() {
@@ -1313,65 +1248,6 @@ int Screen::get_screen_bpp() {
 	return pf.bpp();
 #endif
 }
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-bool Screen::init_sdl2_window(uint16 scale) {
-	uint32 win_width = width;
-	uint32 win_height = height;
-
-	window_scale_w = (float)scale;
-	window_scale_h = (float)scale;
-
-	if (non_square_pixels)
-		window_scale_h *= 1.2;
-
-	SDL_CreateWindowAndRenderer(width * window_scale_w, (int)(height * window_scale_h), SDL_WINDOW_SHOWN, &sdlWindow, &sdlRenderer);
-	if (sdlWindow == NULL || sdlRenderer == NULL)
-		return false;
-
-	SDL_SetWindowTitle(sdlWindow, "Nuvie");
-	//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
-	SDL_RenderSetLogicalSize(sdlRenderer, width * window_scale_w, (int)(height * window_scale_h)); //VGA non-square pixels.
-
-	set_fullscreen(fullscreen);
-
-	return true;
-}
-
-bool Screen::create_sdl_surface_and_texture(sint32 w, sint32 h, uint32 format) {
-	uint32 rmask, gmask, bmask, amask;
-	int bpp;
-
-	if (!Graphics::PixelFormatEnumToMasks(format, &bpp, &rmask, &gmask, &bmask, &amask))
-		return false;
-
-	sdl_surface = SDL_CreateRGBSurface(0, w, h, bpp,
-	                                   rmask,
-	                                   gmask,
-	                                   bmask,
-	                                   amask);
-
-	if (sdl_surface == NULL) {
-		fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
-		return false;
-	}
-
-	sdlTexture = SDL_CreateTexture(sdlRenderer,
-	                               format,
-	                               SDL_TEXTUREACCESS_STREAMING,
-	                               w, h);
-
-	if (sdlTexture == NULL) {
-		SDL_FreeSurface(sdl_surface);
-		sdl_surface = NULL;
-		fprintf(stderr, "SDL_CreateTexture failed: %s\n", SDL_GetError());
-		return false;
-	}
-
-	return true;
-}
-
-#endif
 
 void Screen::set_screen_mode() {
 	if (scale_factor == 0) scale_factor = 1;
