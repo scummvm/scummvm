@@ -349,7 +349,9 @@ void MacText::render(int from, int to) {
 
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			debug(9, "MacText::render: line %d[%d]/%d at %d,%d (%s)", i, j, xOffset, _textLines[i].chunks[j].fontId, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str());
+			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d",
+				i, j, xOffset, _textLines[i].y, _textLines[i].height, _textLines[i].chunks[j].text.encode().c_str(),
+				_textLines[i].chunks[j].fontId, _surface->w, _surface->h);
 
 			if (_textLines[i].chunks[j].text.empty())
 				continue;
@@ -426,8 +428,10 @@ void MacText::recalcDims() {
 	for (uint i = 0; i < _textLines.size(); i++) {
 		_textLines[i].y = y;
 
-		y += getLineHeight(i) + _interLinear;
+		// We must calculate width first, because it enforces
+		// the computation. Calling Height() will return cached value!
 		_textMaxWidth = MAX(_textMaxWidth, getLineWidth(i, true));
+		y += getLineHeight(i) + _interLinear;
 	}
 
 	_textMaxHeight = y - _interLinear;
