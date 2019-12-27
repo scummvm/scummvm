@@ -295,22 +295,21 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheSprite(id, field, d);
 		break;
 	case kThePerFrameHook:
-		warning("STUB: setting the perframehook");
+		warning("STUB: Lingo::setTheEntity(): setting the perframehook");
 		break;
 	case kTheFloatPrecision:
 		_floatPrecision = d.toInt();
 		_floatPrecision = MAX(0, MIN(_floatPrecision, 19)); // 0 to 19
 		_floatPrecisionFormat = Common::String::format("%%.%df", _floatPrecision);
-		warning("set to %d: %s", _floatPrecision, _floatPrecisionFormat.c_str());
 		break;
 	case kTheColorDepth:
 		_vm->_colorDepth = d.toInt();
 
 		// bpp. 1, 2, 4, 8, 32
-		warning("STUB: Set color depth to %d", _vm->_colorDepth);
+		warning("STUB: Lingo::setTheEntity(): Set color depth to %d", _vm->_colorDepth);
 		break;
 	default:
-		warning("Unprocessed setting field %d of entity %d", field, entity);
+		warning("Lingo::setTheEntity(): Unprocessed setting field %d of entity %d", field, entity);
 	}
 }
 
@@ -320,14 +319,14 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	if (id1.type == INT) {
 		id = id1.u.i;
 	} else {
-		warning("Unknown the sprite id type: %s", id1.type2str());
+		warning("Lingo::setTheSprite(): Unknown the sprite id type: %s", id1.type2str());
 		return;
 	}
 
 	d.toInt(); // Enforce Integer
 
 	if (!_vm->getCurrentScore()) {
-		warning("The sprite %d field %d setting over non-active score", id, field);
+		warning("Lingo::setTheSprite(): The sprite %d field %d setting over non-active score", id, field);
 		return;
 	}
 
@@ -419,7 +418,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_editableText = *d.toString();
 		break;
 	default:
-		warning("Unprocessed setting field %d of sprite", field);
+		warning("Lingo::setTheSprite(): Unprocessed setting field %d of sprite", field);
 	}
 }
 
@@ -434,7 +433,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getTheCast(id, field);
 		break;
 	case kThePerFrameHook:
-		warning("STUB: getting the perframehook");
+		warning("STUB: Lingo::getTheEntity(): getting the perframehook");
 		break;
 	case kTheFloatPrecision:
 		d.type = INT;
@@ -510,7 +509,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = _vm->getCurrentScore()->getCurrentFrame();
 		break;
 	default:
-		warning("Unprocessed getting field %d of entity %d", field, entity);
+		warning("Lingo::getTheEntity(): Unprocessed getting field %d of entity %d", field, entity);
 		d.type = VOID;
 	}
 
@@ -524,12 +523,12 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	if (id1.type == INT) {
 		id = id1.u.i;
 	} else {
-		warning("Unknown the sprite id type: %s", id1.type2str());
+		warning("Lingo::getTheSprite(): Unknown the sprite id type: %s", id1.type2str());
 		return d;
 	}
 
 	if (!_vm->getCurrentScore()) {
-		warning("The sprite %d field %d setting over non-active score", id, field);
+		warning("Lingo::getTheSprite(): The sprite %d field %d setting over non-active score", id, field);
 		return d;
 	}
 
@@ -621,7 +620,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.s = &sprite->_editableText;
 		break;
 	default:
-		warning("Unprocessed getting field %d of sprite", field);
+		warning("Lingo::getTheSprite(): Unprocessed getting field %d of sprite", field);
 		d.type = VOID;
 	}
 
@@ -635,12 +634,12 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	if (id1.type == INT) {
 		id = id1.u.i;
 	} else {
-		warning("Unknown the cast id type: %s", id1.type2str());
+		warning("Lingo::getTheCast(): Unknown the cast id type: %s", id1.type2str());
 		return d;
 	}
 
 	if (!_vm->getCurrentScore()) {
-		warning("The cast %d field %d setting over non-active score", id, field);
+		warning("Lingo::getTheCast(): The cast %d field %d setting over non-active score", id, field);
 		return d;
 	}
 
@@ -654,7 +653,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 
 		return d;
 	} else {
-		warning("The cast %d found", id);
+		warning("Lingo::getTheCast(): The cast %d found", id);
 	}
 
 	castType = _vm->getCurrentScore()->_castTypes[id];
@@ -687,7 +686,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	case kTheBackColor:
 		{
 			if (castType != kCastShape) {
-				warning("Field %d of cast %d not found", field, id);
+				warning("Lingo::getTheCast(): Field %d of cast %d not found", field, id);
 				d.type = VOID;
 				return d;
 			}
@@ -699,7 +698,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	case kTheForeColor:
 		{
 			if (castType != kCastShape) {
-				warning("Field %d of cast %d not found", field, id);
+				warning("Lingo::getTheCast(): Field %d of cast %d not found", field, id);
 				d.type = VOID;
 				return d;
 			}
@@ -712,7 +711,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d.u.i = 1; //Not loaded handled above
 		break;
 	default:
-		warning("Unprocessed getting field %d of cast %d", field, id);
+		warning("Lingo::getTheCast(): Unprocessed getting field %d of cast %d", field, id);
 		d.type = VOID;
 	//TODO find out about String fields
 	}
@@ -726,12 +725,12 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	if (id1.type == INT) {
 		id = id1.u.i;
 	} else {
-		warning("Unknown the cast id type: %s", id1.type2str());
+		warning("Lingo::setTheCast(): Unknown the cast id type: %s", id1.type2str());
 		return;
 	}
 
 	if (!_vm->getCurrentScore()) {
-		warning("The cast %d field %d setting over non-active score", id, field);
+		warning("Lingo::setTheCast(): The cast %d field %d setting over non-active score", id, field);
 		return;
 	}
 
@@ -739,14 +738,14 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	CastInfo *castInfo = _vm->getCurrentScore()->_castsInfo[id];
 
 	if (!castInfo) {
-		warning("The cast %d found", id);
+		warning("Lingo::setTheCast(): The cast %d found", id);
 		return;
 	}
 
 	switch (field) {
 	case kTheCastType:
 		// TODO: You can actually switch the cast type!?
-		warning("Tried to switch cast type of %d", id);
+		warning("Lingo::setTheCast(): Tried to switch cast type of %d", id);
 		//cast->type = static_cast<CastType>(d.u.i);
 		//cast->modified = 1;
 		break;
@@ -770,7 +769,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	case kTheBackColor:
 		{
 			if (castType != kCastShape) {
-				warning("Field %d of cast %d not found", field, id);
+				warning("Lingo::setTheCast(): Field %d of cast %d not found", field, id);
 			}
 			ShapeCast *shape = _vm->getCurrentScore()->_loadedShapes->getVal(id);
 			shape->_bgCol = d.u.i;
@@ -780,7 +779,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	case kTheForeColor:
 		{
 			if (castType != kCastShape) {
-				warning("Field %d of cast %d not found", field, id);
+				warning("Lingo::setTheCast(): Field %d of cast %d not found", field, id);
 				return;
 			}
 			ShapeCast *shape = _vm->getCurrentScore()->_loadedShapes->getVal(id);
@@ -789,7 +788,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		}
 		break;
 	default:
-		warning("Unprocessed getting field %d of cast %d", field, id);
+		warning("Lingo::setTheCast(): Unprocessed getting field %d of cast %d", field, id);
 	}
 }
 
