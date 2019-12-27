@@ -759,40 +759,6 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	}
 }
 
-void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, uint16 spriteId, Common::Rect drawRect) {
-	// drawRect could be bigger than the spriteSurface. Clip it
-	Common::Rect t(spriteSurface.w, spriteSurface.h);
-	t.moveTo(drawRect.left, drawRect.top);
-	drawRect.clip(t);
-
-	switch (_sprites[spriteId]->_ink) {
-	case kInkTypeCopy:
-		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
-		break;
-	case kInkTypeTransparent:
-		// FIXME: is it always white (last entry in pallette)?
-		targetSurface.transBlitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top), _vm->getPaletteColorCount() - 1);
-		break;
-	case kInkTypeBackgndTrans:
-		drawBackgndTransSprite(targetSurface, spriteSurface, drawRect);
-		break;
-	case kInkTypeMatte:
-		drawMatteSprite(targetSurface, spriteSurface, drawRect);
-		break;
-	case kInkTypeGhost:
-		drawGhostSprite(targetSurface, spriteSurface, drawRect);
-		break;
-	case kInkTypeReverse:
-		drawReverseSprite(targetSurface, spriteSurface, drawRect);
-		break;
-	default:
-		warning("Frame::inkBasedBlit(): Unhandled ink type %d", _sprites[spriteId]->_ink);
-		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
-		break;
-	}
-}
-
-
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textSize) {
 	TextCast *textCast = _sprites[spriteId]->_buttonCast != nullptr ? (TextCast*)_sprites[spriteId]->_buttonCast : _sprites[spriteId]->_textCast;
 
@@ -914,6 +880,39 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX, textY), 0xff);
 
 	inkBasedBlit(surface, textWithFeatures, spriteId, Common::Rect(x, y, x + width, y + height));
+}
+
+void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, uint16 spriteId, Common::Rect drawRect) {
+	// drawRect could be bigger than the spriteSurface. Clip it
+	Common::Rect t(spriteSurface.w, spriteSurface.h);
+	t.moveTo(drawRect.left, drawRect.top);
+	drawRect.clip(t);
+
+	switch (_sprites[spriteId]->_ink) {
+	case kInkTypeCopy:
+		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
+		break;
+	case kInkTypeTransparent:
+		// FIXME: is it always white (last entry in pallette)?
+		targetSurface.transBlitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top), _vm->getPaletteColorCount() - 1);
+		break;
+	case kInkTypeBackgndTrans:
+		drawBackgndTransSprite(targetSurface, spriteSurface, drawRect);
+		break;
+	case kInkTypeMatte:
+		drawMatteSprite(targetSurface, spriteSurface, drawRect);
+		break;
+	case kInkTypeGhost:
+		drawGhostSprite(targetSurface, spriteSurface, drawRect);
+		break;
+	case kInkTypeReverse:
+		drawReverseSprite(targetSurface, spriteSurface, drawRect);
+		break;
+	default:
+		warning("Frame::inkBasedBlit(): Unhandled ink type %d", _sprites[spriteId]->_ink);
+		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
+		break;
+	}
 }
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
