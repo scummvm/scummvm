@@ -120,13 +120,9 @@ void GUI_Font::TextOut(Graphics::ManagedSurface *context, int x, int y, const ch
 	int i;
 	int j;
 	uint8 ch;
-	Common::Rect src;
-	Common::Rect dst;
+	Common::Rect src(charw, charh - 1);
+	Common::Rect dst(charw, charh - 1);
 
-	src.setWidth(charw);
-	src.setHeight(charh - 1);
-	dst.setWidth(charw);
-	dst.setHeight(charh - 1);
 	i = 0;
 	j = 0;
 	while ((ch = text[i])) { // single "=" is correct!
@@ -138,12 +134,14 @@ void GUI_Font::TextOut(Graphics::ManagedSurface *context, int x, int y, const ch
 		src.moveTo((ch % 16) * charw, (ch / 16) * charh);
 		if (w_data) {
 			dst.left = x;
-			dst.setWidth(w_data[ch]);
+			dst.right = x + w_data[ch];
 			x += dst.width();
-		} else
-			dst.moveTo(x + (j * charw), dst.top);
 
-		dst.top = y;
+		} else {
+			dst.moveTo(x + (j * charw), dst.top);
+		}
+
+		dst.moveTo(dst.left, y);
 		SDL_BlitSurface(fontStore, &src, context, &dst);
 		i++;
 		j++;

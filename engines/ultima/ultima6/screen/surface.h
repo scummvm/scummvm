@@ -31,9 +31,11 @@ namespace Ultima6 {
 class OpenGL;
 
 class RenderSurface {
+private:
 	uint8   *buffer;                // If the buffer is created, this is it
 	uint16  *zbuffer_priv;
-	Graphics::ManagedSurface *sdl_surface;
+	Graphics::ManagedSurface *_rawSurface;
+	DisposeAfterUse::Flag _disposeSurface;
 public:
 	OpenGL  *opengl;                // OpenGL surface
 
