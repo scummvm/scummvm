@@ -78,7 +78,8 @@ GUI_status GUI_YesNoDialog::KeyDown(const Common::KeyState &key) {
 		button_index[b_index_num]->set_highlighted(true);
 		return GUI_YUM;
 	case DO_ACTION_KEY:
-		if (b_index_num != -1) return button_index[b_index_num]->Activate_button();
+		if (b_index_num != -1)
+			return button_index[b_index_num]->Activate_button();
 		break;
 	default:
 		break;

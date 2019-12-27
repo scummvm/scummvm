@@ -343,8 +343,7 @@ bool Events::handleEvent(const Common::Event *event_) {
 		break;
 
 	case Common::EVENT_QUIT:
-		quitDialog();
-		break;
+		return false;
 
 	default:
 		break;
