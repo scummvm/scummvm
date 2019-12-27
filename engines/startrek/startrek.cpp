@@ -105,6 +105,9 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 
 	for (int i = 0; i < NUM_OBJECTS; i++)
 		_itemList[i] = g_itemList[i];
+
+	for (int i = 0; i < MAX_BAN_FILES; i++)
+		_banFiles[i] = nullptr;
 }
 
 StarTrekEngine::~StarTrekEngine() {

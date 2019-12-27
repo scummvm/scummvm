@@ -63,8 +63,6 @@ class Room;
 class Console;
 
 typedef String(StarTrekEngine::*TextGetterFunc)(int, uintptr, String *);
-// FIXME: Eventually get rid of Common::SharedPtr and dispose of file streams properly
-typedef Common::SharedPtr<Common::MemoryReadStreamEndian> FileStream;
 
 const int SAVEGAME_DESCRIPTION_LEN = 30;
 
@@ -366,7 +364,7 @@ public:
 	 * "renderBanAboveSprites()" redraws sprites above them if necessary.
 	 */
 	void renderBanBelowSprites();
-	void renderBan(byte *pixelDest, FileStream file);
+	void renderBan(byte *screenPixels, byte *bgPixels, int banFileIndex);
 	void renderBanAboveSprites();
 	void removeActorFromScreen(int actorIndex);
 	void actorFunc1();
@@ -706,7 +704,7 @@ public:
 
 	// ".BAN" files provide extra miscellaneous animations in the room, ie. flashing
 	// pixels on computer consoles, or fireflies in front of the screen.
-	FileStream _banFiles[MAX_BAN_FILES];
+	Common::MemoryReadStreamEndian *_banFiles[MAX_BAN_FILES];
 	uint16 _banFileOffsets[MAX_BAN_FILES];
 
 	Sprite _inventoryIconSprite;

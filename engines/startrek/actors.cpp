@@ -32,8 +32,11 @@ namespace StarTrek {
 void StarTrekEngine::initActors() {
 	for (int i = 0; i < NUM_ACTORS; i++)
 		_actorList[i] = Actor();
-	for (int i = 0; i < MAX_BAN_FILES; i++)
-		_banFiles[i].reset();
+
+	for (int i = 0; i < MAX_BAN_FILES; i++) {
+		delete _banFiles[i];
+		_banFiles[i] = nullptr;
+	}
 
 	_kirkActor->animationString = "kstnd";
 	_spockActor->animationString = "sstnd";
@@ -68,7 +71,7 @@ void StarTrekEngine::loadBanFile(const Common::String &name) {
 	debugC(kDebugGeneral, 7, "Load BAN file: %s.ban", name.c_str());
 	for (int i = 0; i < MAX_BAN_FILES; i++) {
 		if (!_banFiles[i]) {
-			_banFiles[i] = SharedPtr<Common::MemoryReadStreamEndian>(loadFile(name + ".ban"));
+			_banFiles[i] = loadFile(name + ".ban");
 			_banFileOffsets[i] = 0;
 			return;
 		}
@@ -268,51 +271,58 @@ void StarTrekEngine::renderBanBelowSprites() {
 		}
 
 		int16 size = _banFiles[i]->readSint16();
-		if (size != 0) {
-			_banFiles[i]->seek(_banFileOffsets[i], SEEK_SET);
-			renderBan(screenPixels, _banFiles[i]);
-
-			_banFiles[i]->seek(_banFileOffsets[i], SEEK_SET);
-			renderBan(bgPixels, _banFiles[i]);
-		}
-
+		if (size != 0)
+			renderBan(screenPixels, bgPixels, i);
 	}
 
 	_gfx->unlockScreenPixels();
 }
 
-void StarTrekEngine::renderBan(byte *destPixels, FileStream banFile) {
+void StarTrekEngine::renderBan(byte *screenPixels, byte *bgPixels, int banFileIndex) {
+	Common::MemoryReadStreamEndian *banFile = _banFiles[banFileIndex];
+	banFile->seek(_banFileOffsets[banFileIndex], SEEK_SET);
+
 	uint16 offset = banFile->readUint16();
 	int32 size = banFile->readUint16();
 
-	byte *dest = destPixels + offset;
+	byte *dest1 = screenPixels + offset;
+	byte *dest2 = bgPixels + offset;
 
 	// Skip 8 bytes (rectangle encompassing the area being drawn to)
-	banFile->readSint32();
-	banFile->readSint32();
+	banFile->skip(8);
 
 	while (--size >= 0) {
-		assert(dest >= destPixels && dest < destPixels + SCREEN_WIDTH * SCREEN_HEIGHT);
+		assert(dest1 >= screenPixels && dest1 < screenPixels + SCREEN_WIDTH * SCREEN_HEIGHT);
+		assert(dest2 >= bgPixels && dest2 < bgPixels + SCREEN_WIDTH * SCREEN_HEIGHT);
+
 		int8 b = banFile->readByte();
 
-		if (b == -128) // Add value to destination (usually jumping to next row)
-			dest += banFile->readUint16();
-		else if (b < 0) { // Repeated byte
+		if (b == -128) {	// Add value to destination (usually jumping to next row)
+			uint16 skip = banFile->readUint16();
+			dest1 += skip;
+			dest2 += skip;
+		} else if (b < 0) { // Repeated byte
 			byte c = banFile->readByte();
-			if (c == 0)
-				dest += (-b) + 1;
-			else {
-				for (int j = 0; j < (-b) + 1; j++)
-					(*dest++) = c;
+			if (c == 0) {
+				dest1 += (-b) + 1;
+				dest2 += (-b) + 1;
+			} else {
+				for (int j = 0; j < (-b) + 1; j++) {
+					(*dest1++) = c;
+					(*dest2++) = c;
+				}
 			}
 		} else { // List of bytes
 			b++;
 			while (b-- != 0) {
 				byte c = banFile->readByte();
-				if (c == 0)
-					dest++;
-				else
-					*(dest++) = c;
+				if (c == 0) {
+					dest1++;
+					dest2++;
+				} else {
+					*(dest1++) = c;
+					*(dest2++) = c;
+				}
 			}
 		}
 	}
@@ -424,7 +434,8 @@ void StarTrekEngine::actorFunc1() {
 	}
 
 	for (int i = 0; i < MAX_BAN_FILES; i++) {
-		_banFiles[i].reset();
+		delete _banFiles[i];
+		_banFiles[i] = nullptr;
 	}
 }
 
