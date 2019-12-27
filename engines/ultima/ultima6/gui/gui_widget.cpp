@@ -163,8 +163,7 @@ void GUI_Widget::PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) {
 	if (screen != NULL)
 		return;
 
-	area.left = x + offset_x;
-	area.top = y + offset_y;
+	area.moveTo(x + offset_x, y + offset_y);
 
 	gui_drag_manager = dm;
 
