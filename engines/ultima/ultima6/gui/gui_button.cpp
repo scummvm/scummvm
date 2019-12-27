@@ -125,14 +125,12 @@ GUI_Button::~GUI_Button() {
 
 /* Resize/reposition/change text */
 void GUI_Button::ChangeTextButton(int x, int y, int w, int h, const char *text, int alignment) {
-	if (x >= 0)
-		area.left = x;
-	if (y >= 0)
-		area.top = y;
-	if (w >= 0)
-		area.setWidth(w);
-	if (h >= 0)
-		area.setHeight(h);
+	if (w == -1 && h == -1) {
+		area = Common::Rect();
+	} else {
+		assert(x >= 0 && y >= 0 && w >= 0 && h >= 0);
+		area = Common::Rect(x, y, x + w, y + h);
+	}
 
 	if (freebutton) {
 		if (button)
@@ -320,46 +318,48 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 	}
 	ty = (area.height() - th) >> 1;
 
-	switch (style) {
-	case BUTTON3D_UP:
-		fillrect = Common::Rect(area.width(), 2);
-		SDL_FillRect(img, &fillrect, color1);
-		fillrect.moveTo(0, area.height() - 2);
-		SDL_FillRect(img, &fillrect, color2);
+	if (!area.isEmpty()) {
+		switch (style) {
+		case BUTTON3D_UP:
+			fillrect = Common::Rect(area.width(), 2);
+			SDL_FillRect(img, &fillrect, color1);
+			fillrect.moveTo(0, area.height() - 2);
+			SDL_FillRect(img, &fillrect, color2);
 
-		fillrect = Common::Rect(2, area.height());
-		SDL_FillRect(img, &fillrect, color1);
-		fillrect.moveTo(area.width() - 2, 0);
-		SDL_FillRect(img, &fillrect, color2);
+			fillrect = Common::Rect(2, area.height());
+			SDL_FillRect(img, &fillrect, color1);
+			fillrect.moveTo(area.width() - 2, 0);
+			SDL_FillRect(img, &fillrect, color2);
 
-		fillrect.setHeight(1);
-		fillrect.setWidth(1);
-		SDL_FillRect(img, &fillrect, color1);
-		fillrect.moveTo(1, area.height() - 1);
-		SDL_FillRect(img, &fillrect, color2);
+			fillrect.setHeight(1);
+			fillrect.setWidth(1);
+			SDL_FillRect(img, &fillrect, color1);
+			fillrect.moveTo(1, area.height() - 1);
+			SDL_FillRect(img, &fillrect, color2);
 
-		fillrect = Common::Rect(2, 2, area.width() - 2, area.height() - 2);
-		SDL_FillRect(img, &fillrect, color3);
+			fillrect = Common::Rect(2, 2, area.width() - 2, area.height() - 2);
+			SDL_FillRect(img, &fillrect, color3);
 
-		buttonFont->TextOut(img, tx, ty, text);
-		break;
-	case BUTTON3D_DOWN:
-		fillrect = Common::Rect(area.width(), area.height());
-		SDL_FillRect(img, &fillrect, color3);
-		buttonFont->TextOut(img, tx + 1, ty + 1, text);
-		break;
-	case BUTTON2D_UP:
-		fillrect = Common::Rect(area.width(), area.height());
-		SDL_FillRect(img, &fillrect, color3);
-		buttonFont->TextOut(img, tx, ty, text);
-		break;
-	case BUTTON2D_DOWN:
-		fillrect = Common::Rect(area.width(), area.height());
-		SDL_FillRect(img, &fillrect, color4);
-		buttonFont->SetTransparency(0);
-		buttonFont->SetColoring(BI1_R, BI1_G, BI1_B, BI2_R, BI2_G, BI2_B);
-		buttonFont->TextOut(img, tx, ty, text);
-		break;
+			buttonFont->TextOut(img, tx, ty, text);
+			break;
+		case BUTTON3D_DOWN:
+			fillrect = Common::Rect(area.width(), area.height());
+			SDL_FillRect(img, &fillrect, color3);
+			buttonFont->TextOut(img, tx + 1, ty + 1, text);
+			break;
+		case BUTTON2D_UP:
+			fillrect = Common::Rect(area.width(), area.height());
+			SDL_FillRect(img, &fillrect, color3);
+			buttonFont->TextOut(img, tx, ty, text);
+			break;
+		case BUTTON2D_DOWN:
+			fillrect = Common::Rect(area.width(), area.height());
+			SDL_FillRect(img, &fillrect, color4);
+			buttonFont->SetTransparency(0);
+			buttonFont->SetColoring(BI1_R, BI1_G, BI1_B, BI2_R, BI2_G, BI2_B);
+			buttonFont->TextOut(img, tx, ty, text);
+			break;
+		}
 	}
 
 	delete[] duptext;
