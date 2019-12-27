@@ -417,15 +417,16 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 	size -= 4;
 
 	if (_vm->getVersion() == 4) {
-		uint32 unk1 = stream.readUint32();
-		uint32 unk2 = stream.readUint32();
-		uint16 unk3 = stream.readUint16();
-		uint16 unk4 = stream.readUint16();
-		uint16 unk5 = stream.readUint16();
-		uint16 unk6 = stream.readUint16();
+		uint32 frame1Offset = stream.readUint32();
+		uint32 numFrames = stream.readUint32();
+		uint16 version = stream.readUint16();
+		uint16 spriteRecordSize = stream.readUint16();
+		uint16 numChannels = stream.readUint16();
+		uint16 unk1 = stream.readUint16();
 		size -= 16;
 
-		warning("STUB: Score::loadFrames. unk1: %x unk2: %x unk3: %x unk4: %x unk5: %x unk6: %x", unk1, unk2, unk3, unk4, unk5, unk6);
+		warning("STUB: Score::loadFrames. frame1Offset: %x numFrames: %x version: %x spriteRecordSize: %x numChannels: %x unk1: %x",
+			frame1Offset, numFrames, version, spriteRecordSize, numChannels, unk1);
 		// Unknown, some bytes - constant (refer to contuinity).
 	} else if (_vm->getVersion() > 4) {
 		//what data is up the top of D5 VWSC?
@@ -478,7 +479,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 
 	while (size != 0 && !stream.eos()) {
 		uint16 frameSize = stream.readUint16();
-		debugC(kDebugLoading, 8, "++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
+		debugC(kDebugLoading, 8, "++++++++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
 
 		if (frameSize > 0) {
 			Frame *frame = new Frame(_vm);
@@ -506,7 +507,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 			frame->readChannels(str);
 			delete str;
 
-			debugC(8, kDebugLoading, "Frame %d actionId: %d", _frames.size(), frame->_actionId);
+			debugC(8, kDebugLoading, "Score::loadFrames(): Frame %d actionId: %d", _frames.size(), frame->_actionId);
 
 			_frames.push_back(frame);
 		} else {
@@ -649,11 +650,11 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	// TODO: Determine if there really is a minimum size.
 	// This value was too small for Shape Casts.
 	if (stream.size() < 10) {
-		warning("CAST data id %d is too small", id);
+		warning("Score::loadCastData(): CAST data id %d is too small", id);
 		return;
 	}
 
-	debugC(3, kDebugLoading, "CASt: id: %d", id);
+	debugC(3, kDebugLoading, "Score::loadCastData(): CASt: id: %d", id);
 
 	if (debugChannelSet(5, kDebugLoading) && stream.size() < 2048)
 		stream.hexdump(stream.size());
@@ -694,7 +695,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		error("Score::loadCastData: unsupported Director version (%d)", _vm->getVersion());
 	}
 
-	debugC(3, kDebugLoading, "CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
+	debugC(3, kDebugLoading, "Score::loadCastData(): CASt: id: %d type: %x size1: %d size2: %d (%x) size3: %d unk1: %d unk2: %d unk3: %d",
 		id, castType, size1, size2, size2, size3, unk1, unk2, unk3);
 
 	byte *data = (byte *)calloc(sizeToRead, 1);
@@ -790,7 +791,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		uint32 entryType = 0;
 		Common::Array<Common::String> castStrings = loadStrings(stream, entryType, false);
 
-		debugCN(4, kDebugLoading, "str(%d): '", castStrings.size());
+		debugCN(4, kDebugLoading, "Score::loadCastData(): str(%d): '", castStrings.size());
 
 		for (uint i = 0; i < castStrings.size(); i++) {
 			debugCN(4, kDebugLoading, "%s'", castStrings[i].c_str());
@@ -817,7 +818,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 				int resourceId = _castScriptIds[scriptId];
 				_lingo->addCodeV4(*_movieArchive->getResource(MKTAG('L', 's', 'c', 'r'), resourceId), kCastScript, id);
 			} else {
-				warning("Lingo context missing a resource entry for script %d referenced in cast %d", scriptId, id);
+				warning("Score::loadCastData(): Lingo context missing a resource entry for script %d referenced in cast %d", scriptId, id);
 			}
 		} else {
 			if (!ci->script.empty()) {
@@ -833,7 +834,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	}
 
 	if (size3)
-		warning("size3: %x", size3);
+		warning("Score::loadCastData(): size3: %x", size3);
 }
 
 void Score::loadCastInto(Sprite *sprite, int castId) {
