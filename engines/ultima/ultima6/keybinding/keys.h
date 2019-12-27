@@ -50,22 +50,7 @@ struct ActionType {
 	int params[c_maxparams];
 };
 
-struct Keycode_Hash {
-	uint operator()(const Common::KeyState &x) const {
-		return (uint)x.keycode & ((uint)x.flags << 24);
-	}
-};
-
-struct Keycode_EqualTo {
-	bool operator()(const Common::KeyState &k1, const Common::KeyState &k2) const {
-		if (k1.keycode == k2.keycode)
-			return k1.flags < k2.flags;
-		else
-			return k1.keycode < k2.keycode;
-	}
-};
-
-typedef std::map<Common::KeyState, ActionType, Keycode_Hash, Keycode_EqualTo> KeyMap;
+typedef std::map<uint32, ActionType> KeyMap;
 
 class Configuration;
 
@@ -73,10 +58,10 @@ char get_ascii_char_from_keysym(Common::KeyState keysym);
 
 class KeyBinder {
 private:
-	KeyMap bindings;
+	KeyMap _bindings;
 
-	std::vector<std::string> keyhelp;
-	std::vector<std::string> cheathelp;
+	std::vector<std::string> _keyHelp;
+	std::vector<std::string> _cheatHelp;
 #ifdef HAVE_JOYSTICK_SUPPORT
 	SDL_Joystick *joystick;
 	bool repeat_hat, joy_repeat_enabled; // repeat hat instead of axis when hat is found
@@ -93,7 +78,7 @@ public:
 	KeyBinder(Configuration *config);
 	~KeyBinder();
 	/* Add keybinding */
-	void AddKeyBinding(Common::KeyCode sym, int mod, const Action *action,
+	void AddKeyBinding(Common::KeyCode sym, byte mod, const Action *action,
 	                   int nparams, int *params);
 
 	/* Delete keybinding */
@@ -101,14 +86,14 @@ public:
 
 	/* Other methods */
 	void Flush() {
-		bindings.clear();
-		keyhelp.clear();
-		cheathelp.clear();
+		_bindings.clear();
+		_keyHelp.clear();
+		_cheatHelp.clear();
 	}
-	ActionType get_ActionType(Common::KeyState key);
+	ActionType get_ActionType(const Common::KeyState &key);
 	ActionKeyType GetActionKeyType(ActionType a);
 	bool DoAction(ActionType const &a) const;
-	KeyMap::iterator get_sdlkey_index(Common::KeyState key);
+	KeyMap::iterator get_sdlkey_index(const Common::KeyState &key);
 	bool HandleEvent(const Common::Event *event);
 
 	void LoadFromFile(const char *filename);
