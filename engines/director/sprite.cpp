@@ -39,7 +39,6 @@ Sprite::Sprite() {
 	_castId = 0;
 	_backColor = 255;
 	_foreColor = 0;
-	_pattern = 0;
 	_left = 0;
 	_right = 0;
 	_top = 0;
@@ -120,5 +119,50 @@ Sprite::~Sprite() {
 	if (_buttonCast)
 		delete _buttonCast;
 }
+
+uint16 Sprite::getPattern() {
+	switch (_spriteType) {
+	case kRectangleSprite:
+	case kRoundedRectangleSprite:
+	case kOvalSprite:
+	case kLineTopBottomSprite:
+	case kLineBottomTopSprite:
+	case kOutlinedRectangleSprite:
+	case kOutlinedRoundedRectangleSprite:
+	case kOutlinedOvalSprite:
+		return _castId;
+
+	case kCastMemberSprite:
+		// TODO. Check type being shape, and return its pattern
+		warning("Sprite::getPattern(): kCastMemberSprite");
+		return 0;
+
+	default:
+		return 0;
+	}
+}
+
+void Sprite::setPattern(uint16 pattern) {
+	switch (_spriteType) {
+	case kRectangleSprite:
+	case kRoundedRectangleSprite:
+	case kOvalSprite:
+	case kLineTopBottomSprite:
+	case kLineBottomTopSprite:
+	case kOutlinedRectangleSprite:
+	case kOutlinedRoundedRectangleSprite:
+	case kOutlinedOvalSprite:
+		_castId = pattern;
+
+	case kCastMemberSprite:
+		// TODO
+		warning("Sprite::setPattern(): kCastMemberSprite");
+		return;
+
+	default:
+		return;
+	}
+}
+
 
 } // End of namespace Director

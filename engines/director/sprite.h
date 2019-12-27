@@ -63,6 +63,9 @@ public:
 	Sprite(const Sprite &sprite);
 	~Sprite();
 
+	uint16 getPattern();
+	void setPattern(uint16 pattern);
+
 	uint16 _scriptId;
 	byte _flags2;  // x40 editable, 0x80 moveable
 	byte _unk2;
@@ -91,7 +94,6 @@ public:
 	byte _moveable;
 	byte _backColor;
 	byte _foreColor;
-	uint16 _pattern;
 
 	uint16 _left;
 	uint16 _right;
