@@ -477,7 +477,7 @@ public:
 	 * Draw a line of text to a standard bitmap (NOT a "TextBitmap", whose pixel array is
 	 * an array of characters, but an actual standard bitmap).
 	 */
-	void drawTextLineToBitmap(const char *text, int textLen, int x, int y, SharedPtr<Bitmap> bitmap);
+	void drawTextLineToBitmap(const char *text, int textLen, int x, int y, Bitmap *bitmap);
 
 	String centerTextboxHeader(String headerText);
 	void getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex);
@@ -549,8 +549,8 @@ private:
 	char _textInputBuffer[TEXT_INPUT_BUFFER_SIZE];
 	int16 _textInputCursorPos;
 	char _textInputCursorChar;
-	SharedPtr<Bitmap> _textInputBitmapSkeleton;
-	SharedPtr<Bitmap> _textInputBitmap;
+	Bitmap *_textInputBitmapSkeleton;
+	Bitmap *_textInputBitmap;
 	Sprite _textInputSprite;
 
 	// menu.cpp

@@ -80,7 +80,7 @@ const char *StarTrekEngine::getNextTextLine(const char *text, char *lineOutput, 
 	return lastSpaceInput + 1;
 }
 
-void StarTrekEngine::drawTextLineToBitmap(const char *text, int textLen, int x, int y, SharedPtr<Bitmap> bitmap) {
+void StarTrekEngine::drawTextLineToBitmap(const char *text, int textLen, int x, int y, Bitmap *bitmap) {
 	const int charWidth = 8;
 
 	int textOffset = 0;
@@ -850,8 +850,8 @@ void StarTrekEngine::initTextInputSprite(int16 textboxX, int16 textboxY, const C
 	int16 width = headerLen * 8 + 8;
 	int16 height = row * 8 + 8;
 
-	_textInputBitmapSkeleton = SharedPtr<Bitmap>(new Bitmap(width, height));
-	_textInputBitmap         = SharedPtr<Bitmap>(new Bitmap(width, height));
+	_textInputBitmapSkeleton = new Bitmap(width, height);
+	_textInputBitmap         = new Bitmap(width, height);
 
 	_textInputBitmapSkeleton->xoffset = width / 2;
 	if (textboxX + width / 2 >= SCREEN_WIDTH)
@@ -908,7 +908,7 @@ void StarTrekEngine::initTextInputSprite(int16 textboxX, int16 textboxY, const C
 	_gfx->addSprite(&_textInputSprite);
 	_textInputSprite.drawMode = 2;
 	_textInputSprite.field8 = "System";
-	_textInputSprite.bitmap = _textInputBitmap;
+	_textInputSprite.bitmap = SharedPtr<Bitmap>(_textInputBitmap);
 	_textInputSprite.setXYAndPriority(textboxX, textboxY, 15);
 	_textInputSprite.drawPriority2 = 8;
 	_gfx->drawAllSprites();
@@ -920,8 +920,8 @@ void StarTrekEngine::cleanupTextInputSprite() {
 	_gfx->delSprite(&_textInputSprite);
 
 	_textInputSprite.bitmap.reset();
-	_textInputBitmapSkeleton.reset();
-	_textInputBitmap.reset();
+	delete _textInputBitmapSkeleton;
+	delete _textInputBitmap;
 }
 
 } // End of namespace StarTrek
