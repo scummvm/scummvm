@@ -61,12 +61,13 @@ private:
 	 * the offset from the parent's top-left corner this sub-surface starts at
 	 */
 	Common::Point _offsetFromOwner;
-protected:
+public:
 	/**
 	 * Clips the given source bounds so the passed destBounds will be entirely on-screen
 	 */
 	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds);
 
+protected:
 	/**
 	 * Base method that descendent classes can override for recording affected
 	 * dirty areas of the surface
