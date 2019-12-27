@@ -36,6 +36,8 @@
 #include "ultima/ultima6/core/effect.h"
 #include "common/hash-str.h"
 
+#define ENCODE_KEY(key, mod) ((uint32)(key) | ((uint32)(mod) << 24))
+
 namespace Ultima {
 namespace Ultima6 {
 
@@ -281,7 +283,7 @@ KeyBinder::KeyBinder(Configuration *config) {
 		config->value("config/datadir", dir, "./data");
 		keyfilename = dir + "/defaultkeys.txt";
 	}
-	LoadFromFile(keyfilename.c_str()); // will throw() if not found
+	LoadFromFile(keyfilename.c_str());
 
 	LoadGameSpecificKeys(); // won't load if file isn't found
 	LoadFromPatch(); // won't load if file isn't found
@@ -366,12 +368,10 @@ KeyBinder::KeyBinder(Configuration *config) {
 KeyBinder::~KeyBinder() {
 }
 
-void KeyBinder::AddKeyBinding(Common::KeyCode key, int mod, const Action *action,
+void KeyBinder::AddKeyBinding(Common::KeyCode key, byte mod, const Action *action,
                               int nparams, int *params) {
 	Common::KeyState k;
 	ActionType a;
-	k.keycode = key;
-	k.flags = mod;
 	a.action = action;
 
 	int i;  // For MSVC
@@ -380,12 +380,12 @@ void KeyBinder::AddKeyBinding(Common::KeyCode key, int mod, const Action *action
 	for (i = nparams; i < c_maxparams; i++)
 		a.params[i] = -1;
 
-	bindings[k] = a;
+	_bindings[ENCODE_KEY(key, mod)] = a;
 }
 
-ActionType KeyBinder::get_ActionType(Common::KeyState key) {
+ActionType KeyBinder::get_ActionType(const Common::KeyState &key) {
 	KeyMap::iterator sdlkey_index = get_sdlkey_index(key);
-	if (sdlkey_index == bindings.end()) {
+	if (sdlkey_index == _bindings.end()) {
 		ActionType actionType = {&doNothingAction, {0}};
 		return actionType;
 	}
@@ -409,23 +409,8 @@ bool KeyBinder::DoAction(ActionType const &a) const {
 	return true;
 }
 
-KeyMap::iterator KeyBinder::get_sdlkey_index(Common::KeyState keysym) {
-	Common::KeyState key = keysym;
-	key.flags = 0;
-	if (keysym.flags & Common::KBD_SHIFT)
-		key.flags = key.flags | Common::KBD_SHIFT;
-	if (keysym.flags & Common::KBD_CTRL)
-		key.flags = key.flags | Common::KBD_CTRL;
-#if defined(MACOS) || defined(MACOSX)
-	// map Meta to Alt on MacOS
-	if (keysym.flags & Common::KBD_META)
-		key.flags = key.flags | Common::KBD_ALT;
-#else
-	if (keysym.flags & Common::KBD_ALT)
-		key.flags = key.flags | Common::KBD_ALT;
-#endif
-
-	return bindings.find(key);
+KeyMap::iterator KeyBinder::get_sdlkey_index(const Common::KeyState &key) {
+	return _bindings.find(ENCODE_KEY(key.keycode, key.flags));
 }
 
 bool KeyBinder::HandleEvent(const Common::Event *ev) {
@@ -436,7 +421,7 @@ bool KeyBinder::HandleEvent(const Common::Event *ev) {
 		return false;
 
 	sdlkey_index = get_sdlkey_index(key);
-	if (sdlkey_index != bindings.end())
+	if (sdlkey_index != _bindings.end())
 		return DoAction((*sdlkey_index)._value);
 
 	if (ev->kbd.keycode != Common::KEYCODE_LALT && ev->kbd.keycode != Common::KEYCODE_RALT
@@ -482,7 +467,7 @@ void KeyBinder::ShowKeys() const { // FIXME This doesn't look very good, the fon
 		MsgScroll *scroll = Game::get_game()->get_scroll();
 		scroll->set_autobreak(true);
 
-		for (iter = keyhelp.begin(); iter != keyhelp.end(); ++iter) {
+		for (iter = _keyHelp.begin(); iter != _keyHelp.end(); ++iter) {
 			keysStr = "\n";
 			keysStr.append(iter->c_str());
 			scroll->display_string(keysStr, 1);
@@ -525,36 +510,35 @@ void KeyBinder::ParseLine(char *line) {
 	skipspace(s);
 
 	// comments and empty lines
-	if (s.length() == 0 || s[0] == '#')
+	if (s.empty() || s.hasPrefix("#"))
 		return;
 
 	u = s;
 	u = to_uppercase(u);
 
 	// get key
-	while (s.length() && !Common::isSpace(s[0])) {
+	while (!s.empty() && !Common::isSpace(s[0])) {
 		// check modifiers
-		if (u.substr(0, 4) == "ALT-") {
+		if (u.hasPrefix("ALT-")) {
 			k.flags = k.flags | Common::KBD_ALT;
 			s.erase(0, 4);
 			u.erase(0, 4);
-		} else if (u.substr(0, 5) == "CTRL-") {
+		} else if (u.hasPrefix("CTRL-")) {
 			k.flags = k.flags | Common::KBD_CTRL;
 			s.erase(0, 5);
 			u.erase(0, 5);
-		} else if (u.substr(0, 6) == "SHIFT-") {
+		} else if (u.hasPrefix("SHIFT-")) {
 			k.flags = k.flags | Common::KBD_SHIFT;
 			s.erase(0, 6);
 			u.erase(0, 6);
 		} else {
-
 			i = s.find_first_of(chardata.whitespace);
 
 			keycode = s.substr(0, i);
 			s.erase(0, i);
 			string t = to_uppercase(keycode);
 
-			if (t.length() == 0) {
+			if (t.empty()) {
 				::error("Keybinder: parse error in line: %s", s.c_str());
 			} else if (t.length() == 1) {
 				// translate 1-letter keys straight to Common::KeyCode
@@ -603,7 +587,7 @@ void KeyBinder::ParseLine(char *line) {
 	skipspace(s);
 
 	int np = 0;
-	while (s.length() && s[0] != '#' && np < c_maxparams) {
+	while (!s.empty() && s[0] != '#' && np < c_maxparams) {
 		i = s.find_first_of(chardata.whitespace);
 		string tmp = s.substr(0, i);
 		s.erase(0, i);
@@ -614,7 +598,7 @@ void KeyBinder::ParseLine(char *line) {
 	}
 
 	// read optional help comment
-	if (s.length() >= 1 && s[0] == '#') {
+	if (!s.empty() && s[0] == '#') {
 		if (s.length() >= 2 && s[1] == '-') {
 			show = false;
 		} else {
@@ -649,9 +633,9 @@ void KeyBinder::ParseLine(char *line) {
 
 		// add to help list
 		if (a.action->key_type == Action::normal_keys)
-			keyhelp.push_back(desc);
+			_keyHelp.push_back(desc);
 		else if (a.action->key_type == Action::cheat_keys)
-			cheathelp.push_back(desc);
+			_cheatHelp.push_back(desc);
 	}
 
 	// bind key
