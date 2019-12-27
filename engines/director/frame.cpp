@@ -917,12 +917,16 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
 	uint8 skipColor = _vm->getPaletteColorCount() - 1; // FIXME is it always white (last entry in pallette) ?
+	Common::Rect srcRect(sprite.w, sprite.h);
 
-	for (int ii = 0; ii < sprite.h; ii++) {
-		const byte *src = (const byte *)sprite.getBasePtr(0, ii);
+	if (!target.clip(srcRect, drawRect))
+		return; // Out of screen
+
+	for (int ii = 0; ii < srcRect.height(); ii++) {
+		const byte *src = (const byte *)sprite.getBasePtr(srcRect.left, srcRect.top + ii);
 		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + ii);
 
-		for (int j = 0; j < drawRect.width(); j++) {
+		for (int j = 0; j < srcRect.width(); j++) {
 			if (*src != skipColor)
 				*dst = *src;
 
@@ -933,12 +937,17 @@ void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graph
 }
 
 void Frame::drawGhostSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
+	Common::Rect srcRect(sprite.w, sprite.h);
+
+	if (!target.clip(srcRect, drawRect))
+		return; // Out of screen
+
 	uint8 skipColor = _vm->getPaletteColorCount() - 1;
-	for (int ii = 0; ii < sprite.h; ii++) {
-		const byte *src = (const byte *)sprite.getBasePtr(0, ii);
+	for (int ii = 0; ii < srcRect.height(); ii++) {
+		const byte *src = (const byte *)sprite.getBasePtr(srcRect.left, srcRect.top + ii);
 		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + ii);
 
-		for (int j = 0; j < drawRect.width(); j++) {
+		for (int j = 0; j < srcRect.width(); j++) {
 			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0) && (*src != skipColor))
 				*dst = (_vm->getPaletteColorCount() - 1) - *src; // Oposite color
 
@@ -949,12 +958,17 @@ void Frame::drawGhostSprite(Graphics::ManagedSurface &target, const Graphics::Su
 }
 
 void Frame::drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
+	Common::Rect srcRect(sprite.w, sprite.h);
+
+	if (!target.clip(srcRect, drawRect))
+		return; // Out of screen
+
 	uint8 skipColor = _vm->getPaletteColorCount() - 1;
-	for (int ii = 0; ii < sprite.h; ii++) {
-		const byte *src = (const byte *)sprite.getBasePtr(0, ii);
+	for (int ii = 0; ii < srcRect.height(); ii++) {
+		const byte *src = (const byte *)sprite.getBasePtr(srcRect.left, srcRect.top + ii);
 		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + ii);
 
-		for (int j = 0; j < drawRect.width(); j++) {
+		for (int j = 0; j < srcRect.width(); j++) {
 			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0)) {
 				if (*src != skipColor) {
 					*dst = (*dst == *src ? (*src == 0 ? 0xff : 0) : *src);
@@ -975,7 +989,7 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 	Common::Rect srcRect(sprite.w, sprite.h);
 
 	if (!target.clip(srcRect, drawRect))
-		return;	// Out of screen
+		return; // Out of screen
 
 	// Searching white color in the corners
 	int whiteColor = -1;
@@ -1023,7 +1037,7 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 			const byte *mask = (const byte *)ff.getMask()->getBasePtr(srcRect.left, srcRect.top + yy);
 			byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + yy);
 
-			for (int xx = 0; xx < drawRect.width(); xx++, src++, dst++, mask++)
+			for (int xx = 0; xx < srcRect.width(); xx++, src++, dst++, mask++)
 				if (*mask == 0)
 					*dst = *src;
 		}
