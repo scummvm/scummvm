@@ -116,7 +116,7 @@ bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16
 	inventory_button = loadButton(datadir, "inventory", 71, 108);
 
 	font = new GUI_Font(GUI_FONT_GUMP);
-	font->SetColoring(0x08, 0x08, 0x08, 0x80, 0x58, 0x30, 0x00, 0x00, 0x00);
+	font->setColoring(0x08, 0x08, 0x08, 0x80, 0x58, 0x30, 0x00, 0x00, 0x00);
 
 	if (party->get_member_num(actor) < 0) {
 		if (Game::get_game()->get_event()->using_control_cheat() == false)
@@ -244,8 +244,8 @@ void DollViewGump::Display(bool full_redraw) {
 		SDL_BlitSurface(actor_doll, NULL, surface, &dst);
 	}
 
-	uint8 w = font->get_center(actor->get_name(), 58);
-	font->TextOut(screen->get_sdl_surface(), area.left + 29 + w, area.top + 7, actor->get_name());
+	uint8 w = font->getCenter(actor->get_name(), 58);
+	font->textOut(screen->get_sdl_surface(), area.left + 29 + w, area.top + 7, actor->get_name());
 
 	displayEquipWeight();
 
@@ -266,10 +266,10 @@ void DollViewGump::displayEquipWeight() {
 	char string[4]; //nnn\0
 
 	snprintf(string, 4, "%u", equip_weight);
-	font->TextOut(screen->get_sdl_surface(), area.left + ((equip_weight > 9) ? 59 : 64), area.top + 82, string);
+	font->textOut(screen->get_sdl_surface(), area.left + ((equip_weight > 9) ? 59 : 64), area.top + 82, string);
 
 	snprintf(string, 4, "%u", strength);
-	font->TextOut(screen->get_sdl_surface(), area.left + ((strength > 9) ? 76 : 81), area.top + 82, string);
+	font->textOut(screen->get_sdl_surface(), area.left + ((strength > 9) ? 76 : 81), area.top + 82, string);
 }
 
 void DollViewGump::displayCombatMode() {
@@ -283,8 +283,8 @@ void DollViewGump::displayCombatMode() {
 		text = combat_mode_tbl_md[index];
 	else // SE
 		text = combat_mode_tbl_se[index];
-	uint8 c = font->get_center(text, 55);
-	font->TextOut(screen->get_sdl_surface(), area.left + 36 + c, area.top + 97, text);
+	uint8 c = font->getCenter(text, 55);
+	font->textOut(screen->get_sdl_surface(), area.left + 36 + c, area.top + 97, text);
 }
 
 void DollViewGump::left_arrow() {

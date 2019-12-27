@@ -81,7 +81,7 @@ bool PortraitViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, ui
 	set_bg_color_key(0, 0x70, 0xfc);
 
 	font = new GUI_Font(GUI_FONT_GUMP);
-	font->SetColoring(0x08, 0x08, 0x08, 0x80, 0x58, 0x30, 0x00, 0x00, 0x00);
+	font->setColoring(0x08, 0x08, 0x08, 0x80, 0x58, 0x30, 0x00, 0x00, 0x00);
 
 	Graphics::ManagedSurface *image, *image1;
 
@@ -145,53 +145,53 @@ void PortraitViewGump::Display(bool full_redraw) {
 	screen->blit(area.left + 25, area.top + 17, portrait_data, 8, portrait->get_portrait_width(), portrait->get_portrait_height(), portrait->get_portrait_width(), false);
 
 	int w, h;
-	w = font->get_center(actor->get_name(), 138);
+	w = font->getCenter(actor->get_name(), 138);
 
-	font->SetColoring(0x08, 0x08, 0x08, 0x80, 0x58, 0x30, 0x00, 0x00, 0x00);
+	font->setColoring(0x08, 0x08, 0x08, 0x80, 0x58, 0x30, 0x00, 0x00, 0x00);
 
-	font->TextOut(screen->get_sdl_surface(), area.left + 29 + w, area.top + 6, actor->get_name());
+	font->textOut(screen->get_sdl_surface(), area.left + 29 + w, area.top + 6, actor->get_name());
 
 	snprintf(buf, 5, "%d", actor->get_strength());
-	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 18, buf);
+	font->textExtent(buf, &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 18, buf);
 
 	snprintf(buf, 5, "%d", actor->get_dexterity());
-	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 27, buf);
+	font->textExtent(buf, &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 27, buf);
 
 	snprintf(buf, 5, "%d", actor->get_intelligence());
-	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 36, buf);
+	font->textExtent(buf, &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 36, buf);
 
-	font->SetColoring(0x6c, 0x00, 0x00, 0xbc, 0x34, 0x00, 0x00, 0x00, 0x00);
+	font->setColoring(0x6c, 0x00, 0x00, 0xbc, 0x34, 0x00, 0x00, 0x00, 0x00);
 
 	snprintf(buf, 5, "%d", actor->get_magic());
-	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 55, buf);
+	font->textExtent(buf, &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 55, buf);
 
 	snprintf(buf, 5, "%d", actor->get_maxmagic());
-	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 55, buf);
+	font->textExtent(buf, &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 55, buf);
 
-	font->SetColoring(0x00, 0x3c, 0x70, 0x74, 0x74, 0x74, 0x00, 0x00, 0x00);
+	font->setColoring(0x00, 0x3c, 0x70, 0x74, 0x74, 0x74, 0x00, 0x00, 0x00);
 
 	snprintf(buf, 5, "%d", actor->get_hp());
-	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 64, buf);
+	font->textExtent(buf, &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 64, buf);
 
 	snprintf(buf, 5, "%d", actor->get_maxhp());
-	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 64, buf);
+	font->textExtent(buf, &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 64, buf);
 
-	font->SetColoring(0xa8, 0x28, 0x00, 0xa8, 0x54, 0x00, 0x00, 0x00, 0x00);
+	font->setColoring(0xa8, 0x28, 0x00, 0xa8, 0x54, 0x00, 0x00, 0x00, 0x00);
 
 	snprintf(buf, 5, "%d", actor->get_level());
-	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 73, buf);
+	font->textExtent(buf, &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 142 - w, area.top + 73, buf);
 
 	snprintf(buf, 5, "%d", actor->get_exp());
-	font->TextExtent(buf, &w, &h);
-	font->TextOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 73, buf);
+	font->textExtent(buf, &w, &h);
+	font->textOut(screen->get_sdl_surface(), area.left + 170 - w, area.top + 73, buf);
 
 	if (show_cursor)
 		screen->blit(area.left + cursor_xoff, area.top + cursor_yoff, (const unsigned char *)cursor_tile->data, 8, 16, 16, 16, true);

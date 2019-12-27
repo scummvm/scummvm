@@ -166,9 +166,9 @@ void GUI_Button:: Display(bool full_redraw) {
 		**** OLD VERSION WITH TEXT CHECKMARK ****
 		      if (checked)
 		      {
-		        buttonFont->SetTransparency(1);
-		        buttonFont->SetColoring(255,0,0);
-		        buttonFont->TextOut(surface,area.left+4,area.top+4,textmark);
+		        buttonFont->setTransparency(true);
+		        buttonFont->setColoring(255,0,0);
+		        buttonFont->textOut(surface,area.left+4,area.top+4,textmark);
 		      }
 		*/
 
@@ -295,16 +295,16 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 	uint32 color4 = SDL_MapRGB(img->format, BI2_R, BI2_G, BI2_B);
 
 
-	buttonFont->SetColoring(0, 0, 0);
-	buttonFont->SetTransparency(1);
-	buttonFont->TextExtent(text, &tw, &th);
+	buttonFont->setColoring(0, 0, 0);
+	buttonFont->setTransparency(true);
+	buttonFont->textExtent(text, &tw, &th);
 	if (tw > (area.width() - (4 + is_checkable * 16))) {
-		int n = (area.width() - (4 + is_checkable * 16)) / buttonFont->CharWidth();
+		int n = (area.width() - (4 + is_checkable * 16)) / buttonFont->charWidth();
 		duptext = new char[n + 1];
 		strncpy(duptext, text, n);
 		duptext[n] = 0;
 		text = duptext;
-		buttonFont->TextExtent(text, &tw, &th);
+		buttonFont->textExtent(text, &tw, &th);
 	}
 	if (th > (area.height() - 4)) {
 		text = "";
@@ -344,24 +344,24 @@ Graphics::ManagedSurface *GUI_Button::CreateTextButtonImage(int style, const cha
 			fillrect = Common::Rect(2, 2, area.width() - 2, area.height() - 2);
 			SDL_FillRect(img, &fillrect, color3);
 
-			buttonFont->TextOut(img, tx, ty, text);
+			buttonFont->textOut(img, tx, ty, text);
 			break;
 		case BUTTON3D_DOWN:
 			fillrect = Common::Rect(area.width(), area.height());
 			SDL_FillRect(img, &fillrect, color3);
-			buttonFont->TextOut(img, tx + 1, ty + 1, text);
+			buttonFont->textOut(img, tx + 1, ty + 1, text);
 			break;
 		case BUTTON2D_UP:
 			fillrect = Common::Rect(area.width(), area.height());
 			SDL_FillRect(img, &fillrect, color3);
-			buttonFont->TextOut(img, tx, ty, text);
+			buttonFont->textOut(img, tx, ty, text);
 			break;
 		case BUTTON2D_DOWN:
 			fillrect = Common::Rect(area.width(), area.height());
 			SDL_FillRect(img, &fillrect, color4);
-			buttonFont->SetTransparency(0);
-			buttonFont->SetColoring(BI1_R, BI1_G, BI1_B, BI2_R, BI2_G, BI2_B);
-			buttonFont->TextOut(img, tx, ty, text);
+			buttonFont->setTransparency(false);
+			buttonFont->setColoring(BI1_R, BI1_G, BI1_B, BI2_R, BI2_G, BI2_B);
+			buttonFont->textOut(img, tx, ty, text);
 			break;
 		}
 	}
