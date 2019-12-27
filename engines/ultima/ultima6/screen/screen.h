@@ -39,15 +39,10 @@ namespace Ultima6 {
 class Configuration;
 
 class Screen {
+private:
 	Configuration *config;
-	Graphics::Screen *sdl_surface;
-	RenderSurface *surface;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_Window *sdlWindow;
-	SDL_Renderer *sdlRenderer;
-	SDL_Texture *sdlTexture;
-	float window_scale_w = 1.0, window_scale_h = 1.0;
-#endif
+	Graphics::Screen *_rawSurface;
+	RenderSurface *_renderSurface;
 	ScalerRegistry     scaler_reg;     // Scaler Registry
 	const ScalerStruct *scaler;        // Scaler
 	int scaler_index;  // Index of Current Scaler
@@ -94,7 +89,7 @@ public:
 	bool clear(sint16 x, sint16 y, sint16 w, sint16 h, Common::Rect *clip_rect = NULL);
 	void *get_pixels();
 	const byte *get_surface_pixels() {
-		return (surface->get_pixels());
+		return (_renderSurface->get_pixels());
 	}
 	uint16 get_pitch();
 	Graphics::ManagedSurface *create_sdl_surface_from(byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch);
@@ -196,22 +191,11 @@ protected:
 	void restore_area32(byte *pixels, Common::Rect *area, byte *target = NULL, Common::Rect *target_area = NULL, bool free_src = true);
 
 	void set_screen_mode();
-	bool try_scaler(int w, int h, uint32 flags, int hwdepth);
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	bool SDL_VideoModeOK(int scaled_width, int scaled_height, int bbp, int flags);
-#endif
 
 private:
 	int get_screen_bpp();
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	bool init_sdl2_window(uint16 scale);
-	bool create_sdl_surface_and_texture(sint32 w, sint32 h, uint32 format);
-#else
 	bool sdl1_toggle_fullscreen();
-#endif
-
 	bool set_fullscreen(bool value);
 };
 

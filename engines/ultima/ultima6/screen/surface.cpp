@@ -42,27 +42,28 @@ uint32 RenderSurface::Gmask;
 uint32 RenderSurface::Bmask;
 
 // Default constructor for no created surface
-RenderSurface::RenderSurface() : buffer(0), zbuffer_priv(0), sdl_surface(NULL), opengl(0),
-	bytes_per_pixel(0), bits_per_pixel(0), format_type(0),
-	pixels(0), zbuffer(0), w(0), h(0), pitch(0),
-	gl(0), gr(0), gt(0), gb(0),  lock_count(0) {
+RenderSurface::RenderSurface() : buffer(0), zbuffer_priv(0), _rawSurface(NULL),
+		_disposeSurface(DisposeAfterUse::YES), opengl(0), bytes_per_pixel(0),
+		bits_per_pixel(0), format_type(0), pixels(0), zbuffer(0), w(0), h(0),
+		pitch(0), gl(0), gr(0), gt(0), gb(0),  lock_count(0) {
 }
 
 // Constructor for custom buffer
-RenderSurface::RenderSurface(uint32 width, uint32 height, uint32 bpp, byte *p) : buffer(0), zbuffer_priv(0), sdl_surface(NULL), opengl(0),
-	bytes_per_pixel(bpp / 8), bits_per_pixel(bpp),
-	pixels(p), zbuffer(0), w(width), h(height), pitch(width),
-	gl(0), gr(width), gt(0), gb(height), lock_count(0) {
+RenderSurface::RenderSurface(uint32 width, uint32 height, uint32 bpp, byte *p) :
+		buffer(0), zbuffer_priv(0), _rawSurface(NULL), _disposeSurface(DisposeAfterUse::YES),
+		opengl(0), bytes_per_pixel(bpp / 8), bits_per_pixel(bpp), pixels(p), zbuffer(0),
+		w(width), h(height), pitch(width), gl(0), gr(width), gt(0), gb(height), lock_count(0) {
 	// Set default formats for the buffer
 	if (bpp == 32) set_format888();
 	else set_format565();
 }
 
 // Constructor for generic surface (with optional guardband)
-RenderSurface::RenderSurface(uint32 width, uint32 height, uint32 bpp, sint32 guard) : buffer(0), zbuffer_priv(0), sdl_surface(NULL), opengl(0),
-	bytes_per_pixel(bpp / 8), bits_per_pixel(bpp),
-	pixels(0), zbuffer(0), w(width), h(height), pitch(width * (bpp / 8) + 2 * guard * (bpp / 8)),
-	gl(-guard), gr(guard + width), gt(-guard), gb(guard + height), lock_count(0) {
+RenderSurface::RenderSurface(uint32 width, uint32 height, uint32 bpp, sint32 guard) :
+		buffer(0), zbuffer_priv(0), _rawSurface(NULL), _disposeSurface(DisposeAfterUse::YES),
+		opengl(0), bytes_per_pixel(bpp / 8), bits_per_pixel(bpp), pixels(0), zbuffer(0),
+		w(width), h(height), pitch(width * (bpp / 8) + 2 * guard * (bpp / 8)),
+		gl(-guard), gr(guard + width), gt(-guard), gb(guard + height), lock_count(0) {
 	// Set default formats for the buffer
 	if (bpp == 32) set_format888();
 	else set_format565();
@@ -72,24 +73,25 @@ RenderSurface::RenderSurface(uint32 width, uint32 height, uint32 bpp, sint32 gua
 }
 
 // Constructor for sdl surface
-RenderSurface::RenderSurface(Graphics::ManagedSurface *surf) : buffer(0), zbuffer_priv(0), sdl_surface(NULL), opengl(0),
-	bytes_per_pixel(0), bits_per_pixel(0),
-	pixels((byte *)surf->getPixels()), zbuffer(0), w(surf->w), h(surf->h), pitch(surf->pitch),
-	gl(0), gr(surf->w), gt(0), gb(surf->h), lock_count(0) {
+RenderSurface::RenderSurface(Graphics::ManagedSurface *surf) :
+		_rawSurface(surf), _disposeSurface(DisposeAfterUse::NO), w(surf->w), h(surf->h),
+		pitch(surf->pitch), gr(surf->w), pixels((byte*)surf->getPixels()), buffer(0),
+		zbuffer_priv(0), opengl(0), bytes_per_pixel(0), bits_per_pixel(0), zbuffer(0),
+		gl(0), gt(0), gb(surf->h), lock_count(0) {
 	set_format(&surf->format);
 }
 
 // Constructor for opengl surface
-RenderSurface::RenderSurface(OpenGL *ogl) : buffer(0), zbuffer_priv(0), sdl_surface(NULL), opengl(ogl),
-	bytes_per_pixel(0), bits_per_pixel(0), format_type(0),
-	pixels(0), zbuffer(0), w(0), h(0), pitch(0),
-	gl(0), gr(0), gt(0), gb(0), lock_count(0) {
+RenderSurface::RenderSurface(OpenGL *ogl) : buffer(0), zbuffer_priv(0), _rawSurface(NULL),
+		opengl(ogl), bytes_per_pixel(0), bits_per_pixel(0), format_type(0), pixels(0),
+		zbuffer(0), w(0), h(0), pitch(0), gl(0), gr(0), gt(0), gb(0), lock_count(0) {
 }
 
 RenderSurface::~RenderSurface() {
-	if (buffer) delete [] buffer;
-	if (zbuffer_priv) delete [] zbuffer_priv;
-	if (sdl_surface) SDL_FreeSurface(sdl_surface);
+	delete[] buffer;
+	delete[] zbuffer_priv;
+	if (_rawSurface && _disposeSurface == DisposeAfterUse::YES)
+		delete _rawSurface;
 }
 
 //
@@ -106,11 +108,11 @@ void RenderSurface::set_format(const Graphics::PixelFormat *fmt) {
 	Gloss16 = Gloss + 8;
 	Bloss16 = Bloss + 8;
 	Rshift = fmt->rShift;
-	Gshift = fmt->gShift;
+	Gshift = fmt->gShift; 
 	Bshift = fmt->bShift;
-	Rmask = fmt->rMax();
-	Gmask = fmt->gMax();
-	Bmask = fmt->bMax();
+	Rmask = fmt->rMax() << fmt->rShift;
+	Gmask = fmt->gMax() << fmt->gShift;
+	Bmask = fmt->bMax() << fmt->bShift;
 
 	// RGB 565
 	if (Rmask == 0xf800 && Gmask == 0x7e0 && Bmask == 0x1f)
@@ -496,7 +498,6 @@ RenderSurface *CreateRenderSurface(uint32 width, uint32 height, uint32 bpp, sint
 
 RenderSurface *CreateRenderSurface(Graphics::ManagedSurface *surf) {
 	return new RenderSurface(surf);
-
 }
 
 RenderSurface *CreateRenderSurface(OpenGL *ogl) {
@@ -522,16 +523,16 @@ Graphics::ManagedSurface *RenderSurface::createSurface(int w, int h, int rMask, 
 
 
 Graphics::ManagedSurface *RenderSurface::get_sdl_surface() {
-	if (sdl_surface == NULL) {
-		sdl_surface = new Graphics::ManagedSurface(w, h,
+	if (_rawSurface == NULL) {
+		_rawSurface = new Graphics::ManagedSurface(w, h,
 			Graphics::PixelFormat(bytes_per_pixel, getBits(Rmask), getBits(Gmask),
 				getBits(Bmask), 0, Rshift, Gshift, Bshift, 0));
 
-		byte *dest = (byte *)sdl_surface->getPixels();
-		Common::copy(pixels, pixels + (sdl_surface->pitch * sdl_surface->h), dest);
+		byte *dest = (byte *)_rawSurface->getPixels();
+		Common::copy(pixels, pixels + (_rawSurface->pitch * _rawSurface->h), dest);
 	}
 
-	return sdl_surface;
+	return _rawSurface;
 }
 
 const unsigned char *RenderSurface::get_pixels() {
