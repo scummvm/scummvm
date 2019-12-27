@@ -544,6 +544,8 @@ void Score::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 			", style: %d", len, ver1, _currentFrameRate, lightswitch, unk1, commentFont, commentSize, commentStyle);
 	debugC(1, kDebugLoading, "Score::loadConfig(): stagecolor: %d, depth: %d, color: %d, rgb: 0x%04x 0x%04x 0x%04x",
 			_stageColor, bitdepth, color, stageColorR, stageColorG, stageColorB);
+	if (debugChannelSet(1, kDebugLoading))
+		_movieRect.debugPrint(1, "Score::loadConfig(): Movie rect: ");
 	debugC(1, kDebugLoading, "Score::loadConfig(): %d bytes left", stream.size() - stream.pos());
 }
 
