@@ -50,8 +50,8 @@ GUI_TextInput:: GUI_TextInput(int x, int y, uint8 r, uint8 g, uint8 b, const cha
 	pos = strlen(text);
 	length = pos;
 
-	area.setWidth(max_width * font->CharWidth());
-	area.setHeight(max_height * font->CharHeight());
+	area.setWidth(max_width * font->charWidth());
+	area.setHeight(max_height * font->charHeight());
 }
 
 GUI_TextInput::~GUI_TextInput() {
@@ -303,8 +303,8 @@ void GUI_TextInput::display_cursor() {
 	x = pos % max_width;
 	y = pos / max_width;
 
-	cw = font->CharWidth();
-	ch = font->CharHeight();
+	cw = font->charWidth();
+	ch = font->charHeight();
 
 	r.left = area.left + x * cw;
 	r.top = area.top + y * ch;

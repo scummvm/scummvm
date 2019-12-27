@@ -89,7 +89,7 @@ void ScrollViewGump::Display(bool full_redraw) {
 	screen->fill(26, area.left, area.top, area.width(), area.height());
 	DisplayChildren(full_redraw);
 
-//font->TextOut(screen->get_sdl_surface(), area.left + 29, area.top + 6, "This is a test sign");
+//font->textOut(screen->get_sdl_surface(), area.left + 29, area.top + 6, "This is a test sign");
 
 //font->drawString(screen, sign_text, strlen(sign_text), area.left + (area.width() - font->getStringWidth(sign_text)) / 2, area.top + (area.height() - 19) / 2, 0, 0);
 	update_display = false;

@@ -92,7 +92,7 @@ bool SpellViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint1
 	this->AddWidget(right_button);
 
 	font = new GUI_Font(GUI_FONT_GUMP);
-	font->SetColoring(0x7c, 0x00, 0x00, 0xd0, 0x70, 0x00, 0x00, 0x00, 0x00);
+	font->setColoring(0x7c, 0x00, 0x00, 0xd0, 0x70, 0x00, 0x00, 0x00, 0x00);
 
 	return true;
 }
@@ -211,7 +211,7 @@ void SpellViewGump::printSpellQty(uint8 spellNum, uint16 x, uint16 y) {
 	if (qty < 10)
 		x += 5;
 
-	font->TextOut(bg_image, x, y, num_str);
+	font->textOut(bg_image, x, y, num_str);
 }
 
 void SpellViewGump::Display(bool full_redraw) {

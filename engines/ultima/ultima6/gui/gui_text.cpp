@@ -60,7 +60,7 @@ GUI_Text:: GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, const char *str, GU
 		return;
 	}
 
-	font->TextExtent(text, &w, &h, max_width);
+	font->textExtent(text, &w, &h, max_width);
 
 	area.setWidth(w);
 	area.setHeight(h);
@@ -77,9 +77,9 @@ GUI_Text::~GUI_Text() {
 /* Show the widget  */
 void
 GUI_Text:: Display(bool full_redraw) {
-	font->SetTransparency(1);
-	font->SetColoring(R, G, B);
-	font->TextOut(surface, area.left, area.top, text, max_width);
+	font->setTransparency(true);
+	font->setColoring(R, G, B);
+	font->textOut(surface, area.left, area.top, text, max_width);
 
 	DisplayChildren();
 }

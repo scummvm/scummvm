@@ -36,9 +36,9 @@ GUI_Console::GUI_Console(uint16 x, uint16 y, uint16 w, uint16 h)
 	: GUI_Widget(NULL, x, y, w, h) {
 	bg_color = new GUI_Color(0, 0, 0);
 	font = new GUI_Font(1);
-	font->SetColoring(0xff, 0xff, 0xff, 0, 0, 0);
-	num_rows = (uint16)(h / font->CharHeight());
-	num_cols = (uint16)(w / font->CharWidth());
+	font->setColoring(0xff, 0xff, 0xff, 0, 0, 0);
+	num_rows = (uint16)(h / font->charHeight());
+	num_cols = (uint16)(w / font->charWidth());
 }
 
 GUI_Console::~GUI_Console() {
@@ -62,7 +62,7 @@ void GUI_Console:: Display(bool full_redraw) {
 
 	uint16 i = 0;
 	for (std::list<std::string>::iterator it = data.begin(); it != data.end(); it++) {
-		font->TextOut(surface, area.left, area.top + i * font->CharHeight(), (*it).c_str(), false);
+		font->textOut(surface, area.left, area.top + i * font->charHeight(), (*it).c_str(), false);
 		i++;
 	}
 	screen->update(area.left, area.top, area.width(), area.height());
