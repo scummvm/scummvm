@@ -125,11 +125,15 @@ GUI_Button::~GUI_Button() {
 
 /* Resize/reposition/change text */
 void GUI_Button::ChangeTextButton(int x, int y, int w, int h, const char *text, int alignment) {
-	if (w == -1 && h == -1) {
-		area = Common::Rect();
-	} else {
-		assert(x >= 0 && y >= 0 && w >= 0 && h >= 0);
-		area = Common::Rect(x, y, x + w, y + h);
+	if (x != -1 || y != -1) {
+		assert(x >= 0 && y >= 0);
+		area.moveTo(x, y);
+	}
+
+	if (w != -1 || h != -1) {
+		assert(w >= 0 && h >= 0);
+		area.setWidth(w);
+		area.setHeight(h);
 	}
 
 	if (freebutton) {
