@@ -973,6 +973,10 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 	// Like background trans, but all white pixels NOT ENCLOSED by coloured pixels are transparent
 	Graphics::Surface tmp;
 	tmp.copyFrom(sprite);
+	Common::Rect srcRect(sprite.w, sprite.h);
+
+	if (!target.clip(srcRect, drawRect))
+		return;	// Out of screen
 
 	// Searching white color in the corners
 	int whiteColor = -1;
@@ -994,8 +998,8 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 	if (whiteColor == -1) {
 		debugC(1, kDebugImages, "Frame::drawMatteSprite(): No white color for Matte image");
 
-		for (int yy = 0; yy < tmp.h; yy++) {
-			const byte *src = (const byte *)tmp.getBasePtr(0, yy);
+		for (int yy = 0; yy < srcRect.height(); yy++) {
+			const byte *src = (const byte *)tmp.getBasePtr(srcRect.left, srcRect.top + yy);
 			byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + yy);
 
 			for (int xx = 0; xx < drawRect.width(); xx++, src++, dst++)
@@ -1015,9 +1019,9 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 		}
 		ff.fillMask();
 
-		for (int yy = 0; yy < tmp.h; yy++) {
-			const byte *src = (const byte *)tmp.getBasePtr(0, yy);
-			const byte *mask = (const byte *)ff.getMask()->getBasePtr(0, yy);
+		for (int yy = 0; yy < srcRect.height(); yy++) {
+			const byte *src = (const byte *)tmp.getBasePtr(srcRect.left, srcRect.top + yy);
+			const byte *mask = (const byte *)ff.getMask()->getBasePtr(srcRect.left, srcRect.top + yy);
 			byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + yy);
 
 			for (int xx = 0; xx < drawRect.width(); xx++, src++, dst++, mask++)
