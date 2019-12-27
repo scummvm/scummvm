@@ -85,7 +85,7 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 	_gfx->fadeoutScreen();
 	_sound->stopAllVocSounds();
 
-	_gfx->setBackgroundImage(_gfx->loadBitmap(getScreenName()));
+	_gfx->setBackgroundImage(getScreenName());
 	_gfx->loadPri(getScreenName());
 	_gfx->loadPalette("palette");
 	_gfx->copyBackgroundScreen();

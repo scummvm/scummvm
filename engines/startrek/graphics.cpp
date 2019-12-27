@@ -72,8 +72,8 @@ Graphics::~Graphics() {
 	delete _font;
 }
 
-void Graphics::setBackgroundImage(Bitmap *bitmap) {
-	_backgroundImage = SharedPtr<Bitmap>(bitmap);
+void Graphics::setBackgroundImage(Common::String imageName) {
+	_backgroundImage = SharedPtr<Bitmap>(loadBitmap(imageName));
 }
 
 void Graphics::drawBitmapToBackground(const Common::Rect &origRect, const Common::Rect &drawRect, Bitmap *bitmap) {

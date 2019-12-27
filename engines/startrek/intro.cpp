@@ -45,7 +45,7 @@ void StarTrekEngine::playIntro() {
 	_gfx->clearScreenAndPriBuffer();
 	_gfx->fadeoutScreen();
 	_gfx->loadPalette("gold");
-	_gfx->setBackgroundImage(_gfx->loadBitmap("goldlogo"));
+	_gfx->setBackgroundImage("goldlogo");
 	_sound->playVoc("logo");
 	_gfx->copyBackgroundScreen();
 	_system->updateScreen();

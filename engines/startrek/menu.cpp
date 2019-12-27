@@ -1028,7 +1028,7 @@ void StarTrekEngine::showRepublicMap(int16 arg0, int16 turbolift) {
 	_gfx->pushSprites();
 
 	if (!_awayMission.veng.showedRepublicMapFirstTime) {
-		_gfx->setBackgroundImage(_gfx->loadBitmap("veng9b"));
+		_gfx->setBackgroundImage("veng9b");
 		_gfx->copyBackgroundScreen();
 		_system->updateScreen();
 		_system->delayMillis(10);
@@ -1085,7 +1085,7 @@ void StarTrekEngine::showRepublicMap(int16 arg0, int16 turbolift) {
 		_gfx->fadeoutScreen();
 	}
 
-	_gfx->setBackgroundImage(_gfx->loadBitmap("veng9"));
+	_gfx->setBackgroundImage("veng9");
 	_gfx->copyBackgroundScreen();
 	_system->updateScreen();
 	_system->delayMillis(10);
@@ -1171,7 +1171,7 @@ lclick:
 	_gfx->popSprites();
 
 	_gfx->loadPri(getScreenName());
-	_gfx->setBackgroundImage(_gfx->loadBitmap(getScreenName()));
+	_gfx->setBackgroundImage(getScreenName());
 	_gfx->copyBackgroundScreen();
 	_system->updateScreen();
 	_system->delayMillis(10);

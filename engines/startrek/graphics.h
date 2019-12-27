@@ -51,7 +51,7 @@ public:
 	Graphics(StarTrekEngine *vm);
 	~Graphics();
 
-	void setBackgroundImage(Bitmap *bitmap);
+	void setBackgroundImage(Common::String imageName);
 	/**
 	 * @param origRect The rectangle containing the original bitmap (must contain the
 	 *                 whole bitmap, even if some is outside the drawable space)

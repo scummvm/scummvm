@@ -274,8 +274,7 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	actorFunc1();
 	initActors();
 
-	Bitmap *bgImage = _gfx->loadBitmap("transprt");
-	_gfx->setBackgroundImage(bgImage);
+	_gfx->setBackgroundImage("transprt");
 	_gfx->clearPri();
 	_gfx->loadPalette("palette");
 	_gfx->copyBackgroundScreen();
