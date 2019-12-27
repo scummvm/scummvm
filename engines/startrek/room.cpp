@@ -756,7 +756,7 @@ void Room::mccoyScan(int direction, TextRef text, bool changeDirection, bool fro
 		showText(TX_SPEAKER_MCCOY, text, fromRDF);
 }
 
-bool Room::isPointInPolygon(int16 offset, int16 x, int16 y) {
+bool Room::isPointInPolygon(int offset, int16 x, int16 y) {
 	int16 *data = (int16 *)(_rdfData + offset);
 	int16 numVertices = data[1];
 	int16 *vertData = &data[2];

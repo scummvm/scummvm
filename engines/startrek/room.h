@@ -158,7 +158,7 @@ public:
 	 *   * Number of vertices in polygon
 	 *   * For each vertex: x and y coordinates.
 	 */
-	bool isPointInPolygon(int16 offset, int16 x, int16 y);
+	bool isPointInPolygon(int offset, int16 x, int16 y);
 
 	byte *_rdfData;
 
