@@ -102,7 +102,7 @@ int SDL_SetColorKey(Graphics::ManagedSurface *surface, int flag, uint32 key) {
 	return 0;
 }
 
-int SDL_SetColors(Graphics::ManagedSurface *surface, SDL_Color *colors, int firstcolor, int ncolors) {
+int SDL_SetColors(Graphics::ManagedSurface *surface, const SDL_Color *colors, int firstcolor, int ncolors) {
 	surface->setPalette(colors, firstcolor, ncolors);
 	return 0;
 }
