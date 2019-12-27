@@ -284,7 +284,7 @@ void MacWindowManager::removeWindow(MacWindow *target) {
 void macDrawPixel(int x, int y, int color, void *data) {
 	MacPlotData *p = (MacPlotData *)data;
 
-	if (p->fillType > p->patterns->size())
+	if (p->fillType > p->patterns->size() || !p->fillType)
 		return;
 
 	byte *pat = p->patterns->operator[](p->fillType - 1);
