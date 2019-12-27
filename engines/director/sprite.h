@@ -91,6 +91,8 @@ public:
 	byte _moveable;
 	byte _backColor;
 	byte _foreColor;
+	uint16 _pattern;
+
 	uint16 _left;
 	uint16 _right;
 	uint16 _top;

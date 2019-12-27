@@ -39,6 +39,7 @@ Sprite::Sprite() {
 	_castId = 0;
 	_backColor = 255;
 	_foreColor = 0;
+	_pattern = 0;
 	_left = 0;
 	_right = 0;
 	_top = 0;

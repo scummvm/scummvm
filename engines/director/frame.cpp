@@ -674,7 +674,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	// No minus one on the pattern here! MacPlotData will do that for us!
 	//Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), 1, 1, sp->_backColor);
-	Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), sp->_castId, sp->_lineSize + 1, sp->_backColor);
+	Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), sp->_pattern, sp->_lineSize + 1, sp->_backColor);
 	Common::Rect fillRect(shapeRect.width(), shapeRect.height());
 
 	switch (sp->_spriteType) {

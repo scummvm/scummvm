@@ -417,6 +417,9 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheEditableText:
 		sprite->_editableText = *d.toString();
 		break;
+	case kThePattern:
+		sprite->_pattern = d.u.i;
+		break;
 	default:
 		warning("Lingo::setTheSprite(): Unprocessed setting field %d of sprite", field);
 	}
@@ -618,6 +621,9 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	case kTheEditableText:
 		d.toString();
 		d.u.s = &sprite->_editableText;
+		break;
+	case kThePattern:
+		d.u.i = sprite->_pattern;
 		break;
 	default:
 		warning("Lingo::getTheSprite(): Unprocessed getting field %d of sprite", field);
