@@ -105,13 +105,13 @@ void GUI_Font::SetTransparency(int on) {
 
 /* determine foreground and background color values RGB*/
 void GUI_Font::SetColoring(uint8 fr, uint8 fg, uint8 fb, uint8 br, uint8 bg, uint8 bb) {
-	SDL_Color colors[2] = { MAKE_COLOR(br, bg, bb, 0), MAKE_COLOR(fr, fg, fb, 0) };	
+	const SDL_Color colors[2] = { MAKE_COLOR(br, bg, bb), MAKE_COLOR(fr, fg, fb) };	
 	SDL_SetColors(fontStore, colors, 0, 2);
 }
 
 void GUI_Font::SetColoring(uint8 fr, uint8 fg, uint8 fb, uint8 fr1, uint8 fg1, uint8 fb1, uint8 br, uint8 bg, uint8 bb) {
-	SDL_Color colors[3] = {
-		MAKE_COLOR(br, bg, bb, 0), MAKE_COLOR(fr, fg, fb, 0), MAKE_COLOR(fr1, fg1, fb1, 0) };
+	const SDL_Color colors[3] = {
+		MAKE_COLOR(br, bg, bb, 0), MAKE_COLOR(fr, fg, fb), MAKE_COLOR(fr1, fg1, fb1) };
 	SDL_SetColors(fontStore, colors, 0, 3);
 }
 
