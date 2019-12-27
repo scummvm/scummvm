@@ -321,9 +321,6 @@ SciEvent EventManager::getScummVMEvent() {
 
 	input.character = ev.kbd.ascii;
 
-	if (g_sci->getLanguage() == Common::PL_POL)
-		debug("character: %d(%x)  keycode: %d(%x)", ev.kbd.ascii, ev.kbd.ascii, ev.kbd.keycode, ev.kbd.keycode);
-
 	if (scummVMKeycode >= Common::KEYCODE_KP0 && scummVMKeycode <= Common::KEYCODE_KP9 && !(scummVMKeyFlags & Common::KBD_NUM)) {
 		// TODO: Leaky abstractions from SDL should not be handled in game
 		// engines!
@@ -381,14 +378,11 @@ SciEvent EventManager::getScummVMEvent() {
 					input.character = input.character - 0x410 + 0x80;
 			}
 		} else if (g_sci->getLanguage() == Common::PL_POL) {
-			debugN("%d (0x%04x)", input.character, input.character); // FIXME. Remove after completion
 			for (int i = 0; UTF16toWin1250[i]; i++)
 				if (UTF16toWin1250[i] == input.character) {
 					input.character = 0x80 + i;
 					break;
 				}
-
-			debug(" -> %d (0x%04x)", input.character, input.character);
 		}
 	}
 
