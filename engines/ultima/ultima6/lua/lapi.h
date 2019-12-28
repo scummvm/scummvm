@@ -20,16 +20,32 @@
  *
  */
 
-#ifndef ULTIMA6_SCRIPT_SCRIPT_ACTOR_H
-#define ULTIMA6_SCRIPT_SCRIPT_ACTOR_H
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "ultima/ultima6/lua/lua.h"
+/*
+** $Id: lapi.h,v 2.7.1.1 2013/04/12 18:48:47 roberto Exp $
+** Auxiliary functions from Lua API
+** See Copyright Notice in lua.h
+*/
+
+#ifndef lapi_h
+#define lapi_h
+
+
+#include "ultima/ultima6/lua/llimits.h"
+#include "ultima/ultima6/lua/lstate.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-void nscript_init_actor(lua_State *L);
-bool nscript_new_actor_var(lua_State *L, uint16 actor_num);
+#define api_incr_top(L)   {L->top++; api_check(L, L->top <= L->ci->top, \
+				"stack overflow");}
+
+#define adjustresults(L,nres) \
+    { if ((nres) == LUA_MULTRET && L->ci->top < L->top) L->ci->top = L->top; }
+
+#define api_checknelems(L,n)	api_check(L, (n) < (L->top - L->ci->func), \
+				  "not enough elements in the stack")
 
 } // End of namespace Ultima6
 } // End of namespace Ultima
