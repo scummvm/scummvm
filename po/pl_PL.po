@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-12-14 13:24+0000\n"
-"PO-Revision-Date: 2019-09-15 20:54+0000\n"
-"Last-Translator: Rafa³ Bêd¼kowski <ravcik@gmail.com>\n"
+"PO-Revision-Date: 2020-01-02 02:12+0000\n"
+"Last-Translator: Gucek <gucek001@interia.pl>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 3.7.1\n"
+"X-Generator: Weblate 3.9.1\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-Language: Polish\n"
@@ -933,9 +933,8 @@ msgid "Preferred device:"
 msgstr "Pref. urz±dzenie:"
 
 #: gui/options.cpp:1110
-#, fuzzy
 msgid "Music device:"
-msgstr "Urz. muzyczne:"
+msgstr "Urz±dzenie muzyczne:"
 
 #: gui/options.cpp:1110 gui/options.cpp:1112
 msgid "Specifies preferred sound device or sound card emulator"
@@ -964,7 +963,6 @@ msgid "AdLib is used for music in many games"
 msgstr "AdLib jest u¿ywany do muzyki w wielu grach"
 
 #: gui/options.cpp:1153
-#, fuzzy
 msgid "GM device:"
 msgstr "Urz±dzenie GM:"
 
