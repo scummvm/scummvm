@@ -33,6 +33,11 @@
 namespace Ultima {
 namespace Shared {
 
+enum UltimaDebugChannels {
+    kDebugPath = 1 << 0,
+    kDebugGraphics = 1 << 1
+};
+
 class UltimaEngine : public Engine {
     friend class EventsManager;
 private:
@@ -43,7 +48,7 @@ protected:
     Debugger *_debugger;
     EventsManager *_events;
 protected:
-	/**
+    /**
 	 * Initializes needed data for the engine
 	 */
 	virtual bool initialize();
@@ -64,6 +69,23 @@ public:
 	~UltimaEngine();
 
     /**
+     * Returns supported engine features
+     */
+    virtual bool hasFeature(EngineFeature f) const;
+
+    /**
+     * Returns game features
+     */
+    uint32 getFeatures() const;
+
+    /**
+     * Returns the filename for a savegame given it's slot
+     */
+    Common::String getSaveFilename(int slotNumber) {
+        return Common::String::format("%s.%.3d", _targetName.c_str(), slotNumber);
+    }
+
+    /**
      * Show a messae in a GUI dialog
      */
 	void GUIError(const Common::String &msg);
@@ -72,6 +94,18 @@ public:
 	 * Get a random number
 	 */
 	uint getRandomNumber(uint maxVal) { return _randomSource.getRandomNumber(maxVal); }
+
+    /**
+     * Get a reference to the data archive
+     */
+    Common::Archive *getDataArchive() const {
+        return _dataArchive;
+    }
+
+    /**
+     * Returns a file system node for the game directory
+     */
+    Common::FSNode getGameDirectory() const;
 };
 
 extern UltimaEngine *g_ultima;

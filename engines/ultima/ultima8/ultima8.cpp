@@ -21,8 +21,6 @@
  */
 
 #include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
 #include "common/translation.h"
 #include "common/unzip.h"
 #include "common/translation.h"
@@ -126,21 +124,15 @@ using std::string;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(Ultima8Engine, CoreApp)
 
-#define DATA_FILENAME "ultima.dat"
-#define DATA_VERSION_MAJOR 1
-#define DATA_VERSION_MINOR 0
-
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) : 
-		Engine(syst), CoreApp(gameDesc), _gameDescription(gameDesc),
-		_randomSource("Ultima8"), save_count(0), game(0), kernel(0),
-		_dataArchive(0), objectmanager(0), hidmanager(0), _mouse(0),
-		ucmachine(0), screen(0), fontmanager(0), fullscreen(false),
-		palettemanager(0), gamedata(0), world(0), desktopGump(0),
-		consoleGump(0), gameMapGump(0), avatarMoverProcess(0),
-		runSDLInit(false), frameSkip(false), frameLimit(true), interpolate(true),
-		animationRate(100), avatarInStasis(false), paintEditorItems(false), inversion(0),
-		painting(false), showTouching(false), timeOffset(0), has_cheated(false),
-		cheats_enabled(false), drawRenderStats(false), ttfoverrides(false), audiomixer(0) {
+		Shared::UltimaEngine(syst, gameDesc), CoreApp(gameDesc), save_count(0), game(0),
+		kernel(0), objectmanager(0), hidmanager(0), _mouse(0), ucmachine(0), screen(0),
+		fontmanager(0), fullscreen(false), palettemanager(0), gamedata(0), world(0),
+		desktopGump(0), consoleGump(0), gameMapGump(0), avatarMoverProcess(0), runSDLInit(false),
+		frameSkip(false), frameLimit(true), interpolate(true), animationRate(100),
+		avatarInStasis(false), paintEditorItems(false), inversion(0), painting(false),
+		showTouching(false), timeOffset(0), has_cheated(false), cheats_enabled(false),
+		drawRenderStats(false), ttfoverrides(false), audiomixer(0) {
 	application = this;
 
 	for (uint16 key = 0; key < HID_LAST; ++key) {
@@ -150,6 +142,7 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 }
 
 Ultima8Engine::~Ultima8Engine() {
+	FORGET_OBJECT(_events);
 	FORGET_OBJECT(kernel);
 	FORGET_OBJECT(objectmanager);
 	FORGET_OBJECT(hidmanager);
@@ -163,17 +156,6 @@ Ultima8Engine::~Ultima8Engine() {
 	FORGET_OBJECT(fontmanager);
 	FORGET_OBJECT(screen);
 	FORGET_OBJECT(_memoryManager);
-}
-
-bool Ultima8::Ultima8Engine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
-}
-
-uint32 Ultima8Engine::getFeatures() const {
-	return _gameDescription->desc.flags;
 }
 
 Common::Error Ultima8Engine::run() {
@@ -191,12 +173,13 @@ Common::Error Ultima8Engine::run() {
 
 
 bool Ultima8Engine::initialize() {
-	if (!loadData())
+	if (!Shared::UltimaEngine::initialize())
 		return false;
 
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
-	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
+	// Set up the events manager
+	_events = new Shared::EventsManager();
 
+	// Add console commands
 	con->AddConsoleCommand("quit", ConCmd_quit);
 	con->AddConsoleCommand("Ultima8Engine::quit", ConCmd_quit);
 	con->AddConsoleCommand("QuitGump::verifyQuit", QuitGump::ConCmd_verifyQuit);
@@ -283,39 +266,6 @@ bool Ultima8Engine::initialize() {
 	return true;
 }
 
-bool Ultima8Engine::loadData() {
-	Common::File f;
-
-	if (!Common::File::exists(DATA_FILENAME) ||
-			(_dataArchive = Common::makeZipArchive(DATA_FILENAME)) == 0 ||
-			!f.open("ultima8/version.txt", *_dataArchive)) {
-		delete _dataArchive;
-		GUIError(Common::String::format(_("Could not locate engine data %s"), DATA_FILENAME));
-		return false;
-	}
-
-	// Validate the version
-	char buffer[5];
-	f.read(buffer, 4);
-	buffer[4] = '\0';
-
-	int major = 0, minor = 0;
-	if (buffer[1] == '.') {
-		major = buffer[0] - '0';
-		minor = atoi(&buffer[2]);
-	}
-
-	if (major != DATA_VERSION_MAJOR || minor != DATA_VERSION_MINOR) {
-		delete _dataArchive;
-		GUIError(Common::String::format(_("Out of date engine data. Expected %d.%d, but got version %d.%d"),
-			DATA_VERSION_MAJOR, DATA_VERSION_MINOR, major, minor));
-		return false;
-	}
-
-	SearchMan.add("data", _dataArchive);
-	return true;
-}
-
 void Ultima8Engine::deinitialize() {
 	con->RemoveConsoleCommand(Ultima8Engine::ConCmd_quit);
 	con->RemoveConsoleCommand(QuitGump::ConCmd_verifyQuit);
@@ -373,14 +323,6 @@ void Ultima8Engine::deinitialize() {
 	con->RemoveConsoleCommand(AudioProcess::ConCmd_listSFX);
 	con->RemoveConsoleCommand(AudioProcess::ConCmd_stopSFX);
 	con->RemoveConsoleCommand(AudioProcess::ConCmd_playSFX);
-}
-
-Common::FSNode Ultima8Engine::getGameDirectory() const {
-	return Common::FSNode(ConfMan.get("path"));
-}
-
-void Ultima8Engine::GUIError(const Common::String &msg) {
-	GUIErrorMessage(msg);
 }
 
 void Ultima8Engine::startup() {
@@ -831,7 +773,7 @@ void Ultima8Engine::runGame() {
 		}
 
 		// get & handle all events in queue
-		while (isRunning && g_system->getEventManager()->pollEvent(event)) {
+		while (isRunning && _events->pollEvent(event)) {
 			handleEvent(event);
 		}
 		handleDelayedEvents();
@@ -2136,6 +2078,13 @@ uint32 Ultima8Engine::I_closeItemGumps(const uint8 *args, unsigned int /*argsize
 	g->getDesktopGump()->CloseItemDependents();
 
 	return 0;
+}
+
+bool Ultima8Engine::isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {
+	folder = "ultima8";
+	majorVersion = 1;
+	minorVersion = 0;
+	return true;
 }
 
 } // End of namespace Ultima8
