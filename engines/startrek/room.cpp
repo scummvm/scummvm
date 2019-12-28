@@ -601,7 +601,7 @@ void Room::showBitmapFor5Ticks(const Common::String &bmpName, int priority) {
 	Sprite sprite;
 	_vm->_gfx->addSprite(&sprite);
 	sprite.setXYAndPriority(0, 0, priority);
-	sprite.setBitmap(_vm->_gfx->loadBitmap(bmpName));
+	sprite.setBitmap(_vm->loadBitmapFile(bmpName));
 
 	_vm->_gfx->drawAllSprites();
 

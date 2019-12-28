@@ -159,7 +159,7 @@ void StarTrekEngine::chooseMousePositionFromSprites(Sprite *sprites, int numSpri
 
 }
 
-void StarTrekEngine::drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color) {
+void StarTrekEngine::drawMenuButtonOutline(Bitmap *bitmap, byte color) {
 	int lineWidth = bitmap->width - 2;
 	int offsetToBottom = (bitmap->height - 3) * bitmap->width;
 
@@ -188,7 +188,7 @@ void StarTrekEngine::showOptionsMenu(int x, int y) {
 	_mouseControllingShip = false;
 
 	Common::Point oldMousePos = _gfx->getMousePos();
-	_gfx->setMouseBitmap(_gfx->loadBitmap("options"));
+	_gfx->setMouseBitmap("options");
 	loadMenuButtons("options", x, y);
 
 	uint32 disabledButtons = 0;
@@ -307,7 +307,7 @@ int StarTrekEngine::showActionMenu() {
 	bool addEventBack = false;
 	int action = ACTION_WALK;
 
-	menuSprite.setBitmap(_gfx->loadBitmap("action"));
+	menuSprite.setBitmap(loadBitmapFile("action"));
 	int menuWidth = menuSprite.bitmap->width;
 	int menuHeight = menuSprite.bitmap->height;
 
@@ -376,7 +376,7 @@ mousePosChanged: {
 					bitmapName = "walk";
 				}
 
-				_gfx->setMouseBitmap(_gfx->loadBitmap(bitmapName));
+				_gfx->setMouseBitmap(bitmapName);
 
 				if (lockMousePoint.x != -1)
 					_gfx->lockMousePosition(lockMousePoint.x, lockMousePoint.y);
@@ -523,7 +523,7 @@ void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 		}
 		bitmapBasename[10] = '\0';
 
-		_activeMenu->sprites[i].setBitmap(_gfx->loadBitmap(bitmapBasename));
+		_activeMenu->sprites[i].setBitmap(loadBitmapFile(bitmapBasename));
 		_activeMenu->sprites[i].pos.x = stream->readUint16() + xpos;
 		_activeMenu->sprites[i].pos.y = stream->readUint16() + ypos;
 		_activeMenu->retvals[i] = stream->readUint16();
@@ -555,7 +555,7 @@ void StarTrekEngine::setVisibleMenuButtons(uint32 bits) {
 		if ((bits & spriteBitmask) == 0 || sprite->drawMode != 0) {
 			if ((bits & spriteBitmask) == 0 && sprite->drawMode == 2) {
 				if (i == _activeMenu->selectedButton) {
-					drawMenuButtonOutline(sprite->bitmap, 0x00);
+					drawMenuButtonOutline(sprite->bitmap.get(), 0x00);
 					_activeMenu->selectedButton = -1;
 				}
 
@@ -592,7 +592,7 @@ void StarTrekEngine::disableMenuButtons(uint32 bits) {
 	if (_activeMenu->selectedButton != -1
 	        && (_activeMenu->disabledButtons & (1 << _activeMenu->selectedButton))) {
 		Sprite *sprite = &_activeMenu->sprites[_activeMenu->selectedButton];
-		drawMenuButtonOutline(sprite->bitmap, 0x00);
+		drawMenuButtonOutline(sprite->bitmap.get(), 0x00);
 
 		sprite->bitmapChanged = true;
 		_activeMenu->selectedButton = -1;
@@ -622,12 +622,12 @@ int StarTrekEngine::handleMenuEvents(uint32 ticksUntilClickingEnabled, bool inTe
 				if (buttonIndex != _activeMenu->selectedButton) {
 					if (_activeMenu->selectedButton != -1) {
 						Sprite &spr = _activeMenu->sprites[_activeMenu->selectedButton];
-						drawMenuButtonOutline(spr.bitmap, 0x00);
+						drawMenuButtonOutline(spr.bitmap.get(), 0x00);
 						spr.bitmapChanged = true;
 					}
 					if (buttonIndex != -1) {
 						Sprite &spr = _activeMenu->sprites[buttonIndex];
-						drawMenuButtonOutline(spr.bitmap, 0xda);
+						drawMenuButtonOutline(spr.bitmap.get(), 0xda);
 						spr.bitmapChanged = true;
 					}
 					_activeMenu->selectedButton = buttonIndex;
@@ -835,7 +835,7 @@ rclick:
 
 void StarTrekEngine::unloadMenuButtons() {
 	if (_activeMenu->selectedButton != -1)
-		drawMenuButtonOutline(_activeMenu->sprites[_activeMenu->selectedButton].bitmap, 0x00);
+		drawMenuButtonOutline(_activeMenu->sprites[_activeMenu->selectedButton].bitmap.get(), 0x00);
 
 	for (int i = 0; i < _activeMenu->numButtons; i++) {
 		Sprite *sprite = &_activeMenu->sprites[i];
@@ -921,7 +921,7 @@ void StarTrekEngine::chooseMouseBitmapForAction(int action, bool withRedOutline)
 		break;
 	}
 
-	_gfx->setMouseBitmap(_gfx->loadBitmap(bitmapName));
+	_gfx->setMouseBitmap(bitmapName);
 }
 
 void StarTrekEngine::showQuitGamePrompt(int x, int y) {
@@ -1134,7 +1134,7 @@ lclick:
 				if (!spriteLoaded) {
 					_gfx->addSprite(&someSprite);
 					someSprite.setXYAndPriority(3, 168, 15);
-					someSprite.setBitmap(_gfx->loadBitmap(Common::String::format("turbo%d", clickedArea)));
+					someSprite.setBitmap(loadBitmapFile(Common::String::format("turbo%d", clickedArea)));
 					spriteLoaded = true;
 				}
 			} else {

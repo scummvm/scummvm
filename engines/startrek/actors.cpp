@@ -717,19 +717,19 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 	        && (c == 'm' || c == 's' || c == 'k' || c == 'r')) {
 		if (c == 'm') {
 			// Mccoy has the "base" animations for all crewmen
-			bitmapToReturn = _gfx->loadBitmap(filename);
+			bitmapToReturn = new Bitmap(loadBitmapFile(filename));
 		} else {
 			// All crewman other than mccoy copy the animation frames from mccoy, change
 			// the colors of the uniforms, and load an "xor" file to redraw the face.
 
 			// TODO: The ".$bm" extension is a "virtual file"? Caches the changes to the
 			// file made here?
-			// bitmapToReturn = _gfx->loadBitmap(filename + ".$bm");
+			// bitmapToReturn = new Bitmap(loadBitmapFile(filename + ".$bm"));
 
 			if (bitmapToReturn == nullptr) {
 				Common::String mccoyFilename = filename;
 				mccoyFilename.setChar('m', 0);
-				Bitmap *bitmap = _gfx->loadBitmap(mccoyFilename);
+				Bitmap *bitmap = new Bitmap(loadBitmapFile(mccoyFilename));
 
 				uint16 width = bitmap->width;
 				uint16 height = bitmap->height;
@@ -796,7 +796,7 @@ Bitmap *StarTrekEngine::loadAnimationFrame(const Common::String &filename, Fixed
 	} else {
 		// TODO: when loading a bitmap, it passes a different argument than is standard to
 		// the "file loading with cache" function...
-		bitmapToReturn = _gfx->loadBitmap(filename);
+		bitmapToReturn = new Bitmap(loadBitmapFile(filename));
 	}
 
 	if (scale != 1.0) {
@@ -1035,7 +1035,7 @@ void StarTrekEngine::showInventoryIcons(bool showItem) {
 		_itemIconSprite.pos.y = 10;
 		_itemIconSprite.drawPriority = 15;
 		_itemIconSprite.drawPriority2 = 8;
-		_itemIconSprite.setBitmap(_gfx->loadBitmap(itemFilename));
+		_itemIconSprite.setBitmap(loadBitmapFile(itemFilename));
 
 		_inventoryIconSprite.pos.x = 46;
 	}
@@ -1046,7 +1046,7 @@ void StarTrekEngine::showInventoryIcons(bool showItem) {
 	_inventoryIconSprite.drawMode = 2;
 	_inventoryIconSprite.drawPriority = 15;
 	_inventoryIconSprite.drawPriority2 = 8;
-	_inventoryIconSprite.setBitmap(_gfx->loadBitmap("inv00"));
+	_inventoryIconSprite.setBitmap(loadBitmapFile("inv00"));
 }
 
 bool StarTrekEngine::isObjectUnusable(int object, int action) {
@@ -1163,7 +1163,7 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 		itemSprites[i].pos.y = itemPositions[i].y;
 		itemSprites[i].drawPriority = 15;
 		itemSprites[i].drawPriority2 = 8;
-		itemSprites[i].setBitmap(_gfx->loadBitmap(itemNames[i]));
+		itemSprites[i].setBitmap(loadBitmapFile(itemNames[i]));
 	}
 
 	chooseMousePositionFromSprites(itemSprites, numItems, -1, 4);
@@ -1183,11 +1183,11 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 			itemIndex = getMenuButtonAt(itemSprites, numItems, mousePos.x, mousePos.y);
 			if (itemIndex != lastItemIndex) {
 				if (lastItemIndex != -1) {
-					drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap, 0);
+					drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap.get(), 0);
 					itemSprites[lastItemIndex].bitmapChanged = true;
 				}
 				if (itemIndex != -1) {
-					drawMenuButtonOutline(itemSprites[itemIndex].bitmap, 15);
+					drawMenuButtonOutline(itemSprites[itemIndex].bitmap.get(), 15);
 					itemSprites[itemIndex].bitmapChanged = true;
 				}
 				lastItemIndex = itemIndex;
@@ -1266,7 +1266,7 @@ exitWithoutSelection:
 
 	_sound->playSoundEffectIndex(0x10);
 	if (lastItemIndex >= 0)
-		drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap, 0);
+		drawMenuButtonOutline(itemSprites[lastItemIndex].bitmap.get(), 0);
 
 	for (int i = 0; i < numItems; i++)
 		itemSprites[i].dontDrawNextFrame();

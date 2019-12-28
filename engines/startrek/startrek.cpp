@@ -135,7 +135,7 @@ Common::Error StarTrekEngine::run() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 	initializeEventsAndMouse();
 
-	_gfx->setMouseBitmap(_gfx->loadBitmap("pushbtn"));
+	_gfx->setMouseBitmap("pushbtn");
 	_gfx->toggleMouse(true);
 
 	bool shouldPlayIntro = true;
@@ -509,6 +509,10 @@ Common::MemoryReadStreamEndian *StarTrekEngine::loadFile(Common::String filename
 	delete stream;
 
 	return new Common::MemoryReadStreamEndian(data, size, bigEndian);
+}
+
+Common::MemoryReadStreamEndian *StarTrekEngine::loadBitmapFile(Common::String baseName) {
+	return loadFile(baseName + ".BMP");
 }
 
 Common::MemoryReadStreamEndian *StarTrekEngine::loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3) {

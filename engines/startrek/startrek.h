@@ -242,6 +242,8 @@ public:
 	void cleanupBridge() {}; // TODO
 
 	Common::MemoryReadStreamEndian *loadFile(Common::String filename, int fileIndex = 0);
+	Common::MemoryReadStreamEndian *loadBitmapFile(Common::String baseName);
+
 	/**
 	 * TODO: Figure out what the extra parameters are, and if they're important.
 	 */
@@ -570,7 +572,7 @@ public:
 	 * Draws or removes the outline on menu buttons when the cursor hovers on them, or leaves
 	 * them.
 	 */
-	void drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color);
+	void drawMenuButtonOutline(Bitmap *bitmap, byte color);
 	void showOptionsMenu(int x, int y);
 	/**
 	 * Show the "action selection" menu, ie. look, talk, etc.

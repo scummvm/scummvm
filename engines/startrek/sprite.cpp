@@ -37,6 +37,11 @@ void Sprite::setBitmap(Bitmap *b) {
 	bitmapChanged = true;
 }
 
+void Sprite::setBitmap(Common::MemoryReadStreamEndian *stream) {
+	bitmap = SharedPtr<Bitmap>(new Bitmap(stream));
+	bitmapChanged = true;
+}
+
 void Sprite::setXYAndPriority(int16 x, int16 y, int16 priority) {
 	pos.x = x;
 	pos.y = y;

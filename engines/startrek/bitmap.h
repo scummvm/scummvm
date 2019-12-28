@@ -29,9 +29,6 @@
 
 namespace StarTrek {
 
-// FIXME: Eventually get rid of Common::SharedPtr and dispose of file streams properly
-typedef Common::SharedPtr<Common::MemoryReadStreamEndian> FileStream;
-
 struct Bitmap {
 	int16 xoffset;
 	int16 yoffset;
@@ -39,8 +36,7 @@ struct Bitmap {
 	int16 height;
 	byte *pixels;
 
-	Bitmap(FileStream stream);
-	Bitmap(Common::MemoryReadStreamEndian *stream);
+	Bitmap(Common::MemoryReadStreamEndian *stream, bool closeStream = true);
 	Bitmap(const Bitmap &bitmap);
 	Bitmap(int w, int h);
 	~Bitmap();

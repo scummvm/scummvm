@@ -393,25 +393,25 @@ bool Room::demon4ShowSunPuzzle() {
 		_vm->_gfx->addSprite(&sprites[i]);
 	}
 
-	sprites[0].setBitmap(_vm->_gfx->loadBitmap("levery"));
-	sprites[1].setBitmap(_vm->_gfx->loadBitmap("leverr"));
-	sprites[2].setBitmap(_vm->_gfx->loadBitmap("leverb"));
+	sprites[0].setBitmap(_vm->loadBitmapFile("levery"));
+	sprites[1].setBitmap(_vm->loadBitmapFile("leverr"));
+	sprites[2].setBitmap(_vm->loadBitmapFile("leverb"));
 
-	SharedPtr<Bitmap> lightyBitmap = SharedPtr<Bitmap>(_vm->_gfx->loadBitmap("lighty"));
-	SharedPtr<Bitmap> lightrBitmap = SharedPtr<Bitmap>(_vm->_gfx->loadBitmap("lightr"));
-	SharedPtr<Bitmap> lightbBitmap = SharedPtr<Bitmap>(_vm->_gfx->loadBitmap("lightb"));
+	Bitmap *lightyBitmap = new Bitmap(_vm->loadBitmapFile("lighty"));
+	Bitmap *lightrBitmap = new Bitmap(_vm->loadBitmapFile("lightr"));
+	Bitmap *lightbBitmap = new Bitmap(_vm->loadBitmapFile("lightb"));
 
 	for (int i = 3; i < 9; i++)
-		sprites[i].bitmap = lightyBitmap;
+		sprites[i].setBitmap(lightyBitmap);
 	for (int i = 9; i < 15; i++)
-		sprites[i].bitmap = lightrBitmap;
+		sprites[i].setBitmap(lightrBitmap);
 	for (int i = 15; i < 21; i++)
-		sprites[i].bitmap = lightbBitmap;
+		sprites[i].setBitmap(lightbBitmap);
 
 	Sprite doneButtonSprite;
 	_vm->_gfx->addSprite(&doneButtonSprite);
 	doneButtonSprite.setXYAndPriority(0x104, 0x64, 2);
-	doneButtonSprite.setBitmap(_vm->_gfx->loadBitmap("donebutt"));
+	doneButtonSprite.setBitmap(_vm->loadBitmapFile("donebutt"));
 	// BUGFIX: use draw mode 2 so the entire button is clickable (not just non-transparent
 	// pixels)
 	doneButtonSprite.drawMode = 2;
@@ -531,6 +531,10 @@ done:
 	_vm->_gfx->setBackgroundImage(_vm->getScreenName());
 	_vm->_gfx->copyBackgroundScreen();
 	_vm->_gfx->forceDrawAllSprites();
+
+	delete lightbBitmap;
+	delete lightrBitmap;
+	delete lightyBitmap;
 
 	return solved;
 }

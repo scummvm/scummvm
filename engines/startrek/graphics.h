@@ -84,14 +84,12 @@ public:
 	void setPri(byte val);
 	byte getPriValue(int x, int y);
 
-	Bitmap *loadBitmap(String basename);
-
 	Common::Point getMousePos();
 	/**
 	 * Changes the mouse bitmap. The change won't take effect until drawAllSprites is
 	 * called again.
 	 */
-	void setMouseBitmap(Bitmap *bitmap);
+	void setMouseBitmap(Common::String bitmapName);
 	void popMouseBitmap();
 	void toggleMouse(bool visible);
 
@@ -166,7 +164,7 @@ private:
 	int16 _paletteFadeLevel;
 
 	Common::Rect _screenRect;
-	SharedPtr<Bitmap> _backgroundImage;
+	Bitmap *_backgroundImage;
 
 	Sprite *_sprites[MAX_SPRITES];
 	int _numSprites;

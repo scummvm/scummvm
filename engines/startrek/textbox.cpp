@@ -310,7 +310,7 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 
 		Common::Point oldMousePos = _gfx->getMousePos();
 		_gfx->warpMouse(xoffset + 0xde, yoffset - 0x08);
-		_gfx->setMouseBitmap(_gfx->loadBitmap("pushbtn"));
+		_gfx->setMouseBitmap("pushbtn");
 
 		bool tmpMouseControllingShip = _mouseControllingShip;
 		_mouseControllingShip = false;

@@ -116,7 +116,7 @@ void StarTrekEngine::drawStarfield() {
 
 			file->seek(fileOffset, SEEK_SET);
 
-			Bitmap *bitmap = new Bitmap(file);
+			Bitmap *bitmap = new Bitmap(file, false);
 			if (!drawRect.isEmpty())
 				_gfx->drawBitmapToBackground(starRect, drawRect, bitmap);
 			delete bitmap;
@@ -238,9 +238,7 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 		// TODO: call it
 	}
 
-	if (r3->shpFile != nullptr) {
-		r3->shpFile->seek(r3->bitmapOffset, SEEK_SET);
-		SharedPtr<Bitmap> bitmap(new Bitmap(r3->shpFile));
+	if (r3->bitmap != nullptr) {
 		double dbl68 = ((double)r3->field24 * _starfieldPointDivisor) / r3->field36.z;
 		double dbl70 = 1.0 / dbl68;
 
@@ -278,24 +276,24 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 		r3->field98 = dbl48;
 
 		// dbl30, (bitmap->xoffset + 2), r3->field58,
-		double tmp = r3->field58 - (double)(bitmap->xoffset + 2) * dbl30;
+		double tmp = r3->field58 - (double)(r3->bitmap->xoffset + 2) * dbl30;
 		// dbl20, (bitmap->yoffset + 2), tmp
-		double dbl10 = tmp - (double)(bitmap->yoffset + 2) * dbl20;
+		double dbl10 = tmp - (double)(r3->bitmap->yoffset + 2) * dbl20;
 
 		// dbl28, (bitmap->xoffset + 2), r3->field5a
-		tmp = r3->field5a - (double)(bitmap->xoffset + 2) * dbl28;
+		tmp = r3->field5a - (double)(r3->bitmap->xoffset + 2) * dbl28;
 		// dbl18, (bitmap->yoffset + 2), tmp
-		double dbl8 = tmp - (double)(bitmap->yoffset + 2) * dbl18;
+		double dbl8 = tmp - (double)(r3->bitmap->yoffset + 2) * dbl18;
 
 		// dbl60, r3->field58, bitmap->xoffset + 2
-		tmp = (bitmap->xoffset + 2) - dbl60 * r3->field58;
+		tmp = (r3->bitmap->xoffset + 2) - dbl60 * r3->field58;
 		double dbl40 = tmp - dbl50 * r3->field5a;
 
-		tmp = (bitmap->yoffset + 2) - dbl58 * r3->field58;
+		tmp = (r3->bitmap->yoffset + 2) - dbl58 * r3->field58;
 		double dbl38 = tmp - dbl48 * r3->field5a;
 
-		double dbl3e4 = bitmap->width + 2;
-		double dbl3ec = bitmap->height + 2;
+		double dbl3e4 = r3->bitmap->width + 2;
+		double dbl3ec = r3->bitmap->height + 2;
 
 		double thing[8];
 		tmp = 1.0 * dbl30;
@@ -424,8 +422,8 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 			Bitmap tmpBitmap(256, 249);
 			byte *otherBuffer = new byte[256 * 256];
 
-			int16 bitmapWidth = bitmap->width;
-			int16 bitmapHeight = bitmap->height;
+			int16 bitmapWidth = r3->bitmap->width;
+			int16 bitmapHeight = r3->bitmap->height;
 
 			if (bitmapHeight > 245)
 				error("Shape height too big in drawR3Shape!");
@@ -447,7 +445,7 @@ void StarTrekEngine::drawR3Shape(R3 *r3) {
 			if (r3->field1e == 2) {
 				// TODO
 			} else
-				_gfx->copyRectBetweenBitmaps(&tmpBitmap, 2, 2, bitmap.get(), 0, 0, bitmapWidth, bitmapHeight);
+				_gfx->copyRectBetweenBitmaps(&tmpBitmap, 2, 2, r3->bitmap, 0, 0, bitmapWidth, bitmapHeight);
 
 			byte *bgPixels = _gfx->getBackgroundPixels() + shpImageTop * SCREEN_WIDTH;
 
