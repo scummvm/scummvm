@@ -261,13 +261,6 @@ const KeycodeString StringTable[] = {
 	{"", Common::KEYCODE_INVALID} // terminator
 };
 
-
-typedef std::map<Common::String, Common::KeyCode> ParseKeyMap;
-typedef std::map<Common::String, const Action *> ParseActionMap;
-
-static ParseKeyMap keys;
-static ParseActionMap actions;
-
 const Action doNothingAction = { "DO_NOTHING", ActionDoNothing, "", Action::dont_show, true, OTHER_KEY };
 
 KeyBinder::KeyBinder(Configuration *config) {
@@ -553,8 +546,8 @@ void KeyBinder::ParseLine(char *line) {
 			} else {
 				// lookup in table
 				ParseKeyMap::iterator key_index;
-				key_index = keys.find(t);
-				if (key_index != keys.end()) {
+				key_index = _keys.find(t);
+				if (key_index != _keys.end()) {
 					k.keycode = (*key_index)._value;
 				} else {
 					::error("Keybinder: unsupported key: %s", keycode.c_str());
@@ -576,9 +569,9 @@ void KeyBinder::ParseLine(char *line) {
 	t = to_uppercase(t);
 
 	ParseActionMap::iterator action_index;
-	action_index = actions.find(t);
-	if (action_index != actions.end()) {
-		a.action = (*action_index)._value;
+	action_index = _actions.find(t);
+	if (action_index != _actions.end()) {
+		a.action = (const Action *)(*action_index)._value;
 	} else {
 		::error("Keybinder: unsupported action: %s", t.c_str());
 	}
@@ -706,10 +699,10 @@ void KeyBinder::LoadFromPatch() { // FIXME default should probably be system spe
 // codes used in keybindings-files. (use uppercase here)
 void KeyBinder::FillParseMaps() {
 	for (int i = 0; strlen(StringTable[i].s) > 0; i++)
-		keys[StringTable[i].s] = StringTable[i].k;
+		_keys[StringTable[i].s] = StringTable[i].k;
 
 	for (int i = 0; strlen(NuvieActions[i].s) > 0; i++)
-		actions[NuvieActions[i].s] = &(NuvieActions[i]);
+		_actions[NuvieActions[i].s] = &(NuvieActions[i]);
 }
 
 #ifdef HAVE_JOYSTICK_SUPPORT
