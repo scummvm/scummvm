@@ -134,8 +134,6 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	_vm->clearFlags(ENGINE_FLAG_100000);
 	_vm->clearFlags(ENGINE_FLAG_200000);
 
-	_vm->loadCurrentSceneMsf();
-
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 
 	if (flicker == NULL || flicker->sceneId == 0) {
@@ -145,6 +143,8 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 		flicker->sceneId = _currentSceneId;
 		_vm->getINI(1)->sceneId = _currentSceneId;
 	}
+
+	_vm->loadCurrentSceneMsf();
 
 	_stage = _backgroundLoader->load(sceneId);
 	if (!_vm->isFlagSet(ENGINE_FLAG_800)) {

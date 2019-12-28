@@ -87,8 +87,8 @@ bool ActorResource::load(uint32 id, byte *dataStart, Common::SeekableReadStream 
 		_frames[i].frameDataOffset = &dataStart[frameDataOffset];
 		_frames[i].flags = stream.readUint16LE();
 		_frames[i].field_c = stream.readUint16LE();
-		debug(3, "Frame[%d] @%X, xOffset: %d field_2: %d (%d, %d) offset: %X, flags: %X field_c: %d",
-				i, offset, _frames[i].xOffset, _frames[i].yOffset, _frames[i].width, _frames[i].height, frameDataOffset, _frames[i].flags, _frames[i].field_c);
+//		debug(3, "Frame[%d] @%X, xOffset: %d field_2: %d (%d, %d) offset: %X, flags: %X field_c: %d",
+//				i, offset, _frames[i].xOffset, _frames[i].yOffset, _frames[i].width, _frames[i].height, frameDataOffset, _frames[i].flags, _frames[i].field_c);
 	}
 
 	return false;
