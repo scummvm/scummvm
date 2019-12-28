@@ -129,6 +129,7 @@ public:
 	void resetSequenceIP();
 	byte *getSeqIpAtOffset(uint32 offset);
 	void loadFrame(uint16 frameOffset);
+	void freeFrame();
 	void reset_maybe();
 	bool pathfinding_maybe(int16 target_x, int16 target_y, uint16 isNotFlicker);
 	void walkPath();
