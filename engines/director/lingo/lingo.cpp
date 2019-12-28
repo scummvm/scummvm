@@ -487,4 +487,18 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 	}
 }
 
+void Lingo::printAllVars() {
+	debugN("  Local vars: ");
+	for (SymbolHash::iterator i = _localvars->begin(); i != _localvars->end(); ++i) {
+		debugN("%s, ", (*i)._key.c_str());
+	}
+	debug("");
+
+	debugN("  Global vars: ");
+	for (SymbolHash::iterator i = _globalvars.begin(); i != _globalvars.end(); ++i) {
+		debugN("%s, ", (*i)._key.c_str());
+	}
+	debug("");
+}
+
 } // End of namespace Director

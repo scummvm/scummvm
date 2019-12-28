@@ -58,6 +58,11 @@ void Lingo::execute(uint pc) {
 		if (debugChannelSet(5, kDebugLingoExec))
 			printStack("Stack before: ", current);
 
+		if (debugChannelSet(9, kDebugLingoExec)) {
+			debug("Vars after");
+			printAllVars();
+		}
+
 		debugC(1, kDebugLingoExec, "[%3d]: %s", current, instr.c_str());
 
 		_pc++;
@@ -65,6 +70,11 @@ void Lingo::execute(uint pc) {
 
 		if (debugChannelSet(5, kDebugLingoExec))
 			printStack("Stack after: ", current);
+
+		if (debugChannelSet(9, kDebugLingoExec)) {
+			debug("Vars after");
+			printAllVars();
+		}
 
 		if (_pc >= (*_currentScript).size()) {
 			warning("Lingo::execute(): Bad PC (%d)", _pc);
