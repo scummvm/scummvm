@@ -102,7 +102,7 @@ protected:
 	void update_cursor();
 	void hide_buttons();
 	void show_buttons();
-	GUI_status MouseDown(int x, int y, MouseButton button);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
 	GUI_status MouseWheel(sint32 x, sint32 y);
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
 };

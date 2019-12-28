@@ -23,6 +23,7 @@
 #ifndef ULTIMA6_CORE_EVENT_H
 #define ULTIMA6_CORE_EVENT_H
 
+#include "ultima/shared/core/events.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/misc/call_back.h"
@@ -86,10 +87,6 @@ extern uint32 nuvieGameCounter;
 #define EVENTINPUT_OBJECT   3
 #define EVENTINPUT_MAPCOORD_DIR 4
 #define EVENTINPUT_SPELL_NUM 5
-
-enum MouseButton { BUTTON_NONE = 0, BUTTON_LEFT = 1, BUTTON_RIGHT = 2, BUTTON_MIDDLE = 3 };
-
-#define BUTTON_MASK(MB) (1 << ((int)(MB) - 1))
 
 /**
  * Joystick actions mapped to dummy unused keycode values
@@ -184,7 +181,7 @@ struct EventInput_s {
 };
 typedef struct EventInput_s EventInput;
 
-class Events : public CallBack {
+class Events : public Ultima::Shared::EventsManager, public CallBack {
 	friend class Magic; // FIXME
 private:
 	Configuration *config;
@@ -235,14 +232,7 @@ private:
 	FpsCounter *fps_counter_widget;
 	ScriptThread *scriptThread;
 
-	uint8  _buttonsDown;
-	Common::Point _mousePos;
 	static Events *g_events;
-private:
-	/**
-	 * Sets whether a given button is depressed
-	 */
-	void setButtonDown(MouseButton button, bool isDown);
 protected:
 	inline uint32 TimeLeft();
 
@@ -254,6 +244,8 @@ protected:
 public:
 	Events(Configuration *cfg);
 	virtual ~Events();
+
+	void clear();
 
 	bool init(ObjManager *om, MapWindow *mw, MsgScroll *ms, Player *p, Magic *mg,
 	          GameClock *gc, ViewManager *vm, UseCode *uc, GUI *g, KeyBinder *kb);
@@ -450,42 +442,7 @@ public:
 		* Gets a reference to the events manager
 		*/
 	static Events *get() { return g_events; }
-
-	/**
-	 * Returns true if a given mouse button is pressed
-	 */
-	inline bool isButtonDown(MouseButton button) const {
-		return (_buttonsDown & BUTTON_MASK(button)) != 0;
-	}
-
-	/**
-	 * Returns true if any mouse button is pressed
-	 */
-	bool isButtonDown() const {
-		return isButtonDown(BUTTON_LEFT) || isButtonDown(BUTTON_RIGHT) || isButtonDown(BUTTON_MIDDLE);
-	}
-
-	/**
-	 * Returns the mouse buttons states
-	 */
-	byte getButtonState() const { return _buttonsDown; }
-
-	/**
-	 * Returns the mouse position
-	 */
-	static Common::Point getMousePos();
-
-	/**
-	 * Poll for any pending events
-	 */
-	bool pollEvent(Common::Event& event);
 };
-
-extern bool isMouseDownEvent(Common::EventType type);
-
-extern bool isMouseUpEvent(Common::EventType type);
-
-extern MouseButton whichButton(Common::EventType type);
 
 extern bool shouldQuit();
 

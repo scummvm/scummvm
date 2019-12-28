@@ -229,14 +229,13 @@ GUI:: HandleStatus(GUI_status status) {
 }
 
 /* Handle an event, passing it to widgets until they return a status */
-GUI_status
-GUI:: HandleEvent(Common::Event *event) {
+GUI_status GUI:: HandleEvent(Common::Event *event) {
 	int i;
 	int hit;
 	GUI_status status = GUI_PASS;
 
 	if (screen_scale_factor != 1) {
-		if (isMouseDownEvent(event->type) || isMouseUpEvent(event->type)) {
+		if (Shared::isMouseDownEvent(event->type) || Shared::isMouseUpEvent(event->type)) {
 			event->mouse.x /= screen_scale_factor;
 			event->mouse.y /= screen_scale_factor;
 		}
@@ -258,7 +257,7 @@ GUI:: HandleEvent(Common::Event *event) {
 #endif
 
 	if (dragging) { //&& !block_input)
-		if (isMouseUpEvent(event->type)) { //FIX for button up that doesn't hit a widget.
+		if (Shared::isMouseUpEvent(event->type)) { //FIX for button up that doesn't hit a widget.
 			for (hit = false, i = numwidgets - 1; (i >= 0) && (hit == false); --i) {
 				if (widgets[i]->Status() == WIDGET_VISIBLE && widgets[i]->is_drop_target() && widgets[i]->HitRect(event->mouse.x, event->mouse.y)) {
 					gui_drag_manager->drop((GUI_DragArea *)widgets[i], event->mouse.x, event->mouse.y);

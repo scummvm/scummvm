@@ -211,7 +211,7 @@ GUI_status SaveDialog::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status SaveDialog::MouseDown(int x, int y, MouseButton button) {
+GUI_status SaveDialog::MouseDown(int x, int y, Shared::MouseButton button) {
 	return GUI_YUM;
 }
 

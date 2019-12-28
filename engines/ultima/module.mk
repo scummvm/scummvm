@@ -2,6 +2,8 @@ MODULE := engines/ultima
 
 MODULE_OBJS := \
 	detection.o \
+	shared/core/ultima.o \
+	shared/core/events.o \
 	shared/std/misc.o \
 	shared/std/string.o
 

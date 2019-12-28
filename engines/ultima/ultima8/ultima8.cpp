@@ -28,6 +28,7 @@
 #include "common/translation.h"
 #include "gui/saveload.h"
 
+#include "ultima/shared/core/events.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/misc/pent_include.h"
 
@@ -1253,11 +1254,11 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_MBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN: {
-		MouseButton button = BUTTON_LEFT;
+		Shared::MouseButton button = Shared::BUTTON_LEFT;
 		if (event.type == Common::EVENT_RBUTTONDOWN)
-			button = BUTTON_RIGHT;
+			button = Shared::BUTTON_RIGHT;
 		else if (event.type == Common::EVENT_MBUTTONDOWN)
-			button = BUTTON_MIDDLE;
+			button = Shared::BUTTON_MIDDLE;
 
 		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
 		if (_mouse->buttonDown(button))
@@ -1268,11 +1269,11 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_MBUTTONUP:
 	case Common::EVENT_RBUTTONUP: {
-		MouseButton button = BUTTON_LEFT;
+		Shared::MouseButton button = Shared::BUTTON_LEFT;
 		if (event.type == Common::EVENT_RBUTTONUP)
-			button = BUTTON_RIGHT;
+			button = Shared::BUTTON_RIGHT;
 		else if (event.type == Common::EVENT_MBUTTONUP)
-			button = BUTTON_MIDDLE;
+			button = Shared::BUTTON_MIDDLE;
 
 		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
 		if (_mouse->buttonUp(button))

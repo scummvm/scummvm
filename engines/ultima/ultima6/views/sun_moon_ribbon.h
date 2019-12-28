@@ -43,7 +43,7 @@ public:
 	void init(Screen *screen);
 	void Display(bool full_redraw);
 
-	GUI_status MouseDown(int x, int y, MouseButton button);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
 
 
 	void extend() {

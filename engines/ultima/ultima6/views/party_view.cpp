@@ -106,7 +106,7 @@ GUI_status PartyView::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status PartyView::MouseUp(int x, int y, MouseButton button) {
+GUI_status PartyView::MouseUp(int x, int y, Shared::MouseButton button) {
 	x -= area.left;
 	y -= area.top;
 

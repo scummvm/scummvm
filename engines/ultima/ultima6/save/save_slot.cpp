@@ -202,7 +202,7 @@ GUI_status SaveSlot::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status SaveSlot::MouseDown(int x, int y, MouseButton button) {
+GUI_status SaveSlot::MouseDown(int x, int y, Shared::MouseButton button) {
 	if (selected != true) {
 		selected = true;
 		callback_object->callback(SAVESLOT_CB_SELECTED, this, NULL);
@@ -211,7 +211,7 @@ GUI_status SaveSlot::MouseDown(int x, int y, MouseButton button) {
 	return GUI_YUM;
 }
 
-GUI_status SaveSlot::MouseUp(int x, int y, MouseButton button) {
+GUI_status SaveSlot::MouseUp(int x, int y, Shared::MouseButton button) {
 	return GUI_PASS;
 }
 

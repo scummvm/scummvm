@@ -46,14 +46,14 @@ namespace Ultima6 {
 Ultima6Engine *g_engine;
 
 Ultima6Engine::Ultima6Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima6"),
-		_config(nullptr), _dataArchive(nullptr), _screen(nullptr),
-		_script(nullptr), _game(nullptr) {
+		Ultima::Shared::UltimaEngine(syst, gameDesc), 
+		_config(nullptr), _screen(nullptr), _script(nullptr), _game(nullptr) {
 	g_engine = this;
 }
 
 Ultima6Engine::~Ultima6Engine() {
 	delete _config;
+	delete _events;
 	delete _screen;
 	delete _script;
 	delete _game;
@@ -61,10 +61,21 @@ Ultima6Engine::~Ultima6Engine() {
 	g_engine = nullptr;
 }
 
+bool Ultima6Engine::isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {
+	folder = "ultima6";
+	majorVersion = 1;
+	minorVersion = 0;
+	return true;
+}
+
+
 bool Ultima6Engine::initialize() {
 	uint8 gameType;
-	bool playENding = false;
+	bool playEnding = false;
 	bool showVirtueMsg = false;
+
+	if (!Ultima::Shared::UltimaEngine::initialize())
+		return false;
 
 	// Get which game to play
 	switch (_gameDescription->gameId) {
@@ -82,12 +93,10 @@ bool Ultima6Engine::initialize() {
 		break;
 	}
 
-	// Hook up to the data archive
-	if (!loadData())
-		return false;
-
 	// Find and load config file
 	initConfig();
+	Events *events = new Ultima::Ultima6::Events(_config);
+	_events = events;
 
 	// Setup screen
 	_screen = new Screen(_config);
@@ -127,13 +136,13 @@ bool Ultima6Engine::initialize() {
 	SoundManager *sound_manager = new SoundManager(_mixer);
 	sound_manager->nuvieStartup(_config);
 
-	_game = new Game(_config, _screen, gui, gameType, sound_manager);
+	_game = new Game(_config, events, _screen, gui, gameType, sound_manager);
 
 	_script = new Script(_config, gui, sound_manager, gameType);
 	if (_script->init() == false)
 		return false;
 
-	if (playENding) {
+	if (playEnding) {
 		_script->play_cutscene("/ending.lua");
 		return false;
 	}
@@ -160,13 +169,6 @@ Common::Error Ultima6Engine::run() {
 	}
 
 	return Common::kNoError;
-}
-
-const char *Ultima6Engine::getConfigPathWin32() {
-	static char configFile[MAXPATHLEN];
-	configFile[0] = '\0';
-
-	return configFile;
 }
 
 void Ultima6Engine::initConfig() {
@@ -242,44 +244,6 @@ bool Ultima6Engine::playIntro() {
 	}
 
 	return false;
-}
-
-
-bool Ultima6Engine::loadData() {
-	Common::File f;
-
-	if (!Common::File::exists(DATA_FILENAME) ||
-		(_dataArchive = Common::makeZipArchive(DATA_FILENAME)) == 0 ||
-		!f.open("ultima8/version.txt", *_dataArchive)) {
-		delete _dataArchive;
-		GUIError(Common::String::format(_("Could not locate engine data %s"), DATA_FILENAME));
-		return false;
-	}
-
-	// Validate the version
-	char buffer[5];
-	f.read(buffer, 4);
-	buffer[4] = '\0';
-
-	int major = 0, minor = 0;
-	if (buffer[1] == '.') {
-		major = buffer[0] - '0';
-		minor = atoi(&buffer[2]);
-	}
-
-	if (major != DATA_VERSION_MAJOR || minor != DATA_VERSION_MINOR) {
-		delete _dataArchive;
-		GUIError(Common::String::format(_("Out of date engine data. Expected %d.%d, but got version %d.%d"),
-			DATA_VERSION_MAJOR, DATA_VERSION_MINOR, major, minor));
-		return false;
-	}
-
-	SearchMan.add("data", _dataArchive);
-	return true;
-}
-
-void Ultima6Engine::GUIError(const Common::String& msg) {
-	GUIErrorMessage(msg);
 }
 
 } // End of namespace Ultima6

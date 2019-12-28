@@ -144,7 +144,7 @@ class Game {
 
 public:
 
-	Game(Configuration *cfg, Screen *scr, GUI *g, nuvie_game_t type, SoundManager *sm);
+	Game(Configuration *cfg, Events *evt, Screen *scr, GUI *g, nuvie_game_t type, SoundManager *sm);
 	~Game();
 
 	bool loadGame(Script *s);

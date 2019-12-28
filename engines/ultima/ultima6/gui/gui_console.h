@@ -52,8 +52,8 @@ public:
 	virtual void Display(bool full_redraw);
 
 	/* events, used for dragging the area. */
-	GUI_status MouseDown(int x, int y, MouseButton button);
-	GUI_status MouseUp(int x, int y, MouseButton button);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button);
 	GUI_status MouseMotion(int x, int y, uint8 state);
 
 	virtual void AddLine(std::string line);

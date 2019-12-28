@@ -62,7 +62,6 @@ namespace Ultima {
 namespace Ultima6 {
 
 Events *Events::g_events;
-static int16 mouse_x = 0, mouse_y = 0;
 
 using std::string;
 
@@ -77,10 +76,19 @@ void EventInput_s::set_loc(MapCoord c) {
 	loc = new MapCoord(c);
 }
 
-Events::Events(Configuration *cfg) : config(cfg), _buttonsDown(0) {
+Events::Events(Configuration *cfg) : Shared::EventsManager(), config(cfg) {
 	g_events = this;
-	mouse_x = mouse_y = 0;
+	clear();
+}
 
+Events::~Events() {
+	g_events = nullptr;
+
+	delete time_queue;
+	delete game_time_queue;
+}
+
+void Events::clear() {
 	clear_alt_code();
 	active_alt_code = 0;
 	alt_code_input_num = 0;
@@ -124,16 +132,10 @@ Events::Events(Configuration *cfg) : config(cfg), _buttonsDown(0) {
 	scriptThread = NULL;
 }
 
-Events::~Events() {
-	g_events = nullptr;
-	mouse_x = mouse_y = 0;
-
-	delete time_queue;
-	delete game_time_queue;
-}
-
 bool Events::init(ObjManager *om, MapWindow *mw, MsgScroll *ms, Player *p, Magic *mg,
                  GameClock *gc, ViewManager *vm, UseCode *uc, GUI *g, KeyBinder *kb) {
+	clear();
+
 	gui = g;
 	obj_manager = om;
 	map_window = mw;
@@ -3814,62 +3816,6 @@ bool Events::input_really_needs_directon() {
 		return true;
 	else
 		return false;
-}
-
-
-void Events::setButtonDown(MouseButton button, bool isDown) {
-	assert(button != BUTTON_NONE);
-	if (isDown)
-		_buttonsDown |= BUTTON_MASK(button);
-	else
-		_buttonsDown &= ~BUTTON_MASK(button);
-}
-
-
-bool Events::pollEvent(Common::Event &evt) {
-	if (g_system->getEventManager()->pollEvent(evt)) {
-		if (isMouseDownEvent(evt.type)) {
-			setButtonDown(whichButton(evt.type), true);
-			mouse_x = evt.mouse.x;
-			mouse_y = evt.mouse.y;
-		} else if (isMouseUpEvent(evt.type)) {
-			setButtonDown(whichButton(evt.type), false);
-			mouse_x = evt.mouse.x;
-			mouse_y = evt.mouse.y;
-		} else if (evt.type == Common::EVENT_MOUSEMOVE) {
-			mouse_x = evt.mouse.x;
-			mouse_y = evt.mouse.y;
-		}
-
-		return true;
-	}
-
-	return false;
-}
-
-Common::Point Events::getMousePos() {
-	return Common::Point(mouse_x, mouse_y);
-}
-
-bool isMouseDownEvent(Common::EventType type) {
-	return type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_RBUTTONDOWN
-		|| type == Common::EVENT_MBUTTONDOWN;
-}
-
-bool isMouseUpEvent(Common::EventType type) {
-	return type == Common::EVENT_LBUTTONUP || type == Common::EVENT_RBUTTONUP
-		|| type == Common::EVENT_MBUTTONUP;
-}
-
-MouseButton whichButton(Common::EventType type) {
-	if (type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_LBUTTONUP)
-		return BUTTON_LEFT;
-	else if (type == Common::EVENT_RBUTTONDOWN || type == Common::EVENT_RBUTTONUP)
-		return BUTTON_RIGHT;
-	else if (type == Common::EVENT_MBUTTONDOWN || type == Common::EVENT_MBUTTONUP)
-		return BUTTON_MIDDLE;
-	else
-		return BUTTON_NONE;
 }
 
 bool shouldQuit() {

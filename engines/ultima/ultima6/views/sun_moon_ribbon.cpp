@@ -215,7 +215,7 @@ void SunMoonRibbon::display_dungeon_strip() {
 	screen->update(dest.left, dest.top, dest.width(), dest.height());
 }
 
-GUI_status SunMoonRibbon::MouseDown(int x, int y, MouseButton button) {
+GUI_status SunMoonRibbon::MouseDown(int x, int y, Shared::MouseButton button) {
 	Common::Rect rect = area;
 
 	if (retracted) {
