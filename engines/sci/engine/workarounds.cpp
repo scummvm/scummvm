@@ -1246,6 +1246,8 @@ static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	//  audio36 for the the other has the wrong tuple, which we fix in the audio36 workarounds.
 	{ GID_GK1,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  420,   2,  32,   3,  1, { MSG_WORKAROUND_REMAP,    420,   2,  32,   0,  1,  0,   0,   0, NULL } },
 	{ GID_GK1,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  420,   2,  32,   0,  1, { MSG_WORKAROUND_REMAP,    420,   2,  32,   2,  1,  0,   0,   0, NULL } },
+	// Clicking any item other than the dagger on theater vent in room 11853
+	{ GID_GK2,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1, 1185,   4,   0,   0,  1, { MSG_WORKAROUND_REMAP,   1185,   4,  62,   0,  1,  0,   0,   0, NULL } },
 	// Asking Yvette about Tut in act 2 party in floppy version - bug #10723
 	//  The last two sequences in this five part message reveal a murder that hasn't occurred yet.
 	//  We skip these as to not spoil the plot, but only in the act 2 rooms, as the message is used
@@ -1321,6 +1323,8 @@ static const SciMessageWorkaroundEntry audio36Workarounds[] = {
 	// game              media             language       room   mod    n    v    c   s    workaround-type          mod    n    v    c   s tlk  idx  len  text
 	// Clicking money on Lorelei when dancing - bug #10819 (see message workarounds above)
 	{ GID_GK1,           SCI_MEDIA_CD,     K_LANG_NONE,     -1,  420,   2,  32,   0,  1, { MSG_WORKAROUND_REMAP,    420,   2,  32,   3,  1,  0,   0,   0, NULL } },
+	// Clicking Von Glower's letter on Gabriel in room 1120
+	{ GID_GK2,           SCI_MEDIA_ALL,    K_LANG_ENGLISH,  -1, 1120,   5,  96,   0,  1, { MSG_WORKAROUND_REMAP,   1120,   5,   2,   0,  1,  0,   0,   0, NULL } },
 	// Clicking Look on floor grate in room 510 - bug #10848
 	{ GID_QFG4,          SCI_MEDIA_CD,     K_LANG_NONE,     -1,  510,  23,   1,   0,  1, { MSG_WORKAROUND_REMAP,    510, 199,   1,   0,  1,  0,   0,   0, NULL } },
 	// Clicking flowers on Rusalka - bug #10849 (see message workarounds above)

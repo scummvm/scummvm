@@ -3388,11 +3388,35 @@ static const uint16 gk2BenchmarkPatch[] = {
 	PATCH_END
 };
 
+// Clicking an inventory item on the Wager paintings in rooms 8616 and 8617
+//  causes a missing message error. The paintings only have responses for the
+//  "Do" verb but painting:doVerb passes the incoming verb to gk2Messager:say
+//  without any filtering. We fix this by always playing the "Do" message.
+//
+// Applies to: All versions
+// Responsible methods: painting:doVerb in scripts 8616 and 8617
+static const uint16 gk2WagerPaintingMessageSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(say),  // pushi say
+	0x38, SIG_UINT16(0x0006),   // pushi 0006
+	0x67, SIG_ADDTOOFFSET(+1),  // pTos noun
+	0x8f, 0x01,                 // lsp 01 [ verb ]
+	SIG_END,
+};
+
+static const uint16 gk2WagerPaintingMessagePatch[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x39, 0x3e,                 // pushi 3e [ "Do" verb ]
+	PATCH_END
+};
+
 //          script, description,                                              signature                         patch
 static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,     0, "disable volume reset on startup",                     1, gk2VolumeResetSignature,          gk2VolumeResetPatch },
 	{  true,     0, "disable video benchmarking",                          1, gk2BenchmarkSignature,            gk2BenchmarkPatch },
 	{  true,    23, "fix inventory scroll start direction",                1, gk2InvScrollSignature,            gk2InvScrollPatch },
+	{  true,  8616, "fix wagner painting message",                         2, gk2WagerPaintingMessageSignature, gk2WagerPaintingMessagePatch },
+	{  true,  8617, "fix wagner painting message",                         2, gk2WagerPaintingMessageSignature, gk2WagerPaintingMessagePatch },
 	{  true, 64990, "increase number of save games (1/2)",                 1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",                 1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",                     1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
