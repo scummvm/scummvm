@@ -968,9 +968,9 @@
 	</dialog>
 
 	<dialog name = 'GameOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
-		<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '16'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget' type = 'TabWidget'/>
-			<layout type = 'horizontal' padding = '16, 16, 16, 4'>
+			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
 				<space/>
 				<widget name = 'Cancel'
 						type = 'Button'
@@ -1822,6 +1822,29 @@
 			</layout>
 		</layout>
 	</dialog>
+
 	<dialog name = 'DropdownDialog' overlays = 'screen_center'>
+	</dialog>
+
+	<dialog name = 'UnknownGameDialog' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 8, 0'>
+			<widget name = 'TextContainer'
+			/>
+			<layout type = 'horizontal' padding = '0, 0, 16, 16'>
+				<space/>
+				<widget name = 'Report'
+						type = 'Button'
+				/>
+				<widget name = 'Copy'
+						type = 'Button'
+				/>
+				<widget name = 'Close'
+						type = 'Button'
+				/>
+				<widget name = 'Add'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
 	</dialog>
 </layout_info>

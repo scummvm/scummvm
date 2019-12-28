@@ -41,7 +41,7 @@ ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, const Common::Stri
 void ScrollContainerWidget::init() {
 	setFlags(WIDGET_ENABLED);
 	_type = kScrollContainerWidget;
-	_backgroundType = ThemeEngine::kDialogBackgroundDefault;
+	_backgroundType = ThemeEngine::kWidgetBackgroundPlain;
 	_verticalScroll = new ScrollBarWidget(this, _w-16, 0, 16, _h);
 	_verticalScroll->setTarget(this);
 	_scrolledX = 0;
@@ -136,24 +136,12 @@ void ScrollContainerWidget::reflowLayout() {
 	//recalculate height
 	recalc();
 
-	//hide those widgets which are out of visible area
-	ptr = _firstWidget;
-	while (ptr) {
-		int y = ptr->getAbsY() - getChildY();
-		int h = ptr->getHeight();
-		bool visible = ptr->isVisible();
-		if (y + h - _scrolledY < 0) visible = false;
-		if (y - _scrolledY > _limitH) visible = false;
-		ptr->setVisible(visible);
-		ptr = ptr->next();
-	}
-
 	_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
 	_verticalScroll->recalc();
 }
 
 void ScrollContainerWidget::drawWidget() {
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x + _w, _y + getHeight()), _backgroundType);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + getHeight()), _backgroundType);
 }
 
 bool ScrollContainerWidget::containsWidget(Widget *w) const {
@@ -176,7 +164,7 @@ Common::Rect ScrollContainerWidget::getClipRect() const {
 	return Common::Rect(getAbsX(), getAbsY(), getAbsX() + _w, getAbsY() + getHeight() - 1); // this -1 is because of container border, which might not be present actually
 }
 
-void ScrollContainerWidget::setBackgroundType(ThemeEngine::DialogBackground backgroundType) {
+void ScrollContainerWidget::setBackgroundType(ThemeEngine::WidgetBackground backgroundType) {
 	_backgroundType = backgroundType;
 }
 
