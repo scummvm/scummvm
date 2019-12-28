@@ -87,7 +87,7 @@ bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 		// It's a file specifically from the ultima.dat file
 		f = new Common::File();
 		if (f->open(Common::String::format("ultima8/%s", name.substr(6).c_str()),
-			*Ultima8Engine::get_instance()->_dataArchive)) {
+			*Ultima8Engine::get_instance()->getDataArchive())) {
 			in = f;
 			return true;
 		}

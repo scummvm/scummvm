@@ -80,7 +80,7 @@ bool EventsManager::pollEvent(Common::Event &event) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			// Check for debugger
-			if (g_ultima->_events != nullptr && event.kbd.keycode == Common::KEYCODE_d
+			if (g_ultima->_debugger != nullptr && event.kbd.keycode == Common::KEYCODE_d
 					&& (event.kbd.flags & Common::KBD_CTRL)) {
 				// Attach to the debugger
 				g_ultima->_debugger->attach();
@@ -110,6 +110,9 @@ bool EventsManager::pollEvent(Common::Event &event) {
 void EventsManager::nextFrame() {
 	++_frameCounter;
 	++_playTime;
+
+	if (g_ultima->_debugger)
+		g_ultima->_debugger->onFrame();
 }
 
 void EventsManager::setButtonDown(MouseButton button, bool isDown) {

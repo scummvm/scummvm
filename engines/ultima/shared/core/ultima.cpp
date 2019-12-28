@@ -23,6 +23,8 @@
 #include "ultima/shared/core/ultima.h"
 #include "ultima/shared/core/events.h"
 #include "audio/mixer.h"
+#include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/translation.h"
 #include "common/unzip.h"
@@ -49,6 +51,10 @@ bool UltimaEngine::initialize() {
 	Common::String folder;
 	int reqMajorVersion, reqMinorVersion;
 
+	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
+	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
+
+	// Check if the game uses data from te ultima.dat archive
 	if (!isDataRequired(folder, reqMajorVersion, reqMinorVersion))
 		return true;
 
@@ -93,6 +99,21 @@ bool UltimaEngine::autoSaveCheck(int lastSaveTime) {
 	}
 
 	return false;
+}
+
+bool UltimaEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
+uint32 UltimaEngine::getFeatures() const {
+	return _gameDescription->desc.flags;
+}
+
+Common::FSNode UltimaEngine::getGameDirectory() const {
+	return Common::FSNode(ConfMan.get("path"));
 }
 
 } // End of namespace Shared

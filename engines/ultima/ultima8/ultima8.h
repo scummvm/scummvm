@@ -34,6 +34,7 @@
 #include "graphics/surface.h"
 #include "ultima/detection.h"
 #include "ultima/shared/std/containers.h"
+#include "ultima/shared/core/ultima.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/args.h"
 
@@ -76,37 +77,20 @@ namespace Pentagram {
 class AudioMixer;
 }
 
-class Ultima8Engine : public CoreApp, public Engine {
-public:
-	enum Ultima8DebugChannels {
-		kDebugPath = 1 << 0,
-		kDebugGraphics = 1 << 1
-	};
+class Ultima8Engine : public Shared::UltimaEngine, public CoreApp {
 private:
-	const Ultima::UltimaGameDescription *_gameDescription;
-	Common::RandomSource _randomSource;
 	std::list<ObjId> textmodes;      //!< Gumps that want text mode
-
-	/**
-	 * Does basic engine initialization
-	 */
-	bool initialize();
 	
 	/**
 	 * Does engine deinitialization
 	 */
 	void deinitialize();
-	
-	/**
-	 * Loads the Ultima 8 engine data file and hooks it into ScumMVM's search manager
-	 */
-	bool loadData();
 
 	// Load and save games from arbitrary filenames from the console
 	static void ConCmd_saveGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::saveGame <optional filename>" console command
 	static void ConCmd_loadGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::loadGame <optional filename>" console command
 	static void ConCmd_newGame(const Console::ArgvType &argv);          //!< "Ultima8Engine::newGame" console command
-	static void ConCmd_ForceQuit(const Console::ArgvType &argv);
+//	static void ConCmd_ForceQuit(const Console::ArgvType &argv);
 
 	static void ConCmd_quit(const Console::ArgvType &argv);             //!< "quit" console command
 
@@ -154,7 +138,7 @@ private:
 	void setupCoreGumps();
 
 	//! Does a Full reset of the Engine (including shutting down Video)
-	void fullReset();
+//	void fullReset();
 
 	// full system
 	Game *game;
@@ -223,11 +207,16 @@ private:
 protected:
 	// Engine APIs
 	virtual Common::Error run() override;
-	virtual bool hasFeature(EngineFeature f) const;
+
+	virtual bool initialize() override;
 
 	virtual void DeclareArgs();
-public:
-	Common::Archive *_dataArchive;
+
+	/**
+	 * Returns the data archive folder and version that's required
+	 */
+	virtual bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
+
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -235,30 +224,8 @@ public:
 	virtual ~Ultima8Engine();
 	void GUIError(const Common::String &msg);
 
-	uint32 getFeatures() const;
-
 	static Ultima8Engine *get_instance() {
 		return p_dynamic_cast<Ultima8Engine *>(application);
-	}
-
-
-	/**
-	 * Returns a file system node for the game directory
-	 */
-	Common::FSNode getGameDirectory() const;
-
-	/**
-	 * Returns the filename for a savegame given it's slot
-	 */
-	std::string getSaveFilename(int slotNumber) {
-		return Common::String::format("%s.%.3d", _targetName.c_str(), slotNumber);
-	}
-
-	/**
-	 * Returns a random number
-	 */
-	uint getRandomNumber(uint maxVal) {
-		return _randomSource.getRandomNumber(maxVal);
 	}
 
 	void startup();
