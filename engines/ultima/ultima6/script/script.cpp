@@ -20,11 +20,14 @@
  *
  */
 
+#include "ultima/ultima6/lua/lua.h"
+#include "ultima/ultima6/lua/lauxlib.h"
+#include "ultima/ultima6/lua/lualib.h"
+
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/core/u6_objects.h"
-
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/core/game_clock.h"
 #include "ultima/ultima6/core/effect.h"
@@ -42,17 +45,12 @@
 #include "ultima/ultima6/sound/sound_manager.h"
 #include "ultima/ultima6/core/console.h"
 #include "ultima/ultima6/core/cursor.h"
-
 #include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/script/script_actor.h"
 #include "ultima/ultima6/script/script_cutscene.h"
 #include "ultima/ultima6/core/magic.h"
 #include "ultima/ultima6/files/tmx_map.h"
 #include "ultima/ultima6/files/u6_lib_n.h"
-
-#include "common/lua/lua.h"
-#include "common/lua/lauxlib.h"
-#include "common/lua/lualib.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -467,7 +465,7 @@ uint8 ScriptThread::resume_with_nil() {
 
 uint8 ScriptThread::resume(int narg) {
 	const char *s;
-	int ret = lua_resume(L, narg);
+	int ret = lua_resume(L, NULL, narg);
 
 	state = NUVIE_SCRIPT_ERROR;
 
@@ -1541,11 +1539,7 @@ uint16 Script::call_get_tile_to_object_mapping(uint16 tile_n) {
 	lua_pushnumber(L, (lua_Number)tile_n);
 	call_function("get_tile_to_object_mapping", 1, 1);
 	
-#ifdef TODO
 	return (lua_tounsigned(L, -1));
-#else
-	return 0;
-#endif
 }
 
 bool Script::call_is_tile_object(uint16 obj_n) {

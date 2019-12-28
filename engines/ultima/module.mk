@@ -169,7 +169,39 @@ MODULE_OBJS += \
 	ultima6/views/sun_moon_ribbon.o \
 	ultima6/views/sun_moon_strip_widget.o \
 	ultima6/views/vew.o \
-	ultima6/views/view_manager.o
+	ultima6/views/view_manager.o \
+	ultima6/lua/lapi.o \
+	ultima6/lua/lauxlib.o \
+	ultima6/lua/lbaselib.o \
+	ultima6/lua/lbitlib.o \
+	ultima6/lua/lcode.o \
+	ultima6/lua/lcorolib.o \
+	ultima6/lua/lctype.o \
+	ultima6/lua/ldblib.o \
+	ultima6/lua/ldebug.o \
+	ultima6/lua/ldo.o \
+	ultima6/lua/ldump.o \
+	ultima6/lua/lfunc.o \
+	ultima6/lua/lgc.o \
+	ultima6/lua/linit.o \
+	ultima6/lua/liolib.o \
+	ultima6/lua/llex.o \
+	ultima6/lua/lmathlib.o \
+	ultima6/lua/lmem.o \
+	ultima6/lua/loadlib.o \
+	ultima6/lua/lobject.o \
+	ultima6/lua/lopcodes.o \
+	ultima6/lua/loslib.o \
+	ultima6/lua/lparser.o \
+	ultima6/lua/lstate.o \
+	ultima6/lua/lstring.o \
+	ultima6/lua/lstrlib.o \
+	ultima6/lua/ltable.o \
+	ultima6/lua/ltablib.o \
+	ultima6/lua/ltm.o \
+	ultima6/lua/lundump.o \
+	ultima6/lua/lvm.o \
+	ultima6/lua/lzio.o
 endif
 
 ifdef ENABLE_ULTIMA8

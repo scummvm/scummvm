@@ -20,6 +20,7 @@
  *
  */
 
+#include "ultima/ultima6/lua/lauxlib.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/files/u6_lib_n.h"
@@ -34,7 +35,6 @@
 #include "ultima/ultima6/core/cursor.h"
 #include "ultima/ultima6/keybinding/keys.h"
 #include "ultima/ultima6/script/script_cutscene.h"
-#include "common/lua/lauxlib.h"
 #include "common/system.h"
 
 namespace Ultima {

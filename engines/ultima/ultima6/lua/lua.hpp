@@ -20,18 +20,14 @@
  *
  */
 
-#ifndef ULTIMA6_SCRIPT_SCRIPT_ACTOR_H
-#define ULTIMA6_SCRIPT_SCRIPT_ACTOR_H
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+// lua.hpp
+// Lua header files for C++
+// <<extern "C">> not supplied automatically because Lua also compiles as C++
+
+//extern "C" {
 #include "ultima/ultima6/lua/lua.h"
-
-namespace Ultima {
-namespace Ultima6 {
-
-void nscript_init_actor(lua_State *L);
-bool nscript_new_actor_var(lua_State *L, uint16 actor_num);
-
-} // End of namespace Ultima6
-} // End of namespace Ultima
-
-#endif
+#include "ultima/ultima6/lua/lualib.h"
+#include "ultima/ultima6/lua/lauxlib.h"
+//}
