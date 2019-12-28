@@ -36,10 +36,7 @@ namespace GUI {
 ListWidget::ListWidget(Dialog *boss, const String &name, const char *tooltip, uint32 cmd)
 	: EditableWidget(boss, name, tooltip), _cmd(cmd) {
 
-	_scrollBar = NULL;
-
-	// This ensures that _entriesPerPage is properly initialized.
-	reflowLayout();
+	_entriesPerPage = 0;
 
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
@@ -69,10 +66,7 @@ ListWidget::ListWidget(Dialog *boss, const String &name, const char *tooltip, ui
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd)
 	: EditableWidget(boss, x, y, w, h, tooltip), _cmd(cmd) {
 
-	_scrollBar = NULL;
-
-	// This ensures that _entriesPerPage is properly initialized.
-	reflowLayout();
+	_entriesPerPage = 0;
 
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);

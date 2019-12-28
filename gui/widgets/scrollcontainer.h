@@ -35,12 +35,13 @@ class ScrollContainerWidget: public Widget, public CommandSender {
 	uint16 _limitH;
 	uint32 _reflowCmd;
 	ThemeEngine::DialogBackground _backgroundType;
+	Common::String _dialogName;
 
 	void recalc();
 
 public:
 	ScrollContainerWidget(GuiObject *boss, int x, int y, int w, int h, uint32 reflowCmd = 0);
-	ScrollContainerWidget(GuiObject *boss, const Common::String &name, uint32 reflowCmd = 0);
+	ScrollContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogName, uint32 reflowCmd = 0);
 	~ScrollContainerWidget() override;
 
 	void init();

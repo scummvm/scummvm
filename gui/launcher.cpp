@@ -94,13 +94,9 @@ enum {
 #pragma mark -
 
 LauncherDialog::LauncherDialog()
-	: Dialog(0, 0, 320, 200) {
-	_backgroundType = GUI::ThemeEngine::kDialogBackgroundMain;
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
+	: Dialog("Launcher") {
 
-	_w = screenW;
-	_h = screenH;
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundMain;
 
 	build();
 

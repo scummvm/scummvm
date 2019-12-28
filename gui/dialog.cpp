@@ -25,6 +25,7 @@
 
 #include "gui/gui-manager.h"
 #include "gui/dialog.h"
+#include "gui/ThemeEval.h"
 #include "gui/widget.h"
 
 namespace GUI {
@@ -103,6 +104,10 @@ void Dialog::reflowLayout() {
 	// The screen has changed. That means the screen visual may also have
 	// changed, so any cached image may be invalid. The subsequent redraw
 	// should be treated as the very first draw.
+
+	if (!_name.empty()) {
+		g_gui.xmlEval()->reflowDialogLayout(_name, _firstWidget);
+	}
 
 	GuiObject::reflowLayout();
 

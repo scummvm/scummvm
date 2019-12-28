@@ -83,8 +83,9 @@ public:
 	void addPadding(int16 l, int16 r, int16 t, int16 b) { _curLayout.top()->setPadding(l, r, t, b); }
 
 	void closeLayout() { _curLayout.pop(); }
-	void closeDialog() { _curLayout.pop()->reflowLayout(); _curDialog.clear(); }
+	void closeDialog() { _curLayout.pop(); _curDialog.clear(); }
 
+	void reflowDialogLayout(const Common::String &name, Widget *widgetChain);
 	bool getWidgetData(const Common::String &widget, int16 &x, int16 &y, uint16 &w, uint16 &h);
 
 	Graphics::TextAlign getWidgetTextHAlign(const Common::String &widget);

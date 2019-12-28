@@ -290,6 +290,7 @@ void EventRecorder::init(Common::String recordFileName, RecordMode mode) {
 	}
 	if (_recordMode != kPassthrough) {
 		_controlPanel = new GUI::OnScreenDialog(_recordMode == kRecorderRecord);
+		_controlPanel->reflowLayout();
 	}
 	if (_recordMode == kRecorderPlayback) {
 		applyPlaybackSettings();

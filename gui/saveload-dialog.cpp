@@ -398,8 +398,7 @@ SaveLoadChooserSimple::SaveLoadChooserSimple(const String &title, const String &
 
 	_delSupport = _metaInfoSupport = _thumbnailSupport = false;
 
-	_container = new ContainerWidget(this, 0, 0, 10, 10);
-//	_container->setHints(THEME_HINT_USE_SHADOW);
+	_container = new ContainerWidget(this, "SaveLoadChooser.Thumbnail");
 }
 
 int SaveLoadChooserSimple::runIntern() {
@@ -472,6 +471,8 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 }
 
 void SaveLoadChooserSimple::reflowLayout() {
+	SaveLoadChooserDialog::reflowLayout();
+
 	if (g_gui.xmlEval()->getVar("Globals.SaveLoadChooser.ExtInfo.Visible") == 1 && (_thumbnailSupport || _saveDateSupport || _playTimeSupport)) {
 		int16 x, y;
 		uint16 w, h;
@@ -536,8 +537,6 @@ void SaveLoadChooserSimple::reflowLayout() {
 		_time->setVisible(false);
 		_playtime->setVisible(false);
 	}
-
-	SaveLoadChooserDialog::reflowLayout();
 }
 
 void SaveLoadChooserSimple::updateSelection(bool redraw) {
@@ -744,6 +743,10 @@ SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::String &title, bool saveM
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
 	new StaticTextWidget(this, "SaveLoadChooser.Title", title);
+
+	// The list widget needs to be bound so it takes space in the layout
+	ContainerWidget *list = new ContainerWidget(this, "SaveLoadChooser.List");
+	list->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
 
 	// Buttons
 	new ButtonWidget(this, "SaveLoadChooser.Delete", _("Cancel"), 0, kCloseCmd);

@@ -131,7 +131,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	// 1) The game tab
 	//
-	tab->addTab(_("Game"));
+	tab->addTab(_("Game"), "GameOptions_Game");
 
 	// GUI:  Label & edit widget for the game ID
 	if (g_system->getOverlayWidth() > 320)
@@ -175,7 +175,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	// 2) The engine tab (shown only if there are custom engine options)
 	//
 	if (_engineOptions.size() > 0) {
-		tab->addTab(_("Engine"));
+		tab->addTab(_("Engine"), "GameOptions_Engine");
 
 		addEngineControls(tab, "GameOptions_Engine.", _engineOptions);
 	}
@@ -183,8 +183,8 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	// 3) The graphics tab
 	//
-	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
-	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GameOptions_Graphics.Container", kGraphicsTabContainerReflowCmd);
+	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"), "GameOptions_Graphics");
+	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GameOptions_Graphics.Container", "GameOptions_Graphics_Container", kGraphicsTabContainerReflowCmd);
 	graphicsContainer->setBackgroundType(ThemeEngine::kDialogBackgroundNone);
 	graphicsContainer->setTarget(this);
 
@@ -198,7 +198,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	// 4) The audio tab
 	//
-	tab->addTab(_("Audio"));
+	tab->addTab(_("Audio"), "GameOptions_Audio");
 
 	if (g_system->getOverlayWidth() > 320)
 		_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _("Override global audio settings"), 0, kCmdGlobalAudioOverride);
@@ -212,9 +212,9 @@ EditGameDialog::EditGameDialog(const String &domain)
 	// 5) The volume tab
 	//
 	if (g_system->getOverlayWidth() > 320)
-		tab->addTab(_("Volume"));
+		tab->addTab(_("Volume"), "GameOptions_Volume");
 	else
-		tab->addTab(_c("Volume", "lowres"));
+		tab->addTab(_c("Volume", "lowres"), "GameOptions_Volume");
 
 	if (g_system->getOverlayWidth() > 320)
 		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _("Override global volume settings"), 0, kCmdGlobalVolumeOverride);
@@ -230,7 +230,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	_globalMIDIOverride = NULL;
 	if (showMidi) {
-		tab->addTab(_("MIDI"));
+		tab->addTab(_("MIDI"), "GameOptions_MIDI");
 
 		if (g_system->getOverlayWidth() > 320)
 			_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _("Override global MIDI settings"), 0, kCmdGlobalMIDIOverride);
@@ -245,7 +245,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	_globalMT32Override = NULL;
 	if (showMidi) {
-		tab->addTab(_("MT-32"));
+		tab->addTab(_("MT-32"), "GameOptions_MT32");
 
 		if (g_system->getOverlayWidth() > 320)
 			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _("Override global MT-32 settings"), 0, kCmdGlobalMT32Override);
@@ -259,9 +259,9 @@ EditGameDialog::EditGameDialog(const String &domain)
 	// 8) The Paths tab
 	//
 	if (g_system->getOverlayWidth() > 320)
-		tab->addTab(_("Paths"));
+		tab->addTab(_("Paths"), "GameOptions_Paths");
 	else
-		tab->addTab(_c("Paths", "lowres"));
+		tab->addTab(_c("Paths", "lowres"), "GameOptions_Paths");
 
 	// These buttons have to be extra wide, or the text will be truncated
 	// in the small version of the GUI.

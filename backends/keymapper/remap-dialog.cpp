@@ -50,6 +50,9 @@ RemapDialog::RemapDialog()
 
 	_scrollBar = new GUI::ScrollBarWidget(this, 0, 0, 0, 0);
 
+	GUI::ContainerWidget *keymapArea = new GUI::ContainerWidget(this, "KeyMapper.KeymapArea");
+	keymapArea->setBackgroundType(GUI::ThemeEngine::kWidgetBackgroundNo);
+
 	new GUI::ButtonWidget(this, "KeyMapper.Close", _("Close"), 0, kCloseCmd);
 }
 

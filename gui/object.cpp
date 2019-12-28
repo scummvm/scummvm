@@ -31,7 +31,6 @@ namespace GUI {
 
 GuiObject::GuiObject(const Common::String &name)
 	: _x(-1000), _y(-1000), _w(0), _h(0), _name(name), _firstWidget(nullptr) {
-	reflowLayout();
 }
 
 GuiObject::~GuiObject() {

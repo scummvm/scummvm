@@ -51,15 +51,15 @@ enum {
 };
 
 void OnScreenDialog::reflowLayout() {
-	GuiObject::reflowLayout();
+	Dialog::reflowLayout();
+
+	_x = _y = 0;
 }
 
 void OnScreenDialog::releaseFocus() {
 }
 
 OnScreenDialog::OnScreenDialog(bool isRecord) : Dialog("OnScreenDialog") {
-	_x = _y = 0;
-
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.OnScreenDialog.ShowPics") == 1 && g_gui.theme()->supportsImages()) {
 		GUI::PicButtonWidget *button;

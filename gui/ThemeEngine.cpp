@@ -1165,6 +1165,9 @@ void ThemeEngine::drawWidgetBackground(const Common::Rect &r, uint16 hints, Widg
 		return;
 
 	switch (background) {
+	case kWidgetBackgroundNo:
+		break;
+
 	case kWidgetBackgroundBorderSmall:
 		drawDD(kDDWidgetBackgroundSmall, r);
 		break;
