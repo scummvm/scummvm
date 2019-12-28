@@ -985,7 +985,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GameOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
+	<dialog name = 'GameOptions_Graphics' overlays = 'Dialog.GameOptions.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'Container'/>
 		</layout>
@@ -999,7 +999,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GameOptions_Audio' overlays = 'Dialog.GlobalOptions.TabWidget'>
+	<dialog name = 'GameOptions_Audio' overlays = 'Dialog.GameOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<widget name = 'EnableTabCheckbox'
 					type = 'Checkbox'
@@ -1008,7 +1008,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GameOptions_MIDI' overlays = 'Dialog.GlobalOptions.TabWidget'>
+	<dialog name = 'GameOptions_MIDI' overlays = 'Dialog.GameOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<widget name = 'EnableTabCheckbox'
 					type = 'Checkbox'
@@ -1017,7 +1017,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GameOptions_MT32' overlays = 'Dialog.GlobalOptions.TabWidget'>
+	<dialog name = 'GameOptions_MT32' overlays = 'Dialog.GameOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<widget name = 'EnableTabCheckbox'
 					type = 'Checkbox'
@@ -1026,7 +1026,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GameOptions_Volume' overlays = 'Dialog.GlobalOptions.TabWidget'>
+	<dialog name = 'GameOptions_Volume' overlays = 'Dialog.GameOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<widget name = 'EnableTabCheckbox'
 					type = 'Checkbox'

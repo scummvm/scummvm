@@ -77,8 +77,6 @@ protected:
 	Array<ActionInfo> _currentActions;
 	int _topAction;
 
-	Rect _keymapArea;
-
 	GUI::StaticTextWidget *_kmPopUpDesc;
 	GUI::PopUpWidget *_kmPopUp;
 	//GUI::ContainerWidget *_container;

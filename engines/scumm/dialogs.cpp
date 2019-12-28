@@ -287,6 +287,9 @@ HelpDialog::HelpDialog(const GameSettings &game)
 	new GUI::ButtonWidget(this, "ScummHelp.Close", _("~C~lose"), 0, GUI::kCloseCmd);
 	_prevButton->clearFlags(WIDGET_ENABLED);
 
+	GUI::ContainerWidget *placeHolder = new GUI::ContainerWidget(this, "ScummHelp.HelpText");
+	placeHolder->setBackgroundType(GUI::ThemeEngine::kWidgetBackgroundNo);
+
 	_numLines = HELP_NUM_LINES;
 
 	// Dummy entries

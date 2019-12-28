@@ -105,30 +105,18 @@ void ThemeEval::addWidget(const Common::String &name, int w, int h, const Common
 									typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign);
 
 	_curLayout.top()->addChild(widget);
-	setVar(_curDialog + "." + name + ".Enabled", enabled ? 1 : 0);
+	setVar("Dialog." + _curDialog + "." + name + ".Enabled", enabled ? 1 : 0);
 }
 
 void ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, bool enabled, int inset) {
-	int16 x, y;
-	uint16 w, h;
+	Common::String var = "Dialog." + name;
 
-	ThemeLayout *layout = 0;
+	ThemeLayout *layout = new ThemeLayoutMain(name, overlays, enabled, inset);
 
-	if (overlays == "screen") {
-		layout = new ThemeLayoutMain(inset, inset, g_system->getOverlayWidth() - 2 * inset, g_system->getOverlayHeight() - 2 * inset);
-	} else if (overlays == "screen_center") {
-		layout = new ThemeLayoutMain(-1, -1, -1, -1);
-	} else if (getWidgetData(overlays, x, y, w, h)) {
-		layout = new ThemeLayoutMain(x + inset, y + inset, w - 2 * inset, h - 2 * inset);
-	}
+	if (_layouts.contains(var))
+		delete _layouts[var];
 
-	if (!layout)
-		error("Error when loading dialog position for '%s'", overlays.c_str());
-
-	if (_layouts.contains(name))
-		delete _layouts[name];
-
-	_layouts[name] = layout;
+	_layouts[var] = layout;
 
 	layout->setPadding(
 		getVar("Globals.Padding.Left", 0),
@@ -139,7 +127,7 @@ void ThemeEval::addDialog(const Common::String &name, const Common::String &over
 
 	_curLayout.push(layout);
 	_curDialog = name;
-	setVar(name + ".Enabled", enabled ? 1 : 0);
+	setVar(var + ".Enabled", enabled ? 1 : 0);
 }
 
 void ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, bool center) {
@@ -166,6 +154,15 @@ void ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, bool center
 void ThemeEval::addSpace(int size) {
 	ThemeLayout *space = new ThemeLayoutSpacing(_curLayout.top(), size);
 	_curLayout.top()->addChild(space);
+}
+
+void ThemeEval::reflowDialogLayout(const Common::String &name, Widget *widgetChain) {
+	if (!_layouts.contains("Dialog." + name)) {
+		warning("No layout found for dialog '%s'", name.c_str());
+		return;
+	}
+
+	_layouts["Dialog." + name]->reflowLayout(widgetChain);
 }
 
 bool ThemeEval::addImportedLayout(const Common::String &name) {

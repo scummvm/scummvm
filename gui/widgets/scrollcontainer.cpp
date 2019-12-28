@@ -33,8 +33,8 @@ ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, int x, int y, int 
 	init();
 }
 
-ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, const Common::String &name, uint32 reflowCmd)
-	: Widget(boss, name), CommandSender(nullptr), _reflowCmd(reflowCmd) {
+ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogName, uint32 reflowCmd)
+	: Widget(boss, name), CommandSender(nullptr), _reflowCmd(reflowCmd), _dialogName(dialogName) {
 	init();
 }
 
@@ -118,6 +118,10 @@ void ScrollContainerWidget::handleCommand(CommandSender *sender, uint32 cmd, uin
 
 void ScrollContainerWidget::reflowLayout() {
 	Widget::reflowLayout();
+
+	if (!_dialogName.empty()) {
+		g_gui.xmlEval()->reflowDialogLayout(_dialogName, _firstWidget);
+	}
 
 	//reflow layout of inner widgets
 	Widget *ptr = _firstWidget;

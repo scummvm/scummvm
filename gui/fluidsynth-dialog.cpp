@@ -66,7 +66,7 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 
 	_tabWidget = new TabWidget(this, "FluidSynthSettings.TabWidget");
 
-	_tabWidget->addTab(_("Reverb"));
+	_tabWidget->addTab(_("Reverb"), "FluidSynthSettings_Reverb");
 
 	_reverbActivate = new CheckboxWidget(_tabWidget, "FluidSynthSettings_Reverb.EnableTabCheckbox", _("Active"), 0, kActivateReverbCmd);
 
@@ -98,7 +98,7 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 	_reverbLevelSlider->setMaxValue(100);
 	_reverbLevelLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.LevelLabel", "90");
 
-	_tabWidget->addTab(_("Chorus"));
+	_tabWidget->addTab(_("Chorus"), "FluidSynthSettings_Chorus");
 
 	_chorusActivate = new CheckboxWidget(_tabWidget, "FluidSynthSettings_Chorus.EnableTabCheckbox", _("Active"), 0, kActivateChorusCmd);
 
@@ -136,7 +136,7 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 	_chorusWaveFormTypePopUp->appendEntry(_("Sine"), kWaveFormTypeSine);
 	_chorusWaveFormTypePopUp->appendEntry(_("Triangle"), kWaveFormTypeTriangle);
 
-	_tabWidget->addTab(_("Misc"));
+	_tabWidget->addTab(_("Misc"), "FluidSynthSettings_Misc");
 
 	_miscInterpolationPopUpDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Misc.InterpolationText", _("Interpolation:"));
 	_miscInterpolationPopUp = new PopUpWidget(_tabWidget, "FluidSynthSettings_Misc.Interpolation");

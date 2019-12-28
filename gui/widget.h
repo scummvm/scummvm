@@ -130,6 +130,9 @@ public:
 	virtual void setPos(int x, int y) { _x = x; _y = y; }
 	virtual void setSize(int w, int h) { _w = w; _h = h; }
 
+	/** Returns the minimal size the widget needs to have for its contents to fit */
+	virtual void getMinSize(int &minWidth, int &minHeight) { minHeight = -1; minWidth = -1; }
+
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {}
 	virtual void handleMouseUp(int x, int y, int button, int clickCount) {}
 	virtual void handleMouseEntered(int button) {}
@@ -218,6 +221,8 @@ public:
 	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip = 0, uint32 cmd = 0, uint8 hotkey = 0);
 	ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip = 0, uint32 cmd = 0, uint8 hotkey = 0);
 
+	void getMinSize(int &minWidth, int &minHeight) override;
+
 	void setCmd(uint32 cmd)				{ _cmd = cmd; }
 	uint32 getCmd() const				{ return _cmd; }
 
@@ -245,6 +250,8 @@ public:
 	void handleMouseMoved(int x, int y, int button) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void reflowLayout() override;
+	void getMinSize(int &minWidth, int &minHeight) override;
+
 
 	void appendEntry(const Common::String &label, uint32 cmd);
 	void clearEntries();
@@ -430,8 +437,12 @@ public:
 	virtual bool containsWidget(Widget *) const;
 	virtual Widget *findWidget(int x, int y);
 	virtual void removeWidget(Widget *widget);
+
+	void setBackgroundType(ThemeEngine::WidgetBackground backgroundType);
 protected:
 	void drawWidget();
+
+	ThemeEngine::WidgetBackground _backgroundType;
 };
 
 ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x=0, int y=0, int w=0, int h=0);
