@@ -734,24 +734,25 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 
 void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	int id = 0;
+	Score *score = _vm->getCurrentScore();
+
+	if (!score) {
+		warning("Lingo::setTheCast(): The cast %d field %d setting over non-active score", id, field);
+		return;
+	}
 
 	if (id1.type == INT) {
-		id = id1.u.i;
+		id = id1.u.i + score->_castIDoffset;
 	} else {
 		warning("Lingo::setTheCast(): Unknown the cast id type: %s", id1.type2str());
 		return;
 	}
 
-	if (!_vm->getCurrentScore()) {
-		warning("Lingo::setTheCast(): The cast %d field %d setting over non-active score", id, field);
-		return;
-	}
-
-	CastType castType = _vm->getCurrentScore()->_castTypes[id];
-	CastInfo *castInfo = _vm->getCurrentScore()->_castsInfo[id];
+	CastType castType = score->_castTypes[id];
+	CastInfo *castInfo = score->_castsInfo[id];
 
 	if (!castInfo) {
-		warning("Lingo::setTheCast(): The cast %d found", id);
+		warning("Lingo::setTheCast(): The cast %d not found", id);
 		return;
 	}
 
@@ -772,19 +773,19 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		castInfo->script = *d.u.s;
 		break;
 	case kTheWidth:
-		_vm->getCurrentScore()->getCastMemberInitialRect(id).setWidth(d.u.i);
-		_vm->getCurrentScore()->setCastMemberModified(id);
+		score->getCastMemberInitialRect(id).setWidth(d.u.i);
+		score->setCastMemberModified(id);
 		break;
 	case kTheHeight:
-		_vm->getCurrentScore()->getCastMemberInitialRect(id).setHeight(d.u.i);
-		_vm->getCurrentScore()->setCastMemberModified(id);
+		score->getCastMemberInitialRect(id).setHeight(d.u.i);
+		score->setCastMemberModified(id);
 		break;
 	case kTheBackColor:
 		{
 			if (castType != kCastShape) {
 				warning("Lingo::setTheCast(): Field %d of cast %d not found", field, id);
 			}
-			ShapeCast *shape = _vm->getCurrentScore()->_loadedShapes->getVal(id);
+			ShapeCast *shape = score->_loadedShapes->getVal(id);
 			shape->_bgCol = d.u.i;
 			shape->_modified = 1;
 		}
@@ -795,7 +796,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 				warning("Lingo::setTheCast(): Field %d of cast %d not found", field, id);
 				return;
 			}
-			ShapeCast *shape = _vm->getCurrentScore()->_loadedShapes->getVal(id);
+			ShapeCast *shape = score->_loadedShapes->getVal(id);
 			shape->_fgCol = d.u.i;
 			shape->_modified = 1;
 		}
