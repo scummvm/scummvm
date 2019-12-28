@@ -178,7 +178,7 @@ Gump *U8SaveGump::OnMouseDown(int button, int mx, int my) {
 
 
 void U8SaveGump::OnMouseClick(int button, int mx, int my) {
-	if (button != BUTTON_LEFT) return;
+	if (button != Shared::BUTTON_LEFT) return;
 
 	ParentToGump(mx, my);
 

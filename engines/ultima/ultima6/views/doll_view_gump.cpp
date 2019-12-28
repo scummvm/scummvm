@@ -677,11 +677,11 @@ GUI_status DollViewGump::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status DollViewGump::MouseDown(int x, int y, MouseButton button) {
+GUI_status DollViewGump::MouseDown(int x, int y, Shared::MouseButton button) {
 	return DraggableView::MouseDown(x, y, button);
 }
 
-GUI_status DollViewGump::MouseUp(int x, int y, MouseButton button) {
+GUI_status DollViewGump::MouseUp(int x, int y, Shared::MouseButton button) {
 	return DraggableView::MouseUp(x, y, button);
 }
 

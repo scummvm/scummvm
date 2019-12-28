@@ -93,8 +93,8 @@ public:
 	virtual void Display(bool full_redraw);
 
 	/* Mouse hits activate us */
-	virtual GUI_status MouseDown(int x, int y, MouseButton button);
-	virtual GUI_status MouseUp(int x, int y, MouseButton button);
+	virtual GUI_status MouseDown(int x, int y, Shared::MouseButton button);
+	virtual GUI_status MouseUp(int x, int y, Shared::MouseButton button);
 	virtual GUI_status MouseMotion(int x, int y, uint8 state);
 
 	/* Clickable or not ... */
@@ -113,7 +113,7 @@ public:
 	virtual void set_highlighted(bool val) {
 		is_highlighted = val;
 	}
-	virtual GUI_status Activate_button(int x = 0, int y = 0, MouseButton button = BUTTON_LEFT);
+	virtual GUI_status Activate_button(int x = 0, int y = 0, Shared::MouseButton button = Shared::BUTTON_LEFT);
 
 protected:
 	/* yields an appropriate image */

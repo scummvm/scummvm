@@ -84,7 +84,7 @@ public:
 	bool is_garg_font();
 
 	GUI_status KeyDown(const Common::KeyState &key);
-	GUI_status MouseDown(int x, int y, MouseButton button);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
 
 	void move_scroll_down() {
 		scroll_movement_event(SCROLL_DOWN);

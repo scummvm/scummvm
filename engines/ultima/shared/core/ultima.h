@@ -20,57 +20,63 @@
  *
  */
 
-#ifndef ULTIMA6_ULTIMA6_H
-#define ULTIMA6_ULTIMA6_H
+#ifndef ULTIMA_SHARED_ULTIMA_H
+#define ULTIMA_SHARED_ULTIMA_H
 
-#include "ultima/shared/core/ultima.h"
-#include "ultima/shared/std/string.h"
-#include "ultima/ultima6/conf/configuration.h"
+#include "ultima/detection.h"
+#include "Ultima/shared/core/debugger.h"
+#include "Ultima/shared/core/events.h"
 #include "common/archive.h"
 #include "common/random.h"
 #include "engines/engine.h"
 
 namespace Ultima {
-namespace Ultima6 {
+namespace Shared {
 
-class Screen;
-class Script;
-class Game;
-
-class Ultima6Engine : public Ultima::Shared::UltimaEngine {
+class UltimaEngine : public Engine {
+    friend class EventsManager;
 private:
-	Configuration *_config;
-	Screen *_screen;
-	Script *_script;
-	Game *_game;
-private:
-	void initConfig();
-	void assignGameConfigValues(uint8 game_type);
-	bool checkGameDir(uint8 game_type);
-	bool checkDataDir();
-
-	bool playIntro();
+    Common::RandomSource _randomSource;
 protected:
-    virtual bool initialize() override;
+	const Ultima::UltimaGameDescription *_gameDescription;
+	Common::Archive *_dataArchive;
+    Debugger *_debugger;
+    EventsManager *_events;
+protected:
+	/**
+	 * Initializes needed data for the engine
+	 */
+	virtual bool initialize();
 
     /**
      * Returns the data archive folder and version that's required
      */
-    virtual bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
+    virtual bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {
+        return false;
+    }
 
+    /**
+     * Checks if an auto save should be done, and if so, takes care of it
+     */
+    bool autoSaveCheck(int lastSaveTime);
 public:
-	Ultima6Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
-	~Ultima6Engine();
+	UltimaEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
+	~UltimaEngine();
+
+    /**
+     * Show a messae in a GUI dialog
+     */
+	void GUIError(const Common::String &msg);
 
 	/**
-	 * Play the game
+	 * Get a random number
 	 */
-	virtual Common::Error run() override;
+	uint getRandomNumber(uint maxVal) { return _randomSource.getRandomNumber(maxVal); }
 };
 
-extern Ultima6Engine *g_engine;
+extern UltimaEngine *g_ultima;
 
-} // End of namespace Ultima6
+} // End of namespace Shared
 } // End of namespace Ultima
 
 #endif

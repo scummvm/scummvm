@@ -20,45 +20,27 @@
  *
  */
 
-#ifndef ULTIMA6_VIEWS_SCROLL_VIEW_GUMP_H
-#define ULTIMA6_VIEWS_SCROLL_VIEW_GUMP_H
+#ifndef ULTIMA_SHARED_DEBUGGER_H
+#define ULTIMA_SHARED_DEBUGGER_H
 
-#include "ultima/ultima6/views/draggable_view.h"
+#include "common/scummsys.h"
+#include "gui/debugger.h"
 
 namespace Ultima {
-namespace Ultima6 {
+namespace Shared {
 
-class Configuration;
-class TileManager;
-class ObjManager;
-class Screen;
-class ScrollWidgetGump;
+class UltimaEngine;
 
-class ScrollViewGump : public DraggableView {
-
-	ScrollWidgetGump *scroll_widget;
-
+/**
+ * Debugger base class
+ */
+class Debugger : public GUI::Debugger {
 public:
-	ScrollViewGump(Configuration *cfg);
-	~ScrollViewGump();
-
-	bool init(Screen *tmp_screen, void *view_manager, Font *f, Party *p, TileManager *tm, ObjManager *om, std::string text_string);
-
-	void Display(bool full_redraw);
-
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
-
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) {
-		return GUI_YUM;
-	}
-	GUI_status KeyDown(const Common::KeyState &key);
-
-protected:
-
+    Debugger() {}
+    virtual ~Debugger() {}
 };
 
-} // End of namespace Ultima6
+} // End of namespace Shared
 } // End of namespace Ultima
 
 #endif

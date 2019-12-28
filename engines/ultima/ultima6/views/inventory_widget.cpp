@@ -280,7 +280,7 @@ void InventoryWidget::display_arrows() {
 		font->drawChar(screen, 25, area.left, area.top + 3 * 16 + 8);
 }
 
-GUI_status InventoryWidget::MouseDown(int x, int y, MouseButton button) {
+GUI_status InventoryWidget::MouseDown(int x, int y, Shared::MouseButton button) {
 	Events *event = Game::get_game()->get_event();
 	CommandBar *command_bar = Game::get_game()->get_command_bar();
 	x -= area.left;
@@ -386,7 +386,7 @@ GUI_status InventoryWidget::MouseWheel(sint32 x, sint32 y) {
 }
 
 // change container, ready/unready object, activate arrows
-GUI_status InventoryWidget::MouseUp(int x, int y, MouseButton button) {
+GUI_status InventoryWidget::MouseUp(int x, int y, Shared::MouseButton button) {
 
 	CommandBar *command_bar = Game::get_game()->get_command_bar();
 
@@ -650,7 +650,7 @@ void InventoryWidget::try_click() {
 }
 
 /* Use object. */
-GUI_status InventoryWidget::MouseDouble(int x, int y, MouseButton button) {
+GUI_status InventoryWidget::MouseDouble(int x, int y, Shared::MouseButton button) {
 	// we have to check if double-clicks are allowed here, since we use single-clicks
 	if (!Game::get_game()->get_map_window()->is_doubleclick_enabled())
 		return (GUI_PASS);
@@ -668,12 +668,12 @@ GUI_status InventoryWidget::MouseDouble(int x, int y, MouseButton button) {
 	return (GUI_PASS);
 }
 
-GUI_status InventoryWidget::MouseClick(int x, int y, MouseButton button) {
+GUI_status InventoryWidget::MouseClick(int x, int y, Shared::MouseButton button) {
 	return (MouseUp(x, y, button));
 }
 
 // change container, ready/unready object, activate arrows
-GUI_status InventoryWidget::MouseDelayed(int x, int y, MouseButton button) {
+GUI_status InventoryWidget::MouseDelayed(int x, int y, Shared::MouseButton button) {
 	if (ready_obj)
 		try_click();
 	return GUI_PASS;

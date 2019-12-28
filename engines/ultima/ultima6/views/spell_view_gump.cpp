@@ -299,8 +299,8 @@ GUI_status SpellViewGump::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status SpellViewGump::MouseDown(int x, int y, MouseButton button) {
-	if (button == BUTTON_RIGHT) {
+GUI_status SpellViewGump::MouseDown(int x, int y, Shared::MouseButton button) {
+	if (button == Shared::BUTTON_RIGHT) {
 		close_spellbook();
 		return GUI_YUM;
 	}
@@ -339,7 +339,7 @@ GUI_status SpellViewGump::MouseDown(int x, int y, MouseButton button) {
 	return DraggableView::MouseDown(x, y, button);
 }
 
-GUI_status SpellViewGump::MouseUp(int x, int y, MouseButton button) {
+GUI_status SpellViewGump::MouseUp(int x, int y, Shared::MouseButton button) {
 	sint16 spell = getSpell(x, y);
 
 	if (spell != -1 && spell == selected_spell) {

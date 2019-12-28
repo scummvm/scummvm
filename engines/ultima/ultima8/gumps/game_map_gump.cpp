@@ -286,12 +286,12 @@ Gump *GameMapGump::OnMouseDown(int button, int mx, int my) {
 	GumpToScreenSpace(sx, sy);
 
 	AvatarMoverProcess *amp = Ultima8Engine::get_instance()->getAvatarMoverProcess();
-	if (button == BUTTON_RIGHT || button == BUTTON_LEFT) {
+	if (button == Shared::BUTTON_RIGHT || button == Shared::BUTTON_LEFT) {
 		amp->OnMouseDown(button, sx, sy);
 	}
 
-	if (button == BUTTON_LEFT || button == BUTTON_RIGHT ||
-	        button == BUTTON_MIDDLE) {
+	if (button == Shared::BUTTON_LEFT || button == Shared::BUTTON_RIGHT ||
+	        button == Shared::BUTTON_MIDDLE) {
 		// we take all clicks
 		return this;
 	}
@@ -301,7 +301,7 @@ Gump *GameMapGump::OnMouseDown(int button, int mx, int my) {
 
 void GameMapGump::OnMouseUp(int button, int mx, int my) {
 	AvatarMoverProcess *amp = Ultima8Engine::get_instance()->getAvatarMoverProcess();
-	if (button == BUTTON_RIGHT || button == BUTTON_LEFT) {
+	if (button == Shared::BUTTON_RIGHT || button == Shared::BUTTON_LEFT) {
 		amp->OnMouseUp(button);
 	}
 }
@@ -309,10 +309,10 @@ void GameMapGump::OnMouseUp(int button, int mx, int my) {
 void GameMapGump::OnMouseClick(int button, int mx, int my) {
 	MainActor *avatar = getMainActor();
 	switch (button) {
-	case BUTTON_LEFT: {
+	case Shared::BUTTON_LEFT: {
 		if (avatar->isInCombat()) break;
 
-		if (Mouse::get_instance()->isMouseDownEvent(BUTTON_RIGHT)) break;
+		if (Mouse::get_instance()->isMouseDownEvent(Shared::BUTTON_RIGHT)) break;
 
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << std::endl;
@@ -331,7 +331,7 @@ void GameMapGump::OnMouseClick(int button, int mx, int my) {
 		}
 		break;
 	}
-	case BUTTON_MIDDLE: {
+	case Shared::BUTTON_MIDDLE: {
 		uint16 objID = TraceObjId(mx, my);
 		Item *item = getItem(objID);
 		if (item) {
@@ -377,10 +377,10 @@ void GameMapGump::OnMouseClick(int button, int mx, int my) {
 void GameMapGump::OnMouseDouble(int button, int mx, int my) {
 	MainActor *avatar = getMainActor();
 	switch (button) {
-	case BUTTON_LEFT: {
+	case Shared::BUTTON_LEFT: {
 		if (avatar->isInCombat()) break;
 
-		if (Mouse::get_instance()->isMouseDownEvent(BUTTON_RIGHT)) break;
+		if (Mouse::get_instance()->isMouseDownEvent(Shared::BUTTON_RIGHT)) break;
 
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << std::endl;

@@ -68,7 +68,7 @@ public:
 
 	GUI_status close_dialog();
 	GUI_status KeyDown(const Common::KeyState &key);
-	GUI_status MouseDown(int x, int y, MouseButton button);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
 	GUI_status MouseWheel(sint32 x, sint32 y);
 	GUI_Scroller *get_scroller() {
 		return scroller;

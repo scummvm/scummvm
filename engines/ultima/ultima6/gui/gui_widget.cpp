@@ -64,8 +64,8 @@ void GUI_Widget::Init(void *data, int x, int y, int w, int h) {
 
 	update_display = true;
 	set_accept_mouseclick(false); // initializes mouseclick time; SB-X
-	delayed_button = BUTTON_NONE; // optional mouseclick-delay; SB-X
-	held_button = BUTTON_NONE; // optional mousedown-delay; SB-X
+	delayed_button = Shared::BUTTON_NONE; // optional mouseclick-delay; SB-X
+	held_button = Shared::BUTTON_NONE; // optional mousedown-delay; SB-X
 	mouse_moved = false;
 
 	int mx = 0, my = 0;
@@ -316,11 +316,11 @@ GUI_status GUI_Widget::KeyUp(Common::KeyState key) {
 	return (GUI_PASS);
 }
 
-GUI_status GUI_Widget::MouseDown(int x, int y, MouseButton button) {
+GUI_status GUI_Widget::MouseDown(int x, int y, Shared::MouseButton button) {
 	return (GUI_PASS);
 }
 
-GUI_status GUI_Widget::MouseUp(int x, int y, MouseButton button) {
+GUI_status GUI_Widget::MouseUp(int x, int y, Shared::MouseButton button) {
 	return (GUI_PASS);
 }
 
@@ -369,10 +369,10 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_MBUTTONDOWN: {
 		int x, y;
-		MouseButton button;
+		Shared::MouseButton button;
 		x = event->mouse.x;
 		y = event->mouse.y;
-		button = whichButton(event->type);
+		button = Shared::whichButton(event->type);
 		if (focused || HitRect(x, y)) {
 			set_mousedown(SDL_GetTicks(), button);
 
@@ -391,10 +391,10 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 	case Common::EVENT_RBUTTONUP:
 	case Common::EVENT_MBUTTONUP: {
 		int x, y;
-		MouseButton button;
+		Shared::MouseButton button;
 		x = event->mouse.x;
 		y = event->mouse.y;
-		button = whichButton(event->type);
+		button = Shared::whichButton(event->type);
 		if (focused || HitRect(x, y))  {
 			int rel_time = SDL_GetTicks();
 			int last_rel_time = get_mouseup(button);
@@ -488,13 +488,13 @@ void GUI_Widget::drag_perform_drop(int x, int y, int message, void *data) {
 
 /* Mouse button was pressed and released over the widget.
  */
-GUI_status GUI_Widget::MouseClick(int x, int y, MouseButton button) {
+GUI_status GUI_Widget::MouseClick(int x, int y, Shared::MouseButton button) {
 	return (GUI_PASS);
 }
 
 /* Mouse button was clicked twice over the widget, within a certain time period.
  */
-GUI_status GUI_Widget::MouseDouble(int x, int y, MouseButton button) {
+GUI_status GUI_Widget::MouseDouble(int x, int y, Shared::MouseButton button) {
 	return (GUI_PASS);
 }
 
@@ -568,18 +568,18 @@ GUI_status GUI_Widget::try_mouse_delayed() {
 	int time_to_click = SDL_GetTicks() - mouseup_time;
 
 	if (mousedown_time != 0 && time_to_hold >= GUI::mouseclick_delay) {
-		MouseButton button = held_button;
+		Shared::MouseButton button = held_button;
 		int x, y; // position isn't saved anywhere so we get it here
 		screen->get_mouse_location(&x, &y); // hopefully it hasn't changed since MouseDown
-		held_button = BUTTON_NONE; // no need to clear mousedown time, MouseUp does that
+		held_button = Shared::BUTTON_NONE; // no need to clear mousedown time, MouseUp does that
 		return (MouseHeld(x, y, button));
 	}
 
 	if (mouseup_time != 0 && time_to_click >= GUI::mouseclick_delay) {
-		MouseButton button = delayed_button;
+		Shared::MouseButton button = delayed_button;
 		int x, y; // position isn't saved anywhere so we get it here
 		screen->get_mouse_location(&x, &y); // hopefully it hasn't changed since MouseClick/MouseUp
-		delayed_button = BUTTON_NONE;
+		delayed_button = Shared::BUTTON_NONE;
 		// before a Double or Delayed click, mouseup time is reset
 		set_mouseup(0, button);
 		return (MouseDelayed(x, y, button));
@@ -589,13 +589,13 @@ GUI_status GUI_Widget::try_mouse_delayed() {
 
 // like a MouseClick but called only after waiting for MouseDouble, if
 // wait_for_mouseclick(button) was called
-GUI_status GUI_Widget::MouseDelayed(int x, int y, MouseButton button) {
+GUI_status GUI_Widget::MouseDelayed(int x, int y, Shared::MouseButton button) {
 	return (GUI_PASS);
 }
 
 // like a MouseDown but called only after waiting for MouseUp, if
 // wait_for_mousedown(button) was called
-GUI_status GUI_Widget::MouseHeld(int x, int y, MouseButton button) {
+GUI_status GUI_Widget::MouseHeld(int x, int y, Shared::MouseButton button) {
 	return (GUI_PASS);
 }
 

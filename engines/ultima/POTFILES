@@ -1,2 +1,3 @@
-engines/ultima/ultima8/ultima8.cpp
+engines/ultima/shared/core/ultima.cpp
 engines/ultima/ultima6/ultima6.cpp
+engines/ultima/ultima8/ultima8.cpp

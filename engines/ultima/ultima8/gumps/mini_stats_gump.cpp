@@ -116,7 +116,7 @@ uint16 MiniStatsGump::TraceObjId(int mx, int my) {
 }
 
 Gump *MiniStatsGump::OnMouseDown(int button, int mx, int my) {
-	if (button == BUTTON_LEFT)
+	if (button == Shared::BUTTON_LEFT)
 		return this;
 
 	return 0;

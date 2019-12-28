@@ -2079,7 +2079,7 @@ GUI_status MapWindow::Idle(void) {
 
 
 // single-click (press and release button)
-GUI_status MapWindow::MouseClick(int x, int y, MouseButton button) {
+GUI_status MapWindow::MouseClick(int x, int y, Shared::MouseButton button) {
 	if (button == USE_BUTTON && look_on_left_click) {
 		wait_for_mouseclick(button); // see MouseDelayed
 	}
@@ -2087,7 +2087,7 @@ GUI_status MapWindow::MouseClick(int x, int y, MouseButton button) {
 }
 
 // single-click; waited for double-click
-GUI_status MapWindow::MouseDelayed(int x, int y, MouseButton button) {
+GUI_status MapWindow::MouseDelayed(int x, int y, Shared::MouseButton button) {
 	Events *event = game->get_event();
 	if (!looking || game->user_paused() || event->cursor_mode
 	        || (event->get_mode() != MOVE_MODE && event->get_mode() != EQUIP_MODE)) {
@@ -2105,7 +2105,7 @@ GUI_status MapWindow::MouseDelayed(int x, int y, MouseButton button) {
 }
 
 // MouseDown; waited for MouseUp
-GUI_status MapWindow::MouseHeld(int x, int y, MouseButton button) {
+GUI_status MapWindow::MouseHeld(int x, int y, Shared::MouseButton button) {
 	looking = false;
 	if (walk_with_left_button)
 		set_walking(true);
@@ -2113,7 +2113,7 @@ GUI_status MapWindow::MouseHeld(int x, int y, MouseButton button) {
 }
 
 // double-click
-GUI_status MapWindow::MouseDouble(int x, int y, MouseButton button) {
+GUI_status MapWindow::MouseDouble(int x, int y, Shared::MouseButton button) {
 	Events *event = game->get_event();
 
 	// only USE if not doing anything in event
@@ -2143,7 +2143,7 @@ GUI_status MapWindow::MouseWheel(sint32 x, sint32 y) {
 	return GUI_YUM;
 }
 
-GUI_status MapWindow::MouseDown(int x, int y, MouseButton button) {
+GUI_status MapWindow::MouseDown(int x, int y, Shared::MouseButton button) {
 	//DEBUG(0,LEVEL_DEBUGGING,"MapWindow::MouseDown, button = %i\n", button);
 	Events *event = game->get_event();
 	Actor *player = actor_manager->get_player();
@@ -2221,7 +2221,7 @@ GUI_status MapWindow::MouseDown(int x, int y, MouseButton button) {
 	return  GUI_PASS;
 }
 
-GUI_status MapWindow::MouseUp(int x, int y, MouseButton button) {
+GUI_status MapWindow::MouseUp(int x, int y, Shared::MouseButton button) {
 	// cancel dragging and movement no matter what button is released
 	if (selected_obj) {
 		selected_obj = NULL;

@@ -73,9 +73,9 @@ public:
 	void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y);
 	void close_look();
 	GUI_status KeyDown(const Common::KeyState &key);
-	GUI_status MouseDown(int x, int y, MouseButton button);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
 
-	GUI_status MouseUp(int x, int y, MouseButton button) {
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) {
 		return GUI_YUM;
 	}
 	GUI_status MouseMotion(int x, int y, uint8 state) {
@@ -87,16 +87,16 @@ public:
 	GUI_status MouseLeave(uint8 state) {
 		return GUI_YUM;
 	}
-	GUI_status MouseClick(int x, int y, MouseButton button) {
+	GUI_status MouseClick(int x, int y, Shared::MouseButton button) {
 		return GUI_YUM;
 	}
-	GUI_status MouseDouble(int x, int y, MouseButton button) {
+	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) {
 		return GUI_YUM;
 	}
-	GUI_status MouseDelayed(int x, int y, MouseButton button) {
+	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) {
 		return GUI_YUM;
 	}
-	GUI_status MouseHeld(int x, int y, MouseButton button) {
+	GUI_status MouseHeld(int x, int y, Shared::MouseButton button) {
 		return GUI_YUM;
 	}
 	GUI_status MouseWheel(sint32 x, sint32 y);

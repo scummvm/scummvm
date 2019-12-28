@@ -61,7 +61,7 @@ public:
 
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
 
-	GUI_status MouseDown(int x, int y, MouseButton button);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
 	GUI_status MouseWheel(sint32 x, sint32 y);
 
 protected:

@@ -117,13 +117,13 @@ void GUI_Scroller:: Display(bool full_redraw) {
 	return;
 }
 
-GUI_status GUI_Scroller::MouseDown(int x, int y, MouseButton button) {
+GUI_status GUI_Scroller::MouseDown(int x, int y, Shared::MouseButton button) {
 //grab_focus();
 
 	return GUI_YUM;
 }
 
-GUI_status GUI_Scroller::MouseUp(int x, int y, MouseButton button) {
+GUI_status GUI_Scroller::MouseUp(int x, int y, Shared::MouseButton button) {
 
 // release_focus();
 

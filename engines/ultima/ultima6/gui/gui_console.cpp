@@ -88,7 +88,7 @@ void GUI_Console::AddLine(std::string line) {
 		data.pop_front();
 }
 
-GUI_status GUI_Console::MouseDown(int x, int y, MouseButton button) {
+GUI_status GUI_Console::MouseDown(int x, int y, Shared::MouseButton button) {
 
 
 //grab_focus();
@@ -96,7 +96,7 @@ GUI_status GUI_Console::MouseDown(int x, int y, MouseButton button) {
 	return GUI_YUM;
 }
 
-GUI_status GUI_Console::MouseUp(int x, int y, MouseButton button) {
+GUI_status GUI_Console::MouseUp(int x, int y, Shared::MouseButton button) {
 
 // release_focus();
 

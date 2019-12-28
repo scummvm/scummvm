@@ -54,8 +54,8 @@ public:
 
 	virtual void Display(bool full_redraw);
 	virtual GUI_status KeyDown(const Common::KeyState &key);
-	virtual GUI_status MouseDown(int x, int y, MouseButton button);
-	virtual GUI_status MouseUp(int x, int y, MouseButton button);
+	virtual GUI_status MouseDown(int x, int y, Shared::MouseButton button);
+	virtual GUI_status MouseUp(int x, int y, Shared::MouseButton button);
 
 private:
 	const char *get_command_name(sint8 command_num);

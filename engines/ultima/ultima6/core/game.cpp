@@ -75,9 +75,11 @@ namespace Ultima6 {
 
 Game *Game::game = NULL;
 
-Game::Game(Configuration *cfg, Screen *scr, GUI *g, nuvie_game_t type, SoundManager *sm) {
+Game::Game(Configuration *cfg, Events *evt, Screen *scr, GUI *g, nuvie_game_t type, SoundManager *sm) {
 	game = this;
 	config = cfg;
+	event = evt;
+	
 	gui = g;
 
 	screen = scr;
@@ -97,7 +99,6 @@ Game::Game(Configuration *cfg, Screen *scr, GUI *g, nuvie_game_t type, SoundMana
 	map_window = NULL;
 	actor_manager = NULL;
 	player = NULL;
-	event = NULL;
 	converse = NULL;
 	conv_gump = NULL;
 	command_bar = NULL;
@@ -183,7 +184,6 @@ Game::~Game() {
 	if (actor_manager) delete actor_manager;
 	//delete map_window;
 	if (player) delete player;
-	if (event) delete event;
 	//delete background;
 	if (converse) delete converse;
 	if (clock) delete clock;
@@ -333,7 +333,6 @@ bool Game::loadGame(Script *s) {
 		magic = new Magic();
 	}
 
-	event = new Events(config);
 	event->init(obj_manager, map_window, scroll, player, magic, clock, view_manager, usecode, gui, keybinder);
 	if (game_type == NUVIE_GAME_U6) {
 		magic->init(event);

@@ -708,7 +708,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 	return GUI_YUM;
 }
 
-GUI_status ConverseGump::MouseUp(int x, int y, MouseButton button) {
+GUI_status ConverseGump::MouseUp(int x, int y, Shared::MouseButton button) {
 	std::string token_str;
 
 	if (page_break || !is_talking()) { // any click == scroll-to-end

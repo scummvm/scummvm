@@ -47,8 +47,8 @@ public:
 
 	virtual int GetSelection() const;
 
-	virtual GUI_status MouseUp(int x, int y, MouseButton button);
-	virtual GUI_status Activate_button(int x = 0, int y = 0, MouseButton button = BUTTON_LEFT);
+	virtual GUI_status MouseUp(int x, int y, Shared::MouseButton button);
+	virtual GUI_status Activate_button(int x = 0, int y = 0, Shared::MouseButton button = Shared::BUTTON_LEFT);
 
 protected:
 	int selection;

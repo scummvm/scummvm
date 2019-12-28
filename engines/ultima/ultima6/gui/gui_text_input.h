@@ -52,7 +52,7 @@ public:
 
 	void release_focus();
 
-	GUI_status MouseUp(int x, int y, MouseButton button);
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button);
 	GUI_status KeyDown(const Common::KeyState &key);
 
 	void add_char(char c);
