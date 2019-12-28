@@ -765,22 +765,35 @@ bool ThemeParser::parserCallback_import(ParserNode *node) {
 
 bool ThemeParser::parserCallback_layout(ParserNode *node) {
 	int spacing = -1;
-	bool center = false;
 
 	if (node->values.contains("spacing")) {
 		if (!parseIntegerKey(node->values["spacing"], 1, &spacing))
 			return false;
 	}
 
-	(void)Common::parseBool(node->values["center"], center);
+	ThemeLayout::ItemAlign itemAlign = ThemeLayout::kItemAlignStart;
+
+	if (node->values.contains("align")) {
+		Common::String val = node->values["align"];
+		if (val == "start") {
+			itemAlign = ThemeLayout::kItemAlignStart;
+		} else if (val == "center") {
+			itemAlign = ThemeLayout::kItemAlignCenter;
+		} else if (val == "end") {
+			itemAlign = ThemeLayout::kItemAlignEnd;
+		} else if (val == "stretch") {
+			itemAlign = ThemeLayout::kItemAlignStretch;
+		} else {
+			return parserError("'" + val + "' is not a valid item alignment for a layout.");
+		}
+	}
 
 	if (node->values["type"] == "vertical")
-		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutVertical, spacing, center);
+		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutVertical, spacing, itemAlign);
 	else if (node->values["type"] == "horizontal")
-		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutHorizontal, spacing, center);
+		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutHorizontal, spacing, itemAlign);
 	else
 		return parserError("Invalid layout type. Only 'horizontal' and 'vertical' layouts allowed.");
-
 
 	if (node->values.contains("padding")) {
 		int paddingL, paddingR, paddingT, paddingB;

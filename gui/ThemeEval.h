@@ -75,7 +75,7 @@ public:
 	bool hasVar(const Common::String &name) { return _vars.contains(name) || _builtin.contains(name); }
 
 	void addDialog(const Common::String &name, const Common::String &overlays, bool enabled = true, int inset = 0);
-	void addLayout(ThemeLayout::LayoutType type, int spacing, bool center = false);
+	void addLayout(ThemeLayout::LayoutType type, int spacing, ThemeLayout::ItemAlign itemAlign);
 	void addWidget(const Common::String &name, int w, int h, const Common::String &type, bool enabled = true, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 	bool addImportedLayout(const Common::String &name);
 	void addSpace(int size);
