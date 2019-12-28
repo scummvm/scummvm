@@ -308,6 +308,9 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		// bpp. 1, 2, 4, 8, 32
 		warning("STUB: Lingo::setTheEntity(): Set color depth to %d", _vm->_colorDepth);
 		break;
+	case kTheCast:
+		setTheCast(id, field, d);
+		break;
 	default:
 		warning("Lingo::setTheEntity(): Unprocessed setting field %d of entity %d", field, entity);
 	}
