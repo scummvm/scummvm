@@ -28,6 +28,7 @@
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 #include "common/events.h"
+#include "common/hash-str.h"
 
 #ifdef HAVE_JOYSTICK_SUPPORT
 typedef enum { AXES_PAIR1, AXES_PAIR2, AXES_PAIR3, AXES_PAIR4, UNHANDLED_AXES_PAIR } joy_axes_pairs;
@@ -52,6 +53,9 @@ struct ActionType {
 
 typedef std::map<uint32, ActionType> KeyMap;
 
+typedef std::map<Common::String, Common::KeyCode> ParseKeyMap;
+typedef std::map<Common::String, const void *> ParseActionMap;
+
 class Configuration;
 
 char get_ascii_char_from_keysym(Common::KeyState keysym);
@@ -62,6 +66,10 @@ private:
 
 	std::vector<std::string> _keyHelp;
 	std::vector<std::string> _cheatHelp;
+	ParseKeyMap _keys;
+	ParseActionMap _actions;
+
+
 #ifdef HAVE_JOYSTICK_SUPPORT
 	SDL_Joystick *joystick;
 	bool repeat_hat, joy_repeat_enabled; // repeat hat instead of axis when hat is found
