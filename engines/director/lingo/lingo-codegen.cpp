@@ -179,7 +179,7 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 
 	if (!_localvars || !_localvars->contains(name)) { // Create variable if it was not defined
 		// Check if it is a global symbol
-		if (_globalvars.contains(name) && _globalvars[name]->type == SYMBOL)
+		if (_globalvars.contains(name))
 			return _globalvars[name];
 
 		if (!create)
@@ -190,10 +190,11 @@ Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
 		sym->type = VOID;
 		sym->u.i = 0;
 
-		if (_localvars)
-			(*_localvars)[name] = sym;
+		if (!putInGlobalList) {
+			if (_localvars)
+				(*_localvars)[name] = sym;
 
-		if (putInGlobalList) {
+		} else {
 			sym->global = true;
 			_globalvars[name] = sym;
 		}
