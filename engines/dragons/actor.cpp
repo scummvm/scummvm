@@ -164,6 +164,7 @@ void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 	frame_height = 0;
 	frame_flags = 4;
 	//TODO sub_80017010();
+	freeFrame();
 
 	updateSequence((uint16)sequenceID);
 }
@@ -179,12 +180,7 @@ void Actor::resetSequenceIP() {
 }
 
 void Actor::loadFrame(uint16 frameOffset) {
-	if (frame) {
-		delete frame;
-	}
-	if (surface) {
-		delete surface;
-	}
+	freeFrame();
 
 	frame = _actorResource->loadFrameHeader(frameOffset);
 
@@ -202,6 +198,13 @@ void Actor::loadFrame(uint16 frameOffset) {
 
 }
 
+void Actor::freeFrame() {
+	delete frame;
+	delete surface;
+	frame = NULL;
+	surface = NULL;
+}
+
 byte *Actor::getSeqIpAtOffset(uint32 offset) {
 	return _actorResource->getSequenceDataAtOffset(offset);
 }
@@ -209,6 +212,7 @@ byte *Actor::getSeqIpAtOffset(uint32 offset) {
 void Actor::reset_maybe() {
 	flags = 0;
 	//TODO actor_find_by_resourceId_and_remove_resource_from_mem_maybe(resourceID);
+	freeFrame();
 }
 
 static const int32 pathfinderXYOffsetTbl[32] =
