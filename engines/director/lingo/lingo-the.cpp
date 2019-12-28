@@ -742,17 +742,17 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	}
 
 	if (id1.type == INT) {
-		id = id1.u.i + score->_castIDoffset;
+		id = id1.u.i;
 	} else {
 		warning("Lingo::setTheCast(): Unknown the cast id type: %s", id1.type2str());
 		return;
 	}
 
 	CastType castType = score->_castTypes[id];
-	CastInfo *castInfo = score->_castsInfo[id];
+	CastInfo *castInfo = score->_castsInfo[id + score->_castIDoffset];
 
 	if (!castInfo) {
-		warning("Lingo::setTheCast(): The cast %d not found", id);
+		warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
 		return;
 	}
 
