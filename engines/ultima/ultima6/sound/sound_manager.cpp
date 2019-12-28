@@ -82,6 +82,9 @@ SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
 }
 
 SoundManager::~SoundManager() {
+	// Stop all mixing
+	_mixer->stopAll();
+
 	//thanks to wjp for this one
 	while (!m_Songs.empty()) {
 		delete *(m_Songs.begin());
@@ -100,10 +103,6 @@ SoundManager::~SoundManager() {
 		delete it->_value;
 	for (StringCollectionMap::iterator it = m_MusicMap.begin(); it != m_MusicMap.end(); ++it)
 		delete it->_value;
-
-	if (audio_enabled)
-		_mixer->stopAll();
-
 }
 
 bool SoundManager::nuvieStartup(Configuration *config) {
