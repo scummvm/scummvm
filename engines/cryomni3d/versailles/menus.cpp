@@ -555,7 +555,7 @@ uint CryOmni3DEngine_Versailles::displayYesNoBox(Graphics::ManagedSurface &surfa
 	bool redraw = true;
 	uint result = uint(-1);
 
-	while (!end || redraw) {
+	while (!shouldAbort() && (!end || redraw)) {
 		if (redraw) {
 			for (uint boxId = 0; boxId < 2; boxId++) {
 				if (boxId == result) {
@@ -855,6 +855,9 @@ uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFr
 				autoRepeatInhibit = true;
 				autoRepeatEndInhibit = g_system->getMillis() + autoRepeatDelay;
 				filesListChanged = true;
+			}
+			if (shouldAbort()) {
+				return uint(-1);
 			}
 		}
 		if (autoRepeatInhibit && g_system->getMillis() > autoRepeatEndInhibit) {
