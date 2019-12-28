@@ -17307,6 +17307,33 @@ static const uint16 sq6HookahHosePointPatch[] = {
 	PATCH_END
 };
 
+// Filling the helmet in room 690 awards three points, but this happens every
+//  time the player returns to fill the helmet with no limit. We fix this by
+//  associating the points with flag 297 so that they're only awarded once, as
+//  Sierra did in the French, German, and Mac versions.
+//
+// Applies to: English PC
+// Responsible method: sGetStuff:changeState(8)
+static const uint16 sq6DuplicatePointsSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(points),        // pushi points
+	0x78,                               // push1
+	0x39, 0x03,                         // pushi 03
+	0x81, 0x01,                         // lag 01
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ SQ6 points: 3 ]
+	0x7e,                               // line
+	SIG_END
+};
+
+static const uint16 sq6DuplicatePointsPatch[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x7a,                               // push2
+	PATCH_ADDTOOFFSET(+4),
+	0x38, PATCH_UINT16(0x0129),         // pushi 0129
+	0x4a, PATCH_UINT16(0x0008),         // send 08 [ SQ6 points: 3 297 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,     0, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
@@ -17319,6 +17346,7 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,   460, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,   500, "fix slow transitions",                        1, sq6SlowTransitionSignature1,     sq6SlowTransitionPatch1 },
 	{  true,   510, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,   690, "fix duplicate points",                        1, sq6DuplicatePointsSignature,     sq6DuplicatePointsPatch },
 	{  true, 64908, "disable video benchmarking",                  1, sq6BenchmarkSignature,           sci2BenchmarkPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,          sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,          sci2NumSavesPatch2 },
