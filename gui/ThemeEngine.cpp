@@ -1047,7 +1047,7 @@ void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo s
 	r2.setWidth(MIN((int16)width, r.width()));
 	//	r2.top++; r2.bottom--; r2.left++; r2.right--;
 
-	drawWidgetBackground(r, 0, kWidgetBackgroundSlider);
+	drawWidgetBackground(r, kWidgetBackgroundSlider);
 
 	drawDD(dd, r2);
 }
@@ -1160,7 +1160,7 @@ void ThemeEngine::drawSurface(const Common::Point &p, const Graphics::Surface &s
 	addDirtyRect(dirtyRect);
 }
 
-void ThemeEngine::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background) {
+void ThemeEngine::drawWidgetBackground(const Common::Rect &r, WidgetBackground background) {
 	if (!ready())
 		return;
 

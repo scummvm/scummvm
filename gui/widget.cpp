@@ -115,7 +115,7 @@ void Widget::draw() {
 
 		// Draw border
 		if (_flags & WIDGET_BORDER) {
-			g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0,
+			g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h),
 			                                    ThemeEngine::kWidgetBackgroundBorder);
 			_x += 4;
 			_y += 4;
@@ -900,7 +900,7 @@ void ContainerWidget::setBackgroundType(ThemeEngine::WidgetBackground background
 }
 
 void ContainerWidget::drawWidget() {
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0, _backgroundType);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), _backgroundType);
 }
 
 } // End of namespace GUI

@@ -402,7 +402,7 @@ public:
 	/** @name WIDGET DRAWING METHODS */
 	//@{
 
-	void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background = kWidgetBackgroundPlain);
+	void drawWidgetBackground(const Common::Rect &r, WidgetBackground background);
 
 	void drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled,
 	                uint16 hints = 0);

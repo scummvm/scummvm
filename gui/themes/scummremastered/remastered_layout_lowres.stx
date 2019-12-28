@@ -611,7 +611,7 @@
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'Container'/>
 		</layout>
-	</dialog>	
+	</dialog>
 
 	<dialog name = 'GlobalOptions_Cloud_Container' overlays = 'GlobalOptions_Cloud.Container'>
 		<layout type = 'vertical' padding = '10, 13, 10, 10' spacing = '8'>
@@ -1795,6 +1795,29 @@
 			</layout>
 		</layout>
 	</dialog>
+
 	<dialog name = 'DropdownDialog' overlays = 'screen_center'>
+	</dialog>
+
+	<dialog name = 'UnknownGameDialog' overlays = 'screen' inset = '8' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 8, 0'>
+			<widget name = 'TextContainer'
+			/>
+			<layout type = 'horizontal' padding = '0, 0, 8, 8'>
+				<space/>
+				<widget name = 'Report'
+						type = 'Button'
+				/>
+				<widget name = 'Copy'
+						type = 'Button'
+				/>
+				<widget name = 'Close'
+						type = 'Button'
+				/>
+				<widget name = 'Add'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
 	</dialog>
 </layout_info>
