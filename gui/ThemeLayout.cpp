@@ -250,12 +250,11 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 }
 
 void ThemeLayoutStacked::reflowLayoutVertical(Widget *widgetChain) {
-	int curX, curY;
+	int curY;
 	int resize[8];
 	int rescount = 0;
 	bool fixedWidth = _w != -1;
 
-	curX = _padding.left;
 	curY = _padding.top;
 	_h = _padding.top + _padding.bottom;
 
@@ -274,12 +273,6 @@ void ThemeLayoutStacked::reflowLayoutVertical(Widget *widgetChain) {
 		}
 
 		_children[i]->offsetY(curY);
-
-		// Center child if it this has been requested *and* the space permits it.
-		if (_centered && _children[i]->getWidth() < (_w - _padding.left - _padding.right) && _w != -1) {
-			_children[i]->offsetX((_w >> 1) - (_children[i]->getWidth() >> 1));
-		} else
-			_children[i]->offsetX(curX);
 
 		// Advance the vertical offset by the height of the newest item, plus
 		// the item spacing value.
@@ -302,6 +295,29 @@ void ThemeLayoutStacked::reflowLayoutVertical(Widget *widgetChain) {
 		_w = 0;
 	}
 
+	for (uint i = 0; i < _children.size(); ++i) {
+		switch (_itemAlign) {
+		case kItemAlignStart:
+			_children[i]->offsetX(_padding.left);
+			break;
+		case kItemAlignCenter:
+			// Center child if it this has been requested *and* the space permits it.
+			if (_children[i]->getWidth() < (_w - _padding.left - _padding.right)) {
+				_children[i]->offsetX((_w >> 1) - (_children[i]->getWidth() >> 1));
+			} else {
+				_children[i]->offsetX(_padding.left);
+			}
+			break;
+		case kItemAlignEnd:
+			_children[i]->offsetX(_w - _children[i]->getWidth() - _padding.right);
+			break;
+		case kItemAlignStretch:
+			_children[i]->offsetX(_padding.left);
+			_children[i]->setWidth(_w - _padding.left - _padding.right);
+			break;
+		}
+	}
+
 	// If there were any items with undetermined height, then compute and set
 	// their height now. We do so by determining how much space is left, and
 	// then distributing this equally over all items which need auto-resizing.
@@ -321,13 +337,12 @@ void ThemeLayoutStacked::reflowLayoutVertical(Widget *widgetChain) {
 }
 
 void ThemeLayoutStacked::reflowLayoutHorizontal(Widget *widgetChain) {
-	int curX, curY;
+	int curX;
 	int resize[8];
 	int rescount = 0;
 	bool fixedHeight = _h != -1;
 
 	curX = _padding.left;
-	curY = _padding.top;
 	_w = _padding.left + _padding.right;
 
 	for (uint i = 0; i < _children.size(); ++i) {
@@ -345,12 +360,6 @@ void ThemeLayoutStacked::reflowLayoutHorizontal(Widget *widgetChain) {
 		}
 
 		_children[i]->offsetX(curX);
-
-		// Center child if it this has been requested *and* the space permits it.
-		if (_centered && _children[i]->getHeight() < (_h - _padding.top - _padding.bottom) && _h != -1)
-			_children[i]->offsetY((_h >> 1) - (_children[i]->getHeight() >> 1));
-		else
-			_children[i]->offsetY(curY);
 
 		// Advance the horizontal offset by the width of the newest item, plus
 		// the item spacing value.
@@ -371,6 +380,29 @@ void ThemeLayoutStacked::reflowLayoutHorizontal(Widget *widgetChain) {
 	// If the height is not set at this point, then we have no bound widgets.
 	if (!fixedHeight && _h == -1) {
 		_h = 0;
+	}
+
+	for (uint i = 0; i < _children.size(); ++i) {
+		switch (_itemAlign) {
+		case kItemAlignStart:
+			_children[i]->offsetY(_padding.top);
+			break;
+		case kItemAlignCenter:
+			// Center child if it this has been requested *and* the space permits it.
+			if (_children[i]->getHeight() < (_h - _padding.top - _padding.bottom)) {
+				_children[i]->offsetY((_h >> 1) - (_children[i]->getHeight() >> 1));
+			} else {
+				_children[i]->offsetY(_padding.top);
+			}
+			break;
+		case kItemAlignEnd:
+			_children[i]->offsetY(_h - _children[i]->getHeight() - _padding.bottom);
+			break;
+		case kItemAlignStretch:
+			_children[i]->offsetY(_padding.top);
+			_children[i]->setHeight(_w - _padding.top - _padding.bottom);
+			break;
+		}
 	}
 
 	// If there were any items with undetermined width, then compute and set

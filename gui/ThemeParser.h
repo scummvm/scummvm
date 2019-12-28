@@ -189,7 +189,7 @@ protected:
 				XML_PROP(inset, false)
 				XML_KEY(layout)
 					XML_PROP(type, true)
-					XML_PROP(center, false)
+					XML_PROP(align, false)
 					XML_PROP(padding, false)
 					XML_PROP(spacing, false)
 

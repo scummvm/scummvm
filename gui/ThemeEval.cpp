@@ -130,13 +130,13 @@ void ThemeEval::addDialog(const Common::String &name, const Common::String &over
 	setVar(var + ".Enabled", enabled ? 1 : 0);
 }
 
-void ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, bool center) {
+void ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, ThemeLayout::ItemAlign itemAlign) {
 	ThemeLayout *layout = 0;
 
 	if (spacing == -1)
 		spacing = getVar("Globals.Layout.Spacing", 4);
 
-	layout = new ThemeLayoutStacked(_curLayout.top(), type, spacing, center);
+	layout = new ThemeLayoutStacked(_curLayout.top(), type, spacing, itemAlign);
 
 	assert(layout);
 

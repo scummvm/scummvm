@@ -52,6 +52,14 @@ public:
 		kLayoutSpace
 	};
 
+	/// Cross-direction alignment of layout children.
+	enum ItemAlign {
+		kItemAlignStart,   ///< Items are aligned to the left for vertical layouts or to the top for horizontal layouts
+		kItemAlignCenter,  ///< Items are centered in the container
+		kItemAlignEnd,     ///< Items are aligned to the right for vertical layouts or to the bottom for horizontal layouts
+		kItemAlignStretch  ///< Items are resized to match the size of the layout in the cross-direction
+	};
+
 	ThemeLayout(ThemeLayout *p) :
 		_parent(p), _x(0), _y(0), _w(-1), _h(-1),
 		_defaultW(-1), _defaultH(-1),
@@ -167,11 +175,10 @@ protected:
 
 class ThemeLayoutStacked : public ThemeLayout {
 public:
-	ThemeLayoutStacked(ThemeLayout *p, LayoutType type, int spacing, bool center) :
-		ThemeLayout(p), _type(type), _centered(center) {
+	ThemeLayoutStacked(ThemeLayout *p, LayoutType type, int spacing, ItemAlign itemAlign) :
+		ThemeLayout(p), _type(type), _itemAlign(itemAlign) {
 		assert((type == kLayoutVertical) || (type == kLayoutHorizontal));
 		_spacing = spacing;
-		_centered = center;
 	}
 
 	void reflowLayout(Widget *widgetChain) override {
@@ -208,7 +215,7 @@ protected:
 	}
 
 	const LayoutType _type;
-	bool _centered;
+	ItemAlign _itemAlign;
 	int8 _spacing;
 };
 
