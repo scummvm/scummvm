@@ -72,6 +72,7 @@ Score::Score(DirectorEngine *vm) {
 	_lingo = _vm->getLingo();
 	_soundManager = _vm->getSoundManager();
 	_currentMouseDownSpriteId = 0;
+	_mouseIsDown = false;
 
 	// FIXME: TODO: Check whether the original truely does it
 	if (_vm->getVersion() <= 3) {

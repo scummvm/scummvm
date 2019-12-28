@@ -74,6 +74,8 @@ void DirectorEngine::processEvents() {
 				spriteId = currentFrame->getSpriteIDFromPos(pos);
 				sc->_currentMouseDownSpriteId = spriteId;
 
+				sc->_mouseIsDown = true;
+
 				debugC(3, kDebugEvents, "event: Button Down @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
 				_lingo->processEvent(kEventMouseDown);
 
@@ -88,6 +90,8 @@ void DirectorEngine::processEvents() {
 				spriteId = currentFrame->getSpriteIDFromPos(pos);
 
 				debugC(3, kDebugEvents, "event: Button Up @(%d, %d), sprite id: %d", pos.x, pos.y, spriteId);
+
+				sc->_mouseIsDown = false;
 
 				_lingo->processEvent(kEventMouseUp);
 				sc->_currentMouseDownSpriteId = 0;
