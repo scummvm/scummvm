@@ -356,9 +356,9 @@ VabSound * SoundManager::loadVab(const char *headerFilename, const char *bodyFil
 void SoundManager::playOrStopSound(uint16 soundId) {
 	uint16 volumeId;
 	if ((soundId & 0x8000u) == 0) {
-		volumeId = soundId + _vm->getCurrentSceneId() * 0x20;
+		volumeId = (soundId & ~0x4000u) + _vm->getCurrentSceneId() * 0x20;
 	} else {
-		volumeId = soundId & 0x7fffu;
+		volumeId = soundId & ~(0x4000u | 0x8000u);
 	}
 
 	if ((soundId & 0x4000u) == 0) {
@@ -420,6 +420,8 @@ void SoundManager::loadMsf(uint32 sceneId) {
 
 		auto *msfStream = new Common::MemoryReadStream(msfData, msfSize, DisposeAfterUse::YES);
 
+		stopAllVoices();
+
 		delete _vabMusx;
 		_vabMusx = new VabSound(msfStream, _vm);
 	}
@@ -449,6 +451,12 @@ void SoundManager::stopVoicePlaying(uint16 soundID) {
 			_vm->_mixer->stopHandle(_voice[i].handle);
 			return;
 		}
+	}
+}
+
+void SoundManager::stopAllVoices() {
+	for (int i = 0; i < NUM_VOICES; i++) {
+		_vm->_mixer->stopHandle(_voice[i].handle);
 	}
 }
 

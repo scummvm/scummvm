@@ -92,6 +92,7 @@ private:
 	bool isVoicePlaying(uint16 soundID);
 	Audio::SoundHandle *getVoiceHandle(uint16 soundID);
 	void stopVoicePlaying(uint16 soundID);
+	void stopAllVoices();
 
 private:
 	class PSXAudioTrack {
