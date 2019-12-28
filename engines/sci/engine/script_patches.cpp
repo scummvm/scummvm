@@ -17221,9 +17221,94 @@ static const uint16 sq6BenchmarkSignature[] = {
 	SIG_END
 };
 
+// SQ6 advertises a maximum score of 500 but the game is missing two points.
+//  The "Official Player's Guide" authorized by Sierra includes a point list
+//  that adds up to 500. It claims that three points should be awarded instead
+//  of two when untangling the hose and attaching the staple and celery.
+//
+// Since an official point list exists that adds up to the 500 points that the
+//  game advertises, we add the two missing points to the inventory actions.
+//  Two versions of this patch are necessary because the English PC versions
+//  were compiled with line number debugging instructions and the subsequent
+//  French, German, and Mac versions weren't.
+//
+// Applies to: All versions
+// Responsible methods: Hookah_Hose:cue, Staple:doVerb, Celery:doVerb
+// Fixes bug: #11275
+static const uint16 sq6MissingPointsSignature[] = {
+	0x7e, SIG_ADDTOOFFSET(+2),      // line
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(points),    // pushi points
+	0x78,                           // push1
+	0x7a,                           // push2
+	SIG_END
+};
+
+static const uint16 sq6MissingPointsPatch[] = {
+	0x39, PATCH_SELECTOR8(points),  // pushi points
+	0x39, 0x01,                     // pushi 01
+	0x38, PATCH_UINT16(0x0003),     // pushi 0003
+	PATCH_END
+};
+
+// French, German, and Mac versions don't include line number instructions
+//  and require specific patches.
+static const uint16 sq6StapleCeleryPointSignature[] = {
+	0x72, SIG_ADDTOOFFSET(+2),      // lofsa Grappling_Hook
+	0x36,                           // push
+	0x81, 0x09,                     // lag 09
+	0x4a, SIG_UINT16(0x0006),       // send 06
+	0x39, SIG_SELECTOR8(points),    // pushi points
+	SIG_MAGICDWORD,
+	0x78,                           // push1
+	0x7a,                           // push2
+	0x38, SIG_SELECTOR16(setCursor),// pushi setCursor
+	SIG_END
+};
+
+static const uint16 sq6StapleCeleryPointPatch[] = {
+	0x74, PATCH_ADDTOOFFSET(+2),    // lofss Grappling_Hook
+	0x81, 0x09,                     // lag 09
+	0x4a, PATCH_UINT16(0x0006),     // send 06
+	0x39, PATCH_SELECTOR8(points),  // pushi points
+	0x78,                           // push1
+	0x39, 0x03,                     // pushi 03
+	PATCH_END
+};
+
+static const uint16 sq6HookahHosePointSignature[] = {
+	0x30, SIG_UINT16(0x0054),       // bnt 0054
+	SIG_ADDTOOFFSET(+75),
+	0x72, SIG_ADDTOOFFSET(+2),      // lofsa Hookah_Connected
+	0x36,                           // push
+	0x81, 0x09,                     // lag 09
+	0x4a, SIG_UINT16(0x000c),       // send 0c
+	0x39, SIG_SELECTOR8(points),    // pushi points
+	SIG_MAGICDWORD,
+	0x78,                           // push1
+	0x7a,                           // push2
+	0x81, 0x01,                     // lag 01
+	SIG_END
+};
+
+static const uint16 sq6HookahHosePointPatch[] = {
+	0x30, PATCH_UINT16(0x0053),     // bnt 0053
+	PATCH_ADDTOOFFSET(+75),
+	0x74, PATCH_ADDTOOFFSET(+2),    // lofss Hookah_Connected
+	0x81, 0x09,                     // lag 09
+	0x4a, PATCH_UINT16(0x000c),     // send 0c
+	0x39, PATCH_SELECTOR8(points),  // pushi points
+	0x78,                           // push1
+	0x39, 0x03,                     // pushi 03
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,     0, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
+	{  true,    15, "fix english pc missing points",               3, sq6MissingPointsSignature,       sq6MissingPointsPatch },
+	{  true,    15, "fix staple/celery missing point",             2, sq6StapleCeleryPointSignature,   sq6StapleCeleryPointPatch },
+	{  true,    15, "fix hookah hose missing point",               1, sq6HookahHosePointSignature,     sq6HookahHosePointPatch },
 	{  true,    15, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,    22, "fix invalid array construction",              1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,   410, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
