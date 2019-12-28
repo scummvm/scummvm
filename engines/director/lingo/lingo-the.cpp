@@ -514,6 +514,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = INT;
 		d.u.i = _vm->getCurrentScore()->getCurrentFrame();
 		break;
+	case kTheStillDown:
+		d.type = INT;
+		d.u.i = _vm->getCurrentScore()->_mouseIsDown;
+		break;
 	default:
 		warning("Lingo::getTheEntity(): Unprocessed getting field %d of entity %d", field, entity);
 		d.type = VOID;
