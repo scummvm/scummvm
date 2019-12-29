@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-12-29 13:14+0000\n"
+"PO-Revision-Date: 2019-12-31 23:45+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/prince/"
 "prince/ru/>\n"
@@ -6803,7 +6803,7 @@ msgstr "HERO: Я его просто нашел, но я не знаю, что �
 
 #: dialog0205.txt:3
 msgid "HERO: Jeśli on ma dla ciebie jakieś znaczenie,|to weź go sobie."
-msgstr "HERO: Если он тебе не нужен, я оставлю..."
+msgstr "HERO: Если он значит что-то для тебе,|то оставь его себе."
 
 #: dialog0205.txt:4
 msgid "OTHER: Hm."
@@ -6811,7 +6811,7 @@ msgstr "OTHER: Хм."
 
 #: dialog0205.txt:5
 msgid "OTHER: Może zareagowałem zbyt gwałtownie."
-msgstr "OTHER: Я соответственно реагировал."
+msgstr "OTHER: Может я отреагировал слишком напористо."
 
 #: dialog0205.txt:6
 msgid "OTHER: Od czasów Blaviken jakoś szybko się|denerwuję."
@@ -6843,7 +6843,7 @@ msgstr "OTHER2: И как сильно?"
 
 #: dialog0207.txt:4
 msgid "OTHER: Robiłem wczoraj maseczkę, i dzisiaj|mam skórę jak aksamit."
-msgstr "OTHER: Вчера я сделал себе маску, а сегодня моя кожа|чистая, как у новорожденного."
+msgstr "OTHER: Вчера сделала себе масочку,|а сегодня моя кожа как бархат."
 
 #: dialog0207.txt:5
 msgid "OTHER2: Och, to wspaniale."
@@ -6851,19 +6851,19 @@ msgstr "OTHER2: О, это здорово."
 
 #: dialog0208.txt:1
 msgid "HERO: Czeka pani na kogoś?"
-msgstr "HERO: Мы кого-то ждем?"
+msgstr "HERO: Мадам кого-то ждёт?"
 
 #: dialog0208.txt:2
 msgid "OTHER: Nie twoja sprawa."
-msgstr "OTHER: Это не пройдет."
+msgstr "OTHER: Не твоё дело."
 
 #: dialog0208.txt:3
 msgid "OTHER: Chyba, że to ty przyniosłeś truciz..."
-msgstr "OTHER: Это значит, что ты принес яд..."
+msgstr "OTHER: Разве только если ты принес яд..."
 
 #: dialog0208.txt:4
 msgid "OTHER: Tfu, nic nie mówiłam."
-msgstr "OTHER: Я ничего не говорил."
+msgstr "OTHER: Ой, я ничего не говорила."
 
 #: dialog0208.txt:5
 msgid "HERO: Truciznę?"
@@ -6871,7 +6871,7 @@ msgstr "HERO: Какой яд?"
 
 #: dialog0208.txt:6
 msgid "OTHER: Och, nie najlepszy ze mnie|spiskowiec, książę."
-msgstr "OTHER: Ой, уйди, я вовсе не подданный,|принц."
+msgstr "OTHER: Ой, из меня плохой конспиратор, принц."
 
 #: dialog0208.txt:7
 msgid "OTHER: Książę?!"
@@ -6991,7 +6991,9 @@ msgstr "HERO: Что тут произошло? Кто-то выбивает к�
 
 #: dialog0216.txt:1
 msgid "HERO: Hej, zna ktoś jakiegoś krasnoluda? Założyłem|się z przyjaciółką,  że jak go wytargam za|brodę, to wyleci co najmniej sto wszy."
-msgstr "HERO: Кто-нибудь знает гнома? Я тут поспорил с подругой,|что ели она увидит гнома, то завизжит."
+msgstr ""
+"HERO: Кто-нибудь знает какого-нибудь гнома? Я тут|поспорил с подругой, что "
+"если я его дёрну за бороду,|то оттуда вылетит не меньше сотни вшей."
 
 #: dialog0217.txt:1
 msgid "HERO: Słyszeliście kiedy krasnolud potrafi zdjąć|majtki przez głowę?"
@@ -7245,7 +7247,7 @@ msgstr "HERO: Можно войти?"
 
 #: dialog0235.txt:3
 msgid "P#HERO: Halo?!..."
-msgstr "P#HERO: Ой! Привет!"
+msgstr "P#HERO: Аллё?"
 
 #: dialog0236.txt:1
 msgid "HERO: Właściwie to wcale jej nie znam."
@@ -7257,7 +7259,7 @@ msgstr "HERO: Мы однажды плыли в одной лодке."
 
 #: dialog0236.txt:3
 msgid "HERO: Przez przypadek."
-msgstr "HERO: Случайность."
+msgstr "HERO: Случайно."
 
 #: dialog0237.txt:1
 msgid "HERO: Ciągle zły?"
@@ -7265,7 +7267,7 @@ msgstr "HERO: Все еще злитесь?"
 
 #: dialog0238.txt:1
 msgid "OTHER: Witam szanownego grzesznika."
-msgstr "OTHER: Прощай, уважаемый грешник."
+msgstr "OTHER: Приветствую, уважаемого грешника."
 
 #: dialog0238.txt:2
 msgid "OTHER: Służymy miłą, sympatyczną celą|grzechów lekkich."
@@ -7293,7 +7295,7 @@ msgstr "$1: Я платил налоги."
 
 #: dialog0239.txt:103
 msgid "$2: Pobierałem podatki."
-msgstr "$2: Я платил больше налогов, чем надо."
+msgstr "$2: Я собирал налоги."
 
 #: dialog0239.txt:104
 msgid "$3: Zaraz wrócę, tylko się jeszcze trochę rozejrzę."
@@ -7481,7 +7483,7 @@ msgstr "HERO: Ты сам сказал, что как дьявол я могу �
 
 #: dialog0244.txt:5
 msgid "OTHER2: Coś ty jakiś taki dziwny..."
-msgstr "OTHER2: Ты меня смешишь."
+msgstr "OTHER2: Ты выглядишь странновато..."
 
 #: dialog0244.txt:6
 msgid "OTHER2: Różek złamany, ogona nie ma..."
@@ -7501,7 +7503,7 @@ msgstr "$1: Некромант виноват, что я хвост потеря
 
 #: dialog0244.txt:110
 msgid "$2: O tak, śmierdzę jak nikt!"
-msgstr "$2: Да нет, я воняю как и все!"
+msgstr "$2: О, я вонюч как никто другой!"
 
 #: dialog0244.txt:111
 msgid "$3: Czy musicie być takimi formalistami?"
@@ -7545,7 +7547,7 @@ msgstr "OTHER2: Мне не нравится твоя история.#B0"
 
 #: dialog0244.txt:100101
 msgid "OTHER: Odciął?"
-msgstr "OTHER: Уф! Прошло?"
+msgstr "OTHER: Отрубил?"
 
 #: dialog0244.txt:100102
 msgid "HERO: Nie, wezwał mnie do pentagramu, a potem|podstępem przybił ogon do podłogi|i odesłał mnie z powrotem."
@@ -7693,7 +7695,7 @@ msgstr "OTHER: Мне твоя помощь больше не нужна!"
 
 #: dialog0246.txt:10
 msgid "OTHER: Poradzę sobie sama!"
-msgstr "OTHER: Я иду один!"
+msgstr "OTHER: Сама справлюсь!"
 
 #: dialog0246.txt:11
 msgid "HERO: Cóż, ponoć do trzech razy sztuka."
