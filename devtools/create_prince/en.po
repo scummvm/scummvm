@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-12-28 10:04+0000\n"
+"PO-Revision-Date: 2019-12-29 13:14+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -6856,67 +6856,73 @@ msgstr "OTHER: At least two?"
 
 #: dialog0187.txt:3
 msgid "OTHER2: Może i mam, panienko, ale z nikim|się nimi nie będę dzielił."
-msgstr ""
+msgstr "OTHER2: I might have, miss, but I will not share|them with anyone."
 
 #: dialog0187.txt:4
 msgid "OTHER2: A już na pewno nie z towarzyszką tego|cmentarnego rabusia!"
-msgstr ""
+msgstr "OTHER2: And certainly not with the companion|of that grave robber!"
 
 #: dialog0188.txt:1
 msgid "OTHER: Okradałeś groby?!"
-msgstr ""
+msgstr "OTHER: Have you robbed the graves?!"
 
 #: dialog0188.txt:2
 msgid "HERO: Skądże znowu! W końcu jestem księciem!"
-msgstr ""
+msgstr "HERO: Not at all! I'm a prince after all!"
 
 #: dialog0189.txt:1
 msgid "OTHER: I jeszcze kłamca!"
-msgstr ""
+msgstr "OTHER: And a liar!"
 
 #: dialog0189.txt:2
 msgid "OTHER: Jesteś paskudny, jesteś cmentarną hieną|i jesteś oszustem. Wybrałaś sobie|świetnego towarzysza, panienko."
 msgstr ""
+"OTHER: You are nasty, you are a cemetery hyena|and you are a cheater. What a "
+"great|companion you chose to yourself, miss."
 
 #: dialog0189.txt:3
 msgid "OTHER: Won z mojego cmentarza!"
-msgstr ""
+msgstr "OTHER: Get out from my cemetery!"
 
 #: dialog0190.txt:1
 msgid "HERO: Sprawy się komplikują."
-msgstr ""
+msgstr "HERO: Things are getting complicated."
 
 #: dialog0191.txt:1
 msgid "HERO: Spróbuj wejść tam, do środka."
-msgstr ""
+msgstr "HERO: Try to go in there."
 
 #: dialog0191.txt:2
 msgid "OTHER: A to niby po co?"
-msgstr ""
+msgstr "OTHER: What is the point?"
 
 #: dialog0191.txt:3
 msgid "HERO: Hm, nie wiem, ale zawsze można znaleźć|coś ciekawego w takich miejscach."
 msgstr ""
+"HERO: Hmm, I don't know, but you can always find|something interesting in "
+"such places."
 
 #: dialog0191.txt:4
 msgid "HERO: Uwierz mojej intuicji."
-msgstr ""
+msgstr "HERO: Trust my intuition."
 
 #: dialog0191.txt:5
 msgid "OTHER: Pędzę, lecę."
-msgstr ""
+msgstr "OTHER: Yeah, right! Watch me do it."
 
 #: dialog0191.txt:6
 msgid "OTHER: Mam ci przynieść karalucha czy pająka?"
-msgstr ""
+msgstr "OTHER: Should I bring you a cockroach or spider?"
 
 #: dialog0191.txt:7
 msgid "OTHER: Co jeszcze mogę dla ciebie zrobić?|Nie  rozbawiłoby cię, gdybym|wskoczyła w ogień?"
 msgstr ""
+"OTHER: What else can I do for you?|Wouldn't it make you laugh if I|jumped in "
+"the fire?"
 
 #: dialog0192.txt:1
 msgid "HERO: Musisz spróbować tam się wcisnąć.|Widziałem szczura."
-msgstr ""
+msgstr "HERO: You must try to squeeze in there.|I saw a rat."
 
 #: dialog0192.txt:2
 msgid "HERO: Grabarz na pewno da nam za niego|kilka oboli."
@@ -6924,115 +6930,119 @@ msgstr "HERO: The gravedigger will surely give us few|oboles for him."
 
 #: dialog0192.txt:3
 msgid "OTHER: Spróbuj sam."
-msgstr ""
+msgstr "OTHER: Try it yourself."
 
 #: dialog0192.txt:4
 msgid "HERO: Jestem zbyt potężnie zbudowany."
-msgstr ""
+msgstr "HERO: My body shape is too bulky."
 
 #: dialog0192.txt:5
 msgid "HERO: Ty jesteś szczupła i szybka, przed tobą|żaden szczur nie zdoła się schować."
-msgstr ""
+msgstr "HERO: You are slim and fast, no rat can hide from you."
 
 #: dialog0192.txt:6
 msgid "P#OTHER: Potraktuję to jako komplement."
-msgstr ""
+msgstr "P#OTHER: I'll take this as a compliment."
 
 #: dialog0193.txt:1
 msgid "HERO: Jeszcze jedna próba, to naprawdę|ważne."
-msgstr ""
+msgstr "HERO: One more try, it really important."
 
 #: dialog0193.txt:2
 msgid "OTHER: No dobrze."
-msgstr ""
+msgstr "OTHER: Okay."
 
 #: dialog0194.txt:1
 msgid "OTHER: Nie ma mowy!"
-msgstr ""
+msgstr "OTHER: No way!"
 
 #: dialog0194.txt:2
 msgid "OTHER: Porwę sobie ubranie!"
-msgstr ""
+msgstr "OTHER: I'll rip my clothes!"
 
 #: dialog0194.txt:3
 msgid "OTHER: A poza tym nie mam już za plecami|zdrajcy, który mnie brutalnie|popchnie."
 msgstr ""
+"OTHER: And besides, I don't have a traitor|behind me who will push "
+"me|brutally."
 
 #: dialog0194.txt:4
 msgid "OTHER: Jednym słowem nie dostaniesz szczura,|zanim nie poszerzysz tego otworu!"
-msgstr ""
+msgstr "OTHER: Simply speaking, you won't get a rat|until you widen this hole!"
 
 #: dialog0195.txt:1
 msgid "OTHER: A jednak słabeusz..."
-msgstr ""
+msgstr "OTHER: Such a weakling..."
 
 #: dialog0196.txt:1
 msgid "OTHER: Mizerne chuchro..."
-msgstr ""
+msgstr "OTHER: Pathetic looser..."
 
 #: dialog0197.txt:1
 msgid "OTHER: Widziałam silniejsze niemowlaki..."
-msgstr ""
+msgstr "OTHER: I've seen babies stronger than that..."
 
 #: dialog0198.txt:1
 msgid "OTHER: Chuderlaczek..."
-msgstr ""
+msgstr "OTHER: Wonderboy..."
 
 #: dialog0199.txt:1
 msgid "OTHER: Mój ty siłaczu..."
-msgstr ""
+msgstr "OTHER: My strong man..."
 
 #: dialog0200.txt:1
 msgid "OTHER: Udało się, ale jeśli wytniesz mi jeszcze raz|taki numer, to zaśpiewasz zupełnie innym|głosem."
 msgstr ""
+"OTHER: It worked this time, but if you make|such a trick again, you'll be "
+"singing|a different tune."
 
 #: dialog0200.txt:2
 msgid "OTHER: Dużo cieńszym, zapewniam cię..."
-msgstr ""
+msgstr "OTHER: In a very high pitch, I promise..."
 
 #: dialog0201.txt:1
 msgid "HERO: Zanim mnie zabijesz..."
-msgstr ""
+msgstr "HERO: Before you kill me..."
 
 #: dialog0201.txt:2
 msgid "OTHER: Sześć... Pięć..."
-msgstr ""
+msgstr "OTHER: Six... Five..."
 
 #: dialog0201.txt:3
 msgid "HERO: Mam dobrą wiadomość!"
-msgstr ""
+msgstr "HERO: I have good news!"
 
 #: dialog0201.txt:4
 msgid "OTHER: Cztery... Trzy..."
-msgstr ""
+msgstr "OTHER: Four... Three..."
 
 #: dialog0201.txt:5
 msgid "HERO: Poczekaj, bo to ważne dla ciebie..."
-msgstr ""
+msgstr "HERO: Wait, because it's important to you..."
 
 #: dialog0201.txt:6
 msgid "OTHER: Dwa... Jeden..."
-msgstr ""
+msgstr "OTHER: Two... One..."
 
 #: dialog0201.txt:7
 msgid "HERO: Znalazłem ci przyjaciela!"
-msgstr ""
+msgstr "HERO: I found a friend for you!"
 
 #: dialog0201.txt:8
 msgid "HERO: Prawdziwego, tłustego, obrzydliwego|szczura!"
-msgstr ""
+msgstr "HERO: A real, fat, disgusting rat!"
 
 #: dialog0201.txt:9
 msgid "OTHER: Zero... Minus jeden..."
-msgstr ""
+msgstr "OTHER: Zero... Minus one..."
 
 #: dialog0201.txt:10
 msgid "P#OTHER: Naprawdę?"
-msgstr ""
+msgstr "P#OTHER: Really?"
 
 #: dialog0201.txt:11
 msgid "HERO: Słowo pogromcy smoków!"
-msgstr ""
+msgstr "HERO: A word of the dragon slayer!"
 
 #: dialog0201.txt:12
 msgid "HERO: Chętnie oddam go za dwa obole."
@@ -7040,11 +7050,11 @@ msgstr "HERO: I will gladly give him for two oboles."
 
 #: dialog0201.txt:13
 msgid "OTHER: Nie ma sprawy. To uczciwa cena."
-msgstr ""
+msgstr "OTHER: You're welcome. It's a fair price."
 
 #: dialog0202.txt:1
 msgid "OTHER: Wyczuwam wiedźmiński amulet..."
-msgstr ""
+msgstr "OTHER: I sense the witcher amulet..."
 
 #: dialog0202.txt:2
 msgid "HERO: Co takiego?"
@@ -7052,19 +7062,19 @@ msgstr "HERO: What happened?"
 
 #: dialog0203.txt:1
 msgid "OTHER: Więc są jeszcze jacyś..."
-msgstr ""
+msgstr "OTHER: So there are still some..."
 
 #: dialog0204.txt:1
 msgid "OTHER: Nie rozpoznałeś naszego Znaku!"
-msgstr ""
+msgstr "OTHER: You didn't recognize our Sign!"
 
 #: dialog0204.txt:2
 msgid "OTHER: Komu ukradłeś ten amulet?"
-msgstr ""
+msgstr "OTHER: Who did you steal this amulet for?"
 
 #: dialog0204.txt:3
 msgid "OTHER: Skąd go masz?!"
-msgstr ""
+msgstr "OTHER: Where did you get it from?!"
 
 #: dialog0204.txt:4
 msgid "OTHER: Gadaj natychmiast!"
