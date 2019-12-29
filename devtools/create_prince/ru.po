@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-12-28 10:04+0000\n"
+"PO-Revision-Date: 2019-12-29 13:14+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/prince/"
 "prince/ru/>\n"
@@ -6625,7 +6625,7 @@ msgstr "HERO: Поверь моей интуиции."
 
 #: dialog0191.txt:5
 msgid "OTHER: Pędzę, lecę."
-msgstr "OTHER: Я бегу, я лечу."
+msgstr "OTHER: Ага, бегу и спотыкаюсь."
 
 #: dialog0191.txt:6
 msgid "OTHER: Mam ci przynieść karalucha czy pająka?"
@@ -6649,11 +6649,11 @@ msgstr "OTHER: Попробуй сам."
 
 #: dialog0192.txt:4
 msgid "HERO: Jestem zbyt potężnie zbudowany."
-msgstr "HERO: Я слишком силен."
+msgstr "HERO: Я слишком крупно сложён."
 
 #: dialog0192.txt:5
 msgid "HERO: Ty jesteś szczupła i szybka, przed tobą|żaden szczur nie zdoła się schować."
-msgstr "HERO: Ты тощий и маленький, крысы тобой не|заинтересуются."
+msgstr "HERO: Ты стройная и быстрая, ни одна крыса|не сможет от тебя скрыться."
 
 #: dialog0192.txt:6
 msgid "P#OTHER: Potraktuję to jako komplement."
@@ -6669,7 +6669,7 @@ msgstr "OTHER: Ладно."
 
 #: dialog0194.txt:1
 msgid "OTHER: Nie ma mowy!"
-msgstr "OTHER: Закрыто!"
+msgstr "OTHER: Не может быть и речи!"
 
 #: dialog0194.txt:2
 msgid "OTHER: Porwę sobie ubranie!"
@@ -6681,7 +6681,7 @@ msgstr "OTHER: Кроме того, меня больше никто не пле
 
 #: dialog0194.txt:4
 msgid "OTHER: Jednym słowem nie dostaniesz szczura,|zanim nie poszerzysz tego otworu!"
-msgstr "OTHER: Ты никого не победишь, пока не подрастешь!"
+msgstr "OTHER: Проще говоря, ты не получишь крысу,|пока не расширишь эту дыру!"
 
 #: dialog0195.txt:1
 msgid "OTHER: A jednak słabeusz..."
@@ -6693,7 +6693,7 @@ msgstr "OTHER: Дохлый слабак..."
 
 #: dialog0197.txt:1
 msgid "OTHER: Widziałam silniejsze niemowlaki..."
-msgstr "OTHER: Я видел более сильных муравьев..."
+msgstr "OTHER: Я встречала более сильных младенцев..."
 
 #: dialog0198.txt:1
 msgid "OTHER: Chuderlaczek..."
@@ -6705,15 +6705,17 @@ msgstr "OTHER: Ты, мое воплощение силы..."
 
 #: dialog0200.txt:1
 msgid "OTHER: Udało się, ale jeśli wytniesz mi jeszcze raz|taki numer, to zaśpiewasz zupełnie innym|głosem."
-msgstr "OTHER: Получилось. Но если ты еще раз такое|проделаешь, тебе придется подкоротить|язык."
+msgstr ""
+"OTHER: Получилось. Но если ты еще раз такое|выкинешь, ты у меня запоёшь "
+"по-другому."
 
 #: dialog0200.txt:2
 msgid "OTHER: Dużo cieńszym, zapewniam cię..."
-msgstr "OTHER: И то сверху, если ты понимаешь, о|чем я."
+msgstr "OTHER: Очень тоненьким голосом, я тебя уверяю."
 
 #: dialog0201.txt:1
 msgid "HERO: Zanim mnie zabijesz..."
-msgstr "HERO: Прежде чем ты меня проверишь,..."
+msgstr "HERO: Прежде чем ты меня прибьёшь..."
 
 #: dialog0201.txt:2
 msgid "OTHER: Sześć... Pięć..."
@@ -6741,7 +6743,7 @@ msgstr "HERO: Я нашел тебе друга!"
 
 #: dialog0201.txt:8
 msgid "HERO: Prawdziwego, tłustego, obrzydliwego|szczura!"
-msgstr "HERO: Хорошая крыса!"
+msgstr "HERO: Настоящую, толстую, мерзкую крысу!"
 
 #: dialog0201.txt:9
 msgid "OTHER: Zero... Minus jeden..."
@@ -6781,7 +6783,7 @@ msgstr "OTHER: Ты не узнал наших знаков!"
 
 #: dialog0204.txt:2
 msgid "OTHER: Komu ukradłeś ten amulet?"
-msgstr "OTHER: Кому ты отдал этот амулет?"
+msgstr "OTHER: Для кого ты украл этот амулет?"
 
 #: dialog0204.txt:3
 msgid "OTHER: Skąd go masz?!"
