@@ -763,6 +763,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
 			return;
 		}
+		d.toString();
 		castInfo->fileName = *d.u.s;
 		break;
 	case kTheName:
@@ -770,6 +771,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
 			return;
 		}
+		d.toString();
 		castInfo->name = *d.u.s;
 		break;
 	case kTheScriptText:
@@ -777,13 +779,16 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
 			return;
 		}
+		d.toString();
 		castInfo->script = *d.u.s;
 		break;
 	case kTheWidth:
+		d.toInt();
 		score->getCastMemberInitialRect(id).setWidth(d.u.i);
 		score->setCastMemberModified(id);
 		break;
 	case kTheHeight:
+		d.toInt();
 		score->getCastMemberInitialRect(id).setHeight(d.u.i);
 		score->setCastMemberModified(id);
 		break;
@@ -793,6 +798,8 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 				warning("Lingo::setTheCast(): Field %d of cast %d not found", field, id);
 			}
 			ShapeCast *shape = score->_loadedShapes->getVal(id);
+
+			d.toInt();
 			shape->_bgCol = d.u.i;
 			shape->_modified = 1;
 		}
