@@ -529,6 +529,9 @@ void Score::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 	_castArrayEnd = stream.readUint16();
 	_currentFrameRate = stream.readByte();
 
+	if (_currentFrameRate == 0)
+		_currentFrameRate = 20;
+
 	byte lightswitch = stream.readByte();
 	uint16 unk1 = stream.readUint16();
 	uint16 commentFont = stream.readUint16();
