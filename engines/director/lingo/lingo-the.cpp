@@ -751,11 +751,6 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	CastType castType = score->_castTypes[id];
 	CastInfo *castInfo = score->_castsInfo[id + score->_castIDoffset];
 
-	if (!castInfo) {
-		warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
-		return;
-	}
-
 	switch (field) {
 	case kTheCastType:
 		// TODO: You can actually switch the cast type!?
@@ -764,12 +759,24 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		//cast->modified = 1;
 		break;
 	case kTheFileName:
+		if (!castInfo) {
+			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
+			return;
+		}
 		castInfo->fileName = *d.u.s;
 		break;
 	case kTheName:
+		if (!castInfo) {
+			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
+			return;
+		}
 		castInfo->name = *d.u.s;
 		break;
 	case kTheScriptText:
+		if (!castInfo) {
+			warning("Lingo::setTheCast(): The cast %d not found. type: %d", id, castType);
+			return;
+		}
 		castInfo->script = *d.u.s;
 		break;
 	case kTheWidth:
@@ -801,8 +808,21 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			shape->_modified = 1;
 		}
 		break;
+	case kTheText:
+		if (castType == kCastText) {
+			if (!score->_loadedText->contains(id)) {
+				warning("Lingo::setTheCast(): Unknown STXT cast id %d", id);
+				return;
+			} else {
+				d.toString();
+				score->_loadedText->getVal(id)->setText(d.u.s->c_str());
+			}
+		} else {
+			warning("Lingo::setTheCast(): Unprocessed setting text of cast %d type %d", id, castType);
+		}
+		break;
 	default:
-		warning("Lingo::setTheCast(): Unprocessed getting field %d of cast %d", field, id);
+		warning("Lingo::setTheCast(): Unprocessed setting field %d of cast %d", field, id);
 	}
 }
 
