@@ -148,7 +148,6 @@ static const char *const selectorNameTable[] = {
 	"newWith",      // SCI2 array script
 	"scrollSelections", // GK2
 	"posn",         // SCI2 benchmarking script
-	"detailLevel",  // GK2 benchmarking
 	"view",         // RAMA benchmarking, GK1, QFG4
 	"fade",         // Shivers
 	"test",         // Torin
@@ -263,7 +262,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_newWith,
 	SELECTOR_scrollSelections,
 	SELECTOR_posn,
-	SELECTOR_detailLevel,
 	SELECTOR_view,
 	SELECTOR_fade,
 	SELECTOR_test,
@@ -3362,33 +3360,26 @@ static const uint16 gk2VolumeResetPatch[] = {
 	PATCH_END
 };
 
-// GK2 has custom video benchmarking code that needs to be disabled in a subroutine
-// which is called from 'GK2::init'; see sci2BenchmarkSignature
-// TODO: Patch is not applied to localized versions and needs to get adjusted
+// GK2 has custom video benchmarking code that needs to be disabled in a local
+//  procedure called from GK2:init. It sets the game's detailLevel and returns
+//  a value which is assigned to GK2:speedRating and never used. The maximum
+//  detailLevel the game recognizes is six so we just set it to that.
+//
+// Applies to: All versions
+// Responsible method: GK2:init
 static const uint16 gk2BenchmarkSignature[] = {
-	0x7e, SIG_ADDTOOFFSET(+2), // line
-	0x38, SIG_SELECTOR16(new), // pushi new
-	0x76,                      // push0
-	0x51, SIG_ADDTOOFFSET(+1), // class Actor
-	0x4a, SIG_UINT16(0x04),    // send 4
-	0xa5, 0x00,                // sat temp[0]
-	0x7e, SIG_ADDTOOFFSET(+2), // line
-	0x7e, SIG_ADDTOOFFSET(+2), // line
-	0x39, SIG_SELECTOR8(view), // pushi view ($e)
-	SIG_MAGICDWORD,
-	0x78,                      // push1
-	0x38, SIG_UINT16(0xfdd4),  // pushi 64980
+	0x76,                       // push0
+	0x40, SIG_ADDTOOFFSET(+2),  // call speed test proc 
+	      SIG_MAGICDWORD,
+		  SIG_UINT16(0x0000),
+	0x65, 0x28,                 // aTop speedRating
 	SIG_END
 };
 
 static const uint16 gk2BenchmarkPatch[] = {
-	0x38, PATCH_SELECTOR16(detailLevel), // pushi detailLevel
-	0x78,                                // push1
-	0x38, PATCH_UINT16(399),             // pushi 399 (10000 / 25 - 1)
-	0x81, 0x01,                          // lag global[1]
-	0x4a, PATCH_UINT16(0x0006),          // send 6
-	0x34, PATCH_UINT16(10000),           // ldi 10000
-	0x48,                                // ret
+	0x35, 0x06,                 // ldi 06
+	0x65, 0x18,                 // aTop _detailLevel
+	0x33, 0x02,                 // jmp 02
 	PATCH_END
 };
 
