@@ -77,10 +77,10 @@ TheEntity entities[] = {
 	{ kTheMachineType,		"machineType",		false, 2 },	// D2 f
 	{ kTheMaxInteger,		"maxInteger",		false, 4 },	//				D4 f
 	{ kTheMemorySize,		"memorySize",		false, 2 },	// D2 f
-	{ kTheMenu,				"menu",				true,  0 },
-	{ kTheMenus,			"menus",			false, 0 },
-	{ kTheMenuItem,			"menuitem",			true,  0 },
-	{ kTheMenuItems,		"menuitems",		false, 0 },
+	{ kTheMenu,				"menu",				true,  3 },	//		 D3 p
+	{ kTheMenus,			"menus",			false, 3 },	//		 D3 p
+	{ kTheMenuItem,			"menuitem",			true,  3 },	//		 D3 p
+	{ kTheMenuItems,		"menuitems",		false, 3 },	//		 D3 f
 	{ kTheMouseCast,		"mouseCast",		false, 3 },	//		D3 f
 	{ kTheMouseChar,		"mouseChar",		false, 3 },	//		D3 f
 	{ kTheMouseDown,		"mouseDown",		false, 2 },	// D2 f
@@ -108,8 +108,8 @@ TheEntity entities[] = {
 	{ kTheQuickTimePresent,	"quickTimePresent",	false, 4 },	//				D4 f
 	{ kTheRandomSeed,		"randomSeed",		false, 4 },	//				D4 p
 	{ kTheResult,			"result",			false, 2 },	// D2 f
-	{ kTheRightMouseDown,	"rightMouseDown",	false, 0 },
-	{ kTheRightMouseUp,		"rightMouseUp",		false, 0 },
+	{ kTheRightMouseDown,	"rightMouseDown",	false, 5 },	//						D5 f
+	{ kTheRightMouseUp,		"rightMouseUp",		false, 5 },	//						D5 f
 	{ kTheRomanLingo,		"romanLingo",		false, 4 },	//				D4 p
 	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,4 },//			D4 f
 	{ kTheSearchPath,		"searchPath",		false, 4 },	//				D4 f
