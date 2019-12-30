@@ -119,7 +119,7 @@ TheEntity entities[] = {
 	{ kTheShiftDown,		"shiftDown",		false, 2 },	// D2 f
 	{ kTheSoundEnabled,		"soundEnabled",		false, 2 },	// D2 p
 	{ kTheSoundLevel,		"soundLevel",		false, 2 },	// D2 p
-	{ kTheSprite,			"sprite",			true,  4 },	//				D4
+	{ kTheSprite,			"sprite",			true,  2 },	// D4 p
 	{ kTheSqrt,				"sqrt",				false, 2 },	// D2 f
 	{ kTheStage,			"stage",			false, 4 },	//				D4 p
 	{ kTheStageBottom,		"stageBottom",		false, 2 },	// D2 f
@@ -277,14 +277,18 @@ void Lingo::initTheEntities() {
 	TheEntity *e = entities;
 
 	while (e->entity != kTheNOEntity) {
-		_theEntities[e->name] = e;
+		if (e->version <= _vm->getVersion())
+			_theEntities[e->name] = e;
+
 		e++;
 	}
 
 	TheEntityField *f = fields;
 
 	while (f->entity != kTheNOEntity) {
-		_theEntityFields[Common::String::format("%d%s", f->entity, f->name)] = f;
+		if (f->version <= _vm->getVersion())
+			_theEntityFields[Common::String::format("%d%s", f->entity, f->name)] = f;
+
 		f++;
 	}
 }
