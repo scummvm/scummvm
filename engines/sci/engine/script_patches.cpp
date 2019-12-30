@@ -3474,6 +3474,45 @@ static const uint16 gk2SoundManagerLockupPatch2[] = {
 	PATCH_END
 };
 
+// Clicking on Frau Miller in room 810 after exhausting her topics and then
+//  clicking on anything else can lockup or crash the game. rm810:newRoom fades
+//  the music before transitioning to room 8110, which takes several seconds.
+//  The game doesn't disable input during this period and if the player begins
+//  another action then rm810:cue can unexpectedly interrupt it. If Grace is
+//  walking then the room will reload in a handsOff state. Other edge cases
+//  include setting the room number to zero and subsequently crashing.
+//
+// We fix this by calling handsOff so that the player can't interrupt the Frau
+//  Miller room transition while waiting for the music to fade, which is
+//  consistent with the exit to the map.
+//
+// Applies to: All versions
+// Responsible method: rm810:newRoom
+static const uint16 gk2FrauMillerLockupSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x03,                         // pushi 03
+	0x8f, 0x01,                         // lsp 01
+	0x38, SIG_UINT16(0x1fae),           // pushi 1fae
+	0x38, SIG_UINT16(0x0320),           // pushi 0320
+	0x46, SIG_UINT16(0xfde7),           // calle proc64999_5 [ OneOf newRoomNumber 8110 800 ]
+	      SIG_UINT16(0x0005),
+	      SIG_UINT16(0x0006),
+	0x31,                               // bnt [ don't fade music ]
+	SIG_END,
+};
+
+static const uint16 gk2FrauMillerLockupPatch[] = {
+	0x8f, 0x01,                         // lsp 01
+	0x34, PATCH_UINT16(0x1fae),         // ldi 1fae
+	0x24,                               // le? [ newRoomNumber <= 8110 ]
+	0x31, PATCH_GETORIGINALBYTEADJUST(+18, +11), // bnt [ don't fade music ]
+	0x38, PATCH_SELECTOR16(handsOff),   // pushi handsOff
+	0x39, 0x00,                         // pushi 00
+	0x80, PATCH_UINT16(0x0001),         // lag 0001
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ GK2 handsOff: ]
+	PATCH_END
+};
+
 // Clicking an inventory item on the Wagner paintings in rooms 8616 and 8617
 //  causes a missing message error. The paintings only have responses for the
 //  "Do" verb but painting:doVerb passes the incoming verb to gk2Messager:say
@@ -3505,6 +3544,7 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,    23, "fix inventory scroll direction (no line numbers)",    1, gk2InventoryScrollDirSignature2,   gk2InventoryScrollDirPatch2 },
 	{  true,    37, "fix sound manager lockup",                            1, gk2SoundManagerLockupSignature1,   gk2SoundManagerLockupPatch1 },
 	{  true,    37, "fix sound manager lockup (no line numbers)",          1, gk2SoundManagerLockupSignature2,   gk2SoundManagerLockupPatch2 },
+	{  true,   810, "fix frau miller lockup",                              1, gk2FrauMillerLockupSignature,      gk2FrauMillerLockupPatch },
 	{  true,  8616, "fix wagner painting message",                         2, gk2WagnerPaintingMessageSignature, gk2WagnerPaintingMessagePatch },
 	{  true,  8617, "fix wagner painting message",                         2, gk2WagnerPaintingMessageSignature, gk2WagnerPaintingMessagePatch },
 	{  true, 64990, "increase number of save games (1/2)",                 1, sci2NumSavesSignature1,            sci2NumSavesPatch1 },
