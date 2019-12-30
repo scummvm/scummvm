@@ -3415,6 +3415,61 @@ static const uint16 gk2BenchmarkPatch[] = {
 	PATCH_END
 };
 
+// GK2 has a complex sound bug which causes seemingly random lockups when
+//  changing rooms in many areas including the Herrenchiemse Museum, the Hunt 
+//  Club, and St. Georg Church. This also occurs in the original.
+//
+// SoundManager continuously plays an array of sounds provided to its play
+//  method. Sounds play in a random order with a random delay of five to ten
+//  seconds in between. SoundManager is attached to soundRegion and survives
+//  room changes. Rooms that set a new playlist call play on initialization.
+//  The problem is that SoundManager:play doesn't clear its delay timer. If play
+//  is called during a delay then the timer continues and expires during the
+//  next sound. This is noticeable throughout the game when background music is
+//  randomly interrupted by different music. Many room scripts change rooms by
+//  calling SoundManager:fade in handsOff mode and proceeding once they've been
+//  cued. If a stray SoundManager timer expires while a script is waiting for
+//  fade to complete then SoundManager:cue will play the next sound, overwrite
+//  gk2Music:client with itself, and the waiting script will never cue.
+//
+// We fix this by clearing SoundManager's timer state in SoundManager:play.
+//  This prevents the delay timer from ever running while music is playing.
+//
+// Applies to: All versions
+// Responsible method: SoundManager:play
+static const uint16 gk2SoundManagerLockupSignature1[] = {
+	0x7e, SIG_ADDTOOFFSET(+2),          // line
+	0x7e, SIG_ADDTOOFFSET(+2),          // line
+	SIG_MAGICDWORD,
+	0x35, 0x00,                         // ldi 00
+	0x65, 0x34,                         // aTop cleanup
+	SIG_END
+};
+
+static const uint16 gk2SoundManagerLockupPatch1[] = {
+	0x35, 0x00,                         // ldi 00
+	0x64, PATCH_UINT16(0x001e),         // aTop seconds
+	0x64, PATCH_UINT16(0x0012),         // aTop scratch
+	PATCH_END
+};
+
+static const uint16 gk2SoundManagerLockupSignature2[] = {
+	0x87, SIG_MAGICDWORD, 0x00,         // lap 00
+	0x18,                               // not
+	0x31, 0x10,                         // bnt 10 [ skip debug message ]
+	0x78,                               // push1
+	0x72,                               // lofsa "WARNING: 0 args passed to SoundManager!"
+	SIG_END
+};
+
+static const uint16 gk2SoundManagerLockupPatch2[] = {
+	0x35, 0x00,                         // ldi 00
+	0x65, 0x1e,                         // aTop seconds
+	0x65, 0x12,                         // aTop scratch
+	0x32, PATCH_UINT16(0x0014),         // jmp 0014 [ skip debug message ]
+	PATCH_END
+};
+
 // Clicking an inventory item on the Wagner paintings in rooms 8616 and 8617
 //  causes a missing message error. The paintings only have responses for the
 //  "Do" verb but painting:doVerb passes the incoming verb to gk2Messager:say
@@ -3444,6 +3499,8 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,    23, "fix inventory scroll speed",                          2, gk2InventoryScrollSpeedSignature,  gk2InventoryScrollSpeedPatch },
 	{  true,    23, "fix inventory scroll direction",                      1, gk2InventoryScrollDirSignature1,   gk2InventoryScrollDirPatch1 },
 	{  true,    23, "fix inventory scroll direction (no line numbers)",    1, gk2InventoryScrollDirSignature2,   gk2InventoryScrollDirPatch2 },
+	{  true,    37, "fix sound manager lockup",                            1, gk2SoundManagerLockupSignature1,   gk2SoundManagerLockupPatch1 },
+	{  true,    37, "fix sound manager lockup (no line numbers)",          1, gk2SoundManagerLockupSignature2,   gk2SoundManagerLockupPatch2 },
 	{  true,  8616, "fix wagner painting message",                         2, gk2WagnerPaintingMessageSignature, gk2WagnerPaintingMessagePatch },
 	{  true,  8617, "fix wagner painting message",                         2, gk2WagnerPaintingMessageSignature, gk2WagnerPaintingMessagePatch },
 	{  true, 64990, "increase number of save games (1/2)",                 1, sci2NumSavesSignature1,            sci2NumSavesPatch1 },
