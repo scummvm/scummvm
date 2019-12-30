@@ -392,7 +392,7 @@ expr: simpleexpr { $$ = $1; }
 	| FBLTINONEARG expr		{
 		g_lingo->codeFunc($1, 1);
 		delete $1; }
-	| FBLTINARGLIST nonemptyarglist			{ g_lingo->codeFunc($1, $2); }
+	| FBLTINARGLIST arglist	{ g_lingo->codeFunc($1, $2); }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($1, $3);
 		delete $1; }
@@ -474,7 +474,7 @@ proc: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 		g_lingo->code1(g_lingo->c_voidpush);
 		g_lingo->codeFunc($1, 1);
 		delete $1; }
-	| BLTINARGLIST nonemptyarglist			{ g_lingo->codeFunc($1, $2); }
+	| BLTINARGLIST arglist	{ g_lingo->codeFunc($1, $2); }
 	| tOPEN expr tWITH expr	{ g_lingo->code1(g_lingo->c_open); }
 	| tOPEN expr 			{ g_lingo->code2(g_lingo->c_voidpush, g_lingo->c_open); }
 	| TWOWORDBUILTIN ID arglist	{ Common::String s(*$1); s += '-'; s += *$2; g_lingo->codeFunc(&s, $3); }
