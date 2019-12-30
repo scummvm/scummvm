@@ -149,128 +149,128 @@ TheEntity entities[] = {
 };
 
 TheEntityField fields[] = {
-	{ kTheSprite,	"backColor",	kTheBackColor },	// D2 p
-	{ kTheSprite,	"blend",		kTheBlend },		//				D4 p
-	{ kTheSprite,	"bottom",		kTheBottom },		// D2 p
-	{ kTheSprite,	"castNum",		kTheCastNum },		// D2 p
-	{ kTheSprite,	"constraint",	kTheConstraint },	// D2 p
-	{ kTheSprite,	"cursor",		kTheCursor },		// D2 p
-	{ kTheSprite,	"editableText", kTheEditableText },	//				D4 p
-	{ kTheSprite,	"foreColor",	kTheForeColor },	// D2 p
-	{ kTheSprite,	"height",		kTheHeight },		// D2 p
-	{ kTheSprite,	"immediate",	kTheImmediate },	// D2 p
-	{ kTheSprite,	"ink",			kTheInk },			// D2 p
-	{ kTheSprite,	"left",			kTheLeft },			// D2 p
-	{ kTheSprite,	"lineSize",		kTheLineSize },		// D2 p
-	{ kTheSprite,	"locH",			kTheLocH },			// D2 p
-	{ kTheSprite,	"locV",			kTheLocV },			// D2 p
-	{ kTheSprite,	"moveableSprite",kTheMoveableSprite },//			D4 p
-	{ kTheSprite,	"movieRate",	kTheMovieRate },	//				D4 P
-	{ kTheSprite,	"movieTime",	kTheMovieTime },	//				D4 P
-	{ kTheSprite,	"pattern",		kThePattern },		// D2 p
-	{ kTheSprite,	"puppet",		kThePuppet },		// D2 p
-	{ kTheSprite,	"right",		kTheRight },		// D2 p
-	{ kTheSprite,	"scoreColor",	kTheScoreColor },	//				D4 p
-	{ kTheSprite,	"scriptNum",	kTheScriptNum },	//				D4 p
-	{ kTheSprite,	"startTime",	kTheStartTime },	//				D4 p
-	{ kTheSprite,	"stretch",		kTheStrech },		// D2 p
-	{ kTheSprite,	"stopTime",		kTheStopTime },		//				D4 p
-	{ kTheSprite,	"top",			kTheTop },			// D2 p
-	{ kTheSprite,	"trails",		kTheTrails },		//				D4 p
-	{ kTheSprite,	"type",			kTheType },			// D2 p
-	{ kTheSprite,	"visible",		kTheVisible },		//				D4 p
-	{ kTheSprite,	"volume",		kTheVolume },		//				D4 p
-	{ kTheSprite,	"width",		kTheWidth },		// D2 p
+	{ kTheSprite,	"backColor",	kTheBackColor,	2 },// D2 p
+	{ kTheSprite,	"blend",		kTheBlend,		4 },//				D4 p
+	{ kTheSprite,	"bottom",		kTheBottom,		2 },// D2 p
+	{ kTheSprite,	"castNum",		kTheCastNum,	2 },// D2 p
+	{ kTheSprite,	"constraint",	kTheConstraint, 2 },// D2 p
+	{ kTheSprite,	"cursor",		kTheCursor,		2 },// D2 p
+	{ kTheSprite,	"editableText", kTheEditableText,4 },//				D4 p
+	{ kTheSprite,	"foreColor",	kTheForeColor,	2 },// D2 p
+	{ kTheSprite,	"height",		kTheHeight,		2 },// D2 p
+	{ kTheSprite,	"immediate",	kTheImmediate,	2 },// D2 p
+	{ kTheSprite,	"ink",			kTheInk,		2 },// D2 p
+	{ kTheSprite,	"left",			kTheLeft,		2 },// D2 p
+	{ kTheSprite,	"lineSize",		kTheLineSize,	2 },// D2 p
+	{ kTheSprite,	"locH",			kTheLocH,		2 },// D2 p
+	{ kTheSprite,	"locV",			kTheLocV,		2 },// D2 p
+	{ kTheSprite,	"moveableSprite",kTheMoveableSprite,4 },//			D4 p
+	{ kTheSprite,	"movieRate",	kTheMovieRate,	4 },//				D4 P
+	{ kTheSprite,	"movieTime",	kTheMovieTime,	4 },//				D4 P
+	{ kTheSprite,	"pattern",		kThePattern,	2 },// D2 p
+	{ kTheSprite,	"puppet",		kThePuppet,		2 },// D2 p
+	{ kTheSprite,	"right",		kTheRight,		2 },// D2 p
+	{ kTheSprite,	"scoreColor",	kTheScoreColor,	4 },//				D4 p
+	{ kTheSprite,	"scriptNum",	kTheScriptNum,	4 },//				D4 p
+	{ kTheSprite,	"startTime",	kTheStartTime,	4 },//				D4 p
+	{ kTheSprite,	"stretch",		kTheStrech,		2 },// D2 p
+	{ kTheSprite,	"stopTime",		kTheStopTime,	4 },//				D4 p
+	{ kTheSprite,	"top",			kTheTop,		2 },// D2 p
+	{ kTheSprite,	"trails",		kTheTrails,		4 },//				D4 p
+	{ kTheSprite,	"type",			kTheType,		2 },// D2 p
+	{ kTheSprite,	"visible",		kTheVisible,	4 },//				D4 p
+	{ kTheSprite,	"volume",		kTheVolume,		4 },//				D4 p
+	{ kTheSprite,	"width",		kTheWidth,		2 },// D2 p
 
 	// Common cast fields
-	{ kTheCast,		"castType",		kTheCastType },		//				D4 p
-	{ kTheCast,		"filename",		kTheFileName },		//				D4 p
-	{ kTheCast,		"height",		kTheHeight },		//				D4 p
-	{ kTheCast,		"loaded",		kTheLoaded },		//				D4 p
-	{ kTheCast,		"modified",		kTheModified },		//				D4 p
-	{ kTheCast,		"name",			kTheName },			//		D3 p
-	{ kTheCast,		"number",		kTheNumber },		//		D3 p
-	{ kTheCast,		"rect",			kTheRect },			//				D4 p
-	{ kTheCast,		"purgePriority",kThePurgePriority },//	 			D4 p // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
-	{ kTheCast,		"scriptText",	kTheScriptText },	//				D4 p
-	{ kTheCast,		"width",		kTheWidth },		//				D4 p
+	{ kTheCast,		"castType",		kTheCastType,	4 },//				D4 p
+	{ kTheCast,		"filename",		kTheFileName,	4 },//				D4 p
+	{ kTheCast,		"height",		kTheHeight,		4 },//				D4 p
+	{ kTheCast,		"loaded",		kTheLoaded,		4 },//				D4 p
+	{ kTheCast,		"modified",		kTheModified,	4 },//				D4 p
+	{ kTheCast,		"name",			kTheName,		3 },//		D3 p
+	{ kTheCast,		"number",		kTheNumber,		3 },//		D3 p
+	{ kTheCast,		"rect",			kTheRect,		4 },//				D4 p
+	{ kTheCast,		"purgePriority",kThePurgePriority,4 },//			D4 p // 0 Never purge, 1 Purge Last, 2 Purge next, 2 Purge normal
+	{ kTheCast,		"scriptText",	kTheScriptText,	4 },//				D4 p
+	{ kTheCast,		"width",		kTheWidth,		4 },//				D4 p
 
 	// Shape fields
-	{ kTheCast,		"backColor",	kTheBackColor },	//				D4 p
-	{ kTheCast,		"foreColor",	kTheForeColor },	//				D4 p
+	{ kTheCast,		"backColor",	kTheBackColor,	4 },//				D4 p
+	{ kTheCast,		"foreColor",	kTheForeColor,	4 },//				D4 p
 
 	// Digital video fields
-	{ kTheCast,		"center",		kTheCenter },		//				D4 p
-	{ kTheCast,		"controller",	kTheController },	//				D4 p
-	{ kTheCast,		"crop",			kTheCrop },			//				D4 p
-	{ kTheCast,		"directToStage",kTheDirectToStage },//				D4 p
-	{ kTheCast,		"duration",		kTheDuration },		//				D4 p
-	{ kTheCast,		"frameRate",	kTheFrameRate },	//				D4 p
-	{ kTheCast,		"loop",			kTheLoop },			//				D4 p
-	{ kTheCast,		"pausedAtStart",kThePausedAtStart },//				D4 p
-	{ kTheCast,		"preLoad",		kThePreLoad },		//				D4 p
-	{ kTheCast,		"sound",		kTheSound },		//				D4 p // 0-1 off-on
-	{ kTheCast,		"video",		kTheVideo },		//				D4 p
+	{ kTheCast,		"center",		kTheCenter,		4 },//				D4 p
+	{ kTheCast,		"controller",	kTheController,	4 },//				D4 p
+	{ kTheCast,		"crop",			kTheCrop,		4 },//				D4 p
+	{ kTheCast,		"directToStage",kTheDirectToStage,4 },//			D4 p
+	{ kTheCast,		"duration",		kTheDuration,	4 },//				D4 p
+	{ kTheCast,		"frameRate",	kTheFrameRate,	4 },//				D4 p
+	{ kTheCast,		"loop",			kTheLoop,		4 },//				D4 p
+	{ kTheCast,		"pausedAtStart",kThePausedAtStart,4 },//			D4 p
+	{ kTheCast,		"preLoad",		kThePreLoad,	4 },//				D4 p
+	{ kTheCast,		"sound",		kTheSound,		4 },//				D4 p // 0-1 off-on
+	{ kTheCast,		"video",		kTheVideo,		4 },//				D4 p
 
 	// Bitmap fields
-	{ kTheCast,		"depth",		kTheDepth },
-	{ kTheCast,		"regPoint",		kTheRegPoint },		//				D4 p
-	{ kTheCast,		"palette",		kThePalette },		//				D4 p
-	{ kTheCast,		"picture",		kThePicture },		//		D3 p
+	{ kTheCast,		"depth",		kTheDepth,		4 },//				D4 p
+	{ kTheCast,		"regPoint",		kTheRegPoint,	4 },//				D4 p
+	{ kTheCast,		"palette",		kThePalette,	4 },//				D4 p
+	{ kTheCast,		"picture",		kThePicture,	3 },//		D3 p
 
 	// TextCast fields
-	{ kTheCast,		"hilite",		kTheHilite },		// D2 p
-	{ kTheCast,		"size",			kTheSize },			//				D4 p
-	{ kTheCast,		"text",			kTheText },			// D2 p
+	{ kTheCast,		"hilite",		kTheHilite,		2 },// D2 p
+	{ kTheCast,		"size",			kTheSize,		4 },//				D4 p
+	{ kTheCast,		"text",			kTheText,		2 },// D2 p
 
 	// Field fields
-	{ kTheField,	"textAlign",	kTheTextAlign },	//		D3 p
-	{ kTheField,	"textFont",		kTheTextFont },		//		D3 p
-	{ kTheField,	"textHeight",	kTheTextHeight },	//		D3 p
-	{ kTheField,	"textSize",		kTheTextSize },		//		D3 p
-	{ kTheField,	"textStyle",	kTheTextStyle },	//		D3 p
+	{ kTheField,	"textAlign",	kTheTextAlign,	3 },//		D3 p
+	{ kTheField,	"textFont",		kTheTextFont,	3 },//		D3 p
+	{ kTheField,	"textHeight",	kTheTextHeight,	3 },//		D3 p
+	{ kTheField,	"textSize",		kTheTextSize,	3 },//		D3 p
+	{ kTheField,	"textStyle",	kTheTextStyle,	3 },//		D3 p
 
-	{ kTheWindow,	"drawRect",		kTheDrawRect },		//				D4 p
-	{ kTheWindow,	"fileName",		kTheFileName },		//				D4 p
-	{ kTheWindow,	"modal",		kTheModal },		//				D4 p
-	{ kTheWindow,	"rect",			kTheRect },			//				D4 p
-	{ kTheWindow,	"title",		kTheTitle },		//				D4 p
-	{ kTheWindow,	"titleVisible",	kTheTitleVisible },	//				D4 p
-	{ kTheWindow,	"sourceRect",	kTheSourceRect },	//				D4 p
-	{ kTheWindow,	"visible",		kTheVisible },		//				D4 p
-	{ kTheWindow,	"windowType",	kTheWindowType },	//				D4 p
+	{ kTheWindow,	"drawRect",		kTheDrawRect,	4 },//				D4 p
+	{ kTheWindow,	"fileName",		kTheFileName,	4 },//				D4 p
+	{ kTheWindow,	"modal",		kTheModal,		4 },//				D4 p
+	{ kTheWindow,	"rect",			kTheRect,		4 },//				D4 p
+	{ kTheWindow,	"title",		kTheTitle,		4 },//				D4 p
+	{ kTheWindow,	"titleVisible",	kTheTitleVisible,4 },//				D4 p
+	{ kTheWindow,	"sourceRect",	kTheSourceRect,	4 },//				D4 p
+	{ kTheWindow,	"visible",		kTheVisible,	4 },//				D4 p
+	{ kTheWindow,	"windowType",	kTheWindowType,	4 },//				D4 p
 
-	{ kTheMenuItem,	"checkmark",	kTheCheckMark },	//		D3 p
-	{ kTheMenuItem, "enabled",		kTheEnabled },		//		D3 p
-	{ kTheMenuItem, "name",			kTheName },			//		D3 p
-	{ kTheMenuItem, "script",		kTheScript },		//		D3 p
+	{ kTheMenuItem,	"checkmark",	kTheCheckMark,	3 },//		D3 p
+	{ kTheMenuItem, "enabled",		kTheEnabled,	3 },//		D3 p
+	{ kTheMenuItem, "name",			kTheName,		3 },//		D3 p
+	{ kTheMenuItem, "script",		kTheScript,		3 },//		D3 p
 
-	{ kTheMenu,		"name",			kTheName },			//		D3 p
+	{ kTheMenu,		"name",			kTheName,		3 },//		D3 p
 
-	{ kTheCastMembers,	"number",	kTheNumber },		// 		D3 p
-	{ kTheChars,	"number",		kTheNumber },		//		D3 p
-	{ kTheChars,	"last",			kTheLast },			//				D4 f
-	{ kTheItems,	"number",		kTheNumber },		//		D3 p
-	{ kTheItems,	"last",			kTheLast },			//				D4 f
-	{ kTheLines,	"number",		kTheNumber },		//		D3 p
-	{ kTheLines,	"last",			kTheLast },			//				D4 f
-	{ kTheMenuItems,"number",		kTheNumber },		//		D3 p
-	{ kTheMenus,	"number",		kTheNumber },		//		D3 p
-	{ kTheWords,	"number",		kTheNumber },		//		D3 p
-	{ kTheWords,	"last",			kTheLast },			//				D4 f
+	{ kTheCastMembers,	"number",	kTheNumber,		3 },// 		D3 p
+	{ kTheChars,	"number",		kTheNumber,		3 },//		D3 p
+	{ kTheChars,	"last",			kTheLast,		4 },//				D4 f
+	{ kTheItems,	"number",		kTheNumber,		3 },//		D3 p
+	{ kTheItems,	"last",			kTheLast,		4 },//				D4 f
+	{ kTheLines,	"number",		kTheNumber,		3 },//		D3 p
+	{ kTheLines,	"last",			kTheLast,		4 },//				D4 f
+	{ kTheMenuItems,"number",		kTheNumber,		3 },//		D3 p
+	{ kTheMenus,	"number",		kTheNumber,		3 },//		D3 p
+	{ kTheWords,	"number",		kTheNumber,		3 },//		D3 p
+	{ kTheWords,	"last",			kTheLast,		4 },//				D4 f
 
-	{ kTheDate,		"short",		kTheShort },		//		D3 f
-	{ kTheDate,		"long",			kTheLong },			//		D3 f
-	{ kTheDate,		"abbreviated",	kTheAbbr },			//		D3 f
-	{ kTheDate,		"abbrev",		kTheAbbr },			//		D3 f
-	{ kTheDate,		"abbr",			kTheAbbr },			//		D3 f
-	{ kTheTime,		"short",		kTheShort },		//		D3 f
-	{ kTheTime,		"long",			kTheLong },			//		D3 f
-	{ kTheTime,		"abbreviated",	kTheAbbr },			//		D3 f
-	{ kTheTime,		"abbrev",		kTheAbbr },			//		D3 f
-	{ kTheTime,		"abbr",			kTheAbbr },			//		D3 f
+	{ kTheDate,		"short",		kTheShort,		3 },//		D3 f
+	{ kTheDate,		"long",			kTheLong,		3 },//		D3 f
+	{ kTheDate,		"abbreviated",	kTheAbbr,		3 },//		D3 f
+	{ kTheDate,		"abbrev",		kTheAbbr,		3 },//		D3 f
+	{ kTheDate,		"abbr",			kTheAbbr,		3 },//		D3 f
+	{ kTheTime,		"short",		kTheShort,		3 },//		D3 f
+	{ kTheTime,		"long",			kTheLong,		3 },//		D3 f
+	{ kTheTime,		"abbreviated",	kTheAbbr,		3 },//		D3 f
+	{ kTheTime,		"abbrev",		kTheAbbr,		3 },//		D3 f
+	{ kTheTime,		"abbr",			kTheAbbr,		3 },//		D3 f
 
-	{ kTheNOEntity, NULL, kTheNOField }
+	{ kTheNOEntity, NULL, kTheNOField, 0 }
 };
 
 void Lingo::initTheEntities() {

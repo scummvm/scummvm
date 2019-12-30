@@ -235,6 +235,7 @@ struct TheEntityField {
 	TheEntityType entity;
 	const char *name;
 	TheFieldType field;
+	int version;
 };
 
 } // End of namespace Director
