@@ -378,9 +378,10 @@ Common::String *Datum::toString() {
 	case REFERENCE:
 		{
 			int idx = u.i;
+			Score *score = g_director->getCurrentScore();
 
-			if (!g_director->getCurrentScore()->_loadedText->contains(idx)) {
-				if (!g_director->getCurrentScore()->_loadedText->contains(idx - 1024)) {
+			if (!score->_loadedCast->contains(idx)) {
+				if (!score->_loadedCast->contains(idx - score->_castIDoffset)) {
 					warning("toString(): Unknown REFERENCE %d", idx);
 					*s = "";
 					break;
@@ -389,7 +390,7 @@ Common::String *Datum::toString() {
 				}
 			}
 
-			*s = g_director->getCurrentScore()->_loadedText->getVal(idx)->_ptext;
+			*s = ((TextCast *)score->_loadedCast->getVal(idx))->_ptext;
 		}
 		break;
 	default:

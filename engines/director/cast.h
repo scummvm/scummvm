@@ -123,6 +123,13 @@ public:
 	uint32 _id;
 };
 
+class RTECast : public TextCast {
+public:
+	RTECast(Common::ReadStreamEndian &stream, uint16 version);
+
+	void loadChunks();
+};
+
 struct CastInfo {
 	Common::String script;
 	Common::String name;

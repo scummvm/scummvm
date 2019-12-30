@@ -142,12 +142,8 @@ public:
 	bool _stopPlay;
 	uint32 _nextFrameTime;
 
-	Common::HashMap<int, ButtonCast *> *_loadedButtons;
-	Common::HashMap<int, TextCast *> *_loadedText;
-	//Common::HashMap<int, SoundCast *> _loadedSound;
-	Common::HashMap<int, BitmapCast *> *_loadedBitmaps;
-	Common::HashMap<int, ShapeCast *> *_loadedShapes;
-	Common::HashMap<int, ScriptCast *> *_loadedScripts;
+	Common::HashMap<int, Cast *> *_loadedCast;
+
 	Common::HashMap<int, const Stxt *> *_loadedStxts;
 
 	uint16 _castIDoffset;

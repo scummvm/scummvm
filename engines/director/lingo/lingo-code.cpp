@@ -337,8 +337,9 @@ void Lingo::c_assign() {
 	}
 
 	if (d1.type == REFERENCE) {
-		if (!g_director->getCurrentScore()->_loadedText->contains(d1.u.i)) {
-			if (!g_director->getCurrentScore()->_loadedText->contains(d1.u.i - 1024)) {
+		Score *score = g_director->getCurrentScore();
+		if (!score->_loadedCast->contains(d1.u.i)) {
+			if (!score->_loadedCast->contains(d1.u.i - score->_castIDoffset)) {
 				warning("c_assign: Unknown REFERENCE %d", d1.u.i);
 				g_lingo->pushVoid();
 				return;
@@ -349,7 +350,7 @@ void Lingo::c_assign() {
 
 		d2.toString();
 
-		g_director->getCurrentScore()->_loadedText->getVal(d1.u.i)->setText(d2.u.s->c_str());
+		((TextCast *)score->_loadedCast->getVal(d1.u.i))->setText(d2.u.s->c_str());
 
 		return;
 	}

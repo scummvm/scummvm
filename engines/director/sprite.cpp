@@ -52,10 +52,7 @@ Sprite::Sprite() {
 	_stretch = 0;
 	_type = kInactiveSprite;
 
-	_bitmapCast = nullptr;
-	_textCast = nullptr;
-	_buttonCast = nullptr;
-	_shapeCast = nullptr;
+	_cast = nullptr;
 
 	_blend = 0;
 	_lineSize = 1;
@@ -91,10 +88,7 @@ Sprite::Sprite(const Sprite &sprite) {
 	_stretch = sprite._stretch;
 	_type = sprite._type;
 
-	_bitmapCast = sprite._bitmapCast;
-	_shapeCast = sprite._shapeCast;
-	_textCast = sprite._textCast;
-	_buttonCast = sprite._buttonCast;
+	_cast = sprite._cast;
 
 	_constraint = sprite._constraint;
 	_moveable = sprite._moveable;
@@ -110,14 +104,8 @@ Sprite::Sprite(const Sprite &sprite) {
 }
 
 Sprite::~Sprite() {
-	if (_bitmapCast)
-		delete _bitmapCast;
-	if (_shapeCast)
-		delete _shapeCast;
-	if (_textCast)
-		delete _textCast;
-	if (_buttonCast)
-		delete _buttonCast;
+	if (_cast)
+		delete _cast;
 }
 
 uint16 Sprite::getPattern() {

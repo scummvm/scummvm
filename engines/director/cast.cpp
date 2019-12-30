@@ -31,6 +31,8 @@
 namespace Director {
 
 BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version) {
+	_type = kCastBitmap;
+
 	if (version < 4) {
 		_pitch = 0;
 		_flags = stream.readByte();	// region: 0 - auto, 1 - matte, 2 - disabled
@@ -106,6 +108,8 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 }
 
 TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
+	_type = kCastText;
+
 	_borderSize = kSizeNone;
 	_gutterSize = kSizeNone;
 	_boxShadow = kSizeNone;
@@ -260,6 +264,8 @@ void TextCast::setText(const char *text) {
 }
 
 ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
+	_type = kCastShape;
+
 	byte flags, unk1;
 
 	_ink = kInkTypeCopy;
@@ -300,6 +306,8 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 }
 
 ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextCast(stream, version) {
+	_type = kCastButton;
+
 	if (version < 4) {
 		_buttonType = static_cast<ButtonType>(stream.readUint16BE());
 	} else {
@@ -316,6 +324,8 @@ ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextC
 }
 
 ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
+	_type = kCastLingoScript;
+
 	if (version < 4) {
 		error("Unhandled Script cast");
 	} else if (version == 4) {
@@ -345,6 +355,23 @@ ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
 		// WIP need to complete this!
 	}
 	_modified = 0;
+}
+
+RTECast::RTECast(Common::ReadStreamEndian &stream, uint16 version) : TextCast(stream, version) {
+
+	_type = kCastRTE;
+}
+
+void RTECast::loadChunks() {
+	//TODO: Actually load RTEs correctly, don't just make fake STXT.
+#if 0
+	Common::SeekableReadStream *rte1 = _movieArchive->getResource(res->children[child].tag, res->children[child].index);
+	byte *buffer = new byte[rte1->size() + 2];
+	rte1->read(buffer, rte1->size());
+	buffer[rte1->size()] = '\n';
+	buffer[rte1->size() + 1] = '\0';
+	_loadedText->getVal(id)->importRTE(buffer);
+#endif
 }
 
 } // End of namespace Director

@@ -626,23 +626,25 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			} else if (castType == kCastButton) {
 				renderButton(surface, i);
 			} else {
-				if (!_sprites[i]->_bitmapCast) {
+				if (!_sprites[i]->_cast || _sprites[i]->_cast->_type != kCastBitmap) {
 					warning("Frame::renderSprites(): No cast ID for sprite %d", i);
 					continue;
 				}
 
-				int32 regX = _sprites[i]->_bitmapCast->_regX;
-				int32 regY = _sprites[i]->_bitmapCast->_regY;
-				int32 rectLeft = _sprites[i]->_bitmapCast->_initialRect.left;
-				int32 rectTop = _sprites[i]->_bitmapCast->_initialRect.top;
+				BitmapCast *bc = (BitmapCast *)_sprites[i]->_cast;
+
+				int32 regX = bc->_regX;
+				int32 regY = bc->_regY;
+				int32 rectLeft = bc->_initialRect.left;
+				int32 rectTop = bc->_initialRect.top;
 
 				int x = _sprites[i]->_startPoint.x - regX + rectLeft;
 				int y = _sprites[i]->_startPoint.y - regY + rectTop;
 				int height = _sprites[i]->_height;
-				int width = _vm->getVersion() > 4 ? _sprites[i]->_bitmapCast->_initialRect.width() : _sprites[i]->_width;
+				int width = _vm->getVersion() > 4 ? bc->_initialRect.width() : _sprites[i]->_width;
 				Common::Rect drawRect(x, y, x + width, y + height);
 				addDrawRect(i, drawRect);
-				inkBasedBlit(surface, *(_sprites[i]->_bitmapCast->_surface), i, drawRect);
+				inkBasedBlit(surface, *(bc->_surface), i, drawRect);
 			}
 		}
 	}
@@ -658,9 +660,9 @@ void Frame::addDrawRect(uint16 spriteId, Common::Rect &rect) {
 void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	Sprite *sp = _sprites[spriteId];
 
-	if (sp->_shapeCast != NULL) {
-		sp->_foreColor = sp->_shapeCast->_fgCol;
-		sp->_backColor = sp->_shapeCast->_bgCol;
+	if (sp->_cast != NULL) {
+		sp->_foreColor = ((ShapeCast *)sp->_cast)->_fgCol;
+		sp->_backColor = ((ShapeCast *)sp->_cast)->_bgCol;
 		//sp->_ink = sp->_shapeCast->_ink;
 	}
 
@@ -717,7 +719,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	uint16 castId = _sprites[spriteId]->_castId;
-	ButtonCast *button = _vm->getCurrentScore()->_loadedButtons->getVal(castId);
+	ButtonCast *button = (ButtonCast *)_vm->getCurrentScore()->_loadedCast->getVal(castId);
 
 	uint32 rectLeft = button->_initialRect.left;
 	uint32 rectTop = button->_initialRect.top;
@@ -760,7 +762,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 }
 
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textSize) {
-	TextCast *textCast = _sprites[spriteId]->_buttonCast != nullptr ? (TextCast*)_sprites[spriteId]->_buttonCast : _sprites[spriteId]->_textCast;
+	TextCast *textCast = (TextCast*)_sprites[spriteId]->_cast;
 
 	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
 	int y = _sprites[spriteId]->_startPoint.y; // +rectTop;

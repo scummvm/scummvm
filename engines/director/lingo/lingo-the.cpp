@@ -704,7 +704,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 				return d;
 			}
 
-			ShapeCast *shape = _vm->getCurrentScore()->_loadedShapes->getVal(id);
+			ShapeCast *shape = (ShapeCast *)_vm->getCurrentScore()->_loadedCast->getVal(id);
 			d.u.i = shape->_bgCol;
 		}
 		break;
@@ -716,7 +716,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 				return d;
 			}
 
-			ShapeCast *shape = _vm->getCurrentScore()->_loadedShapes->getVal(id);
+			ShapeCast *shape = (ShapeCast *)_vm->getCurrentScore()->_loadedCast->getVal(id);
 			d.u.i = shape->_fgCol;
 		}
 		break;
@@ -797,7 +797,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 			if (castType != kCastShape) {
 				warning("Lingo::setTheCast(): Field %d of cast %d not found", field, id);
 			}
-			ShapeCast *shape = score->_loadedShapes->getVal(id);
+			ShapeCast *shape = (ShapeCast *)score->_loadedCast->getVal(id);
 
 			d.toInt();
 			shape->_bgCol = d.u.i;
@@ -810,19 +810,19 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 				warning("Lingo::setTheCast(): Field %d of cast %d not found", field, id);
 				return;
 			}
-			ShapeCast *shape = score->_loadedShapes->getVal(id);
+			ShapeCast *shape = (ShapeCast *)score->_loadedCast->getVal(id);
 			shape->_fgCol = d.u.i;
 			shape->_modified = 1;
 		}
 		break;
 	case kTheText:
 		if (castType == kCastText) {
-			if (!score->_loadedText->contains(id)) {
+			if (score->_loadedCast->contains(id) && score->_loadedCast->getVal(id)->_type == kCastText) {
+				d.toString();
+				((TextCast *)score->_loadedCast->getVal(id))->setText(d.u.s->c_str());
+			} else {
 				warning("Lingo::setTheCast(): Unknown STXT cast id %d", id);
 				return;
-			} else {
-				d.toString();
-				score->_loadedText->getVal(id)->setText(d.u.s->c_str());
 			}
 		} else {
 			warning("Lingo::setTheCast(): Unprocessed setting text of cast %d type %d", id, castType);

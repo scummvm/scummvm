@@ -77,12 +77,7 @@ public:
 	InkType _ink;
 	uint16 _trails;
 
-	BitmapCast *_bitmapCast;
-	ShapeCast *_shapeCast;
-	//SoundCast *_soundCast;
-	TextCast *_textCast;
-	ButtonCast *_buttonCast;
-	//ScriptCast *_scriptCast;
+	Cast *_cast;
 
 	uint16 _flags;
 	Common::Point _startPoint;
