@@ -103,8 +103,9 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<f> FLOAT
 %token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG BLTINARGLIST TWOWORDBUILTIN
 %token<s> FBLTIN FBLTINNOARGS FBLTINONEARG FBLTINARGLIST RBLTIN RBLTINONEARG
-%token<s> ID STRING HANDLER SYMBOL THEOBJECTFIELD
+%token<s> ID STRING HANDLER SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL tMETHOD
+%token<objectfield> THEOBJECTFIELD
 %token tDOWN tELSE tELSIF tEXIT tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tOPEN tPLAY tDONE tINSTANCE
@@ -186,6 +187,11 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->codeInt($2[0]);
 		g_lingo->codeInt($2[1]);
 		$$ = $5; }
+	| tSET THEOBJECTFIELD tTO expr	{
+		g_lingo->code1(g_lingo->c_objectfieldassign);
+		g_lingo->codeString($2.s->c_str());
+		g_lingo->codeInt($2.e);
+		$$ = $4; }
 	;
 
 stmtoneliner: macro

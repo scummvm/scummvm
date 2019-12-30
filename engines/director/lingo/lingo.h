@@ -322,6 +322,7 @@ public:
 
 	static void c_theentitypush();
 	static void c_theentityassign();
+	static void c_objectfieldassign();
 
 	static void c_repeatwhilecode();
 	static void c_repeatwithcode();
@@ -571,6 +572,7 @@ public:
 	Datum getTheEntity(int entity, Datum &id, int field);
 	Datum getTheSprite(Datum &id, int field);
 	Datum getTheCast(Datum &id, int field);
+	void setObjectField(Common::String &obj, int field, Datum &d);
 
 public:
 	bool isInArgStack(Common::String *s);

@@ -462,6 +462,15 @@ void Lingo::c_theentityassign() {
 	g_lingo->setTheEntity(entity, id, field, d);
 }
 
+void Lingo::c_objectfieldassign() {
+	Common::String object(g_lingo->readString());
+	int field  = g_lingo->readInt();
+
+	Datum d = g_lingo->pop();
+
+	g_lingo->setObjectField(object, field, d);
+}
+
 void Lingo::c_swap() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();

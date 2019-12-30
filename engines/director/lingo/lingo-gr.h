@@ -70,10 +70,10 @@
      STRING = 286,
      HANDLER = 287,
      SYMBOL = 288,
-     THEOBJECTFIELD = 289,
-     ENDCLAUSE = 290,
-     tPLAYACCEL = 291,
-     tMETHOD = 292,
+     ENDCLAUSE = 289,
+     tPLAYACCEL = 290,
+     tMETHOD = 291,
+     THEOBJECTFIELD = 292,
      tDOWN = 293,
      tELSE = 294,
      tELSIF = 295,
@@ -163,10 +163,10 @@
 #define STRING 286
 #define HANDLER 287
 #define SYMBOL 288
-#define THEOBJECTFIELD 289
-#define ENDCLAUSE 290
-#define tPLAYACCEL 291
-#define tMETHOD 292
+#define ENDCLAUSE 289
+#define tPLAYACCEL 290
+#define tMETHOD 291
+#define THEOBJECTFIELD 292
 #define tDOWN 293
 #define tELSE 294
 #define tELSIF 295

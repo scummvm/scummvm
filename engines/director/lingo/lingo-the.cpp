@@ -842,4 +842,8 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	}
 }
 
+void Lingo::setObjectField(Common::String &obj, int field, Datum &d) {
+	warning("STUB: setObjectField(\"%s\", %d, ...)", obj.c_str(), field);
+}
+
 } // End of namespace Director
