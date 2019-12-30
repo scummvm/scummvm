@@ -192,7 +192,7 @@ void SmushFont::drawSubstring(const char *str, byte *buffer, int dst_width, int 
 	if (x < 0)
 		x = 0;
 
-	if (_vm->_language == Common::HE_ISR || true) {
+	if (_vm->_language == Common::HE_ISR) {
 		for (int i = strlen(str); i >= 0; i--) {
 			x += drawChar(buffer, dst_width, x, y, str[i]);
 		}
