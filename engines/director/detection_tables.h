@@ -44,7 +44,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GID_TEST,
-		3
+		4
 	},
 
 	// Generic D3 Mac entry
