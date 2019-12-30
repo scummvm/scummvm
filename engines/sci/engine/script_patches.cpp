@@ -146,7 +146,6 @@ static const char *const selectorNameTable[] = {
 	"handleEvent",  // EcoQuest 2, Shivers
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
-	"scrollSelections", // GK2
 	"posn",         // SCI2 benchmarking script
 	"view",         // RAMA benchmarking, GK1, QFG4
 	"fade",         // Shivers
@@ -260,7 +259,6 @@ enum ScriptPatcherSelectors {
 #ifdef ENABLE_SCI32
 	,
 	SELECTOR_newWith,
-	SELECTOR_scrollSelections,
 	SELECTOR_posn,
 	SELECTOR_view,
 	SELECTOR_fade,
@@ -3315,31 +3313,69 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 #pragma mark -
 #pragma mark Gabriel Knight 2
 
-// The down scroll button in GK2 jumps up a pixel on mousedown because there is
-// a send to scrollSelections using an immediate value 1, which means to scroll
-// up by 1 pixel. This patch fixes the send to scrollSelections by passing the
-// button's delta instead of 1 in 'ScrollButton::track'.
+// GK2's inventory scrolls smoothly when the mouse is held down in the original
+//  due to an inner loop in ScrollButton:track, but this causes slow scrolling
+//  in our interpreter since we throttle kFrameOut. The script's inner loop is
+//  itself throttled by ScrollButton:moveDelay, which is set to 25 and limits
+//  event processing to every 25th iteration. Removing this delay results in
+//  smooth scrolling as in the original.
 //
-// Applies to at least: English CD 1.00, English Steam 1.01
-// Fixes bug: #9648
-static const uint16 gk2InvScrollSignature[] = {
-	0x7e, SIG_ADDTOOFFSET(+2),              // line whatever
+// Applies to: All versions
+// Responsible method: ScrollButton:track
+static const uint16 gk2InventoryScrollSpeedSignature[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(scrollSelections), // pushi scrollSelections ($2c3)
-	0x78,                                   // push1
-	0x78,                                   // push1
-	0x63, 0x98,                             // pToa $98
-	0x4a, SIG_UINT16(0x06),                 // send 6
+	0x63, 0x9c,                 // pToa moveDelay [ 25 ]
+	0xa5, 0x02,                 // sat 02
+	SIG_END,
+};
+
+static const uint16 gk2InventoryScrollSpeedPatch[] = {
+	0x35, 0x01,                 // ldi 01
+	PATCH_END
+};
+
+// The down scroll button in GK2 jumps up a pixel on mousedown because there is
+//  a send to scrollSelections using an immediate value 1, which means to scroll
+//  up by 1 pixel. This patch fixes the send to scrollSelections by passing the
+//  button's delta instead of 1. The Italian version's vocab.997 is missing the
+//  scrollSelections selector so this patch avoids referencing it. Two versions
+//  are necessary to accomodate scripts compiled with and without line numbers.
+//
+// Applies to: All versions
+// Responsible method: ScrollButon:track
+// Fixes bug: #9648
+static const uint16 gk2InventoryScrollDirSignature1[] = {
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x63, 0x98,                         // pToa client
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ client scrollSelections: 1 ]
+	0x7e,                               // line
 	SIG_END
 };
 
-static const uint16 gk2InvScrollPatch[] = {
-	0x38, PATCH_SELECTOR16(scrollSelections), // pushi scrollSelections ($2c3)
-	0x78,                                     // push1
-	0x67, 0x9a,                               // pTos $9a (delta)
-	0x63, 0x98,                               // pToa $98
-	0x4a, PATCH_UINT16(0x06),                 // send 6
-	0x18, 0x18,                               // (waste bytes)
+static const uint16 gk2InventoryScrollDirPatch1[] = {
+	0x66, PATCH_UINT16(0x009a),         // pTos delta
+	0x62, PATCH_UINT16(0x0098),         // pToa client
+	0x4a, PATCH_UINT16(0x0006),         // send 06 [ client scrollSelections: delta ]
+	PATCH_END
+};
+
+static const uint16 gk2InventoryScrollDirSignature2[] = {
+	0x78,                               // push1
+	0x63, 0x98,                         // pToa client
+	0x4a, SIG_MAGICDWORD,               // send 06 [ client scrollSelections: 1 ]
+	SIG_UINT16(0x0006),
+	0x35, 0x02,                         // ldi 02
+	0x65, 0x56,                         // aTop cel
+	SIG_END
+};
+
+static const uint16 gk2InventoryScrollDirPatch2[] = {
+	0x67, 0x9a,                         // pTos delta
+	0x63, 0x98,                         // pToa client
+	0x4a, PATCH_UINT16(0x0006),         // send 06 [ client scrollSelections: delta ]
+	0x7a,                               // push2
+	0x69, 0x56,                         // sTop cel
 	PATCH_END
 };
 
@@ -3409,7 +3445,9 @@ static const uint16 gk2WagnerPaintingMessagePatch[] = {
 static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,     0, "disable volume reset on startup",                     1, gk2VolumeResetSignature,           gk2VolumeResetPatch },
 	{  true,     0, "disable video benchmarking",                          1, gk2BenchmarkSignature,             gk2BenchmarkPatch },
-	{  true,    23, "fix inventory scroll start direction",                1, gk2InvScrollSignature,             gk2InvScrollPatch },
+	{  true,    23, "fix inventory scroll speed",                          2, gk2InventoryScrollSpeedSignature,  gk2InventoryScrollSpeedPatch },
+	{  true,    23, "fix inventory scroll direction",                      1, gk2InventoryScrollDirSignature1,   gk2InventoryScrollDirPatch1 },
+	{  true,    23, "fix inventory scroll direction (no line numbers)",    1, gk2InventoryScrollDirSignature2,   gk2InventoryScrollDirPatch2 },
 	{  true,  8616, "fix wagner painting message",                         2, gk2WagnerPaintingMessageSignature, gk2WagnerPaintingMessagePatch },
 	{  true,  8617, "fix wagner painting message",                         2, gk2WagnerPaintingMessageSignature, gk2WagnerPaintingMessagePatch },
 	{  true, 64990, "increase number of save games (1/2)",                 1, sci2NumSavesSignature1,            sci2NumSavesPatch1 },
