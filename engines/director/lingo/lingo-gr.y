@@ -89,6 +89,11 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 	int code;
 	int narg;	/* number of arguments */
 	Common::Array<double> *arr;
+
+	struct {
+		Common::String *s;
+		int e;
+	} objectfield;
 }
 
 %token UNARY
@@ -98,7 +103,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<f> FLOAT
 %token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG BLTINARGLIST TWOWORDBUILTIN
 %token<s> FBLTIN FBLTINNOARGS FBLTINONEARG FBLTINARGLIST RBLTIN RBLTINONEARG
-%token<s> ID STRING HANDLER SYMBOL
+%token<s> ID STRING HANDLER SYMBOL THEOBJECTFIELD
 %token<s> ENDCLAUSE tPLAYACCEL tMETHOD
 %token tDOWN tELSE tELSIF tEXIT tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN

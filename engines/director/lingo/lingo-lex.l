@@ -222,6 +222,19 @@ whitespace [\t ]
 				return THEENTITYWITHID;
 			else
 				return THEENTITY;
+		} else {
+			if (g_director->getVersion() >= 4) {
+				field = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
+
+				if (!g_lingo->_theEntityFields.contains(field)) {
+					error("LEXER: Unhandled the field %s for object", field.c_str());
+				}
+
+				yylval.objectfield.s = new Common::String(ptr);
+				yylval.objectfield.e = g_lingo->_theEntityFields[field]->field;
+
+				return THEOBJECTFIELD;
+			}
 		}
 
 		warning("LEXER: Unhandled the entity %s", ptr);

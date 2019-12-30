@@ -274,6 +274,8 @@ TheEntityField fields[] = {
 };
 
 void Lingo::initTheEntities() {
+	_objectEntityId = kTheObject;
+
 	TheEntity *e = entities;
 
 	while (e->entity != kTheNOEntity) {
@@ -288,6 +290,9 @@ void Lingo::initTheEntities() {
 	while (f->entity != kTheNOEntity) {
 		if (f->version <= _vm->getVersion())
 			_theEntityFields[Common::String::format("%d%s", f->entity, f->name)] = f;
+
+		// Store all fields for kTheObject
+		_theEntityFields[Common::String::format("%d%s", _objectEntityId, f->name)] = f;
 
 		f++;
 	}

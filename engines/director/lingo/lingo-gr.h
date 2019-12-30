@@ -70,64 +70,65 @@
      STRING = 286,
      HANDLER = 287,
      SYMBOL = 288,
-     ENDCLAUSE = 289,
-     tPLAYACCEL = 290,
-     tMETHOD = 291,
-     tDOWN = 292,
-     tELSE = 293,
-     tELSIF = 294,
-     tEXIT = 295,
-     tGLOBAL = 296,
-     tGO = 297,
-     tIF = 298,
-     tINTO = 299,
-     tLOOP = 300,
-     tMACRO = 301,
-     tMOVIE = 302,
-     tNEXT = 303,
-     tOF = 304,
-     tPREVIOUS = 305,
-     tPUT = 306,
-     tREPEAT = 307,
-     tSET = 308,
-     tTHEN = 309,
-     tTO = 310,
-     tWHEN = 311,
-     tWITH = 312,
-     tWHILE = 313,
-     tNLELSE = 314,
-     tFACTORY = 315,
-     tOPEN = 316,
-     tPLAY = 317,
-     tDONE = 318,
-     tINSTANCE = 319,
-     tGE = 320,
-     tLE = 321,
-     tEQ = 322,
-     tNEQ = 323,
-     tAND = 324,
-     tOR = 325,
-     tNOT = 326,
-     tMOD = 327,
-     tAFTER = 328,
-     tBEFORE = 329,
-     tCONCAT = 330,
-     tCONTAINS = 331,
-     tSTARTS = 332,
-     tCHAR = 333,
-     tITEM = 334,
-     tLINE = 335,
-     tWORD = 336,
-     tSPRITE = 337,
-     tINTERSECTS = 338,
-     tWITHIN = 339,
-     tTELL = 340,
-     tPROPERTY = 341,
-     tON = 342,
-     tME = 343,
-     tENDIF = 344,
-     tENDREPEAT = 345,
-     tENDTELL = 346
+     THEOBJECTFIELD = 289,
+     ENDCLAUSE = 290,
+     tPLAYACCEL = 291,
+     tMETHOD = 292,
+     tDOWN = 293,
+     tELSE = 294,
+     tELSIF = 295,
+     tEXIT = 296,
+     tGLOBAL = 297,
+     tGO = 298,
+     tIF = 299,
+     tINTO = 300,
+     tLOOP = 301,
+     tMACRO = 302,
+     tMOVIE = 303,
+     tNEXT = 304,
+     tOF = 305,
+     tPREVIOUS = 306,
+     tPUT = 307,
+     tREPEAT = 308,
+     tSET = 309,
+     tTHEN = 310,
+     tTO = 311,
+     tWHEN = 312,
+     tWITH = 313,
+     tWHILE = 314,
+     tNLELSE = 315,
+     tFACTORY = 316,
+     tOPEN = 317,
+     tPLAY = 318,
+     tDONE = 319,
+     tINSTANCE = 320,
+     tGE = 321,
+     tLE = 322,
+     tEQ = 323,
+     tNEQ = 324,
+     tAND = 325,
+     tOR = 326,
+     tNOT = 327,
+     tMOD = 328,
+     tAFTER = 329,
+     tBEFORE = 330,
+     tCONCAT = 331,
+     tCONTAINS = 332,
+     tSTARTS = 333,
+     tCHAR = 334,
+     tITEM = 335,
+     tLINE = 336,
+     tWORD = 337,
+     tSPRITE = 338,
+     tINTERSECTS = 339,
+     tWITHIN = 340,
+     tTELL = 341,
+     tPROPERTY = 342,
+     tON = 343,
+     tME = 344,
+     tENDIF = 345,
+     tENDREPEAT = 346,
+     tENDTELL = 347
    };
 #endif
 /* Tokens.  */
@@ -162,64 +163,65 @@
 #define STRING 286
 #define HANDLER 287
 #define SYMBOL 288
-#define ENDCLAUSE 289
-#define tPLAYACCEL 290
-#define tMETHOD 291
-#define tDOWN 292
-#define tELSE 293
-#define tELSIF 294
-#define tEXIT 295
-#define tGLOBAL 296
-#define tGO 297
-#define tIF 298
-#define tINTO 299
-#define tLOOP 300
-#define tMACRO 301
-#define tMOVIE 302
-#define tNEXT 303
-#define tOF 304
-#define tPREVIOUS 305
-#define tPUT 306
-#define tREPEAT 307
-#define tSET 308
-#define tTHEN 309
-#define tTO 310
-#define tWHEN 311
-#define tWITH 312
-#define tWHILE 313
-#define tNLELSE 314
-#define tFACTORY 315
-#define tOPEN 316
-#define tPLAY 317
-#define tDONE 318
-#define tINSTANCE 319
-#define tGE 320
-#define tLE 321
-#define tEQ 322
-#define tNEQ 323
-#define tAND 324
-#define tOR 325
-#define tNOT 326
-#define tMOD 327
-#define tAFTER 328
-#define tBEFORE 329
-#define tCONCAT 330
-#define tCONTAINS 331
-#define tSTARTS 332
-#define tCHAR 333
-#define tITEM 334
-#define tLINE 335
-#define tWORD 336
-#define tSPRITE 337
-#define tINTERSECTS 338
-#define tWITHIN 339
-#define tTELL 340
-#define tPROPERTY 341
-#define tON 342
-#define tME 343
-#define tENDIF 344
-#define tENDREPEAT 345
-#define tENDTELL 346
+#define THEOBJECTFIELD 289
+#define ENDCLAUSE 290
+#define tPLAYACCEL 291
+#define tMETHOD 292
+#define tDOWN 293
+#define tELSE 294
+#define tELSIF 295
+#define tEXIT 296
+#define tGLOBAL 297
+#define tGO 298
+#define tIF 299
+#define tINTO 300
+#define tLOOP 301
+#define tMACRO 302
+#define tMOVIE 303
+#define tNEXT 304
+#define tOF 305
+#define tPREVIOUS 306
+#define tPUT 307
+#define tREPEAT 308
+#define tSET 309
+#define tTHEN 310
+#define tTO 311
+#define tWHEN 312
+#define tWITH 313
+#define tWHILE 314
+#define tNLELSE 315
+#define tFACTORY 316
+#define tOPEN 317
+#define tPLAY 318
+#define tDONE 319
+#define tINSTANCE 320
+#define tGE 321
+#define tLE 322
+#define tEQ 323
+#define tNEQ 324
+#define tAND 325
+#define tOR 326
+#define tNOT 327
+#define tMOD 328
+#define tAFTER 329
+#define tBEFORE 330
+#define tCONCAT 331
+#define tCONTAINS 332
+#define tSTARTS 333
+#define tCHAR 334
+#define tITEM 335
+#define tLINE 336
+#define tWORD 337
+#define tSPRITE 338
+#define tINTERSECTS 339
+#define tWITHIN 340
+#define tTELL 341
+#define tPROPERTY 342
+#define tON 343
+#define tME 344
+#define tENDIF 345
+#define tENDREPEAT 346
+#define tENDTELL 347
 
 
 
@@ -235,9 +237,14 @@ typedef union YYSTYPE
 	int code;
 	int narg;	/* number of arguments */
 	Common::Array<double> *arr;
+
+	struct {
+		Common::String *s;
+		int e;
+	} objectfield;
 }
 /* Line 1529 of yacc.c.  */
-#line 241 "engines/director/lingo/lingo-gr.hpp"
+#line 248 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

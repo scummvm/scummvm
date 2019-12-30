@@ -591,6 +591,9 @@ public:
 	Common::Array<Common::String *> _argstack;
 	TheEntityHash _theEntities;
 	TheEntityFieldHash _theEntityFields;
+
+	int _objectEntityId;
+
 	Common::Array<int> _labelstack;
 	Common::Array<Common::String> _namelist;
 

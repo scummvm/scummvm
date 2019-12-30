@@ -27,7 +27,8 @@ namespace Director {
 
 enum TheEntityType {
 	kTheNOEntity = 0,
-	kTheActorList = 1,
+	kTheObject = 1,
+	kTheActorList = 2,
 	kTheBeepOn,
 	kTheButtonStyle,
 	kTheCast,
