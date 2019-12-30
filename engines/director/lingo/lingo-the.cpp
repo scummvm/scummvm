@@ -340,7 +340,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 
 	switch (field) {
 	case kTheCastNum:
-		if (_vm->getCurrentScore()->_castTypes.contains(d.u.i)) {
+		if (_vm->getCurrentScore()->_loadedCast->contains(d.u.i)) {
 			_vm->getCurrentScore()->loadCastInto(sprite, d.u.i);
 			sprite->_castId = d.u.i;
 		}
@@ -658,7 +658,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 
 	CastType castType;
 	CastInfo *castInfo;
-	if (!_vm->getCurrentScore()->_castTypes.contains(id)) {
+	if (!_vm->getCurrentScore()->_loadedCast->contains(id)) {
 		if (field == kTheLoaded) {
 			d.type = INT;
 			d.u.i = 0;
@@ -669,7 +669,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		warning("Lingo::getTheCast(): The cast %d found", id);
 	}
 
-	castType = _vm->getCurrentScore()->_castTypes[id];
+	castType = _vm->getCurrentScore()->_loadedCast->getVal(id)->_type;
 	castInfo = _vm->getCurrentScore()->_castsInfo[id];
 
 	d.type = INT;
@@ -748,7 +748,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		return;
 	}
 
-	CastType castType = score->_castTypes[id];
+	CastType castType = score->_loadedCast->getVal(id)->_type;
 	CastInfo *castInfo = score->_castsInfo[id + score->_castIDoffset];
 
 	switch (field) {

@@ -119,7 +119,6 @@ public:
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedDIB() const { return _sharedDIB; }
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedBMP() const { return _sharedBMP; }
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedSTXT() const { return _sharedSTXT; }
-	Common::HashMap<int, CastType> *getSharedCastTypes();
 
 	Common::HashMap<Common::String, Score *> *_movies;
 
@@ -171,7 +170,6 @@ private:
 	Graphics::MacPatterns _director3QuickDrawPatterns;
 
 	Common::String _sharedCastFile;
-	Common::HashMap<int, CastType> _dummyCastType;
 
 	bool _draggingSprite;
 	uint16 _draggingSpriteId;

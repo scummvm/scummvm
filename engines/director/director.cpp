@@ -269,11 +269,4 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 	return nameMap;
 }
 
-Common::HashMap<int, CastType> *DirectorEngine::getSharedCastTypes() {
-	if (_sharedScore)
-		return &_sharedScore->_castTypes;
-
-	return &_dummyCastType;
-}
-
 } // End of namespace Director

@@ -122,7 +122,6 @@ private:
 
 public:
 	Common::Array<Frame *> _frames;
-	Common::HashMap<int, CastType> _castTypes;
 	Common::HashMap<uint16, CastInfo *> _castsInfo;
 	Common::HashMap<Common::String, int> _castsNames;
 	Common::SortedArray<Label *> *_labels;

@@ -566,22 +566,18 @@ void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) BitmapCast", id, numToCastNum(id));
 			// TODO: Work out the proper tag!
 			_loadedCast->setVal(id, new BitmapCast(stream, MKTAG('B', 'I', 'T', 'D'), _vm->getVersion()));
-			_castTypes[id] = kCastBitmap;
 			break;
 		case kCastText:
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) TextCast", id, numToCastNum(id));
 			_loadedCast->setVal(id, new TextCast(stream, _vm->getVersion()));
-			_castTypes[id] = kCastText;
 			break;
 		case kCastShape:
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) ShapeCast", id, numToCastNum(id));
 			_loadedCast->setVal(id, new ShapeCast(stream, _vm->getVersion()));
-			_castTypes[id] = kCastShape;
 			break;
 		case kCastButton:
 			debugC(3, kDebugLoading, "Score::loadCastDataVWCR(): CastTypes id: %d(%s) ButtonCast", id, numToCastNum(id));
 			_loadedCast->setVal(id, new ButtonCast(stream, _vm->getVersion()));
-			_castTypes[id] = kCastButton;
 			break;
 		default:
 			warning("Score::loadCastDataVWCR(): Unhandled cast id: %d(%s), type: %d, %d bytes", id, numToCastNum(id), castType, size);
@@ -673,31 +669,25 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	switch (castType) {
 	case kCastBitmap:
 		_loadedCast->setVal(id, new BitmapCast(castStream, res->tag, _vm->getVersion()));
-		_castTypes[id] = kCastBitmap;
 		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastBitmap (%d)", res->children.size());
 		break;
 	case kCastText:
 		_loadedCast->setVal(id, new TextCast(castStream, _vm->getVersion()));
-		_castTypes[id] = kCastText;
 		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastText (%d)", res->children.size());
 		break;
 	case kCastShape:
 		_loadedCast->setVal(id, new ShapeCast(castStream, _vm->getVersion()));
-		_castTypes[id] = kCastShape;
 		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastShape (%d)", res->children.size());
 		break;
 	case kCastButton:
 		_loadedCast->setVal(id, new ButtonCast(castStream, _vm->getVersion()));
-		_castTypes[id] = kCastButton;
 		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastButton (%d)", res->children.size());
 		break;
 	case kCastLingoScript:
 		_loadedCast->setVal(id, new ScriptCast(castStream, _vm->getVersion()));
-		_castTypes[id] = kCastLingoScript;
 		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastLingoScript");
 		break;
 	case kCastRTE:
-		_castTypes[id] = kCastRTE;
 		_loadedCast->setVal(id, new RTECast(castStream, _vm->getVersion()));
 		debugC(3, kDebugLoading, "Score::loadCastData(): loaded kCastRTE (%d)", res->children.size());
 		break;

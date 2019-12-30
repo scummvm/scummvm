@@ -604,16 +604,16 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 					break;
 				}
 			} else {
-				if (!_vm->getCurrentScore()->_castTypes.contains(_sprites[i]->_castId)) {
-					if (!_vm->getSharedCastTypes()->contains(_sprites[i]->_castId)) {
+				if (!_vm->getCurrentScore()->_loadedCast->contains(_sprites[i]->_castId)) {
+					if (!_vm->getSharedScore()->_loadedCast->contains(_sprites[i]->_castId)) {
 						debugC(1, kDebugImages, "Frame::renderSprites(): Cast id %d not found", _sprites[i]->_castId);
 						continue;
 					} else {
 						debugC(1, kDebugImages, "Frame::renderSprites(): Getting cast id %d from shared cast", _sprites[i]->_castId);
-						castType = _vm->getSharedCastTypes()->getVal(_sprites[i]->_castId);
+						castType = _vm->getSharedScore()->_loadedCast->getVal(_sprites[i]->_castId)->_type;
 					}
 				} else {
-					castType = _vm->getCurrentScore()->_castTypes[_sprites[i]->_castId];
+					castType = _vm->getCurrentScore()->_loadedCast->getVal(_sprites[i]->_castId)->_type;
 				}
 			}
 
