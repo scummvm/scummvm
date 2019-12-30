@@ -26,6 +26,7 @@
 #include "common/keyboard.h"
 #include "common/translation.h"
 #include "common/system.h"
+#include "backends/keymapper/keymapper.h"
 #include "graphics/scaler.h"
 #include "gui/saveload.h"
 #include "gui/message.h"
@@ -151,6 +152,8 @@ Common::Error MohawkEngine_Riven::run() {
 		_cursor = new MacCursorManager("Riven");
 
 	initVars();
+	initKeymap();
+
 
 	// Check the user has copied all the required datafiles
 	if (!checkDatafiles()) {
@@ -869,6 +872,41 @@ void MohawkEngine_Riven::runOptionsDialog() {
 
 	_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
 	_card->initializeZipMode();
+}
+
+void MohawkEngine_Riven::initKeymap() {
+#ifdef ENABLE_KEYMAPPER
+	static const char *const kKeymapName = "riven";
+	Common::Keymapper *const mapper = _eventMan->getKeymapper();
+
+	// Do not try to recreate same keymap over again
+	if (mapper->getKeymap(kKeymapName) != 0)
+		return;
+
+	Common::Keymap *const engineKeyMap = new Common::Keymap(kKeymapName);
+
+	const Common::KeyActionEntry keyActionEntries[] = {
+		{ Common::KEYCODE_UP, "UP", _("Move Forward") },
+		{ Common::KEYCODE_DOWN, "DWN", _("Move Back") },
+		{ Common::KEYCODE_LEFT, "TL", _("Turn Left") },
+		{ Common::KEYCODE_RIGHT, "TR", _("Turn Right") },
+		{ Common::KEYCODE_PAGEUP, "LKUP", _("Look Up") },
+		{ Common::KEYCODE_PAGEDOWN, "LKDN", _("Look Down") },
+		{ Common::KEYCODE_F5, "OPTS", _("Show/Hide Options Menu") },
+		{ Common::KeyState(Common::KEYCODE_o, 'o', Common::KBD_CTRL), "LOAD", _("Load Game State") },
+		{ Common::KeyState(Common::KEYCODE_s, 's', Common::KBD_CTRL), "SAVE", _("Save Game State") },
+		{ Common::KeyState(Common::KEYCODE_r, 'r', Common::KBD_CTRL), "RMM", _("Return To Main Menu") },
+		{ Common::KeyState(Common::KEYCODE_p, 'p', Common::KBD_CTRL), "INTV", _("Play Intro Videos") }
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
+		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
+		act->addKeyEvent(keyActionEntries[i].ks);
+	}
+
+	mapper->addGameKeymap(engineKeyMap);
+	mapper->pushKeymap(kKeymapName, true);
+#endif
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

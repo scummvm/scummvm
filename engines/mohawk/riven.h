@@ -134,6 +134,7 @@ private:
 	// Variables
 	void initVars();
 
+	void initKeymap();
 	void pauseEngineIntern(bool) override;
 	uint32 sanitizeTransitionMode(uint32 mode);
 public:
