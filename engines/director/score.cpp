@@ -722,8 +722,9 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 		break;
 	}
 
-	for (uint child = 0; child < res->children.size(); child++)
-		_loadedCast->getVal(id)->_children.push_back(res->children[child]);
+	if (_loadedCast->contains(id)) // Skip unhandled casts
+		for (uint child = 0; child < res->children.size(); child++)
+			_loadedCast->getVal(id)->_children.push_back(res->children[child]);
 
 	free(data);
 
