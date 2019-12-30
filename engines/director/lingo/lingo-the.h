@@ -228,6 +228,7 @@ struct TheEntity {
 	TheEntityType entity;
 	const char *name;
 	bool hasId;
+	int version;
 };
 
 struct TheEntityField {

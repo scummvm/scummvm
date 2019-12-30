@@ -32,120 +32,120 @@ namespace Director {
 class Sprite;
 
 TheEntity entities[] = {
-	{ kTheActorList,		"actorList",		false },	//				D4 property
-	{ kTheBeepOn,			"beepOn",			false },	// D2 p
-	{ kTheButtonStyle,		"buttonStyle",		false },	// D2 p
-	{ kTheCast,				"cast",				true  },	// D3
-	{ kTheCastMembers,		"castmembers",		false },	//		 D3
-	{ kTheCenterStage,		"centerStage",		false },	// D2 p
-	{ kTheChars,			"chars",			false },	//		 D3
-	{ kTheCheckBoxAccess,	"checkBoxAccess",	false },	// D2 p
-	{ kTheCheckBoxType,		"checkBoxType",		false },	// D2 p
-	{ kTheClickLoc,			"clickLoc",			false },	// 				D4 function
-	{ kTheClickOn,			"clickOn",			false },	// D2 f
-	{ kTheColorDepth,		"colorDepth",		false },	// D2 p
-	{ kTheColorQD,			"colorQD",			false },	// D2 f
-	{ kTheCommandDown,		"commandDown",		false },	// D2 f
-	{ kTheControlDown,		"controlDown",		false },	// D2 f
-	{ kTheDate,				"date",				false },	//		 D3
-	{ kTheDoubleClick,		"doubleClick",		false },	// D2 f
-	{ kTheExitLock,			"exitLock",			false },	// D2 p
-	{ kTheField,			"field",			true  },	//		 D3
-	{ kTheFixStageSize,		"fixStageSize",		false },	// D2 p
-	{ kTheFloatPrecision,	"floatPrecision",	false },	//		D3 p
-	{ kTheFrame,			"frame",			false },	// D2 f
-	{ kTheFrameLabel,		"frameLabel",		false },	//				D4 p
-	{ kTheFrameScript,		"frameScript",		false },	//				D4 p
-	{ kTheFramePalette,		"framePalette",		false },	//				D4 p
-	{ kTheFreeBlock,		"freeBlock",		false },	// D2 f
-	{ kTheFreeBytes,		"freeBytes",		false },	// D2 f
-	{ kTheFullColorPermit,	"fullColorPermit",	false },	// D2 p
-	{ kTheImageDirect,		"imageDirect",		false },	// D2 p
-	{ kTheItems,			"items",			false },	//		 D3
-	{ kTheItemDelimiter,	"itemDelimiter",	false },	//				D4 p
-	{ kTheKey,				"key",				false },	// D2 f
-	{ kTheKeyCode,			"keyCode",			false },	// D2 f
-	{ kTheKeyDownScript,	"keyDownScript",	false },	// D2 p
-	{ kTheKeyUpScript,		"keyUpScript",		false },	//				D4 p
-	{ kTheLabelList,		"labelList",		false },	//		D3 f
-	{ kTheLastClick,		"lastClick",		false },	// D2 f
-	{ kTheLastEvent,		"lastEvent",		false },	// D2 f
-	{ kTheLastFrame,		"lastFrame",		false },	//				D4 p
-	{ kTheLastKey,			"lastKey",			false },	// D2 f
-	{ kTheLastRoll,			"lastRoll",			false },	// D2 f
-	{ kTheLines,			"lines",			false },	//		 D3
-	{ kTheMachineType,		"machineType",		false },	// D2 f
-	{ kTheMaxInteger,		"maxInteger",		false },	//				D4 f
-	{ kTheMemorySize,		"memorySize",		false },	// D2 f
-	{ kTheMenu,				"menu",				true  },
-	{ kTheMenus,			"menus",			false },
-	{ kTheMenuItem,			"menuitem",			true  },
-	{ kTheMenuItems,		"menuitems",		false },
-	{ kTheMouseCast,		"mouseCast",		false },	//		D3 f
-	{ kTheMouseChar,		"mouseChar",		false },	//		D3 f
-	{ kTheMouseDown,		"mouseDown",		false },	// D2 f
-	{ kTheMouseDownScript,  "mouseDownScript",	false },	// D2 p
-	{ kTheMouseH,			"mouseH",			false },	// D2 f
-	{ kTheMouseItem,		"mouseItem",		false },	//		D3 f
-	{ kTheMouseLine,		"mouseLine",		false },	//		D3 f
-	{ kTheMouseUp,			"mouseUp",			false },	// D2 f
-	{ kTheMouseUpScript,  	"mouseUpScript",	false },	// D2 p
-	{ kTheMouseV,			"mouseV",			false },	// D2 f
-	{ kTheMouseWord,		"mouseWord",		false },	//		D3 f
-	{ kTheMovie,			"movie",			false },	// D2 f
-	{ kTheMovieFileFreeSize,"movieFileFreeSize",false },	//				D4 f
-	{ kTheMovieFileSize,	"movieFileSize",	false },	//				D4 f
-	{ kTheMovieName,		"movieName",		false },	//				D4 f
-	{ kTheMoviePath,		"moviePath",		false },	//				D4 f
-	{ kTheMultiSound,		"multiSound",		false },	//				D4 p
-	{ kTheOptionDown,		"optionDown",		false },	// D2 f
-	{ kTheParamCount,		"paramCount",		false },	//				D4 f
-	{ kThePathName,			"pathName",			false },	// D2 f
-	{ kThePauseState,		"pauseState",		false },	// D2 f
-	{ kThePerFrameHook,		"perFrameHook",		false },	// D2 p
-	{ kThePreloadEventAbort,"preloadEventAbort",false },	//				D4 p
-	{ kThePreLoadRAM,		"preLoadRAM",		false },	//				D4 p
-	{ kTheQuickTimePresent,	"quickTimePresent",	false },	//				D4 f
-	{ kTheRandomSeed,		"randomSeed",		false },	//				D4 p
-	{ kTheResult,			"result",			false },	// D2 f
-	{ kTheRightMouseDown,	"rightMouseDown",	false },
-	{ kTheRightMouseUp,		"rightMouseUp",		false },
-	{ kTheRomanLingo,		"romanLingo",		false },	//				D4 p
-	{ kTheSearchCurrentFolder,"searchCurrentFolder",false },//				D4 f
-	{ kTheSearchPath,		"searchPath",		false },	//				D4 f
-	{ kTheSelection,		"selection",		false },	// D2 f
-	{ kTheSelEnd,			"selEnd",			false },	// D2 p
-	{ kTheSelStart,			"selStart",			false },	// D2 p
-	{ kTheShiftDown,		"shiftDown",		false },	// D2 f
-	{ kTheSoundEnabled,		"soundEnabled",		false },	// D2 p
-	{ kTheSoundLevel,		"soundLevel",		false },	// D2 p
-	{ kTheSprite,			"sprite",			true  },	//				D4
-	{ kTheSqrt,				"sqrt",				false },	// D2 f
-	{ kTheStage,			"stage",			false },	//				D4 p
-	{ kTheStageBottom,		"stageBottom",		false },	// D2 f
-	{ kTheStageColor,		"stageColor",		false },	//		D3 p
-	{ kTheStageLeft,		"stageLeft",		false },	// D2 f
-	{ kTheStageRight,		"stageRight",		false },	// D2 f
-	{ kTheStageTop,			"stageTop",			false },	// D2 f
-	{ kTheStillDown,		"stillDown",		false },	// D2 f
-	{ kTheSwitchColorDepth,	"switchColorDepth",	false },	// D2 p
-	{ kTheTicks,			"ticks",			false },	// D2 f
-	{ kTheTimeoutKeyDown,	"timeoutKeyDown",	false },	// D2 p
-	{ kTheTimeoutLapsed,	"timeoutLapsed",	false },	// D2 p
-	{ kTheTimeoutLength,	"timeoutLength",	false },	// D2 p
-	{ kTheTimeoutMouse,		"timeoutMouse",		false },	// D2 p
-	{ kTheTimeoutPlay,		"timeoutPlay",		false },	// D2 p
-	{ kTheTimeoutScript,	"timeoutScript",	false },	// D2 p
-	{ kTheTime,				"time",				false },	// 		D3 f
-	{ kTheTimer,			"timer",			false },	// D2 p
-	{ kTheTrace,			"trace",			false },	//				D4 p
-	{ kTheTraceLoad,		"traceLoad",		false },	//				D4 p
-	{ kTheTraceLogFile,		"traceLogFile",		false },	//				D4 p
-	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false },	//				D4 p
-	{ kTheWindow,			"window",			true },		//				D4
-	{ kTheWindowList,		"windowList",		false },	//				D4 p
-	{ kTheWords,			"words",			false },	//		 D3
-	{ kTheNOEntity, NULL, false }
+	{ kTheActorList,		"actorList",		false, 4 },	//				D4 property
+	{ kTheBeepOn,			"beepOn",			false, 2 },	// D2 p
+	{ kTheButtonStyle,		"buttonStyle",		false, 2 },	// D2 p
+	{ kTheCast,				"cast",				true,  3 },	// D3
+	{ kTheCastMembers,		"castmembers",		false, 3 },	//		 D3
+	{ kTheCenterStage,		"centerStage",		false, 2 },	// D2 p
+	{ kTheChars,			"chars",			false, 3 },	//		 D3
+	{ kTheCheckBoxAccess,	"checkBoxAccess",	false, 2 },	// D2 p
+	{ kTheCheckBoxType,		"checkBoxType",		false, 2 },	// D2 p
+	{ kTheClickLoc,			"clickLoc",			false, 4 },	// 				D4 function
+	{ kTheClickOn,			"clickOn",			false, 2 },	// D2 f
+	{ kTheColorDepth,		"colorDepth",		false, 2 },	// D2 p
+	{ kTheColorQD,			"colorQD",			false, 2 },	// D2 f
+	{ kTheCommandDown,		"commandDown",		false, 2 },	// D2 f
+	{ kTheControlDown,		"controlDown",		false, 2 },	// D2 f
+	{ kTheDate,				"date",				false, 3 },	//		 D3
+	{ kTheDoubleClick,		"doubleClick",		false, 2 },	// D2 f
+	{ kTheExitLock,			"exitLock",			false, 2 },	// D2 p
+	{ kTheField,			"field",			true,  3 },	//		 D3
+	{ kTheFixStageSize,		"fixStageSize",		false, 2 },	// D2 p
+	{ kTheFloatPrecision,	"floatPrecision",	false, 3 },	//		D3 p
+	{ kTheFrame,			"frame",			false, 2 },	// D2 f
+	{ kTheFrameLabel,		"frameLabel",		false, 4 },	//				D4 p
+	{ kTheFrameScript,		"frameScript",		false, 4 },	//				D4 p
+	{ kTheFramePalette,		"framePalette",		false, 4 },	//				D4 p
+	{ kTheFreeBlock,		"freeBlock",		false, 2 },	// D2 f
+	{ kTheFreeBytes,		"freeBytes",		false, 2 },	// D2 f
+	{ kTheFullColorPermit,	"fullColorPermit",	false, 2 },	// D2 p
+	{ kTheImageDirect,		"imageDirect",		false, 2 },	// D2 p
+	{ kTheItems,			"items",			false, 3 },	//		 D3
+	{ kTheItemDelimiter,	"itemDelimiter",	false, 4 },	//				D4 p
+	{ kTheKey,				"key",				false, 2 },	// D2 f
+	{ kTheKeyCode,			"keyCode",			false, 2 },	// D2 f
+	{ kTheKeyDownScript,	"keyDownScript",	false, 2 },	// D2 p
+	{ kTheKeyUpScript,		"keyUpScript",		false, 4 },	//				D4 p
+	{ kTheLabelList,		"labelList",		false, 3 },	//		D3 f
+	{ kTheLastClick,		"lastClick",		false, 2 },	// D2 f
+	{ kTheLastEvent,		"lastEvent",		false, 2 },	// D2 f
+	{ kTheLastFrame,		"lastFrame",		false, 4 },	//				D4 p
+	{ kTheLastKey,			"lastKey",			false, 2 },	// D2 f
+	{ kTheLastRoll,			"lastRoll",			false, 2 },	// D2 f
+	{ kTheLines,			"lines",			false, 3 },	//		 D3
+	{ kTheMachineType,		"machineType",		false, 2 },	// D2 f
+	{ kTheMaxInteger,		"maxInteger",		false, 4 },	//				D4 f
+	{ kTheMemorySize,		"memorySize",		false, 2 },	// D2 f
+	{ kTheMenu,				"menu",				true,  0 },
+	{ kTheMenus,			"menus",			false, 0 },
+	{ kTheMenuItem,			"menuitem",			true,  0 },
+	{ kTheMenuItems,		"menuitems",		false, 0 },
+	{ kTheMouseCast,		"mouseCast",		false, 3 },	//		D3 f
+	{ kTheMouseChar,		"mouseChar",		false, 3 },	//		D3 f
+	{ kTheMouseDown,		"mouseDown",		false, 2 },	// D2 f
+	{ kTheMouseDownScript,  "mouseDownScript",	false, 2 },	// D2 p
+	{ kTheMouseH,			"mouseH",			false, 2 },	// D2 f
+	{ kTheMouseItem,		"mouseItem",		false, 3 },	//		D3 f
+	{ kTheMouseLine,		"mouseLine",		false, 3 },	//		D3 f
+	{ kTheMouseUp,			"mouseUp",			false, 2 },	// D2 f
+	{ kTheMouseUpScript,  	"mouseUpScript",	false, 2 },	// D2 p
+	{ kTheMouseV,			"mouseV",			false, 2 },	// D2 f
+	{ kTheMouseWord,		"mouseWord",		false, 3 },	//		D3 f
+	{ kTheMovie,			"movie",			false, 2 },	// D2 f
+	{ kTheMovieFileFreeSize,"movieFileFreeSize",false, 4 },	//				D4 f
+	{ kTheMovieFileSize,	"movieFileSize",	false, 4 },	//				D4 f
+	{ kTheMovieName,		"movieName",		false, 4 },	//				D4 f
+	{ kTheMoviePath,		"moviePath",		false, 4 },	//				D4 f
+	{ kTheMultiSound,		"multiSound",		false, 4 },	//				D4 p
+	{ kTheOptionDown,		"optionDown",		false, 2 },	// D2 f
+	{ kTheParamCount,		"paramCount",		false, 4 },	//				D4 f
+	{ kThePathName,			"pathName",			false, 2 },	// D2 f
+	{ kThePauseState,		"pauseState",		false, 2 },	// D2 f
+	{ kThePerFrameHook,		"perFrameHook",		false, 2 },	// D2 p
+	{ kThePreloadEventAbort,"preloadEventAbort",false, 4 },	//				D4 p
+	{ kThePreLoadRAM,		"preLoadRAM",		false, 4 },	//				D4 p
+	{ kTheQuickTimePresent,	"quickTimePresent",	false, 4 },	//				D4 f
+	{ kTheRandomSeed,		"randomSeed",		false, 4 },	//				D4 p
+	{ kTheResult,			"result",			false, 2 },	// D2 f
+	{ kTheRightMouseDown,	"rightMouseDown",	false, 0 },
+	{ kTheRightMouseUp,		"rightMouseUp",		false, 0 },
+	{ kTheRomanLingo,		"romanLingo",		false, 4 },	//				D4 p
+	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,4 },//			D4 f
+	{ kTheSearchPath,		"searchPath",		false, 4 },	//				D4 f
+	{ kTheSelection,		"selection",		false, 2 },	// D2 f
+	{ kTheSelEnd,			"selEnd",			false, 2 },	// D2 p
+	{ kTheSelStart,			"selStart",			false, 2 },	// D2 p
+	{ kTheShiftDown,		"shiftDown",		false, 2 },	// D2 f
+	{ kTheSoundEnabled,		"soundEnabled",		false, 2 },	// D2 p
+	{ kTheSoundLevel,		"soundLevel",		false, 2 },	// D2 p
+	{ kTheSprite,			"sprite",			true,  4 },	//				D4
+	{ kTheSqrt,				"sqrt",				false, 2 },	// D2 f
+	{ kTheStage,			"stage",			false, 4 },	//				D4 p
+	{ kTheStageBottom,		"stageBottom",		false, 2 },	// D2 f
+	{ kTheStageColor,		"stageColor",		false, 3 },	//		D3 p
+	{ kTheStageLeft,		"stageLeft",		false, 2 },	// D2 f
+	{ kTheStageRight,		"stageRight",		false, 2 },	// D2 f
+	{ kTheStageTop,			"stageTop",			false, 2 },	// D2 f
+	{ kTheStillDown,		"stillDown",		false, 2 },	// D2 f
+	{ kTheSwitchColorDepth,	"switchColorDepth",	false, 2 },	// D2 p
+	{ kTheTicks,			"ticks",			false, 2 },	// D2 f
+	{ kTheTimeoutKeyDown,	"timeoutKeyDown",	false, 2 },	// D2 p
+	{ kTheTimeoutLapsed,	"timeoutLapsed",	false, 2 },	// D2 p
+	{ kTheTimeoutLength,	"timeoutLength",	false, 2 },	// D2 p
+	{ kTheTimeoutMouse,		"timeoutMouse",		false, 2 },	// D2 p
+	{ kTheTimeoutPlay,		"timeoutPlay",		false, 2 },	// D2 p
+	{ kTheTimeoutScript,	"timeoutScript",	false, 2 },	// D2 p
+	{ kTheTime,				"time",				false, 3 },	// 		D3 f
+	{ kTheTimer,			"timer",			false, 2 },	// D2 p
+	{ kTheTrace,			"trace",			false, 4 },	//				D4 p
+	{ kTheTraceLoad,		"traceLoad",		false, 4 },	//				D4 p
+	{ kTheTraceLogFile,		"traceLogFile",		false, 4 },	//				D4 p
+	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false,4 },//				D4 p
+	{ kTheWindow,			"window",			true,  4 },	//				D4
+	{ kTheWindowList,		"windowList",		false, 4 },	//				D4 p
+	{ kTheWords,			"words",			false, 3 },	//		 D3
+	{ kTheNOEntity, NULL, false, 0 }
 };
 
 TheEntityField fields[] = {
