@@ -3364,7 +3364,7 @@ static const uint16 gk2InventoryScrollDirSignature2[] = {
 	0x78,                               // push1
 	0x63, 0x98,                         // pToa client
 	0x4a, SIG_MAGICDWORD,               // send 06 [ client scrollSelections: 1 ]
-	SIG_UINT16(0x0006),
+	      SIG_UINT16(0x0006),
 	0x35, 0x02,                         // ldi 02
 	0x65, 0x56,                         // aTop cel
 	SIG_END
@@ -3382,7 +3382,7 @@ static const uint16 gk2InventoryScrollDirPatch2[] = {
 // The init code 'GK2::init' that runs when GK2 starts up unconditionally resets
 // the music volume to 63, but the game should always use the volume stored in
 // ScummVM.
-// Applies to at least: English 1.00 CD
+// Applies to: All versions
 // Fixes bug: #9700
 static const uint16 gk2VolumeResetSignature[] = {
 	SIG_MAGICDWORD,
