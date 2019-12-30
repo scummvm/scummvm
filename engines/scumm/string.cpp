@@ -1045,7 +1045,8 @@ void ScummEngine::drawString(int a, const byte *msg) {
 			while (ltext[ll] == 0xFF) {
 				ll += 4;
 			}
-			byte lenbuf[270] = {0};
+			byte lenbuf[270];
+			memset(lenbuf, 0, sizeof(lenbuf));
 			int pos = ll;
 			while (ltext[pos]) {
 				if ((ltext[pos] == 0xFF || (_game.version <= 6 && ltext[pos] == 0xFE)) && ltext[pos+1] == 8) {
@@ -1104,7 +1105,8 @@ void ScummEngine::drawString(int a, const byte *msg) {
 					while (ltext[ll] == 0xFF) {
 						ll += 4;
 					}
-					byte lenbuf[270] = {0};
+					byte lenbuf[270];
+					memset(lenbuf, 0, sizeof(lenbuf));
 					memcpy(lenbuf, ltext, ll);
 					int u = ll;
 					while (ltext[u]) {
