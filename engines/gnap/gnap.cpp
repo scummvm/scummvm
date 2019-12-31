@@ -544,7 +544,7 @@ void GnapEngine::setVerbCursor(int verbCursor) {
 void GnapEngine::setCursor(int cursorIndex) {
 	if (_cursorIndex != cursorIndex) {
 		const char *cursorName = kCursorNames[cursorIndex];
-		Graphics::WinCursorGroup *cursorGroup = Graphics::WinCursorGroup::createCursorGroup(*_exe, Common::WinResourceID(cursorName));
+		Graphics::WinCursorGroup *cursorGroup = Graphics::WinCursorGroup::createCursorGroup(_exe, Common::WinResourceID(cursorName));
 		if (cursorGroup) {
 			Graphics::Cursor *cursor = cursorGroup->cursors[0].cursor;
 			CursorMan.replaceCursor(cursor);

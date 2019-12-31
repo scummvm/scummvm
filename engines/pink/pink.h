@@ -62,6 +62,10 @@
 
 struct ADGameDescription;
 
+namespace Common {
+	class PEResources;
+}
+
 namespace Graphics {
 class MacMenu;
 }
@@ -132,9 +136,9 @@ public:
 private:
 	Common::Error init();
 
-	void initMenu(Common::PEResources &exeResources);
+	void initMenu(Common::PEResources *exeResources);
 
-	bool loadCursors(Common::PEResources &exeResources);
+	bool loadCursors(Common::PEResources *exeResources);
 
 	void initModule(const Common::String &moduleName, const Common::String &pageName, Archive *saveFile);
 	void addModule(const Common::String &moduleName);
@@ -147,6 +151,8 @@ private:
 
 	Common::String _nextModule;
 	Common::String _nextPage;
+
+	Common::PEResources *_exeResources;
 
 	OrbFile  _orb;
 	BroFile *_bro;

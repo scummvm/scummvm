@@ -106,7 +106,7 @@ private:
 
 	int32 _fowRenderTable[32768];
 
-	Common::PEResources _exe;
+	Common::PEResources *_exe;
 	Common::String _fileName;
 };
 

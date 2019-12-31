@@ -30,10 +30,6 @@
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/screen.h"
 
-namespace Common {
-	class PEResources;
-}
-
 namespace Graphics {
 	class MacMenu;
 }

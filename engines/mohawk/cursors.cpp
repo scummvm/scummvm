@@ -157,7 +157,7 @@ NECursorManager::~NECursorManager() {
 
 void NECursorManager::setCursor(uint16 id) {
 	if (_exe) {
-		Graphics::WinCursorGroup *cursorGroup = Graphics::WinCursorGroup::createCursorGroup(*_exe, id);
+		Graphics::WinCursorGroup *cursorGroup = Graphics::WinCursorGroup::createCursorGroup(_exe, id);
 
 		if (cursorGroup) {
 			Graphics::Cursor *cursor = cursorGroup->cursors[0].cursor;
@@ -253,7 +253,7 @@ PECursorManager::PECursorManager(const Common::String &appName) {
 	_cursors.resize(cursorGroups.size());
 	for (uint i = 0; i < cursorGroups.size(); i++) {
 		_cursors[i].id = cursorGroups[i].getID();
-		_cursors[i].cursorGroup = Graphics::WinCursorGroup::createCursorGroup(*exe, cursorGroups[i]);
+		_cursors[i].cursorGroup = Graphics::WinCursorGroup::createCursorGroup(exe, cursorGroups[i]);
 	}
 
 	delete exe;
