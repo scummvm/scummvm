@@ -179,7 +179,7 @@ void ScummEngine_v6::drawBlastTexts() {
 				// Some localizations may override colors
 				// See credits in Chinese COMI
 				if (_game.id == GID_CMI &&	_language == Common::ZH_TWN &&
-					  c == '^' && (buf == _blastTextQueue[i].text + 1)) {
+				      c == '^' && (buf == _blastTextQueue[i].text + 1)) {
 					if (*buf == 'c') {
 						int color = buf[3] - '0' + 10 *(buf[2] - '0');
 						_charset->setColor(color);
@@ -462,6 +462,9 @@ bool ScummEngine::newLine() {
 }
 
 void ScummEngine::fakeBidiString(char *ltext, bool ignoreVerb) {
+	// Provides custom made BiDi mechanism.
+	// Reverses texts on each line marked by control characters (considering different control characters used in verbs panel)
+	// While preserving original order of numbers (also negative numbers and comma separated)
 	int ll = 0;
 	if (_game.id == GID_INDY4 && ltext[ll] == 127) {
 		ll++;
@@ -471,9 +474,9 @@ void ScummEngine::fakeBidiString(char *ltext, bool ignoreVerb) {
 	}
 	int ipos = 0;
 	int start = 0;
-	char* text = ltext + ll;
-	char* current = text;
-	while(1) {
+	char *text = ltext + ll;
+	char *current = text;
+	while (1) {
 		if (*current == 13 || *current == 0 || *current == -1 || *current == -2) {
 
 			// ignore the line break for verbs texts
@@ -538,7 +541,7 @@ void ScummEngine::fakeBidiString(char *ltext, bool ignoreVerb) {
 		break;
 	}
 	if (!ignoreVerb && _game.id == GID_INDY4 && ltext[0] == 127) {
-		ltext[start + ipos + ll] = (char) 128;
+		ltext[start + ipos + ll] = '\x80';
 		ltext[start + ipos + ll + 1] = '\0';
 	}
 }
@@ -631,7 +634,7 @@ void ScummEngine::CHARSET_1() {
 		return;
 
 	if ((_game.version <= 6 && _haveMsg == 1) ||
-		(_game.version == 7 && _haveMsg != 1)) {
+	    (_game.version == 7 && _haveMsg != 1)) {
 
 		if (_game.heversion >= 60) {
 			if (_sound->isSoundRunning(1) == 0)
@@ -1032,6 +1035,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	if (_charset->_center) {
 		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
 	} else if (_game.version >= 4 && _game.version < 7 && _game.id != GID_SAMNMAX && _language == Common::HE_ISR) {
+		// Ignore INDY4 verbs (but allow dialogue)
 		if (_game.id != GID_INDY4 || buf[0] == 127) {
 			int ll = 0;
 			if (_game.id == GID_INDY4 && buf[0] == 127) {
@@ -1039,7 +1043,8 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				ll++;
 			}
 
-			byte* ltext = buf;
+			// Skip control characters as they might contain '\0' which results in incorrect string width.
+			byte *ltext = buf;
 			while (ltext[ll] == 0xFF) {
 				ll += 4;
 			}
@@ -1096,8 +1101,9 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				if (_charset->_center) {
 					_charset->_left = _charset->_startLeft - _charset->getStringWidth(a, buf + i);
 				} else if (_game.version >= 4 && _game.version < 7 && _language == Common::HE_ISR) {
+					// Skip control characters as they might contain '\0' which results in incorrect string width.
 					int ll = 0;
-					byte* ltext = buf + i;
+					byte *ltext = buf + i;
 					while (ltext[ll] == 0xFF) {
 						ll += 4;
 					}
