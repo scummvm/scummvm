@@ -3561,6 +3561,31 @@ static const uint16 gk2XaverBlackWolfkPatch[] = {
 	PATCH_END
 };
 
+// In early versions of GK2, clicking on the holy water basket after using the
+//  holy water locks up the game. The script is supposed to test the flag that's
+//  set when getting the water but some code mistakenly tests inventory instead.
+//  We fix this as Sierra did by replacing the inventory tests with flag tests.
+//
+// Applies to: English PC 1.0, Mac
+// Responsible methods: waterBakset:handleEvent, waterBasket:doVerb
+static const uint16 gk2HolyWaterLockupSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(has),  // pushi has
+	0x78,                       // push1
+	0x39, 0x3e,                 // pushi 3e
+	0x81, 0x00,                 // lag 00
+	0x4a, SIG_UINT16(0x0006),   // send 06 [ GraceEgo has: 62 (invBottleOfWater) ]
+	SIG_END
+};
+
+static const uint16 gk2HolyWaterLockupPatch[] = {
+	0x38, PATCH_UINT16(0x0001), // pushi 0001
+	0x38, PATCH_UINT16(0x0476), // pushi 0476
+	0x47, 0x0b, 0x00,           // calle proc11_0 [ is flag 1142 set? ]
+	      PATCH_UINT16(0x0002),
+	PATCH_END
+};
+
 // Clicking an inventory item on the Wagner paintings in rooms 8616 and 8617
 //  causes a missing message error. The paintings only have responses for the
 //  "Do" verb but painting:doVerb passes the incoming verb to gk2Messager:say
@@ -3593,6 +3618,7 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,    37, "fix sound manager lockup",                            1, gk2SoundManagerLockupSignature1,   gk2SoundManagerLockupPatch1 },
 	{  true,    37, "fix sound manager lockup (no line numbers)",          1, gk2SoundManagerLockupSignature2,   gk2SoundManagerLockupPatch2 },
 	{  true,   810, "fix frau miller lockup",                              1, gk2FrauMillerLockupSignature,      gk2FrauMillerLockupPatch },
+	{  true,  1020, "fix holy water lockup",                               2, gk2HolyWaterLockupSignature,       gk2HolyWaterLockupPatch },
 	{  true,  3210, "fix police station deadend",                          1, gk2PoliceStationDeadendSignature,  gk2PoliceStationDeadendPatch },
 	{  true,  4320, "fix xaver black wolf topic",                          1, gk2XaverBlackWolfSignature,        gk2XaverBlackWolfkPatch },
 	{  true,  8616, "fix wagner painting message",                         2, gk2WagnerPaintingMessageSignature, gk2WagnerPaintingMessagePatch },
