@@ -322,6 +322,7 @@ public:
 
 	static void c_theentitypush();
 	static void c_theentityassign();
+	static void c_objectfieldpush();
 	static void c_objectfieldassign();
 
 	static void c_repeatwhilecode();
@@ -573,6 +574,7 @@ public:
 	Datum getTheEntity(int entity, Datum &id, int field);
 	Datum getTheSprite(Datum &id, int field);
 	Datum getTheCast(Datum &id, int field);
+	Datum getObjectField(Common::String &obj, int field);
 	void setObjectField(Common::String &obj, int field, Datum &d);
 
 public:

@@ -842,6 +842,15 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	}
 }
 
+Datum Lingo::getObjectField(Common::String &obj, int field) {
+	warning("STUB: getObjectField(\"%s\", %d)", obj.c_str(), field);
+
+	Datum d;
+	d.type = VOID;
+
+	return d;
+}
+
 void Lingo::setObjectField(Common::String &obj, int field, Datum &d) {
 	warning("STUB: setObjectField(\"%s\", %d, ...)", obj.c_str(), field);
 }

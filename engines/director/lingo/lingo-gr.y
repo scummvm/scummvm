@@ -410,6 +410,10 @@ expr: simpleexpr { $$ = $1; }
 		WRITE_UINT32(&e, $1[0]);
 		WRITE_UINT32(&f, $1[1]);
 		g_lingo->code2(e, f); }
+	| THEOBJECTFIELD {
+		g_lingo->code1(g_lingo->c_objectfieldpush);
+		g_lingo->codeString($1.s->c_str());
+		g_lingo->codeInt($1.e); }
 	| asgn
 	| expr '+' expr				{ g_lingo->code1(g_lingo->c_add); }
 	| expr '-' expr				{ g_lingo->code1(g_lingo->c_sub); }
