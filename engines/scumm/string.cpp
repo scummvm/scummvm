@@ -478,6 +478,13 @@ void ScummEngine::fakeBidiString(char *ltext, bool ignoreVerb) {
 	int start = 0;
 	char *text = ltext + ll;
 	char *current = text;
+
+	int bufferSize = 384;
+	char * const buff = (char *)calloc(sizeof(char), bufferSize);
+	assert(buff);
+	char * const stack = (char *)calloc(sizeof(char), bufferSize);
+	assert(stack);
+
 	while (1) {
 		if (*current == 13 || *current == 0 || *current == -1 || *current == -2) {
 
@@ -490,10 +497,8 @@ void ScummEngine::fakeBidiString(char *ltext, bool ignoreVerb) {
 				continue;
 			}
 
-			char buff[384];
-			memset(buff, 0, sizeof(buff));
-			char stack[384];
-			memset(stack, 0, sizeof(stack));
+			memset(buff, 0, bufferSize);
+			memset(stack, 0, bufferSize);
 
 			int sthead = 0;
 			char last = '\0';
@@ -546,6 +551,9 @@ void ScummEngine::fakeBidiString(char *ltext, bool ignoreVerb) {
 		ltext[start + ipos + ll] = '\x80';
 		ltext[start + ipos + ll + 1] = '\0';
 	}
+
+	free(buff);
+	free(stack);
 }
 
 void ScummEngine::CHARSET_1() {
