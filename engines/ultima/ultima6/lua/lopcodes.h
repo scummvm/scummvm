@@ -28,8 +28,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lopcodes_h
-#define lopcodes_h
+#ifndef ULTIMA6_LUA_lopcodes_h
+#define ULTIMA6_LUA_lopcodes_h
 
 #include "ultima/ultima6/lua/llimits.h"
 

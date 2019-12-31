@@ -30,8 +30,8 @@
 */
 
 
-#ifndef lua_h
-#define lua_h
+#ifndef ULTIMA6_LUA_lua_h
+#define ULTIMA6_LUA_lua_h
 
 #include <stdarg.h>
 #include <stddef.h>

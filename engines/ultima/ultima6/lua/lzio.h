@@ -29,8 +29,8 @@
 */
 
 
-#ifndef lzio_h
-#define lzio_h
+#ifndef ULTIMA6_LUA_lzio_h
+#define ULTIMA6_LUA_lzio_h
 
 #include "ultima/ultima6/lua/lua.h"
 

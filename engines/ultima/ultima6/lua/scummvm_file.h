@@ -20,32 +20,48 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#ifndef ULTIMA6_LUA_SCUMMVM_FILE
+#define ULTIMA6_LUA_SCUMMVM_FILE
 
-/*
-** $Id: lapi.h,v 2.7.1.1 2013/04/12 18:48:47 roberto Exp $
-** Auxiliary functions from Lua API
-** See Copyright Notice in lua.h
-*/
-
-#ifndef ULTIMA6_LUA_lapi_h
-#define ULTIMA6_LUA_lapi_h
-
-
-#include "ultima/ultima6/lua/llimits.h"
-#include "ultima/ultima6/lua/lstate.h"
+#include "common/file.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-#define api_incr_top(L)   {L->top++; api_check(L, L->top <= L->ci->top, \
-				"stack overflow");}
+class ScummVMFile {
+private:
+    Common::File *_file;
+    bool _isText;
 
-#define adjustresults(L,nres) \
-    { if ((nres) == LUA_MULTRET && L->ci->top < L->top) L->ci->top = L->top; }
+    ScummVMFile(Common::File *f, bool isText) : _file(f), _isText(isText) {
+    }
+public:
+    static ScummVMFile *open(const Common::String &filename, const Common::String &mode);
+public:
+    ~ScummVMFile() {
+        delete _file;
+    }
 
-#define api_checknelems(L,n)	api_check(L, (n) < (L->top - L->ci->func), \
-				  "not enough elements in the stack")
+    /**
+     * Returns true if the end of the file has been reached
+     */
+    bool eof() const;
+
+    /**
+     * Returns non-zero for any error having occurred
+     */
+    int error() const;
+
+    /**
+     * Reads bytes from the file
+     */
+    size_t read(void *buf, size_t size);
+
+    /**
+     * Gets the next character/byte
+     */
+    int getChar();
+};
 
 } // End of namespace Ultima6
 } // End of namespace Ultima

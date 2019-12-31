@@ -28,8 +28,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lstate_h
-#define lstate_h
+#ifndef ULTIMA6_LUA_lstate_h
+#define ULTIMA6_LUA_lstate_h
 
 #include "ultima/ultima6/lua/lua.h"
 

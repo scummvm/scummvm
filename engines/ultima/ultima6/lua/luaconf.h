@@ -29,8 +29,8 @@
 */
 
 
-#ifndef lconfig_h
-#define lconfig_h
+#ifndef ULTIMA6_LUA_lconfig_h
+#define ULTIMA6_LUA_lconfig_h
 
 #include <limits.h>
 #include <stddef.h>

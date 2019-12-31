@@ -28,8 +28,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lfunc_h
-#define lfunc_h
+#ifndef ULTIMA6_LUA_lfunc_h
+#define ULTIMA6_LUA_lfunc_h
 
 
 #include "ultima/ultima6/lua/lobject.h"

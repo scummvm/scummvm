@@ -201,7 +201,8 @@ MODULE_OBJS += \
 	ultima6/lua/ltm.o \
 	ultima6/lua/lundump.o \
 	ultima6/lua/lvm.o \
-	ultima6/lua/lzio.o
+	ultima6/lua/lzio.o \
+	ultima6/lua/scummvm_file.o
 endif
 
 ifdef ENABLE_ULTIMA8
