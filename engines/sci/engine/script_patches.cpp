@@ -3509,6 +3509,33 @@ static const uint16 gk2FrauMillerLockupPatch[] = {
 	PATCH_END
 };
 
+// GK2 1.0 contains a deadend bug in chapter 3. Exhausting Leber's topics before
+//  reading Grace's letter prevents returning to the police station to ask about
+//  the Black Wolf, which is necessary to complete the chapter.
+//
+// We fix this as Sierra did by adding a flag 218 test so that the police
+//  station doesn't close before Leber has been asked the Black Wolf.
+//
+// Applies to: English PC 1.0
+// Responsible method: rm3210:dispose
+static const uint16 gk2PoliceStationDeadendSignature[] = {
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x00dd),           // pushi 00dd
+	0x47, 0x0b, 0x00, SIG_MAGICDWORD,   // calle proc11_0 [ is flag 221 set? ]
+	      SIG_UINT16(0x002),
+	0x31, 0x51,                         // bnt 51 [ skip closing police station ]
+	SIG_END
+};
+
+static const uint16 gk2PoliceStationDeadendPatch[] = {
+	0x80, PATCH_UINT16(0x00a3),         // lag 00a3 [ flags 208-223 ]
+	0x39, 0x24,                         // pushi 24
+	0x12,                               // and
+	0x39, 0x24,                         // pushi 24
+	0x1a,                               // eq? [ are flags 218 and 221 set? ]
+	PATCH_END
+};
+
 // Clicking an inventory item on the Wagner paintings in rooms 8616 and 8617
 //  causes a missing message error. The paintings only have responses for the
 //  "Do" verb but painting:doVerb passes the incoming verb to gk2Messager:say
@@ -3541,6 +3568,7 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,    37, "fix sound manager lockup",                            1, gk2SoundManagerLockupSignature1,   gk2SoundManagerLockupPatch1 },
 	{  true,    37, "fix sound manager lockup (no line numbers)",          1, gk2SoundManagerLockupSignature2,   gk2SoundManagerLockupPatch2 },
 	{  true,   810, "fix frau miller lockup",                              1, gk2FrauMillerLockupSignature,      gk2FrauMillerLockupPatch },
+	{  true,  3210, "fix police station deadend",                          1, gk2PoliceStationDeadendSignature,  gk2PoliceStationDeadendPatch },
 	{  true,  8616, "fix wagner painting message",                         2, gk2WagnerPaintingMessageSignature, gk2WagnerPaintingMessagePatch },
 	{  true,  8617, "fix wagner painting message",                         2, gk2WagnerPaintingMessageSignature, gk2WagnerPaintingMessagePatch },
 	{  true, 64990, "increase number of save games (1/2)",                 1, sci2NumSavesSignature1,            sci2NumSavesPatch1 },
