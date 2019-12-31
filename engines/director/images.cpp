@@ -204,7 +204,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 			for (x = 0; x < _surface->w;) {
 				switch (_bitsPerPixel) {
 				case 1: {
-					for (int c = 0; c < 8; c++, x++) {
+					for (int c = 0; c < 8 && x < _surface->w; c++, x++) {
 						*((byte *)_surface->getBasePtr(x, y)) = (pixels[(((y * _surface->pitch) + x) / 8)] & (1 << (7 - c))) ? 0 : 0xff;
 					}
 					break;
