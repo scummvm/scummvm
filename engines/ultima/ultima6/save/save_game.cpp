@@ -50,17 +50,14 @@
 namespace Ultima {
 namespace Ultima6 {
 
-#ifdef WIN32
-#define OBJLIST_FILENAME "savegame\\objlist"
-#define OBJBLK_FILENAME  "savegame\\objblkxx"
-#else
 #define OBJLIST_FILENAME "savegame/objlist"
 #define OBJBLK_FILENAME  "savegame/objblkxx"
-#endif
 
 SaveGame::SaveGame(Configuration *cfg) {
 	config = cfg;
-	init(NULL); //we don't need ObjManager here as there will be nothing to clean at this stage. :-)
+
+	// We don't need ObjManager here as there will be nothing to clean at this stage
+	init(NULL);
 }
 
 SaveGame::~SaveGame() {
@@ -95,8 +92,7 @@ bool SaveGame::load_new() {
 
 	init(obj_manager);
 
-// load surface chunks
-
+	// Load surface chunks
 	config_get_path(config, "lzobjblk", filename);
 	data = lzw.decompress_file(filename, decomp_size);
 
@@ -108,8 +104,7 @@ bool SaveGame::load_new() {
 	buf.close();
 	free(data);
 
-// load dungeon chunks
-
+	// Load dungeon chunks
 	config_get_path(config, "lzdngblk", filename);
 	data = lzw.decompress_file(filename, decomp_size);
 
@@ -121,8 +116,7 @@ bool SaveGame::load_new() {
 	pos = buf.position();
 	buf.close();
 
-// load objlist
-
+	// load objlist
 	objlist.open(&data[pos], decomp_size - pos, NUVIE_BUF_COPY);
 
 	update_objlist_for_new_game();
@@ -140,7 +134,6 @@ bool SaveGame::load_new() {
 bool SaveGame::load_original() {
 	std::string path, objlist_filename, objblk_filename;
 	unsigned char *data;
-//char *filename;
 	char x, y;
 	uint16 len;
 	uint8 i;
@@ -181,7 +174,7 @@ bool SaveGame::load_original() {
 
 	objblk_filename[len - 1] = 'i';
 
-	for (i = 0, x = 'a'; x < 'f'; x++, i++) { //Load dungeons
+	for (i = 0, x = 'a'; x < 'f'; x++, i++) { // Load dungeons
 		objblk_filename[len - 2] = x;
 		config_get_path(config, objblk_filename, path);
 		objblk_file->open(path);
@@ -196,7 +189,7 @@ bool SaveGame::load_original() {
 
 	delete objblk_file;
 
-//print_egg_list();
+	//print_egg_list();
 	config_get_path(config, OBJLIST_FILENAME, objlist_filename);
 	if (objlist_file.open(objlist_filename) == false)
 		return false;
@@ -243,7 +236,7 @@ bool SaveGame::load_objlist() {
 	view_manager = game->get_view_manager();
 	weather = game->get_weather();
 
-	portrait->load(&objlist); //load avatar portrait number.
+	portrait->load(&objlist); // load avatar portrait number.
 
 	clock->load(&objlist);
 	game->set_ethereal(false); // needs to go before actor_manager->load(&objlist);
@@ -277,7 +270,6 @@ bool SaveGame::load_objlist() {
 }
 
 SaveHeader *SaveGame::load_info(NuvieIOFileRead *loadfile) {
-#ifdef TODO
 	uint32 rmask, gmask, bmask;
 	unsigned char save_desc[MAX_SAVE_DESC_LENGTH + 1];
 	unsigned char player_name[14];
@@ -319,12 +311,10 @@ SaveHeader *SaveGame::load_info(NuvieIOFileRead *loadfile) {
 
 	loadfile->readToBuf(header.thumbnail_data, MAPWINDOW_THUMBNAIL_SIZE * MAPWINDOW_THUMBNAIL_SIZE * 3); //seek past thumbnail data.
 
-	header.thumbnail = SDL_CreateRGBSurfaceFrom(header.thumbnail_data, MAPWINDOW_THUMBNAIL_SIZE, MAPWINDOW_THUMBNAIL_SIZE, 24, MAPWINDOW_THUMBNAIL_SIZE * 3, rmask, gmask, bmask, 0);
+	header.thumbnail = nullptr;
+	//SDL_CreateRGBSurfaceFrom(header.thumbnail_data, MAPWINDOW_THUMBNAIL_SIZE, MAPWINDOW_THUMBNAIL_SIZE, 24, MAPWINDOW_THUMBNAIL_SIZE * 3, rmask, gmask, bmask, 0);
 
 	return &header;
-#else
-	return nullptr;
-#endif
 }
 
 bool SaveGame::check_version(NuvieIOFileRead *loadfile) {
@@ -348,7 +338,6 @@ bool SaveGame::load(const char *filename) {
 	NuvieIOFileRead *loadfile;
 	unsigned char *data;
 	int game_type;
-//char game_tag[3];
 	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
 
 	config->value("config/GameType", game_type);
@@ -373,19 +362,19 @@ bool SaveGame::load(const char *filename) {
 
 	load_info(loadfile); //load header info
 
-// load actor inventories
+	// Load actor inventories
 	obj_manager->load_super_chunk((NuvieIO *)loadfile, 0, 0);
 
-// load eggs
+	// Load eggs
 	obj_manager->load_super_chunk((NuvieIO *)loadfile, 0, 0);
 
-// load surface objects
+	// Load surface objects
 	for (i = 0; i < 64; i++) {
 		ConsoleAddInfo("Loading super chunk %d of 64", i + 1);
 		obj_manager->load_super_chunk((NuvieIO *)loadfile, 0, i);
 	}
 
-// load dungeon objects
+	// Load dungeon objects
 	for (i = 0; i < 5; i++) {
 		obj_manager->load_super_chunk((NuvieIO *)loadfile, i + 1, 0);
 	}
@@ -474,11 +463,11 @@ bool SaveGame::save(const char *filename, std::string *save_description) {
 
 	obj_manager->save_eggs(savefile);
 
-// save surface objects
+	// Save surface objects
 	for (i = 0; i < 64; i++)
 		obj_manager->save_super_chunk(savefile, 0, i);
 
-// save dungeon objects
+	// Save dungeon objects
 	for (i = 0; i < 5; i++)
 		obj_manager->save_super_chunk(savefile, i + 1, 0);
 
@@ -543,7 +532,7 @@ bool SaveGame::save_thumbnail(NuvieIOFileWrite *savefile) {
 }
 
 void SaveGame::clean_up() {
-//clean up old header if required
+	// Clean up old header if required
 	if (header.thumbnail) {
 		SDL_FreeSurface(header.thumbnail);
 		delete[] header.thumbnail_data;
@@ -551,8 +540,6 @@ void SaveGame::clean_up() {
 		header.thumbnail = NULL;
 		header.thumbnail_data = NULL;
 	}
-
-	return;
 }
 
 void SaveGame::update_objlist_for_new_game() {
@@ -578,7 +565,7 @@ void SaveGame::update_objlist_for_new_game_u6() {
 
 	objlist.writeBuf((const unsigned char *)name.c_str(), len + 1);
 
-	objlist.seek(0x1c71); //gender
+	objlist.seek(0x1c71); // gender
 
 	int gender;
 	config->value("config/newgamedata/gender", gender, 0);
@@ -604,10 +591,10 @@ void SaveGame::update_objlist_for_new_game_u6() {
 	objlist.write1(stat);
 
 	objlist.seek(0xc02);
-	objlist.write2(0x172); //experience
+	objlist.write2(0x172); // experience
 
 	objlist.seek(0x13f2);
-	objlist.write1(stat * 2); //magic
+	objlist.write1(stat * 2); // magic
 
 	objlist.seek(0xff2);
 	objlist.write1(3); //level
@@ -641,7 +628,7 @@ void SaveGame::update_objlist_for_new_game_se() {
 	objlist.write1(str * 2 + intelligence); //hp
 
 	objlist.seek(0x14f2);
-	objlist.write1(dex); //movement points
+	objlist.write1(dex); // movement points
 }
 
 void SaveGame::update_objlist_for_new_game_md() {
@@ -672,38 +659,38 @@ void SaveGame::update_objlist_for_new_game_md() {
 	objlist.write1(intelligence);
 
 	objlist.seek(0xc02);
-	objlist.write2(600); //experience
+	objlist.write2(600); // experience
 
 	objlist.seek(0xe01);
 	objlist.write1(str * 2 + (4 * 24)); //hp = strength * 2 + level * 24
 
 	objlist.seek(0xff2);
-	objlist.write1(4); //level
+	objlist.write1(4); // level
 
-	//FIXME movement points where are they?
+	// FIXME: movement points where are they?
 	objlist.seek(0x14f2);
-	objlist.write1(dex); //movement points
+	objlist.write1(dex); // movement points
 
 	objlist.seek(0x15f2);
-	objlist.write1(20); //movement points
+	objlist.write1(20); // movement points
 
 	objlist.seek(OBJLIST_OFFSET_MD_GENDER);
 	objlist.write1(gender);
 
-	//read in avatar's obj_n + frame_n data
+	// Read in avatar's obj_n + frame_n data
 	objlist.seek(0x403);
 	uint8 b2 = objlist.read1();
 	uint16 obj_n = gender == 0 ? 343 : 344;
 	uint8 frame_n = (b2 & 0xfc) >> 2;
 
-	//write out adjusted avatar gender obj_n + frame_n
+	// Write out adjusted avatar gender obj_n + frame_n
 	objlist.seek(0x402);
 	objlist.write1(obj_n & 0xff);
 	b2 = obj_n >> 8;
 	b2 += frame_n << 2;
 	objlist.write1(b2);
 
-	//also write to the old obj_n + frame_n data.
+	// Also write to the old obj_n + frame_n data.
 	objlist.seek(0x16f3);
 	objlist.write1(obj_n & 0xff);
 	b2 = obj_n >> 8;

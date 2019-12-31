@@ -46,8 +46,8 @@ class NuvieIOFileWrite;
 
 struct SaveHeader {
 	uint16 num_saves;
-	uint32 actual_play_time; //total play time for this save game in minutes.
-	uint32 game_play_time; //total play time for this save game measured in game turns.
+	uint32 actual_play_time; // Total play time for this save game in minutes.
+	uint32 game_play_time; // Total play time for this save game measured in game turns.
 	std::string save_description;
 	std::string player_name;
 	uint8 player_gender;
@@ -74,14 +74,22 @@ struct SaveHeader {
 };
 
 class SaveGame {
+private:
 	Configuration *config;
-
 	SaveHeader header;
-
 	NuvieIOBuffer objlist;
+protected:
+	bool load_objlist();
+	bool save_objlist();
+	bool save_thumbnail(NuvieIOFileWrite *savefile);
 
+	void clean_up();
+
+	void update_objlist_for_new_game();
+	void update_objlist_for_new_game_u6();
+	void update_objlist_for_new_game_se();
+	void update_objlist_for_new_game_md();
 public:
-
 	SaveGame(Configuration *cfg);
 	~SaveGame();
 
@@ -96,23 +104,9 @@ public:
 
 	bool save(const char *filename, std::string *save_description);
 
-
-	uint16 get_num_saves() {
+	uint16 get_num_saves() const {
 		return header.num_saves;
 	};
-
-protected:
-
-	bool load_objlist();
-	bool save_objlist();
-	bool save_thumbnail(NuvieIOFileWrite *savefile);
-
-	void clean_up();
-
-	void update_objlist_for_new_game();
-	void update_objlist_for_new_game_u6();
-	void update_objlist_for_new_game_se();
-	void update_objlist_for_new_game_md();
 };
 
 } // End of namespace Ultima6
