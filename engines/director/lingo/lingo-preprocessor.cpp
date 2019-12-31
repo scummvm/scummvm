@@ -83,7 +83,8 @@ Common::String Lingo::codePreprocessor(const char *s, bool simple) {
 		else if (*s)
 			res += *s;
 
-		s++;
+		if (*s)
+			s++;
 	}
 
 	Common::String tmp(res);
