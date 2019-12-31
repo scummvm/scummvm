@@ -3518,7 +3518,7 @@ static const uint16 gk2FrauMillerLockupPatch[] = {
 //  the Black Wolf, which is necessary to complete the chapter.
 //
 // We fix this as Sierra did by adding a flag 218 test so that the police
-//  station doesn't close before Leber has been asked the Black Wolf.
+//  station doesn't close before Leber has been asked about the Black Wolf.
 //
 // Applies to: English PC 1.0
 // Responsible method: rm3210:dispose
