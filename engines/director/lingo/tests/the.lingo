@@ -23,3 +23,6 @@ set the filename of BlastWindow to "blastwin"
 set the titleVisible of BlastWindow to true
 set the modal of BlastWindow to true
 set the windowtype of BlastWindow to 5
+
+set the bottom of x to originV + (the number of lines in someText) * 16
+set the bottom of x to originV + (the number of words in someText) * 16
