@@ -74,6 +74,8 @@ static struct FuncDescr {
 	{ Lingo::c_eval,		"c_eval",		"s" },
 	{ Lingo::c_theentitypush,"c_theentitypush","ii" }, // entity, field
 	{ Lingo::c_theentityassign,"c_theentityassign","ii" },
+	{ Lingo::c_objectfieldpush,"c_objectfieldpush","si" }, // object, field
+	{ Lingo::c_objectfieldassign,"c_objectfieldassign","si" },
 	{ Lingo::c_swap,		"c_swap",		"" },
 	{ Lingo::c_add,			"c_add",		"" },
 	{ Lingo::c_sub,			"c_sub",		"" },
