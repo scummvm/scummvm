@@ -21,6 +21,7 @@
  */
 
 #include "mohawk/console.h"
+#include "mohawk/cursors.h"
 #include "mohawk/livingbooks.h"
 #include "mohawk/resource.h"
 #include "mohawk/sound.h"
@@ -754,6 +755,7 @@ LivingBooksConsole::LivingBooksConsole(MohawkEngine_LivingBooks *vm) : GUI::Debu
 	registerCmd("stopSound",			WRAP_METHOD(LivingBooksConsole, Cmd_StopSound));
 	registerCmd("drawImage",			WRAP_METHOD(LivingBooksConsole, Cmd_DrawImage));
 	registerCmd("changePage",			WRAP_METHOD(LivingBooksConsole, Cmd_ChangePage));
+	registerCmd("changeCursor",			WRAP_METHOD(LivingBooksConsole, Cmd_ChangeCursor));
 }
 
 LivingBooksConsole::~LivingBooksConsole() {
@@ -808,6 +810,16 @@ bool LivingBooksConsole::Cmd_ChangePage(int argc, const char **argv) {
 			return false;
 	}
 	debugPrintf("no such page %d.%d\n", page, subpage);
+	return true;
+}
+
+bool LivingBooksConsole::Cmd_ChangeCursor(int argc, const char **argv) {
+	if (argc == 1) {
+		debugPrintf("Usage: changeCursor <value>\n");
+		return true;
+	}
+
+	_vm->_cursor->setCursor((uint16)atoi(argv[1]));
 	return true;
 }
 
