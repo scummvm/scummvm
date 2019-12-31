@@ -3540,6 +3540,27 @@ static const uint16 gk2PoliceStationDeadendPatch[] = {
 	PATCH_END
 };
 
+// In chapter 3, Xaver can be asked about the Black Wolf before learning about
+//  the Black Wolf from Grace's letter. The tBlackWolf topic in room 4320 is
+//  missing the readyFlagNum value of 514 that the other tBlackWolf topics in
+//  chapter 3 have, so we set it.
+//
+// Applies to: All versions
+// Responsible method: heap in script 4320
+static const uint16 gk2XaverBlackWolfSignature[] = {
+	SIG_MAGICDWORD,             // tBlackWolf
+	SIG_UINT16(0x010e),         // sceneNum = 270
+	SIG_UINT16(0x00f0),         // flagNum = 240
+	SIG_UINT16(0x0000),         // readyFlagNum = 0
+	SIG_END
+};
+
+static const uint16 gk2XaverBlackWolfkPatch[] = {
+	PATCH_ADDTOOFFSET(+4),
+	PATCH_UINT16(0x0202),       // readyFlagNum = 514
+	PATCH_END
+};
+
 // Clicking an inventory item on the Wagner paintings in rooms 8616 and 8617
 //  causes a missing message error. The paintings only have responses for the
 //  "Do" verb but painting:doVerb passes the incoming verb to gk2Messager:say
@@ -3573,6 +3594,7 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,    37, "fix sound manager lockup (no line numbers)",          1, gk2SoundManagerLockupSignature2,   gk2SoundManagerLockupPatch2 },
 	{  true,   810, "fix frau miller lockup",                              1, gk2FrauMillerLockupSignature,      gk2FrauMillerLockupPatch },
 	{  true,  3210, "fix police station deadend",                          1, gk2PoliceStationDeadendSignature,  gk2PoliceStationDeadendPatch },
+	{  true,  4320, "fix xaver black wolf topic",                          1, gk2XaverBlackWolfSignature,        gk2XaverBlackWolfkPatch },
 	{  true,  8616, "fix wagner painting message",                         2, gk2WagnerPaintingMessageSignature, gk2WagnerPaintingMessagePatch },
 	{  true,  8617, "fix wagner painting message",                         2, gk2WagnerPaintingMessageSignature, gk2WagnerPaintingMessagePatch },
 	{  true, 64990, "increase number of save games (1/2)",                 1, sci2NumSavesSignature1,            sci2NumSavesPatch1 },
