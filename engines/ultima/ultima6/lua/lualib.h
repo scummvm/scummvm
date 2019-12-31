@@ -29,8 +29,8 @@
 */
 
 
-#ifndef lualib_h
-#define lualib_h
+#ifndef ULTIMA6_LUA_ualib_h
+#define ULTIMA6_LUA_lualib_h
 
 #include "ultima/ultima6/lua/lua.h"
 

@@ -28,8 +28,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lmem_h
-#define lmem_h
+#ifndef ULTIMA6_LUA_lmem_h
+#define ULTIMA6_LUA_lmem_h
 
 
 #include <stddef.h>

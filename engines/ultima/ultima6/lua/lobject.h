@@ -29,8 +29,8 @@
 */
 
 
-#ifndef lobject_h
-#define lobject_h
+#ifndef ULTIMA6_LUA_lobject_h
+#define ULTIMA6_LUA_lobject_h
 
 
 #include <stdarg.h>

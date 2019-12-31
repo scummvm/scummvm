@@ -28,8 +28,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef ldebug_h
-#define ldebug_h
+#ifndef ULTIMA6_LUA_ldebug_h
+#define ULTIMA6_LUA_ldebug_h
 
 
 #include "ultima/ultima6/lua/lstate.h"

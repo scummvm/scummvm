@@ -28,8 +28,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lvm_h
-#define lvm_h
+#ifndef ULTIMA6_LUA_lvm_h
+#define ULTIMA6_LUA_lvm_h
 
 
 #include "ultima/ultima6/lua/ldo.h"

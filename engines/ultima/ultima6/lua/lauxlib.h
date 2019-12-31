@@ -29,8 +29,8 @@
 */
 
 
-#ifndef lauxlib_h
-#define lauxlib_h
+#ifndef ULTIMA6_LUA_lauxlib_h
+#define ULTIMA6_LUA_lauxlib_h
 
 
 #include <stddef.h>

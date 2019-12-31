@@ -28,8 +28,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lparser_h
-#define lparser_h
+#ifndef ULTIMA6_LUA_lparser_h
+#define ULTIMA6_LUA_lparser_h
 
 #include "ultima/ultima6/lua/llimits.h"
 #include "ultima/ultima6/lua/lobject.h"

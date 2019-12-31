@@ -28,8 +28,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef llimits_h
-#define llimits_h
+#ifndef ULTIMA6_LUA_llimits_h
+#define ULTIMA6_LUA_llimits_h
 
 
 #include <limits.h>
