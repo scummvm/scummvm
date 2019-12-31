@@ -1013,7 +1013,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		_charset->setCurID(vs->charset_nr);
 
 		// Compute the text rect
-		if (_language == Common::HE_ISR /* && !(_game.id == GID_FT && (_charset->getCurID() == 6 || _charset->getCurID() == 7))*/) {
+		if (_language == Common::HE_ISR) {
 			vs->curRect.left = _screenWidth - _charset->getStringWidth(0, buf);
 		}
 		vs->curRect.right = 0;
