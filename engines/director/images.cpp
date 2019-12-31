@@ -107,6 +107,12 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 BITDDecoder::BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch) {
 	_surface = new Graphics::Surface();
 
+	if (pitch < w) {
+		warning("BITDDecoder: pitch is too small: %d < %d", pitch, w);
+
+		pitch = w;
+	}
+
 	Graphics::PixelFormat pf = Graphics::PixelFormat::createFormatCLUT8();
 	switch (bitsPerPixel) {
 	case 2:
