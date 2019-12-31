@@ -123,7 +123,7 @@ static struct BuiltinProto {
 	{ "preLoadCast",	Lingo::b_preLoadCast,	-1,0, false, 3, BLTIN },	//		D3 c
 	{ "quit",			Lingo::b_quit,			0, 0, false, 2, BLTIN },	// D2 c
 	{ "restart",		Lingo::b_restart,		0, 0, false, 2, BLTIN },	// D2 c
-	{ "return",			Lingo::b_return,		1, 1, false, 2, BLTIN },	// D2 function
+	{ "return",			Lingo::b_return,		0, 1, false, 2, BLTIN },	// D2 function
 	{ "shutDown",		Lingo::b_shutDown,		0, 0, false, 2, BLTIN },	// D2 c
 	{ "startTimer",		Lingo::b_startTimer,	0, 0, false, 2, BLTIN },	// D2 c
 		// when keyDown														// D2
