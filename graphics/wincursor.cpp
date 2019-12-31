@@ -250,7 +250,7 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::NEResources &exe, cons
 
 	stream->skip(4);
 	uint32 cursorCount = stream->readUint16LE();
-	if ((uint32)stream->size() < (6 + cursorCount * 16))
+	if ((uint32)stream->size() < (6 + cursorCount * 14))
 		return 0;
 
 	WinCursorGroup *group = new WinCursorGroup();
@@ -274,7 +274,7 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::NEResources &exe, cons
 		}
 
 		stream->readUint32LE(); // data size
-		uint32 cursorId = stream->readUint32LE();
+		uint32 cursorId = stream->readUint16LE();
 
 		Common::ScopedPtr<Common::SeekableReadStream> cursorStream(exe.getResource(Common::kWinCursor, cursorId));
 		if (!cursorStream) {
