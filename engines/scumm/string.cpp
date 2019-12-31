@@ -498,10 +498,10 @@ void ScummEngine::fakeBidiString(char *ltext, bool ignoreVerb) {
 			memset(buff, 0, bufferSize);
 			memset(stack, 0, bufferSize);
 
+			// Reverse string on current line (between start and ipos).
 			int sthead = 0;
 			char last = '\0';
 			for (int j = 0; j < ipos; j++) {
-				// Reverse string on current line (between start and ipos).
 				char *curr = text + start + ipos - j - 1;
 				// Special cases to preserve original ordering (numbers).
 				if (Common::isDigit(*curr) ||
