@@ -131,6 +131,7 @@ static struct BuiltinProto {
 		// when mouseUp														// D2
 		// when timeOut														// D2
 	// Types
+	{ "factory",		Lingo::b_factoryP,		1, 1, true,  3, FBLTIN },	//		D3
 	{ "floatP",			Lingo::b_floatP,		1, 1, true,  3, FBLTIN },	//		D3
 	{ "ilk",	 		Lingo::b_ilk,			1, 2, false, 4, FBLTIN },	//			D4 f
 	{ "integerp",		Lingo::b_integerp,		1, 1, true,  2, FBLTIN },	// D2 f
@@ -951,6 +952,15 @@ void Lingo::b_startTimer(int nargs) {
 ///////////////////
 // Types
 ///////////////////
+void Lingo::b_factoryP(int nargs) {
+	Datum d = g_lingo->pop();
+	d.toInt();
+	d.u.i = 1;
+	g_lingo->push(d);
+
+	warning("STUB: b_factoryP");
+}
+
 void Lingo::b_floatP(int nargs) {
 	Datum d = g_lingo->pop();
 	int res = (d.type == FLOAT) ? 1 : 0;

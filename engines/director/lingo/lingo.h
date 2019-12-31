@@ -429,6 +429,7 @@ public:
 	static void b_setProp(int nargs);
 	static void b_sort(int nargs);
 
+	static void b_factoryP(int nargs);
 	static void b_floatP(int nargs);
 	static void b_ilk(int nargs);
 	static void b_integerp(int nargs);

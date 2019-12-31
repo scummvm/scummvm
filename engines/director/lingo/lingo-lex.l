@@ -121,7 +121,7 @@ whitespace [\t ]
 
 		return ENDCLAUSE;
 	}
-(?i:factory)	{ count(); return tFACTORY; }
+(?i:^[ \t]*factory) { count(); return tFACTORY; }
 (?i:exit)		{ count(); return tEXIT; }
 (?i:global)		{ count(); return tGLOBAL; }
 (?i:go[\t ]+to[\t ]+frame)	{ count(); return tGO; }
