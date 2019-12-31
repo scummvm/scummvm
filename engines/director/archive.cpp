@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/substream.h"
 #include "common/macresman.h"
@@ -358,7 +359,32 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	Common::SeekableSubReadStreamEndian subStream(stream, startOffset + 4, stream->size(), _isBigEndian, DisposeAfterUse::NO);
 
-	subStream.readUint32(); // size
+	uint32 sz = subStream.readUint32(); // size
+
+	// If it is an embedded file, dump it if requested
+	if (ConfMan.getBool("dump_scripts") && startOffset) {
+		Common::DumpFile out;
+
+		char buf[256];
+		sprintf(buf, "./dumps/%s-%08x", g_director->getEXEName().c_str(), startOffset);
+
+		if (out.open(buf)) {
+			byte *data = (byte *)malloc(sz);
+
+			stream->seek(startOffset);
+			stream->read(data, sz);
+			out.write(data, sz);
+			out.flush();
+			out.close();
+
+			free(data);
+
+			stream->seek(startOffset + 8);
+			warning("dumped: %s", buf);
+		} else {
+			warning("Can not open dump file %s", buf);
+		}
+	}
 
 	uint32 rifxType = subStream.readUint32();
 
@@ -374,7 +400,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	subStream.readUint32(); // unknown
 	uint32 mmapOffset = subStream.readUint32() - startOffset - 4;
 	uint32 version = subStream.readUint32(); // 0 for 4.0, 0x4c1 for 5.0, 0x4c7 for 6.0, 0x708 for 8.5, 0x742 for 10.0
-	warning("RIFX: version: %x", version);
+	warning("RIFX: version: %x type: %s", version, tag2str(rifxType));
 
 	subStream.seek(mmapOffset);
 
@@ -404,7 +430,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		uint16 unk1 = subStream.readUint16();
 		uint32 unk2 = subStream.readUint32();
 
-		debug(3, "Found RIFX resource index %d: '%s', %d @ 0x%08x (%d), flags: %x unk1: %x unk2: %x",
+		debug(3, "Found RIFX resource index %d: '%s', %d bytes @ 0x%08x (%d), flags: %x unk1: %x unk2: %x",
 			i, tag2str(tag), size, offset, offset, flags, unk1, unk2);
 
 		Resource res;
