@@ -40,7 +40,7 @@
 namespace Pink {
 
 PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
-	: Engine(system), _console(nullptr), _rnd("pink"),
+	: Engine(system), _console(nullptr), _rnd("pink"), _exeResources(nullptr),
 	_desc(desc), _bro(nullptr), _menu(nullptr), _actor(nullptr),
 	_module(nullptr), _director(nullptr), _pdaMgr(this) {
 
@@ -56,6 +56,7 @@ PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 
 PinkEngine::~PinkEngine() {
 	delete _console;
+	delete _exeResources;
 	delete _bro;
 	_pdaMgr.close();
 	for (uint i = 0; i < _modules.size(); ++i) {
@@ -72,16 +73,16 @@ Common::Error PinkEngine::init() {
 	debugC(10, kPinkDebugGeneral, "PinkEngine init");
 	initGraphics(640, 480);
 
-	Common::PEResources exeResources;
+	_exeResources = new Common::PEResources();
 	Common::String fileName = isPeril() ? "pptp.exe" : "hpp.exe";
-	if (!exeResources.loadFromEXE(fileName)) {
+	if (!_exeResources->loadFromEXE(fileName)) {
 		return Common::kNoGameDataFoundError;
 	}
 
 	_console = new Console(this);
 	_director = new Director();
 
-	initMenu(exeResources);
+	initMenu(_exeResources);
 
 	Common::String orbName;
 	Common::String broName;
@@ -96,7 +97,7 @@ Common::Error PinkEngine::init() {
 	if (!_orb.open(orbName) || (_bro && !_bro->open(broName) && _orb.getTimestamp() == _bro->getTimestamp()))
 		return Common::kNoGameDataFoundError;
 
-	if (!loadCursors(exeResources))
+	if (!loadCursors(_exeResources))
 		return Common::kNoGameDataFoundError;
 
 	setCursor(kLoadingCursor);
@@ -233,7 +234,7 @@ bool PinkEngine::checkValueOfVariable(Common::String &variable, Common::String &
 	return _variables[variable] == value;
 }
 
-bool PinkEngine::loadCursors(Common::PEResources &exeResources) {
+bool PinkEngine::loadCursors(Common::PEResources *exeResources) {
 	bool isPokus = !isPeril();
 
 	_cursors.reserve(kCursorsCount);

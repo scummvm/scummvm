@@ -24,6 +24,7 @@
 #include "common/stack.h"
 #include "common/keyboard.h"
 #include "common/macresman.h"
+#include "common/winexe_pe.h"
 
 #include "graphics/primitives.h"
 #include "graphics/font.h"
@@ -200,8 +201,8 @@ static Common::U32String readUnicodeString(Common::SeekableReadStream *stream) {
 }
 
 
-MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager *wm) {
-	Common::SeekableReadStream *menuData = exe.getResource(Common::kWinMenu, 128);
+MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources *exe, MacWindowManager *wm) {
+	Common::SeekableReadStream *menuData = exe->getResource(Common::kWinMenu, 128);
 	if (!menuData)
 		return nullptr;
 
