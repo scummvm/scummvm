@@ -3322,7 +3322,7 @@ static const uint16 gk2InventoryScrollSpeedSignature[] = {
 	SIG_MAGICDWORD,
 	0x63, 0x9c,                 // pToa moveDelay [ 25 ]
 	0xa5, 0x02,                 // sat 02
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 gk2InventoryScrollSpeedPatch[] = {
@@ -3494,7 +3494,7 @@ static const uint16 gk2FrauMillerLockupSignature[] = {
 	      SIG_UINT16(0x0005),
 	      SIG_UINT16(0x0006),
 	0x31,                               // bnt [ don't fade music ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 gk2FrauMillerLockupPatch[] = {
@@ -3522,7 +3522,7 @@ static const uint16 gk2WagnerPaintingMessageSignature[] = {
 	0x38, SIG_UINT16(0x0006),   // pushi 0006
 	0x67, SIG_ADDTOOFFSET(+1),  // pTos noun
 	0x8f, 0x01,                 // lsp 01 [ verb ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 gk2WagnerPaintingMessagePatch[] = {
@@ -7944,7 +7944,7 @@ static const uint16 phant1ResetStabDonFlagSignature[] = {
 	0x34, SIG_UINT16(0x0384),       // ldi 0384
 	0x1a,                           // eq?
 	0x18,                           // not
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 phant1ResetStabDonFlagPatch[] = {
