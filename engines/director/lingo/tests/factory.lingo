@@ -62,6 +62,7 @@ method hit
     go "Death"
     set the locV of sprite 14 to 400
     aimgun2
+    if factory(killloc) then put "boo"
 method mDispose
     global fire1
     set fire1 = 0
