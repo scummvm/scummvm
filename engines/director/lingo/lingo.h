@@ -555,6 +555,11 @@ public:
 	static void b_me(int nargs);
 	static void b_script(int nargs);
 
+	static void b_numberofchars(int nargs);
+	static void b_numberofitems(int nargs);
+	static void b_numberoflines(int nargs);
+	static void b_numberofwords(int nargs);
+
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);
 	void func_beep(int repeats);

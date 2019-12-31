@@ -186,6 +186,29 @@ whitespace [\t ]
 
 		return FBLTINONEARG;
 	}
+(?i:the[ \t]+number[\t ]+of[\t ]+[[:alpha:]]+[\t ]in)	{
+		count();
+
+		const char *ptr = &yytext[4]; // Skip 'the '
+		while (*ptr == ' ' || *ptr == '\t') ptr++;
+
+		ptr += 6; // skip 'number '
+		while (*ptr == ' ' || *ptr == '\t') ptr++;
+
+		ptr += 3; // Skip 'of '
+		while (*ptr == ' ' || *ptr == '\t') ptr++;
+
+		Common::String field;
+		while (*ptr != ' ' && *ptr != '\t')
+			field += *ptr++;
+
+		yylval.s = new Common::String(Common::String::format("numberOf%s", field.c_str()));
+
+		if (g_lingo->_builtins.contains(*yylval.s))
+			return FBLTINONEARG;
+		else
+			error("LEXER: Unhandled chunk expression %s", yylval.s->c_str());
+	}
 (?i:the[ \t]+[[:alpha:]]+[\t ]+of[\t ]+{identifier})	{
 		count();
 

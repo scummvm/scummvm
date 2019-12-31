@@ -221,6 +221,11 @@ static struct BuiltinProto {
 	{ "me",				Lingo::b_me,			-1,0, false, 3, BLTIN },	//		D3
 	{ "script",			Lingo::b_script,		1, 1, false, 4, RBLTIN },	//			D4 f
 	{ "window",			Lingo::b_window,		1, 1, false, 4, RBLTIN },	//			D4 f
+	// Chunk operations
+	{ "numberOfChars",	Lingo::b_numberofchars,	1, 1, false, 4, FBLTIN },	//			D4 f
+	{ "numberOfItems",	Lingo::b_numberofitems,	1, 1, false, 4, FBLTIN },	//			D4 f
+	{ "numberOfLines",	Lingo::b_numberoflines,	1, 1, false, 4, FBLTIN },	//			D4 f
+	{ "numberOfWords",	Lingo::b_numberofwords,	1, 1, false, 4, FBLTIN },	//			D4 f
 
 	{ 0, 0, 0, 0, false, 0, 0 }
 };
@@ -1753,6 +1758,46 @@ void Lingo::b_window(int nargs) {
 	warning("STUB: b_window");
 
 	d.type = REFERENCE;
+
+	g_lingo->push(d);
+}
+
+void Lingo::b_numberofchars(int nargs) {
+	Datum d = g_lingo->pop();
+
+	warning("STUB: b_numberofchars");
+	d.toInt();
+	d.u.i = 0;
+
+	g_lingo->push(d);
+}
+
+void Lingo::b_numberofitems(int nargs) {
+	Datum d = g_lingo->pop();
+
+	warning("STUB: b_numberofitems");
+	d.toInt();
+	d.u.i = 0;
+
+	g_lingo->push(d);
+}
+
+void Lingo::b_numberoflines(int nargs) {
+	Datum d = g_lingo->pop();
+
+	warning("STUB: b_numberoflines");
+	d.toInt();
+	d.u.i = 0;
+
+	g_lingo->push(d);
+}
+
+void Lingo::b_numberofwords(int nargs) {
+	Datum d = g_lingo->pop();
+
+	warning("STUB: b_numberofwords");
+	d.toInt();
+	d.u.i = 0;
 
 	g_lingo->push(d);
 }
