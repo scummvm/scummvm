@@ -1148,7 +1148,7 @@ void LB::b_installMenu(int nargs) {
 	d.toInt();
 
 	if (g_director->getVersion() < 4)
-		d.u.i += 1024;
+		d.u.i += g_director->getCurrentScore()->_castIDoffset;
 
 	const Stxt *stxt = g_director->getCurrentScore()->_loadedStxts->getVal(d.u.i, nullptr);
 

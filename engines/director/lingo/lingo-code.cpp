@@ -349,7 +349,7 @@ void LC::c_assign() {
 				g_lingo->pushVoid();
 				return;
 			} else {
-				d1.u.i -= 1024;
+				d1.u.i -= score->_castIDoffset;
 			}
 		}
 
