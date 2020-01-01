@@ -21,18 +21,16 @@
  */
 
 #include "ultima/shared/core/ultima.h"
+#include "ultima/shared/core/data_archive.h"
 #include "ultima/shared/core/events.h"
 #include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/translation.h"
-#include "common/unzip.h"
 
 namespace Ultima {
 namespace Shared {
-
-#define DATA_FILENAME "ultima.dat"
 
 UltimaEngine * g_ultima;
 
@@ -47,7 +45,6 @@ UltimaEngine::~UltimaEngine() {
 }
 
 bool UltimaEngine::initialize() {
-	Common::File f;
 	Common::String folder;
 	int reqMajorVersion, reqMinorVersion;
 
@@ -58,34 +55,16 @@ bool UltimaEngine::initialize() {
 	if (!isDataRequired(folder, reqMajorVersion, reqMinorVersion))
 		return true;
 
-	if (!Common::File::exists(DATA_FILENAME) ||
-		(_dataArchive = Common::makeZipArchive(DATA_FILENAME)) == 0 ||
-		!f.open(Common::String::format("%s/version.txt", folder.c_str()), *_dataArchive)) {
-		delete _dataArchive;
-		GUIError(Common::String::format(_("Could not locate engine data %s"), DATA_FILENAME));
+	// Try and open the data archive
+	Common::String errorMsg;
+	_dataArchive = UltimaDataArchive::load(folder, reqMajorVersion, reqMinorVersion, errorMsg);
+	if (_dataArchive) {
+		SearchMan.add("data", _dataArchive);
+		return true;
+	} else {
+		GUIError(errorMsg);
 		return false;
 	}
-
-	// Validate the version
-	char buffer[5];
-	f.read(buffer, 4);
-	buffer[4] = '\0';
-
-	int major = 0, minor = 0;
-	if (buffer[1] == '.') {
-		major = buffer[0] - '0';
-		minor = atoi(&buffer[2]);
-	}
-
-	if (major != reqMajorVersion || minor != reqMinorVersion) {
-		delete _dataArchive;
-		GUIError(Common::String::format(_("Out of date engine data. Expected %d.%d, but got version %d.%d"),
-			reqMajorVersion, reqMinorVersion, major, minor));
-		return false;
-	}
-
-	SearchMan.add("data", _dataArchive);
-	return true;
 }
 
 void UltimaEngine::GUIError(const Common::String &msg) {
