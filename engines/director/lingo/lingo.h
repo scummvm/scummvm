@@ -44,45 +44,6 @@ struct LingoV4TheEntity;
 class DirectorEngine;
 class Frame;
 
-enum LEvent {
-	kEventPrepareMovie,
-	kEventStartMovie,
-	kEventStepMovie,
-	kEventStopMovie,
-
-	kEventNew,
-	kEventBeginSprite,
-	kEventEndSprite,
-
-	kEventNone,
-	kEventEnterFrame,
-	kEventPrepareFrame,
-	kEventIdle,
-	kEventStepFrame,
-	kEventExitFrame,
-	kEventTimeout,
-
-	kEventActivateWindow,
-	kEventDeactivateWindow,
-	kEventMoveWindow,
-	kEventResizeWindow,
-	kEventOpenWindow,
-	kEventCloseWindow,
-
-	kEventKeyUp,
-	kEventKeyDown,
-	kEventMouseUp,
-	kEventMouseDown,
-	kEventRightMouseUp,
-	kEventRightMouseDown,
-	kEventMouseEnter,
-	kEventMouseLeave,
-	kEventMouseUpOutSide,
-	kEventMouseWithin,
-
-	kEventStart
-};
-
 enum LexerDefineState {
 	kStateNone,
 	kStateInDef,

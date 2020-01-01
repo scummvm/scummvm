@@ -135,6 +135,46 @@ enum InkType {
 	kInkTypeDark
 };
 
+enum LEvent {
+	kEventPrepareMovie,
+	kEventStartMovie,
+	kEventStepMovie,
+	kEventStopMovie,
+
+	kEventNew,
+	kEventBeginSprite,
+	kEventEndSprite,
+
+	kEventNone,
+	kEventEnterFrame,
+	kEventPrepareFrame,
+	kEventIdle,
+	kEventStepFrame,
+	kEventExitFrame,
+	kEventTimeout,
+
+	kEventActivateWindow,
+	kEventDeactivateWindow,
+	kEventMoveWindow,
+	kEventResizeWindow,
+	kEventOpenWindow,
+	kEventCloseWindow,
+
+	kEventKeyUp,
+	kEventKeyDown,
+	kEventMouseUp,
+	kEventMouseDown,
+	kEventRightMouseUp,
+	kEventRightMouseDown,
+	kEventMouseEnter,
+	kEventMouseLeave,
+	kEventMouseUpOutSide,
+	kEventMouseWithin,
+
+	kEventStart
+};
+
+
 const char *scriptType2str(ScriptType scr);
 
 } // End of namespace Director
