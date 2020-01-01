@@ -45,6 +45,7 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
 
 #include "director/util.h"
@@ -474,7 +475,7 @@ void Lingo::codeFactory(Common::String &name) {
 	sym->nargs = -1;
 	sym->maxArgs = 0;
 	sym->parens = true;
-	sym->u.bltin = g_lingo->b_factory;
+	sym->u.bltin = LB::b_factory;
 
 	_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
 }

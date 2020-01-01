@@ -48,6 +48,7 @@
 #include "director/score.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
 
 namespace Director {
@@ -1182,7 +1183,7 @@ void LC::call(Common::String name, int nargs) {
 	}
 
 	if (sym->type == BLTIN || sym->type == FBLTIN || sym->type == RBLTIN) {
-		if (sym->u.bltin == g_lingo->b_factory) {
+		if (sym->u.bltin == LB::b_factory) {
 			g_lingo->factoryCall(name, nargs);
 		} else {
 			int stackSize = g_lingo->_stack.size() - nargs;
