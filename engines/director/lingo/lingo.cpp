@@ -25,6 +25,7 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-code.h"
 #include "director/cast.h"
 #include "director/frame.h"
 #include "director/score.h"
@@ -45,6 +46,10 @@ Symbol::Symbol() {
 
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
+
+	_lc = new LC;
+
+	g_lc = _lc;
 
 	_currentScript = 0;
 	_currentScriptType = kMovieScript;

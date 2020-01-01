@@ -24,6 +24,7 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-code.h"
 #include "director/frame.h"
 #include "director/score.h"
 #include "director/sprite.h"
@@ -935,7 +936,7 @@ void Lingo::b_quit(int nargs) {
 
 void Lingo::b_return(int nargs) {
 	// We do not touch the top of the stack, it will be returned
-	c_procret();
+	g_lc->c_procret();
 }
 
 void Lingo::b_restart(int nargs) {
@@ -1135,7 +1136,7 @@ void Lingo::b_importFileInto(int nargs) {
 void menuCommandsCallback(int action, Common::String &text, void *data) {
 	Common::String name = Common::String::format("scummvmMenu%d", action);
 
-	g_lingo->call(name, 0);
+	g_lc->call(name, 0);
 }
 
 void Lingo::b_installMenu(int nargs) {
@@ -1686,7 +1687,7 @@ void Lingo::factoryCall(Common::String &name, int nargs) {
 	s = name + "-" + *method.u.s;
 
 	debugC(3, kDebugLingoExec, "Stack size before call: %d, nargs: %d", _stack.size(), nargs);
-	call(s, nargs);
+	_lc->call(s, nargs);
 	debugC(3, kDebugLingoExec, "Stack size after call: %d", _stack.size());
 
 	if (!method.u.s->compareToIgnoreCase("mNew")) {

@@ -24,6 +24,7 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-bytecode.h"
 #include "director/lingo/lingo-the.h"
 
@@ -31,53 +32,53 @@ namespace Director {
 
 static LingoV4Bytecode lingoV4[] = {
 	{ 0x01, STOP, "" },
-	{ 0x03, Lingo::c_voidpush, "" },
-	{ 0x04, Lingo::c_mul, "" },
-	{ 0x05, Lingo::c_add, "" },
-	{ 0x06, Lingo::c_sub, "" },
-	{ 0x07, Lingo::c_div, "" },
-	{ 0x08, Lingo::c_mod, "" },
-	{ 0x09, Lingo::c_negate, "" },
-	{ 0x0a, Lingo::c_ampersand, "" },
-	{ 0x0b, Lingo::c_concat, "" },
-	{ 0x0c, Lingo::c_lt, "" },
-	{ 0x0d, Lingo::c_le, "" },
-	{ 0x0e, Lingo::c_neq, "" },
-	{ 0x0f, Lingo::c_eq, "" },
-	{ 0x10, Lingo::c_gt, "" },
-	{ 0x11, Lingo::c_ge, "" },
-	{ 0x12, Lingo::c_and, "" },
-	{ 0x13, Lingo::c_or, "" },
-	{ 0x14, Lingo::c_not, "" },
-	{ 0x15, Lingo::c_contains, "" },
-	{ 0x16, Lingo::c_starts, "" },
-	{ 0x17, Lingo::c_of, "" },
-	{ 0x18, Lingo::c_hilite, "" },
-	{ 0x19, Lingo::c_intersects, "" },
-	{ 0x1a, Lingo::c_within, "" },
-	{ 0x1b, Lingo::c_field, "" },
-	{ 0x1c, Lingo::c_tell, "" },
-	{ 0x1d, Lingo::c_telldone, "" },
-	{ 0x41, Lingo::c_intpush, "b" },
-	{ 0x42, Lingo::c_argcpush, "b" },
-	{ 0x43, Lingo::c_argcnoretpush, "b" },
+	{ 0x03, LC::c_voidpush, "" },
+	{ 0x04, LC::c_mul, "" },
+	{ 0x05, LC::c_add, "" },
+	{ 0x06, LC::c_sub, "" },
+	{ 0x07, LC::c_div, "" },
+	{ 0x08, LC::c_mod, "" },
+	{ 0x09, LC::c_negate, "" },
+	{ 0x0a, LC::c_ampersand, "" },
+	{ 0x0b, LC::c_concat, "" },
+	{ 0x0c, LC::c_lt, "" },
+	{ 0x0d, LC::c_le, "" },
+	{ 0x0e, LC::c_neq, "" },
+	{ 0x0f, LC::c_eq, "" },
+	{ 0x10, LC::c_gt, "" },
+	{ 0x11, LC::c_ge, "" },
+	{ 0x12, LC::c_and, "" },
+	{ 0x13, LC::c_or, "" },
+	{ 0x14, LC::c_not, "" },
+	{ 0x15, LC::c_contains, "" },
+	{ 0x16, LC::c_starts, "" },
+	{ 0x17, LC::c_of, "" },
+	{ 0x18, LC::c_hilite, "" },
+	{ 0x19, LC::c_intersects, "" },
+	{ 0x1a, LC::c_within, "" },
+	{ 0x1b, LC::c_field, "" },
+	{ 0x1c, LC::c_tell, "" },
+	{ 0x1d, LC::c_telldone, "" },
+	{ 0x41, LC::c_intpush, "b" },
+	{ 0x42, LC::c_argcpush, "b" },
+	{ 0x43, LC::c_argcnoretpush, "b" },
 	// 0x44, push a constant
-	{ 0x45, Lingo::c_namepush, "b" },
-	{ 0x53, Lingo::c_jump, "jb" },
-	{ 0x54, Lingo::c_jump, "jbn" },
-	{ 0x55, Lingo::c_jumpifz, "jb" },
-	{ 0x56, Lingo::cb_localcall, "b" },
-	{ 0x57, Lingo::cb_call, "b" },
-	{ 0x5c, Lingo::cb_v4theentitypush, "b" },
-	{ 0x5d, Lingo::cb_v4theentityassign, "b" },
-	{ 0x66, Lingo::cb_v4theentitynamepush, "b" },
-	{ 0x81, Lingo::c_intpush, "w" },
-	{ 0x82, Lingo::c_argcpush, "w" },
-	{ 0x83, Lingo::c_argcnoretpush, "w" },
+	{ 0x45, LC::c_namepush, "b" },
+	{ 0x53, LC::c_jump, "jb" },
+	{ 0x54, LC::c_jump, "jbn" },
+	{ 0x55, LC::c_jumpifz, "jb" },
+	{ 0x56, LC::cb_localcall, "b" },
+	{ 0x57, LC::cb_call, "b" },
+	{ 0x5c, LC::cb_v4theentitypush, "b" },
+	{ 0x5d, LC::cb_v4theentityassign, "b" },
+	{ 0x66, LC::cb_v4theentitynamepush, "b" },
+	{ 0x81, LC::c_intpush, "w" },
+	{ 0x82, LC::c_argcpush, "w" },
+	{ 0x83, LC::c_argcnoretpush, "w" },
 	// 0x84, push a constant
-	{ 0x93, Lingo::c_jump, "jw" },
-	{ 0x94, Lingo::c_jump, "jwn" },
-	{ 0x95, Lingo::c_jumpifz, "jw" },
+	{ 0x93, LC::c_jump, "jw" },
+	{ 0x94, LC::c_jump, "jwn" },
+	{ 0x95, LC::c_jumpifz, "jw" },
 	{ 0, 0, 0 }
 };
 
@@ -189,7 +190,7 @@ void Lingo::initBytecode() {
 }
 
 
-void Lingo::cb_localcall() {
+void LC::cb_localcall() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->_namelist[nameId];
 
@@ -207,13 +208,13 @@ void Lingo::cb_localcall() {
 }
 
 
-void Lingo::cb_call() {
+void LC::cb_call() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->_namelist[nameId];
 
 	Datum nargs = g_lingo->pop();
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
-		g_lingo->call(name, nargs.u.i);
+		g_lc->call(name, nargs.u.i);
 
 	} else {
 		warning("cb_call: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
@@ -222,7 +223,7 @@ void Lingo::cb_call() {
 }
 
 
-void Lingo::cb_v4theentitypush() {
+void LC::cb_v4theentitypush() {
 	int bank = g_lingo->readInt();
 
 	Datum firstArg = g_lingo->pop();
@@ -282,7 +283,7 @@ void Lingo::cb_v4theentitypush() {
 }
 
 
-void Lingo::cb_v4theentitynamepush() {
+void LC::cb_v4theentitynamepush() {
 	Datum nargs = g_lingo->pop();
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
 		if (nargs.u.i > 0) {
@@ -312,7 +313,7 @@ void Lingo::cb_v4theentitynamepush() {
 }
 
 
-void Lingo::cb_v4theentityassign() {
+void LC::cb_v4theentityassign() {
 	int bank = g_lingo->readInt();
 
 	Datum firstArg = g_lingo->pop();
@@ -585,13 +586,13 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 				Datum constant = _currentScriptContext->constants[arg];
 				switch (constant.type) {
 				case INT:
-					g_lingo->code1(Lingo::c_intpush);
+					g_lingo->code1(LC::c_intpush);
 					break;
 				case FLOAT:
-					g_lingo->code1(Lingo::c_floatpush);
+					g_lingo->code1(LC::c_floatpush);
 					break;
 				case STRING:
-					g_lingo->code1(Lingo::c_stringpush);
+					g_lingo->code1(LC::c_stringpush);
 					break;
 				default:
 					error("Unknown constant type %d", constant.type);
@@ -658,12 +659,12 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 				if (opcode < 0x40) { // 1 byte instruction
 					debugC(5, kDebugLingoCompile, "Unimplemented opcode: 0x%02x", opcode);
 					offsetList.push_back(_currentScript->size());
-					g_lingo->code1(Lingo::c_unk);
+					g_lingo->code1(LC::c_unk);
 					g_lingo->codeInt(opcode);
 				} else if (opcode < 0x80) { // 2 byte instruction
 					debugC(5, kDebugLingoCompile, "Unimplemented opcode: 0x%02x (%d)", opcode, (uint)codeStore[pointer]);
 					offsetList.push_back(_currentScript->size());
-					g_lingo->code1(Lingo::c_unk1);
+					g_lingo->code1(LC::c_unk1);
 					g_lingo->codeInt(opcode);
 					offsetList.push_back(_currentScript->size());
 					g_lingo->codeInt((uint)codeStore[pointer]);
@@ -671,7 +672,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 				} else { // 3 byte instruction
 					debugC(5, kDebugLingoCompile, "Unimplemented opcode: 0x%02x (%d, %d)", opcode, (uint)codeStore[pointer], (uint)codeStore[pointer+1]);
 					offsetList.push_back(_currentScript->size());
-					g_lingo->code1(Lingo::c_unk2);
+					g_lingo->code1(LC::c_unk2);
 					g_lingo->codeInt(opcode);
 					offsetList.push_back(_currentScript->size());
 					g_lingo->codeInt((uint)codeStore[pointer]);

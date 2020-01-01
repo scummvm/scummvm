@@ -22,6 +22,7 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-code.h"
 #include "director/frame.h"
 #include "director/score.h"
 #include "director/sprite.h"
@@ -315,7 +316,7 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 
 	if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
 		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), _eventHandler", _eventHandlerTypes[event], scriptType2str(st), entityId);
-		call(_eventHandlerTypes[event], 0); // D4+ Events
+		g_lc->call(_eventHandlerTypes[event], 0); // D4+ Events
 	} else if (event == kEventNone && _scriptContexts[st].contains(entityId)) {
 		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), script", _eventHandlerTypes[event], scriptType2str(st), entityId);
 
