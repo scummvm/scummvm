@@ -154,7 +154,7 @@ void ScummEngine_v6::drawBlastTexts() {
 		_charset->setCurID(_blastTextQueue[i].charset);
 
 		if (_game.version >= 7 && _language == Common::HE_ISR) {
-			fakeBidiString((char *)buf, false);
+			fakeBidiString(buf, false);
 		}
 
 		do {
@@ -463,35 +463,35 @@ bool ScummEngine::newLine() {
 	return true;
 }
 
-void ScummEngine::fakeBidiString(char *ltext, bool ignoreVerb) {
+void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) {
 	// Provides custom made BiDi mechanism.
 	// Reverses texts on each line marked by control characters (considering different control characters used in verbs panel)
 	// While preserving original order of numbers (also negative numbers and comma separated)
-	int ll = 0;
-	if (_game.id == GID_INDY4 && ltext[ll] == 127) {
+	int32 ll = 0;
+	if (_game.id == GID_INDY4 && ltext[ll] == 0x7F) {
 		ll++;
 	}
-	while (ltext[ll] == -1) {
+	while (ltext[ll] == 0xFF) {
 		ll += 4;
 	}
-	int ipos = 0;
-	int start = 0;
-	char *text = ltext + ll;
-	char *current = text;
+	int32 ipos = 0;
+	int32 start = 0;
+	byte *text = ltext + ll;
+	byte *current = text;
 
-	int bufferSize = 384;
-	char * const buff = (char *)calloc(sizeof(char), bufferSize);
+	int32 bufferSize = 384;
+	byte * const buff = (byte *)calloc(sizeof(byte), bufferSize);
 	assert(buff);
-	char * const stack = (char *)calloc(sizeof(char), bufferSize);
+	byte * const stack = (byte *)calloc(sizeof(byte), bufferSize);
 	assert(stack);
 
 	while (1) {
-		if (*current == 13 || *current == 0 || *current == -1 || *current == -2) {
+		if (*current == 0x0D || *current == 0 || *current == 0xFF || *current == 0xFE) {
 
 			// ignore the line break for verbs texts
 			if (ignoreVerb && (*(current + 1) ==  8)) {
 				*(current + 1) = *current;
-				*current = 8;
+				*current = 0x08;
 				ipos += 2;
 				current += 2;
 				continue;
@@ -501,14 +501,14 @@ void ScummEngine::fakeBidiString(char *ltext, bool ignoreVerb) {
 			memset(stack, 0, bufferSize);
 
 			// Reverse string on current line (between start and ipos).
-			int sthead = 0;
-			char last = '\0';
+			int32 sthead = 0;
+			byte last = 0;
 			for (int j = 0; j < ipos; j++) {
-				char *curr = text + start + ipos - j - 1;
+				byte *curr = text + start + ipos - j - 1;
 				// Special cases to preserve original ordering (numbers).
 				if (Common::isDigit(*curr) ||
-						(*curr == ',' && j + 1 < ipos && Common::isDigit(*(curr - 1)) && Common::isDigit(last)) ||
-						(*curr == '-' && (j + 1 == ipos || Common::isSpace(*(curr - 1))) && Common::isDigit(last))) {
+						(*curr == (byte)',' && j + 1 < ipos && Common::isDigit(*(curr - 1)) && Common::isDigit(last)) ||
+						(*curr == (byte)'-' && (j + 1 == ipos || Common::isSpace(*(curr - 1))) && Common::isDigit(last))) {
 					++sthead;
 					stack[sthead] = *curr;
 				} else {
@@ -527,9 +527,9 @@ void ScummEngine::fakeBidiString(char *ltext, bool ignoreVerb) {
 			memcpy(text + start, buff, ipos);
 			start += ipos + 1;
 			ipos = -1;
-			if (*current == -1 || *current == -2) {
+			if (*current == 0xFF || *current == 0xFE) {
 				current++;
-				if (*current == 3 || *current == 2) {
+				if (*current == 0x03 || *current == 0x02) {
 					break;
 				}
 				if (*current == 0x0A || *current == 0x0C) {
@@ -549,9 +549,9 @@ void ScummEngine::fakeBidiString(char *ltext, bool ignoreVerb) {
 		}
 		break;
 	}
-	if (!ignoreVerb && _game.id == GID_INDY4 && ltext[0] == 127) {
-		ltext[start + ipos + ll] = '\x80';
-		ltext[start + ipos + ll + 1] = '\0';
+	if (!ignoreVerb && _game.id == GID_INDY4 && ltext[0] == 0x7F) {
+		ltext[start + ipos + ll] = 0x80;
+		ltext[start + ipos + ll + 1] = 0;
 	}
 
 	free(buff);
@@ -711,7 +711,7 @@ void ScummEngine::CHARSET_1() {
 	int c = 0;
 
 	if (_game.version >= 4 && _game.version < 7 && _language == Common::HE_ISR) {
-		fakeBidiString((char *)_charsetBuffer + _charsetBufPos, true);
+		fakeBidiString(_charsetBuffer + _charsetBufPos, true);
 	}
 
 	while (handleNextCharsetCode(a, &c)) {
@@ -984,7 +984,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	convertMessageToString(msg, buf, sizeof(buf));
 
 	if (_game.version >= 4 && _game.version < 7 && _language == Common::HE_ISR) {
-		fakeBidiString((char *)buf, false);
+		fakeBidiString(buf, false);
 	}
 
 	_charset->_top = _string[a].ypos + _screenTop;
