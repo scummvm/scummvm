@@ -1194,7 +1194,7 @@ std::set<std::string> ActorManager::getCustomTileFilenames(std::string datadir, 
 	build_path(GUI::get_gui()->get_data_dir(), datadir, path);
 	filelistDataDir.open(path.c_str(), filenamePrefix.c_str(), NUVIE_SORT_NAME_ASC);
 
-	build_path(Game::get_game()->get_save_manager()->get_savegame_directory(), "data", path);
+	path = "data";
 	build_path(path, datadir, path);
 	filelistSaveGameDir.open(path.c_str(), filenamePrefix.c_str(), NUVIE_SORT_NAME_ASC);
 
