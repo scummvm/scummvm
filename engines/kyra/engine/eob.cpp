@@ -412,7 +412,7 @@ void EoBEngine::drawDoorIntern(int type, int index, int x, int y, int w, int wal
 	case 4:
 	case 5:
 	case 6:
-		y = _dscDoorY6[mDim] - shp[1];
+		y = _dscDoorY7[mDim] - shp[1];
 		d1 = _dscDoorCoordsExt[index << 1] >> 3;
 		d2 = _dscDoorCoordsExt[(index << 1) + 1] >> 3;
 		if (_shpDmX1 > d1)
