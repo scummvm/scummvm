@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/system.h"
+#include "common/events.h"
+
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/sprite.h"
@@ -466,6 +469,14 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheKeyCode:
 		d.type = INT;
 		d.u.i = _vm->_keyCode;
+		break;
+	case kTheMouseH:
+		d.type = INT;
+		d.u.i = g_system->getEventManager()->getMousePos().x;
+		break;
+	case kTheMouseV:
+		d.type = INT;
+		d.u.i = g_system->getEventManager()->getMousePos().y;
 		break;
 	case kTheColorQD:
 		d.type = INT;
