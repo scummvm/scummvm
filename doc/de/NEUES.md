@@ -4,6 +4,11 @@ Programmcodes finden Sie auf Englisch unter:
 
 #### 2.2.0 (DD.MM.YYYY)
 
+ Kyra:
+    - Unterstützung für die PC-98-Version von Eye of the Beholder I hinzugefügt.
+
+ Xeen:
+    - Anzeige von Goldmünzen und Edelsteinen auf der Nintendo Switch korrigiert.
 
 #### 2.1.0 "Electric Sheep" (13.10.2019)
 
