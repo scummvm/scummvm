@@ -114,6 +114,7 @@ static struct BuiltinProto {
 	{ "dontPassEvent",	LB::b_dontPassEvent,0, 0, false, 2, BLTIN },	// D2 c
 	{ "delay",	 		LB::b_delay,		1, 1, false, 2, BLTIN },	// D2 c
 	{ "do",		 		LB::b_do,			1, 1, false, 2, BLTIN },	// D2 c
+	{ "go",		 		LB::b_go,			1, 2, false, 4, BLTIN },	// 			D4 c
 	{ "halt",	 		LB::b_halt,			0, 0, false, 4, BLTIN },	//			D4 c
 	{ "nothing",		LB::b_nothing,		0, 0, false, 2, BLTIN },	// D2 c
 	{ "pass",			LB::b_pass,			0, 0, false, 4, BLTIN },	//			D4 c
