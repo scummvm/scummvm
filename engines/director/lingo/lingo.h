@@ -148,6 +148,7 @@ public:
 	void addCode(const char *code, ScriptType type, uint16 id);
 	void addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id);
 	void addNamesV4(Common::SeekableSubReadStreamEndian &stream);
+	void executeHandler(Common::String name);
 	void executeScript(ScriptType type, uint16 id, uint16 function);
 	void printStack(const char *s, uint pc);
 	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);

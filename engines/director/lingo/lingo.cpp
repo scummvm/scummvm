@@ -243,6 +243,16 @@ void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
 	cleanLocalVars();
 }
 
+void Lingo::executeHandler(Common::String name) {
+	_returning = false;
+	_localvars = new SymbolHash;
+
+	debugC(1, kDebugLingoExec, "Executing script handler : %s", name.c_str());
+	LC::call(name, 0);
+
+	cleanLocalVars();
+}
+
 void Lingo::restartLingo() {
 	warning("STUB: restartLingo()");
 
