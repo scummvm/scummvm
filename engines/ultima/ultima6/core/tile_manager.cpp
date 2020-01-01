@@ -33,7 +33,6 @@
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/core/look.h"
 #include "ultima/ultima6/core/game_clock.h"
-#include "ultima/ultima6/save/save_manager.h"
 #include "ultima/ultima6/core/tile_manager.h"
 #include "ultima/ultima6/gui/gui.h"
 

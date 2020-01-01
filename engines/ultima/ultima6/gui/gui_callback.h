@@ -24,6 +24,7 @@
 #define ULTIMA6_GUI_GUI_CALLBACK_H
 
 #include "ultima/ultima6/gui/gui_status.h"
+#include "ultima/ultima6/core/nuvie_defs.h"
 
 namespace Ultima {
 namespace Ultima6 {

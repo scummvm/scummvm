@@ -45,8 +45,6 @@
 #include "ultima/ultima6/core/effect.h"
 #include "ultima/ultima6/core/effect_manager.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
-
-#include "ultima/ultima6/save/save_manager.h"
 #include "ultima/ultima6/core/magic.h"
 #include "ultima/ultima6/gui/gui_yes_no_dialog.h"
 #include "ultima/ultima6/menus/game_menu_dialog.h"
@@ -2448,20 +2446,6 @@ void Events::quitDialog() {
 		gui->lock_input(quit_dialog);
 	}
 
-	return;
-}
-
-void Events::saveDialog() {
-	close_gumps();
-
-	SaveManager *save_manager = game->get_save_manager();
-	if (mode == EQUIP_MODE)
-		cancelAction();
-	if (mode == MOVE_MODE) {
-		map_window->set_looking(false);
-		map_window->set_walking(false);
-		save_manager->create_dialog();
-	}
 	return;
 }
 

@@ -33,9 +33,10 @@
 namespace Ultima {
 namespace Ultima6 {
 
+class Game;
+class SaveGame;
 class Screen;
 class Script;
-class Game;
 
 class Ultima6Engine : public Ultima::Shared::UltimaEngine {
 private:
@@ -43,6 +44,7 @@ private:
 	Screen *_screen;
 	Script *_script;
 	Game *_game;
+	SaveGame *_savegame;
 private:
 	void initConfig();
 	void assignGameConfigValues(uint8 game_type);
@@ -66,6 +68,46 @@ public:
 	 * Play the game
 	 */
 	virtual Common::Error run() override;
+
+	/**
+	 * Indicates whether a game state can be loaded.
+	 */
+	virtual bool canLoadGameStateCurrently() override;
+
+	/**
+	 * Indicates whether a game state can be saved.
+	 */
+	virtual bool canSaveGameStateCurrently() override;
+
+	/**
+	 * Load a game state.
+	 * @param slot	the slot from which a savestate should be loaded
+	 * @return returns kNoError on success, else an error code.
+	 */
+	virtual Common::Error loadGameState(int slot) override;
+
+	/**
+	 * Save a game state.
+	 * @param slot	the slot into which the savestate should be stored
+	 * @param desc	a description for the savestate, entered by the user
+	 * @return returns kNoError on success, else an error code.
+	 */
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+
+	/**
+	 * Either starts the most recently saved game, or falls back on starting a new game
+	 */
+	bool journeyOnwards();
+
+	/**
+	 * Loads the most recently saved game
+	 */
+	bool loadLatestSave();
+
+	/**
+	 * Quick save or load a savegame
+	 */
+	bool quickSave(int saveSlot, bool isLoad);
 };
 
 extern Ultima6Engine *g_engine;

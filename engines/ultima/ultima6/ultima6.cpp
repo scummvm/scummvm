@@ -33,6 +33,10 @@
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/core/console.h"
 #include "ultima/ultima6/sound/sound_manager.h"
+#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/save/save_game.h"
+#include "ultima/ultima6/core/msg_scroll.h"
+#include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/unzip.h"
 
@@ -46,14 +50,15 @@ namespace Ultima6 {
 Ultima6Engine *g_engine;
 
 Ultima6Engine::Ultima6Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
-		Ultima::Shared::UltimaEngine(syst, gameDesc), 
-		_config(nullptr), _screen(nullptr), _script(nullptr), _game(nullptr) {
+		Ultima::Shared::UltimaEngine(syst, gameDesc),  _config(nullptr), _savegame(nullptr),
+		_screen(nullptr), _script(nullptr), _game(nullptr) {
 	g_engine = this;
 }
 
 Ultima6Engine::~Ultima6Engine() {
 	delete _config;
 	delete _events;
+	delete _savegame;
 	delete _screen;
 	delete _script;
 	delete _game;
@@ -95,8 +100,13 @@ bool Ultima6Engine::initialize() {
 
 	// Find and load config file
 	initConfig();
+
+	// Setup events
 	Events *events = new Ultima::Ultima6::Events(_config);
 	_events = events;
+
+	// Setup savegame handler
+	_savegame = new SaveGame(_config);
 
 	// Setup screen
 	_screen = new Screen(_config);
@@ -222,6 +232,115 @@ bool Ultima6Engine::checkDataDir() {
 	ConsoleAddInfo("datadir: \"%s\"", path.c_str());
 
 	return true;
+}
+
+bool Ultima6Engine::canLoadGameStateCurrently() {
+	if (_events == nullptr)
+		return false;
+
+	// Note that to mimic what Nuvie originally did, any attempt to try and open
+	// the save dialog will result in active gumps being closed
+	Events *events = static_cast<Events *>(_events);
+	MapWindow *mapWindow = _game->get_map_window();
+	events->close_gumps();
+
+	switch (events->get_mode()) {
+	case EQUIP_MODE:
+		events->cancelAction();
+		return false;
+	case MOVE_MODE:
+		mapWindow->set_looking(false);
+		mapWindow->set_walking(false);
+		return true;
+	default:
+		// Saving/loading only available in standard move mode in-game
+		return false;
+	}
+}
+
+bool Ultima6Engine::canSaveGameStateCurrently() {
+	if (!canLoadGameStateCurrently())
+		return false;
+
+	// Further checks against saving
+	Events *events = static_cast<Events *>(_events);
+	MsgScroll *scroll = _game->get_scroll();
+
+	if (_game->is_armageddon()) {
+		scroll->message("Can't save. You killed everyone!\n\n");
+		return false;
+	} else if (events->using_control_cheat()) {
+		scroll->message(" Can't save while using control cheat\n\n");
+		return false;
+	}
+
+	return true;
+}
+
+Common::Error Ultima6Engine::loadGameState(int slot) {
+	// TODO
+	return Common::kNoError;
+}
+
+Common::Error Ultima6Engine::saveGameState(int slot, const Common::String &desc) {
+	// TODO
+	return Common::kNoError;
+}
+
+bool Ultima6Engine::journeyOnwards() {
+	bool newsave = false;
+
+	_config->value("config/newgame", newsave, false);
+
+	if (newsave) {
+		return _savegame->load_new();
+	}
+
+	return loadLatestSave();
+}
+
+bool Ultima6Engine::loadLatestSave() {
+	if (ConfMan.hasKey("latest_save")) {
+		int saveSlot = ConfMan.getInt("latest_save");
+		return loadGameState(saveSlot).getCode() == Common::kNoError;
+	}
+
+	return _savegame->load_new();
+}
+
+bool Ultima6Engine::quickSave(int saveSlot, bool isLoad) {
+	if (saveSlot < 0 || saveSlot > 99)
+		return false;
+
+	std::string text;
+	MsgScroll *scroll = _game->get_scroll();
+
+	if (isLoad) {
+		if (!canLoadGameStateCurrently())
+			return false;
+
+		text = _("loading quick save %d");
+	} else {
+		if (!canSaveGameStateCurrently())
+			return false;
+
+		text = _("saving quick save %d");
+	}
+
+	text = std::string::format(text.c_str(), saveSlot);
+	scroll->display_string(text);
+
+	if (isLoad) {
+		if (loadGameState(saveSlot).getCode() == Common::kNoError) {
+			return true;
+		} else {
+			scroll->message("\nfailed!\n\n");
+			return false;
+		}
+	} else {
+		Common::String saveDesc = Common::String::format(_("Quicksave %03d"), saveSlot);
+		return saveGameState(saveSlot, saveDesc).getCode() == Common::kNoError;
+	}
 }
 
 bool Ultima6Engine::playIntro() {

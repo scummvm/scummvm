@@ -106,6 +106,16 @@ public:
      * Returns a file system node for the game directory
      */
     Common::FSNode getGameDirectory() const;
+
+    /**
+     * Shows the ScummVM save dialog, allowing users to save their game
+     */
+    virtual bool saveGame();
+
+    /**
+     * Shows the ScummVM Restore dialog, allowing users to restore a game
+     */
+    virtual bool loadGame();
 };
 
 extern UltimaEngine *g_ultima;

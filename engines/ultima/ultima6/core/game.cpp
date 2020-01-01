@@ -56,11 +56,9 @@
 #include "ultima/ultima6/core/command_bar_new_ui.h"
 #include "ultima/ultima6/views/party_view.h"
 #include "ultima/ultima6/views/actor_view.h"
-
 #include "ultima/ultima6/usecode/usecode.h"
 #include "ultima/ultima6/usecode/u6_usecode.h"
 #include "ultima/ultima6/core/cursor.h"
-#include "ultima/ultima6/save/save_manager.h"
 #include "ultima/ultima6/core/weather.h"
 #include "ultima/ultima6/core/book.h"
 #include "ultima/ultima6/keybinding/keys.h"
@@ -107,7 +105,6 @@ Game::Game(Configuration *cfg, Events *evt, Screen *scr, GUI *g, nuvie_game_t ty
 	party = NULL;
 	portrait = NULL;
 	view_manager = NULL;
-	save_manager = NULL;
 	egg_manager = NULL;
 	usecode = NULL;
 	effect_manager = NULL;
@@ -194,7 +191,6 @@ Game::~Game() {
 	if (gui) delete gui;
 	if (usecode) delete usecode;
 	if (effect_manager) delete effect_manager;
-	if (save_manager) delete save_manager;
 	if (cursor) delete cursor;
 	if (egg_manager) delete egg_manager;
 	if (weather) delete weather;
@@ -213,10 +209,6 @@ bool Game::loadGame(Script *s) {
 	script = s;
 	//sound_manager->LoadSongs(NULL);
 	//sound_manager->LoadObjectSamples(NULL);
-
-	save_manager = new SaveManager(config);
-	if (save_manager->init() == false)
-		return false;
 
 	palette = new GamePalette(screen, config);
 
@@ -338,7 +330,7 @@ bool Game::loadGame(Script *s) {
 		magic->init(event);
 	}
 
-	if (save_manager->load_save() == false) {
+	if (g_engine->journeyOnwards() == false) {
 		return false;
 	}
 

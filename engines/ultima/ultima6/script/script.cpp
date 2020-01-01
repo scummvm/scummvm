@@ -38,7 +38,6 @@
 #include "ultima/ultima6/core/tile_manager.h"
 #include "ultima/ultima6/views/view_manager.h"
 #include "ultima/ultima6/views/inventory_view.h"
-#include "ultima/ultima6/save/save_manager.h"
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/core/weather.h"
 #include "ultima/ultima6/usecode/usecode.h"

@@ -57,7 +57,6 @@ class Events;
 class GUI;
 class EffectManager;
 class SoundManager;
-class SaveManager;
 class EggManager;
 class CommandBar;
 class Weather;
@@ -73,6 +72,7 @@ typedef enum {
 } GamePauseState;
 
 class Game {
+private:
 	nuvie_game_t game_type;
 	uint8 game_style; //new, original, orig_plus_cutoff_map, or orig_plus_full_map
 	static Game *game;
@@ -100,7 +100,6 @@ class Game {
 	ViewManager *view_manager;
 	EffectManager *effect_manager;
 	SoundManager *sound_manager;
-	SaveManager *save_manager;
 	EggManager *egg_manager;
 
 	GameClock *clock;
@@ -389,9 +388,6 @@ public:
 	}
 	SoundManager *get_sound_manager() {
 		return (sound_manager);
-	}
-	SaveManager *get_save_manager()   {
-		return (save_manager);
 	}
 
 	Cursor *get_cursor()              {
