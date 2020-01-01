@@ -22,6 +22,7 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
+#include "common/system.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -96,41 +97,70 @@ bool NuvieIOFileRead::readToBuf(unsigned char *buf, uint32 buf_size) {
 // NuvieIOFileWrite
 //
 
+NuvieIOFileWrite::NuvieIOFileWrite() : _saveFileData(DisposeAfterUse::YES),
+		_file(nullptr), _saveFile(nullptr) {
+}
+
 NuvieIOFileWrite::~NuvieIOFileWrite() {
 	close();
 }
 
 bool NuvieIOFileWrite::open(const Common::String &filename) {
-	if (_file.isOpen()) //We already have a file open lets bail.
+	if (isOpen())
+		// We already have an open file
 		return false;
 
-	if (!_file.open(filename)) {
-		DEBUG(0, LEVEL_ERROR, "Failed opening '%s'\n", filename.c_str());
-		return false;
+	if (filename.contains("/")) {
+		// It's a relative path, so we open it using a DumpFile
+		if (!_dumpFile.open(filename, true)) {
+			DEBUG(0, LEVEL_ERROR, "Failed opening '%s'\n", filename.c_str());
+			return false;
+		}
+
+		_file = &_dumpFile;
+	} else {
+		// Singular file, so open it as a save file
+		_saveFile = g_system->getSavefileManager()->openForSaving(filename, false);
+		assert(_saveFile);
+
+		// Point _file to the _saveFileData member for initial writing,
+		// since save files don't allow seeking
+		_file = &_saveFileData;
 	}
 
-	size = _file.size();
+	size = 0;
 	pos = 0;
 
 	return true;
 }
 
 void NuvieIOFileWrite::close() {
-	_file.close();
+	if (_saveFile) {
+		// Writing using savefile interface, so flush out data
+		_saveFile->write(_saveFileData.getData(), _saveFileData.size());
+		_saveFile->finalize();
+		delete _saveFile;
+		_saveFile = nullptr;
+	} else {
+		// Writing to a dump file, so simply close it
+		_dumpFile.close();
+	}
+
+	_file = nullptr;
 }
 
 void NuvieIOFileWrite::seek(uint32 new_pos) {
-	if (_file.isOpen() && new_pos <= size) {
-		_file.seek(new_pos);
+	if (isOpen() && new_pos <= size) {
+		_file->seek(new_pos);
 		pos = new_pos;
 	}
 }
 
 bool NuvieIOFileWrite::write1(uint8 src) {
-	if (!_file.isOpen())
+	if (!isOpen())
 		return false;
 
-	_file.writeByte(src);
+	_file->writeByte(src);
 	++pos;
 
 	if (pos > size)
@@ -140,10 +170,10 @@ bool NuvieIOFileWrite::write1(uint8 src) {
 }
 
 bool NuvieIOFileWrite::write2(uint16 src) {
-	if (!_file.isOpen())
+	if (!isOpen())
 		return false;
 
-	_file.writeUint16LE(src);
+	_file->writeUint16LE(src);
 	pos += 2;
 
 	if (pos > size)
@@ -153,10 +183,10 @@ bool NuvieIOFileWrite::write2(uint16 src) {
 }
 
 bool NuvieIOFileWrite::write4(uint32 src) {
-	if (!_file.isOpen())
+	if (!isOpen())
 		return false;
 
-	_file.writeUint32LE(src);
+	_file->writeUint32LE(src);
 	pos += 4;
 
 	if (pos > size)
@@ -166,14 +196,14 @@ bool NuvieIOFileWrite::write4(uint32 src) {
 }
 
 uint32 NuvieIOFileWrite::writeBuf(const unsigned char *src, uint32 src_size) {
-	if (!_file.isOpen())
+	if (!isOpen())
 		return false;
 
 	pos += src_size;
 	if (pos > size)
 		size = pos;
 
-	return (_file.write(src, src_size));
+	return (_file->write(src, src_size));
 }
 
 uint32 NuvieIOFileWrite::write(NuvieIO *src) {
