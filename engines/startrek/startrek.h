@@ -549,8 +549,6 @@ private:
 	char _textInputBuffer[TEXT_INPUT_BUFFER_SIZE];
 	int16 _textInputCursorPos;
 	char _textInputCursorChar;
-	Bitmap *_textInputBitmapSkeleton;
-	Bitmap *_textInputBitmap;
 	Sprite _textInputSprite;
 
 	// menu.cpp

@@ -684,9 +684,7 @@ void StarTrekEngine::redrawTextInput() {
 	if (_textInputCursorChar != 0)
 		buf[_textInputCursorPos] = _textInputCursorChar;
 
-	memcpy(_textInputBitmap->pixels, _textInputBitmapSkeleton->pixels, _textInputBitmapSkeleton->width * _textInputBitmapSkeleton->height);
-
-	drawTextLineToBitmap(buf, MAX_TEXT_INPUT_LEN, 4, 12, _textInputBitmap);
+	drawTextLineToBitmap(buf, MAX_TEXT_INPUT_LEN, 4, 12, _textInputSprite.bitmap.get());
 	_textInputSprite.bitmapChanged = true;
 	_gfx->drawAllSprites();
 }
@@ -847,70 +845,45 @@ void StarTrekEngine::initTextInputSprite(int16 textboxX, int16 textboxY, const C
 		row++;
 	} while (headerPos != 0 && row < 11);
 
-	int16 width = headerLen * 8 + 8;
-	int16 height = row * 8 + 8;
+	const int16 width = headerLen * 8 + 8;
+	const int16 height = row * 8 + 8;
 
-	_textInputBitmapSkeleton = new Bitmap(width, height);
-	_textInputBitmap         = new Bitmap(width, height);
 
-	_textInputBitmapSkeleton->xoffset = width / 2;
+	_textInputSprite.bitmap = SharedPtr<Bitmap>(new Bitmap(width, height));
+
+	_textInputSprite.bitmap->xoffset = width / 2;
 	if (textboxX + width / 2 >= SCREEN_WIDTH)
-		_textInputBitmapSkeleton->xoffset += width / 2 + textboxX - (SCREEN_WIDTH - 1);
+		_textInputSprite.bitmap->xoffset += width / 2 + textboxX - (SCREEN_WIDTH - 1);
 	if (textboxX - width / 2 < 0)
-		_textInputBitmapSkeleton->xoffset -= 0 - (textboxX - width / 2);
+		_textInputSprite.bitmap->xoffset -= 0 - (textboxX - width / 2);
 
-	_textInputBitmapSkeleton->yoffset = height + 20;
-	memset(_textInputBitmapSkeleton->pixels, 0, width * height);
+	_textInputSprite.bitmap->yoffset = height + 20;
 
-	// Top border
 	int16 xPos = 1;
+	while (xPos < width - 1) {
+		_textInputSprite.bitmap->pixels[1 * width + xPos] = 0x78;	// Top border
+		_textInputSprite.bitmap->pixels[(height - 2) * width + xPos] = 0x78;	// Bottom border
+		xPos++;
+	}
+
 	int16 yPos = 1;
-	while (xPos < width - 1) {
-		_textInputBitmapSkeleton->pixels[yPos * width + xPos] = 0x78;
-		xPos++;
-	}
-
-	// Bottom border
-	xPos = 1;
-	yPos = height - 2;
-	while (xPos < width - 1) {
-		_textInputBitmapSkeleton->pixels[yPos * width + xPos] = 0x78;
-		xPos++;
-	}
-
-	// Left border
-	xPos = 1;
-	yPos = 1;
 	while (yPos < height - 1) {
-		_textInputBitmapSkeleton->pixels[yPos * width + xPos] = 0x78;
-		yPos++;
-	}
-
-	// Right border
-	xPos = width - 2;
-	yPos = 1;
-	while (yPos < height - 1) {
-		_textInputBitmapSkeleton->pixels[yPos * width + xPos] = 0x78;
+		_textInputSprite.bitmap->pixels[yPos * width + 1] = 0x78;	// Left border
+		_textInputSprite.bitmap->pixels[yPos * width + (width - 2)] = 0x78;	// Right border
 		yPos++;
 	}
 
 	// Draw header text
 	for (int r = 0; r < row; r++) {
 		char *text = textBuf + r * TEXTBOX_WIDTH;
-		drawTextLineToBitmap(text, strlen(text), 4, r * 8 + 4, _textInputBitmapSkeleton);
+		drawTextLineToBitmap(text, strlen(text), 4, r * 8 + 4, _textInputSprite.bitmap.get());
 	}
 
-	// Copy skeleton bitmap to actual used bitmap
-	_textInputBitmap->xoffset = _textInputBitmapSkeleton->xoffset;
-	_textInputBitmap->yoffset = _textInputBitmapSkeleton->yoffset;
-	memcpy(_textInputBitmap->pixels, _textInputBitmapSkeleton->pixels, width * height);
-
-	_gfx->addSprite(&_textInputSprite);
 	_textInputSprite.drawMode = 2;
 	_textInputSprite.field8 = "System";
-	_textInputSprite.bitmap = SharedPtr<Bitmap>(_textInputBitmap);
 	_textInputSprite.setXYAndPriority(textboxX, textboxY, 15);
 	_textInputSprite.drawPriority2 = 8;
+
 	_gfx->drawAllSprites();
 }
 
@@ -920,8 +893,6 @@ void StarTrekEngine::cleanupTextInputSprite() {
 	_gfx->delSprite(&_textInputSprite);
 
 	_textInputSprite.bitmap.reset();
-	delete _textInputBitmapSkeleton;
-	delete _textInputBitmap;
 }
 
 } // End of namespace StarTrek
