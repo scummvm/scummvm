@@ -503,7 +503,7 @@ void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) {
 			// Reverse string on current line (between start and ipos).
 			int32 sthead = 0;
 			byte last = 0;
-			for (int j = 0; j < ipos; j++) {
+			for (int32 j = 0; j < ipos; j++) {
 				byte *curr = text + start + ipos - j - 1;
 				// Special cases to preserve original ordering (numbers).
 				if (Common::isDigit(*curr) ||
