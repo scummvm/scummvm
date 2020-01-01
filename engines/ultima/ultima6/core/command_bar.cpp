@@ -41,10 +41,10 @@
 #include "ultima/ultima6/core/player.h"
 #include "ultima/ultima6/save/obj_list.h"
 #include "ultima/ultima6/files/nuvie_io.h"
-#include "ultima/ultima6/save/save_manager.h"
 #include "ultima/ultima6/files/u6_shape.h"
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/gui/gui.h"
+#include "ultima/ultima6/ultima6.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -333,12 +333,12 @@ bool CommandBar::try_selected_action(sint8 command_num) {
 
 // CommandBarNewUI only commands
 	if (command_num == save_num) {
-		event->saveDialog();
+		g_engine->openMainMenuDialog();
 		return false;
 	} else if (command_num == quick_save_num)
-		return game->get_save_manager()->quick_save(0, QUICK_SAVE);
+		return g_engine->quickSave(0, true);
 	else if (command_num == quick_load_num)
-		return game->get_save_manager()->quick_save(0, QUICK_LOAD);
+		return g_engine->quickSave(0, false);
 	else if (command_num >= save_num)
 		return false;
 

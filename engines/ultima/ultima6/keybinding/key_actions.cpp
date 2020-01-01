@@ -28,7 +28,6 @@
 #include "ultima/ultima6/core/player.h"
 #include "ultima/ultima6/views/view_manager.h"
 #include "ultima/ultima6/core/msg_scroll.h"
-#include "ultima/ultima6/save/save_manager.h"
 #include "ultima/ultima6/views/inventory_view.h"
 #include "ultima/ultima6/core/command_bar.h"
 #include "ultima/ultima6/views/actor_view.h"
@@ -41,6 +40,7 @@
 #include "ultima/ultima6/core/background.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/u6_misc.h"
+#include "ultima/ultima6/ultima6.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -315,22 +315,21 @@ void ActionPartyMode(int const *params) {
 }
 
 void ActionSaveDialog(int const *params) {
-	EVENT->saveDialog();
+	g_engine->saveGame();
 }
 
 void ActionLoadLatestSave(int const *params) {
 	EVENT->close_gumps();
-	SaveManager *save_manager = GAME->get_save_manager();
 	GAME->get_scroll()->display_string("Load game!\n");
-	save_manager->load_latest_save();
+	g_engine->loadLatestSave();
 }
 
 void ActionQuickSave(int const *params) {
-	GAME->get_save_manager()->quick_save(params[0], QUICK_SAVE);
+	g_engine->quickSave(params[0], false);
 }
 
 void ActionQuickLoad(int const *params) {
-	GAME->get_save_manager()->quick_save(params[0], QUICK_LOAD);
+	g_engine->quickSave(params[0], true);
 }
 
 void ActionQuitDialog(int const *params) {

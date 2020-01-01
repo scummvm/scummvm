@@ -31,7 +31,7 @@
 #define MAX_SAVE_DESC_LENGTH    52
 
 #include "ultima/shared/std/string.h"
-
+#include "ultima/ultima6/files/nuvie_io_file.h"
 
 namespace Ultima {
 namespace Ultima6 {

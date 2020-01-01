@@ -35,6 +35,7 @@
 #include "ultima/ultima6/menus/cheats_dialog.h"
 #include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/keybinding/keys.h"
+#include "ultima/ultima6/ultima6.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -154,7 +155,7 @@ GUI_status GameMenuDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 	if (caller == this) {
 		close_dialog();
 	} else if (caller == (GUI_CallBack *)saveLoad_button) {
-		Game::get_game()->get_event()->saveDialog();
+		g_engine->saveGame();
 	} else if (caller == (GUI_CallBack *)video_button) {
 		GUI_Widget *video_dialog;
 		video_dialog = (GUI_Widget *) new VideoDialog((GUI_CallBack *)this);

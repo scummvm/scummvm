@@ -431,7 +431,6 @@ public:
 	bool dont_show_target_cursor();
 	bool input_really_needs_directon();
 	void quitDialog();
-	void saveDialog();
 	void gameMenuDialog();
 	bool actor_exists(Actor *a);
 

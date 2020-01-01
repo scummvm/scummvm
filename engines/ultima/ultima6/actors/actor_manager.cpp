@@ -43,7 +43,6 @@
 #include "ultima/ultima6/core/u6_objects.h"
 #include "ultima/ultima6/core/map_window.h"
 #include "ultima/ultima6/views/view_manager.h"
-#include "ultima/ultima6/save/save_manager.h"
 
 namespace Ultima {
 namespace Ultima6 {
