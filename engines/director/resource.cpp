@@ -57,6 +57,8 @@ void DirectorEngine::loadInitialMovie(const Common::String movie) {
 }
 
 Archive *DirectorEngine::openMainArchive(const Common::String movie) {
+	debug(1, "openMainArchive(\"%s\")", movie.c_str());
+
 	delete _mainArchive;
 
 	_mainArchive = createArchive();

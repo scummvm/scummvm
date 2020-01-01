@@ -142,13 +142,13 @@ Common::String convertPath(Common::String &path) {
 	return res;
 }
 
-Common::String getPath(Common::String path) {
+Common::String getPath(Common::String path, Common::String cwd) {
 	const char *s;
 	if ((s = strrchr(path.c_str(), '/'))) {
 		return Common::String(path.c_str(), s + 1);
 	}
 
-	return "";
+	return cwd; // The path is not altered
 }
 
 } // End of namespace Director

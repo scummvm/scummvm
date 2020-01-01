@@ -154,7 +154,7 @@ Common::Error DirectorEngine::run() {
 	//_mainArchive->openFile("bookshelf_example.mmm");
 
 	_currentScore = new Score(this);
-	_currentPath = getPath(getEXEName());
+	_currentPath = getPath(getEXEName(), _currentPath);
 
 	if (getVersion() < 4) {
 		if (getPlatform() == Common::kPlatformWindows) {
@@ -210,11 +210,11 @@ Common::Error DirectorEngine::run() {
 
 			delete _currentScore;
 
-			_currentPath = getPath(_nextMovie.movie);
+			_currentPath = getPath(_nextMovie.movie, _currentPath);
 
 			loadSharedCastsFrom(_currentPath + _sharedCastFile);
 
-			Archive *mov = openMainArchive(_nextMovie.movie);
+			Archive *mov = openMainArchive(_currentPath + Common::lastPathComponent(_nextMovie.movie, '/'));
 
 			if (!mov) {
 				warning("nextMovie: No score is loaded");

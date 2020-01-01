@@ -100,6 +100,7 @@ public:
 	Lingo *getLingo() const { return _lingo; }
 	Score *getCurrentScore() const { return _currentScore; }
 	Score *getSharedScore() const { return _sharedScore; }
+	Common::String getCurrentPath() const { return _currentPath; }
 	void setPalette(byte *palette, uint16 count);
 	bool hasFeature(EngineFeature f) const;
 	const byte *getPalette() const { return _currentPalette; }
