@@ -719,7 +719,7 @@ void Game::update_once_display() {
 std::string Game::get_data_file_path(std::string datafile) {
 	std::string path;
 	build_path("data", datafile, path);
-	build_path(save_manager->get_savegame_directory(), path, path);
+
 	if (!file_exists(path.c_str())) {
 		build_path(gui->get_data_dir(), datafile, path);
 	}

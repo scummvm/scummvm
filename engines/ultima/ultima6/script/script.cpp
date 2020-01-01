@@ -3193,7 +3193,7 @@ export map to Tiled TMX files. This creates 1 TMX file per map level. They are s
 static int nscript_map_export_tmx_files(lua_State *L) {
 	Game *game = Game::get_game();
 	TMXMap *tmxMap = new TMXMap(game->get_tile_manager(), game->get_game_map(), game->get_obj_manager());
-	lua_pushboolean(L, tmxMap->exportTmxMapFiles(game->get_save_manager()->get_savegame_directory(), game->get_game_type()));
+	lua_pushboolean(L, tmxMap->exportTmxMapFiles("data", game->get_game_type()));
 
 	delete tmxMap;
 	return 1;
@@ -3214,7 +3214,7 @@ static int nscript_tileset_export(lua_State *L) {
 	}
 
 	std::string path;
-	build_path(game->get_save_manager()->get_savegame_directory(), "data", path);
+	path = "data";
 	build_path(path, "images", path);
 	build_path(path, "tiles", path);
 	build_path(path, get_game_tag(game->get_game_type()), path);
