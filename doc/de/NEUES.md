@@ -2,6 +2,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.1.1 (XX.XX.XXXX)
+ Xeen:
+   - Anzeige von Goldmünzen und Edelsteinen auf der Nintendo Switch korrigiert
+
 #### 2.1.0 "Electric Sheep" (13.10.2019)
 
  Neue Spiele:
