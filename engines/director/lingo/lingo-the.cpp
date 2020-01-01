@@ -38,7 +38,7 @@ TheEntity entities[] = {
 	{ kTheActorList,		"actorList",		false, 4 },	//				D4 property
 	{ kTheBeepOn,			"beepOn",			false, 2 },	// D2 p
 	{ kTheButtonStyle,		"buttonStyle",		false, 2 },	// D2 p
-	{ kTheCast,				"cast",				true,  3 },	// D3
+	{ kTheCast,				"cast",				true,  2 },	// D3
 	{ kTheCastMembers,		"castmembers",		false, 3 },	//		 D3
 	{ kTheCenterStage,		"centerStage",		false, 2 },	// D2 p
 	{ kTheChars,			"chars",			false, 3 },	//		 D3
