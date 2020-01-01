@@ -142,7 +142,7 @@ public:
 	bool is_container(uint16 obj_n, uint8 frame_n);
 	bool is_readable(Obj *obj);
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
 
 protected:
 	bool uc_event(const U6ObjectType *type, UseCodeEvent ev, Obj *obj);

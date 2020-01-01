@@ -351,7 +351,7 @@ public:
 	ExplosiveAnim(MapCoord *start, uint32 size);
 	~ExplosiveAnim();
 	void start();
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	bool update();
 	bool already_hit(MapEntity ent);
 	void hit_object(Obj *obj);
@@ -451,7 +451,7 @@ public:
 	HitAnim(MapCoord *loc);
 	HitAnim(Actor *actor);
 
-	uint16 callback(uint16 msg, CallBack *caller, void *msg_data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *msg_data) override;
 	void start()                    {
 		start_timer(300);
 	}

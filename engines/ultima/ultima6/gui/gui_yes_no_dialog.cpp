@@ -34,7 +34,8 @@
 namespace Ultima {
 namespace Ultima6 {
 
-GUI_YesNoDialog::GUI_YesNoDialog(GUI *gui, int x, int y, int w, int h, const char *msg, GUI_CallBack *yesCallback, GUI_CallBack *noCallback) :
+GUI_YesNoDialog::GUI_YesNoDialog(GUI *gui, int x, int y, int w, int h, const char *msg,
+		CallBack *yesCallback, CallBack *noCallback) :
 	GUI_Dialog(x, y, w, h, 244, 216, 131, GUI_DIALOG_MOVABLE) {
 	GUI_Widget *widget;
 	b_index_num = -1;
@@ -60,7 +61,7 @@ GUI_YesNoDialog::~GUI_YesNoDialog() {
 
 GUI_status GUI_YesNoDialog::KeyDown(const Common::KeyState &key) {
 	if (key.keycode == Common::KEYCODE_y)
-		return yes_callback_object->callback(YESNODIALOG_CB_YES, this, this);
+		return (GUI_status)yes_callback_object->callback(YESNODIALOG_CB_YES, nullptr);
 
 	KeyBinder *keybinder = Game::get_game()->get_keybinder();
 	ActionType a = keybinder->get_ActionType(key);
@@ -85,15 +86,15 @@ GUI_status GUI_YesNoDialog::KeyDown(const Common::KeyState &key) {
 		break;
 	}
 
-	return no_callback_object->callback(YESNODIALOG_CB_NO, this, this);
+	return (GUI_status)no_callback_object->callback(YESNODIALOG_CB_NO, nullptr);
 }
 
 GUI_status GUI_YesNoDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 	if (caller == (GUI_CallBack *)yes_button)
-		return yes_callback_object->callback(YESNODIALOG_CB_YES, this, this);
+		return (GUI_status)yes_callback_object->callback(YESNODIALOG_CB_YES, nullptr);
 
 	if (caller == (GUI_CallBack *)no_button)
-		return no_callback_object->callback(YESNODIALOG_CB_NO, this, this);
+		return (GUI_status)no_callback_object->callback(YESNODIALOG_CB_NO, nullptr);
 
 	return GUI_PASS;
 }
