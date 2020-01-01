@@ -42,8 +42,6 @@ struct TheEntityField;
 struct LingoV4Bytecode;
 struct LingoV4TheEntity;
 class DirectorEngine;
-class LC;
-
 class Frame;
 
 enum LEvent {
@@ -179,8 +177,6 @@ struct CFrame {	/* proc/func call stack frame */
 };
 
 class Lingo {
-
-friend class LC;
 
 public:
 	Lingo(DirectorEngine *vm);
@@ -532,7 +528,7 @@ public:
 	void push(Datum d);
 	Datum pop(void);
 
-private:
+public:
 	Common::HashMap<uint32, const char *> _eventHandlerTypes;
 	Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _eventHandlerTypeIds;
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
@@ -544,17 +540,14 @@ private:
 
 	FuncHash _functions;
 
-protected:
 	Common::HashMap<int, LingoV4Bytecode *> _lingoV4;
 	Common::HashMap<int, LingoV4TheEntity *> _lingoV4TheEntity;
 
-private:
 	uint _pc;
 
 	StackData _stack;
 
 	DirectorEngine *_vm;
-	LC *_lc;
 
 	int _floatPrecision;
 

@@ -140,56 +140,56 @@ programline: /* empty */
 	;
 
 asgn: tPUT expr tINTO ID 		{
-		g_lingo->code1(g_lc->c_varpush);
+		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($4->c_str());
-		g_lingo->code1(g_lc->c_assign);
+		g_lingo->code1(LC::c_assign);
 		$$ = $2;
 		delete $4; }
 	| tPUT expr tINTO reference 		{
-			g_lingo->code1(g_lc->c_assign);
+			g_lingo->code1(LC::c_assign);
 			$$ = $2; }
-	| tPUT expr tAFTER expr 		{ $$ = g_lingo->code1(g_lc->c_after); }		// D3
-	| tPUT expr tBEFORE expr 		{ $$ = g_lingo->code1(g_lc->c_before); }		// D3
+	| tPUT expr tAFTER expr 		{ $$ = g_lingo->code1(LC::c_after); }		// D3
+	| tPUT expr tBEFORE expr 		{ $$ = g_lingo->code1(LC::c_before); }		// D3
 	| tSET ID tEQ expr			{
-		g_lingo->code1(g_lc->c_varpush);
+		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($2->c_str());
-		g_lingo->code1(g_lc->c_assign);
+		g_lingo->code1(LC::c_assign);
 		$$ = $4;
 		delete $2; }
 	| tSET THEENTITY tEQ expr	{
-		g_lingo->code1(g_lc->c_intpush);
+		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
-		g_lingo->code1(g_lc->c_theentityassign);
+		g_lingo->code1(LC::c_theentityassign);
 		g_lingo->codeInt($2[0]);
 		g_lingo->codeInt($2[1]);
 		$$ = $4; }
 	| tSET ID tTO expr			{
-		g_lingo->code1(g_lc->c_varpush);
+		g_lingo->code1(LC::c_varpush);
 		g_lingo->codeString($2->c_str());
-		g_lingo->code1(g_lc->c_assign);
+		g_lingo->code1(LC::c_assign);
 		$$ = $4;
 		delete $2; }
 	| tSET THEENTITY tTO expr	{
-		g_lingo->code1(g_lc->c_intpush);
+		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
-		g_lingo->code1(g_lc->c_theentityassign);
+		g_lingo->code1(LC::c_theentityassign);
 		g_lingo->codeInt($2[0]);
 		g_lingo->codeInt($2[1]);
 		$$ = $4; }
 	| tSET THEENTITYWITHID expr tTO expr	{
-		g_lingo->code1(g_lc->c_swap);
-		g_lingo->code1(g_lc->c_theentityassign);
+		g_lingo->code1(LC::c_swap);
+		g_lingo->code1(LC::c_theentityassign);
 		g_lingo->codeInt($2[0]);
 		g_lingo->codeInt($2[1]);
 		$$ = $5; }
 	| tSET THEENTITYWITHID simpleexpr tEQ expr	{
-		g_lingo->code1(g_lc->c_swap);
-		g_lingo->code1(g_lc->c_theentityassign);
+		g_lingo->code1(LC::c_swap);
+		g_lingo->code1(LC::c_theentityassign);
 		g_lingo->codeInt($2[0]);
 		g_lingo->codeInt($2[1]);
 		$$ = $5; }
 	| tSET THEOBJECTFIELD tTO expr	{
-		g_lingo->code1(g_lc->c_objectfieldassign);
+		g_lingo->code1(LC::c_objectfieldassign);
 		g_lingo->codeString($2.s->c_str());
 		g_lingo->codeInt($2.e);
 		$$ = $4; }
@@ -321,18 +321,18 @@ ifoneliner: if expr end tTHEN stmtoneliner end tELSE begin stmtoneliner end tEND
 	;
 
 
-repeatwhile:	tREPEAT tWHILE		{ $$ = g_lingo->code3(g_lc->c_repeatwhilecode, STOP, STOP); }
+repeatwhile:	tREPEAT tWHILE		{ $$ = g_lingo->code3(LC::c_repeatwhilecode, STOP, STOP); }
 	;
 
 repeatwith:		tREPEAT tWITH ID	{
-		$$ = g_lingo->code3(g_lc->c_repeatwithcode, STOP, STOP);
+		$$ = g_lingo->code3(LC::c_repeatwithcode, STOP, STOP);
 		g_lingo->code3(STOP, STOP, STOP);
 		g_lingo->codeString($3->c_str());
 		delete $3; }
 	;
 
 if:	  tIF					{
-		$$ = g_lingo->code1(g_lc->c_ifcode);
+		$$ = g_lingo->code1(LC::c_ifcode);
 		g_lingo->code3(STOP, STOP, STOP);
 		g_lingo->code1(0);  // Do not skip end
 		g_lingo->codeLabel(0); } // Mark beginning of the if() statement
@@ -341,7 +341,7 @@ if:	  tIF					{
 elseif:	  tELSIF			{
 		inst skipEnd;
 		WRITE_UINT32(&skipEnd, 1); // We have to skip end to avoid multiple executions
-		$$ = g_lingo->code1(g_lc->c_ifcode);
+		$$ = g_lingo->code1(LC::c_ifcode);
 		g_lingo->code3(STOP, STOP, STOP);
 		g_lingo->code1(skipEnd); }
 	;
@@ -358,29 +358,29 @@ stmtlist: 					{ $$ = g_lingo->_currentScript->size(); }
 	;
 
 when:	  tWHEN	ID tTHEN	{
-		$$ = g_lingo->code1(g_lc->c_whencode);
+		$$ = g_lingo->code1(LC::c_whencode);
 		g_lingo->code1(STOP);
 		g_lingo->codeString($2->c_str());
 		delete $2; }
 
 tell:	  tTELL				{
-		$$ = g_lingo->code1(g_lc->c_tellcode);
+		$$ = g_lingo->code1(LC::c_tellcode);
 		g_lingo->code1(STOP); }
 
 simpleexpr: INT		{
-		$$ = g_lingo->code1(g_lc->c_intpush);
+		$$ = g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt($1); }
 	| FLOAT		{
-		$$ = g_lingo->code1(g_lc->c_floatpush);
+		$$ = g_lingo->code1(LC::c_floatpush);
 		g_lingo->codeFloat($1); }
 	| SYMBOL	{											// D3
-		$$ = g_lingo->code1(g_lc->c_symbolpush);
+		$$ = g_lingo->code1(LC::c_symbolpush);
 		g_lingo->codeString($1->c_str()); }
 	| STRING		{
-		$$ = g_lingo->code1(g_lc->c_stringpush);
+		$$ = g_lingo->code1(LC::c_stringpush);
 		g_lingo->codeString($1->c_str()); }
 	| ID		{
-		$$ = g_lingo->code1(g_lc->c_eval);
+		$$ = g_lingo->code1(LC::c_eval);
 		g_lingo->codeString($1->c_str());
 		delete $1; }
 	;
@@ -398,56 +398,56 @@ expr: simpleexpr { $$ = $1; }
 		$$ = g_lingo->codeFunc($1, $3);
 		delete $1; }
 	| THEENTITY	{
-		$$ = g_lingo->code1(g_lc->c_intpush);
+		$$ = g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
-		g_lingo->code1(g_lc->c_theentitypush);
+		g_lingo->code1(LC::c_theentitypush);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, $1[0]);
 		WRITE_UINT32(&f, $1[1]);
 		g_lingo->code2(e, f); }
 	| THEENTITYWITHID expr	{
-		$$ = g_lingo->code1(g_lc->c_theentitypush);
+		$$ = g_lingo->code1(LC::c_theentitypush);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, $1[0]);
 		WRITE_UINT32(&f, $1[1]);
 		g_lingo->code2(e, f); }
 	| THEOBJECTFIELD {
-		g_lingo->code1(g_lc->c_objectfieldpush);
+		g_lingo->code1(LC::c_objectfieldpush);
 		g_lingo->codeString($1.s->c_str());
 		g_lingo->codeInt($1.e); }
 	| asgn
-	| expr '+' expr				{ g_lingo->code1(g_lc->c_add); }
-	| expr '-' expr				{ g_lingo->code1(g_lc->c_sub); }
-	| expr '*' expr				{ g_lingo->code1(g_lc->c_mul); }
-	| expr '/' expr				{ g_lingo->code1(g_lc->c_div); }
-	| expr tMOD expr			{ g_lingo->code1(g_lc->c_mod); }
-	| expr '>' expr				{ g_lingo->code1(g_lc->c_gt); }
-	| expr '<' expr				{ g_lingo->code1(g_lc->c_lt); }
-	| expr tEQ expr				{ g_lingo->code1(g_lc->c_eq); }
-	| expr tNEQ expr			{ g_lingo->code1(g_lc->c_neq); }
-	| expr tGE expr				{ g_lingo->code1(g_lc->c_ge); }
-	| expr tLE expr				{ g_lingo->code1(g_lc->c_le); }
-	| expr tAND expr			{ g_lingo->code1(g_lc->c_and); }
-	| expr tOR expr				{ g_lingo->code1(g_lc->c_or); }
-	| tNOT expr  %prec UNARY	{ g_lingo->code1(g_lc->c_not); }
-	| expr '&' expr				{ g_lingo->code1(g_lc->c_ampersand); }
-	| expr tCONCAT expr			{ g_lingo->code1(g_lc->c_concat); }
-	| expr tCONTAINS expr		{ g_lingo->code1(g_lc->c_contains); }
-	| expr tSTARTS expr			{ g_lingo->code1(g_lc->c_starts); }
+	| expr '+' expr				{ g_lingo->code1(LC::c_add); }
+	| expr '-' expr				{ g_lingo->code1(LC::c_sub); }
+	| expr '*' expr				{ g_lingo->code1(LC::c_mul); }
+	| expr '/' expr				{ g_lingo->code1(LC::c_div); }
+	| expr tMOD expr			{ g_lingo->code1(LC::c_mod); }
+	| expr '>' expr				{ g_lingo->code1(LC::c_gt); }
+	| expr '<' expr				{ g_lingo->code1(LC::c_lt); }
+	| expr tEQ expr				{ g_lingo->code1(LC::c_eq); }
+	| expr tNEQ expr			{ g_lingo->code1(LC::c_neq); }
+	| expr tGE expr				{ g_lingo->code1(LC::c_ge); }
+	| expr tLE expr				{ g_lingo->code1(LC::c_le); }
+	| expr tAND expr			{ g_lingo->code1(LC::c_and); }
+	| expr tOR expr				{ g_lingo->code1(LC::c_or); }
+	| tNOT expr  %prec UNARY	{ g_lingo->code1(LC::c_not); }
+	| expr '&' expr				{ g_lingo->code1(LC::c_ampersand); }
+	| expr tCONCAT expr			{ g_lingo->code1(LC::c_concat); }
+	| expr tCONTAINS expr		{ g_lingo->code1(LC::c_contains); }
+	| expr tSTARTS expr			{ g_lingo->code1(LC::c_starts); }
 	| '+' expr  %prec UNARY		{ $$ = $2; }
-	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(g_lc->c_negate); }
+	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(LC::c_negate); }
 	| '(' expr ')'				{ $$ = $2; }
-	| '[' arglist ']'			{ $$ = g_lingo->code1(g_lc->c_arraypush); g_lingo->codeArray($2); }
-	| tSPRITE expr tINTERSECTS expr 	{ g_lingo->code1(g_lc->c_intersects); }
-	| tSPRITE expr tWITHIN expr		 	{ g_lingo->code1(g_lc->c_within); }
-	| tCHAR expr tOF expr				{ g_lingo->code1(g_lc->c_charOf); }
-	| tCHAR expr tTO expr tOF expr		{ g_lingo->code1(g_lc->c_charToOf); }
-	| tITEM expr tOF expr				{ g_lingo->code1(g_lc->c_itemOf); }
-	| tITEM expr tTO expr tOF expr		{ g_lingo->code1(g_lc->c_itemToOf); }
-	| tLINE expr tOF expr				{ g_lingo->code1(g_lc->c_lineOf); }
-	| tLINE expr tTO expr tOF expr		{ g_lingo->code1(g_lc->c_lineToOf); }
-	| tWORD expr tOF expr				{ g_lingo->code1(g_lc->c_wordOf); }
-	| tWORD expr tTO expr tOF expr		{ g_lingo->code1(g_lc->c_wordToOf); }
+	| '[' arglist ']'			{ $$ = g_lingo->code1(LC::c_arraypush); g_lingo->codeArray($2); }
+	| tSPRITE expr tINTERSECTS expr 	{ g_lingo->code1(LC::c_intersects); }
+	| tSPRITE expr tWITHIN expr		 	{ g_lingo->code1(LC::c_within); }
+	| tCHAR expr tOF expr				{ g_lingo->code1(LC::c_charOf); }
+	| tCHAR expr tTO expr tOF expr		{ g_lingo->code1(LC::c_charToOf); }
+	| tITEM expr tOF expr				{ g_lingo->code1(LC::c_itemOf); }
+	| tITEM expr tTO expr tOF expr		{ g_lingo->code1(LC::c_itemToOf); }
+	| tLINE expr tOF expr				{ g_lingo->code1(LC::c_lineOf); }
+	| tLINE expr tTO expr tOF expr		{ g_lingo->code1(LC::c_lineToOf); }
+	| tWORD expr tOF expr				{ g_lingo->code1(LC::c_wordOf); }
+	| tWORD expr tTO expr tOF expr		{ g_lingo->code1(LC::c_wordToOf); }
 	| tME '(' ID ')'					{ g_lingo->codeMe($3, 0); }
 	| tME '(' ID ',' arglist ')'		{ g_lingo->codeMe($3, $5); }
 	| tME								{ g_lingo->codeMe(nullptr, 0); }
@@ -458,11 +458,11 @@ reference: 	RBLTINONEARG simpleexpr	{
 		delete $1; }
 	;
 
-proc: tPUT expr				{ g_lingo->code1(g_lc->c_printtop); }
+proc: tPUT expr				{ g_lingo->code1(LC::c_printtop); }
 	| gotofunc
 	| playfunc
-	| tEXIT tREPEAT			{ g_lingo->code1(g_lc->c_exitRepeat); }
-	| tEXIT					{ g_lingo->code1(g_lc->c_procret); }
+	| tEXIT tREPEAT			{ g_lingo->code1(LC::c_exitRepeat); }
+	| tEXIT					{ g_lingo->code1(LC::c_procret); }
 	| tGLOBAL globallist
 	| tPROPERTY propertylist
 	| tINSTANCE instancelist
@@ -476,25 +476,25 @@ proc: tPUT expr				{ g_lingo->code1(g_lc->c_printtop); }
 		g_lingo->codeFunc($1, 1);
 		delete $1; }
 	| BLTINNOARGSORONE 		{
-		g_lingo->code1(g_lc->c_voidpush);
+		g_lingo->code1(LC::c_voidpush);
 		g_lingo->codeFunc($1, 1);
 		delete $1; }
 	| BLTINARGLIST arglist	{ g_lingo->codeFunc($1, $2); }
-	| tOPEN expr tWITH expr	{ g_lingo->code1(g_lc->c_open); }
-	| tOPEN expr 			{ g_lingo->code2(g_lc->c_voidpush, g_lc->c_open); }
+	| tOPEN expr tWITH expr	{ g_lingo->code1(LC::c_open); }
+	| tOPEN expr 			{ g_lingo->code2(LC::c_voidpush, LC::c_open); }
 	| TWOWORDBUILTIN ID arglist	{ Common::String s(*$1); s += '-'; s += *$2; g_lingo->codeFunc(&s, $3); }
 	;
 
-globallist: ID					{ g_lingo->code1(g_lc->c_global); g_lingo->codeString($1->c_str()); delete $1; }
-	| globallist ',' ID			{ g_lingo->code1(g_lc->c_global); g_lingo->codeString($3->c_str()); delete $3; }
+globallist: ID					{ g_lingo->code1(LC::c_global); g_lingo->codeString($1->c_str()); delete $1; }
+	| globallist ',' ID			{ g_lingo->code1(LC::c_global); g_lingo->codeString($3->c_str()); delete $3; }
 	;
 
-propertylist: ID				{ g_lingo->code1(g_lc->c_property); g_lingo->codeString($1->c_str()); delete $1; }
-	| propertylist ',' ID		{ g_lingo->code1(g_lc->c_property); g_lingo->codeString($3->c_str()); delete $3; }
+propertylist: ID				{ g_lingo->code1(LC::c_property); g_lingo->codeString($1->c_str()); delete $1; }
+	| propertylist ',' ID		{ g_lingo->code1(LC::c_property); g_lingo->codeString($3->c_str()); delete $3; }
 	;
 
-instancelist: ID				{ g_lingo->code1(g_lc->c_instance); g_lingo->codeString($1->c_str()); delete $1; }
-	| instancelist ',' ID		{ g_lingo->code1(g_lc->c_instance); g_lingo->codeString($3->c_str()); delete $3; }
+instancelist: ID				{ g_lingo->code1(LC::c_instance); g_lingo->codeString($1->c_str()); delete $1; }
+	| instancelist ',' ID		{ g_lingo->code1(LC::c_instance); g_lingo->codeString($3->c_str()); delete $3; }
 	;
 
 // go {to} {frame} whichFrame {of movie whichMovie}
@@ -505,40 +505,40 @@ instancelist: ID				{ g_lingo->code1(g_lc->c_instance); g_lingo->codeString($1->
 // go to {frame} whichFrame {of movie whichMovie}
 // go to {frame whichFrame of} movie whichMovie
 
-gotofunc: tGO tLOOP				{ g_lingo->code1(g_lc->c_gotoloop); }
-	| tGO tNEXT					{ g_lingo->code1(g_lc->c_gotonext); }
-	| tGO tPREVIOUS				{ g_lingo->code1(g_lc->c_gotoprevious); }
+gotofunc: tGO tLOOP				{ g_lingo->code1(LC::c_gotoloop); }
+	| tGO tNEXT					{ g_lingo->code1(LC::c_gotonext); }
+	| tGO tPREVIOUS				{ g_lingo->code1(LC::c_gotoprevious); }
 	| tGO expr 			{
-		g_lingo->code1(g_lc->c_intpush);
+		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(1);
-		g_lingo->code1(g_lc->c_goto); }
+		g_lingo->code1(LC::c_goto); }
 	| tGO expr gotomovie	{
-		g_lingo->code1(g_lc->c_intpush);
+		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(3);
-		g_lingo->code1(g_lc->c_goto); }
+		g_lingo->code1(LC::c_goto); }
 	| tGO gotomovie				{
-		g_lingo->code1(g_lc->c_intpush);
+		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(2);
-		g_lingo->code1(g_lc->c_goto); }
+		g_lingo->code1(LC::c_goto); }
 	;
 
 gotomovie: tOF tMOVIE expr
 	| tMOVIE expr
 	;
 
-playfunc: tPLAY tDONE			{ g_lingo->code1(g_lc->c_playdone); }
+playfunc: tPLAY tDONE			{ g_lingo->code1(LC::c_playdone); }
 	| tPLAY expr 			{
-		g_lingo->code1(g_lc->c_intpush);
+		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(1);
-		g_lingo->code1(g_lc->c_play); }
+		g_lingo->code1(LC::c_play); }
 	| tPLAY expr gotomovie	{
-		g_lingo->code1(g_lc->c_intpush);
+		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(3);
-		g_lingo->code1(g_lc->c_play); }
+		g_lingo->code1(LC::c_play); }
 	| tPLAY gotomovie				{
-		g_lingo->code1(g_lc->c_intpush);
+		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(2);
-		g_lingo->code1(g_lc->c_play); }
+		g_lingo->code1(LC::c_play); }
 	| tPLAYACCEL { g_lingo->codeSetImmediate(true); } arglist	{
 		g_lingo->codeSetImmediate(false);
 		g_lingo->codeFunc($1, $3); }
@@ -571,19 +571,19 @@ playfunc: tPLAY tDONE			{ g_lingo->code1(g_lc->c_playdone); }
 //   on keyword
 defn: tMACRO ID { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear(); }
 		begin argdef '\n' argstore stmtlist 		{
-			g_lingo->code1(g_lc->c_procret);
+			g_lingo->code1(LC::c_procret);
 			g_lingo->define(*$2, $4, $5);
 			g_lingo->clearArgStack();
 			g_lingo->_indef = kStateNone; }
 	| tFACTORY ID	{ g_lingo->codeFactory(*$2); }
 	| tMETHOD { g_lingo->_indef = kStateInArgs; }
 		begin argdef '\n' argstore stmtlist 		{
-			g_lingo->code1(g_lc->c_procret);
+			g_lingo->code1(LC::c_procret);
 			g_lingo->define(*$1, $3, $4 + 1, &g_lingo->_currentFactory);
 			g_lingo->clearArgStack();
 			g_lingo->_indef = kStateNone; }
 	| on begin argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
-		g_lingo->code1(g_lc->c_procret);
+		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$1, $2, $3);
 		g_lingo->clearArgStack();
 		g_lingo->_indef = kStateNone;
@@ -591,7 +591,7 @@ defn: tMACRO ID { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear
 
 		checkEnd($7, $1->c_str(), false); }
 	| on begin argdef '\n' argstore stmtlist {	// D4. No 'end' clause
-		g_lingo->code1(g_lc->c_procret);
+		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$1, $2, $3);
 		g_lingo->_indef = kStateNone;
 		g_lingo->clearArgStack();
@@ -614,7 +614,7 @@ argstore:	  /* nothing */		{ g_lingo->codeArgStore(); g_lingo->_indef = kStateIn
 	;
 
 macro: ID nonemptyarglist	{
-		g_lingo->code1(g_lc->c_call);
+		g_lingo->code1(LC::c_call);
 		g_lingo->codeString($1->c_str());
 		inst numpar = 0;
 		WRITE_UINT32(&numpar, $2);

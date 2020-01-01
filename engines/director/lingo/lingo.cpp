@@ -47,10 +47,6 @@ Symbol::Symbol() {
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
 
-	_lc = new LC;
-
-	g_lc = _lc;
-
 	_currentScript = 0;
 	_currentScriptType = kMovieScript;
 	_currentEntityId = 0;

@@ -356,16 +356,16 @@ void Lingo::clearArgStack() {
 
 void Lingo::codeArgStore() {
 	for (int i = _argstack.size() - 1; i >= 0; i--) {
-		code1(g_lc->c_varpush);
+		code1(LC::c_varpush);
 		codeString(_argstack[i]->c_str());
-		code1(g_lc->c_assign);
+		code1(LC::c_assign);
 	}
 }
 
 int Lingo::codeSetImmediate(bool state) {
 	g_lingo->_immediateMode = state;
 
-	int res = g_lingo->code1(g_lc->c_setImmediate);
+	int res = g_lingo->code1(LC::c_setImmediate);
 	inst i = 0;
 	WRITE_UINT32(&i, state);
 	g_lingo->code1(i);
@@ -374,7 +374,7 @@ int Lingo::codeSetImmediate(bool state) {
 }
 
 int Lingo::codeFunc(Common::String *s, int numpar) {
-	int ret = g_lingo->code1(g_lc->c_call);
+	int ret = g_lingo->code1(LC::c_call);
 
 	g_lingo->codeString(s->c_str());
 
@@ -388,13 +388,13 @@ int Lingo::codeFunc(Common::String *s, int numpar) {
 int Lingo::codeMe(Common::String *method, int numpar) {
 	// Check if need to encode reference to the factory
 	if (method == nullptr) {
-		int ret = g_lingo->code1(g_lc->c_factory);
+		int ret = g_lingo->code1(LC::c_factory);
 		g_lingo->codeString(g_lingo->_currentFactory.c_str());
 
 		return ret;
 	}
 
-	int ret = g_lingo->code1(g_lc->c_call);
+	int ret = g_lingo->code1(LC::c_call);
 
 	Common::String m(g_lingo->_currentFactory);
 

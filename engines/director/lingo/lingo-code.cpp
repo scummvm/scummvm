@@ -52,8 +52,6 @@
 
 namespace Director {
 
-LC *g_lc;
-
 static struct FuncDescr {
 	const inst func;
 	const char *name;
@@ -408,13 +406,13 @@ bool LC::verify(Symbol *s) {
 }
 
 void LC::c_eval() {
-	g_lc->c_varpush();
+	LC::c_varpush();
 
 	Datum d;
 	d = g_lingo->pop();
 
 	if (d.type == HANDLER) {
-		g_lc->call(*d.u.s, 0);
+		LC::call(*d.u.s, 0);
 		delete d.u.s;
 		return;
 	}
@@ -424,7 +422,7 @@ void LC::c_eval() {
 		return;
 	}
 
-	if (!g_lc->verify(d.u.sym))
+	if (!LC::verify(d.u.sym))
 		return;
 
 	d.type = d.u.sym->type;
@@ -1131,7 +1129,7 @@ void LC::c_call() {
 
 	int nargs = g_lingo->readInt();
 
-	g_lc->call(name, nargs);
+	LC::call(name, nargs);
 }
 
 void LC::call(Common::String name, int nargs) {
