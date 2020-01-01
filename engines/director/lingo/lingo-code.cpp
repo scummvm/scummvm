@@ -93,7 +93,6 @@ static struct FuncDescr {
 	{ LC::c_starts,			"c_starts",			"" },
 	{ LC::c_intersects,		"c_intersects",		"" },
 	{ LC::c_within,			"c_within",			"" },
-	{ LC::c_field,			"c_field",			"" },
 	{ LC::c_of,				"c_of",				"" },
 	{ LC::c_charOf,			"c_charOf",			"" },	// D3
 	{ LC::c_charToOf,		"c_charToOf",		"" },	// D3
@@ -139,7 +138,9 @@ static struct FuncDescr {
 	{ LC::c_unk1,			"c_unk1",			"ii" },
 	{ LC::c_unk2,			"c_unk2",			"iii" },
 	{ LC::cb_call,			"cb_call",			"i" },
+	{ LC::cb_field,			"cb_field",			"" },
 	{ LC::cb_localcall,		"cb_localcall",		"i" },
+	{ LC::cb_v4putvalue,		"cb_putvalue",		"i" },
 	{ LC::cb_v4theentitypush,"c_v4theentitypush","i" },
 	{ LC::cb_v4theentitynamepush,"c_v4theentitynamepush","i" },
 	{ LC::cb_v4theentityassign,"c_v4theentityassign","i" },
@@ -686,14 +687,6 @@ void LC::c_within() {
 	Datum d1 = g_lingo->pop();
 
 	warning("STUB: c_within: %d %d", d1.u.i, d2.u.i);
-
-	g_lingo->push(d1);
-}
-
-void LC::c_field() {
-	Datum d1 = g_lingo->pop();
-
-	warning("STUB: c_field: %d", d1.u.i);
 
 	g_lingo->push(d1);
 }

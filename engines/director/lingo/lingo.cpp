@@ -299,25 +299,35 @@ int Lingo::alignTypes(Datum &d1, Datum &d2) {
 
 int Datum::toInt() {
 	switch (type) {
+	case REFERENCE:
+		toString();
+	case STRING:
+		u.i = atoi(u.s->c_str());
+		break;
 	case INT:
 		// no-op
 		break;
 	case FLOAT:
 		u.i = (int)u.f;
-		type = INT;
 		break;
 	default:
 		warning("Incorrect operation toInt() for type: %s", type2str());
 	}
+
+	type = INT;
 
 	return u.i;
 }
 
 double Datum::toFloat() {
 	switch (type) {
+	case REFERENCE:
+		toString();
+	case STRING:
+		u.f = atof(u.s->c_str());
+		break;
 	case INT:
 		u.f = (double)u.i;
-		type = FLOAT;
 		break;
 	case FLOAT:
 		// no-op
@@ -325,6 +335,8 @@ double Datum::toFloat() {
 	default:
 		warning("Incorrect operation toFloat() for type: %s", type2str());
 	}
+
+	type = FLOAT;
 
 	return u.f;
 }

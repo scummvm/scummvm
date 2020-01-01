@@ -49,7 +49,6 @@ namespace LC {
 
 	void c_intersects();
 	void c_within();
-	void c_field();
 	void c_of();
 	void c_charOf();
 	void c_charToOf();
@@ -129,6 +128,8 @@ namespace LC {
 	// bytecode-related instructions
 	void cb_localcall();
 	void cb_call();
+	void cb_field();
+	void cb_v4putvalue();
 	void cb_v4theentitypush();
 	void cb_v4theentitynamepush();
 	void cb_v4theentityassign();

@@ -25,13 +25,14 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
+#include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-bytecode.h"
 #include "director/lingo/lingo-the.h"
 
 namespace Director {
 
 static LingoV4Bytecode lingoV4[] = {
-	{ 0x01, STOP, "" },
+	{ 0x01, LC::c_procret, "" },
 	{ 0x03, LC::c_voidpush, "" },
 	{ 0x04, LC::c_mul, "" },
 	{ 0x05, LC::c_add, "" },
@@ -56,7 +57,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x18, LC::c_hilite, "" },
 	{ 0x19, LC::c_intersects, "" },
 	{ 0x1a, LC::c_within, "" },
-	{ 0x1b, LC::c_field, "" },
+	{ 0x1b, LC::cb_field, "" },
 	{ 0x1c, LC::c_tell, "" },
 	{ 0x1d, LC::c_telldone, "" },
 	{ 0x41, LC::c_intpush, "b" },
@@ -69,6 +70,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x55, LC::c_jumpifz, "jb" },
 	{ 0x56, LC::cb_localcall, "b" },
 	{ 0x57, LC::cb_call, "b" },
+	{ 0x59, LC::cb_v4putvalue, "b" },
 	{ 0x5c, LC::cb_v4theentitypush, "b" },
 	{ 0x5d, LC::cb_v4theentityassign, "b" },
 	{ 0x66, LC::cb_v4theentitynamepush, "b" },
@@ -190,6 +192,11 @@ void Lingo::initBytecode() {
 }
 
 
+void LC::cb_field() {
+	LB::b_field(1);
+}
+
+
 void LC::cb_localcall() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->_namelist[nameId];
@@ -205,6 +212,24 @@ void LC::cb_localcall() {
 		warning("cb_localcall: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
 	}
 
+}
+
+
+void LC::cb_v4putvalue() {
+	int op = g_lingo->readInt();
+
+	switch (op) {
+	case 0x16:
+		// put value into field textVar
+		{
+			LC::cb_field();
+			LC::c_assign();
+		}
+		break;
+	default:
+		warning("cb_v4putvalue: unknown operator %d", op);
+		break;
+	}
 }
 
 
@@ -683,6 +708,9 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			}
 		}
 
+		// Add backstop
+		g_lingo->code1(STOP);
+
 		// Rewrite every offset flagged as a jump based on the new code alignment.
 		// This converts the relative offset from the bytecode to an absolute one.
 		for (uint j = 0; j < jumpList.size(); j++) {
@@ -707,6 +735,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			warning("Function has unknown name id %d, skipping define", nameIndex);
 		}
 	}
+
 	free(codeStore);
 }
 
@@ -743,6 +772,7 @@ void Lingo::addNamesV4(Common::SeekableSubReadStreamEndian &stream) {
 			name += stream.readByte();
 		}
 		_namelist.push_back(name);
+		debugC(5, kDebugLoading, "%d: \"%s\"", i, name.c_str());
 	}
 
 }

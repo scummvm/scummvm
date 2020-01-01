@@ -1724,7 +1724,7 @@ void LB::b_field(int nargs) {
 		if (g_director->getCurrentScore()->_castsNames.contains(*d.u.s))
 			id = g_director->getCurrentScore()->_castsNames[*d.u.s];
 		else
-			error("b_filed: Reference to non-existent field: %s", d.u.s->c_str());
+			error("b_field: Reference to non-existent field: %s", d.u.s->c_str());
 	} else if (d.type == INT || d.type == FLOAT) {
 		d.toInt();
 		id = d.u.i;
