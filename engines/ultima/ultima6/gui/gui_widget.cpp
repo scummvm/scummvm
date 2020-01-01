@@ -115,8 +115,7 @@ void GUI_Widget::MoveRelative(int dx, int dy) {
 void GUI_Widget::Move(int new_x, int new_y) {
 	std::list<GUI_Widget *>::iterator child;
 
-	area.left = new_x + offset_x;
-	area.top = new_y + offset_y;
+	area.moveTo(new_x + offset_x, new_y + offset_y);
 
 	for (child = children.begin(); child != children.end(); child++)
 		(*child)->Move(area.left, area.top);
