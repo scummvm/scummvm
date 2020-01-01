@@ -1,3 +1,4 @@
 engines/ultima/shared/core/ultima.cpp
+engines/ultima/shared/core/data_archive.cpp
 engines/ultima/ultima6/ultima6.cpp
 engines/ultima/ultima8/ultima8.cpp
