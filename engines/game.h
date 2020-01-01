@@ -66,10 +66,12 @@ public:
 /**
  * The description of a game supported by an engine
  */
-struct QualifiedGameDescriptor : public PlainGameDescriptor {
-	const char *engineId;
+struct QualifiedGameDescriptor {
+	Common::String engineId;
+	Common::String gameId;
+	Common::String description;
 
-	QualifiedGameDescriptor();
+	QualifiedGameDescriptor() {}
 	QualifiedGameDescriptor(const char *engine, const PlainGameDescriptor &pgd);
 };
 

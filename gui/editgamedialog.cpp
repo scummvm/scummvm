@@ -121,7 +121,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 
 	// GAME: Determine the description string
 	String description(ConfMan.get("description", domain));
-	if (description.empty() && qgd.description) {
+	if (description.empty() && !qgd.description.empty()) {
 		description = qgd.description;
 	}
 
