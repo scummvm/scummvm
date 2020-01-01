@@ -36,6 +36,8 @@ Common::String *toLowercaseMac(Common::String *s);
 
 Common::String convertPath(Common::String &path);
 
+Common::String getPath(Common::String path);
+
 void processQuitEvent(); // events.cpp
 
 } // End of namespace Director

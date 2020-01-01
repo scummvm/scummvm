@@ -35,6 +35,7 @@
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/lingo/lingo.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -153,6 +154,7 @@ Common::Error DirectorEngine::run() {
 	//_mainArchive->openFile("bookshelf_example.mmm");
 
 	_currentScore = new Score(this);
+	_currentPath = getPath(getEXEName());
 
 	if (getVersion() < 4) {
 		if (getPlatform() == Common::kPlatformWindows) {
@@ -168,7 +170,7 @@ Common::Error DirectorEngine::run() {
 		_sharedCastFile = "Shared.dir";
 	}
 
-	loadSharedCastsFrom(_sharedCastFile);
+	loadSharedCastsFrom(_currentPath + _sharedCastFile);
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nObtaining score name\n");
 	loadInitialMovie(getEXEName());
@@ -207,6 +209,10 @@ Common::Error DirectorEngine::run() {
 			_lingo->restartLingo();
 
 			delete _currentScore;
+
+			_currentPath = getPath(_nextMovie.movie);
+
+			loadSharedCastsFrom(_currentPath + _sharedCastFile);
 
 			Archive *mov = openMainArchive(_nextMovie.movie);
 

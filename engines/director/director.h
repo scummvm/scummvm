@@ -105,6 +105,7 @@ public:
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 	void loadSharedCastsFrom(Common::String filename);
+	void clearSharedCast();
 	void loadPatterns();
 	Graphics::MacPatterns &getPatterns();
 
@@ -165,6 +166,7 @@ private:
 	Lingo *_lingo;
 
 	Score *_currentScore;
+	Common::String _currentPath;
 
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;

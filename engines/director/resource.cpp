@@ -248,7 +248,26 @@ void DirectorEngine::loadMac(const Common::String movie) {
 	}
 }
 
+void DirectorEngine::clearSharedCast() {
+	if (!_sharedScore)
+		return;
+
+	delete _sharedScore;
+
+	delete _sharedDIB;
+	delete _sharedSTXT;
+	delete _sharedSound;
+	delete _sharedBMP;
+}
+
 void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
+	if (_sharedScore) {
+		if (_sharedScore->_movieArchive->getFileName().equalsIgnoreCase(filename))
+			return;
+	}
+
+	clearSharedCast();
+
 	Archive *shardcst = createArchive();
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
