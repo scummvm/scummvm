@@ -2441,8 +2441,8 @@ void Events::quitDialog() {
 		              170,
 		              80,
 		              "Do you want to Quit",
-		              (GUI_CallBack *) this,
-		              (GUI_CallBack *) this);
+		              this,
+		              this);
 
 		gui->AddWidget(quit_dialog);
 		gui->lock_input(quit_dialog);

@@ -117,8 +117,7 @@ public:
 	CannonballEffect(Obj *src_obj, sint8 direction = -1);
 //    CannonballEffect(Actor *src_actor, Actor *target_actor); from a ship
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
-
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
 class ProjectileEffect : public Effect {
@@ -153,7 +152,7 @@ public:
 
 	void init(uint16 tileNum, MapCoord start, vector<MapCoord> t, uint8 speed, bool trailFlag, uint16 initialTileRotation, uint16 rotationAmount, uint8 src_y_offset);
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 
 	vector<MapEntity> *get_hit_entities() {
 		return &hit_entities;
@@ -200,7 +199,7 @@ public:
 		Effect::delete_self();
 	}
 
-	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) {
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override {
 		if (msg == MESG_TIMED) delete_self();    //= 0;
 		return (0);
 	}
@@ -221,7 +220,7 @@ class QuakeEffect : public TimedEffect {
 public:
 	QuakeEffect(uint8 magnitude, uint32 duration, Actor *keep_on = NULL);
 	~QuakeEffect();
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 
 	void init_directions();
 	void recenter_map();
@@ -235,7 +234,7 @@ class HitEffect : public Effect {
 public:
 	HitEffect(Actor *target, uint32 duration = 300);
 	HitEffect(MapCoord location);
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
 /* Print text to MapWindow for a given duration
@@ -245,7 +244,7 @@ class TextEffect : public Effect {
 public:
 	TextEffect(std::string text);
 	TextEffect(std::string text, MapCoord location);
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
 
@@ -264,7 +263,7 @@ protected:
 
 public:
 	ExplosiveEffect(uint16 x, uint16 y, uint32 size, uint16 dmg = 0);
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 
 	// children can override
 	virtual void delete_self() {
@@ -334,7 +333,7 @@ public:
 	void hit_target();
 
 	void get_obj(Obj *obj, uint16 qty);
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
 #define MISSILE_DEFAULT_SPEED 200
@@ -367,7 +366,7 @@ public:
 	          const MapCoord &target, uint32 dmg, uint8 intercept, uint32 speed);
 	void hit_target();
 	void hit_blocking();
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
 #if 0
@@ -401,7 +400,7 @@ public:
 	SleepEffect(uint8 to_hour);
 	~SleepEffect();
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	void delete_self();
 };
 
@@ -440,7 +439,7 @@ public:
 	FadeEffect(FadeType fade, FadeDirection dir, Graphics::ManagedSurface *capture, uint32 speed = 0);
 	FadeEffect(FadeType fade, FadeDirection dir, Graphics::ManagedSurface *capture, uint16 x, uint16 y, uint32 speed = 0);
 	~FadeEffect();
-	virtual uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 
 	bool pixelated_fade_out();
 	bool pixelated_fade_in();
@@ -467,7 +466,7 @@ class GameFadeInEffect : public FadeEffect {
 public:
 	GameFadeInEffect(uint32 color);
 	~GameFadeInEffect();
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
 
@@ -481,7 +480,7 @@ class FadeObjectEffect : public Effect {
 public:
 	FadeObjectEffect(Obj *obj, FadeDirection dir);
 	~FadeObjectEffect();
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
 
@@ -495,7 +494,7 @@ class VanishEffect : public Effect {
 public:
 	VanishEffect(bool pause_user = VANISH_NOWAIT);
 	~VanishEffect();
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
 class TileFadeEffect : public TimedEffect {
@@ -513,7 +512,7 @@ public:
 	//TileFadeEffect(MapCoord loc, Tile *from, uint8 color_from, uint8 color_to, bool reverse, uint16 speed);
 	TileFadeEffect(Actor *a, uint16 speed);
 	~TileFadeEffect();
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 
 protected:
 	void add_actor_anim();
@@ -534,7 +533,7 @@ public:
 	TileBlackFadeEffect(Actor *a, uint8 fade_color, uint16 speed);
 	TileBlackFadeEffect(Obj *o, uint8 fade_color, uint16 speed);
 	~TileBlackFadeEffect();
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 protected:
 	void init(uint8 fade_color, uint16 speed);
 	void add_actor_anim();
@@ -559,7 +558,7 @@ public:
 	~XorEffect() { }
 
 	/* Called by the timer between each effect stage. */
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
 /* Briefly modify the mapwindow colors, disable map-blacking and player
@@ -581,7 +580,7 @@ public:
 	~U6WhitePotionEffect() { }
 
 	/* Called by the timer between each effect stage. */
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
 
@@ -594,14 +593,14 @@ public:
 	XRayEffect(uint32 eff_ms);
 	~XRayEffect() { }
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
 /* Pause the game, create an effect, and wait for user input to continue. */
 class PauseEffect: public Effect {
 public:
 	/* Called by the Effect handler when input is available. */
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	virtual void delete_self() {
 		Effect::delete_self();
 	}
@@ -614,7 +613,7 @@ class TextInputEffect: public Effect {
 	std::string input;
 public:
 	/* Called by the Effect handler when input is available. */
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	TextInputEffect(const char *allowed_chars, bool can_escape);
 	~TextInputEffect() { }
 	std::string get_input() {
@@ -625,7 +624,7 @@ public:
 class WizardEyeEffect: public Effect {
 public:
 	/* Called by the Effect handler when input is available. */
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	virtual void delete_self() {
 		Effect::delete_self();
 	}
@@ -682,7 +681,7 @@ protected:
 public:
 	WingStrikeEffect(Actor *target_actor);
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
 class HailStormEffect : public Effect {
@@ -691,7 +690,7 @@ protected:
 public:
 	HailStormEffect(MapCoord target);
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
 #define EFFECT_PROCESS_GUI_INPUT true
@@ -706,7 +705,7 @@ public:
 	AsyncEffect(Effect *e);
 	~AsyncEffect();
 	void run(bool process_gui_input = false);
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 };
 
 } // End of namespace Ultima6

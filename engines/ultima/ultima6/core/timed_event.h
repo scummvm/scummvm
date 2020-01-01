@@ -160,7 +160,7 @@ public:
 	void init(MapCoord *d, MapCoord *t, Obj *use_obj);
 	void timed(uint32 evtime);
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL);
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
 
 protected:
 	bool move_party();
