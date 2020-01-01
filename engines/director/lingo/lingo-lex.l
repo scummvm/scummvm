@@ -207,7 +207,7 @@ whitespace [\t ]
 		if (g_lingo->_builtins.contains(*yylval.s))
 			return FBLTINONEARG;
 		else
-			error("LEXER: Unhandled chunk expression %s", yylval.s->c_str());
+			error("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
 	}
 (?i:the[ \t]+[[:alpha:]]+[\t ]+of[\t ]+{identifier})	{
 		count();
@@ -250,7 +250,7 @@ whitespace [\t ]
 				field = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
 
 				if (!g_lingo->_theEntityFields.contains(field)) {
-					error("LEXER: Unhandled the field %s for object", field.c_str());
+					error("LEXER: Unhandled the field '%s' for object", field.c_str());
 				}
 
 				yylval.objectfield.s = new Common::String(ptr);
@@ -260,7 +260,7 @@ whitespace [\t ]
 			}
 		}
 
-		warning("LEXER: Unhandled the entity %s", ptr);
+		warning("LEXER: Unhandled the entity '%s', field '%s'", ptr, field.c_str());
 	}
 (?i:the[ \t]+[[:alpha:]]+[ \t+](date|time))		{
 		count();
@@ -310,7 +310,7 @@ whitespace [\t ]
 				return THEENTITY;
 		}
 
-		warning("LEXER: Unhandled the entity %s", ptr);
+		warning("LEXER: Unhandled the entity '%s'", ptr);
 	}
 (?i:then)			{ count(); return tTHEN; }
 (?i:to)				{ count(); return tTO; }

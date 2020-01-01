@@ -1420,7 +1420,7 @@ YY_RULE_SETUP
 		if (g_lingo->_builtins.contains(*yylval.s))
 			return FBLTINONEARG;
 		else
-			error("LEXER: Unhandled chunk expression %s", yylval.s->c_str());
+			error("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
 	}
 	YY_BREAK
 case 53:
@@ -1467,7 +1467,7 @@ YY_RULE_SETUP
 				field = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
 
 				if (!g_lingo->_theEntityFields.contains(field)) {
-					error("LEXER: Unhandled the field %s for object", field.c_str());
+					error("LEXER: Unhandled the field '%s' for object", field.c_str());
 				}
 
 				yylval.objectfield.s = new Common::String(ptr);
@@ -1477,7 +1477,7 @@ YY_RULE_SETUP
 			}
 		}
 
-		warning("LEXER: Unhandled the entity %s", ptr);
+		warning("LEXER: Unhandled the entity '%s', field '%s'", ptr, field.c_str());
 	}
 	YY_BREAK
 case 54:
@@ -1535,7 +1535,7 @@ YY_RULE_SETUP
 				return THEENTITY;
 		}
 
-		warning("LEXER: Unhandled the entity %s", ptr);
+		warning("LEXER: Unhandled the entity '%s'", ptr);
 	}
 	YY_BREAK
 case 56:
