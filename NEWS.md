@@ -34,6 +34,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  3DS port:
    - Major improvements.
 
+ AmigaOS4 port:
+   - Minor tweaks (stack cookie, build automation).
+
  Android port:
    - Improved filesystem navigation.
 
