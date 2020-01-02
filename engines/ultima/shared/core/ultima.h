@@ -121,6 +121,32 @@ public:
      * Shows the ScummVM Restore dialog, allowing users to restore a game
      */
     virtual bool loadGame();
+
+    /**
+     * Indicates whether a game state can be loaded.
+     * @param isAutosave	Flags whether it's an autosave check
+     */
+    virtual bool canLoadGameState(bool isAutosave = false) = 0;
+
+    /**
+     * Indicates whether a game state can be loaded.
+     */
+    virtual bool canLoadGameStateCurrently() override {
+        return canLoadGameState(false);
+    }
+
+    /**
+     * Indicates whether a game state can be saved.
+     * @param isAutosave	Flags whether it's an autosave check
+     */
+    virtual bool canSaveGameState(bool isAutosave = false) = 0;
+
+    /**
+     * Indicates whether a game state can be saved.
+     */
+    virtual bool canSaveGameStateCurrently() override {
+        return canSaveGameState(false);
+    }
 };
 
 extern UltimaEngine *g_ultima;

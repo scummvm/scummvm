@@ -69,7 +69,7 @@ void NuvieIOFileRead::close() {
 }
 
 void NuvieIOFileRead::seek(uint32 new_pos) {
-	if (isOpen() && new_pos <= _file->size()) {
+	if (isOpen() && (int)new_pos <= _file->size()) {
 		_file->seek(new_pos);
 		pos = new_pos;
 	}

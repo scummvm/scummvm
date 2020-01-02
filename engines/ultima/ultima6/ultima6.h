@@ -71,13 +71,15 @@ public:
 
 	/**
 	 * Indicates whether a game state can be loaded.
+	 * @param isAutosave	Flags whether it's an autosave check
 	 */
-	virtual bool canLoadGameStateCurrently() override;
+	virtual bool canLoadGameState(bool isAutosave = false) override;
 
 	/**
 	 * Indicates whether a game state can be saved.
+	 * @param isAutosave	Flags whether it's an autosave check
 	 */
-	virtual bool canSaveGameStateCurrently() override;
+	virtual bool canSaveGameState(bool isAutosave = false) override;
 
 	/**
 	 * Load a game state.

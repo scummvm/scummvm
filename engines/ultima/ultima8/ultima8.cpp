@@ -1296,7 +1296,7 @@ void Ultima8Engine::writeSaveInfo(ODataSource *ods) {
 }
 
 bool Ultima8Engine::saveGame() {
-	if (!canSaveGameStateCurrently())
+	if (!canSaveGameState())
 		return false;
 
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
@@ -1322,7 +1322,7 @@ bool Ultima8Engine::saveGame() {
 	return result;
 }
 
-bool Ultima8Engine::canSaveGameStateCurrently() {
+bool Ultima8Engine::canSaveGameState(bool isAutosave) {
 	if (desktopGump->FindGump<ModalGump>())
 		// Can't save when a modal gump is open
 		return false;
