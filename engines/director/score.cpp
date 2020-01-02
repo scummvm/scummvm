@@ -95,6 +95,8 @@ Score::Score(DirectorEngine *vm) {
 
 	_castIDoffset = 0;
 
+	_movieArchive = nullptr;
+
 	_loadedStxts = new Common::HashMap<int, const Stxt *>();
 	_loadedCast = new Common::HashMap<int, Cast *>();
 }
