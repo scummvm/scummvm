@@ -278,12 +278,12 @@ bool Ultima6Engine::canSaveGameStateCurrently() {
 }
 
 Common::Error Ultima6Engine::loadGameState(int slot) {
-	Common::String filename = UltimaMetaEngine::generateSaveName(_targetName, slot);
+	Common::String filename = getSaveFilename(slot);
 	return _savegame->load(filename) ? Common::kNoError : Common::kReadingFailed;
 }
 
 Common::Error Ultima6Engine::saveGameState(int slot, const Common::String &desc) {
-	Common::String filename = UltimaMetaEngine::generateSaveName(_targetName, slot);
+	Common::String filename = getSaveFilename(slot);
 	return _savegame->save(filename, desc) ? Common::kNoError : Common::kReadingFailed;
 }
 

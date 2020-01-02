@@ -46,13 +46,23 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 
 #include "ultima/detection_tables.h"
 
+namespace Ultima {
+UltimaMetaEngine *g_metaEngine;
+}; // End of namespace Ultima
+
+
 UltimaMetaEngine::UltimaMetaEngine() : AdvancedMetaEngine(Ultima::GAME_DESCRIPTIONS,
 	        sizeof(Ultima::UltimaGameDescription), ULTIMA_GAMES) {
+	Ultima::g_metaEngine = this;
 #ifdef ENABLE_ULTIMA8
 	static const char *const DIRECTORY_GLOBS[2] = { "usecode", 0 };
 	_maxScanDepth = 2;
 	_directoryGlobs = DIRECTORY_GLOBS;
 #endif
+}
+
+UltimaMetaEngine::~UltimaMetaEngine() {
+	Ultima::g_metaEngine = nullptr;
 }
 
 bool UltimaMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -99,8 +109,11 @@ const char *UltimaMetaEngine::getSavegamePattern(const char *target) const {
 	return buffer;
 }
 
-Common::String UltimaMetaEngine::generateSaveName(const Common::String &target, int slot) {
-	return Common::String::format("%s.%.3d", target.c_str(), slot);
+const char *UltimaMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
+	static char buffer[100];
+	snprintf(buffer, 200, "%s.%.3d", target == nullptr ? getEngineId() : target, saveGameIdx);
+
+	return buffer;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ULTIMA)

@@ -96,7 +96,6 @@ Common::FSNode UltimaEngine::getGameDirectory() const {
 	return Common::FSNode(ConfMan.get("path"));
 }
 
-
 bool UltimaEngine::loadGame() {
 	if (!canLoadGameStateCurrently())
 		return false;
@@ -124,6 +123,10 @@ bool UltimaEngine::saveGame() {
 		return saveGameState(slotNum, saveName).getCode() == Common::kNoError;
 
 	return false;
+}
+
+UltimaMetaEngine *UltimaEngine::getMetaEngine() const {
+	return g_metaEngine;
 }
 
 } // End of namespace Shared

@@ -64,6 +64,11 @@ protected:
      * Checks if an auto save should be done, and if so, takes care of it
      */
     bool autoSaveCheck(int lastSaveTime);
+
+    /**
+     * Returns the Ultima meta engine
+     */
+    UltimaMetaEngine *getMetaEngine() const;
 public:
 	UltimaEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~UltimaEngine();
@@ -82,7 +87,7 @@ public:
      * Returns the filename for a savegame given it's slot
      */
     Common::String getSaveFilename(int slotNumber) {
-        return Common::String::format("%s.%.3d", _targetName.c_str(), slotNumber);
+        return getMetaEngine()->getSavegameFile(slotNumber, _targetName.c_str());
     }
 
     /**
