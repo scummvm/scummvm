@@ -142,7 +142,10 @@ Common::Error StarkEngine::run() {
 
 	// Load through ResidualVM launcher
 	if (ConfMan.hasKey("save_slot")) {
-		loadGameState(ConfMan.getInt("save_slot"));
+		Common::Error loadError = loadGameState(ConfMan.getInt("save_slot"));
+		if (loadError.getCode() != Common::kNoError) {
+			return loadError;
+		}
 	}
 
 	// Start running
@@ -361,7 +364,7 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	Common::String filename = formatSaveName(_targetName.c_str(), slot);
 	Common::InSaveFile *save = _saveFileMan->openForLoading(filename);
 	if (!save) {
-		return _saveFileMan->getError();
+		return Common::kReadingFailed;
 	}
 
 	StateReadStream stream(save);
@@ -402,6 +405,11 @@ Common::Error StarkEngine::loadGameState(int slot) {
 		return Common::kReadingFailed;
 	}
 
+	if (stream.err()) {
+		warning("An error occured when reading '%s'", filename.c_str());
+		return Common::kReadingFailed;
+	}
+
 	// Initialize the world resources with the loaded state
 	StarkResourceProvider->initGlobal();
 	StarkResourceProvider->setShouldRestoreCurrentState();
@@ -428,7 +436,7 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 	Common::String filename = formatSaveName(_targetName.c_str(), slot);
 	Common::OutSaveFile *save = _saveFileMan->openForSaving(filename);
 	if (!save) {
-		return _saveFileMan->getError();
+		return Common::kCreatingFileFailed;
 	}
 
 	// 1. Write the header
@@ -455,6 +463,11 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 
 	// 4. Write the location stack
 	StarkResourceProvider->writeLocationStack(save);
+
+	if (save->err()) {
+		warning("An error occured when writing '%s'", filename.c_str());
+		return Common::kWritingFailed;
+	}
 
 	delete save;
 
