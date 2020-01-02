@@ -311,12 +311,12 @@ public:
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	virtual bool canLoadGameStateCurrently() { return true; }
+	virtual bool canLoadGameState(bool isAutosave = false) { return true; }
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	virtual bool canSaveGameStateCurrently();
+	virtual bool canSaveGameState(bool isAutosave = false) override;
 
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);

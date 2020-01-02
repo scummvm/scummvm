@@ -234,7 +234,7 @@ bool Ultima6Engine::checkDataDir() {
 	return true;
 }
 
-bool Ultima6Engine::canLoadGameStateCurrently() {
+bool Ultima6Engine::canLoadGameState(bool isAutosave) {
 	if (_events == nullptr)
 		return false;
 
@@ -242,24 +242,30 @@ bool Ultima6Engine::canLoadGameStateCurrently() {
 	// the save dialog will result in active gumps being closed
 	Events *events = static_cast<Events *>(_events);
 	MapWindow *mapWindow = _game->get_map_window();
-	events->close_gumps();
+	
+	if (isAutosave) {
+		return events->get_mode() == MOVE_MODE;
+	
+	} else {
+		events->close_gumps();
 
-	switch (events->get_mode()) {
-	case EQUIP_MODE:
-		events->cancelAction();
-		return false;
-	case MOVE_MODE:
-		mapWindow->set_looking(false);
-		mapWindow->set_walking(false);
-		return true;
-	default:
-		// Saving/loading only available in standard move mode in-game
-		return false;
+		switch (events->get_mode()) {
+		case EQUIP_MODE:
+			events->cancelAction();
+			return false;
+		case MOVE_MODE:
+			mapWindow->set_looking(false);
+			mapWindow->set_walking(false);
+			return true;
+		default:
+			// Saving/loading only available in standard move mode in-game
+			return false;
+		}
 	}
 }
 
-bool Ultima6Engine::canSaveGameStateCurrently() {
-	if (!canLoadGameStateCurrently())
+bool Ultima6Engine::canSaveGameState(bool isAutosave) {
+	if (!canLoadGameState(isAutosave))
 		return false;
 
 	// Further checks against saving
@@ -267,10 +273,12 @@ bool Ultima6Engine::canSaveGameStateCurrently() {
 	MsgScroll *scroll = _game->get_scroll();
 
 	if (_game->is_armageddon()) {
-		scroll->message("Can't save. You killed everyone!\n\n");
+		if (!isAutosave)
+			scroll->message("Can't save. You killed everyone!\n\n");
 		return false;
 	} else if (events->using_control_cheat()) {
-		scroll->message(" Can't save while using control cheat\n\n");
+		if (!isAutosave)
+			scroll->message(" Can't save while using control cheat\n\n");
 		return false;
 	}
 
