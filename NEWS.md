@@ -25,6 +25,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Supernova:
    - Hooked F5 to the Main Menu.
 
+ Toltecs:
+   - Added Czech version support.
+
  Xeen:
    - Fix display of gold and gem amounts on the Switch.
 
