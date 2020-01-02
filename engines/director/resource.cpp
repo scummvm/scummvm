@@ -284,6 +284,8 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (!shardcst->openFile(filename)) {
 		warning("No shared cast %s", filename.c_str());
 
+		_sharedScore = new Score(this);
+
 		return;
 	}
 

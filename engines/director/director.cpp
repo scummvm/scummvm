@@ -64,8 +64,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Load Patterns
 	loadPatterns();
 
-	_sharedScore = nullptr;
-
 	_currentScore = nullptr;
 	_soundManager = nullptr;
 	_currentPalette = nullptr;
