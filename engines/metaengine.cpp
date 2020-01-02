@@ -30,6 +30,9 @@
 #include "common/system.h"
 #include "common/translation.h"
 
+#include "graphics/palette.h"
+#include "graphics/scaler.h"
+#include "graphics/managed_surface.h"
 #include "graphics/thumbnail.h"
 
 const char *MetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
@@ -149,11 +152,20 @@ void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playti
 	saveFile->writeByte(desc.size());
 	saveFile->writeString(desc);
 
-	Graphics::saveThumbnail(*saveFile); // FIXME. Render proper screen
-
+	saveScreenThumbnail(saveFile);
 	saveFile->writeUint32LE(headerPos);	// Store where the header starts
 
 	saveFile->finalize();
+}
+
+void MetaEngine::saveScreenThumbnail(Common::OutSaveFile *saveFile) {
+	// Create a thumbnail surface from the screen
+	Graphics::Surface thumb;
+	::createThumbnailFromScreen(&thumb);
+
+	// Write out the thumbnail
+	Graphics::saveThumbnail(*saveFile, thumb);
+	thumb.free();
 }
 
 void MetaEngine::parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDescriptor *desc) {
@@ -286,7 +298,7 @@ SaveStateDescriptor MetaEngine::querySaveMetaInfos(const char *target, int slot)
 		return SaveStateDescriptor();
 
 	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
-		getSavegameFile(slot)));
+		getSavegameFile(slot, target)));
 
 	if (f) {
 		ExtendedSavegameHeader header;

@@ -92,6 +92,11 @@ struct ExtendedSavegameHeader {
  * and instantiate actual Engine objects.
  */
 class MetaEngine : public PluginObject {
+private:
+	/**
+	 * Converts the current screen contents to a thumbnail, and saves it
+	 */
+	static void saveScreenThumbnail(Common::OutSaveFile *saveFile);
 public:
 	virtual ~MetaEngine() {}
 
