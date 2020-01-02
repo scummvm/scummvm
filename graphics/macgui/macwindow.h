@@ -164,6 +164,7 @@ protected:
 	bool (*_callback)(WindowClick, Common::Event &, void *);
 	void *_dataPtr;
 
+public:
 	MacWindowManager *_wm;
 };
 

@@ -519,4 +519,4 @@ bool MacWindow::processEvent(Common::Event &event) {
 		return false;
 }
 
-} // End of namespace Wage
+} // End of namespace Graphics

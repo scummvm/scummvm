@@ -1263,4 +1263,4 @@ void MacMenu::eventLoop() {
 	}
 }
 
-} // End of namespace Wage
+} // End of namespace Graphics

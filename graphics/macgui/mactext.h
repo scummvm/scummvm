@@ -87,6 +87,8 @@ struct MacTextLine {
 };
 
 class MacText {
+	friend class MacEditableText;
+
 public:
 	MacText(Common::U32String s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor,
 			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
@@ -132,7 +134,7 @@ private:
 	void reallocSurface();
 	int getLineWidth(int line, bool enforce = false);
 
-private:
+protected:
 	MacWindowManager *_wm;
 
 	Common::U32String _str;
