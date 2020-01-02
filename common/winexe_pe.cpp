@@ -23,7 +23,6 @@
 #include "common/array.h"
 #include "common/debug.h"
 #include "common/endian.h"
-#include "common/file.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/winexe_pe.h"
@@ -42,20 +41,6 @@ void PEResources::clear() {
 	_sections.clear();
 	_resources.clear();
 	delete _exe; _exe = nullptr;
-}
-
-bool PEResources::loadFromEXE(const String &fileName) {
-	if (fileName.empty())
-		return false;
-
-	File *file = new File();
-
-	if (!file->open(fileName)) {
-		delete file;
-		return false;
-	}
-
-	return loadFromEXE(file);
 }
 
 bool PEResources::loadFromEXE(SeekableReadStream *stream) {

@@ -38,7 +38,7 @@ class SeekableReadStream;
  * A class able to load resources from a Windows Portable Executable, such
  * as cursors, bitmaps, and sounds.
  */
-class PEResources {
+class PEResources : WinResources {
 public:
 	PEResources();
 	~PEResources();
@@ -47,7 +47,7 @@ public:
 	void clear();
 
 	/** Load from an EXE file. */
-	bool loadFromEXE(const String &fileName);
+	using WinResources::loadFromEXE;
 
 	bool loadFromEXE(File *stream);
 
