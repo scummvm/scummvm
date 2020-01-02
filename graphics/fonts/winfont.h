@@ -28,6 +28,7 @@
 
 namespace Common {
 class SeekableReadStream;
+class WinResources;
 }
 
 namespace Graphics {
@@ -67,8 +68,7 @@ public:
 	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 
 private:
-	bool loadFromPE(const Common::String &fileName, const WinFontDirEntry &dirEntry);
-	bool loadFromNE(const Common::String &fileName, const WinFontDirEntry &dirEntry);
+	bool loadFromEXE(Common::WinResources *exe, const Common::String &fileName, const WinFontDirEntry &dirEntry);
 
 	uint32 getFontIndex(Common::SeekableReadStream &stream, const WinFontDirEntry &dirEntry);
 	bool loadFromFNT(Common::SeekableReadStream &stream);
