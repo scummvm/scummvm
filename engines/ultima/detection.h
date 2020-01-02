@@ -55,9 +55,8 @@ struct UltimaGameDescription {
 
 class UltimaMetaEngine : public AdvancedMetaEngine {
 public:
-	static Common::String generateSaveName(const Common::String &target, int slot);
-public:
 	UltimaMetaEngine();
+	virtual ~UltimaMetaEngine();
 
 	virtual const char *getEngineId() const override {
 		return "ultima";
@@ -72,9 +71,15 @@ public:
 	}
 
 	virtual const char *getSavegamePattern(const char *target = nullptr) const override;
+	virtual const char *getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
+
 	virtual bool hasFeature(MetaEngineFeature f) const override;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	virtual int getMaximumSaveSlot() const override;
 };
+
+namespace Ultima {
+extern UltimaMetaEngine *g_metaEngine;
+}; // End of namespace Ultima
 
 #endif
