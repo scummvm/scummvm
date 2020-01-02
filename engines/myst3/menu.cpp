@@ -34,6 +34,8 @@
 
 #include "graphics/colormasks.h"
 
+#include "gui/message.h"
+
 namespace Myst3 {
 
 Dialog::Dialog(Myst3Engine *vm, uint id):
@@ -584,7 +586,11 @@ void PagingMenu::loadMenuLoad() {
 	uint16 index = page * 7 + item;
 	assert(index < _saveLoadFiles.size());
 
-	_vm->loadGameState(_saveLoadFiles[index], kTransitionFade);
+	Common::Error loadError = _vm->loadGameState(_saveLoadFiles[index], kTransitionFade);
+	if (loadError.getCode() != Common::kNoError) {
+		GUI::MessageDialog dialog(loadError.getDesc());
+		dialog.runModal();
+	}
 }
 
 void PagingMenu::saveMenuOpen() {
@@ -640,10 +646,11 @@ void PagingMenu::saveMenuSave() {
 	if (fileExists && _vm->openDialog(dialogIdFromType(kConfirmOverwrite)) != 1)
 		return;
 
-	// Save the state and the thumbnail
-	Common::OutSaveFile *save = _vm->getSaveFileManager()->openForSaving(fileName);
-	_vm->_state->save(save, _saveName, _saveThumbnail.get());
-	delete save;
+	Common::Error saveError = _vm->saveGameState(_saveName, _saveThumbnail.get());
+	if (saveError.getCode() != Common::kNoError) {
+		GUI::MessageDialog dialog(saveError.getDesc());
+		dialog.runModal();
+	}
 
 	// Do next action
 	_vm->_state->setMenuNextAction(_vm->_state->getMenuSaveAction());
@@ -874,6 +881,10 @@ void AlbumMenu::loadSaves() {
 
 		// Open save
 		Common::InSaveFile *saveFile = _vm->getSaveFileManager()->openForLoading(saveFiles[i]);
+		if (!saveFile) {
+			warning("Failed to open save %s for reading.", saveFiles[i].c_str());
+			continue;
+		}
 
 		// Read state data
 		Common::Serializer s = Common::Serializer(saveFile, 0);
@@ -893,6 +904,8 @@ void AlbumMenu::loadSaves() {
 			miniThumb->free();
 			delete miniThumb;
 		}
+
+		delete saveFile;
 	}
 }
 
@@ -956,7 +969,11 @@ void AlbumMenu::loadMenuLoad() {
 		return; // No save to load, do nothing
 	}
 
-	_vm->loadGameState(saveFiles[selectedSave], kTransitionFade);
+	Common::Error loadError = _vm->loadGameState(saveFiles[selectedSave], kTransitionFade);
+	if (loadError.getCode() != Common::kNoError) {
+		GUI::MessageDialog dialog(loadError.getDesc());
+		dialog.runModal();
+	}
 }
 
 void AlbumMenu::saveMenuOpen() {
@@ -975,17 +992,17 @@ void AlbumMenu::saveMenuSave() {
 
 	Common::String saveNameTemplate = getSaveNameTemplate();
 	Common::String saveName = Common::String::format(saveNameTemplate.c_str(), selectedSave);
-	Common::String fileName = saveName + ".m3x";
 
 	// Ask the user if he wants to overwrite the existing save
 	Common::HashMap<int, Common::String> saveFiles = listSaveFiles();
 	if (saveFiles.contains(selectedSave) && _vm->openDialog(dialogIdFromType(kConfirmOverwrite)) != 1)
 		return;
 
-	// Save the state and the thumbnail
-	Common::OutSaveFile *save = _vm->getSaveFileManager()->openForSaving(fileName);
-	_vm->_state->save(save, saveName, _saveThumbnail.get());
-	delete save;
+	Common::Error saveError = _vm->saveGameState(saveName, _saveThumbnail.get());
+	if (saveError.getCode() != Common::kNoError) {
+		GUI::MessageDialog dialog(saveError.getDesc());
+		dialog.runModal();
+	}
 
 	// Do next action
 	_vm->_state->setMenuNextAction(_vm->_state->getMenuSaveAction());

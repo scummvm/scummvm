@@ -407,9 +407,9 @@ void GameState::syncFloat(Common::Serializer &s, float &val,
 	}
 }
 
-void GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
+Common::Error GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
 	if (!s.syncVersion(kSaveVersion))
-		error("This savegame (v%d) is too recent (max %d) please get a newer version of ResidualVM", s.getVersion(), kSaveVersion);
+		return Common::Error(Common::kUnknownError, Common::String::format("This savegame (v%d) is too recent (max %d) please get a newer version of ResidualVM", s.getVersion(), kSaveVersion));
 
 	s.syncAsUint32LE(gameRunning);
 	s.syncAsUint32LE(tickCount);
@@ -474,6 +474,8 @@ void GameState::StateData::syncWithSaveGame(Common::Serializer &s) {
 	s.syncAsByte(saveHour, 149);
 	s.syncAsByte(saveMinute, 149);
 	s.syncString(saveDescription, 149);
+
+	return Common::kNoError;
 }
 
 const Graphics::PixelFormat GameState::getThumbnailSavePixelFormat() {
@@ -532,16 +534,20 @@ void GameState::newGame() {
 	_lastTickStartTime = g_system->getMillis();
 }
 
-bool GameState::load(Common::InSaveFile *saveFile) {
+Common::Error GameState::load(Common::InSaveFile *saveFile) {
 	Common::Serializer s = Common::Serializer(saveFile, 0);
-	_data.syncWithSaveGame(s);
+	Common::Error loadError = _data.syncWithSaveGame(s);
 
 	_data.gameRunning = true;
 
-	return true;
+	if (loadError.getCode() != Common::kNoError) {
+		return loadError;
+	}
+
+	return Common::kNoError;
 }
 
-bool GameState::save(Common::OutSaveFile *saveFile, const Common::String &description, const Graphics::Surface *thumbnail) {
+Common::Error GameState::save(Common::OutSaveFile *saveFile, const Common::String &description, const Graphics::Surface *thumbnail) {
 	Common::Serializer s = Common::Serializer(0, saveFile);
 
 	// Update save creation info
@@ -555,11 +561,17 @@ bool GameState::save(Common::OutSaveFile *saveFile, const Common::String &descri
 	_data.saveDescription = description;
 
 	_data.gameRunning = false;
-	_data.syncWithSaveGame(s);
+
+	Common::Error saveError = _data.syncWithSaveGame(s);
+	if (saveError.getCode() != Common::kNoError) {
+		return saveError;
+	}
+
 	writeThumbnail(saveFile, thumbnail);
+
 	_data.gameRunning = true;
 
-	return true;
+	return Common::kNoError;
 }
 
 Common::String GameState::formatSaveTime() {

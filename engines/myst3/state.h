@@ -52,8 +52,8 @@ public:
 	virtual ~GameState();
 
 	void newGame();
-	bool load(Common::InSaveFile *saveFile);
-	bool save(Common::OutSaveFile *saveFile, const Common::String &description, const Graphics::Surface *thumbnail);
+	Common::Error load(Common::InSaveFile *saveFile);
+	Common::Error save(Common::OutSaveFile *saveFile, const Common::String &description, const Graphics::Surface *thumbnail);
 
 	int32 getVar(uint16 var);
 	void setVar(uint16 var, int32 value);
@@ -380,7 +380,7 @@ public:
 		Common::String saveDescription;
 
 		StateData();
-		void syncWithSaveGame(Common::Serializer &s);
+		Common::Error syncWithSaveGame(Common::Serializer &s);
 	};
 
 	static const Graphics::PixelFormat getThumbnailSavePixelFormat();

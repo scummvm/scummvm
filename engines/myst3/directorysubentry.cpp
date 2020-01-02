@@ -101,7 +101,7 @@ void DirectorySubEntry::dumpToFile(Common::SeekableReadStream &inStream, const c
 	debug("Extracted %s", fileName);
 	
 	Common::DumpFile outFile;
-	if (!outFile.open(fileName))
+	if (!outFile.open(fileName, true))
 		error("Unable to open file '%s' for writing", fileName);
 	
 	inStream.seek(_offset);

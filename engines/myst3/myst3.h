@@ -124,8 +124,9 @@ public:
 	bool canLoadGameStateCurrently() override;
 	void tryAutoSaving();
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	Common::Error loadGameState(Common::String fileName, TransitionType transition);
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(const Common::String &desc, const Graphics::Surface *thumbnail);
 
 	const DirectorySubEntry *getFileDescription(const Common::String &room, uint32 index, uint16 face,
 	                                            DirectorySubEntry::ResourceType type);

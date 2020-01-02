@@ -265,6 +265,10 @@ public:
 
 		// Open save
 		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(saveInfos.getDescription());
+		if (!saveFile) {
+			warning("Unable to open file %s for reading, slot %d", saveInfos.getDescription().c_str(), slot);
+			return SaveStateDescriptor();
+		}
 
 		// Read state data
 		Common::Serializer s = Common::Serializer(saveFile, 0);

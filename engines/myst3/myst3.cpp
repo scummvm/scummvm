@@ -189,7 +189,10 @@ Common::Error Myst3Engine::run() {
 
 	if (ConfMan.hasKey("save_slot")) {
 		// Load game from specified slot, if any
-		loadGameState(ConfMan.getInt("save_slot"));
+		Common::Error loadError = loadGameState(ConfMan.getInt("save_slot"));
+		if (loadError.getCode() != Common::kNoError) {
+			return loadError;
+		}
 	} else {
 		if (getPlatform() == Common::kPlatformXbox) {
 			// Play the logo videos
@@ -1545,16 +1548,25 @@ Common::Error Myst3Engine::loadGameState(int slot) {
 }
 
 Common::Error Myst3Engine::loadGameState(Common::String fileName, TransitionType transition) {
-	Common::InSaveFile *saveFile = _saveFileMan->openForLoading(fileName);
+	Common::SharedPtr<Common::InSaveFile> saveFile = Common::SharedPtr<Common::InSaveFile>(_saveFileMan->openForLoading(fileName));
 	if (!saveFile) {
-		return _saveFileMan->getError();
+		return Common::kReadingFailed;
 	}
 
-	if (!_state->load(saveFile)) {
-		delete saveFile;
-		return Common::kUnknownError;
+	Common::Error loadError = _state->load(saveFile.get());
+	if (loadError.getCode() != Common::kNoError) {
+		return loadError;
 	}
-	delete saveFile;
+
+	if (saveFile->eos()) {
+		warning("Unexpected end of file reached when reading '%s'", fileName.c_str());
+		return Common::kReadingFailed;
+	}
+
+	if (saveFile->err()) {
+		warning("An error occured when reading '%s'", fileName.c_str());
+		return Common::kReadingFailed;
+	}
 
 	_inventory->loadFromState();
 
@@ -1572,6 +1584,7 @@ Common::Error Myst3Engine::loadGameState(Common::String fileName, TransitionType
 	_sound->playEffect(696, 60);
 
 	goToNode(0, transition);
+
 	return Common::kNoError;
 }
 
@@ -1595,30 +1608,41 @@ Common::Error Myst3Engine::saveGameState(int slot, const Common::String &desc) {
 		return Common::Error(Common::kCreatingFileFailed, _("Invalid file name for saving"));
 	}
 
-	// Strip extension
-	Common::String saveName = desc;
-	if (desc.hasSuffixIgnoreCase(".M3S") || desc.hasSuffixIgnoreCase(".M3X")) {
-		saveName.erase(desc.size() - 4, desc.size());
-	}
-
 	// Try to use an already generated thumbnail
 	const Graphics::Surface *thumbnail = _menu->borrowSaveThumbnail();
 	if (!thumbnail) {
 		return Common::Error(Common::kUnknownError, "No thumbnail");
 	}
 
-	Common::String fileName = Saves::buildName(saveName.c_str(), getPlatform());
-	Common::ScopedPtr<Common::OutSaveFile> save(_saveFileMan->openForSaving(fileName));
-	if (!save) {
-		return _saveFileMan->getError();
+	return saveGameState(desc, thumbnail);
+}
+
+Common::Error Myst3Engine::saveGameState(const Common::String &desc, const Graphics::Surface *thumbnail) {
+	// Strip extension
+	Common::String saveName = desc;
+	if (desc.hasSuffixIgnoreCase(".M3S") || desc.hasSuffixIgnoreCase(".M3X")) {
+		saveName.erase(desc.size() - 4, desc.size());
 	}
+
+	Common::String fileName = Saves::buildName(saveName.c_str(), getPlatform());
 
 	// Save the state and the thumbnail
-	if (!_state->save(save.get(), saveName, thumbnail)) {
-		return Common::kUnknownError;
+	Common::SharedPtr<Common::OutSaveFile> save = Common::SharedPtr<Common::OutSaveFile>(_saveFileMan->openForSaving(fileName));
+	if (!save) {
+		return Common::kCreatingFileFailed;
 	}
 
-	return Common::kNoError;
+	Common::Error saveError = _state->save(save.get(), saveName, thumbnail);
+	if (saveError.getCode() != Common::kNoError) {
+		return saveError;
+	}
+
+	if (save->err()) {
+		warning("An error occured when writing '%s'", fileName.c_str());
+		return Common::kWritingFailed;
+	}
+
+	return saveError;
 }
 
 void Myst3Engine::animateDirectionChange(float targetPitch, float targetHeading, uint16 scriptTicks) {
