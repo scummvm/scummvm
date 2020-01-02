@@ -33,11 +33,8 @@
 #include "common/str.h"
 #include "common/substream.h"
 #include "common/system.h"
-#include "common/winexe.h"
-#include "common/winexe_pe.h"
 #include "engines/engine.h"
 #include "graphics/pixelformat.h"
-#include "graphics/wincursor.h"
 #include "graphics/fontman.h"
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
@@ -49,6 +46,10 @@
 #include "gnap/music.h"
 
 struct ADGameDescription;
+
+namespace Common {
+class PEResources;
+}
 
 namespace Gnap {
 

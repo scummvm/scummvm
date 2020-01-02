@@ -30,6 +30,9 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/timer.h"
+#include "common/winexe_pe.h"
+
+#include "graphics/wincursor.h"
 
 #include "engines/util.h"
 

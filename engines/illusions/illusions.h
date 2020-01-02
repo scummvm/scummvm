@@ -34,8 +34,6 @@
 #include "common/str.h"
 #include "common/substream.h"
 #include "common/system.h"
-#include "common/winexe.h"
-#include "common/winexe_pe.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
 

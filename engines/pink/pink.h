@@ -29,8 +29,6 @@
 #include "engines/engine.h"
 #include "engines/savestate.h"
 
-#include "graphics/wincursor.h"
-
 #include "gui/debugger.h"
 
 #include "pink/constants.h"
@@ -68,6 +66,7 @@ namespace Common {
 
 namespace Graphics {
 class MacMenu;
+class WinCursorGroup;
 }
 
 namespace Pink {

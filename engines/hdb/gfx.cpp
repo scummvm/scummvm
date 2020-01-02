@@ -25,7 +25,6 @@
 #include "common/random.h"
 #include "common/memstream.h"
 #include "graphics/cursor.h"
-#include "graphics/wincursor.h"
 #include "graphics/cursorman.h"
 
 #include "hdb/hdb.h"

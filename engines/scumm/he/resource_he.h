@@ -24,7 +24,10 @@
 #define SCUMM_HE_RESOURCE_HE_H
 
 #include "common/macresman.h"
-#include "common/winexe_pe.h"
+
+namespace Common {
+class PEResources;
+}
 
 namespace Scumm {
 

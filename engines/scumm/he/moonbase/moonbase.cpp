@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/winexe_pe.h"
+
 #include "scumm/he/intern_he.h"
 #include "scumm/he/moonbase/moonbase.h"
 #include "scumm/he/moonbase/ai_main.h"

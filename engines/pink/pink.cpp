@@ -30,6 +30,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
+#include "graphics/wincursor.h"
 
 #include "pink/pink.h"
 #include "pink/console.h"
