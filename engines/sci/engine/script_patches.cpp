@@ -3563,7 +3563,7 @@ static const uint16 gk2XaverBlackWolfkPatch[] = {
 //  We fix this as Sierra did by replacing the inventory tests with flag tests.
 //
 // Applies to: English PC 1.0, Mac
-// Responsible methods: waterBakset:handleEvent, waterBasket:doVerb
+// Responsible methods: waterBasket:handleEvent, waterBasket:doVerb
 static const uint16 gk2HolyWaterLockupSignature[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_SELECTOR16(has),  // pushi has
@@ -3579,6 +3579,46 @@ static const uint16 gk2HolyWaterLockupPatch[] = {
 	0x38, PATCH_UINT16(0x0476), // pushi 0476
 	0x47, 0x0b, 0x00,           // calle proc11_0 [ is flag 1142 set? ]
 	      PATCH_UINT16(0x0002),
+	PATCH_END
+};
+
+// In early versions of GK2, Neuschwanstein castle can flash when clicking the
+//  Hint button even after completing everything. The Hint script tests too many
+//  flags including one whose value is random since it toggles back and forth
+//  between two tape messages. We remove these flag tests as Sierra did.
+//
+// Applies to: English PC 1.0, Mac
+// Responsible method: local procedure #0 in script 800
+static const uint16 gk2NeuschwansteinHintSignature1[] = {
+	SIG_MAGICDWORD,
+	0x78,                       // push1
+	0x38, SIG_UINT16(0x024d),   // pushi 024d
+	0x47, 0x0b, 0x00,           // calle proc11_0 [ is flag 589 set? ]
+	SIG_UINT16(0x0002),
+	SIG_END
+};
+
+static const uint16 gk2NeuschwansteinHintSignature2[] = {
+	SIG_MAGICDWORD,
+	0x78,                       // push1
+	0x38, SIG_UINT16(0x024e),   // pushi 024e
+	0x47, 0x0b, 0x00,           // calle proc11_0 [ is flag 590 set? ]
+	SIG_UINT16(0x0002),
+	SIG_END
+};
+
+static const uint16 gk2NeuschwansteinHintSignature3[] = {
+	SIG_MAGICDWORD,
+	0x78,                       // push1
+	0x38, SIG_UINT16(0x0250),   // pushi 0250
+	0x47, 0x0b, 0x00,           // calle proc11_0 [ is flag 592 set? ]
+	SIG_UINT16(0x0002),
+	SIG_END
+};
+
+static const uint16 gk2NeuschwansteinHintPatch[] = {
+	0x35, 0x01,                 // ldi 01
+	0x33, 0x05,                 // jmp 05
 	PATCH_END
 };
 
@@ -3613,6 +3653,9 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,    23, "fix inventory scroll direction (no line numbers)",    1, gk2InventoryScrollDirSignature2,   gk2InventoryScrollDirPatch2 },
 	{  true,    37, "fix sound manager lockup",                            1, gk2SoundManagerLockupSignature1,   gk2SoundManagerLockupPatch1 },
 	{  true,    37, "fix sound manager lockup (no line numbers)",          1, gk2SoundManagerLockupSignature2,   gk2SoundManagerLockupPatch2 },
+	{  true,   800, "fix neuschwanstein hint (1/3)",                       1, gk2NeuschwansteinHintSignature1,   gk2NeuschwansteinHintPatch },
+	{  true,   800, "fix neuschwanstein hint (2/3)",                       1, gk2NeuschwansteinHintSignature2,   gk2NeuschwansteinHintPatch },
+	{  true,   800, "fix neuschwanstein hint (3/3)",                       1, gk2NeuschwansteinHintSignature3,   gk2NeuschwansteinHintPatch },
 	{  true,   810, "fix frau miller lockup",                              1, gk2FrauMillerLockupSignature,      gk2FrauMillerLockupPatch },
 	{  true,  1020, "fix holy water lockup",                               2, gk2HolyWaterLockupSignature,       gk2HolyWaterLockupPatch },
 	{  true,  3210, "fix police station deadend",                          1, gk2PoliceStationDeadendSignature,  gk2PoliceStationDeadendPatch },
