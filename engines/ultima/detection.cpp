@@ -99,6 +99,10 @@ const char *UltimaMetaEngine::getSavegamePattern(const char *target) const {
 	return buffer;
 }
 
+Common::String UltimaMetaEngine::generateSaveName(const Common::String &target, int slot) {
+	return Common::String::format("%s.%.3d", target.c_str(), slot);
+}
+
 #if PLUGIN_ENABLED_DYNAMIC(ULTIMA)
 REGISTER_PLUGIN_DYNAMIC(ULTIMA, PLUGIN_TYPE_ENGINE, UltimaMetaEngine);
 #else

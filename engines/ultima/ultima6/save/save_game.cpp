@@ -331,7 +331,7 @@ bool SaveGame::check_version(NuvieIOFileRead *loadfile) {
 	return true;
 }
 
-bool SaveGame::load(const char *filename) {
+bool SaveGame::load(const Common::String &filename) {
 	uint8 i;
 	uint32 objlist_size;
 	uint32 bytes_read;
@@ -349,8 +349,8 @@ bool SaveGame::load(const char *filename) {
 		return false;
 	}
 
-	ConsoleAddInfo("Loading Game: %s", filename);
-	DEBUG(0, LEVEL_NOTIFICATION, "Loading Game: %s\n", filename);
+	ConsoleAddInfo("Loading Game: %s", filename.c_str());
+	DEBUG(0, LEVEL_NOTIFICATION, "Loading Game: %s\n", filename.c_str());
 
 	if (!check_version(loadfile)) {
 		DEBUG(0, LEVEL_NOTIFICATION, "version incorrect\n");
@@ -394,7 +394,7 @@ bool SaveGame::load(const char *filename) {
 	return true;
 }
 
-bool SaveGame::save(const char *filename, std::string *save_description) {
+bool SaveGame::save(const Common::String &filename, const Common::String &save_description) {
 	uint8 i;
 	NuvieIOFileWrite *savefile;
 	int game_type;
@@ -441,7 +441,7 @@ bool SaveGame::save(const char *filename, std::string *save_description) {
 	savefile->write2(header.num_saves);
 
 	memset(save_desc, 0, MAX_SAVE_DESC_LENGTH);
-	strncpy((char *)save_desc, save_description->c_str(), MAX_SAVE_DESC_LENGTH);
+	strncpy((char *)save_desc, save_description.c_str(), MAX_SAVE_DESC_LENGTH);
 	save_desc[MAX_SAVE_DESC_LENGTH] = '\0';
 	savefile->writeBuf(save_desc, MAX_SAVE_DESC_LENGTH);
 

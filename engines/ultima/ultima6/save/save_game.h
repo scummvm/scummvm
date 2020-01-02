@@ -98,11 +98,11 @@ public:
 	bool load_new();
 	bool load_original();
 	SaveHeader *load_info(NuvieIOFileRead *loadfile);
-	bool load(const char *filename);
+	bool load(const Common::String &filename);
 
 	bool check_version(NuvieIOFileRead *loadfile);
 
-	bool save(const char *filename, std::string *save_description);
+	bool save(const Common::String &filename, const Common::String &save_description);
 
 	uint16 get_num_saves() const {
 		return header.num_saves;
