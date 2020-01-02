@@ -23,12 +23,9 @@
 #ifndef ULTIMA6_SAVE_SAVE_GAME_H
 #define ULTIMA6_SAVE_SAVE_GAME_H
 
-#define NUVIE_SAVE_VERSION_MAJOR 0
-#define NUVIE_SAVE_VERSION_MINOR 3
-
-#define NUVIE_SAVE_VERSION       NUVIE_SAVE_VERSION_MAJOR * 256 + NUVIE_SAVE_VERSION_MINOR
-
-#define MAX_SAVE_DESC_LENGTH    52
+#define SAVE_VERSION_MAJOR 1
+#define SAVE_VERSION_MINOR 0
+#define SAVE_VERSION (SAVE_VERSION_MAJOR * 256 + SAVE_VERSION_MINOR)
 
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
@@ -44,46 +41,13 @@ class Map;
 class NuvieIO;
 class NuvieIOFileWrite;
 
-struct SaveHeader {
-	uint16 num_saves;
-	uint32 actual_play_time; // Total play time for this save game in minutes.
-	uint32 game_play_time; // Total play time for this save game measured in game turns.
-	std::string save_description;
-	std::string player_name;
-	uint8 player_gender;
-	uint8 str, intelligence, dex;
-	uint16 level;
-	uint16 exp;
-
-	Graphics::ManagedSurface *thumbnail;
-	unsigned char *thumbnail_data;
-
-	SaveHeader() {
-		num_saves = 0;
-		actual_play_time = 0;
-		game_play_time = 0;
-		player_gender = 0;
-		str = 0;
-		intelligence = 0;
-		dex = 0;
-		level = 0;
-		exp = 0;
-		thumbnail = NULL;
-		thumbnail_data = NULL;
-	};
-};
-
 class SaveGame {
 private:
 	Configuration *config;
-	SaveHeader header;
 	NuvieIOBuffer objlist;
 protected:
 	bool load_objlist();
 	bool save_objlist();
-	bool save_thumbnail(NuvieIOFileWrite *savefile);
-
-	void clean_up();
 
 	void update_objlist_for_new_game();
 	void update_objlist_for_new_game_u6();
@@ -97,16 +61,11 @@ public:
 
 	bool load_new();
 	bool load_original();
-	SaveHeader *load_info(NuvieIOFileRead *loadfile);
 	bool load(const Common::String &filename);
 
-	bool check_version(NuvieIOFileRead *loadfile);
+	bool check_version(NuvieIOFileRead *loadfile, uint16 gameType);
 
 	bool save(const Common::String &filename, const Common::String &save_description);
-
-	uint16 get_num_saves() const {
-		return header.num_saves;
-	};
 };
 
 } // End of namespace Ultima6

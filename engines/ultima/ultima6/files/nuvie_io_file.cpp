@@ -22,6 +22,8 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
+#include "ultima/shared/core/ultima.h"
+#include "engines/metaengine.h"
 #include "common/system.h"
 
 namespace Ultima {
@@ -32,39 +34,54 @@ NuvieIOFileRead::~NuvieIOFileRead() {
 }
 
 bool NuvieIOFileRead::open(const Common::String &filename) {
-	if (_file.isOpen()) //We already have a file open lets bail.
+	if (isOpen())
+		// We already have a file open, lets bail.
 		return false;
 
-	if (!_file.open(filename)) {
+	if (!_srcFile.open(filename)) {
 		DEBUG(0, LEVEL_ERROR, "Failed opening '%s'\n", filename.c_str());
 		return false;
 	}
 
-	size = _file.size();
+	_file = &_srcFile;
+	size = _srcFile.size();
+	pos = 0;
+
+	return true;
+}
+
+bool NuvieIOFileRead::open(Common::InSaveFile *saveFile) {
+	assert(saveFile);
+	_file = saveFile;
+
+	size = _file->size();
 	pos = 0;
 
 	return true;
 }
 
 void NuvieIOFileRead::close() {
-	_file.close();
+	if (_srcFile.isOpen())
+		_srcFile.close();
+	_file = nullptr;
+
 	NuvieIO::close();
 }
 
 void NuvieIOFileRead::seek(uint32 new_pos) {
-	if (_file.isOpen() && new_pos <= size) {
-		_file.seek(new_pos);
+	if (isOpen() && new_pos <= _file->size()) {
+		_file->seek(new_pos);
 		pos = new_pos;
 	}
 }
 
 uint8 NuvieIOFileRead::read1() {
-	if (pos >= size)
+	if (pos > size - 1)
 		return 0;
 
 	pos++;
 
-	return _file.readByte();
+	return _file->readByte();
 }
 
 uint16 NuvieIOFileRead::read2() {
@@ -72,7 +89,7 @@ uint16 NuvieIOFileRead::read2() {
 		return 0;
 
 	pos += 2;
-	return _file.readUint16LE();
+	return _file->readUint16LE();
 }
 
 uint32 NuvieIOFileRead::read4() {
@@ -80,18 +97,17 @@ uint32 NuvieIOFileRead::read4() {
 		return 0;
 
 	pos += 4;
-	return _file.readUint32LE();
+	return _file->readUint32LE();
 }
 
 bool NuvieIOFileRead::readToBuf(unsigned char *buf, uint32 buf_size) {
 	if (pos + buf_size > size)
 		return false;
 
-	_file.read(buf, buf_size);
+	_file->read(buf, buf_size);
 	pos += buf_size;
 	return true;
 }
-
 
 
 // NuvieIOFileWrite
@@ -138,6 +154,8 @@ void NuvieIOFileWrite::close() {
 	if (_saveFile) {
 		// Writing using savefile interface, so flush out data
 		_saveFile->write(_saveFileData.getData(), _saveFileData.size());
+		MetaEngine::appendExtendedSave(_saveFile, Shared::g_ultima->getTotalPlayTime(), _description);
+
 		_saveFile->finalize();
 		delete _saveFile;
 		_saveFile = nullptr;

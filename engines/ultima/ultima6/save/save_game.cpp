@@ -46,6 +46,8 @@
 #include "ultima/ultima6/core/weather.h"
 #include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/core/events.h"
+#include "common/system.h"
+#include "common/savefile.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -62,12 +64,9 @@ SaveGame::SaveGame(Configuration *cfg) {
 
 SaveGame::~SaveGame() {
 	objlist.close();
-	clean_up();
 }
 
 void SaveGame::init(ObjManager *obj_manager) {
-	header.save_description.assign("");
-
 	if (objlist.get_size() > 0)
 		objlist.close();
 
@@ -163,7 +162,7 @@ bool SaveGame::load_original() {
 				return false;
 			}
 
-			if (obj_manager->load_super_chunk((NuvieIO *)objblk_file, 0, i) == false) {
+			if (obj_manager->load_super_chunk(objblk_file, 0, i) == false) {
 				delete objblk_file;
 				return false;
 			}
@@ -179,7 +178,7 @@ bool SaveGame::load_original() {
 		config_get_path(config, objblk_filename, path);
 		objblk_file->open(path);
 
-		if (obj_manager->load_super_chunk((NuvieIO *)objblk_file, i, 0) == false) {
+		if (obj_manager->load_super_chunk(objblk_file, i, 0) == false) {
 			delete objblk_file;
 			return false;
 		}
@@ -269,62 +268,20 @@ bool SaveGame::load_objlist() {
 	return true;
 }
 
-SaveHeader *SaveGame::load_info(NuvieIOFileRead *loadfile) {
-	uint32 rmask, gmask, bmask;
-	unsigned char save_desc[MAX_SAVE_DESC_LENGTH + 1];
-	unsigned char player_name[14];
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	rmask = 0x00ff0000;
-	gmask = 0x0000ff00;
-	bmask = 0x000000ff;
-#else
-	rmask = 0x000000ff;
-	gmask = 0x0000ff00;
-	bmask = 0x00ff0000;
-#endif
-
-	clean_up();
-
-	loadfile->seek(15); //skip version, textual id string and game tag
-
-	header.num_saves = loadfile->read2();
-
-	loadfile->readToBuf(save_desc, MAX_SAVE_DESC_LENGTH);
-	save_desc[MAX_SAVE_DESC_LENGTH] = '\0';
-	header.save_description.assign((const char *)save_desc);
-
-	loadfile->readToBuf(player_name, 14);
-	header.player_name.assign((const char *)player_name);
-
-	header.player_gender = loadfile->read1();
-
-	header.level = loadfile->read1();
-	header.str = loadfile->read1();
-	header.dex = loadfile->read1();
-	header.intelligence = loadfile->read1();
-	header.exp = loadfile->read2();
-
-//should we load the thumbnail here!?
-
-	header.thumbnail_data = new unsigned char[MAPWINDOW_THUMBNAIL_SIZE * MAPWINDOW_THUMBNAIL_SIZE * 3];
-
-	loadfile->readToBuf(header.thumbnail_data, MAPWINDOW_THUMBNAIL_SIZE * MAPWINDOW_THUMBNAIL_SIZE * 3); //seek past thumbnail data.
-
-	header.thumbnail = nullptr;
-	//SDL_CreateRGBSurfaceFrom(header.thumbnail_data, MAPWINDOW_THUMBNAIL_SIZE, MAPWINDOW_THUMBNAIL_SIZE, 24, MAPWINDOW_THUMBNAIL_SIZE * 3, rmask, gmask, bmask, 0);
-
-	return &header;
-}
-
-bool SaveGame::check_version(NuvieIOFileRead *loadfile) {
-	uint16 version;
+bool SaveGame::check_version(NuvieIOFileRead *loadfile, uint16 gameType) {
+	uint16 version, gt;
 
 	loadfile->seekStart();
-
 	version = loadfile->read2();
-	if (version != NUVIE_SAVE_VERSION) {
-		DEBUG(0, LEVEL_ERROR, "Incompatible savegame version. Savegame version '%d', current system version '%d'\n", version, NUVIE_SAVE_VERSION);
+	gt = loadfile->read2();
+
+	if (version != SAVE_VERSION) {
+		DEBUG(0, LEVEL_ERROR, "Incompatible savegame version. Savegame version '%d', current system version '%d'\n", version, SAVE_VERSION);
+		return false;
+	}
+
+	if (gt != gameType) {
+		DEBUG(0, LEVEL_ERROR, "Incorrect game type\n");
 		return false;
 	}
 
@@ -335,59 +292,51 @@ bool SaveGame::load(const Common::String &filename) {
 	uint8 i;
 	uint32 objlist_size;
 	uint32 bytes_read;
-	NuvieIOFileRead *loadfile;
+	NuvieIOFileRead loadFile;
 	unsigned char *data;
 	int game_type;
 	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
 
 	config->value("config/GameType", game_type);
 
-	loadfile = new NuvieIOFileRead();
-
-	if (loadfile->open(filename) == false) {
-		delete loadfile;
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(filename);
+	if (!loadFile.open(saveFile))
 		return false;
-	}
 
 	ConsoleAddInfo("Loading Game: %s", filename.c_str());
 	DEBUG(0, LEVEL_NOTIFICATION, "Loading Game: %s\n", filename.c_str());
 
-	if (!check_version(loadfile)) {
+	if (!check_version(&loadFile, game_type)) {
 		DEBUG(0, LEVEL_NOTIFICATION, "version incorrect\n");
-		delete loadfile;
 		return false;
 	}
 
 	init(obj_manager); // needs to come after checking for failure
 
-	load_info(loadfile); //load header info
-
 	// Load actor inventories
-	obj_manager->load_super_chunk((NuvieIO *)loadfile, 0, 0);
+	obj_manager->load_super_chunk(&loadFile, 0, 0);
 
 	// Load eggs
-	obj_manager->load_super_chunk((NuvieIO *)loadfile, 0, 0);
+	obj_manager->load_super_chunk(&loadFile, 0, 0);
 
 	// Load surface objects
 	for (i = 0; i < 64; i++) {
 		ConsoleAddInfo("Loading super chunk %d of 64", i + 1);
-		obj_manager->load_super_chunk((NuvieIO *)loadfile, 0, i);
+		obj_manager->load_super_chunk(&loadFile, 0, i);
 	}
 
 	// Load dungeon objects
 	for (i = 0; i < 5; i++) {
-		obj_manager->load_super_chunk((NuvieIO *)loadfile, i + 1, 0);
+		obj_manager->load_super_chunk(&loadFile, i + 1, 0);
 	}
 
-	objlist_size = loadfile->get_size() - loadfile->position();
-
-	data = loadfile->readBuf(objlist_size, &bytes_read);
+	objlist_size = loadFile.read4();
+	data = loadFile.readBuf(objlist_size, &bytes_read);
 
 	objlist.open(data, objlist_size, NUVIE_BUF_COPY);
 
 	free(data);
-	loadfile->close();
-	delete loadfile;
+	loadFile.close();
 
 	load_objlist();
 
@@ -396,14 +345,10 @@ bool SaveGame::load(const Common::String &filename) {
 
 bool SaveGame::save(const Common::String &filename, const Common::String &save_description) {
 	uint8 i;
-	NuvieIOFileWrite *savefile;
+	NuvieIOFileWrite saveFile;
 	int game_type;
 	char game_tag[3];
-	unsigned char player_name[14];
-	unsigned char save_desc[MAX_SAVE_DESC_LENGTH + 1];
 	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
-	Player *player = Game::get_game()->get_player();
-	Actor *avatar = Game::get_game()->get_actor_manager()->get_actor(1); // get the avatar actor.
 
 	config->value("config/GameType", game_type);
 	bool newgame;
@@ -413,13 +358,7 @@ bool SaveGame::save(const Common::String &filename, const Common::String &save_d
 		config->write();
 	}
 
-	savefile = new NuvieIOFileWrite();
-
-	savefile->open(filename);
-
-	savefile->write2(NUVIE_SAVE_VERSION);
-	savefile->writeBuf((const unsigned char *)"Nuvie Save", 11);
-
+	saveFile.open(filename);
 
 	switch (game_type) {
 	case NUVIE_GAME_U6 :
@@ -435,49 +374,28 @@ bool SaveGame::save(const Common::String &filename, const Common::String &save_d
 		break;
 	}
 
-	savefile->writeBuf((const unsigned char *)game_tag, 2);
+	saveFile.write2(SAVE_VERSION);
+	saveFile.writeBuf((const unsigned char *)game_tag, 2);
 
-	header.num_saves++;
-	savefile->write2(header.num_saves);
+	obj_manager->save_inventories(&saveFile);
 
-	memset(save_desc, 0, MAX_SAVE_DESC_LENGTH);
-	strncpy((char *)save_desc, save_description.c_str(), MAX_SAVE_DESC_LENGTH);
-	save_desc[MAX_SAVE_DESC_LENGTH] = '\0';
-	savefile->writeBuf(save_desc, MAX_SAVE_DESC_LENGTH);
-
-	memset(player_name, 0, 14);
-	strcpy((char *)player_name, (const char *)player->get_name());
-	savefile->writeBuf((const unsigned char *)player_name, 14);
-
-	savefile->write1(player->get_gender());
-
-	savefile->write1(avatar->get_level());
-	savefile->write1(avatar->get_strength());
-	savefile->write1(avatar->get_dexterity());
-	savefile->write1(avatar->get_intelligence());
-	savefile->write2(avatar->get_exp());
-
-	save_thumbnail(savefile);
-
-	obj_manager->save_inventories(savefile);
-
-	obj_manager->save_eggs(savefile);
+	obj_manager->save_eggs(&saveFile);
 
 	// Save surface objects
 	for (i = 0; i < 64; i++)
-		obj_manager->save_super_chunk(savefile, 0, i);
+		obj_manager->save_super_chunk(&saveFile, 0, i);
 
 	// Save dungeon objects
 	for (i = 0; i < 5; i++)
-		obj_manager->save_super_chunk(savefile, i + 1, 0);
+		obj_manager->save_super_chunk(&saveFile, i + 1, 0);
 
 	save_objlist();
 
-	savefile->writeBuf(objlist.get_raw_data(), objlist.get_size());
+	saveFile.write4(objlist.get_size());
+	saveFile.writeBuf(objlist.get_raw_data(), objlist.get_size());
 
-	savefile->close();
-
-	delete savefile;
+	saveFile.writeDesc(save_description);
+	saveFile.close();
 
 	return true;
 }
@@ -516,30 +434,6 @@ bool SaveGame::save_objlist() {
 	scroll->display_prompt();
 
 	return true;
-}
-
-bool SaveGame::save_thumbnail(NuvieIOFileWrite *savefile) {
-	unsigned char *thumbnail;
-
-	MapWindow *map_window = Game::get_game()->get_map_window();
-
-	thumbnail = map_window->make_thumbnail();
-
-	savefile->writeBuf(thumbnail, MAPWINDOW_THUMBNAIL_SIZE * MAPWINDOW_THUMBNAIL_SIZE * 3);
-	map_window->free_thumbnail();
-
-	return true;
-}
-
-void SaveGame::clean_up() {
-	// Clean up old header if required
-	if (header.thumbnail) {
-		SDL_FreeSurface(header.thumbnail);
-		delete[] header.thumbnail_data;
-
-		header.thumbnail = NULL;
-		header.thumbnail_data = NULL;
-	}
 }
 
 void SaveGame::update_objlist_for_new_game() {
