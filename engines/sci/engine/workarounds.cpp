@@ -370,6 +370,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_GK1,            -1, 64950, -1,            "Feature", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // sometimes when walk-clicking
 	{ GID_GK1,            -1, 64937, -1,         "GKControls", "dispatchEvent",                   NULL,     6,     6, { WORKAROUND_FAKE,   0 } }, // when using keyboard navigation (tab) in the game settings and hitting 'enter' when over a slider
 	{ GID_GK2,            -1,    11,  0,                   "", "export 10",                       NULL,    -1,    -1, { WORKAROUND_FAKE,   0 } }, // When game starts and throughout game. temp1 in Italian version, temp3 in others
+	{ GID_GK2,            -1, 64921, -1,              "Print", "addEdit",                         NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // When trying to use the game debugger's flag setting command
 	{ GID_HOYLE1,          4,   104,  0,   "GinRummyCardList", "calcRuns",                        NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // Gin Rummy / right when the game starts
 	{ GID_HOYLE1,          5,   204,  0,            "tableau", "checkRuns",                       NULL,     2,     2, { WORKAROUND_FAKE,   0 } }, // Cribbage / during the game
 	{ GID_HOYLE1,          3,    16,  0,                   "", "export 0",     sig_uninitread_hoyle1_1,     3,     3, { WORKAROUND_FAKE,   0 } }, // Hearts / during the game - bug #5299
