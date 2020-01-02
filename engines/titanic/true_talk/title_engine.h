@@ -24,7 +24,6 @@
 #define TITANIC_TITLE_ENGINE_H
 
 #include "common/stream.h"
-#include "common/winexe_pe.h"
 #include "titanic/support/string.h"
 #include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/tt_response.h"

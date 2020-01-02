@@ -35,6 +35,7 @@
 #include "common/archive.h"
 #include "common/memstream.h"
 #include "common/system.h"
+#include "common/winexe_pe.h"
 
 namespace Scumm {
 

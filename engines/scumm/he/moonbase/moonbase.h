@@ -25,7 +25,9 @@
 
 #ifdef ENABLE_HE
 
-#include "common/winexe_pe.h"
+namespace Common {
+class PEResources;
+}
 
 namespace Scumm {
 

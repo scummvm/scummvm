@@ -22,7 +22,6 @@
 
 #include "common/endian.h"
 #include "common/archive.h"
-#include "common/winexe.h"
 #include "common/winexe_pe.h"
 
 #include "graphics/cursorman.h"
