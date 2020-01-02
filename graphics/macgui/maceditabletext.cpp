@@ -45,8 +45,8 @@ enum {
 
 static void cursorTimerHandler(void *refCon);
 
-MacEditableText::MacEditableText(Common::U32String s, MacWindow *parent, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
-		MacText(s, parent->_wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear), MacWidget(0, true, parent) {
+MacEditableText::MacEditableText(MacWindow *parent, int x, int y, int w, int h, Common::U32String s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
+		MacWidget(parent, x, y, w, h, true), MacText(s, parent->_wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear) {
 
 	_parent = parent;
 	_maxWidth = maxWidth;
@@ -54,8 +54,8 @@ MacEditableText::MacEditableText(Common::U32String s, MacWindow *parent, const M
 	init();
 }
 
-MacEditableText::MacEditableText(const Common::String &s, MacWindow *parent, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
-		MacText(s, parent->_wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear), MacWidget(0, true, parent) {
+MacEditableText::MacEditableText(MacWindow *parent, int x, int y, int w, int h, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
+		MacWidget(parent, x, y, w, h, true), MacText(s, parent->_wm, macFont, fgcolor, bgcolor, maxWidth, textAlignment, interlinear) {
 
 	_parent = parent;
 	_maxWidth = maxWidth;
@@ -132,7 +132,7 @@ void MacEditableText::clearText() {
 	updateCursorPos();
 }
 
-void MacEditableText::setTextWindowFont(const MacFont *font) {
+void MacEditableText::setTextFont(const MacFont *font) {
 	_font = font;
 
 	_fontRef = _wm->_fontMan->getFont(*font);
@@ -140,7 +140,7 @@ void MacEditableText::setTextWindowFont(const MacFont *font) {
 	MacText::setDefaultFormatting(font->getId(), font->getSlant(), font->getSize(), 0, 0, 0);
 }
 
-const MacFont *MacEditableText::getTextWindowFont() {
+const MacFont *MacEditableText::getTextFont() {
 	return _font;
 }
 
@@ -299,7 +299,8 @@ bool MacEditableText::processEvent(Common::Event &event) {
 		if (!_editable)
 			return false;
 
-		_wm->setActive(getId());
+		// Make the parent window active
+		_wm->setActive(_parent->getId());
 
 		if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_META)) {
 			return false;

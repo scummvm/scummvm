@@ -25,29 +25,31 @@
 
 #include "common/rect.h"
 
+namespace Common {
+	struct Event;
+}
+
 namespace Graphics {
 
 class MacWindow;
+class ManagedSurface;
 
 class MacWidget {
 	friend class MacEditableText;
 
 public:
-	MacWidget(int id, bool focusable, MacWindow *parent);
+	MacWidget(MacWindow *parent, int x, int y, int w, int h, bool focusable);
 	virtual ~MacWidget() {}
 
 	const Common::Rect &getDimensions() { return _dims; }
-	int getId() { return _id; }
 	bool isFocusable() { return _focusable; }
 	virtual void setActive(bool active) = 0;
 	void setDirty(bool dirty) { _contentIsDirty = dirty; }
-	//virtual bool draw(ManagedSurface *g, bool forceRedraw = false) = 0;
-	//virtual bool processEvent(Common::Event &event) = 0;
+	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) = 0;
+	virtual bool processEvent(Common::Event &event) = 0;
 	virtual bool hasAllFocus() = 0;
 
 protected:
-	int _id;
-
 	bool _focusable;
 	bool _contentIsDirty;
 

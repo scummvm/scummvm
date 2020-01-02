@@ -52,9 +52,9 @@ struct SelectedText {
 
 class MacEditableText : public MacText, public MacWidget {
 public:
-	MacEditableText(Common::U32String s, MacWindow *parent, const MacFont *font, int fgcolor, int bgcolor,
+	MacEditableText(MacWindow *parent, int x, int y, int w, int h, Common::U32String s, const MacFont *font, int fgcolor, int bgcolor,
 			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
-	MacEditableText(const Common::String &s, MacWindow *parent, const MacFont *font, int fgcolor, int bgcolor,
+	MacEditableText(MacWindow *parent, int x, int y, int w, int h, const Common::String &s, const MacFont *font, int fgcolor, int bgcolor,
 			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
 			// 0 pixels between the lines by default
 	virtual ~MacEditableText();
@@ -65,8 +65,8 @@ public:
 
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false);
 
-	void setTextWindowFont(const MacFont *macFont);
-	const MacFont *getTextWindowFont();
+	void setTextFont(const MacFont *macFont);
+	const MacFont *getTextFont();
 
 	void appendText(Common::U32String str, const MacFont *macFont, bool skipAdd = false);
 	void appendText(const Common::String &str, const MacFont *macFont, bool skipAdd = false);
