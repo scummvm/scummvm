@@ -23,6 +23,7 @@
 #ifndef COMMON_WINEXE_H
 #define COMMON_WINEXE_H
 
+#include "file.h"
 #include "hash-str.h"
 #include "str.h"
 
@@ -88,6 +89,40 @@ struct WinResourceID_Hash {
 
 struct WinResourceID_EqualTo {
 	bool operator()(const WinResourceID &id1, const WinResourceID &id2) const { return id1 == id2; }
+};
+
+/**
+ * A class able to load resources from a Windows Executable, such
+ * as cursors, bitmaps, and sounds.
+ */
+class WinResources {
+public:
+	virtual ~WinResources() {}
+
+	/** Clear all information. */
+	virtual void clear() = 0;
+
+	/** Load from an EXE file. */
+	virtual bool loadFromEXE(const String &fileName);
+
+	virtual bool loadFromEXE(File *stream) = 0;
+
+	/** Return a list of IDs for a given type. */
+	virtual const Array<WinResourceID> getIDList(const WinResourceID &type) const = 0;
+
+	/** Return a list of languages for a given type and ID. */
+	virtual const Array<WinResourceID> getLangList(const WinResourceID &type, const WinResourceID &id) const {
+		Array<WinResourceID> array;
+		return array;
+	};
+
+	/** Return a stream to the specified resource, taking the first language found (or 0 if non-existent). */
+	virtual File *getResource(const WinResourceID &type, const WinResourceID &id) = 0;
+
+	/** Return a stream to the specified resource (or 0 if non-existent). */
+	virtual File *getResource(const WinResourceID &type, const WinResourceID &id, const WinResourceID &lang) {
+		return getResource(type, id);
+	}
 };
 
 } // End of namespace Common

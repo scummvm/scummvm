@@ -44,20 +44,6 @@ void PEResources::clear() {
 	delete _exe; _exe = 0;
 }
 
-bool PEResources::loadFromEXE(const String &fileName) {
-	if (fileName.empty())
-		return false;
-
-	File *file = new File();
-
-	if (!file->open(fileName.c_str())) {
-		delete file;
-		return false;
-	}
-
-	return loadFromEXE(file);
-}
-
 bool PEResources::loadFromEXE(File *stream) {
 	clear();
 
