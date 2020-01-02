@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-12-31 23:45+0000\n"
+"PO-Revision-Date: 2020-01-02 17:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -8058,15 +8058,16 @@ msgstr "OTHER: The next thing I remember was this cell."
 
 #: dialog0247.txt:7
 msgid "P#HERO: No tak."
-msgstr ""
+msgstr "P#HERO: Yeah."
 
 #: dialog0247.txt:8
 msgid "HERO: Mnie nie złapali, ale nawet przebranie|za diabła nie pomogło."
 msgstr ""
+"HERO: They did not catch me, but even disguise|of the devil did not help."
 
 #: dialog0247.txt:9
 msgid "OTHER: A to dlaczego?"
-msgstr ""
+msgstr "OTHER: How so?"
 
 #: dialog0247.txt:10
 msgid "HERO: Brak mi najwyraźniej siły przekonywania."
