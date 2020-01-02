@@ -24,6 +24,7 @@
 #include "ultima/ultima8/filesys/savegame.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
+#include "ultima/shared/core/ultima.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "graphics/thumbnail.h"
@@ -120,8 +121,7 @@ bool SavegameWriter::finish() {
 	
 	// Handle adding savegame header
 	Common::OutSaveFile *dest = dynamic_cast<Common::OutSaveFile *>(_file->GetRawStream());
-	uint32 totalPlayTime = 0;		// TODO: Total playtime
-	MetaEngine::appendExtendedSave(dest, totalPlayTime, _description);
+	MetaEngine::appendExtendedSave(dest, Shared::g_ultima->getTotalPlayTime(), _description);
 	dest->finalize();
 
 	return true;

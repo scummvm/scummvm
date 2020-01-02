@@ -44,10 +44,14 @@ public:
 
 class NuvieIOFileRead : public NuvieIOFile {
 private:
-	Common::File _file;
+	Common::SeekableReadStream *_file;
+	Common::File _srcFile;
 public:
+	NuvieIOFileRead() : NuvieIOFile(), _file(nullptr) {}
 	virtual ~NuvieIOFileRead();
+
 	virtual bool open(const Common::String &filename) override;
+	virtual bool open(Common::InSaveFile *saveFile);
 	virtual void close() override;
 	virtual void seek(uint32 new_pos) override;
 
@@ -56,6 +60,10 @@ public:
 	virtual uint32 read4() override;
 
 	virtual bool readToBuf(unsigned char *buf, uint32 buf_size) override;
+
+	bool isOpen() const {
+		return _file != nullptr;
+	}
 };
 
 /**
@@ -71,6 +79,7 @@ private:
 	Common::DumpFile _dumpFile;
 	Common::OutSaveFile *_saveFile;
 	Common::MemoryWriteStreamDynamic _saveFileData;
+	Common::String _description;
 protected:
 	bool isOpen() const {
 		return _file != nullptr;
@@ -85,7 +94,10 @@ public:
 	bool write1(uint8 src);
 	bool write2(uint16 src);
 	bool write4(uint32 src);
-	
+	void writeDesc(const Common::String &desc) {
+		_description = desc;
+	}
+
 	virtual uint32 writeBuf(const unsigned char *src, uint32 src_size) override;
 	uint32 write(NuvieIO *src);
 };
