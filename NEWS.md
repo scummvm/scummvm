@@ -30,6 +30,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Xeen:
    - Fix display of gold and gem amounts on the Switch.
+   - Fix tavern exit locations in Swords of Xeen.
 
  3DS port:
    - Major improvements.
