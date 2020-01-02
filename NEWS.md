@@ -1,9 +1,45 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.1.1 (XXXX-XX-XX)
+#### 2.1.1 (2020-XX-XX)
+ General:
+   - Fixed crash when switching certain languages in GUI.
+   - Fixed ESC erroneously saving the changes in the options dialog.
+   - Improvements in FM-TOWNS/PC-98 audio.
+
+ Bladerunner:
+   - Fixed buggy savestate in some scenes.
+
+ Kyra:
+    - Fixed monster random item chance in EOB1.
+	- Fixed stone skin spell warning.
+	- Fixed Sound issues in the Legend of Kyrandia 2.
+
+ SCI:
+   - Numerous game script fixes.
+   - Support for Polish LSL7.
+
+ SCUMM:
+   - Added support for Pajama2 GB.
+
+ Supernova:
+   - Hooked F5 to the Main Menu.
+
  Xeen:
-   - Fix display of gold and gem amounts on the Switch
+   - Fix display of gold and gem amounts on the Switch.
+
+ 3DS port:
+   - Major improvements.
+
+ Android port:
+   - Improved filesystem navigation.
+
+ Switch port:
+   - Added cloud integration.
+
+ Windows:
+   - Improvements to Text-to-Speech support.
+
 
 #### 2.1.0 "Electric Sheep" (2019-10-11)
 
