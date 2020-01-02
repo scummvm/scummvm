@@ -55,24 +55,26 @@ struct UltimaGameDescription {
 
 class UltimaMetaEngine : public AdvancedMetaEngine {
 public:
+	static Common::String generateSaveName(const Common::String &target, int slot);
+public:
 	UltimaMetaEngine();
 
-	virtual const char *getEngineId() const {
+	virtual const char *getEngineId() const override {
 		return "ultima";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Ultima";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Ultima games (C) Origin Systems Inc.";
 	}
 
-	virtual const char *getSavegamePattern(const char *target = nullptr) const;
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual int getMaximumSaveSlot() const;
+	virtual const char *getSavegamePattern(const char *target = nullptr) const override;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual int getMaximumSaveSlot() const override;
 };
 
 #endif
