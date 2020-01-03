@@ -642,7 +642,7 @@ protected:
 	int _cdaTrackTableFinaleSize;
 	const char *const *_ingameSoundList;
 	int _ingameSoundListSize;
-	const uint16 *_ingameSoundIndex;
+	const int16 *_ingameSoundIndex;
 	int _ingameSoundIndexSize;
 	const uint16 *_ingameTalkObjIndex;
 	int _ingameTalkObjIndexSize;

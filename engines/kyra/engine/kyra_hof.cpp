@@ -1460,8 +1460,8 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 	if (track == -1)
 		return;
 
-	int16 prio = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2 + 1]);
-	int16 file = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
+	int16 prio = READ_LE_INT16(&_ingameSoundIndex[track * 2 + 1]);
+	int16 file = READ_LE_INT16(&_ingameSoundIndex[track * 2]);
 	prio = prio <= 0 ? -prio : (prio * volume) >> 8;
 
 	if (file != -1 && _sound->useDigitalSfx()) {
