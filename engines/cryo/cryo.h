@@ -89,13 +89,6 @@ public:
 
 extern CryoEngine *g_ed;
 
-// Example console class
-class Console : public GUI::Debugger {
-public:
-	Console(CryoEngine *vm) {}
-	virtual ~Console(void) {}
-};
-
 } // End of namespace Cryo
 
 #endif

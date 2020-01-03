@@ -649,7 +649,6 @@ private:
 	CSoundChannel  *_musicChannel;
 	CSoundChannel  *_voiceChannel;
 	CSoundChannel *_hnmSoundChannel;
-	Sound        *_voiceSound;
 
 	int   _demoCurrentTicks;
 	int   _demoStartTicks;
