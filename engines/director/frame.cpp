@@ -660,10 +660,34 @@ void Frame::addDrawRect(uint16 spriteId, Common::Rect &rect) {
 void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	Sprite *sp = _sprites[spriteId];
 
-	if (sp->_cast != NULL) {
-		sp->_foreColor = ((ShapeCast *)sp->_cast)->_fgCol;
-		sp->_backColor = ((ShapeCast *)sp->_cast)->_bgCol;
-		//sp->_ink = sp->_shapeCast->_ink;
+	byte spriteType = sp->_spriteType;
+	if (spriteType == kCastMemberSprite && sp->_cast != NULL) {
+		switch (sp->_cast->_type) {
+		case kCastShape:
+			{
+				ShapeCast *sc = (ShapeCast *)sp->_cast;
+				switch (sc->_shapeType) {
+				case kShapeRectangle:
+					spriteType = sc->_fillType ? kRectangleSprite : kOutlinedRectangleSprite;
+					break;
+				case kShapeRoundRect:
+					spriteType = sc->_fillType ? kRoundedRectangleSprite : kOutlinedRoundedRectangleSprite;
+					break;
+				case kShapeOval:
+					spriteType = sc->_fillType ? kOvalSprite : kOutlinedOvalSprite;
+					break;
+				case kShapeLine:
+					spriteType = sc->_lineDirection == 6 ? kLineTopBottomSprite : kLineBottomTopSprite;
+					break;
+				default:
+					break;
+				}
+			}
+			break;
+		default:
+			warning("Frame::renderShape(): Unhandled cast type: %d", sp->_cast->_type);
+			break;
+		}
 	}
 
 	Common::Rect shapeRect = Common::Rect(sp->_startPoint.x,
@@ -679,7 +703,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), sp->getPattern(), sp->_lineSize + 1, sp->_backColor);
 	Common::Rect fillRect(shapeRect.width(), shapeRect.height());
 
-	switch (sp->_spriteType) {
+	switch (spriteType) {
 	case kRectangleSprite:
 		Graphics::drawFilledRect(fillRect, sp->_foreColor, Graphics::macDrawPixel, &pd);
 		break;
@@ -706,7 +730,6 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, sp->_foreColor, false, Graphics::macDrawPixel, &pd);
 		break;
 	case kCastMemberSprite: 		// Face kit D3
-		// FIXME. Check
 		Graphics::drawFilledRect(fillRect, sp->_foreColor, Graphics::macDrawPixel, &pd);
 		break;
 	default:

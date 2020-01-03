@@ -282,6 +282,18 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_ink = static_cast<InkType>(_fillType & 0x3f);
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
+	} else if (version == 4) {
+		flags = 0;
+		unk1 = stream.readByte();
+		_shapeType = static_cast<ShapeType>(stream.readByte());
+		_initialRect = Score::readRect(stream);
+		_pattern = stream.readUint16BE();
+		_fgCol = (uint8)stream.readByte();
+		_bgCol = (uint8)stream.readByte();
+		_fillType = stream.readByte();
+		_ink = static_cast<InkType>(_fillType & 0x3f);
+		_lineThickness = stream.readByte();
+		_lineDirection = stream.readByte();
 	} else {
 		flags = stream.readByte();
 		unk1 = stream.readByte();

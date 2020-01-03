@@ -52,10 +52,10 @@ enum ScriptType {
 };
 
 enum ShapeType {
-	kShapeRectangle,
-	kShapeRoundRect,
-	kShapeOval,
-	kShapeLine
+	kShapeRectangle = 1,
+	kShapeRoundRect = 2,
+	kShapeOval = 3,
+	kShapeLine = 4
 };
 
 enum TextType {
