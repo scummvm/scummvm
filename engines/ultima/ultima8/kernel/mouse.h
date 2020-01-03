@@ -25,7 +25,7 @@
 
 #include "common/rect.h"
 #include "common/stack.h"
-#include "ultima/shared/core/events.h"
+#include "ultima/shared/engine/events.h"
 #include "ultima/ultima8/graphics/texture.h"
 
 namespace Ultima {

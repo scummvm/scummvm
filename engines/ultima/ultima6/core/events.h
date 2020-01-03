@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_CORE_EVENT_H
 #define ULTIMA6_CORE_EVENT_H
 
-#include "ultima/shared/core/events.h"
+#include "ultima/shared/engine/events.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/misc/call_back.h"

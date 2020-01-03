@@ -26,7 +26,7 @@
 #include "common/translation.h"
 #include "gui/saveload.h"
 
-#include "ultima/shared/core/events.h"
+#include "ultima/shared/engine/events.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/misc/pent_include.h"
 

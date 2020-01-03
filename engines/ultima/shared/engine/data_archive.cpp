@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/shared/core/data_archive.h"
+#include "ultima/shared/engine/data_archive.h"
 #include "common/file.h"
 #include "common/translation.h"
 #include "common/unzip.h"
