@@ -2042,6 +2042,22 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "51c1ead1163e19a2de8f121c39df7a76", 200764100},
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO_KQ7 },
+		
+	// King's Quest 7 - Russian DOS (SoftClub official translation)
+	// VERSION file reports "2.1b", provided by trcpman in Trac #11302
+	{"kq7", "", {
+		{"resource.map", 0, "dd1504ee0274e4e3b8447b25137136df", 18709},
+		{"resource.000", 0, "e6cee6c1ddb1e73e8c25d8f2a9f508ff", 200873632},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_KQ7 },
+
+	// King's Quest 7 - Russian Windows (SoftClub official translation)
+	// VERSION file reports "2.1b", provided by trcpman in Trac #11302
+	{"kq7", "", {
+		{"resource.map", 0, "dd1504ee0274e4e3b8447b25137136df", 18709},
+		{"resource.000", 0, "e6cee6c1ddb1e73e8c25d8f2a9f508ff", 200873632},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO_KQ7 },
 
 	// King's Quest 7 - English DOS Non-Interactive Demo
 	// SCI interpreter version 2.100.002
