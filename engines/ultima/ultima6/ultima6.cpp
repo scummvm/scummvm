@@ -118,8 +118,8 @@ bool Ultima6Engine::initialize() {
 
 	GUI *gui = new GUI(_config, _screen);
 
-	ConsoleInit(_config, _screen, gui, 320, 200);
-	ConsoleAddInfo("\n ScummVM Nuvie: ver 0.5 rev 1927 \n");
+	ConsoleInit(_config, _screen, gui, _screen->get_width(), _screen->get_height());
+	ConsoleAddInfo("ScummVM Nuvie");
 	ConsoleAddInfo("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
 
 	if (showVirtueMsg) {
