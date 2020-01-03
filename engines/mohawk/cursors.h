@@ -27,7 +27,7 @@
 
 namespace Common {
 class MacResManager;
-class NEResources;
+class WinResources;
 class SeekableReadStream;
 class String;
 }
@@ -125,19 +125,6 @@ private:
 
 #endif // ENABLE_MYST
 
-// The cursor manager for NE EXE's
-class NECursorManager : public CursorManager {
-public:
-	explicit NECursorManager(const Common::String &appName);
-	~NECursorManager() override;
-
-	void setCursor(uint16 id) override;
-	bool hasSource() const override { return _exe != nullptr; }
-
-private:
-	Common::NEResources *_exe;
-};
-
 // The cursor manager for Mac applications
 class MacCursorManager : public CursorManager {
 public:
@@ -166,14 +153,16 @@ private:
 	MohawkArchive *_sysArchive;
 };
 
-// The cursor manager for PE EXE's
-class PECursorManager : public CursorManager {
+// The cursor manager for Windows EXE's
+class WinCursorManager : public CursorManager {
 public:
-	explicit PECursorManager(const Common::String &appName);
-	~PECursorManager() override;
+	~WinCursorManager() override;
 
 	void setCursor(uint16 id) override;
 	bool hasSource() const override { return !_cursors.empty(); }
+
+protected:
+	void loadCursors(Common::WinResources *exe);
 
 private:
 	struct CursorItem {
@@ -182,6 +171,18 @@ private:
 	};
 
 	Common::Array<CursorItem> _cursors;
+};
+
+// The cursor manager for NE EXE's
+class NECursorManager : public WinCursorManager {
+public:
+	explicit NECursorManager(const Common::String &appName);
+};
+
+// The cursor manager for PE EXE's
+class PECursorManager : public WinCursorManager {
+public:
+	explicit PECursorManager(const Common::String &appName);
 };
 
 } // End of namespace Mohawk
