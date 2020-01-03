@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2019-12-31 23:45+0000\n"
+"PO-Revision-Date: 2020-01-04 01:01+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/prince/"
 "prince/ru/>\n"
@@ -7987,23 +7987,23 @@ msgstr "HERO: Теперь я вообще ничего не понимаю!"
 
 #: dialog0260.txt:2
 msgid "HERO: Jesteś śliczna!"
-msgstr "HERO: Ты прекрасен!"
+msgstr "HERO: Ты прекрасна!"
 
 #: dialog0260.txt:3
 msgid "HERO: Jesteś ...śliczna!"
-msgstr "HERO: Это ты сама прекрасна!"
+msgstr "HERO: Ты... прекрасна!"
 
 #: dialog0260.txt:4
 msgid "HERO: Jesteś..."
-msgstr "HERO: А ты..."
+msgstr "HERO: Ты..."
 
 #: dialog0260.txt:5
 msgid "OTHER: Śliczna."
-msgstr "OTHER: Хорошо..."
+msgstr "OTHER: Прекрасна."
 
 #: dialog0260.txt:6
 msgid "OTHER: Właśnie dlatego ją nosiłam."
-msgstr "OTHER: Вот поэтому я тебя и встретил..."
+msgstr "OTHER: Вот поэтому я её и носила."
 
 #: dialog0260.txt:7
 msgid "OTHER: Jestem córką króla z południa,|na imię mi Shandria."
@@ -8047,7 +8047,7 @@ msgstr "OTHER: ... мой друг?"
 
 #: dialog0261.txt:5
 msgid "HERO: Teraz to przyjacielu...."
-msgstr "HERO: Просто мой друг."
+msgstr "HERO: Ага, теперь я друг..."
 
 #: dialog0261.txt:6
 msgid "HERO: Ta grzesznica twierdzi, że przed przydzieleniem|do celi musi koniecznie porozmawiać z Lucyferem."
