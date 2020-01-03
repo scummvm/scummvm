@@ -270,7 +270,7 @@ bool Game::loadGame(Script *s) {
 	game_map->loadMap(tile_manager, obj_manager);
 	egg_manager->set_obj_manager(obj_manager);
 
-	ConsoleAddInfo("Loading actor data.\n");
+	ConsoleAddInfo("Loading actor data.");
 	actor_manager = new ActorManager(config, game_map, tile_manager, obj_manager, clock);
 
 	game_map->set_actor_manager(actor_manager);

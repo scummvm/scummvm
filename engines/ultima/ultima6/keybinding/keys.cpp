@@ -654,7 +654,7 @@ void KeyBinder::LoadFromFile(const char *filename) {
 
 	Flush();
 
-	ConsoleAddInfo("Loading keybindings from file %s\n", filename);
+	ConsoleAddInfo("Loading keybindings from file %s", filename);
 	LoadFromFileInternal(filename);
 }
 
@@ -679,10 +679,10 @@ void KeyBinder::LoadGameSpecificKeys() {
 	else
 		key_path = key_path_str.c_str();
 	if (fileExists(key_path)) {
-		ConsoleAddInfo("Loading %s\n", key_path);
+		ConsoleAddInfo("Loading %s", key_path);
 		LoadFromFileInternal(key_path);
 	} else // These aren't critical so failing to load doesn't matter much
-		ConsoleAddInfo("Couldn't find $s\n", key_path);
+		ConsoleAddInfo("Couldn't find $s", key_path);
 }
 
 void KeyBinder::LoadFromPatch() { // FIXME default should probably be system specific
@@ -691,7 +691,7 @@ void KeyBinder::LoadFromPatch() { // FIXME default should probably be system spe
 
 	config->value(config_get_game_key(config) + "/patch_keys", PATCH_KEYS, "./patchkeys.txt");
 	if (fileExists(PATCH_KEYS.c_str())) {
-		ConsoleAddInfo("Loading patch keybindings\n");
+		ConsoleAddInfo("Loading patch keybindings");
 		LoadFromFileInternal(PATCH_KEYS.c_str());
 	}
 }
