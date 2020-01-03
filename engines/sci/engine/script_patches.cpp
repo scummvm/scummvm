@@ -3557,6 +3557,35 @@ static const uint16 gk2XaverBlackWolfkPatch[] = {
 	PATCH_END
 };
 
+// Chapter 4 has a bug in many versions of GK2 that is effectively a deadend.
+//  Asking Georg about "Ludwig's letter to the Conductor" is required to finish
+//  the chapter. This topic becomes available after looking at the "Ludwig and
+//  Wagner" plaque in Herrenchiemsee and then clicking again to read it aloud.
+//  The problem is that the rest of the game only cares about looking at the 
+//  plaque. If Herrenchiemsee is completed without reading the plaque then the
+//  Hint feature claims everything is done and the player appears to be stuck.
+//
+// We fix this as Sierra did by making Georg's letter topic available upon just
+//  looking at the plaque, which is consistent with the rest of the scripts.
+//  Although Sierra advertised this fix in the readme for GK2PAT 1.11, the patch
+//  file seems to be missing, but appears in later versions and the GOG release.
+//
+// Applies to: English PC 1.0, 1.1, 1.11 Patch, Mac
+// Responsible method: Heap in script 8520
+static const uint16 gk2GeorgLetterTopicSignature[] = {
+	SIG_MAGICDWORD,             // tLtr2Conductor
+	SIG_UINT16(0x0211),         // sceneNum = 529
+	SIG_UINT16(0x012a),         // flagNum = 298
+	SIG_UINT16(0x0283),         // readyFlagNum = 643
+	SIG_END
+};
+
+static const uint16 gk2GeorgLetterTopicPatch[] = {
+	PATCH_ADDTOOFFSET(+4),
+	PATCH_UINT16(0x026f),       // readyFlagNum = 623
+	PATCH_END
+};
+
 // In early versions of GK2, clicking on the holy water basket after using the
 //  holy water locks up the game. The script is supposed to test the flag that's
 //  set when getting the water but some code mistakenly tests inventory instead.
@@ -3660,6 +3689,7 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,  1020, "fix holy water lockup",                               2, gk2HolyWaterLockupSignature,       gk2HolyWaterLockupPatch },
 	{  true,  3210, "fix police station deadend",                          1, gk2PoliceStationDeadendSignature,  gk2PoliceStationDeadendPatch },
 	{  true,  4320, "fix xaver black wolf topic",                          1, gk2XaverBlackWolfSignature,        gk2XaverBlackWolfkPatch },
+	{  true,  8520, "fix georg letter topic",                              1, gk2GeorgLetterTopicSignature,      gk2GeorgLetterTopicPatch },
 	{  true,  8616, "fix wagner painting message",                         2, gk2WagnerPaintingMessageSignature, gk2WagnerPaintingMessagePatch },
 	{  true,  8617, "fix wagner painting message",                         2, gk2WagnerPaintingMessageSignature, gk2WagnerPaintingMessagePatch },
 	{  true, 64990, "increase number of save games (1/2)",                 1, sci2NumSavesSignature1,            sci2NumSavesPatch1 },
