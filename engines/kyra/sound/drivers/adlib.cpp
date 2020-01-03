@@ -245,8 +245,9 @@ void AdLibDriver::setupPrograms() {
 	// next sound (with a lower priority) starts which will cause that sound to be skipped. We simply
 	// restart incoming sounds during stop sound execution.
 	// UPDATE: This stilly applies after introduction of the _programQueue.
+	// UPDATE: This can also happen with the HOF main menu, so I commented out the version < 3 limitation.
 	QueueEntry retrySound;
-	if (_version < 3 && _programQueue[_programQueueStart].id == 0)
+	if (/*_version < 3 &&*/ _programQueue[_programQueueStart].id == 0)
 		_retrySounds = true;
 	else if (_retrySounds)
 		retrySound = _programQueue[_programQueueStart];
