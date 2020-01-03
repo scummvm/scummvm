@@ -60,7 +60,6 @@ Converse::Converse() {
 	npc = NULL;
 	npc_num = 0;
 	script_num = 0;
-	name = desc = NULL;
 	src = NULL;
 	src_num = 0;
 
@@ -129,14 +128,6 @@ void Converse::reset() {
 		script = NULL;
 	}
 
-	if (name) {
-		free(name);
-		name = NULL;
-	}
-	if (desc) {
-		free(desc);
-		desc = NULL;
-	}
 	if (allowed_input) {
 		free(allowed_input);
 		allowed_input = NULL;
@@ -514,8 +505,8 @@ const char *Converse::npc_name(uint8 num) {
 //    if(actors->get_actor(num))
 //        actors->get_actor(num)->set_name(name);
 
-	if ((num == npc_num) && name) // use NPC name
-		strncpy(aname, name, 15);
+	if ((num == npc_num) && !_name.empty()) // use NPC name
+		strncpy(aname, _name.c_str(), 15);
 	else {                            // or load another script
 //        uint32 temp_num = num;
 		num = load_conv(get_script_num(num)); // get idx number; won't actually reload file
@@ -569,7 +560,7 @@ bool Converse::override_input() {
 		in_str = "bye";
 	else if (in_str == "look") {
 		print("You see ");
-		print(desc);
+		print(_desc.c_str());
 		script->seek(script->pos() - 1); // back to ASK command
 	} else if (overide_cheat && in_str == "join") {
 		if (Game::get_game()->get_game_type() == NUVIE_GAME_U6 // altars and statues
@@ -647,6 +638,7 @@ ConvScript::ConvScript(U6Lib_n *s, uint32 idx) {
 	cpy = NULL;
 
 	read_script();
+
 	rewind();
 }
 

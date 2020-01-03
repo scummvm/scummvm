@@ -199,6 +199,14 @@ public:
 	}
 
 	/**
+	 * Append a given character a number of times to the string
+	 */
+	void append(size_t n, char c) {
+		string str(n, c);
+		*this += str;
+	}
+
+	/**
 	 * Append another string to this one
 	 */
 	void append(const string &str, size_t size = npos) {

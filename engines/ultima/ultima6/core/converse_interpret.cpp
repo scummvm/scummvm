@@ -283,7 +283,7 @@ string ConverseInterpret::get_formatted_text(const char *c_str) {
 			if (!strcmp(symbol, "$G")) // gender title
 				output.append(converse->player->get_gender_title());
 			else if (!strcmp(symbol, "$N")) // npc name
-				output.append(converse->name);
+				output.append(converse->_name.c_str());
 			else if (!strcmp(symbol, "$P")) // player name
 				output.append(converse->player->get_name());
 			else if (!strcmp(symbol, "$T")) // time of day
@@ -762,12 +762,12 @@ bool ConverseInterpret::op(stack<converse_typed_value> &i) {
 			DEBUG(0, LEVEL_WARNING,
 			      "Converse: npc number inVal script (%d) does not"
 			      " match actor number (%d)\n", v[0], converse->npc_num);
-		converse->name = scumm_strdup(get_text().c_str()); // collected
+		converse->_name = get_text(); // collected
 		break;
 	case U6OP_SLOOK: // 0xf1, description follows
-		converse->desc = scumm_strdup(get_formatted_text(get_text().c_str()).c_str()); // collected
+		converse->_desc = get_formatted_text(get_text().c_str()); // collected
 		converse->print("\nYou see ");
-		converse->print(converse->desc);
+		converse->print(converse->_desc.c_str());
 		converse->print("\n");
 		break;
 	case U6OP_SCONVERSE: // 0xf2
