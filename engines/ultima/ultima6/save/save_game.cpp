@@ -46,6 +46,7 @@
 #include "ultima/ultima6/core/weather.h"
 #include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/core/events.h"
+#include "ultima/ultima6/ultima6.h"
 #include "common/system.h"
 #include "common/savefile.h"
 
@@ -54,6 +55,8 @@ namespace Ultima6 {
 
 #define OBJLIST_FILENAME "savegame/objlist"
 #define OBJBLK_FILENAME  "savegame/objblkxx"
+#define GAME_ID(GT) ((GT == GAME_SAVAGE_EMPIRE) ? MKTAG16('S', 'E') : \
+	((GT == GAME_MARTIAN_DREAMS) ? MKTAG16('M', 'D') : MKTAG16('U', '6')))
 
 SaveGame::SaveGame(Configuration *cfg) {
 	config = cfg;
@@ -294,10 +297,8 @@ bool SaveGame::load(const Common::String &filename) {
 	uint32 bytes_read;
 	NuvieIOFileRead loadFile;
 	unsigned char *data;
-	int game_type;
+	GameId gameType = g_engine->getGameId();
 	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
-
-	config->value("config/GameType", game_type);
 
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(filename);
 	if (!loadFile.open(saveFile))
@@ -306,7 +307,7 @@ bool SaveGame::load(const Common::String &filename) {
 	ConsoleAddInfo("Loading Game: %s", filename.c_str());
 	DEBUG(0, LEVEL_NOTIFICATION, "Loading Game: %s\n", filename.c_str());
 
-	if (!check_version(&loadFile, game_type)) {
+	if (!check_version(&loadFile, GAME_ID(gameType))) {
 		DEBUG(0, LEVEL_NOTIFICATION, "version incorrect\n");
 		return false;
 	}
@@ -346,11 +347,10 @@ bool SaveGame::load(const Common::String &filename) {
 bool SaveGame::save(const Common::String &filename, const Common::String &save_description) {
 	uint8 i;
 	NuvieIOFileWrite saveFile;
-	int game_type;
-	char game_tag[3];
+	GameId gameType = g_engine->getGameId();
+	char gameTag[3];
 	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
 
-	config->value("config/GameType", game_type);
 	bool newgame;
 	config->value("config/newgame", newgame, false);
 	if (newgame) {
@@ -360,22 +360,8 @@ bool SaveGame::save(const Common::String &filename, const Common::String &save_d
 
 	saveFile.open(filename);
 
-	switch (game_type) {
-	case NUVIE_GAME_U6 :
-		strcpy(game_tag, "U6");
-		break;
-
-	case NUVIE_GAME_MD :
-		strcpy(game_tag, "MD");
-		break;
-
-	case NUVIE_GAME_SE :
-		strcpy(game_tag, "SE");
-		break;
-	}
-
 	saveFile.write2(SAVE_VERSION);
-	saveFile.writeBuf((const unsigned char *)game_tag, 2);
+	saveFile.write2(GAME_ID(gameType));
 
 	obj_manager->save_inventories(&saveFile);
 

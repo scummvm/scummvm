@@ -84,6 +84,13 @@ public:
     uint32 getFeatures() const;
 
     /**
+     * Returns the game type being played
+     */
+    GameId getGameId() const {
+        return _gameDescription->gameId;
+    }
+
+    /**
      * Returns the filename for a savegame given it's slot
      */
     Common::String getSaveFilename(int slotNumber) {

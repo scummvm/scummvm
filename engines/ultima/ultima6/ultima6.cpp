@@ -296,14 +296,21 @@ Common::Error Ultima6Engine::saveGameState(int slot, const Common::String &desc)
 }
 
 bool Ultima6Engine::journeyOnwards() {
-	bool newsave = false;
+	// If savegame selected from ScummVM launcher, load it now
+	if (ConfMan.hasKey("save_slot")) {
+		int saveSlot = ConfMan.hasKey("save_slot");
+		return loadGameState(saveSlot).getCode() == Common::kNoError;
+	}
 
+	// Check for new game needed
+	bool newsave = false;
 	_config->value("config/newgame", newsave, false);
 
 	if (newsave) {
 		return _savegame->load_new();
 	}
 
+	// Otherwise load most recent savegame
 	return loadLatestSave();
 }
 
@@ -352,13 +359,8 @@ bool Ultima6Engine::quickSave(int saveSlot, bool isLoad) {
 }
 
 bool Ultima6Engine::playIntro() {
-	bool skip_intro;
-
-	string key = config_get_game_key(_config);
-	key.append("/skip_intro");
-	_config->value(key, skip_intro, false);
-
-	if (skip_intro)
+	if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") >= 0)
+		// Loading a savegame from the launcher, so skip intro
 		return true;
 
 	if (_script->play_cutscene("/intro.lua")) {
