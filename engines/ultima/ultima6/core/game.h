@@ -142,7 +142,6 @@ private:
 	bool _playing;
 
 public:
-
 	Game(Configuration *cfg, Events *evt, Screen *scr, GUI *g, nuvie_game_t type, SoundManager *sm);
 	~Game();
 
@@ -155,6 +154,9 @@ public:
 	void update_once_display();
 	void update_until_converse_finished();
 
+	bool isLoaded() const {
+		return script != nullptr;
+	}
 	GamePauseState get_pause_flags()            {
 		return (pause_flags);
 	}
