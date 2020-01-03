@@ -241,7 +241,7 @@ bool Ultima6Engine::checkDataDir() {
 }
 
 bool Ultima6Engine::canLoadGameStateCurrently(bool isAutosave) {
-	if (_events == nullptr)
+	if (_game == nullptr || !_game->isLoaded())
 		return false;
 
 	// Note that to mimic what Nuvie originally did, any attempt to try and open
