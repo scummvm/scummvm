@@ -64,6 +64,9 @@ private:
         Common::IgnoreCase_EqualTo> _localKeys;
 	std::string _configFilename;
     bool _configChanged;
+
+    // Sets default configurations common to both enhanced and unhenaced
+    void setCommonDefaults(GameId gameType);
 public:
 	Configuration();
 	~Configuration();
@@ -71,8 +74,14 @@ public:
 	// read config file. Multiple files may be read. Order is important.
 	bool readConfigFile(std::string fname, std::string root, bool readonly = true);
 
-    // sets up defaults if ScummVM doesn't already have them
-    void setScummVMDefaultsIfNeeded(GameId gameType);
+    // Returns true if default settings for game have previously been set
+    bool isDefaultsSet() const;
+
+    // sets up unenhanced version defaults
+    void setUnenhancedDefaults(GameId gameType);
+
+    // sets up enhanced version defaults
+    void setEnhancedDefaults(GameId gameType);
 
 	// write all (writable) config files
 	void write();

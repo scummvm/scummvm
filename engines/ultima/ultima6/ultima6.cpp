@@ -83,7 +83,7 @@ bool Ultima6Engine::initialize() {
 		return false;
 
 	// Get which game to play
-	switch (_gameDescription->gameId) {
+	switch (getGameId()) {
 	case GAME_ULTIMA6:
 		gameType = NUVIE_GAME_U6;
 		break;
@@ -188,7 +188,13 @@ void Ultima6Engine::initConfig() {
 	if (Common::File::exists("nuvie.cfg"))
 		(void)_config->readConfigFile("nuvie.cfg", "config");
 
-	_config->setScummVMDefaultsIfNeeded(_gameDescription->gameId);
+	if (!_config->isDefaultsSet()) {
+		if (isEnhanced())
+			_config->setEnhancedDefaults(_gameDescription->gameId);
+		else
+			_config->setUnenhancedDefaults(_gameDescription->gameId);
+	}
+
 }
 
 void Ultima6Engine::assignGameConfigValues(uint8 gameType) {

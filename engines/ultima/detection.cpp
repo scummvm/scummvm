@@ -37,6 +37,8 @@
 static const PlainGameDescriptor ULTIMA_GAMES[] = {
 #ifdef ENABLE_ULTIMA6
 	{ "ultima6", "Ultima VI - The False Prophet" },
+	{ "ultima6_enh", "Ultima VI - The False Prophet - Enhanced" },
+
 #endif
 #ifdef ENABLE_ULTIMA8
 	{ "ultima8", "Ultima 8 - Pagan" },
@@ -83,6 +85,7 @@ bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 		switch (gd->gameId) {
 #ifdef ENABLE_ULTIMA6
 		case Ultima::GAME_ULTIMA6:
+		case Ultima::GAME_ULTIMA6_ENHANCED:
 			*engine = new Ultima::Ultima6::Ultima6Engine(syst, gd);
 			break;
 #endif
