@@ -114,7 +114,7 @@ class Converse {
 	Actor *npc;
 	uint8 npc_num;
 	uint8 script_num; //this could differ from npc_num when talking to guards or wisps etc.
-	char *name, *desc;
+	std::string _name, _desc;
 
 	bool active; // running npc script? (either paused or unpaused)
 	bool need_input; // waiting for text input
