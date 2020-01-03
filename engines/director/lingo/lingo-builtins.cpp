@@ -1663,7 +1663,17 @@ void LB::b_true(int nargs) {
 }
 
 void LB::b_version(int nargs) {
-	g_lingo->push(Datum(g_director->getVersion()));
+	switch (g_director->getVersion()) {
+	case 3:
+		g_lingo->push(Datum(new Common::String("3.1.1"))); // Mac
+		break;
+	case 4:
+		g_lingo->push(Datum(new Common::String("4.0"))); // Mac
+		break;
+	default:
+		error("Unsupported Director for 'version'");
+		break;
+	}
 }
 
 ///////////////////
