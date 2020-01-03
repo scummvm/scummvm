@@ -87,7 +87,16 @@ public:
      * Returns the game type being played
      */
     GameId getGameId() const {
-        return _gameDescription->gameId;
+        return (_gameDescription->gameId == GAME_ULTIMA6_ENHANCED) ?
+            GAME_ULTIMA6 : _gameDescription->gameId;
+    }
+
+    /**
+     * Returns true if the game is running an enhanced version
+     * as compared to the original game
+     */
+    bool isEnhanced() const {
+        return _gameDescription->gameId == GAME_ULTIMA6_ENHANCED;
     }
 
     /**

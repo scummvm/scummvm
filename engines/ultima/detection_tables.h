@@ -38,6 +38,20 @@ static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_ULTIMA6
 	},
 
+	// GOG Ultima 6 - Enhanced
+	{
+		{
+			"ultima6_enh",
+			nullptr,
+			AD_ENTRY1s("converse.a", "5065716423ef1389e3f7b4946d815c26", 162615),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			0,
+			GUIO0()
+		},
+		GAME_ULTIMA6_ENHANCED
+	},
+
 #endif
 
 #ifdef ENABLE_ULTIMA8

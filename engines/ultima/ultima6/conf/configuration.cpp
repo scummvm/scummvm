@@ -296,19 +296,12 @@ void Configuration::getSubkeys(KeyTypeList &ktl, std::string basekey) {
 	}
 }
 
-void Configuration::setScummVMDefaultsIfNeeded(GameId gameType) {
-	if (ConfMan.hasKey("config/video/screen_width"))
-		return;
+bool Configuration::isDefaultsSet() const {
+	return ConfMan.hasKey("config/video/screen_width");
+}
 
-	set("config/video/fullscreen", "no");
+void Configuration::setCommonDefaults(GameId gameType) {
 	set("config/video/non_square_pixels", "no");
-	set("config/video/screen_width", 320);
-	set("config/video/screen_height", 200);
-	set("config/video/game_width", 320);
-	set("config/video/game_height", 200);
-
-	set("config/video/game_style", "original");
-	set("config/video/game_position", "center");
 
 #ifdef TODO
 	set("config/audio/enabled", true);
@@ -323,22 +316,17 @@ void Configuration::setScummVMDefaultsIfNeeded(GameId gameType) {
 	set("config/audio/stop_music_on_group_change", true);
 
 	set("config/input/enable_doubleclick", true);
-	set("config/input/doubleclick_opens_containers", false);
-	set("config/input/party_view_targeting", false);
-	set("config/input/new_command_bar", false);
 	set("config/input/enabled_dragging", true);
 	set("config/input/look_on_left_click", true);
 	set("config/input/walk_with_left_button", true);
 	set("config/input/direction_selects_target", true);
-	set("config/input/interface", "normal");
 
-	set("config/general/lighting", "original");
 	set("config/general/dither_mode", "none");
 	set("config/general/enable_cursors", true);
-	set("config/general/show_console", true);
-	set("config/general/converse_gump", "default");
-	set("config/general/use_text_gumps", false);
 	set("config/general/party_formation", "standard");
+
+	// Only show the startup console if in ScummVM debug mode
+	set("config/general/show_console", gDebugLevel > 0);
 
 	set("config/cheats/enabled", false);
 	set("config/cheats/enable_hackmove", false);
@@ -397,6 +385,46 @@ void Configuration::setScummVMDefaultsIfNeeded(GameId gameType) {
 	//	set("config/newgamedata/str", 0xf);
 	//	set("config/newgamedata/dex", 0xf);
 	//	set("config/newgamedata/int", 0xf);
+}
+
+void Configuration::setUnenhancedDefaults(GameId gameType) {
+	setCommonDefaults(gameType);
+
+	set("config/video/screen_width", 320);
+	set("config/video/screen_height", 200);
+	set("config/video/game_width", 320);
+	set("config/video/game_height", 200);
+	set("config/video/game_style", "original");
+	set("config/video/game_position", "center");
+
+	set("config/general/converse_gump", "default");
+	set("config/general/lighting", "original");
+	set("config/general/use_text_gumps", false);
+
+	set("config/input/doubleclick_opens_containers", false);
+	set("config/input/party_view_targeting", false);
+	set("config/input/new_command_bar", false);
+	set("config/input/interface", "normal");
+}
+
+void Configuration::setEnhancedDefaults(GameId gameType) {
+	setCommonDefaults(gameType);
+
+	set("config/video/screen_width", 640);
+	set("config/video/screen_height", 400);
+	set("config/video/game_width", 640);
+	set("config/video/game_height", 400);
+	set("config/video/game_style", "original+_full_map");
+	set("config/video/game_position", "center");
+
+	set("config/general/converse_gump", "yes");
+	set("config/general/lighting", "smooth");
+	set("config/general/use_text_gumps", true);
+
+	set("config/input/doubleclick_opens_containers", true);
+	set("config/input/party_view_targeting", true);
+	set("config/input/new_command_bar", true);
+	set("config/input/interface", "fullscreen");
 }
 
 } // End of namespace Ultima6
