@@ -11,13 +11,16 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed buggy savestate in some scenes.
 
  Kyra:
-    - Fixed monster random item chance in EOB1.
-	- Fixed stone skin spell warning.
-	- Fixed Sound issues in the Legend of Kyrandia 2.
+   - Fixed monster random item chance in EOB1.
+   - Fixed stone skin spell warning.
+   - Fixed Sound issues in the Legend of Kyrandia 2.
 
  SCI:
-   - Numerous game script fixes.
+   - Numerous game script fixes in CAMELOT, ECO2, GK1, GK2,
+     KQ7, PHANT1, PQ1VGA, QFG3, QFG4, SQ5 and SQ6.
+   - Support for Phantasmagoria 1 censored mode.
    - Support for Polish LSL7.
+   - Support for Italian GK2.
 
  SCUMM:
    - Added support for Pajama2 GB.
