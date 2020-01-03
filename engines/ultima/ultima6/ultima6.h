@@ -73,13 +73,13 @@ public:
 	 * Indicates whether a game state can be loaded.
 	 * @param isAutosave	Flags whether it's an autosave check
 	 */
-	virtual bool canLoadGameState(bool isAutosave = false) override;
+	virtual bool canLoadGameStateCurrently(bool isAutosave) override;
 
 	/**
 	 * Indicates whether a game state can be saved.
 	 * @param isAutosave	Flags whether it's an autosave check
 	 */
-	virtual bool canSaveGameState(bool isAutosave = false) override;
+	virtual bool canSaveGameStateCurrently(bool isAutosave) override;
 
 	/**
 	 * Load a game state.
@@ -92,9 +92,10 @@ public:
 	 * Save a game state.
 	 * @param slot	the slot into which the savestate should be stored
 	 * @param desc	a description for the savestate, entered by the user
+	 * @param isAutosave If true, autosave is being created
 	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 
 	/**
 	 * Either starts the most recently saved game, or falls back on starting a new game

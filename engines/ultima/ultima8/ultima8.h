@@ -311,15 +311,26 @@ public:
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	virtual bool canLoadGameState(bool isAutosave = false) { return true; }
+	virtual bool canLoadGameStateCurrently(bool isAutosave = false) override { return true; }
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	virtual bool canSaveGameState(bool isAutosave = false) override;
+	virtual bool canSaveGameStateCurrently(bool isAutosave = false) override;
 
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	/**
+	 * Load a game state
+	 */
+	virtual Common::Error loadGameState(int slot) override;
+
+	/**
+	 * Save a game state.
+	 * @param slot	the slot into which the savestate should be stored
+	 * @param desc	a description for the savestate, entered by the user
+	 * @param isAutosave If true, autosave is being created
+	 * @return returns kNoError on success, else an error code.
+	 */
+	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 
 	bool saveGame();
 

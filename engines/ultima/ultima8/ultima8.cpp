@@ -1293,7 +1293,7 @@ void Ultima8Engine::writeSaveInfo(ODataSource *ods) {
 }
 
 bool Ultima8Engine::saveGame() {
-	if (!canSaveGameState())
+	if (!canSaveGameStateCurrently(false))
 		return false;
 
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
@@ -1312,14 +1312,14 @@ bool Ultima8Engine::saveGame() {
 		}
 
 		// Save the game
-		result = saveGameState(slot, desc).getCode() == Common::kNoError;
+		result = saveGameState(slot, desc, false).getCode() == Common::kNoError;
 	}
 
 	delete dialog;
 	return result;
 }
 
-bool Ultima8Engine::canSaveGameState(bool isAutosave) {
+bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 	if (desktopGump->FindGump<ModalGump>())
 		// Can't save when a modal gump is open
 		return false;
@@ -1332,7 +1332,7 @@ bool Ultima8Engine::canSaveGameState(bool isAutosave) {
 	return true;
 }
 
-Common::Error Ultima8Engine::saveGameState(int slot, const Common::String &desc) {
+Common::Error Ultima8Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	return saveGame(std::string::format("@save/%d", slot), desc) ?
 		Common::kNoError : Common::kWritingFailed;
 }

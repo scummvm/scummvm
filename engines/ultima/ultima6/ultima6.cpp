@@ -234,7 +234,7 @@ bool Ultima6Engine::checkDataDir() {
 	return true;
 }
 
-bool Ultima6Engine::canLoadGameState(bool isAutosave) {
+bool Ultima6Engine::canLoadGameStateCurrently(bool isAutosave) {
 	if (_events == nullptr)
 		return false;
 
@@ -264,8 +264,8 @@ bool Ultima6Engine::canLoadGameState(bool isAutosave) {
 	}
 }
 
-bool Ultima6Engine::canSaveGameState(bool isAutosave) {
-	if (!canLoadGameState(isAutosave))
+bool Ultima6Engine::canSaveGameStateCurrently(bool isAutosave) {
+	if (!canLoadGameStateCurrently(isAutosave))
 		return false;
 
 	// Further checks against saving
@@ -290,15 +290,25 @@ Common::Error Ultima6Engine::loadGameState(int slot) {
 	return _savegame->load(filename) ? Common::kNoError : Common::kReadingFailed;
 }
 
-Common::Error Ultima6Engine::saveGameState(int slot, const Common::String &desc) {
+Common::Error Ultima6Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::String filename = getSaveFilename(slot);
-	return _savegame->save(filename, desc) ? Common::kNoError : Common::kReadingFailed;
+	if (_savegame->save(filename, desc)) {
+		if (!isAutosave) {
+			MsgScroll *scroll = Game::get_game()->get_scroll();
+			scroll->display_string(_("\nGame Saved\n\n"));
+			scroll->display_prompt();
+		}
+
+		return Common::kNoError;
+	} else {
+		return Common::kReadingFailed;
+	}
 }
 
 bool Ultima6Engine::journeyOnwards() {
 	// If savegame selected from ScummVM launcher, load it now
 	if (ConfMan.hasKey("save_slot")) {
-		int saveSlot = ConfMan.hasKey("save_slot");
+		int saveSlot = ConfMan.getInt("save_slot");
 		return loadGameState(saveSlot).getCode() == Common::kNoError;
 	}
 
@@ -331,12 +341,12 @@ bool Ultima6Engine::quickSave(int saveSlot, bool isLoad) {
 	MsgScroll *scroll = _game->get_scroll();
 
 	if (isLoad) {
-		if (!canLoadGameStateCurrently())
+		if (!canLoadGameStateCurrently(false))
 			return false;
 
 		text = _("loading quick save %d");
 	} else {
-		if (!canSaveGameStateCurrently())
+		if (!canSaveGameStateCurrently(false))
 			return false;
 
 		text = _("saving quick save %d");
@@ -354,7 +364,7 @@ bool Ultima6Engine::quickSave(int saveSlot, bool isLoad) {
 		}
 	} else {
 		Common::String saveDesc = Common::String::format(_("Quicksave %03d"), saveSlot);
-		return saveGameState(saveSlot, saveDesc).getCode() == Common::kNoError;
+		return saveGameState(saveSlot, saveDesc, false).getCode() == Common::kNoError;
 	}
 }
 
