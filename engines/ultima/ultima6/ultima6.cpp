@@ -294,6 +294,11 @@ Common::Error Ultima6Engine::saveGameState(int slot, const Common::String &desc,
 	Common::String filename = getSaveFilename(slot);
 	if (_savegame->save(filename, desc)) {
 		if (!isAutosave) {
+			// Store which savegame was most recently saved
+			ConfMan.setInt("latest_save", slot);
+			ConfMan.flushToDisk();
+
+			// Display that the game was saved
 			MsgScroll *scroll = Game::get_game()->get_scroll();
 			scroll->display_string(_("\nGame Saved\n\n"));
 			scroll->display_prompt();
