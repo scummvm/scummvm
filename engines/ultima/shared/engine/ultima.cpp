@@ -20,9 +20,9 @@
  *
  */
 
-#include "ultima/shared/core/ultima.h"
-#include "ultima/shared/core/data_archive.h"
-#include "ultima/shared/core/events.h"
+#include "ultima/shared/engine/ultima.h"
+#include "ultima/shared/engine/data_archive.h"
+#include "ultima/shared/engine/events.h"
 #include "audio/mixer.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"

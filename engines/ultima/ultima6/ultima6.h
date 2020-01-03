@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_ULTIMA6_H
 #define ULTIMA6_ULTIMA6_H
 
-#include "ultima/shared/core/ultima.h"
+#include "ultima/shared/engine/ultima.h"
 #include "ultima/shared/std/string.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "common/archive.h"

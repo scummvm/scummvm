@@ -22,7 +22,7 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
-#include "ultima/shared/core/ultima.h"
+#include "ultima/shared/engine/ultima.h"
 #include "engines/metaengine.h"
 #include "common/system.h"
 

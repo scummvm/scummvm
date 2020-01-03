@@ -26,8 +26,8 @@
 #include "common/endian.h"
 #include "common/system.h"
 #include "engines/util.h"
-#include "ultima/shared/core/ultima.h"
-#include "ultima/shared/core/events.h"
+#include "ultima/shared/engine/ultima.h"
+#include "ultima/shared/engine/events.h"
 
 namespace Ultima {
 namespace Shared {

@@ -24,7 +24,7 @@
 #include "ultima/ultima8/filesys/savegame.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
-#include "ultima/shared/core/ultima.h"
+#include "ultima/shared/engine/ultima.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "graphics/thumbnail.h"

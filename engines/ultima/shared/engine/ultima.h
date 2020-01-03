@@ -24,8 +24,8 @@
 #define ULTIMA_SHARED_ULTIMA_H
 
 #include "ultima/detection.h"
-#include "Ultima/shared/core/debugger.h"
-#include "Ultima/shared/core/events.h"
+#include "ultima/shared/engine/debugger.h"
+#include "ultima/shared/engine/events.h"
 #include "common/archive.h"
 #include "common/random.h"
 #include "engines/engine.h"
