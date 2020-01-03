@@ -123,6 +123,9 @@ Game::Game(Configuration *cfg, Events *evt, Screen *scr, GUI *g, nuvie_game_t ty
 	armageddon = false;
 	ethereal = false;
 	free_balloon_movement = false;
+	converse_gump_width = 0;
+	min_converse_gump_width = 0;
+	force_solid_converse_bg = false;
 
 	config->value("config/cheats/enabled", cheats_enabled, false);
 	config->value("config/cheats/enable_hackmove", is_using_hackmove, false);
