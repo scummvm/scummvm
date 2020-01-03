@@ -133,27 +133,48 @@ public:
      * Indicates whether a game state can be loaded.
      * @param isAutosave	Flags whether it's an autosave check
      */
-    virtual bool canLoadGameState(bool isAutosave = false) = 0;
+    virtual bool canLoadGameStateCurrently(bool isAutosave) = 0;
 
     /**
      * Indicates whether a game state can be loaded.
      */
     virtual bool canLoadGameStateCurrently() override {
-        return canLoadGameState(false);
+        return canLoadGameStateCurrently(false);
     }
 
     /**
      * Indicates whether a game state can be saved.
      * @param isAutosave	Flags whether it's an autosave check
      */
-    virtual bool canSaveGameState(bool isAutosave = false) = 0;
+    virtual bool canSaveGameStateCurrently(bool isAutosave) = 0;
 
     /**
      * Indicates whether a game state can be saved.
      */
     virtual bool canSaveGameStateCurrently() override {
-        return canSaveGameState(false);
+        return canSaveGameStateCurrently(false);
     }
+
+    /**
+     * Save a game state.
+     * @param slot	the slot into which the savestate should be stored
+     * @param desc	a description for the savestate, entered by the user
+     * @param isAutosave If true, autosave is being created
+     * @return returns kNoError on success, else an error code.
+     */
+    virtual Common::Error saveGameState(int slot, const Common::String &desc) override {
+        return saveGameState(slot, desc, false);
+    }
+
+    /**
+     * Save a game state.
+     * @param slot	the slot into which the savestate should be stored
+     * @param desc	a description for the savestate, entered by the user
+     * @param isAutosave If true, autosave is being created
+     * @return returns kNoError on success, else an error code.
+     */
+    virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) = 0;
+
 };
 
 extern UltimaEngine *g_ultima;

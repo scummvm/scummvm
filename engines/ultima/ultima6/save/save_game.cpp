@@ -348,7 +348,6 @@ bool SaveGame::save(const Common::String &filename, const Common::String &save_d
 	uint8 i;
 	NuvieIOFileWrite saveFile;
 	GameId gameType = g_engine->getGameId();
-	char gameTag[3];
 	ObjManager *obj_manager = Game::get_game()->get_obj_manager();
 
 	bool newgame;
@@ -415,9 +414,6 @@ bool SaveGame::save_objlist() {
 	game->get_command_bar()->save(&objlist);
 
 	game->get_script()->call_save_game(&objlist);
-
-	scroll->display_string("\nGame Saved\n\n");
-	scroll->display_prompt();
 
 	return true;
 }

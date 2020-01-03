@@ -73,8 +73,8 @@ void UltimaEngine::GUIError(const Common::String &msg) {
 }
 
 bool UltimaEngine::autoSaveCheck(int lastSaveTime) {
-	if (shouldPerformAutoSave(lastSaveTime) && canSaveGameState(true)) {
-		saveGameState(0, _("Autosave"));
+	if (shouldPerformAutoSave(lastSaveTime) && canSaveGameStateCurrently(true)) {
+		saveGameState(0, _("Autosave"), true);
 		return true;
 	}
 
