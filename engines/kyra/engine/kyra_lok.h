@@ -170,7 +170,7 @@ protected:
 	void seq_makeBrandonWisp();
 	void seq_dispelMagicAnimation();
 	void seq_fillFlaskWithWater(int item, int type);
-	void seq_playDrinkPotionAnim(int item, int unk2, int flags);
+	void seq_playDrinkPotionAnim(int item, int makeFlaskEmpty, int flags);
 	void seq_brandonToStone();
 
 	// -> end fight
