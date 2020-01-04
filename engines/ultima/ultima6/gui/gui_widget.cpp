@@ -103,8 +103,7 @@ void GUI_Widget:: Delete(void) {
 void GUI_Widget::MoveRelative(int dx, int dy) {
 	std::list<GUI_Widget *>::iterator child;
 
-	area.left += dx;
-	area.top += dy;
+	area.translate(dx, dy);
 
 	for (child = children.begin(); child != children.end(); child++)
 		(*child)->MoveRelative(dx, dy);
