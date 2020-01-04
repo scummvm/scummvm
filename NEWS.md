@@ -11,9 +11,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed buggy savestate in some scenes.
 
  Kyra:
-   - Fixed monster random item chance in EOB1.
-   - Fixed stone skin spell warning.
-   - Fixed Sound issues in the Legend of Kyrandia 2.
+   - Fixed EOB1-Amiga ending sequence (which would play only if you achieved all bonus quests).
+   - Fixed monster random item drop chance in EOB1.
+   - Added handling for the secret potion in the Legend of Kyrandia 2.
+   - Fixed sound issues in the Legend of Kyrandia 2.
+   - Fixed minor graphics glitches in Legend of Kyrandia 1, EOB1 and EOB2-FM-TOWNS.
 
  SCI:
    - Numerous game script fixes in CAMELOT, ECO2, GK1, GK2,
