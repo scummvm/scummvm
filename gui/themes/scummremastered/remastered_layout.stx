@@ -554,6 +554,10 @@
 				<widget name = 'PluginsPath'
 						height = 'Globals.Line.Height'
 				/>
+				<widget name = 'PluginsPathClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
 			</layout>
 		</layout>
 	</dialog>

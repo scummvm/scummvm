@@ -78,6 +78,7 @@ enum {
 	kChooseExtraDirCmd		= 'chex',
 	kExtraPathClearCmd		= 'clex',
 	kChoosePluginsDirCmd	= 'chpl',
+	kPluginsPathClearCmd	= 'clpl',
 	kChooseThemeCmd			= 'chtf',
 	kUpdatesCheckCmd		= 'updc',
 	kKbdMouseSpeedChanged	= 'kmsc',
@@ -1465,6 +1466,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_extraPathClearButton = 0;
 #ifdef DYNAMIC_MODULES
 	_pluginsPath = 0;
+	_pluginsPathClearButton = 0;
 #endif
 	_curTheme = 0;
 	_rendererPopUpDesc = 0;
@@ -1649,6 +1651,8 @@ void GlobalOptionsDialog::build() {
 	else
 		new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _c("Plugins Path:", "lowres"), 0, kChoosePluginsDirCmd);
 	_pluginsPath = new StaticTextWidget(tab, "GlobalOptions_Paths.PluginsPath", _c("None", "path"));
+
+	_pluginsPathClearButton = addClearButton(tab, "GlobalOptions_Paths.PluginsPathClearButton", kPluginsPathClearCmd);
 #endif
 #endif
 
@@ -2271,6 +2275,11 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kSavePathClearCmd:
 		_savePath->setLabel(_("Default"));
 		break;
+#ifdef DYNAMIC_MODULES
+	case kPluginsPathClearCmd:
+		_pluginsPath->setLabel(_c("None", "path"));
+		break;
+#endif
 #ifdef USE_CLOUD
 #ifdef USE_SDL_NET
 	case kRootPathClearCmd:

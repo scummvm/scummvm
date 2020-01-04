@@ -269,6 +269,7 @@ protected:
 	ButtonWidget	 *_extraPathClearButton;
 #ifdef DYNAMIC_MODULES
 	StaticTextWidget *_pluginsPath;
+	ButtonWidget	 *_pluginsPathClearButton;
 #endif
 
 	//
