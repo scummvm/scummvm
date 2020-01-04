@@ -7,10 +7,12 @@ for i in *
 do
 	if test -d "$i" ; then
 		cd "$i"
-		bash $0 "$1/$i"
+		if [ "$(ls -A .)" ] ; then # directory is not empty
+			bash $0 "$1/$i"
+		fi
 		cd ..
 	else
-		echo -n $1/$i ; echo -ne "... \r"
+		echo -ne "$1/$i...                 \r"
 		macbinary encode "$i"
 		touch -r "$i" "$i.bin"
 		mv "$i.bin" "$i"
@@ -18,6 +20,6 @@ do
 done
 
 # on the top level we want to print a new line
-if test -z $1 ; then
+if test -z "$1" ; then
 	echo
 fi
