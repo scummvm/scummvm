@@ -121,9 +121,14 @@ uint16 Sprite::getPattern() {
 		return _castId;
 
 	case kCastMemberSprite:
-		// TODO. Check type being shape, and return its pattern
-		warning("Sprite::getPattern(): kCastMemberSprite");
-		return 0;
+		switch (_cast->_type) {
+		case kCastShape:
+			return ((ShapeCast *)_cast)->_pattern;
+			break;
+		default:
+			warning("Sprite::getPattern(): Unhandled cast type: %d", _cast->_type);
+			break;
+		}
 
 	default:
 		return 0;

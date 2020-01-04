@@ -661,6 +661,9 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	Sprite *sp = _sprites[spriteId];
 
 	byte spriteType = sp->_spriteType;
+	byte foreColor = sp->_foreColor;
+	byte backColor = sp->_backColor;
+	byte lineSize = sp->_lineSize + 1;
 	if (spriteType == kCastMemberSprite && sp->_cast != NULL) {
 		switch (sp->_cast->_type) {
 		case kCastShape:
@@ -677,11 +680,14 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 					spriteType = sc->_fillType ? kOvalSprite : kOutlinedOvalSprite;
 					break;
 				case kShapeLine:
-					spriteType = sc->_lineDirection == 6 ? kLineTopBottomSprite : kLineBottomTopSprite;
+					spriteType = sc->_lineDirection == 6 ? kLineBottomTopSprite : kLineTopBottomSprite;
 					break;
 				default:
 					break;
 				}
+				foreColor = sc->_fgCol;
+				backColor = sc->_bgCol;
+				lineSize = sc->_lineThickness;
 			}
 			break;
 		default:
@@ -700,37 +706,37 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	// No minus one on the pattern here! MacPlotData will do that for us!
 	//Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), 1, 1, sp->_backColor);
-	Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), sp->getPattern(), sp->_lineSize + 1, sp->_backColor);
+	Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), sp->getPattern(), lineSize, backColor);
 	Common::Rect fillRect(shapeRect.width(), shapeRect.height());
 
 	switch (spriteType) {
 	case kRectangleSprite:
-		Graphics::drawFilledRect(fillRect, sp->_foreColor, Graphics::macDrawPixel, &pd);
+		Graphics::drawFilledRect(fillRect, foreColor, Graphics::macDrawPixel, &pd);
 		break;
 	case kRoundedRectangleSprite:
-		Graphics::drawRoundRect(fillRect, 4, sp->_foreColor, true, Graphics::macDrawPixel, &pd);
+		Graphics::drawRoundRect(fillRect, 4, foreColor, true, Graphics::macDrawPixel, &pd);
 		break;
 	case kOvalSprite:
-		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, sp->_foreColor, true, Graphics::macDrawPixel, &pd);
+		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, foreColor, true, Graphics::macDrawPixel, &pd);
 		break;
 	case kLineTopBottomSprite:
-		Graphics::drawLine(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, sp->_foreColor, Graphics::macDrawPixel, &pd);
+		Graphics::drawLine(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, foreColor, Graphics::macDrawPixel, &pd);
 		break;
 	case kLineBottomTopSprite:
-		Graphics::drawLine(fillRect.left, fillRect.bottom, fillRect.right, fillRect.top, sp->_foreColor, Graphics::macDrawPixel, &pd);
+		Graphics::drawLine(fillRect.left, fillRect.bottom, fillRect.right, fillRect.top, foreColor, Graphics::macDrawPixel, &pd);
 		break;
 	case kOutlinedRectangleSprite:	// this is actually a mouse-over shape? I don't think it's a real button.
 		//Graphics::drawRect(fillRect, sp->_foreColor, Graphics::macDrawPixel, &pd);
 		tmpSurface.fillRect(Common::Rect(shapeRect.width(), shapeRect.height()), (_vm->getCurrentScore()->_currentMouseDownSpriteId == spriteId ? 0 : 0xff));
 		break;
 	case kOutlinedRoundedRectangleSprite:
-		Graphics::drawRoundRect(fillRect, 4, sp->_foreColor, false, Graphics::macDrawPixel, &pd);
+		Graphics::drawRoundRect(fillRect, 4, foreColor, false, Graphics::macDrawPixel, &pd);
 		break;
 	case kOutlinedOvalSprite:
-		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, sp->_foreColor, false, Graphics::macDrawPixel, &pd);
+		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, foreColor, false, Graphics::macDrawPixel, &pd);
 		break;
 	case kCastMemberSprite: 		// Face kit D3
-		Graphics::drawFilledRect(fillRect, sp->_foreColor, Graphics::macDrawPixel, &pd);
+		Graphics::drawFilledRect(fillRect, foreColor, Graphics::macDrawPixel, &pd);
 		break;
 	default:
 		warning("Frame::renderShape(): Unhandled sprite type: %d", sp->_spriteType);
