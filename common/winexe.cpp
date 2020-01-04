@@ -24,6 +24,8 @@
 #include "common/memstream.h"
 #include "common/str.h"
 #include "common/winexe.h"
+#include "common/winexe_ne.h"
+#include "common/winexe_pe.h"
 
 namespace Common {
 
@@ -158,6 +160,27 @@ bool WinResources::loadFromCompressedEXE(const String &fileName) {
 	SeekableReadStream *stream = new MemoryReadStream(unpackedData, unpackedLength);
 
 	return loadFromEXE(stream);
+}
+
+
+WinResources *WinResources::createFromEXE(const String &fileName) {
+	WinResources *exe;
+
+	// First try loading via the NE code
+	exe = new Common::NEResources();
+	if (exe->loadFromEXE(fileName)) {
+		return exe;
+	}
+	delete exe;
+
+	// Then try loading via the PE code
+	exe = new Common::PEResources();
+	if (exe->loadFromEXE(fileName)) {
+		return exe;
+	}
+	delete exe;
+
+	return nullptr;
 }
 
 } // End of namespace Common

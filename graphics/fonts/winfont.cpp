@@ -77,27 +77,13 @@ static WinFontDirEntry readDirEntry(Common::SeekableReadStream &stream) {
 }
 
 bool WinFont::loadFromFON(const Common::String &fileName, const WinFontDirEntry &dirEntry) {
-	Common::WinResources *exe;
+	Common::WinResources *exe = Common::WinResources::createFromEXE(fileName);
+	if (!exe)
+		return false;
 
-	// First try loading via the NE code
-	exe = new Common::NEResources();
-	if (exe->loadFromEXE(fileName)) {
-		bool ok = loadFromEXE(exe, fileName, dirEntry);
-		delete exe;
-		return ok;
-	}
+	bool ok = loadFromEXE(exe, fileName, dirEntry);
 	delete exe;
-
-	// Then try loading via the PE code
-	exe = new Common::PEResources();
-	if (exe->loadFromEXE(fileName)) {
-		bool ok = loadFromEXE(exe, fileName, dirEntry);
-		delete exe;
-		return ok;
-	}
-	delete exe;
-
-	return false;
+	return ok;
 }
 
 bool WinFont::loadFromEXE(Common::WinResources *exe, const Common::String &fileName, const WinFontDirEntry &dirEntry) {
