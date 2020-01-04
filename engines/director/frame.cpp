@@ -664,7 +664,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	byte spriteType = sp->_spriteType;
 	byte foreColor = sp->_foreColor;
 	byte backColor = sp->_backColor;
-	byte lineSize = sp->_lineSize + 1;
+	int lineSize = sp->_lineSize - 1;
 	if (spriteType == kCastMemberSprite && sp->_cast != NULL) {
 		switch (sp->_cast->_type) {
 		case kCastShape:
@@ -688,7 +688,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 				}
 				foreColor = sc->_fgCol;
 				backColor = sc->_bgCol;
-				lineSize = sc->_lineThickness;
+				lineSize = sc->_lineThickness - 1;
 				ink = sc->_ink;
 				// shapes should be rendered with transparency by default
 				if (ink == kInkTypeCopy) {
@@ -714,7 +714,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	// No minus one on the pattern here! MacPlotData will do that for us!
 	//Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), 1, 1, sp->_backColor);
 	Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), sp->getPattern(), lineSize, backColor);
-	Common::Rect fillRect(shapeRect.width(), shapeRect.height());
+	Common::Rect fillRect(MAX((int)shapeRect.width() - lineSize, 0), MAX((int)shapeRect.height() - lineSize, 0));
 
 	switch (spriteType) {
 	case kRectangleSprite:
