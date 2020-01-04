@@ -197,8 +197,8 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._scriptId = stream->readByte();
 			sprite._spriteType = stream->readByte();
 			sprite._enabled = sprite._spriteType != 0;
-			sprite._foreColor = (127 - stream->readByte()) & 0xff; // -128 -> 0, 127 -> 256
-			sprite._backColor = (127 - stream->readByte()) & 0xff;
+			sprite._foreColor = 0xff - (uint8)stream->readByte();
+			sprite._backColor = 0xff - (uint8)stream->readByte();
 
 			sprite._flags = stream->readUint16();
 			sprite._ink = static_cast<InkType>(sprite._flags & 0x3f);
