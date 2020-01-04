@@ -54,7 +54,7 @@ enum MainChannelsPosition {
 	kBlendPosition,
 	kSound2Position,
 	kSound2TypePosition = 11,
-	kPaletePosition = 15
+	kPalettePosition = 15
 };
 
 class Sprite {

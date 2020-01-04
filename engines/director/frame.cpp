@@ -309,7 +309,7 @@ void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16
 			_soundType2 = stream.readByte();
 			offset += 1;
 			break;
-		case kPaletePosition:
+		case kPalettePosition:
 			if (stream.readUint16())
 				readPaletteInfo(stream);
 			offset += 16;
@@ -644,7 +644,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				int width = _vm->getVersion() > 4 ? bc->_initialRect.width() : _sprites[i]->_width;
 				Common::Rect drawRect(x, y, x + width, y + height);
 				addDrawRect(i, drawRect);
-				inkBasedBlit(surface, *(bc->_surface), i, drawRect);
+				inkBasedBlit(surface, *(bc->_surface), _sprites[i]->_ink, drawRect);
 			}
 		}
 	}
@@ -660,6 +660,7 @@ void Frame::addDrawRect(uint16 spriteId, Common::Rect &rect) {
 void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	Sprite *sp = _sprites[spriteId];
 
+	InkType ink = sp->_ink;
 	byte spriteType = sp->_spriteType;
 	byte foreColor = sp->_foreColor;
 	byte backColor = sp->_backColor;
@@ -688,6 +689,11 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 				foreColor = sc->_fgCol;
 				backColor = sc->_bgCol;
 				lineSize = sc->_lineThickness;
+				ink = sc->_ink;
+				// shapes should be rendered with transparency by default
+				if (ink == kInkTypeCopy) {
+					ink = kInkTypeTransparent;
+				}
 			}
 			break;
 		default:
@@ -703,6 +709,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	Graphics::ManagedSurface tmpSurface;
 	tmpSurface.create(shapeRect.width(), shapeRect.height(), Graphics::PixelFormat::createFormatCLUT8());
+	tmpSurface.clear(255);
 
 	// No minus one on the pattern here! MacPlotData will do that for us!
 	//Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), 1, 1, sp->_backColor);
@@ -743,7 +750,8 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	}
 
 	addDrawRect(spriteId, shapeRect);
-	inkBasedBlit(surface, tmpSurface, spriteId, shapeRect);
+	inkBasedBlit(surface, tmpSurface, ink, shapeRect);
+
 }
 
 void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
@@ -910,16 +918,16 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX, textY), 0xff);
 
-	inkBasedBlit(surface, textWithFeatures, spriteId, Common::Rect(x, y, x + width, y + height));
+	inkBasedBlit(surface, textWithFeatures, _sprites[spriteId]->_ink, Common::Rect(x, y, x + width, y + height));
 }
 
-void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, uint16 spriteId, Common::Rect drawRect) {
+void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect) {
 	// drawRect could be bigger than the spriteSurface. Clip it
 	Common::Rect t(spriteSurface.w, spriteSurface.h);
 	t.moveTo(drawRect.left, drawRect.top);
 	drawRect.clip(t);
 
-	switch (_sprites[spriteId]->_ink) {
+	switch (ink) {
 	case kInkTypeCopy:
 		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
 		break;
@@ -940,7 +948,7 @@ void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics
 		drawReverseSprite(targetSurface, spriteSurface, drawRect);
 		break;
 	default:
-		warning("Frame::inkBasedBlit(): Unhandled ink type %d", _sprites[spriteId]->_ink);
+		warning("Frame::inkBasedBlit(): Unhandled ink type %d", ink);
 		targetSurface.blitFrom(spriteSurface, Common::Point(drawRect.left, drawRect.top));
 		break;
 	}
