@@ -52,9 +52,15 @@ uint32 SDL_MapRGB(Graphics::PixelFormat &format, byte r, byte g, byte b) {
 int SDL_BlitSurface(const Graphics::ManagedSurface *src, const Common::Rect *srcrect,
 		Graphics::ManagedSurface *dst, Common::Rect *dstrect) {
 	Common::Rect srcRect = srcrect ? *srcrect : Common::Rect(0, 0, src->w, src->h);
-	Common::Rect dstRect = dstrect ? *dstrect : Common::Rect(0, 0, src->w, src->h);
+	Common::Point destPos = dstrect ? Common::Point(dstrect->left, dstrect->top) : Common::Point();
 
-	dst->transBlitFrom(*src, srcRect, dstRect, (uint)-1);
+	dst->transBlitFrom(*src, srcRect, destPos, (uint)-1);
+
+	if (dstrect) {
+		dstrect->setWidth(srcRect.width());
+		dstrect->setHeight(srcRect.height());
+	}
+
 	return 0;
 }
 

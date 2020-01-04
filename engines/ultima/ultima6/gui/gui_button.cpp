@@ -162,16 +162,6 @@ void GUI_Button:: Display(bool full_redraw) {
 			SDL_BlitSurface(button, NULL, surface, &dest);
 	}
 	if (is_checkable) {
-		/*
-		**** OLD VERSION WITH TEXT CHECKMARK ****
-		      if (checked)
-		      {
-		        buttonFont->setTransparency(true);
-		        buttonFont->setColoring(255,0,0);
-		        buttonFont->textOut(surface,area.left+4,area.top+4,textmark);
-		      }
-		*/
-
 		src.left = 8 - (checked * 8);
 		src.top = 0;
 		src.setWidth(8);
