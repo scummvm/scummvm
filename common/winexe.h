@@ -128,6 +128,8 @@ public:
 	virtual SeekableReadStream *getResource(const WinResourceID &type, const WinResourceID &id, const WinResourceID &lang) {
 		return getResource(type, id);
 	}
+
+	static WinResources *createFromEXE(const String &fileName);
 };
 
 } // End of namespace Common
