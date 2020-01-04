@@ -176,7 +176,7 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->codeInt($2[0]);
 		g_lingo->codeInt($2[1]);
 		$$ = $4; }
-	| tSET THEENTITYWITHID expr tTO expr	{
+	| tSET THEENTITYWITHID simpleexpr tTO expr	{
 		g_lingo->code1(LC::c_swap);
 		g_lingo->code1(LC::c_theentityassign);
 		g_lingo->codeInt($2[0]);
@@ -405,7 +405,7 @@ expr: simpleexpr { $$ = $1; }
 		WRITE_UINT32(&e, $1[0]);
 		WRITE_UINT32(&f, $1[1]);
 		g_lingo->code2(e, f); }
-	| THEENTITYWITHID expr	{
+	| THEENTITYWITHID simpleexpr {
 		$$ = g_lingo->code1(LC::c_theentitypush);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, $1[0]);
