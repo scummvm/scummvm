@@ -357,6 +357,9 @@ void PluginManagerUncached::loadFirstPlugin() {
 bool PluginManagerUncached::loadNextPlugin() {
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
 
+	if (!_currentPlugin)
+		return false;
+
 	for (++_currentPlugin; _currentPlugin != _allEnginePlugins.end(); ++_currentPlugin) {
 		if ((*_currentPlugin)->loadPlugin()) {
 			addToPluginsInMemList(*_currentPlugin);
@@ -533,7 +536,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 	DetectedGames candidates;
 	PluginList plugins;
 	PluginList::const_iterator iter;
-	PluginManager::instance().loadFirstPlugin();
+	PluginMan.loadFirstPlugin();
 	do {
 		plugins = getPlugins();
 		// Iterate over all known games and for each check if it might be
@@ -549,7 +552,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 			}
 
 		}
-	} while (PluginManager::instance().loadNextPlugin());
+	} while (PluginMan.loadNextPlugin());
 
 	return DetectionResults(candidates);
 }
@@ -641,18 +644,15 @@ const Plugin *EngineManager::findPlugin(const Common::String &engineId) const {
 	}
 
 	// We failed to find it using the engine ID. Scan the list of plugins
-	const PluginList &plugins = getPlugins();
-	if (!plugins.empty()) {
-		PluginMan.loadFirstPlugin();
-		do {
-			plugin = findLoadedPlugin(engineId);
-			if (plugin) {
-				// Update with new plugin file name
-				PluginMan.updateConfigWithFileName(engineId);
-				return plugin;
-			}
-		} while (PluginMan.loadNextPlugin());
-	}
+	PluginMan.loadFirstPlugin();
+	do {
+		plugin = findLoadedPlugin(engineId);
+		if (plugin) {
+			// Update with new plugin file name
+			PluginMan.updateConfigWithFileName(engineId);
+			return plugin;
+		}
+	} while (PluginMan.loadNextPlugin());
 
 	return 0;
 }

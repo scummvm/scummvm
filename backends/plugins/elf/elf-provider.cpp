@@ -181,15 +181,15 @@ PluginList ELFPluginProvider::getPlugins() {
 	PluginList pl = FilePluginProvider::getPlugins();
 
 #if defined(UNCACHED_PLUGINS) && !defined(ELF_NO_MEM_MANAGER)
-	if (!pl.empty()) {
-		// This static downcast is safe because all of the plugins must
-		// be ELF plugins
-		for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
-			(static_cast<ELFPlugin *>(*p))->trackSize();
-		}
+	// This static downcast is safe because all of the plugins must
+	// be ELF plugins
+	for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
+		(static_cast<ELFPlugin *>(*p))->trackSize();
+	}
 
-		// The Memory Manager should now allocate space based on the information
-		// it collected
+	// The Memory Manager should now allocate space based on the information
+	// it collected
+	if (!pl.empty()) {
 		ELFMemMan.allocateHeap();
 	}
 #endif

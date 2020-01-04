@@ -78,9 +78,13 @@ void ELFMemoryManager::trackAlloc(uint32 align, uint32 size) {
 }
 
 void ELFMemoryManager::allocateHeap() {
+	if (!_heapSize) {
+		warning("ELFMemoryManager: Unable to allocate the heap as its size could not be determined.");
+		return;
+	}
+
 	// The memory manager should only allocate once
 	assert (!_heap);
-	assert (_heapSize);
 
 	// clear the list
 	_allocList.clear();
