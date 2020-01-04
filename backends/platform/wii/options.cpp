@@ -48,7 +48,7 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 	new ButtonWidget(this, _w - 216 - 32, _h - 24 - 16, 108, 24, _("Cancel"), 0, 'c');
 	_tab = new TabWidget(this, 0, 0, _w, _h - 54);
 
-	_tabVideo = _tab->addTab(_("Video"));
+	_tabVideo = _tab->addTab(_("Video"), "");
 
 	new StaticTextWidget(_tab, 16, 16, 128, 16,
 						 _("Current video mode:"), Graphics::kTextAlignRight);
@@ -68,7 +68,7 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 	_sliderUnderscanY->setMinValue(0);
 	_sliderUnderscanY->setMaxValue(32);
 
-	_tabInput = _tab->addTab(_("Input"));
+	_tabInput = _tab->addTab(_("Input"), "");
 
 	new StaticTextWidget(_tab, 16, 16, 128, 16,
 						 _("GC Pad sensitivity:"), Graphics::kTextAlignRight);
@@ -83,7 +83,7 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 	_sliderPadAcceleration->setMaxValue(8);
 
 #ifdef USE_WII_DI
-	_tabDVD = _tab->addTab(_("DVD"));
+	_tabDVD = _tab->addTab(_("DVD"), "");
 
 	new StaticTextWidget(_tab, 16, 16, 64, 16,
 						 _("Status:"), Graphics::kTextAlignRight);
@@ -95,7 +95,7 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 #endif
 
 #ifdef USE_WII_SMB
-	_tabSMB = _tab->addTab(_("SMB"));
+	_tabSMB = _tab->addTab(_("SMB"), "");
 
 	new StaticTextWidget(_tab, 16, 16, 64, 16,
 						 _("Status:"), Graphics::kTextAlignRight);
