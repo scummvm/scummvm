@@ -116,15 +116,13 @@ void GUI_Area::Display(bool full_redraw) {
 			framerect.setHeight(frameThickness);
 			SDL_FillRect(surface, &framerect, frameColor);
 			framerect = area;
-			framerect.setHeight(frameThickness);
-			framerect.top += area.height() - frameThickness;
+			framerect.top = framerect.bottom - frameThickness;
 			SDL_FillRect(surface, &framerect, frameColor);
 			framerect = area;
 			framerect.setWidth(frameThickness);
 			SDL_FillRect(surface, &framerect, frameColor);
 			framerect = area;
-			framerect.setWidth(frameThickness);
-			framerect.left += area.width() - frameThickness;
+			framerect.left = framerect.right - frameThickness;
 			SDL_FillRect(surface, &framerect, frameColor);
 		}
 		break;
