@@ -266,14 +266,14 @@ private:
 	GLuint _zBufTex;
 	Math::Vector2d _zBufTexCrop;
 
-	struct Light {
+	struct GLSLight {
 		Math::Vector4d _position;
 		Math::Vector4d _direction;
 		Math::Vector4d _color;
 		Math::Vector4d _params;
 	};
 
-	Light *_lights;
+	GLSLight *_lights;
 	bool _hasAmbientLight;
 	bool _lightsEnabled;
 

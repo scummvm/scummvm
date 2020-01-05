@@ -218,7 +218,7 @@ GfxOpenGLS::GfxOpenGLS() {
 	_selectedTexture = NULL;
 	_emergTexture = 0;
 	_maxLights = 8;
-	_lights = new Light[_maxLights];
+	_lights = new GLSLight[_maxLights];
 	_lightsEnabled = false;
 	_hasAmbientLight = false;
 	_backgroundProgram = nullptr;
@@ -777,7 +777,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 	_actorProgram->setUniform("hasAmbient", _hasAmbientLight);
 	if (_lightsEnabled) {
 		for (int i = 0; i < _maxLights; ++i) {
-			const Light &l = _lights[i];
+			const GLSLight &l = _lights[i];
 			Common::String uniform;
 			uniform = Common::String::format("lights[%u]._position", i);
 
