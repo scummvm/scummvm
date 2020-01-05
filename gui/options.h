@@ -62,17 +62,17 @@ class OptionsDialog : public Dialog {
 public:
 	OptionsDialog(const Common::String &domain, int x, int y, int w, int h);
 	OptionsDialog(const Common::String &domain, const Common::String &name);
-	~OptionsDialog();
+	~OptionsDialog() override;
 
 	void init();
 
-	void open();
+	void open() override;
 	virtual void apply();
-	void close();
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void close() override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	const Common::String& getDomain() const { return _domain; }
 
-	virtual void reflowLayout();
+	void reflowLayout() override;
 
 protected:
 	/** Config domain this dialog is used to edit. */
@@ -240,18 +240,18 @@ protected:
 class GlobalOptionsDialog : public OptionsDialog, public CommandSender {
 public:
 	GlobalOptionsDialog(LauncherDialog *launcher);
-	~GlobalOptionsDialog();
+	~GlobalOptionsDialog() override;
 
-	virtual void apply();
-	void close();
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	void handleTickle();
+	void apply() override;
+	void close() override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleTickle() override;
 
-	virtual void reflowLayout();
+	void reflowLayout() override;
 
 protected:
-	virtual void build();
-	virtual void clean();
+	void build() override;
+	void clean() override;
 
 	Common::String _newTheme;
 	LauncherDialog *_launcher;

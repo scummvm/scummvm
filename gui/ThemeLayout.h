@@ -152,7 +152,7 @@ public:
 	}
 	void reflowLayout(Widget *widgetChain) override;
 
-	void resetLayout() {
+	void resetLayout() override {
 		ThemeLayout::resetLayout();
 		_x = _defaultX;
 		_y = _defaultY;
@@ -162,7 +162,7 @@ public:
 
 protected:
 	LayoutType getLayoutType() const override { return kLayoutMain; }
-	ThemeLayout *makeClone(ThemeLayout *newParent) { assert(!"Do not copy Main Layouts!"); return 0; }
+	ThemeLayout *makeClone(ThemeLayout *newParent) override { assert(!"Do not copy Main Layouts!"); return 0; }
 
 	int16 _defaultX;
 	int16 _defaultY;
@@ -204,7 +204,7 @@ protected:
 
 	LayoutType getLayoutType() const override { return _type; }
 
-	ThemeLayout *makeClone(ThemeLayout *newParent) {
+	ThemeLayout *makeClone(ThemeLayout *newParent) override {
 		ThemeLayoutStacked *n = new ThemeLayoutStacked(*this);
 		n->_parent = newParent;
 
@@ -228,8 +228,8 @@ public:
 		setTextHAlign(align);
 	}
 
-	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
-	Graphics::TextAlign getWidgetTextHAlign(const Common::String &name);
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) override;
+	Graphics::TextAlign getWidgetTextHAlign(const Common::String &name) override;
 
 	void reflowLayout(Widget *widgetChain) override;
 
@@ -241,7 +241,7 @@ protected:
 	bool isBound(Widget *widgetChain) const override;
 	Widget *getWidget(Widget *widgetChain) const;
 
-	ThemeLayout *makeClone(ThemeLayout *newParent) {
+	ThemeLayout *makeClone(ThemeLayout *newParent) override {
 		ThemeLayout *n = new ThemeLayoutWidget(*this);
 		n->_parent = newParent;
 		return n;
@@ -265,7 +265,7 @@ public:
 		}
 	}
 
-	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) override {
 		if (ThemeLayoutWidget::getWidgetData(name, x, y, w, h)) {
 			h -= _tabHeight;
 			return true;
@@ -277,7 +277,7 @@ public:
 protected:
 	LayoutType getLayoutType() const override { return kLayoutTabWidget; }
 
-	ThemeLayout *makeClone(ThemeLayout *newParent) {
+	ThemeLayout *makeClone(ThemeLayout *newParent) override {
 		ThemeLayoutTabWidget *n = new ThemeLayoutTabWidget(*this);
 		n->_parent = newParent;
 		return n;
@@ -296,7 +296,7 @@ public:
 		}
 	}
 
-	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) { return false; }
+	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) override { return false; }
 	void reflowLayout(Widget *widgetChain) override {}
 #ifdef LAYOUT_DEBUG_DIALOG
 	const char *getName() const { return "SPACE"; }
@@ -305,7 +305,7 @@ public:
 protected:
 	LayoutType getLayoutType() const override { return kLayoutSpace; }
 
-	ThemeLayout *makeClone(ThemeLayout *newParent) {
+	ThemeLayout *makeClone(ThemeLayout *newParent) override {
 		ThemeLayout *n = new ThemeLayoutSpacing(*this);
 		n->_parent = newParent;
 		return n;

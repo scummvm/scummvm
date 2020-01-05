@@ -116,7 +116,7 @@ public:
 public:
 	Widget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = 0);
 	Widget(GuiObject *boss, const Common::String &name, const char *tooltip = 0);
-	virtual ~Widget();
+	~Widget() override;
 
 	void init();
 	void resize(int x, int y, int w, int h);
@@ -124,8 +124,8 @@ public:
 	void setNext(Widget *w) { _next = w; }
 	Widget *next() { return _next; }
 
-	virtual int16	getAbsX() const	{ return _x + _boss->getChildX(); }
-	virtual int16	getAbsY() const	{ return _y + _boss->getChildY(); }
+	int16	getAbsX() const override	{ return _x + _boss->getChildX(); }
+	int16	getAbsY() const override	{ return _y + _boss->getChildY(); }
 
 	virtual void setPos(int x, int y) { _x = x; _y = y; }
 	virtual void setSize(int w, int h) { _w = w; _h = h; }
@@ -161,7 +161,7 @@ public:
 	bool isEnabled() const;
 
 	void setVisible(bool e);
-	bool isVisible() const;
+	bool isVisible() const override;
 
 	uint8 parseHotkey(const Common::String &label);
 	Common::String cleanupHotkey(const Common::String &label);
@@ -184,10 +184,10 @@ protected:
 
 	virtual Widget *findWidget(int x, int y) { return this; }
 
-	void releaseFocus() { assert(_boss); _boss->releaseFocus(); }
+	void releaseFocus() override { assert(_boss); _boss->releaseFocus(); }
 
 	// By default, delegate unhandled commands to the boss
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) { assert(_boss); _boss->handleCommand(sender, cmd, data); }
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override { assert(_boss); _boss->handleCommand(sender, cmd, data); }
 };
 
 /* StaticTextWidget */
@@ -201,14 +201,14 @@ public:
 	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip = 0, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
 	void setValue(int value);
 	void setLabel(const Common::String &label);
-	void handleMouseEntered(int button)	{ readLabel(); }
+	void handleMouseEntered(int button) override	{ readLabel(); }
 	const Common::String &getLabel() const		{ return _label; }
 	void setAlign(Graphics::TextAlign align);
 	Graphics::TextAlign getAlign() const		{ return _align; }
 	void readLabel() { read(_label); }
 
 protected:
-	void drawWidget();
+	void drawWidget() override;
 };
 
 /* ButtonWidget */
@@ -228,16 +228,16 @@ public:
 
 	void setLabel(const Common::String &label);
 
-	void handleMouseUp(int x, int y, int button, int clickCount);
-	void handleMouseDown(int x, int y, int button, int clickCount);
-	void handleMouseEntered(int button)	{ readLabel(); if (_duringPress) { setFlags(WIDGET_PRESSED); } else { setFlags(WIDGET_HILITED); } markAsDirty(); }
-	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED | WIDGET_PRESSED); markAsDirty(); }
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseEntered(int button) override	{ readLabel(); if (_duringPress) { setFlags(WIDGET_PRESSED); } else { setFlags(WIDGET_HILITED); } markAsDirty(); }
+	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED | WIDGET_PRESSED); markAsDirty(); }
 
 	void setHighLighted(bool enable);
 	void setPressedState();
 	void setUnpressedState();
 protected:
-	void drawWidget();
+	void drawWidget() override;
 	bool _duringPress;
 };
 
@@ -281,7 +281,7 @@ class PicButtonWidget : public ButtonWidget {
 public:
 	PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = 0, uint32 cmd = 0, uint8 hotkey = 0);
 	PicButtonWidget(GuiObject *boss, const Common::String &name, const char *tooltip = 0, uint32 cmd = 0, uint8 hotkey = 0);
-	~PicButtonWidget();
+	~PicButtonWidget() override;
 
 	void setGfx(const Graphics::Surface *gfx, int statenum = kPicButtonStateEnabled);
 	void setGfx(int w, int h, int r, int g, int b, int statenum = kPicButtonStateEnabled);
@@ -291,7 +291,7 @@ public:
 	void setButtonDisplay(bool enable) {_showButton = enable; }
 
 protected:
-	void drawWidget();
+	void drawWidget() override;
 
 	Graphics::Surface _gfx[kPicButtonStateMax + 1];
 	int _alpha;
@@ -307,16 +307,16 @@ public:
 	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip = 0, uint32 cmd = 0, uint8 hotkey = 0);
 	CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip = 0, uint32 cmd = 0, uint8 hotkey = 0);
 
-	void handleMouseUp(int x, int y, int button, int clickCount);
-	virtual void handleMouseEntered(int button)	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
-	virtual void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void handleMouseEntered(int button) override	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
+	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 
 	void setState(bool state);
 	void toggleState()			{ setState(!_state); }
 	bool getState() const		{ return _state; }
 
 protected:
-	void drawWidget();
+	void drawWidget() override;
 };
 
 class RadiobuttonWidget;
@@ -324,7 +324,7 @@ class RadiobuttonWidget;
 class RadiobuttonGroup : public CommandSender {
 public:
 	RadiobuttonGroup(GuiObject *boss, uint32 cmd = 0);
-	~RadiobuttonGroup() {}
+	~RadiobuttonGroup() override {}
 
 	void addButton(RadiobuttonWidget *button) { _buttons.push_back(button); }
 	Common::Array<RadiobuttonWidget *> getButtonList() const { return _buttons; }
@@ -353,9 +353,9 @@ public:
 	RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip = 0, uint8 hotkey = 0);
 	RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip = 0, uint8 hotkey = 0);
 
-	void handleMouseUp(int x, int y, int button, int clickCount);
-	virtual void handleMouseEntered(int button)	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
-	virtual void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void handleMouseEntered(int button) override	{ readLabel(); setFlags(WIDGET_HILITED); markAsDirty(); }
+	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 
 	void setState(bool state, bool setGroup = true);
 	void toggleState()			{ setState(!_state); }
@@ -363,7 +363,7 @@ public:
 	int getValue() const			{ return _value; }
 
 protected:
-	void drawWidget();
+	void drawWidget() override;
 
 	RadiobuttonGroup *_group;
 };
@@ -391,15 +391,15 @@ public:
 	void setMaxValue(int value)	{ _valueMax = value; }
 	int getMaxValue() const		{ return _valueMax; }
 
-	void handleMouseMoved(int x, int y, int button);
-	void handleMouseDown(int x, int y, int button, int clickCount);
-	void handleMouseUp(int x, int y, int button, int clickCount);
-	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); markAsDirty(); }
-	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
-	void handleMouseWheel(int x, int y, int direction);
+	void handleMouseMoved(int x, int y, int button) override;
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void handleMouseEntered(int button) override	{ setFlags(WIDGET_HILITED); markAsDirty(); }
+	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
+	void handleMouseWheel(int x, int y, int direction) override;
 
 protected:
-	void drawWidget();
+	void drawWidget() override;
 
 	int valueToPos(int value);
 	int posToValue(int pos);
@@ -411,7 +411,7 @@ class GraphicsWidget : public Widget {
 public:
 	GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = 0);
 	GraphicsWidget(GuiObject *boss, const Common::String &name, const char *tooltip = 0);
-	~GraphicsWidget();
+	~GraphicsWidget() override;
 
 	void setGfx(const Graphics::Surface *gfx);
 	void setGfx(int w, int h, int r, int g, int b);
@@ -420,7 +420,7 @@ public:
 	void useThemeTransparency(bool enable) { _transparency = enable; }
 
 protected:
-	void drawWidget();
+	void drawWidget() override;
 
 	Graphics::Surface _gfx;
 	int _alpha;
@@ -432,15 +432,15 @@ class ContainerWidget : public Widget {
 public:
 	ContainerWidget(GuiObject *boss, int x, int y, int w, int h);
 	ContainerWidget(GuiObject *boss, const Common::String &name);
-	~ContainerWidget();
+	~ContainerWidget() override;
 
-	virtual bool containsWidget(Widget *) const;
-	virtual Widget *findWidget(int x, int y);
-	virtual void removeWidget(Widget *widget);
+	bool containsWidget(Widget *) const override;
+	Widget *findWidget(int x, int y) override;
+	void removeWidget(Widget *widget) override;
 
 	void setBackgroundType(ThemeEngine::WidgetBackground backgroundType);
 protected:
-	void drawWidget();
+	void drawWidget() override;
 
 	ThemeEngine::WidgetBackground _backgroundType;
 };

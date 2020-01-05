@@ -41,9 +41,9 @@ class FileBrowserDialog : public Dialog {
 public:
 	FileBrowserDialog(const char *title, const char *fileExtension, int mode);
 
-	virtual void open();
+	void open() override;
 
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	const char *getResult() { return Dialog::getResult() ? _fileName->getEditString().c_str() : NULL; }
 
