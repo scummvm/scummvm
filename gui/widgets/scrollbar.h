@@ -65,14 +65,14 @@ public:
 public:
 	ScrollBarWidget(GuiObject *boss, int x, int y, int w, int h);
 
-	void handleMouseDown(int x, int y, int button, int clickCount);
-	void handleMouseUp(int x, int y, int button, int clickCount);
-	void handleMouseWheel(int x, int y, int direction);
-	void handleMouseMoved(int x, int y, int button);
-	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); }
-	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); _part = kNoPart; markAsDirty(); }
-	void handleTickle();
-	bool wantsFocus() { return true; }
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void handleMouseWheel(int x, int y, int direction) override;
+	void handleMouseMoved(int x, int y, int button) override;
+	void handleMouseEntered(int button) override	{ setFlags(WIDGET_HILITED); }
+	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); _part = kNoPart; markAsDirty(); }
+	void handleTickle() override;
+	bool wantsFocus() override { return true; }
 
 	// FIXME - this should be private, but then we also have to add accessors
 	// for _numEntries, _entriesPerPage and _currentPos. This again leads to the question:
@@ -82,7 +82,7 @@ public:
 	void checkBounds(int old_pos);
 
 protected:
-	void drawWidget();
+	void drawWidget() override;
 };
 
 } // End of namespace GUI

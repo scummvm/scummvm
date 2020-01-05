@@ -67,7 +67,7 @@ class GuiManager : public Common::Singleton<GuiManager> {
 	friend class Dialog;
 	friend class Common::Singleton<SingletonBaseType>;
 	GuiManager();
-	~GuiManager();
+	~GuiManager() override;
 public:
 
 	// Main entry for the GUI: this will start an event loop that keeps running

@@ -60,8 +60,8 @@ public:
 	PopUpWidget(GuiObject *boss, const String &name, const char *tooltip = 0);
 	PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = 0);
 
-	void handleMouseDown(int x, int y, int button, int clickCount);
-	void handleMouseWheel(int x, int y, int direction);
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseWheel(int x, int y, int direction) override;
 
 	void appendEntry(const String &entry, uint32 tag = (uint32)-1);
 	void clearEntries();
@@ -77,12 +77,12 @@ public:
 	uint32 getSelectedTag() const				{ return (_selectedItem >= 0) ? _entries[_selectedItem].tag : (uint32)-1; }
 //	const String& getSelectedString() const		{ return (_selectedItem >= 0) ? _entries[_selectedItem].name : String::emptyString; }
 
-	void handleMouseEntered(int button)	{ if (_selectedItem != -1) read(_entries[_selectedItem].name); setFlags(WIDGET_HILITED); markAsDirty(); }
-	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
+	void handleMouseEntered(int button) override	{ if (_selectedItem != -1) read(_entries[_selectedItem].name); setFlags(WIDGET_HILITED); markAsDirty(); }
+	void handleMouseLeft(int button) override	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 
-	virtual void reflowLayout();
+	void reflowLayout() override;
 protected:
-	void drawWidget();
+	void drawWidget() override;
 };
 
 /**

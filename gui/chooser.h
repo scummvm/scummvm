@@ -49,7 +49,7 @@ public:
 
 	void setList(const StringArray& list);
 
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 };
 
 } // End of namespace GUI

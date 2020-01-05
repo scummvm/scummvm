@@ -38,7 +38,7 @@ private:
 	EditRecordDialog() : Dialog("EditRecordDialog") {};
 public:
 	EditRecordDialog(const Common::String author, const Common::String name, const Common::String notes);
-	~EditRecordDialog();
+	~EditRecordDialog() override;
 
 	const Common::String getAuthor();
 	const Common::String getNotes();
@@ -48,7 +48,7 @@ public:
 	void setNotes(const Common::String &desc);
 	void setName(const Common::String &name);
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 };
 
 }// End of namespace GUI

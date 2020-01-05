@@ -66,7 +66,7 @@ protected:
 public:
 	TabWidget(GuiObject *boss, int x, int y, int w, int h);
 	TabWidget(GuiObject *boss, const String &name);
-	~TabWidget();
+	~TabWidget() override;
 
 	void init();
 
@@ -103,17 +103,17 @@ public:
 		_tabs[tabID].title = title;
 	}
 
-	virtual void handleMouseDown(int x, int y, int button, int clickCount) override;
-	virtual void handleMouseMoved(int x, int y, int button);
-	virtual void handleMouseLeft(int button) { _lastRead = -1; };
-	virtual bool handleKeyDown(Common::KeyState state) override;
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseMoved(int x, int y, int button) override;
+	void handleMouseLeft(int button) override { _lastRead = -1; };
+	bool handleKeyDown(Common::KeyState state) override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	virtual int getFirstVisible() const;
 	virtual void setFirstVisible(int tabID, bool adjustIfRoom = false);
 
-	virtual bool containsWidget(Widget *) const override;
+	bool containsWidget(Widget *) const override;
 
-	virtual void reflowLayout() override;
+	void reflowLayout() override;
 
 	void draw() override;
 	void markAsDirty() override;
@@ -121,12 +121,12 @@ public:
 protected:
 	// We overload getChildY to make sure child widgets are positioned correctly.
 	// Essentially this compensates for the space taken up by the tab title header.
-	virtual int16 getChildY() const override;
-	virtual uint16 getHeight() const override;
+	int16 getChildY() const override;
+	uint16 getHeight() const override;
 
-	virtual void drawWidget() override;
+	void drawWidget() override;
 
-	virtual Widget *findWidget(int x, int y) override;
+	Widget *findWidget(int x, int y) override;
 
 	virtual void adjustTabs(int value);
 

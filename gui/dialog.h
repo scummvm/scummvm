@@ -68,9 +68,9 @@ public:
 
 	virtual int runModal();
 
-	bool	isVisible() const	{ return _visible; }
+	bool	isVisible() const override	{ return _visible; }
 
-	void	releaseFocus();
+	void	releaseFocus() override;
 	void	setFocusWidget(Widget *widget);
 	Widget *getFocusWidget() { return _focusedWidget; }
 
@@ -78,7 +78,7 @@ public:
 	void unSetTickleWidget() { _tickleWidget = NULL; }
 	Widget *getTickleWidget() { return _tickleWidget; }
 
-	virtual void reflowLayout();
+	void reflowLayout() override;
 	virtual void lostFocus();
 	virtual void receivedFocus(int x = -1, int y = -1) { if (x >= 0 && y >= 0) handleMouseMoved(x, y, 0); }
 
@@ -103,12 +103,12 @@ protected:
 	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleMouseLeft(int button) {};
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	virtual void handleOtherEvent(Common::Event evt);
 
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 	Widget *findWidget(const char *name);
-	void removeWidget(Widget *widget);
+	void removeWidget(Widget *widget) override;
 
 	void setDefaultFocusedWidget();
 
