@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-04 01:01+0000\n"
+"PO-Revision-Date: 2020-01-06 00:26+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -8465,23 +8465,23 @@ msgstr "$6: That's dirty!"
 
 #: dialog0263.txt:208
 msgid "$7: Została wyrządzona nam straszna krzywda!"
-msgstr ""
+msgstr "$7: Terrible harm was done to us!"
 
 #: dialog0263.txt:309
 msgid "$8: Żądamy surowego ukarania winnych!"
-msgstr ""
+msgstr "$8: We demand severe punishment for the guilty!"
 
 #: dialog0263.txt:310
 msgid "$9: Chcę odzyskać swoje ciało!"
-msgstr ""
+msgstr "$9: I want to recover my body!"
 
 #: dialog0263.txt:311
 msgid "$10: I trzeba coś z tym fantem zrobić!"
-msgstr ""
+msgstr "$10: And you have to do something about it!"
 
 #: dialog0263.txt:312
 msgid "$11: Chcemy zemsty!"
-msgstr ""
+msgstr "$11: We want revenge!"
 
 #: dialog0263.txt:413
 msgid "$12: Halo?!"
@@ -8489,11 +8489,11 @@ msgstr "$12: Hello?!"
 
 #: dialog0263.txt:414
 msgid "$13: Ktoś nas w ogóle słucha?!"
-msgstr ""
+msgstr "$13: Is anyone listening to us at all?!"
 
 #: dialog0263.txt:415
 msgid "$14: Do licha ciężkiego, co za ignorancja!"
-msgstr ""
+msgstr "$14: What's the hell, such a disregard!"
 
 #: dialog0263.txt:416
 msgid "$15: Słyszysz nas, Lucyferze?!"
@@ -8578,22 +8578,24 @@ msgstr "OTHER: Tell it all again..."
 #: dialog0265.txt:1
 msgid "OTHER: W miarę trwania opowieści Lucyfer był coraz|mniej śpiący, lecz za to coraz bardziej|zdumiony."
 msgstr ""
+"OTHER: As the story progressed, Lucifer was less|and less dormant, but more "
+"and more|astonished."
 
 #: dialog0266.txt:1
 msgid "HERO: To właśnie on!"
-msgstr ""
+msgstr "HERO: It's him!"
 
 #: dialog0267.txt:1
 msgid "OTHER: To właśnie on!"
-msgstr ""
+msgstr "OTHER: It's him!"
 
 #: dialog0268.txt:1
 msgid "HERO: Ten sam demon był przyczyną naszych|nieszczęść?"
-msgstr ""
+msgstr "HERO: The same demon was the cause of our|misfortunes?"
 
 #: dialog0268.txt:2
 msgid "OTHER: Poznaję go!"
-msgstr ""
+msgstr "OTHER: I recognized him!"
 
 #: dialog0268.txt:3
 msgid "OTHER: A my mamy więcej wspólnego niż myślałam..."
