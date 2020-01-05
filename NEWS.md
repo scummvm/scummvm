@@ -2,6 +2,7 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 #### 2.1.1 (2020-XX-XX)
+
  General:
    - Fixed crash when switching certain languages in GUI.
    - Fixed ESC erroneously saving the changes in the options dialog.
