@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.1.1 (2020-XX-XX)
+#### 2.1.1 (2020-01-31)
 
  General:
    - Fixed crash when switching certain languages in GUI.
