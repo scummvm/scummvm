@@ -1,5 +1,5 @@
 [Setup]
-AppCopyright=2019
+AppCopyright=2020
 AppName=ResidualVM
 AppVerName=ResidualVM
 AppPublisher=The ResidualVM Team
