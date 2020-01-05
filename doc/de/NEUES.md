@@ -2,9 +2,58 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.1.1 (XX.XX.XXXX)
+#### 2.1.1 (31.01.2020)
+
+ Allgemein:
+   - Absturz beim Wechsel zwischen einigen Sprachen der Benutzeroberfläche korrigiert.
+   - Ein Druck auf die ESC-Taste speichert nicht mehr irrtümlich Einstellungen im Optionen-Dialog ab.
+   - Verbesserte Audio-Wiedergabe für FM-TOWNS/PC-98.
+
+ Bladerunner:
+   - Fehlerhafte Savestates in einigen Szenen korrigiert.
+
+ Kyra:
+   - End-Sequenz der Amiga-Version von EOB1 korrigiert (wird nur abgespielt, wenn alle Bonus-Quests erfüllt sind.
+   - Die Häufigkeit, mit der Monster in EOB1 Gegenstände fallen lassen wurde korrigiert.
+   - Geheimer Geheimtrank in Legend of Kyrandia 2 kann nun genutzt werden.
+   - Sound-Probleme in Legend of Kyrandia 2 korrigiert.
+   - Kleinere Grafikfehler in Legend of Kyrandia 1, EOB1 und der FM-TOWNS-Version von EOB2 korrigiert.
+
+ SCI:
+   - Zahlreiche Skript-Korrekturen in CAMELOT, ECO2, GK1, GK2, KQ7,
+     PHANT1, PQ1VG, QFG3, QFG4, SQ5 und SQ6.
+   - Unterstützung für den zensierten Modus in Phantasmagoria 1 hinzugefügt.
+   - Unterstützung für die polische Version von LSL7 hinzugefügt.
+   - Unterstützung für die italienische Version von GK2 hinzugefügt.
+   - Unterstützung für die russische Version von KQ7 hinzugefügt.
+
+ SCUMM:
+   - Unterstützung für Pajama2 (UK-Version) hinzugefügt.
+
+ Supernova:
+   - F5 kann nun im Hauptmenü genutzt werden.
+
+ Toltecs:
+   - Unterstützung für die tschechische Version hinzugefügt.
+
  Xeen:
-   - Anzeige von Goldmünzen und Edelsteinen auf der Nintendo Switch korrigiert
+   - Anzeige von Goldmünzen und Edelsteinen auf der Nintendo Switch korrigiert.
+   - Ausgänge zur Taverne in Swords of Xeen korrigiert.
+
+ 3DS-Portierung:
+   - Erhebliche Verbesserungen.
+
+ AmigaOS4-Portierung:
+   - Kleinere Verbesserung (stack cookie, Build-Automatisierung).
+
+ Android-Portierung:
+   - Verbesserung der Dateisystem-Navigation.
+
+ Switch-Portierung:
+   - Cloud-Integration hinzugefügt.
+
+ Windows-Portierung:
+   - Verbesserung der Sprachausgabe (Text-to-Speech).
 
 #### 2.1.0 "Electric Sheep" (13.10.2019)
 
