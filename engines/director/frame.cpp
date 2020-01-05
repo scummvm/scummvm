@@ -813,7 +813,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	}
 }
 
-void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textSize) {
+void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textRect) {
 	TextCast *textCast = (TextCast*)_sprites[spriteId]->_cast;
 
 	int x = _sprites[spriteId]->_startPoint.x; // +rectLeft;
@@ -822,10 +822,10 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	int width;
 
 	if (_vm->getVersion() >= 4) {
-		if (textSize == NULL)
+		if (textRect == NULL)
 			width = textCast->_initialRect.right;
 		else {
-			width = textSize->width();
+			width = textRect->width();
 		}
 	} else {
 		width = textCast->_initialRect.width(); //_sprites[spriteId]->_width;
@@ -844,11 +844,11 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	Graphics::MacFont *macFont = new Graphics::MacFont(textCast->_fontId, textCast->_fontSize, textCast->_textSlant);
 
-	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s' text: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(*macFont).c_str(), Common::toPrintable(textCast->_ftext).c_str());
+	debugC(3, kDebugText, "renderText: sprite: %d x: %d y: %d w: %d h: %d font: '%s' text: '%s'", spriteId, x, y, width, height, _vm->_wm->_fontMan->getFontName(*macFont).c_str(), Common::toPrintable(textCast->_ftext).c_str());
 
 	uint16 boxShadow = (uint16)textCast->_boxShadow;
 	uint16 borderSize = (uint16)textCast->_borderSize;
-	if (textSize != NULL)
+	if (textRect != NULL)
 		borderSize = 0;
 	uint16 padding = (uint16)textCast->_gutterSize;
 	uint16 textShadow = (uint16)textCast->_textShadow;
@@ -863,14 +863,14 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 		return;
 
 	height = textSurface->h;
-	if (textSize != NULL) {
+	if (textRect != NULL) {
 		// TODO: this offset could be due to incorrect fonts loaded!
-		textSize->bottom = height + textCast->_cachedMacText->getLineCount();
+		textRect->bottom = height + textCast->_cachedMacText->getLineCount();
 	}
 
 	uint16 textX = 0, textY = 0;
 
-	if (textSize == NULL) {
+	if (textRect == NULL) {
 		if (borderSize > 0) {
 			if (_vm->getVersion() <= 3)
 				height++;
@@ -916,11 +916,11 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 	Graphics::ManagedSurface textWithFeatures(width + (borderSize * 2) + boxShadow + textShadow, height + borderSize + boxShadow + textShadow);
 	textWithFeatures.fillRect(Common::Rect(textWithFeatures.w, textWithFeatures.h), 0xff);
 
-	if (textSize == NULL && boxShadow > 0) {
+	if (textRect == NULL && boxShadow > 0) {
 		textWithFeatures.fillRect(Common::Rect(boxShadow, boxShadow, textWithFeatures.w + boxShadow, textWithFeatures.h), 0);
 	}
 
-	if (textSize == NULL && borderSize != kSizeNone) {
+	if (textRect == NULL && borderSize != kSizeNone) {
 		for (int bb = 0; bb < borderSize; bb++) {
 			Common::Rect borderRect(bb, bb, textWithFeatures.w - bb - boxShadow - textShadow, textWithFeatures.h - bb - boxShadow - textShadow);
 			textWithFeatures.fillRect(borderRect, 0xff);
