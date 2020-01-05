@@ -63,8 +63,8 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 
 		_initialRect = Score::readRect(stream);
 		_boundingRect = Score::readRect(stream);
-		_regX = stream.readUint16();
 		_regY = stream.readUint16();
+		_regX = stream.readUint16();
 
 		_bitsPerPixel = stream.readUint16();
 		if (_bitsPerPixel == 0)
