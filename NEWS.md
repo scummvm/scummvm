@@ -27,7 +27,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Russian KQ7.
 
  SCUMM:
-   - Added support for Pajama2 GB.
+   - Added support for Pajama2 (UK release).
 
  Supernova:
    - Hooked F5 to the Main Menu.
