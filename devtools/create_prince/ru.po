@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-04 01:01+0000\n"
+"PO-Revision-Date: 2020-01-06 00:26+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/prince/"
 "prince/ru/>\n"
@@ -8135,7 +8135,7 @@ msgstr "$10: Что-то должно произойти!"
 
 #: dialog0263.txt:312
 msgid "$11: Chcemy zemsty!"
-msgstr "$11: Мы хотим курить!"
+msgstr "$11: Мы хотим мести!"
 
 #: dialog0263.txt:413
 msgid "$12: Halo?!"
