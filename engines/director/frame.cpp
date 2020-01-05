@@ -736,7 +736,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		Graphics::drawFilledRect(fillRect, foreColor, Graphics::macDrawPixel, &pd);
 		break;
 	case kRoundedRectangleSprite:
-		Graphics::drawRoundRect(fillRect, 4, foreColor, true, Graphics::macDrawPixel, &pd);
+		Graphics::drawRoundRect(fillRect, 12, foreColor, true, Graphics::macDrawPixel, &pd);
 		break;
 	case kOvalSprite:
 		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, foreColor, true, Graphics::macDrawPixel, &pd);
@@ -752,7 +752,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		tmpSurface.fillRect(Common::Rect(shapeRect.width(), shapeRect.height()), (_vm->getCurrentScore()->_currentMouseDownSpriteId == spriteId ? 0 : 0xff));
 		break;
 	case kOutlinedRoundedRectangleSprite:
-		Graphics::drawRoundRect(fillRect, 4, foreColor, false, Graphics::macDrawPixel, &pd);
+		Graphics::drawRoundRect(fillRect, 12, foreColor, false, Graphics::macDrawPixel, &pd);
 		break;
 	case kOutlinedOvalSprite:
 		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, foreColor, false, Graphics::macDrawPixel, &pd);
