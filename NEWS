@@ -14,6 +14,8 @@
 	- Fixed music tracks sometimes not playing (#1522)
 	- Fixed music tracks sometimes incorrectly restarting (#1476)
 	- Fixed a crash when opening the menu while on the Amateria tracks (#1514)
+	- Improved save file error handling
+	- Improved performance during node transitions on hi-resolution displays
 
 0.3.1 (2018-06-13)
 	Myst III changes:
