@@ -69,8 +69,7 @@ MacText::MacText(Common::U32String s, MacWindowManager *wm, const MacFont *macFo
 
 	_currentFormatting = _defaultFormatting;
 
-	if (!_str.empty())
-		splitString(_str);
+	splitString(_str);
 
 	recalcDims();
 
@@ -101,8 +100,7 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 
 	_currentFormatting = _defaultFormatting;
 
-	if (!_str.empty())
-		splitString(_str);
+	splitString(_str);
 
 	recalcDims();
 
@@ -114,13 +112,11 @@ void MacText::setMaxWidth(int maxWidth) {
 
 	_textLines.clear();
 
-	if (!_str.empty()) {
-		splitString(_str);
+	splitString(_str);
 
-		recalcDims();
+	recalcDims();
 
-		_fullRefresh = true;
-	}
+	_fullRefresh = true;
 }
 
 static const Common::U32String::value_type *readHex(uint16 *res, const Common::U32String::value_type *s, int len) {
