@@ -22,7 +22,7 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/shared/std/string.h"
-#include "ultima/ultima6/core/console.h"
+#include "ultima/ultima6/gui/widgets/console.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/files/nuvie_file_list.h"
 #include "common/fs.h"

@@ -29,7 +29,7 @@
 #include "ultima/shared/std/containers.h"
 
 #include "ultima/ultima6/actors/actor.h"
-#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/gui/widgets/msg_scroll.h"
 #include "ultima/ultima6/files/u6_lib_n.h"
 #include "ultima/ultima6/views/view.h"
 

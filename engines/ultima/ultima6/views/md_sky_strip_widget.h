@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_VIEWS_MD_SKY_STRIP_WIDGET_H
 #define ULTIMA6_VIEWS_MD_SKY_STRIP_WIDGET_H
 
-#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/widgets/gui_widget.h"
 #include "ultima/ultima6/files/u6_shape.h"
 
 namespace Ultima {

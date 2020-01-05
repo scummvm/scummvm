@@ -28,7 +28,7 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/core/obj_manager.h"
-#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/widgets/gui_widget.h"
 #include "ultima/ultima6/core/map.h"
 
 namespace Ultima {

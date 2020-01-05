@@ -34,7 +34,7 @@
 #include "ultima/ultima6/portraits/portrait.h"
 #include "ultima/ultima6/fonts/font.h"
 #include "ultima/ultima6/views/view_manager.h"
-#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/gui/widgets/msg_scroll.h"
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/views/doll_widget.h"
 #include "ultima/ultima6/views/portrait_view.h"

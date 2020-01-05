@@ -29,7 +29,7 @@
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/core/map.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/core/obj_manager.h"
 #include "ultima/ultima6/screen/screen.h"
 #include "ultima/ultima6/script/script.h"

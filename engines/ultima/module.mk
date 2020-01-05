@@ -22,14 +22,8 @@ MODULE_OBJS += \
 	ultima6/conf/xml_node.o \
 	ultima6/conf/xml_tree.o \
 	ultima6/core/anim_manager.o \
-	ultima6/core/background.o \
 	ultima6/core/book.o \
-	ultima6/core/command_bar.o \
-	ultima6/core/command_bar_mew_ui.o \
-	ultima6/core/console.o \
 	ultima6/core/converse.o \
-	ultima6/core/converse_gump.o \
-	ultima6/core/converse_gump_wou.o \
 	ultima6/core/converse_interpret.o \
 	ultima6/core/converse_speech.o \
 	ultima6/core/cursor.o \
@@ -38,15 +32,11 @@ MODULE_OBJS += \
 	ultima6/core/effect_manager.o \
 	ultima6/core/egg_manager.o \
 	ultima6/core/events.o \
-	ultima6/core/fps_counter.o \
 	ultima6/core/game.o \
 	ultima6/core/game_clock.o \
 	ultima6/core/look.o \
 	ultima6/core/magic.o \
 	ultima6/core/map.o \
-	ultima6/core/map_window.o \
-	ultima6/core/msg_scroll.o \
-	ultima6/core/msg_scroll_new_ui.o \
 	ultima6/core/nuvie_defs.o \
 	ultima6/core/obj.o \
 	ultima6/core/obj_manager.o \
@@ -84,8 +74,18 @@ MODULE_OBJS += \
 	ultima6/gui/gui_text.o \
 	ultima6/gui/gui_text_input.o \
 	ultima6/gui/gui_text_toggle_button.o \
-	ultima6/gui/gui_widget.o \
 	ultima6/gui/gui_yes_no_dialog.o \
+	ultima6/gui/widgets/gui_widget.o \
+	ultima6/gui/widgets/background.o \
+	ultima6/gui/widgets/command_bar.o \
+	ultima6/gui/widgets/command_bar_new_ui.o \
+	ultima6/gui/widgets/console.o \
+	ultima6/gui/widgets/msg_scroll.o \
+	ultima6/gui/widgets/msg_scroll_new_ui.o \
+	ultima6/gui/widgets/converse_gump.o \
+	ultima6/gui/widgets/converse_gump_wou.o \
+	ultima6/gui/widgets/fps_counter.o \
+	ultima6/gui/widgets/map_window.o \
 	ultima6/keybinding/keys.o \
 	ultima6/keybinding/key_actions.o \
 	ultima6/menus/audio_dialog.o \

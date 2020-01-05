@@ -36,7 +36,7 @@
 #include "ultima/ultima6/save/obj_list.h"
 #include "ultima/ultima6/core/timed_event.h"
 #include "ultima/ultima6/views/view_manager.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/core/map.h"
 #include "ultima/ultima6/script/script.h"
 

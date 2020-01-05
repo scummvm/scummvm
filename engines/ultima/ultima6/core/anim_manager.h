@@ -27,7 +27,7 @@
 //#include <cassert>
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/core/timed_event.h"
 #include "ultima/ultima6/misc/call_back.h"
 #include "ultima/ultima6/misc/map_entity.h"

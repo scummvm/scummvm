@@ -20,45 +20,43 @@
  *
  */
 
-#ifndef ULTIMA6_CORE_COMMAND_BAR_NEW_UI_H
-#define ULTIMA6_CORE_COMMAND_BAR_NEW_UI_H
+#ifndef ULTIMA6_CORE_BACKGROUND_H
+#define ULTIMA6_CORE_BACKGROUND_H
 
-#include "ultima/shared/std/string.h"
-#include "ultima/ultima6/gui/gui_widget.h"
-#include "ultima/ultima6/misc/call_back.h"
-#include "ultima/ultima6/core/command_bar.h"
+#include "ultima/ultima6/gui/widgets/gui_widget.h"
 
 namespace Ultima {
 namespace Ultima6 {
 
-class NuvieIO;
-class Events;
-class Game;
-class GUI_Button;
-class GUI_CallBack;
-class Text;
-class Font;
+class Configuration;
+class U6Shape;
 
-class CommandBarNewUI: public CommandBar {
-protected:
-	uint8 cur_pos;
-	uint8 icon_w;
-	uint8 icon_h;
-	uint8 icon_y_offset;
-	uint16 num_icons;
+class Background: public GUI_Widget {
+	Configuration *config;
+	int game_type;
 
-	Font *font;
+	U6Shape *background;
+	uint16 bg_w, bg_h;
+	uint16 x_off, y_off, right_bg_x_off, left_bg_x_off, border_width;
+
 public:
-	CommandBarNewUI(Game *g);
-	~CommandBarNewUI();
 
-	virtual void Display(bool full_redraw);
-	virtual GUI_status KeyDown(const Common::KeyState &key);
-	virtual GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseUp(int x, int y, Shared::MouseButton button);
+	Background(Configuration *cfg);
+	~Background();
 
-private:
-	const char *get_command_name(sint8 command_num);
+	bool init();
+	uint16 get_border_width() {
+		return border_width;
+	}
+	void Display(bool full_redraw);
+	bool drag_accept_drop(int x, int y, int message, void *data); // needed for original+_full_map
+	void drag_perform_drop(int x, int y, int message, void *data); // needed for original+_full_map
+	U6Shape *get_bg_shape() {
+		return background;
+	}
+	uint16 get_bg_w() {
+		return bg_w;
+	}
 };
 
 } // End of namespace Ultima6

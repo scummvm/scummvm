@@ -28,7 +28,7 @@
 #include "ultima/ultima6/sound/song_adplug.h"
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/core/player.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/core/effect.h"
 #include "ultima/ultima6/sound/adplug/emu_opl.h"
 #include "ultima/ultima6/sound/adlib_sfx_manager.h"

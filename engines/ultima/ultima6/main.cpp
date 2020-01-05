@@ -30,7 +30,7 @@
 
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-#include "ultima/ultima6/core/console.h"
+#include "ultima/ultima6/gui/widgets/console.h"
 #include "nuvie.h"
 
 #include "main.h"

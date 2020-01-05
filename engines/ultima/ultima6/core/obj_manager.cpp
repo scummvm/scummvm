@@ -32,9 +32,9 @@
 #include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
 #include "ultima/ultima6/core/game.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/script/script.h"
-#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/gui/widgets/msg_scroll.h"
 
 namespace Ultima {
 namespace Ultima6 {

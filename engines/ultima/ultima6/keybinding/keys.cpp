@@ -28,11 +28,11 @@
 #include "ultima/ultima6/core/player.h"
 #include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/files/utils.h"
-#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/gui/widgets/msg_scroll.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/files/nuvie_io.h"
 #include "ultima/ultima6/misc/u6_misc.h"
-#include "ultima/ultima6/core/console.h"
+#include "ultima/ultima6/gui/widgets/console.h"
 #include "ultima/ultima6/core/effect.h"
 #include "common/hash-str.h"
 

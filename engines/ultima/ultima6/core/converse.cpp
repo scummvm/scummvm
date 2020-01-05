@@ -31,13 +31,13 @@
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/sound/sound_manager.h"
 #include "ultima/ultima6/core/events.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/core/converse_interpret.h"
 #include "ultima/ultima6/core/converse_speech.h"
-#include "ultima/ultima6/core/converse_gump.h"
+#include "ultima/ultima6/gui/widgets/converse_gump.h"
 #include "ultima/ultima6/core/converse.h"
 #include "ultima/ultima6/gui/gui.h"
-#include "ultima/ultima6/core/background.h"
+#include "ultima/ultima6/gui/widgets/background.h"
 
 namespace Ultima {
 namespace Ultima6 {

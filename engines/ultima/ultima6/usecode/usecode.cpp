@@ -22,11 +22,11 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_llist.h"
-#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/gui/widgets/msg_scroll.h"
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/usecode/usecode.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/core/events.h"
 

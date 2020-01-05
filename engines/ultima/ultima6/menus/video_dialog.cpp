@@ -33,7 +33,7 @@
 #include "ultima/ultima6/screen/dither.h"
 #include "ultima/ultima6/screen/scale.h"
 #include "ultima/ultima6/screen/screen.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/gui/gui_dialog.h"
 #include "ultima/ultima6/menus/video_dialog.h"
 #include "ultima/ultima6/conf/configuration.h"

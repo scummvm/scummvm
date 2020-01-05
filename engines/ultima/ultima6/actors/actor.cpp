@@ -25,7 +25,7 @@
 #include "ultima/ultima6/misc/u6_llist.h"
 #include "ultima/ultima6/core/game.h"
 #include "ultima/ultima6/core/game_clock.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/core/obj_manager.h"
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/views/view_manager.h"

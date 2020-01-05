@@ -28,7 +28,7 @@
 #include "ultima/ultima6/views/view.h"
 #include "ultima/ultima6/actors/actor.h"
 
-#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/widgets/gui_widget.h"
 #include "ultima/ultima6/gui/gui_button.h"
 
 namespace Ultima {

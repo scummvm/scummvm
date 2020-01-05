@@ -25,7 +25,7 @@
 #ifndef ULTIMA6_GUI_GUI_BUTTON_H
 #define ULTIMA6_GUI_GUI_BUTTON_H
 
-#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/widgets/gui_widget.h"
 #include "ultima/ultima6/gui/gui_font.h"
 
 namespace Ultima {

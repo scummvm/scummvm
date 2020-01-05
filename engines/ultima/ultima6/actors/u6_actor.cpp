@@ -30,7 +30,7 @@
 #include "ultima/ultima6/usecode/u6_usecode.h"
 #include "ultima/ultima6/pathfinder/sched_path_finder.h"
 #include "ultima/ultima6/pathfinder/u6_astar_path.h"
-#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/gui/widgets/msg_scroll.h"
 #include "ultima/ultima6/actors/u6_actor.h"
 
 #include "ultima/ultima6/core/party.h"

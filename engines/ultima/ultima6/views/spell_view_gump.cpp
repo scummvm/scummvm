@@ -29,7 +29,7 @@
 #include "ultima/ultima6/core/magic.h"
 
 #include "ultima/ultima6/views/spell_view_gump.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/files/nuvie_bmp_file.h"
 
 namespace Ultima {

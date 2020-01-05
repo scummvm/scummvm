@@ -26,7 +26,7 @@
 #include "ultima/ultima6/gui/gui_button.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/core/map.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/views/view_manager.h"
 #include "ultima/ultima6/views/map_editor_view.h"
 #include "ultima/ultima6/keybinding/keys.h"
