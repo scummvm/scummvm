@@ -146,7 +146,7 @@ static struct BuiltinProto {
 	// Misc
 	{ "alert",	 		LB::b_alert,		1, 1, false, 2, BLTIN },	// D2 c
 	{ "birth",	 		LB::b_birth,		-1,0, false, 4, FBLTIN },	//			D4 f
-	{ "clearGlobals",	LB::b_clearGlobals,	0, 0, false, 4, BLTIN },	//			D4 c
+	{ "clearGlobals",	LB::b_clearGlobals,	0, 0, false, 3, BLTIN },	//		D3.1 c
 	{ "cursor",	 		LB::b_cursor,		1, 1, false, 2, BLTIN },	// D2 c
 	{ "framesToHMS",	LB::b_framesToHMS,	4, 4, false, 3, FBLTIN },	//		D3 f
 	{ "HMStoFrames",	LB::b_HMStoFrames,	4, 4, false, 3, FBLTIN },	//		D3 f
@@ -161,7 +161,7 @@ static struct BuiltinProto {
 	{ "constrainV",		LB::b_constrainV,	2, 2, true,  2, FBLTIN },	// D2 f
 	{ "copyToClipBoard",LB::b_copyToClipBoard,1,1, false, 4, BLTIN },	//			D4 c
 	{ "duplicate",		LB::b_duplicate,	1, 2, false, 4, BLTIN },	//			D4 c
-	{ "editableText",	LB::b_editableText,	0, 0, false, 2, BLTIN },	// D2
+	{ "editableText",	LB::b_editableText,	0, 0, false, 2, BLTIN },	// D2, FIXME: the field in D4+
 	{ "erase",			LB::b_erase,		1, 1, false, 4, BLTIN },	//			D4 c
 	{ "findEmpty",		LB::b_findEmpty,	1, 1, true,  4, FBLTIN },	//			D4 f
 		// go														// D2
@@ -170,18 +170,18 @@ static struct BuiltinProto {
 	{ "label",			LB::b_label,		1, 1, true,  2, FBLTIN },	// D2 f
 	{ "marker",			LB::b_marker,		1, 1, true,  2, FBLTIN },	// D2 f
 	{ "move",			LB::b_move,			1, 2, false, 4, BLTIN },	//			D4 c
-	{ "moveableSprite",	LB::b_moveableSprite,0, 0, false, 2, BLTIN },	// D2
+	{ "moveableSprite",	LB::b_moveableSprite,0, 0, false, 2, BLTIN },	// D2, FIXME: the field in D4+
 	{ "pasteClipBoardInto",LB::b_pasteClipBoardInto,1,1,false,4,BLTIN },//			D4 c
 	{ "puppetPalette",	LB::b_puppetPalette, -1,0, false, 2, BLTIN },	// D2 c
 	{ "puppetSound",	LB::b_puppetSound,	-1,0, false, 2, BLTIN },	// D2 c
 	{ "puppetSprite",	LB::b_puppetSprite,	-1,0, false, 2, BLTIN },	// D2 c
 	{ "puppetTempo",	LB::b_puppetTempo,	1, 1, false, 2, BLTIN },	// D2 c
 	{ "puppetTransition",LB::b_puppetTransition,-1,0,false,2, BLTIN },	// D2 c
-	{ "ramNeeded",		LB::b_ramNeeded,	2, 2, true,  4, FBLTIN },	//			D4 f
+	{ "ramNeeded",		LB::b_ramNeeded,	2, 2, true,  3, FBLTIN },	//		D3.1 f
 	{ "rollOver",		LB::b_rollOver,		1, 1, true,  2, FBLTIN },	// D2 f
 	{ "spriteBox",		LB::b_spriteBox,	-1,0, false, 2, BLTIN },	// D2 c
-	{ "unLoad",			LB::b_unLoad,		0, 2, false, 4, BLTIN },	//			D4 c
-	{ "unLoadCast",		LB::b_unLoadCast,	0, 2, false, 4, BLTIN },	//			D4 c
+	{ "unLoad",			LB::b_unLoad,		0, 2, false, 3, BLTIN },	//		D3.1 c
+	{ "unLoadCast",		LB::b_unLoadCast,	0, 2, false, 3, BLTIN },	//		D3.1 c
 	{ "updateStage",	LB::b_updateStage,	0, 0, false, 2, BLTIN },	// D2 c
 	{ "zoomBox",		LB::b_zoomBox,		-1,0, false, 2, BLTIN },	// D2 c
 	// Point
@@ -193,7 +193,7 @@ static struct BuiltinProto {
 	{ "union",			LB::b_union,		2, 2, true,  4, FBLTIN },	//			D4 f
 	// Sound
 	{ "beep",	 		LB::b_beep,			0, 1, false, 2, BLTIN },	// D2
-	{ "mci",	 		LB::b_mci,			1, 1, false, 4, BLTIN },	//			D4 c
+	{ "mci",	 		LB::b_mci,			1, 1, false, 3, BLTIN },	//		D3.1 c
 	{ "mciwait",		LB::b_mciwait,		1, 1, false, 4, BLTIN },	//			D4 c
 	{ "sound-close",	LB::b_soundClose, 	1, 1, false, 4, BLTIN },	//			D4 c
 	{ "sound-fadeIn",	LB::b_soundFadeIn, 	1, 2, false, 3, BLTIN },	//		D3 c
