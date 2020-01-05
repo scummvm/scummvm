@@ -208,7 +208,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			else
 				sprite._trails = 0;
 
-			sprite._lineSize = (sprite._flags >> 8) & 0x03;
+			sprite._lineSize = ((sprite._flags >> 8) & 0x03) + 1;
 
 			sprite._castId = stream->readUint16();
 			sprite._startPoint.y = stream->readUint16();
@@ -664,7 +664,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	byte spriteType = sp->_spriteType;
 	byte foreColor = sp->_foreColor;
 	byte backColor = sp->_backColor;
-	int lineSize = sp->_lineSize - 1;
+	int lineSize = sp->_lineSize;
 	if (spriteType == kCastMemberSprite && sp->_cast != NULL) {
 		switch (sp->_cast->_type) {
 		case kCastShape:
@@ -688,7 +688,7 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 				}
 				foreColor = sc->_fgCol;
 				backColor = sc->_bgCol;
-				lineSize = sc->_lineThickness - 1;
+				lineSize = sc->_lineThickness;
 				ink = sc->_ink;
 				// shapes should be rendered with transparency by default
 				if (ink == kInkTypeCopy) {
@@ -700,6 +700,16 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 			warning("Frame::renderShape(): Unhandled cast type: %d", sp->_cast->_type);
 			break;
 		}
+	}
+
+	// for outlined shapes, line thickness of 1 means invisible.
+	// filled shapes need at least a line thickness of 1 for MacPlot to render them
+	if (spriteType == kOutlinedRectangleSprite ||
+		spriteType == kOutlinedRoundedRectangleSprite ||
+		spriteType == kOutlinedOvalSprite ||
+		spriteType == kLineBottomTopSprite ||
+		spriteType == kLineTopBottomSprite) {
+		lineSize -= 1;
 	}
 
 	Common::Rect shapeRect = Common::Rect(sp->_startPoint.x,
