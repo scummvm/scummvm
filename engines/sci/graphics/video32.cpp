@@ -936,7 +936,9 @@ void VMDPlayer::closeOverlay() {
 	}
 #endif
 
-	g_sci->_gfxFrameout->frameOut(true, _drawRect);
+	if (!_leaveLastFrame && _leaveScreenBlack) {
+		g_sci->_gfxFrameout->frameOut(true, _drawRect);
+	}
 }
 
 void VMDPlayer::initComposited() {
