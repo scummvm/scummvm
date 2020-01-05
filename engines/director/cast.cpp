@@ -70,6 +70,9 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 		if (_bitsPerPixel == 0)
 			_bitsPerPixel = 1;
 
+		if (_bitsPerPixel == 1)
+			_pitch *= 8;
+
 		int tail = 0;
 
 		while (!stream.eos()) {
