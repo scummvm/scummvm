@@ -87,17 +87,6 @@ bool EventsManager::pollEvent(Common::Event &event) {
 				g_ultima->_debugger->onFrame();
 				return false;
 			}
-			// Save/load hotkeys
-			if (event.kbd.flags == 0) {
-				if (event.kbd.keycode == Common::KEYCODE_F5) {
-					g_ultima->saveGame();
-					return false;
-				} else if (event.kbd.keycode == Common::KEYCODE_F7) {
-					g_ultima->loadGame();
-					return false;
-				}
-			}
-
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
