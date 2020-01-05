@@ -125,19 +125,19 @@ enum {
 	kApplyCmd = 'appl'
 };
 
-static const char *savePeriodLabels[] = { _s("Never"), _s("Every 5 mins"), _s("Every 10 mins"), _s("Every 15 mins"), _s("Every 30 mins"), 0 };
+static const char *savePeriodLabels[] = { _s("Never"), _s("Every 5 mins"), _s("Every 10 mins"), _s("Every 15 mins"), _s("Every 30 mins"), nullptr };
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
 // The keyboard mouse speed values range from 0 to 7 and correspond to speeds shown in the label
 // "10" (value 3) is the default speed corresponding to the speed before introduction of this control
-static const char *kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", 0 };
+static const char *kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", nullptr };
 
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
-	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(0) {
+	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {
 	init();
 }
 
 OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String &name)
-	: Dialog(name), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(0) {
+	: Dialog(name), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {
 	init();
 }
 
@@ -147,68 +147,68 @@ OptionsDialog::~OptionsDialog() {
 
 void OptionsDialog::init() {
 	_enableControlSettings = false;
-	_onscreenCheckbox = 0;
-	_touchpadCheckbox = 0;
-	_swapMenuAndBackBtnsCheckbox = 0;
-	_kbdMouseSpeedDesc = 0;
-	_kbdMouseSpeedSlider = 0;
-	_kbdMouseSpeedLabel = 0;
-	_joystickDeadzoneDesc = 0;
-	_joystickDeadzoneSlider = 0;
-	_joystickDeadzoneLabel = 0;
+	_onscreenCheckbox = nullptr;
+	_touchpadCheckbox = nullptr;
+	_swapMenuAndBackBtnsCheckbox = nullptr;
+	_kbdMouseSpeedDesc = nullptr;
+	_kbdMouseSpeedSlider = nullptr;
+	_kbdMouseSpeedLabel = nullptr;
+	_joystickDeadzoneDesc = nullptr;
+	_joystickDeadzoneSlider = nullptr;
+	_joystickDeadzoneLabel = nullptr;
 	_enableGraphicSettings = false;
-	_gfxPopUp = 0;
-	_gfxPopUpDesc = 0;
-	_renderModePopUp = 0;
-	_renderModePopUpDesc = 0;
-	_stretchPopUp = 0;
-	_stretchPopUpDesc = 0;
-	_fullscreenCheckbox = 0;
-	_filteringCheckbox = 0;
-	_aspectCheckbox = 0;
+	_gfxPopUp = nullptr;
+	_gfxPopUpDesc = nullptr;
+	_renderModePopUp = nullptr;
+	_renderModePopUpDesc = nullptr;
+	_stretchPopUp = nullptr;
+	_stretchPopUpDesc = nullptr;
+	_fullscreenCheckbox = nullptr;
+	_filteringCheckbox = nullptr;
+	_aspectCheckbox = nullptr;
 	_enableShaderSettings = false;
-	_shaderPopUpDesc = 0;
-	_shaderPopUp = 0;
+	_shaderPopUpDesc = nullptr;
+	_shaderPopUp = nullptr;
 	_enableAudioSettings = false;
-	_midiPopUp = 0;
-	_midiPopUpDesc = 0;
-	_oplPopUp = 0;
-	_oplPopUpDesc = 0;
+	_midiPopUp = nullptr;
+	_midiPopUpDesc = nullptr;
+	_oplPopUp = nullptr;
+	_oplPopUpDesc = nullptr;
 	_enableMIDISettings = false;
-	_gmDevicePopUp = 0;
-	_gmDevicePopUpDesc = 0;
-	_soundFont = 0;
-	_soundFontButton = 0;
-	_soundFontClearButton = 0;
-	_multiMidiCheckbox = 0;
-	_midiGainDesc = 0;
-	_midiGainSlider = 0;
-	_midiGainLabel = 0;
+	_gmDevicePopUp = nullptr;
+	_gmDevicePopUpDesc = nullptr;
+	_soundFont = nullptr;
+	_soundFontButton = nullptr;
+	_soundFontClearButton = nullptr;
+	_multiMidiCheckbox = nullptr;
+	_midiGainDesc = nullptr;
+	_midiGainSlider = nullptr;
+	_midiGainLabel = nullptr;
 	_enableMT32Settings = false;
-	_mt32Checkbox = 0;
-	_mt32DevicePopUp = 0;
-	_mt32DevicePopUpDesc = 0;
-	_enableGSCheckbox = 0;
+	_mt32Checkbox = nullptr;
+	_mt32DevicePopUp = nullptr;
+	_mt32DevicePopUpDesc = nullptr;
+	_enableGSCheckbox = nullptr;
 	_enableVolumeSettings = false;
-	_musicVolumeDesc = 0;
-	_musicVolumeSlider = 0;
-	_musicVolumeLabel = 0;
-	_sfxVolumeDesc = 0;
-	_sfxVolumeSlider = 0;
-	_sfxVolumeLabel = 0;
-	_speechVolumeDesc = 0;
-	_speechVolumeSlider = 0;
-	_speechVolumeLabel = 0;
-	_muteCheckbox = 0;
+	_musicVolumeDesc = nullptr;
+	_musicVolumeSlider = nullptr;
+	_musicVolumeLabel = nullptr;
+	_sfxVolumeDesc = nullptr;
+	_sfxVolumeSlider = nullptr;
+	_sfxVolumeLabel = nullptr;
+	_speechVolumeDesc = nullptr;
+	_speechVolumeSlider = nullptr;
+	_speechVolumeLabel = nullptr;
+	_muteCheckbox = nullptr;
 	_enableSubtitleSettings = false;
-	_subToggleDesc = 0;
-	_subToggleGroup = 0;
-	_subToggleSubOnly = 0;
-	_subToggleSpeechOnly = 0;
-	_subToggleSubBoth = 0;
-	_subSpeedDesc = 0;
-	_subSpeedSlider = 0;
-	_subSpeedLabel = 0;
+	_subToggleDesc = nullptr;
+	_subToggleGroup = nullptr;
+	_subToggleSubOnly = nullptr;
+	_subToggleSpeechOnly = nullptr;
+	_subToggleSubBoth = nullptr;
+	_subSpeedDesc = nullptr;
+	_subSpeedSlider = nullptr;
+	_subSpeedLabel = nullptr;
 
 	// Retrieve game GUI options
 	_guioptions.clear();
@@ -230,21 +230,21 @@ void OptionsDialog::build() {
 	if (g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
 		if (ConfMan.hasKey("onscreen_control", _domain)) {
 			bool onscreenState =  g_system->getFeatureState(OSystem::kFeatureOnScreenControl);
-			if (_onscreenCheckbox != 0)
+			if (_onscreenCheckbox != nullptr)
 				_onscreenCheckbox->setState(onscreenState);
 		}
 	}
 	if (g_system->hasFeature(OSystem::kFeatureTouchpadMode)) {
 		if (ConfMan.hasKey("touchpad_mouse_mode", _domain)) {
 			bool touchpadState =  g_system->getFeatureState(OSystem::kFeatureTouchpadMode);
-			if (_touchpadCheckbox != 0)
+			if (_touchpadCheckbox != nullptr)
 				_touchpadCheckbox->setState(touchpadState);
 		}
 	}
 	if (g_system->hasFeature(OSystem::kFeatureSwapMenuAndBackButtons)) {
 		if (ConfMan.hasKey("swap_menu_and_back_buttons", _domain)) {
 			bool state =  g_system->getFeatureState(OSystem::kFeatureSwapMenuAndBackButtons);
-			if (_swapMenuAndBackBtnsCheckbox != 0)
+			if (_swapMenuAndBackBtnsCheckbox != nullptr)
 				_swapMenuAndBackBtnsCheckbox->setState(state);
 		}
 	}
@@ -257,7 +257,7 @@ void OptionsDialog::build() {
 	}
 	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
 		int value = ConfMan.getInt("joystick_deadzone", _domain);
-		if (_joystickDeadzoneSlider != 0) {
+		if (_joystickDeadzoneSlider != nullptr) {
 			_joystickDeadzoneSlider->setValue(value);
 			_joystickDeadzoneLabel->setValue(value);
 		}
@@ -890,7 +890,7 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_midiPopUp->setEnabled(enabled);
 
 	const Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
-	bool hasMidiDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != NULL);
+	bool hasMidiDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != nullptr);
 
 	if (_domain != Common::ConfigManager::kApplicationDomain && // global dialog
 		hasMidiDefined && // No flags are specified
@@ -1068,7 +1068,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	// RenderMode popup
 	const Common::String allFlags = Common::allRenderModesGUIOs();
-	bool renderingTypeDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != NULL);
+	bool renderingTypeDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != nullptr);
 
 	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", _("Render mode:"), _("Special dithering modes supported by some games"));
 	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", _("Special dithering modes supported by some games"));
@@ -1115,7 +1115,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 
 	// Populate it
 	const Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
-	bool hasMidiDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != NULL);
+	bool hasMidiDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != nullptr);
 
 	const PluginList p = MusicMan.getPlugins();
 	for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
@@ -1197,7 +1197,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 
 	// MIDI gain setting (FluidSynth uses this)
 	_midiGainDesc = new StaticTextWidget(boss, prefix + "mcMidiGainText", _("MIDI gain:"));
-	_midiGainSlider = new SliderWidget(boss, prefix + "mcMidiGainSlider", 0, kMidiGainChanged);
+	_midiGainSlider = new SliderWidget(boss, prefix + "mcMidiGainSlider", nullptr, kMidiGainChanged);
 	_midiGainSlider->setMinValue(0);
 	_midiGainSlider->setMaxValue(1000);
 	_midiGainLabel = new StaticTextWidget(boss, prefix + "mcMidiGainLabel", "1.00");
@@ -1274,7 +1274,7 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &p
 	}
 
 	// Subtitle speed
-	_subSpeedSlider = new SliderWidget(boss, prefix + "subSubtitleSpeedSlider", 0, kSubtitleSpeedChanged);
+	_subSpeedSlider = new SliderWidget(boss, prefix + "subSubtitleSpeedSlider", nullptr, kSubtitleSpeedChanged);
 	_subSpeedLabel = new StaticTextWidget(boss, prefix + "subSubtitleSpeedLabel", "100%");
 	_subSpeedSlider->setMinValue(0); _subSpeedSlider->setMaxValue(maxSliderVal);
 	_subSpeedLabel->setFlags(WIDGET_CLEARBG);
@@ -1289,13 +1289,13 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 		_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", _("Music volume:"));
 	else
 		_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", _c("Music volume:", "lowres"));
-	_musicVolumeSlider = new SliderWidget(boss, prefix + "vcMusicSlider", 0, kMusicVolumeChanged);
+	_musicVolumeSlider = new SliderWidget(boss, prefix + "vcMusicSlider", nullptr, kMusicVolumeChanged);
 	_musicVolumeLabel = new StaticTextWidget(boss, prefix + "vcMusicLabel", "100%");
 	_musicVolumeSlider->setMinValue(0);
 	_musicVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 
-	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", _("Mute all"), 0, kMuteAllChanged);
+	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", _("Mute all"), nullptr, kMuteAllChanged);
 
 	if (g_system->getOverlayWidth() > 320)
 		_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", _("SFX volume:"), _("Special sound effects volume"));
@@ -1311,7 +1311,7 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , _("Speech volume:"));
 	else
 		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , _c("Speech volume:", "lowres"));
-	_speechVolumeSlider = new SliderWidget(boss, prefix + "vcSpeechSlider", 0, kSpeechVolumeChanged);
+	_speechVolumeSlider = new SliderWidget(boss, prefix + "vcSpeechSlider", nullptr, kSpeechVolumeChanged);
 	_speechVolumeLabel = new StaticTextWidget(boss, prefix + "vcSpeechLabel", "100%");
 	_speechVolumeSlider->setMinValue(0);
 	_speechVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
@@ -1453,83 +1453,83 @@ void OptionsDialog::setupGraphicsTab() {
 GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "GlobalOptions"), CommandSender(nullptr), _launcher(launcher) {
 #ifdef GUI_ENABLE_KEYSDIALOG
-	_keysDialog = 0;
+	_keysDialog = nullptr;
 #endif
 #ifdef USE_FLUIDSYNTH
-	_fluidSynthSettingsDialog = 0;
+	_fluidSynthSettingsDialog = nullptr;
 #endif
-	_savePath = 0;
-	_savePathClearButton = 0;
-	_themePath = 0;
-	_themePathClearButton = 0;
-	_extraPath = 0;
-	_extraPathClearButton = 0;
+	_savePath = nullptr;
+	_savePathClearButton = nullptr;
+	_themePath = nullptr;
+	_themePathClearButton = nullptr;
+	_extraPath = nullptr;
+	_extraPathClearButton = nullptr;
 #ifdef DYNAMIC_MODULES
-	_pluginsPath = 0;
-	_pluginsPathClearButton = 0;
+	_pluginsPath = nullptr;
+	_pluginsPathClearButton = nullptr;
 #endif
-	_curTheme = 0;
-	_rendererPopUpDesc = 0;
-	_rendererPopUp = 0;
-	_autosavePeriodPopUpDesc = 0;
-	_autosavePeriodPopUp = 0;
-	_guiLanguagePopUpDesc = 0;
-	_guiLanguagePopUp = 0;
+	_curTheme = nullptr;
+	_rendererPopUpDesc = nullptr;
+	_rendererPopUp = nullptr;
+	_autosavePeriodPopUpDesc = nullptr;
+	_autosavePeriodPopUp = nullptr;
+	_guiLanguagePopUpDesc = nullptr;
+	_guiLanguagePopUp = nullptr;
 	_guiLanguageUseGameLanguageCheckbox = nullptr;
-	_useSystemDialogsCheckbox = 0;
+	_useSystemDialogsCheckbox = nullptr;
 #ifdef USE_UPDATES
-	_updatesPopUpDesc = 0;
-	_updatesPopUp = 0;
+	_updatesPopUpDesc = nullptr;
+	_updatesPopUp = nullptr;
 #endif
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
 	_selectedStorageIndex = CloudMan.getStorageIndex();
-	_storagePopUpDesc = 0;
-	_storagePopUp = 0;
-	_storageDisabledHint = 0;
-	_storageEnableButton = 0;
-	_storageUsernameDesc = 0;
-	_storageUsername = 0;
-	_storageUsedSpaceDesc = 0;
-	_storageUsedSpace = 0;
-	_storageSyncHint = 0;
-	_storageLastSyncDesc = 0;
-	_storageLastSync = 0;
-	_storageSyncSavesButton = 0;
-	_storageDownloadHint = 0;
-	_storageDownloadButton = 0;
-	_storageDisconnectHint = 0;
-	_storageDisconnectButton = 0;
+	_storagePopUpDesc = nullptr;
+	_storagePopUp = nullptr;
+	_storageDisabledHint = nullptr;
+	_storageEnableButton = nullptr;
+	_storageUsernameDesc = nullptr;
+	_storageUsername = nullptr;
+	_storageUsedSpaceDesc = nullptr;
+	_storageUsedSpace = nullptr;
+	_storageSyncHint = nullptr;
+	_storageLastSyncDesc = nullptr;
+	_storageLastSync = nullptr;
+	_storageSyncSavesButton = nullptr;
+	_storageDownloadHint = nullptr;
+	_storageDownloadButton = nullptr;
+	_storageDisconnectHint = nullptr;
+	_storageDisconnectButton = nullptr;
 
 	_connectingStorage = false;
-	_storageWizardNotConnectedHint = 0;
-	_storageWizardOpenLinkHint = 0;
-	_storageWizardLink = 0;
-	_storageWizardCodeHint = 0;
-	_storageWizardCodeBox = 0;
-	_storageWizardPasteButton = 0;
-	_storageWizardConnectButton = 0;
-	_storageWizardConnectionStatusHint = 0;
+	_storageWizardNotConnectedHint = nullptr;
+	_storageWizardOpenLinkHint = nullptr;
+	_storageWizardLink = nullptr;
+	_storageWizardCodeHint = nullptr;
+	_storageWizardCodeBox = nullptr;
+	_storageWizardPasteButton = nullptr;
+	_storageWizardConnectButton = nullptr;
+	_storageWizardConnectionStatusHint = nullptr;
 	_redrawCloudTab = false;
 #endif
 #ifdef USE_SDL_NET
-	_runServerButton = 0;
-	_serverInfoLabel = 0;
-	_rootPathButton = 0;
-	_rootPath = 0;
-	_rootPathClearButton = 0;
-	_serverPortDesc = 0;
-	_serverPort = 0;
-	_serverPortClearButton = 0;
-	_featureDescriptionLine1 = 0;
-	_featureDescriptionLine2 = 0;
+	_runServerButton = nullptr;
+	_serverInfoLabel = nullptr;
+	_rootPathButton = nullptr;
+	_rootPath = nullptr;
+	_rootPathClearButton = nullptr;
+	_serverPortDesc = nullptr;
+	_serverPort = nullptr;
+	_serverPortClearButton = nullptr;
+	_featureDescriptionLine1 = nullptr;
+	_featureDescriptionLine2 = nullptr;
 	_serverWasRunning = false;
 #endif
 #endif
 #ifdef USE_TTS
 	_enableTTS = false;
-	_ttsCheckbox = 0;
-	_ttsVoiceSelectionPopUp = 0;
+	_ttsCheckbox = nullptr;
+	_ttsVoiceSelectionPopUp = nullptr;
 #endif
 }
 
@@ -1599,7 +1599,7 @@ void GlobalOptionsDialog::build() {
 	addMIDIControls(tab, "GlobalOptions_MIDI.");
 
 #ifdef USE_FLUIDSYNTH
-	new ButtonWidget(tab, "GlobalOptions_MIDI.mcFluidSynthSettings", _("FluidSynth Settings"), 0, kFluidSynthSettingsCmd);
+	new ButtonWidget(tab, "GlobalOptions_MIDI.mcFluidSynthSettings", _("FluidSynth Settings"), nullptr, kFluidSynthSettingsCmd);
 #endif
 
 	//
@@ -1630,9 +1630,9 @@ void GlobalOptionsDialog::build() {
 	_savePathClearButton = addClearButton(tab, "GlobalOptions_Paths.SavePathClearButton", kSavePathClearCmd);
 
 	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _("Theme Path:"), 0, kChooseThemeDirCmd);
+		new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _("Theme Path:"), nullptr, kChooseThemeDirCmd);
 	else
-		new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _c("Theme Path:", "lowres"), 0, kChooseThemeDirCmd);
+		new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _c("Theme Path:", "lowres"), nullptr, kChooseThemeDirCmd);
 	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", _c("None", "path"));
 
 	_themePathClearButton = addClearButton(tab, "GlobalOptions_Paths.ThemePathClearButton", kThemePathClearCmd);
@@ -1647,9 +1647,9 @@ void GlobalOptionsDialog::build() {
 
 #ifdef DYNAMIC_MODULES
 	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _("Plugins Path:"), 0, kChoosePluginsDirCmd);
+		new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _("Plugins Path:"), nullptr, kChoosePluginsDirCmd);
 	else
-		new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _c("Plugins Path:", "lowres"), 0, kChoosePluginsDirCmd);
+		new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _c("Plugins Path:", "lowres"), nullptr, kChoosePluginsDirCmd);
 	_pluginsPath = new StaticTextWidget(tab, "GlobalOptions_Paths.PluginsPath", _c("None", "path"));
 
 	_pluginsPathClearButton = addClearButton(tab, "GlobalOptions_Paths.PluginsPathClearButton", kPluginsPathClearCmd);
@@ -1664,7 +1664,7 @@ void GlobalOptionsDialog::build() {
 	else
 		tab->addTab(_c("Misc", "lowres"), "GlobalOptions_Misc");
 
-	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", _("Theme:"), 0, kChooseThemeCmd);
+	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", _("Theme:"), nullptr, kChooseThemeCmd);
 	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
 
 
@@ -1690,7 +1690,7 @@ void GlobalOptionsDialog::build() {
 	}
 
 #ifdef GUI_ENABLE_KEYSDIALOG
-	new ButtonWidget(tab, "GlobalOptions_Misc.KeysButton", _("Keys"), 0, kChooseKeyMappingCmd);
+	new ButtonWidget(tab, "GlobalOptions_Misc.KeysButton", _("Keys"), nullptr, kChooseKeyMappingCmd);
 #endif
 
 	// TODO: joystick setting
@@ -1757,7 +1757,7 @@ void GlobalOptionsDialog::build() {
 
 	_updatesPopUp->setSelectedTag(Common::UpdateManager::normalizeInterval(ConfMan.getInt("updates_check")));
 
-	new ButtonWidget(tab, "GlobalOptions_Misc.UpdatesCheckManuallyButton", _("Check now"), 0, kUpdatesCheckCmd);
+	new ButtonWidget(tab, "GlobalOptions_Misc.UpdatesCheckManuallyButton", _("Check now"), nullptr, kUpdatesCheckCmd);
 #endif
 
 #ifdef USE_CLOUD
@@ -1826,9 +1826,9 @@ void GlobalOptionsDialog::build() {
 	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
-	new ButtonWidget(this, "GlobalOptions.Cancel", _("Cancel"), 0, kCloseCmd);
-	new ButtonWidget(this, "GlobalOptions.Apply", _("Apply"), 0, kApplyCmd);
-	new ButtonWidget(this, "GlobalOptions.Ok", _("OK"), 0, kOKCmd);
+	new ButtonWidget(this, "GlobalOptions.Cancel", _("Cancel"), nullptr, kCloseCmd);
+	new ButtonWidget(this, "GlobalOptions.Apply", _("Apply"), nullptr, kApplyCmd);
+	new ButtonWidget(this, "GlobalOptions.Ok", _("OK"), nullptr, kOKCmd);
 
 #ifdef GUI_ENABLE_KEYSDIALOG
 	_keysDialog = new KeysDialog();
@@ -1902,12 +1902,12 @@ void GlobalOptionsDialog::build() {
 void GlobalOptionsDialog::clean() {
 #ifdef GUI_ENABLE_KEYSDIALOG
 	delete _keysDialog;
-	_keysDialog = 0;
+	_keysDialog = nullptr;
 #endif
 
 #ifdef USE_FLUIDSYNTH
 	delete _fluidSynthSettingsDialog;
-	_fluidSynthSettingsDialog = 0;
+	_fluidSynthSettingsDialog = nullptr;
 #endif
 
 	OptionsDialog::clean();
@@ -1965,7 +1965,7 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 		_storageWizardCodeHint = new StaticTextWidget(boss, prefix + "StorageWizardCodeHint", _c("2. Get the code and enter it here:", "lowres"));
 	else
 		_storageWizardCodeHint = new StaticTextWidget(boss, prefix + "StorageWizardCodeHint", _("2. Get the code and enter it here:"));
-	_storageWizardCodeBox = new EditTextWidget(boss, prefix + "StorageWizardCodeBox", "", 0, 0, 0, ThemeEngine::kFontStyleConsole);
+	_storageWizardCodeBox = new EditTextWidget(boss, prefix + "StorageWizardCodeBox", "", nullptr, 0, 0, ThemeEngine::kFontStyleConsole);
 	_storageWizardPasteButton = new ButtonWidget(boss, prefix + "StorageWizardPasteButton", _("Paste"), _("Paste code from clipboard"), kPasteCodeStorageCmd);
 	_storageWizardConnectButton = new ButtonWidget(boss, prefix + "StorageWizardConnectButton", _("3. Connect"), _("Connect your cloud storage account"), kConnectStorageCmd);
 	_storageWizardConnectionStatusHint = new StaticTextWidget(boss, prefix + "StorageWizardConnectionStatusHint", "...");
@@ -1990,7 +1990,7 @@ void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::Stri
 	uint32 port = Networking::LocalWebserver::getPort();
 
 	_serverPortDesc = new StaticTextWidget(boss, prefix + "ServerPortDesc", _("Server's port:"), _("Port for server to use"));
-	_serverPort = new EditTextWidget(boss, prefix + "ServerPortEditText", Common::String::format("%u", port), 0);
+	_serverPort = new EditTextWidget(boss, prefix + "ServerPortEditText", Common::String::format("%u", port), nullptr);
 	_serverPortClearButton = addClearButton(boss, prefix + "ServerPortClearButton", kServerPortClearCmd);
 
 	if (lowres) {
@@ -2179,7 +2179,7 @@ void GlobalOptionsDialog::apply() {
 #endif
 
 	if (isRebuildNeeded) {
-		if (_launcher != 0)
+		if (_launcher != nullptr)
 			_launcher->rebuild();
 		rebuild();
 	}
@@ -2531,7 +2531,7 @@ void GlobalOptionsDialog::reflowLayout() {
 		_tabWidget->setActiveTab(_midiTabId);
 
 		_tabWidget->removeWidget(_soundFontClearButton);
-		_soundFontClearButton->setNext(0);
+		_soundFontClearButton->setNext(nullptr);
 		delete _soundFontClearButton;
 		_soundFontClearButton = addClearButton(_tabWidget, "GlobalOptions_MIDI.mcFontClearButton", kClearSoundFontCmd);
 	}
@@ -2540,17 +2540,17 @@ void GlobalOptionsDialog::reflowLayout() {
 		_tabWidget->setActiveTab(_pathsTabId);
 
 		_tabWidget->removeWidget(_savePathClearButton);
-		_savePathClearButton->setNext(0);
+		_savePathClearButton->setNext(nullptr);
 		delete _savePathClearButton;
 		_savePathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.SavePathClearButton", kSavePathClearCmd);
 
 		_tabWidget->removeWidget(_themePathClearButton);
-		_themePathClearButton->setNext(0);
+		_themePathClearButton->setNext(nullptr);
 		delete _themePathClearButton;
 		_themePathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.ThemePathClearButton", kThemePathClearCmd);
 
 		_tabWidget->removeWidget(_extraPathClearButton);
-		_extraPathClearButton->setNext(0);
+		_extraPathClearButton->setNext(nullptr);
 		delete _extraPathClearButton;
 		_extraPathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.ExtraPathClearButton", kExtraPathClearCmd);
 	}

@@ -85,7 +85,7 @@ enum {
 */
 class DomainEditTextWidget : public EditTextWidget {
 public:
-	DomainEditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltip = 0)
+	DomainEditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltip = nullptr)
 		: EditTextWidget(boss, name, text, tooltip) {}
 
 protected:
@@ -189,9 +189,9 @@ EditGameDialog::EditGameDialog(const String &domain)
 	graphicsContainer->setTarget(this);
 
 	if (g_system->getOverlayWidth() > 320)
-		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _("Override global graphic settings"), 0, kCmdGlobalGraphicsOverride);
+		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _("Override global graphic settings"), nullptr, kCmdGlobalGraphicsOverride);
 	else
-		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), 0, kCmdGlobalGraphicsOverride);
+		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), nullptr, kCmdGlobalGraphicsOverride);
 
 	addGraphicControls(graphicsContainer, "GameOptions_Graphics_Container.");
 
@@ -201,9 +201,9 @@ EditGameDialog::EditGameDialog(const String &domain)
 	tab->addTab(_("Audio"), "GameOptions_Audio");
 
 	if (g_system->getOverlayWidth() > 320)
-		_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _("Override global audio settings"), 0, kCmdGlobalAudioOverride);
+		_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _("Override global audio settings"), nullptr, kCmdGlobalAudioOverride);
 	else
-		_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _c("Override global audio settings", "lowres"), 0, kCmdGlobalAudioOverride);
+		_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _c("Override global audio settings", "lowres"), nullptr, kCmdGlobalAudioOverride);
 
 	addAudioControls(tab, "GameOptions_Audio.");
 	addSubtitleControls(tab, "GameOptions_Audio.");
@@ -217,9 +217,9 @@ EditGameDialog::EditGameDialog(const String &domain)
 		tab->addTab(_c("Volume", "lowres"), "GameOptions_Volume");
 
 	if (g_system->getOverlayWidth() > 320)
-		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _("Override global volume settings"), 0, kCmdGlobalVolumeOverride);
+		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _("Override global volume settings"), nullptr, kCmdGlobalVolumeOverride);
 	else
-		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _c("Override global volume settings", "lowres"), 0, kCmdGlobalVolumeOverride);
+		_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _c("Override global volume settings", "lowres"), nullptr, kCmdGlobalVolumeOverride);
 
 	addVolumeControls(tab, "GameOptions_Volume.");
 
@@ -228,14 +228,14 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	// 6) The MIDI tab
 	//
-	_globalMIDIOverride = NULL;
+	_globalMIDIOverride = nullptr;
 	if (showMidi) {
 		tab->addTab(_("MIDI"), "GameOptions_MIDI");
 
 		if (g_system->getOverlayWidth() > 320)
-			_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _("Override global MIDI settings"), 0, kCmdGlobalMIDIOverride);
+			_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _("Override global MIDI settings"), nullptr, kCmdGlobalMIDIOverride);
 		else
-			_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _c("Override global MIDI settings", "lowres"), 0, kCmdGlobalMIDIOverride);
+			_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _c("Override global MIDI settings", "lowres"), nullptr, kCmdGlobalMIDIOverride);
 
 		addMIDIControls(tab, "GameOptions_MIDI.");
 	}
@@ -243,14 +243,14 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	// 7) The MT-32 tab
 	//
-	_globalMT32Override = NULL;
+	_globalMT32Override = nullptr;
 	if (showMidi) {
 		tab->addTab(_("MT-32"), "GameOptions_MT32");
 
 		if (g_system->getOverlayWidth() > 320)
-			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _("Override global MT-32 settings"), 0, kCmdGlobalMT32Override);
+			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _("Override global MT-32 settings"), nullptr, kCmdGlobalMT32Override);
 		else
-			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _c("Override global MT-32 settings", "lowres"), 0, kCmdGlobalMT32Override);
+			_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _c("Override global MT-32 settings", "lowres"), nullptr, kCmdGlobalMT32Override);
 
 		addMT32Controls(tab, "GameOptions_MT32.");
 	}
@@ -268,9 +268,9 @@ EditGameDialog::EditGameDialog(const String &domain)
 
 	// GUI:  Button + Label for the game path
 	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), 0, kCmdGameBrowser);
+		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), nullptr, kCmdGameBrowser);
 	else
-		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _c("Game Path:", "lowres"), 0, kCmdGameBrowser);
+		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _c("Game Path:", "lowres"), nullptr, kCmdGameBrowser);
 	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
@@ -296,8 +296,8 @@ EditGameDialog::EditGameDialog(const String &domain)
 	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
-	new ButtonWidget(this, "GameOptions.Cancel", _("Cancel"), 0, kCloseCmd);
-	new ButtonWidget(this, "GameOptions.Ok", _("OK"), 0, kOKCmd);
+	new ButtonWidget(this, "GameOptions.Cancel", _("Cancel"), nullptr, kCloseCmd);
+	new ButtonWidget(this, "GameOptions.Ok", _("OK"), nullptr, kOKCmd);
 }
 
 void EditGameDialog::setupGraphicsTab() {
@@ -439,7 +439,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kCmdGlobalAudioOverride:
 		setAudioSettingsState(data != 0);
 		setSubtitleSettingsState(data != 0);
-		if (_globalVolumeOverride == NULL)
+		if (_globalVolumeOverride == nullptr)
 			setVolumeSettingsState(data != 0);
 		g_gui.scheduleTopDialogRedraw();
 		break;

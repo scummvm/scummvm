@@ -61,11 +61,11 @@ DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher) :
 	_downloadSizeLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSize", "");
 	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSpeed", "");
 	if (g_system->getOverlayWidth() > 320)
-		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _("Cancel download"), 0, kDownloadDialogButtonCmd);
+		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _("Cancel download"), nullptr, kDownloadDialogButtonCmd);
 	else
-		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _c("Cancel download", "lowres"), 0, kDownloadDialogButtonCmd);
+		_cancelButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.MainButton", _c("Cancel download", "lowres"), nullptr, kDownloadDialogButtonCmd);
 
-	_closeButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.CloseButton", _("Hide"), 0, kCloseCmd);
+	_closeButton = new ButtonWidget(this, "GlobalOptions_Cloud_DownloadDialog.CloseButton", _("Hide"), nullptr, kCloseCmd);
 	refreshWidgets();
 
 	CloudMan.setDownloadTarget(this);

@@ -57,8 +57,8 @@ SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBa
 	_progressBar->setValue(progress);
 	_progressBar->setEnabled(false);
 	_percentLabel = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.PercentText", Common::String::format("%u %%", progress));
-	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", "Cancel", 0, kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
-	ButtonWidget *backgroundButton = new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", "Run in background", 0, kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
+	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", "Cancel", nullptr, kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
+	ButtonWidget *backgroundButton = new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", "Run in background", nullptr, kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
 	backgroundButton->setEnabled(canRunInBackground);
 	g_gui.scheduleTopDialogRedraw();
 }
@@ -134,11 +134,11 @@ enum {
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 SaveLoadChooserDialog::SaveLoadChooserDialog(const Common::String &dialogName, const bool saveMode)
-	: Dialog(dialogName), _metaEngine(0), _delSupport(false), _metaInfoSupport(false),
+	: Dialog(dialogName), _metaEngine(nullptr), _delSupport(false), _metaInfoSupport(false),
 	_thumbnailSupport(false), _saveDateSupport(false), _playTimeSupport(false), _saveMode(saveMode),
 	_dialogWasShown(false)
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
-	, _listButton(0), _gridButton(0)
+	, _listButton(nullptr), _gridButton(nullptr)
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 	{
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
@@ -147,11 +147,11 @@ SaveLoadChooserDialog::SaveLoadChooserDialog(const Common::String &dialogName, c
 }
 
 SaveLoadChooserDialog::SaveLoadChooserDialog(int x, int y, int w, int h, const bool saveMode)
-	: Dialog(x, y, w, h), _metaEngine(0), _delSupport(false), _metaInfoSupport(false),
+	: Dialog(x, y, w, h), _metaEngine(nullptr), _delSupport(false), _metaInfoSupport(false),
 	_thumbnailSupport(false), _saveDateSupport(false), _playTimeSupport(false), _saveMode(saveMode),
 	_dialogWasShown(false)
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
-	, _listButton(0), _gridButton(0)
+	, _listButton(nullptr), _gridButton(nullptr)
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 	{
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
@@ -372,8 +372,8 @@ enum {
 };
 
 SaveLoadChooserSimple::SaveLoadChooserSimple(const String &title, const String &buttonLabel, bool saveMode)
-	: SaveLoadChooserDialog("SaveLoadChooser", saveMode), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0),
-	_container(0) {
+	: SaveLoadChooserDialog("SaveLoadChooser", saveMode), _list(nullptr), _chooseButton(nullptr), _deleteButton(nullptr), _gfxWidget(nullptr),
+	_container(nullptr) {
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
 	new StaticTextWidget(this, "SaveLoadChooser.Title", title);
@@ -390,11 +390,11 @@ SaveLoadChooserSimple::SaveLoadChooserSimple(const String &title, const String &
 	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, _("No playtime saved"), Graphics::kTextAlignCenter);
 
 	// Buttons
-	new ButtonWidget(this, "SaveLoadChooser.Cancel", _("Cancel"), 0, kCloseCmd);
-	_chooseButton = new ButtonWidget(this, "SaveLoadChooser.Choose", buttonLabel, 0, kChooseCmd);
+	new ButtonWidget(this, "SaveLoadChooser.Cancel", _("Cancel"), nullptr, kCloseCmd);
+	_chooseButton = new ButtonWidget(this, "SaveLoadChooser.Choose", buttonLabel, nullptr, kChooseCmd);
 	_chooseButton->setEnabled(false);
 
-	_deleteButton = new ButtonWidget(this, "SaveLoadChooser.Delete", _("Delete"), 0, kDelCmd);
+	_deleteButton = new ButtonWidget(this, "SaveLoadChooser.Delete", _("Delete"), nullptr, kDelCmd);
 	_deleteButton->setEnabled(false);
 
 	_delSupport = _metaInfoSupport = _thumbnailSupport = false;
@@ -415,7 +415,7 @@ void SaveLoadChooserSimple::addThumbnailContainer() {
 
 int SaveLoadChooserSimple::runIntern() {
 	if (_gfxWidget)
-		_gfxWidget->setGfx(0);
+		_gfxWidget->setGfx(nullptr);
 
 	_resultString.clear();
 	reflowLayout();
@@ -662,7 +662,7 @@ void SaveLoadChooserSimple::close() {
 		ConfMan.setInt("gui_saveload_last_pos", _list->getCurrentScrollPos());
 	}
 
-	_metaEngine = 0;
+	_metaEngine = nullptr;
 	_target.clear();
 	_saveList.clear();
 	_list->setList(StringArray());
@@ -753,7 +753,7 @@ enum {
 
 SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::String &title, bool saveMode)
 	: SaveLoadChooserDialog("SaveLoadChooser", saveMode), _lines(0), _columns(0), _entriesPerPage(0),
-	_curPage(0), _newSaveContainer(0), _nextFreeSaveSlot(0), _buttons() {
+	_curPage(0), _newSaveContainer(nullptr), _nextFreeSaveSlot(0), _buttons() {
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
 	new StaticTextWidget(this, "SaveLoadChooser.Title", title);
@@ -763,11 +763,11 @@ SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::String &title, bool saveM
 	list->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
 
 	// Buttons
-	new ButtonWidget(this, "SaveLoadChooser.Delete", _("Cancel"), 0, kCloseCmd);
-	_nextButton = new ButtonWidget(this, "SaveLoadChooser.Choose", _("Next"), 0, kNextCmd);
+	new ButtonWidget(this, "SaveLoadChooser.Delete", _("Cancel"), nullptr, kCloseCmd);
+	_nextButton = new ButtonWidget(this, "SaveLoadChooser.Choose", _("Next"), nullptr, kNextCmd);
 	_nextButton->setEnabled(false);
 
-	_prevButton = new ButtonWidget(this, "SaveLoadChooser.Cancel", _("Prev"), 0, kPrevCmd);
+	_prevButton = new ButtonWidget(this, "SaveLoadChooser.Cancel", _("Prev"), nullptr, kPrevCmd);
 	_prevButton->setEnabled(false);
 
 	// Page display
@@ -989,7 +989,7 @@ void SaveLoadChooserGrid::reflowLayout() {
 				buttonCmd += 1;
 			}
 
-			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, 0, buttonCmd);
+			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, nullptr, buttonCmd);
 			dstY += buttonHeight;
 
 			StaticTextWidget *description = new StaticTextWidget(container, dstX, dstY, buttonWidth, kLineHeight, Common::String(), Graphics::kTextAlignLeft);
@@ -1064,7 +1064,7 @@ void SaveLoadChooserGrid::destroyButtons() {
 	if (_newSaveContainer) {
 		removeWidget(_newSaveContainer);
 		delete _newSaveContainer;
-		_newSaveContainer = 0;
+		_newSaveContainer = nullptr;
 	}
 
 	for (ButtonArray::iterator i = _buttons.begin(), end = _buttons.end(); i != end; ++i) {
@@ -1077,7 +1077,7 @@ void SaveLoadChooserGrid::destroyButtons() {
 
 void SaveLoadChooserGrid::hideButtons() {
 	for (ButtonArray::iterator i = _buttons.begin(), end = _buttons.end(); i != end; ++i) {
-		i->button->setGfx(0);
+		i->button->setGfx(nullptr);
 		i->setVisible(false);
 	}
 }
@@ -1157,10 +1157,10 @@ SavenameDialog::SavenameDialog()
 	: Dialog("SavenameDialog") {
 	_title = new StaticTextWidget(this, "SavenameDialog.DescriptionText", Common::String());
 
-	new ButtonWidget(this, "SavenameDialog.Cancel", _("Cancel"), 0, kCloseCmd);
-	new ButtonWidget(this, "SavenameDialog.Ok", _("OK"), 0, kOKCmd);
+	new ButtonWidget(this, "SavenameDialog.Cancel", _("Cancel"), nullptr, kCloseCmd);
+	new ButtonWidget(this, "SavenameDialog.Ok", _("OK"), nullptr, kOKCmd);
 
-	_description = new EditTextWidget(this, "SavenameDialog.Description", Common::String(), 0, 0, kOKCmd);
+	_description = new EditTextWidget(this, "SavenameDialog.Description", Common::String(), nullptr, 0, kOKCmd);
 
 	_targetSlot = 0;
 }

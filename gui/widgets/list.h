@@ -87,13 +87,13 @@ protected:
 	int				_lastRead;
 
 public:
-	ListWidget(Dialog *boss, const String &name, const char *tooltip = 0, uint32 cmd = 0);
-	ListWidget(Dialog *boss, int x, int y, int w, int h, const char *tooltip = 0, uint32 cmd = 0);
+	ListWidget(Dialog *boss, const String &name, const char *tooltip = nullptr, uint32 cmd = 0);
+	ListWidget(Dialog *boss, int x, int y, int w, int h, const char *tooltip = nullptr, uint32 cmd = 0);
 
 	bool containsWidget(Widget *) const override;
 	Widget *findWidget(int x, int y) override;
 
-	void setList(const StringArray &list, const ColorList *colors = 0);
+	void setList(const StringArray &list, const ColorList *colors = nullptr);
 	const StringArray &getList()	const			{ return _dataList; }
 
 	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);

@@ -56,7 +56,7 @@ enum {
 // Constructor
 GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
     _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
-	_theme = 0;
+	_theme = nullptr;
 	_useStdCursor = false;
 
 	_system = g_system;
@@ -156,7 +156,7 @@ bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx, 
 		if (_theme && id == _theme->getThemeId() && gfx == _theme->getGraphicsMode())
 			return true;
 
-	ThemeEngine *newTheme = 0;
+	ThemeEngine *newTheme = nullptr;
 
 	if (gfx == ThemeEngine::kGfxDisabled)
 		gfx = ThemeEngine::_defaultRendererMode;
@@ -277,7 +277,7 @@ void GuiManager::redraw() {
 
 Dialog *GuiManager::getTopDialog() const {
 	if (_dialogStack.empty())
-		return 0;
+		return nullptr;
 	return _dialogStack.top();
 }
 
@@ -285,9 +285,9 @@ void GuiManager::addToTrash(GuiObject* object, Dialog* parent) {
 	debug(7, "Adding Gui Object %p to trash", (void *)object);
 	GuiObjectTrashItem t;
 	t.object = object;
-	t.parent = 0;
+	t.parent = nullptr;
 	// If a dialog was provided, check it is in the dialog stack
-	if (parent != 0) {
+	if (parent != nullptr) {
 		for (uint i = 0 ; i < _dialogStack.size() ; ++i) {
 			if (_dialogStack[i] == parent) {
 				t.parent = parent;
@@ -302,7 +302,7 @@ void GuiManager::runLoop() {
 	Dialog * const activeDialog = getTopDialog();
 	bool didSaveState = false;
 
-	if (activeDialog == 0)
+	if (activeDialog == nullptr)
 		return;
 
 #ifdef ENABLE_EVENTRECORDER
@@ -372,7 +372,7 @@ void GuiManager::runLoop() {
 		// Delete GuiObject that have been added to the trash for a delayed deletion
 		Common::List<GuiObjectTrashItem>::iterator it = _guiObjectTrash.begin();
 		while (it != _guiObjectTrash.end()) {
-			if ((*it).parent == 0 || (*it).parent == activeDialog) {
+			if ((*it).parent == nullptr || (*it).parent == activeDialog) {
 				debug(7, "Delayed deletion of Gui Object %p", (void *)(*it).object);
 				delete (*it).object;
 				it = _guiObjectTrash.erase(it);
@@ -497,7 +497,7 @@ void GuiManager::setupCursor() {
 	};
 
 	CursorMan.pushCursorPalette(palette, 0, 4);
-	CursorMan.pushCursor(NULL, 0, 0, 0, 0, 0);
+	CursorMan.pushCursor(nullptr, 0, 0, 0, 0, 0);
 	CursorMan.showMouse(true);
 }
 
@@ -552,7 +552,7 @@ void GuiManager::screenChange() {
 }
 
 void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDialog) {
-	if (activeDialog == 0)
+	if (activeDialog == nullptr)
 		return;
 	int button;
 	uint32 time;

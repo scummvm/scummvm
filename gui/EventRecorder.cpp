@@ -70,9 +70,9 @@ void writeTime(Common::WriteStream *outFile, uint32 d) {
 }
 
 EventRecorder::EventRecorder() {
-	_timerManager = NULL;
+	_timerManager = nullptr;
 	_recordMode = kPassthrough;
-	_fakeMixerManager = NULL;
+	_fakeMixerManager = nullptr;
 	_initialized = false;
 	_needRedraw = false;
 	_fastPlayback = false;
@@ -81,21 +81,19 @@ EventRecorder::EventRecorder() {
 	_savedState = false;
 	_needcontinueGame = false;
 	_temporarySlot = 0;
-	_realSaveManager = 0;
-	_realMixerManager = 0;
-	_controlPanel = 0;
+	_realSaveManager = nullptr;
+	_realMixerManager = nullptr;
+	_controlPanel = nullptr;
 	_lastMillis = 0;
 	_lastScreenshotTime = 0;
 	_screenshotPeriod = 0;
-	_playbackFile = 0;
+	_playbackFile = nullptr;
 
 	DebugMan.addDebugChannel(kDebugLevelEventRec, "EventRec", "Event recorder debug level");
 }
 
 EventRecorder::~EventRecorder() {
-	if (_timerManager != NULL) {
-		delete _timerManager;
-	}
+	delete _timerManager;
 }
 
 void EventRecorder::deinit() {
@@ -107,7 +105,7 @@ void EventRecorder::deinit() {
 	_initialized = false;
 	_recordMode = kPassthrough;
 	delete _fakeMixerManager;
-	_fakeMixerManager = NULL;
+	_fakeMixerManager = nullptr;
 	_controlPanel->close();
 	delete _controlPanel;
 	debugC(1, kDebugLevelEventRec, "playback:action=stopplayback");
@@ -486,7 +484,7 @@ Common::List<Common::Event> EventRecorder::mapEvent(const Common::Event &ev, Com
 
 void EventRecorder::setGameMd5(const ADGameDescription *gameDesc) {
 	for (const ADGameFileDescription *fileDesc = gameDesc->filesDescriptions; fileDesc->fileName; fileDesc++) {
-		if (fileDesc->md5 != NULL) {
+		if (fileDesc->md5 != nullptr) {
 			_playbackFile->getHeader().hashRecords[fileDesc->fileName] = fileDesc->md5;
 		}
 	}
@@ -536,13 +534,13 @@ Common::SeekableReadStream *EventRecorder::processSaveStream(const Common::Strin
 		return new Common::MemoryReadStream(_playbackFile->getHeader().saveFiles[fileName].buffer, _playbackFile->getHeader().saveFiles[fileName].size);
 	case kRecorderRecord:
 		saveFile = _realSaveManager->openForLoading(fileName);
-		if (saveFile != NULL) {
+		if (saveFile != nullptr) {
 			_playbackFile->addSaveFile(fileName, saveFile);
 			saveFile->seek(0);
 		}
 		return saveFile;
 	default:
-		return NULL;
+		return nullptr;
 		break;
 	}
 }

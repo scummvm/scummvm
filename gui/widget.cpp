@@ -58,7 +58,7 @@ void Widget::init() {
 
 Widget::~Widget() {
 	delete _next;
-	_next = 0;
+	_next = nullptr;
 }
 
 void Widget::resize(int x, int y, int w, int h) {
@@ -169,7 +169,7 @@ Widget *Widget::findWidgetInChain(Widget *w, const char *name) {
 		}
 		w = w->_next;
 	}
-	return 0;
+	return nullptr;
 }
 
 bool Widget::containsWidgetInChain(Widget *w, Widget *search) {

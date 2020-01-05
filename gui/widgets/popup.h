@@ -57,8 +57,8 @@ protected:
 	int				_rightPadding;
 
 public:
-	PopUpWidget(GuiObject *boss, const String &name, const char *tooltip = 0);
-	PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = 0);
+	PopUpWidget(GuiObject *boss, const String &name, const char *tooltip = nullptr);
+	PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = nullptr);
 
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseWheel(int x, int y, int direction) override;

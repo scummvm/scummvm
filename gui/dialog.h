@@ -75,7 +75,7 @@ public:
 	Widget *getFocusWidget() { return _focusedWidget; }
 
 	void setTickleWidget(Widget *widget) { _tickleWidget = widget; }
-	void unSetTickleWidget() { _tickleWidget = NULL; }
+	void unSetTickleWidget() { _tickleWidget = nullptr; }
 	Widget *getTickleWidget() { return _tickleWidget; }
 
 	void reflowLayout() override;

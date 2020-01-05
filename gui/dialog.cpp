@@ -41,7 +41,7 @@ namespace GUI {
 
 Dialog::Dialog(int x, int y, int w, int h)
 	: GuiObject(x, y, w, h),
-	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _tickleWidget(0), _visible(false),
+	  _mouseWidget(nullptr), _focusedWidget(nullptr), _dragWidget(nullptr), _tickleWidget(nullptr), _visible(false),
 	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 	// Some dialogs like LauncherDialog use internally a fixed size, even though
 	// their widgets rely on the layout to be initialized correctly by the theme.
@@ -55,7 +55,7 @@ Dialog::Dialog(int x, int y, int w, int h)
 
 Dialog::Dialog(const Common::String &name)
 	: GuiObject(name),
-	  _mouseWidget(0), _focusedWidget(0), _dragWidget(0), _tickleWidget(0), _visible(false),
+	  _mouseWidget(nullptr), _focusedWidget(nullptr), _dragWidget(nullptr), _tickleWidget(nullptr), _visible(false),
 	_backgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 
 	// It may happen that we have 3x scaler in launcher (960xY) and then 640x480
@@ -94,7 +94,7 @@ void Dialog::close() {
 
 	if (_mouseWidget) {
 		_mouseWidget->handleMouseLeft(0);
-		_mouseWidget = 0;
+		_mouseWidget = nullptr;
 	}
 	releaseFocus();
 	g_gui.closeTopDialog();
@@ -119,7 +119,7 @@ void Dialog::reflowLayout() {
 }
 
 void Dialog::lostFocus() {
-	_dragWidget = NULL;
+	_dragWidget = nullptr;
 
 	if (_tickleWidget) {
 		_tickleWidget->lostFocus();
@@ -151,7 +151,7 @@ void Dialog::setDefaultFocusedWidget() {
 void Dialog::releaseFocus() {
 	if (_focusedWidget) {
 		_focusedWidget->lostFocus();
-		_focusedWidget = 0;
+		_focusedWidget = nullptr;
 	}
 }
 
@@ -228,7 +228,7 @@ void Dialog::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (w)
 		w->handleMouseUp(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), button, clickCount);
 
-	_dragWidget = 0;
+	_dragWidget = nullptr;
 }
 
 void Dialog::handleMouseWheel(int x, int y, int direction) {
@@ -310,7 +310,7 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 			_mouseWidget = w;
 			w->handleMouseEntered(button);
 		} else if (!mouseInFocusedWidget && _mouseWidget == w) {
-			_mouseWidget = 0;
+			_mouseWidget = nullptr;
 			w->handleMouseLeft(button);
 		}
 
@@ -333,7 +333,7 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 		// If we have a widget in drag mode we prevent mouseEntered
 		// events from being sent to other widgets.
 		if (_dragWidget && w != _dragWidget)
-			w = 0;
+			w = nullptr;
 
 		if (w)
 			w->handleMouseEntered(button);
@@ -380,11 +380,11 @@ Widget *Dialog::findWidget(const char *name) {
 
 void Dialog::removeWidget(Widget *del) {
 	if (del == _mouseWidget || del->containsWidget(_mouseWidget))
-		_mouseWidget = NULL;
+		_mouseWidget = nullptr;
 	if (del == _focusedWidget || del->containsWidget(_focusedWidget))
-		_focusedWidget = NULL;
+		_focusedWidget = nullptr;
 	if (del == _dragWidget || del->containsWidget(_dragWidget))
-		_dragWidget = NULL;
+		_dragWidget = nullptr;
 
 	GuiObject::removeWidget(del);
 }

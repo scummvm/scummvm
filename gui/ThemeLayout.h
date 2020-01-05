@@ -162,7 +162,7 @@ public:
 
 protected:
 	LayoutType getLayoutType() const override { return kLayoutMain; }
-	ThemeLayout *makeClone(ThemeLayout *newParent) override { assert(!"Do not copy Main Layouts!"); return 0; }
+	ThemeLayout *makeClone(ThemeLayout *newParent) override { assert(!"Do not copy Main Layouts!"); return nullptr; }
 
 	int16 _defaultX;
 	int16 _defaultY;

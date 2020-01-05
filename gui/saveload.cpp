@@ -31,12 +31,12 @@
 namespace GUI {
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode)
-	: _impl(0), _title(title), _buttonLabel(buttonLabel), _saveMode(saveMode) {
+	: _impl(nullptr), _title(title), _buttonLabel(buttonLabel), _saveMode(saveMode) {
 }
 
 SaveLoadChooser::~SaveLoadChooser() {
 	delete _impl;
-	_impl = 0;
+	_impl = nullptr;
 }
 
 void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
@@ -44,7 +44,7 @@ void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
 	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(engine);
 	if (!_impl || _impl->getType() != requestedType) {
 		delete _impl;
-		_impl = 0;
+		_impl = nullptr;
 
 		switch (requestedType) {
 		case kSaveLoadDialogGrid:
