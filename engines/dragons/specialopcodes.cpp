@@ -96,7 +96,7 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x13, spcUnk13InventionBookCloseRelated);
 	OPCODE(0x14, spcClearEngineFlag8);
 	OPCODE(0x15, spcSetEngineFlag8);
-
+	OPCODE(0x16, spcNoop1);
 	OPCODE(0x17, spcKnightPoolReflectionLogic);
 	OPCODE(0x18, clearSceneUpdateFunction);
 	OPCODE(0x19, spcWalkOnStilts);
@@ -273,7 +273,7 @@ void SpecialOpcodes::spcUnkC() {
 }
 
 void SpecialOpcodes::spcFadeScreen() {
-	//TODO call_fade_related_1f();
+	_vm->call_fade_related_1f();
 }
 
 void SpecialOpcodes::spcLadyOfTheLakeCapturedSceneLogic() {
