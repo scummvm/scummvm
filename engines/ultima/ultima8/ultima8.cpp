@@ -1840,7 +1840,7 @@ void Ultima8Engine::ConCmd_saveGame(const Console::ArgvType &argv) {
 		// Save a game with the given name into the quicksave slot
 		Ultima8Engine::get_instance()->saveGame("@save/1", argv[1]);
 	} else {
-
+		Ultima8Engine::get_instance()->saveGame();
 	}
 }
 
