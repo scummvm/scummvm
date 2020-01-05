@@ -213,7 +213,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			else
 				sprite._trails = 0;
 
-			sprite._lineSize = ((sprite._flags >> 8) & 0x03) + 1;
+			sprite._lineSize = ((sprite._flags >> 8) & 0x07);
 
 			sprite._castId = stream->readUint16();
 			sprite._startPoint.y = stream->readUint16();
