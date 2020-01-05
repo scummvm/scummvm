@@ -331,8 +331,8 @@ bool Ultima6Engine::journeyOnwards() {
 		return _savegame->load_new();
 	}
 
-	// Otherwise load most recent savegame
-	return loadLatestSave();
+	// Otherwise start a new game
+	return _savegame->load_new();
 }
 
 bool Ultima6Engine::loadLatestSave() {
