@@ -21,10 +21,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCI:
    - Numerous game script fixes in CAMELOT, ECO2, GK1, GK2,
      KQ7, PHANT1, PQ1VGA, QFG3, QFG4, SQ5 and SQ6.
-   - Support for Phantasmagoria 1 censored mode.
-   - Support for Polish LSL7.
-   - Support for Italian GK2.
-   - Support for Russian KQ7.
+   - Added support for Phantasmagoria 1 censored mode.
+   - Added support for Polish LSL7.
+   - Added support for Italian GK2.
+   - Added support for Russian KQ7.
 
  SCUMM:
    - Added support for Pajama2 GB.
