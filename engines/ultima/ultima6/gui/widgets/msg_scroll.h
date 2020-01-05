@@ -24,7 +24,7 @@
 #define ULTIMA6_CORE_MSG_SCROLL_H
 
 #include "ultima/ultima6/misc/call_back.h"
-#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/widgets/gui_widget.h"
 
 #define MSGSCROLL_U6_WIDTH 17
 #define MSGSCROLL_U6_HEIGHT 10

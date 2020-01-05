@@ -28,8 +28,8 @@
 #include "ultima/ultima6/files/u6_lib_n.h"
 #include "ultima/ultima6/files/u6_bmp.h"
 #include "ultima/ultima6/screen/dither.h"
-#include "ultima/ultima6/core/background.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/background.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/gui/gui.h"
 
 namespace Ultima {

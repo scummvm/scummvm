@@ -33,10 +33,10 @@
 #include "ultima/ultima6/menus/input_dialog.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/core/events.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/views/party_view.h"
 #include "ultima/ultima6/views/view_manager.h"
-#include "ultima/ultima6/core/command_bar_new_ui.h"
+#include "ultima/ultima6/gui/widgets/command_bar_new_ui.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/keybinding/keys.h"
 

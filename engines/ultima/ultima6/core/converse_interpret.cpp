@@ -31,7 +31,7 @@
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/core/game_clock.h"
 #include "ultima/ultima6/core/map.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/core/effect.h"
 #include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/core/converse_interpret.h"

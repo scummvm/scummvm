@@ -26,8 +26,8 @@
 #include "ultima/ultima6/screen/surface.h"
 #include "ultima/ultima6/screen/scale.h"
 #include "ultima/ultima6/screen/screen.h"
-#include "ultima/ultima6/core/map_window.h"
-#include "ultima/ultima6/core/background.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
+#include "ultima/ultima6/gui/widgets/background.h"
 #include "common/system.h"
 #include "engines/util.h"
 

@@ -32,7 +32,7 @@
 #include "ultima/ultima6/screen/screen.h"
 #include "ultima/ultima6/fonts/font_manager.h"
 #include "ultima/ultima6/fonts/font.h"
-#include "ultima/ultima6/core/fps_counter.h"
+#include "ultima/ultima6/gui/widgets/fps_counter.h"
 
 namespace Ultima {
 namespace Ultima6 {

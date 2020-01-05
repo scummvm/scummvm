@@ -29,12 +29,12 @@
 #include "ultima/ultima6/fonts/font.h"
 #include "ultima/ultima6/core/weather.h"
 #include "ultima/ultima6/script/script.h"
-#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/gui/widgets/msg_scroll.h"
 #include "ultima/ultima6/core/events.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "ultima/ultima6/core/command_bar.h"
+#include "ultima/ultima6/gui/widgets/command_bar.h"
 #include "ultima/ultima6/usecode/usecode.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/views/sun_moon_strip_widget.h"
 
 namespace Ultima {

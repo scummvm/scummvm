@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_VIEWS_SUN_MOON_STRIP_WIDGET_H
 #define ULTIMA6_VIEWS_SUN_MOON_STRIP_WIDGET_H
 
-#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/widgets/gui_widget.h"
 #include "ultima/ultima6/core/tile_manager.h"
 
 namespace Ultima {

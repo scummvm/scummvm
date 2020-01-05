@@ -35,9 +35,9 @@
 #include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/core/converse.h"
-#include "ultima/ultima6/core/converse_gump.h"
+#include "ultima/ultima6/gui/widgets/converse_gump.h"
 #include "ultima/ultima6/conf/configuration.h"
-#include "ultima/ultima6/core/background.h"
+#include "ultima/ultima6/gui/widgets/background.h"
 #include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {

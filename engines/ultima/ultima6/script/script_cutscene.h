@@ -25,7 +25,7 @@
 
 #include "ultima/ultima6/lua/lua.h"
 #include "ultima/ultima6/gui/gui.h"
-#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/widgets/gui_widget.h"
 #include "ultima/ultima6/files/u6_shape.h"
 #include "ultima/ultima6/fonts/wou_font.h"
 #include "ultima/ultima6/conf/configuration.h"

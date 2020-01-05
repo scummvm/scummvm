@@ -28,11 +28,11 @@
 #include "ultima/ultima6/fonts/font.h"
 #include "ultima/ultima6/screen/game_palette.h"
 #include "ultima/ultima6/gui/gui.h"
-#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/gui/widgets/msg_scroll.h"
 #include "ultima/ultima6/portraits/portrait.h"
 #include "ultima/ultima6/core/player.h"
 #include "ultima/ultima6/fonts/conv_font.h"
-#include "ultima/ultima6/core/msg_scroll_new_ui.h"
+#include "ultima/ultima6/gui/widgets/msg_scroll_new_ui.h"
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/core/timed_event.h"
 

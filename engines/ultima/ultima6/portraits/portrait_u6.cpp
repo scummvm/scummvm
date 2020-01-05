@@ -23,7 +23,7 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 
 #include "ultima/ultima6/conf/configuration.h"
-#include "ultima/ultima6/core/console.h"
+#include "ultima/ultima6/gui/widgets/console.h"
 #include "ultima/ultima6/files/nuvie_io_file.h"
 #include "ultima/ultima6/files/u6_shape.h"
 #include "ultima/ultima6/screen/dither.h"

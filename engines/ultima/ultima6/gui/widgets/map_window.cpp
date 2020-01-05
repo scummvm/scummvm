@@ -29,10 +29,10 @@
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/views/view_manager.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/core/events.h"
-#include "ultima/ultima6/core/msg_scroll.h"
-#include "ultima/ultima6/core/msg_scroll_new_ui.h"
+#include "ultima/ultima6/gui/widgets/msg_scroll.h"
+#include "ultima/ultima6/gui/widgets/msg_scroll_new_ui.h"
 #include "ultima/ultima6/core/effect.h" /* for initial fade-in */
 #include "ultima/ultima6/core/tile_manager.h"
 #include "ultima/ultima6/sound/sound_manager.h"
@@ -44,10 +44,10 @@
 #include "ultima/ultima6/core/weather.h"
 #include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/core/u6_objects.h"
-#include "ultima/ultima6/core/command_bar.h"
+#include "ultima/ultima6/gui/widgets/command_bar.h"
 #include "ultima/ultima6/views/actor_view.h"
 #include "ultima/ultima6/views/inventory_view.h"
-#include "ultima/ultima6/core/background.h"
+#include "ultima/ultima6/gui/widgets/background.h"
 #include "ultima/ultima6/keybinding/keys.h"
 
 namespace Ultima {

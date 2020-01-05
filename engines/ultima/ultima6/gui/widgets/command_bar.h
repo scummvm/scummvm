@@ -24,7 +24,7 @@
 #define ULTIMA6_CORE_COMMAND_BAR_H
 
 #include "ultima/shared/std/string.h"
-#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/widgets/gui_widget.h"
 #include "ultima/ultima6/misc/call_back.h"
 
 namespace Ultima {

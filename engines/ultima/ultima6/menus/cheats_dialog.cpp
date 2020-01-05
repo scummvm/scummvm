@@ -35,7 +35,7 @@
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/core/converse.h"
 #include "ultima/ultima6/core/obj_manager.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/keybinding/keys.h"
 

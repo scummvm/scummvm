@@ -25,7 +25,7 @@
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/gui/gui.h"
-#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/widgets/gui_widget.h"
 #include "ultima/ultima6/gui/gui_scroll_bar.h"
 #include "ultima/ultima6/gui/gui_scroller.h"
 

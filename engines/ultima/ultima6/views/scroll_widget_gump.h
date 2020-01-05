@@ -24,8 +24,8 @@
 #define ULTIMA6_VIEWS_SCROLL_WIDGET_GUMP_H
 
 #include "ultima/ultima6/misc/call_back.h"
-#include "ultima/ultima6/gui/gui_widget.h"
-#include "ultima/ultima6/core/msg_scroll.h"
+#include "ultima/ultima6/gui/widgets/gui_widget.h"
+#include "ultima/ultima6/gui/widgets/msg_scroll.h"
 #include "ultima/ultima6/fonts/font.h"
 //#include <stdarg.h>
 

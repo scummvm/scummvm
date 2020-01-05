@@ -30,7 +30,7 @@
 #include "ultima/ultima6/core/tile_manager.h"
 #include "ultima/ultima6/actors/actor_manager.h"
 #include "ultima/ultima6/core/map.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 
 #include "ultima/ultima6/misc/u6_misc.h"
 

@@ -23,7 +23,7 @@
 #ifndef ULTIMA6_GUI_GUI_TEXT_H
 #define ULTIMA6_GUI_GUI_TEXT_H
 
-#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/widgets/gui_widget.h"
 
 namespace Ultima {
 namespace Ultima6 {

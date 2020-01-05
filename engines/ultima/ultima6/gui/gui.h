@@ -27,7 +27,7 @@
 
 #include "ultima/ultima6/gui/gui_status.h"
 #include "ultima/ultima6/gui/gui_drag_manager.h"
-#include "ultima/ultima6/gui/gui_widget.h"
+#include "ultima/ultima6/gui/widgets/gui_widget.h"
 #include "ultima/ultima6/gui/gui_font.h"
 #include "common/events.h"
 

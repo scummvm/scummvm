@@ -41,7 +41,7 @@
 #include "ultima/ultima6/portraits/portrait.h"
 #include "ultima/ultima6/script/script.h"
 #include "ultima/ultima6/core/u6_objects.h"
-#include "ultima/ultima6/core/map_window.h"
+#include "ultima/ultima6/gui/widgets/map_window.h"
 #include "ultima/ultima6/views/view_manager.h"
 
 namespace Ultima {
