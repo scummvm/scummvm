@@ -372,7 +372,8 @@ enum {
 };
 
 SaveLoadChooserSimple::SaveLoadChooserSimple(const String &title, const String &buttonLabel, bool saveMode)
-	: SaveLoadChooserDialog("SaveLoadChooser", saveMode), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
+	: SaveLoadChooserDialog("SaveLoadChooser", saveMode), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0),
+	_container(0) {
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
 	new StaticTextWidget(this, "SaveLoadChooser.Title", title);
@@ -398,7 +399,18 @@ SaveLoadChooserSimple::SaveLoadChooserSimple(const String &title, const String &
 
 	_delSupport = _metaInfoSupport = _thumbnailSupport = false;
 
-	_container = new ContainerWidget(this, "SaveLoadChooser.Thumbnail");
+	addThumbnailContainer();
+}
+
+void SaveLoadChooserSimple::addThumbnailContainer() {
+	// When switching layouts, create / remove the thumbnail container as needed
+	if (g_gui.xmlEval()->getVar("Globals.SaveLoadChooser.ExtInfo.Visible") == 1 && !_container) {
+		_container = new ContainerWidget(this, "SaveLoadChooser.Thumbnail");
+	} else if (g_gui.xmlEval()->getVar("Globals.SaveLoadChooser.ExtInfo.Visible") == 0 && _container) {
+		removeWidget(_container);
+		delete _container;
+		_container = nullptr;
+	}
 }
 
 int SaveLoadChooserSimple::runIntern() {
@@ -471,6 +483,8 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 }
 
 void SaveLoadChooserSimple::reflowLayout() {
+	addThumbnailContainer();
+
 	SaveLoadChooserDialog::reflowLayout();
 
 	if (g_gui.xmlEval()->getVar("Globals.SaveLoadChooser.ExtInfo.Visible") == 1 && (_thumbnailSupport || _saveDateSupport || _playTimeSupport)) {
@@ -531,7 +545,7 @@ void SaveLoadChooserSimple::reflowLayout() {
 
 		updateSelection(false);
 	} else {
-		_container->setVisible(false);
+		if (_container) _container->setVisible(false);
 		_gfxWidget->setVisible(false);
 		_date->setVisible(false);
 		_time->setVisible(false);

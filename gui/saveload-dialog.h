@@ -164,6 +164,7 @@ private:
 
 	String					_resultString;
 
+	void addThumbnailContainer();
 	void updateSelection(bool redraw);
 };
 
