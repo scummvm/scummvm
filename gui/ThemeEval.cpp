@@ -131,7 +131,7 @@ void ThemeEval::addDialog(const Common::String &name, const Common::String &over
 }
 
 void ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, ThemeLayout::ItemAlign itemAlign) {
-	ThemeLayout *layout = 0;
+	ThemeLayout *layout = nullptr;
 
 	if (spacing == -1)
 		spacing = getVar("Globals.Layout.Spacing", 4);

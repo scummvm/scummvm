@@ -228,7 +228,7 @@ private:
 	bool selectDescription();
 
 	struct SlotButton {
-		SlotButton() : container(0), button(0), description(0) {}
+		SlotButton() : container(nullptr), button(nullptr), description(nullptr) {}
 		SlotButton(ContainerWidget *c, PicButtonWidget *b, StaticTextWidget *d) : container(c), button(b), description(d) {}
 
 		ContainerWidget  *container;

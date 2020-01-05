@@ -173,10 +173,10 @@ static const DrawDataInfo kDrawDataDefaults[] = {
  * ThemeEngine class
  *********************************************************/
 ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
-	_system(0), _vectorRenderer(0),
+	_system(nullptr), _vectorRenderer(nullptr),
 	_layerToDraw(kDrawLayerBackground), _bytesPerPixel(0),  _graphicsMode(kGfxDisabled),
-	_font(0), _initOk(false), _themeOk(false), _enabled(false), _themeFiles(),
-	_cursor(0) {
+	_font(nullptr), _initOk(false), _themeOk(false), _enabled(false), _themeFiles(),
+	_cursor(nullptr) {
 
 	_system = g_system;
 	_parser = new ThemeParser(this);
@@ -185,15 +185,15 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 	_useCursor = false;
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
-		_widgets[i] = 0;
+		_widgets[i] = nullptr;
 	}
 
 	for (int i = 0; i < kTextDataMAX; ++i) {
-		_texts[i] = 0;
+		_texts[i] = nullptr;
 	}
 
 	for (int i = 0; i < kTextColorMAX; ++i) {
-		_textColors[i] = 0;
+		_textColors[i] = nullptr;
 	}
 
 	// We currently allow two different ways of theme selection in our config file:
@@ -207,7 +207,7 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 	_themeId = getThemeId(_themeFile);
 
 	_graphicsMode = mode;
-	_themeArchive = 0;
+	_themeArchive = nullptr;
 	_initOk = false;
 
 	_cursorHotspotX = _cursorHotspotY = 0;
@@ -220,7 +220,7 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 
 ThemeEngine::~ThemeEngine() {
 	delete _vectorRenderer;
-	_vectorRenderer = 0;
+	_vectorRenderer = nullptr;
 	_screen.free();
 	_backBuffer.free();
 
@@ -488,7 +488,7 @@ void ThemeEngine::restoreBackground(Common::Rect r) {
 void ThemeEngine::addDrawStep(const Common::String &drawDataId, const Graphics::DrawStep &step) {
 	DrawData id = parseDrawDataId(drawDataId);
 
-	assert(id != kDDNone && _widgets[id] != 0);
+	assert(id != kDDNone && _widgets[id] != nullptr);
 	_widgets[id]->_steps.push_back(step);
 }
 
@@ -510,7 +510,7 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file, const Com
 	if (textId == -1)
 		return false;
 
-	if (_texts[textId] != 0)
+	if (_texts[textId] != nullptr)
 		delete _texts[textId];
 
 	_texts[textId] = new TextDrawData;
@@ -570,7 +570,7 @@ bool ThemeEngine::addTextColor(TextColor colorId, int r, int g, int b) {
 	if (colorId >= kTextColorMAX)
 		return false;
 
-	if (_textColors[colorId] != 0)
+	if (_textColors[colorId] != nullptr)
 		delete _textColors[colorId];
 
 	_textColors[colorId] = new TextColorData;
@@ -588,7 +588,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 	if (surf)
 		return true;
 
-	const Graphics::Surface *srcSurface = 0;
+	const Graphics::Surface *srcSurface = nullptr;
 
 	if (filename.hasSuffix(".png")) {
 		// Maybe it is PNG?
@@ -637,7 +637,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 	// Store the surface into our hashmap (attention, may store NULL entries!)
 	_bitmaps[filename] = surf;
 
-	return surf != 0;
+	return surf != nullptr;
 }
 
 bool ThemeEngine::addAlphaBitmap(const Common::String &filename) {
@@ -647,7 +647,7 @@ bool ThemeEngine::addAlphaBitmap(const Common::String &filename) {
 		return true;
 
 #ifdef USE_PNG
-	const Graphics::TransparentSurface *srcSurface = 0;
+	const Graphics::TransparentSurface *srcSurface = nullptr;
 #endif
 
 	if (filename.hasSuffix(".png")) {
@@ -681,7 +681,7 @@ bool ThemeEngine::addAlphaBitmap(const Common::String &filename) {
 	// Store the surface into our hashmap (attention, may store NULL entries!)
 	_abitmaps[filename] = surf;
 
-	return surf != 0;
+	return surf != nullptr;
 }
 
 bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
@@ -690,7 +690,7 @@ bool ThemeEngine::addDrawData(const Common::String &data, bool cached) {
 	if (id == -1)
 		return false;
 
-	if (_widgets[id] != 0)
+	if (_widgets[id] != nullptr)
 		delete _widgets[id];
 
 	_widgets[id] = new WidgetDrawData;
@@ -722,7 +722,7 @@ void ThemeEngine::loadTheme(const Common::String &themeId) {
 	}
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
-		if (_widgets[i] == 0) {
+		if (_widgets[i] == nullptr) {
 			warning("Missing data asset: '%s'", kDrawDataDefaults[i].name);
 		} else {
 			_widgets[i]->calcBackgroundOffset();
@@ -736,17 +736,17 @@ void ThemeEngine::unloadTheme() {
 
 	for (int i = 0; i < kDrawDataMAX; ++i) {
 		delete _widgets[i];
-		_widgets[i] = 0;
+		_widgets[i] = nullptr;
 	}
 
 	for (int i = 0; i < kTextDataMAX; ++i) {
 		delete _texts[i];
-		_texts[i] = 0;
+		_texts[i] = nullptr;
 	}
 
 	for (int i = 0; i < kTextColorMAX; ++i) {
 		delete _textColors[i];
-		_textColors[i] = 0;
+		_textColors[i] = nullptr;
 	}
 
 	_themeEval->reset();
@@ -1553,7 +1553,7 @@ const Graphics::Font *ThemeEngine::loadScalableFont(const Common::String &filena
 	if (font)
 		return font;
 #endif
-	return 0;
+	return nullptr;
 }
 
 const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, Common::String &name) {
@@ -1588,13 +1588,13 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, Comm
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
 const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, const Common::String &scalableFilename, const Common::String &charset, const int pointsize, const bool makeLocalizedFont) {
 	Common::String fontName;
 
-	const Graphics::Font *font = 0;
+	const Graphics::Font *font = nullptr;
 
 	// Prefer scalable fonts over non-scalable fonts
 	if (!scalableFilename.empty())

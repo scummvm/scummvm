@@ -76,8 +76,8 @@ ConsoleDialog::ConsoleDialog(float widthPercent, float heightPercent)
 	_promptStartPos = _promptEndPos = -1;
 
 	// Init callback
-	_callbackProc = 0;
-	_callbackRefCon = 0;
+	_callbackProc = nullptr;
+	_callbackRefCon = nullptr;
 
 	// Init History
 	_historyIndex = 0;

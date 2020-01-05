@@ -69,8 +69,8 @@ void TabWidget::init() {
 
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
-	_navLeft = new ButtonWidget(this, x, y, _butW, _butH, "<", 0, kCmdLeft);
-	_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, ">", 0, kCmdRight);
+	_navLeft = new ButtonWidget(this, x, y, _butW, _butH, "<", nullptr, kCmdLeft);
+	_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, ">", nullptr, kCmdRight);
 	_lastRead = -1;
 }
 
@@ -81,10 +81,10 @@ TabWidget::~TabWidget() {
 	// date. So update it now.
 	if (_activeTab != -1)
 		_tabs[_activeTab].firstWidget = _firstWidget;
-	_firstWidget = 0;
+	_firstWidget = nullptr;
 	for (uint i = 0; i < _tabs.size(); ++i) {
 		delete _tabs[i].firstWidget;
-		_tabs[i].firstWidget = 0;
+		_tabs[i].firstWidget = nullptr;
 	}
 	_tabs.clear();
 	delete _navRight;
@@ -109,7 +109,7 @@ int TabWidget::addTab(const String &title, const String &dialogName) {
 	Tab newTab;
 	newTab.title = title;
 	newTab.dialogName = dialogName;
-	newTab.firstWidget = 0;
+	newTab.firstWidget = nullptr;
 
 	// Determine the new tab width
 	int newWidth = g_gui.getStringWidth(title) + kTabTitleSpacing;
@@ -134,7 +134,7 @@ void TabWidget::removeTab(int tabID) {
 	if (tabID == _activeTab) {
 		_tabs[tabID].firstWidget = _firstWidget;
 		releaseFocus();
-		_firstWidget = 0;
+		_firstWidget = nullptr;
 	}
 
 	// Dispose the widgets in that tab and then the tab itself

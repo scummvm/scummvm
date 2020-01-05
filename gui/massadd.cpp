@@ -60,9 +60,9 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	_dirsScanned(0),
 	_oldGamesCount(0),
 	_dirTotal(0),
-	_okButton(0),
-	_dirProgressText(0),
-	_gameProgressText(0) {
+	_okButton(nullptr),
+	_dirProgressText(nullptr),
+	_gameProgressText(nullptr) {
 
 	StringArray l;
 
@@ -86,10 +86,10 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	_list->setNumberingMode(kListNumberingOff);
 	_list->setList(l);
 
-	_okButton = new ButtonWidget(this, "MassAdd.Ok", _("OK"), 0, kOkCmd, Common::ASCII_RETURN);
+	_okButton = new ButtonWidget(this, "MassAdd.Ok", _("OK"), nullptr, kOkCmd, Common::ASCII_RETURN);
 	_okButton->setEnabled(false);
 
-	new ButtonWidget(this, "MassAdd.Cancel", _("Cancel"), 0, kCancelCmd, Common::ASCII_ESCAPE);
+	new ButtonWidget(this, "MassAdd.Cancel", _("Cancel"), nullptr, kCancelCmd, Common::ASCII_ESCAPE);
 
 	// Build a map from all configured game paths to the targets using them
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();

@@ -65,7 +65,7 @@ public:
 	 * 'Attach' the debugger. This ensures that the next time onFrame()
 	 * is invoked, the debugger will activate and accept user input.
 	 */
-	virtual void attach(const char *entry = 0);
+	virtual void attach(const char *entry = nullptr);
 
 	/**
 	 * Return true if the debugger is currently active (i.e. executing

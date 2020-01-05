@@ -51,12 +51,12 @@ enum {
 	kEditRecordCmd = 'EDIT'
 };
 
-RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(0), _currentScreenshot(0) {
+RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(nullptr), _currentScreenshot(0) {
 	_firstScreenshotUpdate = false;
 	_screenShotsCount = 0;
-	_currentScreenshotText = 0;
-	_authorText = 0;
-	_notesText = 0;
+	_currentScreenshotText = nullptr;
+	_authorText = nullptr;
+	_notesText = nullptr;
 
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
@@ -65,12 +65,12 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(0), _currentS
 	_list = new GUI::ListWidget(this, "RecorderDialog.List");
 	_list->setNumberingMode(GUI::kListNumberingOff);
 
-	_deleteButton = new GUI::ButtonWidget(this, "RecorderDialog.Delete", _("Delete"), 0, kDeleteCmd);
-	new GUI::ButtonWidget(this, "RecorderDialog.Cancel", _("Cancel"), 0, kCloseCmd);
-	new GUI::ButtonWidget(this, "RecorderDialog.Record", _("Record"), 0, kRecordCmd);
-	_playbackButton = new GUI::ButtonWidget(this, "RecorderDialog.Playback", _("Playback"), 0, kPlaybackCmd);
+	_deleteButton = new GUI::ButtonWidget(this, "RecorderDialog.Delete", _("Delete"), nullptr, kDeleteCmd);
+	new GUI::ButtonWidget(this, "RecorderDialog.Cancel", _("Cancel"), nullptr, kCloseCmd);
+	new GUI::ButtonWidget(this, "RecorderDialog.Record", _("Record"), nullptr, kRecordCmd);
+	_playbackButton = new GUI::ButtonWidget(this, "RecorderDialog.Playback", _("Playback"), nullptr, kPlaybackCmd);
 
-	_editButton = new GUI::ButtonWidget(this, "RecorderDialog.Edit", _("Edit"), 0, kEditRecordCmd);
+	_editButton = new GUI::ButtonWidget(this, "RecorderDialog.Edit", _("Edit"), nullptr, kEditRecordCmd);
 
 	_editButton->setEnabled(false);
 	_deleteButton->setEnabled(false);
@@ -79,14 +79,14 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(0), _currentS
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 	_container = new GUI::ContainerWidget(this, "RecorderDialog.Thumbnail");
 	if (g_gui.xmlEval()->getVar("Globals.RecorderDialog.ExtInfo.Visible") == 1) {
-		new GUI::ButtonWidget(this,"RecorderDialog.NextScreenShotButton", "<", 0, kPrevScreenshotCmd);
-		new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", ">", 0, kNextScreenshotCmd);
+		new GUI::ButtonWidget(this,"RecorderDialog.NextScreenShotButton", "<", nullptr, kPrevScreenshotCmd);
+		new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", ">", nullptr, kNextScreenshotCmd);
 		_currentScreenshotText = new StaticTextWidget(this, "RecorderDialog.currentScreenshot", "0/0");
 		_authorText = new StaticTextWidget(this, "RecorderDialog.Author", _("Author: "));
 		_notesText = new StaticTextWidget(this, "RecorderDialog.Notes", _("Notes: "));
 	}
 	if (_gfxWidget)
-		_gfxWidget->setGfx(0);
+		_gfxWidget->setGfx(nullptr);
 }
 
 
@@ -274,7 +274,7 @@ void RecorderDialog::updateScreenshot() {
 		_firstScreenshotUpdate = false;
 	}
 	Graphics::Surface *srcsf = _playbackFile.getScreenShot(_currentScreenshot);
-	if (srcsf != NULL) {
+	if (srcsf != nullptr) {
 		Graphics::Surface *destsf = Graphics::scale(*srcsf, _gfxWidget->getWidth(), _gfxWidget->getHeight());
 		_gfxWidget->setGfx(destsf);
 		updateScreenShotsText();

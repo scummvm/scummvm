@@ -156,7 +156,7 @@ void AboutDialog::addLine(const char *str) {
 			// We could use TransMan.getCurrentCharset() but rather than compare strings
 			// it is easier to use TransMan.getCharsetMapping() (non null in case of non
 			// ISO-8859-1 mapping)
-			useAscii = (TransMan.getCharsetMapping() != NULL);
+			useAscii = (TransMan.getCharsetMapping() != nullptr);
 #endif
 			if (useAscii)
 				asciiStr = str;

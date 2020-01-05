@@ -105,7 +105,7 @@ static GUI::ThemeEngine::TextAlignVertical parseTextVAlign(const Common::String 
 
 ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {
 	_defaultStepGlobal = defaultDrawStep();
-	_defaultStepLocal = 0;
+	_defaultStepLocal = nullptr;
 	_theme = parent;
 }
 
@@ -119,7 +119,7 @@ void ThemeParser::cleanup() {
 	delete _defaultStepLocal;
 
 	_defaultStepGlobal = defaultDrawStep();
-	_defaultStepLocal = 0;
+	_defaultStepLocal = nullptr;
 	_palette.clear();
 }
 
@@ -140,7 +140,7 @@ Graphics::DrawStep *ThemeParser::defaultDrawStep() {
 
 Graphics::DrawStep *ThemeParser::newDrawStep() {
 	assert(_defaultStepGlobal);
-	Graphics::DrawStep *step = 0; //new DrawStep;
+	Graphics::DrawStep *step = nullptr; //new DrawStep;
 
 	if (_defaultStepLocal) {
 		step = new Graphics::DrawStep(*_defaultStepLocal);
@@ -153,12 +153,12 @@ Graphics::DrawStep *ThemeParser::newDrawStep() {
 
 bool ThemeParser::parserCallback_defaults(ParserNode *node) {
 	ParserNode *parentNode = getParentNode(node);
-	Graphics::DrawStep *step = 0;
+	Graphics::DrawStep *step = nullptr;
 
 	if (parentNode->name == "render_info") {
 		step = _defaultStepGlobal;
 	} else if (parentNode->name == "drawdata") {
-		if (_defaultStepLocal == 0)
+		if (_defaultStepLocal == nullptr)
 			_defaultStepLocal = new Graphics::DrawStep(*_defaultStepGlobal);
 
 		step = _defaultStepLocal;
@@ -337,7 +337,7 @@ static Graphics::DrawingFunctionCallback getDrawingFunctionCallback(const Common
 	if (name == "alphabitmap")
 		return &Graphics::VectorRenderer::drawCallback_ALPHABITMAP;
 
-	return 0;
+	return nullptr;
 }
 
 
@@ -348,7 +348,7 @@ bool ThemeParser::parserCallback_drawstep(ParserNode *node) {
 
 	drawstep->drawingCall = getDrawingFunctionCallback(functionName);
 
-	if (drawstep->drawingCall == 0) {
+	if (drawstep->drawingCall == nullptr) {
 		delete drawstep;
 		return parserError(functionName + " is not a valid drawing function name");
 	}
@@ -381,7 +381,7 @@ bool ThemeParser::parserCallback_drawdata(ParserNode *node) {
 		return parserError("Error adding Draw Data set: Invalid DrawData name.");
 
 	delete _defaultStepLocal;
-	_defaultStepLocal = 0;
+	_defaultStepLocal = nullptr;
 
 	return true;
 }

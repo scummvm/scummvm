@@ -44,7 +44,7 @@ FileBrowserDialog::FileBrowserDialog(const char *title, const char *fileExtensio
 
 	_fileMask = "*.";
 	_fileMask += fileExtension;
-	_fileList = NULL;
+	_fileList = nullptr;
 
 	new StaticTextWidget(this, "FileBrowser.Headline", title ? title :
 					mode == kFBModeLoad ? _("Choose file for loading") : _("Enter filename for saving"));
@@ -62,8 +62,8 @@ FileBrowserDialog::FileBrowserDialog(const char *title, const char *fileExtensio
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	// Buttons
-	new ButtonWidget(this, "FileBrowser.Cancel", _("Cancel"), 0, kCloseCmd);
-	new ButtonWidget(this, "FileBrowser.Choose", _("Choose"), 0, kChooseCmd);
+	new ButtonWidget(this, "FileBrowser.Cancel", _("Cancel"), nullptr, kCloseCmd);
+	new ButtonWidget(this, "FileBrowser.Choose", _("Choose"), nullptr, kChooseCmd);
 }
 
 void FileBrowserDialog::open() {

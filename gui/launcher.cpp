@@ -123,7 +123,7 @@ LauncherDialog::~LauncherDialog() {
 
 void LauncherDialog::build() {
 #ifndef DISABLE_FANCY_THEMES
-	_logo = 0;
+	_logo = nullptr;
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
@@ -174,9 +174,9 @@ void LauncherDialog::build() {
 	}
 
 	// Search box
-	_searchDesc = 0;
+	_searchDesc = nullptr;
 #ifndef DISABLE_FANCY_THEMES
-	_searchPic = 0;
+	_searchPic = nullptr;
 	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
 		_searchPic = new GraphicsWidget(this, "Launcher.SearchPic", _("Search in game list"));
 		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
@@ -184,11 +184,11 @@ void LauncherDialog::build() {
 #endif
 		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
 
-	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, 0, kSearchCmd);
+	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, nullptr, kSearchCmd);
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 
 	// Add list with game titles
-	_list = new ListWidget(this, "Launcher.GameList", 0, kListSearchCmd);
+	_list = new ListWidget(this, "Launcher.GameList", nullptr, kListSearchCmd);
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 
@@ -733,9 +733,9 @@ void LauncherDialog::reflowLayout() {
 
 		if (_logo) {
 			removeWidget(_logo);
-			_logo->setNext(0);
+			_logo->setNext(nullptr);
 			delete _logo;
-			_logo = 0;
+			_logo = nullptr;
 		}
 	}
 
@@ -746,9 +746,9 @@ void LauncherDialog::reflowLayout() {
 
 		if (_searchDesc) {
 			removeWidget(_searchDesc);
-			_searchDesc->setNext(0);
+			_searchDesc->setNext(nullptr);
 			delete _searchDesc;
-			_searchDesc = 0;
+			_searchDesc = nullptr;
 		}
 	} else {
 		if (!_searchDesc)
@@ -756,14 +756,14 @@ void LauncherDialog::reflowLayout() {
 
 		if (_searchPic) {
 			removeWidget(_searchPic);
-			_searchPic->setNext(0);
+			_searchPic->setNext(nullptr);
 			delete _searchPic;
-			_searchPic = 0;
+			_searchPic = nullptr;
 		}
 	}
 
 	removeWidget(_searchClearButton);
-	_searchClearButton->setNext(0);
+	_searchClearButton->setNext(nullptr);
 	delete _searchClearButton;
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 #endif

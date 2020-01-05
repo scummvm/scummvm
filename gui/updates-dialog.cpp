@@ -113,7 +113,7 @@ UpdatesDialog::UpdatesDialog() : Dialog(30, 20, 260, 124) {
 	int buttonPos = _w - buttonWidth - 10;
 
 	_proceedButton = new ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight,
-				_("Proceed"), 0, kProceedCmd, Common::ASCII_RETURN);
+				_("Proceed"), nullptr, kProceedCmd, Common::ASCII_RETURN);
 }
 
 void UpdatesDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

@@ -106,7 +106,7 @@ public:
 	 * dialog is provided and is present in the DialogStack, the object will
 	 * only be deleted when that dialog is the top level dialog.
 	 */
-	void addToTrash(GuiObject*, Dialog* parent = 0);
+	void addToTrash(GuiObject*, Dialog* parent = nullptr);
 	void initTextToSpeech();
 
 	bool _launched;
