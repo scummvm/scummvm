@@ -3673,6 +3673,35 @@ static const uint16 gk2WagnerPaintingMessagePatch[] = {
 	PATCH_END
 };
 
+// The game-over rooms 665 and 666 draw a pic over everything by setting the
+//  default plane's priority to 202, but this is already inventoryBorderPlane's
+//  priority. In our interpreter this causes a border fragment to be drawn above
+//  the pics. This worked by luck in Sierra's interpreter because it sorts on
+//  memory ID when planes have the same priority. In ScummVM the renderer
+//  guarantees a sort order based on the creation order of the planes. The
+//  default plane is created first and drawn before inventoryBorderPlane.
+//
+// We fix this by increasing the plane priority in the game-over rooms.
+//
+// Applies to: All versions
+// Responsible methods: gabeNews:init, uDie:init
+// Fixes bug: #11298
+static const uint16 gk2GameOverPrioritySignature[] = {
+	0x39, SIG_SELECTOR8(priority),  // pushi priority
+	SIG_MAGICDWORD,
+	0x78,                           // push1
+	0x38, SIG_UINT16(0x00ca),       // pushi 00ca
+	0x81, 0x03,                     // lag 03
+	0x4a, SIG_UINT16(0x0012),       // send 12 [ Plane ... priority: 202 ]
+	SIG_END
+};
+
+static const uint16 gk2GameOverPriorityPatch[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x38, PATCH_UINT16(0x00cb),     // pushi 00cb [ priority: 203 ]
+	PATCH_END
+};
+
 //          script, description,                                              signature                         patch
 static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,     0, "disable volume reset on startup",                     1, gk2VolumeResetSignature,           gk2VolumeResetPatch },
@@ -3682,6 +3711,8 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,    23, "fix inventory scroll direction (no line numbers)",    1, gk2InventoryScrollDirSignature2,   gk2InventoryScrollDirPatch2 },
 	{  true,    37, "fix sound manager lockup",                            1, gk2SoundManagerLockupSignature1,   gk2SoundManagerLockupPatch1 },
 	{  true,    37, "fix sound manager lockup (no line numbers)",          1, gk2SoundManagerLockupSignature2,   gk2SoundManagerLockupPatch2 },
+	{  true,   665, "fix game-over priority",                              1, gk2GameOverPrioritySignature,      gk2GameOverPriorityPatch },
+	{  true,   666, "fix game-over priority",                              1, gk2GameOverPrioritySignature,      gk2GameOverPriorityPatch },
 	{  true,   800, "fix neuschwanstein hint (1/3)",                       1, gk2NeuschwansteinHintSignature1,   gk2NeuschwansteinHintPatch },
 	{  true,   800, "fix neuschwanstein hint (2/3)",                       1, gk2NeuschwansteinHintSignature2,   gk2NeuschwansteinHintPatch },
 	{  true,   800, "fix neuschwanstein hint (3/3)",                       1, gk2NeuschwansteinHintSignature3,   gk2NeuschwansteinHintPatch },
