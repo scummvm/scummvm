@@ -380,7 +380,10 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 						}
 					}
 				}
-				if (param_5 == 0) goto LAB_80032efc;
+				if (param_5 == 0) {
+					_vm->data_800633fc = 0;
+					return (uint)returnStatus;
+				}
 				uVar9 = ((int)((int)(short)unaff_s4 * (uint)1 * (int)sVar3) >> 3) * 0x3c;
 				if ((param_7 == 0) && _vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED)) {
 					uVar9 = 0;
@@ -427,7 +430,6 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 				_vm->setFlags(ENGINE_FLAG_8);
 			}
 		}
-		LAB_80032efc:
 		_vm->data_800633fc = 0;
 		return (uint)returnStatus;
 }
@@ -560,7 +562,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 	_vm->_scriptOpcodes->loadTalkDialogEntries(scriptOpCall);
 	numEntries = _dialogEntries.size();
 	if (numEntries == 0) {
-		return 0;
+		return false;
 	}
 
 	for (Common::Array<TalkDialogEntry*>::iterator it = _dialogEntries.begin(); it != _dialogEntries.end(); it++) {
@@ -581,14 +583,14 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 		if (numActiveDialogEntries == 0) {
 			//TODO logic from LAB_80029bc0 reset cursor
 			exitTalkMenu(isFlag8Set, isFlag100Set, dialogEntries);
-			return 1;
+			return true;
 		}
 
 		selectedDialogText = displayTalkDialogMenu(dialogEntries);
 		if (selectedDialogText == NULL) {
 			callMaybeResetData();
 			exitTalkMenu(isFlag8Set, isFlag100Set, dialogEntries);
-			return 1;
+			return true;
 		}
 		_vm->clearFlags(ENGINE_FLAG_8);
 		strcpy((char *)local_990, selectedDialogText->dialogText);
@@ -640,7 +642,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 //	actors[0].y_pos = cursor_y_var;
 
 	exitTalkMenu(isFlag8Set, isFlag100Set, dialogEntries);
-	return 1;
+	return true;
 }
 
 TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dialogEntries) {
