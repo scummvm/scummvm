@@ -685,8 +685,6 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		}
 
 		return d;
-	} else {
-		warning("Lingo::getTheCast(): The cast %d found", id);
 	}
 
 	castType = _vm->getCurrentScore()->_loadedCast->getVal(id)->_type;
