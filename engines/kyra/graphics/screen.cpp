@@ -3171,12 +3171,25 @@ void Screen::rectClip(int &x, int &y, int w, int h) {
 
 void Screen::shakeScreen(int times) {
 	while (times--) {
+		// The original did not need an artificial delay, but we do.
+		// Or the shake will be too fast to be actually seen.
+		uint32 delayuntil = _system->getMillis() + 16;
+
 		// seems to be 1 line (320 pixels) offset in the original
-		// 4 looks more like dosbox though, maybe check this again
-		_system->setShakePos(0, 4);
+		// -4 looks more like dosbox though, maybe check this again		
+		_system->setShakePos(0, -4);
 		_system->updateScreen();
+
+		int diff = delayuntil - _system->getMillis();
+		if (diff > 0)
+			_system->delayMillis(diff);
+		delayuntil = _system->getMillis() + 16;
 		_system->setShakePos(0, 0);
 		_system->updateScreen();
+
+		diff = delayuntil - _system->getMillis();
+		if (diff > 0)
+			_system->delayMillis(diff);
 	}
 }
 
