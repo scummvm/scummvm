@@ -21,6 +21,7 @@
  */
 
 #include "common/substream.h"
+#include "graphics/surface.h"
 
 #include "director/director.h"
 #include "director/cachedmactext.h"
@@ -29,6 +30,17 @@
 #include "director/stxt.h"
 
 namespace Director {
+
+Cast::Cast() {
+	_type = kCastTypeNull;
+	_surface = nullptr;
+
+	_modified = true;
+}
+
+Cast::~Cast() {
+	delete _surface;
+}
 
 BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version) {
 	_type = kCastBitmap;
@@ -106,7 +118,6 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 
 
 		stream.readUint32();
 	}
-	_modified = 0;
 	_tag = castTag;
 }
 
@@ -223,10 +234,10 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		stream.readUint16();
 	}
 
-	_modified = 0;
-
 	_cachedMacText = new CachedMacText(this, version, -1, g_director->_wm);
 	// TODO Destroy me
+
+	_modified = false;
 }
 
 void TextCast::importStxt(const Stxt *stxt) {
@@ -305,7 +316,7 @@ ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
 		_lineThickness = 1;
 		_lineDirection = 0;
 	}
-	_modified = 0;
+	_modified = false;
 
 	debugC(3, kDebugLoading, "ShapeCast: fl: %x unk1: %x type: %d pat: %d fg: %d bg: %d fill: %d thick: %d dir: %d",
 		flags, unk1, _shapeType, _pattern, _fgCol, _bgCol, _fillType, _lineThickness, _lineDirection);
@@ -329,7 +340,6 @@ ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextC
 
 		_buttonType = static_cast<ButtonType>(stream.readUint16BE());
 	}
-	_modified = 0;
 }
 
 ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
@@ -363,7 +373,6 @@ ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
 
 		// WIP need to complete this!
 	}
-	_modified = 0;
 }
 
 RTECast::RTECast(Common::ReadStreamEndian &stream, uint16 version) : TextCast(stream, version) {

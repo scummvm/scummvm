@@ -42,6 +42,9 @@ class CachedMacText;
 
 class Cast {
 public:
+	Cast();
+	virtual ~Cast();
+
 	CastType _type;
 	Common::Rect _initialRect;
 	Common::Rect _boundingRect;
@@ -49,7 +52,7 @@ public:
 
 	const Graphics::Surface *_surface;
 
-	byte _modified;
+	bool _modified;
 };
 
 class BitmapCast : public Cast {
