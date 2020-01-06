@@ -149,6 +149,7 @@ BITDDecoder::~BITDDecoder() {
 }
 
 void BITDDecoder::destroy() {
+	delete _surface;
 	_surface = 0;
 
 	delete[] _palette;
