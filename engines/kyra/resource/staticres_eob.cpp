@@ -1395,7 +1395,7 @@ const EoBEngine::RenderModePalFile EoBEngine::_renderModePalFiles[3] = {
 	{	-1, "" }
 };
 
-const EoBEngine::TitleScreenConfig EoBEngine::_titleConfig[4] = {
+const EoBEngine::TitleScreenConfig EoBEngine::_titleConfig[5] = {
 	{
 		Common::kPlatformDOS,
 		Common::UNK_LANG,
@@ -1444,6 +1444,18 @@ const EoBEngine::TitleScreenConfig EoBEngine::_titleConfig[4] = {
 		76, 164, 175, 31, 14, 13, -1,
 		0
 	},
+	{
+		Common::kPlatformSegaCD,
+		Common::UNK_LANG,
+		"EOBTITLE",
+		&_renderModePalFiles[2],
+		1,
+		2,
+		false,
+		77, 161, 173, 29, 1, 2, 12,
+		76, 160, 175, 31, 1, 2, -1,
+		-8
+	}
 };
 
 void DarkMoonEngine::initStaticResource() {

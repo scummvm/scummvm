@@ -95,6 +95,7 @@ protected:
 	typedef Common::List<Common::SharedPtr<ResArchiveLoader> > LoaderList;
 	LoaderList _loaders;
 
+	const bool _bigEndianPlatForm;
 	KyraEngine_v1 *_vm;
 };
 

@@ -29,6 +29,8 @@
 
 namespace Kyra {
 
+class SegaCDResource;
+class SegaSequencePlayer;
 class EoBEngine : public EoBCoreEngine {
 friend class GUI_EoB;
 friend class EoBSeqPlayerCommon;
@@ -69,14 +71,14 @@ private:
 	};
 
 	static const RenderModePalFile _renderModePalFiles[3];
-	static const TitleScreenConfig _titleConfig[4];
+	static const TitleScreenConfig _titleConfig[5];
 	const TitleScreenConfig *_ttlCfg;
 
 	// Main loop
 	void startupNew() override;
 	void startupLoad() override;
 
-	// Intro/Outro
+	// Intro/Outro/Sequence Playback
 	enum IntroPart {
 		kOnlyCredits = 0,
 		kOnlyIntro,
@@ -87,7 +89,11 @@ private:
 	void seq_playFinale() override;
 	void seq_xdeath() override;
 
+	void seq_segaOpeningCredits();
+	bool seq_segaPlaySequence(int id);
+
 	const char *const *_finBonusStrings;
+	SegaSequencePlayer *_seqPlayer;
 	bool _xdth;
 
 	// characters
@@ -146,6 +152,10 @@ private:
 	int resurrectionSelectDialogue() override;
 	void healParty();
 
+	// Resource
+	SegaCDResource *_sres;
+
+	// GUI
 	const KyraRpgGUISettings *guiSettings() const override;
 	void useMainMenuGUISettings(bool toggle) override { _useMainMenuGUISettings = toggle; }
 

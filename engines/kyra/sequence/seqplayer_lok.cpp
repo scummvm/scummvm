@@ -20,7 +20,7 @@
  *
  */
 
-#include "kyra/sequence/seqplayer.h"
+#include "kyra/sequence/seqplayer_lok.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound.h"
 

@@ -21,7 +21,7 @@
  */
 
 #include "kyra/engine/kyra_lok.h"
-#include "kyra/sequence/seqplayer.h"
+#include "kyra/sequence/seqplayer_lok.h"
 #include "kyra/resource/resource.h"
 #include "kyra/engine/sprites.h"
 #include "kyra/graphics/wsamovie.h"

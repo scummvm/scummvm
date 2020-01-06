@@ -470,7 +470,7 @@ Common::Error EoBCoreEngine::init() {
 	_res = new Resource(this);
 	assert(_res);
 	_res->reset();
-
+ 
 	_staticres = new StaticResource(this);
 	assert(_staticres);
 	if (!_staticres->init())
@@ -478,27 +478,39 @@ Common::Error EoBCoreEngine::init() {
 
 	// We start the respective sound driver even if "No Music" has
 	// been selected, because we don't have a null driver class (and
-	// don't really need one). We just disable the sound in the settings.
+	// don't really need one). We just disable the sound here.
 	MidiDriver::DeviceHandle dev = 0;
-	if (_flags.platform == Common::kPlatformDOS) {
+	switch (_flags.platform) {
+	case Common::kPlatformDOS: {
 		int flags = MDT_ADLIB | MDT_PCSPK;
 		dev = MidiDriver::detectDevice(_flags.gameID == GI_EOB1 ? flags | MDT_PCJR : flags);
 		MusicType type = MidiDriver::getMusicType(dev);
 		_sound = new SoundPC_v1(this, _mixer, type == MT_ADLIB ? Sound::kAdLib : type == MT_PCSPK ? Sound::kPCSpkr : Sound::kPCjr);
-	} else if (_flags.platform == Common::kPlatformFMTowns) {
+		} break;
+	case Common::kPlatformFMTowns:
 		dev = MidiDriver::detectDevice(MDT_TOWNS);
-		// SoundTowns_Darkmoon requires initialized _staticres
 		_sound = new SoundTowns_Darkmoon(this, _mixer);
-	} else if (_flags.platform == Common::kPlatformPC98) {
+		break;
+	case Common::kPlatformPC98:
 		if (_flags.gameID == GI_EOB1) {
 			dev = MidiDriver::detectDevice(MDT_PC98);
 			_sound = new SoundPC98_EoB(this, _mixer);
 		} else {
 			dev = MidiDriver::detectDevice(MDT_PC98 | MDT_MIDI);
+			/**/
 		}
-	} else if (_flags.platform == Common::kPlatformAmiga) {
+		break;
+	case Common::kPlatformAmiga:
 		dev = MidiDriver::detectDevice(MDT_AMIGA);
 		_sound = new SoundAmiga_EoB(this, _mixer);
+		break;
+	case Common::kPlatformSegaCD:
+		dev = MidiDriver::detectDevice(/*MDT_SEGACD*/MDT_TOWNS);
+		_sound = new SoundSegaCD_EoB(this, _mixer);
+		break;
+	default:
+		// Dummy error message. Unsupported platforms don't have detection entries.
+		error("Unsupported platform '%d'", _flags.platform);
 	}
 
 	assert(_sound);
@@ -506,6 +518,8 @@ Common::Error EoBCoreEngine::init() {
 
 	if (_flags.platform == Common::kPlatformPC98)
 		_sound->loadSfxFile("EFECT.OBJ");
+	else if (_flags.platform == Common::kPlatformSegaCD)
+		_sound->loadSfxFile("FMSE");
 
 	// Setup volume settings (and read in all ConfigManager settings)
 	_configNullSound = (MidiDriver::getMusicType(dev) == MT_NULL);
@@ -530,25 +544,7 @@ Common::Error EoBCoreEngine::init() {
 	assert(_inf);
 	setDebugger(new Debugger_EoB(this));
 	
-	if (_flags.platform == Common::kPlatformAmiga) {
-		if (_res->exists("EOBF6.FONT"))
-			_screen->loadFont(Screen::FID_6_FNT, "EOBF6.FONT");
-		else if (_res->exists("FONTS/EOBF6.FONT"))
-			_screen->loadFont(Screen::FID_6_FNT, "FONTS/EOBF6.FONT");
-		else
-			AmigaDOSFont::errorDialog(0);
-
-		if (_res->exists("EOBF8.FONT"))
-			_screen->loadFont(Screen::FID_8_FNT, "EOBF8.FONT");
-		else if (_res->exists("FONTS/EOBF8.FONT"))
-			_screen->loadFont(Screen::FID_8_FNT, "FONTS/EOBF8.FONT");
-		else
-			AmigaDOSFont::errorDialog(0);
-
-	} else {
-		_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
-		_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
-	}
+	loadFonts();
 
 	Common::Error err = KyraRpgEngine::init();
 	if (err.getCode() != Common::kNoError)
@@ -636,21 +632,55 @@ Common::Error EoBCoreEngine::init() {
 	return Common::kNoError;
 }
 
+void EoBCoreEngine::loadFonts() {
+	// Only the fonts that are based on game resource files are loaded here. ScummVM builtin fonts like the
+	// FM-Towns ROM font or the PC-98 SJIS font get initialized in Screen::init() and Screen_EoB::init().
+
+	if (_flags.platform == Common::kPlatformAmiga) {
+		if (_res->exists("EOBF6.FONT"))
+			_screen->loadFont(Screen::FID_6_FNT, "EOBF6.FONT");
+		else if (_res->exists("FONTS/EOBF6.FONT"))
+			_screen->loadFont(Screen::FID_6_FNT, "FONTS/EOBF6.FONT");
+		else
+			AmigaDOSFont::errorDialog(0);
+
+		if (_res->exists("EOBF8.FONT"))
+			_screen->loadFont(Screen::FID_8_FNT, "EOBF8.FONT");
+		else if (_res->exists("FONTS/EOBF8.FONT"))
+			_screen->loadFont(Screen::FID_8_FNT, "FONTS/EOBF8.FONT");
+		else
+			AmigaDOSFont::errorDialog(0);
+
+	} else if (_flags.platform != Common::kPlatformSegaCD) {
+		_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
+		_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
+	}
+
+	if (_flags.platform == Common::kPlatformFMTowns) {
+			_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT.DMP");
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		_screen->loadFont(Screen::FID_SJIS_SMALL_FNT, "FONT12.FNT");
+	} else if (_flags.platform == Common::kPlatformSegaCD) {
+		//_screen->loadFont(Screen::FID_8_FNT, "FONTK12");
+		//_screen->loadFont(Screen::FID_6_FNT, "FONT8SH");
+	}
+}
+
 Common::Error EoBCoreEngine::go() {
 	static_cast<Debugger_EoB *>(getDebugger())->initialize();
 	_txt->removePageBreakFlag();
-	_screen->setFont(_flags.platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
-	loadItemsAndDecorationsShapes();
-	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
+	//_screen->setFont(_flags.platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	//loadItemsAndDecorationsShapes();
+	//_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
 
 	// Import original save game files (especially the "Quick Start Party")
 	if (ConfMan.getBool("importOrigSaves")) {
-		importOriginalSaveFile(-1);
-		ConfMan.setBool("importOrigSaves", false);
-		ConfMan.flushToDisk();
+		//importOriginalSaveFile(-1);
+		//ConfMan.setBool("importOrigSaves", false);
+		//ConfMan.flushToDisk();
 	}
 
-	loadItemDefs();
+	//loadItemDefs();
 	int action = 0;
 
 	for (bool repeatLoop = true; repeatLoop; repeatLoop ^= true) {

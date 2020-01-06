@@ -22,7 +22,7 @@
 
 #include "kyra/engine/kyra_lok.h"
 #include "kyra/resource/resource.h"
-#include "kyra/sequence/seqplayer.h"
+#include "kyra/sequence/seqplayer_lok.h"
 #include "kyra/engine/sprites.h"
 #include "kyra/graphics/animator_lok.h"
 #include "kyra/gui/debugger.h"

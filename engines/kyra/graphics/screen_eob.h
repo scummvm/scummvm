@@ -29,8 +29,10 @@
 
 namespace Kyra {
 
+class SegaRenderer;
 class EoBCoreEngine;
 class Screen_EoB : public Screen {
+friend class SegaRenderer;
 public:
 	Screen_EoB(EoBCoreEngine *vm, OSystem *system);
 	~Screen_EoB() override;
@@ -92,7 +94,7 @@ public:
 	void shadeRect(int x1, int y1, int x2, int y2, int shadingLevel);
 
 	// PC-98 specific
-	void selectPC98Palette(int paletteIndex, Palette &dest, int brightness = 0, bool set = false);
+	void selectPC98Palette(int palID, Palette &dest, int brightness = 0, bool set = false);
 	void decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize);
 	void decodePC98PlanarBitmap(uint8 *srcDstBuffer, uint8 *tmpBuffer, uint16 size = 64000);
 
@@ -101,7 +103,7 @@ public:
 		uint8 delay;
 	};
 
-	void initPC98PaletteCycle(int paletteIndex, PalCycleData *data);
+	void initPC98PaletteCycle(int palID, PalCycleData *data);
 	void updatePC98PaletteCycle(int brightness);
 
 	PalCycleData *_activePalCycle;
@@ -113,6 +115,15 @@ public:
 	// I use colors 32 to 63 for these extra colors (which the Amiga copper sends to the color
 	// registers on the fly at vertical beam position 120).
 	void setDualPalettes(Palette &top, Palette &bottom);
+
+	// SegaCD specific
+	void sega_selectPalette(int srcPalID, int dstPalID, int brightness = 0, bool set = false);
+	void sega_fadePalette(int delay, int brEnd, int dstPalID = -1);
+	void sega_fadeToBlack(int delay) { sega_fadePalette(delay, -8); }
+	void sega_fadeToWhite(int delay) { sega_fadePalette(delay, 8); }
+	void sega_fadeToNeutral(int delay) { sega_fadePalette(delay, 0); }
+	void sega_paletteOps(int opPal, int par1, int par2);
+	SegaRenderer *sega_getRenderer() const { return _segaRenderer; }
 
 private:
 	void updateDirtyRects() override;
@@ -150,9 +161,6 @@ private:
 	uint8 *_egaDitheringTable;
 	uint8 *_egaDitheringTempPage;
 
-	// hard coded 16 color palettes for PC98 version of EOB1
-	const uint8 *_palette16c[10];
-
 	Common::String _cpsFilePattern;
 
 	const uint16 _cursorColorKey16Bit;
@@ -160,6 +168,85 @@ private:
 	static const uint8 _egaMatchTable[];
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
+
+	// SegaCD specific
+	SegaRenderer *_segaRenderer;
+	uint16 _segaPalette[64];
+	uint8 _brState[4];
+};
+
+class SegaRenderer {
+public:
+	enum Plane {
+		kPlaneA = 0,
+		kPlaneB = 1,
+		kWindowPlane = 2
+	};
+
+	enum WindowMode {
+		kWinToLeft = 0,
+		kWinToTop = 0,
+		kWinToRight = 1,
+		kWinToBottom = 1
+	};
+
+	enum HScrollMode {
+		kHScrollFullScreen = 0,
+		kHScroll8PixelRows,
+		kHScroll1PixelRows
+	};
+
+public:
+	SegaRenderer(Screen_EoB *screen);
+	~SegaRenderer();
+
+	void setResolution(int w, int h);
+	void setPlaneTableLocation(int plane, uint16 addr);
+	void setupPlaneAB(int plane, uint16 w, uint16 h);
+	void setupWindowPlane(int blockX, int blockY, int horizontalMode, int verticalMode);
+	void setHScrollTableLocation(int addr);
+	void setPitch(int pitch);
+	void setHScrollMode(int mode);	
+
+	void loadToVRAM(const uint16 *data, int dataSize, int addr);
+	void loadToVRAM(Common::SeekableReadStreamEndian *in, int addr, bool compressedData = false);
+	void memsetVRAM(int addr, uint8 val, int len);
+	void fillRectWithTiles(int addr, int x, int y, int w, int h, uint16 nameTblEntry, bool incr = false);
+	
+	void render(int destPageNum);
+
+private:
+	void renderTile(uint8 *dst, int destX, uint16 *nameTable, int hScrollTableIndex);
+	void renderLineFragment(uint8 *&dst, const uint8 *src, int start, int end, uint8 pal);
+
+	void checkUpdateDirtyRects(int addr, int len);
+	void addDirtyRect(int x, int y, int w, int h);
+	void sendDirtyRectsToScreen();
+	void clearDirtyRects();
+
+	struct SegaPlane {
+		SegaPlane() : blockX(0), blockY(0), w(0), h(0), nameTable(0) {}
+		int blockX, blockY;
+		uint16 w, h;
+		uint16 *nameTable;
+		uint16 nameTableSize;
+	};
+
+	SegaPlane _planes[3];
+	uint8 *_vram;
+	uint16 *_hScrollTable;
+	uint8 _hScrollMode;
+	uint16 _pitch;
+
+	struct DRChainEntry {
+		DRChainEntry(DRChainEntry *chain, int x, int y, int w, int h) : next(chain), rect(x, y, x + w, y + h) {}
+		Common::Rect rect;
+		DRChainEntry *next;
+	} *_drChain;
+
+	Screen_EoB *_screen;
+
+	uint16 _screenW, _screenH, _blocksW, _blocksH;
 };
 
 /**

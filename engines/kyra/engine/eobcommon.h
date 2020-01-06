@@ -263,6 +263,7 @@ public:
 protected:
 	// Startup
 	Common::Error init() override;
+	void loadFonts();
 	Common::Error go() override;
 
 	// Main Menu, Intro, Finale
@@ -848,6 +849,7 @@ protected:
 	int countResurrectionCandidates();
 
 	void seq_portal();
+	bool seq_playSegaSequence(int id) { return true; }
 	bool checkPassword();
 
 	Common::String convertAsciiToSjis(Common::String str);

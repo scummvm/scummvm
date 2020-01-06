@@ -23,7 +23,9 @@
 #ifdef ENABLE_EOB
 
 #include "kyra/engine/eob.h"
+#include "kyra/sequence/seqplayer_eob_segacd.h"
 #include "kyra/resource/resource.h"
+#include "kyra/resource/resource_segacd.h"
 #include "kyra/sound/sound.h"
 
 namespace Kyra {
@@ -47,10 +49,15 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_useMainMenuGUISettings = false;
 	_ttlCfg = 0;
 	_xdth = false;
+
+	_seqPlayer = 0;
+	_sres = 0;
 }
 
 EoBEngine::~EoBEngine() {
 	delete[] _itemsOverlay;
+	delete _seqPlayer;
+	delete _sres;
 }
 
 Common::Error EoBEngine::init() {
@@ -101,6 +108,11 @@ Common::Error EoBEngine::init() {
 	} else if (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA) {
 		_vcnFilePattern = "%s.ECN";
 		_vmpFilePattern = "%s.EMP";
+	} else if (_flags.platform == Common::kPlatformSegaCD) {
+		_sres = new SegaCDResource(_res);
+		assert(_sres);
+		_seqPlayer = new SegaSequencePlayer(this, _sres);
+		assert(_seqPlayer);
 	}
 
 	return Common::kNoError;

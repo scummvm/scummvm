@@ -66,8 +66,9 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_cyclePalette = 0;
 	_cpsFilePattern = "%s.";
 	_activePalCycle = 0;
-	for (int i = 0; i < 10; ++i)
-		_palette16c[i] = 0;	
+	_segaRenderer = 0;
+	memset(_brState, 0, sizeof(_brState));
+	memset(_segaPalette, 0, sizeof(_segaPalette));
 }
 
 Screen_EoB::~Screen_EoB() {
@@ -80,6 +81,7 @@ Screen_EoB::~Screen_EoB() {
 	delete[] _cgaDitheringTables[0];
 	delete[] _cgaDitheringTables[1];
 	delete[] _cyclePalette;
+	delete _segaRenderer;
 }
 
 bool Screen_EoB::init() {
@@ -92,12 +94,10 @@ bool Screen_EoB::init() {
 			_shpBuffer = new uint8[SCREEN_H * SCREEN_W];
 			_convertHiColorBuffer = new uint8[SCREEN_H * SCREEN_W];
 			enableHiColorMode(true);			
-			loadFont(FID_SJIS_SMALL_FNT, "FONT.DMP");
 			assert(_fonts[FID_SJIS_FNT]);
 			_fonts[FID_SJIS_FNT]->setStyle(Font::kFSFat);
 			_fonts[FID_SJIS_LARGE_FNT] = new SJISFontLarge(_sjisFontShared);
 		} else if (_vm->game() == GI_EOB1 && _vm->gameFlags().platform == Common::kPlatformPC98) {
-			loadFont(FID_SJIS_SMALL_FNT, "FONT12.FNT");
 			_fonts[FID_SJIS_FNT] = new SJISFontEoB1PC98(_sjisFontShared, /*12,*/ _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp), _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp));
 		}
 
@@ -118,12 +118,16 @@ bool Screen_EoB::init() {
 			memset(_cgaScaleTable, 0, 256 * sizeof(uint8));
 			for (int i = 0; i < 256; i++)
 				_cgaScaleTable[i] = ((i & 0xF0) >> 2) | (i & 0x03);
-		}
-
-		const uint8 *pal16c = _vm->staticres()->loadRawData(kEoB1Palettes16c, temp);
-		if (pal16c) {
-			for (int i = 0; i < 10; i++)
-				_palette16c[i] = pal16c + i * 48;
+		} else if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
+			_segaRenderer = new SegaRenderer(this);
+			_segaRenderer->setResolution(320, 224);
+			_segaRenderer->setPlaneTableLocation(SegaRenderer::kPlaneA, 0xC000);
+			_segaRenderer->setPlaneTableLocation(SegaRenderer::kPlaneB, 0xE000);
+			_segaRenderer->setPlaneTableLocation(SegaRenderer::kWindowPlane, 0xF000);
+			_segaRenderer->setupPlaneAB(SegaRenderer::kPlaneA, 1024, 256);
+			_segaRenderer->setupPlaneAB(SegaRenderer::kPlaneB, 1024, 256);
+			_segaRenderer->setupWindowPlane(0, 0, SegaRenderer::kWinToLeft, SegaRenderer::kWinToTop);
+			_segaRenderer->setHScrollTableLocation(0xD800);
 		}
 
 		static const char *cpsExt[] = { "CPS", "EGA", "SHP", "BIN" };
@@ -1501,16 +1505,18 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 	if (fnt)
 		delete fnt;
 
-	if (!scumm_stricmp(filename, "FONT.DMP"))
-		fnt = new SJISFont12x12(_vm->staticres()->loadRawDataBe16(kEoB2FontDmpSearchTbl, temp));
-	else if (!scumm_stricmp(filename, "FONT12.FNT"))
-		fnt = new Font12x12PC98(12, _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp),
-			_vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp), _vm->staticres()->loadRawData(kEoB1FontLookupTable, temp));
-	else if (_isAmiga)
+	if (fontId == FID_SJIS_SMALL_FNT) {
+		if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+			fnt = new SJISFont12x12(_vm->staticres()->loadRawDataBe16(kEoB2FontDmpSearchTbl, temp));
+		else if (_vm->gameFlags().platform == Common::kPlatformPC98)
+			fnt = new Font12x12PC98(12, _vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable1, temp),
+				_vm->staticres()->loadRawDataBe16(kEoB1Ascii2SjisTable2, temp), _vm->staticres()->loadRawData(kEoB1FontLookupTable, temp));
+	} else if (_isAmiga) {
 		fnt = new AmigaDOSFont(_vm->resource(), _vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::DE_DEU);
-	else
+	} else {
 		// We use normal VGA rendering in EOB II, since we do the complete EGA dithering in updateScreen().
 		fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode, 12);
+	}
 
 	assert(fnt);
 
@@ -1522,330 +1528,6 @@ bool Screen_EoB::loadFont(FontId fontId, const char *filename) {
 	fnt->setColorMap(_textColorsMap);
 	delete file;
 	return ret;
-}
-
-void Screen_EoB::decodeSHP(const uint8 *data, int dstPage) {
-	int32 bytesLeft = READ_LE_UINT32(data);
-	const uint8 *src = data + 4;
-	uint8 *dst = getPagePtr(dstPage);
-
-	if (bytesLeft < 0) {
-		memcpy(dst, data, 64000);
-		return;
-	}
-
-	while (bytesLeft > 0) {
-		uint8 code = *src++;
-		bytesLeft--;
-
-		for (int i = 8; i; i--) {
-			if (code & 0x80) {
-				uint16 copyOffs = (src[0] << 4) | (src[1] >> 4);
-				uint8 count = (src[1] & 0x0F) + 3;
-				src += 2;
-				bytesLeft -= 2;
-				const uint8 *copySrc = dst - 1 - copyOffs;
-				while (count--)
-					*dst++ = *copySrc++;
-			} else if (bytesLeft) {
-				*dst++ = *src++;
-				bytesLeft--;
-			} else {
-				break;
-			}
-			code <<= 1;
-		}
-	}
-}
-
-void Screen_EoB::convertToHiColor(int page) {
-	if (!_16bitPalette)
-		return;
-	uint16 *dst = (uint16 *)getPagePtr(page);
-	memcpy(_convertHiColorBuffer, dst, SCREEN_H * SCREEN_W);
-	uint8 *src = _convertHiColorBuffer;
-	for (int s = SCREEN_H * SCREEN_W; s; --s)
-		*dst++ = _16bitPalette[*src++];
-}
-
-void Screen_EoB::shadeRect(int x1, int y1, int x2, int y2, int shadingLevel) {
-	if (!_16bitPalette)
-		return;
-
-	int l = _16bitShadingLevel;
-	_16bitShadingLevel = shadingLevel;
-
-	if (_curPage == 0 || _curPage == 1)
-		addDirtyRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
-
-	uint16 *dst = (uint16*)(getPagePtr(_curPage) + y1 * SCREEN_W * _bytesPerPixel + x1 * _bytesPerPixel);
-
-	for (; y1 < y2; ++y1) {
-		uint16 *ptr = dst;
-		for (int i = 0; i < x2 - x1; i++) {
-			*ptr = shade16bitColor(*ptr);
-			ptr++;
-		}
-		dst += SCREEN_W;
-	}
-
-	_16bitShadingLevel = l;
-}
-
-void Screen_EoB::selectPC98Palette(int paletteIndex, Palette &dest, int brightness, bool set) {
-	if (paletteIndex < 0 || paletteIndex > 9)
-		return;
-	if (!_use16ColorMode || !_palette16c[paletteIndex])
-		return;
-
-	uint8 pal[48];
-	for (int i = 0; i < 48; ++i)
-		pal[i] = CLIP<int>(_palette16c[paletteIndex][i] + brightness, 0, 15);
-	loadPalette(pal, dest, 48);
-	
-	if (set)
-		setScreenPalette(dest);
-}
-
-void Screen_EoB::decodeBIN(const uint8 *src, uint8 *dst, uint16 inSize) {
-	const uint8 *end = src + inSize;
-	memset(_dsTempPage, 0, 2048);
-	int tmpDstOffs = 0;
-
-	while (src < end) {
-		uint8 code = *src++;
-		if (!(code & 0x80)) {
-			int offs = code << 4;
-			code = *src++;
-			offs |= (code >> 4);
-			int len = (code & 0x0F) + 2;
-			int tmpSrcOffs = (tmpDstOffs - offs) & 0x7FF;
-			const uint8 *tmpSrc2 = dst;
-
-			for (int len2 = len; len2; len2--) {
-				*dst++ = _dsTempPage[tmpSrcOffs++];
-				tmpSrcOffs &= 0x7FF;
-			}
-
-			while (len--) {
-				_dsTempPage[tmpDstOffs++] = *tmpSrc2++;
-				tmpDstOffs &= 0x7FF;
-			}
-
-		} else if (code & 0x40) {
-			int len = code & 7;
-			if (code & 0x20)
-				len = (len << 8) | *src++;
-			len += 2;
-
-			int planes = ((code >> 3) & 3) + 1;
-			while (len--) {
-				for (int i = 0; i < planes; ++i) {
-					*dst++ = _dsTempPage[tmpDstOffs++] = src[i];
-					tmpDstOffs &= 0x7FF;
-				}
-			}
-			src += planes;
-		} else {
-			for (int len = (code & 0x3F) + 1; len; len--) {
-				*dst++ = _dsTempPage[tmpDstOffs++] = *src++;
-				tmpDstOffs &= 0x7FF;
-			}
-		}
-	}
-}
-
-void Screen_EoB::decodePC98PlanarBitmap(uint8 *srcDstBuffer, uint8 *tmpBuffer, uint16 size) {
-	assert(tmpBuffer != srcDstBuffer);
-	memcpy(tmpBuffer, srcDstBuffer, size);
-	const uint8 *src = tmpBuffer;
-	uint8 *dst1 = srcDstBuffer;
-	uint8 *dst2 = srcDstBuffer + 4;
-	size >>= 3;
-	while (size--) {
-		for (int i = 0; i < 4; ++i) {
-			uint8 col1 = 0;
-			uint8 col2 = 0;
-			for (int ii = 0; ii < 4; ++ii) {
-				col1 |= ((src[ii] >> (7 - i)) & 1) << ii;
-				col2 |= ((src[ii] >> (3 - i)) & 1) << ii;
-			}
-			*dst1++ = col1;
-			*dst2++ = col2;
-		}
-		src += 4;
-		dst1 += 4;
-		dst2 += 4;
-	}
-}
-
-void Screen_EoB::initPC98PaletteCycle(int paletteIndex, PalCycleData *data) {
-	if (!_use16ColorMode || !_cyclePalette)
-		return;
-
-	_activePalCycle = data;
-
-	if (data)
-		memcpy(_cyclePalette, _palette16c[paletteIndex], 48);
-	else
-		memset(_cyclePalette, 0, 48);
-}
-
-void Screen_EoB::updatePC98PaletteCycle(int brightness) {
-	if (_activePalCycle) {
-		for (int i = 0; i < 48; ++i) {
-			if (--_activePalCycle[i].delay)
-				continue;
-			for (int8 in = 32; in == 32; ) {
-				in = *_activePalCycle[i].data++;
-				if (in < 16 && in > -16) {
-					_cyclePalette[i] += in;
-					_activePalCycle[i].delay = *_activePalCycle[i].data++;
-				} else if (in < 32) {
-					_cyclePalette[i] = in - 16;
-					_activePalCycle[i].delay = *_activePalCycle[i].data++;
-				} else if (in == 32)
-					_activePalCycle[i].data += READ_BE_INT16(_activePalCycle[i].data);
-			}
-		}
-	}
-
-	uint8 pal[48];
-	for (int i = 0; i < 48; ++i)
-		pal[i] = CLIP<int>(_cyclePalette[i] + brightness, 0, 15);
-	loadPalette(pal, *_palettes[0], 48);
-	setScreenPalette(*_palettes[0]);
-}
-
-static uint32 _decodeFrameAmiga_x = 0;
-
-bool decodeFrameAmiga_readNextBit(const uint8 *&data, uint32 &code, uint32 &chk) {
-	_decodeFrameAmiga_x = code & 1;
-	code >>= 1;
-	if (code)
-		return _decodeFrameAmiga_x;
-
-	data -= 4;
-	code = READ_BE_UINT32(data);
-	chk ^= code;
-	_decodeFrameAmiga_x = code & 1;
-	code = (code >> 1) | (1 << 31);
-
-	return _decodeFrameAmiga_x;
-}
-
-uint32 decodeFrameAmiga_readBits(const uint8 *&data, uint32 &code, uint32 &chk, int count) {
-	uint32 res = 0;
-	while (count--) {
-		decodeFrameAmiga_readNextBit(data, code, chk);
-		uint32 bt1 = _decodeFrameAmiga_x;
-		_decodeFrameAmiga_x = res >> 31;
-		res = (res << 1) | bt1;
-	}
-	return res;
-}
-
-void Screen_EoB::loadSpecialAmigaCPS(const char *fileName, int destPage, bool isGraphics) {
-	uint32 fileSize = 0;
-	const uint8 *file = _vm->resource()->fileData(fileName, &fileSize);
-
-	if (!file)
-		error("Screen_EoB::loadSpecialAmigaCPS(): Failed to load file '%s'", file);
-
-	uint32 inSize = READ_BE_UINT32(file);
-	const uint8 *pos = file;
-
-	// Check whether the file starts with the actual compression header.
-	// If this is not the case, there should a palette before the header.
-	// Unlike normal CPS files these files never have more than one palette.
-	if (((inSize + 15) & ~3) != ((fileSize + 3) & ~3)) {
-		Common::MemoryReadStream in(pos, 64);
-		_palettes[0]->loadAmigaPalette(in, 0, 32);
-		pos += 64;
-	}
-
-	inSize = READ_BE_UINT32(pos);
-	uint32 outSize = READ_BE_UINT32(pos + 4);
-	uint32 chk = READ_BE_UINT32(pos + 8);
-
-	pos = pos + 8 + inSize;
-	uint8 *dstStart = _pagePtrs[destPage];
-	uint8 *dst = dstStart + outSize;
-
-	uint32 val = READ_BE_UINT32(pos);
-	_decodeFrameAmiga_x = 0;
-	chk ^= val;
-
-	while (dst > dstStart) {
-		int para = -1;
-		int para2 = 0;
-
-		if (decodeFrameAmiga_readNextBit(pos, val, chk)) {
-			uint32 code = decodeFrameAmiga_readBits(pos, val, chk, 2);
-
-			if (code == 3) {
-				para = para2 = 8;
-			} else {
-				int cnt = 0;
-				if (code < 2) {
-					cnt = 3 + code;
-					para2 = 9 + code;
-				} else {
-					cnt = decodeFrameAmiga_readBits(pos, val, chk, 8) + 1;
-					para2 = 12;
-				}
-					
-				code = decodeFrameAmiga_readBits(pos, val, chk, para2);
-				while (cnt--) {
-					dst--;
-					*dst = dst[code & 0xFFFF];
-				}
-			}
-		} else {
-			if (decodeFrameAmiga_readNextBit(pos, val, chk)) {
-				uint32 code = decodeFrameAmiga_readBits(pos, val, chk, 8);
-				dst--;
-				*dst = dst[code & 0xFFFF];
-				dst--;
-				*dst = dst[code & 0xFFFF];
-
-			} else {
-				para = 3;				
-			}
-		}
-
-		if (para > 0) {
-			uint32 code = decodeFrameAmiga_readBits(pos, val, chk, para);
-			uint32 cnt = (code & 0xFFFF) + para2 + 1;
-
-			while (cnt--) {
-				for (int i = 0; i < 8; ++i) {
-					decodeFrameAmiga_readNextBit(pos, val, chk);
-					uint32 bt1 = _decodeFrameAmiga_x;
-					_decodeFrameAmiga_x = code >> 31;
-					code = (code << 1) | bt1;
-				}
-				*(--dst) = code & 0xFF;
-			}
-		}
-	}
-
-	delete[] file;
-
-	if (chk)
-		error("Screen_EoB::loadSpecialAmigaCPS(): Checksum error");
-
-	if (isGraphics)
-		convertAmigaGfx(_pagePtrs[destPage], 320, 200);
-}
-
-void Screen_EoB::setDualPalettes(Palette &top, Palette &bottom) {
-	// The original supports simultaneous fading of both palettes, but doesn't make any use of that
-	// feature. The fade rate is always set to 0. So I see no need to implement that.
-	_palettes[0]->copy(top, 0, 32, 0);
-	_palettes[0]->copy(bottom, 0, 32, 32);
-	setScreenPalette(*_palettes[0]);
-	enableDualPaletteMode(120);
 }
 
 void Screen_EoB::updateDirtyRects() {
