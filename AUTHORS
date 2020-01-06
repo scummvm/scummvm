@@ -9,13 +9,13 @@ ResidualVM
   -----
     Grim Team:
        James Brown                  - Grim developer (retired)
-       Giulio Camuffo               - Grim developer
+       Giulio Camuffo               - Grim developer (retired)
        Dries Harnie                 - EMI, Android, OpenGL ES developer
        Pawel Kolodziejski           - Core developer (suspended)
-       Christian Krause             - EMI developer
        Einar Johan T. Soemaaen      - Grim, EMI developer
+       Christian Krause             - EMI developer (retired)
        Joel Teichroeb               - EMI, Android developer
-       Joni Vahamaki                - EMI developer
+       Joni Vahamaki                - EMI developer (retired)
 
     Myst 3 Team:
        Bastien Bouclet              - Core developer
@@ -58,8 +58,7 @@ ResidualVM
        Guillem Jover                - Few code improvements
        Filippos Karapetis           - Compilation fixes
        Ingo van Lil                 - Various fixes and improvements for EMI
-       Vincent Pelletier            - Various engine improvements and code
-                                      fixes
+       Vincent Pelletier            - Various engine and TinyGL improvements
        Joost Peters                 - Various code fixes
        George Macon                 - Few fixes
        Josh Matthews                - Few fixes to engine
@@ -82,16 +81,24 @@ ResidualVM
        sietschie                    - Few fixes to engine
 
     Myst 3:
+       David Fioramonti             - Autosave support and few fixes
        Matthew Hoops                - Various engine improvements and code
                                       fixes
        Stefano Musumeci             - TinyGL engine driver support
 
     Stark:
+       Bartosz Dudziak              - Various engine improvements and code
+                                      fixes
        Matthew Hoops                - ADPCM decoder
        Pawel Kolodziejski           - Various engine code fixes
+       Awad Mackie                  - Few fixes to engine
+       Marius Ioan Orban            - Code fix
        Vincent Pelletier            - Raw sound support
        Jordi Vilalta Prat           - Initial engine contributor
        Scott Thomas                 - Initial engine author
+       Will Thomson                 - Few fixes to engine
+       Faalagorn                    - Few code improvements
+       orangeforest11               - Few engine improvements
 
 ScummVM code
 ************
