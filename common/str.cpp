@@ -1097,7 +1097,7 @@ size_t strnlen(const char *src, size_t maxSize) {
 String toPrintable(const String &in, bool keepNewLines) {
 	Common::String res;
 
-	const char *tr =    "\x01\x02\x03\x04\x05\x06" "a"
+	const char *tr = "\x01\x01\x02\x03\x04\x05\x06" "a"
 				  //"\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f";
 					   "b" "t" "n" "v" "f" "r\x0e\x0f"
 					"\x10\x11\x12\x13\x14\x15\x16\x17"
@@ -1117,10 +1117,10 @@ String toPrintable(const String &in, bool keepNewLines) {
 			res += '\\';
 
 			if (*p < 0x20) {
-				if (tr[*p + 1] < 0x20)
+				if (tr[*p] < 0x20)
 					res += Common::String::format("x%02x", *p);
 				else
-					res += tr[*p + 1];
+					res += tr[*p];
 			} else {
 				res += *p;	// We will escape it
 			}
