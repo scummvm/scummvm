@@ -157,6 +157,61 @@ void Screen::copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPit
 	}
 }
 
+void Screen::drawScaledSprite(Graphics::Surface *destSurface, byte *source, int sourceWidth, int sourceHeight,
+		int destX, int destY, int destWidth, int destHeight, byte *palette, bool flipX, uint8 alpha) {
+	// Based on the GNAP engine scaling code
+	// TODO Implement flipping
+	const int xs = ((sourceWidth - 1) << 16) / destWidth;
+	const int ys = ((sourceHeight -1) << 16) / destHeight;
+	int clipX = 0, clipY = 0;
+	const int destPitch = destSurface->pitch;
+	if (destX < 0) {
+		clipX = -destX;
+		destX = 0;
+		destWidth -= clipX;
+	}
+	if (destX + destWidth >= destSurface->w) {
+		destWidth = destSurface->w - destX;
+	}
+	if (destY < 0) {
+		clipY = -destY;
+		destY = 0;
+		destHeight -= clipY;
+	}
+	if (destY + destHeight >= destSurface->h) {
+		destHeight = destSurface->h - destY;
+	}
+	if (destWidth < 0 || destHeight < 0)
+		return;
+	byte *dst = (byte *)destSurface->getBasePtr(destX, destY);
+	int yi = ys * clipY;
+	byte *hsrc = source + sourceWidth * ((yi + 0x8000) >> 16);
+	for (int yc = 0; yc < destHeight; ++yc) {
+		byte *wdst = dst;
+		int xi = xs * clipX;
+		byte *wsrc = hsrc + ((xi + 0x8000) >> 16);
+		for (int xc = 0; xc < destWidth; ++xc) {
+			byte colorIndex = *wsrc;
+			uint16 c = READ_LE_UINT16(&palette[colorIndex * 2]);
+			if (c != 0) {
+				if (!(c & 0x8000) || alpha == 255) {
+					// only copy opaque pixels
+					WRITE_LE_UINT16(wdst, c & ~0x8000);
+				} else {
+					WRITE_LE_UINT16(wdst, alphaBlendRGB555(c, READ_LE_INT16(wdst), alpha));
+					// semi-transparent pixels.
+				}
+			}
+			wdst += 2;
+			xi += xs;
+			wsrc = hsrc + ((xi + 0x8000) >> 16);
+		}
+		dst += destPitch;
+		yi += ys;
+		hsrc = source + sourceWidth * ((yi + 0x8000) >> 16);
+	}
+}
+
 Common::Rect Screen::clipRectToScreen(int destX, int destY, const Common::Rect rect) {
 	return clipRectToRect(destX, destY, rect, Common::Rect(320, 200));
 }

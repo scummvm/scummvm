@@ -368,23 +368,21 @@ void Scene::draw() {
 				actor->frame->height != 0
 				) {
 				Graphics::Surface *s = actor->surface;
-				int x = actor->x_pos - actor->frame->xOffset - (actor->_actorID < ACTOR_INVENTORY_OFFSET ? _camera.x : 0);
-				int y = actor->y_pos - actor->frame->yOffset - _camera.y;
-				//int x = ini->x;// - actor->frame_vram_x;
-				//int y = ini->y;// - actor->frame_vram_y;
 				if (actor->priorityLayer == priority) { //} && x + s->w < 320 && y + s->h < 200) {
-					debug(4, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
+					if (!actor->isFlagSet(ACTOR_FLAG_80)) {
+						actor->scale = _stage->getScale(actor->y_pos);
+					}
+					int x = actor->x_pos - (actor->frame->xOffset * actor->scale / 256) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.x);
+					int y = actor->y_pos - (actor->frame->yOffset * actor->scale / 256) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.y);
+
+					debug(4, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d Scale: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
 						  y,
-						  s->w, s->h, actor->priorityLayer);
+						  s->w, s->h, actor->priorityLayer, actor->scale);
 					_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->frame->flags & Dragons::FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? 255 : 128);
 					if (_vm->isDebugMode()) {
 						_screen->drawRect(0x7fff, Common::Rect(x, y, x + s->w, y + s->h), actor->_actorID);
 						drawActorNumber(x + s->w, y + 8, actor->_actorID);
 					}
-				} else {
-					debug(4, "Actor (not displayed) %d %s (%d, %d) Priority: %d", actor->_actorID,
-						  actor->_actorResource->getFilename(),
-						  x, y, actor->priorityLayer);
 				}
 			}
 		}

@@ -42,7 +42,7 @@ enum ActorFlags {
 	ACTOR_FLAG_40 = 0x40,
 	ACTOR_FLAG_80 = 0x80,
 	ACTOR_FLAG_100 = 0x100,
-	ACTOR_FLAG_200 = 0x200,
+	ACTOR_FLAG_200 = 0x200,  // Use screen coordinates not map coordinates.
 	ACTOR_FLAG_400 = 0x400,
 	ACTOR_FLAG_800 = 0x800,
 	ACTOR_FLAG_1000 = 0x1000,

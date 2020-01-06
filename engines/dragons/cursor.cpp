@@ -70,8 +70,8 @@ void Cursor::update() {
 		_sequenceID = 1;
 	}
 
-	_actor->x_pos = _x + _vm->_scene->_camera.x;
-	_actor->y_pos = _y + _vm->_scene->_camera.y;
+	_actor->x_pos = _x;
+	_actor->y_pos = _y;
 
 	// 0x80028104
 	if (_iniUnderCursor != 0
@@ -198,8 +198,10 @@ int16 Cursor::updateINIUnderCursor() {
 }
 
 int16 Cursor::updateIniFromScene() {
-	int16 cursorTileX = _actor->x_pos / 32;
-	int16 cursorTileY = _actor->y_pos / 8;
+	int16 cursorX = _x + _vm->_scene->_camera.x;
+	int16 cursorY = _y + _vm->_scene->_camera.y;
+	int16 cursorTileX = cursorX / 32;
+	int16 cursorTileY = cursorY / 8;
 	int16 data_80072890_orig = data_80072890;
 	int16 data_800728b0_cursor_seqID_orig = data_800728b0_cursor_seqID;
 	for(int i=0;i <_vm->_dragonINIResource->totalRecords(); i++) {
@@ -214,8 +216,8 @@ int16 Cursor::updateIniFromScene() {
 				if (ini->actor->isFlagSet(ACTOR_FLAG_40) && ini->actor->isFlagSet(ACTOR_FLAG_8)) {
 					int16 iniActorXPosition = ini->actor->x_pos - ini->actor->frame->xOffset;
 					int16 iniActorYPosition = ini->actor->y_pos - ini->actor->frame->yOffset;
-					if (_actor->x_pos >= iniActorXPosition && _actor->x_pos < iniActorXPosition + ini->actor->frame->width
-					&& _actor->y_pos >= iniActorYPosition && _actor->y_pos < iniActorYPosition + ini->actor->frame->height) {
+					if (cursorX >= iniActorXPosition && cursorX < iniActorXPosition + ini->actor->frame->width
+					&& cursorY >= iniActorYPosition && cursorY < iniActorYPosition + ini->actor->frame->height) {
 						cursorOverIni = i + 1;
 					}
 				}
@@ -229,7 +231,7 @@ int16 Cursor::updateIniFromScene() {
 						}
 					} else {
 						// 0x80028ac4
-						if (_actor->x_pos >= img->x && _actor->x_pos < img->x + img->w && _actor->y_pos >= img->y && _actor->y_pos < img->y + img->h) {
+						if (cursorX >= img->x && cursorX < img->x + img->w && cursorY >= img->y && cursorY < img->y + img->h) {
 							cursorOverIni = i + 1;
 						}
 					}
@@ -355,8 +357,8 @@ byte *Cursor::getPalette() {
 
 void Cursor::updateActorPosition(int16 x, int16 y) {
 	updatePosition(x, y);
-	_actor->x_pos = _x + _vm->_scene->_camera.x;
-	_actor->y_pos = _y + _vm->_scene->_camera.y;
+	_actor->x_pos = _x;
+	_actor->y_pos = _y;
 }
 
 } // End of namespace Dragons
