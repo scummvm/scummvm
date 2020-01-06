@@ -24,14 +24,26 @@
 #define LUA_SCUMMVM_FILE_H
 
 #include "common/str.h"
+#include "common/file.h"
 
 namespace Lua {
+
+class LuaFileProxy {
+public:
+	static LuaFileProxy *create(const Common::String &filename, const Common::String &mode);
+public:
+	virtual ~LuaFileProxy() {}
+	virtual bool eof() const = 0;
+	virtual size_t read(void *ptr, size_t size, size_t count) = 0;
+	virtual size_t write(const char *ptr, size_t count) = 0;
+};
 
 /**
  * The following class acts as a proxy interface to the I/O code, pretending that the ScummVM
  * settings are a properly formatted 'config.lua' file
  */
-class LuaFileProxy {
+class LuaFileConfig : public LuaFileProxy {
+	friend class LuaFileProxy;
 private:
 	Common::String _readData;
 	uint _readPos;
@@ -43,13 +55,28 @@ private:
 	void setLanguage(const Common::String &lang);
 	void writeSettings();
 	void updateSetting(const Common::String &setting, const Common::String &value);
-public:
-	LuaFileProxy(const Common::String &filename, const Common::String &mode);
-	~LuaFileProxy();
 
-	bool eof() const { return _readPos >= _readData.size(); }
-	size_t read(void *ptr, size_t size, size_t count);
-	size_t write(const char *ptr, size_t count);
+	LuaFileConfig(const Common::String &filename, const Common::String &mode);
+public:
+	virtual ~LuaFileConfig();
+
+	virtual bool eof() const override { return _readPos >= _readData.size(); }
+	virtual size_t read(void *ptr, size_t size, size_t count) override;
+	virtual size_t write(const char *ptr, size_t count) override;
+};
+
+class LuaFileRead : public LuaFileProxy {
+private:
+	Common::File _file;
+	int32 _size;
+public:
+	LuaFileRead(const Common::String &filename, const Common::String &mode);
+public:
+	virtual ~LuaFileRead() {}
+
+	virtual bool eof() const override;
+	virtual size_t read(void *ptr, size_t size, size_t count) override;
+	virtual size_t write(const char *ptr, size_t count) override;
 };
 
 } // End of namespace Lua
