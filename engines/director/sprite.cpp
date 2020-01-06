@@ -146,6 +146,7 @@ void Sprite::setPattern(uint16 pattern) {
 	case kOutlinedRoundedRectangleSprite:
 	case kOutlinedOvalSprite:
 		_castId = pattern;
+		break;
 
 	case kCastMemberSprite:
 		// TODO
