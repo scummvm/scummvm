@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-06 00:26+0000\n"
+"PO-Revision-Date: 2020-01-08 00:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -8599,67 +8599,72 @@ msgstr "OTHER: I recognized him!"
 
 #: dialog0268.txt:3
 msgid "OTHER: A my mamy więcej wspólnego niż myślałam..."
-msgstr ""
+msgstr "OTHER: And we have more in common than I thought..."
 
 #: dialog0269.txt:1
 msgid "OTHER: Tak, mój panie?"
-msgstr ""
+msgstr "OTHER: Yes my lord?"
 
 #: dialog0270.txt:1
 msgid "OTHER: Rozpoczął się iście piekielny ogień pytań."
-msgstr ""
+msgstr "OTHER: And the truly hellish flow of questions began."
 
 #: dialog0271.txt:1
 msgid "OTHER: Jesteś najbardziej nikczemnym, zuchwałym|i zepsutym diabłem w ostatnich latach."
-msgstr ""
+msgstr "OTHER: You are the most wicked, bold and corrupt devil in recent years."
 
 #: dialog0271.txt:2
 msgid "OTHER: Przebijasz nawet Belzebuba."
-msgstr ""
+msgstr "OTHER: You even beat Beelzebub."
 
 #: dialog0271.txt:3
 msgid "OTHER2: Wszystko dla twojej chwały,|mój panie."
-msgstr ""
+msgstr "OTHER2: Everything for your glory,|my lord."
 
 #: dialog0271.txt:4
 msgid "OTHER2: Mówiłem, że moje nowoczesne metody|przyniosą rezultat i dotrzymuję|słowa."
 msgstr ""
+"OTHER2: I said that my modern methods will bring results|and I keep my word."
 
 #: dialog0271.txt:5
 msgid "OTHER2: Zasady są po to, by je łamać!"
-msgstr ""
+msgstr "OTHER2: The rules are there to break!"
 
 #: dialog0271.txt:6
 msgid "OTHER2: Postęp musi skruszyć zmurszałe|i przestarzałe prawo!"
-msgstr ""
+msgstr "OTHER2: Progress must break the old and|outdated law!"
 
 #: dialog0271.txt:7
 msgid "OTHER: I za to należy ci się nagroda, a tym dwóm|idiotom jakaś specjalna kara, może małe|przypalanko, może..."
 msgstr ""
+"OTHER: And for that, you deserve a reward, and for|these two idiots some "
+"special punishment,|maybe a small burn, maybe..."
 
 #: dialog0272.txt:1
 msgid "P#OTHER: Z drugiej jednak strony..."
-msgstr ""
+msgstr "P#OTHER: On the other hand, however..."
 
 #: dialog0272.txt:2
 msgid "P#OTHER: ...nie można tolerować narobionych|przez ciebie kłopotów."
-msgstr ""
+msgstr "P#OTHER: ...you can't ignore the trouble you|have caused."
 
 #: dialog0272.txt:3
 msgid "OTHER: I tego, że do Piekła dostali się|zwykli śmiertelnicy, a ten na górze|znowu mnie upokarza."
 msgstr ""
+"OTHER: And the fact that ordinary mortals|got to Hell, and the dude from the "
+"top|humiliates me again."
 
 #: dialog0272.txt:4
 msgid "OTHER: Jeśli nie odkręcisz tego w 5 sekund,|ja odkręcę ci łeb."
-msgstr ""
+msgstr "OTHER: If you don't unscrew it in 5 seconds,|I'll unscrew your head."
 
 #: dialog0272.txt:5
 msgid "OTHER: A potem spokojnie porozmawiamy sobie o|ŁAMANIU, KRUSZENIU I WYPALANIU."
-msgstr ""
+msgstr "OTHER: And then we'll calmly talk about|BREAKING, CRUSHING AND BURNING."
 
 #: dialog0272.txt:6
 msgid "OTHER: I to będzie długa rozmowa."
-msgstr ""
+msgstr "OTHER: And it will be a long conversation."
 
 #: dialog0273.txt:1
 msgid "HERO: Ładna dzisiaj pogoda."
