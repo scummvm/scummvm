@@ -117,7 +117,8 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 	_gutterSize = kSizeNone;
 	_boxShadow = kSizeNone;
 
-	_flags1 = 0;
+	_flags = 0;
+	_textFlags = 0;
 	_fontId = 0;
 	_fontSize = 12;
 	_textType = kTextTypeFixed;
@@ -127,7 +128,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 	_palinfo1 = _palinfo2 = _palinfo3 = 0;
 
 	if (version <= 3) {
-		_flags1 = stream.readByte(); // region: 0 - auto, 1 - matte, 2 - disabled
+		_flags = stream.readByte(); // region: 0 - auto, 1 - matte, 2 - disabled
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
 		_boxShadow = static_cast<SizeType>(stream.readByte());
@@ -141,7 +142,6 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		uint16 pad3;
 		uint16 pad4 = 0;
 		uint16 totalTextHeight;
-		byte flags = 0;
 
 		if (version == 2) {
 			pad2 = stream.readUint16();
@@ -153,15 +153,9 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 			pad3 = stream.readUint16();
 
 			_textShadow = static_cast<SizeType>(stream.readByte());
-			flags = stream.readByte();
-			if (flags & 0x1)
-				_textFlags.push_back(kTextFlagEditable);
-			if (flags & 0x2)
-				_textFlags.push_back(kTextFlagAutoTab);
-			if (flags & 0x4)
-				_textFlags.push_back(kTextFlagDoNotWrap);
-			if (flags & 0xf8)
-				warning("Unprocessed text cast flags: %x", flags & 0xf8);
+			_textFlags = stream.readByte();
+			if (_textFlags & 0xf8)
+				warning("Unprocessed text cast flags: %x", _textFlags & 0xf8);
 
 			totalTextHeight = stream.readUint16();
 		} else {
@@ -173,9 +167,9 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		}
 
 		debugC(2, kDebugLoading, "TextCast(): flags1: %d, border: %d gutter: %d shadow: %d pad1: %x align: %04x",
-				_flags1, _borderSize, _gutterSize, _boxShadow, pad1, _textAlign);
+				_flags, _borderSize, _gutterSize, _boxShadow, pad1, _textAlign);
 		debugC(2, kDebugLoading, "TextCast(): rgb: 0x%04x 0x%04x 0x%04x, pad2: %x pad3: %d pad4: %d shadow: %d flags: %d totHeight: %d",
-				_palinfo1, _palinfo2, _palinfo3, pad2, pad3, pad4, _textShadow, flags, totalTextHeight);
+				_palinfo1, _palinfo2, _palinfo3, pad2, pad3, pad4, _textShadow, _textFlags, totalTextHeight);
 		if (debugChannelSet(2, kDebugLoading)) {
 			_initialRect.debugPrint(2, "TextCast(): rect:");
 		}

@@ -92,14 +92,14 @@ public:
 	SizeType _gutterSize;
 	SizeType _boxShadow;
 
-	byte _flags1;
+	byte _flags;
 	uint32 _fontId;
 	uint16 _fontSize;
 	TextType _textType;
 	TextAlignType _textAlign;
 	SizeType _textShadow;
 	byte _textSlant;
-	Common::Array<TextFlag> _textFlags;
+	byte _textFlags;
 	uint16 _palinfo1, _palinfo2, _palinfo3;
 
 	Common::String _ftext;

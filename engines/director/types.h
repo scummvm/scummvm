@@ -71,9 +71,9 @@ enum TextAlignType {
 };
 
 enum TextFlag {
-	kTextFlagEditable,
-	kTextFlagAutoTab,
-	kTextFlagDoNotWrap
+	kTextFlagEditable	= (1 << 0),
+	kTextFlagAutoTab	= (1 << 1),
+	kTextFlagDoNotWrap	= (1 << 2)
 };
 
 enum SizeType {
