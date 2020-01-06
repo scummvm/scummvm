@@ -323,6 +323,7 @@ double Datum::toFloat() {
 	switch (type) {
 	case REFERENCE:
 		toString();
+		// fallthrough
 	case STRING:
 		u.f = atof(u.s->c_str());
 		break;
