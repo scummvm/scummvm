@@ -557,7 +557,7 @@ LUALIB_API int luaL_loadfile (lua_State *L, const char *filename) {
   lf.extraline = 0;
 
   lua_pushfstring(L, "@%s", filename);
-  lf.f = new Lua::LuaFileProxy(filename, "r");
+  lf.f = Lua::LuaFileProxy::create(filename, "r");
 /*
   if (filename == NULL) {
     lua_pushliteral(L, "=stdin");

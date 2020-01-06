@@ -177,7 +177,7 @@ static int io_open (lua_State *L) {
   const char *filename = luaL_checkstring(L, 1);
   const char *mode = luaL_optstring(L, 2, "r");
   Lua::LuaFileProxy **pf = newfile(L);
-  *pf = new Lua::LuaFileProxy(filename, mode);
+  *pf = Lua::LuaFileProxy::create(filename, mode);
   return (*pf == NULL) ? pushresult(L, 0, filename) : 1;
 }
 

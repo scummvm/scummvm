@@ -26,13 +26,20 @@
 
 namespace Lua {
 
-LuaFileProxy::LuaFileProxy(const Common::String &filename, const Common::String &mode) : _readPos(0) {
+LuaFileProxy *LuaFileProxy::create(const Common::String &filename, const Common::String &mode) {
+	if (filename.contains("config.lua"))
+		return new LuaFileConfig(filename, mode);
+
+	return new LuaFileRead(filename, mode);
+}
+
+LuaFileConfig::LuaFileConfig(const Common::String &filename, const Common::String &mode) : _readPos(0) {
 	assert(filename.contains("config.lua"));
 	if (mode == "r")
 		setupConfigFile();
 }
 
-Common::String LuaFileProxy::formatDouble(double value) {
+Common::String LuaFileConfig::formatDouble(double value) {
 	// This is a bit hackish. The point of it is that it's important that
 	// we ignore the locale decimal mark and force it to be a point. If it
 	// would happen to be a comma instead, it seems that it's seen as two
@@ -47,7 +54,7 @@ Common::String LuaFileProxy::formatDouble(double value) {
 	return Common::String::format("%s%.0f.%.0f", negative ? "-" : "", integerPart, fractionalPart);
 }
 
-void LuaFileProxy::setupConfigFile() {
+void LuaFileConfig::setupConfigFile() {
 	double sfxVolume = !ConfMan.hasKey("sfx_volume") ? 1.0 : 1.0 * ConfMan.getInt("sfx_volume") / 255.0;
 	double musicVolume = !ConfMan.hasKey("music_volume") ? 0.5 : 1.0 * ConfMan.getInt("music_volume") / 255.0;
 	double speechVolume = !ConfMan.hasKey("speech_volume") ? 1.0 : 1.0 * ConfMan.getInt("speech_volume") / 255.0;
@@ -71,19 +78,19 @@ SFX_SPEECH_VOLUME = %s\r\n",
 	_readPos = 0;
 }
 
-LuaFileProxy::~LuaFileProxy() {
+LuaFileConfig::~LuaFileConfig() {
 	if (!_settings.empty())
 		writeSettings();
 }
 
-size_t LuaFileProxy::read(void *ptr, size_t size, size_t count) {
+size_t LuaFileConfig::read(void *ptr, size_t size, size_t count) {
 	size_t bytesRead = MIN<size_t>(_readData.size() - _readPos, size * count);
 	memmove(ptr, &_readData.c_str()[_readPos], bytesRead);
 	_readPos += bytesRead;
 	return bytesRead / size;
 }
 
-size_t LuaFileProxy::write(const char *ptr, size_t count) {
+size_t LuaFileConfig::write(const char *ptr, size_t count) {
 	// Loop through the provided line(s)
 	while (*ptr) {
 		if ((*ptr == '-') && (*(ptr + 1) == '-')) {
@@ -108,7 +115,7 @@ size_t LuaFileProxy::write(const char *ptr, size_t count) {
 	return count;
 }
 
-void LuaFileProxy::writeSettings() {
+void LuaFileConfig::writeSettings() {
 	// Loop through the setting lines
 	const char *pSrc = _settings.c_str();
 	while (*pSrc) {
@@ -145,7 +152,7 @@ void LuaFileProxy::writeSettings() {
 	ConfMan.flushToDisk();
 }
 
-void LuaFileProxy::updateSetting(const Common::String &setting, const Common::String &value) {
+void LuaFileConfig::updateSetting(const Common::String &setting, const Common::String &value) {
 	if (setting == "GAME_LANGUAGE")
 		setLanguage(value);
 	else if (setting == "GAME_SUBTITLES")
@@ -167,7 +174,7 @@ void LuaFileProxy::updateSetting(const Common::String &setting, const Common::St
 /**
  * Get the language code used by the game for each language it supports
  */
-Common::String LuaFileProxy::getLanguage() {
+Common::String LuaFileConfig::getLanguage() {
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 	switch (lang) {
 	case Common::EN_ANY:
@@ -197,7 +204,7 @@ Common::String LuaFileProxy::getLanguage() {
 /**
  * Set the language code fro the game
  */
-void LuaFileProxy::setLanguage(const Common::String &lang) {
+void LuaFileConfig::setLanguage(const Common::String &lang) {
 	if (lang == "en")
 		ConfMan.set("language", Common::getLanguageCode(Common::EN_ANY));
 	else if (lang == "de")
@@ -218,6 +225,42 @@ void LuaFileProxy::setLanguage(const Common::String &lang) {
 		ConfMan.set("language", Common::getLanguageCode(Common::RU_RUS));
 	else
 		error("Unknown language encountered");
+}
+
+
+LuaFileRead::LuaFileRead(const Common::String &filename, const Common::String &mode) {
+	assert(mode == "r");
+	if (!_file.open(filename))
+		error("Could not open file %s", filename.c_str());
+
+	_size = _file.size();
+}
+
+bool LuaFileRead::eof() const {
+	return _file.eos();
+}
+
+size_t LuaFileRead::read(void *ptr, size_t size, size_t count) {
+	assert(size == 1);
+	byte *dataPtr = (byte *)ptr;
+
+	while (count > 0) {
+		byte c = _file.readByte();
+		if (_file.eos())
+			break;
+		if (c == '\r')
+			continue;
+
+		*dataPtr++ = c;
+		--count;
+	}
+
+	return dataPtr - (byte *)ptr;
+}
+
+size_t LuaFileRead::write(const char *ptr, size_t count) {
+	// Unsupported
+	return 0;
 }
 
 } // End of namespace Lua
