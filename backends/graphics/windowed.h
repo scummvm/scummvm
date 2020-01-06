@@ -396,9 +396,9 @@ private:
 					width = fracToInt(height * displayAspect);
 			}
 		}
-
-		drawRect.left = ((_windowWidth - width) / 2) + _gameScreenShakeXOffset;
-		drawRect.top = ((_windowHeight - height) / 2) + _gameScreenShakeYOffset;
+		
+		drawRect.left = ((_windowWidth - width) / 2) + _gameScreenShakeXOffset * _windowWidth / getWidth();
+		drawRect.top = ((_windowHeight - height) / 2) + _gameScreenShakeYOffset * _windowHeight / getHeight();
 		drawRect.setWidth(width);
 		drawRect.setHeight(height);
 	}
