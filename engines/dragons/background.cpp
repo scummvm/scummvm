@@ -84,7 +84,7 @@ void PriorityLayer::restoreTileMap(int16 x, int16 y, int16 w, int16 h) {
 
 }
 
-Background::Background() : _priorityLayer(0), _points1(0), _points2(0), _data(0) {
+Background::Background() : _priorityLayer(0), _points2(0), _data(0) {
 	_layerSurface[0] = NULL;
 	_layerSurface[1] = NULL;
 	_layerSurface[2] = NULL;
@@ -115,7 +115,7 @@ bool Background::load(byte *dataStart, uint32 size) {
 	_palette[0] = 0x00; //FIXME update palette
 	_palette[1] = 0x00;
 
-	_points1 = loadPoints(stream); // 0x200
+	_scaleLayer.load(stream); // 0x200
 	_points2 = loadPoints(stream); // 0x280
 	stream.seek(0x305);
 	uint8 tileindexOffset = stream.readByte();
@@ -286,6 +286,10 @@ Common::Point Background::getLayerOffset(uint8 layerNumber) {
 	return layerOffset[layerNumber];
 }
 
+int16 Background::getScale(int16 y) {
+	return _scaleLayer.getScale(y);
+}
+
 BackgroundResourceLoader::BackgroundResourceLoader(BigfileArchive *bigFileArchive, DragonRMS *dragonRMS) : _bigFileArchive(
 	bigFileArchive), _dragonRMS(dragonRMS) {}
 
@@ -302,6 +306,92 @@ Background *BackgroundResourceLoader::load(const char *filename) {
 	Background *bg = new Background();
 	bg->load(scrData, size);
 	return bg;
+}
+
+void ScaleLayer::load(Common::SeekableReadStream &stream) {
+	for (int i = 0; i < 32; i++) {
+		_bands[i]._y = stream.readSint16LE();
+		_bands[i]._priority = stream.readSint16LE();
+	}
+}
+
+uint16 ScaleLayer::getScale(uint16 y) {
+	short yBand;
+	uint uVar1;
+	short local_v0_368;
+	int iVar3;
+	short lowerYBandIdx;
+	ScaleBand *pSVar4;
+	short upperYBandIdx;
+	uint uVar5;
+	ScaleBand *pSVar6;
+	int uVar7;
+
+
+	upperYBandIdx = -1;
+	for (int16 i = 0x1f; i >= 0; i--) {
+		yBand = _bands[i]._y;
+		if (yBand != -1 && yBand <= y) {
+			upperYBandIdx = i;
+			break;
+		}
+	}
+//	iVar3 = 0x1f0000;
+//	do {
+//		yBand = *(ushort *)((int)&scaleBandTbl->y + (iVar3 >> 0xe));
+//		if ((yBand != 0xffff) && (yBand <= y)) break;
+//		i = i + -1;
+//		iVar3 = i * 0x10000;
+//	} while (-1 < i * 0x10000);
+	lowerYBandIdx = 32;
+	for (int16 i = 0; i < 32; i++) {
+		yBand = _bands[i]._y;
+		if (yBand != -1 && y <= yBand) {
+			lowerYBandIdx = i;
+			break;
+		}
+	}
+//	j = 0;
+//	iVar3 = 0;
+//	do {
+//		lowerYBandIdx = (short)j;
+//		yBand = *(ushort *)((int)&scaleBandTbl->y + (iVar3 >> 0xe));
+//		if ((yBand != 0xffff) && (y <= yBand)) break;
+//		j = j + 1;
+//		lowerYBandIdx = (short)j;
+//		iVar3 = j * 0x10000;
+//	} while (j * 0x10000 >> 0x10 < 0x20);
+	if ((upperYBandIdx == -1) && (lowerYBandIdx == 0x20)) {
+		return 0x100;
+	}
+	if (upperYBandIdx < 0 || lowerYBandIdx >= 32) {
+		if (upperYBandIdx >= 0) {
+			lowerYBandIdx = upperYBandIdx;
+		}
+		upperYBandIdx = lowerYBandIdx;
+	}
+
+
+	pSVar6 = &_bands[upperYBandIdx];  //scaleBandTbl + (int)upperYBandIdx;
+	uVar7 = (0x21 - (uint)pSVar6->_priority) * 8;
+	uVar1 = uVar7;
+	if (y != pSVar6->_y) {
+		pSVar4 = &_bands[lowerYBandIdx]; //scaleBandTbl + (int)lowerYBandIdx;
+		uVar5 = (0x21 - (uint)pSVar4->_priority) * 8;
+		uVar1 = uVar5;
+		if ((y != pSVar4->_y) && (uVar1 = uVar7, (int)upperYBandIdx != (int)lowerYBandIdx)) {
+			local_v0_368 = pSVar4->_y - pSVar6->_y;
+			uVar1 = uVar5;
+			if (local_v0_368 != 0) {
+				iVar3 = ((uVar5 & 0xffffu) - (uVar7 & 0xffffu)) * (uint)(ushort)(y - pSVar6->_y);
+
+				assert (((uint)(ushort)local_v0_368 != 0xffffffff) || (iVar3 != -0x80000000));
+
+				return uVar7 + iVar3 / (int)(uint)(ushort)local_v0_368 & 0xffff;
+			}
+		}
+	}
+	return uVar1 & 0xfff8u;
 }
 
 } // End of namespace Dragons

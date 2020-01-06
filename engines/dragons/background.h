@@ -43,6 +43,20 @@ public:
 	Background *load(const char *filename);
 };
 
+typedef struct {
+	int16 _y;
+	int16 _priority;
+} ScaleBand;
+
+class ScaleLayer {
+public:
+	void load(Common::SeekableReadStream &stream);
+	uint16 getScale(uint16 y);
+
+private:
+	ScaleBand _bands[32];
+};
+
 struct TileMap {
 	uint16 w;
 	uint16 h;
@@ -57,9 +71,9 @@ private:
 	byte *_tileDataOffset;
 	TileMap _tileMap[4];
 	PriorityLayer *_priorityLayer;
+	ScaleLayer _scaleLayer;
 	byte _palette[512];
 	Graphics::Surface *_layerSurface[3];
-	Common::Point *_points1;
 	Common::Point *_points2;
 	uint8 layerPriority[3];
 	Common::Point layerOffset[3];
@@ -92,6 +106,7 @@ public:
 	void setPalette(byte *newPalette);
 	void setLayerOffset(uint8 layerNumber, Common::Point offset);
 	Common::Point getLayerOffset(uint8 layerNumber);
+	int16 getScale(int16 y);
 private:
 	Common::Point *loadPoints(Common::SeekableReadStream &stream);
 	Graphics::Surface *initGfxLayer(TileMap &tileMap);
