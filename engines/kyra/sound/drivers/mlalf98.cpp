@@ -436,7 +436,7 @@ bool SoundChannel::_globalBlock = false;
 SoundChannel::SoundChannel(PC98AudioCore *pc98a, int part, int regOffset, int type) : _pc98a(pc98a), _regOffset(regOffset), _part(part),
 _ticksLeft(0), _program(0), _volume(0), _algorithm(0), _envRR(0), _vbrDelay(0), _vbrRem(0), _vbrRate(0), _vbrTicker(0), _vbrStepSize(0), _vbrModifier(0),
 _vbrDepth(0), _vbrState(0), _duration(0), _frequency(0), _flags2(0), _note(0), _flags(0),
-_transpose(0), _envCurLvl(0), _fadeVolModifier(0), _fadeProgress(0), _fadeTicker(0), _trmCarrier(1),
+_transpose(0), _envCurLvl(0), _fadeVolModifier(0), _fadeProgress(0), _fadeTicker(16), _trmCarrier(1),
 _dataPtr(0), _dataEnd(0), _loopStartPtr(0), _instrBuffer(0), _backupData(0), _mute(false), _type(type) {
 	_subOpcodes[0].reserve(8);
 	_subOpcodes[1].reserve(8);
@@ -509,6 +509,8 @@ void SoundChannel::startFadeOut() {
 void SoundChannel::updateFadeOut() {
 	if (--_fadeTicker)
 		return;
+
+	_fadeTicker = 16;
 
 	if (!_fadeProgress)
 		return;
