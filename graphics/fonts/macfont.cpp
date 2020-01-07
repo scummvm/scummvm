@@ -643,9 +643,6 @@ static void magnifyGray(Surface *src, int *dstGray, int width, int height, float
 	}
 }
 
-static const bool bdir = true;
-static const bool pile = false;
-
 static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height) {
 	glyph->width++;
 
@@ -658,28 +655,11 @@ static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height) {
 			bool center = *srcPtr == 1;
 			bool right = x > glyph->width - 1 ? false : *(srcPtr + 1) == 1;
 
-			bool tmp, bold;
+			bool edge, bold, res;
 
-			bool res;
-
-			if (bdir) {
-				/* left shifted image */
-				bold = left;
-			} else {
-				/* right shifted image */
-				bold = right;
-			}
-			if (pile) {
-				/* left edge */
-				tmp = left;
-				res = (!tmp && center) || bold;
-			} else {
-				/* right edge */
-				tmp = right;
-				res = (!tmp && bold) || center;
-			}
-
-			res = center || left;
+			bold = center || left;
+			edge = !center && right;
+			res = (bold && !edge);
 
 			*dst = res ? 1 : 0;
 		}
