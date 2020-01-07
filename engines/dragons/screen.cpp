@@ -67,7 +67,15 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 	copyRectToSurface(srcSurface.getBasePtr(clipRect.left, clipRect.top), srcSurface.pitch, srcSurface.w, clipRect.left, destX, destY, clipRect.width(), clipRect.height(), flipX, alpha);
 }
 
-void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *palette, int destX, int destY, const Common::Rect srcRect, bool flipX, uint8 alpha) {
+void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *palette, int destX, int destY, const Common::Rect srcRect, bool flipX, uint8 alpha, uint16 scale) {
+	if (scale != DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) {
+		drawScaledSprite(_backSurface, (byte *)srcSurface.getBasePtr(0, 0),
+				srcRect.width(), srcRect.height(),
+				destX, destY,
+				srcRect.width() * scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE, srcRect.height() * scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE,
+				palette, flipX, alpha);
+		return;
+	}
 	Common::Rect clipRect = clipRectToScreen( destX,  destY, srcRect);
 	if (clipRect.width() == 0 || clipRect.height() == 0) {
 		return;
@@ -187,7 +195,7 @@ void Screen::drawScaledSprite(Graphics::Surface *destSurface, byte *source, int 
 	int yi = ys * clipY;
 	byte *hsrc = source + sourceWidth * ((yi + 0x8000) >> 16);
 	for (int yc = 0; yc < destHeight; ++yc) {
-		byte *wdst = dst;
+		byte *wdst = flipX ? dst + (destWidth - 1) * 2 : dst;
 		int xi = xs * clipX;
 		byte *wsrc = hsrc + ((xi + 0x8000) >> 16);
 		for (int xc = 0; xc < destWidth; ++xc) {
@@ -202,7 +210,7 @@ void Screen::drawScaledSprite(Graphics::Surface *destSurface, byte *source, int 
 					// semi-transparent pixels.
 				}
 			}
-			wdst += 2;
+			wdst += (flipX ? -2 : 2);
 			xi += xs;
 			wsrc = hsrc + ((xi + 0x8000) >> 16);
 		}
