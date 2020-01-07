@@ -458,7 +458,14 @@ void MacFontManager::generateFont(MacFont &toFont, MacFont &fromFont) {
 	debugN("Found font substitute for font '%s' ", getFontName(toFont).c_str());
 	debug("as '%s'", getFontName(fromFont).c_str());
 
-	MacFONTFont *font = Graphics::MacFONTFont::scaleFont(fromFont.getFont(), toFont.getSize());
+	bool bold = false, italic = false;
+
+	if (fromFont.getSlant() == kMacFontRegular) {
+		bold = toFont.getSlant() == kMacFontBold;
+		italic = toFont.getSlant() == kMacFontItalic;
+	}
+
+	MacFONTFont *font = Graphics::MacFONTFont::scaleFont(fromFont.getFont(), toFont.getSize(), bold, italic);
 
 	if (!font) {
 		warning("Failed to generate font '%s'", getFontName(toFont).c_str());
