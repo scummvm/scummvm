@@ -25,6 +25,8 @@
 #include "graphics/managed_surface.h"
 #include "graphics/fonts/macfont.h"
 
+#define DEBUGSCALING 0
+
 namespace Graphics {
 
 enum {
@@ -393,6 +395,10 @@ int MacFONTFont::getKerningOffset(uint32 left, uint32 right) const {
 	return 0;
 }
 
+#if DEBUGSCALING
+bool dododo;
+#endif
+
 MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 	if (!src) {
 		warning("Empty font reference in scale font");
@@ -403,6 +409,11 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 		warning("Requested to scale 0 size font");
 		return NULL;
 	}
+
+	Graphics::Surface srcSurf;
+	srcSurf.create(src->getFontSize() * 3, src->getFontSize() * 3, PixelFormat::createFormatCLUT8());
+	int dstGraySize = newSize * 3 * newSize * 3;
+	int *dstGray = (int *)malloc(dstGraySize * sizeof(int));
 
 	float scale = (float)newSize / (float)src->getFontSize();
 
@@ -427,7 +438,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 
 	data._glyphs.resize(src->_data._glyphs.size());
 
-	// Dtermine width of the bit image table
+	// Determine width of the bit image table
 	int newBitmapWidth = 0;
 	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
@@ -435,7 +446,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 
 		glyph->width = (int)((float)srcglyph->width * scale);
 		glyph->kerningOffset = (int)((float)srcglyph->kerningOffset * scale);
-		glyph->bitmapWidth = (int)((float)srcglyph->bitmapWidth * scale);
+		glyph->bitmapWidth = glyph->width; //(int)((float)srcglyph->bitmapWidth * scale);
 		glyph->bitmapOffset = newBitmapWidth;
 
 		newBitmapWidth += (glyph->bitmapWidth + 7) & ~0x7;
@@ -446,43 +457,144 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 	uint bitImageSize = data._rowWords * data._fRectHeight;
 	data._bitImage = new byte[bitImageSize];
 
-	int srcPitch = src->_data._rowWords;
 	int dstPitch = data._rowWords;
 
 	for (uint i = 0; i < src->_data._glyphs.size() + 1; i++) {
 		const MacGlyph *srcglyph = (i == src->_data._glyphs.size()) ? &src->_data._defaultChar : &src->_data._glyphs[i];
+
+		int grayLevel = src->_data._fRectHeight * srcglyph->width / 4;
+
+#if DEBUGSCALING
+		int ccc = 'c';
+		dododo = i == ccc;
+#endif
+
+		srcSurf.fillRect(Common::Rect(srcSurf.w, srcSurf.h), 0);
+		src->drawChar(&srcSurf, i + src->_data._firstChar, 0, 0, 1);
+		memset(dstGray, 0, dstGraySize * sizeof(int));
+		src->magnifyGray(&srcSurf, srcglyph, dstGray, scale);
+
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
 		byte *ptr = &data._bitImage[glyph->bitmapOffset / 8];
+		int *grayPtr = dstGray;
 
 		for (int y = 0; y < data._fRectHeight; y++) {
-			const byte *srcd = (const byte *)&src->_data._bitImage[((int)((float)y / scale)) * srcPitch];
 			byte *dst = ptr;
 			byte b = 0;
 
-			for (int x = 0; x < glyph->width; x++) {
-				int sx = (int)((float)x / scale) + srcglyph->bitmapOffset;
+			for (int x = 0; x < glyph->width; x++, grayPtr++) {
+				b <<= 1;
 
-				if (srcd[sx / 8] & (0x80 >> (sx % 8)))
+#if DEBUGSCALING
+				if (i == ccc) {
+					if (*grayPtr)
+						debugN(1, "%3d ", *grayPtr);
+					else
+						debugN(1, "    ");
+				}
+#endif
+
+				if (*grayPtr > grayLevel)
 					b |= 1;
 
-				if (!(x % 8) && x) {
+				if (x % 8 == 7) {
 					*dst++ = b;
 					b = 0;
 				}
-
-				b <<= 1;
 			}
+
+#if DEBUGSCALING
+			if (i == ccc) {
+				debugN(1, "--> %d ", grayLevel);
+
+				grayPtr = &dstGray[y * glyph->width];
+				for (int x = 0; x < glyph->width; x++, grayPtr++)
+					debugN("%c", *grayPtr > grayLevel ? '#' : '.');
+			}
+#endif
 
 			if (((glyph->width - 1) % 8)) {
+#if DEBUGSCALING
+				if (i == ccc)
+					debugN("  --- %02x (w: %d bw: %d << %d)", b, glyph->width, glyph->bitmapWidth, 7 - ((glyph->width - 1) % 8));
+#endif
+
 				b <<= 7 - ((glyph->width - 1) % 8);
 				*dst = b;
+
+#if DEBUGSCALING
+				if (i == ccc)
+					debugN("  --- %02x ", b);
+#endif
 			}
+
+#if DEBUGSCALING
+			if (i == ccc) {
+				byte *srcRow = data._bitImage + y * data._rowWords;
+
+				for (uint16 x = 0; x < glyph->bitmapWidth; x++) {
+					uint16 bitmapOffset = glyph->bitmapOffset + x;
+
+					debugN("%c", srcRow[bitmapOffset / 8] & (1 << (7 - (bitmapOffset % 8))) ? '*' : '.');
+				}
+
+				debug("");
+			}
+#endif
 
 			ptr += dstPitch;
 		}
 	}
 
+	srcSurf.free();
+	free(dstGray);
+
 	return new MacFONTFont(data);
+}
+
+#define howmany(x, y)	(((x)+((y)-1))/(y))
+
+static void countupScore(int *dstGray, int x, int y, int bbw, int bbh, float scale) {
+	int newbbw = bbw * scale;
+	int newbbh = bbh * scale;
+	int x_ = x * newbbw;
+	int y_ = y * newbbh;
+	int x1 = x_ + newbbw;
+	int y1 = y_ + newbbh;
+
+	int newxbegin = x_ / bbw;
+	int newybegin = y_ / bbh;
+	int newxend = howmany(x1, bbw);
+	int newyend = howmany(y1, bbh);
+
+	for (int newy = newybegin; newy < newyend; newy++) {
+		for (int newx = newxbegin; newx < newxend; newx++) {
+			int newX = newx * bbw;
+			int newY = newy * bbh;
+			int newX1 = newX + bbw;
+			int newY1 = newY + bbh;
+			dstGray[newy * newbbw + newx] += (MIN(x1, newX1) - MAX(x_, newX)) *
+											 (MIN(y1, newY1) - MAX(y_, newY));
+		}
+	}
+}
+
+void MacFONTFont::magnifyGray(Surface *src, const MacGlyph *glyph, int *dstGray, float scale) const {
+	for (uint16 y = 0; y < _data._fRectHeight; y++) {
+		for (uint16 x = 0; x < glyph->width; x++) {
+			if (*((byte *)src->getBasePtr(x, y)) == 1)
+				countupScore(dstGray, x, y, glyph->width, _data._fRectHeight, scale);
+#if DEBUGSCALING
+			if (dododo)
+				debugN("%c", *((byte *)src->getBasePtr(x, y)) == 1 ? '*' : ' ');
+#endif
+		}
+
+#if DEBUGSCALING
+		if (dododo)
+			debug("");
+#endif
+	}
 }
 
 void MacFONTFont::testBlit(const MacFONTFont *src, ManagedSurface *dst, int color, int x0, int y0, int width) {

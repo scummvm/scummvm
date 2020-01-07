@@ -166,6 +166,7 @@ private:
 	MacFONTdata _data;
 
 	const MacGlyph *findGlyph(uint32 c) const;
+	void magnifyGray(Surface *src, const MacGlyph *glyph, int *dstGray, float scale) const;
 };
 
 } // End of namespace Graphics
