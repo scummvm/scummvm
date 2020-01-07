@@ -391,7 +391,6 @@ bool SaveGame::save_objlist() {
 	ActorManager *actor_manager;
 	Player *player;
 	Party *party;
-	MsgScroll *scroll;
 	Weather *weather;
 
 	game = Game::get_game();
@@ -401,7 +400,6 @@ bool SaveGame::save_objlist() {
 
 	player = game->get_player();
 	party = game->get_party();
-	scroll = game->get_scroll();
 	weather = game->get_weather();
 
 	clock->save(&objlist);

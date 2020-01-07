@@ -20,6 +20,8 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/scummsys.h"
 #include "ultima/ultima6/lua/lua.h"
 #include "ultima/ultima6/lua/lauxlib.h"
 #include "ultima/ultima6/lua/lualib.h"

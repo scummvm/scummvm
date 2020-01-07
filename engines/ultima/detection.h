@@ -81,6 +81,6 @@ public:
 
 namespace Ultima {
 extern UltimaMetaEngine *g_metaEngine;
-}; // End of namespace Ultima
+} // End of namespace Ultima
 
 #endif

@@ -113,7 +113,7 @@ const Action NuvieActions[] = {
 	{ "TOGGLE_AUDIO", ActionToggleAudio, "Toggle audio", Action::normal_keys, true, TOGGLE_AUDIO_KEY },
 	{ "TOGGLE_MUSIC", ActionToggleMusic, "Toggle music", Action::normal_keys, true, TOGGLE_MUSIC_KEY },
 	{ "TOGGLE_SFX", ActionToggleSFX, "Toggle sfx", Action::normal_keys, true, TOGGLE_SFX_KEY },
-	{ "TOGGLE_ORIGINAL_STYLE_COMMAND_BAR", ActionToggleOriginalStyleCommandBar, "Show/hide original style command bar", Action::normal_keys, true,  },
+	{ "TOGGLE_ORIGINAL_STYLE_COMMAND_BAR", ActionToggleOriginalStyleCommandBar, "Show/hide original style command bar", Action::normal_keys, true, OTHER_KEY },
 	{ "DO_ACTION", ActionDoAction, "Do action", Action::normal_keys, true, DO_ACTION_KEY },
 	{ "CANCEL_ACTION", ActionCancelAction, "Cancel action", Action::normal_keys, true, CANCEL_ACTION_KEY },
 	{ "MSG_SCROLL_UP", ActionMsgScrollUP, "Msg scroll up", Action::normal_keys, true, MSGSCROLL_UP_KEY },

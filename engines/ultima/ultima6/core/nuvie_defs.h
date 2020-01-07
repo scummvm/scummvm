@@ -55,6 +55,16 @@ typedef uint8 nuvie_game_t; // Game type (1=u6,2=md,4=se)
 #define clamp_max(v, c)  (((v) > (c)) ? (c) : (v))
 #define clamp(v, c1, c2) ( ((v) < (c1)) ? (c1) : (((v) > (c2)) ? (c2) : (v)) )
 
+#ifndef INT_MAX
+#define INT_MAX 0x7fffffff
+#endif
+#ifndef UCHAR_MAX
+#define UCHAR_MAX 0xff
+#endif
+#ifndef SHRT_MAX
+#define SHRT_MAX 0x7fff
+#endif
+
 //FIXME fix for future maps which will probably be 1024 wide starting at level 6..
 #define WRAPPED_COORD(c,level) ((c)&((level)?255:1023))
 #define WRAP_COORD(c,level) ((c)&=((level)?255:1023))

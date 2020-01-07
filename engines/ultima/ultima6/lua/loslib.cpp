@@ -37,9 +37,9 @@
 #define LUA_LIB
 
 #include "ultima/ultima6/lua/lua.h"
-
 #include "ultima/ultima6/lua/lauxlib.h"
 #include "ultima/ultima6/lua/lualib.h"
+#include "common/textconsole.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -78,7 +78,8 @@ namespace Ultima6 {
 #elif !defined(lua_tmpnam)
 
 #define LUA_TMPNAMBUFSIZE	L_tmpnam
-#define lua_tmpnam(b,e)		{ e = (tmpnam(b) == NULL); }
+#define lua_tmpnam(b,e) ::error("unsupported - tmpnam")
+//{ e = (tmpnam(b) == NULL); }
 
 #endif
 
