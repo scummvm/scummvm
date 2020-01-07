@@ -399,9 +399,10 @@ int MacFONTFont::getKerningOffset(uint32 left, uint32 right) const {
 bool dododo;
 #endif
 
-static void magnifyGray(Surface *src, const MacGlyph *glyph, int *dstGray, int height, float scale);
+static void magnifyGray(Surface *src, int *dstGray, int width, int height, float scale);
+static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height);
 
-MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
+MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bold, bool italic) {
 	if (!src) {
 		warning("Empty font reference in scale font");
 		return NULL;
@@ -413,8 +414,8 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 	}
 
 	Graphics::Surface srcSurf;
-	srcSurf.create(src->getFontSize() * 3, src->getFontSize() * 3, PixelFormat::createFormatCLUT8());
-	int dstGraySize = newSize * 3 * newSize * 3;
+	srcSurf.create(src->getFontSize() * 2, src->getFontSize() * 2, PixelFormat::createFormatCLUT8());
+	int dstGraySize = newSize * 2 * newSize;
 	int *dstGray = (int *)malloc(dstGraySize * sizeof(int));
 
 	float scale = (float)newSize / (float)src->getFontSize();
@@ -475,7 +476,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 		srcSurf.fillRect(Common::Rect(srcSurf.w, srcSurf.h), 0);
 		src->drawChar(&srcSurf, i + src->_data._firstChar, 0, 0, 1);
 		memset(dstGray, 0, dstGraySize * sizeof(int));
-		magnifyGray(&srcSurf, srcglyph, dstGray, src->_data._fRectHeight, scale);
+		magnifyGray(&srcSurf, dstGray, srcglyph->width, src->_data._fRectHeight, scale);
 
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
 		int *grayPtr = dstGray;
@@ -501,6 +502,31 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 			if (i == ccc)
 				debug(1, "");
 #endif
+		}
+
+		if (bold) {
+			memset(dstGray, 0, dstGraySize * sizeof(int));
+			makeBold(&srcSurf, dstGray, glyph, data._fRectHeight);
+
+			for (uint16 y = 0; y < data._fRectHeight; y++) {
+				int *srcPtr = &dstGray[y * glyph->width];
+				byte *dstPtr = (byte *)srcSurf.getBasePtr(0, y);
+
+				for (uint16 x = 0; x < glyph->width; x++, srcPtr++, dstPtr++) {
+					if (*srcPtr)
+						*dstPtr = 1;
+
+#if DEBUGSCALING
+					if (i == ccc)
+						debugN("%c", *srcPtr ? '@' : '.');
+#endif
+				}
+
+#if DEBUGSCALING
+				if (i == ccc)
+					debug("");
+#endif
+			}
 		}
 
 		byte *ptr = &data._bitImage[glyph->bitmapOffset / 8];
@@ -598,11 +624,11 @@ static void countupScore(int *dstGray, int x, int y, int bbw, int bbh, float sca
 	}
 }
 
-static void magnifyGray(Surface *src, const MacGlyph *glyph, int *dstGray, int height, float scale) {
+static void magnifyGray(Surface *src, int *dstGray, int width, int height, float scale) {
 	for (uint16 y = 0; y < height; y++) {
-		for (uint16 x = 0; x < glyph->width; x++) {
+		for (uint16 x = 0; x < width; x++) {
 			if (*((byte *)src->getBasePtr(x, y)) == 1)
-				countupScore(dstGray, x, y, glyph->width, height, scale);
+				countupScore(dstGray, x, y, width, height, scale);
 #if DEBUGSCALING
 			if (dododo)
 				debugN("%c", *((byte *)src->getBasePtr(x, y)) == 1 ? '*' : ' ');
@@ -613,6 +639,49 @@ static void magnifyGray(Surface *src, const MacGlyph *glyph, int *dstGray, int h
 		if (dododo)
 			debug("");
 #endif
+	}
+}
+
+static const bool bdir = true;
+static const bool pile = false;
+
+static void makeBold(Surface *src, int *dstGray, MacGlyph *glyph, int height) {
+	glyph->width++;
+
+	for (uint16 y = 0; y < height; y++) {
+		byte *srcPtr = (byte *)src->getBasePtr(0, y);
+		int *dst = &dstGray[y * glyph->width];
+
+		for (uint16 x = 0; x < glyph->width; x++, srcPtr++, dst++) {
+			bool left = x ? *(srcPtr - 1) == 1 : false;
+			bool center = *srcPtr == 1;
+			bool right = x > glyph->width - 1 ? false : *(srcPtr + 1) == 1;
+
+			bool tmp, bold;
+
+			bool res;
+
+			if (bdir) {
+				/* left shifted image */
+				bold = left;
+			} else {
+				/* right shifted image */
+				bold = right;
+			}
+			if (pile) {
+				/* left edge */
+				tmp = left;
+				res = (!tmp && center) || bold;
+			} else {
+				/* right edge */
+				tmp = right;
+				res = (!tmp && bold) || center;
+			}
+
+			res = center || left;
+
+			*dst = res ? 1 : 0;
+		}
 	}
 }
 
