@@ -301,6 +301,7 @@ int Datum::toInt() {
 	switch (type) {
 	case REFERENCE:
 		toString();
+		// fallthrough
 	case STRING:
 		u.i = atoi(u.s->c_str());
 		break;
@@ -517,13 +518,13 @@ void Lingo::printAllVars() {
 	for (SymbolHash::iterator i = _localvars->begin(); i != _localvars->end(); ++i) {
 		debugN("%s, ", (*i)._key.c_str());
 	}
-	debug("");
+	debugN("\n");
 
 	debugN("  Global vars: ");
 	for (SymbolHash::iterator i = _globalvars.begin(); i != _globalvars.end(); ++i) {
 		debugN("%s, ", (*i)._key.c_str());
 	}
-	debug("");
+	debugN("\n");
 }
 
 } // End of namespace Director
