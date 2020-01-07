@@ -31,11 +31,7 @@
 #ifndef ULTIMA6_LUA_llimits_h
 #define ULTIMA6_LUA_llimits_h
 
-
-#include <limits.h>
-#include <stddef.h>
-
-
+#include <math.h>
 #include "ultima/ultima6/lua/lua.h"
 
 namespace Ultima {
@@ -283,7 +279,7 @@ union luai_Cast { double l_d; LUA_INT32 l_p[2]; };
 #if !defined(lua_number2unsigned)	/* { */
 /* the following definition assures proper modulo behavior */
 #if defined(LUA_NUMBER_DOUBLE) || defined(LUA_NUMBER_FLOAT)
-#include <math.h>
+//include <math.h>
 #define SUPUNSIGNED	((lua_Number)(~(lua_Unsigned)0) + 1)
 #define lua_number2unsigned(i,n)  \
 	((i)=(lua_Unsigned)((n) - floor((n)/SUPUNSIGNED)*SUPUNSIGNED))

@@ -26,13 +26,8 @@
 ** See Copyright Notice in lua.h
 */
 
-
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#include "common/scummsys.h"
 
 /* This file uses only the official API of Lua.
 ** Any function declared here could be written as an application function.
@@ -47,6 +42,12 @@
 
 namespace Ultima {
 namespace Ultima6 {
+
+#ifdef errno
+#undef errno
+#endif
+
+static const int errno = 0;
 
 /*
 ** {======================================================

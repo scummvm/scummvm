@@ -50,7 +50,7 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 
 namespace Ultima {
 UltimaMetaEngine *g_metaEngine;
-}; // End of namespace Ultima
+} // End of namespace Ultima
 
 
 UltimaMetaEngine::UltimaMetaEngine() : AdvancedMetaEngine(Ultima::GAME_DESCRIPTIONS,

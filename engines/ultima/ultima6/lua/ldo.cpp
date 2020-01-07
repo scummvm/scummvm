@@ -52,6 +52,7 @@
 #include "ultima/ultima6/lua/lundump.h"
 #include "ultima/ultima6/lua/lvm.h"
 #include "ultima/ultima6/lua/lzio.h"
+#include "common/textconsole.h"
 
 namespace Ultima {
 namespace Ultima6 {
@@ -72,9 +73,8 @@ namespace Ultima6 {
 
 #if defined(__cplusplus) && !defined(LUA_USE_LONGJMP)
 /* C++ exceptions */
-#define LUAI_THROW(L,c)		throw(c)
-#define LUAI_TRY(L,c,a) \
-	try { a } catch(...) { if ((c)->status == 0) (c)->status = -1; }
+#define LUAI_THROW(L,c)	::error("unsupported")
+#define LUAI_TRY(L,c,a) do { a } while(0);
 #define luai_jmpbuf		int  /* dummy variable */
 
 #elif defined(LUA_USE_ULONGJMP)

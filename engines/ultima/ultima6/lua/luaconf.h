@@ -32,7 +32,7 @@
 #ifndef ULTIMA6_LUA_lconfig_h
 #define ULTIMA6_LUA_lconfig_h
 
-#include <limits.h>
+#include "ultima/ultima6/core/nuvie_defs.h"
 #include <stddef.h>
 
 namespace Ultima {
