@@ -405,35 +405,53 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	// No simple substitute was found. Looking for neighborhood fonts
 
 	// First we gather all font sizes for this font
-	Common::Array<int> sizes;
+	Common::Array<MacFont *> sizes;
 	for (Common::HashMap<Common::String, MacFont *>::iterator i = _fontRegistry.begin(); i != _fontRegistry.end(); ++i) {
 		if (i->_value->getId() == macFont.getId() && i->_value->getSlant() == macFont.getSlant() && !i->_value->isGenerated())
-			sizes.push_back(i->_value->getSize());
+			sizes.push_back(i->_value);
 	}
 
 	if (sizes.empty()) {
-		debug(1, "No viable substitute found for font %s", getFontName(macFont).c_str());
-		return;
+		if (macFont.getSlant() == kMacFontRegular) {
+			debug(1, "No viable substitute found for font %s", getFontName(macFont).c_str());
+			return;
+		}
+
+		// Now let's try to find a regular font
+		for (Common::HashMap<Common::String, MacFont *>::iterator i = _fontRegistry.begin(); i != _fontRegistry.end(); ++i) {
+			if (i->_value->getId() == macFont.getId() && i->_value->getSlant() == kMacFontRegular && !i->_value->isGenerated())
+				sizes.push_back(i->_value);
+		}
+
+		if (sizes.empty()) {
+			debug(1, "No viable substitute found for font %s", getFontName(macFont).c_str());
+			return;
+		}
 	}
 
-	// Now looking next larger font, and store the largest one for next check
-	int candidate = 1000;
-	int maxSize = sizes[0];
+	// Now looking for the next larger font, and store the largest one for next check
+	MacFont *candidate = nullptr;
+	MacFont *maxSize = sizes[0];
 	for (uint i = 0; i < sizes.size(); i++) {
-		if (sizes[i] > macFont.getSize() && sizes[i] < candidate)
+		if (sizes[i]->getSize() == macFont.getSize()) { // Same size but regular slant
+			candidate = sizes[i];
+			break;
+		}
+
+		if (sizes[i]->getSize() > macFont.getSize() && candidate && sizes[i]->getSize() < candidate->getSize())
 			candidate = sizes[i];
 
-		if (sizes[i] > maxSize)
+		if (sizes[i]->getSize() > maxSize->getSize())
 			maxSize = sizes[i];
 	}
 
-	if (candidate != 1000) {
-		generateFont(macFont, *_fontRegistry[getFontName(macFont.getId(), candidate, macFont.getSlant())]);
+	if (candidate) {
+		generateFont(macFont, *candidate);
 		return;
 	}
 
 	// Now next smaller font, which is the biggest we have
-	generateFont(macFont, *_fontRegistry[getFontName(macFont.getId(), maxSize, macFont.getSlant())]);
+	generateFont(macFont, *maxSize);
 }
 
 void MacFontManager::generateFont(MacFont &toFont, MacFont &fromFont) {
