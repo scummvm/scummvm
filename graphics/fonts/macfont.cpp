@@ -524,7 +524,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 
 #if DEBUGSCALING
 				if (i == ccc)
-					debug("");
+					debugN("\n");
 #endif
 			}
 		}
@@ -583,7 +583,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, bool bo
 					debugN("%c", srcRow[bitmapOffset / 8] & (1 << (7 - (bitmapOffset % 8))) ? '*' : '.');
 				}
 
-				debug("");
+				debugN("\n");
 			}
 #endif
 
@@ -637,7 +637,7 @@ static void magnifyGray(Surface *src, int *dstGray, int width, int height, float
 
 #if DEBUGSCALING
 		if (dododo)
-			debug("");
+			debugN("\n");
 #endif
 	}
 }
