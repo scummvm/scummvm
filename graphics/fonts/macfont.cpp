@@ -399,6 +399,8 @@ int MacFONTFont::getKerningOffset(uint32 left, uint32 right) const {
 bool dododo;
 #endif
 
+static void magnifyGray(Surface *src, const MacGlyph *glyph, int *dstGray, int height, float scale);
+
 MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 	if (!src) {
 		warning("Empty font reference in scale font");
@@ -449,7 +451,8 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 		glyph->bitmapWidth = glyph->width; //(int)((float)srcglyph->bitmapWidth * scale);
 		glyph->bitmapOffset = newBitmapWidth;
 
-		newBitmapWidth += (glyph->bitmapWidth + 7) & ~0x7;
+		// Align width to a byte
+		newBitmapWidth += (glyph->bitmapWidth + 7 + 2) & ~0x7; // Add 2 pixels for italic and bold
 	}
 
 	data._rowWords = newBitmapWidth;
@@ -472,19 +475,15 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 		srcSurf.fillRect(Common::Rect(srcSurf.w, srcSurf.h), 0);
 		src->drawChar(&srcSurf, i + src->_data._firstChar, 0, 0, 1);
 		memset(dstGray, 0, dstGraySize * sizeof(int));
-		src->magnifyGray(&srcSurf, srcglyph, dstGray, scale);
+		magnifyGray(&srcSurf, srcglyph, dstGray, src->_data._fRectHeight, scale);
 
 		MacGlyph *glyph = (i == src->_data._glyphs.size()) ? &data._defaultChar : &data._glyphs[i];
-		byte *ptr = &data._bitImage[glyph->bitmapOffset / 8];
 		int *grayPtr = dstGray;
 
 		for (int y = 0; y < data._fRectHeight; y++) {
-			byte *dst = ptr;
-			byte b = 0;
+			byte *dst = (byte *)srcSurf.getBasePtr(0, y);
 
-			for (int x = 0; x < glyph->width; x++, grayPtr++) {
-				b <<= 1;
-
+			for (int x = 0; x < glyph->width; x++, grayPtr++, dst++) {
 #if DEBUGSCALING
 				if (i == ccc) {
 					if (*grayPtr)
@@ -493,8 +492,28 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize) {
 						debugN(1, "    ");
 				}
 #endif
-
 				if (*grayPtr > grayLevel)
+					*dst = 1;
+				else
+					*dst = 0;
+			}
+#if DEBUGSCALING
+			if (i == ccc)
+				debug(1, "");
+#endif
+		}
+
+		byte *ptr = &data._bitImage[glyph->bitmapOffset / 8];
+
+		for (int y = 0; y < data._fRectHeight; y++) {
+			byte *dst = ptr;
+			byte *srcPtr = (byte *)srcSurf.getBasePtr(0, y);
+			byte b = 0;
+
+			for (int x = 0; x < glyph->width; x++, srcPtr++) {
+				b <<= 1;
+
+				if (*srcPtr == 1)
 					b |= 1;
 
 				if (x % 8 == 7) {
@@ -579,11 +598,11 @@ static void countupScore(int *dstGray, int x, int y, int bbw, int bbh, float sca
 	}
 }
 
-void MacFONTFont::magnifyGray(Surface *src, const MacGlyph *glyph, int *dstGray, float scale) const {
-	for (uint16 y = 0; y < _data._fRectHeight; y++) {
+static void magnifyGray(Surface *src, const MacGlyph *glyph, int *dstGray, int height, float scale) {
+	for (uint16 y = 0; y < height; y++) {
 		for (uint16 x = 0; x < glyph->width; x++) {
 			if (*((byte *)src->getBasePtr(x, y)) == 1)
-				countupScore(dstGray, x, y, glyph->width, _data._fRectHeight, scale);
+				countupScore(dstGray, x, y, glyph->width, height, scale);
 #if DEBUGSCALING
 			if (dododo)
 				debugN("%c", *((byte *)src->getBasePtr(x, y)) == 1 ? '*' : ' ');
@@ -602,7 +621,7 @@ void MacFONTFont::testBlit(const MacFONTFont *src, ManagedSurface *dst, int colo
 		byte *srcRow = src->_data._bitImage + y * src->_data._rowWords;
 
 		for (int x = 0; x < width; x++) {
-			uint16 bitmapOffset = x;
+			uint16 bitmapOffset = x + 64;
 
 			if (srcRow[bitmapOffset / 8] & (1 << (7 - (bitmapOffset % 8)))) {
 				if (dst->format.bytesPerPixel == 1)
