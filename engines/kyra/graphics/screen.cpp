@@ -3220,26 +3220,31 @@ void Screen::rectClip(int &x, int &y, int w, int h) {
 }
 
 void Screen::shakeScreen(int times) {
+	static const int8 _shakeParaPC[] = { 32, 0, -4, 32, 0, 0 };
+	static const int8 _shakeParaFMTOWNS[] = { 32, 0, -4, 48, 0, 4, 32, -4, 0, 32, 4, 0, 32, 0, 0 };
+
+	const int8 *data = _shakeParaPC;
+	int steps = ARRAYSIZE(_shakeParaPC) / 3;
+
+	// The FM-TOWNS version has a slightly better shake animation
+	// TODO: check PC-98 version
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+		data = _shakeParaFMTOWNS;
+		steps = ARRAYSIZE(_shakeParaFMTOWNS) / 3;
+	}
+
 	while (times--) {
-		// The original did not need an artificial delay, but we do.
-		// Or the shake will be too fast to be actually seen.
-		uint32 delayuntil = _system->getMillis() + 16;
-
-		// seems to be 1 line (320 pixels) offset in the original
-		// -4 looks more like dosbox though, maybe check this again		
-		_system->setShakePos(0, -4);
-		_system->updateScreen();
-
-		int diff = delayuntil - _system->getMillis();
-		if (diff > 0)
-			_system->delayMillis(diff);
-		delayuntil = _system->getMillis() + 16;
-		_system->setShakePos(0, 0);
-		_system->updateScreen();
-
-		diff = delayuntil - _system->getMillis();
-		if (diff > 0)
-			_system->delayMillis(diff);
+		for (int i = 0; i < steps; ++i) {
+			// The original PC version did not need an artificial delay, but we do.
+			// Or the shake will be too fast to be actually seen.
+			uint32 delayuntil = _system->getMillis() + data[0];
+			_system->setShakePos(data[1], data[2]);
+			_system->updateScreen();
+			int diff = delayuntil - _system->getMillis();
+			if (diff > 0)
+				_system->delayMillis(diff);
+			data += 3;
+		}
 	}
 }
 
