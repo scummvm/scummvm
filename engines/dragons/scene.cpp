@@ -372,13 +372,13 @@ void Scene::draw() {
 					if (!actor->isFlagSet(ACTOR_FLAG_80)) {
 						actor->scale = _stage->getScale(actor->y_pos);
 					}
-					int x = actor->x_pos - (actor->frame->xOffset * actor->scale / 256) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.x);
-					int y = actor->y_pos - (actor->frame->yOffset * actor->scale / 256) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.y);
+					int x = actor->x_pos - (actor->frame->xOffset * actor->scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.x);
+					int y = actor->y_pos - (actor->frame->yOffset * actor->scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.y);
 
 					debug(4, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d Scale: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
 						  y,
 						  s->w, s->h, actor->priorityLayer, actor->scale);
-					_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->frame->flags & Dragons::FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? 255 : 128);
+						_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->frame->flags & Dragons::FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? 255 : 128, actor->scale);
 					if (_vm->isDebugMode()) {
 						_screen->drawRect(0x7fff, Common::Rect(x, y, x + s->w, y + s->h), actor->_actorID);
 						drawActorNumber(x + s->w, y + 8, actor->_actorID);
