@@ -781,9 +781,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	int height = button->_initialRect.height();
 	int width = button->_initialRect.width() + 3;
 
-	Common::Rect textRect(0, 0, width, height);
-	// pass the rect of the button into the label.
-	renderText(surface, spriteId, &textRect);
+	bool invert = spriteId == _vm->getCurrentScore()->_currentMouseDownSpriteId;
 
 	// TODO: review all cases to confirm if we should use text height.
 	// height = textRect.height();
@@ -799,8 +797,9 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		break;
 	case kTypeButton: {
 			_rect = Common::Rect(x, y, x + width, y + height + 3);
-			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1, Graphics::kColorWhite);
-			Graphics::drawRoundRect(_rect, 4, 0, false, Graphics::macDrawPixel, &pd);
+			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1, invert ? Graphics::kColorBlack : Graphics::kColorWhite);
+
+			Graphics::drawRoundRect(_rect, 4, 0, invert, Graphics::macDrawPixel, &pd);
 			addDrawRect(spriteId, _rect);
 		}
 		break;
@@ -811,6 +810,10 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		warning("renderButton: Unknown buttonType");
 		break;
 	}
+
+	Common::Rect textRect(0, 0, width, height);
+	// pass the rect of the button into the label.
+	renderText(surface, spriteId, &textRect);
 }
 
 void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Common::Rect *textRect) {
@@ -933,7 +936,12 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	textWithFeatures.transBlitFrom(textSurface->rawSurface(), Common::Point(textX, textY), 0xff);
 
-	inkBasedBlit(surface, textWithFeatures, _sprites[spriteId]->_ink, Common::Rect(x, y, x + width, y + height));
+	InkType ink = _sprites[spriteId]->_ink;
+
+	if (spriteId == _vm->getCurrentScore()->_currentMouseDownSpriteId)
+		ink = kInkTypeReverse;
+
+	inkBasedBlit(surface, textWithFeatures, ink, Common::Rect(x, y, x + width, y + height));
 }
 
 void Frame::inkBasedBlit(Graphics::ManagedSurface &targetSurface, const Graphics::Surface &spriteSurface, InkType ink, Common::Rect drawRect) {
