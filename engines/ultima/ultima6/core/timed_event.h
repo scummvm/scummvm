@@ -53,13 +53,10 @@ public:
 		clear();
 	}
 
-	bool empty() {
+	bool empty() const {
 		return (tq.empty());
 	}
-	void clear() {
-		while (!empty()) pop_timer();
-	}
-
+	void clear();
 	void add_timer(TimedEvent *tevent);
 	void remove_timer(TimedEvent *tevent);
 	TimedEvent *pop_timer();
