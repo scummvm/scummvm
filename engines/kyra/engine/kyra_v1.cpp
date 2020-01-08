@@ -235,6 +235,19 @@ void KyraEngine_v1::setMousePos(int x, int y) {
 		y <<= 1;
 	}
 	_system->warpMouse(x, y);
+
+	// Feed the event manager an artficial mouse move event, since warpMouse() won't generate one.
+	// From the warpMouse comments I gather that this behavior is intentional due to requirements of
+	// the SCUMM engine. In KYRA we need to get the same coordinates from _eventMan->getMousePos()
+	// that we send via warpMouse(). We have script situations in Kyra (like the Alchemists' crystals
+	// scene) where a new mouse cursor position is set and then immediately read. This function would
+	// then get wrong coordinates.
+	Common::Event event;
+	event.type = Common::EVENT_MOUSEMOVE;
+	event.mouse.x = x;
+	event.mouse.y = y;
+	_eventMan->pushEvent(event);
+	updateInput();
 }
 
 int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) {

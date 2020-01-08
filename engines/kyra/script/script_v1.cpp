@@ -65,7 +65,7 @@ int KyraEngine_v1::o1_showMouse(EMCState *script) {
 
 int KyraEngine_v1::o1_setMousePos(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1_setMousePos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	_system->warpMouse(stackPos(0), stackPos(1));
+	setMousePos(stackPos(0), stackPos(1));
 	return 0;
 }
 
