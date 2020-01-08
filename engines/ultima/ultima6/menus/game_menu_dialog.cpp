@@ -45,9 +45,9 @@ namespace Ultima6 {
 #ifdef HAVE_JOYSTICK_SUPPORT
 #include "JoystickDialog.h"
 
-#define GMD_HEIGHT 135 // 13 bigger
+#define GMD_HEIGHT 148 // 13 bigger
 #else
-#define GMD_HEIGHT 122
+#define GMD_HEIGHT 135
 #endif
 
 GameMenuDialog::GameMenuDialog(GUI_CallBack *callback)
@@ -63,41 +63,44 @@ bool GameMenuDialog::init() {
 	int width = 132;
 	int height = 12;
 	int buttonX = 9;
-	uint8 buttonY = 9;
-	uint8 row_h = 13;
+	int buttonY = 9;
+	int row_h = 13;
 	b_index_num = -1;
 	last_index = 0;
 	GUI *gui = GUI::get_gui();
 
-	saveLoad_button = new GUI_Button(this, buttonX, buttonY, width, height, "Load/Save Game", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
-	AddWidget(saveLoad_button);
-	button_index[last_index] = saveLoad_button;
+	save_button = new GUI_Button(this, buttonX, buttonY, width, height, "Save Game", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
+	AddWidget(save_button);
+	button_index[last_index] = save_button;
+	load_button = new GUI_Button(this, buttonX, buttonY += row_h, width, height, "Load Game", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
+	AddWidget(load_button);
+	button_index[++last_index] = load_button;
 	video_button = new GUI_Button(this, buttonX, buttonY += row_h, width, height, "Video Options", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(video_button);
-	button_index[last_index += 1] = video_button;
+	button_index[++last_index] = video_button;
 	audio_button = new GUI_Button(this, buttonX, buttonY += row_h, width, height, "Audio Options", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(audio_button);
-	button_index[last_index += 1] = audio_button;
+	button_index[++last_index] = audio_button;
 	input_button = new GUI_Button(this, buttonX, buttonY += row_h, width, height, "Input Options", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(input_button);
-	button_index[last_index += 1] = input_button;
+	button_index[++last_index] = input_button;
 #ifdef HAVE_JOYSTICK_SUPPORT
 	joystick_button = new GUI_Button(this, buttonX, buttonY += row_h, width, height, "Joystick Options", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(joystick_button);
-	button_index[last_index += 1] = joystick_button;
+	button_index[++last_index] = joystick_button;
 #endif
 	gameplay_button = new GUI_Button(this, buttonX, buttonY += row_h, width, height, "Gameplay Options", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(gameplay_button);
-	button_index[last_index += 1] = gameplay_button;
+	button_index[++last_index] = gameplay_button;
 	cheats_button = new GUI_Button(this, buttonX, buttonY += row_h, width, height, "Cheats", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(cheats_button);
-	button_index[last_index += 1] = cheats_button;
+	button_index[++last_index] = cheats_button;
 	continue_button = new GUI_Button(this, buttonX, buttonY += row_h, width, height, "Back to Game", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(continue_button);
-	button_index[last_index += 1] = cheats_button;
+	button_index[++last_index] = cheats_button;
 	quit_button = new GUI_Button(this, buttonX, buttonY += row_h, width, height, "Quit", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(quit_button);
-	button_index[last_index += 1] = quit_button;
+	button_index[++last_index] = quit_button;
 
 	return true;
 }
@@ -154,8 +157,10 @@ GUI_status GameMenuDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 
 	if (caller == this) {
 		close_dialog();
-	} else if (caller == (GUI_CallBack *)saveLoad_button) {
+	} else if (caller == (GUI_CallBack *)save_button) {
 		g_engine->saveGame();
+	} else if (caller == (GUI_CallBack *)load_button) {
+		g_engine->loadGame();
 	} else if (caller == (GUI_CallBack *)video_button) {
 		GUI_Widget *video_dialog;
 		video_dialog = (GUI_Widget *) new VideoDialog((GUI_CallBack *)this);
