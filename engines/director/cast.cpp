@@ -348,15 +348,26 @@ ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
 	if (version < 4) {
 		error("Unhandled Script cast");
 	} else if (version == 4) {
-		stream.readByte();
-		stream.readByte();
+		byte unk1 = stream.readByte();
+		byte type = stream.readByte();
+
+		switch (type) {
+		case 1:
+			_scriptType = kScoreScript;
+			break;
+		case 3:
+			_scriptType = kMovieScript;
+			break;
+		default:
+			error("ScriptCast: Unprocessed script type: %d", type);
+		}
 
 		_initialRect = Score::readRect(stream);
 		_boundingRect = Score::readRect(stream);
 
 		_id = stream.readUint32();
 
-		debugC(4, kDebugLoading, "CASt: Script id: %d", _id);
+		debugC(4, kDebugLoading, "CASt: Script id: %d type: %s (%d) unk1: %d", _id, scriptType2str(_scriptType), type, unk1);
 
 		stream.readByte(); // There should be no more data
 		assert(stream.eos());

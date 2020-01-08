@@ -50,7 +50,8 @@ const char *scriptTypes[] = {
 	"SpriteScript",
 	"FrameScript",
 	"CastScript",
-	"GlobalScript"
+	"GlobalScript",
+	"ScoreScript"
 };
 
 const char *scriptType2str(ScriptType scr) {
@@ -615,7 +616,7 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 	// TODO: Determine if there really is a minimum size.
 	// This value was too small for Shape Casts.
 	if (stream.size() < 10) {
-		warning("Score::loadCastData(): CAST data id %d is too small", id);
+		warning("Score::loadCastData(): CASt data id %d is too small", id);
 		return;
 	}
 

@@ -124,6 +124,7 @@ public:
 	ScriptCast(Common::ReadStreamEndian &stream, uint16 version);
 
 	uint32 _id;
+	ScriptType _scriptType;
 };
 
 class RTECast : public TextCast {
