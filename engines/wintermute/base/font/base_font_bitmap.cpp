@@ -360,10 +360,10 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 	int lastWidth = 0;
 	int i;
 	int r = 255, g = 255, b = 255;
-	bool custoTrans = false;
+	bool customTrans = false;
 #ifdef ENABLE_FOXTAIL
 	int ar = 255, ag = 255, ab = 255;
-	bool custoAlpha = false;
+	bool customAlpha = false;
 #endif
 	char *surfaceFile = nullptr;
 	char *spriteFile = nullptr;
@@ -385,13 +385,13 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 
 		case TOKEN_TRANSPARENT:
 			parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
-			custoTrans = true;
+			customTrans = true;
 			break;
 
 #ifdef ENABLE_FOXTAIL
 		case TOKEN_COLOR:
 			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
-			custoAlpha = true;
+			customAlpha = true;
 			break;
 #endif
 
@@ -467,13 +467,13 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 
 	if (surfaceFile != nullptr && !_sprite) {
 		_subframe = new BaseSubFrame(_gameRef);
-		if (custoTrans) {
+		if (customTrans) {
 			_subframe->setSurface(surfaceFile, false, r, g, b);
 		} else {
 			_subframe->setSurface(surfaceFile);
 		}
 #ifdef ENABLE_FOXTAIL
-		if (custoAlpha) {
+		if (customAlpha) {
 			_subframe->_alpha = BYTETORGBA(ar, ag, ab, 255);
 		}
 #endif
