@@ -101,6 +101,7 @@ TheEntity entities[] = {
 	{ kTheParamCount,		"paramCount",		false, 4 },	//				D4 f
 	{ kThePathName,			"pathName",			false, 2 },	// D2 f
 	{ kThePauseState,		"pauseState",		false, 2 },	// D2 f
+	{ kThePi,				"pi",				false, 4 },	//				D4 f
 	{ kThePerFrameHook,		"perFrameHook",		false, 2 },	// D2 p
 	{ kThePreloadEventAbort,"preloadEventAbort",false, 4 },	//				D4 p
 	{ kThePreLoadRAM,		"preLoadRAM",		false, 4 },	//				D4 p
@@ -522,6 +523,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheStillDown:
 		d.type = INT;
 		d.u.i = _vm->getCurrentScore()->_mouseIsDown;
+		break;
+	case kThePi:
+		d.type = FLOAT;
+		d.u.f = M_PI;
 		break;
 	default:
 		warning("Lingo::getTheEntity(): Unprocessed getting field %d of entity %d", field, entity);

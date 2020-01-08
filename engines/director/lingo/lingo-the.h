@@ -99,6 +99,7 @@ enum TheEntityType {
 	kThePathName,
 	kThePauseState,
 	kThePerFrameHook,
+	kThePi,
 	kThePreloadEventAbort,
 	kThePreLoadRAM,
 	kTheQuickTimePresent,
