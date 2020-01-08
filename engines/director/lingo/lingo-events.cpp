@@ -200,8 +200,9 @@ void Lingo::runMovieScript(LEvent event) {
 	if (_dontPassEvent)
 		return;
 
-	for (uint i = 0; i < _scriptContexts[kMovieScript].size(); i++) {
-		processEvent(event, kMovieScript, i);
+	for (ScriptContextHash::iterator it = _scriptContexts[kMovieScript].begin();
+			it != _scriptContexts[kMovieScript].end(); ++it) {
+		processEvent(event, kMovieScript, it->_key);
 		// TODO: How do know which script handles the message?
 	}
 	debugC(9, kDebugEvents, "STUB: processEvent(event, kMovieScript, ?)");
@@ -243,12 +244,13 @@ void Lingo::processFrameEvent(LEvent event) {
 void Lingo::processGenericEvent(LEvent event) {
 	// Movie Script
 	int id = -1;
-	if (event == kEventStart || event == kEventPrepareMovie)
+	if (event == kEventStart || event == kEventPrepareMovie ||
+		event == kEventStartMovie || event == kEventStopMovie)
 		id = 0;
 	else
-		warning("STUB: processGenericEvent called for something else than kEventStart or kEventPrepareMovie, additional logic probably needed");
+		warning("STUB: processGenericEvent called for unprocessed event, additional logic probably needed");
 
-	processEvent(event, kMovieScript, id);
+	runMovieScript(event);
 }
 
 void Lingo::processSpriteEvent(LEvent event) {
