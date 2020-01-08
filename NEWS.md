@@ -8,6 +8,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Xeen:
    - Fix display of gold and gem amounts on the Switch
+   - Fix crash loading Deep Mine Alpha in World of Xeen CD
 
 #### 2.1.0 "Electric Sheep" (2019-10-11)
 

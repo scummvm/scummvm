@@ -785,17 +785,22 @@ void Map::load(int mapId) {
 				}
 			} else if (File::exists(mobName)) {
 				// For surrounding maps, set up flags for whether objects are present
-				// Load the monster/object data
-				File mobFile(mobName);
-				XeenSerializer sMob(&mobFile, nullptr);
-				MonsterObjectData mobData(_vm);
-				mobData.synchronize(sMob, _monsterData);
-				mobFile.close();
 
-				mazeDataP->_objectsPresent.resize(mobData._objects.size());
-				for (uint objIndex = 0; objIndex < mobData._objects.size(); ++objIndex) {
-					const Common::Point &pt = mobData._objects[objIndex]._position;
-					mazeDataP->_objectsPresent[objIndex] = ABS(pt.x) != 128 && ABS(pt.y) != 128;
+				// WORKAROUND: In WOX CD Map 120, one of the maps for Deep Mine Alpha,
+				// has invalid monster data. So to work around it, we just ignore it
+				if (!(mapId == 120 && g_vm->getIsCD() && g_vm->getGameID() == GType_WorldOfXeen)) {
+					// Load the monster/object data
+					File mobFile(mobName);
+					XeenSerializer sMob(&mobFile, nullptr);
+					MonsterObjectData mobData(_vm);
+					mobData.synchronize(sMob, _monsterData);
+					mobFile.close();
+
+					mazeDataP->_objectsPresent.resize(mobData._objects.size());
+					for (uint objIndex = 0; objIndex < mobData._objects.size(); ++objIndex) {
+						const Common::Point &pt = mobData._objects[objIndex]._position;
+						mazeDataP->_objectsPresent[objIndex] = ABS(pt.x) != 128 && ABS(pt.y) != 128;
+					}
 				}
 			}
 		}
