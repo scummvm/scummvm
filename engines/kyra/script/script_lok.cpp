@@ -362,6 +362,19 @@ int KyraEngine_LoK::o1_forceBrandonToNormal(EMCState *script) {
 int KyraEngine_LoK::o1_poisonDeathNow(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_poisonDeathNow(%p) ()", (const void *)script);
 	seq_poisonDeathNow(1);
+
+	// WORKAROUND for the poison animation after drinking the green potion
+	// that can be made at the alchemists' crystals.
+	// The next animator update from inside delay() after completing the
+	// poison animation would cause invalid memory access (tryin to draw the
+	// already freed special anim shape 142).
+	// I can definitely confirm that for the FM-TOWNS version. I don't know
+	// about the DOS-CD version. Maybe this has been fixed there somehow.
+	// I simply repeat the same steps that are done after the potion animation
+	// when bitten by the snake (scene_lok.cpp, lines 964, 966).
+	_characterList[0].currentAnimFrame = 7;
+	_animator->animRefreshNPC(0);
+
 	return 0;
 }
 
