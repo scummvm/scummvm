@@ -21,10 +21,8 @@
  */
 
 #include "ultima/ultima6/core/nuvie_defs.h"
-
 #include "ultima/ultima6/gui/gui_text.h"
 #include "ultima/ultima6/gui/gui_font.h"
-//#include <stdlib.h>
 
 namespace Ultima {
 namespace Ultima6 {
@@ -53,7 +51,7 @@ GUI_Text:: GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, const char *str, GU
 
 	font = gui_font;
 
-	text = (char *)scumm_strdup(str);
+	text = scumm_strdup(str);
 
 	if (text == NULL) {
 		DEBUG(0, LEVEL_ERROR, "GUI_Text: failed to allocate memory for text\n");
@@ -67,16 +65,12 @@ GUI_Text:: GUI_Text(int x, int y, uint8 r, uint8 g, uint8 b, const char *str, GU
 }
 
 GUI_Text::~GUI_Text() {
-	if (text)
-		free(text);
-
-	return;
+	delete[] text;
 }
 
 
 /* Show the widget  */
-void
-GUI_Text:: Display(bool full_redraw) {
+void GUI_Text:: Display(bool full_redraw) {
 	font->setTransparency(true);
 	font->setColoring(R, G, B);
 	font->textOut(surface, area.left, area.top, text, max_width);
