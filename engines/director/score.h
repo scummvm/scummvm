@@ -123,7 +123,7 @@ private:
 public:
 	Common::Array<Frame *> _frames;
 	Common::HashMap<uint16, CastInfo *> _castsInfo;
-	Common::HashMap<Common::String, int> _castsNames;
+	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _castsNames;
 	Common::SortedArray<Label *> *_labels;
 	Common::HashMap<uint16, Common::String> _actions;
 	Common::HashMap<uint16, bool> _immediateActions;

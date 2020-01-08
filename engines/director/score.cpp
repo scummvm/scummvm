@@ -746,12 +746,33 @@ void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream, uint16 id,
 
 		CastInfo *ci = new CastInfo();
 
-		if (castStrings.size() >= 5) {
-			ci->script = castStrings[0];
-			ci->name = castStrings[1];
-			ci->directory = castStrings[2];
-			ci->fileName = castStrings[3];
+		// We have here variable number of strings. Thus, instead of
+		// adding tons of ifs, we use this switch()
+		switch (castStrings.size()) {
+		default:
+			warning("Score::loadCastData(): extra %d strings", castStrings.size() - 5);
+			// fallthrough
+		case 5:
 			ci->type = castStrings[4];
+			// fallthrough
+		case 4:
+			ci->fileName = castStrings[3];
+			// fallthrough
+		case 3:
+			ci->directory = castStrings[2];
+			// fallthrough
+		case 2:
+			ci->name = castStrings[1];
+
+			if (!ci->name.empty()) {
+				_castsNames[ci->name] = id;
+			}
+			// fallthrough
+		case 1:
+			ci->script = castStrings[0];
+			// fallthrough
+		case 0:
+			break;
 		}
 
 		// FIXME. Disabled by default, requires --debugflags=bytecode for now
@@ -1231,12 +1252,12 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 		for (uint j = entries[i]; j < entries[i + 1]; j++)
 			if (data[j] == '\r')
 				entryString += '\n';
-			else
+			else if (j > entries[i] || data[j] >= 0x20) // Skip first byte which is string length
 				entryString += data[j];
 
 		strings.push_back(entryString);
 
-		debugC(6, kDebugLoading, "String %d:\n%s\n", i, entryString.c_str());
+		debugC(6, kDebugLoading, "String %d:\n%s\n", i, Common::toPrintable(entryString).c_str());
 	}
 
 	free(data);
