@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-12-14 13:24+0000\n"
-"PO-Revision-Date: 2019-11-04 06:57+0000\n"
-"Last-Translator: Matan Bareket <mataniko@gmail.com>\n"
+"PO-Revision-Date: 2020-01-09 01:27+0000\n"
+"Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
 "Language: he\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Weblate 3.7.1\n"
+"X-Generator: Weblate 3.9.1\n"
 "X-Language-name: Hebrew\n"
 
 #: gui/about.cpp:102
@@ -36,25 +36,28 @@ msgstr "מנועים זמינים:"
 
 #: gui/browser.cpp:75 backends/dialogs/macosx/macosx-dialogs.mm:87
 msgid "Show hidden files"
-msgstr "הצג קבצים מוסתרים"
+msgstr "הצגת קבצים נסתרים"
 
 #: gui/browser.cpp:75
 msgid "Show files marked with the hidden attribute"
-msgstr "הצג קבצים עם תכונת הסתרה"
+msgstr "הצגת קבצים שסומנו כנסתרים"
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
+#, fuzzy
 msgid "Go up"
-msgstr "עלה למעלה"
+msgstr "תיקיה למעלה"
 
 #: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
+#, fuzzy
 msgid "Go to previous directory level"
-msgstr "חזור אל התיקיה הקודמת"
+msgstr "חזרה אל התיקיה הקודמת"
 
 #: gui/browser.cpp:81 gui/remotebrowser.cpp:59
+#, fuzzy
 msgctxt "lowres"
 msgid "Go up"
-msgstr "עלה למעלה"
+msgstr "תיקיה למעלה"
 
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:299
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
@@ -87,19 +90,19 @@ msgstr "בחירה"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
-msgstr "בחר תיקייה כדי להוריד קבצי משחק"
+msgstr "בחירת תיקיה להורדת נתוני משחק"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:482 gui/launcher.cpp:210
 msgid "Select directory with game data"
-msgstr "בחר תיקייה עם קבצי משחק"
+msgstr "בחירת תיקיה עם נתוני משחק"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "From: "
-msgstr "מאת: - "
+msgstr "מאת: "
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:228
 msgid "To: "
-msgstr "אל: - "
+msgstr "אל: "
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
@@ -112,7 +115,7 @@ msgstr "ביטול הורדה"
 
 #: gui/downloaddialog.cpp:68
 msgid "Hide"
-msgstr "הסתר"
+msgstr "הסתרה"
 
 #: gui/downloaddialog.cpp:118
 msgid ""
@@ -168,7 +171,7 @@ msgstr ""
 #: engines/sword2/animation.cpp:465 engines/sword2/animation.cpp:475
 #: engines/zvision/file/save_manager.cpp:230
 msgid "OK"
-msgstr "אוקיי"
+msgstr "אישור"
 
 #: gui/downloaddialog.cpp:152
 #, c-format
@@ -203,7 +206,7 @@ msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
-"תיאור משחק קצר לשימוש כאשר מתייחסים לשמירות וכדי להריץ את המשחק משורת הפקודות"
+"תיאור קצר של המשחק המשמש להפניה למשחקים שמורים ולהרצת המשחק משורת הפקודה"
 
 #: gui/editgamedialog.cpp:140
 msgctxt "lowres"
@@ -217,7 +220,7 @@ msgstr "שם:"
 #: gui/editgamedialog.cpp:145 gui/editgamedialog.cpp:147
 #: gui/editgamedialog.cpp:148
 msgid "Full title of the game"
-msgstr "שם מלא של המשחק"
+msgstr "כותרת מלאה של המשחק"
 
 #: gui/editgamedialog.cpp:147
 msgctxt "lowres"
@@ -229,10 +232,11 @@ msgid "Language:"
 msgstr "שפה:"
 
 #: gui/editgamedialog.cpp:151 gui/editgamedialog.cpp:152
+#, fuzzy
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
-msgstr "שפת המשחק. זה לא יהפוך משחק בטורקית למשחק בעברית"
+msgstr "שפת המשחק. אפשרות זו לא תהפוך משחק בטורקית למשחק בעברית"
 
 #: gui/editgamedialog.cpp:153 gui/editgamedialog.cpp:167 gui/options.cpp:1061
 #: gui/options.cpp:1074 gui/options.cpp:1088 gui/options.cpp:1699
@@ -268,7 +272,7 @@ msgstr "תצוגה"
 
 #: gui/editgamedialog.cpp:192
 msgid "Override global graphic settings"
-msgstr "בטל הגדרות תצוגה גלובליות"
+msgstr "ביטול הגדרות תצוגה גלובליות"
 
 #: gui/editgamedialog.cpp:194
 msgctxt "lowres"
@@ -398,7 +402,7 @@ msgstr "ברירת מחדל"
 
 #: gui/editgamedialog.cpp:462 gui/options.cpp:2282
 msgid "Select SoundFont"
-msgstr "בחר SoundFont"
+msgstr "בחירת SoundFont"
 
 #: gui/editgamedialog.cpp:501
 msgid "Select additional game directory"
@@ -418,7 +422,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:546
 msgid "This game ID is already taken. Please choose another one."
-msgstr "מזהה המשחק תפוס. אנא בחר מזהה אחר."
+msgstr "מזהה המשחק כבר תפוס. נא לבחור מזהה אחר."
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
@@ -430,15 +434,15 @@ msgstr "הערות:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr "אוקיי"
+msgstr "אישור"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Choose file for loading"
-msgstr "בחר קובץ לטעינה"
+msgstr "בחירת קובץ לטעינה"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Enter filename for saving"
-msgstr "הכנס שם קובץ לשמירה"
+msgstr "יש להזין שם קובץ לשמירה"
 
 #: gui/filebrowser-dialog.cpp:133
 msgid "Do you really want to overwrite the file?"
@@ -446,7 +450,7 @@ msgstr "האם באמת להחליף את הקובץ?"
 
 #: gui/fluidsynth-dialog.cpp:69
 msgid "Reverb"
-msgstr "הידהוד"
+msgstr "הדהוד"
 
 #: gui/fluidsynth-dialog.cpp:71 gui/fluidsynth-dialog.cpp:103
 msgid "Active"
@@ -546,7 +550,7 @@ msgstr "לחיצת עכבר"
 
 #: gui/gui-manager.cpp:130 base/main.cpp:376
 msgid "Display keyboard"
-msgstr "הצג מקלדת"
+msgstr "הצגת מקלדת"
 
 #: gui/gui-manager.cpp:134 base/main.cpp:380
 msgid "Remap keys"
@@ -599,7 +603,7 @@ msgstr "~א~ודות..."
 
 #: gui/launcher.cpp:145 backends/platform/sdl/macosx/appmenu_osx.mm:203
 msgid "About ScummVM"
-msgstr "אודות ScummVM"
+msgstr "על אודות ScummVM"
 
 #: gui/launcher.cpp:146
 msgid "~O~ptions..."
