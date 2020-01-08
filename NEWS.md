@@ -25,6 +25,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Polish LSL7.
    - Added support for Italian GK2.
    - Added support for Russian KQ7.
+   - Added support for GK2 fan-made subtitle patches.
 
  SCUMM:
    - Added support for Pajama2 (UK release).
