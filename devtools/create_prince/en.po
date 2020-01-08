@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-08 00:27+0000\n"
+"PO-Revision-Date: 2020-01-09 15:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -8753,26 +8753,28 @@ msgstr "OTHER: Marosthittem chodj les uji|nioklamcom."
 #: dialog0283.txt:1
 msgid "HERO: Pewnie nic nie rozumiesz z tego, co|mówię, ty tępy osiłku."
 msgstr ""
+"HERO: You apparently don't understand anything|from what I'm saying,|you "
+"blunt musclehead."
 
 #: dialog0284.txt:1
 msgid "HERO: Co za zadziwiający świat, mają tu takie|tresowane małpy jak ty."
-msgstr ""
+msgstr "HERO: What an amazing world, having such trained|monkeys as you here."
 
 #: dialog0285.txt:1
 msgid "HERO: Ha, ha! Mogę do ciebie gadać co chcę,|a ty i tak mi nic nie zrobisz."
-msgstr ""
+msgstr "HERO: Haha! I can tell you what I want|and you won't do anything to me."
 
 #: dialog0286.txt:1
 msgid "HERO: Arivaldzie! Już czas! Już czas!|Zabierz mnie stąd!"
-msgstr ""
+msgstr "HERO: Arivald! It's time! It's time!|Take me out of here!"
 
 #: dialog0287.txt:1
 msgid "HERO: A kim do licha jest Sheila?..."
-msgstr ""
+msgstr "HERO: Who the hell is Sheila?..."
 
 #: dialog0288.txt:1
 msgid "HERO: Ślepa to mało powiedziane..."
-msgstr ""
+msgstr "HERO: Blind is an understatement..."
 
 #: dialog0289.txt:1
 msgid "OTHER: Nareszcie chwila rozrywki!"
@@ -8780,67 +8782,67 @@ msgstr "OTHER: Finally a minute break!"
 
 #: dialog0290.txt:1
 msgid "OTHER: Czas się odegrać!"
-msgstr ""
+msgstr "OTHER: Time to play back!"
 
 #: dialog0291.txt:1
 msgid "OTHER: Łapy aż zatrzeszczą!"
-msgstr ""
+msgstr "OTHER: My paws are crackling up!"
 
 #: dialog0292.txt:1
 msgid "OTHER: Rączki do góry!"
-msgstr ""
+msgstr "OTHER: Hands up!"
 
 #: dialog0293.txt:1
 msgid "OTHER: Nadchodzi godzina zapłaty!"
-msgstr ""
+msgstr "OTHER: The hour of payback is coming!"
 
 #: dialog0294.txt:1
 msgid "OTHER: To oznacza wojnę!"
-msgstr ""
+msgstr "OTHER: It means war!"
 
 #: dialog0295.txt:1
 msgid "OTHER: Się robi, książę!"
-msgstr ""
+msgstr "OTHER: Consider it done, prince!"
 
 #: dialog0296.txt:1
 msgid "OTHER: O nie, książę, jak tak dalej pójdzie,|to zbankrutuję."
-msgstr ""
+msgstr "OTHER: Oh no, prince, if this continues,|I will go bankrupt."
 
 #: dialog0296.txt:2
 msgid "OTHER: Myślę, że starczy na dzisiaj."
-msgstr ""
+msgstr "OTHER: I think that's enough for today."
 
 #: dialog0297.txt:1
 msgid "OTHER: Ty atakujesz, książę."
-msgstr ""
+msgstr "OTHER: Your turn to attack, prince."
 
 #: dialog0298.txt:1
 msgid "OTHER: Broń się, książę."
-msgstr ""
+msgstr "OTHER: Defend yourself, prince."
 
 #: dialog0299.txt:1
 msgid "OTHER: Dobra nasza, teraz ja atakuję!"
-msgstr ""
+msgstr "OTHER: We are good, I'm attacking now!"
 
 #: dialog0300.txt:1
 msgid "OTHER: Ha, i tak się obronię!"
-msgstr ""
+msgstr "OTHER: Ha, I will defend myself anyway!"
 
 #: dialog0301.txt:1
 msgid "OTHER: Złocisz dla ciebie, książę..."
-msgstr ""
+msgstr "OTHER: Some gold for you, prince..."
 
 #: dialog0302.txt:1
 msgid "OTHER: Poproszę o złocisza, książę..."
-msgstr ""
+msgstr "OTHER: Please, give me some gold, prince..."
 
 #: dialog0303.txt:1
 msgid "OTHER: Nie masz złociszy?"
-msgstr ""
+msgstr "OTHER: Got no gold?"
 
 #: dialog0303.txt:2
 msgid "OTHER: Ech, książę..."
-msgstr ""
+msgstr "OTHER: Ugh, prince..."
 
 #: dialog0303.txt:3
 msgid "OTHER: Ale przynajmniej miałem chwilę radości."
