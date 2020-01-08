@@ -41,7 +41,6 @@ TheEntity entities[] = {
 	{ kTheCast,				"cast",				true,  2 },	// D2
 	{ kTheCastMembers,		"castmembers",		false, 3 },	//		 D3
 	{ kTheCenterStage,		"centerStage",		false, 2 },	// D2 p
-	{ kTheChars,			"chars",			false, 3 },	//		 D3
 	{ kTheCheckBoxAccess,	"checkBoxAccess",	false, 2 },	// D2 p
 	{ kTheCheckBoxType,		"checkBoxType",		false, 2 },	// D2 p
 	{ kTheClickLoc,			"clickLoc",			false, 4 },	// 				D4 function
@@ -64,7 +63,6 @@ TheEntity entities[] = {
 	{ kTheFreeBytes,		"freeBytes",		false, 2 },	// D2 f
 	{ kTheFullColorPermit,	"fullColorPermit",	false, 2 },	// D2 p
 	{ kTheImageDirect,		"imageDirect",		false, 2 },	// D2 p
-	{ kTheItems,			"items",			false, 3 },	//		 D3
 	{ kTheItemDelimiter,	"itemDelimiter",	false, 4 },	//				D4 p
 	{ kTheKey,				"key",				false, 2 },	// D2 f
 	{ kTheKeyCode,			"keyCode",			false, 2 },	// D2 f
@@ -76,12 +74,10 @@ TheEntity entities[] = {
 	{ kTheLastFrame,		"lastFrame",		false, 4 },	//				D4 p
 	{ kTheLastKey,			"lastKey",			false, 2 },	// D2 f
 	{ kTheLastRoll,			"lastRoll",			false, 2 },	// D2 f
-	{ kTheLines,			"lines",			false, 3 },	//		 D3
 	{ kTheMachineType,		"machineType",		false, 2 },	// D2 f
 	{ kTheMaxInteger,		"maxInteger",		false, 3 },	//		D3.1 f
 	{ kTheMemorySize,		"memorySize",		false, 2 },	// D2 f
 	{ kTheMenu,				"menu",				true,  3 },	//		 D3 p
-	{ kTheMenus,			"menus",			false, 3 },	//		 D3 p
 	{ kTheMenuItem,			"menuitem",			true,  3 },	//		 D3 p
 	{ kTheMenuItems,		"menuitems",		false, 3 },	//		 D3 f
 	{ kTheMouseCast,		"mouseCast",		false, 3 },	//		D3 f
@@ -147,7 +143,6 @@ TheEntity entities[] = {
 	{ kTheUpdateMovieEnabled,"updateMovieEnabled",false,4 },//				D4 p
 	{ kTheWindow,			"window",			true,  4 },	//				D4
 	{ kTheWindowList,		"windowList",		false, 4 },	//				D4 p
-	{ kTheWords,			"words",			false, 3 },	//		 D3
 	{ kTheNOEntity, NULL, false, 0 }
 };
 
@@ -178,7 +173,6 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"trails",		kTheTrails,		3 },//		D3.1 p
 	{ kTheSprite,	"type",			kTheType,		2 },// D2 p
 	{ kTheSprite,	"visible",		kTheVisible,	4 },//				D4 p
-	{ kTheSprite,	"volume",		kTheVolume,		3 },//		D3.1 p
 	{ kTheSprite,	"width",		kTheWidth,		2 },// D2 p
 
 	// Common cast fields
@@ -214,6 +208,7 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"startTime",	kTheStartTime,	3 },//			D3.1 p
 	{ kTheSprite,	"stopTime",		kTheStopTime,	3 },//			D3.1 p
 	{ kTheCast,		"video",		kTheVideo,		4 },//				D4 p
+	{ kTheSprite,	"volume",		kTheVolume,		3 },//		D3.1 p
 
 	// Bitmap fields
 	{ kTheCast,		"depth",		kTheDepth,		4 },//				D4 p
@@ -251,16 +246,6 @@ TheEntityField fields[] = {
 	{ kTheMenu,		"name",			kTheName,		3 },//		D3 p
 
 	{ kTheCastMembers,	"number",	kTheNumber,		3 },// 		D3 p
-	{ kTheChars,	"number",		kTheNumber,		3 },//		D3 p
-	{ kTheChars,	"last",			kTheLast,		4 },//				D4 f
-	{ kTheItems,	"number",		kTheNumber,		3 },//		D3 p
-	{ kTheItems,	"last",			kTheLast,		4 },//				D4 f
-	{ kTheLines,	"number",		kTheNumber,		3 },//		D3 p
-	{ kTheLines,	"last",			kTheLast,		4 },//				D4 f
-	{ kTheMenuItems,"number",		kTheNumber,		3 },//		D3 p
-	{ kTheMenus,	"number",		kTheNumber,		3 },//		D3 p
-	{ kTheWords,	"number",		kTheNumber,		3 },//		D3 p
-	{ kTheWords,	"last",			kTheLast,		4 },//				D4 f
 
 	{ kTheDate,		"short",		kTheShort,		3 },//		D3 f
 	{ kTheDate,		"long",			kTheLong,		3 },//		D3 f

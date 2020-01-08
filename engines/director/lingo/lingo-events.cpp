@@ -34,9 +34,9 @@ struct EventHandlerType {
 	const char *name;
 } static const eventHandlerDescs[] = {
 	{ kEventPrepareMovie,		"prepareMovie" },
-	{ kEventStartMovie,			"startMovie" },			//		D3?
-	{ kEventStepMovie,			"stepMovie" },			//		D3?
-	{ kEventStopMovie,			"stopMovie" },			//		D3?
+	{ kEventStartMovie,			"startMovie" },			//		D3
+	{ kEventStepMovie,			"stepMovie" },			//		D3
+	{ kEventStopMovie,			"stopMovie" },			//		D3
 
 	{ kEventNew,				"newSprite" },
 	{ kEventBeginSprite,		"beginSprite" },
@@ -44,7 +44,7 @@ struct EventHandlerType {
 
 	{ kEventEnterFrame,			"enterFrame" },			//			D4
 	{ kEventPrepareFrame,		"prepareFrame" },
-	{ kEventIdle,				"idle" },
+	{ kEventIdle,				"idle" },				//		D3
 	{ kEventStepFrame,			"stepFrame"},
 	{ kEventExitFrame,			"exitFrame" },			//			D4
 
@@ -58,8 +58,8 @@ struct EventHandlerType {
 
 	{ kEventKeyUp,				"keyUp" },				//			D4
 	{ kEventKeyDown,			"keyDown" },			// D2 w		D4 (as when from D2)
-	{ kEventMouseUp,			"mouseUp" },			// D2 w	D3?
-	{ kEventMouseDown,			"mouseDown" },			// D2 w	D3?
+	{ kEventMouseUp,			"mouseUp" },			// D2 w	D3
+	{ kEventMouseDown,			"mouseDown" },			// D2 w	D3
 	{ kEventRightMouseDown,		"rightMouseDown" },
 	{ kEventRightMouseUp,		"rightMouseUp" },
 	{ kEventMouseEnter,			"mouseEnter" },
