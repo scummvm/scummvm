@@ -3225,7 +3225,7 @@ void Screen::shakeScreen(int times) {
 
 	const int8 *data = _shakeParaPC;
 	int steps = ARRAYSIZE(_shakeParaPC) / 3;
-
+	
 	// The FM-TOWNS version has a slightly better shake animation
 	// TODO: check PC-98 version
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
@@ -3233,16 +3233,28 @@ void Screen::shakeScreen(int times) {
 		steps = ARRAYSIZE(_shakeParaFMTOWNS) / 3;
 	}
 
+	Common::Event event;
+
 	while (times--) {
 		for (int i = 0; i < steps; ++i) {
-			// The original PC version did not need an artificial delay, but we do.
-			// Or the shake will be too fast to be actually seen.
-			uint32 delayuntil = _system->getMillis() + data[0];
+			// The original PC version did not need an artificial delay, but we do or the shake will be
+			// too fast to be actually seen.
+			uint32 end = _system->getMillis() + data[0];
 			_system->setShakePos(data[1], data[2]);
-			_system->updateScreen();
-			int diff = delayuntil - _system->getMillis();
-			if (diff > 0)
-				_system->delayMillis(diff);
+
+			for (uint32 now = _system->getMillis(); now < end; ) {
+				// Update the event manager to keep smooth mouse pointer movement.
+				while (_vm->getEventManager()->pollEvent(event)) {
+					if (event.type == Common::EVENT_KEYDOWN) {
+						// This is really the only thing that should be handled.
+						if (event.kbd.keycode == Common::KEYCODE_q && event.kbd.hasFlags(Common::KBD_CTRL))
+							_vm->quitGame();
+					}
+				}
+				_system->updateScreen();
+				now = _system->getMillis();
+				_system->delayMillis(MIN<uint>(end - now, 10));
+			}
 			data += 3;
 		}
 	}
