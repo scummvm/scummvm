@@ -298,6 +298,7 @@ void ThemeLayoutStacked::reflowLayoutVertical(Widget *widgetChain) {
 	for (uint i = 0; i < _children.size(); ++i) {
 		switch (_itemAlign) {
 		case kItemAlignStart:
+		default:
 			_children[i]->offsetX(_padding.left);
 			break;
 		case kItemAlignCenter:
@@ -385,6 +386,7 @@ void ThemeLayoutStacked::reflowLayoutHorizontal(Widget *widgetChain) {
 	for (uint i = 0; i < _children.size(); ++i) {
 		switch (_itemAlign) {
 		case kItemAlignStart:
+		default:
 			_children[i]->offsetY(_padding.top);
 			break;
 		case kItemAlignCenter:
