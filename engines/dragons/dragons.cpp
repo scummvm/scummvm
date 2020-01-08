@@ -567,7 +567,7 @@ void DragonsEngine::gameLoop()
 				if (tmpId != 0) {
 					actor->flags = 0;
 					actor->priorityLayer = 0;
-					actor->scale = 0x100;
+					actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 					actor->updateSequence(getINI(tmpId - 1)->field_8 * 2 + 10);
 					actor->setFlag(ACTOR_FLAG_40);
 					actor->setFlag(ACTOR_FLAG_80);
@@ -584,7 +584,7 @@ void DragonsEngine::gameLoop()
 				Actor *invActor = _inventory->getInventoryItemActor(_cursor->iniItemInHand);
 				invActor->flags = 0;
 				invActor->priorityLayer = 0;
-				invActor->scale = 0x100;
+				invActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 				invActor->updateSequence(
 						 getINI(_cursor->iniItemInHand - 1)->field_8 * 2 + 10);
 				_cursor->iniItemInHand = 0;

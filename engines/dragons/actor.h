@@ -31,7 +31,6 @@ class ActorResource;
 struct ActorFrame;
 
 #define DRAGONS_ENGINE_NUM_ACTORS 64
-#define DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE 256
 
 enum ActorFlags {
 	ACTOR_FLAG_1 = 1,

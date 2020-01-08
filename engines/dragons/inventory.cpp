@@ -29,6 +29,7 @@
 #include "bag.h"
 #include "scene.h"
 #include "talk.h"
+#include "dragons/screen.h"
 
 namespace Dragons {
 
@@ -81,7 +82,7 @@ void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backg
 	_actor->y_pos = 0;
 	_actor->priorityLayer = 6;
 	_actor->flags = 0;
-	_actor->scale = 0x100;
+	_actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_actor->updateSequence(0);
 	_actor->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
 						 Dragons::ACTOR_FLAG_200);
@@ -174,7 +175,7 @@ void Inventory::openInventory() {
 
 		if (inventoryItemTbl[i]) {
 			item->flags = 0; //clear all flags
-			item->scale = 0x100;
+			item->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 			item->priorityLayer = 0;
 			item->updateSequence(_vm->getINI(inventoryItemTbl[i] - 1)->field_8 * 2 + 10);
 			item->setFlag(ACTOR_FLAG_200);

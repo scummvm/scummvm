@@ -168,7 +168,9 @@ void Screen::copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPit
 void Screen::drawScaledSprite(Graphics::Surface *destSurface, byte *source, int sourceWidth, int sourceHeight,
 		int destX, int destY, int destWidth, int destHeight, byte *palette, bool flipX, uint8 alpha) {
 	// Based on the GNAP engine scaling code
-	// TODO Implement flipping
+	if (destWidth == 0 || destHeight == 0) {
+		return;
+	}
 	const int xs = ((sourceWidth - 1) << 16) / destWidth;
 	const int ys = ((sourceHeight -1) << 16) / destHeight;
 	int clipX = 0, clipY = 0;
