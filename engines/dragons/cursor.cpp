@@ -29,6 +29,7 @@
 #include "inventory.h"
 #include "scene.h"
 #include "scriptopcodes.h"
+#include "dragons/screen.h"
 
 namespace Dragons {
 
@@ -43,7 +44,7 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	_actor->y_pos = _y = 100;
 	_actor->priorityLayer = 6;
 	_actor->flags = 0;
-	_actor->scale = 0x100;
+	_actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_actor->updateSequence(_sequenceID);
 	_actor->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
 					  Dragons::ACTOR_FLAG_200);

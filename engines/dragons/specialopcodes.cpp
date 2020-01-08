@@ -21,6 +21,7 @@
  */
 
 #include "dragons/actorresource.h"
+#include "dragons/background.h"
 #include "dragons/cursor.h"
 #include "dragons/cutscene.h"
 #include "dragons/credits.h"
@@ -410,7 +411,7 @@ void SpecialOpcodes::spcStGeorgeDragonLanded() {
 	origActor->reset_maybe();
 //	reset_actor_maybe();
 	ini121->actor->setFlag(ACTOR_FLAG_80);
-	ini121->actor->scale = 0x100;
+	ini121->actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	ini121->actor->priorityLayer = 2;
 	ini121->actorResourceId = 0x48;
 
@@ -497,15 +498,16 @@ void SpecialOpcodes::spcStopFlameBedroomEscapeSceneLogic() {
 }
 
 void SpecialOpcodes::spcCastleMoatFull() {
-	//TODO
+	_vm->_scene->getScaleLayer()->backup();
 }
 
 void SpecialOpcodes::spcCastleRestoreScalePoints() {
-	//TODO spcCastleRestoreScalePoints
+	_vm->_scene->getScaleLayer()->restore();
 }
 
 void SpecialOpcodes::spcCastleMoatUpdateActorSceneScalePoints() {
-	//TODO
+	_vm->_scene->getScaleLayer()->clearAll();
+	_vm->_scene->getScaleLayer()->setValue(0, 199, 7);
 }
 
 void SpecialOpcodes::spcCastleGateMoatDrainedSceneLogic() {
@@ -514,7 +516,7 @@ void SpecialOpcodes::spcCastleGateMoatDrainedSceneLogic() {
 void SpecialOpcodes::spcUnk34() {
 	Actor *flicker = _vm->_dragonINIResource->getFlickerRecord()->actor;
 	flicker->setFlag(ACTOR_FLAG_80);
-	flicker->scale = 0x100;
+	flicker->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 }
 
 void SpecialOpcodes::spcFlickerClearFlag0x80() {

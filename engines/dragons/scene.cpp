@@ -370,7 +370,7 @@ void Scene::draw() {
 				Graphics::Surface *s = actor->surface;
 				if (actor->priorityLayer == priority) { //} && x + s->w < 320 && y + s->h < 200) {
 					if (!actor->isFlagSet(ACTOR_FLAG_80)) {
-						actor->scale = _stage->getScale(actor->y_pos);
+						actor->scale = _stage->getScaleLayer()->getScale(actor->y_pos);
 					}
 					int x = actor->x_pos - (actor->frame->xOffset * actor->scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.x);
 					int y = actor->y_pos - (actor->frame->yOffset * actor->scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.y);
@@ -513,6 +513,10 @@ void Scene::drawBgLayer(uint8 layerNumber, Common::Rect rect, Graphics::Surface 
 	}
 //	clippedRect.bottom += offset.y < 0 ? -offset.y : 0;
 	_screen->copyRectToSurface8bpp(*surface, _screen->getPalette(0), 0, 0, rect, false, 128);
+}
+
+ScaleLayer *Scene::getScaleLayer() {
+	return _stage->getScaleLayer();
 }
 
 } // End of namespace Dragons

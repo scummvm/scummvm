@@ -25,6 +25,7 @@
 #include "dragons/dragonini.h"
 #include "dragons/talk.h"
 #include "dragons/scene.h"
+#include "dragons/screen.h"
 
 namespace Dragons {
 
@@ -52,7 +53,7 @@ void Minigame5::run() {
 	uint16 local_76;
 	ushort local_74;
 	ushort local_72;
-	ushort local_70;
+	ushort bombScale;
 	Actor *bombActor;
 	Actor *flickerActor;
 	Actor *pusherActor;
@@ -107,7 +108,7 @@ void Minigame5::run() {
 	_vm->_dragonINIResource->setFlickerRecord(_vm->_dragonINIResource->getRecord(DAT_80063a40 - 1));
 	flickerActor = _vm->_dragonINIResource->getFlickerRecord()->actor;
 	flickerActor->flags = flickerActor->flags | 0x380;
-	flickerActor->scale = 0x100;
+	flickerActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	flickerActor->priorityLayer = 4;
 	flickerActor->_sequenceID2 = -1;
 	flickerActor->updateSequence(0x19);
@@ -126,7 +127,7 @@ void Minigame5::run() {
 	pusherActor->flags = pusherActor->flags | 0x380;
 	pusherActor->x_pos = flickerActor->x_pos + -0xe;
 	pusherActor->y_pos = flickerActor->y_pos + 7;
-	pusherActor->scale = 0x100;
+	pusherActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	pusherActor->priorityLayer = 6;
 //	DisableVSyncEvent();
 	wheelsActor = _vm->_actorManager->loadActor(7,0x11,0,0);
@@ -135,7 +136,7 @@ void Minigame5::run() {
 		error("Couldn't alloc wheels!");
 	}
 	wheelsActor->flags = wheelsActor->flags | 0x380;
-	wheelsActor->scale = 0x100;
+	wheelsActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	wheelsActor->x_pos = flickerActor->x_pos;
 	wheelsActor->y_pos = flickerActor->y_pos;
 	wheelsActor->priorityLayer = 5;
@@ -148,7 +149,7 @@ void Minigame5::run() {
 		error("Couldn't alloc bomb!");
 	}
 	bombActor->flags = bombActor->flags | 0x380;
-	bombActor->scale = 0x100;
+	bombActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	bombActor->priorityLayer = 0;
 //	DisableVSyncEvent();
 	dustActor = _vm->_actorManager->loadActor(8,8,100,100,0);
@@ -157,7 +158,7 @@ void Minigame5::run() {
 		error("Couldn't alloc dust sprite!");
 	}
 	dustActor->flags = dustActor->flags | 0x380;
-	dustActor->scale = 0x100;
+	dustActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	local_4e = _vm->_dragonINIResource->getRecord(DAT_80063a48 + -1)->actor;
 	local_4c = 0;
 	local_4a = local_4e->field_c;
@@ -279,8 +280,8 @@ void Minigame5::run() {
 									local_5e = 0x2d00;
 									local_5a = (local_72 + 3) * 0x80;
 									bombActor->y_pos = 0x5a;
-									local_70 = 0x100;
-									bombActor->scale = 0x100;
+									bombScale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+									bombActor->scale = bombScale;
 									_vm->playOrStopSound(10);
 									bombActor->priorityLayer = 3;
 									flickerActor->updateSequence(8);
@@ -294,7 +295,7 @@ void Minigame5::run() {
 							break;
 						case 3:
 							local_60 = local_60 + local_5c;
-							if ((uint)local_72 * 2 + 0xb4 < (uint)local_70) {
+							if ((uint)local_72 * 2 + 0xb4 < (uint)bombScale) {
 								local_5e = local_5e - local_5a;
 								local_5a = local_5a - local_28[((uint)local_72 - 1) * 3];
 								if (local_5a < 0) {
@@ -302,7 +303,7 @@ void Minigame5::run() {
 								}
 							}
 							else {
-								if ((int)(uint)local_70 < (int)((uint)local_72 * -4 + 0xba)) {
+								if ((int)(uint)bombScale < (int)((uint)local_72 * -4 + 0xba)) {
 									local_5e = local_5e + local_5a;
 									local_5a = local_5a + local_28[((uint)local_72 - 1) * 3 + 2];
 								}
@@ -312,9 +313,9 @@ void Minigame5::run() {
 							}
 							bombActor->x_pos = local_60 >> 7;
 							bombActor->y_pos = local_5e >> 7;
-							local_70 = local_70 - 3;
-							bombActor->scale = local_70;
-							if (local_70 == 0x7f) {
+							bombScale = bombScale - 3;
+							bombActor->scale = bombScale;
+							if (bombScale == 0x7f) {
 								if (((local_60 >> 7 < local_30[0]) || (local_30[1] < local_60 >> 7)) ||
 									(local_72 != local_30[2])) {
 									local_42 = 8;
@@ -346,13 +347,13 @@ void Minigame5::run() {
 									currentState = 8;
 								}
 							}
-							if (local_70 < 0x7f) {
+							if (bombScale < 0x7f) {
 								bombActor->priorityLayer = 2;
 							}
-							if ((0xc < local_70) && (local_70 < 0x41)) {
+							if ((0xc < bombScale) && (bombScale < 0x41)) {
 								bombActor->priorityLayer = 0;
 							}
-							if ((short)local_70 < 2) {
+							if ((short)bombScale < 2) {
 								currentState = 5;
 							}
 							break;

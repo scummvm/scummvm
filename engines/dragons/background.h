@@ -50,11 +50,18 @@ typedef struct {
 
 class ScaleLayer {
 public:
+	ScaleLayer();
+	~ScaleLayer();
 	void load(Common::SeekableReadStream &stream);
 	uint16 getScale(uint16 y);
+	void backup();
+	void restore();
+	void clearAll();
+	void setValue(uint8 index, int16 y, int16 value);
 
 private:
 	ScaleBand _bands[32];
+	ScaleBand *_savedBands;
 };
 
 struct TileMap {
@@ -106,7 +113,7 @@ public:
 	void setPalette(byte *newPalette);
 	void setLayerOffset(uint8 layerNumber, Common::Point offset);
 	Common::Point getLayerOffset(uint8 layerNumber);
-	int16 getScale(int16 y);
+	ScaleLayer *getScaleLayer() { return &_scaleLayer; }
 private:
 	Common::Point *loadPoints(Common::SeekableReadStream &stream);
 	Graphics::Surface *initGfxLayer(TileMap &tileMap);

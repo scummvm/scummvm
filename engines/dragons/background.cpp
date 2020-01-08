@@ -23,6 +23,7 @@
 #include "graphics/screen.h"
 #include "common/endian.h"
 #include "background.h"
+#include "screen.h"
 
 namespace Dragons {
 
@@ -286,10 +287,6 @@ Common::Point Background::getLayerOffset(uint8 layerNumber) {
 	return layerOffset[layerNumber];
 }
 
-int16 Background::getScale(int16 y) {
-	return _scaleLayer.getScale(y);
-}
-
 BackgroundResourceLoader::BackgroundResourceLoader(BigfileArchive *bigFileArchive, DragonRMS *dragonRMS) : _bigFileArchive(
 	bigFileArchive), _dragonRMS(dragonRMS) {}
 
@@ -392,6 +389,40 @@ uint16 ScaleLayer::getScale(uint16 y) {
 		}
 	}
 	return uVar1 & 0xfff8u;
+}
+
+ScaleLayer::ScaleLayer(): _savedBands(NULL) {
+	for (int i = 0; i < 32; i++) {
+		_bands[i]._y = -1;
+		_bands[i]._priority = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	}
+}
+
+ScaleLayer::~ScaleLayer() {
+	delete _savedBands;
+}
+
+void ScaleLayer::backup() {
+	delete _savedBands;
+	_savedBands = new ScaleBand[32];
+	memcpy(_savedBands, _bands, sizeof(_bands));
+}
+
+void ScaleLayer::restore() {
+	assert(_savedBands);
+	memcpy(_bands, _savedBands, sizeof(_bands));
+}
+
+void ScaleLayer::clearAll() {
+	for (int i = 0; i < 32; i++) {
+		_bands[i]._y = -1;
+	}
+}
+
+void ScaleLayer::setValue(uint8 index, int16 y, int16 value) {
+	assert(index < 32);
+	_bands[index]._y = y;
+	_bands[index]._priority = value;
 }
 
 } // End of namespace Dragons

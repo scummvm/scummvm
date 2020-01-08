@@ -222,7 +222,7 @@ void Minigame3::run() {
 			error("Couldn't alloc tear");
 		}
 		tearActorTbl[(int16)i]->flags = tearActorTbl[(int16)i]->flags | 0x380;
-		tearActorTbl[(int16)i]->scale = 0x100;
+		tearActorTbl[(int16)i]->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 		tearActorTbl[(int16)i]->priorityLayer = 0;
 		local_208[(int16)i] = -1;
 		local_208[(int)(int16)i + 8] = 0;
@@ -240,7 +240,7 @@ void Minigame3::run() {
 	handActorId->setFlag(ACTOR_FLAG_800);
 	handActorId->setFlag(ACTOR_FLAG_2000);
 	handActorId->setFlag(ACTOR_FLAG_4000);
-	handActorId->scale = 0x100;
+	handActorId->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	handActorId->priorityLayer = 0;
 	handActorId->field_7c = 0x40000;
 	i = 0;
@@ -250,7 +250,7 @@ void Minigame3::run() {
 			error("Couldn't alloc tear blink");
 		}
 		tearBlinkActorTbl[(int16)i]->flags = tearBlinkActorTbl[(int16)i]->flags | 0x4384;
-		tearBlinkActorTbl[(int16)i]->scale = 0x100;
+		tearBlinkActorTbl[(int16)i]->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 		tearBlinkActorTbl[(int16)i]->priorityLayer = 0;
 		i = i + 1;
 	}
@@ -262,7 +262,7 @@ void Minigame3::run() {
 		}
 		tearBlinkActorTbl2[(int16)i]->setFlag(ACTOR_FLAG_100);
 		tearBlinkActorTbl2[(int16)i]->setFlag(ACTOR_FLAG_800);
-		tearBlinkActorTbl2[(int16)i]->scale = 0x100;
+		tearBlinkActorTbl2[(int16)i]->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 		tearBlinkActorTbl2[(int16)i]->priorityLayer = 0;
 		i = i + 1;
 	}

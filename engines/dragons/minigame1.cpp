@@ -24,6 +24,7 @@
 #include "dragons.h"
 #include "dragons/dragonini.h"
 #include "dragons/talk.h"
+#include "dragons/screen.h"
 
 namespace Dragons {
 
@@ -174,7 +175,7 @@ void Minigame1::run() {
 	_vm->_dragonINIResource->setFlickerRecord(_vm->getINI(DAT_80063a40 - 1));
 	flickerActor = _vm->getINI(DAT_80063a40 - 1)->actor;
 	flickerActor->flags = flickerActor->flags | 0x380;
-	flickerActor->scale = 0x100;
+	flickerActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	flickerActor->priorityLayer = 4;
 	flickerActor->_sequenceID2 = -1;
 	flickerActor->updateSequence(0x15);
@@ -191,14 +192,14 @@ void Minigame1::run() {
 	pusherActor->flags = pusherActor->flags | 0x380;
 	pusherActor->x_pos = flickerActor->x_pos + -0xe;
 	pusherActor->y_pos = flickerActor->y_pos + 7;
-	pusherActor->scale = 0x100;
+	pusherActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	pusherActor->priorityLayer = 6;
 	wheelsActor = _vm->_actorManager->loadActor(7,0x11,0,0);
 //	if (wheelsActorId == -1) {
 //		ProbablyShowASCIIMessage(s_couldn't_alloc_wheels_8008e96c,2,4,0,0xffffffff);
 //	}
 	wheelsActor->flags = wheelsActor->flags | 0x380;
-	wheelsActor->scale = 0x100;
+	wheelsActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	wheelsActor->x_pos = flickerActor->x_pos;
 	wheelsActor->y_pos = flickerActor->y_pos;
 	wheelsActor->priorityLayer = 5;
@@ -209,7 +210,7 @@ void Minigame1::run() {
 //		ProbablyShowASCIIMessage(s_couldn't_alloc-cat_8008e984,2,4,0,0xffffffff);
 //	}
 	catActor->flags = catActor->flags | 0x380;
-	catActor->scale = 0x100;
+	catActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	catActor->priorityLayer = 0;
 	i = 0;
 	while (i < 3) {
@@ -218,7 +219,7 @@ void Minigame1::run() {
 //			ProbablyShowASCIIMessage(s_couldn't_alloc_target!_8008e998,2,4,0,0xffffffff);
 //		}
 		targetActorIdTbl[(uint)i + 1]->flags = targetActorIdTbl[(uint)i + 1]->flags | 0x380;
-		targetActorIdTbl[(uint)i + 1]->scale = 0x100;
+		targetActorIdTbl[(uint)i + 1]->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 		auStack378[(uint)i] = 0;
 		//TODO FUN_80017010_update_actor_texture_maybe(1);
 		i = i + 1;
@@ -233,7 +234,7 @@ void Minigame1::run() {
 //		ProbablyShowASCIIMessage(s_couldn't_alloc_dust_sprite!_8008e9b0,2,5,0,0xffffffff);
 //	}
 	dustSpriteActor->flags = dustSpriteActor->flags | 0x380;
-	dustSpriteActor->scale = 0x100;
+	dustSpriteActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	uVar1 = _vm->getINI(DAT_80063a48 - 1)->actor; //dragon_ini_pointer[DAT_80063a48 + -1].actorId;
 	local_21e = 0;
 	actorFieldC = uVar1->field_c;
@@ -382,7 +383,7 @@ void Minigame1::run() {
 							local_23a = (local_25a + 3) * 0x80;
 							catActor->y_pos = 0x5a;
 							catFieldE_scaleMaybe = 0x100;
-							catActor->scale = 0x100;
+							catActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 							catActor->updateSequence(0xc);
 							_vm->playOrStopSound(5);
 							catActor->priorityLayer = 3;
@@ -586,7 +587,7 @@ void Minigame1::run() {
 								else {
 									if ((int)(uint)(local_240 >> 7) < (int)((uint)flickerXPos - 0x32)) {
 										if (catActor->_sequenceID != 9) {
-											catActor->scale = 0x100;
+											catActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 											catActor->updateSequence(9);
 										}
 										local_240 = local_240 + 0x180;
@@ -595,7 +596,7 @@ void Minigame1::run() {
 									else {
 										if ((uint)flickerXPos + 0x32 < (uint)(local_240 >> 7)) {
 											if (catActor->_sequenceID != 10) {
-												catActor->scale = 0x100;
+												catActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 												catActor->updateSequence(10);
 											}
 											local_240 = local_240 - 0x180;
