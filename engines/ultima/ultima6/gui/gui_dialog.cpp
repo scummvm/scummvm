@@ -91,9 +91,7 @@ GUI_Dialog:: Display(bool full_redraw) {
 				backingstore_rect.width(), backingstore_rect.height());
 		}
 
-		backingstore_rect.left = area.left; // cursor must be drawn LAST for this to work
-		backingstore_rect.top = area.top;
-
+		backingstore_rect.moveTo(area.left, area.top);
 		backingstore = screen->copy_area(&backingstore_rect, backingstore);
 
 		old_x = area.left;
