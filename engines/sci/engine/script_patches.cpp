@@ -147,6 +147,7 @@ static const char *const selectorNameTable[] = {
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
 	"posn",         // SCI2 benchmarking script
+	"printLang",    // GK2
 	"view",         // RAMA benchmarking, GK1, QFG4
 	"fade",         // Shivers
 	"test",         // Torin
@@ -260,6 +261,7 @@ enum ScriptPatcherSelectors {
 	,
 	SELECTOR_newWith,
 	SELECTOR_posn,
+	SELECTOR_printLang,
 	SELECTOR_view,
 	SELECTOR_fade,
 	SELECTOR_test,
@@ -3706,6 +3708,39 @@ static const uint16 gk2GameOverPriorityPatch[] = {
 	PATCH_END
 };
 
+// GK2 fans have created patches that add subtitles to the entire game. There
+//  are at least English and Spanish patch sets. Sierra added the subtitle
+//  feature solely for the Portuguese version, which along with the Italian
+//  version are the final localized versions of the game. The Italian version
+//  also contains the subtitle scripts even though it doesn't make of use the
+//  feature. The fan patches work by including these Italian scripts, replacing
+//  the Portuguese resources and strings, and configuring Sierra's interpreter
+//  to use the Portuguese language through RESOURCE.CFG. This sets GK2:printLang
+//  which the scripts test for Portuguese in order to activate subtitles.
+//
+// The subtitle patches are compatible with ScummVM except for the requirement
+//  that GK2:printLang equals Portuguese (351) since we don't use RESOURCE.CFG.
+//  We fix this by patching the GK2:printLang tests to always activate subtitles
+//  when a sync resource is present for synchronizing text to video playback.
+//
+// Applies to: PC versions with a subtitle fan-patch applied
+// Responsible methods: Any that test GK2:printLang for Portuguese
+// Fixes bugs: #9677, #11282
+static const uint16 gk2SubtitleCompatibilitySignature[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(printLang), // pushi printLang
+	0x76,                           // push0
+	0x81, 0x01,                     // lag 01
+	0x4a, SIG_UINT16(0x0004),       // send 04 [ GK2 printLang? ]
+	SIG_END
+};
+
+static const uint16 gk2SubtitleCompatibilityPatch[] = {
+	0x34, PATCH_UINT16(0x015f),     // ldi 015f [ K_LANG_PORTUGUESE ]
+	0x33, 0x03,                     // jmp 03
+	PATCH_END
+};
+
 //          script, description,                                              signature                         patch
 static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true,     0, "disable volume reset on startup",                     1, gk2VolumeResetSignature,           gk2VolumeResetPatch },
@@ -3730,6 +3765,11 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true, 64990, "increase number of save games (1/2)",                 1, sci2NumSavesSignature1,            sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",                 1, sci2NumSavesSignature2,            sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",                     1, sci2ChangeDirSignature,            sci2ChangeDirPatch },
+	{ false,    11, "subtitle patch compatibility",                        7, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
+	{ false,    12, "subtitle patch compatibility",                        6, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
+	{ false,    36, "subtitle patch compatibility",                        2, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
+	{ false,   200, "subtitle patch compatibility",                        1, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
+	{ false, 64924, "subtitle patch compatibility",                        1, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -18556,6 +18596,12 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 			case GID_FREDDYPHARKAS:
 				if (_isMacSci11 && !g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 844))) {
 					enablePatch(signatureTable, "Mac: skip broken hop singh scene");
+				}
+				break;
+			case GID_GK2:
+				// Enable subtitle compatibility if a sync resource is present
+				if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeSync, 10))) {
+					enablePatch(signatureTable, "subtitle patch compatibility");
 				}
 				break;
 			case GID_KQ5:
