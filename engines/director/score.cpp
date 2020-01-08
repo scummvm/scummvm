@@ -1307,6 +1307,8 @@ void Score::startLoop() {
 	_stopPlay = false;
 	_nextFrameTime = 0;
 
+	_lingo->processEvent(kEventStartMovie);
+
 	_frames[_currentFrame]->prepareFrame(this);
 
 	while (!_stopPlay) {
@@ -1322,6 +1324,8 @@ void Score::startLoop() {
 		if (_currentFrame < _frames.size())
 			_vm->processEvents();
 	}
+
+	_lingo->processEvent(kEventStopMovie);
 }
 
 void Score::update() {
