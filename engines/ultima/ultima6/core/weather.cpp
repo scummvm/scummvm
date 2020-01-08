@@ -58,7 +58,6 @@ Weather::Weather(Configuration *cfg, GameClock *c, nuvie_game_t type) {
 }
 
 Weather::~Weather() {
-	delete wind_timer;
 }
 
 bool Weather::load(NuvieIO *objlist) {

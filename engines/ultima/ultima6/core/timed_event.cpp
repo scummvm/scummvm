@@ -57,6 +57,13 @@ void TimeQueue::call_timers(uint32 now) {
 	}
 }
 
+void TimeQueue::clear() {
+	while (!empty()) {
+		TimedEvent *event = pop_timer();
+		if (event->tq_can_delete)
+			delete event;
+	}
+}
 
 /* Add new timed event to queue, which will activate `event' when time is
  * `evtime'.
