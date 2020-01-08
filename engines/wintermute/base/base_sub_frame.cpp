@@ -119,7 +119,7 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	Rect32 rect;
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
-	bool custoTrans = false;
+	bool customTrans = false;
 	rect.setEmpty();
 	char *surfaceFile = nullptr;
 
@@ -134,7 +134,7 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 
 		case TOKEN_TRANSPARENT:
 			parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
-			custoTrans = true;
+			customTrans = true;
 			break;
 
 		case TOKEN_RECT:
@@ -191,7 +191,7 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	}
 
 	if (surfaceFile != nullptr) {
-		if (custoTrans) {
+		if (customTrans) {
 			setSurface(surfaceFile, false, r, g, b, lifeTime, keepLoaded);
 		} else {
 			setSurface(surfaceFile, true, 0, 0, 0, lifeTime, keepLoaded);
@@ -199,7 +199,7 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	}
 
 	_alpha = BYTETORGBA(ar, ag, ab, alpha);
-	if (custoTrans) {
+	if (customTrans) {
 		_transparent = BYTETORGBA(r, g, b, 0xFF);
 	}
 
