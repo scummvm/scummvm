@@ -20,13 +20,9 @@
  *
  */
 
-//#include <list>
-//#include <cassert>
-//#include <cmath>
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/conf/configuration.h"
 #include "ultima/ultima6/misc/call_back.h"
-
 #include "ultima/ultima6/files/nuvie_io.h"
 #include "ultima/ultima6/misc/u6_misc.h"
 #include "ultima/ultima6/misc/u6_llist.h"
@@ -62,7 +58,7 @@ Weather::Weather(Configuration *cfg, GameClock *c, nuvie_game_t type) {
 }
 
 Weather::~Weather() {
-
+	delete wind_timer;
 }
 
 bool Weather::load(NuvieIO *objlist) {

@@ -103,6 +103,8 @@ SoundManager::~SoundManager() {
 		delete it->_value;
 	for (StringCollectionMap::iterator it = m_MusicMap.begin(); it != m_MusicMap.end(); ++it)
 		delete it->_value;
+
+	delete m_SfxManager;
 }
 
 bool SoundManager::nuvieStartup(Configuration *config) {

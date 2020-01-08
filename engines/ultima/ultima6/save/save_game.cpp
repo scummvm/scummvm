@@ -341,6 +341,7 @@ bool SaveGame::load(const Common::String &filename) {
 
 	load_objlist();
 
+	delete saveFile;
 	return true;
 }
 
