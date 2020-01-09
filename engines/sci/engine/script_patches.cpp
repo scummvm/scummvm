@@ -3706,13 +3706,11 @@ static const uint16 gk2GameOverPriorityPatch[] = {
 
 // GK2 fans have created patches that add subtitles to the entire game. There
 //  are at least English and Spanish patch sets. Sierra added the subtitle
-//  feature solely for the Portuguese version, which along with the Italian
-//  version are the final localized versions of the game. The Italian version
-//  also contains the subtitle scripts even though it doesn't make of use the
-//  feature. The fan patches work by including these Italian scripts, replacing
-//  the Portuguese resources and strings, and configuring Sierra's interpreter
-//  to use the Portuguese language through RESOURCE.CFG. This sets GK2:printLang
-//  which the scripts test for Portuguese in order to activate subtitles.
+//  feature solely for the Portuguese version. The fan patches include these
+//  subtitle scripts, replace the Portuguese resources and embedded script
+//  strings, and configure Sierra's interpreter to use the Portuguese language
+//  through RESOURCE.CFG. This sets GK2:printLang which the scripts test for
+//  Portuguese in order to activate subtitles.
 //
 // The subtitle patches are compatible with ScummVM except for the requirement
 //  that GK2:printLang equals Portuguese (351) since we don't use RESOURCE.CFG.
@@ -3761,10 +3759,12 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true, 64990, "increase number of save games (1/2)",                 1, sci2NumSavesSignature1,            sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",                 1, sci2NumSavesSignature2,            sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",                     1, sci2ChangeDirSignature,            sci2ChangeDirPatch },
+	{ false,     0, "subtitle patch compatibility",                        3, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
 	{ false,    11, "subtitle patch compatibility",                        7, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
-	{ false,    12, "subtitle patch compatibility",                        6, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
-	{ false,    36, "subtitle patch compatibility",                        2, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
+	{ false,    12, "subtitle patch compatibility",                        5, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
+	{ false,    91, "subtitle patch compatibility",                        7, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
 	{ false,   200, "subtitle patch compatibility",                        1, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
+	{ false,  1300, "subtitle patch compatibility",                        1, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
 	{ false, 64924, "subtitle patch compatibility",                        1, gk2SubtitleCompatibilitySignature, gk2SubtitleCompatibilityPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
