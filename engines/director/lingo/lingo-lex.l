@@ -178,7 +178,7 @@ whitespace [\t ]
 
 		return FBLTINONEARG;
 	}
-(?i:the[ \t]+number[\t ]+of[\t ]+[[:alpha:]]+[\t ]in)	{
+(?i:the[ \t]+number[\t ]+of[\t ]+[[:alpha:]]+[\t ](in|of))	{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
