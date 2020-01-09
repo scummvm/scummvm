@@ -71,6 +71,7 @@ bool DirectorEngine::hasFeature(EngineFeature f) const {
 static const PlainGameDescriptor directorGames[] = {
 	{ "director",	"Macromedia Director Game" },
 	{ "directortest",	"Macromedia Director Test Target" },
+	{ "directortest-all",	"Macromedia Director All Movies Test Target" },
 	{ "theapartment",	"The Apartment, Interactive demo" },
 	{ "gundam0079",	"Gundam 0079: The War for Earth" },
 	{ "jewels",		"Jewels of the Oracle" },

@@ -145,6 +145,8 @@ Common::Error DirectorEngine::run() {
 		_lingo->runTests();
 
 		return Common::kNoError;
+	} else if (getGameID() == GID_TESTALL) {
+		enqueueAllMovies();
 	}
 
 	// FIXME
@@ -201,6 +203,10 @@ Common::Error DirectorEngine::run() {
 		_currentScore->startLoop();
 
 		debugC(1, kDebugEvents, "Finished playback of score '%s'", _currentScore->getMacName().c_str());
+
+		if (getGameID() == GID_TESTALL) {
+			_nextMovie = getNextMovieFromQueue();
+		}
 
 		// If a loop was requested, do it
 		if (!_nextMovie.movie.empty()) {
@@ -271,6 +277,28 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 	}
 
 	return nameMap;
+}
+
+void DirectorEngine::enqueueAllMovies() {
+	Common::ArchiveMemberList fsList;
+	SearchMan.listMatchingMembers(fsList, "*");
+
+	for (Common::ArchiveMemberList::iterator it = fsList.begin(); it != fsList.end(); ++it)
+		_movieQueue.push_back((*it)->getName());
+
+	Common::sort(_movieQueue.begin(), _movieQueue.end());
+
+	debug(1, "Enqueued %d movies", _movieQueue.size());
+}
+
+MovieReference DirectorEngine::getNextMovieFromQueue() {
+	MovieReference res;
+
+	res.movie = _movieQueue.front();
+
+	_movieQueue.remove_at(0);
+
+	return res;
 }
 
 } // End of namespace Director

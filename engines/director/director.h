@@ -25,6 +25,7 @@
 
 #include "common/random.h"
 #include "common/rect.h"
+#include "common/str-array.h"
 
 #include "common/hashmap.h"
 #include "engines/engine.h"
@@ -47,7 +48,8 @@ namespace Director {
 
 enum DirectorGameID {
 	GID_GENERIC,
-	GID_TEST
+	GID_TEST,
+	GID_TESTALL
 };
 
 class Archive;
@@ -178,9 +180,14 @@ private:
 	uint16 _draggingSpriteId;
 	Common::Point _draggingSpritePos;
 
+	Common::StringArray _movieQueue;
+
 private:
 	void testFontScaling();
 	void testFonts();
+
+	void enqueueAllMovies();
+	MovieReference getNextMovieFromQueue();
 };
 
 extern DirectorEngine *g_director;
