@@ -173,7 +173,13 @@ Common::Error DirectorEngine::run() {
 	loadSharedCastsFrom(_currentPath + _sharedCastFile);
 
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\nObtaining score name\n");
-	loadInitialMovie(getEXEName());
+
+	if (getGameID() == GID_TESTALL)  {
+		_nextMovie = getNextMovieFromQueue();
+		loadInitialMovie(_nextMovie.movie);
+	} else {
+		loadInitialMovie(getEXEName());
+	}
 
 	_currentScore->setArchive(_mainArchive);
 	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -280,21 +286,24 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 }
 
 void DirectorEngine::enqueueAllMovies() {
-	Common::ArchiveMemberList fsList;
-	SearchMan.listMatchingMembers(fsList, "*");
+	Common::FSNode dir(ConfMan.get("path"));
+	Common::FSList files;
+	dir.getChildren(files, Common::FSNode::kListFilesOnly);
 
-	for (Common::ArchiveMemberList::iterator it = fsList.begin(); it != fsList.end(); ++it)
-		_movieQueue.push_back((*it)->getName());
+	for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file)
+		_movieQueue.push_back((*file).getName());
 
 	Common::sort(_movieQueue.begin(), _movieQueue.end());
 
-	debug(1, "Enqueued %d movies", _movieQueue.size());
+	debug(1, "=========> Enqueued %d movies", _movieQueue.size());
 }
 
 MovieReference DirectorEngine::getNextMovieFromQueue() {
 	MovieReference res;
 
 	res.movie = _movieQueue.front();
+
+	debug(1, "=========> Next movie is %s", res.movie.c_str());
 
 	_movieQueue.remove_at(0);
 
