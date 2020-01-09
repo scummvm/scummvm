@@ -26,3 +26,5 @@ set the windowtype of BlastWindow to 5
 
 set the bottom of x to originV + (the number of lines in someText) * 16
 set the bottom of x to originV + (the number of words in someText) * 16
+
+put the number of words of field 1 into field 5
