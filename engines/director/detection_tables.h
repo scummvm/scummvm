@@ -37,7 +37,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 		{
 			"directortest",
 			"",
-			AD_ENTRY1("lingotests.lingo", 0),
+			AD_ENTRY1("lingotests", 0),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
