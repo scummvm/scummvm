@@ -311,7 +311,7 @@ void DirectorEngine::testFonts() {
 
 	Common::MacResManager *fontFile = new Common::MacResManager();
 	if (!fontFile->open(fontName))
-		error("Could not open %s as a resource fork", fontName.c_str());
+		error("testFonts(): Could not open %s as a resource fork", fontName.c_str());
 
 	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
 	if (fonds.size() > 0) {
