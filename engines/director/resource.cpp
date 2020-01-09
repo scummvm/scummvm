@@ -63,8 +63,10 @@ Archive *DirectorEngine::openMainArchive(const Common::String movie) {
 
 	_mainArchive = createArchive();
 
-	if (!_mainArchive->openFile(movie))
-		error("openMainArchive(): Could not open '%s'", movie.c_str());
+	if (!_mainArchive->openFile(movie)) {
+		warning("openMainArchive(): Could not open '%s'", movie.c_str());
+		return nullptr;
+	}
 
 	return _mainArchive;
 }

@@ -358,13 +358,13 @@ void Score::loadSpriteImages(bool isSharedCast) {
 
 
 Score::~Score() {
-	if (_surface)
+	if (_surface && _surface->w)
 		_surface->free();
 
-	if (_trailSurface)
+	if (_trailSurface && _trailSurface->w)
 		_trailSurface->free();
 
-	if (_backSurface)
+	if (_backSurface && _backSurface->w)
 		_backSurface->free();
 
 	delete _backSurface;
