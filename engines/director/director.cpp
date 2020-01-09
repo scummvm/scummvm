@@ -204,11 +204,13 @@ Common::Error DirectorEngine::run() {
 			_nextMovie.frameI = -1;
 		}
 
-		debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
+		if (!debugChannelSet(-1, kDebugLingoCompileOnly)) {
+			debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
 
-		_currentScore->startLoop();
+			_currentScore->startLoop();
 
-		debugC(1, kDebugEvents, "Finished playback of score '%s'", _currentScore->getMacName().c_str());
+			debugC(1, kDebugEvents, "Finished playback of score '%s'", _currentScore->getMacName().c_str());
+		}
 
 		if (getGameID() == GID_TESTALL) {
 			_nextMovie = getNextMovieFromQueue();
