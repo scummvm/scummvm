@@ -72,6 +72,8 @@
 	<string>faYfM+DGPgJCrRzpxSHoFD0rzHa6ZnnEXuzz2E7ZRUk=</string>
 	<key>NSDockTilePlugIn</key>
 	<string>scummvm.docktileplugin</string>
+        <key>NSRequiresAquaSystemAppearance</key>
+        <false/>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
 </dict>
