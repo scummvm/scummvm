@@ -39,8 +39,207 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseKeyboardState, false)
 
+// Used in WME 1.x
+// See "MSDN: Virtual-Key Codes" for more details on original WME keycodes
+const keyCodeMapping wmeOriginalMapping[] = {
+	{ Common::KEYCODE_BACKSPACE,    8 },
+	{ Common::KEYCODE_TAB,          9 },
+	{ Common::KEYCODE_RETURN,       13 },
+	{ Common::KEYCODE_CAPSLOCK,     20 },
+	{ Common::KEYCODE_ESCAPE,       27 },
+	{ Common::KEYCODE_SPACE,        32 },
+
+	{ Common::KEYCODE_PAUSE,        19 },
+	{ Common::KEYCODE_PAGEUP,       33 },
+	{ Common::KEYCODE_PAGEDOWN,     34 },
+	{ Common::KEYCODE_END,          35 },
+	{ Common::KEYCODE_HOME,         36 },
+	{ Common::KEYCODE_LEFT,         37 },
+	{ Common::KEYCODE_UP,           38 },
+	{ Common::KEYCODE_RIGHT,        39 },
+	{ Common::KEYCODE_DOWN,         40 },
+	{ Common::KEYCODE_PRINT,        42 },
+	{ Common::KEYCODE_INSERT,       45 },
+	{ Common::KEYCODE_DELETE,       46 },
+	{ Common::KEYCODE_SCROLLOCK,    145 },
+
+	{ Common::KEYCODE_0,            48 },
+	{ Common::KEYCODE_1,            49 },
+	{ Common::KEYCODE_2,            50 },
+	{ Common::KEYCODE_3,            51 },
+	{ Common::KEYCODE_4,            52 },
+	{ Common::KEYCODE_5,            53 },
+	{ Common::KEYCODE_6,            54 },
+	{ Common::KEYCODE_7,            55 },
+	{ Common::KEYCODE_8,            56 },
+	{ Common::KEYCODE_9,            57 },
+
+	{ Common::KEYCODE_a,            65 },
+	{ Common::KEYCODE_b,            66 },
+	{ Common::KEYCODE_c,            67 },
+	{ Common::KEYCODE_d,            68 },
+	{ Common::KEYCODE_e,            69 },
+	{ Common::KEYCODE_f,            70 },
+	{ Common::KEYCODE_g,            71 },
+	{ Common::KEYCODE_h,            72 },
+	{ Common::KEYCODE_i,            73 },
+	{ Common::KEYCODE_j,            74 },
+	{ Common::KEYCODE_k,            75 },
+	{ Common::KEYCODE_l,            76 },
+	{ Common::KEYCODE_m,            77 },
+	{ Common::KEYCODE_n,            78 },
+	{ Common::KEYCODE_o,            79 },
+	{ Common::KEYCODE_p,            80 },
+	{ Common::KEYCODE_q,            81 },
+	{ Common::KEYCODE_r,            82 },
+	{ Common::KEYCODE_s,            83 },
+	{ Common::KEYCODE_t,            84 },
+	{ Common::KEYCODE_u,            85 },
+	{ Common::KEYCODE_v,            86 },
+	{ Common::KEYCODE_w,            87 },
+	{ Common::KEYCODE_x,            88 },
+	{ Common::KEYCODE_y,            89 },
+	{ Common::KEYCODE_z,            90 },
+
+	{ Common::KEYCODE_CLEAR,        12 },
+	{ Common::KEYCODE_KP_ENTER,     13 },
+	{ Common::KEYCODE_KP0,          96 },
+	{ Common::KEYCODE_KP1,          97 },
+	{ Common::KEYCODE_KP2,          98 },
+	{ Common::KEYCODE_KP3,          99 },
+	{ Common::KEYCODE_KP4,          100 },
+	{ Common::KEYCODE_KP5,          101 },
+	{ Common::KEYCODE_KP6,          102 },
+	{ Common::KEYCODE_KP7,          103 },
+	{ Common::KEYCODE_KP8,          104 },
+	{ Common::KEYCODE_KP9,          105 },
+	{ Common::KEYCODE_KP_MULTIPLY,  106 },
+	{ Common::KEYCODE_KP_PLUS,      107 },
+	{ Common::KEYCODE_KP_MINUS,     109 },
+	{ Common::KEYCODE_KP_PERIOD,    110 },
+	{ Common::KEYCODE_KP_DIVIDE,    111 },
+	{ Common::KEYCODE_NUMLOCK,      144 },
+
+	{ Common::KEYCODE_F1,           112 },
+	{ Common::KEYCODE_F2,           113 },
+	{ Common::KEYCODE_F3,           114 },
+	{ Common::KEYCODE_F4,           115 },
+	{ Common::KEYCODE_F5,           116 },
+	{ Common::KEYCODE_F6,           117 },
+	{ Common::KEYCODE_F7,           118 },
+	{ Common::KEYCODE_F8,           119 },
+	{ Common::KEYCODE_F9,           120 },
+	{ Common::KEYCODE_F10,          121 },
+	{ Common::KEYCODE_F11,          122 },
+	{ Common::KEYCODE_F12,          123 },
+
+	{ Common::KEYCODE_INVALID,      0 }
+};
+
+// Used in WME Lite & FoxTail
+// See "SDL_Keycode" for more details on new WME keycodes
+const keyCodeMapping wmeSdlMapping[] = {
+	{ Common::KEYCODE_BACKSPACE,    8 },
+	{ Common::KEYCODE_TAB,          9 },
+	{ Common::KEYCODE_RETURN,       13 },
+	{ Common::KEYCODE_ESCAPE,       27 },
+	{ Common::KEYCODE_SPACE,        32 },
+	{ Common::KEYCODE_CAPSLOCK,     1073741881 },
+
+	{ Common::KEYCODE_DELETE,       127 },
+	{ Common::KEYCODE_PRINT,        1073741894 },
+	{ Common::KEYCODE_SCROLLOCK,    1073741895 },
+	{ Common::KEYCODE_PAUSE,        1073741896 },
+	{ Common::KEYCODE_INSERT,       1073741897 },
+	{ Common::KEYCODE_HOME,         1073741898 },
+	{ Common::KEYCODE_PAGEUP,       1073741899 },
+	{ Common::KEYCODE_END,          1073741901 },
+	{ Common::KEYCODE_PAGEDOWN,     1073741902 },
+	{ Common::KEYCODE_RIGHT,        1073741903 },
+	{ Common::KEYCODE_LEFT,         1073741904 },
+	{ Common::KEYCODE_DOWN,         1073741905 },
+	{ Common::KEYCODE_UP,           1073741906 },
+
+	{ Common::KEYCODE_0,            48 },
+	{ Common::KEYCODE_1,            49 },
+	{ Common::KEYCODE_2,            50 },
+	{ Common::KEYCODE_3,            51 },
+	{ Common::KEYCODE_4,            52 },
+	{ Common::KEYCODE_5,            53 },
+	{ Common::KEYCODE_6,            54 },
+	{ Common::KEYCODE_7,            55 },
+	{ Common::KEYCODE_8,            56 },
+	{ Common::KEYCODE_9,            57 },
+
+	{ Common::KEYCODE_a,            97 },
+	{ Common::KEYCODE_b,            98 },
+	{ Common::KEYCODE_c,            99 },
+	{ Common::KEYCODE_d,            100 },
+	{ Common::KEYCODE_e,            101 },
+	{ Common::KEYCODE_f,            102 },
+	{ Common::KEYCODE_g,            103 },
+	{ Common::KEYCODE_h,            104 },
+	{ Common::KEYCODE_i,            105 },
+	{ Common::KEYCODE_j,            106 },
+	{ Common::KEYCODE_k,            107 },
+	{ Common::KEYCODE_l,            108 },
+	{ Common::KEYCODE_m,            109 },
+	{ Common::KEYCODE_n,            110 },
+	{ Common::KEYCODE_o,            111 },
+	{ Common::KEYCODE_p,            112 },
+	{ Common::KEYCODE_q,            113 },
+	{ Common::KEYCODE_r,            114 },
+	{ Common::KEYCODE_s,            115 },
+	{ Common::KEYCODE_t,            116 },
+	{ Common::KEYCODE_u,            117 },
+	{ Common::KEYCODE_v,            118 },
+	{ Common::KEYCODE_w,            119 },
+	{ Common::KEYCODE_x,            120 },
+	{ Common::KEYCODE_y,            121 },
+	{ Common::KEYCODE_z,            122 },
+	
+	{ Common::KEYCODE_KP_ENTER,     13 },
+	{ Common::KEYCODE_NUMLOCK,      1073741907 },
+	{ Common::KEYCODE_KP_DIVIDE,    1073741908 },
+	{ Common::KEYCODE_KP_MULTIPLY,  1073741909 },
+	{ Common::KEYCODE_KP_MINUS,     1073741910 },
+	{ Common::KEYCODE_KP_PLUS,      1073741911 },
+	{ Common::KEYCODE_KP1,          1073741913 },
+	{ Common::KEYCODE_KP2,          1073741914 },
+	{ Common::KEYCODE_KP3,          1073741915 },
+	{ Common::KEYCODE_KP4,          1073741916 },
+	{ Common::KEYCODE_KP5,          1073741917 },
+	{ Common::KEYCODE_KP6,          1073741918 },
+	{ Common::KEYCODE_KP7,          1073741919 },
+	{ Common::KEYCODE_KP8,          1073741920 },
+	{ Common::KEYCODE_KP9,          1073741921 },
+	{ Common::KEYCODE_KP0,          1073741922 },
+	{ Common::KEYCODE_KP_PERIOD,    1073741923 },
+	{ Common::KEYCODE_CLEAR,        1073741980 },
+
+	{ Common::KEYCODE_F1,           1073741882 },
+	{ Common::KEYCODE_F2,           1073741883 },
+	{ Common::KEYCODE_F3,           1073741884 },
+	{ Common::KEYCODE_F4,           1073741885 },
+	{ Common::KEYCODE_F5,           1073741886 },
+	{ Common::KEYCODE_F6,           1073741887 },
+	{ Common::KEYCODE_F7,           1073741888 },
+	{ Common::KEYCODE_F8,           1073741889 },
+	{ Common::KEYCODE_F9,           1073741890 },
+	{ Common::KEYCODE_F10,          1073741891 },
+	{ Common::KEYCODE_F11,          1073741892 },
+	{ Common::KEYCODE_F12,          1073741893 },
+
+	{ Common::KEYCODE_INVALID,      0 }
+};
+
 //////////////////////////////////////////////////////////////////////////
 BaseKeyboardState::BaseKeyboardState(BaseGame *inGame) : BaseScriptable(inGame) {
+	init();
+}
+
+//////////////////////////////////////////////////////////////////////////
+void BaseKeyboardState::init() {
 	_currentPrintable = false;
 	_currentCharCode = 0;
 	_currentKeyData = 0;
@@ -52,6 +251,14 @@ BaseKeyboardState::BaseKeyboardState(BaseGame *inGame) : BaseScriptable(inGame) 
 	_keyStates = new uint8[KEYSTATES_ARRAY_SIZE];
 	for (int i = 0; i < KEYSTATES_ARRAY_SIZE; i++) {
 		_keyStates[i] = false;
+	}
+
+	if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
+		_mapping = wmeOriginalMapping;
+		_mappingSize = ARRAYSIZE(wmeOriginalMapping);
+	} else {
+		_mapping = wmeSdlMapping;
+		_mappingSize = ARRAYSIZE(wmeSdlMapping);
 	}
 }
 
@@ -108,8 +315,18 @@ bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *
 			// For letters, single keycode is used for upper and lower case
 			// This mean that IsKeyDown(65) is true for both 'a' and Shift+'a'
 
-			// See "MSDN: Virtual-Key Codes" for more details on original WME keycodes
-			vKeyCode = vKeyToKeyCode(val->getInt());
+			vKeyCode = Common::KEYCODE_INVALID;
+			uint32 temp = (uint32)val->getInt();
+			
+			for (uint32 i = 0; i < _mappingSize; i++) {
+				if (_mapping[i].engineKeycode == temp) {
+					vKeyCode = _mapping[i].commonKeycode;
+				}
+			}
+
+            if (vKeyCode == Common::KEYCODE_INVALID) {
+				warning("Unknown VKEY: %d", temp);
+			}
 		}
 
 		bool isDown = _keyStates[vKeyCode];
@@ -251,22 +468,28 @@ bool BaseKeyboardState::readKey(Common::Event *event) {
 		_currentPrintable = true;
 	}
 
-	// use keyCodeToVKey mapping for all other events
-	// in WME 1.x some of those keys are printable
-	else if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
-		_currentCharCode = keyCodeToVKey(event);
-		_currentPrintable = code == Common::KEYCODE_BACKSPACE || 
-							code == Common::KEYCODE_TAB || 
-							code == Common::KEYCODE_RETURN || 
-							code == Common::KEYCODE_KP_ENTER || 
-							code == Common::KEYCODE_ESCAPE;
-	}
-
-	// use keyCodeToVKey mapping for all other events
-	// all of those key are not printable in WME_LITE and FOXTAIL
+	// use _mapping for all other events
 	else {
-		_currentCharCode = keyCodeToVKey(event);
-		_currentPrintable = false;
+		_currentCharCode = 0;
+		for (uint32 i = 0; i < _mappingSize; i++) {
+			if (_mapping[i].commonKeycode == event->kbd.keycode) {
+				_currentCharCode = _mapping[i].engineKeycode;
+			}
+		}
+
+		if (!_currentCharCode && (event->kbd.flags & Common::KBD_NON_STICKY) == 0) {
+			warning("Key pressed (%d '%c') is not recognized, ASCII returned (%d '%c').", event->kbd.keycode, event->kbd.keycode, event->kbd.ascii, event->kbd.ascii);
+		}
+
+		if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
+			_currentPrintable = code == Common::KEYCODE_BACKSPACE || 
+								code == Common::KEYCODE_TAB || 
+								code == Common::KEYCODE_RETURN || 
+								code == Common::KEYCODE_KP_ENTER || 
+								code == Common::KEYCODE_ESCAPE;
+		} else {
+			_currentPrintable = false;
+		}
 	}
 
 	_currentControl = isControlDown();
@@ -290,10 +513,7 @@ bool BaseKeyboardState::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_currentShift));
 
 	if (!persistMgr->getIsSaving()) {
-		_keyStates = new uint8[323]; // Hardcoded size for the common/keyboard.h enum
-		for (int i = 0; i < 323; i++) {
-			_keyStates[i] = false;
-		}
+		init();
 	}
 
 	return STATUS_OK;
@@ -320,563 +540,6 @@ bool BaseKeyboardState::isAltDown() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseKeyboardState::isCurrentPrintable() const {
 	return _currentPrintable;
-}
-
-//////////////////////////////////////////////////////////////////////////
-enum VKeyCodes {
-	kVkBack       = 8,  //printable
-	kVkTab        = 9,  //printable
-	kVkClear      = 12,
-	kVkReturn     = 13, //printable
-	kVkPause      = 19,
-	kVkCapital    = 20,
-	kVkEscape     = 27, //printable
-	kVkSpace      = 32, //printable
-
-	kVkPrior      = 33,
-	kVkNext       = 34,
-	kVkEnd        = 35,
-	kVkHome       = 36,
-	kVkLeft       = 37,
-	kVkUp         = 38,
-	kVkRight      = 39,
-	kVkDown       = 40,
-	kVkPrint      = 42,
-	kVkInsert     = 45,
-	kVkDelete     = 46,
-
-	kVkA          = 65, //printable
-	kVkB          = 66, //printable
-	kVkC          = 67, //printable
-	kVkD          = 68, //printable
-	kVkE          = 69, //printable
-	kVkF          = 70, //printable
-	kVkG          = 71, //printable
-	kVkH          = 72, //printable
-	kVkI          = 73, //printable
-	kVkJ          = 74, //printable
-	kVkK          = 75, //printable
-	kVkL          = 76, //printable
-	kVkM          = 77, //printable
-	kVkN          = 78, //printable
-	kVkO          = 79, //printable
-	kVkP          = 80, //printable
-	kVkQ          = 81, //printable
-	kVkR          = 82, //printable
-	kVkS          = 83, //printable
-	kVkT          = 84, //printable
-	kVkU          = 85, //printable
-	kVkV          = 86, //printable
-	kVkW          = 87, //printable
-	kVkX          = 88, //printable
-	kVkY          = 89, //printable
-	kVkZ          = 90, //printable
-
-	kVkNumpad0    = 96, //printable
-	kVkNumpad1    = 97, //printable
-	kVkNumpad2    = 98, //printable
-	kVkNumpad3    = 99, //printable
-	kVkNumpad4    = 100, //printable
-	kVkNumpad5    = 101, //printable
-	kVkNumpad6    = 102, //printable
-	kVkNumpad7    = 103, //printable
-	kVkNumpad8    = 104, //printable
-	kVkNumpad9    = 105, //printable
-	kVkMultiply   = 106, //printable
-	kVkAdd        = 107, //printable
-	kVkSeparator  = 108, //printable
-	kVkSubtract   = 109, //printable
-	kVkDecimal    = 110, //printable
-	kVkDivide     = 111, //printable
-
-	kVkF1         = 112,
-	kVkF2         = 113,
-	kVkF3         = 114,
-	kVkF4         = 115,
-	kVkF5         = 116,
-	kVkF6         = 117,
-	kVkF7         = 118,
-	kVkF8         = 119,
-	kVkF9         = 120,
-	kVkF10        = 121,
-	kVkF11        = 122,
-	kVkF12        = 123,
-
-	kVkNumLock    = 144,
-	kVkScroll     = 145
-
-    //TODO: shift, ctrl, menu, etc...
-};
-
-#ifdef ENABLE_FOXTAIL
-enum FoxtailVKeyCodes {
-	kFtVkBack       = 8,
-	kFtVkTab        = 9,
-	kFtVkClear      = 1073741980,
-	kFtVkReturn     = 13,
-	kFtVkPause      = 1073741896,
-	kFtVkCapital    = 1073741881,
-	kFtVkEscape     = 27,
-	kFtVkSpace      = 32, //printable
-
-	kFtVkPrior      = 1073741899,
-	kFtVkNext       = 1073741902,
-	kFtVkEnd        = 1073741901,
-	kFtVkHome       = 1073741898,
-	kFtVkLeft       = 1073741904,
-	kFtVkUp         = 1073741906,
-	kFtVkRight      = 1073741903,
-	kFtVkDown       = 1073741905,
-	kFtVkPrint      = 1073741894,
-	kFtVkInsert     = 1073741897,
-	kFtVkDelete     = 127,
-
-	kFtVkF1         = 1073741882,
-	kFtVkF2         = 1073741883,
-	kFtVkF3         = 1073741884,
-	kFtVkF4         = 1073741885,
-	kFtVkF5         = 1073741886,
-	kFtVkF6         = 1073741887,
-	kFtVkF7         = 1073741888,
-	kFtVkF8         = 1073741889,
-	kFtVkF9         = 1073741890,
-	kFtVkF10        = 1073741891,
-	kFtVkF11        = 1073741892,
-	kFtVkF12        = 1073741893,
-
-	kFtVkNumLock    = 1073741907,
-	kFtVkScroll     = 1073741895
-};
-
-//////////////////////////////////////////////////////////////////////////
-uint32 keyCodeToVKeyFoxtail(Common::Event *event) {
-	switch (event->kbd.keycode) {
-	case Common::KEYCODE_BACKSPACE:
-		return kFtVkBack;
-	case Common::KEYCODE_TAB:
-		return kFtVkTab;
-	case Common::KEYCODE_CLEAR:
-	case Common::KEYCODE_KP5:
-		return kFtVkClear;
-	case Common::KEYCODE_RETURN:
-	case Common::KEYCODE_KP_ENTER:
-		return kFtVkReturn;
-	case Common::KEYCODE_PAUSE:
-		return kFtVkPause;
-	case Common::KEYCODE_CAPSLOCK:
-		return kFtVkCapital;
-	case Common::KEYCODE_ESCAPE:
-		return kFtVkEscape;
-	case Common::KEYCODE_SPACE:
-		return kFtVkSpace;
-	case Common::KEYCODE_KP9:
-	case Common::KEYCODE_PAGEUP:
-		return kFtVkPrior;
-	case Common::KEYCODE_KP3:
-	case Common::KEYCODE_PAGEDOWN:
-		return kFtVkNext;
-	case Common::KEYCODE_END:
-	case Common::KEYCODE_KP1:
-		return kFtVkEnd;
-	case Common::KEYCODE_HOME:
-	case Common::KEYCODE_KP7:
-		return kFtVkHome;
-	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_KP4:
-		return kFtVkLeft;
-	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_KP6:
-		return kFtVkRight;
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_KP8:
-		return kFtVkUp;
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_KP2:
-		return kFtVkDown;
-	case Common::KEYCODE_PRINT:
-		return kFtVkPrint;
-	case Common::KEYCODE_INSERT:
-	case Common::KEYCODE_KP0:
-		return kFtVkInsert;
-	case Common::KEYCODE_DELETE:
-	case Common::KEYCODE_KP_PERIOD:
-		return kFtVkDelete;
-	case Common::KEYCODE_F1:
-		return kFtVkF1;
-	case Common::KEYCODE_F2:
-		return kFtVkF2;
-	case Common::KEYCODE_F3:
-		return kFtVkF3;
-	case Common::KEYCODE_F4:
-		return kFtVkF4;
-	case Common::KEYCODE_F5:
-		return kFtVkF5;
-	case Common::KEYCODE_F6:
-		return kFtVkF6;
-	case Common::KEYCODE_F7:
-		return kFtVkF7;
-	case Common::KEYCODE_F8:
-		return kFtVkF8;
-	case Common::KEYCODE_F9:
-		return kFtVkF9;
-	case Common::KEYCODE_F10:
-		return kFtVkF10;
-	case Common::KEYCODE_F11:
-		return kFtVkF11;
-	case Common::KEYCODE_F12:
-		return kFtVkF12;
-	case Common::KEYCODE_NUMLOCK:
-		return kFtVkNumLock;
-	case Common::KEYCODE_SCROLLOCK:
-		return kFtVkScroll;
-	default:
-		// check if any non-sticky keys were used, otherwise key is unknown to us
-		if ((event->kbd.flags & Common::KBD_NON_STICKY) == 0) {
-			warning("Key pressed is not recognized, ASCII returned (%d '%c').", event->kbd.keycode, event->kbd.keycode);
-		}
-		// return ASCII if no match, since it could be used for typing
-		return event->kbd.ascii;
-		break;
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-Common::KeyCode vKeyToKeyCodeFoxtail(uint32 vkey) {
-	switch (vkey) {
-	case kFtVkBack:
-		return Common::KEYCODE_BACKSPACE;
-	case kFtVkTab:
-		return Common::KEYCODE_TAB;
-	case kFtVkClear:
-		return Common::KEYCODE_CLEAR;
-	case kFtVkReturn:
-		return Common::KEYCODE_RETURN;
-	case kFtVkPause:
-		return Common::KEYCODE_PAUSE;
-	case kFtVkCapital:
-		return Common::KEYCODE_CAPSLOCK;
-	case kFtVkEscape:
-		return Common::KEYCODE_ESCAPE;
-	case kFtVkSpace:
-		return Common::KEYCODE_SPACE;
-	case kFtVkPrior:
-		return Common::KEYCODE_PAGEUP;
-	case kFtVkNext:
-		return Common::KEYCODE_PAGEDOWN;
-	case kFtVkHome:
-		return Common::KEYCODE_HOME;
-	case kFtVkEnd:
-		return Common::KEYCODE_END;
-	case kFtVkLeft:
-		return Common::KEYCODE_LEFT;
-	case kFtVkRight:
-		return Common::KEYCODE_RIGHT;
-	case kFtVkUp:
-		return Common::KEYCODE_UP;
-	case kFtVkDown:
-		return Common::KEYCODE_DOWN;
-	case kFtVkPrint:
-		return Common::KEYCODE_PRINT;
-	case kFtVkInsert:
-		return Common::KEYCODE_INSERT;
-	case kFtVkDelete:
-		return Common::KEYCODE_DELETE;
-	case kFtVkF1:
-		return Common::KEYCODE_F1;
-	case kFtVkF2:
-		return Common::KEYCODE_F2;
-	case kFtVkF3:
-		return Common::KEYCODE_F3;
-	case kFtVkF4:
-		return Common::KEYCODE_F4;
-	case kFtVkF5:
-		return Common::KEYCODE_F5;
-	case kFtVkF6:
-		return Common::KEYCODE_F6;
-	case kFtVkF7:
-		return Common::KEYCODE_F7;
-	case kFtVkF8:
-		return Common::KEYCODE_F8;
-	case kFtVkF9:
-		return Common::KEYCODE_F9;
-	case kFtVkF10:
-		return Common::KEYCODE_F10;
-	case kFtVkF11:
-		return Common::KEYCODE_F11;
-	case kFtVkF12:
-		return Common::KEYCODE_F12;
-	case kFtVkNumLock:
-		return Common::KEYCODE_NUMLOCK;
-	case kFtVkScroll:
-		return Common::KEYCODE_SCROLLOCK;
-	default:
-		warning("Unknown VKEY: %d", vkey);
-		return (Common::KeyCode)(vkey < KEYSTATES_ARRAY_SIZE ? vkey : 0);
-		break;
-	}
-}
-#endif
-
-//////////////////////////////////////////////////////////////////////////
-uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
-#ifdef ENABLE_FOXTAIL
-	if (BaseEngine::instance().isFoxTail()) {
-		return keyCodeToVKeyFoxtail(event);
-	}
-#endif
-	switch (event->kbd.keycode) {
-	case Common::KEYCODE_BACKSPACE:
-		return kVkBack;
-	case Common::KEYCODE_TAB:
-		return kVkTab;
-	case Common::KEYCODE_CLEAR:
-	case Common::KEYCODE_KP5:
-		return kVkClear;
-	case Common::KEYCODE_RETURN:
-	case Common::KEYCODE_KP_ENTER:
-		return kVkReturn;
-	case Common::KEYCODE_PAUSE:
-		return kVkPause;
-	case Common::KEYCODE_CAPSLOCK:
-		return kVkCapital;
-	case Common::KEYCODE_ESCAPE:
-		return kVkEscape;
-	case Common::KEYCODE_KP9:
-	case Common::KEYCODE_PAGEUP:
-		return kVkPrior;
-	case Common::KEYCODE_KP3:
-	case Common::KEYCODE_PAGEDOWN:
-		return kVkNext;
-	case Common::KEYCODE_END:
-	case Common::KEYCODE_KP1:
-		return kVkEnd;
-	case Common::KEYCODE_HOME:
-	case Common::KEYCODE_KP7:
-		return kVkHome;
-	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_KP4:
-		return kVkLeft;
-	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_KP6:
-		return kVkRight;
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_KP8:
-		return kVkUp;
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_KP2:
-		return kVkDown;
-	case Common::KEYCODE_PRINT:
-		return kVkPrint;
-	case Common::KEYCODE_INSERT:
-	case Common::KEYCODE_KP0:
-		return kVkInsert;
-	case Common::KEYCODE_DELETE:
-	case Common::KEYCODE_KP_PERIOD:
-		return kVkDelete;
-	case Common::KEYCODE_F1:
-		return kVkF1;
-	case Common::KEYCODE_F2:
-		return kVkF2;
-	case Common::KEYCODE_F3:
-		return kVkF3;
-	case Common::KEYCODE_F4:
-		return kVkF4;
-	case Common::KEYCODE_F5:
-		return kVkF5;
-	case Common::KEYCODE_F6:
-		return kVkF6;
-	case Common::KEYCODE_F7:
-		return kVkF7;
-	case Common::KEYCODE_F8:
-		return kVkF8;
-	case Common::KEYCODE_F9:
-		return kVkF9;
-	case Common::KEYCODE_F10:
-		return kVkF10;
-	case Common::KEYCODE_F11:
-		return kVkF11;
-	case Common::KEYCODE_F12:
-		return kVkF12;
-	case Common::KEYCODE_NUMLOCK:
-		return kVkNumLock;
-	case Common::KEYCODE_SCROLLOCK:
-		return kVkScroll;
-	default:
-		// check if any non-sticky keys were used, otherwise key is unknown to us
-		if ((event->kbd.flags & Common::KBD_NON_STICKY) == 0) {
-			warning("Key pressed is not recognized, ASCII returned (%d '%c').", event->kbd.keycode, event->kbd.keycode);
-		}
-		// return ASCII if no match, since it could be used for typing
-		return event->kbd.ascii;
-		break;
-	}
-
-}
-
-//////////////////////////////////////////////////////////////////////////
-Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
-#ifdef ENABLE_FOXTAIL
-	if (BaseEngine::instance().isFoxTail()) {
-		return vKeyToKeyCodeFoxtail(vkey);
-	}
-#endif
-	switch (vkey) {
-	case kVkBack:
-		return Common::KEYCODE_BACKSPACE;
-	case kVkTab:
-		return Common::KEYCODE_TAB;
-	case kVkClear:
-		return Common::KEYCODE_CLEAR;
-	case kVkReturn:
-		return Common::KEYCODE_RETURN;
-	case kVkPause:
-		return Common::KEYCODE_PAUSE;
-	case kVkCapital:
-		return Common::KEYCODE_CAPSLOCK;
-	case kVkEscape:
-		return Common::KEYCODE_ESCAPE;
-	case kVkSpace:
-		return Common::KEYCODE_SPACE;
-	case kVkPrior:
-		return Common::KEYCODE_PAGEUP;
-	case kVkNext:
-		return Common::KEYCODE_PAGEDOWN;
-	case kVkHome:
-		return Common::KEYCODE_HOME;
-	case kVkEnd:
-		return Common::KEYCODE_END;
-	case kVkLeft:
-		return Common::KEYCODE_LEFT;
-	case kVkRight:
-		return Common::KEYCODE_RIGHT;
-	case kVkUp:
-		return Common::KEYCODE_UP;
-	case kVkDown:
-		return Common::KEYCODE_DOWN;
-	case kVkPrint:
-		return Common::KEYCODE_PRINT;
-	case kVkInsert:
-		return Common::KEYCODE_INSERT;
-	case kVkDelete:
-		return Common::KEYCODE_DELETE;
-	case kVkA:
-		return Common::KEYCODE_a;
-	case kVkB:
-		return Common::KEYCODE_b;
-	case kVkC:
-		return Common::KEYCODE_c;
-	case kVkD:
-		return Common::KEYCODE_d;
-	case kVkE:
-		return Common::KEYCODE_e;
-	case kVkF:
-		return Common::KEYCODE_f;
-	case kVkG:
-		return Common::KEYCODE_g;
-	case kVkH:
-		return Common::KEYCODE_h;
-	case kVkI:
-		return Common::KEYCODE_i;
-	case kVkJ:
-		return Common::KEYCODE_j;
-	case kVkK:
-		return Common::KEYCODE_k;
-	case kVkL:
-		return Common::KEYCODE_l;
-	case kVkM:
-		return Common::KEYCODE_m;
-	case kVkN:
-		return Common::KEYCODE_n;
-	case kVkO:
-		return Common::KEYCODE_o;
-	case kVkP:
-		return Common::KEYCODE_p;
-	case kVkQ:
-		return Common::KEYCODE_q;
-	case kVkR:
-		return Common::KEYCODE_r;
-	case kVkS:
-		return Common::KEYCODE_s;
-	case kVkT:
-		return Common::KEYCODE_t;
-	case kVkU:
-		return Common::KEYCODE_u;
-	case kVkV:
-		return Common::KEYCODE_v;
-	case kVkW:
-		return Common::KEYCODE_w;
-	case kVkX:
-		return Common::KEYCODE_x;
-	case kVkY:
-		return Common::KEYCODE_y;
-	case kVkZ:
-		return Common::KEYCODE_z;
-	case kVkNumpad0:
-		return Common::KEYCODE_KP0;
-	case kVkNumpad1:
-		return Common::KEYCODE_KP1;
-	case kVkNumpad2:
-		return Common::KEYCODE_KP2;
-	case kVkNumpad3:
-		return Common::KEYCODE_KP3;
-	case kVkNumpad4:
-		return Common::KEYCODE_KP4;
-	case kVkNumpad5:
-		return Common::KEYCODE_KP5;
-	case kVkNumpad6:
-		return Common::KEYCODE_KP6;
-	case kVkNumpad7:
-		return Common::KEYCODE_KP7;
-	case kVkNumpad8:
-		return Common::KEYCODE_KP8;
-	case kVkNumpad9:
-		return Common::KEYCODE_KP9;
-	case kVkMultiply:
-		return Common::KEYCODE_KP_MULTIPLY;
-	case kVkAdd:
-		return Common::KEYCODE_KP_PLUS;
-	case kVkSeparator:
-		return Common::KEYCODE_KP_EQUALS;
-	case kVkSubtract:
-		return Common::KEYCODE_KP_MINUS;
-	case kVkDecimal:
-		return Common::KEYCODE_KP_PERIOD;
-	case kVkDivide:
-		return Common::KEYCODE_KP_DIVIDE;
-	case kVkF1:
-		return Common::KEYCODE_F1;
-	case kVkF2:
-		return Common::KEYCODE_F2;
-	case kVkF3:
-		return Common::KEYCODE_F3;
-	case kVkF4:
-		return Common::KEYCODE_F4;
-	case kVkF5:
-		return Common::KEYCODE_F5;
-	case kVkF6:
-		return Common::KEYCODE_F6;
-	case kVkF7:
-		return Common::KEYCODE_F7;
-	case kVkF8:
-		return Common::KEYCODE_F8;
-	case kVkF9:
-		return Common::KEYCODE_F9;
-	case kVkF10:
-		return Common::KEYCODE_F10;
-	case kVkF11:
-		return Common::KEYCODE_F11;
-	case kVkF12:
-		return Common::KEYCODE_F12;
-	case kVkNumLock:
-		return Common::KEYCODE_NUMLOCK;
-	case kVkScroll:
-		return Common::KEYCODE_SCROLLOCK;
-	default:
-		warning("Unknown VKEY: %d", vkey);
-		return (Common::KeyCode)(vkey < KEYSTATES_ARRAY_SIZE ? vkey : 0);
-		break;
-	}
-
 }
 
 } // End of namespace Wintermute

@@ -37,6 +37,11 @@
 
 namespace Wintermute {
 
+struct keyCodeMapping {
+	Common::KeyCode commonKeycode;
+	uint32 engineKeycode;
+};
+
 class BaseKeyboardState : public BaseScriptable {
 public:
 	DECLARE_PERSISTENT(BaseKeyboardState, BaseScriptable)
@@ -58,6 +63,8 @@ public:
 	virtual const char *scToString();
 
 private:
+	void init();
+
 	bool _currentPrintable;
 	uint32 _currentKeyData;
 	uint32 _currentCharCode;
@@ -67,8 +74,9 @@ private:
 	bool _currentControl;
 
 	uint8 *_keyStates;
-	uint32 keyCodeToVKey(Common::Event *event); //TODO, add more mappings
-	Common::KeyCode vKeyToKeyCode(uint32 vkey); //TODO, reimplement using ScummVM-backend
+
+	const keyCodeMapping *_mapping;
+	uint32 _mappingSize;
 };
 
 } // End of namespace Wintermute
