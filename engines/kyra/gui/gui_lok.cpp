@@ -209,7 +209,7 @@ void GUI_LoK::createScreenThumbnail(Graphics::Surface &dst) {
 			if (_screen->isInterfacePaletteEnabled()) {
 				for (int y = 0; y < 64; ++y) {
 					for (int x = 0; x < 320; ++x) {
-						screen[(y + 136) * Screen::SCREEN_W + x] += 32;
+						screen[(y + 136) * Screen::SCREEN_W + x] |= 0x20;
 					}
 				}
 			}
