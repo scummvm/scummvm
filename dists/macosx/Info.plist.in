@@ -56,5 +56,7 @@
 	<string>https://www.residualvm.org/appcasts/macosx/release.xml</string>
 	<key>NSDockTilePlugIn</key>
 	<string>residualvm.docktileplugin</string>
+	<key>NSRequiresAquaSystemAppearance</key>
+	<false/>
 </dict>
 </plist>
