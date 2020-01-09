@@ -256,14 +256,21 @@ void DirectorEngine::clearSharedCast() {
 
 	delete _sharedScore;
 
+	_sharedScore = nullptr;
+
 	delete _sharedDIB;
 	delete _sharedSTXT;
 	delete _sharedSound;
 	delete _sharedBMP;
+
+	_sharedDIB = nullptr;
+	_sharedSTXT = nullptr;
+	_sharedSound = nullptr;
+	_sharedBMP = nullptr;
 }
 
 void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
-	if (_sharedScore) {
+	if (_sharedScore && _sharedScore->_movieArchive) {
 		if (_sharedScore->_movieArchive->getFileName().equalsIgnoreCase(filename))
 			return;
 	}
@@ -283,6 +290,8 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	if (!shardcst->openFile(filename)) {
 		warning("No shared cast %s", filename.c_str());
+
+		delete shardcst;
 
 		_sharedScore = new Score(this);
 
