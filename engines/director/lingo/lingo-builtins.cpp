@@ -495,6 +495,8 @@ void LB::b_hilite(int nargs) {
 
 void LB::b_length(int nargs) {
 	Datum d = g_lingo->pop();
+	if (d.type == REFERENCE)
+		d.toString();
 
 	if (d.type != STRING)
 		error("Incorrect type for 'length' function: %s", d.type2str());

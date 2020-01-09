@@ -129,7 +129,7 @@ uint16 Sprite::getPattern() {
 			warning("Sprite::getPattern(): Unhandled cast type: %d", _cast->_type);
 			break;
 		}
-
+		// fallthrough
 	default:
 		return 0;
 	}
