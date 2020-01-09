@@ -305,6 +305,9 @@ int Datum::toInt() {
 	case STRING:
 		u.i = atoi(u.s->c_str());
 		break;
+	case VOID:
+		u.i = 0;
+		break;
 	case INT:
 		// no-op
 		break;
@@ -327,6 +330,9 @@ double Datum::toFloat() {
 		// fallthrough
 	case STRING:
 		u.f = atof(u.s->c_str());
+		break;
+	case VOID:
+		u.f = 0.0;
 		break;
 	case INT:
 		u.f = (double)u.i;
