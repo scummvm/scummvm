@@ -26,6 +26,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die polische Version von LSL7 hinzugefügt.
    - Unterstützung für die italienische Version von GK2 hinzugefügt.
    - Unterstützung für die russische Version von KQ7 hinzugefügt.
+   - Unterstützung für von Fans erstellte Untertitel für GK2 hinzugefügt.
 
  SCUMM:
    - Unterstützung für Pajama2 (UK-Version) hinzugefügt.
@@ -39,6 +40,7 @@ Programmcodes finden Sie auf Englisch unter:
  Xeen:
    - Anzeige von Goldmünzen und Edelsteinen auf der Nintendo Switch korrigiert.
    - Ausgänge zur Taverne in Swords of Xeen korrigiert.
+   - Absturz beim Laden von Deep Mine Alpha in der CD-Version von World of Xeen behoben.
 
  3DS-Portierung:
    - Erhebliche Verbesserungen.
@@ -54,6 +56,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Windows-Portierung:
    - Verbesserung der Sprachausgabe (Text-to-Speech).
+
 
 #### 2.1.0 "Electric Sheep" (13.10.2019)
 
