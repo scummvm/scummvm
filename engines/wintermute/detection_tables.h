@@ -3039,1037 +3039,1209 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "044d4ad8b9a079a99892fd7f7673076c", 181051276,
 					"localization.txt", "e69948ef75907fa591f4062b05470012", 5919), Common::PT_BRA, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_2),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jul 2014) (German SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jul 2014) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_sd.dcp", "aee08a5a713c1b45e67471134772f72f", 97833631,
-					"i18n_de_strings.dcp", "9cc009980d018476b177e2a4075f56b4", 43104), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "9cc009980d018476b177e2a4075f56b4", 43104), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jul 2014) (English SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jul 2014) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_sd.dcp", "aee08a5a713c1b45e67471134772f72f", 97833631,
-					"i18n_en_strings.dcp", "40f8ea49a3e8d54a5202aa88c12fba80", 75108), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "40f8ea49a3e8d54a5202aa88c12fba80", 75108), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jul 2014) (Spanish SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jul 2014) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_sd.dcp", "aee08a5a713c1b45e67471134772f72f", 97833631,
-					"i18n_es_strings.dcp", "6a8d5b434dfe758abb2ace1a75a4dab1", 40122), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "6a8d5b434dfe758abb2ace1a75a4dab1", 40122), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jul 2014) (French SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jul 2014) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_sd.dcp", "aee08a5a713c1b45e67471134772f72f", 97833631,
-					"i18n_fr_strings.dcp", "b3fe8c720bb6a5378f6da2f593339c70", 40760), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "b3fe8c720bb6a5378f6da2f593339c70", 40760), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jul 2014) (Italian SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jul 2014) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_sd.dcp", "aee08a5a713c1b45e67471134772f72f", 97833631,
-					"i18n_it_strings.dcp", "5abaab4d57d7585b3c4b23f34f2d0dd8", 40468), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "5abaab4d57d7585b3c4b23f34f2d0dd8", 40468), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 12th 2015) (German SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 12th 2015) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_sd.dcp", "6842ddf537f2cd186df050aa8c05d363", 97835480,
-					"i18n_de_strings.dcp", "780b0d8d4f2b2b32e729090c1018df43", 43136), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "780b0d8d4f2b2b32e729090c1018df43", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 12th 2015) (English SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 12th 2015) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_sd.dcp", "6842ddf537f2cd186df050aa8c05d363", 97835480,
-					"i18n_en_strings.dcp", "636e32cf89f02fca30a6f4caa38dede1", 75126), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "636e32cf89f02fca30a6f4caa38dede1", 75126), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 12th 2015) (Spanish SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 12th 2015) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_sd.dcp", "6842ddf537f2cd186df050aa8c05d363", 97835480,
-					"i18n_es_strings.dcp", "c62f94e9cd543ecbdc0f02acc744cd29", 40153), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "c62f94e9cd543ecbdc0f02acc744cd29", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 12th 2015) (French SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 12th 2015) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_sd.dcp", "6842ddf537f2cd186df050aa8c05d363", 97835480,
-					"i18n_fr_strings.dcp", "548e88d67be123bb54f5b265226f051a", 40807), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "548e88d67be123bb54f5b265226f051a", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 12th 2015) (Italian SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 12th 2015) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_sd.dcp", "6842ddf537f2cd186df050aa8c05d363", 97835480,
-					"i18n_it_strings.dcp", "c3d180dd634705cb16ccd650066e1da8", 40502), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "c3d180dd634705cb16ccd650066e1da8", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 12th 2015) (Polish SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 12th 2015) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_sd.dcp", "6842ddf537f2cd186df050aa8c05d363", 97835480,
-					"i18n_pl_strings.dcp", "8dac09efb73ae4a7a2b897de6f37e906", 40062), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "8dac09efb73ae4a7a2b897de6f37e906", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 12th 2015) (Russian SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 12th 2015) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_sd.dcp", "6842ddf537f2cd186df050aa8c05d363", 97835480,
-					"i18n_ru_strings.dcp", "88daa5c022c18535e2da86fa558db792", 45838), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "88daa5c022c18535e2da86fa558db792", 45838), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 22th 2015) (German SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 22th 2015) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_sd.dcp", "6135b62bb28434c1af42de84ef8b96fe", 97808411,
-					"i18n_de_strings.dcp", "d245d247a282cda33b83ed6918b2e6d5", 43136), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "d245d247a282cda33b83ed6918b2e6d5", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 22th 2015) (English SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 22th 2015) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_sd.dcp", "6135b62bb28434c1af42de84ef8b96fe", 97808411,
-					"i18n_en_strings.dcp", "5e9cf5a8403b98f7d92de55efccc0d34", 75119), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "5e9cf5a8403b98f7d92de55efccc0d34", 75119), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 22th 2015) (Spanish SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 22th 2015) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_sd.dcp", "6135b62bb28434c1af42de84ef8b96fe", 97808411,
-					"i18n_es_strings.dcp", "edb19a0758243da8929844bac035d384", 40153), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "edb19a0758243da8929844bac035d384", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 22th 2015) (French SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 22th 2015) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_sd.dcp", "6135b62bb28434c1af42de84ef8b96fe", 97808411,
-					"i18n_fr_strings.dcp", "40dda8156fa93717cf962e75d76929b1", 40807), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "40dda8156fa93717cf962e75d76929b1", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 22th 2015) (Italian SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 22th 2015) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_sd.dcp", "6135b62bb28434c1af42de84ef8b96fe", 97808411,
-					"i18n_it_strings.dcp", "0d1dac14379e55356794fb7cca8865b2", 40502), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "0d1dac14379e55356794fb7cca8865b2", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 22th 2015) (Polish SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 22th 2015) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_sd.dcp", "6135b62bb28434c1af42de84ef8b96fe", 97808411,
-					"i18n_pl_strings.dcp", "cdd0b203c591dfb411cb6fc89ac009c1", 40062), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "cdd0b203c591dfb411cb6fc89ac009c1", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 22th 2015) (Russian SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Feb 22th 2015) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_sd.dcp", "6135b62bb28434c1af42de84ef8b96fe", 97808411,
-					"i18n_ru_strings.dcp", "77fc889bb25438bafe897d1566bd7e50", 45546), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "77fc889bb25438bafe897d1566bd7e50", 45546), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Sep 2016) (German SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Sep 2016) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
-					"i18n_de_strings.dcp", "94230807d77dacb420f446c34dd60072", 43136), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "94230807d77dacb420f446c34dd60072", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Sep 2016) (English SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Sep 2016) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
-					"i18n_en_strings.dcp", "253e7f5e2bb4a33c7df52a04624d18c6", 75119), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "253e7f5e2bb4a33c7df52a04624d18c6", 75119), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Sep 2016) (Spanish SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Sep 2016) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
-					"i18n_es_strings.dcp", "2227cee67309f564178e48d3eb30fc98", 40153), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "2227cee67309f564178e48d3eb30fc98", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Sep 2016) (French SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Sep 2016) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
-					"i18n_fr_strings.dcp", "f50d251df43e5433b9664d5c2463fb08", 40807), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "f50d251df43e5433b9664d5c2463fb08", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Sep 2016) (Italian SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Sep 2016) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
-					"i18n_it_strings.dcp", "6ad0d7c0a0c450d6af334cd1b4dbe72e", 40502), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "6ad0d7c0a0c450d6af334cd1b4dbe72e", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Sep 2016) (Polish SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Sep 2016) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
-					"i18n_pl_strings.dcp", "7c07fb021517dd21ba2e2a5739d0168e", 40062), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "7c07fb021517dd21ba2e2a5739d0168e", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Sep 2016) (Russian SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Sep 2016) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_sd.dcp", "8864e2e552bb7816916d8c6630e8f1a5", 97821007,
-					"i18n_ru_strings.dcp", "5cecc876ec1b364f22780d18a0821349", 45546), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "5cecc876ec1b364f22780d18a0821349", 45546), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (German SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jun 2018) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
-					"i18n_de_strings.dcp", "59d15bb3c32354b5104475df0ff6c50b", 43136), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "59d15bb3c32354b5104475df0ff6c50b", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (English SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jun 2018) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
-					"i18n_en_strings.dcp", "733a53213ab5be27941c34dcef531e0e", 75119), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "733a53213ab5be27941c34dcef531e0e", 75119), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Spanish SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jun 2018) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
-					"i18n_es_strings.dcp", "18876a252741b8bda888805ca860f600", 40153), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "18876a252741b8bda888805ca860f600", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (French SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jun 2018) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
-					"i18n_fr_strings.dcp", "850cce9217d83785e4b56028441b0d71", 40807), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "850cce9217d83785e4b56028441b0d71", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Italian SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jun 2018) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
-					"i18n_it_strings.dcp", "de567598fba43589841c354306a80377", 40502), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "de567598fba43589841c354306a80377", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Polish SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jun 2018) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
-					"i18n_pl_strings.dcp", "daa4b251caec6c6e2c3b96aaf87ae33a", 40062), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "daa4b251caec6c6e2c3b96aaf87ae33a", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Russian SD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (Steam, Jun 2018) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_sd.dcp", "551feca25b9e0ac9d467c105efb373e8", 97979104,
-					"i18n_ru_strings.dcp", "ebf28ca1475b3be9754a323966807683", 45546), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "ebf28ca1475b3be9754a323966807683", 45546), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jul 2014) (German HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jul 2014) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_hd.dcp", "d8d903cbda2ff7001cc7ce949775897e", 197016744,
-					"i18n_de_strings.dcp", "9cc009980d018476b177e2a4075f56b4", 43104), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "9cc009980d018476b177e2a4075f56b4", 43104), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jul 2014) (English HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jul 2014) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_hd.dcp", "d8d903cbda2ff7001cc7ce949775897e", 197016744,
-					"i18n_en_strings.dcp", "40f8ea49a3e8d54a5202aa88c12fba80", 75108), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "40f8ea49a3e8d54a5202aa88c12fba80", 75108), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jul 2014) (Spanish HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jul 2014) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_hd.dcp", "d8d903cbda2ff7001cc7ce949775897e", 197016744,
-					"i18n_es_strings.dcp", "6a8d5b434dfe758abb2ace1a75a4dab1", 40122), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "6a8d5b434dfe758abb2ace1a75a4dab1", 40122), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jul 2014) (French HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jul 2014) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_hd.dcp", "d8d903cbda2ff7001cc7ce949775897e", 197016744,
-					"i18n_fr_strings.dcp", "b3fe8c720bb6a5378f6da2f593339c70", 40760), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "b3fe8c720bb6a5378f6da2f593339c70", 40760), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jul 2014) (Italian HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jul 2014) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e19b63c6aa19d491a4f533ac9c1609ef", 97061505,
 					"data_hd.dcp", "d8d903cbda2ff7001cc7ce949775897e", 197016744,
-					"i18n_it_strings.dcp", "5abaab4d57d7585b3c4b23f34f2d0dd8", 40468), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "5abaab4d57d7585b3c4b23f34f2d0dd8", 40468), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 12th 2015) (German HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 12th 2015) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_hd.dcp", "1a077e884c659f34da61dd205591f83d", 197018612,
-					"i18n_de_strings.dcp", "780b0d8d4f2b2b32e729090c1018df43", 43136), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "780b0d8d4f2b2b32e729090c1018df43", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 12th 2015) (English HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 12th 2015) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_hd.dcp", "1a077e884c659f34da61dd205591f83d", 197018612,
-					"i18n_en_strings.dcp", "636e32cf89f02fca30a6f4caa38dede1", 75126), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "636e32cf89f02fca30a6f4caa38dede1", 75126), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 12th 2015) (Spanish HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 12th 2015) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_hd.dcp", "1a077e884c659f34da61dd205591f83d", 197018612,
-					"i18n_es_strings.dcp", "c62f94e9cd543ecbdc0f02acc744cd29", 40153), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "c62f94e9cd543ecbdc0f02acc744cd29", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 12th 2015) (French HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 12th 2015) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_hd.dcp", "1a077e884c659f34da61dd205591f83d", 197018612,
-					"i18n_fr_strings.dcp", "548e88d67be123bb54f5b265226f051a", 40807), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "548e88d67be123bb54f5b265226f051a", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 12th 2015) (Italian HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 12th 2015) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_hd.dcp", "1a077e884c659f34da61dd205591f83d", 197018612,
-					"i18n_it_strings.dcp", "c3d180dd634705cb16ccd650066e1da8", 40502), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "c3d180dd634705cb16ccd650066e1da8", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 12th 2015) (Polish HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 12th 2015) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_hd.dcp", "1a077e884c659f34da61dd205591f83d", 197018612,
-					"i18n_pl_strings.dcp", "8dac09efb73ae4a7a2b897de6f37e906", 40062), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "8dac09efb73ae4a7a2b897de6f37e906", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 12th 2015) (Russian HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 12th 2015) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e382f34f0bd319ad310aba2ecd239dec", 95879376,
 					"data_hd.dcp", "1a077e884c659f34da61dd205591f83d", 197018612,
-					"i18n_ru_strings.dcp", "88daa5c022c18535e2da86fa558db792", 45838), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "88daa5c022c18535e2da86fa558db792", 45838), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 22th 2015) (German HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 22th 2015) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_hd.dcp", "bfd3bc963c073af866e5405d6d5f1347", 197125364,
-					"i18n_de_strings.dcp", "d245d247a282cda33b83ed6918b2e6d5", 43136), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "d245d247a282cda33b83ed6918b2e6d5", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 22th 2015) (English HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 22th 2015) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_hd.dcp", "bfd3bc963c073af866e5405d6d5f1347", 197125364,
-					"i18n_en_strings.dcp", "5e9cf5a8403b98f7d92de55efccc0d34", 75119), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "5e9cf5a8403b98f7d92de55efccc0d34", 75119), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 22th 2015) (Spanish HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 22th 2015) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_hd.dcp", "bfd3bc963c073af866e5405d6d5f1347", 197125364,
-					"i18n_es_strings.dcp", "edb19a0758243da8929844bac035d384", 40153), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "edb19a0758243da8929844bac035d384", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 22th 2015) (French HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 22th 2015) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_hd.dcp", "bfd3bc963c073af866e5405d6d5f1347", 197125364,
-					"i18n_fr_strings.dcp", "40dda8156fa93717cf962e75d76929b1", 40807), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "40dda8156fa93717cf962e75d76929b1", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 22th 2015) (Italian HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 22th 2015) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_hd.dcp", "bfd3bc963c073af866e5405d6d5f1347", 197125364,
-					"i18n_it_strings.dcp", "0d1dac14379e55356794fb7cca8865b2", 40502), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "0d1dac14379e55356794fb7cca8865b2", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 22th 2015) (Polish HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 22th 2015) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_hd.dcp", "bfd3bc963c073af866e5405d6d5f1347", 197125364,
-					"i18n_pl_strings.dcp", "cdd0b203c591dfb411cb6fc89ac009c1", 40062), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "cdd0b203c591dfb411cb6fc89ac009c1", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Feb 22th 2015) (Russian HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Feb 22th 2015) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "bb6136d76ebadf06c90877283aa1d55a", 95890682,
 					"data_hd.dcp", "bfd3bc963c073af866e5405d6d5f1347", 197125364,
-					"i18n_ru_strings.dcp", "77fc889bb25438bafe897d1566bd7e50", 45546), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "77fc889bb25438bafe897d1566bd7e50", 45546), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Sep 2016) (German HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Sep 2016) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
-					"i18n_de_strings.dcp", "94230807d77dacb420f446c34dd60072", 43136), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "94230807d77dacb420f446c34dd60072", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Sep 2016) (English HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Sep 2016) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
-					"i18n_en_strings.dcp", "253e7f5e2bb4a33c7df52a04624d18c6", 75119), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "253e7f5e2bb4a33c7df52a04624d18c6", 75119), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Sep 2016) (Spanish HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Sep 2016) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
-					"i18n_es_strings.dcp", "2227cee67309f564178e48d3eb30fc98", 40153), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "2227cee67309f564178e48d3eb30fc98", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Sep 2016) (French HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Sep 2016) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
-					"i18n_fr_strings.dcp", "f50d251df43e5433b9664d5c2463fb08", 40807), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "f50d251df43e5433b9664d5c2463fb08", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Sep 2016) (Italian HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Sep 2016) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
-					"i18n_it_strings.dcp", "6ad0d7c0a0c450d6af334cd1b4dbe72e", 40502), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "6ad0d7c0a0c450d6af334cd1b4dbe72e", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Sep 2016) (Polish HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Sep 2016) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
-					"i18n_pl_strings.dcp", "7c07fb021517dd21ba2e2a5739d0168e", 40062), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "7c07fb021517dd21ba2e2a5739d0168e", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Sep 2016) (Russian HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Sep 2016) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "46bb5822abf6d422d08a68070e05bd86", 95890675,
 					"data_hd.dcp", "79a5c4ae560817a149506dce894274d0", 197155130,
-					"i18n_ru_strings.dcp", "5cecc876ec1b364f22780d18a0821349", 45546), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "5cecc876ec1b364f22780d18a0821349", 45546), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (German HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jun 2018) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
-					"i18n_de_strings.dcp", "59d15bb3c32354b5104475df0ff6c50b", 43136), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "59d15bb3c32354b5104475df0ff6c50b", 43136), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (English HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jun 2018) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
-					"i18n_en_strings.dcp", "733a53213ab5be27941c34dcef531e0e", 75119), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "733a53213ab5be27941c34dcef531e0e", 75119), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Spanish HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jun 2018) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
-					"i18n_es_strings.dcp", "18876a252741b8bda888805ca860f600", 40153), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "18876a252741b8bda888805ca860f600", 40153), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (French HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jun 2018) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
-					"i18n_fr_strings.dcp", "850cce9217d83785e4b56028441b0d71", 40807), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "850cce9217d83785e4b56028441b0d71", 40807), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Italian HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jun 2018) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
-					"i18n_it_strings.dcp", "de567598fba43589841c354306a80377", 40502), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "de567598fba43589841c354306a80377", 40502), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Polish HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jun 2018) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
-					"i18n_pl_strings.dcp", "daa4b251caec6c6e2c3b96aaf87ae33a", 40062), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "daa4b251caec6c6e2c3b96aaf87ae33a", 40062), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act I: Greed (Steam, Jun 2018) (Russian HD)
-	WME_WINENTRY("sotv1", "",
+	// Shadows on the Vatican - Act I: Greed (Full HD Version) (Steam, Jun 2018) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv1", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e0d5b1276cf80c858b7404f1f3381e2b", 95890675,
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
-					"i18n_ru_strings.dcp", "ebf28ca1475b3be9754a323966807683", 45546), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "ebf28ca1475b3be9754a323966807683", 45546), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 26th 2015) (English SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 26th 2015) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
 					"data_sd.dcp", "bd51d2a1e662bd9ed3af7aa1f2180900", 91701364,
-					"i18n_en_strings.dcp", "33db4beabfe9813f16133c97198b7520", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "33db4beabfe9813f16133c97198b7520", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 26th 2015) (Italian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 26th 2015) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
 					"data_sd.dcp", "bd51d2a1e662bd9ed3af7aa1f2180900", 91701364,
-					"i18n_it_strings.dcp", "1fefff6f0fb87abe9acf88da9af1a8e7", 127306), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "1fefff6f0fb87abe9acf88da9af1a8e7", 127306), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 26th 2015) (German SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 26th 2015) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
 					"data_sd.dcp", "bd51d2a1e662bd9ed3af7aa1f2180900", 91701364,
-					"i18n_de_strings.dcp", "30a2d7f796b3924af7e77e28f52a18b0", 60239), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "30a2d7f796b3924af7e77e28f52a18b0", 60239), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 29th 2015) (German SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 29th 2015) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
 					"data_sd.dcp", "bd51d2a1e662bd9ed3af7aa1f2180900", 91701364,
-					"i18n_de_strings.dcp", "1159db7384da56aae6953d1b943e4c57", 60737), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "1159db7384da56aae6953d1b943e4c57", 60737), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 26th 2015) (French SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 26th 2015) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
 					"data_sd.dcp", "bd51d2a1e662bd9ed3af7aa1f2180900", 91701364,
-					"i18n_fr_strings.dcp", "0ce3927e47f9ed8ca6668d0728508abb", 59087), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "0ce3927e47f9ed8ca6668d0728508abb", 59087), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 26th 2015) (Russian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 26th 2015) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
 					"data_sd.dcp", "bd51d2a1e662bd9ed3af7aa1f2180900", 91701364,
-					"i18n_ru_strings.dcp", "20aebb86e857f213fd46d24fba3f6b9c", 73828), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "20aebb86e857f213fd46d24fba3f6b9c", 73828), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 26th 2015) (Polish SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 26th 2015) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
 					"data_sd.dcp", "bd51d2a1e662bd9ed3af7aa1f2180900", 91701364,
-					"i18n_pl_strings.dcp", "cc5e50a22672c17211008b6f710e2009", 119066), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "cc5e50a22672c17211008b6f710e2009", 119066), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 31th 2015) (English SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 31th 2015) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e499fac283cf68c6a85638415c4ec083", 273132663,
 					"data_sd.dcp", "f9d1bb722eee17696c1c9266d6905924", 91701364,
-					"i18n_en_strings.dcp", "fe5b2bb6dd91bbac101f61f388ae8e09", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "fe5b2bb6dd91bbac101f61f388ae8e09", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 31th 2015) (Italian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 31th 2015) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e499fac283cf68c6a85638415c4ec083", 273132663,
 					"data_sd.dcp", "f9d1bb722eee17696c1c9266d6905924", 91701364,
-					"i18n_it_strings.dcp", "cf17089a0c047e7521c4da4a534b0c75", 127245), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "cf17089a0c047e7521c4da4a534b0c75", 127245), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 31th 2015) (German SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 31th 2015) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e499fac283cf68c6a85638415c4ec083", 273132663,
 					"data_sd.dcp", "f9d1bb722eee17696c1c9266d6905924", 91701364,
-					"i18n_de_strings.dcp", "e0285a53d947e6e6925094604d011d3c", 60728), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "e0285a53d947e6e6925094604d011d3c", 60728), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 31th 2015) (French SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 31th 2015) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e499fac283cf68c6a85638415c4ec083", 273132663,
 					"data_sd.dcp", "f9d1bb722eee17696c1c9266d6905924", 91701364,
-					"i18n_fr_strings.dcp", "9155180fb4b3a727a5ae58555e77fe0f", 59087), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "9155180fb4b3a727a5ae58555e77fe0f", 59087), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 31th 2015) (Russian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 31th 2015) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e499fac283cf68c6a85638415c4ec083", 273132663,
 					"data_sd.dcp", "f9d1bb722eee17696c1c9266d6905924", 91701364,
-					"i18n_ru_strings.dcp", "decc382f1e1c382e43f7a65f76177cc6", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "decc382f1e1c382e43f7a65f76177cc6", 73757), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 31th 2015) (Polish SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 31th 2015) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "e499fac283cf68c6a85638415c4ec083", 273132663,
 					"data_sd.dcp", "f9d1bb722eee17696c1c9266d6905924", 91701364,
-					"i18n_pl_strings.dcp", "70e7aac260fc6e114b9a52a163276889", 119066), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "70e7aac260fc6e114b9a52a163276889", 119066), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Nov 2015) (English SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Nov 2015) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "8c9aa3c3d705f61c753e2f54f3104b8e", 273131920,
 					"data_sd.dcp", "570aec5b2ceeea6e3d327b54b183d46b", 91702107,
-					"i18n_en_strings.dcp", "b53006a80b7c7c6c40d69ee4ac6eab0e", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "b53006a80b7c7c6c40d69ee4ac6eab0e", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Nov 2015) (Italian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Nov 2015) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "8c9aa3c3d705f61c753e2f54f3104b8e", 273131920,
 					"data_sd.dcp", "570aec5b2ceeea6e3d327b54b183d46b", 91702107,
-					"i18n_it_strings.dcp", "4c84c9662e758c14a127130e20895f65", 127245), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "4c84c9662e758c14a127130e20895f65", 127245), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Nov 2015) (German SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Nov 2015) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "8c9aa3c3d705f61c753e2f54f3104b8e", 273131920,
 					"data_sd.dcp", "570aec5b2ceeea6e3d327b54b183d46b", 91702107,
-					"i18n_de_strings.dcp", "3a454226e403b32ac3b16a15711afe3f", 60728), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "3a454226e403b32ac3b16a15711afe3f", 60728), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Nov 2015) (French SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Nov 2015) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "8c9aa3c3d705f61c753e2f54f3104b8e", 273131920,
 					"data_sd.dcp", "570aec5b2ceeea6e3d327b54b183d46b", 91702107,
-					"i18n_fr_strings.dcp", "b2c65cef26a889663e7311a15796469b", 59087), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "b2c65cef26a889663e7311a15796469b", 59087), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Nov 2015) (Russian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Nov 2015) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "8c9aa3c3d705f61c753e2f54f3104b8e", 273131920,
 					"data_sd.dcp", "570aec5b2ceeea6e3d327b54b183d46b", 91702107,
-					"i18n_ru_strings.dcp", "d9efa7d1d872f81d4d8602d5b4eb4f70", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "d9efa7d1d872f81d4d8602d5b4eb4f70", 73757), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Nov 2015) (Polish SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Nov 2015) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "8c9aa3c3d705f61c753e2f54f3104b8e", 273131920,
 					"data_sd.dcp", "570aec5b2ceeea6e3d327b54b183d46b", 91702107,
-					"i18n_pl_strings.dcp", "31da3aa3c184282290f5e418e6412eb3", 119066), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "31da3aa3c184282290f5e418e6412eb3", 119066), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jan 2016) (English SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Jan 2016) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "988f6f424110bf0d88b9c8066809df84", 273131920,
 					"data_sd.dcp", "30e5c1bd6e98485886c0e8c665510897", 91702107,
-					"i18n_en_strings.dcp", "699872d03e5c379299d1cd75894c6ef5", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "699872d03e5c379299d1cd75894c6ef5", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jan 2016) (Italian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Jan 2016) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "988f6f424110bf0d88b9c8066809df84", 273131920,
 					"data_sd.dcp", "30e5c1bd6e98485886c0e8c665510897", 91702107,
-					"i18n_it_strings.dcp", "fd8a38801ff03401447e9507965841b2", 127245), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "fd8a38801ff03401447e9507965841b2", 127245), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jan 2016) (German SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Jan 2016) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "988f6f424110bf0d88b9c8066809df84", 273131920,
 					"data_sd.dcp", "30e5c1bd6e98485886c0e8c665510897", 91702107,
-					"i18n_de_strings.dcp", "56057bb46e86965e2b5d5ca7823baad5", 60235), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "56057bb46e86965e2b5d5ca7823baad5", 60235), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jan 2016) (French SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Jan 2016) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "988f6f424110bf0d88b9c8066809df84", 273131920,
 					"data_sd.dcp", "30e5c1bd6e98485886c0e8c665510897", 91702107,
-					"i18n_fr_strings.dcp", "29a3a13a8bf787c0811eba67f7c59b41", 59087), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "29a3a13a8bf787c0811eba67f7c59b41", 59087), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jan 2016) (Russian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Jan 2016) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "988f6f424110bf0d88b9c8066809df84", 273131920,
 					"data_sd.dcp", "30e5c1bd6e98485886c0e8c665510897", 91702107,
-					"i18n_ru_strings.dcp", "92ddba944cc23ad12122bf571ac6b856", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "92ddba944cc23ad12122bf571ac6b856", 73757), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jan 2016) (Polish SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Jan 2016) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "988f6f424110bf0d88b9c8066809df84", 273131920,
 					"data_sd.dcp", "30e5c1bd6e98485886c0e8c665510897", 91702107,
-					"i18n_pl_strings.dcp", "a3729952b1e24d2d4367dd07a735235b", 119066), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "a3729952b1e24d2d4367dd07a735235b", 119066), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, May 2016) (English SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, May 2016) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "208df61df9b95c9d9d0107877eb2f4d7", 273131926,
 					"data_sd.dcp", "ff35bbc26334a58b3b4da6d828d69ac2", 94358335,
-					"i18n_en_strings.dcp", "6a389c7509da41c4e15b63a7c0530243", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "6a389c7509da41c4e15b63a7c0530243", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, May 2016) (Italian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, May 2016) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "208df61df9b95c9d9d0107877eb2f4d7", 273131926,
 					"data_sd.dcp", "ff35bbc26334a58b3b4da6d828d69ac2", 94358335,
-					"i18n_it_strings.dcp", "6222689f42ea2948e3d38e537710383f", 127239), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "6222689f42ea2948e3d38e537710383f", 127239), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, May 2016) (German SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, May 2016) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "208df61df9b95c9d9d0107877eb2f4d7", 273131926,
 					"data_sd.dcp", "ff35bbc26334a58b3b4da6d828d69ac2", 94358335,
-					"i18n_de_strings.dcp", "975928849951229f497de36e1a707b61", 60230), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "975928849951229f497de36e1a707b61", 60230), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, May 2016) (Spanish SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, May 2016) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "208df61df9b95c9d9d0107877eb2f4d7", 273131926,
 					"data_sd.dcp", "ff35bbc26334a58b3b4da6d828d69ac2", 94358335,
-					"i18n_es_strings.dcp", "83d88a4b2e5da2a40ac981fcfa9a95bc", 55013), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "83d88a4b2e5da2a40ac981fcfa9a95bc", 55013), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, May 2016) (French SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, May 2016) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "208df61df9b95c9d9d0107877eb2f4d7", 273131926,
 					"data_sd.dcp", "ff35bbc26334a58b3b4da6d828d69ac2", 94358335,
-					"i18n_fr_strings.dcp", "6bfc2f1753141e28d22756d9768f4d44", 59086), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "6bfc2f1753141e28d22756d9768f4d44", 59086), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, May 2016) (Russian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, May 2016) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "208df61df9b95c9d9d0107877eb2f4d7", 273131926,
 					"data_sd.dcp", "ff35bbc26334a58b3b4da6d828d69ac2", 94358335,
-					"i18n_ru_strings.dcp", "e85982376d9fb1c21e1acc8272b49412", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "e85982376d9fb1c21e1acc8272b49412", 73757), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, May 2016) (Polish SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, May 2016) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "208df61df9b95c9d9d0107877eb2f4d7", 273131926,
 					"data_sd.dcp", "ff35bbc26334a58b3b4da6d828d69ac2", 94358335,
-					"i18n_pl_strings.dcp", "5ba1e92f1fc762ecec74104f4588ba04", 119066), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "5ba1e92f1fc762ecec74104f4588ba04", 119066), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Sep 2016) (English SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Sep 2016) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "73b14ef68eecd41afbe39c2c4f671986", 273131946,
 					"data_sd.dcp", "f06a138b758e888f030ce659a42a6e31", 97327255,
-					"i18n_en_strings.dcp", "250626c49627e5f3f18883d6eb71e869", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "250626c49627e5f3f18883d6eb71e869", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Sep 2016) (Italian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Sep 2016) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "73b14ef68eecd41afbe39c2c4f671986", 273131946,
 					"data_sd.dcp", "f06a138b758e888f030ce659a42a6e31", 97327255,
-					"i18n_it_strings.dcp", "338be9aa9c611e349ab7c0a4065a6c78", 127241), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "338be9aa9c611e349ab7c0a4065a6c78", 127241), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Sep 2016) (German SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Sep 2016) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "73b14ef68eecd41afbe39c2c4f671986", 273131946,
 					"data_sd.dcp", "f06a138b758e888f030ce659a42a6e31", 97327255,
-					"i18n_de_strings.dcp", "46811e68b29fd07e115343e17c53f676", 60429), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "46811e68b29fd07e115343e17c53f676", 60429), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Sep 2016) (Spanish SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Sep 2016) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "73b14ef68eecd41afbe39c2c4f671986", 273131946,
 					"data_sd.dcp", "f06a138b758e888f030ce659a42a6e31", 97327255,
-					"i18n_es_strings.dcp", "61e518d05b62a48827ce6fa0a95e8021", 54964), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "61e518d05b62a48827ce6fa0a95e8021", 54964), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Sep 2016) (French SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Sep 2016) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "73b14ef68eecd41afbe39c2c4f671986", 273131946,
 					"data_sd.dcp", "f06a138b758e888f030ce659a42a6e31", 97327255,
-					"i18n_fr_strings.dcp", "4605094d334272dd2bc3ba3203b36c48", 59086), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "4605094d334272dd2bc3ba3203b36c48", 59086), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Sep 2016) (Russian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Sep 2016) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "73b14ef68eecd41afbe39c2c4f671986", 273131946,
 					"data_sd.dcp", "f06a138b758e888f030ce659a42a6e31", 97327255,
-					"i18n_ru_strings.dcp", "8a948c77f185feac630600e3d8f55195", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "8a948c77f185feac630600e3d8f55195", 73757), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Sep 2016) (Polish SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Sep 2016) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "73b14ef68eecd41afbe39c2c4f671986", 273131946,
 					"data_sd.dcp", "f06a138b758e888f030ce659a42a6e31", 97327255,
-					"i18n_pl_strings.dcp", "4a07c25e2d082320880536cc2a835868", 119077), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "4a07c25e2d082320880536cc2a835868", 119077), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 2016) (English SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 2016) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_sd.dcp", "eedb6e8addffd6cd882f18b231e439a4", 97327255,
-					"i18n_en_strings.dcp", "db0db417d6dc8c70de625ee7520d5e40", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "db0db417d6dc8c70de625ee7520d5e40", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 2016) (Italian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 2016) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_sd.dcp", "eedb6e8addffd6cd882f18b231e439a4", 97327255,
-					"i18n_it_strings.dcp", "809c993d42983fe8664a628804cba98e", 127241), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "809c993d42983fe8664a628804cba98e", 127241), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 2016) (German SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 2016) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_sd.dcp", "eedb6e8addffd6cd882f18b231e439a4", 97327255,
-					"i18n_de_strings.dcp", "e6570cb5365d6122e0ac549f83945a9f", 60429), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "e6570cb5365d6122e0ac549f83945a9f", 60429), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 2016) (Spanish SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 2016) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_sd.dcp", "eedb6e8addffd6cd882f18b231e439a4", 97327255,
-					"i18n_es_strings.dcp", "c06845d464212b022c7eee21cc6502d1", 54964), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "c06845d464212b022c7eee21cc6502d1", 54964), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 2016) (French SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 2016) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_sd.dcp", "eedb6e8addffd6cd882f18b231e439a4", 97327255,
-					"i18n_fr_strings.dcp", "47ff2736401cde872ef454f41a5216ec", 59086), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "47ff2736401cde872ef454f41a5216ec", 59086), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 2016) (Russian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 2016) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_sd.dcp", "eedb6e8addffd6cd882f18b231e439a4", 97327255,
-					"i18n_ru_strings.dcp", "5ffe06a72c914d287878f2f018109f04", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "5ffe06a72c914d287878f2f018109f04", 73757), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 2016) (Polish SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 2016) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_sd.dcp", "eedb6e8addffd6cd882f18b231e439a4", 97327255,
-					"i18n_pl_strings.dcp", "43df37eaa12d9a60561297a199ba0e70", 119077), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "43df37eaa12d9a60561297a199ba0e70", 119077), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (English SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Jun 2018) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_sd.dcp", "e235c10ece56ac3056ebfa851726dca6", 97169915,
-					"i18n_en_strings.dcp", "4b6a631516bd9bd1aa20028b0c7266bd", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "4b6a631516bd9bd1aa20028b0c7266bd", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Italian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Jun 2018) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_sd.dcp", "e235c10ece56ac3056ebfa851726dca6", 97169915,
-					"i18n_it_strings.dcp", "ba71ea60d10a440b6604add1452994f6", 127751), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "ba71ea60d10a440b6604add1452994f6", 127751), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (German SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Jun 2018) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_sd.dcp", "e235c10ece56ac3056ebfa851726dca6", 97169915,
-					"i18n_de_strings.dcp", "999727c3c9bae93f06d19c71337b5d66", 60429), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "999727c3c9bae93f06d19c71337b5d66", 60429), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Spanish SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Jun 2018) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_sd.dcp", "e235c10ece56ac3056ebfa851726dca6", 97169915,
-					"i18n_es_strings.dcp", "fe5b26d90019d9601de6b3fb13daee87", 54964), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "fe5b26d90019d9601de6b3fb13daee87", 54964), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (French SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Jun 2018) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_sd.dcp", "e235c10ece56ac3056ebfa851726dca6", 97169915,
-					"i18n_fr_strings.dcp", "4f336e2ba1941c006dab3c9ec543db69", 59086), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "4f336e2ba1941c006dab3c9ec543db69", 59086), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Russian SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Jun 2018) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_sd.dcp", "e235c10ece56ac3056ebfa851726dca6", 97169915,
-					"i18n_ru_strings.dcp", "f7243c0c9b1a9393fdd97b0c2496ba05", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "f7243c0c9b1a9393fdd97b0c2496ba05", 73757), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Polish SD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Jun 2018) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_sd.dcp", "e235c10ece56ac3056ebfa851726dca6", 97169915,
-					"i18n_pl_strings.dcp", "67c194c45375d2e26f8bf5ae17800944", 119354), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "67c194c45375d2e26f8bf5ae17800944", 119354), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_HD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 26th 2015) (English HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 26th 2015) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
 					"data_hd.dcp", "a6a3c9dd40902bf6177349f70cc5d215", 259399315,
-					"i18n_en_strings.dcp", "33db4beabfe9813f16133c97198b7520", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "33db4beabfe9813f16133c97198b7520", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 26th 2015) (Italian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 26th 2015) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
 					"data_hd.dcp", "a6a3c9dd40902bf6177349f70cc5d215", 259399315,
-					"i18n_it_strings.dcp", "1fefff6f0fb87abe9acf88da9af1a8e7", 127306), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "1fefff6f0fb87abe9acf88da9af1a8e7", 127306), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 26th 2015) (German HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 26th 2015) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
 					"data_hd.dcp", "a6a3c9dd40902bf6177349f70cc5d215", 259399315,
-					"i18n_de_strings.dcp", "30a2d7f796b3924af7e77e28f52a18b0", 60239), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "30a2d7f796b3924af7e77e28f52a18b0", 60239), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 29th 2015) (German HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 29th 2015) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
 					"data_hd.dcp", "a6a3c9dd40902bf6177349f70cc5d215", 259399315,
-					"i18n_de_strings.dcp", "1159db7384da56aae6953d1b943e4c57", 60737), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "1159db7384da56aae6953d1b943e4c57", 60737), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 26th 2015) (French HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 26th 2015) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
 					"data_hd.dcp", "a6a3c9dd40902bf6177349f70cc5d215", 259399315,
-					"i18n_fr_strings.dcp", "0ce3927e47f9ed8ca6668d0728508abb", 59087), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "0ce3927e47f9ed8ca6668d0728508abb", 59087), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 26th 2015) (Russian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 26th 2015) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
 					"data_hd.dcp", "a6a3c9dd40902bf6177349f70cc5d215", 259399315,
-					"i18n_ru_strings.dcp", "20aebb86e857f213fd46d24fba3f6b9c", 73828), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "20aebb86e857f213fd46d24fba3f6b9c", 73828), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 26th 2015) (Polish HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 26th 2015) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
 					"data_hd.dcp", "a6a3c9dd40902bf6177349f70cc5d215", 259399315,
-					"i18n_pl_strings.dcp", "cc5e50a22672c17211008b6f710e2009", 119066), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "cc5e50a22672c17211008b6f710e2009", 119066), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 31th 2015) (English HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 31th 2015) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e499fac283cf68c6a85638415c4ec083", 273132663,
 					"data_hd.dcp", "13b45668b605dea1829ca5f276de1339", 259399315,
-					"i18n_en_strings.dcp", "fe5b2bb6dd91bbac101f61f388ae8e09", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "fe5b2bb6dd91bbac101f61f388ae8e09", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 31th 2015) (Italian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 31th 2015) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e499fac283cf68c6a85638415c4ec083", 273132663,
 					"data_hd.dcp", "13b45668b605dea1829ca5f276de1339", 259399315,
-					"i18n_it_strings.dcp", "cf17089a0c047e7521c4da4a534b0c75", 127245), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "cf17089a0c047e7521c4da4a534b0c75", 127245), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 31th 2015) (German HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 31th 2015) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e499fac283cf68c6a85638415c4ec083", 273132663,
 					"data_hd.dcp", "13b45668b605dea1829ca5f276de1339", 259399315,
-					"i18n_de_strings.dcp", "e0285a53d947e6e6925094604d011d3c", 60728), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "e0285a53d947e6e6925094604d011d3c", 60728), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 31th 2015) (French HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 31th 2015) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e499fac283cf68c6a85638415c4ec083", 273132663,
 					"data_hd.dcp", "13b45668b605dea1829ca5f276de1339", 259399315,
-					"i18n_fr_strings.dcp", "9155180fb4b3a727a5ae58555e77fe0f", 59087), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "9155180fb4b3a727a5ae58555e77fe0f", 59087), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 31th 2015) (Russian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 31th 2015) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e499fac283cf68c6a85638415c4ec083", 273132663,
 					"data_hd.dcp", "13b45668b605dea1829ca5f276de1339", 259399315,
-					"i18n_ru_strings.dcp", "decc382f1e1c382e43f7a65f76177cc6", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "decc382f1e1c382e43f7a65f76177cc6", 73757), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 31th 2015) (Polish HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 31th 2015) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "e499fac283cf68c6a85638415c4ec083", 273132663,
 					"data_hd.dcp", "13b45668b605dea1829ca5f276de1339", 259399315,
-					"i18n_pl_strings.dcp", "70e7aac260fc6e114b9a52a163276889", 119066), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "70e7aac260fc6e114b9a52a163276889", 119066), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Nov 2015) (English HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Nov 2015) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "8c9aa3c3d705f61c753e2f54f3104b8e", 273131920,
 					"data_hd.dcp", "b4d2ce0a1f5e2e342af7cbf74630300f", 259399911,
-					"i18n_en_strings.dcp", "b53006a80b7c7c6c40d69ee4ac6eab0e", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "b53006a80b7c7c6c40d69ee4ac6eab0e", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Nov 2015) (Italian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Nov 2015) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "8c9aa3c3d705f61c753e2f54f3104b8e", 273131920,
 					"data_hd.dcp", "b4d2ce0a1f5e2e342af7cbf74630300f", 259399911,
-					"i18n_it_strings.dcp", "4c84c9662e758c14a127130e20895f65", 127245), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "4c84c9662e758c14a127130e20895f65", 127245), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Nov 2015) (German HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Nov 2015) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "8c9aa3c3d705f61c753e2f54f3104b8e", 273131920,
 					"data_hd.dcp", "b4d2ce0a1f5e2e342af7cbf74630300f", 259399911,
-					"i18n_de_strings.dcp", "3a454226e403b32ac3b16a15711afe3f", 60728), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "3a454226e403b32ac3b16a15711afe3f", 60728), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Nov 2015) (French HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Nov 2015) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "8c9aa3c3d705f61c753e2f54f3104b8e", 273131920,
 					"data_hd.dcp", "b4d2ce0a1f5e2e342af7cbf74630300f", 259399911,
-					"i18n_fr_strings.dcp", "b2c65cef26a889663e7311a15796469b", 59087), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "b2c65cef26a889663e7311a15796469b", 59087), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Nov 2015) (Russian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Nov 2015) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "8c9aa3c3d705f61c753e2f54f3104b8e", 273131920,
 					"data_hd.dcp", "b4d2ce0a1f5e2e342af7cbf74630300f", 259399911,
-					"i18n_ru_strings.dcp", "d9efa7d1d872f81d4d8602d5b4eb4f70", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "d9efa7d1d872f81d4d8602d5b4eb4f70", 73757), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Nov 2015) (Polish HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Nov 2015) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "8c9aa3c3d705f61c753e2f54f3104b8e", 273131920,
 					"data_hd.dcp", "b4d2ce0a1f5e2e342af7cbf74630300f", 259399911,
-					"i18n_pl_strings.dcp", "31da3aa3c184282290f5e418e6412eb3", 119066), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "31da3aa3c184282290f5e418e6412eb3", 119066), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jan 2016) (English HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Jan 2016) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "988f6f424110bf0d88b9c8066809df84", 273131920,
 					"data_hd.dcp", "a5670ea7c401ce187a54223bdc101408", 259399911,
-					"i18n_en_strings.dcp", "699872d03e5c379299d1cd75894c6ef5", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "699872d03e5c379299d1cd75894c6ef5", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jan 2016) (Italian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Jan 2016) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "988f6f424110bf0d88b9c8066809df84", 273131920,
 					"data_hd.dcp", "a5670ea7c401ce187a54223bdc101408", 259399911,
-					"i18n_it_strings.dcp", "fd8a38801ff03401447e9507965841b2", 127245), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "fd8a38801ff03401447e9507965841b2", 127245), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jan 2016) (German HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Jan 2016) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "988f6f424110bf0d88b9c8066809df84", 273131920,
 					"data_hd.dcp", "a5670ea7c401ce187a54223bdc101408", 259399911,
-					"i18n_de_strings.dcp", "56057bb46e86965e2b5d5ca7823baad5", 60235), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "56057bb46e86965e2b5d5ca7823baad5", 60235), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jan 2016) (French HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Jan 2016) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "988f6f424110bf0d88b9c8066809df84", 273131920,
 					"data_hd.dcp", "a5670ea7c401ce187a54223bdc101408", 259399911,
-					"i18n_fr_strings.dcp", "29a3a13a8bf787c0811eba67f7c59b41", 59087), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "29a3a13a8bf787c0811eba67f7c59b41", 59087), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jan 2016) (Russian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Jan 2016) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "988f6f424110bf0d88b9c8066809df84", 273131920,
 					"data_hd.dcp", "a5670ea7c401ce187a54223bdc101408", 259399911,
-					"i18n_ru_strings.dcp", "92ddba944cc23ad12122bf571ac6b856", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "92ddba944cc23ad12122bf571ac6b856", 73757), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jan 2016) (Polish HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Jan 2016) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "988f6f424110bf0d88b9c8066809df84", 273131920,
 					"data_hd.dcp", "a5670ea7c401ce187a54223bdc101408", 259399911,
-					"i18n_pl_strings.dcp", "a3729952b1e24d2d4367dd07a735235b", 119066), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "a3729952b1e24d2d4367dd07a735235b", 119066), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, May 2016) (English HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, May 2016) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "208df61df9b95c9d9d0107877eb2f4d7", 273131926,
 					"data_hd.dcp", "79a959116026a085435d1cc95bfa9570", 265023033,
-					"i18n_en_strings.dcp", "6a389c7509da41c4e15b63a7c0530243", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "6a389c7509da41c4e15b63a7c0530243", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, May 2016) (Italian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, May 2016) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "208df61df9b95c9d9d0107877eb2f4d7", 273131926,
 					"data_hd.dcp", "79a959116026a085435d1cc95bfa9570", 265023033,
-					"i18n_it_strings.dcp", "6222689f42ea2948e3d38e537710383f", 127239), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "6222689f42ea2948e3d38e537710383f", 127239), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, May 2016) (German HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, May 2016) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "208df61df9b95c9d9d0107877eb2f4d7", 273131926,
 					"data_hd.dcp", "79a959116026a085435d1cc95bfa9570", 265023033,
-					"i18n_de_strings.dcp", "975928849951229f497de36e1a707b61", 60230), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "975928849951229f497de36e1a707b61", 60230), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, May 2016) (Spanish HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, May 2016) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "208df61df9b95c9d9d0107877eb2f4d7", 273131926,
 					"data_hd.dcp", "79a959116026a085435d1cc95bfa9570", 265023033,
-					"i18n_es_strings.dcp", "83d88a4b2e5da2a40ac981fcfa9a95bc", 55013), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "83d88a4b2e5da2a40ac981fcfa9a95bc", 55013), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, May 2016) (French HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, May 2016) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "208df61df9b95c9d9d0107877eb2f4d7", 273131926,
 					"data_hd.dcp", "79a959116026a085435d1cc95bfa9570", 265023033,
-					"i18n_fr_strings.dcp", "6bfc2f1753141e28d22756d9768f4d44", 59086), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "6bfc2f1753141e28d22756d9768f4d44", 59086), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, May 2016) (Russian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, May 2016) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "208df61df9b95c9d9d0107877eb2f4d7", 273131926,
 					"data_hd.dcp", "79a959116026a085435d1cc95bfa9570", 265023033,
-					"i18n_ru_strings.dcp", "e85982376d9fb1c21e1acc8272b49412", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "e85982376d9fb1c21e1acc8272b49412", 73757), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, May 2016) (Polish HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, May 2016) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "208df61df9b95c9d9d0107877eb2f4d7", 273131926,
 					"data_hd.dcp", "79a959116026a085435d1cc95bfa9570", 265023033,
-					"i18n_pl_strings.dcp", "5ba1e92f1fc762ecec74104f4588ba04", 119066), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "5ba1e92f1fc762ecec74104f4588ba04", 119066), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Sep 2016) (English HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Sep 2016) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "73b14ef68eecd41afbe39c2c4f671986", 273131946,
 					"data_hd.dcp", "d7d7fbdbf0ec41eddf92078d38be8de5", 271652871,
-					"i18n_en_strings.dcp", "250626c49627e5f3f18883d6eb71e869", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "250626c49627e5f3f18883d6eb71e869", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Sep 2016) (Italian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Sep 2016) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "73b14ef68eecd41afbe39c2c4f671986", 273131946,
 					"data_hd.dcp", "d7d7fbdbf0ec41eddf92078d38be8de5", 271652871,
-					"i18n_it_strings.dcp", "338be9aa9c611e349ab7c0a4065a6c78", 127241), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "338be9aa9c611e349ab7c0a4065a6c78", 127241), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Sep 2016) (German HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Sep 2016) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "73b14ef68eecd41afbe39c2c4f671986", 273131946,
 					"data_hd.dcp", "d7d7fbdbf0ec41eddf92078d38be8de5", 271652871,
-					"i18n_de_strings.dcp", "46811e68b29fd07e115343e17c53f676", 60429), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "46811e68b29fd07e115343e17c53f676", 60429), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Sep 2016) (Spanish HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Sep 2016) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "73b14ef68eecd41afbe39c2c4f671986", 273131946,
 					"data_hd.dcp", "d7d7fbdbf0ec41eddf92078d38be8de5", 271652871,
-					"i18n_es_strings.dcp", "61e518d05b62a48827ce6fa0a95e8021", 54964), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "61e518d05b62a48827ce6fa0a95e8021", 54964), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Sep 2016) (French HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Sep 2016) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "73b14ef68eecd41afbe39c2c4f671986", 273131946,
 					"data_hd.dcp", "d7d7fbdbf0ec41eddf92078d38be8de5", 271652871,
-					"i18n_fr_strings.dcp", "4605094d334272dd2bc3ba3203b36c48", 59086), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "4605094d334272dd2bc3ba3203b36c48", 59086), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Sep 2016) (Russian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Sep 2016) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "73b14ef68eecd41afbe39c2c4f671986", 273131946,
 					"data_hd.dcp", "d7d7fbdbf0ec41eddf92078d38be8de5", 271652871,
-					"i18n_ru_strings.dcp", "8a948c77f185feac630600e3d8f55195", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "8a948c77f185feac630600e3d8f55195", 73757), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Sep 2016) (Polish HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Sep 2016) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "73b14ef68eecd41afbe39c2c4f671986", 273131946,
 					"data_hd.dcp", "d7d7fbdbf0ec41eddf92078d38be8de5", 271652871,
-					"i18n_pl_strings.dcp", "4a07c25e2d082320880536cc2a835868", 119077), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "4a07c25e2d082320880536cc2a835868", 119077), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 2016) (English HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 2016) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_hd.dcp", "5e4f57e77da13286bfa22ab157fcf147", 271652871,
-					"i18n_en_strings.dcp", "db0db417d6dc8c70de625ee7520d5e40", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "db0db417d6dc8c70de625ee7520d5e40", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 2016) (Italian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 2016) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_hd.dcp", "5e4f57e77da13286bfa22ab157fcf147", 271652871,
-					"i18n_it_strings.dcp", "809c993d42983fe8664a628804cba98e", 127241), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "809c993d42983fe8664a628804cba98e", 127241), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 2016) (German HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 2016) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_hd.dcp", "5e4f57e77da13286bfa22ab157fcf147", 271652871,
-					"i18n_de_strings.dcp", "e6570cb5365d6122e0ac549f83945a9f", 60429), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "e6570cb5365d6122e0ac549f83945a9f", 60429), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 2016) (Spanish HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 2016) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_hd.dcp", "5e4f57e77da13286bfa22ab157fcf147", 271652871,
-					"i18n_es_strings.dcp", "c06845d464212b022c7eee21cc6502d1", 54964), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "c06845d464212b022c7eee21cc6502d1", 54964), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 2016) (French HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 2016) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_hd.dcp", "5e4f57e77da13286bfa22ab157fcf147", 271652871,
-					"i18n_fr_strings.dcp", "47ff2736401cde872ef454f41a5216ec", 59086), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "47ff2736401cde872ef454f41a5216ec", 59086), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 2016) (Russian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 2016) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_hd.dcp", "5e4f57e77da13286bfa22ab157fcf147", 271652871,
-					"i18n_ru_strings.dcp", "5ffe06a72c914d287878f2f018109f04", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "5ffe06a72c914d287878f2f018109f04", 73757), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Oct 2016) (Polish HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Oct 2016) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "f04bc0d4fb2034adea3e7f9652b617ec", 273131946,
 					"data_hd.dcp", "5e4f57e77da13286bfa22ab157fcf147", 271652871,
-					"i18n_pl_strings.dcp", "43df37eaa12d9a60561297a199ba0e70", 119077), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "43df37eaa12d9a60561297a199ba0e70", 119077), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (English HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Jun 2018) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
-					"i18n_en_strings.dcp", "4b6a631516bd9bd1aa20028b0c7266bd", 114808), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_en_strings.dcp", "4b6a631516bd9bd1aa20028b0c7266bd", 114808), Common::EN_ANY, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Italian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Jun 2018) (Italian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
-					"i18n_it_strings.dcp", "ba71ea60d10a440b6604add1452994f6", 127751), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_it_strings.dcp", "ba71ea60d10a440b6604add1452994f6", 127751), Common::IT_ITA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (German HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Jun 2018) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
-					"i18n_de_strings.dcp", "999727c3c9bae93f06d19c71337b5d66", 60429), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_de_strings.dcp", "999727c3c9bae93f06d19c71337b5d66", 60429), Common::DE_DEU, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Spanish HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Jun 2018) (Spanish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
-					"i18n_es_strings.dcp", "fe5b26d90019d9601de6b3fb13daee87", 54964), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_es_strings.dcp", "fe5b26d90019d9601de6b3fb13daee87", 54964), Common::ES_ESP, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (French HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Jun 2018) (French)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
-					"i18n_fr_strings.dcp", "4f336e2ba1941c006dab3c9ec543db69", 59086), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_fr_strings.dcp", "4f336e2ba1941c006dab3c9ec543db69", 59086), Common::FR_FRA, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Russian HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Jun 2018) (Russian)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
-					"i18n_ru_strings.dcp", "f7243c0c9b1a9393fdd97b0c2496ba05", 73757), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_ru_strings.dcp", "f7243c0c9b1a9393fdd97b0c2496ba05", 73757), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
-	// Shadows on the Vatican - Act II: Wrath (Steam, Jun 2018) (Polish HD)
-	WME_WINENTRY("sotv2", "",
+	// Shadows on the Vatican - Act II: Wrath (Full HD Version) (Steam, Jun 2018) (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("sotv2", "Full HD Version",
 		WME_ENTRY3s("data.dcp", "0410ed71d9d6f133c703009edab38da4", 273131997,
 					"data_hd.dcp", "61b79bd9f732e48bb097227ee615463b", 272405838,
-					"i18n_pl_strings.dcp", "67c194c45375d2e26f8bf5ae17800944", 119354), Common::PL_POL, ADGF_UNSTABLE, WME_1_9_3),
+					"i18n_pl_strings.dcp", "67c194c45375d2e26f8bf5ae17800944", 119354), Common::PL_POL, ADGF_UNSTABLE | GF_IGNORE_SD_FILES, WME_1_9_3),
 
 	// The Shine of a Star
 	WME_WINENTRY("shinestar", "",
