@@ -191,7 +191,8 @@ Common::Error DirectorEngine::run() {
 	while (loop) {
 		loop = false;
 
-		_currentScore->loadArchive();
+		if (_currentScore)
+			_currentScore->loadArchive();
 
 		// If we came in a loop, then skip as requested
 		if (!_nextMovie.frameS.empty()) {
@@ -231,6 +232,11 @@ Common::Error DirectorEngine::run() {
 
 			if (!mov) {
 				warning("nextMovie: No score is loaded");
+
+				if (getGameID() == GID_TESTALL) {
+					loop = true;
+					continue;
+				}
 
 				return Common::kNoError;
 			}
