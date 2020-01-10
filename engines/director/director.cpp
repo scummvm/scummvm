@@ -207,7 +207,7 @@ Common::Error DirectorEngine::run() {
 			_nextMovie.frameI = -1;
 		}
 
-		if (!debugChannelSet(-1, kDebugLingoCompileOnly)) {
+		if (!debugChannelSet(-1, kDebugLingoCompileOnly) && _currentScore) {
 			debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
 
 			_currentScore->startLoop();
