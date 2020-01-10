@@ -51,6 +51,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"carolreed13",     "Carol Reed 13 - The Birdwatcher"},
 	{"carolreed14",     "Carol Reed 14 - The Fall Of April"},
 	{"chivalry",        "Chivalry is Not Dead"},
+	{"colorsoncanvas",  "Colors on Canvas"},
 	{"conspiracao",     "Conspiracao Dumont"},
 	{"corrosion",       "Corrosion: Cold Winter Waiting"},
 	{"darkfallls",      "Dark Fall: Lost Souls"},
@@ -541,6 +542,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Chivalry is Not Dead (Version from deirdrakai.com)
 	WME_WINENTRY("chivalry", "",
 		WME_ENTRY1s("data.dcp", "ae6d91b9517f4d2851a8ad94c96951c8", 7278302), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_8_0),
+
+	// Colors on Canvas (Demo)
+	WME_WINENTRY("colorsoncanvas", "Demo",
+		WME_ENTRY1s("data.dcp", "95d98104c0a9470a29da4d833ea19b98", 20824332), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// Conspiracao Dumont (Demo)
 	WME_WINENTRY("conspiracao", "Demo",
