@@ -242,7 +242,12 @@ Symbol *Lingo::define(Common::String &name, int nargs, ScriptData *code) {
 		// we don't want to be here. The getHandler call should have used the EntityId and the result
 		// should have been unique!
 		warning("Redefining handler '%s'", name.c_str());
-		delete sym->u.defn;
+
+		// Do not attempt to remove code from built-ins
+		if (sym->type == HANDLER)
+			delete sym->u.defn;
+		else
+			sym->type = HANDLER;
 	}
 
 	sym->u.defn = code;
