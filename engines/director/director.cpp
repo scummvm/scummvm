@@ -312,6 +312,9 @@ void DirectorEngine::enqueueAllMovies() {
 MovieReference DirectorEngine::getNextMovieFromQueue() {
 	MovieReference res;
 
+	if (_movieQueue.empty())
+		return res;
+
 	res.movie = _movieQueue.front();
 
 	debug(0, "=======================================");
