@@ -74,6 +74,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"goldencalf",      "The Golden Calf"},
 	{"hamlet",          "Hamlet or the last game without MMORPG features, shaders and product placement"},
 	{"helga",           "Helga Deep In Trouble"},
+	{"hor",             "Hor"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
 	{"knossos",         "K'NOSSOS"},
 	{"kulivocko",       "Kulivocko"},
@@ -886,6 +887,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("helga", "Demo",
 		WME_ENTRY2s("english.dcp", "b3a93e678f0ef97200f691cd1724643f", 135864,
 					"data.dcp", "45134ed93bc391edf148b79cdcbf2a09", 154266028), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+
+	// Hor v1.0
+	WME_WINENTRY("hor", "1.0",
+		WME_ENTRY1s("data.dcp", "ae94007f25a21143c028c1b7807dd907", 15077486), Common::UNK_LANG, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Hor v1.3
+	WME_WINENTRY("hor", "1.3",
+		WME_ENTRY1s("data.dcp", "37b0abeb8651b82b9e6327bd10a18185", 15077486), Common::UNK_LANG, ADGF_UNSTABLE, WME_1_9_3),
 
 	// James Peris: No License Nor Control (English)
 	WME_WINENTRY("jamesperis", "Version 1.5",
