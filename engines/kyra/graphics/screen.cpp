@@ -3223,19 +3223,20 @@ void Screen::shakeScreen(int times) {
 	static const int8 _shakeParaPC[] = { 32, 0, -4, 32, 0, 0 };
 	static const int8 _shakeParaFMTOWNS[] = { 32, 0, -4, 48, 0, 4, 32, -4, 0, 32, 4, 0, 32, 0, 0 };
 
-	const int8 *data = _shakeParaPC;
+	const int8 *shakeData = _shakeParaPC;
 	int steps = ARRAYSIZE(_shakeParaPC) / 3;
 	
 	// The FM-TOWNS version has a slightly better shake animation
 	// TODO: check PC-98 version
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
-		data = _shakeParaFMTOWNS;
+		shakeData = _shakeParaFMTOWNS;
 		steps = ARRAYSIZE(_shakeParaFMTOWNS) / 3;
 	}
 
 	Common::Event event;
 
 	while (times--) {
+		const int8 *data = shakeData;
 		for (int i = 0; i < steps; ++i) {
 			// The original PC version did not need an artificial delay, but we do or the shake will be
 			// too fast to be actually seen.
