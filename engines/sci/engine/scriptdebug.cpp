@@ -988,27 +988,11 @@ void debugPropertyAccess(Object *obj, reg_t objp, unsigned int index, Selector s
 	}
 }
 
-void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
-	if (s->abortScriptProcessing != kAbortNone) {
-		return;
-	}
-
-	Kernel *kernel = g_sci->getKernel();
-	if (!kernelSubCall) {
-		debugN("k%s: ", kernelCall->name);
-	} else {
-		int callNameLen = strlen(kernelCall->name);
-		if (strncmp(kernelCall->name, kernelSubCall->name, callNameLen) == 0) {
-			const char *subCallName = kernelSubCall->name + callNameLen;
-			debugN("k%s(%s): ", kernelCall->name, subCallName);
-		} else {
-			debugN("k%s(%s): ", kernelCall->name, kernelSubCall->name);
-		}
-	}
+static void logParameters(const KernelFunction *kernelCall, EngineState *s, int argc, reg_t *argv) {
 	for (int parmNr = 0; parmNr < argc; parmNr++) {
 		if (parmNr)
 			debugN(", ");
-		uint16 regType = kernel->findRegType(argv[parmNr]);
+		uint16 regType = g_sci->getKernel()->findRegType(argv[parmNr]);
 		if (regType & SIG_TYPE_NULL)
 			debugN("0");
 		else if (regType & SIG_TYPE_UNINITIALIZED)
@@ -1045,7 +1029,7 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 						// TODO: Any other segment types which could
 						// use special handling?
 
-						if (kernelCall->function == &kSaid) {
+						if (kernelCall != nullptr && kernelCall->function == &kSaid) {
 							SegmentRef saidSpec = s->_segMan->dereference(argv[parmNr]);
 							if (saidSpec.isRaw) {
 								debugN(" ('");
@@ -1066,12 +1050,46 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 			}
 		}
 	}
+}
+
+void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
+	if (s->abortScriptProcessing != kAbortNone) {
+		return;
+	}
+
+	if (!kernelSubCall) {
+		debugN("k%s: ", kernelCall->name);
+	} else {
+		int callNameLen = strlen(kernelCall->name);
+		if (strncmp(kernelCall->name, kernelSubCall->name, callNameLen) == 0) {
+			const char *subCallName = kernelSubCall->name + callNameLen;
+			debugN("k%s(%s): ", kernelCall->name, subCallName);
+		} else {
+			debugN("k%s(%s): ", kernelCall->name, kernelSubCall->name);
+		}
+	}
+
+	logParameters(kernelCall, s, argc, argv);
+
 	if (result.isPointer())
 		debugN(" = %04x:%04x\n", PRINT_REG(result));
 	else
 		debugN(" = %d\n", result.getOffset());
 }
 
+void logExportCall(uint16 script, uint16 pubfunct, EngineState *s, int argc, reg_t *argv) {
+	if (s->abortScriptProcessing != kAbortNone) {
+		return;
+	}
+
+	debugN("script %d, export %d: ", script, pubfunct);
+
+	if (argc > 1) {
+		argv++;
+		logParameters(nullptr, s, argc, argv);
+	}
+	debugN("\n");
+}
 
 void logBacktrace() {
 	Console *con = g_sci->getSciDebugger();
