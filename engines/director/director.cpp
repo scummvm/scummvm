@@ -221,6 +221,7 @@ Common::Error DirectorEngine::run() {
 			_lingo->restartLingo();
 
 			delete _currentScore;
+			_currentScore = nullptr;
 
 			_currentPath = getPath(_nextMovie.movie, _currentPath);
 

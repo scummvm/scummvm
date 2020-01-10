@@ -64,6 +64,9 @@ Archive *DirectorEngine::openMainArchive(const Common::String movie) {
 	_mainArchive = createArchive();
 
 	if (!_mainArchive->openFile(movie)) {
+		delete _mainArchive;
+		_mainArchive = nullptr;
+
 		warning("openMainArchive(): Could not open '%s'", movie.c_str());
 		return nullptr;
 	}
@@ -294,8 +297,6 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 		warning("No shared cast %s", filename.c_str());
 
 		delete shardcst;
-
-		_sharedScore = new Score(this);
 
 		return;
 	}

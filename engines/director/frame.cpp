@@ -610,7 +610,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				}
 			} else {
 				if (!_vm->getCurrentScore()->_loadedCast->contains(_sprites[i]->_castId)) {
-					if (!_vm->getSharedScore()->_loadedCast->contains(_sprites[i]->_castId)) {
+					if (!_vm->getSharedScore() || !_vm->getSharedScore()->_loadedCast->contains(_sprites[i]->_castId)) {
 						debugC(1, kDebugImages, "Frame::renderSprites(): Cast id %d not found", _sprites[i]->_castId);
 						continue;
 					} else {

@@ -67,9 +67,9 @@ const char *scriptType2str(ScriptType scr) {
 
 Score::Score(DirectorEngine *vm) {
 	_vm = vm;
-	_surface = new Graphics::ManagedSurface;
-	_trailSurface = new Graphics::ManagedSurface;
-	_backSurface = new Graphics::ManagedSurface;
+	_surface = nullptr;
+	_trailSurface = nullptr;
+	_backSurface = nullptr;
 	_lingo = _vm->getLingo();
 	_soundManager = _vm->getSoundManager();
 	_currentMouseDownSpriteId = 0;
@@ -98,8 +98,8 @@ Score::Score(DirectorEngine *vm) {
 
 	_movieArchive = nullptr;
 
-	_loadedStxts = new Common::HashMap<int, const Stxt *>();
-	_loadedCast = new Common::HashMap<int, Cast *>();
+	_loadedStxts = nullptr;
+	_loadedCast = nullptr;
 }
 
 void Score::setArchive(Archive *archive) {
@@ -223,6 +223,8 @@ void Score::loadArchive() {
 	}
 
 	Common::Array<uint16> cast = _movieArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
+	_loadedCast = new Common::HashMap<int, Cast *>();
+
 	if (cast.size() > 0) {
 		debugC(2, kDebugLoading, "****** Loading %d CASt resources", cast.size());
 
@@ -255,6 +257,9 @@ void Score::loadArchive() {
 	// Now process STXTs
 	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
 	debugC(2, kDebugLoading, "****** Loading %d STXT resources", stxt.size());
+
+	_loadedStxts = new Common::HashMap<int, const Stxt *>();
+
 	for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 		_loadedStxts->setVal(*iterator,
 				 new Stxt(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator)));
@@ -554,6 +559,8 @@ void Score::readVersion(uint32 rid) {
 void Score::loadCastDataVWCR(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(1, kDebugLoading, "****** Loading Cast rects VWCR. start: %d, end: %d", _castArrayStart, _castArrayEnd);
 
+	_loadedCast = new Common::HashMap<int, Cast *>();
+
 	for (uint16 id = _castArrayStart; id <= _castArrayEnd; id++) {
 		byte size = stream.readByte();
 		if (size == 0)
@@ -599,7 +606,7 @@ void Score::setSpriteCasts() {
 			if (castId == 0)
 				continue;
 
-			if (_vm->getSharedScore() != nullptr && _vm->getSharedScore()->_loadedCast->contains(castId)) {
+			if (_vm->getSharedScore() && _vm->getSharedScore()->_loadedCast && _vm->getSharedScore()->_loadedCast->contains(castId)) {
 				_frames[i]->_sprites[j]->_cast = _vm->getSharedScore()->_loadedCast->getVal(castId);
 			} else if (_loadedCast->contains(castId)) {
 				_frames[i]->_sprites[j]->_cast = _loadedCast->getVal(castId);
@@ -1313,6 +1320,10 @@ void Score::startLoop() {
 	debugC(1, kDebugImages, "Score dims: %dx%d", _movieRect.width(), _movieRect.height());
 
 	initGraphics(_movieRect.width(), _movieRect.height());
+
+	_surface = new Graphics::ManagedSurface;
+	_trailSurface = new Graphics::ManagedSurface;
+	_backSurface = new Graphics::ManagedSurface;
 
 	_surface->create(_movieRect.width(), _movieRect.height());
 	_trailSurface->create(_movieRect.width(), _movieRect.height());
