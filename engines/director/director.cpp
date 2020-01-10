@@ -182,17 +182,19 @@ Common::Error DirectorEngine::run() {
 	}
 
 	_currentScore->setArchive(_mainArchive);
-	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-	debug(0, "@@@@   Score name '%s'", _currentScore->getMacName().c_str());
-	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	bool loop = true;
 
 	while (loop) {
 		loop = false;
 
-		if (_currentScore)
+		if (_currentScore) {
+			debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+			debug(0, "@@@@   Score name '%s'", _currentScore->getMacName().c_str());
+			debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+
 			_currentScore->loadArchive();
+		}
 
 		// If we came in a loop, then skip as requested
 		if (!_nextMovie.frameS.empty()) {
