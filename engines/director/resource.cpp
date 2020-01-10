@@ -284,10 +284,6 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	Archive *shardcst = createArchive();
 
-	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());
-	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-
 	_sharedDIB = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 	_sharedSTXT = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 	_sharedSound = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
@@ -300,6 +296,10 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 		return;
 	}
+
+	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());
+	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 	_sharedScore = new Score(this);
 	_sharedScore->setArchive(shardcst);

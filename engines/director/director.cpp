@@ -314,7 +314,9 @@ MovieReference DirectorEngine::getNextMovieFromQueue() {
 
 	res.movie = _movieQueue.front();
 
-	debug(1, "=========> Next movie is %s", res.movie.c_str());
+	debug(0, "=======================================");
+	debug(0, "=========> Next movie is %s", res.movie.c_str());
+	debug(0, "=======================================");
 
 	_movieQueue.remove_at(0);
 
