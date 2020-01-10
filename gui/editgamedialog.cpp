@@ -341,14 +341,12 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("speech_volume", _domain);
 	_globalVolumeOverride->setState(e);
 
-	if (!_guioptions.contains(GUIO_NOMIDI)) {
+	if (!_guioptions.contains(GUIO_NOMIDI) && !_guioptions.contains(GUIO_NOMUSIC)) {
 		e = ConfMan.hasKey("soundfont", _domain) ||
 			ConfMan.hasKey("multi_midi", _domain) ||
 			ConfMan.hasKey("midi_gain", _domain);
 		_globalMIDIOverride->setState(e);
-	}
 
-	if (!_guioptions.contains(GUIO_NOMIDI)) {
 		e = ConfMan.hasKey("native_mt32", _domain) ||
 			ConfMan.hasKey("enable_gs", _domain);
 		_globalMT32Override->setState(e);
