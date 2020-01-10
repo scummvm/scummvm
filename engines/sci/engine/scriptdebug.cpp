@@ -945,32 +945,34 @@ void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr arg
 	}	// switch
 }
 
-void debugPropertyAccess(Object *obj, reg_t objp, unsigned int index, reg_t curValue, reg_t newValue, SegManager *segMan, BreakpointType breakpointType) {
+void debugPropertyAccess(Object *obj, reg_t objp, unsigned int index, Selector selector, reg_t curValue, reg_t newValue, SegManager *segMan, BreakpointType breakpointType) {
 	const Object *var_container = obj;
 	if (!obj->isClass() && getSciVersion() != SCI_VERSION_3)
 		var_container = segMan->getObject(obj->getSuperClassSelector());
 
-	uint16 varSelector;
-	if (getSciVersion() == SCI_VERSION_3) {
-		varSelector = index;
-	} else {
-		index >>= 1;
-
-		if (index >= var_container->getVarCount()) {
-			// TODO: error, warning, debug?
-			return;
+	if (selector == NULL_SELECTOR) {
+		if (getSciVersion() == SCI_VERSION_3) {
+			selector = index;
 		}
+		else {
+			index >>= 1;
 
-		varSelector = var_container->getVarSelector(index);
+			if (index >= var_container->getVarCount()) {
+				// TODO: error, warning, debug?
+				return;
+			}
+
+			selector = var_container->getVarSelector(index);
+		}
 	}
 
-	if (g_sci->checkSelectorBreakpoint(breakpointType, objp, varSelector)) {
+	if (g_sci->checkSelectorBreakpoint(breakpointType, objp, selector)) {
 		// checkSelectorBreakpoint has already triggered the breakpoint.
 		// We just output the relevant data here.
 
 		Console *con = g_sci->getSciDebugger();
 		const char *objectName = segMan->getObjectName(objp);
-		const char *selectorName = g_sci->getKernel()->getSelectorName(varSelector).c_str();
+		const char *selectorName = g_sci->getKernel()->getSelectorName(selector).c_str();
 		if (breakpointType == BREAK_SELECTORWRITE) {
 			con->debugPrintf("Write to selector (%s:%s): change %04x:%04x to %04x:%04x\n",
 								objectName, selectorName,

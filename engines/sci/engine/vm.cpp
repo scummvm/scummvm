@@ -1133,7 +1133,7 @@ void run_vm(EngineState *s) {
 		case op_pToa: // 0x31 (49)
 			// Property To Accumulator
 			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORREAD) {
-				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				debugPropertyAccess(obj, s->xs->objp, opparams[0], NULL_SELECTOR,
 				                    validate_property(s, obj, opparams[0]), NULL_REG,
 				                    s->_segMan, BREAK_SELECTORREAD);
 			}
@@ -1145,7 +1145,7 @@ void run_vm(EngineState *s) {
 			// Accumulator To Property
 			reg_t &opProperty = validate_property(s, obj, opparams[0]);
 			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORWRITE) {
-				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				debugPropertyAccess(obj, s->xs->objp, opparams[0], NULL_SELECTOR,
 				                    opProperty, s->r_acc,
 				                    s->_segMan, BREAK_SELECTORWRITE);
 			}
@@ -1162,7 +1162,7 @@ void run_vm(EngineState *s) {
 			// Property To Stack
 			reg_t value = validate_property(s, obj, opparams[0]);
 			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORREAD) {
-				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				debugPropertyAccess(obj, s->xs->objp, opparams[0], NULL_SELECTOR,
 				                    value, NULL_REG,
 				                    s->_segMan, BREAK_SELECTORREAD);
 			}
@@ -1176,7 +1176,7 @@ void run_vm(EngineState *s) {
 			reg_t newValue = POP32();
 			reg_t &opProperty = validate_property(s, obj, opparams[0]);
 			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORWRITE) {
-				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				debugPropertyAccess(obj, s->xs->objp, opparams[0], NULL_SELECTOR,
 				                    opProperty, newValue,
 				                    s->_segMan, BREAK_SELECTORWRITE);
 			}
@@ -1198,7 +1198,7 @@ void run_vm(EngineState *s) {
 			reg_t oldValue = opProperty;
 
 			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORREAD) {
-				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				debugPropertyAccess(obj, s->xs->objp, opparams[0], NULL_SELECTOR,
 				                    oldValue, NULL_REG,
 				                    s->_segMan, BREAK_SELECTORREAD);
 			}
@@ -1209,7 +1209,7 @@ void run_vm(EngineState *s) {
 				opProperty -= 1;
 
 			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORWRITE) {
-				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				debugPropertyAccess(obj, s->xs->objp, opparams[0], NULL_SELECTOR,
 				                    oldValue, opProperty,
 				                    s->_segMan, BREAK_SELECTORWRITE);
 			}
