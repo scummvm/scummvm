@@ -27,8 +27,8 @@
 #include "titanic/star_control/star_closeup.h"
 #include "titanic/star_control/star_markers.h"
 #include "titanic/star_control/star_crosshairs.h"
-#include "titanic/star_control/star_points1.h"
-#include "titanic/star_control/star_points2.h"
+#include "titanic/star_control/const_boundaries.h"
+#include "titanic/star_control/constellations.h"
 
 namespace Titanic {
 
@@ -36,11 +36,11 @@ class CStarField : public CStarFieldBase {
 private:
 	CStarMarkers _markers;
 	CStarCrosshairs _crosshairs;
-	CStarPoints1 _points1;
-	CStarPoints2 _points2;
+	CConstBoundaries _constBounds;
+	CConstellations _constMap;
 	CStarCloseup _starCloseup;
-	bool _points1On;
-	bool _points2On;
+	bool _renderBoundaries;
+	bool _renderConstMap;
 	StarMode _mode;
 	bool _showBox;
 	bool _closeToMarker;
@@ -72,10 +72,14 @@ public:
 	 */
 	void render(CVideoSurface *surface, CStarCamera *camera);
 
-	int get1() const;
-	void set1(int val);
-	int get2() const;
-	void set2(int val);
+	bool getBoundaryState() const;
+
+	void setBoundaryState(bool state);
+
+	bool getConstMapState() const;
+
+	void setConstMapState(bool state);
+
 	int get54() const;
 	void set54(int val);
 
@@ -147,6 +151,7 @@ public:
 	void incMatches();
 
 	void fn8(CVideoSurface *surface);
+
 	void fn9() { _starCloseup.fn1(); }
 
 	/**

@@ -31,14 +31,14 @@ namespace Titanic {
 class CStarCamera;
 class CSurfaceArea;
 
-class CStarPoints2 {
+class CConstellations {
 	struct CStarPointEntry {
 		FVector _v1, _v2;
 	};
 	class RootEntry : public Common::Array<CStarPointEntry> {
 	public:
-		int _field0;
-		RootEntry() : _field0(0) {}
+		bool _visible;
+		RootEntry() : _visible(false) {}
 	};
 private:
 	Common::Array<RootEntry> _data;

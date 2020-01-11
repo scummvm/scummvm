@@ -434,6 +434,8 @@ MODULE_OBJS := \
 	star_control/base_stars.o \
 	star_control/camera_auto_mover.o \
 	star_control/camera_mover.o \
+	star_control/const_boundaries.o \
+	star_control/constellations.o \
 	star_control/fmatrix.o \
 	star_control/fpoint.o \
 	star_control/fpose.o \
@@ -450,8 +452,6 @@ MODULE_OBJS := \
 	star_control/star_field_base.o \
 	star_control/star_field.o \
 	star_control/star_markers.o \
-	star_control/star_points1.o \
-	star_control/star_points2.o \
 	star_control/star_ref.o \
 	star_control/star_view.o \
 	star_control/surface_area.o \

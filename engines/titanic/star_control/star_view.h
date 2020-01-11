@@ -48,7 +48,7 @@ private:
 	CSurfaceFader _fader;
 	CVideoSurface *_photoSurface;
 	CGameObject *_homePhotoMask;
-	bool _field218;
+	bool _stereoPair;
 	bool _showingPhoto;
 private:
 	void fn18(CStarCamera *camera);
@@ -57,7 +57,7 @@ private:
 	/**
 	 * Gets a random position and orientation
 	 */
-	void randomizeVectors1(FVector &pos, FVector &orientation);
+	void getRandomViewpoint(FVector &pos, FVector &orientation);
 
 	/**
 	 * Gets a random position and orientation
@@ -125,39 +125,68 @@ public:
 	 */
 	void starDestinationSet();
 
-	/**
-	 * Resets back to the origin position
-	 */
-	void resetPosition();
-
 	void fn2();
-	void fn3(bool fadeIn);
-	void fn4();
-	void fn5();
-	void fn6();
-	void fn7();
+	void triggerFade(bool fadeIn);
+
+	/**
+	 * View the solar system
+	 */
+	void viewEarth();
+
+	/**
+	 * Set the view to be from earth
+	 */
+	void viewFromEarth();
+
+	/**
+	 * Turn on constellation boundaries
+	 */
+	void viewBoundaries();
+
+	/**
+	 * Turn on the constellation lines
+	 */
+	void viewConstellations();
+
+	/**
+	 * Look at a random star
+	 */
+	void viewRandomStar();
 
 	/**
 	 * Increase starfield movement to full speed
 	 */
 	void fullSpeed();
 
-	void fn9();
+	/**
+	 * Enable stereo pair vision
+	 */
+	void toggleSteroPair();
 
 	/**
 	 * Toggles between starfield and photo modes
 	 */
-	void toggleMode();
+	void toggleHomePhoto();
 
-	void fn11();
+	/**
+	 * Toggles the solar object rendering
+	 */
+	void toggleSolarRendering();
 
 	/**
 	 * Toggles whether the viewpoint box is visible in the starfield
 	 */
-	void toggleBox();
+	void TogglePosFrame();
 
-	void fn13();
-	void fn14();
+	/**
+	 * Turn on Stereo Pair imaging
+	 */
+	void stereoPairOn();
+
+	/**
+	 * Turn off Stereo Pair imaging
+	 */
+	void stereoPairOff();
 
 	/**
 	 * Called when the photograph is used on the navigation computer

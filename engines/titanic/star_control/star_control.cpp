@@ -169,7 +169,7 @@ void CStarControl::doAction(StarControlAction action) {
 			detach();
 			addUnder(view);
 			_view.fn2();
-			_view.fn3(true);
+			_view.triggerFade(true);
 			_visible = true;
 		}
 		break;
@@ -186,52 +186,52 @@ void CStarControl::doAction(StarControlAction action) {
 		break;
 	}
 
-	case STAR_2:
-		_view.fn4();
+	case STAR_VIEW_EARTH:
+		_view.viewEarth();
 		break;
 
-	case STAR_RESET_POS:
-		_view.resetPosition();
+	case STAR_VIEW_FROM_EARTH:
+		_view.viewFromEarth();
 		break;
 
-	case STAR_4:
-		_view.fn5();
+	case STAR_VIEW_BOUNDARIES:
+		_view.viewBoundaries();
 		break;
 
-	case STAR_5:
-		_view.fn6();
+	case STAR_VIEW_CONSTELLATIONS:
+		_view.viewConstellations();
 		break;
 
-	case STAR_6:
-		_view.fn7();
+	case STAR_VIEW_RANDOM_STAR:
+		_view.viewRandomStar();
 		break;
 
 	case STAR_FULL_SPEED:
 		_view.fullSpeed();
 		break;
 
-	case STAR_8:
-		_view.fn9();
+	case STAR_TOGGLE_STEREO_PAIR:
+		_view.toggleSteroPair();
 		break;
 
-	case STAR_TOGGLE_MODE:
-		_view.toggleMode();
+	case STAR_TOGGLE_HOME_PHOTO:
+		_view.toggleHomePhoto();
 		break;
 
-	case STAR_10:
-		_view.fn11();
+	case STAR_TOGGLE_SOLAR_RENDERING:
+		_view.toggleSolarRendering();
 		break;
 
-	case STAR_11:
-		_view.toggleBox();
+	case STAR_TOGGLE_POS_FRAME:
+		_view.TogglePosFrame();
 		break;
 
-	case STAR_12:
-		_view.fn13();
+	case STAR_STEREO_PAIR_ON:
+		_view.stereoPairOn();
 		break;
 
-	case STAR_13:
-		_view.fn14();
+	case STAR_STEREO_PAIR_OFF:
+		_view.stereoPairOff();
 		break;
 
 	case STAR_SET_REFERENCE: {
@@ -243,11 +243,11 @@ void CStarControl::doAction(StarControlAction action) {
 	}
 
 	case STAR_FADE_IN:
-		_view.fn3(true);
+		_view.triggerFade(true);
 		break;
 
 	case STAR_FADE_OUT:
-		_view.fn3(false);
+		_view.triggerFade(false);
 		break;
 
 	case LOCK_STAR:
@@ -258,7 +258,7 @@ void CStarControl::doAction(StarControlAction action) {
 		_view.unlockStar();
 		break;
 
-	case STAR_19:
+	case STAR_CLEAR_MODIFIED:
 		_view.starDestinationSet();
 		break;
 

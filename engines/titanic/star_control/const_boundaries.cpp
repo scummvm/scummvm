@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/star_control/star_points1.h"
+#include "titanic/star_control/const_boundaries.h"
 #include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/surface_area.h"
 #include "titanic/support/files_manager.h"
@@ -32,10 +32,10 @@ namespace Titanic {
 
 #define ARRAY_COUNT 876
 
-CStarPoints1::CStarPoints1() {
+CConstBoundaries::CConstBoundaries() {
 }
 
-bool CStarPoints1::initialize() {
+bool CConstBoundaries::initialize() {
 	// Get a reference to the starfield points resource
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource("STARFIELD/POINTS");
 	assert(stream && stream->size() == (12 * ARRAY_COUNT));
@@ -61,7 +61,7 @@ bool CStarPoints1::initialize() {
 	return true;
 }
 
-void CStarPoints1::draw(CSurfaceArea *surface, CStarCamera *camera) {
+void CConstBoundaries::draw(CSurfaceArea *surface, CStarCamera *camera) {
 	if (_data.empty())
 		return;
 

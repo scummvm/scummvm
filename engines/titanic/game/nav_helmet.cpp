@@ -61,7 +61,7 @@ bool CNavHelmet::MovieEndMsg(CMovieEndMsg *msg) {
 		pet->incAreaLocks();
 
 		starFn(STAR_SHOW);
-		starFn(STAR_12);
+		starFn(STAR_STEREO_PAIR_ON);
 	}
 
 	return true;
@@ -109,7 +109,7 @@ bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 
 bool CNavHelmet::PETPhotoOnOffMsg(CPETPhotoOnOffMsg *msg) {
 	if (_helmetOn)
-		starFn(STAR_TOGGLE_MODE);
+		starFn(STAR_TOGGLE_HOME_PHOTO);
 
 	return true;
 }

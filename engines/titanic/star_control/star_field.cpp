@@ -27,15 +27,15 @@
 
 namespace Titanic {
 
-CStarField::CStarField() : _points1On(false), _points2On(false), _mode(MODE_STARFIELD),
+CStarField::CStarField() : _renderBoundaries(false), _renderConstMap(false), _mode(MODE_STARFIELD),
 		_showBox(true), _closeToMarker(false), _isSolved(false) {
 }
 
 void CStarField::load(SimpleFile *file) {
 	_markers.load(file);
 	_crosshairs.load(file);
-	_points1On = file->readNumber();
-	_points2On = file->readNumber();
+	_renderBoundaries = file->readNumber();
+	_renderConstMap = file->readNumber();
 	_mode = (StarMode)file->readNumber();
 	_showBox = file->readNumber();
 	_isSolved = file->readNumber();
@@ -44,21 +44,21 @@ void CStarField::load(SimpleFile *file) {
 void CStarField::save(SimpleFile *file, int indent) {
 	_markers.save(file, indent);
 	_crosshairs.save(file, indent);
-	file->writeNumberLine(_points1On, indent);
-	file->writeNumberLine(_points2On, indent);
+	file->writeNumberLine(_renderBoundaries, indent);
+	file->writeNumberLine(_renderConstMap, indent);
 	file->writeNumberLine(_mode, indent);
 	file->writeNumberLine(_showBox, indent);
 	file->writeNumberLine(_isSolved, indent);
 }
 
 bool CStarField::initDocument() {
-	bool valid = setup() && _points1.initialize();
+	bool valid = setup() && _constBounds.initialize();
 	if (valid)
 		valid = _starCloseup.setup();
 	if (valid)
-		valid = _points1.initialize();
+		valid = _constBounds.initialize();
 	if (valid)
-		valid = _points2.initialize();
+		valid = _constMap.initialize();
 
 	return valid;
 }
@@ -72,28 +72,28 @@ void CStarField::render(CVideoSurface *surface, CStarCamera *camera) {
 	_markers.draw(&surfaceArea, camera, nullptr);
 	_crosshairs.draw(&surfaceArea);
 
-	if (_points2On)
-		_points2.draw(&surfaceArea, camera);
-	if (_points1On)
-		_points1.draw(&surfaceArea, camera);
+	if (_renderConstMap)
+		_constMap.draw(&surfaceArea, camera);
+	if (_renderBoundaries)
+		_constBounds.draw(&surfaceArea, camera);
 
 	fn4(&surfaceArea, camera);
 }
 
-int CStarField::get1() const {
-	return _points1On;
+bool CStarField::getBoundaryState() const {
+	return _renderBoundaries;
 }
 
-void CStarField::set1(int val) {
-	_points1On = val;
+void CStarField::setBoundaryState(bool state) {
+	_renderBoundaries = state;
 }
 
-int CStarField::get2() const {
-	return _points2On;
+bool CStarField::getConstMapState() const {
+	return _renderConstMap;
 }
 
-void CStarField::set2(int val) {
-	_points2On = val;
+void CStarField::setConstMapState(bool state) {
+	_renderConstMap = state;
 }
 
 int CStarField::get54() const {

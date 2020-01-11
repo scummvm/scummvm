@@ -102,7 +102,7 @@ public:
 	virtual void setCenterYAngle(int v);
 	virtual void setCenterZAngle(int v);
 	virtual void randomizeOrientation();
-	virtual void proc12(StarMode mode, double v2);
+	virtual void setFields(StarMode mode, double val);
 	virtual void proc13(CViewport *dest);
 
 	/**

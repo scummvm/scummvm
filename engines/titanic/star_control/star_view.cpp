@@ -37,7 +37,7 @@ namespace Titanic {
 CStarView::CStarView() : _camera((const CNavigationInfo *)nullptr), _owner(nullptr),
 		_starField(nullptr), _videoSurface(nullptr), _hasReference(0),
 		_photoSurface(nullptr), _homePhotoMask(nullptr),
-		_field218(false), _showingPhoto(false) {
+		_stereoPair(false), _showingPhoto(false) {
 	CNavigationInfo data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
 
 	_camera.proc3(&data);
@@ -56,7 +56,7 @@ void CStarView::load(SimpleFile *file, int param) {
 		if (_hasReference)
 			_photoViewport.load(file, 0);
 
-		_field218 = file->readNumber();
+		_stereoPair = file->readNumber();
 		_showingPhoto = file->readNumber();
 	}
 }
@@ -68,7 +68,7 @@ void CStarView::save(SimpleFile *file, int indent) {
 	if (_hasReference)
 		_photoViewport.save(file, indent);
 
-	file->writeNumberLine(_field218, indent);
+	file->writeNumberLine(_stereoPair, indent);
 	file->writeNumberLine(_showingPhoto, indent);
 }
 
@@ -161,7 +161,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	switch (tolower(key)) {
 	case Common::KEYCODE_TAB:
 		if (_starField) {
-			toggleMode();
+			toggleHomePhoto();
 			return true;
 		}
 		break;
@@ -259,10 +259,6 @@ void CStarView::starDestinationSet() {
 	_camera.clearIsMoved();
 }
 
-void CStarView::resetPosition() {
-	_camera.setPosition(FVector(0.0, 0.0, 0.0));
-}
-
 bool CStarView::updateCamera() {
 	if (_fader.isActive() || _showingPhoto)
 		return false;
@@ -289,38 +285,42 @@ void CStarView::fn2() {
 			resizeSurface(scrManager, 600, 340, &_videoSurface);
 
 		if (_videoSurface) {
-			fn13();
+			stereoPairOn();
 			fn19(244);
 			draw(scrManager);
 		}
 	}
 }
 
-void CStarView::fn3(bool fadeIn) {
+void CStarView::triggerFade(bool fadeIn) {
 	_fader.reset();
 	_fader.setFadeIn(fadeIn);
 }
 
-void CStarView::fn4() {
-	FVector v1, v2;
-	randomizeVectors1(v1, v2);
-	_camera.setPosition(v1);
-	_camera.setOrientation(v2);
+void CStarView::viewFromEarth() {
+	_camera.setPosition(FVector(0.0, 0.0, 0.0));
 }
 
-void CStarView::fn5() {
-	_starField->set1(!_starField->get1());
+void CStarView::viewEarth() {
+	FVector pos, dir;
+	getRandomViewpoint(pos, dir);
+	_camera.setPosition(pos);
+	_camera.setOrientation(dir);
 }
 
-void CStarView::fn6() {
-	_starField->set2(!_starField->get2());
+void CStarView::viewBoundaries() {
+	_starField->setBoundaryState(!_starField->getBoundaryState());
 }
 
-void CStarView::fn7() {
+void CStarView::viewConstellations() {
+	_starField->setConstMapState(!_starField->getConstMapState());
+}
+
+void CStarView::viewRandomStar() {
 	const CBaseStarEntry *star = _starField->getRandomStar();
 	if (star) {
 		FVector pos, orientation;
-		randomizeVectors1(pos, orientation);
+		getRandomViewpoint(pos, orientation);
 		pos += star->_position;
 		_camera.setPosition(pos);
 		_camera.setOrientation(orientation);
@@ -331,7 +331,7 @@ void CStarView::fn19(int index) {
 	const CBaseStarEntry *star = _starField->getStar(index);
 	if (star) {
 		FVector pos, orientation;
-		randomizeVectors1(pos, orientation);
+		getRandomViewpoint(pos, orientation);
 		pos += star->_position;
 		_camera.setPosition(pos);
 		_camera.setOrientation(orientation);
@@ -342,18 +342,18 @@ void CStarView::fullSpeed() {
 	_camera.fullSpeed();
 }
 
-void CStarView::fn9() {
-	_field218 = !_field218;
-	if (_field218) {
-		_camera.proc12(MODE_PHOTO, 30.0);
-		_camera.proc12(MODE_STARFIELD, 28000.0);
+void CStarView::toggleSteroPair() {
+	_stereoPair = !_stereoPair;
+	if (_stereoPair) {
+		_camera.setFields(MODE_PHOTO, 30.0);
+		_camera.setFields(MODE_STARFIELD, 28000.0);
 	} else {
-		_camera.proc12(MODE_PHOTO, 0.0);
-		_camera.proc12(MODE_STARFIELD, 0.0);
+		_camera.setFields(MODE_PHOTO, 0.0);
+		_camera.setFields(MODE_STARFIELD, 0.0);
 	}
 }
 
-void CStarView::toggleMode() {
+void CStarView::toggleHomePhoto() {
 	if (!_photoSurface)
 		return;
 
@@ -362,26 +362,26 @@ void CStarView::toggleMode() {
 		_starField->setMode(_showingPhoto ? MODE_PHOTO : MODE_STARFIELD);
 }
 
-void CStarView::fn11() {
+void CStarView::toggleSolarRendering() {
 	if (_starField)
 		_starField->fn9();
 }
 
-void CStarView::toggleBox() {
+void CStarView::TogglePosFrame() {
 	if (_starField)
 		_starField->toggleBox();
 }
 
-void CStarView::fn13() {
-	_field218 = true;
-	_camera.proc12(MODE_PHOTO, 30.0);
-	_camera.proc12(MODE_STARFIELD, 28000.0);
+void CStarView::stereoPairOn() {
+	_stereoPair = true;
+	_camera.setFields(MODE_PHOTO, 30.0);
+	_camera.setFields(MODE_STARFIELD, 28000.0);
 }
 
-void CStarView::fn14() {
-	_field218 = false;
-	_camera.proc12(MODE_PHOTO, 0.0);
-	_camera.proc12(MODE_STARFIELD, 0.0);
+void CStarView::stereoPairOff() {
+	_stereoPair = false;
+	_camera.setFields(MODE_PHOTO, 0.0);
+	_camera.setFields(MODE_STARFIELD, 0.0);
 }
 
 void CStarView::setHasReference() {
@@ -390,12 +390,12 @@ void CStarView::setHasReference() {
 
 	_photoViewport.setPosition(pos);
 	_photoViewport.setOrientation(orientation);
-	_field218 = false;
+	_stereoPair = false;
 	_photoViewport.changeStarColorPixel(MODE_PHOTO, 0.0);
 	_photoViewport.changeStarColorPixel(MODE_STARFIELD, 0.0);
 	_hasReference = true;
 	reset();
-	_field218 = true;
+	_stereoPair = true;
 }
 
 void CStarView::lockStar() {
@@ -471,7 +471,7 @@ void CStarView::fn18(CStarCamera *camera) {
 	}
 }
 
-void CStarView::randomizeVectors1(FVector &pos, FVector &orientation) {
+void CStarView::getRandomViewpoint(FVector &pos, FVector &orientation) {
 	/* ***DEBUG***
 	v1._x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
 	v1._y = 3072.0 - g_vm->getRandomFloat() * -4096.0;

@@ -127,9 +127,9 @@ void CStarCamera::randomizeOrientation() {
 		_viewport.randomizeOrientation();
 }
 
-void CStarCamera::proc12(StarMode mode, double v2) {
+void CStarCamera::setFields(StarMode mode, double val) {
 	if (!isLocked())
-		_viewport.changeStarColorPixel(mode, v2);
+		_viewport.changeStarColorPixel(mode, val);
 }
 
 void CStarCamera::proc13(CViewport *dest) {

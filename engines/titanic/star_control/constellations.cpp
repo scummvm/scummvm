@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/star_control/star_points2.h"
+#include "titanic/star_control/constellations.h"
 #include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/surface_area.h"
 #include "titanic/support/files_manager.h"
@@ -32,7 +32,7 @@ namespace Titanic {
 
 #define ARRAY_COUNT 80
 
-bool CStarPoints2::initialize() {
+bool CConstellations::initialize() {
 	// Get a reference to the starfield points resource
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource("STARFIELD/POINTS2");
 
@@ -66,7 +66,7 @@ bool CStarPoints2::initialize() {
 	return true;
 }
 
-void CStarPoints2::draw(CSurfaceArea *surface, CStarCamera *camera) {
+void CConstellations::draw(CSurfaceArea *surface, CStarCamera *camera) {
 	if (_data.empty())
 		return;
 
@@ -84,7 +84,7 @@ void CStarPoints2::draw(CSurfaceArea *surface, CStarCamera *camera) {
 
 	for (uint rootCtr = 0; rootCtr < _data.size(); ++rootCtr) {
 		const RootEntry &re = _data[rootCtr];
-		if (!re._field0 || re.empty())
+		if (!re._visible || re.empty())
 			continue;
 
 		for (uint idx = 0; idx < re.size(); ++idx) {
