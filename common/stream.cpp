@@ -28,6 +28,19 @@
 
 namespace Common {
 
+uint32 WriteStream::writeStream(ReadStream *stream, uint32 dataSize) {
+	void *buf = malloc(dataSize);
+	dataSize = stream->read(buf, dataSize);
+	assert(dataSize > 0);
+	dataSize = write(buf, dataSize);
+	free(buf);
+	return dataSize;
+}
+
+uint32 WriteStream::writeStream(SeekableReadStream *stream) {
+	return writeStream(stream, stream->size());
+}
+
 void WriteStream::writeString(const String &str) {
 	write(str.c_str(), str.size());
 }
