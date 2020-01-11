@@ -993,6 +993,11 @@ void ResourceManager::init() {
 		_mapVersion = _volVersion;
 	}
 
+	if ((_volVersion == kResVersionSci3) && (_mapVersion < kResVersionSci2)) {
+		warning("Detected volume version is too high for detected map version. Setting volume version to map version");
+		_volVersion = _mapVersion;
+	}
+
 	debugC(1, kDebugLevelResMan, "resMan: Detected resource map version %d: %s", _mapVersion, versionDescription(_mapVersion));
 	debugC(1, kDebugLevelResMan, "resMan: Detected volume version %d: %s", _volVersion, versionDescription(_volVersion));
 
