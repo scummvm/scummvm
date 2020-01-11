@@ -18,6 +18,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed sound issues in the Legend of Kyrandia 2.
    - Fixed minor graphics glitches in Legend of Kyrandia 1, EOB1 and EOB2-FM-TOWNS.
 
+Queen:
+   - Fixed regression with the display of the bellboy dialogue.
+
  SCI:
    - Numerous game script fixes in CAMELOT, ECO2, GK1, GK2,
      KQ7, PHANT1, PQ1VGA, QFG3, QFG4, SQ5 and SQ6.
@@ -37,10 +40,22 @@ For a more comprehensive changelog of the latest experimental code, see:
  Toltecs:
    - Added Czech version support.
 
+ Wintermute:
+   - Added several missing game variants and demos to the detection tables.
+   - Fixed regression with stack handling.
+   - Fixed the behavior of edit boxes.
+   - Improved support for Chinese language game variants.
+ 
  Xeen:
-   - Fix display of gold and gem amounts on the Switch.
-   - Fix tavern exit locations in Swords of Xeen.
-   - Fix crash loading Deep Mine Alpha in World of Xeen CD
+   - Fixed display of gold and gem amounts on the Switch.
+   - Fixed tavern exit locations in Swords of Xeen.
+   - Fixed crash loading Deep Mine Alpha in World of Xeen CD.
+
+ GUI:
+   - MIDI setting tabs are no longer shown if a game has no music at all.
+
+ All ports:
+   - Fixed screen filling in non-paletted screen modes.
 
  3DS port:
    - Major improvements.
@@ -50,6 +65,12 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Android port:
    - Improved filesystem navigation.
+
+ IOS port:
+   - The home indicator is now automatically hidden on iPhone X and later models.
+
+ NETWORKING:
+   - Improved error handling.
 
  Switch port:
    - Added cloud integration.
