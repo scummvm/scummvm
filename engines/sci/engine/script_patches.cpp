@@ -17088,12 +17088,57 @@ static const uint16 sq1vgaPatchSpiderDroidTiming[] = {
 	PATCH_END
 };
 
+// The Russian version of SQ1VGA has mangled class names in its scripts. This
+//  isn't a problem in Sierra's interpreter since this is just metadata, but our
+//  feature detection code looks up several classes by name and requires them to
+//  exist. We fix this by patching the Motion, Rm, and Sound strings back to
+//  their original values.
+//
+// Applies to: Russian PC Floppy
+// Fixes bug: #10156
+static const uint16 sq1vgaSignatureRussianMotionName[] = {
+	SIG_MAGICDWORD,
+	0x2A, 0x4D, 0x6F, 0x74, 0x69,       // *Motion.
+	0x6F, 0x6E, 0x20,
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchRussianMotionName[] = {
+	0x4D, 0x6F, 0x74, 0x69, 0x6F,       // Motion
+	0x6E, 0x00,
+	PATCH_END
+};
+static const uint16 sq1vgaSignatureRussianRmName[] = {
+	SIG_MAGICDWORD,
+	0x2a, 0x52, 0x6d, 0x00,             // *Rm
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchRussianRmName[] = {
+	0x52, 0x6d, 0x00,                   // Rm
+	PATCH_END
+};
+
+static const uint16 sq1vgaSignatureRussianSoundName[] = {
+	SIG_MAGICDWORD,
+	0x87, 0xa2, 0xe3, 0xaa, 0x00, 0x00, // ....
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchRussianSoundName[] = {
+	0x53, 0x6f, 0x75, 0x63, 0x64,       // Sound
+	PATCH_END
+};
+
 //          script, description,                                      signature                                   patch
 static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,    45, "Ulence Flats: timepod graphic glitch",        1, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
 	{  true,    45, "Ulence Flats: force field generator glitch",  1, sq1vgaSignatureUlenceFlatsGeneratorGlitch,  sq1vgaPatchUlenceFlatsGeneratorGlitch },
 	{  true,    58, "Sarien armory droid zapping ego first time",  1, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
 	{  true,   704, "spider droid timing issue",                   1, sq1vgaSignatureSpiderDroidTiming,           sq1vgaPatchSpiderDroidTiming },
+	{  true,   989, "rename russian Sound class",                  1, sq1vgaSignatureRussianSoundName,            sq1vgaPatchRussianSoundName },
+	{  true,   992, "rename russian Motion class",                 1, sq1vgaSignatureRussianMotionName,           sq1vgaPatchRussianMotionName },
+	{  true,   994, "rename russian Rm class",                     1, sq1vgaSignatureRussianRmName,               sq1vgaPatchRussianRmName },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
