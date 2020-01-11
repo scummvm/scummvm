@@ -1518,7 +1518,7 @@ void Score::renderZoomBox(bool redraw) {
 		end = MIN(start + 3 - box->step % 2, 8);
 	}
 
-	Graphics::MacPlotData pd(_surface, &_vm->_wm->getPatterns(), Graphics::kPatternCheckers, 1, 0);
+	Graphics::MacPlotData pd(_surface, &_vm->_wm->getPatterns(), Graphics::kPatternCheckers, 0, 0, 1, 0);
 
 	for (int i = start; i <= end; i++) {
 		Common::Rect r(box->start.left   + (box->end.left   - box->start.left)   * i / 8,

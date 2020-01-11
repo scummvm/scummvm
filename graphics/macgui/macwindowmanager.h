@@ -83,11 +83,13 @@ struct MacPlotData {
 	Graphics::ManagedSurface *surface;
 	MacPatterns *patterns;
 	uint fillType;
+	int fillOriginX;
+	int fillOriginY;
 	int thickness;
 	uint bgColor;
 
-	MacPlotData(Graphics::ManagedSurface *s, MacPatterns *p, int f, int t, uint bg) :
-		surface(s), patterns(p), fillType(f), thickness(t), bgColor(bg) {
+	MacPlotData(Graphics::ManagedSurface *s, MacPatterns *p, uint f, int fx, int fy, int t, uint bg) :
+		surface(s), patterns(p), fillType(f), fillOriginX(fx), fillOriginY(fy), thickness(t), bgColor(bg) {
 	}
 };
 

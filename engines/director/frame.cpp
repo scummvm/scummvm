@@ -727,8 +727,8 @@ void Frame::renderShape(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	tmpSurface.clear(255);
 
 	// No minus one on the pattern here! MacPlotData will do that for us!
-	//Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), 1, 1, sp->_backColor);
-	Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), sp->getPattern(), lineSize, backColor);
+	//Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), 1, 0, 0, 1, sp->_backColor);
+	Graphics::MacPlotData pd(&tmpSurface, &_vm->getPatterns(), sp->getPattern(), -shapeRect.left, -shapeRect.top, lineSize, backColor);
 	Common::Rect fillRect(MAX((int)shapeRect.width() - lineSize, 0), MAX((int)shapeRect.height() - lineSize, 0));
 
 	switch (spriteType) {
@@ -797,7 +797,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 		break;
 	case kTypeButton: {
 			_rect = Common::Rect(x, y, x + width, y + height + 3);
-			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 1, invert ? Graphics::kColorBlack : Graphics::kColorWhite);
+			Graphics::MacPlotData pd(&surface, &_vm->getMacWindowManager()->getPatterns(), Graphics::MacGUIConstants::kPatternSolid, 0, 0, 1, invert ? Graphics::kColorBlack : Graphics::kColorWhite);
 
 			Graphics::drawRoundRect(_rect, 4, 0, invert, Graphics::macDrawPixel, &pd);
 			addDrawRect(spriteId, _rect);
