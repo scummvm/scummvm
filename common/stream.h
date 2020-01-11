@@ -29,6 +29,7 @@
 
 namespace Common {
 
+class ReadStream;
 class SeekableReadStream;
 
 /**
@@ -227,6 +228,13 @@ public:
 
 		writeUint64BE(n);
 	}
+
+	/**
+	 * Write data from another stream to this one.
+	 */
+	uint32 writeStream(ReadStream *stream, uint32 dataSize);
+
+	uint32 writeStream(SeekableReadStream *stream);
 
 	/**
 	 * Write the given string to the stream.
