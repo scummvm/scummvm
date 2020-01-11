@@ -223,7 +223,8 @@ void Score::loadArchive() {
 	}
 
 	Common::Array<uint16> cast = _movieArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
-	_loadedCast = new Common::HashMap<int, Cast *>();
+	if (!_loadedCast)
+		_loadedCast = new Common::HashMap<int, Cast *>();
 
 	if (cast.size() > 0) {
 		debugC(2, kDebugLoading, "****** Loading %d CASt resources", cast.size());
