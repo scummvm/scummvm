@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-12-14 13:24+0000\n"
-"PO-Revision-Date: 2019-11-13 02:03+0000\n"
+"PO-Revision-Date: 2020-01-14 01:55+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -117,8 +117,8 @@ msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
-"Φαίνεται πως η σύνδεσή σας είναι περιορισμένη. Θέλετε πραγματικά να "
-"μεταφορτώσετε αρχεία με αυτή;"
+"Η σύνδεσή σας δείχνει να είναι περιορισμένη. Θέλετε σίγουρα να μεταφορτώσετε "
+"αρχεία με αυτή;"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -149,8 +149,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
-"Δεν ήταν δυνατή η δημιουργία φακέλου για μεταφόρτωση - ο προκαθορισμένος "
-"φάκελος έχει ένα αρχείο με το ίδιο όνομα."
+"Αδυναμία δημιουργίας φακέλου για τη λήψη - στον καθορισμένο φάκελο υπάρχει "
+"αρχείο με το ίδιο όνομα."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:300
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:38 gui/launcher.cpp:490
@@ -177,8 +177,8 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
-"Το \"%s\" υπάρχει ήδη στον προκαθορισμένο φάκελο.\n"
-"Θέλετε πραγματικά να μεταφορτώσετε αρχεία σε αυτό το φάκελο;"
+"Το \"%s\" υπάρχει ήδη στον καθορισμένο φάκελο.\n"
+"Θέλετε σίγουρα να κάνετε λήψη αρχείων σε εκείνο το φάκελο;"
 
 #: gui/downloaddialog.cpp:215
 #, c-format
@@ -451,7 +451,7 @@ msgstr "Εισάγετε όνομα αρχείου για αποθήκευση"
 
 #: gui/filebrowser-dialog.cpp:133
 msgid "Do you really want to overwrite the file?"
-msgstr "Θέλετε πραγματικά να αντικαταστήσετε το αρχείο;"
+msgstr "Θέλετε σίγουρα να αντικαταστήσετε το αρχείο;"
 
 #: gui/fluidsynth-dialog.cpp:69
 msgid "Reverb"
@@ -542,7 +542,7 @@ msgstr ""
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
-"Θέλετε πραγματικά να επαναφέρετε όλες τις ρυθμίσεις του FluidSynth στις "
+"Θέλετε σίγουρα να επαναφέρετε όλες τις ρυθμίσεις του FluidSynth στις "
 "προκαθορισμένες τους τιμές;"
 
 #: gui/gui-manager.cpp:123 gui/unknown-game-dialog.cpp:49
@@ -647,7 +647,7 @@ msgstr "~Π~ροσθήκη Παιχνιδιού..."
 
 #: gui/launcher.cpp:160 gui/launcher.cpp:170
 msgid "Add games to the list"
-msgstr ""
+msgstr "Προσθήκη παιχνιδιών στη λίστα"
 
 #: gui/launcher.cpp:161
 msgid "Mass Add..."
@@ -677,7 +677,6 @@ msgid "~A~dd Game..."
 msgstr "~Π~ροσθ. Παιχν..."
 
 #: gui/launcher.cpp:171
-#, fuzzy
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Μαζική Προσθήκη..."
@@ -726,12 +725,12 @@ msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
-"Θέλετε πραγματικά να τρέξετε τον μαζικό ανιχνευτή παιχνιδιών; Αυτό θα "
-"μπορούσε ενδεχομένως να προσθέσει ένα τεράστιο αριθμό παιχνιδιών."
+"Θέλετε σίγουρα να τρέξετε τον μαζικό ανιχνευτή παιχνιδιών; Αυτό ενδέχεται να "
+"προσθέσει ένα τεράστιο αριθμό παιχνιδιών."
 
 #: gui/launcher.cpp:398
 msgid "Do you really want to remove this game configuration?"
-msgstr "Θέλετε πραγματικά να σβήσετε τις ρυθμίσεις αυτού του παιχνιδιού;"
+msgstr "Θέλετε σίγουρα να σβήσετε τις ρυθμίσεις αυτού του παιχνιδιού;"
 
 #: gui/launcher.cpp:440
 msgid "Do you want to load saved game?"
@@ -750,7 +749,7 @@ msgstr ""
 #: gui/launcher.cpp:559
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr ""
-"Το ScummVM δε μπόρεσε να βρεί κάποιο παιχνίδι στον προκαθορισμένο φάκελο!"
+"Το ScummVM δεν μπόρεσε να βρει κάποιο παιχνίδι στον συγκεκριμένο φάκελο!"
 
 #: gui/launcher.cpp:574
 msgid "Unknown variant"
@@ -1589,7 +1588,7 @@ msgstr ""
 
 #: gui/options.cpp:2392 gui/options.cpp:2430
 msgid "Wait until current Storage finishes up and try again."
-msgstr "Αναμονή μέχρι να ολοκληρωθεί η τρέχουσα Αποθήκευση και δοκιμάστε ξανά."
+msgstr "Περιμένετε να ολοκληρωθεί η τρέχουσα Αποθήκευση και δοκιμάστε ξανά."
 
 #: gui/options.cpp:2405
 msgid "Connecting..."
@@ -1698,7 +1697,7 @@ msgstr "Σημειώσεις: "
 
 #: gui/recorderdialog.cpp:154
 msgid "Do you really want to delete this record?"
-msgstr "Θέλετε πραγματικά να σβήσετε αυτή την εγγραφή;"
+msgstr "Θέλετε σίγουρα να σβήσετε αυτή την εγγραφή;"
 
 #: gui/recorderdialog.cpp:171
 msgid "Unknown Author"
@@ -1730,7 +1729,7 @@ msgstr "Χωρίς αποθηκ. ώρα παιχνιδιού"
 
 #: gui/saveload-dialog.cpp:453
 msgid "Do you really want to delete this saved game?"
-msgstr "Θέλετε πραγματικά να σβήσετε αυτό το αποθηκευμένο παιχνίδι;"
+msgstr "Θέλετε σίγουρα να σβήσετε αυτό το αποθηκευμένο παιχνίδι;"
 
 #: gui/saveload-dialog.cpp:580 gui/saveload-dialog.cpp:1092
 msgid "Date: "
@@ -2101,12 +2100,12 @@ msgstr ""
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:98
 #: engines/tsage/dialogs.cpp:112
 msgid "~O~K"
-msgstr "~Ο~Κ"
+msgstr "~O~K"
 
 #: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:99
 #: engines/tsage/dialogs.cpp:113
 msgid "~C~ancel"
-msgstr "~Α~κύρωση"
+msgstr "Ακύρ~ω~ση"
 
 #: engines/dialogs.cpp:311
 msgid "~K~eys"
@@ -2119,7 +2118,7 @@ msgstr "Αδυναμία αλλαγής σε ανάλυση '%dx%d'."
 
 #: engines/engine.cpp:312
 msgid "Could not initialize color format."
-msgstr "Δεν ήταν δυνατή η προετοιμασία μορφής χρώματος."
+msgstr "Αδυναμία αρχικοποίησης της μορφής χρώματος."
 
 #: engines/engine.cpp:321
 #, c-format
@@ -2151,9 +2150,9 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the README file for details."
 msgstr ""
-"Φαίνετε ότι παίζετε το παιχνίδι απευθείας\n"
-"από το CD. Αυτό είναι γνωστό ότι προκαλεί προβλήματα,\n"
-"και ως εκ τούτου συνιστάται να αντιγράψετε αντ'αυτού\n"
+"Φαίνεται ότι παίζετε το παιχνίδι απευθείας\n"
+"από το CD. Αυτό ενδέχεται να παρουσιάσει προβλήματα,\n"
+"και συνεπώς συνιστάται αντ'αυτού να αντιγράψετε \n"
 "τα αρχεία δεδομένων στο σκληρό σας δίσκο.\n"
 "Δείτε το αρχείο README για λεπτομέρειες."
 
@@ -2194,7 +2193,7 @@ msgstr ""
 
 #: engines/engine.cpp:547 engines/wintermute/wintermute.cpp:165
 msgid "Start anyway"
-msgstr "Εκκίνηση ούτως ή άλλως"
+msgstr "Εκκίνηση παρά ταύτα"
 
 #: engines/game.cpp:179
 #, c-format
@@ -2350,12 +2349,12 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
-"Η μεταφόρτωση ολοκληρώθηκε.\n"
-"Δεν ήταν δυνατή η μεταφόρτωση %u αρχείων."
+"Η λήψη ολοκληρώθηκε.\n"
+"Αδυναμία λήψης %u αρχείων."
 
 #: backends/cloud/storage.cpp:350
 msgid "Download complete."
-msgstr "Η μεταφόρτωση ολοκληρώθηκε."
+msgstr "Η λήψη ολοκληρώθηκε."
 
 #: backends/cloud/storage.cpp:360
 msgid "Download failed."
@@ -2372,7 +2371,7 @@ msgstr "Launcher"
 
 #: backends/events/default/default-events.cpp:212
 msgid "Do you really want to quit?"
-msgstr "Θέλετε πραγματικά να βγείτε από το πρόγραμμα;"
+msgstr "Θέλετε σίγουρα να βγείτε από το πρόγραμμα;"
 
 #: backends/events/default/default-events.cpp:212
 #: backends/platform/symbian/src/SymbianActions.cpp:52
@@ -2733,7 +2732,7 @@ msgstr "Δεν προσδιορίστηκε αρχείο!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
 msgid "Uploaded successfully!"
-msgstr "Η μεταφορά ολοκληρώθηκε επιτυχώς!"
+msgstr "Επιτυχία μεταφοράς!"
 
 #: backends/platform/3ds/options-dialog.cpp:44
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
@@ -4059,10 +4058,11 @@ msgid ""
 msgstr ""
 "%d πρωτότυπα αποθηκευμένα αρχεία παιχνιδιού εισήχθησαν επιτυχώς στο\n"
 "ScummVM. Αν αργότερα θελήσετε να εισάγετε πρωτότυπα αποθηκευμένα αρχεία \n"
-"παιχνιδιού χειροκίνητα, θα χρειαστεί να ανοιξετε το τερματικό "
-"αποσφαλμάτωσης \n"
+"παιχνιδιού χειροκίνητα, θα χρειαστεί να ανοίξετε το τερματικό αποσφαλμάτωσης "
+"\n"
 "(debug console) του ScummVM και να χρησιμοποιήσετε την εντολή "
 "'import_savefile'.\n"
+"\n"
 
 #: engines/kyra/graphics/screen_eob.cpp:2258
 msgid ""
@@ -4306,9 +4306,9 @@ msgid ""
 msgstr ""
 "Σε αυτό το σημείο, η δοκιμαστική έκδοση του Riven\n"
 "θα σας ρωτούσε αν θέλετε να ανοίξετε ένα φυλλομετρητή\n"
-"για να μεταβείτε στο ηλεκτρονικό κατάστημα της Red Orb\n"
-"για να αγοράσετε το παιχνίδι. Το ScummVM δε μπορεί να\n"
-"το κάνει αυτό και η ιστοσελίδα δεν υπάρχει πλέον."
+"(browser) για να μεταβείτε στο ηλεκτρονικό κατάστημα\n"
+"της Red Orb και να αγοράσετε το παιχνίδι. Το ScummVM\n"
+"δεν μπορεί να το κάνει αυτό και η ιστοσελίδα δεν υπάρχει πλέον."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
@@ -5295,15 +5295,15 @@ msgstr "Κάνε πίσω"
 
 #: engines/scumm/help.cpp:308
 msgid "Block high"
-msgstr "Υψηλό μπλοκάρισμα"
+msgstr "Μπλοκάρισμα ψηλά"
 
 #: engines/scumm/help.cpp:309
 msgid "Block middle"
-msgstr "Μεσαίο μπλοκάρισμα"
+msgstr "Μπλοκάρισμα στη μέση"
 
 #: engines/scumm/help.cpp:310
 msgid "Block low"
-msgstr "Χαμηλό μπλοκάρισμα"
+msgstr "Μπλοκάρισμα χαμηλά"
 
 #: engines/scumm/help.cpp:311
 msgid "Punch high"
