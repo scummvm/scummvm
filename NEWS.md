@@ -6,9 +6,84 @@ For a more comprehensive changelog of the latest experimental code, see:
  Kyra:
    - Added support for the PC-98 version of Eye of the Beholder I.
 
+
+#### 2.1.1 (2020-01-31)
+
+ General:
+   - Fixed crash when switching certain languages in GUI.
+   - Fixed ESC erroneously saving the changes in the options dialog.
+   - Improvements in FM-TOWNS/PC-98 audio.
+
+ Bladerunner:
+   - Fixed buggy savestate in some scenes.
+
+ Kyra:
+   - Fixed EOB1-Amiga ending sequence (which would play only if you achieved all bonus quests).
+   - Fixed monster random item drop chance in EOB1.
+   - Added handling for the secret potion in the Legend of Kyrandia 2.
+   - Fixed sound issues in the Legend of Kyrandia 2.
+   - Fixed minor graphics glitches in Legend of Kyrandia 1, EOB1 and EOB2-FM-TOWNS.
+
+Queen:
+   - Fixed regression with the display of the bellboy dialogue.
+
+ SCI:
+   - Numerous game script fixes in CAMELOT, ECO2, GK1, GK2,
+     KQ7, PHANT1, PQ1VGA, QFG3, QFG4, SQ5 and SQ6.
+   - Added support for Phantasmagoria 1 censored mode.
+   - Added support for Polish LSL7.
+   - Added support for Italian GK2.
+   - Added support for Russian KQ7.
+   - Added support for Russian SQ1VGA.
+   - Added support for GK2 fan-made subtitle patches.
+
+ SCUMM:
+   - Added support for Pajama2 (UK release).
+
+ Supernova:
+   - Hooked F5 to the Main Menu.
+
+ Toltecs:
+   - Added Czech version support.
+
+ Wintermute:
+   - Added several missing game variants and demos to the detection tables.
+   - Fixed regression with stack handling.
+   - Fixed the behavior of edit boxes.
+   - Improved support for Chinese language game variants.
+ 
  Xeen:
-   - Fix display of gold and gem amounts on the Switch
-   - Fix crash loading Deep Mine Alpha in World of Xeen CD
+   - Fixed display of gold and gem amounts on the Switch.
+   - Fixed tavern exit locations in Swords of Xeen.
+   - Fixed crash loading Deep Mine Alpha in World of Xeen CD.
+
+ GUI:
+   - MIDI setting tabs are no longer shown if a game has no music at all.
+
+ All ports:
+   - Fixed screen filling in non-paletted screen modes.
+
+ 3DS port:
+   - Major improvements.
+
+ AmigaOS4 port:
+   - Minor tweaks (stack cookie, build automation).
+
+ Android port:
+   - Improved filesystem navigation.
+
+ IOS port:
+   - The home indicator is now automatically hidden on iPhone X and later models.
+
+ NETWORKING:
+   - Improved error handling.
+
+ Switch port:
+   - Added cloud integration.
+
+ Windows:
+   - Improvements to Text-to-Speech support.
+
 
 #### 2.1.0 "Electric Sheep" (2019-10-11)
 
