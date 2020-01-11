@@ -19,6 +19,9 @@ Programmcodes finden Sie auf Englisch unter:
    - Sound-Probleme in Legend of Kyrandia 2 korrigiert.
    - Kleinere Grafikfehler in Legend of Kyrandia 1, EOB1 und der FM-TOWNS-Version von EOB2 korrigiert.
 
+ Queen:
+   - Neu aufgetretener Fehler im Zusammenhang mit dem Dialog des Portiers behoben.
+
  SCI:
    - Zahlreiche Skript-Korrekturen in CAMELOT, ECO2, GK1, GK2, KQ7,
      PHANT1, PQ1VG, QFG3, QFG4, SQ5 und SQ6.
@@ -26,6 +29,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die polische Version von LSL7 hinzugefügt.
    - Unterstützung für die italienische Version von GK2 hinzugefügt.
    - Unterstützung für die russische Version von KQ7 hinzugefügt.
+   - Unterstützung für die russische Version von SQ1VGA hinzugefügt.
    - Unterstützung für von Fans erstellte Untertitel für GK2 hinzugefügt.
 
  SCUMM:
@@ -37,10 +41,22 @@ Programmcodes finden Sie auf Englisch unter:
  Toltecs:
    - Unterstützung für die tschechische Version hinzugefügt.
 
+ Wintermute:
+   - Mehrere fehlende Spiel-Varianten und Demos zu den Erkennungstabellen hinzugefügt.
+   - Neu aufgetretener Fehler im Zusammenhang mit dem Stack-Handling behoben.
+   - Das Verhalten von Edit-Boxen wurde korrigiert.
+   - Verbesserung der Unterstützung von chinesischen Spielversionen.
+
  Xeen:
    - Anzeige von Goldmünzen und Edelsteinen auf der Nintendo Switch korrigiert.
    - Ausgänge zur Taverne in Swords of Xeen korrigiert.
    - Absturz beim Laden von Deep Mine Alpha in der CD-Version von World of Xeen behoben.
+
+ GUI:
+   - Der Reiter zum Anpassen der MIDI-Optionen wird nicht mehr angezeigt, wenn das Spiel kein MIDI unterstützt.
+
+ Alle Portierungen:
+   - Bildschirmdarstellung in einigen Bildschirm-Modi korrigiert.
 
  3DS-Portierung:
    - Erhebliche Verbesserungen.
