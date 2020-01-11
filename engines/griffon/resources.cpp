@@ -631,6 +631,8 @@ void GriffonEngine::loadMap(int mapnum) {
 			_npcInfo[i].spellDamage = 60;
 
 			_npcInfo[i].walkspd = 1;
+			_npcInfo[i].frame2 = 0;
+			_npcInfo[i].attackattempt = 0;
 
 			_npcInfo[i].floating = RND() * 16;
 		}
