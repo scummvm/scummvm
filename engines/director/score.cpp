@@ -124,14 +124,12 @@ void Score::loadArchive() {
 
 	if (clutList.size() == 0) {
 		warning("CLUT resource not found, using default Mac palette");
-		g_system->getPaletteManager()->setPalette(defaultPalette, 0, 256);
-		_vm->setPalette(defaultPalette, 256);
+		_vm->setPalette(-1);
 	} else {
 		Common::SeekableSubReadStreamEndian *pal = _movieArchive->getResource(MKTAG('C', 'L', 'U', 'T'), clutList[0]);
 
 		debugC(2, kDebugLoading, "****** Loading Palette CLUT");
 		loadPalette(*pal);
-		g_system->getPaletteManager()->setPalette(_vm->getPalette(), 0, _vm->getPaletteColorCount());
 	}
 
 	// Font Directory
@@ -518,6 +516,9 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 void Score::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(1, kDebugLoading, "****** Loading Config VWCF");
 
+	if (debugChannelSet(5, kDebugLoading))
+		stream.hexdump(stream.size());
+
 	uint16 len = stream.readUint16();
 	uint16 ver1 = stream.readUint16();
 	_movieRect = Score::readRect(stream);
@@ -541,13 +542,29 @@ void Score::loadConfig(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 stageColorG = stream.readUint16();
 	uint16 stageColorB = stream.readUint16();
 
+	for (int i = 0; i < 0x0b; i++) {
+		stream.readByte();
+	}
+
+	if (_vm->getVersion() >= 4) {
+		for (int i = 0; i < 0x16; i++) {
+			stream.readByte();
+		}
+
+		int palette = (int16)stream.readUint16();
+		_vm->setPalette(palette - 1);
+
+		for (int i = 0; i < 0x08; i++) {
+			stream.readByte();
+		}
+	}
+
 	debugC(1, kDebugLoading, "Score::loadConfig(): len: %d, ver: %d, framerate: %d, light: %d, unk: %d, font: %d, size: %d"
 			", style: %d", len, ver1, _currentFrameRate, lightswitch, unk1, commentFont, commentSize, commentStyle);
 	debugC(1, kDebugLoading, "Score::loadConfig(): stagecolor: %d, depth: %d, color: %d, rgb: 0x%04x 0x%04x 0x%04x",
 			_stageColor, bitdepth, color, stageColorR, stageColorG, stageColorB);
 	if (debugChannelSet(1, kDebugLoading))
 		_movieRect.debugPrint(1, "Score::loadConfig(): Movie rect: ");
-	debugC(1, kDebugLoading, "Score::loadConfig(): %d bytes left", stream.size() - stream.pos());
 }
 
 void Score::readVersion(uint32 rid) {

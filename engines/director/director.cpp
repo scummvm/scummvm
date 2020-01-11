@@ -61,6 +61,9 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Setup mixer
 	syncSoundSettings();
 
+	// Load Palettes
+	loadPalettes();
+
 	// Load Patterns
 	loadPatterns();
 
