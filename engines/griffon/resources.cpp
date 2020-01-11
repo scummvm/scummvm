@@ -192,6 +192,12 @@ void GriffonEngine::loadMap(int mapnum) {
 		_spellInfo[i].frame = 0;
 
 	_roomLock = false;
+	_saidLocked = false;
+	_saidJammed = false;
+	_itemSelOn = false;
+	_selEnemyOn = false;
+	_curItem = 0;
+	_player.itemselshade = 0;
 
 	char name[256];
 	// read *.map file

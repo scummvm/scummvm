@@ -54,6 +54,7 @@ void Player::reset() {
 	hp = 0;
 	maxHp = 0;
 	hpflash = 0;
+	hpflashb = 0;
 	level = 0;
 	maxLevel = 0;
 	sword = 0;
@@ -65,6 +66,7 @@ void Player::reset() {
 		inventory[i] = 0;
 	}
 	attackStrength = 0;
+	itemselshade = 0;
 	spellDamage = 0;
 	swordDamage = 0;
 	exp = 0;

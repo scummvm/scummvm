@@ -618,6 +618,11 @@ void GriffonEngine::checkTrigger() {
 
 	_canUseKey = false;
 
+	for (int i = 0; i < kMaxFloat; i++) {
+		_floatText[i].framesLeft = 0;
+		_floatIcon[i].framesLeft = 0;
+	}
+
 	if (_triggerLoc[lx][ly] > -1)
 		processTrigger(_triggerLoc[lx][ly]);
 }

@@ -48,6 +48,7 @@ namespace Griffon {
 
 void GriffonEngine::title(int mode) {
 	float xofs = 0;
+	_itemyloc = 0;
 	bool exitTitle = false;
 
 	rcSrc.left = 0;
