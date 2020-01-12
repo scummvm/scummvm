@@ -27,6 +27,7 @@ Queen:
    - Added support for Phantasmagoria 1 censored mode.
    - Added support for Polish LSL7.
    - Added support for Italian GK2.
+   - Added support for Portuguese GK2.
    - Added support for Russian KQ7.
    - Added support for Russian SQ1VGA.
    - Added support for GK2 fan-made subtitle patches.
