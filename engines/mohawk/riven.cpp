@@ -152,8 +152,6 @@ Common::Error MohawkEngine_Riven::run() {
 		_cursor = new MacCursorManager("Riven");
 
 	initVars();
-	initKeymap();
-
 
 	// Check the user has copied all the required datafiles
 	if (!checkDatafiles()) {
