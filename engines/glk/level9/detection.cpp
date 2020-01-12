@@ -735,8 +735,8 @@ bool Level9MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 			continue;
 
 		uint32 fileSize = gameFile.size();
-		if (fileSize > 0xffff) {
-			// Too big to possibly be a Level 9 game
+		if (fileSize == 0 || fileSize > 0xffff) {
+			// Too big or too small to possibly be a Level 9 game
 			gameFile.close();
 			continue;
 		}
