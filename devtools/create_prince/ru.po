@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-06 00:26+0000\n"
+"PO-Revision-Date: 2020-01-16 10:38+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/prince/"
 "prince/ru/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.9.1\n"
+"X-Generator: Weblate 3.10.1\n"
 
 #: dialog0001.txt:1
 msgid "HERO: Przeppp... raszam..."
@@ -8843,7 +8843,7 @@ msgstr "$2: Жесты: Совсем пьяный"
 
 #: dialog0316.txt:104
 msgid "$3: Gest: złożone ręce"
-msgstr "$3: Жесты: Руки падают вниз"
+msgstr "$3: Жесты: Руки для молитвы"
 
 #: dialog0316.txt:100001
 msgid "#B0"
@@ -8967,11 +8967,12 @@ msgstr "HERO: Это было смешно, но теперь вернись."
 
 #: dialog0329.txt:2
 msgid "OTHER: Jestem silna i sprawna, ale jakoś jeszcze|nie potrafię skakać dwa metry w górę."
-msgstr "OTHER: Конечно. В моей форме я могу прыгать на два метра."
+msgstr ""
+"OTHER: Я сильная и прыткая, но всё-же как-то не могу прыгать на два метра."
 
 #: dialog0329.txt:3
 msgid "OTHER: Przecież to oczywiste, że musisz mi|pomóc."
-msgstr "OTHER: Я думал, что само собой разумеется, что ты мне|поможешь."
+msgstr "OTHER: Само собой разумеется, ты должен мне|помочь."
 
 #: dialog0329.txt:4
 msgid "OTHER: Wpakowałeś mnie tu, to teraz mnie|wyciągnij."
@@ -9243,7 +9244,9 @@ msgstr "OTHER: Галадор!"
 
 #: dialog0389.txt:2
 msgid "P#OTHER: Wrócił do dawnego ciała i nieoczekiwanie|ta jego nowa wersja spodobała się pięknej|Shandrii!"
-msgstr "P#OTHER: Наш герой был снова возвращен в свое тело и этим очень изумил|нашу прекрасную Шандрию."
+msgstr ""
+"P#OTHER: Наш герой был снова возвращен в свое тело|и эта его новая версия "
+"понравилась|прекрасной Шандрии!"
 
 #: dialog0390.txt:1
 msgid "OTHER: Kobiety są nieobliczalne..."
@@ -9255,7 +9258,9 @@ msgstr "OTHER: ... А Шандрия оказалась на редкость н
 
 #: dialog0392.txt:1
 msgid "OTHER: Miejmy nadzieję, że nie weźmie naszego|bohatera pod swój uroczy pantofelek."
-msgstr "OTHER: К счастью, она не взяла нашего героя под свое|покровительство..."
+msgstr ""
+"OTHER: Будем надеяться, что она не загонит|нашего героя под свой красивый "
+"каблучок..."
 
 #: dialog0393.txt:1
 msgid "OTHER: Choć znając ją i jego nie jest to wykluczone."
