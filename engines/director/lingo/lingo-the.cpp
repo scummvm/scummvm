@@ -59,6 +59,7 @@ TheEntity entities[] = {
 	{ kTheFrameLabel,		"frameLabel",		false, 4 },	//				D4 p
 	{ kTheFrameScript,		"frameScript",		false, 4 },	//				D4 p
 	{ kTheFramePalette,		"framePalette",		false, 4 },	//				D4 p
+	{ kTheFrameTempo,		"frameTempo",		false, 4 },	//				D4 f
 	{ kTheFreeBlock,		"freeBlock",		false, 2 },	// D2 f
 	{ kTheFreeBytes,		"freeBytes",		false, 2 },	// D2 f
 	{ kTheFullColorPermit,	"fullColorPermit",	false, 2 },	// D2 p

@@ -53,6 +53,7 @@ enum TheEntityType {
 	kTheFrameLabel,
 	kTheFramePalette,
 	kTheFrameScript,
+	kTheFrameTempo,
 	kTheFreeBlock,
 	kTheFreeBytes,
 	kTheFullColorPermit,
