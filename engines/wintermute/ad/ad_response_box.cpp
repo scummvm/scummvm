@@ -477,7 +477,7 @@ bool AdResponseBox::display() {
 	}
 
 	int xxx, yyy;
-	uint32 i;
+	int32 i;
 
 	xxx = rect.left;
 	yyy = rect.top;
@@ -485,7 +485,7 @@ bool AdResponseBox::display() {
 	// shift down if needed
 	if (!_horizontal) {
 		int totalHeight = 0;
-		for (i = 0; i < _respButtons.size(); i++) {
+		for (i = 0; i < (int32) _respButtons.size(); i++) {
 			totalHeight += (_respButtons[i]->getHeight() + _spacing);
 		}
 		totalHeight -= _spacing;
@@ -512,7 +512,7 @@ bool AdResponseBox::display() {
 
 	// prepare response buttons
 	bool scrollNeeded = false;
-	for (i = _scrollOffset; i < _respButtons.size(); i++) {
+	for (i = _scrollOffset; i < (int32) _respButtons.size(); i++) {
 
 #ifdef ENABLE_FOXTAIL
 		// FoxTail's "HORIZONTAL=TRUE" display boxes are actual 2x3 display boxes
@@ -570,7 +570,7 @@ bool AdResponseBox::display() {
 
 
 	// display response buttons
-	for (i = _scrollOffset; i < _respButtons.size(); i++) {
+	for (i = _scrollOffset; i < (int32) _respButtons.size(); i++) {
 		_respButtons[i]->display();
 	}
 
