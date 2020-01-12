@@ -69,6 +69,7 @@ namespace LC {
 	void c_argcpush();
 	void c_argcnoretpush();
 	void c_arraypush();
+	void c_proparraypush();
 	void c_assign();
 	bool verify(Symbol *s);
 	void c_eval();

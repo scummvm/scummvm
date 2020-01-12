@@ -205,7 +205,6 @@ public:
 	int codeString(const char *s);
 	void codeLabel(int label);
 	int codeInt(int val);
-	int codeArray(int arraySize);
 
 	int calcStringAlignment(const char *s) {
 		return calcCodeAlignment(strlen(s) + 1);

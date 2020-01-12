@@ -333,14 +333,6 @@ int Lingo::codeInt(int val) {
 	return _currentScript->size();
 }
 
-int Lingo::codeArray(int arraySize) {
-	inst i = 0;
-	WRITE_UINT32(&i, arraySize);
-	g_lingo->code1(i);
-
-	return _currentScript->size();
-}
-
 bool Lingo::isInArgStack(Common::String *s) {
 	for (uint i = 0; i < _argstack.size(); i++)
 		if (_argstack[i]->equalsIgnoreCase(*s))

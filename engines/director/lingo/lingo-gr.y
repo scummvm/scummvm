@@ -116,8 +116,8 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token tON tME tENDIF tENDREPEAT tENDTELL
 
 %type<code> asgn begin elseif end expr if when repeatwhile
-%type<code> repeatwith stmtlist tell reference simpleexpr
-%type<narg> argdef arglist nonemptyarglist
+%type<code> repeatwith stmtlist tell reference simpleexpr list valuelist
+%type<narg> argdef arglist nonemptyarglist linearlist proplist
 %type<s> on
 
 %left tAND tOR
@@ -287,7 +287,7 @@ ifstmt: if expr end tTHEN stmtlist end elseifstmtlist end tENDIF {
 	;
 
 elseifstmtlist:	/* nothing */
-	| elseifstmt elseifstmtlist
+	| elseifstmtlist elseifstmt
 	;
 
 elseifstmt: elseif expr end tTHEN stmtlist end {
@@ -383,6 +383,7 @@ simpleexpr: INT		{
 		$$ = g_lingo->code1(LC::c_eval);
 		g_lingo->codeString($1->c_str());
 		delete $1; }
+	| list
 	;
 
 expr: simpleexpr { $$ = $1; }
@@ -437,7 +438,6 @@ expr: simpleexpr { $$ = $1; }
 	| '+' expr  %prec UNARY		{ $$ = $2; }
 	| '-' expr  %prec UNARY		{ $$ = $2; g_lingo->code1(LC::c_negate); }
 	| '(' expr ')'				{ $$ = $2; }
-	| '[' arglist ']'			{ $$ = g_lingo->code1(LC::c_arraypush); g_lingo->codeArray($2); }
 	| tSPRITE expr tINTERSECTS expr 	{ g_lingo->code1(LC::c_intersects); }
 	| tSPRITE expr tWITHIN expr		 	{ g_lingo->code1(LC::c_within); }
 	| tCHAR expr tOF expr				{ g_lingo->code1(LC::c_charOf); }
@@ -629,5 +629,28 @@ arglist:  /* nothing */ 	{ $$ = 0; }
 nonemptyarglist:  expr			{ $$ = 1; }
 	| nonemptyarglist ',' expr	{ $$ = $1 + 1; }
 	;
+
+list: '[' valuelist ']'		{ $$ = $2; }
+	;
+
+valuelist:	/* nothing */	{ $$ = g_lingo->code2(LC::c_arraypush, 0); }
+	| ':'					{ $$ = g_lingo->code2(LC::c_proparraypush, 0); }
+	| linearlist { $$ = g_lingo->code1(LC::c_arraypush); $$ = g_lingo->codeInt($1); }
+	| proplist	 { $$ = g_lingo->code1(LC::c_proparraypush); $$ = g_lingo->codeInt($1); }
+	;
+
+linearlist: simpleexpr			{ $$ = 1; }
+	| linearlist ',' simpleexpr { $$ = $1 + 1; }
+	;
+
+proplist:  proppair			{ $$ = 1; }
+	| proplist ',' proppair	{ $$ = $1 + 1; }
+	;
+
+proppair: SYMBOL ':' simpleexpr {
+		g_lingo->code1(LC::c_symbolpush);
+		g_lingo->codeString($1->c_str()); }
+	;
+
 
 %%

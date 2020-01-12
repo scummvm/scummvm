@@ -63,6 +63,7 @@ static struct FuncDescr {
 	{ LC::c_argcpush,		"c_argcpush",		"i" },
 	{ LC::c_argcnoretpush,	"c_argcnoretpush",	"i" },
 	{ LC::c_arraypush,		"c_arraypush",		"i" },
+	{ LC::c_proparraypush,	"c_proparraypush",	"i" },
 	{ LC::c_printtop,		"c_printtop",		""  },
 	{ LC::c_intpush,		"c_intpush",		"i" },
 	{ LC::c_voidpush,		"c_voidpush",		""  },
@@ -286,6 +287,20 @@ void LC::c_arraypush() {
 	warning("STUB: c_arraypush()");
 
 	for (int i = 0; i < arraySize; i++)
+		g_lingo->pop();
+
+	d.u.i = arraySize;
+	d.type = INT;
+	g_lingo->push(d);
+}
+
+void LC::c_proparraypush() {
+	Datum d;
+	int arraySize = g_lingo->readInt();
+
+	warning("STUB: c_proparraypush()");
+
+	for (int i = 0; i < arraySize * 2; i++)
 		g_lingo->pop();
 
 	d.u.i = arraySize;
