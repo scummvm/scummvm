@@ -41,6 +41,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Toltecs:
    - Unterstützung für die tschechische Version hinzugefügt.
+   - Fehler behoben, der dazu geführt hat, dass Spiele-Menüs bei der Rückker zum Launcher nicht geschlossen wurden.
 
  Wintermute:
    - Mehrere fehlende Spiel-Varianten und Demos zu den Erkennungstabellen hinzugefügt.
