@@ -178,20 +178,20 @@ void CStarField::drawBox(CSurfaceArea *surfaceArea) {
 }
 
 void CStarField::fn4(CSurfaceArea *surfaceArea, CStarCamera *camera) {
-	FVector v1, v2, v3;
+	FVector screenCoord, worldCoord, photoPos;
 	_closeToMarker = false;
 
 	if (_mode == MODE_STARFIELD) {
-		if (fn5(surfaceArea, camera, v1, v2, v3) > -1.0) {
+		if (lockDistance(surfaceArea, camera, screenCoord, worldCoord, photoPos) > -1.0) {
 			surfaceArea->_pixel = 0xA0A0;
 			surfaceArea->setColorFromPixel();
-			surfaceArea->drawLine(FRect(v1._x, v1._y, v3._x, v3._y));
+			surfaceArea->drawLine(FRect(screenCoord._x, screenCoord._y, photoPos._x, photoPos._y));
 		}
 	}
 }
 
-double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
-		FVector &v1, FVector &v2, FVector &v3) {
+double CStarField::lockDistance(CSurfaceArea *surfaceArea, CStarCamera *camera,
+		FVector &screenCoord, FVector &worldCoord, FVector &photoPos) {
 	if (_crosshairs.isEmpty())
 		// No crosshairs selection yet
 		return -1.0;
@@ -200,24 +200,24 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 		return -1.0;
 
 	const CBaseStarEntry *dataP = _markers.getDataPtr(_crosshairs._entryIndex);
-	v2 = dataP->_position;
-	FVector tv = camera->getRelativePosNoCentering(2, v2); // First argument is not getting used in CViewport::fn16
+	worldCoord = dataP->_position;
+	FVector tv = camera->getRelativePosNoCentering(2, worldCoord); // First argument is not getting used in CViewport::fn16
 
 	if (camera->getThreshold() >= tv._z)
 		return -1.0;
 
 	tv = camera->getRelativePos(2, tv);
 
-	v1 = FVector(tv._x + surfaceArea->_centroid._x,
+	screenCoord = FVector(tv._x + surfaceArea->_centroid._x,
 		tv._y + surfaceArea->_centroid._y, tv._z);
 	FPoint pt = _crosshairs.getPosition();
-	v3 = FVector(pt._x, pt._y, 1.0);
+	photoPos = FVector(pt._x, pt._y, 1.0);
 
-	double incr = (v1._x - pt._x) * (v1._x - pt._x);
+	double incr = (screenCoord._x - pt._x) * (screenCoord._x - pt._x);
 	if (incr > 3600.0)
 		return -1.0;
 
-	incr += (v1._y - pt._y) * (v1._y - pt._y);
+	incr += (screenCoord._y - pt._y) * (screenCoord._y - pt._y);
 	if (incr > 3600.0)
 		return -1.0;
 
@@ -230,13 +230,13 @@ void CStarField::fn6(CVideoSurface *surface, CStarCamera *camera) {
 	_crosshairs.fn1(this, &surfaceArea, camera);
 }
 
-void CStarField::incMatches() {
+void CStarField::incLockLevel() {
 	_crosshairs.incMatches();
 	setSolved();
 }
 
-void CStarField::fn8(CVideoSurface *surface) {
-	_crosshairs.fn2(surface, this, &_markers);
+void CStarField::decLockLevel(CVideoSurface *surface) {
+	_crosshairs.decMatches(surface, this, &_markers);
 	setSolved();
 }
 

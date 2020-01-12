@@ -79,12 +79,16 @@ public:
 	void draw(CSurfaceArea *surfaceArea);
 
 	bool fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarCamera *camera);
-	void fn2(CVideoSurface *surface, CStarField *starField, CStarMarkers *markers);
 
 	/**
-	 * Increments the index for the number of matches
+	 * Increments the number of matches
 	 */
 	void incMatches();
+
+	/**
+	 * Decrements the number of matches
+	 */
+	void decMatches(CVideoSurface *surface, CStarField *starField, CStarMarkers *markers);
 
 	/**
 	 * Draw the crosshairs for a given star

@@ -69,7 +69,7 @@ void CStarControl::load(SimpleFile *file) {
 			error("There's no screen manager during loading");
 
 		_view.setup(screenManager, &_starField, this);
-		_view.reset();
+		_view.takeCurrentHomePhoto();
 
 		_enabled = true;
 	}
@@ -168,7 +168,7 @@ void CStarControl::doAction(StarControlAction action) {
 		if (view) {
 			detach();
 			addUnder(view);
-			_view.fn2();
+			_view.resetView();
 			_view.triggerFade(true);
 			_visible = true;
 		}
@@ -235,7 +235,7 @@ void CStarControl::doAction(StarControlAction action) {
 		break;
 
 	case STAR_SET_REFERENCE: {
-		_view.setHasReference();
+		_view.takeCurrentHomePhoto();
 		CPetControl *pet = getPetControl();
 		if (pet)
 			pet->starsSetReference();

@@ -149,7 +149,7 @@ bool CStarCrosshairs::fn1(CStarField *starField, CSurfaceArea *surfaceArea, CSta
 	}
 }
 
-void CStarCrosshairs::fn2(CVideoSurface *surface, CStarField *starField, CStarMarkers *markers) {
+void CStarCrosshairs::decMatches(CVideoSurface *surface, CStarField *starField, CStarMarkers *markers) {
 	if (_matchIndex <= -1) {
 		if (_entryIndex > -1) {
 			drawEntry(_entryIndex, surface, starField, markers);

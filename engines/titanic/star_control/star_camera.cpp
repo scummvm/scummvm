@@ -219,7 +219,6 @@ StarColor CStarCamera::getStarColor() const {
 	return _viewport._starColor;
 }
 
-// Similar to CViewport::fn17/fn18
 FVector CStarCamera::getRelativePos(int index, const FVector &src) {
 	FVector dest;
 

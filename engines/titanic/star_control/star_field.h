@@ -32,6 +32,8 @@
 
 namespace Titanic {
 
+#define STAR_SCALE 1024.0F
+
 class CStarField : public CStarFieldBase {
 private:
 	CStarMarkers _markers;
@@ -141,18 +143,26 @@ public:
 	}
 
 	void fn1(CErrorCode *errorCode);
-	double fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
-		FVector &v1, FVector &v2, FVector &v3);
+
+	/**
+	  * Gets the lock distance to a star
+	  */
+	double lockDistance(CSurfaceArea *surfaceArea, CStarCamera *camera,
+		FVector &screenCoord, FVector &worldCoord, FVector &photoPos);
+
 	void fn6(CVideoSurface *surface, CStarCamera *camera);
 
 	/**
 	 * Increments the number of matched markers
 	 */
-	void incMatches();
+	void incLockLevel();
 
-	void fn8(CVideoSurface *surface);
+	/**
+	 * Decrements the number of matched markers
+	 */
+	void decLockLevel(CVideoSurface *surface);
 
-	void fn9() { _starCloseup.fn1(); }
+	void ToggleSolarRendering() { _starCloseup.fn1(); }
 
 	/**
 	 * Called when the starfield is clicked

@@ -43,7 +43,7 @@ private:
 	CStarField *_starField;
 	CVideoSurface *_videoSurface;
 	CStarCamera _camera;
-	bool _hasReference;
+	bool _lensValid;
 	CViewport _photoViewport;
 	CSurfaceFader _fader;
 	CVideoSurface *_photoSurface;
@@ -51,8 +51,15 @@ private:
 	bool _stereoPair;
 	bool _showingPhoto;
 private:
-	void fn18(CStarCamera *camera);
-	void fn19(int v);
+	/**
+	 * Take a photograph of a view specified by the camera
+	 */
+	void takeHomePhotoHelper(CStarCamera *camera);
+
+	/**
+	 * View a specified star
+	 */
+	void viewRequiredStar(int index);
 
 	/**
 	 * Gets a random position and orientation
@@ -88,7 +95,10 @@ public:
 	 */
 	void setup(CScreenManager *screenManager, CStarField *starField, CStarControl *starControl);
 
-	void reset();
+	/**
+	 * Take a photograph of a view specified by the current home photo lens
+	 */
+	void takeCurrentHomePhoto();
 
 	/**
 	 * Allows the item to draw itself
@@ -125,7 +135,11 @@ public:
 	 */
 	void starDestinationSet();
 
-	void fn2();
+	/**
+	 * Reset the starfield view
+	 */
+	void resetView();
+
 	void triggerFade(bool fadeIn);
 
 	/**
@@ -189,9 +203,10 @@ public:
 	void stereoPairOff();
 
 	/**
-	 * Called when the photograph is used on the navigation computer
+	 * Called when the photograph is used on the navigation computer,
+	 * takes a photograph of the current view, writing it to the home photo surface
 	 */
-	void setHasReference();
+	void takeHomePhoto();
 
 	/**
 	 * Handles locking in a star
@@ -206,4 +221,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_RENDERER_H */
+#endif /* TITANIC_STAR_VIEW_H */

@@ -31,11 +31,12 @@
 #include "titanic/core/game_object.h"
 #include "titanic/messages/pet_messages.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
 CStarView::CStarView() : _camera((const CNavigationInfo *)nullptr), _owner(nullptr),
-		_starField(nullptr), _videoSurface(nullptr), _hasReference(0),
+		_starField(nullptr), _videoSurface(nullptr), _lensValid(0),
 		_photoSurface(nullptr), _homePhotoMask(nullptr),
 		_stereoPair(false), _showingPhoto(false) {
 	CNavigationInfo data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
@@ -52,8 +53,8 @@ void CStarView::load(SimpleFile *file, int param) {
 	if (!param) {
 		_camera.load(file, param);
 
-		_hasReference = file->readNumber();
-		if (_hasReference)
+		_lensValid = file->readNumber();
+		if (_lensValid)
 			_photoViewport.load(file, 0);
 
 		_stereoPair = file->readNumber();
@@ -64,8 +65,8 @@ void CStarView::load(SimpleFile *file, int param) {
 void CStarView::save(SimpleFile *file, int indent) {
 	_camera.save(file, indent);
 
-	file->writeNumberLine(_hasReference, indent);
-	if (_hasReference)
+	file->writeNumberLine(_lensValid, indent);
+	if (_lensValid)
 		_photoViewport.save(file, indent);
 
 	file->writeNumberLine(_stereoPair, indent);
@@ -77,10 +78,10 @@ void CStarView::setup(CScreenManager *screenManager, CStarField *starField, CSta
 	_owner = starControl;
 }
 
-void CStarView::reset() {
-	if (_hasReference) {
+void CStarView::takeCurrentHomePhoto() {
+	if (_lensValid) {
 		CStarCamera camera(&_photoViewport);
-		fn18(&camera);
+		takeHomePhotoHelper(&camera);
 	}
 }
 
@@ -278,7 +279,7 @@ bool CStarView::updateCamera() {
 	return false;
 }
 
-void CStarView::fn2() {
+void CStarView::resetView() {
 	if (!_videoSurface) {
 		CScreenManager *scrManager = CScreenManager::setCurrent();
 		if (scrManager)
@@ -286,7 +287,7 @@ void CStarView::fn2() {
 
 		if (_videoSurface) {
 			stereoPairOn();
-			fn19(244);
+			viewRequiredStar(244);
 			draw(scrManager);
 		}
 	}
@@ -327,7 +328,7 @@ void CStarView::viewRandomStar() {
 	}
 }
 
-void CStarView::fn19(int index) {
+void CStarView::viewRequiredStar(int index) {
 	const CBaseStarEntry *star = _starField->getStar(index);
 	if (star) {
 		FVector pos, orientation;
@@ -364,7 +365,7 @@ void CStarView::toggleHomePhoto() {
 
 void CStarView::toggleSolarRendering() {
 	if (_starField)
-		_starField->fn9();
+		_starField->ToggleSolarRendering();
 }
 
 void CStarView::TogglePosFrame() {
@@ -384,7 +385,7 @@ void CStarView::stereoPairOff() {
 	_camera.setFields(MODE_STARFIELD, 0.0);
 }
 
-void CStarView::setHasReference() {
+void CStarView::takeHomePhoto() {
 	FVector pos, orientation;
 	getRandomPhotoViewpoint(pos, orientation);
 
@@ -393,42 +394,44 @@ void CStarView::setHasReference() {
 	_stereoPair = false;
 	_photoViewport.changeStarColorPixel(MODE_PHOTO, 0.0);
 	_photoViewport.changeStarColorPixel(MODE_STARFIELD, 0.0);
-	_hasReference = true;
-	reset();
+
+	_lensValid = true;
+	takeCurrentHomePhoto();
 	_stereoPair = true;
 }
 
 void CStarView::lockStar() {
 	if (_starField && !_showingPhoto) {
 		CSurfaceArea surfaceArea(_videoSurface);
-		FVector v1, v2, v3;
-		double val = _starField->fn5(&surfaceArea, &_camera, v1, v2, v3);
+		FVector screenCoord, worldCoord, photoPos;
+		double dist = _starField->lockDistance(&surfaceArea, &_camera,
+			screenCoord, worldCoord, photoPos);
 		bool lockSuccess = false;
 
-		if (val > -1.0) {
-			v1 -= surfaceArea._centroid;
-			v3 -= surfaceArea._centroid;
+		if (dist > -1.0) {
+			screenCoord -= surfaceArea._centroid;
+			photoPos -= surfaceArea._centroid;
 
 			switch (_starField->getMatchedIndex()) {
 			case -1:
 				// First star match
-				lockSuccess = _camera.lockMarker1(v1, v2, v3);
+				lockSuccess = _camera.lockMarker1(screenCoord, worldCoord, photoPos);
 				assert(lockSuccess); // lockMarker1 should always succeed
-				_starField->incMatches();
+				_starField->incLockLevel();
 				break;
 
 			case 0:
 				// Second star match
-				lockSuccess = _camera.lockMarker2(&_photoViewport, v2);
+				lockSuccess = _camera.lockMarker2(&_photoViewport, worldCoord);
 				if (lockSuccess) // lockMarker2 may have issues
-					_starField->incMatches();
+					_starField->incLockLevel();
 				break;
 
 			case 1:
 				// Third star match
-				lockSuccess = _camera.lockMarker3(&_photoViewport, v2);
+				lockSuccess = _camera.lockMarker3(&_photoViewport, worldCoord);
 				assert(lockSuccess); // lockMarker3 should always succeed
-				_starField->incMatches();
+				_starField->incLockLevel();
 				break;
 
 			default:
@@ -441,11 +444,11 @@ void CStarView::lockStar() {
 void CStarView::unlockStar() {
 	if (_starField && !_showingPhoto && _camera.isNotInLockingProcess()) {
 		_camera.removeLockedStar();
-		_starField->fn8(_photoSurface);
+		_starField->decLockLevel(_photoSurface);
 	}
 }
 
-void CStarView::fn18(CStarCamera *camera) {
+void CStarView::takeHomePhotoHelper(CStarCamera *camera) {
 	if (_starField) {
 		if (!_photoSurface) {
 			CScreenManager *scrManager = CScreenManager::setCurrent();
