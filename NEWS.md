@@ -40,6 +40,7 @@ Queen:
 
  Toltecs:
    - Added Czech version support.
+   - Fixed exiting from game menus when returning to the launcher.
 
  Wintermute:
    - Added several missing game variants and demos to the detection tables.
