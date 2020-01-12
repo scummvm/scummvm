@@ -272,8 +272,10 @@ void ThemeLayoutStacked::reflowLayoutVertical(Widget *widgetChain) {
 
 		_children[i]->reflowLayout(widgetChain);
 
-		if (_children[i]->getWidth() == -1)
-			_children[i]->setWidth((_w == -1 ? getParentWidth() : _w) - _padding.left - _padding.right);
+		if (_children[i]->getWidth() == -1) {
+			int16 width = (_w == -1 ? getParentWidth() : _w) - _padding.left - _padding.right;
+			_children[i]->setWidth(MAX<int16>(width, 0));
+		}
 
 		if (_children[i]->getHeight() == -1) {
 			assert(rescount < ARRAYSIZE(resize));
@@ -333,6 +335,7 @@ void ThemeLayoutStacked::reflowLayoutVertical(Widget *widgetChain) {
 	// then distributing this equally over all items which need auto-resizing.
 	if (rescount) {
 		int newh = (getParentHeight() - _h - _padding.bottom) / rescount;
+		if (newh < 0) newh = 0; // In case there is no room left, avoid giving a negative height to widgets
 
 		for (int i = 0; i < rescount; ++i) {
 			// Set the height of the item.
@@ -360,8 +363,10 @@ void ThemeLayoutStacked::reflowLayoutHorizontal(Widget *widgetChain) {
 
 		_children[i]->reflowLayout(widgetChain);
 
-		if (_children[i]->getHeight() == -1)
-			_children[i]->setHeight((_h == -1 ? getParentHeight() : _h) - _padding.top - _padding.bottom);
+		if (_children[i]->getHeight() == -1) {
+			int16 height = (_h == -1 ? getParentHeight() : _h) - _padding.top - _padding.bottom;
+			_children[i]->setHeight(MAX<int16>(height, 0));
+		}
 
 		if (_children[i]->getWidth() == -1) {
 			assert(rescount < ARRAYSIZE(resize));
@@ -421,6 +426,7 @@ void ThemeLayoutStacked::reflowLayoutHorizontal(Widget *widgetChain) {
 	// then distributing this equally over all items which need auto-resizing.
 	if (rescount) {
 		int neww = (getParentWidth() - _w - _padding.right) / rescount;
+		if (neww < 0) neww = 0; // In case there is no room left, avoid giving a negative width to widgets
 
 		for (int i = 0; i < rescount; ++i) {
 			// Set the width of the item.
