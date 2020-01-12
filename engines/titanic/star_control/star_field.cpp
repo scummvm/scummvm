@@ -56,8 +56,6 @@ bool CStarField::initDocument() {
 	if (valid)
 		valid = _starCloseup.setup();
 	if (valid)
-		valid = _constBounds.initialize();
-	if (valid)
 		valid = _constMap.initialize();
 
 	return valid;

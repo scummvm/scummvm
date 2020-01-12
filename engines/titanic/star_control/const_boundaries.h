@@ -32,12 +32,12 @@ class CStarCamera;
 class CSurfaceArea;
 
 class CConstBoundaries {
-	struct CStarPointEntry : public FVector {
-		bool _flag;
-		CStarPointEntry() : FVector(), _flag(false) {}
+	struct CBoundaryVector : public FVector {
+		bool _isDrawn;		// Line is drawn to previous point
+		CBoundaryVector() : FVector(), _isDrawn(false) {}
 	};
 private:
-	Common::Array<CStarPointEntry> _data;
+	Common::Array<CBoundaryVector> _data;
 public:
 	CConstBoundaries();
 
@@ -47,11 +47,11 @@ public:
 	bool initialize();
 
 	/**
-	 * Draw the starfield points
+	 * Draw the boundary structure
 	 */
 	void draw(CSurfaceArea *surface, CStarCamera *camera);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_POINTS1_H */
+#endif /* TITANIC_CONST_BOUNDARIES_H */

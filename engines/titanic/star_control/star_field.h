@@ -33,6 +33,7 @@
 namespace Titanic {
 
 #define STAR_SCALE 1024.0F
+#define UNIVERSE_SCALE 3000000.0f
 
 class CStarField : public CStarFieldBase {
 private:

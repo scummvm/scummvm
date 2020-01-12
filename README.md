@@ -1750,6 +1750,7 @@ games and other games.
     Period (.)             - starmap move backward
     l                      - starmap lock coordinate
     d                      - starmap unlock coordinate
+	b                      - starmap show boundary sphere
 
   The Feeble Files:
     Ctrl-d                 - Starts the debugger

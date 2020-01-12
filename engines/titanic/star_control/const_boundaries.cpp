@@ -22,6 +22,7 @@
 
 #include "titanic/star_control/const_boundaries.h"
 #include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/star_field.h"
 #include "titanic/star_control/surface_area.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
@@ -36,25 +37,31 @@ CConstBoundaries::CConstBoundaries() {
 }
 
 bool CConstBoundaries::initialize() {
+	double y, z, ra, dec, phi, theta;
+
 	// Get a reference to the starfield points resource
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource("STARFIELD/POINTS");
 	assert(stream && stream->size() == (12 * ARRAY_COUNT));
 
 	_data.resize(ARRAY_COUNT);
 	for (int idx = 0; idx < ARRAY_COUNT; ++idx) {
-		CStarPointEntry &entry = _data[idx];
+		CBoundaryVector &entry = _data[idx];
 
 		// Get the next set of values
-		double v1 = stream->readSint32LE();
-		double v2 = stream->readSint32LE();
-		entry._flag = stream->readUint32LE() != 0;
+		entry._isDrawn = (idx == 0) ? 0 : stream->readUint32LE() != 0;
+		y = stream->readSint32LE();
+		z = stream->readSint32LE();
 
-		v1 *= Common::deg2rad<double>(0.015);
-		v2 *= Common::deg2rad<double>(0.0099999998);
+		ra = y * 360.0F / 24000.0F;
+		dec = z / 100.0F;
 
-		entry._x = cos(v2) * 3000000.0 * cos(v1);
-		entry._y = sin(v1) * 3000000.0 * cos(v2);
-		entry._z = sin(v2) * 3000000.0;
+		// Work the polar coordinates
+		phi = Common::deg2rad<double>(ra);
+		theta = Common::deg2rad<double>(dec);
+
+		entry._x = UNIVERSE_SCALE * cos(theta) * cos(phi);
+		entry._y = UNIVERSE_SCALE * cos(theta) * sin(phi);
+		entry._z = UNIVERSE_SCALE * sin(theta);
 	}
 
 	delete stream;
@@ -65,46 +72,50 @@ void CConstBoundaries::draw(CSurfaceArea *surface, CStarCamera *camera) {
 	if (_data.empty())
 		return;
 
+	// get the current camera transform.
 	FPose pose = camera->getPose();
-	double threshold = camera->getThreshold();
-	FVector vector1, vector2, vector3, vector4;
-	FVector vTemp = _data[0];
-	double vWidth2 = (double)surface->_width * 0.5;
-	double vHeight2 = (double)surface->_height * 0.5;
-	FRect r;
+	float threshold = camera->getThreshold();
+	float centerX = (float)surface->_width / 2.0f;
+	float centerY = (float)surface->_height / 2.0f;
 
+	FVector ec0, ec1, wc;
+	FVector sc0, sc1;
+
+	// Get the starting point
+	wc = _data[0];
+	ec0._x = wc._x * pose._row1._x + wc._y * pose._row2._x + wc._z * pose._row3._x + pose._vector._x;
+	ec0._y = wc._x * pose._row1._y + wc._y * pose._row2._y + wc._z * pose._row3._y + pose._vector._y;
+	ec0._z = wc._x * pose._row1._z + wc._y * pose._row2._z + wc._z * pose._row3._z + pose._vector._z;
+
+	// Set the drawing mode and color
 	surface->_pixel = 0xff0000;
 	uint oldPixel = surface->_pixel;
 	surface->setColorFromPixel();
 	SurfaceAreaMode oldMode = surface->setMode(SA_SOLID);
 
-	vector1._z = vTemp._x * pose._row1._z + vTemp._y * pose._row2._z + vTemp._z * pose._row3._z + pose._vector._z;
-	vector1._x = vTemp._x * pose._row1._x + vTemp._y * pose._row2._x + vTemp._z * pose._row3._x + pose._vector._x;
-	vector1._y = vTemp._x * pose._row1._y + vTemp._y * pose._row2._y + vTemp._z * pose._row3._y + pose._vector._y; 
-
+	// Iterate through each remaining point
 	for (uint idx = 1; idx < _data.size(); ++idx) {
-		const FVector &sv = _data[idx];
-		bool flag = _data[idx - 1]._flag;
-		vTemp = sv;
+		// Process the next point
+		wc = _data[idx];
+		ec1._z = wc._x * pose._row1._z + wc._y * pose._row2._z + wc._z * pose._row3._z + pose._vector._z;
+		ec1._x = wc._x * pose._row1._x + wc._y * pose._row2._x + wc._z * pose._row3._x + pose._vector._x;
+		ec1._y = wc._x * pose._row1._y + wc._y * pose._row2._y + wc._z * pose._row3._y + pose._vector._y;
 
-		vector3._x = vTemp._x * pose._row1._x + vTemp._y * pose._row2._x + vTemp._z * pose._row3._x * pose._vector._x;
-		vector3._y = vTemp._x * pose._row1._y + vTemp._y * pose._row2._y + vTemp._z * pose._row3._y * pose._vector._y;
-		vector3._z = vTemp._x * pose._row1._z + vTemp._y * pose._row2._z + vTemp._z * pose._row3._z + pose._vector._z;
-
-		if (flag && vector1._z > threshold && vector3._z > threshold) {
-			vector2 = camera->getRelativePos(2, vector1);
-			vector4 = camera->getRelativePos(2, vector3);
-
-			r.bottom = vector4._y + vHeight2;
-			r.right = vector4._x + vWidth2;
-			r.top = vector2._y + vHeight2;
-			r.left = vector2._x + vWidth2;
-			surface->drawLine(r);
+		// Is this connected to the previous point?
+		if (_data[idx]._isDrawn) {
+			if (ec0._z > threshold && ec1._z > threshold) {
+				// Render the line
+				sc0 = camera->getRelativePos(2, ec0);
+				sc1 = camera->getRelativePos(2, ec1);
+				surface->drawLine(FPoint(sc0._x + centerX, sc0._y + centerY),
+					FPoint(sc1._x + centerX, sc1._y + centerY));
+			}
 		}
 
-		vector1 = vector3;
+		ec0 = ec1;
 	}
 
+	// Reset back to previous
 	surface->_pixel = oldPixel;
 	surface->setColorFromPixel();
 	surface->setMode(oldMode);
