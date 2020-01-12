@@ -338,7 +338,7 @@ void AgiBase::initRenderMode() {
 		break;
 	}
 
-	if (getFeatures() & (GF_AGI256 | GF_AGI256_2)) {
+	if (getFeatures() & GF_AGI256) {
 		// If current game is AGI256, switch (force) to VGA render mode
 		_renderMode = Common::kRenderVGA;
 	}

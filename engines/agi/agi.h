@@ -144,22 +144,14 @@ enum BooterDisks {
 // GF_OLDAMIGAV20 means that the interpreter is an old Amiga AGI interpreter that
 // uses value 20 for the computer type (v20 i.e. vComputer) rather than the usual value 5.
 //
-// GF_CLIPCOORDS means that views' coordinates must be clipped at least in commands
-// position and position.v.
-//
 enum AgiGameFeatures {
 	GF_AGIMOUSE    = (1 << 0), // this disables "Click-to-walk mouse interface"
 	GF_AGDS        = (1 << 1),
 	GF_AGI256      = (1 << 2), // marks fanmade AGI-256 games
-	GF_AGI256_2    = (1 << 3), // marks fanmade AGI-256-2 games
-	GF_AGIPAL      = (1 << 4), // marks game using fanmade AGIPAL extension
-	GF_MACGOLDRUSH = (1 << 5), // use "grdir" instead of "dir" for volume loading
-	GF_FANMADE     = (1 << 6), // marks fanmade games
-	GF_MENUS       = (1 << 7), // not used anymore
-	GF_ESCPAUSE    = (1 << 8), // not used anymore, we detect this internally
-	GF_OLDAMIGAV20 = (1 << 9),
-	GF_CLIPCOORDS  = (1 << 10), // not used atm
-	GF_2GSOLDSOUND = (1 << 11)
+	GF_MACGOLDRUSH = (1 << 3), // use "grdir" instead of "dir" for volume loading
+	GF_FANMADE     = (1 << 4), // marks fanmade games
+	GF_OLDAMIGAV20 = (1 << 5),
+	GF_2GSOLDSOUND = (1 << 6)
 };
 
 struct AGIGameDescription;

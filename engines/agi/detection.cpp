@@ -489,7 +489,6 @@ ADDetectedGame AgiMetaEngine::fallbackDetect(const FileMap &allFilesXXX, const C
 
 		if (agipal) { // Check if it is AGIPAL
 			description = "Unknown v2 AGIPAL Game";
-			g_fallbackDesc.features |= GF_AGIPAL; // Add AGIPAL feature flag
 		} else { // Not AGIPAL so just plain v2
 			description = "Unknown v2 Game";
 		}
