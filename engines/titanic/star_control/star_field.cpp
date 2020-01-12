@@ -77,7 +77,7 @@ void CStarField::render(CVideoSurface *surface, CStarCamera *camera) {
 	if (_renderBoundaries)
 		_constBounds.draw(&surfaceArea, camera);
 
-	fn4(&surfaceArea, camera);
+	renderLockLine(&surfaceArea, camera);
 }
 
 bool CStarField::getBoundaryState() const {
@@ -177,7 +177,7 @@ void CStarField::drawBox(CSurfaceArea *surfaceArea) {
 	surfaceArea->setColorFromPixel();
 }
 
-void CStarField::fn4(CSurfaceArea *surfaceArea, CStarCamera *camera) {
+void CStarField::renderLockLine(CSurfaceArea *surfaceArea, CStarCamera *camera) {
 	FVector screenCoord, worldCoord, photoPos;
 	_closeToMarker = false;
 
@@ -201,7 +201,7 @@ double CStarField::lockDistance(CSurfaceArea *surfaceArea, CStarCamera *camera,
 
 	const CBaseStarEntry *dataP = _markers.getDataPtr(_crosshairs._entryIndex);
 	worldCoord = dataP->_position;
-	FVector tv = camera->getRelativePosNoCentering(2, worldCoord); // First argument is not getting used in CViewport::fn16
+	FVector tv = camera->getRelativePosNoCentering(2, worldCoord);
 
 	if (camera->getThreshold() >= tv._z)
 		return -1.0;

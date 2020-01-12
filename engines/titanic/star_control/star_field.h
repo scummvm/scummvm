@@ -53,7 +53,11 @@ private:
 	 */
 	void drawBox(CSurfaceArea *surfaceArea);
 
-	void fn4(CSurfaceArea *surfaceArea, CStarCamera *camera);
+	/**
+	 * If the player's home photo has a selected star, and the starfield view
+	 * is close enough to it, draw a lock line
+	 */
+	void renderLockLine(CSurfaceArea *surfaceArea, CStarCamera *camera);
 public:
 	CStarField();
 
