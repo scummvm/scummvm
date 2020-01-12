@@ -27,6 +27,7 @@
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
 #include "common/endian.h"
+#include "common/str-array.h"
 
 #include "director/types.h"
 #include "director/lingo/lingo-gr.h"
@@ -156,7 +157,6 @@ public:
 	void initBuiltIns();
 	void initFuncs();
 	void initBytecode();
-	void initTheEntities();
 
 	void runTests();
 
@@ -177,6 +177,7 @@ private:
 	void runMovieScript(LEvent event);
 	void processSpriteEvent(LEvent event);
 	void processEvent(LEvent event, ScriptType st, int entityId);
+
 public:
 	ScriptType event2script(LEvent ev);
 	Symbol *getHandler(Common::String &name);
@@ -252,7 +253,9 @@ public:
 	void func_cursor(int c);
 	int func_marker(int m);
 
+	// lingo-the.cpp
 public:
+	void initTheEntities();
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);
 	void setTheSprite(Datum &id, int field, Datum &d);
 	void setTheCast(Datum &id, int field, Datum &d);
@@ -261,6 +264,12 @@ public:
 	Datum getTheCast(Datum &id, int field);
 	Datum getObjectField(Common::String &obj, int field);
 	void setObjectField(Common::String &obj, int field, Datum &d);
+	const char *entity2str(int id);
+	const char *field2str(int id);
+
+private:
+	Common::StringArray _entityNames;
+	Common::StringArray _fieldNames;
 
 public:
 	bool isInArgStack(Common::String *s);

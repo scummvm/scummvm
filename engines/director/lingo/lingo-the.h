@@ -142,7 +142,8 @@ enum TheEntityType {
 	kTheUpdateMovieEnabled,
 	kTheWindow,
 	kTheWindowList,
-	kTheWords
+	kTheWords,
+	kTheMaxTheEntityType		// This must be always last
 };
 
 enum TheFieldType {
@@ -224,7 +225,8 @@ enum TheFieldType {
 	kTheVisible,
 	kTheVolume,
 	kTheWidth,
-	kTheWindowType
+	kTheWindowType,
+	kTheMaxTheFieldType		// This must be always last
 };
 
 struct TheEntity {

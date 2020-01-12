@@ -267,19 +267,27 @@ void Lingo::initTheEntities() {
 	_objectEntityId = kTheObject;
 
 	TheEntity *e = entities;
+	_entityNames.resize(kTheMaxTheEntityType);
 
 	while (e->entity != kTheNOEntity) {
-		if (e->version <= _vm->getVersion())
+		if (e->version <= _vm->getVersion()) {
 			_theEntities[e->name] = e;
+
+			_entityNames[e->entity] = e->name;
+		}
 
 		e++;
 	}
 
 	TheEntityField *f = fields;
+	_fieldNames.resize(kTheMaxTheFieldType);
 
 	while (f->entity != kTheNOEntity) {
-		if (f->version <= _vm->getVersion())
+		if (f->version <= _vm->getVersion()) {
 			_theEntityFields[Common::String::format("%d%s", f->entity, f->name)] = f;
+
+			_fieldNames[f->field] = f->name;
+		}
 
 		// Store all fields for kTheObject
 		_theEntityFields[Common::String::format("%d%s", _objectEntityId, f->name)] = f;
@@ -287,6 +295,28 @@ void Lingo::initTheEntities() {
 		f++;
 	}
 }
+
+const char *Lingo::entity2str(int id) {
+	static char buf[20];
+
+	if (id && id < kTheMaxTheEntityType && !_entityNames[id].empty())
+		return _entityNames[id].c_str();
+
+	snprintf(buf, 19, "#%d", id);
+
+	return (const char *)buf;
+}
+const char *Lingo::field2str(int id) {
+	static char buf[20];
+
+	if (id && id < kTheMaxTheFieldType && !_fieldNames[id].empty())
+		return _fieldNames[id].c_str();
+
+	snprintf(buf, 19, "#%d", id);
+
+	return (const char *)buf;
+}
+
 
 Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	Datum d;
@@ -391,7 +421,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = _vm->getCurrentScore()->_mouseIsDown;
 		break;
 	default:
-		warning("Lingo::getTheEntity(): Unprocessed getting field %d of entity %d", field, entity);
+		warning("Lingo::getTheEntity(): Unprocessed getting field %s of entity %s", field2str(field), entity2str(entity));
 		d.type = VOID;
 	}
 
@@ -421,7 +451,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheSprite(id, field, d);
 		break;
 	default:
-		warning("Lingo::setTheEntity(): Unprocessed setting field %d of entity %d", field, entity);
+		warning("Lingo::setTheEntity(): Unprocessed setting field %s of entity %s", field2str(field), entity2str(entity));
 	}
 }
 
@@ -437,7 +467,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	}
 
 	if (!_vm->getCurrentScore()) {
-		warning("Lingo::getTheSprite(): The sprite %d field %d setting over non-active score", id, field);
+		warning("Lingo::getTheSprite(): The sprite %d field %s setting over non-active score", id, field2str(field));
 		return d;
 	}
 
@@ -532,7 +562,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		d.u.i = sprite->_width;
 		break;
 	default:
-		warning("Lingo::getTheSprite(): Unprocessed getting field %d of sprite", field);
+		warning("Lingo::getTheSprite(): Unprocessed getting field %s of sprite", field2str(field));
 		d.type = VOID;
 	}
 
@@ -552,7 +582,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	d.toInt(); // Enforce Integer
 
 	if (!_vm->getCurrentScore()) {
-		warning("Lingo::setTheSprite(): The sprite %d field %d setting over non-active score", id, field);
+		warning("Lingo::setTheSprite(): The sprite %d field %s setting over non-active score", id, field2str(field));
 		return;
 	}
 
@@ -647,7 +677,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_width = d.u.i;
 		break;
 	default:
-		warning("Lingo::setTheSprite(): Unprocessed setting field %d of sprite", field);
+		warning("Lingo::setTheSprite(): Unprocessed setting field %s of sprite", field2str(field));
 	}
 }
 
@@ -663,7 +693,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	}
 
 	if (!_vm->getCurrentScore()) {
-		warning("Lingo::getTheCast(): The cast %d field %d setting over non-active score", id, field);
+		warning("Lingo::getTheCast(): The cast %d field %s setting over non-active score", id, field2str(field));
 		return d;
 	}
 
@@ -687,7 +717,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	case kTheBackColor:
 		{
 			if (castType != kCastShape) {
-				warning("Lingo::getTheCast(): Field %d of cast %d not found", field, id);
+				warning("Lingo::getTheCast(): Field %s of cast %d not found", field2str(field), id);
 				d.type = VOID;
 				return d;
 			}
@@ -706,7 +736,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	case kTheForeColor:
 		{
 			if (castType != kCastShape) {
-				warning("Lingo::getTheCast(): Field %d of cast %d not found", field, id);
+				warning("Lingo::getTheCast(): Field %s of cast %d not found", field2str(field), id);
 				d.type = VOID;
 				return d;
 			}
@@ -733,7 +763,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d.u.i = _vm->getCurrentScore()->getCastMemberInitialRect(id).width();
 		break;
 	default:
-		warning("Lingo::getTheCast(): Unprocessed getting field %d of cast %d", field, id);
+		warning("Lingo::getTheCast(): Unprocessed getting field %s of cast %d", field2str(field), id);
 		d.type = VOID;
 	//TODO find out about String fields
 	}
@@ -746,7 +776,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	Score *score = _vm->getCurrentScore();
 
 	if (!score) {
-		warning("Lingo::setTheCast(): The cast %d field %d setting over non-active score", id, field);
+		warning("Lingo::setTheCast(): The cast %d field %s setting over non-active score", id, field2str(field));
 		return;
 	}
 
@@ -764,7 +794,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	case kTheBackColor:
 		{
 			if (castType != kCastShape) {
-				warning("Lingo::setTheCast(): Field %d of cast %d not found", field, id);
+				warning("Lingo::setTheCast(): Field %s of cast %d not found", field2str(field), id);
 			}
 			ShapeCast *shape = (ShapeCast *)score->_loadedCast->getVal(id);
 
@@ -790,7 +820,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 	case kTheForeColor:
 		{
 			if (castType != kCastShape) {
-				warning("Lingo::setTheCast(): Field %d of cast %d not found", field, id);
+				warning("Lingo::setTheCast(): Field %s of cast %d not found", field2str(field), id);
 				return;
 			}
 			ShapeCast *shape = (ShapeCast *)score->_loadedCast->getVal(id);
@@ -838,7 +868,7 @@ void Lingo::setTheCast(Datum &id1, int field, Datum &d) {
 		score->setCastMemberModified(id);
 		break;
 	default:
-		warning("Lingo::setTheCast(): Unprocessed setting field %d of cast %d", field, id);
+		warning("Lingo::setTheCast(): Unprocessed setting field %s of cast %d", field2str(field), id);
 	}
 }
 
