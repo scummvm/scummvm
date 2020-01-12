@@ -475,35 +475,31 @@ void CStarView::takeHomePhotoHelper(CStarCamera *camera) {
 }
 
 void CStarView::getRandomViewpoint(FVector &pos, FVector &orientation) {
-	/* ***DEBUG***
-	v1._x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
-	v1._y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
-	v1._z = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+	const double MIN_RADIUS = 3.0F * STAR_SCALE;
+	const double RADIUS = 4.0F * STAR_SCALE;
 
-	v2._x = -v1._x;
-	v2._y = -v1._y;
-	v2._z = -v1._z;
-	v2.normalize();
-	*/
-	// Values temporarily hardcoded to match hacked values in original EXE
-	pos = FVector((float)69481544.0, (float)69481544.0, (float)69481544.0);
-	orientation = FVector((float)-0.577350259, (float)-0.577350259, (float)-0.577350259);
+	pos._x = MIN_RADIUS + g_vm->getRandomFloat() * RADIUS;
+	pos._y = MIN_RADIUS + g_vm->getRandomFloat() * RADIUS;
+	pos._z = MIN_RADIUS + g_vm->getRandomFloat() * RADIUS;
+
+	orientation._x = -pos._x;
+	orientation._y = -pos._y;
+	orientation._z = -pos._z;
+	orientation.normalize();
 }
 
 void CStarView::getRandomPhotoViewpoint(FVector &pos, FVector &orientation) {
-	/* ****DEBUG***
-	v1._x = 3072.0 - g_vm->getRandomFloat() * -4096.0;
-	v1._y = 3072.0 - g_vm->getRandomFloat() * -4096.0;
-	v1._z = 3072.0 - g_vm->getRandomFloat() * -4096.0;
+	const double MIN_RADIUS = 3.0F * STAR_SCALE;
+	const double RADIUS = 4.0F * STAR_SCALE;
 
-	v2._x = g_vm->getRandomFloat() * 8192.0 - v1._x;
-	v2._y = g_vm->getRandomFloat() * 1024.0 - v1._y;
-	v2._z = -v1._z;
-	v2.normalize();
-	*/
-	// Values temporarily hardcoded to match hacked values in original EXE
-	pos = FVector((float)69481544.0, (float)69481544.0, (float)69481544.0);
-	orientation = FVector((float)0.624659300, (float)-0.468542814, (float)-0.624714553);
+	pos._x = MIN_RADIUS + g_vm->getRandomFloat() * RADIUS;
+	pos._y = MIN_RADIUS + g_vm->getRandomFloat() * RADIUS;
+	pos._z = MIN_RADIUS + g_vm->getRandomFloat() * RADIUS;
+
+	orientation._x = g_vm->getRandomFloat() * (STAR_SCALE * 8) - pos._x;
+	orientation._y = g_vm->getRandomFloat() * STAR_SCALE - pos._y;
+	orientation._z = -pos._z;
+	orientation.normalize();
 }
 
 void CStarView::resizeSurface(CScreenManager *scrManager, int width, int height,
