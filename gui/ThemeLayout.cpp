@@ -48,7 +48,16 @@ void ThemeLayout::importLayout(ThemeLayout *layout) {
 		for (uint i = 0; i < layout->_children.size(); ++i)
 			_children.push_back(layout->_children[i]->makeClone(this));
 	} else {
-		_children.push_back(layout->makeClone(this));
+		ThemeLayout *clone = layout->makeClone(this);
+
+		// When importing a layout into a layout of the same type, the children
+		// of the imported layout are copied over, ignoring the padding of the
+		// imported layout. Here when importing a layout of a different type
+		// into a layout we explicitly ignore the padding so the appearance
+		// is the same in both cases.
+		clone->setPadding(0, 0, 0, 0);
+
+		_children.push_back(clone);
 	}
 }
 
