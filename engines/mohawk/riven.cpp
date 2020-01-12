@@ -893,8 +893,12 @@ void MohawkEngine_Riven::initKeymap() {
 		{ Common::KEYCODE_PAGEUP, "LKUP", _("Look Up") },
 		{ Common::KEYCODE_PAGEDOWN, "LKDN", _("Look Down") },
 		{ Common::KEYCODE_F5, "OPTS", _("Show/Hide Options Menu") },
+		{ Common::KEYCODE_SPACE, "PAUS", _("Pause") },
 		{ Common::KeyState(Common::KEYCODE_o, 'o', Common::KBD_CTRL), "LOAD", _("Load Game State") },
-		{ Common::KeyState(Common::KEYCODE_s, 's', Common::KBD_CTRL), "SAVE", _("Save Game State") },
+		{ Common::KeyState(Common::KEYCODE_s, 's', Common::KBD_CTRL), "SAVE", _("Save Game State") }
+	};
+
+	const Common::KeyActionEntry keyActionEntriesDemo[] = {
 		{ Common::KeyState(Common::KEYCODE_r, 'r', Common::KBD_CTRL), "RMM", _("Return To Main Menu") },
 		{ Common::KeyState(Common::KEYCODE_p, 'p', Common::KBD_CTRL), "INTV", _("Play Intro Videos") }
 	};
@@ -902,6 +906,21 @@ void MohawkEngine_Riven::initKeymap() {
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
 		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
 		act->addKeyEvent(keyActionEntries[i].ks);
+	}
+
+	if (getFeatures() & GF_DEMO) {
+		for (uint i = 0; i < ARRAYSIZE(keyActionEntriesDemo); i++) {
+			Common::Action* const act = new Common::Action(engineKeyMap, keyActionEntriesDemo[i].id, keyActionEntriesDemo[i].description);
+			act->addKeyEvent(keyActionEntriesDemo[i].ks);
+		}
+	}
+
+	if (getFeatures() & GF_25TH) {
+		Common::Action* const act = new Common::Action(engineKeyMap, "SMNU", _("Skip / Open main menu"));
+		act->addKeyEvent(Common::KEYCODE_ESCAPE);
+	} else {
+		Common::Action* const act = new Common::Action(engineKeyMap, "SKIP", _("Skip"));
+		act->addKeyEvent(Common::KEYCODE_ESCAPE);
 	}
 
 	mapper->addGameKeymap(engineKeyMap);
