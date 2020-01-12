@@ -952,6 +952,24 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
 
+	// Gabriel Knight 2 - Portuguese DOS/Windows (6-CDs original release)
+	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
+	{"gk2", "", {
+		{"resmap.001", 0, "dc313253adfe68584ad43993599dfb7e", 2806},
+		{"ressci.001", 0, "37d2df0e1ec0603b605d0c87f1c09ce5", 50932558},
+		{"resmap.002", 0, "3fd2283c7983d821b894593e97359913", 1999},
+		{"ressci.002", 0, "5d07e6b51afaa3a5850b17a3dbd800a0", 42258859},
+		{"resmap.003", 0, "c9980e5a16d7247f156b056a2e3adca7", 1711},
+		{"ressci.003", 0, "59b597ed3550b5e175746e4f9bc8786d", 35477175},
+		{"resmap.004", 0, "92e24eba78d7bed89954c472a5acc5f6", 2755},
+		{"ressci.004", 0, "5d07e6b51afaa3a5850b17a3dbd800a0", 59781752},
+		{"resmap.005", 0, "207f4f2ce425059bdd2f755a58c66309", 2101},
+		{"ressci.005", 0, "1eb5a72744799f5a5518543f5b4c3c79", 38249037},
+		{"resmap.006", 0, "c92f7b756964c8a57928a0b6558feaa5", 3007},
+		{"ressci.006", 0, "4037d941aec39d2e654e20960429aefc", 60781720},
+		AD_LISTEND},
+		Common::PT_BRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
+
 	// Gabriel Knight 2 - Italian DOS/Windows (6-CDs original release, provided in Trac #11013)
 	// Executable scanning reports "2.100.002", VERSION file reports "Italian 1.0"
 	{"gk2", "", {
