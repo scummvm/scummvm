@@ -1456,6 +1456,9 @@ void KyraEngine_HoF::playVoice(int high, int low) {
 }
 
 void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
+	static const uint8 volTable1[] = { 223, 159, 95, 47, 15, 0 };
+	static const uint8 volTable2[] = { 100, 75, 50, 25, 12, 0 };
+
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		if (track == 10)
 			track = _lastSfxTrack;
@@ -1474,6 +1477,12 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 	prio = prio <= 0 ? -prio : (prio * volume) >> 8;
 
 	if (file != -1 && _sound->useDigitalSfx()) {
+		for (int i = 0; i < 6; i++) {
+			if (volTable1[i] < volume) {
+				volume = volTable2[i];
+				break;
+			}
+		}
 		_sound->voicePlay(_ingameSoundList[file], 0, volume, prio, true);
 	} else if (_flags.platform == Common::kPlatformDOS) {
 		if (_sound->getSfxType() == Sound::kMidiMT32)
@@ -1484,7 +1493,7 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 			track = track < _pcSpkSfxMapSize ? _pcSpkSfxMap[track] - 1 : -1;
 
 		if (track != -1)
-			KyraEngine_v1::snd_playSoundEffect(track);
+			KyraEngine_v1::snd_playSoundEffect(track, volume);
 	} else if (file != -1) {
 		KyraEngine_v1::snd_playSoundEffect(file);
 	}
