@@ -28,6 +28,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für den zensierten Modus in Phantasmagoria 1 hinzugefügt.
    - Unterstützung für die polische Version von LSL7 hinzugefügt.
    - Unterstützung für die italienische Version von GK2 hinzugefügt.
+   - Unterstützung für die portugiesische Version von GK2 hinzugefügt.
    - Unterstützung für die russische Version von KQ7 hinzugefügt.
    - Unterstützung für die russische Version von SQ1VGA hinzugefügt.
    - Unterstützung für von Fans erstellte Untertitel für GK2 hinzugefügt.
