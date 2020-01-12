@@ -183,6 +183,8 @@ void GriffonEngine::drawHud() {
 	//sprintf(line, "_fps: %i, map: %i, exp: %i/%i", (int)_fps, _curmap, _player.exp, _player.nextlevel);
 	//drawString(_videobuffer, line, 0, 0, 0);
 
+	_itemyloc = 0;
+
 	game_fillrect(_videoBuffer2, 0, 0, 320, 240, 0);
 
 	for (int i = 0; i < kMaxFloat; i++) {

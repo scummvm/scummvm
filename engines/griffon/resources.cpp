@@ -491,6 +491,9 @@ void GriffonEngine::loadMap(int mapnum) {
 		INPUT("%i", &_npcInfo[i].item3);
 		INPUT("%i", &_npcInfo[i].script);
 
+		_npcInfo[i].frame2 = 0;
+		_npcInfo[i].attackattempt = 0;
+
 		// baby dragon
 		if (_npcInfo[i].spriteset == kMonsterBabyDragon) {
 			_npcInfo[i].hp = 12;
