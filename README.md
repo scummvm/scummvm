@@ -1751,6 +1751,7 @@ games and other games.
     l                      - starmap lock coordinate
     d                      - starmap unlock coordinate
 	b                      - starmap show boundary sphere
+	c                      - starmap show constellations sphere
 
   The Feeble Files:
     Ctrl-d                 - Starts the debugger

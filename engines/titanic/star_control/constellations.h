@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_STAR_POINTS2_H
-#define TITANIC_STAR_POINTS2_H
+#ifndef TITANIC_CONSTELLATIONS_H
+#define TITANIC_CONSTELLATIONS_H
 
 #include "titanic/star_control/fvector.h"
 #include "common/array.h"
@@ -32,16 +32,12 @@ class CStarCamera;
 class CSurfaceArea;
 
 class CConstellations {
-	struct CStarPointEntry {
-		FVector _v1, _v2;
+	struct ConstellationLine {
+		FVector _start, _end;
 	};
-	class RootEntry : public Common::Array<CStarPointEntry> {
-	public:
-		bool _visible;
-		RootEntry() : _visible(false) {}
-	};
+	typedef Common::Array<ConstellationLine> Constellation;
 private:
-	Common::Array<RootEntry> _data;
+	Common::Array<Constellation> _data;
 public:
 	/**
 	 * Initializes the data
@@ -56,4 +52,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_POINTS2_H */
+#endif /* TITANIC_CONSTELLATIONS_H */

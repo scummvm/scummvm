@@ -245,10 +245,16 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		}
 		break;
 
-	// New for ScummVM to show the boundaries code the original implemented,
+	// New for ScummVM to show the boundaries sphere code the original implemented,
 	// but wasn't actually hooked up to any player action
 	case Common::KEYCODE_b:
 		viewBoundaries();
+		return true;
+
+	// New for ScummVM to show the constellations sphere code the original implemented,
+	// but wasn't actually hooked up to any player action
+	case Common::KEYCODE_c:
+		viewConstellations();
 		return true;
 
 	default:

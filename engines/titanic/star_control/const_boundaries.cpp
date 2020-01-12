@@ -97,9 +97,9 @@ void CConstBoundaries::draw(CSurfaceArea *surface, CStarCamera *camera) {
 	for (uint idx = 1; idx < _data.size(); ++idx) {
 		// Process the next point
 		wc = _data[idx];
-		ec1._z = wc._x * pose._row1._z + wc._y * pose._row2._z + wc._z * pose._row3._z + pose._vector._z;
 		ec1._x = wc._x * pose._row1._x + wc._y * pose._row2._x + wc._z * pose._row3._x + pose._vector._x;
 		ec1._y = wc._x * pose._row1._y + wc._y * pose._row2._y + wc._z * pose._row3._y + pose._vector._y;
+		ec1._z = wc._x * pose._row1._z + wc._y * pose._row2._z + wc._z * pose._row3._z + pose._vector._z;
 
 		// Is this connected to the previous point?
 		if (_data[idx]._isDrawn) {

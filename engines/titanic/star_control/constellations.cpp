@@ -22,6 +22,7 @@
 
 #include "titanic/star_control/constellations.h"
 #include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/star_field.h"
 #include "titanic/star_control/surface_area.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
@@ -30,34 +31,37 @@
 
 namespace Titanic {
 
-#define ARRAY_COUNT 80
+#define TOTAL_CONSTELLATIONS 80
 
 bool CConstellations::initialize() {
+	double ra, dec, phi, theta;
+
 	// Get a reference to the starfield points resource
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource("STARFIELD/POINTS2");
 
-	_data.resize(ARRAY_COUNT);
-	for (int rootCtr = 0; rootCtr < ARRAY_COUNT; ++rootCtr) {
-		// Get the number of sub-entries for this entry
+	_data.resize(TOTAL_CONSTELLATIONS);
+	for (int rootCtr = 0; rootCtr < TOTAL_CONSTELLATIONS; ++rootCtr) {
+		// Get the number of points in the constellation
 		int count = stream->readUint32LE();
-		double v1, v2;
 
-		// Read in the sub-entries
-		RootEntry &rootEntry = _data[rootCtr];
+		// Read in the points
+		Constellation &rootEntry = _data[rootCtr];
 		rootEntry.resize(count);
 		for (int idx = 0; idx < count; ++idx) {
-			CStarPointEntry &se = rootEntry[idx];
-			FVector *vectors[2] = { &se._v1, &se._v2 };
+			ConstellationLine &cl = rootEntry[idx];
+			FVector *vectors[2] = { &cl._start, &cl._end};
 
 			for (int fctr = 0; fctr < 2; ++fctr) {
-				v1 = stream->readSint32LE();
-				v2 = stream->readSint32LE();
-				v1 *= Common::deg2rad<double>(0.015);
-				v2 *= Common::deg2rad<double>(0.01);
+				ra = (double)stream->readSint32LE() * 360.0f / 24000.0f;
+				dec = (double)stream->readSint32LE() / 100.0f;
 
-				vectors[fctr]->_x = cos(v1) * 3000000.0 * cos(v2);
-				vectors[fctr]->_y = sin(v1) * 3000000.0 * cos(v2);
-				vectors[fctr]->_z = sin(v2) * 3000000.0;
+				// Work the polar coordinates
+				phi = Common::deg2rad<double>(ra);
+				theta = Common::deg2rad<double>(dec);
+
+				vectors[fctr]->_x = UNIVERSE_SCALE * cos(theta) * cos(phi);
+				vectors[fctr]->_y = UNIVERSE_SCALE * cos(theta) * sin(phi);
+				vectors[fctr]->_z = UNIVERSE_SCALE * sin(theta);
 			}
 		}
 	}
@@ -72,49 +76,45 @@ void CConstellations::draw(CSurfaceArea *surface, CStarCamera *camera) {
 
 	FPose pose = camera->getPose();
 	double threshold = camera->getThreshold();
-	FVector vector1, vector2, vector3, vector4;
-	double vWidth2 = (double)surface->_width * 0.5;
-	double vHeight2 = (double)surface->_height * 0.5;
-	FRect r;
+	double centerX = (double)surface->_width / 2.0F;
+	double centerY = (double)surface->_height / 2.0F;
+	FVector ec0, ec1;
+	FVector sc0, sc1;
 
+	// Set the drawing mode, saving the old mode
 	surface->_pixel = 0xffff00;
 	uint oldPixel = surface->_pixel;
 	surface->setColorFromPixel();
 	SurfaceAreaMode oldMode = surface->setMode(SA_SOLID);
 
-	for (uint rootCtr = 0; rootCtr < _data.size(); ++rootCtr) {
-		const RootEntry &re = _data[rootCtr];
-		if (!re._visible || re.empty())
+	// Iterate through the constellations
+	for (uint conCtr = 0; conCtr < _data.size(); ++conCtr) {
+		const Constellation &con = _data[conCtr];
+		if (con.empty())
 			continue;
 
-		for (uint idx = 0; idx < re.size(); ++idx) {
-			const CStarPointEntry &se = re[idx];
-			vector1._z = pose._row2._z * se._v1._y + pose._row3._z * se._v1._z
-				+ pose._row1._z * se._v1._x + pose._vector._z;
-			vector1._x = pose._row2._x * se._v1._y + pose._row3._x * se._v1._z
-				+ pose._row1._x * se._v1._x + pose._vector._x;
-			vector1._y = pose._row2._y * se._v1._y + pose._row3._y * se._v1._z
-				+ pose._row1._y * se._v1._x + pose._vector._y;
-			vector3._z = pose._row2._z * se._v2._y + pose._row2._x * se._v2._z
-				+ pose._row1._z * se._v2._x + pose._vector._y;
-			vector3._x = pose._row3._z * se._v2._y + pose._row3._x * se._v2._z
-				+ pose._row1._x * se._v2._x + pose._vector._y;
-			vector3._y = pose._row2._y * se._v2._y + pose._row3._y * se._v2._z
-				+ pose._row1._y * se._v2._x + pose._vector._y;
+		for (uint idx = 0; idx < con.size(); ++idx) {
+			const FVector &ps = con[idx]._start;
+			ec0._x = ps._x * pose._row1._x + ps._y * pose._row2._x + ps._z * pose._row3._x + pose._vector._x;
+			ec0._y = ps._x * pose._row1._y + ps._y * pose._row2._y + ps._z * pose._row3._y + pose._vector._y;
+			ec0._z = ps._x * pose._row1._z + ps._y * pose._row2._z + ps._z * pose._row3._z + pose._vector._z;
 
-			if (vector1._z > threshold && vector3._z > threshold) {
-				vector2 = camera->getRelativePos(2, vector1);
-				vector4 = camera->getRelativePos(2, vector3);
+			const FVector &pe = con[idx]._end;
+			ec1._x = pe._x * pose._row1._x + pe._y * pose._row2._x + pe._z * pose._row3._x + pose._vector._x;
+			ec1._y = pe._x * pose._row1._y + pe._y * pose._row2._y + pe._z * pose._row3._y + pose._vector._y;
+			ec1._z = pe._x * pose._row1._z + pe._y * pose._row2._z + pe._z * pose._row3._z + pose._vector._z;
 
-				r.bottom = vector4._y + vHeight2;
-				r.right = vector4._x + vWidth2;
-				r.top = vector2._y + vHeight2;
-				r.left = vector2._x + vWidth2;
-				surface->drawLine(r);
+			// Draw if the constellation line is visible
+			if (ec0._z > threshold && ec1._z > threshold) {
+				sc0 = camera->getRelativePos(2, ec0);
+				sc1 = camera->getRelativePos(2, ec1);
+				surface->drawLine(Point(sc0._x + centerX, sc0._y + centerY),
+					Point(sc1._x + centerX, sc1._y + centerY));
 			}
 		}
 	}
 
+	// Restore the old state
 	surface->_pixel = oldPixel;
 	surface->setColorFromPixel();
 	surface->setMode(oldMode);
