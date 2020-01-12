@@ -650,6 +650,9 @@ proplist:  proppair			{ $$ = 1; }
 proppair: SYMBOL ':' simpleexpr {
 		g_lingo->code1(LC::c_symbolpush);
 		g_lingo->codeString($1->c_str()); }
+	| STRING ':' simpleexpr {
+			g_lingo->code1(LC::c_stringpush);
+			g_lingo->codeString($1->c_str()); }
 	;
 
 
