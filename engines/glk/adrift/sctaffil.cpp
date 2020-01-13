@@ -22,6 +22,7 @@
 
 #include "glk/adrift/scare.h"
 #include "glk/adrift/scprotos.h"
+#include "glk/adrift/detection.h"
 #include "common/algorithm.h"
 #include "common/zlib.h"
 #include "common/memstream.h"
@@ -49,23 +50,6 @@ enum {
 static const sc_char NEWLINE = '\n';
 static const sc_char CARRIAGE_RETURN = '\r';
 static const sc_char NUL = '\0';
-
-/* Various version TAF file signatures. */
-static const sc_byte V500_SIGNATURE[VERSION_HEADER_SIZE] = {
-	0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87, 0xc2, 0xcf, 0x92, 0x45, 0x3e, 0x61, 0x30, 0x30
-};
-
-static const sc_byte V400_SIGNATURE[VERSION_HEADER_SIZE] = {
-	0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87, 0xc2, 0xcf, 0x93, 0x45, 0x3e, 0x61, 0x39, 0xfa
-};
-
-static const sc_byte V390_SIGNATURE[VERSION_HEADER_SIZE] = {
-	0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87, 0xc2, 0xcf, 0x94, 0x45, 0x37, 0x61, 0x39, 0xfa
-};
-
-static const sc_byte V380_SIGNATURE[VERSION_HEADER_SIZE] = {
-	0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87, 0xc2, 0xcf, 0x94, 0x45, 0x36, 0x61, 0x39, 0xfa
-};
 
 /*
  * Game TAF data structure.  The game structure contains the original TAF
@@ -495,14 +479,14 @@ static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
 			return NULL;
 		}
 
-		/*
-		 * Compare the header with the known TAF signatures, and set TAF version
-		 * appropriately.
-		 */
-		if (memcmp(taf->header, V500_SIGNATURE, VERSION_HEADER_SIZE) == 0) {
+		/* Handle different TAF versions */
+		int version = AdriftMetaEngine::detectGameVersion(taf->header);
+
+		if (version == TAF_VERSION_500 || version == TAF_VERSION_390 ||
+				version == TAF_VERSION_380) {
 			taf->version = TAF_VERSION_500;
 
-		} else if (memcmp(taf->header, V400_SIGNATURE, VERSION_HEADER_SIZE) == 0) {
+		} else if (version == TAF_VERSION_400) {
 			/* Read in the version 4.0 header extension. */
 			in_bytes = callback(opaque,
 			                    taf->header + VERSION_HEADER_SIZE,
@@ -515,11 +499,8 @@ static sc_tafref_t taf_create_from_callback(sc_read_callbackref_t callback,
 			}
 
 			taf->version = TAF_VERSION_400;
-		} else if (memcmp(taf->header, V390_SIGNATURE, VERSION_HEADER_SIZE) == 0)
-			taf->version = TAF_VERSION_390;
-		else if (memcmp(taf->header, V380_SIGNATURE, VERSION_HEADER_SIZE) == 0)
-			taf->version = TAF_VERSION_380;
-		else {
+
+		} else {
 			taf_destroy(taf);
 			return NULL;
 		}

@@ -55,6 +55,11 @@ public:
 	 * Check for game Id clashes with other sub-engines
 	 */
 	static void detectClashes(Common::StringMap &map);
+
+	/**
+	 * Detect the game version
+	 */
+	static int detectGameVersion(const byte *header);
 };
 
 } // End of namespace Adrift
