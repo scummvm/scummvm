@@ -1723,6 +1723,7 @@ void LB::b_cast(int nargs) {
 	warning("STUB: b_cast");
 
 	d.type = REFERENCE;
+	d.u.i = 0;
 
 	g_lingo->push(d);
 }
@@ -1757,6 +1758,7 @@ void LB::b_script(int nargs) {
 	warning("STUB: b_script");
 
 	d.type = REFERENCE;
+	d.u.i = 0;
 
 	g_lingo->push(d);
 }
@@ -1767,6 +1769,7 @@ void LB::b_window(int nargs) {
 	warning("STUB: b_window");
 
 	d.type = REFERENCE;
+	d.u.i = 0;
 
 	g_lingo->push(d);
 }
