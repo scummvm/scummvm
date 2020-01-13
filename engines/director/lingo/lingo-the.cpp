@@ -120,6 +120,7 @@ TheEntity entities[] = {
 	{ kTheShiftDown,		"shiftDown",		false, 2 },	// D2 f
 	{ kTheSoundEnabled,		"soundEnabled",		false, 2 },	// D2 p
 	{ kTheSoundLevel,		"soundLevel",		false, 2 },	// D2 p
+	{ kTheSoundEntity,		"sound",			true,  4 },	// D4
 	{ kTheSprite,			"sprite",			true,  2 },	// D4 p
 	{ kTheSqrt,				"sqrt",				false, 2 },	// D2 f
 	{ kTheStage,			"stage",			false, 4 },	//				D4 p
@@ -259,6 +260,8 @@ TheEntityField fields[] = {
 	{ kTheTime,		"abbreviated",	kTheAbbr,		3 },//		D3 f
 	{ kTheTime,		"abbrev",		kTheAbbr,		3 },//		D3 f
 	{ kTheTime,		"abbr",			kTheAbbr,		3 },//		D3 f
+
+	{ kTheSoundEntity,"volume",		kTheVolume,		4 },//				D4 p
 
 	{ kTheNOEntity, NULL, kTheNOField, 0 }
 };

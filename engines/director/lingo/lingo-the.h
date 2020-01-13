@@ -115,6 +115,7 @@ enum TheEntityType {
 	kTheSelEnd,
 	kTheSelStart,
 	kTheShiftDown,
+	kTheSoundEntity,
 	kTheSoundEnabled,
 	kTheSoundLevel,
 	kTheSprite,
