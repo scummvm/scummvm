@@ -411,6 +411,12 @@ Common::String *Datum::toString() {
 			int idx = u.i;
 			Score *score = g_director->getCurrentScore();
 
+			if (!score) {
+				warning("toString(): No score");
+				*s = "";
+				break;
+			}
+
 			if (!score->_loadedCast->contains(idx)) {
 				if (!score->_loadedCast->contains(idx - score->_castIDoffset)) {
 					warning("toString(): Unknown REFERENCE %d", idx);
