@@ -165,6 +165,7 @@ static const char *const selectorNameTable[] = {
 	"fore",         // KQ7
 	"back",         // KQ7
 	"font",         // KQ7
+	"setHeading",   // KQ7
 	"setScale",     // LSL6hires, QFG4
 	"setScaler",    // LSL6hires, QFG4
 	"readWord",     // LSL7, Phant1, Torin
@@ -279,6 +280,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_fore,
 	SELECTOR_back,
 	SELECTOR_font,
+	SELECTOR_setHeading,
 	SELECTOR_setScale,
 	SELECTOR_setScaler,
 	SELECTOR_readWord,
@@ -5060,10 +5062,48 @@ static const uint16 kq7ExtraAmbrosiaPatch[] = {
 	PATCH_END
 };
 
+// In KQ7 1.4, after giving the statue to the snake oil salesman, the curtain is
+//  drawn on top of ego when walking in front of the wagon. The script doesn't
+//  dispose of the salesman and this leaves his final cel stuck on the screen.
+//  We add the missing call to snakeSalesman:dispose.
+//
+// Applies to: English PC 1.4
+// Responsible method: giveStatue:changeState
+// Fixes bug: #10221
+static const uint16 kq7SnakeOilSalesmanSignature[] = {
+	0x38, SIG_SELECTOR16(setHeading),   // pushi setHeading
+	SIG_ADDTOOFFSET(+0x281),
+	0x72, SIG_UINT16(0x15b4),           // lofsa snakeSalesman
+	SIG_ADDTOOFFSET(+0x3f),
+	0x3c,                               // dup
+	0x35, SIG_MAGICDWORD, 0x0c,         // ldi 0c
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0010),           // bnt 0010 [ state 13 ]
+	0x38, SIG_SELECTOR16(setHeading),   // pushi setHeading
+	0x7a,                               // pushi2
+	0x38, SIG_UINT16(0x00b4),           // pushi 00b4
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0008),           // send 08  [ KQEgo setHeading: 180 self ]
+	0x32, SIG_UINT16(0x0017),           // jmp 0017 [ end of method ]
+	SIG_END
+};
+
+static const uint16 kq7SnakeOilSalesmanPatch[] = {
+	PATCH_ADDTOOFFSET(+0x02cd),
+	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
+	0x76,                               // push0
+	0x72, PATCH_UINT16(0x15b4),         // lofsa snakeSalesman
+	0x4a, PATCH_UINT16(0x0004),         // send 04  [ snakeSalesman: dispose ]
+	0x32, PATCH_UINT16(0xfd26),         // jmp fd26 [ KQEgo setHeading and end of method ] 
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,     0, "disable video benchmarking",                  1, kq7BenchmarkSignature,                    kq7BenchmarkPatch },
 	{  true,     0, "remove hardcoded spin loop",                  1, kq7PragmaFailSpinSignature,               kq7PragmaFailSpinPatch },
+	{  true,  5300, "fix snake oil salesman disposal",             1, kq7SnakeOilSalesmanSignature,             kq7SnakeOilSalesmanPatch },
 	{  true,  6100, "fix extra ambrosia",                          1, kq7ExtraAmbrosiaSignature,                kq7ExtraAmbrosiaPatch },
 	{  true,    31, "enable subtitles (1/3)",                      1, kq7SubtitleFixSignature1,                 kq7SubtitleFixPatch1 },
 	{  true, 64928, "enable subtitles (2/3)",                      1, kq7SubtitleFixSignature2,                 kq7SubtitleFixPatch2 },
