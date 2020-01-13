@@ -141,10 +141,10 @@ static struct FuncDescr {
 	{ LC::cb_call,			"cb_call",			"i" },
 	{ LC::cb_field,			"cb_field",			"" },
 	{ LC::cb_localcall,		"cb_localcall",		"i" },
-	{ LC::cb_v4putvalue,		"cb_putvalue",		"i" },
-	{ LC::cb_v4theentitypush,"c_v4theentitypush","i" },
-	{ LC::cb_v4theentitynamepush,"c_v4theentitynamepush","i" },
-	{ LC::cb_v4theentityassign,"c_v4theentityassign","i" },
+	{ LC::cb_v4putvalue,	"cb_putvalue",		"i" },
+	{ LC::cb_v4theentitypush,"cb_v4theentitypush","i" },
+	{ LC::cb_v4theentitynamepush,"cb_v4theentitynamepush","i" },
+	{ LC::cb_v4theentityassign,"cb_v4theentityassign","i" },
 	{ 0, 0, 0 }
 };
 
