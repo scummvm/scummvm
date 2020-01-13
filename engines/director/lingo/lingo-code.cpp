@@ -1079,7 +1079,13 @@ void LC::c_whencode() {
 }
 
 void LC::c_tellcode() {
-	warning("STUB: c_tellcode");
+	Datum d1 = g_lingo->pop(); // reference
+	uint start = g_lingo->_pc;
+	uint end = g_lingo->readInt() + start - 1;
+
+	warning("STUB: c_tellcode(%s)", d1.toString()->c_str());
+
+	g_lingo->_pc = end;
 }
 
 void LC::c_tell() {
