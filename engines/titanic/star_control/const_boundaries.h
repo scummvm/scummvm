@@ -28,7 +28,7 @@
 
 namespace Titanic {
 
-class CStarCamera;
+class CCamera;
 class CSurfaceArea;
 
 class CConstBoundaries {
@@ -49,7 +49,7 @@ public:
 	/**
 	 * Draw the boundary structure
 	 */
-	void draw(CSurfaceArea *surface, CStarCamera *camera);
+	void draw(CSurfaceArea *surface, CCamera *camera);
 };
 
 } // End of namespace Titanic

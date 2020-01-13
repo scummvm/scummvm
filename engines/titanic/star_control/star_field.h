@@ -58,7 +58,7 @@ private:
 	 * If the player's home photo has a selected star, and the starfield view
 	 * is close enough to it, draw a lock line
 	 */
-	void renderLockLine(CSurfaceArea *surfaceArea, CStarCamera *camera);
+	void renderLockLine(CSurfaceArea *surfaceArea, CCamera *camera);
 public:
 	CStarField();
 
@@ -77,7 +77,7 @@ public:
 	/**
 	 * Renders the contents of the starfield
 	 */
-	void render(CVideoSurface *surface, CStarCamera *camera);
+	void render(CVideoSurface *surface, CCamera *camera);
 
 	bool getBoundaryState() const;
 
@@ -152,10 +152,10 @@ public:
 	/**
 	  * Gets the lock distance to a star
 	  */
-	double lockDistance(CSurfaceArea *surfaceArea, CStarCamera *camera,
+	double lockDistance(CSurfaceArea *surfaceArea, CCamera *camera,
 		FVector &screenCoord, FVector &worldCoord, FVector &photoPos);
 
-	void fn6(CVideoSurface *surface, CStarCamera *camera);
+	void fn6(CVideoSurface *surface, CCamera *camera);
 
 	/**
 	 * Increments the number of matched markers
@@ -172,7 +172,7 @@ public:
 	/**
 	 * Called when the starfield is clicked
 	 */
-	bool mouseButtonDown(CVideoSurface *surface, CStarCamera *camera,
+	bool mouseButtonDown(CVideoSurface *surface, CCamera *camera,
 		int flags, const Common::Point &pt);
 
 	/**

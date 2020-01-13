@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_STAR_CAMERA_H
-#define TITANIC_STAR_CAMERA_H
+#ifndef TITANIC_CAMERA_H
+#define TITANIC_CAMERA_H
 
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/base_stars.h"
@@ -40,7 +40,7 @@ enum StarLockState { ZERO_LOCKED=0, ONE_LOCKED=1, TWO_LOCKED=2, THREE_LOCKED=3 }
 /**
  * Implements a reference point from which the starmap can be viewed
  */
-class CStarCamera {
+class CCamera {
 private:
 	static FMatrix *_priorOrientation;
 	static FMatrix *_newOrientation;
@@ -72,9 +72,9 @@ public:
 	static void init();
 	static void deinit();
 public:
-	CStarCamera(const CNavigationInfo *data);
-	CStarCamera(CViewport *src);
-	virtual ~CStarCamera();
+	CCamera(const CNavigationInfo *data);
+	CCamera(CViewport *src);
+	virtual ~CCamera();
 
 	virtual void proc2(const CViewport *src);
 	virtual void proc3(const CNavigationInfo *src);
@@ -118,12 +118,12 @@ public:
 	/**
 	 * Increases movement speed in forward direction
 	 */
-	virtual void increaseForwardSpeed();
+	virtual void accelerate();
 
 	/**
 	 * Increases movement speed in backward direction
 	 */
-	virtual void increaseBackwardSpeed();
+	virtual void deccelerate();
 
 	/**
 	 * Increase to full speed
@@ -248,4 +248,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_STAR_CAMERA_H */
+#endif /* TITANIC_CAMERA_H */

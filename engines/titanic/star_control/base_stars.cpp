@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/base_stars.h"
-#include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/camera.h"
 #include "titanic/star_control/star_closeup.h"
 #include "titanic/star_control/star_ref.h"
 #include "titanic/support/files_manager.h"
@@ -126,7 +126,7 @@ void CBaseStars::resetEntry(CBaseStarEntry &entry) {
 		entry._data[idx] = 0;
 }
 
-void CBaseStars::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
+void CBaseStars::draw(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup) {
 	if (!_data.empty()) {
 		switch (camera->getStarColor()) {
 		case WHITE: // draw white, green, and red stars (mostly white)
@@ -161,7 +161,7 @@ void CBaseStars::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClose
 	}
 }
 
-void CBaseStars::draw1(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
+void CBaseStars::draw1(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup) {
 	FPose pose = camera->getPose();
 	camera->getRelativeXCenterPixels(&_value1, &_value2, &_value3, &_value4);
 
@@ -246,7 +246,7 @@ void CBaseStars::draw1(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 	}
 }
 
-void CBaseStars::draw2(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
+void CBaseStars::draw2(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup) {
 	FPose pose = camera->getPose();
 	camera->getRelativeXCenterPixels(&_value1, &_value2, &_value3, &_value4);
 
@@ -332,7 +332,7 @@ void CBaseStars::draw2(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 	}
 }
 
-void CBaseStars::draw3(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
+void CBaseStars::draw3(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup) {
 	FPose pose = camera->getPose();
 	camera->getRelativeXCenterPixels(&_value1, &_value2, &_value3, &_value4);
 
@@ -439,7 +439,7 @@ void CBaseStars::draw3(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 	}
 }
 
-void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
+void CBaseStars::draw4(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup) {
 	FPose pose = camera->getPose();
 	camera->getRelativeXCenterPixels(&_value1, &_value2, &_value3, &_value4);
 
@@ -547,14 +547,14 @@ void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 	}
 }
 
-int CBaseStars::findStar(CSurfaceArea *surfaceArea, CStarCamera *camera,
+int CBaseStars::findStar(CSurfaceArea *surfaceArea, CCamera *camera,
 		const Common::Point &pt) {
 	CStarRef1 ref(this, pt);
 	ref.process(surfaceArea, camera);
 	return ref._index;
 }
 
-int CBaseStars::baseFn2(CSurfaceArea *surfaceArea, CStarCamera *camera) {
+int CBaseStars::baseFn2(CSurfaceArea *surfaceArea, CCamera *camera) {
 	CStarRef3 ref(this);
 	ref.process(surfaceArea, camera);
 	return ref._index;

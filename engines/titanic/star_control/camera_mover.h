@@ -69,12 +69,12 @@ public:
 	/**
 	 * Increases movement speed in forward direction
 	 */
-	virtual void increaseForwardSpeed();
+	virtual void accelerate();
 
 	/**
 	 * Decreases movement speed in backward direction
 	 */
-	virtual void increaseBackwardSpeed();
+	virtual void deccelerate();
 
 	/**
 	 * Increase to full speed

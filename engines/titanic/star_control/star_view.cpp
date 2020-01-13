@@ -80,7 +80,7 @@ void CStarView::setup(CScreenManager *screenManager, CStarField *starField, CSta
 
 void CStarView::takeCurrentHomePhoto() {
 	if (_lensValid) {
-		CStarCamera camera(&_photoViewport);
+		CCamera camera(&_photoViewport);
 		takeHomePhotoHelper(&camera);
 	}
 }
@@ -157,7 +157,7 @@ bool CStarView::MouseMoveMsg(int unused, const Point &pt) {
 
 bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	FPose pose;
-	int matchedIndex = _starField ? _starField->getMatchedIndex() : -1;
+	int lockLevel = _starField ? _starField->getMatchedIndex() : -1;
 
 	switch (tolower(key)) {
 	case Common::KEYCODE_TAB:
@@ -186,7 +186,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	}
 
 	case Common::KEYCODE_z:
-		if (matchedIndex == -1) {
+		if (lockLevel == -1) {
 			pose.setRotationMatrix(Y_AXIS, -1.0);
 			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
@@ -195,23 +195,23 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		break;
 
 	case Common::KEYCODE_SEMICOLON:
-		if (matchedIndex == -1) {
-			_camera.increaseForwardSpeed();
+		if (lockLevel == -1) {
+			_camera.accelerate();
 			errorCode->set();
 			return true;
 		}
 		break;
 
 	case Common::KEYCODE_PERIOD:
-		if (matchedIndex == -1) {
-			_camera.increaseBackwardSpeed();
+		if (lockLevel == -1) {
+			_camera.deccelerate();
 			errorCode->set();
 			return true;
 		}
 		break;
 
 	case Common::KEYCODE_SPACE:
-		if (matchedIndex == -1) {
+		if (lockLevel == -1) {
 			_camera.stop();
 			errorCode->set();
 			return true;
@@ -219,7 +219,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		break;
 
 	case Common::KEYCODE_x:
-		if (matchedIndex == -1) {
+		if (lockLevel == -1) {
 			pose.setRotationMatrix(Y_AXIS, 1.0);
 			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
@@ -228,7 +228,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		break;
 
 	case Common::KEYCODE_QUOTE:
-		if (matchedIndex == -1) {
+		if (lockLevel == -1) {
 			pose.setRotationMatrix(X_AXIS, 1.0);
 			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
@@ -237,7 +237,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 		break;
 
 	case Common::KEYCODE_SLASH:
-		if (matchedIndex == -1) {
+		if (lockLevel == -1) {
 			pose.setRotationMatrix(X_AXIS, -1.0);
 			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
@@ -460,7 +460,7 @@ void CStarView::unlockStar() {
 	}
 }
 
-void CStarView::takeHomePhotoHelper(CStarCamera *camera) {
+void CStarView::takeHomePhotoHelper(CCamera *camera) {
 	if (_starField) {
 		if (!_photoSurface) {
 			CScreenManager *scrManager = CScreenManager::setCurrent();

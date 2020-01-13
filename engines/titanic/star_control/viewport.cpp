@@ -231,7 +231,7 @@ FPose CViewport::getRawPose() {
 
 // TODO: should index be used here like 
 // getRelativePosCentering/getRelativePosCentering2?
-// CStarCamera::getRelativePosCentering is calling this with an index of
+// CCamera::getRelativePosCentering is calling this with an index of
 // 2 which corresponds to _isZero which has value 0.
 FVector CViewport::getRelativePosNoCentering(int index, const FVector &src) {
 	FPose current_pose = getPose();

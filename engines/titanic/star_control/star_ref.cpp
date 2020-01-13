@@ -21,12 +21,12 @@
  */
 
 #include "titanic/star_control/star_ref.h"
-#include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/camera.h"
 #include "titanic/star_control/surface_area.h"
 
 namespace Titanic {
 
-void CBaseStarRef::process(CSurfaceArea *surface, CStarCamera *camera) {
+void CBaseStarRef::process(CSurfaceArea *surface, CCamera *camera) {
 	if (_stars->_data.empty())
 		return;
 

@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/camera.h"
 #include "titanic/debugger.h"
 #include "titanic/star_control/camera_mover.h"
 #include "titanic/star_control/fmatrix.h"
@@ -36,114 +36,114 @@ namespace Titanic {
 const double rowScale1 = 100000.0;
 const double rowScale2 = 1000000.0;
 
-FMatrix *CStarCamera::_priorOrientation;
-FMatrix *CStarCamera::_newOrientation;
+FMatrix *CCamera::_priorOrientation;
+FMatrix *CCamera::_newOrientation;
 
-CStarCamera::CStarCamera(const CNavigationInfo *data) :
+CCamera::CCamera(const CNavigationInfo *data) :
 		_starLockState(ZERO_LOCKED), _mover(nullptr), _isMoved(false), _isInLockingProcess(false) {
 	setMoverType(data);
 }
 
-CStarCamera::CStarCamera(CViewport *src) :
+CCamera::CCamera(CViewport *src) :
 		_starLockState(ZERO_LOCKED), _mover(nullptr), _isMoved(false), _isInLockingProcess(false), _viewport(src) {
 }
 
-void CStarCamera::init() {
+void CCamera::init() {
 	_priorOrientation = nullptr;
 	_newOrientation = nullptr;
 }
 
-void CStarCamera::deinit() {
+void CCamera::deinit() {
 	delete _priorOrientation;
 	delete _newOrientation;
 	_priorOrientation = nullptr;
 	_newOrientation = nullptr;
 }
 
-bool CStarCamera::isLocked() { 
+bool CCamera::isLocked() { 
 	return _mover->isLocked();
 }
 
-bool CStarCamera::isNotInLockingProcess() { 
+bool CCamera::isNotInLockingProcess() { 
 	return !_isInLockingProcess;
 }
 
-CStarCamera::~CStarCamera() {
+CCamera::~CCamera() {
 	removeMover();
 }
 
-void CStarCamera::proc2(const CViewport *src) {
+void CCamera::proc2(const CViewport *src) {
 	_viewport.copyFrom(src);
 }
 
-void CStarCamera::proc3(const CNavigationInfo *src) {
+void CCamera::proc3(const CNavigationInfo *src) {
 	_mover->copyFrom(src);
 }
 
-void CStarCamera::setPosition(const FVector &v) {
+void CCamera::setPosition(const FVector &v) {
 	if (!isLocked()) {
 		_viewport.setPosition(v);
 		setIsMoved();
 	}
 }
 
-void CStarCamera::setOrientation(const FVector &v) {
+void CCamera::setOrientation(const FVector &v) {
 	if (!isLocked())
 		_viewport.setOrientation(v);
 }
 
 // This never gets called
-void CStarCamera::proc6(int v) {
+void CCamera::proc6(int v) {
 	if (!isLocked())
 		_viewport.setC(v);
 }
 
 // This never gets called
-void CStarCamera::proc7(int v) {
+void CCamera::proc7(int v) {
 	if (!isLocked())
 		_viewport.set10(v);
 }
 
 // This never gets called
-void CStarCamera::proc8(int v) {
+void CCamera::proc8(int v) {
 	if (!isLocked())
 		_viewport.set14(v);
 }
 
 // This never gets called
-void CStarCamera::setCenterYAngle(int v) {
+void CCamera::setCenterYAngle(int v) {
 	if (!isLocked())
 		_viewport.setCenterYAngle(v);
 }
 
 // This never gets called
-void CStarCamera::setCenterZAngle(int v) {
+void CCamera::setCenterZAngle(int v) {
 	if (!isLocked())
 		_viewport.setCenterZAngle(v);
 }
 
-void CStarCamera::randomizeOrientation() {
+void CCamera::randomizeOrientation() {
 	if (!isLocked())
 		_viewport.randomizeOrientation();
 }
 
-void CStarCamera::setFields(StarMode mode, double val) {
+void CCamera::setFields(StarMode mode, double val) {
 	if (!isLocked())
 		_viewport.changeStarColorPixel(mode, val);
 }
 
-void CStarCamera::proc13(CViewport *dest) {
+void CCamera::proc13(CViewport *dest) {
 	*dest = _viewport;
 }
 
-void CStarCamera::setDestination(const FVector &v) {
+void CCamera::setDestination(const FVector &v) {
 	FMatrix orientation = _viewport.getOrientation();
 	FVector oldPos = _viewport._position;
 
 	_mover->moveTo(oldPos, v, orientation);
 }
 
-void CStarCamera::updatePosition(CErrorCode *errorCode) {
+void CCamera::updatePosition(CErrorCode *errorCode) {
 	if (!_priorOrientation)
 		_priorOrientation = new FMatrix();
 	if (!_newOrientation)
@@ -166,60 +166,60 @@ void CStarCamera::updatePosition(CErrorCode *errorCode) {
 	}
 }
 
-void CStarCamera::increaseForwardSpeed() {
-	_mover->increaseForwardSpeed();
+void CCamera::accelerate() {
+	_mover->accelerate();
 }
 
-void CStarCamera::increaseBackwardSpeed() {
-	_mover->increaseBackwardSpeed();
+void CCamera::deccelerate() {
+	_mover->deccelerate();
 }
 
-void CStarCamera::fullSpeed() {
+void CCamera::fullSpeed() {
 	_mover->fullSpeed();
 }
 
-void CStarCamera::stop() {
+void CCamera::stop() {
 	_mover->stop();
 }
 
-void CStarCamera::reposition(double factor) {
+void CCamera::reposition(double factor) {
 	if (!isLocked())
 		_viewport.reposition(factor);
 }
 
-void CStarCamera::setPosition(const FPose &pose) {
+void CCamera::setPosition(const FPose &pose) {
 	if (!isLocked()) {
 		_viewport.setPosition(pose);
 		setIsMoved();
 	}
 }
 
-void CStarCamera::changeOrientation(FMatrix &m) {
+void CCamera::changeOrientation(FMatrix &m) {
 	if (!isLocked())
 		_viewport.changeOrientation(m);
 }
 
-FPose CStarCamera::getPose() {
+FPose CCamera::getPose() {
 	return _viewport.getPose();
 }
 
-FPose CStarCamera::getRawPose() {
+FPose CCamera::getRawPose() {
 	return _viewport.getRawPose();
 }
 
-double CStarCamera::getThreshold() const {
+double CCamera::getThreshold() const {
 	return _viewport._field10;
 }
 
-double CStarCamera::proc26() const {
+double CCamera::proc26() const {
 	return _viewport._field14;
 }
 
-StarColor CStarCamera::getStarColor() const {
+StarColor CCamera::getStarColor() const {
 	return _viewport._starColor;
 }
 
-FVector CStarCamera::getRelativePos(int index, const FVector &src) {
+FVector CCamera::getRelativePos(int index, const FVector &src) {
 	FVector dest;
 
 	double val;
@@ -236,19 +236,19 @@ FVector CStarCamera::getRelativePos(int index, const FVector &src) {
 	return dest;
 }
 
-FVector CStarCamera::getRelativePosNoCentering(int index, const FVector &src) {
+FVector CCamera::getRelativePosNoCentering(int index, const FVector &src) {
 	return _viewport.getRelativePosNoCentering(index, src);
 }
 
-FVector CStarCamera::proc30(int index, const FVector &v) {
+FVector CCamera::proc30(int index, const FVector &v) {
 	return _viewport.getRelativePosCentering(index, v);
 }
 
-FVector CStarCamera::proc31(int index, const FVector &v) {
+FVector CCamera::proc31(int index, const FVector &v) {
 	return _viewport.getRelativePosCenteringRaw(index, v);
 }
 
-void CStarCamera::setViewportAngle(const FPoint &angles) {
+void CCamera::setViewportAngle(const FPoint &angles) {
 	debug(DEBUG_DETAILED, "setViewportAngle %f %f", angles._x, angles._y);
 
 	if (isLocked())
@@ -396,7 +396,7 @@ void CStarCamera::setViewportAngle(const FPoint &angles) {
 	}
 }
 
-bool CStarCamera::addLockedStar(const FVector v) {
+bool CCamera::addLockedStar(const FVector v) {
 	if (_starLockState == THREE_LOCKED)
 		return false;
 
@@ -411,7 +411,7 @@ bool CStarCamera::addLockedStar(const FVector v) {
 	return true;
 }
 
-bool CStarCamera::removeLockedStar() {
+bool CCamera::removeLockedStar() {
 	if (_starLockState == ZERO_LOCKED)
 		return false;
 
@@ -424,19 +424,19 @@ bool CStarCamera::removeLockedStar() {
 	return true;
 }
 
-void CStarCamera::getRelativeXCenterPixels(double *v1, double *v2, double *v3, double *v4) {
+void CCamera::getRelativeXCenterPixels(double *v1, double *v2, double *v3, double *v4) {
 	_viewport.getRelativeXCenterPixels(v1, v2, v3, v4);
 }
 
-void CStarCamera::load(SimpleFile *file, int param) {
+void CCamera::load(SimpleFile *file, int param) {
 	_viewport.load(file, param);
 }
 
-void CStarCamera::save(SimpleFile *file, int indent) {
+void CCamera::save(SimpleFile *file, int indent) {
 	_viewport.save(file, indent);
 }
 
-bool CStarCamera::setMoverType(const CNavigationInfo *src) {
+bool CCamera::setMoverType(const CNavigationInfo *src) {
 	CCameraMover *mover = nullptr;
 
 	switch (_starLockState) {
@@ -463,7 +463,7 @@ bool CStarCamera::setMoverType(const CNavigationInfo *src) {
 	}
 }
 
-void CStarCamera::removeMover() {
+void CCamera::removeMover() {
 	if (_mover) {
 		delete _mover;
 		_mover = nullptr;
@@ -471,7 +471,7 @@ void CStarCamera::removeMover() {
 	}
 }
 
-bool CStarCamera::lockMarker1(FVector v1, FVector firstStarPosition, FVector v3) {
+bool CCamera::lockMarker1(FVector v1, FVector firstStarPosition, FVector v3) {
 	if (_starLockState != ZERO_LOCKED)
 		return true;
 
@@ -515,7 +515,7 @@ bool CStarCamera::lockMarker1(FVector v1, FVector firstStarPosition, FVector v3)
 	return	true;
 }
 
-bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosition) {
+bool CCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosition) {
 	if (_starLockState != ONE_LOCKED)
 		return true;
 
@@ -607,7 +607,7 @@ bool CStarCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosi
 	return	true;
 }
 
-bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosition) {
+bool CCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosition) {
 	if (_starLockState != TWO_LOCKED)
 		return true;
 
@@ -627,7 +627,7 @@ bool CStarCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosit
 	return true;
 }
 
-float CStarCamera::calcAngleForMinDist(FVector &x, FVector &y, float &minDistance) {
+float CCamera::calcAngleForMinDist(FVector &x, FVector &y, float &minDistance) {
 	FVector tempPos;
 	minDistance = (float)1.0e20;
 	float minDegree = 0.0;

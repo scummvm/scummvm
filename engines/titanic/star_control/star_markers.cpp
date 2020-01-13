@@ -21,12 +21,12 @@
  */
 
 #include "titanic/star_control/star_markers.h"
-#include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/camera.h"
 #include "titanic/star_control/surface_area.h"
 
 namespace Titanic {
 
-void CStarMarkers::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
+void CStarMarkers::draw(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup) {
 	if (_data.empty())
 		return;
 

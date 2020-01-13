@@ -34,7 +34,7 @@ namespace Titanic {
 
 class CStarField;
 class CStarMarkers;
-class CStarCamera;
+class CCamera;
 class SimpleFile;
 
 class CStarCrosshairs {
@@ -78,7 +78,7 @@ public:
 
 	void draw(CSurfaceArea *surfaceArea);
 
-	bool fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarCamera *camera);
+	bool fn1(CStarField *starField, CSurfaceArea *surfaceArea, CCamera *camera);
 
 	/**
 	 * Increments the number of matches

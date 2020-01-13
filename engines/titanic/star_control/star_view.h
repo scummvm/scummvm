@@ -23,7 +23,7 @@
 #ifndef TITANIC_STAR_VIEW_H
 #define TITANIC_STAR_VIEW_H
 
-#include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/camera.h"
 #include "titanic/star_control/surface_fader.h"
 #include "titanic/star_control/viewport.h"
 #include "titanic/support/rect.h"
@@ -42,7 +42,7 @@ private:
 	CStarControl *_owner;
 	CStarField *_starField;
 	CVideoSurface *_videoSurface;
-	CStarCamera _camera;
+	CCamera _camera;
 	bool _lensValid;
 	CViewport _photoViewport;
 	CSurfaceFader _fader;
@@ -54,7 +54,7 @@ private:
 	/**
 	 * Take a photograph of a view specified by the camera
 	 */
-	void takeHomePhotoHelper(CStarCamera *camera);
+	void takeHomePhotoHelper(CCamera *camera);
 
 	/**
 	 * View a specified star

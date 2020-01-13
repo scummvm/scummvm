@@ -40,7 +40,7 @@ enum StarColor { WHITE = 0, PINK = 2 };
 /**
  * Implements the viewport functionality for viewing the star field in
  * a given position and orientation.
- * CStarCamera is a big user of this class
+ * CCamera is a big user of this class
  */
 class CViewport {
 private:

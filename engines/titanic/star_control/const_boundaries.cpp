@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/const_boundaries.h"
-#include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/camera.h"
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/surface_area.h"
 #include "titanic/support/files_manager.h"
@@ -68,7 +68,7 @@ bool CConstBoundaries::initialize() {
 	return true;
 }
 
-void CConstBoundaries::draw(CSurfaceArea *surface, CStarCamera *camera) {
+void CConstBoundaries::draw(CSurfaceArea *surface, CCamera *camera) {
 	if (_data.empty())
 		return;
 

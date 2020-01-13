@@ -28,7 +28,7 @@
 
 namespace Titanic {
 
-class CStarCamera;
+class CCamera;
 class CSurfaceArea;
 
 class CConstellations {
@@ -47,7 +47,7 @@ public:
 	/**
 	 * Draw the starfield points
 	 */
-	void draw(CSurfaceArea *surface, CStarCamera *camera);
+	void draw(CSurfaceArea *surface, CCamera *camera);
 };
 
 } // End of namespace Titanic

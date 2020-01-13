@@ -34,7 +34,7 @@ public:
 	/**
 	 * Draw the item
 	 */
-	virtual void draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup);
+	virtual void draw(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup *closeup);
 
 	/**
 	 * Adds a new star, or removes one if already present at the given co-ordinates

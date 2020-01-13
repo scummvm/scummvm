@@ -28,7 +28,7 @@
 
 namespace Titanic {
 
-class CStarCamera;
+class CCamera;
 class CSurfaceArea;
 
 class CBaseStarRef {
@@ -39,7 +39,7 @@ public:
 	CBaseStarRef() : _stars(nullptr) {}
 	virtual ~CBaseStarRef() {}
 
-	void process(CSurfaceArea *surface, CStarCamera *camera);
+	void process(CSurfaceArea *surface, CCamera *camera);
 
 	virtual bool check(const Common::Point &pt, int index) { return false; }
 };

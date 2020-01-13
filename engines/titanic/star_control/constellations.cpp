@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/constellations.h"
-#include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/camera.h"
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/surface_area.h"
 #include "titanic/support/files_manager.h"
@@ -70,7 +70,7 @@ bool CConstellations::initialize() {
 	return true;
 }
 
-void CConstellations::draw(CSurfaceArea *surface, CStarCamera *camera) {
+void CConstellations::draw(CSurfaceArea *surface, CCamera *camera) {
 	if (_data.empty())
 		return;
 

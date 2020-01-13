@@ -432,6 +432,7 @@ MODULE_OBJS := \
 	sound/wave_file.o \
 	star_control/star_control.o \
 	star_control/base_stars.o \
+	star_control/camera.o \
 	star_control/camera_auto_mover.o \
 	star_control/camera_mover.o \
 	star_control/const_boundaries.o \
@@ -446,7 +447,6 @@ MODULE_OBJS := \
 	star_control/marked_camera_mover.o \
 	star_control/matrix_transform.o \
 	star_control/orientation_changer.o \
-	star_control/star_camera.o \
 	star_control/star_closeup.o \
 	star_control/star_crosshairs.o \
 	star_control/star_field_base.o \

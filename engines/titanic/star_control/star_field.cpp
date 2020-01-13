@@ -22,7 +22,7 @@
 
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/surface_area.h"
-#include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/camera.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -61,7 +61,7 @@ bool CStarField::initDocument() {
 	return valid;
 }
 
-void CStarField::render(CVideoSurface *surface, CStarCamera *camera) {
+void CStarField::render(CVideoSurface *surface, CCamera *camera) {
 	CSurfaceArea surfaceArea(surface);
 	draw(&surfaceArea, camera, &_starCloseup);
 	if (_showBox)
@@ -175,7 +175,7 @@ void CStarField::drawBox(CSurfaceArea *surfaceArea) {
 	surfaceArea->setColorFromPixel();
 }
 
-void CStarField::renderLockLine(CSurfaceArea *surfaceArea, CStarCamera *camera) {
+void CStarField::renderLockLine(CSurfaceArea *surfaceArea, CCamera *camera) {
 	FVector screenCoord, worldCoord, photoPos;
 	_closeToMarker = false;
 
@@ -188,7 +188,7 @@ void CStarField::renderLockLine(CSurfaceArea *surfaceArea, CStarCamera *camera) 
 	}
 }
 
-double CStarField::lockDistance(CSurfaceArea *surfaceArea, CStarCamera *camera,
+double CStarField::lockDistance(CSurfaceArea *surfaceArea, CCamera *camera,
 		FVector &screenCoord, FVector &worldCoord, FVector &photoPos) {
 	if (_crosshairs.isEmpty())
 		// No crosshairs selection yet
@@ -223,7 +223,7 @@ double CStarField::lockDistance(CSurfaceArea *surfaceArea, CStarCamera *camera,
 	return incr;
 }
 
-void CStarField::fn6(CVideoSurface *surface, CStarCamera *camera) {
+void CStarField::fn6(CVideoSurface *surface, CCamera *camera) {
 	CSurfaceArea surfaceArea(surface);
 	_crosshairs.fn1(this, &surfaceArea, camera);
 }
@@ -238,7 +238,7 @@ void CStarField::decLockLevel(CVideoSurface *surface) {
 	setSolved();
 }
 
-bool CStarField::mouseButtonDown(CVideoSurface *surface, CStarCamera *camera,
+bool CStarField::mouseButtonDown(CVideoSurface *surface, CCamera *camera,
 		int flags, const Common::Point &pt) {
 	if (_mode == MODE_STARFIELD) {
 		CSurfaceArea surfaceArea(surface);
