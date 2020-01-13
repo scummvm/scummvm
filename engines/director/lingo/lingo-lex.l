@@ -161,6 +161,26 @@ whitespace [\t ]
 (?i:put)		{ count(); return tPUT; }
 (?i:repeat)		{ count(); return checkImmediate(tREPEAT); }
 (?i:set)		{ count(); return tSET; }
+(?i:sound[\ t]+(close|fadeIn|fadeOut|playFile|stop))	{
+		count();
+
+		const char *ptr = &yytext[6]; // Skip 'sound '
+		while (*ptr == ' ' || *ptr == '\t')
+			ptr++;
+
+		Common::String command;
+		while (*ptr != ' ' && *ptr != '\t')
+			command += *ptr++;
+
+		Common::String bltin = Common::String::format("sound-%s", command.c_str());
+
+		if (g_lingo->_builtins.contains(bltin)) {
+			yylval.s = new Common::String(bltin);
+			return BLTIN;
+		} else {
+			error("LEXER: Unhandled 'sound %s'", command.c_str());
+		}
+	}
 (?i:starts)		{ count(); return tSTARTS; }
 (?i:tell)		{ count(); return tTELL; }
 (?i:the[ \t]+sqrt[\t ]+of[\t ]+)	{
