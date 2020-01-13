@@ -30,3 +30,6 @@ set the bottom of x to originV + (the number of words in someText) * 16
 put the number of words of field 1 into field 5
 
 set h = the locH of sprite pSprite + pChangeH
+
+set the volume of sound 1 to 255
+put the volume of sound 1 into field 11
