@@ -116,7 +116,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token tON tENDIF tENDREPEAT tENDTELL
 
 %type<code> asgn begin elseif end expr if when repeatwhile
-%type<code> repeatwith stmtlist tell reference simpleexpr list valuelist
+%type<code> repeatwith stmtlist tellstart reference simpleexpr list valuelist
 %type<narg> argdef arglist nonemptyarglist linearlist proplist
 %type<s> on
 
@@ -261,11 +261,19 @@ stmt: stmtoneliner
 		WRITE_UINT32(&end, $end - $when);
 		g_lingo->code1(STOP);
 		(*g_lingo->_currentScript)[$when + 1] = end; }
-	| tell expr '\n' stmtlist end tENDTELL {
-		warning("STUB: TELL is not implemented"); }
-	| tell expr tTO expr {
-		warning("STUB: TELL is not implemented"); }
+	| tTELL expr '\n' tellstart stmtlist end tENDTELL {
+		inst end;
+		WRITE_UINT32(&end, $end - $tellstart);
+		(*g_lingo->_currentScript)[$tellstart + 1] = end; }
+	| tTELL expr tTO tellstart stmtoneliner end {
+		inst end;
+		WRITE_UINT32(&end, $end - $tellstart);
+		(*g_lingo->_currentScript)[$tellstart + 1] = end; }
 	;
+
+tellstart:	  /* empty */				{
+		$$ = g_lingo->code1(LC::c_tellcode);
+		g_lingo->code1(STOP); }
 
 ifstmt: if expr end[endexpr] tTHEN stmtlist end[else1] elseifstmtlist end[end3] tENDIF {
 		inst then = 0, else1 = 0, end = 0;
@@ -365,10 +373,6 @@ when:	  tWHEN	ID tTHEN	{
 		g_lingo->code1(STOP);
 		g_lingo->codeString($ID->c_str());
 		delete $ID; }
-
-tell:	  tTELL				{
-		$$ = g_lingo->code1(LC::c_tellcode);
-		g_lingo->code1(STOP); }
 
 simpleexpr: INT		{
 		$$ = g_lingo->code1(LC::c_intpush);
