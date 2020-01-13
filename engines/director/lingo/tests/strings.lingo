@@ -17,3 +17,5 @@ put "That is the last line of the file." & return & "Click Done to exit." && ret
 if the key = Return then
 	dontPassEvent
 end if
+
+when keydown then if the key=return then set the stagecolor to random (256)
