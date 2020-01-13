@@ -26,7 +26,7 @@
 namespace Director {
 
 bool isspec(char c) {
-	return strchr("-+*/%%^:,()><&[]", c) != NULL;
+	return strchr("-+*/%%^:,()><&[]=", c) != NULL;
 }
 
 static Common::String nexttok(const char *s, const char **newP = nullptr) {
@@ -59,8 +59,14 @@ static Common::String prevtok(const char *s, const char *lineStart, const char *
 		s--;
 
 	// Now copy everything till whitespace
-	while (s >= lineStart && *s != ' ' && *s != '\t')
-		res = *s-- + res;
+	if (Common::isAlnum(*s)) {
+		// Now copy everything till whitespace
+		while (s >= lineStart && (Common::isAlnum(*s) || *s == '.'))
+			res = *s-- + res;
+	} else {
+		while (s >= lineStart && isspec(*s))
+			res = *s-- + res;
+	}
 
 	if (newP)
 		*newP = s;
