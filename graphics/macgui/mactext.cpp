@@ -279,7 +279,10 @@ void MacText::splitString(Common::U32String &str) {
 
 		_currentFormatting.getFont()->wordWrapText(tmp, _maxWidth, text, w);
 
-		_textLines[curLine].chunks[curChunk].text = text[0];
+		if (text.size())
+			_textLines[curLine].chunks[curChunk].text = text[0];
+		else
+			warning("MacText::splitString(): Font resulted in 0 width for text '%s'", tmp.encode().c_str());
 
 		if (text.size() > 1) {
 			for (uint i = 1; i < text.size(); i++) {
