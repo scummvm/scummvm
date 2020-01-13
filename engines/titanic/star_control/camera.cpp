@@ -240,11 +240,11 @@ FVector CCamera::getRelativePosNoCentering(int index, const FVector &src) {
 	return _viewport.getRelativePosNoCentering(index, src);
 }
 
-FVector CCamera::proc30(int index, const FVector &v) {
+FVector CCamera::getRelativePosCentering(int index, const FVector &v) {
 	return _viewport.getRelativePosCentering(index, v);
 }
 
-FVector CCamera::proc31(int index, const FVector &v) {
+FVector CCamera::getRelativePosCenteringRaw(int index, const FVector &v) {
 	return _viewport.getRelativePosCenteringRaw(index, v);
 }
 

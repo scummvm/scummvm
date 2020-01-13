@@ -161,8 +161,8 @@ public:
 	virtual FVector getRelativePos(int index, const FVector &src);
 
 	virtual FVector getRelativePosNoCentering(int index, const FVector &src);
-	virtual FVector proc30(int index, const FVector &v);
-	virtual FVector proc31(int index, const FVector &v);
+	virtual FVector getRelativePosCentering(int index, const FVector &v);
+	virtual FVector getRelativePosCenteringRaw(int index, const FVector &v);
 
 	/**
 	 * Sets the viewport position within the starfield
