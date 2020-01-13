@@ -75,10 +75,10 @@ static struct FuncDescr {
 	{ LC::c_setImmediate,	"c_setImmediate",	"i" },
 	{ LC::c_assign,			"c_assign",			""  },
 	{ LC::c_eval,			"c_eval",			"s" },
-	{ LC::c_theentitypush,	"c_theentitypush",	"ii" }, // entity, field
-	{ LC::c_theentityassign,"c_theentityassign","ii" },
-	{ LC::c_objectfieldpush,"c_objectfieldpush","si" }, // object, field
-	{ LC::c_objectfieldassign,"c_objectfieldassign","si" },
+	{ LC::c_theentitypush,	"c_theentitypush",	"EF" }, // entity, field
+	{ LC::c_theentityassign,"c_theentityassign","EF" },
+	{ LC::c_objectfieldpush,"c_objectfieldpush","sF" }, // object, field
+	{ LC::c_objectfieldassign,"c_objectfieldassign","sF" },
 	{ LC::c_swap,			"c_swap",			"" },
 	{ LC::c_add,			"c_add",			"" },
 	{ LC::c_sub,			"c_sub",			"" },

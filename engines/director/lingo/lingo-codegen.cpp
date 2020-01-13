@@ -142,6 +142,22 @@ Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
 					res += Common::String::format(" \"%s\"", s);
 					break;
 				}
+			case 'E':
+				{
+					i = (*sd)[pc++];
+					int v = READ_UINT32(&i);
+
+					res += Common::String::format(" %s", entity2str(v));
+					break;
+				}
+			case 'F':
+				{
+					i = (*sd)[pc++];
+					int v = READ_UINT32(&i);
+
+					res += Common::String::format(" %s", field2str(v));
+					break;
+				}
 			default:
 				warning("decodeInstruction: Unknown parameter type: %c", pars[-1]);
 			}
