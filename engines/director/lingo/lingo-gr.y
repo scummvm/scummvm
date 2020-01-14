@@ -46,6 +46,8 @@
 
 %debug
 
+%require "3.5"
+
 // %glr-parser
 // %defines "engines/director/lingo/lingo-gr.h"
 

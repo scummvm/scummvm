@@ -1,14 +1,14 @@
-/* A Bison parser, made by GNU Bison 2.3.  */
+/* A Bison parser, made by GNU Bison 3.5.  */
 
-/* Skeleton implementation for Bison's Yacc-like parsers in C
+/* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
-   Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+   Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,9 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -43,11 +41,14 @@
    define necessary library symbols; they are noted "INFRINGES ON
    USER NAME SPACE" below.  */
 
+/* Undocumented macros, especially those whose name start with YY_,
+   are private implementation details.  Do not rely on them.  */
+
 /* Identify Bison output.  */
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "2.3"
+#define YYBISON_VERSION "3.5"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -55,204 +56,17 @@
 /* Pure parsers.  */
 #define YYPURE 0
 
-/* Using locations.  */
-#define YYLSP_NEEDED 0
+/* Push parsers.  */
+#define YYPUSH 0
 
-
-
-/* Tokens.  */
-#ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
-      know about them.  */
-   enum yytokentype {
-     UNARY = 258,
-     CASTREF = 259,
-     VOID = 260,
-     VAR = 261,
-     POINT = 262,
-     RECT = 263,
-     ARRAY = 264,
-     OBJECT = 265,
-     REFERENCE = 266,
-     INT = 267,
-     ARGC = 268,
-     ARGCNORET = 269,
-     THEENTITY = 270,
-     THEENTITYWITHID = 271,
-     FLOAT = 272,
-     BLTIN = 273,
-     BLTINNOARGS = 274,
-     BLTINNOARGSORONE = 275,
-     BLTINONEARG = 276,
-     BLTINARGLIST = 277,
-     TWOWORDBUILTIN = 278,
-     FBLTIN = 279,
-     FBLTINNOARGS = 280,
-     FBLTINONEARG = 281,
-     FBLTINARGLIST = 282,
-     RBLTIN = 283,
-     RBLTINONEARG = 284,
-     ID = 285,
-     STRING = 286,
-     HANDLER = 287,
-     SYMBOL = 288,
-     ENDCLAUSE = 289,
-     tPLAYACCEL = 290,
-     tMETHOD = 291,
-     THEOBJECTFIELD = 292,
-     tDOWN = 293,
-     tELSE = 294,
-     tELSIF = 295,
-     tEXIT = 296,
-     tGLOBAL = 297,
-     tGO = 298,
-     tIF = 299,
-     tINTO = 300,
-     tLOOP = 301,
-     tMACRO = 302,
-     tMOVIE = 303,
-     tNEXT = 304,
-     tOF = 305,
-     tPREVIOUS = 306,
-     tPUT = 307,
-     tREPEAT = 308,
-     tSET = 309,
-     tTHEN = 310,
-     tTO = 311,
-     tWHEN = 312,
-     tWITH = 313,
-     tWHILE = 314,
-     tNLELSE = 315,
-     tFACTORY = 316,
-     tOPEN = 317,
-     tPLAY = 318,
-     tDONE = 319,
-     tINSTANCE = 320,
-     tGE = 321,
-     tLE = 322,
-     tEQ = 323,
-     tNEQ = 324,
-     tAND = 325,
-     tOR = 326,
-     tNOT = 327,
-     tMOD = 328,
-     tAFTER = 329,
-     tBEFORE = 330,
-     tCONCAT = 331,
-     tCONTAINS = 332,
-     tSTARTS = 333,
-     tCHAR = 334,
-     tITEM = 335,
-     tLINE = 336,
-     tWORD = 337,
-     tSPRITE = 338,
-     tINTERSECTS = 339,
-     tWITHIN = 340,
-     tTELL = 341,
-     tPROPERTY = 342,
-     tON = 343,
-     tENDIF = 344,
-     tENDREPEAT = 345,
-     tENDTELL = 346
-   };
-#endif
-/* Tokens.  */
-#define UNARY 258
-#define CASTREF 259
-#define VOID 260
-#define VAR 261
-#define POINT 262
-#define RECT 263
-#define ARRAY 264
-#define OBJECT 265
-#define REFERENCE 266
-#define INT 267
-#define ARGC 268
-#define ARGCNORET 269
-#define THEENTITY 270
-#define THEENTITYWITHID 271
-#define FLOAT 272
-#define BLTIN 273
-#define BLTINNOARGS 274
-#define BLTINNOARGSORONE 275
-#define BLTINONEARG 276
-#define BLTINARGLIST 277
-#define TWOWORDBUILTIN 278
-#define FBLTIN 279
-#define FBLTINNOARGS 280
-#define FBLTINONEARG 281
-#define FBLTINARGLIST 282
-#define RBLTIN 283
-#define RBLTINONEARG 284
-#define ID 285
-#define STRING 286
-#define HANDLER 287
-#define SYMBOL 288
-#define ENDCLAUSE 289
-#define tPLAYACCEL 290
-#define tMETHOD 291
-#define THEOBJECTFIELD 292
-#define tDOWN 293
-#define tELSE 294
-#define tELSIF 295
-#define tEXIT 296
-#define tGLOBAL 297
-#define tGO 298
-#define tIF 299
-#define tINTO 300
-#define tLOOP 301
-#define tMACRO 302
-#define tMOVIE 303
-#define tNEXT 304
-#define tOF 305
-#define tPREVIOUS 306
-#define tPUT 307
-#define tREPEAT 308
-#define tSET 309
-#define tTHEN 310
-#define tTO 311
-#define tWHEN 312
-#define tWITH 313
-#define tWHILE 314
-#define tNLELSE 315
-#define tFACTORY 316
-#define tOPEN 317
-#define tPLAY 318
-#define tDONE 319
-#define tINSTANCE 320
-#define tGE 321
-#define tLE 322
-#define tEQ 323
-#define tNEQ 324
-#define tAND 325
-#define tOR 326
-#define tNOT 327
-#define tMOD 328
-#define tAFTER 329
-#define tBEFORE 330
-#define tCONCAT 331
-#define tCONTAINS 332
-#define tSTARTS 333
-#define tCHAR 334
-#define tITEM 335
-#define tLINE 336
-#define tWORD 337
-#define tSPRITE 338
-#define tINTERSECTS 339
-#define tWITHIN 340
-#define tTELL 341
-#define tPROPERTY 342
-#define tON 343
-#define tENDIF 344
-#define tENDREPEAT 345
-#define tENDTELL 346
+/* Pull parsers.  */
+#define YYPULL 1
 
 
 
 
-/* Copy the first part of user declarations.  */
-#line 52 "engines/director/lingo/lingo-gr.y"
+/* First part of user prologue.  */
+#line 54 "engines/director/lingo/lingo-gr.y"
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
@@ -285,11 +99,28 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 }
 
 
+#line 103 "engines/director/lingo/lingo-gr.cpp"
 
-/* Enabling traces.  */
-#ifndef YYDEBUG
-# define YYDEBUG 1
-#endif
+# ifndef YY_CAST
+#  ifdef __cplusplus
+#   define YY_CAST(Type, Val) static_cast<Type> (Val)
+#   define YY_REINTERPRET_CAST(Type, Val) reinterpret_cast<Type> (Val)
+#  else
+#   define YY_CAST(Type, Val) ((Type) (Val))
+#   define YY_REINTERPRET_CAST(Type, Val) ((Type) (Val))
+#  endif
+# endif
+# ifndef YY_NULLPTR
+#  if defined __cplusplus
+#   if 201103L <= __cplusplus
+#    define YY_NULLPTR nullptr
+#   else
+#    define YY_NULLPTR 0
+#   endif
+#  else
+#   define YY_NULLPTR ((void*)0)
+#  endif
+# endif
 
 /* Enabling verbose error messages.  */
 #ifdef YYERROR_VERBOSE
@@ -299,15 +130,121 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 # define YYERROR_VERBOSE 0
 #endif
 
-/* Enabling the token table.  */
-#ifndef YYTOKEN_TABLE
-# define YYTOKEN_TABLE 0
+/* Use api.header.include to #include this header
+   instead of duplicating it here.  */
+#ifndef YY_YY_ENGINES_DIRECTOR_LINGO_LINGO_GR_HPP_INCLUDED
+# define YY_YY_ENGINES_DIRECTOR_LINGO_LINGO_GR_HPP_INCLUDED
+/* Debug traces.  */
+#ifndef YYDEBUG
+# define YYDEBUG 1
+#endif
+#if YYDEBUG
+extern int yydebug;
 #endif
 
+/* Token type.  */
+#ifndef YYTOKENTYPE
+# define YYTOKENTYPE
+  enum yytokentype
+  {
+    UNARY = 258,
+    CASTREF = 259,
+    VOID = 260,
+    VAR = 261,
+    POINT = 262,
+    RECT = 263,
+    ARRAY = 264,
+    OBJECT = 265,
+    REFERENCE = 266,
+    INT = 267,
+    ARGC = 268,
+    ARGCNORET = 269,
+    THEENTITY = 270,
+    THEENTITYWITHID = 271,
+    FLOAT = 272,
+    BLTIN = 273,
+    BLTINNOARGS = 274,
+    BLTINNOARGSORONE = 275,
+    BLTINONEARG = 276,
+    BLTINARGLIST = 277,
+    TWOWORDBUILTIN = 278,
+    FBLTIN = 279,
+    FBLTINNOARGS = 280,
+    FBLTINONEARG = 281,
+    FBLTINARGLIST = 282,
+    RBLTIN = 283,
+    RBLTINONEARG = 284,
+    ID = 285,
+    STRING = 286,
+    HANDLER = 287,
+    SYMBOL = 288,
+    ENDCLAUSE = 289,
+    tPLAYACCEL = 290,
+    tMETHOD = 291,
+    THEOBJECTFIELD = 292,
+    tDOWN = 293,
+    tELSE = 294,
+    tELSIF = 295,
+    tEXIT = 296,
+    tGLOBAL = 297,
+    tGO = 298,
+    tIF = 299,
+    tINTO = 300,
+    tLOOP = 301,
+    tMACRO = 302,
+    tMOVIE = 303,
+    tNEXT = 304,
+    tOF = 305,
+    tPREVIOUS = 306,
+    tPUT = 307,
+    tREPEAT = 308,
+    tSET = 309,
+    tTHEN = 310,
+    tTO = 311,
+    tWHEN = 312,
+    tWITH = 313,
+    tWHILE = 314,
+    tNLELSE = 315,
+    tFACTORY = 316,
+    tOPEN = 317,
+    tPLAY = 318,
+    tDONE = 319,
+    tINSTANCE = 320,
+    tGE = 321,
+    tLE = 322,
+    tEQ = 323,
+    tNEQ = 324,
+    tAND = 325,
+    tOR = 326,
+    tNOT = 327,
+    tMOD = 328,
+    tAFTER = 329,
+    tBEFORE = 330,
+    tCONCAT = 331,
+    tCONTAINS = 332,
+    tSTARTS = 333,
+    tCHAR = 334,
+    tITEM = 335,
+    tLINE = 336,
+    tWORD = 337,
+    tSPRITE = 338,
+    tINTERSECTS = 339,
+    tWITHIN = 340,
+    tTELL = 341,
+    tPROPERTY = 342,
+    tON = 343,
+    tENDIF = 344,
+    tENDREPEAT = 345,
+    tENDTELL = 346
+  };
+#endif
+
+/* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE
-#line 85 "engines/director/lingo/lingo-gr.y"
+union YYSTYPE
 {
+#line 87 "engines/director/lingo/lingo-gr.y"
+
 	Common::String *s;
 	int i;
 	double f;
@@ -320,52 +257,97 @@ typedef union YYSTYPE
 		Common::String *s;
 		int e;
 	} objectfield;
-}
-/* Line 193 of yacc.c.  */
-#line 326 "engines/director/lingo/lingo-gr.cpp"
-	YYSTYPE;
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
-# define YYSTYPE_IS_DECLARED 1
+
+#line 262 "engines/director/lingo/lingo-gr.cpp"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
+# define YYSTYPE_IS_DECLARED 1
 #endif
 
 
+extern YYSTYPE yylval;
 
-/* Copy the second part of user declarations.  */
+int yyparse (void);
+
+#endif /* !YY_YY_ENGINES_DIRECTOR_LINGO_LINGO_GR_HPP_INCLUDED  */
 
 
-/* Line 216 of yacc.c.  */
-#line 339 "engines/director/lingo/lingo-gr.cpp"
 
 #ifdef short
 # undef short
 #endif
 
-#ifdef YYTYPE_UINT8
-typedef YYTYPE_UINT8 yytype_uint8;
-#else
-typedef unsigned char yytype_uint8;
+/* On compilers that do not define __PTRDIFF_MAX__ etc., make sure
+   <limits.h> and (if available) <stdint.h> are included
+   so that the code can choose integer types of a good width.  */
+
+#ifndef __PTRDIFF_MAX__
+# include <limits.h> /* INFRINGES ON USER NAME SPACE */
+# if defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
+#  include <stdint.h> /* INFRINGES ON USER NAME SPACE */
+#  define YY_STDINT_H
+# endif
 #endif
 
-#ifdef YYTYPE_INT8
-typedef YYTYPE_INT8 yytype_int8;
-#elif (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+/* Narrow types that promote to a signed type and that can represent a
+   signed or unsigned integer of at least N bits.  In tables they can
+   save space and decrease cache pressure.  Promoting to a signed type
+   helps avoid bugs in integer arithmetic.  */
+
+#ifdef __INT_LEAST8_MAX__
+typedef __INT_LEAST8_TYPE__ yytype_int8;
+#elif defined YY_STDINT_H
+typedef int_least8_t yytype_int8;
+#else
 typedef signed char yytype_int8;
-#else
-typedef short int yytype_int8;
 #endif
 
-#ifdef YYTYPE_UINT16
-typedef YYTYPE_UINT16 yytype_uint16;
+#ifdef __INT_LEAST16_MAX__
+typedef __INT_LEAST16_TYPE__ yytype_int16;
+#elif defined YY_STDINT_H
+typedef int_least16_t yytype_int16;
 #else
-typedef unsigned short int yytype_uint16;
+typedef short yytype_int16;
 #endif
 
-#ifdef YYTYPE_INT16
-typedef YYTYPE_INT16 yytype_int16;
+#if defined __UINT_LEAST8_MAX__ && __UINT_LEAST8_MAX__ <= __INT_MAX__
+typedef __UINT_LEAST8_TYPE__ yytype_uint8;
+#elif (!defined __UINT_LEAST8_MAX__ && defined YY_STDINT_H \
+       && UINT_LEAST8_MAX <= INT_MAX)
+typedef uint_least8_t yytype_uint8;
+#elif !defined __UINT_LEAST8_MAX__ && UCHAR_MAX <= INT_MAX
+typedef unsigned char yytype_uint8;
 #else
-typedef short int yytype_int16;
+typedef short yytype_uint8;
+#endif
+
+#if defined __UINT_LEAST16_MAX__ && __UINT_LEAST16_MAX__ <= __INT_MAX__
+typedef __UINT_LEAST16_TYPE__ yytype_uint16;
+#elif (!defined __UINT_LEAST16_MAX__ && defined YY_STDINT_H \
+       && UINT_LEAST16_MAX <= INT_MAX)
+typedef uint_least16_t yytype_uint16;
+#elif !defined __UINT_LEAST16_MAX__ && USHRT_MAX <= INT_MAX
+typedef unsigned short yytype_uint16;
+#else
+typedef int yytype_uint16;
+#endif
+
+#ifndef YYPTRDIFF_T
+# if defined __PTRDIFF_TYPE__ && defined __PTRDIFF_MAX__
+#  define YYPTRDIFF_T __PTRDIFF_TYPE__
+#  define YYPTRDIFF_MAXIMUM __PTRDIFF_MAX__
+# elif defined PTRDIFF_MAX
+#  ifndef ptrdiff_t
+#   include <stddef.h> /* INFRINGES ON USER NAME SPACE */
+#  endif
+#  define YYPTRDIFF_T ptrdiff_t
+#  define YYPTRDIFF_MAXIMUM PTRDIFF_MAX
+# else
+#  define YYPTRDIFF_T long
+#  define YYPTRDIFF_MAXIMUM LONG_MAX
+# endif
 #endif
 
 #ifndef YYSIZE_T
@@ -373,53 +355,96 @@ typedef short int yytype_int16;
 #  define YYSIZE_T __SIZE_TYPE__
 # elif defined size_t
 #  define YYSIZE_T size_t
-# elif ! defined YYSIZE_T && (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+# elif defined __STDC_VERSION__ && 199901 <= __STDC_VERSION__
 #  include <stddef.h> /* INFRINGES ON USER NAME SPACE */
 #  define YYSIZE_T size_t
 # else
-#  define YYSIZE_T unsigned int
+#  define YYSIZE_T unsigned
 # endif
 #endif
 
-#define YYSIZE_MAXIMUM ((YYSIZE_T) -1)
+#define YYSIZE_MAXIMUM                                  \
+  YY_CAST (YYPTRDIFF_T,                                 \
+           (YYPTRDIFF_MAXIMUM < YY_CAST (YYSIZE_T, -1)  \
+            ? YYPTRDIFF_MAXIMUM                         \
+            : YY_CAST (YYSIZE_T, -1)))
+
+#define YYSIZEOF(X) YY_CAST (YYPTRDIFF_T, sizeof (X))
+
+/* Stored state numbers (used for stacks). */
+typedef yytype_int16 yy_state_t;
+
+/* State numbers in computations.  */
+typedef int yy_state_fast_t;
 
 #ifndef YY_
 # if defined YYENABLE_NLS && YYENABLE_NLS
 #  if ENABLE_NLS
 #   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
-#   define YY_(msgid) dgettext ("bison-runtime", msgid)
+#   define YY_(Msgid) dgettext ("bison-runtime", Msgid)
 #  endif
 # endif
 # ifndef YY_
-#  define YY_(msgid) msgid
+#  define YY_(Msgid) Msgid
+# endif
+#endif
+
+#ifndef YY_ATTRIBUTE_PURE
+# if defined __GNUC__ && 2 < __GNUC__ + (96 <= __GNUC_MINOR__)
+#  define YY_ATTRIBUTE_PURE __attribute__ ((__pure__))
+# else
+#  define YY_ATTRIBUTE_PURE
+# endif
+#endif
+
+#ifndef YY_ATTRIBUTE_UNUSED
+# if defined __GNUC__ && 2 < __GNUC__ + (7 <= __GNUC_MINOR__)
+#  define YY_ATTRIBUTE_UNUSED __attribute__ ((__unused__))
+# else
+#  define YY_ATTRIBUTE_UNUSED
 # endif
 #endif
 
 /* Suppress unused-variable warnings by "using" E.  */
 #if ! defined lint || defined __GNUC__
-# define YYUSE(e) ((void) (e))
+# define YYUSE(E) ((void) (E))
 #else
-# define YYUSE(e) /* empty */
+# define YYUSE(E) /* empty */
 #endif
 
-/* Identity function, used to suppress warnings about constant conditions.  */
-#ifndef lint
-# define YYID(n) (n)
+#if defined __GNUC__ && ! defined __ICC && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
+/* Suppress an incorrect diagnostic about yylval being uninitialized.  */
+# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN                            \
+    _Pragma ("GCC diagnostic push")                                     \
+    _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")              \
+    _Pragma ("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
+# define YY_IGNORE_MAYBE_UNINITIALIZED_END      \
+    _Pragma ("GCC diagnostic pop")
 #else
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
-static int
-YYID (int i)
-#else
-static int
-YYID (i)
-    int i;
+# define YY_INITIAL_VALUE(Value) Value
 #endif
-{
-  return i;
-}
+#ifndef YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+# define YY_IGNORE_MAYBE_UNINITIALIZED_END
 #endif
+#ifndef YY_INITIAL_VALUE
+# define YY_INITIAL_VALUE(Value) /* Nothing. */
+#endif
+
+#if defined __cplusplus && defined __GNUC__ && ! defined __ICC && 6 <= __GNUC__
+# define YY_IGNORE_USELESS_CAST_BEGIN                          \
+    _Pragma ("GCC diagnostic push")                            \
+    _Pragma ("GCC diagnostic ignored \"-Wuseless-cast\"")
+# define YY_IGNORE_USELESS_CAST_END            \
+    _Pragma ("GCC diagnostic pop")
+#endif
+#ifndef YY_IGNORE_USELESS_CAST_BEGIN
+# define YY_IGNORE_USELESS_CAST_BEGIN
+# define YY_IGNORE_USELESS_CAST_END
+#endif
+
+
+#define YY_ASSERT(E) ((void) (0 && (E)))
 
 #if ! defined yyoverflow || YYERROR_VERBOSE
 
@@ -438,11 +463,11 @@ YYID (i)
 #    define alloca _alloca
 #   else
 #    define YYSTACK_ALLOC alloca
-#    if ! defined _ALLOCA_H && ! defined _STDLIB_H && (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+#    if ! defined _ALLOCA_H && ! defined EXIT_SUCCESS
 #     include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
-#     ifndef _STDLIB_H
-#      define _STDLIB_H 1
+      /* Use EXIT_SUCCESS as a witness for stdlib.h.  */
+#     ifndef EXIT_SUCCESS
+#      define EXIT_SUCCESS 0
 #     endif
 #    endif
 #   endif
@@ -450,8 +475,8 @@ YYID (i)
 # endif
 
 # ifdef YYSTACK_ALLOC
-   /* Pacify GCC's `empty if-body' warning.  */
-#  define YYSTACK_FREE(Ptr) do { /* empty */; } while (YYID (0))
+   /* Pacify GCC's 'empty if-body' warning.  */
+#  define YYSTACK_FREE(Ptr) do { /* empty */; } while (0)
 #  ifndef YYSTACK_ALLOC_MAXIMUM
     /* The OS might guarantee only one guard page at the bottom of the stack,
        and a page size can be as small as 4096 bytes.  So we cannot safely
@@ -465,25 +490,23 @@ YYID (i)
 #  ifndef YYSTACK_ALLOC_MAXIMUM
 #   define YYSTACK_ALLOC_MAXIMUM YYSIZE_MAXIMUM
 #  endif
-#  if (defined __cplusplus && ! defined _STDLIB_H \
+#  if (defined __cplusplus && ! defined EXIT_SUCCESS \
        && ! ((defined YYMALLOC || defined malloc) \
-	     && (defined YYFREE || defined free)))
+             && (defined YYFREE || defined free)))
 #   include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
-#   ifndef _STDLIB_H
-#    define _STDLIB_H 1
+#   ifndef EXIT_SUCCESS
+#    define EXIT_SUCCESS 0
 #   endif
 #  endif
 #  ifndef YYMALLOC
 #   define YYMALLOC malloc
-#   if ! defined malloc && ! defined _STDLIB_H && (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+#   if ! defined malloc && ! defined EXIT_SUCCESS
 void *malloc (YYSIZE_T); /* INFRINGES ON USER NAME SPACE */
 #   endif
 #  endif
 #  ifndef YYFREE
 #   define YYFREE free
-#   if ! defined free && ! defined _STDLIB_H && (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
+#   if ! defined free && ! defined EXIT_SUCCESS
 void free (void *); /* INFRINGES ON USER NAME SPACE */
 #   endif
 #  endif
@@ -493,59 +516,63 @@ void free (void *); /* INFRINGES ON USER NAME SPACE */
 
 #if (! defined yyoverflow \
      && (! defined __cplusplus \
-	 || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
+         || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
 
 /* A type that is properly aligned for any stack member.  */
 union yyalloc
 {
-  yytype_int16 yyss;
-  YYSTYPE yyvs;
-  };
+  yy_state_t yyss_alloc;
+  YYSTYPE yyvs_alloc;
+};
 
 /* The size of the maximum gap between one aligned stack and the next.  */
-# define YYSTACK_GAP_MAXIMUM (sizeof (union yyalloc) - 1)
+# define YYSTACK_GAP_MAXIMUM (YYSIZEOF (union yyalloc) - 1)
 
 /* The size of an array large to enough to hold all stacks, each with
    N elements.  */
 # define YYSTACK_BYTES(N) \
-     ((N) * (sizeof (yytype_int16) + sizeof (YYSTYPE)) \
+     ((N) * (YYSIZEOF (yy_state_t) + YYSIZEOF (YYSTYPE)) \
       + YYSTACK_GAP_MAXIMUM)
 
-/* Copy COUNT objects from FROM to TO.  The source and destination do
-   not overlap.  */
-# ifndef YYCOPY
-#  if defined __GNUC__ && 1 < __GNUC__
-#   define YYCOPY(To, From, Count) \
-      __builtin_memcpy (To, From, (Count) * sizeof (*(From)))
-#  else
-#   define YYCOPY(To, From, Count)		\
-      do					\
-	{					\
-	  YYSIZE_T yyi;				\
-	  for (yyi = 0; yyi < (Count); yyi++)	\
-	    (To)[yyi] = (From)[yyi];		\
-	}					\
-      while (YYID (0))
-#  endif
-# endif
+# define YYCOPY_NEEDED 1
 
 /* Relocate STACK from its old location to the new one.  The
    local variables YYSIZE and YYSTACKSIZE give the old and new number of
    elements in the stack, and YYPTR gives the new location of the
    stack.  Advance YYPTR to a properly aligned location for the next
    stack.  */
-# define YYSTACK_RELOCATE(Stack)					\
-    do									\
-      {									\
-	YYSIZE_T yynewbytes;						\
-	YYCOPY (&yyptr->Stack, Stack, yysize);				\
-	Stack = &yyptr->Stack;						\
-	yynewbytes = yystacksize * sizeof (*Stack) + YYSTACK_GAP_MAXIMUM; \
-	yyptr += yynewbytes / sizeof (*yyptr);				\
-      }									\
-    while (YYID (0))
+# define YYSTACK_RELOCATE(Stack_alloc, Stack)                           \
+    do                                                                  \
+      {                                                                 \
+        YYPTRDIFF_T yynewbytes;                                         \
+        YYCOPY (&yyptr->Stack_alloc, Stack, yysize);                    \
+        Stack = &yyptr->Stack_alloc;                                    \
+        yynewbytes = yystacksize * YYSIZEOF (*Stack) + YYSTACK_GAP_MAXIMUM; \
+        yyptr += yynewbytes / YYSIZEOF (*yyptr);                        \
+      }                                                                 \
+    while (0)
 
 #endif
+
+#if defined YYCOPY_NEEDED && YYCOPY_NEEDED
+/* Copy COUNT objects from SRC to DST.  The source and destination do
+   not overlap.  */
+# ifndef YYCOPY
+#  if defined __GNUC__ && 1 < __GNUC__
+#   define YYCOPY(Dst, Src, Count) \
+      __builtin_memcpy (Dst, Src, YY_CAST (YYSIZE_T, (Count)) * sizeof (*(Src)))
+#  else
+#   define YYCOPY(Dst, Src, Count)              \
+      do                                        \
+        {                                       \
+          YYPTRDIFF_T yyi;                      \
+          for (yyi = 0; yyi < (Count); yyi++)   \
+            (Dst)[yyi] = (Src)[yyi];            \
+        }                                       \
+      while (0)
+#  endif
+# endif
+#endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  132
@@ -558,18 +585,21 @@ union yyalloc
 #define YYNNTS  46
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  168
-/* YYNRULES -- Number of states.  */
+/* YYNSTATES -- Number of states.  */
 #define YYNSTATES  352
 
-/* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   346
 
-#define YYTRANSLATE(YYX)						\
-  ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
 
-/* YYTRANSLATE[YYLEX] -- Bison symbol number corresponding to YYLEX.  */
-static const yytype_uint8 yytranslate[] =
+/* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
+   as returned by yylex, with out-of-bounds checking.  */
+#define YYTRANSLATE(YYX)                                                \
+  (0 <= (YYX) && (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
+
+/* YYTRANSLATE[TOKEN-NUM] -- Symbol number corresponding to TOKEN-NUM
+   as returned by yylex.  */
+static const yytype_int8 yytranslate[] =
 {
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      100,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -609,120 +639,30 @@ static const yytype_uint8 yytranslate[] =
 };
 
 #if YYDEBUG
-/* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
-   YYRHS.  */
-static const yytype_uint16 yyprhs[] =
+  /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
+static const yytype_int16 yyrline[] =
 {
-       0,     0,     3,     7,     9,    12,    13,    15,    17,    22,
-      27,    32,    37,    42,    47,    52,    57,    63,    69,    74,
-      76,    78,    80,    82,    84,    86,    88,    90,    92,    99,
-     110,   122,   126,   133,   138,   148,   161,   162,   165,   172,
-     184,   192,   195,   199,   201,   203,   204,   205,   206,   209,
-     212,   216,   218,   220,   222,   224,   226,   228,   230,   232,
-     234,   236,   239,   242,   247,   249,   252,   254,   256,   260,
-     264,   268,   272,   276,   280,   284,   288,   292,   296,   300,
-     304,   308,   311,   315,   319,   323,   327,   330,   333,   337,
-     342,   347,   352,   359,   364,   371,   376,   383,   388,   395,
-     398,   401,   403,   405,   408,   410,   413,   416,   419,   421,
-     424,   427,   429,   432,   437,   440,   444,   446,   450,   452,
-     456,   458,   462,   465,   468,   471,   474,   478,   481,   485,
-     488,   491,   494,   498,   501,   502,   506,   507,   516,   519,
-     520,   528,   537,   544,   547,   548,   550,   554,   559,   560,
-     562,   566,   567,   570,   571,   573,   577,   579,   583,   587,
-     588,   590,   592,   594,   596,   600,   602,   606,   610
-};
-
-/* YYRHS -- A `-1'-separated list of the rules' RHS.  */
-static const yytype_int16 yyrhs[] =
-{
-     108,     0,    -1,   108,   100,   109,    -1,   109,    -1,     1,
-     100,    -1,    -1,   138,    -1,   113,    -1,    52,   128,    45,
-      30,    -1,    52,   128,    45,   129,    -1,    52,   128,    74,
-     128,    -1,    52,   128,    75,   128,    -1,    54,    30,    68,
-     128,    -1,    54,    15,    68,   128,    -1,    54,    30,    56,
-     128,    -1,    54,    15,    56,   128,    -1,    54,    16,   127,
-      56,   128,    -1,    54,    16,   127,    68,   128,    -1,    54,
-      37,    56,   128,    -1,   145,    -1,   128,    -1,   130,    -1,
-     145,    -1,   128,    -1,   130,    -1,   117,    -1,   111,    -1,
-     114,    -1,   118,   128,   123,   124,   123,    90,    -1,   119,
-      68,   128,   123,    56,   128,   123,   124,   123,    90,    -1,
-     119,    68,   128,   123,    38,    56,   128,   123,   124,   123,
-      90,    -1,   125,   112,   123,    -1,   126,   128,   100,   124,
-     123,    91,    -1,   126,   128,    56,   128,    -1,   120,   128,
-     123,    55,   124,   123,   115,   123,    89,    -1,   120,   128,
-     123,    55,   124,   123,   115,    39,   122,   124,   123,    89,
-      -1,    -1,   115,   116,    -1,   121,   128,   123,    55,   124,
-     123,    -1,   120,   128,   123,    55,   111,   123,    39,   122,
-     111,   123,    89,    -1,   120,   128,   123,    55,   111,   123,
-      89,    -1,    53,    59,    -1,    53,    58,    30,    -1,    44,
-      -1,    40,    -1,    -1,    -1,    -1,   124,   100,    -1,   124,
-     113,    -1,    57,    30,    55,    -1,    86,    -1,    12,    -1,
-      17,    -1,    33,    -1,    31,    -1,    30,    -1,   148,    -1,
-     127,    -1,   129,    -1,    25,    -1,    26,   128,    -1,    27,
-     146,    -1,    30,   101,   146,   102,    -1,    15,    -1,    16,
-     128,    -1,    37,    -1,   110,    -1,   128,    95,   128,    -1,
-     128,    96,   128,    -1,   128,    97,   128,    -1,   128,    98,
-     128,    -1,   128,    73,   128,    -1,   128,    93,   128,    -1,
-     128,    92,   128,    -1,   128,    68,   128,    -1,   128,    69,
-     128,    -1,   128,    66,   128,    -1,   128,    67,   128,    -1,
-     128,    70,   128,    -1,   128,    71,   128,    -1,    72,   128,
-      -1,   128,    94,   128,    -1,   128,    76,   128,    -1,   128,
-      77,   128,    -1,   128,    78,   128,    -1,    95,   128,    -1,
-      96,   128,    -1,   101,   128,   102,    -1,    83,   128,    84,
-     128,    -1,    83,   128,    85,   128,    -1,    79,   128,    50,
-     128,    -1,    79,   128,    56,   128,    50,   128,    -1,    80,
-     128,    50,   128,    -1,    80,   128,    56,   128,    50,   128,
-      -1,    81,   128,    50,   128,    -1,    81,   128,    56,   128,
-      50,   128,    -1,    82,   128,    50,   128,    -1,    82,   128,
-      56,   128,    50,   128,    -1,    29,   127,    -1,    52,   128,
-      -1,   134,    -1,   136,    -1,    41,    53,    -1,    41,    -1,
-      42,   131,    -1,    87,   132,    -1,    65,   133,    -1,    19,
-      -1,    21,   128,    -1,    20,   128,    -1,    20,    -1,    22,
-     146,    -1,    62,   128,    58,   128,    -1,    62,   128,    -1,
-      23,    30,   146,    -1,    30,    -1,   131,   103,    30,    -1,
-      30,    -1,   132,   103,    30,    -1,    30,    -1,   133,   103,
-      30,    -1,    43,    46,    -1,    43,    49,    -1,    43,    51,
-      -1,    43,   128,    -1,    43,   128,   135,    -1,    43,   135,
-      -1,    50,    48,   128,    -1,    48,   128,    -1,    63,    64,
-      -1,    63,   128,    -1,    63,   128,   135,    -1,    63,   135,
-      -1,    -1,    35,   137,   146,    -1,    -1,    47,    30,   139,
-     122,   142,   100,   144,   124,    -1,    61,    30,    -1,    -1,
-      36,   140,   122,   142,   100,   144,   124,    -1,   141,   122,
-     142,   100,   144,   124,    34,   143,    -1,   141,   122,   142,
-     100,   144,   124,    -1,    88,    30,    -1,    -1,    30,    -1,
-     142,   103,    30,    -1,   142,   100,   103,    30,    -1,    -1,
-      30,    -1,   143,   103,    30,    -1,    -1,    30,   147,    -1,
-      -1,   128,    -1,   146,   103,   128,    -1,   128,    -1,   147,
-     103,   128,    -1,   104,   149,   105,    -1,    -1,   106,    -1,
-     150,    -1,   151,    -1,   127,    -1,   150,   103,   127,    -1,
-     152,    -1,   151,   103,   152,    -1,    33,   106,   127,    -1,
-      31,   106,   127,    -1
-};
-
-/* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
-static const yytype_uint16 yyrline[] =
-{
-       0,   132,   132,   133,   134,   137,   138,   139,   142,   148,
-     151,   152,   153,   159,   166,   172,   179,   185,   191,   198,
-     199,   200,   203,   204,   205,   206,   209,   210,   215,   226,
-     243,   255,   260,   262,   267,   277,   289,   290,   293,   301,
-     311,   324,   327,   334,   341,   349,   352,   355,   356,   357,
-     360,   366,   370,   373,   376,   379,   382,   386,   389,   390,
-     391,   394,   397,   398,   401,   409,   415,   419,   420,   421,
-     422,   423,   424,   425,   426,   427,   428,   429,   430,   431,
-     432,   433,   434,   435,   436,   437,   438,   439,   440,   441,
-     442,   443,   444,   445,   446,   447,   448,   449,   450,   453,
-     458,   459,   460,   461,   462,   463,   464,   465,   466,   469,
-     472,   475,   479,   480,   481,   482,   485,   486,   489,   490,
-     493,   494,   505,   506,   507,   508,   512,   516,   522,   523,
-     526,   527,   531,   535,   539,   539,   569,   569,   575,   576,
-     576,   582,   590,   597,   599,   600,   601,   602,   605,   606,
-     607,   610,   613,   621,   622,   623,   626,   627,   630,   633,
-     634,   635,   636,   639,   640,   643,   644,   647,   650
+       0,   134,   134,   135,   136,   139,   140,   141,   144,   150,
+     153,   154,   155,   161,   168,   174,   181,   187,   193,   200,
+     201,   202,   205,   206,   207,   208,   211,   212,   217,   228,
+     245,   257,   262,   264,   269,   279,   291,   292,   295,   303,
+     313,   326,   329,   336,   343,   351,   354,   357,   358,   359,
+     362,   368,   372,   375,   378,   381,   384,   388,   391,   392,
+     393,   396,   399,   400,   403,   411,   417,   421,   422,   423,
+     424,   425,   426,   427,   428,   429,   430,   431,   432,   433,
+     434,   435,   436,   437,   438,   439,   440,   441,   442,   443,
+     444,   445,   446,   447,   448,   449,   450,   451,   452,   455,
+     460,   461,   462,   463,   464,   465,   466,   467,   468,   471,
+     474,   477,   481,   482,   483,   484,   487,   488,   491,   492,
+     495,   496,   507,   508,   509,   510,   514,   518,   524,   525,
+     528,   529,   533,   537,   541,   541,   571,   571,   577,   578,
+     578,   584,   592,   599,   601,   602,   603,   604,   607,   608,
+     609,   612,   615,   623,   624,   625,   628,   629,   632,   635,
+     636,   637,   638,   641,   642,   645,   646,   649,   652
 };
 #endif
 
-#if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
+#if YYDEBUG || YYERROR_VERBOSE || 0
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
@@ -748,16 +688,16 @@ static const char *const yytname[] =
   "ifoneliner", "repeatwhile", "repeatwith", "if", "elseif", "begin",
   "end", "stmtlist", "when", "tell", "simpleexpr", "expr", "reference",
   "proc", "globallist", "propertylist", "instancelist", "gotofunc",
-  "gotomovie", "playfunc", "@1", "defn", "@2", "@3", "on", "argdef",
+  "gotomovie", "playfunc", "$@1", "defn", "$@2", "$@3", "on", "argdef",
   "endargdef", "argstore", "macro", "arglist", "nonemptyarglist", "list",
-  "valuelist", "linearlist", "proplist", "proppair", 0
+  "valuelist", "linearlist", "proplist", "proppair", YY_NULLPTR
 };
 #endif
 
 # ifdef YYPRINT
-/* YYTOKNUM[YYLEX-NUM] -- Internal token number corresponding to
-   token YYLEX-NUM.  */
-static const yytype_uint16 yytoknum[] =
+/* YYTOKNUM[NUM] -- (External) token number corresponding to the
+   (internal) symbol number NUM (which must be that of a token).  */
+static const yytype_int16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
@@ -773,106 +713,18 @@ static const yytype_uint16 yytoknum[] =
 };
 # endif
 
-/* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
-static const yytype_uint8 yyr1[] =
-{
-       0,   107,   108,   108,   108,   109,   109,   109,   110,   110,
-     110,   110,   110,   110,   110,   110,   110,   110,   110,   111,
-     111,   111,   112,   112,   112,   112,   113,   113,   113,   113,
-     113,   113,   113,   113,   114,   114,   115,   115,   116,   117,
-     117,   118,   119,   120,   121,   122,   123,   124,   124,   124,
-     125,   126,   127,   127,   127,   127,   127,   127,   128,   128,
-     128,   128,   128,   128,   128,   128,   128,   128,   128,   128,
-     128,   128,   128,   128,   128,   128,   128,   128,   128,   128,
-     128,   128,   128,   128,   128,   128,   128,   128,   128,   128,
-     128,   128,   128,   128,   128,   128,   128,   128,   128,   129,
-     130,   130,   130,   130,   130,   130,   130,   130,   130,   130,
-     130,   130,   130,   130,   130,   130,   131,   131,   132,   132,
-     133,   133,   134,   134,   134,   134,   134,   134,   135,   135,
-     136,   136,   136,   136,   137,   136,   139,   138,   138,   140,
-     138,   138,   138,   141,   142,   142,   142,   142,   143,   143,
-     143,   144,   145,   146,   146,   146,   147,   147,   148,   149,
-     149,   149,   149,   150,   150,   151,   151,   152,   152
-};
+#define YYPACT_NINF (-279)
 
-/* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
-static const yytype_uint8 yyr2[] =
-{
-       0,     2,     3,     1,     2,     0,     1,     1,     4,     4,
-       4,     4,     4,     4,     4,     4,     5,     5,     4,     1,
-       1,     1,     1,     1,     1,     1,     1,     1,     6,    10,
-      11,     3,     6,     4,     9,    12,     0,     2,     6,    11,
-       7,     2,     3,     1,     1,     0,     0,     0,     2,     2,
-       3,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     2,     2,     4,     1,     2,     1,     1,     3,     3,
-       3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     2,     3,     3,     3,     3,     2,     2,     3,     4,
-       4,     4,     6,     4,     6,     4,     6,     4,     6,     2,
-       2,     1,     1,     2,     1,     2,     2,     2,     1,     2,
-       2,     1,     2,     4,     2,     3,     1,     3,     1,     3,
-       1,     3,     2,     2,     2,     2,     3,     2,     3,     2,
-       2,     2,     3,     2,     0,     3,     0,     8,     2,     0,
-       7,     8,     6,     2,     0,     1,     3,     4,     0,     1,
-       3,     0,     2,     0,     1,     3,     1,     3,     3,     0,
-       1,     1,     1,     1,     3,     1,     3,     3,     3
-};
+#define yypact_value_is_default(Yyn) \
+  ((Yyn) == YYPACT_NINF)
 
-/* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
-   STATE-NUM when YYTABLE doesn't specify something else to do.  Zero
-   means the default is an error.  */
-static const yytype_uint8 yydefact[] =
-{
-       0,     0,    52,    64,     0,    53,   108,   111,     0,   153,
-       0,    60,     0,   153,     0,    56,    55,    54,   134,   139,
-      66,   104,     0,     0,    43,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-      51,     0,     0,     0,     0,     0,   159,     0,     3,    67,
-      26,     7,    27,     0,     0,     0,     0,     0,    58,    20,
-      59,    21,   101,   102,     6,    45,    19,    57,     4,    56,
-       0,    65,   110,   109,   154,   112,   153,    61,    62,    56,
-      99,   153,   156,   152,   153,    45,   103,   116,   105,   122,
-       0,   123,     0,   124,   125,   127,   136,   100,     0,    41,
-       0,     0,     0,     0,     0,   138,   114,   130,   131,   133,
-     120,   107,    81,     0,     0,     0,     0,     0,   118,   106,
-     143,    86,    87,     0,    55,    54,   160,   163,     0,   161,
-     162,   165,     1,     5,    46,     0,    46,    46,    25,     0,
-      23,    24,    22,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,   144,   153,     0,     0,   115,   154,     0,     0,   135,
-     144,     0,   129,     0,   126,    45,     0,     0,     0,    42,
-       0,     0,     0,     0,     0,     0,    50,     0,   132,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,    88,     0,     0,   158,     0,     0,     2,    47,    46,
-       0,    31,    46,     0,    47,    77,    78,    75,    76,    79,
-      80,    72,    83,    84,    85,    74,    73,    82,    68,    69,
-      70,    71,   145,     0,   155,    63,   157,     0,   117,   128,
-     144,     8,     9,    10,    11,    15,    13,     0,     0,    14,
-      12,    18,   113,   121,    91,     0,    93,     0,    95,     0,
-      97,     0,    89,    90,   119,   168,   167,   164,     0,     0,
-     166,    46,     0,    47,     0,    33,    46,   151,     0,   151,
-       0,    16,    17,     0,     0,     0,     0,    48,    49,     0,
-       0,     0,    46,     0,     0,     0,    47,   146,    47,   151,
-      92,    94,    96,    98,    28,     0,    46,    36,    46,    32,
-     147,   142,   140,    47,    46,    47,    46,     0,   148,   137,
-      47,    46,    45,    44,    37,     0,     0,    45,    40,   149,
-     141,    46,     0,    47,    46,    34,     0,     0,     0,    29,
-      46,     0,    46,   150,    30,     0,    47,     0,    35,    46,
-      39,    38
-};
+#define YYTABLE_NINF (-6)
 
-/* YYDEFGOTO[NTERM-NUM].  */
-static const yytype_int16 yydefgoto[] =
-{
-      -1,    47,    48,    49,    50,   137,   288,    52,   316,   324,
-     138,    53,    54,    55,   325,   161,   208,   271,    56,    57,
-      58,    59,    60,    61,    88,   119,   111,    62,    95,    63,
-      84,    64,   175,    85,    65,   233,   330,   296,    66,   167,
-      83,    67,   128,   129,   130,   131
-};
+#define yytable_value_is_error(Yyn) \
+  0
 
-/* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
-   STATE-NUM.  */
-#define YYPACT_NINF -279
+  /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
+     STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
      297,   -82,  -279,  -279,   951,  -279,  -279,   951,   951,   951,
@@ -913,7 +765,50 @@ static const yytype_int16 yypact[] =
     -279,  -279
 };
 
-/* YYPGOTO[NTERM-NUM].  */
+  /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
+     Performed when YYTABLE does not specify something else to do.  Zero
+     means the default is an error.  */
+static const yytype_uint8 yydefact[] =
+{
+       0,     0,    52,    64,     0,    53,   108,   111,     0,   153,
+       0,    60,     0,   153,     0,    56,    55,    54,   134,   139,
+      66,   104,     0,     0,    43,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+      51,     0,     0,     0,     0,     0,   159,     0,     3,    67,
+      26,     7,    27,     0,     0,     0,     0,     0,    58,    20,
+      59,    21,   101,   102,     6,    45,    19,    57,     4,    56,
+       0,    65,   110,   109,   154,   112,   153,    61,    62,    56,
+      99,   153,   156,   152,   153,    45,   103,   116,   105,   122,
+       0,   123,     0,   124,   125,   127,   136,   100,     0,    41,
+       0,     0,     0,     0,     0,   138,   114,   130,   131,   133,
+     120,   107,    81,     0,     0,     0,     0,     0,   118,   106,
+     143,    86,    87,     0,    55,    54,   160,   163,     0,   161,
+     162,   165,     1,     5,    46,     0,    46,    46,    25,     0,
+      23,    24,    22,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,   144,   153,     0,     0,   115,   154,     0,     0,   135,
+     144,     0,   129,     0,   126,    45,     0,     0,     0,    42,
+       0,     0,     0,     0,     0,     0,    50,     0,   132,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    88,     0,     0,   158,     0,     0,     2,    47,    46,
+       0,    31,    46,     0,    47,    77,    78,    75,    76,    79,
+      80,    72,    83,    84,    85,    74,    73,    82,    68,    69,
+      70,    71,   145,     0,   155,    63,   157,     0,   117,   128,
+     144,     8,     9,    10,    11,    15,    13,     0,     0,    14,
+      12,    18,   113,   121,    91,     0,    93,     0,    95,     0,
+      97,     0,    89,    90,   119,   168,   167,   164,     0,     0,
+     166,    46,     0,    47,     0,    33,    46,   151,     0,   151,
+       0,    16,    17,     0,     0,     0,     0,    48,    49,     0,
+       0,     0,    46,     0,     0,     0,    47,   146,    47,   151,
+      92,    94,    96,    98,    28,     0,    46,    36,    46,    32,
+     147,   142,   140,    47,    46,    47,    46,     0,   148,   137,
+      47,    46,    45,    44,    37,     0,     0,    45,    40,   149,
+     141,    46,     0,    47,    46,    34,     0,     0,     0,    29,
+      46,     0,    46,   150,    30,     0,    47,     0,    35,    46,
+      39,    38
+};
+
+  /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
     -279,  -279,    77,  -279,  -278,  -279,     1,  -279,  -279,  -279,
@@ -923,11 +818,19 @@ static const yytype_int16 yypgoto[] =
     -279,  -279,  -279,  -279,  -279,     9
 };
 
-/* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
-   positive, shift that token.  If negative, reduce the rule which
-   number is the opposite.  If zero, do what YYDEFACT says.
-   If YYTABLE_NINF, syntax error.  */
-#define YYTABLE_NINF -6
+  /* YYDEFGOTO[NTERM-NUM].  */
+static const yytype_int16 yydefgoto[] =
+{
+      -1,    47,    48,    49,    50,   137,   288,    52,   316,   324,
+     138,    53,    54,    55,   325,   161,   208,   271,    56,    57,
+      58,    59,    60,    61,    88,   119,   111,    62,    95,    63,
+      84,    64,   175,    85,    65,   233,   330,   296,    66,   167,
+      83,    67,   128,   129,   130,   131
+};
+
+  /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
+     positive, shift that token.  If negative, reduce the rule whose
+     number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
 {
       71,    51,   132,    72,    73,    74,   109,   327,    77,    74,
@@ -1254,8 +1157,8 @@ static const yytype_int16 yycheck[] =
       94,    95,    96,    97,    98
 };
 
-/* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
-   symbol of state STATE-NUM.  */
+  /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
+     symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
        0,     1,    12,    15,    16,    17,    19,    20,    21,    22,
@@ -1296,95 +1199,85 @@ static const yytype_uint8 yystos[] =
       89,   123
 };
 
-#define yyerrok		(yyerrstatus = 0)
-#define yyclearin	(yychar = YYEMPTY)
-#define YYEMPTY		(-2)
-#define YYEOF		0
+  /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
+static const yytype_uint8 yyr1[] =
+{
+       0,   107,   108,   108,   108,   109,   109,   109,   110,   110,
+     110,   110,   110,   110,   110,   110,   110,   110,   110,   111,
+     111,   111,   112,   112,   112,   112,   113,   113,   113,   113,
+     113,   113,   113,   113,   114,   114,   115,   115,   116,   117,
+     117,   118,   119,   120,   121,   122,   123,   124,   124,   124,
+     125,   126,   127,   127,   127,   127,   127,   127,   128,   128,
+     128,   128,   128,   128,   128,   128,   128,   128,   128,   128,
+     128,   128,   128,   128,   128,   128,   128,   128,   128,   128,
+     128,   128,   128,   128,   128,   128,   128,   128,   128,   128,
+     128,   128,   128,   128,   128,   128,   128,   128,   128,   129,
+     130,   130,   130,   130,   130,   130,   130,   130,   130,   130,
+     130,   130,   130,   130,   130,   130,   131,   131,   132,   132,
+     133,   133,   134,   134,   134,   134,   134,   134,   135,   135,
+     136,   136,   136,   136,   137,   136,   139,   138,   138,   140,
+     138,   138,   138,   141,   142,   142,   142,   142,   143,   143,
+     143,   144,   145,   146,   146,   146,   147,   147,   148,   149,
+     149,   149,   149,   150,   150,   151,   151,   152,   152
+};
 
-#define YYACCEPT	goto yyacceptlab
-#define YYABORT		goto yyabortlab
-#define YYERROR		goto yyerrorlab
+  /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
+static const yytype_int8 yyr2[] =
+{
+       0,     2,     3,     1,     2,     0,     1,     1,     4,     4,
+       4,     4,     4,     4,     4,     4,     5,     5,     4,     1,
+       1,     1,     1,     1,     1,     1,     1,     1,     6,    10,
+      11,     3,     6,     4,     9,    12,     0,     2,     6,    11,
+       7,     2,     3,     1,     1,     0,     0,     0,     2,     2,
+       3,     1,     1,     1,     1,     1,     1,     1,     1,     1,
+       1,     2,     2,     4,     1,     2,     1,     1,     3,     3,
+       3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     2,     3,     3,     3,     3,     2,     2,     3,     4,
+       4,     4,     6,     4,     6,     4,     6,     4,     6,     2,
+       2,     1,     1,     2,     1,     2,     2,     2,     1,     2,
+       2,     1,     2,     4,     2,     3,     1,     3,     1,     3,
+       1,     3,     2,     2,     2,     2,     3,     2,     3,     2,
+       2,     2,     3,     2,     0,     3,     0,     8,     2,     0,
+       7,     8,     6,     2,     0,     1,     3,     4,     0,     1,
+       3,     0,     2,     0,     1,     3,     1,     3,     3,     0,
+       1,     1,     1,     1,     3,     1,     3,     3,     3
+};
 
 
-/* Like YYERROR except do call yyerror.  This remains here temporarily
-   to ease the transition to the new meaning of YYERROR, for GCC.
-   Once GCC version 2 has supplanted version 1, this can go.  */
+#define yyerrok         (yyerrstatus = 0)
+#define yyclearin       (yychar = YYEMPTY)
+#define YYEMPTY         (-2)
+#define YYEOF           0
 
-#define YYFAIL		goto yyerrlab
+#define YYACCEPT        goto yyacceptlab
+#define YYABORT         goto yyabortlab
+#define YYERROR         goto yyerrorlab
+
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value)					\
-do								\
-  if (yychar == YYEMPTY && yylen == 1)				\
-    {								\
-      yychar = (Token);						\
-      yylval = (Value);						\
-      yytoken = YYTRANSLATE (yychar);				\
-      YYPOPSTACK (1);						\
-      goto yybackup;						\
-    }								\
-  else								\
-    {								\
-      yyerror (YY_("syntax error: cannot back up")); \
-      YYERROR;							\
-    }								\
-while (YYID (0))
+#define YYBACKUP(Token, Value)                                    \
+  do                                                              \
+    if (yychar == YYEMPTY)                                        \
+      {                                                           \
+        yychar = (Token);                                         \
+        yylval = (Value);                                         \
+        YYPOPSTACK (yylen);                                       \
+        yystate = *yyssp;                                         \
+        goto yybackup;                                            \
+      }                                                           \
+    else                                                          \
+      {                                                           \
+        yyerror (YY_("syntax error: cannot back up")); \
+        YYERROR;                                                  \
+      }                                                           \
+  while (0)
+
+/* Error token number */
+#define YYTERROR        1
+#define YYERRCODE       256
 
 
-#define YYTERROR	1
-#define YYERRCODE	256
-
-
-/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
-   If N is 0, then set CURRENT to the empty location which ends
-   the previous symbol: RHS[0] (always defined).  */
-
-#define YYRHSLOC(Rhs, K) ((Rhs)[K])
-#ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)				\
-    do									\
-      if (YYID (N))                                                    \
-	{								\
-	  (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;	\
-	  (Current).first_column = YYRHSLOC (Rhs, 1).first_column;	\
-	  (Current).last_line    = YYRHSLOC (Rhs, N).last_line;		\
-	  (Current).last_column  = YYRHSLOC (Rhs, N).last_column;	\
-	}								\
-      else								\
-	{								\
-	  (Current).first_line   = (Current).last_line   =		\
-	    YYRHSLOC (Rhs, 0).last_line;				\
-	  (Current).first_column = (Current).last_column =		\
-	    YYRHSLOC (Rhs, 0).last_column;				\
-	}								\
-    while (YYID (0))
-#endif
-
-
-/* YY_LOCATION_PRINT -- Print the location on the stream.
-   This macro was not mandated originally: define only if we know
-   we won't break user code: when these are the locations we know.  */
-
-#ifndef YY_LOCATION_PRINT
-# if defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL
-#  define YY_LOCATION_PRINT(File, Loc)			\
-     fprintf (File, "%d.%d-%d.%d",			\
-	      (Loc).first_line, (Loc).first_column,	\
-	      (Loc).last_line,  (Loc).last_column)
-# else
-#  define YY_LOCATION_PRINT(File, Loc) ((void) 0)
-# endif
-#endif
-
-
-/* YYLEX -- calling `yylex' with the right arguments.  */
-
-#ifdef YYLEX_PARAM
-# define YYLEX yylex (YYLEX_PARAM)
-#else
-# define YYLEX yylex ()
-#endif
 
 /* Enable debugging if requested.  */
 #if YYDEBUG
@@ -1394,80 +1287,63 @@ while (YYID (0))
 #  define YYFPRINTF fprintf
 # endif
 
-# define YYDPRINTF(Args)			\
-do {						\
-  if (yydebug)					\
-    YYFPRINTF Args;				\
-} while (YYID (0))
+# define YYDPRINTF(Args)                        \
+do {                                            \
+  if (yydebug)                                  \
+    YYFPRINTF Args;                             \
+} while (0)
 
-# define YY_SYMBOL_PRINT(Title, Type, Value, Location)			  \
-do {									  \
-  if (yydebug)								  \
-    {									  \
-      YYFPRINTF (stderr, "%s ", Title);					  \
-      yy_symbol_print (stderr,						  \
-		  Type, Value); \
-      YYFPRINTF (stderr, "\n");						  \
-    }									  \
-} while (YYID (0))
-
-
-/*--------------------------------.
-| Print this symbol on YYOUTPUT.  |
-`--------------------------------*/
-
-/*ARGSUSED*/
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
-static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)
-#else
-static void
-yy_symbol_value_print (yyoutput, yytype, yyvaluep)
-    FILE *yyoutput;
-    int yytype;
-    YYSTYPE const * const yyvaluep;
+/* This macro is provided for backward compatibility. */
+#ifndef YY_LOCATION_PRINT
+# define YY_LOCATION_PRINT(File, Loc) ((void) 0)
 #endif
+
+
+# define YY_SYMBOL_PRINT(Title, Type, Value, Location)                    \
+do {                                                                      \
+  if (yydebug)                                                            \
+    {                                                                     \
+      YYFPRINTF (stderr, "%s ", Title);                                   \
+      yy_symbol_print (stderr,                                            \
+                  Type, Value); \
+      YYFPRINTF (stderr, "\n");                                           \
+    }                                                                     \
+} while (0)
+
+
+/*-----------------------------------.
+| Print this symbol's value on YYO.  |
+`-----------------------------------*/
+
+static void
+yy_symbol_value_print (FILE *yyo, int yytype, YYSTYPE const * const yyvaluep)
 {
+  FILE *yyoutput = yyo;
+  YYUSE (yyoutput);
   if (!yyvaluep)
     return;
 # ifdef YYPRINT
   if (yytype < YYNTOKENS)
-    YYPRINT (yyoutput, yytoknum[yytype], *yyvaluep);
-# else
-  YYUSE (yyoutput);
+    YYPRINT (yyo, yytoknum[yytype], *yyvaluep);
 # endif
-  switch (yytype)
-    {
-      default:
-	break;
-    }
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+  YYUSE (yytype);
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
 
-/*--------------------------------.
-| Print this symbol on YYOUTPUT.  |
-`--------------------------------*/
+/*---------------------------.
+| Print this symbol on YYO.  |
+`---------------------------*/
 
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)
-#else
-static void
-yy_symbol_print (yyoutput, yytype, yyvaluep)
-    FILE *yyoutput;
-    int yytype;
-    YYSTYPE const * const yyvaluep;
-#endif
+yy_symbol_print (FILE *yyo, int yytype, YYSTYPE const * const yyvaluep)
 {
-  if (yytype < YYNTOKENS)
-    YYFPRINTF (yyoutput, "token %s (", yytname[yytype]);
-  else
-    YYFPRINTF (yyoutput, "nterm %s (", yytname[yytype]);
+  YYFPRINTF (yyo, "%s %s (",
+             yytype < YYNTOKENS ? "token" : "nterm", yytname[yytype]);
 
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep);
-  YYFPRINTF (yyoutput, ")");
+  yy_symbol_value_print (yyo, yytype, yyvaluep);
+  YYFPRINTF (yyo, ")");
 }
 
 /*------------------------------------------------------------------.
@@ -1475,66 +1351,54 @@ yy_symbol_print (yyoutput, yytype, yyvaluep)
 | TOP (included).                                                   |
 `------------------------------------------------------------------*/
 
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 static void
-yy_stack_print (yytype_int16 *bottom, yytype_int16 *top)
-#else
-static void
-yy_stack_print (bottom, top)
-    yytype_int16 *bottom;
-    yytype_int16 *top;
-#endif
+yy_stack_print (yy_state_t *yybottom, yy_state_t *yytop)
 {
   YYFPRINTF (stderr, "Stack now");
-  for (; bottom <= top; ++bottom)
-    YYFPRINTF (stderr, " %d", *bottom);
+  for (; yybottom <= yytop; yybottom++)
+    {
+      int yybot = *yybottom;
+      YYFPRINTF (stderr, " %d", yybot);
+    }
   YYFPRINTF (stderr, "\n");
 }
 
-# define YY_STACK_PRINT(Bottom, Top)				\
-do {								\
-  if (yydebug)							\
-    yy_stack_print ((Bottom), (Top));				\
-} while (YYID (0))
+# define YY_STACK_PRINT(Bottom, Top)                            \
+do {                                                            \
+  if (yydebug)                                                  \
+    yy_stack_print ((Bottom), (Top));                           \
+} while (0)
 
 
 /*------------------------------------------------.
 | Report that the YYRULE is going to be reduced.  |
 `------------------------------------------------*/
 
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 static void
-yy_reduce_print (YYSTYPE *yyvsp, int yyrule)
-#else
-static void
-yy_reduce_print (yyvsp, yyrule)
-    YYSTYPE *yyvsp;
-    int yyrule;
-#endif
+yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp, int yyrule)
 {
+  int yylno = yyrline[yyrule];
   int yynrhs = yyr2[yyrule];
   int yyi;
-  unsigned long int yylno = yyrline[yyrule];
-  YYFPRINTF (stderr, "Reducing stack by rule %d (line %lu):\n",
-	     yyrule - 1, yylno);
+  YYFPRINTF (stderr, "Reducing stack by rule %d (line %d):\n",
+             yyrule - 1, yylno);
   /* The symbols being reduced.  */
   for (yyi = 0; yyi < yynrhs; yyi++)
     {
-      fprintf (stderr, "   $%d = ", yyi + 1);
-      yy_symbol_print (stderr, yyrhs[yyprhs[yyrule] + yyi],
-		       &(yyvsp[(yyi + 1) - (yynrhs)])
-		       		       );
-      fprintf (stderr, "\n");
+      YYFPRINTF (stderr, "   $%d = ", yyi + 1);
+      yy_symbol_print (stderr,
+                       yystos[yyssp[yyi + 1 - yynrhs]],
+                       &yyvsp[(yyi + 1) - (yynrhs)]
+                                              );
+      YYFPRINTF (stderr, "\n");
     }
 }
 
-# define YY_REDUCE_PRINT(Rule)		\
-do {					\
-  if (yydebug)				\
-    yy_reduce_print (yyvsp, Rule); \
-} while (YYID (0))
+# define YY_REDUCE_PRINT(Rule)          \
+do {                                    \
+  if (yydebug)                          \
+    yy_reduce_print (yyssp, yyvsp, Rule); \
+} while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
    multiple parsers can coexist.  */
@@ -1548,7 +1412,7 @@ int yydebug;
 
 
 /* YYINITDEPTH -- initial size of the parser's stacks.  */
-#ifndef	YYINITDEPTH
+#ifndef YYINITDEPTH
 # define YYINITDEPTH 200
 #endif
 
@@ -1563,26 +1427,18 @@ int yydebug;
 # define YYMAXDEPTH 10000
 #endif
 
-
 
 #if YYERROR_VERBOSE
 
 # ifndef yystrlen
 #  if defined __GLIBC__ && defined _STRING_H
-#   define yystrlen strlen
+#   define yystrlen(S) (YY_CAST (YYPTRDIFF_T, strlen (S)))
 #  else
 /* Return the length of YYSTR.  */
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
-static YYSIZE_T
+static YYPTRDIFF_T
 yystrlen (const char *yystr)
-#else
-static YYSIZE_T
-yystrlen (yystr)
-    const char *yystr;
-#endif
 {
-  YYSIZE_T yylen;
+  YYPTRDIFF_T yylen;
   for (yylen = 0; yystr[yylen]; yylen++)
     continue;
   return yylen;
@@ -1596,16 +1452,8 @@ yystrlen (yystr)
 #  else
 /* Copy YYSRC to YYDEST, returning the address of the terminating '\0' in
    YYDEST.  */
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 static char *
 yystpcpy (char *yydest, const char *yysrc)
-#else
-static char *
-yystpcpy (yydest, yysrc)
-    char *yydest;
-    const char *yysrc;
-#endif
 {
   char *yyd = yydest;
   const char *yys = yysrc;
@@ -1626,408 +1474,392 @@ yystpcpy (yydest, yysrc)
    backslash-backslash).  YYSTR is taken from yytname.  If YYRES is
    null, do not copy; instead, return the length of what the result
    would have been.  */
-static YYSIZE_T
+static YYPTRDIFF_T
 yytnamerr (char *yyres, const char *yystr)
 {
   if (*yystr == '"')
     {
-      YYSIZE_T yyn = 0;
+      YYPTRDIFF_T yyn = 0;
       char const *yyp = yystr;
 
       for (;;)
-	switch (*++yyp)
-	  {
-	  case '\'':
-	  case ',':
-	    goto do_not_strip_quotes;
+        switch (*++yyp)
+          {
+          case '\'':
+          case ',':
+            goto do_not_strip_quotes;
 
-	  case '\\':
-	    if (*++yyp != '\\')
-	      goto do_not_strip_quotes;
-	    /* Fall through.  */
-	  default:
-	    if (yyres)
-	      yyres[yyn] = *yyp;
-	    yyn++;
-	    break;
+          case '\\':
+            if (*++yyp != '\\')
+              goto do_not_strip_quotes;
+            else
+              goto append;
 
-	  case '"':
-	    if (yyres)
-	      yyres[yyn] = '\0';
-	    return yyn;
-	  }
+          append:
+          default:
+            if (yyres)
+              yyres[yyn] = *yyp;
+            yyn++;
+            break;
+
+          case '"':
+            if (yyres)
+              yyres[yyn] = '\0';
+            return yyn;
+          }
     do_not_strip_quotes: ;
     }
 
-  if (! yyres)
+  if (yyres)
+    return yystpcpy (yyres, yystr) - yyres;
+  else
     return yystrlen (yystr);
-
-  return yystpcpy (yyres, yystr) - yyres;
 }
 # endif
 
-/* Copy into YYRESULT an error message about the unexpected token
-   YYCHAR while in state YYSTATE.  Return the number of bytes copied,
-   including the terminating null byte.  If YYRESULT is null, do not
-   copy anything; just return the number of bytes that would be
-   copied.  As a special case, return 0 if an ordinary "syntax error"
-   message will do.  Return YYSIZE_MAXIMUM if overflow occurs during
-   size calculation.  */
-static YYSIZE_T
-yysyntax_error (char *yyresult, int yystate, int yychar)
+/* Copy into *YYMSG, which is of size *YYMSG_ALLOC, an error message
+   about the unexpected token YYTOKEN for the state stack whose top is
+   YYSSP.
+
+   Return 0 if *YYMSG was successfully written.  Return 1 if *YYMSG is
+   not large enough to hold the message.  In that case, also set
+   *YYMSG_ALLOC to the required number of bytes.  Return 2 if the
+   required number of bytes is too large to store.  */
+static int
+yysyntax_error (YYPTRDIFF_T *yymsg_alloc, char **yymsg,
+                yy_state_t *yyssp, int yytoken)
 {
-  int yyn = yypact[yystate];
+  enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
+  /* Internationalized format string. */
+  const char *yyformat = YY_NULLPTR;
+  /* Arguments of yyformat: reported tokens (one for the "unexpected",
+     one per "expected"). */
+  char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
+  /* Actual size of YYARG. */
+  int yycount = 0;
+  /* Cumulated lengths of YYARG.  */
+  YYPTRDIFF_T yysize = 0;
 
-  if (! (YYPACT_NINF < yyn && yyn <= YYLAST))
-    return 0;
-  else
+  /* There are many possibilities here to consider:
+     - If this state is a consistent state with a default action, then
+       the only way this function was invoked is if the default action
+       is an error action.  In that case, don't check for expected
+       tokens because there are none.
+     - The only way there can be no lookahead present (in yychar) is if
+       this state is a consistent state with a default action.  Thus,
+       detecting the absence of a lookahead is sufficient to determine
+       that there is no unexpected or expected token to report.  In that
+       case, just report a simple "syntax error".
+     - Don't assume there isn't a lookahead just because this state is a
+       consistent state with a default action.  There might have been a
+       previous inconsistent state, consistent state with a non-default
+       action, or user semantic action that manipulated yychar.
+     - Of course, the expected token list depends on states to have
+       correct lookahead information, and it depends on the parser not
+       to perform extra reductions after fetching a lookahead from the
+       scanner and before detecting a syntax error.  Thus, state merging
+       (from LALR or IELR) and default reductions corrupt the expected
+       token list.  However, the list is correct for canonical LR with
+       one exception: it will still contain any token that will not be
+       accepted due to an error action in a later state.
+  */
+  if (yytoken != YYEMPTY)
     {
-      int yytype = YYTRANSLATE (yychar);
-      YYSIZE_T yysize0 = yytnamerr (0, yytname[yytype]);
-      YYSIZE_T yysize = yysize0;
-      YYSIZE_T yysize1;
-      int yysize_overflow = 0;
-      enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
-      char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
-      int yyx;
+      int yyn = yypact[*yyssp];
+      YYPTRDIFF_T yysize0 = yytnamerr (YY_NULLPTR, yytname[yytoken]);
+      yysize = yysize0;
+      yyarg[yycount++] = yytname[yytoken];
+      if (!yypact_value_is_default (yyn))
+        {
+          /* Start YYX at -YYN if negative to avoid negative indexes in
+             YYCHECK.  In other words, skip the first -YYN actions for
+             this state because they are default actions.  */
+          int yyxbegin = yyn < 0 ? -yyn : 0;
+          /* Stay within bounds of both yycheck and yytname.  */
+          int yychecklim = YYLAST - yyn + 1;
+          int yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
+          int yyx;
 
-# if 0
-      /* This is so xgettext sees the translatable formats that are
-	 constructed on the fly.  */
-      YY_("syntax error, unexpected %s");
-      YY_("syntax error, unexpected %s, expecting %s");
-      YY_("syntax error, unexpected %s, expecting %s or %s");
-      YY_("syntax error, unexpected %s, expecting %s or %s or %s");
-      YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s");
-# endif
-      char *yyfmt;
-      char const *yyf;
-      static char const yyunexpected[] = "syntax error, unexpected %s";
-      static char const yyexpecting[] = ", expecting %s";
-      static char const yyor[] = " or %s";
-      char yyformat[sizeof yyunexpected
-		    + sizeof yyexpecting - 1
-		    + ((YYERROR_VERBOSE_ARGS_MAXIMUM - 2)
-		       * (sizeof yyor - 1))];
-      char const *yyprefix = yyexpecting;
-
-      /* Start YYX at -YYN if negative to avoid negative indexes in
-	 YYCHECK.  */
-      int yyxbegin = yyn < 0 ? -yyn : 0;
-
-      /* Stay within bounds of both yycheck and yytname.  */
-      int yychecklim = YYLAST - yyn + 1;
-      int yyxend = yychecklim < YYNTOKENS ? yychecklim : YYNTOKENS;
-      int yycount = 1;
-
-      yyarg[0] = yytname[yytype];
-      yyfmt = yystpcpy (yyformat, yyunexpected);
-
-      for (yyx = yyxbegin; yyx < yyxend; ++yyx)
-	if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
-	  {
-	    if (yycount == YYERROR_VERBOSE_ARGS_MAXIMUM)
-	      {
-		yycount = 1;
-		yysize = yysize0;
-		yyformat[sizeof yyunexpected - 1] = '\0';
-		break;
-	      }
-	    yyarg[yycount++] = yytname[yyx];
-	    yysize1 = yysize + yytnamerr (0, yytname[yyx]);
-	    yysize_overflow |= (yysize1 < yysize);
-	    yysize = yysize1;
-	    yyfmt = yystpcpy (yyfmt, yyprefix);
-	    yyprefix = yyor;
-	  }
-
-      yyf = YY_(yyformat);
-      yysize1 = yysize + yystrlen (yyf);
-      yysize_overflow |= (yysize1 < yysize);
-      yysize = yysize1;
-
-      if (yysize_overflow)
-	return YYSIZE_MAXIMUM;
-
-      if (yyresult)
-	{
-	  /* Avoid sprintf, as that infringes on the user's name space.
-	     Don't have undefined behavior even if the translation
-	     produced a string with the wrong number of "%s"s.  */
-	  char *yyp = yyresult;
-	  int yyi = 0;
-	  while ((*yyp = *yyf) != '\0')
-	    {
-	      if (*yyp == '%' && yyf[1] == 's' && yyi < yycount)
-		{
-		  yyp += yytnamerr (yyp, yyarg[yyi++]);
-		  yyf += 2;
-		}
-	      else
-		{
-		  yyp++;
-		  yyf++;
-		}
-	    }
-	}
-      return yysize;
+          for (yyx = yyxbegin; yyx < yyxend; ++yyx)
+            if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR
+                && !yytable_value_is_error (yytable[yyx + yyn]))
+              {
+                if (yycount == YYERROR_VERBOSE_ARGS_MAXIMUM)
+                  {
+                    yycount = 1;
+                    yysize = yysize0;
+                    break;
+                  }
+                yyarg[yycount++] = yytname[yyx];
+                {
+                  YYPTRDIFF_T yysize1
+                    = yysize + yytnamerr (YY_NULLPTR, yytname[yyx]);
+                  if (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM)
+                    yysize = yysize1;
+                  else
+                    return 2;
+                }
+              }
+        }
     }
+
+  switch (yycount)
+    {
+# define YYCASE_(N, S)                      \
+      case N:                               \
+        yyformat = S;                       \
+      break
+    default: /* Avoid compiler warnings. */
+      YYCASE_(0, YY_("syntax error"));
+      YYCASE_(1, YY_("syntax error, unexpected %s"));
+      YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
+      YYCASE_(3, YY_("syntax error, unexpected %s, expecting %s or %s"));
+      YYCASE_(4, YY_("syntax error, unexpected %s, expecting %s or %s or %s"));
+      YYCASE_(5, YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s"));
+# undef YYCASE_
+    }
+
+  {
+    /* Don't count the "%s"s in the final size, but reserve room for
+       the terminator.  */
+    YYPTRDIFF_T yysize1 = yysize + (yystrlen (yyformat) - 2 * yycount) + 1;
+    if (yysize <= yysize1 && yysize1 <= YYSTACK_ALLOC_MAXIMUM)
+      yysize = yysize1;
+    else
+      return 2;
+  }
+
+  if (*yymsg_alloc < yysize)
+    {
+      *yymsg_alloc = 2 * yysize;
+      if (! (yysize <= *yymsg_alloc
+             && *yymsg_alloc <= YYSTACK_ALLOC_MAXIMUM))
+        *yymsg_alloc = YYSTACK_ALLOC_MAXIMUM;
+      return 1;
+    }
+
+  /* Avoid sprintf, as that infringes on the user's name space.
+     Don't have undefined behavior even if the translation
+     produced a string with the wrong number of "%s"s.  */
+  {
+    char *yyp = *yymsg;
+    int yyi = 0;
+    while ((*yyp = *yyformat) != '\0')
+      if (*yyp == '%' && yyformat[1] == 's' && yyi < yycount)
+        {
+          yyp += yytnamerr (yyp, yyarg[yyi++]);
+          yyformat += 2;
+        }
+      else
+        {
+          ++yyp;
+          ++yyformat;
+        }
+  }
+  return 0;
 }
 #endif /* YYERROR_VERBOSE */
-
 
 /*-----------------------------------------------.
 | Release the memory associated to this symbol.  |
 `-----------------------------------------------*/
 
-/*ARGSUSED*/
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 static void
 yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
-#else
-static void
-yydestruct (yymsg, yytype, yyvaluep)
-    const char *yymsg;
-    int yytype;
-    YYSTYPE *yyvaluep;
-#endif
 {
   YYUSE (yyvaluep);
-
   if (!yymsg)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yytype, yyvaluep, yylocationp);
 
-  switch (yytype)
-    {
-
-      default:
-	break;
-    }
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+  YYUSE (yytype);
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
-
-
-/* Prevent warnings from -Wmissing-prototypes.  */
-
-#ifdef YYPARSE_PARAM
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void *YYPARSE_PARAM);
-#else
-int yyparse ();
-#endif
-#else /* ! YYPARSE_PARAM */
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void);
-#else
-int yyparse ();
-#endif
-#endif /* ! YYPARSE_PARAM */
 
 
 
-/* The look-ahead symbol.  */
+
+/* The lookahead symbol.  */
 int yychar;
 
-/* The semantic value of the look-ahead symbol.  */
+/* The semantic value of the lookahead symbol.  */
 YYSTYPE yylval;
-
 /* Number of syntax errors so far.  */
 int yynerrs;
-
 
 
 /*----------.
 | yyparse.  |
 `----------*/
 
-#ifdef YYPARSE_PARAM
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
-int
-yyparse (void *YYPARSE_PARAM)
-#else
-int
-yyparse (YYPARSE_PARAM)
-    void *YYPARSE_PARAM;
-#endif
-#else /* ! YYPARSE_PARAM */
-#if (defined __STDC__ || defined __C99__FUNC__ \
-     || defined __cplusplus || defined _MSC_VER)
 int
 yyparse (void)
-#else
-int
-yyparse ()
-
-#endif
-#endif
 {
-  
-  int yystate;
+    yy_state_fast_t yystate;
+    /* Number of tokens to shift before error messages enabled.  */
+    int yyerrstatus;
+
+    /* The stacks and their tools:
+       'yyss': related to states.
+       'yyvs': related to semantic values.
+
+       Refer to the stacks through separate pointers, to allow yyoverflow
+       to reallocate them elsewhere.  */
+
+    /* The state stack.  */
+    yy_state_t yyssa[YYINITDEPTH];
+    yy_state_t *yyss;
+    yy_state_t *yyssp;
+
+    /* The semantic value stack.  */
+    YYSTYPE yyvsa[YYINITDEPTH];
+    YYSTYPE *yyvs;
+    YYSTYPE *yyvsp;
+
+    YYPTRDIFF_T yystacksize;
+
   int yyn;
   int yyresult;
-  /* Number of tokens to shift before error messages enabled.  */
-  int yyerrstatus;
-  /* Look-ahead token as an internal (translated) token number.  */
+  /* Lookahead token as an internal (translated) token number.  */
   int yytoken = 0;
-#if YYERROR_VERBOSE
-  /* Buffer for error messages, and its allocated size.  */
-  char yymsgbuf[128];
-  char *yymsg = yymsgbuf;
-  YYSIZE_T yymsg_alloc = sizeof yymsgbuf;
-#endif
-
-  /* Three stacks and their tools:
-     `yyss': related to states,
-     `yyvs': related to semantic values,
-     `yyls': related to locations.
-
-     Refer to the stacks thru separate pointers, to allow yyoverflow
-     to reallocate them elsewhere.  */
-
-  /* The state stack.  */
-  yytype_int16 yyssa[YYINITDEPTH];
-  yytype_int16 *yyss = yyssa;
-  yytype_int16 *yyssp;
-
-  /* The semantic value stack.  */
-  YYSTYPE yyvsa[YYINITDEPTH];
-  YYSTYPE *yyvs = yyvsa;
-  YYSTYPE *yyvsp;
-
-
-
-#define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N))
-
-  YYSIZE_T yystacksize = YYINITDEPTH;
-
   /* The variables used to return semantic value and location from the
      action routines.  */
   YYSTYPE yyval;
 
+#if YYERROR_VERBOSE
+  /* Buffer for error messages, and its allocated size.  */
+  char yymsgbuf[128];
+  char *yymsg = yymsgbuf;
+  YYPTRDIFF_T yymsg_alloc = sizeof yymsgbuf;
+#endif
+
+#define YYPOPSTACK(N)   (yyvsp -= (N), yyssp -= (N))
 
   /* The number of symbols on the RHS of the reduced rule.
      Keep to zero when no symbol should be popped.  */
   int yylen = 0;
+
+  yyssp = yyss = yyssa;
+  yyvsp = yyvs = yyvsa;
+  yystacksize = YYINITDEPTH;
 
   YYDPRINTF ((stderr, "Starting parse\n"));
 
   yystate = 0;
   yyerrstatus = 0;
   yynerrs = 0;
-  yychar = YYEMPTY;		/* Cause a token to be read.  */
-
-  /* Initialize stack pointers.
-     Waste one element of value and location stack
-     so that they stay on the same level as the state stack.
-     The wasted elements are never initialized.  */
-
-  yyssp = yyss;
-  yyvsp = yyvs;
-
+  yychar = YYEMPTY; /* Cause a token to be read.  */
   goto yysetstate;
 
+
 /*------------------------------------------------------------.
-| yynewstate -- Push a new state, which is found in yystate.  |
+| yynewstate -- push a new state, which is found in yystate.  |
 `------------------------------------------------------------*/
- yynewstate:
+yynewstate:
   /* In all cases, when you get here, the value and location stacks
      have just been pushed.  So pushing a state here evens the stacks.  */
   yyssp++;
 
- yysetstate:
-  *yyssp = yystate;
+
+/*--------------------------------------------------------------------.
+| yysetstate -- set current state (the top of the stack) to yystate.  |
+`--------------------------------------------------------------------*/
+yysetstate:
+  YYDPRINTF ((stderr, "Entering state %d\n", yystate));
+  YY_ASSERT (0 <= yystate && yystate < YYNSTATES);
+  YY_IGNORE_USELESS_CAST_BEGIN
+  *yyssp = YY_CAST (yy_state_t, yystate);
+  YY_IGNORE_USELESS_CAST_END
 
   if (yyss + yystacksize - 1 <= yyssp)
+#if !defined yyoverflow && !defined YYSTACK_RELOCATE
+    goto yyexhaustedlab;
+#else
     {
       /* Get the current used size of the three stacks, in elements.  */
-      YYSIZE_T yysize = yyssp - yyss + 1;
+      YYPTRDIFF_T yysize = yyssp - yyss + 1;
 
-#ifdef yyoverflow
+# if defined yyoverflow
       {
-	/* Give user a chance to reallocate the stack.  Use copies of
-	   these so that the &'s don't force the real ones into
-	   memory.  */
-	YYSTYPE *yyvs1 = yyvs;
-	yytype_int16 *yyss1 = yyss;
+        /* Give user a chance to reallocate the stack.  Use copies of
+           these so that the &'s don't force the real ones into
+           memory.  */
+        yy_state_t *yyss1 = yyss;
+        YYSTYPE *yyvs1 = yyvs;
 
-
-	/* Each stack pointer address is followed by the size of the
-	   data in use in that stack, in bytes.  This used to be a
-	   conditional around just the two extra args, but that might
-	   be undefined if yyoverflow is a macro.  */
-	yyoverflow (YY_("memory exhausted"),
-		    &yyss1, yysize * sizeof (*yyssp),
-		    &yyvs1, yysize * sizeof (*yyvsp),
-
-		    &yystacksize);
-
-	yyss = yyss1;
-	yyvs = yyvs1;
+        /* Each stack pointer address is followed by the size of the
+           data in use in that stack, in bytes.  This used to be a
+           conditional around just the two extra args, but that might
+           be undefined if yyoverflow is a macro.  */
+        yyoverflow (YY_("memory exhausted"),
+                    &yyss1, yysize * YYSIZEOF (*yyssp),
+                    &yyvs1, yysize * YYSIZEOF (*yyvsp),
+                    &yystacksize);
+        yyss = yyss1;
+        yyvs = yyvs1;
       }
-#else /* no yyoverflow */
-# ifndef YYSTACK_RELOCATE
-      goto yyexhaustedlab;
-# else
+# else /* defined YYSTACK_RELOCATE */
       /* Extend the stack our own way.  */
       if (YYMAXDEPTH <= yystacksize)
-	goto yyexhaustedlab;
+        goto yyexhaustedlab;
       yystacksize *= 2;
       if (YYMAXDEPTH < yystacksize)
-	yystacksize = YYMAXDEPTH;
+        yystacksize = YYMAXDEPTH;
 
       {
-	yytype_int16 *yyss1 = yyss;
-	union yyalloc *yyptr =
-	  (union yyalloc *) YYSTACK_ALLOC (YYSTACK_BYTES (yystacksize));
-	if (! yyptr)
-	  goto yyexhaustedlab;
-	YYSTACK_RELOCATE (yyss);
-	YYSTACK_RELOCATE (yyvs);
-
-#  undef YYSTACK_RELOCATE
-	if (yyss1 != yyssa)
-	  YYSTACK_FREE (yyss1);
+        yy_state_t *yyss1 = yyss;
+        union yyalloc *yyptr =
+          YY_CAST (union yyalloc *,
+                   YYSTACK_ALLOC (YY_CAST (YYSIZE_T, YYSTACK_BYTES (yystacksize))));
+        if (! yyptr)
+          goto yyexhaustedlab;
+        YYSTACK_RELOCATE (yyss_alloc, yyss);
+        YYSTACK_RELOCATE (yyvs_alloc, yyvs);
+# undef YYSTACK_RELOCATE
+        if (yyss1 != yyssa)
+          YYSTACK_FREE (yyss1);
       }
 # endif
-#endif /* no yyoverflow */
 
       yyssp = yyss + yysize - 1;
       yyvsp = yyvs + yysize - 1;
 
-
-      YYDPRINTF ((stderr, "Stack size increased to %lu\n",
-		  (unsigned long int) yystacksize));
+      YY_IGNORE_USELESS_CAST_BEGIN
+      YYDPRINTF ((stderr, "Stack size increased to %ld\n",
+                  YY_CAST (long, yystacksize)));
+      YY_IGNORE_USELESS_CAST_END
 
       if (yyss + yystacksize - 1 <= yyssp)
-	YYABORT;
+        YYABORT;
     }
+#endif /* !defined yyoverflow && !defined YYSTACK_RELOCATE */
 
-  YYDPRINTF ((stderr, "Entering state %d\n", yystate));
+  if (yystate == YYFINAL)
+    YYACCEPT;
 
   goto yybackup;
+
 
 /*-----------.
 | yybackup.  |
 `-----------*/
 yybackup:
-
   /* Do appropriate processing given the current state.  Read a
-     look-ahead token if we need one and don't already have one.  */
+     lookahead token if we need one and don't already have one.  */
 
-  /* First try to decide what to do without reference to look-ahead token.  */
+  /* First try to decide what to do without reference to lookahead token.  */
   yyn = yypact[yystate];
-  if (yyn == YYPACT_NINF)
+  if (yypact_value_is_default (yyn))
     goto yydefault;
 
-  /* Not known => get a look-ahead token if don't already have one.  */
+  /* Not known => get a lookahead token if don't already have one.  */
 
-  /* YYCHAR is either YYEMPTY or YYEOF or a valid look-ahead symbol.  */
+  /* YYCHAR is either YYEMPTY or YYEOF or a valid lookahead symbol.  */
   if (yychar == YYEMPTY)
     {
       YYDPRINTF ((stderr, "Reading a token: "));
-      yychar = YYLEX;
+      yychar = yylex ();
     }
 
   if (yychar <= YYEOF)
@@ -2049,30 +1881,26 @@ yybackup:
   yyn = yytable[yyn];
   if (yyn <= 0)
     {
-      if (yyn == 0 || yyn == YYTABLE_NINF)
-	goto yyerrlab;
+      if (yytable_value_is_error (yyn))
+        goto yyerrlab;
       yyn = -yyn;
       goto yyreduce;
     }
-
-  if (yyn == YYFINAL)
-    YYACCEPT;
 
   /* Count tokens shifted since error; after three, turn off error
      status.  */
   if (yyerrstatus)
     yyerrstatus--;
 
-  /* Shift the look-ahead token.  */
+  /* Shift the lookahead token.  */
   YY_SYMBOL_PRINT ("Shifting", yytoken, &yylval, &yylloc);
-
-  /* Discard the shifted token unless it is eof.  */
-  if (yychar != YYEOF)
-    yychar = YYEMPTY;
-
   yystate = yyn;
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 
+  /* Discard the shifted token.  */
+  yychar = YYEMPTY;
   goto yynewstate;
 
 
@@ -2087,14 +1915,14 @@ yydefault:
 
 
 /*-----------------------------.
-| yyreduce -- Do a reduction.  |
+| yyreduce -- do a reduction.  |
 `-----------------------------*/
 yyreduce:
   /* yyn is the number of a rule to reduce with.  */
   yylen = yyr2[yyn];
 
   /* If YYLEN is nonzero, implement the default value of the action:
-     `$$ = $1'.
+     '$$ = $1'.
 
      Otherwise, the following line sets YYVAL to garbage.
      This behavior is undocumented and Bison
@@ -2107,920 +1935,1067 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 4:
-#line 134 "engines/director/lingo/lingo-gr.y"
-    { yyerrok; ;}
+  case 4:
+#line 136 "engines/director/lingo/lingo-gr.y"
+                                { yyerrok; }
+#line 1942 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 8:
-#line 142 "engines/director/lingo/lingo-gr.y"
-    {
+#line 144 "engines/director/lingo/lingo-gr.y"
+                                        {
 		g_lingo->code1(LC::c_varpush);
-		g_lingo->codeString((yyvsp[(4) - (4)].s)->c_str());
+		g_lingo->codeString((yyvsp[0].s)->c_str());
 		g_lingo->code1(LC::c_assign);
-		(yyval.code) = (yyvsp[(2) - (4)].code);
-		delete (yyvsp[(4) - (4)].s); ;}
+		(yyval.code) = (yyvsp[-2].code);
+		delete (yyvsp[0].s); }
+#line 1953 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 9:
-#line 148 "engines/director/lingo/lingo-gr.y"
-    {
+#line 150 "engines/director/lingo/lingo-gr.y"
+                                                {
 			g_lingo->code1(LC::c_assign);
-			(yyval.code) = (yyvsp[(2) - (4)].code); ;}
+			(yyval.code) = (yyvsp[-2].code); }
+#line 1961 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 10:
-#line 151 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = g_lingo->code1(LC::c_after); ;}
+#line 153 "engines/director/lingo/lingo-gr.y"
+                                                { (yyval.code) = g_lingo->code1(LC::c_after); }
+#line 1967 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 11:
-#line 152 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = g_lingo->code1(LC::c_before); ;}
+#line 154 "engines/director/lingo/lingo-gr.y"
+                                                { (yyval.code) = g_lingo->code1(LC::c_before); }
+#line 1973 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 12:
-#line 153 "engines/director/lingo/lingo-gr.y"
-    {
+#line 155 "engines/director/lingo/lingo-gr.y"
+                                                {
 		g_lingo->code1(LC::c_varpush);
-		g_lingo->codeString((yyvsp[(2) - (4)].s)->c_str());
+		g_lingo->codeString((yyvsp[-2].s)->c_str());
 		g_lingo->code1(LC::c_assign);
-		(yyval.code) = (yyvsp[(4) - (4)].code);
-		delete (yyvsp[(2) - (4)].s); ;}
+		(yyval.code) = (yyvsp[0].code);
+		delete (yyvsp[-2].s); }
+#line 1984 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 13:
-#line 159 "engines/director/lingo/lingo-gr.y"
-    {
+#line 161 "engines/director/lingo/lingo-gr.y"
+                                        {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(LC::c_theentityassign);
-		g_lingo->codeInt((yyvsp[(2) - (4)].e)[0]);
-		g_lingo->codeInt((yyvsp[(2) - (4)].e)[1]);
-		(yyval.code) = (yyvsp[(4) - (4)].code); ;}
+		g_lingo->codeInt((yyvsp[-2].e)[0]);
+		g_lingo->codeInt((yyvsp[-2].e)[1]);
+		(yyval.code) = (yyvsp[0].code); }
+#line 1996 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 14:
-#line 166 "engines/director/lingo/lingo-gr.y"
-    {
+#line 168 "engines/director/lingo/lingo-gr.y"
+                                                {
 		g_lingo->code1(LC::c_varpush);
-		g_lingo->codeString((yyvsp[(2) - (4)].s)->c_str());
+		g_lingo->codeString((yyvsp[-2].s)->c_str());
 		g_lingo->code1(LC::c_assign);
-		(yyval.code) = (yyvsp[(4) - (4)].code);
-		delete (yyvsp[(2) - (4)].s); ;}
+		(yyval.code) = (yyvsp[0].code);
+		delete (yyvsp[-2].s); }
+#line 2007 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 15:
-#line 172 "engines/director/lingo/lingo-gr.y"
-    {
+#line 174 "engines/director/lingo/lingo-gr.y"
+                                        {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(LC::c_theentityassign);
-		g_lingo->codeInt((yyvsp[(2) - (4)].e)[0]);
-		g_lingo->codeInt((yyvsp[(2) - (4)].e)[1]);
-		(yyval.code) = (yyvsp[(4) - (4)].code); ;}
+		g_lingo->codeInt((yyvsp[-2].e)[0]);
+		g_lingo->codeInt((yyvsp[-2].e)[1]);
+		(yyval.code) = (yyvsp[0].code); }
+#line 2019 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 16:
-#line 179 "engines/director/lingo/lingo-gr.y"
-    {
+#line 181 "engines/director/lingo/lingo-gr.y"
+                                                        {
 		g_lingo->code1(LC::c_swap);
 		g_lingo->code1(LC::c_theentityassign);
-		g_lingo->codeInt((yyvsp[(2) - (5)].e)[0]);
-		g_lingo->codeInt((yyvsp[(2) - (5)].e)[1]);
-		(yyval.code) = (yyvsp[(5) - (5)].code); ;}
+		g_lingo->codeInt((yyvsp[-3].e)[0]);
+		g_lingo->codeInt((yyvsp[-3].e)[1]);
+		(yyval.code) = (yyvsp[0].code); }
+#line 2030 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 17:
-#line 185 "engines/director/lingo/lingo-gr.y"
-    {
+#line 187 "engines/director/lingo/lingo-gr.y"
+                                                        {
 		g_lingo->code1(LC::c_swap);
 		g_lingo->code1(LC::c_theentityassign);
-		g_lingo->codeInt((yyvsp[(2) - (5)].e)[0]);
-		g_lingo->codeInt((yyvsp[(2) - (5)].e)[1]);
-		(yyval.code) = (yyvsp[(5) - (5)].code); ;}
+		g_lingo->codeInt((yyvsp[-3].e)[0]);
+		g_lingo->codeInt((yyvsp[-3].e)[1]);
+		(yyval.code) = (yyvsp[0].code); }
+#line 2041 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 18:
-#line 191 "engines/director/lingo/lingo-gr.y"
-    {
+#line 193 "engines/director/lingo/lingo-gr.y"
+                                        {
 		g_lingo->code1(LC::c_objectfieldassign);
-		g_lingo->codeString((yyvsp[(2) - (4)].objectfield).s->c_str());
-		g_lingo->codeInt((yyvsp[(2) - (4)].objectfield).e);
-		(yyval.code) = (yyvsp[(4) - (4)].code); ;}
+		g_lingo->codeString((yyvsp[-2].objectfield).s->c_str());
+		g_lingo->codeInt((yyvsp[-2].objectfield).e);
+		(yyval.code) = (yyvsp[0].code); }
+#line 2051 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 28:
-#line 215 "engines/director/lingo/lingo-gr.y"
-    {
+#line 217 "engines/director/lingo/lingo-gr.y"
+                                                        {
 		inst body = 0, end = 0;
-		WRITE_UINT32(&body, (yyvsp[(3) - (6)].code) - (yyvsp[(1) - (6)].code));
-		WRITE_UINT32(&end, (yyvsp[(5) - (6)].code) - (yyvsp[(1) - (6)].code));
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (6)].code) + 1] = body;	/* body of loop */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (6)].code) + 2] = end; ;}
+		WRITE_UINT32(&body, (yyvsp[-3].code) - (yyvsp[-5].code));
+		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-5].code));
+		(*g_lingo->_currentScript)[(yyvsp[-5].code) + 1] = body;	/* body of loop */
+		(*g_lingo->_currentScript)[(yyvsp[-5].code) + 2] = end; }
+#line 2062 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 29:
-#line 226 "engines/director/lingo/lingo-gr.y"
-    {
+#line 228 "engines/director/lingo/lingo-gr.y"
+                                                                       {
 		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
-		WRITE_UINT32(&init, (yyvsp[(3) - (10)].code) - (yyvsp[(1) - (10)].code));
-		WRITE_UINT32(&finish, (yyvsp[(6) - (10)].code) - (yyvsp[(1) - (10)].code));
-		WRITE_UINT32(&body, (yyvsp[(8) - (10)].code) - (yyvsp[(1) - (10)].code));
-		WRITE_UINT32(&end, (yyvsp[(9) - (10)].code) - (yyvsp[(1) - (10)].code));
+		WRITE_UINT32(&init, (yyvsp[-7].code) - (yyvsp[-9].code));
+		WRITE_UINT32(&finish, (yyvsp[-4].code) - (yyvsp[-9].code));
+		WRITE_UINT32(&body, (yyvsp[-2].code) - (yyvsp[-9].code));
+		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-9].code));
 		WRITE_UINT32(&inc, 1);
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 1] = init;	/* initial count value */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 2] = finish;/* final count value */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 3] = body;	/* body of loop */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 4] = inc;	/* increment */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (10)].code) + 5] = end; ;}
+		(*g_lingo->_currentScript)[(yyvsp[-9].code) + 1] = init;	/* initial count value */
+		(*g_lingo->_currentScript)[(yyvsp[-9].code) + 2] = finish;/* final count value */
+		(*g_lingo->_currentScript)[(yyvsp[-9].code) + 3] = body;	/* body of loop */
+		(*g_lingo->_currentScript)[(yyvsp[-9].code) + 4] = inc;	/* increment */
+		(*g_lingo->_currentScript)[(yyvsp[-9].code) + 5] = end; }
+#line 2079 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 30:
-#line 243 "engines/director/lingo/lingo-gr.y"
-    {
+#line 245 "engines/director/lingo/lingo-gr.y"
+                                                                             {
 		inst init = 0, finish = 0, body = 0, end = 0, inc = 0;
-		WRITE_UINT32(&init, (yyvsp[(3) - (11)].code) - (yyvsp[(1) - (11)].code));
-		WRITE_UINT32(&finish, (yyvsp[(7) - (11)].code) - (yyvsp[(1) - (11)].code));
-		WRITE_UINT32(&body, (yyvsp[(9) - (11)].code) - (yyvsp[(1) - (11)].code));
-		WRITE_UINT32(&end, (yyvsp[(10) - (11)].code) - (yyvsp[(1) - (11)].code));
+		WRITE_UINT32(&init, (yyvsp[-8].code) - (yyvsp[-10].code));
+		WRITE_UINT32(&finish, (yyvsp[-4].code) - (yyvsp[-10].code));
+		WRITE_UINT32(&body, (yyvsp[-2].code) - (yyvsp[-10].code));
+		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-10].code));
 		WRITE_UINT32(&inc, (uint32)-1);
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (11)].code) + 1] = init;	/* initial count value */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (11)].code) + 2] = finish;/* final count value */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (11)].code) + 3] = body;	/* body of loop */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (11)].code) + 4] = inc;	/* increment */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (11)].code) + 5] = end; ;}
+		(*g_lingo->_currentScript)[(yyvsp[-10].code) + 1] = init;	/* initial count value */
+		(*g_lingo->_currentScript)[(yyvsp[-10].code) + 2] = finish;/* final count value */
+		(*g_lingo->_currentScript)[(yyvsp[-10].code) + 3] = body;	/* body of loop */
+		(*g_lingo->_currentScript)[(yyvsp[-10].code) + 4] = inc;	/* increment */
+		(*g_lingo->_currentScript)[(yyvsp[-10].code) + 5] = end; }
+#line 2096 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 31:
-#line 255 "engines/director/lingo/lingo-gr.y"
-    {
+#line 257 "engines/director/lingo/lingo-gr.y"
+                                      {
 		inst end = 0;
-		WRITE_UINT32(&end, (yyvsp[(3) - (3)].code) - (yyvsp[(1) - (3)].code));
+		WRITE_UINT32(&end, (yyvsp[0].code) - (yyvsp[-2].code));
 		g_lingo->code1(STOP);
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (3)].code) + 1] = end; ;}
+		(*g_lingo->_currentScript)[(yyvsp[-2].code) + 1] = end; }
+#line 2106 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 32:
-#line 260 "engines/director/lingo/lingo-gr.y"
-    {
-			warning("STUB: TELL is not implemented"); ;}
+#line 262 "engines/director/lingo/lingo-gr.y"
+                                               {
+			warning("STUB: TELL is not implemented"); }
+#line 2113 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 33:
-#line 262 "engines/director/lingo/lingo-gr.y"
-    {
+#line 264 "engines/director/lingo/lingo-gr.y"
+                             {
 			warning("STUB: TELL is not implemented");
-		;}
+		}
+#line 2121 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 34:
-#line 267 "engines/director/lingo/lingo-gr.y"
-    {
+#line 269 "engines/director/lingo/lingo-gr.y"
+                                                                 {
 		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, (yyvsp[(3) - (9)].code) - (yyvsp[(1) - (9)].code));
-		WRITE_UINT32(&else1, (yyvsp[(6) - (9)].code) - (yyvsp[(1) - (9)].code));
-		WRITE_UINT32(&end, (yyvsp[(8) - (9)].code) - (yyvsp[(1) - (9)].code));
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (9)].code) + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (9)].code) + 2] = else1;	/* elsepart */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (9)].code) + 3] = end;	/* end, if cond fails */
+		WRITE_UINT32(&then, (yyvsp[-6].code) - (yyvsp[-8].code));
+		WRITE_UINT32(&else1, (yyvsp[-3].code) - (yyvsp[-8].code));
+		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-8].code));
+		(*g_lingo->_currentScript)[(yyvsp[-8].code) + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[(yyvsp[-8].code) + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[(yyvsp[-8].code) + 3] = end;	/* end, if cond fails */
 
-		g_lingo->processIf((yyvsp[(1) - (9)].code), (yyvsp[(8) - (9)].code) - (yyvsp[(1) - (9)].code), 0); ;}
+		g_lingo->processIf((yyvsp[-8].code), (yyvsp[-1].code) - (yyvsp[-8].code), 0); }
+#line 2136 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 35:
-#line 277 "engines/director/lingo/lingo-gr.y"
-    {
+#line 279 "engines/director/lingo/lingo-gr.y"
+                                                                                        {
 		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, (yyvsp[(3) - (12)].code) - (yyvsp[(1) - (12)].code));
-		WRITE_UINT32(&else1, (yyvsp[(6) - (12)].code) - (yyvsp[(1) - (12)].code));
-		WRITE_UINT32(&end, (yyvsp[(11) - (12)].code) - (yyvsp[(1) - (12)].code));
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (12)].code) + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (12)].code) + 2] = else1;	/* elsepart */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (12)].code) + 3] = end;	/* end, if cond fails */
+		WRITE_UINT32(&then, (yyvsp[-9].code) - (yyvsp[-11].code));
+		WRITE_UINT32(&else1, (yyvsp[-6].code) - (yyvsp[-11].code));
+		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-11].code));
+		(*g_lingo->_currentScript)[(yyvsp[-11].code) + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[(yyvsp[-11].code) + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[(yyvsp[-11].code) + 3] = end;	/* end, if cond fails */
 
-		g_lingo->processIf((yyvsp[(1) - (12)].code), (yyvsp[(11) - (12)].code) - (yyvsp[(1) - (12)].code), (yyvsp[(9) - (12)].code) - (yyvsp[(1) - (12)].code)); ;}
+		g_lingo->processIf((yyvsp[-11].code), (yyvsp[-1].code) - (yyvsp[-11].code), (yyvsp[-3].code) - (yyvsp[-11].code)); }
+#line 2151 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 38:
-#line 293 "engines/director/lingo/lingo-gr.y"
-    {
+#line 295 "engines/director/lingo/lingo-gr.y"
+                                               {
 		inst then = 0;
-		WRITE_UINT32(&then, (yyvsp[(3) - (6)].code) - (yyvsp[(1) - (6)].code));
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (6)].code) + 1] = then;	/* thenpart */
+		WRITE_UINT32(&then, (yyvsp[-3].code) - (yyvsp[-5].code));
+		(*g_lingo->_currentScript)[(yyvsp[-5].code) + 1] = then;	/* thenpart */
 
-		g_lingo->codeLabel((yyvsp[(1) - (6)].code)); ;}
+		g_lingo->codeLabel((yyvsp[-5].code)); }
+#line 2162 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 39:
-#line 301 "engines/director/lingo/lingo-gr.y"
-    {
+#line 303 "engines/director/lingo/lingo-gr.y"
+                                                                                   {
 		inst then = 0, else1 = 0, end = 0;
-		WRITE_UINT32(&then, (yyvsp[(3) - (11)].code) - (yyvsp[(1) - (11)].code));
-		WRITE_UINT32(&else1, (yyvsp[(6) - (11)].code) - (yyvsp[(1) - (11)].code));
-		WRITE_UINT32(&end, (yyvsp[(10) - (11)].code) - (yyvsp[(1) - (11)].code));
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (11)].code) + 1] = then;	/* thenpart */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (11)].code) + 2] = else1;	/* elsepart */
-		(*g_lingo->_currentScript)[(yyvsp[(1) - (11)].code) + 3] = end;	/* end, if cond fails */
+		WRITE_UINT32(&then, (yyvsp[-8].code) - (yyvsp[-10].code));
+		WRITE_UINT32(&else1, (yyvsp[-5].code) - (yyvsp[-10].code));
+		WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-10].code));
+		(*g_lingo->_currentScript)[(yyvsp[-10].code) + 1] = then;	/* thenpart */
+		(*g_lingo->_currentScript)[(yyvsp[-10].code) + 2] = else1;	/* elsepart */
+		(*g_lingo->_currentScript)[(yyvsp[-10].code) + 3] = end;	/* end, if cond fails */
 
-		g_lingo->processIf((yyvsp[(1) - (11)].code), (yyvsp[(10) - (11)].code) - (yyvsp[(1) - (11)].code), (yyvsp[(8) - (11)].code) - (yyvsp[(1) - (11)].code)); ;}
+		g_lingo->processIf((yyvsp[-10].code), (yyvsp[-1].code) - (yyvsp[-10].code), (yyvsp[-3].code) - (yyvsp[-10].code)); }
+#line 2177 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 40:
-#line 311 "engines/director/lingo/lingo-gr.y"
-    {
+#line 313 "engines/director/lingo/lingo-gr.y"
+                                                    {
 			inst then = 0, else1 = 0, end = 0;
-			WRITE_UINT32(&then, (yyvsp[(3) - (7)].code) - (yyvsp[(1) - (7)].code));
+			WRITE_UINT32(&then, (yyvsp[-4].code) - (yyvsp[-6].code));
 			WRITE_UINT32(&else1, 0);
-			WRITE_UINT32(&end, (yyvsp[(6) - (7)].code) - (yyvsp[(1) - (7)].code));
-			(*g_lingo->_currentScript)[(yyvsp[(1) - (7)].code) + 1] = then;	/* thenpart */
-			(*g_lingo->_currentScript)[(yyvsp[(1) - (7)].code) + 2] = else1;	/* elsepart */
-			(*g_lingo->_currentScript)[(yyvsp[(1) - (7)].code) + 3] = end;	/* end, if cond fails */
+			WRITE_UINT32(&end, (yyvsp[-1].code) - (yyvsp[-6].code));
+			(*g_lingo->_currentScript)[(yyvsp[-6].code) + 1] = then;	/* thenpart */
+			(*g_lingo->_currentScript)[(yyvsp[-6].code) + 2] = else1;	/* elsepart */
+			(*g_lingo->_currentScript)[(yyvsp[-6].code) + 3] = end;	/* end, if cond fails */
 
-			g_lingo->processIf((yyvsp[(1) - (7)].code), (yyvsp[(6) - (7)].code) - (yyvsp[(1) - (7)].code), (yyvsp[(6) - (7)].code) - (yyvsp[(1) - (7)].code)); ;}
+			g_lingo->processIf((yyvsp[-6].code), (yyvsp[-1].code) - (yyvsp[-6].code), (yyvsp[-1].code) - (yyvsp[-6].code)); }
+#line 2192 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 41:
-#line 324 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = g_lingo->code3(LC::c_repeatwhilecode, STOP, STOP); ;}
+#line 326 "engines/director/lingo/lingo-gr.y"
+                                        { (yyval.code) = g_lingo->code3(LC::c_repeatwhilecode, STOP, STOP); }
+#line 2198 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 42:
-#line 327 "engines/director/lingo/lingo-gr.y"
-    {
+#line 329 "engines/director/lingo/lingo-gr.y"
+                                                {
 		(yyval.code) = g_lingo->code3(LC::c_repeatwithcode, STOP, STOP);
 		g_lingo->code3(STOP, STOP, STOP);
-		g_lingo->codeString((yyvsp[(3) - (3)].s)->c_str());
-		delete (yyvsp[(3) - (3)].s); ;}
+		g_lingo->codeString((yyvsp[0].s)->c_str());
+		delete (yyvsp[0].s); }
+#line 2208 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 43:
-#line 334 "engines/director/lingo/lingo-gr.y"
-    {
+#line 336 "engines/director/lingo/lingo-gr.y"
+                                                {
 		(yyval.code) = g_lingo->code1(LC::c_ifcode);
 		g_lingo->code3(STOP, STOP, STOP);
 		g_lingo->code1(0);  // Do not skip end
-		g_lingo->codeLabel(0); ;}
+		g_lingo->codeLabel(0); }
+#line 2218 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 44:
-#line 341 "engines/director/lingo/lingo-gr.y"
-    {
+#line 343 "engines/director/lingo/lingo-gr.y"
+                                        {
 		inst skipEnd;
 		WRITE_UINT32(&skipEnd, 1); // We have to skip end to avoid multiple executions
 		(yyval.code) = g_lingo->code1(LC::c_ifcode);
 		g_lingo->code3(STOP, STOP, STOP);
-		g_lingo->code1(skipEnd); ;}
+		g_lingo->code1(skipEnd); }
+#line 2229 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 45:
-#line 349 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = g_lingo->_currentScript->size(); ;}
+#line 351 "engines/director/lingo/lingo-gr.y"
+                                { (yyval.code) = g_lingo->_currentScript->size(); }
+#line 2235 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 46:
-#line 352 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(STOP); (yyval.code) = g_lingo->_currentScript->size(); ;}
+#line 354 "engines/director/lingo/lingo-gr.y"
+                                { g_lingo->code1(STOP); (yyval.code) = g_lingo->_currentScript->size(); }
+#line 2241 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 47:
-#line 355 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = g_lingo->_currentScript->size(); ;}
+#line 357 "engines/director/lingo/lingo-gr.y"
+                                                { (yyval.code) = g_lingo->_currentScript->size(); }
+#line 2247 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 50:
-#line 360 "engines/director/lingo/lingo-gr.y"
-    {
+#line 362 "engines/director/lingo/lingo-gr.y"
+                                {
 		(yyval.code) = g_lingo->code1(LC::c_whencode);
 		g_lingo->code1(STOP);
-		g_lingo->codeString((yyvsp[(2) - (3)].s)->c_str());
-		delete (yyvsp[(2) - (3)].s); ;}
+		g_lingo->codeString((yyvsp[-1].s)->c_str());
+		delete (yyvsp[-1].s); }
+#line 2257 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 51:
-#line 366 "engines/director/lingo/lingo-gr.y"
-    {
+#line 368 "engines/director/lingo/lingo-gr.y"
+                                        {
 		(yyval.code) = g_lingo->code1(LC::c_tellcode);
-		g_lingo->code1(STOP); ;}
+		g_lingo->code1(STOP); }
+#line 2265 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 52:
-#line 370 "engines/director/lingo/lingo-gr.y"
-    {
+#line 372 "engines/director/lingo/lingo-gr.y"
+                        {
 		(yyval.code) = g_lingo->code1(LC::c_intpush);
-		g_lingo->codeInt((yyvsp[(1) - (1)].i)); ;}
+		g_lingo->codeInt((yyvsp[0].i)); }
+#line 2273 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 53:
-#line 373 "engines/director/lingo/lingo-gr.y"
-    {
+#line 375 "engines/director/lingo/lingo-gr.y"
+                        {
 		(yyval.code) = g_lingo->code1(LC::c_floatpush);
-		g_lingo->codeFloat((yyvsp[(1) - (1)].f)); ;}
+		g_lingo->codeFloat((yyvsp[0].f)); }
+#line 2281 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 54:
-#line 376 "engines/director/lingo/lingo-gr.y"
-    {											// D3
+#line 378 "engines/director/lingo/lingo-gr.y"
+                        {											// D3
 		(yyval.code) = g_lingo->code1(LC::c_symbolpush);
-		g_lingo->codeString((yyvsp[(1) - (1)].s)->c_str()); ;}
+		g_lingo->codeString((yyvsp[0].s)->c_str()); }
+#line 2289 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 55:
-#line 379 "engines/director/lingo/lingo-gr.y"
-    {
+#line 381 "engines/director/lingo/lingo-gr.y"
+                                {
 		(yyval.code) = g_lingo->code1(LC::c_stringpush);
-		g_lingo->codeString((yyvsp[(1) - (1)].s)->c_str()); ;}
+		g_lingo->codeString((yyvsp[0].s)->c_str()); }
+#line 2297 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 56:
-#line 382 "engines/director/lingo/lingo-gr.y"
-    {
+#line 384 "engines/director/lingo/lingo-gr.y"
+                        {
 		(yyval.code) = g_lingo->code1(LC::c_eval);
-		g_lingo->codeString((yyvsp[(1) - (1)].s)->c_str());
-		delete (yyvsp[(1) - (1)].s); ;}
+		g_lingo->codeString((yyvsp[0].s)->c_str());
+		delete (yyvsp[0].s); }
+#line 2306 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 58:
-#line 389 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = (yyvsp[(1) - (1)].code); ;}
+#line 391 "engines/director/lingo/lingo-gr.y"
+                 { (yyval.code) = (yyvsp[0].code); }
+#line 2312 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 60:
-#line 391 "engines/director/lingo/lingo-gr.y"
-    {
-		g_lingo->codeFunc((yyvsp[(1) - (1)].s), 0);
-		delete (yyvsp[(1) - (1)].s); ;}
+#line 393 "engines/director/lingo/lingo-gr.y"
+                        {
+		g_lingo->codeFunc((yyvsp[0].s), 0);
+		delete (yyvsp[0].s); }
+#line 2320 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 61:
-#line 394 "engines/director/lingo/lingo-gr.y"
-    {
-		g_lingo->codeFunc((yyvsp[(1) - (2)].s), 1);
-		delete (yyvsp[(1) - (2)].s); ;}
+#line 396 "engines/director/lingo/lingo-gr.y"
+                                        {
+		g_lingo->codeFunc((yyvsp[-1].s), 1);
+		delete (yyvsp[-1].s); }
+#line 2328 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 62:
-#line 397 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->codeFunc((yyvsp[(1) - (2)].s), (yyvsp[(2) - (2)].narg)); ;}
+#line 399 "engines/director/lingo/lingo-gr.y"
+                                { g_lingo->codeFunc((yyvsp[-1].s), (yyvsp[0].narg)); }
+#line 2334 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 63:
-#line 398 "engines/director/lingo/lingo-gr.y"
-    {
-		(yyval.code) = g_lingo->codeFunc((yyvsp[(1) - (4)].s), (yyvsp[(3) - (4)].narg));
-		delete (yyvsp[(1) - (4)].s); ;}
+#line 400 "engines/director/lingo/lingo-gr.y"
+                                {
+		(yyval.code) = g_lingo->codeFunc((yyvsp[-3].s), (yyvsp[-1].narg));
+		delete (yyvsp[-3].s); }
+#line 2342 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 64:
-#line 401 "engines/director/lingo/lingo-gr.y"
-    {
+#line 403 "engines/director/lingo/lingo-gr.y"
+                        {
 		(yyval.code) = g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(0); // Put dummy id
 		g_lingo->code1(LC::c_theentitypush);
 		inst e = 0, f = 0;
-		WRITE_UINT32(&e, (yyvsp[(1) - (1)].e)[0]);
-		WRITE_UINT32(&f, (yyvsp[(1) - (1)].e)[1]);
-		g_lingo->code2(e, f); ;}
+		WRITE_UINT32(&e, (yyvsp[0].e)[0]);
+		WRITE_UINT32(&f, (yyvsp[0].e)[1]);
+		g_lingo->code2(e, f); }
+#line 2355 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 65:
-#line 409 "engines/director/lingo/lingo-gr.y"
-    {
+#line 411 "engines/director/lingo/lingo-gr.y"
+                               {
 		(yyval.code) = g_lingo->code1(LC::c_theentitypush);
 		inst e = 0, f = 0;
-		WRITE_UINT32(&e, (yyvsp[(1) - (2)].e)[0]);
-		WRITE_UINT32(&f, (yyvsp[(1) - (2)].e)[1]);
-		g_lingo->code2(e, f); ;}
+		WRITE_UINT32(&e, (yyvsp[-1].e)[0]);
+		WRITE_UINT32(&f, (yyvsp[-1].e)[1]);
+		g_lingo->code2(e, f); }
+#line 2366 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 66:
-#line 415 "engines/director/lingo/lingo-gr.y"
-    {
+#line 417 "engines/director/lingo/lingo-gr.y"
+                         {
 		g_lingo->code1(LC::c_objectfieldpush);
-		g_lingo->codeString((yyvsp[(1) - (1)].objectfield).s->c_str());
-		g_lingo->codeInt((yyvsp[(1) - (1)].objectfield).e); ;}
+		g_lingo->codeString((yyvsp[0].objectfield).s->c_str());
+		g_lingo->codeInt((yyvsp[0].objectfield).e); }
+#line 2375 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 68:
-#line 420 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_add); ;}
+#line 422 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_add); }
+#line 2381 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 69:
-#line 421 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_sub); ;}
+#line 423 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_sub); }
+#line 2387 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 70:
-#line 422 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_mul); ;}
+#line 424 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_mul); }
+#line 2393 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 71:
-#line 423 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_div); ;}
+#line 425 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_div); }
+#line 2399 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 72:
-#line 424 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_mod); ;}
+#line 426 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_mod); }
+#line 2405 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 73:
-#line 425 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_gt); ;}
+#line 427 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_gt); }
+#line 2411 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 74:
-#line 426 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_lt); ;}
+#line 428 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_lt); }
+#line 2417 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 75:
-#line 427 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_eq); ;}
+#line 429 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_eq); }
+#line 2423 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 76:
-#line 428 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_neq); ;}
+#line 430 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_neq); }
+#line 2429 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 77:
-#line 429 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_ge); ;}
+#line 431 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_ge); }
+#line 2435 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 78:
-#line 430 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_le); ;}
+#line 432 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_le); }
+#line 2441 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 79:
-#line 431 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_and); ;}
+#line 433 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_and); }
+#line 2447 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 80:
-#line 432 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_or); ;}
+#line 434 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_or); }
+#line 2453 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 81:
-#line 433 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_not); ;}
+#line 435 "engines/director/lingo/lingo-gr.y"
+                                        { g_lingo->code1(LC::c_not); }
+#line 2459 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 82:
-#line 434 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_ampersand); ;}
+#line 436 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_ampersand); }
+#line 2465 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 83:
-#line 435 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_concat); ;}
+#line 437 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_concat); }
+#line 2471 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 84:
-#line 436 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_contains); ;}
+#line 438 "engines/director/lingo/lingo-gr.y"
+                                        { g_lingo->code1(LC::c_contains); }
+#line 2477 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 85:
-#line 437 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_starts); ;}
+#line 439 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_starts); }
+#line 2483 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 86:
-#line 438 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = (yyvsp[(2) - (2)].code); ;}
+#line 440 "engines/director/lingo/lingo-gr.y"
+                                        { (yyval.code) = (yyvsp[0].code); }
+#line 2489 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 87:
-#line 439 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = (yyvsp[(2) - (2)].code); g_lingo->code1(LC::c_negate); ;}
+#line 441 "engines/director/lingo/lingo-gr.y"
+                                        { (yyval.code) = (yyvsp[0].code); g_lingo->code1(LC::c_negate); }
+#line 2495 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 88:
-#line 440 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = (yyvsp[(2) - (3)].code); ;}
+#line 442 "engines/director/lingo/lingo-gr.y"
+                                                { (yyval.code) = (yyvsp[-1].code); }
+#line 2501 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 89:
-#line 441 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_intersects); ;}
+#line 443 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_intersects); }
+#line 2507 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 90:
-#line 442 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_within); ;}
+#line 444 "engines/director/lingo/lingo-gr.y"
+                                                        { g_lingo->code1(LC::c_within); }
+#line 2513 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 91:
-#line 443 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_charOf); ;}
+#line 445 "engines/director/lingo/lingo-gr.y"
+                                                        { g_lingo->code1(LC::c_charOf); }
+#line 2519 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 92:
-#line 444 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_charToOf); ;}
+#line 446 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_charToOf); }
+#line 2525 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 93:
-#line 445 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_itemOf); ;}
+#line 447 "engines/director/lingo/lingo-gr.y"
+                                                        { g_lingo->code1(LC::c_itemOf); }
+#line 2531 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 94:
-#line 446 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_itemToOf); ;}
+#line 448 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_itemToOf); }
+#line 2537 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 95:
-#line 447 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_lineOf); ;}
+#line 449 "engines/director/lingo/lingo-gr.y"
+                                                        { g_lingo->code1(LC::c_lineOf); }
+#line 2543 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 96:
-#line 448 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_lineToOf); ;}
+#line 450 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_lineToOf); }
+#line 2549 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 97:
-#line 449 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_wordOf); ;}
+#line 451 "engines/director/lingo/lingo-gr.y"
+                                                        { g_lingo->code1(LC::c_wordOf); }
+#line 2555 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 98:
-#line 450 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_wordToOf); ;}
+#line 452 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_wordToOf); }
+#line 2561 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 99:
-#line 453 "engines/director/lingo/lingo-gr.y"
-    {
-		g_lingo->codeFunc((yyvsp[(1) - (2)].s), 1);
-		delete (yyvsp[(1) - (2)].s); ;}
+#line 455 "engines/director/lingo/lingo-gr.y"
+                                        {
+		g_lingo->codeFunc((yyvsp[-1].s), 1);
+		delete (yyvsp[-1].s); }
+#line 2569 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 100:
-#line 458 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_printtop); ;}
+#line 460 "engines/director/lingo/lingo-gr.y"
+                                        { g_lingo->code1(LC::c_printtop); }
+#line 2575 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 103:
-#line 461 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_exitRepeat); ;}
+#line 463 "engines/director/lingo/lingo-gr.y"
+                                        { g_lingo->code1(LC::c_exitRepeat); }
+#line 2581 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 104:
-#line 462 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_procret); ;}
+#line 464 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_procret); }
+#line 2587 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 108:
-#line 466 "engines/director/lingo/lingo-gr.y"
-    {
-		g_lingo->codeFunc((yyvsp[(1) - (1)].s), 0);
-		delete (yyvsp[(1) - (1)].s); ;}
+#line 468 "engines/director/lingo/lingo-gr.y"
+                        {
+		g_lingo->codeFunc((yyvsp[0].s), 0);
+		delete (yyvsp[0].s); }
+#line 2595 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 109:
-#line 469 "engines/director/lingo/lingo-gr.y"
-    {
-		g_lingo->codeFunc((yyvsp[(1) - (2)].s), 1);
-		delete (yyvsp[(1) - (2)].s); ;}
+#line 471 "engines/director/lingo/lingo-gr.y"
+                                        {
+		g_lingo->codeFunc((yyvsp[-1].s), 1);
+		delete (yyvsp[-1].s); }
+#line 2603 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 110:
-#line 472 "engines/director/lingo/lingo-gr.y"
-    {
-		g_lingo->codeFunc((yyvsp[(1) - (2)].s), 1);
-		delete (yyvsp[(1) - (2)].s); ;}
+#line 474 "engines/director/lingo/lingo-gr.y"
+                                {
+		g_lingo->codeFunc((yyvsp[-1].s), 1);
+		delete (yyvsp[-1].s); }
+#line 2611 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 111:
-#line 475 "engines/director/lingo/lingo-gr.y"
-    {
+#line 477 "engines/director/lingo/lingo-gr.y"
+                                        {
 		g_lingo->code1(LC::c_voidpush);
-		g_lingo->codeFunc((yyvsp[(1) - (1)].s), 1);
-		delete (yyvsp[(1) - (1)].s); ;}
+		g_lingo->codeFunc((yyvsp[0].s), 1);
+		delete (yyvsp[0].s); }
+#line 2620 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 112:
-#line 479 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->codeFunc((yyvsp[(1) - (2)].s), (yyvsp[(2) - (2)].narg)); ;}
+#line 481 "engines/director/lingo/lingo-gr.y"
+                                { g_lingo->codeFunc((yyvsp[-1].s), (yyvsp[0].narg)); }
+#line 2626 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 113:
-#line 480 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_open); ;}
+#line 482 "engines/director/lingo/lingo-gr.y"
+                                { g_lingo->code1(LC::c_open); }
+#line 2632 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 114:
-#line 481 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code2(LC::c_voidpush, LC::c_open); ;}
+#line 483 "engines/director/lingo/lingo-gr.y"
+                                        { g_lingo->code2(LC::c_voidpush, LC::c_open); }
+#line 2638 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 115:
-#line 482 "engines/director/lingo/lingo-gr.y"
-    { Common::String s(*(yyvsp[(1) - (3)].s)); s += '-'; s += *(yyvsp[(2) - (3)].s); g_lingo->codeFunc(&s, (yyvsp[(3) - (3)].narg)); ;}
+#line 484 "engines/director/lingo/lingo-gr.y"
+                                        { Common::String s(*(yyvsp[-2].s)); s += '-'; s += *(yyvsp[-1].s); g_lingo->codeFunc(&s, (yyvsp[0].narg)); }
+#line 2644 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 116:
-#line 485 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_global); g_lingo->codeString((yyvsp[(1) - (1)].s)->c_str()); delete (yyvsp[(1) - (1)].s); ;}
+#line 487 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_global); g_lingo->codeString((yyvsp[0].s)->c_str()); delete (yyvsp[0].s); }
+#line 2650 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 117:
-#line 486 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_global); g_lingo->codeString((yyvsp[(3) - (3)].s)->c_str()); delete (yyvsp[(3) - (3)].s); ;}
+#line 488 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_global); g_lingo->codeString((yyvsp[0].s)->c_str()); delete (yyvsp[0].s); }
+#line 2656 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 118:
-#line 489 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_property); g_lingo->codeString((yyvsp[(1) - (1)].s)->c_str()); delete (yyvsp[(1) - (1)].s); ;}
+#line 491 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_property); g_lingo->codeString((yyvsp[0].s)->c_str()); delete (yyvsp[0].s); }
+#line 2662 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 119:
-#line 490 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_property); g_lingo->codeString((yyvsp[(3) - (3)].s)->c_str()); delete (yyvsp[(3) - (3)].s); ;}
+#line 492 "engines/director/lingo/lingo-gr.y"
+                                        { g_lingo->code1(LC::c_property); g_lingo->codeString((yyvsp[0].s)->c_str()); delete (yyvsp[0].s); }
+#line 2668 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 120:
-#line 493 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_instance); g_lingo->codeString((yyvsp[(1) - (1)].s)->c_str()); delete (yyvsp[(1) - (1)].s); ;}
+#line 495 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_instance); g_lingo->codeString((yyvsp[0].s)->c_str()); delete (yyvsp[0].s); }
+#line 2674 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 121:
-#line 494 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_instance); g_lingo->codeString((yyvsp[(3) - (3)].s)->c_str()); delete (yyvsp[(3) - (3)].s); ;}
+#line 496 "engines/director/lingo/lingo-gr.y"
+                                        { g_lingo->code1(LC::c_instance); g_lingo->codeString((yyvsp[0].s)->c_str()); delete (yyvsp[0].s); }
+#line 2680 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 122:
-#line 505 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_gotoloop); ;}
+#line 507 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_gotoloop); }
+#line 2686 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 123:
-#line 506 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_gotonext); ;}
+#line 508 "engines/director/lingo/lingo-gr.y"
+                                                        { g_lingo->code1(LC::c_gotonext); }
+#line 2692 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 124:
-#line 507 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_gotoprevious); ;}
+#line 509 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->code1(LC::c_gotoprevious); }
+#line 2698 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 125:
-#line 508 "engines/director/lingo/lingo-gr.y"
-    {
+#line 510 "engines/director/lingo/lingo-gr.y"
+                                        {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(1);
-		g_lingo->code1(LC::c_goto); ;}
+		g_lingo->code1(LC::c_goto); }
+#line 2707 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 126:
-#line 512 "engines/director/lingo/lingo-gr.y"
-    {
+#line 514 "engines/director/lingo/lingo-gr.y"
+                                {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(3);
-		g_lingo->code1(LC::c_goto); ;}
+		g_lingo->code1(LC::c_goto); }
+#line 2716 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 127:
-#line 516 "engines/director/lingo/lingo-gr.y"
-    {
+#line 518 "engines/director/lingo/lingo-gr.y"
+                                                {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(2);
-		g_lingo->code1(LC::c_goto); ;}
+		g_lingo->code1(LC::c_goto); }
+#line 2725 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 130:
-#line 526 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->code1(LC::c_playdone); ;}
+#line 528 "engines/director/lingo/lingo-gr.y"
+                                        { g_lingo->code1(LC::c_playdone); }
+#line 2731 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 131:
-#line 527 "engines/director/lingo/lingo-gr.y"
-    {
+#line 529 "engines/director/lingo/lingo-gr.y"
+                                        {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(1);
-		g_lingo->code1(LC::c_play); ;}
+		g_lingo->code1(LC::c_play); }
+#line 2740 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 132:
-#line 531 "engines/director/lingo/lingo-gr.y"
-    {
+#line 533 "engines/director/lingo/lingo-gr.y"
+                                {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(3);
-		g_lingo->code1(LC::c_play); ;}
+		g_lingo->code1(LC::c_play); }
+#line 2749 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 133:
-#line 535 "engines/director/lingo/lingo-gr.y"
-    {
+#line 537 "engines/director/lingo/lingo-gr.y"
+                                                        {
 		g_lingo->code1(LC::c_intpush);
 		g_lingo->codeInt(2);
-		g_lingo->code1(LC::c_play); ;}
+		g_lingo->code1(LC::c_play); }
+#line 2758 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 134:
-#line 539 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->codeSetImmediate(true); ;}
+#line 541 "engines/director/lingo/lingo-gr.y"
+                     { g_lingo->codeSetImmediate(true); }
+#line 2764 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 135:
-#line 539 "engines/director/lingo/lingo-gr.y"
-    {
+#line 541 "engines/director/lingo/lingo-gr.y"
+                                                                        {
 		g_lingo->codeSetImmediate(false);
-		g_lingo->codeFunc((yyvsp[(1) - (3)].s), (yyvsp[(3) - (3)].narg)); ;}
+		g_lingo->codeFunc((yyvsp[-2].s), (yyvsp[0].narg)); }
+#line 2772 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 136:
-#line 569 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear(); ;}
+#line 571 "engines/director/lingo/lingo-gr.y"
+                { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear(); }
+#line 2778 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 137:
-#line 570 "engines/director/lingo/lingo-gr.y"
-    {
+#line 572 "engines/director/lingo/lingo-gr.y"
+                                                                {
 			g_lingo->code1(LC::c_procret);
-			g_lingo->define(*(yyvsp[(2) - (8)].s), (yyvsp[(4) - (8)].code), (yyvsp[(5) - (8)].narg));
+			g_lingo->define(*(yyvsp[-6].s), (yyvsp[-4].code), (yyvsp[-3].narg));
 			g_lingo->clearArgStack();
-			g_lingo->_indef = kStateNone; ;}
+			g_lingo->_indef = kStateNone; }
+#line 2788 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 138:
-#line 575 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->codeFactory(*(yyvsp[(2) - (2)].s)); ;}
+#line 577 "engines/director/lingo/lingo-gr.y"
+                        { g_lingo->codeFactory(*(yyvsp[0].s)); }
+#line 2794 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 139:
-#line 576 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->_indef = kStateInArgs; ;}
+#line 578 "engines/director/lingo/lingo-gr.y"
+                  { g_lingo->_indef = kStateInArgs; }
+#line 2800 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 140:
-#line 577 "engines/director/lingo/lingo-gr.y"
-    {
+#line 579 "engines/director/lingo/lingo-gr.y"
+                                                                {
 			g_lingo->code1(LC::c_procret);
-			g_lingo->define(*(yyvsp[(1) - (7)].s), (yyvsp[(3) - (7)].code), (yyvsp[(4) - (7)].narg) + 1, &g_lingo->_currentFactory);
+			g_lingo->define(*(yyvsp[-6].s), (yyvsp[-4].code), (yyvsp[-3].narg) + 1, &g_lingo->_currentFactory);
 			g_lingo->clearArgStack();
-			g_lingo->_indef = kStateNone; ;}
+			g_lingo->_indef = kStateNone; }
+#line 2810 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 141:
-#line 582 "engines/director/lingo/lingo-gr.y"
-    {	// D3
+#line 584 "engines/director/lingo/lingo-gr.y"
+                                                                     {	// D3
 		g_lingo->code1(LC::c_procret);
-		g_lingo->define(*(yyvsp[(1) - (8)].s), (yyvsp[(2) - (8)].code), (yyvsp[(3) - (8)].narg));
+		g_lingo->define(*(yyvsp[-7].s), (yyvsp[-6].code), (yyvsp[-5].narg));
 		g_lingo->clearArgStack();
 		g_lingo->_indef = kStateNone;
 		g_lingo->_ignoreMe = false;
 
-		checkEnd((yyvsp[(7) - (8)].s), (yyvsp[(1) - (8)].s)->c_str(), false); ;}
+		checkEnd((yyvsp[-1].s), (yyvsp[-7].s)->c_str(), false); }
+#line 2823 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 142:
-#line 590 "engines/director/lingo/lingo-gr.y"
-    {	// D4. No 'end' clause
+#line 592 "engines/director/lingo/lingo-gr.y"
+                                                 {	// D4. No 'end' clause
 		g_lingo->code1(LC::c_procret);
-		g_lingo->define(*(yyvsp[(1) - (6)].s), (yyvsp[(2) - (6)].code), (yyvsp[(3) - (6)].narg));
+		g_lingo->define(*(yyvsp[-5].s), (yyvsp[-4].code), (yyvsp[-3].narg));
 		g_lingo->_indef = kStateNone;
 		g_lingo->clearArgStack();
-		g_lingo->_ignoreMe = false; ;}
+		g_lingo->_ignoreMe = false; }
+#line 2834 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 143:
-#line 597 "engines/director/lingo/lingo-gr.y"
-    { (yyval.s) = (yyvsp[(2) - (2)].s); g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; ;}
+#line 599 "engines/director/lingo/lingo-gr.y"
+            { (yyval.s) = (yyvsp[0].s); g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
+#line 2840 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 144:
-#line 599 "engines/director/lingo/lingo-gr.y"
-    { (yyval.narg) = 0; ;}
+#line 601 "engines/director/lingo/lingo-gr.y"
+                                { (yyval.narg) = 0; }
+#line 2846 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 145:
-#line 600 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->codeArg((yyvsp[(1) - (1)].s)); (yyval.narg) = 1; ;}
+#line 602 "engines/director/lingo/lingo-gr.y"
+                                                { g_lingo->codeArg((yyvsp[0].s)); (yyval.narg) = 1; }
+#line 2852 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 146:
-#line 601 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->codeArg((yyvsp[(3) - (3)].s)); (yyval.narg) = (yyvsp[(1) - (3)].narg) + 1; ;}
+#line 603 "engines/director/lingo/lingo-gr.y"
+                                        { g_lingo->codeArg((yyvsp[0].s)); (yyval.narg) = (yyvsp[-2].narg) + 1; }
+#line 2858 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 147:
-#line 602 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->codeArg((yyvsp[(4) - (4)].s)); (yyval.narg) = (yyvsp[(1) - (4)].narg) + 1; ;}
+#line 604 "engines/director/lingo/lingo-gr.y"
+                                { g_lingo->codeArg((yyvsp[0].s)); (yyval.narg) = (yyvsp[-3].narg) + 1; }
+#line 2864 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 151:
-#line 610 "engines/director/lingo/lingo-gr.y"
-    { g_lingo->codeArgStore(); g_lingo->_indef = kStateInDef; ;}
+#line 612 "engines/director/lingo/lingo-gr.y"
+                                        { g_lingo->codeArgStore(); g_lingo->_indef = kStateInDef; }
+#line 2870 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 152:
-#line 613 "engines/director/lingo/lingo-gr.y"
-    {
+#line 615 "engines/director/lingo/lingo-gr.y"
+                                {
 		g_lingo->code1(LC::c_call);
-		g_lingo->codeString((yyvsp[(1) - (2)].s)->c_str());
+		g_lingo->codeString((yyvsp[-1].s)->c_str());
 		inst numpar = 0;
-		WRITE_UINT32(&numpar, (yyvsp[(2) - (2)].narg));
-		g_lingo->code1(numpar); ;}
+		WRITE_UINT32(&numpar, (yyvsp[0].narg));
+		g_lingo->code1(numpar); }
+#line 2881 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 153:
-#line 621 "engines/director/lingo/lingo-gr.y"
-    { (yyval.narg) = 0; ;}
+#line 623 "engines/director/lingo/lingo-gr.y"
+                                { (yyval.narg) = 0; }
+#line 2887 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 154:
-#line 622 "engines/director/lingo/lingo-gr.y"
-    { (yyval.narg) = 1; ;}
+#line 624 "engines/director/lingo/lingo-gr.y"
+                                                { (yyval.narg) = 1; }
+#line 2893 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 155:
-#line 623 "engines/director/lingo/lingo-gr.y"
-    { (yyval.narg) = (yyvsp[(1) - (3)].narg) + 1; ;}
+#line 625 "engines/director/lingo/lingo-gr.y"
+                                        { (yyval.narg) = (yyvsp[-2].narg) + 1; }
+#line 2899 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 156:
-#line 626 "engines/director/lingo/lingo-gr.y"
-    { (yyval.narg) = 1; ;}
+#line 628 "engines/director/lingo/lingo-gr.y"
+                                        { (yyval.narg) = 1; }
+#line 2905 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 157:
-#line 627 "engines/director/lingo/lingo-gr.y"
-    { (yyval.narg) = (yyvsp[(1) - (3)].narg) + 1; ;}
+#line 629 "engines/director/lingo/lingo-gr.y"
+                                        { (yyval.narg) = (yyvsp[-2].narg) + 1; }
+#line 2911 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 158:
-#line 630 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = (yyvsp[(2) - (3)].code); ;}
+#line 632 "engines/director/lingo/lingo-gr.y"
+                                { (yyval.code) = (yyvsp[-1].code); }
+#line 2917 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 159:
-#line 633 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = g_lingo->code2(LC::c_arraypush, 0); ;}
+#line 635 "engines/director/lingo/lingo-gr.y"
+                                { (yyval.code) = g_lingo->code2(LC::c_arraypush, 0); }
+#line 2923 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 160:
-#line 634 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = g_lingo->code2(LC::c_proparraypush, 0); ;}
+#line 636 "engines/director/lingo/lingo-gr.y"
+                                                { (yyval.code) = g_lingo->code2(LC::c_proparraypush, 0); }
+#line 2929 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 161:
-#line 635 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = g_lingo->code1(LC::c_arraypush); (yyval.code) = g_lingo->codeInt((yyvsp[(1) - (1)].narg)); ;}
+#line 637 "engines/director/lingo/lingo-gr.y"
+                     { (yyval.code) = g_lingo->code1(LC::c_arraypush); (yyval.code) = g_lingo->codeInt((yyvsp[0].narg)); }
+#line 2935 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 162:
-#line 636 "engines/director/lingo/lingo-gr.y"
-    { (yyval.code) = g_lingo->code1(LC::c_proparraypush); (yyval.code) = g_lingo->codeInt((yyvsp[(1) - (1)].narg)); ;}
+#line 638 "engines/director/lingo/lingo-gr.y"
+                         { (yyval.code) = g_lingo->code1(LC::c_proparraypush); (yyval.code) = g_lingo->codeInt((yyvsp[0].narg)); }
+#line 2941 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 163:
-#line 639 "engines/director/lingo/lingo-gr.y"
-    { (yyval.narg) = 1; ;}
+#line 641 "engines/director/lingo/lingo-gr.y"
+                                        { (yyval.narg) = 1; }
+#line 2947 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 164:
-#line 640 "engines/director/lingo/lingo-gr.y"
-    { (yyval.narg) = (yyvsp[(1) - (3)].narg) + 1; ;}
+#line 642 "engines/director/lingo/lingo-gr.y"
+                                    { (yyval.narg) = (yyvsp[-2].narg) + 1; }
+#line 2953 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 165:
-#line 643 "engines/director/lingo/lingo-gr.y"
-    { (yyval.narg) = 1; ;}
+#line 645 "engines/director/lingo/lingo-gr.y"
+                                        { (yyval.narg) = 1; }
+#line 2959 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 166:
-#line 644 "engines/director/lingo/lingo-gr.y"
-    { (yyval.narg) = (yyvsp[(1) - (3)].narg) + 1; ;}
+#line 646 "engines/director/lingo/lingo-gr.y"
+                                { (yyval.narg) = (yyvsp[-2].narg) + 1; }
+#line 2965 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 167:
-#line 647 "engines/director/lingo/lingo-gr.y"
-    {
+#line 649 "engines/director/lingo/lingo-gr.y"
+                                {
 		g_lingo->code1(LC::c_symbolpush);
-		g_lingo->codeString((yyvsp[(1) - (3)].s)->c_str()); ;}
+		g_lingo->codeString((yyvsp[-2].s)->c_str()); }
+#line 2973 "engines/director/lingo/lingo-gr.cpp"
     break;
 
   case 168:
-#line 650 "engines/director/lingo/lingo-gr.y"
-    {
+#line 652 "engines/director/lingo/lingo-gr.y"
+                                {
 			g_lingo->code1(LC::c_stringpush);
-			g_lingo->codeString((yyvsp[(1) - (3)].s)->c_str()); ;}
+			g_lingo->codeString((yyvsp[-2].s)->c_str()); }
+#line 2981 "engines/director/lingo/lingo-gr.cpp"
     break;
 
 
-/* Line 1267 of yacc.c.  */
-#line 3022 "engines/director/lingo/lingo-gr.cpp"
+#line 2985 "engines/director/lingo/lingo-gr.cpp"
+
       default: break;
     }
+  /* User semantic actions sometimes alter yychar, and that requires
+     that yytoken be updated with the new translation.  We take the
+     approach of translating immediately before every use of yytoken.
+     One alternative is translating here after every semantic action,
+     but that translation would be missed if the semantic action invokes
+     YYABORT, YYACCEPT, or YYERROR immediately after altering yychar or
+     if it invokes YYBACKUP.  In the case of YYABORT or YYACCEPT, an
+     incorrect destructor might then be invoked immediately.  In the
+     case of YYERROR or YYBACKUP, subsequent parser actions might lead
+     to an incorrect destructor call or verbose syntax error message
+     before the lookahead is translated.  */
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
 
   YYPOPSTACK (yylen);
@@ -3029,26 +3004,28 @@ yyreduce:
 
   *++yyvsp = yyval;
 
-
-  /* Now `shift' the result of the reduction.  Determine what state
+  /* Now 'shift' the result of the reduction.  Determine what state
      that goes to, based on the state we popped back to and the rule
      number reduced by.  */
-
-  yyn = yyr1[yyn];
-
-  yystate = yypgoto[yyn - YYNTOKENS] + *yyssp;
-  if (0 <= yystate && yystate <= YYLAST && yycheck[yystate] == *yyssp)
-    yystate = yytable[yystate];
-  else
-    yystate = yydefgoto[yyn - YYNTOKENS];
+  {
+    const int yylhs = yyr1[yyn] - YYNTOKENS;
+    const int yyi = yypgoto[yylhs] + *yyssp;
+    yystate = (0 <= yyi && yyi <= YYLAST && yycheck[yyi] == *yyssp
+               ? yytable[yyi]
+               : yydefgoto[yylhs]);
+  }
 
   goto yynewstate;
 
 
-/*------------------------------------.
-| yyerrlab -- here on detecting error |
-`------------------------------------*/
+/*--------------------------------------.
+| yyerrlab -- here on detecting error.  |
+`--------------------------------------*/
 yyerrlab:
+  /* Make sure we have latest lookahead translation.  See comments at
+     user semantic actions for why this is necessary.  */
+  yytoken = yychar == YYEMPTY ? YYEMPTY : YYTRANSLATE (yychar);
+
   /* If not already recovering from an error, report this error.  */
   if (!yyerrstatus)
     {
@@ -3056,37 +3033,36 @@ yyerrlab:
 #if ! YYERROR_VERBOSE
       yyerror (YY_("syntax error"));
 #else
+# define YYSYNTAX_ERROR yysyntax_error (&yymsg_alloc, &yymsg, \
+                                        yyssp, yytoken)
       {
-	YYSIZE_T yysize = yysyntax_error (0, yystate, yychar);
-	if (yymsg_alloc < yysize && yymsg_alloc < YYSTACK_ALLOC_MAXIMUM)
-	  {
-	    YYSIZE_T yyalloc = 2 * yysize;
-	    if (! (yysize <= yyalloc && yyalloc <= YYSTACK_ALLOC_MAXIMUM))
-	      yyalloc = YYSTACK_ALLOC_MAXIMUM;
-	    if (yymsg != yymsgbuf)
-	      YYSTACK_FREE (yymsg);
-	    yymsg = (char *) YYSTACK_ALLOC (yyalloc);
-	    if (yymsg)
-	      yymsg_alloc = yyalloc;
-	    else
-	      {
-		yymsg = yymsgbuf;
-		yymsg_alloc = sizeof yymsgbuf;
-	      }
-	  }
-
-	if (0 < yysize && yysize <= yymsg_alloc)
-	  {
-	    (void) yysyntax_error (yymsg, yystate, yychar);
-	    yyerror (yymsg);
-	  }
-	else
-	  {
-	    yyerror (YY_("syntax error"));
-	    if (yysize != 0)
-	      goto yyexhaustedlab;
-	  }
+        char const *yymsgp = YY_("syntax error");
+        int yysyntax_error_status;
+        yysyntax_error_status = YYSYNTAX_ERROR;
+        if (yysyntax_error_status == 0)
+          yymsgp = yymsg;
+        else if (yysyntax_error_status == 1)
+          {
+            if (yymsg != yymsgbuf)
+              YYSTACK_FREE (yymsg);
+            yymsg = YY_CAST (char *, YYSTACK_ALLOC (YY_CAST (YYSIZE_T, yymsg_alloc)));
+            if (!yymsg)
+              {
+                yymsg = yymsgbuf;
+                yymsg_alloc = sizeof yymsgbuf;
+                yysyntax_error_status = 2;
+              }
+            else
+              {
+                yysyntax_error_status = YYSYNTAX_ERROR;
+                yymsgp = yymsg;
+              }
+          }
+        yyerror (yymsgp);
+        if (yysyntax_error_status == 2)
+          goto yyexhaustedlab;
       }
+# undef YYSYNTAX_ERROR
 #endif
     }
 
@@ -3094,24 +3070,24 @@ yyerrlab:
 
   if (yyerrstatus == 3)
     {
-      /* If just tried and failed to reuse look-ahead token after an
-	 error, discard it.  */
+      /* If just tried and failed to reuse lookahead token after an
+         error, discard it.  */
 
       if (yychar <= YYEOF)
-	{
-	  /* Return failure if at end of input.  */
-	  if (yychar == YYEOF)
-	    YYABORT;
-	}
+        {
+          /* Return failure if at end of input.  */
+          if (yychar == YYEOF)
+            YYABORT;
+        }
       else
-	{
-	  yydestruct ("Error: discarding",
-		      yytoken, &yylval);
-	  yychar = YYEMPTY;
-	}
+        {
+          yydestruct ("Error: discarding",
+                      yytoken, &yylval);
+          yychar = YYEMPTY;
+        }
     }
 
-  /* Else will try to reuse look-ahead token after shifting the error
+  /* Else will try to reuse lookahead token after shifting the error
      token.  */
   goto yyerrlab1;
 
@@ -3120,14 +3096,12 @@ yyerrlab:
 | yyerrorlab -- error raised explicitly by YYERROR.  |
 `---------------------------------------------------*/
 yyerrorlab:
+  /* Pacify compilers when the user code never invokes YYERROR and the
+     label yyerrorlab therefore never appears in user code.  */
+  if (0)
+    YYERROR;
 
-  /* Pacify compilers like GCC when the user code never invokes
-     YYERROR and the label yyerrorlab therefore never appears in user
-     code.  */
-  if (/*CONSTCOND*/ 0)
-     goto yyerrorlab;
-
-  /* Do not reclaim the symbols of the rule which action triggered
+  /* Do not reclaim the symbols of the rule whose action triggered
      this YYERROR.  */
   YYPOPSTACK (yylen);
   yylen = 0;
@@ -3140,38 +3114,37 @@ yyerrorlab:
 | yyerrlab1 -- common code for both syntax error and YYERROR.  |
 `-------------------------------------------------------------*/
 yyerrlab1:
-  yyerrstatus = 3;	/* Each real token shifted decrements this.  */
+  yyerrstatus = 3;      /* Each real token shifted decrements this.  */
 
   for (;;)
     {
       yyn = yypact[yystate];
-      if (yyn != YYPACT_NINF)
-	{
-	  yyn += YYTERROR;
-	  if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
-	    {
-	      yyn = yytable[yyn];
-	      if (0 < yyn)
-		break;
-	    }
-	}
+      if (!yypact_value_is_default (yyn))
+        {
+          yyn += YYTERROR;
+          if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
+            {
+              yyn = yytable[yyn];
+              if (0 < yyn)
+                break;
+            }
+        }
 
       /* Pop the current state because it cannot handle the error token.  */
       if (yyssp == yyss)
-	YYABORT;
+        YYABORT;
 
 
       yydestruct ("Error: popping",
-		  yystos[yystate], yyvsp);
+                  yystos[yystate], yyvsp);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
     }
 
-  if (yyn == YYFINAL)
-    YYACCEPT;
-
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   *++yyvsp = yylval;
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 
 
   /* Shift the error token.  */
@@ -3188,6 +3161,7 @@ yyacceptlab:
   yyresult = 0;
   goto yyreturn;
 
+
 /*-----------------------------------.
 | yyabortlab -- YYABORT comes here.  |
 `-----------------------------------*/
@@ -3195,7 +3169,8 @@ yyabortlab:
   yyresult = 1;
   goto yyreturn;
 
-#ifndef yyoverflow
+
+#if !defined yyoverflow || YYERROR_VERBOSE
 /*-------------------------------------------------.
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
@@ -3205,18 +3180,27 @@ yyexhaustedlab:
   /* Fall through.  */
 #endif
 
+
+/*-----------------------------------------------------.
+| yyreturn -- parsing is finished, return the result.  |
+`-----------------------------------------------------*/
 yyreturn:
-  if (yychar != YYEOF && yychar != YYEMPTY)
-     yydestruct ("Cleanup: discarding lookahead",
-		 yytoken, &yylval);
-  /* Do not reclaim the symbols of the rule which action triggered
+  if (yychar != YYEMPTY)
+    {
+      /* Make sure we have latest lookahead translation.  See comments at
+         user semantic actions for why this is necessary.  */
+      yytoken = YYTRANSLATE (yychar);
+      yydestruct ("Cleanup: discarding lookahead",
+                  yytoken, &yylval);
+    }
+  /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
   YYPOPSTACK (yylen);
   YY_STACK_PRINT (yyss, yyssp);
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-		  yystos[*yyssp], yyvsp);
+                  yystos[*yyssp], yyvsp);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -3227,11 +3211,7 @@ yyreturn:
   if (yymsg != yymsgbuf)
     YYSTACK_FREE (yymsg);
 #endif
-  /* Make sure YYID is used.  */
-  return YYID (yyresult);
+  return yyresult;
 }
-
-
-#line 656 "engines/director/lingo/lingo-gr.y"
-
+#line 658 "engines/director/lingo/lingo-gr.y"
 
