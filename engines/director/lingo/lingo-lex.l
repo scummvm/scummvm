@@ -176,7 +176,7 @@ whitespace [\t ]
 
 		yylval.s = new Common::String("value");
 
-		return FBLTINONEARG;
+		return FBLTIN;
 	}
 (?i:the[ \t]+number[\t ]+of[\t ]+[[:alpha:]]+[\t ](in|of))	{
 		count();
@@ -197,7 +197,7 @@ whitespace [\t ]
 		yylval.s = new Common::String(Common::String::format("numberOf%s", field.c_str()));
 
 		if (g_lingo->_builtins.contains(*yylval.s))
-			return FBLTINONEARG;
+			return FBLTIN;
 		else
 			error("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
 	}
@@ -342,23 +342,10 @@ whitespace [\t ]
 					if (g_lingo->_builtins[yytext]->nargs != 1 || g_lingo->_builtins[yytext]->maxArgs != 1)
 						error("Incorrectly set RBLTIN %s", yytext);
 
-					return RBLTINONEARG;
+					return RBLTIN;
 				}
-				if (g_lingo->_builtins[yytext]->nargs == 0) {
-					if (g_lingo->_builtins[yytext]->maxArgs == 0)
-						return type == BLTIN ? BLTINNOARGS : FBLTINNOARGS;
-					else if (g_lingo->_builtins[yytext]->maxArgs == 1)
-						return BLTINNOARGSORONE;
-					else
-						return type == BLTIN ? BLTINARGLIST : FBLTINARGLIST;
-				} else if (g_lingo->_builtins[yytext]->nargs == 1 &&
-							g_lingo->_builtins[yytext]->maxArgs == 1) {
-					return type == BLTIN ? BLTINONEARG : FBLTINONEARG;
-				} else if (g_lingo->_builtins[yytext]->nargs == -1) {
-					return type == BLTIN ? BLTINARGLIST : FBLTINARGLIST;
-				} else {
-					return type == BLTIN ? BLTINARGLIST : FBLTINARGLIST;
-				}
+
+				return type;
 			}
 		}
 

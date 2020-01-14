@@ -103,8 +103,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<i> INT ARGC ARGCNORET
 %token<e> THEENTITY THEENTITYWITHID
 %token<f> FLOAT
-%token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG BLTINARGLIST
-%token<s> FBLTIN FBLTINNOARGS FBLTINONEARG FBLTINARGLIST RBLTIN RBLTINONEARG
+%token<s> BLTIN FBLTIN RBLTIN
 %token<s> ID STRING HANDLER SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL tMETHOD
 %token<objectfield> THEOBJECTFIELD
@@ -395,14 +394,9 @@ simpleexpr: INT		{
 
 expr: simpleexpr { $$ = $simpleexpr; }
 	| reference
-	| FBLTINNOARGS 	{
-		g_lingo->codeFunc($FBLTINNOARGS, 0);
-		delete $FBLTINNOARGS; }
-	| FBLTINONEARG expr		{
-		g_lingo->codeFunc($FBLTINONEARG, 1);
-		delete $FBLTINONEARG; }
-	| FBLTINARGLIST arglist	{ g_lingo->codeFunc($FBLTINARGLIST, $arglist);
-		delete $FBLTINARGLIST; }
+	| FBLTIN arglist	{
+		g_lingo->codeFunc($FBLTIN, $arglist);
+		delete $FBLTIN; }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($ID, $arglist);
 		delete $ID; }
@@ -459,9 +453,9 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| tWORD expr tTO expr tOF expr		{ g_lingo->code1(LC::c_wordToOf); }
 	;
 
-reference: 	RBLTINONEARG simpleexpr	{
-		g_lingo->codeFunc($RBLTINONEARG, 1);
-		delete $RBLTINONEARG; }
+reference: 	RBLTIN simpleexpr	{
+		g_lingo->codeFunc($RBLTIN, 1);
+		delete $RBLTIN; }
 	;
 
 proc: tPUT expr				{ g_lingo->code1(LC::c_printtop); }
@@ -472,21 +466,9 @@ proc: tPUT expr				{ g_lingo->code1(LC::c_printtop); }
 	| tGLOBAL globallist
 	| tPROPERTY propertylist
 	| tINSTANCE instancelist
-	| BLTINNOARGS 	{
-		g_lingo->codeFunc($BLTINNOARGS, 0);
-		delete $BLTINNOARGS; }
-	| BLTINONEARG expr		{
-		g_lingo->codeFunc($BLTINONEARG, 1);
-		delete $BLTINONEARG; }
-	| BLTINNOARGSORONE expr	{
-		g_lingo->codeFunc($BLTINNOARGSORONE, 1);
-		delete $BLTINNOARGSORONE; }
-	| BLTINNOARGSORONE 		{
-		g_lingo->code1(LC::c_voidpush);
-		g_lingo->codeFunc($BLTINNOARGSORONE, 1);
-		delete $BLTINNOARGSORONE; }
-	| BLTINARGLIST arglist	{ g_lingo->codeFunc($BLTINARGLIST, $arglist);
-		delete $BLTINARGLIST; }
+	| BLTIN arglist			{
+		g_lingo->codeFunc($BLTIN, $arglist);
+		delete $BLTIN; }
 	| tOPEN expr tWITH expr	{ g_lingo->code1(LC::c_open); }
 	| tOPEN expr 			{ g_lingo->code2(LC::c_voidpush, LC::c_open); }
 	;
