@@ -103,7 +103,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<i> INT ARGC ARGCNORET
 %token<e> THEENTITY THEENTITYWITHID
 %token<f> FLOAT
-%token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG BLTINARGLIST TWOWORDBUILTIN
+%token<s> BLTIN BLTINNOARGS BLTINNOARGSORONE BLTINONEARG BLTINARGLIST
 %token<s> FBLTIN FBLTINNOARGS FBLTINONEARG FBLTINARGLIST RBLTIN RBLTINONEARG
 %token<s> ID STRING HANDLER SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL tMETHOD
@@ -489,12 +489,6 @@ proc: tPUT expr				{ g_lingo->code1(LC::c_printtop); }
 		delete $BLTINARGLIST; }
 	| tOPEN expr tWITH expr	{ g_lingo->code1(LC::c_open); }
 	| tOPEN expr 			{ g_lingo->code2(LC::c_voidpush, LC::c_open); }
-	| TWOWORDBUILTIN ID arglist	{
-		Common::String s(*$TWOWORDBUILTIN);
-		s += '-'; s += *$ID;
-		g_lingo->codeFunc(&s, $arglist);
-		delete $ID;
-		delete $TWOWORDBUILTIN; }
 	;
 
 globallist: ID					{ g_lingo->code1(LC::c_global); g_lingo->codeString($1->c_str()); delete $ID; }

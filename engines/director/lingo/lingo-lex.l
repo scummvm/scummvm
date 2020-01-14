@@ -335,9 +335,6 @@ whitespace [\t ]
 			if (g_lingo->isInArgStack(yylval.s))
 				return ID;
 
-		if (g_lingo->_twoWordBuiltins.contains(yytext))
-			return TWOWORDBUILTIN;
-
 		if (g_lingo->_builtins.contains(yytext)) {
 			int type = g_lingo->_builtins[yytext]->type;
 			if ((type == BLTIN || type == FBLTIN || type == RBLTIN) && g_lingo->_builtins[yytext]->parens == false) {
