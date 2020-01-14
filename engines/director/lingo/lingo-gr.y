@@ -194,6 +194,7 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(LC::c_objectfieldassign);
 		g_lingo->codeString($THEOBJECTFIELD.s->c_str());
 		g_lingo->codeInt($THEOBJECTFIELD.e);
+		delete $THEOBJECTFIELD.s;
 		$$ = $expr; }
 	;
 
@@ -377,10 +378,12 @@ simpleexpr: INT		{
 		g_lingo->codeFloat($FLOAT); }
 	| SYMBOL	{											// D3
 		$$ = g_lingo->code1(LC::c_symbolpush);
-		g_lingo->codeString($SYMBOL->c_str()); }
+		g_lingo->codeString($SYMBOL->c_str());
+		delete $SYMBOL; }
 	| STRING		{
 		$$ = g_lingo->code1(LC::c_stringpush);
-		g_lingo->codeString($STRING->c_str()); }
+		g_lingo->codeString($STRING->c_str());
+		delete $STRING; }
 	| ID		{
 		$$ = g_lingo->code1(LC::c_eval);
 		g_lingo->codeString($ID->c_str());
@@ -417,7 +420,8 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| THEOBJECTFIELD {
 		g_lingo->code1(LC::c_objectfieldpush);
 		g_lingo->codeString($THEOBJECTFIELD.s->c_str());
-		g_lingo->codeInt($THEOBJECTFIELD.e); }
+		g_lingo->codeInt($THEOBJECTFIELD.e);
+		delete $THEOBJECTFIELD.s; }
 	| asgn
 	| expr '+' expr				{ g_lingo->code1(LC::c_add); }
 	| expr '-' expr				{ g_lingo->code1(LC::c_sub); }
@@ -481,19 +485,19 @@ proc: tPUT expr				{ g_lingo->code1(LC::c_printtop); }
 	| BLTINARGLIST arglist	{ g_lingo->codeFunc($BLTINARGLIST, $arglist); }
 	| tOPEN expr tWITH expr	{ g_lingo->code1(LC::c_open); }
 	| tOPEN expr 			{ g_lingo->code2(LC::c_voidpush, LC::c_open); }
-	| TWOWORDBUILTIN ID arglist	{ Common::String s(*$TWOWORDBUILTIN); s += '-'; s += *$ID; g_lingo->codeFunc(&s, $arglist); }
+	| TWOWORDBUILTIN ID arglist	{ Common::String s(*$TWOWORDBUILTIN); s += '-'; s += *$ID; g_lingo->codeFunc(&s, $arglist); delete $ID; }
 	;
 
-globallist: ID					{ g_lingo->code1(LC::c_global); g_lingo->codeString($1->c_str()); delete $1; }
-	| globallist ',' ID			{ g_lingo->code1(LC::c_global); g_lingo->codeString($3->c_str()); delete $3; }
+globallist: ID					{ g_lingo->code1(LC::c_global); g_lingo->codeString($1->c_str()); delete $ID; }
+	| globallist ',' ID			{ g_lingo->code1(LC::c_global); g_lingo->codeString($3->c_str()); delete $ID; }
 	;
 
-propertylist: ID				{ g_lingo->code1(LC::c_property); g_lingo->codeString($1->c_str()); delete $1; }
-	| propertylist ',' ID		{ g_lingo->code1(LC::c_property); g_lingo->codeString($3->c_str()); delete $3; }
+propertylist: ID				{ g_lingo->code1(LC::c_property); g_lingo->codeString($1->c_str()); delete $ID; }
+	| propertylist ',' ID		{ g_lingo->code1(LC::c_property); g_lingo->codeString($3->c_str()); delete $ID; }
 	;
 
-instancelist: ID				{ g_lingo->code1(LC::c_instance); g_lingo->codeString($1->c_str()); delete $1; }
-	| instancelist ',' ID		{ g_lingo->code1(LC::c_instance); g_lingo->codeString($3->c_str()); delete $3; }
+instancelist: ID				{ g_lingo->code1(LC::c_instance); g_lingo->codeString($1->c_str()); delete $ID; }
+	| instancelist ',' ID		{ g_lingo->code1(LC::c_instance); g_lingo->codeString($3->c_str()); delete $ID; }
 	;
 
 // go {to} {frame} whichFrame {of movie whichMovie}
@@ -573,8 +577,9 @@ defn: tMACRO ID { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear
 			g_lingo->code1(LC::c_procret);
 			g_lingo->define(*$ID, $begin, $argdef);
 			g_lingo->clearArgStack();
-			g_lingo->_indef = kStateNone; }
-	| tFACTORY ID	{ g_lingo->codeFactory(*$2); }
+			g_lingo->_indef = kStateNone;
+			delete $ID; }
+	| tFACTORY ID	{ g_lingo->codeFactory(*$2); delete $ID; }
 	| tMETHOD { g_lingo->_indef = kStateInArgs; }
 		begin argdef '\n' argstore stmtlist 		{
 			g_lingo->code1(LC::c_procret);
@@ -588,25 +593,27 @@ defn: tMACRO ID { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear
 		g_lingo->_indef = kStateNone;
 		g_lingo->_ignoreMe = false;
 
-		checkEnd($ENDCLAUSE, $on->c_str(), false); }
+		checkEnd($ENDCLAUSE, $on->c_str(), false);
+		delete $on; }
 	| on begin argdef '\n' argstore stmtlist {	// D4. No 'end' clause
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$on, $begin, $argdef);
 		g_lingo->_indef = kStateNone;
 		g_lingo->clearArgStack();
-		g_lingo->_ignoreMe = false; }
+		g_lingo->_ignoreMe = false;
+		delete $on; }
 
 on:  tON ID { $$ = $ID; g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
 
 argdef:  /* nothing */ 		{ $$ = 0; }
-	| ID					{ g_lingo->codeArg($ID); $$ = 1; }
-	| argdef ',' ID			{ g_lingo->codeArg($ID); $$ = $1 + 1; }
-	| argdef '\n' ',' ID	{ g_lingo->codeArg($ID); $$ = $1 + 1; }
+	| ID					{ g_lingo->codeArg($ID); $$ = 1; delete $ID; }
+	| argdef ',' ID			{ g_lingo->codeArg($ID); $$ = $1 + 1; delete $ID; }
+	| argdef '\n' ',' ID	{ g_lingo->codeArg($ID); $$ = $1 + 1; delete $ID; }
 	;
 
 endargdef:	/* nothing */
-	| ID
-	| endargdef ',' ID
+	| ID					{ delete $ID; }
+	| endargdef ',' ID		{ delete $ID; }
 	;
 
 argstore:	  /* nothing */		{ g_lingo->codeArgStore(); g_lingo->_indef = kStateInDef; }
@@ -617,7 +624,8 @@ macro: ID nonemptyarglist	{
 		g_lingo->codeString($ID->c_str());
 		inst numpar = 0;
 		WRITE_UINT32(&numpar, $nonemptyarglist);
-		g_lingo->code1(numpar); }
+		g_lingo->code1(numpar);
+		delete $ID; }
 	;
 
 arglist:  /* nothing */ 	{ $$ = 0; }
@@ -648,10 +656,12 @@ proplist:  proppair			{ $$ = 1; }
 
 proppair: SYMBOL ':' simpleexpr {
 		g_lingo->code1(LC::c_symbolpush);
-		g_lingo->codeString($SYMBOL->c_str()); }
+		g_lingo->codeString($SYMBOL->c_str());
+		delete $SYMBOL; }
 	| STRING ':' simpleexpr {
 		g_lingo->code1(LC::c_stringpush);
-		g_lingo->codeString($STRING->c_str()); }
+		g_lingo->codeString($STRING->c_str());
+		delete $STRING; }
 	;
 
 
