@@ -32,17 +32,26 @@ class FVector;
 class SimpleFile;
 
 struct CNavigationInfo {
-	double _speed;
-	double _speedChangeCtr;
-	double _speedChangeInc;
-	double _unused;
-	double _maxSpeed;
-	double _unusedX;
-	double _unusedY;
-	double _unusedZ;
+	double _initialVelocity;
+	double _minVelocity;
+	double _maxVelocity;
+	double _velocity;
+	double _acceleration;
+	double _rotationX;
+	double _rotationY;
+	double _rotationZ;
 };
 
-class CCameraMover : public CNavigationInfo {
+class CCameraMover {
+protected:
+	double _currVelocity;
+	double _incVelocity;
+	double _incAcceleration;
+	double _minVelocity;
+	double _maxVelocity;
+	double _rotationX;
+	double _rotationY;
+	double _rotationZ;
 public:
 	int _lockCounter;
 	CStarVector *_starVector;
@@ -50,8 +59,8 @@ public:
 	CCameraMover(const CNavigationInfo *src);
 	virtual ~CCameraMover();
 
-	virtual void copyFrom(const CNavigationInfo *src);
-	virtual void copyTo(CNavigationInfo *dest);
+	virtual void setMotion(const CNavigationInfo *src);
+	virtual void getMotion(CNavigationInfo *dest);
 
 	/**
 	 * delete _starVector

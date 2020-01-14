@@ -77,7 +77,7 @@ void CCamera::setViewport(const CViewport *src) {
 }
 
 void CCamera::setMotion(const CNavigationInfo *src) {
-	_mover->copyFrom(src);
+	_mover->setMotion(src);
 }
 
 void CCamera::setPosition(const FVector &v) {
@@ -397,7 +397,7 @@ bool CCamera::addLockedStar(const FVector v) {
 		return false;
 
 	CNavigationInfo data;
-	_mover->copyTo(&data);
+	_mover->getMotion(&data);
 	removeMover();
 
 	FVector &row = _lockedStarsPos[(int)_starLockState];
@@ -412,7 +412,7 @@ bool CCamera::removeLockedStar() {
 		return false;
 
 	CNavigationInfo data;
-	_mover->copyTo(&data);
+	_mover->getMotion(&data);
 	removeMover();
 
 	_starLockState = StarLockState((int)_starLockState - 1);

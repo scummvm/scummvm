@@ -33,7 +33,7 @@ CCameraMover::CCameraMover(const CNavigationInfo *src) {
 	_starVector = nullptr;
 
 	if (src) {
-		copyFrom(src);
+		setMotion(src);
 	} else {
 		reset();
 	}
@@ -51,14 +51,14 @@ void CCameraMover::clear() {
 }
 
 void CCameraMover::reset() {
-	_speed = 0.0;
-	_speedChangeCtr = 0.0;
-	_speedChangeInc = 20.0;
-	_unused = 0.0;
-	_maxSpeed = 50000.0;
-	_unusedX = 1.0;
-	_unusedY = 1.0;
-	_unusedZ = 0.0;
+	_currVelocity = 0.0;
+	_incVelocity = 0.0;
+	_incAcceleration = 20.0;
+	_minVelocity = 0.0;
+	_maxVelocity = 50000.0;
+	_rotationX = 1.0;
+	_rotationY = 1.0;
+	_rotationZ = 0.0;
 }
 
 void CCameraMover::setVector(CStarVector *sv) {
@@ -66,77 +66,77 @@ void CCameraMover::setVector(CStarVector *sv) {
 	_starVector = sv;
 }
 
-void CCameraMover::copyFrom(const CNavigationInfo *src) {
-	_speed = src->_speed;
-	_unused = src->_speedChangeCtr;
-	_maxSpeed = src->_speedChangeInc;
-	_speedChangeCtr = src->_unused;
-	_speedChangeInc = src->_maxSpeed;
-	_unusedX = src->_unusedX;
-	_unusedY = src->_unusedY;
-	_unusedZ = src->_unusedZ;
+void CCameraMover::setMotion(const CNavigationInfo *src) {
+	_currVelocity = src->_initialVelocity;
+	_minVelocity = src->_minVelocity;
+	_maxVelocity = src->_maxVelocity;
+	_incVelocity = src->_velocity;
+	_incAcceleration = src->_acceleration;
+	_rotationX = src->_rotationX;
+	_rotationY = src->_rotationY;
+	_rotationZ = src->_rotationZ;
 }
 
-void CCameraMover::copyTo(CNavigationInfo *dest) {
-	dest->_speed = _speed;
-	dest->_speedChangeCtr = _unused;
-	dest->_speedChangeInc = _maxSpeed;
-	dest->_unused = _speedChangeCtr;
-	dest->_maxSpeed = _speedChangeInc;
-	dest->_unusedX = _unusedX;
-	dest->_unusedY = _unusedY;
-	dest->_unusedZ = _unusedZ;
+void CCameraMover::getMotion(CNavigationInfo *dest) {
+	dest->_initialVelocity = _currVelocity;
+	dest->_minVelocity = _minVelocity;
+	dest->_maxVelocity = _maxVelocity;
+	dest->_velocity = _incVelocity;
+	dest->_acceleration = _incAcceleration;
+	dest->_rotationX = _rotationX;
+	dest->_rotationY = _rotationY;
+	dest->_rotationZ = _rotationZ;
 }
 
 void CCameraMover::accelerate() {
-	if (!isLocked() && _speed < _maxSpeed) {
-		_speedChangeCtr += _speedChangeInc;
-		_speed += ABS(_speedChangeCtr);
+	if (!isLocked() && _currVelocity < _maxVelocity) {
+		_incVelocity += _incAcceleration;
+		_currVelocity += ABS(_incVelocity);
 	}
 }
 
 void CCameraMover::deccelerate() {
-	if (!isLocked() && _speed > -_maxSpeed) {
-		_speedChangeCtr -= _speedChangeInc;
-		_speed -= ABS(_speedChangeCtr);
+	if (!isLocked() && _currVelocity > -_maxVelocity) {
+		_incVelocity -= _incAcceleration;
+		_currVelocity -= ABS(_incVelocity);
 	}
 }
 
 void CCameraMover::fullSpeed() {
 	if (!isLocked())
-		_speed = _maxSpeed;
+		_currVelocity = _maxVelocity;
 }
 
 void CCameraMover::stop() {
 	if (!isLocked()) {
-		_speed = 0.0;
-		_speedChangeCtr = 0.0;
+		_currVelocity = 0.0;
+		_incVelocity = 0.0;
 	}
 }
 
 // TODO: this is confusing to negate the val value
 void CCameraMover::load(SimpleFile *file, int val) {
 	if (!val) {
-		_speed = file->readFloat();
-		_speedChangeCtr = file->readFloat();
-		_speedChangeInc = file->readFloat();
-		_unused = file->readFloat();
-		_maxSpeed = file->readFloat();
-		_unusedX = file->readFloat();
-		_unusedY = file->readFloat();
-		_unusedZ = file->readFloat();
+		_currVelocity = file->readFloat();
+		_incVelocity = file->readFloat();
+		_incAcceleration = file->readFloat();
+		_minVelocity = file->readFloat();
+		_maxVelocity = file->readFloat();
+		_rotationX = file->readFloat();
+		_rotationY = file->readFloat();
+		_rotationZ = file->readFloat();
 	}
 }
 
 void CCameraMover::save(SimpleFile *file, int indent) {
-	file->writeFloatLine(_speed, indent);
-	file->writeFloatLine(_speedChangeCtr, indent);
-	file->writeFloatLine(_speedChangeInc, indent);
-	file->writeFloatLine(_unused, indent);
-	file->writeFloatLine(_maxSpeed, indent);
-	file->writeFloatLine(_unusedX, indent);
-	file->writeFloatLine(_unusedY, indent);
-	file->writeFloatLine(_unusedZ, indent);
+	file->writeFloatLine(_currVelocity, indent);
+	file->writeFloatLine(_incVelocity, indent);
+	file->writeFloatLine(_incAcceleration, indent);
+	file->writeFloatLine(_minVelocity, indent);
+	file->writeFloatLine(_maxVelocity, indent);
+	file->writeFloatLine(_rotationX, indent);
+	file->writeFloatLine(_rotationY, indent);
+	file->writeFloatLine(_rotationZ, indent);
 }
 
 void CCameraMover::incLockCount() {

@@ -52,10 +52,10 @@ void CMarkedCameraMover::updatePosition(CErrorCode &errorCode, FVector &pos, FMa
 			if (_starVector)
 				_starVector->apply();
 		}
-	} else if (_speed != 0.0) {
-		pos._x += orientation._row3._x * _speed;
-		pos._y += orientation._row3._y * _speed;
-		pos._z += orientation._row3._z * _speed;
+	} else if (_currVelocity != 0.0) {
+		pos._x += orientation._row3._x * _currVelocity;
+		pos._y += orientation._row3._y * _currVelocity;
+		pos._z += orientation._row3._z * _currVelocity;
 		errorCode.set();
 	}
 }
