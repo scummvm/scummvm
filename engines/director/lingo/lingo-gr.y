@@ -47,9 +47,10 @@
 %debug
 
 %require "3.5"
+%defines "engines/director/lingo/lingo-gr.h"
+%output "engines/director/lingo/lingo-gr.cpp"
 
 // %glr-parser
-// %defines "engines/director/lingo/lingo-gr.h"
 
 %{
 #define FORBIDDEN_SYMBOL_ALLOW_ALL

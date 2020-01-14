@@ -31,8 +31,7 @@ MODULE_OBJS = \
 
 director-grammar:
 	flex -o engines/director/lingo/lingo-lex.cpp engines/director/lingo/lingo-lex.l
-	bison -dv -o engines/director/lingo/lingo-gr.cpp engines/director/lingo/lingo-gr.y
-	mv engines/director/lingo/lingo-gr.hpp engines/director/lingo/lingo-gr.h
+	bison -dv engines/director/lingo/lingo-gr.y
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_DIRECTOR), DYNAMIC_PLUGIN)
