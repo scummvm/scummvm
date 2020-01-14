@@ -406,7 +406,7 @@ expr: simpleexpr { $$ = $1; }
 		WRITE_UINT32(&e, $1[0]);
 		WRITE_UINT32(&f, $1[1]);
 		g_lingo->code2(e, f); }
-	| THEENTITYWITHID simpleexpr {
+	| THEENTITYWITHID expr {
 		$$ = g_lingo->code1(LC::c_theentitypush);
 		inst e = 0, f = 0;
 		WRITE_UINT32(&e, $1[0]);
