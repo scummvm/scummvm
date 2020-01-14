@@ -78,8 +78,6 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 			yyerror(err.c_str());
 		}
 	}
-
-	delete token;
 }
 
 %}
@@ -402,7 +400,8 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| FBLTINONEARG expr		{
 		g_lingo->codeFunc($FBLTINONEARG, 1);
 		delete $FBLTINONEARG; }
-	| FBLTINARGLIST arglist	{ g_lingo->codeFunc($FBLTINARGLIST, $arglist); }
+	| FBLTINARGLIST arglist	{ g_lingo->codeFunc($FBLTINARGLIST, $arglist);
+		delete $FBLTINARGLIST; }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($ID, $arglist);
 		delete $ID; }
@@ -485,10 +484,16 @@ proc: tPUT expr				{ g_lingo->code1(LC::c_printtop); }
 		g_lingo->code1(LC::c_voidpush);
 		g_lingo->codeFunc($BLTINNOARGSORONE, 1);
 		delete $BLTINNOARGSORONE; }
-	| BLTINARGLIST arglist	{ g_lingo->codeFunc($BLTINARGLIST, $arglist); }
+	| BLTINARGLIST arglist	{ g_lingo->codeFunc($BLTINARGLIST, $arglist);
+		delete $BLTINARGLIST; }
 	| tOPEN expr tWITH expr	{ g_lingo->code1(LC::c_open); }
 	| tOPEN expr 			{ g_lingo->code2(LC::c_voidpush, LC::c_open); }
-	| TWOWORDBUILTIN ID arglist	{ Common::String s(*$TWOWORDBUILTIN); s += '-'; s += *$ID; g_lingo->codeFunc(&s, $arglist); delete $ID; }
+	| TWOWORDBUILTIN ID arglist	{
+		Common::String s(*$TWOWORDBUILTIN);
+		s += '-'; s += *$ID;
+		g_lingo->codeFunc(&s, $arglist);
+		delete $ID;
+		delete $TWOWORDBUILTIN; }
 	;
 
 globallist: ID					{ g_lingo->code1(LC::c_global); g_lingo->codeString($1->c_str()); delete $ID; }
@@ -547,7 +552,8 @@ playfunc: tPLAY tDONE			{ g_lingo->code1(LC::c_playdone); }
 		g_lingo->code1(LC::c_play); }
 	| tPLAYACCEL { g_lingo->codeSetImmediate(true); } arglist	{
 		g_lingo->codeSetImmediate(false);
-		g_lingo->codeFunc($1, $3); }
+		g_lingo->codeFunc($tPLAYACCEL, $arglist);
+		delete $tPLAYACCEL; }
 	;
 
 // macro
@@ -588,7 +594,8 @@ defn: tMACRO ID { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear
 			g_lingo->code1(LC::c_procret);
 			g_lingo->define(*$tMETHOD, $begin, $argdef + 1, &g_lingo->_currentFactory);
 			g_lingo->clearArgStack();
-			g_lingo->_indef = kStateNone; }
+			g_lingo->_indef = kStateNone;
+			delete $tMETHOD; }
 	| on begin argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$on, $begin, $argdef);
@@ -597,7 +604,8 @@ defn: tMACRO ID { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear
 		g_lingo->_ignoreMe = false;
 
 		checkEnd($ENDCLAUSE, $on->c_str(), false);
-		delete $on; }
+		delete $on;
+		delete $ENDCLAUSE; }
 	| on begin argdef '\n' argstore stmtlist {	// D4. No 'end' clause
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$on, $begin, $argdef);
