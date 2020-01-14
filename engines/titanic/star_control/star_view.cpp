@@ -41,7 +41,7 @@ CStarView::CStarView() : _camera((const CNavigationInfo *)nullptr), _owner(nullp
 		_stereoPair(false), _showingPhoto(false) {
 	CNavigationInfo data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
 
-	_camera.proc3(&data);
+	_camera.setMotion(&data);
 }
 
 CStarView::~CStarView() {

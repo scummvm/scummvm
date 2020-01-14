@@ -74,7 +74,7 @@ void CConstBoundaries::draw(CSurfaceArea *surface, CCamera *camera) {
 
 	// get the current camera transform.
 	FPose pose = camera->getPose();
-	float threshold = camera->getThreshold();
+	float threshold = camera->getFrontClip();
 	float centerX = (float)surface->_width / 2.0f;
 	float centerY = (float)surface->_height / 2.0f;
 

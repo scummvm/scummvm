@@ -72,11 +72,11 @@ CCamera::~CCamera() {
 	removeMover();
 }
 
-void CCamera::proc2(const CViewport *src) {
+void CCamera::setViewport(const CViewport *src) {
 	_viewport.copyFrom(src);
 }
 
-void CCamera::proc3(const CNavigationInfo *src) {
+void CCamera::setMotion(const CNavigationInfo *src) {
 	_mover->copyFrom(src);
 }
 
@@ -93,21 +93,21 @@ void CCamera::setOrientation(const FVector &v) {
 }
 
 // This never gets called
-void CCamera::proc6(int v) {
+void CCamera::setRoleAngle(double angle) {
 	if (!isLocked())
-		_viewport.setC(v);
+		_viewport.SetRoleAngle(angle);
 }
 
 // This never gets called
-void CCamera::proc7(int v) {
+void CCamera::setFrontClip(double n) {
 	if (!isLocked())
-		_viewport.set10(v);
+		_viewport.setFrontClip(n);
 }
 
 // This never gets called
-void CCamera::proc8(int v) {
+void CCamera::SetBackClip(double f) {
 	if (!isLocked())
-		_viewport.set14(v);
+		_viewport.setBackClip(f);
 }
 
 // This never gets called
@@ -130,10 +130,6 @@ void CCamera::randomizeOrientation() {
 void CCamera::setFields(StarMode mode, double val) {
 	if (!isLocked())
 		_viewport.changeStarColorPixel(mode, val);
-}
-
-void CCamera::proc13(CViewport *dest) {
-	*dest = _viewport;
 }
 
 void CCamera::setDestination(const FVector &v) {
@@ -207,12 +203,12 @@ FPose CCamera::getRawPose() {
 	return _viewport.getRawPose();
 }
 
-double CCamera::getThreshold() const {
-	return _viewport._field10;
+double CCamera::getFrontClip() const {
+	return _viewport._frontClip;
 }
 
-double CCamera::proc26() const {
-	return _viewport._field14;
+double CCamera::getBackClip() const {
+	return _viewport._backClip;
 }
 
 StarColor CCamera::getStarColor() const {
@@ -481,7 +477,7 @@ bool CCamera::lockMarker1(FVector v1, FVector firstStarPosition, FVector v3) {
 	double val6, val7, val8, val9;
 
 	val1 = _viewport._centerVector._y * v1._x;
-	tempV._z = _viewport._field10;
+	tempV._z = _viewport._frontClip;
 	val2 = _viewport._centerVector._y * tempV._z * v3._x;
 	val3 = _viewport._centerVector._z * v1._y;
 	val4 = _viewport._centerVector._z * tempV._z;

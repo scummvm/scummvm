@@ -75,7 +75,7 @@ void CConstellations::draw(CSurfaceArea *surface, CCamera *camera) {
 		return;
 
 	FPose pose = camera->getPose();
-	double threshold = camera->getThreshold();
+	double threshold = camera->getFrontClip();
 	double centerX = (double)surface->_width / 2.0F;
 	double centerY = (double)surface->_height / 2.0F;
 	FVector ec0, ec1;

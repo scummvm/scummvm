@@ -76,8 +76,15 @@ public:
 	CCamera(CViewport *src);
 	virtual ~CCamera();
 
-	virtual void proc2(const CViewport *src);
-	virtual void proc3(const CNavigationInfo *src);
+	/**
+	 * Copy the state from a specified viewport
+	 */
+	virtual void setViewport(const CViewport *src);
+
+	/**
+	 * Set motion from the passed navigation info
+	 */
+	virtual void setMotion(const CNavigationInfo *src);
 
 	/**
 	 * The mover/view is not currently homing in on a new star
@@ -96,14 +103,25 @@ public:
 	 */
 	virtual void setOrientation(const FVector &v);
 
-	virtual void proc6(int v);
-	virtual void proc7(int v);
-	virtual void proc8(int v);
+	/**
+	 * Assigns a roll angle about the view direction
+	 */
+	virtual void setRoleAngle(double angle);
+
+	/**
+	 * Assign a near clip plane distance
+	 */
+	virtual void setFrontClip(double n);
+
+	/**
+	 * Assign a far clipping plane distance
+	 */
+	virtual void SetBackClip(double f);
+
 	virtual void setCenterYAngle(int v);
 	virtual void setCenterZAngle(int v);
 	virtual void randomizeOrientation();
 	virtual void setFields(StarMode mode, double val);
-	virtual void proc13(CViewport *dest);
 
 	/**
 	 * Sets the destination to move the camera to
@@ -150,9 +168,18 @@ public:
 	virtual FPose getPose();
 
 	virtual FPose getRawPose();
-	virtual double getThreshold() const;
 
-	virtual double proc26() const;
+	/**
+	 * Get the front clipping distance
+	 */
+	virtual double getFrontClip() const;
+
+	/**
+	 * Get the back clipping distance
+	 */
+	virtual double getBackClip() const;
+
+
 	virtual StarColor getStarColor() const;
 
 	/**

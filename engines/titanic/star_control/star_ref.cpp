@@ -32,7 +32,7 @@ void CBaseStarRef::process(CSurfaceArea *surface, CCamera *camera) {
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPose pose = camera->getPose();
-	double threshold = camera->getThreshold();
+	double threshold = camera->getFrontClip();
 	double vWidth2 = (double)surface->_width * 0.5;
 	double vHeight2 = (double)surface->_height * 0.5;
 	FVector vTemp, vector1, vector2;

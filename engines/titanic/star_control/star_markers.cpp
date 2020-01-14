@@ -31,7 +31,7 @@ void CStarMarkers::draw(CSurfaceArea *surfaceArea, CCamera *camera, CStarCloseup
 		return;
 
 	FPose pose = camera->getPose();
-	double threshold = camera->getThreshold();
+	double threshold = camera->getFrontClip();
 	FPoint center((double)surfaceArea->_width * 0.5,
 		surfaceArea->_height * 0.5);
 	FVector newV;

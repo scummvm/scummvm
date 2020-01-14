@@ -201,7 +201,7 @@ double CStarField::lockDistance(CSurfaceArea *surfaceArea, CCamera *camera,
 	worldCoord = dataP->_position;
 	FVector tv = camera->getRelativePosNoCentering(2, worldCoord);
 
-	if (camera->getThreshold() >= tv._z)
+	if (camera->getFrontClip() >= tv._z)
 		return -1.0;
 
 	tv = camera->getRelativePos(2, tv);
