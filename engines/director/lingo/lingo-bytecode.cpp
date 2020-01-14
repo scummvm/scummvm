@@ -362,50 +362,55 @@ void LC::cb_v4theentityassign() {
 	result.type = VOID;
 
 	int key = (bank << 8) + firstArg.u.i;
-	if (g_lingo->_lingoV4TheEntity.contains(key)) {
-		debugC(3, kDebugLingoExec, "cb_v4theentityassign: mapping 0x%02x, 0x%02x", bank, firstArg.u.i);
-		if (g_lingo->_lingoV4TheEntity[key]->writable) {
-			int entity = g_lingo->_lingoV4TheEntity[key]->entity;
-			int field = g_lingo->_lingoV4TheEntity[key]->field;
-			switch (g_lingo->_lingoV4TheEntity[key]->type) {
-			case kTEANOArgs:
-				{
-					Datum id;
-					id.u.s = NULL;
-					id.type = VOID;
-					debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(0x%02x, NULL, 0x%02x, value)", entity, field);
-					g_lingo->setTheEntity(entity, id, field, value);
-				}
-				break;
-			case kTEAItemId:
-				{
-					Datum id = g_lingo->pop();
-					debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(0x%02x, id, 0x%02x, value)", entity, field);
-					g_lingo->setTheEntity(entity, id, field, value);
-				}
-				break;
-			case kTEAString:
-				{
-					/*Datum stringArg = */g_lingo->pop();
-					warning("cb_v4theentityassign: STUB: kTEAString");
-				}
-				break;
-			case kTEAMenuIdItemId:
-				{
-					/*Datum menuId = */g_lingo->pop();
-					/*Datum itemId = */g_lingo->pop();
-					warning("cb_v4theentityassign: STUB: kTEAMenuIdItemId");
-				}
-				break;
-			default:
-				warning("cb_v4theentityassign: unknown call type %d", g_lingo->_lingoV4TheEntity[key]->type);
-				break;
-			}
-		} else {
-			warning("cb_v4theentityassign: non-writable mapping 0x%02x 0x%02x", bank, firstArg.u.i);
-		}
-	} else {
+	if (!g_lingo->_lingoV4TheEntity.contains(key)) {
 		warning("cb_v4theentityassign: unhandled mapping 0x%02x 0x%02x", bank, firstArg.u.i);
+
+		return;
+	}
+
+	debugC(3, kDebugLingoExec, "cb_v4theentityassign: mapping 0x%02x, 0x%02x", bank, firstArg.u.i);
+
+	if (!g_lingo->_lingoV4TheEntity[key]->writable) {
+		warning("cb_v4theentityassign: non-writable mapping 0x%02x 0x%02x", bank, firstArg.u.i);
+
+		return;
+	}
+
+	int entity = g_lingo->_lingoV4TheEntity[key]->entity;
+	int field = g_lingo->_lingoV4TheEntity[key]->field;
+	switch (g_lingo->_lingoV4TheEntity[key]->type) {
+	case kTEANOArgs:
+		{
+			Datum id;
+			id.u.s = NULL;
+			id.type = VOID;
+			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(0x%02x, NULL, 0x%02x, value)", entity, field);
+			g_lingo->setTheEntity(entity, id, field, value);
+		}
+		break;
+	case kTEAItemId:
+		{
+			Datum id = g_lingo->pop();
+			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(0x%02x, id, 0x%02x, value)", entity, field);
+			g_lingo->setTheEntity(entity, id, field, value);
+		}
+		break;
+	case kTEAString:
+		{
+			/*Datum stringArg = */g_lingo->pop();
+			warning("cb_v4theentityassign: STUB: kTEAString");
+		}
+		break;
+	case kTEAMenuIdItemId:
+		{
+			/*Datum menuId = */g_lingo->pop();
+			/*Datum itemId = */g_lingo->pop();
+			warning("cb_v4theentityassign: STUB: kTEAMenuIdItemId");
+		}
+		break;
+	default:
+		warning("cb_v4theentityassign: unknown call type %d", g_lingo->_lingoV4TheEntity[key]->type);
+		break;
 	}
 }
 
