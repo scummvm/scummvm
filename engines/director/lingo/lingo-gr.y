@@ -149,8 +149,8 @@ asgn: tPUT expr tINTO ID 		{
 		$$ = $expr;
 		delete $ID; }
 	| tPUT expr tINTO reference 		{
-			g_lingo->code1(LC::c_assign);
-			$$ = $expr; }
+		g_lingo->code1(LC::c_assign);
+		$$ = $expr; }
 	| tPUT expr tAFTER expr 		{ $$ = g_lingo->code1(LC::c_after); }		// D3
 	| tPUT expr tBEFORE expr 		{ $$ = g_lingo->code1(LC::c_before); }		// D3
 	| tSET ID tEQ expr			{
@@ -262,10 +262,9 @@ stmt: stmtoneliner
 		g_lingo->code1(STOP);
 		(*g_lingo->_currentScript)[$when + 1] = end; }
 	| tell expr '\n' stmtlist end tENDTELL {
-			warning("STUB: TELL is not implemented"); }
+		warning("STUB: TELL is not implemented"); }
 	| tell expr tTO expr {
-			warning("STUB: TELL is not implemented");
-		}
+		warning("STUB: TELL is not implemented"); }
 	;
 
 ifstmt: if expr end[endexpr] tTHEN stmtlist end[else1] elseifstmtlist end[end3] tENDIF {
@@ -559,20 +558,20 @@ playfunc: tPLAY tDONE			{ g_lingo->code1(LC::c_playdone); }
 // See also:
 //   on keyword
 defn: tMACRO ID { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear(); }
-		begin argdef '\n' argstore stmtlist 		{
-			g_lingo->code1(LC::c_procret);
-			g_lingo->define(*$ID, $begin, $argdef);
-			g_lingo->clearArgStack();
-			g_lingo->_indef = kStateNone;
-			delete $ID; }
+			begin argdef '\n' argstore stmtlist 		{
+		g_lingo->code1(LC::c_procret);
+		g_lingo->define(*$ID, $begin, $argdef);
+		g_lingo->clearArgStack();
+		g_lingo->_indef = kStateNone;
+		delete $ID; }
 	| tFACTORY ID	{ g_lingo->codeFactory(*$2); delete $ID; }
 	| tMETHOD { g_lingo->_indef = kStateInArgs; }
-		begin argdef '\n' argstore stmtlist 		{
-			g_lingo->code1(LC::c_procret);
-			g_lingo->define(*$tMETHOD, $begin, $argdef + 1, &g_lingo->_currentFactory);
-			g_lingo->clearArgStack();
-			g_lingo->_indef = kStateNone;
-			delete $tMETHOD; }
+			begin argdef '\n' argstore stmtlist 		{
+		g_lingo->code1(LC::c_procret);
+		g_lingo->define(*$tMETHOD, $begin, $argdef + 1, &g_lingo->_currentFactory);
+		g_lingo->clearArgStack();
+		g_lingo->_indef = kStateNone;
+		delete $tMETHOD; }
 	| on begin argdef '\n' argstore stmtlist ENDCLAUSE endargdef {	// D3
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$on, $begin, $argdef);
