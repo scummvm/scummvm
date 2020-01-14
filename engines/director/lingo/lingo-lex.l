@@ -24,6 +24,7 @@
 %option nounput
 %option noinput
 %option never-interactive
+%option case-insensitive
 
 %option outfile="engines/director/lingo/lingo-lex.cpp"
 
@@ -95,17 +96,17 @@ whitespace [\t ]
 
 [#]{identifier}	{ count(); yylval.s = new Common::String(yytext); return SYMBOL; }	// D3
 
-(?i:after)		{ count(); return tAFTER; }		// D3
-(?i:and)		{ count(); return tAND; }
-(?i:before)		{ count(); return tBEFORE; }	// D3
-(?i:char)		{ count(); return tCHAR; }		// D3
-(?i:contains)	{ count(); return tCONTAINS; }
-(?i:done)		{ count(); return tDONE; }
-(?i:down)		{ count(); return tDOWN; }
-(?i:if)			{ count(); return tIF; }
-(?i:else[\t ]+if)	{ count(); return tELSIF; }
-(?i:else)		{ count(); return tELSE; }
-(?i:end)([\t ]+{identifier})?	{
+after		{ count(); return tAFTER; }		// D3
+and			{ count(); return tAND; }
+before		{ count(); return tBEFORE; }	// D3
+char		{ count(); return tCHAR; }		// D3
+contains	{ count(); return tCONTAINS; }
+done		{ count(); return tDONE; }
+down		{ count(); return tDOWN; }
+if			{ count(); return tIF; }
+else[\t ]+if { count(); return tELSIF; }
+else		{ count(); return tELSE; }
+end([\t ]+{identifier})?	{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'end '
@@ -123,20 +124,20 @@ whitespace [\t ]
 
 		return ENDCLAUSE;
 	}
-^[ \t]*(?:factory) { count(); return tFACTORY; }
-(?i:exit)		{ count(); return tEXIT; }
-(?i:global)		{ count(); return tGLOBAL; }
-(?i:go[\t ]+to[\t ]+frame)	{ count(); return tGO; }
-(?i:go[\t ]+to)	{ count(); return tGO; }
-(?i:go)			{ count(); return tGO; }
-(?i:instance)	{ count(); return tINSTANCE; }
-(?i:intersects)	{ count(); return tINTERSECTS; }
-(?i:into)		{ count(); return tINTO; }
-(?i:item)		{ count(); return tITEM; }
-(?i:line)		{ count(); return tLINE; }
-(?i:loop)		{ count(); return checkImmediate(tLOOP); }
-(?i:macro)		{ count(); return tMACRO; }
-(?i:method)([\t ]*{identifier})		{
+^[ \t]*factory { count(); return tFACTORY; }
+exit		{ count(); return tEXIT; }
+global		{ count(); return tGLOBAL; }
+go[\t ]+to[\t ]+frame	{ count(); return tGO; }
+go[\t ]+to	{ count(); return tGO; }
+go			{ count(); return tGO; }
+instance	{ count(); return tINSTANCE; }
+intersects	{ count(); return tINTERSECTS; }
+into		{ count(); return tINTO; }
+item		{ count(); return tITEM; }
+line		{ count(); return tLINE; }
+loop		{ count(); return checkImmediate(tLOOP); }
+macro		{ count(); return tMACRO; }
+method[\t ]*{identifier}		{
 		count();
 
 		const char *ptr = &yytext[6]; // Skip 'method '
@@ -147,23 +148,23 @@ whitespace [\t ]
 
 		return tMETHOD;
 	}
-(?i:mod)		{ count(); return tMOD; }
-(?i:movie)		{ count(); return tMOVIE; }
-(?i:next)		{ count(); return tNEXT; }
-(?i:not)		{ count(); return tNOT; }
-(?i:of)			{ count(); return tOF; }
-(?i:on)			{ count(); return tON; }		// D3
-(?i:open)		{ count(); return tOPEN; }
-(?i:or)			{ count(); return tOR; }
-(?i:play[\t ]+frame)	{ count(); return tPLAY; }
-(?i:play)		{ count(); return tPLAY; }
-(?i:playAccel)	{ count(); yylval.s = new Common::String(yytext); return tPLAYACCEL; }
-(?i:previous)	{ count(); return tPREVIOUS; }
-(?i:property)	{ count(); return tPROPERTY; }	// D4
-(?i:put)		{ count(); return tPUT; }
-(?i:repeat)		{ count(); return checkImmediate(tREPEAT); }
-(?i:set)		{ count(); return tSET; }
-(?i:sound[\ t]+(close|fadeIn|fadeOut|playFile|stop))	{
+mod			{ count(); return tMOD; }
+movie		{ count(); return tMOVIE; }
+next		{ count(); return tNEXT; }
+not			{ count(); return tNOT; }
+of			{ count(); return tOF; }
+on			{ count(); return tON; }		// D3
+open		{ count(); return tOPEN; }
+or			{ count(); return tOR; }
+play[\t ]+frame	{ count(); return tPLAY; }
+play		{ count(); return tPLAY; }
+playAccel	{ count(); yylval.s = new Common::String(yytext); return tPLAYACCEL; }
+previous	{ count(); return tPREVIOUS; }
+property	{ count(); return tPROPERTY; }	// D4
+put			{ count(); return tPUT; }
+repeat		{ count(); return checkImmediate(tREPEAT); }
+set			{ count(); return tSET; }
+sound[\ t]+(close|fadeIn|fadeOut|playFile|stop)	{
 		count();
 
 		const char *ptr = &yytext[6]; // Skip 'sound '
@@ -183,9 +184,9 @@ whitespace [\t ]
 			error("LEXER: Unhandled 'sound %s'", command.c_str());
 		}
 	}
-(?i:starts)		{ count(); return tSTARTS; }
-(?i:tell)		{ count(); return tTELL; }
-(?i:the[ \t]+sqrt[\t ]+of[\t ]+)	{
+starts		{ count(); return tSTARTS; }
+tell		{ count(); return tTELL; }
+the[ \t]+sqrt[\t ]+of[\t ]+	{
 		count();
 
 		yylval.e[0] = g_lingo->_theEntities["sqrt"]->entity;
@@ -193,14 +194,14 @@ whitespace [\t ]
 
 		return THEENTITYWITHID;
 	}
-(?i:the[ \t]+value[\t ]+of[\t ]*)	{
+the[ \t]+value[\t ]+of[\t ]*	{
 		count();
 
 		yylval.s = new Common::String("value");
 
 		return FBLTIN;
 	}
-(?i:the[ \t]+number[\t ]+of[\t ]+[[:alpha:]]+[\t ](in|of))	{
+the[ \t]+number[\t ]+of[\t ]+[[:alpha:]]+[\t ](in|of)	{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
@@ -223,7 +224,7 @@ whitespace [\t ]
 		else
 			error("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
 	}
-(?i:the[ \t]+[[:alpha:]]+[\t ]+of[\t ]+{identifier})	{
+the[ \t]+[[:alpha:]]+[\t ]+of[\t ]+{identifier}	{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
@@ -276,7 +277,7 @@ whitespace [\t ]
 
 		warning("LEXER: Unhandled the entity '%s', field '%s'", ptr, field.c_str());
 	}
-(?i:the[ \t]+[[:alpha:]]+[ \t+](date|time))		{
+the[ \t]+[[:alpha:]]+[ \t+](date|time)		{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
@@ -307,7 +308,7 @@ whitespace [\t ]
 		else
 			return THEENTITY;
 	}
-(?i:the[ \t]+[[:alpha:]]+)		{
+the[ \t]+[[:alpha:]]+		{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
@@ -326,14 +327,14 @@ whitespace [\t ]
 
 		warning("LEXER: Unhandled the entity '%s'", ptr);
 	}
-(?i:then)			{ count(); return tTHEN; }
-(?i:to)				{ count(); return tTO; }
-(?i:sprite)			{ count(); return tSPRITE; }
-(?i:with)			{ count(); return tWITH; }
-(?i:within)			{ count(); return tWITHIN; }
-(?i:when)			{ count(); return tWHEN; }
-(?i:while)			{ count(); return tWHILE; }
-(?i:word)			{ count(); return tWORD; }
+then			{ count(); return tTHEN; }
+to				{ count(); return tTO; }
+sprite			{ count(); return tSPRITE; }
+with			{ count(); return tWITH; }
+within			{ count(); return tWITHIN; }
+when			{ count(); return tWHEN; }
+while			{ count(); return tWHILE; }
+word			{ count(); return tWORD; }
 
 [<][>]				{ count(); return tNEQ; }
 [>][=]				{ count(); return tGE; }
