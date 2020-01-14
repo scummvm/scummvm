@@ -122,9 +122,9 @@ namespace LC {
 	void c_hilite();
 
 	// stubs for unknown instructions
-	void c_unk();
-	void c_unk1();
-	void c_unk2();
+	void cb_unk();
+	void cb_unk1();
+	void cb_unk2();
 
 	// bytecode-related instructions
 	void cb_localcall();

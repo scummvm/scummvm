@@ -59,88 +59,88 @@ static struct FuncDescr {
 	const char *args;
 } funcDescr[] = {
 	{ 0,					"STOP",				""  },
-	{ LC::c_xpop,			"c_xpop",			""  },
-	{ LC::c_argcpush,		"c_argcpush",		"i" },
-	{ LC::c_argcnoretpush,	"c_argcnoretpush",	"i" },
-	{ LC::c_arraypush,		"c_arraypush",		"i" },
-	{ LC::c_proparraypush,	"c_proparraypush",	"i" },
-	{ LC::c_printtop,		"c_printtop",		""  },
-	{ LC::c_intpush,		"c_intpush",		"i" },
-	{ LC::c_voidpush,		"c_voidpush",		""  },
-	{ LC::c_floatpush,		"c_floatpush",		"f" },
-	{ LC::c_stringpush,		"c_stringpush",		"s" },
-	{ LC::c_symbolpush,		"c_symbolpush",		"s" },	// D3
-	{ LC::c_namepush,		"c_namepush",		"i" },
-	{ LC::c_varpush,		"c_varpush",		"s" },
-	{ LC::c_setImmediate,	"c_setImmediate",	"i" },
-	{ LC::c_assign,			"c_assign",			""  },
-	{ LC::c_eval,			"c_eval",			"s" },
-	{ LC::c_theentitypush,	"c_theentitypush",	"EF" }, // entity, field
-	{ LC::c_theentityassign,"c_theentityassign","EF" },
-	{ LC::c_objectfieldpush,"c_objectfieldpush","sF" }, // object, field
-	{ LC::c_objectfieldassign,"c_objectfieldassign","sF" },
-	{ LC::c_swap,			"c_swap",			"" },
 	{ LC::c_add,			"c_add",			"" },
-	{ LC::c_sub,			"c_sub",			"" },
-	{ LC::c_mul,			"c_mul",			"" },
-	{ LC::c_div,			"c_div",			"" },
-	{ LC::c_mod,			"c_mod",			"" },
-	{ LC::c_negate,			"c_negate",			"" },
-	{ LC::c_ampersand,		"c_ampersand",		"" },
 	{ LC::c_after,			"c_after",			"" },	// D3
+	{ LC::c_ampersand,		"c_ampersand",		"" },
+	{ LC::c_and,			"c_and",			"" },
+	{ LC::c_argcnoretpush,	"c_argcnoretpush",	"i" },
+	{ LC::c_argcpush,		"c_argcpush",		"i" },
+	{ LC::c_arraypush,		"c_arraypush",		"i" },
+	{ LC::c_assign,			"c_assign",			""  },
 	{ LC::c_before,			"c_before",			"" },	// D3
-	{ LC::c_concat,			"c_concat",			"" },
-	{ LC::c_contains,		"c_contains",		"" },
-	{ LC::c_starts,			"c_starts",			"" },
-	{ LC::c_intersects,		"c_intersects",		"" },
-	{ LC::c_within,			"c_within",			"" },
-	{ LC::c_of,				"c_of",				"" },
+	{ LC::c_call,			"c_call",			"si" },
 	{ LC::c_charOf,			"c_charOf",			"" },	// D3
 	{ LC::c_charToOf,		"c_charToOf",		"" },	// D3
-	{ LC::c_itemOf,			"c_itemOf",			"" },	// D3
-	{ LC::c_itemToOf,		"c_itemToOf",		"" },	// D3
-	{ LC::c_lineOf,			"c_lineOf",			"" },	// D3
-	{ LC::c_lineToOf,		"c_lineToOf",		"" },	// D3
-	{ LC::c_wordOf,			"c_wordOf",			"" },	// D3
-	{ LC::c_wordToOf,		"c_wordToOf",		"" },	// D3
-	{ LC::c_and,			"c_and",			"" },
-	{ LC::c_or,				"c_or",				"" },
-	{ LC::c_not,			"c_not",			"" },
+	{ LC::c_concat,			"c_concat",			"" },
+	{ LC::c_contains,		"c_contains",		"" },
+	{ LC::c_div,			"c_div",			"" },
 	{ LC::c_eq,				"c_eq",				"" },
-	{ LC::c_neq,			"c_neq",			"" },
-	{ LC::c_gt,				"c_gt",				"" },
-	{ LC::c_lt,				"c_lt",				"" },
-	{ LC::c_ge,				"c_ge",				"" },
-	{ LC::c_le,				"c_le",				"" },
-	{ LC::c_jump,			"c_jump",			"i" },
-	{ LC::c_jumpifz,		"c_jumpifz",		"i" },
-	{ LC::c_repeatwhilecode,"c_repeatwhilecode","oo" },
-	{ LC::c_repeatwithcode,	"c_repeatwithcode",	"ooooos" },
+	{ LC::c_eval,			"c_eval",			"s" },
 	{ LC::c_exitRepeat,		"c_exitRepeat",		"" },
-	{ LC::c_ifcode,			"c_ifcode",			"oooi" },
-	{ LC::c_tellcode,		"c_tellcode",		"o" },
-	{ LC::c_tell,			"c_tell",			"" },
-	{ LC::c_telldone,		"c_telldone",		"" },
-	{ LC::c_whencode,		"c_whencode",		"os" },
+	{ LC::c_floatpush,		"c_floatpush",		"f" },
+	{ LC::c_ge,				"c_ge",				"" },
+	{ LC::c_global,			"c_global",			"s" },
 	{ LC::c_goto,			"c_goto",			"" },
 	{ LC::c_gotoloop,		"c_gotoloop",		"" },
 	{ LC::c_gotonext,		"c_gotonext",		"" },
 	{ LC::c_gotoprevious,	"c_gotoprevious",	"" },
+	{ LC::c_gt,				"c_gt",				"" },
+	{ LC::c_hilite,			"c_hilite",			"" },
+	{ LC::c_ifcode,			"c_ifcode",			"oooi" },
+	{ LC::c_instance,		"c_instance",		"s" },
+	{ LC::c_intersects,		"c_intersects",		"" },
+	{ LC::c_intpush,		"c_intpush",		"i" },
+	{ LC::c_itemOf,			"c_itemOf",			"" },	// D3
+	{ LC::c_itemToOf,		"c_itemToOf",		"" },	// D3
+	{ LC::c_jump,			"c_jump",			"i" },
+	{ LC::c_jumpifz,		"c_jumpifz",		"i" },
+	{ LC::c_le,				"c_le",				"" },
+	{ LC::c_lineOf,			"c_lineOf",			"" },	// D3
+	{ LC::c_lineToOf,		"c_lineToOf",		"" },	// D3
+	{ LC::c_lt,				"c_lt",				"" },
+	{ LC::c_mod,			"c_mod",			"" },
+	{ LC::c_mul,			"c_mul",			"" },
+	{ LC::c_namepush,		"c_namepush",		"i" },
+	{ LC::c_negate,			"c_negate",			"" },
+	{ LC::c_neq,			"c_neq",			"" },
+	{ LC::c_not,			"c_not",			"" },
+	{ LC::c_objectfieldassign,"c_objectfieldassign","sF" },
+	{ LC::c_objectfieldpush,"c_objectfieldpush","sF" }, // object, field
+	{ LC::c_of,				"c_of",				"" },
+	{ LC::c_open,			"c_open",			"" },
+	{ LC::c_or,				"c_or",				"" },
 	{ LC::c_play,			"c_play",			"" },
 	{ LC::c_playdone,		"c_playdone",		"" },
-	{ LC::c_call,			"c_call",			"si" },
+	{ LC::c_printtop,		"c_printtop",		""  },
 	{ LC::c_procret,		"c_procret",		"" },
-	{ LC::c_global,			"c_global",			"s" },
+	{ LC::c_proparraypush,	"c_proparraypush",	"i" },
 	{ LC::c_property,		"c_property",		"s" },
-	{ LC::c_instance,		"c_instance",		"s" },
-	{ LC::c_open,			"c_open",			"" },
-	{ LC::c_hilite,			"c_hilite",			"" },
-	{ LC::c_unk,			"c_unk",			"i" },
-	{ LC::c_unk1,			"c_unk1",			"ii" },
-	{ LC::c_unk2,			"c_unk2",			"iii" },
+	{ LC::c_repeatwhilecode,"c_repeatwhilecode","oo" },
+	{ LC::c_repeatwithcode,	"c_repeatwithcode",	"ooooos" },
+	{ LC::c_setImmediate,	"c_setImmediate",	"i" },
+	{ LC::c_starts,			"c_starts",			"" },
+	{ LC::c_stringpush,		"c_stringpush",		"s" },
+	{ LC::c_sub,			"c_sub",			"" },
+	{ LC::c_swap,			"c_swap",			"" },
+	{ LC::c_symbolpush,		"c_symbolpush",		"s" },	// D3
+	{ LC::c_tell,			"c_tell",			"" },
+	{ LC::c_tellcode,		"c_tellcode",		"o" },
+	{ LC::c_telldone,		"c_telldone",		"" },
+	{ LC::c_theentityassign,"c_theentityassign","EF" },
+	{ LC::c_theentitypush,	"c_theentitypush",	"EF" }, // entity, field
+	{ LC::c_varpush,		"c_varpush",		"s" },
+	{ LC::c_voidpush,		"c_voidpush",		""  },
+	{ LC::c_whencode,		"c_whencode",		"os" },
+	{ LC::c_within,			"c_within",			"" },
+	{ LC::c_wordOf,			"c_wordOf",			"" },	// D3
+	{ LC::c_wordToOf,		"c_wordToOf",		"" },	// D3
+	{ LC::c_xpop,			"c_xpop",			""  },
 	{ LC::cb_call,			"cb_call",			"i" },
 	{ LC::cb_field,			"cb_field",			"" },
 	{ LC::cb_localcall,		"cb_localcall",		"i" },
+	{ LC::cb_unk,			"cb_unk",			"i" },
+	{ LC::cb_unk1,			"cb_unk1",			"ii" },
+	{ LC::cb_unk2,			"cb_unk2",			"iii" },
 	{ LC::cb_v4putvalue,	"cb_putvalue",		"i" },
 	{ LC::cb_v4theentitypush,"cb_v4theentitypush","i" },
 	{ LC::cb_v4theentitynamepush,"cb_v4theentitynamepush","i" },
@@ -1336,24 +1336,5 @@ void LC::c_hilite() {
 		first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
 		cast_id.u.i);
 }
-
-void LC::c_unk() {
-	uint opcode = g_lingo->readInt();
-	warning("STUB: opcode 0x%02x", opcode);
-}
-
-void LC::c_unk1() {
-	uint opcode = g_lingo->readInt();
-	uint arg1 = g_lingo->readInt();
-	warning("STUB: opcode 0x%02x (%d)", opcode, arg1);
-}
-
-void LC::c_unk2() {
-	uint opcode = g_lingo->readInt();
-	uint arg1 = g_lingo->readInt();
-	uint arg2 = g_lingo->readInt();
-	warning("STUB: opcode 0x%02x (%d, %d)", opcode, arg1, arg2);
-}
-
 
 }

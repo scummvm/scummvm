@@ -191,6 +191,23 @@ void Lingo::initBytecode() {
 	}
 }
 
+void LC::cb_unk() {
+	uint opcode = g_lingo->readInt();
+	warning("STUB: opcode 0x%02x", opcode);
+}
+
+void LC::cb_unk1() {
+	uint opcode = g_lingo->readInt();
+	uint arg1 = g_lingo->readInt();
+	warning("STUB: opcode 0x%02x (%d)", opcode, arg1);
+}
+
+void LC::cb_unk2() {
+	uint opcode = g_lingo->readInt();
+	uint arg1 = g_lingo->readInt();
+	uint arg2 = g_lingo->readInt();
+	warning("STUB: opcode 0x%02x (%d, %d)", opcode, arg1, arg2);
+}
 
 void LC::cb_field() {
 	LB::b_field(1);
@@ -676,12 +693,12 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 				if (opcode < 0x40) { // 1 byte instruction
 					debugC(5, kDebugLingoCompile, "Unimplemented opcode: 0x%02x", opcode);
 					offsetList.push_back(_currentScript->size());
-					g_lingo->code1(LC::c_unk);
+					g_lingo->code1(LC::cb_unk);
 					g_lingo->codeInt(opcode);
 				} else if (opcode < 0x80) { // 2 byte instruction
 					debugC(5, kDebugLingoCompile, "Unimplemented opcode: 0x%02x (%d)", opcode, (uint)codeStore[pointer]);
 					offsetList.push_back(_currentScript->size());
-					g_lingo->code1(LC::c_unk1);
+					g_lingo->code1(LC::cb_unk1);
 					g_lingo->codeInt(opcode);
 					offsetList.push_back(_currentScript->size());
 					g_lingo->codeInt((uint)codeStore[pointer]);
@@ -689,7 +706,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 				} else { // 3 byte instruction
 					debugC(5, kDebugLingoCompile, "Unimplemented opcode: 0x%02x (%d, %d)", opcode, (uint)codeStore[pointer], (uint)codeStore[pointer+1]);
 					offsetList.push_back(_currentScript->size());
-					g_lingo->code1(LC::c_unk2);
+					g_lingo->code1(LC::cb_unk2);
 					g_lingo->codeInt(opcode);
 					offsetList.push_back(_currentScript->size());
 					g_lingo->codeInt((uint)codeStore[pointer]);
