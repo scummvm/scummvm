@@ -196,7 +196,6 @@ namespace LB {
 
 	void b_cast(int nargs);
 	void b_field(int nargs);
-	void b_me(int nargs);
 	void b_script(int nargs);
 
 	void b_numberofchars(int nargs);

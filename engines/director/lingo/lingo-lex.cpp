@@ -1604,12 +1604,6 @@ YY_RULE_SETUP
 		if (g_lingo->_twoWordBuiltins.contains(yytext))
 			return TWOWORDBUILTIN;
 
-		// Special treatment of 'me'. First parameter is method name
-		if (!g_lingo->_currentFactory.empty()) {
-			if (yylval.s->equalsIgnoreCase("me"))
-				return tME;
-		}
-
 		if (g_lingo->_builtins.contains(yytext)) {
 			int type = g_lingo->_builtins[yytext]->type;
 			if ((type == BLTIN || type == FBLTIN || type == RBLTIN) && g_lingo->_builtins[yytext]->parens == false) {
@@ -1642,41 +1636,41 @@ YY_RULE_SETUP
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 376 "engines/director/lingo/lingo-lex.l"
+#line 370 "engines/director/lingo/lingo-lex.l"
 { count(); yylval.f = atof(yytext); return FLOAT; }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 377 "engines/director/lingo/lingo-lex.l"
+#line 371 "engines/director/lingo/lingo-lex.l"
 { count(); yylval.i = strtol(yytext, NULL, 10); return INT; }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 378 "engines/director/lingo/lingo-lex.l"
+#line 372 "engines/director/lingo/lingo-lex.l"
 { count(); return *yytext; }
 	YY_BREAK
 case 72:
 /* rule 72 can match eol */
 YY_RULE_SETUP
-#line 379 "engines/director/lingo/lingo-lex.l"
+#line 373 "engines/director/lingo/lingo-lex.l"
 { count(); return '\n'; }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 380 "engines/director/lingo/lingo-lex.l"
+#line 374 "engines/director/lingo/lingo-lex.l"
 { count(); yylval.s = new Common::String(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 381 "engines/director/lingo/lingo-lex.l"
+#line 375 "engines/director/lingo/lingo-lex.l"
 { count(); }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 383 "engines/director/lingo/lingo-lex.l"
+#line 377 "engines/director/lingo/lingo-lex.l"
 ECHO;
 	YY_BREAK
-#line 1680 "engines/director/lingo/lingo-lex.cpp"
+#line 1674 "engines/director/lingo/lingo-lex.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2636,7 +2630,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 383 "engines/director/lingo/lingo-lex.l"
+#line 377 "engines/director/lingo/lingo-lex.l"
 
 
 

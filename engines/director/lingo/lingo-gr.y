@@ -113,7 +113,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token tGE tLE tEQ tNEQ tAND tOR tNOT tMOD
 %token tAFTER tBEFORE tCONCAT tCONTAINS tSTARTS tCHAR tITEM tLINE tWORD
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
-%token tON tME tENDIF tENDREPEAT tENDTELL
+%token tON tENDIF tENDREPEAT tENDTELL
 
 %type<code> asgn begin elseif end expr if when repeatwhile
 %type<code> repeatwith stmtlist tell reference simpleexpr list valuelist
@@ -448,9 +448,6 @@ expr: simpleexpr { $$ = $1; }
 	| tLINE expr tTO expr tOF expr		{ g_lingo->code1(LC::c_lineToOf); }
 	| tWORD expr tOF expr				{ g_lingo->code1(LC::c_wordOf); }
 	| tWORD expr tTO expr tOF expr		{ g_lingo->code1(LC::c_wordToOf); }
-	| tME '(' ID ')'					{ g_lingo->codeMe($3, 0); }
-	| tME '(' ID ',' arglist ')'		{ g_lingo->codeMe($3, $5); }
-	| tME								{ g_lingo->codeMe(nullptr, 0); }
 	;
 
 reference: 	RBLTINONEARG simpleexpr	{

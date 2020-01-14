@@ -125,10 +125,9 @@
      tTELL = 341,
      tPROPERTY = 342,
      tON = 343,
-     tME = 344,
-     tENDIF = 345,
-     tENDREPEAT = 346,
-     tENDTELL = 347
+     tENDIF = 344,
+     tENDREPEAT = 345,
+     tENDTELL = 346
    };
 #endif
 /* Tokens.  */
@@ -218,10 +217,9 @@
 #define tTELL 341
 #define tPROPERTY 342
 #define tON 343
-#define tME 344
-#define tENDIF 345
-#define tENDREPEAT 346
-#define tENDTELL 347
+#define tENDIF 344
+#define tENDREPEAT 345
+#define tENDTELL 346
 
 
 
@@ -244,7 +242,7 @@ typedef union YYSTYPE
 	} objectfield;
 }
 /* Line 1529 of yacc.c.  */
-#line 248 "engines/director/lingo/lingo-gr.hpp"
+#line 246 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -320,6 +320,10 @@ void LC::c_varpush() {
 		return;
 	}
 
+	if (name.equalsIgnoreCase("me")) {
+		warning("c_varpush: ME");
+	}
+
 	if (g_lingo->getHandler(name) != NULL) {
 		d.type = HANDLER;
 		d.u.s = new Common::String(name);
