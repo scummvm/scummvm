@@ -444,8 +444,15 @@ void KyraEngine_MR::initSceneAnims(int unk1) {
 
 	AnimObj *obj = &_animObjects[0];
 
-	if (_mainCharacter.animFrame != 87 && !unk1)
-		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+	if (_mainCharacter.animFrame != 87 && !unk1) {
+		if (_mainCharacter.facing == 0xFF) {
+			// Fix for bug #11312 (café scene)
+			debugC(3, kDebugLevelSprites, "KyraEngine_MR::initSceneAnims(): Triggered WORKAROUND for invalid character facing");
+			_mainCharacter.animFrame = 0;
+		} else {
+			_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+		}
+	}
 
 	obj->enabled = true;
 	obj->xPos1 = _mainCharacter.x1;
