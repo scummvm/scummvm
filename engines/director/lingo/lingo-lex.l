@@ -25,6 +25,8 @@
 %option noinput
 %option never-interactive
 
+%option outfile="engines/director/lingo/lingo-lex.cpp"
+
 %{
 
 #define YY_NO_UNISTD_H

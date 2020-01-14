@@ -30,7 +30,7 @@ MODULE_OBJS = \
 	lingo/lingo-the.o
 
 director-grammar:
-	flex -o engines/director/lingo/lingo-lex.cpp engines/director/lingo/lingo-lex.l
+	flex engines/director/lingo/lingo-lex.l
 	bison -dv engines/director/lingo/lingo-gr.y
 
 # This module can be built as a plugin
