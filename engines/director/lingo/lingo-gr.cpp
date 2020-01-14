@@ -243,8 +243,8 @@ union YYSTYPE
 	Common::Array<double> *arr;
 
 	struct {
-		Common::String *s;
-		int e;
+		Common::String *os;
+		int oe;
 	} objectfield;
 
 #line 251 "engines/director/lingo/lingo-gr.cpp"
@@ -1702,7 +1702,7 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
 
     case 28: /* THEOBJECTFIELD  */
 #line 131 "engines/director/lingo/lingo-gr.y"
-            { delete ((*yyvaluep).objectfield).s; }
+            { delete ((*yyvaluep).objectfield).os; }
 #line 1707 "engines/director/lingo/lingo-gr.cpp"
         break;
 
@@ -2085,9 +2085,9 @@ yyreduce:
 #line 194 "engines/director/lingo/lingo-gr.y"
                                         {
 		g_lingo->code1(LC::c_objectfieldassign);
-		g_lingo->codeString((yyvsp[-2].objectfield).s->c_str());
-		g_lingo->codeInt((yyvsp[-2].objectfield).e);
-		delete (yyvsp[-2].objectfield).s;
+		g_lingo->codeString((yyvsp[-2].objectfield).os->c_str());
+		g_lingo->codeInt((yyvsp[-2].objectfield).oe);
+		delete (yyvsp[-2].objectfield).os;
 		(yyval.code) = (yyvsp[0].code); }
 #line 2093 "engines/director/lingo/lingo-gr.cpp"
     break;
@@ -2398,9 +2398,9 @@ yyreduce:
 #line 416 "engines/director/lingo/lingo-gr.y"
                          {
 		g_lingo->code1(LC::c_objectfieldpush);
-		g_lingo->codeString((yyvsp[0].objectfield).s->c_str());
-		g_lingo->codeInt((yyvsp[0].objectfield).e);
-		delete (yyvsp[0].objectfield).s; }
+		g_lingo->codeString((yyvsp[0].objectfield).os->c_str());
+		g_lingo->codeInt((yyvsp[0].objectfield).oe);
+		delete (yyvsp[0].objectfield).os; }
 #line 2405 "engines/director/lingo/lingo-gr.cpp"
     break;
 

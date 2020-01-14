@@ -245,8 +245,8 @@ whitespace [\t ]
 					error("LEXER: Unhandled the field '%s' for object", field.c_str());
 				}
 
-				yylval.objectfield.s = new Common::String(ptr);
-				yylval.objectfield.e = g_lingo->_theEntityFields[field]->field;
+				yylval.objectfield.os = new Common::String(ptr);
+				yylval.objectfield.oe = g_lingo->_theEntityFields[field]->field;
 
 				return THEOBJECTFIELD;
 			}

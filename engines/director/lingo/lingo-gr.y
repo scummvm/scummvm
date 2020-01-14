@@ -93,8 +93,8 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 	Common::Array<double> *arr;
 
 	struct {
-		Common::String *s;
-		int e;
+		Common::String *os;
+		int oe;
 	} objectfield;
 }
 
@@ -128,7 +128,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %right UNARY
 
 %destructor { delete $$; } <s>
-%destructor { delete $$.s; } <objectfield>
+%destructor { delete $$.os; } <objectfield>
 
 %%
 
@@ -193,9 +193,9 @@ asgn: tPUT expr tINTO ID 		{
 		$$ = $expr; }
 	| tSET THEOBJECTFIELD tTO expr	{
 		g_lingo->code1(LC::c_objectfieldassign);
-		g_lingo->codeString($THEOBJECTFIELD.s->c_str());
-		g_lingo->codeInt($THEOBJECTFIELD.e);
-		delete $THEOBJECTFIELD.s;
+		g_lingo->codeString($THEOBJECTFIELD.os->c_str());
+		g_lingo->codeInt($THEOBJECTFIELD.oe);
+		delete $THEOBJECTFIELD.os;
 		$$ = $expr; }
 	;
 
@@ -415,9 +415,9 @@ expr: simpleexpr { $$ = $simpleexpr; }
 		g_lingo->code2(e, f); }
 	| THEOBJECTFIELD {
 		g_lingo->code1(LC::c_objectfieldpush);
-		g_lingo->codeString($THEOBJECTFIELD.s->c_str());
-		g_lingo->codeInt($THEOBJECTFIELD.e);
-		delete $THEOBJECTFIELD.s; }
+		g_lingo->codeString($THEOBJECTFIELD.os->c_str());
+		g_lingo->codeInt($THEOBJECTFIELD.oe);
+		delete $THEOBJECTFIELD.os; }
 	| asgn
 	| expr '+' expr				{ g_lingo->code1(LC::c_add); }
 	| expr '-' expr				{ g_lingo->code1(LC::c_sub); }

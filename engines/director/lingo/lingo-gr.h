@@ -147,8 +147,8 @@ union YYSTYPE
 	Common::Array<double> *arr;
 
 	struct {
-		Common::String *s;
-		int e;
+		Common::String *os;
+		int oe;
 	} objectfield;
 
 #line 155 "engines/director/lingo/lingo-gr.h"
