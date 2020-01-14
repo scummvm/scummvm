@@ -129,6 +129,9 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %left '*' '/' '%' tMOD
 %right UNARY
 
+%destructor { delete $$; } <s>
+%destructor { delete $$.s; } <objectfield>
+
 %%
 
 program: program '\n' programline
