@@ -1,3 +1,5 @@
+global version
+
 on initPattern
     global MaxPattern
     set MaxPattern = 65
