@@ -550,7 +550,7 @@ playfunc: tPLAY tDONE			{ g_lingo->code1(LC::c_playdone); }
 //
 // See also:
 //   on keyword
-defn: tMACRO ID { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear(); }
+defn: tMACRO { g_lingo->_indef = kStateInArgs; } ID { g_lingo->_currentFactory.clear(); }
 			begin argdef '\n' argstore stmtlist 		{
 		g_lingo->code1(LC::c_procret);
 		g_lingo->define(*$ID, $begin, $argdef);
@@ -583,7 +583,7 @@ defn: tMACRO ID { g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear
 		g_lingo->_ignoreMe = false;
 		delete $on; }
 
-on:  tON ID { $$ = $ID; g_lingo->_indef = kStateInArgs; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
+on:  tON { g_lingo->_indef = kStateInArgs; } ID { $$ = $ID; g_lingo->_currentFactory.clear(); g_lingo->_ignoreMe = true; }
 
 argdef:  /* nothing */ 		{ $$ = 0; }
 	| ID					{ g_lingo->codeArg($ID); $$ = 1; delete $ID; }
