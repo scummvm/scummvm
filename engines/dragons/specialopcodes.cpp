@@ -47,10 +47,17 @@
 
 namespace Dragons {
 
+const int16 shakeTbl[16] = {
+		5,      2,     -2,     -5,
+		5,      2,     -2,     -5,
+		-1,      2,     -1,     -1,
+		2,     -1,      1,      0
+};
+
 // SpecialOpcodes
 
 SpecialOpcodes::SpecialOpcodes(DragonsEngine *vm)
-	: _vm(vm) {
+	: _vm(vm), _specialOpCounter(0) {
 	initOpcodes();
 }
 
@@ -296,22 +303,10 @@ void SpecialOpcodes::spcStopLadyOfTheLakeCapturedSceneLogic() {
 }
 
 void SpecialOpcodes::spc11ShakeScreen() {
-	//TODO
-//	iVar18 = 1;
-//	local_10a0 = DAT_8001170c;
-//	local_109c = DAT_80011710;
-//	local_1098 = DAT_80011714;
-//	local_1094 = uint32_t_80011718;
-//	local_1090 = DAT_8001171c;
-//	local_108c = DAT_80011720;
-//	local_1088 = DAT_80011724;
-//	local_1084 = DAT_80011728;
-//	screenShakeOffset = (short)local_10a0;
-//	while (screenShakeOffset != 0) {
-//		ContinueGame?();
-//		screenShakeOffset = *(short *)((int)&local_10a0 + ((iVar18 << 0x10) >> 0xf));
-//		iVar18 = iVar18 + 1;
-//	}
+	for (int i = 0; i < 16; i++ ) {
+		_vm->_screen->setScreenShakeOffset(0, shakeTbl[i]);
+		_vm->waitForFrames(1);
+	}
 }
 
 void SpecialOpcodes::spcHandleInventionBookTransition() {
@@ -532,24 +527,10 @@ void SpecialOpcodes::spcTownAngryVillagersSceneLogic() {
 }
 
 void SpecialOpcodes::spcBlackDragonCrashThroughGate() {
-	//TODO spcBlackDragonCrashThroughGate
-	//shake screen.
-//	iVar18 = 1;
-//	local_fd8 = DAT_8001170c;
-//	local_fd4 = DAT_80011710;
-//	local_fd0 = DAT_80011714;
-//	local_fcc = uint32_t_80011718;
-//	local_fc8 = DAT_8001171c;
-//	local_fc4 = DAT_80011720;
-//	local_fc0 = DAT_80011724;
-//	local_fbc = DAT_80011728;
-//	DAT_8006339a = (short)local_10a0;
-//	while (screenShakeOffset = DAT_8006339a, DAT_8006339a != 0) {
-//		screenShakeOffset = DAT_8006339a;
-//		ContinueGame?();
-//		DAT_8006339a = *(short *)((int)&local_fd8 + ((iVar18 << 0x10) >> 0xf));
-//		iVar18 = iVar18 + 1;
-//	}
+	for (int i = 0; i < 16; i++ ) {
+		_vm->_screen->setScreenShakeOffset(shakeTbl[i], shakeTbl[i]);
+		_vm->waitForFrames(1);
+	}
 }
 
 void SpecialOpcodes::spcSetEngineFlag0x2000000() {
@@ -831,15 +812,13 @@ void SpecialOpcodes::spc82CallResetDataMaybe() {
 
 void SpecialOpcodes::spcStopScreenShakeUpdater() {
 	_vm->setSceneUpdateFunction(NULL);
-	//TODO spcStopScreenShakeUpdater
-//	DAT_8006339a = 0;
-//	screenShakeOffset = 0;
+	_vm->_screen->setScreenShakeOffset(0, 0);
 }
 
 void SpecialOpcodes::spcInsideBlackDragonScreenShake() {
 	const int16 shakeTbl[5] = {5, -2, 4, -1, 0};
 	for (int i = 0; i < 5; i ++) {
-		_vm->_screen->setScreenShakeOffset(shakeTbl[i]);
+		_vm->_screen->setScreenShakeOffset(0, shakeTbl[i]);
 		_vm->waitForFrames(1);
 	}
 }
@@ -1076,7 +1055,16 @@ void SpecialOpcodes::spcUnk80FlickerArmorOn() {
 }
 
 void SpecialOpcodes::spcShakeScreenSceneLogic() {
+	setSpecialOpCounter(0x1e);
 	_vm->setSceneUpdateFunction(shakeScreenUpdateFunction);
+}
+
+int16 SpecialOpcodes::getSpecialOpCounter() {
+	return _specialOpCounter;
+}
+
+void SpecialOpcodes::setSpecialOpCounter(int16 newValue) {
+	_specialOpCounter = newValue;
 }
 
 void pizzaUpdateFunction() {
@@ -1182,22 +1170,19 @@ void castleBuildingBlackDragon2UpdateFunction() {
 }
 
 void shakeScreenUpdateFunction() {
-	//TODO shakeScreenUpdateFunction
-//	uint uVar1;
-//
-//	if (int16_t_80072898 == 0) {
-//		DAT_80083148 = DAT_80083148 ^ 1;
-//		uVar1 = 1;
-//		if (DAT_80083148 == 0) {
-//			uVar1 = 0xffffffff;
-//		}
-//		DAT_8006339a = (undefined2)uVar1;
-//		screenShakeOffset = DAT_8006339a;
-//	}
-//	else {
-//		int16_t_80072898 = int16_t_80072898 - 1;
-//		uVar1 = (uint)(ushort)int16_t_80072898;
-//	}
+	static uint8 DAT_80083148 = 0;
+	DragonsEngine *vm = getEngine();
+	int16 int16_t_80072898 = vm->_scriptOpcodes->_specialOpCodes->getSpecialOpCounter();
+
+	if (int16_t_80072898 == 0) {
+		DAT_80083148 = DAT_80083148 ^ 1u;
+		int16 shakeValue = DAT_80083148 != 0 ? 1 : -1;
+		vm->_screen->setScreenShakeOffset(shakeValue, shakeValue);
+	}
+	else {
+		int16_t_80072898 = int16_t_80072898 - 1;
+	}
+	vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(int16_t_80072898);
 }
 
 void ladyOfTheLakeCapturedUpdateFunction() {

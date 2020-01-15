@@ -24,6 +24,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
+#include "common/rect.h"
 
 namespace Dragons {
 #define DRAGONS_NUM_PALETTES 5
@@ -33,7 +34,7 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 	Graphics::Surface *_backSurface;
 	byte _palettes[DRAGONS_NUM_PALETTES][512];
-	int16 _screenShakeOffset;
+	Common::Point _screenShakeOffset;
 public:
 	virtual ~Screen();
 
@@ -53,7 +54,7 @@ public:
 	Common::Rect clipRectToScreen(int destX, int destY, const Common::Rect rect);
 	Common::Rect clipRectToRect(int destX, int destY, const Common::Rect rect, const Common::Rect containerRect);
 
-	void setScreenShakeOffset(int16 newOffset);
+	void setScreenShakeOffset(int16 x, int16 y);
 
 	void copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, byte *palette, int yOffset);
 

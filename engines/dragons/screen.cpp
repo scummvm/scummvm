@@ -34,11 +34,24 @@ Screen::Screen() {
 	initGraphics(320, 200, &_pixelFormat);
 	_backSurface = new Graphics::Surface();
 	_backSurface->create(320, 200, _pixelFormat);
-	_screenShakeOffset = 0;
+	_screenShakeOffset = Common::Point();
 }
 
 void Screen::updateScreen() {
-	g_system->copyRectToScreen((byte*)_backSurface->getBasePtr(0, 0), _backSurface->pitch, 0, 0, _backSurface->w, _backSurface->h);
+	if (_screenShakeOffset.x != 0 || _screenShakeOffset.y != 0) {
+		g_system->fillScreen(0); //TODO this is meant for 8bit screens. we should use system shake here.
+	}
+	Common::Rect clipRect = clipRectToScreen( _screenShakeOffset.x,  _screenShakeOffset.y, Common::Rect(_backSurface->w, _backSurface->h));
+	g_system->copyRectToScreen((byte*)_backSurface->getBasePtr(clipRect.left, clipRect.top),
+			_backSurface->pitch,
+			_screenShakeOffset.x < 0 ? 0 : _screenShakeOffset.x, _screenShakeOffset.y < 0 ? 0 : _screenShakeOffset.y,
+			clipRect.width(), clipRect.height());
+//	if (_screenShakeOffset < 0) {
+//		_backSurface->fillRect(Common::Rect(0,_backSurface->h + _screenShakeOffset - 1, _backSurface->w - 1, _backSurface->h - 1), 0);
+//	}
+//	if (_screenShakeOffset > 0) {
+//		_backSurface->fillRect(Common::Rect(0,0, _backSurface->w - 1, _screenShakeOffset - 1), 0);
+//	}
 	g_system->updateScreen();
 }
 
@@ -335,7 +348,7 @@ byte *Screen::getPalette(uint16 paletteNum) {
 }
 
 void Screen::clearScreen() {
-	_backSurface->fillRect(Common::Rect(0,0, _backSurface->w, _backSurface->h), 0);
+	_backSurface->fillRect(Common::Rect(0,0, _backSurface->w - 1, _backSurface->h - 1), 0);
 }
 
 void Screen::drawRect(uint16 colour, Common::Rect rect, int id) {
@@ -351,8 +364,9 @@ void Screen::drawRect(uint16 colour, Common::Rect rect, int id) {
 
 }
 
-void Screen::setScreenShakeOffset(int16 newOffset) {
-	_screenShakeOffset = newOffset;
+void Screen::setScreenShakeOffset(int16 x, int16 y) {
+	_screenShakeOffset.x = x;
+	_screenShakeOffset.y = y;
 }
 
 void Screen::copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, byte *palette, int yOffset) {

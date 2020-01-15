@@ -317,7 +317,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 			screenShakeCounter = 0;
 		}
 		if (shouldShakeScreen) {
-			_vm->_screen->setScreenShakeOffset(screenShakeTbl[screenShakeCounter]);
+			_vm->_screen->setScreenShakeOffset(0, screenShakeTbl[screenShakeCounter]);
 			if (screenShakeTbl[screenShakeCounter] == 0) {
 				shouldShakeScreen = false;
 			}
@@ -662,7 +662,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 					uVar13->flags = uVar13->flags | 0x1000;
 					flickerArm->flags = flickerArm->flags | 0x1000;
 					loungealotThumb->flags = loungealotThumb->flags | 0x1000;
-					_vm->_screen->setScreenShakeOffset(0);
+					_vm->_screen->setScreenShakeOffset(0, 0);
 					if (local_258 == 1) {
 //						playSoundFromTxtIndex(DAT_80063ad0);
 						loungealotHeadActor->updateSequence(9);
