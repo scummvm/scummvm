@@ -33,3 +33,5 @@ put the width of cast 3
 unload
 unload ab
 unload ab, bc
+
+put framesToHMS(integer(field 3),30,false,false) into field 5
