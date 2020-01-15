@@ -1068,13 +1068,13 @@ void SpecialOpcodes::setSpecialOpCounter(int16 newValue) {
 }
 
 void pizzaUpdateFunction() {
-		static int16 DAT_800634bc = 0;
+		static int16 counter = 0;
 		DragonsEngine *vm = getEngine();
 
 		Actor *actorf4 = vm->getINI(0xf4)->actor;
 		Actor *actorf5 = vm->getINI(0xf5)->actor;
 
-		if (DAT_800634bc == 0) {
+		if (counter == 0) {
 			if (actorf4->isFlagSet(ACTOR_FLAG_4)) {
 				if (actorf4->_sequenceID == 0) {
 					actorf4->updateSequence(1);
@@ -1084,7 +1084,7 @@ void pizzaUpdateFunction() {
 						actorf5->x_pos = 0x115;
 						actorf5->y_pos = 0x5c;
 						actorf5->updateSequence(7);
-						DAT_800634bc = 0x2d;
+						counter = 0x2d;
 						return;
 					}
 					if (actorf4->_sequenceID == 2) {
@@ -1109,7 +1109,7 @@ void pizzaUpdateFunction() {
 			}
 		}
 		else {
-			DAT_800634bc--;
+			counter--;
 		}
 }
 
@@ -1170,19 +1170,19 @@ void castleBuildingBlackDragon2UpdateFunction() {
 }
 
 void shakeScreenUpdateFunction() {
-	static uint8 DAT_80083148 = 0;
+	static uint8 shakeDirection = 0;
 	DragonsEngine *vm = getEngine();
-	int16 int16_t_80072898 = vm->_scriptOpcodes->_specialOpCodes->getSpecialOpCounter();
+	int16 counter = vm->_scriptOpcodes->_specialOpCodes->getSpecialOpCounter();
 
-	if (int16_t_80072898 == 0) {
-		DAT_80083148 = DAT_80083148 ^ 1u;
-		int16 shakeValue = DAT_80083148 != 0 ? 1 : -1;
+	if (counter == 0) {
+		shakeDirection = shakeDirection ^ 1u;
+		int16 shakeValue = shakeDirection != 0 ? 1 : -1;
 		vm->_screen->setScreenShakeOffset(shakeValue, shakeValue);
 	}
 	else {
-		int16_t_80072898 = int16_t_80072898 - 1;
+		counter--;
 	}
-	vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(int16_t_80072898);
+	vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(counter);
 }
 
 void ladyOfTheLakeCapturedUpdateFunction() {
