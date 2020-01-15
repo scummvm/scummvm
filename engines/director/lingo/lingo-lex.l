@@ -85,7 +85,7 @@ constinteger [[:digit:]]+
 conststring \"[^\"\r\n]*\"
 operator [-+*/%^:,()><&\[\]]
 newline [ \t]*[\n\r]
-whitespace [\t ]
+whitespace [ \t]
 
 %%
 
@@ -104,9 +104,9 @@ contains	{ count(); return tCONTAINS; }
 done		{ count(); return tDONE; }
 down		{ count(); return tDOWN; }
 if			{ count(); return tIF; }
-else[\t ]+if { count(); return tELSIF; }
+else[ \t]+if { count(); return tELSIF; }
 else		{ count(); return tELSE; }
-end([\t ]+{identifier})?	{
+end([ \t]+{identifier})?	{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'end '
@@ -127,8 +127,8 @@ end([\t ]+{identifier})?	{
 ^[ \t]*factory { count(); return tFACTORY; }
 exit		{ count(); return tEXIT; }
 global		{ count(); return tGLOBAL; }
-go[\t ]+to[\t ]+frame	{ count(); return tGO; }
-go[\t ]+to	{ count(); return tGO; }
+go[ \t]+to[ \t]+frame	{ count(); return tGO; }
+go[ \t]+to	{ count(); return tGO; }
 go			{ count(); return tGO; }
 instance	{ count(); return tINSTANCE; }
 intersects	{ count(); return tINTERSECTS; }
@@ -137,7 +137,7 @@ item		{ count(); return tITEM; }
 line		{ count(); return tLINE; }
 loop		{ count(); return checkImmediate(tLOOP); }
 macro		{ count(); return tMACRO; }
-method[\t ]*{identifier}		{
+method[ \t]*{identifier}		{
 		count();
 
 		const char *ptr = &yytext[6]; // Skip 'method '
@@ -156,7 +156,7 @@ of			{ count(); return tOF; }
 on			{ count(); return tON; }		// D3
 open		{ count(); return tOPEN; }
 or			{ count(); return tOR; }
-play[\t ]+frame	{ count(); return tPLAY; }
+play[ \t]+frame	{ count(); return tPLAY; }
 play		{ count(); return tPLAY; }
 playAccel	{ count(); yylval.s = new Common::String(yytext); return tPLAYACCEL; }
 previous	{ count(); return tPREVIOUS; }
@@ -164,7 +164,7 @@ property	{ count(); return tPROPERTY; }	// D4
 put			{ count(); return tPUT; }
 repeat		{ count(); return checkImmediate(tREPEAT); }
 set			{ count(); return tSET; }
-sound[\ t]+(close|fadeIn|fadeOut|playFile|stop)	{
+sound[ \t]+(close|fadeIn|fadeOut|playFile|stop)	{
 		count();
 
 		const char *ptr = &yytext[6]; // Skip 'sound '
@@ -186,7 +186,7 @@ sound[\ t]+(close|fadeIn|fadeOut|playFile|stop)	{
 	}
 starts		{ count(); return tSTARTS; }
 tell		{ count(); return tTELL; }
-the[ \t]+sqrt[\t ]+of[\t ]+	{
+the[ \t]+sqrt[ \t]+of[ \t]+	{
 		count();
 
 		yylval.e[0] = g_lingo->_theEntities["sqrt"]->entity;
@@ -194,14 +194,14 @@ the[ \t]+sqrt[\t ]+of[\t ]+	{
 
 		return THEENTITYWITHID;
 	}
-the[ \t]+value[\t ]+of[\t ]*	{
+the[ \t]+value[ \t]+of[ \t]*	{
 		count();
 
 		yylval.s = new Common::String("value");
 
 		return FBLTIN;
 	}
-the[ \t]+number[\t ]+of[\t ]+[[:alpha:]]+[\t ](in|of)	{
+the[ \t]+number[ \t]+of[ \t]+[[:alpha:]]+[ \t](in|of)	{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
@@ -224,7 +224,7 @@ the[ \t]+number[\t ]+of[\t ]+[[:alpha:]]+[\t ](in|of)	{
 		else
 			error("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
 	}
-the[ \t]+[[:alpha:]]+[\t ]+of[\t ]+{identifier}	{
+the[ \t]+[[:alpha:]]+[ \t]+of[ \t]+{identifier}	{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
