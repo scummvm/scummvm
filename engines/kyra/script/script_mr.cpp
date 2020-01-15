@@ -73,7 +73,7 @@ int KyraEngine_MR::o3_refreshCharacter(EMCState *script) {
 		_mainCharacter.facing = facing;
 
 	if (frame >= 0 && frame != 87)
-		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+		_mainCharacter.animFrame = (_mainCharacter.facing == 0xFF) ? 0 : _characterFrameTable[_mainCharacter.facing];
 	else
 		_mainCharacter.animFrame = 87;
 
@@ -91,7 +91,7 @@ int KyraEngine_MR::o3_getMalcolmsMood(EMCState *script) {
 
 int KyraEngine_MR::o3_getCharacterFrameFromFacing(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_getCharacterFrameFromFacing(%p) ()", (const void *)script);
-	return _characterFrameTable[_mainCharacter.facing];
+	return (_mainCharacter.facing == 0xFF) ? 0 : _characterFrameTable[_mainCharacter.facing];
 }
 
 int KyraEngine_MR::o3_setCharacterFacing(EMCState *script) {
@@ -109,7 +109,7 @@ int KyraEngine_MR::o3_showSceneFileMessage(EMCState *script) {
 int KyraEngine_MR::o3_setCharacterAnimFrameFromFacing(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setCharacterAnimFrameFromFacing(%p) ()", (const void *)script);
 	updateCharPal(0);
-	_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+	_mainCharacter.animFrame = (_mainCharacter.facing == 0xFF) ? 0 : _characterFrameTable[_mainCharacter.facing];
 	updateCharacterAnim(0);
 	refreshAnimObjectsIfNeed();
 	return 0;
@@ -673,7 +673,7 @@ int KyraEngine_MR::o3_enterNewScene(EMCState *script) {
 	_unk5 = 1;
 
 	if (_mainCharX == -1 || _mainCharY == -1) {
-		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+		_mainCharacter.animFrame = (_mainCharacter.facing == 0xFF) ? 0 : _characterFrameTable[_mainCharacter.facing];
 		updateCharacterAnim(0);
 	}
 	_screen->showMouse();
@@ -700,7 +700,7 @@ int KyraEngine_MR::o3_setMalcolmPos(EMCState *script) {
 	if (_mainCharX == -1 && _mainCharY == -1)
 		_mainCharacter.animFrame = 87;
 	else
-		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+		_mainCharacter.animFrame = (_mainCharacter.facing == 0xFF) ? 0 : _characterFrameTable[_mainCharacter.facing];
 
 	return 0;
 }
