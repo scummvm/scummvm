@@ -103,6 +103,8 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 		// error("0x8002f404"); //TODO do we need this logic?
 	}
 
+	_screen->setScreenShakeOffset(0, 0);
+
 	if (!(sceneId & 0x8000)) {
 		byte *obd = _dragonRMS->getObdDataField10(sceneId);
 		ScriptOpCall scriptOpCall(obd + 4, READ_LE_UINT32(obd));

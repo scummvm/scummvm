@@ -212,21 +212,9 @@ void CutScene::scene1() {
 																									_vm->clearFlags(ENGINE_FLAG_20000);
 																									// fade_related_calls_with_1f();
 																									// DisableVSyncEvent();
-//TODO
-//																									actorId_arg = 2;
-//																									puVar4 = scrData_offset_200 + 4;
-//																									do {
-//																										*puVar4 = 0xffff;
-//																										puVar4[1] = 0xffff;
-//																										puVar3 = scrData_offset_200;
-//																										actorId_arg = actorId_arg + 1;
-//																										puVar4 = puVar4 + 2;
-//																									} while (actorId_arg < 0x20);
-//																									sVar9 = 0xe;
-//																									scrData_offset_200[1] = 0x11;
-//																									puVar3[2] = 199;
-//																									*puVar3 = 0;
-//																									puVar3[3] = 1;
+																									_vm->_scene->getScaleLayer()->clearAll();
+																									_vm->_scene->getScaleLayer()->setValue(0, 0, 17);
+																									_vm->_scene->getScaleLayer()->setValue(1, 199, 1);
 
 																									// EnableVSyncEvent();
 																									changeBackgroundPosition(

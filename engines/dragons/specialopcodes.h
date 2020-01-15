@@ -60,8 +60,13 @@ protected:
 	DragonsEngine *_vm;
 	SpecialOpcode *_opcodes[DRAGONS_NUM_SPECIAL_OPCODES];
 	Common::String _opcodeNames[DRAGONS_NUM_SPECIAL_OPCODES];
+	int16 _specialOpCounter;
 
+public:
+	int16 getSpecialOpCounter();
+	void setSpecialOpCounter(int16 newValue);
 
+protected:
 	void initOpcodes();
 	void freeOpcodes();
 
@@ -108,7 +113,7 @@ protected:
 	void spcStopMonksAtBarSceneLogic(); //0x29
 
 	void spcFlameBedroomEscapeSceneLogic(); // 0x2b
-	void spcStopFlameBedroomEscapeSceneLogic(); // 0x2b
+	void spcStopFlameBedroomEscapeSceneLogic(); // 0x2c
 
 	void spcCastleMoatFull(); //0x2e
 	void spcCastleRestoreScalePoints(); //0x2f
