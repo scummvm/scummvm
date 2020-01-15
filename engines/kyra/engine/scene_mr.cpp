@@ -266,7 +266,9 @@ void KyraEngine_MR::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 void KyraEngine_MR::enterNewSceneUnk2(int unk1) {
 	_savedMouseState = -1;
 	if (_mainCharX == -1 && _mainCharY == -1 && !unk1) {
-		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+		if (_mainCharacter.facing == 0xFF)
+			debugC(3, kDebugLevelSprites, "KyraEngine_MR::enterNewSceneUnk2(): Triggered WORKAROUND for invalid character facing");
+		_mainCharacter.animFrame = (_mainCharacter.facing == 0xFF) ? 0 : _characterFrameTable[_mainCharacter.facing];
 		updateCharacterAnim(0);
 		refreshAnimObjectsIfNeed();
 	}
@@ -445,13 +447,9 @@ void KyraEngine_MR::initSceneAnims(int unk1) {
 	AnimObj *obj = &_animObjects[0];
 
 	if (_mainCharacter.animFrame != 87 && !unk1) {
-		if (_mainCharacter.facing == 0xFF) {
-			// Fix for bug #11312 (café scene)
+		if (_mainCharacter.facing == 0xFF)
 			debugC(3, kDebugLevelSprites, "KyraEngine_MR::initSceneAnims(): Triggered WORKAROUND for invalid character facing");
-			_mainCharacter.animFrame = 0;
-		} else {
-			_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
-		}
+		_mainCharacter.animFrame = (_mainCharacter.facing == 0xFF) ? 0 : _characterFrameTable[_mainCharacter.facing];
 	}
 
 	obj->enabled = true;
@@ -649,7 +647,7 @@ int KyraEngine_MR::trySceneChange(int *moveTable, int unk1, int updateChar) {
 	}
 
 	if (updateChar)
-		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+		_mainCharacter.animFrame = (_mainCharacter.facing == 0xFF) ? 0 : _characterFrameTable[_mainCharacter.facing];
 
 	updateCharacterAnim(0);
 	refreshAnimObjectsIfNeed();
