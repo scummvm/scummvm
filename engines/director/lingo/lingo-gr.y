@@ -378,6 +378,9 @@ simpleexpr: INT		{
 
 expr: simpleexpr { $$ = $simpleexpr; }
 	| reference
+	| FBLTIN '(' arglist ')' {
+		g_lingo->codeFunc($FBLTIN, $arglist);
+		delete $FBLTIN; }
 	| FBLTIN arglist	{
 		g_lingo->codeFunc($FBLTIN, $arglist);
 		delete $FBLTIN; }
@@ -448,6 +451,9 @@ proc: tPUT expr				{ g_lingo->code1(LC::c_printtop); }
 	| tGLOBAL globallist
 	| tPROPERTY propertylist
 	| tINSTANCE instancelist
+	| BLTIN '(' arglist ')'			{
+		g_lingo->codeFunc($BLTIN, $arglist);
+		delete $BLTIN; }
 	| BLTIN arglist			{
 		g_lingo->codeFunc($BLTIN, $arglist);
 		delete $BLTIN; }
