@@ -201,7 +201,7 @@ the[ \t]+value[ \t]+of[ \t]*	{
 
 		return FBLTIN;
 	}
-the[ \t]+number[ \t]+of[ \t]+[[:alpha:]]+[ \t](in|of)	{
+the[ \t]+number[ \t]+of[ \t]+[[:alpha:]]+[ \t](in|of)[ \t]	{
 		count();
 
 		const char *ptr = &yytext[4]; // Skip 'the '
