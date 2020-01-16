@@ -247,7 +247,7 @@ the[ \t]+[[:alpha:]]+[ \t]+of[ \t]+{identifier}	{
 			field = Common::String::format("%d%s", g_lingo->_theEntities[ptr]->entity, field.c_str());
 
 			if (!g_lingo->_theEntityFields.contains(field)) {
-				error("LEXER: Unhandled the field %s", ptr);
+				error("LEXER: Unhandled the field %s of %s", field.c_str(), ptr);
 			}
 
 			if (g_lingo->_theEntityFields[field]->entity != g_lingo->_theEntities[ptr]->entity)
