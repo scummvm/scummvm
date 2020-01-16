@@ -25,35 +25,33 @@
 
 namespace Titanic {
 
-void CMarkedAutoMover::setPathOrients(const FVector &oldPos, const FVector &newPos,
+void CMarkedAutoMover::setFlight(const FVector &oldPos, const FVector &newPos,
 	const FMatrix &oldOrientation, const FMatrix &newOrientation) {
 	CFlightManagerBase::setPath(oldPos, newPos);
 
 	double distance = _distance;
 	_active = true;
 	_flight = true;
-	calcSpeeds(120, 4, distance);
-
+	buildMotionTable(120, 4, distance);
 
 	_orientationChanger.load(oldOrientation, newOrientation);
-	_transitionPercent = 0.0;
+	_currentSpin = 0.0;
 
 	if (_totCount == 0) {
-		_transitionPercentInc = 0.1;
+		_spinStep = 0.1;
 		_active = true;
 	} else {
-		_transitionPercentInc = 1.0 / _totCount;
+		_spinStep = 1.0 / _totCount;
 		_active = true;
 	}
-
 }
 
 MoverState CMarkedAutoMover::move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	if (!_active)
 		return NOT_ACTIVE;
 
-	_transitionPercent += _transitionPercentInc;
-	orientation = _orientationChanger.getOrientation(_transitionPercent);
+	_currentSpin += _spinStep;
+	orientation = _orientationChanger.getOrientation(_currentSpin);
 	errorCode.set();
 
 	if (_accCount >= 0) {
@@ -72,7 +70,7 @@ MoverState CMarkedAutoMover::move(CErrorCode &errorCode, FVector &pos, FMatrix &
 		errorCode.set();
 		return MOVING;
 	} else if (_decCount >= 0) {
-		double speedVal = _gammaTable[nMoverTransitions - 1 - _decCount];
+		double speedVal = _gammaTable[GAMMA_TABLE_SIZE - 1 - _decCount];
 		pos += _direction * speedVal;
 		getVectorOnPath(pos);
 

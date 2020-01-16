@@ -29,9 +29,10 @@
 
 namespace Titanic {
 
+#define GAMMA_TABLE_SIZE 32
+
 class CErrorCode;
 class FMatrix;
-const int nMoverTransitions = 32; // The number of vector transitions when doing a mover change is fixed
 enum MoverState { NOT_ACTIVE = 0, MOVING = 1, DONE_MOVING = 2 };
 
 /**
@@ -50,9 +51,9 @@ protected:
 	int _traCount;
 	int _decCount;
 	int _totCount;
-	double _gammaTable[nMoverTransitions];
-	double _transitionPercent;
-	double _transitionPercentInc;
+	double _gammaTable[GAMMA_TABLE_SIZE];
+	double _currentSpin;
+	double _spinStep;
 	COrientationChanger _orientationChanger;
 public:
 	CFlightManagerBase();
@@ -72,11 +73,11 @@ public:
 	 * Applys speeds to the mover. More than one application is usually done for several transitions
 	 */
 	virtual MoverState move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) { return DONE_MOVING; }
+
 	/**
-	 * Given a distance to cover, determines a bunch of speeds for a gradual transition
-	 * from one position to another (the mover). The speeds go from fast to slow
+	 * Given a distance to cover, builds an acceleration table for the journey
 	 */
-	virtual void calcSpeeds(int val1, int val2, float distance);
+	virtual void buildMotionTable(int sustain, int decay, float distance);
 
 	bool isActive() const { return _active; }
 };

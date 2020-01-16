@@ -29,8 +29,8 @@ namespace Titanic {
 void CFlightManagerUnmarked::setOrientations(const FMatrix &srcOrient, const FMatrix &destOrient) {
 	CFlightManagerBase::clear();
 	_orientationChanger.load(srcOrient, destOrient);
-	_transitionPercentInc = 0.1;
-	_transitionPercent = 0.0;
+	_spinStep = 0.1;
+	_currentSpin = 0.0;
 	_accCount = _traCount = _decCount = -1;
 	_active = true;
 }
@@ -41,12 +41,12 @@ void CFlightManagerUnmarked::setPathOrient(const FVector &srcV, const FVector &d
 	if (_distance > 8000.0) {
 		_active = true;
 		_flight = true;
-		calcSpeeds(120, 4, _distance - 8000.0);
+		buildMotionTable(120, 4, _distance - 8000.0);
 	}
 
 	FVector row3 = orientation._row3;
 	double mult = _direction._x * row3._x + _direction._y * row3._y + _direction._z * row3._z;
-	_transitionPercent = 1.0;
+	_currentSpin = 1.0;
 
 	bool flag = false;
 	if (mult < 1.0) {
@@ -59,17 +59,17 @@ void CFlightManagerUnmarked::setPathOrient(const FVector &srcV, const FVector &d
 
 	if (!flag) {
 		FVector tempV1;
-		tempV1 = row3.addAndNormalize(_direction);
-		tempV1 = row3.addAndNormalize(tempV1);
-		tempV1 = row3.addAndNormalize(tempV1);
-		tempV1 = row3.addAndNormalize(tempV1);
+		tempV1 = row3.half(_direction);
+		tempV1 = row3.half(tempV1);
+		tempV1 = row3.half(tempV1);
+		tempV1 = row3.half(tempV1);
 
 		FMatrix newOrient;
 		newOrient.set(tempV1);
 		_orientationChanger.load(orientation, newOrient);
 
-		_transitionPercent = 0.0;
-		_transitionPercentInc = 0.1;
+		_currentSpin = 0.0;
+		_spinStep = 0.1;
 		_active = true;
 	}
 }
@@ -82,9 +82,9 @@ MoverState CFlightManagerUnmarked::move(CErrorCode &errorCode, FVector &pos, FMa
 
 	// Firstly we have to do a transition of the camera orientation from
 	// it's current position to one where the destination star is centered
-	if (_transitionPercent < 1.0) {
-		_transitionPercent += _transitionPercentInc;
-		orientation = _orientationChanger.getOrientation(_transitionPercent);
+	if (_currentSpin < 1.0) {
+		_currentSpin += _spinStep;
+		orientation = _orientationChanger.getOrientation(_currentSpin);
 		errorCode.set();
 		return MOVING;
 	}
@@ -116,10 +116,10 @@ MoverState CFlightManagerUnmarked::move(CErrorCode &errorCode, FVector &pos, FMa
 	}
 
 	if (!flag) {
-		v1 = v2.addAndNormalize(v3);
-		v1 = v2.addAndNormalize(v1);
-		v1 = v2.addAndNormalize(v1);
-		v1 = v2.addAndNormalize(v1);
+		v1 = v2.half(v3);
+		v1 = v2.half(v1);
+		v1 = v2.half(v1);
+		v1 = v2.half(v1);
 
 		orientation.set(v1);
 		v2 = v1;
@@ -148,7 +148,7 @@ MoverState CFlightManagerUnmarked::move(CErrorCode &errorCode, FVector &pos, FMa
 	}
 
 	if (_decCount >= 0) {
-		double speedVal = _gammaTable[nMoverTransitions - 1 - _decCount];
+		double speedVal = _gammaTable[GAMMA_TABLE_SIZE - 1 - _decCount];
 		v1._y = v2._y * speedVal;
 		v1._z = v2._z * speedVal;
 		v1._x = v2._x * speedVal;

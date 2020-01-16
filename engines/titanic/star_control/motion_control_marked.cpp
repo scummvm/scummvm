@@ -36,7 +36,7 @@ void CMotionControlMarked::transitionBetweenPosOrients(const FVector &oldPos, co
 	if (isLocked())
 		decLockCount();
 
-	_autoMover.setPathOrients(oldPos, newPos, oldOrientation, newOrientation);
+	_autoMover.setFlight(oldPos, newPos, oldOrientation, newOrientation);
 	incLockCount();
 }
 
