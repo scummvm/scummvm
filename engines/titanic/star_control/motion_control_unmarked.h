@@ -20,11 +20,11 @@
  *
  */
 
-#ifndef TITANIC_UNMARKED_CAMERA_MOVER_H
-#define TITANIC_UNMARKED_CAMERA_MOVER_H
+#ifndef TITANIC_MOTION_CONTROL_UNMARKED_H
+#define TITANIC_MOTION_CONTROL_UNMARKED_H
 
 #include "titanic/star_control/motion_control.h"
-#include "titanic/star_control/unmarked_auto_mover.h"
+#include "titanic/star_control/flight_manager_unmarked.h"
 
 namespace Titanic {
 
@@ -33,7 +33,7 @@ class FVector;
 
 class CMotionControlUnmarked : public CMotionControl {
 private:
-	CUnmarkedAutoMover _autoMover;
+	CFlightManagerUnmarked _autoMover;
 public:
 	CMotionControlUnmarked(const CNavigationInfo *src);
 	virtual ~CMotionControlUnmarked() {}
@@ -53,4 +53,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_UNMARKED_CAMERA_MOVER_H */
+#endif /* TITANIC_MOTION_CONTROL_UNMARKED_H */

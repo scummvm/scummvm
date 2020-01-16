@@ -121,7 +121,7 @@ public:
 	/**
 	 * Load the class
 	 */
-	virtual void load(SimpleFile *file, int val = 0);
+	virtual void load(SimpleFile *file, int version = 0);
 
 	/**
 	 * Save the class

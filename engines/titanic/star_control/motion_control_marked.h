@@ -24,7 +24,7 @@
 #define TITANIC_MOTION_CONTROL_MARKED_H
 
 #include "titanic/star_control/motion_control.h"
-#include "titanic/star_control/marked_auto_mover.h"
+#include "titanic/star_control/flight_manager_marked.h"
 
 namespace Titanic {
 

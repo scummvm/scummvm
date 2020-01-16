@@ -433,9 +433,11 @@ MODULE_OBJS := \
 	star_control/star_control.o \
 	star_control/base_stars.o \
 	star_control/camera.o \
-	star_control/camera_auto_mover.o \
 	star_control/const_boundaries.o \
 	star_control/constellations.o \
+	star_control/flight_manager_base.o \
+	star_control/flight_manager_marked.o \
+	star_control/flight_manager_unmarked.o \
 	star_control/fmatrix.o \
 	star_control/fpoint.o \
 	star_control/fpose.o \

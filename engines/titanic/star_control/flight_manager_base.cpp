@@ -20,12 +20,12 @@
  *
  */
 
-#include "titanic/star_control/camera_auto_mover.h"
+#include "titanic/star_control/flight_manager_base.h"
 #include "titanic/star_control/fmatrix.h"
 
 namespace Titanic {
 
-CCameraAutoMover::CCameraAutoMover() : _srcPos(0.0, 1000000.0, 0.0) {
+CFlightManagerBase::CFlightManagerBase() : _srcPos(0.0, 1000000.0, 0.0) {
 	_field4 = 0;
 	_active = false;
 	_distance = 0.0;
@@ -41,7 +41,7 @@ CCameraAutoMover::CCameraAutoMover() : _srcPos(0.0, 1000000.0, 0.0) {
 	_transitionPercentInc = 0.0;
 }
 
-void CCameraAutoMover::clear() {
+void CFlightManagerBase::clear() {
 	_srcPos.clear();
 	_destPos.clear();
 	_transitionPercent = 1.0;
@@ -50,7 +50,7 @@ void CCameraAutoMover::clear() {
 	_field34 = false;
 }
 
-void CCameraAutoMover::setPath(const FVector &srcV, const FVector &destV) {
+void CFlightManagerBase::setPath(const FVector &srcV, const FVector &destV) {
 	_srcPos = srcV;
 	_destPos = destV;
 	_posDelta = _destPos - _srcPos;
@@ -69,7 +69,7 @@ void CCameraAutoMover::setPath(const FVector &srcV, const FVector &destV) {
 	_transitionPercent = 1.0;
 }
 
-void CCameraAutoMover::calcSpeeds(int val1, int val2, float distance) {
+void CFlightManagerBase::calcSpeeds(int val1, int val2, float distance) {
 	// Usually val1 and val2 are small where as distance can be large
 	_field44 = val1;
 	_field4C = val1 + 2 * (nMoverTransitions - 1); // For _nMoverTransitions = 32 this second value was 62, 

@@ -20,19 +20,19 @@
  *
  */
 
-#ifndef TITANIC_UNMARKED_AUTO_MOVER_H
-#define TITANIC_UNMARKED_AUTO_MOVER_H
+#ifndef TITANIC_FLIGHT_MANAGER_UNMARKED_H
+#define TITANIC_FLIGHT_MANAGER_UNMARKED_H
 
-#include "titanic/star_control/camera_auto_mover.h"
+#include "titanic/star_control/flight_manager_base.h"
 
 namespace Titanic {
 
 /**
  * Automatic camera mover used when no markers have been set
  */
-class CUnmarkedAutoMover : public CCameraAutoMover {
+class CFlightManagerUnmarked : public CFlightManagerBase {
 public:
-	virtual ~CUnmarkedAutoMover() {}
+	virtual ~CFlightManagerUnmarked() {}
 
 	virtual void setOrientations(const FMatrix &srcOrient, const FMatrix &destOrient);
 
@@ -46,4 +46,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_UNMARKED_AUTO_MOVER_H */
+#endif /* TITANIC_FLIGHT_MANAGER_UNMARKED_H */

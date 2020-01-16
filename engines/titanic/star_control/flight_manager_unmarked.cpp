@@ -20,15 +20,14 @@
  *
  */
 
-#include "titanic/star_control/unmarked_auto_mover.h"
+#include "titanic/star_control/flight_manager_unmarked.h"
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/error_code.h"
-// Not currently being used: #include "common/textconsole.h"
 
 namespace Titanic {
 
-void CUnmarkedAutoMover::setOrientations(const FMatrix &srcOrient, const FMatrix &destOrient) {
-	CCameraAutoMover::clear();
+void CFlightManagerUnmarked::setOrientations(const FMatrix &srcOrient, const FMatrix &destOrient) {
+	CFlightManagerBase::clear();
 	_orientationChanger.load(srcOrient, destOrient);
 	_transitionPercentInc = 0.1;
 	_transitionPercent = 0.0;
@@ -36,8 +35,8 @@ void CUnmarkedAutoMover::setOrientations(const FMatrix &srcOrient, const FMatrix
 	_active = true;
 }
 
-void CUnmarkedAutoMover::setPathOrient(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
-	CCameraAutoMover::setPath(srcV, destV);
+void CFlightManagerUnmarked::setPathOrient(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
+	CFlightManagerBase::setPath(srcV, destV);
 
 	if (_distance > 8000.0) {
 		_active = true;
@@ -75,7 +74,7 @@ void CUnmarkedAutoMover::setPathOrient(const FVector &srcV, const FVector &destV
 	}
 }
 
-MoverState CUnmarkedAutoMover::move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
+MoverState CFlightManagerUnmarked::move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	FVector v1, v2, v3, v4;
 
 	if (!_active)

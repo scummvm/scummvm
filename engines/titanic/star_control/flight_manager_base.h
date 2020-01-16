@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_CAMERA_AUTO_MOVER_H
-#define TITANIC_CAMERA_AUTO_MOVER_H
+#ifndef TITANIC_FLIGHT_MANAGER_BASE_H
+#define TITANIC_FLIGHT_MANAGER_BASE_H
 
 #include "titanic/star_control/fvector.h"
 #include "titanic/star_control/orientation_changer.h"
@@ -35,9 +35,9 @@ const int nMoverTransitions = 32; // The number of vector transitions when doing
 enum MoverState { NOT_ACTIVE = 0, MOVING = 1, DONE_MOVING = 2 };
 
 /**
- * Base class for automatic movement of the starview camera
+ * Base class for flight manager handling automated movement
  */
-class CCameraAutoMover {
+class CFlightManagerBase {
 protected:
 	int _field4;
 	bool _active;
@@ -57,8 +57,8 @@ protected:
 	double _transitionPercentInc;
 	COrientationChanger _orientationChanger;
 public:
-	CCameraAutoMover();
-	virtual ~CCameraAutoMover() {}
+	CFlightManagerBase();
+	virtual ~CFlightManagerBase() {}
 
 	/**
 	 * Clear src and dest orientation and set some default values for other fields
@@ -85,4 +85,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_CAMERA_AUTO_MOVER_H */
+#endif /* TITANIC_FLIGHT_MANAGER_BASE_H */

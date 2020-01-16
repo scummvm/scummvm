@@ -20,15 +20,14 @@
  *
  */
 
-#include "titanic/star_control/marked_auto_mover.h"
+#include "titanic/star_control/flight_manager_marked.h"
 #include "titanic/star_control/error_code.h"
-// Not currently being used: #include "common/textconsole.h"
 
 namespace Titanic {
 
 void CMarkedAutoMover::setPathOrients(const FVector &oldPos, const FVector &newPos,
 	const FMatrix &oldOrientation, const FMatrix &newOrientation) {
-	CCameraAutoMover::setPath(oldPos, newPos);
+	CFlightManagerBase::setPath(oldPos, newPos);
 
 	double distance = _distance;
 	_active = true;

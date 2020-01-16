@@ -20,17 +20,17 @@
  *
  */
 
-#ifndef TITANIC_MARKED_AUTO_MOVER_H
-#define TITANIC_MARKED_AUTO_MOVER_H
+#ifndef TITANIC_FLIGHT_MANAGER_MARKED_H
+#define TITANIC_FLIGHT_MANAGER_MARKED_H
 
-#include "titanic/star_control/camera_auto_mover.h"
+#include "titanic/star_control/flight_manager_base.h"
 
 namespace Titanic {
 
 /**
  * Automatic camera mover used when one or more markers have been set
  */
-class CMarkedAutoMover : public CCameraAutoMover {
+class CMarkedAutoMover : public CFlightManagerBase {
 private:
 	/**
 	 * Given a vector, figures out how far is from the movement source, and
@@ -52,4 +52,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_MARKED_AUTO_MOVER_H */
+#endif /* TITANIC_FLIGHT_MANAGER_MARKED_H */

@@ -114,8 +114,8 @@ void CMotionControl::stop() {
 }
 
 // TODO: this is confusing to negate the val value
-void CMotionControl::load(SimpleFile *file, int val) {
-	if (!val) {
+void CMotionControl::load(SimpleFile *file, int version) {
+	if (version == 0) {
 		_currVelocity = file->readFloat();
 		_incVelocity = file->readFloat();
 		_incAcceleration = file->readFloat();
