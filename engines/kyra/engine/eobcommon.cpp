@@ -409,16 +409,29 @@ Common::Error EoBCoreEngine::init() {
 	if (!_staticres->init())
 		error("_staticres->init() failed");
 
-	// SoundTowns_Darkmoon requires initialized _staticres
+	// We start the respective sound driver even if "No Music" has
+	// been selected, because we don't have a null driver class (and
+	// don't really need one). We just disable the sound in the settings.
+	MidiDriver::DeviceHandle dev = 0;
 	if (_flags.platform == Common::kPlatformDOS) {
-		//MidiDriverType midiDriver = MidiDriver::detectDevice(MDT_PCSPK | MDT_ADLIB);
-		_sound = new SoundAdLibPC(this, _mixer);
+		dev = MidiDriver::detectDevice(/*MDT_PCSPK | */MDT_ADLIB);
+		//if (MidiDriver::getMusicType(dev) == MT_ADLIB)
+			_sound = new SoundAdLibPC(this, _mixer);
+		//else
+		//	_sound = new SoundPCS(this, _mixer);
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
+		dev = MidiDriver::detectDevice(MDT_TOWNS);
+		// SoundTowns_Darkmoon requires initialized _staticres
 		_sound = new SoundTowns_Darkmoon(this, _mixer);
 	} else if (_flags.platform == Common::kPlatformPC98) {
-		if (_flags.gameID == GI_EOB1)
+		if (_flags.gameID == GI_EOB1) {
+			dev = MidiDriver::detectDevice(MDT_PC98);
 			_sound = new SoundPC98_EoB(this, _mixer);
+		} else {
+			dev = MidiDriver::detectDevice(MDT_PC98 | MDT_MIDI);
+		}
 	} else if (_flags.platform == Common::kPlatformAmiga) {
+		dev = MidiDriver::detectDevice(MDT_AMIGA);
 		_sound = new SoundAmiga_EoB(this, _mixer);
 	}
 
@@ -429,7 +442,8 @@ Common::Error EoBCoreEngine::init() {
 	_sound->loadSfxFile("EFECT.OBJ");
 
 	// Setup volume settings (and read in all ConfigManager settings)
-	syncSoundSettings();
+	_configNullSound = (MidiDriver::getMusicType(dev) == MT_NULL);
+	syncSoundSettings();	
 
 	if (!_screen->init())
 		error("screen()->init() failed");
@@ -640,8 +654,8 @@ void EoBCoreEngine::readSettings() {
 	_configMusic = (_flags.platform == Common::kPlatformPC98) ? (ConfMan.getBool("music_mute") ? 0 : 1) : (_configSounds ? 1 : 0);
 
 	if (_sound) {
-		_sound->enableMusic(_configMusic);
-		_sound->enableSFX(_configSounds);
+		_sound->enableMusic(_configNullSound ? false : _configMusic);
+		_sound->enableSFX(_configNullSound ? false : _configSounds);
 	}
 }
 
@@ -659,8 +673,8 @@ void EoBCoreEngine::writeSettings() {
 		} else if (!_configSounds) {
 			_sound->haltTrack();
 		}
-		_sound->enableMusic(_configMusic);
-		_sound->enableSFX(_configSounds);
+		_sound->enableMusic(_configNullSound ? false : _configMusic);
+		_sound->enableSFX(_configNullSound ? false : _configSounds);
 	}
 
 	ConfMan.flushToDisk();

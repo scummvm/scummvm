@@ -1726,7 +1726,7 @@ void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim
 
 	int seq = 0;
 
-	while (_vm->sound()->checkTrigger() < index && !(_vm->skipFlag() || _vm->shouldQuit())) {
+	while (_vm->sound()->musicEnabled() && _vm->sound()->checkTrigger() < index && !(_vm->skipFlag() || _vm->shouldQuit())) {
 		if (introUpdateAnim) {
 			animCommand(30 | seq);
 			seq ^= 1;
@@ -1740,7 +1740,7 @@ void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim
 }
 
 void DarkmoonSequenceHelper::updateAmigaSound() {
-	if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+	if (_vm->gameFlags().platform != Common::kPlatformAmiga || !_vm->sound()->musicEnabled())
 		return;
 
 	int ct = _vm->sound()->checkTrigger();

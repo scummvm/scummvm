@@ -303,6 +303,7 @@ protected:
 	int _configMusic;
 	bool _configSounds;
 	uint8 _configVoice;
+	bool _configNullSound;
 
 	Common::RenderMode _configRenderMode;
 
