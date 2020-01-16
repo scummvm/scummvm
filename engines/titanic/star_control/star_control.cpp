@@ -25,7 +25,7 @@
 #include "titanic/core/project_item.h"
 #include "titanic/game_manager.h"
 #include "titanic/pet_control/pet_control.h"
-#include "titanic/star_control/camera_mover.h"
+#include "titanic/star_control/motion_control.h"
 #include "titanic/star_control/error_code.h" // CErrorCode
 #include "titanic/support/screen_manager.h"
 

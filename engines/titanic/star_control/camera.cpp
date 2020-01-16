@@ -22,11 +22,11 @@
 
 #include "titanic/star_control/camera.h"
 #include "titanic/debugger.h"
-#include "titanic/star_control/camera_mover.h"
+#include "titanic/star_control/motion_control.h"
 #include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/fpoint.h"
-#include "titanic/star_control/marked_camera_mover.h"
-#include "titanic/star_control/unmarked_camera_mover.h"
+#include "titanic/star_control/motion_control_marked.h"
+#include "titanic/star_control/motion_control_unmarked.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
@@ -433,17 +433,17 @@ void CCamera::save(SimpleFile *file, int indent) {
 }
 
 bool CCamera::setMoverType(const CNavigationInfo *src) {
-	CCameraMover *mover = nullptr;
+	CMotionControl *mover = nullptr;
 
 	switch (_starLockState) {
 	case ZERO_LOCKED:
-		mover = new CUnmarkedCameraMover(src);
+		mover = new CMotionControlUnmarked(src);
 		break;
 
 	case ONE_LOCKED:
 	case TWO_LOCKED:
 	case THREE_LOCKED:
-		mover = new CMarkedCameraMover(src);
+		mover = new CMotionControlMarked(src);
 		break;
 
 	default:
@@ -502,8 +502,8 @@ bool CCamera::lockMarker1(FVector v1, FVector firstStarPosition, FVector v3) {
 	FMatrix matrix = _viewport.getOrientation();
 	const FVector &pos = _viewport._position;
 	_mover->transitionBetweenOrientations(v3, tempV, pos, matrix); // TODO: pos does not get used in this function, 
-																// i.e., _mover has CUnmarkedCameraMover handle which means
-																// CUnmarkedCameraMover::transitionBetweenOrientations gets called
+																// i.e., _mover has CMotionControlUnmarked handle which means
+																// CMotionControlUnmarked::transitionBetweenOrientations gets called
 
 	CStarVector *sv = new CStarVector(this, firstStarPosition);
 	_mover->setVector(sv);

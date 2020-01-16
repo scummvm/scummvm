@@ -20,50 +20,33 @@
  *
  */
 
-#include "titanic/star_control/unmarked_camera_mover.h"
-#include "titanic/debugger.h"
+#include "titanic/star_control/motion_control_marked.h"
 #include "titanic/star_control/base_stars.h"
-#include "titanic/star_control/fpose.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fmatrix.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 
-CUnmarkedCameraMover::CUnmarkedCameraMover(const CNavigationInfo *src) :
-		CCameraMover(src) {
+CMotionControlMarked::CMotionControlMarked(const CNavigationInfo *src) :
+		CMotionControl(src) {
 }
 
-void CUnmarkedCameraMover::moveTo(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
+void CMotionControlMarked::transitionBetweenPosOrients(const FVector &oldPos, const FVector &newPos,
+		const FMatrix &oldOrientation, const FMatrix &newOrientation) {
 	if (isLocked())
 		decLockCount();
 
-	debugC(DEBUG_BASIC, kDebugStarfield, "Starfield move %s to %s", srcV.toString().c_str(),
-		destV.toString().c_str());
-	_autoMover.setPathOrient(srcV, destV, orientation);
-}
-
-// TODO: v3 is unused
-void CUnmarkedCameraMover::transitionBetweenOrientations(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) {
-	if (isLocked())
-		decLockCount();
-
-	FVector vector1 = v1;
-	FVector vector2 = v2;
-	FPose matrix1 = vector2.getFrameTransform(vector1);
-	FPose matrix2 = matrix1.compose(m);
-
-	_autoMover.setOrientations(m, matrix2);
+	_autoMover.setPathOrients(oldPos, newPos, oldOrientation, newOrientation);
 	incLockCount();
 }
 
-void CUnmarkedCameraMover::updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
+void CMotionControlMarked::updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	if (_autoMover.isActive()) {
 		decLockCount();
-		MoverState moverState = _autoMover.move(errorCode, pos, orientation);
-		if (moverState == MOVING)
+		MoverState moveState = _autoMover.move(errorCode, pos, orientation);
+		if (moveState == MOVING)
 			incLockCount();
-		if (moverState == DONE_MOVING) {
+		if (moveState == DONE_MOVING) {
 			stop();
 			if (_starVector)
 				_starVector->apply();

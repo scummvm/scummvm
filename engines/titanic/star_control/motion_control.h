@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_CAMERA_MOVER_H
-#define TITANIC_CAMERA_MOVER_H
+#ifndef TITANIC_MOTION_CONTROL_H
+#define TITANIC_MOTION_CONTROL_H
 
 namespace Titanic {
 
@@ -42,7 +42,7 @@ struct CNavigationInfo {
 	double _rotationZ;
 };
 
-class CCameraMover {
+class CMotionControl {
 protected:
 	double _currVelocity;
 	double _incVelocity;
@@ -56,8 +56,8 @@ public:
 	int _lockCounter;
 	CStarVector *_starVector;
 public:
-	CCameraMover(const CNavigationInfo *src);
-	virtual ~CCameraMover();
+	CMotionControl(const CNavigationInfo *src);
+	virtual ~CMotionControl();
 
 	virtual void setMotion(const CNavigationInfo *src);
 	virtual void getMotion(CNavigationInfo *dest);
@@ -146,4 +146,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_CAMERA_MOVER_H */
+#endif /* TITANIC_MOTION_CONTROL_H */

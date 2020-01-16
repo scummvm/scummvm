@@ -20,15 +20,14 @@
  *
  */
 
-#include "titanic/star_control/camera_mover.h"
-#include "titanic/star_control/base_stars.h" // includes class CStarVector
+#include "titanic/star_control/motion_control.h"
+#include "titanic/star_control/base_stars.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/support/simple_file.h"
-// Not currently being used: #include "common/textconsole.h"
 
 namespace Titanic {
 
-CCameraMover::CCameraMover(const CNavigationInfo *src) {
+CMotionControl::CMotionControl(const CNavigationInfo *src) {
 	_lockCounter = 0;
 	_starVector = nullptr;
 
@@ -39,18 +38,18 @@ CCameraMover::CCameraMover(const CNavigationInfo *src) {
 	}
 }
 
-CCameraMover::~CCameraMover() {
+CMotionControl::~CMotionControl() {
 	clear();
 }
 
-void CCameraMover::clear() {
+void CMotionControl::clear() {
 	if (_starVector) {
 		delete _starVector;
 		_starVector = nullptr;
 	}
 }
 
-void CCameraMover::reset() {
+void CMotionControl::reset() {
 	_currVelocity = 0.0;
 	_incVelocity = 0.0;
 	_incAcceleration = 20.0;
@@ -61,12 +60,12 @@ void CCameraMover::reset() {
 	_rotationZ = 0.0;
 }
 
-void CCameraMover::setVector(CStarVector *sv) {
+void CMotionControl::setVector(CStarVector *sv) {
 	clear();
 	_starVector = sv;
 }
 
-void CCameraMover::setMotion(const CNavigationInfo *src) {
+void CMotionControl::setMotion(const CNavigationInfo *src) {
 	_currVelocity = src->_initialVelocity;
 	_minVelocity = src->_minVelocity;
 	_maxVelocity = src->_maxVelocity;
@@ -77,7 +76,7 @@ void CCameraMover::setMotion(const CNavigationInfo *src) {
 	_rotationZ = src->_rotationZ;
 }
 
-void CCameraMover::getMotion(CNavigationInfo *dest) {
+void CMotionControl::getMotion(CNavigationInfo *dest) {
 	dest->_initialVelocity = _currVelocity;
 	dest->_minVelocity = _minVelocity;
 	dest->_maxVelocity = _maxVelocity;
@@ -88,26 +87,26 @@ void CCameraMover::getMotion(CNavigationInfo *dest) {
 	dest->_rotationZ = _rotationZ;
 }
 
-void CCameraMover::accelerate() {
+void CMotionControl::accelerate() {
 	if (!isLocked() && _currVelocity < _maxVelocity) {
 		_incVelocity += _incAcceleration;
 		_currVelocity += ABS(_incVelocity);
 	}
 }
 
-void CCameraMover::deccelerate() {
+void CMotionControl::deccelerate() {
 	if (!isLocked() && _currVelocity > -_maxVelocity) {
 		_incVelocity -= _incAcceleration;
 		_currVelocity -= ABS(_incVelocity);
 	}
 }
 
-void CCameraMover::fullSpeed() {
+void CMotionControl::fullSpeed() {
 	if (!isLocked())
 		_currVelocity = _maxVelocity;
 }
 
-void CCameraMover::stop() {
+void CMotionControl::stop() {
 	if (!isLocked()) {
 		_currVelocity = 0.0;
 		_incVelocity = 0.0;
@@ -115,7 +114,7 @@ void CCameraMover::stop() {
 }
 
 // TODO: this is confusing to negate the val value
-void CCameraMover::load(SimpleFile *file, int val) {
+void CMotionControl::load(SimpleFile *file, int val) {
 	if (!val) {
 		_currVelocity = file->readFloat();
 		_incVelocity = file->readFloat();
@@ -128,7 +127,7 @@ void CCameraMover::load(SimpleFile *file, int val) {
 	}
 }
 
-void CCameraMover::save(SimpleFile *file, int indent) {
+void CMotionControl::save(SimpleFile *file, int indent) {
 	file->writeFloatLine(_currVelocity, indent);
 	file->writeFloatLine(_incVelocity, indent);
 	file->writeFloatLine(_incAcceleration, indent);
@@ -139,12 +138,12 @@ void CCameraMover::save(SimpleFile *file, int indent) {
 	file->writeFloatLine(_rotationZ, indent);
 }
 
-void CCameraMover::incLockCount() {
+void CMotionControl::incLockCount() {
 	if (_lockCounter < 3)
 	++_lockCounter;
 }
 
-void CCameraMover::decLockCount() {
+void CMotionControl::decLockCount() {
 	if (_lockCounter > 0)
 		--_lockCounter;
 }

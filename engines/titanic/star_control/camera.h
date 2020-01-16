@@ -29,7 +29,7 @@
 
 namespace Titanic {
 
-class CCameraMover;
+class CMotionControl;
 class CErrorCode;
 struct CNavigationInfo;
 class FPoint;
@@ -47,7 +47,7 @@ private:
 private:
 	StarLockState _starLockState;
 	FMatrix _lockedStarsPos; // Each row represents the location of a locked star
-	CCameraMover *_mover; // A marked or unmarked camera mover, contains an automover
+	CMotionControl *_mover; // A marked or unmarked camera mover, contains an automover
 	CViewport _viewport;
 	bool _isMoved; // Used in CPetStarfield to determine if a star destination can be set
 	bool _isInLockingProcess; // The mover/view is homing in on a new star

@@ -23,7 +23,7 @@
 #ifndef TITANIC_UNMARKED_CAMERA_MOVER_H
 #define TITANIC_UNMARKED_CAMERA_MOVER_H
 
-#include "titanic/star_control/camera_mover.h"
+#include "titanic/star_control/motion_control.h"
 #include "titanic/star_control/unmarked_auto_mover.h"
 
 namespace Titanic {
@@ -31,12 +31,12 @@ namespace Titanic {
 class FMatrix;
 class FVector;
 
-class CUnmarkedCameraMover : public CCameraMover {
+class CMotionControlUnmarked : public CMotionControl {
 private:
 	CUnmarkedAutoMover _autoMover;
 public:
-	CUnmarkedCameraMover(const CNavigationInfo *src);
-	virtual ~CUnmarkedCameraMover() {}
+	CMotionControlUnmarked(const CNavigationInfo *src);
+	virtual ~CMotionControlUnmarked() {}
 
 	/**
 	 * Start a movement to a given specified destination

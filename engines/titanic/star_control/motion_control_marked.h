@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef TITANIC_MARKED_CAMERA_MOVER_H
-#define TITANIC_MARKED_CAMERA_MOVER_H
+#ifndef TITANIC_MOTION_CONTROL_MARKED_H
+#define TITANIC_MOTION_CONTROL_MARKED_H
 
-#include "titanic/star_control/camera_mover.h"
+#include "titanic/star_control/motion_control.h"
 #include "titanic/star_control/marked_auto_mover.h"
 
 namespace Titanic {
@@ -31,12 +31,12 @@ namespace Titanic {
 class FMatrix;
 class FVector;
 
-class CMarkedCameraMover : public CCameraMover {
+class CMotionControlMarked : public CMotionControl {
 private:
 	CMarkedAutoMover _autoMover;
 public:
-	CMarkedCameraMover(const CNavigationInfo *src);
-	virtual ~CMarkedCameraMover() {}
+	CMotionControlMarked(const CNavigationInfo *src);
+	virtual ~CMotionControlMarked() {}
 
 	/**
 	 * Move the mover from an old position and orientation to a new
@@ -53,4 +53,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_MARKED_CAMERA_MOVER_H */
+#endif /* TITANIC_MOTION_CONTROL_MARKED_H */

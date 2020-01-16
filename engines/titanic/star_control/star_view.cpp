@@ -21,7 +21,7 @@
  */
 
 #include "titanic/star_control/star_view.h"
-#include "titanic/star_control/camera_mover.h"
+#include "titanic/star_control/motion_control.h"
 #include "titanic/star_control/error_code.h"
 #include "titanic/star_control/fvector.h"
 #include "titanic/star_control/star_control.h"
