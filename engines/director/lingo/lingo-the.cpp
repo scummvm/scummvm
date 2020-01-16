@@ -168,6 +168,7 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"moveableSprite",kTheMoveableSprite,4 },//			D4 p
 	{ kTheSprite,	"pattern",		kThePattern,	2 },// D2 p
 	{ kTheSprite,	"puppet",		kThePuppet,		2 },// D2 p
+	{ kTheSprite,	"rect",			kTheRect,		4 },//				D4 p ???
 	{ kTheSprite,	"right",		kTheRight,		2 },// D2 p
 	{ kTheSprite,	"scoreColor",	kTheScoreColor,	4 },//				D4 p
 	{ kTheSprite,	"scriptNum",	kTheScriptNum,	4 },//				D4 p
