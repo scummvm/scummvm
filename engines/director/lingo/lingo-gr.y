@@ -101,7 +101,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token UNARY
 %token CASTREF VOID VAR POINT RECT ARRAY OBJECT REFERENCE
 %token<i> INT ARGC ARGCNORET
-%token<e> THEENTITY THEENTITYWITHID
+%token<e> THEENTITY THEENTITYWITHID THEMENUITEMENTITY
 %token<f> FLOAT
 %token<s> BLTIN FBLTIN RBLTIN
 %token<s> ID STRING HANDLER SYMBOL
@@ -188,6 +188,18 @@ asgn: tPUT expr tINTO ID 		{
 		g_lingo->code1(LC::c_theentityassign);
 		g_lingo->codeInt($THEENTITYWITHID[0]);
 		g_lingo->codeInt($THEENTITYWITHID[1]);
+		$$ = $expr; }
+	// the <field> of menuItem <expr>" of menu <expr>
+	| tSET THEMENUITEMENTITY simpleexpr tOF ID simpleexpr tTO expr	{
+		if (!$ID->equalsIgnoreCase("menu")) {
+			error("LEXER: keyword 'menu' expected");
+		}
+
+		warning("STUB: menuItem entity");
+		g_lingo->code1(LC::c_swap);
+		g_lingo->code1(LC::c_theentityassign);
+		g_lingo->codeInt($THEMENUITEMENTITY[0]);
+		g_lingo->codeInt($THEMENUITEMENTITY[1]);
 		$$ = $expr; }
 	| tSET THEOBJECTFIELD tTO expr	{
 		g_lingo->code1(LC::c_objectfieldassign);

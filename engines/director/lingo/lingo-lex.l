@@ -256,6 +256,10 @@ the[ \t]+[[:alpha:]]+[ \t]+of[ \t]+{identifier}	{
 			yylval.e[0] = g_lingo->_theEntities[ptr]->entity;
 			yylval.e[1] = g_lingo->_theEntityFields[field]->field;
 
+			// the <field> of menuItem <expr>" of menu <expr>
+			if (g_lingo->_theEntityFields[field]->entity == kTheMenuItem)
+				return THEMENUITEMENTITY;
+
 			if (g_lingo->_theEntities[ptr]->hasId)
 				return THEENTITYWITHID;
 			else
