@@ -31,18 +31,18 @@ void CMarkedAutoMover::setPathOrients(const FVector &oldPos, const FVector &newP
 
 	double distance = _distance;
 	_active = true;
-	_field34 = true;
+	_flight = true;
 	calcSpeeds(120, 4, distance);
 
 
 	_orientationChanger.load(oldOrientation, newOrientation);
 	_transitionPercent = 0.0;
 
-	if (_field4C == 0) {
+	if (_totCount == 0) {
 		_transitionPercentInc = 0.1;
 		_active = true;
 	} else {
-		_transitionPercentInc = 1.0 / _field4C;
+		_transitionPercentInc = 1.0 / _totCount;
 		_active = true;
 	}
 
@@ -56,27 +56,27 @@ MoverState CMarkedAutoMover::move(CErrorCode &errorCode, FVector &pos, FMatrix &
 	orientation = _orientationChanger.getOrientation(_transitionPercent);
 	errorCode.set();
 
-	if (_field40 >= 0) {
-		double speedVal = _speeds[_field40];
-		pos += _posDelta * speedVal;
+	if (_accCount >= 0) {
+		double speedVal = _gammaTable[_accCount];
+		pos += _direction * speedVal;
 		getVectorOnPath(pos);
 
-		--_field40;
+		--_accCount;
 		errorCode.set();
 		return MOVING;
-	} else if (_field44 > 0) {
-		pos += _posDelta * _field38;
+	} else if (_traCount > 0) {
+		pos += _direction * _step;
 		getVectorOnPath(pos);
 
-		--_field44;
+		--_traCount;
 		errorCode.set();
 		return MOVING;
-	} else if (_field48 >= 0) {
-		double speedVal = _speeds[nMoverTransitions - 1 - _field48];
-		pos += _posDelta * speedVal;
+	} else if (_decCount >= 0) {
+		double speedVal = _gammaTable[nMoverTransitions - 1 - _decCount];
+		pos += _direction * speedVal;
 		getVectorOnPath(pos);
 
-		--_field48;
+		--_decCount;
 		errorCode.set();
 		return MOVING;
 	} else {
@@ -86,7 +86,7 @@ MoverState CMarkedAutoMover::move(CErrorCode &errorCode, FVector &pos, FMatrix &
 }
 
 void CMarkedAutoMover::getVectorOnPath(FVector &pos) const {
-	double distance = _posDelta.getDistance(pos);
+	double distance = _direction.getDistance(pos);
 	distance /= _distance;
 
 	if (distance <= 0.0) {

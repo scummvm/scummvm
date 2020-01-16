@@ -39,20 +39,18 @@ enum MoverState { NOT_ACTIVE = 0, MOVING = 1, DONE_MOVING = 2 };
  */
 class CFlightManagerBase {
 protected:
-	int _field4;
 	bool _active;
 	FVector _srcPos, _destPos;
 	double _distance;
-	FVector _posDelta;
-	bool _field34;
-	double _field38;
-	double _field3C;
-	int _field40;
-	int _field44;
-	int _field48;
-	int _field4C;
-	double _speeds[nMoverTransitions];
-	int _field54;
+	FVector _direction;
+	bool _flight;
+	double _step;
+	double _step1;
+	int _accCount;
+	int _traCount;
+	int _decCount;
+	int _totCount;
+	double _gammaTable[nMoverTransitions];
 	double _transitionPercent;
 	double _transitionPercentInc;
 	COrientationChanger _orientationChanger;
@@ -68,7 +66,7 @@ public:
 	/**
 	 * Setup a transition to from one position to another
 	 */
-	void setPath(const FVector &srcV, const FVector &destV);
+	void setPath(const FVector &from, const FVector &to);
 
 	/**
 	 * Applys speeds to the mover. More than one application is usually done for several transitions

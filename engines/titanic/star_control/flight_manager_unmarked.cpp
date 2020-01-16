@@ -31,7 +31,7 @@ void CFlightManagerUnmarked::setOrientations(const FMatrix &srcOrient, const FMa
 	_orientationChanger.load(srcOrient, destOrient);
 	_transitionPercentInc = 0.1;
 	_transitionPercent = 0.0;
-	_field40 = _field44 = _field48 = -1;
+	_accCount = _traCount = _decCount = -1;
 	_active = true;
 }
 
@@ -40,12 +40,12 @@ void CFlightManagerUnmarked::setPathOrient(const FVector &srcV, const FVector &d
 
 	if (_distance > 8000.0) {
 		_active = true;
-		_field34 = 1;
+		_flight = true;
 		calcSpeeds(120, 4, _distance - 8000.0);
 	}
 
 	FVector row3 = orientation._row3;
-	double mult = _posDelta._x * row3._x + _posDelta._y * row3._y + _posDelta._z * row3._z;
+	double mult = _direction._x * row3._x + _direction._y * row3._y + _direction._z * row3._z;
 	_transitionPercent = 1.0;
 
 	bool flag = false;
@@ -59,7 +59,7 @@ void CFlightManagerUnmarked::setPathOrient(const FVector &srcV, const FVector &d
 
 	if (!flag) {
 		FVector tempV1;
-		tempV1 = row3.addAndNormalize(_posDelta);
+		tempV1 = row3.addAndNormalize(_direction);
 		tempV1 = row3.addAndNormalize(tempV1);
 		tempV1 = row3.addAndNormalize(tempV1);
 		tempV1 = row3.addAndNormalize(tempV1);
@@ -90,7 +90,7 @@ MoverState CFlightManagerUnmarked::move(CErrorCode &errorCode, FVector &pos, FMa
 	}
 
 	// From here on, we handle the movement to the given destination
-	if (!_field34) {
+	if (!_flight) {
 		_active = false;
 		return DONE_MOVING;
 	}
@@ -125,30 +125,30 @@ MoverState CFlightManagerUnmarked::move(CErrorCode &errorCode, FVector &pos, FMa
 		v2 = v1;
 	}
 
-	if (_field40 >= 0) {
-		double speedVal = _speeds[_field40];
+	if (_accCount >= 0) {
+		double speedVal = _gammaTable[_accCount];
 		v1 = v2 * speedVal;
 		pos += v1;
 
-		--_field40;
+		--_accCount;
 		errorCode.set();
 		return MOVING;
 	}
 
-	if (_field44 > 0) {
-		v1._z = v2._z * _field38;
-		v1._x = v2._x * _field38;
+	if (_traCount > 0) {
+		v1._z = v2._z * _step;
+		v1._x = v2._x * _step;
 		pos._x = v1._x + pos._x;
-		pos._y = v2._y * _field38 + pos._y;
+		pos._y = v2._y * _step + pos._y;
 		pos._z = v1._z + pos._z;
 
-		--_field44;
+		--_traCount;
 		errorCode.set();
 		return MOVING;
 	}
 
-	if (_field48 >= 0) {
-		double speedVal = _speeds[nMoverTransitions - 1 - _field48];
+	if (_decCount >= 0) {
+		double speedVal = _gammaTable[nMoverTransitions - 1 - _decCount];
 		v1._y = v2._y * speedVal;
 		v1._z = v2._z * speedVal;
 		v1._x = v2._x * speedVal;
@@ -156,7 +156,7 @@ MoverState CFlightManagerUnmarked::move(CErrorCode &errorCode, FVector &pos, FMa
 		pos._z = v1._z + pos._z;
 		pos._x = pos._x + v1._x;
 
-		--_field48;
+		--_decCount;
 		errorCode.set();
 		return MOVING;
 	}
