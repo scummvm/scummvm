@@ -43,6 +43,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_debugger = 0;
 
 	_configRenderMode = Common::kRenderDefault;
+	_configNullSound = false;
 
 	if (_flags.platform == Common::kPlatformAmiga)
 		_gameSpeed = 50;
@@ -594,16 +595,16 @@ void KyraEngine_v1::readSettings() {
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 
 	if (_sound) {
-		_sound->enableMusic(_configMusic);
-		_sound->enableSFX(_configSounds);
+		_sound->enableMusic(_configNullSound ? false : _configMusic);
+		_sound->enableSFX(_configNullSound ? false : _configSounds);
 	}
 
 	bool speechMute = ConfMan.getBool("speech_mute");
 	bool subtitles = ConfMan.getBool("subtitles");
 
-	if (!speechMute && subtitles)
+	if (!_configNullSound && !speechMute && subtitles)
 		_configVoice = 2;   // Voice & Text
-	else if (!speechMute && !subtitles)
+	else if (!_configNullSound && !speechMute && !subtitles)
 		_configVoice = 1;   // Voice only
 	else
 		_configVoice = 0;   // Text only
@@ -637,8 +638,8 @@ void KyraEngine_v1::writeSettings() {
 	if (_sound) {
 		if (!_configMusic)
 			_sound->beginFadeOut();
-		_sound->enableMusic(_configMusic);
-		_sound->enableSFX(_configSounds);
+		_sound->enableMusic(_configNullSound ? false : _configMusic);
+		_sound->enableSFX(_configNullSound ? false : _configSounds);
 	}
 
 	ConfMan.setBool("speech_mute", speechMute);
