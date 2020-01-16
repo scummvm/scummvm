@@ -23,10 +23,12 @@
 #ifndef TITANIC_MOTION_CONTROL_H
 #define TITANIC_MOTION_CONTROL_H
 
+#include "titanic/star_control/fmatrix.h"
+
 namespace Titanic {
 
+class CCamera;
 class CErrorCode;
-class CStarVector;
 class FMatrix;
 class FVector;
 class SimpleFile;
@@ -42,6 +44,23 @@ struct CNavigationInfo {
 	double _rotationZ;
 };
 
+/**
+ * Handles doing a callback to the starfield to lock in a star after movement finishes
+ */
+class CCallbackHandler {
+private:
+	CCamera *_owner;
+	FVector _vector;
+public:
+	CCallbackHandler(CCamera *owner, const FVector &v) : _owner(owner), _vector(v) {
+	}
+
+	/**
+	 * Locks in the star at the given position
+	 */
+	void apply();
+};
+
 class CMotionControl {
 protected:
 	double _currVelocity;
@@ -54,7 +73,7 @@ protected:
 	double _rotationZ;
 public:
 	int _lockCounter;
-	CStarVector *_starVector;
+	CCallbackHandler *_callback;
 public:
 	CMotionControl(const CNavigationInfo *src);
 	virtual ~CMotionControl();
@@ -72,9 +91,9 @@ public:
 	virtual void reset();
 
 	/**
-	 * Sets this CStarVector
+	 * Sets this CCallbackHandler
 	 */
-	virtual void setVector(CStarVector *sv);
+	virtual void setCallback(CCallbackHandler *callback);
 	/**
 	 * Increases movement speed in forward direction
 	 */

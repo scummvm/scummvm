@@ -505,8 +505,8 @@ bool CCamera::lockMarker1(FVector v1, FVector firstStarPosition, FVector v3) {
 																// i.e., _mover has CMotionControlUnmarked handle which means
 																// CMotionControlUnmarked::transitionBetweenOrientations gets called
 
-	CStarVector *sv = new CStarVector(this, firstStarPosition);
-	_mover->setVector(sv);
+	CCallbackHandler *callback = new CCallbackHandler(this, firstStarPosition);
+	_mover->setCallback(callback);
 
 	return	true;
 }
@@ -597,8 +597,8 @@ bool CCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosition
 	// WORKAROUND: set old position to new position (1st argument), this prevents 
 	// locking issues when locking the 2nd star. Fixes #9961.
 	_mover->transitionBetweenPosOrients(newPos, newPos, oldOr, newOr);
-	CStarVector *sv = new CStarVector(this, secondStarPosition);
-	_mover->setVector(sv);
+	CCallbackHandler *callback = new CCallbackHandler(this, secondStarPosition);
+	_mover->setCallback(callback);
 
 	return	true;
 }
@@ -617,8 +617,8 @@ bool CCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosition)
 	// locking issues when locking the 3rd star. Fixes #9961.
 	_mover->transitionBetweenPosOrients(newPos, newPos, oldOr, newOr);
 
-	CStarVector *sv = new CStarVector(this, thirdStarPosition);
-	_mover->setVector(sv);
+	CCallbackHandler *callback = new CCallbackHandler(this, thirdStarPosition);
+	_mover->setCallback(callback);
 
 	return true;
 }

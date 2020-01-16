@@ -160,19 +160,6 @@ public:
 	int baseFn2(CSurfaceArea *surfaceArea, CCamera *camera);
 };
 
-class CStarVector {
-private:
-	CCamera *_owner;
-	FVector _vector;
-public:
-	CStarVector(CCamera *owner, const FVector &v) : _owner(owner), _vector(v) {}
-
-	/**
-	 * Applies the saved vector
-	 */
-	void apply();
-};
-
 } // End of namespace Titanic
 
 #endif /* TITANIC_BASE_STARS_H */

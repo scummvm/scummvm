@@ -65,8 +65,8 @@ void CMotionControlUnmarked::updatePosition(CErrorCode &errorCode, FVector &pos,
 			incLockCount();
 		if (moverState == DONE_MOVING) {
 			stop();
-			if (_starVector)
-				_starVector->apply();
+			if (_callback)
+				_callback->apply();
 		}
 	} else if (_currVelocity != 0.0) {
 		pos._x += orientation._row3._x * _currVelocity;

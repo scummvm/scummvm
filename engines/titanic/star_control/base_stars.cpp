@@ -560,10 +560,4 @@ int CBaseStars::baseFn2(CSurfaceArea *surfaceArea, CCamera *camera) {
 	return ref._index;
 }
 
-/*------------------------------------------------------------------------*/
-
-void CStarVector::apply() {
-	_owner->addLockedStar(_vector);
-}
-
 } // End of namespace Titanic

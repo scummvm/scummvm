@@ -23,13 +23,20 @@
 #include "titanic/star_control/motion_control.h"
 #include "titanic/star_control/base_stars.h"
 #include "titanic/star_control/error_code.h"
+#include "titanic/star_control/camera.h"
 #include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
+void CCallbackHandler::apply() {
+	_owner->addLockedStar(_vector);
+}
+
+/*------------------------------------------------------------------------*/
+
 CMotionControl::CMotionControl(const CNavigationInfo *src) {
 	_lockCounter = 0;
-	_starVector = nullptr;
+	_callback = nullptr;
 
 	if (src) {
 		setMotion(src);
@@ -43,9 +50,9 @@ CMotionControl::~CMotionControl() {
 }
 
 void CMotionControl::clear() {
-	if (_starVector) {
-		delete _starVector;
-		_starVector = nullptr;
+	if (_callback) {
+		delete _callback;
+		_callback = nullptr;
 	}
 }
 
@@ -60,9 +67,9 @@ void CMotionControl::reset() {
 	_rotationZ = 0.0;
 }
 
-void CMotionControl::setVector(CStarVector *sv) {
+void CMotionControl::setCallback(CCallbackHandler *callback) {
 	clear();
-	_starVector = sv;
+	_callback = callback;
 }
 
 void CMotionControl::setMotion(const CNavigationInfo *src) {
