@@ -17785,6 +17785,42 @@ static const uint16 sq6DuplicatePointsPatch[] = {
 	PATCH_END
 };
 
+// When attempting to restore a game that was saved with a different version of
+//  the interpreter, SQ6 displays a standard error dialog but then crashes due
+//  to a script bug. This also occurs in the original. SQ6 has custom code in
+//  Game:restore to set and restore the cursor differently depending on the
+//  current room. If in room 100, the main menu, then it attempts to restore the
+//  cursor by sending a message to an uninitialized variable.
+//
+// We fix this by not restoring the cursor when temp1 is zero. This patch relies
+//  on an existing uninitialized read workaround for Game:restore. The dialog
+//  still renders poorly, as it does in the original, but that's unrelated.
+//
+// Applies to: All versions
+// Responsible method: Game:restore
+// Fixes bug: #9702
+static const uint16 sq6RestoreErrorDialogSignature[] = {
+	0x38, SIG_SELECTOR16(setCursor),    // pushi setCursor
+	SIG_MAGICDWORD,
+	0x7a,                               // push2
+	0x8d, 0x01,                         // lst 01
+	0x76,                               // push0
+	0x43, 0x54, SIG_UINT16(0x0000),     // callk HaveMouse 00
+	0x36,                               // push
+	0x54, SIG_UINT16(0x0008),           // self 0008 [ self setCursor: temp1 kHaveMouse ]
+	SIG_END
+};
+
+static const uint16 sq6RestoreErrorDialogPatch[] = {
+	0x85, 0x01,                         // lat 01
+	0x30, PATCH_UINT16(0x000a),         // bnt 000a [ skip setCursor if temp1 == 0 ]
+	0x38, PATCH_SELECTOR16(setCursor),  // pushi setCursor
+	0x7a,                               // push2
+	0x8d, 0x01,                         // lst 01
+	0x78,                               // push1
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,     0, "fix slow transitions",                        1, sq6SlowTransitionSignature2,     sq6SlowTransitionPatch2 },
@@ -17802,6 +17838,7 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,          sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,          sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,          sci2ChangeDirPatch },
+	{  true, 64994, "fix restore-error dialog",                    1, sq6RestoreErrorDialogSignature,  sq6RestoreErrorDialogPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
