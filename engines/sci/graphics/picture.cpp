@@ -127,7 +127,7 @@ void GfxPicture::drawSci11Vga() {
 	if (has_cel) {
 		// Create palette and set it
 		_palette->createFromData(inbuffer.subspan(palette_data_ptr), &palette);
-		_palette->set(&palette, true);
+		_palette->set(&palette, true, false, true);
 
 		drawCelData(inbuffer, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, 0, 0, false);
 	}
