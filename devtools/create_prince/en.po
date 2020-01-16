@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-16 10:38+0000\n"
+"PO-Revision-Date: 2020-01-18 17:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -8831,15 +8831,15 @@ msgstr "OTHER: Ha, I will defend myself anyway!"
 
 #: dialog0301.txt:1
 msgid "OTHER: Złocisz dla ciebie, książę..."
-msgstr "OTHER: A gold piece for you, prince..."
+msgstr "OTHER: A piece of gold for you, prince..."
 
 #: dialog0302.txt:1
 msgid "OTHER: Poproszę o złocisza, książę..."
-msgstr "OTHER: Please, give me a gold piece, prince..."
+msgstr "OTHER: Please, give me a piece of gold, prince..."
 
 #: dialog0303.txt:1
 msgid "OTHER: Nie masz złociszy?"
-msgstr "OTHER: Got no gold pieces?"
+msgstr "OTHER: Got no pieces of gold?"
 
 #: dialog0303.txt:2
 msgid "OTHER: Ech, książę..."
@@ -8875,7 +8875,7 @@ msgstr "OTHER: And how much, specifically?..."
 
 #: dialog0307.txt:1
 msgid "HERO: Jednego, ślicznego złocisza."
-msgstr "HERO: One, lovely gold piece."
+msgstr "HERO: One, lovely piece of gold."
 
 #: dialog0307.txt:2
 msgid "OTHER: Przyprowadź jeszcze czterech kolegów|i porozmawiamy."
@@ -8897,7 +8897,7 @@ msgstr "HERO: U-hm."
 
 #: dialog0308.txt:1
 msgid "OTHER: ...bo jeśli złociszy jest mniej niż|pięć..."
-msgstr "OTHER: ...because if there are less than|five gold pieces ..."
+msgstr "OTHER: ...because if there are less than|five pieces of gold..."
 
 #: dialog0308.txt:2
 msgid "HERO: Tak właśnie jest, widzę, że przedni|z ciebie jasnowidz..."
@@ -8913,7 +8913,7 @@ msgstr "OTHER: The price of the service is not negotiable."
 
 #: dialog0308.txt:5
 msgid "OTHER: Pięć złociszy, albo nic."
-msgstr "OTHER: Five gold pieces or nothing."
+msgstr "OTHER: Five pieces of gold or nothing."
 
 #: dialog0308.txt:6
 msgid "HERO: Ech ten wolny rynek..."
@@ -8957,7 +8957,7 @@ msgstr "OTHER: I know this sounds strange,|but so it is."
 
 #: dialog0309.txt:10
 msgid "HERO: No to chyba straciłem pięć złociszy..."
-msgstr "HERO: Well, I think I lost five gold pieces..."
+msgstr "HERO: Well, I think I lost five pieces of gold..."
 
 #: dialog0310.txt:1
 msgid "OTHER: Widzę..."
@@ -9745,47 +9745,58 @@ msgstr ""
 
 #: dialog0403.txt:1
 msgid "OTHER: Pustelnik opuścił swoją chałupkę|i postanowił zamieszkać w młynie..."
-msgstr ""
+msgstr "OTHER: The hermit left his cottage and|decided to live in a mill..."
 
 #: dialog0403.txt:2
 msgid "OTHER: ...tłumacząc wszystkim, że koło młyńskie hipnotyzuje|lepiej, niż jakiekolwiek ziele, a zepsuta mąka i mrówki|są i tak o wiele lepsze niż jego poprzednia dieta."
 msgstr ""
+"OTHER: ...explaining to everyone that the mill wheel mesmerizes|better than "
+"any herb, and spoiled flour and ants are much|better than his previous diet."
 
 #: dialog0404.txt:1
 msgid "OTHER: Do dziś nie wiadomo, kim była kobieta w woalce..."
-msgstr ""
+msgstr "OTHER: To this day, it is not known who the woman in the veil was..."
 
 #: dialog0405.txt:1
 msgid "OTHER: ...ale jeden z mieszkańców miasteczka cierpiał na|straszną niestrawność przez ponad dwa miesiące."
 msgstr ""
+"OTHER: ...but one of the townspeople suffered from|terrible indigestion for "
+"over two months."
 
 #: dialog0406.txt:1
 msgid "OTHER: Nieszczęśliwy krasnolud, naiwnie myślący,|że w mózgu pomieszało mu się od nadmiaru piwa..."
 msgstr ""
+"OTHER: An unhappy dwarf, naively thinking that|his brain was mixed up from "
+"excess beer..."
 
 #: dialog0407.txt:1
 msgid "OTHER: ...co jest przecież oczywistą brednią,|bo piwo jest zbawiennym i uzdrawiającym likworem..."
 msgstr ""
+"OTHER: ...which is obvious nonsense, because beer|is a beneficial and "
+"healing liquor..."
 
 #: dialog0408.txt:1
 msgid "OTHER: ...zdecydował rozpocząć nowe życie."
-msgstr ""
+msgstr "OTHER: ...decided to start a new life."
 
 #: dialog0409.txt:1
 msgid "OTHER: A ja?"
-msgstr ""
+msgstr "OTHER: And me?"
 
 #: dialog0410.txt:1
 msgid "OTHER: Cóż...|Nigdy nie potrafiłem usiedzieć w jednym miejscu."
-msgstr ""
+msgstr "OTHER: Well...|I could never manage to sit in one place."
 
 #: dialog0411.txt:1
 msgid "OTHER: Być może poszukam dróg w czasie i przestrzeni,|aby rozwiązać zagadkę mojej śmierci."
 msgstr ""
+"OTHER: Perhaps I will look for paths in time and space|to solve the mystery "
+"of my death."
 
 #: dialog0412.txt:1
 msgid "OTHER: Bo nie wiem czy wiecie, że zginąłem|w sposób niezwykle..."
 msgstr ""
+"OTHER: Because I don't know if you're aware that|I died in a way extremely..."
 
 #: dialog0413.txt:1
 msgid "OTHER: Ale..."
@@ -9793,43 +9804,49 @@ msgstr ""
 
 #: dialog0414.txt:1
 msgid "OTHER: ...dość o tym! Szczerze mówiąc strasznie|zaschło mi w ustach."
-msgstr ""
+msgstr "OTHER: ...enough about it! To be honest, my mouth|is now dry."
 
 #: dialog0414.txt:2
 msgid "P#OTHER: Jeżeli kiedyś zobaczycie mnie w karczmie|nie wahajcie się przysiąść, zwłaszcza jak|jesteście piękną blondynką."
 msgstr ""
+"P#OTHER: If you ever see me in an inn, don't hesitate|to join me, especially "
+"if you are a beautiful blonde."
 
 #: dialog0415.txt:1
 msgid "OTHER: Jeżeli usłyszycie pieśń o mnie nie|wahajcie się przyłączyć do chóru."
-msgstr ""
+msgstr "OTHER: If you hear a song about me,|don't hesitate to join the choir."
 
 #: dialog0416.txt:1
 msgid "OTHER: O mnie powstają tylko piękne pieśni."
-msgstr ""
+msgstr "OTHER: Only beautiful songs are written about me."
 
 #: dialog0417.txt:1
 msgid "OTHER: Pamiętasz, ile razy wyciągałem cię z opresji?"
-msgstr ""
+msgstr "OTHER: Do you remember how many times I got you out of trouble?"
 
 #: dialog0417.txt:2
 msgid "OTHER2: Pamiętam, już ci dziękowałam."
-msgstr ""
+msgstr "OTHER2: I remember, I thanked you already."
 
 #: dialog0417.txt:3
 msgid "OTHER: A pamiętasz, jak byliśmy przytuleni|w jednej z tych komnat w Piekle?"
 msgstr ""
+"OTHER: And do you remember how we were hugged|in one of those chambers in "
+"Hell?"
 
 #: dialog0417.txt:4
 msgid "OTHER2: Pamiętam. Coś nawet zacząłeś mówić...|Bałam się nawet przez chwilę, że mnie pocałujesz."
 msgstr ""
+"OTHER2: I remember. You even started to say something...|I was even afraid "
+"for a moment that you would kiss me."
 
 #: dialog0417.txt:5
 msgid "OTHER: Bałaś się?! Jak to, bałaś się?!"
-msgstr ""
+msgstr "OTHER: Were you afraid?! What do you mean, you were afraid?!"
 
 #: dialog0417.txt:6
 msgid "P#OTHER2: Och, jesteś taki głupiutki..."
-msgstr ""
+msgstr "P#OTHER2: Oh, you are so stupid..."
 
 #: dialog0417.txt:7
 msgid "P#OTHER: Achhh... Rozumiem."
@@ -9837,7 +9854,7 @@ msgstr "P#OTHER: Ahhh... I understand."
 
 #: dialog0418.txt:1
 msgid "OTHER: No, ale może jeszcze będą z ciebie ludzie."
-msgstr ""
+msgstr "OTHER: Well, but maybe you will become a man some day."
 
 #: invtxt.txt:1
 msgid "eliksir nieśmiertelności - Aż trudno uwierzyć, że coś takiego|naprawdę istnieje."
@@ -9847,7 +9864,7 @@ msgstr ""
 
 #: invtxt.txt:2
 msgid "kapeć - Stary, cuchnący, zgrzybiały kapeć."
-msgstr ""
+msgstr "slipper - Old, stinking, decrepit slipper."
 
 #: invtxt.txt:3
 msgid "amulet - Talizman w kształcie głowy wilka."
