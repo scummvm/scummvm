@@ -163,6 +163,7 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"ink",			kTheInk,		2 },// D2 p
 	{ kTheSprite,	"left",			kTheLeft,		2 },// D2 p
 	{ kTheSprite,	"lineSize",		kTheLineSize,	2 },// D2 p
+	{ kTheSprite,	"loc",			kTheLoc,		4 },//				D4 p ???
 	{ kTheSprite,	"locH",			kTheLocH,		2 },// D2 p
 	{ kTheSprite,	"locV",			kTheLocV,		2 },// D2 p
 	{ kTheSprite,	"moveableSprite",kTheMoveableSprite,4 },//			D4 p

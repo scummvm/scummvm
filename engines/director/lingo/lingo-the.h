@@ -178,6 +178,7 @@ enum TheFieldType {
 	kTheLeft,
 	kTheLineSize,
 	kTheLoaded,
+	kTheLoc,
 	kTheLocH,
 	kTheLocV,
 	kTheLong,
