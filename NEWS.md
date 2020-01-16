@@ -16,7 +16,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed monster random item drop chance in EOB1.
    - Added handling for the secret potion in the Legend of Kyrandia 2.
    - Fixed sound issues in the Legend of Kyrandia 2.
-   - Fixed minor graphics glitches in Legend of Kyrandia 1, EOB1 and EOB2-FM-TOWNS.
+   - Fixed graphics glitches in Legend of Kyrandia 1 and 3, EOB1 and EOB2-FM-TOWNS.
 
 Queen:
    - Fixed regression with the display of the bellboy dialogue.
