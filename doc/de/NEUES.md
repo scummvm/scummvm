@@ -17,7 +17,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Die Häufigkeit, mit der Monster in EOB1 Gegenstände fallen lassen wurde korrigiert.
    - Geheimer Geheimtrank in Legend of Kyrandia 2 kann nun genutzt werden.
    - Sound-Probleme in Legend of Kyrandia 2 korrigiert.
-   - Kleinere Grafikfehler in Legend of Kyrandia 1, EOB1 und der FM-TOWNS-Version von EOB2 korrigiert.
+   - Grafikfehler in Legend of Kyrandia 1 und 3, EOB1 und den FM-TOWNS-Versionen von EOB1 und EOB2 korrigiert.
 
  Queen:
    - Neu aufgetretener Fehler im Zusammenhang mit dem Dialog des Portiers behoben.
