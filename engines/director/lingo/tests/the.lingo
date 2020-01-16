@@ -35,3 +35,5 @@ set the volume of sound 1 to 255
 put the volume of sound 1 into field 11
 
 set the checkMark of menuItem "Horizontal" of menu "The Ball" to False
+
+put the number of castMembers into field 5
