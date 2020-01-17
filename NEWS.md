@@ -28,7 +28,6 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Mohawk:
    - Persist changes in game options across sessions.
-   -
 
  Queen:
    - Fixed regression with the display of the bellboy dialogue.
