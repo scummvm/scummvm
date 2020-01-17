@@ -115,7 +115,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token tSPRITE tINTERSECTS tWITHIN tTELL tPROPERTY
 %token tON tENDIF tENDREPEAT tENDTELL
 
-%type<code> asgn begin elseif end expr if when repeatwhile
+%type<code> asgn begin elseif end expr if when repeatwhile chunkexpr
 %type<code> repeatwith stmtlist tellstart reference simpleexpr list valuelist
 %type<narg> argdef arglist nonemptyarglist linearlist proplist
 %type<s> on
@@ -441,7 +441,8 @@ expr: simpleexpr { $$ = $simpleexpr; }
 	| '(' expr[arg] ')'			{ $$ = $arg; }
 	| tSPRITE expr tINTERSECTS expr 	{ g_lingo->code1(LC::c_intersects); }
 	| tSPRITE expr tWITHIN expr		 	{ g_lingo->code1(LC::c_within); }
-	| tCHAR expr tOF expr				{ g_lingo->code1(LC::c_charOf); }
+
+chunkexpr: 	tCHAR expr tOF expr			{ g_lingo->code1(LC::c_charOf); }
 	| tCHAR expr tTO expr tOF expr		{ g_lingo->code1(LC::c_charToOf); }
 	| tITEM expr tOF expr				{ g_lingo->code1(LC::c_itemOf); }
 	| tITEM expr tTO expr tOF expr		{ g_lingo->code1(LC::c_itemToOf); }
@@ -453,6 +454,7 @@ expr: simpleexpr { $$ = $simpleexpr; }
 reference: 	RBLTIN simpleexpr	{
 		g_lingo->codeFunc($RBLTIN, 1);
 		delete $RBLTIN; }
+	| chunkexpr
 
 proc: tPUT expr				{ g_lingo->code1(LC::c_printtop); }
 	| gotofunc
