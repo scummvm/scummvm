@@ -444,7 +444,6 @@ MODULE_OBJS := \
 	star_control/frange.o \
 	star_control/frect.o \
 	star_control/fvector.o \
-	star_control/marked_auto_mover.o \
 	star_control/matrix_transform.o \
 	star_control/motion_control.o \
 	star_control/motion_control_unmarked.o \
@@ -459,7 +458,6 @@ MODULE_OBJS := \
 	star_control/star_view.o \
 	star_control/surface_area.o \
 	star_control/surface_fader.o \
-	star_control/unmarked_auto_mover.o \
 	star_control/viewport.o \
 	support/avi_surface.o \
 	support/direct_draw.o \
