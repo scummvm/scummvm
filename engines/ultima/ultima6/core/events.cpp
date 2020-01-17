@@ -74,7 +74,7 @@ void EventInput_s::set_loc(MapCoord c) {
 	loc = new MapCoord(c);
 }
 
-Events::Events(Configuration *cfg) : Shared::EventsManager(), config(cfg) {
+Events::Events(Shared::EventsCallback *callback, Configuration *cfg) : Shared::EventsManager(callback), config(cfg) {
 	g_events = this;
 	clear();
 }

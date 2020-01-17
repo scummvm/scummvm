@@ -102,7 +102,7 @@ bool Ultima6Engine::initialize() {
 	initConfig();
 
 	// Setup events
-	Events *events = new Ultima::Ultima6::Events(_config);
+	Events *events = new Ultima::Ultima6::Events(this, _config);
 	_events = events;
 
 	// Setup savegame handler

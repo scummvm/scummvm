@@ -20,31 +20,30 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_ENGINE_DEBUGGER_H
-#define ULTIMA_SHARED_ENGINE_DEBUGGER_H
+#ifndef ULTIMA_SHARED_GFX_VISUAL_SURFACE_H
+#define ULTIMA_SHARED_GFX_VISUAL_SURFACE_H
 
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "graphics/managed_surface.h"
+#include "ultima/shared/core/named_item.h"
+#include "ultima/shared/gfx/screen.h"
 
 namespace Ultima {
 namespace Shared {
+namespace Gfx {
 
-class UltimaEngine;
+class VisualSurface : public Graphics::ManagedSurface {
+private:
+	Common::Rect _bounds;
 
-/**
- * Debugger base class
- */
-class Debugger : public GUI::Debugger {
-protected:
 	/**
-	 * Converts a string to an integer
+	 * Moves font output to a new line, prompting for waiting if necessary
 	 */
-	int strToInt(const char *s);
+	bool newLine();
 public:
-	Debugger();
-    virtual ~Debugger() {}
+	VisualSurface(const Graphics::ManagedSurface &src, const Common::Rect &bounds);
 };
 
+} // End of namespace Gfx
 } // End of namespace Shared
 } // End of namespace Ultima
 

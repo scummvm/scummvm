@@ -20,31 +20,48 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_ENGINE_DEBUGGER_H
-#define ULTIMA_SHARED_ENGINE_DEBUGGER_H
+#ifndef ULTIMA_SHARED_GFX_FONT_H
+#define ULTIMA_SHARED_GFX_FONT_H
 
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "common/array.h"
+#include "common/stream.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Shared {
+namespace Gfx {
 
-class UltimaEngine;
-
-/**
- * Debugger base class
- */
-class Debugger : public GUI::Debugger {
-protected:
-	/**
-	 * Converts a string to an integer
-	 */
-	int strToInt(const char *s);
+class Font {
 public:
-	Debugger();
-    virtual ~Debugger() {}
+	Font();
+
+	/**
+	 * Draw a character
+	 */
+	void writeChar(Graphics::ManagedSurface &surface, Common::Point &textPos, char c);
+
+	/**
+	 * Write out a string
+	 */
+	void writeString(Graphics::ManagedSurface &surface, Common::Point &textPos, const Common::String &msg);
+
+	/**
+	 * Return the width of a character
+	 */
+	uint charWidth(char c) const;
+
+	/**
+	 * Return the width of a string
+	 */
+	uint stringWidth(const Common::String &msg) const;
+
+	/**
+	 * Returns the height of the font
+	 */
+	uint lineHeight() const { return 8; }
 };
 
+} // End of namespace Gfx
 } // End of namespace Shared
 } // End of namespace Ultima
 

@@ -20,32 +20,31 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_ENGINE_DEBUGGER_H
-#define ULTIMA_SHARED_ENGINE_DEBUGGER_H
-
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "ultima/shared/core/saveable_object.h"
+#include "ultima/shared/core/tree_item.h"
+#include "ultima/shared/core/named_item.h"
+#include "ultima/shared/core/project_item.h"
 
 namespace Ultima {
 namespace Shared {
 
-class UltimaEngine;
+ClassDef SaveableObject::type() {
+	return ClassDef("SaveableObject", nullptr);
+}
 
-/**
- * Debugger base class
- */
-class Debugger : public GUI::Debugger {
-protected:
-	/**
-	 * Converts a string to an integer
-	 */
-	int strToInt(const char *s);
-public:
-	Debugger();
-    virtual ~Debugger() {}
-};
+bool SaveableObject::isInstanceOf(const ClassDef &classDef) const {
+	ClassDef def = getType();
+	for (;;) {
+		if (def == classDef)
+			return true;
+
+		if (!def.hasParent())
+			break;
+		def = def.parent();
+	}
+
+	return false;
+}
 
 } // End of namespace Shared
 } // End of namespace Ultima
-
-#endif

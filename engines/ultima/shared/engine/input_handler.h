@@ -20,29 +20,57 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_ENGINE_DEBUGGER_H
-#define ULTIMA_SHARED_ENGINE_DEBUGGER_H
+#ifndef ULTIMA_SHARED_ENGINE_INPUT_HANDLER_H
+#define ULTIMA_SHARED_ENGINE_INPUT_HANDLER_H
 
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "ultima/shared/engine/input_translator.h"
+#include "ultima/shared/core/tree_item.h"
 
 namespace Ultima {
 namespace Shared {
 
-class UltimaEngine;
+class GameManager;
 
-/**
- * Debugger base class
- */
-class Debugger : public GUI::Debugger {
-protected:
+class InputHandler {
+private:
 	/**
-	 * Converts a string to an integer
+	 * Process and dispatch a passed message
 	 */
-	int strToInt(const char *s);
+	void processMessage(CMessage *msg);
+
+	/**
+	 * Dispatches a message to the project
+	 */
+	void dispatchMessage(CMessage *msg);
 public:
-	Debugger();
-    virtual ~Debugger() {}
+	GameManager *_gameManager;
+	InputTranslator *_inputTranslator;
+	bool _dragging;
+	bool _buttonDown;
+	Common::Point _mousePos;
+	Common::Point _dragStartPos;
+	int _lockCount;
+	bool _abortMessage;
+public:
+	InputHandler(GameManager *owner);
+	~InputHandler();
+
+	void setTranslator(InputTranslator *translator);
+
+	/**
+	 * Increment the lock count
+	 */
+	void incLockCount();
+
+	/**
+	 * Decrement the lock count on the input handler
+	 */
+	void decLockCount();
+
+	/**
+	 * Handles a genereated mouse message
+	 */
+	void handleMessage(CMessage &msg, bool respectLock = true);
 };
 
 } // End of namespace Shared

@@ -27,6 +27,9 @@
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/translation.h"
+#ifdef ENABLE_ULTIMA1
+#include "ultima/shared/engine/ultima_early.h"
+#endif
 #ifdef ENABLE_ULTIMA6
 #include "ultima/ultima6/ultima6.h"
 #endif
@@ -35,13 +38,15 @@
 #endif
 
 static const PlainGameDescriptor ULTIMA_GAMES[] = {
+#ifdef ENABLE_ULTIMA1
+	{ "ultima1", "Ultima I - The First Age of Darkness" },
+#endif
 #ifdef ENABLE_ULTIMA6
 	{ "ultima6", "Ultima VI - The False Prophet" },
 	{ "ultima6_enh", "Ultima VI - The False Prophet - Enhanced" },
-
 #endif
 #ifdef ENABLE_ULTIMA8
-	{ "ultima8", "Ultima 8 - Pagan" },
+	{ "ultima8", "Ultima VIII - Pagan" },
 #endif
 	{ 0, 0 }
 };
@@ -83,6 +88,11 @@ bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 	const Ultima::UltimaGameDescription *gd = (const Ultima::UltimaGameDescription *)desc;
 	if (gd) {
 		switch (gd->gameId) {
+#ifdef ENABLE_ULTIMA1
+		case Ultima::GAME_ULTIMA1:
+			*engine = new Ultima::Shared::UltimaEarlyEngine(syst, gd);
+			break;
+#endif
 #ifdef ENABLE_ULTIMA6
 		case Ultima::GAME_ULTIMA6:
 		case Ultima::GAME_ULTIMA6_ENHANCED:

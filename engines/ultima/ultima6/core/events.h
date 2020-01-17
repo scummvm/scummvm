@@ -242,7 +242,7 @@ protected:
 	void try_next_attack();
 
 public:
-	Events(Configuration *cfg);
+	Events(Shared::EventsCallback *callback, Configuration *cfg);
 	virtual ~Events();
 
 	void clear();

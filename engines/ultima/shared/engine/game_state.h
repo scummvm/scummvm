@@ -20,29 +20,16 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_ENGINE_DEBUGGER_H
-#define ULTIMA_SHARED_ENGINE_DEBUGGER_H
-
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#ifndef ULTIMA_SHARED_ENGINE_GAME_STATE_H
+#define ULTIMA_SHARED_ENGINE_GAME_STATE_H
 
 namespace Ultima {
 namespace Shared {
 
-class UltimaEngine;
+struct GameState {
+	int _partNumber;
 
-/**
- * Debugger base class
- */
-class Debugger : public GUI::Debugger {
-protected:
-	/**
-	 * Converts a string to an integer
-	 */
-	int strToInt(const char *s);
-public:
-	Debugger();
-    virtual ~Debugger() {}
+	GameState();
 };
 
 } // End of namespace Shared

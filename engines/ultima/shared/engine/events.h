@@ -20,12 +20,13 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_EVENTS_H
-#define ULTIMA_SHARED_EVENTS_H
+#ifndef ULTIMA_SHARED_ENGINE_EVENTS_H
+#define ULTIMA_SHARED_ENGINE_EVENTS_H
 
 #include "common/scummsys.h"
 #include "common/events.h"
-#include "common/queue.h"
+#include "common/stack.h"
+#include "graphics/screen.h"
 
 namespace Ultima {
 namespace Shared {
@@ -34,6 +35,7 @@ namespace Shared {
 #define GAME_FRAME_TIME 50
 #define SCREEN_UPDATE_TIME 10
 #define BUTTON_MASK(MB) (1 << ((int)(MB) - 1))
+#define DOUBLE_CLICK_TIME 100
 
 enum MouseButton {
 	BUTTON_NONE = 0,
@@ -43,16 +45,139 @@ enum MouseButton {
 	MOUSE_LAST
 };
 
-class UltimaEngine;
+enum SpecialButtons {
+	MK_LBUTTON = 1, MK_RBUTTON = 2, MK_MBUTTON = 4, MK_SHIFT = 8, MK_CONTROL = 0x10	
+};
+
+class Debugger;
+
+/**
+ * A base class for windows that can receive event messages
+ */
+class EventTarget {
+public:
+	virtual ~EventTarget() {
+	}
+
+	/**
+	 * Called to handle any regular updates the game requires
+	 */
+	virtual void onIdle() {
+	}
+
+	/**
+	 * Mouse/key event handlers
+	 */
+	virtual void mouseMove(const Common::Point &mousePos) {
+	}
+	virtual void leftButtonDown(const Common::Point &mousePos) {
+	}
+	virtual void leftButtonUp(const Common::Point &mousePos) {
+	}
+	virtual void leftButtonDoubleClick(const Common::Point &mousePos) {
+	}
+	virtual void middleButtonDown(const Common::Point &mousePos) {
+	}
+	virtual void middleButtonUp(const Common::Point &mousePos) {
+	}
+	virtual void middleButtonDoubleClick(const Common::Point &mousePos) {
+	}
+	virtual void rightButtonDown(const Common::Point &mousePos) {
+	}
+	virtual void rightButtonUp(const Common::Point &mousePos) {
+	}
+	virtual void mouseWheel(const Common::Point &mousePos, bool wheelUp) {
+	}
+	virtual void keyDown(Common::KeyState keyState) {
+	}
+	virtual void keyUp(Common::KeyState keyState) {
+	}
+};
+
+/**
+ * An eent target used for waiting for a mouse or keypress
+ */
+class CPressTarget : public EventTarget {
+public:
+	bool _pressed;
+public:
+	CPressTarget() : _pressed(false) {
+	}
+	virtual ~CPressTarget() {
+	}
+	virtual void leftButtonDown(const Common::Point &mousePos) {
+		_pressed = true;
+	}
+	virtual void middleButtonDown(const Common::Point &mousePos) {
+		_pressed = true;
+	}
+	virtual void rightButtonDown(const Common::Point &mousePos) {
+		_pressed = true;
+	}
+	virtual void keyDown(Common::KeyState keyState) {
+		_pressed = true;
+	}
+};
+
+/**
+ * Abstract interface for engine functionality the events manager needs to access
+ */
+class EventsCallback {
+public:
+	/**
+	 * Destructor
+	 */
+	virtual ~EventsCallback() {}
+
+    /**
+     * Checks if an auto save should be done, and if so, takes care of it
+     */
+	virtual bool autoSaveCheck(int lastSaveTime) = 0;
+
+	/**
+	 * Get the debugger
+	 */
+	virtual Debugger *getDebugger() const = 0;
+
+	/**
+	 * Get the screen
+	 */
+	virtual Graphics::Screen *getScreen() const {
+		return nullptr;
+	}
+};
 
 class EventsManager {
 private:
+	EventsCallback *_callback;
+	Common::Stack<EventTarget *> _eventTargets;
 	uint32 _frameCounter;
+	uint32 _priorFrameTime;
 	uint32 _priorFrameCounterTime;
 	uint32 _lastAutosaveTime;
 	uint32 _gameCounter;
 	uint32 _playTime;
-private:
+	Common::Point _mousePos;
+	uint _specialButtons;
+	uint8  _buttonsDown;
+
+	/**
+	 * Check whether it's time to display the next screen frame
+	 */
+	bool checkForNextFrameCounter();
+
+	/**
+	 * Return the currently active event target
+	 */
+	EventTarget *eventTarget() const {
+		return _eventTargets.top();
+	}
+
+	/**
+	 * Handles setting/resettings special buttons on key up/down
+	 */
+	void handleKbdSpecial(Common::KeyState keyState);
+
 	/**
 	 * Sets whether a given button is depressed
 	 */
@@ -63,16 +188,90 @@ protected:
 	 */
 	virtual void nextFrame();
 public:
-	Common::Point _mousePos;
-	uint8  _buttonsDown;
-public:
-	EventsManager();
-	virtual ~EventsManager();
+	EventsManager(EventsCallback *callback);
+	virtual ~EventsManager() {}
+
+	/**
+	 * Adds a new event target to the top of the list. It will get
+	 * all events generated until such time as another is pushed on
+	 * top of it, or the removeTarget method is called
+	 */
+	void addTarget(EventTarget *target) {
+		_eventTargets.push(target);
+	}
+
+	/**
+	 * Removes the currently active event target
+	 */
+	void removeTarget() {
+		_eventTargets.pop();
+	}
+
+	/**
+	 * Polls the ScummVM backend for any pending events, passing out the event, if any
+	 */
+
+	virtual bool pollEvent(Common::Event &event);
+
+	/**
+	 * Checks for any pending events. This differs from pollEvent, in that the event manager will dispatch
+	 * all pending events to the currently registered active event target, rather than simply returning a
+	 * single event like pollEvent does
+	 */
+	void pollEvents();
+
+	/**
+	 * Poll for events and introduce a small delay, to allow the system to
+	 * yield to other running programs
+	 */
+	void pollEventsAndWait();
+
+	/**
+	 * Return the current game frame number
+	 */
+	uint32 getFrameCounter() const {
+		return _frameCounter;
+	}
+
+	/**
+	 * Get the elapsed playtime
+	 */
+	uint32 getTicksCount() const;
+
+	/**
+	 * Sleep for a specified period of time
+	 */
+	void sleep(uint time);
+
+	/**
+	 * Wait for a mouse or keypress
+	 */
+	bool waitForPress(uint expiry);
+
+	/**
+	 * Sets the mouse position
+	 */
+	void setMousePos(const Common::Point &pt);
+
+	/*
+	 * Return whether a given special key is currently pressed
+	 */
+	bool isSpecialPressed(SpecialButtons btn) const {
+		return (_specialButtons & btn) != 0;
+	}
+
+	/**
+	 * Returns the bitset of the currently pressed special buttons
+	 */
+	uint getSpecialButtons() const {
+		return _specialButtons;
+	}
 
 	/*
 	 * Set the cursor
 	 */
-	virtual void setCursor(int cursorId) {}
+	virtual void setCursor(int cursorId) {
+	}
 
 	/**
 	 * Show the mouse cursor
@@ -90,25 +289,25 @@ public:
 	bool isCursorVisible();
 
 	/**
-	 * Polls the ScummVM backend for any pending events
-	 */
-	virtual bool pollEvent(Common::Event &event);
-
-	/**
 	 * Gets the current total ticks
 	 */
-	uint32 getTicks() { return _frameCounter; }
+	uint32 getTicks() {
+		return _frameCounter;
+	}
 
 	/**
 	 * Gets the total overall play time
 	 */
-	uint32 playTime() const { return _playTime; }
-	
+	uint32 playTime() const {
+		return _playTime;
+	}
+
 	/**
 	 * Sets the current play time
 	 */
-	void setPlayTime(uint32 time) { _playTime = time; }
-
+	void setPlayTime(uint32 time) {
+		_playTime = time;
+	}
 
 	/**
 	 * Returns true if a given mouse button is pressed

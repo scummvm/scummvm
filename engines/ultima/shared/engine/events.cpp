@@ -32,11 +32,9 @@
 namespace Ultima {
 namespace Shared {
 
-EventsManager::EventsManager() : _playTime(0), _gameCounter(0), _frameCounter(0),
-	_priorFrameCounterTime(0), _lastAutosaveTime(0), _buttonsDown(0) {
-}
-
-EventsManager::~EventsManager() {
+EventsManager::EventsManager(EventsCallback *callback) : _callback(callback), _playTime(0),
+		_gameCounter(0), _frameCounter(0), _priorFrameCounterTime(0), _lastAutosaveTime(0),
+		_buttonsDown(0), _specialButtons(0) {
 }
 
 void EventsManager::showCursor() {
@@ -63,7 +61,7 @@ bool EventsManager::pollEvent(Common::Event &event) {
 	// Handle auto saves
 	if (!_lastAutosaveTime)
 		_lastAutosaveTime = timer;
-	g_ultima->autoSaveCheck(_lastAutosaveTime);
+	_callback->autoSaveCheck(_lastAutosaveTime);
 
 	// Event handling
 	if (g_system->getEventManager()->pollEvent(event)) {
@@ -78,15 +76,22 @@ bool EventsManager::pollEvent(Common::Event &event) {
 		}
 
 		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
+		case Common::EVENT_KEYDOWN: {
+			handleKbdSpecial(event.kbd);
+
 			// Check for debugger
-			if (g_ultima->_debugger != nullptr && event.kbd.keycode == Common::KEYCODE_d
+			Debugger *debugger = _callback->getDebugger();
+			if (debugger != nullptr && event.kbd.keycode == Common::KEYCODE_d
 					&& (event.kbd.flags & Common::KBD_CTRL)) {
 				// Attach to the debugger
-				g_ultima->_debugger->attach();
-				g_ultima->_debugger->onFrame();
+				debugger->attach();
+				debugger->onFrame();
 				return false;
 			}
+			break;
+		}
+		case Common::EVENT_KEYUP:
+			handleKbdSpecial(event.kbd);
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
@@ -107,23 +112,143 @@ bool EventsManager::pollEvent(Common::Event &event) {
 	return false;
 }
 
+void EventsManager::pollEvents() {
+	Common::Event event;
+
+	while (pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_MOUSEMOVE:
+			eventTarget()->mouseMove(_mousePos);
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+			eventTarget()->leftButtonDown(_mousePos);
+			break;
+		case Common::EVENT_LBUTTONUP:
+			eventTarget()->leftButtonUp(_mousePos);
+			break;
+		case Common::EVENT_MBUTTONDOWN:
+			eventTarget()->middleButtonDown(_mousePos);
+			break;
+		case Common::EVENT_MBUTTONUP:
+			eventTarget()->middleButtonUp(_mousePos);
+			break;
+		case Common::EVENT_RBUTTONDOWN:
+			eventTarget()->rightButtonDown(_mousePos);
+			break;
+		case Common::EVENT_RBUTTONUP:
+			eventTarget()->rightButtonUp(_mousePos);
+			break;
+		case Common::EVENT_WHEELUP:
+		case Common::EVENT_WHEELDOWN:
+			eventTarget()->mouseWheel(_mousePos, event.type == Common::EVENT_WHEELUP);
+			break;
+		case Common::EVENT_KEYDOWN:
+			eventTarget()->keyDown(event.kbd);
+			break;
+		case Common::EVENT_KEYUP:
+			eventTarget()->keyUp(event.kbd);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void EventsManager::pollEventsAndWait() {
+	pollEvents();
+	g_system->delayMillis(10);
+}
+
 void EventsManager::nextFrame() {
 	++_frameCounter;
 	++_playTime;
 
-	if (g_ultima->_debugger)
-		g_ultima->_debugger->onFrame();
+	// Handle any idle updates
+	if (!_eventTargets.empty())
+		eventTarget()->onIdle();
+
+	Debugger *debugger = _callback->getDebugger();
+	if (debugger)
+		debugger->onFrame();
+
+	Graphics::Screen *screen = _callback->getScreen();
+	if (screen)
+		screen->update();
 }
 
 void EventsManager::setButtonDown(MouseButton button, bool isDown) {
 	assert(button != BUTTON_NONE);
-	if (isDown)
+
+	byte mask = 0;
+	switch (button) {
+	case BUTTON_LEFT:
+		mask = MK_LBUTTON;
+		break;
+	case BUTTON_RIGHT:
+		mask = MK_RBUTTON;
+		break;
+	case BUTTON_MIDDLE:
+		mask = MK_MBUTTON;
+		break;
+	default:
+		break;	
+	}
+
+	if (isDown) {
 		_buttonsDown |= BUTTON_MASK(button);
-	else
+		_specialButtons |= mask;
+	} else {
 		_buttonsDown &= ~BUTTON_MASK(button);
+		_specialButtons &= ~mask;
+	}
+}
+
+uint32 EventsManager::getTicksCount() const {
+	return _frameCounter * GAME_FRAME_TIME;
+}
+
+void EventsManager::sleep(uint time) {
+	uint32 delayEnd = g_system->getMillis() + time;
+
+	while (!g_engine->shouldQuit() && g_system->getMillis() < delayEnd)
+		pollEventsAndWait();
+}
+
+bool EventsManager::waitForPress(uint expiry) {
+	uint32 delayEnd = g_system->getMillis() + expiry;
+	CPressTarget pressTarget;
+	addTarget(&pressTarget);
+
+	while (!g_engine->shouldQuit() && g_system->getMillis() < delayEnd && !pressTarget._pressed) {
+		pollEventsAndWait();
+	}
+
+	removeTarget();
+	return pressTarget._pressed;
+}
+
+void EventsManager::setMousePos(const Common::Point &pt) {
+	g_system->warpMouse(pt.x, pt.y);
+	_mousePos = pt;
+	eventTarget()->mouseMove(_mousePos);
+}
+
+void EventsManager::handleKbdSpecial(Common::KeyState keyState) {
+	if (keyState.flags & Common::KBD_CTRL)
+		_specialButtons |= MK_CONTROL;
+	else
+		_specialButtons &= ~MK_CONTROL;
+
+	if (keyState.flags & Common::KBD_SHIFT)
+		_specialButtons |= MK_SHIFT;
+	else
+		_specialButtons &= ~MK_SHIFT;
 }
 
 
+bool shouldQuit() {
+	return g_engine->shouldQuit();
+}
 
 bool isMouseDownEvent(Common::EventType type) {
 	return type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_RBUTTONDOWN
@@ -144,10 +269,6 @@ MouseButton whichButton(Common::EventType type) {
 		return BUTTON_MIDDLE;
 	else
 		return BUTTON_NONE;
-}
-
-bool shouldQuit() {
-	return g_engine->shouldQuit();
 }
 
 } // End of namespace Shared

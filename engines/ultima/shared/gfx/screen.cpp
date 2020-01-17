@@ -20,32 +20,22 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_ENGINE_DEBUGGER_H
-#define ULTIMA_SHARED_ENGINE_DEBUGGER_H
-
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "engines/util.h"
+#include "ultima/shared/gfx/screen.h"
 
 namespace Ultima {
 namespace Shared {
+namespace Gfx {
 
-class UltimaEngine;
+#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
-/**
- * Debugger base class
- */
-class Debugger : public GUI::Debugger {
-protected:
-	/**
-	 * Converts a string to an integer
-	 */
-	int strToInt(const char *s);
-public:
-	Debugger();
-    virtual ~Debugger() {}
-};
+Screen::Screen() : Graphics::Screen(320, 200) {
+	initGraphics(320, 200);
+}
 
+Screen::~Screen() {
+}
+
+} // End of namespace Gfx
 } // End of namespace Shared
 } // End of namespace Ultima
-
-#endif

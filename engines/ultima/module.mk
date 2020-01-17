@@ -4,9 +4,40 @@ MODULE_OBJS := \
 	detection.o \
 	shared/engine/ultima.o \
 	shared/engine/data_archive.o \
+	shared/engine/debugger.o \
 	shared/engine/events.o \
 	shared/std/misc.o \
 	shared/std/string.o
+
+ifdef ENABLE_ULTIMA1
+MODULE_OBJS += \
+	shared/core/file.o \
+	shared/core/message_target.o \
+	shared/core/mouse_cursor.o \
+	shared/core/named_item.o \
+	shared/core/project_item.o \
+	shared/core/saveable_object.o \
+	shared/core/tree_item.o \
+	shared/engine/debugger.o \
+	shared/engine/game_manager.o \
+	shared/engine/game_state.o \
+	shared/engine/input_handler.o \
+	shared/engine/input_translator.o \
+	shared/engine/main_game_window.o \
+	shared/engine/messages.o \
+	shared/engine/resources.o \
+	shared/engine/ultima_early.o \
+	shared/gfx/font.o \
+	shared/gfx/screen.o \
+	shared/gfx/visual_container.o \
+	shared/gfx/visual_item.o \
+	shared/gfx/visual_surface.o
+endif
+
+ifdef ENABLE_ULTIMA1
+MODULE_OBJS += \
+	ultima1/project_item.o
+endif
 
 ifdef ENABLE_ULTIMA6
 MODULE_OBJS += \
