@@ -79,6 +79,7 @@ namespace LC {
 
 	void c_theentitypush();
 	void c_theentityassign();
+	void c_themenuitementityassign();
 	void c_objectfieldpush();
 	void c_objectfieldassign();
 

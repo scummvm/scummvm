@@ -196,8 +196,7 @@ asgn: tPUT expr tINTO ID 		{
 		}
 
 		warning("STUB: menuItem entity");
-		g_lingo->code1(LC::c_swap);
-		g_lingo->code1(LC::c_theentityassign);
+		g_lingo->code1(LC::c_themenuitementityassign);
 		g_lingo->codeInt($THEMENUITEMENTITY[0]);
 		g_lingo->codeInt($THEMENUITEMENTITY[1]);
 		$$ = $expr; }

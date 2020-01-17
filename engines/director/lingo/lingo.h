@@ -256,6 +256,7 @@ public:
 public:
 	void initTheEntities();
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);
+	void setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d);
 	void setTheSprite(Datum &id, int field, Datum &d);
 	void setTheCast(Datum &id, int field, Datum &d);
 	Datum getTheEntity(int entity, Datum &id, int field);

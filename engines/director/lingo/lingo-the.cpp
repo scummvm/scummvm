@@ -460,6 +460,11 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	}
 }
 
+void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d) {
+	warning("STUB: setTheMenuItemEntity(%s, \"%s\", %s, \"%s\", %s)", entity2str(entity), menuId.toString()->c_str(), field2str(field),
+				menuItemId.toString()->c_str(), d.toString()->c_str());
+}
+
 Datum Lingo::getTheSprite(Datum &id1, int field) {
 	Datum d;
 	int id = 0;
