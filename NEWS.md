@@ -99,7 +99,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Minor improvements.
 
  Windows:
-   - Improvements to Text-to-Speech support.
+   - Added Text-to-Speech support.
    - Fix screenshots with Unicode paths.
 
 

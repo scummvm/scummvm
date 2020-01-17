@@ -99,7 +99,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Kleinere Verbesserungen.
 
  Windows-Portierung:
-   - Verbesserung der Sprachausgabe (Text-to-Speech).
+   - Unterstützung für Sprachausgabe in der Benutzeroberfläche (Text-to-Speech) hinzugefügt.
    - Bildschirmfotos können nun auch in Ordnern mit Unicode-Zeichen gespeichert werden.
 
 
