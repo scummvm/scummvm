@@ -4,7 +4,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		package="org.scummvm.scummvm"
 		android:versionCode="@ANDROID_VERSIONCODE@"
-		android:versionName="2.1.1pre"
+		android:versionName="2.1.1"
 		android:launchMode="singleTask"
 		android:installLocation="auto"
 		android:sharedUserId="org.scummvm.scummvm">
