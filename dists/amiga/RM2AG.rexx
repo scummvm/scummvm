@@ -78,7 +78,7 @@ END
 Prepare the Amiga guide file, add intro and fixed text.
 */
 WRITELN(guide_write,'@DATABASE ScummVM README.guide')
-WRITELN(guide_write,'@$VER: ScummVM Readme 2.1.1pre')
+WRITELN(guide_write,'@$VER: ScummVM Readme 2.1.2pre')
 WRITELN(guide_write,'@(C) by The ScummVM team')
 WRITELN(guide_write,'@AUTHOR The ScummVM team')
 WRITELN(guide_write,'@WORDWRAP')
@@ -124,7 +124,7 @@ DO WHILE EOF(readme_read) = 0
 		Two chapters (1.0 and 7.8) are "empty", consisting of only
 		it`s chapter names. Link them to their respective sub chapters
 		(1.1 and 7.8.1) to not display a blank page.
-		
+
 		If chapter 1.0 is found, add a link node to chapter 1.1.
 		*/
 		IF POS('  - [<>1.0<>)',working_line) = 1 THEN DO
@@ -228,7 +228,7 @@ DO WHILE EOF(readme_read) = 0
 		Two chapters (1.0 and 7.8) are "empty", consisting of only
 		it`s chapter names. Link them to their respective sub chapters
 		(1.1 and 7.8.1) to not display a blank page.
-		
+
 		If chapter 1.1 is found, don`t close the NODE, just write the line.
 		*/
 		IF POS('<>1.1<>',working_line) = 1 THEN DO
