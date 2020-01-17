@@ -35,7 +35,7 @@ struct CNavigationInfo;
 class FPoint;
 class SimpleFile;
 
-enum StarLockState { ZERO_LOCKED=0, ONE_LOCKED=1, TWO_LOCKED=2, THREE_LOCKED=3 };
+enum StarLockLevel { ZERO_LOCKED=0, ONE_LOCKED=1, TWO_LOCKED=2, THREE_LOCKED=3 };
 
 /**
  * Implements a reference point from which the starmap can be viewed
@@ -45,24 +45,24 @@ private:
 	static FMatrix *_priorOrientation;
 	static FMatrix *_newOrientation;
 private:
-	StarLockState _starLockState;
+	StarLockLevel _lockLevel;
 	FMatrix _lockedStarsPos; // Each row represents the location of a locked star
-	CMotionControl *_mover; // A marked or unmarked camera mover, contains an automover
+	CMotionControl *_motion; // A marked or unmarked camera mover, contains an automover
 	CViewport _viewport;
 	bool _isMoved; // Used in CPetStarfield to determine if a star destination can be set
 	bool _isInLockingProcess; // The mover/view is homing in on a new star
 private:
 	/**
-	 * Set Mover type to be unmarked or marked camera mover based on 
-	 * the number of stars currently locked (_starLockState)
-	 * The CNavigationInfo data is used to initialize the mover
+	 * Creates a motion controller for the camera. This needs to be recreated
+	 * when the number of locked stars changes. 
+	 * @param src	Contains characteristics to set for the motion
 	 */
-	bool setMoverType(const CNavigationInfo *src);
+	bool createMotionControl(const CNavigationInfo *src);
 
 	/**
 	 * Deletes the previous mover handle
 	 */
-	void removeMover();
+	void deleteMotionController();
 
 	/**
 	 * Return whether the handler is locked
@@ -199,7 +199,7 @@ public:
 	/**
 	 * How many stars are currently locked onto
 	 */
-	virtual StarLockState getStarLockState() const { return _starLockState; }
+	virtual StarLockLevel getLockLevel() const { return _lockLevel; }
 
 	/**
 	 * Adds the row for a locked in marker/star

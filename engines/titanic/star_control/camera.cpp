@@ -40,12 +40,12 @@ FMatrix *CCamera::_priorOrientation;
 FMatrix *CCamera::_newOrientation;
 
 CCamera::CCamera(const CNavigationInfo *data) :
-		_starLockState(ZERO_LOCKED), _mover(nullptr), _isMoved(false), _isInLockingProcess(false) {
-	setMoverType(data);
+		_lockLevel(ZERO_LOCKED), _motion(nullptr), _isMoved(false), _isInLockingProcess(false) {
+	createMotionControl(data);
 }
 
 CCamera::CCamera(CViewport *src) :
-		_starLockState(ZERO_LOCKED), _mover(nullptr), _isMoved(false), _isInLockingProcess(false), _viewport(src) {
+		_lockLevel(ZERO_LOCKED), _motion(nullptr), _isMoved(false), _isInLockingProcess(false), _viewport(src) {
 }
 
 void CCamera::init() {
@@ -61,7 +61,7 @@ void CCamera::deinit() {
 }
 
 bool CCamera::isLocked() { 
-	return _mover->isLocked();
+	return _motion->isLocked();
 }
 
 bool CCamera::isNotInLockingProcess() { 
@@ -69,7 +69,7 @@ bool CCamera::isNotInLockingProcess() {
 }
 
 CCamera::~CCamera() {
-	removeMover();
+	deleteMotionController();
 }
 
 void CCamera::setViewport(const CViewport *src) {
@@ -77,7 +77,7 @@ void CCamera::setViewport(const CViewport *src) {
 }
 
 void CCamera::setMotion(const CNavigationInfo *src) {
-	_mover->setMotion(src);
+	_motion->setMotion(src);
 }
 
 void CCamera::setPosition(const FVector &v) {
@@ -136,7 +136,7 @@ void CCamera::setDestination(const FVector &v) {
 	FMatrix orientation = _viewport.getOrientation();
 	FVector oldPos = _viewport._position;
 
-	_mover->moveTo(oldPos, v, orientation);
+	_motion->moveTo(oldPos, v, orientation);
 }
 
 void CCamera::updatePosition(CErrorCode *errorCode) {
@@ -150,7 +150,7 @@ void CCamera::updatePosition(CErrorCode *errorCode) {
 
 	FVector priorPos = _viewport._position;
 	FVector newPos = _viewport._position;
-	_mover->updatePosition(*errorCode, newPos, *_newOrientation);
+	_motion->updatePosition(*errorCode, newPos, *_newOrientation);
 
 	if (newPos != priorPos) {
 		_viewport.setPosition(newPos);
@@ -163,19 +163,19 @@ void CCamera::updatePosition(CErrorCode *errorCode) {
 }
 
 void CCamera::accelerate() {
-	_mover->accelerate();
+	_motion->accelerate();
 }
 
 void CCamera::deccelerate() {
-	_mover->deccelerate();
+	_motion->deccelerate();
 }
 
 void CCamera::fullSpeed() {
-	_mover->fullSpeed();
+	_motion->fullSpeed();
 }
 
 void CCamera::stop() {
-	_mover->stop();
+	_motion->stop();
 }
 
 void CCamera::reposition(double factor) {
@@ -250,7 +250,7 @@ void CCamera::setViewportAngle(const FPoint &angles) {
 	if (isLocked())
 		return;
 
-	switch(_starLockState) {
+	switch(_lockLevel) {
 	case ZERO_LOCKED: {
 		FPose subX(X_AXIS, angles._y);
 		FPose subY(Y_AXIS, -angles._x); // needs to be negative or looking left will cause the view to go right
@@ -393,30 +393,30 @@ void CCamera::setViewportAngle(const FPoint &angles) {
 }
 
 bool CCamera::addLockedStar(const FVector v) {
-	if (_starLockState == THREE_LOCKED)
+	if (_lockLevel == THREE_LOCKED)
 		return false;
 
 	CNavigationInfo data;
-	_mover->getMotion(&data);
-	removeMover();
+	_motion->getMotion(&data);
+	deleteMotionController();
 
-	FVector &row = _lockedStarsPos[(int)_starLockState];
-	_starLockState = StarLockState((int)_starLockState + 1);
+	FVector &row = _lockedStarsPos[(int)_lockLevel];
+	_lockLevel = (StarLockLevel)((int)_lockLevel + 1);
 	row = v;
-	setMoverType(&data);
+	createMotionControl(&data);
 	return true;
 }
 
 bool CCamera::removeLockedStar() {
-	if (_starLockState == ZERO_LOCKED)
+	if (_lockLevel == ZERO_LOCKED)
 		return false;
 
 	CNavigationInfo data;
-	_mover->getMotion(&data);
-	removeMover();
+	_motion->getMotion(&data);
+	deleteMotionController();
 
-	_starLockState = StarLockState((int)_starLockState - 1);
-	setMoverType(&data);
+	_lockLevel = (StarLockLevel)((int)_lockLevel - 1);
+	createMotionControl(&data);
 	return true;
 }
 
@@ -432,43 +432,43 @@ void CCamera::save(SimpleFile *file, int indent) {
 	_viewport.save(file, indent);
 }
 
-bool CCamera::setMoverType(const CNavigationInfo *src) {
-	CMotionControl *mover = nullptr;
+bool CCamera::createMotionControl(const CNavigationInfo *src) {
+	CMotionControl *motion = nullptr;
 
-	switch (_starLockState) {
+	switch (_lockLevel) {
 	case ZERO_LOCKED:
-		mover = new CMotionControlUnmarked(src);
+		motion = new CMotionControlUnmarked(src);
 		break;
 
 	case ONE_LOCKED:
 	case TWO_LOCKED:
 	case THREE_LOCKED:
-		mover = new CMotionControlMarked(src);
+		motion = new CMotionControlMarked(src);
 		break;
 
 	default:
 		break;
 	}
 
-	if (mover) {
-		assert(!_mover); // removeMover() is usually called before this function so _mover is null
-		_mover = mover;
+	if (motion) {
+		assert(!_motion);
+		_motion = motion;
 		return true;
 	} else {
 		return false;
 	}
 }
 
-void CCamera::removeMover() {
-	if (_mover) {
-		delete _mover;
-		_mover = nullptr;
+void CCamera::deleteMotionController() {
+	if (_motion) {
+		delete _motion;
+		_motion = nullptr;
 		_isInLockingProcess = false;
 	}
 }
 
 bool CCamera::lockMarker1(FVector v1, FVector firstStarPosition, FVector v3) {
-	if (_starLockState != ZERO_LOCKED)
+	if (_lockLevel != ZERO_LOCKED)
 		return true;
 
 	_isInLockingProcess = true;
@@ -501,18 +501,16 @@ bool CCamera::lockMarker1(FVector v1, FVector firstStarPosition, FVector v3) {
 
 	FMatrix matrix = _viewport.getOrientation();
 	const FVector &pos = _viewport._position;
-	_mover->transitionBetweenOrientations(v3, tempV, pos, matrix); // TODO: pos does not get used in this function, 
-																// i.e., _mover has CMotionControlUnmarked handle which means
-																// CMotionControlUnmarked::transitionBetweenOrientations gets called
+	_motion->transitionBetweenOrientations(v3, tempV, pos, matrix);
 
 	CCallbackHandler *callback = new CCallbackHandler(this, firstStarPosition);
-	_mover->setCallback(callback);
+	_motion->setCallback(callback);
 
 	return	true;
 }
 
 bool CCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosition) {
-	if (_starLockState != ONE_LOCKED)
+	if (_lockLevel != ONE_LOCKED)
 		return true;
 
 	_isInLockingProcess = true;
@@ -596,15 +594,15 @@ bool CCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosition
 
 	// WORKAROUND: set old position to new position (1st argument), this prevents 
 	// locking issues when locking the 2nd star. Fixes #9961.
-	_mover->transitionBetweenPosOrients(newPos, newPos, oldOr, newOr);
+	_motion->transitionBetweenPosOrients(newPos, newPos, oldOr, newOr);
 	CCallbackHandler *callback = new CCallbackHandler(this, secondStarPosition);
-	_mover->setCallback(callback);
+	_motion->setCallback(callback);
 
 	return	true;
 }
 
 bool CCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosition) {
-	if (_starLockState != TWO_LOCKED)
+	if (_lockLevel != TWO_LOCKED)
 		return true;
 
 	_isInLockingProcess = true;
@@ -615,10 +613,10 @@ bool CCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosition)
 
 	// WORKAROUND: set old position to new position (1st argument), this prevents 
 	// locking issues when locking the 3rd star. Fixes #9961.
-	_mover->transitionBetweenPosOrients(newPos, newPos, oldOr, newOr);
+	_motion->transitionBetweenPosOrients(newPos, newPos, oldOr, newOr);
 
 	CCallbackHandler *callback = new CCallbackHandler(this, thirdStarPosition);
-	_mover->setCallback(callback);
+	_motion->setCallback(callback);
 
 	return true;
 }
