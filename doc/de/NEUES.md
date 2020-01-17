@@ -88,6 +88,10 @@ Programmcodes finden Sie auf Englisch unter:
  MacOS X-Portierung:
    - Verbesserte Unterstützung für den "Dark Mode".
 
+ RISC OS-Portierung:
+   - Absturz behoben, der auftritt, wenn auf ein nicht verfügbares Laufwerk zugegriffen wird.
+   - Versions-Anforderungen für DigitalRenderer reduziert.
+
  Switch-Portierung:
    - Cloud-Integration hinzugefügt.
 
