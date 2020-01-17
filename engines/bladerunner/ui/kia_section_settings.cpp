@@ -215,12 +215,12 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 				subtitlesTranslation = "Sottotitoli";
 				break;
 			case Common::ES_ESP:
-				subtitlesTranslation = "Subtitulos";
+				subtitlesTranslation = "Subt\xa1tulos"; // the spanish text must have accented í
 				break;
 			case Common::RU_RUS:
 				// субтитры
 				if (_vm->_russianCP1251) {
-					// Patched transalation by Siberian Studio is using Windows-1251 encoding
+					// Patched translation by Siberian Studio is using Windows-1251 encoding
 					subtitlesTranslation = "\xf1\xf3\xe1\xf2\xe8\xf2\xf0\xfb";
 				} else {
 					// Original release uses custom encoding
