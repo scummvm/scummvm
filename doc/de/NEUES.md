@@ -8,9 +8,17 @@ Programmcodes finden Sie auf Englisch unter:
    - Absturz beim Wechsel zwischen einigen Sprachen der Benutzeroberfläche korrigiert.
    - Ein Druck auf die ESC-Taste speichert nicht mehr irrtümlich Einstellungen im Optionen-Dialog ab.
    - Verbesserte Audio-Wiedergabe für FM-TOWNS/PC-98.
+   - Unterstützung für Griechisch in der Benutzeroberfläche verbessert.
+
+ Netzwerk:
+   - Verbesserte Fehlerbehandlung.
+   - Spielstände werden nur wenn nötig heruntergeladen.
 
  Bladerunner:
    - Fehlerhafte Savestates in einigen Szenen korrigiert.
+   - Unterstützung für 120 FPS hinzugefügt.
+   - Unterstützung für Thumbnails verbessert.
+   - Unterstützung für virtuelle Keyboards im Speicherbildschirm auf betroffenen Plattformen hinzugefügt.
 
  Kyra:
    - End-Sequenz der Amiga-Version von EOB1 korrigiert (wird nur abgespielt, wenn alle Bonus-Quests erfüllt sind.
@@ -18,6 +26,9 @@ Programmcodes finden Sie auf Englisch unter:
    - Geheimer Geheimtrank in Legend of Kyrandia 2 kann nun genutzt werden.
    - Sound-Probleme in Legend of Kyrandia 2 korrigiert.
    - Grafikfehler in Legend of Kyrandia 1 und 3, EOB1 und den FM-TOWNS-Versionen von EOB1 und EOB2 korrigiert.
+
+ Mohawk:
+   - Änderungen in den Spiele-Optionen werden nun über Sitzungen hinweg gespeichert.
 
  Queen:
    - Neu aufgetretener Fehler im Zusammenhang mit dem Dialog des Portiers behoben.
@@ -68,12 +79,24 @@ Programmcodes finden Sie auf Englisch unter:
 
  Android-Portierung:
    - Verbesserung der Dateisystem-Navigation.
+   - HiDPI-Displays werden nun korrekt unterstützt.
+   - Verbesserung der Keyboard-Unterstützung.
+
+ iOS-Portierung:
+   - Der Startbildschirm-Indikator wird nun automatisch auf dem iPhone X und späteren Modellen versteckt.
+
+ MacOS X-Portierung:
+   - Verbesserte Unterstützung für den "Dark Mode".
 
  Switch-Portierung:
    - Cloud-Integration hinzugefügt.
 
+ OpenPandora-Portierung:
+   - Kleinere Verbesserungen.
+
  Windows-Portierung:
    - Verbesserung der Sprachausgabe (Text-to-Speech).
+   - Bildschirmfotos können nun auch in Ordnern mit Unicode-Zeichen gespeichert werden.
 
 
 #### 2.1.0 "Electric Sheep" (13.10.2019)
