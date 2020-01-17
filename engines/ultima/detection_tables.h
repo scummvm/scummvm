@@ -23,6 +23,22 @@
 namespace Ultima {
 
 static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
+#ifdef ENABLE_ULTIMA1
+	{
+		// Ultima I - The First Age of Darkness
+		{
+			"ultima1",
+			0,
+			AD_ENTRY1s("gate_000.rgn", "33c250bf306b7cbbd3dd71b6029b8784", 768),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GAME_ULTIMA1
+	},
+#endif
+
 #ifdef ENABLE_ULTIMA6
 	// GOG Ultima 6
 	{
@@ -51,7 +67,6 @@ static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		},
 		GAME_ULTIMA6_ENHANCED
 	},
-
 #endif
 
 #ifdef ENABLE_ULTIMA8

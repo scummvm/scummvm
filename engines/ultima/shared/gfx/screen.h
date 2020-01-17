@@ -20,31 +20,27 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_ENGINE_DEBUGGER_H
-#define ULTIMA_SHARED_ENGINE_DEBUGGER_H
+#ifndef ULTIMA_SHARED_GFX_SCREEN_H
+#define ULTIMA_SHARED_GFX_SCREEN_H
 
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "common/list.h"
+#include "common/rect.h"
+#include "graphics/screen.h"
+#include "ultima/shared/gfx/font.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Shared {
 
-class UltimaEngine;
+namespace Gfx {
 
-/**
- * Debugger base class
- */
-class Debugger : public GUI::Debugger {
-protected:
-	/**
-	 * Converts a string to an integer
-	 */
-	int strToInt(const char *s);
+class Screen : public Graphics::Screen {
 public:
-	Debugger();
-    virtual ~Debugger() {}
+	Screen();
+	virtual ~Screen();
 };
 
+} // End of namespace Gfx
 } // End of namespace Shared
 } // End of namespace Ultima
 

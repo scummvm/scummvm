@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_DATA_ARCHIVE_H
-#define ULTIMA_SHARED_DATA_ARCHIVE_H
+#ifndef ULTIMA_SHARED_ENGINE_DATA_ARCHIVE_H
+#define ULTIMA_SHARED_ENGINE_DATA_ARCHIVE_H
 
 #include "common/archive.h"
 #include "common/str.h"

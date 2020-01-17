@@ -176,7 +176,7 @@ bool Ultima8Engine::initialize() {
 		return false;
 
 	// Set up the events manager
-	_events = new Shared::EventsManager();
+	_events = new Shared::EventsManager(this);
 
 	// Add console commands
 	con->AddConsoleCommand("quit", ConCmd_quit);

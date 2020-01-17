@@ -20,29 +20,27 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_ENGINE_DEBUGGER_H
-#define ULTIMA_SHARED_ENGINE_DEBUGGER_H
+#ifndef ULTIMA_SHARED_CORE_NAMED_ITEM_H
+#define ULTIMA_SHARED_CORE_NAMED_ITEM_H
 
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "ultima/shared/core/tree_item.h"
 
 namespace Ultima {
 namespace Shared {
 
-class UltimaEngine;
-
-/**
- * Debugger base class
- */
-class Debugger : public GUI::Debugger {
-protected:
-	/**
-	 * Converts a string to an integer
-	 */
-	int strToInt(const char *s);
+class NamedItem: public TreeItem {
+	DECLARE_MESSAGE_MAP;
 public:
-	Debugger();
-    virtual ~Debugger() {}
+	Common::String _name;
+public:
+	CLASSDEF;
+	NamedItem() {}
+	NamedItem(const Common::String &name) : _name(name) {}
+
+	/**
+	 * Gets the name of the item, if any
+	 */
+	virtual const Common::String getName() const { return _name; }
 };
 
 } // End of namespace Shared

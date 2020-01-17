@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_ULTIMA_H
-#define ULTIMA_SHARED_ULTIMA_H
+#ifndef ULTIMA_SHARED_ENGINE_ULTIMA_H
+#define ULTIMA_SHARED_ENGINE_ULTIMA_H
 
 #include "ultima/detection.h"
 #include "ultima/shared/engine/debugger.h"
@@ -38,20 +38,23 @@ enum UltimaDebugChannels {
     kDebugGraphics = 1 << 1
 };
 
-class UltimaEngine : public Engine {
-    friend class EventsManager;
+class UltimaEngine : public Engine, public EventsCallback {
 private:
     Common::RandomSource _randomSource;
 protected:
 	const Ultima::UltimaGameDescription *_gameDescription;
 	Common::Archive *_dataArchive;
-    Debugger *_debugger;
-    EventsManager *_events;
+	Debugger *_debugger;
 protected:
     /**
 	 * Initializes needed data for the engine
 	 */
 	virtual bool initialize();
+
+	/**
+	 * Deinitialize the engine
+	 */
+	virtual void deinitialize() {}
 
     /**
      * Returns the data archive folder and version that's required
@@ -61,14 +64,11 @@ protected:
     }
 
     /**
-     * Checks if an auto save should be done, and if so, takes care of it
-     */
-    bool autoSaveCheck(int lastSaveTime);
-
-    /**
      * Returns the Ultima meta engine
      */
     UltimaMetaEngine *getMetaEngine() const;
+public:
+	EventsManager *_events;
 public:
 	UltimaEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~UltimaEngine();
@@ -122,6 +122,18 @@ public:
     Common::Archive *getDataArchive() const {
         return _dataArchive;
     }
+
+	/**
+	 * Checks if an auto save should be done, and if so, takes care of it
+	 */
+	virtual bool autoSaveCheck(int lastSaveTime) override;
+
+	/**
+	 * Return the debugger
+	 */
+	virtual Debugger *getDebugger() const {
+		return _debugger;
+	}
 
     /**
      * Returns a file system node for the game directory
@@ -183,7 +195,6 @@ public:
      * @return returns kNoError on success, else an error code.
      */
     virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) = 0;
-
 };
 
 extern UltimaEngine *g_ultima;
