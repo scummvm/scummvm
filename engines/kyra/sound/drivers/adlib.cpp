@@ -934,13 +934,26 @@ uint8 AdLibDriver::calculateOpLevel1(Channel &channel) {
 		value += level3 ^ 0x3F;
 	}
 
-	value = CLIP<int8>(value, 0, 0x3F);
+	// The clipping as signed instead of unsigned causes very ugly noises in LOK when the music
+	// is fading out in certain situations (bug #11303). The bug only comes to surface when the
+	// volume setting is not maxed out to 255.
+	// The original LOK AdLib driver does the same wrong clipping, but this doesn't cause glitches
+	// there. The original driver (and game) does not have volume settings and uses a simpler
+	// total level calculation (simply adding the three opExtraLevels to the opLevel).
+	// The original HOF/LOL sound drivers do the same clipping, too. That's were we got that code.
+	// I assume that the issue has been fixed in the fadeout tracks there.
+	// I limit this to LOK for now, since the issue hasn't been reported from any other KYRA games.
+	if (_version == 3) {
+		if (value < 0)
+			debugC(3, kDebugLevelSound, "AdLibDriver::calculateOpLevel1(): WORKAROUND - total level clipping uint/int bug encountered");
+		value = (int8)CLIP<uint8>(value, 0, 0x3F);
+	} else
+		value = CLIP<int8>(value, 0, 0x3F);
 
 	if (!channel.volumeModifier)
 		value = 0x3F;
 
 	// Preserve the scaling level bits from opLevel1
-
 	return checkValue(value) | (channel.opLevel1 & 0xC0);
 }
 
@@ -958,13 +971,18 @@ uint8 AdLibDriver::calculateOpLevel2(Channel &channel) {
 
 	value += level3 ^ 0x3F;
 
-	value = CLIP<int8>(value, 0, 0x3F);
+	// See comment in calculateOpLevel1()
+	if (_version == 3) {
+		if (value < 0)
+			debugC(3, kDebugLevelSound, "AdLibDriver::calculateOpLevel1(): WORKAROUND - total level clipping uint/int bug encountered");
+		value = (int8)CLIP<uint8>(value, 0, 0x3F);
+	} else
+		value = CLIP<int8>(value, 0, 0x3F);
 
 	if (!channel.volumeModifier)
 		value = 0x3F;
 
 	// Preserve the scaling level bits from opLevel2
-
 	return checkValue(value) | (channel.opLevel2 & 0xC0);
 }
 
