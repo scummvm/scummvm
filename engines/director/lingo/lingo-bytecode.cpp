@@ -494,14 +494,14 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 				constant.type = STRING;
 				constant.u.s = new Common::String();
 				uint32 pointer = value;
-				if (pointer + 4 >= constsStoreSize) {
+				if (pointer + 4 > constsStoreSize) {
 					error("Constant string is too small");
 					break;
 				}
 				uint32 length = READ_BE_UINT32(&constsStore[pointer]);
 				pointer += 4;
 				uint32 end = pointer + length;
-				if (end >= constsStoreSize) {
+				if (end > constsStoreSize) {
 					error("Constant string is too large");
 					break;
 				}
@@ -515,7 +515,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 					}
 					pointer += 1;
 				}
-				if (pointer >= constsStoreSize) {
+				if (pointer > constsStoreSize) {
 					warning("Constant string has no null terminator");
 					break;
 				}
