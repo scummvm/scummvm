@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="scenes">
+			<UniqueIdentifier>8A466E0E-9AF5-4E53-B1A1-7C75EB93A390</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene01.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene02.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene03.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene04.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene05.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene06.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene07.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene08.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene09.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene10.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene11.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene12.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene13.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene14.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene15.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene16.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene17.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene18and19.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene20.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene21.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene22.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene23.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene24.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene25.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene26.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene27.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene28.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene29.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene30.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene31.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene32.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene33.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene34.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene35.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene36.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene37.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\scene38.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\sceneDbg.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\sceneFinal.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\sceneIntro.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\scenes\sceneIntroDemo.cpp">
+			<Filter>scenes</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\fullpipe\anihandler.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\behavior.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\console.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\detection.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\floaters.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\fullpipe.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\gameloader.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\gfx.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\init.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\input.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\interaction.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\inventory.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\lift.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\messagehandlers.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\messages.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\modal.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\motion.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\ngiarchive.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scene.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\scenes.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\sound.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\stateloader.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\statesaver.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\statics.cpp" />
+		<ClCompile Include="..\..\engines\fullpipe\utils.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\fullpipe\anihandler.h" />
+		<ClInclude Include="..\..\engines\fullpipe\behavior.h" />
+		<ClInclude Include="..\..\engines\fullpipe\console.h" />
+		<ClInclude Include="..\..\engines\fullpipe\constants.h" />
+		<ClInclude Include="..\..\engines\fullpipe\floaters.h" />
+		<ClInclude Include="..\..\engines\fullpipe\fullpipe.h" />
+		<ClInclude Include="..\..\engines\fullpipe\gameloader.h" />
+		<ClInclude Include="..\..\engines\fullpipe\gfx.h" />
+		<ClInclude Include="..\..\engines\fullpipe\input.h" />
+		<ClInclude Include="..\..\engines\fullpipe\interaction.h" />
+		<ClInclude Include="..\..\engines\fullpipe\inventory.h" />
+		<ClInclude Include="..\..\engines\fullpipe\messages.h" />
+		<ClInclude Include="..\..\engines\fullpipe\modal.h" />
+		<ClInclude Include="..\..\engines\fullpipe\motion.h" />
+		<ClInclude Include="..\..\engines\fullpipe\ngiarchive.h" />
+		<ClInclude Include="..\..\engines\fullpipe\objectnames.h" />
+		<ClInclude Include="..\..\engines\fullpipe\objects.h" />
+		<ClInclude Include="..\..\engines\fullpipe\scene.h" />
+		<ClInclude Include="..\..\engines\fullpipe\scenes.h" />
+		<ClInclude Include="..\..\engines\fullpipe\sound.h" />
+		<ClInclude Include="..\..\engines\fullpipe\statics.h" />
+		<ClInclude Include="..\..\engines\fullpipe\utils.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\fullpipe\module.mk" />
+	</ItemGroup>
+</Project>

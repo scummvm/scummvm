@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="dialogs">
+			<UniqueIdentifier>44EB9197-3C5A-40E1-A367-B612556F35A6</UniqueIdentifier>
+		</Filter>
+		<Filter Include="swordsofxeen">
+			<UniqueIdentifier>8ED72700-9CED-4F2A-A206-5E1AA7BE9F8E</UniqueIdentifier>
+		</Filter>
+		<Filter Include="worldofxeen">
+			<UniqueIdentifier>F181438F-56D6-44DB-98BC-F071F02A380A</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\xeen\dialogs\credits_screen.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_awards.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_char_info.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_control_panel.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_copy_protection.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_create_char.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_difficulty.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_dismiss.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_exchange.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_info.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_input.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_items.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_map.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_message.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_party.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_query.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_quests.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_quick_fight.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_quick_ref.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_spells.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\dialogs_whowill.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\dialogs\please_wait.cpp">
+			<Filter>dialogs</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\swordsofxeen\swordsofxeen.cpp">
+			<Filter>swordsofxeen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\swordsofxeen\swordsofxeen_menu.cpp">
+			<Filter>swordsofxeen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\worldofxeen\clouds_cutscenes.cpp">
+			<Filter>worldofxeen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\worldofxeen\darkside_cutscenes.cpp">
+			<Filter>worldofxeen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\worldofxeen\worldofxeen.cpp">
+			<Filter>worldofxeen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\worldofxeen\worldofxeen_cutscenes.cpp">
+			<Filter>worldofxeen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\worldofxeen\worldofxeen_menu.cpp">
+			<Filter>worldofxeen</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\xeen\character.cpp" />
+		<ClCompile Include="..\..\engines\xeen\combat.cpp" />
+		<ClCompile Include="..\..\engines\xeen\cutscenes.cpp" />
+		<ClCompile Include="..\..\engines\xeen\debugger.cpp" />
+		<ClCompile Include="..\..\engines\xeen\detection.cpp" />
+		<ClCompile Include="..\..\engines\xeen\events.cpp" />
+		<ClCompile Include="..\..\engines\xeen\files.cpp" />
+		<ClCompile Include="..\..\engines\xeen\font.cpp" />
+		<ClCompile Include="..\..\engines\xeen\interface.cpp" />
+		<ClCompile Include="..\..\engines\xeen\interface_minimap.cpp" />
+		<ClCompile Include="..\..\engines\xeen\interface_scene.cpp" />
+		<ClCompile Include="..\..\engines\xeen\item.cpp" />
+		<ClCompile Include="..\..\engines\xeen\locations.cpp" />
+		<ClCompile Include="..\..\engines\xeen\map.cpp" />
+		<ClCompile Include="..\..\engines\xeen\party.cpp" />
+		<ClCompile Include="..\..\engines\xeen\patcher.cpp" />
+		<ClCompile Include="..\..\engines\xeen\resources.cpp" />
+		<ClCompile Include="..\..\engines\xeen\saves.cpp" />
+		<ClCompile Include="..\..\engines\xeen\screen.cpp" />
+		<ClCompile Include="..\..\engines\xeen\scripts.cpp" />
+		<ClCompile Include="..\..\engines\xeen\sound.cpp" />
+		<ClCompile Include="..\..\engines\xeen\sound_driver.cpp" />
+		<ClCompile Include="..\..\engines\xeen\sound_driver_adlib.cpp" />
+		<ClCompile Include="..\..\engines\xeen\spells.cpp" />
+		<ClCompile Include="..\..\engines\xeen\sprites.cpp" />
+		<ClCompile Include="..\..\engines\xeen\subtitles.cpp" />
+		<ClCompile Include="..\..\engines\xeen\window.cpp" />
+		<ClCompile Include="..\..\engines\xeen\xeen.cpp" />
+		<ClCompile Include="..\..\engines\xeen\xsurface.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\xeen\dialogs\credits_screen.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_awards.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_char_info.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_control_panel.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_copy_protection.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_create_char.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_difficulty.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_dismiss.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_exchange.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_info.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_input.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_items.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_map.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_message.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_party.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_query.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_quests.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_quick_fight.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_quick_ref.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_spells.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\dialogs_whowill.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\dialogs\please_wait.h">
+			<Filter>dialogs</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\swordsofxeen\swordsofxeen.h">
+			<Filter>swordsofxeen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\swordsofxeen\swordsofxeen_menu.h">
+			<Filter>swordsofxeen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\worldofxeen\clouds_cutscenes.h">
+			<Filter>worldofxeen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\worldofxeen\darkside_cutscenes.h">
+			<Filter>worldofxeen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\worldofxeen\worldofxeen.h">
+			<Filter>worldofxeen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\worldofxeen\worldofxeen_cutscenes.h">
+			<Filter>worldofxeen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\worldofxeen\worldofxeen_menu.h">
+			<Filter>worldofxeen</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\xeen\character.h" />
+		<ClInclude Include="..\..\engines\xeen\combat.h" />
+		<ClInclude Include="..\..\engines\xeen\cutscenes.h" />
+		<ClInclude Include="..\..\engines\xeen\debugger.h" />
+		<ClInclude Include="..\..\engines\xeen\detection_tables.h" />
+		<ClInclude Include="..\..\engines\xeen\events.h" />
+		<ClInclude Include="..\..\engines\xeen\files.h" />
+		<ClInclude Include="..\..\engines\xeen\font.h" />
+		<ClInclude Include="..\..\engines\xeen\interface.h" />
+		<ClInclude Include="..\..\engines\xeen\interface_minimap.h" />
+		<ClInclude Include="..\..\engines\xeen\interface_scene.h" />
+		<ClInclude Include="..\..\engines\xeen\item.h" />
+		<ClInclude Include="..\..\engines\xeen\locations.h" />
+		<ClInclude Include="..\..\engines\xeen\map.h" />
+		<ClInclude Include="..\..\engines\xeen\party.h" />
+		<ClInclude Include="..\..\engines\xeen\patcher.h" />
+		<ClInclude Include="..\..\engines\xeen\resources.h" />
+		<ClInclude Include="..\..\engines\xeen\saves.h" />
+		<ClInclude Include="..\..\engines\xeen\screen.h" />
+		<ClInclude Include="..\..\engines\xeen\scripts.h" />
+		<ClInclude Include="..\..\engines\xeen\sound.h" />
+		<ClInclude Include="..\..\engines\xeen\sound_driver.h" />
+		<ClInclude Include="..\..\engines\xeen\sound_driver_adlib.h" />
+		<ClInclude Include="..\..\engines\xeen\spells.h" />
+		<ClInclude Include="..\..\engines\xeen\sprites.h" />
+		<ClInclude Include="..\..\engines\xeen\subtitles.h" />
+		<ClInclude Include="..\..\engines\xeen\window.h" />
+		<ClInclude Include="..\..\engines\xeen\xeen.h" />
+		<ClInclude Include="..\..\engines\xeen\xsurface.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\xeen\module.mk" />
+	</ItemGroup>
+</Project>

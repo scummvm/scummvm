@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{A32161A9-4C92-4F9D-AAF7-A3D8FE2ADC25}</ProjectGuid>
+		<RootNamespace>tsage</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\tsage\blue_force\blueforce_dialogs.cpp" />
+		<ClCompile Include="..\..\engines\tsage\blue_force\blueforce_logic.cpp" />
+		<ClCompile Include="..\..\engines\tsage\blue_force\blueforce_scenes0.cpp" />
+		<ClCompile Include="..\..\engines\tsage\blue_force\blueforce_scenes1.cpp" />
+		<ClCompile Include="..\..\engines\tsage\blue_force\blueforce_scenes2.cpp" />
+		<ClCompile Include="..\..\engines\tsage\blue_force\blueforce_scenes3.cpp" />
+		<ClCompile Include="..\..\engines\tsage\blue_force\blueforce_scenes4.cpp" />
+		<ClCompile Include="..\..\engines\tsage\blue_force\blueforce_scenes5.cpp" />
+		<ClCompile Include="..\..\engines\tsage\blue_force\blueforce_scenes6.cpp" />
+		<ClCompile Include="..\..\engines\tsage\blue_force\blueforce_scenes7.cpp" />
+		<ClCompile Include="..\..\engines\tsage\blue_force\blueforce_scenes8.cpp" />
+		<ClCompile Include="..\..\engines\tsage\blue_force\blueforce_scenes9.cpp" />
+		<ClCompile Include="..\..\engines\tsage\blue_force\blueforce_speakers.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld\ringworld_demo.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld\ringworld_dialogs.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld\ringworld_logic.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld\ringworld_scenes1.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld\ringworld_scenes10.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld\ringworld_scenes2.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld\ringworld_scenes3.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld\ringworld_scenes4.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld\ringworld_scenes5.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld\ringworld_scenes6.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld\ringworld_scenes8.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld\ringworld_speakers.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld2\ringworld2_airduct.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld2\ringworld2_dialogs.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld2\ringworld2_logic.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld2\ringworld2_outpost.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld2\ringworld2_scenes0.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld2\ringworld2_scenes1.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld2\ringworld2_scenes2.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld2\ringworld2_scenes3.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld2\ringworld2_speakers.cpp" />
+		<ClCompile Include="..\..\engines\tsage\ringworld2\ringworld2_vampire.cpp" />
+		<ClCompile Include="..\..\engines\tsage\sherlock\sherlock_logo.cpp" />
+		<ClCompile Include="..\..\engines\tsage\converse.cpp" />
+		<ClCompile Include="..\..\engines\tsage\core.cpp" />
+		<ClCompile Include="..\..\engines\tsage\debugger.cpp" />
+		<ClCompile Include="..\..\engines\tsage\detection.cpp" />
+		<ClCompile Include="..\..\engines\tsage\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\tsage\events.cpp" />
+		<ClCompile Include="..\..\engines\tsage\globals.cpp" />
+		<ClCompile Include="..\..\engines\tsage\graphics.cpp" />
+		<ClCompile Include="..\..\engines\tsage\resources.cpp" />
+		<ClCompile Include="..\..\engines\tsage\saveload.cpp" />
+		<ClCompile Include="..\..\engines\tsage\scenes.cpp" />
+		<ClCompile Include="..\..\engines\tsage\screen.cpp" />
+		<ClCompile Include="..\..\engines\tsage\sound.cpp" />
+		<ClCompile Include="..\..\engines\tsage\staticres.cpp" />
+		<ClCompile Include="..\..\engines\tsage\tsage.cpp" />
+		<ClCompile Include="..\..\engines\tsage\user_interface.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\tsage\blue_force\blueforce_dialogs.h" />
+		<ClInclude Include="..\..\engines\tsage\blue_force\blueforce_logic.h" />
+		<ClInclude Include="..\..\engines\tsage\blue_force\blueforce_scenes0.h" />
+		<ClInclude Include="..\..\engines\tsage\blue_force\blueforce_scenes1.h" />
+		<ClInclude Include="..\..\engines\tsage\blue_force\blueforce_scenes2.h" />
+		<ClInclude Include="..\..\engines\tsage\blue_force\blueforce_scenes3.h" />
+		<ClInclude Include="..\..\engines\tsage\blue_force\blueforce_scenes4.h" />
+		<ClInclude Include="..\..\engines\tsage\blue_force\blueforce_scenes5.h" />
+		<ClInclude Include="..\..\engines\tsage\blue_force\blueforce_scenes6.h" />
+		<ClInclude Include="..\..\engines\tsage\blue_force\blueforce_scenes7.h" />
+		<ClInclude Include="..\..\engines\tsage\blue_force\blueforce_scenes8.h" />
+		<ClInclude Include="..\..\engines\tsage\blue_force\blueforce_scenes9.h" />
+		<ClInclude Include="..\..\engines\tsage\blue_force\blueforce_speakers.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld\ringworld_demo.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld\ringworld_dialogs.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld\ringworld_logic.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld\ringworld_scenes1.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld\ringworld_scenes10.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld\ringworld_scenes2.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld\ringworld_scenes3.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld\ringworld_scenes4.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld\ringworld_scenes5.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld\ringworld_scenes6.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld\ringworld_scenes8.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld\ringworld_speakers.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld2\ringworld2_airduct.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld2\ringworld2_dialogs.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld2\ringworld2_logic.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld2\ringworld2_outpost.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld2\ringworld2_scenes0.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld2\ringworld2_scenes1.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld2\ringworld2_scenes2.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld2\ringworld2_scenes3.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld2\ringworld2_speakers.h" />
+		<ClInclude Include="..\..\engines\tsage\ringworld2\ringworld2_vampire.h" />
+		<ClInclude Include="..\..\engines\tsage\sherlock\sherlock_logo.h" />
+		<ClInclude Include="..\..\engines\tsage\converse.h" />
+		<ClInclude Include="..\..\engines\tsage\core.h" />
+		<ClInclude Include="..\..\engines\tsage\debugger.h" />
+		<ClInclude Include="..\..\engines\tsage\detection_tables.h" />
+		<ClInclude Include="..\..\engines\tsage\dialogs.h" />
+		<ClInclude Include="..\..\engines\tsage\events.h" />
+		<ClInclude Include="..\..\engines\tsage\globals.h" />
+		<ClInclude Include="..\..\engines\tsage\graphics.h" />
+		<ClInclude Include="..\..\engines\tsage\resources.h" />
+		<ClInclude Include="..\..\engines\tsage\saveload.h" />
+		<ClInclude Include="..\..\engines\tsage\scenes.h" />
+		<ClInclude Include="..\..\engines\tsage\screen.h" />
+		<ClInclude Include="..\..\engines\tsage\sound.h" />
+		<ClInclude Include="..\..\engines\tsage\staticres.h" />
+		<ClInclude Include="..\..\engines\tsage\tsage.h" />
+		<ClInclude Include="..\..\engines\tsage\user_interface.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\tsage\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

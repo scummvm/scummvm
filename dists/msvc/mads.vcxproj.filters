@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="dragonsphere">
+			<UniqueIdentifier>C03E5C61-985E-4784-8026-474961A0A1A4</UniqueIdentifier>
+		</Filter>
+		<Filter Include="nebular">
+			<UniqueIdentifier>44935E1B-9522-4E6F-B3EF-C3D8DD6B81BF</UniqueIdentifier>
+		</Filter>
+		<Filter Include="phantom">
+			<UniqueIdentifier>A1586B6B-A2EB-4509-8667-6DBBFD7AE050</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\mads\dragonsphere\dragonsphere_scenes.cpp">
+			<Filter>dragonsphere</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\dragonsphere\dragonsphere_scenes1.cpp">
+			<Filter>dragonsphere</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\dragonsphere\game_dragonsphere.cpp">
+			<Filter>dragonsphere</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\dragonsphere\globals_dragonsphere.cpp">
+			<Filter>dragonsphere</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\nebular\dialogs_nebular.cpp">
+			<Filter>nebular</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\nebular\game_nebular.cpp">
+			<Filter>nebular</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\nebular\globals_nebular.cpp">
+			<Filter>nebular</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\nebular\menu_nebular.cpp">
+			<Filter>nebular</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes.cpp">
+			<Filter>nebular</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes1.cpp">
+			<Filter>nebular</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes2.cpp">
+			<Filter>nebular</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes3.cpp">
+			<Filter>nebular</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes4.cpp">
+			<Filter>nebular</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes5.cpp">
+			<Filter>nebular</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes6.cpp">
+			<Filter>nebular</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes7.cpp">
+			<Filter>nebular</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\nebular\nebular_scenes8.cpp">
+			<Filter>nebular</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\nebular\sound_nebular.cpp">
+			<Filter>nebular</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\phantom\game_phantom.cpp">
+			<Filter>phantom</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\phantom\globals_phantom.cpp">
+			<Filter>phantom</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\phantom\phantom_scenes.cpp">
+			<Filter>phantom</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\phantom\phantom_scenes1.cpp">
+			<Filter>phantom</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\phantom\phantom_scenes2.cpp">
+			<Filter>phantom</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\phantom\phantom_scenes3.cpp">
+			<Filter>phantom</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\phantom\phantom_scenes4.cpp">
+			<Filter>phantom</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\phantom\phantom_scenes5.cpp">
+			<Filter>phantom</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\mads\action.cpp" />
+		<ClCompile Include="..\..\engines\mads\animation.cpp" />
+		<ClCompile Include="..\..\engines\mads\assets.cpp" />
+		<ClCompile Include="..\..\engines\mads\audio.cpp" />
+		<ClCompile Include="..\..\engines\mads\camera.cpp" />
+		<ClCompile Include="..\..\engines\mads\compression.cpp" />
+		<ClCompile Include="..\..\engines\mads\conversations.cpp" />
+		<ClCompile Include="..\..\engines\mads\debugger.cpp" />
+		<ClCompile Include="..\..\engines\mads\detection.cpp" />
+		<ClCompile Include="..\..\engines\mads\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\mads\events.cpp" />
+		<ClCompile Include="..\..\engines\mads\font.cpp" />
+		<ClCompile Include="..\..\engines\mads\game.cpp" />
+		<ClCompile Include="..\..\engines\mads\game_data.cpp" />
+		<ClCompile Include="..\..\engines\mads\globals.cpp" />
+		<ClCompile Include="..\..\engines\mads\hotspots.cpp" />
+		<ClCompile Include="..\..\engines\mads\inventory.cpp" />
+		<ClCompile Include="..\..\engines\mads\mads.cpp" />
+		<ClCompile Include="..\..\engines\mads\menu_views.cpp" />
+		<ClCompile Include="..\..\engines\mads\messages.cpp" />
+		<ClCompile Include="..\..\engines\mads\msurface.cpp" />
+		<ClCompile Include="..\..\engines\mads\palette.cpp" />
+		<ClCompile Include="..\..\engines\mads\player.cpp" />
+		<ClCompile Include="..\..\engines\mads\rails.cpp" />
+		<ClCompile Include="..\..\engines\mads\resources.cpp" />
+		<ClCompile Include="..\..\engines\mads\scene.cpp" />
+		<ClCompile Include="..\..\engines\mads\scene_data.cpp" />
+		<ClCompile Include="..\..\engines\mads\screen.cpp" />
+		<ClCompile Include="..\..\engines\mads\sequence.cpp" />
+		<ClCompile Include="..\..\engines\mads\sound.cpp" />
+		<ClCompile Include="..\..\engines\mads\sprites.cpp" />
+		<ClCompile Include="..\..\engines\mads\staticres.cpp" />
+		<ClCompile Include="..\..\engines\mads\user_interface.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\mads\dragonsphere\dragonsphere_scenes.h">
+			<Filter>dragonsphere</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\dragonsphere\dragonsphere_scenes1.h">
+			<Filter>dragonsphere</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\dragonsphere\game_dragonsphere.h">
+			<Filter>dragonsphere</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\dragonsphere\globals_dragonsphere.h">
+			<Filter>dragonsphere</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\nebular\dialogs_nebular.h">
+			<Filter>nebular</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\nebular\game_nebular.h">
+			<Filter>nebular</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\nebular\globals_nebular.h">
+			<Filter>nebular</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\nebular\menu_nebular.h">
+			<Filter>nebular</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes.h">
+			<Filter>nebular</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes1.h">
+			<Filter>nebular</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes2.h">
+			<Filter>nebular</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes3.h">
+			<Filter>nebular</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes4.h">
+			<Filter>nebular</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes5.h">
+			<Filter>nebular</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes6.h">
+			<Filter>nebular</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes7.h">
+			<Filter>nebular</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\nebular\nebular_scenes8.h">
+			<Filter>nebular</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\nebular\sound_nebular.h">
+			<Filter>nebular</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\phantom\game_phantom.h">
+			<Filter>phantom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\phantom\globals_phantom.h">
+			<Filter>phantom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\phantom\phantom_scenes.h">
+			<Filter>phantom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\phantom\phantom_scenes1.h">
+			<Filter>phantom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\phantom\phantom_scenes2.h">
+			<Filter>phantom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\phantom\phantom_scenes3.h">
+			<Filter>phantom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\phantom\phantom_scenes4.h">
+			<Filter>phantom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\phantom\phantom_scenes5.h">
+			<Filter>phantom</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\mads\action.h" />
+		<ClInclude Include="..\..\engines\mads\animation.h" />
+		<ClInclude Include="..\..\engines\mads\assets.h" />
+		<ClInclude Include="..\..\engines\mads\audio.h" />
+		<ClInclude Include="..\..\engines\mads\camera.h" />
+		<ClInclude Include="..\..\engines\mads\compression.h" />
+		<ClInclude Include="..\..\engines\mads\conversations.h" />
+		<ClInclude Include="..\..\engines\mads\debugger.h" />
+		<ClInclude Include="..\..\engines\mads\detection_tables.h" />
+		<ClInclude Include="..\..\engines\mads\dialogs.h" />
+		<ClInclude Include="..\..\engines\mads\events.h" />
+		<ClInclude Include="..\..\engines\mads\font.h" />
+		<ClInclude Include="..\..\engines\mads\game.h" />
+		<ClInclude Include="..\..\engines\mads\game_data.h" />
+		<ClInclude Include="..\..\engines\mads\globals.h" />
+		<ClInclude Include="..\..\engines\mads\hotspots.h" />
+		<ClInclude Include="..\..\engines\mads\inventory.h" />
+		<ClInclude Include="..\..\engines\mads\mads.h" />
+		<ClInclude Include="..\..\engines\mads\menu_views.h" />
+		<ClInclude Include="..\..\engines\mads\messages.h" />
+		<ClInclude Include="..\..\engines\mads\msurface.h" />
+		<ClInclude Include="..\..\engines\mads\palette.h" />
+		<ClInclude Include="..\..\engines\mads\player.h" />
+		<ClInclude Include="..\..\engines\mads\rails.h" />
+		<ClInclude Include="..\..\engines\mads\resources.h" />
+		<ClInclude Include="..\..\engines\mads\scene.h" />
+		<ClInclude Include="..\..\engines\mads\scene_data.h" />
+		<ClInclude Include="..\..\engines\mads\screen.h" />
+		<ClInclude Include="..\..\engines\mads\sequence.h" />
+		<ClInclude Include="..\..\engines\mads\sound.h" />
+		<ClInclude Include="..\..\engines\mads\sprites.h" />
+		<ClInclude Include="..\..\engines\mads\staticres.h" />
+		<ClInclude Include="..\..\engines\mads\user_interface.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\mads\module.mk" />
+	</ItemGroup>
+</Project>

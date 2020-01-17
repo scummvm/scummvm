@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{0D807875-D254-4E61-A09C-E88B7765DA16}</ProjectGuid>
+		<RootNamespace>gob</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\gob\demos\batplayer.cpp" />
+		<ClCompile Include="..\..\engines\gob\demos\demoplayer.cpp" />
+		<ClCompile Include="..\..\engines\gob\demos\scnplayer.cpp" />
+		<ClCompile Include="..\..\engines\gob\detection\detection.cpp" />
+		<ClCompile Include="..\..\engines\gob\minigames\geisha\diving.cpp" />
+		<ClCompile Include="..\..\engines\gob\minigames\geisha\evilfish.cpp" />
+		<ClCompile Include="..\..\engines\gob\minigames\geisha\meter.cpp" />
+		<ClCompile Include="..\..\engines\gob\minigames\geisha\mouth.cpp" />
+		<ClCompile Include="..\..\engines\gob\minigames\geisha\oko.cpp" />
+		<ClCompile Include="..\..\engines\gob\minigames\geisha\penetration.cpp" />
+		<ClCompile Include="..\..\engines\gob\minigames\geisha\submarine.cpp" />
+		<ClCompile Include="..\..\engines\gob\pregob\onceupon\abracadabra.cpp" />
+		<ClCompile Include="..\..\engines\gob\pregob\onceupon\babayaga.cpp" />
+		<ClCompile Include="..\..\engines\gob\pregob\onceupon\chargenchild.cpp" />
+		<ClCompile Include="..\..\engines\gob\pregob\onceupon\onceupon.cpp" />
+		<ClCompile Include="..\..\engines\gob\pregob\onceupon\parents.cpp" />
+		<ClCompile Include="..\..\engines\gob\pregob\onceupon\stork.cpp" />
+		<ClCompile Include="..\..\engines\gob\pregob\onceupon\title.cpp" />
+		<ClCompile Include="..\..\engines\gob\pregob\gctfile.cpp" />
+		<ClCompile Include="..\..\engines\gob\pregob\pregob.cpp" />
+		<ClCompile Include="..\..\engines\gob\pregob\seqfile.cpp" />
+		<ClCompile Include="..\..\engines\gob\pregob\txtfile.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveconverter.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveconverter_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveconverter_v3.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveconverter_v4.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\savefile.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\savehandler.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_ajworld.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_fascin.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_geisha.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_inca2.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_playtoons.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_v3.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_v4.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_v6.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_v7.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\adlib.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\adlplayer.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\bgatmosphere.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\cdrom.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\infogrames.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\musplayer.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\pcspeaker.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\protracker.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\sound.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\soundblaster.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\sounddesc.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\soundmixer.cpp" />
+		<ClCompile Include="..\..\engines\gob\anifile.cpp" />
+		<ClCompile Include="..\..\engines\gob\aniobject.cpp" />
+		<ClCompile Include="..\..\engines\gob\backbuffer.cpp" />
+		<ClCompile Include="..\..\engines\gob\cheater.cpp" />
+		<ClCompile Include="..\..\engines\gob\cheater_geisha.cpp" />
+		<ClCompile Include="..\..\engines\gob\cmpfile.cpp" />
+		<ClCompile Include="..\..\engines\gob\console.cpp" />
+		<ClCompile Include="..\..\engines\gob\databases.cpp" />
+		<ClCompile Include="..\..\engines\gob\dataio.cpp" />
+		<ClCompile Include="..\..\engines\gob\dbase.cpp" />
+		<ClCompile Include="..\..\engines\gob\decfile.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_bargon.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_fascin.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_playtoons.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\expression.cpp" />
+		<ClCompile Include="..\..\engines\gob\game.cpp" />
+		<ClCompile Include="..\..\engines\gob\global.cpp" />
+		<ClCompile Include="..\..\engines\gob\gob.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin_v3.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin_v4.cpp" />
+		<ClCompile Include="..\..\engines\gob\hotspots.cpp" />
+		<ClCompile Include="..\..\engines\gob\iniconfig.cpp" />
+		<ClCompile Include="..\..\engines\gob\init.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_fascin.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_geisha.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v3.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v4.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v6.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v7.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_bargon.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_fascin.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_geisha.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_inca2.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_littlered.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_playtoons.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v3.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v4.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v5.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v6.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v7.cpp" />
+		<ClCompile Include="..\..\engines\gob\map.cpp" />
+		<ClCompile Include="..\..\engines\gob\map_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\map_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\mult.cpp" />
+		<ClCompile Include="..\..\engines\gob\mult_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\mult_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\palanim.cpp" />
+		<ClCompile Include="..\..\engines\gob\resources.cpp" />
+		<ClCompile Include="..\..\engines\gob\rxyfile.cpp" />
+		<ClCompile Include="..\..\engines\gob\scenery.cpp" />
+		<ClCompile Include="..\..\engines\gob\scenery_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\scenery_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\script.cpp" />
+		<ClCompile Include="..\..\engines\gob\surface.cpp" />
+		<ClCompile Include="..\..\engines\gob\totfile.cpp" />
+		<ClCompile Include="..\..\engines\gob\util.cpp" />
+		<ClCompile Include="..\..\engines\gob\variables.cpp" />
+		<ClCompile Include="..\..\engines\gob\video.cpp" />
+		<ClCompile Include="..\..\engines\gob\video_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\video_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\video_v6.cpp" />
+		<ClCompile Include="..\..\engines\gob\videoplayer.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\gob\demos\batplayer.h" />
+		<ClInclude Include="..\..\engines\gob\demos\demoplayer.h" />
+		<ClInclude Include="..\..\engines\gob\demos\scnplayer.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_adi2.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_adi4.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_adibou.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_ajworld.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_bargon.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_crousti.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_dynasty.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_fallback.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_fascin.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_geisha.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_gob1.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_gob2.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_gob3.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_inca2.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_lit.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_littlered.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_onceupon.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_playtoons.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_urban.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_ween.h" />
+		<ClInclude Include="..\..\engines\gob\detection\tables_woodruff.h" />
+		<ClInclude Include="..\..\engines\gob\minigames\geisha\diving.h" />
+		<ClInclude Include="..\..\engines\gob\minigames\geisha\evilfish.h" />
+		<ClInclude Include="..\..\engines\gob\minigames\geisha\meter.h" />
+		<ClInclude Include="..\..\engines\gob\minigames\geisha\mouth.h" />
+		<ClInclude Include="..\..\engines\gob\minigames\geisha\oko.h" />
+		<ClInclude Include="..\..\engines\gob\minigames\geisha\penetration.h" />
+		<ClInclude Include="..\..\engines\gob\minigames\geisha\submarine.h" />
+		<ClInclude Include="..\..\engines\gob\pregob\onceupon\abracadabra.h" />
+		<ClInclude Include="..\..\engines\gob\pregob\onceupon\babayaga.h" />
+		<ClInclude Include="..\..\engines\gob\pregob\onceupon\brokenstrings.h" />
+		<ClInclude Include="..\..\engines\gob\pregob\onceupon\chargenchild.h" />
+		<ClInclude Include="..\..\engines\gob\pregob\onceupon\onceupon.h" />
+		<ClInclude Include="..\..\engines\gob\pregob\onceupon\palettes.h" />
+		<ClInclude Include="..\..\engines\gob\pregob\onceupon\parents.h" />
+		<ClInclude Include="..\..\engines\gob\pregob\onceupon\stork.h" />
+		<ClInclude Include="..\..\engines\gob\pregob\onceupon\title.h" />
+		<ClInclude Include="..\..\engines\gob\pregob\gctfile.h" />
+		<ClInclude Include="..\..\engines\gob\pregob\pregob.h" />
+		<ClInclude Include="..\..\engines\gob\pregob\seqfile.h" />
+		<ClInclude Include="..\..\engines\gob\pregob\txtfile.h" />
+		<ClInclude Include="..\..\engines\gob\save\saveconverter.h" />
+		<ClInclude Include="..\..\engines\gob\save\savefile.h" />
+		<ClInclude Include="..\..\engines\gob\save\savehandler.h" />
+		<ClInclude Include="..\..\engines\gob\save\saveload.h" />
+		<ClInclude Include="..\..\engines\gob\sound\adlib.h" />
+		<ClInclude Include="..\..\engines\gob\sound\adlplayer.h" />
+		<ClInclude Include="..\..\engines\gob\sound\bgatmosphere.h" />
+		<ClInclude Include="..\..\engines\gob\sound\cdrom.h" />
+		<ClInclude Include="..\..\engines\gob\sound\infogrames.h" />
+		<ClInclude Include="..\..\engines\gob\sound\musplayer.h" />
+		<ClInclude Include="..\..\engines\gob\sound\pcspeaker.h" />
+		<ClInclude Include="..\..\engines\gob\sound\protracker.h" />
+		<ClInclude Include="..\..\engines\gob\sound\sound.h" />
+		<ClInclude Include="..\..\engines\gob\sound\soundblaster.h" />
+		<ClInclude Include="..\..\engines\gob\sound\sounddesc.h" />
+		<ClInclude Include="..\..\engines\gob\sound\soundmixer.h" />
+		<ClInclude Include="..\..\engines\gob\anifile.h" />
+		<ClInclude Include="..\..\engines\gob\aniobject.h" />
+		<ClInclude Include="..\..\engines\gob\backbuffer.h" />
+		<ClInclude Include="..\..\engines\gob\cheater.h" />
+		<ClInclude Include="..\..\engines\gob\cmpfile.h" />
+		<ClInclude Include="..\..\engines\gob\console.h" />
+		<ClInclude Include="..\..\engines\gob\databases.h" />
+		<ClInclude Include="..\..\engines\gob\dataio.h" />
+		<ClInclude Include="..\..\engines\gob\dbase.h" />
+		<ClInclude Include="..\..\engines\gob\decfile.h" />
+		<ClInclude Include="..\..\engines\gob\draw.h" />
+		<ClInclude Include="..\..\engines\gob\expression.h" />
+		<ClInclude Include="..\..\engines\gob\game.h" />
+		<ClInclude Include="..\..\engines\gob\global.h" />
+		<ClInclude Include="..\..\engines\gob\gob.h" />
+		<ClInclude Include="..\..\engines\gob\goblin.h" />
+		<ClInclude Include="..\..\engines\gob\hotspots.h" />
+		<ClInclude Include="..\..\engines\gob\iniconfig.h" />
+		<ClInclude Include="..\..\engines\gob\init.h" />
+		<ClInclude Include="..\..\engines\gob\inter.h" />
+		<ClInclude Include="..\..\engines\gob\map.h" />
+		<ClInclude Include="..\..\engines\gob\mult.h" />
+		<ClInclude Include="..\..\engines\gob\palanim.h" />
+		<ClInclude Include="..\..\engines\gob\resources.h" />
+		<ClInclude Include="..\..\engines\gob\rxyfile.h" />
+		<ClInclude Include="..\..\engines\gob\scenery.h" />
+		<ClInclude Include="..\..\engines\gob\script.h" />
+		<ClInclude Include="..\..\engines\gob\surface.h" />
+		<ClInclude Include="..\..\engines\gob\totfile.h" />
+		<ClInclude Include="..\..\engines\gob\util.h" />
+		<ClInclude Include="..\..\engines\gob\variables.h" />
+		<ClInclude Include="..\..\engines\gob\video.h" />
+		<ClInclude Include="..\..\engines\gob\videoplayer.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\gob\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

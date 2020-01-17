@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{4CBD01CE-5968-4803-821C-59391BFD446B}</ProjectGuid>
+		<RootNamespace>agi</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\agi\agi.cpp" />
+		<ClCompile Include="..\..\engines\agi\checks.cpp" />
+		<ClCompile Include="..\..\engines\agi\console.cpp" />
+		<ClCompile Include="..\..\engines\agi\cycle.cpp" />
+		<ClCompile Include="..\..\engines\agi\detection.cpp" />
+		<ClCompile Include="..\..\engines\agi\font.cpp" />
+		<ClCompile Include="..\..\engines\agi\global.cpp" />
+		<ClCompile Include="..\..\engines\agi\graphics.cpp" />
+		<ClCompile Include="..\..\engines\agi\inv.cpp" />
+		<ClCompile Include="..\..\engines\agi\keyboard.cpp" />
+		<ClCompile Include="..\..\engines\agi\loader_v1.cpp" />
+		<ClCompile Include="..\..\engines\agi\loader_v2.cpp" />
+		<ClCompile Include="..\..\engines\agi\loader_v3.cpp" />
+		<ClCompile Include="..\..\engines\agi\logic.cpp" />
+		<ClCompile Include="..\..\engines\agi\lzw.cpp" />
+		<ClCompile Include="..\..\engines\agi\menu.cpp" />
+		<ClCompile Include="..\..\engines\agi\motion.cpp" />
+		<ClCompile Include="..\..\engines\agi\objects.cpp" />
+		<ClCompile Include="..\..\engines\agi\op_cmd.cpp" />
+		<ClCompile Include="..\..\engines\agi\op_dbg.cpp" />
+		<ClCompile Include="..\..\engines\agi\op_test.cpp" />
+		<ClCompile Include="..\..\engines\agi\opcodes.cpp" />
+		<ClCompile Include="..\..\engines\agi\picture.cpp" />
+		<ClCompile Include="..\..\engines\agi\preagi.cpp" />
+		<ClCompile Include="..\..\engines\agi\preagi_mickey.cpp" />
+		<ClCompile Include="..\..\engines\agi\preagi_troll.cpp" />
+		<ClCompile Include="..\..\engines\agi\preagi_winnie.cpp" />
+		<ClCompile Include="..\..\engines\agi\saveload.cpp" />
+		<ClCompile Include="..\..\engines\agi\sound.cpp" />
+		<ClCompile Include="..\..\engines\agi\sound_2gs.cpp" />
+		<ClCompile Include="..\..\engines\agi\sound_coco3.cpp" />
+		<ClCompile Include="..\..\engines\agi\sound_midi.cpp" />
+		<ClCompile Include="..\..\engines\agi\sound_pcjr.cpp" />
+		<ClCompile Include="..\..\engines\agi\sound_sarien.cpp" />
+		<ClCompile Include="..\..\engines\agi\sprite.cpp" />
+		<ClCompile Include="..\..\engines\agi\systemui.cpp" />
+		<ClCompile Include="..\..\engines\agi\text.cpp" />
+		<ClCompile Include="..\..\engines\agi\view.cpp" />
+		<ClCompile Include="..\..\engines\agi\wagparser.cpp" />
+		<ClCompile Include="..\..\engines\agi\words.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\agi\agi.h" />
+		<ClInclude Include="..\..\engines\agi\appleIIgs_timedelay_overwrite.h" />
+		<ClInclude Include="..\..\engines\agi\console.h" />
+		<ClInclude Include="..\..\engines\agi\detection_tables.h" />
+		<ClInclude Include="..\..\engines\agi\font.h" />
+		<ClInclude Include="..\..\engines\agi\graphics.h" />
+		<ClInclude Include="..\..\engines\agi\inv.h" />
+		<ClInclude Include="..\..\engines\agi\keyboard.h" />
+		<ClInclude Include="..\..\engines\agi\logic.h" />
+		<ClInclude Include="..\..\engines\agi\lzw.h" />
+		<ClInclude Include="..\..\engines\agi\menu.h" />
+		<ClInclude Include="..\..\engines\agi\mouse_cursor.h" />
+		<ClInclude Include="..\..\engines\agi\opcodes.h" />
+		<ClInclude Include="..\..\engines\agi\palette.h" />
+		<ClInclude Include="..\..\engines\agi\picture.h" />
+		<ClInclude Include="..\..\engines\agi\preagi.h" />
+		<ClInclude Include="..\..\engines\agi\preagi_mickey.h" />
+		<ClInclude Include="..\..\engines\agi\preagi_troll.h" />
+		<ClInclude Include="..\..\engines\agi\preagi_winnie.h" />
+		<ClInclude Include="..\..\engines\agi\sound.h" />
+		<ClInclude Include="..\..\engines\agi\sound_2gs.h" />
+		<ClInclude Include="..\..\engines\agi\sound_coco3.h" />
+		<ClInclude Include="..\..\engines\agi\sound_midi.h" />
+		<ClInclude Include="..\..\engines\agi\sound_pcjr.h" />
+		<ClInclude Include="..\..\engines\agi\sound_sarien.h" />
+		<ClInclude Include="..\..\engines\agi\sprite.h" />
+		<ClInclude Include="..\..\engines\agi\systemui.h" />
+		<ClInclude Include="..\..\engines\agi\text.h" />
+		<ClInclude Include="..\..\engines\agi\view.h" />
+		<ClInclude Include="..\..\engines\agi\wagparser.h" />
+		<ClInclude Include="..\..\engines\agi\words.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\agi\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

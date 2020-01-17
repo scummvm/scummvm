@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{E25A7B20-D043-4AED-AA10-7C8E6A1D99BC}</ProjectGuid>
+		<RootNamespace>sherlock</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\3do\movie_decoder.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\3do\scalpel_3do_screen.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\drivers\adlib.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\drivers\mt32.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\tsage\logo.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\tsage\resources.cpp">
+			<ObjectFileName>$(IntDir)scalpel_tsage_%(Filename).obj</ObjectFileName>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_darts.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_debugger.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_fixed_text.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_inventory.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_journal.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_map.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_people.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_saveload.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_scene.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_screen.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_talk.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\scalpel_user_interface.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scalpel\settings.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_darts.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_debugger.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_fixed_text.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_inventory.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_journal.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_map.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_people.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_resources.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_scene.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_screen.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_talk.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\tattoo_user_interface.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_base.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_credits.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_files.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_foolscap.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_inventory.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_lab.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_options.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_password.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_quit.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_talk.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_text.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_tooltip.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\tattoo\widget_verbs.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\animation.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\debugger.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\detection.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\events.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\fixed_text.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\fonts.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\image_file.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\inventory.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\journal.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\map.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\music.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\objects.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\people.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\resources.cpp">
+			<ObjectFileName>$(IntDir)%(Filename).obj</ObjectFileName>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sherlock\saveload.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\scene.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\screen.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\sherlock.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\sound.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\surface.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\talk.cpp" />
+		<ClCompile Include="..\..\engines\sherlock\user_interface.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\sherlock\scalpel\3do\movie_decoder.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\3do\scalpel_3do_screen.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\drivers\mididriver.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\tsage\logo.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\tsage\resources.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_darts.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_debugger.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_fixed_text.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_inventory.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_journal.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_map.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_people.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_saveload.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_scene.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_screen.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_talk.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\scalpel_user_interface.h" />
+		<ClInclude Include="..\..\engines\sherlock\scalpel\settings.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_darts.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_debugger.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_fixed_text.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_inventory.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_journal.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_map.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_people.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_resources.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_scene.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_screen.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_talk.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\tattoo_user_interface.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_base.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_credits.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_files.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_foolscap.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_inventory.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_lab.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_options.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_password.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_quit.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_talk.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_text.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_tooltip.h" />
+		<ClInclude Include="..\..\engines\sherlock\tattoo\widget_verbs.h" />
+		<ClInclude Include="..\..\engines\sherlock\animation.h" />
+		<ClInclude Include="..\..\engines\sherlock\debugger.h" />
+		<ClInclude Include="..\..\engines\sherlock\detection_tables.h" />
+		<ClInclude Include="..\..\engines\sherlock\events.h" />
+		<ClInclude Include="..\..\engines\sherlock\fixed_text.h" />
+		<ClInclude Include="..\..\engines\sherlock\fonts.h" />
+		<ClInclude Include="..\..\engines\sherlock\image_file.h" />
+		<ClInclude Include="..\..\engines\sherlock\inventory.h" />
+		<ClInclude Include="..\..\engines\sherlock\journal.h" />
+		<ClInclude Include="..\..\engines\sherlock\map.h" />
+		<ClInclude Include="..\..\engines\sherlock\music.h" />
+		<ClInclude Include="..\..\engines\sherlock\objects.h" />
+		<ClInclude Include="..\..\engines\sherlock\people.h" />
+		<ClInclude Include="..\..\engines\sherlock\resources.h" />
+		<ClInclude Include="..\..\engines\sherlock\saveload.h" />
+		<ClInclude Include="..\..\engines\sherlock\scene.h" />
+		<ClInclude Include="..\..\engines\sherlock\screen.h" />
+		<ClInclude Include="..\..\engines\sherlock\sherlock.h" />
+		<ClInclude Include="..\..\engines\sherlock\sound.h" />
+		<ClInclude Include="..\..\engines\sherlock\surface.h" />
+		<ClInclude Include="..\..\engines\sherlock\talk.h" />
+		<ClInclude Include="..\..\engines\sherlock\user_interface.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\sherlock\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

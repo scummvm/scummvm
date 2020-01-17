@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="fmv">
+			<UniqueIdentifier>4BC10DA0-97B3-4EB5-AB11-517140FD4519</UniqueIdentifier>
+		</Filter>
+		<Filter Include="gfx">
+			<UniqueIdentifier>27E92839-E26D-4BB7-8EF3-D8FD5BB06EB6</UniqueIdentifier>
+		</Filter>
+		<Filter Include="gfx\image">
+			<UniqueIdentifier>859FA3DB-7163-4687-84BC-0F0C5E07B1A6</UniqueIdentifier>
+		</Filter>
+		<Filter Include="input">
+			<UniqueIdentifier>79EFB558-35DF-4A22-8B8C-F2BC9852C82A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="kernel">
+			<UniqueIdentifier>3700CBBF-459A-4614-98EC-AACF3600D864</UniqueIdentifier>
+		</Filter>
+		<Filter Include="math">
+			<UniqueIdentifier>A485BA3D-90D4-4244-84E1-129CD3DBCC18</UniqueIdentifier>
+		</Filter>
+		<Filter Include="package">
+			<UniqueIdentifier>1F48839A-A0EE-4DFC-BB55-C6F6AA163B04</UniqueIdentifier>
+		</Filter>
+		<Filter Include="script">
+			<UniqueIdentifier>AB35C922-EFE5-4C8C-8D74-6F05447D51BA</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sfx">
+			<UniqueIdentifier>BB50EBE0-508B-4FAA-AB10-AD3FA7725839</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\sword25\fmv\movieplayer.cpp">
+			<Filter>fmv</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\fmv\movieplayer_script.cpp">
+			<Filter>fmv</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\image\art.cpp">
+			<Filter>gfx\image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\image\imgloader.cpp">
+			<Filter>gfx\image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\image\renderedimage.cpp">
+			<Filter>gfx\image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\image\swimage.cpp">
+			<Filter>gfx\image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\image\vectorimage.cpp">
+			<Filter>gfx\image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\image\vectorimagerenderer.cpp">
+			<Filter>gfx\image</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\animation.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\animationdescription.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\animationresource.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\animationtemplate.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\animationtemplateregistry.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\bitmap.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\dynamicbitmap.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\fontresource.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\graphicengine.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\graphicengine_script.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\microtiles.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\panel.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\renderobject.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\renderobjectmanager.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\screenshot.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\staticbitmap.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\text.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\gfx\timedrenderobject.cpp">
+			<Filter>gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\input\inputengine.cpp">
+			<Filter>input</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\input\inputengine_script.cpp">
+			<Filter>input</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\kernel\filesystemutil.cpp">
+			<Filter>kernel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\kernel\inputpersistenceblock.cpp">
+			<Filter>kernel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\kernel\kernel.cpp">
+			<Filter>kernel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\kernel\kernel_script.cpp">
+			<Filter>kernel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\kernel\outputpersistenceblock.cpp">
+			<Filter>kernel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\kernel\persistenceservice.cpp">
+			<Filter>kernel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\kernel\resmanager.cpp">
+			<Filter>kernel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\kernel\resource.cpp">
+			<Filter>kernel</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\math\geometry_script.cpp">
+			<Filter>math</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\math\polygon.cpp">
+			<Filter>math</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\math\region.cpp">
+			<Filter>math</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\math\regionregistry.cpp">
+			<Filter>math</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\math\vertex.cpp">
+			<Filter>math</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\math\walkregion.cpp">
+			<Filter>math</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\package\packagemanager.cpp">
+			<Filter>package</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\package\packagemanager_script.cpp">
+			<Filter>package</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\script\lua_extensions.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\script\luabindhelper.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\script\luacallback.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\script\luascript.cpp">
+			<Filter>script</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\sfx\soundengine.cpp">
+			<Filter>sfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\sfx\soundengine_script.cpp">
+			<Filter>sfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sword25\console.cpp" />
+		<ClCompile Include="..\..\engines\sword25\detection.cpp" />
+		<ClCompile Include="..\..\engines\sword25\sword25.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\sword25\fmv\movieplayer.h">
+			<Filter>fmv</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\image\art.h">
+			<Filter>gfx\image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\image\image.h">
+			<Filter>gfx\image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\image\imgloader.h">
+			<Filter>gfx\image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\image\renderedimage.h">
+			<Filter>gfx\image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\image\swimage.h">
+			<Filter>gfx\image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\image\vectorimage.h">
+			<Filter>gfx\image</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\animation.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\animationdescription.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\animationresource.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\animationtemplate.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\animationtemplateregistry.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\bitmap.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\bitmapresource.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\dynamicbitmap.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\fontresource.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\graphicengine.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\microtiles.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\panel.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\renderobject.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\renderobjectmanager.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\renderobjectptr.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\renderobjectregistry.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\rootrenderobject.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\screenshot.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\staticbitmap.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\text.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\gfx\timedrenderobject.h">
+			<Filter>gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\input\inputengine.h">
+			<Filter>input</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\kernel\common.h">
+			<Filter>kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\kernel\filesystemutil.h">
+			<Filter>kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\kernel\inputpersistenceblock.h">
+			<Filter>kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\kernel\kernel.h">
+			<Filter>kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\kernel\objectregistry.h">
+			<Filter>kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\kernel\outputpersistenceblock.h">
+			<Filter>kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\kernel\persistable.h">
+			<Filter>kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\kernel\persistenceblock.h">
+			<Filter>kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\kernel\persistenceservice.h">
+			<Filter>kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\kernel\resmanager.h">
+			<Filter>kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\kernel\resource.h">
+			<Filter>kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\kernel\resservice.h">
+			<Filter>kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\kernel\service.h">
+			<Filter>kernel</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\math\geometry.h">
+			<Filter>math</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\math\line.h">
+			<Filter>math</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\math\polygon.h">
+			<Filter>math</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\math\region.h">
+			<Filter>math</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\math\regionregistry.h">
+			<Filter>math</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\math\vertex.h">
+			<Filter>math</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\math\walkregion.h">
+			<Filter>math</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\package\packagemanager.h">
+			<Filter>package</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\script\luabindhelper.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\script\luacallback.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\script\luascript.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\script\script.h">
+			<Filter>script</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\sfx\soundengine.h">
+			<Filter>sfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sword25\console.h" />
+		<ClInclude Include="..\..\engines\sword25\detection_tables.h" />
+		<ClInclude Include="..\..\engines\sword25\sword25.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\sword25\module.mk" />
+	</ItemGroup>
+</Project>

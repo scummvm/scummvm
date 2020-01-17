@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="minigames">
+			<UniqueIdentifier>A4F6C59A-53FC-44CA-BE69-C00AEFBE9073</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\bbvs\minigames\bbairguitar.cpp">
+			<Filter>minigames</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bbvs\minigames\bbairguitar_anims.cpp">
+			<Filter>minigames</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bbvs\minigames\bbant.cpp">
+			<Filter>minigames</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bbvs\minigames\bbant_anims.cpp">
+			<Filter>minigames</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bbvs\minigames\bbloogie.cpp">
+			<Filter>minigames</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bbvs\minigames\bbloogie_anims.cpp">
+			<Filter>minigames</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bbvs\minigames\bbtennis.cpp">
+			<Filter>minigames</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bbvs\minigames\bbtennis_anims.cpp">
+			<Filter>minigames</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bbvs\minigames\minigame.cpp">
+			<Filter>minigames</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\bbvs\bbvs.cpp" />
+		<ClCompile Include="..\..\engines\bbvs\detection.cpp" />
+		<ClCompile Include="..\..\engines\bbvs\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\bbvs\gamemodule.cpp" />
+		<ClCompile Include="..\..\engines\bbvs\graphics.cpp" />
+		<ClCompile Include="..\..\engines\bbvs\logic.cpp" />
+		<ClCompile Include="..\..\engines\bbvs\saveload.cpp" />
+		<ClCompile Include="..\..\engines\bbvs\scene.cpp" />
+		<ClCompile Include="..\..\engines\bbvs\sound.cpp" />
+		<ClCompile Include="..\..\engines\bbvs\spritemodule.cpp" />
+		<ClCompile Include="..\..\engines\bbvs\videoplayer.cpp" />
+		<ClCompile Include="..\..\engines\bbvs\walk.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\bbvs\minigames\bbairguitar.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bbvs\minigames\bbant.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bbvs\minigames\bbloogie.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bbvs\minigames\bbtennis.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bbvs\minigames\minigame.h">
+			<Filter>minigames</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\bbvs\bbvs.h" />
+		<ClInclude Include="..\..\engines\bbvs\dialogs.h" />
+		<ClInclude Include="..\..\engines\bbvs\gamemodule.h" />
+		<ClInclude Include="..\..\engines\bbvs\graphics.h" />
+		<ClInclude Include="..\..\engines\bbvs\sound.h" />
+		<ClInclude Include="..\..\engines\bbvs\spritemodule.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\bbvs\module.mk" />
+	</ItemGroup>
+</Project>

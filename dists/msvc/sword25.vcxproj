@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{306952F1-2EEB-4F6B-84A1-281F225E0048}</ProjectGuid>
+		<RootNamespace>sword25</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\sword25\fmv\movieplayer.cpp" />
+		<ClCompile Include="..\..\engines\sword25\fmv\movieplayer_script.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\image\art.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\image\imgloader.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\image\renderedimage.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\image\swimage.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\image\vectorimage.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\image\vectorimagerenderer.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\animation.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\animationdescription.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\animationresource.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\animationtemplate.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\animationtemplateregistry.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\bitmap.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\dynamicbitmap.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\fontresource.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\graphicengine.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\graphicengine_script.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\microtiles.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\panel.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\renderobject.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\renderobjectmanager.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\screenshot.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\staticbitmap.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\text.cpp" />
+		<ClCompile Include="..\..\engines\sword25\gfx\timedrenderobject.cpp" />
+		<ClCompile Include="..\..\engines\sword25\input\inputengine.cpp" />
+		<ClCompile Include="..\..\engines\sword25\input\inputengine_script.cpp" />
+		<ClCompile Include="..\..\engines\sword25\kernel\filesystemutil.cpp" />
+		<ClCompile Include="..\..\engines\sword25\kernel\inputpersistenceblock.cpp" />
+		<ClCompile Include="..\..\engines\sword25\kernel\kernel.cpp" />
+		<ClCompile Include="..\..\engines\sword25\kernel\kernel_script.cpp" />
+		<ClCompile Include="..\..\engines\sword25\kernel\outputpersistenceblock.cpp" />
+		<ClCompile Include="..\..\engines\sword25\kernel\persistenceservice.cpp" />
+		<ClCompile Include="..\..\engines\sword25\kernel\resmanager.cpp" />
+		<ClCompile Include="..\..\engines\sword25\kernel\resource.cpp" />
+		<ClCompile Include="..\..\engines\sword25\math\geometry_script.cpp" />
+		<ClCompile Include="..\..\engines\sword25\math\polygon.cpp" />
+		<ClCompile Include="..\..\engines\sword25\math\region.cpp" />
+		<ClCompile Include="..\..\engines\sword25\math\regionregistry.cpp" />
+		<ClCompile Include="..\..\engines\sword25\math\vertex.cpp" />
+		<ClCompile Include="..\..\engines\sword25\math\walkregion.cpp" />
+		<ClCompile Include="..\..\engines\sword25\package\packagemanager.cpp" />
+		<ClCompile Include="..\..\engines\sword25\package\packagemanager_script.cpp" />
+		<ClCompile Include="..\..\engines\sword25\script\lua_extensions.cpp" />
+		<ClCompile Include="..\..\engines\sword25\script\luabindhelper.cpp" />
+		<ClCompile Include="..\..\engines\sword25\script\luacallback.cpp" />
+		<ClCompile Include="..\..\engines\sword25\script\luascript.cpp" />
+		<ClCompile Include="..\..\engines\sword25\sfx\soundengine.cpp" />
+		<ClCompile Include="..\..\engines\sword25\sfx\soundengine_script.cpp" />
+		<ClCompile Include="..\..\engines\sword25\console.cpp" />
+		<ClCompile Include="..\..\engines\sword25\detection.cpp" />
+		<ClCompile Include="..\..\engines\sword25\sword25.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\sword25\fmv\movieplayer.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\image\art.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\image\image.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\image\imgloader.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\image\renderedimage.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\image\swimage.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\image\vectorimage.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\animation.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\animationdescription.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\animationresource.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\animationtemplate.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\animationtemplateregistry.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\bitmap.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\bitmapresource.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\dynamicbitmap.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\fontresource.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\graphicengine.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\microtiles.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\panel.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\renderobject.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\renderobjectmanager.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\renderobjectptr.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\renderobjectregistry.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\rootrenderobject.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\screenshot.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\staticbitmap.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\text.h" />
+		<ClInclude Include="..\..\engines\sword25\gfx\timedrenderobject.h" />
+		<ClInclude Include="..\..\engines\sword25\input\inputengine.h" />
+		<ClInclude Include="..\..\engines\sword25\kernel\common.h" />
+		<ClInclude Include="..\..\engines\sword25\kernel\filesystemutil.h" />
+		<ClInclude Include="..\..\engines\sword25\kernel\inputpersistenceblock.h" />
+		<ClInclude Include="..\..\engines\sword25\kernel\kernel.h" />
+		<ClInclude Include="..\..\engines\sword25\kernel\objectregistry.h" />
+		<ClInclude Include="..\..\engines\sword25\kernel\outputpersistenceblock.h" />
+		<ClInclude Include="..\..\engines\sword25\kernel\persistable.h" />
+		<ClInclude Include="..\..\engines\sword25\kernel\persistenceblock.h" />
+		<ClInclude Include="..\..\engines\sword25\kernel\persistenceservice.h" />
+		<ClInclude Include="..\..\engines\sword25\kernel\resmanager.h" />
+		<ClInclude Include="..\..\engines\sword25\kernel\resource.h" />
+		<ClInclude Include="..\..\engines\sword25\kernel\resservice.h" />
+		<ClInclude Include="..\..\engines\sword25\kernel\service.h" />
+		<ClInclude Include="..\..\engines\sword25\math\geometry.h" />
+		<ClInclude Include="..\..\engines\sword25\math\line.h" />
+		<ClInclude Include="..\..\engines\sword25\math\polygon.h" />
+		<ClInclude Include="..\..\engines\sword25\math\region.h" />
+		<ClInclude Include="..\..\engines\sword25\math\regionregistry.h" />
+		<ClInclude Include="..\..\engines\sword25\math\vertex.h" />
+		<ClInclude Include="..\..\engines\sword25\math\walkregion.h" />
+		<ClInclude Include="..\..\engines\sword25\package\packagemanager.h" />
+		<ClInclude Include="..\..\engines\sword25\script\luabindhelper.h" />
+		<ClInclude Include="..\..\engines\sword25\script\luacallback.h" />
+		<ClInclude Include="..\..\engines\sword25\script\luascript.h" />
+		<ClInclude Include="..\..\engines\sword25\script\script.h" />
+		<ClInclude Include="..\..\engines\sword25\sfx\soundengine.h" />
+		<ClInclude Include="..\..\engines\sword25\console.h" />
+		<ClInclude Include="..\..\engines\sword25\detection_tables.h" />
+		<ClInclude Include="..\..\engines\sword25\sword25.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\sword25\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

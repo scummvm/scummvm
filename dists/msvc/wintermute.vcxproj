@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{F30EE0F0-F20C-4876-ACDC-A30FB45C6905}</ProjectGuid>
+		<RootNamespace>wintermute</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_actor.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_entity.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_game.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_inventory.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_inventory_box.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_item.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_layer.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_node_state.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_object.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_path.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_path_point.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_region.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_response.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_response_box.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_response_context.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_rot_level.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_scale_level.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_scene.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_scene_node.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_scene_state.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_sentence.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_sprite_set.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_talk_def.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_talk_holder.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_talk_node.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_waypoint_group.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\file\base_disk_file.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\file\base_file.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\file\base_file_entry.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\file\base_package.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\file\base_save_thumb_file.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\file\base_savefile_manager_file.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\font\base_font.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\font\base_font_bitmap.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\font\base_font_storage.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\font\base_font_truetype.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\gfx\osystem\base_render_osystem.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\gfx\osystem\base_surface_osystem.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\gfx\osystem\render_ticket.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\gfx\base_image.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\gfx\base_renderer.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\gfx\base_surface.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\particles\part_emitter.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\particles\part_force.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\particles\part_particle.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\debuggable\debuggable_script.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\debuggable\debuggable_script_engine.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_engine.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_array.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_date.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_directory.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_file.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_math.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_mem_buffer.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_object.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_string.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_stack.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_value.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\sound\base_sound.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\sound\base_sound_buffer.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\sound\base_sound_manager.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_active_rect.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_dynamic_buffer.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_engine.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_fader.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_file_manager.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_frame.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_game.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_game_music.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_game_settings.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_keyboard_state.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_named_object.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_object.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_parser.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_persistence_manager.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_point.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_quick_msg.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_region.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_script_holder.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_scriptable.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_sprite.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_string_table.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_sub_frame.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_surface_storage.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_transition_manager.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\base_viewport.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\save_thumb_helper.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\saveload.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\base\timer.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\debugger\listing_providers\basic_source_listing_provider.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\debugger\listing_providers\blank_listing.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\debugger\listing_providers\blank_listing_provider.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\debugger\listing_providers\cached_source_listing_provider.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\debugger\listing_providers\source_listing.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\debugger\breakpoint.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\debugger\debugger_controller.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\debugger\error.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\debugger\listing.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\debugger\script_monitor.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\debugger\watch.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\debugger\watch_instance.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\math\math_util.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\math\matrix4.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\math\vector2.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\system\sys_class.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\system\sys_class_registry.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\system\sys_instance.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ui\ui_button.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ui\ui_edit.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ui\ui_entity.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ui\ui_object.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ui\ui_text.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ui\ui_tiled_image.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\ui\ui_window.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\utils\convert_utf.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\utils\crc.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\utils\path_util.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\utils\string_util.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\utils\utils.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\video\subtitle_card.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\video\video_player.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\video\video_subtitler.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\video\video_theora_player.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\debugger.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\detection.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\persistent.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\platform_osystem.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\wintermute.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_actor.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_entity.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_game.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_inventory.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_inventory_box.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_item.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_layer.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_node_state.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_object.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_path.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_path_point.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_region.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_response.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_response_box.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_response_context.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_rot_level.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_scale_level.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_scene.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_scene_node.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_scene_state.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_sentence.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_sprite_set.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_talk_def.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_talk_holder.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_talk_node.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_types.h" />
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_waypoint_group.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\file\base_disk_file.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\file\base_file.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\file\base_file_entry.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\file\base_package.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\file\base_save_thumb_file.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\file\base_savefile_manager_file.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\file\dcpackage.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\font\base_font.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\font\base_font_bitmap.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\font\base_font_storage.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\font\base_font_truetype.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\gfx\osystem\base_render_osystem.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\gfx\osystem\base_surface_osystem.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\gfx\osystem\render_ticket.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\gfx\base_image.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\gfx\base_renderer.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\gfx\base_surface.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\particles\part_emitter.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\particles\part_force.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\particles\part_particle.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\debuggable\debuggable_script.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\debuggable\debuggable_script_engine.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\dcscript.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_engine.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_array.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_date.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_directory.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_file.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_math.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_mem_buffer.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_object.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_string.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_stack.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_value.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\sound\base_sound.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\sound\base_sound_buffer.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\sound\base_sound_manager.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_active_rect.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_dynamic_buffer.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_engine.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_fader.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_file_manager.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_frame.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_game.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_game_music.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_game_settings.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_keyboard_state.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_named_object.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_object.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_parser.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_persistence_manager.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_point.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_quick_msg.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_region.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_script_holder.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_scriptable.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_sprite.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_string_table.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_sub_frame.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_surface_storage.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_transition_manager.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\base_viewport.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\save_thumb_helper.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\saveload.h" />
+		<ClInclude Include="..\..\engines\wintermute\base\timer.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing_providers\basic_source_listing_provider.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing_providers\blank_listing.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing_providers\blank_listing_provider.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing_providers\cached_source_listing_provider.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing_providers\source_listing.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing_providers\source_listing_provider.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger\breakpoint.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger\debugger_controller.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger\error.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing_provider.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger\script_monitor.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger\watch.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger\watch_instance.h" />
+		<ClInclude Include="..\..\engines\wintermute\math\floatpoint.h" />
+		<ClInclude Include="..\..\engines\wintermute\math\math_util.h" />
+		<ClInclude Include="..\..\engines\wintermute\math\matrix4.h" />
+		<ClInclude Include="..\..\engines\wintermute\math\rect32.h" />
+		<ClInclude Include="..\..\engines\wintermute\math\vector2.h" />
+		<ClInclude Include="..\..\engines\wintermute\system\sys_class.h" />
+		<ClInclude Include="..\..\engines\wintermute\system\sys_class_registry.h" />
+		<ClInclude Include="..\..\engines\wintermute\system\sys_instance.h" />
+		<ClInclude Include="..\..\engines\wintermute\ui\ui_button.h" />
+		<ClInclude Include="..\..\engines\wintermute\ui\ui_edit.h" />
+		<ClInclude Include="..\..\engines\wintermute\ui\ui_entity.h" />
+		<ClInclude Include="..\..\engines\wintermute\ui\ui_object.h" />
+		<ClInclude Include="..\..\engines\wintermute\ui\ui_text.h" />
+		<ClInclude Include="..\..\engines\wintermute\ui\ui_tiled_image.h" />
+		<ClInclude Include="..\..\engines\wintermute\ui\ui_window.h" />
+		<ClInclude Include="..\..\engines\wintermute\utils\convert_utf.h" />
+		<ClInclude Include="..\..\engines\wintermute\utils\crc.h" />
+		<ClInclude Include="..\..\engines\wintermute\utils\path_util.h" />
+		<ClInclude Include="..\..\engines\wintermute\utils\string_util.h" />
+		<ClInclude Include="..\..\engines\wintermute\utils\utils.h" />
+		<ClInclude Include="..\..\engines\wintermute\video\subtitle_card.h" />
+		<ClInclude Include="..\..\engines\wintermute\video\video_player.h" />
+		<ClInclude Include="..\..\engines\wintermute\video\video_subtitler.h" />
+		<ClInclude Include="..\..\engines\wintermute\video\video_theora_player.h" />
+		<ClInclude Include="..\..\engines\wintermute\coll_templ.h" />
+		<ClInclude Include="..\..\engines\wintermute\dcgf.h" />
+		<ClInclude Include="..\..\engines\wintermute\dctypes.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger.h" />
+		<ClInclude Include="..\..\engines\wintermute\detection_tables.h" />
+		<ClInclude Include="..\..\engines\wintermute\game_description.h" />
+		<ClInclude Include="..\..\engines\wintermute\persistent.h" />
+		<ClInclude Include="..\..\engines\wintermute\platform_osystem.h" />
+		<ClInclude Include="..\..\engines\wintermute\wintermute.h" />
+		<ClInclude Include="..\..\engines\wintermute\wintypes.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\wintermute\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

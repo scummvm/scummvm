@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="music">
+			<UniqueIdentifier>4D132136-0A97-4BC8-864A-80E43DE159A0</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\sky\music\adlibchannel.cpp">
+			<Filter>music</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sky\music\adlibmusic.cpp">
+			<Filter>music</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sky\music\gmchannel.cpp">
+			<Filter>music</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sky\music\gmmusic.cpp">
+			<Filter>music</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sky\music\mt32music.cpp">
+			<Filter>music</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sky\music\musicbase.cpp">
+			<Filter>music</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sky\autoroute.cpp" />
+		<ClCompile Include="..\..\engines\sky\compact.cpp" />
+		<ClCompile Include="..\..\engines\sky\control.cpp" />
+		<ClCompile Include="..\..\engines\sky\debug.cpp" />
+		<ClCompile Include="..\..\engines\sky\detection.cpp" />
+		<ClCompile Include="..\..\engines\sky\disk.cpp" />
+		<ClCompile Include="..\..\engines\sky\grid.cpp" />
+		<ClCompile Include="..\..\engines\sky\hufftext.cpp" />
+		<ClCompile Include="..\..\engines\sky\intro.cpp" />
+		<ClCompile Include="..\..\engines\sky\logic.cpp" />
+		<ClCompile Include="..\..\engines\sky\mouse.cpp" />
+		<ClCompile Include="..\..\engines\sky\rnc_deco.cpp" />
+		<ClCompile Include="..\..\engines\sky\screen.cpp" />
+		<ClCompile Include="..\..\engines\sky\sky.cpp" />
+		<ClCompile Include="..\..\engines\sky\sound.cpp" />
+		<ClCompile Include="..\..\engines\sky\text.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\sky\music\adlibchannel.h">
+			<Filter>music</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sky\music\adlibmusic.h">
+			<Filter>music</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sky\music\gmchannel.h">
+			<Filter>music</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sky\music\gmmusic.h">
+			<Filter>music</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sky\music\mt32music.h">
+			<Filter>music</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sky\music\musicbase.h">
+			<Filter>music</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sky\autoroute.h" />
+		<ClInclude Include="..\..\engines\sky\compact.h" />
+		<ClInclude Include="..\..\engines\sky\control.h" />
+		<ClInclude Include="..\..\engines\sky\debug.h" />
+		<ClInclude Include="..\..\engines\sky\disk.h" />
+		<ClInclude Include="..\..\engines\sky\grid.h" />
+		<ClInclude Include="..\..\engines\sky\intro.h" />
+		<ClInclude Include="..\..\engines\sky\logic.h" />
+		<ClInclude Include="..\..\engines\sky\mouse.h" />
+		<ClInclude Include="..\..\engines\sky\rnc_deco.h" />
+		<ClInclude Include="..\..\engines\sky\screen.h" />
+		<ClInclude Include="..\..\engines\sky\sky.h" />
+		<ClInclude Include="..\..\engines\sky\skydefs.h" />
+		<ClInclude Include="..\..\engines\sky\sound.h" />
+		<ClInclude Include="..\..\engines\sky\struc.h" />
+		<ClInclude Include="..\..\engines\sky\text.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\sky\module.mk" />
+	</ItemGroup>
+</Project>

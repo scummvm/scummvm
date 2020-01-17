@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="engine">
+			<UniqueIdentifier>26D39FAB-81F3-4498-945B-CB08DD578157</UniqueIdentifier>
+		</Filter>
+		<Filter Include="graphics">
+			<UniqueIdentifier>7BB6ACEB-6096-4BE8-8483-122019437BB6</UniqueIdentifier>
+		</Filter>
+		<Filter Include="parser">
+			<UniqueIdentifier>2520AA1D-52F6-4CF5-A4A3-F46246705C14</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sound">
+			<UniqueIdentifier>379AED87-180F-4AF8-8D6A-D7ABAF9C6ACC</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sound\decoders">
+			<UniqueIdentifier>05A80025-3C28-48C1-9A33-5C91B80E4A03</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sound\drivers">
+			<UniqueIdentifier>741055BF-38F3-4569-9837-0AFC43BA59AC</UniqueIdentifier>
+		</Filter>
+		<Filter Include="video">
+			<UniqueIdentifier>26E55D08-CDED-40E9-93C8-19D261CEB9CE</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\sci\engine\features.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\file.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\gc.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\guest_additions.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\hoyle5poker.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\kernel.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\kevent.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\kfile.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\kgraphics.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\kgraphics32.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\klists.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\kmath.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\kmenu.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\kmisc.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\kmovement.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\kparse.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\kpathing.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\kscripts.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\ksound.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\kstring.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\kvideo.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\message.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\object.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\savegame.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\script.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\script_patches.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\scriptdebug.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\seg_manager.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\segment.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\selector.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\state.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\static_selectors.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\vm.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\vm_types.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\engine\workarounds.cpp">
+			<Filter>engine</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\animate.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\cache.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\celobj32.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\compare.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\controls16.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\controls32.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\coordadjuster.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\cursor.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\cursor32.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\font.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\fontsjis.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\frameout.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\maciconbar.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\menu.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\paint16.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\paint32.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\palette.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\palette32.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\picture.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\plane32.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\portrait.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\ports.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\remap.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\remap32.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\screen.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\screen_item32.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\text16.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\text32.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\transitions.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\transitions32.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\video32.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\graphics\view.cpp">
+			<Filter>graphics</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\parser\grammar.cpp">
+			<Filter>parser</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\parser\said.cpp">
+			<Filter>parser</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\parser\vocabulary.cpp">
+			<Filter>parser</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\decoders\sol.cpp">
+			<Filter>sound\decoders</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\drivers\adlib.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\drivers\amigamac.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\drivers\cms.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\drivers\fb01.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\drivers\fmtowns.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\drivers\midi.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\drivers\pc9801.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\drivers\pcjr.cpp">
+			<Filter>sound\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\audio.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\audio32.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\midiparser_sci.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\music.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\soundcmd.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\sound\sync.cpp">
+			<Filter>sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\video\robot_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\video\seq_decoder.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\sci\console.cpp" />
+		<ClCompile Include="..\..\engines\sci\decompressor.cpp" />
+		<ClCompile Include="..\..\engines\sci\detection.cpp" />
+		<ClCompile Include="..\..\engines\sci\event.cpp" />
+		<ClCompile Include="..\..\engines\sci\resource.cpp" />
+		<ClCompile Include="..\..\engines\sci\resource_audio.cpp" />
+		<ClCompile Include="..\..\engines\sci\sci.cpp" />
+		<ClCompile Include="..\..\engines\sci\util.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\sci\engine\features.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\file.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\gc.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\guest_additions.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\hoyle5poker.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\kernel.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\kernel_tables.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\message.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\object.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\savegame.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\script.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\script_patches.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\scriptdebug.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\seg_manager.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\segment.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\selector.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\state.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\vm.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\vm_types.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\engine\workarounds.h">
+			<Filter>engine</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\animate.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\cache.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\celobj32.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\compare.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\controls16.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\controls32.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\coordadjuster.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\cursor.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\cursor32.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\font.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\fontsjis.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\frameout.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\helpers.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\lists32.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\maciconbar.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\menu.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\paint16.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\paint32.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\palette.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\palette32.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\picture.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\plane32.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\portrait.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\ports.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\remap.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\remap32.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\screen.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\screen_item32.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\text16.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\text32.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\transitions.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\transitions32.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\video32.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\graphics\view.h">
+			<Filter>graphics</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\parser\vocabulary.h">
+			<Filter>parser</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\sound\decoders\sol.h">
+			<Filter>sound\decoders</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\sound\drivers\gm_names.h">
+			<Filter>sound\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\sound\drivers\map-mt32-to-gm.h">
+			<Filter>sound\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\sound\drivers\mididriver.h">
+			<Filter>sound\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\sound\audio.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\sound\audio32.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\sound\midiparser_sci.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\sound\music.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\sound\soundcmd.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\sound\sync.h">
+			<Filter>sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\video\robot_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\video\seq_decoder.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\sci\console.h" />
+		<ClInclude Include="..\..\engines\sci\debug.h" />
+		<ClInclude Include="..\..\engines\sci\decompressor.h" />
+		<ClInclude Include="..\..\engines\sci\detection_tables.h" />
+		<ClInclude Include="..\..\engines\sci\event.h" />
+		<ClInclude Include="..\..\engines\sci\resource.h" />
+		<ClInclude Include="..\..\engines\sci\resource_intern.h" />
+		<ClInclude Include="..\..\engines\sci\sci.h" />
+		<ClInclude Include="..\..\engines\sci\util.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\sci\module.mk" />
+	</ItemGroup>
+</Project>

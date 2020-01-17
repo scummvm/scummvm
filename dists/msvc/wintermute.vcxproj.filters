@@ -1,0 +1,849 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="ad">
+			<UniqueIdentifier>7CCED5AE-D4D9-48CE-9F27-327D87C4A0BE</UniqueIdentifier>
+		</Filter>
+		<Filter Include="base">
+			<UniqueIdentifier>D31A08D8-2093-4E9A-9B76-3AA3DB13CE3D</UniqueIdentifier>
+		</Filter>
+		<Filter Include="base\file">
+			<UniqueIdentifier>DA20F9E8-ABFA-46B7-8A27-1784C44EC9DD</UniqueIdentifier>
+		</Filter>
+		<Filter Include="base\font">
+			<UniqueIdentifier>592EAE9F-190E-4DD8-B66B-95D4B56085FB</UniqueIdentifier>
+		</Filter>
+		<Filter Include="base\gfx">
+			<UniqueIdentifier>93F2B296-4D22-4143-A480-C1620406A57B</UniqueIdentifier>
+		</Filter>
+		<Filter Include="base\gfx\osystem">
+			<UniqueIdentifier>78E9B9AA-FC60-414D-A958-676FDC6E55B3</UniqueIdentifier>
+		</Filter>
+		<Filter Include="base\particles">
+			<UniqueIdentifier>E8F27219-2F56-4551-87EF-6B632816F568</UniqueIdentifier>
+		</Filter>
+		<Filter Include="base\scriptables">
+			<UniqueIdentifier>AA0F3B2F-CADB-4482-9A12-C7CE310258C6</UniqueIdentifier>
+		</Filter>
+		<Filter Include="base\scriptables\debuggable">
+			<UniqueIdentifier>736F362A-44F2-4523-9FAF-CCFE754E6B18</UniqueIdentifier>
+		</Filter>
+		<Filter Include="base\sound">
+			<UniqueIdentifier>913DBF77-415C-4998-909A-5FD8ED96674C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="debugger">
+			<UniqueIdentifier>6B6FA75D-DD18-47A6-AB9D-5C28E3F36C0B</UniqueIdentifier>
+		</Filter>
+		<Filter Include="debugger\listing_providers">
+			<UniqueIdentifier>78973427-ED2C-4D43-A47A-D4E574E20E63</UniqueIdentifier>
+		</Filter>
+		<Filter Include="math">
+			<UniqueIdentifier>8016C7FB-A58C-4B71-A0CF-C82EF797973C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="system">
+			<UniqueIdentifier>5C47E8C9-3C15-4F7E-8C6E-F181F0F6404A</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ui">
+			<UniqueIdentifier>C68F33C8-7FEF-42D5-A732-4CE09EDB6143</UniqueIdentifier>
+		</Filter>
+		<Filter Include="utils">
+			<UniqueIdentifier>E5FDCBD2-C7E4-4BA0-A50D-D94FF954C277</UniqueIdentifier>
+		</Filter>
+		<Filter Include="video">
+			<UniqueIdentifier>12E8FA7F-08EA-443C-91DF-534619A872A1</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_actor.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_entity.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_game.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_inventory.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_inventory_box.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_item.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_layer.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_node_state.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_object.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_path.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_path_point.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_region.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_response.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_response_box.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_response_context.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_rot_level.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_scale_level.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_scene.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_scene_node.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_scene_state.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_sentence.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_sprite_set.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_talk_def.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_talk_holder.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_talk_node.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ad\ad_waypoint_group.cpp">
+			<Filter>ad</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\file\base_disk_file.cpp">
+			<Filter>base\file</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\file\base_file.cpp">
+			<Filter>base\file</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\file\base_file_entry.cpp">
+			<Filter>base\file</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\file\base_package.cpp">
+			<Filter>base\file</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\file\base_save_thumb_file.cpp">
+			<Filter>base\file</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\file\base_savefile_manager_file.cpp">
+			<Filter>base\file</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\font\base_font.cpp">
+			<Filter>base\font</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\font\base_font_bitmap.cpp">
+			<Filter>base\font</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\font\base_font_storage.cpp">
+			<Filter>base\font</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\font\base_font_truetype.cpp">
+			<Filter>base\font</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\gfx\osystem\base_render_osystem.cpp">
+			<Filter>base\gfx\osystem</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\gfx\osystem\base_surface_osystem.cpp">
+			<Filter>base\gfx\osystem</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\gfx\osystem\render_ticket.cpp">
+			<Filter>base\gfx\osystem</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\gfx\base_image.cpp">
+			<Filter>base\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\gfx\base_renderer.cpp">
+			<Filter>base\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\gfx\base_surface.cpp">
+			<Filter>base\gfx</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\particles\part_emitter.cpp">
+			<Filter>base\particles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\particles\part_force.cpp">
+			<Filter>base\particles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\particles\part_particle.cpp">
+			<Filter>base\particles</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\debuggable\debuggable_script.cpp">
+			<Filter>base\scriptables\debuggable</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\debuggable\debuggable_script_engine.cpp">
+			<Filter>base\scriptables\debuggable</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script.cpp">
+			<Filter>base\scriptables</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_engine.cpp">
+			<Filter>base\scriptables</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_array.cpp">
+			<Filter>base\scriptables</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_date.cpp">
+			<Filter>base\scriptables</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_directory.cpp">
+			<Filter>base\scriptables</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_file.cpp">
+			<Filter>base\scriptables</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_math.cpp">
+			<Filter>base\scriptables</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_mem_buffer.cpp">
+			<Filter>base\scriptables</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_object.cpp">
+			<Filter>base\scriptables</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_ext_string.cpp">
+			<Filter>base\scriptables</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_stack.cpp">
+			<Filter>base\scriptables</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\scriptables\script_value.cpp">
+			<Filter>base\scriptables</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\sound\base_sound.cpp">
+			<Filter>base\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\sound\base_sound_buffer.cpp">
+			<Filter>base\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\sound\base_sound_manager.cpp">
+			<Filter>base\sound</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_active_rect.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_dynamic_buffer.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_engine.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_fader.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_file_manager.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_frame.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_game.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_game_music.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_game_settings.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_keyboard_state.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_named_object.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_object.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_parser.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_persistence_manager.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_point.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_quick_msg.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_region.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_script_holder.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_scriptable.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_sprite.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_string_table.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_sub_frame.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_surface_storage.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_transition_manager.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\base_viewport.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\save_thumb_helper.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\saveload.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\base\timer.cpp">
+			<Filter>base</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\debugger\listing_providers\basic_source_listing_provider.cpp">
+			<Filter>debugger\listing_providers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\debugger\listing_providers\blank_listing.cpp">
+			<Filter>debugger\listing_providers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\debugger\listing_providers\blank_listing_provider.cpp">
+			<Filter>debugger\listing_providers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\debugger\listing_providers\cached_source_listing_provider.cpp">
+			<Filter>debugger\listing_providers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\debugger\listing_providers\source_listing.cpp">
+			<Filter>debugger\listing_providers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\debugger\breakpoint.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\debugger\debugger_controller.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\debugger\error.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\debugger\listing.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\debugger\script_monitor.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\debugger\watch.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\debugger\watch_instance.cpp">
+			<Filter>debugger</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\math\math_util.cpp">
+			<Filter>math</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\math\matrix4.cpp">
+			<Filter>math</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\math\vector2.cpp">
+			<Filter>math</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\system\sys_class.cpp">
+			<Filter>system</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\system\sys_class_registry.cpp">
+			<Filter>system</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\system\sys_instance.cpp">
+			<Filter>system</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ui\ui_button.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ui\ui_edit.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ui\ui_entity.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ui\ui_object.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ui\ui_text.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ui\ui_tiled_image.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\ui\ui_window.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\utils\convert_utf.cpp">
+			<Filter>utils</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\utils\crc.cpp">
+			<Filter>utils</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\utils\path_util.cpp">
+			<Filter>utils</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\utils\string_util.cpp">
+			<Filter>utils</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\utils\utils.cpp">
+			<Filter>utils</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\video\subtitle_card.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\video\video_player.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\video\video_subtitler.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\video\video_theora_player.cpp">
+			<Filter>video</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\wintermute\debugger.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\detection.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\persistent.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\platform_osystem.cpp" />
+		<ClCompile Include="..\..\engines\wintermute\wintermute.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_actor.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_entity.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_game.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_inventory.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_inventory_box.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_item.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_layer.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_node_state.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_object.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_path.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_path_point.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_region.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_response.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_response_box.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_response_context.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_rot_level.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_scale_level.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_scene.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_scene_node.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_scene_state.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_sentence.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_sprite_set.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_talk_def.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_talk_holder.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_talk_node.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_types.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ad\ad_waypoint_group.h">
+			<Filter>ad</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\file\base_disk_file.h">
+			<Filter>base\file</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\file\base_file.h">
+			<Filter>base\file</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\file\base_file_entry.h">
+			<Filter>base\file</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\file\base_package.h">
+			<Filter>base\file</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\file\base_save_thumb_file.h">
+			<Filter>base\file</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\file\base_savefile_manager_file.h">
+			<Filter>base\file</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\file\dcpackage.h">
+			<Filter>base\file</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\font\base_font.h">
+			<Filter>base\font</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\font\base_font_bitmap.h">
+			<Filter>base\font</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\font\base_font_storage.h">
+			<Filter>base\font</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\font\base_font_truetype.h">
+			<Filter>base\font</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\gfx\osystem\base_render_osystem.h">
+			<Filter>base\gfx\osystem</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\gfx\osystem\base_surface_osystem.h">
+			<Filter>base\gfx\osystem</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\gfx\osystem\render_ticket.h">
+			<Filter>base\gfx\osystem</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\gfx\base_image.h">
+			<Filter>base\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\gfx\base_renderer.h">
+			<Filter>base\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\gfx\base_surface.h">
+			<Filter>base\gfx</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\particles\part_emitter.h">
+			<Filter>base\particles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\particles\part_force.h">
+			<Filter>base\particles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\particles\part_particle.h">
+			<Filter>base\particles</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\debuggable\debuggable_script.h">
+			<Filter>base\scriptables\debuggable</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\debuggable\debuggable_script_engine.h">
+			<Filter>base\scriptables\debuggable</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\dcscript.h">
+			<Filter>base\scriptables</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script.h">
+			<Filter>base\scriptables</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_engine.h">
+			<Filter>base\scriptables</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_array.h">
+			<Filter>base\scriptables</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_date.h">
+			<Filter>base\scriptables</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_directory.h">
+			<Filter>base\scriptables</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_file.h">
+			<Filter>base\scriptables</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_math.h">
+			<Filter>base\scriptables</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_mem_buffer.h">
+			<Filter>base\scriptables</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_object.h">
+			<Filter>base\scriptables</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_ext_string.h">
+			<Filter>base\scriptables</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_stack.h">
+			<Filter>base\scriptables</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\scriptables\script_value.h">
+			<Filter>base\scriptables</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\sound\base_sound.h">
+			<Filter>base\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\sound\base_sound_buffer.h">
+			<Filter>base\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\sound\base_sound_manager.h">
+			<Filter>base\sound</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_active_rect.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_dynamic_buffer.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_engine.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_fader.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_file_manager.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_frame.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_game.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_game_music.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_game_settings.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_keyboard_state.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_named_object.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_object.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_parser.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_persistence_manager.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_point.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_quick_msg.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_region.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_script_holder.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_scriptable.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_sprite.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_string_table.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_sub_frame.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_surface_storage.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_transition_manager.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\base_viewport.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\save_thumb_helper.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\saveload.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\base\timer.h">
+			<Filter>base</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing_providers\basic_source_listing_provider.h">
+			<Filter>debugger\listing_providers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing_providers\blank_listing.h">
+			<Filter>debugger\listing_providers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing_providers\blank_listing_provider.h">
+			<Filter>debugger\listing_providers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing_providers\cached_source_listing_provider.h">
+			<Filter>debugger\listing_providers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing_providers\source_listing.h">
+			<Filter>debugger\listing_providers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing_providers\source_listing_provider.h">
+			<Filter>debugger\listing_providers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\debugger\breakpoint.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\debugger\debugger_controller.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\debugger\error.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\debugger\listing_provider.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\debugger\script_monitor.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\debugger\watch.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\debugger\watch_instance.h">
+			<Filter>debugger</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\math\floatpoint.h">
+			<Filter>math</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\math\math_util.h">
+			<Filter>math</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\math\matrix4.h">
+			<Filter>math</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\math\rect32.h">
+			<Filter>math</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\math\vector2.h">
+			<Filter>math</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\system\sys_class.h">
+			<Filter>system</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\system\sys_class_registry.h">
+			<Filter>system</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\system\sys_instance.h">
+			<Filter>system</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ui\ui_button.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ui\ui_edit.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ui\ui_entity.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ui\ui_object.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ui\ui_text.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ui\ui_tiled_image.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\ui\ui_window.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\utils\convert_utf.h">
+			<Filter>utils</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\utils\crc.h">
+			<Filter>utils</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\utils\path_util.h">
+			<Filter>utils</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\utils\string_util.h">
+			<Filter>utils</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\utils\utils.h">
+			<Filter>utils</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\video\subtitle_card.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\video\video_player.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\video\video_subtitler.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\video\video_theora_player.h">
+			<Filter>video</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\wintermute\coll_templ.h" />
+		<ClInclude Include="..\..\engines\wintermute\dcgf.h" />
+		<ClInclude Include="..\..\engines\wintermute\dctypes.h" />
+		<ClInclude Include="..\..\engines\wintermute\debugger.h" />
+		<ClInclude Include="..\..\engines\wintermute\detection_tables.h" />
+		<ClInclude Include="..\..\engines\wintermute\game_description.h" />
+		<ClInclude Include="..\..\engines\wintermute\persistent.h" />
+		<ClInclude Include="..\..\engines\wintermute\platform_osystem.h" />
+		<ClInclude Include="..\..\engines\wintermute\wintermute.h" />
+		<ClInclude Include="..\..\engines\wintermute\wintypes.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\wintermute\module.mk" />
+	</ItemGroup>
+</Project>

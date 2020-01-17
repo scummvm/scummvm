@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{1DF62C11-9B41-4558-B26E-E516E2E242CD}</ProjectGuid>
+		<RootNamespace>scumm</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\scumm\he\logic\baseball2001.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\logic\basketball.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\logic\football.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\logic\funshop.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\logic\moonbase_logic.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\logic\puttrace.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\logic\soccer.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_defenseunit.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_main.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_node.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_targetacquisition.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_traveller.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_tree.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_types.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_weapon.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\distortion.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\moonbase.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\moonbase_fow.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\net_main.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\animation_he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\cup_player_he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\floodfill_he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\logic_he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\palette_he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\resource_he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\script_v100he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\script_v60he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\script_v70he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\script_v71he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\script_v72he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\script_v80he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\script_v90he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\sound_he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\sprite_he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\he\wiz_he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse\drivers\amiga.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse\drivers\fmtowns.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse\drivers\mac_m68k.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse\drivers\pcspk.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse\imuse.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse\imuse_part.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse\imuse_player.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse\instrument.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse\sysex_samnmax.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse\sysex_scumm.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse_bndmgr.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse_codecs.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse_music.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse_script.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse_sndmgr.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse_tables.cpp" />
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse_track.cpp" />
+		<ClCompile Include="..\..\engines\scumm\insane\insane.cpp" />
+		<ClCompile Include="..\..\engines\scumm\insane\insane_ben.cpp" />
+		<ClCompile Include="..\..\engines\scumm\insane\insane_enemy.cpp" />
+		<ClCompile Include="..\..\engines\scumm\insane\insane_iact.cpp" />
+		<ClCompile Include="..\..\engines\scumm\insane\insane_scenes.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_ad.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_apple2.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_he.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_mac.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_mod.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_nes.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_pce.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_sid.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_towns.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_v1.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_v2.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_v2a.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_v2base.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_v2cms.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_v3a.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_v3m.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_v4a.cpp" />
+		<ClCompile Include="..\..\engines\scumm\players\player_v5m.cpp" />
+		<ClCompile Include="..\..\engines\scumm\smush\channel.cpp" />
+		<ClCompile Include="..\..\engines\scumm\smush\codec1.cpp" />
+		<ClCompile Include="..\..\engines\scumm\smush\codec37.cpp" />
+		<ClCompile Include="..\..\engines\scumm\smush\codec47.cpp" />
+		<ClCompile Include="..\..\engines\scumm\smush\imuse_channel.cpp" />
+		<ClCompile Include="..\..\engines\scumm\smush\saud_channel.cpp" />
+		<ClCompile Include="..\..\engines\scumm\smush\smush_font.cpp" />
+		<ClCompile Include="..\..\engines\scumm\smush\smush_mixer.cpp" />
+		<ClCompile Include="..\..\engines\scumm\smush\smush_player.cpp" />
+		<ClCompile Include="..\..\engines\scumm\actor.cpp" />
+		<ClCompile Include="..\..\engines\scumm\akos.cpp" />
+		<ClCompile Include="..\..\engines\scumm\base-costume.cpp" />
+		<ClCompile Include="..\..\engines\scumm\bomp.cpp" />
+		<ClCompile Include="..\..\engines\scumm\boxes.cpp" />
+		<ClCompile Include="..\..\engines\scumm\camera.cpp" />
+		<ClCompile Include="..\..\engines\scumm\cdda.cpp" />
+		<ClCompile Include="..\..\engines\scumm\charset-fontdata.cpp" />
+		<ClCompile Include="..\..\engines\scumm\charset.cpp" />
+		<ClCompile Include="..\..\engines\scumm\costume.cpp" />
+		<ClCompile Include="..\..\engines\scumm\cursor.cpp" />
+		<ClCompile Include="..\..\engines\scumm\debugger.cpp" />
+		<ClCompile Include="..\..\engines\scumm\detection.cpp" />
+		<ClCompile Include="..\..\engines\scumm\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\scumm\file.cpp" />
+		<ClCompile Include="..\..\engines\scumm\file_nes.cpp" />
+		<ClCompile Include="..\..\engines\scumm\gfx.cpp" />
+		<ClCompile Include="..\..\engines\scumm\gfx_towns.cpp" />
+		<ClCompile Include="..\..\engines\scumm\help.cpp" />
+		<ClCompile Include="..\..\engines\scumm\input.cpp" />
+		<ClCompile Include="..\..\engines\scumm\midiparser_ro.cpp" />
+		<ClCompile Include="..\..\engines\scumm\nut_renderer.cpp" />
+		<ClCompile Include="..\..\engines\scumm\object.cpp" />
+		<ClCompile Include="..\..\engines\scumm\palette.cpp" />
+		<ClCompile Include="..\..\engines\scumm\resource.cpp" />
+		<ClCompile Include="..\..\engines\scumm\resource_v2.cpp" />
+		<ClCompile Include="..\..\engines\scumm\resource_v3.cpp" />
+		<ClCompile Include="..\..\engines\scumm\resource_v4.cpp" />
+		<ClCompile Include="..\..\engines\scumm\room.cpp" />
+		<ClCompile Include="..\..\engines\scumm\saveload.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script_v0.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script_v2.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script_v3.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script_v4.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script_v5.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script_v6.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script_v8.cpp" />
+		<ClCompile Include="..\..\engines\scumm\scumm.cpp" />
+		<ClCompile Include="..\..\engines\scumm\sound.cpp" />
+		<ClCompile Include="..\..\engines\scumm\string.cpp" />
+		<ClCompile Include="..\..\engines\scumm\usage_bits.cpp" />
+		<ClCompile Include="..\..\engines\scumm\util.cpp" />
+		<ClCompile Include="..\..\engines\scumm\vars.cpp" />
+		<ClCompile Include="..\..\engines\scumm\verbs.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_defenseunit.h" />
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_main.h" />
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_node.h" />
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_pattern.h" />
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_targetacquisition.h" />
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_traveller.h" />
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_tree.h" />
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_types.h" />
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_weapon.h" />
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\moonbase.h" />
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\net_defines.h" />
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\net_main.h" />
+		<ClInclude Include="..\..\engines\scumm\he\animation_he.h" />
+		<ClInclude Include="..\..\engines\scumm\he\cup_player_he.h" />
+		<ClInclude Include="..\..\engines\scumm\he\floodfill_he.h" />
+		<ClInclude Include="..\..\engines\scumm\he\intern_he.h" />
+		<ClInclude Include="..\..\engines\scumm\he\logic_he.h" />
+		<ClInclude Include="..\..\engines\scumm\he\resource_he.h" />
+		<ClInclude Include="..\..\engines\scumm\he\sound_he.h" />
+		<ClInclude Include="..\..\engines\scumm\he\sprite_he.h" />
+		<ClInclude Include="..\..\engines\scumm\he\wiz_he.h" />
+		<ClInclude Include="..\..\engines\scumm\imuse\drivers\amiga.h" />
+		<ClInclude Include="..\..\engines\scumm\imuse\drivers\fmtowns.h" />
+		<ClInclude Include="..\..\engines\scumm\imuse\drivers\mac_m68k.h" />
+		<ClInclude Include="..\..\engines\scumm\imuse\drivers\pcspk.h" />
+		<ClInclude Include="..\..\engines\scumm\imuse\imuse.h" />
+		<ClInclude Include="..\..\engines\scumm\imuse\imuse_internal.h" />
+		<ClInclude Include="..\..\engines\scumm\imuse\instrument.h" />
+		<ClInclude Include="..\..\engines\scumm\imuse\sysex.h" />
+		<ClInclude Include="..\..\engines\scumm\imuse_digi\dimuse.h" />
+		<ClInclude Include="..\..\engines\scumm\imuse_digi\dimuse_bndmgr.h" />
+		<ClInclude Include="..\..\engines\scumm\imuse_digi\dimuse_codecs.h" />
+		<ClInclude Include="..\..\engines\scumm\imuse_digi\dimuse_sndmgr.h" />
+		<ClInclude Include="..\..\engines\scumm\imuse_digi\dimuse_tables.h" />
+		<ClInclude Include="..\..\engines\scumm\imuse_digi\dimuse_track.h" />
+		<ClInclude Include="..\..\engines\scumm\insane\insane.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_ad.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_apple2.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_he.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_mac.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_mod.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_nes.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_pce.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_sid.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_towns.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_v1.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_v2.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_v2a.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_v2base.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_v2cms.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_v3a.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_v3m.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_v4a.h" />
+		<ClInclude Include="..\..\engines\scumm\players\player_v5m.h" />
+		<ClInclude Include="..\..\engines\scumm\smush\channel.h" />
+		<ClInclude Include="..\..\engines\scumm\smush\codec37.h" />
+		<ClInclude Include="..\..\engines\scumm\smush\codec47.h" />
+		<ClInclude Include="..\..\engines\scumm\smush\smush_font.h" />
+		<ClInclude Include="..\..\engines\scumm\smush\smush_mixer.h" />
+		<ClInclude Include="..\..\engines\scumm\smush\smush_player.h" />
+		<ClInclude Include="..\..\engines\scumm\actor.h" />
+		<ClInclude Include="..\..\engines\scumm\actor_he.h" />
+		<ClInclude Include="..\..\engines\scumm\akos.h" />
+		<ClInclude Include="..\..\engines\scumm\base-costume.h" />
+		<ClInclude Include="..\..\engines\scumm\bomp.h" />
+		<ClInclude Include="..\..\engines\scumm\boxes.h" />
+		<ClInclude Include="..\..\engines\scumm\cdda.h" />
+		<ClInclude Include="..\..\engines\scumm\charset.h" />
+		<ClInclude Include="..\..\engines\scumm\costume.h" />
+		<ClInclude Include="..\..\engines\scumm\debugger.h" />
+		<ClInclude Include="..\..\engines\scumm\detection.h" />
+		<ClInclude Include="..\..\engines\scumm\detection_tables.h" />
+		<ClInclude Include="..\..\engines\scumm\dialogs.h" />
+		<ClInclude Include="..\..\engines\scumm\file.h" />
+		<ClInclude Include="..\..\engines\scumm\file_nes.h" />
+		<ClInclude Include="..\..\engines\scumm\gfx.h" />
+		<ClInclude Include="..\..\engines\scumm\help.h" />
+		<ClInclude Include="..\..\engines\scumm\music.h" />
+		<ClInclude Include="..\..\engines\scumm\nut_renderer.h" />
+		<ClInclude Include="..\..\engines\scumm\object.h" />
+		<ClInclude Include="..\..\engines\scumm\resource.h" />
+		<ClInclude Include="..\..\engines\scumm\script.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm-md5.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v0.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v2.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v3.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v4.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v5.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v6.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v7.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v8.h" />
+		<ClInclude Include="..\..\engines\scumm\sound.h" />
+		<ClInclude Include="..\..\engines\scumm\usage_bits.h" />
+		<ClInclude Include="..\..\engines\scumm\util.h" />
+		<ClInclude Include="..\..\engines\scumm\verbs.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\scumm\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<Filter Include="he">
+			<UniqueIdentifier>7ADE699B-C9B9-4520-A6F6-6B316AF119C5</UniqueIdentifier>
+		</Filter>
+		<Filter Include="he\logic">
+			<UniqueIdentifier>14AE695B-A2E9-4F93-A6D0-6CE2C401D90C</UniqueIdentifier>
+		</Filter>
+		<Filter Include="he\moonbase">
+			<UniqueIdentifier>00473CC9-A826-4AD5-AD96-A457D596F713</UniqueIdentifier>
+		</Filter>
+		<Filter Include="imuse">
+			<UniqueIdentifier>AF7B16C4-A4C8-482F-BA5D-277FAF01EA8F</UniqueIdentifier>
+		</Filter>
+		<Filter Include="imuse\drivers">
+			<UniqueIdentifier>A16519F9-8FF0-4E61-9288-A456715B5AD0</UniqueIdentifier>
+		</Filter>
+		<Filter Include="imuse_digi">
+			<UniqueIdentifier>C8A52B7A-40C9-4874-BE93-8383BD5F7819</UniqueIdentifier>
+		</Filter>
+		<Filter Include="insane">
+			<UniqueIdentifier>81EB4933-089F-4A42-856E-A46F539D1281</UniqueIdentifier>
+		</Filter>
+		<Filter Include="players">
+			<UniqueIdentifier>3F5170B7-F7A6-4EBB-8F5D-E0217C73518B</UniqueIdentifier>
+		</Filter>
+		<Filter Include="smush">
+			<UniqueIdentifier>918FC1BF-1442-4A02-AB14-FCEA2B658457</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\scumm\he\logic\baseball2001.cpp">
+			<Filter>he\logic</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\logic\basketball.cpp">
+			<Filter>he\logic</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\logic\football.cpp">
+			<Filter>he\logic</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\logic\funshop.cpp">
+			<Filter>he\logic</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\logic\moonbase_logic.cpp">
+			<Filter>he\logic</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\logic\puttrace.cpp">
+			<Filter>he\logic</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\logic\soccer.cpp">
+			<Filter>he\logic</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_defenseunit.cpp">
+			<Filter>he\moonbase</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_main.cpp">
+			<Filter>he\moonbase</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_node.cpp">
+			<Filter>he\moonbase</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_targetacquisition.cpp">
+			<Filter>he\moonbase</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_traveller.cpp">
+			<Filter>he\moonbase</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_tree.cpp">
+			<Filter>he\moonbase</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_types.cpp">
+			<Filter>he\moonbase</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\ai_weapon.cpp">
+			<Filter>he\moonbase</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\distortion.cpp">
+			<Filter>he\moonbase</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\moonbase.cpp">
+			<Filter>he\moonbase</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\moonbase_fow.cpp">
+			<Filter>he\moonbase</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\moonbase\net_main.cpp">
+			<Filter>he\moonbase</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\animation_he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\cup_player_he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\floodfill_he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\logic_he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\palette_he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\resource_he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\script_v100he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\script_v60he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\script_v70he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\script_v71he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\script_v72he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\script_v80he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\script_v90he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\sound_he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\sprite_he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\he\wiz_he.cpp">
+			<Filter>he</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse\drivers\amiga.cpp">
+			<Filter>imuse\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse\drivers\fmtowns.cpp">
+			<Filter>imuse\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse\drivers\mac_m68k.cpp">
+			<Filter>imuse\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse\drivers\pcspk.cpp">
+			<Filter>imuse\drivers</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse\imuse.cpp">
+			<Filter>imuse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse\imuse_part.cpp">
+			<Filter>imuse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse\imuse_player.cpp">
+			<Filter>imuse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse\instrument.cpp">
+			<Filter>imuse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse\sysex_samnmax.cpp">
+			<Filter>imuse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse\sysex_scumm.cpp">
+			<Filter>imuse</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse.cpp">
+			<Filter>imuse_digi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse_bndmgr.cpp">
+			<Filter>imuse_digi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse_codecs.cpp">
+			<Filter>imuse_digi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse_music.cpp">
+			<Filter>imuse_digi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse_script.cpp">
+			<Filter>imuse_digi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse_sndmgr.cpp">
+			<Filter>imuse_digi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse_tables.cpp">
+			<Filter>imuse_digi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\imuse_digi\dimuse_track.cpp">
+			<Filter>imuse_digi</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\insane\insane.cpp">
+			<Filter>insane</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\insane\insane_ben.cpp">
+			<Filter>insane</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\insane\insane_enemy.cpp">
+			<Filter>insane</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\insane\insane_iact.cpp">
+			<Filter>insane</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\insane\insane_scenes.cpp">
+			<Filter>insane</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_ad.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_apple2.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_he.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_mac.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_mod.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_nes.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_pce.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_sid.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_towns.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_v1.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_v2.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_v2a.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_v2base.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_v2cms.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_v3a.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_v3m.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_v4a.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\players\player_v5m.cpp">
+			<Filter>players</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\smush\channel.cpp">
+			<Filter>smush</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\smush\codec1.cpp">
+			<Filter>smush</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\smush\codec37.cpp">
+			<Filter>smush</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\smush\codec47.cpp">
+			<Filter>smush</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\smush\imuse_channel.cpp">
+			<Filter>smush</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\smush\saud_channel.cpp">
+			<Filter>smush</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\smush\smush_font.cpp">
+			<Filter>smush</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\smush\smush_mixer.cpp">
+			<Filter>smush</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\smush\smush_player.cpp">
+			<Filter>smush</Filter>
+		</ClCompile>
+		<ClCompile Include="..\..\engines\scumm\actor.cpp" />
+		<ClCompile Include="..\..\engines\scumm\akos.cpp" />
+		<ClCompile Include="..\..\engines\scumm\base-costume.cpp" />
+		<ClCompile Include="..\..\engines\scumm\bomp.cpp" />
+		<ClCompile Include="..\..\engines\scumm\boxes.cpp" />
+		<ClCompile Include="..\..\engines\scumm\camera.cpp" />
+		<ClCompile Include="..\..\engines\scumm\cdda.cpp" />
+		<ClCompile Include="..\..\engines\scumm\charset-fontdata.cpp" />
+		<ClCompile Include="..\..\engines\scumm\charset.cpp" />
+		<ClCompile Include="..\..\engines\scumm\costume.cpp" />
+		<ClCompile Include="..\..\engines\scumm\cursor.cpp" />
+		<ClCompile Include="..\..\engines\scumm\debugger.cpp" />
+		<ClCompile Include="..\..\engines\scumm\detection.cpp" />
+		<ClCompile Include="..\..\engines\scumm\dialogs.cpp" />
+		<ClCompile Include="..\..\engines\scumm\file.cpp" />
+		<ClCompile Include="..\..\engines\scumm\file_nes.cpp" />
+		<ClCompile Include="..\..\engines\scumm\gfx.cpp" />
+		<ClCompile Include="..\..\engines\scumm\gfx_towns.cpp" />
+		<ClCompile Include="..\..\engines\scumm\help.cpp" />
+		<ClCompile Include="..\..\engines\scumm\input.cpp" />
+		<ClCompile Include="..\..\engines\scumm\midiparser_ro.cpp" />
+		<ClCompile Include="..\..\engines\scumm\nut_renderer.cpp" />
+		<ClCompile Include="..\..\engines\scumm\object.cpp" />
+		<ClCompile Include="..\..\engines\scumm\palette.cpp" />
+		<ClCompile Include="..\..\engines\scumm\resource.cpp" />
+		<ClCompile Include="..\..\engines\scumm\resource_v2.cpp" />
+		<ClCompile Include="..\..\engines\scumm\resource_v3.cpp" />
+		<ClCompile Include="..\..\engines\scumm\resource_v4.cpp" />
+		<ClCompile Include="..\..\engines\scumm\room.cpp" />
+		<ClCompile Include="..\..\engines\scumm\saveload.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script_v0.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script_v2.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script_v3.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script_v4.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script_v5.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script_v6.cpp" />
+		<ClCompile Include="..\..\engines\scumm\script_v8.cpp" />
+		<ClCompile Include="..\..\engines\scumm\scumm.cpp" />
+		<ClCompile Include="..\..\engines\scumm\sound.cpp" />
+		<ClCompile Include="..\..\engines\scumm\string.cpp" />
+		<ClCompile Include="..\..\engines\scumm\usage_bits.cpp" />
+		<ClCompile Include="..\..\engines\scumm\util.cpp" />
+		<ClCompile Include="..\..\engines\scumm\vars.cpp" />
+		<ClCompile Include="..\..\engines\scumm\verbs.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_defenseunit.h">
+			<Filter>he\moonbase</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_main.h">
+			<Filter>he\moonbase</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_node.h">
+			<Filter>he\moonbase</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_pattern.h">
+			<Filter>he\moonbase</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_targetacquisition.h">
+			<Filter>he\moonbase</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_traveller.h">
+			<Filter>he\moonbase</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_tree.h">
+			<Filter>he\moonbase</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_types.h">
+			<Filter>he\moonbase</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\ai_weapon.h">
+			<Filter>he\moonbase</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\moonbase.h">
+			<Filter>he\moonbase</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\net_defines.h">
+			<Filter>he\moonbase</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\moonbase\net_main.h">
+			<Filter>he\moonbase</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\animation_he.h">
+			<Filter>he</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\cup_player_he.h">
+			<Filter>he</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\floodfill_he.h">
+			<Filter>he</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\intern_he.h">
+			<Filter>he</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\logic_he.h">
+			<Filter>he</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\resource_he.h">
+			<Filter>he</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\sound_he.h">
+			<Filter>he</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\sprite_he.h">
+			<Filter>he</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\he\wiz_he.h">
+			<Filter>he</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\imuse\drivers\amiga.h">
+			<Filter>imuse\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\imuse\drivers\fmtowns.h">
+			<Filter>imuse\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\imuse\drivers\mac_m68k.h">
+			<Filter>imuse\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\imuse\drivers\pcspk.h">
+			<Filter>imuse\drivers</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\imuse\imuse.h">
+			<Filter>imuse</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\imuse\imuse_internal.h">
+			<Filter>imuse</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\imuse\instrument.h">
+			<Filter>imuse</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\imuse\sysex.h">
+			<Filter>imuse</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\imuse_digi\dimuse.h">
+			<Filter>imuse_digi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\imuse_digi\dimuse_bndmgr.h">
+			<Filter>imuse_digi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\imuse_digi\dimuse_codecs.h">
+			<Filter>imuse_digi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\imuse_digi\dimuse_sndmgr.h">
+			<Filter>imuse_digi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\imuse_digi\dimuse_tables.h">
+			<Filter>imuse_digi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\imuse_digi\dimuse_track.h">
+			<Filter>imuse_digi</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\insane\insane.h">
+			<Filter>insane</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_ad.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_apple2.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_he.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_mac.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_mod.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_nes.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_pce.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_sid.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_towns.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_v1.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_v2.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_v2a.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_v2base.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_v2cms.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_v3a.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_v3m.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_v4a.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\players\player_v5m.h">
+			<Filter>players</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\smush\channel.h">
+			<Filter>smush</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\smush\codec37.h">
+			<Filter>smush</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\smush\codec47.h">
+			<Filter>smush</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\smush\smush_font.h">
+			<Filter>smush</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\smush\smush_mixer.h">
+			<Filter>smush</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\smush\smush_player.h">
+			<Filter>smush</Filter>
+		</ClInclude>
+		<ClInclude Include="..\..\engines\scumm\actor.h" />
+		<ClInclude Include="..\..\engines\scumm\actor_he.h" />
+		<ClInclude Include="..\..\engines\scumm\akos.h" />
+		<ClInclude Include="..\..\engines\scumm\base-costume.h" />
+		<ClInclude Include="..\..\engines\scumm\bomp.h" />
+		<ClInclude Include="..\..\engines\scumm\boxes.h" />
+		<ClInclude Include="..\..\engines\scumm\cdda.h" />
+		<ClInclude Include="..\..\engines\scumm\charset.h" />
+		<ClInclude Include="..\..\engines\scumm\costume.h" />
+		<ClInclude Include="..\..\engines\scumm\debugger.h" />
+		<ClInclude Include="..\..\engines\scumm\detection.h" />
+		<ClInclude Include="..\..\engines\scumm\detection_tables.h" />
+		<ClInclude Include="..\..\engines\scumm\dialogs.h" />
+		<ClInclude Include="..\..\engines\scumm\file.h" />
+		<ClInclude Include="..\..\engines\scumm\file_nes.h" />
+		<ClInclude Include="..\..\engines\scumm\gfx.h" />
+		<ClInclude Include="..\..\engines\scumm\help.h" />
+		<ClInclude Include="..\..\engines\scumm\music.h" />
+		<ClInclude Include="..\..\engines\scumm\nut_renderer.h" />
+		<ClInclude Include="..\..\engines\scumm\object.h" />
+		<ClInclude Include="..\..\engines\scumm\resource.h" />
+		<ClInclude Include="..\..\engines\scumm\script.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm-md5.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v0.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v2.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v3.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v4.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v5.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v6.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v7.h" />
+		<ClInclude Include="..\..\engines\scumm\scumm_v8.h" />
+		<ClInclude Include="..\..\engines\scumm\sound.h" />
+		<ClInclude Include="..\..\engines\scumm\usage_bits.h" />
+		<ClInclude Include="..\..\engines\scumm\util.h" />
+		<ClInclude Include="..\..\engines\scumm\verbs.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\scumm\module.mk" />
+	</ItemGroup>
+</Project>

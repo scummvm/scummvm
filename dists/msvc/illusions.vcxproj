@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{3E9D7747-B5F8-4F3B-A123-C3DEADA3AA85}</ProjectGuid>
+		<RootNamespace>illusions</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\illusions\bbdou\bbdou_bubble.cpp" />
+		<ClCompile Include="..\..\engines\illusions\bbdou\bbdou_credits.cpp" />
+		<ClCompile Include="..\..\engines\illusions\bbdou\bbdou_credits_staticdata.cpp" />
+		<ClCompile Include="..\..\engines\illusions\bbdou\bbdou_cursor.cpp" />
+		<ClCompile Include="..\..\engines\illusions\bbdou\bbdou_foodctl.cpp" />
+		<ClCompile Include="..\..\engines\illusions\bbdou\bbdou_inventory.cpp" />
+		<ClCompile Include="..\..\engines\illusions\bbdou\bbdou_menukeys.cpp" />
+		<ClCompile Include="..\..\engines\illusions\bbdou\bbdou_specialcode.cpp" />
+		<ClCompile Include="..\..\engines\illusions\bbdou\bbdou_triggerfunctions.cpp" />
+		<ClCompile Include="..\..\engines\illusions\bbdou\bbdou_videoplayer.cpp" />
+		<ClCompile Include="..\..\engines\illusions\bbdou\gamestate_bbdou.cpp" />
+		<ClCompile Include="..\..\engines\illusions\bbdou\illusions_bbdou.cpp" />
+		<ClCompile Include="..\..\engines\illusions\bbdou\menusystem_bbdou.cpp" />
+		<ClCompile Include="..\..\engines\illusions\bbdou\scriptopcodes_bbdou.cpp" />
+		<ClCompile Include="..\..\engines\illusions\duckman\duckman_credits.cpp" />
+		<ClCompile Include="..\..\engines\illusions\duckman\duckman_dialog.cpp" />
+		<ClCompile Include="..\..\engines\illusions\duckman\duckman_inventory.cpp" />
+		<ClCompile Include="..\..\engines\illusions\duckman\duckman_screenshakereffects.cpp" />
+		<ClCompile Include="..\..\engines\illusions\duckman\duckman_specialcode.cpp" />
+		<ClCompile Include="..\..\engines\illusions\duckman\duckman_videoplayer.cpp" />
+		<ClCompile Include="..\..\engines\illusions\duckman\gamestate_duckman.cpp" />
+		<ClCompile Include="..\..\engines\illusions\duckman\illusions_duckman.cpp" />
+		<ClCompile Include="..\..\engines\illusions\duckman\menusystem_duckman.cpp" />
+		<ClCompile Include="..\..\engines\illusions\duckman\propertytimers.cpp" />
+		<ClCompile Include="..\..\engines\illusions\duckman\scriptopcodes_duckman.cpp" />
+		<ClCompile Include="..\..\engines\illusions\resources\actorresource.cpp" />
+		<ClCompile Include="..\..\engines\illusions\resources\backgroundresource.cpp" />
+		<ClCompile Include="..\..\engines\illusions\resources\fontresource.cpp" />
+		<ClCompile Include="..\..\engines\illusions\resources\genericresource.cpp" />
+		<ClCompile Include="..\..\engines\illusions\resources\midiresource.cpp" />
+		<ClCompile Include="..\..\engines\illusions\resources\scriptresource.cpp" />
+		<ClCompile Include="..\..\engines\illusions\resources\soundresource.cpp" />
+		<ClCompile Include="..\..\engines\illusions\resources\talkresource.cpp" />
+		<ClCompile Include="..\..\engines\illusions\threads\abortablethread.cpp" />
+		<ClCompile Include="..\..\engines\illusions\threads\causethread_duckman.cpp" />
+		<ClCompile Include="..\..\engines\illusions\threads\scriptthread.cpp" />
+		<ClCompile Include="..\..\engines\illusions\threads\talkthread.cpp" />
+		<ClCompile Include="..\..\engines\illusions\threads\talkthread_duckman.cpp" />
+		<ClCompile Include="..\..\engines\illusions\threads\timerthread.cpp" />
+		<ClCompile Include="..\..\engines\illusions\actor.cpp" />
+		<ClCompile Include="..\..\engines\illusions\camera.cpp" />
+		<ClCompile Include="..\..\engines\illusions\cursor.cpp" />
+		<ClCompile Include="..\..\engines\illusions\detection.cpp" />
+		<ClCompile Include="..\..\engines\illusions\dictionary.cpp" />
+		<ClCompile Include="..\..\engines\illusions\fileresourcereader.cpp" />
+		<ClCompile Include="..\..\engines\illusions\fixedpoint.cpp" />
+		<ClCompile Include="..\..\engines\illusions\gamarchive.cpp" />
+		<ClCompile Include="..\..\engines\illusions\gamestate.cpp" />
+		<ClCompile Include="..\..\engines\illusions\gamresourcereader.cpp" />
+		<ClCompile Include="..\..\engines\illusions\graphics.cpp" />
+		<ClCompile Include="..\..\engines\illusions\illusions.cpp" />
+		<ClCompile Include="..\..\engines\illusions\input.cpp" />
+		<ClCompile Include="..\..\engines\illusions\menusystem.cpp" />
+		<ClCompile Include="..\..\engines\illusions\pathfinder.cpp" />
+		<ClCompile Include="..\..\engines\illusions\resourcesystem.cpp" />
+		<ClCompile Include="..\..\engines\illusions\saveload.cpp" />
+		<ClCompile Include="..\..\engines\illusions\screen.cpp" />
+		<ClCompile Include="..\..\engines\illusions\screentext.cpp" />
+		<ClCompile Include="..\..\engines\illusions\scriptopcodes.cpp" />
+		<ClCompile Include="..\..\engines\illusions\scriptstack.cpp" />
+		<ClCompile Include="..\..\engines\illusions\sequenceopcodes.cpp" />
+		<ClCompile Include="..\..\engines\illusions\sound.cpp" />
+		<ClCompile Include="..\..\engines\illusions\specialcode.cpp" />
+		<ClCompile Include="..\..\engines\illusions\textdrawer.cpp" />
+		<ClCompile Include="..\..\engines\illusions\thread.cpp" />
+		<ClCompile Include="..\..\engines\illusions\time.cpp" />
+		<ClCompile Include="..\..\engines\illusions\updatefunctions.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\illusions\bbdou\bbdou_bubble.h" />
+		<ClInclude Include="..\..\engines\illusions\bbdou\bbdou_credits.h" />
+		<ClInclude Include="..\..\engines\illusions\bbdou\bbdou_cursor.h" />
+		<ClInclude Include="..\..\engines\illusions\bbdou\bbdou_foodctl.h" />
+		<ClInclude Include="..\..\engines\illusions\bbdou\bbdou_inventory.h" />
+		<ClInclude Include="..\..\engines\illusions\bbdou\bbdou_menukeys.h" />
+		<ClInclude Include="..\..\engines\illusions\bbdou\bbdou_specialcode.h" />
+		<ClInclude Include="..\..\engines\illusions\bbdou\bbdou_triggerfunctions.h" />
+		<ClInclude Include="..\..\engines\illusions\bbdou\bbdou_videoplayer.h" />
+		<ClInclude Include="..\..\engines\illusions\bbdou\gamestate_bbdou.h" />
+		<ClInclude Include="..\..\engines\illusions\bbdou\illusions_bbdou.h" />
+		<ClInclude Include="..\..\engines\illusions\bbdou\menusystem_bbdou.h" />
+		<ClInclude Include="..\..\engines\illusions\bbdou\scriptopcodes_bbdou.h" />
+		<ClInclude Include="..\..\engines\illusions\duckman\duckman_credits.h" />
+		<ClInclude Include="..\..\engines\illusions\duckman\duckman_dialog.h" />
+		<ClInclude Include="..\..\engines\illusions\duckman\duckman_inventory.h" />
+		<ClInclude Include="..\..\engines\illusions\duckman\duckman_screenshakereffects.h" />
+		<ClInclude Include="..\..\engines\illusions\duckman\duckman_specialcode.h" />
+		<ClInclude Include="..\..\engines\illusions\duckman\duckman_videoplayer.h" />
+		<ClInclude Include="..\..\engines\illusions\duckman\gamestate_duckman.h" />
+		<ClInclude Include="..\..\engines\illusions\duckman\illusions_duckman.h" />
+		<ClInclude Include="..\..\engines\illusions\duckman\menusystem_duckman.h" />
+		<ClInclude Include="..\..\engines\illusions\duckman\propertytimers.h" />
+		<ClInclude Include="..\..\engines\illusions\duckman\scriptopcodes_duckman.h" />
+		<ClInclude Include="..\..\engines\illusions\resources\actorresource.h" />
+		<ClInclude Include="..\..\engines\illusions\resources\backgroundresource.h" />
+		<ClInclude Include="..\..\engines\illusions\resources\fontresource.h" />
+		<ClInclude Include="..\..\engines\illusions\resources\genericresource.h" />
+		<ClInclude Include="..\..\engines\illusions\resources\midiresource.h" />
+		<ClInclude Include="..\..\engines\illusions\resources\scriptresource.h" />
+		<ClInclude Include="..\..\engines\illusions\resources\soundresource.h" />
+		<ClInclude Include="..\..\engines\illusions\resources\talkresource.h" />
+		<ClInclude Include="..\..\engines\illusions\threads\abortablethread.h" />
+		<ClInclude Include="..\..\engines\illusions\threads\causethread_duckman.h" />
+		<ClInclude Include="..\..\engines\illusions\threads\scriptthread.h" />
+		<ClInclude Include="..\..\engines\illusions\threads\talkthread.h" />
+		<ClInclude Include="..\..\engines\illusions\threads\talkthread_duckman.h" />
+		<ClInclude Include="..\..\engines\illusions\threads\timerthread.h" />
+		<ClInclude Include="..\..\engines\illusions\actor.h" />
+		<ClInclude Include="..\..\engines\illusions\camera.h" />
+		<ClInclude Include="..\..\engines\illusions\cursor.h" />
+		<ClInclude Include="..\..\engines\illusions\dictionary.h" />
+		<ClInclude Include="..\..\engines\illusions\fileresourcereader.h" />
+		<ClInclude Include="..\..\engines\illusions\fixedpoint.h" />
+		<ClInclude Include="..\..\engines\illusions\gamarchive.h" />
+		<ClInclude Include="..\..\engines\illusions\gamestate.h" />
+		<ClInclude Include="..\..\engines\illusions\gamresourcereader.h" />
+		<ClInclude Include="..\..\engines\illusions\graphics.h" />
+		<ClInclude Include="..\..\engines\illusions\illusions.h" />
+		<ClInclude Include="..\..\engines\illusions\input.h" />
+		<ClInclude Include="..\..\engines\illusions\menusystem.h" />
+		<ClInclude Include="..\..\engines\illusions\pathfinder.h" />
+		<ClInclude Include="..\..\engines\illusions\resourcereader.h" />
+		<ClInclude Include="..\..\engines\illusions\resourcesystem.h" />
+		<ClInclude Include="..\..\engines\illusions\screen.h" />
+		<ClInclude Include="..\..\engines\illusions\screentext.h" />
+		<ClInclude Include="..\..\engines\illusions\scriptopcodes.h" />
+		<ClInclude Include="..\..\engines\illusions\scriptstack.h" />
+		<ClInclude Include="..\..\engines\illusions\sequenceopcodes.h" />
+		<ClInclude Include="..\..\engines\illusions\sound.h" />
+		<ClInclude Include="..\..\engines\illusions\specialcode.h" />
+		<ClInclude Include="..\..\engines\illusions\textdrawer.h" />
+		<ClInclude Include="..\..\engines\illusions\thread.h" />
+		<ClInclude Include="..\..\engines\illusions\time.h" />
+		<ClInclude Include="..\..\engines\illusions\updatefunctions.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\illusions\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>
