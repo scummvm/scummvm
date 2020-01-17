@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-12-14 13:24+0000\n"
-"PO-Revision-Date: 2019-11-08 08:00+0000\n"
+"PO-Revision-Date: 2020-01-17 14:24+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.9.1\n"
+"X-Generator: Weblate 3.10.1\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Nederlands\n"
 
@@ -641,7 +641,7 @@ msgstr "Spel ~T~oevoegen..."
 
 #: gui/launcher.cpp:160 gui/launcher.cpp:170
 msgid "Add games to the list"
-msgstr ""
+msgstr "Voeg spellen aan de lijst toe"
 
 #: gui/launcher.cpp:161
 msgid "Mass Add..."
@@ -669,10 +669,9 @@ msgid "~A~dd Game..."
 msgstr "~T~oevoegen..."
 
 #: gui/launcher.cpp:171
-#, fuzzy
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr "Bulk Import..."
+msgstr "Bulk Toevoegen..."
 
 #: gui/launcher.cpp:175
 msgctxt "lowres"
@@ -3436,13 +3435,14 @@ msgstr ""
 
 #: engines/bladerunner/detection.cpp:75
 msgid "Max frames per second limit"
-msgstr ""
+msgstr "Max frames per seconde limiet"
 
 #: engines/bladerunner/detection.cpp:76
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
 msgstr ""
+"Deze modus richt op een maximum van 120 fps. Uitgeschakeld is dat 60 fps"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
