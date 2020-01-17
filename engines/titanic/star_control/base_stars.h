@@ -23,7 +23,7 @@
 #ifndef TITANIC_BASE_STARS_H
 #define TITANIC_BASE_STARS_H
 
-#include "titanic/star_control/frange.h" // class Fvector
+#include "titanic/star_control/frange.h"
 #include "common/array.h"
 
 namespace Common {

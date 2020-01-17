@@ -23,13 +23,13 @@
 #ifndef TITANIC_TITANIC_H
 #define TITANIC_TITANIC_H
 
-#include "common/random.h" // getRandomNumber and getRandomFloat
-#include "engines/engine.h" // class Engine
-#include "titanic/support/exe_resources.h" // class CExeResources
-#include "titanic/support/movie_manager.h" // class CMovieManager
-#include "titanic/support/string.h" // class StringArray;
-#include "titanic/support/strings.h" // class Strings;
-#include "common/language.h" // Language enum
+#include "common/random.h"
+#include "engines/engine.h"
+#include "titanic/support/exe_resources.h"
+#include "titanic/support/movie_manager.h"
+#include "titanic/support/string.h"
+#include "titanic/support/strings.h"
+#include "common/language.h"
 
 /**
  * This is the namespace of the Titanic engine.

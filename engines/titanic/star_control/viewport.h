@@ -23,8 +23,8 @@
 #ifndef TITANIC_VIEWPORT_H
 #define TITANIC_VIEWPORT_H
 
-#include "titanic/star_control/base_stars.h" // Includes StarMode enum
-#include "titanic/star_control/fpose.h" // Includes FMatrix and FVector
+#include "titanic/star_control/base_stars.h"
+#include "titanic/star_control/fpose.h"
 
 class SimpleFile;
 

@@ -23,7 +23,7 @@
 #ifndef TITANIC_STAR_CONTROL_H
 #define TITANIC_STAR_CONTROL_H
 
-#include "titanic/core/game_object.h" // class SimpleFile
+#include "titanic/core/game_object.h"
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/star_view.h"
 
