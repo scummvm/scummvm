@@ -88,6 +88,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  MacOS X port:
    - Follow the OS dark theme for window decorations.
 
+ RISC OS port:
+   - Fixed crash when accessing an unavailable drive.
+   - Reduced the required DigitalRenderer version.
+
  Switch port:
    - Added cloud integration.
 
