@@ -36,6 +36,7 @@ struct Character {
 	uint _charisma;
 	uint _wisdom;
 	uint _intelligence;
+	uint _hitPoints;
 	uint _experience;
 	uint _food;
 	uint _coins;
@@ -44,7 +45,7 @@ struct Character {
 	int _readySpell;
 public:
 	Character() : _strength(0), _agility(0), _stamina(0), _charisma(0), _wisdom(0), _intelligence(0),
-		_food(0), _coins(0), _equippedWeapon(-1), _equippedArmor(-1), _readySpell(-1) {}
+		_hitPoints(0), _experience(0), _food(0), _coins(0), _equippedWeapon(-1), _equippedArmor(-1), _readySpell(-1) {}
 };
 
 typedef Common::Array<Character> CharacterArray;

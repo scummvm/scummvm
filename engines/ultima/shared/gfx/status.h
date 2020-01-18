@@ -28,12 +28,20 @@
 namespace Ultima {
 namespace Shared {
 
+/**
+ * Displays the total hits, food, experience, and coins you have
+ */
 class Status : public Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
 public:
 	CLASSDEF;
-	Status(TreeItem *parent) : Gfx::VisualItem("Status", Rect(8, 168, 240, 200), parent) {}
+	Status(TreeItem *parent) : Gfx::VisualItem("Status", Rect(248, 168, 320, 200), parent) {}
 	virtual ~Status() {}
+
+	/**
+	 * Draw the contents
+	 */
+	virtual void draw();
 };
 
 } // End of namespace Shared

@@ -45,6 +45,10 @@ Game *TreeItem::getRoot() {
 	return dynamic_cast<Game *>(treeItem);
 }
 
+Shared::GameState *TreeItem::getGameState() {
+	return getRoot()->_gameState;
+}
+
 TreeItem *TreeItem::getLastSibling() {
 	TreeItem *item = this;
 	while (item->getNextSibling())
