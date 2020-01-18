@@ -28,6 +28,10 @@
 namespace Ultima {
 namespace Shared {
 
+namespace Gfx {
+class VisualItem;
+} // End of namespace Gfx
+
 class Game;
 class GameManager;
 class GameState;
@@ -107,6 +111,11 @@ public:
 	 * Return the game's map
 	 */
 	Map *getMap();
+
+	/**
+	 * Returns the currently active game view
+	 */
+	Gfx::VisualItem *getView();
 
 	/**
 	 * Get the next sibling

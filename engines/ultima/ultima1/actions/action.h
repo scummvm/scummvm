@@ -30,6 +30,7 @@ namespace Ultima1 {
 
 class Ultima1Game;
 class Ultima1Map;
+class GameResources;
 
 namespace Actions {
 
@@ -54,6 +55,16 @@ public:
 	 * Return the game's map
 	 */
 	Ultima1Map *getMap();
+
+	/**
+	 * Gets the data resources for the game
+	 */
+	GameResources *getRes();
+
+	/**
+	 * Adds a text string to the status area
+	 */
+	void addStatusMsg(const Common::String &text);
 };
 
 } // End of namespace Actions

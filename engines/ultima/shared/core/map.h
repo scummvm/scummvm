@@ -31,7 +31,7 @@ namespace Ultima {
 namespace Shared {
 
 enum Direction {
-	DIR_UP = 1, DIR_DOWN = 2, DIR_LEFT = 3, DIR_RIGHT = 4
+	DIR_LEFT = 1, DIR_RIGHT = 2, DIR_UP = 3, DIR_DOWN = 4
 };
 
 class Game;
@@ -115,12 +115,13 @@ protected:
 	byte _mapId;						// The map Id
 	Common::Array<MapWidgetPtr> _widgets;	// Party, monsteres, transports, etc.
 	Common::Array<int16> _data;			// Data for the map
+	Point _position;					// Current position within the map
+	ViewportPosition _viewportPos;		// Viewport position
+public:
 	Point _size;						// X, Y size of the map
 	Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile
-	Point _position;					// Current position within the map
 	Direction _direction;				// Current direction being faced in the underworld
 	bool _fixed;						// Town/city type maps that don't scroll as the player moves
-	ViewportPosition _viewportPos;		// Viewport position
 protected:
 	/**
 	 * Gets a point relative to the current position
@@ -144,9 +145,9 @@ public:
 	size_t height() const { return _size.y; }
 
 	/**
-	 * Load a given map
+	 * Return the current position
 	 */
-	virtual void loadMap(int mapId, uint videoMode);
+	Point getPosition() const { return _position; }
 
 	/**
 	 * Set the position
@@ -159,6 +160,11 @@ public:
 	Point getViewportPosition(const Point &viewportSize);
 
 	/**
+	 * Shifts the viewport by a given delta
+	 */
+	void shiftViewport(const Point &delta);
+
+	/**
 	 * Gets a tile at a given position
 	 */
 	void getTileAt(const Point &pt, MapTile *tile);
@@ -167,6 +173,11 @@ public:
 	 * Adds a widget to the map
 	 */
 	void addWidget(MapWidget *widget);
+
+	/**
+	 * Load a given map
+	 */
+	virtual void loadMap(int mapId, uint videoMode);
 };
 
 } // End of namespace Shared

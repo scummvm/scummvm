@@ -49,6 +49,7 @@ MODULE_OBJS += \
 	ultima1/actions/move.o \
 	ultima1/core/map.o \
 	ultima1/core/resources.o \
+	ultima1/core/transports.o \
 	ultima1/gfx/drawing_support.o \
 	ultima1/gfx/game_view.o \
 	ultima1/gfx/status.o \

@@ -20,31 +20,29 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_CORE_RESOURCES_H
-#define ULTIMA_ULTIMA1_CORE_RESOURCES_H
-
-#include "ultima/shared/engine/resources.h"
+#include "ultima/ultima1/core/transports.h"
+#include "ultima/ultima1/core/map.h"
+#include "common/algorithm.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
-class GameResources : public Shared::LocalResourceFile {
-protected:
-	/**
-	 * Synchronize resource data
-	 */
-	virtual void synchronize();
-public:
-	const char *STATUS_TEXT[4];
-	const char *DIRECTION_NAMES[4];
-	const char *LOCATION_NAMES[85];
-	const char *BLOCKED;
-public:
-	GameResources();
-	GameResources(Shared::Resources *resManager);
-};
+bool TransportOnFoot::canMoveTo(const Point &destPos) {
+	return true;
+}
+
+bool TransportOnFoot::moveTo(const Point &destPos) {
+	_map->setPosition(destPos);
+	return true;
+}
+
+bool TransportOnFoot::isPrincessSaved() const {
+	return false;
+}
+
+void TransportOnFoot::princessSaved() {
+
+}
 
 } // End of namespace Ultima1
 } // End of namespace Ultima
-
-#endif
