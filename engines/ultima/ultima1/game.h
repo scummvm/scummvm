@@ -20,15 +20,26 @@
  *
  */
 
-#include "ultima/ultima0/project_item.h"
+#ifndef ULTIMA_ULTIMA1_GAME_H
+#define ULTIMA_ULTIMA1_GAME_H
+
+#include "ultima/shared/early/ultima_game.h"
 
 namespace Ultima {
-namespace Ultima0 {
+namespace Ultima1 {
 
-EMPTY_MESSAGE_MAP(Ultima0Game, Shared::UltimaGame);
+class Ultima1Game : public Shared::UltimaGame {
+	DECLARE_MESSAGE_MAP;
+public:
 
-Ultima0Game::Ultima0Game() : Shared::UltimaGame() {
-}
+public:
+	CLASSDEF;
+	Ultima1Game();
+	virtual ~Ultima1Game() {}
 
-} // End of namespace Ultima0
+};
+
+} // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

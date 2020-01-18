@@ -20,19 +20,18 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_ENGINE_GAME_STATE_H
-#define ULTIMA_SHARED_ENGINE_GAME_STATE_H
+#include "ultima/shared/core/game_state.h"
 
 namespace Ultima {
 namespace Shared {
 
-struct GameState {
-	int _partNumber;
+GameState::GameState() : MAX_TILES_PER_ORIGINAL(16, 16), _map(nullptr) {
+	_characters.resize(1);
+}
 
-	GameState();
-};
+GameState::~GameState() {
+	delete _map;
+}
 
 } // End of namespace Shared
 } // End of namespace Ultima
-
-#endif

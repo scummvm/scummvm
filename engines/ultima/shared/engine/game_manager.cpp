@@ -25,17 +25,18 @@
 #include "ultima/shared/engine/events.h"
 #include "ultima/shared/engine/messages.h"
 #include "ultima/shared/core/project_item.h"
+#include "ultima/shared/early/game.h"
 
 namespace Ultima {
 namespace Shared {
 
-GameManager::GameManager(ProjectItem *project, Audio::Mixer *mixer) :
-	_project(project), _inputHandler(this), _inputTranslator(&_inputHandler) {
-	_project->setGameManager(this);
+GameManager::GameManager(Game *project, Audio::Mixer *mixer):
+		_project(project), _inputHandler(this), _inputTranslator(&_inputHandler) {
+//	_project->setGameManager(this);
 }
 
 GameManager::~GameManager() {
-	_project->resetGameManager();
+	//_project->resetGameManager();
 }
 
 void GameManager::update() {

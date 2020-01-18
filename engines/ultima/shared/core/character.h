@@ -20,15 +20,36 @@
  *
  */
 
-#include "ultima/ultima0/project_item.h"
+#ifndef ULTIMA_SHARED_CORE_CHARACTER_H
+#define ULTIMA_SHARED_CORE_CHARACTER_H
+
+#include "common/array.h"
+#include "common/str.h"
 
 namespace Ultima {
-namespace Ultima0 {
+namespace Shared {
 
-EMPTY_MESSAGE_MAP(Ultima0Game, Shared::UltimaGame);
+struct Character {
+	uint _strength;
+	uint _agility;
+	uint _stamina;
+	uint _charisma;
+	uint _wisdom;
+	uint _intelligence;
+	uint _experience;
+	uint _food;
+	uint _coins;
+	int _equippedWeapon;
+	int _equippedArmor;
+	int _readySpell;
+public:
+	Character() : _strength(0), _agility(0), _stamina(0), _charisma(0), _wisdom(0), _intelligence(0),
+		_food(0), _coins(0), _equippedWeapon(-1), _equippedArmor(-1), _readySpell(-1) {}
+};
 
-Ultima0Game::Ultima0Game() : Shared::UltimaGame() {
-}
+typedef Common::Array<Character> CharacterArray;
 
-} // End of namespace Ultima0
-} // End of namespace Ultima
+} // End of namespace Shared
+} // End of namespace Xeen
+
+#endif

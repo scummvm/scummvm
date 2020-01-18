@@ -11,7 +11,10 @@ MODULE_OBJS := \
 
 ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
+	shared/core/character.o \
 	shared/core/file.o \
+	shared/core/game_state.o \
+	shared/core/map.o \
 	shared/core/message_target.o \
 	shared/core/mouse_cursor.o \
 	shared/core/named_item.o \
@@ -19,17 +22,23 @@ MODULE_OBJS += \
 	shared/core/saveable_object.o \
 	shared/core/tree_item.o \
 	shared/early/font_resources.o \
+	shared/early/game.o \
 	shared/early/ultima_early.o \
+	shared/early/ultima_game.o \
 	shared/engine/debugger.o \
 	shared/engine/game_manager.o \
-	shared/engine/game_state.o \
 	shared/engine/input_handler.o \
 	shared/engine/input_translator.o \
 	shared/engine/main_game_window.o \
 	shared/engine/messages.o \
 	shared/engine/resources.o \
 	shared/gfx/font.o \
+	shared/gfx/game_view.o \
+	shared/gfx/info.o \
 	shared/gfx/screen.o \
+	shared/gfx/status.o \
+	shared/gfx/viewport_dungeon.o \
+	shared/gfx/viewport_map.o \
 	shared/gfx/visual_container.o \
 	shared/gfx/visual_item.o \
 	shared/gfx/visual_surface.o
@@ -40,6 +49,9 @@ MODULE_OBJS += \
 	ultima0/core/resources.o \
 	ultima0/project_item.o \
 	ultima0/resources.o \
+	ultima1/core/map.o \
+	ultima1/core/resources.o \
+	ultima1/game.o \
 	ultima1/project_item.o
 endif
 

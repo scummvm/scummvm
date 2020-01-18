@@ -20,15 +20,59 @@
  *
  */
 
-#include "ultima/ultima0/project_item.h"
+#include "ultima/shared/core/named_item.h"
+#include "ultima/shared/early/game.h"
 
 namespace Ultima {
-namespace Ultima0 {
+namespace Shared {
 
-EMPTY_MESSAGE_MAP(Ultima0Game, Shared::UltimaGame);
+#define CURRENT_SAVEGAME_VERSION 1
+#define MAX_SAVEGAME_SLOTS 99
+#define MINIMUM_SAVEGAME_VERSION 1
 
-Ultima0Game::Ultima0Game() : Shared::UltimaGame() {
+EMPTY_MESSAGE_MAP(Game, NamedItem);
+
+Game::Game() : _gameManager(nullptr) {
 }
 
-} // End of namespace Ultima0
+void Game::setGameManager(GameManager *gameManager) {
+	if (!_gameManager)
+		_gameManager = gameManager;
+}
+
+void Game::resetGameManager() {
+	_gameManager = nullptr;
+}
+
+void Game::loadGame(int slotId) {
+
+}
+
+void Game::saveGame(int slotId, const Common::String &desc) {
+
+}
+
+void Game::clear() {
+	TreeItem *item;
+	while ((item = getFirstChild()) != nullptr)
+		item->destroyAll();
+}
+
+void Game::preLoad() {
+
+}
+
+void Game::postLoad() {
+
+}
+
+void Game::preSave() {
+
+}
+
+void Game::postSave() {
+
+}
+
+} // End of namespace Shared
 } // End of namespace Ultima

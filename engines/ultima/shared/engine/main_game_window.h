@@ -28,6 +28,8 @@
 #include "ultima/shared/engine/game_manager.h"
 #include "ultima/shared/core/project_item.h"
 #include "ultima/shared/engine/events.h"
+#include "ultima/shared/engine/game_manager.h"
+#include "ultima/shared/engine/events.h"
 
 namespace Ultima {
 namespace Shared {
@@ -59,7 +61,7 @@ private:
 	}
 public:
 	GameManager *_gameManager;
-	ProjectItem *_project;
+	Game *_project;
 public:
 	MainGameWindow();
 	virtual ~MainGameWindow();

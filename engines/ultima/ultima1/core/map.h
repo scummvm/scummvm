@@ -20,15 +20,19 @@
  *
  */
 
-#include "ultima/ultima0/project_item.h"
+#ifndef ULTIMA_ULTIMA1_CORE_MAP_H
+#define ULTIMA_ULTIMA1_CORE_MAP_H
+
+#include "ultima/shared/core/map.h"
 
 namespace Ultima {
-namespace Ultima0 {
+namespace Ultima1 {
 
-EMPTY_MESSAGE_MAP(Ultima0Game, Shared::UltimaGame);
+class Ultima1Map : public Shared::Map {
 
-Ultima0Game::Ultima0Game() : Shared::UltimaGame() {
-}
+};
 
-} // End of namespace Ultima0
+} // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

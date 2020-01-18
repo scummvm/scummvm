@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "audio/mixer.h"
-#include "ultima/shared/engine/game_state.h"
+#include "ultima/shared/core/game_state.h"
 #include "ultima/shared/engine/input_handler.h"
 #include "ultima/shared/engine/input_translator.h"
 #include "ultima/shared/gfx/visual_item.h"
@@ -33,19 +33,19 @@
 namespace Ultima {
 namespace Shared {
 
-class ProjectItem;
+class Game;
 
 class GameManager {
 private:
 	int _transitionCtr;
 public:
-	ProjectItem *_project;
+	Game *_project;
 	GameState _gameState;
 	InputHandler _inputHandler;
 	InputTranslator _inputTranslator;
 	Gfx::VisualItem *_view;
 public:
-	GameManager(ProjectItem *project, Audio::Mixer *mixer);
+	GameManager(Game *project, Audio::Mixer *mixer);
 	~GameManager();
 
 	/**

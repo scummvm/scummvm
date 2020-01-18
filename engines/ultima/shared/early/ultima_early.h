@@ -31,7 +31,7 @@ namespace Shared {
 class MainGameWindow;
 class MouseCursor;
 class Resources;
-class ProjectItem;
+class Game;
 
 namespace Gfx {
 class Screen;
@@ -80,7 +80,7 @@ public:
 	 * Creates a new project hierarchy for the game, that contains all
 	 * the logic for playing that particular game.
 	 */
-	ProjectItem *createProject() const;
+	Game *createProject() const;
 
 	/**
 	 * Get the screen

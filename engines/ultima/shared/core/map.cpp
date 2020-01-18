@@ -20,14 +20,12 @@
  *
  */
 
-#include "ultima/shared/engine/game_state.h"
+#include "ultima/shared/core/map.h"
 
 namespace Ultima {
 namespace Shared {
 
-GameState::GameState() {
-	_partNumber = 0;
-}
+
 
 } // End of namespace Shared
 } // End of namespace Ultima
