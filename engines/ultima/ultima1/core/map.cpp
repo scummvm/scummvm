@@ -21,9 +21,60 @@
  */
 
 #include "ultima/ultima1/core/map.h"
+#include "ultima/shared/core/file.h"
 
 namespace Ultima {
 namespace Ultima1 {
+
+using Shared::File;
+
+void Ultima1Map::loadMap(int mapId, uint videoMode) {
+	Map::loadMap(mapId, videoMode);
+
+	if (mapId == 0)
+		loadOverworldMap();
+	else
+		loadTownCastleMap();
+}
+
+void Ultima1Map::loadOverworldMap() {
+	_mapType = Shared::MAP_OVERWORLD;
+
+	_size = Common::Point(168, 156);
+	_tilesPerOrigTile = Common::Point(1, 1);
+	_data.resize(_size.x * _size.y);
+
+	File f("map.bin");
+	for (int y = 0; y < _size.y; ++y) {
+		for (int x = 0; x < _size.x; ++x)
+			_data[y * _size.x + x] = f.readByte();
+	}
+}
+
+void Ultima1Map::loadTownCastleMap() {
+	_size = Common::Point(38, 18);
+	_tilesPerOrigTile = Common::Point(1, 1);
+	_data.resize(_size.x * _size.y);
+
+	File f("tcd.bin");
+	f.seek(_mapId * 684);
+	for (int y = 0; y < _size.y; ++y) {
+		for (int x = 0; x < _size.x; ++x)
+			_data[y * _size.x + x] = f.readByte();
+	}
+
+	_fixed = true;
+	if (_mapId < 33) {
+		// Town/city
+		_mapType = Shared::MAP_TOWN;
+		_mapStyle = (_mapId % 8) + 2;
+	} else {
+		// Castle
+		_mapType = Shared::MAP_CASTLE;
+		_mapStyle = _mapId % 2;
+		_mapId -= 33;
+	}
+}
 
 
 } // End of namespace Ultima1
