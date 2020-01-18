@@ -25,101 +25,153 @@
 namespace Ultima {
 namespace Shared {
 
-ResourceFile::ResourceFile(Common::ReadStream *in) : _inStream(in), _outStream(nullptr), _bufferP(_buffer) {
-	Common::fill(_buffer, _buffer + STRING_BUFFER_SIZE, 0);
-}
-
-ResourceFile::ResourceFile(Common::WriteStream *out) : _inStream(nullptr), _outStream(out), _bufferP(_buffer) {
+ResourceFile::ResourceFile(Common::ReadStream *in) : _inStream(in), _bufferP(_buffer) {
 	Common::fill(_buffer, _buffer + STRING_BUFFER_SIZE, 0);
 }
 
 void ResourceFile::syncString(const char *&str) {
-	if (_inStream) {
-		str = _bufferP;
-		while ((*_bufferP = _inStream->readByte()) != '\0')
-			++_bufferP;
+	str = _bufferP;
+	while ((*_bufferP = _inStream->readByte()) != '\0')
+		++_bufferP;
 
-		assert(_bufferP < (_buffer + STRING_BUFFER_SIZE));
+	assert(_bufferP < (_buffer + STRING_BUFFER_SIZE));
+}
+
+void ResourceFile::syncStrings(const char **str, size_t count) {
+	uint tag = _inStream->readUint32LE();
+	assert(tag == MKTAG(count, 0, 0, 0));
+
+	for (size_t idx = 0; idx < count; ++idx)
+		syncString(str[idx]);
+}
+
+void ResourceFile::syncStrings2D(const char **str, size_t count1, size_t count2) {
+	uint tag = _inStream->readUint32LE();
+	assert(tag == MKTAG(count1, count2, 0, 0));
+
+	for (size_t idx = 0; idx < count1 * count2; ++idx)
+		syncString(str[idx]);
+}
+
+void ResourceFile::syncNumber(int &val) {
+	val = _inStream->readSint32LE();
+}
+
+void ResourceFile::syncNumbers(int *vals, size_t count) {
+	uint tag = _inStream->readUint32LE();
+	assert(tag == MKTAG(count, 0, 0, 0));
+	for (size_t idx = 0; idx < count; ++idx)
+		vals[idx] = _inStream->readSint32LE();
+}
+
+void ResourceFile::syncNumbers2D(int *vals, size_t count1, size_t count2) {
+	uint tag = _inStream->readUint32LE();
+	assert(tag == MKTAG(count1, count2, 0, 0));
+	for (size_t idx = 0; idx < count1 * count2; ++idx)
+		vals[idx] = _inStream->readSint32LE();
+}
+
+void ResourceFile::syncNumbers3D(int *vals, size_t count1, size_t count2, size_t count3) {
+	uint tag = _inStream->readUint32LE();
+	assert(tag == MKTAG(count1, count2, count3, 0));
+	for (size_t idx = 0; idx < count1 * count2 * count3; ++idx)
+		vals[idx] = _inStream->readSint32LE();
+}
+
+void ResourceFile::syncBytes(byte *vals, size_t count) {
+	uint tag = _inStream->readUint32LE();
+	assert(tag == MKTAG(count, 0, 0, 0));
+	_inStream->read(vals, count);
+}
+
+void ResourceFile::syncBytes2D(byte *vals, size_t count1, size_t count2) {
+	uint tag = _inStream->readUint32LE();
+	assert(tag == MKTAG(count1, count2, 0, 0));
+	_inStream->read(vals, count1 * count2);
+}
+
+/*-------------------------------------------------------------------*/
+
+LocalResourceFile::LocalResourceFile(Common::WriteStream *out) : ResourceFile(nullptr), _outStream(out) {
+}
+
+void LocalResourceFile::syncString(const char *&str) {
+	if (!_outStream) {
+		ResourceFile::syncString(str);
 	} else {
 		_outStream->writeString(str);
 	}
 }
 
-void ResourceFile::syncStrings(const char **str, int count) {
-	if (_inStream) {
-		uint tag = _inStream->readUint32LE();
-		assert(tag == MKTAG(count, 0, 0, 0));
+void LocalResourceFile::syncStrings(const char **str, size_t count) {
+	if (!_outStream) { 
+		ResourceFile::syncStrings(str, count);
 	} else {
 		_outStream->writeUint32LE(MKTAG(count, 0, 0, 0));
+		for (size_t idx = 0; idx < count; ++idx)
+			syncString(str[idx]);
 	}
-
-	for (int idx = 0; idx < count; ++idx)
-		syncString(str[idx]);
 }
 
-void ResourceFile::syncStrings2D(const char **str, int count1, int count2) {
-	if (_inStream) {
-		uint tag = _inStream->readUint32LE();
-		assert(tag == MKTAG(count1, count2, 0, 0));
+void LocalResourceFile::syncStrings2D(const char **str, size_t count1, size_t count2) {
+	if (!_outStream) {
+		ResourceFile::syncStrings2D(str, count1, count2);
 	} else {
 		_outStream->writeUint32LE(MKTAG(count1, count2, 0, 0));
+		for (size_t idx = 0; idx < count1 * count2; ++idx)
+			syncString(str[idx]);
 	}
-
-	for (int idx = 0; idx < count1 * count2; ++idx)
-		syncString(str[idx]);
 }
 
-void ResourceFile::syncNumber(int &val) {
-	if (_inStream)
-		val = _inStream->readSint32LE();
+void LocalResourceFile::syncNumber(int &val) {
+	if (!_outStream)
+		ResourceFile::syncNumber(val);
 	else
 		_outStream->writeUint32LE(val);
 }
 
-void ResourceFile::syncNumbers(int *vals, int count) {
-	if (_inStream) {
-		uint tag = _inStream->readUint32LE();
-		assert(tag == MKTAG(count, 0, 0, 0));
-		for (int idx = 0; idx < count; ++idx)
-			vals[idx] = _inStream->readSint32LE();
+void LocalResourceFile::syncNumbers(int *vals, size_t count) {
+	if (!_outStream) {
+		ResourceFile::syncNumbers(vals, count);
 	} else {
 		_outStream->writeUint32LE(MKTAG(count, 0, 0, 0));
-		for (int idx = 0; idx < count; ++idx)
+		for (size_t idx = 0; idx < count; ++idx)
 			_outStream->writeUint32LE(vals[idx]);
 	}
 }
 
-void ResourceFile::syncNumbers2D(int *vals, int count1, int count2) {
-	if (_inStream) {
-		uint tag = _inStream->readUint32LE();
-		assert(tag == MKTAG(count1, count2, 0, 0));
-		for (int idx = 0; idx < count1 * count2; ++idx)
-			vals[idx] = _inStream->readSint32LE();
+void LocalResourceFile::syncNumbers2D(int *vals, size_t count1, size_t count2) {
+	if (!_outStream) {
+		ResourceFile::syncNumbers2D(vals, count1, count2);
 	} else {
 		_outStream->writeUint32LE(MKTAG(count1, count2, 0, 0));
-		for (int idx = 0; idx < count1 * count2; ++idx)
+		for (size_t idx = 0; idx < count1 * count2; ++idx)
 			_outStream->writeUint32LE(vals[idx]);
 	}
 }
 
-void ResourceFile::syncNumbers3D(int *vals, int count1, int count2, int count3) {
-	if (_inStream) {
-		uint tag = _inStream->readUint32LE();
-		assert(tag == MKTAG(count1, count2, count3, 0));
-		for (int idx = 0; idx < count1 * count2 * count3; ++idx)
-			vals[idx] = _inStream->readSint32LE();
+void LocalResourceFile::syncNumbers3D(int *vals, size_t count1, size_t count2, size_t count3) {
+	if (!_outStream) {
+		ResourceFile::syncNumbers3D(vals, count1, count2, count3);
 	} else {
 		_outStream->writeUint32LE(MKTAG(count1, count2, count3, 0));
-		for (int idx = 0; idx < count1 * count2 * count3; ++idx)
+		for (size_t idx = 0; idx < count1 * count2 * count3; ++idx)
 			_outStream->writeUint32LE(vals[idx]);
 	}
 }
 
-void ResourceFile::syncBytes2D(byte *vals, int count1, int count2) {
-	if (_inStream) {
-		uint tag = _inStream->readUint32LE();
-		assert(tag == MKTAG(count1, count2, 0, 0));
-		_inStream->read(vals, count1 * count2);
+void LocalResourceFile::syncBytes(byte *vals, size_t count) {
+	if (!_outStream) {
+		ResourceFile::syncBytes(vals, count);
+	} else {
+		_outStream->writeUint32LE(MKTAG(count, 0, 0, 0));
+		_outStream->write(vals, count);
+	}
+}
+
+void LocalResourceFile::syncBytes2D(byte *vals, size_t count1, size_t count2) {
+	if (!_outStream) {
+		ResourceFile::syncBytes2D(vals, count1, count2);
 	} else {
 		_outStream->writeUint32LE(MKTAG(count1, count2, 0, 0));
 		_outStream->write(vals, count1 * count2);

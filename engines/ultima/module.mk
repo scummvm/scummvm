@@ -36,6 +36,8 @@ endif
 
 ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
+	ultima0/project_item.o \
+	ultima0/resources.o \
 	ultima1/project_item.o
 endif
 
