@@ -27,7 +27,7 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "ultima/shared/engine/game_manager.h"
-#include "ultima/shared/engine/ultima_early.h"
+#include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/core/project_item.h"
 
 namespace Ultima {

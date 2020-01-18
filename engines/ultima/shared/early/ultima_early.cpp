@@ -23,7 +23,7 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "ultima/shared/engine/ultima_early.h"
+#include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/engine/main_game_window.h"
 #include "ultima/shared/engine/resources.h"
 #include "ultima/shared/core/mouse_cursor.h"
@@ -39,14 +39,12 @@ UltimaEarlyEngine::UltimaEarlyEngine(OSystem *syst, const UltimaGameDescription 
 		UltimaEngine(syst, gameDesc) {
 	g_vm = this;
 	_mouseCursor = nullptr;
-	_res = nullptr;
 	_screen = nullptr;
 	_window = nullptr;
 }
 
 UltimaEarlyEngine::~UltimaEarlyEngine() {
 	delete _mouseCursor;
-	delete _res;
 	delete _screen;
 	delete _window;
 }
@@ -59,7 +57,11 @@ bool UltimaEarlyEngine::initialize() {
 	if (!UltimaEngine::initialize())
 		return false;
 
-	_res = new Resources();
+	Resources *res = new Shared::Resources();
+	if (!res->setup())
+		return false;
+
+	_events = new EventsManager(this);
 	_screen = new Gfx::Screen();
 	_mouseCursor = new MouseCursor();
 	_window = new MainGameWindow();
@@ -72,7 +74,6 @@ void UltimaEarlyEngine::deinitialize() {
 }
 
 Common::Error UltimaEarlyEngine::run() {
-	// Initialize the engine
 	if (initialize()) {
 		playGame();
 	}

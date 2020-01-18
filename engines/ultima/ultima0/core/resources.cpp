@@ -20,19 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA0_RESOURCES_H
-#define ULTIMA_ULTIMA0_RESOURCES_H
-
-#include "ultima/shared/engine/resources.h"
+#include "ultima/ultima0/core/resources.h"
 
 namespace Ultima {
-namespace Ultima0 {
 
-class Resources : public Shared::LocalResourceFile {
-	
-};
-
-} // End of namespace Ultima0
 } // End of namespace Ultima
-
-#endif

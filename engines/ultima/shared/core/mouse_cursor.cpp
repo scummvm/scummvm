@@ -24,7 +24,7 @@
 #include "graphics/managed_surface.h"
 #include "ultima/shared/core/mouse_cursor.h"
 #include "ultima/shared/core/file.h"
-#include "ultima/shared/engine/ultima_early.h"
+#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Shared {

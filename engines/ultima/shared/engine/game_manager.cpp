@@ -21,7 +21,7 @@
  */
 
 #include "ultima/shared/engine/game_manager.h"
-#include "ultima/shared/engine/ultima_early.h"
+#include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/shared/engine/messages.h"
 #include "ultima/shared/core/project_item.h"

@@ -28,7 +28,7 @@
 #include "common/system.h"
 #include "common/translation.h"
 #ifdef ENABLE_ULTIMA1
-#include "ultima/shared/engine/ultima_early.h"
+#include "ultima/shared/early/ultima_early.h"
 #endif
 #ifdef ENABLE_ULTIMA6
 #include "ultima/ultima6/ultima6.h"
