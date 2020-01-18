@@ -59,12 +59,12 @@ VisualSurface VisualItem::getSurface() {
 	return VisualSurface(src, _bounds);
 }
 
-void VisualItem::setBounds(const Common::Rect &r) {
+void VisualItem::setBounds(const Rect &r) {
 	_bounds = r;
 	setDirty();
 }
 
-void VisualItem::setPosition(const Common::Point &pt) {
+void VisualItem::setPosition(const Point &pt) {
 	_bounds.moveTo(pt);
 	setDirty();
 }

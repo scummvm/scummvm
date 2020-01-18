@@ -58,6 +58,16 @@ public:
 	 * to the bottom of the screen to separate the status and info areas
 	 */
 	void drawGameFrame();
+
+	/**
+	 * Draw a right arrow glyph
+	 */
+	void drawRightArrow();
+
+	/**
+	 * Draw a left arrow glyph
+	 */
+	void drawLeftArrow();
 };
 
 } // End of namespace Shared

@@ -25,22 +25,46 @@
 
 #include "graphics/managed_surface.h"
 #include "ultima/shared/core/named_item.h"
+#include "ultima/shared/core/rect.h"
 #include "ultima/shared/gfx/screen.h"
 
 namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
+class Font;
+
 class VisualSurface : public Graphics::ManagedSurface {
 private:
-	Common::Rect _bounds;
+	Rect _bounds;
+	Point _textPos;
 public:
-	VisualSurface(const Graphics::ManagedSurface &src, const Common::Rect &bounds);
+	VisualSurface(const Graphics::ManagedSurface &src, const Rect &bounds);
 
 	/**
 	 * Draws a point on the surface
 	 */
-	void drawPoint(const Common::Point &pt, byte color);
+	void drawPoint(const Point &pt, byte color);
+
+	/**
+	 * Set the position for writing text to
+	 */
+	void setTextPos(const Point &pt) { _textPos = pt; }
+
+	/**
+	 * Write out a string
+	 */
+	void writeString(const Common::String &msg, const Point &pt, byte color);
+
+	/**
+	 * Write out a string
+	 */
+	void writeString(const Common::String &msg, byte color);
+
+	/**
+	 * Draw a character
+	 */
+	void writeChar(unsigned char c, const Point &pt, byte color);
 };
 
 } // End of namespace Gfx

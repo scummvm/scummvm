@@ -40,8 +40,8 @@ void Ultima1Map::loadMap(int mapId, uint videoMode) {
 void Ultima1Map::loadOverworldMap() {
 	_mapType = Shared::MAP_OVERWORLD;
 
-	_size = Common::Point(168, 156);
-	_tilesPerOrigTile = Common::Point(1, 1);
+	_size = Point(168, 156);
+	_tilesPerOrigTile = Point(1, 1);
 	_data.resize(_size.x * _size.y);
 
 	File f("map.bin");
@@ -52,8 +52,8 @@ void Ultima1Map::loadOverworldMap() {
 }
 
 void Ultima1Map::loadTownCastleMap() {
-	_size = Common::Point(38, 18);
-	_tilesPerOrigTile = Common::Point(1, 1);
+	_size = Point(38, 18);
+	_tilesPerOrigTile = Point(1, 1);
 	_data.resize(_size.x * _size.y);
 
 	File f("tcd.bin");

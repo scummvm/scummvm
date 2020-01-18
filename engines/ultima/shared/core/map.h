@@ -24,7 +24,7 @@
 #define ULTIMA_SHARED_CORE_MAP_H
 
 #include "common/array.h"
-#include "common/rect.h"
+#include "ultima/shared/core/rect.h"
 
 namespace Ultima {
 namespace Shared {
@@ -48,16 +48,16 @@ protected:
 	MapType _mapType;
 	uint _mapStyle;						// Map style category for towns & castles
 	Common::Array<int16> _data;			// Data for the map
-	Common::Point _size;				// X, Y size of the map
-	Common::Point _tilesPerOrigTile;	// For enhanced modes, number of tiles per original game tile
-	Common::Point _currentPos;			// Current position within the map
+	Point _size;				// X, Y size of the map
+	Point _tilesPerOrigTile;	// For enhanced modes, number of tiles per original game tile
+	Point _currentPos;			// Current position within the map
 	Direction _direction;				// Current direction being faced in the underworld
 	bool _fixed;						// Town/city type maps that don't scroll as the player moves
 protected:
 	/**
 	 * Gets a point relative to the current position
 	 */
-	virtual Common::Point getRelativePosition(const Common::Point &delta);
+	virtual Point getRelativePosition(const Point &delta);
 public:
 	/**
 	 * Constructor
@@ -73,7 +73,7 @@ public:
 	/**
 	 * Set the position
 	 */
-	void setPosition(const Common::Point &pt);
+	void setPosition(const Point &pt);
 };
 
 } // End of namespace Shared

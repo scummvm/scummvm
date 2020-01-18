@@ -24,7 +24,7 @@
 #define ULTIMA_SHARED_GFX_SCREEN_H
 
 #include "common/list.h"
-#include "common/rect.h"
+#include "ultima/shared/core/rect.h"
 #include "graphics/screen.h"
 #include "ultima/shared/gfx/font.h"
 #include "ultima/shared/engine/messages.h"

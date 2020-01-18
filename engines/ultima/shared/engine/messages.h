@@ -24,7 +24,7 @@
 #define ULTIMA_SHARED_ENGINE_MESSAGES_H
 
 #include "common/keyboard.h"
-#include "common/rect.h"
+#include "ultima/shared/core/rect.h"
 #include "ultima/shared/core/base_object.h"
 #include "ultima/shared/core/tree_item.h"
 
@@ -132,33 +132,27 @@ enum CMouseButton {
 class CMouseMsg : public CMessage {
 public:
 	int _buttons;
-	Common::Point _mousePos;
+	Point _mousePos;
 public:
 	MESSAGEDEF(CMouseMsg);
 
-	CMouseMsg() : _buttons(0) {
-	}
-	CMouseMsg(const Common::Point &pt, int buttons) :
-		_mousePos(pt), _buttons(buttons) {
-	}
+	CMouseMsg() : _buttons(0) {}
+	CMouseMsg(const Point &pt, int buttons) :
+		_mousePos(pt), _buttons(buttons) {}
 };
 
 class CMouseMoveMsg : public CMouseMsg {
 public:
 	MESSAGEDEFP(CMouseMoveMsg, CMouseMsg);
-	CMouseMoveMsg() : CMouseMsg() {
-	}
-	CMouseMoveMsg(const Common::Point &pt, int buttons) : CMouseMsg(pt, buttons) {
-	}
+	CMouseMoveMsg() : CMouseMsg() {}
+	CMouseMoveMsg(const Point &pt, int buttons) : CMouseMsg(pt, buttons) {}
 };
 
 class CMouseDragMsg : public CMouseMoveMsg {
 public:
 	MESSAGEDEFP(CMouseDragMsg, CMouseMoveMsg);
-	CMouseDragMsg() : CMouseMoveMsg() {
-	}
-	CMouseDragMsg(const Common::Point &pt, int buttons) : CMouseMoveMsg(pt, buttons) {
-	}
+	CMouseDragMsg() : CMouseMoveMsg() {}
+	CMouseDragMsg(const Point &pt, int buttons) : CMouseMoveMsg(pt, buttons) {}
 };
 
 class CMouseButtonMsg : public CMouseMsg {
@@ -166,28 +160,22 @@ public:
 	int _field10;
 public:
 	MESSAGEDEFP(CMouseButtonMsg, CMouseMsg);
-	CMouseButtonMsg() : CMouseMsg(), _field10(0) {
-	}
-	CMouseButtonMsg(const Common::Point &pt, int buttons) : CMouseMsg(pt, buttons) {
-	}
+	CMouseButtonMsg() : CMouseMsg(), _field10(0) {}
+	CMouseButtonMsg(const Point &pt, int buttons) : CMouseMsg(pt, buttons) {}
 };
 
 class CMouseButtonDownMsg : public CMouseButtonMsg {
 public:
 	MESSAGEDEFP(CMouseButtonDownMsg, CMouseButtonMsg);
-	CMouseButtonDownMsg() : CMouseButtonMsg() {
-	}
-	CMouseButtonDownMsg(const Common::Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {
-	}
+	CMouseButtonDownMsg() : CMouseButtonMsg() {}
+	CMouseButtonDownMsg(const Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 };
 
 class CMouseButtonUpMsg : public CMouseButtonMsg {
 public:
 	MESSAGEDEFP(CMouseButtonUpMsg, CMouseButtonMsg);
-	CMouseButtonUpMsg() : CMouseButtonMsg() {
-	}
-	CMouseButtonUpMsg(const Common::Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {
-	}
+	CMouseButtonUpMsg() : CMouseButtonMsg() {}
+	CMouseButtonUpMsg(const Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 };
 
 class CMouseWheelMsg : public CMouseMsg {
@@ -195,20 +183,16 @@ public:
 	bool _wheelUp;
 public:
 	MESSAGEDEFP(CMouseWheelMsg, CMouseMsg);
-	CMouseWheelMsg() : CMouseMsg(), _wheelUp(false) {
-	}
-	CMouseWheelMsg(const Common::Point &pt, bool wheelUp) :
-		CMouseMsg(pt, 0), _wheelUp(wheelUp) {
-	}
+	CMouseWheelMsg() : CMouseMsg(), _wheelUp(false) {}
+	CMouseWheelMsg(const Point &pt, bool wheelUp) :
+		CMouseMsg(pt, 0), _wheelUp(wheelUp) {}
 };
 
 class CMouseDoubleClickMsg : public CMouseButtonMsg {
 public:
 	MESSAGEDEFP(CMouseDuobleClickMsg, CMouseButtonMsg);
-	CMouseDoubleClickMsg() : CMouseButtonMsg() {
-	}
-	CMouseDoubleClickMsg(const Common::Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {
-	}
+	CMouseDoubleClickMsg() : CMouseButtonMsg() {}
+	CMouseDoubleClickMsg(const Point &pt, int buttons) : CMouseButtonMsg(pt, buttons) {}
 };
 
 MESSAGE1(CKeyCharMsg, int, key, 32);

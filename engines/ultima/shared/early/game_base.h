@@ -37,6 +37,7 @@ class UltimaEngine;
 
 namespace Gfx {
 	class VisualItem;
+	class Font;
 }
 
 class GameBase : public TreeItem, public EventTarget {
@@ -49,6 +50,7 @@ private:
 	Shared::GameState _gameState;
 	InputHandler _inputHandler;
 	InputTranslator _inputTranslator;
+	Gfx::Font *_font;
 private:
 	/**
 	 * Checks for the presence of any savegames and, if present,
@@ -56,9 +58,9 @@ private:
 	 */
 	int getSavegameSlot();
 
-	void leftButtonDoubleClick(const Common::Point &mousePos);
-	void middleButtonDoubleClick(const Common::Point &mousePos);
-	void rightButtonDoubleClick(const Common::Point &mousePos);
+	void leftButtonDoubleClick(const Point &mousePos);
+	void middleButtonDoubleClick(const Point &mousePos);
+	void rightButtonDoubleClick(const Point &mousePos);
 
 	/**
 	 * Returns true if the player can control the mouse
@@ -75,21 +77,21 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~GameBase() {}
+	virtual ~GameBase();
 
 	/**
 	 * Called to handle any regular updates the game requires
 	 */
 	virtual void onIdle();
 
-	virtual void mouseMove(const Common::Point &mousePos);
-	virtual void leftButtonDown(const Common::Point &mousePos);
-	virtual void leftButtonUp(const Common::Point &mousePos);
-	virtual void middleButtonDown(const Common::Point &mousePos);
-	virtual void middleButtonUp(const Common::Point &mousePos);
-	virtual void rightButtonDown(const Common::Point &mousePos);
-	virtual void rightButtonUp(const Common::Point &mousePos);
-	virtual void mouseWheel(const Common::Point &mousePos, bool wheelUp);
+	virtual void mouseMove(const Point &mousePos);
+	virtual void leftButtonDown(const Point &mousePos);
+	virtual void leftButtonUp(const Point &mousePos);
+	virtual void middleButtonDown(const Point &mousePos);
+	virtual void middleButtonUp(const Point &mousePos);
+	virtual void rightButtonDown(const Point &mousePos);
+	virtual void rightButtonUp(const Point &mousePos);
+	virtual void mouseWheel(const Point &mousePos, bool wheelUp);
 	virtual void keyDown(Common::KeyState keyState);
 
 	/**
@@ -126,6 +128,16 @@ public:
 	 * Returns the current view
 	 */
 	Gfx::VisualItem *getView() const { return _currentView; }
+
+	/**
+	 * Set a font to use
+	 */
+	void setFont(Gfx::Font *font);
+
+	/**
+	 * Returns the current font
+	 */
+	Gfx::Font *getFont() const { return _font; }
 };
 
 } // End of namespace Shared

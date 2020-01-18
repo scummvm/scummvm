@@ -33,8 +33,8 @@ Map::Map() {
 	_fixed = false;
 }
 
-Common::Point Map::getRelativePosition(const Common::Point &delta) {
-	Common::Point pt = _currentPos + delta;
+Point Map::getRelativePosition(const Point &delta) {
+	Point pt = _currentPos + delta;
 	if (pt.x < 0)
 		pt.x += _size.x;
 	else if (pt.x >= _size.x)
@@ -54,8 +54,8 @@ void Map::loadMap(int mapId, uint videoMode) {
 	_fixed = false;
 }
 
-void Map::setPosition(const Common::Point &pt) {
-	_currentPos = Common::Point(pt.x * _tilesPerOrigTile.x, pt.y * _tilesPerOrigTile.y);
+void Map::setPosition(const Point &pt) {
+	_currentPos = Point(pt.x * _tilesPerOrigTile.x, pt.y * _tilesPerOrigTile.y);
 }
 
 } // End of namespace Shared

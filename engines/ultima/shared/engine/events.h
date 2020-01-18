@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/stack.h"
 #include "graphics/screen.h"
+#include "ultima/shared/core/rect.h"
 
 namespace Ultima {
 namespace Shared {
@@ -157,7 +158,7 @@ private:
 	uint32 _lastAutosaveTime;
 	uint32 _gameCounter;
 	uint32 _playTime;
-	Common::Point _mousePos;
+	Point _mousePos;
 	uint _specialButtons;
 	uint8  _buttonsDown;
 
@@ -251,7 +252,7 @@ public:
 	/**
 	 * Sets the mouse position
 	 */
-	void setMousePos(const Common::Point &pt);
+	void setMousePos(const Point &pt);
 
 	/*
 	 * Return whether a given special key is currently pressed

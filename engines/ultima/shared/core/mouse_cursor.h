@@ -24,7 +24,7 @@
 #define ULTIMA_SHARED_CORE_MOUSE_CURSOR_H
 
 #include "common/scummsys.h"
-#include "common/rect.h"
+#include "ultima/shared/core/rect.h"
 #include "common/stream.h"
 
 namespace Ultima {
@@ -61,7 +61,7 @@ enum CursorId {
  */
 class MouseCursor {
 	struct MouseCursorData {
-		Common::Point _hotspot;
+		Point _hotspot;
 		uint16 _pixels[16];
 		uint16 _mask[16];
 

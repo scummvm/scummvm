@@ -86,7 +86,7 @@ public:
  * This will allow the data for a particular Ultima game to be gradually built up without repeatedly
  * regenerating a data file. Once a game has been properly tested, then it can be moved out.
  */
-class LocalResourceFile : protected ResourceFile {
+class LocalResourceFile : public ResourceFile {
 private:
 	Common::MemoryWriteStreamDynamic _file;
 	Resources *_owner;

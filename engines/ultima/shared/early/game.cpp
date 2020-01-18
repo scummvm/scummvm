@@ -25,6 +25,7 @@
 #include "ultima/shared/engine/resources.h"
 #include "ultima/shared/early/font_resources.h"
 #include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/gfx/font.h"
 #include "ultima/shared/gfx/screen.h"
 
 namespace Ultima {
@@ -33,8 +34,10 @@ namespace Shared {
 EMPTY_MESSAGE_MAP(Game, GameBase);
 
 Game::Game() : GameBase() {
-	_fontResources = new FontResources();
 	_gameState = new GameState();
+	_fontResources = new FontResources();
+	_fontResources->load();
+	setFont(new Gfx::Font((const byte *)&_fontResources->_font8x8[0][0]));
 
 	setPalette();
 }

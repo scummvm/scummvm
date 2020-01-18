@@ -31,7 +31,7 @@
 namespace Ultima {
 namespace Ultima1 {
 
-GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Common::Rect(0, 0, 320, 200), parent) {
+GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
 	_info = new Shared::Info(this);
 	_status = new Shared::Status(this);
 	_viewportDungeon = new Shared::ViewportDungeon(this);
@@ -46,13 +46,16 @@ GameView::~GameView() {
 }
 
 void GameView::draw() {
-	DrawingSupport ds(getSurface());
-	ds.drawGameFrame();
+	drawFrame();
 	Shared::Gfx::VisualContainer::draw();
 }
 
 void GameView::drawFrame() {
+	DrawingSupport ds(getSurface());
+	ds.drawGameFrame();
 
+	Shared::Gfx::VisualSurface vs = getSurface();
+	vs.writeString("Testing", Point(100, 80), 1);
 }
 
 } // End of namespace Shared

@@ -42,18 +42,18 @@ public:
 public:
 	InputTranslator(InputHandler *inputHandler);
 
-	void mouseMove(int special, const Common::Point &pt);
-	void mouseDrag(int special, const Common::Point &pt);
-	void leftButtonDown(int special, const Common::Point &pt);
-	void leftButtonUp(int special, const Common::Point &pt);
-	void leftButtonDoubleClick(int special, const Common::Point &pt);
-	void middleButtonDown(int special, const Common::Point &pt);
-	void middleButtonUp(int special, const Common::Point &pt);
-	void middleButtonDoubleClick(int special, const Common::Point &pt);
-	void rightButtonDown(int special, const Common::Point &pt);
-	void rightButtonUp(int special, const Common::Point &pt);
-	void mouseWheel(bool wheelUp, const Common::Point &pt);
-	void rightButtonDoubleClick(int special, const Common::Point &pt);
+	void mouseMove(int special, const Point &pt);
+	void mouseDrag(int special, const Point &pt);
+	void leftButtonDown(int special, const Point &pt);
+	void leftButtonUp(int special, const Point &pt);
+	void leftButtonDoubleClick(int special, const Point &pt);
+	void middleButtonDown(int special, const Point &pt);
+	void middleButtonUp(int special, const Point &pt);
+	void middleButtonDoubleClick(int special, const Point &pt);
+	void rightButtonDown(int special, const Point &pt);
+	void rightButtonUp(int special, const Point &pt);
+	void mouseWheel(bool wheelUp, const Point &pt);
+	void rightButtonDoubleClick(int special, const Point &pt);
 	void keyDown(const Common::KeyState &keyState);
 
 	/**
