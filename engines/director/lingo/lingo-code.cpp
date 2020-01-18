@@ -1164,8 +1164,6 @@ void LC::c_call() {
 }
 
 void LC::call(Common::String name, int nargs) {
-	bool dropArgs = false;
-
 	if (debugChannelSet(3, kDebugLingoExec))
 		g_lingo->printSTUBWithArglist(name.c_str(), nargs, "call:");
 
@@ -1180,16 +1178,22 @@ void LC::call(Common::String name, int nargs) {
 		}
 	}
 
+	call(sym, nargs);
+}
+
+void LC::call(Symbol *sym, int nargs) {
+	bool dropArgs = false;
+
 	if (sym == NULL) {
-		warning("Call to undefined handler '%s'. Dropping %d stack items", name.c_str(), nargs);
+		warning("Call to undefined handler. Dropping %d stack items", nargs);
 		dropArgs = true;
 	} else {
 		if ((sym->type == BLTIN || sym->type == FBLTIN || sym->type == RBLTIN)
 				&& sym->nargs != -1 && sym->nargs != nargs && sym->maxArgs != nargs) {
 			if (sym->nargs == sym->maxArgs)
-				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", name.c_str(), sym->nargs, nargs);
+				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", sym->name.c_str(), sym->nargs, nargs);
 			else
-				warning("Incorrect number of arguments to handler '%s', expecting %d or %d. Dropping %d stack items", name.c_str(), sym->nargs, sym->maxArgs, nargs);
+				warning("Incorrect number of arguments to handler '%s', expecting %d or %d. Dropping %d stack items", sym->name.c_str(), sym->nargs, sym->maxArgs, nargs);
 
 			dropArgs = true;
 		}
@@ -1207,14 +1211,14 @@ void LC::call(Common::String name, int nargs) {
 
 	if (sym->nargs != -1 && sym->maxArgs < nargs) {
 		warning("Incorrect number of arguments for function %s (%d, expected %d to %d). Dropping extra %d",
-					name.c_str(), nargs, sym->nargs, sym->maxArgs, nargs - sym->nargs);
+					sym->name.c_str(), nargs, sym->nargs, sym->maxArgs, nargs - sym->nargs);
 		for (int i = 0; i < nargs - sym->maxArgs; i++)
 			g_lingo->pop();
 	}
 
 	if (sym->type == BLTIN || sym->type == FBLTIN || sym->type == RBLTIN) {
 		if (sym->u.bltin == LB::b_factory) {
-			g_lingo->factoryCall(name, nargs);
+			g_lingo->factoryCall(sym->name, nargs);
 		} else {
 			int stackSize = g_lingo->_stack.size() - nargs;
 
@@ -1224,10 +1228,10 @@ void LC::call(Common::String name, int nargs) {
 
 			if (sym->type == FBLTIN || sym->type == RBLTIN) {
 				if (stackNewSize - stackSize != 1)
-					warning("built-in function %s did not return value", name.c_str());
+					warning("built-in function %s did not return value", sym->name.c_str());
 			} else {
 				if (stackNewSize - stackSize != 0)
-					warning("built-in procedure %s returned extra %d values", name.c_str(), stackNewSize - stackSize);
+					warning("built-in procedure %s returned extra %d values", sym->name.c_str(), stackNewSize - stackSize);
 			}
 		}
 
@@ -1248,6 +1252,7 @@ void LC::call(Common::String name, int nargs) {
 	fp->sp = sym;
 	fp->retpc = g_lingo->_pc;
 	fp->retscript = g_lingo->_currentScript;
+	fp->retctx = g_lingo->_currentScriptContext;
 	fp->localvars = g_lingo->_localvars;
 
 	// Create new set of local variables
@@ -1274,6 +1279,7 @@ void LC::c_procret() {
 	g_lingo->_callstack.pop_back();
 
 	g_lingo->_currentScript = fp->retscript;
+	g_lingo->_currentScriptContext = fp->retctx;
 	g_lingo->_pc = fp->retpc;
 
 	g_lingo->cleanLocalVars();

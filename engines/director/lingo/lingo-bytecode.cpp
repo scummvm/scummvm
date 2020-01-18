@@ -215,15 +215,15 @@ void LC::cb_field() {
 
 
 void LC::cb_localcall() {
-	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->_namelist[nameId];
+	int functionId = g_lingo->readInt();
 
 	Datum nargs = g_lingo->pop();
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
-		warning("STUB: cb_localcall(%s)", name.c_str());
-		for (int i = 0; i < nargs.u.i; i++) {
-			g_lingo->pop();
-		}
+		Symbol *sym = g_lingo->_currentScriptContext->functions[functionId];
+		if (debugChannelSet(3, kDebugLingoExec))
+			g_lingo->printSTUBWithArglist(sym->name.c_str(), nargs.u.i, "call:");
+
+		LC::call(sym, nargs.u.i);
 
 	} else {
 		warning("cb_localcall: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
@@ -565,8 +565,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		}
 
 		_currentScriptFunction = i;
-		_currentScriptContext->functions.push_back(new ScriptData);
-		_currentScript = _currentScriptContext->functions[_currentScriptFunction];
+		_currentScript = new ScriptData;
 
 		uint16 nameIndex = stream.readUint16();
 		stream.readUint16();
@@ -742,12 +741,20 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		}
 
 		// Attach to handlers
+		Symbol *sym = NULL;
 		if (nameIndex < _namelist.size()) {
-			g_lingo->define(_namelist[nameIndex], argCount, new ScriptData(&(*_currentScript)[0], _currentScript->size()));
-
+			sym = g_lingo->define(_namelist[nameIndex], argCount, _currentScript);
+			_currentScriptContext->functions.push_back(sym);
 		} else {
 			warning("Function has unknown name id %d, skipping define", nameIndex);
+			sym = new Symbol;
+			sym->type = HANDLER;
+			sym->u.defn = _currentScript;
+			sym->nargs = argCount;
+			sym->maxArgs = argCount;
 		}
+		_currentScriptContext->functions.push_back(sym);
+
 	}
 
 	free(codeStore);

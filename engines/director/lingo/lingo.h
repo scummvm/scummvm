@@ -82,7 +82,7 @@ struct Symbol {	/* symbol table entry */
 	int nargs;		/* number of arguments */
 	int maxArgs;	/* maximal number of arguments, for builtins */
 	bool parens;	/* whether parens required or not, for builitins */
-
+	
 	bool global;
 
 	Symbol();
@@ -119,7 +119,7 @@ struct Builtin {
 };
 
 struct ScriptContext {
-	Common::Array<ScriptData *> functions;
+	Common::Array<Symbol *> functions;
 	Common::Array<Datum> constants;
 };
 
@@ -135,6 +135,7 @@ struct CFrame {	/* proc/func call stack frame */
 	Symbol	*sp;	/* symbol table entry */
 	int		retpc;	/* where to resume after return */
 	ScriptData	*retscript;	 /* which script to resume after return */
+	ScriptContext	*retctx;   /* which script context to use after return */
 	SymbolHash *localvars;
 };
 

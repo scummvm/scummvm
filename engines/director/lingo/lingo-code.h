@@ -101,6 +101,7 @@ namespace LC {
 	void c_jumpifz();
 	void c_call();
 
+	void call(Symbol *, int nargs);
 	void call(Common::String name, int nargs);
 
 	void c_procret();

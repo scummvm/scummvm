@@ -142,8 +142,9 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 	// FIXME: unpack into seperate functions
 	_currentScriptFunction = 0;
-	_currentScriptContext->functions.push_back(new ScriptData);
-	_currentScript = _currentScriptContext->functions[_currentScriptFunction];
+	_currentScriptContext->functions.push_back(new Symbol);
+	_currentScript = new ScriptData;
+	_currentScriptContext->functions[_currentScriptFunction]->u.defn = _currentScript;
 
 	_linenumber = _colnumber = 1;
 	_hadError = false;
@@ -232,7 +233,7 @@ void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
 	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d, function: %d", scriptType2str(type), id, function);
 
 	_currentScriptContext = _scriptContexts[type][id];
-	_currentScript = _currentScriptContext->functions[function];
+	_currentScript = _currentScriptContext->functions[function]->u.defn;
 	_pc = 0;
 	_returning = false;
 
