@@ -1453,13 +1453,11 @@ void DarkmoonSequenceHelper::printText(int index, int color) {
 }
 
 void DarkmoonSequenceHelper::fadeText() {
-	if (_vm->skipFlag() || _vm->shouldQuit())
-		return;
-
+	int rate = _vm->skipFlag() || _vm->shouldQuit() ? 16 : 8;
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		_screen->fadeTextColor(_palettes[0], 31, 8);
+		_screen->fadeTextColor(_palettes[0], 31, rate);
 	else if (_vm->_configRenderMode != Common::kRenderEGA)
-		_screen->fadeTextColor(_palettes[0], 255, 8);
+		_screen->fadeTextColor(_palettes[0], 255, rate);
 	
 	memset(_textColor, 0, 3);
 	_screen->clearCurDim();
