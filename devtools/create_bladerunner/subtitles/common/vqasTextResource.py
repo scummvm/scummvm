@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 #
 
-my_module_version = "1.00"
+my_module_version = "1.60"
 my_module_name = "vqasTextResource"
 
 # Timestamps and placeholder cells for all supported VQAs ((row 2 and below)
@@ -425,6 +425,9 @@ END06_VQA_TEXT_RESOURCE_TUPLE_LIST = [
 	(175, 226, " ", "00:00:12", "00:00:15.10", "Steele")
 ]
 ##
+TB_FLY_VQA_TEXT_RESOURCE_TUPLE_LIST = [
+	(11, 50, " ", "00:00:01", "00:00:03.37", "Blimp Guy")
+]
 ##
 ##
 ##
@@ -453,7 +456,8 @@ ALL_VQA_TEXT_RESOURCES_LISTS = [
 	("END04A_", END04A_VQA_TEXT_RESOURCE_TUPLE_LIST),
 	("END04B_", END04B_VQA_TEXT_RESOURCE_TUPLE_LIST),
 	("END04C_", END04C_VQA_TEXT_RESOURCE_TUPLE_LIST),
-	("END06_",  END06_VQA_TEXT_RESOURCE_TUPLE_LIST)
+	("END06_",  END06_VQA_TEXT_RESOURCE_TUPLE_LIST),
+	("TB_FLY_", TB_FLY_VQA_TEXT_RESOURCE_TUPLE_LIST)
 ]
 #
 #

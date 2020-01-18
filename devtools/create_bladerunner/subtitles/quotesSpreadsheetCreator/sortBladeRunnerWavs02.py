@@ -76,7 +76,7 @@ from vqasTextResource import *
 #sys.setdefaultencoding('utf8')
 
 COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
-APP_VERSION = "0.85"
+APP_VERSION = "1.60"
 APP_NAME = "sortBladeRunnerWavs"
 APP_WRAPPER_NAME = "quotesSpreadsheetCreator.py"
 APP_NAME_SPACED = "Blade Runner Transcript Excel Creator (bare bones)"
@@ -138,7 +138,8 @@ SUPPORTED_PLACEHOLDER_VQA_LOCALIZED_FILES = [
 	('END04A_', 'Moonbus Ending - Start', '7933.333 ms, 119 frames'),
 	('END04B_', 'Moonbus Ending - With Lucy', '6533.333 ms, 98 frames'),
 	('END04C_', 'Moonbus Ending - With Dektora', '7733.333 ms, 116 frames'),
-	('END06_',  'Kipple Ending - With Steele', '36400 ms, 546 frames')
+	('END06_',  'Kipple Ending - With Steele', '36400 ms, 546 frames'),
+	('TB_FLY_',  'Fly-through to Tyrell Building', '13533.333 ms, 203 frames')
 	]
 SUPPORTED_SPECIAL_POGO_FILE = 'POGO.TR'
 SUPPORTED_DIALOGUE_VERSION_SHEET = 'SBTLVERS.TRE'
