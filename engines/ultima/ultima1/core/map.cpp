@@ -30,7 +30,7 @@ namespace Ultima1 {
 
 using Shared::File;
 
-Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Map() {
+Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Map(), _mapType(MAP_OVERWORLD), _mapStyle(0), _mapIndex(0) {
 	addWidget(new WidgetPlayer(game, this));
 }
 
@@ -44,7 +44,8 @@ void Ultima1Map::loadMap(int mapId, uint videoMode) {
 }
 
 void Ultima1Map::loadOverworldMap() {
-	_mapType = Shared::MAP_OVERWORLD;
+	_mapType = MAP_OVERWORLD;
+	_mapStyle = _mapIndex = 0;
 
 	_size = Point(168, 156);
 	_tilesPerOrigTile = Point(1, 1);
@@ -76,13 +77,14 @@ void Ultima1Map::loadTownCastleMap() {
 	_fixed = true;
 	if (_mapId < 33) {
 		// Town/city
-		_mapType = Shared::MAP_TOWN;
+		_mapType = MAP_TOWN;
 		_mapStyle = (_mapId % 8) + 2;
+		_mapIndex = _mapId;
 	} else {
 		// Castle
-		_mapType = Shared::MAP_CASTLE;
+		_mapType = MAP_CASTLE;
 		_mapStyle = _mapId % 2;
-		_mapId -= 33;
+		_mapIndex = _mapId - 33;
 	}
 }
 
