@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_CORE_SAVEABLE_OBJECT_H
-#define ULTIMA_SHARED_CORE_SAVEABLE_OBJECT_H
+#ifndef ULTIMA_SHARED_CORE_BASE_OBJECT_H
+#define ULTIMA_SHARED_CORE_BASE_OBJECT_H
 
 #include "common/scummsys.h"
 #include "common/array.h"
@@ -32,11 +32,15 @@
 namespace Ultima {
 namespace Shared {
 
-class SaveableObject;
+class BaseObject;
 
 class ClassDef;
 typedef ClassDef(*ClassDefFn)();
 
+/**
+ * Encapsulation of a class definition. Used as part of the message dispatch system
+ * to identify classes that implement particular messages
+ */
 class ClassDef {
 private:
 	ClassDefFn _parentFn;
@@ -44,10 +48,15 @@ public:
 	const char *_className;
 public:
 	ClassDef(const char *className, const ClassDefFn parentFn) :
-		_className(className), _parentFn(parentFn) {}
+		_className(className), _parentFn(parentFn) {
+	}
 
-	bool hasParent() const { return _parentFn != nullptr; }
-	ClassDef parent() const { return (*_parentFn)(); }
+	bool hasParent() const {
+		return _parentFn != nullptr;
+	}
+	ClassDef parent() const {
+		return (*_parentFn)();
+	}
 	bool operator==(const ClassDef &right) const {
 		return !strcmp(_className, right._className);
 	}
@@ -57,12 +66,19 @@ public:
 	static ::Ultima::Shared::ClassDef type(); \
 	virtual ::Ultima::Shared::ClassDef getType() const { return type(); }
 
-
-class SaveableObject {
+/**
+ * Defines the most basic root of the engine's object hierarchy.
+ */
+class BaseObject {
 public:
 	CLASSDEF
-	virtual ~SaveableObject() {}
+		virtual ~BaseObject() {
+	}
 
+	/**
+	 * Returns true if a given object is of the type defined by the class definition,
+	 * or one of it's descendants
+	 */
 	bool isInstanceOf(const ClassDef &classDef) const;
 };
 

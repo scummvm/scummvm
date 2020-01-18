@@ -35,7 +35,11 @@ class NamedItem;
 class Game;
 class CMessage;
 
-class TreeItem : public MessageTarget {
+/**
+ * This implements the base for objects can form a class hierarchy, with parents, children, and siblings
+ * that messages can be passed around.
+ */
+class TreeItem: public MessageTarget {
 	friend class CMessage;
 	DECLARE_MESSAGE_MAP;
 private:
