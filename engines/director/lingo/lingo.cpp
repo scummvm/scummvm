@@ -144,7 +144,9 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	_currentScriptFunction = 0;
 	_currentScriptContext->functions.push_back(new Symbol);
 	_currentScript = new ScriptData;
+	_currentScriptContext->functions[_currentScriptFunction]->type = HANDLER;
 	_currentScriptContext->functions[_currentScriptFunction]->u.defn = _currentScript;
+	_currentScriptContext->functions[_currentScriptFunction]->ctx = _currentScriptContext;
 
 	_linenumber = _colnumber = 1;
 	_hadError = false;

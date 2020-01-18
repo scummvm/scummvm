@@ -42,6 +42,7 @@ struct TheEntity;
 struct TheEntityField;
 struct LingoV4Bytecode;
 struct LingoV4TheEntity;
+struct ScriptContext;
 class DirectorEngine;
 class Frame;
 
@@ -84,6 +85,7 @@ struct Symbol {	/* symbol table entry */
 	bool parens;	/* whether parens required or not, for builitins */
 	
 	bool global;
+	ScriptContext *ctx;		/* optional script context to execute with */
 
 	Symbol();
 };

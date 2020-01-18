@@ -269,6 +269,7 @@ Symbol *Lingo::define(Common::String &name, int nargs, ScriptData *code) {
 	sym->u.defn = code;
 	sym->nargs = nargs;
 	sym->maxArgs = nargs;
+	sym->ctx = NULL;
 
 	if (debugChannelSet(1, kDebugLingoCompile)) {
 		uint pc = 0;

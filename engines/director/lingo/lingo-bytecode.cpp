@@ -528,14 +528,12 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		case 9:  // Float type
 			{
 				constant.type = FLOAT;
-				if (value < constsStoreOffset) {
-					warning("Constant float start offset is out of bounds");
-					break;
-				} else if (value + 4 > constsStoreSize) {
+				if (value + 4 > constsStoreSize) {
 					warning("Constant float end offset is out of bounds");
 					break;
 				}
-				constant.u.f = *(float *)(constsStore + value);
+				warning("Float constants not implemented yet");
+				constant.u.f = 0.0;
 			}
 			break;
 		default:
@@ -744,7 +742,6 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		Symbol *sym = NULL;
 		if (nameIndex < _namelist.size()) {
 			sym = g_lingo->define(_namelist[nameIndex], argCount, _currentScript);
-			_currentScriptContext->functions.push_back(sym);
 		} else {
 			warning("Function has unknown name id %d, skipping define", nameIndex);
 			sym = new Symbol;
@@ -753,6 +750,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			sym->nargs = argCount;
 			sym->maxArgs = argCount;
 		}
+		sym->ctx = _currentScriptContext;
 		_currentScriptContext->functions.push_back(sym);
 
 	}

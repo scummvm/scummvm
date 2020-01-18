@@ -1261,6 +1261,10 @@ void LC::call(Symbol *sym, int nargs) {
 	g_lingo->_callstack.push_back(fp);
 
 	g_lingo->_currentScript = sym->u.defn;
+	if (sym->ctx) {
+		g_lingo->_currentScriptContext = sym->ctx;
+	}
+
 	g_lingo->execute(0);
 
 	g_lingo->_returning = false;
