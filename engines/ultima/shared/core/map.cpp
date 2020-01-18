@@ -33,8 +33,6 @@ void MapTile::clear() {
 
 Map::Map() {
 	_mapId = 0;
-	_mapType = MAP_OVERWORLD;
-	_mapStyle = 0;
 	_direction = DIR_UP;
 	_fixed = false;
 }
@@ -55,8 +53,6 @@ Point Map::getRelativePosition(const Point &delta) {
 
 void Map::loadMap(int mapId, uint videoMode) {
 	_mapId = mapId;
-	_mapType = MAP_OVERWORLD;
-	_mapStyle = 0;
 	_fixed = false;
 }
 
@@ -77,7 +73,19 @@ Point Map::getViewportPosition(const Point &viewportSize) {
 	if (!_viewportPos.isValid() || _viewportPos._size != viewportSize) {
 		// Calculate the new position
 		if (_fixed) {
+			// Whilst in the original Ultima i cities and castles fit onto a single screen, with enhancements this
+			// may not be the case. So allow for showing the relevant part of a fixed map so the player is on-screen
+			if (_position.x < (int)(width() / 2)) {
+				topLeft.x = MAX(_position.x - 5, 0);
+			} else {
+				topLeft.x = MIN(_position.x + 5, (int)width()) - viewportSize.x;
+			}
 
+			if (_position.y < (int)(height() / 2)) {
+				topLeft.y = MAX(_position.y - 5, 0);
+			} else {
+				topLeft.y = MIN(_position.y + 5, (int)height()) - viewportSize.y;
+			}
 		} else {
 			// Non-fixed map, so it wraps around the edges if necessary
 			topLeft.x = _position.x - (viewportSize.x - 1) / 2;

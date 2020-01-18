@@ -28,6 +28,10 @@
 namespace Ultima {
 namespace Ultima1 {
 
+enum MapType {
+	MAP_OVERWORLD = 0, MAP_TOWN = 1, MAP_CASTLE = 2, MAP_DUNGEON = 3, MAP_UNKNOWN = 4
+};
+
 class Ultima1Game;
 
 class U1MapTile : public Shared::MapTile {
@@ -46,6 +50,11 @@ private:
 	 * Load a town/castle map
 	 */
 	void loadTownCastleMap();
+public:
+	MapType _mapType;					// Type of map
+	uint _mapStyle;						// Map style category for towns & castles
+	uint _mapIndex;						// Map index, such as city/castle #; not to be confused with mapId
+	Common::String _name;				// Name of map, if applicable
 public:
 	/**
 	 * Constructor

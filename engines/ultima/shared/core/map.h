@@ -30,10 +30,6 @@
 namespace Ultima {
 namespace Shared {
 
-enum MapType {
-	MAP_OVERWORLD = 0, MAP_TOWN = 1, MAP_CASTLE = 2, MAP_DUNGEON = 3, MAP_UNKNOWN = 4
-};
-
 enum Direction {
 	DIR_UP = 1, DIR_DOWN = 2, DIR_LEFT = 3, DIR_RIGHT = 4
 };
@@ -118,8 +114,6 @@ class Map {
 protected:
 	byte _mapId;						// The map Id
 	Common::Array<MapWidgetPtr> _widgets;	// Party, monsteres, transports, etc.
-	MapType _mapType;
-	uint _mapStyle;						// Map style category for towns & castles
 	Common::Array<int16> _data;			// Data for the map
 	Point _size;						// X, Y size of the map
 	Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile
