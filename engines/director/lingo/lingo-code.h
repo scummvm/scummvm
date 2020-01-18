@@ -129,10 +129,15 @@ namespace LC {
 	void cb_unk2();
 
 	// bytecode-related instructions
-	void cb_localcall();
+	void cb_array();
 	void cb_call();
 	void cb_field();
-	void cb_v4putvalue();
+	void cb_globalassign();
+	void cb_globalpush();
+	void cb_localcall();
+	void cb_varassign();
+	void cb_varpush();
+	void cb_v4assign();
 	void cb_v4theentitypush();
 	void cb_v4theentitynamepush();
 	void cb_v4theentityassign();

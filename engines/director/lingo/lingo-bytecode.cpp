@@ -60,24 +60,33 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x1b, LC::cb_field,		"" },
 	{ 0x1c, LC::c_tell,			"" },
 	{ 0x1d, LC::c_telldone,		"" },
+	{ 0x1e, LC::cb_array,		"" },
 	{ 0x41, LC::c_intpush,		"b" },
-	{ 0x42, LC::c_argcpush,		"b" },
-	{ 0x43, LC::c_argcnoretpush,"b" },
+	{ 0x42, LC::c_argcnoretpush,"b" },
+	{ 0x43, LC::c_argcpush,		"b" },
 	// 0x44, push a constant
 	{ 0x45, LC::c_namepush,		"b" },
+	{ 0x49, LC::cb_globalpush,	"b" },
+	{ 0x4c, LC::cb_varpush,		"b" },
+	{ 0x4f, LC::cb_globalassign,"b" },
+	{ 0x52, LC::cb_varassign,	"b" },
 	{ 0x53, LC::c_jump,			"jb" },
 	{ 0x54, LC::c_jump,			"jbn" },
 	{ 0x55, LC::c_jumpifz,		"jb" },
 	{ 0x56, LC::cb_localcall,	"b" },
 	{ 0x57, LC::cb_call,		"b" },
-	{ 0x59, LC::cb_v4putvalue,	"b" },
+	{ 0x59, LC::cb_v4assign,	"b" },
 	{ 0x5c, LC::cb_v4theentitypush, "b" },
 	{ 0x5d, LC::cb_v4theentityassign, "b" },
 	{ 0x66, LC::cb_v4theentitynamepush, "b" },
 	{ 0x81, LC::c_intpush,		"w" },
-	{ 0x82, LC::c_argcpush,		"w" },
-	{ 0x83, LC::c_argcnoretpush,"w" },
+	{ 0x82, LC::c_argcnoretpush,"w" },
+	{ 0x83, LC::c_argcpush,		"w" },
 	// 0x84, push a constant
+	{ 0x89, LC::cb_globalpush,	"w" },
+	{ 0x8c, LC::cb_varpush,		"w" },
+	{ 0x8f, LC::cb_globalassign,"w" },
+	{ 0x92, LC::cb_varassign,	"w" },
 	{ 0x93, LC::c_jump,			"jw" },
 	{ 0x94, LC::c_jump,			"jwn" },
 	{ 0x95, LC::c_jumpifz,		"jw" },
@@ -111,7 +120,7 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x03, 0x02, kTheMenuItem,			kTheCheckMark,		true, kTEAMenuIdItemId },
 	{ 0x03, 0x03, kTheMenuItem,			kTheEnabled,		true, kTEAMenuIdItemId },
 	{ 0x03, 0x04, kTheMenuItem,			kTheScript,			true, kTEAMenuIdItemId },
-	{ 0x04, 0x01, kTheSound,			kTheVolume,			true, kTEAItemId },
+	{ 0x04, 0x01, kTheSoundEntity,		kTheVolume,			true, kTEAItemId },
 	{ 0x06, 0x01, kTheSprite,			kTheCursor,			true, kTEAItemId },
 	{ 0x06, 0x02, kTheSprite,			kTheBackColor,		true, kTEAItemId },
 	{ 0x06, 0x03, kTheSprite,			kTheBottom,			true, kTEAItemId },
@@ -221,7 +230,7 @@ void LC::cb_localcall() {
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
 		Symbol *sym = g_lingo->_currentScriptContext->functions[functionId];
 		if (debugChannelSet(3, kDebugLingoExec))
-			g_lingo->printSTUBWithArglist(sym->name.c_str(), nargs.u.i, "call:");
+			g_lingo->printSTUBWithArglist(sym->name.c_str(), nargs.u.i, "localcall:");
 
 		LC::call(sym, nargs.u.i);
 
@@ -232,7 +241,7 @@ void LC::cb_localcall() {
 }
 
 
-void LC::cb_v4putvalue() {
+void LC::cb_v4assign() {
 	int op = g_lingo->readInt();
 
 	switch (op) {
@@ -250,6 +259,23 @@ void LC::cb_v4putvalue() {
 }
 
 
+void LC::cb_array() {
+	Datum nargs = g_lingo->pop();
+	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
+		Datum result;
+		warning("STUB: cb_array()");
+
+		for (int i = 0; i < nargs.u.i; i++)
+			g_lingo->pop();
+
+		result.type = VOID;
+		g_lingo->push(result);
+	} else {
+		warning("cb_array: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
+	}
+}
+
+
 void LC::cb_call() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->_namelist[nameId];
@@ -262,6 +288,74 @@ void LC::cb_call() {
 		warning("cb_call: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
 	}
 
+}
+
+
+void LC::cb_globalpush() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->_namelist[nameId];
+
+	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
+	if (!s) {
+		warning("Global %s not found", name.c_str());
+	} else if (s && !s->global) {
+		warning("Variable %s is local, not global", name.c_str());
+	}
+
+	Datum result;
+	result.type = VOID;
+	warning("STUB: cb_globalpush %s", name.c_str());
+	g_lingo->push(result);
+}
+
+
+void LC::cb_globalassign() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->_namelist[nameId];
+
+	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
+	if (!s) {
+		warning("Global %s not found", name.c_str());
+	} else if (s && !s->global) {
+		warning("Variable %s is local, not global", name.c_str());
+	}
+
+	warning("STUB: cb_globalassign %s", name.c_str());
+	g_lingo->pop();
+}
+
+
+void LC::cb_varpush() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->_namelist[nameId];
+
+	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
+	if (!s) {
+		warning("Variable %s not found", name.c_str());
+	} else if (s && s->global) {
+		warning("Variable %s is global, not local", name.c_str());
+	}
+
+	Datum result;
+	result.type = VOID;
+	warning("STUB: cb_varpush %s", name.c_str());
+	g_lingo->push(result);
+}
+
+
+void LC::cb_varassign() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->_namelist[nameId];
+
+	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
+	if (!s) {
+		warning("Variable %s not found", name.c_str());
+	} else if (s && s->global) {
+		warning("Variable %s is global, not local", name.c_str());
+	}
+
+	warning("STUB: cb_varassign %s", name.c_str());
+	g_lingo->pop();
 }
 
 
