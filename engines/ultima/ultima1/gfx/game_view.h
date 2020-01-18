@@ -46,9 +46,19 @@ private:
 	Shared::Status *_status;
 	Shared::ViewportDungeon *_viewportDungeon;
 	Shared::ViewportMap *_viewportMap;
+private:
+	/**
+	 * Draw the frame for the screen
+	 */
+	void drawFrame();
 public:
 	GameView();
 	virtual ~GameView();
+
+	/**
+	 * Draw the game screen
+	 */
+	virtual void draw();
 };
 
 } // End of namespace Shared

@@ -30,6 +30,10 @@ VisualSurface::VisualSurface(const Graphics::ManagedSurface &src, const Common::
 	Graphics::ManagedSurface(src), _bounds(bounds) {
 }
 
+void VisualSurface::drawPoint(const Common::Point &pt, byte color) {
+	fillRect(Common::Rect(pt.x, pt.y, pt.x + 1, pt.y + 1), color);
+}
+
 } // End of namespace Gfx
 } // End of namespace Shared
 } // End of namespace Ultima

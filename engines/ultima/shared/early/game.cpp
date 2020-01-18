@@ -50,8 +50,8 @@ void Game::setPalette() {
 		static const byte PALETTE[4][3] = { { 0, 0, 0 }, { 0xAA, 0xAA, 0 }, {0xAA, 0, 0xAA }, {0xAA, 0xAA, 0xAA } };
 		g_vm->_screen->setPalette(&PALETTE[0][0], 0, 4);
 
-		_foregroundColor = 3;
-		_backgroundColor = 3;
+		_edgeColor = 3;
+		_borderColor = 3;
 		_highlightColor = 1;
 		_textColor = 3;
 		_color1 = 6;
@@ -68,8 +68,8 @@ void Game::setPalette() {
 		};
 		g_vm->_screen->setPalette(&PALETTE[0][0], 0, 16);
 
-		_foregroundColor = 15;
-		_backgroundColor = 1;
+		_edgeColor = 15;
+		_borderColor = 1;
 		_highlightColor = 12;
 		_textColor = 11;
 		_color1 = 7;
