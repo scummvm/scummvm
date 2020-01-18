@@ -30,6 +30,10 @@
 namespace Ultima {
 namespace Shared {
 
+enum VideoMode {
+	UNSET = -1, CGA = 0, EGA = 1, TGA = 2, VGA_ENHANCED = 3
+};
+
 class GameState {
 private:
 	/**
@@ -53,6 +57,16 @@ public:
 	 * Characters in the party. In the earlier Ultima games, this is a single character
 	 */
 	CharacterArray _characters;
+
+	/**
+	 * Game type Id
+	 */
+	uint _gameId;
+
+	/**
+	 * Video mode
+	 */
+	VideoMode _videoMode;
 public:
 	/**
 	 * Constructor

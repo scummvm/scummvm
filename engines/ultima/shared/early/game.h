@@ -63,9 +63,7 @@ private:
 public:
 	CLASSDEF;
 	Game();
-	virtual ~Game() {
-		destroyChildren();
-	}
+	virtual ~Game() {}
 
 	/**
 	 * Sets the game manager for the project, if not already set

@@ -29,7 +29,7 @@ static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		{
 			"ultima1",
 			0,
-			AD_ENTRY1s("gate_000.rgn", "33c250bf306b7cbbd3dd71b6029b8784", 768),
+			AD_ENTRY1s("map.bin", "f99633a0110ccf90837ab161be56cf1c", 13104),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
