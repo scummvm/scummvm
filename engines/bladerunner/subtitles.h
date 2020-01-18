@@ -45,7 +45,7 @@ class Subtitles {
 	static const uint kPreferedLine           = 2;      // Prefer drawing from this line (the bottom-most of available subtitle lines index is 0) by default
 	static const int  kMarginBottom           = 12;     // In pixels. This is the bottom margin beneath the subtitles space
 	static const int  kTextMaxWidth           = 610;    // In pixels
-	static const int  kMaxTextResourceEntries = 1 + 25; // Support in-game subs (1) and all possible VQAs (25) with spoken dialogue or translatable text
+	static const int  kMaxTextResourceEntries = 27; // Support in-game subs (1) and all possible VQAs (26) with spoken dialogue or translatable text
 	static const char *SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries];
 	static const char *SUBTITLES_FONT_FILENAME_EXTERNAL;
 	static const char *SUBTITLES_VERSION_TRENAME;

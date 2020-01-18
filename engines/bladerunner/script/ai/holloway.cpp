@@ -174,7 +174,7 @@ bool AIScriptHolloway::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Player_Gains_Control();
 
-		Outtake_Play(kOuttakeInterrogation, 0, 1);
+		Outtake_Play(kOuttakeInterrogation, false, 1);
 
 		if (Global_Variable_Query(kVariableHollowayArrest) == 1) {
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR08ReadyToRun);

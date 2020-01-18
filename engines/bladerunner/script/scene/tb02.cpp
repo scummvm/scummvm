@@ -34,7 +34,7 @@ void SceneScriptTB02::InitializeScene() {
 	} else {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Outtake_Play(kOuttakeTyrellBuildingFly, false, -1);
+		Outtake_Play(kOuttakeTyrellBuildingFly, false, -1); // TB_FLY_#.VQA Note: this is the only fly-through scene that is localized!
 		Setup_Scene_Information(-304.0f, -81.46f, 1434.0f, 250);
 	}
 	if (Global_Variable_Query(kVariableChapter) > 3) {
