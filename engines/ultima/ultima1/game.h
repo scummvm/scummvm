@@ -38,6 +38,11 @@ public:
 	CLASSDEF;
 	Ultima1Game();
 	virtual ~Ultima1Game();
+
+	/**
+	 * Called when the game starts
+	 */
+	void starting();
 };
 
 } // End of namespace Ultima1

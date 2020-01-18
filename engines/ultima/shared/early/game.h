@@ -23,7 +23,7 @@
 #ifndef ULTIMA_SHARED_EARLY_GAME_H
 #define ULTIMA_SHARED_EARLY_GAME_H
 
-#include "ultima/shared/core/named_item.h"
+#include "ultima/shared/early/game_base.h"
 
 namespace Ultima {
 namespace Shared {
@@ -32,7 +32,7 @@ class GameView;
 class GameState;
 class FontResources;
 
-class Game : public NamedItem {
+class Game : public GameBase {
 	DECLARE_MESSAGE_MAP;
 private:
 	GameView *_gameView;
