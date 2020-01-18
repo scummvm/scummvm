@@ -44,25 +44,17 @@ private:
 	/**
 	 * Common initialization method used by the constructors
 	 */
-	void init();
+	void init(TreeItem *parent = nullptr);
 protected:
 	Common::Rect _bounds;
 	bool _isDirty;
 public:
 	CLASSDEF;
-	VisualItem() {
-		init();
-	}
-	VisualItem(const Common::Rect &r) : _bounds(r) {
-		init();
-	}
-	VisualItem(const Common::String &name) : NamedItem(name) {
-		init();
-	}
-	VisualItem(const Common::String &name, const Common::Rect &r) : NamedItem(name),
-		_bounds(r) {
-		init();
-	}
+	VisualItem() { init(); }
+	VisualItem(const Common::Rect &r, TreeItem *parent = nullptr) : _bounds(r) { init(parent); }
+	VisualItem(const Common::String &name, TreeItem *parent = nullptr) : NamedItem(name) { init(parent); }
+	VisualItem(const Common::String &name, const Common::Rect &r, TreeItem *parent = nullptr) : NamedItem(name),
+		_bounds(r) { init(parent); }
 
 	virtual ~VisualItem() {
 	}
