@@ -31,30 +31,16 @@ namespace Ultima {
 namespace Shared {
 
 class FontResources : public LocalResourceFile {
-private:
-	File _file;
-	Common::MemoryWriteStreamDynamic _saveStream;
-	Resources *_resources;
-private:
+protected:
 	/**
 	 * Synchronize resource data
 	 */
-	void synchronize();
+	virtual void synchronize();
 public:
 	byte _font8x8[256][8];
 public:
 	FontResources();
 	FontResources(Resources *resManager);
-
-	/**
-	 * Loads the resource
-	 */
-	void load();
-
-	/**
-	 * Saves the resource
-	 */
-	void save();
 };
 
 } // End of namespace Shared

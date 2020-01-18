@@ -26,34 +26,44 @@
 #include "common/algorithm.h"
 #include "common/archive.h"
 #include "common/array.h"
+#include "common/memstream.h"
 #include "common/str.h"
-#include "common/stream.h"
 #include "common/serializer.h"
+#include "ultima/shared/core/file.h"
 
 #define STRING_BUFFER_SIZE 32768
 
 namespace Ultima {
 namespace Shared {
 
+class Resources;
+
 /**
  * Base class for classes that exposes a set of strings, arrays, and other data from a resource
  */
 class ResourceFile {
 private:
-	Common::ReadStream *_inStream;
+	File _file;
 	char _buffer[STRING_BUFFER_SIZE];
 	char *_bufferP;
+protected:
+	Common::String _filename;
 protected:
 	/**
 	 * Constructor
 	 */
-	ResourceFile(Common::ReadStream *in);
+	ResourceFile(const Common::String &filename);
 
 	/**
 	 * Destructor
 	 */
 	virtual ~ResourceFile() {
 	}
+
+	/**
+	 * Synchronizes the data for the resource
+	 */
+	virtual void synchronize() = 0;
 
 	virtual void syncString(const char *&str);
 	virtual void syncStrings(const char **str, size_t count);
@@ -64,6 +74,11 @@ protected:
 	virtual void syncNumbers3D(int *vals, size_t count1, size_t count2, size_t count3);
 	virtual void syncBytes(byte *vals, size_t count);
 	virtual void syncBytes2D(byte *vals, size_t count1, size_t count2);
+public:
+	/**
+	 * Loads in a resource
+	 */
+	void load();
 };
 
 /**
@@ -73,18 +88,19 @@ protected:
  */
 class LocalResourceFile : protected ResourceFile {
 private:
-	Common::WriteStream *_outStream;
+	Common::MemoryWriteStreamDynamic _file;
+	Resources *_owner;
 protected:
 	/**
 	 * Constructor
 	 */
-	LocalResourceFile(Common::ReadStream *in) : ResourceFile(in) {
-	}
+	LocalResourceFile(const Common::String &filename) : ResourceFile(filename), _owner(nullptr), _file(DisposeAfterUse::YES) {}
 
 	/**
 	 * Constructor
 	 */
-	LocalResourceFile(Common::WriteStream *out);
+	LocalResourceFile(Resources *owner, const Common::String &filename) : ResourceFile(filename),
+		_owner(owner), _file(DisposeAfterUse::YES) {}
 
 	virtual void syncString(const char *&str);
 	virtual void syncStrings(const char **str, size_t count);
@@ -95,6 +111,11 @@ protected:
 	virtual void syncNumbers3D(int *vals, size_t count1, size_t count2, size_t count3);
 	virtual void syncBytes(byte *vals, size_t count);
 	virtual void syncBytes2D(byte *vals, size_t count1, size_t count2);
+public:
+	/**
+	 * Write out the resource to the in-memory resource store
+	 */
+	void save();
 };
 
 /**
