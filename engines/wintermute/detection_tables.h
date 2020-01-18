@@ -1114,6 +1114,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507), Common::ES_ESP, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// Lov Mamuta
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("lovmamuta", "",
 		WME_ENTRY1s("data.dcp", "ce2be4691fa0104cfdd63656cedaf810", 11198933), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_9_1),
 
