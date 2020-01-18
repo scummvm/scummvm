@@ -45,6 +45,8 @@ BaseEngine::BaseEngine() {
 	_rnd = nullptr;
 	_gameId = "";
 	_language = Common::UNK_LANG;
+	_targetExecutable = LATEST_VERSION;
+	_flags = 0;
 }
 
 void BaseEngine::init() {
@@ -61,11 +63,12 @@ BaseEngine::~BaseEngine() {
 	delete _classReg;
 }
 
-void BaseEngine::createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, WMETargetExecutable targetExecutable) {
+void BaseEngine::createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, WMETargetExecutable targetExecutable, uint32 flags) {
 	instance()._targetName = targetName;
 	instance()._gameId = gameId;
 	instance()._language = lang;
 	instance()._targetExecutable = targetExecutable;
+	instance()._flags = flags;
 	instance().init();
 }
 
