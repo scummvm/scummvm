@@ -24,7 +24,8 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "ultima/shared/early/ultima_early.h"
-#include "ultima/shared/engine/main_game_window.h"
+#include "ultima/shared/engine/debugger.h"
+#include "ultima/shared/engine/events.h"
 #include "ultima/shared/engine/resources.h"
 #include "ultima/shared/core/mouse_cursor.h"
 #include "ultima/shared/gfx/screen.h"
@@ -40,13 +41,14 @@ UltimaEarlyEngine::UltimaEarlyEngine(OSystem *syst, const UltimaGameDescription 
 	g_vm = this;
 	_mouseCursor = nullptr;
 	_screen = nullptr;
-	_window = nullptr;
 }
 
 UltimaEarlyEngine::~UltimaEarlyEngine() {
+	delete _debugger;
+	delete _events;
+	delete _game;
 	delete _mouseCursor;
 	delete _screen;
-	delete _window;
 }
 
 GameId UltimaEarlyEngine::getGameID() const {
@@ -63,11 +65,15 @@ bool UltimaEarlyEngine::initialize() {
 		return false;
 	}
 
+	_debugger = new Debugger();
 	_events = new EventsManager(this);
 	_screen = new Gfx::Screen();
 	_mouseCursor = new MouseCursor();
-	_window = new MainGameWindow();
-	_window->applicationStarting();
+
+	// Create the game, and signal to it that the game is starting
+	_game = createGame();
+	_events->addTarget(_game);
+	_game->starting();
 	return true;
 }
 

@@ -30,9 +30,9 @@
 namespace Ultima {
 namespace Shared {
 
-EMPTY_MESSAGE_MAP(Game, NamedItem);
+EMPTY_MESSAGE_MAP(Game, GameBase);
 
-Game::Game() : NamedItem() {
+Game::Game() : GameBase() {
 	_fontResources = new FontResources();
 	_gameState = new GameState();
 

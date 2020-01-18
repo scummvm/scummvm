@@ -37,5 +37,9 @@ Ultima1Game::~Ultima1Game() {
 	delete _gameView;
 }
 
+void Ultima1Game::starting() {
+	_gameView->changeView("GameView");
+}
+
 } // End of namespace Ultima1
 } // End of namespace Ultima

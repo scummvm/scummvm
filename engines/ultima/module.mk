@@ -22,12 +22,11 @@ MODULE_OBJS += \
 	shared/core/tree_item.o \
 	shared/early/font_resources.o \
 	shared/early/game.o \
+	shared/early/game_base.o \
 	shared/early/ultima_early.o \
 	shared/engine/debugger.o \
-	shared/engine/game_manager.o \
 	shared/engine/input_handler.o \
 	shared/engine/input_translator.o \
-	shared/engine/main_game_window.o \
 	shared/engine/messages.o \
 	shared/engine/resources.o \
 	shared/gfx/font.o \

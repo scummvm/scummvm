@@ -22,82 +22,61 @@
 
 #include "common/config-manager.h"
 #include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/early/game_base.h"
 #include "ultima/shared/engine/debugger.h"
-#include "ultima/shared/engine/game_manager.h"
-#include "ultima/shared/engine/main_game_window.h"
 #include "ultima/shared/engine/messages.h"
 #include "ultima/shared/core/mouse_cursor.h"
-#include "ultima/shared/early/game.h"
+#include "ultima/shared/gfx/visual_container.h"
 
 namespace Ultima {
 namespace Shared {
 
-MainGameWindow::MainGameWindow() : _priorLeftDownTime(0), _priorMiddleDownTime(0), _priorRightDownTime(0) {
-	_gameManager = nullptr;
-
-	// Create the game hierarchy
-	_game = g_vm->createGame();
-
-	// Set the window as an event target
-	g_vm->_events->addTarget(this);
+GameBase::GameBase() : _currentView(nullptr),
+_priorLeftDownTime(0), _priorMiddleDownTime(0), _priorRightDownTime(0),
+_inputHandler(this), _inputTranslator(&_inputHandler) {
 }
 
-MainGameWindow::~MainGameWindow() {
-	delete _game;
-}
-
-void MainGameWindow::applicationStarting() {
-	// Create game view and manager
-	_gameManager = new GameManager(_game, g_vm->_mixer);
-
-	// Set the starting game view
+void GameBase::starting() {
+	// Enable the mouse cursor
 	g_vm->_mouseCursor->show();
 
-	Gfx::VisualItem *firstView = dynamic_cast<Gfx::VisualItem *>(_game->findByName("MainMenu"));
-	_gameManager->setView(firstView);
-
 	// Generate starting message for showing the view
+	assert(_currentView);
 	CShowMsg showMsg;
-	showMsg.execute(firstView, nullptr, MSGFLAG_SCAN);
+	showMsg.execute(_currentView, nullptr, MSGFLAG_SCAN);
 }
 
-int MainGameWindow::getSavegameSlot() {
+int GameBase::getSavegameSlot() {
 	return 0;
 }
 
-void MainGameWindow::draw() {
-	if (_gameManager->_view)
-		_gameManager->_view->draw();
+void GameBase::draw() {
+	if (_currentView)
+		_currentView->draw();
 }
 
-void MainGameWindow::mouseChanged() {
+void GameBase::mouseChanged() {
 
 }
 
-void MainGameWindow::onIdle() {
-	if (!_gameManager)
-		return;
-
-	// Let the game manager perform any game updates
-	_gameManager->update();
-
+void GameBase::onIdle() {
 	// Handle any drawing updates
 	draw();
 }
 
 #define HANDLE_MESSAGE(METHOD) \
-	_gameManager->_inputTranslator.METHOD(g_vm->_events->getSpecialButtons(), mousePos); \
+	_inputTranslator.METHOD(g_vm->_events->getSpecialButtons(), mousePos); \
 	mouseChanged()
 
 
-void MainGameWindow::mouseMove(const Common::Point &mousePos) {
+void GameBase::mouseMove(const Common::Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
 	HANDLE_MESSAGE(mouseMove);
 }
 
-void MainGameWindow::leftButtonDown(const Common::Point &mousePos) {
+void GameBase::leftButtonDown(const Common::Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
@@ -110,21 +89,21 @@ void MainGameWindow::leftButtonDown(const Common::Point &mousePos) {
 	}
 }
 
-void MainGameWindow::leftButtonUp(const Common::Point &mousePos) {
+void GameBase::leftButtonUp(const Common::Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
 	HANDLE_MESSAGE(leftButtonUp);
 }
 
-void MainGameWindow::leftButtonDoubleClick(const Common::Point &mousePos) {
+void GameBase::leftButtonDoubleClick(const Common::Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
 	HANDLE_MESSAGE(leftButtonDoubleClick);
 }
 
-void MainGameWindow::middleButtonDown(const Common::Point &mousePos) {
+void GameBase::middleButtonDown(const Common::Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
@@ -137,21 +116,21 @@ void MainGameWindow::middleButtonDown(const Common::Point &mousePos) {
 	}
 }
 
-void MainGameWindow::middleButtonUp(const Common::Point &mousePos) {
+void GameBase::middleButtonUp(const Common::Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
 	HANDLE_MESSAGE(middleButtonUp);
 }
 
-void MainGameWindow::middleButtonDoubleClick(const Common::Point &mousePos) {
+void GameBase::middleButtonDoubleClick(const Common::Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
 	HANDLE_MESSAGE(middleButtonDoubleClick);
 }
 
-void MainGameWindow::rightButtonDown(const Common::Point &mousePos) {
+void GameBase::rightButtonDown(const Common::Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
@@ -164,30 +143,72 @@ void MainGameWindow::rightButtonDown(const Common::Point &mousePos) {
 	}
 }
 
-void MainGameWindow::rightButtonUp(const Common::Point &mousePos) {
+void GameBase::rightButtonUp(const Common::Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
 	HANDLE_MESSAGE(rightButtonUp);
 }
 
-void MainGameWindow::mouseWheel(const Common::Point &mousePos, bool wheelUp) {
+void GameBase::mouseWheel(const Common::Point &mousePos, bool wheelUp) {
 	if (!isMouseControlEnabled())
 		return;
 
-	_gameManager->_inputTranslator.mouseWheel(wheelUp, mousePos);
+	_inputTranslator.mouseWheel(wheelUp, mousePos);
 	mouseChanged();
 }
 
-void MainGameWindow::rightButtonDoubleClick(const Common::Point &mousePos) {
+void GameBase::rightButtonDoubleClick(const Common::Point &mousePos) {
 	if (!isMouseControlEnabled())
 		return;
 
 	HANDLE_MESSAGE(rightButtonDoubleClick);
 }
 
-void MainGameWindow::keyDown(Common::KeyState keyState) {
-	_gameManager->_inputTranslator.keyDown(keyState);
+void GameBase::keyDown(Common::KeyState keyState) {
+	_inputTranslator.keyDown(keyState);
+}
+
+void GameBase::setView(Gfx::VisualItem *view) {
+	_currentView = view;
+}
+
+void GameBase::setView(const Common::String &viewName) {
+	_currentView = dynamic_cast<Gfx::VisualItem *>(findByName("MainMenu"));
+}
+
+void GameBase::update() {
+	if (_currentView) {
+		// Signal the next frame
+		CFrameMsg frameMsg(g_vm->_events->getTicksCount());
+		frameMsg.execute(_currentView, nullptr, MSGFLAG_SCAN);
+
+		_currentView->draw();
+	}
+}
+
+void GameBase::changeView(const Common::String &name) {
+	Gfx::VisualItem *newView = dynamic_cast<Gfx::VisualItem *>(findByName(name));
+	assert(newView);
+
+	// Hide the current view
+	CHideMsg hideMsg(_currentView, true);
+	hideMsg.execute(_currentView, nullptr, MSGFLAG_SCAN);
+
+	if (hideMsg._fadeOut) {
+		// TODO: Fade out
+	}
+
+	// Show the new view
+	_currentView = newView;
+	CShowMsg showMsg(_currentView, true);
+	showMsg.execute(_currentView, nullptr, MSGFLAG_SCAN);
+
+	_currentView->draw();
+
+	if (showMsg._fadeIn) {
+		// TODO: Fade in
+	}
 }
 
 } // End of namespace Shared

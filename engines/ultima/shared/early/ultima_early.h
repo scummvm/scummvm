@@ -28,8 +28,10 @@
 namespace Ultima {
 namespace Shared {
 
+class Debugger;
+class Events;
 class Game;
-class MainGameWindow;
+class GameBase;
 class MouseCursor;
 class Resources;
 
@@ -54,7 +56,7 @@ protected:
 	 */
 	virtual bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
 public:
-	MainGameWindow *_window;
+	GameBase *_game;
 	MouseCursor *_mouseCursor;
 	Gfx::Screen *_screen;
 public:
@@ -111,7 +113,7 @@ public:
 	/*
 	 * Creates a new hierarchy for the game, that contains all the logic for playing that particular game.
 	 */
-	Shared::Game *createGame() const;
+	Game *createGame() const;
 };
 
 extern UltimaEarlyEngine *g_vm;
