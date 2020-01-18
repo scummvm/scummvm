@@ -288,23 +288,11 @@ static const byte INT10_FONT_08[256][8] = {
 
 /*-------------------------------------------------------------------*/
 
-FontResources::FontResources() : LocalResourceFile(&_file), _resources(nullptr), _saveStream(DisposeAfterUse::YES) {
+FontResources::FontResources() : LocalResourceFile("COMMON/FONTS") {
 }
 
-FontResources::FontResources(Resources *resManager) : LocalResourceFile(&_saveStream), _resources(resManager),
-_saveStream(DisposeAfterUse::YES) {
+FontResources::FontResources(Resources *resManager) : LocalResourceFile(resManager, "COMMON/FONTS") {
 	Common::copy((const byte *)INT10_FONT_08, (const byte *)INT10_FONT_08 + 256 * 8, (byte *)_font8x8);
-}
-
-void FontResources::load() {
-	_file.open("fonts");
-	synchronize();
-	_file.close();
-}
-
-void FontResources::save() {
-	synchronize();
-	_resources->addResource("shared/fonts", _saveStream.getData(), _saveStream.size());
 }
 
 void FontResources::synchronize() {
