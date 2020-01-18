@@ -77,8 +77,8 @@ Point Map::getViewportPosition(const Point &viewportSize) {
 
 		} else {
 			// Non-fixed map, so it wraps around the edges if necessary
-			topLeft.x = _position.x + (viewportSize.x - 1) / 2;
-			topLeft.y = _position.y + (viewportSize.y - 1) / 2;
+			topLeft.x = _position.x - (viewportSize.x - 1) / 2;
+			topLeft.y = _position.y - (viewportSize.y - 1) / 2;
 
 			if (topLeft.x < 0)
 				topLeft.x += width();
@@ -97,6 +97,9 @@ Point Map::getViewportPosition(const Point &viewportSize) {
 	return topLeft;
 }
 
+void Map::getTileAt(const Point &pt, MapTile *tile) {
+	tile->_tileNum = _data[pt.y * _size.x + pt.x];
+}
 
 } // End of namespace Shared
 } // End of namespace Ultima

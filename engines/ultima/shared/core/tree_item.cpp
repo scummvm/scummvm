@@ -57,6 +57,10 @@ TreeItem *TreeItem::getLastSibling() {
 	return item;
 }
 
+Shared::Map *TreeItem::getMap() {
+	return getGameState()->_map;
+}
+
 TreeItem *TreeItem::getLastChild() const {
 	if (!_firstChild)
 		return nullptr;
