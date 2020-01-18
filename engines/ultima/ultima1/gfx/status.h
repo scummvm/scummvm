@@ -20,35 +20,31 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_GFX_GAME_VIEW_H
-#define ULTIMA_SHARED_GFX_GAME_VIEW_H
+#ifndef ULTIMA_ULTIMA1_GFX_STATUS_H
+#define ULTIMA_ULTIMA1_GFX_STATUS_H
 
-#include "ultima/shared/gfx/visual_container.h"
+#include "ultima/shared/gfx/visual_item.h"
 
 namespace Ultima {
-namespace Shared {
-
-class Info;
-class Status;
-class ViewportDungeon;
-class ViewportMap;
+namespace Ultima1 {
 
 /**
- * This class implements a standard view screen that shows a status and log area, as well as either
- * a map or dungeon view covering the bulk of the screen
+ * Displays the total hits, food, experience, and coins you have
  */
-class GameView : public Gfx::VisualContainer {
-private:
-	Info *_info;
-	Status *_status;
-	ViewportDungeon *_viewportDungeon;
-	ViewportMap *_viewportMap;
+class Status : public Shared::Gfx::VisualItem {
+	DECLARE_MESSAGE_MAP;
 public:
-	GameView();
-	virtual ~GameView();
+	CLASSDEF;
+	Status(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("Status", Rect(248, 168, 320, 200), parent) {}
+	virtual ~Status() {}
+
+	/**
+	 * Draw the contents
+	 */
+	virtual void draw();
 };
 
-} // End of namespace Shared
+} // End of namespace Ultima1
 } // End of namespace Xeen
 
 #endif

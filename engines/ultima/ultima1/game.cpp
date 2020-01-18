@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/gfx/game_view.h"
 
 namespace Ultima {
@@ -29,6 +30,7 @@ namespace Ultima1 {
 EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
 
 Ultima1Game::Ultima1Game() : Shared::Game() {
+	_res = new GameResources();
 	_gameView = new GameView(this);
 }
 
@@ -37,6 +39,7 @@ Ultima1Game::~Ultima1Game() {
 }
 
 void Ultima1Game::starting() {
+	_res->load();
 	_gameView->setView("GameView");
 }
 

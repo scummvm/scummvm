@@ -20,31 +20,34 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_GFX_STATUS_H
-#define ULTIMA_SHARED_GFX_STATUS_H
-
-#include "ultima/shared/gfx/visual_item.h"
+#include "ultima/ultima1/gfx/status.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/shared/core/game_state.h"
+#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
-namespace Shared {
+namespace Ultima1 {
 
-/**
- * Displays the total hits, food, experience, and coins you have
- */
-class Status : public Gfx::VisualItem {
-	DECLARE_MESSAGE_MAP;
-public:
-	CLASSDEF;
-	Status(TreeItem *parent) : Gfx::VisualItem("Status", Rect(248, 168, 320, 200), parent) {}
-	virtual ~Status() {}
+EMPTY_MESSAGE_MAP(Status, Shared::Gfx::VisualItem);
 
-	/**
-	 * Draw the contents
-	 */
-	virtual void draw();
-};
+void Status::draw() {
+	Ultima1Game *game = static_cast<Ultima1Game *>(getRoot());
+	Shared::GameState *gameState = getGameState();
+	Shared::Gfx::VisualSurface s = getSurface();
+	s.clear();
 
-} // End of namespace Shared
-} // End of namespace Xeen
+	// Iterate through displaying the four values
+	Shared::Character &c = gameState->_characters.front();
+	const uint *vals[4] = { &c._hitPoints, &c._food, &c._experience, &c._coins };
 
-#endif
+	for (int idx = 0; idx < 4; ++idx) {
+		// Write header
+		s.writeString(game->_res->STATUS_TEXT[idx], TextPoint(0, idx), game->_textColor);
+
+		uint value = MIN(*vals[idx], (uint)9999);
+		s.writeString(Common::String::format("%4u", value), TextPoint(5, idx), game->_textColor);
+	}
+}
+
+} // End of namespace Ultima1
+} // End of namespace Ultima
