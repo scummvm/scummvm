@@ -45,9 +45,13 @@ void Ultima1Map::loadOverworldMap() {
 	_data.resize(_size.x * _size.y);
 
 	File f("map.bin");
+	byte b;
 	for (int y = 0; y < _size.y; ++y) {
-		for (int x = 0; x < _size.x; ++x)
-			_data[y * _size.x + x] = f.readByte();
+		for (int x = 0; x < _size.x; x += 2) {
+			b = f.readByte();
+			_data[y * _size.x + x] = b & 0xf;
+			_data[y * _size.x + x + 1] = b >> 4;
+		}
 	}
 }
 
@@ -76,6 +80,10 @@ void Ultima1Map::loadTownCastleMap() {
 	}
 }
 
+void Ultima1Map::getTileAt(const Point &pt, U1MapTile *tile) {
+	Shared::Map::getTileAt(pt, tile);
+
+}
 
 } // End of namespace Ultima1
 } // End of namespace Ultima

@@ -21,6 +21,7 @@
  */
 
 #include "ultima/shared/gfx/viewport_map.h"
+#include "ultima/shared/core/map.h"
 
 namespace Ultima {
 namespace Shared {
@@ -28,12 +29,29 @@ namespace Shared {
 EMPTY_MESSAGE_MAP(ViewportMap, Gfx::VisualItem);
 
 void ViewportMap::draw() {
+	// Get a surface reference and clear it's contents
 	Gfx::VisualSurface s = getSurface();
 	s.clear();
 
-	// TODO: Properly display map
-	for (int idx = 0; idx < 8; ++idx)
-		_sprites[idx].draw(s, Common::Point(idx * 16, idx * 16));
+	// Figure out how many tiles can fit into the display
+	const Point spriteSize = _sprites.getSpriteSize();
+	const Point visibleTiles(_bounds.width() / spriteSize.x, _bounds.height() / spriteSize.y);
+
+	// Get a reference to the map and get the starting tile position
+	Map *map = getMap();
+	const Point topLeft = map->getViewportPosition(visibleTiles);
+
+	// Iterate through drawing the map
+	MapTile tile;
+	for (int y = 0; y < visibleTiles.y; ++y) {
+		for (int x = 0; x < visibleTiles.x; ++x) {
+			// Get the next tile to display
+			map->getTileAt(Point(topLeft.x + x, topLeft.y + y), &tile);
+
+			// Draw it
+			_sprites[tile._tileNum].draw(s, Point(x * spriteSize.x, y * spriteSize.y));
+		}
+	}
 }
 
 } // End of namespace Shared

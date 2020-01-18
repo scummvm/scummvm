@@ -28,6 +28,12 @@
 namespace Ultima {
 namespace Ultima1 {
 
+
+class U1MapTile : public Shared::MapTile {
+public:
+
+};
+
 class Ultima1Map : public Shared::Map {
 private:
 	/**
@@ -49,6 +55,11 @@ public:
 	 * Load a given map
 	 */
 	virtual void loadMap(int mapId, uint videoMode);
+
+	/**
+	 * Gets a tile at a given position
+	 */
+	void getTileAt(const Point &pt, U1MapTile *tile);
 };
 
 } // End of namespace Ultima1

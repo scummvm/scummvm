@@ -76,6 +76,8 @@ public:
 };
 
 class Sprites : public Common::Array<Sprite> {
+private:
+	Point _spriteSize;							// Size of individual sprites
 public:
 	/**
 	 * Load a raw data file containing sprite pixels
@@ -86,6 +88,11 @@ public:
 	 * @param h				Height of files
 	 */
 	void load(const Common::String &name, uint bpp, size_t startingIndex = 0, uint16 w = 16, uint16 h = 16);
+
+	/**
+	 * Return the default dimensions for tiles
+	 */
+	Point getSpriteSize() const { return _spriteSize; }
 };
 
 } // End of namespace Gfx

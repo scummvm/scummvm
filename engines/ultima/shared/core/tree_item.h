@@ -34,6 +34,7 @@ class Game;
 class GameManager;
 class GameState;
 class Events;
+class Map;
 class NamedItem;
 class CMessage;
 
@@ -103,6 +104,11 @@ public:
 	 * Return the game state
 	 */
 	Shared::GameState *getGameState();
+
+	/**
+	 * Return the game's map
+	 */
+	Shared::Map *getMap();
 
 	/**
 	 * Get the next sibling

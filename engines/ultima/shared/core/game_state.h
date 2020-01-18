@@ -47,16 +47,16 @@ private:
 	 * so would have to be divided by MAX_TILES_PER_ORIGINAL to get original game co-ordinates
 	 */
 	Point _worldMapPos;
-
-	/**
-	 * Pointer to the map manager for the game
-	 */
-	Map *_map;
 public:
 	/**
 	 * Characters in the party. In the earlier Ultima games, this is a single character
 	 */
 	CharacterArray _characters;
+
+	/**
+	 * Pointer to the map manager for the game
+	 */
+	Map *_map;
 
 	/**
 	 * Game type Id

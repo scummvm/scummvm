@@ -72,6 +72,8 @@ void Sprite::draw(Graphics::ManagedSurface &dest, const Common::Point &pt) {
 /*-------------------------------------------------------------------*/
 
 void Sprites::load(const Common::String &name, uint bpp, size_t startingIndex, uint16 w, uint16 h) {
+	_spriteSize = Point(w, h);
+
 	// Open the tiles for access
 	File f(name);
 	byte *buffer = new byte[w * h];
