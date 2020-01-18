@@ -919,7 +919,7 @@ void AdLibDriver::secondaryEffect1(Channel &channel) {
 }
 
 uint8 AdLibDriver::calculateOpLevel1(Channel &channel) {
-	int8 value = channel.opLevel1 & 0x3F;
+	uint8 value = channel.opLevel1 & 0x3F;
 
 	if (channel.twoChan) {
 		value += channel.opExtraLevel1;
@@ -934,31 +934,30 @@ uint8 AdLibDriver::calculateOpLevel1(Channel &channel) {
 		value += level3 ^ 0x3F;
 	}
 
-	// The clipping as signed instead of unsigned causes very ugly noises in LOK when the music
-	// is fading out in certain situations (bug #11303). The bug only comes to surface when the
-	// volume setting is not maxed out to 255.
-	// The original LOK AdLib driver does the same wrong clipping, but this doesn't cause glitches
-	// there. The original driver (and game) does not have volume settings and uses a simpler
-	// total level calculation (simply adding the three opExtraLevels to the opLevel).
-	// The original HOF/LOL sound drivers do the same clipping, too. That's were we got that code.
-	// I assume that the issue has been fixed in the fadeout tracks there.
-	// I limit this to LOK for now, since the issue hasn't been reported from any other KYRA games.
-	if (_version == 3) {
-		if (value < 0)
-			debugC(3, kDebugLevelSound, "AdLibDriver::calculateOpLevel1(): WORKAROUND - total level clipping uint/int bug encountered");
-		value = (int8)CLIP<uint8>(value, 0, 0x3F);
-	} else
-		value = CLIP<int8>(value, 0, 0x3F);
+	// The clipping as signed instead of unsigned caused very ugly noises in LOK when the music
+	// was fading out in certain situations (bug #11303). The bug seems to come to surface only
+	// when the volume is not set to the maximum.
+	// I have confirmed that the noise bug also appears in LOL floppy (Westwood logo sound). It has
+	// been reported to be present in EOB 1 (intro music), but I haven't been able to confirm it.
+	// The original AdLib drivers all do the same wrong clipping. At least in the original EOB and
+	// LOK games this wouldn't cause issues, since the original drivers (and games) do not have
+	// volume settings and use a simpler calculation of the total level (just adding the three
+	// opExtraLevels to the opLevel).
+	// The later (HOF/LOL) original drivers do the same wrong clipping, too. But original LOL floppy
+	// doesn't have volume settings either. And with max volume the logo sound is okay... 
+	if (value & 0x80)
+		debugC(3, kDebugLevelSound, "AdLibDriver::calculateOpLevel1(): WORKAROUND - total level clipping uint/int bug encountered");
+	value = CLIP<uint8>(value, 0, 0x3F);
 
 	if (!channel.volumeModifier)
 		value = 0x3F;
 
 	// Preserve the scaling level bits from opLevel1
-	return checkValue(value) | (channel.opLevel1 & 0xC0);
+	return value | (channel.opLevel1 & 0xC0);
 }
 
 uint8 AdLibDriver::calculateOpLevel2(Channel &channel) {
-	int8 value = channel.opLevel2 & 0x3F;
+	uint8 value = channel.opLevel2 & 0x3F;
 
 	value += channel.opExtraLevel1;
 	value += channel.opExtraLevel2;
@@ -972,18 +971,15 @@ uint8 AdLibDriver::calculateOpLevel2(Channel &channel) {
 	value += level3 ^ 0x3F;
 
 	// See comment in calculateOpLevel1()
-	if (_version == 3) {
-		if (value < 0)
-			debugC(3, kDebugLevelSound, "AdLibDriver::calculateOpLevel1(): WORKAROUND - total level clipping uint/int bug encountered");
-		value = (int8)CLIP<uint8>(value, 0, 0x3F);
-	} else
-		value = CLIP<int8>(value, 0, 0x3F);
+	if (value & 0x80)
+		debugC(3, kDebugLevelSound, "AdLibDriver::calculateOpLevel2(): WORKAROUND - total level clipping uint/int bug encountered");
+	value = CLIP<uint8>(value, 0, 0x3F);
 
 	if (!channel.volumeModifier)
 		value = 0x3F;
 
 	// Preserve the scaling level bits from opLevel2
-	return checkValue(value) | (channel.opLevel2 & 0xC0);
+	return value | (channel.opLevel2 & 0xC0);
 }
 
 // parser opcodes
