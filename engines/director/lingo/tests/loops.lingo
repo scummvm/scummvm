@@ -25,3 +25,10 @@ repeat while y < 5
 set y = y + 1
 put y
 end repeat
+
+
+repeat while y < 5
+  set y = y + 1
+  if y = 3 then next repeat
+  put y
+end repeat
