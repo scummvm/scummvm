@@ -70,7 +70,7 @@ void DrawingSupport::drawGameFrame() {
 void DrawingSupport::roundFrameCorners(bool skipBottom) {
 	// Round the edges of the big outer border
 	for (int idx = 1; idx <= 4; ++idx) {
-		_surface.drawLine(idx, 0, 0, idx, 0);
+		_surface.drawLine(0, idx, idx, 0, 0);
 		_surface.drawLine(319 - idx, 0, 319, idx, 0);
 		
 		if (!skipBottom) {

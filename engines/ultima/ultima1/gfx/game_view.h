@@ -29,12 +29,13 @@ namespace Ultima {
 
 namespace Shared {
 	class Info;
-	class Status;
 	class ViewportDungeon;
 	class ViewportMap;
 }
 	
 namespace Ultima1 {
+
+class Status;
 
 /**
  * This class implements a standard view screen that shows a status and log area, as well as either
@@ -43,9 +44,9 @@ namespace Ultima1 {
 class GameView : public Shared::Gfx::VisualContainer {
 private:
 	Shared::Info *_info;
-	Shared::Status *_status;
 	Shared::ViewportDungeon *_viewportDungeon;
 	Shared::ViewportMap *_viewportMap;
+	Status *_status;
 public:
 	GameView(TreeItem *parent = nullptr);
 	virtual ~GameView();

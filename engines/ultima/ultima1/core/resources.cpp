@@ -26,6 +26,8 @@
 namespace Ultima {
 namespace Ultima1 {
 
+const char *const SRC_STATUS_TEXT[4] = { "Hits:", "Food:",  "Exp.:", "Coin:" };
+
 const char *const SRC_LOCATION_NAMES[85] = {
 	"?",
 	"Britian",
@@ -122,12 +124,13 @@ const char *const SRC_LOCATION_NAMES[85] = {
 GameResources::GameResources() : LocalResourceFile("ULTIMA1/DATA") {
 } 
 
-GameResources::GameResources(Shared::Resources *resManager) :
-		Shared::LocalResourceFile(resManager, "ULTIMA1/DATA") {
+GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(resManager, "ULTIMA1/DATA") {
+	Common::copy(SRC_STATUS_TEXT, SRC_STATUS_TEXT + 4, STATUS_TEXT);
 	Common::copy(SRC_LOCATION_NAMES, SRC_LOCATION_NAMES + 85, LOCATION_NAMES);
 }
 
 void GameResources::synchronize() {
+	syncStrings(STATUS_TEXT, 4);
 	syncStrings(LOCATION_NAMES, 32);
 }
 

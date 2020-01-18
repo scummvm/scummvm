@@ -22,6 +22,7 @@
 
 #include "ultima/shared/engine/resources.h"
 #include "ultima/shared/early/font_resources.h"
+#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Shared {
@@ -38,8 +39,9 @@ void ResourceFile::load() {
 
 void ResourceFile::syncString(const char *&str) {
 	str = _bufferP;
-	while ((*_bufferP = _file.readByte()) != '\0')
-		++_bufferP;
+	do {
+		*_bufferP = _file.readByte();
+	} while (*_bufferP++);
 
 	assert(_bufferP < (_buffer + STRING_BUFFER_SIZE));
 }
@@ -110,6 +112,7 @@ void LocalResourceFile::syncString(const char *&str) {
 		ResourceFile::syncString(str);
 	} else {
 		_file.writeString(str);
+		_file.writeByte('\0');
 	}
 }
 
@@ -194,6 +197,8 @@ bool Resources::setup() {
 	// Save locally constructred resources to the archive manager for access
 	Shared::FontResources sharedFonts(this);
 	sharedFonts.save();
+	Ultima1::GameResources u1Data(this);
+	u1Data.save();
 
 	SearchMan.add("ultima", this);
 	return true;

@@ -30,10 +30,8 @@ MODULE_OBJS += \
 	shared/engine/messages.o \
 	shared/engine/resources.o \
 	shared/gfx/font.o \
-	shared/gfx/game_view.o \
 	shared/gfx/info.o \
 	shared/gfx/screen.o \
-	shared/gfx/status.o \
 	shared/gfx/viewport_dungeon.o \
 	shared/gfx/viewport_map.o \
 	shared/gfx/visual_container.o \
@@ -50,6 +48,7 @@ MODULE_OBJS += \
 	ultima1/core/resources.o \
 	ultima1/gfx/drawing_support.o \
 	ultima1/gfx/game_view.o \
+	ultima1/gfx/status.o \
 	ultima1/game.o
 endif
 
