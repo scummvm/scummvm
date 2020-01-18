@@ -35,7 +35,7 @@ enum MapType {
 };
 
 enum Direction {
-	DIR_NORTH = 0, DIR_SOUTH = 1, DIR_EAST = 2, DIR_WEST = 3
+	DIR_UP = 1, DIR_DOWN = 2, DIR_LEFT = 3, DIR_RIGHT = 4
 };
 
 class Game;

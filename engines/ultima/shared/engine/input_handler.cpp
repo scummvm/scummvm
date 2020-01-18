@@ -21,10 +21,11 @@
  */
 
 #include "ultima/shared/engine/input_handler.h"
+#include "ultima/shared/engine/ultima.h"
 #include "ultima/shared/engine/events.h"
-#include "ultima/shared/engine/messages.h"
-#include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/early/game_base.h"
+#include "ultima/shared/engine/messages.h"
+#include "ultima/shared/gfx/visual_item.h"
 
 namespace Ultima {
 namespace Shared {
@@ -110,9 +111,9 @@ void InputHandler::processMessage(CMessage *msg) {
 }
 
 void InputHandler::dispatchMessage(CMessage *msg) {
-//	Gfx::VisualItem *view = _game->getView();
-//	if (view)
-//		msg->execute(view, nullptr, MSGFLAG_BREAK_IF_HANDLED);
+	Gfx::VisualItem *view = _game->getView();
+	if (view)
+		msg->execute(view, nullptr, MSGFLAG_BREAK_IF_HANDLED);
 }
 
 } // End of namespace Shared
