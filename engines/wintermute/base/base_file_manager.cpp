@@ -194,8 +194,9 @@ bool BaseFileManager::registerPackages(const Common::FSList &fslist) {
 bool BaseFileManager::registerPackages() {
 	debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "Scanning packages");
 
-	// We need the target name as a Common::String to perform some game-specific hacks.
-	Common::String targetName = BaseEngine::instance().getGameTargetName();
+	// We need game flags to perform some game-specific hacks.
+	uint32 flags = BaseEngine::instance().getFlags();
+	warning("Flags are %lu", flags);
 
 	// Register without using SearchMan, as otherwise the FSNode-based lookup in openPackage will fail
 	// and that has to be like that to support the detection-scheme.
@@ -224,6 +225,13 @@ bool BaseFileManager::registerPackages() {
 			// issues.
 			Common::String parentName = it->getName();
 			parentName.toLowercase();
+
+			// Avoid registering all the resolutions for SD/HD games
+			if (flags & GF_IGNORE_HD_FILES && fileName.hasSuffix("_hd.dcp")) {
+				continue;
+			} else if (flags & GF_IGNORE_SD_FILES && fileName.hasSuffix("_sd.dcp")) {
+				continue;
+			}
 
 			// Avoid registering all the language files
 			// TODO: Select based on the gameDesc.

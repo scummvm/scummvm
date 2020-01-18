@@ -88,6 +88,9 @@ static const char *directoryGlobs[] = {
 class WintermuteMetaEngine : public AdvancedMetaEngine {
 public:
 	WintermuteMetaEngine() : AdvancedMetaEngine(Wintermute::gameDescriptions, sizeof(WMEGameDescription), Wintermute::wintermuteGames, gameGuiOptions) {
+		// Use kADFlagUseExtraAsHint to distinguish between SD and HD versions
+		// of J.U.L.I.A. when their datafiles sit in the same directory (e.g. in Steam distribution). 
+		_flags = kADFlagUseExtraAsHint;
 		_guiOptions = GUIO3(GUIO_NOMIDI, GAMEOPTION_SHOW_FPS, GAMEOPTION_BILINEAR);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;

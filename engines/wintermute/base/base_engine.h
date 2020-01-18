@@ -112,10 +112,11 @@ class BaseEngine : public Common::Singleton<Wintermute::BaseEngine> {
 	SystemClassRegistry *_classReg;
 	Common::Language _language;
 	WMETargetExecutable _targetExecutable;
+	uint32 _flags;
 public:
 	BaseEngine();
 	~BaseEngine();
-	static void createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, WMETargetExecutable targetExecutable = LATEST_VERSION);
+	static void createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, WMETargetExecutable targetExecutable, uint32 flags);
 
 	void setGameRef(BaseGame *gameRef) { _gameRef = gameRef; }
 
@@ -133,6 +134,7 @@ public:
 	Common::String getGameTargetName() const { return _targetName; }
 	Common::String getGameId() const { return _gameId; }
 	Common::Language getLanguage() const { return _language; }
+	uint32 getFlags() const { return _flags; }
 	WMETargetExecutable getTargetExecutable() const {
 		return _targetExecutable;
 	}

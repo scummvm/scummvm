@@ -149,7 +149,7 @@ Common::Error WintermuteEngine::run() {
 }
 
 int WintermuteEngine::init() {
-	BaseEngine::createInstance(_targetName, _gameDescription->adDesc.gameId, _gameDescription->adDesc.language, _gameDescription->targetExecutable);
+	BaseEngine::createInstance(_targetName, _gameDescription->adDesc.gameId, _gameDescription->adDesc.language, _gameDescription->targetExecutable, _gameDescription->adDesc.flags);
 
 	// check dependencies for games with high resolution assets
 	#if not defined(USE_PNG) || not defined(USE_JPEG) || not defined(USE_VORBIS)

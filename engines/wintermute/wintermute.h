@@ -47,7 +47,9 @@ enum {
 
 enum WintermuteGameFeatures {
  	/** A game with low-spec resources. */
- 	GF_LOWSPEC_ASSETS       = 1 << 0
+ 	GF_LOWSPEC_ASSETS       = 1 << 0,
+ 	GF_IGNORE_SD_FILES      = 1 << 1,
+ 	GF_IGNORE_HD_FILES      = 1 << 2
 };
 
 class WintermuteEngine : public Engine {
