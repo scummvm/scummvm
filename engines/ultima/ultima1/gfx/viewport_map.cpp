@@ -20,31 +20,15 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GFX_STATUS_H
-#define ULTIMA_ULTIMA1_GFX_STATUS_H
-
-#include "ultima/shared/gfx/visual_item.h"
+#include "ultima/ultima1/gfx/viewport_map.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
-/**
- * Displays the total hits, food, experience, and coins you have
- */
-class Status : public Shared::Gfx::VisualItem {
-	DECLARE_MESSAGE_MAP;
-public:
-	CLASSDEF;
-	Status(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("Status", Rect(248, 168, 320, 200), parent) {}
-	virtual ~Status() {}
-
-	/**
-	 * Draw the contents
-	 */
-	virtual void draw();
-};
+ViewportMap::ViewportMap(TreeItem *parent) : Shared::ViewportMap(parent) {
+	_sprites.load("egatiles.bin", 4);
+	_sprites.load("egatown.bin", 4, 256);
+}
 
 } // End of namespace Ultima1
 } // End of namespace Ultima
-
-#endif

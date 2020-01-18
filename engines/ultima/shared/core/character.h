@@ -51,6 +51,6 @@ public:
 typedef Common::Array<Character> CharacterArray;
 
 } // End of namespace Shared
-} // End of namespace Xeen
+} // End of namespace Ultima
 
 #endif

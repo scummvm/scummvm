@@ -71,6 +71,6 @@ public:
 };
 
 } // End of namespace Shared
-} // End of namespace Xeen
+} // End of namespace Ultima
 
 #endif

@@ -27,5 +27,14 @@ namespace Shared {
 
 EMPTY_MESSAGE_MAP(ViewportMap, Gfx::VisualItem);
 
+void ViewportMap::draw() {
+	Gfx::VisualSurface s = getSurface();
+	s.clear();
+
+	// TODO: Properly display map
+	for (int idx = 0; idx < 8; ++idx)
+		_sprites[idx].draw(s, Common::Point(idx * 16, idx * 16));
+}
+
 } // End of namespace Shared
 } // End of namespace Ultima
