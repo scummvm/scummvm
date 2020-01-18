@@ -35,7 +35,7 @@ Map::Map() {
 	_mapId = 0;
 	_mapType = MAP_OVERWORLD;
 	_mapStyle = 0;
-	_direction = DIR_NORTH;
+	_direction = DIR_UP;
 	_fixed = false;
 }
 
