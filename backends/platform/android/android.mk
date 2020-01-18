@@ -1,9 +1,10 @@
 # Android specific build targets
 
 # These must be incremented for each market upload
-ANDROID_VERSIONCODE = 40
+ANDROID_VERSIONCODE = 45
 
 # Historical version codes:
+# ScummVM 2.1.1: 40-44 (armeabi, arm-v7a, arm64-v8a, x86, x86_64 respectively)
 # ScummVM 2.1.0: 35-39 (armeabi, arm-v7a, arm64-v8a, x86, x86_64 respectively)
 # ScummVM 2.0.0: 30-34
 # ScummVM 1.9.0.1: 25-28
