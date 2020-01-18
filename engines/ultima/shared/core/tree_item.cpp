@@ -35,16 +35,14 @@ _nextSibling(nullptr), _priorSibling(nullptr),
 _disposeAfterUse(DisposeAfterUse::NO) {
 }
 
-Game *TreeItem::getRoot() const {
-	TreeItem *parent = getParent();
+Game *TreeItem::getRoot() {
+	TreeItem *treeItem = this;
 
-	if (parent) {
-		do {
-			parent = parent->getParent();
-		} while (parent->getParent());
+	while (treeItem->getParent()) {
+		treeItem = treeItem->getParent();
 	}
 
-	return dynamic_cast<Game *>(parent);
+	return dynamic_cast<Game *>(treeItem);
 }
 
 TreeItem *TreeItem::getLastSibling() {

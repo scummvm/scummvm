@@ -50,7 +50,7 @@ protected:
 	bool _isDirty;
 public:
 	CLASSDEF;
-	VisualItem() { init(); }
+	VisualItem(TreeItem *parent = nullptr) { init(parent); }
 	VisualItem(const Common::Rect &r, TreeItem *parent = nullptr) : _bounds(r) { init(parent); }
 	VisualItem(const Common::String &name, TreeItem *parent = nullptr) : NamedItem(name) { init(parent); }
 	VisualItem(const Common::String &name, const Common::Rect &r, TreeItem *parent = nullptr) : NamedItem(name),
@@ -99,7 +99,12 @@ public:
 	/**
 	 * Helper function to switch to a different visual item
 	 */
-	void changeView(const Common::String &name);
+	void setView(const Common::String &viewName);
+
+	/**
+	 * Helper function to switch the item to be the current view
+	 */
+	void setView();
 };
 
 } // End of namespace Gfx

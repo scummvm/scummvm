@@ -95,7 +95,7 @@ public:
 	/**
 	 * Jumps up through the parents to find the root item
 	 */
-	Game *getRoot() const;
+	Game *getRoot();
 
 	/**
 	 * Get the next sibling

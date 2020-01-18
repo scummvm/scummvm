@@ -29,8 +29,7 @@ namespace Ultima1 {
 EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
 
 Ultima1Game::Ultima1Game() : Shared::Game() {
-	_gameView = new GameView();
-	_gameView->addUnder(this);
+	_gameView = new GameView(this);
 }
 
 Ultima1Game::~Ultima1Game() {
@@ -38,7 +37,7 @@ Ultima1Game::~Ultima1Game() {
 }
 
 void Ultima1Game::starting() {
-	_gameView->changeView("GameView");
+	_gameView->setView("GameView");
 }
 
 } // End of namespace Ultima1

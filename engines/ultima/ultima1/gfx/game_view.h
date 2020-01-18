@@ -52,7 +52,7 @@ private:
 	 */
 	void drawFrame();
 public:
-	GameView();
+	GameView(TreeItem *parent = nullptr);
 	virtual ~GameView();
 
 	/**
