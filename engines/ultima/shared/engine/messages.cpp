@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Shared {
 
-CMessage::CMessage() : SaveableObject() {
+CMessage::CMessage() : BaseObject() {
 }
 
 bool CMessage::execute(TreeItem *target, const ClassDef *classDef, int flags) {

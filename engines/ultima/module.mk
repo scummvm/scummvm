@@ -11,6 +11,7 @@ MODULE_OBJS := \
 
 ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
+	shared/core/base_object.o \
 	shared/core/character.o \
 	shared/core/file.o \
 	shared/core/game_state.o \
@@ -19,7 +20,6 @@ MODULE_OBJS += \
 	shared/core/mouse_cursor.o \
 	shared/core/named_item.o \
 	shared/core/project_item.o \
-	shared/core/saveable_object.o \
 	shared/core/tree_item.o \
 	shared/early/font_resources.o \
 	shared/early/game.o \

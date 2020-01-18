@@ -26,7 +26,7 @@ namespace Ultima {
 namespace Shared {
 
 ClassDef MessageTarget::type() {
-	return ClassDef("MessageTarget", &SaveableObject::type);
+	return ClassDef("MessageTarget", &BaseObject::type);
 }
 
 const MSGMAP *MessageTarget::getMessageMap() const {

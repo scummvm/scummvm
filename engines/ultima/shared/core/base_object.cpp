@@ -20,19 +20,18 @@
  *
  */
 
-#include "ultima/shared/core/saveable_object.h"
+#include "ultima/shared/core/base_object.h"
 #include "ultima/shared/core/tree_item.h"
 #include "ultima/shared/core/named_item.h"
-#include "ultima/shared/core/project_item.h"
 
 namespace Ultima {
 namespace Shared {
 
-ClassDef SaveableObject::type() {
-	return ClassDef("SaveableObject", nullptr);
+ClassDef BaseObject::type() {
+	return ClassDef("BaseObject", nullptr);
 }
 
-bool SaveableObject::isInstanceOf(const ClassDef &classDef) const {
+bool BaseObject::isInstanceOf(const ClassDef &classDef) const {
 	ClassDef def = getType();
 	for (;;) {
 		if (def == classDef)
