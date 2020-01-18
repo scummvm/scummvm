@@ -21,7 +21,7 @@
  */
 
 #include "ultima/shared/engine/messages.h"
-#include "ultima/shared/engine/ultima_early.h"
+#include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/engine/main_game_window.h"
 #include "ultima/shared/gfx/screen.h"
 #include "ultima/shared/core/project_item.h"

@@ -21,7 +21,7 @@
  */
 
 #include "common/config-manager.h"
-#include "ultima/shared/engine/ultima_early.h"
+#include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/engine/debugger.h"
 #include "ultima/shared/engine/game_manager.h"
 #include "ultima/shared/engine/main_game_window.h"

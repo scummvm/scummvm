@@ -18,6 +18,8 @@ MODULE_OBJS += \
 	shared/core/project_item.o \
 	shared/core/saveable_object.o \
 	shared/core/tree_item.o \
+	shared/early/font_resources.o \
+	shared/early/ultima_early.o \
 	shared/engine/debugger.o \
 	shared/engine/game_manager.o \
 	shared/engine/game_state.o \
@@ -26,7 +28,6 @@ MODULE_OBJS += \
 	shared/engine/main_game_window.o \
 	shared/engine/messages.o \
 	shared/engine/resources.o \
-	shared/engine/ultima_early.o \
 	shared/gfx/font.o \
 	shared/gfx/screen.o \
 	shared/gfx/visual_container.o \
@@ -36,6 +37,7 @@ endif
 
 ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
+	ultima0/core/resources.o \
 	ultima0/project_item.o \
 	ultima0/resources.o \
 	ultima1/project_item.o

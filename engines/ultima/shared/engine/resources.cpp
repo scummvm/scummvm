@@ -21,6 +21,7 @@
  */
 
 #include "ultima/shared/engine/resources.h"
+#include "ultima/shared/early/font_resources.h"
 
 namespace Ultima {
 namespace Shared {
@@ -104,7 +105,7 @@ void LocalResourceFile::syncString(const char *&str) {
 }
 
 void LocalResourceFile::syncStrings(const char **str, size_t count) {
-	if (!_outStream) { 
+	if (!_outStream) {
 		ResourceFile::syncStrings(str, count);
 	} else {
 		_outStream->writeUint32LE(MKTAG(count, 0, 0, 0));
@@ -181,7 +182,58 @@ void LocalResourceFile::syncBytes2D(byte *vals, size_t count1, size_t count2) {
 /*-------------------------------------------------------------------*/
 
 bool Resources::setup() {
-	return false;
+	// Save locally constructred resources to the archive manager for access
+	Shared::FontResources sharedFonts;
+	sharedFonts.save();
+
+	SearchMan.add("ultima", this);
+	return true;
+}
+
+void Resources::addResource(const Common::String &name, const byte *data, size_t size) {
+	// Add a new entry to the local resources list for the passed data
+	_localResources.push_back(LocalResource());
+	LocalResource &lr = _localResources[_localResources.size() - 1];
+
+	lr._name = name;
+	lr._data.resize(size);
+	Common::copy(data, data + size, &lr._data[0]);
+}
+
+const Resources::LocalResource *Resources::getResource(const Common::String &name) const {
+	for (uint idx = 0; idx < _localResources.size(); ++idx) {
+		if (!_localResources[idx]._name.compareToIgnoreCase(name))
+			return &_localResources[idx];
+	}
+
+	return nullptr;
+}
+
+bool Resources::hasFile(const Common::String &name) const {
+	return getResource(name) != nullptr;
+}
+
+int Resources::listMembers(Common::ArchiveMemberList &list) const {
+	for (uint idx = 0; idx < _localResources.size(); ++idx) {
+		list.push_back(Common::ArchiveMemberPtr(new Common::GenericArchiveMember(_localResources[idx]._name, this)));
+	}
+
+	return _localResources.size();
+}
+
+const Common::ArchiveMemberPtr Resources::getMember(const Common::String &name) const {
+	if (!hasFile(name))
+		return Common::ArchiveMemberPtr();
+
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+}
+
+Common::SeekableReadStream *Resources::createReadStreamForMember(const Common::String &name) const {
+	const LocalResource *lr = getResource(name);
+	if (!lr)
+		return nullptr;
+
+	return new Common::MemoryReadStream(&lr->_data[0], lr->_data.size());
 }
 
 } // End of namespace Shared

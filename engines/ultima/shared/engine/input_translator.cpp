@@ -24,7 +24,7 @@
 #include "ultima/shared/engine/input_translator.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/shared/engine/messages.h"
-#include "ultima/shared/engine/ultima_early.h"
+#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Shared {

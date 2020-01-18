@@ -20,19 +20,44 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA0_RESOURCES_H
-#define ULTIMA_ULTIMA0_RESOURCES_H
+#ifndef ULTIMA_SHARED_EARLY_FONT_RESOURCES_H
+#define ULTIMA_SHARED_EARLY_FONT_RESOURCES_H
 
 #include "ultima/shared/engine/resources.h"
+#include "ultima/shared/core/file.h"
+#include "common/memstream.h"
 
 namespace Ultima {
-namespace Ultima0 {
+namespace Shared {
 
-class Resources : public Shared::LocalResourceFile {
-	
+class FontResources : public LocalResourceFile {
+private:
+	File _file;
+	Common::MemoryWriteStreamDynamic _saveStream;
+	Resources *_resources;
+private:
+	/**
+	 * Synchronize resource data
+	 */
+	void synchronize();
+public:
+	byte _font8x8[256][8];
+public:
+	FontResources();
+	FontResources(Resources *resManager);
+
+	/**
+	 * Loads the resource
+	 */
+	void load();
+
+	/**
+	 * Saves the resource
+	 */
+	void save();
 };
 
-} // End of namespace Ultima0
+} // End of namespace Shared
 } // End of namespace Ultima
 
 #endif

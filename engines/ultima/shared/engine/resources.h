@@ -24,7 +24,10 @@
 #define ULTIMA_SHARED_ENGINE_RESOURCES_H
 
 #include "common/algorithm.h"
+#include "common/archive.h"
+#include "common/array.h"
 #include "common/str.h"
+#include "common/stream.h"
 #include "common/serializer.h"
 
 #define STRING_BUFFER_SIZE 32768
@@ -49,7 +52,8 @@ protected:
 	/**
 	 * Destructor
 	 */
-	virtual ~ResourceFile() {}
+	virtual ~ResourceFile() {
+	}
 
 	virtual void syncString(const char *&str);
 	virtual void syncStrings(const char **str, size_t count);
@@ -74,7 +78,8 @@ protected:
 	/**
 	 * Constructor
 	 */
-	LocalResourceFile(Common::ReadStream *in) : ResourceFile(in) {}
+	LocalResourceFile(Common::ReadStream *in) : ResourceFile(in) {
+	}
 
 	/**
 	 * Constructor
@@ -95,18 +100,65 @@ protected:
 /**
  * Resources manager
  */
-class Resources {
+class Resources : public Common::Archive {
+	struct LocalResource {
+		Common::String _name;
+		Common::Array<byte> _data;
+	};
+private:
+	Common::Array<LocalResource> _localResources;
+private:
+	/**
+	 * Scan the resource list for a given resource
+	 */
+	const LocalResource *getResource(const Common::String &name) const;
 public:
 	/**
 	 * Constructor
 	 */
-	Resources() {}
+	Resources() {
+	}
 
 	/**
 	 * Sets up the resources for the engine
 	 * @returns		False if setup failed
 	 */
 	bool setup();
+
+	/**
+	 * Adds a resource created in memory to the ScummVM archive manager, so that it can be
+	 * later opened like a normal file. Just as it will when eventually shifted to the
+	 * data file for the engine
+	 */
+	void addResource(const Common::String &name, const byte *data, size_t size);
+
+	// Archive implementation
+	/**
+	 * Check if a member with the given name is present in the Archive.
+	 * Patterns are not allowed, as this is meant to be a quick File::exists()
+	 * replacement.
+	 */
+	virtual bool hasFile(const Common::String &name) const;
+
+	/**
+	 * Add all members of the Archive to list.
+	 * Must only append to list, and not remove elements from it.
+	 *
+	 * @return the number of names added to list
+	 */
+	virtual int listMembers(Common::ArchiveMemberList &list) const;
+
+	/**
+	 * Returns a ArchiveMember representation of the given file.
+	 */
+	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
+
+	/**
+	 * Create a stream bound to a member with the specified name in the
+	 * archive. If no member with this name exists, 0 is returned.
+	 * @return the newly created input stream
+	 */
+	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 };
 
 } // End of namespace Shared

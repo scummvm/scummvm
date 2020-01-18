@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_ENGINE_ULTIMA_EARLY_H
-#define ULTIMA_SHARED_ENGINE_ULTIMA_EARLY_H
+#ifndef ULTIMA_SHARED_EARLY_ULTIMA_EARLY_H
+#define ULTIMA_SHARED_EARLY_ULTIMA_EARLY_H
 
 #include "ultima/shared/engine/ultima.h"
 
@@ -56,7 +56,6 @@ protected:
 public:
 	MainGameWindow *_window;
 	MouseCursor *_mouseCursor;
-	Resources *_res;
 	Gfx::Screen *_screen;
 public:
 	UltimaEarlyEngine(OSystem *syst, const UltimaGameDescription *gameDesc);
