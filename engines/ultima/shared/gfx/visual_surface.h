@@ -34,13 +34,13 @@ namespace Gfx {
 class VisualSurface : public Graphics::ManagedSurface {
 private:
 	Common::Rect _bounds;
-
-	/**
-	 * Moves font output to a new line, prompting for waiting if necessary
-	 */
-	bool newLine();
 public:
 	VisualSurface(const Graphics::ManagedSurface &src, const Common::Rect &bounds);
+
+	/**
+	 * Draws a point on the surface
+	 */
+	void drawPoint(const Common::Point &pt, byte color);
 };
 
 } // End of namespace Gfx
