@@ -22,6 +22,7 @@
 
 #include "ultima/shared/gfx/visual_item.h"
 #include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/early/game.h"
 
 namespace Ultima {
 namespace Shared {
@@ -81,8 +82,12 @@ void VisualItem::setDirty() {
 	}
 }
 
-void VisualItem::changeView(const Common::String &name) {
-	// TODO
+void VisualItem::setView(const Common::String &viewName) {
+	getRoot()->setView(viewName);
+}
+
+void VisualItem::setView() {
+	getRoot()->setView(this);
 }
 
 } // End of namespace Gfx

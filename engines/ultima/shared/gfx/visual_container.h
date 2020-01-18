@@ -47,11 +47,13 @@ private:
 	VisualItem *handleMouseMsg(CMouseMsg *msg);
 public:
 	CLASSDEF;
-	VisualContainer() : VisualItem(), _mouseFocusItem(nullptr) {}
-	VisualContainer(const Common::Rect &r) : VisualItem(r), _mouseFocusItem(nullptr) {}
-	VisualContainer(const Common::String &name) : VisualItem(name), _mouseFocusItem(nullptr) {}
-	VisualContainer(const Common::String &name, const Common::Rect &r) : VisualItem(name, r),
-		_mouseFocusItem(nullptr) {}
+	VisualContainer(TreeItem *parent = nullptr) : VisualItem(parent), _mouseFocusItem(nullptr) {}
+	VisualContainer(const Common::Rect &r, TreeItem *parent = nullptr) :
+		VisualItem(r, parent), _mouseFocusItem(nullptr) {}
+	VisualContainer(const Common::String &name, TreeItem *parent = nullptr) :
+		VisualItem(name, parent), _mouseFocusItem(nullptr) {}
+	VisualContainer(const Common::String &name, const Common::Rect &r, TreeItem *parent = nullptr) :
+		VisualItem(name, r, parent), _mouseFocusItem(nullptr) {}
 	virtual ~VisualContainer() {}
 
 	/**
