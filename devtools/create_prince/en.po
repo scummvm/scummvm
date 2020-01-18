@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-18 17:17+0000\n"
+"PO-Revision-Date: 2020-01-20 21:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -9876,11 +9876,11 @@ msgstr "dagger - It looks amazing... and also very scary."
 
 #: invtxt.txt:5
 msgid "wytrychy - Nosił wilk razy kilka..."
-msgstr ""
+msgstr "lockpicks - He who fights with the sword, will die by the sword..."
 
 #: invtxt.txt:6
 msgid "księga szarej magii - Szara magia?..."
-msgstr ""
+msgstr "book of grey magic - Grey magic?..."
 
 #: invtxt.txt:7
 msgid "klejnot - Piękny i na pewno wart fortunę."
@@ -9892,19 +9892,22 @@ msgstr "shovel - A useful work tool."
 
 #: invtxt.txt:9
 msgid "fałszywe kości - Kości są tak wyważone, by zawsze|wypadała szóstka."
-msgstr ""
+msgstr "cheat dices - they are balanced in a way,|that you always roll 6 pips."
 
 #: invtxt.txt:10
 msgid "książka - Cała zapisana w nieznanym mi języku.|Mnóstwo dziwnych rysunków..."
 msgstr ""
+"book - All written in a language unknown to me.|Lots of strange drawings..."
 
 #: invtxt.txt:11
 msgid "czar - Bez cienia wątpliwości - nic z niego|nie rozumiem."
 msgstr ""
+"spell - Without a hint of a doubt - I don't understand|anything about it."
 
 #: invtxt.txt:12
 msgid "srebrne lustro - Jest tak gładkie, że nawet moja nowa|twarz zaczyna mi się podobać..."
 msgstr ""
+"silver mirror - It's so smooth that even my new face|begins to please me..."
 
 #: invtxt.txt:13
 msgid "czar - Czar przenosin do siedziby Pana Słońce."
@@ -9913,58 +9916,68 @@ msgstr "spell - The spell moves to the headquarters of the Lord Sun."
 #: invtxt.txt:14
 msgid "lutnia - Żona barda krzyczała coś o lutni-samograjce...|Ale ta tutaj jakoś siedzi cicho..."
 msgstr ""
+"lute - The bard's wife was shouting something a self-playing lute...|But "
+"this one somehow lies quietly..."
 
 #: invtxt.txt:15
 msgid "talizman nekromanty - Przepełniony podstępną magią..."
-msgstr ""
+msgstr "necromancer's talisman - Filled with sneaky magic..."
 
 #: invtxt.txt:16
 msgid "szal modnisi - Po zapachu sądząc składa się po połowie|z jedwabiu i perfum."
 msgstr ""
+"fashion scarf - Judging by the smell, it consists of|half silk and half "
+"perfume."
 
 #: invtxt.txt:17
 msgid "święcona woda - Wygląda zwyczajnie, ale wiadomo - pozory|mylą."
-msgstr ""
+msgstr "holy water - It looks ordinary, but you know - looks are deceptive."
 
 #: invtxt.txt:18
 msgid "siekiera - Latająca gilotyna."
-msgstr ""
+msgstr "axe - Flying guillotine."
 
 #: invtxt.txt:19
 msgid "gałąź - Zwykła gałąź."
-msgstr ""
+msgstr "branch - Normal branch."
 
 #: invtxt.txt:20
 msgid "gałąź - Kawałek osiki."
-msgstr ""
+msgstr "branch - A piece of aspen."
 
 #: invtxt.txt:21
 msgid "zaostrzony kołek - Dobry wampir to martwy wampir. Choć chyba|wampiry i tak są martwe."
 msgstr ""
+"sharp stake - A good vampire is a dead vampire. Though|I think vampires are "
+"dead anyway."
 
 #: invtxt.txt:22
 msgid "dłuższy kawałek linki - Trudno w to uwierzyć, ale jest to dłuższy|kawałek linki."
 msgstr ""
+"a longer piece of rope - It's hard to believe, but it's a longer|piece of "
+"rope."
 
 #: invtxt.txt:23
 msgid "krótszy kawałek linki - Mimo długotrwałego wpatrywania się wciąż|jest to krótszy kawałek linki."
 msgstr ""
+"shorter piece of rope - Despite long-term staring, it is still|a shorter "
+"piece of rope."
 
 #: invtxt.txt:24
 msgid "krzyż - Doskonała broń przeciw wszelkiemu Złu!"
-msgstr ""
+msgstr "cross - A perfect weapon against all evil!"
 
 #: invtxt.txt:25
 msgid "poświęcony krzyż - Wzmocniony duchowo odstraszacz Zła."
-msgstr ""
+msgstr "sanctified cross - spiritually enforced repellent of Evil."
 
 #: invtxt.txt:26
 msgid "krzyż z czosnkiem - Wzmocniony zapachowo odstraszacz Zła."
-msgstr ""
+msgstr "cross with garlic - Aroma enforced repellent of Evil."
 
 #: invtxt.txt:27
 msgid "Nieustraszony Zabójca Wampirów - DO DZIEŁA!"
-msgstr ""
+msgstr "Fearless Vampire Killer - TIME TO ACT!"
 
 #: invtxt.txt:28
 msgid "czosnek - Mała, niedorozwinięta, śmierdząca cebula."
@@ -9981,10 +9994,13 @@ msgstr "sword - Ha! Enemies, tremble!"
 #: invtxt.txt:31
 msgid "kartka - To brakująca kartka pamiętnika nekromanty!|Opisuje czar \"Utłuszczenie\", który ponoć na|chwilkę odwraca gabaryty zaklętego nim obiektu..."
 msgstr ""
+"page - This is a necromancer's missing diary page!|It describes the spell \""
+"Fatten\", which apparently changes|the dimensions of the spell object for a "
+"moment..."
 
 #: invtxt.txt:32
 msgid "linka - Długa, mocna linka."
-msgstr ""
+msgstr "cord - Long, strong cord."
 
 #: invtxt.txt:33
 msgid "poemat - Słowa, słowa, słowa..."
@@ -9992,7 +10008,7 @@ msgstr "poem - Words, words, words..."
 
 #: invtxt.txt:34
 msgid "flakonik z perfumami - Jak znam żonę barda to równie dobrze|może to być kwas."
-msgstr ""
+msgstr "perfume bottle - As I know the bard's wife, it may well be acid."
 
 #: invtxt.txt:35
 msgid "szlafmyca - Co za gustowny ubiór na noc."
@@ -10000,15 +10016,15 @@ msgstr "nightcap - What a tasteful night dress."
 
 #: invtxt.txt:36
 msgid "trzonek siekiery - Wykonany jest z bardzo twardego drewna."
-msgstr ""
+msgstr "axe shaft - Made of very hard wood."
 
 #: invtxt.txt:37
 msgid "łuska - Jest prawie tak wielka, jak liść klonu!"
-msgstr ""
+msgstr "husk - It's almost as big as a maple leaf!"
 
 #: invtxt.txt:38
 msgid "kartka z księgi - Smoki, żmije i jaszczury. Wszystko o..."
-msgstr ""
+msgstr "page from the book - Dragons, vipers and lizards. All about..."
 
 #: invtxt.txt:39
 msgid "fragment kartki - Ten smok nie wygląda przyjaźnie..."
@@ -10016,11 +10032,11 @@ msgstr "map piece - That dragon doesn't look friendly..."
 
 #: invtxt.txt:40
 msgid "księga czarów - Księga nafaszerowana czarami jak|ja dobrymi pomysłami."
-msgstr ""
+msgstr "book of spells - A book stuffed with spells like me with good ideas."
 
 #: invtxt.txt:41
 msgid "trzonek z linką - Linka przywiązana do środka trzonka."
-msgstr ""
+msgstr "handle with a cord - A cord tied to the center of the handle."
 
 #: invtxt.txt:42
 msgid "szczur - Roznoszące choroby obrzydlistwo."
@@ -10033,30 +10049,34 @@ msgstr "two oboles - I hope they were not taken from|under someone's tongue."
 #: invtxt.txt:44
 msgid "eliksir szybkości - Będę mknął niczym gazela. Szkoda, że|efekt jest krótkotrwały."
 msgstr ""
+"speed potion - I'll be rushing like a gazelle. It is a pity that the effect "
+"is short-lived."
 
 #: invtxt.txt:45
 msgid "kufel krasnoluda - Masywny i pojemny kufel, prawie|dzieło sztuki."
-msgstr ""
+msgstr "dwarf pint - A massive and roomy pint, almost|a work of art."
 
 #: invtxt.txt:46
 msgid "kufel pełen mazi - Dobrze, że to coś nie przeżarło go na|wylot. Widocznie został dobrze|zaimpregnowany piwem."
 msgstr ""
+"pint full of goo - It's good that it didn't gnaw|through it. Apparently it "
+"was well|impregnated with beer."
 
 #: invtxt.txt:47
 msgid "mieszek ze złotem - Ciężki i miło brzęczący. Witajcie|słodkie dukatki!"
-msgstr ""
+msgstr "bellows with gold - Heavy and nice buzzing. Hello, sweet ducats!"
 
 #: invtxt.txt:48
 msgid "puzderko z trucizną - Ciekawe, dla kogo to było|przeznaczone?"
-msgstr ""
+msgstr "poison box - I wonder who it was intended for?"
 
 #: invtxt.txt:49
 msgid "diamentowy kastet - Trwalszy niż życie..."
-msgstr ""
+msgstr "diamond brass knuckles - More durable than life..."
 
 #: invtxt.txt:50
 msgid "kamienny udziec - Nieco twardawy."
-msgstr ""
+msgstr "stone thigh - A bit hard."
 
 #: invtxt.txt:51
 msgid "świeczka - Ucięta świeczka."
@@ -10441,6 +10461,11 @@ msgstr ""
 #: mob.lst:5013
 msgid "plakat - \"Kto odnajdzie moją jedyną i ukochaną córkę|Shandrię otrzyma tyle złota, ile potrafi|unieść. Nie będę zmuszał do małżeństwa\".+\"...Zaginęła roku Kozła, zimą, i do dziś los|jest jej nieznany. Pogrążony w smutku, król|Badurrae, Rawet\".+Jest jeszcze portret, ale już mało wyraźny.|Ten plakat wisi tu chyba ładnych parę lat..."
 msgstr ""
+"poster - \"Who will find my only and beloved daughter|Shandria will receive "
+"as much gold as he can carry.|I will not force the marriage.\"+\"... She is "
+"missing from the year of the Goat,|in the winter, and to this day her fate "
+"is unknown.|King Badurrae, Rawet.\"+There is still a portrait, but not very "
+"clear.|This poster probably hangs here quite a few years..."
 
 #: mob.lst:5014
 msgid "butelki - Butelki trochę brudne, ale zawartość|chyba... hm...  czysta."
@@ -10755,10 +10780,18 @@ msgstr ""
 #: mob.lst:13006
 msgid "brzydka dziewczyna - Ponoć był taki podróżnik, który brał na|długie wyprawy najbrzydszą dziewczynę|w okolicy.+Kiedy po miesiącach pobytu na pustkowiu|dziewczyna zaczynała mu się podobać|wiedział, że czas wracać do ludzi.+Ale gdyby miał tę dziewczynę u boku...+...nigdy byśmy go już nie zobaczyli..."
 msgstr ""
+"ugly girl - Apparently there was such a traveller who took|the ugliest girl "
+"in the area on long trips.+When, after months of staying in the wilderness,|"
+"he started to like the girl, he knew that it was time to|return to people. + "
+"But if he had this girl next to him...+...we would never see him again..."
 
 #: mob.lst:13007
 msgid "Sheila - Ponoć był taki podróżnik, który brał na|długie wyprawy najbrzydszą dziewczynę|w okolicy.+Kiedy po miesiącach pobytu na pustkowiu|dziewczyna zaczynała mu się podobać|wiedział, że czas wracać do ludzi.+Ale gdyby miał Sheilę u boku...+...nigdy byśmy go już nie zobaczyli..."
 msgstr ""
+"Sheila - Apparently there was such a traveller who took|the ugliest girl in "
+"the area on long trips.+When, after months of staying in the wilderness,|he "
+"started to like the girl, he knew that it was time to|return to people. + "
+"But if he had this girl next to him...+...we would never see him again..."
 
 #: mob.lst:13008
 msgid "wstążki - Lubię ozdoby, ale wstążki w łóżku to już|chyba lekka przesada."
@@ -10827,6 +10860,10 @@ msgstr ""
 #: mob.lst:14012
 msgid "księgi - Skoro znajdują się w takim miejscu, to pewnie|są wiele warte...+Może opowiadają o sztuce czarodziejskiej?+Albo są rodowymi pamiętnikami pełnymi|namiętności i zbrodni?*+No cóż, mogą też być zwykłe księgi|rachunkowe.+Albo spis mieszkańców królestwa.+Eee tam, na pewno nic ciekawego."
 msgstr ""
+"books - If they are in such a place, they are probably|worth a lot...+Maybe "
+"they talk about the art of magic?+Or they are family diaries full of passion "
+"and crime?*+Well, they can also be ordinary accounting books.+Or a list of "
+"residents of the kingdom.+Uhm, there certainly nothing interesting."
 
 #: mob.lst:14013
 msgid "zasłona - Chroni skarbiec przed wzrokiem ciekawskich|ptaków?..."
