@@ -28,6 +28,7 @@
 namespace Ultima {
 namespace Ultima1 {
 
+class Ultima1Game;
 
 class U1MapTile : public Shared::MapTile {
 public:
@@ -49,7 +50,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Ultima1Map() : Shared::Map() {}
+	Ultima1Map(Ultima1Game *game);
 
 	/**
 	 * Load a given map

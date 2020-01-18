@@ -34,7 +34,7 @@ namespace Shared {
 EMPTY_MESSAGE_MAP(Game, GameBase);
 
 Game::Game() : GameBase() {
-	_gameState = new GameState();
+	_gameState = new GameState(this);
 	_fontResources = new FontResources();
 	_fontResources->load();
 	setFont(new Gfx::Font((const byte *)&_fontResources->_font8x8[0][0]));

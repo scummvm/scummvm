@@ -43,7 +43,6 @@ private:
 	 */
 	void setPalette();
 public:
-	GameState *_gameState;
 	byte _edgeColor;
 	byte _borderColor;
 	byte _highlightColor;

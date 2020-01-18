@@ -37,6 +37,9 @@ enum Direction {
 	DIR_NORTH = 0, DIR_SOUTH = 1, DIR_EAST = 2, DIR_WEST = 3
 };
 
+class Game;
+class Map;
+
 /**
  * Contains data about a given position within the map
  */
@@ -54,6 +57,29 @@ public:
 	 * Clears the map tile information
 	 */
 	virtual void clear();
+};
+
+/**
+ * Base class for things that appear within a map, such as monsters, transports, or people
+ */
+class MapWidget {
+protected:
+	Game *_game;						// Game reference
+	Map *_map;							// Map reference
+	Point _position;					// Position within the map
+	int _hitPoints;						// Hit pointers
+public:
+	/**
+	 * Constructor
+	 */
+	MapWidget(Game *game, Map *map) : _game(game), _map(map) {}
+	MapWidget() : _game(nullptr), _map(nullptr) {}
+	virtual ~MapWidget() {}
+
+	/**
+	 * Get the tile for the widget
+	 */
+	virtual uint getTileNum() const { return 0; }
 };
 
 /**
@@ -86,6 +112,7 @@ class Map {
 	};
 protected:
 	byte _mapId;						// The map Id
+	Common::Array<MapWidget> _widgets;	// Party, monsteres, transports, etc.
 	MapType _mapType;
 	uint _mapStyle;						// Map style category for towns & castles
 	Common::Array<int16> _data;			// Data for the map

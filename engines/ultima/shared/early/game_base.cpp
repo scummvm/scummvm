@@ -32,8 +32,8 @@
 namespace Ultima {
 namespace Shared {
 
-GameBase::GameBase(): _currentView(nullptr), _font(nullptr), _priorLeftDownTime(0),
-	_priorMiddleDownTime(0), _priorRightDownTime(0), _inputHandler(this), _inputTranslator(&_inputHandler) {
+GameBase::GameBase(): _currentView(nullptr), _font(nullptr), _priorLeftDownTime(0), _priorMiddleDownTime(0),
+		_priorRightDownTime(0), _inputHandler(this), _gameState(nullptr), _inputTranslator(&_inputHandler) {
 }
 
 GameBase::~GameBase() {

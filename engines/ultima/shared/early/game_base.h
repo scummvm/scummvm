@@ -34,6 +34,7 @@ namespace Ultima {
 namespace Shared {
 
 class UltimaEngine;
+class GameState;
 
 namespace Gfx {
 	class VisualItem;
@@ -41,16 +42,6 @@ namespace Gfx {
 }
 
 class GameBase : public TreeItem, public EventTarget {
-private:
-	int _pendingLoadSlot;
-	uint32 _priorLeftDownTime;
-	uint32 _priorMiddleDownTime;
-	uint32 _priorRightDownTime;
-	Gfx::VisualItem *_currentView;
-	Shared::GameState _gameState;
-	InputHandler _inputHandler;
-	InputTranslator _inputTranslator;
-	Gfx::Font *_font;
 private:
 	/**
 	 * Checks for the presence of any savegames and, if present,
@@ -68,6 +59,17 @@ private:
 	bool isMouseControlEnabled() const { return true; }
 
 	void changeView(const Common::String &name);
+protected:
+	int _pendingLoadSlot;
+	uint32 _priorLeftDownTime;
+	uint32 _priorMiddleDownTime;
+	uint32 _priorRightDownTime;
+	Gfx::VisualItem *_currentView;
+	InputHandler _inputHandler;
+	InputTranslator _inputTranslator;
+	Gfx::Font *_font;
+public:
+	GameState *_gameState;
 public:
 	/**
 	 * Constructor
