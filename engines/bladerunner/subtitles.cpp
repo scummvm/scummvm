@@ -92,7 +92,8 @@ const char *Subtitles::SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries] = {
 	"END01D",           // 22
 	"END01E",           // 23
 	"END01F",           // 24
-	"END03"             // 25
+	"END03",            // 25
+	"TB_FLY"            // 26
 };
 
 /**
