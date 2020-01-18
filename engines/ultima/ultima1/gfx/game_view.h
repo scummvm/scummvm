@@ -46,11 +46,6 @@ private:
 	Shared::Status *_status;
 	Shared::ViewportDungeon *_viewportDungeon;
 	Shared::ViewportMap *_viewportMap;
-private:
-	/**
-	 * Draw the frame for the screen
-	 */
-	void drawFrame();
 public:
 	GameView(TreeItem *parent = nullptr);
 	virtual ~GameView();

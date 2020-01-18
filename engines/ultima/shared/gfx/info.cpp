@@ -21,11 +21,16 @@
  */
 
 #include "ultima/shared/gfx/info.h"
+#include "ultima/shared/early/game.h"
 
 namespace Ultima {
 namespace Shared {
 
 EMPTY_MESSAGE_MAP(Info, Gfx::VisualItem);
+
+void Info::draw() {
+
+}
 
 } // End of namespace Shared
 } // End of namespace Ultima

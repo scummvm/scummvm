@@ -36,7 +36,6 @@ class Game : public GameBase {
 	DECLARE_MESSAGE_MAP;
 private:
 	GameView *_gameView;
-	GameState *_gameState;
 	FontResources *_fontResources;
 private:
 	/**
@@ -44,6 +43,7 @@ private:
 	 */
 	void setPalette();
 public:
+	GameState *_gameState;
 	byte _edgeColor;
 	byte _borderColor;
 	byte _highlightColor;

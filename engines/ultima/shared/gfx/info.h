@@ -28,12 +28,20 @@
 namespace Ultima {
 namespace Shared {
 
+/**
+ * Textual info area, showing what commands area done, and any responses to them
+ */
 class Info : public Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
 public:
 	CLASSDEF;
-	Info(TreeItem *parent) : Gfx::VisualItem("Info", Rect(8, 168, 240, 200), parent) {}
+	Info(TreeItem *parent) : Gfx::VisualItem("Info", Rect(0, 168, 240, 200), parent) {}
 	virtual ~Info() {}
+
+	/**
+	 * Draw the contents
+	 */
+	virtual void draw();
 };
 
 } // End of namespace Shared

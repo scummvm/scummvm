@@ -28,22 +28,16 @@
 namespace Ultima {
 namespace Shared {
 
+class TextPoint;
+
 typedef Common::Rect Rect;
 
-struct Point : public Common::Point {
-	Point() : Common::Point() {}
-	Point(int16 x1, int16 y1) : Common::Point(x1, y1) {}
-	Point(const Common::Point &pt) : Common::Point(pt.x, pt.y) {}
-};
+typedef Common::Point Point;
 
 class TextPoint : public Common::Point {
 public:
-	TextPoint() : Point() {}
-	TextPoint(int16 x1, int16 y1) : Point(x1, y1) {}
-
-	operator Point() const {
-		return Point(x * 8, y * 8);
-	}
+	TextPoint() : Common::Point() {}
+	TextPoint(int16 x1, int16 y1) : Common::Point(x1 * 8, y1 * 8) {}
 };
 
 } // End of namespace Shared
