@@ -42,7 +42,7 @@ GameState::GameState() : MAX_TILES_PER_ORIGINAL(16, 16), _videoMode(EGA) {
 
 	// Load the default overworld map
 	_map->loadMap(0, _videoMode);
-	_map->setPosition(Common::Point(49, 40));
+	_map->setPosition(Point(49, 40));
 }
 
 GameState::~GameState() {

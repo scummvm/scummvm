@@ -21,17 +21,36 @@
  */
 
 #include "ultima/shared/gfx/visual_surface.h"
+#include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/early/game_base.h"
+#include "ultima/shared/gfx/font.h"
 
 namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
-VisualSurface::VisualSurface(const Graphics::ManagedSurface &src, const Common::Rect &bounds) :
-	Graphics::ManagedSurface(src), _bounds(bounds) {
+VisualSurface::VisualSurface(const Graphics::ManagedSurface &src, const Rect &bounds) :
+		Graphics::ManagedSurface(src), _bounds(bounds) {
 }
 
-void VisualSurface::drawPoint(const Common::Point &pt, byte color) {
-	fillRect(Common::Rect(pt.x, pt.y, pt.x + 1, pt.y + 1), color);
+void VisualSurface::drawPoint(const Point &pt, byte color) {
+	fillRect(Rect(pt.x, pt.y, pt.x + 1, pt.y + 1), color);
+}
+
+void VisualSurface::writeString(const Common::String &msg, const Point &pt, byte color) {
+	_textPos = pt;
+	writeString(msg, color);
+}
+
+void VisualSurface::writeString(const Common::String &msg, byte color) {
+	Gfx::Font *font = g_vm->_game->getFont();
+	_textPos.x += font->writeString(*this, msg, _textPos, color);
+}
+
+void VisualSurface::writeChar(unsigned char c, const Point &pt, byte color) {
+	Gfx::Font *font = g_vm->_game->getFont();
+	font->writeChar(*this, c, _textPos, color);
+	_textPos.x += font->charWidth(c);
 }
 
 } // End of namespace Gfx

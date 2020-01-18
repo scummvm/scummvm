@@ -97,7 +97,7 @@ void InputHandler::processMessage(CMessage *msg) {
 				// Save where the drag movement started from
 				_dragStartPos = _mousePos;
 			} else {
-				Common::Point delta = _mousePos - _dragStartPos;
+				Point delta = _mousePos - _dragStartPos;
 				int distance = (int)sqrt(double(delta.x * delta.x + delta.y * delta.y));
 
 				if (distance > 4) {

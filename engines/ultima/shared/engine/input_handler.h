@@ -47,8 +47,8 @@ public:
 	InputTranslator *_inputTranslator;
 	bool _dragging;
 	bool _buttonDown;
-	Common::Point _mousePos;
-	Common::Point _dragStartPos;
+	Point _mousePos;
+	Point _dragStartPos;
 	int _lockCount;
 	bool _abortMessage;
 public:

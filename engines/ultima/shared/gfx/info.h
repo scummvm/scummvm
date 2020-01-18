@@ -32,7 +32,7 @@ class Info : public Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
 public:
 	CLASSDEF;
-	Info(TreeItem *parent) : Gfx::VisualItem("Info", Common::Rect(8, 168, 240, 200), parent) {}
+	Info(TreeItem *parent) : Gfx::VisualItem("Info", Rect(8, 168, 240, 200), parent) {}
 	virtual ~Info() {}
 };
 

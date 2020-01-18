@@ -20,53 +20,38 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_GFX_FONT_H
-#define ULTIMA_SHARED_GFX_FONT_H
+#ifndef ULTIMA_SHARED_CORE_RECT_H
+#define ULTIMA_SHARED_CORE_RECT_H
 
-#include "common/array.h"
-#include "common/stream.h"
-#include "graphics/managed_surface.h"
-#include "ultima/shared/core/rect.h"
+#include "common/rect.h"
 
 namespace Ultima {
 namespace Shared {
-namespace Gfx {
 
-class Font {
-private:
-	const byte *_data;
-	size_t _startingChar, _endingChar;
-public:
-	Font(const byte *data, size_t startingChar = 0, size_t charCount = 256);
+typedef Common::Rect Rect;
 
-	/**
-	 * Write out a string
-	 */
-	int writeString(Graphics::ManagedSurface &surface, const Common::String &msg, const Point &pt, byte color);
-
-	/**
-	 * Draw a character
-	 */
-	void writeChar(Graphics::ManagedSurface &surface, unsigned char c, const Point &pt, byte color);
-
-	/**
-	 * Return the width of a character
-	 */
-	uint charWidth(char c) const;
-
-	/**
-	 * Return the width of a string
-	 */
-	uint stringWidth(const Common::String &msg) const;
-
-	/**
-	 * Returns the height of the font
-	 */
-	uint lineHeight() const;
+struct Point : public Common::Point {
+	Point() : Common::Point() {}
+	Point(int16 x1, int16 y1) : Common::Point(x1, y1) {}
+	Point(const Common::Point &pt) : Common::Point(pt.x, pt.y) {}
 };
 
-} // End of namespace Gfx
+class TextPoint : public Common::Point {
+public:
+	TextPoint() : Point() {}
+	TextPoint(int16 x1, int16 y1) : Point(x1, y1) {}
+
+	operator Point() const {
+		return Point(x * 8, y * 8);
+	}
+};
+
 } // End of namespace Shared
+
+using Shared::Rect;
+using Shared::Point;
+using Shared::TextPoint;
+
 } // End of namespace Ultima
 
 #endif

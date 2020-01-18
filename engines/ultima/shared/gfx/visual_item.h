@@ -46,14 +46,14 @@ private:
 	 */
 	void init(TreeItem *parent = nullptr);
 protected:
-	Common::Rect _bounds;
+	Rect _bounds;
 	bool _isDirty;
 public:
 	CLASSDEF;
 	VisualItem(TreeItem *parent = nullptr) { init(parent); }
-	VisualItem(const Common::Rect &r, TreeItem *parent = nullptr) : _bounds(r) { init(parent); }
+	VisualItem(const Rect &r, TreeItem *parent = nullptr) : _bounds(r) { init(parent); }
 	VisualItem(const Common::String &name, TreeItem *parent = nullptr) : NamedItem(name) { init(parent); }
-	VisualItem(const Common::String &name, const Common::Rect &r, TreeItem *parent = nullptr) : NamedItem(name),
+	VisualItem(const Common::String &name, const Rect &r, TreeItem *parent = nullptr) : NamedItem(name),
 		_bounds(r) { init(parent); }
 
 	virtual ~VisualItem() {
@@ -75,21 +75,19 @@ public:
 	/**
 	 * Gets the bounds for the item
 	 */
-	const Common::Rect &getBounds() {
-		return _bounds;
-	}
+	const Rect &getBounds() { return _bounds; }
 
 	/**
 	 * Sets the bounds for the item
 	 * @remarks Does not erase the item if it's already been drawn
 	 */
-	void setBounds(const Common::Rect &r);
+	void setBounds(const Rect &r);
 
 	/**
 	 * Set the position for the item
 	 * @remarks Does not erase the item if it's already been drawn
 	 */
-	void setPosition(const Common::Point &pt);
+	void setPosition(const Point &pt);
 
 	/**
 	 * Flags the item as being changed, requiring a full redraw

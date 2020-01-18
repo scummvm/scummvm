@@ -23,7 +23,7 @@
 #ifndef ULTIMA_SHARED_CORE_GAME_STATE_H
 #define ULTIMA_SHARED_CORE_GAME_STATE_H
 
-#include "common/rect.h"
+#include "ultima/shared/core/rect.h"
 #include "ultima/shared/core/character.h"
 #include "ultima/shared/core/map.h"
 
@@ -40,13 +40,13 @@ private:
 	 * Enhanced game versions can have multiple tiles per tile of the original game. This constant
 	 * specifies the maximum number of tiles a map can have versus the original
 	 */
-	const Common::Point MAX_TILES_PER_ORIGINAL;
+	const Point MAX_TILES_PER_ORIGINAL;
 
 	/**
 	 * Position in the world map. This is in the context of the whatever overworld map is used,
 	 * so would have to be divided by MAX_TILES_PER_ORIGINAL to get original game co-ordinates
 	 */
-	Common::Point _worldMapPos;
+	Point _worldMapPos;
 
 	/**
 	 * Pointer to the map manager for the game

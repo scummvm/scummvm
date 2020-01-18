@@ -48,11 +48,11 @@ private:
 public:
 	CLASSDEF;
 	VisualContainer(TreeItem *parent = nullptr) : VisualItem(parent), _mouseFocusItem(nullptr) {}
-	VisualContainer(const Common::Rect &r, TreeItem *parent = nullptr) :
+	VisualContainer(const Rect &r, TreeItem *parent = nullptr) :
 		VisualItem(r, parent), _mouseFocusItem(nullptr) {}
 	VisualContainer(const Common::String &name, TreeItem *parent = nullptr) :
 		VisualItem(name, parent), _mouseFocusItem(nullptr) {}
-	VisualContainer(const Common::String &name, const Common::Rect &r, TreeItem *parent = nullptr) :
+	VisualContainer(const Common::String &name, const Rect &r, TreeItem *parent = nullptr) :
 		VisualItem(name, r, parent), _mouseFocusItem(nullptr) {}
 	virtual ~VisualContainer() {}
 
