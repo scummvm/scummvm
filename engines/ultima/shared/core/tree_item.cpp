@@ -21,10 +21,8 @@
  */
 
 #include "ultima/shared/core/tree_item.h"
-#include "ultima/shared/core/named_item.h"
-#include "ultima/shared/core/project_item.h"
-#include "ultima/shared/engine/game_manager.h"
 #include "ultima/shared/early/game.h"
+#include "ultima/shared/engine/game_manager.h"
 
 namespace Ultima {
 namespace Shared {

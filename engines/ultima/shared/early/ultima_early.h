@@ -28,10 +28,10 @@
 namespace Ultima {
 namespace Shared {
 
+class Game;
 class MainGameWindow;
 class MouseCursor;
 class Resources;
-class Game;
 
 namespace Gfx {
 class Screen;
@@ -77,12 +77,6 @@ public:
 	GameId getGameID() const;
 
 	/**
-	 * Creates a new project hierarchy for the game, that contains all
-	 * the logic for playing that particular game.
-	 */
-	Game *createProject() const;
-
-	/**
 	 * Get the screen
 	 */
 	virtual Graphics::Screen *getScreen() const;
@@ -113,6 +107,11 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 		return Common::kWritingFailed;
 	}
+
+	/*
+	 * Creates a new hierarchy for the game, that contains all the logic for playing that particular game.
+	 */
+	Shared::Game *createGame() const;
 };
 
 extern UltimaEarlyEngine *g_vm;

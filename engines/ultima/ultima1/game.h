@@ -23,14 +23,14 @@
 #ifndef ULTIMA_ULTIMA1_GAME_H
 #define ULTIMA_ULTIMA1_GAME_H
 
-#include "ultima/shared/early/ultima_game.h"
+#include "ultima/shared/early/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
 class GameView;
 
-class Ultima1Game : public Shared::UltimaGame {
+class Ultima1Game : public Shared::Game {
 	DECLARE_MESSAGE_MAP;
 public:
 	GameView *_gameView;

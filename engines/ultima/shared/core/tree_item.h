@@ -28,11 +28,11 @@
 namespace Ultima {
 namespace Shared {
 
+class Game;
 class GameManager;
 class GameState;
 class Events;
 class NamedItem;
-class Game;
 class CMessage;
 
 /**

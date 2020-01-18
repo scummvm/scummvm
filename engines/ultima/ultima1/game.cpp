@@ -26,9 +26,9 @@
 namespace Ultima {
 namespace Ultima1 {
 
-EMPTY_MESSAGE_MAP(Ultima1Game, Shared::UltimaGame);
+EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
 
-Ultima1Game::Ultima1Game() : Shared::UltimaGame() {
+Ultima1Game::Ultima1Game() : Shared::Game() {
 	_gameView = new GameView();
 	_gameView->addUnder(this);
 }

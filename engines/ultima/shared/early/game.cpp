@@ -20,57 +20,66 @@
  *
  */
 
-#include "ultima/shared/core/named_item.h"
 #include "ultima/shared/early/game.h"
+#include "ultima/shared/core/game_state.h"
+#include "ultima/shared/engine/resources.h"
+#include "ultima/shared/early/font_resources.h"
+#include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/gfx/screen.h"
 
 namespace Ultima {
 namespace Shared {
 
-#define CURRENT_SAVEGAME_VERSION 1
-#define MAX_SAVEGAME_SLOTS 99
-#define MINIMUM_SAVEGAME_VERSION 1
-
 EMPTY_MESSAGE_MAP(Game, NamedItem);
 
-Game::Game() : _gameManager(nullptr) {
+Game::Game() : NamedItem() {
+	_fontResources = new FontResources();
+	_gameState = new GameState();
+
+	setPalette();
 }
 
-void Game::setGameManager(GameManager *gameManager) {
-	if (!_gameManager)
-		_gameManager = gameManager;
+Game::~Game() {
+	delete _fontResources;
+	delete _gameState;
 }
 
-void Game::resetGameManager() {
-	_gameManager = nullptr;
-}
+void Game::setPalette() {
+	switch (_gameState->_videoMode) {
+	case CGA: {
+		static const byte PALETTE[4][3] = { { 0, 0, 0 }, { 0xAA, 0xAA, 0 }, {0xAA, 0, 0xAA }, {0xAA, 0xAA, 0xAA } };
+		g_vm->_screen->setPalette(&PALETTE[0][0], 0, 4);
 
-void Game::loadGame(int slotId) {
+		_foregroundColor = 3;
+		_backgroundColor = 3;
+		_highlightColor = 1;
+		_textColor = 3;
+		_color1 = 6;
+		break;
+	}
 
-}
+	case TGA:
+	case EGA: {
+		static const byte PALETTE[16][3] = {
+			{ 0, 0, 0 }, { 0x00, 0x00, 0x80 }, { 0x00, 0x80, 0x00 }, { 0x00, 0x80, 0x80 },
+			{ 0x80, 0x00, 0x00 }, { 0x80, 0x00, 0x80 }, { 0x80, 0x80, 0x00 }, { 0xC0, 0xC0, 0xC0 },
+			{ 0x80, 0x80, 0x80 }, { 0x00, 0x00, 0xFF }, { 0x00, 0xFF, 0x00 }, { 0x00, 0xFF, 0xFF },
+			{ 0xFF, 0x40, 0x40 }, { 0xFF, 0x00, 0xFF }, { 0xFF, 0xFF, 0x00 }, {0xFF, 0xFF, 0xFF }
+		};
+		g_vm->_screen->setPalette(&PALETTE[0][0], 0, 16);
 
-void Game::saveGame(int slotId, const Common::String &desc) {
+		_foregroundColor = 15;
+		_backgroundColor = 1;
+		_highlightColor = 12;
+		_textColor = 11;
+		_color1 = 7;
+		break;
+	}
 
-}
-
-void Game::clear() {
-	TreeItem *item;
-	while ((item = getFirstChild()) != nullptr)
-		item->destroyAll();
-}
-
-void Game::preLoad() {
-
-}
-
-void Game::postLoad() {
-
-}
-
-void Game::preSave() {
-
-}
-
-void Game::postSave() {
+	default:
+		error("TODO: Palette setup for other video mode");
+		break;
+	}
 
 }
 

@@ -24,7 +24,6 @@
 #include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/engine/main_game_window.h"
 #include "ultima/shared/gfx/screen.h"
-#include "ultima/shared/core/project_item.h"
 #include "ultima/shared/early/game.h"
 
 namespace Ultima {
@@ -63,8 +62,8 @@ bool CMessage::execute(TreeItem *target, const ClassDef *classDef, int flags) {
 
 bool CMessage::execute(const Common::String &target, const ClassDef *classDef, int flags) {
 	// Scan for the target by name
-	Game *project = g_vm->_window->_project;
-	for (TreeItem *treeItem = project; treeItem; treeItem = treeItem->scan(project)) {
+	Shared::Game *game = g_vm->_window->_game;
+	for (TreeItem *treeItem = game; treeItem; treeItem = treeItem->scan(game)) {
 		if (!treeItem->getName().compareToIgnoreCase(target))
 			return execute(treeItem, classDef, flags);
 	}

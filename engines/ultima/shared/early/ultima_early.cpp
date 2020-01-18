@@ -29,7 +29,6 @@
 #include "ultima/shared/core/mouse_cursor.h"
 #include "ultima/shared/gfx/screen.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/ultima1/project_item.h"
 
 namespace Ultima {
 namespace Shared {
@@ -91,7 +90,7 @@ void UltimaEarlyEngine::playGame() {
 	}
 }
 
-Game *UltimaEarlyEngine::createProject() const {
+Game *UltimaEarlyEngine::createGame() const {
 	switch (getGameID()) {
 	case GAME_ULTIMA1:
 		return new Ultima1::Ultima1Game();
