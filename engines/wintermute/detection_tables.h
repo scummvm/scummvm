@@ -56,6 +56,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"corrosion",       "Corrosion: Cold Winter Waiting"},
 	{"darkfallls",      "Dark Fall: Lost Souls"},
 	{"deadcity",        "Dead City"},
+	{"devilincapital",  "Devil In The Capital"},
 	{"dfafadventure",   "DFAF Adventure"},
 	{"drbohus",         "Dr. Bohus"},
 	{"dreamcat",        "Dreamcat"},
@@ -68,6 +69,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"everydaygray",    "Everyday Grey"},
 	{"facenoir",        "Face Noir"},
 	{"findinghope",     "Finding Hope"},
+	{"forgottensound1", "Forgotten Sound 1 - Revelation"},
+	{"forgottensound2", "Forgotten Sound 2 - Destiny"},
 	{"four",            "Four"},
 	{"foxtail",         "FoxTail"},
 	{"framed",          "Framed"},
@@ -103,6 +106,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"polechudes",      "Pole Chudes"},
 	{"projectdoom",     "Project: Doom"},
 	{"projectjoe",      "Project Joe"},
+	{"qajarycat",       "Qajary Cat"},
 	{"rebeccacarlson1", "Rebecca Carlson Mystery 01 - Silent Footsteps"},
 	{"reptilesquest",   "On the Tracks of Dinosaurs"},
 	{"reversion1",      "Reversion: The Escape"},
@@ -121,6 +125,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"sotv2",           "Shadows on the Vatican - Act II: Wrath"},
 	{"tanya1",          "Tanya Grotter and the Magical Double Bass"},
 	{"tanya2",          "Tanya Grotter and the Disappearing Floor"},
+	{"tehran1933",      "Murder In Tehran's Alleys 1933"},
+	{"tehran2016",      "Murder In Tehran's Alleys 2016"},
 	{"theancientmark1", "The Ancient Mark - Episode 1"},
 	{"thebox",          "The Box"},
 	{"thekite",         "The Kite"},
@@ -602,6 +608,11 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("russian.dcp", "a0ae71e9e1185596fffb07ad2c951eb9", 653317,
 					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::RU_RUS, ADGF_UNSTABLE, WME_1_4_1),
 
+	// Devil In The Capital (Steam, July 2017) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("devilincapital", "",
+		WME_ENTRY1s("data.dcp","c3a3cd00c0493cddb84ce243272f60be", 1317709066), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
 	// DFAF Adventure
 	WME_WINENTRY("dfafadventure", "",
 		WME_ENTRY1s("data.dcp","5704ebef961176f647742aa66bd09352", 10083417), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, WME_1_9_1),
@@ -736,6 +747,16 @@ static const WMEGameDescription gameDescriptions[] = {
 	// NOTE: this game distribution contained unpacked game files instead of usual game.dcp package
 	WME_WINENTRY("findinghope", "",
 		WME_ENTRY1s("default.game", "57db79e9de62b9d1c7a335822f6242ff", 742), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Forgotten Sound 1 - Revelation (Steam, January 2018)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("forgottensound1", "",
+		WME_ENTRY1s("data.dcp", "01b8b2b4c55c2d83071f5730269cb313", 937507449), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Forgotten Sound 2 - Destiny (Steam, January 2018)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope	
+	WME_WINENTRY("forgottensound2", "",
+		WME_ENTRY1s("data.dcp", "d743f4ffee2a7cc939e314f29a1a0cd6", 1244439717), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Four
 	WME_WINENTRY("four", "",
@@ -1339,6 +1360,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Project Lonely Robot (Beta)
 	WME_WINENTRY("lonelyrobot", "Beta",
 		WME_ENTRY1s("data.dcp", "a0cf7ad5bab957416dcda454e9f28ef0", 3420120), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_0),
+
+	// Qajary Cat (Steam, November 2017) (English)
+	WME_WINENTRY("qajarycat", "",
+		WME_ENTRY1s("data.dcp", "3e47e3cd94133bdd5facf30ee84389ea", 447760816), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Rebecca Carlson Mystery 01 - Silent Footsteps
 	WME_WINENTRY("rebeccacarlson1", "",
@@ -4293,6 +4318,16 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Tanya Grotter and the Disappearing Floor
 	WME_WINENTRY("tanya2", "",
 		WME_ENTRY1s("data.dcp", "9c15f14990f630177e063da885d03e6d", 936959767), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_3),
+
+	// Murder In Tehran's Alleys 1933 (Steam, June 2017)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("tehran1933", "",
+		WME_ENTRY1s("data.dcp", "7d74999f8a926bce367b2f851a06bc1c", 890506879), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Murder In Tehran's Alleys 2016 (Steam, June 2017)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("tehran2016", "",
+		WME_ENTRY1s("data.dcp", "952346c4d7a08986688b3cc583215d33", 1163612836), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// The Ancient Mark - Episode 1
 	WME_WINENTRY("theancientmark1", "",
