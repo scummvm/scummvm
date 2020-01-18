@@ -168,6 +168,11 @@ public:
 	 * Gets a tile at a given position
 	 */
 	void getTileAt(const Point &pt, MapTile *tile);
+
+	/**
+	 * Adds a widget to the map
+	 */
+	void addWidget(MapWidget *widget);
 };
 
 } // End of namespace Shared

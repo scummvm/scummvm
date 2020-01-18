@@ -20,42 +20,44 @@
  *
  */
 
-#include "ultima/ultima1/gfx/game_view.h"
-#include "ultima/shared/gfx/info.h"
-#include "ultima/shared/gfx/viewport_dungeon.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/gfx/drawing_support.h"
-#include "ultima/ultima1/gfx/status.h"
-#include "ultima/ultima1/gfx/viewport_map.h"
-#include "ultima/ultima1/actions/move.h"
+#ifndef ULTIMA_ULTIMA1_ACTIONS_ACTION_H
+#define ULTIMA_ULTIMA1_ACTIONS_ACTION_H
+
+#include "ultima/shared/core/tree_item.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace U1Gfx {
 
-GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
-	_info = new Shared::Info(this);
-	_status = new Status(this);
-	_viewportDungeon = new Shared::ViewportDungeon(this);
-	_viewportMap = new ViewportMap(this);
-	_actions[0] = new Actions::Move(this);
-}
+class Ultima1Game;
+class Ultima1Map;
 
-GameView::~GameView() {
-	delete _info;
-	delete _status;
-	delete _viewportDungeon;
-	delete _viewportMap;
-	delete _actions[0];
-}
+namespace Actions {
 
-void GameView::draw() {
-	DrawingSupport ds(getSurface());
-	ds.drawGameFrame();
+class Action : public Shared::TreeItem {
+public:
+	/**
+	 * Constructor
+	 */
+	Action(TreeItem *parent);
 
-	Shared::Gfx::VisualContainer::draw();
-}
+	/**
+	 * Destructor
+	 */
+	virtual ~Action() {}
 
-} // End of namespace U1Gfx
-} // End of namespace Shared
+	/**
+	 * Jumps up through the parents to find the root game
+	 */
+	Ultima1Game *getRoot();
+
+	/**
+	 * Return the game's map
+	 */
+	Ultima1Map *getMap();
+};
+
+} // End of namespace Actions
+} // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

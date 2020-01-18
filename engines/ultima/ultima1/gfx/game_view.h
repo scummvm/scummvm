@@ -26,12 +26,21 @@
 #include "ultima/shared/gfx/visual_container.h"
 
 namespace Ultima {
-
 namespace Shared {
-	class Info;
-	class ViewportDungeon;
-}
-	
+class Info;
+class ViewportDungeon;
+} // End of namespace Shared
+} // End of namespace Ultima
+
+namespace Ultima {
+namespace Ultima1 {
+namespace Actions {
+class Action;
+} // End of namespace Actions
+} // End of namespace Ultima1
+} // End of namespace Ultima
+
+namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
@@ -48,6 +57,7 @@ private:
 	Shared::ViewportDungeon *_viewportDungeon;
 	ViewportMap *_viewportMap;
 	Status *_status;
+	Actions::Action *_actions[1];
 public:
 	GameView(TreeItem *parent = nullptr);
 	virtual ~GameView();
@@ -59,7 +69,7 @@ public:
 };
 
 } // End of namespace U1Gfx
-} // End of namespace Shared
+} // End of namespace Ultima1
 } // End of namespace Ultima
 
 #endif

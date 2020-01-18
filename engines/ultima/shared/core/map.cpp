@@ -112,5 +112,9 @@ void Map::getTileAt(const Point &pt, MapTile *tile) {
 	}
 }
 
+void Map::addWidget(MapWidget *widget) {
+	_widgets.push_back(Shared::MapWidgetPtr(widget));
+}
+
 } // End of namespace Shared
 } // End of namespace Ultima

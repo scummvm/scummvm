@@ -31,7 +31,7 @@ namespace Ultima1 {
 using Shared::File;
 
 Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Map() {
-	_widgets.push_back(Shared::MapWidgetPtr(new WidgetPlayer(game, this)));
+	addWidget(new WidgetPlayer(game, this));
 }
 
 void Ultima1Map::loadMap(int mapId, uint videoMode) {
