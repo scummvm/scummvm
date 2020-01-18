@@ -124,7 +124,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"theancientmark1", "The Ancient Mark - Episode 1"},
 	{"thebox",          "The Box"},
 	{"thekite",         "The Kite"},
-	{"thelastcrown",    "The Last Crown"},
+	{"thelastcrownmh",  "The Last Crown - Midnight Horror"},
+	{"thelostcrowngha", "The Lost Crown - A Ghost-Hunting Adventure"},
 	{"tib",             "Fairy Tales About Toshechka and Boshechka"},
 	{"tradestory",      "The Trader of Stories"},
 	{"twc",             "The White Chamber"},
@@ -4336,34 +4337,45 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("thekite", "Version 1.4.r",
 		WME_ENTRY1s("data.dcp", "16618c3488b07fae5d00fb94c408d2b8", 47472358), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
-	// The Last Crown - A Ghost Hunting Adventure (2CD version)
+	// The Last Crown - Midnight Horror (Steam, Dec 2015) (English)
+	// NOTE: Same packages were reuploaded to Steam at October 2017
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("thelastcrown", "",
+	WME_WINENTRY("thelastcrownmh", "",
+		WME_ENTRY1s("stageplay.dcp", "eaf6c27f45cbb786306bf9dce0db7f94", 920651607), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// The Last Crown - Midnight Horror (Steam, Oct 2017) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("thelastcrownmh", "",
+		WME_ENTRY1s("stageplay.dcp", "563dd3383cb91b0f988fd9650815830f", 871649803), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
+
+	// The Lost Crown - A Ghost Hunting Adventure (2CD version) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("thelostcrowngha", "",
 		WME_ENTRY1s("theatre.dcp", "d0ee83038af66a6a4bb7c513e9550cbb", 77989556), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_2),
 
-	// The Last Crown - A Ghost Hunting Adventure (DVD version)
+	// The Lost Crown - A Ghost Hunting Adventure (DVD version) (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("thelastcrown", "",
+	WME_WINENTRY("thelostcrowngha", "",
 		WME_ENTRY1s("theatre.dcp", "741867f67bfb639ac0c96f6990822893", 78078952), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_2),
 
-	// The Last Crown - A Ghost Hunting Adventure (DVD version, German)
+	// The Lost Crown - A Ghost Hunting Adventure (DVD version) (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("thelastcrown", "",
+	WME_WINENTRY("thelostcrowngha", "",
 		WME_ENTRY1s("theatre.dcp", "3deed61c6f6f02e7422b639c52b9169a", 78455706), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_2),
 
-	// The Last Crown - A Ghost Hunting Adventure (Steam, Jul 2014)
+	// The Lost Crown - A Ghost Hunting Adventure (Steam, Jul 2014) (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("thelastcrown", "",
+	WME_WINENTRY("thelostcrowngha", "",
 		WME_ENTRY1s("theatre.dcp", "25e005501162a96743ae3d3d33e7bbc3", 88472760), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// The Last Crown - A Ghost Hunting Adventure (Steam, Jun 2014) (German)
+	// The Lost Crown - A Ghost Hunting Adventure (Steam, Jun 2014) (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("thelastcrown", "",
+	WME_WINENTRY("thelostcrowngha", "",
 		WME_ENTRY1s("theatre.dcp", "46cf3cfa4c4a1007b94c00d779bb24bd", 89163239), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
 
-	// The Last Crown - A Ghost Hunting Adventure (Steam, Jul 2014) (German)
+	// The Lost Crown - A Ghost Hunting Adventure (Steam, Jul 2014) (German)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
-	WME_WINENTRY("thelastcrown", "",
+	WME_WINENTRY("thelostcrowngha", "",
 		WME_ENTRY1s("theatre.dcp", "21e943958e69c3f80803c649b6290140", 89163394), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Fairy Tales About Toshechka and Boshechka
