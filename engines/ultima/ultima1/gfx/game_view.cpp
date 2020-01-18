@@ -23,10 +23,10 @@
 #include "ultima/ultima1/gfx/game_view.h"
 #include "ultima/shared/gfx/info.h"
 #include "ultima/shared/gfx/viewport_dungeon.h"
-#include "ultima/shared/gfx/viewport_map.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/gfx/drawing_support.h"
 #include "ultima/ultima1/gfx/status.h"
+#include "ultima/ultima1/gfx/viewport_map.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -35,7 +35,7 @@ GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", 
 	_info = new Shared::Info(this);
 	_status = new Status(this);
 	_viewportDungeon = new Shared::ViewportDungeon(this);
-	_viewportMap = new Shared::ViewportMap(this);
+	_viewportMap = new ViewportMap(this);
 }
 
 GameView::~GameView() {

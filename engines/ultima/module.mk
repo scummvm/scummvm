@@ -50,6 +50,7 @@ MODULE_OBJS += \
 	ultima1/gfx/drawing_support.o \
 	ultima1/gfx/game_view.o \
 	ultima1/gfx/status.o \
+	ultima1/gfx/viewport_map.o \
 	ultima1/game.o
 endif
 
