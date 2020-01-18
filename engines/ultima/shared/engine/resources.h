@@ -102,6 +102,11 @@ protected:
 	LocalResourceFile(Resources *owner, const Common::String &filename) : ResourceFile(filename),
 		_owner(owner), _file(DisposeAfterUse::YES) {}
 
+	/**
+	 * Return true if in saving mode
+	 */
+	bool isSaving() const { return _owner != nullptr; }
+
 	virtual void syncString(const char *&str);
 	virtual void syncStrings(const char **str, size_t count);
 	virtual void syncStrings2D(const char **str, size_t count1, size_t count2);

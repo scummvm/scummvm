@@ -20,15 +20,23 @@
  *
  */
 
-#include "ultima/ultima0/project_item.h"
+#ifndef ULTIMA_SHARED_GFX_STATUS_H
+#define ULTIMA_SHARED_GFX_STATUS_H
+
+#include "ultima/shared/gfx/visual_item.h"
 
 namespace Ultima {
-namespace Ultima0 {
+namespace Shared {
 
-EMPTY_MESSAGE_MAP(Ultima0Game, Shared::UltimaGame);
+class Status : public Gfx::VisualItem {
+	DECLARE_MESSAGE_MAP;
+public:
+	CLASSDEF;
+	Status() : Gfx::VisualItem("Status", Common::Rect(8, 168, 240, 200)) {}
+	virtual ~Status() {}
+};
 
-Ultima0Game::Ultima0Game() : Shared::UltimaGame() {
-}
+} // End of namespace Shared
+} // End of namespace Xeen
 
-} // End of namespace Ultima0
-} // End of namespace Ultima
+#endif

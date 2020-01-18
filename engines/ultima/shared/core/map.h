@@ -20,15 +20,17 @@
  *
  */
 
-#include "ultima/ultima0/project_item.h"
+#ifndef ULTIMA_SHARED_CORE_MAP_H
+#define ULTIMA_SHARED_CORE_MAP_H
 
 namespace Ultima {
-namespace Ultima0 {
+namespace Shared {
 
-EMPTY_MESSAGE_MAP(Ultima0Game, Shared::UltimaGame);
+class Map {
 
-Ultima0Game::Ultima0Game() : Shared::UltimaGame() {
-}
+};
 
-} // End of namespace Ultima0
-} // End of namespace Ultima
+} // End of namespace Shared
+} // End of namespace Xeen
+
+#endif

@@ -20,15 +20,12 @@
  *
  */
 
-#include "ultima/ultima0/project_item.h"
+#include "ultima/shared/gfx/viewport_dungeon.h"
 
 namespace Ultima {
-namespace Ultima0 {
+namespace Shared {
 
-EMPTY_MESSAGE_MAP(Ultima0Game, Shared::UltimaGame);
+EMPTY_MESSAGE_MAP(ViewportDungeon, Shared::Gfx::VisualItem);
 
-Ultima0Game::Ultima0Game() : Shared::UltimaGame() {
-}
-
-} // End of namespace Ultima0
+} // End of namespace Shared
 } // End of namespace Ultima

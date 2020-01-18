@@ -24,6 +24,7 @@
 #include "ultima/shared/core/named_item.h"
 #include "ultima/shared/core/project_item.h"
 #include "ultima/shared/engine/game_manager.h"
+#include "ultima/shared/early/game.h"
 
 namespace Ultima {
 namespace Shared {
@@ -35,7 +36,7 @@ _nextSibling(nullptr), _priorSibling(nullptr),
 _disposeAfterUse(DisposeAfterUse::NO) {
 }
 
-ProjectItem *TreeItem::getRoot() const {
+Game *TreeItem::getRoot() const {
 	TreeItem *parent = getParent();
 
 	if (parent) {
@@ -44,7 +45,7 @@ ProjectItem *TreeItem::getRoot() const {
 		} while (parent->getParent());
 	}
 
-	return dynamic_cast<ProjectItem *>(parent);
+	return dynamic_cast<Game *>(parent);
 }
 
 TreeItem *TreeItem::getLastSibling() {

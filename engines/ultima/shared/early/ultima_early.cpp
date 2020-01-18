@@ -28,6 +28,7 @@
 #include "ultima/shared/engine/resources.h"
 #include "ultima/shared/core/mouse_cursor.h"
 #include "ultima/shared/gfx/screen.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/project_item.h"
 
 namespace Ultima {
@@ -58,8 +59,10 @@ bool UltimaEarlyEngine::initialize() {
 		return false;
 
 	Resources *res = new Shared::Resources();
-	if (!res->setup())
+	if (!res->setup()) {
+		delete res;
 		return false;
+	}
 
 	_events = new EventsManager(this);
 	_screen = new Gfx::Screen();
@@ -88,10 +91,10 @@ void UltimaEarlyEngine::playGame() {
 	}
 }
 
-ProjectItem *UltimaEarlyEngine::createProject() const {
+Game *UltimaEarlyEngine::createProject() const {
 	switch (getGameID()) {
 	case GAME_ULTIMA1:
-		return new Ultima1::Ultima1ProjectItem();
+		return new Ultima1::Ultima1Game();
 	default:
 		error("Unknown game");
 	}

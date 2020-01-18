@@ -27,6 +27,7 @@
 #include "ultima/shared/engine/main_game_window.h"
 #include "ultima/shared/engine/messages.h"
 #include "ultima/shared/core/mouse_cursor.h"
+#include "ultima/shared/early/game.h"
 
 namespace Ultima {
 namespace Shared {

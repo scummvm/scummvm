@@ -20,15 +20,15 @@
  *
  */
 
-#include "ultima/ultima0/project_item.h"
+#include "ultima/ultima1/game.h"
 
 namespace Ultima {
-namespace Ultima0 {
+namespace Ultima1 {
 
-EMPTY_MESSAGE_MAP(Ultima0Game, Shared::UltimaGame);
+EMPTY_MESSAGE_MAP(Ultima1Game, Shared::UltimaGame);
 
-Ultima0Game::Ultima0Game() : Shared::UltimaGame() {
+Ultima1Game::Ultima1Game() : Shared::UltimaGame() {
 }
 
-} // End of namespace Ultima0
+} // End of namespace Ultima1
 } // End of namespace Ultima

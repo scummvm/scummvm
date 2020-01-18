@@ -20,15 +20,28 @@
  *
  */
 
-#include "ultima/ultima0/project_item.h"
+#ifndef ULTIMA_ULTIMA1_CORE_RESOURCES_H
+#define ULTIMA_ULTIMA1_CORE_RESOURCES_H
+
+#include "ultima/shared/engine/resources.h"
 
 namespace Ultima {
-namespace Ultima0 {
+namespace Ultima1 {
 
-EMPTY_MESSAGE_MAP(Ultima0Game, Shared::UltimaGame);
+class GameResources : public Shared::LocalResourceFile {
+protected:
+	/**
+	 * Synchronize resource data
+	 */
+	virtual void synchronize();
+public:
+	const char *LOCATION_NAMES[85];
+public:
+	GameResources();
+	GameResources(Shared::Resources *resManager);
+};
 
-Ultima0Game::Ultima0Game() : Shared::UltimaGame() {
-}
+} // End of namespace Ultima1
+} // End of namespace Xeen
 
-} // End of namespace Ultima0
-} // End of namespace Ultima
+#endif

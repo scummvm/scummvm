@@ -20,15 +20,30 @@
  *
  */
 
-#include "ultima/ultima0/project_item.h"
+#include "ultima/shared/early/ultima_game.h"
+#include "ultima/shared/early/font_resources.h"
+#include "ultima/shared/core/game_state.h"
+#include "ultima/shared/engine/resources.h"
+#include "ultima/shared/gfx/game_view.h"
 
 namespace Ultima {
-namespace Ultima0 {
+namespace Shared {
 
-EMPTY_MESSAGE_MAP(Ultima0Game, Shared::UltimaGame);
+EMPTY_MESSAGE_MAP(UltimaGame, Game);
 
-Ultima0Game::Ultima0Game() : Shared::UltimaGame() {
+UltimaGame::UltimaGame() : Game() {
+	_fontResources = new FontResources();
+	_gameState = new GameState();
+	_gameView = new GameView();
+
+	_gameView->addUnder(this);
 }
 
-} // End of namespace Ultima0
+UltimaGame::~UltimaGame() {
+	delete _fontResources;
+	delete _gameState;
+	delete _gameView;
+}
+
+} // End of namespace Shared
 } // End of namespace Ultima

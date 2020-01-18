@@ -20,15 +20,40 @@
  *
  */
 
-#include "ultima/ultima0/project_item.h"
+#ifndef ULTIMA_SHARED_EARLY_ULTIMA_GAME_H
+#define ULTIMA_SHARED_EARLY_ULTIMA_GAME_H
+
+#include "ultima/shared/early/game.h"
 
 namespace Ultima {
-namespace Ultima0 {
+namespace Shared {
 
-EMPTY_MESSAGE_MAP(Ultima0Game, Shared::UltimaGame);
+class GameView;
+class GameState;
+class FontResources;
 
-Ultima0Game::Ultima0Game() : Shared::UltimaGame() {
-}
+class UltimaGame : public Game {
+	DECLARE_MESSAGE_MAP;
+public:
+	GameView *_gameView;
+	GameState *_gameState;
+	FontResources *_fontResources;
+public:
+	CLASSDEF;
 
-} // End of namespace Ultima0
+	/**
+	 * Constructor
+	 */
+	UltimaGame();
+	
+	/**
+	 * Destructor
+	 */
+	virtual ~UltimaGame();
+
+};
+
+} // End of namespace Shared
 } // End of namespace Ultima
+
+#endif
