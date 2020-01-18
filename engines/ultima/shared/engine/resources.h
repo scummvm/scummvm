@@ -38,7 +38,6 @@ namespace Shared {
 class ResourceFile {
 private:
 	Common::ReadStream *_inStream;
-	Common::WriteStream *_outStream;
 	char _buffer[STRING_BUFFER_SIZE];
 	char *_bufferP;
 protected:
@@ -48,20 +47,54 @@ protected:
 	ResourceFile(Common::ReadStream *in);
 
 	/**
-	 * Constructor
+	 * Destructor
 	 */
-	ResourceFile(Common::WriteStream *out);
-public:
-	void syncString(const char *&str);
-	void syncStrings(const char **str, int count);
-	void syncStrings2D(const char **str, int count1, int count2);
-	void syncNumber(int &val);
-	void syncNumbers(int *vals, int count);
-	void syncNumbers2D(int *vals, int count1, int count2);
-	void syncNumbers3D(int *vals, int count1, int count2, int count3);
-	void syncBytes2D(byte *vals, int count1, int count2);
+	virtual ~ResourceFile() {}
+
+	virtual void syncString(const char *&str);
+	virtual void syncStrings(const char **str, size_t count);
+	virtual void syncStrings2D(const char **str, size_t count1, size_t count2);
+	virtual void syncNumber(int &val);
+	virtual void syncNumbers(int *vals, size_t count);
+	virtual void syncNumbers2D(int *vals, size_t count1, size_t count2);
+	virtual void syncNumbers3D(int *vals, size_t count1, size_t count2, size_t count3);
+	virtual void syncBytes(byte *vals, size_t count);
+	virtual void syncBytes2D(byte *vals, size_t count1, size_t count2);
 };
 
+/**
+ * Derived base class for resources that have their contents within the executable rather than a data file.
+ * This will allow the data for a particular Ultima game to be gradually built up without repeatedly
+ * regenerating a data file. Once a game has been properly tested, then it can be moved out.
+ */
+class LocalResourceFile : protected ResourceFile {
+private:
+	Common::WriteStream *_outStream;
+protected:
+	/**
+	 * Constructor
+	 */
+	LocalResourceFile(Common::ReadStream *in) : ResourceFile(in) {}
+
+	/**
+	 * Constructor
+	 */
+	LocalResourceFile(Common::WriteStream *out);
+
+	virtual void syncString(const char *&str);
+	virtual void syncStrings(const char **str, size_t count);
+	virtual void syncStrings2D(const char **str, size_t count1, size_t count2);
+	virtual void syncNumber(int &val);
+	virtual void syncNumbers(int *vals, size_t count);
+	virtual void syncNumbers2D(int *vals, size_t count1, size_t count2);
+	virtual void syncNumbers3D(int *vals, size_t count1, size_t count2, size_t count3);
+	virtual void syncBytes(byte *vals, size_t count);
+	virtual void syncBytes2D(byte *vals, size_t count1, size_t count2);
+};
+
+/**
+ * Resources manager
+ */
 class Resources {
 public:
 	/**
