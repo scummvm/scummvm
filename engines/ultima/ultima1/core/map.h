@@ -33,6 +33,7 @@ enum MapType {
 };
 
 class Ultima1Game;
+class WidgetTransport;
 
 class U1MapTile : public Shared::MapTile {
 public:
@@ -55,6 +56,7 @@ public:
 	uint _mapStyle;						// Map style category for towns & castles
 	uint _mapIndex;						// Map index, such as city/castle #; not to be confused with mapId
 	Common::String _name;				// Name of map, if applicable
+	WidgetTransport *_currentTransport;	// Current means of transport, even if on foot
 public:
 	/**
 	 * Constructor

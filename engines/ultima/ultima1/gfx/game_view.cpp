@@ -63,17 +63,17 @@ void GameView::draw() {
 }
 
 bool GameView::VirtualKeyCharMsg(CVirtualKeyCharMsg &msg) {
-	if (msg._keyState.keycode == Common::KEYCODE_UP || msg._keyState.keycode == Common::KEYCODE_KP8) {
+	if (msg._keyState.keycode == Common::KEYCODE_LEFT || msg._keyState.keycode == Common::KEYCODE_KP4) {
 		Shared::CMoveMsg move(Shared::DIR_LEFT);
+		move.execute(this);
+	} else if (msg._keyState.keycode == Common::KEYCODE_RIGHT || msg._keyState.keycode == Common::KEYCODE_KP6) {
+		Shared::CMoveMsg move(Shared::DIR_RIGHT);
+		move.execute(this);
+	} else if (msg._keyState.keycode == Common::KEYCODE_UP || msg._keyState.keycode == Common::KEYCODE_KP8) {
+		Shared::CMoveMsg move(Shared::DIR_UP);
 		move.execute(this);
 	} else if (msg._keyState.keycode == Common::KEYCODE_DOWN || msg._keyState.keycode == Common::KEYCODE_KP2) {
-		Shared::CMoveMsg move(Shared::DIR_LEFT);
-		move.execute(this);
-	} else 	if (msg._keyState.keycode == Common::KEYCODE_LEFT || msg._keyState.keycode == Common::KEYCODE_KP4) {
-		Shared::CMoveMsg move(Shared::DIR_LEFT);
-		move.execute(this);
-	} else 	if (msg._keyState.keycode == Common::KEYCODE_RIGHT || msg._keyState.keycode == Common::KEYCODE_KP6) {
-		Shared::CMoveMsg move(Shared::DIR_LEFT);
+		Shared::CMoveMsg move(Shared::DIR_DOWN);
 		move.execute(this);
 	} else {
 		return false;

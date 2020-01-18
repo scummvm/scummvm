@@ -251,6 +251,16 @@ MESSAGE1(CFrameMsg, uint, ticks, 0);
  */
 MESSAGE1(CMoveMsg, int, direction, 0);
 
+/**
+ * Adds text strings to the status area
+ */
+MESSAGE1(CStatusMsg, Common::String, text, "");
+
+/**
+ * Signals a sound effect
+ */
+MESSAGE1(CSoundEffectMsg, uint, effectNum, 0);
+
 } // End of namespace Shared
 } // End of namespace Ultima
 

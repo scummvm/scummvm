@@ -21,6 +21,10 @@
  */
 
 #include "ultima/ultima1/actions/move.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/ultima1/core/map.h"
+#include "ultima/ultima1/core/transports.h"
+#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -30,7 +34,41 @@ BEGIN_MESSAGE_MAP(Move, Action)
 	ON_MESSAGE(MoveMsg)
 END_MESSAGE_MAP()
 
-bool Move::MoveMsg(Shared::CMoveMsg &msg) {
+bool Move::MoveMsg(CMoveMsg &msg) {
+	Ultima1Map *map = getMap();
+	WidgetTransport *transport = map->_currentTransport;
+
+	// Figure out the new position
+	Point delta;
+	switch (msg._direction) {
+	case Shared::DIR_LEFT:
+		delta = Point(-1, 0);
+		break;
+	case Shared::DIR_RIGHT:
+		delta = Point(1, 0);
+		break;
+	case Shared::DIR_UP:
+		delta = Point(0, -1);
+		break;
+	case Shared::DIR_DOWN:
+		delta = Point(0, 1);
+		break;
+	}
+
+	// Check if the given transport type can move to the new position
+	Point newPos = map->getPosition() + delta;
+	if (transport->canMoveTo(newPos)) {
+		// Shift the viewport
+		map->shiftViewport(delta);
+
+		// Move to the new position
+		if (transport->moveTo(newPos))
+			addStatusMsg(getRes()->DIRECTION_NAMES[msg._direction - 1]);
+	} else {
+		// Nope, so show a blocked message
+		addStatusMsg(getRes()->BLOCKED);
+	}
+
 	return true;
 }
 

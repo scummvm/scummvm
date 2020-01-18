@@ -108,6 +108,26 @@ Point Map::getViewportPosition(const Point &viewportSize) {
 	return topLeft;
 }
 
+void Map::shiftViewport(const Point &delta) {
+	Point &topLeft = _viewportPos._topLeft;
+	topLeft += delta;
+
+	if (_fixed) {
+		// Shift the viewport, but constraining the map to fill up the screen
+		topLeft.x = CLIP(topLeft.x, (int16)0, (int16)(width() - _viewportPos._size.x));
+		topLeft.y = CLIP(topLeft.y, (int16)0, (int16)(height() - _viewportPos._size.y));
+	} else {
+		if (topLeft.x < 0)
+			topLeft.x += width();
+		else if (topLeft.x >= (int16)width())
+			topLeft.x -= width();
+		if (topLeft.y < 0)
+			topLeft.y += height();
+		else if (topLeft.y >= (int16)height())
+			topLeft.y -= height();
+	}
+}
+
 void Map::getTileAt(const Point &pt, MapTile *tile) {
 	// Get the base tile
 	tile->_tileNum = _data[pt.y * _size.x + pt.x];

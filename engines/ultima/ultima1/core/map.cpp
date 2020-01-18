@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima1/core/map.h"
-#include "ultima/ultima1/core/widget_player.h"
+#include "ultima/ultima1/core/transports.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/shared/core/file.h"
 
@@ -31,7 +31,8 @@ namespace Ultima1 {
 using Shared::File;
 
 Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Map(), _mapType(MAP_OVERWORLD), _mapStyle(0), _mapIndex(0) {
-	addWidget(new WidgetPlayer(game, this));
+	_currentTransport = new TransportOnFoot(game, this);
+	addWidget(_currentTransport);
 }
 
 void Ultima1Map::loadMap(int mapId, uint videoMode) {

@@ -28,6 +28,8 @@ namespace Ultima1 {
 
 const char *const SRC_STATUS_TEXT[4] = { "Hits:", "Food:",  "Exp.:", "Coin:" };
 
+const char *const SRC_DIRECTION_NAMES[4] = { "West", "East", "North", "South" };
+
 const char *const SRC_LOCATION_NAMES[85] = {
 	"?",
 	"Britian",
@@ -119,6 +121,8 @@ const char *const SRC_LOCATION_NAMES[85] = {
 	"The Hole to Hades"
 };
 
+const char *const SRC_BLOCKED = "Blocked!";
+
 /*-------------------------------------------------------------------*/
 
 GameResources::GameResources() : LocalResourceFile("ULTIMA1/DATA") {
@@ -126,12 +130,16 @@ GameResources::GameResources() : LocalResourceFile("ULTIMA1/DATA") {
 
 GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(resManager, "ULTIMA1/DATA") {
 	Common::copy(SRC_STATUS_TEXT, SRC_STATUS_TEXT + 4, STATUS_TEXT);
+	Common::copy(SRC_DIRECTION_NAMES, SRC_DIRECTION_NAMES + 4, DIRECTION_NAMES);
 	Common::copy(SRC_LOCATION_NAMES, SRC_LOCATION_NAMES + 85, LOCATION_NAMES);
+	BLOCKED = SRC_BLOCKED;
 }
 
 void GameResources::synchronize() {
 	syncStrings(STATUS_TEXT, 4);
+	syncStrings(DIRECTION_NAMES, 4);
 	syncStrings(LOCATION_NAMES, 32);
+	syncString(BLOCKED);
 }
 
 } // End of namespace Ultima1
