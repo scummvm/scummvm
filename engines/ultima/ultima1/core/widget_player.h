@@ -20,36 +20,28 @@
  *
  */
 
-#include "ultima/shared/early/ultima_early.h"
-#include "ultima/shared/early/game_base.h"
-#include "ultima/shared/core/game_state.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/map.h"
+#ifndef ULTIMA_ULTIMA1_CORE_WIDGET_PLAYER_H
+#define ULTIMA_ULTIMA1_CORE_WIDGET_PLAYER_H
+
+#include "ultima/shared/core/map.h"
 
 namespace Ultima {
-namespace Shared {
+namespace Ultima1 {
 
-GameState::GameState(Game *game) : MAX_TILES_PER_ORIGINAL(16, 16), _videoMode(EGA) {
-	_characters.resize(1);
-	_gameId = g_vm->getGameID();
+class WidgetPlayer : public Shared::MapWidget {
+public:
+	/**
+	 * Constructor
+	 */
+	WidgetPlayer(Shared::Game *game, Shared::Map *map) : Shared::MapWidget(game, map) {}
 
-	switch (_gameId) {
-	case GAME_ULTIMA1:
-		_map = new Ultima1::Ultima1Map(static_cast<Ultima1::Ultima1Game *>(game));
-		break;
-	default:
-		error("Unspported game");
-		break;
-	}
+	/**
+	 * Get the tile for the widget
+	 */
+	virtual uint getTileNum() const { return 42; }
+};
 
-	// Load the default overworld map
-	_map->loadMap(0, _videoMode);
-	_map->setPosition(Point(49, 40));
-}
-
-GameState::~GameState() {
-	delete _map;
-}
-
-} // End of namespace Shared
+} // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

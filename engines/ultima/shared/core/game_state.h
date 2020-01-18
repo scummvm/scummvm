@@ -30,6 +30,8 @@
 namespace Ultima {
 namespace Shared {
 
+class Game;
+
 enum VideoMode {
 	UNSET = -1, CGA = 0, EGA = 1, TGA = 2, VGA_ENHANCED = 3
 };
@@ -71,7 +73,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	GameState();
+	GameState(Game *game);
 
 	/**
 	 * Destructor

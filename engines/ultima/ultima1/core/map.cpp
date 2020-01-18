@@ -21,12 +21,18 @@
  */
 
 #include "ultima/ultima1/core/map.h"
+#include "ultima/ultima1/core/widget_player.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/shared/core/file.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
 using Shared::File;
+
+Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Map() {
+	_widgets.push_back(WidgetPlayer(game, this));
+}
 
 void Ultima1Map::loadMap(int mapId, uint videoMode) {
 	Map::loadMap(mapId, videoMode);
