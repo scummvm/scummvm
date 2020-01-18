@@ -192,7 +192,7 @@ void LocalResourceFile::syncBytes2D(byte *vals, size_t count1, size_t count2) {
 
 bool Resources::setup() {
 	// Save locally constructred resources to the archive manager for access
-	Shared::FontResources sharedFonts;
+	Shared::FontResources sharedFonts(this);
 	sharedFonts.save();
 
 	SearchMan.add("ultima", this);

@@ -34,10 +34,15 @@ class FontResources;
 
 class UltimaGame : public Game {
 	DECLARE_MESSAGE_MAP;
-public:
+private:
 	GameView *_gameView;
 	GameState *_gameState;
 	FontResources *_fontResources;
+private:
+	/**
+	 * Sets up game palette
+	 */
+	void setPalette();
 public:
 	CLASSDEF;
 
@@ -50,7 +55,6 @@ public:
 	 * Destructor
 	 */
 	virtual ~UltimaGame();
-
 };
 
 } // End of namespace Shared

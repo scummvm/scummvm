@@ -37,6 +37,8 @@
 #include "ultima/ultima8/ultima8.h"
 #endif
 
+namespace Ultima {
+
 static const PlainGameDescriptor ULTIMA_GAMES[] = {
 #ifdef ENABLE_ULTIMA1
 	{ "ultima1", "Ultima I - The First Age of Darkness" },
@@ -51,6 +53,8 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 	{ 0, 0 }
 };
 
+} // End of namespace Ultima
+
 #include "ultima/detection_tables.h"
 
 namespace Ultima {
@@ -59,8 +63,9 @@ UltimaMetaEngine *g_metaEngine;
 
 
 UltimaMetaEngine::UltimaMetaEngine() : AdvancedMetaEngine(Ultima::GAME_DESCRIPTIONS,
-	        sizeof(Ultima::UltimaGameDescription), ULTIMA_GAMES) {
+	        sizeof(Ultima::UltimaGameDescription), Ultima::ULTIMA_GAMES) {
 	Ultima::g_metaEngine = this;
+
 #ifdef ENABLE_ULTIMA8
 	static const char *const DIRECTORY_GLOBS[2] = { "usecode", 0 };
 	_maxScanDepth = 2;
