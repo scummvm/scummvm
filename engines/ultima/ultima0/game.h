@@ -20,24 +20,24 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_PROJECT_ITEM_H
-#define ULTIMA_ULTIMA1_PROJECT_ITEM_H
+#ifndef ULTIMA_ULTIMA0_GAME_H
+#define ULTIMA_ULTIMA0_GAME_H
 
-#include "ultima/shared/core/project_item.h"
+#include "ultima/shared/early/game.h"
 
 namespace Ultima {
-namespace Ultima1 {
+namespace Ultima0 {
 
-class Ultima1ProjectItem : public Shared::ProjectItem {
+class Ultima0Game : public Shared::Game {
 	DECLARE_MESSAGE_MAP;
 public:
 	CLASSDEF;
-	Ultima1ProjectItem();
-	virtual ~Ultima1ProjectItem() {}
+	Ultima0Game();
+	virtual ~Ultima0Game() {}
 
 };
 
-} // End of namespace Ultima1
+} // End of namespace Ultima0
 } // End of namespace Ultima
 
 #endif

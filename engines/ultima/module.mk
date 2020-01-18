@@ -19,12 +19,10 @@ MODULE_OBJS += \
 	shared/core/message_target.o \
 	shared/core/mouse_cursor.o \
 	shared/core/named_item.o \
-	shared/core/project_item.o \
 	shared/core/tree_item.o \
 	shared/early/font_resources.o \
 	shared/early/game.o \
 	shared/early/ultima_early.o \
-	shared/early/ultima_game.o \
 	shared/engine/debugger.o \
 	shared/engine/game_manager.o \
 	shared/engine/input_handler.o \
@@ -47,13 +45,12 @@ endif
 ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
 	ultima0/core/resources.o \
-	ultima0/project_item.o \
+	ultima0/game.o \
 	ultima0/resources.o \
 	ultima1/core/map.o \
 	ultima1/core/resources.o \
 	ultima1/gfx/game_view.o \
-	ultima1/game.o \
-	ultima1/project_item.o
+	ultima1/game.o
 endif
 
 ifdef ENABLE_ULTIMA6

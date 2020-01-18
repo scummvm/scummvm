@@ -26,7 +26,6 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "ultima/shared/engine/game_manager.h"
-#include "ultima/shared/core/project_item.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/shared/engine/game_manager.h"
 #include "ultima/shared/engine/events.h"
@@ -61,7 +60,7 @@ private:
 	}
 public:
 	GameManager *_gameManager;
-	Game *_project;
+	Shared::Game *_game;
 public:
 	MainGameWindow();
 	virtual ~MainGameWindow();

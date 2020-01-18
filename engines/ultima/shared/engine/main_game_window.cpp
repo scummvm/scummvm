@@ -35,25 +35,25 @@ namespace Shared {
 MainGameWindow::MainGameWindow() : _priorLeftDownTime(0), _priorMiddleDownTime(0), _priorRightDownTime(0) {
 	_gameManager = nullptr;
 
-	// Create the game project
-	_project = g_vm->createProject();
+	// Create the game hierarchy
+	_game = g_vm->createGame();
 
 	// Set the window as an event target
 	g_vm->_events->addTarget(this);
 }
 
 MainGameWindow::~MainGameWindow() {
-	delete _project;
+	delete _game;
 }
 
 void MainGameWindow::applicationStarting() {
 	// Create game view and manager
-	_gameManager = new GameManager(_project, g_vm->_mixer);
+	_gameManager = new GameManager(_game, g_vm->_mixer);
 
 	// Set the starting game view
 	g_vm->_mouseCursor->show();
 
-	Gfx::VisualItem *firstView = dynamic_cast<Gfx::VisualItem *>(_project->findByName("MainMenu"));
+	Gfx::VisualItem *firstView = dynamic_cast<Gfx::VisualItem *>(_game->findByName("MainMenu"));
 	_gameManager->setView(firstView);
 
 	// Generate starting message for showing the view

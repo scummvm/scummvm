@@ -39,13 +39,13 @@ class GameManager {
 private:
 	int _transitionCtr;
 public:
-	Game *_project;
+	Game *_game;
 	GameState _gameState;
 	InputHandler _inputHandler;
 	InputTranslator _inputTranslator;
 	Gfx::VisualItem *_view;
 public:
-	GameManager(Game *project, Audio::Mixer *mixer);
+	GameManager(Shared::Game *game, Audio::Mixer *mixer);
 	~GameManager();
 
 	/**

@@ -23,72 +23,44 @@
 #ifndef ULTIMA_SHARED_EARLY_GAME_H
 #define ULTIMA_SHARED_EARLY_GAME_H
 
-#include "common/scummsys.h"
-#include "common/str.h"
-#include "engines/savestate.h"
-#include "graphics/surface.h"
-#include "ultima/shared/core/file.h"
 #include "ultima/shared/core/named_item.h"
 
 namespace Ultima {
 namespace Shared {
 
-class GameManager;
+class GameView;
+class GameState;
+class FontResources;
 
 class Game : public NamedItem {
 	DECLARE_MESSAGE_MAP;
 private:
-	GameManager *_gameManager;
-
-	/**
-	 * Called at the beginning of loading a game
-	 */
-	void preLoad();
-
-	/**
-	 * Does post-loading processing
-	 */
-	void postLoad();
-
-	/**
-	 * Called when a game is about to be saved
-	 */
-	void preSave();
-
-	/**
-	 * Called when a game has finished being saved
-	 */
-	void postSave();
+	GameView *_gameView;
+	GameState *_gameState;
+	FontResources *_fontResources;
 private:
+	/**
+	 * Sets up game palette
+	 */
+	void setPalette();
+public:
+	byte _foregroundColor;
+	byte _backgroundColor;
+	byte _highlightColor;
+	byte _textColor;
+	byte _color1;
 public:
 	CLASSDEF;
+
+	/**
+	 * Constructor
+	 */
 	Game();
-	virtual ~Game() {}
-
+	
 	/**
-	 * Sets the game manager for the project, if not already set
+	 * Destructor
 	 */
-	void setGameManager(GameManager *gameManager);
-
-	/**
-	 * Resets the game manager field
-	 */
-	void resetGameManager();
-
-	/**
-	 * Load the entire project data for a given slot Id
-	 */
-	void loadGame(int slotId);
-
-	/**
-	 * Save the entire project data to a given savegame slot
-	 */
-	void saveGame(int slotId, const Common::String &desc);
-
-	/**
-	 * Clear any currently loaded project
-	 */
-	void clear();
+	virtual ~Game();
 };
 
 } // End of namespace Shared
