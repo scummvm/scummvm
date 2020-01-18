@@ -22,10 +22,10 @@
 
 #include "ultima/shared/early/ultima_game.h"
 #include "ultima/shared/core/game_state.h"
-#include "ultima/shared/gfx/game_view.h"
 #include "ultima/shared/engine/resources.h"
-#include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/gfx/screen.h"
 #include "ultima/shared/early/font_resources.h"
+#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Shared {
@@ -35,8 +35,6 @@ EMPTY_MESSAGE_MAP(UltimaGame, Game);
 UltimaGame::UltimaGame() : Game() {
 	_fontResources = new FontResources();
 	_gameState = new GameState();
-	_gameView = new GameView();
-	_gameView->addUnder(this);
 
 	setPalette();
 }
@@ -44,7 +42,6 @@ UltimaGame::UltimaGame() : Game() {
 UltimaGame::~UltimaGame() {
 	delete _fontResources;
 	delete _gameState;
-	delete _gameView;
 }
 
 void UltimaGame::setPalette() {
