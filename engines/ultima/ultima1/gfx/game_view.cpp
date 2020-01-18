@@ -20,27 +20,32 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GAME_H
-#define ULTIMA_ULTIMA1_GAME_H
-
-#include "ultima/shared/early/ultima_game.h"
+#include "ultima/ultima1/gfx/game_view.h"
+#include "ultima/shared/gfx/info.h"
+#include "ultima/shared/gfx/status.h"
+#include "ultima/shared/gfx/viewport_dungeon.h"
+#include "ultima/shared/gfx/viewport_map.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
-class GameView;
+GameView::GameView() {
+	_info = new Shared::Info();
+	_status = new Shared::Status();
+	_viewportDungeon = new Shared::ViewportDungeon();
+	_viewportMap = new Shared::ViewportMap();
+	_info->addUnder(this);
+	_status->addUnder(this);
+	_viewportDungeon->addUnder(this);
+	_viewportMap->addUnder(this);
+}
 
-class Ultima1Game : public Shared::UltimaGame {
-	DECLARE_MESSAGE_MAP;
-public:
-	GameView *_gameView;
-public:
-	CLASSDEF;
-	Ultima1Game();
-	virtual ~Ultima1Game();
-};
+GameView::~GameView() {
+	delete _info;
+	delete _status;
+	delete _viewportDungeon;
+	delete _viewportMap;
+}
 
-} // End of namespace Ultima1
+} // End of namespace Shared
 } // End of namespace Ultima
-
-#endif

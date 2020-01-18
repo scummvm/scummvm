@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/gfx/game_view.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -28,6 +29,12 @@ namespace Ultima1 {
 EMPTY_MESSAGE_MAP(Ultima1Game, Shared::UltimaGame);
 
 Ultima1Game::Ultima1Game() : Shared::UltimaGame() {
+	_gameView = new GameView();
+	_gameView->addUnder(this);
+}
+
+Ultima1Game::~Ultima1Game() {
+	delete _gameView;
 }
 
 } // End of namespace Ultima1
