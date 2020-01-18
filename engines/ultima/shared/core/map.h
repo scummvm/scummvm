@@ -23,11 +23,57 @@
 #ifndef ULTIMA_SHARED_CORE_MAP_H
 #define ULTIMA_SHARED_CORE_MAP_H
 
+#include "common/array.h"
+#include "common/rect.h"
+
 namespace Ultima {
 namespace Shared {
 
-class Map {
+enum MapType {
+	MAP_OVERWORLD = 0, MAP_TOWN = 1, MAP_CASTLE = 2, MAP_DUNGEON = 3, MAP_UNKNOWN = 4
+};
 
+enum Direction {
+	DIR_NORTH = 0, DIR_SOUTH = 1, DIR_EAST = 2, DIR_WEST = 3
+};
+
+struct MapTile {
+	int _tileNum;
+
+};
+
+class Map {
+protected:
+	byte _mapId;						// The map Id
+	MapType _mapType;
+	uint _mapStyle;						// Map style category for towns & castles
+	Common::Array<int16> _data;			// Data for the map
+	Common::Point _size;				// X, Y size of the map
+	Common::Point _tilesPerOrigTile;	// For enhanced modes, number of tiles per original game tile
+	Common::Point _currentPos;			// Current position within the map
+	Direction _direction;				// Current direction being faced in the underworld
+	bool _fixed;						// Town/city type maps that don't scroll as the player moves
+protected:
+	/**
+	 * Gets a point relative to the current position
+	 */
+	virtual Common::Point getRelativePosition(const Common::Point &delta);
+public:
+	/**
+	 * Constructor
+	 */
+	Map();
+	virtual ~Map() {}
+
+	/**
+	 * Load a given map
+	 */
+	virtual void loadMap(int mapId, uint videoMode);
+
+	/**
+	 * Set the position
+	 */
+	void setPosition(const Common::Point &pt);
 };
 
 } // End of namespace Shared

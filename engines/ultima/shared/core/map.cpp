@@ -25,7 +25,38 @@
 namespace Ultima {
 namespace Shared {
 
+Map::Map() {
+	_mapId = 0;
+	_mapType = MAP_OVERWORLD;
+	_mapStyle = 0;
+	_direction = DIR_NORTH;
+	_fixed = false;
+}
 
+Common::Point Map::getRelativePosition(const Common::Point &delta) {
+	Common::Point pt = _currentPos + delta;
+	if (pt.x < 0)
+		pt.x += _size.x;
+	else if (pt.x >= _size.x)
+		pt.x -= _size.x;
+	if (pt.y < 0)
+		pt.y += _size.y;
+	else if (pt.y >= _size.y)
+		pt.y -= _size.y;
+
+	return pt;
+}
+
+void Map::loadMap(int mapId, uint videoMode) {
+	_mapId = mapId;
+	_mapType = MAP_OVERWORLD;
+	_mapStyle = 0;
+	_fixed = false;
+}
+
+void Map::setPosition(const Common::Point &pt) {
+	_currentPos = Common::Point(pt.x * _tilesPerOrigTile.x, pt.y * _tilesPerOrigTile.y);
+}
 
 } // End of namespace Shared
 } // End of namespace Ultima

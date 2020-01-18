@@ -29,7 +29,26 @@ namespace Ultima {
 namespace Ultima1 {
 
 class Ultima1Map : public Shared::Map {
+private:
+	/**
+	 * Load the overworld map
+	 */
+	void loadOverworldMap();
 
+	/**
+	 * Load a town/castle map
+	 */
+	void loadTownCastleMap();
+public:
+	/**
+	 * Constructor
+	 */
+	Ultima1Map() : Shared::Map() {}
+
+	/**
+	 * Load a given map
+	 */
+	virtual void loadMap(int mapId, uint videoMode);
 };
 
 } // End of namespace Ultima1
