@@ -338,7 +338,6 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 		return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
 	}
 
-	const uint32 srcSize = fileStream->size();
 	disposeVolumeFileStream(fileStream, src);
 
 	SciSpan<const byte>::const_iterator ptr = mapRes->cbegin();
