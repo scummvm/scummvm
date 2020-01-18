@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima1 {
 
-GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", parent) {
+GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Common::Rect(0, 0, 320, 200), parent) {
 	_info = new Shared::Info(this);
 	_status = new Shared::Status(this);
 	_viewportDungeon = new Shared::ViewportDungeon(this);
