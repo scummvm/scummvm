@@ -228,23 +228,19 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Alimardan's Mischief
 	WME_WINENTRY("alimardan1", "",
-		WME_ENTRY2s("language.dcp", "eccbc69ef8e3bf0e99ae2d7e39b9af4e", 660070,
-					"data.dcp", "55c28b8d4f49120f980d237951a6c73f", 1834957694), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "55c28b8d4f49120f980d237951a6c73f", 1834957694), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Alimardan's Mischief (Steam, August 2017)
 	WME_WINENTRY("alimardan1", "",
-		WME_ENTRY2s("language.dcp", "95d5ce5de1bad7cf2db67a934c36f5cb", 660483,
-					"data.dcp", "ef27d8483d6f19d5398fc81ea05e5320", 1258766332), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "ef27d8483d6f19d5398fc81ea05e5320", 1258766332), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Alimardan's Mischief (Steam, October 2017)
 	WME_WINENTRY("alimardan1", "",
-		WME_ENTRY2s("language.dcp", "650077b587f2ee42478b3a545a0f55d2", 660483,
-					"data.dcp", "d74f56d9ce3b7442b921393af7fb6167", 1258761838), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "d74f56d9ce3b7442b921393af7fb6167", 1258761838), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Alimardan Meets Merlin
 	WME_WINENTRY("alimardan2", "",
-		WME_ENTRY2s("language.dcp", "0cbb7e1e84a342782c24938af4da1402", 686580,
-					"data.dcp", "e3ffb5d177737a57bb391995d9361055", 413397623), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+		WME_ENTRY1s("data.dcp", "e3ffb5d177737a57bb391995d9361055", 413397623), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Alpha Polaris (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
