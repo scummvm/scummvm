@@ -1030,11 +1030,15 @@ void LC::c_repeatwithcode(void) {
 		g_lingo->_pc = end + savepc - 1; /* next stmt */
 }
 
+void LC::c_nextRepeat(void) {
+	warning("STUB: c_nextRepeat");
+}
+
 void LC::c_exitRepeat(void) {
 	g_lingo->_exitRepeat = true;
 }
 
-void LC::c_ifcode() {
+void LC::c_ifcode(void) {
 	Datum d;
 	int savepc = g_lingo->_pc;	/* then part */
 

@@ -85,6 +85,7 @@ namespace LC {
 
 	void c_repeatwhilecode();
 	void c_repeatwithcode();
+	void c_nextRepeat();
 	void c_ifcode();
 	void c_whencode();
 	void c_tellcode();
