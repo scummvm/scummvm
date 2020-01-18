@@ -575,6 +575,11 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("data.dcp", "1d3e4d97f135d61c6532b3bc08272156", 643363379,
 					"steam_001.dcp", "e10b58c16e9487cfaf395c3b88ca1fd1", 42049), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
 
+	// Corrosion: Cold Winter Waiting (Enhanced Edition) (v1.2.3)
+	WME_WINENTRY("corrosion", "Enhanced Edition v1.2.3",
+		WME_ENTRY2s("data.dcp", "1feab5a4bbf6bbc2ddee61f885abc096", 643363368,
+					"steam_001.dcp", "bad99743e3d64368004fb2c172b96346", 42049), Common::EN_ANY, ADGF_NO_FLAGS, WME_1_9_1),
+
 	// Dark Fall: Lost Souls
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("darkfallls", "",
