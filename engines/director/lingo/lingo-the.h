@@ -224,6 +224,7 @@ enum TheFieldType {
 	kTheTrails,
 	kTheType,
 	kTheVideo,
+	kTheVisibility,
 	kTheVisible,
 	kTheVolume,
 	kTheWidth,

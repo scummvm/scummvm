@@ -177,6 +177,7 @@ TheEntityField fields[] = {
 	{ kTheSprite,	"top",			kTheTop,		2 },// D2 p
 	{ kTheSprite,	"trails",		kTheTrails,		3 },//		D3.1 p
 	{ kTheSprite,	"type",			kTheType,		2 },// D2 p
+	{ kTheSprite,	"visibility",	kTheVisibility,	3 },//		D3.1 p
 	{ kTheSprite,	"visible",		kTheVisible,	4 },//				D4 p
 	{ kTheSprite,	"width",		kTheWidth,		2 },// D2 p
 
@@ -562,6 +563,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 	case kTheType:
 		d.u.i = sprite->_type;
 		break;
+	case kTheVisibility:
 	case kTheVisible:
 		d.u.i = (sprite->_visible ? 1 : 0);
 		break;
@@ -677,6 +679,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheType:
 		sprite->_type = static_cast<SpriteType>(d.u.i);
 		break;
+	case kTheVisibility:
 	case kTheVisible:
 		sprite->_visible = (d.u.i == 0 ? false : true);
 		break;
