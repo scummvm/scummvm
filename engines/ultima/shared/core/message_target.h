@@ -49,15 +49,15 @@ protected: \
 	virtual const Ultima::Shared::MSGMAP *getMessageMap() const
 
 #define BEGIN_MESSAGE_MAP(theClass, baseClass) \
-	ClassDef theClass::type() { return ClassDef(#theClass, &baseClass::type); } \
-	const MSGMAP *theClass::getMessageMap() const \
+	Ultima::Shared::ClassDef theClass::type() { return Ultima::Shared::ClassDef(#theClass, &baseClass::type); } \
+	const Ultima::Shared::MSGMAP *theClass::getMessageMap() const \
 		{ return getThisMessageMap(); } \
-	const MSGMAP *theClass::getThisMessageMap() \
+	const Ultima::Shared::MSGMAP *theClass::getThisMessageMap() \
 	{ \
 		typedef theClass ThisClass;						   \
 		typedef baseClass TheBaseClass;					   \
-		typedef bool (theClass::*FNPTR)(CMessage *msg);    \
-		static const MSGMAP_ENTRY _messageEntries[] = {
+		typedef bool (theClass::*FNPTR)(Ultima::Shared::CMessage *msg);    \
+		static const Ultima::Shared::MSGMAP_ENTRY _messageEntries[] = {
 
 #define ON_MESSAGE(msgClass) \
 	{ static_cast<Ultima::Shared::PMSG>((FNPTR)&ThisClass::msgClass), &C##msgClass::type },
@@ -65,7 +65,7 @@ protected: \
 #define END_MESSAGE_MAP() \
 		{ (Ultima::Shared::PMSG)nullptr, nullptr } \
 	}; \
-		static const MSGMAP messageMap = \
+		static const Ultima::Shared::MSGMAP messageMap = \
 		{ &TheBaseClass::getThisMessageMap, &_messageEntries[0] }; \
 		return &messageMap; \
 	}

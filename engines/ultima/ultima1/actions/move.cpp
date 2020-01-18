@@ -20,42 +20,20 @@
  *
  */
 
-#include "ultima/ultima1/gfx/game_view.h"
-#include "ultima/shared/gfx/info.h"
-#include "ultima/shared/gfx/viewport_dungeon.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/gfx/drawing_support.h"
-#include "ultima/ultima1/gfx/status.h"
-#include "ultima/ultima1/gfx/viewport_map.h"
 #include "ultima/ultima1/actions/move.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace U1Gfx {
+namespace Actions {
 
-GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
-	_info = new Shared::Info(this);
-	_status = new Status(this);
-	_viewportDungeon = new Shared::ViewportDungeon(this);
-	_viewportMap = new ViewportMap(this);
-	_actions[0] = new Actions::Move(this);
+BEGIN_MESSAGE_MAP(Move, Action)
+	ON_MESSAGE(MoveMsg)
+END_MESSAGE_MAP()
+
+bool Move::MoveMsg(Shared::CMoveMsg &msg) {
+	return true;
 }
 
-GameView::~GameView() {
-	delete _info;
-	delete _status;
-	delete _viewportDungeon;
-	delete _viewportMap;
-	delete _actions[0];
-}
-
-void GameView::draw() {
-	DrawingSupport ds(getSurface());
-	ds.drawGameFrame();
-
-	Shared::Gfx::VisualContainer::draw();
-}
-
-} // End of namespace U1Gfx
-} // End of namespace Shared
+} // End of namespace Actions
+} // End of namespace Ultima1
 } // End of namespace Ultima

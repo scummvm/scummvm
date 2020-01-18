@@ -201,6 +201,11 @@ MESSAGE2(CShowMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fa
 MESSAGE2(CHideMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fadeOut, false);
 MESSAGE1(CFrameMsg, uint, ticks, 0);
 
+/**
+ * Used to trigger a party movement
+ */
+MESSAGE1(CMoveMsg, int, direction, 0);
+
 } // End of namespace Shared
 } // End of namespace Ultima
 
