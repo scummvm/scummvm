@@ -32,6 +32,7 @@ MODULE_OBJS += \
 	shared/gfx/font.o \
 	shared/gfx/info.o \
 	shared/gfx/screen.o \
+	shared/gfx/sprite.o \
 	shared/gfx/viewport_dungeon.o \
 	shared/gfx/viewport_map.o \
 	shared/gfx/visual_container.o \
