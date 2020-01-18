@@ -30,14 +30,10 @@ namespace Ultima {
 namespace Ultima1 {
 
 GameView::GameView() {
-	_info = new Shared::Info();
-	_status = new Shared::Status();
-	_viewportDungeon = new Shared::ViewportDungeon();
-	_viewportMap = new Shared::ViewportMap();
-	_info->addUnder(this);
-	_status->addUnder(this);
-	_viewportDungeon->addUnder(this);
-	_viewportMap->addUnder(this);
+	_info = new Shared::Info(this);
+	_status = new Shared::Status(this);
+	_viewportDungeon = new Shared::ViewportDungeon(this);
+	_viewportMap = new Shared::ViewportMap(this);
 }
 
 GameView::~GameView() {

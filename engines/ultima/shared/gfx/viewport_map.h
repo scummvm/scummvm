@@ -32,7 +32,7 @@ class ViewportMap : public Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
 public:
 	CLASSDEF;
-	ViewportMap() : Gfx::VisualItem("ViewportMap", Common::Rect(8, 8, 312, 168)) {}
+	ViewportMap(TreeItem *parent) : Gfx::VisualItem("ViewportMap", Common::Rect(8, 8, 312, 168), parent) {}
 	virtual ~ViewportMap() {}
 };
 
