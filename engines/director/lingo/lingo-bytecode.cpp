@@ -220,6 +220,9 @@ void LC::cb_unk2() {
 
 void LC::cb_field() {
 	LB::b_field(1);
+	Datum field = g_lingo->pop();
+	Datum result = g_lingo->varFetch(field);
+	g_lingo->push(result);
 }
 
 
@@ -248,7 +251,7 @@ void LC::cb_v4assign() {
 	case 0x16:
 		// put value into field textVar
 		{
-			LC::cb_field();
+			LB::b_field(1);
 			LC::c_assign();
 		}
 		break;

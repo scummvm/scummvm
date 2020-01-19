@@ -367,25 +367,6 @@ void LC::c_assign() {
 	d1 = g_lingo->pop();
 	d2 = g_lingo->pop();
 
-	if (d1.type == REFERENCE) {
-		Score *score = g_director->getCurrentScore();
-		if (!score->_loadedCast->contains(d1.u.i)) {
-			if (!score->_loadedCast->contains(d1.u.i - score->_castIDoffset)) {
-				warning("c_assign: Unknown REFERENCE %d", d1.u.i);
-				g_lingo->pushVoid();
-				return;
-			} else {
-				d1.u.i -= score->_castIDoffset;
-			}
-		}
-
-		d2.toString();
-
-		((TextCast *)score->_loadedCast->getVal(d1.u.i))->setText(d2.u.s->c_str());
-
-		return;
-	}
-
 	g_lingo->varAssign(d1, d2);
 }
 
