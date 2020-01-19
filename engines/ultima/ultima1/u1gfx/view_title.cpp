@@ -89,6 +89,11 @@ ViewTitle::~ViewTitle() {
 }
 
 void ViewTitle::draw() {
+	if (!_isDirty)
+		return;
+
+	VisualContainer::draw();
+
 	switch (_mode) {
 	case TITLEMODE_COPYRIGHT:
 		drawCopyrightView();
@@ -135,11 +140,11 @@ void ViewTitle::drawCopyrightView() {
 void ViewTitle::drawPresentsView() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	Shared::Gfx::VisualSurface s = getSurface();
-	s.clear();
-	s.blitFrom(_logo, Point(20, 21));
 
 	switch (_counter) {
 	case 0:
+		s.clear();
+		s.blitFrom(_logo, Point(20, 21));
 		s.writeString(game->_res->TITLE_MESSAGES[3], TextPoint(14, 13), game->_textColor);
 		break;
 	case 1:
@@ -148,6 +153,7 @@ void ViewTitle::drawPresentsView() {
 		s.writeString(game->_res->TITLE_MESSAGES[6], TextPoint(5, 14), game->_textColor);
 		break;
 	case 2:
+		s.fillRect(Rect(0, 12 * 8, 320, 15 * 8), game->_bgColor);
 		s.writeString(game->_res->TITLE_MESSAGES[7], TextPoint(6, 12), game->_textColor);
 		s.writeString(game->_res->TITLE_MESSAGES[8], TextPoint(6, 13), game->_textColor);
 		break;
@@ -215,30 +221,30 @@ void ViewTitle::setCastlePalette() {
 
 bool ViewTitle::FrameMsg(CFrameMsg &msg) {
 	uint32 time = getGame()->getMillis();
-
+	if (time < _expiryTime)
+		return true;
+	setDirty();
+	
 	switch (_mode) {
 	case TITLEMODE_COPYRIGHT:
-		if (time > _expiryTime) {
-			_mode = TITLEMODE_PRESENTS;
-			_counter = 0;
-			_expiryTime = time + 3000;
-		}
+		_mode = TITLEMODE_PRESENTS;
+		_counter = 0;
+		_expiryTime = time + 3000;
+		setDirty();
 		break;
 
 	case TITLEMODE_PRESENTS:
-		if (time > _expiryTime) {
-			_expiryTime = time + 3000;
-			if (++_counter == 3) {
-				_mode = TITLEMODE_CASTLE;
-				_counter = 0;
-				_expiryTime = time;
-				setCastlePalette();
-			}
+		_expiryTime = time + 3000;
+		if (++_counter == 3) {
+			_mode = TITLEMODE_CASTLE;
+			_counter = 0;
+			_expiryTime = time;
+			setCastlePalette();
 		}
 		break;
 
 	case TITLEMODE_CASTLE:
-		_expiryTime = time + 20;
+		_expiryTime = time + 200;
 		if (++_counter == 100) {
 			_mode = TITLEMODE_PRESENTS;
 			_counter = 0;
@@ -248,20 +254,18 @@ bool ViewTitle::FrameMsg(CFrameMsg &msg) {
 		break;
 
 	case TITLEMODE_TRADEMARKS:
-		if (time > _expiryTime) {
-			_expiryTime = time + 20;
-			++_counter;
-			if (_counter == 32) {
-				_expiryTime = time + 4000;
-			} else if (_counter == 33) {
-				_mode = TITLEMODE_MAIN_MENU;
-				_expiryTime = time;
-				_counter = 0;
+		_expiryTime = time + 20;
+		++_counter;
+		if (_counter == 32) {
+			_expiryTime = time + 4000;
+		} else if (_counter == 33) {
+			_mode = TITLEMODE_MAIN_MENU;
+			_expiryTime = time;
+			_counter = 0;
 
-				Shared::Gfx::TextCursor *textCursor = getGame()->_textCursor;
-				textCursor->setPosition(TextPoint(25, 18));
-				textCursor->setVisible(true);
-			}
+			Shared::Gfx::TextCursor *textCursor = getGame()->_textCursor;
+			textCursor->setPosition(TextPoint(25, 18));
+			textCursor->setVisible(true);
 		}
 		break;
 
