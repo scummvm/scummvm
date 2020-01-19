@@ -92,5 +92,12 @@ void writeUltima1Resources(Archive &a) {
 	createLogo(u1, logo);
 	a.add("ULTIMA1/LOGO", logo);
 
+	// Add the flag data for the castle title screen
+	Common::MemFile flags;
+	u1.seek(DATA_SEGMENT_OFFSET + 0x124);
+	for (int idx = 0; idx < 64 * 3; ++idx)
+		flags.writeByte(u1.readByte() ? 10 : 11);
+	a.add("ULTIMA1/FLAGS", flags);
+
 	u1.close();
 }
