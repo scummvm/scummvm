@@ -31,7 +31,20 @@ BEGIN_MESSAGE_MAP(Sprites, TreeItem)
 END_MESSAGE_MAP()
 
 bool Sprites::FrameMsg(CFrameMsg &msg) {
+	if (!empty()) {
+		animateWater();
+	}
+
 	return false;
+}
+
+void Sprites::animateWater() {
+	byte lineBuffer[16];
+	Shared::Gfx::Sprite &sprite = (*this)[0];
+
+	Common::copy(sprite.getBasePtr(0, 15), sprite.getBasePtr(0, 16), lineBuffer);
+	Common::copy_backward(sprite.getBasePtr(0, 0), sprite.getBasePtr(0, 15), sprite.getBasePtr(0, 16));
+	Common::copy(lineBuffer, lineBuffer + 16, sprite.getBasePtr(0, 0));
 }
 
 } // End of namespace U1Gfx

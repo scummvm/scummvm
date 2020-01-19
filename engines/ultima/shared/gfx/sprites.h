@@ -69,6 +69,21 @@ public:
 	 * Return the height of the sprite
 	 */
 	uint16 h() const { return _surface.h; }
+
+	/**
+	 * Get a reference to the sprite surface
+	 */
+	byte *getPixels() { return (byte *)_surface.getPixels(); }
+
+	/**
+	 * Get a reference to a specified position within the sprite
+	 */
+	byte *getBasePtr(int16 x, int16 y) { return (byte *)_surface.getBasePtr(x, y); }
+
+	/**
+	 * Get a reference to a specified position within the sprite
+	 */
+	const byte *getBasePtr(int16 x, int16 y) const { return (const byte *)_surface.getBasePtr(x, y); }
 };
 
 class Sprites : public Common::Array<Sprite> {

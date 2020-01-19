@@ -39,6 +39,11 @@ using Shared::CFrameMsg;
 class Sprites : public ::Ultima::Shared::Gfx::Sprites, public Shared::TreeItem {
 	DECLARE_MESSAGE_MAP;
 	bool FrameMsg(CFrameMsg &msg);
+private:
+	/**
+	 * Animates the water sprite by rotating it's lines vertically
+	 */
+	void animateWater();
 public:
 	CLASSDEF;
 	Sprites(TreeItem *parent) : ::Ultima::Shared::Gfx::Sprites(), TreeItem() {
