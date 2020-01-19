@@ -1070,7 +1070,7 @@ void Score::dumpScript(const char *script, ScriptType type, uint16 id) {
 	switch (type) {
 	case kNoneScript:
 	default:
-		error("Incorrect dumpScript() call");
+		error("Incorrect dumpScript() call (type %d)", type);
 	case kFrameScript:
 		typeName = "frame";
 		break;
@@ -1085,6 +1085,9 @@ void Score::dumpScript(const char *script, ScriptType type, uint16 id) {
 		break;
 	case kGlobalScript:
 		typeName = "global";
+		break;
+	case kScoreScript:
+		typeName = "score";
 		break;
 	}
 
