@@ -80,7 +80,6 @@ protected:
 	Gfx::Font *_font;
 public:
 	Gfx::TextCursor *_textCursor;
-	Gfx::TextInput *_textInput;
 	uint _videoMode;
 public:
 	/**
