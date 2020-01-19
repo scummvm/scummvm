@@ -200,6 +200,11 @@ public:
 	 * Returns true if the cell is a type that has walls on it: walls, doors, or secret doors
 	 */
 	virtual bool isWallOrDoorway(const Point &pt) const;
+
+	/**
+	 * Returns true if the cell represents a solid (non-walkable) tile
+	 */
+	virtual bool isSolid(const Point &pt) const;
 };
 
 } // End of namespace Ultima1

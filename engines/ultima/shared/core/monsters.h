@@ -24,6 +24,7 @@
 #define ULTIMA_SHARED_CORE_MONSTERS_H
 
 #include "ultima/shared/core/map.h"
+#include "ultima/shared/gfx/dungeon_surface.h"
 
 namespace Ultima {
 namespace Shared {
@@ -59,6 +60,11 @@ public:
 	 * Returns true if a monster blocks the background behind him
 	 */
 	virtual bool isBlockingView() const = 0;
+
+	/**
+	 * Draw a monster
+	 */
+	virtual void draw(DungeonSurface &s, uint distance) = 0; 
 };
 
 } // End of namespace Ultima1

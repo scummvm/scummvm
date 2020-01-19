@@ -86,5 +86,61 @@ void DungeonSurface::drawWidget(uint widgetId, uint distance, byte color) {
 	_widgetFn(*this, widgetId, distance, color);
 }
 
+void DungeonSurface::drawLadderDownFaceOn(uint distance) {
+	if (distance <= 5) {
+		drawWidget(27, distance, _edgeColor);
+		drawWidget(28, distance, _edgeColor);
+	}
+}
+
+void DungeonSurface::drawLadderDownSideOn(uint distance) {
+	if (distance <= 5) {
+		drawWidget(27, distance, _edgeColor);
+		drawWidget(29, distance, _edgeColor);
+	}
+}
+
+void DungeonSurface::drawLadderUpFaceOn(uint distance) {
+	if (distance <= 5) {
+		drawWidget(26, distance, _edgeColor);
+		drawWidget(28, distance, _edgeColor);
+	}
+}
+
+void DungeonSurface::drawLadderUpSideOn(uint distance) {
+	if (distance <= 5) {
+		drawWidget(26, distance, _edgeColor);
+		drawWidget(29, distance, _edgeColor);
+	}
+}
+
+void DungeonSurface::drawLeftDoor(uint distance) {
+	// TODO
+}
+
+void DungeonSurface::drawLeftWall(uint distance) {
+	// TODO
+}
+
+void DungeonSurface::drawLeftBlank(uint distance) {
+	// TODO
+}
+
+void DungeonSurface::drawRightDoor(uint distance) {
+	// TODO
+}
+
+void DungeonSurface::drawRightWall(uint distance) {
+	// TODO
+}
+
+void DungeonSurface::drawRightBlank(uint distance) {
+	// TODO
+}
+
+void DungeonSurface::drawBeams(uint distance) {
+	// TODO
+}
+
 } // End of namespace Shared
 } // End of namespace Ultima

@@ -341,5 +341,10 @@ bool Ultima1Map::isWallOrDoorway(const Point &pt) const {
 	return _data[pt.y][pt.x] == DTILE_WALL || _data[pt.y][pt.x] == DTILE_DOOR || _data[pt.y][pt.x] == DTILE_SECRET_DOOR;
 }
 
+bool Ultima1Map::isSolid(const Point &pt) const {
+	return _data[pt.y][pt.x] != DTILE_HALLWAY && _data[pt.y][pt.x] != DTILE_LADDER_DOWN
+		&& _data[pt.y][pt.x] == DTILE_LADDER_UP;
+}
+
 } // End of namespace Ultima1
 } // End of namespace Ultima

@@ -75,6 +75,61 @@ public:
 	 * Draws a monster or item at a given distance from the player
 	 */
 	void drawWidget(uint widgetId, uint distance, byte color);
+
+	/**
+	 * Draw a ladder down face on
+	 */
+	void drawLadderDownFaceOn(uint distance);
+
+	/**
+	 * Draw a ladder down side on
+	 */
+	void drawLadderDownSideOn(uint distance);
+
+	/**
+	 * Draw a ladder down face on
+	 */
+	void drawLadderUpFaceOn(uint distance);
+
+	/**
+	 * Draw a ladder down side on
+	 */
+	void drawLadderUpSideOn(uint distance);
+
+	/**
+	 * Draw beams
+	 */
+	void drawBeams(uint distance);
+
+	/**
+	 * Draws a door on the left hand side
+	 */
+	void drawLeftDoor(uint distance);
+
+	/**
+	 * Draws a wall on the left-hand side
+	 */
+	void drawLeftWall(uint distance);
+
+	/**
+	 * Draws open/walkable areas on the left hand side
+	 */
+	void drawLeftBlank(uint distance);
+
+	/**
+	 * Draws a door on the right hand side
+	 */
+	void drawRightDoor(uint distance);
+
+	/**
+	 * Draws a wall on the right-hand side
+	 */
+	void drawRightWall(uint distance);
+
+	/**
+	 * Draws open/walkable areas on the right hand side
+	 */
+	void drawRightBlank(uint distance);
 };
 
 } // End of namespace Shared
