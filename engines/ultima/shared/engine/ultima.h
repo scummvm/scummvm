@@ -42,7 +42,7 @@ class UltimaEngine : public Engine, public EventsCallback {
 private:
     Common::RandomSource _randomSource;
 protected:
-	const Ultima::UltimaGameDescription *_gameDescription;
+	const UltimaGameDescription *_gameDescription;
 	Common::Archive *_dataArchive;
 	Debugger *_debugger;
 protected:
@@ -83,20 +83,22 @@ public:
      */
     uint32 getFeatures() const;
 
+	/**
+	 * Return the game's language
+	 */
+	Common::Language getLanguage() const;
+
     /**
      * Returns the game type being played
      */
-    GameId getGameId() const {
-        return (_gameDescription->gameId == GAME_ULTIMA6_ENHANCED) ?
-            GAME_ULTIMA6 : _gameDescription->gameId;
-    }
+	GameId getGameId() const;
 
     /**
      * Returns true if the game is running an enhanced version
      * as compared to the original game
      */
     bool isEnhanced() const {
-        return _gameDescription->gameId == GAME_ULTIMA6_ENHANCED;
+		return getFeatures() & GF_VGA_ENHANCED;
     }
 
     /**

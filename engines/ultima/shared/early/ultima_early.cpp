@@ -52,10 +52,6 @@ UltimaEarlyEngine::~UltimaEarlyEngine() {
 	delete _screen;
 }
 
-GameId UltimaEarlyEngine::getGameID() const {
-	return _gameDescription->gameId;
-}
-
 bool UltimaEarlyEngine::initialize() {
 	if (!UltimaEngine::initialize())
 		return false;
@@ -98,7 +94,7 @@ void UltimaEarlyEngine::playGame() {
 }
 
 Game *UltimaEarlyEngine::createGame() const {
-	switch (getGameID()) {
+	switch (getGameId()) {
 	case GAME_ULTIMA1:
 		return new Ultima1::Ultima1Game();
 	default:

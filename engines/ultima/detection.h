@@ -37,7 +37,6 @@ enum GameId {
 	GAME_ULTIMA4,
 	GAME_ULTIMA5,
 	GAME_ULTIMA6,
-	GAME_ULTIMA6_ENHANCED,
 	GAME_SAVAGE_EMPIRE,
 	GAME_MARTIAN_DREAMS,
 	GAME_ULTIMA_UNDERWORLD1,
@@ -47,9 +46,14 @@ enum GameId {
 	// There is no game after Ultima 8. Nope.. none at all.
 };
 
+enum UltimaGameFeatures {
+	GF_VGA_ENHANCED = 1 << 0
+};
+
 struct UltimaGameDescription {
 	ADGameDescription desc;
 	GameId gameId;
+	uint32 features;
 };
 
 } // End of namespace Ultima8

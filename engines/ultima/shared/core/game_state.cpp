@@ -31,7 +31,7 @@ namespace Shared {
 
 GameState::GameState(Game *game) : _videoMode(EGA), _dungeonExitHitPoints(0), _randomSeed(0) {
 	_characters.resize(1);
-	_gameId = g_vm->getGameID();
+	_gameId = g_vm->getGameId();
 
 	switch (_gameId) {
 	case GAME_ULTIMA1:

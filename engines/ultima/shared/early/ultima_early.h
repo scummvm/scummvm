@@ -26,6 +26,9 @@
 #include "ultima/shared/engine/ultima.h"
 
 namespace Ultima {
+
+struct UltimaGameDescription;
+
 namespace Shared {
 
 class Debugger;
@@ -72,11 +75,6 @@ public:
 	 * Play the game
 	 */
 	void playGame();
-
-	/**
-	 * Returns the Id of the game
-	 */
-	GameId getGameID() const;
 
 	/**
 	 * Get the screen
