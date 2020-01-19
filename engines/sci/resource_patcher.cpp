@@ -30,7 +30,8 @@ namespace Sci {
 
 // Start of internal resource patcher macros. Please do not use these directly
 // in resource patches.
-#define _NUMARGS(...) (sizeof((int[]){__VA_ARGS__})/sizeof(int))
+using int_c_array = int[];
+#define _NUMARGS(...) (sizeof(int_c_array{__VA_ARGS__})/sizeof(int))
 #ifdef SCUMM_LITTLE_ENDIAN
 #define _PACKINT32(n) (((uint32)n) & 0xFF), (((uint32)n) >> 8 & 0xFF), (((uint32)n) >> 16 & 0xFF), (((uint32)n) >> 24 & 0xFF)
 #else
