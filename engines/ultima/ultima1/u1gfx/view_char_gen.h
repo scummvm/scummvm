@@ -40,6 +40,11 @@ class ViewCharacterGeneration : public Shared::Gfx::VisualContainer {
 	DECLARE_MESSAGE_MAP;
 	bool KeypressMsg(CKeypressMsg &msg);
 private:
+	enum Flag {
+		FLAG_FRAME = 1, FLAG_ATTRIBUTES = 2, FLAG_ATTR_POINTERS = 4, FLAG_HELP = 8, FLAG_RACE = 16, FLAG_SEX = 32,
+		FLAG_INITIAL = FLAG_FRAME | FLAG_ATTRIBUTES | FLAG_ATTR_POINTERS | FLAG_HELP
+	};
+	int _flags;
 	Shared::Character _character;
 public:
 	CLASSDEF;
