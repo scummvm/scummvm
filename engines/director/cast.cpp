@@ -344,6 +344,7 @@ ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextC
 
 ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
 	_type = kCastLingoScript;
+	_scriptType = kNoneScript;
 
 	if (version < 4) {
 		error("Unhandled Script cast");
