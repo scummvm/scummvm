@@ -47,7 +47,7 @@ GameBase::~GameBase() {
 	delete _textInput;
 }
 
-void GameBase::starting() {
+void GameBase::starting(bool isLoading) {
 	// Enable the mouse cursor
 	g_vm->_mouseCursor->show();
 

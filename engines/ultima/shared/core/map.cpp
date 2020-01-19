@@ -268,7 +268,18 @@ void Map::load(MapId mapId) {
 }
 
 void Map::synchronize(Common::Serializer &s) {
-	load(_mapArea->getMapId());
+	int mapId;
+
+	if (s.isSaving()) {
+		// Saving
+		mapId = _mapArea->getMapId();
+		s.syncAsUint16LE(mapId);
+	} else {
+		// Loading
+		s.syncAsUint16LE(mapId);
+		load(mapId);
+	}
+
 	_mapArea->synchronize(s);
 }
 

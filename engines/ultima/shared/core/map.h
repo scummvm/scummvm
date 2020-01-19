@@ -33,7 +33,7 @@ namespace Ultima {
 
 namespace Shared {
 
-#define REGISTER_WIDGET(NAME) if (name == "NAME") return new Widgets::NAME(_game, (Ultima1Map::MapBase *)map) 
+#define REGISTER_WIDGET(NAME) if (name == #NAME) return new Widgets::NAME(_game, (Ultima1Map::MapBase *)map) 
 #define DECLARE_WIDGET(NAME) virtual const char *getClassName() const override { return #NAME; }
 
 enum Direction {
