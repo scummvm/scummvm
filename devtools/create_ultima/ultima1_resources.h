@@ -20,38 +20,11 @@
  *
  */
 
- // Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#ifndef ULTIMA1_RESOURCES_H
+#define ULTIMA1_RESOURCES_H
 
-// HACK to allow building with the SDL backend on MinGW
-// see bug #1800764 "TOOLS: MinGW tools building broken"
-#ifdef main
-#undef main
-#endif // main
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "archive.h"
-#include "ultima1_map.h"
-#include "ultima1_resources.h"
 
-#define VERSION_NUMBER 1
+extern void writeUltima1Resources(Archive &a);
 
-void NORETURN_PRE error(const char *s, ...) {
-	printf("%s\n", s);
-	exit(1);
-}
-
-int main(int argc, char *argv[]) {
-	Archive archive;
-	if (!archive.open("ultima.dat")) {
-		error("Could not open output file");
-	}
-
-	writeUltima1Resources(archive);
-	writeUltima1EnhancedMap(archive);
-
-	archive.close();
-	return 0;
-}
+#endif
