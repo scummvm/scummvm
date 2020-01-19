@@ -82,6 +82,11 @@ public:
 	virtual uint getLevel() const { return _dungeonLevel; }
 
 	/**
+	 * Updates the map at the end of a turn
+	 */
+	void update();
+
+	/**
 	 * Spawns a monster within dungeons
 	 */
 	void spawnMonster();

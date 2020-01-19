@@ -52,5 +52,23 @@ GameState::~GameState() {
 	delete _map;
 }
 
+bool GameState::isPartyDead() const {
+	for (uint idx = 0; idx < _characters.size(); ++idx) {
+		if (_characters[idx]._hitPoints > 0)
+			return false;
+	}
+
+	return true;
+}
+
+bool GameState::isPartyFoodless() const {
+	for (uint idx = 0; idx < _characters.size(); ++idx) {
+		if (_characters[idx]._food > 0)
+			return false;
+	}
+
+	return true;
+}
+
 } // End of namespace Shared
 } // End of namespace Ultima

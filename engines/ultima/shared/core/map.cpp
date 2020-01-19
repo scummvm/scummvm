@@ -106,6 +106,15 @@ void Map::MapBase::addWidget(MapWidget *widget) {
 	_widgets.push_back(Shared::MapWidgetPtr(widget));
 }
 
+void Map::MapBase::removeWidget(MapWidget *widget) {
+	for (uint idx = 0; idx < _widgets.size(); ++idx) {
+		if (_widgets[idx].get() == widget) {
+			_widgets.remove_at(idx);
+			break;
+		}
+	}
+}
+
 void Map::MapBase::getTileAt(const Point &pt, MapTile *tile) {
 	tile->clear();
 
@@ -126,7 +135,11 @@ void Map::MapBase::getTileAt(const Point &pt, MapTile *tile) {
 void Map::MapBase::update() {
 	// Call the update method of each widget, to allow for things like npc movement, etc.
 	for (uint idx = 0; idx < _widgets.size(); ++idx)
-		_widgets[idx].get()->update();
+		_widgets[idx].get()->update(true);
+
+	// Call the update method of each widget, to allow for things like npc movement, etc.
+	for (uint idx = 0; idx < _widgets.size(); ++idx)
+		_widgets[idx].get()->update(false);
 }
 
 Point Map::MapBase::getPosition() const {

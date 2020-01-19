@@ -29,6 +29,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+#define SGN(v) ((v) > 0 ? 1 : -1)
+
 bool DungeonMonster::isBlockingView() const {
 	return _monsterId != MONSTER_INVISIBLE_SEEKER && _monsterId != MONSTER_MIMIC
 		&& _monsterId != MONSTER_GELATINOUS_CUBE;
@@ -45,6 +47,30 @@ void DungeonMonster::draw(Shared::DungeonSurface &s, uint distance) {
 			Widgets::DungeonWidget::drawWidget(s, _monsterId, distance, game->_edgeColor);
 		}
 	}
+}
+
+void DungeonMonster::update(bool isPreUpdate) {
+	assert(isPreUpdate);
+	Point playerPos = _map->_currentTransport->_position;
+	Point delta = playerPos - _position;
+	int distance = ABS(delta.x) + ABS(delta.y);
+
+	if (distance == 1) {
+		attack(true);
+	} else if (distance < 8) {
+		movement();
+	}
+}
+
+void DungeonMonster::movement() {
+	Point playerPos = _map->_currentTransport->_position;
+	Point delta = playerPos - _position;
+	Shared::MapTile tle;
+
+	if (delta.x != 0 && canMoveTo(Point(_position.x + SGN(delta.x), _position.y)))
+		_position.x += SGN(delta.x);
+	else if (delta.y != 0 && canMoveTo(Point(_position.x, _position.y + SGN(delta.y))))
+		_position.y += SGN(delta.y);
 }
 
 /*-------------------------------------------------------------------*/

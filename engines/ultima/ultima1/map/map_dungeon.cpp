@@ -177,6 +177,23 @@ void MapDungeon::spawnMonsterAt(const Point &pt) {
 	}
 }
 
+void MapDungeon::update() {
+	U1MapTile tile;
+	Point pt;
+
+	// Widgets in the dungeon are updated by row
+	for (pt.y = 1; pt.y < ((int)height() - 1) && !_game->_gameState->isPartyFoodless(); pt.y++) {
+		for (pt.x = 1; pt.x < ((int)width() - 1); pt.x++) {
+			// Check for a widget at the given position
+			getTileAt(pt, &tile);
+
+			Shared::Creature *creature = dynamic_cast<Shared::Creature *>(tile._widget);
+			if (creature)
+				creature->update(true);
+		}
+	}
+}
+
 } // End of namespace Map
 } // End of namespace Ultima1
 } // End of namespace Ultima

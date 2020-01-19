@@ -83,6 +83,16 @@ public:
 	 * Destructor
 	 */
 	~GameState();
+
+	/**
+	 * Returns true if the party is dead
+	 */
+	bool isPartyDead() const;
+
+	/**
+	 * Returns true if the party has no food
+	 */
+	bool isPartyFoodless() const;
 };
 
 } // End of namespace Shared
