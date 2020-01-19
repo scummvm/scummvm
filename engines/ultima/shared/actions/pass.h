@@ -39,8 +39,8 @@ public:
 	CLASSDEF;
 
 	/**
-	* Constructor
-	*/
+	 * Constructor
+	 */
 	Pass(TreeItem *parent, const char *&text) : Action(parent), _text(text) {}
 
 	/**

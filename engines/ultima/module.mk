@@ -12,6 +12,7 @@ MODULE_OBJS := \
 ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
 	shared/actions/action.o \
+	shared/actions/huh.o \
 	shared/actions/pass.o \
 	shared/core/base_object.o \
 	shared/core/character.o \

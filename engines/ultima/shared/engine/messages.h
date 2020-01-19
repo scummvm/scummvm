@@ -222,6 +222,36 @@ public:
 };
 
 /**
+ * Climb up or down
+ */
+MESSAGE0(CClimbMsg);
+
+/**
+ * Used to trigger an Enter action
+ */
+MESSAGE0(CEnterMsg);
+
+/**
+ * Used to notify that a rendering frame has finished, occurring at GAME_FRAME_RATE times every second
+ */
+MESSAGE1(CFrameMsg, uint, ticks, 0);
+
+/**
+ * Notifies a game view is being hidden
+ */
+MESSAGE2(CHideMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fadeOut, false);
+
+/**
+ * Adds text strings to the info area
+ */
+MESSAGE2(CInfoMsg, Common::String, text, "", bool, newLine, true);
+
+/**
+ * Signals an unknown/unhandled keypress
+ */
+MESSAGE0(CHuhMsg);
+
+/**
  * Signals a single standard ASCII keypress
  */
 MESSAGE1(CKeyCharMsg, int, key, 32);
@@ -232,44 +262,19 @@ MESSAGE1(CKeyCharMsg, int, key, 32);
 MESSAGE1(CKeypressMsg, Common::KeyState, keyState, Common::KeyState());
 
 /**
- * Called when a game view is shown
- */
-MESSAGE2(CShowMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fadeIn, false);
-
-/**
- * Notifies a game view is being hidden
- */
-MESSAGE2(CHideMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fadeOut, false);
-
-/**
- * Used to notify that a rendering frame has finished, occurring at GAME_FRAME_RATE times every second
- */
-MESSAGE1(CFrameMsg, uint, ticks, 0);
-
-/**
- * Adds text strings to the info area
- */
-MESSAGE2(CInfoMsg, Common::String, text, "", bool, newLine, true);
-
-/**
  * Used to trigger a party movement
  */
 MESSAGE1(CMoveMsg, int, direction, 0);
 
 /**
- * Used to trigger an Enter action
- */
-MESSAGE0(CEnterMsg);
-
-/**
- * Climb up or down
- */
-MESSAGE0(CClimbMsg);
-
-/**
  * Pass a turn
  */
 MESSAGE0(CPassMsg);
+
+/**
+ * Called when a game view is shown
+ */
+MESSAGE2(CShowMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fadeIn, false);
 
 } // End of namespace Shared
 } // End of namespace Ultima

@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/u1gfx/game_view.h"
+#include "ultima/shared/actions/huh.h"
 #include "ultima/shared/actions/pass.h"
 #include "ultima/shared/core/map.h"
 #include "ultima/ultima1/game.h"
@@ -54,6 +55,7 @@ GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", 
 	_actions[1] = new Actions::Climb(this);
 	_actions[2] = new Actions::Enter(this);
 	_actions[3] = new Shared::Actions::Pass(this, game->_res->PASS);
+	_actions[4] = new Shared::Actions::Huh(this, game->_res->HUH);
 }
 
 GameView::~GameView() {
@@ -61,7 +63,7 @@ GameView::~GameView() {
 	delete _status;
 	delete _viewportDungeon;
 	delete _viewportMap;
-	for (int idx = 0; idx < 4; ++idx)
+	for (int idx = 0; idx < 5; ++idx)
 		delete _actions[idx];
 }
 
@@ -148,8 +150,11 @@ bool GameView::KeypressMsg(CKeypressMsg &msg) {
 		pass.execute(this);
 		break;
 	}
-	default:
-		return false;
+	default: {
+		Shared::CHuhMsg huh;
+		huh.execute(this);
+		break;
+	}
 	}
 
 	// End of turn
