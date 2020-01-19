@@ -290,12 +290,50 @@ void Lingo::restartLingo() {
 }
 
 int Lingo::alignTypes(Datum &d1, Datum &d2) {
-	int opType = INT;
+	int opType = VOID;
+
+	if (d1.type == STRING) {
+		char *endPtr = 0;
+		int i = strtol(d1.u.s->c_str(), &endPtr, 10);
+		if (*endPtr == 0) {
+			d1.type = INT;
+			d1.u.i = i;
+		} else {
+			double d = strtod(d1.u.s->c_str(), &endPtr);
+			if (*endPtr == 0) {
+				d1.type = FLOAT;
+				d1.u.f = d;
+			} else {
+				warning("Unable to parse '%s' as a number", d1.u.s->c_str());
+			}
+		}
+	}
+	if (d2.type == STRING) {
+		char *endPtr = 0;
+		int i = strtol(d2.u.s->c_str(), &endPtr, 10);
+		if (*endPtr == 0) {
+			d2.type = INT;
+			d2.u.i = i;
+		} else {
+			double d = strtod(d2.u.s->c_str(), &endPtr);
+			if (*endPtr == 0) {
+				d2.type = FLOAT;
+				d2.u.f = d;
+			} else {
+				warning("Unable to parse '%s' as a number", d2.u.s->c_str());
+			}
+		}
+	}
+
 
 	if (d1.type == FLOAT || d2.type == FLOAT) {
 		opType = FLOAT;
 		d1.toFloat();
 		d2.toFloat();
+	} else if (d1.type == INT && d2.type == INT) {
+		opType = INT;
+	} else {
+		warning("No numeric type alignment available");
 	}
 
 	return opType;
@@ -307,7 +345,16 @@ int Datum::toInt() {
 		toString();
 		// fallthrough
 	case STRING:
-		u.i = atoi(u.s->c_str());
+		{
+			char *endPtr = 0;
+			int result = strtol(u.s->c_str(), &endPtr, 10);
+			if (*endPtr == 0) {
+				u.i = result;
+			} else {
+				warning("Invalid int '%s'", u.s->c_str());
+				u.i = 0;
+			}
+		}
 		break;
 	case VOID:
 		u.i = 0;
@@ -333,7 +380,16 @@ double Datum::toFloat() {
 		toString();
 		// fallthrough
 	case STRING:
-		u.f = atof(u.s->c_str());
+		{
+			char *endPtr = 0;
+			double result = strtod(u.s->c_str(), &endPtr);
+			if (*endPtr == 0) {
+				u.f = result;
+			} else {
+				warning("Invalid float '%s'", u.s->c_str());
+				u.f = 0.0;
+			}
+		}
 		break;
 	case VOID:
 		u.f = 0.0;
