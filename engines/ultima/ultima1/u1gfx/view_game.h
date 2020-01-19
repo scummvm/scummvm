@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GFX_GAME_VIEW_H
-#define ULTIMA_ULTIMA1_GFX_GAME_VIEW_H
+#ifndef ULTIMA_ULTIMA1_GFX_VIEW_GAME_H
+#define ULTIMA_ULTIMA1_GFX_VIEW_GAME_H
 
 #include "ultima/shared/gfx/visual_container.h"
 #include "ultima/shared/gfx/bitmap.h"
@@ -41,14 +41,13 @@ namespace U1Gfx {
 
 class Status;
 class ViewportMap;
-
 using Shared::CKeypressMsg;
 
 /**
  * This class implements a standard view screen that shows a status and log area, as well as either
  * a map or dungeon view covering the bulk of the screen
  */
-class GameView : public Shared::Gfx::VisualContainer {
+class ViewGame : public Shared::Gfx::VisualContainer {
 	DECLARE_MESSAGE_MAP;
 	bool KeypressMsg(CKeypressMsg &msg);
 private:
@@ -64,8 +63,8 @@ private:
 	void drawIndicators();
 public:
 	CLASSDEF;
-	GameView(TreeItem *parent = nullptr);
-	virtual ~GameView();
+	ViewGame(TreeItem *parent = nullptr);
+	virtual ~ViewGame();
 
 	/**
 	 * Draw the game screen

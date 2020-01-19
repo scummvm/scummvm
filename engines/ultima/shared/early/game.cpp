@@ -53,6 +53,7 @@ void Game::setCGAPalette() {
 	_highlightColor = 1;
 	_textColor = 3;
 	_color1 = 6;
+	_whiteColor = 3;
 }
 
 void Game::setEGAPalette() {
@@ -70,6 +71,7 @@ void Game::setEGAPalette() {
 	_textColor = 11;
 	_color1 = 7;
 	_bgColor = 0;
+	_whiteColor = 15;
 }
 
 void Game::loadU6Palette() {

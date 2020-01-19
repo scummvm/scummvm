@@ -29,10 +29,6 @@
 namespace Ultima {
 namespace Ultima1 {
 
-namespace U1Gfx {
-	class GameView;
-}
-
 enum VideoMode {
 	VIDEOMODE_EGA = 0, VIDEOMODE_VGA = 1
 };
@@ -44,6 +40,7 @@ class Ultima1Game : public Shared::Game {
 public:
 	GameResources *_res;
 	Shared::Gfx::VisualContainer *_gameView;
+	Shared::Gfx::VisualContainer *_titleView;
 public:
 	CLASSDEF;
 	Ultima1Game();

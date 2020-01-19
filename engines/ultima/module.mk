@@ -64,11 +64,12 @@ MODULE_OBJS += \
 	ultima1/map/map_dungeon.o \
 	ultima1/map/map_overworld.o \
 	ultima1/u1gfx/drawing_support.o \
-	ultima1/u1gfx/game_view.o \
 	ultima1/u1gfx/info.o \
 	ultima1/u1gfx/sprites.o \
 	ultima1/u1gfx/status.o \
 	ultima1/u1gfx/text_cursor.o \
+	ultima1/u1gfx/view_game.o \
+	ultima1/u1gfx/view_title.o \
 	ultima1/u1gfx/viewport_dungeon.o \
 	ultima1/u1gfx/viewport_map.o \
 	ultima1/u6gfx/game_view.o \

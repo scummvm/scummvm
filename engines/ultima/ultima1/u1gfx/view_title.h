@@ -20,70 +20,48 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_EARLY_GAME_H
-#define ULTIMA_SHARED_EARLY_GAME_H
+#ifndef ULTIMA_ULTIMA1_GFX_VIEW_MAP_H
+#define ULTIMA_ULTIMA1_GFX_VIEW_MAP_H
 
-#include "ultima/shared/early/game_base.h"
+#include "ultima/shared/gfx/visual_container.h"
+#include "ultima/shared/gfx/bitmap.h"
 
 namespace Ultima {
+
 namespace Shared {
+	class Info;
+	class ViewportDungeon;
+	namespace Actions {
+		class Action;
+	}
+}
+	
+namespace Ultima1 {
+namespace U1Gfx {
 
-class GameView;
-class GameState;
-class FontResources;
+class Status;
+class ViewportMap;
+using Shared::CKeypressMsg;
 
-class Game : public GameBase {
+/**
+ * This class implements a standard view screen that shows a status and log area, as well as either
+ * a map or dungeon view covering the bulk of the screen
+ */
+class ViewTitle : public Shared::Gfx::VisualContainer {
 	DECLARE_MESSAGE_MAP;
-protected:
-	GameView *_gameView;
-	FontResources *_fontResources;
-protected:
-	/**
-	 * Sets up EGA palette
-	 */
-	void setEGAPalette();
-
-	/**
-	 * Sets up a CGA palette
-	 */
-	void setCGAPalette();
-
-	/**
-	 * Loads the Ultima 6 palette
-	 */
-	void loadU6Palette();
-public:
-	byte _edgeColor;
-	byte _borderColor;
-	byte _highlightColor;
-	byte _textColor;
-	byte _color1;
-	byte _bgColor;
-	byte _whiteColor;
+	bool KeypressMsg(CKeypressMsg &msg);
 public:
 	CLASSDEF;
+	ViewTitle(Shared::TreeItem *parent = nullptr);
+	virtual ~ViewTitle();
 
 	/**
-	 * Constructor
+	 * Draw the game screen
 	 */
-	Game();
-	
-	/**
-	 * Destructor
-	 */
-	virtual ~Game();
-
-	/**
-	 * Play a sound effect
-	 */
-	void playFX(uint effectId);
-
-	/**
-	 * Called at the end of each turn
-	 */
-	void endOfTurn();
+	virtual void draw();
 };
 
+} // End of namespace U1Gfx
 } // End of namespace Shared
 } // End of namespace Ultima
 
