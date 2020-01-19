@@ -38,13 +38,6 @@ END_MESSAGE_MAP()
 
 ViewCharacterGeneration::ViewCharacterGeneration(Shared::TreeItem *parent) :
 		Shared::Gfx::VisualContainer("CharGen", Rect(0, 0, 320, 200), parent) {
-	_attributes[0] = &_character._strength;
-	_attributes[1] = &_character._agility;
-	_attributes[2] = &_character._stamina;
-	_attributes[3] = &_character._charisma;
-	_attributes[4] = &_character._wisdom;
-	_attributes[5] = &_character._intelligence;
-	setMode(FLAG_INITIAL);
 }
 
 void ViewCharacterGeneration::setMode(uint flags) {
@@ -54,14 +47,24 @@ void ViewCharacterGeneration::setMode(uint flags) {
 	textCursor->setVisible(false);
 
 	if (flags & FLAG_FRAME) {
+		// Set up character and attributes pointers
+		_character = getGame()->_gameState->_currentCharacter;
+		_attributes[0] = &_character->_strength;
+		_attributes[1] = &_character->_agility;
+		_attributes[2] = &_character->_stamina;
+		_attributes[3] = &_character->_charisma;
+		_attributes[4] = &_character->_wisdom;
+		_attributes[5] = &_character->_intelligence;
+
+		// Set character to default
 		_pointsRemaining = 30;
 		_selectedAttribute = 0;
-		_character._strength = 10;
-		_character._agility = 10;
-		_character._stamina = 10;
-		_character._charisma = 10;
-		_character._wisdom = 10;
-		_character._intelligence = 10;
+		_character->_strength = 10;
+		_character->_agility = 10;
+		_character->_stamina = 10;
+		_character->_charisma = 10;
+		_character->_wisdom = 10;
+		_character->_intelligence = 10;
 	} else if (_flags & FLAG_RACE) {
 		textCursor->setPosition(TextPoint(20, 17));
 		textCursor->setVisible(true);
@@ -115,8 +118,8 @@ void ViewCharacterGeneration::drawAttributes(Shared::Gfx::VisualSurface &s) {
 	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[1], _pointsRemaining),
 		TextPoint(6, 4), game->_textColor);
 	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[2],
-		_character._strength, _character._agility, _character._stamina,
-		_character._charisma, _character._wisdom, _character._intelligence),
+		_character->_strength, _character->_agility, _character->_stamina,
+		_character->_charisma, _character->_wisdom, _character->_intelligence),
 		TextPoint(12, 6), game->_textColor);
 }
 
@@ -151,7 +154,7 @@ void ViewCharacterGeneration::drawSex(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 
 	s.writeString(game->_res->CHAR_GEN_TEXT[9], TextPoint(14, 13), game->_textColor);
-	s.writeString(game->_res->RACE_NAMES[_character._race], game->_textColor);
+	s.writeString(game->_res->RACE_NAMES[_character->_race], game->_textColor);
 
 	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
 	s.writeString(game->_res->CHAR_GEN_TEXT[7], TextPoint(3, 17), game->_textColor);
@@ -163,7 +166,7 @@ void ViewCharacterGeneration::drawClass(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 
 	s.writeString(game->_res->CHAR_GEN_TEXT[10], TextPoint(15, 14), game->_textColor);
-	s.writeString(game->_res->SEX_NAMES[_character._sex], game->_textColor);
+	s.writeString(game->_res->SEX_NAMES[_character->_sex], game->_textColor);
 
 	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
 	s.writeString(game->_res->CHAR_GEN_TEXT[8], TextPoint(3, 17), game->_textColor);
@@ -177,28 +180,28 @@ void ViewCharacterGeneration::drawName(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 
 	s.writeString(game->_res->CHAR_GEN_TEXT[11], TextPoint(13, 15), game->_textColor);
-	s.writeString(game->_res->CLASS_NAMES[_character._class], game->_textColor);
+	s.writeString(game->_res->CLASS_NAMES[_character->_class], game->_textColor);
 
 	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
 	s.writeString(game->_res->CHAR_GEN_TEXT[12], TextPoint(3, 17), game->_textColor);
 }
 
 void ViewCharacterGeneration::setRace(int raceNum) {
-	_character._race = raceNum;
+	_character->_race = raceNum;
 
 	switch (raceNum) {
 	case 0:
-		_character._intelligence += 5;
+		_character->_intelligence += 5;
 		break;
 	case 1:
-		_character._agility += 5;
+		_character->_agility += 5;
 		break;
 	case 2:
-		_character._strength += 5;
+		_character->_strength += 5;
 		break;
 	case 3:
-		_character._wisdom += 10;
-		_character._strength -= 5;
+		_character->_wisdom += 10;
+		_character->_strength -= 5;
 		break;
 	default:
 		break;
@@ -208,12 +211,12 @@ void ViewCharacterGeneration::setRace(int raceNum) {
 }
 
 void ViewCharacterGeneration::setSex(int sexNum) {
-	_character._sex = sexNum;
+	_character->_sex = sexNum;
 	setMode(FLAG_CLASS);
 }
 
 void ViewCharacterGeneration::setClass(int classNum) {
-	_character._class = classNum;
+	_character->_class = classNum;
 	setMode(FLAG_NAME);
 }
 
