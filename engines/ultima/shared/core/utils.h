@@ -20,40 +20,17 @@
  *
  */
 
-#include "ultima/shared/early/ultima_early.h"
-#include "ultima/shared/early/game_base.h"
-#include "ultima/shared/core/game_state.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/map/map.h"
+#ifndef ULTIMA_UTILS_H
+#define ULTIMA_UTILS_H
 
 namespace Ultima {
 namespace Shared {
 
-GameState::GameState(Game *game) : _game(game), _videoMode(EGA), _dungeonExitHitPoints(0), _randomSeed(0) {
-	_gameId = g_vm->getGameId();
-}
+#define SGN(v) ((v) > 0 ? 1 : -1)
 
-GameState::~GameState() {
-	delete _map;
-}
-
-bool GameState::isPartyDead() const {
-	for (uint idx = 0; idx < _characters.size(); ++idx) {
-		if (_characters[idx]._hitPoints > 0)
-			return false;
-	}
-
-	return true;
-}
-
-bool GameState::isPartyFoodless() const {
-	for (uint idx = 0; idx < _characters.size(); ++idx) {
-		if (_characters[idx]._food > 0)
-			return false;
-	}
-
-	return true;
-}
+extern bool isVowel(char c);
 
 } // End of namespace Shared
 } // End of namespace Ultima
+
+#endif

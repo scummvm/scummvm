@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/core/game_state.h"
+#include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/map/map.h"
 #include "ultima/ultima1/game.h"
 
@@ -28,8 +29,6 @@ namespace Ultima {
 namespace Ultima1 {
 
 GameState::GameState(Ultima1Game *game) : Shared::GameState(game) {
-	setupParty();
-
 	_map = new Map::Ultima1Map(static_cast<Ultima1Game *>(game));
 	// Load the default overworld map
 	_map->load(Ultima1::Map::MAPID_OVERWORLD);
@@ -37,13 +36,25 @@ GameState::GameState(Ultima1Game *game) : Shared::GameState(game) {
 	_map->setPosition(Point(62, 49));
 }
 
-void GameState::setupParty() {
+void GameState::setup() {
 	// Setup characters array
 	_characters.resize(1);
 	_currentCharacter = &_characters.front();
-	_currentCharacter->_armor.resize(5);
-	_currentCharacter->_weapons.resize(15);
-	_currentCharacter->_spells.resize(10);
+
+	Ultima1Game *game = dynamic_cast<Ultima1Game *>(_game);
+	_currentCharacter->_weapons.resize(16);
+	for (int idx = 0; idx < 16; ++idx) {
+		_currentCharacter->_weapons[idx]._longName = game->_res->WEAPON_NAMES_UPPERCASE[idx];
+		_currentCharacter->_weapons[idx]._longName = game->_res->WEAPON_NAMES_LOWERCASE[idx];
+	}
+
+	_currentCharacter->_armor.resize(6);
+	for (int idx = 0; idx < 6; ++idx)
+		_currentCharacter->_armor[idx]._name = game->_res->ARMOR_NAMES[idx];
+
+	_currentCharacter->_spells.resize(11);
+	for (int idx = 0; idx < 11; ++idx)
+		_currentCharacter->_spells[idx]._name = game->_res->SPELL_NAMES[idx];
 }
 
 } // End of namespace Ultima1

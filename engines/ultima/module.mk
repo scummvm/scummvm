@@ -24,6 +24,7 @@ MODULE_OBJS += \
 	shared/core/mouse_cursor.o \
 	shared/core/named_item.o \
 	shared/core/tree_item.o \
+	shared/core/utils.o \
 	shared/core/widgets.o \
 	shared/early/font_resources.o \
 	shared/early/game.o \

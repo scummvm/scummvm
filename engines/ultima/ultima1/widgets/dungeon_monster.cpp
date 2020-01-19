@@ -24,13 +24,12 @@
 #include "ultima/ultima1/map/map.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/shared/core/utils.h"
 #include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
-
-#define SGN(v) ((v) > 0 ? 1 : -1)
 
 bool DungeonMonster::isBlockingView() const {
 	return _monsterId != MONSTER_INVISIBLE_SEEKER && _monsterId != MONSTER_MIMIC
@@ -103,7 +102,7 @@ void DungeonMonster::attack(bool isAllowed) {
 	Point playerPos = _map->_currentTransport->_position;
 	Point delta = playerPos - _position;
 	Shared::Character *c = _game->_gameState->_currentCharacter;
-	uint threshold, value;
+	uint threshold, damage;
 	bool isHit = true;
 
 	// Get tile details for both the player and the attacking creature
@@ -122,15 +121,15 @@ void DungeonMonster::attack(bool isAllowed) {
 
 	if (_game->getRandomNumber(1, 255) > threshold) {
 		threshold = _game->getRandomNumber(1, 255);
-		value = (_monsterId * _monsterId) + _map->getLevel();
-		if (value > 255) {
-			value = _game->getRandomNumber(_monsterId + 1, 255);
+		damage = (_monsterId * _monsterId) + _map->getLevel();
+		if (damage > 255) {
+			damage = _game->getRandomNumber(_monsterId + 1, 255);
 		}
 
-		if (_monsterId == MONSTER_GELATINOUS_CUBE && c->_equippedArmor != -1) {
+		if (_monsterId == MONSTER_GELATINOUS_CUBE && c->isArmorEquipped()) {
 			addInfoMsg(game->_res->ARMOR_DESTROYED);
-			c->_armor[c->_equippedArmor]--;
-			c->_equippedArmor = -1;
+			c->_armor[c->_equippedArmor]._quantity--;
+			c->removeArmor();
 			isHit = false;
 		} else if (_monsterId == MONSTER_GREMLIN) {
 			addInfoMsg(game->_res->GREMLIN_STOLE);
@@ -141,15 +140,27 @@ void DungeonMonster::attack(bool isAllowed) {
 			c->_intelligence = (c->_intelligence / 2) + 5;
 			isHit = false;
 		} else if (_monsterId == MONSTER_THIEF) {
-			// TODO: More stuff
+			// Thief will steal the first spare weapon player has that isn't equipped
+			for (uint weaponNum = 1; weaponNum < c->_weapons.size(); ++weaponNum) {
+				if ((int)weaponNum != c->_equippedWeapon && c->_weapons[weaponNum]._quantity > 0) {
+					// TODO: May need to worry about word wrapping long line
+					addInfoMsg(Common::String::format(game->_res->THIEF_STOLE,
+						Shared::isVowel(c->_weapons[weaponNum]._longName.firstChar()) ? game->_res->AN : game->_res->A
+					));
+					c->_weapons[weaponNum]._quantity--;
+					break;
+				}
+			}
 		}
 	} else {
 		addInfoMsg(game->_res->MISSED);
 		isHit = false;
 	}
 
-
-	// TODO: rest of monster attacks
+	if (isHit) {
+		addInfoMsg(Common::String::format(game->_res->HIT_DAMAGE, damage));
+		c->_hitPoints -= damage;
+	}
 }
 
 } // End of namespace Widgets
