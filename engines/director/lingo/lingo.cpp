@@ -52,6 +52,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_currentEntityId = 0;
 	_pc = 0;
 	_returning = false;
+	_nextRepeat = false;
 	_indef = kStateNone;
 	_ignoreMe = false;
 	_immediateMode = false;

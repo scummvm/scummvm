@@ -83,7 +83,7 @@ struct Symbol {	/* symbol table entry */
 	int nargs;		/* number of arguments */
 	int maxArgs;	/* maximal number of arguments, for builtins */
 	bool parens;	/* whether parens required or not, for builitins */
-	
+
 	bool global;
 	ScriptContext *ctx;		/* optional script context to execute with */
 
@@ -285,6 +285,7 @@ public:
 	uint16 _currentScriptFunction;
 	ScriptData *_currentScript;
 	bool _returning;
+	bool _nextRepeat;
 	LexerDefineState _indef;
 	bool _ignoreMe;
 	bool _immediateMode;

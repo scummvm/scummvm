@@ -103,6 +103,7 @@ static struct FuncDescr {
 	{ LC::c_namepush,		"c_namepush",		"i" },
 	{ LC::c_negate,			"c_negate",			"" },
 	{ LC::c_neq,			"c_neq",			"" },
+	{ LC::c_nextRepeat,		"c_nextRepeat",		"" },
 	{ LC::c_not,			"c_not",			"" },
 	{ LC::c_objectfieldassign,"c_objectfieldassign","sF" },
 	{ LC::c_objectfieldpush,"c_objectfieldpush","sF" }, // object, field
@@ -968,6 +969,8 @@ void LC::c_repeatwhilecode(void) {
 
 	while (d.u.i) {
 		g_lingo->execute(body + savepc - 1);	/* body */
+		g_lingo->_nextRepeat = false;
+
 		if (g_lingo->_returning)
 			break;
 
@@ -1009,6 +1012,8 @@ void LC::c_repeatwithcode(void) {
 
 	while (true) {
 		g_lingo->execute(body + savepc - 1);	/* body */
+		g_lingo->_nextRepeat = false;
+
 		if (g_lingo->_returning)
 			break;
 
@@ -1031,7 +1036,9 @@ void LC::c_repeatwithcode(void) {
 }
 
 void LC::c_nextRepeat(void) {
-	warning("STUB: c_nextRepeat");
+	// loop body is a single instruction chunk which ends with
+	// STOP. Now we simulate end of execution of this chunk
+	g_lingo->_nextRepeat = true;
 }
 
 void LC::c_exitRepeat(void) {
