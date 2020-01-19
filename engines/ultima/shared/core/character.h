@@ -55,6 +55,11 @@ public:
 		uint _quantity;
 	};
 public:
+	Common::String _name;
+	uint _race;
+	uint _sex;
+	uint _class;
+
 	uint _strength;
 	uint _agility;
 	uint _stamina;
@@ -71,9 +76,6 @@ public:
 	Common::Array<Weapon> _weapons;
 	Common::Array<Armor> _armor;
 	Common::Array<Spell> _spells;
-	uint _race;
-	uint _sex;
-	uint _class;
 public:
 	/**
 	 * Constructor

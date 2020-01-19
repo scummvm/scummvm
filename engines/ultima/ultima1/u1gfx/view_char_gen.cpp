@@ -25,7 +25,8 @@
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/u1gfx/text_cursor.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/shared/early/font_resources.h"
+#include "ultima/shared/gfx/text_input.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -34,6 +35,7 @@ namespace U1Gfx {
 BEGIN_MESSAGE_MAP(ViewCharacterGeneration, Shared::Gfx::VisualContainer)
 	ON_MESSAGE(KeypressMsg)
 	ON_MESSAGE(ShowMsg)
+	ON_MESSAGE(TextInputMsg)
 END_MESSAGE_MAP()
 
 ViewCharacterGeneration::ViewCharacterGeneration(Shared::TreeItem *parent) :
@@ -43,12 +45,14 @@ ViewCharacterGeneration::ViewCharacterGeneration(Shared::TreeItem *parent) :
 void ViewCharacterGeneration::setMode(uint flags) {
 	_flags = flags;
 	setDirty();
-	Shared::Gfx::TextCursor *textCursor = getGame()->_textCursor;
+
+	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+	Shared::Gfx::TextCursor *textCursor = game->_textCursor;
 	textCursor->setVisible(false);
 
 	if (flags & FLAG_FRAME) {
 		// Set up character and attributes pointers
-		_character = getGame()->_gameState->_currentCharacter;
+		_character = game->_gameState->_currentCharacter;
 		_attributes[0] = &_character->_strength;
 		_attributes[1] = &_character->_agility;
 		_attributes[2] = &_character->_stamina;
@@ -74,6 +78,11 @@ void ViewCharacterGeneration::setMode(uint flags) {
 	} else if (_flags & FLAG_CLASS) {
 		textCursor->setPosition(TextPoint(21, 17));
 		textCursor->setVisible(true);
+	} else if (_flags & FLAG_NAME) {
+		game->_textInput->show(TextPoint(19, 17), false, 14, game->_textColor);
+	} else if (_flags & FLAG_SAVE) {
+		textCursor->setPosition(TextPoint(20, 23));
+		textCursor->setVisible(true);
 	}
 }
 
@@ -97,6 +106,8 @@ void ViewCharacterGeneration::draw() {
 		drawClass(s);
 	if (_flags & FLAG_NAME)
 		drawName(s);
+	if (_flags & FLAG_SAVE)
+		drawSave(s);
 }
 
 void ViewCharacterGeneration::drawFrame(Shared::Gfx::VisualSurface &s) {
@@ -186,6 +197,12 @@ void ViewCharacterGeneration::drawName(Shared::Gfx::VisualSurface &s) {
 	s.writeString(game->_res->CHAR_GEN_TEXT[12], TextPoint(3, 17), game->_textColor);
 }
 
+void ViewCharacterGeneration::drawSave(Shared::Gfx::VisualSurface &s) {
+	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+	s.writeString(_character->_name, TextPoint(12, 6), game->_textColor);
+	s.writeString(game->_res->CHAR_GEN_TEXT[13], TextPoint(2, 23), game->_textColor);
+}
+
 void ViewCharacterGeneration::setRace(int raceNum) {
 	_character->_race = raceNum;
 
@@ -217,7 +234,26 @@ void ViewCharacterGeneration::setSex(int sexNum) {
 
 void ViewCharacterGeneration::setClass(int classNum) {
 	_character->_class = classNum;
-	setMode(FLAG_NAME);
+
+	switch (classNum) {
+	case 0:
+		_character->_strength += 10;
+		_character->_agility += 10;
+		break;
+	case 1:
+		_character->_wisdom += 10;
+		break;
+	case 2:
+		_character->_intelligence += 10;
+		break;
+	case 3:
+		_character->_agility += 10;
+		break;
+	default:
+		break;
+	}
+
+	setMode(FLAG_NAME | FLAG_ATTRIBUTES);
 }
 
 bool ViewCharacterGeneration::ShowMsg(CShowMsg &msg) {
@@ -233,6 +269,8 @@ bool ViewCharacterGeneration::HideMsg(CHideMsg &msg) {
 }
 
 bool ViewCharacterGeneration::KeypressMsg(CKeypressMsg &msg) {
+	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+
 	if (_flags & FLAG_RACE) {
 		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode <= Common::KEYCODE_d)
 			setRace(msg._keyState.keycode - Common::KEYCODE_a);
@@ -243,7 +281,16 @@ bool ViewCharacterGeneration::KeypressMsg(CKeypressMsg &msg) {
 		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode <= Common::KEYCODE_d)
 			setClass(msg._keyState.keycode - Common::KEYCODE_a);
 	} else if (_flags & FLAG_NAME) {
-		// TODO
+		// Shouldn't reach here, since during name entry, keypresses go to text input
+	} else if (_flags & FLAG_SAVE) {
+		if (msg._keyState.keycode == Common::KEYCODE_y) {
+			// Save the game and switch back to the main menu
+			save();
+			setView("Title");
+		} else if (msg._keyState.keycode == Common::KEYCODE_n) {
+			// Start at the beginning again
+			setMode(FLAG_INITIAL);
+		}
 	} else {
 		// Initial attributes allocation
 		switch (msg._keyState.keycode) {
@@ -278,9 +325,14 @@ bool ViewCharacterGeneration::KeypressMsg(CKeypressMsg &msg) {
 			break;
 
 		case Common::KEYCODE_SPACE:
-			// Switch over to selecting race
-			_selectedAttribute = -1;
-			setMode(FLAG_RACE | FLAG_ATTR_POINTERS);
+			if (_pointsRemaining == 0) {
+				// Switch over to selecting race
+				game->playFX(1);
+				_selectedAttribute = -1;
+				setMode(FLAG_RACE | FLAG_ATTR_POINTERS);
+			} else {
+				game->playFX(0);
+			}
 			break;
 
 		case Common::KEYCODE_ESCAPE:
@@ -294,6 +346,21 @@ bool ViewCharacterGeneration::KeypressMsg(CKeypressMsg &msg) {
 	}
 
 	return true;
+}
+
+bool ViewCharacterGeneration::TextInputMsg(CTextInputMsg &msg) {
+	if (!msg._escaped && !msg._text.empty()) {
+		// Name provided
+		_character->_name = msg._text;
+		msg._textInput->hide();
+		setMode(FLAG_SAVE);
+	}
+
+	return true;
+}
+
+void ViewCharacterGeneration::save() {
+	// TODO
 }
 
 } // End of namespace U1Gfx

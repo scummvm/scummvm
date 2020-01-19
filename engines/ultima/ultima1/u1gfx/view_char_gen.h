@@ -36,6 +36,7 @@ namespace U1Gfx {
 using Shared::CKeypressMsg;
 using Shared::CShowMsg;
 using Shared::CHideMsg;
+using Shared::CTextInputMsg;
 
 /**
  * This class implements the character generation view
@@ -45,10 +46,11 @@ class ViewCharacterGeneration : public Shared::Gfx::VisualContainer {
 	bool KeypressMsg(CKeypressMsg &msg);
 	bool ShowMsg(CShowMsg &msg);
 	bool HideMsg(CHideMsg &msg);
+	bool TextInputMsg(CTextInputMsg &msg);
 private:
 	enum Flag {
 		FLAG_FRAME = 1, FLAG_ATTRIBUTES = 2, FLAG_ATTR_POINTERS = 4, FLAG_HELP = 8, FLAG_RACE = 16,
-		FLAG_SEX = 32, FLAG_CLASS = 64, FLAG_NAME = 128,
+		FLAG_SEX = 32, FLAG_CLASS = 64, FLAG_NAME = 128, FLAG_SAVE = 256,
 		FLAG_INITIAL = FLAG_FRAME | FLAG_ATTRIBUTES | FLAG_ATTR_POINTERS | FLAG_HELP
 	};
 	uint _flags;
@@ -103,6 +105,11 @@ private:
 	 void drawName(Shared::Gfx::VisualSurface &s);
 
 	 /**
+	  * Draw the save prompt
+	  */
+	 void drawSave(Shared::Gfx::VisualSurface &s);
+
+	 /**
 	  * Set the character's race
 	  */
 	 void setRace(int raceNum);
@@ -116,6 +123,11 @@ private:
 	  * Set the character's class
 	  */
 	 void setClass(int classNum);
+
+	 /**
+	  * Set final properties and save the game
+	  */
+	 void save();
 public:
 	CLASSDEF;
 

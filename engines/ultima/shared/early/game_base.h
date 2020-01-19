@@ -39,6 +39,7 @@ class GameState;
 namespace Gfx {
 	class Font;
 	class TextCursor;
+	class TextInput;
 	class VisualItem;
 }
 
@@ -72,6 +73,7 @@ protected:
 public:
 	GameState *_gameState;
 	Gfx::TextCursor *_textCursor;
+	Gfx::TextInput *_textInput;
 	uint _videoMode;
 public:
 	/**

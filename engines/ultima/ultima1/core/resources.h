@@ -39,7 +39,7 @@ protected:
 public:
 	const char *TITLE_MESSAGES[13];
 	const char *MAIN_MENU_TEXT[7];
-	const char *CHAR_GEN_TEXT[13];
+	const char *CHAR_GEN_TEXT[14];
 	const char *RACE_NAMES[4];
 	const char *SEX_NAMES[3];
 	const char *CLASS_NAMES[4];
