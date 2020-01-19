@@ -22,8 +22,8 @@
 
 #include "ultima/ultima1/map/map_dungeon.h"
 #include "ultima/ultima1/map/map.h"
-#include "ultima/ultima1/widgets/transport.h"
 #include "ultima/ultima1/widgets/dungeon_widget.h"
+#include "ultima/ultima1/widgets/dungeon_player.h"
 #include "ultima/ultima1/game.h"
 
 namespace Ultima {
@@ -55,7 +55,7 @@ bool MapDungeon::changeLevel(int delta) {
 	_currentTransport = nullptr;
 
 	// Set up widget for the player
-	_currentTransport = new Widgets::TransportOnFoot(_game, this);
+	_currentTransport = new Widgets::DungeonPlayer(_game, this);
 	addWidget(_currentTransport);
 
 	// Place walls around the edge of the map

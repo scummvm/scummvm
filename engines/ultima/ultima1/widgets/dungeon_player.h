@@ -23,7 +23,8 @@
 #ifndef ULTIMA_ULTIMA1_WIDGETS_DUNGEON_PLAYER_H
 #define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_PLAYER_H
 
-#include "ultima/games/shared/core/widgets.h"
+#include "ultima/shared/core/widgets.h"
+#include "ultima/shared/early/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -34,15 +35,20 @@ public:
 	/**
 	 * Constructor
 	 */
-	DungeonWidget(Shared::Game *game, Map::MapBase *map) : MapWidget(game, map) {}
-	DungeonWidget(Shared::Game::Game *game, Ultima1Map::MapBase *map, const Point &pt) : MapWidget(game, map, pt) {}
-	DungeonWidget(Shared::Game *game, Ultima1Map::MapBase *map, const Point &pt, const Common::String &name) :
-		MapWidget(Shared::Game, map, pt, name) {}
+	DungeonPlayer(Shared::Game *game, Shared::Map::MapBase *map) : Shared::DungeonWidget(game, map) {}
+	DungeonPlayer(Shared::Game *game, Shared::Map::MapBase *map, const Point &pt) : Shared::DungeonWidget(game, map, pt) {}
+	DungeonPlayer(Shared::Game *game, Shared::Map::MapBase *map, const Point &pt, const Common::String &name) :
+		Shared::DungeonWidget(game, map, pt, name) {}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~DungeonWidget() {}
+	virtual ~DungeonPlayer() {}
+
+	/**
+	 * The player's viewpoint has no intrinsic drawing
+	 */
+	virtual void draw(Shared::DungeonSurface &s, uint distance) {}
 };
 
 } // End of namespace Widgets
