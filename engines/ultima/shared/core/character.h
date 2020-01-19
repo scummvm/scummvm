@@ -42,10 +42,13 @@ struct Character {
 	uint _coins;
 	int _equippedWeapon;
 	int _equippedArmor;
-	int _readySpell;
+	int _equippedSpell;
+	Common::Array<uint> _armor;
+	Common::Array<uint> _weapons;
+	Common::Array<uint> _spells;
 public:
 	Character() : _strength(0), _agility(0), _stamina(0), _charisma(0), _wisdom(0), _intelligence(0),
-		_hitPoints(0), _experience(0), _food(0), _coins(0), _equippedWeapon(-1), _equippedArmor(-1), _readySpell(-1) {}
+		_hitPoints(0), _experience(0), _food(0), _coins(0), _equippedWeapon(-1), _equippedArmor(-1), _equippedSpell(-1) {}
 };
 
 typedef Common::Array<Character> CharacterArray;

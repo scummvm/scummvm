@@ -37,6 +37,11 @@ enum VideoMode {
 };
 
 class GameState {
+private:
+	/**
+	 * Sets up the party
+	 */
+	void setupParty();
 public:
 	/**
 	 * Position in the world map. This is stored separately from the map so that the same point can
@@ -48,6 +53,11 @@ public:
 	 * Characters in the party. In the earlier Ultima games, this is a single character
 	 */
 	CharacterArray _characters;
+
+	/**
+	 * Currently active character. In earlier Ultima games, this is the single party member
+	 */
+	Character *_currentCharacter;
 
 	/**
 	 * Pointer to the map manager for the game
