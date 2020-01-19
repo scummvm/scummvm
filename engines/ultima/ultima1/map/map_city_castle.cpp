@@ -28,16 +28,23 @@
 #include "ultima/ultima1/people/guard.h"
 #include "ultima/ultima1/people/king.h"
 #include "ultima/ultima1/people/princess.h"
+#include "ultima/ultima1/people/wench.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Map {
 
 void MapCityCastle::load(Shared::MapId mapId) {
+	clear();
 	Shared::Map::MapBase::load(mapId);
 
 	setDimensions(Point(38, 18));
 	_tilesPerOrigTile = Point(1, 1);
+}
+
+void MapCityCastle::clear() {
+	Shared::Map::MapBase::clear();
+	_guardsHostile = false;
 }
 
 void MapCityCastle::loadWidgets() {
@@ -63,6 +70,9 @@ void MapCityCastle::loadWidgets() {
 			break;
 		case 22:
 			person = new People::Princess(_game, this, lp[3]);
+			break;
+		case 50:
+			person = new People::Wench(_game, this, lp[3]);
 			break;
 		default:
 			error("Unknown NPC type %d", lp[0]);

@@ -20,56 +20,32 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_PEOPLE_PERSON_H
-#define ULTIMA_ULTIMA1_PEOPLE_PERSON_H
+#ifndef ULTIMA_ULTIMA1_PEOPLE_WENCH_H
+#define ULTIMA_ULTIMA1_PEOPLE_WENCH_H
 
-#include "ultima/ultima1/map/map.h"
-#include "ultima/ultima1/game.h"
+#include "ultima/ultima1/people/person.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace People {
 
-class Person : public Shared::MapWidget {
-private:
-	uint _tileNum;
-	int _hitPoints;
-protected:
-	Ultima1Game *_game;
-	Map::Ultima1Map::MapBase *_map;
-protected:
-	/**
-	 * Returns true if the guards are currently hostile
-	 */
-	bool areGuardsHostile() const;
-
-	/**
-	 * Returns a random movement delta of -1, 0, or 1
-	 */
-	int getRandomDelta() const;
-
-	/**
-	 * Returns a random movement delta
-	 */
-	Point getRandomMoveDelta() const {
-		return Point(getRandomDelta(), getRandomDelta());
-	}
+class Wench : public Person {
 public:
 	/**
 	 * Constructor
 	 */
-	Person(Ultima1Game *game, Map::Ultima1Map::MapBase *map, uint tileNum, int hitPoints) :
-		Shared::MapWidget(game, map), _game(game), _map(map), _tileNum(tileNum), _hitPoints(hitPoints) {}
+	Wench(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
+		Person(game, map, 50, hitPoints) {}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~Person() {}
+	virtual ~Wench() {}
 
 	/**
-	 * Get the tile number for the person
+	 * Called to update the character at the end of a turn
 	 */
-	virtual uint getTileNum() const { return _tileNum; }
+	virtual void update();
 };
 
 } // End of namespace People
