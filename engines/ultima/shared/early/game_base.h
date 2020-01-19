@@ -158,6 +158,11 @@ public:
 	 * Wait for a given period of time
 	 */
 	void sleep(uint time);
+
+	/**
+	 * Return the current time
+	 */
+	uint32 getMillis() const;
 };
 
 } // End of namespace Shared
