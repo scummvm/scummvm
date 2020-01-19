@@ -67,13 +67,11 @@ void WRITE_SCI11ENDIAN_UINT16(void *ptr, uint16 val) {
 		WRITE_LE_UINT16(ptr, val);
 }
 
-#ifdef ENABLE_SCI32
 void WRITE_SCI11ENDIAN_UINT32(void *ptr, uint32 val) {
 	if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1)
 		WRITE_BE_UINT32(ptr, val);
 	else
 		WRITE_LE_UINT32(ptr, val);
 }
-#endif
 
 } // End of namespace Sci
