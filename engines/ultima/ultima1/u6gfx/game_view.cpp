@@ -81,6 +81,11 @@ void GameView::loadBackground() {
 	// Clear off the rest of the scroll
 	byte bgColor = *(const byte *)_background.getBasePtr(8, 8);
 	_background.fillRect(Common::Rect(8, 8, 312, 192), bgColor);
+
+	// Render the status and info areas
+	Scroll scroll;
+	scroll.draw(_background, Common::Rect(247, 159, 320, 200));
+	scroll.draw(_background, Common::Rect(0, 159, 255, 200));
 }
 
 void GameView::draw() {
@@ -112,6 +117,33 @@ bool GameView::KeypressMsg(CKeypressMsg &msg) {
 	}
 
 	return true;
+}
+
+/*-------------------------------------------------------------------*/
+
+GameView::Scroll::Scroll() {
+	Shared::Gfx::Bitmap b;
+	b.load("newmagic.bmp");
+	copyFrom(b);
+}
+
+void GameView::Scroll::draw(Graphics::ManagedSurface &dest, const Common::Rect &r) {
+	const byte bgColor = *(const byte *)getBasePtr(16, 16);
+
+	// To allow for increasing and/or decreasing horizontal and vertical, we rendering into
+	// the four corners, allowing overlapping in the source if needed to increase the width
+	// Top left
+	dest.transBlitFrom(*this, Common::Rect(0, 0, r.width() / 2 + 1, r.height() / 2 + 1),
+		Common::Point(r.left, r.top), bgColor);
+	// Top right
+	dest.transBlitFrom(*this, Common::Rect(this->w - r.width() / 2, 0, this->w, r.height() / 2 + 1),
+		Common::Point(r.left + r.width() / 2, r.top), bgColor);
+	// Bottom left
+	dest.transBlitFrom(*this, Common::Rect(0, this->h - r.height() / 2, r.width() / 2 + 1, this->h),
+		Common::Point(r.left, r.top + r.height() / 2), bgColor);
+	// Bottom right
+	dest.transBlitFrom(*this, Common::Rect(this->w - r.width() / 2, this->h - r.height() / 2,
+		this->w, this->h), Common::Point(r.left + r.width() / 2, r.top + r.height() / 2), bgColor);
 }
 
 } // End of namespace U1Gfx
