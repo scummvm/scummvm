@@ -72,6 +72,8 @@ MODULE_OBJS += \
 	ultima1/maps/map_dungeon.o \
 	ultima1/maps/map_overworld.o \
 	ultima1/maps/map_tile.o \
+	ultima1/u1dialogs/dialog.o \
+	ultima1/u1dialogs/grocer.o \
 	ultima1/u1gfx/drawing_support.o \
 	ultima1/u1gfx/info.o \
 	ultima1/u1gfx/sprites.o \
