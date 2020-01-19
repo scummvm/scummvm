@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/core/map.h"
+#include "ultima/ultima1/core/dungeon_widgets.h"
 #include "ultima/ultima1/core/people.h"
 #include "ultima/ultima1/core/transports.h"
 #include "ultima/ultima1/core/resources.h"
@@ -39,12 +40,8 @@ enum CityTile {
 };
 
 enum DungeonTile {
-	DTILE_HALLWAY = 0, DTILE_WALL = 1, DTILE_SECRET_DOOR = 2, DTILE_DOOR = 3, DTILE_CHEST = 4,
-	DTILE_COFFIN = 5, DTILE_LADDER_DOWN = 6, DTILE_LADDER_UP = 7, DTILE_BEAMS = 8
-};
-
-enum DungeonItem {
-	DITEM_NONE = 0, DITEM_CHEST = 4, DITEM_COFFIN = 5
+	DTILE_HALLWAY = 0, DTILE_WALL = 1, DTILE_SECRET_DOOR = 2, DTILE_DOOR = 3, DTILE_LADDER_DOWN = 6, 
+	DTILE_LADDER_UP = 7, DTILE_BEAMS = 8
 };
 
 void SurroundingTotals::load(Ultima1Map *map) {
@@ -313,12 +310,15 @@ void Ultima1Map::loadDungeonMap() {
 	}
 
 	// Place chests and/or coffins randomly throughout the level
+	_random.setSeed(_random.getSeed() + 1777);
+	_dungeonLevel = 10; //****DEBUG*****
 	for (uint ctr = 0; ctr <= _dungeonLevel; ++ctr) {
 		Point pt(getRandomNumber(10, 99) / 10, getRandomNumber(10, 99) / 10);
 		byte currTile = _data[pt.y][pt.x];
 
 		if (currTile != DTILE_WALL && currTile != DTILE_SECRET_DOOR && currTile != DTILE_BEAMS) {
-			_data[pt.y][pt.x] = (getRandomNumber(1, 100) & 1) ? DTILE_COFFIN : DTILE_CHEST;
+			_widgets.push_back(Shared::MapWidgetPtr(new DungeonWidget(_game, this, pt,
+				(getRandomNumber(1, 100) & 1) ? DITEM_COFFIN : DITEM_CHEST)));
 		}
 	}
 

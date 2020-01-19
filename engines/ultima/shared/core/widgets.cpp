@@ -20,54 +20,11 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_CORE_MONSTERS_H
-#define ULTIMA_SHARED_CORE_MONSTERS_H
-
-#include "ultima/shared/core/map.h"
-#include "ultima/shared/gfx/dungeon_surface.h"
+#include "ultima/shared/core/widgets.h"
 
 namespace Ultima {
 namespace Shared {
 
-class Monster : public MapWidget {
-protected:
-	int _hitPoints;
-public:
-	/**
-	 * Constructor
-	 */
-	Monster(Game *game, Map *map, int hitPoints) : MapWidget(game, map), _hitPoints(hitPoints) {}
-
-	/**
-	 * Destructor
-	 */
-	virtual ~Monster() {}
-};
-
-class DungeonMonster : public Monster {
-public:
-	/**
-	 * Constructor
-	 */
-	DungeonMonster(Game *game, Map *map, int hitPoints) : Monster(game, map, hitPoints) {}
-
-	/**
-	 * Destructor
-	 */
-	virtual ~DungeonMonster() {}
-
-	/**
-	 * Returns true if a monster blocks the background behind him
-	 */
-	virtual bool isBlockingView() const = 0;
-
-	/**
-	 * Draw a monster
-	 */
-	virtual void draw(DungeonSurface &s, uint distance) = 0; 
-};
 
 } // End of namespace Ultima1
 } // End of namespace Ultima
-
-#endif

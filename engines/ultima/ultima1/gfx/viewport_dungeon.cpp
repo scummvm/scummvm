@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima1/gfx/viewport_dungeon.h"
-#include "ultima/ultima1/core/monsters.h"
+#include "ultima/ultima1/core/dungeon_widgets.h"
 #include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {

@@ -30,7 +30,6 @@ void MapTile::clear() {
 	_widgetNum = -1;
 	_widget = nullptr;
 	_itemNum = -1;
-	_item = nullptr;
 	_isDoor = _isSecretDoor = false;
 	_isLadderUp = _isLadderDown = false;
 	_isWall = _isHallway = _isBeams = false;
@@ -49,7 +48,6 @@ void Map::clear() {
 	_mapId = 0;
 	_data.clear();
 	_widgets.clear();
-	_items.clear();
 }
 
 void Map::setDimensions(const Point &size) {
@@ -170,15 +168,6 @@ void Map::getTileAt(const Point &pt, MapTile *tile) {
 		if (_widgets[idx]->_position == pt) {
 			tile->_widgetNum = idx;
 			tile->_widget = _widgets[idx].get();
-			break;
-		}
-	}
-
-	// Check for any item on that map tile
-	for (uint idx = 0; idx < _items.size(); ++idx) {
-		if (_items[idx]->_position == pt) {
-			tile->_itemNum = idx;
-			tile->_item = _items[idx].get();
 			break;
 		}
 	}

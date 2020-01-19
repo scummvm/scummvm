@@ -120,6 +120,8 @@ const char *const SRC_LOCATION_NAMES[LOCATION_COUNT] = {
 	"The Hole to Hades"
 };
 
+static const char *const SRC_DUNGEON_ITEM_NAMES[2] = { "Chest", "Coffin" };
+
 const byte SRC_LOCATION_X[LOCATION_COUNT] = {
 	39, 66, 25, 46, 52, 18, 70, 64, 126, 128, 148, 115, 150, 121,
 	150, 109, 42, 44, 64, 31, 66, 37, 66, 25, 128, 101, 142, 121,
@@ -468,6 +470,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(SRC_LOCATION_Y, SRC_LOCATION_Y + 84, LOCATION_Y);
 	Common::copy(&SRC_LOCATION_PEOPLE[0][0], &SRC_LOCATION_PEOPLE[0][0] + 150 * 4, &LOCATION_PEOPLE[0][0]);
 	Common::copy(&SRC_DUNGEON_DRAW_DATA[0], &SRC_DUNGEON_DRAW_DATA[1964], DUNGEON_DRAW_DATA);
+	Common::copy(&SRC_DUNGEON_ITEM_NAMES[0], &SRC_DUNGEON_ITEM_NAMES[2], DUNGEON_ITEM_NAMES);
 	BLOCKED = SRC_BLOCKED;
 	ENTER_QUESTION = SRC_ENTER_QUESTION;
 	ENTERING = SRC_ENTERING;
@@ -483,6 +486,7 @@ void GameResources::synchronize() {
 	syncBytes(LOCATION_Y, 84);
 	syncNumbers2D((int *)LOCATION_PEOPLE, 150, 4);
 	syncBytes(DUNGEON_DRAW_DATA, 1964);
+	syncStrings(DUNGEON_ITEM_NAMES, 2);
 	syncString(BLOCKED);
 	syncString(ENTER_QUESTION);
 	syncString(ENTERING);
