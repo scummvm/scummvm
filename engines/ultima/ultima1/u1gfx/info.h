@@ -20,41 +20,31 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_GFX_INFO_H
-#define ULTIMA_SHARED_GFX_INFO_H
+#ifndef ULTIMA_ULTIMA1_GFX_INFO_H
+#define ULTIMA_ULTIMA1_GFX_INFO_H
 
-#include "ultima/shared/gfx/visual_item.h"
-#include "common/str-array.h"
+#include "ultima/shared/gfx/info.h"
 
 namespace Ultima {
-namespace Shared {
+namespace Ultima1 {
+namespace U1Gfx {
 
 /**
  * Textual info area, showing what commands area done, and any responses to them
  */
-class Info : public Gfx::VisualItem {
-	DECLARE_MESSAGE_MAP;
-	bool FrameMsg(CFrameMsg &msg);
-	bool InfoMsg(CInfoMsg &msg);
-private:
-	Common::StringArray _lines;
+class Info : public Shared::Info {
 protected:
 	/**
 	 * Draws a prompt character
 	 */
-	virtual void drawPrompt(Gfx::VisualSurface &surf, const Point &pt) = 0;
+	virtual void drawPrompt(Shared::Gfx::VisualSurface &surf, const Point &pt);
 public:
-	CLASSDEF;
-	Info(TreeItem *parent, const Rect &bounds) : Gfx::VisualItem("Info", bounds, parent) {}
+	Info(TreeItem *parent) : Shared::Info(parent, Rect(0, 168, 240, 200)) {}
 	virtual ~Info() {}
-
-	/**
-	 * Draw the contents
-	 */
-	virtual void draw();
 };
 
-} // End of namespace Shared
+} // End of namespace U1Gfx
+} // End of namespace Ultima1
 } // End of namespace Ultima
 
 #endif
