@@ -42,6 +42,11 @@ const char *const SRC_TITLE_MESSAGES[13] = {
 	"Conversion by: John Fachini"
 };
 
+const char *const SRC_MAIN_MENU_TEXT[7] = {
+	"*** Ultima I ***",  "from darkest", "dungeons, to", "deepest space!",
+	"a) Generate new character", "b) Continue previous game", "Thy choice: "
+};
+
 const char *const SRC_STATUS_TEXT[4] = { "Hits:", "Food:",  "Exp.:", "Coin:" };
 
 const char *const SRC_DIRECTION_NAMES[4] = { "West", "East", "North", "South" };
@@ -530,6 +535,7 @@ GameResources::GameResources() : LocalResourceFile("ULTIMA1/DATA") {
 
 GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(resManager, "ULTIMA1/DATA") {
 	Common::copy(SRC_TITLE_MESSAGES, SRC_TITLE_MESSAGES + 13, TITLE_MESSAGES);
+	Common::copy(SRC_MAIN_MENU_TEXT, SRC_MAIN_MENU_TEXT + 7, MAIN_MENU_TEXT);
 	Common::copy(SRC_STATUS_TEXT, SRC_STATUS_TEXT + 4, STATUS_TEXT);
 	Common::copy(SRC_DIRECTION_NAMES, SRC_DIRECTION_NAMES + 4, DIRECTION_NAMES);
 	Common::copy(SRC_DUNGEON_MOVES, SRC_DUNGEON_MOVES + 4, DUNGEON_MOVES);
@@ -575,6 +581,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 
 void GameResources::synchronize() {
 	syncStrings(TITLE_MESSAGES, 13);
+	syncStrings(MAIN_MENU_TEXT, 7);
 	syncStrings(STATUS_TEXT, 4);
 	syncStrings(DIRECTION_NAMES, 4);
 	syncStrings(DUNGEON_MOVES, 4);
