@@ -62,6 +62,7 @@ MODULE_OBJS += \
 	ultima1/core/transports.o \
 	ultima1/u1gfx/drawing_support.o \
 	ultima1/u1gfx/game_view.o \
+	ultima1/u1gfx/info.o \
 	ultima1/u1gfx/sprites.o \
 	ultima1/u1gfx/status.o \
 	ultima1/u1gfx/text_cursor.o \

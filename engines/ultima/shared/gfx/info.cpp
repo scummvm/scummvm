@@ -26,7 +26,17 @@
 namespace Ultima {
 namespace Shared {
 
-EMPTY_MESSAGE_MAP(Info, Gfx::VisualItem);
+#define PROMPT_CHAR '\x1'
+
+BEGIN_MESSAGE_MAP(Info, Gfx::VisualItem)
+	ON_MESSAGE(FrameMsg)
+	ON_MESSAGE(InfoMsg)
+END_MESSAGE_MAP()
+
+bool Info::FrameMsg(CFrameMsg &msg) {
+	
+	return true;
+}
 
 bool Info::InfoMsg(CInfoMsg &msg) {
 

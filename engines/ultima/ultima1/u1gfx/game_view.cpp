@@ -23,9 +23,9 @@
 #include "ultima/ultima1/u1gfx/game_view.h"
 #include "ultima/shared/actions/pass.h"
 #include "ultima/shared/core/map.h"
-#include "ultima/shared/gfx/info.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/u1gfx/drawing_support.h"
+#include "ultima/ultima1/u1gfx/info.h"
 #include "ultima/ultima1/u1gfx/status.h"
 #include "ultima/ultima1/u1gfx/viewport_dungeon.h"
 #include "ultima/ultima1/u1gfx/viewport_map.h"
@@ -43,8 +43,8 @@ BEGIN_MESSAGE_MAP(GameView, Shared::Gfx::VisualContainer)
 	ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
-GameView::GameView(Shared::TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
-	_info = new Shared::Info(this);
+GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
+	_info = new Info(this);
 	_status = new Status(this);
 	_viewportDungeon = new ViewportDungeon(this);
 
