@@ -137,11 +137,11 @@ static struct FuncDescr {
 	{ LC::c_wordOf,			"c_wordOf",			"" },	// D3
 	{ LC::c_wordToOf,		"c_wordToOf",		"" },	// D3
 	{ LC::c_xpop,			"c_xpop",			""  },
-	{ LC::cb_array,			"cb_array",			"" },
 	{ LC::cb_call,			"cb_call",			"i" },
 	{ LC::cb_field,			"cb_field",			"" },
 	{ LC::cb_globalassign,	"cb_globalassign",	"i" },
 	{ LC::cb_globalpush,	"cb_globalpush",	"i" },
+	{ LC::cb_list,			"cb_list",			"" },
 	{ LC::cb_localcall,		"cb_localcall",		"i" },
 	{ LC::cb_unk,			"cb_unk",			"i" },
 	{ LC::cb_unk1,			"cb_unk1",			"ii" },
@@ -366,11 +366,6 @@ void LC::c_assign() {
 	d1 = g_lingo->pop();
 	d2 = g_lingo->pop();
 
-	if (d1.type != VAR && d1.type != REFERENCE) {
-		warning("assignment to non-variable");
-		return;
-	}
-
 	if (d1.type == REFERENCE) {
 		Score *score = g_director->getCurrentScore();
 		if (!score->_loadedCast->contains(d1.u.i)) {
@@ -390,38 +385,7 @@ void LC::c_assign() {
 		return;
 	}
 
-	if (d1.u.sym->type != INT && d1.u.sym->type != VOID &&
-			d1.u.sym->type != FLOAT && d1.u.sym->type != STRING) {
-		warning("assignment to non-variable '%s'", d1.u.sym->name.c_str());
-		return;
-	}
-
-	if ((d1.u.sym->type == STRING || d1.u.sym->type == VOID) && d1.u.sym->u.s) // Free memory if needed
-		delete d1.u.sym->u.s;
-
-	if (d1.u.sym->type == POINT || d1.u.sym->type == RECT || d1.u.sym->type == ARRAY)
-		delete d1.u.sym->u.farr;
-
-	if (d2.type == INT) {
-		d1.u.sym->u.i = d2.u.i;
-	} else if (d2.type == FLOAT) {
-		d1.u.sym->u.f = d2.u.f;
-	} else if (d2.type == STRING) {
-		d1.u.sym->u.s = new Common::String(*d2.u.s);
-		delete d2.u.s;
-	} else if (d2.type == POINT) {
-		d1.u.sym->u.farr = new FloatArray(*d2.u.farr);
-		delete d2.u.farr;
-	} else if (d2.type == SYMBOL) {
-		d1.u.sym->u.i = d2.u.i;
-	} else if (d2.type == OBJECT) {
-		d1.u.sym->u.s = d2.u.s;
-	} else {
-		warning("c_assign: unhandled type: %s", d2.type2str());
-		d1.u.sym->u.s = d2.u.s;
-	}
-
-	d1.u.sym->type = d2.type;
+	g_lingo->varAssign(d1, d2);
 }
 
 bool LC::verify(Symbol *s) {
@@ -457,22 +421,7 @@ void LC::c_eval() {
 	if (!LC::verify(d.u.sym))
 		return;
 
-	d.type = d.u.sym->type;
-
-	if (d.u.sym->type == INT)
-		d.u.i = d.u.sym->u.i;
-	else if (d.u.sym->type == FLOAT)
-		d.u.f = d.u.sym->u.f;
-	else if (d.u.sym->type == STRING)
-		d.u.s = new Common::String(*d.u.sym->u.s);
-	else if (d.u.sym->type == POINT)
-		d.u.farr = d.u.sym->u.farr;
-	else if (d.u.sym->type == SYMBOL)
-		d.u.i = d.u.sym->u.i;
-	else if (d.u.sym->type == VOID)
-		d.u.s = new Common::String(d.u.sym->name);
-	else
-		warning("c_eval: unhandled type: %s", d.type2str());
+	d = g_lingo->varFetch(d);
 
 	g_lingo->push(d);
 }

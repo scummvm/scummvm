@@ -130,11 +130,11 @@ namespace LC {
 	void cb_unk2();
 
 	// bytecode-related instructions
-	void cb_array();
 	void cb_call();
 	void cb_field();
 	void cb_globalassign();
 	void cb_globalpush();
+	void cb_list();
 	void cb_localcall();
 	void cb_varassign();
 	void cb_varpush();
