@@ -224,6 +224,26 @@ the[ \t]+number[ \t]+of[ \t]+[[:alpha:]]+[ \t](in|of)[ \t]	{
 		else
 			error("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
 	}
+the[ \t]+last[ \t][[:alpha:]]+[ \t](in|of)[ \t]	{
+		count();
+
+		const char *ptr = &yytext[4]; // Skip 'the '
+		while (*ptr == ' ' || *ptr == '\t') ptr++;
+
+		ptr += 5; // skip 'last '
+		while (*ptr == ' ' || *ptr == '\t') ptr++;
+
+		Common::String field;
+		while (*ptr != ' ' && *ptr != '\t')
+			field += *ptr++;
+
+		yylval.s = new Common::String(Common::String::format("last%sOf", field.c_str()));
+
+		if (g_lingo->_builtins.contains(*yylval.s))
+			return FBLTIN;
+		else
+			error("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
+	}
 the[ \t]+[[:alpha:]]+[ \t]+of[ \t]+{identifier}	{
 		count();
 

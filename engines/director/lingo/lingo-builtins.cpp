@@ -229,6 +229,10 @@ static struct BuiltinProto {
 	{ "numberOfItems",	LB::b_numberofitems,1, 1, false, 4, FBLTIN },	//			D4 f
 	{ "numberOfLines",	LB::b_numberoflines,1, 1, false, 4, FBLTIN },	//			D4 f
 	{ "numberOfWords",	LB::b_numberofwords,1, 1, false, 4, FBLTIN },	//			D4 f
+	{ "lastCharOf",		LB::b_lastcharof,	1, 1, false, 4, FBLTIN },	//			D4 f
+	{ "lastItemOf",		LB::b_lastitemof,	1, 1, false, 4, FBLTIN },	//			D4 f
+	{ "lastLineOf",		LB::b_lastlineof,	1, 1, false, 4, FBLTIN },	//			D4 f
+	{ "lastWordOf",		LB::b_lastwordof,	1, 1, false, 4, FBLTIN },	//			D4 f
 
 	{ 0, 0, 0, 0, false, 0, 0 }
 };
@@ -1814,5 +1818,44 @@ void LB::b_numberofwords(int nargs) {
 	g_lingo->push(d);
 }
 
+void LB::b_lastcharof(int nargs) {
+	Datum d = g_lingo->pop();
+
+	warning("STUB: b_lastcharof");
+	d.toInt();
+	d.u.i = 0;
+
+	g_lingo->push(d);
+}
+
+void LB::b_lastitemof(int nargs) {
+	Datum d = g_lingo->pop();
+
+	warning("STUB: b_lastitemof");
+	d.toInt();
+	d.u.i = 0;
+
+	g_lingo->push(d);
+}
+
+void LB::b_lastlineof(int nargs) {
+	Datum d = g_lingo->pop();
+
+	warning("STUB: b_lastlineof");
+	d.toInt();
+	d.u.i = 0;
+
+	g_lingo->push(d);
+}
+
+void LB::b_lastwordof(int nargs) {
+	Datum d = g_lingo->pop();
+
+	warning("STUB: b_lastwordof");
+	d.toInt();
+	d.u.i = 0;
+
+	g_lingo->push(d);
+}
 
 } // End of namespace Director
