@@ -17,6 +17,7 @@ MODULE_OBJS += \
 	shared/core/game_state.o \
 	shared/core/map.o \
 	shared/core/message_target.o \
+	shared/core/monsters.o \
 	shared/core/mouse_cursor.o \
 	shared/core/named_item.o \
 	shared/core/tree_item.o \
@@ -49,6 +50,7 @@ MODULE_OBJS += \
 	ultima1/actions/enter.o \
 	ultima1/actions/move.o \
 	ultima1/core/map.o \
+	ultima1/core/monsters.o \
 	ultima1/core/people.o \
 	ultima1/core/resources.o \
 	ultima1/core/transports.o \
