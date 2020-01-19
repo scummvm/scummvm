@@ -41,38 +41,51 @@ class Ultima1Map;
 class WidgetTransport;
 
 class U1MapTile : public Shared::MapTile {
+	friend class Ultima1Map;
+private:
+	Ultima1Map *_map;
 public:
 	int _locationNum;
 public:
 	/**
+	 * Clears tile data
+	 */
+	virtual void clear();
+
+	/**
 	 * Return true if the tile base is water
 	 */
-	bool isWater() const { return _tileNum == 0; }
+	bool isWater() const;
 
 	/**
 	 * Return true if the tile base is grass
 	 */
-	bool isGrass() const { return _tileNum == 1; }
+	bool isGrass() const;
 
 	/**
 	 * Return true if the tile base is woods
 	 */
-	bool isWoods() const { return _tileNum == 2; }
+	bool isWoods() const;
 
 	/**
 	 * Return true if the tile base in the original map is water
 	 */
-	bool isOriginalWater() const { return _tileNum == 0; }
+	bool isOriginalWater() const;
 
 	/**
 	 * Return true if the tile base in the original map is grass
 	 */
-	bool isOriginalGrass() const { return _tileNum == 1; }
+	bool isOriginalGrass() const;
 
 	/**
 	 * Return true if the tile base in the original map is woods
 	 */
-	bool isOriginalWoods() const { return _tileNum == 2; }
+	bool isOriginalWoods() const;
+
+	/**
+	 * Returns true if the tile is a ground type tool
+	 */
+	bool isGround() const;
 };
 
 /**

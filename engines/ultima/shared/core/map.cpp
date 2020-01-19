@@ -26,7 +26,9 @@ namespace Ultima {
 namespace Shared {
 
 void MapTile::clear() {
-	_tileNum = -1;
+	_tileId = _tileNum = -1;
+	_widgetNum = -1;
+	_widget = nullptr;
 }
 
 /*-------------------------------------------------------------------*/
@@ -39,14 +41,17 @@ Map::Map() {
 
 Point Map::getDeltaPosition(const Point &delta) {
 	Point pt = _position + delta;
-	if (pt.x < 0)
-		pt.x += _size.x;
-	else if (pt.x >= _size.x)
-		pt.x -= _size.x;
-	if (pt.y < 0)
-		pt.y += _size.y;
-	else if (pt.y >= _size.y)
-		pt.y -= _size.y;
+
+	if (!_fixed) {
+		if (pt.x < 0)
+			pt.x += _size.x;
+		else if (pt.x >= _size.x)
+			pt.x -= _size.x;
+		if (pt.y < 0)
+			pt.y += _size.y;
+		else if (pt.y >= _size.y)
+			pt.y -= _size.y;
+	}
 
 	return pt;
 }
@@ -121,14 +126,18 @@ void Map::shiftViewport(const Point &delta) {
 }
 
 void Map::getTileAt(const Point &pt, MapTile *tile) {
+	tile->clear();
+
 	// Get the base tile
 	tile->_tileNum = tile->_tileId = _data[pt.y * _size.x + pt.x];
 
-	// Get the tiles for any widgets on that map tile
-	tile->_widgetTiles.clear();
+	// Check for any widget on that map tile
 	for (uint idx = 0; idx < _widgets.size(); ++idx) {
-		if (_widgets[idx]->_position == pt)
-			tile->_widgetTiles.push_back(_widgets[idx]->getTileNum());
+		if (_widgets[idx]->_position == pt) {
+			tile->_widgetNum = idx;
+			tile->_widget = _widgets[idx].get();
+			break;
+		}
 	}
 }
 

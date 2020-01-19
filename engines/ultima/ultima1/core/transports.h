@@ -28,7 +28,20 @@
 namespace Ultima {
 namespace Ultima1 {
 
+class Ultima1Game;
+class Ultima1Map;
+
 class WidgetTransport : public Shared::MapWidget {
+protected:
+	/**
+	 * Gets the Ultima 1 game
+	 */
+	Ultima1Game *getGame() const;
+
+	/**
+	 * Gets the Ultima 1 map
+	 */
+	Ultima1Map *getMap() const;
 public:
 	/**
 	 * Constructor
