@@ -44,7 +44,7 @@ END_MESSAGE_MAP()
 GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
 	_info = new Shared::Info(this);
 	_status = new Status(this);
-	_viewportDungeon = new Shared::ViewportDungeon(this);
+	_viewportDungeon = new Shared::ViewportDungeon(nullptr);
 	_viewportMap = new ViewportMap(this);
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Actions::Enter(this);

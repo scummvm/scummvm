@@ -24,18 +24,16 @@
 #include "ultima/shared/core/monsters.h"
 #include "ultima/shared/core/map.h"
 #include "ultima/shared/early/game.h"
+#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Shared {
 
 EMPTY_MESSAGE_MAP(ViewportDungeon, Shared::Gfx::VisualItem);
 
-const byte WALL_ARRAY_X[] = { 0, 72, 108, 126, 135, 144 };
-const byte WALL_ARRAY_Y[] = { 0, 36, 54, 63, 68, 72 };
-
 void ViewportDungeon::draw() {
 	// Get a surface reference and clear it's contents
-	Gfx::VisualSurface s = getSurface();
+	DungeonSurface s = getSurface();
 	s.clear();
 
 	// Get the position delta for the cells to the left and right of the player's position
@@ -70,23 +68,39 @@ void ViewportDungeon::draw() {
 
 	// If stuck in a wall, draw it and exit
 	if (isWall) {
-		drawWall(0);
+		s.drawWall(0);
 		return;
 	}
 
-	Point backDelta1(delta.x * distance, delta.y * distance),
-		backDelta2(delta.x * distance, delta.y * distance);
+	Point backDelta(delta.x * distance, delta.y * distance),
+		currDelta(delta.x * distance, delta.y * distance);
 
 	if (isDoor && map->isWallOrDoorway(map->getPosition() + delta)) {
-		drawWall(0);
+		s.drawWall(0);
 	} else {
 		if (isDoor)
-			drawDoorway(0);
+			s.drawDoorway(0);
 
+		byte var3 = 0, var4 = 0, var5 = 0, var6 = 0;
+		byte var7 = 0, var8 = 0;
+		for (int index = distance; distance; --distance) {
+			currDelta -= delta;
+			
+			if (!isDoor || distance > 1) {
+				// todo
+			}
+
+
+		}
 		// TODO
 	}
 
 	// TODO
+}
+
+DungeonSurface ViewportDungeon::getSurface() {
+	Graphics::ManagedSurface src(*g_vm->_screen, _bounds);
+	return DungeonSurface(src, _bounds, getGame());
 }
 
 uint ViewportDungeon::distanceToOccupiedCell(const Point &delta) {
@@ -111,31 +125,6 @@ bool ViewportDungeon::isMonsterBlocking(const Point &pt) {
 	getMap()->getTileAt(pt, &tile);
 	DungeonMonster *monster = dynamic_cast<DungeonMonster *>(tile._widget);
 	return monster != nullptr && monster->isBlockingView();
-}
-
-void ViewportDungeon::drawWall(uint distance) {
-	Game *game = getGame();
-	Gfx::VisualSurface s = getSurface();
-	int offsetX = !distance ? 8 : 0, offsetY = !distance ? 8 : 0;
-
-	if (distance <= 5) {
-		s.hLine(WALL_ARRAY_X[distance] + 16 + offsetX, WALL_ARRAY_Y[distance] + 8 + offsetY,
-			303 - WALL_ARRAY_X[distance] - offsetX, game->_edgeColor);
-		s.hLine(WALL_ARRAY_X[distance] + 16 + offsetX, 15 - WALL_ARRAY_Y[distance] - offsetY,
-			303 - WALL_ARRAY_X[distance] - offsetX, game->_edgeColor);
-	}
-}
-
-void ViewportDungeon::drawDoorway(uint distance) {
-	Game *game = getGame();
-	Gfx::VisualSurface s = getSurface();
-	int offsetY = !distance ? 8 : 0;
-	byte color = !distance ? 0 : game->_edgeColor;
-
-	if (distance < 5) {
-		s.frameRect(Rect(WALL_ARRAY_X[distance + 1] + 16, WALL_ARRAY_Y[distance + 1] + 8,
-			303 - WALL_ARRAY_X[distance + 1], 151 - WALL_ARRAY_Y[distance] - offsetY), color);
-	}
 }
 
 } // End of namespace Shared
