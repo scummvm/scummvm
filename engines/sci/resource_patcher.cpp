@@ -383,7 +383,7 @@ static const byte pq4EnhancedAudioToggleView[] = {
 
 static const GameResourcePatch resourcePatches[] = {
 	{ GID_PHANTASMAGORIA, Common::UNK_LANG, ResourceId(kResourceTypeView, 64001), phant1View64001Palette,     false },
-	{ GID_PQ4,            Common::EN_ANY,   ResourceId(kResourceTypeView, 20982), pq4EnhancedAudioToggleView, true }
+	{ GID_PQ4,            Common::EN_ANY,   ResourceId(kResourceTypeView, 10988), pq4EnhancedAudioToggleView, true }
 };
 
 #pragma mark -

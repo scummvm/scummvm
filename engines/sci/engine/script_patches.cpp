@@ -9120,36 +9120,45 @@ static const uint16 pq4CdSpeechAndSubtitlesSignature[] = {
 	SIG_END
 };
 
+// Note: global 0x5a may contain the following values:
+// 1: subtitles
+// 2: speech
+// 3: both
 static const uint16 pq4CdSpeechAndSubtitlesPatch[] = {
 	// iconText::init
 	0x76,                           // push0
 	0x41, 0x02, PATCH_UINT16(0x00), // call [our new subroutine which sets view+loop+cel], 0
 	0x33, 0x40,                     // jmp [to original init, super GCItem call]
 	// new code for setting view+loop+cel
-	0x34, PATCH_UINT16(0x2aeb),     // ldi 10987
-	0x65, 0x78,                     // aTop mainView - always set this view, because it's used by 2 states
+	//
 	0x89, 0x5a,                     // lsg global[$5a]
 	0x35, 0x03,                     // ldi 3
 	0x1a,                           // eq?
-	0x31, 0x04,                     // bnt [skip over follow up code]
-	// speech+subtitles mode
-	0x78,                           // push1
-	0x69, 0x7a,                     // sTop mainLoop
-	0x48,                           // ret
-	0x89, 0x5a,                     // lsg global[$5a]
-	0x35, 0x01,                     // ldi 1
-	0x12,                           // and
-	0x31, 0x04,                     // bnt [skip over follow up code]
-	// subtitles mode
+	0x31, 0x05,                     // bnt [skip over the view modification code]
+	//
+	// Mode 3: speech+subtitles
+	0x34, PATCH_UINT16(0x2aec),     // ldi 10988 (our new injected view, speech + subtitles)
+	0x33, 0x03,                     // jmp [skip over the view modification code]
+	// Mode 1: subtitles
+	0x34, PATCH_UINT16(0x2aeb),     // ldi 10987 (subtitles view)
+	//
+	// common code for speech+subtitles / subtitles mode
+	0x65, 0x78,                     // aTop mainView
 	0x76,                           // push0
 	0x69, 0x7a,                     // sTop mainLoop
-	0x48,                           // ret
-	// speech mode
-	0x34, PATCH_UINT16(0x2ae6),     // ldi 10982
+	//
+	0x89, 0x5a,                     // lsg global[$5a]
+	0x35, 0x02,                     // ldi 2
+	0x1a,                           // eq?
+	0x31, 0x09,                     // bnt [skip over follow up code]
+	//
+	// Mode 2: speech
+	0x34, PATCH_UINT16(0x2ae6),     // ldi 10982 (speech view)
 	0x65, 0x78,                     // aTop mainView
 	0x35, 0x0f,                     // ldi 15
 	0x65, 0x7a,                     // aTop mainLoop
 	0x48,                           // ret
+	//
 	PATCH_ADDTOOFFSET(+38),         // skip to iconText::select
 
 	// iconText::select
