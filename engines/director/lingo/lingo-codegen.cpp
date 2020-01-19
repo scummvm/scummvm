@@ -44,6 +44,8 @@
 // THIS SOFTWARE.
 
 #include "director/director.h"
+#include "director/cast.h"
+#include "director/score.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
@@ -485,40 +487,70 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		return;
 	}
 
-	if (var.u.sym->type != INT && var.u.sym->type != VOID &&
-			var.u.sym->type != FLOAT && var.u.sym->type != STRING) {
-		warning("varAssign: assignment to non-variable '%s'", var.u.sym->name.c_str());
-		return;
+	if (var.type == VAR) {
+		Symbol *sym = var.u.sym;
+		if (!sym) {
+			warning("varAssign: symbol not defined");
+			return;
+		}
+
+		if (sym->type != INT && sym->type != VOID &&
+				sym->type != FLOAT && sym->type != STRING) {
+			warning("varAssign: assignment to non-variable '%s'", sym->name.c_str());
+			return;
+		}
+
+		if ((sym->type == STRING || sym->type == VOID) && sym->u.s) // Free memory if needed
+			delete var.u.sym->u.s;
+
+		if (sym->type == POINT || sym->type == RECT || sym->type == ARRAY)
+			delete var.u.sym->u.farr;
+
+		sym->type = value.type;
+		if (value.type == INT) {
+			sym->u.i = value.u.i;
+		} else if (value.type == FLOAT) {
+			sym->u.f = value.u.f;
+		} else if (value.type == STRING) {
+			sym->u.s = new Common::String(*value.u.s);
+			delete value.u.s;
+		} else if (value.type == POINT) {
+			sym->u.farr = new FloatArray(*value.u.farr);
+			delete value.u.farr;
+		} else if (value.type == SYMBOL) {
+			sym->u.i = value.u.i;
+		} else if (value.type == OBJECT) {
+			sym->u.s = value.u.s;
+		} else if (value.type == VOID) {
+			sym->u.i = 0;
+		} else {
+			warning("varAssign: unhandled type: %s", value.type2str());
+			sym->u.s = value.u.s;
+		}
+	} else if (var.type == REFERENCE) {
+		Score *score = g_director->getCurrentScore();
+		if (!score->_loadedCast->contains(var.u.i)) {
+			if (!score->_loadedCast->contains(var.u.i - score->_castIDoffset)) {
+				warning("varAssign: Unknown REFERENCE %d", var.u.i);
+				return;
+			} else {
+				var.u.i -= score->_castIDoffset;
+			}
+		}
+		Cast *cast = score->_loadedCast->getVal(var.u.i);
+		if (cast) {
+			switch (cast->_type) {
+			case kCastText:
+				value.toString();
+				((TextCast *)cast)->setText(value.u.s->c_str());
+				delete value.u.s;
+				break;
+			default:
+				warning("varAssign: Unhandled cast type %s", tag2str(cast->_type));
+				break;
+			}
+		}
 	}
-
-	if ((var.u.sym->type == STRING || var.u.sym->type == VOID) && var.u.sym->u.s) // Free memory if needed
-		delete var.u.sym->u.s;
-
-	if (var.u.sym->type == POINT || var.u.sym->type == RECT || var.u.sym->type == ARRAY)
-		delete var.u.sym->u.farr;
-
-	if (value.type == INT) {
-		var.u.sym->u.i = value.u.i;
-	} else if (value.type == FLOAT) {
-		var.u.sym->u.f = value.u.f;
-	} else if (value.type == STRING) {
-		var.u.sym->u.s = new Common::String(*value.u.s);
-		delete value.u.s;
-	} else if (value.type == POINT) {
-		var.u.sym->u.farr = new FloatArray(*value.u.farr);
-		delete value.u.farr;
-	} else if (value.type == SYMBOL) {
-		var.u.sym->u.i = value.u.i;
-	} else if (value.type == OBJECT) {
-		var.u.sym->u.s = value.u.s;
-	} else if (value.type == VOID) {
-		var.u.sym->u.i = 0;
-	} else {
-		warning("varAssign: unhandled type: %s", value.type2str());
-		var.u.sym->u.s = value.u.s;
-	}
-
-	var.u.sym->type = value.type;
 }
 
 Datum Lingo::varFetch(Datum &var) {
@@ -529,23 +561,55 @@ Datum Lingo::varFetch(Datum &var) {
 		return result;
 	}
 
-	result.type = var.u.sym->type;
+	if (var.type == VAR) {
+		Symbol *sym = var.u.sym;
+		if (!sym) {
+			warning("varFetch: symbol not defined");
+			return result;
+		}
 
-	if (var.u.sym->type == INT)
-		result.u.i = var.u.sym->u.i;
-	else if (var.u.sym->type == FLOAT)
-		result.u.f = var.u.sym->u.f;
-	else if (var.u.sym->type == STRING)
-		result.u.s = new Common::String(*var.u.sym->u.s);
-	else if (var.u.sym->type == POINT)
-		result.u.farr = var.u.sym->u.farr;
-	else if (var.u.sym->type == SYMBOL)
-		result.u.i = var.u.sym->u.i;
-	else if (var.u.sym->type == VOID)
-		result.u.i = 0;
-	else {
-		warning("varFetch: unhandled type: %s", var.type2str());
-		result.type = VOID;
+		result.type = sym->type;
+
+		if (sym->type == INT)
+			result.u.i = sym->u.i;
+		else if (sym->type == FLOAT)
+			result.u.f = sym->u.f;
+		else if (sym->type == STRING)
+			result.u.s = new Common::String(*sym->u.s);
+		else if (sym->type == POINT)
+			result.u.farr = sym->u.farr;
+		else if (sym->type == SYMBOL)
+			result.u.i = var.u.sym->u.i;
+		else if (sym->type == VOID)
+			result.u.i = 0;
+		else {
+			warning("varFetch: unhandled type: %s", var.type2str());
+			result.type = VOID;
+		}
+
+	} else if (var.type == REFERENCE) {
+		Score *score = g_director->getCurrentScore();
+		if (!score->_loadedCast->contains(var.u.i)) {
+			if (!score->_loadedCast->contains(var.u.i - score->_castIDoffset)) {
+				warning("varFetch: Unknown REFERENCE %d", var.u.i);
+				return result;
+			} else {
+				var.u.i -= score->_castIDoffset;
+			}
+		}
+		Cast *cast = score->_loadedCast->getVal(var.u.i);
+		if (cast) {
+			switch (cast->_type) {
+			case kCastText:
+				result.type = STRING;
+				result.u.s = new Common::String(((TextCast *)cast)->_ptext);
+				break;
+			default:
+				warning("varFetch: Unhandled cast type %s", tag2str(cast->_type));
+				break;
+			}
+		}
+
 	}
 
 	return result;
