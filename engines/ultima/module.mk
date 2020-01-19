@@ -60,13 +60,13 @@ MODULE_OBJS += \
 	ultima1/core/people.o \
 	ultima1/core/resources.o \
 	ultima1/core/transports.o \
-	ultima1/gfx/drawing_support.o \
-	ultima1/gfx/game_view.o \
-	ultima1/gfx/sprites.o \
-	ultima1/gfx/status.o \
-	ultima1/gfx/text_cursor.o \
-	ultima1/gfx/viewport_dungeon.o \
-	ultima1/gfx/viewport_map.o \
+	ultima1/u1gfx/drawing_support.o \
+	ultima1/u1gfx/game_view.o \
+	ultima1/u1gfx/sprites.o \
+	ultima1/u1gfx/status.o \
+	ultima1/u1gfx/text_cursor.o \
+	ultima1/u1gfx/viewport_dungeon.o \
+	ultima1/u1gfx/viewport_map.o \
 	ultima1/u6gfx/game_view.o \
 	ultima1/game.o
 endif

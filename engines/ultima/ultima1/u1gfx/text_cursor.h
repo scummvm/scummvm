@@ -20,60 +20,43 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GFX_DRAWING_SUPPORT_H
-#define ULTIMA_ULTIMA1_GFX_DRAWING_SUPPORT_H
+#ifndef ULTIMA_ULTIMA1_U1GFX_TEXT_CURSOR_H
+#define ULTIMA_ULTIMA1_U1GFX_TEXT_CURSOR_H
 
-#include "ultima/shared/gfx/visual_surface.h"
+#include "ultima/shared/gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Ultima1 {
-
-class Ultima1Game;
-
 namespace U1Gfx {
 
-/**
- * Implements various support methods for drawing onto visual surfaces
- */
-class DrawingSupport {
+class U1TextCursor : public Shared::Gfx::TextCursor {
 private:
-	Shared::Gfx::VisualSurface _surface;
-	Ultima1Game *_game;
+	int _frameNum;
+	uint32 _lastFrameFrame;
 private:
 	/**
-	 * Tweaks the edges of a drawn border to give it a rounded effect
+	 * Get the current game milliseconds
 	 */
-	void roundFrameCorners(bool skipBottom = false);
+	uint32 getTime();
 public:
 	/**
 	 * Constructor
 	 */
-	DrawingSupport(const Shared::Gfx::VisualSurface &s);
+	U1TextCursor() : _frameNum(0), _lastFrameFrame(0) {}
 
 	/**
-	 * Draws a frame around the entire screen
+	 * Destructor
 	 */
-	void drawFrame();
+	virtual ~U1TextCursor() {}
 
 	/**
-	 * Draw a frame around the viewport area of the screen, and a vertical seperator line
-	 * to the bottom of the screen to separate the status and info areas
+	 * Draw the cursor
 	 */
-	void drawGameFrame();
-
-	/**
-	 * Draw a right arrow glyph
-	 */
-	void drawRightArrow(const Point &pt);
-
-	/**
-	 * Draw a left arrow glyph
-	 */
-	void drawLeftArrow(const Point &pt);
+	virtual void draw();
 };
 
 } // End of namespace U1Gfx
-} // End of namespace Shared
+} // End of namespace Ultima1
 } // End of namespace Ultima
 
 #endif

@@ -20,43 +20,54 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_TEXT_CURSOR_H
-#define ULTIMA_ULTIMA1_TEXT_CURSOR_H
+#ifndef ULTIMA_ULTIMA1_U1GFX_SPRITES_H
+#define ULTIMA_ULTIMA1_U1GFX_SPRITES_H
 
-#include "ultima/shared/gfx/text_cursor.h"
+#include "ultima/shared/gfx/sprites.h"
+#include "ultima/shared/core/tree_item.h"
+#include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Gfx {
+namespace U1Gfx {
 
-class U1TextCursor : public Shared::Gfx::TextCursor {
+using Shared::CFrameMsg;
+
+/**
+ * Displays the total hits, food, experience, and coins you have
+ */
+class Sprites : public Shared::Gfx::Sprites, public Shared::TreeItem {
+	DECLARE_MESSAGE_MAP;
+	bool FrameMsg(CFrameMsg &msg);
 private:
-	int _frameNum;
-	uint32 _lastFrameFrame;
+	bool _isOverworld;
+	uint _frameCtr;
 private:
 	/**
-	 * Get the current game milliseconds
+	 * Animates the water sprite by rotating it's lines vertically
 	 */
-	uint32 getTime();
+	void animateWater();
 public:
-	/**
-	 * Constructor
-	 */
-	U1TextCursor() : _frameNum(0), _lastFrameFrame(0) {}
+	CLASSDEF;
+	Sprites(TreeItem *parent) : Shared::Gfx::Sprites(), TreeItem(), _isOverworld(false), _frameCtr(0) {
+		addUnder(parent);
+	}
+	virtual ~Sprites() {}
 
 	/**
-	 * Destructor
+	 * Return a specific sprite
 	 */
-	virtual ~U1TextCursor() {}
+	virtual Shared::Gfx::Sprite &operator[](uint idx);
 
 	/**
-	 * Draw the cursor
+	 * Loads the Ultima 1 sprites
 	 */
-	virtual void draw();
+	void load(bool isOverworld);
 };
 
-} // End of namespace Gfx
+} // End of namespace U1Gfx
 } // End of namespace Ultima1
-} // End of namespace Ultima
+} // End of namespace Xeen
 
 #endif

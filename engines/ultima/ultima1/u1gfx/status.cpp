@@ -20,23 +20,35 @@
  *
  */
 
-#include "ultima/ultima1/gfx/viewport_dungeon.h"
-#include "ultima/ultima1/core/dungeon_widgets.h"
-#include "ultima/shared/early/ultima_early.h"
+#include "ultima/ultima1/u1gfx/status.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/shared/core/game_state.h"
+#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-Shared::DungeonSurface ViewportDungeon::getSurface() {
-	Graphics::ManagedSurface src(*g_vm->_screen, _bounds);
-	return Shared::DungeonSurface(src, _bounds, getGame(), &drawWidget);
-}
+EMPTY_MESSAGE_MAP(Status, Shared::Gfx::VisualItem);
 
-void ViewportDungeon::drawWidget(Graphics::ManagedSurface &s, uint widgetId, uint distance, byte color) {
-	// Pass on to the dungeon widget drawer
-	Graphics::ManagedSurface surf(s, Common::Rect(-8, -8, s.w - 8, s.h - 8));
-	DungeonWidget::drawWidget(surf, (DungeonWidgetId)widgetId, distance, color);
+void Status::draw() {
+	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+	Shared::GameState *gameState = getGameState();
+	Shared::Gfx::VisualSurface s = getSurface();
+	s.clear();
+
+	// Iterate through displaying the values
+	Shared::Character &c = gameState->_characters.front();
+	const uint *vals[4] = { &c._hitPoints, &c._food, &c._experience, &c._coins };
+	int count = game->isVGA() ? 3 : 4;
+
+	for (int idx = 0; idx < count; ++idx) {
+		// Write header
+		s.writeString(game->_res->STATUS_TEXT[idx], TextPoint(0, idx), game->_textColor, game->_bgColor);
+
+		uint value = MIN(*vals[idx], (uint)9999);
+		s.writeString(Common::String::format("%4u", value), TextPoint(5, idx), game->_textColor, game->_bgColor);
+	}
 }
 
 } // End of namespace U1Gfx

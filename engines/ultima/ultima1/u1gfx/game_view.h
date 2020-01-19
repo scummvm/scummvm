@@ -20,33 +20,61 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GFX_VIEWPORT_DUNGEON_H
-#define ULTIMA_ULTIMA1_GFX_VIEWPORT_DUNGEON_H
+#ifndef ULTIMA_ULTIMA1_GFX_GAME_VIEW_H
+#define ULTIMA_ULTIMA1_GFX_GAME_VIEW_H
 
-#include "ultima/shared/gfx/viewport_dungeon.h"
+#include "ultima/shared/gfx/visual_container.h"
+#include "ultima/shared/gfx/bitmap.h"
 
 namespace Ultima {
+
+namespace Shared {
+	class Info;
+	class ViewportDungeon;
+	namespace Actions {
+		class Action;
+	}
+}
+	
 namespace Ultima1 {
 namespace U1Gfx {
 
-class ViewportDungeon : public Shared::ViewportDungeon {
+class Status;
+class ViewportMap;
+
+using Shared::CKeypressMsg;
+
+/**
+ * This class implements a standard view screen that shows a status and log area, as well as either
+ * a map or dungeon view covering the bulk of the screen
+ */
+class GameView : public Shared::Gfx::VisualContainer {
+	DECLARE_MESSAGE_MAP;
+	bool KeypressMsg(CKeypressMsg &msg);
+private:
+	Shared::Info *_info;
+	Shared::ViewportDungeon *_viewportDungeon;
+	ViewportMap *_viewportMap;
+	Status *_status;
+	Shared::Actions::Action *_actions[4];
 private:
 	/**
-	 * Draws a dungeon widget
+	 * Draws level & direction indicators when in a dungeon
 	 */
-	static void drawWidget(Graphics::ManagedSurface &s, uint widgetId, uint distance, byte color);
-protected:
-	/**
-	 * Returns the surface for rendering the dungeon
-	 */
-	virtual Shared::DungeonSurface getSurface();
+	void drawIndicators();
 public:
-	ViewportDungeon(TreeItem *parent) : Shared::ViewportDungeon(parent) {}
-	virtual ~ViewportDungeon() {}
+	CLASSDEF;
+	GameView(TreeItem *parent = nullptr);
+	virtual ~GameView();
+
+	/**
+	 * Draw the game screen
+	 */
+	virtual void draw();
 };
 
 } // End of namespace U1Gfx
-} // End of namespace Ultima1
+} // End of namespace Shared
 } // End of namespace Xeen
 
 #endif

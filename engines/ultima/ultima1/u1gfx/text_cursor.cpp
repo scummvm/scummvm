@@ -20,33 +20,28 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GFX_STATUS_H
-#define ULTIMA_ULTIMA1_GFX_STATUS_H
-
-#include "ultima/shared/gfx/visual_item.h"
+#include "ultima/ultima1/u1gfx/text_cursor.h"
+#include "common/system.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-/**
- * Displays the total hits, food, experience, and coins you have
- */
-class Status : public Shared::Gfx::VisualItem {
-	DECLARE_MESSAGE_MAP;
-public:
-	CLASSDEF;
-	Status(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("Status", Rect(248, 168, 320, 200), parent) {}
-	virtual ~Status() {}
+#define CURSOR_ANIM_FRAME_TIME 100
 
-	/**
-	 * Draw the contents
-	 */
-	virtual void draw();
-};
+void U1TextCursor::draw() {
+	uint32 time = getTime();
+	if (!_visible || (time - _lastFrameFrame) < CURSOR_ANIM_FRAME_TIME)
+		return;
+
+	_lastFrameFrame = time;
+	// TODO: Draw u1 cursor
+}
+
+uint32 U1TextCursor::getTime() {
+	return g_system->getMillis();
+}
 
 } // End of namespace U1Gfx
 } // End of namespace Ultima1
 } // End of namespace Ultima
-
-#endif

@@ -20,14 +20,14 @@
  *
  */
 
-#include "ultima/ultima1/gfx/sprites.h"
+#include "ultima/ultima1/u1gfx/sprites.h"
 #include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-BEGIN_MESSAGE_MAP(Sprites, TreeItem)
+BEGIN_MESSAGE_MAP(Sprites, Shared::TreeItem)
 	ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
@@ -35,9 +35,9 @@ void Sprites::load(bool isOverworld) {
 	_isOverworld = isOverworld;
 
 	if (isOverworld)
-		::Ultima::Shared::Gfx::Sprites::load("t1ktiles.bin", 4);
+		Shared::Gfx::Sprites::load("t1ktiles.bin", 4);
 	else
-		::Ultima::Shared::Gfx::Sprites::load("t1ktown.bin", 4, 8, 8);
+		Shared::Gfx::Sprites::load("t1ktown.bin", 4, 8, 8);
 }
 
 bool Sprites::FrameMsg(CFrameMsg &msg) {
@@ -58,7 +58,7 @@ void Sprites::animateWater() {
 	Common::copy(lineBuffer, lineBuffer + 16, sprite.getBasePtr(0, 0));
 }
 
-::Ultima::Shared::Gfx::Sprite &Sprites::operator[](uint idx) {
+Shared::Gfx::Sprite &Sprites::operator[](uint idx) {
 	int offset = 2;
 	if ((_frameCtr % 6) == 0)
 		offset = 0;
@@ -67,25 +67,25 @@ void Sprites::animateWater() {
 
 	if (!_isOverworld) {
 		// Don't do overworld tile animations within the cities and castles
-		return ::Ultima::Shared::Gfx::Sprites::operator[](idx);
+		return Shared::Gfx::Sprites::operator[](idx);
 	} else if (idx == 4 && offset != 2) {
 		// Castle flag waving
-		return ::Ultima::Shared::Gfx::Sprites::operator[](4 + offset);
+		return Shared::Gfx::Sprites::operator[](4 + offset);
 	} else if (idx == 6) {
 		// City flag waving
-		return ::Ultima::Shared::Gfx::Sprites::operator[](7 + ((_frameCtr & 3) ? 1 : 0));
+		return Shared::Gfx::Sprites::operator[](7 + ((_frameCtr & 3) ? 1 : 0));
 	} else {
 		if (idx >= 7)
 			idx += 2;
 
 		if (idx == 14 || idx == 25) {
 			// Transports
-			return ::Ultima::Shared::Gfx::Sprites::operator[](idx + (_frameCtr & 1));
+			return Shared::Gfx::Sprites::operator[](idx + (_frameCtr & 1));
 		} else if (idx >= 19 && idx <= 47) {
 			// Random monster animation
-			return ::Ultima::Shared::Gfx::Sprites::operator[](idx + (g_vm->getRandomNumber(1, 100) & 1));
+			return Shared::Gfx::Sprites::operator[](idx + (g_vm->getRandomNumber(1, 100) & 1));
 		} else {
-			return ::Ultima::Shared::Gfx::Sprites::operator[](idx);
+			return Shared::Gfx::Sprites::operator[](idx);
 		}
 	}
 }

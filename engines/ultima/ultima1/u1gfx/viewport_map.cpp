@@ -20,28 +20,34 @@
  *
  */
 
-#include "ultima/ultima1/gfx/text_cursor.h"
-#include "common/system.h"
+#include "ultima/ultima1/u1gfx/viewport_map.h"
+#include "ultima/ultima1/u1gfx/sprites.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Gfx {
+namespace U1Gfx {
 
-#define CURSOR_ANIM_FRAME_TIME 100
-
-void U1TextCursor::draw() {
-	uint32 time = getTime();
-	if (!_visible || (time - _lastFrameFrame) < CURSOR_ANIM_FRAME_TIME)
-		return;
-
-	_lastFrameFrame = time;
-	// TODO: Draw u1 cursor
+ViewportMap::ViewportMap(Shared::TreeItem *parent) : Shared::ViewportMap(parent), _mapType(MAP_OVERWORLD) {
+	_sprites = new Sprites(this);	
 }
 
-uint32 U1TextCursor::getTime() {
-	return g_system->getMillis();
+ViewportMap::~ViewportMap() {
 }
 
-} // End of namespace Gfx
+void ViewportMap::draw() {
+	Ultima1Map *map = static_cast<Ultima1Map *>(getMap());
+
+	// If necessary, load the sprites for rendering the map
+	if (_sprites->empty() || _mapType != map->_mapType) {
+		_mapType = map->_mapType;
+		Sprites *sprites = static_cast<Sprites *>(_sprites);
+		sprites->load(_mapType == MAP_OVERWORLD);
+	}
+
+	// Draw the map
+	Shared::ViewportMap::draw();
+}
+
+} // End of namespace U1Gfx
 } // End of namespace Ultima1
 } // End of namespace Ultima

@@ -20,38 +20,25 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GFX_VIEWPORT_MAP_H
-#define ULTIMA_ULTIMA1_GFX_VIEWPORT_MAP_H
-
-#include "ultima/shared/gfx/viewport_map.h"
-#include "ultima/ultima1/core/map.h"
+#include "ultima/ultima1/u1gfx/viewport_dungeon.h"
+#include "ultima/ultima1/core/dungeon_widgets.h"
+#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-class ViewportMap : public Shared::ViewportMap {
-private:
-	MapType _mapType;
-public:
-	/**
-	 * Constructor
-	 */
-	ViewportMap(TreeItem *parent);
-	
-	/**
-	 * Destructor
-	 */
-	virtual ~ViewportMap();
+Shared::DungeonSurface ViewportDungeon::getSurface() {
+	Graphics::ManagedSurface src(*g_vm->_screen, _bounds);
+	return Shared::DungeonSurface(src, _bounds, getGame(), &drawWidget);
+}
 
-	/**
-	 * Draws the map
-	 */
-	virtual void draw();
-};
+void ViewportDungeon::drawWidget(Graphics::ManagedSurface &s, uint widgetId, uint distance, byte color) {
+	// Pass on to the dungeon widget drawer
+	Graphics::ManagedSurface surf(s, Common::Rect(-8, -8, s.w - 8, s.h - 8));
+	DungeonWidget::drawWidget(surf, (DungeonWidgetId)widgetId, distance, color);
+}
 
 } // End of namespace U1Gfx
 } // End of namespace Ultima1
-} // End of namespace Xeen
-
-#endif
+} // End of namespace Ultima

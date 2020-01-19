@@ -25,16 +25,16 @@
 #include "ultima/shared/core/map.h"
 #include "ultima/shared/gfx/info.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/ultima1/gfx/drawing_support.h"
-#include "ultima/ultima1/gfx/status.h"
-#include "ultima/ultima1/gfx/viewport_dungeon.h"
-#include "ultima/ultima1/gfx/viewport_map.h"
+#include "ultima/ultima1/u1gfx/drawing_support.h"
+#include "ultima/ultima1/u1gfx/status.h"
+#include "ultima/ultima1/u1gfx/viewport_dungeon.h"
+#include "ultima/ultima1/u1gfx/viewport_map.h"
 #include "ultima/ultima1/actions/move.h"
 #include "ultima/ultima1/actions/climb.h"
 #include "ultima/ultima1/actions/enter.h"
 #include "ultima/ultima1/core/resources.h"
-#include "ultima/shared/gfx/bitmap.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/shared/gfx/bitmap.h"
 
 namespace Ultima {
 namespace Ultima1 {
