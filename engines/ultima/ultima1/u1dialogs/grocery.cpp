@@ -20,35 +20,27 @@
  *
  */
 
-#include "ultima/ultima1/u1dialogs/dialog.h"
+#include "ultima/ultima1/u1dialogs/grocery.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/ultima1/maps/map.h"
-#include "ultima/shared/gfx/visual_surface.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-Dialog::Dialog(Ultima1Game *game) : Popup(game) {
-	_bounds = Rect(31, 23, 287, 127);
+EMPTY_MESSAGE_MAP(Grocery, BuySellDialog);
+
+Grocery::Grocery(Ultima1Game *game, BuySell buySell, int groceryNum) :
+		BuySellDialog(game, buySell, game->_res->GROCERY_NAMES[groceryNum]) {
 }
 
-Ultima1Game *Dialog::getGame() {
-	return static_cast<Ultima1Game *>(TreeItem::getGame());
-}
+void Grocery::draw() {
+	BuySellDialog::draw();
 
-Maps::Ultima1Map *Dialog::getMap() {
-	return static_cast<Maps::Ultima1Map *>(getGame()->getMap());
-}
-
-void Dialog::draw() {
-	Shared::Gfx::VisualSurface s = getSurface();
-	s.clear();
-
-	// Draw the frame
-	s.frameRect(Rect(3, 3, _bounds.width() - 3, _bounds.height() - 3), getGame()->_borderColor);
+	// TODO
 }
 
 } // End of namespace U1Dialogs
-} // End of namespace Gfx
+} // End of namespace Ultima1
 } // End of namespace Ultima

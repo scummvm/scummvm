@@ -20,35 +20,51 @@
  *
  */
 
+#ifndef ULTIMA_ULTIMA1_U1DIALOGS_BUY_SELL_DIALOG_H
+#define ULTIMA_ULTIMA1_U1DIALOGS_BUY_SELL_DIALOG_H
+
 #include "ultima/ultima1/u1dialogs/dialog.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/maps/map.h"
-#include "ultima/shared/gfx/visual_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-Dialog::Dialog(Ultima1Game *game) : Popup(game) {
-	_bounds = Rect(31, 23, 287, 127);
-}
+enum BuySell { BUY, SELL, SOLD, CANT_AFFORD };
 
-Ultima1Game *Dialog::getGame() {
-	return static_cast<Ultima1Game *>(TreeItem::getGame());
-}
+/**
+  * Secondary base class for dialogs that have display for buying and selling
+  */
+class BuySellDialog : public Dialog {
+protected:
+	BuySell _buySell;
+	Common::String _title;
+public:
+	/**
+	 * Constructor
+	 */
+	BuySellDialog(Ultima1Game *game, BuySell buySell, const Common::String &title) : Dialog(game),
+		_buySell(buySell), _title(title) {
+		assert(buySell == BUY || buySell == SOLD);
+	}
 
-Maps::Ultima1Map *Dialog::getMap() {
-	return static_cast<Maps::Ultima1Map *>(getGame()->getMap());
-}
+	/**
+	 * Draws the visual item on the screen
+	 */
+	virtual void draw();
 
-void Dialog::draw() {
-	Shared::Gfx::VisualSurface s = getSurface();
-	s.clear();
+	/**
+	 *  Switches the dialog to displaying sold
+	 */
+	void showSold();
 
-	// Draw the frame
-	s.frameRect(Rect(3, 3, _bounds.width() - 3, _bounds.height() - 3), getGame()->_borderColor);
-}
+	/**
+	 * Switches the dialog to displaying a can't afford message
+	 */
+	void cantAfford();
+};
 
 } // End of namespace U1Dialogs
-} // End of namespace Gfx
+} // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

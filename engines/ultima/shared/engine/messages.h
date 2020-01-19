@@ -41,6 +41,7 @@ class CMessage;
 namespace Gfx {
 class VisualItem;
 class TextInput;
+class Popup;
 }
 
 #define MESSAGEDEF(theClass) \
@@ -281,6 +282,11 @@ MESSAGE1(CMoveMsg, int, direction, 0);
  * Pass a turn
  */
 MESSAGE0(CPassMsg);
+
+/**
+ * Called when a popup is finally shown
+ */
+MESSAGE1(CPopupShownMsg, Gfx::Popup *, view, (Gfx::Popup *)nullptr);
 
 /**
  * Called when a game view is shown

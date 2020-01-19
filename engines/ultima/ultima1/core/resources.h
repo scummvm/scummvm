@@ -82,6 +82,17 @@ public:
 	const char *JESTER_SPEECH2;
 	const char *BARD_STOLEN;
 	const char *JESTER_STOLEN;
+
+	const char *NOTHING;
+	const char *SOLD;
+	const char *CANT_AFFORD;
+	const char *GROCERY_NAMES[8];
+	const char *GROCERY_SELL;
+	const char *GROCERY_PACKS1;
+	const char *GROCERY_PACKS2;
+	const char *GROCERY_PACKS3;
+	const char *GROCERY_PACKS_FOOD;
+
 public:
 	GameResources();
 	GameResources(Shared::Resources *resManager);

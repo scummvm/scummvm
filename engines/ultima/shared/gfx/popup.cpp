@@ -27,6 +27,10 @@ namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
+BEGIN_MESSAGE_MAP(Popup, VisualItem)
+	ON_MESSAGE(ShowMsg)
+END_MESSAGE_MAP()
+
 void Popup::show(TreeItem *respondTo) {
 	// Save a copy of the view the popup is being shown on, and activate it
 	_parentView = _game->getView();
@@ -42,6 +46,12 @@ void Popup::hide() {
 	// Reset back to the parent view
 	_game->setView(_parentView);
 	_parentView->setDirty();
+}
+
+bool Popup::ShowMsg(CShowMsg &msg) {
+	CPopupShownMsg shownMsg(this);
+	shownMsg.execute(_respondTo);
+	return true;
 }
 
 } // End of namespace Gfx
