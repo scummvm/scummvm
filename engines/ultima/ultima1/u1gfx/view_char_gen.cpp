@@ -42,6 +42,11 @@ END_MESSAGE_MAP()
 
 ViewCharacterGeneration::ViewCharacterGeneration(Shared::TreeItem *parent) :
 		Shared::Gfx::VisualItem("CharGen", Rect(0, 0, 320, 200), parent) {
+	_textInput = new Shared::Gfx::TextInput(getGame());
+}
+
+ViewCharacterGeneration::~ViewCharacterGeneration() {
+	delete _textInput;
 }
 
 void ViewCharacterGeneration::setMode(uint flags) {
@@ -81,7 +86,7 @@ void ViewCharacterGeneration::setMode(uint flags) {
 		textCursor->setPosition(TextPoint(21, 17));
 		textCursor->setVisible(true);
 	} else if (_flags & FLAG_NAME) {
-		game->_textInput->show(TextPoint(19, 17), false, 14, game->_textColor);
+		_textInput->show(TextPoint(19, 17), false, 14, game->_textColor);
 	} else if (_flags & FLAG_SAVE) {
 		textCursor->setPosition(TextPoint(30, 22));
 		textCursor->setVisible(true);
@@ -367,8 +372,7 @@ bool ViewCharacterGeneration::TextInputMsg(CTextInputMsg &msg) {
 		// Name provided
 		_character->_name = msg._text;
 		
-		Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-		game->_textInput->hide();
+		_textInput->hide();
 		setMode(FLAG_SAVE);
 	}
 
