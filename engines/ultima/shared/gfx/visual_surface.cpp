@@ -44,7 +44,7 @@ void VisualSurface::writeString(const Common::String &msg, const Point &pt, byte
 
 void VisualSurface::writeString(const Common::String &msg, byte color, byte bgColor) {
 	Gfx::Font *font = g_vm->_game->getFont();
-	_textPos.x += font->writeString(*this, msg, _textPos, color, bgColor);
+	font->writeString(*this, msg, _textPos, color, bgColor);
 }
 
 void VisualSurface::writeChar(unsigned char c, const Point &pt, byte color, byte bgColor) {
@@ -55,7 +55,6 @@ void VisualSurface::writeChar(unsigned char c, const Point &pt, byte color, byte
 void VisualSurface::writeChar(unsigned char c, byte color, byte bgColor) {
 	Gfx::Font *font = g_vm->_game->getFont();
 	font->writeChar(*this, c, _textPos, color, bgColor);
-	_textPos.x += font->charWidth(c);
 }
 
 size_t VisualSurface::fontHeight() {

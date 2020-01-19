@@ -38,6 +38,7 @@ protected:
 	virtual void synchronize() override;
 public:
 	const char *TITLE_MESSAGES[13];
+	const char *CHAR_GEN_TEXT[10];
 	const char *MAIN_MENU_TEXT[7];
 	const char *STATUS_TEXT[4];
 	const char *DIRECTION_NAMES[4];
