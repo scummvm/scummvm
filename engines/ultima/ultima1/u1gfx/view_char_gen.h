@@ -48,7 +48,7 @@ class ViewCharacterGeneration : public Shared::Gfx::VisualContainer {
 private:
 	enum Flag {
 		FLAG_FRAME = 1, FLAG_ATTRIBUTES = 2, FLAG_ATTR_POINTERS = 4, FLAG_HELP = 8, FLAG_RACE = 16,
-		FLAG_SEX = 32, FLAG_CLASS = 64,
+		FLAG_SEX = 32, FLAG_CLASS = 64, FLAG_NAME = 128,
 		FLAG_INITIAL = FLAG_FRAME | FLAG_ATTRIBUTES | FLAG_ATTR_POINTERS | FLAG_HELP
 	};
 	uint _flags;
@@ -96,6 +96,26 @@ private:
 	  * Draw the class selection
 	  */
 	 void drawClass(Shared::Gfx::VisualSurface &s);
+
+	 /**
+	  * Draw the name entry
+	  */
+	 void drawName(Shared::Gfx::VisualSurface &s);
+
+	 /**
+	  * Set the character's race
+	  */
+	 void setRace(int raceNum);
+
+	 /**
+	  * Set the character's sex
+	  */
+	 void setSex(int sexNum);
+
+	 /**
+	  * Set the character's class
+	  */
+	 void setClass(int classNum);
 public:
 	CLASSDEF;
 
