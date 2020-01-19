@@ -319,7 +319,7 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 	if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
 		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), _eventHandler", _eventHandlerTypes[event], scriptType2str(st), entityId);
 		executeHandler(_eventHandlerTypes[event]); // D4+ Events
-	} else if (event == kEventNone && _scriptContexts[st].contains(entityId)) {
+	} else if (_vm->getVersion() < 4 && event == kEventNone && _scriptContexts[st].contains(entityId)) {
 		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), script", _eventHandlerTypes[event], scriptType2str(st), entityId);
 
 		executeScript(st, entityId, 0); // D3 list of scripts.
