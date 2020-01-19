@@ -44,7 +44,7 @@ enum DungeonItemId {
 	DITEM_CHEST = 4, DITEM_COFFIN = 5
 };
 
-class DungeonMonster : public Shared::Monster, public Shared::DungeonCreature {
+class DungeonMonster : public Shared::Creature, public Shared::DungeonCreature {
 private:
 	DungeonWidgetId _monsterId;
 public:
@@ -53,7 +53,7 @@ public:
 	 */
 	DungeonMonster(Shared::Game *game, Shared::Map::MapBase *map, DungeonWidgetId monsterId, int hitPoints,
 		const Point &pt, Shared::Direction dir = Shared::DIR_NONE) :
-		Shared::Monster(game, map, hitPoints, pt, dir), Shared::DungeonCreature(), _monsterId(monsterId) {}
+		Shared::Creature(game, map, hitPoints, pt, dir), Shared::DungeonCreature(), _monsterId(monsterId) {}
 
 	/**
 	 * Destructor

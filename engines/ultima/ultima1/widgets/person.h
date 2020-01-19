@@ -25,15 +25,15 @@
 
 #include "ultima/ultima1/map/map.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/shared/core/widgets.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-class Person : public Shared::MapWidget {
+class Person : public Shared::Creature {
 private:
 	uint _tileNum;
-	int _hitPoints;
 protected:
 	Ultima1Game *_game;
 	Map::Ultima1Map::MapBase *_map;
@@ -59,7 +59,7 @@ public:
 	 * Constructor
 	 */
 	Person(Ultima1Game *game, Map::Ultima1Map::MapBase *map, uint tileNum, int hitPoints) :
-		Shared::MapWidget(game, map), _game(game), _map(map), _tileNum(tileNum), _hitPoints(hitPoints) {}
+		Shared::Creature(game, map, hitPoints), _tileNum(tileNum) {}
 
 	/**
 	 * Destructor
