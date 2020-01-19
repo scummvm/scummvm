@@ -20,25 +20,20 @@
  *
  */
 
-#include "ultima/shared/core/widgets.h"
-#include "ultima/shared/early/game.h"
-#include "ultima/shared/core/game_state.h"
+#include "ultima/ultima1/widgets/dungeon_player.h"
+#include "ultima/ultima1/widgets/dungeon_widget.h"
 
 namespace Ultima {
-namespace Shared {
+namespace Ultima1 {
+namespace Widgets {
 
-/*------------------------------------------------------------------------*/
+bool DungeonPlayer::canMoveTo(const Point &destPos) {
+	if (!MapWidget::canMoveTo(destPos))
+		return false;
 
-void Creature::update(bool isPreUpdate) {
-	if (isPreUpdate) {
-		// Check whether creature can attack
-		_isAttacking = canAttack();
-		if (!_isAttacking)
-			movement();
-	} else if (_isAttacking && !_game->_gameState->isPartyDead()) {
-		attack(canAttack());
-	}
+	return DungeonMonster::canMoveTo(_map, this, destPos);
 }
 
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima

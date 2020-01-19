@@ -73,6 +73,32 @@ void DungeonMonster::movement() {
 		_position.y += SGN(delta.y);
 }
 
+bool DungeonMonster::canMoveTo(const Point &destPos) {
+	if (!MapWidget::canMoveTo(destPos))
+		return false;
+
+	return DungeonMonster::canMoveTo(_map, this, destPos);
+}
+
+bool DungeonMonster::canMoveTo(Shared::Map::MapBase *map, MapWidget *widget, const Point &destPos) {
+	// Get the details of the position
+	Shared::MapTile currTile, destTile;
+	
+	map->getTileAt(map->getPosition(), &currTile);
+	map->getTileAt(destPos, &destTile);
+
+	// Can't move onto certain dungeon tile types
+	if (destTile._isWall || destTile._isSecretDoor || destTile._isBeams)
+		return false;
+
+	// Can't move to directly adjoining doorway cells (they'd be in parralel to each other, not connected)
+	if (destTile._isDoor && currTile._isDoor)
+		return false;
+
+	return true;
+}
+
+
 /*-------------------------------------------------------------------*/
 
 DungeonWidget::DungeonWidget(Shared::Game *game, Shared::Map::MapBase *map, const Point &pt,

@@ -116,11 +116,6 @@ public:
 	 * Draws an item
 	 */
 	virtual void draw(DungeonSurface &s, uint distance) = 0;
-	
-	/**
-	 * Returns true if the given transport type can move to a given position on the map
-	 */
-	virtual bool canMoveTo(const Point &destPos);
 };
 
 /**
