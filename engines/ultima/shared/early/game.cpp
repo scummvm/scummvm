@@ -74,6 +74,27 @@ void Game::setEGAPalette() {
 	_whiteColor = 15;
 }
 
+void Game::setEGAPalette(const byte *palette) {
+	// Build up the EGA palette
+	byte egaPalette[64 * 3];
+
+	byte *p = &egaPalette[0];
+	for (int i = 0; i < 64; ++i) {
+		*p++ = (i >> 2 & 1) * 0xaa + (i >> 5 & 1) * 0x55;
+		*p++ = (i >> 1 & 1) * 0xaa + (i >> 4 & 1) * 0x55;
+		*p++ = (i & 1) * 0xaa + (i >> 3 & 1) * 0x55;
+	}
+
+	// Loop through setting palette colors based on the passed indexes
+	for (int idx = 0; idx < 16; ++idx) {
+		int palIndex = palette[idx];
+		assert(palIndex < 64);
+
+		const byte *pRgb = (const byte *)&egaPalette[palIndex * 3];
+		g_vm->_screen->setPalette(pRgb, idx, 1);
+	}
+}
+
 void Game::loadU6Palette() {
 	// Read in the palette
 	File f("u6pal");
