@@ -31,16 +31,6 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-Ultima1Game *Transport::getGame() const {
-	return static_cast<Ultima1Game *>(_game);
-}
-
-Maps::MapBase *Transport::getMap() const {
-	return static_cast<Maps::MapBase *>(_map);
-}
-
-/*-------------------------------------------------------------------*/
-
 uint TransportOnFoot::getTileNum() const {
 	return 8;
 }

@@ -28,26 +28,9 @@
 
 namespace Ultima {
 namespace Ultima1 {
-
-class Ultima1Game;
-
-namespace Maps {
-class MapBase;
-}
-
 namespace Widgets {
 
 class Transport : public OverworldWidget {
-protected:
-	/**
-	 * Gets the Ultima 1 game
-	 */
-	Ultima1Game *getGame() const;
-
-	/**
-	 * Gets the Ultima 1 map
-	 */
-	Maps::MapBase *getMap() const;
 public:
 	/**
 	 * Constructor
