@@ -59,7 +59,7 @@ public:
 	/**
 	 * Draws the container by iterating through each child and letting it draw
 	 */
-	virtual void draw();
+	virtual void draw() override;
 };
 
 } // End of namespace Gfx

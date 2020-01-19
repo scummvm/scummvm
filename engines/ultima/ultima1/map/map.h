@@ -91,7 +91,7 @@ public:
 		/**
 		 * Gets a tile at a given position
 		 */
-		virtual void getTileAt(const Point &pt, Shared::MapTile *tile);
+		virtual void getTileAt(const Point &pt, Shared::MapTile *tile) override;
 	};
 
 private:
@@ -121,7 +121,7 @@ public:
 	/**
 	 * Load a given map
 	 */
-	virtual void load(Shared::MapId mapId);
+	virtual void load(Shared::MapId mapId) override;
 
 	/**
 	 * Returns true if Lord British's castle is the currently active map

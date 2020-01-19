@@ -47,7 +47,7 @@ public:
 	/**
 	 * Draws the map
 	 */
-	virtual void draw();
+	virtual void draw() override;
 };
 
 } // End of namespace U1Gfx

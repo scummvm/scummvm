@@ -39,7 +39,7 @@ protected:
 	/**
 	 * Handles moving creatures
 	 */
-	virtual void movement();
+	virtual void movement() override;
 public:
 	/**
 	 * Returns true if the given widget can move to a given position on the map
@@ -66,29 +66,29 @@ public:
 	/**
 	 * Returns true if a monster blocks the background behind him
 	 */
-	virtual bool isBlockingView() const;
+	virtual bool isBlockingView() const override;
 
 	/**
 	 * Draw a monster
 	 */
-	virtual void draw(Shared::DungeonSurface &s, uint distance);
+	virtual void draw(Shared::DungeonSurface &s, uint distance) override;
 
 	/**
 	 * Called to update the widget at the end of a turn
 	 * @param isPreUpdate		Update is called twice in succesion during the end of turn update.
 	 *		Once with true for all widgets, then with it false
 	 */
-	virtual void update(bool isPreUpdate);
+	virtual void update(bool isPreUpdate) override;
 
 	/**
 	 * Returns true if the given widget can move to a given position on the map
 	 */
-	virtual bool canMoveTo(const Point &destPos);
+	virtual bool canMoveTo(const Point &destPos) override;
 
 	/**
 	 * Handles attacks
 	 */
-	virtual void attack();
+	virtual void attack() override;
 };
 
 } // End of namespace Widgets

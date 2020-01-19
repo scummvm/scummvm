@@ -26,7 +26,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-void Guard::update() {
+void Guard::movement() {
 
 }
 

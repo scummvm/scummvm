@@ -63,17 +63,17 @@ public:
 	/**
 	 * Load the map
 	 */
-	virtual void load(Shared::MapId mapId);
+	virtual void load(Shared::MapId mapId) override;
 
 	/**
 		* Clears all map data
 		*/
-	virtual void clear();
+	virtual void clear() override;
 
 	/**
 	 * Get the viewport position
 	 */
-	virtual Point getViewportPosition(const Point &viewportSize);
+	virtual Point getViewportPosition(const Point &viewportSize) override;
 };
 
 /**
@@ -94,7 +94,7 @@ public:
 	/**
 	 * Load the map
 	 */
-	virtual void load(Shared::MapId mapId);
+	virtual void load(Shared::MapId mapId) override;
 };
 
 /**
@@ -117,7 +117,7 @@ public:
 	/**
 	 * Load the map
 	 */
-	virtual void load(Shared::MapId mapId);
+	virtual void load(Shared::MapId mapId) override;
 };
 
 } // End of namespace Map

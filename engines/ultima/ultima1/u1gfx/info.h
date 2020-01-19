@@ -37,7 +37,7 @@ protected:
 	/**
 	 * Draws a prompt character
 	 */
-	virtual void drawPrompt(Shared::Gfx::VisualSurface &surf, const Point &pt);
+	virtual void drawPrompt(Shared::Gfx::VisualSurface &surf, const Point &pt) override;
 public:
 	Info(TreeItem *parent) : Shared::Info(parent, Rect(0, 168, 240, 200)) {}
 	virtual ~Info() {}

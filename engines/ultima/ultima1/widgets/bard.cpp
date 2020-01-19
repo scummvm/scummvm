@@ -26,7 +26,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-void Bard::update() {
+void Bard::movement() {
 
 }
 

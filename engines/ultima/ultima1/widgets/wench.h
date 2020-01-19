@@ -30,6 +30,11 @@ namespace Ultima1 {
 namespace Widgets {
 
 class Wench : public Person {
+protected:
+	/**
+	 * Handles moving creatures
+	 */
+	virtual void movement() override;
 public:
 	/**
 	 * Constructor
@@ -41,11 +46,6 @@ public:
 	 * Destructor
 	 */
 	virtual ~Wench() {}
-
-	/**
-	 * Called to update the character at the end of a turn
-	 */
-	virtual void update();
 };
 
 } // End of namespace Widgets

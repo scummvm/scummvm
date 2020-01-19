@@ -69,7 +69,7 @@ public:
 	/**
 	 * Get the tile number for the person
 	 */
-	virtual uint getTileNum() const { return _tileNum; }
+	virtual uint getTileNum() const override { return _tileNum; }
 };
 
 } // End of namespace Widgets

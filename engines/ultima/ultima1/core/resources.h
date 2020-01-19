@@ -35,7 +35,7 @@ protected:
 	/**
 	 * Synchronize resource data
 	 */
-	virtual void synchronize();
+	virtual void synchronize() override;
 public:
 	const char *STATUS_TEXT[4];
 	const char *DIRECTION_NAMES[4];

@@ -42,27 +42,27 @@ public:
 	 * Open the file with the given filename, by searching SearchMan.
 	 * @param	name	the name of the file to open
 	 */
-	virtual bool open(const Common::String &name);
+	virtual bool open(const Common::String &name) override;
 
 	/**
 	 * Open the file with the given filename from within the given archive.
 	 * @param	name	the name of the file to open
 	 * @param	archive		the archive in which to search for the file
 	 */
-	virtual bool open(const Common::String &name, Common::Archive &archive);
+	virtual bool open(const Common::String &name, Common::Archive &archive) override;
 
 	/**
 	 * Open the file corresponding to the give node.
 	 * @param   node        the node to consider.
 	 */
-	virtual bool open(const Common::FSNode &node);
+	virtual bool open(const Common::FSNode &node) override;
 
 	/**
 	 * 'Open' the given stream. That is, we just wrap around it
 	 * @param	stream		a pointer to a SeekableReadStream, or 0
 	 * @param	name		a string describing the 'file' corresponding to stream
 	 */
-	virtual bool open(SeekableReadStream *stream, const Common::String &name);
+	virtual bool open(SeekableReadStream *stream, const Common::String &name) override;
 
 	/**
 	 * Reads in a null terminated string
