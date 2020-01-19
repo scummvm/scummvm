@@ -25,6 +25,9 @@
 namespace Ultima {
 namespace Shared {
 
+void Character::synchronize(Common::Serializer &s) {
+
+}
 
 } // End of namespace Shared
 } // End of namespace Ultima

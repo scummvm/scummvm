@@ -49,6 +49,17 @@ void Map::MapBase::load(MapId mapId) {
 	_mapId = mapId;
 }
 
+void Map::MapBase::synchronize(Common::Serializer &s) {
+	s.syncAsUint16LE(_mapId);
+	s.syncAsUint16LE(_mapIndex);
+	s.syncAsUint16LE(_mapStyle);
+//	s.syncAsUint16LE(_viewportPos.x);
+//	s.syncAsUint16LE(_viewportPos.y);
+	s.syncString(_name);
+
+	// Synchronize the list of widgets
+}
+
 void Map::MapBase::setDimensions(const Point &size) {
 	_data.resize(size.y);
 	for (int y = 0; y < size.y; ++y)
@@ -223,6 +234,10 @@ void Map::clear() {
 
 void Map::load(MapId mapId) {
 	_mapArea = nullptr;
+}
+
+void Map::synchronize(Common::Serializer &s) {
+	_mapArea->synchronize(s);
 }
 
 } // End of namespace Shared

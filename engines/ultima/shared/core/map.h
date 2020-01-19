@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/ptr.h"
+#include "common/serializer.h"
 #include "ultima/shared/core/rect.h"
 #include "ultima/shared/gfx/dungeon_surface.h"
 
@@ -176,6 +177,11 @@ public:
 		virtual ~MapBase() {}
 
 		/**
+		 * Handles loading and saving the map's data
+		 */
+		virtual void synchronize(Common::Serializer &s);
+
+		/**
 		 * Adds a widget to the map
 		 */
 		void addWidget(MapWidget *widget);
@@ -304,6 +310,11 @@ public:
 	 * Clears all map data
 	 */
 	virtual void clear();
+
+	/**
+	 * Handles loading and saving the map's data
+	 */
+	virtual void synchronize(Common::Serializer &s);
 
 	/**
 	 * Gets a tile at a given position

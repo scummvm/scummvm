@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/str.h"
+#include "common/serializer.h"
 
 namespace Ultima {
 namespace Shared {
@@ -83,6 +84,11 @@ public:
 	Character() : _strength(0), _agility(0), _stamina(0), _charisma(0), _wisdom(0), _intelligence(0),
 		_hitPoints(0), _experience(0), _food(0), _coins(0), _equippedWeapon(0), _equippedArmor(0), _equippedSpell(0),
 		_race(0), _sex(0), _class(0) {}
+
+	/**
+	 * Handles loading and saving games
+	 */
+	void synchronize(Common::Serializer &s);
 
 	/**
 	 * Returns true if a weapon is equipped
