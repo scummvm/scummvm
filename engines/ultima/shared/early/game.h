@@ -54,6 +54,11 @@ public:
 	 * Returns true if the party has no food
 	 */
 	bool isFoodless() const;
+
+	/**
+	 * Handles loading and saving games
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 /**
@@ -140,6 +145,11 @@ public:
 	 * Returns the map
 	 */
 	virtual Shared::Map *getMap() const override { return _map; }
+
+	/**
+	 * Handles loading and saving games
+	 */
+	virtual void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Shared

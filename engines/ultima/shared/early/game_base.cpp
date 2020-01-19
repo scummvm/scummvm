@@ -258,5 +258,11 @@ uint32 GameBase::getMillis() const {
 	return g_system->getMillis();
 }
 
+void GameBase::synchronize(Common::Serializer &s) {
+	_priorLeftDownTime = 0;
+	_priorMiddleDownTime = 0;
+	_priorRightDownTime = 0;
+}
+
 } // End of namespace Shared
 } // End of namespace Ultima
