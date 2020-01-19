@@ -89,15 +89,15 @@ public:
 	 */
 	virtual void onIdle();
 
-	virtual void mouseMove(const Point &mousePos);
-	virtual void leftButtonDown(const Point &mousePos);
-	virtual void leftButtonUp(const Point &mousePos);
-	virtual void middleButtonDown(const Point &mousePos);
-	virtual void middleButtonUp(const Point &mousePos);
-	virtual void rightButtonDown(const Point &mousePos);
-	virtual void rightButtonUp(const Point &mousePos);
-	virtual void mouseWheel(const Point &mousePos, bool wheelUp);
-	virtual void keyDown(Common::KeyState keyState);
+	virtual void mouseMove(const Point &mousePos) override;
+	virtual void leftButtonDown(const Point &mousePos) override;
+	virtual void leftButtonUp(const Point &mousePos) override;
+	virtual void middleButtonDown(const Point &mousePos) override;
+	virtual void middleButtonUp(const Point &mousePos) override;
+	virtual void rightButtonDown(const Point &mousePos) override;
+	virtual void rightButtonUp(const Point &mousePos) override;
+	virtual void mouseWheel(const Point &mousePos, bool wheelUp) override;
+	virtual void keyDown(Common::KeyState keyState) override;
 
 	/**
 	 * Called when the game starts

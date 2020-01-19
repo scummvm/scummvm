@@ -27,7 +27,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-void Wench::update() {
+void Wench::movement() {
 	if (!areGuardsHostile()) {
 		// Get a random new position
 		Point delta = getRandomMoveDelta();

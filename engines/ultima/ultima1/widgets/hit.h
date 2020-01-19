@@ -44,7 +44,7 @@ public:
 	/**
 	 * Get the tile for the transport method
 	 */
-	virtual uint getTileNum() const;
+	virtual uint getTileNum() const override;
 };
 
 } // End of namespace Widgets

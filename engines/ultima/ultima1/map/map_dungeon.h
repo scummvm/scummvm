@@ -74,12 +74,12 @@ public:
 	 * @param delta		Delta to change dungeon level by
 	 * @returns			False if dungeon left, true if still within dungeon
 	 */
-	virtual bool changeLevel(int delta);
+	virtual bool changeLevel(int delta) override;
 
 	/**
 	 * Get the current map level
 	 */
-	virtual uint getLevel() const { return _dungeonLevel; }
+	virtual uint getLevel() const override { return _dungeonLevel; }
 
 	/**
 	 * Updates the map at the end of a turn

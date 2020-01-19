@@ -48,12 +48,12 @@ public:
 	/**
 	 * The player's viewpoint has no intrinsic drawing
 	 */
-	virtual void draw(Shared::DungeonSurface &s, uint distance) {}
+	virtual void draw(Shared::DungeonSurface &s, uint distance) override {}
 
 	/**
 	 * Returns true if the given widget can move to a given position on the map
 	 */
-	virtual bool canMoveTo(const Point &destPos);
+	virtual bool canMoveTo(const Point &destPos) override;
 };
 
 } // End of namespace Widgets

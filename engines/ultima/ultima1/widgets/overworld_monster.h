@@ -47,18 +47,18 @@ protected:
 	 * Returns either the maximum attack distance for a monster, or 0 if the monster is beyond
 	 * that distance from the player
 	 */
-	virtual uint attackDistance() const;
+	virtual uint attackDistance() const override;
 
 
 	/**
 	 * Handles attacks
 	 */
-	virtual void attack();
+	virtual void attack() override;
 
 	/**
 	 * Handles moving creatures
 	 */
-	virtual void movement();
+	virtual void movement() override;
 public:
 	/**
 	 * Returns true if the given widget can move to a given position on the map

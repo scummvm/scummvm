@@ -80,7 +80,7 @@ public:
 	/**
 	 * Get the tile for the transport method
 	 */
-	virtual uint getTileNum() const;
+	virtual uint getTileNum() const override;
 
 	/**
 	 * Moves to a given position
@@ -88,7 +88,7 @@ public:
 	 * @param dir			Optional explicit direction to set. If not specified,
 	 *		the direction will be set relative to the position moved from
 	 */
-	virtual void moveTo(const Point &destPos, Shared::Direction dir = Shared::DIR_NONE);
+	virtual void moveTo(const Point &destPos, Shared::Direction dir = Shared::DIR_NONE) override;
 };
 
 } // End of namespace Widgets

@@ -47,22 +47,22 @@ public:
 	/**
 	 * Returns whether the map wraps around to the other side at it's edges (i.e. the overworld)
 	 */
-	virtual bool isMapWrapped() const { return true; }
+	virtual bool isMapWrapped() const override { return true; }
 
 	/**
 	 * Shifts the viewport by a given delta
 	 */
-	virtual void shiftViewport(const Point &delta);
+	virtual void shiftViewport(const Point &delta) override;
 
 	/**
 	 * Get the viewport position
 	 */
-	virtual Point getViewportPosition(const Point &viewportSize);
+	virtual Point getViewportPosition(const Point &viewportSize) override;
 
 	/**
 	 * Gets a point relative to the current position
 	 */
-	virtual Point getDeltaPosition(const Point &delta);
+	virtual Point getDeltaPosition(const Point &delta) override;
 };
 
 } // End of namespace Map

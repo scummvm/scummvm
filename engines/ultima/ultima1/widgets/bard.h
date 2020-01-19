@@ -33,6 +33,11 @@ namespace Widgets {
  * Bard & Jester persons
  */
 class Bard : public Person {
+protected:
+	/**
+	 * Handles moving creatures
+	 */
+	virtual void movement() override;
 public:
 	/**
 	 * Constructor
@@ -44,11 +49,6 @@ public:
 	 * Destructor
 	 */
 	virtual ~Bard() {}
-
-	/**
-	 * Called to update the character at the end of a turn
-	 */
-	virtual void update();
 };
 
 } // End of namespace Widgets
