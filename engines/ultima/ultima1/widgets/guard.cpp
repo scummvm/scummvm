@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/widgets/guard.h"
+#include "ultima/ultima1/core/resources.h"
 #include "ultima/shared/core/utils.h"
 
 namespace Ultima {
@@ -49,6 +50,23 @@ void Guard::movement() {
 		moved = moveBy(Point(0, delta.y));
 	if (moved)
 		_game->playFX(4);
+}
+
+void Guard::attack() {
+	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
+	Shared::Character *c = game->_gameState->_currentCharacter;
+	addInfoMsg(Common::String::format(game->_res->ATTACKED_BY, _name.c_str()));
+	game->playFX(7);
+
+	uint threshold = (c->_stamina / 2) + (c->_equippedArmor * 8) + 56;
+	if (_game->getRandomNumber(1, 255) > threshold) {
+		int damage = _game->getRandomNumber(2, c->_hitPoints / 128 + 15);
+		addInfoMsg(Common::String::format("%s...%2d %s", game->_res->HIT, damage, game->_res->DAMAGE));
+		game->playFX(2);
+		c->_hitPoints -= damage;
+	} else {
+		addInfoMsg(game->_res->MISSED);
+	}
 }
 
 } // End of namespace Widgets
