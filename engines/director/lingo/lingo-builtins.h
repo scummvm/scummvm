@@ -202,6 +202,10 @@ namespace LB {
 	void b_numberofitems(int nargs);
 	void b_numberoflines(int nargs);
 	void b_numberofwords(int nargs);
+	void b_lastcharof(int nargs);
+	void b_lastitemof(int nargs);
+	void b_lastlineof(int nargs);
+	void b_lastwordof(int nargs);
 
 } // End of namespace LB
 
