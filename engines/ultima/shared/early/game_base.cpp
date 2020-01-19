@@ -35,7 +35,7 @@
 namespace Ultima {
 namespace Shared {
 
-GameBase::GameBase(): _currentView(nullptr), _pendingDialog(nullptr), _font(nullptr), _priorLeftDownTime(0),
+GameBase::GameBase(): _currentView(nullptr), _pendingPopup(nullptr), _font(nullptr), _priorLeftDownTime(0),
 		_priorMiddleDownTime(0), _priorRightDownTime(0), _inputHandler(this), _inputTranslator(&_inputHandler),
 		_videoMode(0), _textCursor(nullptr) {
 	_textInput = new Gfx::TextInput(this);
@@ -178,9 +178,9 @@ void GameBase::setView(const Common::String &viewName) {
 	showMsg.execute(_currentView);
 }
 
-void GameBase::setDialog(Gfx::Dialog *dialog) {
-	assert(!_pendingDialog);
-	_pendingDialog = dialog;
+void GameBase::setPopup(Gfx::Popup *popup) {
+	assert(!_pendingPopup);
+	_pendingPopup = popup;
 }
 
 void GameBase::update() {
@@ -192,10 +192,10 @@ void GameBase::update() {
 		// Draw the view
 		if (_currentView->isDirty()) {
 			_currentView->draw();
-		} else if (_pendingDialog) {
-			// There's a pending dialog to display, so make it active
-			_currentView = _pendingDialog;
-			_pendingDialog = nullptr;
+		} else if (_pendingPopup) {
+			// There's a pending popup to display, so make it active
+			_currentView = _pendingPopup;
+			_pendingPopup = nullptr;
 		}
 
 		 // Allow the text cursor to update

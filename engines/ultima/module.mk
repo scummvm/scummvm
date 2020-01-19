@@ -35,10 +35,10 @@ MODULE_OBJS += \
 	shared/engine/messages.o \
 	shared/engine/resources.o \
 	shared/gfx/bitmap.o \
-	shared/gfx/dialog.o \
 	shared/gfx/dungeon_surface.o \
 	shared/gfx/font.o \
 	shared/gfx/info.o \
+	shared/gfx/popup.o \
 	shared/gfx/screen.o \
 	shared/gfx/sprites.o \
 	shared/gfx/text_cursor.o \

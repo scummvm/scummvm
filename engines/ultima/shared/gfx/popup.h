@@ -20,26 +20,46 @@
  *
  */
 
-#include "ultima/shared/gfx/dialog.h"
-#include "ultima/shared/early/game_base.h"
+#ifndef ULTIMA_SHARED_GFX_POPUP_H
+#define ULTIMA_SHARED_GFX_POPUP_H
+
+#include "ultima/shared/gfx/visual_item.h"
 
 namespace Ultima {
 namespace Shared {
+
+class GameBase;
+
 namespace Gfx {
 
-void Dialog::show() {
-	// Save a copy of the view the dialog is being shown on, and activate it
-	_parentView = _game->getView();
-	_game->setDialog(this);
-	setDirty();
-}
+/**
+ * Base class for graphic elements that "pop up" on top of existing views. This includes things like
+ * dialogs, text input, etc.
+ */
+class Popup : public VisualItem {
+protected:
+	GameBase *_game;
+	VisualItem *_parentView;
+public:
+	/**
+	 * Constructor
+	 */
+	Popup(GameBase *game) : VisualItem(nullptr), _game(game) {
+	}
 
-void Dialog::hide() {
-	// Reset back to the parent view
-	_game->setView(_parentView);
-	_parentView->setDirty();
-}
+	/**
+	 * Show the popup
+	 */
+	void show();
+
+	/**
+	 * Hide the popup
+	 */
+	void hide();
+};
 
 } // End of namespace Gfx
 } // End of namespace Shared
 } // End of namespace Ultima
+
+#endif
