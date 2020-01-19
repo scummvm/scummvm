@@ -23,11 +23,15 @@
 #include "ultima/shared/gfx/viewport_dungeon.h"
 #include "ultima/shared/core/monsters.h"
 #include "ultima/shared/core/map.h"
+#include "ultima/shared/early/game.h"
 
 namespace Ultima {
 namespace Shared {
 
 EMPTY_MESSAGE_MAP(ViewportDungeon, Shared::Gfx::VisualItem);
+
+const byte WALL_ARRAY_X[] = { 0, 72, 108, 126, 135, 144 };
+const byte WALL_ARRAY_Y[] = { 0, 36, 54, 63, 68, 72 };
 
 void ViewportDungeon::draw() {
 	// Get a surface reference and clear it's contents
@@ -64,14 +68,19 @@ void ViewportDungeon::draw() {
 	bool isWall = map->isWallOrSecretDoor(map->getPosition());
 	int distance = distanceToOccupiedCell(delta);
 
+	if (isWall) {
+		drawWall(0);
+		return;
+	}
+
 }
 
-int ViewportDungeon::distanceToOccupiedCell(const Point &delta) {
+uint ViewportDungeon::distanceToOccupiedCell(const Point &delta) {
 	Point d = delta;
-	int distance;
+	uint distance;
 	for (distance = 1; !isCellOccupied(d); ++distance, d.x += ABS(d.x), d.y += ABS(d.y)) {}
 
-	return MIN(distance, 5);
+	return MIN(distance, (uint)5);
 }
 
 bool ViewportDungeon::isCellOccupied(const Point &delta) {
@@ -88,6 +97,19 @@ bool ViewportDungeon::isMonsterBlocking(const Point &pt) {
 	getMap()->getTileAt(pt, &tile);
 	DungeonMonster *monster = dynamic_cast<DungeonMonster *>(tile._widget);
 	return monster != nullptr && monster->isBlockingView();
+}
+
+void ViewportDungeon::drawWall(uint distance) {
+	Game *game = getGame();
+	Gfx::VisualSurface s = getSurface();
+	int offsetX = !distance ? 8 : 0, offsetY = !distance ? 8 : 0;
+
+	if (distance <= 5) {
+		s.hLine(WALL_ARRAY_X[distance] + 16 + offsetX, WALL_ARRAY_Y[distance] + 8 + offsetY,
+			303 - WALL_ARRAY_X[distance] - offsetX, game->_edgeColor);
+		s.hLine(WALL_ARRAY_X[distance] + 16 + offsetX, 15 - WALL_ARRAY_Y[distance] - offsetY,
+			303 - WALL_ARRAY_X[distance] - offsetX, game->_edgeColor);
+	}
 }
 
 } // End of namespace Shared
