@@ -33,17 +33,6 @@
 namespace Ultima {
 namespace Ultima1 {
 
-using Shared::File;
-
-enum CityTile {
-	CTILE_GATE = 11
-};
-
-enum DungeonTile {
-	DTILE_HALLWAY = 0, DTILE_WALL = 1, DTILE_SECRET_DOOR = 2, DTILE_DOOR = 3, DTILE_LADDER_DOWN = 6, 
-	DTILE_LADDER_UP = 7, DTILE_BEAMS = 8
-};
-
 void SurroundingTotals::load(Ultima1Map *map) {
 	U1MapTile mapTile;
 	_water = _woods = _grass = 0;
@@ -138,7 +127,7 @@ void Ultima1Map::loadOverworldMap() {
 	_mapType = MAP_OVERWORLD;
 	_tilesPerOrigTile = Point(1, 1);
 
-	File f("map.bin");
+	Shared::File f("map.bin");
 	byte b;
 	for (int y = 0; y < _size.y; ++y) {
 		for (int x = 0; x < _size.x; x += 2) {
@@ -168,7 +157,7 @@ void Ultima1Map::loadTownCastleMap() {
 
 void Ultima1Map::loadTownCastleData() {
 	// Load the contents of the map
-	File f("tcd.bin");
+	Shared::File f("tcd.bin");
 	f.seek(_mapStyle * 684);
 	for (int x = 0; x < _size.x; ++x) {
 		for (int y = 0; y < _size.y; ++y)
@@ -271,6 +260,10 @@ void Ultima1Map::loadDungeonMap() {
 	_position = Point(1, 1);
 	_direction = Shared::DIR_DOWN;
 
+	generateDungeonMap();
+}
+
+void Ultima1Map::generateDungeonMap() {
 	// Set up widget for the player
 	_currentTransport = new TransportOnFoot(_game, this);
 	addWidget(_currentTransport);

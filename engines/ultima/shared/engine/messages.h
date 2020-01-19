@@ -261,6 +261,11 @@ MESSAGE1(CMoveMsg, int, direction, 0);
  */
 MESSAGE0(CEnterMsg);
 
+/**
+ * Climb up or down
+ */
+MESSAGE0(CClimbMsg);
+
 } // End of namespace Shared
 } // End of namespace Ultima
 
