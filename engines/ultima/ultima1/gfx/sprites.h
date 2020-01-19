@@ -20,37 +20,35 @@
  *
  */
 
-#include "ultima/ultima1/gfx/viewport_map.h"
-#include "ultima/ultima1/gfx/sprites.h"
+#ifndef ULTIMA_ULTIMA1_GFX_SPRITES_H
+#define ULTIMA_ULTIMA1_GFX_SPRITES_H
+
+#include "ultima/shared/gfx/sprites.h"
+#include "ultima/shared/core/tree_item.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-ViewportMap::ViewportMap(TreeItem *parent) : Shared::ViewportMap(parent), _mapType(MAP_OVERWORLD) {
-	_sprites = new Sprites(this);	
-}
+using Shared::CFrameMsg;
 
-ViewportMap::~ViewportMap() {
-}
-
-void ViewportMap::draw() {
-	Ultima1Map *map = static_cast<Ultima1Map *>(getMap());
-
-	// If necessary, load the sprites for rendering the map
-	if (_sprites->empty() || _mapType != map->_mapType) {
-		_mapType = map->_mapType;
-
-		if (_mapType == MAP_OVERWORLD)
-			_sprites->load("t1ktiles.bin", 4);
-		else
-			_sprites->load("t1ktown.bin", 4, 8, 8);
+/**
+ * Displays the total hits, food, experience, and coins you have
+ */
+class Sprites : public ::Ultima::Shared::Gfx::Sprites, public Shared::TreeItem {
+	DECLARE_MESSAGE_MAP;
+	bool FrameMsg(CFrameMsg &msg);
+public:
+	CLASSDEF;
+	Sprites(TreeItem *parent) : ::Ultima::Shared::Gfx::Sprites(), TreeItem() {
+		addUnder(parent);
 	}
-
-	// Draw the map
-	Shared::ViewportMap::draw();
-}
+	virtual ~Sprites() {}
+};
 
 } // End of namespace U1Gfx
 } // End of namespace Ultima1
-} // End of namespace Ultima
+} // End of namespace Xeen
+
+#endif

@@ -34,8 +34,15 @@ class ViewportMap : public Shared::ViewportMap {
 private:
 	MapType _mapType;
 public:
+	/**
+	 * Constructor
+	 */
 	ViewportMap(TreeItem *parent);
-	virtual ~ViewportMap() {}
+	
+	/**
+	 * Destructor
+	 */
+	virtual ~ViewportMap();
 
 	/**
 	 * Draws the map

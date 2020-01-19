@@ -34,7 +34,7 @@ void ViewportMap::draw() {
 	s.clear();
 
 	// Figure out how many tiles can fit into the display
-	const Point spriteSize = _sprites.getSpriteSize();
+	const Point spriteSize = _sprites->getSpriteSize();
 	const Point visibleTiles(_bounds.width() / spriteSize.x, _bounds.height() / spriteSize.y);
 
 	// Get a reference to the map and get the starting tile position
@@ -49,11 +49,11 @@ void ViewportMap::draw() {
 
 			// Get the next tile to display and draw it
 			map->getTileAt(Point(topLeft.x + x, topLeft.y + y), &tile);
-			_sprites[tile._tileNum].draw(s, drawPos);
+			(*_sprites)[tile._tileNum].draw(s, drawPos);
 
 			// Draw any widget on the tile
 			if (tile._widget)
-				_sprites[tile._widget->getTileNum()].draw(s, drawPos);
+				(*_sprites)[tile._widget->getTileNum()].draw(s, drawPos);
 		}
 	}
 }

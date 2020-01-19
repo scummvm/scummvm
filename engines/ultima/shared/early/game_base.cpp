@@ -55,18 +55,13 @@ int GameBase::getSavegameSlot() {
 	return 0;
 }
 
-void GameBase::draw() {
-	if (_currentView)
-		_currentView->draw();
-}
-
 void GameBase::mouseChanged() {
 
 }
 
 void GameBase::onIdle() {
 	// Handle any drawing updates
-	draw();
+	update();
 }
 
 #define HANDLE_MESSAGE(METHOD) \

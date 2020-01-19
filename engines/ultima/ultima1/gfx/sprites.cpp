@@ -20,35 +20,18 @@
  *
  */
 
-#include "ultima/ultima1/gfx/viewport_map.h"
 #include "ultima/ultima1/gfx/sprites.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-ViewportMap::ViewportMap(TreeItem *parent) : Shared::ViewportMap(parent), _mapType(MAP_OVERWORLD) {
-	_sprites = new Sprites(this);	
-}
+BEGIN_MESSAGE_MAP(Sprites, TreeItem)
+	ON_MESSAGE(FrameMsg)
+END_MESSAGE_MAP()
 
-ViewportMap::~ViewportMap() {
-}
-
-void ViewportMap::draw() {
-	Ultima1Map *map = static_cast<Ultima1Map *>(getMap());
-
-	// If necessary, load the sprites for rendering the map
-	if (_sprites->empty() || _mapType != map->_mapType) {
-		_mapType = map->_mapType;
-
-		if (_mapType == MAP_OVERWORLD)
-			_sprites->load("t1ktiles.bin", 4);
-		else
-			_sprites->load("t1ktown.bin", 4, 8, 8);
-	}
-
-	// Draw the map
-	Shared::ViewportMap::draw();
+bool Sprites::FrameMsg(CFrameMsg &msg) {
+	return false;
 }
 
 } // End of namespace U1Gfx
