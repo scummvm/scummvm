@@ -36,12 +36,14 @@ MODULE_OBJS += \
 	shared/engine/messages.o \
 	shared/engine/resources.o \
 	shared/gfx/bitmap.o \
+	shared/gfx/dialog.o \
 	shared/gfx/dungeon_surface.o \
 	shared/gfx/font.o \
 	shared/gfx/info.o \
 	shared/gfx/screen.o \
 	shared/gfx/sprites.o \
 	shared/gfx/text_cursor.o \
+	shared/gfx/text_input.o \
 	shared/gfx/viewport_dungeon.o \
 	shared/gfx/viewport_map.o \
 	shared/gfx/visual_container.o \

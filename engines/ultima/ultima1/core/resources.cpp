@@ -47,7 +47,7 @@ const char *const SRC_MAIN_MENU_TEXT[7] = {
 	"a) Generate new character", "b) Continue previous game", "Thy choice: "
 };
 
-const char *const SRC_CHAR_GEN_TEXT[13] = {
+const char *const SRC_CHAR_GEN_TEXT[14] = {
 	" Character Generation ",
 	"Points left to distribute: %2d",
 	"Strength........%d\n"
@@ -73,7 +73,8 @@ const char *const SRC_CHAR_GEN_TEXT[13] = {
 	"Race: ",
 	"Sex: ",
 	"Class: ",
-	"Enter thy name:"
+	"Enter thy name:",
+	"Save this character? (Y-N)"
 };
 
 const char *const SRC_RACE_NAMES[4] = { "Human", "Elf", "Dwarf", "Bobbit" };
@@ -571,7 +572,7 @@ GameResources::GameResources() : LocalResourceFile("ULTIMA1/DATA") {
 GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(resManager, "ULTIMA1/DATA") {
 	Common::copy(SRC_TITLE_MESSAGES, SRC_TITLE_MESSAGES + 13, TITLE_MESSAGES);
 	Common::copy(SRC_MAIN_MENU_TEXT, SRC_MAIN_MENU_TEXT + 7, MAIN_MENU_TEXT);
-	Common::copy(SRC_CHAR_GEN_TEXT, SRC_CHAR_GEN_TEXT + 13, CHAR_GEN_TEXT);
+	Common::copy(SRC_CHAR_GEN_TEXT, SRC_CHAR_GEN_TEXT + 14, CHAR_GEN_TEXT);
 	Common::copy(SRC_RACE_NAMES, SRC_RACE_NAMES + 4, RACE_NAMES);
 	Common::copy(SRC_SEX_NAMES, SRC_SEX_NAMES + 3, SEX_NAMES);
 	Common::copy(SRC_CLASS_NAMES, SRC_CLASS_NAMES + 4, CLASS_NAMES);
