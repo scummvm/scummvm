@@ -28,6 +28,13 @@
 
 namespace Ultima {
 namespace Ultima1 {
+
+class Ultima1Game;
+
+namespace Maps {
+class MapBase;
+}
+
 namespace Widgets {
 
 enum DungeonWidgetId {
@@ -40,16 +47,11 @@ enum DungeonWidgetId {
 	UITEM_HOLE_UP = 26, UITEM_HOLE_DOWN = 27, UITEM_LADDER_UP = 28, UITEM_LADDER_DOWN = 29
 };
 
-enum DungeonItemId {
-	DITEM_CHEST = 4, DITEM_COFFIN = 5
-};
-
 /**
  * Encapsulated class for drawing widgets within dungeons
  */
 class DungeonWidget : public Shared::Maps::DungeonWidget {
 private:
-	DungeonItemId _itemId;
 	DungeonWidgetId _widgetId;
 private:
 	/**
@@ -61,15 +63,23 @@ private:
 	 * Extracts a drawing position
 	 */
 	static void getPos(const byte *&data, int bitShift, Point &pt);
+protected:
+	/**
+	 * Gets the Ultima 1 game
+	 */
+	Ultima1Game *getGame() const;
+
+	/**
+	 * Gets the Ultima 1 map
+	 */
+	Maps::MapBase *getMap() const;
 public:
 	Common::String _name;			// Name of item
 public:
-	DECLARE_WIDGET(DungeonWidget)
-
 	/**
 	 * Constructor
 	 */
-	DungeonWidget(Shared::Game *game, Shared::Maps::MapBase *map, const Point &pt, DungeonItemId itemId);
+	DungeonWidget(Shared::Game *game, Shared::Maps::MapBase *map, DungeonWidgetId widgetId, const Point &pt);
 
 	/**
 	 * Constructor

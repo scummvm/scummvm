@@ -534,7 +534,7 @@ const char *const SRC_OVERWORLD_MONSTER_NAMES[15] = {
 };
 const char *const SRC_DUNGEON_MONSTER_NAMES[25] = {
 	"Ranger", "Skeleton", "Thief", "Giant rat", "Bat", "Spider", "Viper", "Orc", "Cyclops", "Gelatinous cube",
-	"Ettin", "Chest", "Lizard man", "Minatour", "Carrion creeper", "Tangler", "Gremlin", "Wandering eyes",
+	"Ettin", "Chest", "Lizard man", "Minotour", "Carrion creeper", "Tangler", "Gremlin", "Wandering eyes",
 	"Wraith", "Lich", "Invisible seeker", "Mind whipper", "Zorn", "Daemon", "Balron"
 };
 

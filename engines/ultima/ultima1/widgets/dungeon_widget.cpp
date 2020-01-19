@@ -22,6 +22,7 @@
 
 #include "ultima/ultima1/widgets/dungeon_widget.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/maps/map_base.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/shared/early/ultima_early.h"
 
@@ -29,12 +30,16 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-DungeonWidget::DungeonWidget(Shared::Game *game, Shared::Maps::MapBase *map, const Point &pt,
-		DungeonItemId itemId) : Shared::Maps::DungeonWidget(game, map, pt), _itemId(itemId) {
-	_widgetId = (_itemId == DITEM_CHEST) ? MONSTER_MIMIC : UITEM_COFFIN;
-	
-	GameResources &res = *static_cast<Ultima1Game *>(game)->_res;
-	_name = (_itemId == DITEM_CHEST) ? res.DUNGEON_ITEM_NAMES[0] : res.DUNGEON_ITEM_NAMES[1];
+DungeonWidget::DungeonWidget(Shared::Game *game, Shared::Maps::MapBase *map, DungeonWidgetId widgetId,
+		const Point &pt) : Shared::Maps::DungeonWidget(game, map, pt), _widgetId(widgetId) {
+}
+
+Ultima1Game *DungeonWidget::getGame() const {
+	return static_cast<Ultima1Game *>(_game);
+}
+
+Maps::MapBase *DungeonWidget::getMap() const {
+	return static_cast<Maps::MapBase *>(_map);
 }
 
 const byte OFFSET_Y[5] = { 139, 112, 96, 88, 84 };

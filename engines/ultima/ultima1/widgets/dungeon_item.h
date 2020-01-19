@@ -20,43 +20,46 @@
  *
  */
 
-#include "ultima/ultima1/widgets/overworld_widget.h"
-#include "ultima/ultima1/maps/map_base.h"
-#include "ultima/ultima1/maps/map_tile.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/shared/early/ultima_early.h"
+#ifndef ULTIMA_ULTIMA1_WIDGETS_DUNGEON_ITEM_H
+#define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_ITEM_H
+
+#include "ultima/ultima1/widgets/dungeon_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-Ultima1Game *OverworldWidget::getGame() const {
-	return static_cast<Ultima1Game *>(_game);
-}
+enum DungeonItemId {
+	DITEM_CHEST = 4, DITEM_COFFIN = 5
+};
 
-Maps::MapBase *OverworldWidget::getMap() const {
-	return static_cast<Maps::MapBase *>(_map);
-}
+/**
+ * Encapsulated class for drawing widgets within dungeons
+ */
+class DungeonItem : public DungeonWidget {
+private:
+	DungeonItemId _itemId;
+public:
+	DECLARE_WIDGET(DungeonItem)
 
-void OverworldWidget::synchronize(Common::Serializer &s) {
-	MapWidget::synchronize(s);
-	s.syncAsUint16LE(_tileNum);
-}
+	/**
+	 * Constructor
+	 */
+	DungeonItem(Shared::Game *game, Shared::Maps::MapBase *map, DungeonItemId itemId, const Point &pt);
 
-Shared::Maps::MapWidget::CanMove OverworldWidget::canMoveTo(const Point &destPos) {
-	Shared::Maps::MapWidget::CanMove result = Shared::Maps::MapWidget::canMoveTo(destPos);
-	if (result != Shared::Maps::MapWidget::UNSET)
-		return result;
+	/**
+	 * Constructor
+	 */
+	DungeonItem(Shared::Game *game, Shared::Maps::MapBase *map) : DungeonWidget(game, map) {}
 
-	Maps::U1MapTile tile;
-	getMap()->getTileAt(destPos, &tile);
-
-	// Default mobility for most monsters and transports is overland only
-	return tile.isGround() ? Shared::Maps::MapWidget::YES : Shared::Maps::MapWidget::NO;
-}
-
+	/**
+	 * Handles loading and saving games
+	 */
+	virtual void synchronize(Common::Serializer &s) override;
+};
 
 } // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

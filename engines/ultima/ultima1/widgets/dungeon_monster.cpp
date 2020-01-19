@@ -32,10 +32,24 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+DungeonMonster::DungeonMonster(Shared::Game *game, Shared::Maps::MapBase *map, DungeonWidgetId monsterId,
+		int hitPoints, const Point &pt) :
+		DungeonWidget(game, map, monsterId, pt), Shared::Maps::DungeonCreature(game, map, hitPoints),
+		_monsterId(monsterId) {
+	_name = getGame()->_res->DUNGEON_MONSTER_NAMES[_monsterId];
+}
+
+DungeonMonster::DungeonMonster(Shared::Game *game, Shared::Maps::MapBase *map) :
+		DungeonWidget(game, map), Shared::Maps::DungeonCreature(game, map), _monsterId(MONSTER_NONE) {
+}
+
 void DungeonMonster::synchronize(Common::Serializer &s) {
 	DungeonWidget::synchronize(s);
 	Creature::synchronize(s);
 	s.syncAsUint16LE(_monsterId);
+
+	if (s.isLoading())
+		_name = getGame()->_res->DUNGEON_MONSTER_NAMES[_monsterId];
 }
 
 bool DungeonMonster::isBlockingView() const {
@@ -50,8 +64,7 @@ void DungeonMonster::draw(Shared::DungeonSurface &s, uint distance) {
 			s.drawLeftEdge(distance);
 			s.drawRightEdge(distance);
 		} else {
-			Ultima1Game *game = static_cast<Ultima1Game *>(g_vm->_game);
-			Widgets::DungeonWidget::drawWidget(s, _monsterId, distance, game->_edgeColor);
+			DungeonWidget::draw(s, distance);
 		}
 	}
 }
