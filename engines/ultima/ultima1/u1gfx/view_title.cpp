@@ -68,6 +68,8 @@ ViewTitle::ViewTitle(TreeItem *parent) : Shared::Gfx::VisualContainer("Title", R
 	load16(_castle, f);
 	f.close();
 
+	//***DEBUG****
+	setCastlePalette();
 	_mode = TITLEMODE_CASTLE;
 }
 
@@ -93,6 +95,7 @@ void ViewTitle::draw() {
 void ViewTitle::drawCopyrightView() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	Shared::Gfx::VisualSurface s = getSurface();
+	s.clear();
 
 	// Draw horizontal title lines
 	for (int idx = 0; idx < 3; ++idx) {
@@ -109,6 +112,7 @@ void ViewTitle::drawCopyrightView() {
 void ViewTitle::drawPresentsView() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	Shared::Gfx::VisualSurface s = getSurface();
+	s.clear();
 	s.blitFrom(_logo, Point(20, 21));
 
 	switch (_counter) {
@@ -134,6 +138,16 @@ void ViewTitle::drawCastleView() {
 	s.blitFrom(_castle);
 }
 
+void ViewTitle::setTitlePalette() {
+	const byte PALETTE[] = { 0, 1, 2, 3, 4, 5, 6, 7, 56, 57, 58, 59, 60, 61, 62, 63 };
+	getGame()->setEGAPalette(PALETTE);
+}
+
+void ViewTitle::setCastlePalette() {
+	const byte PALETTE[] = { 0, 24, 7, 63, 63, 34, 58, 14, 20, 7, 61, 59, 1, 57, 7, 63 };
+	getGame()->setEGAPalette(PALETTE);
+}
+
 bool ViewTitle::FrameMsg(CFrameMsg &msg) {
 	uint32 time = getGame()->getMillis();
 
@@ -153,16 +167,18 @@ bool ViewTitle::FrameMsg(CFrameMsg &msg) {
 				_mode = TITLEMODE_CASTLE;
 				_counter = 0;
 				_expiryTime = time;
+				setCastlePalette();
 			}
 		}
 		break;
 
 	case TITLEMODE_CASTLE:
-		_expiryTime = time + 50;
+		_expiryTime = time + 20;
 		if (++_counter == 100) {
 			_mode = TITLEMODE_PRESENTS;
 			_counter = 0;
 			_expiryTime = time + 3000;
+			setTitlePalette();
 		}
 		break;
 	}

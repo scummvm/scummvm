@@ -44,11 +44,6 @@ protected:
 	void setEGAPalette();
 
 	/**
-	 * Sets up a CGA palette
-	 */
-	void setCGAPalette();
-
-	/**
 	 * Loads the Ultima 6 palette
 	 */
 	void loadU6Palette();
@@ -82,6 +77,16 @@ public:
 	 * Called at the end of each turn
 	 */
 	void endOfTurn();
+
+	/**
+	 * Sets an EGA palette based on a 16-byte EGA RGB indexes
+	 */
+	void setEGAPalette(const byte *palette);
+
+	/**
+	 * Sets up a CGA palette
+	 */
+	void setCGAPalette();
 };
 
 } // End of namespace Shared
