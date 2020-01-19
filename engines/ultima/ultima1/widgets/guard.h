@@ -30,7 +30,14 @@ namespace Ultima1 {
 namespace Widgets {
 
 class Guard : public Person {
+private:
+	bool _moved;
 protected:
+	/**
+	 * Returns the attack distance for the guard
+	 */
+	virtual uint attackDistance() const override;
+
 	/**
 	 * Handles moving creatures
 	 */
@@ -40,7 +47,7 @@ public:
 	 * Constructor
 	 */
 	Guard(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
-		Person(game, map, 17, hitPoints) {}
+		Person(game, map, 17, hitPoints), _moved(false) {}
 
 	/**
 	 * Destructor
