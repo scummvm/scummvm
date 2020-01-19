@@ -36,7 +36,7 @@ EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
 Ultima1Game::Ultima1Game() : Shared::Game() {
 	_res = new GameResources();
 	delete _textCursor;
-	_textCursor = new U1Gfx::U1TextCursor();
+	_textCursor = new U1Gfx::U1TextCursor(_textColor, _bgColor);
 
 	if (g_vm->getFeatures() & GF_VGA_ENHANCED) {
 		_videoMode = VIDEOMODE_VGA;

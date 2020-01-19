@@ -21,21 +21,46 @@
  */
 
 #include "ultima/ultima1/u1gfx/text_cursor.h"
+#include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/gfx/screen.h"
 #include "common/system.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
 #define CURSOR_ANIM_FRAME_TIME 100
+#define CURSOR_W 8
+#define CURSOR_H 8
+
+static const byte TEXT_CURSOR_FRAMES[4][8] = {
+	{ 0x66, 0x3C, 0x18, 0x66, 0x66, 0x18, 0x3C, 0x66 },
+	{ 0x3C, 0x18, 0x66, 0x24, 0x24, 0x66, 0x18, 0x3C },
+	{ 0x18, 0x66, 0x24, 0x3C, 0x3C, 0x24, 0x66, 0x18 },
+	{ 0x66, 0x24, 0x18, 0x18, 0x18, 0x18, 0x3C, 0x66 }
+};
 
 void U1TextCursor::draw() {
 	uint32 time = getTime();
-	if (!_visible || (time - _lastFrameFrame) < CURSOR_ANIM_FRAME_TIME)
+	if (!_visible || !_fgColor || (time - _lastFrameFrame) < CURSOR_ANIM_FRAME_TIME)
 		return;
 
+	// Get the surface area to draw the cursor on
+	Graphics::ManagedSurface s(*g_vm->_screen, Rect(_pos.x, _pos.y, _pos.x + 8, _pos.y + 8));
+
+	// Loop to draw the cursor
+	for (int y = 0; y < CURSOR_H; ++y) {
+		byte bits = TEXT_CURSOR_FRAMES[_frameNum][y];
+		byte *lineP = (byte *)s.getBasePtr(0, y);
+		for (int x = 0; x < CURSOR_W; ++x, ++lineP, bits >>= 1) {
+			*lineP = (bits & 1) ? _fgColor : _bgColor;
+		}
+	}
+
+	// Increment to next frame
 	_lastFrameFrame = time;
-	// TODO: Draw u1 cursor
+	_frameNum = (_frameNum + 1) % 3;
 }
 
 uint32 U1TextCursor::getTime() {

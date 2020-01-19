@@ -31,6 +31,7 @@ namespace U1Gfx {
 
 class U1TextCursor : public Shared::Gfx::TextCursor {
 private:
+	const byte &_fgColor, &_bgColor;
 	int _frameNum;
 	uint32 _lastFrameFrame;
 private:
@@ -42,7 +43,8 @@ public:
 	/**
 	 * Constructor
 	 */
-	U1TextCursor() : _frameNum(0), _lastFrameFrame(0) {}
+	U1TextCursor(const byte &fgColor, const byte &bgColor) : _fgColor(fgColor), _bgColor(bgColor),
+		_frameNum(0), _lastFrameFrame(0) {}
 
 	/**
 	 * Destructor
