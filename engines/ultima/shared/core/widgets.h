@@ -46,21 +46,21 @@ public:
 	virtual ~StandardWidget() {}
 };
 
-class Monster : public StandardWidget {
+class Creature : public StandardWidget {
 protected:
 	int _hitPoints;
 public:
 	/**
 	 * Constructor
 	 */
-	Monster(Game *game, Map::MapBase *map) : StandardWidget(game, map), _hitPoints(0) {}
-	Monster(Game *game, Map::MapBase *map, int hitPoints) : StandardWidget(game, map), _hitPoints(hitPoints) {}
-	Monster(Game *game, Map::MapBase *map, int hitPoints, const Point &pt, Direction dir = DIR_NONE) : StandardWidget(game, map, pt, dir), _hitPoints(hitPoints) {}
+	Creature(Game *game, Map::MapBase *map) : StandardWidget(game, map), _hitPoints(0) {}
+	Creature(Game *game, Map::MapBase *map, int hitPoints) : StandardWidget(game, map), _hitPoints(hitPoints) {}
+	Creature(Game *game, Map::MapBase *map, int hitPoints, const Point &pt, Direction dir = DIR_NONE) : StandardWidget(game, map, pt, dir), _hitPoints(hitPoints) {}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~Monster() {}
+	virtual ~Creature() {}
 };
 
 
