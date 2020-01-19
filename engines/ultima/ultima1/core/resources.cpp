@@ -450,20 +450,17 @@ static const byte SRC_DUNGEON_DRAW_DATA[1964] = {
 
 
 const char *const SRC_BLOCKED = "Blocked!";
-
 const char *const SRC_ENTER_QUESTION = "Enter?";
-
 const char *const SRC_ENTERING = "Entering...";
-
 const char *const SRC_THE_CITY_OF = "The city of ";
-
 const char *const SRC_DUNGEON_LEVEL = " Level    ";
-
 const char *const SRC_PASS = "Pass";
-
 const char *const SRC_HUH = "Huh?";
-
 const char *const SRC_ATTACKED_BY = "Attacked by %s!";
+const char *const SRC_ARMOR_DESTROYED = "Armor destroyed!";
+const char *const SRC_GREMLIN_STOLE = "A gremlin stole some food!";
+const char *const SRC_MENTAL_ATTACK = "Mental attack!";
+const char *const SRC_MISSED = "Missed!";
 
 /*-------------------------------------------------------------------*/
 
@@ -488,6 +485,10 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	PASS = SRC_PASS;
 	HUH = SRC_HUH;
 	ATTACKED_BY = SRC_ATTACKED_BY;
+	ARMOR_DESTROYED = SRC_ARMOR_DESTROYED;
+	GREMLIN_STOLE = SRC_GREMLIN_STOLE;
+	MENTAL_ATTACK = SRC_MENTAL_ATTACK;
+	MISSED = SRC_MISSED;
 }
 
 void GameResources::synchronize() {
@@ -508,6 +509,10 @@ void GameResources::synchronize() {
 	syncString(PASS);
 	syncString(HUH);
 	syncString(ATTACKED_BY);
+	syncString(ARMOR_DESTROYED);
+	syncString(GREMLIN_STOLE);
+	syncString(MENTAL_ATTACK);
+	syncString(MISSED);
 }
 
 } // End of namespace Ultima1

@@ -54,6 +54,10 @@ public:
 	const char *PASS;
 	const char *HUH;
 	const char *ATTACKED_BY;
+	const char *ARMOR_DESTROYED;
+	const char *GREMLIN_STOLE;
+	const char *MENTAL_ATTACK;
+	const char *MISSED;
 public:
 	GameResources();
 	GameResources(Shared::Resources *resManager);

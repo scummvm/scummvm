@@ -102,6 +102,9 @@ void DungeonMonster::attack(bool isAllowed) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
 	Point playerPos = _map->_currentTransport->_position;
 	Point delta = playerPos - _position;
+	Shared::Character *c = _game->_gameState->_currentCharacter;
+	uint threshold, value;
+	bool isHit = true;
 
 	// Get tile details for both the player and the attacking creature
 	Map::U1MapTile playerTile,creatureTile;
@@ -113,6 +116,38 @@ void DungeonMonster::attack(bool isAllowed) {
 
 	// Write attack line
 	addInfoMsg(Common::String::format(game->_res->ATTACKED_BY, _name.c_str()));
+	_game->playFX(3);
+
+	threshold = (c->_stamina / 2) + (c->_equippedArmor * 8) + 56;
+
+	if (_game->getRandomNumber(1, 255) > threshold) {
+		threshold = _game->getRandomNumber(1, 255);
+		value = (_monsterId * _monsterId) + _map->getLevel();
+		if (value > 255) {
+			value = _game->getRandomNumber(_monsterId + 1, 255);
+		}
+
+		if (_monsterId == MONSTER_GELATINOUS_CUBE && c->_equippedArmor != -1) {
+			addInfoMsg(game->_res->ARMOR_DESTROYED);
+			c->_armor[c->_equippedArmor]--;
+			c->_equippedArmor = -1;
+			isHit = false;
+		} else if (_monsterId == MONSTER_GREMLIN) {
+			addInfoMsg(game->_res->GREMLIN_STOLE);
+			c->_food /= 2;
+			isHit = false;
+		} else if (_monsterId == MONSTER_MIND_WHIPPER && threshold < 128) {
+			addInfoMsg(game->_res->MENTAL_ATTACK);
+			c->_intelligence = (c->_intelligence / 2) + 5;
+			isHit = false;
+		} else if (_monsterId == MONSTER_THIEF) {
+			// TODO: More stuff
+		}
+	} else {
+		addInfoMsg(game->_res->MISSED);
+		isHit = false;
+	}
+
 
 	// TODO: rest of monster attacks
 }

@@ -30,8 +30,8 @@ namespace Ultima {
 namespace Shared {
 
 GameState::GameState(Game *game) : _videoMode(EGA), _dungeonExitHitPoints(0), _randomSeed(0) {
-	_characters.resize(1);
 	_gameId = g_vm->getGameId();
+	setupParty();
 
 	switch (_gameId) {
 	case GAME_ULTIMA1:
@@ -44,6 +44,21 @@ GameState::GameState(Game *game) : _videoMode(EGA), _dungeonExitHitPoints(0), _r
 		break;
 	default:
 		error("Unspported game");
+		break;
+	}
+}
+
+void GameState::setupParty() {
+	switch (_gameId) {
+	case GAME_ULTIMA1:
+		// Setup characters array
+		_characters.resize(1);
+		_currentCharacter = &_characters.front();
+		_currentCharacter->_armor.resize(5);
+		_currentCharacter->_weapons.resize(15);
+		_currentCharacter->_spells.resize(10);
+		break;
+	default:
 		break;
 	}
 }
