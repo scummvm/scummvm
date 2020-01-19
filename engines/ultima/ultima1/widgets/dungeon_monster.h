@@ -34,7 +34,7 @@ namespace Widgets {
 /**
  * Implements monsters within the dungeons
  */
-class DungeonMonster : public Shared::Maps::DungeonWidget, public Shared::Maps::DungeonCreature {
+class DungeonMonster : public DungeonWidget, public Shared::Maps::DungeonCreature {
 private:
 	DungeonWidgetId _monsterId;
 protected:
@@ -54,14 +54,12 @@ public:
 	 * Constructor
 	 */
 	DungeonMonster(Shared::Game *game, Shared::Maps::MapBase *map, DungeonWidgetId monsterId, int hitPoints,
-		const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) :
-		Shared::Maps::DungeonWidget(game, map, pt, dir), Shared::Maps::DungeonCreature(game, map, hitPoints), _monsterId(monsterId) {}
+		const Point &pt);
 
 	/**
 	 * Constructor
 	 */
-	DungeonMonster(Shared::Game *game, Shared::Maps::MapBase *map) :
-		Shared::Maps::DungeonWidget(game, map), Shared::Maps::DungeonCreature(game, map), _monsterId(MONSTER_NONE) {}
+	DungeonMonster(Shared::Game *game, Shared::Maps::MapBase *map);
 
 	/**
 	 * Destructor
