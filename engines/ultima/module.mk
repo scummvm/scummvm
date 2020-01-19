@@ -77,6 +77,7 @@ MODULE_OBJS += \
 	ultima1/widgets/dungeon_player.o \
 	ultima1/widgets/dungeon_widget.o \
 	ultima1/widgets/guard.o \
+	ultima1/widgets/hit.o \
 	ultima1/widgets/king.o \
 	ultima1/widgets/overworld_monster.o \
 	ultima1/widgets/person.o \
