@@ -21,8 +21,6 @@
  */
 
 #include "ultima/ultima1/u6gfx/game_view.h"
-#include "ultima/shared/core/map.h"
-#include "ultima/shared/gfx/info.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/gfx/drawing_support.h"
 #include "ultima/ultima1/gfx/status.h"
@@ -32,6 +30,9 @@
 #include "ultima/ultima1/actions/climb.h"
 #include "ultima/ultima1/actions/enter.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/shared/gfx/bitmap.h"
+#include "ultima/shared/core/map.h"
+#include "ultima/shared/gfx/info.h"
 #include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
@@ -44,16 +45,42 @@ END_MESSAGE_MAP()
 
 GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
 	_info = nullptr;
-	_background.load("paper.bmp");
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Actions::Climb(this);
 	_actions[2] = new Actions::Enter(this);
+	loadBackground();
 }
 
 GameView::~GameView() {
 	delete _info;
 	for (int idx = 0; idx < 3; ++idx)
 		delete _actions[idx];
+}
+
+void GameView::loadBackground() {
+	// Load in the Ultima 6 background
+	Shared::Gfx::Bitmap pic;
+	pic.load("paper.bmp");
+	_background.copyFrom(pic);
+
+	// The scroll area in Ultima 6 is too big for the Ultima 1 status area, so we first have to remove it
+	// Erase bottom edge of scroll
+	_background.blitFrom(_background, Common::Rect(8, 190, 160, 200), Common::Point(168, 190));
+
+	// Erase right edge of scroll
+	pic.create(8, 86);
+	pic.blitFrom(_background, Common::Rect(312, 16, 320, 102), Common::Point(0, 0));
+	_background.blitFrom(pic, Common::Point(312, 105));
+
+	// Erase bottom right-corner of scroll
+	pic.create(8, 12);
+	pic.blitFrom(_background, Common::Rect(0, 188, 8, 200), Common::Point(0, 0));
+	pic.flipHorizontally();
+	_background.blitFrom(pic, Common::Point(312, 188));
+
+	// Clear off the rest of the scroll
+	byte bgColor = *(const byte *)_background.getBasePtr(8, 8);
+	_background.fillRect(Common::Rect(8, 8, 312, 192), bgColor);
 }
 
 void GameView::draw() {

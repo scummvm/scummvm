@@ -50,6 +50,18 @@ void Bitmap::load(const Common::String &filename) {
 	}
 }
 
+void Bitmap::flipHorizontally() {
+	Graphics::Surface s = getSubArea(Common::Rect(0, 0, this->w, this->h));
+	
+	for (int y = 0; y < h; ++y) {
+		byte *lineStart = (byte *)s.getBasePtr(0, y);
+		byte *lineEnd = (byte *)s.getBasePtr(this->w - 1, y);
+
+		for (int x = 0; x < (this->w - 1) / 2; ++x, ++lineStart, --lineEnd)
+			SWAP(*lineStart, *lineEnd);
+	}
+}
+
 } // End of namespace Gfx
 } // End of namespace Shared
 } // End of namespace Ultima

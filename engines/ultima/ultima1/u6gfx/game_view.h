@@ -24,7 +24,6 @@
 #define ULTIMA_ULTIMA1_U6GFX_GAME_VIEW_H
 
 #include "ultima/shared/gfx/visual_container.h"
-#include "ultima/shared/gfx/bitmap.h"
 
 namespace Ultima {
 
@@ -53,7 +52,13 @@ private:
 	Shared::Info *_info;
 	Shared::ViewportDungeon *_viewportDungeon;
 	Actions::Action *_actions[3];
-	Shared::Gfx::Bitmap _background;
+	Graphics::ManagedSurface _background;
+private:
+	/**
+	 * Sets up the background for the screen by adapting the Ultima 6 game background to fit the
+	 * asthetics needed for Ultima 1
+	 */
+	void loadBackground();
 public:
 	CLASSDEF;
 	GameView(TreeItem *parent = nullptr);
