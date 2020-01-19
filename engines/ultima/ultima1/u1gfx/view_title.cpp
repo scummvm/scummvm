@@ -187,8 +187,19 @@ void ViewTitle::drawTrademarksView() {
 }
 
 void ViewTitle::drawMainMenu() {
+	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	Shared::Gfx::VisualSurface s = getSurface();
+	DrawingSupport ds(s);
 	s.clear();
+	ds.drawFrame();
+
+	s.writeString(game->_res->MAIN_MENU_TEXT[0], TextPoint(12, 6), game->_whiteColor);
+	s.writeString(game->_res->MAIN_MENU_TEXT[1], TextPoint(14, 9), game->_whiteColor);
+	s.writeString(game->_res->MAIN_MENU_TEXT[2], TextPoint(14, 10), game->_whiteColor);
+	s.writeString(game->_res->MAIN_MENU_TEXT[3], TextPoint(13, 11), game->_whiteColor);
+	s.writeString(game->_res->MAIN_MENU_TEXT[4], TextPoint(8, 14), game->_textColor);
+	s.writeString(game->_res->MAIN_MENU_TEXT[5], TextPoint(8, 15), game->_textColor);
+	s.writeString(game->_res->MAIN_MENU_TEXT[6], TextPoint(13, 18), game->_textColor);
 }
 
 void ViewTitle::setTitlePalette() {
