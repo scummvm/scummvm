@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-18 17:17+0000\n"
+"PO-Revision-Date: 2020-01-20 22:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/prince/"
 "prince/ru/>\n"
@@ -9452,7 +9452,7 @@ msgstr "Дольх - Очень оригинально, но очень|стра
 
 #: invtxt.txt:5
 msgid "wytrychy - Nosił wilk razy kilka..."
-msgstr "Дитрих - Инструмент воров"
+msgstr "отмычки - Кто к нам с мечём придёт..."
 
 #: invtxt.txt:6
 msgid "księga szarej magii - Szara magia?..."
@@ -9540,7 +9540,7 @@ msgstr "Крест с чесноком - Усиленное средство п�
 
 #: invtxt.txt:27
 msgid "Nieustraszony Zabójca Wampirów - DO DZIEŁA!"
-msgstr "Патентованное средство от вампиров - Ручная работа!"
+msgstr "Бесстрашный Убийца Вампиров - ВРЕМЯ ДЕЙСТВОВАТЬ!"
 
 #: invtxt.txt:28
 msgid "czosnek - Mała, niedorozwinięta, śmierdząca cebula."
@@ -9556,7 +9556,10 @@ msgstr "Меч - Ха! Берегись враги!"
 
 #: invtxt.txt:31
 msgid "kartka - To brakująca kartka pamiętnika nekromanty!|Opisuje czar \"Utłuszczenie\", który ponoć na|chwilkę odwraca gabaryty zaklętego nim obiektu..."
-msgstr "Страница из книги - Это - недостающая страница из дневника Некроманта!|Она описывает заклинание Дикмаха. Причем масса|компонентов отличается."
+msgstr ""
+"страница - Это - недостающая страница из дневника Некроманта!|Она описывает "
+"заклинание \"Жирение\", которое, по-видимому, на минутку|меняет размеры "
+"заклятого объекта..."
 
 #: invtxt.txt:32
 msgid "linka - Długa, mocna linka."
