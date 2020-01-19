@@ -92,6 +92,14 @@ uint32 UltimaEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
 }
 
+Common::Language UltimaEngine::getLanguage() const {
+	return _gameDescription->desc.language;
+}
+
+GameId UltimaEngine::getGameId() const {
+	return _gameDescription->gameId;
+}
+
 Common::FSNode UltimaEngine::getGameDirectory() const {
 	return Common::FSNode(ConfMan.get("path"));
 }

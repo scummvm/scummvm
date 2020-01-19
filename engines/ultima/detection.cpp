@@ -100,7 +100,6 @@ bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 #endif
 #ifdef ENABLE_ULTIMA6
 		case Ultima::GAME_ULTIMA6:
-		case Ultima::GAME_ULTIMA6_ENHANCED:
 			*engine = new Ultima::Ultima6::Ultima6Engine(syst, gd);
 			break;
 #endif

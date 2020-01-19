@@ -32,9 +32,7 @@ namespace Shared {
 
 #define CURSOR_WIDTH 16
 #define CURSOR_HEIGHT 16
-
-class UltimaEarlyEngine;
-
+/*
 namespace Early {
 
 enum CursorId {
@@ -55,6 +53,7 @@ enum CursorId {
 
 } // End of namespace Xanth
 } // End of namespace Later
+*/
 
 /**
  * Handles the dislay and management of the on-screen mouse cursor

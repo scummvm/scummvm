@@ -22,8 +22,28 @@
 
 namespace Ultima {
 
-static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
+static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 #ifdef ENABLE_ULTIMA1
+	{
+		// Ultima I - The First Age of Darkness
+		{
+			"ultima1",
+			"VGA Enhanced",
+			{
+				{ "maptiles.vga", 0, "d4b67e17affe64c0ddb48511bfe4cf37", 47199 },
+				{ "objtiles.vga", 0, "1a1446970d095aeb03bcf6dcec40d6e2", 289344 },
+				{ "map.bin", 0, "f99633a0110ccf90837ab161be56cf1c", 13104 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GAME_ULTIMA1,
+		GF_VGA_ENHANCED
+	},
+
 	{
 		// Ultima I - The First Age of Darkness
 		{
@@ -35,7 +55,8 @@ static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GAME_ULTIMA1
+		GAME_ULTIMA1,
+		0
 	},
 #endif
 
@@ -51,7 +72,8 @@ static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			0,
 			GUIO0()
 		},
-		GAME_ULTIMA6
+		GAME_ULTIMA6,
+		0
 	},
 
 	// GOG Ultima 6 - Enhanced
@@ -65,7 +87,8 @@ static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			0,
 			GUIO0()
 		},
-		GAME_ULTIMA6_ENHANCED
+		GAME_ULTIMA6,
+		GF_VGA_ENHANCED
 	},
 #endif
 
@@ -80,7 +103,8 @@ static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			0,
 			GUIO1(GUIO_NOMIDI)
 		},
-		GAME_ULTIMA8
+		GAME_ULTIMA8,
+		0
 	},
 
 	{
@@ -98,7 +122,8 @@ static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			0,
 			GUIO1(GUIO_NOMIDI)
 		},
-		GAME_ULTIMA8
+		GAME_ULTIMA8,
+		0
 	},
 
 	{
@@ -116,11 +141,12 @@ static const Ultima::UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			0,
 			GUIO1(GUIO_NOMIDI)
 		},
-		GAME_ULTIMA8
+		GAME_ULTIMA8,
+		0
 	},
 #endif
 
-	{ AD_TABLE_END_MARKER, (GameId)0 }
+	{ AD_TABLE_END_MARKER, (GameId)0, 0 }
 };
 
 } // End of namespace Ultima
