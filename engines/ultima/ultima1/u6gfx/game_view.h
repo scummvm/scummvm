@@ -26,20 +26,30 @@
 #include "ultima/shared/gfx/visual_container.h"
 
 namespace Ultima {
-
 namespace Shared {
 class Info;
 class ViewportDungeon;
-}
-	
-namespace Ultima1 {
+} // End of namespace Shared
+} // End of namespace Ultima
+
+namespace Ultima {
+namespace Shared {
 namespace Actions {
 class Action;
-}
+} // End of namespace Actions
+} // End of namespace Shared
+} // End of namespace Ultima
+
+namespace Ultima {
+namespace Ultima1 {
 namespace U1Gfx {
-	class Status;
-}
-	
+class Status;
+} // End of namespace U1Gfx
+} // End of namespace Ultima1
+} // End of namespace Ultima
+
+namespace Ultima {
+namespace Ultima1 {
 namespace U6Gfx {
 
 using Shared::CKeypressMsg;
@@ -71,7 +81,7 @@ private:
 	Shared::Info *_info;
 	U1Gfx::Status *_status;
 	Shared::ViewportDungeon *_viewportDungeon;
-	Actions::Action *_actions[3];
+	Shared::Actions::Action *_actions[4];
 	Graphics::ManagedSurface _background;
 private:
 	/**
@@ -92,6 +102,6 @@ public:
 
 } // End of namespace U6Gfx
 } // End of namespace Shared
-} // End of namespace Xeen
+} // End of namespace Ultima
 
 #endif

@@ -58,11 +58,6 @@ public:
 	 * Called when the game starts
 	 */
 	void starting();
-
-	/**
-	 * Play a sound effect
-	 */
-	void playFX(uint effectId);
 };
 
 } // End of namespace Ultima1

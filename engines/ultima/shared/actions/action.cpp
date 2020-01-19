@@ -20,43 +20,38 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_CORE_RESOURCES_H
-#define ULTIMA_ULTIMA1_CORE_RESOURCES_H
-
-#include "ultima/shared/engine/resources.h"
+#include "ultima/shared/actions/action.h"
+#include "ultima/shared/early/game.h"
+#include "ultima/shared/core/map.h"
+#include "ultima/shared/gfx/visual_item.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
-namespace Ultima1 {
+namespace Shared {
+namespace Actions {
 
-#define LOCATION_COUNT 84
+Action::Action(TreeItem *parent) : TreeItem() {
+	assert(parent);
+	addUnder(parent);
+}
 
-class GameResources : public Shared::LocalResourceFile {
-protected:
-	/**
-	 * Synchronize resource data
-	 */
-	virtual void synchronize();
-public:
-	const char *STATUS_TEXT[4];
-	const char *DIRECTION_NAMES[4];
-	const char *LOCATION_NAMES[LOCATION_COUNT];
-	byte LOCATION_X[LOCATION_COUNT];
-	byte LOCATION_Y[LOCATION_COUNT];
-	int LOCATION_PEOPLE[150][4];
-	byte DUNGEON_DRAW_DATA[1964];
-	const char *DUNGEON_ITEM_NAMES[2];
-	const char *BLOCKED;
-	const char *ENTER_QUESTION;
-	const char *ENTERING;
-	const char *THE_CITY_OF;
-	const char *DUNGEON_LEVEL;
-	const char *PASS;
-public:
-	GameResources();
-	GameResources(Shared::Resources *resManager);
-};
+Game *Action::getGame() {
+	return static_cast<Game *>(TreeItem::getGame());
+}
 
-} // End of namespace Ultima1
+Map *Action::getMap() {
+	return static_cast<Map *>(TreeItem::getMap());
+}
+
+void Action::addInfoMsg(const Common::String &text, bool newLine) {
+	CInfoMsg msg(text, newLine);
+	msg.execute(getView(), nullptr, MSGFLAG_BREAK_IF_HANDLED);
+}
+
+void Action::playFX(uint effectId) {
+	getGame()->playFX(effectId);
+}
+
+} // End of namespace Actions
+} // End of namespace Shared
 } // End of namespace Ultima
-
-#endif

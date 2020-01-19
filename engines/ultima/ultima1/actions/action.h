@@ -23,7 +23,7 @@
 #ifndef ULTIMA_ULTIMA1_ACTIONS_ACTION_H
 #define ULTIMA_ULTIMA1_ACTIONS_ACTION_H
 
-#include "ultima/shared/core/tree_item.h"
+#include "ultima/shared/actions/action.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -34,12 +34,12 @@ class GameResources;
 
 namespace Actions {
 
-class Action : public Shared::TreeItem {
+class Action : public Shared::Actions::Action {
 public:
 	/**
 	 * Constructor
 	 */
-	Action(TreeItem *parent);
+	Action(TreeItem *parent) : Shared::Actions::Action(parent) {}
 
 	/**
 	 * Destructor
@@ -60,18 +60,6 @@ public:
 	 * Gets the data resources for the game
 	 */
 	GameResources *getRes();
-
-	/**
-	 * Adds a text string to the info area
-	 * @param text		Text to add
-	 * @param newLine	Whether to apply a newline at the end
-	 */
-	void addInfoMsg(const Common::String &text, bool newLine = true);
-
-	/**
-	 * Play a sound effect
-	 */
-	void playFX(uint effectId);
 };
 
 } // End of namespace Actions
