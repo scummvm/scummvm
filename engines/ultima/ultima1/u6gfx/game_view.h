@@ -20,33 +20,26 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GFX_GAME_VIEW_H
-#define ULTIMA_ULTIMA1_GFX_GAME_VIEW_H
+#ifndef ULTIMA_ULTIMA1_U6GFX_GAME_VIEW_H
+#define ULTIMA_ULTIMA1_U6GFX_GAME_VIEW_H
 
 #include "ultima/shared/gfx/visual_container.h"
 #include "ultima/shared/gfx/bitmap.h"
 
 namespace Ultima {
+
 namespace Shared {
 class Info;
 class ViewportDungeon;
-} // End of namespace Shared
-} // End of namespace Ultima
-
-namespace Ultima {
+}
+	
 namespace Ultima1 {
 namespace Actions {
 class Action;
-} // End of namespace Actions
-} // End of namespace Ultima1
-} // End of namespace Ultima
+}
+	
+namespace U6Gfx {
 
-namespace Ultima {
-namespace Ultima1 {
-namespace U1Gfx {
-
-class Status;
-class ViewportMap;
 using Shared::CKeypressMsg;
 
 /**
@@ -59,14 +52,8 @@ class GameView : public Shared::Gfx::VisualContainer {
 private:
 	Shared::Info *_info;
 	Shared::ViewportDungeon *_viewportDungeon;
-	ViewportMap *_viewportMap;
-	Status *_status;
 	Actions::Action *_actions[3];
-private:
-	/**
-	 * Draws level & direction indicators when in a dungeon
-	 */
-	void drawIndicators();
+	Shared::Gfx::Bitmap _background;
 public:
 	CLASSDEF;
 	GameView(TreeItem *parent = nullptr);
@@ -78,8 +65,8 @@ public:
 	virtual void draw();
 };
 
-} // End of namespace U1Gfx
-} // End of namespace Ultima1
-} // End of namespace Ultima
+} // End of namespace U6Gfx
+} // End of namespace Shared
+} // End of namespace Xeen
 
 #endif

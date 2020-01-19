@@ -15,6 +15,7 @@ MODULE_OBJS += \
 	shared/core/character.o \
 	shared/core/file.o \
 	shared/core/game_state.o \
+	shared/core/lzw.o \
 	shared/core/map.o \
 	shared/core/message_target.o \
 	shared/core/mouse_cursor.o \
@@ -30,6 +31,7 @@ MODULE_OBJS += \
 	shared/engine/input_translator.o \
 	shared/engine/messages.o \
 	shared/engine/resources.o \
+	shared/gfx/bitmap.o \
 	shared/gfx/dungeon_surface.o \
 	shared/gfx/font.o \
 	shared/gfx/info.o \
@@ -62,6 +64,7 @@ MODULE_OBJS += \
 	ultima1/gfx/sprites.o \
 	ultima1/gfx/status.o \
 	ultima1/gfx/viewport_map.o \
+	ultima1/u6gfx/game_view.o \
 	ultima1/game.o
 endif
 

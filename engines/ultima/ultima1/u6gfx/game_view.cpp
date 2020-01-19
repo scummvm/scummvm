@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima1/gfx/game_view.h"
+#include "ultima/ultima1/u6gfx/game_view.h"
 #include "ultima/shared/core/map.h"
 #include "ultima/shared/gfx/info.h"
 #include "ultima/ultima1/game.h"
@@ -36,18 +36,15 @@
 
 namespace Ultima {
 namespace Ultima1 {
-namespace U1Gfx {
+namespace U6Gfx {
 
 BEGIN_MESSAGE_MAP(GameView, Shared::Gfx::VisualContainer)
 	ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
 GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
-	_info = new Shared::Info(this);
-	_status = new Status(this);
-	_viewportDungeon = new ViewportDungeon(this);
-	_viewportMap = new ViewportMap(this);
-
+	_info = nullptr;
+	_background.load("newmagic.bmp");
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Actions::Climb(this);
 	_actions[2] = new Actions::Enter(this);
@@ -55,53 +52,13 @@ GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", 
 
 GameView::~GameView() {
 	delete _info;
-	delete _status;
-	delete _viewportDungeon;
-	delete _viewportMap;
 	for (int idx = 0; idx < 3; ++idx)
 		delete _actions[idx];
 }
 
 void GameView::draw() {
-	DrawingSupport ds(getSurface());
-	ds.drawGameFrame();
-	drawIndicators();
-
-	_info->draw();
-	_status->draw();
-
-	Ultima1Map *map = static_cast<Ultima1Map *>(getMap());
-	switch (map->_mapType) {
-	case MAP_DUNGEON:
-		_viewportDungeon->draw();
-		break;
-	default:
-		_viewportMap->draw();
-		break;
-	}
-}
-
-void GameView::drawIndicators() {
-	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	Ultima1Map *map = static_cast<Ultima1Map *>(getMap());
-
 	Shared::Gfx::VisualSurface s = getSurface();
-	DrawingSupport ds(s);
-
-	if (map->_mapType == MAP_DUNGEON) {
-		// Draw the dungeon level indicator
-		ds.drawRightArrow(TextPoint(15, 0));
-		s.writeString(game->_res->DUNGEON_LEVEL, TextPoint(16, 0), game->_textColor);
-		s.writeString(Common::String::format("%2d", map->_dungeonLevel), TextPoint(23, 0), game->_textColor);
-		ds.drawLeftArrow(TextPoint(26, 0));
-
-		// Draw the current direction
-		const char *dir = game->_res->DIRECTION_NAMES[map->_direction - 1];
-		ds.drawRightArrow(TextPoint(16, 19));
-		s.writeString("       ", TextPoint(17, 19), game->_textColor);
-		s.writeString(dir, TextPoint(19 - (7 - strlen(dir)) / 2, 19), game->_textColor);
-		ds.drawLeftArrow(TextPoint(24, 19));
-	}
+	s.blitFrom(_background);
 }
 
 bool GameView::KeypressMsg(CKeypressMsg &msg) {
