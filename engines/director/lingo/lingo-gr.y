@@ -640,8 +640,8 @@ valuelist:	/* nothing */	{ $$ = g_lingo->code2(LC::c_arraypush, 0); }
 	| linearlist { $$ = g_lingo->code1(LC::c_arraypush); $$ = g_lingo->codeInt($linearlist); }
 	| proplist	 { $$ = g_lingo->code1(LC::c_proparraypush); $$ = g_lingo->codeInt($proplist); }
 
-linearlist: simpleexpr			{ $$ = 1; }
-	| linearlist ',' simpleexpr { $$ = $1 + 1; }
+linearlist: expr			{ $$ = 1; }
+	| linearlist ',' expr	{ $$ = $1 + 1; }
 
 proplist:  proppair			{ $$ = 1; }
 	| proplist ',' proppair	{ $$ = $1 + 1; }
