@@ -263,8 +263,7 @@ stmt: stmtoneliner
 		(*g_lingo->_currentScript)[$repeatwith + 4] = inc;		/* increment */
 		(*g_lingo->_currentScript)[$repeatwith + 5] = end; }	/* end, if cond fails */
 	| tNEXT tREPEAT {
-		g_lingo->code1(LC::c_nextRepeat);
-	}
+		g_lingo->code1(LC::c_nextRepeat); }
 	| when stmtonelinerwithif end {
 		inst end = 0;
 		WRITE_UINT32(&end, $end - $when);
