@@ -54,9 +54,17 @@ void SurroundingTotals::load(Ultima1Map *map) {
 
 /*------------------------------------------------------------------------*/
 
-Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Map(), _game(game), _mapType(MAP_OVERWORLD), _mapStyle(0), _mapIndex(0) {
-	_currentTransport = new TransportOnFoot(game, this);
-	addWidget(_currentTransport);
+Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Map(), _game(game), _mapType(MAP_OVERWORLD) {
+	clearFields();
+}
+
+void Ultima1Map::clearFields() {
+	_currentTransport = nullptr;
+	_mapType = MAP_OVERWORLD;
+	_mapStyle = _mapIndex = 0;
+	_name.clear();
+	_fixed = false;
+	_castleKey = 0;
 }
 
 void Ultima1Map::loadMap(int mapId, uint videoMode) {
@@ -69,11 +77,6 @@ void Ultima1Map::loadMap(int mapId, uint videoMode) {
 }
 
 void Ultima1Map::loadOverworldMap() {
-	_mapType = MAP_OVERWORLD;
-	_mapStyle = _mapIndex = 0;
-	_fixed = false;
-	_name.clear();
-
 	_size = Point(168, 156);
 	_tilesPerOrigTile = Point(1, 1);
 	_data.resize(_size.x * _size.y);
@@ -87,6 +90,9 @@ void Ultima1Map::loadOverworldMap() {
 			_data[y * _size.x + x + 1] = b & 0xf;
 		}
 	}
+
+	// Load widgets
+	loadWidgets();
 }
 
 void Ultima1Map::loadTownCastleMap() {
@@ -96,22 +102,15 @@ void Ultima1Map::loadTownCastleMap() {
 	_fixed = true;
 
 	// Set up properties for the map
-	if (_mapId < 33) {
+	if (_mapId < 33)
 		// Town/city
-		_mapType = MAP_CITY;
-		_mapStyle = (_mapId % 8) + 2;
-		_mapIndex = _mapId;
-		setPosition(Common::Point(width() / 2, height() - 1));		// Start at bottom center edge of map
-		_name = Common::String::format("%s %s", _game->_res->THE_CITY_OF, _game->_res->LOCATION_NAMES[_mapId - 1]);
-	} else {
+		loadTown();
+	else
 		// Castle
-		_mapType = MAP_CASTLE;
-		_mapIndex = _mapId - 33;
-		_mapStyle = _mapIndex % 2;
-		setPosition(Common::Point(0, height() / 2));		// Start at center left edge of map
-		_name = _game->_res->LOCATION_NAMES[_mapId - 1];
-	}
+		loadCastle();
+}
 
+void Ultima1Map::loadTownCastleData() {
 	// Load the contents of the map
 	File f("tcd.bin");
 	f.seek(_mapStyle * 684);
@@ -119,9 +118,37 @@ void Ultima1Map::loadTownCastleMap() {
 		for (int y = 0; y < _size.y; ++y)
 			_data[y * _size.x + x] = f.readByte();
 	}
+}
 
-	// Load up the people that are present in the map
-	loadLocationWidgets();
+void Ultima1Map::loadTown() {
+	_mapType = MAP_CITY;
+	_mapStyle = (_mapId % 8) + 2;
+	_mapIndex = _mapId;
+	setPosition(Common::Point(width() / 2, height() - 1));		// Start at bottom center edge of map
+	_name = Common::String::format("%s %s", _game->_res->THE_CITY_OF, _game->_res->LOCATION_NAMES[_mapId - 1]);
+
+	loadTownCastleData();
+
+	// Load up the widgets for the given map
+	loadWidgets();
+}
+
+void Ultima1Map::loadCastle() {
+	_mapType = MAP_CASTLE;
+	_mapIndex = _mapId - 33;
+	_mapStyle = _mapIndex % 2;
+	setPosition(Common::Point(0, height() / 2));		// Start at center left edge of map
+	_name = _game->_res->LOCATION_NAMES[_mapId - 1];
+	_castleKey = _game->getRandomNumber(255) & 1 ? 61 : 60;
+
+	loadTownCastleData();
+
+	// Set up door locks
+	_data[35 + (_mapStyle ? 4 : 14) * _size.x] = 11;
+	_data[31 + (_mapStyle ? 4 : 14) * _size.x] = 11;
+
+	// Load up the widgets for the given map
+	loadWidgets();
 }
 
 void Ultima1Map::getTileAt(const Point &pt, Shared::MapTile *tile) {
@@ -149,8 +176,12 @@ void Ultima1Map::getTileAt(const Point &pt, Shared::MapTile *tile) {
 	}
 }
 
-void Ultima1Map::loadLocationWidgets() {
+void Ultima1Map::loadWidgets() {
 	_widgets.clear();
+
+	// Set up widget for the player
+	_currentTransport = new TransportOnFoot(_game, this);
+	addWidget(_currentTransport);
 
 	if (_mapType == MAP_CITY || _mapType == MAP_CASTLE) {
 		for (int idx = 0; idx < 15; ++idx) {
