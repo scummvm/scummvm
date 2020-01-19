@@ -30,6 +30,7 @@ MODULE_OBJS += \
 	shared/engine/input_translator.o \
 	shared/engine/messages.o \
 	shared/engine/resources.o \
+	shared/gfx/dungeon_surface.o \
 	shared/gfx/font.o \
 	shared/gfx/info.o \
 	shared/gfx/screen.o \

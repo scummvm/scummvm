@@ -20,49 +20,57 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_GFX_VIEWPORT_DUNGEON_H
-#define ULTIMA_SHARED_GFX_VIEWPORT_DUNGEON_H
+#ifndef ULTIMA_SHARED_GFX_DUNGEON_H
+#define ULTIMA_SHARED_GFX_DUNGEON_H
 
-#include "ultima/shared/gfx/visual_item.h"
-#include "ultima/shared/gfx/dungeon_surface.h"
+#include "ultima/shared/gfx/visual_surface.h"
 
 namespace Ultima {
 namespace Shared {
 
-class ViewportDungeon : public Gfx::VisualItem {
-	DECLARE_MESSAGE_MAP;
+class Game;
+
+/**
+ * Acts as a handy container for the drawing methods for rendering the dungeon view
+ */
+class DungeonSurface : public Gfx::VisualSurface {
 private:
-	/**
-	 * Returns the distance to an occupied cell, if any
-	 */
-	uint distanceToOccupiedCell(const Point &delta);
-
-	/**
-	 * Returns if a cell at a given delta to the player is occupied
-	 */
-	bool isCellOccupied(const Point &delta);
-
-	/**
-	 * Returns true if a monster is at a given position, and it has the blocking attribute
-	 */
-	bool isMonsterBlocking(const Point &pt);
-
-	/**
-	 * Returns the surface for rendering the dungeon
-	 */
-	DungeonSurface getSurface();
+	Game *_game;
+	byte _edgeColor;
 public:
-	CLASSDEF;
-	ViewportDungeon(TreeItem *parent) : Gfx::VisualItem("ViewportDungeon", Rect(8, 8, 312, 168), parent) {}
-	virtual ~ViewportDungeon() {}
+	/**
+	 * Constructor
+	 */
+	DungeonSurface(const Graphics::ManagedSurface &src, const Rect &bounds, Game *game);
 
 	/**
-	 * Draws the dungeon
+	 * Draws a wall
 	 */
-	virtual void draw();
+	void drawWall(uint distance);
+
+	/**
+	 * Draws a doorway
+	 */
+	void drawDoorway(uint distance);
+
+	/**
+	 * Draws a vertical line forming the edge of cells to the left of the player
+	 */
+	void drawLeftEdge(uint distance);
+
+	/**
+	 * Draws a vertical line forming the edge of cells to the right of the player
+	 */
+	void drawRightEdge(uint distance);
+
+	/**
+	 * Draw a monster or, failing that, the given tile at a given cell and distance
+	 */
+	void drawCell(uint distance, const Point &pt);
+
 };
 
 } // End of namespace Shared
-} // End of namespace Ultima
+} // End of namespace Xeen
 
 #endif
