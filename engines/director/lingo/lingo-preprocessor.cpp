@@ -346,8 +346,10 @@ Common::String Lingo::preprocessReturn(Common::String in) {
 
 		next = nexttok(ptr + 6); // end of 'return'
 
-		if (prev.equals("&") || prev.equals("&&") || prev.equals("=") ||
-				next.equals("&") || next.equals("&&")) {
+		debugC(2, kDebugLingoParse, "RETURN: prevtok: %s nexttok: %s", prev.c_str(), next.c_str());
+
+		if (prev.hasSuffix("&") || prev.hasSuffix("&&") || prev.hasSuffix("=") ||
+				next.hasPrefix("&") || next.hasPrefix("&&")) {
 			res += "scummvm_"; // Turn it into scummvm_return
 		}
 
