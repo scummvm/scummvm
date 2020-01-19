@@ -30,10 +30,6 @@ namespace Ultima1 {
 
 GameState::GameState(Ultima1Game *game) : Shared::GameState(game) {
 	_map = new Map::Ultima1Map(static_cast<Ultima1Game *>(game));
-	// Load the default overworld map
-	_map->load(Ultima1::Map::MAPID_OVERWORLD);
-	//_map->setPosition(Point(49, 40));
-	_map->setPosition(Point(62, 49));
 }
 
 void GameState::setup() {

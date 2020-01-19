@@ -23,6 +23,7 @@
 #include "ultima/ultima1/u1gfx/view_char_gen.h"
 #include "ultima/ultima1/u1gfx/drawing_support.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/map/map.h"
 #include "ultima/ultima1/u1gfx/text_cursor.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/shared/gfx/text_input.h"
@@ -370,7 +371,25 @@ bool ViewCharacterGeneration::TextInputMsg(CTextInputMsg &msg) {
 }
 
 void ViewCharacterGeneration::save() {
-	// TODO
+	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+	game->_gameState->_randomSeed = game->getRandomNumber(0xffffffff);
+
+	// Set the default position
+	Shared::Map *map = game->_gameState->_map;
+	map->load(Ultima1::Map::MAPID_OVERWORLD);
+	map->setPosition(Point(49, 40));
+
+	// Set other character properties
+	_character->_hitPoints = 150;
+	_character->_coins = 100;
+	_character->_experience = 0;
+	_character->_equippedWeapon = 1;
+	_character->_weapons[1]._quantity = 1;
+	_character->_equippedArmor = 1;
+	_character->_armor[1]._quantity = 1;
+	_character->_equippedSpell = 0;
+
+	// TODO: Actually saving the game
 }
 
 } // End of namespace U1Gfx
