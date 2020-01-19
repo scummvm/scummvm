@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/u1gfx/info.h"
+#include "ultima/ultima1/u1gfx/drawing_support.h"
 #include "ultima/shared/early/game.h"
 
 namespace Ultima {
@@ -28,7 +29,8 @@ namespace Ultima1 {
 namespace U1Gfx {
 
 void Info::drawPrompt(Shared::Gfx::VisualSurface &surf, const Point &pt) {
-	// TODO: Drawing
+	DrawingSupport ds(surf);
+	ds.drawRightArrow(pt);
 }
 
 } // End of namespace U1Gfx

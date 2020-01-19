@@ -34,7 +34,6 @@ namespace Shared {
  */
 class Info : public Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
-	bool FrameMsg(CFrameMsg &msg);
 	bool InfoMsg(CInfoMsg &msg);
 private:
 	Common::StringArray _lines;

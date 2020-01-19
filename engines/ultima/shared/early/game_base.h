@@ -69,9 +69,9 @@ protected:
 	InputHandler _inputHandler;
 	InputTranslator _inputTranslator;
 	Gfx::Font *_font;
-	Gfx::TextCursor *_textCursor;
 public:
 	GameState *_gameState;
+	Gfx::TextCursor *_textCursor;
 	uint _videoMode;
 public:
 	/**
