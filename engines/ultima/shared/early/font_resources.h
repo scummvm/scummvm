@@ -38,6 +38,7 @@ protected:
 	virtual void synchronize();
 public:
 	byte _font8x8[256][8];
+	byte _fontU6[256][8];
 public:
 	FontResources();
 	FontResources(Resources *resManager);

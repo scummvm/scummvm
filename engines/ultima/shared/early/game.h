@@ -34,7 +34,7 @@ class FontResources;
 
 class Game : public GameBase {
 	DECLARE_MESSAGE_MAP;
-private:
+protected:
 	GameView *_gameView;
 	FontResources *_fontResources;
 protected:
