@@ -41,6 +41,7 @@ namespace U1Gfx {
 
 class Status;
 class ViewportMap;
+using Shared::CFrameMsg;
 using Shared::CKeypressMsg;
 
 /**
@@ -49,6 +50,7 @@ using Shared::CKeypressMsg;
  */
 class ViewGame : public Shared::Gfx::VisualContainer {
 	DECLARE_MESSAGE_MAP;
+	bool FrameMsg(CFrameMsg &msg);
 	bool KeypressMsg(CKeypressMsg &msg);
 private:
 	Shared::Info *_info;
@@ -56,6 +58,7 @@ private:
 	ViewportMap *_viewportMap;
 	Status *_status;
 	Shared::Actions::Action *_actions[5];
+	int _frameCtr;
 private:
 	/**
 	 * Draws level & direction indicators when in a dungeon

@@ -187,7 +187,7 @@ void GameBase::update() {
 	if (_currentView) {
 		// Signal the next frame
 		CFrameMsg frameMsg(g_vm->_events->getTicksCount());
-		frameMsg.execute(_currentView, nullptr, MSGFLAG_SCAN);
+		frameMsg.execute(_currentView);
 
 		// Draw the view
 		if (_currentView->isDirty()) {

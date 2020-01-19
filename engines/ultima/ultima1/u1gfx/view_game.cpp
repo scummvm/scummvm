@@ -41,10 +41,11 @@ namespace Ultima1 {
 namespace U1Gfx {
 
 BEGIN_MESSAGE_MAP(ViewGame, Shared::Gfx::VisualContainer)
+	ON_MESSAGE(FrameMsg)
 	ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
-ViewGame::ViewGame(Shared::TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect(0, 0, 320, 200), parent) {
+ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect(0, 0, 320, 200), parent), _frameCtr(0) {
 	_info = new Info(this);
 	_status = new Status(this);
 	_viewportDungeon = new ViewportDungeon(this);
@@ -115,6 +116,20 @@ void ViewGame::drawIndicators() {
 		s.writeString(dir, TextPoint(19 - (7 - strlen(dir)) / 2, 19), game->_textColor);
 		ds.drawLeftArrow(TextPoint(24, 19));
 	}
+}
+
+#define FRAME_REDUCTION_RATE 5
+
+bool ViewGame::FrameMsg(CFrameMsg &msg) {
+	if (_frameCtr == FRAME_REDUCTION_RATE) {
+		// Ignore frame message at the start of passing reduced frame rate to child views
+		return false;
+	} else if (++_frameCtr == FRAME_REDUCTION_RATE) {
+		msg.execute(this, nullptr, Shared::MSGFLAG_SCAN);
+		_frameCtr = 0;
+	}
+
+	return true;
 }
 
 bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
