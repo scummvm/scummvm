@@ -53,7 +53,7 @@
 namespace Director {
 
 void Lingo::execute(uint pc) {
-	for (_pc = pc; !_returning && (*_currentScript)[_pc] != STOP;) {
+	for (_pc = pc; !_returning && (*_currentScript)[_pc] != STOP && !_nextRepeat;) {
 		Common::String instr = decodeInstruction(_currentScript, _pc);
 		uint current = _pc;
 
