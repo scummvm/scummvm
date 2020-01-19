@@ -29,6 +29,9 @@ namespace Ultima {
 namespace Ultima1 {
 namespace People {
 
+/**
+ * Bard & Jester persons
+ */
 class Bard : public Person {
 public:
 	/**

@@ -67,6 +67,7 @@ MODULE_OBJS += \
 	ultima1/people/king.o \
 	ultima1/people/person.o \
 	ultima1/people/princess.o \
+	ultima1/people/wench.o \
 	ultima1/u1gfx/drawing_support.o \
 	ultima1/u1gfx/game_view.o \
 	ultima1/u1gfx/info.o \

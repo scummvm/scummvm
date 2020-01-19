@@ -48,10 +48,12 @@ protected:
 	 */
 	void loadTownCastleData();
 public:
+	bool _guardsHostile;			// Flag for whether guards are hostile
+public:
 	/**
 	 * Constructor
 	 */
-	MapCityCastle(Ultima1Game *game) : Ultima1Map::MapBase(game) {}
+	MapCityCastle(Ultima1Game *game) : Ultima1Map::MapBase(game), _guardsHostile(false) {}
 
 	/**
 	 * Destructor
@@ -62,6 +64,11 @@ public:
 	 * Load the map
 	 */
 	virtual void load(Shared::MapId mapId);
+
+	/**
+		* Clears all map data
+		*/
+	virtual void clear();
 
 	/**
 	 * Get the viewport position
