@@ -23,7 +23,7 @@
 #include "ultima/ultima1/actions/move.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/map/map.h"
-#include "ultima/ultima1/core/transports.h"
+#include "ultima/ultima1/widgets/transport.h"
 #include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
@@ -53,7 +53,7 @@ bool Move::MoveMsg(CMoveMsg &msg) {
 			break;
 		}
 	} else {
-		WidgetTransport *transport = dynamic_cast<WidgetTransport *>(map->getCurrentTransport());
+		Widgets::Transport *transport = dynamic_cast<Widgets::Transport *>(map->getCurrentTransport());
 		assert(transport);
 
 		// Figure out the new position
@@ -152,7 +152,7 @@ void Move::dungeonTurnAround() {
 void Move::dungeonMoveForward() {
 	Map::Ultima1Map *map = getMap();
 	Point delta = map->getDirectionDelta();
-	WidgetTransport *transport = dynamic_cast<WidgetTransport *>(map->getCurrentTransport());
+	Widgets::Transport *transport = dynamic_cast<Widgets::Transport *>(map->getCurrentTransport());
 	assert(transport);
 
 	if (transport->canMoveTo(map->getPosition() + delta)) {

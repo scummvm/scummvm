@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_CORE_WIDGET_PLAYER_H
-#define ULTIMA_ULTIMA1_CORE_WIDGET_PLAYER_H
+#ifndef ULTIMA_ULTIMA1_WIDGETS_TRANSPORT_H
+#define ULTIMA_ULTIMA1_WIDGETS_TRANSPORT_H
 
 #include "ultima/ultima1/map/map.h"
 
@@ -30,7 +30,9 @@ namespace Ultima1 {
 
 class Ultima1Game;
 
-class WidgetTransport : public Shared::MapWidget {
+namespace Widgets {
+
+class Transport : public Shared::MapWidget {
 protected:
 	/**
 	 * Gets the Ultima 1 game
@@ -45,12 +47,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	WidgetTransport(Shared::Game *game, Shared::Map::MapBase *map) : Shared::MapWidget(game, map) {}
+	Transport(Shared::Game *game, Shared::Map::MapBase *map) : Shared::MapWidget(game, map) {}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~WidgetTransport() {}
+	virtual ~Transport() {}
 
 	/**
 	 * Returns true if the given transport type can move to a given position on the map
@@ -66,7 +68,7 @@ public:
 	virtual bool moveTo(const Point &destPos) = 0;
 };
 
-class TransportOnFoot : public WidgetTransport {
+class TransportOnFoot : public Transport {
 private:
 	/**
 	 * Checks for whether a princess has been saved from a castle being left
@@ -81,7 +83,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	TransportOnFoot(Shared::Game *game, Shared::Map::MapBase *map) : WidgetTransport(game, map) {}
+	TransportOnFoot(Shared::Game *game, Shared::Map::MapBase *map) : Transport(game, map) {}
 
 	/**
 	 * Destructor
@@ -106,6 +108,7 @@ public:
 	virtual bool moveTo(const Point &destPos);
 };
 
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

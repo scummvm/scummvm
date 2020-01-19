@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima1/map/map_overworld.h"
-#include "ultima/ultima1/core/transports.h"
+#include "ultima/ultima1/widgets/transport.h"
 #include "ultima/ultima1/map/map.h"
 #include "ultima/ultima1/game.h"
 
@@ -50,7 +50,7 @@ void MapOverworld::load(Shared::MapId mapId) {
 
 void MapOverworld::loadWidgets() {
 	// Set up widget for the player
-	_currentTransport = new TransportOnFoot(_game, this);
+	_currentTransport = new Widgets::TransportOnFoot(_game, this);
 	addWidget(_currentTransport);
 }
 

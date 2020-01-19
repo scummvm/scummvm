@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima1/core/transports.h"
+#include "ultima/ultima1/widgets/transport.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/map/map.h"
 #include "ultima/ultima1/map/map_dungeon.h"
@@ -29,12 +29,13 @@
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Widgets {
 
-Ultima1Game *WidgetTransport::getGame() const {
+Ultima1Game *Transport::getGame() const {
 	return static_cast<Ultima1Game *>(_game);
 }
 
-Map::Ultima1Map::MapBase *WidgetTransport::getMap() const {
+Map::Ultima1Map::MapBase *Transport::getMap() const {
 	return static_cast<Map::Ultima1Map::MapBase *>(_map);
 }
 
@@ -125,5 +126,6 @@ void TransportOnFoot::princessSaved() {
 
 }
 
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
