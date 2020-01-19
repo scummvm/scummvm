@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/gfx/sprites.h"
+#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -33,6 +34,7 @@ END_MESSAGE_MAP()
 bool Sprites::FrameMsg(CFrameMsg &msg) {
 	if (!empty()) {
 		animateWater();
+		++_frameCtr;
 	}
 
 	return false;
@@ -45,6 +47,30 @@ void Sprites::animateWater() {
 	Common::copy(sprite.getBasePtr(0, 15), sprite.getBasePtr(0, 16), lineBuffer);
 	Common::copy_backward(sprite.getBasePtr(0, 0), sprite.getBasePtr(0, 15), sprite.getBasePtr(0, 16));
 	Common::copy(lineBuffer, lineBuffer + 16, sprite.getBasePtr(0, 0));
+}
+
+::Ultima::Shared::Gfx::Sprite &Sprites::operator[](uint idx) {
+	int offset = 2;
+	if ((_frameCtr % 6) == 0)
+		offset = 0;
+	else if ((_frameCtr % 3) == 0)
+		offset = 1;
+
+	if (idx == 4 && offset != 2) {
+		// Castle flag waving
+		return ::Ultima::Shared::Gfx::Sprites::operator[](4 + offset);
+	} else if (idx == 7) {
+		// City flag waving
+		return ::Ultima::Shared::Gfx::Sprites::operator[](7 + ((_frameCtr & 3) ? 1 : 0));
+	} else if (idx == 14 || idx == 25) {
+		// Transports 
+		return ::Ultima::Shared::Gfx::Sprites::operator[](idx + (_frameCtr & 1));
+	} else if (idx >= 19 && idx <= 47) {
+		// Random monster animation
+		return ::Ultima::Shared::Gfx::Sprites::operator[](idx + (g_vm->getRandomNumber(1, 100) & 1));
+	} else {
+		return ::Ultima::Shared::Gfx::Sprites::operator[](idx);
+	}
 }
 
 } // End of namespace U1Gfx
