@@ -29,9 +29,6 @@
 #include "ultima/shared/gfx/dungeon_surface.h"
 
 namespace Ultima {
-namespace Core {
-	class WidgetTransport;
-}
 
 namespace Shared {
 

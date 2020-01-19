@@ -57,7 +57,6 @@ MODULE_OBJS += \
 	ultima1/actions/enter.o \
 	ultima1/actions/move.o \
 	ultima1/core/resources.o \
-	ultima1/core/transports.o \
 	ultima1/map/map.o \
 	ultima1/map/map_city_castle.o \
 	ultima1/map/map_dungeon.o \
@@ -77,6 +76,7 @@ MODULE_OBJS += \
 	ultima1/widgets/king.o \
 	ultima1/widgets/person.o \
 	ultima1/widgets/princess.o \
+	ultima1/widgets/transport.o \
 	ultima1/widgets/wench.o \
 	ultima1/game.o
 endif
