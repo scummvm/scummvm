@@ -41,7 +41,7 @@ using Shared::CTextInputMsg;
 /**
  * This class implements the character generation view
  */
-class ViewCharacterGeneration : public Shared::Gfx::VisualContainer {
+class ViewCharacterGeneration : public Shared::Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
 	bool KeypressMsg(CKeypressMsg &msg);
 	bool ShowMsg(CShowMsg &msg);
