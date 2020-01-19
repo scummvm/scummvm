@@ -1004,6 +1004,12 @@ void LC::c_repeatwithcode(void) {
 	Common::String countername((char *)&(*g_lingo->_currentScript)[savepc + 5]);
 	Symbol *counter = g_lingo->lookupVar(countername.c_str());
 
+	if (finish == 0 && inc == 0) {
+		warning("STUB: 'repeat with' over list ");
+		g_lingo->_pc = end + savepc - 1; /* next stmt */
+		return;
+	}
+
 	if (counter->type == CASTREF) {
 		error("Cast ref used as index: %s", countername.c_str());
 	}

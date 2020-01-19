@@ -107,7 +107,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<s> ID STRING HANDLER SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL tMETHOD
 %token<objectfield> THEOBJECTFIELD
-%token tDOWN tELSE tELSIF tEXIT tGLOBAL tGO tIF tINTO tLOOP tMACRO
+%token tDOWN tELSE tELSIF tEXIT tGLOBAL tGO tIF tIN tINTO tLOOP tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tOPEN tPLAY tDONE tINSTANCE
 %token tGE tLE tEQ tNEQ tAND tOR tNOT tMOD
@@ -262,6 +262,17 @@ stmt: stmtoneliner
 		(*g_lingo->_currentScript)[$repeatwith + 3] = body;		/* body of loop */
 		(*g_lingo->_currentScript)[$repeatwith + 4] = inc;		/* increment */
 		(*g_lingo->_currentScript)[$repeatwith + 5] = end; }	/* end, if cond fails */
+	| repeatwith tIN expr[list] end stmtlist end[end3] tENDREPEAT {
+		inst list = 0, body = 0, end = 0;
+		WRITE_UINT32(&list, $list - $repeatwith);
+		WRITE_UINT32(&body, $stmtlist - $repeatwith);
+		WRITE_UINT32(&end, $end3 - $repeatwith);
+		(*g_lingo->_currentScript)[$repeatwith + 1] = list;		/* initial count value */
+		(*g_lingo->_currentScript)[$repeatwith + 2] = 0;		/* final count value */
+		(*g_lingo->_currentScript)[$repeatwith + 3] = body;		/* body of loop */
+		(*g_lingo->_currentScript)[$repeatwith + 4] = 0;		/* increment */
+		(*g_lingo->_currentScript)[$repeatwith + 5] = end; }	/* end, if cond fails */
+
 	| tNEXT tREPEAT {
 		g_lingo->code1(LC::c_nextRepeat); }
 	| when stmtonelinerwithif end {
