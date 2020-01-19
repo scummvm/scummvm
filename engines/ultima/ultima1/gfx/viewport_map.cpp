@@ -40,11 +40,8 @@ void ViewportMap::draw() {
 	// If necessary, load the sprites for rendering the map
 	if (_sprites->empty() || _mapType != map->_mapType) {
 		_mapType = map->_mapType;
-
-		if (_mapType == MAP_OVERWORLD)
-			_sprites->load("t1ktiles.bin", 4);
-		else
-			_sprites->load("t1ktown.bin", 4, 8, 8);
+		Sprites *sprites = static_cast<Sprites *>(_sprites);
+		sprites->load(_mapType == MAP_OVERWORLD);
 	}
 
 	// Draw the map

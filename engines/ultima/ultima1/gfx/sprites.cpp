@@ -31,12 +31,21 @@ BEGIN_MESSAGE_MAP(Sprites, TreeItem)
 	ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
+void Sprites::load(bool isOverworld) {
+	_isOverworld = isOverworld;
+
+	if (isOverworld)
+		::Ultima::Shared::Gfx::Sprites::load("t1ktiles.bin", 4);
+	else
+		::Ultima::Shared::Gfx::Sprites::load("t1ktown.bin", 4, 8, 8);
+}
+
 bool Sprites::FrameMsg(CFrameMsg &msg) {
-	if (!empty()) {
+	if (!empty() && _isOverworld) {
 		animateWater();
-		++_frameCtr;
 	}
 
+	++_frameCtr;
 	return false;
 }
 
@@ -56,7 +65,10 @@ void Sprites::animateWater() {
 	else if ((_frameCtr % 3) == 0)
 		offset = 1;
 
-	if (idx == 4 && offset != 2) {
+	if (!_isOverworld) {
+		// Don't do overworld tile animations within the cities and castles
+		return ::Ultima::Shared::Gfx::Sprites::operator[](idx);
+	} else if (idx == 4 && offset != 2) {
 		// Castle flag waving
 		return ::Ultima::Shared::Gfx::Sprites::operator[](4 + offset);
 	} else if (idx == 7) {
