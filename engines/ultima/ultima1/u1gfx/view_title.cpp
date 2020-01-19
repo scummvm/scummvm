@@ -48,9 +48,8 @@ void load16(Graphics::ManagedSurface &s, Common::ReadStream &in) {
 	}
 }
 
-ViewTitle::ViewTitle(TreeItem *parent) : Shared::Gfx::VisualContainer("Title", Rect(0, 0, 320, 200), parent),
-		_mode(TITLEMODE_COPYRIGHT), _counter(0) {
-	_expiryTime = getGame()->getMillis() + 2000;
+ViewTitle::ViewTitle(Shared::TreeItem *parent) : Shared::Gfx::VisualContainer("Title", Rect(0, 0, 320, 200), parent) {
+	setMode(TITLEMODE_COPYRIGHT);
 
 	// Load the Origin logo
 	Shared::File f("data/logo.bmp");
@@ -85,13 +84,7 @@ ViewTitle::ViewTitle(TreeItem *parent) : Shared::Gfx::VisualContainer("Title", R
 	f.close();
 }
 
-ViewTitle::~ViewTitle() {
-}
-
 void ViewTitle::draw() {
-	if (!_isDirty)
-		return;
-
 	VisualContainer::draw();
 
 	switch (_mode) {
@@ -227,30 +220,18 @@ bool ViewTitle::FrameMsg(CFrameMsg &msg) {
 	
 	switch (_mode) {
 	case TITLEMODE_COPYRIGHT:
-		_mode = TITLEMODE_PRESENTS;
-		_counter = 0;
-		_expiryTime = time + 3000;
-		setDirty();
+		setMode(TITLEMODE_PRESENTS);
 		break;
-
 	case TITLEMODE_PRESENTS:
 		_expiryTime = time + 3000;
-		if (++_counter == 3) {
-			_mode = TITLEMODE_CASTLE;
-			_counter = 0;
-			_expiryTime = time;
-			setCastlePalette();
-		}
+		if (++_counter == 3)
+			setMode(TITLEMODE_CASTLE);
 		break;
 
 	case TITLEMODE_CASTLE:
 		_expiryTime = time + 200;
-		if (++_counter == 100) {
-			_mode = TITLEMODE_PRESENTS;
-			_counter = 0;
-			_expiryTime = time + 3000;
-			setTitlePalette();
-		}
+		if (++_counter == 100)
+			setMode(TITLEMODE_PRESENTS);
 		break;
 
 	case TITLEMODE_TRADEMARKS:
@@ -259,13 +240,7 @@ bool ViewTitle::FrameMsg(CFrameMsg &msg) {
 		if (_counter == 32) {
 			_expiryTime = time + 4000;
 		} else if (_counter == 33) {
-			_mode = TITLEMODE_MAIN_MENU;
-			_expiryTime = time;
-			_counter = 0;
-
-			Shared::Gfx::TextCursor *textCursor = getGame()->_textCursor;
-			textCursor->setPosition(TextPoint(25, 18));
-			textCursor->setVisible(true);
+			setMode(TITLEMODE_MAIN_MENU);
 		}
 		break;
 
@@ -274,6 +249,34 @@ bool ViewTitle::FrameMsg(CFrameMsg &msg) {
 	}
 
 	return true;
+}
+
+void ViewTitle::setMode(TitleMode mode) {
+	_expiryTime = getGame()->getMillis();
+	_counter = 0;
+	_mode = mode;
+	setDirty();
+	setTitlePalette();
+
+	switch (mode) {
+	case TITLEMODE_COPYRIGHT:
+		_expiryTime += 4000;
+		break;
+	case TITLEMODE_PRESENTS:
+		_expiryTime += 3000;
+		break;
+	case TITLEMODE_CASTLE:
+		setCastlePalette();
+		break;
+	case TITLEMODE_MAIN_MENU: {
+		Shared::Gfx::TextCursor *textCursor = getGame()->_textCursor;
+		textCursor->setPosition(TextPoint(25, 18));
+		textCursor->setVisible(true);
+		break;
+	}
+	default:
+		break;
+	}
 }
 
 bool ViewTitle::KeypressMsg(CKeypressMsg &msg) {

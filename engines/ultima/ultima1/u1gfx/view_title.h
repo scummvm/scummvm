@@ -89,10 +89,18 @@ private:
 	 * Sets up the palette for the title views
 	 */
 	void setTitlePalette();
+
+	/**
+	 * Sets the current mode (display) within the title
+	 */
+	void setMode(TitleMode mode);
 public:
 	CLASSDEF;
+
+	/**
+	 * Constructor
+	 */
 	ViewTitle(Shared::TreeItem *parent = nullptr);
-	virtual ~ViewTitle();
 
 	/**
 	 * Draw the game screen
