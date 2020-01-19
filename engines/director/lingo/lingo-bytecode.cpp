@@ -33,7 +33,7 @@ namespace Director {
 
 static LingoV4Bytecode lingoV4[] = {
 	{ 0x01, LC::c_procret,		"" },
-	{ 0x03, LC::c_voidpush,		"" },
+	{ 0x03, LC::cb_zeropush,	"" },
 	{ 0x04, LC::c_mul,			"" },
 	{ 0x05, LC::c_add,			"" },
 	{ 0x06, LC::c_sub,			"" },
@@ -294,10 +294,14 @@ void LC::cb_call() {
 void LC::cb_globalpush() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->_namelist[nameId];
+	Datum result;
+	result.type = VOID;
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (!s) {
 		warning("Variable %s not found", name.c_str());
+		g_lingo->push(result);
+		return;
 	} else if (s && !s->global) {
 		warning("Variable %s is local, not global", name.c_str());
 	}
@@ -305,7 +309,7 @@ void LC::cb_globalpush() {
 	Datum target;
 	target.type = VAR;
 	target.u.sym = s;
-	Datum result = g_lingo->varFetch(target);
+	result = g_lingo->varFetch(target);
 	g_lingo->push(result);
 }
 
@@ -334,10 +338,14 @@ void LC::cb_globalassign() {
 void LC::cb_varpush() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->_namelist[nameId];
+	Datum result;
+	result.type = VOID;
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (!s) {
 		warning("Variable %s not found", name.c_str());
+		g_lingo->push(result);
+		return;
 	} else if (s && s->global) {
 		warning("Variable %s is global, not local", name.c_str());
 	}
@@ -345,7 +353,7 @@ void LC::cb_varpush() {
 	Datum target;
 	target.type = VAR;
 	target.u.sym = s;
-	Datum result = g_lingo->varFetch(target);
+	result = g_lingo->varFetch(target);
 	g_lingo->push(result);
 }
 
@@ -520,6 +528,13 @@ void LC::cb_v4theentityassign() {
 	}
 }
 
+void LC::cb_zeropush() {
+	Datum d;
+	d.u.i = 0;
+	d.type = INT;
+	g_lingo->push(d);
+}
+
 void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id) {
 	debugC(1, kDebugLingoCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(type), id);
 
@@ -550,8 +565,8 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	for (uint32 i = 0; i < 0x2e; i++) {
 		stream.readByte();
 	}
-	/*uint16 globalsOffset = */stream.readUint16();
-	/*uint16 globalsCount = */stream.readUint16();
+	uint16 globalsOffset = stream.readUint16();
+	uint16 globalsCount = stream.readUint16();
 	// unk3
 	for (uint32 i = 0; i < 0x4; i++) {
 		stream.readByte();
@@ -566,6 +581,20 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	stream.readUint16();
 	stream.readUint16();
 	/*uint16 constsBase = */stream.readUint16();
+
+	// initialise each global variable
+	debugC(5, kDebugLoading, "Lscr globals list:");
+	stream.seek(globalsOffset);
+	for (uint16 i = 0; i < globalsCount; i++) {
+		uint16 nameIndex = stream.readUint16();
+		if (nameIndex < _namelist.size()) {
+			const char *name = _namelist[nameIndex].c_str();
+			debugC(5, kDebugLoading, "%d: %s", i, name);
+			Symbol *s = g_lingo->lookupVar(name, true, true);
+		} else {
+			warning("Global %d has unknown name id %d, skipping define", i, nameIndex);
+		}
+	}
 
 	// preload all the constants!
 	// these are stored as a reference table of 6 byte entries, followed by a storage area.

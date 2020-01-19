@@ -511,6 +511,8 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 		var.u.sym->u.i = value.u.i;
 	} else if (value.type == OBJECT) {
 		var.u.sym->u.s = value.u.s;
+	} else if (value.type == VOID) {
+		var.u.sym->u.i = 0;
 	} else {
 		warning("varAssign: unhandled type: %s", value.type2str());
 		var.u.sym->u.s = value.u.s;
@@ -529,7 +531,7 @@ Datum Lingo::varFetch(Datum &var) {
 
 	result.type = var.u.sym->type;
 
-	if (result.u.sym->type == INT)
+	if (var.u.sym->type == INT)
 		result.u.i = var.u.sym->u.i;
 	else if (var.u.sym->type == FLOAT)
 		result.u.f = var.u.sym->u.f;
@@ -540,7 +542,7 @@ Datum Lingo::varFetch(Datum &var) {
 	else if (var.u.sym->type == SYMBOL)
 		result.u.i = var.u.sym->u.i;
 	else if (var.u.sym->type == VOID)
-		result.u.s = new Common::String(var.u.sym->name);
+		result.u.i = 0;
 	else {
 		warning("varFetch: unhandled type: %s", var.type2str());
 		result.type = VOID;

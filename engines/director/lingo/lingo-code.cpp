@@ -152,6 +152,7 @@ static struct FuncDescr {
 	{ LC::cb_v4theentitypush,"cb_v4theentitypush","i" },
 	{ LC::cb_v4theentitynamepush,"cb_v4theentitynamepush","i" },
 	{ LC::cb_v4theentityassign,"cb_v4theentityassign","i" },
+	{ LC::cb_zeropush,		"cb_zeropush",		"" },
 	{ 0, 0, 0 }
 };
 
