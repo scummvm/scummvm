@@ -27,9 +27,13 @@ namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
-void Popup::show() {
-	// Save a copy of the view the dialog is being shown on, and activate it
+void Popup::show(TreeItem *respondTo) {
+	// Save a copy of the view the popup is being shown on, and activate it
 	_parentView = _game->getView();
+	_respondTo = respondTo;
+	if (!_respondTo)
+		_respondTo = _parentView;
+
 	_game->setPopup(this);
 	setDirty();
 }

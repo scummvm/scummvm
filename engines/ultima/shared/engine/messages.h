@@ -245,6 +245,16 @@ MESSAGE2(CHideMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fa
 /**
  * Adds text strings to the info area
  */
+MESSAGE1(CInfoGetKeypress, MessageTarget *, responder, (MessageTarget *)nullptr);
+
+/**
+ * Adds text strings to the info area
+ */
+MESSAGE1(CInfoGetInput, MessageTarget *, responder, (MessageTarget *)nullptr);
+
+/**
+ * Adds text strings to the info area
+ */
 MESSAGE2(CInfoMsg, Common::String, text, "", bool, newLine, true);
 
 /**
