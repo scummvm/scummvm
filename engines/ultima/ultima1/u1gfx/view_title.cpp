@@ -26,7 +26,8 @@
 #include "ultima/ultima1/game.h"
 #include "ultima/shared/core/file.h"
 #include "ultima/shared/gfx/text_cursor.h"
-#include "ultima/shared/engine/messages.h"
+#include "ultima/shared/early/font_resources.h"
+#include "ultima/shared/early/ultima_early.h"
 #include "image/bmp.h"
 
 namespace Ultima {
@@ -300,8 +301,14 @@ bool ViewTitle::KeypressMsg(CKeypressMsg &msg) {
 			Shared::Gfx::TextCursor *textCursor = getGame()->_textCursor;
 			textCursor->setVisible(false);
 
-			if (msg._keyState.keycode == Common::KEYCODE_a)
+			if (msg._keyState.keycode == Common::KEYCODE_a) {
 				setView("CharGen");
+			} else {
+				if (g_vm->loadGame())
+					setView("Game");
+				else
+					textCursor->setVisible(true);
+			}
 		}
 
 	} else if (_mode != TITLEMODE_TRADEMARKS) {
