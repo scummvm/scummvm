@@ -28,17 +28,18 @@
 
 namespace Ultima {
 namespace Shared {
+
 class Info;
 class ViewportDungeon;
 } // End of namespace Shared
 } // End of namespace Ultima
 
 namespace Ultima {
-namespace Ultima1 {
+namespace Shared {
 namespace Actions {
 class Action;
 } // End of namespace Actions
-} // End of namespace Ultima1
+} // End of namespace Shared
 } // End of namespace Ultima
 
 namespace Ultima {
@@ -61,7 +62,7 @@ private:
 	Shared::ViewportDungeon *_viewportDungeon;
 	ViewportMap *_viewportMap;
 	Status *_status;
-	Actions::Action *_actions[3];
+	Shared::Actions::Action *_actions[4];
 private:
 	/**
 	 * Draws level & direction indicators when in a dungeon

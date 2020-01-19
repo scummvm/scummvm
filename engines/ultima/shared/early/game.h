@@ -71,6 +71,11 @@ public:
 	 * Destructor
 	 */
 	virtual ~Game();
+
+	/**
+	 * Play a sound effect
+	 */
+	void playFX(uint effectId);
 };
 
 } // End of namespace Shared

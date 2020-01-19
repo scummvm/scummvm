@@ -20,43 +20,37 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_CORE_RESOURCES_H
-#define ULTIMA_ULTIMA1_CORE_RESOURCES_H
+#ifndef ULTIMA_SHARED_ACTIONS_PASS_H
+#define ULTIMA_SHARED_ACTIONS_PASS_H
 
-#include "ultima/shared/engine/resources.h"
+#include "ultima/shared/actions/action.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
-namespace Ultima1 {
+namespace Shared {
+namespace Actions {
 
-#define LOCATION_COUNT 84
+class Pass : public Action {
+	DECLARE_MESSAGE_MAP;
+	bool PassMsg(CPassMsg &msg);
+private:
+	const char *&_text;
+public:
+	CLASSDEF;
 
-class GameResources : public Shared::LocalResourceFile {
-protected:
 	/**
-	 * Synchronize resource data
+	* Constructor
+	*/
+	Pass(TreeItem *parent, const char *&text) : Action(parent), _text(text) {}
+
+	/**
+	 * Destructor
 	 */
-	virtual void synchronize();
-public:
-	const char *STATUS_TEXT[4];
-	const char *DIRECTION_NAMES[4];
-	const char *LOCATION_NAMES[LOCATION_COUNT];
-	byte LOCATION_X[LOCATION_COUNT];
-	byte LOCATION_Y[LOCATION_COUNT];
-	int LOCATION_PEOPLE[150][4];
-	byte DUNGEON_DRAW_DATA[1964];
-	const char *DUNGEON_ITEM_NAMES[2];
-	const char *BLOCKED;
-	const char *ENTER_QUESTION;
-	const char *ENTERING;
-	const char *THE_CITY_OF;
-	const char *DUNGEON_LEVEL;
-	const char *PASS;
-public:
-	GameResources();
-	GameResources(Shared::Resources *resManager);
+	virtual ~Pass() {}
 };
 
-} // End of namespace Ultima1
+} // End of namespace Actions
+} // End of namespace Shared
 } // End of namespace Ultima
 
 #endif

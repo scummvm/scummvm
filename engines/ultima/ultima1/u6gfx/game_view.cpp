@@ -21,6 +21,9 @@
  */
 
 #include "ultima/ultima1/u6gfx/game_view.h"
+#include "ultima/shared/actions/pass.h"
+#include "ultima/shared/core/map.h"
+#include "ultima/shared/gfx/info.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/gfx/drawing_support.h"
 #include "ultima/ultima1/gfx/status.h"
@@ -31,8 +34,6 @@
 #include "ultima/ultima1/actions/enter.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/shared/gfx/bitmap.h"
-#include "ultima/shared/core/map.h"
-#include "ultima/shared/gfx/info.h"
 #include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
@@ -46,16 +47,19 @@ END_MESSAGE_MAP()
 GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
 	_info = nullptr;
 	_status = new U1Gfx::Status(this);
+
+	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Actions::Climb(this);
 	_actions[2] = new Actions::Enter(this);
+	_actions[3] = new Shared::Actions::Pass(this, game->_res->PASS);
 	loadBackground();
 }
 
 GameView::~GameView() {
 	delete _info;
 	delete _status;
-	for (int idx = 0; idx < 3; ++idx)
+	for (int idx = 0; idx < 4; ++idx)
 		delete _actions[idx];
 }
 
@@ -98,25 +102,47 @@ void GameView::draw() {
 }
 
 bool GameView::KeypressMsg(CKeypressMsg &msg) {
-	if (msg._keyState.keycode == Common::KEYCODE_LEFT || msg._keyState.keycode == Common::KEYCODE_KP4) {
+	switch (msg._keyState.keycode) {
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_KP4: {
 		Shared::CMoveMsg move(Shared::DIR_LEFT);
 		move.execute(this);
-	} else if (msg._keyState.keycode == Common::KEYCODE_RIGHT || msg._keyState.keycode == Common::KEYCODE_KP6) {
+		break;
+	}
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_KP6: {
 		Shared::CMoveMsg move(Shared::DIR_RIGHT);
 		move.execute(this);
-	} else if (msg._keyState.keycode == Common::KEYCODE_UP || msg._keyState.keycode == Common::KEYCODE_KP8) {
+		break;
+	}
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8: {
 		Shared::CMoveMsg move(Shared::DIR_UP);
 		move.execute(this);
-	} else if (msg._keyState.keycode == Common::KEYCODE_DOWN || msg._keyState.keycode == Common::KEYCODE_KP2) {
+		break;
+	}
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2: {
 		Shared::CMoveMsg move(Shared::DIR_DOWN);
 		move.execute(this);
-	} else if (msg._keyState.keycode == Common::KEYCODE_e) {
+		break;
+	}
+	case Common::KEYCODE_e: {
 		Shared::CEnterMsg enter;
 		enter.execute(this);
-	} else if (msg._keyState.keycode == Common::KEYCODE_k) {
+		break;
+	}
+	case Common::KEYCODE_k: {
 		Shared::CClimbMsg climb;
 		climb.execute(this);
-	} else {
+		break;
+	}
+	case Common::KEYCODE_SPACE: {
+		Shared::CPassMsg pass;
+		pass.execute(this);
+		break;
+	}
+	default:
 		return false;
 	}
 

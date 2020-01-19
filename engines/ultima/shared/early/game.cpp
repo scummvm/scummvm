@@ -94,5 +94,10 @@ void Game::loadU6Palette() {
 	_bgColor = 49;
 }
 
+void Game::playFX(uint effectId) {
+	warning("TODO: playFX");
+}
+
+
 } // End of namespace Shared
 } // End of namespace Ultima
