@@ -47,7 +47,7 @@ const char *const SRC_MAIN_MENU_TEXT[7] = {
 	"a) Generate new character", "b) Continue previous game", "Thy choice: "
 };
 
-const char *const SRC_CHAR_GEN_TEXT[10] = {
+const char *const SRC_CHAR_GEN_TEXT[11] = {
 	" Character Generation ",
 	"Points left to distribute: %2d",
 	"Strength........%d\n"
@@ -60,13 +60,21 @@ const char *const SRC_CHAR_GEN_TEXT[10] = {
 		"increase and decrease attributes\n"
 		"with left and right arrows.  Press\n"
 		"space bar when finished, or escape\n"
-		"to return to the main menu."
-	"",
-	"",
-	"",
-	"",
-	"",
-	""
+		"to return to the main menu.",
+	"Select thy race:",
+	"a) Human\n"
+		"b) Elf\n"
+		"c) Dwarf\n"
+		"d) Bobbit",
+	"Select thy sex:",
+	"a) Male\n"
+		"b) Female",
+	"Select thy class:",
+	"a) Fighter\n"
+		"b) Cleric\n"
+		"c) Wizard\n"
+		"d) Thief",
+	"Enter thy name:"
 };
 
 const char *const SRC_STATUS_TEXT[4] = { "Hits:", "Food:",  "Exp.:", "Coin:" };
@@ -558,7 +566,7 @@ GameResources::GameResources() : LocalResourceFile("ULTIMA1/DATA") {
 GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(resManager, "ULTIMA1/DATA") {
 	Common::copy(SRC_TITLE_MESSAGES, SRC_TITLE_MESSAGES + 13, TITLE_MESSAGES);
 	Common::copy(SRC_MAIN_MENU_TEXT, SRC_MAIN_MENU_TEXT + 7, MAIN_MENU_TEXT);
-	Common::copy(SRC_CHAR_GEN_TEXT, SRC_CHAR_GEN_TEXT + 10, CHAR_GEN_TEXT);
+	Common::copy(SRC_CHAR_GEN_TEXT, SRC_CHAR_GEN_TEXT + 11, CHAR_GEN_TEXT);
 	Common::copy(SRC_STATUS_TEXT, SRC_STATUS_TEXT + 4, STATUS_TEXT);
 	Common::copy(SRC_DIRECTION_NAMES, SRC_DIRECTION_NAMES + 4, DIRECTION_NAMES);
 	Common::copy(SRC_DUNGEON_MOVES, SRC_DUNGEON_MOVES + 4, DUNGEON_MOVES);
@@ -605,7 +613,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 void GameResources::synchronize() {
 	syncStrings(TITLE_MESSAGES, 13);
 	syncStrings(MAIN_MENU_TEXT, 7);
-	syncStrings(CHAR_GEN_TEXT, 10);
+	syncStrings(CHAR_GEN_TEXT, 11);
 	syncStrings(STATUS_TEXT, 4);
 	syncStrings(DIRECTION_NAMES, 4);
 	syncStrings(DUNGEON_MOVES, 4);
