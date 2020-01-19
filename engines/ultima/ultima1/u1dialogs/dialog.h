@@ -28,8 +28,6 @@
 namespace Ultima {
 namespace Ultima1 {
 
-enum BuySell { BUY, SELL };
-
 class Ultima1Game;
 namespace Maps {
 	class Ultima1Map;
@@ -55,27 +53,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Dialog(Shared::GameBase *game);
-
-	/**
-	 * Draws the visual item on the screen
-	 */
-	virtual void draw();
-};
-
-/**
-  * Secondary base class for dialogs that have display for buying and selling
-  */
-class BuySellDialog : public Dialog {
-protected:
-	BuySell _buySell;
-	Common::String _title;
-public:
-	/**
-	 * Constructor
-	 */
-	BuySellDialog(Shared::GameBase *game, BuySell buySell, const Common::String &title) : Dialog(game),
-		_buySell(buySell), _title(title) {}
+	Dialog(Ultima1Game *game);
 
 	/**
 	 * Draws the visual item on the screen

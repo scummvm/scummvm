@@ -563,6 +563,19 @@ const char *const SRC_JESTER_SPEECH2 = "I've got the key!";
 const char *const SRC_BARD_STOLEN = "Iolo stole something!";
 const char *const SRC_JESTER_STOLEN = "The jester stole something!";
 
+const char *const SRC_GROCERY_NAMES[8] = {
+	"Li'l Karelia's Finnish Grocery", "Adventurer's Supply Post", "", "The Brown Bag", "Fresh Food Marketplace",
+	"Rations Unlimited", "Fastest Freshest Food Market", "Exploration Provisioners"
+};
+
+const char *const SRC_NOTHING = "nothing";
+const char *const SRC_SOLD = "Sold!";
+const char *const SRC_CANT_AFFORD = "Thou canst not afford it!";
+const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
+const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
+const char *const SRC_GROCERY_PACKS2 = "each.  How many dost thou";
+const char *const SRC_GROCERY_PACKS3 = "wish to purchase?";
+const char *const SRC_GROCERY_PACKS_FOOD = "%d packs food";
 
 /*-------------------------------------------------------------------*/
 
@@ -617,6 +630,16 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	JESTER_SPEECH2 = SRC_JESTER_SPEECH2;
 	BARD_STOLEN = SRC_BARD_STOLEN;
 	JESTER_STOLEN = SRC_JESTER_STOLEN;
+
+	NOTHING = SRC_NOTHING;
+	SOLD = SRC_SOLD;
+	CANT_AFFORD = SRC_CANT_AFFORD;
+	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
+	GROCERY_SELL = SRC_GROCERY_SELL;
+	GROCERY_PACKS1 = SRC_GROCERY_PACKS1;
+	GROCERY_PACKS2 = SRC_GROCERY_PACKS2;
+	GROCERY_PACKS3 = SRC_GROCERY_PACKS3;
+	GROCERY_PACKS_FOOD = SRC_GROCERY_PACKS_FOOD;
 }
 
 void GameResources::synchronize() {
@@ -665,6 +688,17 @@ void GameResources::synchronize() {
 	syncString(BARD_SPEECH2);
 	syncString(JESTER_SPEECH1);
 	syncString(JESTER_SPEECH2);
+
+	syncString(NOTHING);
+	syncString(SOLD);
+	syncString(CANT_AFFORD);
+	syncStrings(GROCERY_NAMES, 8);
+	syncString(GROCERY_SELL);
+	syncString(GROCERY_PACKS1);
+	syncString(GROCERY_PACKS2);
+	syncString(GROCERY_PACKS3);
+	syncString(GROCERY_PACKS_FOOD);
+
 }
 
 } // End of namespace Ultima1
