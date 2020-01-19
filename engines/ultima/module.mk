@@ -35,6 +35,7 @@ MODULE_OBJS += \
 	shared/engine/messages.o \
 	shared/engine/resources.o \
 	shared/gfx/bitmap.o \
+	shared/gfx/character_input.o \
 	shared/gfx/dungeon_surface.o \
 	shared/gfx/font.o \
 	shared/gfx/info.o \
