@@ -116,6 +116,13 @@ public:
 	 */
 	uint getRandomNumber(uint maxVal) { return _randomSource.getRandomNumber(maxVal); }
 
+	/**
+	 * Gets a random number
+	 */
+	uint getRandomNumber(uint min, uint max) {
+		return min + _randomSource.getRandomNumber(max - min);
+	}
+
     /**
      * Get a reference to the data archive
      */

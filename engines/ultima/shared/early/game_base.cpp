@@ -33,8 +33,7 @@ namespace Ultima {
 namespace Shared {
 
 GameBase::GameBase(): _currentView(nullptr), _font(nullptr), _priorLeftDownTime(0), _priorMiddleDownTime(0),
-		_priorRightDownTime(0), _inputHandler(this), _inputTranslator(&_inputHandler), _randomSource("Ultima"),
-		_gameState(nullptr) {
+		_priorRightDownTime(0), _inputHandler(this), _inputTranslator(&_inputHandler), _gameState(nullptr) {
 }
 
 GameBase::~GameBase() {
@@ -215,6 +214,14 @@ void GameBase::changeView(const Common::String &name) {
 void GameBase::setFont(Gfx::Font *font) {
 	delete _font;
 	_font = font;
+}
+
+uint GameBase::getRandomNumber(uint max) {
+	return g_vm->getRandomNumber(max);
+}
+
+uint GameBase::getRandomNumber(uint min, uint max) {
+	return g_vm->getRandomNumber(min, max);
 }
 
 } // End of namespace Shared

@@ -84,13 +84,13 @@ void Sprites::load(const Common::String &name, uint bpp, uint16 w, uint16 h) {
 
 	// Ensure there's enough capacity for the tileset
 	if (count > size())
-		resize(count);
+		_data.resize(count);
 
 	// Iterate through loading the tile data and creating sprites for them
 	for (size_t idx = 0; idx < count; ++idx) {
 		f.read(buffer, bytesPerTile);
 
-		(*this)[idx] = Sprite(buffer, bpp, w, h);
+		_data[idx] = Sprite(buffer, bpp, w, h);
 	}
 
 	delete[] buffer;

@@ -86,8 +86,9 @@ public:
 	const byte *getBasePtr(int16 x, int16 y) const { return (const byte *)_surface.getBasePtr(x, y); }
 };
 
-class Sprites : public Common::Array<Sprite> {
-private:
+class Sprites {
+protected:
+	Common::Array<Sprite> _data;
 	Point _spriteSize;							// Size of individual sprites
 public:
 	/**
@@ -103,6 +104,21 @@ public:
 	 * Return the default dimensions for tiles
 	 */
 	Point getSpriteSize() const { return _spriteSize; }
+
+	/**
+	 * Return the size of the sprites list
+	 */
+	size_t size() const { return _data.size(); }
+
+	/**
+	 * Returns true if the sprites list is empty
+	 */
+	bool empty() const { return size() == 0; }
+
+	/**
+	 * Return a specific sprite
+	 */
+	virtual Sprite &operator[](uint idx) { return _data[idx]; }
 };
 
 } // End of namespace Gfx
