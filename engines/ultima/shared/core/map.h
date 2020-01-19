@@ -130,6 +130,7 @@ public:
 	Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile
 	Direction _direction;				// Current direction being faced in the underworld
 	bool _fixed;						// Town/city type maps that don't scroll as the player moves
+	uint _dungeonLevel;					// Dungeon level number
 public:
 	/**
 	 * Constructor

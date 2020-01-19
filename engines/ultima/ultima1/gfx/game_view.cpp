@@ -30,6 +30,7 @@
 #include "ultima/ultima1/gfx/viewport_map.h"
 #include "ultima/ultima1/actions/enter.h"
 #include "ultima/ultima1/actions/move.h"
+#include "ultima/ultima1/core/resources.h"
 #include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
@@ -61,8 +62,32 @@ GameView::~GameView() {
 void GameView::draw() {
 	DrawingSupport ds(getSurface());
 	ds.drawGameFrame();
+	drawIndicators();
 
 	Shared::Gfx::VisualContainer::draw();
+}
+
+void GameView::drawIndicators() {
+	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+	Ultima1Map *map = static_cast<Ultima1Map *>(getMap());
+
+	Shared::Gfx::VisualSurface s = getSurface();
+	DrawingSupport ds(s);
+
+	if (true) { //map->_mapType == MAP_DUNGEON) {
+		// Draw the dungeon level indicator
+		ds.drawRightArrow(TextPoint(15, 0));
+		s.writeString(game->_res->DUNGEON_LEVEL, TextPoint(16, 0), game->_textColor);
+		s.writeString(Common::String::format("%2d", map->_dungeonLevel), TextPoint(23, 0), game->_textColor);
+		ds.drawLeftArrow(TextPoint(26, 0));
+
+		// Draw the current direction
+		const char *dir = game->_res->DIRECTION_NAMES[map->_direction - 1];
+		ds.drawRightArrow(TextPoint(16, 19));
+		s.writeString("       ", TextPoint(17, 19), game->_textColor);
+		s.writeString(dir, TextPoint(19 - (7 - strlen(dir)) / 2, 19), game->_textColor);
+		ds.drawLeftArrow(TextPoint(24, 19));
+	}
 }
 
 bool GameView::KeypressMsg(CKeypressMsg &msg) {

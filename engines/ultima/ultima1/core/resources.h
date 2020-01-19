@@ -47,6 +47,7 @@ public:
 	const char *ENTER_QUESTION;
 	const char *ENTERING;
 	const char *THE_CITY_OF;
+	const char *DUNGEON_LEVEL;
 public:
 	GameResources();
 	GameResources(Shared::Resources *resManager);

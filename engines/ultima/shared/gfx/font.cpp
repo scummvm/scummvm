@@ -50,8 +50,7 @@ void Font::writeChar(Graphics::ManagedSurface &surface, unsigned char c, const P
 		byte lineData = charP[y];
 
 		for (int x = 0; x < 8; ++x, lineData <<= 1, ++lineP) {
-			if (lineData & 0x80)
-				*lineP = color;
+			*lineP = (lineData & 0x80) ? color : 0;
 		}
 	}
 }

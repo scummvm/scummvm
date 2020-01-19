@@ -298,6 +298,8 @@ const char *const SRC_ENTERING = "Entering...";
 
 const char *const SRC_THE_CITY_OF = "The city of ";
 
+const char *const SRC_DUNGEON_LEVEL = " Level    ";
+
 /*-------------------------------------------------------------------*/
 
 GameResources::GameResources() : LocalResourceFile("ULTIMA1/DATA") {
@@ -314,6 +316,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	ENTER_QUESTION = SRC_ENTER_QUESTION;
 	ENTERING = SRC_ENTERING;
 	THE_CITY_OF = SRC_THE_CITY_OF;
+	DUNGEON_LEVEL = SRC_DUNGEON_LEVEL;
 }
 
 void GameResources::synchronize() {
@@ -327,6 +330,7 @@ void GameResources::synchronize() {
 	syncString(ENTER_QUESTION);
 	syncString(ENTERING);
 	syncString(THE_CITY_OF);
+	syncString(DUNGEON_LEVEL);
 }
 
 } // End of namespace Ultima1
