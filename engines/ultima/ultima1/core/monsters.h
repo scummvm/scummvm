@@ -39,6 +39,10 @@ enum DungeonWidgetId {
 	UITEM_26 = 26, UITEM_27 = 27
 };
 
+enum DungeonItemId {
+	DITEM_CHEST = 4, DITEM_COFFIN = 5
+};
+
 class U1DungeonMonster : public Shared::DungeonMonster {
 private:
 	DungeonWidgetId _monsterId;
@@ -68,7 +72,9 @@ public:
 /**
  * Encapsulated class for drawing widgets within dungeons
  */
-class DungeonWidget {
+class DungeonWidget : public Shared::MapItem {
+private:
+	uint _itemId;
 private:
 	/**
 	 * Get the drawing data table
@@ -81,9 +87,19 @@ private:
 	static void getPos(const byte *&data, int bitShift, Point &pt);
 public:
 	/**
+	 * Constructor
+	 */
+	DungeonWidget(Shared::Game *game, Shared::Map *map, uint itemId) : Shared::MapItem(game, map), _itemId(itemId) {}
+
+	/**
 	 * Draws a dungeon widget onto the passed surface
 	 */
 	static void drawWidget(Graphics::ManagedSurface &s, DungeonWidgetId widgetId, uint distance, byte color);
+
+	/**
+	 * Handles any post-rendering drawing of specific item types
+	 */
+	virtual void postDraw(Shared::DungeonSurface &s);
 };
 
 } // End of namespace Ultima1

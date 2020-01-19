@@ -87,5 +87,12 @@ void DungeonWidget::getPos(const byte *&data, int bitShift, Point &pt) {
 	pt.y = (*data++ >> bitShift);
 }
 
+void DungeonWidget::postDraw(Shared::DungeonSurface &s) {
+	if (_itemId == DITEM_COFFIN)
+		drawWidget(s, UITEM_COFFIN, 1, _game->_edgeColor);
+	else if (_itemId == DITEM_CHEST)
+		drawWidget(s, MONSTER_MIMIC, 1, _game->_edgeColor);
+}
+
 } // End of namespace Ultima1
 } // End of namespace Ultima

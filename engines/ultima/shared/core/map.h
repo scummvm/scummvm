@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/ptr.h"
 #include "ultima/shared/core/rect.h"
+#include "ultima/shared/gfx/dungeon_surface.h"
 
 namespace Ultima {
 namespace Shared {
@@ -93,7 +94,12 @@ public:
 	/**
 	 * Draw the item
 	 */
-	virtual void draw();
+	virtual void draw(Shared::DungeonSurface &s, uint distance) {}
+
+	/**
+	 * Handles any post-rendering drawing of specific item types
+	 */
+	virtual void postDraw(Shared::DungeonSurface &s) {}
 };
 
 typedef Common::SharedPtr<MapItem> MapItemPtr;
