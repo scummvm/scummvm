@@ -20,44 +20,28 @@
  *
  */
 
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/gfx/game_view.h"
 #include "ultima/ultima1/gfx/text_cursor.h"
-#include "ultima/ultima1/u6gfx/game_view.h"
-#include "ultima/shared/engine/resources.h"
-#include "ultima/shared/early/font_resources.h"
-#include "ultima/shared/early/ultima_early.h"
+#include "common/system.h"
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Gfx {
 
-EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
+#define CURSOR_ANIM_FRAME_TIME 100
 
-Ultima1Game::Ultima1Game() : Shared::Game() {
-	_res = new GameResources();
-	delete _textCursor;
-	_textCursor = new Gfx::U1TextCursor();
+void U1TextCursor::draw() {
+	uint32 time = getTime();
+	if (!_visible || (time - _lastFrameFrame) < CURSOR_ANIM_FRAME_TIME)
+		return;
 
-	if (g_vm->getFeatures() & GF_VGA_ENHANCED) {
-		_videoMode = VIDEOMODE_VGA;
-		loadU6Palette();
-		setFont(new Shared::Gfx::Font((const byte *)&_fontResources->_fontU6[0][0]));
-		_gameView = new U6Gfx::GameView(this);
-	} else {
-		setEGAPalette();
-		_gameView = new U1Gfx::GameView(this);
-	}
+	_lastFrameFrame = time;
+	// TODO: Draw u1 cursor
 }
 
-Ultima1Game::~Ultima1Game() {
-	delete _gameView;
+uint32 U1TextCursor::getTime() {
+	return g_system->getMillis();
 }
 
-void Ultima1Game::starting() {
-	_res->load();
-	_gameView->setView("GameView");
-}
-
+} // End of namespace Gfx
 } // End of namespace Ultima1
 } // End of namespace Ultima

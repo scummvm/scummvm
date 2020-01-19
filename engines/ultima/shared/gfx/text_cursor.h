@@ -20,44 +20,65 @@
  *
  */
 
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/gfx/game_view.h"
-#include "ultima/ultima1/gfx/text_cursor.h"
-#include "ultima/ultima1/u6gfx/game_view.h"
-#include "ultima/shared/engine/resources.h"
-#include "ultima/shared/early/font_resources.h"
-#include "ultima/shared/early/ultima_early.h"
+#ifndef ULTIMA_SHARED_GFX_TEXT_CURSOR_H
+#define ULTIMA_SHARED_GFX_TEXT_CURSOR_H
+
+#include "ultima/shared/core/rect.h"
 
 namespace Ultima {
-namespace Ultima1 {
+namespace Shared {
+namespace Gfx {
 
-EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
-
-Ultima1Game::Ultima1Game() : Shared::Game() {
-	_res = new GameResources();
-	delete _textCursor;
-	_textCursor = new Gfx::U1TextCursor();
-
-	if (g_vm->getFeatures() & GF_VGA_ENHANCED) {
-		_videoMode = VIDEOMODE_VGA;
-		loadU6Palette();
-		setFont(new Shared::Gfx::Font((const byte *)&_fontResources->_fontU6[0][0]));
-		_gameView = new U6Gfx::GameView(this);
-	} else {
-		setEGAPalette();
-		_gameView = new U1Gfx::GameView(this);
+/**
+ * Base class for text cursors, and is used by those games that don't have a visible cursor
+ */
+class TextCursor {
+protected:
+	bool _visible;
+	Point _pos;
+public:
+	TextCursor() : _visible(false) {
 	}
-}
+	virtual ~TextCursor() {
+	}
 
-Ultima1Game::~Ultima1Game() {
-	delete _gameView;
-}
+	/**
+	 * Returns true if the cursor is visible
+	 */
+	bool isVisible() const {
+		return _visible;
+	}
 
-void Ultima1Game::starting() {
-	_res->load();
-	_gameView->setView("GameView");
-}
+	/**
+	 * Returns the position of the cursor
+	 */
+	Point getPosition() const {
+		return _pos;
+	}
 
-} // End of namespace Ultima1
+	/**
+	 * Sets the visibility of the cursor
+	 */
+	void setVisible(bool isVis) {
+		_visible = isVis;
+	}
+
+	/**
+	 * Sets the position of the cursor
+	 */
+	void setPosition(const Point &pt) {
+		_pos = pt;
+	}
+
+	/**
+	 * Draw the cursor
+	 */
+	virtual void draw() {
+	}
+};
+
+} // End of namespace Gfx
+} // End of namespace Shared
 } // End of namespace Ultima
+
+#endif
