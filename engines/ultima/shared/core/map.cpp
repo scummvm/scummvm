@@ -21,6 +21,8 @@
  */
 
 #include "ultima/shared/core/map.h"
+#include "ultima/shared/early/game.h"
+#include "ultima/shared/gfx/visual_item.h"
 
 namespace Ultima {
 namespace Shared {
@@ -159,6 +161,11 @@ void Map::MapBase::setDirection(Shared::Direction dir) {
 }
 
 /*------------------------------------------------------------------------*/
+
+void MapWidget::addInfoMsg(const Common::String &text, bool newLine) {
+	CInfoMsg msg(text, newLine);
+	msg.execute(_game->getView());
+}
 
 bool MapWidget::canMoveTo(const Point &destPos) {
 	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)_map->width() || destPos.y >= (int)_map->height()) {

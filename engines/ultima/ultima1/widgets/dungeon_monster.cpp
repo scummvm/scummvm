@@ -21,6 +21,8 @@
  */
 
 #include "ultima/ultima1/widgets/dungeon_monster.h"
+#include "ultima/ultima1/map/map.h"
+#include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/shared/early/ultima_early.h"
 
@@ -64,7 +66,6 @@ void DungeonMonster::update(bool isPreUpdate) {
 void DungeonMonster::movement() {
 	Point playerPos = _map->_currentTransport->_position;
 	Point delta = playerPos - _position;
-	Shared::MapTile tle;
 
 	if (delta.x != 0 && canMoveTo(Point(_position.x + SGN(delta.x), _position.y)))
 		_position.x += SGN(delta.x);
@@ -95,6 +96,25 @@ bool DungeonMonster::canMoveTo(Shared::Map::MapBase *map, MapWidget *widget, con
 		return false;
 
 	return true;
+}
+
+void DungeonMonster::attack(bool isAllowed) {
+	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
+	Point playerPos = _map->_currentTransport->_position;
+	Point delta = playerPos - _position;
+
+	// Get tile details for both the player and the attacking creature
+	Map::U1MapTile playerTile,creatureTile;
+	_map->getTileAt(playerPos, &playerTile);
+	_map->getTileAt(_position, &creatureTile);
+
+	if (playerTile._isBeams || (creatureTile._isDoor && (playerTile._isDoor || playerTile._isWall || playerTile._isSecretDoor)))
+		return;
+
+	// Write attack line
+	addInfoMsg(Common::String::format(game->_res->ATTACKED_BY, _name.c_str()));
+
+	// TODO: rest of monster attacks
 }
 
 } // End of namespace Widgets

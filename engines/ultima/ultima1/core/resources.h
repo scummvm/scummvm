@@ -53,6 +53,7 @@ public:
 	const char *DUNGEON_LEVEL;
 	const char *PASS;
 	const char *HUH;
+	const char *ATTACKED_BY;
 public:
 	GameResources();
 	GameResources(Shared::Resources *resManager);

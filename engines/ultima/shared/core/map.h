@@ -478,6 +478,13 @@ public:
 	virtual ~MapWidget() {}
 
 	/**
+	 * Adds a text string to the info area
+	 * @param text		Text to add
+	 * @param newLine	Whether to apply a newline at the end
+	 */
+	void addInfoMsg(const Common::String &text, bool newLine = true);
+
+	/**
 	 * Get the tile for the widget
 	 */
 	virtual uint getTileNum() const { return 0; }
