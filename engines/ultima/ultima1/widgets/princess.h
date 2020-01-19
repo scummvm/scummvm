@@ -23,13 +23,16 @@
 #ifndef ULTIMA_ULTIMA1_PEOPLE_PRINCESS_H
 #define ULTIMA_ULTIMA1_PEOPLE_PRINCESS_H
 
-#include "ultima/ultima1/widgets/person.h"
+#include "ultima/ultima1/widgets/wench.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-class Princess : public Person {
+/**
+ * Handles the princess NPCs
+ */
+class Princess : public Wench {
 protected:
 	/**
 	 * Handles moving creatures
@@ -40,7 +43,7 @@ public:
 	 * Constructor
 	 */
 	Princess(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
-		Person(game, map, 22, hitPoints) {}
+		Wench(game, map, 22, hitPoints) {}
 
 	/**
 	 * Destructor

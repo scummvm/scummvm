@@ -21,13 +21,40 @@
  */
 
 #include "ultima/ultima1/widgets/princess.h"
+#include "ultima/shared/core/utils.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
 void Princess::movement() {
+	if (!areGuardsHostile()) {
+		// Until guards turn hostile, the princesses exhibit standard wench behaviour 
+		Wench::movement();
+	} else {
+		// When the guards are hostile, keep the princess moving towards the player
+		Point playerPos = _map->_currentTransport->_position;
+		Point delta(SGN(_position.x - playerPos.x), SGN(_position.y - playerPos.y));
+		bool moved = false;
 
+		// Randomly choose whether to give precedence to a X or Y move
+		if (_game->getRandomNumber(1, 100) >= 50) {
+			// Delta X comes first
+			if (delta.x != 0)
+				moved = canMoveTo(Point(delta.x, 0));
+			if (!moved && delta.y != 0)
+				moved = canMoveTo(Point(0, delta.y));
+		} else {
+			// Delta Y comes first
+			if (delta.y != 0)
+				moved = canMoveTo(Point(0, delta.y));
+			if (!moved && delta.x != 0)
+				moved = canMoveTo(Point(delta.x, 0));
+		}
+
+		if (moved)
+			_game->playFX(4);
+	}
 }
 
 } // End of namespace Widgets

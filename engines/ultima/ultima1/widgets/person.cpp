@@ -36,6 +36,17 @@ int Person::getRandomDelta() const {
 	return _game->getRandomNumber(2) - 1;
 }
 
+bool Person::moveBy(const Point &delta) {
+	// TODO: Movement allowed on tile 63.. is this the gate of the princess' cells?
+	Point newPos = _position + delta;
+	if (canMoveTo(newPos)) {
+		_position = newPos;
+		return true;
+	} else {
+		return false;
+	}
+}
+
 } // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima

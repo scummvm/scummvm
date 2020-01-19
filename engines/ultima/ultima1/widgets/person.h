@@ -54,6 +54,13 @@ protected:
 	Point getRandomMoveDelta() const {
 		return Point(getRandomDelta(), getRandomDelta());
 	}
+
+	/**
+	 * Moves by a given delta if the destination is available
+	 * @param delta		Delta to move character by
+	 * @returns			True if the move was able to be done
+	 */
+	bool moveBy(const Point &delta);
 public:
 	/**
 	 * Constructor
