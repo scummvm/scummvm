@@ -30,13 +30,6 @@ namespace Ultima1 {
 
 #define LOCATION_COUNT 84
 
-struct LocationPerson {
-	int _id;
-	int _x;
-	int _y;
-	uint _hitPoints;
-};
-
 class GameResources : public Shared::LocalResourceFile {
 protected:
 	/**
@@ -49,7 +42,7 @@ public:
 	const char *LOCATION_NAMES[LOCATION_COUNT];
 	byte LOCATION_X[LOCATION_COUNT];
 	byte LOCATION_Y[LOCATION_COUNT];
-	LocationPerson LOCATION_PEOPLE[150];
+	int LOCATION_PEOPLE[150][4];
 	const char *BLOCKED;
 	const char *ENTER_QUESTION;
 	const char *ENTERING;

@@ -185,12 +185,12 @@ void Ultima1Map::loadWidgets() {
 
 	if (_mapType == MAP_CITY || _mapType == MAP_CASTLE) {
 		for (int idx = 0; idx < 15; ++idx) {
-			LocationPerson &lp = _game->_res->LOCATION_PEOPLE[_mapStyle * 15 + idx];
-			if (lp._id == -1)
+			const int *lp = _game->_res->LOCATION_PEOPLE[_mapStyle * 15 + idx];
+			if (lp[0] == -1)
 				break;
 
-			Person *person = new Person(_game, this, lp._id, lp._hitPoints);
-			person->_position = Point(lp._x, lp._y);
+			Person *person = new Person(_game, this, lp[0], lp[3]);
+			person->_position = Point(lp[1], lp[2]);
 			addWidget(person);
 		}
 	}
