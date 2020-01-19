@@ -43,12 +43,12 @@ public:
 	 * Write out a string
 	 */
 	int writeString(Graphics::ManagedSurface &surface, const Common::String &msg,
-		const Point &pt, byte color, byte bgColor = 0);
+		Point &pt, byte color, byte bgColor = 0);
 
 	/**
 	 * Draw a character
 	 */
-	void writeChar(Graphics::ManagedSurface &surface, unsigned char c, const Point &pt,
+	void writeChar(Graphics::ManagedSurface &surface, unsigned char c, Point &pt,
 		byte color, byte bgColor = 0);
 
 	/**

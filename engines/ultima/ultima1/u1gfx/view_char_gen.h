@@ -31,6 +31,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
+#define ATTRIBUTE_COUNT 6
+
 using Shared::CKeypressMsg;
 
 /**
@@ -41,11 +43,50 @@ class ViewCharacterGeneration : public Shared::Gfx::VisualContainer {
 	bool KeypressMsg(CKeypressMsg &msg);
 private:
 	enum Flag {
-		FLAG_FRAME = 1, FLAG_ATTRIBUTES = 2, FLAG_ATTR_POINTERS = 4, FLAG_HELP = 8, FLAG_RACE = 16, FLAG_SEX = 32,
+		FLAG_FRAME = 1, FLAG_ATTRIBUTES = 2, FLAG_ATTR_POINTERS = 4, FLAG_HELP = 8, FLAG_RACE = 16,
+		FLAG_SEX = 32, FLAG_CLASS = 64,
 		FLAG_INITIAL = FLAG_FRAME | FLAG_ATTRIBUTES | FLAG_ATTR_POINTERS | FLAG_HELP
 	};
-	int _flags;
+	uint _flags;
 	Shared::Character _character;
+	int _pointsRemaining;
+	int _selectedAttribute;
+	uint *_attributes[ATTRIBUTE_COUNT];
+private:
+	/**
+	 * Draw the outer frame for the view
+	 */
+	void drawFrame(Shared::Gfx::VisualSurface &s);
+
+	/**
+	 * Draw the attribute list
+	 */
+	void drawAttributes(Shared::Gfx::VisualSurface &s);
+
+	/**
+	 * Draw the pointers to the currently selected attribute
+	 */
+	void drawAttributePointers(Shared::Gfx::VisualSurface &s);
+
+	/**
+	 * Draw the help text
+	 */
+	void drawHelp(Shared::Gfx::VisualSurface &s);
+
+	/**
+	 * Draw the race selection
+	 */
+	void drawRace(Shared::Gfx::VisualSurface &s);
+
+	/**
+	 * Draw the sex selection
+	 */
+	 void drawSex(Shared::Gfx::VisualSurface &s);
+
+	 /**
+	  * Draw the class selection
+	  */
+	 void drawClass(Shared::Gfx::VisualSurface &s);
 public:
 	CLASSDEF;
 
