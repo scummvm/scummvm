@@ -105,12 +105,7 @@ public:
 	virtual void starting();
 
 	/**
-	 * Main draw method for the game
-	 */
-	void draw();
-
-	/**
-	 * Called once every frame to update the game
+	 * Called once every frame to update the game and render the view
 	 */
 	void update();
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_SPRITE_H
-#define ULTIMA_SPRITE_H
+#ifndef ULTIMA_SPRITES_H
+#define ULTIMA_SPRITES_H
 
 #include "common/array.h"
 #include "graphics/managed_surface.h"
@@ -61,18 +61,14 @@ public:
 	void draw(Graphics::ManagedSurface &dest, const Common::Point &pt);
 
 	/**
-	 * Return the width of the sprite
+	 * Return the width of the sprite 
 	 */
-	uint16 w() const {
-		return _surface.w;
-	}
+	uint16 w() const { return _surface.w; }
 
 	/**
 	 * Return the height of the sprite
 	 */
-	uint16 h() const {
-		return _surface.h;
-	}
+	uint16 h() const { return _surface.h; }
 };
 
 class Sprites : public Common::Array<Sprite> {
