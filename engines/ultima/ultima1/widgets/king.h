@@ -43,6 +43,11 @@ public:
 		Person(game, map, 20, hitPoints) {}
 
 	/**
+	 * Constructor
+	 */
+	King(Ultima1Game *game, Map::Ultima1Map::MapBase *map) : Person(game, map, 20) {}
+
+	/**
 	 * Destructor
 	 */
 	virtual ~King() {}

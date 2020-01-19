@@ -26,7 +26,10 @@
 namespace Ultima {
 namespace Shared {
 
-/*------------------------------------------------------------------------*/
+void Creature::synchronize(Common::Serializer &s) {
+	StandardWidget::synchronize(s);
+	s.syncAsSint16LE(_hitPoints);
+}
 
 void Creature::update(bool isPreUpdate) {
 	if (isPreUpdate) {

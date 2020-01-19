@@ -124,6 +124,14 @@ class Map {
 		bool isValid() const { return _mapId != -1; }
 
 		/**
+		 * Handles loading and saving viewport
+		 */
+		void synchronize(Common::Serializer &s) {
+			s.syncAsUint16LE(_topLeft.x);
+			s.syncAsUint16LE(_topLeft.y);
+		}
+
+		/**
 		 * Resets the viewport position, so it'll get recalculated the next call to getViewportPosition
 		 */
 		void reset() { _mapId = -1; }
@@ -146,6 +154,7 @@ public:
 	 */
 	class MapBase {
 	private:
+		Map *_map;							// Map manager reference
 		Game *_game;						// Game reference
 	protected:
 		MapId _mapId;						// The map Id
@@ -168,7 +177,7 @@ public:
 		/**
 		 * Constructor
 		 */
-		MapBase(Game *game) : _game(game), _currentTransport(nullptr), _mapId(0), _mapIndex(0),
+		MapBase(Game *game, Map *map) : _game(game), _map(map), _currentTransport(nullptr), _mapId(0), _mapIndex(0),
 			_mapStyle(0) {}
 
 		/**
@@ -315,6 +324,11 @@ public:
 	 * Handles loading and saving the map's data
 	 */
 	virtual void synchronize(Common::Serializer &s);
+
+	/**
+	 * Instantiates a widget type by name
+	 */
+	virtual MapWidget *createWidget(Shared::Map::MapBase *map, const Common::String &name) = 0;
 
 	/**
 	 * Gets a tile at a given position
@@ -487,6 +501,11 @@ public:
 	 * Destructor
 	 */
 	virtual ~MapWidget() {}
+
+	/**
+	 * Handles loading and saving games
+	 */
+	virtual void synchronize(Common::Serializer &s);
 
 	/**
 	 * Adds a text string to the info area

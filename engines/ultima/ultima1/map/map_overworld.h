@@ -36,7 +36,7 @@ private:
 	 */
 	void loadWidgets();
 public:
-	MapOverworld(Ultima1Game *game) : Ultima1Map::MapBase(game) {}
+	MapOverworld(Ultima1Game *game, Ultima1Map *map) : Ultima1Map::MapBase(game, map) {}
 	virtual ~MapOverworld() {}
 
 	/**

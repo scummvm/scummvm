@@ -55,6 +55,12 @@ public:
 		Person(game, map, 17, hitPoints), _moved(false) {}
 
 	/**
+	 * Constructor
+	 */
+	Guard(Ultima1Game *game, Map::Ultima1Map::MapBase *map) :
+		Person(game, map, 17), _moved(false) {}
+
+	/**
 	 * Destructor
 	 */
 	virtual ~Guard() {}

@@ -60,7 +60,7 @@ private:
 	 */
 	void spawnMonsterAt(const Point &pt);
 public:
-	MapDungeon(Ultima1Game *game) : Ultima1Map::MapBase(game), _dungeonLevel(0),
+	MapDungeon(Ultima1Game *game, Ultima1Map *map) : Ultima1Map::MapBase(game, map), _dungeonLevel(0),
 		_random("UltimaDungeons") {}
 	virtual ~MapDungeon() {}
 

@@ -31,6 +31,9 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+/**
+ * Base class for NPC creatures
+ */
 class Person : public Shared::Creature {
 private:
 	uint _tileNum;
@@ -67,6 +70,12 @@ public:
 	 */
 	Person(Ultima1Game *game, Map::Ultima1Map::MapBase *map, uint tileNum, int hitPoints) :
 		Shared::Creature(game, map, hitPoints), _game(game), _map(map), _tileNum(tileNum) {}
+
+	/**
+	 * Constructor
+	 */
+	Person(Ultima1Game *game, Map::Ultima1Map::MapBase *map, uint tileNum) :
+		Shared::Creature(game, map), _game(game), _map(map), _tileNum(tileNum) {}
 
 	/**
 	 * Destructor

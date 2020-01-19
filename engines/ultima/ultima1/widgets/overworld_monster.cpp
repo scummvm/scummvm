@@ -39,6 +39,12 @@ OverworldMonster::OverworldMonster(Shared::Game *game, Shared::Map::MapBase *map
 	_attackStrength = g->_res->OVERWORLD_MONSTER_DAMAGE[_monsterId];
 }
 
+void OverworldMonster::synchronize(Common::Serializer &s) {
+	Shared::Creature::synchronize(s);
+	s.syncAsUint16LE(_tileNum);
+	s.syncAsUint16LE(_monsterId);
+	s.syncAsUint16LE(_attackStrength);
+}
 
 uint OverworldMonster::attackDistance() const {
 	Point playerPos = _map->_currentTransport->_position;
@@ -47,6 +53,10 @@ uint OverworldMonster::attackDistance() const {
 	int threshold = _tileNum == 23 || _tileNum == 25 || _tileNum == 31 || _tileNum == 47 ? 3 : 1;
 	int distance = MIN(diff.x, diff.y);
 	return distance <= threshold ? threshold : 0;
+}
+
+void OverworldMonster::movement() {
+	// TODO
 }
 
 void OverworldMonster::attack() {
