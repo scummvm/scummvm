@@ -24,11 +24,12 @@
 #define ULTIMA_ULTIMA1_CORE_MONSTERS_H
 
 #include "ultima/shared/core/monsters.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
-enum DungeonMonsterId {
+enum DungeonWidgetId {
 	MONSTER_NONE = -1, MONSTER_RANGER = 0, MONSTER_SKELETON = 1, MONSTER_THIEF = 2, MONSTER_GIANT_RAT = 3,
 	MONSTER_RAT = 4, MONSTER_SPIDER = 5, MONSTER_VIPER = 6, MONSTER_ORC = 7, MONSTER_CYCLOPS = 8,
 	MONSTER_GELATINOUS_CUBE = 9, MONSTER_ETTIN = 10, MONSTER_MIMIC = 11, MONSTER_LIZARD_MAN = 12,
@@ -40,7 +41,7 @@ enum DungeonMonsterId {
 
 class U1DungeonMonster : public Shared::DungeonMonster {
 private:
-	DungeonMonsterId _monsterId;
+	DungeonWidgetId _monsterId;
 public:
 	/**
 	 * Constructor
@@ -58,6 +59,16 @@ public:
 	virtual bool isBlockingView() const;
 };
 
+/**
+ * Encapsulated class for drawing widgets within dungeons
+ */
+class DungeonWidget {
+public:
+	/**
+	 * Draws a dungeon widget onto the passed surface
+	 */
+	static void drawWidget(Graphics::ManagedSurface &s, DungeonWidgetId widgetId, uint distance, byte color);
+};
 
 } // End of namespace Ultima1
 } // End of namespace Ultima

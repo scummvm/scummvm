@@ -20,21 +20,24 @@
  *
  */
 
+#include "ultima/ultima1/gfx/viewport_dungeon.h"
 #include "ultima/ultima1/core/monsters.h"
+#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {
+namespace U1Gfx {
 
-bool U1DungeonMonster::isBlockingView() const {
-	return _monsterId != MONSTER_INVISIBLE_SEEKER && _monsterId != MONSTER_MIMIC
-		&& _monsterId != MONSTER_GELATINOUS_CUBE;
+Shared::DungeonSurface ViewportDungeon::getSurface() {
+	Graphics::ManagedSurface src(*g_vm->_screen, _bounds);
+	return Shared::DungeonSurface(src, _bounds, getGame(), &drawWidget);
 }
 
-/*-------------------------------------------------------------------*/
-
-void DungeonWidget::drawWidget(Graphics::ManagedSurface &s, DungeonWidgetId widgetId, uint distance, byte color) {
-	// TODO
+void ViewportDungeon::drawWidget(Graphics::ManagedSurface &s, uint widgetId, uint distance, byte color) {
+	// Pass on to the dungeon widget drawer
+	DungeonWidget::drawWidget(s, (DungeonWidgetId)widgetId, distance, color);
 }
 
+} // End of namespace U1Gfx
 } // End of namespace Ultima1
 } // End of namespace Ultima

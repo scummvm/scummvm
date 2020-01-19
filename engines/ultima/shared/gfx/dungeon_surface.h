@@ -28,6 +28,8 @@
 namespace Ultima {
 namespace Shared {
 
+typedef void(*DrawWidgetFn)(Graphics::ManagedSurface &s, uint widgetId, uint distance, byte color);
+
 class Game;
 
 /**
@@ -35,13 +37,14 @@ class Game;
  */
 class DungeonSurface : public Gfx::VisualSurface {
 private:
-	Game *_game;
 	byte _edgeColor;
+	byte _widgetColor;
+	DrawWidgetFn _widgetFn;
 public:
 	/**
 	 * Constructor
 	 */
-	DungeonSurface(const Graphics::ManagedSurface &src, const Rect &bounds, Game *game);
+	DungeonSurface(const Graphics::ManagedSurface &src, const Rect &bounds, Game *game, DrawWidgetFn widgetFn);
 
 	/**
 	 * Draws a wall
@@ -64,10 +67,14 @@ public:
 	void drawRightEdge(uint distance);
 
 	/**
-	 * Draw a monster or, failing that, the given tile at a given cell and distance
+	 * Draws a monster at a given distance from the player
 	 */
-	void drawCell(uint distance, const Point &pt);
+	void drawMonsterAt(uint distance, uint monsterId);
 
+	/**
+	 * Draws a monster or item at a given distance from the player
+	 */
+	void drawWidget(uint widgetId, uint distance, byte color);
 };
 
 } // End of namespace Shared
