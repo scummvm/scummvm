@@ -69,6 +69,11 @@ public:
 	DungeonWidget(Shared::Game *game, Shared::Map::MapBase *map, const Point &pt, DungeonItemId itemId);
 
 	/**
+	 * Constructor
+	 */
+	DungeonWidget(Shared::Game *game, Shared::Map::MapBase *map) : Shared::DungeonWidget(game, map) {}
+
+	/**
 	 * Draws a dungeon widget onto the passed surface
 	 */
 	static void drawWidget(Graphics::ManagedSurface &s, DungeonWidgetId widgetId, uint distance, byte color);

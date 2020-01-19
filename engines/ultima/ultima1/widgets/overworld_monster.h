@@ -49,7 +49,6 @@ protected:
 	 */
 	virtual uint attackDistance() const override;
 
-
 	/**
 	 * Handles attacks
 	 */
@@ -72,6 +71,12 @@ public:
 		const Point &pt, Shared::Direction dir = Shared::DIR_NONE);
 
 	/**
+	 * Constructor
+	 */
+	OverworldMonster(Shared::Game *game, Shared::Map::MapBase *map) : Shared::Creature(game, map),
+		_tileNum(0), _monsterId(NESS_CREATURE), _attackStrength(0) {}
+
+	/**
 	 * Destructor
 	 */
 	virtual ~OverworldMonster() {}
@@ -80,6 +85,11 @@ public:
 	 * Returns the monster's type
 	 */
 	OverworldMonsterId id() const { return _monsterId; }
+
+	/**
+	 * Handles loading and saving games
+	 */
+	virtual void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Widgets

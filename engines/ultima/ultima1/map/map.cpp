@@ -27,6 +27,18 @@
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/widgets/dungeon_widget.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/widgets/bard.h"
+#include "ultima/ultima1/widgets/dungeon_monster.h"
+#include "ultima/ultima1/widgets/dungeon_player.h"
+#include "ultima/ultima1/widgets/dungeon_widget.h"
+#include "ultima/ultima1/widgets/guard.h"
+#include "ultima/ultima1/widgets/king.h"
+#include "ultima/ultima1/widgets/merchant.h"
+#include "ultima/ultima1/widgets/merchant.h"
+#include "ultima/ultima1/widgets/overworld_monster.h"
+#include "ultima/ultima1/widgets/princess.h"
+#include "ultima/ultima1/widgets/transport.h"
+#include "ultima/ultima1/widgets/wench.h"
 #include "ultima/shared/core/file.h"
 #include "ultima/shared/early/ultima_early.h"
 
@@ -56,7 +68,7 @@ void SurroundingTotals::load(Ultima1Map *map) {
 
 /*------------------------------------------------------------------------*/
 
-Ultima1Map::MapBase::MapBase(Ultima1Game *game) : Shared::Map::MapBase(game), _game(game) {
+Ultima1Map::MapBase::MapBase(Ultima1Game *game, Ultima1Map *map) : Shared::Map::MapBase(game, map), _game(game) {
 }
 
 void Ultima1Map::MapBase::getTileAt(const Point &pt, Shared::MapTile *tile) {
@@ -139,10 +151,10 @@ bool U1MapTile::isGround() const {
 
 Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Map(), _game(game), _mapType(MAP_OVERWORLD) {
 	Ultima1Map::clear();
-	_mapCity = new MapCity(game);
-	_mapCastle = new MapCastle(game);
-	_mapDungeon = new MapDungeon(game);
-	_mapOverworld = new MapOverworld(game);
+	_mapCity = new MapCity(game, this);
+	_mapCastle = new MapCastle(game, this);
+	_mapDungeon = new MapDungeon(game, this);
+	_mapOverworld = new MapOverworld(game, this);
 }
 
 Ultima1Map::~Ultima1Map() {
@@ -186,6 +198,24 @@ void Ultima1Map::load(Shared::MapId mapId) {
 
 bool Ultima1Map::isLordBritishCastle() const {
 	return _mapType == MAP_CASTLE && static_cast<MapCityCastle *>(_mapArea)->getMapIndex() == 0;
+}
+
+#define REGISTER_WIDGET(NAME) if (name == "NAME") return new Widgets::NAME(_game, (Ultima1Map::MapBase *)map) 
+
+Shared::MapWidget *Ultima1Map::createWidget(Shared::Map::MapBase *map, const Common::String &name) {
+	REGISTER_WIDGET(Bard);
+	REGISTER_WIDGET(DungeonMonster);
+	REGISTER_WIDGET(DungeonPlayer);
+	REGISTER_WIDGET(DungeonWidget);
+	REGISTER_WIDGET(Guard);
+	REGISTER_WIDGET(King);
+	REGISTER_WIDGET(Merchant);
+	REGISTER_WIDGET(OverworldMonster);
+	REGISTER_WIDGET(Princess);
+	REGISTER_WIDGET(TransportOnFoot);
+	REGISTER_WIDGET(Wench);
+
+	error("Unknown widget type '%s'", name.c_str());
 }
 
 } // End of namespace Map

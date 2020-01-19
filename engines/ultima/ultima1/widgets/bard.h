@@ -52,6 +52,11 @@ public:
 		Person(game, map, 19, hitPoints) {}
 
 	/**
+	 * Constructor
+	 */
+	Bard(Ultima1Game *game, Map::Ultima1Map::MapBase *map) : Person(game, map, 19) {}
+
+	/**
 	 * Destructor
 	 */
 	virtual ~Bard() {}

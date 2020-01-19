@@ -54,6 +54,12 @@ public:
 		Shared::Creature(game, map, hitPoints, pt, dir), Shared::DungeonCreature(), _monsterId(monsterId) {}
 
 	/**
+	 * Constructor
+	 */
+	DungeonMonster(Shared::Game *game, Shared::Map::MapBase *map) :
+		Shared::Creature(game, map), Shared::DungeonCreature(), _monsterId(MONSTER_NONE) {}
+
+	/**
 	 * Destructor
 	 */
 	virtual ~DungeonMonster() {}

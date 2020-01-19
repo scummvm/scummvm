@@ -50,12 +50,7 @@ void Map::MapBase::load(MapId mapId) {
 }
 
 void Map::MapBase::synchronize(Common::Serializer &s) {
-	s.syncAsUint16LE(_mapId);
-	s.syncAsUint16LE(_mapIndex);
-	s.syncAsUint16LE(_mapStyle);
-//	s.syncAsUint16LE(_viewportPos.x);
-//	s.syncAsUint16LE(_viewportPos.y);
-	s.syncString(_name);
+	_viewportPos.synchronize(s);
 
 	// Synchronize the list of widgets
 }
@@ -172,6 +167,13 @@ void Map::MapBase::setDirection(Shared::Direction dir) {
 }
 
 /*------------------------------------------------------------------------*/
+
+void MapWidget::synchronize(Common::Serializer &s) {
+	s.syncAsUint16LE(_position.x);
+	s.syncAsSint16LE(_position.y);
+	s.syncAsByte(_direction);
+	s.syncString(_name);
+}
 
 void MapWidget::addInfoMsg(const Common::String &text, bool newLine) {
 	CInfoMsg msg(text, newLine);

@@ -53,7 +53,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	MapCityCastle(Ultima1Game *game) : Ultima1Map::MapBase(game), _guardsHostile(false) {}
+	MapCityCastle(Ultima1Game *game, Ultima1Map *map) : Ultima1Map::MapBase(game, map), _guardsHostile(false) {}
 
 	/**
 	 * Destructor
@@ -84,7 +84,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	MapCity(Ultima1Game *game) : MapCityCastle(game) {}
+	MapCity(Ultima1Game *game, Ultima1Map *map) : MapCityCastle(game, map) {}
 
 	/**
 	 * Destructor
@@ -107,7 +107,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	MapCastle(Ultima1Game *game) : MapCityCastle(game), _castleKey(0) {}
+	MapCastle(Ultima1Game *game, Ultima1Map *map) : MapCityCastle(game, map), _castleKey(0) {}
 
 	/**
 	 * Destructor

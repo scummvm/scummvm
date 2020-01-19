@@ -46,6 +46,11 @@ public:
 		Wench(game, map, 22, hitPoints) {}
 
 	/**
+	 * Constructor
+	 */
+	Princess(Ultima1Game *game, Map::Ultima1Map::MapBase *map) : Wench(game, map, 22) {}
+
+	/**
 	 * Destructor
 	 */
 	virtual ~Princess() {}

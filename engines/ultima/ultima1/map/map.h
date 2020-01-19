@@ -81,7 +81,7 @@ public:
 		/**
 		 * Constructor
 		 */
-		MapBase(Ultima1Game *game);
+		MapBase(Ultima1Game *game, Ultima1Map *map);
 		
 		/**
 		 * Destructor
@@ -128,6 +128,11 @@ public:
 	 * Returns true if Lord British's castle is the currently active map
 	 */
 	bool isLordBritishCastle() const;
+
+	/**
+	 * Instantiates a widget type by name
+	*/
+	virtual Shared::MapWidget *createWidget(Shared::Map::MapBase *map, const Common::String &name) override;
 };
 
 /**
