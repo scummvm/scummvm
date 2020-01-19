@@ -24,6 +24,7 @@
 #define ULTIMA_ULTIMA1_CORE_MAP_H
 
 #include "ultima/shared/core/map.h"
+#include "common/random.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -113,6 +114,7 @@ struct SurroundingTotals {
 class Ultima1Map : public Shared::Map {
 private:
 	Ultima1Game *_game;
+	Common::RandomSource _random;
 private:
 	/**
 	 * Load the overworld map
@@ -148,6 +150,16 @@ private:
 	 * Loads a underworld/dungeon map
 	 */
 	void loadDungeonMap();
+
+	/**
+	 * Sets up a deterministic random seed for generating dungeon data
+	 */
+	void setRandomSeed();
+
+	/**
+	 * Gets a random number
+	 */
+	uint getRandomNumber(uint min, uint max) { return min + _random.getRandomNumber(max - min); }
 public:
 	MapType _mapType;					// Type of map
 	uint _mapStyle;						// Map style category for towns & castles
