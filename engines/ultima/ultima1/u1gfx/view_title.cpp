@@ -34,7 +34,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-BEGIN_MESSAGE_MAP(ViewTitle, Shared::Gfx::VisualContainer)
+BEGIN_MESSAGE_MAP(ViewTitle, Shared::Gfx::VisualItem)
 	ON_MESSAGE(ShowMsg)
 	ON_MESSAGE(KeypressMsg)
 	ON_MESSAGE(FrameMsg)
@@ -50,7 +50,7 @@ void load16(Graphics::ManagedSurface &s, Common::ReadStream &in) {
 	}
 }
 
-ViewTitle::ViewTitle(Shared::TreeItem *parent) : Shared::Gfx::VisualContainer("Title", Rect(0, 0, 320, 200), parent) {
+ViewTitle::ViewTitle(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("Title", Rect(0, 0, 320, 200), parent) {
 	setMode(TITLEMODE_COPYRIGHT);
 
 	// Load the Origin logo
@@ -87,7 +87,7 @@ ViewTitle::ViewTitle(Shared::TreeItem *parent) : Shared::Gfx::VisualContainer("T
 }
 
 void ViewTitle::draw() {
-	VisualContainer::draw();
+	VisualItem::draw();
 
 	switch (_mode) {
 	case TITLEMODE_COPYRIGHT:
@@ -282,7 +282,7 @@ void ViewTitle::setMode(TitleMode mode) {
 }
 
 bool ViewTitle::ShowMsg(CShowMsg &msg) {
-	Shared::Gfx::VisualContainer::ShowMsg(msg);
+	Shared::Gfx::VisualItem::ShowMsg(msg);
 
 	if (_mode == TITLEMODE_MAIN_MENU) {
 		// Returning to main menu from another screen

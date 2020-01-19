@@ -34,14 +34,14 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-BEGIN_MESSAGE_MAP(ViewCharacterGeneration, Shared::Gfx::VisualContainer)
+BEGIN_MESSAGE_MAP(ViewCharacterGeneration, Shared::Gfx::VisualItem)
 	ON_MESSAGE(KeypressMsg)
 	ON_MESSAGE(ShowMsg)
 	ON_MESSAGE(TextInputMsg)
 END_MESSAGE_MAP()
 
 ViewCharacterGeneration::ViewCharacterGeneration(Shared::TreeItem *parent) :
-		Shared::Gfx::VisualContainer("CharGen", Rect(0, 0, 320, 200), parent) {
+		Shared::Gfx::VisualItem("CharGen", Rect(0, 0, 320, 200), parent) {
 }
 
 void ViewCharacterGeneration::setMode(uint flags) {
@@ -89,7 +89,7 @@ void ViewCharacterGeneration::setMode(uint flags) {
 }
 
 void ViewCharacterGeneration::draw() {
-	VisualContainer::draw();
+	Shared::Gfx::VisualItem::draw();
 	Shared::Gfx::VisualSurface s = getSurface();
 
 	if (_flags & FLAG_FRAME)
@@ -269,13 +269,13 @@ void ViewCharacterGeneration::setClass(int classNum) {
 }
 
 bool ViewCharacterGeneration::ShowMsg(CShowMsg &msg) {
-	Shared::Gfx::VisualContainer::ShowMsg(msg);
+	Shared::Gfx::VisualItem::ShowMsg(msg);
 	setMode(FLAG_INITIAL);
 	return true;
 }
 
 bool ViewCharacterGeneration::HideMsg(CHideMsg &msg) {
-	Shared::Gfx::VisualContainer::HideMsg(msg);
+	Shared::Gfx::VisualItem::HideMsg(msg);
 	getGame()->_textCursor->setVisible(false);
 	return true;
 }

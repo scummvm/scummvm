@@ -44,9 +44,9 @@ private:
 	void setup();
 public:
 	GameResources *_res;
-	Shared::Gfx::VisualContainer *_gameView;
-	Shared::Gfx::VisualContainer *_titleView;
-	Shared::Gfx::VisualContainer *_charGenView;
+	Shared::Gfx::VisualItem *_gameView;
+	Shared::Gfx::VisualItem *_titleView;
+	Shared::Gfx::VisualItem *_charGenView;
 public:
 	CLASSDEF;
 	Ultima1Game();

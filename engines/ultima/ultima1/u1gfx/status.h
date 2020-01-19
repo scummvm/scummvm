@@ -36,7 +36,7 @@ class Status : public Shared::Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
 public:
 	CLASSDEF;
-	Status(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("Status", Rect(248, 168, 320, 200), parent) {}
+	Status(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("Status", TextRect(31, 21, 40, 25), parent) {}
 	virtual ~Status() {}
 
 	/**
