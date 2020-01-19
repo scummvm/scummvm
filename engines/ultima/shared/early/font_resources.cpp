@@ -297,6 +297,17 @@ FontResources::FontResources(Resources *resManager) : LocalResourceFile(resManag
 
 void FontResources::synchronize() {
 	syncBytes2D((byte *)_font8x8, 256, 8);
+
+	// Load in the Ultima VI font if present
+	Common::File f;
+	if (f.exists("u6.ch")) {
+		f.open("u6.ch");
+		for (int idx = 0; idx < 256; ++idx)
+			f.read(&_fontU6[idx][0], 8);
+	} else {
+		for (int idx = 0; idx < 256; ++idx)
+			Common::fill(&_fontU6[idx][0], &_fontU6[idx][8], 0);
+	}
 }
 
 } // End of namespace Shared

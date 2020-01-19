@@ -24,6 +24,7 @@
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/gfx/game_view.h"
 #include "ultima/ultima1/u6gfx/game_view.h"
+#include "ultima/shared/early/font_resources.h"
 #include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
@@ -37,6 +38,7 @@ Ultima1Game::Ultima1Game() : Shared::Game() {
 	if (g_vm->getFeatures() & GF_VGA_ENHANCED) {
 		_videoMode = VIDEOMODE_VGA;
 		loadU6Palette();
+		setFont(new Shared::Gfx::Font((const byte *)&_fontResources->_fontU6[0][0]));
 		_gameView = new U6Gfx::GameView(this);
 	} else {
 		setEGAPalette();
