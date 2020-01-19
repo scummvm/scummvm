@@ -30,9 +30,10 @@ namespace Shared {
 const byte WALL_ARRAY_X[] = { 0, 72, 108, 126, 135, 144 };
 const byte WALL_ARRAY_Y[] = { 0, 36, 54, 63, 68, 72 };
 
-DungeonSurface::DungeonSurface(const Graphics::ManagedSurface &src, const Rect &bounds, Game *game) :
-		Gfx::VisualSurface(src, bounds), _game(game) {
-	_edgeColor = _edgeColor;
+DungeonSurface::DungeonSurface(const Graphics::ManagedSurface &src, const Rect &bounds, Game *game, DrawWidgetFn widgetFn) :
+		Gfx::VisualSurface(src, bounds), _widgetFn(widgetFn) {
+	_edgeColor = game->_edgeColor;
+	_widgetColor = 0;
 }
 
 void DungeonSurface::drawWall(uint distance) {
@@ -68,22 +69,22 @@ void DungeonSurface::drawRightEdge(uint distance) {
 	}
 }
 
-void DungeonSurface::drawCell(uint distance, const Point &pt) {
-	Map *map = _game->getMap();
-	MapTile tile;
-	map->getTileAt(pt, &tile);
-
-	if (tile._widget) {
-		// Draw a monster
-		if (map->isWallOrDoorway(pt))
+void DungeonSurface::drawMonsterAt(uint distance, uint monsterId) {
+	if (distance < 5) {
+		if (monsterId == 9) {
+			// Gelatinous cube
 			drawWall(distance);
-
-
-
-		//static_cast<DungeonMonster *>(tile._widget)->draw(distance);
+			drawLeftEdge(distance);
+			drawRightEdge(distance);
+		} else {
+			drawWidget(monsterId, distance, _edgeColor);
+		}
 	}
 }
 
+void DungeonSurface::drawWidget(uint widgetId, uint distance, byte color) {
+	_widgetFn(*this, widgetId, distance, color);
+}
 
 } // End of namespace Shared
 } // End of namespace Ultima

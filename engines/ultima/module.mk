@@ -55,6 +55,7 @@ MODULE_OBJS += \
 	ultima1/core/people.o \
 	ultima1/core/resources.o \
 	ultima1/core/transports.o \
+	ultima1/gfx/viewport_dungeon.o \
 	ultima1/gfx/drawing_support.o \
 	ultima1/gfx/game_view.o \
 	ultima1/gfx/sprites.o \

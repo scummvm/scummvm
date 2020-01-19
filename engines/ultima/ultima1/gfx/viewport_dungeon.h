@@ -20,54 +20,33 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_GFX_VIEWPORT_DUNGEON_H
-#define ULTIMA_SHARED_GFX_VIEWPORT_DUNGEON_H
+#ifndef ULTIMA_ULTIMA1_GFX_VIEWPORT_DUNGEON_H
+#define ULTIMA_ULTIMA1_GFX_VIEWPORT_DUNGEON_H
 
-#include "ultima/shared/gfx/visual_item.h"
-#include "ultima/shared/gfx/dungeon_surface.h"
+#include "ultima/shared/gfx/viewport_dungeon.h"
 
 namespace Ultima {
-namespace Shared {
+namespace Ultima1 {
+namespace U1Gfx {
 
-class ViewportDungeon : public Gfx::VisualItem {
-	DECLARE_MESSAGE_MAP;
+class ViewportDungeon : public Shared::ViewportDungeon {
 private:
 	/**
-	 * Returns the distance to an occupied cell, if any
+	 * Draws a dungeon widget
 	 */
-	uint distanceToOccupiedCell(const Point &delta);
-
-	/**
-	 * Returns if a cell at a given delta to the player is occupied
-	 */
-	bool isCellOccupied(const Point &delta);
-
-	/**
-	 * Returns true if a monster is at a given position, and it has the blocking attribute
-	 */
-	bool isMonsterBlocking(const Point &pt);
-
-	/**
-	 * Draw a monster or, failing that, the given tile at a given cell and distance
-	 */
-	void drawCell(uint distance, const Point &pt);
+	static void drawWidget(Graphics::ManagedSurface &s, uint widgetId, uint distance, byte color);
 protected:
 	/**
 	 * Returns the surface for rendering the dungeon
 	 */
-	virtual DungeonSurface getSurface() = 0;
+	virtual Shared::DungeonSurface getSurface();
 public:
-	CLASSDEF;
-	ViewportDungeon(TreeItem *parent) : Gfx::VisualItem("ViewportDungeon", Rect(8, 8, 312, 168), parent) {}
+	ViewportDungeon(TreeItem *parent) : Shared::ViewportDungeon(parent) {}
 	virtual ~ViewportDungeon() {}
-
-	/**
-	 * Draws the dungeon
-	 */
-	virtual void draw();
 };
 
-} // End of namespace Shared
-} // End of namespace Ultima
+} // End of namespace U1Gfx
+} // End of namespace Ultima1
+} // End of namespace Xeen
 
 #endif

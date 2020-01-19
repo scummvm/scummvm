@@ -23,10 +23,10 @@
 #include "ultima/ultima1/gfx/game_view.h"
 #include "ultima/shared/core/map.h"
 #include "ultima/shared/gfx/info.h"
-#include "ultima/shared/gfx/viewport_dungeon.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/gfx/drawing_support.h"
 #include "ultima/ultima1/gfx/status.h"
+#include "ultima/ultima1/gfx/viewport_dungeon.h"
 #include "ultima/ultima1/gfx/viewport_map.h"
 #include "ultima/ultima1/actions/enter.h"
 #include "ultima/ultima1/actions/move.h"
@@ -44,7 +44,7 @@ END_MESSAGE_MAP()
 GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
 	_info = new Shared::Info(this);
 	_status = new Status(this);
-	_viewportDungeon = new Shared::ViewportDungeon(nullptr);
+	_viewportDungeon = new ViewportDungeon(this);
 	_viewportMap = new ViewportMap(this);
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Actions::Enter(this);
@@ -64,7 +64,18 @@ void GameView::draw() {
 	ds.drawGameFrame();
 	drawIndicators();
 
-	Shared::Gfx::VisualContainer::draw();
+	_info->draw();
+	_status->draw();
+	
+	Ultima1Map *map = static_cast<Ultima1Map *>(getMap());
+	switch (map->_mapType) {
+	case MAP_DUNGEON:
+		_viewportDungeon->draw();
+		break;
+	default:
+		_viewportMap->draw();
+		break;
+	}
 }
 
 void GameView::drawIndicators() {

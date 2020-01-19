@@ -24,7 +24,6 @@
 #include "ultima/shared/core/monsters.h"
 #include "ultima/shared/core/map.h"
 #include "ultima/shared/early/game.h"
-#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Shared {
@@ -98,11 +97,6 @@ void ViewportDungeon::draw() {
 	// TODO
 }
 
-DungeonSurface ViewportDungeon::getSurface() {
-	Graphics::ManagedSurface src(*g_vm->_screen, _bounds);
-	return DungeonSurface(src, _bounds, getGame());
-}
-
 uint ViewportDungeon::distanceToOccupiedCell(const Point &delta) {
 	Point d = delta;
 	uint distance;
@@ -125,6 +119,24 @@ bool ViewportDungeon::isMonsterBlocking(const Point &pt) {
 	getMap()->getTileAt(pt, &tile);
 	DungeonMonster *monster = dynamic_cast<DungeonMonster *>(tile._widget);
 	return monster != nullptr && monster->isBlockingView();
+}
+
+void ViewportDungeon::drawCell(uint distance, const Point &pt) {
+	DungeonSurface s = getSurface();
+	Map *map = getMap();
+
+	MapTile tile;
+	map->getTileAt(pt, &tile);
+
+	if (tile._widget) {
+		// Draw a monster
+		if (map->isWallOrDoorway(pt))
+			s.drawWall(distance);
+
+
+
+		//static_cast<DungeonMonster *>(tile._widget)->draw(distance);
+	}
 }
 
 } // End of namespace Shared
