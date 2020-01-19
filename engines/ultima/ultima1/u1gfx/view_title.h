@@ -28,21 +28,13 @@
 #include "graphics/managed_surface.h"
 
 namespace Ultima {
-
-namespace Shared {
-	class Info;
-	class ViewportDungeon;
-	namespace Actions {
-		class Action;
-	}
-}
-	
 namespace Ultima1 {
 namespace U1Gfx {
 
 class Status;
 class ViewportMap;
 using Shared::CKeypressMsg;
+using Shared::CFrameMsg;
 
 /**
  * This class implements a standard view screen that shows a status and log area, as well as either
@@ -51,8 +43,28 @@ using Shared::CKeypressMsg;
 class ViewTitle : public Shared::Gfx::VisualContainer {
 	DECLARE_MESSAGE_MAP;
 	bool KeypressMsg(CKeypressMsg &msg);
+	bool FrameMsg(CFrameMsg &msg);
 private:
 	Graphics::ManagedSurface _logo;
+	enum TitleMode { TITLEMODE_COPYRIGHT, TITLEMODE_PRESENTS, TITLEMODE_CASTLE };
+	TitleMode _mode;
+	uint32 _expiryTime;
+	int _counter;
+private:
+	/**
+	 * Shows the initial copyright screen
+	 */
+	void drawCopyrightView();
+
+	/**
+	 * Draws the presents view
+	 */
+	void drawPresentsView();
+
+	/**
+	 * Draws the castle view
+	 */
+	void drawCastleView();
 public:
 	CLASSDEF;
 	ViewTitle(Shared::TreeItem *parent = nullptr);

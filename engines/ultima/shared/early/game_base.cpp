@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/system.h"
 #include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/early/game_base.h"
 #include "ultima/shared/engine/debugger.h"
@@ -234,6 +235,10 @@ uint GameBase::getRandomNumber(uint min, uint max) {
 
 void GameBase::sleep(uint time) {
 	g_vm->_events->sleep(time);
+}
+
+uint32 GameBase::getMillis() const {
+	return g_system->getMillis();
 }
 
 } // End of namespace Shared
