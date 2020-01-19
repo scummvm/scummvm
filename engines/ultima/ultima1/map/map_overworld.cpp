@@ -49,9 +49,13 @@ void MapOverworld::load(Shared::MapId mapId) {
 }
 
 void MapOverworld::loadWidgets() {
-	// Set up widget for the player
-	_currentTransport = new Widgets::TransportOnFoot(_game, this);
-	addWidget(_currentTransport);
+	// Note: the overworld player, transports, and monsters are persistant, so we only have to set up
+	// the initial "on foot" transport the first time
+	if (_widgets.empty()) {
+		// Set up widget for the player
+		_currentTransport = new Widgets::TransportOnFoot(_game, this);
+		addWidget(_currentTransport);
+	}
 }
 
 Point MapOverworld::getDeltaPosition(const Point &delta) {

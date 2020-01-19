@@ -60,7 +60,7 @@ public:
 	/**
 	 * Called when the game starts
 	 */
-	void starting();
+	virtual void starting(bool isLoading) override;
 
 	/**
 	 * Returns true if the game can currently be saved
