@@ -63,6 +63,16 @@ public:
  * Encapsulated class for drawing widgets within dungeons
  */
 class DungeonWidget {
+private:
+	/**
+	 * Get the drawing data table
+	 */
+	static const byte *getData();
+
+	/**
+	 * Extracts a drawing position
+	 */
+	static void getPos(const byte *&data, int bitShift, Point &pt);
 public:
 	/**
 	 * Draws a dungeon widget onto the passed surface

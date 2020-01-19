@@ -21,6 +21,9 @@
  */
 
 #include "ultima/ultima1/core/monsters.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,8 +35,43 @@ bool U1DungeonMonster::isBlockingView() const {
 
 /*-------------------------------------------------------------------*/
 
+const byte OFFSET_Y[5] = { 139, 112, 96, 88, 84 };
+enum { POINT_AT = 126, END_OF_DRAW = 127 };
+
 void DungeonWidget::drawWidget(Graphics::ManagedSurface &s, DungeonWidgetId widgetId, uint distance, byte color) {
-	// TODO
+	Point pt, priorPt;
+	int yOffset = OFFSET_Y[distance];
+	int shift = (distance == 4) ? 5 : distance;
+
+	// Get a pointer to the drawing data
+	const byte *data = getData();
+	data += READ_LE_UINT16(data + widgetId * 2);
+
+	while (*data != END_OF_DRAW) {
+		// Check for a point vs a line
+		bool isPoint = *data == POINT_AT;
+		if (isPoint)
+			++data;
+
+		// Get the next position
+		getPos(data, shift, pt);
+		pt.y += yOffset;
+
+		// Draw point or line
+		if (!isPoint)
+			s.drawLine(priorPt.x, priorPt.y, pt.x, pt.y, color);
+		priorPt = pt;
+	}
+}
+
+const byte *DungeonWidget::getData() {
+	Ultima1Game *game = static_cast<Ultima1Game *>(g_vm->_game);
+	return game->_res->DUNGEON_DRAW_DATA;
+}
+
+void DungeonWidget::getPos(const byte *&data, int bitShift, Point &pt) {
+	pt.x = (*data++ >> bitShift) + 160;
+	pt.y = (*data++ >> bitShift);
 }
 
 } // End of namespace Ultima1
