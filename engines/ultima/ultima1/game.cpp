@@ -24,6 +24,7 @@
 #include "ultima/ultima1/core/game_state.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/u1gfx/view_game.h"
+#include "ultima/ultima1/u1gfx/view_char_gen.h"
 #include "ultima/ultima1/u1gfx/view_title.h"
 #include "ultima/ultima1/u1gfx/text_cursor.h"
 #include "ultima/ultima1/u6gfx/game_view.h"
@@ -47,10 +48,12 @@ Ultima1Game::Ultima1Game() : Shared::Game() {
 		setFont(new Shared::Gfx::Font((const byte *)&_fontResources->_fontU6[0][0]));
 		_gameView = new U6Gfx::GameView(this);
 		_titleView = nullptr;
+		_charGenView = nullptr;
 	} else {
 		setEGAPalette();
 		_gameView = new U1Gfx::ViewGame(this);
 		_titleView = new U1Gfx::ViewTitle(this);
+		_charGenView = new U1Gfx::ViewCharacterGeneration(this);
 	}
 }
 

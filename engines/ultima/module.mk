@@ -69,6 +69,7 @@ MODULE_OBJS += \
 	ultima1/u1gfx/sprites.o \
 	ultima1/u1gfx/status.o \
 	ultima1/u1gfx/text_cursor.o \
+	ultima1/u1gfx/view_char_gen.o \
 	ultima1/u1gfx/view_game.o \
 	ultima1/u1gfx/view_title.o \
 	ultima1/u1gfx/viewport_dungeon.o \

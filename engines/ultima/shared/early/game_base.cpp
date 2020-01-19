@@ -179,6 +179,10 @@ void GameBase::setView(Gfx::VisualItem *view) {
 void GameBase::setView(const Common::String &viewName) {
 	_currentView = dynamic_cast<Gfx::VisualItem *>(findByName(viewName));
 	assert(_currentView);
+	
+	// Signal the view that it's now active
+	CShowMsg showMsg;
+	showMsg.execute(_currentView);
 }
 
 void GameBase::update() {

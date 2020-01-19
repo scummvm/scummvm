@@ -280,6 +280,14 @@ bool ViewTitle::KeypressMsg(CKeypressMsg &msg) {
 	uint32 time = getGame()->getMillis();
 
 	if (_mode == TITLEMODE_MAIN_MENU) {
+		if (msg._keyState.keycode == Common::KEYCODE_a || msg._keyState.keycode == Common::KEYCODE_b) {
+			// Hide the cursor
+			Shared::Gfx::TextCursor *textCursor = getGame()->_textCursor;
+			textCursor->setVisible(false);
+
+			if (msg._keyState.keycode == Common::KEYCODE_a)
+				setView("CharGen");
+		}
 
 	} else if (_mode != TITLEMODE_TRADEMARKS) {
 		// Switch to the trademarks view
