@@ -20,42 +20,51 @@
  *
  */
 
-#include "ultima/ultima1/widgets/urban_widget.h"
-#include "ultima/ultima1/maps/map_city_castle.h"
-#include "ultima/ultima1/maps/map_tile.h"
+#ifndef ULTIMA_ULTIMA1_WIDGETS_OVERWORLD_WIDGET_H
+#define ULTIMA_ULTIMA1_WIDGETS_OVERWORLD_WIDGET_H
+
+#include "ultima/shared/maps/map.h"
+#include "ultima/shared/maps/map_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-Shared::Maps::MapWidget::CanMove UrbanWidget::canMoveTo(const Point &destPos) {
-	Shared::Maps::MapWidget::CanMove result = Shared::Maps::MapWidget::canMoveTo(destPos);
-	if (result != UNSET)
-		return result;
+/**
+ * Encapsulated class for drawing widgets within dungeons
+ */
+class OverworldWidget : public Shared::Maps::MapWidget {
+public:
+	Common::String _name;
+	uint _tileNum;
+public:
+	DECLARE_WIDGET(OverworldWidget)
 
-	// Get the details of the position
-	Maps::U1MapTile destTile;
-	_map->getTileAt(destPos, &destTile);
+	/**
+	 * Constructor
+	 */
+	OverworldWidget(Shared::Game *game, Shared::Maps::MapBase *map, uint tileNum, const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) :
+		Shared::Maps::MapWidget(game, map, pt, dir), _tileNum(tileNum)  {}
 
-	return destTile._tileNum == Maps::CTILE_1 || destTile._tileNum == Maps::CTILE_51 ? YES : NO;
-}
+	/**
+	 * Constructor
+	 */
+	OverworldWidget(Shared::Game *game, Shared::Maps::MapBase *map) : Shared::Maps::MapWidget(game, map),
+		_tileNum(0) {}
 
-bool UrbanWidget::moveBy(const Point &delta) {
-	// TODO: Movement allowed on tile 63.. is this the gate of the princess' cells?
-	Point newPos = _position + delta;
-	if (canMoveTo(newPos) == YES) {
-		_position = newPos;
-		return true;
-	} else {
-		return false;
-	}
-}
+	/**
+	 * Get the tile number for the person
+	 */
+	virtual uint getTileNum() const override { return _tileNum; }
 
-void UrbanWidget::synchronize(Common::Serializer &s) {
-	MapWidget::synchronize(s);
-	s.syncAsUint16LE(_tileNum);
-}
+	/**
+	 * Handles loading and saving games
+	 */
+	virtual void synchronize(Common::Serializer &s) override;
+};
 
 } // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

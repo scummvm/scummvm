@@ -20,38 +20,16 @@
  *
  */
 
-#include "ultima/ultima1/widgets/urban_widget.h"
-#include "ultima/ultima1/maps/map_city_castle.h"
-#include "ultima/ultima1/maps/map_tile.h"
+#include "ultima/ultima1/widgets/overworld_widget.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-Shared::Maps::MapWidget::CanMove UrbanWidget::canMoveTo(const Point &destPos) {
-	Shared::Maps::MapWidget::CanMove result = Shared::Maps::MapWidget::canMoveTo(destPos);
-	if (result != UNSET)
-		return result;
-
-	// Get the details of the position
-	Maps::U1MapTile destTile;
-	_map->getTileAt(destPos, &destTile);
-
-	return destTile._tileNum == Maps::CTILE_1 || destTile._tileNum == Maps::CTILE_51 ? YES : NO;
-}
-
-bool UrbanWidget::moveBy(const Point &delta) {
-	// TODO: Movement allowed on tile 63.. is this the gate of the princess' cells?
-	Point newPos = _position + delta;
-	if (canMoveTo(newPos) == YES) {
-		_position = newPos;
-		return true;
-	} else {
-		return false;
-	}
-}
-
-void UrbanWidget::synchronize(Common::Serializer &s) {
+void OverworldWidget::synchronize(Common::Serializer &s) {
 	MapWidget::synchronize(s);
 	s.syncAsUint16LE(_tileNum);
 }
