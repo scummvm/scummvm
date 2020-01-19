@@ -45,6 +45,16 @@ Game *TreeItem::getGame() {
 	return dynamic_cast<Game *>(treeItem);
 }
 
+const Shared::Game *TreeItem::getGame() const {
+	const TreeItem *treeItem = this;
+
+	while (treeItem->getParent()) {
+		treeItem = treeItem->getParent();
+	}
+
+	return dynamic_cast<const Shared::Game *>(treeItem);
+}
+
 TreeItem *TreeItem::getLastSibling() {
 	TreeItem *item = this;
 	while (item->getNextSibling())
