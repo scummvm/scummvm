@@ -24,7 +24,6 @@
 #define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_WIDGET_H
 
 #include "ultima/shared/core/widgets.h"
-#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -42,59 +41,6 @@ enum DungeonWidgetId {
 
 enum DungeonItemId {
 	DITEM_CHEST = 4, DITEM_COFFIN = 5
-};
-
-class DungeonMonster : public Shared::Creature, public Shared::DungeonCreature {
-private:
-	DungeonWidgetId _monsterId;
-protected:
-	/**
-	 * Handles moving creatures
-	 */
-	virtual void movement();
-public:
-	/**
-	 * Returns true if the given widget can move to a given position on the map
-	 */
-	static bool canMoveTo(Shared::Map::MapBase *map, MapWidget *widget, const Point &destPos);
-public:
-	/**
-	 * Constructor
-	 */
-	DungeonMonster(Shared::Game *game, Shared::Map::MapBase *map, DungeonWidgetId monsterId, int hitPoints,
-		const Point &pt, Shared::Direction dir = Shared::DIR_NONE) :
-		Shared::Creature(game, map, hitPoints, pt, dir), Shared::DungeonCreature(), _monsterId(monsterId) {}
-
-	/**
-	 * Destructor
-	 */
-	virtual ~DungeonMonster() {}
-
-	/**
-	 * Returns true if a monster blocks the background behind him
-	 */
-	virtual bool isBlockingView() const;
-
-	/**
-	 * Draw a monster
-	 */
-	virtual void draw(Shared::DungeonSurface &s, uint distance);
-
-	/**
-	 * Called to update the widget at the end of a turn
-	 * @param isPreUpdate		Update is called twice in succesion during the end of turn update.
-	 *		Once with true for all widgets, then with it false
-	 */
-	virtual void update(bool isPreUpdate);
-
-	/**
-	 * Returns true if the given widget can move to a given position on the map
-	 */
-	virtual bool canMoveTo(const Point &destPos);
-	/**
-	 * Returns the monster's type
-	 */
-	DungeonWidgetId id() const { return _monsterId; }
 };
 
 /**
