@@ -20,16 +20,36 @@
  *
  */
 
-#include "ultima/ultima1/people/princess.h"
+#ifndef ULTIMA_ULTIMA1_PEOPLE_WENCH_H
+#define ULTIMA_ULTIMA1_PEOPLE_WENCH_H
+
+#include "ultima/ultima1/widgets/person.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace People {
+namespace Widgets {
 
-void Princess::update() {
+class Wench : public Person {
+public:
+	/**
+	 * Constructor
+	 */
+	Wench(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
+		Person(game, map, 50, hitPoints) {}
 
-}
+	/**
+	 * Destructor
+	 */
+	virtual ~Wench() {}
 
-} // End of namespace People
+	/**
+	 * Called to update the character at the end of a turn
+	 */
+	virtual void update();
+};
+
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

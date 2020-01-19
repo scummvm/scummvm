@@ -20,36 +20,16 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_PEOPLE_PRINCESS_H
-#define ULTIMA_ULTIMA1_PEOPLE_PRINCESS_H
-
-#include "ultima/ultima1/people/person.h"
+#include "ultima/ultima1/widgets/princess.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace People {
+namespace Widgets {
 
-class Princess : public Person {
-public:
-	/**
-	 * Constructor
-	 */
-	Princess(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
-		Person(game, map, 22, hitPoints) {}
+void Princess::update() {
 
-	/**
-	 * Destructor
-	 */
-	virtual ~Princess() {}
+}
 
-	/**
-	 * Called to update the character at the end of a turn
-	 */
-	virtual void update();
-};
-
-} // End of namespace People
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
-
-#endif

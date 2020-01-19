@@ -63,12 +63,6 @@ MODULE_OBJS += \
 	ultima1/map/map_city_castle.o \
 	ultima1/map/map_dungeon.o \
 	ultima1/map/map_overworld.o \
-	ultima1/people/bard.o \
-	ultima1/people/guard.o \
-	ultima1/people/king.o \
-	ultima1/people/person.o \
-	ultima1/people/princess.o \
-	ultima1/people/wench.o \
 	ultima1/u1gfx/drawing_support.o \
 	ultima1/u1gfx/game_view.o \
 	ultima1/u1gfx/info.o \
@@ -78,6 +72,12 @@ MODULE_OBJS += \
 	ultima1/u1gfx/viewport_dungeon.o \
 	ultima1/u1gfx/viewport_map.o \
 	ultima1/u6gfx/game_view.o \
+	ultima1/widgets/bard.o \
+	ultima1/widgets/guard.o \
+	ultima1/widgets/king.o \
+	ultima1/widgets/person.o \
+	ultima1/widgets/princess.o \
+	ultima1/widgets/wench.o \
 	ultima1/game.o
 endif
 

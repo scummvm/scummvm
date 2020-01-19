@@ -61,11 +61,19 @@ public:
 		MapWidget(game, map, pt, name) {}
 
 	/**
+	 * Destructor
+	 */
+	virtual ~DungeonWidget() {}
+
+	/**
 	 * Draws an item
 	 */
 	virtual void draw(DungeonSurface &s, uint distance) = 0;
 };
 
+/**
+ * Base class for dungeon monsters
+ */
 class DungeonMonster : public Monster {
 public:
 	/**

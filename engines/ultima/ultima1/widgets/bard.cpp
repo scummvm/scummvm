@@ -20,16 +20,16 @@
  *
  */
 
-#include "ultima/ultima1/people/king.h"
+#include "ultima/ultima1/widgets/bard.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace People {
+namespace Widgets {
 
-void King::update() {
+void Bard::update() {
 
 }
 
-} // End of namespace People
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima

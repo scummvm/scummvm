@@ -20,16 +20,36 @@
  *
  */
 
-#include "ultima/ultima1/people/bard.h"
+#ifndef ULTIMA_ULTIMA1_PEOPLE_GUARD_H
+#define ULTIMA_ULTIMA1_PEOPLE_GUARD_H
+
+#include "ultima/ultima1/widgets/person.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace People {
+namespace Widgets {
 
-void Bard::update() {
+class Guard : public Person {
+public:
+	/**
+	 * Constructor
+	 */
+	Guard(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
+		Person(game, map, 17, hitPoints) {}
 
-}
+	/**
+	 * Destructor
+	 */
+	virtual ~Guard() {}
 
-} // End of namespace People
+	/**
+	 * Called to update the character at the end of a turn
+	 */
+	virtual void update();
+};
+
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif
