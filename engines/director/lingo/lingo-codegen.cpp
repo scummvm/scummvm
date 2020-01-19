@@ -479,6 +479,76 @@ void Lingo::processIf(int startlabel, int endlabel, int finalElse) {
 	}
 }
 
+void Lingo::varAssign(Datum &var, Datum &value) {
+	if (var.type != VAR && var.type != REFERENCE) {
+		warning("varAssign: assignment to non-variable");
+		return;
+	}
+
+	if (var.u.sym->type != INT && var.u.sym->type != VOID &&
+			var.u.sym->type != FLOAT && var.u.sym->type != STRING) {
+		warning("varAssign: assignment to non-variable '%s'", var.u.sym->name.c_str());
+		return;
+	}
+
+	if ((var.u.sym->type == STRING || var.u.sym->type == VOID) && var.u.sym->u.s) // Free memory if needed
+		delete var.u.sym->u.s;
+
+	if (var.u.sym->type == POINT || var.u.sym->type == RECT || var.u.sym->type == ARRAY)
+		delete var.u.sym->u.farr;
+
+	if (value.type == INT) {
+		var.u.sym->u.i = value.u.i;
+	} else if (value.type == FLOAT) {
+		var.u.sym->u.f = value.u.f;
+	} else if (value.type == STRING) {
+		var.u.sym->u.s = new Common::String(*value.u.s);
+		delete value.u.s;
+	} else if (value.type == POINT) {
+		var.u.sym->u.farr = new FloatArray(*value.u.farr);
+		delete value.u.farr;
+	} else if (value.type == SYMBOL) {
+		var.u.sym->u.i = value.u.i;
+	} else if (value.type == OBJECT) {
+		var.u.sym->u.s = value.u.s;
+	} else {
+		warning("varAssign: unhandled type: %s", value.type2str());
+		var.u.sym->u.s = value.u.s;
+	}
+
+	var.u.sym->type = value.type;
+}
+
+Datum Lingo::varFetch(Datum &var) {
+	Datum result;
+	result.type = VOID;
+	if (var.type != VAR && var.type != REFERENCE) {
+		warning("varFetch: fetch from non-variable");
+		return result;
+	}
+
+	result.type = var.u.sym->type;
+
+	if (result.u.sym->type == INT)
+		result.u.i = var.u.sym->u.i;
+	else if (var.u.sym->type == FLOAT)
+		result.u.f = var.u.sym->u.f;
+	else if (var.u.sym->type == STRING)
+		result.u.s = new Common::String(*var.u.sym->u.s);
+	else if (var.u.sym->type == POINT)
+		result.u.farr = var.u.sym->u.farr;
+	else if (var.u.sym->type == SYMBOL)
+		result.u.i = var.u.sym->u.i;
+	else if (var.u.sym->type == VOID)
+		result.u.s = new Common::String(var.u.sym->name);
+	else {
+		warning("varFetch: unhandled type: %s", var.type2str());
+		result.type = VOID;
+	}
+
+	return result;
+}
+
 void Lingo::codeFactory(Common::String &name) {
 	_currentFactory = name;
 

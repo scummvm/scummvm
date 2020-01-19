@@ -60,7 +60,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x1b, LC::cb_field,		"" },
 	{ 0x1c, LC::c_tell,			"" },
 	{ 0x1d, LC::c_telldone,		"" },
-	{ 0x1e, LC::cb_array,		"" },
+	{ 0x1e, LC::cb_list,		"" },
 	{ 0x41, LC::c_intpush,		"b" },
 	{ 0x42, LC::c_argcnoretpush,"b" },
 	{ 0x43, LC::c_argcpush,		"b" },
@@ -253,17 +253,17 @@ void LC::cb_v4assign() {
 		}
 		break;
 	default:
-		warning("cb_v4putvalue: unknown operator %d", op);
+		warning("cb_v4assign: unknown operator %d", op);
 		break;
 	}
 }
 
 
-void LC::cb_array() {
+void LC::cb_list() {
 	Datum nargs = g_lingo->pop();
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
 		Datum result;
-		warning("STUB: cb_array()");
+		warning("STUB: cb_list()");
 
 		for (int i = 0; i < nargs.u.i; i++)
 			g_lingo->pop();
@@ -271,7 +271,7 @@ void LC::cb_array() {
 		result.type = VOID;
 		g_lingo->push(result);
 	} else {
-		warning("cb_array: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
+		warning("cb_list: first arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
 	}
 }
 
@@ -297,14 +297,15 @@ void LC::cb_globalpush() {
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (!s) {
-		warning("Global %s not found", name.c_str());
+		warning("Variable %s not found", name.c_str());
 	} else if (s && !s->global) {
 		warning("Variable %s is local, not global", name.c_str());
 	}
 
-	Datum result;
-	result.type = VOID;
-	warning("STUB: cb_globalpush %s", name.c_str());
+	Datum target;
+	target.type = VAR;
+	target.u.sym = s;
+	Datum result = g_lingo->varFetch(target);
 	g_lingo->push(result);
 }
 
@@ -315,13 +316,18 @@ void LC::cb_globalassign() {
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (!s) {
-		warning("Global %s not found", name.c_str());
+		warning("Variable %s not found", name.c_str());
+		g_lingo->pop();
+		return;
 	} else if (s && !s->global) {
 		warning("Variable %s is local, not global", name.c_str());
 	}
 
-	warning("STUB: cb_globalassign %s", name.c_str());
-	g_lingo->pop();
+	Datum target;
+	target.type = VAR;
+	target.u.sym = s;
+	Datum source = g_lingo->pop();
+	g_lingo->varAssign(target, source);
 }
 
 
@@ -336,9 +342,10 @@ void LC::cb_varpush() {
 		warning("Variable %s is global, not local", name.c_str());
 	}
 
-	Datum result;
-	result.type = VOID;
-	warning("STUB: cb_varpush %s", name.c_str());
+	Datum target;
+	target.type = VAR;
+	target.u.sym = s;
+	Datum result = g_lingo->varFetch(target);
 	g_lingo->push(result);
 }
 
@@ -350,12 +357,17 @@ void LC::cb_varassign() {
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (!s) {
 		warning("Variable %s not found", name.c_str());
+		g_lingo->pop();
+		return;
 	} else if (s && s->global) {
 		warning("Variable %s is global, not local", name.c_str());
 	}
 
-	warning("STUB: cb_varassign %s", name.c_str());
-	g_lingo->pop();
+	Datum target;
+	target.type = VAR;
+	target.u.sym = s;
+	Datum source = g_lingo->pop();
+	g_lingo->varAssign(target, source);
 }
 
 
