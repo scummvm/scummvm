@@ -38,8 +38,6 @@ Game::Game() : GameBase() {
 	_fontResources = new FontResources();
 	_fontResources->load();
 	setFont(new Gfx::Font((const byte *)&_fontResources->_font8x8[0][0]));
-
-	setPalette();
 }
 
 Game::~Game() {
@@ -47,43 +45,51 @@ Game::~Game() {
 	delete _gameState;
 }
 
-void Game::setPalette() {
-	switch (_gameState->_videoMode) {
-	case CGA: {
-		static const byte PALETTE[4][3] = { { 0, 0, 0 }, { 0xAA, 0xAA, 0 }, {0xAA, 0, 0xAA }, {0xAA, 0xAA, 0xAA } };
-		g_vm->_screen->setPalette(&PALETTE[0][0], 0, 4);
+void Game::setCGAPalette() {
+	static const byte PALETTE[4][3] = { { 0, 0, 0 },{ 0xAA, 0xAA, 0 },{ 0xAA, 0, 0xAA },{ 0xAA, 0xAA, 0xAA } };
+	g_vm->_screen->setPalette(&PALETTE[0][0], 0, 4);
 
-		_edgeColor = 3;
-		_borderColor = 3;
-		_highlightColor = 1;
-		_textColor = 3;
-		_color1 = 6;
-		break;
-	}
+	_edgeColor = 3;
+	_borderColor = 3;
+	_highlightColor = 1;
+	_textColor = 3;
+	_color1 = 6;
+}
 
-	case TGA:
-	case EGA: {
-		static const byte PALETTE[16][3] = {
-			{ 0, 0, 0 }, { 0x00, 0x00, 0x80 }, { 0x00, 0x80, 0x00 }, { 0x00, 0x80, 0x80 },
-			{ 0x80, 0x00, 0x00 }, { 0x80, 0x00, 0x80 }, { 0x80, 0x80, 0x00 }, { 0xC0, 0xC0, 0xC0 },
-			{ 0x80, 0x80, 0x80 }, { 0x00, 0x00, 0xFF }, { 0x00, 0xFF, 0x00 }, { 0x00, 0xFF, 0xFF },
-			{ 0xFF, 0x40, 0x40 }, { 0xFF, 0x00, 0xFF }, { 0xFF, 0xFF, 0x00 }, {0xFF, 0xFF, 0xFF }
-		};
-		g_vm->_screen->setPalette(&PALETTE[0][0], 0, 16);
+void Game::setEGAPalette() {
+	static const byte PALETTE[16][3] = {
+		{ 0, 0, 0 },{ 0x00, 0x00, 0x80 },{ 0x00, 0x80, 0x00 },{ 0x00, 0x80, 0x80 },
+		{ 0x80, 0x00, 0x00 },{ 0x80, 0x00, 0x80 },{ 0x80, 0x80, 0x00 },{ 0xC0, 0xC0, 0xC0 },
+		{ 0x80, 0x80, 0x80 },{ 0x00, 0x00, 0xFF },{ 0x00, 0xFF, 0x00 },{ 0x00, 0xFF, 0xFF },
+		{ 0xFF, 0x40, 0x40 },{ 0xFF, 0x00, 0xFF },{ 0xFF, 0xFF, 0x00 },{ 0xFF, 0xFF, 0xFF }
+	};
+	g_vm->_screen->setPalette(&PALETTE[0][0], 0, 16);
 
-		_edgeColor = 15;
-		_borderColor = 1;
-		_highlightColor = 12;
-		_textColor = 11;
-		_color1 = 7;
-		break;
-	}
+	_edgeColor = 15;
+	_borderColor = 1;
+	_highlightColor = 12;
+	_textColor = 11;
+	_color1 = 7;
+}
 
-	default:
-		error("TODO: Palette setup for other video mode");
-		break;
-	}
+void Game::loadU6Palette() {
+	// Read in the palette
+	File f("u6pal");
+	byte palette[PALETTE_SIZE];
+	f.read(palette, PALETTE_SIZE);
+	f.close();
 
+	// Adjust the palette values from 0-63 to 0-255, and set the palette
+	for (int idx = 0; idx < PALETTE_SIZE; ++idx)
+		palette[idx] = VGA_COLOR_TRANS(palette[idx]);
+	g_vm->_screen->setPalette(&palette[0], 0, PALETTE_COUNT);
+
+	// TODO: Set appropriate indexes
+	_edgeColor = 15;
+	_borderColor = 1;
+	_highlightColor = 12;
+	_textColor = 11;
+	_color1 = 7;
 }
 
 } // End of namespace Shared

@@ -70,6 +70,7 @@ protected:
 	Gfx::Font *_font;
 public:
 	GameState *_gameState;
+	uint _videoMode;
 public:
 	/**
 	 * Constructor

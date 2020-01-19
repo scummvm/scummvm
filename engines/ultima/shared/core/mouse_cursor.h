@@ -71,7 +71,7 @@ private:
 	int _cursorId;
 private:
 	/**
-	 * Loads the mosue cursors
+	 * Loads the mouse cursors
 	 */
 	void loadCursors();
 public:
