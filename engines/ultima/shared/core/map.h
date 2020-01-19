@@ -49,19 +49,25 @@ protected:
 	Map *_map;							// Map reference
 public:
 	Point _position;					// Position within the map
-	int _hitPoints;						// Hit pointers
+	Common::String _name;				// Name of widget
 public:
 	/**
 	 * Constructor
 	 */
 	MapWidget(Game *game, Map *map) : _game(game), _map(map) {}
-	MapWidget() : _game(nullptr), _map(nullptr) {}
+	MapWidget(Game *game, Map *map, const Point &pt) : _game(game), _map(map), _position(pt) {}
+	MapWidget(Game *game, Map *map, const Point &pt, const Common::String &name) :
+		_game(game), _map(map), _position(pt), _name(name) {}
+
+	/**
+	 * Destructor
+	 */
 	virtual ~MapWidget() {}
 
 	/**
 	 * Get the tile for the widget
 	 */
-	virtual uint getTileNum() const = 0;
+	virtual uint getTileNum() const { return 0; }
 
 	/**
 	 * Returns true if the player can move onto a tile the widget occupies
@@ -72,6 +78,7 @@ public:
 typedef Common::SharedPtr<MapWidget> MapWidgetPtr;
 
 /**
+<<<<<<< HEAD
  * Base class for items that appear within the dungeons
  */
 class MapItem {
@@ -95,16 +102,13 @@ public:
 	 * Draw the item
 	 */
 	virtual void draw(Shared::DungeonSurface &s, uint distance) {}
-
-	/**
-	 * Handles any post-rendering drawing of specific item types
-	 */
-	virtual void postDraw(Shared::DungeonSurface &s) {}
 };
 
 typedef Common::SharedPtr<MapItem> MapItemPtr;
 
 /**
+=======
+>>>>>>> 04ee1c8... ULTIMA1: Merging map _items array into _widgets
  * Contains data about a given position within the map
  */
 class MapTile {
@@ -114,7 +118,6 @@ public:
 	int _widgetNum;							// Widget number, if any
 	MapWidget *_widget;						// Widget pointer
 	int _itemNum;							// Item number, if any
-	MapItem *_item;							// Item pointer
 	// Dungeon tile flags 
 	bool _isDoor, _isSecretDoor;
 	bool _isLadderUp, _isLadderDown;
@@ -123,7 +126,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	MapTile() : _tileNum(-1), _tileId(-1), _widgetNum(-1), _widget(nullptr), _itemNum(-1), _item(nullptr),
+	MapTile() : _tileNum(-1), _tileId(-1), _widgetNum(-1), _widget(nullptr), _itemNum(-1),
 	_isDoor(false), _isSecretDoor(false), _isLadderUp(false), _isLadderDown(false), _isWall(false),
 		_isHallway(false), _isBeams(false) {}
 
@@ -201,7 +204,6 @@ class Map {
 protected:
 	byte _mapId;						// The map Id
 	Common::Array<MapWidgetPtr> _widgets;	// Party, monsteres, transports, etc.
-	Common::Array<MapItemPtr> _items;	// Items like coffins and chests that appear in dungeons
 	Common::Array<MapCellsRow> _data;	// Data for the map
 	Point _position;					// Current position within the map
 	ViewportPosition _viewportPos;		// Viewport position

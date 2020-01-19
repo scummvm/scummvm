@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima1/core/monsters.h"
+#include "ultima/ultima1/core/dungeon_widgets.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/shared/early/ultima_early.h"
@@ -47,6 +47,14 @@ void U1DungeonMonster::draw(Shared::DungeonSurface &s, uint distance) {
 }
 
 /*-------------------------------------------------------------------*/
+
+DungeonWidget::DungeonWidget(Shared::Game *game, Shared::Map *map, const Point &pt, DungeonItemId itemId) :
+		Shared::DungeonWidget(game, map, pt), _itemId(itemId) {
+	_widgetId = (_itemId == DITEM_CHEST) ? MONSTER_MIMIC : UITEM_COFFIN;
+	
+	GameResources &res = *static_cast<Ultima1Game *>(game)->_res;
+	_name = (_itemId == DITEM_CHEST) ? res.DUNGEON_ITEM_NAMES[0] : res.DUNGEON_ITEM_NAMES[1];
+}
 
 const byte OFFSET_Y[5] = { 139, 112, 96, 88, 84 };
 enum { POINT_AT = 126, END_OF_DRAW = 127 };
@@ -87,11 +95,9 @@ void DungeonWidget::getPos(const byte *&data, int bitShift, Point &pt) {
 	pt.y = ((int8)*data++ >> bitShift);
 }
 
-void DungeonWidget::postDraw(Shared::DungeonSurface &s) {
-	if (_itemId == DITEM_COFFIN)
-		drawWidget(s, UITEM_COFFIN, 1, _game->_edgeColor);
-	else if (_itemId == DITEM_CHEST)
-		drawWidget(s, MONSTER_MIMIC, 1, _game->_edgeColor);
+void DungeonWidget::draw(Shared::DungeonSurface &s, uint distance) {
+	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
+	drawWidget(s, _widgetId, distance, game->_edgeColor);
 }
 
 } // End of namespace Ultima1
