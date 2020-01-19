@@ -47,6 +47,11 @@ enum DungeonItemId {
 class DungeonMonster : public Shared::Creature, public Shared::DungeonCreature {
 private:
 	DungeonWidgetId _monsterId;
+protected:
+	/**
+	 * Handles moving creatures
+	 */
+	virtual void movement();
 public:
 	/**
 	 * Constructor
@@ -69,6 +74,13 @@ public:
 	 * Draw a monster
 	 */
 	virtual void draw(Shared::DungeonSurface &s, uint distance);
+
+	/**
+	 * Called to update the widget at the end of a turn
+	 * @param isPreUpdate		Update is called twice in succesion during the end of turn update.
+	 *		Once with true for all widgets, then with it false
+	 */
+	virtual void update(bool isPreUpdate);
 
 	/**
 	 * Returns the monster's type

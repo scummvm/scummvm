@@ -49,18 +49,48 @@ public:
 class Creature : public StandardWidget {
 protected:
 	int _hitPoints;
+	bool _isAttacking;
+protected:
+	/**
+	 * Returns the distance a creature can attack from
+	 */
+	virtual bool canAttack() const { return false; }
+
+	/**
+	 * Handles moving creatures
+	 */
+	virtual void movement() {}
+
+	/**
+	 * Handles attacks
+	 */
+	virtual void attack(bool canAttack) {}
 public:
 	/**
 	 * Constructor
 	 */
-	Creature(Game *game, Map::MapBase *map) : StandardWidget(game, map), _hitPoints(0) {}
-	Creature(Game *game, Map::MapBase *map, int hitPoints) : StandardWidget(game, map), _hitPoints(hitPoints) {}
-	Creature(Game *game, Map::MapBase *map, int hitPoints, const Point &pt, Direction dir = DIR_NONE) : StandardWidget(game, map, pt, dir), _hitPoints(hitPoints) {}
+	Creature(Game *game, Map::MapBase *map) : StandardWidget(game, map), _hitPoints(0), _isAttacking(false) {}
+	Creature(Game *game, Map::MapBase *map, int hitPoints) : StandardWidget(game, map),
+		_hitPoints(hitPoints), _isAttacking(false) {}
+	Creature(Game *game, Map::MapBase *map, int hitPoints, const Point &pt, Direction dir = DIR_NONE) :
+		StandardWidget(game, map, pt, dir), _hitPoints(hitPoints), _isAttacking(false) {}
 
 	/**
 	 * Destructor
 	 */
 	virtual ~Creature() {}
+
+	/**
+	 * Called to update the widget at the end of a turn
+	 * @param isPreUpdate		Update is called twice in succesion during the end of turn update.
+	 *		Once with true for all widgets, then with it false
+	 */
+	virtual void update(bool isPreUpdate);
+
+	/**
+	 * True true if the creature is dead
+	 */
+	bool isDead() const { return _hitPoints <= 0; }
 };
 
 

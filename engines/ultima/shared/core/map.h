@@ -181,6 +181,11 @@ public:
 		void addWidget(MapWidget *widget);
 
 		/**
+		 * Removes a widget from the map
+		 */
+		void removeWidget(MapWidget *widget);
+
+		/**
 		 * Clears all map data
 		 */
 		virtual void clear();
@@ -484,8 +489,10 @@ public:
 
 	/**
 	 * Called to update the widget at the end of a turn
+	 * @param isPreUpdate		Update is called twice in succesion during the end of turn update.
+	 *		Once with true for all widgets, then with it false
 	 */
-	virtual void update() {}
+	virtual void update(bool isPreUpdate) {}
 
 	/**
 	 * Returns true if the given transport type can move to a given position on the map
