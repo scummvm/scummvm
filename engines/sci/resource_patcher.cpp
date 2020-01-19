@@ -617,7 +617,7 @@ ResourcePatcher::PatchSizes ResourcePatcher::calculatePatchSizes(const byte *pat
 		}
 	}
 
-	return { dataSize, deltaSize };
+	return PatchSizes(dataSize, deltaSize);
 }
 
 int32 ResourcePatcher::readBlockSize(const byte * &patchData) const {
