@@ -465,7 +465,7 @@ proc: tPUT expr				{ g_lingo->code1(LC::c_printtop); }
 	| tEXIT tREPEAT			{ g_lingo->code1(LC::c_exitRepeat); }
 	| tEXIT					{ g_lingo->code1(LC::c_procret); }
 	| tGLOBAL { g_lingo->_indef = kStateInArgs; } globallist { g_lingo->_indef = kStateNone; }
-	| tPROPERTY propertylist
+	| tPROPERTY { g_lingo->_indef = kStateInArgs; } propertylist { g_lingo->_indef = kStateNone; }
 	| tINSTANCE instancelist
 	| BLTIN '(' arglist ')'			{
 		g_lingo->codeFunc($BLTIN, $arglist);

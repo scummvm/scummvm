@@ -181,7 +181,6 @@ namespace LB {
 	void b_soundPlayFile(int nargs);
 	void b_soundStop(int nargs);
 
-	void b_ancestor(int nargs);
 	void b_backspace(int nargs);
 	void b_empty(int nargs);
 	void b_enter(int nargs);

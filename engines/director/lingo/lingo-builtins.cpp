@@ -208,7 +208,6 @@ static struct BuiltinProto {
 	{ "moveToBack",		LB::b_moveToBack,	1, 1, false, 4, BLTIN },	//			D4 c
 	{ "moveToFront",	LB::b_moveToFront,	1, 1, false, 4, BLTIN },	//			D4 c
 	// Constants
-	{ "ancestor",		LB::b_ancestor,		0, 0, false, 4, BLTIN },	//			D4
 	{ "backspace",		LB::b_backspace,	0, 0, false, 2, FBLTIN },	// D2
 	{ "empty",			LB::b_empty,		0, 0, false, 2, FBLTIN },	// D2
 	{ "enter",			LB::b_enter,		0, 0, false, 2, FBLTIN },	// D2
@@ -1631,11 +1630,6 @@ void LB::b_soundStop(int nargs) {
 ///////////////////
 // Constants
 ///////////////////
-void LB::b_ancestor(int nargs) {
-	warning("STUB: b_ancestor");
-	g_lingo->push(Datum(0));
-}
-
 void LB::b_backspace(int nargs) {
 	g_lingo->push(Datum(new Common::String("\b")));
 }
