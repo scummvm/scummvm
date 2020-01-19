@@ -25,6 +25,7 @@
 
 #include "ultima/shared/gfx/visual_item.h"
 #include "ultima/shared/gfx/dungeon_surface.h"
+#include "ultima/shared/core/map.h"
 
 namespace Ultima {
 namespace Shared {
@@ -55,12 +56,12 @@ private:
 	/**
 	 * Draw a cell to the left
 	 */
-	void drawLeftCell(uint distance, const Point &pt);
+	void drawLeftCell(uint distance, const MapTile &tile);
 
 	/**
 	 * Draw a cell to the left
 	 */
-	void drawRightCell(uint distance, const Point &pt);
+	void drawRightCell(uint distance, const MapTile &tile);
 protected:
 	/**
 	 * Returns the surface for rendering the dungeon

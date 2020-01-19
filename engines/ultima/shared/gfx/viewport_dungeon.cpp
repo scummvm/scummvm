@@ -106,8 +106,8 @@ void ViewportDungeon::draw() {
 						s.drawRightEdge(index);
 				}
 
-				drawLeftCell(index, pt);
-				drawRightCell(index, pt);
+				drawLeftCell(index, leftTile);
+				drawRightCell(index, rightTile);
 			}
 
 			drawCell(index, pt + delta);
@@ -120,14 +120,16 @@ void ViewportDungeon::draw() {
 
 		map->getTileAt(currentPos + delta, &backTile);
 		if (distance < 5 && isMonsterBlocking(currentPos + backDelta) && backTile.isDoor()) {
-			drawLeftCell(distance + 1, currentPos + leftDelta);
-			drawRightCell(distance + 1, currentPos + rightDelta);
+			map->getTileAt(currentPos + leftDelta, &leftTile);
+			map->getTileAt(currentPos + rightDelta, &rightTile);
+
+			drawLeftCell(distance + 1, leftTile);
+			drawRightCell(distance + 1, rightTile);
 
 			map->getTileAt(currentPos + leftDelta, &leftTile);
 			if (!leftTile.isSolid())
 				s.drawLeftEdge(distance);
 
-			map->getTileAt(currentPos + rightDelta, &rightTile);
 			if (!rightTile.isSolid())
 				s.drawRightEdge(distance);
 		} else {
@@ -227,11 +229,8 @@ void ViewportDungeon::drawCell(uint distance, const Point &pt) {
 	}
 }
 
-void ViewportDungeon::drawLeftCell(uint distance, const Point &pt) {
+void ViewportDungeon::drawLeftCell(uint distance, const MapTile &tile) {
 	DungeonSurface s = getSurface();
-	Map *map = getMap();
-	MapTile tile;
-	map->getTileAt(pt, &tile);
 
 	if (tile.isDoor())
 		s.drawLeftDoor(distance);
@@ -241,11 +240,8 @@ void ViewportDungeon::drawLeftCell(uint distance, const Point &pt) {
 		s.drawLeftBlank(distance);
 }
 
-void ViewportDungeon::drawRightCell(uint distance, const Point &pt) {
+void ViewportDungeon::drawRightCell(uint distance, const MapTile &tile) {
 	DungeonSurface s = getSurface();
-	Map *map = getMap();
-	MapTile tile;
-	map->getTileAt(pt, &tile);
 
 	if (tile.isDoor())
 		s.drawRightDoor(distance);
