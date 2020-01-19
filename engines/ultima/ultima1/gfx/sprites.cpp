@@ -71,17 +71,22 @@ void Sprites::animateWater() {
 	} else if (idx == 4 && offset != 2) {
 		// Castle flag waving
 		return ::Ultima::Shared::Gfx::Sprites::operator[](4 + offset);
-	} else if (idx == 7) {
+	} else if (idx == 6) {
 		// City flag waving
 		return ::Ultima::Shared::Gfx::Sprites::operator[](7 + ((_frameCtr & 3) ? 1 : 0));
-	} else if (idx == 14 || idx == 25) {
-		// Transports 
-		return ::Ultima::Shared::Gfx::Sprites::operator[](idx + (_frameCtr & 1));
-	} else if (idx >= 19 && idx <= 47) {
-		// Random monster animation
-		return ::Ultima::Shared::Gfx::Sprites::operator[](idx + (g_vm->getRandomNumber(1, 100) & 1));
 	} else {
-		return ::Ultima::Shared::Gfx::Sprites::operator[](idx);
+		if (idx >= 7)
+			idx += 2;
+
+		if (idx == 14 || idx == 25) {
+			// Transports
+			return ::Ultima::Shared::Gfx::Sprites::operator[](idx + (_frameCtr & 1));
+		} else if (idx >= 19 && idx <= 47) {
+			// Random monster animation
+			return ::Ultima::Shared::Gfx::Sprites::operator[](idx + (g_vm->getRandomNumber(1, 100) & 1));
+		} else {
+			return ::Ultima::Shared::Gfx::Sprites::operator[](idx);
+		}
 	}
 }
 

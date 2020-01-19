@@ -40,7 +40,7 @@ Ultima1Map *WidgetTransport::getMap() const {
 
 uint TransportOnFoot::getTileNum() const {
 	Ultima1Map *map = getMap();
-	return map->_mapType == MAP_OVERWORLD ? 10 : 18;
+	return map->_mapType == MAP_OVERWORLD ? 8 : 18;
 }
 
 bool TransportOnFoot::canMoveTo(const Point &destPos) {
