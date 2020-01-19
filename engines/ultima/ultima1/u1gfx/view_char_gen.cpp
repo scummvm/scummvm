@@ -23,8 +23,9 @@
 #include "ultima/ultima1/u1gfx/view_char_gen.h"
 #include "ultima/ultima1/u1gfx/drawing_support.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/u1gfx/text_cursor.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/shared/engine/messages.h"
+#include "ultima/shared/early/font_resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,23 +33,39 @@ namespace U1Gfx {
 
 BEGIN_MESSAGE_MAP(ViewCharacterGeneration, Shared::Gfx::VisualContainer)
 	ON_MESSAGE(KeypressMsg)
+	ON_MESSAGE(ShowMsg)
 END_MESSAGE_MAP()
 
 ViewCharacterGeneration::ViewCharacterGeneration(Shared::TreeItem *parent) :
-		Shared::Gfx::VisualContainer("CharGen", Rect(0, 0, 320, 200), parent), _flags(FLAG_INITIAL),
-		_pointsRemaining(30), _selectedAttribute(0) {
-	_character._strength = 10;
-	_character._agility = 10;
-	_character._stamina = 10;
-	_character._charisma = 10;
-	_character._wisdom = 10;
-	_character._intelligence = 10;
+		Shared::Gfx::VisualContainer("CharGen", Rect(0, 0, 320, 200), parent) {
 	_attributes[0] = &_character._strength;
 	_attributes[1] = &_character._agility;
 	_attributes[2] = &_character._stamina;
 	_attributes[3] = &_character._charisma;
 	_attributes[4] = &_character._wisdom;
 	_attributes[5] = &_character._intelligence;
+	setMode(FLAG_INITIAL);
+}
+
+void ViewCharacterGeneration::setMode(Flag flag) {
+	_flags = flag;
+	setDirty();
+	getGame()->_textCursor->setVisible(false);
+
+	switch (flag) {
+	case FLAG_INITIAL:
+		_pointsRemaining = 30;
+		_selectedAttribute = 0;
+		_character._strength = 10;
+		_character._agility = 10;
+		_character._stamina = 10;
+		_character._charisma = 10;
+		_character._wisdom = 10;
+		_character._intelligence = 10;
+		break;
+	default:
+		break;
+	}
 }
 
 void ViewCharacterGeneration::draw() {
@@ -124,7 +141,68 @@ void ViewCharacterGeneration::drawClass(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 }
 
+bool ViewCharacterGeneration::ShowMsg(CShowMsg &msg) {
+	Shared::Gfx::VisualContainer::ShowMsg(msg);
+	setMode(FLAG_INITIAL);
+	return true;
+}
+
+bool ViewCharacterGeneration::HideMsg(CHideMsg &msg) {
+	Shared::Gfx::VisualContainer::HideMsg(msg);
+	getGame()->_textCursor->setVisible(false);
+	return true;
+}
+
 bool ViewCharacterGeneration::KeypressMsg(CKeypressMsg &msg) {
+	if (_flags & (FLAG_RACE | FLAG_SEX | FLAG_CLASS)) {
+		// TODO
+	} else {
+		// Initial attributes allocation
+		switch (msg._keyState.keycode) {
+		case Common::KEYCODE_UP:
+		case Common::KEYCODE_KP8:
+			_selectedAttribute = (_selectedAttribute == 0) ? ATTRIBUTE_COUNT - 1 : _selectedAttribute - 1;
+			setMode(FLAG_ATTR_POINTERS);
+			break;
+
+		case Common::KEYCODE_DOWN:
+		case Common::KEYCODE_KP2:
+			_selectedAttribute = (_selectedAttribute == ATTRIBUTE_COUNT - 1) ? 0 : _selectedAttribute + 1;
+			setMode(FLAG_ATTR_POINTERS);
+			break;
+
+		case Common::KEYCODE_LEFT:
+		case Common::KEYCODE_KP4:
+			if (*_attributes[_selectedAttribute] > 10) {
+				++_pointsRemaining;
+				--*_attributes[_selectedAttribute];
+			}
+			setMode(FLAG_ATTRIBUTES);
+			break;
+
+		case Common::KEYCODE_RIGHT:
+		case Common::KEYCODE_KP6:
+			if (_pointsRemaining > 0 && *_attributes[_selectedAttribute] < 25) {
+				--_pointsRemaining;
+				++*_attributes[_selectedAttribute];
+			}
+			setMode(FLAG_ATTRIBUTES);
+			break;
+
+		case Common::KEYCODE_SPACE:
+			// Switch over to selecting race
+			setMode(FLAG_RACE);
+			break;
+
+		case Common::KEYCODE_ESCAPE:
+			// Switch back to main menu
+			setView("Title");
+			break;
+
+		default:
+			break;
+		}
+	}
 
 	return true;
 }

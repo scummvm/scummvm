@@ -34,6 +34,8 @@ namespace U1Gfx {
 #define ATTRIBUTE_COUNT 6
 
 using Shared::CKeypressMsg;
+using Shared::CShowMsg;
+using Shared::CHideMsg;
 
 /**
  * This class implements the character generation view
@@ -41,6 +43,8 @@ using Shared::CKeypressMsg;
 class ViewCharacterGeneration : public Shared::Gfx::VisualContainer {
 	DECLARE_MESSAGE_MAP;
 	bool KeypressMsg(CKeypressMsg &msg);
+	bool ShowMsg(CShowMsg &msg);
+	bool HideMsg(CHideMsg &msg);
 private:
 	enum Flag {
 		FLAG_FRAME = 1, FLAG_ATTRIBUTES = 2, FLAG_ATTR_POINTERS = 4, FLAG_HELP = 8, FLAG_RACE = 16,
@@ -53,6 +57,11 @@ private:
 	int _selectedAttribute;
 	uint *_attributes[ATTRIBUTE_COUNT];
 private:
+	/**
+	 * Set state within the view
+	 */
+	void setMode(Flag flag);
+
 	/**
 	 * Draw the outer frame for the view
 	 */

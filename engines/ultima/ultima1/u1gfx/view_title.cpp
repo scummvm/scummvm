@@ -34,6 +34,7 @@ namespace Ultima1 {
 namespace U1Gfx {
 
 BEGIN_MESSAGE_MAP(ViewTitle, Shared::Gfx::VisualContainer)
+	ON_MESSAGE(ShowMsg)
 	ON_MESSAGE(KeypressMsg)
 	ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
@@ -277,6 +278,17 @@ void ViewTitle::setMode(TitleMode mode) {
 	default:
 		break;
 	}
+}
+
+bool ViewTitle::ShowMsg(CShowMsg &msg) {
+	Shared::Gfx::VisualContainer::ShowMsg(msg);
+
+	if (_mode == TITLEMODE_MAIN_MENU) {
+		// Returning to main menu from another screen
+		setMode(TITLEMODE_MAIN_MENU);
+	}
+
+	return true;
 }
 
 bool ViewTitle::KeypressMsg(CKeypressMsg &msg) {

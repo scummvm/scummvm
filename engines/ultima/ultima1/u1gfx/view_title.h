@@ -31,6 +31,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
+using Shared::CShowMsg;
 using Shared::CKeypressMsg;
 using Shared::CFrameMsg;
 
@@ -40,6 +41,7 @@ using Shared::CFrameMsg;
  */
 class ViewTitle : public Shared::Gfx::VisualContainer {
 	DECLARE_MESSAGE_MAP;
+	bool ShowMsg(CShowMsg &msg);
 	bool KeypressMsg(CKeypressMsg &msg);
 	bool FrameMsg(CFrameMsg &msg);
 private:
