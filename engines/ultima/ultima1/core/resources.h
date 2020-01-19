@@ -37,6 +37,7 @@ protected:
 	 */
 	virtual void synchronize() override;
 public:
+	const char *TITLE_MESSAGES[3];
 	const char *STATUS_TEXT[4];
 	const char *DIRECTION_NAMES[4];
 	const char *DUNGEON_MOVES[4];

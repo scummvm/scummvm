@@ -26,6 +26,8 @@
 namespace Ultima {
 namespace Ultima1 {
 
+const char *const SRC_TITLE_MESSAGES[3] = { "Ultima I", "The First Age of Darkness", "Copyright (C) 1987 Origin Systems, Inc." };
+
 const char *const SRC_STATUS_TEXT[4] = { "Hits:", "Food:",  "Exp.:", "Coin:" };
 
 const char *const SRC_DIRECTION_NAMES[4] = { "West", "East", "North", "South" };
@@ -513,6 +515,7 @@ GameResources::GameResources() : LocalResourceFile("ULTIMA1/DATA") {
 } 
 
 GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(resManager, "ULTIMA1/DATA") {
+	Common::copy(SRC_TITLE_MESSAGES, SRC_TITLE_MESSAGES + 3, TITLE_MESSAGES);
 	Common::copy(SRC_STATUS_TEXT, SRC_STATUS_TEXT + 4, STATUS_TEXT);
 	Common::copy(SRC_DIRECTION_NAMES, SRC_DIRECTION_NAMES + 4, DIRECTION_NAMES);
 	Common::copy(SRC_DUNGEON_MOVES, SRC_DUNGEON_MOVES + 4, DUNGEON_MOVES);
@@ -557,6 +560,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 }
 
 void GameResources::synchronize() {
+	syncStrings(TITLE_MESSAGES, 3);
 	syncStrings(STATUS_TEXT, 4);
 	syncStrings(DIRECTION_NAMES, 4);
 	syncStrings(DUNGEON_MOVES, 4);

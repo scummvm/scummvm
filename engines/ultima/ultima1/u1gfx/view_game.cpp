@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima1/u1gfx/game_view.h"
+#include "ultima/ultima1/u1gfx/view_game.h"
 #include "ultima/shared/actions/huh.h"
 #include "ultima/shared/actions/pass.h"
 #include "ultima/shared/core/map.h"
@@ -40,11 +40,11 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-BEGIN_MESSAGE_MAP(GameView, Shared::Gfx::VisualContainer)
+BEGIN_MESSAGE_MAP(ViewGame, Shared::Gfx::VisualContainer)
 	ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
-GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
+ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("View", Rect(0, 0, 320, 200), parent) {
 	_info = new Info(this);
 	_status = new Status(this);
 	_viewportDungeon = new ViewportDungeon(this);
@@ -58,7 +58,7 @@ GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", 
 	_actions[4] = new Shared::Actions::Huh(this, game->_res->HUH);
 }
 
-GameView::~GameView() {
+ViewGame::~ViewGame() {
 	delete _info;
 	delete _status;
 	delete _viewportDungeon;
@@ -67,7 +67,7 @@ GameView::~GameView() {
 		delete _actions[idx];
 }
 
-void GameView::draw() {
+void ViewGame::draw() {
 	DrawingSupport ds(getSurface());
 	ds.drawGameFrame();
 	drawIndicators();
@@ -86,7 +86,7 @@ void GameView::draw() {
 	}
 }
 
-void GameView::drawIndicators() {
+void ViewGame::drawIndicators() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	Map::Ultima1Map *map = static_cast<Map::Ultima1Map *>(getMap());
 
@@ -109,7 +109,7 @@ void GameView::drawIndicators() {
 	}
 }
 
-bool GameView::KeypressMsg(CKeypressMsg &msg) {
+bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
 	switch (msg._keyState.keycode) {
 	case Common::KEYCODE_LEFT:
 	case Common::KEYCODE_KP4: {
