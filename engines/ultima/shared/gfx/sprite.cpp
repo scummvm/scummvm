@@ -42,12 +42,12 @@ Sprite::Sprite(const byte *src, uint bpp, uint16 w, uint16 h) {
 
 	for (int y = 0; y < h; ++y) {
 		byte *destP = (byte *)_surface.getBasePtr(0, y);
-
-		for (int x = 0; x < w; ++x, v >>= bpp) {
+		
+		for (int x = 0; x < w; ++x, v <<= bpp) {
 			if ((x % (8 / bpp)) == 0)
 				v = *src++;
 
-			*destP++ = v & ((1 << bpp) - 1);
+			*destP++ = (((uint)v << bpp) & 0xff00) >> 8;
 		}
 	}
 }
