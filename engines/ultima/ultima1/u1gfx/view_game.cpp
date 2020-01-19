@@ -80,7 +80,8 @@ void ViewGame::draw() {
 	}
 
 	_info->draw();
-	_status->draw();
+	if (_status->isDirty())
+		_status->draw();
 
 	Map::Ultima1Map *map = static_cast<Map::Ultima1Map *>(getGame()->getMap());
 	switch (map->_mapType) {

@@ -34,6 +34,8 @@ namespace U1Gfx {
  */
 class Status : public Shared::Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
+private:
+	uint _hitPoints, _food, _experience, _coins;
 public:
 	CLASSDEF;
 	Status(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("Status", TextRect(31, 21, 40, 25), parent) {}
@@ -43,6 +45,11 @@ public:
 	 * Draw the contents
 	 */
 	virtual void draw() override;
+
+	/**
+	 * Returns true if the item is dirty, requiring a redraw
+	 */
+	virtual bool isDirty() const override;
 };
 
 } // End of namespace U1Gfx

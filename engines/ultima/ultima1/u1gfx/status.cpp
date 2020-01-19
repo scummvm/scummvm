@@ -30,14 +30,32 @@ namespace U1Gfx {
 
 EMPTY_MESSAGE_MAP(Status, Shared::Gfx::VisualItem);
 
+bool Status::isDirty() const {
+	if (_isDirty)
+		return true;
+
+	const Ultima1Game *game = static_cast<const Ultima1Game *>(getGame());
+	const Shared::Character &c = *game->_party._currentCharacter;
+
+	return c._hitPoints != _hitPoints || c._food != _food || c._experience != _experience || c._coins != _coins;
+}
+
 void Status::draw() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+	const Shared::Character &c = *game->_party._currentCharacter;
+
+	// Copy over the character fields
+	_hitPoints = c._hitPoints;
+	_food = c._food;
+	_experience = c._experience;
+	_coins = c._coins;
+
+	// Clear the status area
 	Shared::Gfx::VisualSurface s = getSurface();
 	s.clear();
 
 	// Iterate through displaying the values
-	Shared::Character &c = *game->_party._currentCharacter;
-	const uint *vals[4] = { &c._hitPoints, &c._food, &c._experience, &c._coins };
+	const uint *vals[4] = { &_hitPoints, &_food, &_experience, &_coins };
 	int count = game->isVGA() ? 3 : 4;
 
 	for (int idx = 0; idx < count; ++idx) {
@@ -47,6 +65,8 @@ void Status::draw() {
 		uint value = MIN(*vals[idx], (uint)9999);
 		s.writeString(Common::String::format("%4u", value), TextPoint(5, idx), game->_textColor, game->_bgColor);
 	}
+
+	_isDirty = false;
 }
 
 } // End of namespace U1Gfx
