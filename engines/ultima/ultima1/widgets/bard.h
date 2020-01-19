@@ -33,6 +33,12 @@ namespace Widgets {
  * Bard & Jester persons
  */
 class Bard : public Person {
+private:
+	/**
+	 * Called when the bard/jester steals something from the player
+	 * @returns		True if player had a weapon to steal
+	 */
+	bool stealWeapon();
 protected:
 	/**
 	 * Handles moving creatures
@@ -49,6 +55,11 @@ public:
 	 * Destructor
 	 */
 	virtual ~Bard() {}
+
+	/**
+	 * Talk to an NPC
+	 */
+	virtual void talk();
 };
 
 } // End of namespace Widgets

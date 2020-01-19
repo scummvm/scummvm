@@ -21,13 +21,61 @@
  */
 
 #include "ultima/ultima1/widgets/bard.h"
+#include "ultima/ultima1/map/map_city_castle.h"
+#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
 void Bard::movement() {
+	if (areGuardsHostile())
+		return;
 
+	Point playerPos = _map->_currentTransport->_position;
+	bool stolen = false;
+
+	// Choose a new random position to  move to
+	Point newPos = _position + getRandomMoveDelta();
+
+	if (canMoveTo(newPos)) {
+		// Move to the new position
+		_position = newPos;
+		_game->playFX(4);
+	} else if (newPos == playerPos) {
+		// Moved into player, which causes them to steal a weapon from the player
+		stolen = stealWeapon();
+	}
+
+	if (!stolen && _game->getRandomNumber(1, 255) < 15)
+		talk();
+}
+
+bool Bard::stealWeapon() {
+	Shared::Character *c = _game->_gameState->_currentCharacter;
+	for (uint idx = 1; idx < c->_weapons.size(); ++idx) {
+		if (c->_weapons[idx]._quantity > 0 && (int)idx != c->_equippedWeapon) {
+			c->_weapons[idx]._quantity--;
+
+			if (_game->getRandomNumber(1, 255) < (c->_agility + 128)) {
+
+			}
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Bard::talk() {
+	if (dynamic_cast<Map::MapCity *>(_map)) {
+		addInfoMsg(_game->_res->BARD_SPEECH1);
+		addInfoMsg(_game->_res->BARD_SPEECH2);
+	} else {
+		addInfoMsg(_game->_res->JESTER_SPEECH1);
+		addInfoMsg(_game->_res->JESTER_SPEECH2);
+	}
 }
 
 } // End of namespace Widgets

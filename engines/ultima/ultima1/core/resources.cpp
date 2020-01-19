@@ -499,6 +499,13 @@ const char *const SRC_AN = "an";
 const char *const SRC_HIT = "Hit!";
 const char *const SRC_ATTACKS = "attacks!";
 const char *const SRC_DAMAGE = "damage";
+const char *const SRC_BARD_SPEECH1 = "Iolo the Bard sings:";
+const char *const SRC_BARD_SPEECH2 = "Ho eyoh he hum!";
+const char *const SRC_JESTER_SPEECH1 = "Gwino the jester sings:";
+const char *const SRC_JESTER_SPEECH2 = "I've got the key!";
+const char *const SRC_BARD_STOLEN = "Iolo stole something!";
+const char *const SRC_JESTER_STOLEN = "The jester stole something!";
+
 
 /*-------------------------------------------------------------------*/
 
@@ -541,6 +548,12 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	HIT = SRC_HIT;
 	ATTACKS = SRC_ATTACKS;
 	DAMAGE = SRC_DAMAGE;
+	BARD_SPEECH1 = SRC_BARD_SPEECH1;
+	BARD_SPEECH2 = SRC_BARD_SPEECH2;
+	JESTER_SPEECH1 = SRC_JESTER_SPEECH1;
+	JESTER_SPEECH2 = SRC_JESTER_SPEECH2;
+	BARD_STOLEN = SRC_BARD_STOLEN;
+	JESTER_STOLEN = SRC_JESTER_STOLEN;
 }
 
 void GameResources::synchronize() {
@@ -579,6 +592,10 @@ void GameResources::synchronize() {
 	syncString(HIT);
 	syncString(ATTACKS);
 	syncString(DAMAGE);
+	syncString(BARD_SPEECH1);
+	syncString(BARD_SPEECH2);
+	syncString(JESTER_SPEECH1);
+	syncString(JESTER_SPEECH2);
 }
 
 } // End of namespace Ultima1
