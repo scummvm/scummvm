@@ -56,7 +56,7 @@ bool Move::MoveMsg(CMoveMsg &msg) {
 	}
 
 	// Check if the given transport type can move to the new position
-	Point newPos = map->getPosition() + delta;
+	Point newPos = map->getDeltaPosition(delta);
 	if (transport->canMoveTo(newPos)) {
 		// Shift the viewport
 		map->shiftViewport(delta);

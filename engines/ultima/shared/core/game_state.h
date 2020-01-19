@@ -37,19 +37,13 @@ enum VideoMode {
 };
 
 class GameState {
-private:
+public:
 	/**
-	 * Enhanced game versions can have multiple tiles per tile of the original game. This constant
-	 * specifies the maximum number of tiles a map can have versus the original
-	 */
-	const Point MAX_TILES_PER_ORIGINAL;
-
-	/**
-	 * Position in the world map. This is in the context of the whatever overworld map is used,
-	 * so would have to be divided by MAX_TILES_PER_ORIGINAL to get original game co-ordinates
+	 * Position in the world map. This is stored separately from the map so that the same point can
+	 * be returned to when leaving locations
 	 */
 	Point _worldMapPos;
-public:
+
 	/**
 	 * Characters in the party. In the earlier Ultima games, this is a single character
 	 */

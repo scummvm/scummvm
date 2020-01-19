@@ -44,6 +44,10 @@ bool Enter::EnterMsg(CEnterMsg &msg) {
 		addStatusMsg(game->_res->ENTER_QUESTION);
 		playFX(1);
 	} else {
+		// Save the position on the world map
+		game->_gameState->_worldMapPos = Point(map->getPosition().x / map->_tilesPerOrigTile.x,
+			map->getPosition().y / map->_tilesPerOrigTile.y);
+
 		// Load the location
 		map->loadMap(mapTile._locationNum, getGameState()->_videoMode);
 

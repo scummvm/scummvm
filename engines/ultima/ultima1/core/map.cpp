@@ -54,6 +54,45 @@ void SurroundingTotals::load(Ultima1Map *map) {
 
 /*------------------------------------------------------------------------*/
 
+void U1MapTile::clear() {
+	_map = nullptr;
+	_locationNum = -1;
+}
+
+bool U1MapTile::isWater() const {
+	return _map->_mapType == MAP_OVERWORLD && _tileId == 0;
+}
+
+bool U1MapTile::isGrass() const {
+	return _map->_mapType == MAP_OVERWORLD && _tileId == 1;
+}
+
+bool U1MapTile::isWoods() const {
+	return _map->_mapType == MAP_OVERWORLD && _tileId == 2;
+}
+
+bool U1MapTile::isOriginalWater() const {
+	return _map->_mapType == MAP_OVERWORLD && _tileId == 0;
+}
+
+bool U1MapTile::isOriginalGrass() const {
+	return _map->_mapType == MAP_OVERWORLD && _tileId == 1;
+}
+
+bool U1MapTile::isOriginalWoods() const {
+	return _map->_mapType == MAP_OVERWORLD && _tileId == 2;
+}
+
+bool U1MapTile::isGround() const {
+	if ((_map->_mapType == MAP_CITY || _map->_mapType == MAP_CASTLE) && (_tileId == 1 || _tileId >= 51))
+		return true;
+	else if (_map->_mapType == MAP_OVERWORLD)
+		return _tileId != 0;
+	return false;
+}
+
+/*------------------------------------------------------------------------*/
+
 Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Map(), _game(game), _mapType(MAP_OVERWORLD) {
 	clearFields();
 }
@@ -77,6 +116,7 @@ void Ultima1Map::loadMap(int mapId, uint videoMode) {
 }
 
 void Ultima1Map::loadOverworldMap() {
+	_mapType = MAP_OVERWORLD;
 	_size = Point(168, 156);
 	_tilesPerOrigTile = Point(1, 1);
 	_data.resize(_size.x * _size.y);
@@ -162,6 +202,7 @@ void Ultima1Map::getTileAt(const Point &pt, Shared::MapTile *tile) {
 	U1MapTile *mapTile = dynamic_cast<U1MapTile *>(tile);
 	if (mapTile) {
 		GameResources *res = _game->_res;
+		mapTile->_map = this;
 
 		// Check for a location at the given position
 		mapTile->_locationNum = -1;

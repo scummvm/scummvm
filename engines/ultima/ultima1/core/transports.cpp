@@ -21,22 +21,83 @@
  */
 
 #include "ultima/ultima1/core/transports.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/map.h"
 #include "common/algorithm.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
+Ultima1Game *WidgetTransport::getGame() const {
+	return static_cast<Ultima1Game *>(_game);
+}
+
+Ultima1Map *WidgetTransport::getMap() const {
+	return static_cast<Ultima1Map *>(_map);
+}
+
+/*-------------------------------------------------------------------*/
+
 uint TransportOnFoot::getTileNum() const {
-	Ultima1Map *map = static_cast<Ultima1Map *>(_map);
+	Ultima1Map *map = getMap();
 	return map->_mapType == MAP_OVERWORLD ? 10 : 18;
 }
 
 bool TransportOnFoot::canMoveTo(const Point &destPos) {
-	return true;
+	Ultima1Map *map = getMap();
+
+	// If beyond the end of the map, must be in a location map returning to the overworld
+	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)map->width() || destPos.y >= (int)map->height())
+		return true;
+
+	// Get the details of the position
+	U1MapTile tile;
+	map->getTileAt(destPos, &tile);
+
+	// If there's a widget blocking the tile, return false
+	if (tile._widget && tile._widget->isBlocking())
+		return false;
+
+	return tile.isGround();
 }
 
 bool TransportOnFoot::moveTo(const Point &destPos) {
+	Ultima1Map *map = getMap();
+
+	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)map->width() || destPos.y >= (int)map->height()) {
+		// Handling for leaving locations by walking off the edge of the map
+		Ultima1Game *game = getGame();
+
+		if (map->_mapType == MAP_CASTLE && isPrincessSaved())
+			princessSaved();
+
+		// Load the overworld map
+		map->loadMap(MAP_OVERWORLD, game->_gameState->_videoMode);
+
+		// Get the world map position from the game state, and scan through the tiles representing that tile
+		// in the original map to find the one that was used to enter the location, then set the position to it
+		const Point &worldPos = game->_gameState->_worldMapPos;
+		U1MapTile mapTile;
+		for (int tileY = 0; tileY < map->_tilesPerOrigTile.y; ++tileY) {
+			for (int tileX = 0; tileX < map->_tilesPerOrigTile.x; ++tileX) {
+				Point mapPos(worldPos.x * map->_tilesPerOrigTile.x + tileX, worldPos.y * map->_tilesPerOrigTile.y + tileY);
+				map->getTileAt(mapPos, &mapTile);
+				if (mapTile._locationNum != -1) {
+					// We've found the location tile
+					map->setPosition(mapPos);
+					return false;
+				}
+			}
+		}
+
+		// Couldn't find where to place player. Shouldn't happen, but if so, simply place them at the middle position
+		Point mapPos(worldPos.x * map->_tilesPerOrigTile.x - ((map->_tilesPerOrigTile.x - 1) / 2),
+			worldPos.y * map->_tilesPerOrigTile.y - ((map->_tilesPerOrigTile.y - 1) / 2));
+		map->setPosition(mapPos);
+		return false;
+	}
+
+	// Normal movement
 	_map->setPosition(destPos);
 	return true;
 }

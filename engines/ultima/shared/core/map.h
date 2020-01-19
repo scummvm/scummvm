@@ -38,27 +38,6 @@ class Game;
 class Map;
 
 /**
- * Contains data about a given position within the map
- */
-class MapTile {
-public:
-	int _tileNum;
-	int _tileId;
-	Common::Array<int> _widgetTiles;
-public:
-	/**
-	 * Constructor
-	 */
-	MapTile() : _tileNum(-1), _tileId(-1) {}
-	virtual ~MapTile() {}
-
-	/**
-	 * Clears the map tile information
-	 */
-	virtual void clear();
-};
-
-/**
  * Base class for things that appear within a map, such as monsters, transports, or people
  */
 class MapWidget {
@@ -80,9 +59,37 @@ public:
 	 * Get the tile for the widget
 	 */
 	virtual uint getTileNum() const = 0;
+
+	/**
+	 * Returns true if the player can move onto a tile the widget occupies
+	 */
+	virtual bool isBlocking() const { return true; }
 };
 
 typedef Common::SharedPtr<MapWidget> MapWidgetPtr;
+
+
+/**
+ * Contains data about a given position within the map
+ */
+class MapTile {
+public:
+	int _tileId;							// Tile Id
+	int _tileNum;							// Tile number to display. Normally equals Tile Id, but can differ in rare cases
+	int _widgetNum;							// Widget number, if any
+	MapWidget *_widget;						// Widget pointer
+public:
+	/**
+	 * Constructor
+	 */
+	MapTile() : _tileNum(-1), _tileId(-1), _widgetNum(-1), _widget(nullptr) {}
+	virtual ~MapTile() {}
+
+	/**
+	 * Clears the map tile information
+	 */
+	virtual void clear();
+};
 
 /**
  * Base class for managing maps within the game
