@@ -25,6 +25,7 @@
 
 #include "ultima/shared/gfx/visual_container.h"
 #include "ultima/shared/gfx/bitmap.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
 
@@ -50,6 +51,8 @@ using Shared::CKeypressMsg;
 class ViewTitle : public Shared::Gfx::VisualContainer {
 	DECLARE_MESSAGE_MAP;
 	bool KeypressMsg(CKeypressMsg &msg);
+private:
+	Graphics::ManagedSurface _logo;
 public:
 	CLASSDEF;
 	ViewTitle(Shared::TreeItem *parent = nullptr);

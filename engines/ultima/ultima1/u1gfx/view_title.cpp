@@ -24,7 +24,9 @@
 #include "ultima/ultima1/u1gfx/drawing_support.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/shared/core/file.h"
 #include "ultima/shared/engine/messages.h"
+#include "image/bmp.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -34,7 +36,16 @@ BEGIN_MESSAGE_MAP(ViewTitle, Shared::Gfx::VisualContainer)
 	ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
-ViewTitle::ViewTitle(Shared::TreeItem *parent) : Shared::Gfx::VisualContainer("Title", Rect(0, 0, 320, 200), parent) {
+ViewTitle::ViewTitle(TreeItem *parent) : Shared::Gfx::VisualContainer("Title", Rect(0, 0, 320, 200), parent) {
+	// Load the Origin logo
+	Shared::File f("data/logo.bmp");
+	Image::BitmapDecoder bmp;
+	if (!bmp.loadStream(f))
+		error("Couldn't load logo");
+
+	const Graphics::Surface *src = bmp.getSurface();
+	_logo.create(src->w, src->h);
+	_logo.blitFrom(*src);
 }
 
 ViewTitle::~ViewTitle() {
@@ -54,6 +65,9 @@ void ViewTitle::draw() {
 	s.writeString(game->_res->TITLE_MESSAGES[0], TextPoint(16, 8), game->_whiteColor);
 	s.writeString(game->_res->TITLE_MESSAGES[1], TextPoint(8, 11), game->_whiteColor);
 	s.writeString(game->_res->TITLE_MESSAGES[2], TextPoint(0, 21), game->_whiteColor);
+
+	//****DEBUG*****
+	s.blitFrom(_logo);
 }
 
 bool ViewTitle::KeypressMsg(CKeypressMsg &msg) {

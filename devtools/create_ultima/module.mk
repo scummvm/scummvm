@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	create_ultima.o \
 	archive.o \
 	ultima1_map.o \
+	ultima1_resources.o \
 	hashmap.o \
 	memorypool.o \
 	str.o
