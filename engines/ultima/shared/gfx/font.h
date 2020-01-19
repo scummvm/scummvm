@@ -42,12 +42,14 @@ public:
 	/**
 	 * Write out a string
 	 */
-	int writeString(Graphics::ManagedSurface &surface, const Common::String &msg, const Point &pt, byte color);
+	int writeString(Graphics::ManagedSurface &surface, const Common::String &msg,
+		const Point &pt, byte color, byte bgColor = 0);
 
 	/**
 	 * Draw a character
 	 */
-	void writeChar(Graphics::ManagedSurface &surface, unsigned char c, const Point &pt, byte color);
+	void writeChar(Graphics::ManagedSurface &surface, unsigned char c, const Point &pt,
+		byte color, byte bgColor = 0);
 
 	/**
 	 * Return the width of a character

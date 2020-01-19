@@ -58,6 +58,7 @@ public:
 	byte _highlightColor;
 	byte _textColor;
 	byte _color1;
+	byte _bgColor;
 public:
 	CLASSDEF;
 

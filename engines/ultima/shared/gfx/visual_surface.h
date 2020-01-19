@@ -54,22 +54,22 @@ public:
 	/**
 	 * Write out a string
 	 */
-	void writeString(const Common::String &msg, const Point &pt, byte color);
+	void writeString(const Common::String &msg, const Point &pt, byte color, byte bgColor = 0);
 
 	/**
 	 * Write out a string
 	 */
-	void writeString(const Common::String &msg, byte color);
+	void writeString(const Common::String &msg, byte color, byte bgColor = 0);
 
 	/**
 	 * Draw a character
 	 */
-	void writeChar(unsigned char c, const Point &pt, byte color);
+	void writeChar(unsigned char c, const Point &pt, byte color, byte bgColor = 0);
 
 	/**
 	 * Draw a character
 	 */
-	void writeChar(unsigned char c, byte color);
+	void writeChar(unsigned char c, byte color, byte bgColor = 0);
 };
 
 } // End of namespace Gfx

@@ -45,6 +45,7 @@ END_MESSAGE_MAP()
 
 GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
 	_info = nullptr;
+	_status = new U1Gfx::Status(this);
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Actions::Climb(this);
 	_actions[2] = new Actions::Enter(this);
@@ -53,6 +54,7 @@ GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", 
 
 GameView::~GameView() {
 	delete _info;
+	delete _status;
 	for (int idx = 0; idx < 3; ++idx)
 		delete _actions[idx];
 }
@@ -91,6 +93,8 @@ void GameView::loadBackground() {
 void GameView::draw() {
 	Shared::Gfx::VisualSurface s = getSurface();
 	s.blitFrom(_background);
+
+	_status->draw();
 }
 
 bool GameView::KeypressMsg(CKeypressMsg &msg) {

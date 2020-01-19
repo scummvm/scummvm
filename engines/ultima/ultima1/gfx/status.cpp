@@ -37,16 +37,17 @@ void Status::draw() {
 	Shared::Gfx::VisualSurface s = getSurface();
 	s.clear();
 
-	// Iterate through displaying the four values
+	// Iterate through displaying the values
 	Shared::Character &c = gameState->_characters.front();
 	const uint *vals[4] = { &c._hitPoints, &c._food, &c._experience, &c._coins };
+	int count = game->isVGA() ? 3 : 4;
 
-	for (int idx = 0; idx < 4; ++idx) {
+	for (int idx = 0; idx < count; ++idx) {
 		// Write header
-		s.writeString(game->_res->STATUS_TEXT[idx], TextPoint(0, idx), game->_textColor);
+		s.writeString(game->_res->STATUS_TEXT[idx], TextPoint(0, idx), game->_textColor, game->_bgColor);
 
 		uint value = MIN(*vals[idx], (uint)9999);
-		s.writeString(Common::String::format("%4u", value), TextPoint(5, idx), game->_textColor);
+		s.writeString(Common::String::format("%4u", value), TextPoint(5, idx), game->_textColor, game->_bgColor);
 	}
 }
 

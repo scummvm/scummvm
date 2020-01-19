@@ -37,24 +37,24 @@ void VisualSurface::drawPoint(const Point &pt, byte color) {
 	fillRect(Rect(pt.x, pt.y, pt.x + 1, pt.y + 1), color);
 }
 
-void VisualSurface::writeString(const Common::String &msg, const Point &pt, byte color) {
+void VisualSurface::writeString(const Common::String &msg, const Point &pt, byte color, byte bgColor) {
 	_textPos = pt;
-	writeString(msg, color);
+	writeString(msg, color, bgColor);
 }
 
-void VisualSurface::writeString(const Common::String &msg, byte color) {
+void VisualSurface::writeString(const Common::String &msg, byte color, byte bgColor) {
 	Gfx::Font *font = g_vm->_game->getFont();
-	_textPos.x += font->writeString(*this, msg, _textPos, color);
+	_textPos.x += font->writeString(*this, msg, _textPos, color, bgColor);
 }
 
-void VisualSurface::writeChar(unsigned char c, const Point &pt, byte color) {
+void VisualSurface::writeChar(unsigned char c, const Point &pt, byte color, byte bgColor) {
 	_textPos = pt;
-	writeChar(c, color);
+	writeChar(c, color, bgColor);
 }
 
-void VisualSurface::writeChar(unsigned char c, byte color) {
+void VisualSurface::writeChar(unsigned char c, byte color, byte bgColor) {
 	Gfx::Font *font = g_vm->_game->getFont();
-	font->writeChar(*this, c, _textPos, color);
+	font->writeChar(*this, c, _textPos, color, bgColor);
 	_textPos.x += font->charWidth(c);
 }
 

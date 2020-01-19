@@ -30,17 +30,19 @@ namespace Gfx {
 Font::Font(const byte *data, size_t startingChar, size_t charCount) :
 	_data(data), _startingChar(startingChar), _endingChar(startingChar + charCount - 1) {}
 
-int Font::writeString(Graphics::ManagedSurface &surface, const Common::String &msg, const Point &pt, byte color) {
+int Font::writeString(Graphics::ManagedSurface &surface, const Common::String &msg, const Point &pt,
+		byte color, byte bgColor) {
 	Point textPos = pt;
 	int total = 0;
 
 	for (const char *msgP = msg.c_str(); *msgP; ++msgP, textPos.x += 8, total += 8)
-		writeChar(surface, (unsigned char)*msgP, textPos, color);
+		writeChar(surface, (unsigned char)*msgP, textPos, color, bgColor);
 	
 	return total;
 }
 
-void Font::writeChar(Graphics::ManagedSurface &surface, unsigned char c, const Point &pt, byte color) {
+void Font::writeChar(Graphics::ManagedSurface &surface, unsigned char c, const Point &pt,
+		byte color, byte bgColor) {
 	assert(c >= _startingChar && c <= _endingChar);
 	const byte *charP = _data + (c - _startingChar) * 8;
 	Graphics::Surface s = surface.getSubArea(Common::Rect(pt.x, pt.y, pt.x + 8, pt.y + 8));
@@ -50,7 +52,7 @@ void Font::writeChar(Graphics::ManagedSurface &surface, unsigned char c, const P
 		byte lineData = charP[y];
 
 		for (int x = 0; x < 8; ++x, lineData <<= 1, ++lineP) {
-			*lineP = (lineData & 0x80) ? color : 0;
+			*lineP = (lineData & 0x80) ? color : bgColor;
 		}
 	}
 }
