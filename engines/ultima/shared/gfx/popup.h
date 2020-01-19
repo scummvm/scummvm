@@ -40,17 +40,19 @@ class Popup : public VisualItem {
 protected:
 	GameBase *_game;
 	VisualItem *_parentView;
+	TreeItem *_respondTo;
 public:
 	/**
 	 * Constructor
 	 */
-	Popup(GameBase *game) : VisualItem(nullptr), _game(game) {
-	}
+	Popup(GameBase *game) : VisualItem(nullptr), _game(game), _respondTo(nullptr) {}
 
 	/**
 	 * Show the popup
+	 * @param respondTo		Element to send any response to when the popup closes.
+	 *						If not provided, any response goes to the active view
 	 */
-	void show();
+	void show(TreeItem *respondTo = nullptr);
 
 	/**
 	 * Hide the popup

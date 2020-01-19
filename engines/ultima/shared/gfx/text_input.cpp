@@ -76,10 +76,10 @@ bool TextInput::KeypressMsg(CKeypressMsg &msg) {
 		}
 	} else if (msg._keyState.keycode == Common::KEYCODE_RETURN || msg._keyState.keycode == Common::KEYCODE_KP_ENTER) {
 		CTextInputMsg inputMsg(this, _text, false);
-		inputMsg.execute(_parentView);
+		inputMsg.execute(_respondTo);
 	} else if (Common::KEYCODE_ESCAPE) {
 		CTextInputMsg inputMsg(this, "", true);
-		inputMsg.execute(_parentView);
+		inputMsg.execute(_respondTo);
 	}
 
 	return true;
