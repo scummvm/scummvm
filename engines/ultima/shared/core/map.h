@@ -115,7 +115,7 @@ class Map {
 protected:
 	byte _mapId;						// The map Id
 	Common::Array<MapWidgetPtr> _widgets;	// Party, monsteres, transports, etc.
-	Common::Array<int16> _data;			// Data for the map
+	Common::Array<byte> _data;			// Data for the map
 	Point _position;					// Current position within the map
 	ViewportPosition _viewportPos;		// Viewport position
 public:

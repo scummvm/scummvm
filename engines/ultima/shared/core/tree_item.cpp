@@ -35,7 +35,7 @@ _nextSibling(nullptr), _priorSibling(nullptr),
 _disposeAfterUse(DisposeAfterUse::NO) {
 }
 
-Game *TreeItem::getRoot() {
+Game *TreeItem::getGame() {
 	TreeItem *treeItem = this;
 
 	while (treeItem->getParent()) {
@@ -46,7 +46,7 @@ Game *TreeItem::getRoot() {
 }
 
 GameState *TreeItem::getGameState() {
-	return getRoot()->_gameState;
+	return getGame()->_gameState;
 }
 
 TreeItem *TreeItem::getLastSibling() {
@@ -62,7 +62,7 @@ Map *TreeItem::getMap() {
 }
 
 Gfx::VisualItem *TreeItem::getView() {
-	return getRoot()->getView();
+	return getGame()->getView();
 }
 
 TreeItem *TreeItem::getLastChild() const {

@@ -34,7 +34,7 @@ BEGIN_MESSAGE_MAP(Enter, Action)
 END_MESSAGE_MAP()
 
 bool Enter::EnterMsg(CEnterMsg &msg) {
-	Ultima1Game *game = getRoot();
+	Ultima1Game *game = getGame();
 	Ultima1Map *map = getMap();
 	U1MapTile mapTile;
 

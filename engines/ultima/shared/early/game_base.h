@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/random.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/shared/core/game_state.h"
 #include "ultima/shared/engine/input_handler.h"
@@ -42,6 +43,8 @@ namespace Gfx {
 }
 
 class GameBase : public TreeItem, public EventTarget {
+private:
+	Common::RandomSource _randomSource;
 private:
 	/**
 	 * Checks for the presence of any savegames and, if present,
@@ -140,6 +143,16 @@ public:
 	 * Returns the current font
 	 */
 	Gfx::Font *getFont() const { return _font; }
+
+	/**
+	 * Gets a random number
+	 */
+	uint getRandomNumber(uint max) { return _randomSource.getRandomNumber(max); }
+
+	/**
+	 * Gets a random number
+	 */
+	uint getRandomNumber(uint min, uint max) { return min + _randomSource.getRandomNumber(max - min); }
 };
 
 } // End of namespace Shared

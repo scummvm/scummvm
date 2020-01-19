@@ -99,6 +99,11 @@ private:
 	Ultima1Game *_game;
 private:
 	/**
+	 * Clears Ultima 1 extended fields
+	 */
+	void clearFields();
+
+	/**
 	 * Load the overworld map
 	 */
 	void loadOverworldMap();
@@ -109,15 +114,30 @@ private:
 	void loadTownCastleMap();
 
 	/**
-	 * Load widgets for locations
+	 * Load the base map for towns and castles
 	 */
-	void loadLocationWidgets();
+	void loadTownCastleData();
+
+	/**
+	 * Loads a town/city
+	 */
+	void loadTown();
+
+	/**
+	 * Loads a castle
+	 */
+	void loadCastle();
+	/**
+	 * Load widget list for the given map
+	 */
+	void loadWidgets();
 public:
 	MapType _mapType;					// Type of map
 	uint _mapStyle;						// Map style category for towns & castles
 	uint _mapIndex;						// Map index within cateogry, such as city/castle #; not to be confused with mapId
 	Common::String _name;				// Name of map, if applicable
 	WidgetTransport *_currentTransport;	// Current means of transport, even if on foot
+	uint _castleKey;					// Key for castle map lock
 public:
 	/**
 	 * Constructor

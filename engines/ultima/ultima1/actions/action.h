@@ -49,7 +49,7 @@ public:
 	/**
 	 * Jumps up through the parents to find the root game
 	 */
-	Ultima1Game *getRoot();
+	Ultima1Game *getGame();
 
 	/**
 	 * Return the game's map

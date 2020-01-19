@@ -40,7 +40,7 @@ class Screen;
 }
 
 class UltimaEarlyEngine : public UltimaEngine {
-protected:
+private:
 	/**
 	 * Initialize the engine
 	 */

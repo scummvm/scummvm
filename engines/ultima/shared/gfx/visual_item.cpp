@@ -83,11 +83,11 @@ void VisualItem::setDirty() {
 }
 
 void VisualItem::setView(const Common::String &viewName) {
-	getRoot()->setView(viewName);
+	getGame()->setView(viewName);
 }
 
 void VisualItem::setView() {
-	getRoot()->setView(this);
+	getGame()->setView(this);
 }
 
 } // End of namespace Gfx

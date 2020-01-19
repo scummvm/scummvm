@@ -36,8 +36,8 @@ Action::Action(TreeItem *parent) : Shared::TreeItem() {
 	addUnder(parent);
 }
 
-Ultima1Game *Action::getRoot() {
-	return static_cast<Ultima1Game *>(TreeItem::getRoot());
+Ultima1Game *Action::getGame() {
+	return static_cast<Ultima1Game *>(TreeItem::getGame());
 }
 
 Ultima1Map *Action::getMap() {
@@ -45,7 +45,7 @@ Ultima1Map *Action::getMap() {
 }
 
 GameResources *Action::getRes() {
-	return getRoot()->_res;
+	return getGame()->_res;
 }
 
 void Action::addStatusMsg(const Common::String &text) {
@@ -54,7 +54,7 @@ void Action::addStatusMsg(const Common::String &text) {
 }
 
 void Action::playFX(uint effectId) {
-	getRoot()->playFX(effectId);
+	getGame()->playFX(effectId);
 }
 
 } // End of namespace Actions

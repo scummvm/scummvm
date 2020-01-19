@@ -100,7 +100,7 @@ public:
 	/**
 	 * Jumps up through the parents to find the root game
 	 */
-	Game *getRoot();
+	Game *getGame();
 
 	/**
 	 * Return the game state
