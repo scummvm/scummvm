@@ -44,16 +44,11 @@ void Sprites::load(bool isOverworld) {
 }
 
 bool Sprites::FrameMsg(CFrameMsg &msg) {
-	uint32 time = getGame()->getMillis();
-
-	if (time >= _nextFrameTime) {
-		_nextFrameTime = time + ANIMATE_FRAME_DELAY;
-		if (!empty() && _isOverworld) {
-			animateWater();
-		}
-
-		++_frameCtr;
+	if (!empty() && _isOverworld) {
+		animateWater();
 	}
+
+	++_frameCtr;
 
 	return false;
 }
