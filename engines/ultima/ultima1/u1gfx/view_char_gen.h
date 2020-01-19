@@ -52,7 +52,7 @@ private:
 		FLAG_INITIAL = FLAG_FRAME | FLAG_ATTRIBUTES | FLAG_ATTR_POINTERS | FLAG_HELP
 	};
 	uint _flags;
-	Shared::Character _character;
+	Shared::Character *_character;
 	int _pointsRemaining;
 	int _selectedAttribute;
 	uint *_attributes[ATTRIBUTE_COUNT];
