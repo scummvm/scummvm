@@ -27,6 +27,7 @@
 #include "ultima/shared/engine/messages.h"
 #include "ultima/shared/core/mouse_cursor.h"
 #include "ultima/shared/gfx/font.h"
+#include "ultima/shared/gfx/text_cursor.h"
 #include "ultima/shared/gfx/visual_container.h"
 
 namespace Ultima {
@@ -35,10 +36,12 @@ namespace Shared {
 GameBase::GameBase(): _currentView(nullptr), _font(nullptr), _priorLeftDownTime(0), _priorMiddleDownTime(0),
 		_priorRightDownTime(0), _inputHandler(this), _inputTranslator(&_inputHandler), _gameState(nullptr),
 		_videoMode(0) {
+	_textCursor = new Gfx::TextCursor();
 }
 
 GameBase::~GameBase() {
 	delete _font;
+	delete _textCursor;
 }
 
 void GameBase::starting() {
@@ -184,7 +187,11 @@ void GameBase::update() {
 		CFrameMsg frameMsg(g_vm->_events->getTicksCount());
 		frameMsg.execute(_currentView, nullptr, MSGFLAG_SCAN);
 
+		// Draw the view
 		_currentView->draw();
+
+		 // Draw the text cursor if it's visible
+		_textCursor->draw();
 	}
 }
 

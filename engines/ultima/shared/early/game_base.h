@@ -37,8 +37,9 @@ class UltimaEngine;
 class GameState;
 
 namespace Gfx {
-	class VisualItem;
 	class Font;
+	class TextCursor;
+	class VisualItem;
 }
 
 class GameBase : public TreeItem, public EventTarget {
@@ -68,6 +69,7 @@ protected:
 	InputHandler _inputHandler;
 	InputTranslator _inputTranslator;
 	Gfx::Font *_font;
+	Gfx::TextCursor *_textCursor;
 public:
 	GameState *_gameState;
 	uint _videoMode;
