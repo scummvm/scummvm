@@ -68,6 +68,6 @@ public:
 
 } // End of namespace U1Gfx
 } // End of namespace Ultima1
-} // End of namespace Xeen
+} // End of namespace Ultima
 
 #endif

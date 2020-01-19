@@ -75,6 +75,6 @@ public:
 
 } // End of namespace U1Gfx
 } // End of namespace Shared
-} // End of namespace Xeen
+} // End of namespace Ultima
 
 #endif
