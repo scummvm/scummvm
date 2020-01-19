@@ -20,28 +20,36 @@
  *
  */
 
-#include "ultima/ultima1/people/wench.h"
-#include "ultima/ultima1/map/map.h"
+#ifndef ULTIMA_ULTIMA1_PEOPLE_PRINCESS_H
+#define ULTIMA_ULTIMA1_PEOPLE_PRINCESS_H
+
+#include "ultima/ultima1/widgets/person.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace People {
+namespace Widgets {
 
-void Wench::update() {
-	if (!areGuardsHostile()) {
-		// Get a random new position
-		Point delta = getRandomMoveDelta();
-		Point newPos = _position + delta;
-		
-		// Check the destination tile
-		Map::U1MapTile mapTile;
-		_map->getTileAt(newPos, &mapTile);
+class Princess : public Person {
+public:
+	/**
+	 * Constructor
+	 */
+	Princess(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
+		Person(game, map, 22, hitPoints) {}
 
-		// If the destination is clear, move to it
-		// TODO: move check, and if clear, move to dest
-	}
-}
+	/**
+	 * Destructor
+	 */
+	virtual ~Princess() {}
 
-} // End of namespace People
+	/**
+	 * Called to update the character at the end of a turn
+	 */
+	virtual void update();
+};
+
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

@@ -23,11 +23,11 @@
 #ifndef ULTIMA_ULTIMA1_PEOPLE_KING_H
 #define ULTIMA_ULTIMA1_PEOPLE_KING_H
 
-#include "ultima/ultima1/people/person.h"
+#include "ultima/ultima1/widgets/person.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace People {
+namespace Widgets {
 
 class King : public Person {
 public:
@@ -48,7 +48,7 @@ public:
 	virtual void update();
 };
 
-} // End of namespace People
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

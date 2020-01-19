@@ -24,11 +24,11 @@
 #include "ultima/ultima1/core/transports.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/ultima1/people/bard.h"
-#include "ultima/ultima1/people/guard.h"
-#include "ultima/ultima1/people/king.h"
-#include "ultima/ultima1/people/princess.h"
-#include "ultima/ultima1/people/wench.h"
+#include "ultima/ultima1/widgets/bard.h"
+#include "ultima/ultima1/widgets/guard.h"
+#include "ultima/ultima1/widgets/king.h"
+#include "ultima/ultima1/widgets/princess.h"
+#include "ultima/ultima1/widgets/wench.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -57,22 +57,22 @@ void MapCityCastle::loadWidgets() {
 		if (lp[0] == -1)
 			break;
 
-		People::Person *person;
+		Widgets::Person *person;
 		switch (lp[0]) {
 		case 17:
-			person = new People::Guard(_game, this, lp[3]);
+			person = new Widgets::Guard(_game, this, lp[3]);
 			break;
 		case 19:
-			person = new People::Bard(_game, this, lp[3]);
+			person = new Widgets::Bard(_game, this, lp[3]);
 			break;
 		case 20:
-			person = new People::King(_game, this, lp[3]);
+			person = new Widgets::King(_game, this, lp[3]);
 			break;
 		case 22:
-			person = new People::Princess(_game, this, lp[3]);
+			person = new Widgets::Princess(_game, this, lp[3]);
 			break;
 		case 50:
-			person = new People::Wench(_game, this, lp[3]);
+			person = new Widgets::Wench(_game, this, lp[3]);
 			break;
 		default:
 			error("Unknown NPC type %d", lp[0]);

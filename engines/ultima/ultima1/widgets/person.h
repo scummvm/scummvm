@@ -28,7 +28,7 @@
 
 namespace Ultima {
 namespace Ultima1 {
-namespace People {
+namespace Widgets {
 
 class Person : public Shared::MapWidget {
 private:
@@ -72,7 +72,7 @@ public:
 	virtual uint getTileNum() const { return _tileNum; }
 };
 
-} // End of namespace People
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

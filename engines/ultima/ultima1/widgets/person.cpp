@@ -20,12 +20,12 @@
  *
  */
 
-#include "ultima/ultima1/people/person.h"
+#include "ultima/ultima1/widgets/person.h"
 #include "ultima/ultima1/map/map_city_castle.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace People {
+namespace Widgets {
 
 bool Person::areGuardsHostile() const {
 	Map::MapCityCastle *cityCastle = static_cast<Map::MapCityCastle *>(_map);
@@ -36,6 +36,6 @@ int Person::getRandomDelta() const {
 	return _game->getRandomNumber(2) - 1;
 }
 
-} // End of namespace People
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
