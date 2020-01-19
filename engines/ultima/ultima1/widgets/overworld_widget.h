@@ -28,12 +28,29 @@
 
 namespace Ultima {
 namespace Ultima1 {
+
+class Ultima1Game;
+
+namespace Maps {
+class MapBase;
+}
+
 namespace Widgets {
 
 /**
  * Encapsulated class for drawing widgets within dungeons
  */
 class OverworldWidget : public Shared::Maps::MapWidget {
+protected:
+	/**
+	 * Gets the Ultima 1 game
+	 */
+	Ultima1Game *getGame() const;
+
+	/**
+	 * Gets the Ultima 1 map
+	 */
+	Maps::MapBase *getMap() const;
 public:
 	Common::String _name;
 	uint _tileNum;
@@ -61,6 +78,11 @@ public:
 	 * Handles loading and saving games
 	 */
 	virtual void synchronize(Common::Serializer &s) override;
+
+	/**
+	 * Returns true if the given widget can move to a given position on the map
+	 */
+	virtual CanMove canMoveTo(const Point &destPos) override;
 };
 
 } // End of namespace Widgets
