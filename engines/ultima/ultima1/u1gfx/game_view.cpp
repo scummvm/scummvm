@@ -20,15 +20,15 @@
  *
  */
 
-#include "ultima/ultima1/gfx/game_view.h"
+#include "ultima/ultima1/u1gfx/game_view.h"
 #include "ultima/shared/actions/pass.h"
 #include "ultima/shared/core/map.h"
 #include "ultima/shared/gfx/info.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/ultima1/gfx/drawing_support.h"
-#include "ultima/ultima1/gfx/status.h"
-#include "ultima/ultima1/gfx/viewport_dungeon.h"
-#include "ultima/ultima1/gfx/viewport_map.h"
+#include "ultima/ultima1/u1gfx/drawing_support.h"
+#include "ultima/ultima1/u1gfx/status.h"
+#include "ultima/ultima1/u1gfx/viewport_dungeon.h"
+#include "ultima/ultima1/u1gfx/viewport_map.h"
 #include "ultima/ultima1/actions/move.h"
 #include "ultima/ultima1/actions/climb.h"
 #include "ultima/ultima1/actions/enter.h"
@@ -43,14 +43,13 @@ BEGIN_MESSAGE_MAP(GameView, Shared::Gfx::VisualContainer)
 	ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
-GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
+GameView::GameView(Shared::TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
 	_info = new Shared::Info(this);
 	_status = new Status(this);
 	_viewportDungeon = new ViewportDungeon(this);
 
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	_viewportMap = new ViewportMap(this);
-
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Actions::Climb(this);
 	_actions[2] = new Actions::Enter(this);

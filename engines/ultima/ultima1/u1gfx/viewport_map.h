@@ -20,43 +20,38 @@
  *
  */
 
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/u1gfx/game_view.h"
-#include "ultima/ultima1/u1gfx/text_cursor.h"
-#include "ultima/ultima1/u6gfx/game_view.h"
-#include "ultima/shared/early/font_resources.h"
-#include "ultima/shared/early/ultima_early.h"
+#ifndef ULTIMA_ULTIMA1_GFX_VIEWPORT_MAP_H
+#define ULTIMA_ULTIMA1_GFX_VIEWPORT_MAP_H
+
+#include "ultima/shared/gfx/viewport_map.h"
+#include "ultima/ultima1/core/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
+namespace U1Gfx {
 
-EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
+class ViewportMap : public Shared::ViewportMap {
+private:
+	MapType _mapType;
+public:
+	/**
+	 * Constructor
+	 */
+	ViewportMap(Shared::TreeItem *parent);
+	
+	/**
+	 * Destructor
+	 */
+	virtual ~ViewportMap();
 
-Ultima1Game::Ultima1Game() : Shared::Game() {
-	_res = new GameResources();
-	delete _textCursor;
-	_textCursor = new U1Gfx::U1TextCursor();
+	/**
+	 * Draws the map
+	 */
+	virtual void draw();
+};
 
-	if (g_vm->getFeatures() & GF_VGA_ENHANCED) {
-		_videoMode = VIDEOMODE_VGA;
-		loadU6Palette();
-		setFont(new Shared::Gfx::Font((const byte *)&_fontResources->_fontU6[0][0]));
-		_gameView = new U6Gfx::GameView(this);
-	} else {
-		setEGAPalette();
-		_gameView = new U1Gfx::GameView(this);
-	}
-}
-
-Ultima1Game::~Ultima1Game() {
-	delete _gameView;
-}
-
-void Ultima1Game::starting() {
-	_res->load();
-	_gameView->setView("GameView");
-}
-
+} // End of namespace U1Gfx
 } // End of namespace Ultima1
-} // End of namespace Ultima
+} // End of namespace Xeen
+
+#endif

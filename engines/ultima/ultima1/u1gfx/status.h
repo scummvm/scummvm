@@ -20,49 +20,29 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GFX_SPRITES_H
-#define ULTIMA_ULTIMA1_GFX_SPRITES_H
+#ifndef ULTIMA_ULTIMA1_U1GFX_STATUS_H
+#define ULTIMA_ULTIMA1_U1GFX_STATUS_H
 
-#include "ultima/shared/gfx/sprites.h"
-#include "ultima/shared/core/tree_item.h"
-#include "ultima/shared/engine/messages.h"
+#include "ultima/shared/gfx/visual_item.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-using Shared::CFrameMsg;
-
 /**
  * Displays the total hits, food, experience, and coins you have
  */
-class Sprites : public ::Ultima::Shared::Gfx::Sprites, public Shared::TreeItem {
+class Status : public Shared::Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
-	bool FrameMsg(CFrameMsg &msg);
-private:
-	bool _isOverworld;
-	uint _frameCtr;
-private:
-	/**
-	 * Animates the water sprite by rotating it's lines vertically
-	 */
-	void animateWater();
 public:
 	CLASSDEF;
-	Sprites(TreeItem *parent) : ::Ultima::Shared::Gfx::Sprites(), TreeItem(), _isOverworld(false), _frameCtr(0) {
-		addUnder(parent);
-	}
-	virtual ~Sprites() {}
+	Status(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("Status", Rect(248, 168, 320, 200), parent) {}
+	virtual ~Status() {}
 
 	/**
-	 * Return a specific sprite
+	 * Draw the contents
 	 */
-	virtual ::Ultima::Shared::Gfx::Sprite &operator[](uint idx);
-
-	/**
-	 * Loads the Ultima 1 sprites
-	 */
-	void load(bool isOverworld);
+	virtual void draw();
 };
 
 } // End of namespace U1Gfx

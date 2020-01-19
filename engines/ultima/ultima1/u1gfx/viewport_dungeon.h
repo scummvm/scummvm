@@ -20,34 +20,33 @@
  *
  */
 
-#include "ultima/ultima1/gfx/viewport_map.h"
-#include "ultima/ultima1/gfx/sprites.h"
+#ifndef ULTIMA_ULTIMA1_U1GFX_VIEWPORT_DUNGEON_H
+#define ULTIMA_ULTIMA1_U1GFX_VIEWPORT_DUNGEON_H
+
+#include "ultima/shared/gfx/viewport_dungeon.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-ViewportMap::ViewportMap(TreeItem *parent) : Shared::ViewportMap(parent), _mapType(MAP_OVERWORLD) {
-	_sprites = new Sprites(this);	
-}
-
-ViewportMap::~ViewportMap() {
-}
-
-void ViewportMap::draw() {
-	Ultima1Map *map = static_cast<Ultima1Map *>(getMap());
-
-	// If necessary, load the sprites for rendering the map
-	if (_sprites->empty() || _mapType != map->_mapType) {
-		_mapType = map->_mapType;
-		Sprites *sprites = static_cast<Sprites *>(_sprites);
-		sprites->load(_mapType == MAP_OVERWORLD);
-	}
-
-	// Draw the map
-	Shared::ViewportMap::draw();
-}
+class ViewportDungeon : public Shared::ViewportDungeon {
+private:
+	/**
+	 * Draws a dungeon widget
+	 */
+	static void drawWidget(Graphics::ManagedSurface &s, uint widgetId, uint distance, byte color);
+protected:
+	/**
+	 * Returns the surface for rendering the dungeon
+	 */
+	virtual Shared::DungeonSurface getSurface();
+public:
+	ViewportDungeon(TreeItem *parent) : Shared::ViewportDungeon(parent) {}
+	virtual ~ViewportDungeon() {}
+};
 
 } // End of namespace U1Gfx
 } // End of namespace Ultima1
-} // End of namespace Ultima
+} // End of namespace Xeen
+
+#endif

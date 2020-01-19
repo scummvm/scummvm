@@ -20,37 +20,60 @@
  *
  */
 
-#include "ultima/ultima1/gfx/status.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/shared/core/game_state.h"
-#include "ultima/ultima1/core/resources.h"
+#ifndef ULTIMA_ULTIMA1_U1GFX_DRAWING_SUPPORT_H
+#define ULTIMA_ULTIMA1_U1GFX_DRAWING_SUPPORT_H
+
+#include "ultima/shared/gfx/visual_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
+
+class Ultima1Game;
+
 namespace U1Gfx {
 
-EMPTY_MESSAGE_MAP(Status, Shared::Gfx::VisualItem);
+/**
+ * Implements various support methods for drawing onto visual surfaces
+ */
+class DrawingSupport {
+private:
+	Shared::Gfx::VisualSurface _surface;
+	Ultima1Game *_game;
+private:
+	/**
+	 * Tweaks the edges of a drawn border to give it a rounded effect
+	 */
+	void roundFrameCorners(bool skipBottom = false);
+public:
+	/**
+	 * Constructor
+	 */
+	DrawingSupport(const Shared::Gfx::VisualSurface &s);
 
-void Status::draw() {
-	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	Shared::GameState *gameState = getGameState();
-	Shared::Gfx::VisualSurface s = getSurface();
-	s.clear();
+	/**
+	 * Draws a frame around the entire screen
+	 */
+	void drawFrame();
 
-	// Iterate through displaying the values
-	Shared::Character &c = gameState->_characters.front();
-	const uint *vals[4] = { &c._hitPoints, &c._food, &c._experience, &c._coins };
-	int count = game->isVGA() ? 3 : 4;
+	/**
+	 * Draw a frame around the viewport area of the screen, and a vertical seperator line
+	 * to the bottom of the screen to separate the status and info areas
+	 */
+	void drawGameFrame();
 
-	for (int idx = 0; idx < count; ++idx) {
-		// Write header
-		s.writeString(game->_res->STATUS_TEXT[idx], TextPoint(0, idx), game->_textColor, game->_bgColor);
+	/**
+	 * Draw a right arrow glyph
+	 */
+	void drawRightArrow(const Point &pt);
 
-		uint value = MIN(*vals[idx], (uint)9999);
-		s.writeString(Common::String::format("%4u", value), TextPoint(5, idx), game->_textColor, game->_bgColor);
-	}
-}
+	/**
+	 * Draw a left arrow glyph
+	 */
+	void drawLeftArrow(const Point &pt);
+};
 
 } // End of namespace U1Gfx
-} // End of namespace Ultima1
-} // End of namespace Ultima
+} // End of namespace Shared
+} // End of namespace Xeen
+
+#endif
