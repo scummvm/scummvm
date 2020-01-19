@@ -182,7 +182,8 @@ sound[ \t]+(close|fadeIn|fadeOut|playFile|stop)	{
 			yylval.s = new Common::String(bltin);
 			return BLTIN;
 		} else {
-			error("LEXER: Unhandled 'sound %s'", command.c_str());
+			warning("LEXER: Unhandled 'sound %s'", command.c_str());
+			return LEXERROR;
 		}
 	}
 starts		{ count(); return tSTARTS; }
@@ -220,10 +221,12 @@ the[ \t]+number[ \t]+of[ \t]+[[:alpha:]]+[ \t](in|of)[ \t]	{
 
 		yylval.s = new Common::String(Common::String::format("numberOf%s", field.c_str()));
 
-		if (g_lingo->_builtins.contains(*yylval.s))
+		if (g_lingo->_builtins.contains(*yylval.s)) {
 			return FBLTIN;
-		else
-			error("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
+		} else {
+			warning("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
+			return LEXERROR;
+		}
 	}
 the[ \t]+last[ \t][[:alpha:]]+[ \t](in|of)[ \t]	{
 		count();
@@ -240,10 +243,12 @@ the[ \t]+last[ \t][[:alpha:]]+[ \t](in|of)[ \t]	{
 
 		yylval.s = new Common::String(Common::String::format("last%sOf", field.c_str()));
 
-		if (g_lingo->_builtins.contains(*yylval.s))
+		if (g_lingo->_builtins.contains(*yylval.s)) {
 			return FBLTIN;
-		else
-			error("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
+		} else {
+			warning("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
+			return LEXERROR;
+		}
 	}
 the[ \t]+[[:alpha:]]+[ \t]+of[ \t]+{identifier}	{
 		count();
@@ -268,11 +273,14 @@ the[ \t]+[[:alpha:]]+[ \t]+of[ \t]+{identifier}	{
 			field = Common::String::format("%d%s", g_lingo->_theEntities[ptr]->entity, field.c_str());
 
 			if (!g_lingo->_theEntityFields.contains(field)) {
-				error("LEXER: Unhandled the field %s of %s", field.c_str(), ptr);
+				warning("LEXER: Unhandled the field %s of %s", field.c_str(), ptr);
+				return LEXERROR;
 			}
 
-			if (g_lingo->_theEntityFields[field]->entity != g_lingo->_theEntities[ptr]->entity)
-				error("LEXER: Unsupported field '%s' for entity '%s'", field.c_str(), ptr);
+			if (g_lingo->_theEntityFields[field]->entity != g_lingo->_theEntities[ptr]->entity) {
+				warning("LEXER: Unsupported field '%s' for entity '%s'", field.c_str(), ptr);
+				return LEXERROR;
+			}
 
 			yylval.e[0] = g_lingo->_theEntities[ptr]->entity;
 			yylval.e[1] = g_lingo->_theEntityFields[field]->field;
@@ -290,7 +298,8 @@ the[ \t]+[[:alpha:]]+[ \t]+of[ \t]+{identifier}	{
 				field = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
 
 				if (!g_lingo->_theEntityFields.contains(field)) {
-					error("LEXER: Unhandled the field '%s' for object", field.c_str());
+					warning("LEXER: Unhandled the field '%s' for object", field.c_str());
+					return LEXERROR;
 				}
 
 				yylval.objectfield.os = new Common::String(ptr);
@@ -319,11 +328,14 @@ the[ \t]+[[:alpha:]]+[ \t+](date|time)		{
 		field = Common::String::format("%d%s", g_lingo->_theEntities[ptr]->entity, field.c_str());
 
 		if (!g_lingo->_theEntityFields.contains(field)) {
-			error("LEXER: Unhandled the field %s", ptr);
+			warning("LEXER: Unhandled the field %s", ptr);
+			return LEXERROR;
 		}
 
-		if (g_lingo->_theEntityFields[field]->entity != g_lingo->_theEntities[ptr]->entity)
-			error("LEXER: Unsupported field '%s' for entity '%s'", field.c_str(), ptr);
+		if (g_lingo->_theEntityFields[field]->entity != g_lingo->_theEntities[ptr]->entity) {
+			warning("LEXER: Unsupported field '%s' for entity '%s'", field.c_str(), ptr);
+			return LEXERROR;
+		}
 
 		yylval.e[0] = g_lingo->_theEntities[ptr]->entity;
 		yylval.e[1] = g_lingo->_theEntityFields[field]->field;
@@ -387,8 +399,10 @@ word			{ count(); return tWORD; }
 			int type = g_lingo->_builtins[yytext]->type;
 			if ((type == BLTIN || type == FBLTIN || type == RBLTIN) && g_lingo->_builtins[yytext]->parens == false) {
 				if (type == RBLTIN) {
-					if (g_lingo->_builtins[yytext]->nargs != 1 || g_lingo->_builtins[yytext]->maxArgs != 1)
-						error("Incorrectly set RBLTIN %s", yytext);
+					if (g_lingo->_builtins[yytext]->nargs != 1 || g_lingo->_builtins[yytext]->maxArgs != 1) {
+						warning("Incorrectly set RBLTIN %s", yytext);
+						return LEXERROR;
+					}
 
 					return RBLTIN;
 				}

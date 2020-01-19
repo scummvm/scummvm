@@ -99,7 +99,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 }
 
 %token UNARY
-%token CASTREF VOID VAR POINT RECT ARRAY OBJECT REFERENCE
+%token CASTREF VOID VAR POINT RECT ARRAY OBJECT REFERENCE LEXERROR
 %token<i> INT ARGC ARGCNORET
 %token<e> THEENTITY THEENTITYWITHID THEMENUITEMENTITY
 %token<f> FLOAT
@@ -192,7 +192,8 @@ asgn: tPUT expr tINTO ID 		{
 	// the <field> of menuItem <expr>" of menu <expr>
 	| tSET THEMENUITEMENTITY simpleexpr tOF ID simpleexpr tTO expr	{
 		if (!$ID->equalsIgnoreCase("menu")) {
-			error("LEXER: keyword 'menu' expected");
+			warning("LEXER: keyword 'menu' expected");
+			YYERROR;
 		}
 
 		warning("STUB: menuItem entity");
