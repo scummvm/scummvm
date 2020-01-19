@@ -556,7 +556,9 @@ def auxPopulateExtraSpeechAudioRow(sh = None, n = 0, pFilenameStr = '', pTextStr
 						# checks if not empty
 						if gStringReplacementForRootFolderWithExportedFiles and gNumReplaceStartingCharacters > 0:
 							realPathOfFileNameToLink = realPathOfFileNameToLink.replace(realPathOfFileNameToLink[:gNumReplaceStartingCharacters], gStringReplacementForRootFolderWithExportedFiles)
-
+						# Libreoffice seems to only work with forward slashes (v6.2.8.2)
+						# Also works with MS Excel (tested with Office 2007)
+						realPathOfFileNameToLink = realPathOfFileNameToLink.replace('\\','/');
 						hyperlinkAudioFormula = 'HYPERLINK("file:///%s","%s")' % (realPathOfFileNameToLink, shortHandFileName)
 						sh.write(n, 6, Formula(hyperlinkAudioFormula))
 						break
@@ -948,6 +950,10 @@ def outputXLS(filename, sheet, listTlkWavs, listDevsWavs, parseTREResourcesAlso 
 				# also works in Windows + LibreOffice (run from msys) -- tried something like:
 				#	python sortBladeRunnerWavs.py -op /g/WORKSPACE/BladeRunnerWorkspace/br-mixer-master/data/WAV -m "G:/WORKSPACE/BladeRunnerWorkspace/br-mixer-master/data/WAV"
 				# put real full path for each file as FILE URL, and real (or approximate shorthand file name as alias)
+				#
+				# Libreoffice seems to only work with forward slashes (v6.2.8.2)
+				# Also works with MS Excel (tested with Office 2007)
+				realPathOfFileNameToLink = realPathOfFileNameToLink.replace('\\','/');
 				hyperlinkAudioFormula = 'HYPERLINK("file:///%s","%s")' % (realPathOfFileNameToLink, shortHandFileName)
 				sh.write(m, 6, Formula(hyperlinkAudioFormula))
 			else:
