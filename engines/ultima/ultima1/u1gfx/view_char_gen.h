@@ -49,9 +49,9 @@ class ViewCharacterGeneration : public Shared::Gfx::VisualContainer {
 	bool TextInputMsg(CTextInputMsg &msg);
 private:
 	enum Flag {
-		FLAG_FRAME = 1, FLAG_ATTRIBUTES = 2, FLAG_ATTR_POINTERS = 4, FLAG_HELP = 8, FLAG_RACE = 16,
-		FLAG_SEX = 32, FLAG_CLASS = 64, FLAG_NAME = 128, FLAG_SAVE = 256,
-		FLAG_INITIAL = FLAG_FRAME | FLAG_ATTRIBUTES | FLAG_ATTR_POINTERS | FLAG_HELP
+		FLAG_FRAME = 1, FLAG_POINTS = 2, FLAG_ATTRIBUTES = 4, FLAG_ATTR_POINTERS = 8, FLAG_HELP = 16,
+		FLAG_RACE = 32, FLAG_SEX = 64, FLAG_CLASS = 128, FLAG_NAME = 256, FLAG_SAVE = 512,
+		FLAG_INITIAL = FLAG_FRAME | FLAG_POINTS | FLAG_ATTRIBUTES | FLAG_ATTR_POINTERS | FLAG_HELP
 	};
 	uint _flags;
 	Shared::Character *_character;
@@ -68,6 +68,11 @@ private:
 	 * Draw the outer frame for the view
 	 */
 	void drawFrame(Shared::Gfx::VisualSurface &s);
+
+	/**
+	 * Draw points remaining
+	 */
+	void drawPointsRemaining(Shared::Gfx::VisualSurface &s);
 
 	/**
 	 * Draw the attribute list

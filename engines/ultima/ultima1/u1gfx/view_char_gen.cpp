@@ -81,7 +81,7 @@ void ViewCharacterGeneration::setMode(uint flags) {
 	} else if (_flags & FLAG_NAME) {
 		game->_textInput->show(TextPoint(19, 17), false, 14, game->_textColor);
 	} else if (_flags & FLAG_SAVE) {
-		textCursor->setPosition(TextPoint(20, 23));
+		textCursor->setPosition(TextPoint(30, 22));
 		textCursor->setVisible(true);
 	}
 }
@@ -92,6 +92,8 @@ void ViewCharacterGeneration::draw() {
 
 	if (_flags & FLAG_FRAME)
 		drawFrame(s);
+	if (_flags & FLAG_POINTS)
+		drawPointsRemaining(s);
 	if (_flags & FLAG_ATTRIBUTES)
 		drawAttributes(s);
 	if (_flags & FLAG_ATTR_POINTERS)
@@ -124,10 +126,15 @@ void ViewCharacterGeneration::drawFrame(Shared::Gfx::VisualSurface &s) {
 	ds.drawLeftArrow(TextPoint(31, 0));
 }
 
-void ViewCharacterGeneration::drawAttributes(Shared::Gfx::VisualSurface &s) {
+void ViewCharacterGeneration::drawPointsRemaining(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+
 	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[1], _pointsRemaining),
 		TextPoint(6, 4), game->_textColor);
+}
+
+void ViewCharacterGeneration::drawAttributes(Shared::Gfx::VisualSurface &s) {
+	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[2],
 		_character->_strength, _character->_agility, _character->_stamina,
 		_character->_charisma, _character->_wisdom, _character->_intelligence),
@@ -153,7 +160,9 @@ void ViewCharacterGeneration::drawHelp(Shared::Gfx::VisualSurface &s) {
 
 void ViewCharacterGeneration::drawRace(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
+	s.fillRect(TextRect(6, 2, 38, 5), game->_bgColor);
+	s.fillRect(TextRect(2, 16, 38, 22), game->_bgColor);
+
 	s.writeString(game->_res->CHAR_GEN_TEXT[6], TextPoint(3, 17), game->_textColor);
 	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[4], 
 		game->_res->RACE_NAMES[0], game->_res->RACE_NAMES[1],
@@ -199,8 +208,9 @@ void ViewCharacterGeneration::drawName(Shared::Gfx::VisualSurface &s) {
 
 void ViewCharacterGeneration::drawSave(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	s.writeString(_character->_name, TextPoint(12, 6), game->_textColor);
-	s.writeString(game->_res->CHAR_GEN_TEXT[13], TextPoint(2, 23), game->_textColor);
+	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
+	s.writeString(_character->_name, TextPoint(12, 4), game->_textColor);
+	s.writeString(game->_res->CHAR_GEN_TEXT[13], TextPoint(3, 22), game->_textColor);
 }
 
 void ViewCharacterGeneration::setRace(int raceNum) {
@@ -312,7 +322,7 @@ bool ViewCharacterGeneration::KeypressMsg(CKeypressMsg &msg) {
 				++_pointsRemaining;
 				--*_attributes[_selectedAttribute];
 			}
-			setMode(FLAG_ATTRIBUTES);
+			setMode(FLAG_ATTRIBUTES | FLAG_POINTS);
 			break;
 
 		case Common::KEYCODE_RIGHT:
@@ -321,7 +331,7 @@ bool ViewCharacterGeneration::KeypressMsg(CKeypressMsg &msg) {
 				--_pointsRemaining;
 				++*_attributes[_selectedAttribute];
 			}
-			setMode(FLAG_ATTRIBUTES);
+			setMode(FLAG_ATTRIBUTES | FLAG_POINTS);
 			break;
 
 		case Common::KEYCODE_SPACE:

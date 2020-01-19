@@ -23,6 +23,7 @@
 #include "ultima/shared/gfx/text_input.h"
 #include "ultima/shared/gfx/text_cursor.h"
 #include "ultima/shared/early/game_base.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Shared {
@@ -33,6 +34,7 @@ BEGIN_MESSAGE_MAP(TextInput, Dialog)
 END_MESSAGE_MAP()
 
 void TextInput::show(const Point &pt, bool isNumeric, size_t maxCharacters, byte color) {
+	Dialog::show();
 	_isNumeric = isNumeric;
 	_maxCharacters = maxCharacters;
 	_color = color;
@@ -54,7 +56,7 @@ void TextInput::draw() {
 	Common::String text = _text;
 	while (text.size() < _maxCharacters)
 		text += ' ';
-	s.writeString(_text, TextPoint(0, 0), _color);
+	s.writeString(text, TextPoint(0, 0), _color);
 }
 
 bool TextInput::KeypressMsg(CKeypressMsg &msg) {
@@ -72,8 +74,11 @@ bool TextInput::KeypressMsg(CKeypressMsg &msg) {
 			setDirty();
 		}
 	} else if (msg._keyState.keycode == Common::KEYCODE_RETURN || msg._keyState.keycode == Common::KEYCODE_KP_ENTER) {
-		// Enter key pressed
-
+		CTextInputMsg inputMsg(this, _text, false);
+		inputMsg.execute(_parentView);
+	} else if (Common::KEYCODE_ESCAPE) {
+		CTextInputMsg inputMsg(this, "", true);
+		inputMsg.execute(_parentView);
 	}
 
 	return true;
