@@ -101,6 +101,11 @@ public:
 	 * Called when the game starts
 	 */
 	virtual void starting();
+	
+	/**
+	 * Returns true if the current video mode is VGA
+	 */
+	virtual bool isVGA() const { return false; }
 
 	/**
 	 * Called once every frame to update the game and render the view

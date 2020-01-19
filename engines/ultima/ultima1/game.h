@@ -50,6 +50,11 @@ public:
 	virtual ~Ultima1Game();
 
 	/**
+	 * Returns true if the current video mode is VGA
+	 */
+	virtual bool isVGA() const { return _videoMode == VIDEOMODE_VGA; }
+
+	/**
 	 * Called when the game starts
 	 */
 	void starting();
