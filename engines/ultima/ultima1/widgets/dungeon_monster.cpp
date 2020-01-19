@@ -63,6 +63,10 @@ void DungeonMonster::update(bool isPreUpdate) {
 }
 
 void DungeonMonster::movement() {
+	if (attackDistance())
+		// Dungeon monsters don't move if they're already in attack range
+		return;
+
 	Point playerPos = _map->_currentTransport->_position;
 	Point delta = playerPos - _position;
 

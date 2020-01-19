@@ -21,13 +21,34 @@
  */
 
 #include "ultima/ultima1/widgets/guard.h"
+#include "ultima/shared/core/utils.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-void Guard::movement() {
+uint Guard::attackDistance() const {
+	Point diff = _position - _map->_currentTransport->_position;
+	return areGuardsHostile() && ABS(diff.x) < 2 && ABS(diff.y) < 2 ? 1 : 0;
+}
 
+void Guard::movement() {
+	// Don't move if the guards aren't hostile, or they're already within attack distance
+	if (!areGuardsHostile() || attackDistance())
+		return;
+
+	Point diff = _position - _map->_currentTransport->_position;
+	Point delta(SGN(diff.x), SGN(diff.y));
+	int totalDiff = ABS(diff.x) + ABS(diff.y);
+	if (totalDiff >= 13)
+		return;
+
+	// Try moving horizontally or vertically towards the player
+	bool moved = moveBy(Point(delta.x, 0));
+	if (!moved)
+		moved = moveBy(Point(0, delta.y));
+	if (moved)
+		_game->playFX(4);
 }
 
 } // End of namespace Widgets

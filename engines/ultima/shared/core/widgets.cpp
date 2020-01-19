@@ -32,9 +32,8 @@ namespace Shared {
 void Creature::update(bool isPreUpdate) {
 	if (isPreUpdate) {
 		// Check whether creature can attack
+		movement();
 		_isAttacking = attackDistance() != 0;
-		if (!_isAttacking)
-			movement();
 	} else if (_isAttacking && !_game->_gameState->isPartyDead()) {
 		attack();
 	}
