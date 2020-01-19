@@ -46,6 +46,7 @@ class ViewTitle : public Shared::Gfx::VisualContainer {
 	bool FrameMsg(CFrameMsg &msg);
 private:
 	Graphics::ManagedSurface _logo, _castle;
+	Graphics::ManagedSurface _flags[3];
 	enum TitleMode { TITLEMODE_COPYRIGHT, TITLEMODE_PRESENTS, TITLEMODE_CASTLE };
 	TitleMode _mode;
 	uint32 _expiryTime;
@@ -65,6 +66,11 @@ private:
 	 * Draws the castle view
 	 */
 	void drawCastleView();
+
+	/**
+	 * Animates the castle flags
+	 */
+	void drawCastleFlag(Shared::Gfx::VisualSurface &s, int xp);
 
 	/**
 	 * Sets up the palette for the castle view

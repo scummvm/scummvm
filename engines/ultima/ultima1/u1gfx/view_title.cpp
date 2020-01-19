@@ -68,9 +68,20 @@ ViewTitle::ViewTitle(TreeItem *parent) : Shared::Gfx::VisualContainer("Title", R
 	load16(_castle, f);
 	f.close();
 
-	//***DEBUG****
-	setCastlePalette();
-	_mode = TITLEMODE_CASTLE;
+	// Load the flags
+	f.open("data/flags.bmp");
+	Image::BitmapDecoder flags;
+	if (!flags.loadStream(f))
+		error("Could not load flags");
+
+	src = flags.getSurface();
+	for (int idx = 0; idx < 3; ++idx) {
+		_flags[idx].create(8, 8);
+		_flags[idx].blitFrom(*src,
+			Common::Rect(idx * 8, 0, (idx + 1) * 8, 8),
+			Common::Point(0, 0));
+	}
+	f.close();
 }
 
 ViewTitle::~ViewTitle() {
@@ -135,7 +146,15 @@ void ViewTitle::drawPresentsView() {
 
 void ViewTitle::drawCastleView() {
 	Shared::Gfx::VisualSurface s = getSurface();
-	s.blitFrom(_castle);
+	if (_counter == 0)
+		s.blitFrom(_castle);
+
+	drawCastleFlag(s, 123);
+	drawCastleFlag(s, 196);
+}
+
+void ViewTitle::drawCastleFlag(Shared::Gfx::VisualSurface &s, int xp) {
+	s.blitFrom(_flags[getGame()->getRandomNumber(0, 2)], Common::Point(xp, 55));
 }
 
 void ViewTitle::setTitlePalette() {
