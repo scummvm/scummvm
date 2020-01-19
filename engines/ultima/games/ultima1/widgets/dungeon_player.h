@@ -20,52 +20,32 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_MAP_MAP_OVERWORLD_H
-#define ULTIMA_ULTIMA1_MAP_MAP_OVERWORLD_H
+#ifndef ULTIMA_ULTIMA1_WIDGETS_DUNGEON_PLAYER_H
+#define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_PLAYER_H
 
-#include "ultima/ultima1/map/map.h"
+#include "ultima/games/shared/core/widgets.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Map {
+namespace Widgets {
 
-class MapOverworld : public Ultima1Map::MapBase {
-private:
-	/**
-	 * Load widget list for the map
-	 */
-	void loadWidgets();
+class DungeonPlayer : public Shared::DungeonWidget {
 public:
-	MapOverworld(Ultima1Game *game) : Ultima1Map::MapBase(game) {}
-	virtual ~MapOverworld() {}
+	/**
+	 * Constructor
+	 */
+	DungeonWidget(Shared::Game *game, Map::MapBase *map) : MapWidget(game, map) {}
+	DungeonWidget(Shared::Game::Game *game, Ultima1Map::MapBase *map, const Point &pt) : MapWidget(game, map, pt) {}
+	DungeonWidget(Shared::Game *game, Ultima1Map::MapBase *map, const Point &pt, const Common::String &name) :
+		MapWidget(Shared::Game, map, pt, name) {}
 
 	/**
-	 * Load the map
+	 * Destructor
 	 */
-	virtual void load(Shared::MapId mapId);
-
-	/**
-	 * Returns whether the map is fixed
-	 */
-	virtual bool isFixed() const { return false; }
-
-	/**
-	 * Shifts the viewport by a given delta
-	 */
-	virtual void shiftViewport(const Point &delta);
-
-	/**
-	 * Get the viewport position
-	 */
-	virtual Point getViewportPosition(const Point &viewportSize);
-
-	/**
-	 * Gets a point relative to the current position
-	 */
-	virtual Point getDeltaPosition(const Point &delta);
+	virtual ~DungeonWidget() {}
 };
 
-} // End of namespace Map
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

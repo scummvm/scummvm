@@ -135,6 +135,26 @@ void Map::MapBase::update() {
 		_widgets[idx].get()->update();
 }
 
+/*------------------------------------------------------------------------*/
+
+bool MapWidget::canMoveTo(const Point &destPos) {
+	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)_map->width() || destPos.y >= (int)_map->height()) {
+		// If the map is fixed, allow moving beyond it's edges so it can be left
+		if (_map->isFixed())
+			return true;
+	}
+
+	// Get the details of the position
+	MapTile destTile;
+	_map->getTileAt(destPos, &destTile);
+
+	// If there's a widget blocking the tile, return false
+	if (destTile._widget && destTile._widget->isBlocking())
+		return false;
+
+	return true;
+}
+
 /*-------------------------------------------------------------------*/
 
 void Map::clear() {

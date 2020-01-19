@@ -29,16 +29,33 @@
 namespace Ultima {
 namespace Shared {
 
-class Monster : public MapWidget {
+/**
+ * Base class for widgets on maps other than the dungeons
+ */
+class StandardWidget : public MapWidget {
+public:
+	/**
+	 * Constructor
+	 */
+	StandardWidget(Game *game, Map::MapBase *map) : MapWidget(game, map) {}
+	StandardWidget(Game *game, Map::MapBase *map, const Point &pt) : MapWidget(game, map, pt) {}
+
+	/**
+	 * Destructor
+	 */
+	virtual ~StandardWidget() {}
+};
+
+class Monster : public StandardWidget {
 protected:
 	int _hitPoints;
 public:
 	/**
 	 * Constructor
 	 */
-	Monster(Game *game, Map::MapBase *map) : MapWidget(game, map), _hitPoints(0) {}
-	Monster(Game *game, Map::MapBase *map, int hitPoints) : MapWidget(game, map), _hitPoints(hitPoints) {}
-	Monster(Game *game, Map::MapBase *map, const Point &pt, int hitPoints) : MapWidget(game, map, pt), _hitPoints(hitPoints) {}
+	Monster(Game *game, Map::MapBase *map) : StandardWidget(game, map), _hitPoints(0) {}
+	Monster(Game *game, Map::MapBase *map, int hitPoints) : StandardWidget(game, map), _hitPoints(hitPoints) {}
+	Monster(Game *game, Map::MapBase *map, const Point &pt, int hitPoints) : StandardWidget(game, map, pt), _hitPoints(hitPoints) {}
 
 	/**
 	 * Destructor
@@ -69,19 +86,26 @@ public:
 	 * Draws an item
 	 */
 	virtual void draw(DungeonSurface &s, uint distance) = 0;
+	
+	/**
+	 * Returns true if the given transport type can move to a given position on the map
+	 */
+	virtual bool canMoveTo(const Point &destPos);
 };
 
 /**
  * Base class for dungeon monsters
  */
-class DungeonMonster : public Monster {
+class DungeonMonster : public DungeonWidget {
+protected:
+	int _hitPoints;
 public:
 	/**
 	 * Constructor
 	 */
-	DungeonMonster(Game *game, Map::MapBase *map, int hitPoints) : Monster(game, map, hitPoints) {}
+	DungeonMonster(Game *game, Map::MapBase *map, int hitPoints) : DungeonWidget(game, map), _hitPoints(hitPoints) {}
 	DungeonMonster(Game *game, Map::MapBase *map, const Point &pt, int hitPoints) :
-		Monster(game, map, pt, hitPoints) {}
+		DungeonWidget(game, map, pt), _hitPoints(hitPoints) {}
 
 	/**
 	 * Destructor

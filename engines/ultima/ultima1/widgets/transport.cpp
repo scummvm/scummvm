@@ -46,37 +46,6 @@ uint TransportOnFoot::getTileNum() const {
 	return dynamic_cast<Map::MapOverworld *>(map) ? 8 : 18;
 }
 
-bool TransportOnFoot::canMoveTo(const Point &destPos) {
-	Map::Ultima1Map::MapBase *map = getMap();
-
-	// If beyond the end of the map, must be in a location map returning to the overworld
-	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)map->width() || destPos.y >= (int)map->height())
-		return true;
-
-	// Get the details of the position
-	Map::U1MapTile currTile, destTile;
-	map->getTileAt(map->getPosition(), &currTile);
-	map->getTileAt(destPos, &destTile);
-
-	// If there's a widget blocking the tile, return false
-	if (destTile._widget && destTile._widget->isBlocking())
-		return false;
-
-	if (dynamic_cast<Map::MapDungeon *>(map)) {
-		// Can't move onto certain dungeon tile types
-		if (destTile._isWall || destTile._isSecretDoor || destTile._isBeams)
-			return false;
-
-		// Can't move to directly adjoining doorway cells (they'd be in parralel to each other, not connected)
-		if (destTile._isDoor && currTile._isDoor)
-			return false;
-
-		return true;
-	} else {
-		return destTile.isGround();
-	}
-}
-
 bool TransportOnFoot::moveTo(const Point &destPos) {
 	Map::Ultima1Map::MapBase *map = getMap();
 

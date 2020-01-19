@@ -213,6 +213,11 @@ public:
 		virtual uint getLevel() const { return 0; }
 
 		/**
+		 * Returns whether the map is fixed
+		 */
+		virtual bool isFixed() const { return true; }
+
+		/**
 		 * Returns the width of the map
 		 */
 		size_t width() const { return _size.x; }
@@ -411,6 +416,14 @@ public:
 	}
 
 	/**
+	 * Returns whether the map is fixed
+	 */
+	bool isFixed() const {
+		assert(_mapArea);
+		return _mapArea->isFixed();
+	}
+
+	/**
 	 * Updates the map at the end of a turn
 	 */
 	void update() {
@@ -457,6 +470,11 @@ public:
 	 * Called to update the widget at the end of a turn
 	 */
 	virtual void update() {}
+
+	/**
+	 * Returns true if the given transport type can move to a given position on the map
+	 */
+	virtual bool canMoveTo(const Point &destPos);
 };
 
 } // End of namespace Shared
