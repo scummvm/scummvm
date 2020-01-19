@@ -64,6 +64,8 @@ public:
 	 */
 	static bool canMoveTo(Shared::Map::MapBase *map, MapWidget *widget, const Point &destPos);
 public:
+	DECLARE_WIDGET(OverworldMonster)
+
 	/**
 	 * Constructor
 	 */

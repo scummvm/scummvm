@@ -31,6 +31,8 @@ namespace Widgets {
 
 class Merchant : public Person {
 public:
+	DECLARE_WIDGET(Merchant)
+
 	/**
 	 * Constructor
 	 */

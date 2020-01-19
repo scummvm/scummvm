@@ -149,7 +149,7 @@ bool U1MapTile::isGround() const {
 
 /*------------------------------------------------------------------------*/
 
-Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Map(), _game(game), _mapType(MAP_OVERWORLD) {
+Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Map(), _game(game), _mapType(MAP_UNKNOWN) {
 	Ultima1Map::clear();
 	_mapCity = new MapCity(game, this);
 	_mapCastle = new MapCastle(game, this);
@@ -165,7 +165,7 @@ Ultima1Map::~Ultima1Map() {
 }
 
 void Ultima1Map::clear() {
-	_mapType = MAP_OVERWORLD;
+	_mapType = MAP_UNKNOWN;
 }
 
 void Ultima1Map::load(Shared::MapId mapId) {
@@ -205,8 +205,6 @@ void Ultima1Map::synchronize(Common::Serializer &s) {
 bool Ultima1Map::isLordBritishCastle() const {
 	return _mapType == MAP_CASTLE && static_cast<MapCityCastle *>(_mapArea)->getMapIndex() == 0;
 }
-
-#define REGISTER_WIDGET(NAME) if (name == "NAME") return new Widgets::NAME(_game, (Ultima1Map::MapBase *)map) 
 
 Shared::MapWidget *Ultima1Map::createWidget(Shared::Map::MapBase *map, const Common::String &name) {
 	REGISTER_WIDGET(Bard);

@@ -55,12 +55,20 @@ void Map::MapBase::synchronize(Common::Serializer &s) {
 	Common::String name;
 
 	if (s.isSaving()) {
-		// Save widgest
-		size = _widgets.size();
+		// Save widgets
+		size = 0;
+		for (uint idx = 0; idx < _widgets.size(); ++idx) {
+			if (_widgets[idx]->getClassName())
+				++size;
+		}
+
 		s.syncAsUint16LE(size);
 		for (uint idx = 0; idx < _widgets.size(); ++idx) {
-			// TODO: Need to have way to get class name for widget
-			_widgets[idx]->synchronize(s);
+			name = _widgets[idx]->getClassName();
+			if (!name.empty()) {
+				s.syncString(name);
+				_widgets[idx]->synchronize(s);
+			}
 		}
 	} else {
 		// Load widgets

@@ -36,6 +36,8 @@ protected:
 	 */
 	virtual void movement() override;
 public:
+	DECLARE_WIDGET(Wench)
+
 	/**
 	 * Constructor
 	 */

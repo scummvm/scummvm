@@ -33,6 +33,9 @@ namespace Ultima {
 
 namespace Shared {
 
+#define REGISTER_WIDGET(NAME) if (name == "NAME") return new Widgets::NAME(_game, (Ultima1Map::MapBase *)map) 
+#define DECLARE_WIDGET(NAME) virtual const char *getClassName() const override { return #NAME; }
+
 enum Direction {
 	DIR_NONE = 0,
 	DIR_LEFT = 1, DIR_RIGHT = 2, DIR_UP = 3, DIR_DOWN = 4,
@@ -506,6 +509,11 @@ public:
 	 * Destructor
 	 */
 	virtual ~MapWidget() {}
+
+	/**
+	 * Return a name for a widget class if it can be synchronized to savegames
+	 */
+	virtual const char *getClassName() const { return nullptr; }
 
 	/**
 	 * Handles loading and saving games
