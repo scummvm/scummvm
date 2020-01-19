@@ -79,6 +79,7 @@ MODULE_OBJS += \
 	ultima1/widgets/guard.o \
 	ultima1/widgets/hit.o \
 	ultima1/widgets/king.o \
+	ultima1/widgets/merchant.o \
 	ultima1/widgets/overworld_monster.o \
 	ultima1/widgets/person.o \
 	ultima1/widgets/princess.o \

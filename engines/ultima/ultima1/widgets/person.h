@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_PEOPLE_PERSON_H
-#define ULTIMA_ULTIMA1_PEOPLE_PERSON_H
+#ifndef ULTIMA_ULTIMA1_WIDGETS_PERSON_H
+#define ULTIMA_ULTIMA1_WIDGETS_PERSON_H
 
 #include "ultima/ultima1/map/map.h"
 #include "ultima/ultima1/game.h"
@@ -66,7 +66,7 @@ public:
 	 * Constructor
 	 */
 	Person(Ultima1Game *game, Map::Ultima1Map::MapBase *map, uint tileNum, int hitPoints) :
-		Shared::Creature(game, map, hitPoints), _tileNum(tileNum) {}
+		Shared::Creature(game, map, hitPoints), _game(game), _map(map), _tileNum(tileNum) {}
 
 	/**
 	 * Destructor

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_PEOPLE_PRINCESS_H
-#define ULTIMA_ULTIMA1_PEOPLE_PRINCESS_H
+#ifndef ULTIMA_ULTIMA1_WIDGETS_PRINCESS_H
+#define ULTIMA_ULTIMA1_WIDGETS_PRINCESS_H
 
 #include "ultima/ultima1/widgets/wench.h"
 

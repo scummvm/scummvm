@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_WIDGETS_BARD_H
-#define ULTIMA_ULTIMA1_WIDGETS_BARD_H
+#ifndef ULTIMA_ULTIMA1_WIDGETS_MERCHANT_H
+#define ULTIMA_ULTIMA1_WIDGETS_MERCHANT_H
 
 #include "ultima/ultima1/widgets/person.h"
 
@@ -29,37 +29,20 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-/**
- * Bard & Jester persons
- */
-class Bard : public Person {
-private:
-	/**
-	 * Called when the bard/jester steals something from the player
-	 * @returns		True if player had a weapon to steal
-	 */
-	bool stealWeapon();
-protected:
-	/**
-	 * Handles moving creatures
-	 */
-	virtual void movement() override;
+class Merchant : public Person {
 public:
 	/**
 	 * Constructor
 	 */
-	Bard(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
-		Person(game, map, 19, hitPoints) {}
+	Merchant(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
+		Person(game, map, 50, hitPoints) {}
+	Merchant(Ultima1Game *game, Map::Ultima1Map::MapBase *map, uint tileNum, int hitPoints) :
+		Person(game, map, tileNum, hitPoints) {}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~Bard() {}
-
-	/**
-	 * Talk to an NPC
-	 */
-	virtual void talk();
+	virtual ~Merchant() {}
 };
 
 } // End of namespace Widgets
