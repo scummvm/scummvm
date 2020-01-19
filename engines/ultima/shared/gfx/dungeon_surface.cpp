@@ -171,7 +171,7 @@ void DungeonSurface::drawRightWall(uint distance) {
 			p2(WALL_ARRAY_X[distance - 1], WALL_ARRAY_Y[distance - 1]);
 
 		drawLine(303 - p2.x, p2.y + 8, 303 - p1.x, p1.y + 8, _edgeColor);
-		drawLine(303 - p2.x, 151 - p2.y, 303 + p1.x, 151 - p1.y, _edgeColor);
+		drawLine(303 - p2.x, 151 - p2.y, 303 - p1.x, 151 - p1.y, _edgeColor);
 	}
 }
 
