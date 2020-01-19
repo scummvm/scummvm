@@ -61,6 +61,11 @@ private:
 	ViewportMap *_viewportMap;
 	Status *_status;
 	Actions::Action *_actions[2];
+private:
+	/**
+	 * Draws level & direction indicators when in a dungeon
+	 */
+	void drawIndicators();
 public:
 	CLASSDEF;
 	GameView(TreeItem *parent = nullptr);

@@ -37,6 +37,7 @@ Map::Map() {
 	_mapId = 0;
 	_direction = DIR_UP;
 	_fixed = false;
+	_dungeonLevel = 0;
 }
 
 Point Map::getDeltaPosition(const Point &delta) {
