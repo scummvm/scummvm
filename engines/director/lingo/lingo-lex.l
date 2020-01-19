@@ -133,6 +133,7 @@ go			{ count(); return tGO; }
 instance	{ count(); return tINSTANCE; }
 intersects	{ count(); return tINTERSECTS; }
 into		{ count(); return tINTO; }
+in			{ count(); return tIN; }
 item		{ count(); return tITEM; }
 line		{ count(); return tLINE; }
 loop		{ count(); return checkImmediate(tLOOP); }
