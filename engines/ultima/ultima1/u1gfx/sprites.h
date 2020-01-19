@@ -41,6 +41,7 @@ class Sprites : public Shared::Gfx::Sprites, public Shared::TreeItem {
 	DECLARE_MESSAGE_MAP;
 	bool FrameMsg(CFrameMsg &msg);
 private:
+	uint32 _nextFrameTime;
 	bool _isOverworld;
 	uint _frameCtr;
 private:
@@ -50,9 +51,17 @@ private:
 	void animateWater();
 public:
 	CLASSDEF;
-	Sprites(TreeItem *parent) : Shared::Gfx::Sprites(), TreeItem(), _isOverworld(false), _frameCtr(0) {
+	
+	/**
+	 * Constructor
+	 */
+	Sprites(Shared::TreeItem *parent) : Shared::Gfx::Sprites(), TreeItem(), _isOverworld(false), _frameCtr(0), _nextFrameTime(0) {
 		addUnder(parent);
 	}
+
+	/**
+	 * Destructor
+	 */
 	virtual ~Sprites() {}
 
 	/**
