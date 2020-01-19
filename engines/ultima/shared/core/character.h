@@ -29,7 +29,32 @@
 namespace Ultima {
 namespace Shared {
 
-struct Character {
+class Character {
+public:
+	/**
+	 * Weapon entry
+	 */
+	struct Weapon {
+		Common::String _shortName, _longName;
+		uint _quantity;
+	};
+
+	/**
+	 * Armor entry
+	 */
+	struct Armor {
+		Common::String _name;
+		uint _quantity;
+	};
+
+	/**
+	 * Spell entry
+	 */
+	struct Spell {
+		Common::String _name;
+		uint _quantity;
+	};
+public:
 	uint _strength;
 	uint _agility;
 	uint _stamina;
@@ -43,12 +68,45 @@ struct Character {
 	int _equippedWeapon;
 	int _equippedArmor;
 	int _equippedSpell;
-	Common::Array<uint> _armor;
-	Common::Array<uint> _weapons;
-	Common::Array<uint> _spells;
+	Common::Array<Weapon> _weapons;
+	Common::Array<Armor> _armor;
+	Common::Array<Spell> _spells;
 public:
+	/**
+	 * Constructor
+	 */
 	Character() : _strength(0), _agility(0), _stamina(0), _charisma(0), _wisdom(0), _intelligence(0),
-		_hitPoints(0), _experience(0), _food(0), _coins(0), _equippedWeapon(-1), _equippedArmor(-1), _equippedSpell(-1) {}
+		_hitPoints(0), _experience(0), _food(0), _coins(0), _equippedWeapon(0), _equippedArmor(0), _equippedSpell(0) {}
+
+	/**
+	 * Returns true if a weapon is equipped
+	 */
+	bool isWeaponEquipped() const { return _equippedWeapon != 0; }
+
+	/**
+	 * Returns true if armor is equipped
+	 */
+	bool isArmorEquipped() const { return _equippedArmor != 0; }
+
+	/**
+	 * Returns true if a spell is equipped
+	 */
+	bool isSpellEquipped() const { return _equippedSpell != 0; }
+
+	/**
+	 * Removes any equipped weapon
+	 */
+	void removeWeapon() { _equippedWeapon = 0; }
+
+	/**
+	 * Removes any eqipped armor
+	 */
+	void removeArmor() { _equippedArmor = 0; }
+
+	/**
+	 * Remove any equipped spell
+	 */
+	void removeSpell() { _equippedSpell = -1; }
 };
 
 typedef Common::Array<Character> CharacterArray;

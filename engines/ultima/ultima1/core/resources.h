@@ -62,6 +62,9 @@ public:
 	const char *GREMLIN_STOLE;
 	const char *MENTAL_ATTACK;
 	const char *MISSED;
+	const char *THIEF_STOLE;
+	const char *A, *AN;
+	const char *HIT_DAMAGE;
 public:
 	GameResources();
 	GameResources(Shared::Resources *resManager);

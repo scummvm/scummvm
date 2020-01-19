@@ -57,6 +57,7 @@ Ultima1Game::~Ultima1Game() {
 
 void Ultima1Game::starting() {
 	_res->load();
+	_gameState->setup();
 	_gameView->setView("GameView");
 }
 

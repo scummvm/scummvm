@@ -480,6 +480,10 @@ const char *const SRC_ARMOR_DESTROYED = "Armor destroyed!";
 const char *const SRC_GREMLIN_STOLE = "A gremlin stole some food!";
 const char *const SRC_MENTAL_ATTACK = "Mental attack!";
 const char *const SRC_MISSED = "Missed!";
+const char *const SRC_THIEF_STOLE = "Thief stole %s %s";
+const char *const SRC_A = "a";
+const char *const SRC_AN = "an";
+const char *const SRC_HIT_DAMAGE = "Hit! %d damage!";
 
 /*-------------------------------------------------------------------*/
 
@@ -513,6 +517,10 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	GREMLIN_STOLE = SRC_GREMLIN_STOLE;
 	MENTAL_ATTACK = SRC_MENTAL_ATTACK;
 	MISSED = SRC_MISSED;
+	THIEF_STOLE = SRC_THIEF_STOLE;
+	A = SRC_A;
+	AN = SRC_AN;
+	HIT_DAMAGE = SRC_HIT_DAMAGE;
 }
 
 void GameResources::synchronize() {
@@ -542,6 +550,10 @@ void GameResources::synchronize() {
 	syncString(GREMLIN_STOLE);
 	syncString(MENTAL_ATTACK);
 	syncString(MISSED);
+	syncString(THIEF_STOLE);
+	syncString(A);
+	syncString(AN);
+	syncString(HIT_DAMAGE);
 }
 
 } // End of namespace Ultima1
