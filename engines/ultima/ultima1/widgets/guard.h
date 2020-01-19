@@ -42,6 +42,11 @@ protected:
 	 * Handles moving creatures
 	 */
 	virtual void movement() override;
+
+	/**
+	 * Handles attacks
+	 */
+	virtual void attack();
 public:
 	/**
 	 * Constructor
