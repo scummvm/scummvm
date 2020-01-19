@@ -105,6 +105,8 @@ void VisualContainer::draw() {
 		if (item)
 			item->draw();
 	}
+
+	_isDirty = false;
 }
 
 } // End of namespace Gfx
