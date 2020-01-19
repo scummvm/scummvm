@@ -20,64 +20,46 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GFX_GAME_VIEW_H
-#define ULTIMA_ULTIMA1_GFX_GAME_VIEW_H
+#ifndef ULTIMA_ULTIMA1_ACTIONS_CLIMB_H
+#define ULTIMA_ULTIMA1_ACTIONS_CLIMB_H
 
-#include "ultima/shared/gfx/visual_container.h"
-
-namespace Ultima {
-namespace Shared {
-class Info;
-class ViewportDungeon;
-} // End of namespace Shared
-} // End of namespace Ultima
+#include "ultima/ultima1/actions/action.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Actions {
-class Action;
-} // End of namespace Actions
-} // End of namespace Ultima1
-} // End of namespace Ultima
 
-namespace Ultima {
-namespace Ultima1 {
-namespace U1Gfx {
+using Shared::CClimbMsg;
 
-class Status;
-class ViewportMap;
-using Shared::CKeypressMsg;
-
-/**
- * This class implements a standard view screen that shows a status and log area, as well as either
- * a map or dungeon view covering the bulk of the screen
- */
-class GameView : public Shared::Gfx::VisualContainer {
+class Climb : public Action {
 	DECLARE_MESSAGE_MAP;
-	bool KeypressMsg(CKeypressMsg &msg);
-private:
-	Shared::Info *_info;
-	Shared::ViewportDungeon *_viewportDungeon;
-	ViewportMap *_viewportMap;
-	Status *_status;
-	Actions::Action *_actions[3];
+	bool ClimbMsg(CClimbMsg &msg);
 private:
 	/**
-	 * Draws level & direction indicators when in a dungeon
+	 * Climb up a ladder
 	 */
-	void drawIndicators();
+	void ladderUp();
+
+	/**
+	 * Climb down a ladder
+	 */
+	void ladderDown();
 public:
 	CLASSDEF;
-	GameView(TreeItem *parent = nullptr);
-	virtual ~GameView();
 
 	/**
-	 * Draw the game screen
+	* Constructor
+	*/
+	Climb(TreeItem *parent) : Action(parent) {}
+
+	/**
+	 * Destructor
 	 */
-	virtual void draw();
+	virtual ~Climb() {}
 };
 
-} // End of namespace U1Gfx
+} // End of namespace Actions
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

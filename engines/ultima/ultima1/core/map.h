@@ -40,6 +40,15 @@ enum MapId {
 	MAPID_OVERWORLD = 0
 };
 
+enum CityTile {
+	CTILE_GATE = 11
+};
+
+enum DungeonTile {
+	DTILE_HALLWAY = 0, DTILE_WALL = 1, DTILE_SECRET_DOOR = 2, DTILE_DOOR = 3, DTILE_LADDER_DOWN = 6,
+	DTILE_LADDER_UP = 7, DTILE_BEAMS = 8
+};
+
 class Ultima1Game;
 class Ultima1Map;
 class WidgetTransport;
@@ -147,7 +156,7 @@ private:
 	void loadWidgets();
 
 	/**
-	 * Loads a underworld/dungeon map
+	 * Loads the dungeon map
 	 */
 	void loadDungeonMap();
 
@@ -197,6 +206,12 @@ public:
 	 * Spawns a monster within dungeons
 	 */
 	void spawnMonster();
+
+	/**
+	 * Generates a predeterministic dungeon level
+	 */
+	void generateDungeonMap();
+
 };
 
 } // End of namespace Ultima1

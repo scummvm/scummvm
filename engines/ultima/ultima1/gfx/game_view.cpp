@@ -28,8 +28,9 @@
 #include "ultima/ultima1/gfx/status.h"
 #include "ultima/ultima1/gfx/viewport_dungeon.h"
 #include "ultima/ultima1/gfx/viewport_map.h"
-#include "ultima/ultima1/actions/enter.h"
 #include "ultima/ultima1/actions/move.h"
+#include "ultima/ultima1/actions/climb.h"
+#include "ultima/ultima1/actions/enter.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/shared/engine/messages.h"
 
@@ -47,7 +48,8 @@ GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", 
 	_viewportDungeon = new ViewportDungeon(this);
 	_viewportMap = new ViewportMap(this);
 	_actions[0] = new Actions::Move(this);
-	_actions[1] = new Actions::Enter(this);
+	_actions[1] = new Actions::Climb(this);
+	_actions[2] = new Actions::Enter(this);
 }
 
 GameView::~GameView() {
@@ -55,7 +57,7 @@ GameView::~GameView() {
 	delete _status;
 	delete _viewportDungeon;
 	delete _viewportMap;
-	for (int idx = 0; idx < 2; ++idx)
+	for (int idx = 0; idx < 3; ++idx)
 		delete _actions[idx];
 }
 
@@ -85,7 +87,7 @@ void GameView::drawIndicators() {
 	Shared::Gfx::VisualSurface s = getSurface();
 	DrawingSupport ds(s);
 
-	if (true) { //map->_mapType == MAP_DUNGEON) {
+	if (map->_mapType == MAP_DUNGEON) {
 		// Draw the dungeon level indicator
 		ds.drawRightArrow(TextPoint(15, 0));
 		s.writeString(game->_res->DUNGEON_LEVEL, TextPoint(16, 0), game->_textColor);
@@ -117,6 +119,9 @@ bool GameView::KeypressMsg(CKeypressMsg &msg) {
 	} else if (msg._keyState.keycode == Common::KEYCODE_e) {
 		Shared::CEnterMsg enter;
 		enter.execute(this);
+	} else if (msg._keyState.keycode == Common::KEYCODE_k) {
+		Shared::CClimbMsg climb;
+		climb.execute(this);
 	} else {
 		return false;
 	}
