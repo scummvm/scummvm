@@ -54,6 +54,11 @@ protected:
 	virtual void movement();
 public:
 	/**
+	 * Returns true if the given widget can move to a given position on the map
+	 */
+	static bool canMoveTo(Shared::Map::MapBase *map, MapWidget *widget, const Point &destPos);
+public:
+	/**
 	 * Constructor
 	 */
 	DungeonMonster(Shared::Game *game, Shared::Map::MapBase *map, DungeonWidgetId monsterId, int hitPoints,
@@ -82,6 +87,10 @@ public:
 	 */
 	virtual void update(bool isPreUpdate);
 
+	/**
+	 * Returns true if the given widget can move to a given position on the map
+	 */
+	virtual bool canMoveTo(const Point &destPos);
 	/**
 	 * Returns the monster's type
 	 */

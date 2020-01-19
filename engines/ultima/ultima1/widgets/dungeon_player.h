@@ -49,6 +49,11 @@ public:
 	 * The player's viewpoint has no intrinsic drawing
 	 */
 	virtual void draw(Shared::DungeonSurface &s, uint distance) {}
+
+	/**
+	 * Returns true if the given widget can move to a given position on the map
+	 */
+	virtual bool canMoveTo(const Point &destPos);
 };
 
 } // End of namespace Widgets
@@ -56,3 +61,4 @@ public:
 } // End of namespace Ultima
 
 #endif
+

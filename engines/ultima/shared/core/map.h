@@ -495,12 +495,12 @@ public:
 	virtual void update(bool isPreUpdate) {}
 
 	/**
-	 * Returns true if the given transport type can move to a given position on the map
+	 * Returns true if the given widget can move to a given position on the map
 	 */
 	virtual bool canMoveTo(const Point &destPos);
 
 	/**
-	 * Moves to a given position
+	 * Moves the widget to a given position
 	 * @param destPos		Specified new position
 	 * @param dir			Optional explicit direction to set. If not specified,
 	 *		the direction will be set relative to the position moved from
