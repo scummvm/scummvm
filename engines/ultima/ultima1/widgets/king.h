@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_PEOPLE_KING_H
-#define ULTIMA_ULTIMA1_PEOPLE_KING_H
+#ifndef ULTIMA_ULTIMA1_WIDGETS_KING_H
+#define ULTIMA_ULTIMA1_WIDGETS_KING_H
 
 #include "ultima/ultima1/widgets/person.h"
 

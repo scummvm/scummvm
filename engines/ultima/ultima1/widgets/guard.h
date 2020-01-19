@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_PEOPLE_GUARD_H
-#define ULTIMA_ULTIMA1_PEOPLE_GUARD_H
+#ifndef ULTIMA_ULTIMA1_WIDGETS_GUARD_H
+#define ULTIMA_ULTIMA1_WIDGETS_GUARD_H
 
 #include "ultima/ultima1/widgets/person.h"
 

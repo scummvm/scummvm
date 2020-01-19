@@ -27,6 +27,7 @@
 #include "ultima/ultima1/widgets/bard.h"
 #include "ultima/ultima1/widgets/guard.h"
 #include "ultima/ultima1/widgets/king.h"
+#include "ultima/ultima1/widgets/merchant.h"
 #include "ultima/ultima1/widgets/princess.h"
 #include "ultima/ultima1/widgets/wench.h"
 
@@ -67,6 +68,9 @@ void MapCityCastle::loadWidgets() {
 			break;
 		case 20:
 			person = new Widgets::King(_game, this, lp[3]);
+			break;
+		case 21:
+			person = new Widgets::Merchant(_game, this, lp[3]);
 			break;
 		case 22:
 			person = new Widgets::Princess(_game, this, lp[3]);

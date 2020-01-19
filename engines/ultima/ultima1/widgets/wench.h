@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_PEOPLE_WENCH_H
-#define ULTIMA_ULTIMA1_PEOPLE_WENCH_H
+#ifndef ULTIMA_ULTIMA1_WIDGETS_WENCH_H
+#define ULTIMA_ULTIMA1_WIDGETS_WENCH_H
 
 #include "ultima/ultima1/widgets/person.h"
 
