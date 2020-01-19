@@ -61,8 +61,9 @@ void ViewportDungeon::draw() {
 		break;
 	}
 
+	Point currentPos = map->getPosition();
 	bool isDoor = map->isDoor(map->getPosition());
-	bool isWall = map->isWallOrSecretDoor(map->getPosition());
+	bool isWall = map->isWallOrSecretDoor(currentPos);
 	int distance = distanceToOccupiedCell(delta);
 
 	// If stuck in a wall, draw it and exit
@@ -80,7 +81,8 @@ void ViewportDungeon::draw() {
 		if (isDoor)
 			s.drawDoorway(0);
 
-		byte var3 = 0, var4 = 0, var5 = 0, var6 = 0;
+		bool endingLeft = false, endingRight = false;
+		bool var5 = 0, var6 = 0;
 		byte var7 = 0, var8 = 0;
 		for (int index = distance; distance; --distance) {
 			currDelta -= delta;
@@ -91,7 +93,28 @@ void ViewportDungeon::draw() {
 
 
 		}
-		// TODO
+
+		if (isDoor)
+			drawCell(0, currentPos);
+
+		if (isMonsterBlocking(currentPos + backDelta) && map->isDoor(currentPos + backDelta) && distance < 5) {
+			drawLeftCell(distance + 1, currentPos + leftDelta);
+			drawRightCell(distance + 1, currentPos + rightDelta);
+
+			if (!map->isSolid(currentPos + leftDelta))
+				s.drawLeftEdge(distance);
+			if (!map->isSolid(currentPos + rightDelta))
+				s.drawRightEdge(distance);
+		} else {
+			if (endingLeft)
+				s.drawLeftEdge(distance);
+			if (endingRight)
+				s.drawRightEdge(distance);
+		}
+	}
+
+	if (isDoor) {
+
 	}
 
 	// TODO
@@ -122,6 +145,7 @@ bool ViewportDungeon::isMonsterBlocking(const Point &pt) {
 }
 
 void ViewportDungeon::drawCell(uint distance, const Point &pt) {
+	Game *game = getGame();
 	DungeonSurface s = getSurface();
 	Map *map = getMap();
 
@@ -132,11 +156,73 @@ void ViewportDungeon::drawCell(uint distance, const Point &pt) {
 		// Draw a monster
 		if (map->isWallOrDoorway(pt))
 			s.drawWall(distance);
+		if (tile._tileNum == 7)
+			// Ladder down
+			s.drawWidget(27, distance, game->_edgeColor);
+		if (tile._tileNum == 6)
+			// Ladder up
+			s.drawWidget(26, distance, game->_edgeColor);
 
-
-
-		//static_cast<DungeonMonster *>(tile._widget)->draw(distance);
+		static_cast<DungeonMonster *>(tile._widget)->draw(s, distance);
+	} else {
+		switch (tile._tileNum) {
+		case 1:
+		case 2:
+			// Wall or secret door
+			s.drawWall(distance);
+			break;
+		case 3:
+			// Doorway
+			s.drawDoorway(distance);
+			break;
+		case 6:
+			// Ladder down
+			if (map->_direction == DIR_UP || map->_direction == DIR_DOWN) {
+				s.drawLadderDownFaceOn(distance);
+			} else {
+				s.drawLadderDownSideOn(distance);
+			}
+			break;
+		case 7:
+			// Ladder up
+			if (map->_direction == DIR_UP || map->_direction == DIR_DOWN) {
+				s.drawLadderUpFaceOn(distance);
+			} else {
+				s.drawLadderUpSideOn(distance);
+			}
+			break;
+		case 8:
+			// Beams
+			s.drawBeams(distance);
+			break;
+		default:
+			break;
+		}
 	}
+}
+
+void ViewportDungeon::drawLeftCell(uint distance, const Point &pt) {
+	DungeonSurface s = getSurface();
+	Map *map = getMap();
+
+	if (map->isDoor(pt))
+		s.drawLeftDoor(distance);
+	else if (map->isWallOrSecretDoor(pt))
+		s.drawLeftWall(distance);
+	else
+		s.drawLeftBlank(distance);
+}
+
+void ViewportDungeon::drawRightCell(uint distance, const Point &pt) {
+	DungeonSurface s = getSurface();
+	Map *map = getMap();
+
+	if (map->isDoor(pt))
+		s.drawRightDoor(distance);
+	else if (map->isWallOrSecretDoor(pt))
+		s.drawRightWall(distance);
+	else
+		s.drawRightBlank(distance);
 }
 
 } // End of namespace Shared

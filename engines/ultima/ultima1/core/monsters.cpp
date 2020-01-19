@@ -33,6 +33,19 @@ bool U1DungeonMonster::isBlockingView() const {
 		&& _monsterId != MONSTER_GELATINOUS_CUBE;
 }
 
+void U1DungeonMonster::draw(Shared::DungeonSurface &s, uint distance) {
+	if (distance < 5) {
+		if (_monsterId == MONSTER_GELATINOUS_CUBE) {
+			s.drawWall(distance);
+			s.drawLeftEdge(distance);
+			s.drawRightEdge(distance);
+		} else {
+			Ultima1Game *game = static_cast<Ultima1Game *>(g_vm->_game);
+			DungeonWidget::drawWidget(s, _monsterId, distance, game->_edgeColor);
+		}
+	}
+}
+
 /*-------------------------------------------------------------------*/
 
 const byte OFFSET_Y[5] = { 139, 112, 96, 88, 84 };

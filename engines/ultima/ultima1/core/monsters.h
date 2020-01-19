@@ -46,7 +46,8 @@ public:
 	/**
 	 * Constructor
 	 */
-	U1DungeonMonster(Shared::Game *game, Shared::Map *map, int hitPoints) : Shared::DungeonMonster(game, map, hitPoints) {}
+	U1DungeonMonster(Shared::Game *game, Shared::Map *map, DungeonWidgetId monsterId, int hitPoints) :
+		Shared::DungeonMonster(game, map, hitPoints), _monsterId(monsterId) {}
 
 	/**
 	 * Destructor
@@ -57,6 +58,11 @@ public:
 	 * Returns true if a monster blocks the background behind him
 	 */
 	virtual bool isBlockingView() const;
+
+	/**
+	 * Draw a monster
+	 */
+	virtual void draw(Shared::DungeonSurface &s, uint distance);
 };
 
 /**

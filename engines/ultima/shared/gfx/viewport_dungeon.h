@@ -51,6 +51,16 @@ private:
 	 * Draw a monster or, failing that, the given tile at a given cell and distance
 	 */
 	void drawCell(uint distance, const Point &pt);
+
+	/**
+	 * Draw a cell to the left
+	 */
+	void drawLeftCell(uint distance, const Point &pt);
+
+	/**
+	 * Draw a cell to the left
+	 */
+	void drawRightCell(uint distance, const Point &pt);
 protected:
 	/**
 	 * Returns the surface for rendering the dungeon
