@@ -59,6 +59,11 @@ public:
 	virtual ~DungeonMonster() {}
 
 	/**
+	 * Returns the monster's type
+	 */
+	DungeonWidgetId id() const { return _monsterId; }
+
+	/**
 	 * Returns true if a monster blocks the background behind him
 	 */
 	virtual bool isBlockingView() const;
@@ -79,10 +84,11 @@ public:
 	 * Returns true if the given widget can move to a given position on the map
 	 */
 	virtual bool canMoveTo(const Point &destPos);
+
 	/**
-	 * Returns the monster's type
+	 * Handles attacks
 	 */
-	DungeonWidgetId id() const { return _monsterId; }
+	virtual void attack(bool isAllowed);
 };
 
 } // End of namespace Widgets
