@@ -100,6 +100,17 @@ void ViewTitle::draw() {
 	case TITLEMODE_CASTLE:
 		drawCastleView();
 		break;
+
+	case TITLEMODE_TRADEMARKS:
+		drawTrademarksView();
+		break;
+
+	case TITLEMODE_MAIN_MENU:
+		drawMainMenu();
+		break;
+
+	default:
+		break;
 	}
 }
 
@@ -157,6 +168,29 @@ void ViewTitle::drawCastleFlag(Shared::Gfx::VisualSurface &s, int xp) {
 	s.blitFrom(_flags[getGame()->getRandomNumber(0, 2)], Common::Point(xp, 55));
 }
 
+void ViewTitle::drawTrademarksView() {
+	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+	Shared::Gfx::VisualSurface s = getSurface();
+	if (_counter == 0)
+		s.clear();
+
+	if (_counter < 32) {
+		s.blitFrom(_logo, Common::Rect(0, 0, _logo.w, _counter + 1), Point(20, 21));
+		s.blitFrom(_logo, Common::Rect(0, _logo.h - _counter - 1, _logo.w, _logo.h),
+			Common::Point(20, 21 + _logo.h - _counter - 1));
+	} else {
+		s.writeString(game->_res->TITLE_MESSAGES[9], TextPoint(1, 17), game->_textColor);
+		s.writeString(game->_res->TITLE_MESSAGES[10], TextPoint(2, 18), game->_textColor);
+		s.writeString(game->_res->TITLE_MESSAGES[11], TextPoint(11, 19), game->_textColor);
+		s.writeString(game->_res->TITLE_MESSAGES[12], TextPoint(6, 23), game->_textColor);
+	}	
+}
+
+void ViewTitle::drawMainMenu() {
+	Shared::Gfx::VisualSurface s = getSurface();
+	s.clear();
+}
+
 void ViewTitle::setTitlePalette() {
 	const byte PALETTE[] = { 0, 1, 2, 3, 4, 5, 6, 7, 56, 57, 58, 59, 60, 61, 62, 63 };
 	getGame()->setEGAPalette(PALETTE);
@@ -200,12 +234,40 @@ bool ViewTitle::FrameMsg(CFrameMsg &msg) {
 			setTitlePalette();
 		}
 		break;
+
+	case TITLEMODE_TRADEMARKS:
+		if (time > _expiryTime) {
+			_expiryTime = time + 20;
+			++_counter;
+			if (_counter == 32) {
+				_expiryTime = time + 4000;
+			} else if (_counter == 33) {
+				_mode = TITLEMODE_MAIN_MENU;
+				_expiryTime = time;
+				_counter = 0;
+			}
+		}
+		break;
+
+	default:
+		break;
 	}
 
 	return true;
 }
 
 bool ViewTitle::KeypressMsg(CKeypressMsg &msg) {
+	uint32 time = getGame()->getMillis();
+
+	if (_mode == TITLEMODE_MAIN_MENU) {
+
+	} else if (_mode != TITLEMODE_TRADEMARKS) {
+		// Switch to the trademarks view
+		_mode = TITLEMODE_TRADEMARKS;
+		_expiryTime = time;
+		_counter = -1;
+	}
+
 	return true;
 }
 
