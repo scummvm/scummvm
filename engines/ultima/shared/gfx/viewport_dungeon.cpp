@@ -61,7 +61,7 @@ void ViewportDungeon::draw() {
 		break;
 	}
 
-	MapTile tile, deltaTile, leftTile, rightTile;
+	MapTile tile, deltaTile, leftTile, rightTile, backTile;
 	Point currentPos = map->getPosition();
 	map->getTileAt(currentPos, &tile);
 	map->getTileAt(currentPos + delta, &deltaTile);
@@ -86,28 +86,51 @@ void ViewportDungeon::draw() {
 			s.drawDoorway(0);
 
 		bool endingLeft = false, endingRight = false;
-		bool var5 = 0, var6 = 0;
-		byte var7 = 0, var8 = 0;
+		bool leftFlag = false, rightFlag = false;
+		bool priorLeftFlag = false, priorRightFlag = false;
+
 		for (int index = distance; distance; --distance) {
 			currDelta -= delta;
+			Point pt = currentPos + currDelta;
 			
 			if (!isDoor || distance > 1) {
-				// todo
+				map->getTileAt(pt + leftDelta, &leftTile);
+				map->getTileAt(pt + rightDelta, &rightTile);
+				leftFlag = leftTile.isSolid();
+				rightFlag = rightTile.isSolid();
+				if (index == distance) {
+					endingLeft = leftFlag;
+					endingRight = rightFlag;
+				} else {
+					if (leftFlag != priorLeftFlag)
+						s.drawLeftEdge(index);
+					if (rightFlag != priorRightFlag)
+						s.drawRightEdge(index);
+				}
+
+				drawLeftCell(index, pt);
+				drawRightCell(index, pt);
 			}
 
-
+			drawCell(index, pt + delta);
+			priorLeftFlag = leftFlag;
+			priorRightFlag = rightFlag;
 		}
-/*
+
 		if (isDoor)
 			drawCell(0, currentPos);
 
-		if (isMonsterBlocking(currentPos + backDelta) && map->isDoor(currentPos + backDelta) && distance < 5) {
+		map->getTileAt(currentPos + delta, &backTile);
+		if (distance < 5 && isMonsterBlocking(currentPos + backDelta) && backTile.isDoor()) {
 			drawLeftCell(distance + 1, currentPos + leftDelta);
 			drawRightCell(distance + 1, currentPos + rightDelta);
 
-			if (!map->isSolid(currentPos + leftDelta))
+			map->getTileAt(currentPos + leftDelta, &leftTile);
+			if (!leftTile.isSolid())
 				s.drawLeftEdge(distance);
-			if (!map->isSolid(currentPos + rightDelta))
+
+			map->getTileAt(currentPos + rightDelta, &rightTile);
+			if (!rightTile.isSolid())
 				s.drawRightEdge(distance);
 		} else {
 			if (endingLeft)
@@ -115,14 +138,11 @@ void ViewportDungeon::draw() {
 			if (endingRight)
 				s.drawRightEdge(distance);
 		}
-		*/
 	}
 
-	if (isDoor) {
-
+	if (isDoor && tile._item) {
+		tile._item->postDraw(s);
 	}
-
-	// TODO
 }
 
 uint ViewportDungeon::distanceToOccupiedCell(const Point &delta) {
