@@ -137,7 +137,7 @@ const byte SRC_LOCATION_Y[LOCATION_COUNT] = {
 	119, 120, 129, 140, 145, 89, 91, 100, 107, 115, 121, 127, 138, 146
 };
 
-const LocationPerson SRC_LOCATION_PEOPLE[150] = {
+const int SRC_LOCATION_PEOPLE[150][4] = {
 	{ 20, 33, 4, 2000 },
 	{ 22, 35, 12, 1 },
 	{ 17, 1, 6, 500 },
@@ -309,7 +309,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(SRC_LOCATION_NAMES, SRC_LOCATION_NAMES + 85, LOCATION_NAMES);
 	Common::copy(SRC_LOCATION_X, SRC_LOCATION_X + 84, LOCATION_X);
 	Common::copy(SRC_LOCATION_Y, SRC_LOCATION_Y + 84, LOCATION_Y);
-	Common::copy(SRC_LOCATION_PEOPLE, SRC_LOCATION_PEOPLE + 150, LOCATION_PEOPLE);
+	Common::copy(&SRC_LOCATION_PEOPLE[0][0], &SRC_LOCATION_PEOPLE[0][0] + 150 * 4, &LOCATION_PEOPLE[0][0]);
 	BLOCKED = SRC_BLOCKED;
 	ENTER_QUESTION = SRC_ENTER_QUESTION;
 	ENTERING = SRC_ENTERING;
@@ -322,6 +322,7 @@ void GameResources::synchronize() {
 	syncStrings(LOCATION_NAMES, LOCATION_COUNT);
 	syncBytes(LOCATION_X, 84);
 	syncBytes(LOCATION_Y, 84);
+	syncNumbers2D((int *)LOCATION_PEOPLE, 150, 4);
 	syncString(BLOCKED);
 	syncString(ENTER_QUESTION);
 	syncString(ENTERING);
