@@ -41,26 +41,41 @@ static const byte TEXT_CURSOR_FRAMES[4][8] = {
 	{ 0x66, 0x24, 0x18, 0x18, 0x18, 0x18, 0x3C, 0x66 }
 };
 
-void U1TextCursor::draw() {
+U1TextCursor::U1TextCursor(const byte &fgColor, const byte &bgColor) : _fgColor(fgColor),
+		_bgColor(bgColor), _frameNum(0), _lastFrameFrame(0) {
+	_bounds = Common::Rect(0, 0, 8, 8);
+}
+
+void U1TextCursor::update() {
 	uint32 time = getTime();
 	if (!_visible || !_fgColor || (time - _lastFrameFrame) < CURSOR_ANIM_FRAME_TIME)
 		return;
 
-	// Get the surface area to draw the cursor on
-	Graphics::ManagedSurface s(*g_vm->_screen, Rect(_pos.x, _pos.y, _pos.x + 8, _pos.y + 8));
+	// Increment to next frame
+	_lastFrameFrame = time;
+	_frameNum = (_frameNum + 1) % 3;
 
+	markAsDirty();
+}
+
+void U1TextCursor::draw() {
+	if (!_visible)
+		return;
+
+	// Get the surface area to draw the cursor on
+	Graphics::ManagedSurface s(8, 8);
+		
 	// Loop to draw the cursor
 	for (int y = 0; y < CURSOR_H; ++y) {
-		byte bits = TEXT_CURSOR_FRAMES[_frameNum][y];
 		byte *lineP = (byte *)s.getBasePtr(0, y);
+		byte bits = TEXT_CURSOR_FRAMES[_frameNum][y];
+
 		for (int x = 0; x < CURSOR_W; ++x, ++lineP, bits >>= 1) {
 			*lineP = (bits & 1) ? _fgColor : _bgColor;
 		}
 	}
 
-	// Increment to next frame
-	_lastFrameFrame = time;
-	_frameNum = (_frameNum + 1) % 3;
+	g_system->copyRectToScreen(s.getPixels(), s.pitch, _bounds.left, _bounds.top, _bounds.width(), _bounds.height());
 }
 
 uint32 U1TextCursor::getTime() {

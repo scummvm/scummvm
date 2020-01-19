@@ -43,13 +43,17 @@ public:
 	/**
 	 * Constructor
 	 */
-	U1TextCursor(const byte &fgColor, const byte &bgColor) : _fgColor(fgColor), _bgColor(bgColor),
-		_frameNum(0), _lastFrameFrame(0) {}
+	U1TextCursor(const byte &fgColor, const byte &bgColor);
 
 	/**
 	 * Destructor
 	 */
 	virtual ~U1TextCursor() {}
+
+	/**
+	 * Update the cursor
+	 */
+	virtual void update();
 
 	/**
 	 * Draw the cursor

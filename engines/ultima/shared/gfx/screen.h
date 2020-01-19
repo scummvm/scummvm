@@ -36,10 +36,52 @@ namespace Gfx {
 
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
-class Screen: public Graphics::Screen {
+
+/**
+ * Base class for an on-screen cursor. Currently used for text cursor display
+ */
+class Cursor {
 public:
+	/**
+	 * Destructor
+	 */
+	virtual ~Cursor() {}
+
+	/**
+	 * Get the bounds of the cursor
+	 */
+	virtual Common::Rect getBounds() const = 0;
+
+	/**
+	 * Draw the cursor
+	 */
+	virtual void draw() = 0;
+};
+
+class Screen: public Graphics::Screen {
+private:
+	Cursor *_cursor;
+	bool _drawCursor;
+public:
+	/**
+	 * Constructor
+	 */
 	Screen();
-	virtual ~Screen();
+
+	/**
+	 * Updates the screen by copying any affected areas to the system
+	 */
+	virtual void update();
+
+	/**
+	 * Updates the screen at the end of an update call
+	 */
+	virtual void updateScreen();
+
+	/**
+	 * Sets the currently active cursor
+	 */
+	void setCursor(Cursor *cursor) { _cursor = cursor; }
 };
 
 } // End of namespace Gfx

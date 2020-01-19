@@ -24,6 +24,7 @@
 #define ULTIMA_SHARED_GFX_TEXT_CURSOR_H
 
 #include "ultima/shared/core/rect.h"
+#include "ultima/shared/gfx/screen.h"
 
 namespace Ultima {
 namespace Shared {
@@ -32,10 +33,15 @@ namespace Gfx {
 /**
  * Base class for text cursors, and is used by those games that don't have a visible cursor
  */
-class TextCursor {
+class TextCursor : public Cursor {
 protected:
 	bool _visible;
-	Point _pos;
+	Common::Rect _bounds;
+protected:
+	/**
+	 * Marks the area of the screen the cursor covers as dirty
+	 */
+	void markAsDirty();
 public:
 	TextCursor() : _visible(false) {
 	}
@@ -50,31 +56,37 @@ public:
 	}
 
 	/**
-	 * Returns the position of the cursor
+	 * Sets the visibility of the cursor
 	 */
-	Point getPosition() const {
-		return _pos;
+	virtual void setVisible(bool isVis) {
+		_visible = isVis;
+		markAsDirty();
 	}
 
 	/**
-	 * Sets the visibility of the cursor
+	 * Get the bounds of the cursor
 	 */
-	void setVisible(bool isVis) {
-		_visible = isVis;
-	}
+	virtual Common::Rect getBounds() const { return _bounds; }
+
+	/**
+	 * Returns the position of the cursor
+	 */
+	Point getPosition() const { return Point(_bounds.left, _bounds.top); }
 
 	/**
 	 * Sets the position of the cursor
 	 */
 	void setPosition(const Point &pt) {
-		_pos = pt;
+		bool vis = _visible;
+		setVisible(false);
+		_bounds.moveTo(pt);
+		setVisible(vis);
 	}
 
 	/**
-	 * Draw the cursor
+	 * Update the cursor
 	 */
-	virtual void draw() {
-	}
+	virtual void update() = 0;
 };
 
 } // End of namespace Gfx
