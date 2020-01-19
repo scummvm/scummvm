@@ -22,6 +22,7 @@
 
 #include "ultima/shared/gfx/info.h"
 #include "ultima/shared/early/game.h"
+#include "ultima/shared/gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Shared {
@@ -29,22 +30,61 @@ namespace Shared {
 #define PROMPT_CHAR '\x1'
 
 BEGIN_MESSAGE_MAP(Info, Gfx::VisualItem)
-	ON_MESSAGE(FrameMsg)
 	ON_MESSAGE(InfoMsg)
 END_MESSAGE_MAP()
 
-bool Info::FrameMsg(CFrameMsg &msg) {
-	
-	return true;
-}
-
 bool Info::InfoMsg(CInfoMsg &msg) {
+	// Add new text
+	if (_lines.empty())
+		_lines.push_back("");
+	_lines.back() += msg._text;
+
+	if (msg._newLine)
+		_lines.push_back("");
 
 	return true;
 }
 
 void Info::draw() {
+	Game *game = getGame();
 
+	// If the bottom line doesn't yet have a prompt, add it in
+	if (_lines.empty())
+		_lines.push_back("");
+	if (_lines.back().empty()) {
+		_lines.back() += PROMPT_CHAR;
+		
+		Gfx::TextCursor *textCursor = game->_textCursor;
+		textCursor->setVisible(true);
+		textCursor->setPosition(Point(8, _bounds.bottom - 8));
+	}
+
+	// Clear the background
+	Gfx::VisualSurface s = getSurface();
+	s.clear();
+
+	// Get the number og lines to display
+	uint lineHeight = s.fontHeight();
+	uint numLines = (s.h + lineHeight - 1) / lineHeight;
+
+	// Discard any stored lines beyond the top of the display
+	while (_lines.size() > numLines)
+		_lines.remove_at(0);
+
+	// Display the lines
+	int x = 0, y = s.h - _lines.size() * lineHeight;
+	for (uint idx = 0; idx < _lines.size(); ++idx, x = 0, y += lineHeight) {
+		// Handle drawing the prompt character at the start of lines if necessary
+		Common::String line = _lines[idx];
+		if (!line.empty() && line[0] == PROMPT_CHAR) {
+			drawPrompt(s, Point(0, y));
+			x = 8;
+			line.deleteChar(0);
+		}
+
+		// Write the remainder of the line
+		s.writeString(line, Point(x, y), game->_textColor);
+	}
 }
 
 } // End of namespace Shared

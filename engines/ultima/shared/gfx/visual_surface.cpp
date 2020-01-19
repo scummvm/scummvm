@@ -58,6 +58,11 @@ void VisualSurface::writeChar(unsigned char c, byte color, byte bgColor) {
 	_textPos.x += font->charWidth(c);
 }
 
+size_t VisualSurface::fontHeight() {
+	Gfx::Font *font = g_vm->_game->getFont();
+	return font->lineHeight();
+}
+
 } // End of namespace Gfx
 } // End of namespace Shared
 } // End of namespace Ultima

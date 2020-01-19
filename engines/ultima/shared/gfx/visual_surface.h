@@ -70,6 +70,11 @@ public:
 	 * Draw a character
 	 */
 	void writeChar(unsigned char c, byte color, byte bgColor = 0);
+
+	/**
+	 * Get the current font height
+	 */
+	size_t fontHeight();
 };
 
 } // End of namespace Gfx
