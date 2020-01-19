@@ -152,10 +152,10 @@ void Move::dungeonTurnAround() {
 void Move::dungeonMoveForward() {
 	Map::Ultima1Map *map = getMap();
 	Point delta = map->getDirectionDelta();
-	Widgets::Transport *transport = dynamic_cast<Widgets::Transport *>(map->getCurrentTransport());
-	assert(transport);
+	Shared::MapWidget *widget = map->getCurrentTransport();
+	assert(widget);
 
-	if (transport->canMoveTo(map->getPosition() + delta)) {
+	if (widget->canMoveTo(map->getPosition() + delta)) {
 		map->setPosition(map->getPosition() + delta);
 	} else {
 		playFX(0);
