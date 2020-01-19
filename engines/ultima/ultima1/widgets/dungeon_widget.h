@@ -63,6 +63,8 @@ private:
 public:
 	Common::String _name;			// Name of item
 public:
+	DECLARE_WIDGET(DungeonWidget)
+
 	/**
 	 * Constructor
 	 */

@@ -32,6 +32,8 @@ namespace Widgets {
 
 class DungeonPlayer : public Shared::DungeonWidget {
 public:
+	DECLARE_WIDGET(DungeonPlayer)
+
 	/**
 	 * Constructor
 	 */

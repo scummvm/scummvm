@@ -48,6 +48,8 @@ protected:
 	 */
 	virtual void attack();
 public:
+	DECLARE_WIDGET(Guard)
+
 	/**
 	 * Constructor
 	 */

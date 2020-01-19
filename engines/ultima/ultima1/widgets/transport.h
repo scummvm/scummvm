@@ -67,6 +67,8 @@ private:
 	 */
 	void princessSaved();
 public:
+	DECLARE_WIDGET(TransportOnFoot)
+
 	/**
 	 * Constructor
 	 */

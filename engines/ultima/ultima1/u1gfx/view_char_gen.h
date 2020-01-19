@@ -132,7 +132,7 @@ private:
 	 /**
 	  * Set final properties and save the game
 	  */
-	 void save();
+	 bool save();
 public:
 	CLASSDEF;
 

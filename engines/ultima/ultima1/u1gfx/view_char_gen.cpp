@@ -28,6 +28,7 @@
 #include "ultima/ultima1/game.h"
 #include "ultima/shared/gfx/text_input.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -295,9 +296,11 @@ bool ViewCharacterGeneration::KeypressMsg(CKeypressMsg &msg) {
 		// Shouldn't reach here, since during name entry, keypresses go to text input
 	} else if (_flags & FLAG_SAVE) {
 		if (msg._keyState.keycode == Common::KEYCODE_y) {
-			// Save the game and switch back to the main menu
-			save();
-			setView("Title");
+			// Save the game
+			if (save())
+				setView("Game");
+			else
+				setView("Title");
 		} else if (msg._keyState.keycode == Common::KEYCODE_n) {
 			// Start at the beginning again
 			setMode(FLAG_INITIAL);
@@ -370,9 +373,9 @@ bool ViewCharacterGeneration::TextInputMsg(CTextInputMsg &msg) {
 	return true;
 }
 
-void ViewCharacterGeneration::save() {
+bool ViewCharacterGeneration::save() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	game->_randomSeed = game->getRandomNumber(0xffffffff);
+	game->_randomSeed = game->getRandomNumber(0xfffffff);
 
 	// Set the default position
 	Shared::Map *map = game->_map;
@@ -389,7 +392,7 @@ void ViewCharacterGeneration::save() {
 	_character->_armor[1]._quantity = 1;
 	_character->_equippedSpell = 0;
 
-	// TODO: Actually saving the game
+	return g_vm->saveGame();
 }
 
 } // End of namespace U1Gfx

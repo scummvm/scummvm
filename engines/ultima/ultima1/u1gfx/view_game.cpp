@@ -44,7 +44,7 @@ BEGIN_MESSAGE_MAP(ViewGame, Shared::Gfx::VisualContainer)
 	ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
-ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("View", Rect(0, 0, 320, 200), parent) {
+ViewGame::ViewGame(Shared::TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect(0, 0, 320, 200), parent) {
 	_info = new Info(this);
 	_status = new Status(this);
 	_viewportDungeon = new ViewportDungeon(this);
