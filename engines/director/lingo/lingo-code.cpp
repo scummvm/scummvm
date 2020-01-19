@@ -331,6 +331,10 @@ void LC::c_varpush() {
 		warning("c_varpush: ME");
 	}
 
+	if (name.equalsIgnoreCase("ancestor")) {
+		warning("c_varpush: ANCESTOR");
+	}
+
 	if (g_lingo->getHandler(name) != NULL) {
 		d.type = HANDLER;
 		d.u.s = new Common::String(name);
