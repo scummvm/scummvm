@@ -20,47 +20,35 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_GAME_H
-#define ULTIMA_ULTIMA1_GAME_H
-
-#include "ultima/shared/early/game.h"
-#include "ultima/shared/gfx/visual_container.h"
+#include "ultima/shared/gfx/bitmap.h"
+#include "ultima/shared/core/file.h"
+#include "common/memstream.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
-namespace Ultima1 {
+namespace Shared {
+namespace Gfx {
 
-namespace U1Gfx {
-	class GameView;
+void Bitmap::load(const Common::String &filename) {
+	File srcFile(filename);
+	Common::MemoryWriteStreamDynamic decompressedFile(DisposeAfterUse::YES);
+	decompress(&srcFile, &decompressedFile);
+
+	// Set the bitmap size
+	Common::MemoryReadStream f(decompressedFile.getData(), decompressedFile.size());
+	int16 xs = f.readSint16LE();
+	int16 ys = f.readSint16LE();
+	create(xs, ys);
+
+	Graphics::Surface s = getSubArea(Common::Rect(0, 0, xs, ys));
+
+	// Read in the lines
+	for (int y = 0; y < ys; ++y) {
+		byte *dest = (byte *)s.getBasePtr(0, y);
+		f.read(dest, xs);
+	}
 }
 
-enum VideoMode {
-	VIDEOMODE_EGA = 0, VIDEOMODE_VGA = 1
-};
-
-class GameResources;
-
-class Ultima1Game : public Shared::Game {
-	DECLARE_MESSAGE_MAP;
-public:
-	GameResources *_res;
-	Shared::Gfx::VisualContainer *_gameView;
-public:
-	CLASSDEF;
-	Ultima1Game();
-	virtual ~Ultima1Game();
-
-	/**
-	 * Called when the game starts
-	 */
-	void starting();
-
-	/**
-	 * Play a sound effect
-	 */
-	void playFX(uint effectId);
-};
-
-} // End of namespace Ultima1
+} // End of namespace Gfx
+} // End of namespace Shared
 } // End of namespace Ultima
-
-#endif
