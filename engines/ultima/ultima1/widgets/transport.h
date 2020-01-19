@@ -55,12 +55,6 @@ public:
 	virtual ~Transport() {}
 
 	/**
-	 * Returns true if the given transport type can move to a given position on the map
-	 * @param destPos		Specified new position
-	 */
-	virtual bool canMoveTo(const Point &destPos) = 0;
-
-	/**
 	 * Moves to a given position
 	 * @param destPos		Specified new position
 	 * @returns				If true, the direction moved will be printed in the status area
@@ -94,11 +88,6 @@ public:
 	 * Get the tile for the transport method
 	 */
 	virtual uint getTileNum() const;
-
-	/**
-	 * Returns true if the given transport type can move to a given position on the map
-	 */
-	virtual bool canMoveTo(const Point &destPos);
 
 	/**
 	 * Moves to a given position

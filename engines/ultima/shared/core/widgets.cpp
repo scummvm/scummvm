@@ -25,6 +25,27 @@
 namespace Ultima {
 namespace Shared {
 
+bool DungeonWidget::canMoveTo(const Point &destPos) {
+	if (!MapWidget::canMoveTo(destPos))
+		return false;
+
+	// Get the details of the position
+	MapTile currTile, destTile;
+	_map->getTileAt(_map->getPosition(), &currTile);
+	_map->getTileAt(destPos, &destTile);
+
+	// Can't move onto certain dungeon tile types
+	if (destTile._isWall || destTile._isSecretDoor || destTile._isBeams)
+		return false;
+
+	// Can't move to directly adjoining doorway cells (they'd be in parralel to each other, not connected)
+	if (destTile._isDoor && currTile._isDoor)
+		return false;
+
+	return true;
+}
+
+/*------------------------------------------------------------------------*/
 
 } // End of namespace Ultima1
 } // End of namespace Ultima

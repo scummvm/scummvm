@@ -42,7 +42,7 @@ void DungeonMonster::draw(Shared::DungeonSurface &s, uint distance) {
 			s.drawRightEdge(distance);
 		} else {
 			Ultima1Game *game = static_cast<Ultima1Game *>(g_vm->_game);
-			DungeonWidget::drawWidget(s, _monsterId, distance, game->_edgeColor);
+			Widgets::DungeonWidget::drawWidget(s, _monsterId, distance, game->_edgeColor);
 		}
 	}
 }
