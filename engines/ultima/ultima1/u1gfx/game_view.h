@@ -56,7 +56,7 @@ private:
 	Shared::ViewportDungeon *_viewportDungeon;
 	ViewportMap *_viewportMap;
 	Status *_status;
-	Shared::Actions::Action *_actions[4];
+	Shared::Actions::Action *_actions[5];
 private:
 	/**
 	 * Draws level & direction indicators when in a dungeon
