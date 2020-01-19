@@ -27,9 +27,7 @@ namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
-#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
-
-Screen::Screen() : Graphics::Screen(320, 200) {
+Screen::Screen(): Graphics::Screen(320, 200) {
 	initGraphics(320, 200);
 }
 

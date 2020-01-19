@@ -23,6 +23,7 @@
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/gfx/game_view.h"
+#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,6 +33,13 @@ EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
 Ultima1Game::Ultima1Game() : Shared::Game() {
 	_res = new GameResources();
 	_gameView = new U1Gfx::GameView(this);
+
+	if (g_vm->getFeatures() & GF_VGA_ENHANCED) {
+		_videoMode = VIDEOMODE_VGA;
+		loadU6Palette();
+	} else {
+		setEGAPalette();
+	}
 }
 
 Ultima1Game::~Ultima1Game() {

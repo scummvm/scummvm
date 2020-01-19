@@ -37,11 +37,21 @@ class Game : public GameBase {
 private:
 	GameView *_gameView;
 	FontResources *_fontResources;
-private:
+protected:
 	/**
-	 * Sets up game palette
+	 * Sets up EGA palette
 	 */
-	void setPalette();
+	void setEGAPalette();
+
+	/**
+	 * Sets up a CGA palette
+	 */
+	void setCGAPalette();
+
+	/**
+	 * Loads the Ultima 6 palette
+	 */
+	void loadU6Palette();
 public:
 	byte _edgeColor;
 	byte _borderColor;

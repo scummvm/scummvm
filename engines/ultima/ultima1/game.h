@@ -32,6 +32,10 @@ namespace U1Gfx {
 	class GameView;
 }
 
+enum VideoMode {
+	VIDEOMODE_EGA = 0, VIDEOMODE_VGA = 1
+};
+
 class GameResources;
 
 class Ultima1Game : public Shared::Game {

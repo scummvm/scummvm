@@ -43,10 +43,18 @@ BEGIN_MESSAGE_MAP(GameView, Shared::Gfx::VisualContainer)
 END_MESSAGE_MAP()
 
 GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Rect(0, 0, 320, 200), parent) {
-	_info = new Shared::Info(this);
-	_status = new Status(this);
-	_viewportDungeon = new ViewportDungeon(this);
-	_viewportMap = new ViewportMap(this);
+	if (getGame()->_videoMode == VIDEOMODE_VGA) {
+		_info = nullptr;
+		_status = nullptr;
+		_viewportDungeon = nullptr;
+		_viewportMap = nullptr;
+	} else {
+		_info = new Shared::Info(this);
+		_status = new Status(this);
+		_viewportDungeon = new ViewportDungeon(this);
+		_viewportMap = new ViewportMap(this);
+	}
+
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Actions::Climb(this);
 	_actions[2] = new Actions::Enter(this);
