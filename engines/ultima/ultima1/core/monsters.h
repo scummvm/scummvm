@@ -55,7 +55,7 @@ public:
 	/**
 	 * Returns true if a monster blocks the background behind him
 	 */
-	virtual bool isBlockedView() const;
+	virtual bool isBlockingView() const;
 };
 
 

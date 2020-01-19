@@ -58,7 +58,7 @@ public:
 	/**
 	 * Returns true if a monster blocks the background behind him
 	 */
-	virtual bool isBlockedView() const = 0;
+	virtual bool isBlockingView() const = 0;
 };
 
 } // End of namespace Ultima1

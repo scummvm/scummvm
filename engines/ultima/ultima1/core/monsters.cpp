@@ -25,7 +25,7 @@
 namespace Ultima {
 namespace Ultima1 {
 
-bool U1DungeonMonster::isBlockedView() const {
+bool U1DungeonMonster::isBlockingView() const {
 	return _monsterId != MONSTER_INVISIBLE_SEEKER && _monsterId != MONSTER_MIMIC
 		&& _monsterId != MONSTER_GELATINOUS_CUBE;
 }

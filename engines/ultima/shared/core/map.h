@@ -164,6 +164,7 @@ class Map {
 		Common::Array<MapCell> _data;
 	public:
 		byte &operator[](int idx) { return _data[idx]; }
+		byte operator[](int idx) const { return _data[idx]; }
 	};
 protected:
 	byte _mapId;						// The map Id
@@ -244,6 +245,21 @@ public:
 	 * Load a given map
 	 */
 	virtual void loadMap(int mapId, uint videoMode);
+
+	/**
+	 * Returns true if the cell at the given position is a door
+	 */
+	virtual bool isDoor(const Point &pt) const = 0;
+
+	/**
+	 * Returns true if the cell at the given position is a wall or secret door
+	 */
+	virtual bool isWallOrSecretDoor(const Point &pt) const = 0;
+
+	/**
+	 * Returns true if the cell is a type that has walls on it: walls, doors, or secret doors
+	 */
+	virtual bool isWallOrDoorway(const Point &pt) const = 0;
 };
 
 } // End of namespace Shared

@@ -30,10 +30,30 @@ namespace Shared {
 
 class ViewportDungeon : public Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
+private:
+	/**
+	 * Returns the distance to an occupied cell, if any
+	 */
+	int distanceToOccupiedCell(const Point &delta);
+
+	/**
+	 * Returns if a cell at a given delta to the player is occupied
+	 */
+	bool isCellOccupied(const Point &delta);
+
+	/**
+	 * Returns true if a monster is at a given position, and it has the blocking attribute
+	 */
+	bool isMonsterBlocking(const Point &pt);
 public:
 	CLASSDEF;
 	ViewportDungeon(TreeItem *parent) : Gfx::VisualItem("ViewportDungeon", Rect(8, 8, 312, 168), parent) {}
 	virtual ~ViewportDungeon() {}
+
+	/**
+	 * Draws the dungeon
+	 */
+	virtual void draw();
 };
 
 } // End of namespace Shared

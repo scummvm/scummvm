@@ -326,5 +326,20 @@ void Ultima1Map::spawnMonster() {
 	// TODO
 }
 
+bool Ultima1Map::isDoor(const Point &pt) const {
+	return _data[pt.y][pt.x] == DTILE_DOOR;
+}
+
+bool Ultima1Map::isWallOrSecretDoor(const Point &pt) const {
+	return _data[pt.y][pt.x] == DTILE_WALL || _data[pt.y][pt.x] == DTILE_SECRET_DOOR;
+}
+
+/**
+ * Returns true if the cell is a type that has walls on it: walls, doors, or secret doors
+ */
+bool Ultima1Map::isWallOrDoorway(const Point &pt) const {
+	return _data[pt.y][pt.x] == DTILE_WALL || _data[pt.y][pt.x] == DTILE_DOOR || _data[pt.y][pt.x] == DTILE_SECRET_DOOR;
+}
+
 } // End of namespace Ultima1
 } // End of namespace Ultima

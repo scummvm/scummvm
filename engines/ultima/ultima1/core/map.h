@@ -185,6 +185,21 @@ public:
 	 * Spawns a monster within dungeons
 	 */
 	void spawnMonster();
+
+	/**
+	 * Returns true if the cell at the given position is a door
+	 */
+	virtual bool isDoor(const Point &pt) const;
+
+	/**
+	 * Returns true if the cell at the given position is a wall or secret door
+	 */
+	virtual bool isWallOrSecretDoor(const Point &pt) const;
+
+	/**
+	 * Returns true if the cell is a type that has walls on it: walls, doors, or secret doors
+	 */
+	virtual bool isWallOrDoorway(const Point &pt) const;
 };
 
 } // End of namespace Ultima1
