@@ -70,6 +70,12 @@ public:
 	const char *HIT;
 	const char *ATTACKS;
 	const char *DAMAGE;
+	const char *BARD_SPEECH1;
+	const char *BARD_SPEECH2;
+	const char *JESTER_SPEECH1;
+	const char *JESTER_SPEECH2;
+	const char *BARD_STOLEN;
+	const char *JESTER_STOLEN;
 public:
 	GameResources();
 	GameResources(Shared::Resources *resManager);

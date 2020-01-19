@@ -70,6 +70,11 @@ public:
 	 * Get the tile number for the person
 	 */
 	virtual uint getTileNum() const override { return _tileNum; }
+
+	/**
+	 * Talk to an NPC
+	 */
+	virtual void talk() {}
 };
 
 } // End of namespace Widgets
