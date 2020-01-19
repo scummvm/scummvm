@@ -366,7 +366,9 @@ bool ViewCharacterGeneration::TextInputMsg(CTextInputMsg &msg) {
 	if (!msg._escaped && !msg._text.empty()) {
 		// Name provided
 		_character->_name = msg._text;
-		msg._textInput->hide();
+		
+		Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+		game->_textInput->hide();
 		setMode(FLAG_SAVE);
 	}
 

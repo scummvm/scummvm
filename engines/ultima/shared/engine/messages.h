@@ -288,9 +288,9 @@ MESSAGE0(CPassMsg);
 MESSAGE2(CShowMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fadeIn, false);
 
 /**
- * Used when text input is finished, to pass the text back to the owning view
+ * Used when text or character input is finished, to pass the text back to the owning view
  */
-MESSAGE3(CTextInputMsg, Gfx::TextInput *, textInput, nullptr, Common::String, text, "", bool, escaped, false);
+MESSAGE2(CTextInputMsg, Common::String, text, "", bool, escaped, false);
 
 } // End of namespace Shared
 } // End of namespace Ultima

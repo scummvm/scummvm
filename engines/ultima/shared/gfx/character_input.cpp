@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/shared/gfx/text_input.h"
+#include "ultima/shared/gfx/character_input.h"
 #include "ultima/shared/gfx/text_cursor.h"
 #include "ultima/shared/early/game_base.h"
 #include "ultima/shared/engine/messages.h"
@@ -29,56 +29,28 @@ namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
-BEGIN_MESSAGE_MAP(TextInput, Popup)
+BEGIN_MESSAGE_MAP(CharacterInput, Popup)
 	ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
-void TextInput::show(const Point &pt, bool isNumeric, size_t maxCharacters, byte color) {
+void CharacterInput::show(const Point &pt, byte color) {
 	Popup::show();
-	_isNumeric = isNumeric;
-	_maxCharacters = maxCharacters;
 	_color = color;
-	_bounds = Rect(pt.x, pt.y, pt.x + 8 * (maxCharacters + 1), pt.y + 8);
-	_text = "";
+	_bounds = Rect(pt.x, pt.y, pt.x + 8, pt.y + 8);
 
 	_game->_textCursor->setPosition(Point(_bounds.left, _bounds.top));
 	_game->_textCursor->setVisible(true);
 }
 
-void TextInput::draw() {
-	Popup::draw();
-
-	VisualSurface s = getSurface();
-
-	// Ensure the cursor is at the right position
-	_game->_textCursor->setPosition(Point(_bounds.left + _text.size() * 8, _bounds.top));
-
-	// Display the text
-	Common::String text = _text;
-	while (text.size() < _maxCharacters)
-		text += ' ';
-	s.writeString(text, TextPoint(0, 0), _color);
-}
-
-bool TextInput::KeypressMsg(CKeypressMsg &msg) {
+bool CharacterInput::KeypressMsg(CKeypressMsg &msg) {
 	uint16 c = msg._keyState.ascii;
 
-	if (c >= ' ' && c <= 0x7f) {
-		// Printable character
-		if (_text.size() < _maxCharacters && (!_isNumeric || (c >= '0' && c <= '9'))) {
-			_text += msg._keyState.ascii;
-			setDirty();
-		}
-	} else if (msg._keyState.keycode == Common::KEYCODE_BACKSPACE || msg._keyState.keycode == Common::KEYCODE_LEFT) {
-		if (!_text.empty()) {
-			_text.deleteLastChar();
-			setDirty();
-		}
-	} else if (msg._keyState.keycode == Common::KEYCODE_RETURN || msg._keyState.keycode == Common::KEYCODE_KP_ENTER) {
-		CTextInputMsg inputMsg(_text, false);
-		inputMsg.execute(_respondTo);
-	} else if (msg._keyState.keycode == Common::KEYCODE_ESCAPE) {
+	if (msg._keyState.keycode == Common::KEYCODE_ESCAPE) {
 		CTextInputMsg inputMsg("", true);
+		inputMsg.execute(_respondTo);
+	} else if (c >= ' ' && c <= 0x7f) {
+		// Printable character
+		CTextInputMsg inputMsg(Common::String(c), false);
 		inputMsg.execute(_respondTo);
 	}
 
