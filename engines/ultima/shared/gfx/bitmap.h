@@ -37,6 +37,11 @@ public:
 	 * Loads an Ultima 6 bitmap
 	 */
 	void load(const Common::String &filename);
+
+	/**
+	 * Flips a bitmap horizontally
+	 */
+	void flipHorizontally();
 };
 
 } // End of namespace Gfx
