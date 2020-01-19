@@ -32,8 +32,8 @@ namespace Ultima1 {
 namespace Widgets {
 
 OverworldMonster::OverworldMonster(Shared::Game *game, Shared::Maps::MapBase *map, uint tileNum, int hitPoints,
-		const Point &pt, Shared::Maps::Direction dir) : Shared::Maps::MapWidget(game, map, pt, dir),
-		Shared::Maps::Creature(game, map, hitPoints), _tileNum(tileNum) {
+		const Point &pt, Shared::Maps::Direction dir) : OverworldWidget(game, map, tileNum, pt, dir),
+		Shared::Maps::Creature(game, map, hitPoints) {
 	_monsterId = (OverworldMonsterId)((tileNum - 19) / 2);
 	
 	Ultima1Game *g = static_cast<Ultima1Game *>(game);
@@ -42,7 +42,7 @@ OverworldMonster::OverworldMonster(Shared::Game *game, Shared::Maps::MapBase *ma
 }
 
 void OverworldMonster::synchronize(Common::Serializer &s) {
-	s.syncAsUint16LE(_tileNum);
+	OverworldWidget::synchronize(s);
 	s.syncAsUint16LE(_monsterId);
 	s.syncAsUint16LE(_attackStrength);
 	s.syncAsSint16LE(_hitPoints);

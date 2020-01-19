@@ -64,6 +64,11 @@ public:
 	 * Returns true if the given widget can move to a given position on the map
 	 */
 	virtual CanMove canMoveTo(const Point &destPos);
+
+	/**
+	 * Handles loading and saving games
+	 */
+	virtual void synchronize(Common::Serializer &s) override;
 };
 
 } // End of namespace Widgets

@@ -91,6 +91,7 @@ MODULE_OBJS += \
 	ultima1/widgets/king.o \
 	ultima1/widgets/merchant.o \
 	ultima1/widgets/overworld_monster.o \
+	ultima1/widgets/overworld_widget.o \
 	ultima1/widgets/person.o \
 	ultima1/widgets/princess.o \
 	ultima1/widgets/transport.o \

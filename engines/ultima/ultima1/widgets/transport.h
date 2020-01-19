@@ -23,8 +23,7 @@
 #ifndef ULTIMA_ULTIMA1_WIDGETS_TRANSPORT_H
 #define ULTIMA_ULTIMA1_WIDGETS_TRANSPORT_H
 
-#include "ultima/shared/maps/map.h"
-#include "ultima/shared/maps/map_widget.h"
+#include "ultima/ultima1/widgets/overworld_widget.h"
 #include "ultima/shared/maps/map_base.h"
 
 namespace Ultima {
@@ -38,7 +37,7 @@ class MapBase;
 
 namespace Widgets {
 
-class Transport : public Shared::Maps::MapWidget {
+class Transport : public OverworldWidget {
 protected:
 	/**
 	 * Gets the Ultima 1 game
@@ -53,7 +52,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Transport(Shared::Game *game, Shared::Maps::MapBase *map) : Shared::Maps::MapWidget(game, map) {}
+	Transport(Shared::Game *game, Shared::Maps::MapBase *map) : OverworldWidget(game, map) {}
 
 	/**
 	 * Destructor
