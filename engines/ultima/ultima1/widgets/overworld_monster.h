@@ -43,9 +43,11 @@ private:
 	OverworldMonsterId _monsterId;
 protected:
 	/**
-	 * Returns the distance a creature can attack from
+	 * Returns either the maximum attack distance for a monster, or 0 if the monster is beyond
+	 * that distance from the player
 	 */
-	virtual bool canAttack() const;
+	virtual uint attackDistance() const;
+
 
 	/**
 	 * Handles attacks

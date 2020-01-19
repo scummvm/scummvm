@@ -75,7 +75,7 @@ Shared::Gfx::Sprite &Sprites::operator[](uint idx) {
 		// City flag waving
 		return Shared::Gfx::Sprites::operator[](7 + ((_frameCtr & 3) ? 1 : 0));
 	} else {
-		if (idx >= 7)
+		if (idx >= 7 && idx < 50)
 			idx += 2;
 
 		if (idx == 14 || idx == 25) {

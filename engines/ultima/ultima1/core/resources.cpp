@@ -493,6 +493,7 @@ const char *const SRC_THIEF_STOLE = "Thief stole %s %s";
 const char *const SRC_A = "a";
 const char *const SRC_AN = "an";
 const char *const SRC_HIT_DAMAGE = "Hit! %d damage!";
+const char *const SRC_MONSTER_ATTACKS = "%s attacks!";
 
 /*-------------------------------------------------------------------*/
 
@@ -532,6 +533,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	A = SRC_A;
 	AN = SRC_AN;
 	HIT_DAMAGE = SRC_HIT_DAMAGE;
+	MONSTER_ATTACKS = SRC_MONSTER_ATTACKS;
 }
 
 void GameResources::synchronize() {
@@ -567,6 +569,7 @@ void GameResources::synchronize() {
 	syncString(A);
 	syncString(AN);
 	syncString(HIT_DAMAGE);
+	syncString(MONSTER_ATTACKS);
 }
 
 } // End of namespace Ultima1

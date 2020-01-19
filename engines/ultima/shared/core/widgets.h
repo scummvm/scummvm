@@ -52,9 +52,10 @@ protected:
 	bool _isAttacking;
 protected:
 	/**
-	 * Returns the distance a creature can attack from
+	 * Returns either the maximum attack distance for a monster, or 0 if the monster is beyond
+	 * that distance from the player
 	 */
-	virtual bool canAttack() const { return false; }
+	virtual uint attackDistance() const { return 0; }
 
 	/**
 	 * Handles moving creatures

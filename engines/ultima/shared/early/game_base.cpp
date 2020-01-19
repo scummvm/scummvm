@@ -232,5 +232,9 @@ uint GameBase::getRandomNumber(uint min, uint max) {
 	return g_vm->getRandomNumber(min, max);
 }
 
+void GameBase::sleep(uint time) {
+	g_vm->_events->sleep(time);
+}
+
 } // End of namespace Shared
 } // End of namespace Ultima
