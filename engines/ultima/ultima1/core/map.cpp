@@ -26,6 +26,7 @@
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/shared/core/file.h"
+#include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -266,13 +267,63 @@ void Ultima1Map::loadDungeonMap() {
 		_data[DUNGEON_HEIGHT - 1][x] = DTILE_WALL;
 	}
 
-	// Place wall sections of every other wall that are always fixed
-	for (int x = 2; x < (DUNGEON_WIDTH - 1); ++x) {
-		_data[2][x] = DTILE_WALL;
-		_data[4][x] = DTILE_WALL;
-		_data[6][x] = DTILE_WALL;
-		_data[8][x] = DTILE_WALL;
+	// Set up walls vertically across the dungeon
+	for (int x = 2; x < (DUNGEON_WIDTH - 1); x += 2)
+		for (int y = 2; y < (DUNGEON_HEIGHT - 1); y += 2)
+			_data[y][x] = DTILE_WALL;
+
+	// Set up randomly selected segments between the fixed wall areas
+	for (int x = 2; x < (DUNGEON_WIDTH - 1); x += 2)
+		for (int y = 1; y < DUNGEON_HEIGHT; y += 2)
+			_data[y][x] = g_vm->getRandomNumber(DTILE_WALL, DTILE_4);
+
+	// Set up wall and beams randomly to subdivide the blank columns
+	const byte DATA1[15] = { 8, 5, 2, 8, 1, 5, 4, 6, 1, 3, 7, 3, 9, 2, 6 };
+	const byte DATA2[15] = { 1, 2, 3, 3, 4, 4, 5, 5, 6, 6, 6, 8, 8, 9, 9 };
+	for (uint ctr = 0; ctr < (_dungeonLevel * 2); ++ctr) {
+		byte newTile = (g_vm->getRandomNumber(255) <= 160) ? DTILE_WALL : DTILE_BEAMS;
+		uint idx = g_vm->getRandomNumber(0, 14);
+
+		if (_dungeonLevel & 1) {
+			_data[DATA2[idx]][DATA1[idx]] = newTile;
+		} else {
+			_data[DATA1[idx]][DATA2[idx]] = newTile;
+		}
 	}
+
+	// Further tiles that placed randomly
+	for (uint ctr = 0; ctr <= _dungeonLevel; ++ctr) {
+		Point pt(g_vm->getRandomNumber(10, 99) / 10, g_vm->getRandomNumber(10, 99));
+		byte currTile = _data[pt.y][pt.x];
+
+		if (currTile != DTILE_WALL && currTile != DTILE_SECRET_DOOR && currTile != DTILE_BEAMS) {
+			_data[pt.y][pt.x] = (g_vm->getRandomNumber(1, 100) & 1) + DTILE_4;
+		}
+	}
+
+	// Set up ladders
+	_data[2][1] = DTILE_HALLWAY;
+	if (_dungeonLevel & 1) {
+		_data[3][7] = DTILE_LADDER_UP;
+		_data[6][3] = DTILE_LADDER_DOWN;
+	} else {
+		_data[3][7] = DTILE_LADDER_DOWN;
+		_data[6][3] = DTILE_LADDER_UP;
+	}
+
+	if (_dungeonLevel == 10)
+		_data[3][7] = DTILE_HALLWAY;
+	if (_dungeonLevel == 1) {
+		_data[1][1] = DTILE_LADDER_UP;
+		_data[3][7] = DTILE_HALLWAY;
+	}
+
+	for (int ctr = 0; ctr < 3; ++ctr)
+		spawnMonster();
+}
+
+void Ultima1Map::spawnMonster() {
+	// TODO
 }
 
 } // End of namespace Ultima1

@@ -180,6 +180,11 @@ public:
 	 * Returns true if Lord British's castle is the currently active map
 	 */
 	bool isLordBritishCastle() const { return _mapType == MAP_CASTLE && _mapIndex == 0; }
+
+	/**
+	 * Spawns a monster within dungeons
+	 */
+	void spawnMonster();
 };
 
 } // End of namespace Ultima1
