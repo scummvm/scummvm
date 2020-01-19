@@ -31,7 +31,19 @@ namespace Shared {
 
 BEGIN_MESSAGE_MAP(Info, Gfx::VisualItem)
 	ON_MESSAGE(InfoMsg)
+	ON_MESSAGE(InfoGetKeypress)
+	ON_MESSAGE(InfoGetInput)
 END_MESSAGE_MAP()
+
+Info::Info(TreeItem *parent, const Rect &bounds) : Gfx::VisualItem("Info", bounds, parent) {
+	_characterInput = new Gfx::CharacterInput(getGame());
+	_textInput = new Gfx::TextInput(getGame());
+}
+
+Info::~Info() {
+	delete _characterInput;
+	delete _textInput;
+}
 
 bool Info::InfoMsg(CInfoMsg &msg) {
 	// Add new text
@@ -41,6 +53,22 @@ bool Info::InfoMsg(CInfoMsg &msg) {
 
 	if (msg._newLine)
 		_lines.push_back(" ");
+
+	return true;
+}
+
+bool Info::InfoGetKeypress(CInfoGetKeypress &msg) {
+	Game *game = getGame();
+	Point pt(_bounds.left + _lines.back().size() * 8, _bounds.bottom - 8);
+	_characterInput->show(pt, game->_textColor);
+
+	return true;
+}
+
+bool Info::InfoGetInput(CInfoGetInput &msg) {
+	Game *game = getGame();
+	Point pt(_bounds.left + _lines.back().size() * 8, _bounds.bottom - 8);
+	_textInput->show(pt, msg._isNumeric, msg._maxCharacters, game->_textColor);
 
 	return true;
 }

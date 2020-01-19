@@ -39,7 +39,14 @@ protected:
 	 */
 	virtual void drawPrompt(Shared::Gfx::VisualSurface &surf, const Point &pt) override;
 public:
+	/**
+	 * Constructor
+	 */
 	Info(TreeItem *parent) : Shared::Info(parent, TextRect(0, 21, 30, 25)) {}
+
+	/**
+	 * Destructor
+	 */
 	virtual ~Info() {}
 };
 

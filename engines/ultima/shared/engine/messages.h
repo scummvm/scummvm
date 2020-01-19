@@ -250,7 +250,7 @@ MESSAGE1(CInfoGetKeypress, MessageTarget *, responder, (MessageTarget *)nullptr)
 /**
  * Adds text strings to the info area
  */
-MESSAGE1(CInfoGetInput, MessageTarget *, responder, (MessageTarget *)nullptr);
+MESSAGE3(CInfoGetInput, MessageTarget *, responder, (MessageTarget *)nullptr, bool, isNumeric, false, size_t, maxCharacters, 10);
 
 /**
  * Adds text strings to the info area

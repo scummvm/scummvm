@@ -24,6 +24,8 @@
 #define ULTIMA_SHARED_GFX_INFO_H
 
 #include "ultima/shared/gfx/visual_item.h"
+#include "ultima/shared/gfx/text_input.h"
+#include "ultima/shared/gfx/character_input.h"
 #include "common/str-array.h"
 
 namespace Ultima {
@@ -35,8 +37,12 @@ namespace Shared {
 class Info : public Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
 	bool InfoMsg(CInfoMsg &msg);
+	bool InfoGetKeypress(CInfoGetKeypress &msg);
+	bool InfoGetInput(CInfoGetInput &msg);
 private:
 	Common::StringArray _lines;
+	Gfx::TextInput *_textInput;
+	Gfx::CharacterInput *_characterInput;
 protected:
 	/**
 	 * Draws a prompt character
@@ -44,8 +50,16 @@ protected:
 	virtual void drawPrompt(Gfx::VisualSurface &surf, const Point &pt) = 0;
 public:
 	CLASSDEF;
-	Info(TreeItem *parent, const Rect &bounds) : Gfx::VisualItem("Info", bounds, parent) {}
-	virtual ~Info() {}
+
+	/**
+	 * Constructor
+	 */
+	Info(TreeItem *parent, const Rect &bounds);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Info();
 
 	/**
 	 * Draw the contents
