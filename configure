@@ -179,6 +179,7 @@ _lua=yes
 _build_scalers=yes
 _build_hq_scalers=yes
 _enable_prof=no
+_enable_asan=no
 _global_constructors=no
 _no_undefined_var_template=no
 _no_pragma_pack=no
@@ -1429,6 +1430,9 @@ for ac_option in $@; do
 		;;
 	--enable-profiling)
 		_enable_prof=yes
+		;;
+	--enable-asan)
+		_enable_asan=yes
 		;;
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -5613,6 +5617,18 @@ if test "$_enable_prof" = yes ; then
 	append_var LDFLAGS "-pg"
 	append_var DEFINES "-DENABLE_PROFILING"
 fi
+
+echo_n "Enabling Address Sanitizer... "
+
+if test "$_enable_asan" = yes ; then
+	if test "$have_clang" = yes ; then
+		append_var CXXFLAGS "-fsanitize=address -fno-omit-frame-pointer"
+		append_var LDFLAGS "-fsanitize=address -fno-omit-frame-pointer"
+	else
+		_enable_asan="disabled, clang-only"
+	fi
+fi
+echo "$_enable_asan"
 
 echo_n "Backend... "
 echo_n "$_backend"
