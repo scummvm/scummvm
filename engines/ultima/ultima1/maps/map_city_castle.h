@@ -135,6 +135,11 @@ public:
 	 * Do an get action
 	 */
 	virtual void get() override;
+
+	/**
+	 * Do an unlock action
+	 */
+	virtual void unlock() override;
 };
 
 /**

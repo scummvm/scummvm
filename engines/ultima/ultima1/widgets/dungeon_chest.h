@@ -47,10 +47,10 @@ public:
 	DungeonChest(Ultima1Game *game, Maps::MapBase *map);
 
 	/**
-	 * Try to unlock the item
-	 * @returns		True if item was capable of being unlocked
+	 * Try to open/unlock the item
+	 * @returns		True if item was capable of being opened or unlocked
 	 */
-	virtual bool unlock() override;
+	virtual bool open() override;
 };
 
 } // End of namespace Widgets

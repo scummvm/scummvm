@@ -115,9 +115,9 @@ public:
 	virtual void open() override;
 
 	/**
-	 * Do an open action
+	 * Do an unlock action
 	 */
-	virtual void unlock() override;
+	virtual void unlock() override { open(); }
 };
 
 } // End of namespace Maps

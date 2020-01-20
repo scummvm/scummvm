@@ -33,6 +33,11 @@ namespace Widgets {
  * Chest item
  */
 class DungeonCoffin : public DungeonItem {
+private:
+	/**
+	 * Shifts the coffin to a given new position, if feasible
+	 */
+	void shiftTo(const Point &newPos);
 public:
 	DECLARE_WIDGET(DungeonCoffin)
 
@@ -47,8 +52,8 @@ public:
 	DungeonCoffin(Ultima1Game *game, Maps::MapBase *map);
 
 	/**
-	 * Try to open the item
-	 * @returns		True if item was capable of being open
+	 * Try to open/unlock the item
+	 * @returns		True if item was capable of being opened or unlocked
 	 */
 	virtual bool open() override;
 };

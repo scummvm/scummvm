@@ -577,7 +577,7 @@ const char *const SRC_A_SECRET_DOOR = "a secret door!";
 const char *const SRC_ACTION_NAMES[26] = {
 	nullptr, nullptr, nullptr, "Drop", "Enter", nullptr, "Get", "HyperJump", "Inform and search", nullptr,
 	"K-Limb", nullptr, nullptr, nullptr, "Open", "Pass", nullptr, nullptr, "Steal", "Transact",
-	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+	"Unlock", nullptr, nullptr, nullptr, nullptr, nullptr
 };
 const char *const SRC_HUH = "Huh?";
 const char *const SRC_WHAT = " what?";
@@ -606,7 +606,8 @@ const char *const SRC_OK = "Ok!";
 const char *const SRC_SHAZAM = "Shazam!";
 const char *const SRC_ALAKAZOT = "Alakazot!";
 const char *const SRC_NO_KINGS_PERMISSION = "Thou hast not the king's permission!";
-
+const char *const SRC_SET_OFF_TRAP = "Thou hast set off a trap!";
+const char *const SRC_THOU_DOST_FIND = "Thou dost find: ";
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
 const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
 const char *const SRC_GROCERY_PACKS2 = "each.  How many dost thou";
@@ -694,6 +695,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	SHAZAM = SRC_SHAZAM;
 	ALAKAZOT = SRC_ALAKAZOT;
 	NO_KINGS_PERMISSION = SRC_NO_KINGS_PERMISSION;
+	SET_OFF_TRAP = SRC_SET_OFF_TRAP;
+	THOU_DOST_FIND = SRC_THOU_DOST_FIND;
 
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
 	GROCERY_SELL = SRC_GROCERY_SELL;
@@ -779,6 +782,8 @@ void GameResources::synchronize() {
 	syncString(SHAZAM);
 	syncString(ALAKAZOT);
 	syncString(NO_KINGS_PERMISSION);
+	syncString(SET_OFF_TRAP);
+	syncString(THOU_DOST_FIND);
 
 	syncStrings(GROCERY_NAMES, 8);
 	syncString(GROCERY_SELL);
