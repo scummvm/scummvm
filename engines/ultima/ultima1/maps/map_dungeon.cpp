@@ -204,6 +204,27 @@ void MapDungeon::spawnMonsterAt(const Point &pt) {
 	}
 }
 
+Widgets::DungeonMonster *MapDungeon::findCreatureInCurrentDirection(uint maxDistance) {
+	U1MapTile tile;
+	Point delta = getDirectionDelta();
+
+	for (uint idx = 1; idx < maxDistance; ++idx) {
+		Point pt = getPosition() + Point(delta.x * idx, delta.y * idx);
+		getTileAt(pt, &tile);
+
+		// If a monster found, return it
+		Widgets::DungeonMonster *monster = dynamic_cast<Widgets::DungeonMonster *>(tile._widget);
+		if (monster)
+			return monster;
+
+		// If a blocking tile reached, then abort the loop
+		if (tile._isWall || tile._isSecretDoor || tile._isBeams || tile._isDoor)
+			break;
+	}
+
+	return nullptr;
+}
+
 void MapDungeon::update() {
 	U1MapTile tile;
 	Point pt;
