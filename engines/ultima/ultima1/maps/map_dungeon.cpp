@@ -29,6 +29,7 @@
 #include "ultima/ultima1/widgets/dungeon_monster.h"
 #include "ultima/ultima1/widgets/dungeon_player.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
@@ -209,7 +210,7 @@ Widgets::DungeonMonster *MapDungeon::findCreatureInCurrentDirection(uint maxDist
 	U1MapTile tile;
 	Point delta = getDirectionDelta();
 
-	for (uint idx = 1; idx < maxDistance; ++idx) {
+	for (uint idx = 1; idx <= maxDistance; ++idx) {
 		Point pt = getPosition() + Point(delta.x * idx, delta.y * idx);
 		getTileAt(pt, &tile);
 
@@ -310,6 +311,22 @@ void MapDungeon::leavingDungeon() {
 		addInfoMsg(Common::String::format(_game->_res->GAIN_HIT_POINTS, _dungeonExitHitPoints));
 		c._hitPoints += _dungeonExitHitPoints;
 	}
+}
+
+void MapDungeon::attack(int direction, int effectId) {
+	const Character &c = *static_cast<Party *>(_game->_party);
+	Widgets::DungeonMonster *monster = findCreatureInCurrentDirection(c._weapons[c._equippedWeapon]._distance);
+	_game->playFX(7);
+
+	if (monster) {
+		uint agility = c._agility + 50;
+		uint damage = _game->getRandomNumber(2, agility + c._equippedWeapon * 8 + c._strength);
+		monster->attackMonster(2, agility, damage);
+	} else {
+		addInfoMsg(_game->_res->NOTHING);
+	}
+
+	_game->endOfTurn();
 }
 
 } // End of namespace Maps

@@ -59,7 +59,8 @@ END_MESSAGE_MAP()
 
 bool Attack::AttackMsg(CAttackMsg &msg) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	const Shared::Character &c = *getGame()->_party;
+	Maps::Ultima1Map *map = static_cast<Maps::Ultima1Map *>(getMap());
+	const Shared::Character &c = *game->_party;
 	const Shared::Weapon &weapon = c._weapons[c._equippedWeapon];
 
 	addInfoMsg(Common::String::format("%s %s", game->_res->ACTION_NAMES[0], weapon._shortName.c_str()), false);
@@ -68,6 +69,10 @@ bool Attack::AttackMsg(CAttackMsg &msg) {
 		addInfoMsg("?");
 		game->playFX(1);
 		game->endOfTurn();
+	} else if (map->_mapType == Maps::MAP_DUNGEON) {
+		// In the dungeons, attacks always are straight ahead
+		addInfoMsg("");
+		doAttack(Shared::Maps::DIR_NONE);
 	} else if (msg._direction == Shared::Maps::DIR_NONE) {
 		// Prompt user for direction
 		addInfoMsg(": ", false);
