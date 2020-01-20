@@ -68,6 +68,12 @@ void Dialog::centerText(const Common::String &line, int yp) {
 	s.writeString(line, TextPoint((_bounds.width() / 8 - line.size() + 1) / 2, yp));
 }
 
+void Dialog::centerText(const Shared::StringArray &lines, int yp) {
+	Shared::Gfx::VisualSurface s = getSurface();
+	for (uint idx = 0; idx < lines.size(); ++idx)
+		s.writeString(lines[idx], TextPoint((_bounds.width() / 8 - lines[idx].size() + 1) / 2, yp + idx));
+}
+
 void Dialog::hide() {
 	Popup::hide();
 

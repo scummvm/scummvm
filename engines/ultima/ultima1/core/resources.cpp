@@ -682,7 +682,31 @@ const char *const SRC_MAGIC_NAMES[8] = {
 	"Psychic Sam's Magical Emporium", nullptr, nullptr, nullptr, "The Unleashed Spell"
 };
 const char *const SRC_DONT_BUY_SPELLS = "Sorry, we don't buy spells!";
-
+const char *SRC_TAVERN_NAMES[8] = {
+	"Pub de Varg", "Ye Olde Local Pub", "Dr. Cat's Lair", "Teaser's House", nullptr,
+	"Mary's Midway", "Kurtstable's Korner", "Dav's House-o-Suds"
+};
+const char *SRC_TAVERN_TEXT[4] = {
+	"Thou art broke!\nCome back when thou hast\nsome money to spend.",
+	"We have plenty of booze\nalready!",
+	"The tavern keeper sayeth:\nHere, have a cold one!", "ale"
+};
+const char *SRC_TAVERN_TIPS[11] = {
+	"Thou had best know",
+	"Thou hast been seduced!\nAfter a long night,\nthou art back.",
+	"about space travel!\nThou must destroy at\nleast 20 enemy vessels\nto become an ace!",
+	"to watch the %s.",
+	"that the princess will give\ngreat reward to the one who\nrescues her, and an extra gift\nto an 8th level ace!",
+	"thou must go back in time.",
+	"thou should destroy\nthe evil gem!",
+	"that many lakes and ponds\nhave strong magical powers!",
+	"this is a great game!",
+	"that over 1000 years ago,\nMondain the Wizard created an\n"
+		"evil gem.  With this gem, he\nis immortal and cannot be\ndefeated.",
+	"The quest of --Ultima-- is to\ntraverse the lands in search\nof a time machine.  Upon\n"
+		"finding such a device, thou\nshould go back in time to the\n"
+		"days before Mondain created\nthe evil gem and destroy him!"
+};
 const char *const SRC_WITH_KING = " with king";
 const char *const SRC_HE_IS_NOT_HERE = "He is not here!";
 const char *const SRC_HE_REJECTS_OFFER = "He rejects thine offer!";
@@ -690,7 +714,7 @@ const char *const SRC_KING_TEXT[12] = {
 	"Dost thou offer pence\ror service: ", "neither", "pence", "service", "How much? ",
 	"Thou hast not that much!", "In return I give unto\rthee %u hit points",
 	"Thou art on a quest\rfor me already!", "Go now and kill a", "Go forth and find",
-	"Do not return until", "thy quest is done!"
+	"Do not return until", "thy quest is done!",
 };
 
 /*-------------------------------------------------------------------*/
@@ -826,7 +850,9 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	NO_ARMOUR_TO_SELL = SRC_NO_ARMOUR_TO_SELL;
 	Common::copy(&SRC_MAGIC_NAMES[0], &SRC_MAGIC_NAMES[8], MAGIC_NAMES);
 	DONT_BUY_SPELLS = SRC_DONT_BUY_SPELLS;
-
+	Common::copy(&SRC_TAVERN_NAMES[0], &SRC_TAVERN_NAMES[8], TAVERN_NAMES);
+	Common::copy(&SRC_TAVERN_TEXT[0], &SRC_TAVERN_TEXT[10], TAVERN_TEXT);
+	Common::copy(&SRC_TAVERN_TIPS[0], &SRC_TAVERN_TIPS[11], TAVERN_TIPS);
 	WITH_KING = SRC_WITH_KING;
 	HE_IS_NOT_HERE = SRC_HE_IS_NOT_HERE;
 	HE_REJECTS_OFFER = SRC_HE_REJECTS_OFFER;
@@ -961,7 +987,9 @@ void GameResources::synchronize() {
 	syncString(NO_ARMOUR_TO_SELL);
 	syncStrings(MAGIC_NAMES, 8);
 	syncString(DONT_BUY_SPELLS);
-
+	syncStrings(TAVERN_NAMES, 8);
+	syncStrings(TAVERN_TEXT, 10);
+	syncStrings(TAVERN_TIPS, 11);
 	syncString(WITH_KING);
 	syncString(HE_IS_NOT_HERE);
 	syncString(HE_REJECTS_OFFER);

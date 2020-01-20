@@ -65,16 +65,13 @@ protected:
 	Widgets::Person *getTalkPerson();
 public:
 	bool _guardsHostile;			// Flag for whether guards are hostile
+	uint _tipCounter;				// Tip counter for taverns
 public:
 	/**
 	 * Constructor
 	 */
-	MapCityCastle(Ultima1Game *game, Ultima1Map *map) : MapBase(game, map), _guardsHostile(false) {}
-
-	/**
-	 * Destructor
-	 */
-	virtual ~MapCityCastle() {}
+	MapCityCastle(Ultima1Game *game, Ultima1Map *map) : MapBase(game, map),
+		_guardsHostile(false), _tipCounter(0) {}
 
 	/**
 	 * Load the map
@@ -126,6 +123,11 @@ public:
 	 * @param widgetNa
 	 */
 	virtual void attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) override;
+
+	/**
+	 * Returns true if a wench is on an adjacent tile to the player
+	 */
+	bool isWenchNearby();
 };
 
 /**
