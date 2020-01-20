@@ -32,7 +32,7 @@ BEGIN_MESSAGE_MAP(Status, Shared::Gfx::VisualItem)
 	ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
-Status::Status(TreeItem *parent) : Shared::Gfx::VisualItem("Status", TextRect(31, 21, 40, 25), parent),
+Status::Status(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("Status", TextRect(31, 21, 39, 24), parent),
 		_hitPoints(0), _food(0), _experience(0), _coins(0) {
 }
 
