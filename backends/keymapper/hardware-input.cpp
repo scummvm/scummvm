@@ -40,6 +40,7 @@ static const KeyTableEntry defaultKeys[] = {
 	{"QUOTEDBL", KEYCODE_QUOTEDBL, '"', "\"", false},
 	{"HASH", KEYCODE_HASH, '#', "#", false},
 	{"DOLLAR", KEYCODE_DOLLAR, '$', "$", false},
+	{"PERCENT", KEYCODE_PERCENT, '%', "%", false},
 	{"AMPERSAND", KEYCODE_AMPERSAND, '&', "&", false},
 	{"QUOTE", KEYCODE_QUOTE, '\'', "'", false},
 	{"LEFTPAREN", KEYCODE_LEFTPAREN, '(', "(", false},
@@ -148,6 +149,9 @@ static const KeyTableEntry defaultKeys[] = {
 	{"F13", KEYCODE_F13, 0, "F13", false},
 	{"F14", KEYCODE_F14, 0, "F14", false},
 	{"F15", KEYCODE_F15, 0, "F15", false},
+	{"F16", KEYCODE_F16, 0, "F16", false},
+	{"F17", KEYCODE_F17, 0, "F17", false},
+	{"F18", KEYCODE_F18, 0, "F18", false},
 
 	// Miscellaneous function keys
 	{"HELP", KEYCODE_HELP, 0, "Help", false},
@@ -161,6 +165,45 @@ static const KeyTableEntry defaultKeys[] = {
 	{"EURO", KEYCODE_EURO, 0, "Euro", false},
 		// Atari keyboard has Undo
 	{"UNDO", KEYCODE_UNDO, 0, "Undo", false},
+	{"SLEEP", KEYCODE_SLEEP, 0, "Sleep", false},
+	{"MUTE", KEYCODE_MUTE, 0, "Mute", false},
+	{"EJECT", KEYCODE_EJECT, 0, "Eject", false},
+	{"VOLUMEUP", KEYCODE_VOLUMEUP, 0, "Volume Up", false},
+	{"VOLUMEDOWN", KEYCODE_VOLUMEDOWN, 0, "Volume Down", false},
+	{"LEFTSOFT", KEYCODE_LEFTSOFT, 0, "Left Soft", false},
+	{"RIGHTSOFT", KEYCODE_RIGHTSOFT, 0, "Right Soft", false},
+	{"CALL", KEYCODE_CALL, 0, "Call", false},
+	{"HANGUP", KEYCODE_HANGUP, 0, "Hang up", false},
+	{"CAMERA", KEYCODE_CAMERA, 0, "Camera", false},
+	{"WWW", KEYCODE_WWW, 0, "WWW", false},
+	{"MAIL", KEYCODE_MAIL, 0, "Mail", false},
+	{"CALCULATOR", KEYCODE_CALCULATOR, 0, "Calculator", false},
+	{"CUT", KEYCODE_CUT, 0, "Cut", false},
+	{"COPY", KEYCODE_COPY, 0, "Copy", false},
+	{"PASTE", KEYCODE_PASTE, 0, "Paste", false},
+	{"SELECT", KEYCODE_SELECT, 0, "Select", false},
+	{"CANCEL", KEYCODE_CANCEL, 0, "Cancel", false},
+
+	// Action keys
+	{"AC_SEARCH", KEYCODE_AC_SEARCH, 0, "AC Search", false},
+	{"AC_HOME", KEYCODE_AC_HOME, 0, "AC Home", false},
+	{"AC_BACK", KEYCODE_AC_BACK, 0, "AC Back", false},
+	{"AC_FORWARD", KEYCODE_AC_FORWARD, 0, "AC Forward", false},
+	{"AC_STOP", KEYCODE_AC_STOP, 0, "AC Stop", false},
+	{"AC_REFRESH", KEYCODE_AC_REFRESH, 0, "AC Refresh", false},
+	{"AC_BOOKMARKS", KEYCODE_AC_BOOKMARKS, 0, "AC Bookmarks", false},
+
+	// Audio keys
+	{"AUDIONEXT", KEYCODE_AUDIONEXT, 0, "Audio Next", false},
+	{"AUDIOPREV", KEYCODE_AUDIOPREV, 0, "Audio Previous", false},
+	{"AUDIOSTOP", KEYCODE_AUDIOSTOP, 0, "Audio Stop", false},
+	{"AUDIOPLAY", KEYCODE_AUDIOPLAY, 0, "Audio Play", false},
+	{"AUDIOPAUSE", KEYCODE_AUDIOPAUSE, 0, "Audio Pause", false},
+	{"AUDIOPLAYPAUSE", KEYCODE_AUDIOPLAYPAUSE, 0, "Audio Play/Pause", false},
+	{"AUDIOMUTE", KEYCODE_AUDIOMUTE, 0, "Audio Mute", false},
+	{"AUDIOREWIND", KEYCODE_AUDIOREWIND, 0, "Audio Rewind", false},
+	{"AUDIOFASTFORWARD", KEYCODE_AUDIOFASTFORWARD, 0, "Audio Fast-Forward", false},
+
 	{0, KEYCODE_INVALID, 0, 0, false}
 };
 
