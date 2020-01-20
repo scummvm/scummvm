@@ -32,7 +32,7 @@ namespace Shared {
 
 EMPTY_MESSAGE_MAP(Game, GameBase);
 
-Game::Game() : GameBase(), _dungeonExitHitPoints(0), _randomSeed(0), _gameView(nullptr), _map(nullptr),
+Game::Game() : GameBase(), _randomSeed(0), _gameView(nullptr), _map(nullptr),
 		_edgeColor(0), _borderColor(0), _highlightColor(0), _textColor(0), _color1(0), _bgColor(0), _whiteColor(0) {
 	_fontResources = new FontResources();
 	_fontResources->load();

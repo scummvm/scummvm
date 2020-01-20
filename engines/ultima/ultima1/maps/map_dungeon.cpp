@@ -39,9 +39,16 @@ void MapDungeon::load(Shared::Maps::MapId mapId) {
 
 	_tilesPerOrigTile = Point(1, 1);
 	_dungeonLevel = 1;
+	_dungeonExitHitPoints = 0;
 
 	changeLevel(0);
 	_playerWidget->moveTo(Point(1, 1), Shared::Maps::DIR_SOUTH);
+}
+
+void MapDungeon::synchronize(Common::Serializer &s) {
+	MapBase::synchronize(s);
+	s.syncAsUint16LE(_dungeonLevel);
+	s.syncAsUint16LE(_dungeonExitHitPoints);
 }
 
 void MapDungeon::getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer) {
@@ -58,8 +65,10 @@ void MapDungeon::getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool in
 
 bool MapDungeon::changeLevel(int delta) {
 	_dungeonLevel += delta;
-	if (_dungeonLevel <= 0)
+	if (_dungeonLevel <= 0) {
+		leavingDungeon();
 		return false;
+	}
 
 	// Set seed for generating a deterministic resulting dungoen level
 	setRandomSeed();
@@ -252,7 +261,7 @@ void MapDungeon::climb() {
 		addInfoMsg(_game->_res->WHAT);
 		_game->playFX(1);
 	} else if (getDirection() == Shared::Maps::DIR_LEFT || getDirection() == Shared::Maps::DIR_RIGHT) {
-		addInfoMsg("");
+		addInfoMsg(""); 
 		addInfoMsg(_game->_res->FACE_THE_LADDER);
 		_game->playFX(1);
 	} else if (tile._isLadderUp) {
@@ -266,6 +275,19 @@ void MapDungeon::climb() {
 void MapDungeon::castSpell(uint spellId) {
 	const Shared::Character &c = *_game->_party._currentCharacter;
 	static_cast<Spells::Spell *>(c._spells[spellId])->dungeonCast(this);
+}
+
+void MapDungeon::leavingDungeon() {
+	Shared::Character &c = *_game->_party._currentCharacter;
+	
+	// Don't allow the hit points addition to push the hit point total beyond 9999
+	if (c._hitPoints + _dungeonExitHitPoints > 9999)
+		_dungeonExitHitPoints = 9999 - c._hitPoints;
+
+	if (_dungeonExitHitPoints) {
+		addInfoMsg(Common::String::format(_game->_res->GAIN_HIT_POINTS, _dungeonExitHitPoints));
+		c._hitPoints += _dungeonExitHitPoints;
+	}
 }
 
 } // End of namespace Maps

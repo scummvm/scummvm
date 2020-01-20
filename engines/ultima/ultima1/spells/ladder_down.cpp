@@ -23,17 +23,27 @@
 #include "ultima/ultima1/spells/ladder_down.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/maps/map_tile.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
 LadderDown::LadderDown() : Spell(SPELL_LADDER_DOWN) {
-	_quantity = 0xffff;			// LadderDown has unlimited uses
 }
 
 void LadderDown::dungeonCast(Maps::MapDungeon *map) {
-	// TODO
+	Point pt = map->getPosition();
+	Maps::U1MapTile tile;
+	map->getTileAt(pt, &tile);
+
+	if (map->getLevel() < 10 && !tile._isBeams && ((pt.x & 1) || (pt.y & 1))) {
+		map->setTileAt(pt, Maps::DTILE_LADDER_DOWN);
+		addInfoMsg(_game->_res->LADDER_CREATED);
+	} else {
+		// Failed
+		Spell::dungeonCast(map);
+	}
 }
 
 } // End of namespace Spells

@@ -94,6 +94,7 @@ public:
 	const char *YOU_ARE_IN_LANDS;
 	const char *FIND;
 	const char *A_SECRET_DOOR;
+	const char *GAIN_HIT_POINTS;
 
 	const char *ACTION_NAMES[26];
 	const char *HUH;
@@ -139,6 +140,7 @@ public:
 	const char *TELEPORTED;
 	const char *FIELD_CREATED;
 	const char *FIELD_DESTROYED;
+	const char *LADDER_CREATED;
 	const char *QUEST_COMPLETED;
 
 	const char *GROCERY_NAMES[8];

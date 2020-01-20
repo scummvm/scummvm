@@ -592,6 +592,7 @@ const char *const SRC_YOU_ARE_IN_WOODS = "You are in the woods";
 const char *const SRC_YOU_ARE_IN_LANDS = "You are in the lands";
 const char *const SRC_FIND = "Thou dost find %s";
 const char *const SRC_A_SECRET_DOOR = "a secret door!";
+const char *const SRC_GAIN_HIT_POINTS = "Thou dost gain %u hit points";
 
 const char *const SRC_ACTION_NAMES[26] = {
 	"Attack with", nullptr, "Cast", "Drop", "Enter", "Fire", "Get", "HyperJump", "Inform and search",
@@ -647,6 +648,7 @@ const char *const SRC_FAILED = "Failed!";
 const char *const SRC_TELEPORTED = "Teleported!";
 const char *const SRC_FIELD_CREATED = "Field created!";
 const char *const SRC_FIELD_DESTROYED = "Field destroyed!";
+const char *const SRC_LADDER_CREATED = "Ladder created!";
 const char *const SRC_QUEST_COMPLETED = "A quest has been completed!";
 
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
@@ -720,6 +722,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	YOU_ARE_IN_LANDS = SRC_YOU_ARE_IN_LANDS;
 	FIND = SRC_FIND;
 	A_SECRET_DOOR = SRC_A_SECRET_DOOR;
+	GAIN_HIT_POINTS = SRC_GAIN_HIT_POINTS;
 
 	Common::copy(&SRC_ACTION_NAMES[0], &SRC_ACTION_NAMES[26], ACTION_NAMES);
 	HUH = SRC_HUH;
@@ -765,6 +768,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	TELEPORTED = SRC_TELEPORTED;
 	FIELD_CREATED = SRC_FIELD_CREATED;
 	FIELD_DESTROYED = SRC_FIELD_DESTROYED;
+	LADDER_CREATED = SRC_LADDER_CREATED;
 	QUEST_COMPLETED = SRC_QUEST_COMPLETED;
 
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
@@ -835,6 +839,7 @@ void GameResources::synchronize() {
 	syncString(YOU_ARE_IN_LANDS);
 	syncString(FIND);
 	syncString(A_SECRET_DOOR);
+	syncString(GAIN_HIT_POINTS);
 
 	syncStrings(ACTION_NAMES, 26);
 	syncString(HUH);
@@ -880,6 +885,7 @@ void GameResources::synchronize() {
 	syncString(TELEPORTED);
 	syncString(FIELD_CREATED);
 	syncString(FIELD_DESTROYED);
+	syncString(LADDER_CREATED);
 	syncString(QUEST_COMPLETED);
 
 	syncStrings(GROCERY_NAMES, 8);

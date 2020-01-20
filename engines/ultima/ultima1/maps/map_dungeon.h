@@ -57,10 +57,22 @@ private:
 	 * so that a given dungeon and level will always be built the same
 	 */
 	uint getDeterministicRandomNumber(uint min, uint max) { return min + _random.getRandomNumber(max - min); }
+
+	/**
+	 * Called when the dungeon is being left
+	 */
+	void leavingDungeon();
 public:
-	MapDungeon(Ultima1Game *game, Ultima1Map *map) : MapBase(game, map), _dungeonLevel(0),
-		_random("UltimaDungeons") {}
+	uint _dungeonExitHitPoints;
+public:
+	MapDungeon(Ultima1Game *game, Ultima1Map *map) : MapBase(game, map), _random("UltimaDungeons"),
+		_dungeonLevel(0), _dungeonExitHitPoints(0) {}
 	virtual ~MapDungeon() {}
+
+	/**
+	 * Handles loading and saving viewport
+	 */
+	void synchronize(Common::Serializer &s);
 
 	/**
 	 * Load the map

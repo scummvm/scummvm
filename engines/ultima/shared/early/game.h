@@ -103,11 +103,6 @@ public:
 	Maps::Map *_map;
 
 	/**
-	 * The number of hit points to generate when a dungeon is left
-	 */
-	uint _dungeonExitHitPoints;
-
-	/**
 	 * Stores the base random seed used for generating deterministic dungeon levels
 	 */
 	uint32 _randomSeed;
