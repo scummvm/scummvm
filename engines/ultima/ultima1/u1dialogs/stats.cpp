@@ -166,7 +166,6 @@ bool Stats::KeypressMsg(CKeypressMsg &msg) {
 		_startingIndex += 26U;
 		setDirty();
 	} else {
-		_game->_textCursor->setVisible(false);
 		hide();
 	}
 
