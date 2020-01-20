@@ -45,6 +45,12 @@ void Spell::cast(Maps::MapBase *map) {
 	_game->playFX(6);
 }
 
+void Spell::dungeonCast(Maps::MapDungeon *map) {
+	// This is the fallback the spells call if it fails
+	addInfoMsg(_game->_res->FAILED);
+	_game->playFX(6);
+}
+
 } // End of namespace Spells
 } // End of namespace Ultima1
 } // End of namespace Ultima
