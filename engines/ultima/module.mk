@@ -23,6 +23,7 @@ MODULE_OBJS += \
 	shared/core/mouse_cursor.o \
 	shared/core/named_item.o \
 	shared/core/party.o \
+	shared/core/str.o \
 	shared/core/tree_item.o \
 	shared/core/utils.o \
 	shared/core/widgets.o \
