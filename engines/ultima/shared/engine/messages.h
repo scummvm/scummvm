@@ -234,12 +234,12 @@ MESSAGE1(CFrameMsg, uint, ticks, 0);
 MESSAGE2(CHideMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fadeOut, false);
 
 /**
- * Adds text strings to the info area
+ * Get a keypress in the info area
  */
 MESSAGE1(CInfoGetKeypress, MessageTarget *, responder, (MessageTarget *)nullptr);
 
 /**
- * Adds text strings to the info area
+ * Get a text input in the input area
  */
 MESSAGE3(CInfoGetInput, MessageTarget *, responder, (MessageTarget *)nullptr, bool, isNumeric, false, size_t, maxCharacters, 10);
 

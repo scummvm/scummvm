@@ -20,8 +20,9 @@
  *
  */
 
-#include "ultima/ultima1/spells/kill.h"
+#include "ultima/ultima1/spells/kill_magic_missile.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/widgets/dungeon_monster.h"
@@ -30,7 +31,9 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
-Kill::Kill() : Spell(SPELL_KILL) {
+/*-------------------------------------------------------------------*/
+
+Kill::Kill() : KillMagicMIssile(SPELL_KILL) {
 }
 
 void Kill::dungeonCast(Maps::MapDungeon *map) {
@@ -45,7 +48,25 @@ void Kill::dungeonCast(Maps::MapDungeon *map) {
 		monster->attackMonster(5, 101, Widgets::ITS_OVER_9000);
 	} else {
 		// Failed
-		Spell::dungeonCast(map);
+		KillMagicMIssile::dungeonCast(map);
+	}
+}
+
+/*-------------------------------------------------------------------*/
+
+MagicMissile::MagicMissile() : KillMagicMIssile(SPELL_MAGIC_MISSILE) {
+}
+
+void MagicMissile::dungeonCast(Maps::MapDungeon *map) {
+	Widgets::DungeonMonster *monster = map->findCreatureInCurrentDirection();
+
+	if (monster) {
+		Character *c = *static_cast<Party *>(_game->_party);
+		uint damage = c->getWeaponDamage();
+		monster->attackMonster(5, 101, damage);
+	}
+	else {
+		KillMagicMIssile::dungeonCast(map);
 	}
 }
 
