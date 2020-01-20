@@ -95,6 +95,11 @@ public:
 	 * Setup the party
 	 */
 	void setup();
+
+	/**
+	 * Operator casting
+	 */
+	operator Character *() const { return static_cast<Character *>(_characters.front()); }
 };
 
 } // End of namespace Ultima1
