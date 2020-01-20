@@ -34,7 +34,10 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-EMPTY_MESSAGE_MAP(Stats, FullScreenDialog);
+BEGIN_MESSAGE_MAP(Stats, FullScreenDialog)
+	ON_MESSAGE(ShowMsg)
+	ON_MESSAGE(KeypressMsg)
+END_MESSAGE_MAP()
 
 /**
  * Counts the number of 
@@ -74,16 +77,22 @@ void Stats::load() {
 		_stats.push_back(StatEntry(_game->_res->STAT_NAMES[9], enemyVessels));
 
 	// Armor, weapons, & spells
-	for (uint idx = 1; idx < c._armor.size(); ++idx)
-		_stats.push_back(StatEntry(formatStat(c._armor[idx]._name.c_str(), c._armor[idx]._quantity),
-			(int)idx == c._equippedArmor ? _game->_highlightColor : _game->_textColor));
-	for (uint idx = 1; idx < c._weapons.size(); ++idx)
-		_stats.push_back(StatEntry(formatStat(c._weapons[idx]._longName.c_str(), c._weapons[idx]._quantity),
-			(int)idx == c._equippedWeapon ? _game->_highlightColor : _game->_textColor));
-	for (uint idx = 1; idx < c._spells.size(); ++idx)
-		_stats.push_back(StatEntry(formatStat(c._spells[idx]._name.c_str(), c._spells[idx]._quantity),
-			(int)idx == c._equippedSpell ? _game->_highlightColor : _game->_textColor));
-	
+	for (uint idx = 1; idx < c._armor.size(); ++idx) {
+		if (c._armor[idx]._quantity > 0)
+			_stats.push_back(StatEntry(formatStat(c._armor[idx]._name.c_str(), c._armor[idx]._quantity),
+				(int)idx == c._equippedArmor ? _game->_highlightColor : _game->_textColor));
+	}
+	for (uint idx = 1; idx < c._weapons.size(); ++idx) {
+		if (c._weapons[idx]._quantity > 0)
+			_stats.push_back(StatEntry(formatStat(c._weapons[idx]._longName.c_str(), c._weapons[idx]._quantity),
+				(int)idx == c._equippedWeapon ? _game->_highlightColor : _game->_textColor));
+	}
+	for (uint idx = 1; idx < c._spells.size(); ++idx) {
+		if (c._spells[idx]._quantity > 0)
+			_stats.push_back(StatEntry(formatStat(c._spells[idx]._name.c_str(), c._spells[idx]._quantity),
+				(int)idx == c._equippedSpell ? _game->_highlightColor : _game->_textColor));
+	}
+
 	// Counts of transport types
 	countTransport<Widgets::Horse>(overworld, _stats, _game->_res->TRANSPORT_NAMES[1], _game->_textColor);
 	countTransport<Widgets::Cart>(overworld, _stats, _game->_res->TRANSPORT_NAMES[2], _game->_textColor);
@@ -94,12 +103,12 @@ void Stats::load() {
 	countTransport<Widgets::TimeMachine>(overworld, _stats, _game->_res->TRANSPORT_NAMES[7], _game->_textColor);
 
 	// Add entries for any gems
-	// TODO
+	addStats(_game->_res->GEM_NAMES, _game->_gems, 0, 3);
 }
 
 void Stats::addStats(const char *const *names, const uint *values, int start, int end, int equippedIndex) {
-	for (int idx = start; idx < end; ++idx) {
-		if (names[idx]) {
+	for (int idx = start; idx <= end; ++idx) {
+		if (values[idx]) {
 			Common::String line = formatStat(names[idx], values[idx]);
 			_stats.push_back(StatEntry(line, (idx == equippedIndex) ? _game->_highlightColor : _game->_textColor));
 		}
@@ -129,7 +138,7 @@ void Stats::draw() {
 
 	// Display stats
 	for (uint idx = 0; idx < MIN(26U, _stats.size() - _startingIndex); ++idx) {
-		s.writeString(_stats[idx]._line, TextPoint(idx >= 13 ? 21 : 2, (idx % 13) + 2), _stats[idx]._color);
+		s.writeString(_stats[_startingIndex + idx]._line, TextPoint(idx >= 13 ? 21 : 2, (idx % 13) + 5), _stats[_startingIndex + idx]._color);
 	}
 
 	// Display a more sign if thare more than 26 remaining entries being displayed
@@ -139,13 +148,13 @@ void Stats::draw() {
 		s.writeString(_game->_res->MORE, TextPoint(17, 19));
 		ds.drawLeftArrow(TextPoint(23, 19));
 	}
+
+	// Write the press any key to continue at bottom of the screen
+	s.fillRect(TextRect(0, 24, 28, 24), _game->_bgColor);
+	s.writeString(_game->_res->PRESS_SPACE_TO_CONTINUE, TextPoint(1, 24));
 }
 
-bool Stats::PopupShowMsg(CPopupShownMsg &msg) {
-	Shared::Gfx::VisualSurface s = getSurface();
-	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
-	
-	s.writeString(_game->_res->PRESS_SPACE_TO_CONTINUE, TextPoint(1, 24));
+bool Stats::ShowMsg(Shared::CShowMsg &msg) {
 	_game->_textCursor->setPosition(TextPoint(1 + strlen(_game->_res->PRESS_SPACE_TO_CONTINUE), 24));
 	_game->_textCursor->setVisible(true);
 
