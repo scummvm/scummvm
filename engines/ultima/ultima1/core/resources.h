@@ -124,6 +124,8 @@ public:
 	const char *PLAYER_DESC;
 	const char *PRESS_SPACE_TO_CONTINUE;
 	const char *MORE;
+	const char *READY_WEAPON_ARMOR_SPELL;
+	const char *WEAPON_ARMOR_SPELL[3];
 
 	const char *GROCERY_NAMES[8];
 	const char *GROCERY_SELL;

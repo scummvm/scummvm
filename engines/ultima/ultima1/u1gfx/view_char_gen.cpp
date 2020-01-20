@@ -393,10 +393,13 @@ bool ViewCharacterGeneration::save() {
 	_character->_food = 200;
 	_character->_experience = 0;
 	_character->_equippedWeapon = 1;
-	_character->_weapons[1]._quantity = 1;
+	_character->_weapons[0]._quantity = 0xffff;		// Hands
+	_character->_weapons[1]._quantity = 1;			// Dagger
 	_character->_equippedArmor = 1;
-	_character->_armor[1]._quantity = 1;
+	_character->_armor[0]._quantity = 0xffff;		// Bare skin
+	_character->_armor[1]._quantity = 1;			// Leather armour
 	_character->_equippedSpell = 0;
+	_character->_spells[0]._quantity = 0xffff;		// Prayer
 
 	return g_vm->saveGame();
 }
