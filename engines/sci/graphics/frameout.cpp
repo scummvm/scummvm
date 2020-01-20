@@ -234,7 +234,9 @@ void GfxFrameout::kernelUpdateScreenItem(const reg_t object) {
 		const reg_t planeObject = readSelector(_segMan, object, SELECTOR(plane));
 		Plane *plane = _planes.findByObject(planeObject);
 		if (plane == nullptr) {
-			error("kUpdateScreenItem: Plane %04x:%04x not found for screen item %04x:%04x", PRINT_REG(planeObject), PRINT_REG(object));
+			// Script bug in PQ:SWAT, when skipping the Tactics Training
+			warning("kUpdateScreenItem: Plane %04x:%04x not found for screen item %04x:%04x", PRINT_REG(planeObject), PRINT_REG(object));
+			return;
 		}
 
 		ScreenItem *screenItem = plane->_screenItemList.findByObject(object);
