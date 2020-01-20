@@ -1,6 +1,7 @@
 package org.scummvm.scummvm;
 
 import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
@@ -11,7 +12,6 @@ import android.view.View;
 public class MouseHelper {
 	private View.OnHoverListener _listener;
 	private ScummVM _scummvm;
-	private long _rmbGuardTime;
 	private boolean _rmbPressed;
 	private boolean _lmbPressed;
 	private boolean _mmbPressed;
@@ -49,6 +49,14 @@ public class MouseHelper {
 
 	public void attach(SurfaceView main_surface) {
 		main_surface.setOnHoverListener(_listener);
+	}
+
+	public static boolean isMouse(KeyEvent e) {
+		int source = e.getSource();
+
+		return ((source & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE) ||
+		       ((source & InputDevice.SOURCE_STYLUS) == InputDevice.SOURCE_STYLUS) ||
+		       ((source & InputDevice.SOURCE_TOUCHPAD) == InputDevice.SOURCE_TOUCHPAD);
 	}
 
 	public static boolean isMouse(MotionEvent e) {
@@ -109,7 +117,6 @@ public class MouseHelper {
 			if (_rmbPressed) {
 				// right mouse button was released just now
 				_scummvm.pushEvent(ScummVMEvents.JE_RMB_UP, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0, 0);
-				_rmbGuardTime = System.currentTimeMillis();
 			}
 
 			_rmbPressed = false;
@@ -133,15 +140,5 @@ public class MouseHelper {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Checks whether right mouse button is pressed or was pressed just previously. This is used to prevent sending
-	 * extra back key on right mouse click which is the default behaviour in some platforms.
-	 *
-	 * @return true if right mouse button is (or was in the last 200ms) pressed
-	 */
-	public boolean getRmbGuard() {
-		return _rmbPressed || _rmbGuardTime + 200 > System.currentTimeMillis();
 	}
 }
