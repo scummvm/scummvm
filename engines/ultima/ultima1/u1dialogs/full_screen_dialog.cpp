@@ -20,68 +20,32 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_U1DIALOGS_DROP_H
-#define ULTIMA_ULTIMA1_U1DIALOGS_DROP_H
-
 #include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
+#include "ultima/ultima1/u1gfx/drawing_support.h"
+#include "ultima/ultima1/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-using Shared::CKeypressMsg;
+FullScreenDialog::FullScreenDialog(Ultima1Game *game) : Dialog(game) {
+	_bounds = Common::Rect(0, 0, 320, 200);
+}
+	
+void FullScreenDialog::drawFrame(const Common::String &title) {
+	Shared::Gfx::VisualSurface s = getSurface();
+	U1Gfx::DrawingSupport ds(s);
+	s.fillRect(TextRect(0, 0, 40, 20), _game->_bgColor);
+	ds.drawGameFrame();
 
-/**
- * Implements the drop dialog
- */
-class Drop : public FullScreenDialog {
-	DECLARE_MESSAGE_MAP;
-	bool KeypressMsg(CKeypressMsg &msg);
-
-	enum Mode { SELECT, DROP_PENCE, DROP_WEAPON, DROP_ARMOR };
-private:
-	Mode _mode;
-private:
-	/**
-	 * Nothing selected
-	 */
-	void nothing();
-
-	/**
-	 * Draw the initial mode selection display
-	 */
-	void drawSelection();
-
-	/**
-	 * Draw the drop pence display
-	 */
-	void drawDropPence();
-
-	/**
-	 * Draw the drop weapon display
-	 */
-	void drawDropWeapon();
-
-	/**
-	 * Draw the drop armor display
-	 */
-	void drawDropArmor();
-public:
-	CLASSDEF;
-
-	/**
-	 * Constructor
-	 */
-	Drop(Ultima1Game *game);
-
-	/**
-	 * Draws the visual item on the screen
-	 */
-	virtual void draw();
-};
+	size_t titleLen = title.size() + 2;
+	size_t xStart = 20 - titleLen / 2;
+	ds.drawRightArrow(TextPoint(xStart - 1, 0));
+	s.fillRect(TextRect(xStart, 0, xStart + titleLen, 0), 0);
+	s.writeString(title, TextPoint(xStart + 1, 0), _game->_textColor);
+	ds.drawLeftArrow(TextPoint(xStart + titleLen, 0));
+}
 
 } // End of namespace U1Dialogs
-} // End of namespace Ultima1
+} // End of namespace Gfx
 } // End of namespace Ultima
-
-#endif

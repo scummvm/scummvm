@@ -72,6 +72,7 @@ MODULE_OBJS += \
 	ultima1/maps/map_tile.o \
 	ultima1/u1dialogs/dialog.o \
 	ultima1/u1dialogs/drop.o \
+	ultima1/u1dialogs/full_screen_dialog.o \
 	ultima1/u1dialogs/grocery.o \
 	ultima1/u1gfx/drawing_support.o \
 	ultima1/u1gfx/info.o \

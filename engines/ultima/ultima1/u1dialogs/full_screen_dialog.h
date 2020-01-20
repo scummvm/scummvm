@@ -20,64 +20,30 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_U1DIALOGS_DROP_H
-#define ULTIMA_ULTIMA1_U1DIALOGS_DROP_H
+#ifndef ULTIMA_ULTIMA1_U1DIALOGS_FULL_SCREEN_DIALOG_H
+#define ULTIMA_ULTIMA1_U1DIALOGS_FULL_SCREEN_DIALOG_H
 
-#include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
+#include "ultima/ultima1/u1dialogs/dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-using Shared::CKeypressMsg;
-
 /**
- * Implements the drop dialog
+ * Base class for dialogs that cover the entire game area, with the exception of the
+ * info & status areas at the bottom of the screen
  */
-class Drop : public FullScreenDialog {
-	DECLARE_MESSAGE_MAP;
-	bool KeypressMsg(CKeypressMsg &msg);
-
-	enum Mode { SELECT, DROP_PENCE, DROP_WEAPON, DROP_ARMOR };
-private:
-	Mode _mode;
-private:
+class FullScreenDialog : public Dialog {
+protected:
 	/**
-	 * Nothing selected
+	 * Draw the frame
 	 */
-	void nothing();
-
-	/**
-	 * Draw the initial mode selection display
-	 */
-	void drawSelection();
-
-	/**
-	 * Draw the drop pence display
-	 */
-	void drawDropPence();
-
-	/**
-	 * Draw the drop weapon display
-	 */
-	void drawDropWeapon();
-
-	/**
-	 * Draw the drop armor display
-	 */
-	void drawDropArmor();
+	void drawFrame(const Common::String &title);
 public:
-	CLASSDEF;
-
 	/**
 	 * Constructor
 	 */
-	Drop(Ultima1Game *game);
-
-	/**
-	 * Draws the visual item on the screen
-	 */
-	virtual void draw();
+	FullScreenDialog(Ultima1Game *game);
 };
 
 } // End of namespace U1Dialogs
