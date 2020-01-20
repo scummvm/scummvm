@@ -84,7 +84,7 @@ protected: \
 		{ &TheBaseClass::getThisMessageMap, &_messageEntries[0] }; \
 		return &messageMap; \
 	} \
-	enum { DUMMY }
+	enum { DUMMY##theClass }
 
 /**
  * The immediate descendant of the base object, this implements the base class for objects

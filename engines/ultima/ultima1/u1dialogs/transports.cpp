@@ -52,7 +52,7 @@ void Transports::loadOverworldFreeTiles() {
 	Maps::U1MapTile mapTile;
 	_water = _woods = _grass = 0;
 
-	// Iterate through the surrounding tiles relative to the player
+	// Iterate through the tiles surrounding the city/castle
 	for (delta.y = -1; delta.y <= 1; ++delta.y) {
 		for (delta.x = -1; delta.x <= 1; ++delta.x) {
 			if (delta.x != 0 || delta.y != 0) {
@@ -182,9 +182,7 @@ bool Transports::CharacterInputMsg(CCharacterInputMsg &msg) {
 
 				// Remove the cost, and add in the new transport
 				c._coins -= cost;
-
-
-				addTransport(transportIndex + 1);
+				addTransport(transportIndex);
 
 				// Show sold and close the dialog
 				setMode(SOLD);
@@ -200,7 +198,28 @@ bool Transports::CharacterInputMsg(CCharacterInputMsg &msg) {
 }
 
 void Transports::addTransport(int transportIndex) {
-	// TODO
+	Maps::MapOverworld *map = static_cast<Maps::Ultima1Map *>(_game->_map)->getOverworldMap();
+	Point delta;
+	Maps::U1MapTile mapTile;
+	const char *const WIDGET_NAMES[6] = {
+		"Horse", "Cart", "Raft", "Frigate", "Aircar", "Shuttle"
+	};
+
+	// Iterate through the tiles surrounding the city/castle
+	for (delta.y = -1; delta.y <= 1; ++delta.y) {
+		for (delta.x = -1; delta.x <= 1; ++delta.x) {
+			if (delta.x != 0 || delta.y != 0) {
+				map->getTileAt(map->getPosition() + delta, &mapTile);
+
+				if ((transportIndex < 2 && mapTile.isOriginalWoods())
+						|| (transportIndex >= 3 && transportIndex <= 4 && mapTile.isOriginalWater())
+						|| (transportIndex >= 5 && mapTile.isOriginalGrass())) {
+					map->createWidget(WIDGET_NAMES[transportIndex]);
+					return;
+				}
+			}
+		}
+	}
 }
 
 } // End of namespace U1Dialogs

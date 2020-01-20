@@ -30,6 +30,7 @@
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/spells/spell.h"
+#include "ultima/ultima1/widgets/dungeon_widget.h"
 #include "ultima/ultima1/widgets/dungeon_item.h"
 #include "ultima/ultima1/widgets/merchant_armour.h"
 #include "ultima/ultima1/widgets/merchant_grocer.h"
@@ -37,7 +38,19 @@
 #include "ultima/ultima1/widgets/merchant_tavern.h"
 #include "ultima/ultima1/widgets/merchant_transport.h"
 #include "ultima/ultima1/widgets/merchant_weapons.h"
+#include "ultima/ultima1/widgets/overworld_monster.h"
 #include "ultima/ultima1/widgets/transport.h"
+#include "ultima/ultima1/widgets/dungeon_monster.h"
+#include "ultima/ultima1/widgets/dungeon_player.h"
+#include "ultima/ultima1/widgets/dungeon_chest.h"
+#include "ultima/ultima1/widgets/dungeon_coffin.h"
+#include "ultima/ultima1/widgets/bard.h"
+#include "ultima/ultima1/widgets/guard.h"
+#include "ultima/ultima1/widgets/king.h"
+#include "ultima/ultima1/widgets/princess.h"
+#include "ultima/ultima1/widgets/transport.h"
+#include "ultima/ultima1/widgets/urban_player.h"
+#include "ultima/ultima1/widgets/wench.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -116,6 +129,35 @@ void MapBase::cast() {
 void MapBase::castSpell(uint spellId) {
 	const Shared::Character &c = *_game->_party;
 	static_cast<Spells::Spell *>(c._spells[spellId])->cast(this);
+}
+
+Shared::Maps::MapWidget *MapBase::createWidget(const Common::String &name) {
+	REGISTER_WIDGET(Bard);
+	REGISTER_WIDGET(DungeonMonster);
+	REGISTER_WIDGET(DungeonPlayer);
+	REGISTER_WIDGET(DungeonChest);
+	REGISTER_WIDGET(DungeonCoffin);
+	REGISTER_WIDGET(Guard);
+	REGISTER_WIDGET(King);
+	REGISTER_WIDGET(MerchantArmour);
+	REGISTER_WIDGET(MerchantGrocer);
+	REGISTER_WIDGET(MerchantMagic);
+	REGISTER_WIDGET(MerchantTavern);
+	REGISTER_WIDGET(MerchantTransport);
+	REGISTER_WIDGET(MerchantWeapons);
+	REGISTER_WIDGET(OverworldMonster);
+	REGISTER_WIDGET(Princess);
+	REGISTER_WIDGET(TransportOnFoot);
+	REGISTER_WIDGET(UrbanPlayer);
+	REGISTER_WIDGET(Wench);
+	REGISTER_WIDGET(Horse);
+	REGISTER_WIDGET(Cart);
+	REGISTER_WIDGET(Raft);
+	REGISTER_WIDGET(Frigate);
+	REGISTER_WIDGET(Aircar);
+	REGISTER_WIDGET(Shuttle);
+
+	error("Unknown widget type '%s'", name.c_str());
 }
 
 } // End of namespace Maps

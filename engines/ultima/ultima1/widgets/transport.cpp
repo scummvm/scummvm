@@ -71,20 +71,28 @@ void Transport::disembark() {
 
 /*-------------------------------------------------------------------*/
 
+EMPTY_MESSAGE_MAP(Horse, Transport);
+
 Horse::Horse(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 1) {
 }
 
 /*-------------------------------------------------------------------*/
+
+EMPTY_MESSAGE_MAP(Cart, Transport);
 
 Cart::Cart(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 2) {
 }
 
 /*-------------------------------------------------------------------*/
 
+EMPTY_MESSAGE_MAP(Raft, Transport);
+
 Raft::Raft(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 3) {
 }
 
 /*-------------------------------------------------------------------*/
+
+EMPTY_MESSAGE_MAP(Frigate, Transport);
 
 Frigate::Frigate(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 4) {
 }
@@ -96,6 +104,8 @@ Common::String Frigate::getWeaponsName() {
 
 /*-------------------------------------------------------------------*/
 
+EMPTY_MESSAGE_MAP(Aircar, Transport);
+
 Aircar::Aircar(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 5) {
 }
 
@@ -105,6 +115,8 @@ Common::String Aircar::getWeaponsName() {
 }
 
 /*-------------------------------------------------------------------*/
+
+EMPTY_MESSAGE_MAP(Shuttle, Transport);
 
 Shuttle::Shuttle(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 6),
 		_space1(1000), _space2(1000) {
@@ -117,6 +129,8 @@ void Shuttle::synchronize(Common::Serializer &s) {
 }
 
 /*-------------------------------------------------------------------*/
+
+EMPTY_MESSAGE_MAP(TimeMachine, Transport);
 
 TimeMachine::TimeMachine(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 7) {
 }

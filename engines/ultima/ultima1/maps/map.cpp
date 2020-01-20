@@ -26,26 +26,7 @@
 #include "ultima/ultima1/maps/map_overworld.h"
 #include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/widgets/dungeon_widget.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/ultima1/widgets/bard.h"
-#include "ultima/ultima1/widgets/dungeon_monster.h"
-#include "ultima/ultima1/widgets/dungeon_player.h"
-#include "ultima/ultima1/widgets/dungeon_chest.h"
-#include "ultima/ultima1/widgets/dungeon_coffin.h"
-#include "ultima/ultima1/widgets/guard.h"
-#include "ultima/ultima1/widgets/king.h"
-#include "ultima/ultima1/widgets/merchant_armour.h"
-#include "ultima/ultima1/widgets/merchant_grocer.h"
-#include "ultima/ultima1/widgets/merchant_magic.h"
-#include "ultima/ultima1/widgets/merchant_tavern.h"
-#include "ultima/ultima1/widgets/merchant_transport.h"
-#include "ultima/ultima1/widgets/merchant_weapons.h"
-#include "ultima/ultima1/widgets/overworld_monster.h"
-#include "ultima/ultima1/widgets/princess.h"
-#include "ultima/ultima1/widgets/transport.h"
-#include "ultima/ultima1/widgets/urban_player.h"
-#include "ultima/ultima1/widgets/wench.h"
 #include "ultima/shared/core/file.h"
 #include "ultima/shared/early/ultima_early.h"
 
@@ -110,29 +91,6 @@ void Ultima1Map::synchronize(Common::Serializer &s) {
 	}
 
 	s.syncAsUint32LE(_moveCounter);
-}
-
-Shared::Maps::MapWidget *Ultima1Map::createWidget(Shared::Maps::MapBase *map, const Common::String &name) {
-	REGISTER_WIDGET(Bard);
-	REGISTER_WIDGET(DungeonMonster);
-	REGISTER_WIDGET(DungeonPlayer);
-	REGISTER_WIDGET(DungeonChest);
-	REGISTER_WIDGET(DungeonCoffin);
-	REGISTER_WIDGET(Guard);
-	REGISTER_WIDGET(King);
-	REGISTER_WIDGET(MerchantArmour);
-	REGISTER_WIDGET(MerchantGrocer);
-	REGISTER_WIDGET(MerchantMagic);
-	REGISTER_WIDGET(MerchantTavern);
-	REGISTER_WIDGET(MerchantTransport);
-	REGISTER_WIDGET(MerchantWeapons);
-	REGISTER_WIDGET(OverworldMonster);
-	REGISTER_WIDGET(Princess);
-	REGISTER_WIDGET(TransportOnFoot);
-	REGISTER_WIDGET(UrbanPlayer);
-	REGISTER_WIDGET(Wench);
-
-	error("Unknown widget type '%s'", name.c_str());
 }
 
 void Ultima1Map::dropCoins(uint amount) {

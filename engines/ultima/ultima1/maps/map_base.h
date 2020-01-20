@@ -62,6 +62,11 @@ public:
 	virtual void getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer = true) override;
 
 	/**
+	 * Instantiates a widget type by name
+	 */
+	virtual Shared::Maps::MapWidget *createWidget(const Common::String &name) override;
+
+	/**
 	 * Default implementation for actions
 	 */
 	#define DEFAULT_ACTION(NAME) virtual void NAME() { unknownAction(); }
