@@ -64,6 +64,11 @@ public:
 	 * Constructor
 	 */
 	Dialog(Ultima1Game *game);
+
+	/**
+	 * Hide the dialog
+	 */
+	virtual void hide() override;
 };
 
 } // End of namespace U1Dialogs
