@@ -33,6 +33,10 @@ enum VideoMode {
 	VIDEOMODE_EGA = 0, VIDEOMODE_VGA = 1
 };
 
+enum CharacterClass {
+	CLASS_FIGHTER = 0, CLASS_CLERIC = 1, CLASS_WIZARD = 0, CLASS_THIEF = 3
+};
+
 class GameResources;
 
 class Ultima1Game : public Shared::Game {

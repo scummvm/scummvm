@@ -34,6 +34,11 @@ namespace Widgets {
  */
 class Merchant : public Person {
 	DECLARE_MESSAGE_MAP;
+protected:
+	/**
+	 * Checks whether the player is caught stealing, and if so, makes the guards hostile
+	 */
+	bool checkCuaghtStealing();
 public:
 	CLASSDEF;
 

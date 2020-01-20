@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/widgets/merchant_grocer.h"
+#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -29,7 +30,16 @@ namespace Widgets {
 EMPTY_MESSAGE_MAP(MerchantGrocer, Merchant);
 
 void MerchantGrocer::steal() {
-	// TODO
+	findFood(true);
+}
+
+void MerchantGrocer::findFood(bool checkStealing) {
+	if (!checkStealing || !checkCuaghtStealing()) {
+		uint food = _game->getRandomNumber(2, 31);
+		_game->_party._currentCharacter->_food += food;
+		addInfoMsg("");
+		addInfoMsg(Common::String::format(_game->_res->GROCERY_FIND_PACKS, food));
+	}
 }
 
 } // End of namespace Widgets
