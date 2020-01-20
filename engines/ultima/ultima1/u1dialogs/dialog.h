@@ -71,6 +71,11 @@ protected:
 	 * Prompts for an input
 	 */
 	void getInput(bool isNumeric = true, size_t maxCharacters = 4);
+
+	/**
+	 * Write a text line to the dialog
+	 */
+	void centerText(const Common::String &line, int yp);
 public:
 	/**
 	 * Constructor

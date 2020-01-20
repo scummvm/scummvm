@@ -63,6 +63,11 @@ void Dialog::draw() {
 	infoArea->draw();
 }
 
+void Dialog::centerText(const Common::String &line, int yp) {
+	Shared::Gfx::VisualSurface s = getSurface();
+	s.writeString(line, TextPoint((_bounds.width() / 8 - line.size() + 1) / 2, yp));
+}
+
 void Dialog::hide() {
 	Popup::hide();
 

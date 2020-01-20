@@ -607,6 +607,7 @@ const char *const SRC_WHAT = " what?";
 const char *const SRC_FACE_THE_LADDER = "Thou must face the ladder!";
 const char *const SRC_CAUGHT = "Oh no!  Thou wert caught!";
 const char *const SRC_NONE_WILL_TALK = "None will talk to thee!";
+const char *const SRC_NOT_BY_COUNTER = "Thou art not by a counter!";
 
 const char *const SRC_GROCERY_NAMES[8] = {
 	"Li'l Karelia's Finnish Grocery", "Adventurer's Supply Post", "", "The Brown Bag", "Fresh Food Marketplace",
@@ -657,10 +658,10 @@ const char *const SRC_LADDER_CREATED = "Ladder created!";
 const char *const SRC_QUEST_COMPLETED = "A quest has been completed!";
 
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
-const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
+const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %u pence";
 const char *const SRC_GROCERY_PACKS2 = "each.  How many dost thou";
 const char *const SRC_GROCERY_PACKS3 = "wish to purchase?";
-const char *const SRC_GROCERY_PACKS_FOOD = "%d packs food";
+const char *const SRC_GROCERY_PACKS_FOOD = "%u packs food";
 const char *const SRC_GROCERY_FIND_PACKS = "Thou dost find %d bags of food!";
 
 const char *const SRC_WITH_KING = " with king";
@@ -748,6 +749,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	FACE_THE_LADDER = SRC_FACE_THE_LADDER;
 	CAUGHT = SRC_CAUGHT;
 	NONE_WILL_TALK = SRC_NONE_WILL_TALK;
+	NOT_BY_COUNTER = SRC_NOT_BY_COUNTER;
 	BUY_SELL = SRC_BUY_SELL;
 	BUY = SRC_BUY;
 	SELL = SRC_SELL;
@@ -875,6 +877,7 @@ void GameResources::synchronize() {
 	syncString(FACE_THE_LADDER);
 	syncString(CAUGHT);
 	syncString(NONE_WILL_TALK);
+	syncString(NOT_BY_COUNTER);
 	syncString(BUY_SELL);
 	syncString(BUY);
 	syncString(SELL);

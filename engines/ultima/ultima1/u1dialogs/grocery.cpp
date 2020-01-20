@@ -21,19 +21,47 @@
  */
 
 #include "ultima/ultima1/u1dialogs/grocery.h"
-#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-EMPTY_MESSAGE_MAP(Grocery, BuySellDialog);
+BEGIN_MESSAGE_MAP(Grocery, BuySellDialog)
+	ON_MESSAGE(TextInputMsg)
+	ON_MESSAGE(FrameMsg)
+END_MESSAGE_MAP()
 
-Grocery::Grocery(Ultima1Game *game, int groceryNum) : BuySellDialog(game, game->_res->GROCERY_NAMES[groceryNum]) {
+Grocery::Grocery(Ultima1Game *game, int groceryNum) : BuySellDialog(game, game->_res->GROCERY_NAMES[groceryNum - 1]),
+		_frameCounter(0) {
 	Shared::Character &c = *game->_party;
 	_costPerPack = 5 - c._intelligence / 20;
+}
+
+void Grocery::setMode(BuySell mode) {
+	switch (mode) {
+	case BUY:
+		addInfoMsg(Common::String::format("%s%s", _game->_res->ACTION_NAMES[19], _game->_res->BUY), false, true);
+		_mode = BUY;
+		setDirty();
+
+		getInput(true, 3);
+		break;
+
+	case SELL:
+		addInfoMsg(Common::String::format("%s%s", _game->_res->ACTION_NAMES[19], _game->_res->SELL), false, true);
+
+		_mode = SELL;
+		_frameCounter = 1;
+		setDirty();
+		break;
+
+	default:
+		BuySellDialog::setMode(mode);
+		break;
+	}
 }
 
 void Grocery::draw() {
@@ -43,18 +71,50 @@ void Grocery::draw() {
 
 	switch (_mode) {
 	case BUY:
-		s.writeString(game->_res->GROCERY_PACKS1, TextPoint(5, 8));
-		s.writeString(game->_res->GROCERY_PACKS2, TextPoint(8, 9));
-		s.writeString(game->_res->GROCERY_PACKS3, TextPoint(15, 10));
+		centerText(Common::String::format(game->_res->GROCERY_PACKS1, _costPerPack), 4);
+		centerText(game->_res->GROCERY_PACKS2, 5);
+		centerText(game->_res->GROCERY_PACKS3, 6);
 		break;
 
 	case SELL:
-		s.writeString(game->_res->GROCERY_SELL, TextPoint(9, 8));
+		centerText(game->_res->GROCERY_SELL, 4);
 		break;
 
 	default:
 		break;
 	}
+}
+
+bool Grocery::TextInputMsg(CTextInputMsg &msg) {
+	assert(_mode == BUY);
+	Shared::Character &c = *_game->_party;
+	uint amount = atoi(msg._text.c_str());
+	uint cost = amount * _costPerPack;
+
+	if (msg._escaped || !amount) {
+		nothing();
+	} else if (cost > c._coins) {
+		cantAfford();
+	} else {
+		addInfoMsg(msg._text);
+
+		c._coins -= cost;
+		c._food += amount * 10;
+		addInfoMsg(Common::String::format(_game->_res->GROCERY_PACKS_FOOD, amount));
+		_game->endOfTurn();
+		hide();
+	}
+
+	return true;
+}
+
+bool Grocery::FrameMsg(CFrameMsg &msg) {
+	if (_frameCounter > 0 && ++_frameCounter > 50) {
+		_game->endOfTurn();
+		hide();
+	}
+
+	return true;
 }
 
 } // End of namespace U1Dialogs

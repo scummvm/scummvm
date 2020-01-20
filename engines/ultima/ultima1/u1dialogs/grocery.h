@@ -29,13 +29,24 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
+using Shared::CFrameMsg;
+using Shared::CTextInputMsg;
+
 /**
  * Implements the buy/sell dialog for grocers
  */
 class Grocery : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
+	bool FrameMsg(CFrameMsg &msg);
+	bool TextInputMsg(CTextInputMsg &msg);
 private:
 	uint _costPerPack;
+	uint _frameCounter;
+protected:
+	/**
+	 * Set the mode
+	 */
+	virtual void setMode(BuySell mode) override;
 public:
 	CLASSDEF;
 

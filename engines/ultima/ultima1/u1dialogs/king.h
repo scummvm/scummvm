@@ -76,11 +76,6 @@ private:
 	 * Give hit points
 	 */
 	void giveHitPoints(uint amount);
-
-	/**
-	 * Write a text line to the dialog
-	 */
-	void centerText(const Common::String &line, int yp);
 public:
 	CLASSDEF;
 

@@ -190,6 +190,8 @@ void Drop::draw() {
 	case DROP_ARMOR:
 		drawDropArmor();
 		break;
+	default:
+		break;
 	}
 }
 

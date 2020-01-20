@@ -337,10 +337,17 @@ void MapCity::get() {
 void MapCity::talk() {
 	if (_guardsHostile) {
 		addInfoMsg(_game->_res->NONE_WILL_TALK);
-	
-	}
+	} else {
+		Widgets::Person *person = getTalkPerson();
 
-	// TODO
+		if (person) {
+			person->talk();
+		} else {
+			addInfoMsg("");
+			addInfoMsg(_game->_res->NOT_BY_COUNTER);
+			_game->endOfTurn();
+		}
+	}
 }
 
 void MapCity::unlock() {
