@@ -23,21 +23,16 @@
 #ifndef ULTIMA_ULTIMA1_U1DIALOGS_PRAYER_H
 #define ULTIMA_ULTIMA1_U1DIALOGS_PRAYER_H
 
-#include "ultima/shared/core/character.h"
+#include "ultima/ultima1/spells/spell.h"
 
 namespace Ultima {
 namespace Ultima1 {
-
-class Ultima1Game;
-
 namespace Spells {
 
 /**
  * Prayer spell
  */
-class Prayer : public Shared::Spell {
-protected:
-	Ultima1Game *_game;
+class Prayer : public Spell {
 public:
 	/**
 	 * Constructor
@@ -45,9 +40,14 @@ public:
 	Prayer();
 
 	/**
-	 * Cast the spell
+	 * Cast the spell outside a dungeon
 	 */
 	virtual void cast() override;
+
+	/**
+	 * Cast the spell within dungeons
+	 */
+	virtual void dungeonCast() override;
 };
 
 } // End of  namespace U1Dialogs
