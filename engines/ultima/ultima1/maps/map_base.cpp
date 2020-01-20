@@ -27,6 +27,7 @@
 #include "ultima/ultima1/maps/map_overworld.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/widgets/merchant.h"
 #include "ultima/ultima1/game.h"
 
 namespace Ultima {
@@ -59,11 +60,25 @@ void MapBase::getTileAt(const Point &pt, Shared::Maps::MapTile *tile) {
 }
 
 void MapBase::steal() {
+	U1MapTile tile;
+	getTileAt(getPosition(), &tile);
+
+	//Widgets::Merchant *merchant = nullptr;
+	switch (tile._tileId) {
+	case 57:
+		break;
+	default:
+		break;
+	}
+
+
 	addInfoMsg("?");
+	_game->playFX(1);
 }
 
 void MapBase::talk() {
 	addInfoMsg("?");
+	_game->playFX(1);
 }
 
 } // End of namespace Maps

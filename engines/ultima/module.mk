@@ -95,6 +95,12 @@ MODULE_OBJS += \
 	ultima1/widgets/hit.o \
 	ultima1/widgets/king.o \
 	ultima1/widgets/merchant.o \
+	ultima1/widgets/merchant_armor.o \
+	ultima1/widgets/merchant_grocer.o \
+	ultima1/widgets/merchant_magic.o \
+	ultima1/widgets/merchant_tavern.o \
+	ultima1/widgets/merchant_transport.o \
+	ultima1/widgets/merchant_weapons.o \
 	ultima1/widgets/overworld_monster.o \
 	ultima1/widgets/overworld_widget.o \
 	ultima1/widgets/person.o \
