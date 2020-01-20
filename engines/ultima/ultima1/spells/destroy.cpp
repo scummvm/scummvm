@@ -23,6 +23,8 @@
 #include "ultima/ultima1/spells/destroy.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/maps/map_tile.h"
+#include "ultima/ultima1/maps/map_dungeon.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,7 +34,20 @@ Destroy::Destroy() : Spell(SPELL_DESTROY) {
 }
 
 void Destroy::dungeonCast(Maps::MapDungeon *map) {
-	// TODO
+	Point newPos;
+	Maps::U1MapTile tile;
+
+	newPos = map->getPosition() + map->getDirectionDelta();
+	map->getTileAt(newPos, &tile);
+
+	if (tile._isBeams && !tile._widget) {
+		// Destroy the beams in front of the player
+		map->setTileAt(newPos, Maps::DTILE_HALLWAY);
+		addInfoMsg(_game->_res->FIELD_DESTROYED);
+	} else {
+		// Failed
+		Spell::dungeonCast(map);
+	}
 }
 
 } // End of namespace Spells

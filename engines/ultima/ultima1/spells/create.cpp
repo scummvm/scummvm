@@ -43,6 +43,7 @@ void Create::dungeonCast(Maps::MapDungeon *map) {
 	if (tile._isHallway && !tile._widget) {
 		// Create beams on the tile in front of the player
 		map->setTileAt(newPos, Maps::DTILE_BEAMS);
+		addInfoMsg(_game->_res->FIELD_CREATED);
 	} else {
 		// Failed
 		Spell::dungeonCast(map);
