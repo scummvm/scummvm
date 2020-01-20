@@ -40,6 +40,8 @@ namespace U1Dialogs {
  */
 class Dialog : public Shared::Gfx::Popup {
 protected:
+	Point _cursorPosition;
+protected:
 	Ultima1Game *_game;
 protected:
 	/**
@@ -64,6 +66,11 @@ public:
 	 * Constructor
 	 */
 	Dialog(Ultima1Game *game);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Dialog();
 
 	/**
 	 * Hide the dialog

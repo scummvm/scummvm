@@ -23,12 +23,18 @@
 #include "ultima/ultima1/u1dialogs/dialog.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map.h"
+#include "ultima/shared/gfx/text_cursor.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
 Dialog::Dialog(Ultima1Game *game) : Popup(game), _game(game) {
+	_cursorPosition = game->_textCursor->getPosition();
+}
+
+Dialog::~Dialog() {
+	_game->_textCursor->setPosition(_cursorPosition);
 }
 
 Maps::Ultima1Map *Dialog::getMap() {
