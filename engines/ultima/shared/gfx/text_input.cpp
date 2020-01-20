@@ -33,8 +33,8 @@ BEGIN_MESSAGE_MAP(TextInput, Popup)
 	ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
-void TextInput::show(const Point &pt, bool isNumeric, size_t maxCharacters, byte color) {
-	Popup::show();
+void TextInput::show(const Point &pt, bool isNumeric, size_t maxCharacters, byte color, TreeItem *respondTo) {
+	Popup::show(respondTo);
 	_isNumeric = isNumeric;
 	_maxCharacters = maxCharacters;
 	_color = color;

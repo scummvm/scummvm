@@ -104,6 +104,10 @@ public:
 	const char *DROP_PENCE;
 	const char *DROP_WEAPON;
 	const char *DROP_ARMOR;
+	const char *NOT_THAT_MUCH;
+	const char *OK;
+	const char *SHAZAM;
+	const char *ALAKAZOT;
 
 	const char *GROCERY_NAMES[8];
 	const char *GROCERY_SELL;

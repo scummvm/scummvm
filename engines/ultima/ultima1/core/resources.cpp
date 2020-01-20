@@ -600,6 +600,10 @@ const char *const SRC_DROP_PENCE_WEAPON_ARMOR = "Drop Pence,Weapon,Armour:";
 const char *const SRC_DROP_PENCE = "Drop pence: ";
 const char *const SRC_DROP_WEAPON = "Drop weapon: ";
 const char *const SRC_DROP_ARMOR = "Drop armor: ";
+const char *const SRC_NOT_THAT_MUCH = "Thou hast not that much!";
+const char *const SRC_OK = "Ok!";
+const char *const SRC_SHAZAM = "Shazam!";
+const char *const SRC_ALAKAZOT = "Alakazot!";
 
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
 const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
@@ -682,6 +686,10 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	DROP_PENCE = SRC_DROP_PENCE;
 	DROP_WEAPON = SRC_DROP_WEAPON;
 	DROP_ARMOR = SRC_DROP_ARMOR;
+	NOT_THAT_MUCH = SRC_NOT_THAT_MUCH;
+	OK = SRC_OK;
+	SHAZAM = SRC_SHAZAM;
+	ALAKAZOT = SRC_ALAKAZOT;
 
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
 	GROCERY_SELL = SRC_GROCERY_SELL;
@@ -761,6 +769,10 @@ void GameResources::synchronize() {
 	syncString(DROP_PENCE);
 	syncString(DROP_WEAPON);
 	syncString(DROP_ARMOR);
+	syncString(NOT_THAT_MUCH);
+	syncString(OK);
+	syncString(SHAZAM);
+	syncString(ALAKAZOT);
 
 	syncStrings(GROCERY_NAMES, 8);
 	syncString(GROCERY_SELL);

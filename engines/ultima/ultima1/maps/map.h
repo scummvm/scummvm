@@ -126,6 +126,11 @@ public:
 	PASS_METHOD(climb)
 	PASS_METHOD(steal)
 	PASS_METHOD(talk)
+
+	/**
+	 * Handles dropping an amount of coins
+	 */
+	void dropCoins(uint amount);
 };
 
 } // End of namespace Maps

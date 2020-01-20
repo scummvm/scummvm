@@ -24,12 +24,14 @@
 #define ULTIMA_ULTIMA1_U1DIALOGS_DROP_H
 
 #include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
+#include "ultima/shared/gfx/text_input.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
 using Shared::CKeypressMsg;
+using Shared::CTextInputMsg;
 
 /**
  * Implements the drop dialog
@@ -37,10 +39,12 @@ using Shared::CKeypressMsg;
 class Drop : public FullScreenDialog {
 	DECLARE_MESSAGE_MAP;
 	bool KeypressMsg(CKeypressMsg &msg);
+	bool TextInputMsg(CTextInputMsg &msg);
 
 	enum Mode { SELECT, DROP_PENCE, DROP_WEAPON, DROP_ARMOR };
 private:
 	Mode _mode;
+	Shared::Gfx::TextInput _textInput;
 private:
 	/**
 	 * Sets the mode

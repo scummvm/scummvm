@@ -90,6 +90,12 @@ public:
 	 * Do a talk action
 	 */
 	void talk() { unknownAction(); }
+
+	/**
+	 * Handles dropping an amount of coins
+	 */
+	virtual void dropCoins(uint coins) {}
+
 };
 
 } // End of namespace Maps
