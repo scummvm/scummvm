@@ -31,7 +31,7 @@ namespace Spells {
 LadderUp::LadderUp() : Spell(SPELL_LADDER_UP) {
 }
 
-void LadderUp::dungeonCast() {
+void LadderUp::dungeonCast(Maps::MapDungeon *map) {
 	// TODO
 }
 

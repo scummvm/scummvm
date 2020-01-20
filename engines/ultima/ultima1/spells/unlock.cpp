@@ -31,7 +31,7 @@ namespace Spells {
 Unlock::Unlock() : Spell(SPELL_UNLOCK) {
 }
 
-void Unlock::dungeonCast() {
+void Unlock::dungeonCast(Maps::MapDungeon *map) {
 	// TODO
 }
 

@@ -31,7 +31,7 @@ namespace Spells {
 MagicMissile::MagicMissile() : Spell(SPELL_MAGIC_MISSILE) {
 }
 
-void MagicMissile::dungeonCast() {
+void MagicMissile::dungeonCast(Maps::MapDungeon *map) {
 	// TODO
 }
 

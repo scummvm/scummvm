@@ -32,7 +32,7 @@ LadderDown::LadderDown() : Spell(SPELL_LADDER_DOWN) {
 	_quantity = 0xffff;			// LadderDown has unlimited uses
 }
 
-void LadderDown::dungeonCast() {
+void LadderDown::dungeonCast(Maps::MapDungeon *map) {
 	// TODO
 }
 

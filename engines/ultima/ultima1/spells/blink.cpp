@@ -31,7 +31,7 @@ namespace Spells {
 Blink::Blink() : Spell(SPELL_BLINK) {
 }
 
-void Blink::dungeonCast() {
+void Blink::dungeonCast(Maps::MapDungeon *map) {
 	// TODO
 }
 

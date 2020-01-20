@@ -38,7 +38,7 @@ void Spell::addInfoMsg(const Common::String &text, bool newLine) {
 	msg.execute(_game->getView());
 }
 
-void Spell::cast() {
+void Spell::cast(Maps::MapBase *map) {
 	// Most spells can't be used outside of dungeons
 	addInfoMsg("");
 	addInfoMsg(_game->_res->DUNGEON_SPELL_ONLY);

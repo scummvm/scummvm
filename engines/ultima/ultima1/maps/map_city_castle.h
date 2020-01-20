@@ -93,7 +93,7 @@ public:
 	/**
 	 * Cast a spell
 	 */
-	virtual void cast();
+	virtual void cast(Maps::MapBase *map);
 
 	/**
 	 * Do a drop action

@@ -32,19 +32,41 @@ Prayer::Prayer() : Spell(SPELL_PRAYER) {
 	_quantity = 0xffff;			// Prayer has unlimited uses
 }
 
-void Prayer::cast() {
-	// TODO
+void Prayer::cast(Maps::MapBase *map) {
+	Shared::Character &c = *_game->_party._currentCharacter;
 	addInfoMsg("");
+	addInfoMsg(_game->_res->SPELL_PHRASES[0], false);
+
+	bool flag = false;
+	if (c._hitPoints < 15) {
+		// Add hit points
+		c._hitPoints = 15;
+		addInfoMsg(Common::String::format(" %s", _game->_res->SPELL_PHRASES[11]));
+		_game->playFX(5);
+		flag = true;
+	} else if (c._food < 15) {
+		// Add food
+		c._food = 15;
+		addInfoMsg(Common::String::format(" %s", _game->_res->SPELL_PHRASES[11]));
+		_game->playFX(5);
+		flag = true;
+	} else if (_game->getRandomNumber(1, 100) < 25) {
+
+	}
+	// TODO
 }
 
-void Prayer::dungeonCast() {
+void Prayer::dungeonCast(Maps::MapDungeon *map) {
+	addInfoMsg("");
+	addInfoMsg(_game->_res->SPELL_PHRASES[0]);
+
 	// When cast within the dungeon, cast a random spell without cost
 	SpellId spellId = (SpellId)_game->getRandomNumber(SPELL_OPEN, SPELL_KILL);
 	if (spellId == SPELL_STEAL)
 		spellId = SPELL_LADDER_DOWN;
 
 	const Shared::Character &c = *_game->_party._currentCharacter;
-	c._spells[spellId]->dungeonCast();
+	static_cast<Spell *>(c._spells[spellId])->dungeonCast(map);
 }
 
 } // End of namespace Spells

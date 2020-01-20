@@ -178,7 +178,7 @@ Widgets::Merchant *MapCityCastle::getStealMerchant() {
 	}
 }
 
-void MapCityCastle::cast() {
+void MapCityCastle::cast(Maps::MapBase *map) {
 	addInfoMsg(Common::String::format(" -- %s", _game->_res->NO_EFFECT));
 	_game->playFX(6);
 }

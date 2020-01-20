@@ -24,6 +24,8 @@
 #define ULTIMA_ULTIMA1_U1DIALOGS_SPELL_H
 
 #include "ultima/shared/core/character.h"
+#include "ultima/ultima1/maps/map_base.h"
+#include "ultima/ultima1/maps/map_dungeon.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -66,7 +68,12 @@ public:
 	/**
 	 * Cast the spell outside of dungeons
 	 */
-	virtual void cast() override;
+	virtual void cast(Maps::MapBase *map);
+
+	/**
+	 * Cast the spell in dungeons
+	 */
+	virtual void dungeonCast(Maps::MapDungeon *map) = 0;
 };
 
 } // End of  namespace U1Dialogs
