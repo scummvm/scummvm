@@ -23,6 +23,7 @@
 #include "ultima/ultima1/spells/prayer.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/widgets/overworld_monster.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -51,9 +52,21 @@ void Prayer::cast(Maps::MapBase *map) {
 		_game->playFX(5);
 		flag = true;
 	} else if (_game->getRandomNumber(1, 100) < 25) {
-
+		for (uint idx = 0; idx < map->_widgets.size(); ++idx) {
+			Widgets::OverworldMonster *monster = dynamic_cast<Widgets::OverworldMonster *>(map->_widgets[idx].get());
+			if (monster && monster->attackDistance() != 0) {
+				map->removeWidget(monster);
+				addInfoMsg(_game->_res->MONSTER_REMOVED);
+				flag = true;
+				break;
+			}
+		}
 	}
-	// TODO
+
+	if (flag) {
+		addInfoMsg(_game->_res->NO_EFFECT);
+		_game->playFX(6);
+	}
 }
 
 void Prayer::dungeonCast(Maps::MapDungeon *map) {

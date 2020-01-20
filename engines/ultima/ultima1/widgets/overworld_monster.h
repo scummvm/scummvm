@@ -44,12 +44,6 @@ private:
 	uint _attackStrength;
 protected:
 	/**
-	 * Returns either the maximum attack distance for a monster, or 0 if the monster is beyond
-	 * that distance from the player
-	 */
-	virtual uint attackDistance() const override;
-
-	/**
 	 * Handles attacks
 	 */
 	virtual void attack() override;
@@ -87,6 +81,12 @@ public:
 	 * Handles loading and saving games
 	 */
 	virtual void synchronize(Common::Serializer &s) override;
+
+	/**
+	 * Returns either the maximum attack distance for a monster, or 0 if the monster is beyond
+	 * that distance from the player
+	 */
+	virtual uint attackDistance() const override;
 };
 
 /**
