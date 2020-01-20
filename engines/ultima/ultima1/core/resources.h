@@ -83,6 +83,7 @@ public:
 
 	const char *ACTION_NAMES[26];
 	const char *HUH;
+	const char *CAUGHT;
 	const char *NONE_WILL_TALK;
 	const char *BUY_SELL;
 	const char *NOTHING;
@@ -95,6 +96,7 @@ public:
 	const char *GROCERY_PACKS2;
 	const char *GROCERY_PACKS3;
 	const char *GROCERY_PACKS_FOOD;
+	const char *GROCERY_FIND_PACKS;
 
 public:
 	GameResources();

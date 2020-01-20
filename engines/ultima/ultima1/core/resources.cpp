@@ -567,6 +567,7 @@ const char *const SRC_ACTION_NAMES[26] = {
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 };
 const char *const SRC_HUH = "Huh?";
+const char *const SRC_CAUGHT = "Oh no!  Thou wert caught!";
 const char *const SRC_NONE_WILL_TALK = "None will talk to thee!";
 
 const char *const SRC_GROCERY_NAMES[8] = {
@@ -584,6 +585,7 @@ const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
 const char *const SRC_GROCERY_PACKS2 = "each.  How many dost thou";
 const char *const SRC_GROCERY_PACKS3 = "wish to purchase?";
 const char *const SRC_GROCERY_PACKS_FOOD = "%d packs food";
+const char *const SRC_GROCERY_FIND_PACKS = "Thou dost find %d bags of food!";
 
 /*-------------------------------------------------------------------*/
 
@@ -639,6 +641,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 
 	Common::copy(&SRC_ACTION_NAMES[0], &SRC_ACTION_NAMES[26], ACTION_NAMES);
 	HUH = SRC_HUH;
+	CAUGHT = SRC_CAUGHT;
 	NONE_WILL_TALK = SRC_NONE_WILL_TALK;
 	BUY_SELL = SRC_BUY_SELL;
 	NOTHING = SRC_NOTHING;
@@ -651,6 +654,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	GROCERY_PACKS2 = SRC_GROCERY_PACKS2;
 	GROCERY_PACKS3 = SRC_GROCERY_PACKS3;
 	GROCERY_PACKS_FOOD = SRC_GROCERY_PACKS_FOOD;
+	GROCERY_FIND_PACKS = SRC_GROCERY_FIND_PACKS;
 }
 
 void GameResources::synchronize() {
@@ -700,6 +704,7 @@ void GameResources::synchronize() {
 
 	syncStrings(ACTION_NAMES, 26);
 	syncString(HUH);
+	syncString(CAUGHT);
 	syncString(NONE_WILL_TALK);
 	syncString(BUY_SELL);
 	syncString(NOTHING);
@@ -712,6 +717,7 @@ void GameResources::synchronize() {
 	syncString(GROCERY_PACKS2);
 	syncString(GROCERY_PACKS3);
 	syncString(GROCERY_PACKS_FOOD);
+	syncString(GROCERY_FIND_PACKS);
 
 }
 
