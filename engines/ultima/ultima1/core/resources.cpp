@@ -669,6 +669,7 @@ const char *const SRC_WEAPONRY_NAMES[8] = {
 	"The Razor's Edge", "Cold Steel Creations", "The Bloody Blade",
 	"The Duelo Shop", "Weaponry Supply", "Cold Steel Creations"
 };
+const char *const SRC_NO_WEAPONRY_TO_SELL = "Thou hast no weaponry to sell!";
 
 const char *const SRC_WITH_KING = " with king";
 const char *const SRC_HE_IS_NOT_HERE = "He is not here!";
@@ -807,6 +808,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	GROCERY_PACKS_FOOD = SRC_GROCERY_PACKS_FOOD;
 	GROCERY_FIND_PACKS = SRC_GROCERY_FIND_PACKS;
 	Common::copy(&SRC_WEAPONRY_NAMES[0], &SRC_WEAPONRY_NAMES[8], WEAPONRY_NAMES);
+	NO_WEAPONRY_TO_SELL = SRC_NO_WEAPONRY_TO_SELL;
+
 
 	WITH_KING = SRC_WITH_KING;
 	HE_IS_NOT_HERE = SRC_HE_IS_NOT_HERE;
@@ -936,6 +939,7 @@ void GameResources::synchronize() {
 	syncString(GROCERY_PACKS_FOOD);
 	syncString(GROCERY_FIND_PACKS);
 	syncStrings(WEAPONRY_NAMES, 8);
+	syncString(NO_WEAPONRY_TO_SELL);
 
 	syncString(WITH_KING);
 	syncString(HE_IS_NOT_HERE);

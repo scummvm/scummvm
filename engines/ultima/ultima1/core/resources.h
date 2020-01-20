@@ -157,6 +157,7 @@ public:
 	const char *GROCERY_PACKS_FOOD;
 	const char *GROCERY_FIND_PACKS;
 	const char *WEAPONRY_NAMES[8];
+	const char *NO_WEAPONRY_TO_SELL;
 
 	const char *WITH_KING;
 	const char *HE_IS_NOT_HERE;

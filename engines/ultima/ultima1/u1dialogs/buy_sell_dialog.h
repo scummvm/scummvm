@@ -75,6 +75,11 @@ protected:
 	 * Switches the dialog to displaying a can't afford message
 	 */
 	void cantAfford() { setMode(CANT_AFFORD); }
+
+	/**
+	 * Sets the dialog to close after a brief pause
+	 */
+	void closeShortly() { _closeCounter = 1; }
 public:
 	CLASSDEF;
 

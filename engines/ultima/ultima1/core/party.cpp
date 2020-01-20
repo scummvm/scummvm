@@ -142,6 +142,10 @@ uint Weapon::getMagicDamage() const {
 	return damage;
 }
 
+uint Weapon::getSellCost() const {
+	return ((_character->_intelligence + 40) * _type * _type) / 256 + 1;
+}
+
 /*-------------------------------------------------------------------*/
 
 Armor::Armor(Ultima1Game *game, Character *c, ArmorType armorType) :

@@ -113,15 +113,24 @@ template<class T>
 class ItemArray : public Common::Array<T> {
 public:
 	/**
+	 * Returns the number of distinct types of items in the array, not counting
+	 * the slot 0 "nothing" slot
+	 */
+	size_t itemsCount() const {
+		uint total = 0;
+		for (uint idx = 1; idx < this->size(); ++idx) {
+			if (!(*this)[idx]->empty())
+				++total;
+		}
+
+		return total;
+	}
+
+	/**
 	 * Returns true if the character has no items
 	 */
 	bool hasNothing() const {
-		for (uint idx = 1; idx < this->size(); ++idx) {
-			if ((*this)[idx]->_quantity != 0)
-				return false;
-		}
-
-		return true;
+		return itemsCount() == 0;
 	}
 };
 

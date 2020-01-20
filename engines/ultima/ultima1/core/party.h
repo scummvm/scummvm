@@ -78,6 +78,11 @@ public:
 	 * Gets the magic damage a given weapon does
 	 */
 	uint getMagicDamage() const;
+
+	/**
+	 * Gets how much the weapon can sell for
+	 */
+	uint getSellCost() const;
 };
 
 /**

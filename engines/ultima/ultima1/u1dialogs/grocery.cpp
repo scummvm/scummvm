@@ -52,7 +52,7 @@ void Grocery::setMode(BuySell mode) {
 		addInfoMsg(Common::String::format("%s%s", _game->_res->ACTION_NAMES[19], _game->_res->SELL), false, true);
 
 		_mode = SELL;
-		_closeCounter = 1;
+		closeShortly();
 		setDirty();
 		break;
 

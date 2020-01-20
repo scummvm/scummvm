@@ -34,8 +34,15 @@ namespace U1Dialogs {
  */
 class Weaponry : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
+	virtual bool CharacterInputMsg(CCharacterInputMsg &msg) override;
 private:
+	uint _weaponryNum;
 	Common::Array<bool> _weaponsPresent;
+private:
+	/**
+	 * Draws the Sell dialog
+	 */
+	void drawSell();
 protected:
 	/**
 	 * Set the mode
