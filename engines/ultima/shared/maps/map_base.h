@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/serializer.h"
+#include "ultima/shared/core/base_object.h"
 #include "ultima/shared/core/rect.h"
 #include "ultima/shared/maps/map_widget.h"
 
@@ -45,6 +46,17 @@ class MapTile;
  * Base class for specific map types
  */
 class MapBase {
+	/**
+	 * Widgets array
+	 */
+	class WidgetsArray : public Common::Array<MapWidgetPtr> {
+	public:
+		/**
+		 * Finds a widget by class
+		 */
+		MapWidget *findByClass(ClassDef *classDef);
+	};
+
 	/**
 	 * Internal class used for storing the data for a row
 	 */
@@ -118,8 +130,8 @@ public:
 	Point _size;						// X, Y size of the map
 	Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile
 	Common::String _name;				// Name of map, if applicable
-	MapWidget *_playerWidget;		// Current means of transport, even if on foot
-	Common::Array<MapWidgetPtr> _widgets;	// Party, monsteres, transports, etc.
+	MapWidget *_playerWidget;			// Current means of transport, even if on foot
+	WidgetsArray _widgets;				// Party, monsteres, transports, etc.
 	Common::Array<MapCellsRow> _data;	// Data for the map
 public:
 	/**

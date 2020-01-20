@@ -21,15 +21,21 @@
  */
 
 #include "ultima/ultima1/maps/map_city_castle.h"
+#include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/widgets/urban_player.h"
 #include "ultima/ultima1/widgets/bard.h"
 #include "ultima/ultima1/widgets/guard.h"
 #include "ultima/ultima1/widgets/king.h"
-#include "ultima/ultima1/widgets/merchant.h"
 #include "ultima/ultima1/widgets/princess.h"
 #include "ultima/ultima1/widgets/wench.h"
+#include "ultima/ultima1/widgets/merchant_armor.h"
+#include "ultima/ultima1/widgets/merchant_grocer.h"
+#include "ultima/ultima1/widgets/merchant_magic.h"
+#include "ultima/ultima1/widgets/merchant_tavern.h"
+#include "ultima/ultima1/widgets/merchant_transport.h"
+#include "ultima/ultima1/widgets/merchant_weapons.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -69,9 +75,34 @@ void MapCityCastle::loadWidgets() {
 		case 20:
 			person = new Widgets::King(_game, this, lp[3]);
 			break;
-		case 21:
-			person = new Widgets::Merchant(_game, this, lp[3]);
+		case 21: {
+			U1MapTile tile;
+			getTileAt(Point(lp[1], lp[2]), &tile);
+
+			switch (tile._tileId) {
+			case 55:
+				person = new Widgets::MerchantArmor(_game, this, lp[3]);
+				break;
+			case 57:
+				person = new Widgets::MerchantGrocer(_game, this, lp[3]);
+				break;
+			case 59:
+				person = new Widgets::MerchantWeapons(_game, this, lp[3]);
+				break;
+			case 60:
+				person = new Widgets::MerchantMagic(_game, this, lp[3]);
+				break;
+			case 61:
+				person = new Widgets::MerchantTavern(_game, this, lp[3]);
+				break;
+			case 62:
+				person = new Widgets::MerchantTransport(_game, this, lp[3]);
+				break;
+			default:
+				error("Invalid merchant");
+			}
 			break;
+		}
 		case 22:
 			person = new Widgets::Princess(_game, this, lp[3]);
 			break;

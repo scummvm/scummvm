@@ -30,6 +30,18 @@ namespace Ultima {
 namespace Shared {
 namespace Maps {
 
+MapWidget *MapBase::WidgetsArray::findByClass(ClassDef *classDef) {
+	for (uint idx = 0; idx < size(); ++idx) {
+		MapWidget *w = (*this)[idx].get();
+		if (w->isInstanceOf(*classDef))
+			return w;
+	}
+
+	return nullptr;
+}
+
+/*-------------------------------------------------------------------*/
+
 void MapBase::clear() {
 	_mapId = 0;
 	_data.clear();

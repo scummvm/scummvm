@@ -20,43 +20,35 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_WIDGETS_MERCHANT_H
-#define ULTIMA_ULTIMA1_WIDGETS_MERCHANT_H
+#ifndef ULTIMA_ULTIMA1_WIDGETS_MERCHANT_TAVERN_H
+#define ULTIMA_ULTIMA1_WIDGETS_MERCHANT_TAVERN_H
 
-#include "ultima/ultima1/widgets/person.h"
+#include "ultima/ultima1/widgets/merchant.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-/**
- * Base class for merchants in the cities and castles
- */
-class Merchant : public Person {
+class MerchantTavern : public Merchant {
 public:
-	DECLARE_WIDGET(Merchant)
+	DECLARE_WIDGET(MerchantTavern)
 
 	/**
 	 * Constructor
 	 */
-	Merchant(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Person(game, map, 50, hitPoints) {}
+	MerchantTavern(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
+		Merchant(game, map, 50, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
-	Merchant(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) :
-		Person(game, map, tileNum, hitPoints) {}
+	MerchantTavern(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) :
+		Merchant(game, map, tileNum, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
-	Merchant(Ultima1Game *game, Maps::MapBase *map) : Person(game, map, 50) {}
-
-	/**
-	 * Does the steal action
-	 */
-	virtual void steal() {}
+	MerchantTavern(Ultima1Game *game, Maps::MapBase *map) : Merchant(game, map, 50) {}
 };
 
 } // End of namespace Widgets

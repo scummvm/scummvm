@@ -26,6 +26,7 @@
 #include "common/ptr.h"
 #include "common/serializer.h"
 #include "common/str.h"
+#include "ultima/shared/core/base_object.h"
 #include "ultima/shared/core/rect.h"
 
 namespace Ultima {
@@ -46,7 +47,7 @@ class MapBase;
 /**
  * Base class for things that appear within a map, such as monsters, transports, or people
  */
-class MapWidget {
+class MapWidget : public BaseObject {
 protected:
 	Game *_game;						// Game reference
 	MapBase *_map;						// Map reference

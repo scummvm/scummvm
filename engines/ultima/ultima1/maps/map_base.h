@@ -59,12 +59,12 @@ public:
 	/**
 	 * Do a steal action
 	 */
-	virtual void steal();
+	void steal();
 
 	/**
 	 * Do a talk action
 	 */
-	virtual void talk();
+	void talk();
 };
 
 } // End of namespace Maps
