@@ -11,6 +11,7 @@ MODULE_OBJS := \
 
 ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
+<<<<<<< HEAD
 	shared/actions/action.o \
 	shared/actions/huh.o \
 	shared/actions/pass.o \
