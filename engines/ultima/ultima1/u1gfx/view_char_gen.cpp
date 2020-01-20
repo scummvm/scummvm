@@ -167,8 +167,8 @@ void ViewCharacterGeneration::drawHelp(Shared::Gfx::VisualSurface &s) {
 
 void ViewCharacterGeneration::drawRace(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	s.fillRect(TextRect(6, 2, 38, 5), game->_bgColor);
-	s.fillRect(TextRect(2, 16, 38, 22), game->_bgColor);
+	s.fillRect(TextRect(6, 2, 37, 4), game->_bgColor);
+	s.fillRect(TextRect(2, 16, 37, 21), game->_bgColor);
 
 	s.writeString(game->_res->CHAR_GEN_TEXT[6], TextPoint(3, 17), game->_textColor);
 	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[4], 

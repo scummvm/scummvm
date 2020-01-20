@@ -42,7 +42,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Info(TreeItem *parent) : Shared::Info(parent, TextRect(0, 21, 30, 25)) {}
+	Info(TreeItem *parent) : Shared::Info(parent, TextRect(0, 21, 29, 24)) {}
 
 	/**
 	 * Destructor
