@@ -97,6 +97,7 @@ MODULE_OBJS += \
 	ultima1/u1dialogs/king.o \
 	ultima1/u1dialogs/ready.o \
 	ultima1/u1dialogs/stats.o \
+	ultima1/u1dialogs/weaponry.o \
 	ultima1/u1gfx/drawing_support.o \
 	ultima1/u1gfx/info.o \
 	ultima1/u1gfx/sprites.o \

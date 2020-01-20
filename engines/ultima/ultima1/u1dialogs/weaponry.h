@@ -20,64 +20,42 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_WIDGETS_MERCHANT_WEAPONS_H
-#define ULTIMA_ULTIMA1_WIDGETS_MERCHANT_WEAPONS_H
+#ifndef ULTIMA_ULTIMA1_U1DIALOGS_WEAPONRY_H
+#define ULTIMA_ULTIMA1_U1DIALOGS_WEAPONRY_H
 
-#include "ultima/ultima1/widgets/merchant.h"
+#include "ultima/ultima1/u1dialogs/buy_sell_dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Widgets {
+namespace U1Dialogs {
 
 /**
- * Implements the weapons merchant
+ * Implements the buy/sell dialog for grocers
  */
-class MerchantWeapons : public Merchant {
+class Weaponry : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
 private:
+	Common::Array<bool> _weaponsPresent;
+protected:
 	/**
-	 * Handles getting or stealing weapons
-	 * @param checkStealing		If set, checks for stealing
+	 * Set the mode
 	 */
-	void findWeapon(bool checkStealing);
+	virtual void setMode(BuySell mode) override;
 public:
-	DECLARE_WIDGET(MerchantWeapons)
 	CLASSDEF;
 
 	/**
 	 * Constructor
 	 */
-	MerchantWeapons(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Merchant(game, map, 50, hitPoints) {}
+	Weaponry(Ultima1Game *game, int weaponryNum);
 
 	/**
-	 * Constructor
+	 * Draws the visual item on the screen
 	 */
-	MerchantWeapons(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) :
-		Merchant(game, map, tileNum, hitPoints) {}
-
-	/**
-	 * Constructor
-	 */
-	MerchantWeapons(Ultima1Game *game, Maps::MapBase *map) : Merchant(game, map, 50) {}
-
-	/**
-	 * Does the get action
-	 */
-	virtual void get() override;
-
-	/**
-	 * Does the steal action
-	 */
-	virtual void steal() override;
-
-	/**
-	 * Talk to an NPC
-	 */
-	virtual void talk() override;
+	virtual void draw();
 };
 
-} // End of namespace Widgets
+} // End of namespace U1Dialogs
 } // End of namespace Ultima1
 } // End of namespace Ultima
 
