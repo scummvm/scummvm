@@ -104,7 +104,7 @@ public class ScummVMEvents implements
 
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (_mouseHelper != null) {
-				if (_mouseHelper.getRmbGuard()) {
+				if (MouseHelper.isMouse(e)) {
 					// right mouse button was just clicked which sends an extra back button press (which should be ignored)
 					return true;
 				}
