@@ -87,6 +87,7 @@ public class ScummVMEvents implements
 				if (imm != null)
 					imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 			} else if (msg.what == MSG_SBACK_LONG_PRESS) {
+				_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MENU, 0, 0, 0, 0);
 				_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MENU, 0, 0, 0, 0);
 			}
 		}
@@ -112,20 +113,6 @@ public class ScummVMEvents implements
 		}
 
 		if (e.isSystem()) {
-			// filter what we handle
-			switch (keyCode) {
-			case KeyEvent.KEYCODE_BACK:
-			case KeyEvent.KEYCODE_MENU:
-			case KeyEvent.KEYCODE_CAMERA:
-			case KeyEvent.KEYCODE_SEARCH:
-			case KeyEvent.KEYCODE_MEDIA_PLAY:
-			case KeyEvent.KEYCODE_MEDIA_PAUSE:
-				break;
-
-			default:
-				return false;
-			}
-
 			// no repeats for system keys
 			if (e.getRepeatCount() > 0)
 				return false;
@@ -161,21 +148,20 @@ public class ScummVMEvents implements
 					keyHandler.sendMessageDelayed(keyHandler.obtainMessage(
 									typeOfLongPressMessage), _longPress);
 					return true;
+				} else if (action != KeyEvent.ACTION_UP) {
+					return true;
 				}
 
 				if (fired) {
 					return true;
 				}
 
-				// only send up events of the menu or back button to the native side
-				if (action != KeyEvent.ACTION_UP) {
-					return true;
-				}
+				// It's still necessary to send a key down event to the backend.
+				_scummvm.pushEvent(JE_SYS_KEY, KeyEvent.ACTION_DOWN, keyCode,
+							e.getUnicodeChar() & KeyCharacterMap.COMBINING_ACCENT_MASK,
+							e.getMetaState(), e.getRepeatCount(),
+							(int)(e.getEventTime() - e.getDownTime()));
 			}
-
-			_scummvm.pushEvent(JE_SYS_KEY, action, keyCode, 0, 0, 0, 0);
-
-			return true;
 		}
 
 		// sequence of characters
@@ -227,7 +213,11 @@ public class ScummVMEvents implements
 			type = JE_GAMEPAD;
 			break;
 		default:
-			type = JE_KEY;
+			if (e.isSystem()) {
+				type = JE_SYS_KEY;
+			} else {
+				type = JE_KEY;
+			}
 			break;
 		}
 

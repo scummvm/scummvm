@@ -71,28 +71,29 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		}
 
 		switch (arg2) {
-
-		// special case. we'll only get its key-up event
 		case JKEYCODE_BACK:
 			if (_swap_menu_and_back) {
-				e.type = Common::EVENT_MAINMENU;
-				pushEvent(e);
+				if (arg1 == JACTION_DOWN) {
+					e.type = Common::EVENT_MAINMENU;
+					pushEvent(e);
+				}
 			} else {
 				e.kbd.keycode = Common::KEYCODE_ESCAPE;
 				e.kbd.ascii = Common::ASCII_ESCAPE;
-				pushKeyPressEvent(e);
+				pushEvent(e);
 			}
 			return;
 
-		// special case. we'll only get its key-up event
 		case JKEYCODE_MENU:
 			if (_swap_menu_and_back) {
 				e.kbd.keycode = Common::KEYCODE_ESCAPE;
 				e.kbd.ascii = Common::ASCII_ESCAPE;
-				pushKeyPressEvent(e);
-			} else {
-				e.type = Common::EVENT_MAINMENU;
 				pushEvent(e);
+			} else {
+				if (arg1 == JACTION_DOWN) {
+					e.type = Common::EVENT_MAINMENU;
+					pushEvent(e);
+				}
 			}
 
 			return;
@@ -122,11 +123,10 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			return;
 
 		default:
-			LOGW("unmapped system key: %d", arg2);
-			return;
+			break;
 		}
 
-		break;
+		// fall through
 
 	case JE_KEY:
 		switch (arg1) {
@@ -705,15 +705,6 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 
 void OSystem_Android::pushEvent(const Common::Event &event) {
 	lockMutex(_event_queue_lock);
-	_event_queue.push(event);
-	unlockMutex(_event_queue_lock);
-}
-
-void OSystem_Android::pushKeyPressEvent(Common::Event &event) {
-	lockMutex(_event_queue_lock);
-	event.type = Common::EVENT_KEYDOWN;
-	_event_queue.push(event);
-	event.type = Common::EVENT_KEYUP;
 	_event_queue.push(event);
 	unlockMutex(_event_queue_lock);
 }
