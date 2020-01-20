@@ -29,16 +29,16 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-using Shared::CKeypressMsg;
-using Shared::CTextInputMsg;
+using Shared::CShowMsg;
+using Shared::CCharacterInputMsg;
 
 /**
  * Implements the Ready dialog
  */
 class Ready : public FullScreenDialog {
 	DECLARE_MESSAGE_MAP;
-	bool KeypressMsg(CKeypressMsg &msg);
-	bool TextInputMsg(CTextInputMsg &msg);
+	bool ShowMsg(CShowMsg &msg);
+	bool CharacterInputMsg(CCharacterInputMsg &msg);
 
 	enum Mode { SELECT, READY_WEAPON, READY_ARMOR, READY_SPELL };
 private:
@@ -58,11 +58,6 @@ private:
 	 * None response
 	 */
 	void none();
-
-	/**
-	 * Draw the initial mode selection display
-	 */
-	void drawSelection();
 
 	/**
 	 * Draw the ready weapon display

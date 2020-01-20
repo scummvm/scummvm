@@ -32,19 +32,24 @@ namespace Ultima1 {
 namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(Ready, Dialog)
-	ON_MESSAGE(KeypressMsg)
+	ON_MESSAGE(ShowMsg)
+	ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
 
 Ready::Ready(Ultima1Game *game) : FullScreenDialog(game), _mode(SELECT) {
 }
 
-bool Ready::KeypressMsg(CKeypressMsg &msg) {
+bool Ready::ShowMsg(CShowMsg &msg) {
+	addInfoMsg(_game->_res->READY_WEAPON_ARMOR_SPELL, false);
+	getKeypress();
+	return true;
+}
+
+bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
 	Shared::Character &c = *_game->_party;
 
 	switch (_mode) {
 	case SELECT:
-		_game->_textCursor->setVisible(false);
-
 		switch (msg._keyState.keycode) {
 		case Common::KEYCODE_w:
 			setMode(READY_WEAPON);
@@ -62,29 +67,41 @@ bool Ready::KeypressMsg(CKeypressMsg &msg) {
 		break;
 
 	case READY_WEAPON:
-		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode < (Common::KEYCODE_a + (int)c._weapons.size()))
-			c._equippedWeapon = msg._keyState.keycode - Common::KEYCODE_a;
+		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode < (Common::KEYCODE_a + (int)c._weapons.size())) {
+			int index = msg._keyState.keycode - Common::KEYCODE_a;
+			if (c._weapons[index]._quantity > 0)
+				c._equippedWeapon = index;
+		}
 
-		addInfoMsg(Common::String::format(" %s: %s", _game->_res->WEAPON_ARMOR_SPELL[0],
-			c._weapons[c._equippedWeapon]._longName.c_str()));
+		addInfoMsg(Common::String::format("%s %s: %s", _game->_res->ACTION_NAMES[17],
+			_game->_res->WEAPON_ARMOR_SPELL[0], c._weapons[c._equippedWeapon]._longName.c_str()),
+			true, true);
 		hide();
 		break;
 
 	case READY_ARMOR:
-		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode < (Common::KEYCODE_a + (int)c._armor.size()))
-			c._equippedArmor = msg._keyState.keycode - Common::KEYCODE_a;
+		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode < (Common::KEYCODE_a + (int)c._armor.size())) {
+			int index = msg._keyState.keycode - Common::KEYCODE_a;
+			if (c._armor[index]._quantity > 0)
+				c._equippedArmor = index;
+		}
 
-		addInfoMsg(Common::String::format(" %s: %s", _game->_res->WEAPON_ARMOR_SPELL[1],
-			c._armor[c._equippedArmor]._name.c_str()));
+		addInfoMsg(Common::String::format("%s %s: %s", _game->_res->ACTION_NAMES[17],
+			_game->_res->WEAPON_ARMOR_SPELL[1], c._armor[c._equippedArmor]._name.c_str()),
+			true, true);
 		hide();
 		break;
 
 	case READY_SPELL:
-		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode < (Common::KEYCODE_a + (int)c._spells.size()))
-			c._equippedSpell = msg._keyState.keycode - Common::KEYCODE_a;
+		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode < (Common::KEYCODE_a + (int)c._spells.size())) {
+			int index = msg._keyState.keycode - Common::KEYCODE_a;
+			if (c._spells[index]->_quantity > 0)
+				c._equippedSpell = index;
+		}
 
-		addInfoMsg(Common::String::format(" %s: %s", _game->_res->WEAPON_ARMOR_SPELL[2],
-			c._spells[c._equippedSpell]->_name.c_str()));
+		addInfoMsg(Common::String::format("%s %s: %s", _game->_res->ACTION_NAMES[17],
+			_game->_res->WEAPON_ARMOR_SPELL[2], c._spells[c._equippedSpell]->_name.c_str()),
+			true, true);
 		hide();
 		break;
 
@@ -104,13 +121,27 @@ void Ready::setMode(Mode mode) {
 	case READY_WEAPON:
 		if (c._weapons.hasNothing()) {
 			nothing();
+		} else {
+			addInfoMsg(Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[17],
+				_game->_res->WEAPON_ARMOR_SPELL[0]), false, true);
+			getKeypress();
 		}
 		break;
 
 	case READY_ARMOR:
 		if (c._armor.hasNothing()) {
 			nothing();
+		} else {
+			addInfoMsg(Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[17],
+				_game->_res->WEAPON_ARMOR_SPELL[1]), false, true);
+			getKeypress();
 		}
+		break;
+
+	case READY_SPELL:
+		addInfoMsg(Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[17],
+			_game->_res->WEAPON_ARMOR_SPELL[2]), false, true);
+		getKeypress();
 		break;
 
 	default:
@@ -119,7 +150,7 @@ void Ready::setMode(Mode mode) {
 }
 
 void Ready::nothing() {
-	addInfoMsg(Common::String::format(" %s", _game->_res->NOTHING));
+	addInfoMsg(_game->_res->NOTHING);
 	hide();
 }
 
@@ -129,10 +160,9 @@ void Ready::none() {
 }
 
 void Ready::draw() {
+	Dialog::draw();
+
 	switch (_mode) {
-	case SELECT:
-		drawSelection();
-		break;
 	case READY_WEAPON:
 		drawReadyWeapon();
 		break;
@@ -142,15 +172,9 @@ void Ready::draw() {
 	case READY_SPELL:
 		drawReadySpell();
 		break;
+	default:
+		break;
 	}
-}
-
-void Ready::drawSelection() {
-	Shared::Gfx::VisualSurface s = getSurface();
-	s.writeString(_game->_res->READY_WEAPON_ARMOR_SPELL, TextPoint(1, 24));
-
-	_game->_textCursor->setPosition(TextPoint(1 + strlen(_game->_res->READY_WEAPON_ARMOR_SPELL), 24));
-	_game->_textCursor->setVisible(true);
 }
 
 void Ready::drawReadyWeapon() {
@@ -173,16 +197,6 @@ void Ready::drawReadyWeapon() {
 			s.writeString(text, TextPoint(15, yp++), (int)idx == c._equippedWeapon ? _game->_highlightColor : _game->_textColor);
 		}
 	}
-
-	// Draw Ready weapon text at the bottom and enable cursor
-	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
-	Common::String line = Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[17],
-		_game->_res->WEAPON_ARMOR_SPELL[0]);
-	s.writeString(line, TextPoint(1, 24));
-
-	// Show cursor in the info area
-	_game->_textCursor->setPosition(TextPoint(1 + line.size(), 24));
-	_game->_textCursor->setVisible(true);
 }
 
 void Ready::drawReadyArmor() {
@@ -205,16 +219,6 @@ void Ready::drawReadyArmor() {
 			s.writeString(text, TextPoint(15, yp++), (int)idx == c._equippedArmor ? _game->_highlightColor : _game->_textColor);
 		}
 	}
-
-	// Draw Ready weapon text at the bottom and enable cursor
-	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
-	Common::String line = Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[17],
-		_game->_res->WEAPON_ARMOR_SPELL[1]);
-	s.writeString(line, TextPoint(1, 24));
-
-	// Show cursor in the info area
-	_game->_textCursor->setPosition(TextPoint(1 + line.size(), 24));
-	_game->_textCursor->setVisible(true);
 }
 
 void Ready::drawReadySpell() {
@@ -237,16 +241,6 @@ void Ready::drawReadySpell() {
 			s.writeString(text, TextPoint(15, yp++), (int)idx == c._equippedSpell ? _game->_highlightColor : _game->_textColor);
 		}
 	}
-
-	// Draw Ready weapon text at the bottom and enable cursor
-	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
-	Common::String line = Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[17],
-		_game->_res->WEAPON_ARMOR_SPELL[2]);
-	s.writeString(line, TextPoint(1, 24));
-
-	// Show cursor in the info area
-	_game->_textCursor->setPosition(TextPoint(1 + line.size(), 24));
-	_game->_textCursor->setVisible(true);
 }
 
 } // End of namespace U1Dialogs
