@@ -114,6 +114,7 @@ protected:
 	uint _mapIndex;						// Index of map within the group of same maps
 	uint _mapStyle;						// Map style category for towns & castles
 	ViewportPosition _viewportPos;		// Viewport position
+	Common::Array<MapCellsRow> _data;	// Data for the map
 protected:
 	/**
 	 * Set the size of the map
@@ -133,7 +134,6 @@ public:
 	Common::String _name;				// Name of map, if applicable
 	MapWidget *_playerWidget;			// Current means of transport, even if on foot
 	WidgetsArray _widgets;				// Party, monsteres, transports, etc.
-	Common::Array<MapCellsRow> _data;	// Data for the map
 public:
 	/**
 	 * Constructor
@@ -170,6 +170,11 @@ public:
 	 * Gets a tile at a given position
 	 */
 	virtual void getTileAt(const Point &pt, MapTile *tile, bool includePlayer = true);
+
+	/**
+	 * Sets a tile at a given position
+	 */
+	virtual void setTileAt(const Point &pt, uint tileId);
 
 	/**
 	 * Resets the viewport when the viewport changes
