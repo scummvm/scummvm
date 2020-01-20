@@ -29,23 +29,68 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-class Hit : public Shared::Maps::MapWidget {
+/**
+ * Common base class for both physical and spell attack effects
+ */
+class AttackEffect : public Shared::Maps::MapWidget {
+protected:
+	uint _tileId;
+	Point _delta;
+	uint _remainingDistance;
+	uint _agility;
+	uint _damage;
+protected:
+	/**
+	 * Constructor
+	 */
+	AttackEffect(Shared::Game *game, Shared::Maps::MapBase *map, uint tileId) : Shared::Maps::MapWidget(game, map),
+		_tileId(tileId), _remainingDistance(0), _agility(0), _damage(0) {}
 public:
 	/**
 	 * Constructor
 	 */
-	Hit(Shared::Game *game, Shared::Maps::MapBase *map) : Shared::Maps::MapWidget(game, map) {}
+	AttackEffect(Shared::Game *game, Shared::Maps::MapBase *map) : Shared::Maps::MapWidget(game, map),
+		_tileId(0), _remainingDistance(0), _agility(0), _damage(0) {}
 
 	/**
-	 * Destructor
+	 * Handles loading and saving the widget's data
 	 */
-	virtual ~Hit() {}
+	virtual void synchronize(Common::Serializer &s) override;
 
 	/**
 	 * Get the tile for the transport method
 	 */
-	virtual uint getTileNum() const override;
+	virtual uint getTileNum() const override { return _tileId; }
+
+	/**
+	 * Set the details for t
+	 */
 };
+
+/**
+ * Physical attack effects
+ */
+class PhysicalAttackEffect : public AttackEffect {
+public:
+	/**
+	 * Constructor
+	 */
+	PhysicalAttackEffect(Shared::Game *game, Shared::Maps::MapBase *map) :
+		AttackEffect(game, map, 50) {}
+};
+
+/**
+ * Spell attack effects
+ */
+class SpellAttackEffect : public AttackEffect {
+public:
+	/**
+	 * Constructor
+	 */
+	SpellAttackEffect(Shared::Game *game, Shared::Maps::MapBase *map) :
+		AttackEffect(game, map, 51) {}
+};
+
 
 } // End of namespace Widgets
 } // End of namespace Ultima1

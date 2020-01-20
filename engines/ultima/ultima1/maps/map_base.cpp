@@ -93,8 +93,7 @@ void MapBase::attack(int direction, int effectId) {
 		damage = _game->getRandomNumber(1, (transport ? transport->transportId() : 0) * 10);
 	}
 
-	// TODO
-	_game->endOfTurn();
+	attack(direction, effectId, maxDistance, damage, agility, "PhysicalAttack");
 }
 
 void MapBase::cast() {
