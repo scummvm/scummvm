@@ -573,6 +573,8 @@ const char *const SRC_ARMOR_DESTROYED = "Armor destroyed!";
 const char *const SRC_GREMLIN_STOLE = "A gremlin stole some food!";
 const char *const SRC_MENTAL_ATTACK = "Mental attack!";
 const char *const SRC_MISSED = "Missed!";
+const char *const SRC_KILLED = "killed!";
+const char *const SRC_DESTROYED = "destroyed!";
 const char *const SRC_THIEF_STOLE = "Thief stole %s %s";
 const char *const SRC_A = "a";
 const char *const SRC_AN = "an";
@@ -645,6 +647,7 @@ const char *const SRC_FAILED = "Failed!";
 const char *const SRC_TELEPORTED = "Teleported!";
 const char *const SRC_FIELD_CREATED = "Field created!";
 const char *const SRC_FIELD_DESTROYED = "Field destroyed!";
+const char *const SRC_QUEST_COMPLETED = "A quest has been completed!";
 
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
 const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
@@ -698,6 +701,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	GREMLIN_STOLE = SRC_GREMLIN_STOLE;
 	MENTAL_ATTACK = SRC_MENTAL_ATTACK;
 	MISSED = SRC_MISSED;
+	KILLED = SRC_KILLED;
+	DESTROYED = SRC_DESTROYED;
 	THIEF_STOLE = SRC_THIEF_STOLE;
 	A = SRC_A;
 	AN = SRC_AN;
@@ -760,6 +765,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	TELEPORTED = SRC_TELEPORTED;
 	FIELD_CREATED = SRC_FIELD_CREATED;
 	FIELD_DESTROYED = SRC_FIELD_DESTROYED;
+	QUEST_COMPLETED = SRC_QUEST_COMPLETED;
 
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
 	GROCERY_SELL = SRC_GROCERY_SELL;
@@ -810,6 +816,8 @@ void GameResources::synchronize() {
 	syncString(GREMLIN_STOLE);
 	syncString(MENTAL_ATTACK);
 	syncString(MISSED);
+	syncString(KILLED);
+	syncString(DESTROYED);
 	syncString(THIEF_STOLE);
 	syncString(A);
 	syncString(AN);
@@ -872,6 +880,7 @@ void GameResources::synchronize() {
 	syncString(TELEPORTED);
 	syncString(FIELD_CREATED);
 	syncString(FIELD_DESTROYED);
+	syncString(QUEST_COMPLETED);
 
 	syncStrings(GROCERY_NAMES, 8);
 	syncString(GROCERY_SELL);

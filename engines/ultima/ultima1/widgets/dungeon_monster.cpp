@@ -187,6 +187,81 @@ void DungeonMonster::attackParty() {
 	}
 }
 
+void DungeonMonster::attackMonster(uint effectNum, uint agility, uint damage) {
+	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
+	Maps::MapDungeon *map = static_cast<Maps::MapDungeon *>(_map);
+	Point currPos = map->getPosition();
+	Maps::U1MapTile playerTile, monsTile;
+	map->getTileAt(currPos, &playerTile);
+	map->getTileAt(_position, &monsTile);
+
+	bool flag = true;
+	if (!playerTile._isDoor) {
+		if (!monsTile._isHallway && !monsTile._isLadderUp && !monsTile._isLadderDown)
+			flag = false;
+	}
+
+	if (game->getRandomNumber(1, 100) <= agility && !playerTile._isWall && !playerTile._isSecretDoor
+			&& !playerTile._isBeams && flag) {
+		// Play effect and add hit message
+		game->playFX(effectNum);
+		if (damage != ITS_OVER_9000)
+			addInfoMsg(Common::String::format("%s ", game->_res->HIT), false);
+
+		if ((int)damage < _hitPoints) {
+			addInfoMsg(Common::String::format("%u %s!", damage, game->_res->DAMAGE));
+			_hitPoints -= damage;
+		} else {
+			addInfoMsg(Common::String::format("%s %s", _name.c_str(),
+				damage == ITS_OVER_9000 ? game->_res->DESTROYED : game->_res->KILLED));
+			monsterDead();
+
+			// Give some treasure
+			uint amount = game->getRandomNumber(2, map->getLevel() * 3 + (uint)_monsterId + 10);
+			addInfoMsg(game->_res->THOU_DOST_FIND);
+			game->giveTreasure(amount, 0);
+
+			// Give experience
+			Shared::Character &c = *game->_party._currentCharacter;
+			uint experience = game->getRandomNumber(2, map->getLevel() * map->getLevel() + 10);
+			c._experience += experience;
+			game->_dungeonExitHitPoints += experience * 2;
+
+			// Delete the monster and create a new one
+			map->removeWidget(this);
+			map->spawnMonster();
+		}
+	} else {
+		// Attack missed
+		addInfoMsg(game->_res->MISSED);
+	}
+}
+
+void DungeonMonster::monsterDead() {
+	int index;
+	switch (_monsterId) {
+	case MONSTER_BALRON:
+		index = 8;
+		break;
+	case MONSTER_CARRION_CREEPER:
+		index = 4;
+		break;
+	case MONSTER_LICH:
+		index = 6;
+		break;
+	case MONSTER_GELATINOUS_CUBE:
+		index = 2;
+		break;
+	default:
+		index = 0;
+		break;
+	}
+
+	if (index) {
+		static_cast<Ultima1Game *>(_game)->questCompleted(8 - index);
+	}
+}
+
 } // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima

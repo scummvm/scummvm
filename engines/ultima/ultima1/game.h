@@ -52,6 +52,7 @@ class GameResources;
 
 class Ultima1Game : public Shared::Game {
 	DECLARE_MESSAGE_MAP;
+	enum QuestFlag { UNSTARTED = 0, IN_PROGRESS = -1, COMPLETED = 1 };
 private:
 	/**
 	 * Takes care of final setup as the game starts
@@ -63,6 +64,7 @@ public:
 	Shared::Gfx::VisualItem *_titleView;
 	Shared::Gfx::VisualItem *_charGenView;
 	uint _gems[4];
+	QuestFlag _questFlags[9];
 
 	Spells::Blink _spellBlink;
 	Spells::Create _spellCreate;
@@ -104,6 +106,11 @@ public:
 	 * Give some treasure
 	 */
 	void giveTreasure(int coins, int v2);
+
+	/**
+	 * Called when a quest is completed
+	 */
+	void questCompleted(uint questNum);
 };
 
 } // End of namespace Ultima1
