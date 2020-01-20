@@ -32,6 +32,7 @@
 #include "ultima/ultima1/u1gfx/viewport_map.h"
 #include "ultima/ultima1/actions/move.h"
 #include "ultima/ultima1/actions/map_action.h"
+#include "ultima/ultima1/actions/quit.h"
 #include "ultima/ultima1/actions/stats.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/shared/gfx/text_cursor.h"
@@ -80,7 +81,7 @@ ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect
 	_actions[7] = new Actions::Climb(this);
 	_actions[8] = new Actions::Open(this);
 	_actions[9] = new Shared::Actions::Pass(this, game->_res->ACTION_NAMES[15]);
-//	_actions[10] = new Actions::Quit(this);
+	_actions[10] = new Actions::Quit(this);
 	_actions[11] = new Actions::Steal(this);
 	_actions[12] = new Actions::Transact(this);
 	_actions[13] = new Actions::Unlock(this);
@@ -230,10 +231,8 @@ bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
 		break;
 	}
 	case Common::KEYCODE_q: {
-		/*
-		CQuitMsg quit;
+		Shared::CQuitMsg quit;
 		quit.execute(this);
-		*/
 		break;
 	}
 	case Common::KEYCODE_s: {
