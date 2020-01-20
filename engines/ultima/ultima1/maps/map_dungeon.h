@@ -121,9 +121,14 @@ public:
 	Widgets::DungeonMonster *findCreatureInCurrentDirection(uint maxDistance = 5);
 
 	/**
+	 * Perform an attack
+	 */
+	virtual void attack(int direction, int effectId) override;
+
+	/**
 	 * Do an inform action
 	 */
-	virtual void inform();
+	virtual void inform() override;
 
 	/**
 	 * Do a climb action
@@ -143,7 +148,7 @@ public:
 	/**
 	 * Cast a specific spell
 	 */
-	virtual void castSpell(uint spell);
+	virtual void castSpell(uint spell) override;
 };
 
 } // End of namespace Maps
