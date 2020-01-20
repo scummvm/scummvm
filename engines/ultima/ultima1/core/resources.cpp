@@ -577,7 +577,7 @@ const char *const SRC_A_SECRET_DOOR = "a secret door!";
 const char *const SRC_ACTION_NAMES[26] = {
 	nullptr, nullptr, nullptr, "Drop", "Enter", nullptr, "Get", "HyperJump", "Inform and search", nullptr,
 	"K-Limb", nullptr, nullptr, nullptr, "Open", "Pass", nullptr, nullptr, "Steal", "Transact",
-	"Unlock", nullptr, nullptr, nullptr, nullptr, nullptr
+	"Unlock", "View", nullptr, nullptr, nullptr, nullptr
 };
 const char *const SRC_HUH = "Huh?";
 const char *const SRC_WHAT = " what?";
@@ -702,6 +702,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	SET_OFF_TRAP = SRC_SET_OFF_TRAP;
 	THOU_DOST_FIND = SRC_THOU_DOST_FIND;
 	NO_KEY = SRC_NO_KEY;
+	INCORRECT_KEY = SRC_INCORRECT_KEY;
 	DOOR_IS_OPEN = SRC_DOOR_IS_OPEN;
 
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);

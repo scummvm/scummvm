@@ -340,6 +340,11 @@ MESSAGE0(CTransactMsg);
  */
 MESSAGE0(CUnlockMsg);
 
+/**
+ * Used to trigger a view change action
+ */
+MESSAGE0(CViewChangeMsg);
+
 } // End of namespace Shared
 } // End of namespace Ultima
 

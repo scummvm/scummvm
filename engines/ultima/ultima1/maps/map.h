@@ -130,6 +130,7 @@ public:
 	PASS_METHOD(steal)
 	PASS_METHOD(talk)
 	PASS_METHOD(unlock)
+	PASS_METHOD(view)
 
 	/**
 	 * Handles dropping an amount of coins
