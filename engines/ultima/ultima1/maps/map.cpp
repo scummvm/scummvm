@@ -128,10 +128,6 @@ void Ultima1Map::synchronize(Common::Serializer &s) {
 		_mapOverworld->synchronize(s);
 }
 
-bool Ultima1Map::isLordBritishCastle() const {
-	return _mapType == MAP_CASTLE && static_cast<MapCityCastle *>(_mapArea)->getMapIndex() == 0;
-}
-
 Shared::Maps::MapWidget *Ultima1Map::createWidget(Shared::Maps::MapBase *map, const Common::String &name) {
 	REGISTER_WIDGET(Bard);
 	REGISTER_WIDGET(DungeonMonster);

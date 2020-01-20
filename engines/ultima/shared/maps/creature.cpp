@@ -41,6 +41,16 @@ void Creature::update(bool isPreUpdate) {
 	}
 }
 
+bool Creature::subtractHitPoints(uint amount) {
+	if ((int)amount >= _hitPoints) {
+		_hitPoints = 0;
+		return true;
+	} else {
+		_hitPoints -= amount;
+		return false;
+	}
+}
+
 } // End of namespace Maps
 } // End of namespace Shared
 } // End of namespace Ultima

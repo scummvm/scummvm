@@ -21,13 +21,20 @@
  */
 
 #include "ultima/ultima1/widgets/king.h"
+#include "ultima/ultima1/maps/map_city_castle.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
 void King::movement() {
+}
 
+bool King::subtractHitPoints(uint amount) {
+	Maps::MapCastle *map = static_cast<Maps::MapCastle *>(_map);
+
+	// Lord British is invincible, the nasty git
+	return map->isLordBritishCastle() ? false : Person::subtractHitPoints(amount);
 }
 
 } // End of namespace Widgets

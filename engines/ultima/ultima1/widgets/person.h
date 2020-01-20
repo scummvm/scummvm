@@ -36,7 +36,7 @@ namespace Widgets {
 /**
  * Base class for NPC creatures
  */
-class Person : public UrbanWidget, Shared::Maps::Creature {
+class Person : public UrbanWidget, public Shared::Maps::Creature {
 	DECLARE_MESSAGE_MAP;
 protected:
 	Ultima1Game *_game;
@@ -74,11 +74,6 @@ public:
 		UrbanWidget(game, map, tileNum), Shared::Maps::Creature(game, map), _game(game), _map(map) {}
 
 	/**
-	 * Destructor
-	 */
-	virtual ~Person() {}
-
-	/**
 	 * Handles loading and saving the map's data
 	 */
 	virtual void synchronize(Common::Serializer &s) override;
@@ -87,6 +82,13 @@ public:
 	 * Talk to an NPC
 	 */
 	virtual void talk() {}
+
+	/**
+	 * Removes hit points from a creature
+	 * @param amount		Amount to remove
+	 * @returns				Returns true if kills the creature
+	 */
+	virtual bool subtractHitPoints(uint amount) override;
 };
 
 } // End of namespace Widgets

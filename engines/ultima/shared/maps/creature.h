@@ -90,6 +90,13 @@ public:
 	 * True true if the creature is dead
 	 */
 	bool isDead() const { return _hitPoints <= 0; }
+
+	/**
+	 * Removes hit points from a creature
+	 * @param amount		Amount to remove
+	 * @returns				Returns true if kills the creature
+	 */
+	virtual bool subtractHitPoints(uint amount);
 };
 
 } // End of namespace Maps

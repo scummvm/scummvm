@@ -26,6 +26,7 @@
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/spells/spell.h"
 #include "ultima/ultima1/widgets/urban_player.h"
+#include "ultima/ultima1/widgets/person.h"
 #include "ultima/ultima1/widgets/bard.h"
 #include "ultima/ultima1/widgets/guard.h"
 #include "ultima/ultima1/widgets/king.h"
@@ -178,7 +179,7 @@ Widgets::Merchant *MapCityCastle::getStealMerchant() {
 	}
 }
 
-void MapCityCastle::cast(Maps::MapBase *map) {
+void MapCityCastle::cast() {
 	addInfoMsg(Common::String::format(" -- %s", _game->_res->NO_EFFECT));
 	_game->playFX(6);
 }
@@ -203,6 +204,41 @@ void MapCityCastle::steal() {
 		addInfoMsg(_game->_res->NOTHING_HERE);
 		_game->playFX(1);
 	}
+}
+
+void MapCityCastle::attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) {
+	_game->playFX(effectId);
+	Point delta = getDirectionDelta();
+	U1MapTile tile;
+	Widgets::Person *person;
+	int currTile;
+
+	// Scan in the given direction for a person to attack
+	uint distance = 1;
+	do {
+		Point pt = getPosition() + Point(delta.x * distance, delta.y * distance);
+		getTileAt(pt, &tile);
+		currTile = tile._tileId == CTILE_63 ? -1 : tile._tileId;
+		person = dynamic_cast<Widgets::Person *>(tile._widget);
+
+	} while (++distance <= maxDistance && !person && (tile._tileId == CTILE_GROUND || tile._tileId >= CTILE_POND_EDGE1));
+
+	if (person && _game->getRandomNumber(1, 100) <= agility) {
+		addInfoMsg(Common::String::format(_game->_res->HIT_CREATURE, person->_name.c_str()), false);
+
+		// Damage the person
+		if (person->subtractHitPoints(amount)) {
+			// Killed them
+			addInfoMsg(_game->_res->KILLED);
+		} else {
+			// Still alive
+			addInfoMsg(Common::String::format("%u %s!", amount, _game->_res->DAMAGE));
+		}
+	} else {
+		addInfoMsg(_game->_res->MISSED);
+	}
+
+	_game->endOfTurn();
 }
 
 /*-------------------------------------------------------------------*/
@@ -352,6 +388,10 @@ void MapCastle::unlock() {
 		_data[pt.y][pt.x] = CTILE_GROUND;
 		_freeingPrincess = true;
 	}
+}
+
+bool MapCastle::isLordBritishCastle() const {
+	return getMapIndex() == 0;
 }
 
 } // End of namespace Maps

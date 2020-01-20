@@ -58,7 +58,7 @@ bool Bard::stealWeapon() {
 			c._weapons[idx].decrQuantity();
 
 			if (_game->getRandomNumber(1, 255) < (c._agility + 128)) {
-
+				// TODO
 			}
 
 			return true;
@@ -76,6 +76,17 @@ void Bard::talk() {
 		addInfoMsg(_game->_res->JESTER_SPEECH1);
 		addInfoMsg(_game->_res->JESTER_SPEECH2);
 	}
+}
+
+bool Bard::subtractHitPoints(uint amount) {
+	bool result = Person::subtractHitPoints(amount);
+	if (result) {
+		Maps::MapCastle *map = dynamic_cast<Maps::MapCastle *>(_map);
+		addInfoMsg(_game->_res->FOUND_KEY);
+		map->_castleKey = 1;
+	}
+
+	return result;
 }
 
 } // End of namespace Widgets

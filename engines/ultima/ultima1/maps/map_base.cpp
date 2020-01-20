@@ -26,6 +26,7 @@
 #include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/maps/map_overworld.h"
 #include "ultima/ultima1/maps/map.h"
+#include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/spells/spell.h"
@@ -36,6 +37,7 @@
 #include "ultima/ultima1/widgets/merchant_tavern.h"
 #include "ultima/ultima1/widgets/merchant_transport.h"
 #include "ultima/ultima1/widgets/merchant_weapons.h"
+#include "ultima/ultima1/widgets/transport.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -77,6 +79,20 @@ void MapBase::unknownAction() {
 }
 
 void MapBase::attack(int direction, int effectId) {
+	uint agility, damage, maxDistance;
+	Widgets::Transport *transport = dynamic_cast<Widgets::Transport *>(_playerWidget);
+
+	if (effectId == 7) {
+		Character &c = *static_cast<Party *>(_game->_party);
+		maxDistance = c._weapons[c._equippedWeapon]._distance;
+		agility = c._agility + 50;
+		damage = _game->getRandomNumber(2, c._strength + c._equippedWeapon * 8);
+	} else {
+		maxDistance = 3;
+		agility = 80;
+		damage = _game->getRandomNumber(1, (transport ? transport->transportId() : 0) * 10);
+	}
+
 	// TODO
 	_game->endOfTurn();
 }
@@ -101,6 +117,10 @@ void MapBase::cast() {
 void MapBase::castSpell(uint spellId) {
 	const Shared::Character &c = *_game->_party;
 	static_cast<Spells::Spell *>(c._spells[spellId])->cast(this);
+}
+
+void MapBase::attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) {
+	// TODO
 }
 
 } // End of namespace Maps

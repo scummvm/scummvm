@@ -81,12 +81,14 @@ public:
 	const char *THIEF_STOLE;
 	const char *A, *AN;
 	const char *HIT;
+	const char *HIT_CREATURE;
 	const char *ATTACKS;
 	const char *DAMAGE;
 	const char *BARD_SPEECH1;
 	const char *BARD_SPEECH2;
 	const char *JESTER_SPEECH1;
 	const char *JESTER_SPEECH2;
+	const char *FOUND_KEY;
 	const char *BARD_STOLEN;
 	const char *JESTER_STOLEN;
 	const char *YOU_ARE_AT_SEA;
