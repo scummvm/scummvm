@@ -34,9 +34,7 @@ BEGIN_MESSAGE_MAP(Drop, Dialog)
 	ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
-Drop::Drop(Ultima1Game *game) : Dialog(game), _mode(SELECT) {
-	// The drop dialog covers the entire screen, but doesn't erase what's under it
-	_bounds = Common::Rect(0, 0, 320, 200);
+Drop::Drop(Ultima1Game *game) : FullScreenDialog(game), _mode(SELECT) {
 }
 
 bool Drop::KeypressMsg(CKeypressMsg &msg) {
@@ -101,15 +99,41 @@ void Drop::drawSelection() {
 }
 
 void Drop::drawDropPence() {
-	// TODO
+	Shared::Gfx::VisualSurface s = getSurface();
+	Common::String text = Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[3], _game->_res->DROP_PENCE);
+	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
+	s.writeString(text, TextPoint(1, 24), _game->_textColor);
+
+	_game->_textCursor->setPosition(TextPoint(1 + text.size(), 24));
+	_game->_textCursor->setVisible(true);
 }
 
 void Drop::drawDropWeapon() {
-	// TODO
+	drawFrame(_game->_res->ACTION_NAMES[3]);
+
+	// Draw drop weapon text at the bottom and enable cursor
+	Shared::Gfx::VisualSurface s = getSurface();
+	Common::String text = Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[3], _game->_res->DROP_WEAPON);
+	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
+	s.writeString(text, TextPoint(1, 24), _game->_textColor);
+
+	// Show cursor in the info area
+	_game->_textCursor->setPosition(TextPoint(1 + text.size(), 24));
+	_game->_textCursor->setVisible(true);
 }
 
 void Drop::drawDropArmor() {
-	// TODO
+	drawFrame(_game->_res->ACTION_NAMES[3]);
+
+	// Draw drop weapon text at the bottom and enable cursor
+	Shared::Gfx::VisualSurface s = getSurface();
+	Common::String text = Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[3], _game->_res->DROP_ARMOR);
+	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
+	s.writeString(text, TextPoint(1, 24), _game->_textColor);
+
+	// Show cursor in the info area
+	_game->_textCursor->setPosition(TextPoint(1 + text.size(), 24));
+	_game->_textCursor->setVisible(true);
 }
 
 } // End of namespace U1Dialogs
