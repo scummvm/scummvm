@@ -195,6 +195,11 @@ void MapBase::setDirection(Direction dir) {
 	_playerWidget->_direction = dir;
 }
 
+void MapBase::addInfoMsg(const Common::String &text, bool newLine) {
+	CInfoMsg msg(text, newLine);
+	msg.execute(_game->getView());
+}
+
 } // End of namespace Maps
 } // End of namespace Shared
 } // End of namespace Ultima

@@ -20,54 +20,26 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_MAPS_MAP_BASE_H
-#define ULTIMA_ULTIMA1_MAPS_MAP_BASE_H
-
-#include "ultima/shared/maps/map_base.h"
+#ifndef ULTIMA_ULTIMA1_ACTIONS_MAP_ACTION_H
+#define ULTIMA_ULTIMA1_ACTIONS_MAP_ACTION_H
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Actions {
 
-class Ultima1Game;
+#define MAP_ACTION(NAME, ACTION_NUM, MAP_METHOD) \
+	using Shared::C##NAME##Msg; \
+	class NAME : public Action { DECLARE_MESSAGE_MAP; bool NAME##Msg(C##NAME##Msg &msg) { \
+	addInfoMsg(getRes()->ACTION_NAMES[ACTION_NUM], false); \
+	getMap()->MAP_METHOD(); \
+	return true; } \
+	public: \
+	CLASSDEF; \
+	NAME(TreeItem *parent) : Action(parent) {} \
+	}; \
+	BEGIN_MESSAGE_MAP(NAME, Action) ON_MESSAGE(NAME##Msg) END_MESSAGE_MAP()
 
-namespace Maps {
-
-class Ultima1Map;
-
-/**
- * Intermediate base class for Ultima 1 maps
- */
-class MapBase : public Shared::Maps::MapBase {
-protected:
-	Ultima1Game *_game;
-public:
-	/**
-	 * Constructor
-	 */
-	MapBase(Ultima1Game *game, Ultima1Map *map);
-		
-	/**
-	 * Destructor
-	 */
-	virtual ~MapBase() {}
-
-	/**
-	 * Gets a tile at a given position
-	 */
-	virtual void getTileAt(const Point &pt, Shared::Maps::MapTile *tile) override;
-
-	/**
-	 * Do a steal action
-	 */
-	virtual void steal();
-
-	/**
-	 * Do a talk action
-	 */
-	virtual void talk();
-};
-
-} // End of namespace Maps
+} // End of namespace Actions
 } // End of namespace Ultima1
 } // End of namespace Ultima
 
