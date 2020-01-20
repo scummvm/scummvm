@@ -40,7 +40,9 @@ class Transports : public BuySellDialog {
 private:
 	uint _transportsNum;
 	uint _water, _woods, _grass;
-	bool _hasFreeTiles;
+	bool _hasFreeTiles, _hasShuttle, _isClosed;
+	uint _transportCount;
+	bool _transports[6];
 private:
 	/**
 	 * Calculates the number of free tiles in the overworld
@@ -56,6 +58,16 @@ private:
 	 * Draws the Sell dialog content
 	 */
 	void drawSell();
+
+	/**
+	 * Gets the cost for buying a given transport
+	 */
+	uint getBuyCost(int transportIndex) const;
+
+	/**
+	 * Add a transport to the overworld map 
+	 */
+	void addTransport(int transportIndex);
 protected:
 	/**
 	 * Set the mode

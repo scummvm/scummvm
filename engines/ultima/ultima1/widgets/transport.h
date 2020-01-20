@@ -146,10 +146,17 @@ public:
  */
 class Shuttle : public Transport {
 public:
+	uint _space1, _space2;
+public:
 	/**
 	 * Constructor
 	 */
 	Shuttle(Ultima1Game *game, Maps::MapBase *map);
+
+	/**
+	 * Handles loading and saving data
+	 */
+	virtual void synchronize(Common::Serializer &s) override;
 };
 
 /**
