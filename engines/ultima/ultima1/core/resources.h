@@ -43,6 +43,7 @@ public:
 	const char *RACE_NAMES[4];
 	const char *SEX_NAMES[3];
 	const char *CLASS_NAMES[4];
+	const char *TRANSPORT_NAMES[10];
 	const char *STAT_NAMES[10];
 	const char *STATUS_TEXT[4];
 	const char *DIRECTION_NAMES[4];
@@ -59,6 +60,7 @@ public:
 	const char *ARMOR_NAMES[6];
 	const char *ARMOR_NAMES_ARTICLE[6];
 	const char *SPELL_NAMES[11];
+	const char *GEM_NAMES[4];
 	byte OVERWORLD_MONSTER_DAMAGE[15];
 	const char *OVERWORLD_MONSTER_NAMES[15];
 	const char *DUNGEON_MONSTER_NAMES[99];
@@ -118,8 +120,10 @@ public:
 	const char *DOOR_IS_OPEN;
 	const char *CANT_LEAVE_IT_HERE;
 	const char *INVENTORY;
+	const char *PLAYER;
 	const char *PLAYER_DESC;
 	const char *PRESS_SPACE_TO_CONTINUE;
+	const char *MORE;
 
 	const char *GROCERY_NAMES[8];
 	const char *GROCERY_SELL;

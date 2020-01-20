@@ -135,6 +135,11 @@ public:
 	 * Remove any equipped spell
 	 */
 	void removeSpell() { _equippedSpell = -1; }
+
+	/**
+	 * Gets the character's experience level
+	 */
+	uint getLevel() const { return (_experience / 1000) + 1; }
 };
 
 typedef Common::Array<Character> CharacterArray;

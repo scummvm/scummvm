@@ -92,6 +92,11 @@ public:
 	 * Adds a widget for the player being on foot, and sets it to the active player widget
 	 */
 	void addOnFoot();
+
+	/**
+	 * Get the number of active enemy vessels
+	 */
+	uint getEnemyVesselCount() const;
 };
 
 } // End of namespace Maps

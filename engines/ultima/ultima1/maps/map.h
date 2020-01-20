@@ -137,6 +137,11 @@ public:
 	 * Handles dropping an amount of coins
 	 */
 	void dropCoins(uint amount);
+
+	/**
+	 * Returns the overworld map
+	 */
+	MapOverworld *getOverworldMap() { return _mapOverworld; }
 };
 
 } // End of namespace Maps
