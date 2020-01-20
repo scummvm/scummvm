@@ -261,6 +261,9 @@ protected:
 #ifdef USE_FLUIDSYNTH
 	FluidSynthSettingsDialog *_fluidSynthSettingsDialog;
 #endif
+
+	void addMIDIControls(GuiObject *boss, const Common::String &prefix);
+
 	StaticTextWidget *_savePath;
 	ButtonWidget	 *_savePathClearButton;
 	StaticTextWidget *_themePath;
@@ -271,6 +274,8 @@ protected:
 	StaticTextWidget *_pluginsPath;
 	ButtonWidget	 *_pluginsPathClearButton;
 #endif
+
+	void addPathsControls(GuiObject *boss, const Common::String &prefix, bool lowres);
 
 	//
 	// Misc controls
@@ -290,6 +295,8 @@ protected:
 	StaticTextWidget *_updatesPopUpDesc;
 	PopUpWidget *_updatesPopUp;
 #endif
+
+	void addMiscControls(GuiObject *boss, const Common::String &prefix, bool lowres);
 
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
@@ -362,6 +369,8 @@ protected:
 	bool _enableTTS;
 	CheckboxWidget *_ttsCheckbox;
 	PopUpWidget *_ttsVoiceSelectionPopUp;
+
+	void addAccessibilityControls(GuiObject *boss, const Common::String &prefix);
 #endif
 };
 

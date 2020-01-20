@@ -1598,10 +1598,6 @@ void GlobalOptionsDialog::build() {
 	_midiTabId = tab->addTab(_("MIDI"), "GlobalOptions_MIDI");
 	addMIDIControls(tab, "GlobalOptions_MIDI.");
 
-#ifdef USE_FLUIDSYNTH
-	new ButtonWidget(tab, "GlobalOptions_MIDI.mcFluidSynthSettings", _("FluidSynth Settings"), nullptr, kFluidSynthSettingsCmd);
-#endif
-
 	//
 	// 4) The MT-32 tab
 	//
@@ -1615,46 +1611,7 @@ void GlobalOptionsDialog::build() {
 		_pathsTabId = tab->addTab(_("Paths"), "GlobalOptions_Paths");
 	else
 		_pathsTabId = tab->addTab(_c("Paths", "lowres"), "GlobalOptions_Paths");
-
-#if !defined(__DC__)
-	// These two buttons have to be extra wide, or the text will be
-	// truncated in the small version of the GUI.
-
-	// Save game path
-	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _("Save Path:"), _("Specifies where your saved games are put"), kChooseSaveDirCmd);
-	else
-		new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _c("Save Path:", "lowres"), _("Specifies where your saved games are put"), kChooseSaveDirCmd);
-	_savePath = new StaticTextWidget(tab, "GlobalOptions_Paths.SavePath", "/foo/bar", _("Specifies where your saved games are put"));
-
-	_savePathClearButton = addClearButton(tab, "GlobalOptions_Paths.SavePathClearButton", kSavePathClearCmd);
-
-	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _("Theme Path:"), nullptr, kChooseThemeDirCmd);
-	else
-		new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _c("Theme Path:", "lowres"), nullptr, kChooseThemeDirCmd);
-	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", _c("None", "path"));
-
-	_themePathClearButton = addClearButton(tab, "GlobalOptions_Paths.ThemePathClearButton", kThemePathClearCmd);
-
-	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
-	else
-		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _c("Extra Path:", "lowres"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
-	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _c("None", "path"), _("Specifies path to additional data used by all games or ScummVM"));
-
-	_extraPathClearButton = addClearButton(tab, "GlobalOptions_Paths.ExtraPathClearButton", kExtraPathClearCmd);
-
-#ifdef DYNAMIC_MODULES
-	if (g_system->getOverlayWidth() > 320)
-		new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _("Plugins Path:"), nullptr, kChoosePluginsDirCmd);
-	else
-		new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _c("Plugins Path:", "lowres"), nullptr, kChoosePluginsDirCmd);
-	_pluginsPath = new StaticTextWidget(tab, "GlobalOptions_Paths.PluginsPath", _c("None", "path"));
-
-	_pluginsPathClearButton = addClearButton(tab, "GlobalOptions_Paths.PluginsPathClearButton", kPluginsPathClearCmd);
-#endif
-#endif
+	addPathsControls(tab, "GlobalOptions_Paths.", g_system->getOverlayWidth() <= 320);
 
 	//
 	// 6) The miscellaneous tab
@@ -1663,102 +1620,7 @@ void GlobalOptionsDialog::build() {
 		tab->addTab(_("Misc"), "GlobalOptions_Misc");
 	else
 		tab->addTab(_c("Misc", "lowres"), "GlobalOptions_Misc");
-
-	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", _("Theme:"), nullptr, kChooseThemeCmd);
-	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
-
-
-	_rendererPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.RendererPopupDesc", _("GUI renderer:"));
-	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.RendererPopup");
-
-	if (g_system->getOverlayWidth() > 320) {
-		for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
-			_rendererPopUp->appendEntry(_(GUI::ThemeEngine::_rendererModes[i].name), GUI::ThemeEngine::_rendererModes[i].mode);
-	} else {
-		for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
-			_rendererPopUp->appendEntry(_(GUI::ThemeEngine::_rendererModes[i].shortname), GUI::ThemeEngine::_rendererModes[i].mode);
-	}
-
-	if (g_system->getOverlayWidth() > 320)
-		_autosavePeriodPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopupDesc", _("Autosave:"));
-	else
-		_autosavePeriodPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopupDesc", _c("Autosave:", "lowres"));
-	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopup");
-
-	for (int i = 0; savePeriodLabels[i]; i++) {
-		_autosavePeriodPopUp->appendEntry(_(savePeriodLabels[i]), savePeriodValues[i]);
-	}
-
-#ifdef GUI_ENABLE_KEYSDIALOG
-	new ButtonWidget(tab, "GlobalOptions_Misc.KeysButton", _("Keys"), nullptr, kChooseKeyMappingCmd);
-#endif
-
-	// TODO: joystick setting
-
-
-#ifdef USE_TRANSLATION
-	_guiLanguagePopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.GuiLanguagePopupDesc", _("GUI language:"), _("Language of ScummVM GUI"));
-	_guiLanguagePopUp = new PopUpWidget(tab, "GlobalOptions_Misc.GuiLanguagePopup");
-#ifdef USE_DETECTLANG
-	_guiLanguagePopUp->appendEntry(_("<default>"), Common::kTranslationAutodetectId);
-#endif // USE_DETECTLANG
-	_guiLanguagePopUp->appendEntry("English", Common::kTranslationBuiltinId);
-	_guiLanguagePopUp->appendEntry("", 0);
-	Common::TLangArray languages = TransMan.getSupportedLanguageNames();
-	Common::TLangArray::iterator lang = languages.begin();
-	while (lang != languages.end()) {
-		_guiLanguagePopUp->appendEntry(lang->name, lang->id);
-		lang++;
-	}
-
-	// Select the currently configured language or default/English if
-	// nothing is specified.
-	if (ConfMan.hasKey("gui_language") && !ConfMan.get("gui_language").empty())
-		_guiLanguagePopUp->setSelectedTag(TransMan.parseLanguage(ConfMan.get("gui_language")));
-	else
-#ifdef USE_DETECTLANG
-		_guiLanguagePopUp->setSelectedTag(Common::kTranslationAutodetectId);
-#else // !USE_DETECTLANG
-		_guiLanguagePopUp->setSelectedTag(Common::kTranslationBuiltinId);
-#endif // USE_DETECTLANG
-
-	_guiLanguageUseGameLanguageCheckbox = new CheckboxWidget(tab, "GlobalOptions_Misc.GuiLanguageUseGameLanguage",
-			_("Switch the GUI language to the game language"),
-			_("When starting a game, change the GUI language to the game language."
-			"That way, if a game uses the ScummVM save and load dialogs, they are "
-			"in the same language as the game.")
-	);
-
-	if (ConfMan.hasKey("gui_use_game_language")) {
-		_guiLanguageUseGameLanguageCheckbox->setState(ConfMan.getBool("gui_use_game_language", _domain));
-	}
-
-#endif // USE_TRANSLATION
-
-	if (g_system->hasFeature(OSystem::kFeatureSystemBrowserDialog)) {
-		_useSystemDialogsCheckbox = new CheckboxWidget(tab, "GlobalOptions_Misc.UseSystemDialogs",
-			_("Use native system file browser"),
-			_("Use the native system file browser instead of the ScummVM one to select a file or directory.")
-		);
-
-		_useSystemDialogsCheckbox->setState(ConfMan.getBool("gui_browser_native", _domain));
-	}
-
-#ifdef USE_UPDATES
-	_updatesPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.UpdatesPopupDesc", _("Update check:"), _("How often to check ScummVM updates"));
-	_updatesPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.UpdatesPopup");
-
-	const int *vals = Common::UpdateManager::getUpdateIntervals();
-
-	while (*vals != -1) {
-		_updatesPopUp->appendEntry(Common::UpdateManager::updateIntervalToString(*vals), *vals);
-		vals++;
-	}
-
-	_updatesPopUp->setSelectedTag(Common::UpdateManager::normalizeInterval(ConfMan.getInt("updates_check")));
-
-	new ButtonWidget(tab, "GlobalOptions_Misc.UpdatesCheckManuallyButton", _("Check now"), nullptr, kUpdatesCheckCmd);
-#endif
+	addMiscControls(tab, "GlobalOptions_Misc.", g_system->getOverlayWidth() <= 320);
 
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
@@ -1795,30 +1657,7 @@ void GlobalOptionsDialog::build() {
 		tab->addTab(_("Accessibility"), "GlobalOptions_Accessibility");
 	else
 		tab->addTab(_c("Accessibility", "lowres"), "GlobalOptions_Accessibility");
-	_ttsCheckbox = new CheckboxWidget(tab, "GlobalOptions_Accessibility.TTSCheckbox",
-			_("Use Text to speech"), _("Will read text in gui on mouse over."));
-	if (ConfMan.hasKey("tts_enabled"))
-		_ttsCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
-	else
-		_ttsCheckbox->setState(false);
-
-	_ttsVoiceSelectionPopUp = new PopUpWidget(tab, "GlobalOptions_Accessibility.TTSVoiceSelection");
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	Common::Array<Common::TTSVoice> voices;
-	if (ttsMan != nullptr)
-		voices = ttsMan->getVoicesArray();
-
-	for(unsigned i = 0; i < voices.size(); i++) {
-		_ttsVoiceSelectionPopUp->appendEntry(voices[i].getDescription(), i);
-	}
-	if (voices.empty())
-		_ttsVoiceSelectionPopUp->appendEntry("None", 0);
-
-	if (ConfMan.hasKey("tts_voice") && (unsigned) ConfMan.getInt("tts_voice", _domain) < voices.size())
-		_ttsVoiceSelectionPopUp->setSelectedTag(ConfMan.getInt("tts_voice", _domain)) ;
-	else
-		_ttsVoiceSelectionPopUp->setSelectedTag(0);
-
+	addAccessibilityControls(tab, "GlobalOptions_Accessibility.");
 #endif // USE_TTS
 
 	// Activate the first tab
@@ -1911,6 +1750,154 @@ void GlobalOptionsDialog::clean() {
 #endif
 
 	OptionsDialog::clean();
+}
+
+void GlobalOptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefix) {
+	OptionsDialog::addMIDIControls(boss, prefix);
+
+#ifdef USE_FLUIDSYNTH
+	new ButtonWidget(boss, prefix + "mcFluidSynthSettings", _("FluidSynth Settings"), nullptr, kFluidSynthSettingsCmd);
+#endif
+}
+
+void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
+#if !defined(__DC__)
+	// These two buttons have to be extra wide, or the text will be
+	// truncated in the small version of the GUI.
+
+	// Save game path
+	if (!lowres)
+		new ButtonWidget(boss, prefix + "SaveButton", _("Save Path:"), _("Specifies where your saved games are put"), kChooseSaveDirCmd);
+	else
+		new ButtonWidget(boss, prefix + "SaveButton", _c("Save Path:", "lowres"), _("Specifies where your saved games are put"), kChooseSaveDirCmd);
+	_savePath = new StaticTextWidget(boss, prefix + "SavePath", "/foo/bar", _("Specifies where your saved games are put"));
+
+	_savePathClearButton = addClearButton(boss, prefix + "SavePathClearButton", kSavePathClearCmd);
+
+	if (!lowres)
+		new ButtonWidget(boss, prefix + "ThemeButton", _("Theme Path:"), nullptr, kChooseThemeDirCmd);
+	else
+		new ButtonWidget(boss, prefix + "ThemeButton", _c("Theme Path:", "lowres"), nullptr, kChooseThemeDirCmd);
+	_themePath = new StaticTextWidget(boss, prefix + "ThemePath", _c("None", "path"));
+
+	_themePathClearButton = addClearButton(boss, prefix + "ThemePathClearButton", kThemePathClearCmd);
+
+	if (!lowres)
+		new ButtonWidget(boss, prefix + "ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
+	else
+		new ButtonWidget(boss, prefix + "ExtraButton", _c("Extra Path:", "lowres"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
+	_extraPath = new StaticTextWidget(boss, prefix + "ExtraPath", _c("None", "path"), _("Specifies path to additional data used by all games or ScummVM"));
+
+	_extraPathClearButton = addClearButton(boss, prefix + "ExtraPathClearButton", kExtraPathClearCmd);
+
+#ifdef DYNAMIC_MODULES
+	if (!lowres)
+		new ButtonWidget(boss, prefix + "PluginsButton", _("Plugins Path:"), nullptr, kChoosePluginsDirCmd);
+	else
+		new ButtonWidget(boss, prefix + "PluginsButton", _c("Plugins Path:", "lowres"), nullptr, kChoosePluginsDirCmd);
+	_pluginsPath = new StaticTextWidget(boss, prefix + "PluginsPath", _c("None", "path"));
+
+	_pluginsPathClearButton = addClearButton(tab, "GlobalOptions_Paths.PluginsPathClearButton", kPluginsPathClearCmd);
+#endif
+#endif
+}
+
+void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
+	new ButtonWidget(boss, prefix + "ThemeButton", _("Theme:"), nullptr, kChooseThemeCmd);
+	_curTheme = new StaticTextWidget(boss, prefix + "CurTheme", g_gui.theme()->getThemeName());
+
+
+	_rendererPopUpDesc = new StaticTextWidget(boss, prefix + "RendererPopupDesc", _("GUI renderer:"));
+	_rendererPopUp = new PopUpWidget(boss, prefix + "RendererPopup");
+
+	if (!lowres) {
+		for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
+			_rendererPopUp->appendEntry(_(GUI::ThemeEngine::_rendererModes[i].name), GUI::ThemeEngine::_rendererModes[i].mode);
+	} else {
+		for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
+			_rendererPopUp->appendEntry(_(GUI::ThemeEngine::_rendererModes[i].shortname), GUI::ThemeEngine::_rendererModes[i].mode);
+	}
+
+	if (!lowres)
+		_autosavePeriodPopUpDesc = new StaticTextWidget(boss, prefix + "AutosavePeriodPopupDesc", _("Autosave:"));
+	else
+		_autosavePeriodPopUpDesc = new StaticTextWidget(boss, prefix + "AutosavePeriodPopupDesc", _c("Autosave:", "lowres"));
+	_autosavePeriodPopUp = new PopUpWidget(boss, prefix + "AutosavePeriodPopup");
+
+	for (int i = 0; savePeriodLabels[i]; i++) {
+		_autosavePeriodPopUp->appendEntry(_(savePeriodLabels[i]), savePeriodValues[i]);
+	}
+
+#ifdef GUI_ENABLE_KEYSDIALOG
+	new ButtonWidget(boss, prefix + "KeysButton", _("Keys"), nullptr, kChooseKeyMappingCmd);
+#endif
+
+	// TODO: joystick setting
+
+
+#ifdef USE_TRANSLATION
+	_guiLanguagePopUpDesc = new StaticTextWidget(boss, prefix + "GuiLanguagePopupDesc", _("GUI language:"), _("Language of ScummVM GUI"));
+	_guiLanguagePopUp = new PopUpWidget(boss, prefix + "GuiLanguagePopup");
+#ifdef USE_DETECTLANG
+	_guiLanguagePopUp->appendEntry(_("<default>"), Common::kTranslationAutodetectId);
+#endif // USE_DETECTLANG
+	_guiLanguagePopUp->appendEntry("English", Common::kTranslationBuiltinId);
+	_guiLanguagePopUp->appendEntry("", 0);
+	Common::TLangArray languages = TransMan.getSupportedLanguageNames();
+	Common::TLangArray::iterator lang = languages.begin();
+	while (lang != languages.end()) {
+		_guiLanguagePopUp->appendEntry(lang->name, lang->id);
+		lang++;
+	}
+
+	// Select the currently configured language or default/English if
+	// nothing is specified.
+	if (ConfMan.hasKey("gui_language") && !ConfMan.get("gui_language").empty())
+		_guiLanguagePopUp->setSelectedTag(TransMan.parseLanguage(ConfMan.get("gui_language")));
+	else
+#ifdef USE_DETECTLANG
+		_guiLanguagePopUp->setSelectedTag(Common::kTranslationAutodetectId);
+#else // !USE_DETECTLANG
+		_guiLanguagePopUp->setSelectedTag(Common::kTranslationBuiltinId);
+#endif // USE_DETECTLANG
+
+	_guiLanguageUseGameLanguageCheckbox = new CheckboxWidget(boss, prefix + "GuiLanguageUseGameLanguage",
+			_("Switch the GUI language to the game language"),
+			_("When starting a game, change the GUI language to the game language."
+			"That way, if a game uses the ScummVM save and load dialogs, they are "
+			"in the same language as the game.")
+	);
+
+	if (ConfMan.hasKey("gui_use_game_language")) {
+		_guiLanguageUseGameLanguageCheckbox->setState(ConfMan.getBool("gui_use_game_language", _domain));
+	}
+
+#endif // USE_TRANSLATION
+
+	if (g_system->hasFeature(OSystem::kFeatureSystemBrowserDialog)) {
+		_useSystemDialogsCheckbox = new CheckboxWidget(boss, prefix + "UseSystemDialogs",
+			_("Use native system file browser"),
+			_("Use the native system file browser instead of the ScummVM one to select a file or directory.")
+		);
+
+		_useSystemDialogsCheckbox->setState(ConfMan.getBool("gui_browser_native", _domain));
+	}
+
+#ifdef USE_UPDATES
+	_updatesPopUpDesc = new StaticTextWidget(boss, prefix + "UpdatesPopupDesc", _("Update check:"), _("How often to check ScummVM updates"));
+	_updatesPopUp = new PopUpWidget(boss, prefix + "UpdatesPopup");
+
+	const int *vals = Common::UpdateManager::getUpdateIntervals();
+
+	while (*vals != -1) {
+		_updatesPopUp->appendEntry(Common::UpdateManager::updateIntervalToString(*vals), *vals);
+		vals++;
+	}
+
+	_updatesPopUp->setSelectedTag(Common::UpdateManager::normalizeInterval(ConfMan.getInt("updates_check")));
+
+	new ButtonWidget(boss, prefix + "UpdatesCheckManuallyButton", _("Check now"), nullptr, kUpdatesCheckCmd);
+#endif
 }
 
 #ifdef USE_CLOUD
@@ -2006,6 +1993,34 @@ void GlobalOptionsDialog::addNetworkControls(GuiObject *boss, const Common::Stri
 }
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
+
+#ifdef USE_TTS
+void GlobalOptionsDialog::addAccessibilityControls(GuiObject *boss, const Common::String &prefix) {
+	_ttsCheckbox = new CheckboxWidget(boss, prefix + "TTSCheckbox",
+			_("Use Text to speech"), _("Will read text in gui on mouse over."));
+	if (ConfMan.hasKey("tts_enabled"))
+		_ttsCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
+	else
+		_ttsCheckbox->setState(false);
+
+	_ttsVoiceSelectionPopUp = new PopUpWidget(boss, prefix + "TTSVoiceSelection");
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	Common::Array<Common::TTSVoice> voices;
+	if (ttsMan != nullptr)
+		voices = ttsMan->getVoicesArray();
+
+	for(unsigned i = 0; i < voices.size(); i++) {
+		_ttsVoiceSelectionPopUp->appendEntry(voices[i].getDescription(), i);
+	}
+	if (voices.empty())
+		_ttsVoiceSelectionPopUp->appendEntry("None", 0);
+
+	if (ConfMan.hasKey("tts_voice") && (unsigned) ConfMan.getInt("tts_voice", _domain) < voices.size())
+		_ttsVoiceSelectionPopUp->setSelectedTag(ConfMan.getInt("tts_voice", _domain)) ;
+	else
+		_ttsVoiceSelectionPopUp->setSelectedTag(0);
+}
+#endif
 
 void GlobalOptionsDialog::apply() {
 	OptionsDialog::apply();
