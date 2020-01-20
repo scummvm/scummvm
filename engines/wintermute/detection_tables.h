@@ -35,6 +35,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"alphapolaris",    "Alpha Polaris"},
 	{"apeiron",         "Apeiron"},
 	{"artofmurder1",    "Art of Murder 1: FBI Confidential"},
+	{"barrowhilldp",    "Barrow Hill - The Dark Path"},
 	{"basisoctavus",    "Basis Octavus"},
 	{"bickadoodle",     "Bickadoodle"},
 	{"bookofgron",      "Book of Gron Part One"},
@@ -380,6 +381,16 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("artofmurder1", "Demo",
 		WME_ENTRY2s("data.dcp", "99d63dfee4ea97d31530649c929bee45", 81127581,
 					"de.dcp", "e97e2e18b26e5eff916c73f720d5f4f2", 17737492), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_1),
+
+	// Barrow Hill - The Dark Path (Steam, September 2018) (English)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("barrowhilldp", "",
+		WME_ENTRY1s("data.dcp", "6b7c8f8185a80c50a71e068aad82862e", 1066752), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Barrow Hill - The Dark Path (Steam, September 2018) (German)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("barrowhilldp", "",
+		WME_ENTRY1s("data.dcp", "958b89bd394bbaae17a3abe51eb00b5b", 1066776), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Basis Octavus
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
