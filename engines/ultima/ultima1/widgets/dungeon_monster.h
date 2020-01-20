@@ -31,12 +31,22 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+enum {
+	// Vegeta, what does the scouter say about his power level?
+	ITS_OVER_9000 = 10000
+};
+
 /**
  * Implements monsters within the dungeons
  */
 class DungeonMonster : public DungeonWidget, public Shared::Maps::DungeonCreature {
 private:
 	DungeonWidgetId _monsterId;
+private:
+	/**
+	 * Called when the monster is killed
+	 */
+	void monsterDead();
 protected:
 	/**
 	 * Handles moving creatures
@@ -102,6 +112,11 @@ public:
 	 * Handles attacking the player
 	 */
 	virtual void attackParty() override;
+
+	/**
+	 * Handles the player attacking the monster
+	 */
+	void attackMonster(uint effectNum, uint agility, uint damage);
 };
 
 } // End of namespace Widgets

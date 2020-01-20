@@ -24,6 +24,7 @@
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/maps/map_tile.h"
+#include "ultima/ultima1/widgets/dungeon_monster.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -39,8 +40,9 @@ void Kill::dungeonCast(Maps::MapDungeon *map) {
 	newPos = map->getPosition() + map->getDirectionDelta();
 	map->getTileAt(newPos, &tile);
 
-	if (tile._widget) {
-		//TODO: widget->
+	Widgets::DungeonMonster *monster = dynamic_cast<Widgets::DungeonMonster *>(tile._widget);
+	if (monster) {
+		monster->attackMonster(5, 101, Widgets::ITS_OVER_9000);
 	} else {
 		// Failed
 		Spell::dungeonCast(map);

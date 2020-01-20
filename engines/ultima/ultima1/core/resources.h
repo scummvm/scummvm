@@ -76,6 +76,8 @@ public:
 	const char *GREMLIN_STOLE;
 	const char *MENTAL_ATTACK;
 	const char *MISSED;
+	const char *KILLED;
+	const char *DESTROYED;
 	const char *THIEF_STOLE;
 	const char *A, *AN;
 	const char *HIT;
@@ -137,6 +139,7 @@ public:
 	const char *TELEPORTED;
 	const char *FIELD_CREATED;
 	const char *FIELD_DESTROYED;
+	const char *QUEST_COMPLETED;
 
 	const char *GROCERY_NAMES[8];
 	const char *GROCERY_SELL;
