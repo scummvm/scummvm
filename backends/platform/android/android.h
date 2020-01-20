@@ -80,8 +80,6 @@ private:
 
 	Common::String getSystemProperty(const char *name) const;
 
-	void setupKeymapper();
-
 protected:
 	virtual Common::EventSource *getDefaultEventSource() { return this; }
 

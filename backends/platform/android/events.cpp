@@ -52,31 +52,6 @@ static inline T scalef(T in, float numerator, float denominator) {
 
 static const int kQueuedInputEventDelay = 50;
 
-void OSystem_Android::setupKeymapper() {
-#ifdef ENABLE_KEYMAPPER
-	using namespace Common;
-
-	Keymapper *mapper = getEventManager()->getKeymapper();
-
-	HardwareInputSet *inputSet = new HardwareInputSet();
-
-	keySet->addHardwareInput(
-		new HardwareInput("n", KeyState(KEYCODE_n), "n (vk)"));
-
-	mapper->registerHardwareInputSet(inputSet);
-
-	Keymap *globalMap = new Keymap(kGlobalKeymapName);
-	Action *act;
-
-	act = new Action(globalMap, "VIRT", "Display keyboard");
-	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, KBD_CTRL));
-
-	mapper->addGlobalKeymap(globalMap);
-
-	mapper->pushKeymap(kGlobalKeymapName);
-#endif
-}
-
 void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 								int arg4, int arg5, int arg6) {
 	Common::Event e;

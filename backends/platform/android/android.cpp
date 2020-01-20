@@ -56,7 +56,6 @@
 #include "common/config-manager.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
-#include "backends/keymapper/keymapper.h"
 #include "backends/mutex/pthread/pthread-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -331,10 +330,6 @@ void OSystem_Android::initBackend() {
 		_swap_menu_and_back = ConfMan.getBool("swap_menu_and_back_buttons");
 	else
 		ConfMan.setBool("swap_menu_and_back_buttons", false);
-
-	// must happen before creating TimerManager to avoid race in
-	// creating EventManager
-	setupKeymapper();
 
 	// BUG: "transient" ConfMan settings get nuked by the options
 	// screen. Passing the savepath in this way makes it stick
