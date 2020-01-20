@@ -21,9 +21,11 @@
  */
 
 #include "ultima/ultima1/u1dialogs/weaponry.h"
+#include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/shared/engine/messages.h"
+#include "ultima/shared/core/str.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -31,27 +33,37 @@ namespace U1Dialogs {
 
 EMPTY_MESSAGE_MAP(Weaponry, BuySellDialog);
 
-Weaponry::Weaponry(Ultima1Game *game, int weaponryNum) : BuySellDialog(game, game->_res->WEAPONRY_NAMES[weaponryNum]) {
-	Shared::Character &c = *game->_party;
-	_weaponsPresent.resize(c._weapons.size());
-
+Weaponry::Weaponry(Ultima1Game *game, int weaponryNum) : BuySellDialog(game, game->_res->WEAPONRY_NAMES[weaponryNum]),
+		_weaponryNum(weaponryNum) {
 }
 
 void Weaponry::setMode(BuySell mode) {
+	Shared::Character &c = *_game->_party;
+
 	switch (mode) {
-	case BUY:
+	case BUY: {
 		addInfoMsg(Common::String::format("%s%s", _game->_res->ACTION_NAMES[19], _game->_res->BUY), false, true);
 		_mode = BUY;
 		setDirty();
 
+		// Set up a flag list of which weapons the store sells
+		_weaponsPresent.resize(c._weapons.size());
+
 		getInput(true, 3);
 		break;
+	}
 
 	case SELL:
 		addInfoMsg(Common::String::format("%s%s", _game->_res->ACTION_NAMES[19], _game->_res->SELL), false, true);
 
+		if (c._weapons.hasNothing()) {
+			addInfoMsg(_game->_res->NOTHING);
+			closeShortly();
+		} else {
+			getKeypress();
+		}
+
 		_mode = SELL;
-		_closeCounter = 1;
 		setDirty();
 		break;
 
@@ -71,11 +83,65 @@ void Weaponry::draw() {
 		break;
 
 	case SELL:
-//		centerText(game->_res->Weaponry_SELL, 4);
+		drawSell();
 		break;
 
 	default:
 		break;
+	}
+}
+
+void Weaponry::drawSell() {
+	Shared::Gfx::VisualSurface s = getSurface();
+	const Shared::Character &c = *_game->_party;
+	int lineCount = c._weapons.itemsCount();
+	int titleLines = String(_title).split("\r\n").size();
+	Common::String line;
+
+	if (lineCount == 0) {
+		centerText(_game->_res->NO_WEAPONRY_TO_SELL, titleLines + 2);
+	} else {
+		for (uint idx = 1; idx < c._weapons.size(); ++idx) {
+			const Weapon &weapon = *static_cast<Weapon *>(c._weapons[idx]);
+			if (!weapon.empty()) {
+				line = Common::String::format("%c) %s", 'a' + idx, weapon._longName.c_str());
+				s.writeString(line, TextPoint(5, idx + titleLines + 1));
+				line = Common::String::format("-%4u", weapon.getSellCost());
+				s.writeString(line, TextPoint(22, idx + titleLines + 1));
+			}
+		}
+	}
+}
+
+bool Weaponry::CharacterInputMsg(CCharacterInputMsg &msg) {
+	Shared::Character &c = *_game->_party;
+
+	if (_mode == SELL && !c._weapons.hasNothing()) {
+		if (msg._keyState.keycode >= Common::KEYCODE_b &&
+			msg._keyState.keycode < (Common::KEYCODE_a + (int)c._weapons.size())) {
+			uint weaponNum = msg._keyState.keycode - Common::KEYCODE_a;
+
+			if (!c._weapons[weaponNum]->empty()) {
+				// Display the sold weapon in the info area
+				Weapon &weapon = *static_cast<Weapon *>(c._weapons[weaponNum]);
+				addInfoMsg(weapon._longName);
+
+				// Give coins for weapon and remove it from the inventory
+				c._coins += weapon.getSellCost();
+				if (weapon.decrQuantity() && (int)weaponNum == c._equippedWeapon)
+					c.removeWeapon();
+
+				// Close the dialog
+				_game->endOfTurn();
+				hide();
+				return true;
+			}
+		}
+
+		nothing();
+		return true;
+	} else {
+		return BuySellDialog::CharacterInputMsg(msg);
 	}
 }
 

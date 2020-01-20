@@ -136,7 +136,7 @@ void BuySellDialog::setMode(BuySell mode) {
 
 	if (_mode == SOLD || _mode == CANT_AFFORD)
 		// Start dialog close countdown
-		_closeCounter = 1;
+		closeShortly();
 }
 
 void BuySellDialog::nothing() {
