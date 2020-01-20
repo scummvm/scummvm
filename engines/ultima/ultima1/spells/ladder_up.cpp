@@ -23,6 +23,7 @@
 #include "ultima/ultima1/spells/ladder_up.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/maps/map_tile.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,7 +33,17 @@ LadderUp::LadderUp() : Spell(SPELL_LADDER_UP) {
 }
 
 void LadderUp::dungeonCast(Maps::MapDungeon *map) {
-	// TODO
+	Point pt = map->getPosition();
+	Maps::U1MapTile tile;
+	map->getTileAt(pt, &tile);
+
+	if (!tile._isBeams && ((pt.x & 1) || (pt.y & 1))) {
+		map->setTileAt(pt, Maps::DTILE_LADDER_UP);
+		addInfoMsg(_game->_res->LADDER_CREATED);
+	} else {
+		// Failed
+		Spell::dungeonCast(map);
+	}
 }
 
 } // End of namespace Spells

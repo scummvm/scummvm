@@ -225,7 +225,7 @@ void DungeonMonster::attackMonster(uint effectNum, uint agility, uint damage) {
 			Shared::Character &c = *game->_party._currentCharacter;
 			uint experience = game->getRandomNumber(2, map->getLevel() * map->getLevel() + 10);
 			c._experience += experience;
-			game->_dungeonExitHitPoints += experience * 2;
+			map->_dungeonExitHitPoints = MIN(map->_dungeonExitHitPoints + experience * 2, 9999U);
 
 			// Delete the monster and create a new one
 			map->removeWidget(this);
