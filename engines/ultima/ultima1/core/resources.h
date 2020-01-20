@@ -115,6 +115,7 @@ public:
 	const char *NO_KEY;
 	const char *INCORRECT_KEY;
 	const char *DOOR_IS_OPEN;
+	const char *CANT_LEAVE_IT_HERE;
 
 	const char *GROCERY_NAMES[8];
 	const char *GROCERY_SELL;

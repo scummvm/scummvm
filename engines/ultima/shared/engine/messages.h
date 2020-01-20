@@ -345,6 +345,11 @@ MESSAGE0(CUnlockMsg);
  */
 MESSAGE0(CViewChangeMsg);
 
+/**
+ * Used to trigger an exit action
+ */
+MESSAGE0(CExitTransportMsg);
+
 } // End of namespace Shared
 } // End of namespace Ultima
 

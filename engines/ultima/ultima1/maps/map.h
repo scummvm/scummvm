@@ -131,6 +131,7 @@ public:
 	PASS_METHOD(talk)
 	PASS_METHOD(unlock)
 	PASS_METHOD(view)
+	PASS_METHOD(disembark)
 
 	/**
 	 * Handles dropping an amount of coins

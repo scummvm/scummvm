@@ -71,17 +71,27 @@ public:
 	/**
 	 * Do an enter action
 	 */
-	virtual void enter();
+	virtual void enter() override;
 
 	/**
 	 * Do an inform action
 	 */
-	virtual void inform();
+	virtual void inform() override;
+
+	/**
+	 * Do an exit transport action
+	 */
+	virtual void disembark() override;
 
 	/**
 	 * Get the lands number the player is currently within
 	 */
 	uint getLandsNumber() const;
+
+	/**
+	 * Adds a widget for the player being on foot, and sets it to the active player widget
+	 */
+	void addOnFoot();
 };
 
 } // End of namespace Maps

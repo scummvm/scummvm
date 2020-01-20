@@ -50,6 +50,7 @@ MAP_ACTION(Steal, 18, steal)
 MAP_ACTION(Transact, 19, talk)
 MAP_ACTION(Unlock, 20, unlock)
 MAP_ACTION(ViewChange, 21, view)
+MAP_ACTION(ExitTransport, 23, disembark)
 }
 
 namespace U1Gfx {
@@ -67,7 +68,7 @@ ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	_viewportMap = new ViewportMap(this);
 	
-	_actions.resize(14);
+	_actions.resize(15);
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Shared::Actions::Huh(this, game->_res->HUH);
 	_actions[2] = new Actions::Drop(this);
@@ -82,6 +83,7 @@ ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect
 	_actions[11] = new Actions::Transact(this);
 	_actions[12] = new Actions::Unlock(this);
 	_actions[13] = new Actions::ViewChange(this);
+	_actions[14] = new Actions::ExitTransport(this);
 }
 
 ViewGame::~ViewGame() {
@@ -242,6 +244,11 @@ bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
 	case Common::KEYCODE_v: {
 		Shared::CViewChangeMsg view;
 		view.execute(this);
+		break;
+	}
+	case Common::KEYCODE_x: {
+		Shared::CExitTransportMsg exit;
+		exit.execute(this);
 		break;
 	}
 	case Common::KEYCODE_SPACE: {

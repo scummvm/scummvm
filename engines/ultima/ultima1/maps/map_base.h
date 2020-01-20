@@ -76,6 +76,7 @@ public:
 	DEFAULT_ACTION(talk)
 	DEFAULT_ACTION(unlock)
 	DEFAULT_ACTION(view)
+	DEFAULT_ACTION(disembark)
 
 	/**
 	 * Handles dropping an amount of coins
