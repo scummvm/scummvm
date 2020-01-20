@@ -23,6 +23,7 @@
 #include "ultima/ultima1/spells/kill.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/maps/map_tile.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,7 +33,18 @@ Kill::Kill() : Spell(SPELL_KILL) {
 }
 
 void Kill::dungeonCast(Maps::MapDungeon *map) {
-	// TODO
+	Point newPos;
+	Maps::U1MapTile tile;
+
+	newPos = map->getPosition() + map->getDirectionDelta();
+	map->getTileAt(newPos, &tile);
+
+	if (tile._widget) {
+		//TODO: widget->
+	} else {
+		// Failed
+		Spell::dungeonCast(map);
+	}
 }
 
 } // End of namespace Spells

@@ -37,7 +37,7 @@ void Creature::update(bool isPreUpdate) {
 		movement();
 		_isAttacking = attackDistance() != 0;
 	} else if (_isAttacking && !_gameRef->_party.isDead()) {
-		attack();
+		attackParty();
 	}
 }
 

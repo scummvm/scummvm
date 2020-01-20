@@ -76,7 +76,7 @@ void DungeonMonster::update(bool isPreUpdate) {
 	int distance = ABS(delta.x) + ABS(delta.y);
 
 	if (distance == 1) {
-		attack();
+		attackParty();
 	} else if (distance < 8) {
 		movement();
 	}
@@ -122,7 +122,7 @@ Shared::Maps::MapWidget::CanMove DungeonMonster::canMoveTo(Shared::Maps::MapBase
 	return YES;
 }
 
-void DungeonMonster::attack() {
+void DungeonMonster::attackParty() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
 	Point playerPos = _map->_playerWidget->_position;
 	//Point delta = playerPos - _position;

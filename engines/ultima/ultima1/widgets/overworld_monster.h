@@ -44,9 +44,9 @@ private:
 	uint _attackStrength;
 protected:
 	/**
-	 * Handles attacks
+	 * Handles attacking the party
 	 */
-	virtual void attack() override;
+	virtual void attackParty() override;
 
 	/**
 	 * Handles moving creatures

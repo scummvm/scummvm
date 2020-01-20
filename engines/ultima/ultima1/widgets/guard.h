@@ -44,9 +44,9 @@ protected:
 	virtual void movement() override;
 
 	/**
-	 * Handles attacks
+	 * Handles attacking the party
 	 */
-	virtual void attack();
+	virtual void attackParty() override;
 public:
 	DECLARE_WIDGET(Guard)
 

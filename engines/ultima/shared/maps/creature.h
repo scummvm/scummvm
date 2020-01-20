@@ -58,9 +58,9 @@ protected:
 	virtual void movement() {}
 
 	/**
-	 * Handles attacks
+	 * Handles attacking the player
 	 */
-	virtual void attack() {}
+	virtual void attackParty() {}
 public:
 	/**
 	 * Constructor
