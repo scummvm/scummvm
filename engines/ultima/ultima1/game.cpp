@@ -98,5 +98,9 @@ bool Ultima1Game::canSaveGameStateCurrently() {
 	return _currentView->getName() == "Game";
 }
 
+void Ultima1Game::giveTreasure(int coins, int v2) {
+	// TODO
+}
+
 } // End of namespace Ultima1
 } // End of namespace Ultima

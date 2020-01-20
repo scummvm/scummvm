@@ -76,6 +76,11 @@ public:
 	 * Returns true if the game can currently be saved
 	 */
 	virtual bool canSaveGameStateCurrently();
+
+	/**
+	 * Give some treasure
+	 */
+	void giveTreasure(int coins, int v2);
 };
 
 } // End of namespace Ultima1

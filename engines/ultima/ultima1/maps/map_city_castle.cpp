@@ -259,6 +259,11 @@ void MapCity::get() {
 	_game->playFX(1);
 }
 
+void MapCity::unlock() {
+	addInfoMsg(_game->_res->WHAT);
+	_game->playFX(1);
+}
+
 /*-------------------------------------------------------------------*/
 
 void MapCastle::load(Shared::Maps::MapId mapId) {

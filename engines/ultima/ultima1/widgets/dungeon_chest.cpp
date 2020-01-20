@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/widgets/dungeon_chest.h"
+#include "ultima/ultima1/maps/map_dungeon.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 
@@ -37,7 +38,21 @@ DungeonChest::DungeonChest(Ultima1Game *game, Maps::MapBase *map) : DungeonItem(
 	_name = game->_res->DUNGEON_ITEM_NAMES[0];
 }
 
-bool DungeonChest::unlock() {
+bool DungeonChest::open() {
+	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
+	Maps::MapDungeon *map = static_cast<Maps::MapDungeon *>(getMap());
+	Shared::Character &c = *_game->_party._currentCharacter;
+
+	if (_game->getRandomNumber(1, 75) <= c._agility || c._class == CLASS_THIEF) {
+		// Successfully opened
+		addInfoMsg(game->_res->THOU_DOST_FIND);
+		game->giveTreasure(game->getRandomNumber(3, map->getLevel() * map->getLevel() + 9), 0);
+	} else {
+		addInfoMsg(game->_res->SET_OFF_TRAP);
+		game->playFX(2);
+		c._hitPoints -= map->getLevel();
+	}
+
 	// TODO
 	return true;
 }

@@ -22,6 +22,8 @@
 
 #include "ultima/ultima1/widgets/dungeon_coffin.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/maps/map_tile.h"
+#include "ultima/ultima1/maps/map_dungeon.h"
 #include "ultima/ultima1/game.h"
 
 namespace Ultima {
@@ -38,8 +40,26 @@ DungeonCoffin::DungeonCoffin(Ultima1Game *game, Maps::MapBase *map) : DungeonIte
 }
 
 bool DungeonCoffin::open() {
-	// TODO
+	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
+	Maps::MapDungeon *map = static_cast<Maps::MapDungeon *>(_map);
+	Point deltaPos = _map->getDeltaPosition(_map->getDirectionDelta());
+	Maps::U1MapTile deltaTile;
+	_map->getTileAt(deltaPos, &deltaTile);
+	addInfoMsg("");
+
+	if (_game->getRandomNumber(1, 255) < 104 && !deltaTile._isWall && !deltaTile._isSecretDoor && !deltaTile._widget) {
+		shiftTo(deltaPos);
+	} else {
+		addInfoMsg(game->_res->FIND);
+		game->giveTreasure(game->getRandomNumber(3, map->getLevel() * map->getLevel() + 9), 0);
+		map->removeWidget(this);
+	}
+
 	return true;
+}
+
+void DungeonCoffin::shiftTo(const Point &newPos) {
+	// TODO
 }
 
 } // End of namespace Widgets

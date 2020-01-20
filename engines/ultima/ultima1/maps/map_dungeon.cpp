@@ -212,28 +212,6 @@ void MapDungeon::update() {
 	}
 }
 
-void MapDungeon::open() {
-	U1MapTile tile;
-	getTileAt(getPosition(), &tile);
-	addInfoMsg(Common::String::format(" %s", _game->_res->DUNGEON_ITEM_NAMES[1]), false);
-
-	if (!tile._item || !tile._item->open()) {
-		addInfoMsg(_game->_res->NONE_HERE);
-		_game->playFX(1);
-	}
-}
-
-void MapDungeon::unlock() {
-	U1MapTile tile;
-	getTileAt(getPosition(), &tile);
-	addInfoMsg(Common::String::format(" %s", _game->_res->DUNGEON_ITEM_NAMES[0]), false);
-
-	if (!tile._item || !tile._item->unlock()) {
-		addInfoMsg(_game->_res->NONE_HERE);
-		_game->playFX(1);
-	}
-}
-
 void MapDungeon::inform() {
 	U1MapTile currTile, destTile;
 	Point pt = getPosition();
@@ -245,6 +223,24 @@ void MapDungeon::inform() {
 		_data[pt.y][pt.x] = DTILE_DOOR;
 	} else {
 		addInfoMsg(Common::String::format("%s %s", _game->_res->FIND, _game->_res->NOTHING));
+	}
+}
+
+void MapDungeon::open() {
+	U1MapTile tile;
+	getTileAt(getPosition(), &tile);
+	addInfoMsg(Common::String::format(" %s", _game->_res->DUNGEON_ITEM_NAMES[1]), false);
+
+	// If there's an item on the cell, try and open it
+	if (tile._item) {
+		addInfoMsg(Common::String::format("%s ", tile._item->_name.c_str()));
+		if (!tile._item->open()) {
+			MapBase::open();
+			return;
+		}
+	} else {
+		addInfoMsg(_game->_res->NONE_HERE);
+		_game->playFX(1);
 	}
 }
 

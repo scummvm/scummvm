@@ -46,16 +46,10 @@ protected:
 	DungeonItem(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId widgetId);
 public:
 	/**
-	 * Try to open the item
-	 * @returns		True if item was capable of being open
+	 * Try to open/unlock the item
+	 * @returns		True if item was capable of being opened or unlocked
 	 */
 	virtual bool open() { return false; }
-
-	/**
-	 * Try to unlock the item
-	 * @returns		True if item was capable of being unlock
-	 */
-	virtual bool unlock() { return false; }
 };
 
 } // End of namespace Widgets

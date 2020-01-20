@@ -64,7 +64,7 @@ void MapBase::getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool inclu
 		}
 
 		// Check for a dungeon item
-		for (uint idx = 0; idx < _widgets.size(); ++idx) {
+		for (uint idx = 0; idx < _widgets.size() && !mapTile->_item; ++idx) {
 			mapTile->_item = dynamic_cast<Widgets::DungeonItem *>(_widgets[idx].get());
 		}
 	}

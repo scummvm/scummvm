@@ -110,6 +110,8 @@ public:
 	const char *SHAZAM;
 	const char *ALAKAZOT;
 	const char *NO_KINGS_PERMISSION;
+	const char *SET_OFF_TRAP;
+	const char *THOU_DOST_FIND;
 
 	const char *GROCERY_NAMES[8];
 	const char *GROCERY_SELL;
