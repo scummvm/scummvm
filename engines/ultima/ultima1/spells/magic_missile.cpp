@@ -22,6 +22,7 @@
 
 #include "ultima/ultima1/spells/magic_missile.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/widgets/dungeon_monster.h"
 
@@ -36,7 +37,9 @@ void MagicMissile::dungeonCast(Maps::MapDungeon *map) {
 	Widgets::DungeonMonster *monster = map->findCreatureInCurrentDirection();
 
 	if (monster) {
-		// TODO
+		Character *c = *static_cast<Party *>(_game->_party);
+		uint damage = c->getWeaponDamage();
+		monster->attackMonster(5, 101, damage);
 	} else {
 		Spell::dungeonCast(map);
 	}
