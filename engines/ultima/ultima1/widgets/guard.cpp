@@ -52,7 +52,7 @@ void Guard::movement() {
 		_game->playFX(4);
 }
 
-void Guard::attack() {
+void Guard::attackParty() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
 	Shared::Character *c = game->_party._currentCharacter;
 	addInfoMsg(Common::String::format(game->_res->ATTACKED_BY, _name.c_str()));

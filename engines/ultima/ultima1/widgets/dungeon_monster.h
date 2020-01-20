@@ -99,9 +99,9 @@ public:
 	virtual CanMove canMoveTo(const Point &destPos) override;
 
 	/**
-	 * Handles attacks
+	 * Handles attacking the player
 	 */
-	virtual void attack() override;
+	virtual void attackParty() override;
 };
 
 } // End of namespace Widgets
