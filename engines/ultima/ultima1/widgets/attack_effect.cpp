@@ -20,15 +20,17 @@
  *
  */
 
-#include "ultima/ultima1/widgets/hit.h"
+#include "ultima/ultima1/widgets/attack_effect.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-uint Hit::getTileNum() const {
-	// Tile for the round hit effect
-	return 50;
+void AttackEffect::synchronize(Common::Serializer &s) {
+	s.syncAsUint16LE(_tileId);
+	s.syncAsUint16LE(_remainingDistance);
+	s.syncAsUint16LE(_agility);
+	s.syncAsUint16LE(_damage);
 }
 
 } // End of namespace Widgets

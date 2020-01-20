@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima1/widgets/overworld_monster.h"
-#include "ultima/ultima1/widgets/hit.h"
+#include "ultima/ultima1/widgets/attack_effect.h"
 #include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
@@ -77,6 +77,7 @@ void OverworldMonster::attackParty() {
 	
 	addInfoMsg(Common::String::format("%s %s %s", _name.c_str(), game->_res->ATTACKS, _name.c_str()), false);
 
+	/* TODO: Refactor to use attack effects
 	// Set up widget for displaying the moving hit circle
 	Hit *hit = new Hit(_game, _map);
 	_map->addWidget(hit);
@@ -90,6 +91,7 @@ void OverworldMonster::attackParty() {
 		_game->sleep(50);
 
 	} while (++distance <= maxDistance && mapTile._tileId != 3 && (tempDiff.x != 0 || tempDiff.y != 0));
+
 
 	// Calculate damage threshold
 	threshold = (c._stamina / 2) + (c._equippedArmor * 8) + 56;
@@ -117,6 +119,7 @@ void OverworldMonster::attackParty() {
 	}
 
 	_map->removeWidget(hit);
+	*/
 }
 
 } // End of namespace Widgets

@@ -104,6 +104,7 @@ MODULE_OBJS += \
 	ultima1/u1gfx/viewport_dungeon.o \
 	ultima1/u1gfx/viewport_map.o \
 	ultima1/u6gfx/game_view.o \
+	ultima1/widgets/attack_effect.o \
 	ultima1/widgets/bard.o \
 	ultima1/widgets/dungeon_chest.o \
 	ultima1/widgets/dungeon_coffin.o \
@@ -112,7 +113,6 @@ MODULE_OBJS += \
 	ultima1/widgets/dungeon_player.o \
 	ultima1/widgets/dungeon_widget.o \
 	ultima1/widgets/guard.o \
-	ultima1/widgets/hit.o \
 	ultima1/widgets/king.o \
 	ultima1/widgets/merchant.o \
 	ultima1/widgets/merchant_armor.o \
