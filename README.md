@@ -1619,6 +1619,9 @@ games and other games.
     Enter                  - Simulate left mouse button press
     Tab                    - Simulate right mouse button press
 
+  AGI/SCI (Sierra):
+    Ctrl-Shift-d           - Starts the debugger
+
   Beneath a Steel Sky:
     Ctrl-d                 - Starts the debugger
     Ctrl-f                 - Toggle fast mode
