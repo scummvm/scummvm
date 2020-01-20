@@ -82,7 +82,7 @@ public:
 	/**
 	 * Perform an attack
 	 */
-	virtual void attack(int direction);
+	virtual void attack(int direction, int effectId);
 
 	/**
 	 * Cast a spell

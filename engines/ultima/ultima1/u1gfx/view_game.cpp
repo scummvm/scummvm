@@ -257,6 +257,7 @@ bool ViewGame::checkMovement(const Common::KeyState &keyState) {
 
 bool ViewGame::CharacterInputMsg(CCharacterInputMsg &msg) {
 	if (checkMovement(msg._keyState)) {}
+	CHECK(Common::KEYCODE_a, Shared::CAttackMsg)
 	CHECK(Common::KEYCODE_c, Shared::CCastMsg)
 	CHECK(Common::KEYCODE_d, Shared::CDropMsg)
 	CHECK(Common::KEYCODE_e, Shared::CEnterMsg)

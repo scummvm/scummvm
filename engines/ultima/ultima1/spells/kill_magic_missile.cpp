@@ -45,6 +45,7 @@ void KillMagicMIssile::cast(Maps::MapBase *map) {
 
 bool KillMagicMIssile::CharacterInputMsg(CCharacterInputMsg &msg) {
 	Shared::Maps::Direction dir = Shared::Maps::MapWidget::directionFromKey(msg._keyState.keycode);
+	Character &c = *static_cast<Party *>(_game->_party);
 
 	if (dir == Shared::Maps::DIR_NONE) {
 		addInfoMsg(_game->_res->NONE);
@@ -52,13 +53,14 @@ bool KillMagicMIssile::CharacterInputMsg(CCharacterInputMsg &msg) {
 	} else {
 		addInfoMsg(_game->_res->DIRECTION_NAMES[(int)dir - 1]);
 		addInfoMsg(_game->_res->SPELL_PHRASES[_spellId == SPELL_MAGIC_MISSILE ? 12 : 13], false);
+		uint damage = _spellId == SPELL_MAGIC_MISSILE ? c.getWeaponDamage() : 9999;
 
-		Shared::Character &c = *_game->_party;
 		if (c._class == CLASS_CLERIC || _game->getRandomNumber(1, 100) < c._wisdom) {
 			_game->playFX(5);
 			addInfoMsg("");
 
 			// TODO: Non-dungeon damage
+			// damage(dir,  7, 3, damage, 101, "SpellEffect");
 		} else {
 			addInfoMsg(_game->_res->FAILED);
 			_game->playFX(6);

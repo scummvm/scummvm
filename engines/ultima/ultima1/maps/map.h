@@ -135,8 +135,8 @@ public:
 	PASS_METHOD(view)
 	PASS_METHOD(disembark)
 
-	void attack(int direction) {
-		static_cast<MapBase *>(_mapArea)->attack(direction);
+	void attack(int direction, int effectId) {
+		static_cast<MapBase *>(_mapArea)->attack(direction, effectId);
 	}
 
 	/**

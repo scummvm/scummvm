@@ -32,6 +32,7 @@ namespace Actions {
 
 BEGIN_MESSAGE_MAP(Attack, Action)
 	ON_MESSAGE(AttackMsg)
+	ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
 
 bool Attack::AttackMsg(CAttackMsg &msg) {
@@ -44,8 +45,35 @@ bool Attack::AttackMsg(CAttackMsg &msg) {
 	if (weapon._distance == 0) {
 		addInfoMsg("?");
 		game->playFX(1);
+		game->endOfTurn();
+	} else if (msg._direction == Shared::Maps::DIR_NONE) {
+		// Prompt user for direction
+		addInfoMsg(": ", false);
+		Shared::CInfoGetKeypress keyMsg(this);
+		keyMsg.execute(getGame());
 	} else {
-		getMap()->attack(msg._direction);
+		addInfoMsg(": ", false);
+		addInfoMsg(game->_res->DIRECTION_NAMES[(int)msg._direction - 1]);
+
+		getMap()->attack(msg._direction, 7);
+	}
+
+	return true;
+}
+
+bool Attack::CharacterInputMsg(CCharacterInputMsg &msg) {
+	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+	Shared::Maps::Direction dir = Shared::Maps::MapWidget::directionFromKey(msg._keyState.keycode);
+//	Shared::Character &c = *getGame()->_party;
+
+	if (dir == Shared::Maps::DIR_NONE) {
+		addInfoMsg(game->_res->NONE);
+		playFX(1);
+		game->endOfTurn();
+	} else {
+		addInfoMsg(game->_res->DIRECTION_NAMES[(int)dir - 1]);
+
+		getMap()->attack(dir, 7);
 	}
 
 	return true;
