@@ -67,10 +67,10 @@ void Status::draw() {
 
 	for (int idx = 0; idx < count; ++idx) {
 		// Write header
-		s.writeString(game->_res->STATUS_TEXT[idx], TextPoint(0, idx), game->_textColor, game->_bgColor);
+		s.writeString(game->_res->STATUS_TEXT[idx], TextPoint(0, idx));
 
 		uint value = MIN(*vals[idx], (uint)9999);
-		s.writeString(Common::String::format("%4u", value), TextPoint(5, idx), game->_textColor, game->_bgColor);
+		s.writeString(Common::String::format("%4u", value), TextPoint(5, idx));
 	}
 
 	_isDirty = false;

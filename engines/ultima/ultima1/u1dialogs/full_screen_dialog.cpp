@@ -42,7 +42,7 @@ void FullScreenDialog::drawFrame(const Common::String &title) {
 	size_t xStart = 20 - titleLen / 2;
 	ds.drawRightArrow(TextPoint(xStart - 1, 0));
 	s.fillRect(TextRect(xStart, 0, xStart + titleLen, 0), 0);
-	s.writeString(title, TextPoint(xStart + 1, 0), _game->_textColor);
+	s.writeString(title, TextPoint(xStart + 1, 0));
 	ds.drawLeftArrow(TextPoint(xStart + titleLen, 0));
 }
 

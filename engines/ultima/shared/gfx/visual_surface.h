@@ -30,6 +30,9 @@
 
 namespace Ultima {
 namespace Shared {
+
+class GameBase;
+	
 namespace Gfx {
 
 class Font;
@@ -38,8 +41,13 @@ class VisualSurface : public Graphics::ManagedSurface {
 private:
 	Rect _bounds;
 	Point _textPos;
+	byte _textColor;
+	byte _bgColor;
 public:
-	VisualSurface(const Graphics::ManagedSurface &src, const Rect &bounds);
+	/**
+	 * Constructor
+	 */
+	VisualSurface(const Graphics::ManagedSurface &src, const Rect &bounds, GameBase *game = nullptr);
 
 	/**
 	 * Draws a point on the surface
@@ -54,22 +62,22 @@ public:
 	/**
 	 * Write out a string
 	 */
-	void writeString(const Common::String &msg, const Point &pt, byte color, byte bgColor = 0);
+	void writeString(const Common::String &msg, const Point &pt, int color = -1, int bgColor = -1);
 
 	/**
 	 * Write out a string
 	 */
-	void writeString(const Common::String &msg, byte color, byte bgColor = 0);
+	void writeString(const Common::String &msg, int color = -1, int bgColor = -1);
 
 	/**
 	 * Draw a character
 	 */
-	void writeChar(unsigned char c, const Point &pt, byte color, byte bgColor = 0);
+	void writeChar(unsigned char c, const Point &pt, int color = -1, int bgColor = -1);
 
 	/**
 	 * Draw a character
 	 */
-	void writeChar(unsigned char c, byte color, byte bgColor = 0);
+	void writeChar(unsigned char c, int color = -1, int bgColor = -1);
 
 	/**
 	 * Get the current font height

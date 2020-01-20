@@ -136,8 +136,7 @@ void ViewCharacterGeneration::drawFrame(Shared::Gfx::VisualSurface &s) {
 void ViewCharacterGeneration::drawPointsRemaining(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 
-	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[1], _pointsRemaining),
-		TextPoint(6, 4), game->_textColor);
+	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[1], _pointsRemaining), TextPoint(6, 4));
 }
 
 void ViewCharacterGeneration::drawAttributes(Shared::Gfx::VisualSurface &s) {
@@ -145,7 +144,7 @@ void ViewCharacterGeneration::drawAttributes(Shared::Gfx::VisualSurface &s) {
 	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[2],
 		_character->_strength, _character->_agility, _character->_stamina,
 		_character->_charisma, _character->_wisdom, _character->_intelligence),
-		TextPoint(12, 6), game->_textColor);
+		TextPoint(12, 6));
 }
 
 void ViewCharacterGeneration::drawAttributePointers(Shared::Gfx::VisualSurface &s) {
@@ -162,7 +161,7 @@ void ViewCharacterGeneration::drawAttributePointers(Shared::Gfx::VisualSurface &
 
 void ViewCharacterGeneration::drawHelp(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	s.writeString(game->_res->CHAR_GEN_TEXT[3], TextPoint(2, 16), game->_textColor);
+	s.writeString(game->_res->CHAR_GEN_TEXT[3], TextPoint(2, 16));
 }
 
 void ViewCharacterGeneration::drawRace(Shared::Gfx::VisualSurface &s) {
@@ -170,54 +169,54 @@ void ViewCharacterGeneration::drawRace(Shared::Gfx::VisualSurface &s) {
 	s.fillRect(TextRect(6, 2, 37, 4), game->_bgColor);
 	s.fillRect(TextRect(2, 16, 37, 21), game->_bgColor);
 
-	s.writeString(game->_res->CHAR_GEN_TEXT[6], TextPoint(3, 17), game->_textColor);
+	s.writeString(game->_res->CHAR_GEN_TEXT[6], TextPoint(3, 17));
 	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[4], 
 		game->_res->RACE_NAMES[0], game->_res->RACE_NAMES[1],
 		game->_res->RACE_NAMES[2], game->_res->RACE_NAMES[3]),
-		TextPoint(12, 19), game->_textColor);
+		TextPoint(12, 19));
 }
 
 void ViewCharacterGeneration::drawSex(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 
-	s.writeString(game->_res->CHAR_GEN_TEXT[9], TextPoint(14, 13), game->_textColor);
-	s.writeString(game->_res->RACE_NAMES[_character->_race], game->_textColor);
+	s.writeString(game->_res->CHAR_GEN_TEXT[9], TextPoint(14, 13));
+	s.writeString(game->_res->RACE_NAMES[_character->_race]);
 
 	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
-	s.writeString(game->_res->CHAR_GEN_TEXT[7], TextPoint(3, 17), game->_textColor);
+	s.writeString(game->_res->CHAR_GEN_TEXT[7], TextPoint(3, 17));
 	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[5],
-		game->_res->SEX_NAMES[0], game->_res->SEX_NAMES[1]), TextPoint(12, 19), game->_textColor);
+		game->_res->SEX_NAMES[0], game->_res->SEX_NAMES[1]), TextPoint(12, 19));
 }
 
 void ViewCharacterGeneration::drawClass(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 
-	s.writeString(game->_res->CHAR_GEN_TEXT[10], TextPoint(15, 14), game->_textColor);
-	s.writeString(game->_res->SEX_NAMES[_character->_sex], game->_textColor);
+	s.writeString(game->_res->CHAR_GEN_TEXT[10], TextPoint(15, 14));
+	s.writeString(game->_res->SEX_NAMES[_character->_sex]);
 
 	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
-	s.writeString(game->_res->CHAR_GEN_TEXT[8], TextPoint(3, 17), game->_textColor);
+	s.writeString(game->_res->CHAR_GEN_TEXT[8], TextPoint(3, 17));
 	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[4],
 		game->_res->CLASS_NAMES[0], game->_res->CLASS_NAMES[1],
 		game->_res->CLASS_NAMES[2], game->_res->CLASS_NAMES[3]),
-		TextPoint(12, 19), game->_textColor);
+		TextPoint(12, 19));
 }
 
 void ViewCharacterGeneration::drawName(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 
-	s.writeString(game->_res->CHAR_GEN_TEXT[11], TextPoint(13, 15), game->_textColor);
-	s.writeString(game->_res->CLASS_NAMES[_character->_class], game->_textColor);
+	s.writeString(game->_res->CHAR_GEN_TEXT[11], TextPoint(13, 15));
+	s.writeString(game->_res->CLASS_NAMES[_character->_class]);
 
 	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
-	s.writeString(game->_res->CHAR_GEN_TEXT[12], TextPoint(3, 17), game->_textColor);
+	s.writeString(game->_res->CHAR_GEN_TEXT[12], TextPoint(3, 17));
 }
 
 void ViewCharacterGeneration::drawSave(Shared::Gfx::VisualSurface &s) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	s.fillRect(Rect(14, 128, 302, 184), game->_bgColor);
-	s.writeString(_character->_name, TextPoint(12, 4), game->_textColor);
-	s.writeString(game->_res->CHAR_GEN_TEXT[13], TextPoint(3, 22), game->_textColor);
+	s.writeString(_character->_name, TextPoint(12, 4));
+	s.writeString(game->_res->CHAR_GEN_TEXT[13], TextPoint(3, 22));
 }
 
 void ViewCharacterGeneration::setRace(int raceNum) {

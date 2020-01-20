@@ -56,7 +56,7 @@ bool VisualItem::HideMsg(CHideMsg &msg) {
 
 VisualSurface VisualItem::getSurface() {
 	Graphics::ManagedSurface src(*g_vm->_screen, _bounds);
-	return VisualSurface(src, _bounds);
+	return VisualSurface(src, _bounds, getGame());
 }
 
 void VisualItem::setBounds(const Rect &r) {

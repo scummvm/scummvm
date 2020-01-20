@@ -43,13 +43,13 @@ void Grocery::draw() {
 
 	switch (_buySell) {
 	case BUY:
-		s.writeString(game->_res->GROCERY_PACKS1, TextPoint(5, 5), game->_textColor);
-		s.writeString(game->_res->GROCERY_PACKS2, TextPoint(5, 5), game->_textColor);
-		s.writeString(game->_res->GROCERY_PACKS3, TextPoint(5, 5), game->_textColor);
+		s.writeString(game->_res->GROCERY_PACKS1, TextPoint(5, 5));
+		s.writeString(game->_res->GROCERY_PACKS2, TextPoint(5, 5));
+		s.writeString(game->_res->GROCERY_PACKS3, TextPoint(5, 5));
 		break;
 
 	case SELL:
-		s.writeString(game->_res->GROCERY_SELL, TextPoint(5, 5), game->_textColor);
+		s.writeString(game->_res->GROCERY_SELL, TextPoint(5, 5));
 		break;
 
 	default:

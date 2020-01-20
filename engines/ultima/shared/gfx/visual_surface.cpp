@@ -22,39 +22,44 @@
 
 #include "ultima/shared/gfx/visual_surface.h"
 #include "ultima/shared/early/ultima_early.h"
-#include "ultima/shared/early/game_base.h"
+#include "ultima/shared/early/game.h"
 #include "ultima/shared/gfx/font.h"
 
 namespace Ultima {
 namespace Shared {
 namespace Gfx {
 
-VisualSurface::VisualSurface(const Graphics::ManagedSurface &src, const Rect &bounds) :
-		Graphics::ManagedSurface(src), _bounds(bounds) {
+VisualSurface::VisualSurface(const Graphics::ManagedSurface &src, const Rect &bounds, GameBase *game) :
+		Graphics::ManagedSurface(src), _bounds(bounds), _textColor(255), _bgColor(0) {
+	Shared::Game *sharedGame = dynamic_cast<Shared::Game *>(game);
+	if (sharedGame) {
+		_textColor = sharedGame->_textColor;
+		_bgColor = sharedGame->_bgColor;
+	}
 }
 
 void VisualSurface::drawPoint(const Point &pt, byte color) {
 	fillRect(Rect(pt.x, pt.y, pt.x + 1, pt.y + 1), color);
 }
 
-void VisualSurface::writeString(const Common::String &msg, const Point &pt, byte color, byte bgColor) {
+void VisualSurface::writeString(const Common::String &msg, const Point &pt, int color, int bgColor) {
 	_textPos = pt;
-	writeString(msg, color, bgColor);
+	writeString(msg, color == -1 ? _textColor : color, bgColor == -1 ? _bgColor : bgColor);
 }
 
-void VisualSurface::writeString(const Common::String &msg, byte color, byte bgColor) {
+void VisualSurface::writeString(const Common::String &msg, int color, int bgColor) {
 	Gfx::Font *font = g_vm->_game->getFont();
-	font->writeString(*this, msg, _textPos, color, bgColor);
+	font->writeString(*this, msg, _textPos, color == -1 ? _textColor : color, bgColor == -1 ? _bgColor : bgColor);
 }
 
-void VisualSurface::writeChar(unsigned char c, const Point &pt, byte color, byte bgColor) {
+void VisualSurface::writeChar(unsigned char c, const Point &pt, int color, int bgColor) {
 	_textPos = pt;
-	writeChar(c, color, bgColor);
+	writeChar(c, color == -1 ? _textColor : color, bgColor == -1 ? _bgColor : bgColor);
 }
 
-void VisualSurface::writeChar(unsigned char c, byte color, byte bgColor) {
+void VisualSurface::writeChar(unsigned char c, int color, int bgColor) {
 	Gfx::Font *font = g_vm->_game->getFont();
-	font->writeChar(*this, c, _textPos, color, bgColor);
+	font->writeChar(*this, c, _textPos, color == -1 ? _textColor : color, bgColor == -1 ? _bgColor : bgColor);
 }
 
 size_t VisualSurface::fontHeight() {

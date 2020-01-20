@@ -138,15 +138,15 @@ void ViewGame::drawIndicators() {
 	if (map->_mapType == Maps::MAP_DUNGEON) {
 		// Draw the dungeon level indicator
 		ds.drawRightArrow(TextPoint(15, 0));
-		s.writeString(game->_res->DUNGEON_LEVEL, TextPoint(16, 0), game->_textColor);
-		s.writeString(Common::String::format("%2d", map->getLevel()), TextPoint(23, 0), game->_textColor);
+		s.writeString(game->_res->DUNGEON_LEVEL, TextPoint(16, 0));
+		s.writeString(Common::String::format("%2d", map->getLevel()), TextPoint(23, 0));
 		ds.drawLeftArrow(TextPoint(26, 0));
 
 		// Draw the current direction
 		const char *dir = game->_res->DIRECTION_NAMES[map->getDirection() - 1];
 		ds.drawRightArrow(TextPoint(16, 19));
-		s.writeString("       ", TextPoint(17, 19), game->_textColor);
-		s.writeString(dir, TextPoint(19 - (7 - strlen(dir)) / 2, 19), game->_textColor);
+		s.writeString("       ", TextPoint(17, 19));
+		s.writeString(dir, TextPoint(19 - (7 - strlen(dir)) / 2, 19));
 		ds.drawLeftArrow(TextPoint(24, 19));
 	}
 }
