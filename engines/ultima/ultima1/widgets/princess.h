@@ -53,9 +53,11 @@ public:
 	Princess(Ultima1Game *game, Maps::MapBase *map) : Wench(game, map, 22) {}
 
 	/**
-	 * Destructor
+	 * Removes hit points from a creature
+	 * @param amount		Amount to remove
+	 * @returns				Returns true if kills the creature
 	 */
-	virtual ~Princess() {}
+	virtual bool subtractHitPoints(uint amount) override;
 };
 
 } // End of namespace Widgets

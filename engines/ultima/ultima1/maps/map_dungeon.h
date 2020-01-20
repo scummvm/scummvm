@@ -121,7 +121,9 @@ public:
 	Widgets::DungeonMonster *findCreatureInCurrentDirection(uint maxDistance = 5);
 
 	/**
-	 * Perform an attack
+	 * Perform an attack in a direction
+	 * @param direction		Direction
+	 * @param effectId		Sound effect to play
 	 */
 	virtual void attack(int direction, int effectId) override;
 

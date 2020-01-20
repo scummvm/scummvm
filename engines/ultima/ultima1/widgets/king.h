@@ -29,6 +29,9 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+/**
+ * Implements the kings within castles
+ */
 class King : public Person {
 protected:
 	/**
@@ -50,9 +53,11 @@ public:
 	King(Ultima1Game *game, Maps::MapBase *map) : Person(game, map, 20) {}
 
 	/**
-	 * Destructor
+	 * Removes hit points from a creature
+	 * @param amount		Amount to remove
+	 * @returns				Returns true if kills the creature
 	 */
-	virtual ~King() {}
+	virtual bool subtractHitPoints(uint amount) override;
 };
 
 } // End of namespace Widgets

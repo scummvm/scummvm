@@ -35,7 +35,7 @@ namespace Maps {
 
 enum CityTile {
 	CTILE_GROUND = 1, CTILE_POND_EDGE1 = 51, CTILE_POND_EDGE2 = 52, CTILE_POND_EDGE3 = 53,
-	CTILE_GATE = 11, CTILE_LOCK1 = 60, CTILE_LOCK2 = 61
+	CTILE_GATE = 11, CTILE_LOCK1 = 60, CTILE_LOCK2 = 61, CTILE_63 = 63
 };
 
 /**
@@ -93,22 +93,33 @@ public:
 	/**
 	 * Cast a spell
 	 */
-	virtual void cast(Maps::MapBase *map);
+	virtual void cast() override;
 
 	/**
 	 * Do a drop action
 	 */
-	virtual void drop();
+	virtual void drop() override;
 
 	/**
 	 * Do an inform action
 	 */
-	virtual void inform();
+	virtual void inform() override;
 
 	/**
 	 * Do a steal action
 	 */
-	virtual void steal();
+	virtual void steal() override;
+
+	/**
+	 * Perform an attack in a direction
+	 * @param direction		Direction
+	 * @param effectId		Sound effect to play
+	 * @param maxDistance	Maximum distance in the given direction
+	 * @param amount		Damage amount
+	 * @param agility		Agility threshold
+	 * @param widgetNa
+	 */
+	virtual void attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) override;
 };
 
 /**
@@ -163,11 +174,6 @@ public:
 		_getCounter(0), _freeingPrincess(false) {}
 
 	/**
-	 * Destructor
-	 */
-	virtual ~MapCastle() {}
-
-	/**
 	 * Load the map
 	 */
 	virtual void load(Shared::Maps::MapId mapId) override;
@@ -191,6 +197,12 @@ public:
 	 * Do an unlock action
 	 */
 	virtual void unlock() override;
+
+
+	/**
+	 * Returns true if Lord British's castle is the currently active map
+	 */
+	bool isLordBritishCastle() const;
 };
 
 } // End of namespace Maps

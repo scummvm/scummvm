@@ -22,6 +22,8 @@
 
 #include "ultima/ultima1/widgets/person.h"
 #include "ultima/ultima1/maps/map_city_castle.h"
+#include "ultima/ultima1/widgets/guard.h"
+#include "ultima/ultima1/widgets/princess.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -41,6 +43,20 @@ int Person::getRandomDelta() const {
 void Person::synchronize(Common::Serializer &s) {
 	UrbanWidget::synchronize(s);
 	Creature::synchronize(s);
+}
+
+bool Person::subtractHitPoints(uint amount) {
+	bool result = Shared::Maps::Creature::subtractHitPoints(amount);
+	if (result) {
+		// Common code for gaining experience for killing different kinds of people
+		Shared::Character &c = *_game->_party;
+		if (dynamic_cast<Widgets::Princess *>(this) == nullptr)
+			c._experience++;
+		if (dynamic_cast<Widgets::Guard *>(this))
+			c._experience += 14;
+	}
+
+	return result;
 }
 
 } // End of namespace Widgets

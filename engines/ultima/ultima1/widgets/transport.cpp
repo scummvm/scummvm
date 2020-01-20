@@ -42,7 +42,9 @@ uint TransportOnFoot::getTileNum() const {
 
 /*-------------------------------------------------------------------*/
 
-Transport::Transport(Ultima1Game *game, Maps::MapBase *map) : OverworldWidget(game, map) {
+Transport::Transport(Ultima1Game *game, Maps::MapBase *map, uint transportId) :
+		OverworldWidget(game, map), _transportId(transportId) {
+	_name = game->_res->TRANSPORT_NAMES[transportId];
 }
 
 void Transport::disembark() {
@@ -69,26 +71,22 @@ void Transport::disembark() {
 
 /*-------------------------------------------------------------------*/
 
-Horse::Horse(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
-	_name = game->_res->TRANSPORT_NAMES[1];
+Horse::Horse(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 1) {
 }
 
 /*-------------------------------------------------------------------*/
 
-Cart::Cart(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
-	_name = game->_res->TRANSPORT_NAMES[2];
+Cart::Cart(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 2) {
 }
 
 /*-------------------------------------------------------------------*/
 
-Raft::Raft(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
-	_name = game->_res->TRANSPORT_NAMES[3];
+Raft::Raft(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 3) {
 }
 
 /*-------------------------------------------------------------------*/
 
-Frigate::Frigate(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
-	_name = game->_res->TRANSPORT_NAMES[4];
+Frigate::Frigate(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 4) {
 }
 
 Common::String Frigate::getWeaponsName() {
@@ -98,8 +96,7 @@ Common::String Frigate::getWeaponsName() {
 
 /*-------------------------------------------------------------------*/
 
-Aircar::Aircar(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
-	_name = game->_res->TRANSPORT_NAMES[5];
+Aircar::Aircar(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 5) {
 }
 
 Common::String Aircar::getWeaponsName() {
@@ -109,14 +106,12 @@ Common::String Aircar::getWeaponsName() {
 
 /*-------------------------------------------------------------------*/
 
-Shuttle::Shuttle(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
-	_name = game->_res->TRANSPORT_NAMES[6];
+Shuttle::Shuttle(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 6) {
 }
 
 /*-------------------------------------------------------------------*/
 
-TimeMachine::TimeMachine(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
-	_name = game->_res->TRANSPORT_NAMES[7];
+TimeMachine::TimeMachine(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 7) {
 }
 
 } // End of namespace Widgets

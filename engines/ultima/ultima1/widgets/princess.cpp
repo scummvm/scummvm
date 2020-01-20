@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/widgets/princess.h"
+#include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/shared/core/utils.h"
 
 namespace Ultima {
@@ -55,6 +56,15 @@ void Princess::movement() {
 		if (moved)
 			_game->playFX(4);
 	}
+}
+
+bool Princess::subtractHitPoints(uint amount) {
+	bool result = Person::subtractHitPoints(amount);
+	if (result)
+		// Princess is dead, you monster. So you can no longer be credited with freeing them
+		static_cast<Maps::MapCastle *>(_map)->_freeingPrincess = false;
+
+	return result;
 }
 
 } // End of namespace Widgets

@@ -52,11 +52,13 @@ public:
  * Base class for the different types of transports
  */
 class Transport : public OverworldWidget {
+protected:
+	uint _transportId;
 public:
 	/**
 	 * Constructor
 	 */
-	Transport(Ultima1Game *game, Maps::MapBase *map);
+	Transport(Ultima1Game *game, Maps::MapBase *map, uint transportId);
 
 	/**
 	 * Disembarks from the transport
@@ -67,6 +69,11 @@ public:
 	 * Get the name of a transport's weapons
 	 */
 	virtual Common::String getWeaponsName() { return ""; }
+
+	/**
+	 * Get an Id for the transport type
+	 */
+	uint transportId() const { return _transportId; }
 };
 
 /**
