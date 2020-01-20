@@ -24,23 +24,70 @@
 #define ULTIMA_ULTIMA1_U1DIALOGS_STATS_H
 
 #include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
+#include "common/array.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
+using Shared::CPopupShownMsg;
+using Shared::CKeypressMsg;
+
 /**
- * Implements the buy/sell dialog for grocers
+ * Implements the stats/inventory dialog
  */
 class Stats : public FullScreenDialog {
 	DECLARE_MESSAGE_MAP;
+	bool PopupShowMsg(CPopupShownMsg &msg);
+	bool KeypressMsg(CKeypressMsg &msg);
+public:
+	/**
+	 * Contains the data for a single stat entry to display
+	 */
+	struct StatEntry {
+		Common::String _line;
+		byte _color;
+
+		StatEntry() : _color(0) {}
+		StatEntry(const Common::String &line, byte color) : _line(line), _color(color) {}
+	};
+
+	/**
+	 * Format a name/value text with dots between them
+	 * @param name		Stat/item name
+	 * @param value		The value/quantity
+	 * @returns			The formatted display of name dots value
+	 */
+	static Common::String formatStat(const char *name, uint value);
+private:
+	Common::Array<StatEntry> _stats;
+	uint _startingIndex;
+private:
+	/**
+	 * Loads the list of stats to display into an array
+	 */
+	void load();
+
+	/**
+	 * Add a range of values into the stats list
+	 * @param names			Stat names
+	 * @param values		Values
+	 * @param start			Starting index
+	 * @param end			Ending index
+	 * @param equippedIndex	Equipped item index, if applicable
+	 * @param row			Starting text row
+	 * @returns				Ending text row
+	 */
+	void addStats(const char *const *names, const uint *values, int start, int end, int equippedIndex = -1);
 public:
 	CLASSDEF;
 
 	/**
 	 * Constructor
 	 */
-	Stats(Ultima1Game *game) : FullScreenDialog(game) {}
+	Stats(Ultima1Game *game) : FullScreenDialog(game), _startingIndex(0) {
+		load();
+	}
 
 	/**
 	 * Draws the visual item on the screen

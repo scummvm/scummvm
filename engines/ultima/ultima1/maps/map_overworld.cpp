@@ -22,6 +22,7 @@
 
 #include "ultima/ultima1/maps/map_overworld.h"
 #include "ultima/ultima1/widgets/transport.h"
+#include "ultima/ultima1/widgets/overworld_monster.h"
 #include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/game.h"
@@ -172,6 +173,16 @@ uint MapOverworld::getLandsNumber() const {
 void MapOverworld::addOnFoot() {
 	_widgets.insert_at(0, Shared::Maps::MapWidgetPtr(new Widgets::TransportOnFoot(_game, this)));
 	_playerWidget = _widgets[0].get();
+}
+
+uint MapOverworld::getEnemyVesselCount() const {
+	uint total = 0;
+	for (uint idx = 0; idx < _widgets.size(); ++idx) {
+		if (dynamic_cast<Widgets::EnemyVessel *>(_widgets[idx].get()))
+			++total;
+	}
+
+	return total;
 }
 
 } // End of namespace Maps

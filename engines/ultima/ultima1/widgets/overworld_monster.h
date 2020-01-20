@@ -89,6 +89,24 @@ public:
 	virtual void synchronize(Common::Serializer &s) override;
 };
 
+/**
+ * Enemy vessels on the overworld
+ */
+class EnemyVessel : public OverworldMonster {
+public:
+	/**
+	 * Constructor
+	 */
+	EnemyVessel(Shared::Game *game, Shared::Maps::MapBase *map, uint tileNum, int hitPoints,
+		const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) :
+		OverworldMonster(game, map, tileNum, hitPoints, pt, dir) {}
+
+	/**
+	 * Constructor
+	 */
+	EnemyVessel(Shared::Game *game, Shared::Maps::MapBase *map) : OverworldMonster(game, map) {}
+};
+
 } // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima

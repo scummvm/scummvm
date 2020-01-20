@@ -64,6 +64,83 @@ public:
 	virtual void disembark();
 };
 
+/**
+ * Horse widget
+ */
+class Horse : public Transport {
+public:
+	/**
+	 * Constructor
+	 */
+	Horse(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {}
+};
+
+/**
+ * Cart widget
+ */
+class Cart : public Transport {
+public:
+	/**
+	 * Constructor
+	 */
+	Cart(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {}
+};
+
+/**
+ * Raft widget
+ */
+class Raft : public Transport {
+public:
+	/**
+	 * Constructor
+	 */
+	Raft(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {}
+};
+
+/**
+ * Frigate widget
+ */
+class Frigate : public Transport {
+public:
+	/**
+	 * Constructor
+	 */
+	Frigate(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {}
+};
+
+/**
+ * Aircar widget
+ */
+class Aircar : public Transport {
+public:
+	/**
+	 * Constructor
+	 */
+	Aircar(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {}
+};
+
+/**
+ * Shuttle widget
+ */
+class Shuttle : public Transport {
+public:
+	/**
+	 * Constructor
+	 */
+	Shuttle(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {}
+};
+
+/**
+ * Time machine widget
+ */
+class TimeMachine : public Transport {
+public:
+	/**
+	 * Constructor
+	 */
+	TimeMachine(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {}
+};
+
 } // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
