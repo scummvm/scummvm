@@ -105,6 +105,7 @@ public:
 	const char *FACE_THE_LADDER;
 	const char *CAUGHT;
 	const char *NONE_WILL_TALK;
+	const char *NOT_BY_COUNTER;
 	const char *BUY_SELL;
 	const char *BUY;
 	const char *SELL;

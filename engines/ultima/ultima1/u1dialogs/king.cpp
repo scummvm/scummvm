@@ -109,11 +109,6 @@ void King::draw() {
 	centerText(_game->_res->KING_TEXT[11], 7);
 }
 
-void King::centerText(const Common::String &line, int yp) {
-	Shared::Gfx::VisualSurface s = getSurface();
-	s.writeString(line, TextPoint(16 - line.size() / 2, yp));
-}
-
 void King::setMode(KingMode mode) {
 	_mode = mode;
 
