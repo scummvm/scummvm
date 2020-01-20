@@ -89,41 +89,8 @@ void Ultima1Game::starting(bool isLoading) {
 	Shared::Game::starting(isLoading);
 
 	_res->load();
-	setup();
+	static_cast<Party *>(_party)->setup();
 	_gameView->setView(isLoading ? "Game" : "Title");
-}
-
-void Ultima1Game::setup() {
-	Shared::Character &c = *_party;
-
-	// Weapons setup
-	c._weapons.resize(16);
-	for (int idx = 0; idx < 16; ++idx) {
-		c._weapons[idx]._longName = _res->WEAPON_NAMES_UPPERCASE[idx];
-		c._weapons[idx]._shortName = _res->WEAPON_NAMES_LOWERCASE[idx];
-		c._weapons[idx]._distance = _res->WEAPON_DISTANCES[idx];
-	}
-
-	// Armor setup
-	c._armor.resize(6);
-	for (int idx = 0; idx < 6; ++idx)
-		c._armor[idx]._name = _res->ARMOR_NAMES[idx];
-
-	// Spells setup
-	c._spells.push_back(&_spellPrayer);
-	c._spells.push_back(&_spellOpen);
-	c._spells.push_back(&_spellUnlock);
-	c._spells.push_back(&_spellMagicMissile);
-	c._spells.push_back(&_spellSteal);
-	c._spells.push_back(&_spellLadderDown);
-	c._spells.push_back(&_spellLadderUp);
-	c._spells.push_back(&_spellBlink);
-	c._spells.push_back(&_spellCreate);
-	c._spells.push_back(&_spellDestroy);
-	c._spells.push_back(&_spellKill);
-
-	for (int idx = 0; idx < 11; ++idx)
-		static_cast<Spells::Spell *>(c._spells[idx])->setGame(this);
 }
 
 bool Ultima1Game::canSaveGameStateCurrently() {

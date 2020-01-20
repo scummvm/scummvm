@@ -35,7 +35,7 @@ namespace Shared {
  * Base class for the player's party
  */
 class Party {
-private:
+protected:
 	Common::Array<Character *> _characters;
 public:
 	~Party();
