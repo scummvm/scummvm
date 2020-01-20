@@ -609,11 +609,6 @@ const char *const SRC_CAUGHT = "Oh no!  Thou wert caught!";
 const char *const SRC_NONE_WILL_TALK = "None will talk to thee!";
 const char *const SRC_NOT_BY_COUNTER = "Thou art not by a counter!";
 
-const char *const SRC_GROCERY_NAMES[8] = {
-	"Li'l Karelia's Finnish Grocery", "Adventurer's Supply Post", "", "The Brown Bag", "Fresh Food Marketplace",
-	"Rations Unlimited", "Fastest Freshest Food Market", "Exploration Provisioners"
-};
-
 const char *const SRC_BUY_SELL = "-Buy, Sell: ";
 const char *const SRC_BUY = "-Buy: ";
 const char *const SRC_SELL = "-Sell: ";
@@ -657,12 +652,23 @@ const char *const SRC_FIELD_DESTROYED = "Field destroyed!";
 const char *const SRC_LADDER_CREATED = "Ladder created!";
 const char *const SRC_QUEST_COMPLETED = "A quest has been completed!";
 
+
+const char *const SRC_GROCERY_NAMES[8] = {
+	"Li'l Karelia's Finnish Grocery", "Adventurer's Supply Post", "", "The Brown Bag", "Fresh Food Marketplace",
+	"Rations Unlimited", "Fastest Freshest Food Market", "Exploration Provisioners"
+};
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
 const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %u pence";
 const char *const SRC_GROCERY_PACKS2 = "each.  How many dost thou";
 const char *const SRC_GROCERY_PACKS3 = "wish to purchase?";
 const char *const SRC_GROCERY_PACKS_FOOD = "%u packs food";
 const char *const SRC_GROCERY_FIND_PACKS = "Thou dost find %d bags of food!";
+
+const char *const SRC_WEAPONRY_NAMES[8] = {
+	"The Weapon Shop of\nLord Eldric D'Charbonneux", "The Tempered Steel",
+	"The Razor's Edge", "Cold Steel Creations", "The Bloody Blade",
+	"The Duelo Shop", "Weaponry Supply", "Cold Steel Creations"
+};
 
 const char *const SRC_WITH_KING = " with king";
 const char *const SRC_HE_IS_NOT_HERE = "He is not here!";
@@ -800,6 +806,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	GROCERY_PACKS3 = SRC_GROCERY_PACKS3;
 	GROCERY_PACKS_FOOD = SRC_GROCERY_PACKS_FOOD;
 	GROCERY_FIND_PACKS = SRC_GROCERY_FIND_PACKS;
+	Common::copy(&SRC_WEAPONRY_NAMES[0], &SRC_WEAPONRY_NAMES[8], WEAPONRY_NAMES);
 
 	WITH_KING = SRC_WITH_KING;
 	HE_IS_NOT_HERE = SRC_HE_IS_NOT_HERE;
@@ -928,6 +935,7 @@ void GameResources::synchronize() {
 	syncString(GROCERY_PACKS3);
 	syncString(GROCERY_PACKS_FOOD);
 	syncString(GROCERY_FIND_PACKS);
+	syncStrings(WEAPONRY_NAMES, 8);
 
 	syncString(WITH_KING);
 	syncString(HE_IS_NOT_HERE);

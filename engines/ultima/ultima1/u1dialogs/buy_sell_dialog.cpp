@@ -21,10 +21,11 @@
  */
 
 #include "ultima/ultima1/u1dialogs/buy_sell_dialog.h"
-#include "ultima/shared/gfx/visual_surface.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/maps/map.h"
+#include "ultima/shared/core/str.h"
+#include "ultima/shared/gfx/visual_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -90,7 +91,9 @@ void BuySellDialog::draw() {
 		s.frameRect(Rect(3, 3, _bounds.width() - 3, _bounds.height() - 3), getGame()->_borderColor);
 
 		// Draw the title
-		s.writeString(_title, Point((_bounds.width() - _title.size() * 8) / 2, 9));
+		Shared::StringArray titleLines = String(_title).split('\n');
+		for (uint y = 0; y < titleLines.size(); ++y)
+			centerText(titleLines[y], y + 1);
 	}
 
 	switch (_mode) {

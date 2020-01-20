@@ -260,6 +260,11 @@ public:
 	uint getMapIndex() const { return _mapIndex; }
 
 	/**
+	 * Gets the map style
+	 */
+	uint getMapStyle() const { return _mapStyle; }
+
+	/**
 	 * Shifts the viewport by a given delta
 	 */
 	virtual void shiftViewport(const Point &delta);

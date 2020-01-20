@@ -156,6 +156,7 @@ public:
 	const char *GROCERY_PACKS3;
 	const char *GROCERY_PACKS_FOOD;
 	const char *GROCERY_FIND_PACKS;
+	const char *WEAPONRY_NAMES[8];
 
 	const char *WITH_KING;
 	const char *HE_IS_NOT_HERE;
