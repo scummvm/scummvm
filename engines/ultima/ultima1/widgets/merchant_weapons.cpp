@@ -51,7 +51,7 @@ void MerchantWeapons::findWeapon(bool checkStealing) {
 		uint weaponNum = _game->getRandomNumber(1, 15);
 		const char *weaponStr = _game->_res->WEAPON_NAMES_ARTICLE[weaponNum];
 
-		c._weapons[weaponNum].incrQuantity();
+		c._weapons[weaponNum]->incrQuantity();
 		addInfoMsg("");
 		addInfoMsg(Common::String::format(_game->_res->FIND, weaponStr));
 	}

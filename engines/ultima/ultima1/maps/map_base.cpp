@@ -84,7 +84,7 @@ void MapBase::attack(int direction, int effectId) {
 
 	if (effectId == 7) {
 		Character &c = *static_cast<Party *>(_game->_party);
-		maxDistance = c._weapons[c._equippedWeapon]._distance;
+		maxDistance = c.equippedWeapon()->_distance;
 		agility = c._agility + 50;
 		damage = _game->getRandomNumber(2, c._strength + c._equippedWeapon * 8);
 	} else {

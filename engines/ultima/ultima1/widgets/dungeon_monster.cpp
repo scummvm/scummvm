@@ -153,7 +153,7 @@ void DungeonMonster::attackParty() {
 
 		if (_widgetId == MONSTER_GELATINOUS_CUBE && c.isArmorEquipped()) {
 			addInfoMsg(game->_res->ARMOR_DESTROYED);
-			c._armor[c._equippedArmor].decrQuantity();
+			c._armor[c._equippedArmor]->decrQuantity();
 			c.removeArmor();
 			isHit = false;
 		} else if (_widgetId == MONSTER_GREMLIN) {
@@ -167,12 +167,13 @@ void DungeonMonster::attackParty() {
 		} else if (_widgetId == MONSTER_THIEF) {
 			// Thief will steal the first spare weapon player has that isn't equipped
 			for (int weaponNum = 1; weaponNum < (int)c._weapons.size(); ++weaponNum) {
-				if (weaponNum != c._equippedWeapon && c._weapons[weaponNum]._quantity > 0) {
+				if (weaponNum != c._equippedWeapon && !c._weapons[weaponNum]->empty()) {
 					// TODO: May need to worry about word wrapping long line
 					addInfoMsg(Common::String::format(game->_res->THIEF_STOLE,
-						Shared::isVowel(c._weapons[weaponNum]._longName.firstChar()) ? game->_res->AN : game->_res->A
+
+						Shared::isVowel(c._weapons[weaponNum]->_longName.firstChar()) ? game->_res->AN : game->_res->A
 					));
-					c._weapons[weaponNum].decrQuantity();
+					c._weapons[weaponNum]->decrQuantity();
 					break;
 				}
 			}

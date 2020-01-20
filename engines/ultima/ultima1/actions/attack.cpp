@@ -61,7 +61,7 @@ bool Attack::AttackMsg(CAttackMsg &msg) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	Maps::Ultima1Map *map = static_cast<Maps::Ultima1Map *>(getMap());
 	const Shared::Character &c = *game->_party;
-	const Shared::Weapon &weapon = c._weapons[c._equippedWeapon];
+	const Shared::Weapon &weapon = *c._weapons[c._equippedWeapon];
 
 	addInfoMsg(Common::String::format("%s %s", game->_res->ACTION_NAMES[0], weapon._shortName.c_str()), false);
 	

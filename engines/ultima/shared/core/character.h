@@ -58,7 +58,7 @@ public:
 	/**
 	 * Change the quantity by a given amount
 	 */
-	void changeQuantity(int delta) {
+	virtual void changeQuantity(int delta) {
 		_quantity = (uint)CLIP((int)_quantity + delta, 0, 9999);
 	}
 
@@ -68,9 +68,17 @@ public:
 	void incrQuantity() { changeQuantity(1); }
 
 	/**
+	 * Returns if the itemized is empty
+	 */
+	bool empty() const { return _quantity == 0; }
+
+	/**
 	 * Decrease the quantity by 1
 	 */
-	void decrQuantity() { changeQuantity(-1); }
+	bool decrQuantity() {
+		changeQuantity(-1);
+		return empty();
+	}
 };
 
 /**
@@ -109,7 +117,7 @@ public:
 	 */
 	bool hasNothing() const {
 		for (uint idx = 1; idx < this->size(); ++idx) {
-			if ((*this)[idx]._quantity != 0)
+			if ((*this)[idx]->_quantity != 0)
 				return false;
 		}
 
@@ -140,8 +148,8 @@ public:
 	int _equippedWeapon;
 	int _equippedArmor;
 	int _equippedSpell;
-	ItemArray<Weapon> _weapons;
-	ItemArray<Armor> _armor;
+	ItemArray<Weapon *> _weapons;
+	ItemArray<Armor *> _armor;
 	ItemArray<Spell *> _spells;
 public:
 	/**
@@ -172,6 +180,21 @@ public:
 	bool isSpellEquipped() const { return _equippedSpell != 0; }
 
 	/**
+	 * Return the equipped weapon
+	 */
+	Weapon *equippedWeapon() const { return _weapons[_equippedWeapon]; }
+
+	/**
+	 * Return the equipped armor
+	 */
+	Armor *equippedArmor() const { return _armor[_equippedArmor]; }
+
+	/**
+	 * Return the equipped spell
+	 */
+	Spell *equippedSpell() const { return _spells[_equippedSpell]; }
+
+	/**
 	 * Removes any equipped weapon
 	 */
 	void removeWeapon() { _equippedWeapon = 0; }
@@ -184,7 +207,7 @@ public:
 	/**
 	 * Remove any equipped spell
 	 */
-	void removeSpell() { _equippedSpell = -1; }
+	void removeSpell() { _equippedSpell = 0; }
 
 	/**
 	 * Gets the character's experience level

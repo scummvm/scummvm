@@ -70,12 +70,12 @@ bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
 	case READY_WEAPON:
 		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode < (Common::KEYCODE_a + (int)c._weapons.size())) {
 			int index = msg._keyState.keycode - Common::KEYCODE_a;
-			if (c._weapons[index]._quantity > 0)
+			if (!c._weapons[index]->empty())
 				c._equippedWeapon = index;
 		}
 
 		addInfoMsg(Common::String::format("%s %s: %s", _game->_res->ACTION_NAMES[17],
-			_game->_res->WEAPON_ARMOR_SPELL[0], c._weapons[c._equippedWeapon]._longName.c_str()),
+			_game->_res->WEAPON_ARMOR_SPELL[0], c.equippedWeapon()->_longName.c_str()),
 			true, true);
 		hide();
 		break;
@@ -83,12 +83,12 @@ bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
 	case READY_ARMOR:
 		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode < (Common::KEYCODE_a + (int)c._armor.size())) {
 			int index = msg._keyState.keycode - Common::KEYCODE_a;
-			if (c._armor[index]._quantity > 0)
+			if (!c._armor[index]->empty())
 				c._equippedArmor = index;
 		}
 
 		addInfoMsg(Common::String::format("%s %s: %s", _game->_res->ACTION_NAMES[17],
-			_game->_res->WEAPON_ARMOR_SPELL[1], c._armor[c._equippedArmor]._name.c_str()),
+			_game->_res->WEAPON_ARMOR_SPELL[1], c.equippedArmor()->_name.c_str()),
 			true, true);
 		hide();
 		break;
@@ -96,7 +96,7 @@ bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
 	case READY_SPELL:
 		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode < (Common::KEYCODE_a + (int)c._spells.size())) {
 			int index = msg._keyState.keycode - Common::KEYCODE_a;
-			if (c._spells[index]->_quantity > 0)
+			if (!c._spells[index]->empty())
 				c._equippedSpell = index;
 		}
 
@@ -186,15 +186,15 @@ void Ready::drawReadyWeapon() {
 	const Shared::Character &c = *_game->_party;
 	int numLines = 0;
 	for (uint idx = 0; idx < c._weapons.size(); ++idx) {
-		if (c._weapons[idx]._quantity)
+		if (!c._weapons[idx]->empty())
 			++numLines;
 	}
 
 	// Draw lines for weapons the player has
 	int yp = 10 - (numLines / 2);
 	for (uint idx = 0; idx < c._weapons.size(); ++idx) {
-		if (c._weapons[idx]._quantity) {
-			Common::String text = Common::String::format("%c) %s", 'a' + idx, c._weapons[idx]._longName.c_str());
+		if (!c._weapons[idx]->empty()) {
+			Common::String text = Common::String::format("%c) %s", 'a' + idx, c._weapons[idx]->_longName.c_str());
 			s.writeString(text, TextPoint(15, yp++), (int)idx == c._equippedWeapon ? _game->_highlightColor : _game->_textColor);
 		}
 	}
@@ -208,15 +208,15 @@ void Ready::drawReadyArmor() {
 	const Shared::Character &c = *_game->_party;
 	int numLines = 0;
 	for (uint idx = 0; idx < c._armor.size(); ++idx) {
-		if (c._armor[idx]._quantity)
+		if (!c._armor[idx]->empty())
 			++numLines;
 	}
 
 	// Draw lines for armor the player has
 	int yp = 10 - (numLines / 2);
 	for (uint idx = 0; idx < c._armor.size(); ++idx) {
-		if (c._armor[idx]._quantity) {
-			Common::String text = Common::String::format("%c) %s", 'a' + idx, c._armor[idx]._name.c_str());
+		if (!c._armor[idx]->empty()) {
+			Common::String text = Common::String::format("%c) %s", 'a' + idx, c._armor[idx]->_name.c_str());
 			s.writeString(text, TextPoint(15, yp++), (int)idx == c._equippedArmor ? _game->_highlightColor : _game->_textColor);
 		}
 	}

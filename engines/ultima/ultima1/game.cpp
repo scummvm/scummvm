@@ -43,7 +43,6 @@ EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
 Ultima1Game::Ultima1Game() : Shared::Game(), _quests(this) {
 	_res = new GameResources();
 	_map = new Maps::Ultima1Map(this);
-	_party = new Party(this);
 
 	_textCursor = new U1Gfx::U1TextCursor(_textColor, _bgColor);
 	g_vm->_screen->setCursor(_textCursor);
@@ -87,7 +86,7 @@ void Ultima1Game::starting(bool isLoading) {
 	Shared::Game::starting(isLoading);
 
 	_res->load();
-	static_cast<Party *>(_party)->setup();
+	_party = new Party(this);
 	_gameView->setView(isLoading ? "Game" : "Title");
 }
 

@@ -37,14 +37,72 @@
 namespace Ultima {
 namespace Ultima1 {
 
-enum Weapon {
+enum WeaponType {
 	WEAPON_HANDS = 0, WEAPON_DAGGER = 1, WEAPON_MACE = 2, WEAPON_AXE = 3, WEAPON_ROPE_SPIKES = 4,
 	WEAPON_SWORD = 5, WEAPON_GREAT_SWORD = 6, WEAPON_BOW_ARROWS = 7, WEAPON_AMULET = 8,
 	WEAPON_WAND = 9, WEAPON_STAFF = 10, WEAPON_TRIANGLE = 11, WEAPON_PISTOL = 12,
 	WEAPON_LIGHT_SWORD = 13, WEAPON_PHAZOR = 14, WEAPON_BLASTER = 15
 };
 
+enum ArmorType {
+	ARMOR_SKIN = 0, ARMOR_LEATHER_ARMOR = 1, ARMOR_CHAIN_MAIL = 2, ARMOR_PLATE_MAIL = 3,
+	ARMOR_VACUUM_SUIT = 4, ARMOR_REFLECT_SUIT = 5
+};
+
 class Ultima1Game;
+class Character;
+
+/**
+ * Derived weapon class
+ */
+class Weapon : public Shared::Weapon {
+private:
+	Ultima1Game *_game;
+	Character *_character;
+	WeaponType _type;
+public:	
+	/**
+	 * Constructor
+	 */
+	Weapon(Ultima1Game *game, Character *c, WeaponType weaponType);
+
+	/**
+	 * Change the quantity by a given amount
+	 */
+	virtual void changeQuantity(int delta) override {
+		if (_type != WEAPON_HANDS)
+			_quantity = (uint)CLIP((int)_quantity + delta, 0, 9999);
+	}
+
+	/**
+	 * Gets the magic damage a given weapon does
+	 */
+	uint getMagicDamage() const;
+};
+
+/**
+ * Derived armor class
+ */
+class Armor : public Shared::Armor {
+private:
+	Ultima1Game *_game;
+	Character *_character;
+	ArmorType _type;
+public:	
+	/**
+	 * Constructor
+	 */
+	Armor(Ultima1Game *game, Character *c, ArmorType armorType);
+
+	/**
+	 * Change the quantity by a given amount
+	 */
+	virtual void changeQuantity(int delta) override {
+		if (_type != ARMOR_SKIN)
+			_quantity = (uint)CLIP((int)_quantity + delta, 0, 9999);
+	}
+};
+
 
 /**
  * Implements the data for a playable character within the game
@@ -52,6 +110,31 @@ class Ultima1Game;
 class Character : public Shared::Character {
 private:
 	Ultima1Game *_game;
+
+	Weapon _weaponHands;
+	Weapon _weaponDagger;
+	Weapon _weaponMace;
+	Weapon _weaponAxe;
+	Weapon _weaponRopeSpikes;
+	Weapon _weaponSword;
+	Weapon _weaponGreatSword;
+	Weapon _weaponBowArrows;
+	Weapon _weaponAmulet;
+	Weapon _weaponWand;
+	Weapon _weaponStaff;
+	Weapon _weaponTriangle;
+	Weapon _weaponPistol;
+	Weapon _weaponLightSword;
+	Weapon _weaponPhazor;
+	Weapon _weaponBlaster;
+
+	Armor _armorSkin;
+	Armor _armorLeatherArmor;
+	Armor _armorChainMail;
+	Armor _armorPlateMail;
+	Armor _armorVacuumSuit;
+	Armor _armorReflectSuit;
+
 	Spells::Blink _spellBlink;
 	Spells::Create _spellCreate;
 	Spells::Destroy _spellDestroy;
@@ -75,9 +158,19 @@ public:
 	void setup();
 
 	/**
-	 * Gets the damage a given weapon does
+	 * Return the equipped weapon
 	 */
-	uint getWeaponDamage() const;
+	Weapon *equippedWeapon() const { return static_cast<Weapon *>(_weapons[_equippedWeapon]); }
+
+	/**
+	 * Return the equipped armor
+	 */
+	Armor *equippedArmor() const { return static_cast<Armor *>(_armor[_equippedArmor]); }
+
+	/**
+	 * Return the equipped spell
+	 */
+	Spells::Spell *equippedSpell() const { return static_cast<Spells::Spell *>(_spells[_equippedSpell]); }
 };
 
 /**

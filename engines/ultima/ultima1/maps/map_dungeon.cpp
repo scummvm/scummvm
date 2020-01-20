@@ -316,7 +316,8 @@ void MapDungeon::leavingDungeon() {
 
 void MapDungeon::attack(int direction, int effectId) {
 	const Character &c = *static_cast<Party *>(_game->_party);
-	Widgets::DungeonMonster *monster = findCreatureInCurrentDirection(c._weapons[c._equippedWeapon]._distance);
+	Widgets::DungeonMonster *monster = findCreatureInCurrentDirection(
+		c.equippedWeapon()->_distance);
 	_game->playFX(7);
 
 	if (monster) {

@@ -97,17 +97,17 @@ void Stats::load() {
 
 	// Armor, weapons, & spells
 	for (uint idx = 1; idx < c._armor.size(); ++idx) {
-		if (c._armor[idx]._quantity > 0)
-			_stats.push_back(StatEntry(formatStat(c._armor[idx]._name.c_str(), c._armor[idx]._quantity),
+		if (!c._armor[idx]->empty())
+			_stats.push_back(StatEntry(formatStat(c._armor[idx]->_name.c_str(), c._armor[idx]->_quantity),
 				(int)idx == c._equippedArmor ? _game->_highlightColor : _game->_textColor));
 	}
 	for (uint idx = 1; idx < c._weapons.size(); ++idx) {
-		if (c._weapons[idx]._quantity > 0)
-			_stats.push_back(StatEntry(formatStat(c._weapons[idx]._longName.c_str(), c._weapons[idx]._quantity),
+		if (!c._weapons[idx]->empty())
+			_stats.push_back(StatEntry(formatStat(c._weapons[idx]->_longName.c_str(), c._weapons[idx]->_quantity),
 				(int)idx == c._equippedWeapon ? _game->_highlightColor : _game->_textColor));
 	}
 	for (uint idx = 1; idx < c._spells.size(); ++idx) {
-		if (c._spells[idx]->_quantity > 0)
+		if (!c._spells[idx]->empty())
 			_stats.push_back(StatEntry(formatStat(c._spells[idx]->_name.c_str(), c._spells[idx]->_quantity),
 				(int)idx == c._equippedSpell ? _game->_highlightColor : _game->_textColor));
 	}

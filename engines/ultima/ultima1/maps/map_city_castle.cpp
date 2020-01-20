@@ -312,7 +312,8 @@ void MapCity::dropCoins(uint coins) {
 		case CTILE_POND_EDGE2: {
 			// Increase the quantity of a random weapon
 			uint weaponNum = _game->getRandomNumber(1, 15);
-			c._weapons[weaponNum]._quantity = MIN(c._weapons[weaponNum]._quantity + 1, 255U);
+			Shared::Weapon &weapon = *c._weapons[weaponNum];
+			weapon._quantity = MIN(weapon._quantity + 1, 255U);
 			break;
 		}
 
