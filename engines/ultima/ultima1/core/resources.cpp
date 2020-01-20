@@ -677,6 +677,11 @@ const char *const SRC_ARMOURY_NAMES[8] = {
 	"Custom Armor Works"
 };
 const char *const SRC_NO_ARMOUR_TO_SELL = "Thou hast no armour to sell!";
+const char *const SRC_MAGIC_NAMES[8] = {
+	"Mad Chad's Magic Shoppe", "Mystic Melinda's", "Words of Power",
+	"Psychic Sam's Magical Emporium", nullptr, nullptr, nullptr, "The Unleashed Spell"
+};
+const char *const SRC_DONT_BUY_SPELLS = "Sorry, we don't buy spells!";
 
 const char *const SRC_WITH_KING = " with king";
 const char *const SRC_HE_IS_NOT_HERE = "He is not here!";
@@ -819,6 +824,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	NO_WEAPONRY_TO_SELL = SRC_NO_WEAPONRY_TO_SELL;
 	Common::copy(&SRC_ARMOURY_NAMES[0], &SRC_ARMOURY_NAMES[8], ARMOURY_NAMES);
 	NO_ARMOUR_TO_SELL = SRC_NO_ARMOUR_TO_SELL;
+	Common::copy(&SRC_MAGIC_NAMES[0], &SRC_MAGIC_NAMES[8], MAGIC_NAMES);
+	DONT_BUY_SPELLS = SRC_DONT_BUY_SPELLS;
 
 	WITH_KING = SRC_WITH_KING;
 	HE_IS_NOT_HERE = SRC_HE_IS_NOT_HERE;
@@ -952,6 +959,8 @@ void GameResources::synchronize() {
 	syncString(NO_WEAPONRY_TO_SELL);
 	syncStrings(ARMOURY_NAMES, 8);
 	syncString(NO_ARMOUR_TO_SELL);
+	syncStrings(MAGIC_NAMES, 8);
+	syncString(DONT_BUY_SPELLS);
 
 	syncString(WITH_KING);
 	syncString(HE_IS_NOT_HERE);

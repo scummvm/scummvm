@@ -60,7 +60,19 @@ Character::Character(Ultima1Game *game) : Shared::Character(), _game(game),
 		_armourChainMail(game, this, ARMOR_CHAIN_MAIL),
 		_armourPlateMail(game, this, ARMOR_PLATE_MAIL),
 		_armourVacuumSuit(game, this, ARMOR_VACUUM_SUIT),
-		_armourReflectSuit(game, this, ARMOR_REFLECT_SUIT) {
+		_armourReflectSuit(game, this, ARMOR_REFLECT_SUIT),
+		
+		_spellBlink(game, this),
+		_spellCreate(game, this),
+		_spellDestroy(game, this),
+		_spellKill(game, this),
+		_spellLadderDown(game, this),
+		_spellLadderUp(game, this),
+		_spellMagicMissile(game, this),
+		_spellOpen(game, this),
+		_spellPrayer(game, this),
+		_spellSteal(game, this),
+		_spellUnlock(game, this) {
 	setup();
 }
 
@@ -103,9 +115,6 @@ void Character::setup() {
 	_spells.push_back(&_spellCreate);
 	_spells.push_back(&_spellDestroy);
 	_spells.push_back(&_spellKill);
-
-	for (int idx = 0; idx < 11; ++idx)
-		static_cast<Spells::Spell *>(_spells[idx])->setGame(_game);
 }
 
 /*-------------------------------------------------------------------*/

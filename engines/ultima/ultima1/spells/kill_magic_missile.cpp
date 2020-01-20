@@ -74,7 +74,7 @@ bool KillMagicMIssile::CharacterInputMsg(CCharacterInputMsg &msg) {
 
 /*-------------------------------------------------------------------*/
 
-Kill::Kill() : KillMagicMIssile(SPELL_KILL) {
+Kill::Kill(Ultima1Game *game, Character *c) : KillMagicMIssile(game, c, SPELL_KILL) {
 }
 
 void Kill::dungeonCast(Maps::MapDungeon *map) {
@@ -96,7 +96,7 @@ void Kill::dungeonCast(Maps::MapDungeon *map) {
 
 /*-------------------------------------------------------------------*/
 
-MagicMissile::MagicMissile() : KillMagicMIssile(SPELL_MAGIC_MISSILE) {
+MagicMissile::MagicMissile(Ultima1Game *game, Character *c) : KillMagicMIssile(game, c, SPELL_MAGIC_MISSILE) {
 }
 
 void MagicMissile::dungeonCast(Maps::MapDungeon *map) {

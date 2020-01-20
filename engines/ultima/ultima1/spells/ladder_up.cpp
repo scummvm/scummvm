@@ -29,7 +29,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
-LadderUp::LadderUp() : Spell(SPELL_LADDER_UP) {
+LadderUp::LadderUp(Ultima1Game *game, Character *c) : Spell(game, c, SPELL_LADDER_UP) {
 }
 
 void LadderUp::dungeonCast(Maps::MapDungeon *map) {

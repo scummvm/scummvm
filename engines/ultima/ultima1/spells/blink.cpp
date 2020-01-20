@@ -29,7 +29,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
-Blink::Blink() : Spell(SPELL_BLINK) {
+Blink::Blink(Ultima1Game *game, Character *c) : Spell(game, c, SPELL_BLINK) {
 }
 
 void Blink::dungeonCast(Maps::MapDungeon *map) {

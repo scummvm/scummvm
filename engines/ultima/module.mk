@@ -96,6 +96,7 @@ MODULE_OBJS += \
 	ultima1/u1dialogs/full_screen_dialog.o \
 	ultima1/u1dialogs/grocery.o \
 	ultima1/u1dialogs/king.o \
+	ultima1/u1dialogs/magic.o \
 	ultima1/u1dialogs/ready.o \
 	ultima1/u1dialogs/stats.o \
 	ultima1/u1dialogs/weaponry.o \

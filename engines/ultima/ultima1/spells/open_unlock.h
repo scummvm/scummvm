@@ -43,7 +43,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	OpenUnlock(SpellId spellId) : Spell(spellId) {}
+	OpenUnlock(Ultima1Game *game, Character *c, SpellId spellId) : Spell(game, c, spellId) {}
 
 	/**
 	 * Cast the spell within dungeons
@@ -59,7 +59,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Open() : OpenUnlock(SPELL_OPEN) {}
+	Open(Ultima1Game *game, Character *c) : OpenUnlock(game, c, SPELL_OPEN) {}
 };
 
 /**
@@ -70,7 +70,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Unlock() : OpenUnlock(SPELL_UNLOCK) {}
+	Unlock(Ultima1Game *game, Character *c) : OpenUnlock(game, c, SPELL_UNLOCK) {}
 };
 
 } // End of  namespace U1Dialogs
