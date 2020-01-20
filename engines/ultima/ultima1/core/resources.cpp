@@ -596,9 +596,9 @@ const char *const SRC_NOTHING_HERE = " - nothing here!";
 const char *const SRC_SOLD = "Sold!";
 const char *const SRC_CANT_AFFORD = "Thou canst not afford it!";
 const char *const SRC_DROP_PENCE_WEAPON_ARMOR = "Drop Pence,Weapon,Armour:";
-const char *const SRC_DROP_PENCE = "pence";
-const char *const SRC_DROP_WEAPON = "weapon";
-const char *const SRC_DROP_ARMOR = "armor";
+const char *const SRC_DROP_PENCE = "Drop pence: ";
+const char *const SRC_DROP_WEAPON = "Drop weapon: ";
+const char *const SRC_DROP_ARMOR = "Drop armor: ";
 
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
 const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
