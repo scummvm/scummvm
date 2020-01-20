@@ -584,17 +584,29 @@ reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 	uint16 handle = argv[0].toUint16();
+	reg_t dest = argv[1];
 	uint16 size = argv[2].toUint16();
 	int bytesRead = 0;
 	byte *buf = new byte[size];
 	debugC(kDebugLevelFile, "kFileIO(readRaw): %d, %d", handle, size);
 
 	FileHandle *f = getFileFromHandle(s, handle);
-	if (f)
+	if (f) {
+		SegmentRef destReference = s->_segMan->dereference(dest);
+		if (destReference.maxSize == size - 4) {
+			// This is an array structure, which starts with the number of
+			// elements in the array and the size of each element. Skip
+			// these bytes. These structures are stored in the ARC files of
+			// the Behind the Developer's Shield and Inside the Chest demos.
+			f->_in->skip(4);
+			size -= 4;
+		}
+
 		bytesRead = f->_in->read(buf, size);
+	}
 
 	if (bytesRead > 0)
-		s->_segMan->memcpy(argv[1], buf, bytesRead);
+		s->_segMan->memcpy(dest, buf, bytesRead);
 
 	delete[] buf;
 	return make_reg(0, bytesRead);
