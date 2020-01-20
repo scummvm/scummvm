@@ -57,6 +57,8 @@ Ultima1Game::Ultima1Game() : Shared::Game() {
 		_titleView = new U1Gfx::ViewTitle(this);
 		_charGenView = new U1Gfx::ViewCharacterGeneration(this);
 	}
+
+	Common::fill(&_gems[0], &_gems[4], 0);
 }
 
 Ultima1Game::~Ultima1Game() {
@@ -66,6 +68,13 @@ Ultima1Game::~Ultima1Game() {
 
 	delete _map;
 	delete _gameView;
+}
+
+void Ultima1Game::synchronize(Common::Serializer &s) {
+	Shared::Game::synchronize(s);
+
+	for (int idx = 0; idx < 4; ++idx)
+		s.syncAsUint16LE(_gems[idx]);
 }
 
 void Ultima1Game::starting(bool isLoading) {
@@ -82,7 +91,7 @@ void Ultima1Game::setup() {
 	c._weapons.resize(16);
 	for (int idx = 0; idx < 16; ++idx) {
 		c._weapons[idx]._longName = _res->WEAPON_NAMES_UPPERCASE[idx];
-		c._weapons[idx]._longName = _res->WEAPON_NAMES_LOWERCASE[idx];
+		c._weapons[idx]._shortName = _res->WEAPON_NAMES_LOWERCASE[idx];
 	}
 
 	c._armor.resize(6);

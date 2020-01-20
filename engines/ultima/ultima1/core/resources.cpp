@@ -85,9 +85,9 @@ const char *const SRC_CLASS_NAMES[4] = { "Fighter", "Cleric", "Wizard", "Thief" 
 
 const char *const SRC_TRANSPORT_NAMES[8] = { "Foot", "Horse", "Cart", "Raft", "Frigate", "Aircar", "Shuttle", "Time Machine" };
 
-const char *const SRC_STAT_NAMES[10] = {
-	"Hit Points" "Strength", "Agility", "Stamina", "Charisma", "Wisdom", "Intelligence"
-	"Copper pence.", "Silver pieces", "Gold crowns..", "Enemy vessels"
+const char *const SRC_STAT_NAMES[11] = {
+	"Hit Points", "Strength", "Agility", "Stamina", "Charisma", "Wisdom", "Intelligence",
+	"Copper pence", "Silver pieces", "Gold crowns", "Enemy vessels"
 };
 
 const char *const SRC_STATUS_TEXT[4] = { "Hits:", "Food:",  "Exp.:", "Coin:" };
@@ -647,7 +647,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(SRC_SEX_NAMES, SRC_SEX_NAMES + 3, SEX_NAMES);
 	Common::copy(SRC_CLASS_NAMES, SRC_CLASS_NAMES + 4, CLASS_NAMES);
 	Common::copy(SRC_TRANSPORT_NAMES, SRC_TRANSPORT_NAMES + 10, TRANSPORT_NAMES);
-	Common::copy(SRC_STAT_NAMES, SRC_STAT_NAMES + 10, STAT_NAMES);
+	Common::copy(SRC_STAT_NAMES, SRC_STAT_NAMES + 11, STAT_NAMES);
 	Common::copy(SRC_STATUS_TEXT, SRC_STATUS_TEXT + 4, STATUS_TEXT);
 	Common::copy(SRC_DIRECTION_NAMES, SRC_DIRECTION_NAMES + 4, DIRECTION_NAMES);
 	Common::copy(SRC_DUNGEON_MOVES, SRC_DUNGEON_MOVES + 4, DUNGEON_MOVES);
@@ -724,7 +724,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	DOOR_IS_OPEN = SRC_DOOR_IS_OPEN;
 	CANT_LEAVE_IT_HERE = SRC_CANT_LEAVE_IT_HERE;
 	INVENTORY = SRC_INVENTORY;
-	PLAYER = SRC_PLAYER_DESC;
+	PLAYER = SRC_PLAYER;
 	PLAYER_DESC = SRC_PLAYER_DESC;
 	PRESS_SPACE_TO_CONTINUE = SRC_PRESS_SPACE_TO_CONTINUE;
 	MORE = SRC_MORE;
@@ -746,7 +746,7 @@ void GameResources::synchronize() {
 	syncStrings(SEX_NAMES, 3);
 	syncStrings(CLASS_NAMES, 4);
 	syncStrings(TRANSPORT_NAMES, 10);
-	syncStrings(STAT_NAMES, 10);
+	syncStrings(STAT_NAMES, 11);
 	syncStrings(STATUS_TEXT, 4);
 	syncStrings(DIRECTION_NAMES, 4);
 	syncStrings(DUNGEON_MOVES, 4);

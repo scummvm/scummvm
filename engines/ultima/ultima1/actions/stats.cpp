@@ -22,6 +22,7 @@
 
 #include "ultima/ultima1/actions/stats.h"
 #include "ultima/ultima1/u1dialogs/stats.h"
+#include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 
 namespace Ultima {
@@ -34,6 +35,8 @@ END_MESSAGE_MAP()
 
 bool Stats::StatsMsg(CStatsMsg &msg) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+	addInfoMsg(game->_res->ACTION_NAMES[25]);
+
 	U1Dialogs::Stats *dialog = new U1Dialogs::Stats(game);
 	dialog->show();
 

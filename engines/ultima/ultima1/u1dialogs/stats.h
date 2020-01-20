@@ -30,7 +30,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-using Shared::CPopupShownMsg;
+using Shared::CShowMsg;
 using Shared::CKeypressMsg;
 
 /**
@@ -38,7 +38,7 @@ using Shared::CKeypressMsg;
  */
 class Stats : public FullScreenDialog {
 	DECLARE_MESSAGE_MAP;
-	bool PopupShowMsg(CPopupShownMsg &msg);
+	bool ShowMsg(CShowMsg &msg);
 	bool KeypressMsg(CKeypressMsg &msg);
 public:
 	/**
