@@ -142,6 +142,10 @@ uint Weapon::getMagicDamage() const {
 	return damage;
 }
 
+uint Weapon::getBuyCost() const {
+	return ((255 - _character->_intelligence) * _type * _type) / 256 + 5;
+}
+
 uint Weapon::getSellCost() const {
 	return ((_character->_intelligence + 40) * _type * _type) / 256 + 1;
 }

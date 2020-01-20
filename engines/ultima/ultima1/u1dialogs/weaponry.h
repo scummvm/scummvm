@@ -37,10 +37,15 @@ class Weaponry : public BuySellDialog {
 	virtual bool CharacterInputMsg(CCharacterInputMsg &msg) override;
 private:
 	uint _weaponryNum;
-	Common::Array<bool> _weaponsPresent;
+	uint _startIndex, _endIndex;
 private:
 	/**
-	 * Draws the Sell dialog
+	 * Draws the Buy dialog content
+	 */
+	void drawBuy();
+
+	/**
+	 * Draws the Sell dialog content
 	 */
 	void drawSell();
 protected:
