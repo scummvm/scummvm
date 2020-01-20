@@ -196,7 +196,6 @@ bool BaseFileManager::registerPackages() {
 
 	// We need game flags to perform some game-specific hacks.
 	uint32 flags = BaseEngine::instance().getFlags();
-	warning("Flags are %lu", flags);
 
 	// Register without using SearchMan, as otherwise the FSNode-based lookup in openPackage will fail
 	// and that has to be like that to support the detection-scheme.
