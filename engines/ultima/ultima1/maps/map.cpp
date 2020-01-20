@@ -153,6 +153,10 @@ Shared::Maps::MapWidget *Ultima1Map::createWidget(Shared::Maps::MapBase *map, co
 	error("Unknown widget type '%s'", name.c_str());
 }
 
+void Ultima1Map::dropCoins(uint amount) {
+	static_cast<MapBase *>(_mapArea)->dropCoins(amount);
+}
+
 } // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima

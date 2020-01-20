@@ -115,6 +115,11 @@ public:
 	 * Load the map
 	 */
 	virtual void load(Shared::Maps::MapId mapId) override;
+
+	/**
+	 * Handles dropping an amount of coins
+	 */
+	virtual void dropCoins(uint coins) override;
 };
 
 /**
@@ -138,6 +143,11 @@ public:
 	 * Load the map
 	 */
 	virtual void load(Shared::Maps::MapId mapId) override;
+
+	/**
+	 * Handles dropping an amount of coins
+	 */
+	virtual void dropCoins(uint coins) override;
 };
 
 } // End of namespace Maps

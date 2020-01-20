@@ -23,8 +23,8 @@
 #include "ultima/ultima1/u1dialogs/drop.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/maps/map.h"
 #include "ultima/shared/gfx/text_cursor.h"
-#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,9 +32,10 @@ namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(Drop, Dialog)
 	ON_MESSAGE(KeypressMsg)
+	ON_MESSAGE(TextInputMsg)
 END_MESSAGE_MAP()
 
-Drop::Drop(Ultima1Game *game) : FullScreenDialog(game), _mode(SELECT) {
+Drop::Drop(Ultima1Game *game) : FullScreenDialog(game), _mode(SELECT), _textInput(game) {
 }
 
 bool Drop::KeypressMsg(CKeypressMsg &msg) {
@@ -92,6 +93,29 @@ bool Drop::KeypressMsg(CKeypressMsg &msg) {
 
 	default:
 		break;
+	}
+
+	return true;
+}
+
+bool Drop::TextInputMsg(CTextInputMsg &msg) {
+	Shared::Character &c = *_game->_party._currentCharacter;
+	assert(_mode == DROP_PENCE);
+	uint amount = atoi(msg._text.c_str());
+
+	if (msg._escaped || !amount) {
+		none();
+
+	} else {
+		addInfoMsg("");
+
+		if (amount > c._coins) {
+			addInfoMsg(_game->_res->NOT_THAT_MUCH);
+			_game->playFX(1);
+		} else {
+			c._coins -= amount;
+			getMap()->dropCoins(amount);
+		}
 	}
 
 	return true;
@@ -161,8 +185,7 @@ void Drop::drawDropPence() {
 	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
 	s.writeString(_game->_res->DROP_ARMOR, TextPoint(1, 24), _game->_textColor);
 
-	_game->_textCursor->setPosition(TextPoint(1 + strlen(_game->_res->DROP_PENCE), 24));
-	_game->_textCursor->setVisible(true);
+	_textInput.show(TextPoint(12, 24), true, 4, _game->_textColor);
 }
 
 void Drop::drawDropWeapon() {

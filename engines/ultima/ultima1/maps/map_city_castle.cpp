@@ -212,6 +212,10 @@ void MapCity::load(Shared::Maps::MapId mapId) {
 	setPosition(Common::Point(width() / 2, height() - 1));		// Start at bottom center edge of map
 }
 
+void MapCity::dropCoins(uint coins) {
+
+}
+
 /*-------------------------------------------------------------------*/
 
 void MapCastle::load(Shared::Maps::MapId mapId) {
@@ -231,6 +235,10 @@ void MapCastle::load(Shared::Maps::MapId mapId) {
 	// Load up the widgets for the given map
 	loadWidgets();
 	setPosition(Common::Point(0, height() / 2));		// Start at center left edge of map
+}
+
+void MapCastle::dropCoins(uint coins) {
+
 }
 
 } // End of namespace Maps

@@ -54,9 +54,12 @@ public:
 	 * @param pt				Position of the input
 	 * @param maxCharacters		Maximum length of input
 	 * @param color				Text color
+	 * @param respondTo			Element to send any response to when the popup closes.
+	 *							If not provided, any response goes to the active view
 	 * @remarks		Generates a TextInputMsg message with the text when Enter or escape is pressed
 	 */
-	void show(const Point &pt, bool isNumeric, size_t maxCharacters, byte color);
+	void show(const Point &pt, bool isNumeric, size_t maxCharacters, byte color,
+		TreeItem *respondTo = nullptr);
 };
 
 } // End of namespace Gfx
