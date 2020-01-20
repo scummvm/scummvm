@@ -1158,7 +1158,25 @@ const KYRAGameDescription adGameDescs[] = {
 				{ "L01.PAK", 0, "d9b9644b709de55f990d5ef73e0f6d44", -1 },
 				{ 0, 0, 0, 0 }
 			},
-			Common::EN_ANY,
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_CD_FAN_FLAGS(Common::RU_RUS, Common::DE_DEU)
+	},
+
+	// Russian fan translation. Version 24.02.2019
+	{
+		{
+			"lol",
+			"CD",
+			{
+				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
+				{ "L01.PAK", 0, "8aa1860a3e9f84c6f11118a0181bcfaf", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
 			GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
