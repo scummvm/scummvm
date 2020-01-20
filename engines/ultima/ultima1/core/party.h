@@ -80,6 +80,11 @@ public:
 	uint getMagicDamage() const;
 
 	/**
+	 * Gets how much the weapon can be bought for
+	 */
+	uint getBuyCost() const;
+
+	/**
 	 * Gets how much the weapon can sell for
 	 */
 	uint getSellCost() const;
