@@ -577,7 +577,7 @@ const char *const SRC_A_SECRET_DOOR = "a secret door!";
 const char *const SRC_ACTION_NAMES[26] = {
 	nullptr, nullptr, nullptr, "Drop", "Enter", nullptr, "Get", "HyperJump", "Inform and search", nullptr,
 	"K-Limb", nullptr, nullptr, nullptr, "Open", "Pass", nullptr, nullptr, "Steal", "Transact",
-	"Unlock", "View", nullptr, nullptr, nullptr, nullptr
+	"Unlock", "View", nullptr, "X-it", nullptr, nullptr
 };
 const char *const SRC_HUH = "Huh?";
 const char *const SRC_WHAT = " what?";
@@ -611,6 +611,7 @@ const char *const SRC_THOU_DOST_FIND = "Thou dost find: ";
 const char *const SRC_NO_KEY = "Thou hast not a key!";
 const char *const SRC_INCORRECT_KEY = "Thou has not\x1F""the correct key!";
 const char *const SRC_DOOR_IS_OPEN = "The door is open";
+const char *const SRC_CANT_LEAVE_IT_HERE = "Thy canst not leave it here!";
 
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
 const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
@@ -704,6 +705,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	NO_KEY = SRC_NO_KEY;
 	INCORRECT_KEY = SRC_INCORRECT_KEY;
 	DOOR_IS_OPEN = SRC_DOOR_IS_OPEN;
+	CANT_LEAVE_IT_HERE = SRC_CANT_LEAVE_IT_HERE;
 
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
 	GROCERY_SELL = SRC_GROCERY_SELL;
@@ -794,6 +796,7 @@ void GameResources::synchronize() {
 	syncString(NO_KEY);
 	syncString(INCORRECT_KEY);
 	syncString(DOOR_IS_OPEN);
+	syncString(CANT_LEAVE_IT_HERE);
 
 	syncStrings(GROCERY_NAMES, 8);
 	syncString(GROCERY_SELL);

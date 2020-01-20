@@ -22,8 +22,9 @@
 
 #include "ultima/ultima1/widgets/transport.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/maps/map.h"
-#include "ultima/ultima1/maps/map_dungeon.h"
+#include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/maps/map_overworld.h"
 #include "common/algorithm.h"
 
@@ -31,8 +32,38 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+TransportOnFoot::TransportOnFoot(Ultima1Game *game, Maps::MapBase *map) : OverworldWidget(game, map) {
+}
+
 uint TransportOnFoot::getTileNum() const {
 	return 8;
+}
+
+/*-------------------------------------------------------------------*/
+
+Transport::Transport(Ultima1Game *game, Maps::MapBase *map) : OverworldWidget(game, map) {
+}
+
+void Transport::disembark() {
+	Maps::U1MapTile tile;
+	Point pt = _map->getPosition();
+	Maps::MapOverworld *map = static_cast<Maps::MapOverworld *>(_map);
+
+	// WORKAROUND: The original allowed dis-embarking if ground tiles were within two tiles of the transport.
+	// It makes better sense to only allow if it's within one tile of the transport (i.e. the ground is adjacent)
+	bool hasGround = false;
+	for (int deltaY = -1; deltaY <= 1 && !hasGround; ++deltaY) {
+		for (int deltaX = -1; deltaX <= 1 && !hasGround; ++deltaX) {
+			_map->getTileAt(pt + Point(deltaX, deltaY), &tile);
+			hasGround = !tile._tileId != Maps::OTILE_OCEAN;
+		}
+	}
+
+	if (tile._tileId > Maps::OTILE_WOODS || !hasGround) {
+		addInfoMsg(getGame()->_res->CANT_LEAVE_IT_HERE);
+	} else {
+		map->addOnFoot();
+	}
 }
 
 } // End of namespace Widgets

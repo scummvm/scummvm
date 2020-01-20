@@ -143,9 +143,9 @@ void MapOverworld::inform() {
 			addInfoMsg(Common::String::format("%s %s", _game->_res->THE_CITY_OF, _game->_res->LOCATION_NAMES[tile._locationNum - 1]));
 		else
 			addInfoMsg(_game->_res->LOCATION_NAMES[tile._locationNum - 1]);
-	} else if (tile._tileId == OTILE_OCEAN) {
+	} else if (tile.isOriginalWater()) {
 		addInfoMsg(_game->_res->YOU_ARE_AT_SEA);
-	} else if (tile._tileId == OTILE_WOODS) {
+	} else if (tile.isOriginalWoods()) {
 		addInfoMsg(_game->_res->YOU_ARE_IN_WOODS);
 	} else {
 		addInfoMsg(_game->_res->YOU_ARE_IN_LANDS);
@@ -153,9 +153,25 @@ void MapOverworld::inform() {
 	}
 }
 
+void MapOverworld::disembark() {
+	Widgets::Transport *transport = dynamic_cast<Widgets::Transport *>(_playerWidget);
+
+	if (transport) {
+		addInfoMsg("");
+		transport->disembark();
+	} else {
+		addInfoMsg(_game->_res->WHAT);
+	}
+}
+
 uint MapOverworld::getLandsNumber() const {
 	Point pt = getPosition();
 	return (pt.y > 77 ? 2 : 0) + (pt.x > 83 ? 1 : 0);
+}
+
+void MapOverworld::addOnFoot() {
+	_widgets.insert_at(0, Shared::Maps::MapWidgetPtr(new Widgets::TransportOnFoot(_game, this)));
+	_playerWidget = _widgets[0].get();
 }
 
 } // End of namespace Maps

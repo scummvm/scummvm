@@ -30,37 +30,38 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-class Transport : public OverworldWidget {
-public:
-	/**
-	 * Constructor
-	 */
-	Transport(Shared::Game *game, Shared::Maps::MapBase *map) : OverworldWidget(game, map) {}
-
-	/**
-	 * Destructor
-	 */
-	virtual ~Transport() {}
-};
-
-class TransportOnFoot : public Transport {
+/**
+ * Widget for the player moving within the overworld on foot
+ */
+class TransportOnFoot : public OverworldWidget {
 public:
 	DECLARE_WIDGET(TransportOnFoot)
 
 	/**
 	 * Constructor
 	 */
-	TransportOnFoot(Shared::Game *game, Shared::Maps::MapBase *map) : Transport(game, map) {}
-
-	/**
-	 * Destructor
-	 */
-	virtual ~TransportOnFoot() {}
+	TransportOnFoot(Ultima1Game *game, Maps::MapBase *map);
 
 	/**
 	 * Get the tile for the transport method
 	 */
 	virtual uint getTileNum() const override;
+};
+
+/**
+ * Base class for the different types of transports
+ */
+class Transport : public OverworldWidget {
+public:
+	/**
+	 * Constructor
+	 */
+	Transport(Ultima1Game *game, Maps::MapBase *map);
+
+	/**
+	 * Disembarks from the transport
+	 */
+	virtual void disembark();
 };
 
 } // End of namespace Widgets
