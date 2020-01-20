@@ -178,7 +178,7 @@ void Drop::draw() {
 
 void Drop::drawSelection() {
 	Shared::Gfx::VisualSurface s = getSurface();
-	s.writeString(_game->_res->DROP_PENCE_WEAPON_ARMOR, TextPoint(1, 24), _game->_textColor);
+	s.writeString(_game->_res->DROP_PENCE_WEAPON_ARMOR, TextPoint(1, 24));
 
 	_game->_textCursor->setPosition(TextPoint(1 + strlen(_game->_res->DROP_PENCE_WEAPON_ARMOR), 24));
 	_game->_textCursor->setVisible(true);
@@ -188,7 +188,7 @@ void Drop::drawDropPence() {
 	Shared::Gfx::VisualSurface s = getSurface();
 	Common::String text = Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[3], _game->_res->DROP_PENCE);
 	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
-	s.writeString(_game->_res->DROP_PENCE, TextPoint(1, 24), _game->_textColor);
+	s.writeString(_game->_res->DROP_PENCE, TextPoint(1, 24));
 
 	_textInput.show(TextPoint(13, 24), true, 4, _game->_textColor);
 }
@@ -211,13 +211,13 @@ void Drop::drawDropWeapon() {
 		if (c._weapons[idx]._quantity) {
 			Common::String text = Common::String::format("%c) %s", 'a' + idx,
 				_game->_res->WEAPON_NAMES_UPPERCASE[idx]);
-			s.writeString(text, TextPoint(15, yp++), _game->_textColor);
+			s.writeString(text, TextPoint(15, yp++));
 		}
 	}
 
 	// Draw drop weapon text at the bottom and enable cursor
 	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
-	s.writeString(_game->_res->DROP_WEAPON, TextPoint(1, 24), _game->_textColor);
+	s.writeString(_game->_res->DROP_WEAPON, TextPoint(1, 24));
 
 	// Show cursor in the info area
 	_game->_textCursor->setPosition(TextPoint(1 + strlen(_game->_res->DROP_WEAPON), 24));
@@ -242,13 +242,13 @@ void Drop::drawDropArmor() {
 		if (c._armor[idx]._quantity) {
 			Common::String text = Common::String::format("%c) %s", 'a' + idx,
 				_game->_res->ARMOR_NAMES[idx]);
-			s.writeString(text, TextPoint(13, yp++), _game->_textColor);
+			s.writeString(text, TextPoint(13, yp++));
 		}
 	}
 
 	// Draw drop armor text at the bottom and enable cursor
 	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
-	s.writeString(_game->_res->DROP_ARMOR, TextPoint(1, 24), _game->_textColor);
+	s.writeString(_game->_res->DROP_ARMOR, TextPoint(1, 24));
 
 	// Show cursor in the info area
 	_game->_textCursor->setPosition(TextPoint(1 + strlen(_game->_res->DROP_ARMOR), 24));

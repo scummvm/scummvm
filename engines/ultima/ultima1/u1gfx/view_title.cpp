@@ -140,17 +140,17 @@ void ViewTitle::drawPresentsView() {
 	case 0:
 		s.clear();
 		s.blitFrom(_logo, Point(20, 21));
-		s.writeString(game->_res->TITLE_MESSAGES[3], TextPoint(14, 13), game->_textColor);
+		s.writeString(game->_res->TITLE_MESSAGES[3], TextPoint(14, 13));
 		break;
 	case 1:
-		s.writeString(game->_res->TITLE_MESSAGES[4], TextPoint(5, 12), game->_textColor);
-		s.writeString(game->_res->TITLE_MESSAGES[5], TextPoint(5, 13), game->_textColor);
-		s.writeString(game->_res->TITLE_MESSAGES[6], TextPoint(5, 14), game->_textColor);
+		s.writeString(game->_res->TITLE_MESSAGES[4], TextPoint(5, 12));
+		s.writeString(game->_res->TITLE_MESSAGES[5], TextPoint(5, 13));
+		s.writeString(game->_res->TITLE_MESSAGES[6], TextPoint(5, 14));
 		break;
 	case 2:
 		s.fillRect(Rect(0, 12 * 8, 320, 15 * 8), game->_bgColor);
-		s.writeString(game->_res->TITLE_MESSAGES[7], TextPoint(6, 12), game->_textColor);
-		s.writeString(game->_res->TITLE_MESSAGES[8], TextPoint(6, 13), game->_textColor);
+		s.writeString(game->_res->TITLE_MESSAGES[7], TextPoint(6, 12));
+		s.writeString(game->_res->TITLE_MESSAGES[8], TextPoint(6, 13));
 		break;
 	default:
 		break;
@@ -181,10 +181,10 @@ void ViewTitle::drawTrademarksView() {
 		s.blitFrom(_logo, Common::Rect(0, _logo.h - _counter - 1, _logo.w, _logo.h),
 			Common::Point(20, 21 + _logo.h - _counter - 1));
 	} else {
-		s.writeString(game->_res->TITLE_MESSAGES[9], TextPoint(1, 17), game->_textColor);
-		s.writeString(game->_res->TITLE_MESSAGES[10], TextPoint(2, 18), game->_textColor);
-		s.writeString(game->_res->TITLE_MESSAGES[11], TextPoint(11, 19), game->_textColor);
-		s.writeString(game->_res->TITLE_MESSAGES[12], TextPoint(6, 23), game->_textColor);
+		s.writeString(game->_res->TITLE_MESSAGES[9], TextPoint(1, 17));
+		s.writeString(game->_res->TITLE_MESSAGES[10], TextPoint(2, 18));
+		s.writeString(game->_res->TITLE_MESSAGES[11], TextPoint(11, 19));
+		s.writeString(game->_res->TITLE_MESSAGES[12], TextPoint(6, 23));
 	}	
 }
 
@@ -195,13 +195,13 @@ void ViewTitle::drawMainMenu() {
 	s.clear();
 	ds.drawFrame();
 
-	s.writeString(game->_res->MAIN_MENU_TEXT[0], TextPoint(12, 6), game->_whiteColor);
-	s.writeString(game->_res->MAIN_MENU_TEXT[1], TextPoint(14, 9), game->_whiteColor);
-	s.writeString(game->_res->MAIN_MENU_TEXT[2], TextPoint(14, 10), game->_whiteColor);
-	s.writeString(game->_res->MAIN_MENU_TEXT[3], TextPoint(13, 11), game->_whiteColor);
-	s.writeString(game->_res->MAIN_MENU_TEXT[4], TextPoint(8, 14), game->_textColor);
-	s.writeString(game->_res->MAIN_MENU_TEXT[5], TextPoint(8, 15), game->_textColor);
-	s.writeString(game->_res->MAIN_MENU_TEXT[6], TextPoint(13, 18), game->_textColor);
+	s.writeString(game->_res->MAIN_MENU_TEXT[0], TextPoint(12, 6));
+	s.writeString(game->_res->MAIN_MENU_TEXT[1], TextPoint(14, 9));
+	s.writeString(game->_res->MAIN_MENU_TEXT[2], TextPoint(14, 10));
+	s.writeString(game->_res->MAIN_MENU_TEXT[3], TextPoint(13, 11));
+	s.writeString(game->_res->MAIN_MENU_TEXT[4], TextPoint(8, 14));
+	s.writeString(game->_res->MAIN_MENU_TEXT[5], TextPoint(8, 15));
+	s.writeString(game->_res->MAIN_MENU_TEXT[6], TextPoint(13, 18));
 }
 
 void ViewTitle::setTitlePalette() {

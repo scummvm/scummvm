@@ -45,16 +45,15 @@ void BuySellDialog::draw() {
 	s.frameRect(Rect(3, 3, _bounds.width() - 3, _bounds.height() - 3), getGame()->_borderColor);
 
 	// Draw the title
-	byte color = getGame()->_textColor;
-	s.writeString(_title, Point((_bounds.width() - _title.size() * 8) / 2, 9), color);
+	s.writeString(_title, Point((_bounds.width() - _title.size() * 8) / 2, 9));
 
 	switch (_buySell) {
 	case SOLD:
-		s.writeString(getGame()->_res->SOLD, TextPoint(14, 5), color);
+		s.writeString(getGame()->_res->SOLD, TextPoint(14, 5));
 		break;
 
 	case CANT_AFFORD:
-		s.writeString(getGame()->_res->CANT_AFFORD, TextPoint(4, 6), color);
+		s.writeString(getGame()->_res->CANT_AFFORD, TextPoint(4, 6));
 		break;
 
 	default:

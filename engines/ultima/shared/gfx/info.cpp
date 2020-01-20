@@ -113,7 +113,7 @@ void Info::draw() {
 		}
 
 		// Write the remainder of the line
-		s.writeString(line, Point(x, y), game->_textColor);
+		s.writeString(line, Point(x, y));
 	}
 
 	_isDirty = false;
