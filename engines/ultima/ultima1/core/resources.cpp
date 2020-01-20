@@ -585,7 +585,7 @@ const char *const SRC_A_SECRET_DOOR = "a secret door!";
 
 const char *const SRC_ACTION_NAMES[26] = {
 	nullptr, nullptr, nullptr, "Drop", "Enter", nullptr, "Get", "HyperJump", "Inform and search", nullptr,
-	"K-Limb", nullptr, nullptr, nullptr, "Open", "Pass", "Quit", nullptr, "Steal", "Transact",
+	"K-Limb", nullptr, nullptr, nullptr, "Open", "Pass", "Quit", "Ready", "Steal", "Transact",
 	"Unlock", "View", nullptr, "X-it", nullptr, "Ztats"
 };
 const char *const SRC_HUH = "Huh?";
@@ -606,7 +606,7 @@ const char *const SRC_NOTHING_HERE = " - nothing here!";
 const char *const SRC_NONE_HERE = " - none here!";
 const char *const SRC_SOLD = "Sold!";
 const char *const SRC_CANT_AFFORD = "Thou canst not afford it!";
-const char *const SRC_DROP_PENCE_WEAPON_ARMOR = "Drop Pence,Weapon,Armour:";
+const char *const SRC_DROP_PENCE_WEAPON_ARMOR = "Drop Pence,Weapon,Armor:";
 const char *const SRC_DROP_PENCE = "Drop pence: ";
 const char *const SRC_DROP_WEAPON = "Drop weapon: ";
 const char *const SRC_DROP_ARMOR = "Drop armor: ";
@@ -626,6 +626,8 @@ const char *const SRC_PLAYER = "Player: %s";
 const char *const SRC_PLAYER_DESC = "A Level %u %s %s %s";
 const char *const SRC_PRESS_SPACE_TO_CONTINUE = "Press Space to continue: ";
 const char *const SRC_MORE = " More ";
+const char *const SRC_READY_WEAPON_ARMOR_SPELL = "Ready Weapon,Armor,Spell:";
+const char *const SRC_WEAPON_ARMOR_SPELL[3] = { "weapon", "armor", "spell" };
 
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
 const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
@@ -728,6 +730,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	PLAYER_DESC = SRC_PLAYER_DESC;
 	PRESS_SPACE_TO_CONTINUE = SRC_PRESS_SPACE_TO_CONTINUE;
 	MORE = SRC_MORE;
+	READY_WEAPON_ARMOR_SPELL = SRC_READY_WEAPON_ARMOR_SPELL;
+	Common::copy(SRC_WEAPON_ARMOR_SPELL, SRC_WEAPON_ARMOR_SPELL + 3, WEAPON_ARMOR_SPELL);
 
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
 	GROCERY_SELL = SRC_GROCERY_SELL;
@@ -827,6 +831,8 @@ void GameResources::synchronize() {
 	syncString(PLAYER_DESC);
 	syncString(PRESS_SPACE_TO_CONTINUE);
 	syncString(MORE);
+	syncString(READY_WEAPON_ARMOR_SPELL);
+	syncStrings(WEAPON_ARMOR_SPELL, 3);
 
 	syncStrings(GROCERY_NAMES, 8);
 	syncString(GROCERY_SELL);
