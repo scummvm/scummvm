@@ -75,6 +75,7 @@ public:
 	DEFAULT_ACTION(steal)
 	DEFAULT_ACTION(talk)
 	DEFAULT_ACTION(unlock)
+	DEFAULT_ACTION(view)
 
 	/**
 	 * Handles dropping an amount of coins
