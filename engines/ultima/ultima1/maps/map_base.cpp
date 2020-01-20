@@ -31,7 +31,7 @@
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/spells/spell.h"
 #include "ultima/ultima1/widgets/dungeon_item.h"
-#include "ultima/ultima1/widgets/merchant_armor.h"
+#include "ultima/ultima1/widgets/merchant_armour.h"
 #include "ultima/ultima1/widgets/merchant_grocer.h"
 #include "ultima/ultima1/widgets/merchant_magic.h"
 #include "ultima/ultima1/widgets/merchant_tavern.h"

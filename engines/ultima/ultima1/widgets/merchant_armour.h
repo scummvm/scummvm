@@ -20,72 +20,64 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_U1DIALOGS_DROP_H
-#define ULTIMA_ULTIMA1_U1DIALOGS_DROP_H
+#ifndef ULTIMA_ULTIMA1_WIDGETS_MERCHANT_ARMOUR_H
+#define ULTIMA_ULTIMA1_WIDGETS_MERCHANT_ARMOUR_H
 
-#include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
-#include "ultima/shared/gfx/text_input.h"
+#include "ultima/ultima1/widgets/merchant.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace U1Dialogs {
-
-using Shared::CShowMsg;
-using Shared::CCharacterInputMsg;
-using Shared::CTextInputMsg;
+namespace Widgets {
 
 /**
- * Implements the drop dialog
+ * Implements the armor merchant
  */
-class Drop : public FullScreenDialog {
+class MerchantArmour : public Merchant {
 	DECLARE_MESSAGE_MAP;
-	bool ShowMsg(CShowMsg &msg);
-	bool CharacterInputMsg(CCharacterInputMsg &msg);
-	bool TextInputMsg(CTextInputMsg &msg);
-
-	enum Mode { SELECT, DROP_PENCE, DROP_WEAPON, DROP_armour };
-private:
-	Mode _mode;
 private:
 	/**
-	 * Sets the mode
+	 * Handles getting or stealing armor
+	 * @param checkStealing		If set, checks for stealing
 	 */
-	void setMode(Mode mode);
-
-	/**
-	 * Nothing selected
-	 */
-	void nothing();
-
-	/**
-	 * None response
-	 */
-	void none();
-
-	/**
-	 * Draw the drop weapon display
-	 */
-	void drawDropWeapon();
-
-	/**
-	 * Draw the drop armor display
-	 */
-	void drawDropArmor();
+	void findArmor(bool checkStealing);
 public:
+	DECLARE_WIDGET(MerchantArmour)
 	CLASSDEF;
 
 	/**
 	 * Constructor
 	 */
-	Drop(Ultima1Game *game);
+	MerchantArmour(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
+		Merchant(game, map, 50, hitPoints) {}
 
 	/**
-	 * Draws the visual item on the screen
+	 * Constructor
 	 */
-	virtual void draw();
+	MerchantArmour(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) :
+		Merchant(game, map, tileNum, hitPoints) {}
+
+	/**
+	 * Constructor
+	 */
+	MerchantArmour(Ultima1Game *game, Maps::MapBase *map) : Merchant(game, map, 50) {}
+
+	/**
+	 * Does the get action
+	 */
+	virtual void get() override;
+
+	/**
+	 * Does the steal action
+	 */
+	virtual void steal() override;
+
+	/**
+	 * Does the talk action
+	 */
+	virtual void talk() override;
 };
 
-} // End of namespace U1Dialogs
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

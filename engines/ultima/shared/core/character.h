@@ -96,9 +96,9 @@ public:
 };
 
 /**
- * Armor entry
+ * Armour entry
  */
-class Armor : public Itemized {
+class Armour : public Itemized {
 public:
 	Common::String _name;
 };
@@ -155,17 +155,17 @@ public:
 	uint _food;
 	uint _coins;
 	int _equippedWeapon;
-	int _equippedArmor;
+	int _equippedArmour;
 	int _equippedSpell;
 	ItemArray<Weapon *> _weapons;
-	ItemArray<Armor *> _armor;
+	ItemArray<Armour *> _armour;
 	ItemArray<Spell *> _spells;
 public:
 	/**
 	 * Constructor
 	 */
 	Character() : _strength(0), _agility(0), _stamina(0), _charisma(0), _wisdom(0), _intelligence(0),
-		_hitPoints(0), _experience(0), _food(0), _coins(0), _equippedWeapon(0), _equippedArmor(0), _equippedSpell(0),
+		_hitPoints(0), _experience(0), _food(0), _coins(0), _equippedWeapon(0), _equippedArmour(0), _equippedSpell(0),
 		_race(0), _sex(0), _class(0) {}
 
 	/**
@@ -181,7 +181,7 @@ public:
 	/**
 	 * Returns true if armor is equipped
 	 */
-	bool isArmorEquipped() const { return _equippedArmor != 0; }
+	bool isArmourEquipped() const { return _equippedArmour != 0; }
 
 	/**
 	 * Returns true if a spell is equipped
@@ -196,7 +196,7 @@ public:
 	/**
 	 * Return the equipped armor
 	 */
-	Armor *equippedArmor() const { return _armor[_equippedArmor]; }
+	Armour *equippedArmour() const { return _armour[_equippedArmour]; }
 
 	/**
 	 * Return the equipped spell
@@ -211,7 +211,7 @@ public:
 	/**
 	 * Removes any eqipped armor
 	 */
-	void removeArmor() { _equippedArmor = 0; }
+	void removeArmour() { _equippedArmour = 0; }
 
 	/**
 	 * Remove any equipped spell

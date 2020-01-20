@@ -40,7 +40,7 @@ Ready::Ready(Ultima1Game *game) : FullScreenDialog(game), _mode(SELECT) {
 }
 
 bool Ready::ShowMsg(CShowMsg &msg) {
-	addInfoMsg(_game->_res->READY_WEAPON_ARMOR_SPELL, false);
+	addInfoMsg(_game->_res->READY_WEAPON_armour_SPELL, false);
 	getKeypress();
 	return true;
 }
@@ -55,7 +55,7 @@ bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
 			setMode(READY_WEAPON);
 			break;
 		case Common::KEYCODE_a:
-			setMode(READY_ARMOR);
+			setMode(READY_armour);
 			break;
 		case Common::KEYCODE_s:
 			setMode(READY_SPELL);
@@ -75,20 +75,20 @@ bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
 		}
 
 		addInfoMsg(Common::String::format("%s %s: %s", _game->_res->ACTION_NAMES[17],
-			_game->_res->WEAPON_ARMOR_SPELL[0], c.equippedWeapon()->_longName.c_str()),
+			_game->_res->WEAPON_armour_SPELL[0], c.equippedWeapon()->_longName.c_str()),
 			true, true);
 		hide();
 		break;
 
-	case READY_ARMOR:
-		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode < (Common::KEYCODE_a + (int)c._armor.size())) {
+	case READY_armour:
+		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode < (Common::KEYCODE_a + (int)c._armour.size())) {
 			int index = msg._keyState.keycode - Common::KEYCODE_a;
-			if (!c._armor[index]->empty())
-				c._equippedArmor = index;
+			if (!c._armour[index]->empty())
+				c._equippedArmour = index;
 		}
 
 		addInfoMsg(Common::String::format("%s %s: %s", _game->_res->ACTION_NAMES[17],
-			_game->_res->WEAPON_ARMOR_SPELL[1], c.equippedArmor()->_name.c_str()),
+			_game->_res->WEAPON_armour_SPELL[1], c.equippedArmour()->_name.c_str()),
 			true, true);
 		hide();
 		break;
@@ -101,7 +101,7 @@ bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
 		}
 
 		addInfoMsg(Common::String::format("%s %s: %s", _game->_res->ACTION_NAMES[17],
-			_game->_res->WEAPON_ARMOR_SPELL[2], c._spells[c._equippedSpell]->_name.c_str()),
+			_game->_res->WEAPON_armour_SPELL[2], c._spells[c._equippedSpell]->_name.c_str()),
 			true, true);
 		hide();
 		break;
@@ -124,24 +124,24 @@ void Ready::setMode(Mode mode) {
 			nothing();
 		} else {
 			addInfoMsg(Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[17],
-				_game->_res->WEAPON_ARMOR_SPELL[0]), false, true);
+				_game->_res->WEAPON_armour_SPELL[0]), false, true);
 			getKeypress();
 		}
 		break;
 
-	case READY_ARMOR:
-		if (c._armor.hasNothing()) {
+	case READY_armour:
+		if (c._armour.hasNothing()) {
 			nothing();
 		} else {
 			addInfoMsg(Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[17],
-				_game->_res->WEAPON_ARMOR_SPELL[1]), false, true);
+				_game->_res->WEAPON_armour_SPELL[1]), false, true);
 			getKeypress();
 		}
 		break;
 
 	case READY_SPELL:
 		addInfoMsg(Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[17],
-			_game->_res->WEAPON_ARMOR_SPELL[2]), false, true);
+			_game->_res->WEAPON_armour_SPELL[2]), false, true);
 		getKeypress();
 		break;
 
@@ -167,7 +167,7 @@ void Ready::draw() {
 	case READY_WEAPON:
 		drawReadyWeapon();
 		break;
-	case READY_ARMOR:
+	case READY_armour:
 		drawReadyArmor();
 		break;
 	case READY_SPELL:
@@ -207,17 +207,17 @@ void Ready::drawReadyArmor() {
 	// Count the number of different types of weapons
 	const Shared::Character &c = *_game->_party;
 	int numLines = 0;
-	for (uint idx = 0; idx < c._armor.size(); ++idx) {
-		if (!c._armor[idx]->empty())
+	for (uint idx = 0; idx < c._armour.size(); ++idx) {
+		if (!c._armour[idx]->empty())
 			++numLines;
 	}
 
 	// Draw lines for armor the player has
 	int yp = 10 - (numLines / 2);
-	for (uint idx = 0; idx < c._armor.size(); ++idx) {
-		if (!c._armor[idx]->empty()) {
-			Common::String text = Common::String::format("%c) %s", 'a' + idx, c._armor[idx]->_name.c_str());
-			s.writeString(text, TextPoint(15, yp++), (int)idx == c._equippedArmor ? _game->_highlightColor : _game->_textColor);
+	for (uint idx = 0; idx < c._armour.size(); ++idx) {
+		if (!c._armour[idx]->empty()) {
+			Common::String text = Common::String::format("%c) %s", 'a' + idx, c._armour[idx]->_name.c_str());
+			s.writeString(text, TextPoint(15, yp++), (int)idx == c._equippedArmour ? _game->_highlightColor : _game->_textColor);
 		}
 	}
 }

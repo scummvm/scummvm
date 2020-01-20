@@ -40,7 +40,7 @@ class Ready : public FullScreenDialog {
 	bool ShowMsg(CShowMsg &msg);
 	bool CharacterInputMsg(CCharacterInputMsg &msg);
 
-	enum Mode { SELECT, READY_WEAPON, READY_ARMOR, READY_SPELL };
+	enum Mode { SELECT, READY_WEAPON, READY_armour, READY_SPELL };
 private:
 	Mode _mode;
 private:

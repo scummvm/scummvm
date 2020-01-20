@@ -394,8 +394,8 @@ bool ViewCharacterGeneration::save() {
 	_character->_experience = 0;
 	_character->_equippedWeapon = 1;
 	_character->_weapons[1]->_quantity = 1;			// Dagger
-	_character->_equippedArmor = 1;
-	_character->_armor[1]->_quantity = 1;			// Leather armour
+	_character->_equippedArmour = 1;
+	_character->_armour[1]->_quantity = 1;			// Leather armour
 	_character->_equippedSpell = 0;
 
 	return g_vm->saveGame();

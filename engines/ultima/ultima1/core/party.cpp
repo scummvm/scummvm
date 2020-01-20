@@ -55,12 +55,12 @@ Character::Character(Ultima1Game *game) : Shared::Character(), _game(game),
 		_weaponPhazor(game, this, WEAPON_PHAZOR),
 		_weaponBlaster(game, this, WEAPON_BLASTER),
 
-		_armorSkin(game, this, ARMOR_SKIN),
-		_armorLeatherArmor(game, this, ARMOR_LEATHER_ARMOR),
-		_armorChainMail(game, this, ARMOR_CHAIN_MAIL),
-		_armorPlateMail(game, this, ARMOR_PLATE_MAIL),
-		_armorVacuumSuit(game, this, ARMOR_VACUUM_SUIT),
-		_armorReflectSuit(game, this, ARMOR_REFLECT_SUIT) {
+		_armourSkin(game, this, ARMOR_SKIN),
+		_armourLeatherArmor(game, this, ARMOR_LEATHER_armour),
+		_armourChainMail(game, this, ARMOR_CHAIN_MAIL),
+		_armourPlateMail(game, this, ARMOR_PLATE_MAIL),
+		_armourVacuumSuit(game, this, ARMOR_VACUUM_SUIT),
+		_armourReflectSuit(game, this, ARMOR_REFLECT_SUIT) {
 	setup();
 }
 
@@ -84,12 +84,12 @@ void Character::setup() {
 	_weapons.push_back(&_weaponBlaster);
 
 	// Armor setup
-	_armor.push_back(&_armorSkin);
-	_armor.push_back(&_armorLeatherArmor);
-	_armor.push_back(&_armorChainMail);
-	_armor.push_back(&_armorPlateMail);
-	_armor.push_back(&_armorVacuumSuit);
-	_armor.push_back(&_armorReflectSuit);
+	_armour.push_back(&_armourSkin);
+	_armour.push_back(&_armourLeatherArmor);
+	_armour.push_back(&_armourChainMail);
+	_armour.push_back(&_armourPlateMail);
+	_armour.push_back(&_armourVacuumSuit);
+	_armour.push_back(&_armourReflectSuit);
 
 	// Spells setup
 	_spells.push_back(&_spellPrayer);
@@ -152,7 +152,7 @@ uint Weapon::getSellCost() const {
 
 /*-------------------------------------------------------------------*/
 
-Armor::Armor(Ultima1Game *game, Character *c, ArmorType armorType) :
+Armour::Armour(Ultima1Game *game, Character *c, ArmorType armorType) :
 		_game(game), _character(c), _type(armorType) {
 	_name = game->_res->ARMOR_NAMES[armorType];
 
@@ -160,8 +160,13 @@ Armor::Armor(Ultima1Game *game, Character *c, ArmorType armorType) :
 		_quantity = 0xffff;
 }
 
-/*-------------------------------------------------------------------*/
+uint Armour::getBuyCost() const {
+	return (200 - _character->_intelligence) / 4 * _type;
+}
 
+uint Armour::getSellCost() const {
+	return (_character->_charisma / 4) * _type;
+}
 
 } // End of namespace Ultima1
 } // End of namespace Ultima

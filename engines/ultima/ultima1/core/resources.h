@@ -116,10 +116,10 @@ public:
 	const char *SOLD;
 	const char *CANT_AFFORD;
 	const char *DONE;
-	const char *DROP_PENCE_WEAPON_ARMOR;
+	const char *DROP_PENCE_WEAPON_armour;
 	const char *DROP_PENCE;
 	const char *DROP_WEAPON;
-	const char *DROP_ARMOR;
+	const char *DROP_armour;
 	const char *NOT_THAT_MUCH;
 	const char *OK;
 	const char *SHAZAM;
@@ -136,8 +136,8 @@ public:
 	const char *PLAYER_DESC;
 	const char *PRESS_SPACE_TO_CONTINUE;
 	const char *MORE;
-	const char *READY_WEAPON_ARMOR_SPELL;
-	const char *WEAPON_ARMOR_SPELL[3];
+	const char *READY_WEAPON_armour_SPELL;
+	const char *WEAPON_armour_SPELL[3];
 	const char *TRANSPORT_WEAPONS[2];
 	const char *NO_EFFECT;
 	const char *USED_UP_SPELL;
@@ -159,6 +159,8 @@ public:
 	const char *GROCERY_FIND_PACKS;
 	const char *WEAPONRY_NAMES[8];
 	const char *NO_WEAPONRY_TO_SELL;
+	const char *ARMOURY_NAMES[8];
+	const char *NO_ARMOUR_TO_SELL;
 
 	const char *WITH_KING;
 	const char *HE_IS_NOT_HERE;

@@ -20,64 +20,46 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_U1DIALOGS_DROP_H
-#define ULTIMA_ULTIMA1_U1DIALOGS_DROP_H
+#ifndef ULTIMA_ULTIMA1_U1DIALOGS_ARMOURY_H
+#define ULTIMA_ULTIMA1_U1DIALOGS_ARMOURY_H
 
-#include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
-#include "ultima/shared/gfx/text_input.h"
+#include "ultima/ultima1/u1dialogs/buy_sell_dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-using Shared::CShowMsg;
-using Shared::CCharacterInputMsg;
-using Shared::CTextInputMsg;
-
 /**
- * Implements the drop dialog
+ * Implements the buy/sell dialog for the armory
  */
-class Drop : public FullScreenDialog {
+class Armoury : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
-	bool ShowMsg(CShowMsg &msg);
-	bool CharacterInputMsg(CCharacterInputMsg &msg);
-	bool TextInputMsg(CTextInputMsg &msg);
-
-	enum Mode { SELECT, DROP_PENCE, DROP_WEAPON, DROP_armour };
+	virtual bool CharacterInputMsg(CCharacterInputMsg &msg) override;
 private:
-	Mode _mode;
+	uint _armouryNum;
+	uint _startIndex, _endIndex;
 private:
 	/**
-	 * Sets the mode
+	 * Draws the Buy dialog content
 	 */
-	void setMode(Mode mode);
+	void drawBuy();
 
 	/**
-	 * Nothing selected
+	 * Draws the Sell dialog content
 	 */
-	void nothing();
-
+	void drawSell();
+protected:
 	/**
-	 * None response
+	 * Set the mode
 	 */
-	void none();
-
-	/**
-	 * Draw the drop weapon display
-	 */
-	void drawDropWeapon();
-
-	/**
-	 * Draw the drop armor display
-	 */
-	void drawDropArmor();
+	virtual void setMode(BuySell mode) override;
 public:
 	CLASSDEF;
 
 	/**
 	 * Constructor
 	 */
-	Drop(Ultima1Game *game);
+	Armoury(Ultima1Game *game, int armouryNum);
 
 	/**
 	 * Draws the visual item on the screen

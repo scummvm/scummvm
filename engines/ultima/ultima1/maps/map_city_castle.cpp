@@ -32,7 +32,7 @@
 #include "ultima/ultima1/widgets/king.h"
 #include "ultima/ultima1/widgets/princess.h"
 #include "ultima/ultima1/widgets/wench.h"
-#include "ultima/ultima1/widgets/merchant_armor.h"
+#include "ultima/ultima1/widgets/merchant_armour.h"
 #include "ultima/ultima1/widgets/merchant_grocer.h"
 #include "ultima/ultima1/widgets/merchant_magic.h"
 #include "ultima/ultima1/widgets/merchant_tavern.h"
@@ -84,7 +84,7 @@ void MapCityCastle::loadWidgets() {
 
 			switch (tile._tileId) {
 			case 55:
-				person = new Widgets::MerchantArmor(_game, this, lp[3]);
+				person = new Widgets::MerchantArmour(_game, this, lp[3]);
 				break;
 			case 57:
 				person = new Widgets::MerchantGrocer(_game, this, lp[3]);
@@ -166,7 +166,7 @@ Widgets::Merchant *MapCityCastle::getStealMerchant() {
 	// Scan for the correct merchant depending on the tile player is on
 	switch (tile._tileId) {
 	case 55:
-		return dynamic_cast<Widgets::MerchantArmor *>(_widgets.findByClass(Widgets::MerchantArmor::type()));
+		return dynamic_cast<Widgets::MerchantArmour *>(_widgets.findByClass(Widgets::MerchantArmour::type()));
 		break;
 	case 57:
 		return dynamic_cast<Widgets::MerchantGrocer *>(_widgets.findByClass(Widgets::MerchantGrocer::type()));
@@ -186,7 +186,7 @@ Widgets::Person *MapCityCastle::getTalkPerson() {
 	switch (tile._tileId) {
 	case 54:
 	case 55:
-		return dynamic_cast<Widgets::Person *>(_widgets.findByClass(Widgets::MerchantArmor::type()));
+		return dynamic_cast<Widgets::Person *>(_widgets.findByClass(Widgets::MerchantArmour::type()));
 
 	case 56:
 	case 57:

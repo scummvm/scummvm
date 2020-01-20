@@ -40,7 +40,7 @@ Drop::Drop(Ultima1Game *game) : FullScreenDialog(game), _mode(SELECT) {
 }
 
 bool Drop::ShowMsg(CShowMsg &msg) {
-	addInfoMsg(_game->_res->DROP_PENCE_WEAPON_ARMOR, false);
+	addInfoMsg(_game->_res->DROP_PENCE_WEAPON_armour, false);
 	getKeypress();
 	return true;
 }
@@ -58,7 +58,7 @@ bool Drop::CharacterInputMsg(CCharacterInputMsg &msg) {
 			setMode(DROP_WEAPON);
 			break;
 		case Common::KEYCODE_a:
-			setMode(DROP_ARMOR);
+			setMode(DROP_armour);
 			break;
 		default:
 			nothing();
@@ -82,15 +82,15 @@ bool Drop::CharacterInputMsg(CCharacterInputMsg &msg) {
 		}
 		break;
 
-	case DROP_ARMOR:
-		if (msg._keyState.keycode >= Common::KEYCODE_b && msg._keyState.keycode < (Common::KEYCODE_b + (int)c._armor.size())
-			&& c._armor[msg._keyState.keycode - Common::KEYCODE_a]->_quantity > 0) {
+	case DROP_armour:
+		if (msg._keyState.keycode >= Common::KEYCODE_b && msg._keyState.keycode < (Common::KEYCODE_b + (int)c._armour.size())
+			&& c._armour[msg._keyState.keycode - Common::KEYCODE_a]->_quantity > 0) {
 			// Drop the armor
 			int armorNum = msg._keyState.keycode - Common::KEYCODE_a;
-			if (c._armor[armorNum]->decrQuantity() && c._equippedArmor == armorNum)
-				c.removeArmor();
+			if (c._armour[armorNum]->decrQuantity() && c._equippedArmour == armorNum)
+				c.removeArmour();
 
-			addInfoMsg(Common::String::format("%s%s", _game->_res->DROP_ARMOR,
+			addInfoMsg(Common::String::format("%s%s", _game->_res->DROP_armour,
 				_game->_res->ARMOR_NAMES[armorNum]), true, true);
 			hide();
 		} else {
@@ -153,11 +153,11 @@ void Drop::setMode(Mode mode) {
 		}
 		break;
 
-	case DROP_ARMOR:
-		if (c._armor.hasNothing()) {
+	case DROP_armour:
+		if (c._armour.hasNothing()) {
 			nothing();
 		} else {
-			addInfoMsg(_game->_res->DROP_ARMOR, false, true);
+			addInfoMsg(_game->_res->DROP_armour, false, true);
 			getKeypress();
 		}
 		break;
@@ -174,7 +174,7 @@ void Drop::nothing() {
 }
 
 void Drop::none() {
-	const char *DROPS[4] = { nullptr, _game->_res->DROP_PENCE, _game->_res->DROP_WEAPON, _game->_res->DROP_ARMOR };
+	const char *DROPS[4] = { nullptr, _game->_res->DROP_PENCE, _game->_res->DROP_WEAPON, _game->_res->DROP_armour };
 
 	addInfoMsg(Common::String::format("%s%s", DROPS[_mode], _game->_res->NONE), true, true);
 	hide();
@@ -187,7 +187,7 @@ void Drop::draw() {
 	case DROP_WEAPON:
 		drawDropWeapon();
 		break;
-	case DROP_ARMOR:
+	case DROP_armour:
 		drawDropArmor();
 		break;
 	default:
@@ -225,15 +225,15 @@ void Drop::drawDropArmor() {
 	// Count the number of different types of armor
 	const Shared::Character &c = *_game->_party;
 	int numLines = 0;
-	for (uint idx = 1; idx < c._armor.size(); ++idx) {
-		if (c._armor[idx]->_quantity)
+	for (uint idx = 1; idx < c._armour.size(); ++idx) {
+		if (c._armour[idx]->_quantity)
 			++numLines;
 	}
 
 	// Draw lines for armor the player has
 	int yp = 10 - (numLines / 2);
-	for (uint idx = 1; idx < c._armor.size(); ++idx) {
-		if (c._armor[idx]->_quantity) {
+	for (uint idx = 1; idx < c._armour.size(); ++idx) {
+		if (c._armour[idx]->_quantity) {
 			Common::String text = Common::String::format("%c) %s", 'a' + idx,
 				_game->_res->ARMOR_NAMES[idx]);
 			s.writeString(text, TextPoint(13, yp++));

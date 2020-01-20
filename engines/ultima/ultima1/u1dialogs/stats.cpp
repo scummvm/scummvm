@@ -96,10 +96,10 @@ void Stats::load() {
 		_stats.push_back(StatEntry(_game->_res->STAT_NAMES[9], enemyVessels));
 
 	// Armor, weapons, & spells
-	for (uint idx = 1; idx < c._armor.size(); ++idx) {
-		if (!c._armor[idx]->empty())
-			_stats.push_back(StatEntry(formatStat(c._armor[idx]->_name.c_str(), c._armor[idx]->_quantity),
-				(int)idx == c._equippedArmor ? _game->_highlightColor : _game->_textColor));
+	for (uint idx = 1; idx < c._armour.size(); ++idx) {
+		if (!c._armour[idx]->empty())
+			_stats.push_back(StatEntry(formatStat(c._armour[idx]->_name.c_str(), c._armour[idx]->_quantity),
+				(int)idx == c._equippedArmour ? _game->_highlightColor : _game->_textColor));
 	}
 	for (uint idx = 1; idx < c._weapons.size(); ++idx) {
 		if (!c._weapons[idx]->empty())

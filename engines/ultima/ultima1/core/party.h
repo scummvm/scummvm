@@ -45,7 +45,7 @@ enum WeaponType {
 };
 
 enum ArmorType {
-	ARMOR_SKIN = 0, ARMOR_LEATHER_ARMOR = 1, ARMOR_CHAIN_MAIL = 2, ARMOR_PLATE_MAIL = 3,
+	ARMOR_SKIN = 0, ARMOR_LEATHER_armour = 1, ARMOR_CHAIN_MAIL = 2, ARMOR_PLATE_MAIL = 3,
 	ARMOR_VACUUM_SUIT = 4, ARMOR_REFLECT_SUIT = 5
 };
 
@@ -93,7 +93,7 @@ public:
 /**
  * Derived armor class
  */
-class Armor : public Shared::Armor {
+class Armour : public Shared::Armour {
 private:
 	Ultima1Game *_game;
 	Character *_character;
@@ -102,7 +102,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Armor(Ultima1Game *game, Character *c, ArmorType armorType);
+	Armour(Ultima1Game *game, Character *c, ArmorType armorType);
 
 	/**
 	 * Change the quantity by a given amount
@@ -111,6 +111,16 @@ public:
 		if (_type != ARMOR_SKIN)
 			_quantity = (uint)CLIP((int)_quantity + delta, 0, 9999);
 	}
+
+	/**
+	 * Gets how much the weapon can be bought for
+	 */
+	uint getBuyCost() const;
+
+	/**
+	 * Gets how much the weapon can sell for
+	 */
+	uint getSellCost() const;
 };
 
 
@@ -138,12 +148,12 @@ private:
 	Weapon _weaponPhazor;
 	Weapon _weaponBlaster;
 
-	Armor _armorSkin;
-	Armor _armorLeatherArmor;
-	Armor _armorChainMail;
-	Armor _armorPlateMail;
-	Armor _armorVacuumSuit;
-	Armor _armorReflectSuit;
+	Armour _armourSkin;
+	Armour _armourLeatherArmor;
+	Armour _armourChainMail;
+	Armour _armourPlateMail;
+	Armour _armourVacuumSuit;
+	Armour _armourReflectSuit;
 
 	Spells::Blink _spellBlink;
 	Spells::Create _spellCreate;
@@ -175,7 +185,7 @@ public:
 	/**
 	 * Return the equipped armor
 	 */
-	Armor *equippedArmor() const { return static_cast<Armor *>(_armor[_equippedArmor]); }
+	Armour *equippedArmour() const { return static_cast<Armour *>(_armour[_equippedArmour]); }
 
 	/**
 	 * Return the equipped spell

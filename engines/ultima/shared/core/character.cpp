@@ -52,11 +52,11 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsUint32LE(_food);
 	s.syncAsUint32LE(_coins);
 	s.syncAsSByte(_equippedWeapon);
-	s.syncAsSByte(_equippedArmor);
+	s.syncAsSByte(_equippedArmour);
 	s.syncAsSByte(_equippedSpell);
 
 	syncArray<Weapon>(_weapons, s);
-	syncArray<Armor>(_armor, s);
+	syncArray<Armour>(_armour, s);
 	syncArray<Spell>(_spells, s);
 }
 

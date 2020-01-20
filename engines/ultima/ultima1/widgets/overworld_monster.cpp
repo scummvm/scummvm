@@ -94,7 +94,7 @@ void OverworldMonster::attackParty() {
 
 
 	// Calculate damage threshold
-	threshold = (c._stamina / 2) + (c._equippedArmor * 8) + 56;
+	threshold = (c._stamina / 2) + (c._equippedArmour * 8) + 56;
 
 	if (tempDiff.x == 0 && tempDiff.y == 0 && _game->getRandomNumber(1, 255) > threshold) {
 		hit->_position = playerPos;
