@@ -691,7 +691,7 @@ const char *SRC_TAVERN_TEXT[4] = {
 	"We have plenty of booze\nalready!",
 	"The tavern keeper sayeth:\nHere, have a cold one!", "ale"
 };
-const char *SRC_TAVERN_TIPS[11] = {
+const char *SRC_TAVERN_TIPS[13] = {
 	"Thou had best know",
 	"Thou hast been seduced!\nAfter a long night,\nthou art back.",
 	"about space travel!\nThou must destroy at\nleast 20 enemy vessels\nto become an ace!",
@@ -705,7 +705,8 @@ const char *SRC_TAVERN_TIPS[11] = {
 		"evil gem.  With this gem, he\nis immortal and cannot be\ndefeated.",
 	"The quest of --Ultima-- is to\ntraverse the lands in search\nof a time machine.  Upon\n"
 		"finding such a device, thou\nshould go back in time to the\n"
-		"days before Mondain created\nthe evil gem and destroy him!"
+		"days before Mondain created\nthe evil gem and destroy him!",
+	"wench", "lecher"
 };
 const char *const SRC_WITH_KING = " with king";
 const char *const SRC_HE_IS_NOT_HERE = "He is not here!";
@@ -852,7 +853,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	DONT_BUY_SPELLS = SRC_DONT_BUY_SPELLS;
 	Common::copy(&SRC_TAVERN_NAMES[0], &SRC_TAVERN_NAMES[8], TAVERN_NAMES);
 	Common::copy(&SRC_TAVERN_TEXT[0], &SRC_TAVERN_TEXT[10], TAVERN_TEXT);
-	Common::copy(&SRC_TAVERN_TIPS[0], &SRC_TAVERN_TIPS[11], TAVERN_TIPS);
+	Common::copy(&SRC_TAVERN_TIPS[0], &SRC_TAVERN_TIPS[13], TAVERN_TIPS);
 	WITH_KING = SRC_WITH_KING;
 	HE_IS_NOT_HERE = SRC_HE_IS_NOT_HERE;
 	HE_REJECTS_OFFER = SRC_HE_REJECTS_OFFER;
@@ -989,7 +990,7 @@ void GameResources::synchronize() {
 	syncString(DONT_BUY_SPELLS);
 	syncStrings(TAVERN_NAMES, 8);
 	syncStrings(TAVERN_TEXT, 10);
-	syncStrings(TAVERN_TIPS, 11);
+	syncStrings(TAVERN_TIPS, 13);
 	syncString(WITH_KING);
 	syncString(HE_IS_NOT_HERE);
 	syncString(HE_REJECTS_OFFER);

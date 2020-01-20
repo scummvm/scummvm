@@ -30,7 +30,7 @@ namespace Ultima {
 namespace Shared {
 namespace Maps {
 
-MapWidget *MapBase::WidgetsArray::findByClass(const ClassDef &classDef) {
+MapWidget *MapBase::WidgetsArray::findByClass(const ClassDef &classDef) const {
 	for (uint idx = 0; idx < size(); ++idx) {
 		MapWidget *w = (*this)[idx].get();
 		if (w->isInstanceOf(classDef))

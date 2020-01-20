@@ -31,6 +31,8 @@
 namespace Ultima {
 namespace Shared {
 
+enum Sex { SEX_MALE = 0, SEX_FEMALE = 1, SEX_OTHER = 2, SEX_YES_PLEASE = 2 };
+
 /**
  * Base class for class types that have a quantity
  */
@@ -141,7 +143,7 @@ class Character {
 public:
 	Common::String _name;
 	uint _race;
-	uint _sex;
+	Sex _sex;
 	uint _class;
 
 	uint _strength;
@@ -166,7 +168,7 @@ public:
 	 */
 	Character() : _strength(0), _agility(0), _stamina(0), _charisma(0), _wisdom(0), _intelligence(0),
 		_hitPoints(0), _experience(0), _food(0), _coins(0), _equippedWeapon(0), _equippedArmour(0), _equippedSpell(0),
-		_race(0), _sex(0), _class(0) {}
+		_race(0), _sex(SEX_MALE), _class(0) {}
 
 	/**
 	 * Handles loading and saving games

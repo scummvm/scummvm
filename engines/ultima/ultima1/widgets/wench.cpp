@@ -27,6 +27,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+EMPTY_MESSAGE_MAP(Wench, Person);
+
 void Wench::movement() {
 	if (!areGuardsHostile()) {
 		// Get a random new position
