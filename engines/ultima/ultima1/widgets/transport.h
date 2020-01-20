@@ -80,7 +80,11 @@ public:
  * Horse widget
  */
 class Horse : public Transport {
+	DECLARE_MESSAGE_MAP;
 public:
+	DECLARE_WIDGET(Horse);
+	CLASSDEF;
+
 	/**
 	 * Constructor
 	 */
@@ -91,7 +95,11 @@ public:
  * Cart widget
  */
 class Cart : public Transport {
+	DECLARE_MESSAGE_MAP;
 public:
+	DECLARE_WIDGET(Cart);
+	CLASSDEF;
+
 	/**
 	 * Constructor
 	 */
@@ -102,7 +110,11 @@ public:
  * Raft widget
  */
 class Raft : public Transport {
+	DECLARE_MESSAGE_MAP;
 public:
+	DECLARE_WIDGET(Raft);
+	CLASSDEF;
+
 	/**
 	 * Constructor
 	 */
@@ -113,7 +125,11 @@ public:
  * Frigate widget
  */
 class Frigate : public Transport {
+	DECLARE_MESSAGE_MAP;
 public:
+	DECLARE_WIDGET(Frigate);
+	CLASSDEF;
+
 	/**
 	 * Constructor
 	 */
@@ -129,7 +145,11 @@ public:
  * Aircar widget
  */
 class Aircar : public Transport {
+	DECLARE_MESSAGE_MAP;
 public:
+	DECLARE_WIDGET(Aircar);
+	CLASSDEF;
+
 	/**
 	 * Constructor
 	 */
@@ -145,9 +165,13 @@ public:
  * Shuttle widget
  */
 class Shuttle : public Transport {
+	DECLARE_MESSAGE_MAP;
 public:
 	uint _space1, _space2;
 public:
+	DECLARE_WIDGET(Shuttle);
+	CLASSDEF;
+
 	/**
 	 * Constructor
 	 */
@@ -163,7 +187,11 @@ public:
  * Time machine widget
  */
 class TimeMachine : public Transport {
+	DECLARE_MESSAGE_MAP;
 public:
+	DECLARE_WIDGET(TimeMachine);
+	CLASSDEF;
+
 	/**
 	 * Constructor
 	 */

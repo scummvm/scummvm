@@ -95,7 +95,7 @@ void MapBase::synchronize(Common::Serializer &s) {
 		for (uint idx = 0; idx < size; ++idx) {
 			s.syncString(name);
 
-			MapWidget *w = _map->createWidget(this, name);
+			MapWidget *w = createWidget(name);
 			w->synchronize(s);
 			addWidget(w);
 		}

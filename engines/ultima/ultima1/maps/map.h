@@ -108,11 +108,6 @@ public:
 	virtual void synchronize(Common::Serializer &s) override;
 
 	/**
-	 * Instantiates a widget type by name
-	*/
-	virtual Shared::Maps::MapWidget *createWidget(Shared::Maps::MapBase *map, const Common::String &name) override;
-
-	/**
 	 * Action pass-throughs
 	 */
 	#define PASS_METHOD(NAME) void NAME() { static_cast<MapBase *>(_mapArea)->NAME(); }

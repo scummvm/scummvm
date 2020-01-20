@@ -38,7 +38,7 @@ class Game;
 
 namespace Maps {
 
-#define REGISTER_WIDGET(NAME) if (name == #NAME) return new Widgets::NAME(_game, (MapBase *)map) 
+#define REGISTER_WIDGET(NAME) if (name == #NAME) return new Widgets::NAME(_game, this) 
 #define DECLARE_WIDGET(NAME) virtual const char *getClassName() const override { return #NAME; }
 
 /**
@@ -76,7 +76,10 @@ public:
 	/**
 	 * Instantiates a widget type by name
 	 */
-	virtual MapWidget *createWidget(MapBase *map, const Common::String &name) = 0;
+	MapWidget *createWidget(const Common::String &name) {
+		assert(_mapArea);
+		return _mapArea->createWidget(name);
+	}
 
 	/**
 	 * Gets a tile at a given position

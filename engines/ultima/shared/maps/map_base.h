@@ -210,6 +210,11 @@ public:
 	virtual bool isMapWrapped() const { return false; }
 
 	/**
+	 * Instantiates a widget type by name
+	 */
+	virtual MapWidget *createWidget(const Common::String &name) = 0;
+
+	/**
 	 * Returns the width of the map
 	 */
 	size_t width() const { return _size.x; }
