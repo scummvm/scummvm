@@ -66,6 +66,11 @@ protected:
 	 * Prompts for a keypress
 	 */
 	void getKeypress();
+
+	/**
+	 * Prompts for an input
+	 */
+	void getInput(bool isNumeric = true, size_t maxCharacters = 4);
 public:
 	/**
 	 * Constructor
