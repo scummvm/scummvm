@@ -20,31 +20,33 @@
  *
  */
 
+#ifndef ULTIMA_ULTIMA1_U1DIALOGS_STEAL_H
+#define ULTIMA_ULTIMA1_U1DIALOGS_STEAL_H
+
 #include "ultima/ultima1/spells/spell.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
-void Spell::setGame(Ultima1Game *game) {
-	_game = game;
-	_name = _game->_res->SPELL_NAMES[_spellId];
-}
+/**
+ * Steal spell
+ */
+class Steal : public Spell {
+public:
+	/**
+	 * Constructor
+	 */
+	Steal();
 
-void Spell::addInfoMsg(const Common::String &text, bool newLine) {
-	Shared::CInfoMsg msg(text, newLine);
-	msg.execute(_game->getView());
-}
+	/**
+	 * Cast the spell within dungeons
+	 */
+	virtual void dungeonCast() override;
+};
 
-void Spell::cast() {
-	// Most spells can't be used outside of dungeons
-	addInfoMsg("");
-	addInfoMsg(_game->_res->DUNGEON_SPELL_ONLY);
-	_game->playFX(6);
-}
-
-} // End of namespace Spells
+} // End of  namespace U1Dialogs
 } // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

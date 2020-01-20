@@ -25,7 +25,17 @@
 
 #include "ultima/shared/early/game.h"
 #include "ultima/shared/gfx/visual_container.h"
+#include "ultima/ultima1/spells/blink.h"
+#include "ultima/ultima1/spells/create.h"
+#include "ultima/ultima1/spells/destroy.h"
+#include "ultima/ultima1/spells/kill.h"
+#include "ultima/ultima1/spells/ladder_down.h"
+#include "ultima/ultima1/spells/ladder_up.h"
+#include "ultima/ultima1/spells/magic_missile.h"
+#include "ultima/ultima1/spells/open.h"
 #include "ultima/ultima1/spells/prayer.h"
+#include "ultima/ultima1/spells/steal.h"
+#include "ultima/ultima1/spells/unlock.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -53,7 +63,18 @@ public:
 	Shared::Gfx::VisualItem *_titleView;
 	Shared::Gfx::VisualItem *_charGenView;
 	uint _gems[4];
+
+	Spells::Blink _spellBlink;
+	Spells::Create _spellCreate;
+	Spells::Destroy _spellDestroy;
+	Spells::Kill _spellKill;
+	Spells::LadderDown _spellLadderDown;
+	Spells::LadderUp _spellLadderUp;
+	Spells::MagicMissile _spellMagicMissile;
+	Spells::Open _spellOpen;
 	Spells::Prayer _spellPrayer;
+	Spells::Steal _spellSteal;
+	Spells::Unlock _spellUnlock;
 public:
 	CLASSDEF;
 	Ultima1Game();
