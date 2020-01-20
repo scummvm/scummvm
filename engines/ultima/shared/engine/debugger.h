@@ -40,6 +40,8 @@ protected:
 	 * Converts a string to an integer
 	 */
 	int strToInt(const char *s);
+
+	bool cmdSpell(int argc, const char **argv);
 public:
 	Debugger();
     virtual ~Debugger() {}
