@@ -92,6 +92,7 @@ void Ultima1Game::setup() {
 	for (int idx = 0; idx < 16; ++idx) {
 		c._weapons[idx]._longName = _res->WEAPON_NAMES_UPPERCASE[idx];
 		c._weapons[idx]._shortName = _res->WEAPON_NAMES_LOWERCASE[idx];
+		c._weapons[idx]._distance = _res->WEAPON_DISTANCES[idx];
 	}
 
 	c._armor.resize(6);

@@ -20,71 +20,44 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_U1DIALOGS_READY_H
-#define ULTIMA_ULTIMA1_U1DIALOGS_READY_H
+#ifndef ULTIMA_ULTIMA1_U1DIALOGS_COMBAT_H
+#define ULTIMA_ULTIMA1_U1DIALOGS_COMBAT_H
 
 #include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
+#include "ultima/shared/maps/map_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
 using Shared::CKeypressMsg;
-using Shared::CTextInputMsg;
 
 /**
- * Implements the Ready dialog
+ * Implements player combat attacks
  */
-class Ready : public FullScreenDialog {
+class Combat : public FullScreenDialog {
 	DECLARE_MESSAGE_MAP;
 	bool KeypressMsg(CKeypressMsg &msg);
-	bool TextInputMsg(CTextInputMsg &msg);
-
-	enum Mode { SELECT, READY_WEAPON, READY_ARMOR, READY_SPELL };
 private:
-	Mode _mode;
+	Common::String _weaponName;
+	int _direction;
 private:
-	/**
-	 * Sets the mode
-	 */
-	void setMode(Mode mode);
-
 	/**
 	 * Nothing selected
 	 */
 	void nothing();
 
 	/**
-	 * None response
-	 */
-	void none();
-
-	/**
-	 * Draw the initial mode selection display
+	 * Draw the selection prompt
 	 */
 	void drawSelection();
-
-	/**
-	 * Draw the ready weapon display
-	 */
-	void drawReadyWeapon();
-
-	/**
-	 * Draw the ready armor display
-	 */
-	void drawReadyArmor();
-
-	/**
-	 * Draw the ready spell display
-	 */
-	void drawReadySpell();
 public:
 	CLASSDEF;
 
 	/**
 	 * Constructor
 	 */
-	Ready(Ultima1Game *game);
+	Combat(Ultima1Game *game, Shared::Maps::Direction direction, int weaponType, const Common::String weaponName);
 
 	/**
 	 * Draws the visual item on the screen

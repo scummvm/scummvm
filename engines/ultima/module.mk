@@ -62,6 +62,7 @@ MODULE_OBJS += \
 	ultima0/game.o \
 	ultima0/resources.o \
 	ultima1/actions/action.o \
+	ultima1/actions/attack.o \
 	ultima1/actions/move.o \
 	ultima1/actions/quit.o \
 	ultima1/actions/ready.o \
@@ -73,6 +74,7 @@ MODULE_OBJS += \
 	ultima1/maps/map_dungeon.o \
 	ultima1/maps/map_overworld.o \
 	ultima1/maps/map_tile.o \
+	ultima1/u1dialogs/combat.o \
 	ultima1/u1dialogs/dialog.o \
 	ultima1/u1dialogs/drop.o \
 	ultima1/u1dialogs/full_screen_dialog.o \
