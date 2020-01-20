@@ -258,7 +258,9 @@ void DungeonMonster::monsterDead() {
 	}
 
 	if (index) {
-		static_cast<Ultima1Game *>(_game)->questCompleted(8 - index);
+		// Mark monster-based quests as complete if in progress
+		Ultima1Game *game = static_cast<Ultima1Game *>(_game);
+		game->_quests[8 - index].complete();
 	}
 }
 

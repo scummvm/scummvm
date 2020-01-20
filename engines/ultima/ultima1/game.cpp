@@ -40,7 +40,7 @@ namespace Ultima1 {
 
 EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
 
-Ultima1Game::Ultima1Game() : Shared::Game() {
+Ultima1Game::Ultima1Game() : Shared::Game(), _quests(this) {
 	_res = new GameResources();
 	_map = new Maps::Ultima1Map(this);
 	_party = new Party(this);
@@ -63,7 +63,6 @@ Ultima1Game::Ultima1Game() : Shared::Game() {
 	}
 
 	Common::fill(&_gems[0], &_gems[4], 0);
-	Common::fill(&_questFlags[0], &_questFlags[9], UNSTARTED);
 }
 
 Ultima1Game::~Ultima1Game() {
@@ -81,8 +80,7 @@ void Ultima1Game::synchronize(Common::Serializer &s) {
 
 	for (int idx = 0; idx < 4; ++idx)
 		s.syncAsUint16LE(_gems[idx]);
-	for (int idx = 0; idx < 9; ++idx)
-		s.syncAsSint16LE(_questFlags[idx]);
+	_quests.synchronize(s);
 }
 
 void Ultima1Game::starting(bool isLoading) {
@@ -99,17 +97,6 @@ bool Ultima1Game::canSaveGameStateCurrently() {
 
 void Ultima1Game::giveTreasure(int coins, int v2) {
 	// TODO
-}
-
-void Ultima1Game::questCompleted(uint questNum) {
-	assert(questNum < 9);
-	if (_questFlags[questNum] == IN_PROGRESS) {
-		_questFlags[questNum] = COMPLETED;
-
-		Shared::CInfoMsg msg(_res->QUEST_COMPLETED, true);
-		msg.execute(this);
-		playFX(5);
-	}
 }
 
 } // End of namespace Ultima1
