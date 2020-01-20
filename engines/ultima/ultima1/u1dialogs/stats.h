@@ -31,7 +31,7 @@ namespace Ultima1 {
 namespace U1Dialogs {
 
 using Shared::CShowMsg;
-using Shared::CKeypressMsg;
+using Shared::CCharacterInputMsg;
 
 /**
  * Implements the stats/inventory dialog
@@ -39,7 +39,7 @@ using Shared::CKeypressMsg;
 class Stats : public FullScreenDialog {
 	DECLARE_MESSAGE_MAP;
 	bool ShowMsg(CShowMsg &msg);
-	bool KeypressMsg(CKeypressMsg &msg);
+	bool CharacterInputMsg(CCharacterInputMsg &msg);
 public:
 	/**
 	 * Contains the data for a single stat entry to display

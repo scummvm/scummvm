@@ -27,7 +27,6 @@
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/widgets/transport.h"
 #include "ultima/ultima1/u1gfx/drawing_support.h"
-#include "ultima/shared/gfx/text_cursor.h"
 #include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
@@ -36,11 +35,31 @@ namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(Stats, FullScreenDialog)
 	ON_MESSAGE(ShowMsg)
-	ON_MESSAGE(KeypressMsg)
+	ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
 
+
+bool Stats::ShowMsg(CShowMsg &msg) {
+	addInfoMsg(_game->_res->PRESS_SPACE_TO_CONTINUE, false);
+	getKeypress();
+	return true;
+}
+
+bool Stats::CharacterInputMsg(CCharacterInputMsg &msg) {
+	if ((_startingIndex + 26U) < _stats.size()) {
+		_startingIndex += 26U;
+		setDirty();
+		getKeypress();
+	} else {
+		addInfoMsg("", false, true);
+		hide();
+	}
+
+	return true;
+}
+
 /**
- * Counts the number of 
+ * Counts the number of a given transport type
  */
 template<class T>
 void countTransport(Maps::MapOverworld *overworldMap, Common::Array<Stats::StatEntry> &stats, const char *name, byte textColor) {
@@ -125,6 +144,8 @@ Common::String Stats::formatStat(const char *name, uint value) {
 }
 
 void Stats::draw() {
+	Dialog::draw();
+
 	drawFrame(_game->_res->INVENTORY);
 	Shared::Gfx::VisualSurface s = getSurface();
 	const Shared::Character &c = *_game->_party;
@@ -148,28 +169,6 @@ void Stats::draw() {
 		s.writeString(_game->_res->MORE, TextPoint(17, 19));
 		ds.drawLeftArrow(TextPoint(23, 19));
 	}
-
-	// Write the press any key to continue at bottom of the screen
-	s.fillRect(TextRect(0, 24, 28, 24), _game->_bgColor);
-	s.writeString(_game->_res->PRESS_SPACE_TO_CONTINUE, TextPoint(1, 24));
-}
-
-bool Stats::ShowMsg(Shared::CShowMsg &msg) {
-	_game->_textCursor->setPosition(TextPoint(1 + strlen(_game->_res->PRESS_SPACE_TO_CONTINUE), 24));
-	_game->_textCursor->setVisible(true);
-
-	return true;
-}
-
-bool Stats::KeypressMsg(CKeypressMsg &msg) {
-	if ((_startingIndex + 26U) < _stats.size()) {
-		_startingIndex += 26U;
-		setDirty();
-	} else {
-		hide();
-	}
-
-	return true;
 }
 
 } // End of namespace U1Dialogs
