@@ -643,6 +643,8 @@ const char *const SRC_DUNGEON_SPELL_ONLY = "Failed, dungeon spell only!";
 const char *const SRC_MONSTER_REMOVED = "Monster removed!";
 const char *const SRC_FAILED = "Failed!";
 const char *const SRC_TELEPORTED = "Teleported!";
+const char *const SRC_FIELD_CREATED = "Field created!";
+const char *const SRC_FIELD_DESTROYED = "Field destroyed!";
 
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
 const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
@@ -756,6 +758,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	MONSTER_REMOVED = SRC_MONSTER_REMOVED;
 	FAILED = SRC_FAILED;
 	TELEPORTED = SRC_TELEPORTED;
+	FIELD_CREATED = SRC_FIELD_CREATED;
+	FIELD_DESTROYED = SRC_FIELD_DESTROYED;
 
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
 	GROCERY_SELL = SRC_GROCERY_SELL;
@@ -866,6 +870,8 @@ void GameResources::synchronize() {
 	syncString(MONSTER_REMOVED);
 	syncString(FAILED);
 	syncString(TELEPORTED);
+	syncString(FIELD_CREATED);
+	syncString(FIELD_DESTROYED);
 
 	syncStrings(GROCERY_NAMES, 8);
 	syncString(GROCERY_SELL);
