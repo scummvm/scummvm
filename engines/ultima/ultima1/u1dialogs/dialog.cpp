@@ -40,6 +40,13 @@ void Dialog::addInfoMsg(const Common::String &text, bool newLine) {
 	msg.execute(_parentView);
 }
 
+void Dialog::hide() {
+	Popup::hide();
+
+	// Delete the dialog when hidden
+	delete this;
+}
+
 } // End of namespace U1Dialogs
 } // End of namespace Gfx
 } // End of namespace Ultima

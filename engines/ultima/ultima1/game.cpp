@@ -29,6 +29,8 @@
 #include "ultima/ultima1/u1gfx/text_cursor.h"
 #include "ultima/ultima1/u6gfx/game_view.h"
 #include "ultima/shared/early/font_resources.h"
+#include "ultima/shared/engine/resources.h"
+#include "ultima/shared/gfx/popup.h"
 #include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
@@ -58,6 +60,10 @@ Ultima1Game::Ultima1Game() : Shared::Game() {
 }
 
 Ultima1Game::~Ultima1Game() {
+	Shared::Gfx::Popup *popup = dynamic_cast<Shared::Gfx::Popup *>(_currentView);
+	if (popup)
+		popup->hide();
+
 	delete _map;
 	delete _gameView;
 }

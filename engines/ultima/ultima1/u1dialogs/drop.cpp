@@ -73,7 +73,6 @@ bool Drop::KeypressMsg(CKeypressMsg &msg) {
 void Drop::nothing() {
 	addInfoMsg(Common::String::format(" %s", _game->_res->NOTHING));
 	hide();
-	delete this;
 }
 
 void Drop::draw() {
