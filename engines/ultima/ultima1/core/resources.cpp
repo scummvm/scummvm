@@ -182,13 +182,18 @@ const char *const SRC_LOCATION_NAMES[LOCATION_COUNT] = {
 static const char *const SRC_DUNGEON_ITEM_NAMES[2] = { "Chest", "Coffin" };
 
 static const char *SRC_WEAPON_NAMES_UPPERCASE[16] = {
-	"Hands", "Dagger", "Mace", "Axe", "Rope & Spikes", "Sword", "Great Sword"
-	"Bow & Arrows", "Amulet", "Pistol", "Light Sword", "Phazor", "Blaster"
+	"Hands", "Dagger", "Mace", "Axe", "Rope & Spikes", "Sword", "Great Sword", "Bow & Arrows",
+	"Amulet", "Wand", "Staff", "Triangle", "Pistol", "Light Sword", "Phazor", "Blaster"
 };
 
 static const char *SRC_WEAPON_NAMES_LOWERCASE[16] = {
 	"hands", "dagger", "mace", "axe", "rope", "sword", "g sword", "bow",
-	"amulet", "wand", "staff" "triangle", "pistol", "L sword", "phazor", "blaster"
+	"amulet", "wand", "staff", "triangle", "pistol", "L sword", "phazor", "blaster"
+};
+
+static const char *SRC_WEAPON_NAMES_ARTICLE[16] = {
+	"a Hands", "a Dagger", "a Mace", "Axe", "a Rope & Spikes", "a Sword", "a Great Sword", "a Bow & Arrows",
+	"an Amulet", "a Wand", "a Staff", "a Triangle", "a Pistol", "a Light Sword", "a Phazor", "a Blaster"
 };
 
 static const char *SRC_ARMOR_NAMES[6] = {
@@ -586,6 +591,7 @@ const char *const SRC_GROCERY_PACKS2 = "each.  How many dost thou";
 const char *const SRC_GROCERY_PACKS3 = "wish to purchase?";
 const char *const SRC_GROCERY_PACKS_FOOD = "%d packs food";
 const char *const SRC_GROCERY_FIND_PACKS = "Thou dost find %d bags of food!";
+const char *const SRC_FIND = "Thou dost find %s";
 
 /*-------------------------------------------------------------------*/
 
@@ -610,6 +616,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(&SRC_DUNGEON_ITEM_NAMES[0], &SRC_DUNGEON_ITEM_NAMES[2], DUNGEON_ITEM_NAMES);
 	Common::copy(&SRC_WEAPON_NAMES_UPPERCASE[0], &SRC_WEAPON_NAMES_UPPERCASE[16], WEAPON_NAMES_UPPERCASE);
 	Common::copy(&SRC_WEAPON_NAMES_LOWERCASE[0], &SRC_WEAPON_NAMES_LOWERCASE[16], WEAPON_NAMES_LOWERCASE);
+	Common::copy(&SRC_WEAPON_NAMES_ARTICLE[0], &SRC_WEAPON_NAMES_ARTICLE[16], WEAPON_NAMES_ARTICLE);
 	Common::copy(&SRC_ARMOR_NAMES[0], &SRC_ARMOR_NAMES[16], ARMOR_NAMES);
 	Common::copy(&SRC_SPELL_NAMES[0], &SRC_SPELL_NAMES[16], SPELL_NAMES);
 	Common::copy(&SRC_OVERWORLD_MONSTER_DAMAGE[0], &SRC_OVERWORLD_MONSTER_DAMAGE[15], OVERWORLD_MONSTER_DAMAGE);
@@ -655,6 +662,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	GROCERY_PACKS3 = SRC_GROCERY_PACKS3;
 	GROCERY_PACKS_FOOD = SRC_GROCERY_PACKS_FOOD;
 	GROCERY_FIND_PACKS = SRC_GROCERY_FIND_PACKS;
+	FIND = SRC_FIND;
 }
 
 void GameResources::synchronize() {
@@ -675,6 +683,7 @@ void GameResources::synchronize() {
 	syncStrings(DUNGEON_ITEM_NAMES, 2);
 	syncStrings(WEAPON_NAMES_UPPERCASE, 16);
 	syncStrings(WEAPON_NAMES_LOWERCASE, 16);
+	syncStrings(WEAPON_NAMES_ARTICLE, 16);
 	syncStrings(ARMOR_NAMES, 6);
 	syncStrings(SPELL_NAMES, 11);
 	syncBytes(OVERWORLD_MONSTER_DAMAGE, 15);
@@ -718,7 +727,7 @@ void GameResources::synchronize() {
 	syncString(GROCERY_PACKS3);
 	syncString(GROCERY_PACKS_FOOD);
 	syncString(GROCERY_FIND_PACKS);
-
+	syncString(FIND);
 }
 
 } // End of namespace Ultima1

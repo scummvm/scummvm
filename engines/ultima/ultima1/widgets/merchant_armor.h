@@ -34,6 +34,12 @@ namespace Widgets {
  */
 class MerchantArmor : public Merchant {
 	DECLARE_MESSAGE_MAP;
+private:
+	/**
+	 * Handles getting or stealing armor
+	 * @param checkStealing		If set, checks for stealing
+	 */
+	void findArmor(bool checkStealing);
 public:
 	DECLARE_WIDGET(MerchantArmor)
 	CLASSDEF;

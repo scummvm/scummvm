@@ -54,7 +54,9 @@ public:
 	const char *DUNGEON_ITEM_NAMES[2];
 	const char *WEAPON_NAMES_UPPERCASE[16];
 	const char *WEAPON_NAMES_LOWERCASE[16];
+	const char *WEAPON_NAMES_ARTICLE[16];
 	const char *ARMOR_NAMES[6];
+	const char *ARMOR_NAMES_ARTICLE[6];
 	const char *SPELL_NAMES[11];
 	byte OVERWORLD_MONSTER_DAMAGE[15];
 	const char *OVERWORLD_MONSTER_NAMES[15];
@@ -97,6 +99,7 @@ public:
 	const char *GROCERY_PACKS3;
 	const char *GROCERY_PACKS_FOOD;
 	const char *GROCERY_FIND_PACKS;
+	const char *FIND;
 
 public:
 	GameResources();

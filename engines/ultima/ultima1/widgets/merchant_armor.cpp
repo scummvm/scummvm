@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/widgets/merchant_armor.h"
+#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -29,7 +30,21 @@ namespace Widgets {
 EMPTY_MESSAGE_MAP(MerchantArmor, Merchant);
 
 void MerchantArmor::steal() {
-	// TODO
+	findArmor(true);
+}
+
+void MerchantArmor::findArmor(bool checkStealing) {
+	if (!checkStealing || !checkCuaghtStealing()) {
+		uint armorNum = _game->getRandomNumber(1, 5);
+		Common::String armorStr = _game->_res->ARMOR_NAMES[armorNum];
+		_game->_party._currentCharacter->_armor[armorNum]._quantity++;
+
+		if (armorNum == 5)
+			armorStr = Common::String::format("%s %s", _game->_res->A, armorStr.c_str());
+
+		addInfoMsg("");
+		addInfoMsg(Common::String::format(_game->_res->FIND, armorStr.c_str()));
+	}
 }
 
 } // End of namespace Widgets
