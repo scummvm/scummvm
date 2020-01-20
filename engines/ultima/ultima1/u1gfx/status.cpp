@@ -28,23 +28,30 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-EMPTY_MESSAGE_MAP(Status, Shared::Gfx::VisualItem);
+BEGIN_MESSAGE_MAP(Status, Shared::Gfx::VisualItem)
+	ON_MESSAGE(FrameMsg)
+END_MESSAGE_MAP()
 
-bool Status::isDirty() const {
-	if (_isDirty)
-		return true;
+Status::Status(TreeItem *parent) : Shared::Gfx::VisualItem("Status", TextRect(31, 21, 40, 25), parent),
+		_hitPoints(0), _food(0), _experience(0), _coins(0) {
+}
 
+bool Status::FrameMsg(CFrameMsg &msg) {
+	// If any of the figures have changed, mark the display as dirty
 	const Ultima1Game *game = static_cast<const Ultima1Game *>(getGame());
 	const Shared::Character &c = *game->_party._currentCharacter;
 
-	return c._hitPoints != _hitPoints || c._food != _food || c._experience != _experience || c._coins != _coins;
+	if (c._hitPoints != _hitPoints || c._food != _food || c._experience != _experience || c._coins != _coins)
+		setDirty(true);
+
+	return true;
 }
 
 void Status::draw() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	const Shared::Character &c = *game->_party._currentCharacter;
 
-	// Copy over the character fields
+	// Update the local copy of the fields
 	_hitPoints = c._hitPoints;
 	_food = c._food;
 	_experience = c._experience;
