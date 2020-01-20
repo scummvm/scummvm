@@ -30,32 +30,47 @@
 namespace Ultima {
 namespace Shared {
 
-class Character {
+/**
+ * Weapon entry
+ */
+struct Weapon {
+	Common::String _shortName, _longName;
+	uint _quantity;
+};
+
+/**
+ * Armor entry
+ */
+struct Armor {
+	Common::String _name;
+	uint _quantity;
+};
+
+/**
+ * Spell entry
+ */
+struct Spell {
+	Common::String _name;
+	uint _quantity;
+};
+
+template<class T>
+class ItemArray : public Common::Array<T> {
 public:
 	/**
-	 * Weapon entry
+	 * Returns true if the character has no items
 	 */
-	struct Weapon {
-		Common::String _shortName, _longName;
-		uint _quantity;
-	};
+	bool hasNothing() const {
+		for (uint idx = 1; idx < this->size(); ++idx) {
+			if ((*this)[idx]._quantity != 0)
+				return false;
+		}
 
-	/**
-	 * Armor entry
-	 */
-	struct Armor {
-		Common::String _name;
-		uint _quantity;
-	};
+		return true;
+	}
+};
 
-	/**
-	 * Spell entry
-	 */
-	struct Spell {
-		Common::String _name;
-		uint _quantity;
-	};
-
+class Character {
 public:
 	Common::String _name;
 	uint _race;
@@ -75,9 +90,9 @@ public:
 	int _equippedWeapon;
 	int _equippedArmor;
 	int _equippedSpell;
-	Common::Array<Weapon> _weapons;
-	Common::Array<Armor> _armor;
-	Common::Array<Spell> _spells;
+	ItemArray<Weapon> _weapons;
+	ItemArray<Armor> _armor;
+	ItemArray<Spell> _spells;
 public:
 	/**
 	 * Constructor

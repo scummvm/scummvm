@@ -44,15 +44,15 @@ bool Drop::KeypressMsg(CKeypressMsg &msg) {
 
 		switch (msg._keyState.keycode) {
 		case Common::KEYCODE_p:
-			_mode = DROP_PENCE;
+			setMode(DROP_PENCE);
 			setDirty();
 			break;
 		case Common::KEYCODE_w:
-			_mode = DROP_WEAPON;
+			setMode(DROP_WEAPON);
 			setDirty();
 			break;
 		case Common::KEYCODE_a:
-			_mode = DROP_ARMOR;
+			setMode(DROP_ARMOR);
 			setDirty();
 			break;
 		default:
@@ -66,6 +66,28 @@ bool Drop::KeypressMsg(CKeypressMsg &msg) {
 	}
 
 	return true;
+}
+
+void Drop::setMode(Mode mode) {
+	_mode = mode;
+	const Shared::Character &c = *_game->_party._currentCharacter;
+
+	switch (mode) {
+	case DROP_WEAPON:
+		if (c._weapons.hasNothing()) {
+			nothing();
+		}
+		break;
+
+	case DROP_ARMOR:
+		if (c._armor.hasNothing()) {
+			nothing();
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Drop::nothing() {
@@ -102,37 +124,71 @@ void Drop::drawDropPence() {
 	Shared::Gfx::VisualSurface s = getSurface();
 	Common::String text = Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[3], _game->_res->DROP_PENCE);
 	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
-	s.writeString(text, TextPoint(1, 24), _game->_textColor);
+	s.writeString(_game->_res->DROP_ARMOR, TextPoint(1, 24), _game->_textColor);
 
-	_game->_textCursor->setPosition(TextPoint(1 + text.size(), 24));
+	_game->_textCursor->setPosition(TextPoint(1 + strlen(_game->_res->DROP_PENCE), 24));
 	_game->_textCursor->setVisible(true);
 }
 
 void Drop::drawDropWeapon() {
+	Shared::Gfx::VisualSurface s = getSurface();
 	drawFrame(_game->_res->ACTION_NAMES[3]);
 
+	// Count the number of different types of weapons
+	const Shared::Character &c = *_game->_party._currentCharacter;
+	int numLines = 0;
+	for (uint idx = 1; idx < c._weapons.size(); ++idx) {
+		if (c._weapons[idx]._quantity)
+			++numLines;
+	}
+
+	// Draw lines for weapons the player has
+	int yp = 10 - (numLines / 2);
+	for (uint idx = 1; idx < c._weapons.size(); ++idx) {
+		if (c._weapons[idx]._quantity) {
+			Common::String text = Common::String::format("%c) %s", 'a' + idx,
+				_game->_res->WEAPON_NAMES_UPPERCASE[idx]);
+			s.writeString(text, TextPoint(15, yp++), _game->_textColor);
+		}
+	}
+
 	// Draw drop weapon text at the bottom and enable cursor
-	Shared::Gfx::VisualSurface s = getSurface();
-	Common::String text = Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[3], _game->_res->DROP_WEAPON);
 	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
-	s.writeString(text, TextPoint(1, 24), _game->_textColor);
+	s.writeString(_game->_res->DROP_WEAPON, TextPoint(1, 24), _game->_textColor);
 
 	// Show cursor in the info area
-	_game->_textCursor->setPosition(TextPoint(1 + text.size(), 24));
+	_game->_textCursor->setPosition(TextPoint(1 + strlen(_game->_res->DROP_WEAPON), 24));
 	_game->_textCursor->setVisible(true);
 }
 
 void Drop::drawDropArmor() {
+	Shared::Gfx::VisualSurface s = getSurface();
 	drawFrame(_game->_res->ACTION_NAMES[3]);
 
-	// Draw drop weapon text at the bottom and enable cursor
-	Shared::Gfx::VisualSurface s = getSurface();
-	Common::String text = Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[3], _game->_res->DROP_ARMOR);
+	// Count the number of different types of armor
+	const Shared::Character &c = *_game->_party._currentCharacter;
+	int numLines = 0;
+	for (uint idx = 1; idx < c._armor.size(); ++idx) {
+		if (c._armor[idx]._quantity)
+			++numLines;
+	}
+
+	// Draw lines for armor the player has
+	int yp = 10 - (numLines / 2);
+	for (uint idx = 1; idx < c._armor.size(); ++idx) {
+		if (c._armor[idx]._quantity) {
+			Common::String text = Common::String::format("%c) %s", 'a' + idx,
+				_game->_res->ARMOR_NAMES[idx]);
+			s.writeString(text, TextPoint(13, yp++), _game->_textColor);
+		}
+	}
+
+	// Draw drop armor text at the bottom and enable cursor
 	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
-	s.writeString(text, TextPoint(1, 24), _game->_textColor);
+	s.writeString(_game->_res->DROP_ARMOR, TextPoint(1, 24), _game->_textColor);
 
 	// Show cursor in the info area
-	_game->_textCursor->setPosition(TextPoint(1 + text.size(), 24));
+	_game->_textCursor->setPosition(TextPoint(1 + strlen(_game->_res->DROP_ARMOR), 24));
 	_game->_textCursor->setVisible(true);
 }
 
