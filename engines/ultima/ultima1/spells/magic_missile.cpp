@@ -23,6 +23,7 @@
 #include "ultima/ultima1/spells/magic_missile.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/widgets/dungeon_monster.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,7 +33,13 @@ MagicMissile::MagicMissile() : Spell(SPELL_MAGIC_MISSILE) {
 }
 
 void MagicMissile::dungeonCast(Maps::MapDungeon *map) {
-	// TODO
+	Widgets::DungeonMonster *monster = map->findCreatureInCurrentDirection();
+
+	if (monster) {
+		// TODO
+	} else {
+		Spell::dungeonCast(map);
+	}
 }
 
 } // End of namespace Spells

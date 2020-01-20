@@ -29,6 +29,10 @@
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Widgets {
+	class DungeonMonster;
+}
+
 namespace Maps {
 
 #define DUNGEON_WIDTH 11
@@ -110,6 +114,11 @@ public:
 	 * Spawns a monster at a given position in the dungeon map
 	 */
 	void spawnMonsterAt(const Point &pt);
+
+	/**
+	 * Find a monster in the current direction being faced
+	 */
+	Widgets::DungeonMonster *findCreatureInCurrentDirection(uint maxDistance = 5);
 
 	/**
 	 * Do an inform action
