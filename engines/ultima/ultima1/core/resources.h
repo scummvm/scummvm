@@ -106,7 +106,6 @@ public:
 	const char *GROCERY_PACKS3;
 	const char *GROCERY_PACKS_FOOD;
 	const char *GROCERY_FIND_PACKS;
-	const char *ENTER_QUESTION;
 public:
 	GameResources();
 	GameResources(Shared::Resources *resManager);
