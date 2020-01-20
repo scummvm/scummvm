@@ -22,6 +22,7 @@
 
 #include "ultima/ultima1/widgets/dungeon_monster.h"
 #include "ultima/ultima1/maps/map.h"
+#include "ultima/ultima1/maps/map_dungeon.h"
 #include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"

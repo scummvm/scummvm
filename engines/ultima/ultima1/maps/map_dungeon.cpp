@@ -23,6 +23,7 @@
 #include "ultima/ultima1/maps/map_dungeon.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/maps/map_tile.h"
+#include "ultima/ultima1/spells/spell.h"
 #include "ultima/ultima1/widgets/dungeon_chest.h"
 #include "ultima/ultima1/widgets/dungeon_coffin.h"
 #include "ultima/ultima1/widgets/dungeon_monster.h"

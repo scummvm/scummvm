@@ -23,16 +23,6 @@
 #ifndef ULTIMA_ULTIMA1_GAME_H
 #define ULTIMA_ULTIMA1_GAME_H
 
-#include "ultima/ultima1/spells/blink.h"
-#include "ultima/ultima1/spells/create.h"
-#include "ultima/ultima1/spells/destroy.h"
-#include "ultima/ultima1/spells/kill.h"
-#include "ultima/ultima1/spells/ladder_down.h"
-#include "ultima/ultima1/spells/ladder_up.h"
-#include "ultima/ultima1/spells/magic_missile.h"
-#include "ultima/ultima1/spells/open_unlock.h"
-#include "ultima/ultima1/spells/prayer.h"
-#include "ultima/ultima1/spells/steal.h"
 #include "ultima/shared/early/game.h"
 #include "ultima/shared/gfx/visual_container.h"
 
@@ -52,11 +42,6 @@ class GameResources;
 class Ultima1Game : public Shared::Game {
 	DECLARE_MESSAGE_MAP;
 	enum QuestFlag { UNSTARTED = 0, IN_PROGRESS = -1, COMPLETED = 1 };
-private:
-	/**
-	 * Takes care of final setup as the game starts
-	 */
-	void setup();
 public:
 	GameResources *_res;
 	Shared::Gfx::VisualItem *_gameView;
@@ -64,18 +49,6 @@ public:
 	Shared::Gfx::VisualItem *_charGenView;
 	uint _gems[4];
 	QuestFlag _questFlags[9];
-
-	Spells::Blink _spellBlink;
-	Spells::Create _spellCreate;
-	Spells::Destroy _spellDestroy;
-	Spells::Kill _spellKill;
-	Spells::LadderDown _spellLadderDown;
-	Spells::LadderUp _spellLadderUp;
-	Spells::MagicMissile _spellMagicMissile;
-	Spells::Open _spellOpen;
-	Spells::Prayer _spellPrayer;
-	Spells::Steal _spellSteal;
-	Spells::Unlock _spellUnlock;
 public:
 	CLASSDEF;
 	Ultima1Game();
