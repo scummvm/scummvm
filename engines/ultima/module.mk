@@ -70,6 +70,7 @@ MODULE_OBJS += \
 	ultima1/actions/ready.o \
 	ultima1/actions/stats.o \
 	ultima1/core/party.o \
+	ultima1/core/quests.o \
 	ultima1/core/resources.o \
 	ultima1/maps/map.o \
 	ultima1/maps/map_base.o \
