@@ -28,7 +28,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
-Steal::Steal() : Spell(SPELL_STEAL) {
+Steal::Steal(Ultima1Game *game, Character *c) : Spell(game, c, SPELL_STEAL) {
 }
 
 void Steal::dungeonCast(Maps::MapDungeon *map) {

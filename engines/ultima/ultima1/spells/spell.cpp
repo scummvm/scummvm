@@ -22,15 +22,16 @@
 
 #include "ultima/ultima1/spells/spell.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
-void Spell::setGame(Ultima1Game *game) {
-	_game = game;
-	_name = _game->_res->SPELL_NAMES[_spellId];
+Spell::Spell(Ultima1Game *game, Character *c, SpellId spellId) : _game(game),
+		_character(c), _spellId(spellId) {
+	_name = _game->_res->SPELL_NAMES[spellId];
 }
 
 void Spell::addInfoMsg(const Common::String &text, bool newLine, bool replaceLine) {
@@ -51,6 +52,10 @@ void Spell::dungeonCast(Maps::MapDungeon *map) {
 	addInfoMsg(_game->_res->FAILED);
 	_game->playFX(6);
 	_game->endOfTurn();
+}
+
+uint Spell::getBuyCost() const {
+	return (200 - _character->_wisdom) / 32 * _spellId;
 }
 
 } // End of namespace Spells

@@ -37,7 +37,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Destroy();
+	Destroy(Ultima1Game *game, Character *c);
 
 	/**
 	 * Cast the spell within dungeons

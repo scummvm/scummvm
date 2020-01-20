@@ -37,7 +37,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Blink();
+	Blink(Ultima1Game *game, Character *c);
 
 	/**
 	 * Cast the spell within dungeons

@@ -30,7 +30,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
-Create::Create() : Spell(SPELL_CREATE) {
+Create::Create(Ultima1Game *game, Character *c) : Spell(game, c, SPELL_CREATE) {
 }
 
 void Create::dungeonCast(Maps::MapDungeon *map) {

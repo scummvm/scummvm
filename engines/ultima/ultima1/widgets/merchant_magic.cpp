@@ -21,12 +21,18 @@
  */
 
 #include "ultima/ultima1/widgets/merchant_magic.h"
+#include "ultima/ultima1/u1dialogs/magic.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
 EMPTY_MESSAGE_MAP(MerchantMagic, Merchant);
+
+void MerchantMagic::talk() {
+	U1Dialogs::Magic *dialog = new U1Dialogs::Magic(_game, _map->getMapStyle() - 2);
+	dialog->show();
+}
 
 } // End of namespace Widgets
 } // End of namespace Ultima1

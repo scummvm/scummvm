@@ -30,7 +30,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
-Destroy::Destroy() : Spell(SPELL_DESTROY) {
+Destroy::Destroy(Ultima1Game *game, Character *c) : Spell(game, c, SPELL_DESTROY) {
 }
 
 void Destroy::dungeonCast(Maps::MapDungeon *map) {

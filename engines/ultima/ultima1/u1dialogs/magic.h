@@ -20,37 +20,51 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_U1DIALOGS_PRAYER_H
-#define ULTIMA_ULTIMA1_U1DIALOGS_PRAYER_H
+#ifndef ULTIMA_ULTIMA1_U1DIALOGS_MAGIC_H
+#define ULTIMA_ULTIMA1_U1DIALOGS_MAGIC_H
 
-#include "ultima/ultima1/spells/spell.h"
+#include "ultima/ultima1/u1dialogs/buy_sell_dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Spells {
+namespace U1Dialogs {
+
+using Shared::CCharacterInputMsg;
 
 /**
- * Prayer spell
+ * Implements the buy/sell dialog for magic
  */
-class Prayer : public Spell {
+class Magic : public BuySellDialog {
+	DECLARE_MESSAGE_MAP;
+	virtual bool CharacterInputMsg(CCharacterInputMsg &msg) override;
+private:
+	uint _magicNum;
+	uint _startIndex, _endIndex;
+private:
+	/**
+	 * Draws the Buy dialog content
+	 */
+	void drawBuy();
+protected:
+	/**
+	 * Set the mode
+	 */
+	virtual void setMode(BuySell mode) override;
 public:
+	CLASSDEF;
+
 	/**
 	 * Constructor
 	 */
-	Prayer(Ultima1Game *game, Character *c);
+	Magic(Ultima1Game *game, int magicNum);
 
 	/**
-	 * Cast the spell outside a dungeon
+	 * Draws the visual item on the screen
 	 */
-	virtual void cast(Maps::MapBase *map) override;
-
-	/**
-	 * Cast the spell within dungeons
-	 */
-	virtual void dungeonCast(Maps::MapDungeon *map) override;
+	virtual void draw();
 };
 
-} // End of  namespace U1Dialogs
+} // End of namespace U1Dialogs
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

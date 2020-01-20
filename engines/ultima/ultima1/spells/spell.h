@@ -31,6 +31,7 @@ namespace Ultima {
 namespace Ultima1 {
 
 class Ultima1Game;
+class Character;
 
 namespace Spells {
 	
@@ -46,6 +47,7 @@ enum SpellId {
 class Spell : public Shared::Spell {
 protected:
 	Ultima1Game *_game;
+	Character *_character;
 	SpellId _spellId;
 protected:
 	/**
@@ -58,12 +60,14 @@ protected:
 	/**
 	 * Constructor
 	 */
-	Spell(SpellId spellId) : _game(nullptr), _spellId(spellId) {}
+	Spell(Ultima1Game *game, Character *c, SpellId spellId);
 public:
 	/**
-	 * Sets the game
+	 * Change the quantity by a given amount
 	 */
-	void setGame(Ultima1Game *game);
+	virtual void changeQuantity(int delta) override {
+		_quantity = (uint)CLIP((int)_quantity + delta, 0, 255);
+	}
 
 	/**
 	 * Cast the spell outside of dungeons
@@ -74,6 +78,11 @@ public:
 	 * Cast the spell in dungeons
 	 */
 	virtual void dungeonCast(Maps::MapDungeon *map);
+
+	/**
+	 * Gets how much the weapon can be bought for
+	 */
+	uint getBuyCost() const;
 };
 
 } // End of  namespace U1Dialogs

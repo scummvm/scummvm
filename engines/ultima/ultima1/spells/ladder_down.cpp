@@ -29,7 +29,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
-LadderDown::LadderDown() : Spell(SPELL_LADDER_DOWN) {
+LadderDown::LadderDown(Ultima1Game *game, Character *c) : Spell(game, c, SPELL_LADDER_DOWN) {
 }
 
 void LadderDown::dungeonCast(Maps::MapDungeon *map) {
