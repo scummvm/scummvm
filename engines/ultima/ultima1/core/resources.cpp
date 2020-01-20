@@ -632,6 +632,8 @@ const char *const SRC_READY_WEAPON_ARMOR_SPELL = "Ready Weapon,Armor,Spell:";
 const char *const SRC_WEAPON_ARMOR_SPELL[3] = { "weapon", "armor", "spell" };
 const char *const SRC_TRANSPORT_WEAPONS[2] = { "cannons", "lasers" };
 const char *const SRC_NO_EFFECT = "Hmmmm... no effect!";
+const char *const SRC_USED_UP_SPELL = "You've used up that spell!";
+const char *const SRC_DUNGEON_SPELL_ONLY = "Failed, dungeon spell only!";
 
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
 const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
@@ -739,6 +741,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(SRC_WEAPON_ARMOR_SPELL, SRC_WEAPON_ARMOR_SPELL + 3, WEAPON_ARMOR_SPELL);
 	Common::copy(SRC_TRANSPORT_WEAPONS, SRC_TRANSPORT_WEAPONS + 2, TRANSPORT_WEAPONS);
 	NO_EFFECT = SRC_NO_EFFECT;
+	USED_UP_SPELL = SRC_USED_UP_SPELL;
+	DUNGEON_SPELL_ONLY = SRC_DUNGEON_SPELL_ONLY;
 
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
 	GROCERY_SELL = SRC_GROCERY_SELL;
@@ -843,6 +847,8 @@ void GameResources::synchronize() {
 	syncStrings(WEAPON_ARMOR_SPELL, 3);
 	syncStrings(TRANSPORT_WEAPONS, 2);
 	syncString(NO_EFFECT);
+	syncString(USED_UP_SPELL);
+	syncString(DUNGEON_SPELL_ONLY);
 
 	syncStrings(GROCERY_NAMES, 8);
 	syncString(GROCERY_SELL);

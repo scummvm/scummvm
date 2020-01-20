@@ -118,6 +118,11 @@ public:
 	 * Do an unlock action
 	 */
 	virtual void unlock() override { open(); }
+
+	/**
+	 * Cast a specific spell
+	 */
+	virtual void castSpell(uint spell);
 };
 
 } // End of namespace Maps

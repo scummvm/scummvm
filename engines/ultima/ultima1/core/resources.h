@@ -129,6 +129,8 @@ public:
 	const char *WEAPON_ARMOR_SPELL[3];
 	const char *TRANSPORT_WEAPONS[2];
 	const char *NO_EFFECT;
+	const char *USED_UP_SPELL;
+	const char *DUNGEON_SPELL_ONLY;
 
 	const char *GROCERY_NAMES[8];
 	const char *GROCERY_SELL;

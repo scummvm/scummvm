@@ -24,6 +24,7 @@
 #include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/spells/spell.h"
 #include "ultima/ultima1/widgets/urban_player.h"
 #include "ultima/ultima1/widgets/bard.h"
 #include "ultima/ultima1/widgets/guard.h"
@@ -177,6 +178,11 @@ Widgets::Merchant *MapCityCastle::getStealMerchant() {
 	}
 }
 
+void MapCityCastle::cast() {
+	addInfoMsg(Common::String::format(" -- %s", _game->_res->NO_EFFECT));
+	_game->playFX(6);
+}
+
 void MapCityCastle::drop() {
 	U1Dialogs::Drop *drop = new U1Dialogs::Drop(_game);
 	drop->show();
@@ -306,8 +312,8 @@ void MapCastle::dropCoins(uint coins) {
 			addInfoMsg(_game->_res->SHAZAM);
 		} else {
 			uint spellNum = _game->getRandomNumber(1, 7);
-			if (spellNum == SPELL_MAGIC_MISSILE)
-				spellNum = SPELL_STEAL;
+			if (spellNum == Spells::SPELL_MAGIC_MISSILE)
+				spellNum = Spells::SPELL_STEAL;
 		
 			c._spells[spellNum]->incrQuantity();
 			addInfoMsg(_game->_res->ALAKAZOT);

@@ -90,6 +90,11 @@ public:
 	virtual void cast();
 
 	/**
+	 * Cast a specific spell
+	 */
+	virtual void castSpell(uint spell);
+
+	/**
 	 * Handles dropping an amount of coins
 	 */
 	virtual void dropCoins(uint coins) {}

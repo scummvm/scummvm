@@ -104,9 +104,14 @@ public:
 	Common::String _name;
 public:
 	/**
-	 * Cast the spell
+	 * Cast the spell outside of dungeons
 	 */
 	virtual void cast() = 0;
+
+	/**
+	 * Cast the spell in dungeons
+	 */
+	virtual void dungeonCast() = 0;
 };
 
 template<class T>

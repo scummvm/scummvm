@@ -91,6 +91,11 @@ public:
 	virtual Point getViewportPosition(const Point &viewportSize) override;
 
 	/**
+	 * Cast a spell
+	 */
+	virtual void cast();
+
+	/**
 	 * Do a drop action
 	 */
 	virtual void drop();

@@ -28,6 +28,7 @@
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/spells/spell.h"
 #include "ultima/ultima1/widgets/dungeon_item.h"
 #include "ultima/ultima1/widgets/merchant_armor.h"
 #include "ultima/ultima1/widgets/merchant_grocer.h"
@@ -81,8 +82,28 @@ void MapBase::attack(int direction) {
 }
 
 void MapBase::cast() {
-	addInfoMsg(Common::String::format(" -- %s", _game->_res->NO_EFFECT));
-	_game->playFX(6);
+	const Shared::Character &c = *_game->_party._currentCharacter;
+	Shared::Spell &spell = *c._spells[c._equippedSpell];
+	addInfoMsg(Common::String::format(" %s", spell._name.c_str()), false);
+
+
+	if (c._equippedSpell == Spells::SPELL_PRAYER) {
+		spell.cast();
+	} else if (spell._quantity == 0) {
+		addInfoMsg("");
+		addInfoMsg(_game->_res->USED_UP_SPELL);
+		_game->playFX(6);
+	} else {
+		spell.decrQuantity();
+		castSpell(c._equippedSpell);
+	}
+}
+
+void MapBase::castSpell(uint spellId) {
+	const Shared::Character &c = *_game->_party._currentCharacter;
+	Shared::Spell &spell = *c._spells[spellId];
+	
+	spell.cast();
 }
 
 } // End of namespace Maps

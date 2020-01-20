@@ -20,27 +20,51 @@
  *
  */
 
-#include "ultima/ultima1/spells/prayer.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/resources.h"
+#ifndef ULTIMA_ULTIMA1_U1DIALOGS_SPELL_H
+#define ULTIMA_ULTIMA1_U1DIALOGS_SPELL_H
+
+#include "ultima/shared/core/character.h"
 
 namespace Ultima {
 namespace Ultima1 {
+
+class Ultima1Game;
+
 namespace Spells {
+	
+enum SpellId {
+	SPELL_PRAYER = 0, SPELL_OPEN = 1, SPELL_UNLOCK = 2, SPELL_MAGIC_MISSILE = 3, SPELL_STEAL = 4,
+	SPELL_LADDER_DOWN = 5, SPELL_LADDER_UP = 6, SPELL_BLINK = 7, SPELL_CREATE = 8,
+	SPELL_DESTROY = 9, SPELL_KILL = 10
+};
 
-Prayer::Prayer() : Spell() {
-//	_name = game->_res->SPELL_NAMES[0];
-	_quantity = 0xffff;			// Prayer has unlimited uses
-}
+/**
+ * Base class for Ultima 1 spells
+ */
+class Spell : public Shared::Spell {
+protected:
+	Ultima1Game *_game;
+protected:
+	/**
+	 * Adds a text string to the info area
+	 * @param text			Text to add
+	 * @param newLine		Whether to apply a newline at the end
+	 */
+	void addInfoMsg(const Common::String &text, bool newLine = true);
+public:
+	/**
+	 * Constructor
+	 */
+	Spell() : _game(nullptr) {}
 
-void Prayer::cast() {
-	// TODO
-}
+	/**
+	 * Cast the spell outside of dungeons
+	 */
+	virtual void cast() override;
+};
 
-void Prayer::dungeonCast() {
-	// TODO
-}
-
-} // End of namespace Spells
+} // End of  namespace U1Dialogs
 } // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

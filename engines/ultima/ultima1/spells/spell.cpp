@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima1/spells/prayer.h"
+#include "ultima/ultima1/spells/spell.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
 
@@ -28,17 +28,15 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
-Prayer::Prayer() : Spell() {
-//	_name = game->_res->SPELL_NAMES[0];
-	_quantity = 0xffff;			// Prayer has unlimited uses
+void Spell::addInfoMsg(const Common::String &text, bool newLine) {
+	Shared::CInfoMsg msg(text, newLine);
+	msg.execute(_game->getView());
 }
 
-void Prayer::cast() {
-	// TODO
-}
-
-void Prayer::dungeonCast() {
-	// TODO
+void Spell::cast() {
+	addInfoMsg("");
+	addInfoMsg(_game->_res->DUNGEON_SPELL_ONLY);
+	_game->playFX(6);
 }
 
 } // End of namespace Spells

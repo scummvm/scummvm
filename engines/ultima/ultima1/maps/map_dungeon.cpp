@@ -263,6 +263,13 @@ void MapDungeon::climb() {
 	}
 }
 
+void MapDungeon::castSpell(uint spellId) {
+	const Shared::Character &c = *_game->_party._currentCharacter;
+	Shared::Spell &spell = *c._spells[spellId];
+
+	spell.dungeonCast();
+}
+
 } // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima
