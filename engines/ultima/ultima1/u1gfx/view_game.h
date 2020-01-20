@@ -82,7 +82,7 @@ public:
 	/**
 	 * Draw the game screen
 	 */
-	virtual void draw();
+	virtual void draw() override;
 };
 
 } // End of namespace U1Gfx

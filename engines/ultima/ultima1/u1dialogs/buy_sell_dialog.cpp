@@ -49,7 +49,7 @@ bool BuySellDialog::ShowMsg(CShowMsg &msg) {
 }
 
 bool BuySellDialog::FrameMsg(CFrameMsg &msg) {
-	if (_closeCounter > 0 && ++_closeCounter > DIALOG_CLOSE_DELAY) {
+	if (_closeCounter > 0 && --_closeCounter == 0) {
 		_game->endOfTurn();
 		hide();
 	}

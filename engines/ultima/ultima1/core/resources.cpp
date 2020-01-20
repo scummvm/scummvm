@@ -708,6 +708,14 @@ const char *SRC_TAVERN_TIPS[13] = {
 		"days before Mondain created\nthe evil gem and destroy him!",
 	"wench", "lecher"
 };
+const char *SRC_TRANSPORTS_NAMES[8] = {
+	"Scooter's Super Duper\nTransport, Inc.", nullptr, nullptr, "Quality Transport Ltd.",
+	nullptr, "O.K. New and Used Transport", nullptr, "Sly Sam's Transportation\nSpecialists"
+};
+const char *SRC_TRANSPORTS_TEXT[2] = {
+	"Sorry, we don't deal in\nused stuff.", "Closed for the day.",
+
+};
 const char *const SRC_WITH_KING = " with king";
 const char *const SRC_HE_IS_NOT_HERE = "He is not here!";
 const char *const SRC_HE_REJECTS_OFFER = "He rejects thine offer!";
@@ -854,6 +862,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(&SRC_TAVERN_NAMES[0], &SRC_TAVERN_NAMES[8], TAVERN_NAMES);
 	Common::copy(&SRC_TAVERN_TEXT[0], &SRC_TAVERN_TEXT[10], TAVERN_TEXT);
 	Common::copy(&SRC_TAVERN_TIPS[0], &SRC_TAVERN_TIPS[13], TAVERN_TIPS);
+	Common::copy(&SRC_TRANSPORTS_NAMES[0], &SRC_TRANSPORTS_NAMES[8], TRANSPORTS_NAMES);
+	Common::copy(&SRC_TRANSPORTS_TEXT[0], &SRC_TRANSPORTS_TEXT[2], TRANSPORTS_TEXT);
 	WITH_KING = SRC_WITH_KING;
 	HE_IS_NOT_HERE = SRC_HE_IS_NOT_HERE;
 	HE_REJECTS_OFFER = SRC_HE_REJECTS_OFFER;
@@ -991,6 +1001,8 @@ void GameResources::synchronize() {
 	syncStrings(TAVERN_NAMES, 8);
 	syncStrings(TAVERN_TEXT, 10);
 	syncStrings(TAVERN_TIPS, 13);
+	syncStrings(TRANSPORTS_NAMES, 8);
+	syncStrings(TRANSPORTS_TEXT, 2);
 	syncString(WITH_KING);
 	syncString(HE_IS_NOT_HERE);
 	syncString(HE_REJECTS_OFFER);

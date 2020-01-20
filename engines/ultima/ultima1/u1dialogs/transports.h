@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_U1DIALOGS_WEAPONRY_H
-#define ULTIMA_ULTIMA1_U1DIALOGS_WEAPONRY_H
+#ifndef ULTIMA_ULTIMA1_U1DIALOGS_TRANSPORTS_H
+#define ULTIMA_ULTIMA1_U1DIALOGS_TRANSPORTS_H
 
 #include "ultima/ultima1/u1dialogs/buy_sell_dialog.h"
 
@@ -29,16 +29,23 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
+using Shared::CCharacterInputMsg;
+
 /**
- * Implements the buy/sell dialog for grocers
+ * Implements the dialog for the transport merchant
  */
-class Weaponry : public BuySellDialog {
+class Transports : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
 	virtual bool CharacterInputMsg(CCharacterInputMsg &msg) override;
 private:
-	uint _weaponryNum;
-	uint _startIndex, _endIndex;
+	uint _transportsNum;
+	uint _water, _woods, _grass;
 private:
+	/**
+	 * Calculates the number of free tiles in the overworld
+	 */
+	void loadOverworldFreeTiles();
+
 	/**
 	 * Draws the Buy dialog content
 	 */
@@ -59,7 +66,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Weaponry(Ultima1Game *game, int weaponryNum);
+	Transports(Ultima1Game *game, int transportNum);
 
 	/**
 	 * Draws the visual item on the screen

@@ -53,28 +53,6 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Maps {
 
-void SurroundingTotals::load(Ultima1Map *map) {
-	U1MapTile mapTile;
-	_water = _woods = _grass = 0;
-	
-	// Iterate through the surrounding tiles relative to the player
-	for (int deltaY = -1; deltaY <= 1; ++deltaY) {
-		for (int deltaX = -1; deltaX <= 1; ++deltaX) {
-			Point delta(deltaX * map->getTilesPerOrigTile().x, deltaY * map->getTilesPerOrigTile().y);
-			map->getTileAt(map->getDeltaPosition(delta), &mapTile);
-
-			if (mapTile.isOriginalWater())
-				++_water;
-			else if (mapTile.isOriginalGrass())
-				++_grass;
-			else if (mapTile.isOriginalWoods())
-				++_woods;
-		}
-	}
-}
-
-/*------------------------------------------------------------------------*/
-
 Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Maps::Map(), _game(game),
 		_mapType(MAP_UNKNOWN), _moveCounter(0) {
 	Ultima1Map::clear();

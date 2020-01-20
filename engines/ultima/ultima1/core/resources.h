@@ -166,6 +166,8 @@ public:
 	const char *TAVERN_NAMES[8];
 	const char *TAVERN_TEXT[10];
 	const char *TAVERN_TIPS[13];
+	const char *TRANSPORTS_NAMES[8];
+	const char *TRANSPORTS_TEXT[2];
 	const char *WITH_KING;
 	const char *HE_IS_NOT_HERE;
 	const char *HE_REJECTS_OFFER;
