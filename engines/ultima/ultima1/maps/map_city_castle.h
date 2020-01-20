@@ -127,7 +127,7 @@ public:
 	/**
 	 * Returns true if a wench is on an adjacent tile to the player
 	 */
-	bool isWenchNearby();
+	bool isWenchNearby() const;
 };
 
 /**

@@ -49,12 +49,15 @@ private:
 	/**
 	 * Delay be a specified amount
 	 */
-	void delay(uint amount) { _countdown = amount; }
+	void delay(uint amount = 4 * DIALOG_CLOSE_DELAY) {
+		_countdown = amount;
+		setDirty();
+	}
 
 	/**
-	 * Returns true if the wench is near the player
+	 * Close the dialog
 	 */
-	bool isWenchNearby() const;
+	void close();
 
 	/**
 	 * Draws the Buy dialog content

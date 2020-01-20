@@ -39,7 +39,6 @@
 #include "ultima/ultima1/widgets/merchant_transport.h"
 #include "ultima/ultima1/widgets/merchant_weapons.h"
 #include "ultima/ultima1/u1dialogs/drop.h"
-#include "ultima/shared/core/utils.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -275,14 +274,14 @@ void MapCityCastle::attack(int direction, int effectId, uint maxDistance, uint a
 	_game->endOfTurn();
 }
 
-bool MapCityCastle::isWenchNearby() {
+bool MapCityCastle::isWenchNearby() const {
 	Shared::Maps::MapWidget *widget = _widgets.findByClass(Widgets::Wench::type());
 	if (!widget)
 		return false;
 
 	const Point &playerPos = _playerWidget->_position;
 	const Point &wenchPos = widget->_position;
-	int distance = MAX(SGN(playerPos.x - wenchPos.x), SGN(playerPos.y - wenchPos.y));
+	int distance = MAX(ABS(playerPos.x - wenchPos.x), ABS(playerPos.y - wenchPos.y));
 	return distance == 1;
 }
 

@@ -244,7 +244,7 @@ void ViewCharacterGeneration::setRace(int raceNum) {
 }
 
 void ViewCharacterGeneration::setSex(int sexNum) {
-	_character->_sex = sexNum;
+	_character->_sex = (Shared::Sex)sexNum;
 	setMode(FLAG_CLASS);
 }
 

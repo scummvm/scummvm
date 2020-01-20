@@ -30,6 +30,7 @@ namespace Ultima1 {
 namespace Widgets {
 
 class Wench : public Person {
+	DECLARE_MESSAGE_MAP;
 protected:
 	/**
 	 * Handles moving creatures
@@ -37,6 +38,7 @@ protected:
 	virtual void movement() override;
 public:
 	DECLARE_WIDGET(Wench)
+	CLASSDEF;
 
 	/**
 	 * Constructor

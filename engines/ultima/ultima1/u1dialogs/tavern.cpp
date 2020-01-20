@@ -66,27 +66,55 @@ void Tavern::setMode(BuySell mode) {
 }
 
 bool Tavern::FrameMsg(CFrameMsg &msg) {
-	const Shared::Character &c = *_game->_party;
+	Shared::Character &c = *_game->_party;
 
 	if (_countdown > 0 && --_countdown == 0) {
 		switch (_mode) {
 		case BUY:
 			switch (_buyDisplay) {
 			case INITIAL:
-				if (c._coins != 0) {
-					if (++_map->_tipCounter > (c._stamina / 4) && isWenchNearby()) {
-						// TODO
-					}
+				if (c._coins == 0) {
+					close();
+					break;
+				}
+
+				if (++_map->_tipCounter > (c._stamina / 4) && _map->isWenchNearby()) {
+					_buyDisplay = TIP0;
+					_tipNumber = 0;
+					c._coins /= 2;
+					c._wisdom = MAX(c._wisdom - 1, 5U);
+
+					delay();
+					break;
+				}
+				// fall through
+
+			case TIP0:
+				if (_game->getRandomNumber(255) < 75) {
+					_buyDisplay = TIP_PAGE1;
+					_tipNumber = _game->getRandomNumber(11, 89) / 10;
+					delay((_tipNumber == 8) ? 7 * DIALOG_CLOSE_DELAY : 4 * DIALOG_CLOSE_DELAY);
+				} else {
+					close();
 				}
 				break;
 
+			case TIP_PAGE1:
+				if (_tipNumber == 8) {
+					_buyDisplay = TIP_PAGE2;
+					delay();
+				} else {
+					close();
+				}
+				break;
+
+			case TIP_PAGE2:
+				close();
+				break;
 			default:
 				break;
 			}
 
-			addInfoMsg("");
-			_game->endOfTurn();
-			hide();
 			break;
 
 		case SELL:
@@ -102,13 +130,10 @@ bool Tavern::FrameMsg(CFrameMsg &msg) {
 	return true;
 }
 
-bool Tavern::isWenchNearby() const {
-	//Shared::Maps::Map *map = _game->_map;
-	
-//	dynamic_cast<Widgets::Person *>(_widgets.findByClass(Widgets::MerchantGrocer::type()))
-	
-	//Point playerPos = map->getPosition();
-	return true;
+void Tavern::close() {
+	addInfoMsg("");
+	_game->endOfTurn();
+	hide();
 }
 
 void Tavern::draw() {
@@ -145,14 +170,27 @@ void Tavern::drawBuy() {
 		break;
 
 	case TIP0:
-	case TIP_PAGE1: {
-		
+	case TIP_PAGE1:
+	case TIP_PAGE2: {
+		if (_tipNumber != 0)
+			centerText(_game->_res->TAVERN_TIPS[0], 3);
+		switch (_tipNumber) {
+		case 2:
+			centerText(Common::String::format(_game->_res->TAVERN_TIPS[3],
+				_game->_res->TAVERN_TIPS[c._sex == Shared::SEX_MALE ? 11 : 12]), 4);
+			break;
+		case 8:
+			centerText(String(_game->_res->TAVERN_TIPS[_buyDisplay == TIP_PAGE1 ? 9 : 10]).split("\r\n"), 4);
+			break;
+		default:
+			centerText(String(_game->_res->TAVERN_TIPS[_tipNumber + 1]).split("\r\n"), 4);
+			break;
+		}
 	}
 
 	default:
 		break;
 	}
-
 }
 
 void Tavern::drawSell() {
