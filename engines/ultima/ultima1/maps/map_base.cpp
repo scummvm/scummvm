@@ -76,9 +76,9 @@ void MapBase::unknownAction() {
 	_game->playFX(1);
 }
 
-void MapBase::attack(int direction) {
-	addInfoMsg(": ");
+void MapBase::attack(int direction, int effectId) {
 	// TODO
+	_game->endOfTurn();
 }
 
 void MapBase::cast() {

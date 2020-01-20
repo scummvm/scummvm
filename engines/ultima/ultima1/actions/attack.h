@@ -31,10 +31,12 @@ namespace Ultima1 {
 namespace Actions {
 
 using Shared::CAttackMsg;
+using Shared::CCharacterInputMsg;
 
 class Attack : public Action {
 	DECLARE_MESSAGE_MAP;
 	bool AttackMsg(CAttackMsg &msg);
+	bool CharacterInputMsg(CCharacterInputMsg &msg);
 public:
 	CLASSDEF;
 

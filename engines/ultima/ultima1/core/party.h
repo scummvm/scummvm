@@ -99,6 +99,11 @@ public:
 	 * Operator casting
 	 */
 	operator Character *() const { return static_cast<Character *>(_characters.front()); }
+
+	/**
+	 * Operator casting
+	 */
+	operator Character &() const { return *static_cast<Character *>(_characters.front()); }
 };
 
 } // End of namespace Ultima1
