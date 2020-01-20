@@ -30,6 +30,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
+#define DIALOG_CLOSE_DELAY 50
+
 enum BuySell { SELECT, BUY, SELL, SOLD, CANT_AFFORD, DONE };
 
 using Shared::CShowMsg;

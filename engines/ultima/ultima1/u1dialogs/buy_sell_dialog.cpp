@@ -31,8 +31,6 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-#define DIALOG_CLOSE_DELAY 50
-
 BEGIN_MESSAGE_MAP(BuySellDialog, Dialog)
 	ON_MESSAGE(ShowMsg)
 	ON_MESSAGE(FrameMsg)
@@ -91,9 +89,7 @@ void BuySellDialog::draw() {
 		s.frameRect(Rect(3, 3, _bounds.width() - 3, _bounds.height() - 3), getGame()->_borderColor);
 
 		// Draw the title
-		Shared::StringArray titleLines = String(_title).split('\n');
-		for (uint y = 0; y < titleLines.size(); ++y)
-			centerText(titleLines[y], y + 1);
+		centerText(String(_title).split('\n'), 1);
 	}
 
 	switch (_mode) {

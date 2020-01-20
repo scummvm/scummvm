@@ -163,6 +163,9 @@ public:
 	const char *NO_ARMOUR_TO_SELL;
 	const char *MAGIC_NAMES[8];
 	const char *DONT_BUY_SPELLS;
+	const char *TAVERN_NAMES[8];
+	const char *TAVERN_TEXT[10];
+	const char *TAVERN_TIPS[11];
 
 	const char *WITH_KING;
 	const char *HE_IS_NOT_HERE;

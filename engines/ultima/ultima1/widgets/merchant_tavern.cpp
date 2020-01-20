@@ -21,12 +21,20 @@
  */
 
 #include "ultima/ultima1/widgets/merchant_tavern.h"
+#include "ultima/ultima1/maps/map_city_castle.h"
+#include "ultima/ultima1/u1dialogs/tavern.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
 EMPTY_MESSAGE_MAP(MerchantTavern, Merchant);
+
+void MerchantTavern::talk() {
+	Maps::MapCityCastle *map = static_cast<Maps::MapCityCastle *>(_map);
+	U1Dialogs::Tavern *dialog = new U1Dialogs::Tavern(_game, map, _map->getMapStyle() - 2);
+	dialog->show();
+}
 
 } // End of namespace Widgets
 } // End of namespace Ultima1

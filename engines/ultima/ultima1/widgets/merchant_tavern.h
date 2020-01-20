@@ -34,6 +34,8 @@ namespace Widgets {
  */
 class MerchantTavern : public Merchant {
 	DECLARE_MESSAGE_MAP;
+private:
+	int _tipCounter;
 public:
 	DECLARE_WIDGET(MerchantTavern)
 	CLASSDEF;
@@ -42,18 +44,23 @@ public:
 	 * Constructor
 	 */
 	MerchantTavern(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Merchant(game, map, 50, hitPoints) {}
+		Merchant(game, map, 50, hitPoints), _tipCounter(0) {}
 
 	/**
 	 * Constructor
 	 */
 	MerchantTavern(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) :
-		Merchant(game, map, tileNum, hitPoints) {}
+		Merchant(game, map, tileNum, hitPoints), _tipCounter(0) {}
 
 	/**
 	 * Constructor
 	 */
-	MerchantTavern(Ultima1Game *game, Maps::MapBase *map) : Merchant(game, map, 50) {}
+	MerchantTavern(Ultima1Game *game, Maps::MapBase *map) : Merchant(game, map, 50), _tipCounter(0) {}
+
+	/**
+	 * Do the talk action
+	 */
+	virtual void talk() override;
 };
 
 } // End of namespace Widgets

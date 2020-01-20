@@ -20,83 +20,68 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_U1DIALOGS_DIALOG_H
-#define ULTIMA_ULTIMA1_U1DIALOGS_DIALOG_H
+#ifndef ULTIMA_ULTIMA1_U1DIALOGS_TAVERN_H
+#define ULTIMA_ULTIMA1_U1DIALOGS_TAVERN_H
 
-#include "ultima/shared/gfx/popup.h"
-#include "ultima/shared/gfx/character_input.h"
-#include "ultima/shared/core/str.h"
+#include "ultima/ultima1/u1dialogs/buy_sell_dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
-
-class Ultima1Game;
 namespace Maps {
-	class Ultima1Map;
+	class MapCityCastle;
 }
-
+	
 namespace U1Dialogs {
 
 /**
- * Base class for Ultima 1 popup dialogs
+ * Implements the buy/sell dialog for taverns
  */
-class Dialog : public Shared::Gfx::Popup {
+class Tavern : public BuySellDialog {
+	DECLARE_MESSAGE_MAP;
+	bool FrameMsg(CFrameMsg &msg);
+private:
+	Maps::MapCityCastle *_map;
+	uint _tavernNum;
+	uint _tipNumber;
+	uint _countdown;
+	enum { INITIAL, TIP0, TIP_PAGE1, TIP_PAGE2 } _buyDisplay;
+private:
+	/**
+	 * Delay be a specified amount
+	 */
+	void delay(uint amount) { _countdown = amount; }
+
+	/**
+	 * Returns true if the wench is near the player
+	 */
+	bool isWenchNearby() const;
+
+	/**
+	 * Draws the Buy dialog content
+	 */
+	void drawBuy();
+
+	/**
+	 * Draws the Sell dialog content
+	 */
+	void drawSell();
 protected:
-	Ultima1Game *_game;
-	Common::String _prompt;
-protected:
 	/**
-	 * Jumps up through the parents to find the root game
+	 * Set the mode
 	 */
-	Ultima1Game *getGame() { return _game; }
-
-	/**
-	 * Return the game's map
-	 */
-	Maps::Ultima1Map *getMap();
-
-	/**
-	 * Adds a text string to the info area
-	 * @param text			Text to add
-	 * @param newLine		Whether to apply a newline at the end
-	 * @param replaceLine	If true, replaces the current last line
-	 */
-	void addInfoMsg(const Common::String &text, bool newLine = true, bool replaceLine = false);
-
-	/**
-	 * Prompts for a keypress
-	 */
-	void getKeypress();
-
-	/**
-	 * Prompts for an input
-	 */
-	void getInput(bool isNumeric = true, size_t maxCharacters = 4);
-
-	/**
-	 * Write a text line to the dialog
-	 */
-	void centerText(const Common::String &line, int yp);
-
-	/**
-	 * Write a text line to the dialog
-	 */
-	void centerText(const Shared::StringArray &lines, int yp);
+	virtual void setMode(BuySell mode) override;
 public:
+	CLASSDEF;
+
 	/**
 	 * Constructor
 	 */
-	Dialog(Ultima1Game *game);
+	Tavern(Ultima1Game *game, Maps::MapCityCastle *map, int tavernNum);
 
 	/**
 	 * Draws the visual item on the screen
 	 */
 	virtual void draw();
-
-	/**
-	 * Hide the dialog
-	 */
-	virtual void hide() override;
 };
 
 } // End of namespace U1Dialogs
