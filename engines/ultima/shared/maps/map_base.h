@@ -107,6 +107,13 @@ protected:
 	 * Set the size of the map
 	 */
 	void setDimensions(const Point &size);
+
+	/**
+	 * Adds a text string to the info area
+	 * @param text		Text to add
+	 * @param newLine	Whether to apply a newline at the end
+	 */
+	void addInfoMsg(const Common::String &text, bool newLine = true);
 public:
 	Point _size;						// X, Y size of the map
 	Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile

@@ -33,12 +33,17 @@
 #include "ultima/ultima1/actions/move.h"
 #include "ultima/ultima1/actions/climb.h"
 #include "ultima/ultima1/actions/enter.h"
-#include "ultima/ultima1/actions/transact.h"
+#include "ultima/ultima1/actions/map_action.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Actions {
+MAP_ACTION(Steal, 18, steal)
+MAP_ACTION(Transact, 19, talk)
+}
+	
 namespace U1Gfx {
 
 BEGIN_MESSAGE_MAP(ViewGame, Shared::Gfx::VisualContainer)
@@ -53,12 +58,15 @@ ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect
 
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	_viewportMap = new ViewportMap(this);
+	
+	_actions.resize(7);
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Actions::Climb(this);
 	_actions[2] = new Actions::Enter(this);
 	_actions[3] = new Shared::Actions::Pass(this, game->_res->ACTION_NAMES[15]);
-	_actions[4] = new Actions::Transact(this);
-	_actions[5] = new Shared::Actions::Huh(this, game->_res->HUH);
+	_actions[4] = new Shared::Actions::Huh(this, game->_res->HUH);
+	_actions[5] = new Actions::Steal(this);
+	_actions[5] = new Actions::Transact(this);
 }
 
 ViewGame::~ViewGame() {
@@ -66,7 +74,7 @@ ViewGame::~ViewGame() {
 	delete _status;
 	delete _viewportDungeon;
 	delete _viewportMap;
-	for (int idx = 0; idx < 5; ++idx)
+	for (uint idx = 0; idx < _actions.size(); ++idx)
 		delete _actions[idx];
 }
 
@@ -168,6 +176,11 @@ bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
 	case Common::KEYCODE_k: {
 		Shared::CClimbMsg climb;
 		climb.execute(this);
+		break;
+	}
+	case Common::KEYCODE_s: {
+		Shared::CStealMsg steal;
+		steal.execute(this);
 		break;
 	}
 	case Common::KEYCODE_t: {

@@ -58,6 +58,14 @@ void MapBase::getTileAt(const Point &pt, Shared::Maps::MapTile *tile) {
 	}
 }
 
+void MapBase::steal() {
+	addInfoMsg("?");
+}
+
+void MapBase::talk() {
+	addInfoMsg("?");
+}
+
 } // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima

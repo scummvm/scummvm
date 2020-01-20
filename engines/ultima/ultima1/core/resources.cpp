@@ -563,7 +563,7 @@ const char *const SRC_JESTER_STOLEN = "The jester stole something!";
 
 const char *const SRC_ACTION_NAMES[26] = {
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-	nullptr, nullptr, nullptr, nullptr, nullptr, "Pass", nullptr, nullptr, nullptr, "Transact",
+	nullptr, nullptr, nullptr, nullptr, nullptr, "Pass", nullptr, nullptr, "Steal", "Transact",
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 };
 const char *const SRC_HUH = "Huh?";

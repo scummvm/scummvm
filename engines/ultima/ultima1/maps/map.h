@@ -115,6 +115,16 @@ public:
 	 * Instantiates a widget type by name
 	*/
 	virtual Shared::Maps::MapWidget *createWidget(Shared::Maps::MapBase *map, const Common::String &name) override;
+
+	/**
+	 * Do a steal action
+	 */
+	void steal();
+
+	/**
+	 * Do a talk action
+	 */
+	void talk();
 };
 
 } // End of namespace Maps
