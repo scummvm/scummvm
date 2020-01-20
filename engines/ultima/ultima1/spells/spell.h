@@ -44,6 +44,7 @@ enum SpellId {
 class Spell : public Shared::Spell {
 protected:
 	Ultima1Game *_game;
+	SpellId _spellId;
 protected:
 	/**
 	 * Adds a text string to the info area
@@ -51,11 +52,16 @@ protected:
 	 * @param newLine		Whether to apply a newline at the end
 	 */
 	void addInfoMsg(const Common::String &text, bool newLine = true);
-public:
+protected:
 	/**
 	 * Constructor
 	 */
-	Spell() : _game(nullptr) {}
+	Spell(SpellId spellId) : _game(nullptr), _spellId(spellId) {}
+public:
+	/**
+	 * Sets the game
+	 */
+	void setGame(Ultima1Game *game);
 
 	/**
 	 * Cast the spell outside of dungeons

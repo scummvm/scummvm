@@ -28,8 +28,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
-Prayer::Prayer() : Spell() {
-//	_name = game->_res->SPELL_NAMES[0];
+Prayer::Prayer() : Spell(SPELL_PRAYER) {
 	_quantity = 0xffff;			// Prayer has unlimited uses
 }
 

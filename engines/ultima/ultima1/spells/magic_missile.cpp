@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima1/spells/spell.h"
+#include "ultima/ultima1/spells/magic_missile.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
 
@@ -28,21 +28,11 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
-void Spell::setGame(Ultima1Game *game) {
-	_game = game;
-	_name = _game->_res->SPELL_NAMES[_spellId];
+MagicMissile::MagicMissile() : Spell(SPELL_MAGIC_MISSILE) {
 }
 
-void Spell::addInfoMsg(const Common::String &text, bool newLine) {
-	Shared::CInfoMsg msg(text, newLine);
-	msg.execute(_game->getView());
-}
-
-void Spell::cast() {
-	// Most spells can't be used outside of dungeons
-	addInfoMsg("");
-	addInfoMsg(_game->_res->DUNGEON_SPELL_ONLY);
-	_game->playFX(6);
+void MagicMissile::dungeonCast() {
+	// TODO
 }
 
 } // End of namespace Spells
