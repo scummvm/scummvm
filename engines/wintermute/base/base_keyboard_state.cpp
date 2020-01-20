@@ -33,8 +33,6 @@
 #include "common/system.h"
 #include "common/keyboard.h"
 
-#define KEYSTATES_ARRAY_SIZE (Common::KEYCODE_UNDO + 1) // Hardcoded size for the common/keyboard.h enum
-
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseKeyboardState, false)
@@ -248,8 +246,8 @@ void BaseKeyboardState::init() {
 	_currentAlt = false;
 	_currentControl = false;
 
-	_keyStates = new uint8[KEYSTATES_ARRAY_SIZE];
-	for (int i = 0; i < KEYSTATES_ARRAY_SIZE; i++) {
+	_keyStates = new uint8[Common::KEYCODE_LAST];
+	for (int i = 0; i < Common::KEYCODE_LAST; i++) {
 		_keyStates[i] = false;
 	}
 
