@@ -75,7 +75,7 @@ public:
 	/**
 	 * Draws the dungeon
 	 */
-	virtual void draw();
+	virtual void draw() override;
 };
 
 } // End of namespace Shared

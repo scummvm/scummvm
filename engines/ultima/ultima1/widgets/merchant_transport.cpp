@@ -21,12 +21,18 @@
  */
 
 #include "ultima/ultima1/widgets/merchant_transport.h"
+#include "ultima/ultima1/u1dialogs/transports.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
 EMPTY_MESSAGE_MAP(MerchantTransport, Merchant);
+
+void MerchantTransport::talk() {
+	U1Dialogs::Transports *dialog = new U1Dialogs::Transports(_game, _map->getMapStyle() - 2);
+	dialog->show();
+}
 
 } // End of namespace Widgets
 } // End of namespace Ultima1

@@ -54,6 +54,11 @@ public:
 	 * Constructor
 	 */
 	MerchantTransport(Ultima1Game *game, Maps::MapBase *map) : Merchant(game, map, 50) {}
+
+	/**
+	 * Do the talk action
+	 */
+	virtual void talk() override;
 };
 
 } // End of namespace Widgets

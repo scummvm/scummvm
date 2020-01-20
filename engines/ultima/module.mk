@@ -100,6 +100,7 @@ MODULE_OBJS += \
 	ultima1/u1dialogs/ready.o \
 	ultima1/u1dialogs/stats.o \
 	ultima1/u1dialogs/tavern.o \
+	ultima1/u1dialogs/transports.o \
 	ultima1/u1dialogs/weaponry.o \
 	ultima1/u1gfx/drawing_support.o \
 	ultima1/u1gfx/info.o \

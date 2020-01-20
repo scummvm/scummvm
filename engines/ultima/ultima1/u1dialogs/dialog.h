@@ -91,7 +91,7 @@ public:
 	/**
 	 * Draws the visual item on the screen
 	 */
-	virtual void draw();
+	virtual void draw() override;
 
 	/**
 	 * Hide the dialog

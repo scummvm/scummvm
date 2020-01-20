@@ -81,14 +81,14 @@ protected:
 	/**
 	 * Sets the dialog to close after a brief pause
 	 */
-	void closeShortly() { _closeCounter = 1; }
+	void closeShortly() { _closeCounter = 3 * DIALOG_CLOSE_DELAY; }
 public:
 	CLASSDEF;
 
 	/**
 	 * Draws the visual item on the screen
 	 */
-	virtual void draw();
+	virtual void draw() override;
 };
 
 } // End of namespace U1Dialogs
