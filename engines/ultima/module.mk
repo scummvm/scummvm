@@ -11,7 +11,6 @@ MODULE_OBJS := \
 
 ifdef ENABLE_ULTIMA1
 MODULE_OBJS += \
-<<<<<<< HEAD
 	shared/actions/action.o \
 	shared/actions/huh.o \
 	shared/actions/pass.o \
@@ -64,6 +63,7 @@ MODULE_OBJS += \
 	ultima0/resources.o \
 	ultima1/actions/action.o \
 	ultima1/actions/move.o \
+	ultima1/actions/quit.o \
 	ultima1/actions/stats.o \
 	ultima1/core/resources.o \
 	ultima1/maps/map.o \
