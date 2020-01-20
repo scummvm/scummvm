@@ -133,6 +133,8 @@ public:
 	const char *USED_UP_SPELL;
 	const char *DUNGEON_SPELL_ONLY;
 	const char *MONSTER_REMOVED;
+	const char *FAILED;
+	const char *TELEPORTED;
 
 	const char *GROCERY_NAMES[8];
 	const char *GROCERY_SELL;
