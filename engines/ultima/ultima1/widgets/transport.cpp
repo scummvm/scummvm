@@ -106,7 +106,14 @@ Common::String Aircar::getWeaponsName() {
 
 /*-------------------------------------------------------------------*/
 
-Shuttle::Shuttle(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 6) {
+Shuttle::Shuttle(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 6),
+		_space1(1000), _space2(1000) {
+}
+
+void Shuttle::synchronize(Common::Serializer &s) {
+	Transport::synchronize(s);
+	s.syncAsUint16LE(_space1);
+	s.syncAsUint16LE(_space2);
 }
 
 /*-------------------------------------------------------------------*/

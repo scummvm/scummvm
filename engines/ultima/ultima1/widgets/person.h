@@ -74,7 +74,7 @@ public:
 		UrbanWidget(game, map, tileNum), Shared::Maps::Creature(game, map), _game(game), _map(map) {}
 
 	/**
-	 * Handles loading and saving the map's data
+	 * Handles loading and saving data
 	 */
 	virtual void synchronize(Common::Serializer &s) override;
 
