@@ -29,20 +29,23 @@
 namespace Ultima {
 
 namespace Shared {
-	class Info;
-	class ViewportDungeon;
-	namespace Actions {
-		class Action;
-	}
-}
+class Info;
+class ViewportDungeon;
+
+namespace Actions {
+class Action;
+} // End of namespace Actions
+} // End of namespace Shared
 	
 namespace Ultima1 {
 namespace U1Gfx {
 
 class Status;
 class ViewportMap;
+using Shared::CShowMsg;
+using Shared::CEndOfTurnMsg;
 using Shared::CFrameMsg;
-using Shared::CKeypressMsg;
+using Shared::CCharacterInputMsg;
 
 /**
  * This class implements a standard view screen that shows a status and log area, as well as either
@@ -50,8 +53,10 @@ using Shared::CKeypressMsg;
  */
 class ViewGame : public Shared::Gfx::VisualContainer {
 	DECLARE_MESSAGE_MAP;
+	bool ShowMsg(CShowMsg &msg);
+	bool EndOfTurnMsg(CEndOfTurnMsg &msg);
 	bool FrameMsg(CFrameMsg &msg);
-	bool KeypressMsg(CKeypressMsg &msg);
+	bool CharacterInputMsg(CCharacterInputMsg &msg);
 private:
 	Shared::Info *_info;
 	Shared::ViewportDungeon *_viewportDungeon;

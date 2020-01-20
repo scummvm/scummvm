@@ -40,6 +40,11 @@ namespace Actions {
  * Base class for implementing the various actions the player can do, such as moving, climbing, entering, etc.
  */
 class Action : public TreeItem {
+protected:
+	/**
+	 * Signals the end of the turn
+	 */
+	void endOfTurn();
 public:
 	/**
 	 * Constructor

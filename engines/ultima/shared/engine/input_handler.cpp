@@ -113,7 +113,7 @@ void InputHandler::processMessage(CMessage *msg) {
 void InputHandler::dispatchMessage(CMessage *msg) {
 	Gfx::VisualItem *view = _game->getView();
 	if (view)
-		msg->execute(view, nullptr, MSGFLAG_BREAK_IF_HANDLED);
+		msg->execute(view);
 }
 
 } // End of namespace Shared

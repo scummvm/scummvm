@@ -46,9 +46,10 @@ public:
 	 * Show the character input
 	 * @param pt		Position of the input
 	 * @param color		Text color
+	 * @param respondTo	Where to send response to
 	 * @remarks			Generates a TextInputMsg message with the character when pressed
 	 */
-	void show(const Point &pt, byte color);
+	void show(const Point &pt, byte color, TreeItem *respondTo = nullptr);
 };
 
 } // End of namespace Gfx

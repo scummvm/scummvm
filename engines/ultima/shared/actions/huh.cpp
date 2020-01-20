@@ -32,6 +32,7 @@ END_MESSAGE_MAP()
 
 bool Huh::HuhMsg(CHuhMsg &msg) {
 	addInfoMsg(_text);
+	endOfTurn();
 	return true;
 }
 

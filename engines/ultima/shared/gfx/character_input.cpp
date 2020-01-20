@@ -33,8 +33,8 @@ BEGIN_MESSAGE_MAP(CharacterInput, Popup)
 	ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
-void CharacterInput::show(const Point &pt, byte color) {
-	Popup::show();
+void CharacterInput::show(const Point &pt, byte color, TreeItem *respondTo) {
+	Popup::show(_respondTo);
 	_color = color;
 	_bounds = Rect(pt.x, pt.y, pt.x + 8, pt.y + 8);
 

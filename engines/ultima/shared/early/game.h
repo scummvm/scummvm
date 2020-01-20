@@ -42,6 +42,7 @@ class Map;
  */
 class Game : public GameBase {
 	DECLARE_MESSAGE_MAP;
+	bool EndOfTurnMsg(CEndOfTurnMsg &msg);
 protected:
 	GameView *_gameView;
 	FontResources *_fontResources;
@@ -98,11 +99,6 @@ public:
 	void playFX(uint effectId);
 
 	/**
-	 * Called at the end of each turn
-	 */
-	void endOfTurn();
-
-	/**
 	 * Sets an EGA palette based on a 16-byte EGA RGB indexes
 	 */
 	void setEGAPalette(const byte *palette);
@@ -121,6 +117,11 @@ public:
 	 * Handles loading and saving games
 	 */
 	virtual void synchronize(Common::Serializer &s) override;
+
+	/**
+	 * Signal an end of turn
+	 */
+	void endOfTurn();
 };
 
 } // End of namespace Shared
