@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/widgets/merchant_weapons.h"
+#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -29,7 +30,18 @@ namespace Widgets {
 EMPTY_MESSAGE_MAP(MerchantWeapons, Merchant);
 
 void MerchantWeapons::steal() {
-	// TODO
+	findWeapon(true);
+}
+
+void MerchantWeapons::findWeapon(bool checkStealing) {
+	if (!checkStealing || !checkCuaghtStealing()) {
+		uint weaponNum = _game->getRandomNumber(1, 15);
+		const char *weaponStr = _game->_res->WEAPON_NAMES_ARTICLE[weaponNum];
+
+		_game->_party._currentCharacter->_weapons[weaponNum]._quantity++;
+		addInfoMsg("");
+		addInfoMsg(Common::String::format(_game->_res->FIND, weaponStr));
+	}
 }
 
 } // End of namespace Widgets
