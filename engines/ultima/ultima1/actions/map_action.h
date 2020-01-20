@@ -32,6 +32,7 @@ namespace Actions {
 	class NAME : public Action { DECLARE_MESSAGE_MAP; bool NAME##Msg(C##NAME##Msg &msg) { \
 	addInfoMsg(getRes()->ACTION_NAMES[ACTION_NUM], false); \
 	getMap()->MAP_METHOD(); \
+	endOfTurn(); \
 	return true; } \
 	public: \
 	CLASSDEF; \

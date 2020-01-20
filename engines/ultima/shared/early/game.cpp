@@ -30,7 +30,9 @@
 namespace Ultima {
 namespace Shared {
 
-EMPTY_MESSAGE_MAP(Game, GameBase);
+BEGIN_MESSAGE_MAP(Game, GameBase)
+	ON_MESSAGE(EndOfTurnMsg)
+END_MESSAGE_MAP()
 
 Game::Game() : GameBase(), _randomSeed(0), _gameView(nullptr), _map(nullptr),
 		_edgeColor(0), _borderColor(0), _highlightColor(0), _textColor(0), _color1(0), _bgColor(0), _whiteColor(0) {
@@ -119,14 +121,20 @@ void Game::playFX(uint effectId) {
 	warning("TODO: playFX");
 }
 
-void Game::endOfTurn() {
-	// Update things on the map
-	_map->update();
-}
-
 void Game::synchronize(Common::Serializer &s) {
 	_party->synchronize(s);
 	_map->synchronize(s);
+}
+
+bool Game::EndOfTurnMsg(CEndOfTurnMsg &msg) {
+	// Update things on the map
+	_map->update();
+	return false;
+}
+
+void Game::endOfTurn() {
+	CEndOfTurnMsg turnMsg;
+	turnMsg.execute(this);
 }
 
 } // End of namespace Shared

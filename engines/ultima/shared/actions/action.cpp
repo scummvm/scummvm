@@ -52,6 +52,10 @@ void Action::playFX(uint effectId) {
 	getGame()->playFX(effectId);
 }
 
+void Action::endOfTurn() {
+	getGame()->endOfTurn();
+}
+
 } // End of namespace Actions
 } // End of namespace Shared
 } // End of namespace Ultima

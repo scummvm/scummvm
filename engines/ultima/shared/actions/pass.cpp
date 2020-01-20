@@ -32,6 +32,7 @@ END_MESSAGE_MAP()
 
 bool Pass::PassMsg(CPassMsg &msg) {
 	addInfoMsg(_text);
+	endOfTurn();
 	return true;
 }
 

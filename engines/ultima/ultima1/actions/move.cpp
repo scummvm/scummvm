@@ -89,6 +89,7 @@ bool Move::MoveMsg(CMoveMsg &msg) {
 		}
 	}
 
+	endOfTurn();
 	return true;
 }
 

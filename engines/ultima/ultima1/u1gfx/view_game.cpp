@@ -62,8 +62,10 @@ MAP_ACTION(ExitTransport, 23, disembark)
 namespace U1Gfx {
 
 BEGIN_MESSAGE_MAP(ViewGame, Shared::Gfx::VisualContainer)
+	ON_MESSAGE(ShowMsg)
+	ON_MESSAGE(EndOfTurnMsg)
 	ON_MESSAGE(FrameMsg)
-	ON_MESSAGE(KeypressMsg)
+	ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
 
 ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect(0, 0, 320, 200), parent), _frameCtr(0) {
@@ -161,6 +163,22 @@ void ViewGame::drawIndicators() {
 	}
 }
 
+bool ViewGame::ShowMsg(CShowMsg &msg) {
+	// Set the info area to prompt for a command
+	Shared::CInfoGetCommandKeypress cmdMsg(this);
+	cmdMsg.execute(this);
+
+	return true;
+}
+
+bool ViewGame::EndOfTurnMsg(CEndOfTurnMsg &msg) {
+	// Set the info area to prompt for the next command
+	Shared::CInfoGetCommandKeypress cmdMsg(this);
+	cmdMsg.execute(this);
+
+	return false;
+}
+
 #define FRAME_REDUCTION_RATE 5
 
 bool ViewGame::FrameMsg(CFrameMsg &msg) {
@@ -239,9 +257,7 @@ bool ViewGame::checkMovement(const Common::KeyState &keyState) {
 	return true;
 }
 
-bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
-	getGame()->_textCursor->setVisible(false);
-
+bool ViewGame::CharacterInputMsg(CCharacterInputMsg &msg) {
 	if (checkMovement(msg._keyState)) {}
 	CHECK(Common::KEYCODE_c, Shared::CCastMsg)
 	CHECK(Common::KEYCODE_d, Shared::CDropMsg)
@@ -265,9 +281,6 @@ bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
 		// Fallback for unknown key
 		dispatchKey<Shared::CPassMsg>(this);
 	}
-
-	// End of turn
-	getGame()->endOfTurn();
 
 	return true;
 }
