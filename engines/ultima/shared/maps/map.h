@@ -4,7 +4,7 @@
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
- * This program is free software; you can redistribute it and/or
+ * This program is free software; you  n redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
@@ -222,6 +222,14 @@ public:
 	void update() {
 		assert(_mapArea);
 		return _mapArea->update();
+	}
+
+	/**
+	 * Cast a specific spell
+	 */
+	void castSpell(uint spellId) {
+		assert(_mapArea);
+		_mapArea->castSpell(spellId);
 	}
 };
 

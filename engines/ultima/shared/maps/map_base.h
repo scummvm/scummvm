@@ -262,6 +262,11 @@ public:
 	 * Updates the map at the end of a turn
 	 */
 	virtual void update();
+
+	/**
+	 * Cast a specific spell
+	 */
+	virtual void castSpell(uint spell) = 0;
 };
 
 } // End of namespace Maps
