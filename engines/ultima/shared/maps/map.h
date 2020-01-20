@@ -87,6 +87,14 @@ public:
 	}
 
 	/**
+	 * Sets a tile at a given position
+	 */
+	void setTileAt(const Point &pt, uint tileId) {
+		assert(_mapArea);
+		return _mapArea->setTileAt(pt, tileId);
+	}
+
+	/**
 	 * Get the viewport position
 	 */
 	Point getViewportPosition(const Point &viewportSize) {

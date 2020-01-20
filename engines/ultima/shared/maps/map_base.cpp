@@ -181,6 +181,10 @@ void MapBase::getTileAt(const Point &pt, MapTile *tile, bool includePlayer) {
 	}
 }
 
+void MapBase::setTileAt(const Point &pt, uint tileId) {
+	_data[pt.y][pt.x] = tileId;
+}
+
 void MapBase::update() {
 	// Call the update method of each widget, to allow for things like npc movement, etc.
 	for (uint idx = 0; idx < _widgets.size(); ++idx)

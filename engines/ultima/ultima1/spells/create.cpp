@@ -23,6 +23,8 @@
 #include "ultima/ultima1/spells/create.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/maps/map_tile.h"
+#include "ultima/ultima1/maps/map_dungeon.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,7 +34,19 @@ Create::Create() : Spell(SPELL_CREATE) {
 }
 
 void Create::dungeonCast(Maps::MapDungeon *map) {
-	// TODO
+	Point newPos;
+	Maps::U1MapTile tile;
+
+	newPos = map->getPosition() + map->getDirectionDelta();
+	map->getTileAt(newPos, &tile);
+
+	if (tile._isHallway && !tile._widget) {
+		// Create beams on the tile in front of the player
+		map->setTileAt(newPos, Maps::DTILE_BEAMS);
+	} else {
+		// Failed
+		Spell::dungeonCast(map);
+	}
 }
 
 } // End of namespace Spells
