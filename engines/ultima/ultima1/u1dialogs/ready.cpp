@@ -61,6 +61,7 @@ bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
 			setMode(READY_SPELL);
 			break;
 		default:
+			addInfoMsg(Common::String::format("%s ", _game->_res->ACTION_NAMES[17]), false, true);
 			nothing();
 			break;
 		}
