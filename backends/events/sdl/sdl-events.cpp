@@ -188,7 +188,7 @@ int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
 		return unicode;
 	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
 		return key & ~0x20;
-	} else if (key >= Common::KEYCODE_NUMLOCK && key <= Common::KEYCODE_EURO) {
+	} else if (key >= Common::KEYCODE_NUMLOCK && key < Common::KEYCODE_LAST) {
 		return 0;
 	} else {
 		return key;
@@ -444,11 +444,6 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDLKey key) {
 	case SDLK_y: return Common::KEYCODE_y;
 	case SDLK_z: return Common::KEYCODE_z;
 	case SDLK_DELETE: return Common::KEYCODE_DELETE;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	case SDL_SCANCODE_TO_KEYCODE(SDL_SCANCODE_GRAVE): return Common::KEYCODE_TILDE;
-#else
-	case SDLK_WORLD_16: return Common::KEYCODE_TILDE;
-#endif
 	case SDLK_KP0: return Common::KEYCODE_KP0;
 	case SDLK_KP1: return Common::KEYCODE_KP1;
 	case SDLK_KP2: return Common::KEYCODE_KP2;
@@ -506,12 +501,51 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDLKey key) {
 	case SDLK_HELP: return Common::KEYCODE_HELP;
 	case SDLK_PRINT: return Common::KEYCODE_PRINT;
 	case SDLK_SYSREQ: return Common::KEYCODE_SYSREQ;
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
-	case SDLK_BREAK: return Common::KEYCODE_BREAK;
-#endif
 	case SDLK_MENU: return Common::KEYCODE_MENU;
 	case SDLK_POWER: return Common::KEYCODE_POWER;
 	case SDLK_UNDO: return Common::KEYCODE_UNDO;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	case SDLK_PERCENT: return Common::KEYCODE_PERCENT;
+	case SDL_SCANCODE_TO_KEYCODE(SDL_SCANCODE_GRAVE): return Common::KEYCODE_TILDE;
+	case SDLK_F16: return Common::KEYCODE_F16;
+	case SDLK_F17: return Common::KEYCODE_F17;
+	case SDLK_F18: return Common::KEYCODE_F18;
+	case SDLK_SLEEP: return Common::KEYCODE_SLEEP;
+	case SDLK_MUTE: return Common::KEYCODE_MUTE;
+	case SDLK_VOLUMEUP: return Common::KEYCODE_VOLUMEUP;
+	case SDLK_VOLUMEDOWN: return Common::KEYCODE_VOLUMEDOWN;
+	case SDLK_EJECT: return Common::KEYCODE_EJECT;
+	case SDLK_WWW: return Common::KEYCODE_WWW;
+	case SDLK_MAIL: return Common::KEYCODE_MAIL;
+	case SDLK_CALCULATOR: return Common::KEYCODE_CALCULATOR;
+	case SDLK_CUT: return Common::KEYCODE_CUT;
+	case SDLK_COPY: return Common::KEYCODE_COPY;
+	case SDLK_PASTE: return Common::KEYCODE_PASTE;
+	case SDLK_SELECT: return Common::KEYCODE_SELECT;
+	case SDLK_CANCEL: return Common::KEYCODE_CANCEL;
+	case SDLK_AC_SEARCH: return Common::KEYCODE_AC_SEARCH;
+	case SDLK_AC_HOME: return Common::KEYCODE_AC_HOME;
+	case SDLK_AC_BACK: return Common::KEYCODE_AC_BACK;
+	case SDLK_AC_FORWARD: return Common::KEYCODE_AC_FORWARD;
+	case SDLK_AC_STOP: return Common::KEYCODE_AC_STOP;
+	case SDLK_AC_REFRESH: return Common::KEYCODE_AC_REFRESH;
+	case SDLK_AC_BOOKMARKS: return Common::KEYCODE_AC_BOOKMARKS;
+	case SDLK_AUDIONEXT: return Common::KEYCODE_AUDIONEXT;
+	case SDLK_AUDIOPREV: return Common::KEYCODE_AUDIOPREV;
+	case SDLK_AUDIOSTOP: return Common::KEYCODE_AUDIOSTOP;
+	case SDLK_AUDIOPLAY: return Common::KEYCODE_AUDIOPLAYPAUSE;
+	case SDLK_AUDIOMUTE: return Common::KEYCODE_AUDIOMUTE;
+#if SDL_VERSION_ATLEAST(2, 0, 6)
+	case SDLK_AUDIOREWIND: return Common::KEYCODE_AUDIOREWIND;
+	case SDLK_AUDIOFASTFORWARD: return Common::KEYCODE_AUDIOFASTFORWARD;
+#endif
+#else
+	case SDLK_WORLD_16: return Common::KEYCODE_TILDE;
+	case SDLK_BREAK: return Common::KEYCODE_BREAK;
+	case SDLK_LMETA: return Common::KEYCODE_LMETA;
+	case SDLK_RMETA: return Common::KEYCODE_RMETA;
+	case SDLK_EURO: return Common::KEYCODE_EURO;
+#endif
 	default: return Common::KEYCODE_INVALID;
 	}
 }
