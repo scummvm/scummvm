@@ -26,18 +26,7 @@ namespace Ultima {
 namespace Shared {
 
 template<typename T>
-void syncArray(Common::Array<T> &items, Common::Serializer &s) {
-	uint count = items.size();
-	s.syncAsByte(count);
-	if (s.isLoading())
-		assert(count == items.size());
-
-	for (uint idx = 0; idx < items.size(); ++idx)
-		items[idx].synchronize(s);
-}
-
-template<typename T>
-void syncArrayPtrs(Common::Array<T *> &items, Common::Serializer &s) {
+void syncArray(Common::Array<T *> &items, Common::Serializer &s) {
 	uint count = items.size();
 	s.syncAsByte(count);
 	if (s.isLoading())
@@ -68,7 +57,7 @@ void Character::synchronize(Common::Serializer &s) {
 
 	syncArray<Weapon>(_weapons, s);
 	syncArray<Armor>(_armor, s);
-	syncArrayPtrs<Spell>(_spells, s);
+	syncArray<Spell>(_spells, s);
 }
 
 } // End of namespace Shared

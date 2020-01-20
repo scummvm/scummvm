@@ -37,22 +37,59 @@ void Party::setup() {
 
 /*-------------------------------------------------------------------*/
 
-Character::Character(Ultima1Game *game) : Shared::Character(), _game(game) {
+Character::Character(Ultima1Game *game) : Shared::Character(), _game(game),
+		_weaponHands(game, this, WEAPON_HANDS),
+		_weaponDagger(game, this, WEAPON_DAGGER),
+		_weaponMace(game, this, WEAPON_MACE),
+		_weaponAxe(game, this, WEAPON_AXE),
+		_weaponRopeSpikes(game, this, WEAPON_ROPE_SPIKES),
+		_weaponSword(game, this, WEAPON_SWORD),
+		_weaponGreatSword(game, this, WEAPON_GREAT_SWORD),
+		_weaponBowArrows(game, this, WEAPON_BOW_ARROWS),
+		_weaponAmulet(game, this, WEAPON_AMULET),
+		_weaponWand(game, this, WEAPON_WAND),
+		_weaponStaff(game, this, WEAPON_STAFF),
+		_weaponTriangle(game, this, WEAPON_TRIANGLE),
+		_weaponPistol(game, this, WEAPON_PISTOL),
+		_weaponLightSword(game, this, WEAPON_LIGHT_SWORD),
+		_weaponPhazor(game, this, WEAPON_PHAZOR),
+		_weaponBlaster(game, this, WEAPON_BLASTER),
+
+		_armorSkin(game, this, ARMOR_SKIN),
+		_armorLeatherArmor(game, this, ARMOR_LEATHER_ARMOR),
+		_armorChainMail(game, this, ARMOR_CHAIN_MAIL),
+		_armorPlateMail(game, this, ARMOR_PLATE_MAIL),
+		_armorVacuumSuit(game, this, ARMOR_VACUUM_SUIT),
+		_armorReflectSuit(game, this, ARMOR_REFLECT_SUIT) {
+	setup();
 }
 
 void Character::setup() {
 	// Weapons setup
-	_weapons.resize(16);
-	for (int idx = 0; idx < 16; ++idx) {
-		_weapons[idx]._longName = _game->_res->WEAPON_NAMES_UPPERCASE[idx];
-		_weapons[idx]._shortName = _game->_res->WEAPON_NAMES_LOWERCASE[idx];
-		_weapons[idx]._distance = _game->_res->WEAPON_DISTANCES[idx];
-	}
+	_weapons.push_back(&_weaponHands);
+	_weapons.push_back(&_weaponDagger);
+	_weapons.push_back(&_weaponMace);
+	_weapons.push_back(&_weaponAxe);
+	_weapons.push_back(&_weaponRopeSpikes);
+	_weapons.push_back(&_weaponSword);
+	_weapons.push_back(&_weaponGreatSword);
+	_weapons.push_back(&_weaponBowArrows);
+	_weapons.push_back(&_weaponAmulet);
+	_weapons.push_back(&_weaponWand);
+	_weapons.push_back(&_weaponStaff);
+	_weapons.push_back(&_weaponTriangle);
+	_weapons.push_back(&_weaponPistol);
+	_weapons.push_back(&_weaponLightSword);
+	_weapons.push_back(&_weaponPhazor);
+	_weapons.push_back(&_weaponBlaster);
 
 	// Armor setup
-	_armor.resize(6);
-	for (int idx = 0; idx < 6; ++idx)
-		_armor[idx]._name = _game->_res->ARMOR_NAMES[idx];
+	_armor.push_back(&_armorSkin);
+	_armor.push_back(&_armorLeatherArmor);
+	_armor.push_back(&_armorChainMail);
+	_armor.push_back(&_armorPlateMail);
+	_armor.push_back(&_armorVacuumSuit);
+	_armor.push_back(&_armorReflectSuit);
 
 	// Spells setup
 	_spells.push_back(&_spellPrayer);
@@ -71,10 +108,23 @@ void Character::setup() {
 		static_cast<Spells::Spell *>(_spells[idx])->setGame(_game);
 }
 
-uint Character::getWeaponDamage() const {
-	uint damage = _game->getRandomNumber(1, _intelligence);
+/*-------------------------------------------------------------------*/
 
-	switch (_equippedWeapon) {
+Weapon::Weapon(Ultima1Game *game, Character *c, WeaponType weaponType) :
+		_game(game), _character(c), _type(weaponType) {
+	_longName = game->_res->WEAPON_NAMES_UPPERCASE[weaponType];
+	_shortName = game->_res->WEAPON_NAMES_LOWERCASE[weaponType];
+	_distance = game->_res->WEAPON_DISTANCES[weaponType];
+
+	if (weaponType == WEAPON_HANDS)
+		_quantity = 0xffff;
+}
+
+
+uint Weapon::getMagicDamage() const {
+	uint damage = _game->getRandomNumber(1, _character->_intelligence);
+
+	switch (_type) {
 	case WEAPON_WAND:
 		damage *= 2;
 		break;
@@ -91,6 +141,19 @@ uint Character::getWeaponDamage() const {
 
 	return damage;
 }
+
+/*-------------------------------------------------------------------*/
+
+Armor::Armor(Ultima1Game *game, Character *c, ArmorType armorType) :
+		_game(game), _character(c), _type(armorType) {
+	_name = game->_res->ARMOR_NAMES[armorType];
+
+	if (armorType == ARMOR_SKIN)
+		_quantity = 0xffff;
+}
+
+/*-------------------------------------------------------------------*/
+
 
 } // End of namespace Ultima1
 } // End of namespace Ultima

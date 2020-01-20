@@ -53,7 +53,8 @@ bool KillMagicMIssile::CharacterInputMsg(CCharacterInputMsg &msg) {
 	} else {
 		addInfoMsg(_game->_res->DIRECTION_NAMES[(int)dir - 1]);
 		addInfoMsg(_game->_res->SPELL_PHRASES[_spellId == SPELL_MAGIC_MISSILE ? 12 : 13], false);
-		uint damage = _spellId == SPELL_MAGIC_MISSILE ? c.getWeaponDamage() : 9999;
+		uint damage = _spellId == SPELL_MAGIC_MISSILE ?
+			c.equippedWeapon()->getMagicDamage() : 9999;
 
 		if (c._class == CLASS_CLERIC || _game->getRandomNumber(1, 100) < c._wisdom) {
 			_game->playFX(5);
@@ -103,10 +104,9 @@ void MagicMissile::dungeonCast(Maps::MapDungeon *map) {
 
 	if (monster) {
 		Character *c = *static_cast<Party *>(_game->_party);
-		uint damage = c->getWeaponDamage();
+		uint damage = c->equippedWeapon()->getMagicDamage();
 		monster->attackMonster(5, 101, damage);
-	}
-	else {
+	} else {
 		KillMagicMIssile::dungeonCast(map);
 	}
 }
