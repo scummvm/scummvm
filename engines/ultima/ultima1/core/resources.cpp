@@ -205,7 +205,7 @@ static const char *SRC_WEAPON_NAMES_ARTICLE[16] = {
 
 static const byte SRC_WEAPON_DISTANCES[16] = { 1, 1, 1, 1, 0, 1, 1, 3, 0, 0, 0, 1, 3, 1, 3, 3 };
 
-static const char *SRC_ARMOR_NAMES[6] = {
+static const char *SRC_armour_NAMES[6] = {
 	"Skin", "Leather armor", "Chain mail", "Plate mail", "Vacuum suit", "Reflect suit"
 };
 
@@ -569,7 +569,7 @@ const char *const SRC_ENTERING = "ing...";
 const char *const SRC_THE_CITY_OF = "The city of";
 const char *const SRC_DUNGEON_LEVEL = " Level    ";
 const char *const SRC_ATTACKED_BY = "Attacked by %s!";
-const char *const SRC_ARMOR_DESTROYED = "Armor destroyed!";
+const char *const SRC_armour_DESTROYED = "Armor destroyed!";
 const char *const SRC_GREMLIN_STOLE = "A gremlin stole some food!";
 const char *const SRC_MENTAL_ATTACK = "Mental attack!";
 const char *const SRC_MISSED = "Missed!";
@@ -619,10 +619,10 @@ const char *const SRC_NONE_HERE = " - none here!";
 const char *const SRC_SOLD = "Sold!";
 const char *const SRC_CANT_AFFORD = "Thou canst not afford it!";
 const char *const SRC_DONE = "Done!";
-const char *const SRC_DROP_PENCE_WEAPON_ARMOR = " Pence,Weapon,Armor:";
+const char *const SRC_DROP_PENCE_WEAPON_armour = " Pence,Weapon,Armor:";
 const char *const SRC_DROP_PENCE = "Drop pence: ";
 const char *const SRC_DROP_WEAPON = "Drop weapon: ";
-const char *const SRC_DROP_ARMOR = "Drop armor: ";
+const char *const SRC_DROP_armour = "Drop armor: ";
 const char *const SRC_NOT_THAT_MUCH = "Thou hast not that much!";
 const char *const SRC_OK = "Ok!";
 const char *const SRC_SHAZAM = "Shazam!";
@@ -639,8 +639,8 @@ const char *const SRC_PLAYER = "Player: %s";
 const char *const SRC_PLAYER_DESC = "A Level %u %s %s %s";
 const char *const SRC_PRESS_SPACE_TO_CONTINUE = "Press Space to continue: ";
 const char *const SRC_MORE = " More ";
-const char *const SRC_READY_WEAPON_ARMOR_SPELL = " Weapon,Armor,Spell:";
-const char *const SRC_WEAPON_ARMOR_SPELL[3] = { "weapon", "armor", "spell" };
+const char *const SRC_READY_WEAPON_armour_SPELL = " Weapon,Armor,Spell:";
+const char *const SRC_WEAPON_armour_SPELL[3] = { "weapon", "armor", "spell" };
 const char *const SRC_TRANSPORT_WEAPONS[2] = { "cannons", "lasers" };
 const char *const SRC_NO_EFFECT = "Hmmmm... no effect!";
 const char *const SRC_USED_UP_SPELL = "You've used up that spell!";
@@ -671,6 +671,12 @@ const char *const SRC_WEAPONRY_NAMES[8] = {
 	"The Duelo Shop", "Weaponry Supply", "Cold Steel Creations"
 };
 const char *const SRC_NO_WEAPONRY_TO_SELL = "Thou hast no weaponry to sell!";
+const char *const SRC_ARMOURY_NAMES[8] = {
+	"The Armour Shop of\nLord Eldric D'Charbonneux",  "Max's Armoury", "The Iron Fist",
+	"The Hammer -n- Anvil", nullptr, "Defense Specialties Unlimited", nullptr,
+	"Custom Armor Works"
+};
+const char *const SRC_NO_ARMOUR_TO_SELL = "Thou hast no armour to sell!";
 
 const char *const SRC_WITH_KING = " with king";
 const char *const SRC_HE_IS_NOT_HERE = "He is not here!";
@@ -709,7 +715,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(&SRC_WEAPON_NAMES_LOWERCASE[0], &SRC_WEAPON_NAMES_LOWERCASE[16], WEAPON_NAMES_LOWERCASE);
 	Common::copy(&SRC_WEAPON_NAMES_ARTICLE[0], &SRC_WEAPON_NAMES_ARTICLE[16], WEAPON_NAMES_ARTICLE);
 	Common::copy(SRC_WEAPON_DISTANCES, SRC_WEAPON_DISTANCES + 16, WEAPON_DISTANCES);
-	Common::copy(&SRC_ARMOR_NAMES[0], &SRC_ARMOR_NAMES[16], ARMOR_NAMES);
+	Common::copy(&SRC_armour_NAMES[0], &SRC_armour_NAMES[16], ARMOR_NAMES);
 	Common::copy(&SRC_SPELL_NAMES[0], &SRC_SPELL_NAMES[16], SPELL_NAMES);
 	Common::copy(SRC_SPELL_PHRASES, SRC_SPELL_PHRASES + 14, SPELL_PHRASES);
 	Common::copy(&SRC_GEM_NAMES[0], &SRC_GEM_NAMES[4], GEM_NAMES);
@@ -723,7 +729,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	THE_CITY_OF = SRC_THE_CITY_OF;
 	DUNGEON_LEVEL = SRC_DUNGEON_LEVEL;
 	ATTACKED_BY = SRC_ATTACKED_BY;
-	ARMOR_DESTROYED = SRC_ARMOR_DESTROYED;
+	ARMOR_DESTROYED = SRC_armour_DESTROYED;
 	GREMLIN_STOLE = SRC_GREMLIN_STOLE;
 	MENTAL_ATTACK = SRC_MENTAL_ATTACK;
 	MISSED = SRC_MISSED;
@@ -768,10 +774,10 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	SOLD = SRC_SOLD;
 	CANT_AFFORD = SRC_CANT_AFFORD;
 	DONE = SRC_DONE;
-	DROP_PENCE_WEAPON_ARMOR = SRC_DROP_PENCE_WEAPON_ARMOR;
+	DROP_PENCE_WEAPON_armour = SRC_DROP_PENCE_WEAPON_armour;
 	DROP_PENCE = SRC_DROP_PENCE;
 	DROP_WEAPON = SRC_DROP_WEAPON;
-	DROP_ARMOR = SRC_DROP_ARMOR;
+	DROP_armour = SRC_DROP_armour;
 	NOT_THAT_MUCH = SRC_NOT_THAT_MUCH;
 	OK = SRC_OK;
 	SHAZAM = SRC_SHAZAM;
@@ -788,8 +794,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	PLAYER_DESC = SRC_PLAYER_DESC;
 	PRESS_SPACE_TO_CONTINUE = SRC_PRESS_SPACE_TO_CONTINUE;
 	MORE = SRC_MORE;
-	READY_WEAPON_ARMOR_SPELL = SRC_READY_WEAPON_ARMOR_SPELL;
-	Common::copy(SRC_WEAPON_ARMOR_SPELL, SRC_WEAPON_ARMOR_SPELL + 3, WEAPON_ARMOR_SPELL);
+	READY_WEAPON_armour_SPELL = SRC_READY_WEAPON_armour_SPELL;
+	Common::copy(SRC_WEAPON_armour_SPELL, SRC_WEAPON_armour_SPELL + 3, WEAPON_armour_SPELL);
 	Common::copy(SRC_TRANSPORT_WEAPONS, SRC_TRANSPORT_WEAPONS + 2, TRANSPORT_WEAPONS);
 	NO_EFFECT = SRC_NO_EFFECT;
 	USED_UP_SPELL = SRC_USED_UP_SPELL;
@@ -811,7 +817,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	GROCERY_FIND_PACKS = SRC_GROCERY_FIND_PACKS;
 	Common::copy(&SRC_WEAPONRY_NAMES[0], &SRC_WEAPONRY_NAMES[8], WEAPONRY_NAMES);
 	NO_WEAPONRY_TO_SELL = SRC_NO_WEAPONRY_TO_SELL;
-
+	Common::copy(&SRC_ARMOURY_NAMES[0], &SRC_ARMOURY_NAMES[8], ARMOURY_NAMES);
+	NO_ARMOUR_TO_SELL = SRC_NO_ARMOUR_TO_SELL;
 
 	WITH_KING = SRC_WITH_KING;
 	HE_IS_NOT_HERE = SRC_HE_IS_NOT_HERE;
@@ -900,10 +907,10 @@ void GameResources::synchronize() {
 	syncString(SOLD);
 	syncString(CANT_AFFORD);
 	syncString(DONE);
-	syncString(DROP_PENCE_WEAPON_ARMOR);
+	syncString(DROP_PENCE_WEAPON_armour);
 	syncString(DROP_PENCE);
 	syncString(DROP_WEAPON);
-	syncString(DROP_ARMOR);
+	syncString(DROP_armour);
 	syncString(NOT_THAT_MUCH);
 	syncString(OK);
 	syncString(SHAZAM);
@@ -920,8 +927,8 @@ void GameResources::synchronize() {
 	syncString(PLAYER_DESC);
 	syncString(PRESS_SPACE_TO_CONTINUE);
 	syncString(MORE);
-	syncString(READY_WEAPON_ARMOR_SPELL);
-	syncStrings(WEAPON_ARMOR_SPELL, 3);
+	syncString(READY_WEAPON_armour_SPELL);
+	syncStrings(WEAPON_armour_SPELL, 3);
 	syncStrings(TRANSPORT_WEAPONS, 2);
 	syncString(NO_EFFECT);
 	syncString(USED_UP_SPELL);
@@ -943,6 +950,8 @@ void GameResources::synchronize() {
 	syncString(GROCERY_FIND_PACKS);
 	syncStrings(WEAPONRY_NAMES, 8);
 	syncString(NO_WEAPONRY_TO_SELL);
+	syncStrings(ARMOURY_NAMES, 8);
+	syncString(NO_ARMOUR_TO_SELL);
 
 	syncString(WITH_KING);
 	syncString(HE_IS_NOT_HERE);

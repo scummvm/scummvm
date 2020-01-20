@@ -58,7 +58,7 @@ void Guard::attackParty() {
 	addInfoMsg(Common::String::format(game->_res->ATTACKED_BY, _name.c_str()));
 	game->playFX(7);
 
-	uint threshold = (c._stamina / 2) + (c._equippedArmor * 8) + 56;
+	uint threshold = (c._stamina / 2) + (c._equippedArmour * 8) + 56;
 	if (_game->getRandomNumber(1, 255) > threshold) {
 		int damage = _game->getRandomNumber(2, c._hitPoints / 128 + 15);
 		addInfoMsg(Common::String::format("%s...%2d %s", game->_res->HIT, damage, game->_res->DAMAGE));

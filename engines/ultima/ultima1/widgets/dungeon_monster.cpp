@@ -142,7 +142,7 @@ void DungeonMonster::attackParty() {
 	addInfoMsg(Common::String::format(game->_res->ATTACKED_BY, _name.c_str()));
 	_game->playFX(3);
 
-	threshold = (c._stamina / 2) + (c._equippedArmor * 8) + 56;
+	threshold = (c._stamina / 2) + (c._equippedArmour * 8) + 56;
 
 	if (_game->getRandomNumber(1, 255) > threshold) {
 		threshold = _game->getRandomNumber(1, 255);
@@ -151,10 +151,10 @@ void DungeonMonster::attackParty() {
 			damage = _game->getRandomNumber(_widgetId + 1, 255);
 		}
 
-		if (_widgetId == MONSTER_GELATINOUS_CUBE && c.isArmorEquipped()) {
+		if (_widgetId == MONSTER_GELATINOUS_CUBE && c.isArmourEquipped()) {
 			addInfoMsg(game->_res->ARMOR_DESTROYED);
-			c._armor[c._equippedArmor]->decrQuantity();
-			c.removeArmor();
+			c._armour[c._equippedArmour]->decrQuantity();
+			c.removeArmour();
 			isHit = false;
 		} else if (_widgetId == MONSTER_GREMLIN) {
 			addInfoMsg(game->_res->GREMLIN_STOLE);

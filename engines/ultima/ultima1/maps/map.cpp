@@ -35,7 +35,7 @@
 #include "ultima/ultima1/widgets/dungeon_coffin.h"
 #include "ultima/ultima1/widgets/guard.h"
 #include "ultima/ultima1/widgets/king.h"
-#include "ultima/ultima1/widgets/merchant_armor.h"
+#include "ultima/ultima1/widgets/merchant_armour.h"
 #include "ultima/ultima1/widgets/merchant_grocer.h"
 #include "ultima/ultima1/widgets/merchant_magic.h"
 #include "ultima/ultima1/widgets/merchant_tavern.h"
@@ -139,7 +139,7 @@ Shared::Maps::MapWidget *Ultima1Map::createWidget(Shared::Maps::MapBase *map, co
 	REGISTER_WIDGET(DungeonCoffin);
 	REGISTER_WIDGET(Guard);
 	REGISTER_WIDGET(King);
-	REGISTER_WIDGET(MerchantArmor);
+	REGISTER_WIDGET(MerchantArmour);
 	REGISTER_WIDGET(MerchantGrocer);
 	REGISTER_WIDGET(MerchantMagic);
 	REGISTER_WIDGET(MerchantTavern);
