@@ -171,6 +171,16 @@ bool ViewGame::FrameMsg(CFrameMsg &msg) {
 	return true;
 }
 
+/**
+ * Dispatch method
+ */
+template<class T>
+void dispatchKey(ViewGame *game) {
+	T dMsg;
+	dMsg.execute(game);
+}
+#define CHECK(KEYCODE, MSG_CLASS) if (msg._keyState.keycode == KEYCODE) { dispatchKey<MSG_CLASS>(this); break; }
+
 bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
 	getGame()->_textCursor->setVisible(false);
 
@@ -199,96 +209,28 @@ bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
 		move.execute(this);
 		break;
 	}
-	case Common::KEYCODE_d: {
-		Shared::CDropMsg drop;
-		drop.execute(this);
-		break;
-	}
-	case Common::KEYCODE_e: {
-		Shared::CEnterMsg enter;
-		enter.execute(this);
-		break;
-	}
-	case Common::KEYCODE_f: {
-		Shared::CFireMsg fire;
-		fire.execute(this);
-		break;
-	}
-	case Common::KEYCODE_g: {
-		Shared::CGetMsg get;
-		get.execute(this);
-		break;
-	}
-	case Common::KEYCODE_h: {
-		Shared::CHyperJumpMsg hyperjump;
-		hyperjump.execute(this);
-		break;
-	}
-	case Common::KEYCODE_i: {
-		Shared::CInformMsg inform;
-		inform.execute(this);
-		break;
-	}
-	case Common::KEYCODE_k: {
-		Shared::CClimbMsg climb;
-		climb.execute(this);
-		break;
-	}
-	case Common::KEYCODE_o: {
-		Shared::COpenMsg open;
-		open.execute(this);
-		break;
-	}
-	case Common::KEYCODE_q: {
-		Shared::CQuitMsg quit;
-		quit.execute(this);
-		break;
-	}
-	case Common::KEYCODE_r: {
-		Shared::CReadyMsg ready;
-		ready.execute(this);
-		break;
-	}
-	case Common::KEYCODE_s: {
-		Shared::CStealMsg steal;
-		steal.execute(this);
-		break;
-	}
-	case Common::KEYCODE_t: {
-		Shared::CTransactMsg transact;
-		transact.execute(this);
-		break;
-	}
-	case Common::KEYCODE_u: {
-		Shared::CUnlockMsg unlock;
-		unlock.execute(this);
-		break;
-	}
-	case Common::KEYCODE_v: {
-		Shared::CViewChangeMsg view;
-		view.execute(this);
-		break;
-	}
-	case Common::KEYCODE_x: {
-		Shared::CExitTransportMsg exit;
-		exit.execute(this);
-		break;
-	}
-	case Common::KEYCODE_z: {
-		Shared::CStatsMsg stats;
-		stats.execute(this);
-		break;
-	}
-	case Common::KEYCODE_SPACE: {
-		Shared::CPassMsg pass;
-		pass.execute(this);
-		break;
-	}
-	default: {
-		Shared::CHuhMsg huh;
-		huh.execute(this);
-		break;
-	}
+
+	default:
+		CHECK(Common::KEYCODE_d, Shared::CDropMsg)
+		CHECK(Common::KEYCODE_e, Shared::CEnterMsg)
+		CHECK(Common::KEYCODE_f, Shared::CFireMsg)
+		CHECK(Common::KEYCODE_g, Shared::CGetMsg)
+		CHECK(Common::KEYCODE_h, Shared::CHyperJumpMsg)
+		CHECK(Common::KEYCODE_i, Shared::CInformMsg)
+		CHECK(Common::KEYCODE_k, Shared::CClimbMsg)
+		CHECK(Common::KEYCODE_o, Shared::COpenMsg)
+		CHECK(Common::KEYCODE_q, Shared::CQuitMsg)
+		CHECK(Common::KEYCODE_r, Shared::CReadyMsg)
+		CHECK(Common::KEYCODE_s, Shared::CStealMsg)
+		CHECK(Common::KEYCODE_t, Shared::CTransactMsg)
+		CHECK(Common::KEYCODE_u, Shared::CUnlockMsg)
+		CHECK(Common::KEYCODE_v, Shared::CViewChangeMsg)
+		CHECK(Common::KEYCODE_x, Shared::CExitTransportMsg)
+		CHECK(Common::KEYCODE_z, Shared::CStatsMsg)
+		CHECK(Common::KEYCODE_SPACE, Shared::CPassMsg)
+
+		// Fallback for unknown key
+		dispatchKey<Shared::CPassMsg>(this);
 	}
 
 	// End of turn
