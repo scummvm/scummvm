@@ -31,7 +31,7 @@ namespace Spells {
 Open::Open() : Spell(SPELL_OPEN) {
 }
 
-void Open::dungeonCast() {
+void Open::dungeonCast(Maps::MapDungeon *map) {
 	// TODO
 }
 

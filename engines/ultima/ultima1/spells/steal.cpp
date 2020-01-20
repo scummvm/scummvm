@@ -31,7 +31,7 @@ namespace Spells {
 Steal::Steal() : Spell(SPELL_STEAL) {
 }
 
-void Steal::dungeonCast() {
+void Steal::dungeonCast(Maps::MapDungeon *map) {
 	// TODO
 }
 

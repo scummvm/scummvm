@@ -31,7 +31,7 @@ namespace Spells {
 Destroy::Destroy() : Spell(SPELL_DESTROY) {
 }
 
-void Destroy::dungeonCast() {
+void Destroy::dungeonCast(Maps::MapDungeon *map) {
 	// TODO
 }
 

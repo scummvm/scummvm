@@ -42,7 +42,7 @@ public:
 	/**
 	 * Cast the spell within dungeons
 	 */
-	virtual void dungeonCast() override;
+	virtual void dungeonCast(Maps::MapDungeon *map) override;
 };
 
 } // End of  namespace U1Dialogs

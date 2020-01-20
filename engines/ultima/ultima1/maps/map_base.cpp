@@ -100,9 +100,7 @@ void MapBase::cast() {
 
 void MapBase::castSpell(uint spellId) {
 	const Shared::Character &c = *_game->_party._currentCharacter;
-	Shared::Spell &spell = *c._spells[spellId];
-	
-	spell.cast();
+	static_cast<Spells::Spell *>(c._spells[spellId])->cast(this);
 }
 
 } // End of namespace Maps

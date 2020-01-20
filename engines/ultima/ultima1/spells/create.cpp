@@ -31,7 +31,7 @@ namespace Spells {
 Create::Create() : Spell(SPELL_CREATE) {
 }
 
-void Create::dungeonCast() {
+void Create::dungeonCast(Maps::MapDungeon *map) {
 	// TODO
 }
 

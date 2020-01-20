@@ -31,7 +31,7 @@ namespace Spells {
 Kill::Kill() : Spell(SPELL_KILL) {
 }
 
-void Kill::dungeonCast() {
+void Kill::dungeonCast(Maps::MapDungeon *map) {
 	// TODO
 }
 

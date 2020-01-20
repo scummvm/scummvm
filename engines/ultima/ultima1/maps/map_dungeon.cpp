@@ -265,9 +265,7 @@ void MapDungeon::climb() {
 
 void MapDungeon::castSpell(uint spellId) {
 	const Shared::Character &c = *_game->_party._currentCharacter;
-	Shared::Spell &spell = *c._spells[spellId];
-
-	spell.dungeonCast();
+	static_cast<Spells::Spell *>(c._spells[spellId])->dungeonCast(this);
 }
 
 } // End of namespace Maps
