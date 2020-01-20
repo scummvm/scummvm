@@ -134,6 +134,10 @@ public:
 	PASS_METHOD(view)
 	PASS_METHOD(disembark)
 
+	void attack(int direction) {
+		static_cast<MapBase *>(_mapArea)->attack(direction);
+	}
+
 	/**
 	 * Handles dropping an amount of coins
 	 */

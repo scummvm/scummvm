@@ -57,6 +57,7 @@ public:
 	const char *WEAPON_NAMES_UPPERCASE[16];
 	const char *WEAPON_NAMES_LOWERCASE[16];
 	const char *WEAPON_NAMES_ARTICLE[16];
+	byte WEAPON_DISTANCES[16];
 	const char *ARMOR_NAMES[6];
 	const char *ARMOR_NAMES_ARTICLE[6];
 	const char *SPELL_NAMES[11];

@@ -64,6 +64,11 @@ private:
 	 * Draws level & direction indicators when in a dungeon
 	 */
 	void drawIndicators();
+
+	/**
+	 * Handle movement keys
+	 */
+	bool checkMovement(const Common::KeyState &keyState);
 public:
 	CLASSDEF;
 	ViewGame(TreeItem *parent = nullptr);

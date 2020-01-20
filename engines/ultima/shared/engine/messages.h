@@ -264,11 +264,6 @@ MESSAGE1(CKeyCharMsg, int, key, 32);
 MESSAGE1(CKeypressMsg, Common::KeyState, keyState, Common::KeyState());
 
 /**
- * Used to trigger a party movement
- */
-MESSAGE1(CMoveMsg, int, direction, 0);
-
-/**
  * Pass a turn
  */
 MESSAGE0(CPassMsg);
@@ -289,6 +284,16 @@ MESSAGE2(CShowMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fa
 MESSAGE2(CTextInputMsg, Common::String, text, "", bool, escaped, false);
 
 /*-------------------------------------------------------------------*/
+
+/**
+ * Used to trigger a party movement
+ */
+MESSAGE1(CMoveMsg, int, direction, 0);
+
+/**
+ * Used to trigger an attack
+ */
+MESSAGE1(CAttackMsg, int, direction, 0);
 
 /**
  * Climb up or down

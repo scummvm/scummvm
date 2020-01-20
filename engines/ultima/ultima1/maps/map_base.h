@@ -80,6 +80,11 @@ public:
 	DEFAULT_ACTION(disembark)
 
 	/**
+	 * Perform an attack
+	 */
+	virtual void attack(int direction);
+
+	/**
 	 * Handles dropping an amount of coins
 	 */
 	virtual void dropCoins(uint coins) {}

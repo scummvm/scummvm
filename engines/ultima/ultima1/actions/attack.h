@@ -20,79 +20,36 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_U1DIALOGS_READY_H
-#define ULTIMA_ULTIMA1_U1DIALOGS_READY_H
+#ifndef ULTIMA_ULTIMA1_ACTIONS_ATTACK_H
+#define ULTIMA_ULTIMA1_ACTIONS_ATTACK_H
 
-#include "ultima/ultima1/u1dialogs/full_screen_dialog.h"
+#include "ultima/ultima1/actions/action.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace U1Dialogs {
+namespace Actions {
 
-using Shared::CKeypressMsg;
-using Shared::CTextInputMsg;
+using Shared::CAttackMsg;
 
-/**
- * Implements the Ready dialog
- */
-class Ready : public FullScreenDialog {
+class Attack : public Action {
 	DECLARE_MESSAGE_MAP;
-	bool KeypressMsg(CKeypressMsg &msg);
-	bool TextInputMsg(CTextInputMsg &msg);
-
-	enum Mode { SELECT, READY_WEAPON, READY_ARMOR, READY_SPELL };
-private:
-	Mode _mode;
-private:
-	/**
-	 * Sets the mode
-	 */
-	void setMode(Mode mode);
-
-	/**
-	 * Nothing selected
-	 */
-	void nothing();
-
-	/**
-	 * None response
-	 */
-	void none();
-
-	/**
-	 * Draw the initial mode selection display
-	 */
-	void drawSelection();
-
-	/**
-	 * Draw the ready weapon display
-	 */
-	void drawReadyWeapon();
-
-	/**
-	 * Draw the ready armor display
-	 */
-	void drawReadyArmor();
-
-	/**
-	 * Draw the ready spell display
-	 */
-	void drawReadySpell();
+	bool AttackMsg(CAttackMsg &msg);
 public:
 	CLASSDEF;
 
 	/**
-	 * Constructor
-	 */
-	Ready(Ultima1Game *game);
+	* Constructor
+	*/
+	Attack(TreeItem *parent) : Action(parent) {}
 
 	/**
-	 * Draws the visual item on the screen
+	 * Destructor
 	 */
-	virtual void draw();
+	virtual ~Attack() {}
 };
 
-} // End of namespace U1Dialogs
+} // End of namespace Actions
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

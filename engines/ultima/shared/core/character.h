@@ -35,6 +35,7 @@ namespace Shared {
  */
 struct Weapon {
 	Common::String _shortName, _longName;
+	uint _distance;
 	uint _quantity;
 };
 

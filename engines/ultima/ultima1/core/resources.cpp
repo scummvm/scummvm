@@ -203,6 +203,8 @@ static const char *SRC_WEAPON_NAMES_ARTICLE[16] = {
 	"an Amulet", "a Wand", "a Staff", "a Triangle", "a Pistol", "a Light Sword", "a Phazor", "a Blaster"
 };
 
+static const byte SRC_WEAPON_DISTANCES[16] = { 1, 1, 1, 1, 0, 1, 1, 3, 0, 0, 0, 1, 3, 1, 3, 3 };
+
 static const char *SRC_ARMOR_NAMES[6] = {
 	"Skin", "Leather armor", "Chain mail", "Plate mail", "Vacuum suit", "Reflect suit"
 };
@@ -584,8 +586,8 @@ const char *const SRC_FIND = "Thou dost find %s";
 const char *const SRC_A_SECRET_DOOR = "a secret door!";
 
 const char *const SRC_ACTION_NAMES[26] = {
-	nullptr, nullptr, nullptr, "Drop", "Enter", "Fire", "Get", "HyperJump", "Inform and search", nullptr,
-	"K-Limb", nullptr, nullptr, nullptr, "Open", "Pass", "Quit", "Ready", "Steal", "Transact",
+	"Attack with", nullptr, nullptr, "Drop", "Enter", "Fire", "Get", "HyperJump", "Inform and search",
+	nullptr, "K-Limb", nullptr, nullptr, nullptr, "Open", "Pass", "Quit", "Ready", "Steal", "Transact",
 	"Unlock", "View", nullptr, "X-it", nullptr, "Ztats"
 };
 const char *const SRC_HUH = "Huh?";
@@ -663,6 +665,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(&SRC_WEAPON_NAMES_UPPERCASE[0], &SRC_WEAPON_NAMES_UPPERCASE[16], WEAPON_NAMES_UPPERCASE);
 	Common::copy(&SRC_WEAPON_NAMES_LOWERCASE[0], &SRC_WEAPON_NAMES_LOWERCASE[16], WEAPON_NAMES_LOWERCASE);
 	Common::copy(&SRC_WEAPON_NAMES_ARTICLE[0], &SRC_WEAPON_NAMES_ARTICLE[16], WEAPON_NAMES_ARTICLE);
+	Common::copy(SRC_WEAPON_DISTANCES, SRC_WEAPON_DISTANCES + 16, WEAPON_DISTANCES);
 	Common::copy(&SRC_ARMOR_NAMES[0], &SRC_ARMOR_NAMES[16], ARMOR_NAMES);
 	Common::copy(&SRC_SPELL_NAMES[0], &SRC_SPELL_NAMES[16], SPELL_NAMES);
 	Common::copy(&SRC_GEM_NAMES[0], &SRC_GEM_NAMES[4], GEM_NAMES);
@@ -765,6 +768,7 @@ void GameResources::synchronize() {
 	syncStrings(WEAPON_NAMES_UPPERCASE, 16);
 	syncStrings(WEAPON_NAMES_LOWERCASE, 16);
 	syncStrings(WEAPON_NAMES_ARTICLE, 16);
+	syncBytes(WEAPON_DISTANCES, 16);
 	syncStrings(ARMOR_NAMES, 6);
 	syncStrings(SPELL_NAMES, 11);
 	syncStrings(GEM_NAMES, 4);

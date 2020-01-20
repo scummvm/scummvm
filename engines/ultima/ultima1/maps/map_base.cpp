@@ -75,6 +75,12 @@ void MapBase::unknownAction() {
 	_game->playFX(1);
 }
 
+void MapBase::attack(int direction) {
+	addInfoMsg(": ");
+
+}
+
+
 } // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima
