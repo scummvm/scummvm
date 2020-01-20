@@ -33,6 +33,7 @@ namespace U1Dialogs {
 BEGIN_MESSAGE_MAP(King, Dialog)
 	ON_MESSAGE(ShowMsg)
 	ON_MESSAGE(CharacterInputMsg)
+	ON_MESSAGE(TextInputMsg)
 END_MESSAGE_MAP()
 
 King::King(Ultima1Game *game) : Dialog(game), _mode(SELECT) {
@@ -49,7 +50,7 @@ void King::draw() {
 	Dialog::draw();
 	Shared::Gfx::VisualSurface s = getSurface();
 
-	if (_mode != SELECT) {
+	if (_mode == SERVICE) {
 		// Draw the background and frame
 		s.clear();
 		s.frameRect(Rect(3, 3, _bounds.width() - 3, _bounds.height() - 3), getGame()->_borderColor);
@@ -62,18 +63,33 @@ void King::draw() {
 
 void King::setMode(KingMode mode) {
 	_mode = mode;
+
+	switch (_mode) {
+	case PENCE:
+		addInfoMsg(_game->_res->KING_TEXT[2]);			// Pence
+		addInfoMsg(_game->_res->KING_TEXT[4], false);	// How much?
+		getInput();
+		break;
+
+	case SERVICE:
+		addInfoMsg(_game->_res->KING_TEXT[3]);
+
+	default:
+		break;
+	}
+
 	setDirty();
 }
 
 bool King::CharacterInputMsg(CCharacterInputMsg &msg) {
 	switch (_mode) {
 	case SELECT:
-		if (msg._keyState.keycode == Common::KEYCODE_s)
-			setMode(SERVICE);
-		else if (msg._keyState.keycode == Common::KEYCODE_s)
+		if (msg._keyState.keycode == Common::KEYCODE_p)
 			setMode(PENCE);
+		else if (msg._keyState.keycode == Common::KEYCODE_s)
+			setMode(SERVICE);
 		else
-			nothing();
+			neither();
 		break;
 
 	default:
@@ -83,8 +99,48 @@ bool King::CharacterInputMsg(CCharacterInputMsg &msg) {
 	return true;
 }
 
-void King::nothing() {
-	addInfoMsg(_game->_res->NOTHING);
+bool King::TextInputMsg(CTextInputMsg &msg) {
+	assert(_mode == PENCE);
+	const Shared::Character &c = *_game->_party;
+	uint amount = atoi(msg._text.c_str());
+
+	if (msg._escaped || !amount) {
+		none();
+	} else if (amount > c._coins) {
+		notThatMuch();
+	} else {
+		addInfoMsg(Common::String::format("%u", amount));
+		giveHitPoints(amount * 3 / 2);
+	}
+
+	return true;
+}
+
+void King::neither() {
+	addInfoMsg(_game->_res->KING_TEXT[1]);
+	_game->endOfTurn();
+	hide();
+}
+
+void King::none() {
+	addInfoMsg(_game->_res->NONE);
+	_game->endOfTurn();
+	hide();
+}
+
+void King::notThatMuch() {
+	addInfoMsg(_game->_res->KING_TEXT[5]);
+	_game->endOfTurn();
+	hide();
+}
+
+void King::giveHitPoints(uint amount) {
+	Shared::Character &c = *_game->_party;
+	assert(amount <= c._coins);
+	c._coins -= amount;
+	c._hitPoints += amount;
+
+	addInfoMsg(Common::String::format(_game->_res->KING_TEXT[6], amount));
 	_game->endOfTurn();
 	hide();
 }

@@ -666,9 +666,9 @@ const char *const SRC_GROCERY_FIND_PACKS = "Thou dost find %d bags of food!";
 const char *const SRC_WITH_KING = " with king";
 const char *const SRC_HE_IS_NOT_HERE = "He is not here!";
 const char *const SRC_HE_REJECTS_OFFER = "He rejects thine offer!";
-const char *const SRC_KING_TEXT[11] = {
+const char *const SRC_KING_TEXT[10] = {
 	"Dost thou offer pence\ror service: ", "neither", "pence", "service", "How much? ",
-	"none", "Thou hast not that much!", "In return I give unto thee %u hit points",
+	"Thou hast not that much!", "In return I give unto\rthee %u hit points",
 	"Thou art on a quest for me already!", "Go now and kill a", "Go forth and find a"
 };
 
@@ -801,7 +801,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	WITH_KING = SRC_WITH_KING;
 	HE_IS_NOT_HERE = SRC_HE_IS_NOT_HERE;
 	HE_REJECTS_OFFER = SRC_HE_REJECTS_OFFER;
-	Common::copy(&SRC_KING_TEXT[0], &SRC_KING_TEXT[11], KING_TEXT);
+	Common::copy(&SRC_KING_TEXT[0], &SRC_KING_TEXT[10], KING_TEXT);
 }
 
 void GameResources::synchronize() {
@@ -928,7 +928,7 @@ void GameResources::synchronize() {
 	syncString(WITH_KING);
 	syncString(HE_IS_NOT_HERE);
 	syncString(HE_REJECTS_OFFER);
-	syncStrings(KING_TEXT, 11);
+	syncStrings(KING_TEXT, 10);
 }
 
 } // End of namespace Ultima1

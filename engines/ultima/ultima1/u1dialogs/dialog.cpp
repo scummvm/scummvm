@@ -50,6 +50,13 @@ void Dialog::getKeypress() {
 	msg.execute(infoArea);
 }
 
+void Dialog::getInput(bool isNumeric, size_t maxCharacters) {
+	TreeItem *infoArea = _game->findByName("Info");
+
+	Shared::CInfoGetInput msg(this, isNumeric, maxCharacters);
+	msg.execute(infoArea);
+}
+
 void Dialog::draw() {
 	// Redraw the game's info area
 	U1Gfx::Info *infoArea = dynamic_cast<U1Gfx::Info *>(_game->findByName("Info"));
