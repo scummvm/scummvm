@@ -103,16 +103,6 @@ public:
 	Game *getGame();
 
 	/**
-	 * Return the game state
-	 */
-	GameState *getGameState();
-
-	/**
-	 * Return the game's map
-	 */
-	Map *getMap();
-
-	/**
 	 * Returns the currently active game view
 	 */
 	Gfx::VisualItem *getView();

@@ -53,7 +53,7 @@ void ViewCharacterGeneration::setMode(uint flags) {
 
 	if (flags & FLAG_FRAME) {
 		// Set up character and attributes pointers
-		_character = game->_gameState->_currentCharacter;
+		_character = game->_party._currentCharacter;
 		_attributes[0] = &_character->_strength;
 		_attributes[1] = &_character->_agility;
 		_attributes[2] = &_character->_stamina;
@@ -372,10 +372,10 @@ bool ViewCharacterGeneration::TextInputMsg(CTextInputMsg &msg) {
 
 void ViewCharacterGeneration::save() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	game->_gameState->_randomSeed = game->getRandomNumber(0xffffffff);
+	game->_randomSeed = game->getRandomNumber(0xffffffff);
 
 	// Set the default position
-	Shared::Map *map = game->_gameState->_map;
+	Shared::Map *map = game->_map;
 	map->load(Ultima1::Map::MAPID_OVERWORLD);
 	map->setPosition(Point(49, 40));
 

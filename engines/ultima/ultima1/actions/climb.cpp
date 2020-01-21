@@ -54,11 +54,9 @@ bool Climb::ClimbMsg(CClimbMsg &msg) {
 
 void Climb::ladderUp() {
 	Map::Ultima1Map *map = getMap();
-	Shared::GameState *gs = getGameState();
 
 	if (!map->changeLevel(-1)) {
 		map->load(Map::MAPID_OVERWORLD);
-		map->setPosition(gs->_worldMapPos);
 	}
 }
 

@@ -75,7 +75,7 @@ void ViewGame::draw() {
 	_info->draw();
 	_status->draw();
 
-	Map::Ultima1Map *map = static_cast<Map::Ultima1Map *>(getMap());
+	Map::Ultima1Map *map = static_cast<Map::Ultima1Map *>(getGame()->getMap());
 	switch (map->_mapType) {
 	case Map::MAP_DUNGEON:
 		_viewportDungeon->draw();
@@ -88,7 +88,7 @@ void ViewGame::draw() {
 
 void ViewGame::drawIndicators() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	Map::Ultima1Map *map = static_cast<Map::Ultima1Map *>(getMap());
+	Map::Ultima1Map *map = static_cast<Map::Ultima1Map *>(game->getMap());
 
 	Shared::Gfx::VisualSurface s = getSurface();
 	DrawingSupport ds(s);

@@ -36,7 +36,7 @@ Ultima1Game *Action::getGame() {
 }
 
 Map::Ultima1Map *Action::getMap() {
-	return static_cast<Map::Ultima1Map *>(TreeItem::getMap());
+	return static_cast<Map::Ultima1Map *>(getGame()->getMap());
 }
 
 GameResources *Action::getRes() {

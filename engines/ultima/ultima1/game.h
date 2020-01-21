@@ -37,6 +37,11 @@ class GameResources;
 
 class Ultima1Game : public Shared::Game {
 	DECLARE_MESSAGE_MAP;
+private:
+	/**
+	 * Takes care of final setup as the game starts
+	 */
+	void setup();
 public:
 	GameResources *_res;
 	Shared::Gfx::VisualContainer *_gameView;
@@ -56,6 +61,11 @@ public:
 	 * Called when the game starts
 	 */
 	void starting();
+
+	/**
+	 * Returns true if the game can currently be saved
+	 */
+	virtual bool canSaveGameStateCurrently();
 };
 
 } // End of namespace Ultima1

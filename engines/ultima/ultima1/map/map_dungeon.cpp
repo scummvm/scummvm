@@ -132,8 +132,8 @@ bool MapDungeon::changeLevel(int delta) {
 
 
 void MapDungeon::setRandomSeed() {
-	const Shared::GameState &gs = *_game->_gameState;
-	uint32 seed = gs._randomSeed + gs._worldMapPos.x * 5 + gs._worldMapPos.y * 3 + _dungeonLevel * 17;
+	Ultima1Map *map = static_cast<Ultima1Map *>(_game->getMap());
+	uint32 seed = _game->_randomSeed + map->_worldPos.x * 5 + map->_worldPos.y * 3 + _dungeonLevel * 17;
 	_random.setSeed(seed);
 }
 
@@ -183,7 +183,7 @@ void MapDungeon::update() {
 	Point pt;
 
 	// Widgets in the dungeon are updated by row
-	for (pt.y = 1; pt.y < ((int)height() - 1) && !_game->_gameState->isPartyFoodless(); pt.y++) {
+	for (pt.y = 1; pt.y < ((int)height() - 1) && !_game->_party.isFoodless(); pt.y++) {
 		for (pt.x = 1; pt.x < ((int)width() - 1); pt.x++) {
 			// Check for a widget at the given position
 			getTileAt(pt, &tile);

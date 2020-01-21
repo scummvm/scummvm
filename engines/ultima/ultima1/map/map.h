@@ -102,6 +102,7 @@ private:
 	MapOverworld *_mapOverworld;
 public:
 	MapType _mapType;					// Type of map
+	Point _worldPos;					// Point in the world map, updated when entering locations
 public:
 	/**
 	 * Constructor

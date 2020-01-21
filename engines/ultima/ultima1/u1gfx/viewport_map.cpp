@@ -22,6 +22,7 @@
 
 #include "ultima/ultima1/u1gfx/viewport_map.h"
 #include "ultima/ultima1/u1gfx/sprites.h"
+#include "ultima/ultima1/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -35,7 +36,7 @@ ViewportMap::~ViewportMap() {
 }
 
 void ViewportMap::draw() {
-	Map::Ultima1Map *map = static_cast<Map::Ultima1Map *>(getMap());
+	Map::Ultima1Map *map = static_cast<Map::Ultima1Map *>(getGame()->getMap());
 
 	// If necessary, load the sprites for rendering the map
 	if (_sprites->empty() || _mapType != map->_mapType) {
