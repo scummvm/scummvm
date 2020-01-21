@@ -41,7 +41,7 @@ bool Enter::EnterMsg(CEnterMsg &msg) {
 	map->getTileAt(map->getPosition(), &mapTile);
 	
 	if (mapTile._locationNum == -1) {
-		addStatusMsg(game->_res->ENTER_QUESTION);
+		addInfoMsg(game->_res->ENTER_QUESTION);
 		playFX(1);
 	} else {
 		// Save the position on the world map
@@ -49,11 +49,11 @@ bool Enter::EnterMsg(CEnterMsg &msg) {
 			map->getPosition().y / map->_tilesPerOrigTile.y);
 
 		// Load the location
-		map->loadMap(mapTile._locationNum, getGameState()->_videoMode);
+		map->loadMap(mapTile._locationNum);
 
 		// Add message for location having been entered
-		addStatusMsg(game->_res->ENTERING);
-		addStatusMsg(map->_name);
+		addInfoMsg(game->_res->ENTERING);
+		addInfoMsg(map->_name);
 	}
 
 	return true;

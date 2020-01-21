@@ -24,6 +24,7 @@
 #define ULTIMA_SHARED_GFX_INFO_H
 
 #include "ultima/shared/gfx/visual_item.h"
+#include "common/str-array.h"
 
 namespace Ultima {
 namespace Shared {
@@ -33,6 +34,9 @@ namespace Shared {
  */
 class Info : public Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
+	bool InfoMsg(CInfoMsg &msg);
+private:
+	Common::StringArray _lines;
 public:
 	CLASSDEF;
 	Info(TreeItem *parent) : Gfx::VisualItem("Info", Rect(0, 168, 240, 200), parent) {}

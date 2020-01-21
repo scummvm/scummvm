@@ -62,9 +62,11 @@ public:
 	GameResources *getRes();
 
 	/**
-	 * Adds a text string to the status area
+	 * Adds a text string to the info area
+	 * @param text		Text to add
+	 * @param newLine	Whether to apply a newline at the end
 	 */
-	void addStatusMsg(const Common::String &text);
+	void addInfoMsg(const Common::String &text, bool newLine = true);
 
 	/**
 	 * Play a sound effect

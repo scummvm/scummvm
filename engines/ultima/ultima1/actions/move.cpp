@@ -80,10 +80,10 @@ bool Move::MoveMsg(CMoveMsg &msg) {
 
 			// Move to the new position
 			if (transport->moveTo(newPos))
-				addStatusMsg(getRes()->DIRECTION_NAMES[msg._direction - 1]);
+				addInfoMsg(getRes()->DIRECTION_NAMES[msg._direction - 1]);
 		} else {
 			// Nope, so show a blocked message
-			addStatusMsg(getRes()->BLOCKED);
+			addInfoMsg(getRes()->BLOCKED);
 			playFX(1);
 		}
 	}

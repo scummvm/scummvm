@@ -87,7 +87,7 @@ Point Map::getDeltaPosition(const Point &delta) {
 	return pt;
 }
 
-void Map::loadMap(int mapId, uint videoMode) {
+void Map::loadMap(int mapId) {
 	clear();
 	_mapId = mapId;
 	_fixed = false;
