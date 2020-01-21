@@ -383,6 +383,15 @@ static void setupKeymapper(OSystem &system) {
 	act = new Action(primaryGlobalKeymap, "FULS", _("Toggle fullscreen"));
 	act->addKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
 
+	act = new Action(primaryGlobalKeymap, "LCLK", _("Left Click"));
+	act->addLeftClickEvent();
+
+	act = new Action(primaryGlobalKeymap, "MCLK", _("Middle Click"));
+	act->addMiddleClickEvent();
+
+	act = new Action(primaryGlobalKeymap, "RCLK", _("Right Click"));
+	act->addRightClickEvent();
+
 	mapper->addGlobalKeymap(primaryGlobalKeymap);
 	mapper->pushKeymap(kGlobalKeymapName, true);
 
