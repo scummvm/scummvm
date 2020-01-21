@@ -50,7 +50,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	U1DungeonMonster(Shared::Game *game, Shared::Map *map, DungeonWidgetId monsterId,
+	U1DungeonMonster(Shared::Game *game, Shared::Map::MapBase *map, DungeonWidgetId monsterId,
 		const Point &pt, int hitPoints) :
 		Shared::DungeonMonster(game, map, pt, hitPoints), _monsterId(monsterId) {}
 
@@ -98,7 +98,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	DungeonWidget(Shared::Game *game, Shared::Map *map, const Point &pt, DungeonItemId itemId);
+	DungeonWidget(Shared::Game *game, Shared::Map::MapBase *map, const Point &pt, DungeonItemId itemId);
 
 	/**
 	 * Draws a dungeon widget onto the passed surface

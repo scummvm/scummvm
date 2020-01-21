@@ -27,7 +27,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Gfx {
 
-ViewportMap::ViewportMap(Shared::TreeItem *parent) : Shared::ViewportMap(parent), _mapType(MAP_OVERWORLD) {
+ViewportMap::ViewportMap(Shared::TreeItem *parent) : Shared::ViewportMap(parent), _mapType(Map::MAP_OVERWORLD) {
 	_sprites = new Sprites(this);	
 }
 
@@ -35,13 +35,13 @@ ViewportMap::~ViewportMap() {
 }
 
 void ViewportMap::draw() {
-	Ultima1Map *map = static_cast<Ultima1Map *>(getMap());
+	Map::Ultima1Map *map = static_cast<Map::Ultima1Map *>(getMap());
 
 	// If necessary, load the sprites for rendering the map
 	if (_sprites->empty() || _mapType != map->_mapType) {
 		_mapType = map->_mapType;
 		Sprites *sprites = static_cast<Sprites *>(_sprites);
-		sprites->load(_mapType == MAP_OVERWORLD);
+		sprites->load(_mapType == Map::MAP_OVERWORLD);
 	}
 
 	// Draw the map

@@ -20,36 +20,47 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_CORE_PEOPLE_H
-#define ULTIMA_ULTIMA1_CORE_PEOPLE_H
+#ifndef ULTIMA_ULTIMA1_MAP_MAP_OVERWORLD_H
+#define ULTIMA_ULTIMA1_MAP_MAP_OVERWORLD_H
 
-#include "ultima/shared/core/map.h"
+#include "ultima/ultima1/map/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Map {
 
-class Person : public Shared::MapWidget {
+class MapOverworld : public Ultima1Map::MapBase {
 private:
-	uint _tileNum;
-	int _hitPoints;
+	/**
+	 * Load widget list for the map
+	 */
+	void loadWidgets();
 public:
-	/**
-	 * Constructor
-	 */
-	Person(Shared::Game *game, Shared::Map::MapBase *map, uint tileNum, int hitPoints) :
-		Shared::MapWidget(game, map), _tileNum(tileNum), _hitPoints(hitPoints) {}
+	MapOverworld(Ultima1Game *game) : Ultima1Map::MapBase(game) {}
+	virtual ~MapOverworld() {}
 
 	/**
-	 * Destructor
+	 * Load the map
 	 */
-	virtual ~Person() {}
+	virtual void load(Shared::MapId mapId);
 
 	/**
-	 * Get the tile number for the person
+	 * Shifts the viewport by a given delta
 	 */
-	virtual uint getTileNum() const { return _tileNum; }
+	virtual void shiftViewport(const Point &delta);
+
+	/**
+	 * Get the viewport position
+	 */
+	virtual Point getViewportPosition(const Point &viewportSize);
+
+	/**
+	 * Gets a point relative to the current position
+	 */
+	virtual Point getDeltaPosition(const Point &delta);
 };
 
+} // End of namespace Map
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

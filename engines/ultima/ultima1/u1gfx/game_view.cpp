@@ -73,9 +73,9 @@ void GameView::draw() {
 	_info->draw();
 	_status->draw();
 
-	Ultima1Map *map = static_cast<Ultima1Map *>(getMap());
+	Map::Ultima1Map *map = static_cast<Map::Ultima1Map *>(getMap());
 	switch (map->_mapType) {
-	case MAP_DUNGEON:
+	case Map::MAP_DUNGEON:
 		_viewportDungeon->draw();
 		break;
 	default:
@@ -86,20 +86,20 @@ void GameView::draw() {
 
 void GameView::drawIndicators() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	Ultima1Map *map = static_cast<Ultima1Map *>(getMap());
+	Map::Ultima1Map *map = static_cast<Map::Ultima1Map *>(getMap());
 
 	Shared::Gfx::VisualSurface s = getSurface();
 	DrawingSupport ds(s);
 
-	if (map->_mapType == MAP_DUNGEON) {
+	if (map->_mapType == Map::MAP_DUNGEON) {
 		// Draw the dungeon level indicator
 		ds.drawRightArrow(TextPoint(15, 0));
 		s.writeString(game->_res->DUNGEON_LEVEL, TextPoint(16, 0), game->_textColor);
-		s.writeString(Common::String::format("%2d", map->_dungeonLevel), TextPoint(23, 0), game->_textColor);
+		s.writeString(Common::String::format("%2d", map->getLevel()), TextPoint(23, 0), game->_textColor);
 		ds.drawLeftArrow(TextPoint(26, 0));
 
 		// Draw the current direction
-		const char *dir = game->_res->DIRECTION_NAMES[map->_direction - 1];
+		const char *dir = game->_res->DIRECTION_NAMES[map->getDirection() - 1];
 		ds.drawRightArrow(TextPoint(16, 19));
 		s.writeString("       ", TextPoint(17, 19), game->_textColor);
 		s.writeString(dir, TextPoint(19 - (7 - strlen(dir)) / 2, 19), game->_textColor);

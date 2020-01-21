@@ -23,13 +23,12 @@
 #ifndef ULTIMA_ULTIMA1_CORE_WIDGET_PLAYER_H
 #define ULTIMA_ULTIMA1_CORE_WIDGET_PLAYER_H
 
-#include "ultima/shared/core/map.h"
+#include "ultima/ultima1/map/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
 class Ultima1Game;
-class Ultima1Map;
 
 class WidgetTransport : public Shared::MapWidget {
 protected:
@@ -41,12 +40,12 @@ protected:
 	/**
 	 * Gets the Ultima 1 map
 	 */
-	Ultima1Map *getMap() const;
+	Map::Ultima1Map::MapBase *getMap() const;
 public:
 	/**
 	 * Constructor
 	 */
-	WidgetTransport(Shared::Game *game, Shared::Map *map) : Shared::MapWidget(game, map) {}
+	WidgetTransport(Shared::Game *game, Shared::Map::MapBase *map) : Shared::MapWidget(game, map) {}
 
 	/**
 	 * Destructor
@@ -82,7 +81,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	TransportOnFoot(Shared::Game *game, Shared::Map *map) : WidgetTransport(game, map) {}
+	TransportOnFoot(Shared::Game *game, Shared::Map::MapBase *map) : WidgetTransport(game, map) {}
 
 	/**
 	 * Destructor

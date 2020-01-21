@@ -29,8 +29,10 @@ namespace Ultima {
 namespace Ultima1 {
 
 class Ultima1Game;
-class Ultima1Map;
 class GameResources;
+namespace Map {
+	class Ultima1Map;
+}
 
 namespace Actions {
 
@@ -54,7 +56,7 @@ public:
 	/**
 	 * Return the game's map
 	 */
-	Ultima1Map *getMap();
+	Map::Ultima1Map *getMap();
 
 	/**
 	 * Gets the data resources for the game

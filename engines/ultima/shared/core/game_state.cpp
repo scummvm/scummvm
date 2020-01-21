@@ -24,7 +24,7 @@
 #include "ultima/shared/early/game_base.h"
 #include "ultima/shared/core/game_state.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/map.h"
+#include "ultima/ultima1/map/map.h"
 
 namespace Ultima {
 namespace Shared {
@@ -35,10 +35,10 @@ GameState::GameState(Game *game) : _videoMode(EGA), _dungeonExitHitPoints(0), _r
 
 	switch (_gameId) {
 	case GAME_ULTIMA1:
-		_map = new Ultima1::Ultima1Map(static_cast<Ultima1::Ultima1Game *>(game));
+		_map = new Ultima1::Map::Ultima1Map(static_cast<Ultima1::Ultima1Game *>(game));
 
 		// Load the default overworld map
-		_map->loadMap(Ultima1::MAPID_OVERWORLD);
+		_map->load(Ultima1::Map::MAPID_OVERWORLD);
 		//_map->setPosition(Point(49, 40));
 		_map->setPosition(Point(62, 49));
 		break;
