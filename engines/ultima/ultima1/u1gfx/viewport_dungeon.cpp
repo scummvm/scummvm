@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima1/u1gfx/viewport_dungeon.h"
-#include "ultima/ultima1/core/dungeon_widgets.h"
+#include "ultima/ultima1/widgets/dungeon_widget.h"
 #include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
@@ -36,7 +36,7 @@ Shared::DungeonSurface ViewportDungeon::getSurface() {
 void ViewportDungeon::drawWidget(Graphics::ManagedSurface &s, uint widgetId, uint distance, byte color) {
 	// Pass on to the dungeon widget drawer
 	Graphics::ManagedSurface surf(s, Common::Rect(-8, -8, s.w - 8, s.h - 8));
-	DungeonWidget::drawWidget(surf, (DungeonWidgetId)widgetId, distance, color);
+	Widgets::DungeonWidget::drawWidget(surf, (Widgets::DungeonWidgetId)widgetId, distance, color);
 }
 
 } // End of namespace U1Gfx

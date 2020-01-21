@@ -56,7 +56,6 @@ MODULE_OBJS += \
 	ultima1/actions/climb.o \
 	ultima1/actions/enter.o \
 	ultima1/actions/move.o \
-	ultima1/core/dungeon_widgets.o \
 	ultima1/core/resources.o \
 	ultima1/core/transports.o \
 	ultima1/map/map.o \
@@ -73,6 +72,7 @@ MODULE_OBJS += \
 	ultima1/u1gfx/viewport_map.o \
 	ultima1/u6gfx/game_view.o \
 	ultima1/widgets/bard.o \
+	ultima1/widgets/dungeon_widget.o \
 	ultima1/widgets/guard.o \
 	ultima1/widgets/king.o \
 	ultima1/widgets/person.o \
