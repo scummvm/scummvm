@@ -24,27 +24,32 @@
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/maps/map.h"
-#include "ultima/shared/gfx/text_cursor.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(Drop, Dialog)
-	ON_MESSAGE(KeypressMsg)
+	ON_MESSAGE(ShowMsg)
+	ON_MESSAGE(CharacterInputMsg)
 	ON_MESSAGE(TextInputMsg)
 END_MESSAGE_MAP()
 
-Drop::Drop(Ultima1Game *game) : FullScreenDialog(game), _mode(SELECT), _textInput(game) {
+Drop::Drop(Ultima1Game *game) : FullScreenDialog(game), _mode(SELECT) {
 }
 
-bool Drop::KeypressMsg(CKeypressMsg &msg) {
+bool Drop::ShowMsg(CShowMsg &msg) {
+	addInfoMsg(_game->_res->DROP_PENCE_WEAPON_ARMOR, false);
+	getKeypress();
+	return true;
+}
+
+bool Drop::CharacterInputMsg(CCharacterInputMsg &msg) {
 	Shared::Character &c = *_game->_party;
 
 	switch (_mode) {
 	case SELECT:
-		_game->_textCursor->setVisible(false);
-
 		switch (msg._keyState.keycode) {
 		case Common::KEYCODE_p:
 			setMode(DROP_PENCE);
@@ -69,7 +74,8 @@ bool Drop::KeypressMsg(CKeypressMsg &msg) {
 			if (--c._weapons[weaponNum]._quantity == 0 && c._equippedWeapon == weaponNum)
 				c._equippedWeapon = 0;
 
-			addInfoMsg(Common::String::format(" %s", _game->_res->WEAPON_NAMES_UPPERCASE[weaponNum]));
+			addInfoMsg(Common::String::format("%s%s", _game->_res->DROP_WEAPON,
+				_game->_res->WEAPON_NAMES_UPPERCASE[weaponNum]), true, true);
 			hide();
 		} else {
 			none();
@@ -84,7 +90,8 @@ bool Drop::KeypressMsg(CKeypressMsg &msg) {
 			if (--c._armor[armorNum]._quantity == 0 && c._equippedArmor == armorNum)
 				c._equippedArmor = 0;
 
-			addInfoMsg(Common::String::format(" %s", _game->_res->ARMOR_NAMES[armorNum]));
+			addInfoMsg(Common::String::format("%s%s", _game->_res->DROP_ARMOR,
+				_game->_res->ARMOR_NAMES[armorNum]), true, true);
 			hide();
 		} else {
 			none();
@@ -132,15 +139,26 @@ void Drop::setMode(Mode mode) {
 
 	const Shared::Character &c = *_game->_party;
 	switch (mode) {
+	case DROP_PENCE:
+		addInfoMsg(_game->_res->DROP_PENCE, false, true);
+		getInput();
+		break;
+
 	case DROP_WEAPON:
 		if (c._weapons.hasNothing()) {
 			nothing();
+		} else {
+			addInfoMsg(_game->_res->DROP_WEAPON, false, true);
+			getKeypress();
 		}
 		break;
 
 	case DROP_ARMOR:
 		if (c._armor.hasNothing()) {
 			nothing();
+		} else {
+			addInfoMsg(_game->_res->DROP_ARMOR, false, true);
+			getKeypress();
 		}
 		break;
 
@@ -150,23 +168,22 @@ void Drop::setMode(Mode mode) {
 }
 
 void Drop::nothing() {
-	addInfoMsg(Common::String::format(" %s", _game->_res->NOTHING));
+	addInfoMsg(Common::String::format("%s %s", _game->_res->ACTION_NAMES[3],
+		_game->_res->NOTHING), true, true);
 	hide();
 }
 
 void Drop::none() {
-	addInfoMsg(Common::String::format(" %s", _game->_res->NONE));
+	const char *DROPS[4] = { nullptr, _game->_res->DROP_PENCE, _game->_res->DROP_WEAPON, _game->_res->DROP_ARMOR };
+
+	addInfoMsg(Common::String::format("%s%s", DROPS[_mode], _game->_res->NONE), true, true);
 	hide();
 }
 
 void Drop::draw() {
+	Dialog::draw();
+
 	switch (_mode) {
-	case SELECT:
-		drawSelection();
-		break;
-	case DROP_PENCE:
-		drawDropPence();
-		break;
 	case DROP_WEAPON:
 		drawDropWeapon();
 		break;
@@ -174,23 +191,6 @@ void Drop::draw() {
 		drawDropArmor();
 		break;
 	}
-}
-
-void Drop::drawSelection() {
-	Shared::Gfx::VisualSurface s = getSurface();
-	s.writeString(_game->_res->DROP_PENCE_WEAPON_ARMOR, TextPoint(1, 24));
-
-	_game->_textCursor->setPosition(TextPoint(1 + strlen(_game->_res->DROP_PENCE_WEAPON_ARMOR), 24));
-	_game->_textCursor->setVisible(true);
-}
-
-void Drop::drawDropPence() {
-	Shared::Gfx::VisualSurface s = getSurface();
-	Common::String text = Common::String::format("%s %s: ", _game->_res->ACTION_NAMES[3], _game->_res->DROP_PENCE);
-	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
-	s.writeString(_game->_res->DROP_PENCE, TextPoint(1, 24));
-
-	_textInput.show(TextPoint(13, 24), true, 4, _game->_textColor);
 }
 
 void Drop::drawDropWeapon() {
@@ -214,14 +214,6 @@ void Drop::drawDropWeapon() {
 			s.writeString(text, TextPoint(15, yp++));
 		}
 	}
-
-	// Draw drop weapon text at the bottom and enable cursor
-	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
-	s.writeString(_game->_res->DROP_WEAPON, TextPoint(1, 24));
-
-	// Show cursor in the info area
-	_game->_textCursor->setPosition(TextPoint(1 + strlen(_game->_res->DROP_WEAPON), 24));
-	_game->_textCursor->setVisible(true);
 }
 
 void Drop::drawDropArmor() {
@@ -245,14 +237,6 @@ void Drop::drawDropArmor() {
 			s.writeString(text, TextPoint(13, yp++));
 		}
 	}
-
-	// Draw drop armor text at the bottom and enable cursor
-	s.fillRect(TextRect(1, 24, 28, 24), _game->_bgColor);
-	s.writeString(_game->_res->DROP_ARMOR, TextPoint(1, 24));
-
-	// Show cursor in the info area
-	_game->_textCursor->setPosition(TextPoint(1 + strlen(_game->_res->DROP_ARMOR), 24));
-	_game->_textCursor->setVisible(true);
 }
 
 } // End of namespace U1Dialogs

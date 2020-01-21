@@ -36,7 +36,7 @@ BEGIN_MESSAGE_MAP(King, Dialog)
 	ON_MESSAGE(TextInputMsg)
 END_MESSAGE_MAP()
 
-King::King(Ultima1Game *game) : Dialog(game), _mode(SELECT) {
+King::King(Ultima1Game *game, uint kingIndex) : Dialog(game), _kingIndex(kingIndex), _mode(SELECT) {
 	_bounds = Rect(31, 23, 287, 127);
 }
 
@@ -48,17 +48,70 @@ bool King::ShowMsg(CShowMsg &msg) {
 
 void King::draw() {
 	Dialog::draw();
+
+	if (_mode != SERVICE)
+		return;
+
 	Shared::Gfx::VisualSurface s = getSurface();
 
-	if (_mode == SERVICE) {
-		// Draw the background and frame
-		s.clear();
-		s.frameRect(Rect(3, 3, _bounds.width() - 3, _bounds.height() - 3), getGame()->_borderColor);
+	// Draw the background and frame
+	s.clear();
+	s.frameRect(Rect(3, 3, _bounds.width() - 3, _bounds.height() - 3), getGame()->_borderColor);
 
-		// Draw the title
-	//	s.writeString(, Point((_bounds.width() - _title.size() * 8) / 2, 9));
+	if (_kingIndex % 1) {
+		// Kill a monster
+		centerText(_game->_res->KING_TEXT[8], 2);
+
+		Common::String name;
+		switch ((_kingIndex - 1) / 2) {
+		case 0:
+			// Gelatinous Cube
+			name = _game->_res->DUNGEON_MONSTER_NAMES[9];
+			break;
+		case 1:
+			// Carrion Creeper
+			name = _game->_res->DUNGEON_MONSTER_NAMES[14];
+			break;
+		case 2:
+			// Lich
+			name = _game->_res->DUNGEON_MONSTER_NAMES[18];
+			break;
+		case 3:
+			// Balron
+			name = _game->_res->DUNGEON_MONSTER_NAMES[23];
+			break;
+		default:
+			break;
+		}
+
+		centerText(name, 4);
+	} else {
+		// Find a location
+		centerText(_game->_res->KING_TEXT[9], 2);
+
+		switch (_kingIndex / 2) {
+		case 0:
+			centerText(_game->_res->LOCATION_NAMES[47], 4);
+			break;
+		case 1:
+			centerText(_game->_res->LOCATION_NAMES[45], 4);
+			break;
+		case 2:
+			centerText(_game->_res->LOCATION_NAMES[43], 4);
+			break;
+		case 3:
+			centerText(_game->_res->LOCATION_NAMES[41], 4);
+			break;
+		}
 	}
 
+	centerText(_game->_res->KING_TEXT[10], 6);
+	centerText(_game->_res->KING_TEXT[11], 7);
+}
+
+void King::centerText(const Common::String &line, int yp) {
+	Shared::Gfx::VisualSurface s = getSurface();
+	s.writeString(line, TextPoint(16 - line.size() / 2, yp));
 }
 
 void King::setMode(KingMode mode) {
@@ -73,6 +126,16 @@ void King::setMode(KingMode mode) {
 
 	case SERVICE:
 		addInfoMsg(_game->_res->KING_TEXT[3]);
+
+		if (_game->_quests[_kingIndex].isInProgress()) {
+			alreadyOnQuest();
+			return;
+		} else {
+			_game->_quests[_kingIndex].start();
+			addInfoMsg(_game->_res->PRESS_SPACE_TO_CONTINUE, false);
+			getKeypress();
+		}
+		break;
 
 	default:
 		break;
@@ -90,6 +153,12 @@ bool King::CharacterInputMsg(CCharacterInputMsg &msg) {
 			setMode(SERVICE);
 		else
 			neither();
+		break;
+
+	case SERVICE:
+		addInfoMsg("");
+		_game->endOfTurn();
+		hide();
 		break;
 
 	default:
@@ -130,6 +199,12 @@ void King::none() {
 
 void King::notThatMuch() {
 	addInfoMsg(_game->_res->KING_TEXT[5]);
+	_game->endOfTurn();
+	hide();
+}
+
+void King::alreadyOnQuest() {
+	addInfoMsg(_game->_res->KING_TEXT[7]);
 	_game->endOfTurn();
 	hide();
 }

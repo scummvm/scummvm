@@ -55,7 +55,7 @@ bool Info::InfoMsg(CInfoMsg &msg) {
 	StringArray lines = String(msg._text).split("\r\n");
 
 	if (!_lines.empty() && msg._replaceLine)
-		_lines.back() = " ";
+		_lines.back() = _lines.back().firstChar();
 
 	for (uint idx = 0; idx < lines.size(); ++idx) {
 		if (_lines.empty() || idx > 0)

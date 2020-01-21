@@ -43,6 +43,10 @@ void QuestFlag::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_state);
 }
 
+void QuestFlag::start() {
+	_state = IN_PROGRESS;
+}
+
 void QuestFlag::complete() {
 	if (isInProgress()) {
 		_state = COMPLETED;
