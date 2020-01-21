@@ -28,6 +28,7 @@
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/widgets/dungeon_item.h"
 #include "ultima/ultima1/widgets/merchant_armor.h"
 #include "ultima/ultima1/widgets/merchant_grocer.h"
 #include "ultima/ultima1/widgets/merchant_magic.h"
@@ -60,6 +61,11 @@ void MapBase::getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool inclu
 					break;
 				}
 			}
+		}
+
+		// Check for a dungeon item
+		for (uint idx = 0; idx < _widgets.size(); ++idx) {
+			mapTile->_item = dynamic_cast<Widgets::DungeonItem *>(_widgets[idx].get());
 		}
 	}
 }

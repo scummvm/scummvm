@@ -113,6 +113,11 @@ public:
 	 * Do an open action
 	 */
 	virtual void open() override;
+
+	/**
+	 * Do an open action
+	 */
+	virtual void unlock() override;
 };
 
 } // End of namespace Maps
