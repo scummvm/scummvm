@@ -91,6 +91,8 @@ public:
 
 	const char *ACTION_NAMES[26];
 	const char *HUH;
+	const char *WHAT;
+	const char *FACE_THE_LADDER;
 	const char *CAUGHT;
 	const char *NONE_WILL_TALK;
 	const char *BUY_SELL;

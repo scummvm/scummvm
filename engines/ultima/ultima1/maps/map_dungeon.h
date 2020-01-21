@@ -100,6 +100,11 @@ public:
 	 * Do an inform action
 	 */
 	virtual void inform();
+
+	/**
+	 * Do a climb action
+	 */
+	virtual void climb();
 };
 
 } // End of namespace Maps
