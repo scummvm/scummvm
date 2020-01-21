@@ -20,42 +20,37 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_WIDGETS_DUNGEON_ITEM_H
-#define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_ITEM_H
+#ifndef ULTIMA_ULTIMA1_WIDGETS_DUNGEON_COFFIN_H
+#define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_COFFIN_H
 
-#include "ultima/ultima1/widgets/dungeon_widget.h"
+#include "ultima/ultima1/widgets/dungeon_item.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-
 /**
- * Encapsulated class for drawing widgets within dungeons
+ * Chest item
  */
-class DungeonItem : public DungeonWidget {
-protected:
-	/**
-	 * Constructor
-	 */
-	DungeonItem(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId widgetId, const Point &pt);
+class DungeonCoffin : public DungeonItem {
+public:
+	DECLARE_WIDGET(DungeonCoffin)
 
 	/**
 	 * Constructor
 	 */
-	DungeonItem(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId widgetId);
-public:
+	DungeonCoffin(Ultima1Game *game, Maps::MapBase *map, const Point &pt);
+
+	/**
+	 * Constructor
+	 */
+	DungeonCoffin(Ultima1Game *game, Maps::MapBase *map);
+
 	/**
 	 * Try to open the item
 	 * @returns		True if item was capable of being open
 	 */
-	virtual bool open() { return false; }
-
-	/**
-	 * Try to unlock the item
-	 * @returns		True if item was capable of being unlock
-	 */
-	virtual bool unlock() { return false; }
+	virtual bool open() override;
 };
 
 } // End of namespace Widgets

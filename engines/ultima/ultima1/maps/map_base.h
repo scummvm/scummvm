@@ -71,14 +71,15 @@ public:
 	DEFAULT_ACTION(hyperjump)
 	DEFAULT_ACTION(inform)
 	DEFAULT_ACTION(climb)
+	DEFAULT_ACTION(open)
 	DEFAULT_ACTION(steal)
 	DEFAULT_ACTION(talk)
+	DEFAULT_ACTION(unlock)
 
 	/**
 	 * Handles dropping an amount of coins
 	 */
 	virtual void dropCoins(uint coins) {}
-
 };
 
 } // End of namespace Maps

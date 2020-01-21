@@ -39,6 +39,9 @@ enum DungeonTile {
 	DTILE_LADDER_UP = 7, DTILE_BEAMS = 8
 };
 
+/**
+ * Implements the dungeon map
+ */
 class MapDungeon : public MapBase {
 private:
 	Common::RandomSource _random;
@@ -104,7 +107,12 @@ public:
 	/**
 	 * Do a climb action
 	 */
-	virtual void climb();
+	virtual void climb() override;
+
+	/**
+	 * Do an open action
+	 */
+	virtual void open() override;
 };
 
 } // End of namespace Maps

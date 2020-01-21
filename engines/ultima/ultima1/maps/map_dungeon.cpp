@@ -23,7 +23,8 @@
 #include "ultima/ultima1/maps/map_dungeon.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/maps/map_tile.h"
-#include "ultima/ultima1/widgets/dungeon_item.h"
+#include "ultima/ultima1/widgets/dungeon_chest.h"
+#include "ultima/ultima1/widgets/dungeon_coffin.h"
 #include "ultima/ultima1/widgets/dungeon_monster.h"
 #include "ultima/ultima1/widgets/dungeon_player.h"
 #include "ultima/ultima1/game.h"
@@ -116,8 +117,10 @@ bool MapDungeon::changeLevel(int delta) {
 		byte currTile = _data[pt.y][pt.x];
 
 		if (currTile != DTILE_WALL && currTile != DTILE_SECRET_DOOR && currTile != DTILE_BEAMS) {
-			_widgets.push_back(Shared::Maps::MapWidgetPtr(new Widgets::DungeonItem(_game, this,
-				(getDeterministicRandomNumber(1, 100) & 1) ? Widgets::DITEM_COFFIN : Widgets::DITEM_CHEST, pt)));
+			_widgets.push_back(Shared::Maps::MapWidgetPtr((getDeterministicRandomNumber(1, 100) & 1) ?
+				(Widgets::DungeonItem *)new Widgets::DungeonChest(_game, this, pt) :
+				(Widgets::DungeonItem *)new Widgets::DungeonCoffin(_game, this, pt)
+				));
 		}
 	}
 
@@ -207,6 +210,10 @@ void MapDungeon::update() {
 				creature->update(true);
 		}
 	}
+}
+
+void MapDungeon::open() {
+	// TODO
 }
 
 void MapDungeon::inform() {

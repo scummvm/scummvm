@@ -28,18 +28,13 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-DungeonItem::DungeonItem(Shared::Game *game, Shared::Maps::MapBase *map, DungeonItemId itemId,
-		const Point &pt) : DungeonWidget(game, map, (_itemId == DITEM_CHEST) ? MONSTER_MIMIC : UITEM_COFFIN, pt),
-		_itemId(itemId) {
-	_name = (_itemId == DITEM_CHEST) ? getGame()->_res->DUNGEON_ITEM_NAMES[0] : getGame()->_res->DUNGEON_ITEM_NAMES[1];
+DungeonItem::DungeonItem(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId widgetId,
+		const Point &pt) : DungeonWidget(game, map, widgetId, pt) {
 }
 
-void DungeonItem::synchronize(Common::Serializer &s) {
-	DungeonWidget::synchronize(s);
-	s.syncAsUint16LE(_itemId);
+DungeonItem::DungeonItem(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId widgetId) :
+		DungeonWidget(game, map, widgetId, Point()) {
 
-	if (s.isLoading())
-		_name = (_itemId == DITEM_CHEST) ? getGame()->_res->DUNGEON_ITEM_NAMES[0] : getGame()->_res->DUNGEON_ITEM_NAMES[1];
 }
 
 } // End of namespace Widgets

@@ -53,13 +53,13 @@ public:
 	/**
 	 * Constructor
 	 */
-	DungeonMonster(Shared::Game *game, Shared::Maps::MapBase *map, DungeonWidgetId monsterId, int hitPoints,
+	DungeonMonster(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId monsterId, int hitPoints,
 		const Point &pt);
 
 	/**
 	 * Constructor
 	 */
-	DungeonMonster(Shared::Game *game, Shared::Maps::MapBase *map);
+	DungeonMonster(Ultima1Game *game, Maps::MapBase *map);
 
 	/**
 	 * Destructor

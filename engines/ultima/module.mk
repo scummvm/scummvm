@@ -86,6 +86,8 @@ MODULE_OBJS += \
 	ultima1/u1gfx/viewport_map.o \
 	ultima1/u6gfx/game_view.o \
 	ultima1/widgets/bard.o \
+	ultima1/widgets/dungeon_chest.o \
+	ultima1/widgets/dungeon_coffin.o \
 	ultima1/widgets/dungeon_item.o \
 	ultima1/widgets/dungeon_monster.o \
 	ultima1/widgets/dungeon_player.o \
