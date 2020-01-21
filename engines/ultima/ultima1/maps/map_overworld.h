@@ -74,11 +74,6 @@ public:
 	virtual void enter() override;
 
 	/**
-	 * Do a fire action
-	 */
-	virtual void fire() override;
-
-	/**
 	 * Do an inform action
 	 */
 	virtual void inform() override;
