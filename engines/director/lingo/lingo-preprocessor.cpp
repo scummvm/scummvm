@@ -56,7 +56,11 @@ static Common::String prevtok(const char *s, const char *lineStart, const char *
 
 	// Scan first non-whitespace
 	while (s >= lineStart && (*s == ' ' || *s == '\t')) // If we see a whitespace
-		s--;
+		if (s > lineStart) {
+			s--;
+		} else {
+			break;
+		}
 
 	// Now copy everything till whitespace
 	if (Common::isAlnum(*s)) {
