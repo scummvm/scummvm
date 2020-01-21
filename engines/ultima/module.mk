@@ -63,6 +63,7 @@ MODULE_OBJS += \
 	ultima0/resources.o \
 	ultima1/actions/action.o \
 	ultima1/actions/move.o \
+	ultima1/actions/stats.o \
 	ultima1/core/resources.o \
 	ultima1/maps/map.o \
 	ultima1/maps/map_base.o \
@@ -74,6 +75,7 @@ MODULE_OBJS += \
 	ultima1/u1dialogs/drop.o \
 	ultima1/u1dialogs/full_screen_dialog.o \
 	ultima1/u1dialogs/grocery.o \
+	ultima1/u1dialogs/stats.o \
 	ultima1/u1gfx/drawing_support.o \
 	ultima1/u1gfx/info.o \
 	ultima1/u1gfx/sprites.o \

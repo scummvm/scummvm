@@ -306,6 +306,11 @@ MESSAGE0(CDropMsg);
 MESSAGE0(CEnterMsg);
 
 /**
+ * Used to trigger an exit action
+ */
+MESSAGE0(CExitTransportMsg);
+
+/**
  * Used to trigger a Get action
  */
 MESSAGE0(CGetMsg);
@@ -326,6 +331,11 @@ MESSAGE0(CInformMsg);
 MESSAGE0(COpenMsg);
 
 /**
+ * Used to trigger a stats action
+ */
+MESSAGE0(CStatsMsg);
+
+/**
  * Used to trigger a steal action
  */
 MESSAGE0(CStealMsg);
@@ -344,11 +354,6 @@ MESSAGE0(CUnlockMsg);
  * Used to trigger a view change action
  */
 MESSAGE0(CViewChangeMsg);
-
-/**
- * Used to trigger an exit action
- */
-MESSAGE0(CExitTransportMsg);
 
 } // End of namespace Shared
 } // End of namespace Ultima

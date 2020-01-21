@@ -43,6 +43,7 @@ public:
 	const char *RACE_NAMES[4];
 	const char *SEX_NAMES[3];
 	const char *CLASS_NAMES[4];
+	const char *STAT_NAMES[10];
 	const char *STATUS_TEXT[4];
 	const char *DIRECTION_NAMES[4];
 	const char *DUNGEON_MOVES[4];
@@ -116,6 +117,9 @@ public:
 	const char *INCORRECT_KEY;
 	const char *DOOR_IS_OPEN;
 	const char *CANT_LEAVE_IT_HERE;
+	const char *INVENTORY;
+	const char *PLAYER_DESC;
+	const char *PRESS_SPACE_TO_CONTINUE;
 
 	const char *GROCERY_NAMES[8];
 	const char *GROCERY_SELL;
