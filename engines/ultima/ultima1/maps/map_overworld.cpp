@@ -22,8 +22,10 @@
 
 #include "ultima/ultima1/maps/map_overworld.h"
 #include "ultima/ultima1/widgets/transport.h"
+#include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -111,6 +113,28 @@ void MapOverworld::shiftViewport(const Point &delta) {
 		topLeft.y += height();
 	else if (topLeft.y >= (int16)height())
 		topLeft.y -= height();
+}
+
+void MapOverworld::inform() {
+	Maps::U1MapTile tile;
+	getTileAt(getPosition(), &tile);
+
+	addInfoMsg("");
+	if (tile._widget) {
+		addInfoMsg(tile._widget->_name);
+	} else if (tile._tileId == OTILE_OCEAN) {
+		addInfoMsg(_game->_res->YOU_ARE_AT_SEA);
+	} else if (tile._tileId == OTILE_WOODS) {
+		addInfoMsg(_game->_res->YOU_ARE_IN_WOODS);
+	} else {
+		addInfoMsg(_game->_res->YOU_ARE_IN_LANDS);
+		addInfoMsg(_game->_res->LAND_NAMES[getLandsNumber()]);
+	}
+}
+
+uint MapOverworld::getLandsNumber() const {
+	Point pt = getPosition();
+	return (pt.y > 77 ? 2 : 0) + (pt.x > 83 ? 1 : 0);
 }
 
 } // End of namespace Maps

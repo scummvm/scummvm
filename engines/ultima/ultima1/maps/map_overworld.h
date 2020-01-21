@@ -29,6 +29,10 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Maps {
 
+enum OverworldTile {
+	OTILE_OCEAN = 0, OTILE_GRASS = 1, OTILE_WOODS = 2
+};
+
 class MapOverworld : public MapBase {
 private:
 	/**
@@ -63,6 +67,16 @@ public:
 	 * Gets a point relative to the current position
 	 */
 	virtual Point getDeltaPosition(const Point &delta) override;
+
+	/**
+	 * Do an inform action
+	 */
+	virtual void inform();
+
+	/**
+	 * Get the lands number the player is currently within
+	 */
+	uint getLandsNumber() const;
 };
 
 } // End of namespace Maps

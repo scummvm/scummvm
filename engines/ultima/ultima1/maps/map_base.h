@@ -57,6 +57,11 @@ public:
 	virtual void getTileAt(const Point &pt, Shared::Maps::MapTile *tile) override;
 
 	/**
+	 * Do an inform action
+	 */
+	virtual void inform() = 0;
+
+	/**
 	 * Do a steal action
 	 */
 	virtual void steal();

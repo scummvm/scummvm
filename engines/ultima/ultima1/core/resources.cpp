@@ -543,6 +543,10 @@ const char *const SRC_DUNGEON_MONSTER_NAMES[25] = {
 	"Wraith", "Lich", "Invisible seeker", "Mind whipper", "Zorn", "Daemon", "Balron"
 };
 
+const char *const SRC_LAND_NAMES[4] = {
+	"of Lord British",  "of the Feudal Lords", "of the Dark Unknown", "of Danger and Despair"
+};
+
 const char *const SRC_BLOCKED = "Blocked!";
 const char *const SRC_ENTER_QUESTION = "Enter?";
 const char *const SRC_ENTERING = "Entering...";
@@ -565,9 +569,14 @@ const char *const SRC_JESTER_SPEECH1 = "Gwino the jester sings:";
 const char *const SRC_JESTER_SPEECH2 = "I've got the key!";
 const char *const SRC_BARD_STOLEN = "Iolo stole something!";
 const char *const SRC_JESTER_STOLEN = "The jester stole something!";
+const char *const SRC_YOU_ARE_AT_SEA = "You are at sea";
+const char *const SRC_YOU_ARE_IN_WOODS = "You are in the woods";
+const char *const SRC_YOU_ARE_IN_LANDS = "You are in the lands";
+const char *const SRC_FIND = "Thou dost find %s";
+const char *const SRC_A_SECRET_DOOR = "a secret door!";
 
 const char *const SRC_ACTION_NAMES[26] = {
-	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, "Inform and search", nullptr,
 	nullptr, nullptr, nullptr, nullptr, nullptr, "Pass", nullptr, nullptr, "Steal", "Transact",
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 };
@@ -591,7 +600,6 @@ const char *const SRC_GROCERY_PACKS2 = "each.  How many dost thou";
 const char *const SRC_GROCERY_PACKS3 = "wish to purchase?";
 const char *const SRC_GROCERY_PACKS_FOOD = "%d packs food";
 const char *const SRC_GROCERY_FIND_PACKS = "Thou dost find %d bags of food!";
-const char *const SRC_FIND = "Thou dost find %s";
 
 /*-------------------------------------------------------------------*/
 
@@ -622,6 +630,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(&SRC_OVERWORLD_MONSTER_DAMAGE[0], &SRC_OVERWORLD_MONSTER_DAMAGE[15], OVERWORLD_MONSTER_DAMAGE);
 	Common::copy(&SRC_OVERWORLD_MONSTER_NAMES[0], &SRC_OVERWORLD_MONSTER_NAMES[15], OVERWORLD_MONSTER_NAMES);
 	Common::copy(&SRC_DUNGEON_MONSTER_NAMES[0], &SRC_DUNGEON_MONSTER_NAMES[25], DUNGEON_MONSTER_NAMES);
+	Common::copy(&SRC_LAND_NAMES[0], &SRC_LAND_NAMES[4], LAND_NAMES);
 
 	BLOCKED = SRC_BLOCKED;
 	ENTER_QUESTION = SRC_ENTER_QUESTION;
@@ -645,6 +654,11 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	JESTER_SPEECH2 = SRC_JESTER_SPEECH2;
 	BARD_STOLEN = SRC_BARD_STOLEN;
 	JESTER_STOLEN = SRC_JESTER_STOLEN;
+	YOU_ARE_AT_SEA = SRC_YOU_ARE_AT_SEA;
+	YOU_ARE_IN_WOODS = SRC_YOU_ARE_IN_WOODS;
+	YOU_ARE_IN_LANDS = SRC_YOU_ARE_IN_LANDS;
+	FIND = SRC_FIND;
+	A_SECRET_DOOR = SRC_A_SECRET_DOOR;
 
 	Common::copy(&SRC_ACTION_NAMES[0], &SRC_ACTION_NAMES[26], ACTION_NAMES);
 	HUH = SRC_HUH;
@@ -662,7 +676,6 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	GROCERY_PACKS3 = SRC_GROCERY_PACKS3;
 	GROCERY_PACKS_FOOD = SRC_GROCERY_PACKS_FOOD;
 	GROCERY_FIND_PACKS = SRC_GROCERY_FIND_PACKS;
-	FIND = SRC_FIND;
 }
 
 void GameResources::synchronize() {
@@ -689,6 +702,7 @@ void GameResources::synchronize() {
 	syncBytes(OVERWORLD_MONSTER_DAMAGE, 15);
 	syncStrings(OVERWORLD_MONSTER_NAMES, 15);
 	syncStrings(DUNGEON_MONSTER_NAMES, 25);
+	syncStrings(LAND_NAMES, 4);
 
 	syncString(BLOCKED);
 	syncString(ENTER_QUESTION);
@@ -710,6 +724,13 @@ void GameResources::synchronize() {
 	syncString(BARD_SPEECH2);
 	syncString(JESTER_SPEECH1);
 	syncString(JESTER_SPEECH2);
+	syncString(BARD_STOLEN);
+	syncString(JESTER_STOLEN);
+	syncString(YOU_ARE_AT_SEA);
+	syncString(YOU_ARE_IN_WOODS);
+	syncString(YOU_ARE_IN_LANDS);
+	syncString(FIND);
+	syncString(A_SECRET_DOOR);
 
 	syncStrings(ACTION_NAMES, 26);
 	syncString(HUH);
@@ -727,7 +748,6 @@ void GameResources::synchronize() {
 	syncString(GROCERY_PACKS3);
 	syncString(GROCERY_PACKS_FOOD);
 	syncString(GROCERY_FIND_PACKS);
-	syncString(FIND);
 }
 
 } // End of namespace Ultima1

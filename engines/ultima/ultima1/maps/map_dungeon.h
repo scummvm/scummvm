@@ -95,6 +95,11 @@ public:
 	 * Spawns a monster within dungeons
 	 */
 	void spawnMonster();
+
+	/**
+	 * Do an inform action
+	 */
+	virtual void inform();
 };
 
 } // End of namespace Maps

@@ -298,6 +298,13 @@ MESSAGE2(CShowMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fa
  */
 MESSAGE2(CTextInputMsg, Common::String, text, "", bool, escaped, false);
 
+/*-------------------------------------------------------------------*/
+
+/**
+ * Used to trigger an inform action
+ */
+MESSAGE0(CInformMsg);
+
 /**
  * Used to trigger a steal action
  */

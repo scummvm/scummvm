@@ -117,6 +117,11 @@ public:
 	virtual Shared::Maps::MapWidget *createWidget(Shared::Maps::MapBase *map, const Common::String &name) override;
 
 	/**
+	 * Do an inform action
+	 */
+	void inform();
+
+	/**
 	 * Do a steal action
 	 */
 	void steal();

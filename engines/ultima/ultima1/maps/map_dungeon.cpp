@@ -27,6 +27,7 @@
 #include "ultima/ultima1/widgets/dungeon_monster.h"
 #include "ultima/ultima1/widgets/dungeon_player.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -205,6 +206,20 @@ void MapDungeon::update() {
 			if (creature)
 				creature->update(true);
 		}
+	}
+}
+
+void MapDungeon::inform() {
+	U1MapTile currTile, destTile;
+	Point pt = getPosition();
+	getTileAt(pt, &currTile);
+	getTileAt(pt + getDirectionDelta(), &destTile);
+
+	if (destTile._isSecretDoor && !currTile._isDoor) {
+		addInfoMsg(Common::String::format("%s %s", _game->_res->FIND, _game->_res->A_SECRET_DOOR));
+		_data[pt.y][pt.x] = DTILE_DOOR;
+	} else {
+		addInfoMsg(Common::String::format("%s %s", _game->_res->FIND, _game->_res->NOTHING));
 	}
 }
 
