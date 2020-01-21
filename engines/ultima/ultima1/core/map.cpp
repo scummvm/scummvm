@@ -354,9 +354,43 @@ void Ultima1Map::setRandomSeed() {
 }
 
 void Ultima1Map::spawnMonster() {
-	// TODO
+	U1MapTile tile;
+
+	// Pick a random position for the monster, trying again up to 500 times
+	// if the chosen position isn't a valid place for the monster
+	for (int tryNum = 0; tryNum < 500; ++tryNum) {
+		Point newPos(getRandomNumber(242) % 9 + 1, getRandomNumber(242) % 9 + 1);
+		getTileAt(newPos, &tile);
+
+		if (tile._tileNum == 0 && tile._widgetNum == -1) {
+			// Found a free spot
+			spawnMonsterAt(newPos);
+			break;
+		}
+	}
 }
 
+void Ultima1Map::spawnMonsterAt(const Point &pt) {
+	// Try up 50 times to randomly pick a monster not already present in the dungeon map
+	for (int tryNum = 0; tryNum < 50; ++tryNum) {
+		DungeonWidgetId monsterId = (DungeonWidgetId)((_dungeonLevel - 1) / 2 * 5 + getRandomNumber(4));
+
+		uint monsIdx;
+		for (monsIdx = 0; monsIdx < _widgets.size(); ++monsIdx) {
+			U1DungeonMonster *mons = dynamic_cast<U1DungeonMonster *>(_widgets[monsIdx].get());
+			if (mons && mons->id() == monsterId)
+				break;
+		}
+
+		if (monsIdx == _widgets.size()) {
+			uint hp = getRandomNumber(1, _dungeonLevel * _dungeonLevel + 1) +
+				(int)monsterId + 10;
+			U1DungeonMonster *monster = new U1DungeonMonster(_game, this, monsterId, hp);
+			addWidget(monster);
+			return;
+		}
+	}
+}
 
 } // End of namespace Ultima1
 } // End of namespace Ultima

@@ -67,6 +67,11 @@ public:
 	 * Draw a monster
 	 */
 	virtual void draw(Shared::DungeonSurface &s, uint distance);
+
+	/**
+	 * Returns the monster's type
+	 */
+	DungeonWidgetId id() const { return _monsterId; }
 };
 
 /**
