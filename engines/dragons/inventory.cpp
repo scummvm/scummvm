@@ -170,8 +170,8 @@ void Inventory::openInventory() {
 	for(int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		Actor *item = _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
 
-		item->x_pos = item->target_x_pos = invXPosTable[i] + 0x10;
-		item->y_pos = item->target_y_pos = invYPosTable[i] + 0xc;
+		item->x_pos = item->_walkDestX = invXPosTable[i] + 0x10;
+		item->y_pos = item->_walkDestY = invYPosTable[i] + 0xc;
 
 		if (inventoryItemTbl[i]) {
 			item->flags = 0; //clear all flags

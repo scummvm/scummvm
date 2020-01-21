@@ -29,6 +29,8 @@
 
 namespace Dragons {
 
+static const int kPathPointsCount = 32;
+
 ActorManager::ActorManager(ActorResourceLoader *actorResourceLoader) : _actorResourceLoader(actorResourceLoader) {
 	for (uint16 i = 0; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
 		_actors.push_back(Actor(i));
@@ -66,7 +68,7 @@ Actor *ActorManager::findFreeActor(int16 resourceId) {
 		Actor *actor = it;
 		if (!(actor->flags & Dragons::ACTOR_FLAG_40)) {
 			actor->resourceID = resourceId;
-			actor->field_7c = 0x100000;
+			actor->_walkSpeed = 0x100000;
 			return actor;
 		}
 	}
@@ -137,9 +139,9 @@ Actor::Actor(uint16 id) : _actorID(id) {
 	priorityLayer = 3;
 	x_pos = 160;
 	y_pos = 110;
-	target_x_pos = 0;
-	target_y_pos = 0;
-	field_7c = 0;
+	_walkDestX = 0;
+	_walkDestY = 0;
+	_walkSpeed = 0;
 	flags = 0;
 	frame_width = 0;
 	frame_height = 0;
@@ -155,8 +157,8 @@ void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 	x_pos = x;
 	y_pos = y;
 	sequenceTimer = 0;
-	target_x_pos = x;
-	target_y_pos = y;
+	_walkDestX = x;
+	_walkDestY = y;
 	scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_sequenceID2 = 0;
 	flags = (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_4);
@@ -258,336 +260,263 @@ static const int32 pathfinderXYOffsetTbl[32] =
 				0x000000fb
 		};
 
+uint32 calcDistance(int32 x1, int32 y1, int32 x2, int32 y2) {
+	return ABS(x2 - x1) * ABS(x2 - x1) + ABS(y2 - y1) * ABS(y2 - y1);
+}
 
-bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, uint16 unkTypeMaybe) {
-	uint8 pathfinderData[32];
-	debug(1, "pathfinding. (%X,%X) -> (%X,%X)", x_pos, y_pos, target_x, target_y);
-	int16 priority = 0;
-	int16 var_90_1 = 0;
-	int16 var88 = 0;
+bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
+	static const int kCosTbl[] = {
+			// cos table
+			256, 251, 236, 212, 181, 142, 97, 49,
+			0, -49, -97, -142, -181, -212, -236, -251,
+			-255, -251, -236, -212, -181, -142, -97, -49,
+			0, 49, 97, 142, 181, 212, 236, 251,
+			11, 0, 0, 0, 0, 0, 0, 0
+	};
+	static const int kAdjustXTbl[] = {
+			1, -1, 0, 0, 1, -1, 1, -1
+	};
+	static const int kAdjustYTbl[] = {
+			0, 0, 1, -1, 1, 1, -1, -1
+	};
 
-	bool isFlag0x10Set = flags & Dragons::ACTOR_FLAG_10;
-	flags &= ~Dragons::ENGINE_FLAG_10;
+	debug("startWalk(%d, %d, %d)", _actorID, destX, destY);
+	bool wasAlreadyWalking = isFlagSet(ACTOR_FLAG_10);
 
-	if (x_pos == target_x && y_pos == target_y) {
-		if (isFlag0x10Set) {
-			pathfindingCleanup();
+	clearFlag(ACTOR_FLAG_10);
+
+	// Check if the actor already is at the destination
+	if (x_pos == destX && y_pos == destY) {
+		if (wasAlreadyWalking) {
+			stopWalk();
 		}
 		return true;
 	}
 
-	int16 newTargetX = target_x;
-	int16 newTargetY = target_y;
+	int xorflagsl = 0;
+	int flag4 = 0;
+	int origDestX = 0, origDestY = 0;
 
-	if (unkTypeMaybe < 2) {
-		priority = getEngine()->_scene->getPriorityAtPosition(Common::Point(target_x, target_y));
-		if (priority < 0) {
-			priority = 1;
-		}
+	int destPriority = 0;
+	if (flags < 2) {
+		destPriority = getEngine()->_scene->getPriorityAtPosition(Common::Point(destX, destY));
+		if (destPriority < 0)
+			destPriority = 1;
 	}
-//	if (((unkTypeMaybe == 0) && (7 < (priority - 1 & 0xffff))) || 	//TODO this is the correct logic I think. need to redo all the pathfinding logic.
-//		((unkTypeMaybe == 1 && (0xf < (priority - 1 & 0xffff))))) {
-	if ((unkTypeMaybe != 0 || priority - 1 < 8) && (unkTypeMaybe != 1 || priority - 1 < 16)) {
-		var_90_1 = (unkTypeMaybe ^ 2) < 1 ? 1 : 0;
 
-		int32 x_related_idx=1;
-		for(; x_related_idx < 320; x_related_idx++) {
-
-			int32 v0_18 = 0;
-			for (int32 s3_1 = 0;s3_1 < 0x20; s3_1++) {
-				int32 v0_19 = s3_1 + 8;
-				if (v0_19 <  0) {
-					v0_19 = s3_1 - 8;
-				}
-				int16 y_offset = (x_related_idx * pathfinderXYOffsetTbl[v0_19 & 0x1f]) / 256;
-				int16 x_offset = (x_related_idx * pathfinderXYOffsetTbl[s3_1 & 0x1f]) / 256;
-				if (target_x + x_offset >= 0 &&
-					target_y + y_offset >= 0) {
-					priority = getEngine()->_scene->getPriorityAtPosition(Common::Point(newTargetX + x_offset, newTargetY + y_offset));
-
-					if ((unkTypeMaybe == 0 && priority - 1 < 8) || (unkTypeMaybe == 1 && priority -1 < 0x10)) {
-						newTargetX += x_offset;
-						newTargetY += y_offset;
-						x_related_idx = -1;
+	if ((flags == 0 && destPriority - 1 >= 8) || (flags == 1 && destPriority - 1 >= 16)) {
+		// Destination point is not walkable so it has to be adjusted
+		// Try to find a walkable destination point by testing the 32 corner points of a circle
+		// in increasing radius steps.
+		bool foundDestPos = false;
+		xorflagsl = 1;
+		origDestX = destX;
+		origDestY = destY;
+		for (int testRadius = 1; testRadius < 320 && !foundDestPos; ++testRadius) {
+			for (int octant = 0; octant < 32; ++octant) {
+				int testDestX = destX + ((testRadius * kCosTbl[octant % 32]) >> 8);
+				int testDestY = destY + ((testRadius * kCosTbl[(octant + 8) % 32]) >> 8);
+				if (testDestX >= 0 && testDestY >= 0) {
+					int testDestPriority = getEngine()->_scene->getPriorityAtPosition(Common::Point(testDestX, testDestY));
+					if ((flags == 0 && testDestPriority - 1 < 8) || (flags == 1 && testDestPriority - 1 < 16)) {
+						destX = testDestX;
+						destY = testDestY;
+						foundDestPos = true;
 						break;
 					}
 				}
 			}
-			if (x_related_idx == -1) {
-				break;
-			}
 		}
-
-		if (x_related_idx == 320) {
-			if (isFlag0x10Set) {
-				pathfindingCleanup();
+		if (!foundDestPos) {
+			if (wasAlreadyWalking) {
+				stopWalk();
 			}
 			return false;
 		}
 	} else {
-		var_90_1 = 1;
+		// TODO Clean up
+		xorflagsl = (flags ^ 2) < 1 ? 1 : 0;
 	}
 
-	if (x_pos == newTargetX && y_pos == newTargetY) {
-		if (isFlag0x10Set) {
-			pathfindingCleanup();
+	// Check if the actor already is at the adjusted destination
+	if (x_pos == destX && y_pos == destY) {
+		if (wasAlreadyWalking) {
+			stopWalk();
 		}
 		return true;
 	}
 
-	int16 numWalkPoints = 0;
+	int tempDestX1 = destX, tempDestY1 = destY;
+	int actorX1 = x_pos, actorY1 = y_pos;
+	bool pathPointProcessed[kPathPointsCount];
 
-	int16 newX = x_pos;
-	int16 newY = y_pos;
+	for (int pointIndex = 0; pointIndex < kPathPointsCount; ++pointIndex) {
+		pathPointProcessed[pointIndex] = false;
+	}
 
-	memset(pathfinderData, 0, 32);
+	_finalWalkDestX = destX;
+	_finalWalkDestY = destY;
 
-	field_76 = newTargetX;
-	field_78 = newTargetY;
-
-	if(!pathfindingUnk(x_pos, y_pos, newTargetX, newTargetY, unkTypeMaybe)) {
-		//  0x8003398c
-		int16 xOffset = -1;
-		//TODO convert to for loops
-		do {
-			int16 yOffset = -1;
-			do {
-				int16 targetXOffset = -1;
-				do {
-					int16 targetYOffset = -1;
-					do {
-						if(pathfindingUnk(newX + xOffset, newY + yOffset, newTargetX + targetXOffset, newTargetY + targetYOffset, unkTypeMaybe | 0x8000)) {
-							targetXOffset = 2;
-							newX += xOffset;
-							newY += yOffset;
-							newTargetX += targetXOffset;
-							newTargetY += targetYOffset;
-							var_90_1 = 0;
-							var88 = 1;
-							x_pos += xOffset;
-							y_pos += yOffset;
-							xOffset = 2;
-							yOffset = 2;
-							targetYOffset = 3;
-						} else {
-							targetYOffset++;
+	if (!canWalkLine(actorX1, actorY1, tempDestX1, tempDestY1, flags)) {
+		// Adjust source/dest positions
+		for (int sxd = -1; sxd <= 1; ++sxd) {
+			for (int syd = -1; syd <= 1; ++syd) {
+				for (int dxd = -1; dxd <= 1; ++dxd) {
+					for (int dyd = -1; dyd <= 1; ++dyd) {
+						if (canWalkLine(actorX1 + sxd, actorY1 + syd, tempDestX1 + dxd, tempDestY1 + dyd, flags | 0x8000)) {
+							sxd = 2;
+							syd = 2;
+							dxd = 2;
+							dyd = 2;
+							actorX1 += sxd;
+							actorY1 += syd;
+							tempDestX1 += dxd;
+							tempDestY1 += dyd;
+							x_pos += sxd;
+							y_pos += syd;
 						}
-					} while(targetYOffset < 2);
-					targetXOffset++;
-				} while(targetXOffset < 2);
-				yOffset++;
-			} while(yOffset < 2);
-			xOffset++;
-		} while(xOffset < 2);
-	}
-
-	if (var88 == 0) { //0x80033af0
-		int16 i;
-		for (i = 0; i < 0x20; i++) {
-			Common::Point point = getEngine()->_scene->getPoint(i);
-			if (point.x != -1) {
-				if (pathfindingUnk(x_pos, x_pos, point.x, point.y, unkTypeMaybe)) {
-					break;
-				}
-			}
-		}
-
-		if (i == 0x20) {
-			// 0x80033b80
-			int16 tempX = newX;
-			int16 tempY = newY;
-			for(int j = 0; j < 0x20; j++) {
-				Common::Point point = getEngine()->_scene->getPoint(j);
-				if (point.x == -1) {
-					continue;
-				}
-				if (pathfindingUnk(newX + 1, tempY, point.x, point.y, unkTypeMaybe)) {
-					newX++;
-					x_pos++;
-					break;
-				} else if (pathfindingUnk(newX - 1, tempY, point.x, point.y, unkTypeMaybe)) {
-					newX--;
-					x_pos--;
-					break;
-				} else if (pathfindingUnk(tempX, newY + 1, point.x, point.y, unkTypeMaybe)) {
-					newY++;
-					y_pos++;
-					break;
-				} else if (pathfindingUnk(tempX, newY - 1, point.x, point.y, unkTypeMaybe)) {
-					newY--;
-					y_pos--;
-					break;
-				} else if (pathfindingUnk(newX + 1, newY + 1, point.x, point.y, unkTypeMaybe)) {
-					newX++;
-					x_pos++;
-					newY++;
-					y_pos++;
-					break;
-				} else if (pathfindingUnk(newX - 1, newY + 1, point.x, point.y, unkTypeMaybe)) {
-					newX--;
-					x_pos--;
-					newY++;
-					y_pos++;
-					break;
-				} else if (pathfindingUnk(newX + 1, newY - 1, point.x, point.y, unkTypeMaybe)) {
-					newX++;
-					x_pos++;
-					newY--;
-					y_pos--;
-					break;
-				} else if (pathfindingUnk(newX - 1, newY - 1, point.x, point.y, unkTypeMaybe)) {
-					newX--;
-					x_pos--;
-					newY--;
-					y_pos--;
-					break;
-				}
-			}
-		}
-
-		if (var88 == 0) {
-			// 0x80033e48
-			for (i = 0; i < 0x20; i++) {
-				Common::Point point = getEngine()->_scene->getPoint(i);
-				if (point.x != -1) {
-					if (pathfindingUnk(x_pos, x_pos, point.x, point.y, unkTypeMaybe)) {
-						break;
-					}
-				}
-			}
-
-			if (i == 0x20) {
-				// 0x80033ed0
-				for(int j = 0; j < 0x20; j++) {
-					Common::Point point = getEngine()->_scene->getPoint(j);
-					if (point.x == -1) {
-						continue;
-					}
-					if (pathfindingUnk(target_x + 1, target_y, point.x, point.y, unkTypeMaybe)) {
-						target_x++;
-						break;
-					} else if (pathfindingUnk(target_x - 1, target_y, point.x, point.y, unkTypeMaybe)) {
-						target_x--;
-						break;
-					} else if (pathfindingUnk(target_x, target_y + 1, point.x, point.y, unkTypeMaybe)) {
-						target_y++;
-						break;
-					} else if (pathfindingUnk(target_x, target_y - 1, point.x, point.y, unkTypeMaybe)) {
-						target_y--;
-						break;
-					} else if (pathfindingUnk(target_x + 1, target_y + 1, point.x, point.y, unkTypeMaybe)) {
-						target_x++;
-						target_y++;
-						break;
-					} else if (pathfindingUnk(target_x - 1, target_y + 1, point.x, point.y, unkTypeMaybe)) {
-						target_x--;
-						target_y++;
-						break;
-					} else if (pathfindingUnk(target_x + 1, target_y - 1, point.x, point.y, unkTypeMaybe)) {
-						target_x++;
-						target_y--;
-						break;
-					} else if (pathfindingUnk(target_x - 1, target_y - 1, point.x, point.y, unkTypeMaybe)) {
-						target_x--;
-						target_y--;
-						break;
 					}
 				}
 			}
 		}
 	}
 
-	for (; !pathfindingUnk(newX, newY, newTargetX, newTargetY, unkTypeMaybe); ) {
-		int16 pointId = pathfindingFindClosestPoint(newX, newY, newTargetX, newTargetY, unkTypeMaybe, pathfinderData);
-		if (pointId == -1) {
-			if (isFlag0x10Set) {
-				pathfindingCleanup();
+	if (flag4 == 0) {
+		// More adjusting of the source position
+		bool needAdjustSourcePoint = true;
+		for (int pointIndex = 0; pointIndex < kPathPointsCount; ++pointIndex) {
+			const Common::Point pt = getEngine()->_scene->getPoint(pointIndex);
+			if (pt.x != -1 && canWalkLine(actorX1, actorY1, pt.x, pt.y, flags)) {
+				needAdjustSourcePoint = false;
+				break;
+			}
+		}
+		if (needAdjustSourcePoint) {
+			for (int pointIndex = 0; needAdjustSourcePoint && pointIndex < kPathPointsCount; ++pointIndex) {
+				const Common::Point pt = getEngine()->_scene->getPoint(pointIndex);
+				for (int deltaIndex = 0; needAdjustSourcePoint && deltaIndex < 8; ++deltaIndex) {
+					const int deltaX = kAdjustXTbl[deltaIndex];
+					const int deltaY = kAdjustYTbl[deltaIndex];
+					if (canWalkLine(actorX1 + deltaX, actorY1 + deltaY, pt.x, pt.y, flags)) {
+						actorX1 += deltaX;
+						actorY1 += deltaY;
+						x_pos += deltaX;
+						y_pos += deltaY;
+						needAdjustSourcePoint = false;
+					}
+				}
+			}
+		}
+		// More adjusting of the destination position
+		bool needAdjustDestPoint = true;
+		for (int pointIndex = 0; pointIndex < kPathPointsCount; ++pointIndex) {
+			const Common::Point pt = getEngine()->_scene->getPoint(pointIndex);
+			if (pt.x != -1 && canWalkLine(destX, destY, pt.x, pt.y, flags)) {
+				needAdjustDestPoint = false;
+				break;
+			}
+		}
+		if (needAdjustDestPoint) {
+			for (int pointIndex = 0; needAdjustDestPoint && pointIndex < kPathPointsCount; ++pointIndex) {
+				const Common::Point pt = getEngine()->_scene->getPoint(pointIndex);
+				for (int deltaIndex = 0; needAdjustDestPoint && deltaIndex < 8; ++deltaIndex) {
+					const int deltaX = kAdjustXTbl[deltaIndex];
+					const int deltaY = kAdjustYTbl[deltaIndex];
+					if (canWalkLine(destX + deltaX, destY + deltaY, pt.x, pt.y, flags)) {
+						destX += deltaX;
+						destY += deltaY;
+						needAdjustDestPoint = false;
+					}
+				}
+			}
+		}
+	}
+
+	// Build the actual path. The path is constructed backwards from the destination to the source.
+	int pathPointsIndex = 0;
+	while (!canWalkLine(actorX1, actorY1, tempDestX1, tempDestY1, flags) && pathPointsIndex < kPathPointsCount) {
+		int foundPointIndex = pathfindingFindClosestPoint(actorX1, actorY1, tempDestX1, tempDestY1, flags, pathPointProcessed);
+		if (foundPointIndex < 0) {
+			if (wasAlreadyWalking) {
+				stopWalk();
 			}
 			return false;
 		}
-		pathfinderData[pointId] = 1;
-		Common::Point point = getEngine()->_scene->getPoint(pointId);
-		newTargetX = point.x;
-		newTargetY = point.y;
-		if (numWalkPoints < 2) {
-			if (numWalkPoints > 0 && pathfindingUnk(point.x, point.y, target_x, target_y, unkTypeMaybe)) {
-				numWalkPoints--;
+		pathPointProcessed[foundPointIndex] = true;
+		const Common::Point pt = getEngine()->_scene->getPoint(foundPointIndex);
+		tempDestX1 = pt.x;
+		tempDestY1 = pt.y;
+		if (pathPointsIndex >= 2) {
+			const Common::Point prevPt = getEngine()->_scene->getPoint(walkPointsTbl[pathPointsIndex - 2]);
+			if (canWalkLine(pt.x, pt.y, prevPt.x, prevPt.y, flags)) {
+				--pathPointsIndex;
 			}
-		} else {
-			Common::Point targetPoint = getEngine()->_scene->getPoint(walkPointsTbl[numWalkPoints - 2]);
-			if (pathfindingUnk(point.x, point.y, targetPoint.x, targetPoint.y, unkTypeMaybe)) {
-				numWalkPoints--;
+		} else if (pathPointsIndex == 1) {
+			if (canWalkLine(pt.x, pt.y, destX, destY, flags)) {
+				--pathPointsIndex;
 			}
 		}
-		walkPointsTbl[numWalkPoints] = (uint16)pointId;
-		numWalkPoints++;
+		walkPointsTbl[pathPointsIndex] = foundPointIndex;
+		++pathPointsIndex;
 	}
 
-		//0x8003437c
-		int16 origDistance = abs(target_x - x_pos) * abs(target_x - x_pos) + abs(target_y - y_pos) * abs(target_y - y_pos);
-		int16 newTargetDiffDistance = abs(newTargetX - target_x) * abs(newTargetX - target_x) + abs(newTargetY - target_y) * abs(newTargetY - target_y);
-
-		if (var_90_1 == 0
-		|| origDistance >= 625
-		|| ((target_x != x_pos || target_y != y_pos) && origDistance >= newTargetDiffDistance)) {
-			//0x80034568
-			debug(1, "0x80034568");
-			walkPointsIndex = numWalkPoints - 1;
-
-			if (numWalkPoints == 0) {
-				target_x_pos = newTargetX;
-				target_y_pos = newTargetY;
-				field_76 = -1;
-				field_78 = -1;
-			} else {
-				uint16 pointId = walkPointsTbl[walkPointsIndex];
-				Common::Point point = getEngine()->_scene->getPoint(pointId);
-				target_x_pos = point.x;
-				target_y_pos = point.y;
-			}
-			int16 newSeqId = pathfindingUpdateTarget(target_x, target_y);
-			if (newSeqId != -1 && !(flags & ACTOR_FLAG_800)) {
-				_sequenceID2 = newSeqId;
-			}
-			if (_sequenceID != _sequenceID2 + 8 && !(flags & ACTOR_FLAG_800)) {
-				updateSequence(_sequenceID2 + 8);
-			}
-			setFlag(ACTOR_FLAG_10);
-			return true;
-		} else {
-			//0x80034470
-			int16 diffX = target_x - newX;
-			int16 diffY = newY - target_y;
-			int16 newSeqId = 0;
-			if (diffX == 0) {
-				newSeqId = diffY <= 0 ? 2 : 6;
-			} else {
-				int16 div = diffY / diffX;
-				if (div == 0) {
-					newSeqId = diffX < 1 ? 4 : 0;
-				} else if (div <= 0) {
-					newSeqId = diffX <= 0 ? 5 : 1;
+	// Direction/post-processing
+	if (xorflagsl != 0) {
+		uint destDistance = calcDistance(destX, destY, tempDestX1, tempDestY1);
+		uint sourceDistance = calcDistance(actorX1, actorY1, destX, destY);
+		if (sourceDistance < 625 && ((actorX1 == destX && actorY1 == destY) || (sourceDistance < destDistance))) {
+			int newDirection;
+			int dx = origDestX - actorX1;
+			int dy = origDestY - actorY1;
+			if (dx != 0) {
+				int slope = dy / dx;
+				if (slope == 0) {
+					newDirection = (dx < 1) ? 4 : 0;
+				} else if (slope > 0) {
+					newDirection = (dx <= 0) ? 3 : 7;
 				} else {
-					newSeqId = diffX <= 0 ? 3 : 7;
+					newDirection = (dx <= 0) ? 5 : 1;
 				}
+			} else {
+				newDirection = (dy <= 0)  ? 2 : 6;
 			}
-			_sequenceID2 = newSeqId;
-			if (isFlag0x10Set) {
-				pathfindingCleanup();
+			_sequenceID2 = newDirection;
+			if (wasAlreadyWalking) {
+				stopWalk();
 			}
+			return false;
 		}
+	}
 
-
-	return false;
+	walkPointsIndex = pathPointsIndex - 1;
+	if (pathPointsIndex == 0) {
+		_walkDestX = tempDestX1;
+		_walkDestY = tempDestY1;
+		_finalWalkDestX = -1;
+		_finalWalkDestY = -1;
+	} else {
+		const Common::Point pt = getEngine()->_scene->getPoint(walkPointsTbl[walkPointsIndex]);
+		_walkDestX = pt.x;
+		_walkDestY = pt.y;
+	}
+	int direction = startMoveToPoint(_walkDestX, _walkDestY);
+	if (direction != -1 && !isFlagSet(ACTOR_FLAG_800)) {
+		_sequenceID2 = direction;
+	}
+	if (_sequenceID != _sequenceID2 + 8 && !isFlagSet(ACTOR_FLAG_800)) {
+		updateSequence(_sequenceID2 + 8);
+	}
+	setFlag(ACTOR_FLAG_10);
+	return true;
 }
 
-void Actor::pathfindingCleanup() {
+void Actor::stopWalk() {
 	clearFlag(Dragons::ACTOR_FLAG_10);
 	walkPointsIndex = 0;
-	target_x_pos = x_pos;
-	target_y_pos = y_pos;
-	field_76 = -1;
-	field_78 = -1;
+	_walkDestX = x_pos;
+	_walkDestY = y_pos;
+	_finalWalkDestX = -1;
+	_finalWalkDestY = -1;
 	setFlag(Dragons::ACTOR_FLAG_4);
 
 	if (flags & Dragons::ACTOR_FLAG_200) {
@@ -638,16 +567,16 @@ bool Actor::isFlagSet(uint32 flag) {
 	return (flags & flag) == flag;
 }
 
-uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, uint16 unkType) {
-	debug(1, "pathfindingUnk. (%X,%X) -> (%X,%X) %d", x_pos, y_pos, target_x, target_y, unkType);
+uint16 Actor::canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, uint16 flags) {
+	debug(1, "canWalkLine. (%X,%X) -> (%X,%X) %d", x_pos, y_pos, target_x, target_y, flags);
 
-	if (unkType == 2) {
+	if (flags == 2) {
 		return 1;
 	}
 	uint16 width = getEngine()->_scene->getStageWidth();
 	uint16 height = getEngine()->_scene->getStageHeight();
 
-	if (unkType & 0x8000) {
+	if (flags & 0x8000) {
 		if (actor_x < 0
 			|| width - 1 < actor_x
 			|| actor_y < 0
@@ -666,31 +595,31 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 		return 1;
 	}
 
-	int16 diffX = target_x - actor_x;
-	int16 diffY = target_y - actor_y;
+	int16 deltaX = target_x - actor_x;
+	int16 deltaY = target_y - actor_y;
 
 	if (target_y != actor_y && target_x == actor_x) {
-		y_increment = diffY > 0 ? 1 : -1;
+		y_increment = deltaY > 0 ? 0x10000 : -0x10000;
 	} else {
 		if (target_y == actor_y) {
 			if (target_x == actor_x) {
 				x_increment = 0;
-				y_increment = diffY > 0 ? 1 : -1;
+				y_increment = deltaY > 0 ? 0x10000 : -0x10000;
 			} else {
-				x_increment = diffX > 0 ? 1 : -1;
+				x_increment = deltaX > 0 ? 0x10000 : -0x10000;
 				y_increment = 0;
 			}
 		} else {
-			if (ABS(diffY) < ABS(diffX)) {
-				x_increment = diffX > 0 ? 1 : -1;
-				y_increment = ((diffY) /*<< 0x10*/) / (diffX);
-				if ((diffY > 0 && y_increment < 0) || (diffY < 0 && y_increment > 0)) {
+			if (ABS(deltaY) < ABS(deltaX)) {
+				x_increment = deltaX > 0 ? 0x10000 : -0x10000;
+				y_increment = ((deltaY) << 0x10) / (deltaX);
+				if ((deltaY > 0 && y_increment < 0) || (deltaY < 0 && y_increment > 0)) {
 					y_increment = -y_increment;
 				}
 			} else {
-				y_increment = diffY > 0 ? 1 : -1;
-				x_increment = ((diffX) /*<< 0x10*/) / (diffY);
-				if ((diffX > 0 && x_increment < 0) || (diffX < 0 && x_increment > 0)) {
+				y_increment = deltaY > 0 ? 0x10000 : -0x10000;
+				x_increment = ((deltaX) << 0x10) / (deltaY);
+				if ((deltaX > 0 && x_increment < 0) || (deltaX < 0 && x_increment > 0)) {
 					x_increment = -x_increment;
 				}
 			}
@@ -708,11 +637,11 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 		if ( priority < 0) {
 			priority = 1;
 		}
-		if (!(unkType & 0x7fff) && (priority == 0 || priority >= 8)) {
+		if (!(flags & 0x7fff) && (priority == 0 || priority >= 8)) {
 			return 0;
 		}
 
-		if ((unkType & 0x7fff) == 1) {
+		if ((flags & 0x7fff) == 1) {
 			if (priority == 0 || priority >= 0x10) {
 				return 0;
 			}
@@ -722,103 +651,105 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 	}
 }
 
-	int16 Actor::pathfindingUpdateTarget(int16 newTargetX, int16 newTargetY) {
-		field_24_x = x_pos << 0x10;
-		field_28_y = y_pos << 0x10;
+int Actor::startMoveToPoint(int destX, int destY) {
+	int direction = 0;
+	int quadrant = 0;
+	int deltaX = destX - x_pos;
+	int deltaY = (destY - y_pos) * 2;
+	int absDeltaX = ABS(deltaX);
+	int absDeltaY = ABS(deltaY);
+	// debug("from: (%d, %d); to: (%d, %d); d: (%d, %d); actor._walkSpeed: %08X", x_pos, actor._y, destX, destY, deltaX, deltaY, actor._walkSpeed);
 
-		int16 diffX = newTargetX - x_pos;
-		int16 diffY = newTargetY - y_pos;
-		int16 absDiffX = abs(diffX);
-		int16 absDiffY = abs(diffY) * 2;
+	_xShl16 = x_pos << 16;
+	_yShl16 = y_pos << 16;
 
-		int16 t2 = 0;
-		int16 newSequenceId = -1;
+	// Walk slope is a fixed point value, where the upper 16 bits are the integral part,
+	// and the lower 16 bits the fractional part. 0x10000 is 1.0.
 
-		if (diffX == 0) {
-			if (diffY == 0) {
-				return -1;
-			}
-			field_2c = 0;
-			field_30 = 0x10000;
+	if (deltaX != 0 && deltaY != 0) {
+		// Walk along both X and Y axis
+		if (absDeltaX < absDeltaY) {
+			_walkSlopeX = (absDeltaX << 16) / absDeltaY;
+			_walkSlopeY = 0x10000;
 		} else {
-			if (diffY == 0) {
-				field_2c = 0x10000;
-				field_30 = 0;
-			} else {
-				if (absDiffX >= absDiffY) {
-					field_2c = 0x10000;
-					field_30 = (absDiffY << 0x10) / absDiffX;
-				} else {
-					field_2c = (absDiffX << 0x10) / absDiffY;
-					field_30 = 0x10000;
-				}
-			}
+			_walkSlopeX = 0x10000;
+			_walkSlopeY = (absDeltaY << 16) / absDeltaX;
 		}
-		field_30 = ((field_30 >> 5) * field_7c) >> 0xb;
-		field_2c = ((field_2c >> 5) * field_7c) >> 0xb;
-
-		if (diffX < 0) {
-			field_2c = -field_2c;
-			t2 = 2;
-		}
-
-		if (diffY < 0) {
-			field_30 = -field_30;
-			t2++;
-		}
-
-		switch (t2) {
-			case 0 :
-				newSequenceId = absDiffX < (absDiffY * 2) ? 2 : 0;
-				break;
-			case 1 :
-				newSequenceId =  absDiffX < (absDiffY * 2) ? 0 : 6;
-				break;
-			case 2 :
-				newSequenceId = absDiffX < (absDiffY * 2) ? 2 : 4;
-				break;
-			case 3 :
-				newSequenceId = absDiffX < (absDiffY * 2) ? 6 : 4;
-				break;
-			default :
-				break;
-		}
-
-		field_30 = field_30 / 2;
-
-		if (getEngine()->_dragonINIResource->isFlicker(_actorID)) {
-			DragonINI *ini = getEngine()->_dragonINIResource->getFlickerRecord();
-			ini->actor->field_2c = (ini->actor->field_2c * 3 + ((ini->actor->field_2c * 3) >> 0x1f)) >> 1;
-			ini->actor->field_30 = (ini->actor->field_30 * 3 + ((ini->actor->field_30 * 3) >> 0x1f)) >> 1;
-		}
-
-		target_x_pos = newTargetX;
-		target_y_pos = newTargetY;
-
-		return newSequenceId;
+	} else if (deltaX != 0) {
+		// Walk along X only
+		_walkSlopeX = 0x10000;
+		_walkSlopeY = 0;
+	} else if (deltaY != 0) {
+		// Walk along Y only
+		_walkSlopeX = 0;
+		_walkSlopeY = 0x10000;
+	} else {
+		// Already at dest
+		return -1;
 	}
+
+	_walkSlopeX = (_walkSlopeX / 32) * (_walkSpeed / 0x800);
+	_walkSlopeY = (_walkSlopeY / 32) * (_walkSpeed / 0x800);
+
+	if (deltaX < 0) {
+		_walkSlopeX = -_walkSlopeX;
+		quadrant += 2;
+	}
+
+	if (deltaY < 0) {
+		_walkSlopeY = -_walkSlopeY;
+		quadrant += 1;
+	}
+
+	switch (quadrant) {
+		case 0:
+			direction = (absDeltaX < absDeltaY) ? 2 : 0;
+			break;
+		case 1:
+			direction = (absDeltaX < absDeltaY) ? 6 : 0;
+			break;
+		case 2:
+			direction = (absDeltaX < absDeltaY) ? 2 : 4;
+			break;
+		case 3:
+			direction = (absDeltaX < absDeltaY) ? 6 : 4;
+			break;
+	}
+
+	_walkSlopeY /= 2;
+	_walkDestX = destX;
+	_walkDestY = destY;
+
+	if (getEngine()->_dragonINIResource->isFlicker(_actorID)) {
+		// Adjust walk slope for the main actor
+		_walkSlopeX = _walkSlopeX * 3 / 2;
+		_walkSlopeY = _walkSlopeY * 3 / 2;
+	}
+
+	return direction;
+}
 
 	void Actor::walkPath() {
 		if (isFlagClear(Dragons::ACTOR_FLAG_400) && isFlagSet(Dragons::ACTOR_FLAG_40) && isFlagSet(Dragons::ACTOR_FLAG_10)) {
-			field_24_x += (((scale * field_2c) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
-			field_28_y += (((scale * field_30) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
+			_xShl16 += (((scale * _walkSlopeX) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
+			_yShl16 += (((scale * _walkSlopeY) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
 
-			if ( (field_2c >= 0 && target_x_pos < (field_24_x >> 0x10))
-			|| (field_2c < 0 && (field_24_x >> 0x10) < target_x_pos)) {
-				field_24_x = target_x_pos << 0x10;
+			if ( (_walkSlopeX >= 0 && _walkDestX < (_xShl16 >> 0x10))
+			|| (_walkSlopeX < 0 && (_xShl16 >> 0x10) < _walkDestX)) {
+				_xShl16 = _walkDestX << 0x10;
 			}
 
-			if ( (field_30 >= 0 && target_y_pos < (field_28_y >> 0x10))
-				 || (field_30 < 0 && (field_28_y >> 0x10) < target_y_pos)) {
-				field_28_y = target_y_pos << 0x10;
+			if ( (_walkSlopeY >= 0 && _walkDestY < (_yShl16 >> 0x10))
+				 || (_walkSlopeY < 0 && (_yShl16 >> 0x10) < _walkDestY)) {
+				_yShl16 = _walkDestY << 0x10;
 			}
 
-			x_pos = field_24_x >> 0x10;
-			y_pos = field_28_y >> 0x10;
+			x_pos = _xShl16 >> 0x10;
+			y_pos = _yShl16 >> 0x10;
 
-			if (x_pos == target_x_pos && y_pos == target_y_pos) {
+			if (x_pos == _walkDestX && y_pos == _walkDestY) {
 				if (walkPointsIndex <= 0) {
-					if (field_76 < 0) {
+					if (_finalWalkDestX < 0) {
 						clearFlag(ACTOR_FLAG_10);
 						if (isFlagClear(ACTOR_FLAG_200)) {
 							clearFlag(ACTOR_FLAG_800);
@@ -827,24 +758,24 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 						clearFlag(ACTOR_FLAG_1);
 						return;
 					} else {
-						target_x_pos = field_76;
-						target_y_pos = field_78;
-						field_76 = -1;
-						field_78 = -1;
+						_walkDestX = _finalWalkDestX;
+						_walkDestY = _finalWalkDestY;
+						_finalWalkDestX = -1;
+						_finalWalkDestY = -1;
 					}
 				} else {
 					walkPointsIndex--;
 					Common::Point point = getEngine()->_scene->getPoint(walkPointsTbl[walkPointsIndex]);
-					target_x_pos = point.x;
-					target_y_pos = point.y;
+					_walkDestX = point.x;
+					_walkDestY = point.y;
 				}
 				// 0x8001bcc8
-				if(pathfindingUpdateTarget(target_x_pos, target_y_pos) == -1) {
-					_sequenceID2 = -1;
-				} else {
-					if (_sequenceID != _sequenceID2 + 8 && !(flags & ACTOR_FLAG_800)) {
-						updateSequence(_sequenceID2 + 8);
-					}
+				int direction = startMoveToPoint(_walkDestX, _walkDestY);
+				if(direction != -1 && !isFlagSet(ACTOR_FLAG_800)) {
+					_sequenceID2 = direction;
+				}
+				if (_sequenceID != _sequenceID2 + 8 && _sequenceID2 != -1 && !(flags & ACTOR_FLAG_800)) {
+					updateSequence(_sequenceID2 + 8);
 				}
 				setFlag(ACTOR_FLAG_10);
 			}
@@ -853,14 +784,14 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 
 	// 0x80034930
 	int16 Actor::pathfindingFindClosestPoint(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y,
-											 int16 unkType, uint8 *pointsInUseTbl) {
+											 int16 unkType, bool *pointsInUseTbl) {
 		int16 pointId = -1;
 		uint32 minDist = 0xffffffff;
 
-		for (int i = 0; i < 0x20; i++) {
+		for (int i = 0; i < kPathPointsCount; i++) {
 			Common::Point point = getEngine()->_scene->getPoint(i);
-			if (point.x != -1 && pointsInUseTbl[i] == 0) {
-				if (pathfindingUnk(point.x, point.y, target_x, target_y, unkType)) {
+			if (point.x != -1 && !pointsInUseTbl[i]) {
+				if (canWalkLine(point.x, point.y, target_x, target_y, unkType)) {
 					uint32 dist = abs(point.x - actor_x) * abs(point.x - actor_x) + abs(point.y - actor_y) * abs(point.y - actor_y);
 					if ( dist < minDist) {
 						minDist = dist;

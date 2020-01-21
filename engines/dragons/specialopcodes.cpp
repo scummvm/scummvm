@@ -352,8 +352,8 @@ void SpecialOpcodes::spcWalkOnStilts() {
 	Actor *actor = _vm->_dragonINIResource->getRecord(0x2a0)->actor;
 	Actor *actor1 = _vm->_dragonINIResource->getRecord(0x2a9)->actor;
 
-	actor->field_2c = actor->field_2c / 3;
-	actor->field_30 = actor->field_30 / 3;
+	actor->_walkSlopeX = actor->_walkSlopeX / 3;
+	actor->_walkSlopeY = actor->_walkSlopeY / 3;
 	bVar2 = false;
 	while (actor->isFlagSet(ACTOR_FLAG_10)) {
 		//pvVar3 = actor->frame_pointer_maybe;

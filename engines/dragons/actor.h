@@ -102,18 +102,18 @@ public:
 	uint16 flags;
 	int16 x_pos;
 	int16 y_pos;
-	int16 target_x_pos;
-	int16 target_y_pos;
-	int32 field_24_x;
-	int32 field_28_y;
-	int32 field_2c;
-	int32 field_30;
+	int16 _walkDestX;
+	int16 _walkDestY;
+	int32 _xShl16;
+	int32 _yShl16;
+	int32 _walkSlopeX;
+	int32 _walkSlopeY;
 	uint16 walkPointsTbl[32];
 	int16 walkPointsIndex;
-	int16 field_76;
-	int16 field_78;
+	int16 _finalWalkDestX;
+	int16 _finalWalkDestY;
 	uint16 field_7a;
-	int32 field_7c;
+	int32 _walkSpeed;
 	uint16 field_80;
 	uint16 frame_vram_x;
 	uint16 frame_vram_y;
@@ -131,7 +131,7 @@ public:
 	void loadFrame(uint16 frameOffset);
 	void freeFrame();
 	void reset_maybe();
-	bool pathfinding_maybe(int16 target_x, int16 target_y, uint16 isNotFlicker);
+	bool startWalk(int16 destX, int16 destY, uint16 flags);
 	void walkPath();
 	void waitUntilFlag4IsSet();
 	void waitUntilFlag8IsSet();
@@ -149,11 +149,11 @@ public:
 
 	byte *getPalette();
 private:
-	void pathfindingCleanup();
-	uint16 pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, uint16 unkType);
-	int16 pathfindingUpdateTarget(int16 newTargetX, int16 newTargetY);
+	void stopWalk();
+	uint16 canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, uint16 flags);
 	int16 pathfindingFindClosestPoint(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, int16 unkType,
-									  uint8 *pointsInUseTbl);
+									  bool *pointsInUseTbl);
+	int startMoveToPoint(int destX, int destY);
 };
 
 } // End of namespace Dragons

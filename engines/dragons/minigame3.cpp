@@ -242,7 +242,7 @@ void Minigame3::run() {
 	handActorId->setFlag(ACTOR_FLAG_4000);
 	handActorId->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	handActorId->priorityLayer = 0;
-	handActorId->field_7c = 0x40000;
+	handActorId->_walkSpeed = 0x40000;
 	i = 0;
 	while ((int16)i < 2) {
 		tearBlinkActorTbl[(int16)i] = _vm->_actorManager->loadActor(0x34,(uint)i,0,0);
@@ -730,7 +730,7 @@ void Minigame3::run() {
 			bVar1 = true;
 		}
 		if (bVar1) {
-			handActorId->pathfinding_maybe((int)handPositionsTbl[local_224].x, (int)handPositionsTbl[local_224].y, 2);
+			handActorId->startWalk((int)handPositionsTbl[local_224].x, (int)handPositionsTbl[local_224].y, 2);
 			bVar1 = false;
 		}
 	}
