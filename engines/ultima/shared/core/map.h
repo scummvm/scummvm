@@ -173,14 +173,14 @@ public:
 		Point _size;						// X, Y size of the map
 		Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile
 		Common::String _name;				// Name of map, if applicable
-		MapWidget *_currentTransport;		// Current means of transport, even if on foot
+		MapWidget *_playerWidget;		// Current means of transport, even if on foot
 		Common::Array<MapWidgetPtr> _widgets;	// Party, monsteres, transports, etc.
 		Common::Array<MapCellsRow> _data;	// Data for the map
 	public:
 		/**
 		 * Constructor
 		 */
-		MapBase(Game *game, Map *map) : _game(game), _map(map), _currentTransport(nullptr), _mapId(0), _mapIndex(0),
+		MapBase(Game *game, Map *map) : _game(game), _map(map), _playerWidget(nullptr), _mapId(0), _mapIndex(0),
 			_mapStyle(0) {}
 
 		/**
@@ -444,11 +444,11 @@ public:
 	}
 
 	/**
-	 * Returns the currently active transport on the map
+	 * Returns the currently active widget that the player is controlling
 	 */
-	MapWidget *getCurrentTransport() const {
+	MapWidget *getPlayerWidget() const {
 		assert(_mapArea);
-		return _mapArea->_currentTransport;
+		return _mapArea->_playerWidget;
 	}
 
 	/**

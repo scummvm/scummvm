@@ -38,6 +38,7 @@
 #include "ultima/ultima1/widgets/overworld_monster.h"
 #include "ultima/ultima1/widgets/princess.h"
 #include "ultima/ultima1/widgets/transport.h"
+#include "ultima/ultima1/widgets/urban_player.h"
 #include "ultima/ultima1/widgets/wench.h"
 #include "ultima/shared/core/file.h"
 #include "ultima/shared/early/ultima_early.h"
@@ -217,6 +218,7 @@ Shared::MapWidget *Ultima1Map::createWidget(Shared::Map::MapBase *map, const Com
 	REGISTER_WIDGET(OverworldMonster);
 	REGISTER_WIDGET(Princess);
 	REGISTER_WIDGET(TransportOnFoot);
+	REGISTER_WIDGET(UrbanPlayer);
 	REGISTER_WIDGET(Wench);
 
 	error("Unknown widget type '%s'", name.c_str());

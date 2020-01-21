@@ -42,30 +42,7 @@ Map::Ultima1Map::MapBase *Transport::getMap() const {
 /*-------------------------------------------------------------------*/
 
 uint TransportOnFoot::getTileNum() const {
-	Map::Ultima1Map::MapBase *map = getMap();
-	return dynamic_cast<Map::MapOverworld *>(map) ? 8 : 18;
-}
-
-void TransportOnFoot::moveTo(const Point &destPos, Shared::Direction dir) {
-	Transport::moveTo(destPos, dir);
-	Shared::Map *map = getGame()->getMap();
-
-	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)map->width() || destPos.y >= (int)map->height()) {
-		// Handling for leaving locations by walking off the edge of the map
-		if (isPrincessSaved())
-			princessSaved();
-
-		// Load the overworld map
-		map->load(Map::MAP_OVERWORLD);
-	}
-}
-
-bool TransportOnFoot::isPrincessSaved() const {
-	return false;
-}
-
-void TransportOnFoot::princessSaved() {
-	// TODO
+	return 8;
 }
 
 } // End of namespace Widgets

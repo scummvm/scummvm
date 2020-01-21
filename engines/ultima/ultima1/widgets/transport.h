@@ -56,16 +56,6 @@ public:
 };
 
 class TransportOnFoot : public Transport {
-private:
-	/**
-	 * Checks for whether a princess has been saved from a castle being left
-	 */
-	bool isPrincessSaved() const;
-
-	/**
-	 * Called for a princess being saved
-	 */
-	void princessSaved();
 public:
 	DECLARE_WIDGET(TransportOnFoot)
 
@@ -83,14 +73,6 @@ public:
 	 * Get the tile for the transport method
 	 */
 	virtual uint getTileNum() const override;
-
-	/**
-	 * Moves to a given position
-	 * @param destPos		Specified new position
-	 * @param dir			Optional explicit direction to set. If not specified,
-	 *		the direction will be set relative to the position moved from
-	 */
-	virtual void moveTo(const Point &destPos, Shared::Direction dir = Shared::DIR_NONE) override;
 };
 
 } // End of namespace Widgets

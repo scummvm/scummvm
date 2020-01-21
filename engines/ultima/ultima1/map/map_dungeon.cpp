@@ -38,7 +38,7 @@ void MapDungeon::load(Shared::MapId mapId) {
 	_dungeonLevel = 1;
 
 	changeLevel(0);
-	_currentTransport->moveTo(Point(1, 1), Shared::DIR_SOUTH);
+	_playerWidget->moveTo(Point(1, 1), Shared::DIR_SOUTH);
 }
 
 bool MapDungeon::changeLevel(int delta) {
@@ -54,8 +54,8 @@ bool MapDungeon::changeLevel(int delta) {
 
 	if (_widgets.empty()) {
 		// Set up widget for the player
-		_currentTransport = new Widgets::DungeonPlayer(_game, this);
-		addWidget(_currentTransport);
+		_playerWidget = new Widgets::DungeonPlayer(_game, this);
+		addWidget(_playerWidget);
 	} else {
 		_widgets.resize(1);
 	}

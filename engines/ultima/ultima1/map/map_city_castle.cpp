@@ -21,9 +21,9 @@
  */
 
 #include "ultima/ultima1/map/map_city_castle.h"
-#include "ultima/ultima1/widgets/transport.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/widgets/urban_player.h"
 #include "ultima/ultima1/widgets/bard.h"
 #include "ultima/ultima1/widgets/guard.h"
 #include "ultima/ultima1/widgets/king.h"
@@ -50,8 +50,8 @@ void MapCityCastle::clear() {
 
 void MapCityCastle::loadWidgets() {
 	// Set up widget for the player
-	_currentTransport = new Widgets::TransportOnFoot(_game, this);
-	addWidget(_currentTransport);
+	_playerWidget = new Widgets::UrbanPlayer(_game, this);
+	addWidget(_playerWidget);
 
 	for (int idx = 0; idx < 15; ++idx) {
 		const int *lp = _game->_res->LOCATION_PEOPLE[_mapStyle * 15 + idx];
@@ -92,8 +92,8 @@ Point MapCityCastle::getViewportPosition(const Point &viewportSize) {
 
 	if (!_viewportPos.isValid() || _viewportPos._size != viewportSize) {
 		// Calculate the new position
-		topLeft.x = _currentTransport->_position.x - (viewportSize.x - 1) / 2;
-		topLeft.y = _currentTransport->_position.y - (viewportSize.y - 1) / 2;
+		topLeft.x = _playerWidget->_position.x - (viewportSize.x - 1) / 2;
+		topLeft.y = _playerWidget->_position.y - (viewportSize.y - 1) / 2;
 
 		// Fixed maps, so constrain top left corner so the map fills the viewport. This will accomodate
 		// future renderings with more tiles, or greater tile size

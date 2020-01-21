@@ -32,7 +32,7 @@ void Bard::movement() {
 	if (areGuardsHostile())
 		return;
 
-	Point playerPos = _map->_currentTransport->_position;
+	Point playerPos = _map->_playerWidget->_position;
 	bool stolen = false;
 
 	// Choose a new random position to  move to

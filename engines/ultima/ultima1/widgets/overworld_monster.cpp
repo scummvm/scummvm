@@ -47,7 +47,7 @@ void OverworldMonster::synchronize(Common::Serializer &s) {
 }
 
 uint OverworldMonster::attackDistance() const {
-	Point playerPos = _map->_currentTransport->_position;
+	Point playerPos = _map->_playerWidget->_position;
 	Point diff = playerPos - _position;
 
 	int threshold = _tileNum == 23 || _tileNum == 25 || _tileNum == 31 || _tileNum == 47 ? 3 : 1;
@@ -61,7 +61,7 @@ void OverworldMonster::movement() {
 
 void OverworldMonster::attack() {
 	Ultima1Game *game = dynamic_cast<Ultima1Game *>(_game);
-	Point playerPos = _map->_currentTransport->_position;
+	Point playerPos = _map->_playerWidget->_position;
 	Point diff = playerPos - _position;
 	Point delta(SGN(diff.x), SGN(diff.y));
 	Point tempDiff;

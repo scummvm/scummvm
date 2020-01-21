@@ -29,7 +29,7 @@ namespace Ultima1 {
 namespace Widgets {
 
 uint Guard::attackDistance() const {
-	Point diff = _position - _map->_currentTransport->_position;
+	Point diff = _position - _map->_playerWidget->_position;
 	return areGuardsHostile() && ABS(diff.x) < 2 && ABS(diff.y) < 2 ? 1 : 0;
 }
 
@@ -38,7 +38,7 @@ void Guard::movement() {
 	if (!areGuardsHostile() || attackDistance())
 		return;
 
-	Point diff = _position - _map->_currentTransport->_position;
+	Point diff = _position - _map->_playerWidget->_position;
 	Point delta(SGN(diff.x), SGN(diff.y));
 	int totalDiff = ABS(diff.x) + ABS(diff.y);
 	if (totalDiff >= 13)
