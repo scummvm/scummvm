@@ -62,6 +62,11 @@ public:
 	 * Disembarks from the transport
 	 */
 	virtual void disembark();
+
+	/**
+	 * Fire a transport's weapons
+	 */
+	virtual bool fire() { return false; }
 };
 
 /**
@@ -106,6 +111,11 @@ public:
 	 * Constructor
 	 */
 	Frigate(Ultima1Game *game, Maps::MapBase *map);
+
+	/**
+	 * Fire a transport's weapons
+	 */
+	virtual bool fire();
 };
 
 /**
@@ -117,6 +127,11 @@ public:
 	 * Constructor
 	 */
 	Aircar(Ultima1Game *game, Maps::MapBase *map);
+
+	/**
+	 * Fire a transport's weapons
+	 */
+	virtual bool fire();
 };
 
 /**

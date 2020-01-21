@@ -126,6 +126,7 @@ public:
 	PASS_METHOD(hyperjump)
 	PASS_METHOD(inform)
 	PASS_METHOD(climb)
+	PASS_METHOD(fire)
 	PASS_METHOD(open)
 	PASS_METHOD(steal)
 	PASS_METHOD(talk)

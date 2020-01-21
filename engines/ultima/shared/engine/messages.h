@@ -311,6 +311,11 @@ MESSAGE0(CEnterMsg);
 MESSAGE0(CExitTransportMsg);
 
 /**
+ * Used to trigger a fire action
+ */
+MESSAGE0(CFireMsg);
+
+/**
  * Used to trigger a Get action
  */
 MESSAGE0(CGetMsg);

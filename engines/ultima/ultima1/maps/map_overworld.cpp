@@ -23,6 +23,7 @@
 #include "ultima/ultima1/maps/map_overworld.h"
 #include "ultima/ultima1/widgets/transport.h"
 #include "ultima/ultima1/widgets/overworld_monster.h"
+#include "ultima/ultima1/widgets/transport.h"
 #include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/game.h"
@@ -132,6 +133,13 @@ void MapOverworld::enter() {
 		addInfoMsg(_game->_res->ENTERING);
 		addInfoMsg(map->getName());
 	}
+}
+
+void MapOverworld::fire() {
+	Widgets::Transport *transport = dynamic_cast<Widgets::Transport *>(_playerWidget);
+
+	if (!transport || !transport->fire())
+		addInfoMsg(_game->_res->WHAT);
 }
 
 void MapOverworld::inform() {
