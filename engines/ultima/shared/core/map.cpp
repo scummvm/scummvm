@@ -149,7 +149,7 @@ void Map::MapBase::shiftViewport(const Point &delta) {
 }
 
 void Map::MapBase::addWidget(MapWidget *widget) {
-	_widgets.push_back(Shared::MapWidgetPtr(widget));
+	_widgets.push_back(MapWidgetPtr(widget));
 }
 
 void Map::MapBase::removeWidget(MapWidget *widget) {
@@ -200,7 +200,7 @@ Direction Map::MapBase::getDirection() const {
 	return _playerWidget->_direction;
 }
 
-void Map::MapBase::setDirection(Shared::Direction dir) {
+void Map::MapBase::setDirection(Direction dir) {
 	_playerWidget->_direction = dir;
 }
 
@@ -214,11 +214,11 @@ void MapWidget::synchronize(Common::Serializer &s) {
 }
 
 void MapWidget::addInfoMsg(const Common::String &text, bool newLine) {
-	CInfoMsg msg(text, newLine);
+	CInfoMsg msg(text, newLine, false);
 	msg.execute(_game->getView());
 }
 
-Shared::MapWidget::CanMove MapWidget::canMoveTo(const Point &destPos) {
+MapWidget::CanMove MapWidget::canMoveTo(const Point &destPos) {
 	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)_map->width() || destPos.y >= (int)_map->height()) {
 		// If the map is fixed, allow moving beyond it's edges so it can be left
 		if (!_map->isMapWrapped())

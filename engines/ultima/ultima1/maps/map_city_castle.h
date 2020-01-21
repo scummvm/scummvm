@@ -81,6 +81,11 @@ public:
 	virtual Point getViewportPosition(const Point &viewportSize) override;
 
 	/**
+	 * Do a drop action
+	 */
+	virtual void drop();
+
+	/**
 	 * Do an inform action
 	 */
 	virtual void inform();

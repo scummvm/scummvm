@@ -20,79 +20,44 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_MAPS_MAP_BASE_H
-#define ULTIMA_ULTIMA1_MAPS_MAP_BASE_H
+#ifndef ULTIMA_ULTIMA1_U1DIALOGS_DROP_H
+#define ULTIMA_ULTIMA1_U1DIALOGS_DROP_H
 
-#include "ultima/shared/maps/map_base.h"
+#include "ultima/ultima1/u1dialogs/dialog.h"
 
 namespace Ultima {
 namespace Ultima1 {
+namespace U1Dialogs {
 
-class Ultima1Game;
-
-namespace Maps {
-
-class Ultima1Map;
+using Shared::CShowMsg;
+using Shared::CTextInputMsg;
 
 /**
- * Intermediate base class for Ultima 1 maps
+ * Implements the drop dialog
  */
-class MapBase : public Shared::Maps::MapBase {
+class Drop : public Dialog {
+	DECLARE_MESSAGE_MAP;
+	bool ShowMsg(CShowMsg &msg);
+	bool TextInputMsg(CTextInputMsg &msg);
+
+	enum Mode { SELECT, DROP_PENCE, DROP_WEAPON, DROP_ARMOR };
 private:
-	/**
-	 * Default unknown/question mark display
-	 */
-	void unknownAction();
-protected:
-	Ultima1Game *_game;
+	Mode _mode;
 public:
+	CLASSDEF;
+
 	/**
 	 * Constructor
 	 */
-	MapBase(Ultima1Game *game, Ultima1Map *map);
-		
-	/**
-	 * Destructor
-	 */
-	virtual ~MapBase() {}
+	Drop(Ultima1Game *game);
 
 	/**
-	 * Gets a tile at a given position
+	 * Draws the visual item on the screen
 	 */
-	virtual void getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer = true) override;
-
-	/**
-	 * Do a drop action
-	 */
-	virtual void drop() { unknownAction(); }
-
-	/**
-	 * Do an enter action
-	 */
-	virtual void enter() { unknownAction(); }
-
-	/**
-	 * Do an inform action
-	 */
-	virtual void inform() = 0;
-
-	/**
-	 * Do a climb action/
-	 */
-	virtual void climb() { unknownAction(); }
-
-	/**
-	 * Do a steal action
-	 */
-	virtual void steal() { unknownAction(); }
-
-	/**
-	 * Do a talk action
-	 */
-	void talk() { unknownAction(); }
+	virtual void draw();
 };
 
-} // End of namespace Maps
+} // End of namespace U1Dialogs
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

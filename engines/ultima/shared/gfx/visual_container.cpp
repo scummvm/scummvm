@@ -113,14 +113,14 @@ void VisualContainer::draw() {
 	_isDirty = false;
 }
 
-void VisualContainer::setDirty() {
+void VisualContainer::setDirty(bool dirty) {
 	for (TreeItem *child = getFirstChild(); child; child = child->getNextSibling()) {
 		VisualItem *item = dynamic_cast<VisualItem *>(child);
 		if (item)
-			item->setDirty();
+			item->setDirty(dirty);
 	}
 
-	_isDirty = true;
+	VisualItem::setDirty(dirty);
 }
 
 bool VisualContainer::isDirty() const {

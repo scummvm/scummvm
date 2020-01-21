@@ -49,11 +49,15 @@ bool Info::InfoMsg(CInfoMsg &msg) {
 	// Add new text
 	if (_lines.empty())
 		_lines.push_back(" ");
+	if (msg._replaceLine)
+		_lines.back() = _lines.back().firstChar();
+
 	_lines.back() += msg._text;
 
 	if (msg._newLine)
 		_lines.push_back(" ");
 
+	setDirty();
 	return true;
 }
 
@@ -113,6 +117,8 @@ void Info::draw() {
 		// Write the remainder of the line
 		s.writeString(line, Point(x, y), game->_textColor);
 	}
+
+	_isDirty = false;
 }
 
 } // End of namespace Shared

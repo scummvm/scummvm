@@ -94,7 +94,12 @@ public:
 	/**
 	 * Flags the item as being changed, requiring a redraw
 	 */
-	virtual void setDirty();
+	virtual void setDirty(bool dirty = true);
+
+	/**
+	 * Clears the dirty flag
+	 */
+	void clearDirty() { setDirty(false); }
 
 	/**
 	 * Returns true if the item is dirty, requiring a redraw

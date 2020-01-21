@@ -69,17 +69,9 @@ void VisualItem::setPosition(const Point &pt) {
 	setDirty();
 }
 
-void VisualItem::setDirty() {
+void VisualItem::setDirty(bool dirty) {
 	// Flag the item as dirty
-	_isDirty = true;
-
-	// Flag any child items also as dirty, since rendering the parent
-	// would cover up any areas that the sub-items render within
-	for (TreeItem *treeItem = scan(this); treeItem; treeItem = treeItem->scan(this)) {
-		VisualItem *item = dynamic_cast<VisualItem *>(treeItem);
-		if (item)
-			item->_isDirty = true;
-	}
+	_isDirty = dirty;
 }
 
 void VisualItem::setView(const Common::String &viewName) {

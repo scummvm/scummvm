@@ -122,10 +122,11 @@ protected:
 
 	/**
 	 * Adds a text string to the info area
-	 * @param text		Text to add
-	 * @param newLine	Whether to apply a newline at the end
+	 * @param text			Text to add
+	 * @param newLine		Whether to apply a newline at the end
+	 * @param replaceLine	If true, replaces the current last line
 	 */
-	void addInfoMsg(const Common::String &text, bool newLine = true);
+	void addInfoMsg(const Common::String &text, bool newLine = true, bool replaceLine = false);
 public:
 	Point _size;						// X, Y size of the map
 	Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile

@@ -36,6 +36,7 @@
 #include "ultima/ultima1/widgets/merchant_tavern.h"
 #include "ultima/ultima1/widgets/merchant_transport.h"
 #include "ultima/ultima1/widgets/merchant_weapons.h"
+#include "ultima/ultima1/u1dialogs/drop.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -154,6 +155,11 @@ void MapCityCastle::loadTownCastleData() {
 		for (int y = 0; y < _size.y; ++y)
 			_data[y][x] = f.readByte();
 	}
+}
+
+void MapCityCastle::drop() {
+	U1Dialogs::Drop *drop = new U1Dialogs::Drop(_game);
+	_game->setPopup(drop);
 }
 
 void MapCityCastle::inform() {

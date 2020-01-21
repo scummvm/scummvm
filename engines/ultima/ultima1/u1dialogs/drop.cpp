@@ -20,45 +20,47 @@
  *
  */
 
-#include "ultima/ultima1/u1gfx/viewport_map.h"
-#include "ultima/ultima1/u1gfx/sprites.h"
+#include "ultima/ultima1/u1dialogs/drop.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace U1Gfx {
+namespace U1Dialogs {
 
-BEGIN_MESSAGE_MAP(ViewportMap, Shared::ViewportMap)
-	ON_MESSAGE(FrameMsg)
+BEGIN_MESSAGE_MAP(Drop, Dialog)
+	ON_MESSAGE(TextInputMsg)
 END_MESSAGE_MAP()
 
-ViewportMap::ViewportMap(TreeItem *parent) : Shared::ViewportMap(parent), _mapType(Maps::MAP_OVERWORLD) {
-	_sprites = new Sprites(this);	
+Drop::Drop(Ultima1Game *game) : Dialog(game), _mode(SELECT) {
+	// The dialog itself doesn't initially display, instead we add a prompt to the info area for
+	// what kind of thing to drop
 }
 
-ViewportMap::~ViewportMap() {
+void Drop::draw() {
+	return;
 }
 
-void ViewportMap::draw() {
-	Maps::Ultima1Map *map = static_cast<Maps::Ultima1Map *>(getGame()->getMap());
+bool Drop::ShowMsg(CShowMsg &msg) {
+	// Add a prompt in the info area for what kind of thing to drop
+	addInfoMsg(getGame()->_res->DROP_PENCE_WEAPON_ARMOR);
+	Shared::CInfoGetKeypress keyMsg(this);
+	keyMsg.execute(_game);
 
-	// If necessary, load the sprites for rendering the map
-	if (_sprites->empty() || _mapType != map->_mapType) {
-		_mapType = map->_mapType;
-		Sprites *sprites = static_cast<Sprites *>(_sprites);
-		sprites->load(_mapType == Maps::MAP_OVERWORLD);
-	}
-
-	// Draw the map
-	Shared::ViewportMap::draw();
-}
-
-bool ViewportMap::FrameMsg(CFrameMsg &msg) {
-	// To allow map to animate, on each frame mark the map as dirty again
-	setDirty(true);
 	return true;
 }
 
-} // End of namespace U1Gfx
+bool Drop::TextInputMsg(CTextInputMsg &msg) {
+	if (msg._escaped) {
+		addInfoMsg(Common::String::format("%s %s", _game->_res->ACTION_NAMES[3], _game->_res->NOTHING), true, true);
+		hide();
+		delete this;
+	}
+
+	return true;
+}
+
+} // End of namespace U1Dialogs
 } // End of namespace Ultima1
 } // End of namespace Ultima

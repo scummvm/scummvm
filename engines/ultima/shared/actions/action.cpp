@@ -43,8 +43,8 @@ Maps::Map *Action::getMap() {
 	return static_cast<Maps::Map *>(getGame()->getMap());
 }
 
-void Action::addInfoMsg(const Common::String &text, bool newLine) {
-	CInfoMsg msg(text, newLine);
+void Action::addInfoMsg(const Common::String &text, bool newLine, bool replaceLine) {
+	CInfoMsg msg(text, newLine, replaceLine);
 	msg.execute(getView());
 }
 
