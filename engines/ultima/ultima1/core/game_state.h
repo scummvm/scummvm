@@ -20,45 +20,30 @@
  *
  */
 
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/game_state.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/u1gfx/game_view.h"
-#include "ultima/ultima1/u1gfx/text_cursor.h"
-#include "ultima/ultima1/u6gfx/game_view.h"
-#include "ultima/shared/early/font_resources.h"
-#include "ultima/shared/early/ultima_early.h"
+#ifndef ULTIMA_ULTIMA1_CORE_GAME_STATE_H
+#define ULTIMA_ULTIMA1_CORE_GAME_STATE_H
+
+#include "ultima/shared/core/game_state.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
-EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
+class Ultima1Game;
 
-Ultima1Game::Ultima1Game() : Shared::Game() {
-	_gameState = new GameState(this);
-	_res = new GameResources();
-	delete _textCursor;
-	_textCursor = new U1Gfx::U1TextCursor(_textColor, _bgColor);
-
-	if (g_vm->getFeatures() & GF_VGA_ENHANCED) {
-		_videoMode = VIDEOMODE_VGA;
-		loadU6Palette();
-		setFont(new Shared::Gfx::Font((const byte *)&_fontResources->_fontU6[0][0]));
-		_gameView = new U6Gfx::GameView(this);
-	} else {
-		setEGAPalette();
-		_gameView = new U1Gfx::GameView(this);
-	}
-}
-
-Ultima1Game::~Ultima1Game() {
-	delete _gameView;
-}
-
-void Ultima1Game::starting() {
-	_res->load();
-	_gameView->setView("GameView");
-}
+class GameState : public Shared::GameState {
+private:
+	/**
+	 * Sets up the party
+	 */
+	void setupParty();
+public:
+	/**
+	 * Constructor
+	 */
+	GameState(Ultima1Game *game);
+};
 
 } // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

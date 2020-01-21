@@ -37,11 +37,6 @@ enum VideoMode {
 };
 
 class GameState {
-private:
-	/**
-	 * Sets up the party
-	 */
-	void setupParty();
 public:
 	/**
 	 * Position in the world map. This is stored separately from the map so that the same point can

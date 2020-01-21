@@ -56,6 +56,7 @@ MODULE_OBJS += \
 	ultima1/actions/climb.o \
 	ultima1/actions/enter.o \
 	ultima1/actions/move.o \
+	ultima1/core/game_state.o \
 	ultima1/core/resources.o \
 	ultima1/map/map.o \
 	ultima1/map/map_city_castle.o \
