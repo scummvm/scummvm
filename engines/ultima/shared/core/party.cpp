@@ -20,43 +20,49 @@
  *
  */
 
-#include "ultima/ultima1/widgets/merchant_weapons.h"
-#include "ultima/ultima1/maps/map_city_castle.h"
-#include "ultima/ultima1/core/resources.h"
+#include "ultima/shared/core/party.h"
 
 namespace Ultima {
-namespace Ultima1 {
-namespace Widgets {
+namespace Shared {
 
-EMPTY_MESSAGE_MAP(MerchantWeapons, Merchant);
+Party::~Party() {
+	for (uint idx = 0; idx < _characters.size(); ++idx)
+		delete _characters[idx];
+}
 
-void MerchantWeapons::get() {
-	Maps::MapCastle *map = dynamic_cast<Maps::MapCastle *>(_map);
-	assert(map);
-	if (map->_getCounter > 0) {
-		--map->_getCounter;
-		findWeapon(false);
-	} else {
-		noKingsPermission();
+void Party::add(Character *c) {
+	_characters.push_back(c);
+}
+
+void Party::synchronize(Common::Serializer &s) {
+	uint partyCount = _characters.size();
+	s.syncAsByte(partyCount);
+	if (s.isLoading())
+		assert(partyCount == _characters.size());
+
+	// Iterate through the characters of the party
+	for (uint idx = 0; idx < _characters.size(); ++idx)
+		_characters[idx]->synchronize(s);
+}
+
+
+bool Party::isDead() const {
+	for (uint idx = 0; idx < _characters.size(); ++idx) {
+		if ((*this)[idx]._hitPoints > 0)
+			return false;
 	}
+
+	return true;
 }
 
-void MerchantWeapons::steal() {
-	findWeapon(true);
-}
-
-void MerchantWeapons::findWeapon(bool checkStealing) {
-	Shared::Character &c = *_game->_party;
-	if (!checkStealing || !checkCuaghtStealing()) {
-		uint weaponNum = _game->getRandomNumber(1, 15);
-		const char *weaponStr = _game->_res->WEAPON_NAMES_ARTICLE[weaponNum];
-
-		c._weapons[weaponNum].incrQuantity();
-		addInfoMsg("");
-		addInfoMsg(Common::String::format(_game->_res->FIND, weaponStr));
+bool Party::isFoodless() const {
+	for (uint idx = 0; idx < _characters.size(); ++idx) {
+		if ((*this)[idx]._food > 0)
+			return false;
 	}
+
+	return true;
 }
 
-} // End of namespace Widgets
-} // End of namespace Ultima1
+} // End of namespace Shared
 } // End of namespace Ultima

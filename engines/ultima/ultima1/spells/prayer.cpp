@@ -34,7 +34,7 @@ Prayer::Prayer() : Spell(SPELL_PRAYER) {
 }
 
 void Prayer::cast(Maps::MapBase *map) {
-	Shared::Character &c = *_game->_party._currentCharacter;
+	Shared::Character &c = *_game->_party;
 	addInfoMsg("");
 	addInfoMsg(_game->_res->SPELL_PHRASES[0], false);
 
@@ -78,7 +78,7 @@ void Prayer::dungeonCast(Maps::MapDungeon *map) {
 	if (spellId == SPELL_STEAL)
 		spellId = SPELL_LADDER_DOWN;
 
-	const Shared::Character &c = *_game->_party._currentCharacter;
+	const Shared::Character &c = *_game->_party;
 	static_cast<Spell *>(c._spells[spellId])->dungeonCast(map);
 }
 

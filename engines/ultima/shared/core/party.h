@@ -20,43 +20,58 @@
  *
  */
 
-#include "ultima/ultima1/widgets/merchant_weapons.h"
-#include "ultima/ultima1/maps/map_city_castle.h"
-#include "ultima/ultima1/core/resources.h"
+#ifndef ULTIMA_SHARED_CORE_PARTY_H
+#define ULTIMA_SHARED_CORE_PARTY_H
+
+#include "common/array.h"
+#include "common/str.h"
+#include "common/serializer.h"
+#include "ultima/shared/core/character.h"
 
 namespace Ultima {
-namespace Ultima1 {
-namespace Widgets {
+namespace Shared {
 
-EMPTY_MESSAGE_MAP(MerchantWeapons, Merchant);
+/**
+ * Base class for the player's party
+ */
+class Party {
+private:
+	Common::Array<Character *> _characters;
+public:
+	~Party();
 
-void MerchantWeapons::get() {
-	Maps::MapCastle *map = dynamic_cast<Maps::MapCastle *>(_map);
-	assert(map);
-	if (map->_getCounter > 0) {
-		--map->_getCounter;
-		findWeapon(false);
-	} else {
-		noKingsPermission();
-	}
-}
+	/**
+	 * Add a character to the party
+	 */
+	void add(Character *c);
 
-void MerchantWeapons::steal() {
-	findWeapon(true);
-}
+	/**
+	 * Casting operator for convenient access to the first character
+	 */
+	operator Character &() const { return *_characters.front(); }
 
-void MerchantWeapons::findWeapon(bool checkStealing) {
-	Shared::Character &c = *_game->_party;
-	if (!checkStealing || !checkCuaghtStealing()) {
-		uint weaponNum = _game->getRandomNumber(1, 15);
-		const char *weaponStr = _game->_res->WEAPON_NAMES_ARTICLE[weaponNum];
+	/**
+	 * Casting operator for convenient access to the first character
+	 */
+	operator Character *() const { return _characters.front(); }
 
-		c._weapons[weaponNum].incrQuantity();
-		addInfoMsg("");
-		addInfoMsg(Common::String::format(_game->_res->FIND, weaponStr));
-	}
-}
+	/**
+	 * Synchronize data
+	 */
+	void synchronize(Common::Serializer &s);
 
-} // End of namespace Widgets
-} // End of namespace Ultima1
+	/**
+	 * Returns true if the party is dead
+	 */
+	bool isDead() const;
+
+	/**
+	 * Returns true if the party has no food
+	 */
+	bool isFoodless() const;
+};
+
+} // End of namespace Shared
 } // End of namespace Ultima
+
+#endif

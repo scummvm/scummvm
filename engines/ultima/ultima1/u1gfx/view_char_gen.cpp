@@ -54,12 +54,13 @@ void ViewCharacterGeneration::setMode(uint flags) {
 	setDirty();
 
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+	Shared::Character &c = *game->_party;
 	Shared::Gfx::TextCursor *textCursor = game->_textCursor;
 	textCursor->setVisible(false);
 
 	if (flags & FLAG_FRAME) {
 		// Set up character and attributes pointers
-		_character = game->_party._currentCharacter;
+		_character = &c;
 		_attributes[0] = &_character->_strength;
 		_attributes[1] = &_character->_agility;
 		_attributes[2] = &_character->_stamina;

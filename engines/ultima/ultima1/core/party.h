@@ -20,43 +20,46 @@
  *
  */
 
-#include "ultima/ultima1/widgets/merchant_weapons.h"
-#include "ultima/ultima1/maps/map_city_castle.h"
-#include "ultima/ultima1/core/resources.h"
+#ifndef ULTIMA_ULTIMA1_CORE_PARTY_H
+#define ULTIMA_ULTIMA1_CORE_PARTY_H
+
+#include "ultima/shared/core/party.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Widgets {
 
-EMPTY_MESSAGE_MAP(MerchantWeapons, Merchant);
+class Ultima1Game;
 
-void MerchantWeapons::get() {
-	Maps::MapCastle *map = dynamic_cast<Maps::MapCastle *>(_map);
-	assert(map);
-	if (map->_getCounter > 0) {
-		--map->_getCounter;
-		findWeapon(false);
-	} else {
-		noKingsPermission();
-	}
-}
+/**
+ * Implements the data for a playable character within the game
+ */
+class Character : public Shared::Character {
+private:
+	Ultima1Game *_game;
+public:
+	/**
+	 * Constructor
+	 */
+	Character(Ultima1Game *game) : Shared::Character(), _game(game) {}
 
-void MerchantWeapons::steal() {
-	findWeapon(true);
-}
+	/**
+	 * Gets the damage a given weapon does
+	 */
+	uint getWeaponDamage() const;
+};
 
-void MerchantWeapons::findWeapon(bool checkStealing) {
-	Shared::Character &c = *_game->_party;
-	if (!checkStealing || !checkCuaghtStealing()) {
-		uint weaponNum = _game->getRandomNumber(1, 15);
-		const char *weaponStr = _game->_res->WEAPON_NAMES_ARTICLE[weaponNum];
+/**
+ * Implements the party
+ */
+class Party : public Shared::Party {
+public:
+	/**
+	 * Constructor
+	 */
+	Party(Ultima1Game *game);
+};
 
-		c._weapons[weaponNum].incrQuantity();
-		addInfoMsg("");
-		addInfoMsg(Common::String::format(_game->_res->FIND, weaponStr));
-	}
-}
-
-} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

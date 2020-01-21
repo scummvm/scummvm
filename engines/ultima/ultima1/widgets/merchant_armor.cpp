@@ -46,10 +46,12 @@ void MerchantArmor::steal() {
 }
 
 void MerchantArmor::findArmor(bool checkStealing) {
+	Shared::Character &c = *_game->_party;
+
 	if (!checkStealing || !checkCuaghtStealing()) {
 		uint armorNum = _game->getRandomNumber(1, 5);
 		Common::String armorStr = _game->_res->ARMOR_NAMES[armorNum];
-		_game->_party._currentCharacter->_armor[armorNum].incrQuantity();
+		c._armor[armorNum].incrQuantity();
 
 		if (armorNum == 5)
 			armorStr = Common::String::format("%s %s", _game->_res->A, armorStr.c_str());

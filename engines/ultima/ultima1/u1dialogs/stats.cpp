@@ -56,7 +56,7 @@ void countTransport(Maps::MapOverworld *overworldMap, Common::Array<Stats::StatE
 }
 
 void Stats::load() {
-	const Shared::Character &c = *_game->_party._currentCharacter;
+	const Shared::Character &c = *_game->_party;
 	Maps::MapOverworld *overworld = getMap()->getOverworldMap();
 
 	// Basic attributes
@@ -127,7 +127,7 @@ Common::String Stats::formatStat(const char *name, uint value) {
 void Stats::draw() {
 	drawFrame(_game->_res->INVENTORY);
 	Shared::Gfx::VisualSurface s = getSurface();
-	const Shared::Character &c = *_game->_party._currentCharacter;
+	const Shared::Character &c = *_game->_party;
 
 	// Player name and description
 	s.writeString(Common::String::format(_game->_res->PLAYER, c._name.c_str()),

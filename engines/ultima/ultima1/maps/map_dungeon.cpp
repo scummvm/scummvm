@@ -230,7 +230,7 @@ void MapDungeon::update() {
 	Point pt;
 
 	// Widgets in the dungeon are updated by row
-	for (pt.y = 1; pt.y < ((int)height() - 1) && !_game->_party.isFoodless(); pt.y++) {
+	for (pt.y = 1; pt.y < ((int)height() - 1) && !_game->_party->isFoodless(); pt.y++) {
 		for (pt.x = 1; pt.x < ((int)width() - 1); pt.x++) {
 			// Check for a widget at the given position
 			getTileAt(pt, &tile);
@@ -294,12 +294,12 @@ void MapDungeon::climb() {
 }
 
 void MapDungeon::castSpell(uint spellId) {
-	const Shared::Character &c = *_game->_party._currentCharacter;
+	const Shared::Character &c = *_game->_party;
 	static_cast<Spells::Spell *>(c._spells[spellId])->dungeonCast(this);
 }
 
 void MapDungeon::leavingDungeon() {
-	Shared::Character &c = *_game->_party._currentCharacter;
+	Shared::Character &c = *_game->_party;
 	
 	// Don't allow the hit points addition to push the hit point total beyond 9999
 	if (c._hitPoints + _dungeonExitHitPoints > 9999)

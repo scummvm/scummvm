@@ -126,7 +126,7 @@ void DungeonMonster::attackParty() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
 	Point playerPos = _map->_playerWidget->_position;
 	//Point delta = playerPos - _position;
-	Shared::Character *c = _game->_party._currentCharacter;
+	Shared::Character &c = *_game->_party;
 	uint threshold, damage;
 	bool isHit = true;
 
@@ -142,7 +142,7 @@ void DungeonMonster::attackParty() {
 	addInfoMsg(Common::String::format(game->_res->ATTACKED_BY, _name.c_str()));
 	_game->playFX(3);
 
-	threshold = (c->_stamina / 2) + (c->_equippedArmor * 8) + 56;
+	threshold = (c._stamina / 2) + (c._equippedArmor * 8) + 56;
 
 	if (_game->getRandomNumber(1, 255) > threshold) {
 		threshold = _game->getRandomNumber(1, 255);
@@ -151,28 +151,28 @@ void DungeonMonster::attackParty() {
 			damage = _game->getRandomNumber(_monsterId + 1, 255);
 		}
 
-		if (_monsterId == MONSTER_GELATINOUS_CUBE && c->isArmorEquipped()) {
+		if (_monsterId == MONSTER_GELATINOUS_CUBE && c.isArmorEquipped()) {
 			addInfoMsg(game->_res->ARMOR_DESTROYED);
-			c->_armor[c->_equippedArmor].decrQuantity();
-			c->removeArmor();
+			c._armor[c._equippedArmor].decrQuantity();
+			c.removeArmor();
 			isHit = false;
 		} else if (_monsterId == MONSTER_GREMLIN) {
 			addInfoMsg(game->_res->GREMLIN_STOLE);
-			c->_food /= 2;
+			c._food /= 2;
 			isHit = false;
 		} else if (_monsterId == MONSTER_MIND_WHIPPER && threshold < 128) {
 			addInfoMsg(game->_res->MENTAL_ATTACK);
-			c->_intelligence = (c->_intelligence / 2) + 5;
+			c._intelligence = (c._intelligence / 2) + 5;
 			isHit = false;
 		} else if (_monsterId == MONSTER_THIEF) {
 			// Thief will steal the first spare weapon player has that isn't equipped
-			for (int weaponNum = 1; weaponNum < (int)c->_weapons.size(); ++weaponNum) {
-				if (weaponNum != c->_equippedWeapon && c->_weapons[weaponNum]._quantity > 0) {
+			for (int weaponNum = 1; weaponNum < (int)c._weapons.size(); ++weaponNum) {
+				if (weaponNum != c._equippedWeapon && c._weapons[weaponNum]._quantity > 0) {
 					// TODO: May need to worry about word wrapping long line
 					addInfoMsg(Common::String::format(game->_res->THIEF_STOLE,
-						Shared::isVowel(c->_weapons[weaponNum]._longName.firstChar()) ? game->_res->AN : game->_res->A
+						Shared::isVowel(c._weapons[weaponNum]._longName.firstChar()) ? game->_res->AN : game->_res->A
 					));
-					c->_weapons[weaponNum].decrQuantity();
+					c._weapons[weaponNum].decrQuantity();
 					break;
 				}
 			}
@@ -180,7 +180,7 @@ void DungeonMonster::attackParty() {
 
 		if (isHit) {
 			addInfoMsg(Common::String::format("%s %2d %s", game->_res->HIT, damage, game->_res->DAMAGE));
-			c->_hitPoints -= damage;
+			c._hitPoints -= damage;
 		}
 	} else {
 		addInfoMsg(game->_res->MISSED);
@@ -222,7 +222,7 @@ void DungeonMonster::attackMonster(uint effectNum, uint agility, uint damage) {
 			game->giveTreasure(amount, 0);
 
 			// Give experience
-			Shared::Character &c = *game->_party._currentCharacter;
+			Shared::Character &c = *game->_party;
 			uint experience = game->getRandomNumber(2, map->getLevel() * map->getLevel() + 10);
 			c._experience += experience;
 			map->_dungeonExitHitPoints = MIN(map->_dungeonExitHitPoints + experience * 2, 9999U);
