@@ -20,21 +20,61 @@
  *
  */
 
-#include "ultima/ultima1/spells/open.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/resources.h"
+#ifndef ULTIMA_ULTIMA1_U1DIALOGS_OPEN_UNLOCK_H
+#define ULTIMA_ULTIMA1_U1DIALOGS_OPEN_UNLOCK_H
+
+#include "ultima/ultima1/spells/spell.h"
+#include "ultima/ultima1/widgets/dungeon_item.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
-Open::Open() : Spell(SPELL_OPEN) {
-}
+/**
+ * Open/unlock common spell base class
+ */
+class OpenUnlock : public Spell {
+private:
+	/**
+	 * Open a given widget
+	 */
+	void openItem(Maps::MapDungeon *map, Widgets::DungeonItem *item);
+public:
+	/**
+	 * Constructor
+	 */
+	OpenUnlock(SpellId spellId) : Spell(spellId) {}
 
-void Open::dungeonCast(Maps::MapDungeon *map) {
-	// TODO
-}
+	/**
+	 * Cast the spell within dungeons
+	 */
+	virtual void dungeonCast(Maps::MapDungeon *map) override;
+};
 
-} // End of namespace Spells
+/**
+ * Open spell
+ */
+class Open : public OpenUnlock {
+public:
+	/**
+	 * Constructor
+	 */
+	Open() : OpenUnlock(SPELL_OPEN) {}
+};
+
+/**
+ * Open spell
+ */
+class Unlock : public OpenUnlock {
+public:
+	/**
+	 * Constructor
+	 */
+	Unlock() : OpenUnlock(SPELL_UNLOCK) {}
+};
+
+} // End of  namespace U1Dialogs
 } // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

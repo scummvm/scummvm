@@ -81,11 +81,10 @@ MODULE_OBJS += \
 	ultima1/spells/ladder_down.o \
 	ultima1/spells/ladder_up.o \
 	ultima1/spells/magic_missile.o \
-	ultima1/spells/open.o \
+	ultima1/spells/open_unlock.o \
 	ultima1/spells/prayer.o \
 	ultima1/spells/spell.o \
 	ultima1/spells/steal.o \
-	ultima1/spells/unlock.o \
 	ultima1/u1dialogs/combat.o \
 	ultima1/u1dialogs/dialog.o \
 	ultima1/u1dialogs/drop.o \

@@ -23,8 +23,6 @@
 #ifndef ULTIMA_ULTIMA1_GAME_H
 #define ULTIMA_ULTIMA1_GAME_H
 
-#include "ultima/shared/early/game.h"
-#include "ultima/shared/gfx/visual_container.h"
 #include "ultima/ultima1/spells/blink.h"
 #include "ultima/ultima1/spells/create.h"
 #include "ultima/ultima1/spells/destroy.h"
@@ -32,10 +30,11 @@
 #include "ultima/ultima1/spells/ladder_down.h"
 #include "ultima/ultima1/spells/ladder_up.h"
 #include "ultima/ultima1/spells/magic_missile.h"
-#include "ultima/ultima1/spells/open.h"
+#include "ultima/ultima1/spells/open_unlock.h"
 #include "ultima/ultima1/spells/prayer.h"
 #include "ultima/ultima1/spells/steal.h"
-#include "ultima/ultima1/spells/unlock.h"
+#include "ultima/shared/early/game.h"
+#include "ultima/shared/gfx/visual_container.h"
 
 namespace Ultima {
 namespace Ultima1 {
