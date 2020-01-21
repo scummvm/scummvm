@@ -63,7 +63,6 @@ public:
 	const char *DUNGEON_MONSTER_NAMES[99];
 	const char *LAND_NAMES[4];
 	const char *BLOCKED;
-	const char *ENTER_QUESTION;
 	const char *ENTERING;
 	const char *THE_CITY_OF;
 	const char *DUNGEON_LEVEL;
@@ -107,6 +106,7 @@ public:
 	const char *GROCERY_PACKS3;
 	const char *GROCERY_PACKS_FOOD;
 	const char *GROCERY_FIND_PACKS;
+	const char *ENTER_QUESTION;
 public:
 	GameResources();
 	GameResources(Shared::Resources *resManager);

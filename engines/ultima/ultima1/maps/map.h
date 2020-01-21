@@ -25,6 +25,7 @@
 
 #include "ultima/shared/maps/map.h"
 #include "ultima/shared/maps/map_widget.h"
+#include "ultima/ultima1/maps/map_base.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -46,7 +47,6 @@ class MapCity;
 class MapCastle;
 class MapDungeon;
 class MapOverworld;
-class MapBase;
 
 /**
  * Used to hold the total number of tiles surrounding location entrances
@@ -117,24 +117,14 @@ public:
 	virtual Shared::Maps::MapWidget *createWidget(Shared::Maps::MapBase *map, const Common::String &name) override;
 
 	/**
-	 * Do an inform action
+	 * Action pass-throughs
 	 */
-	void inform();
-
-	/**
-	 * Do a klimb (climb) action
-	 */
-	void climb();
-
-	/**
-	 * Do a steal action
-	 */
-	void steal();
-
-	/**
-	 * Do a talk action
-	 */
-	void talk();
+	#define PASS_METHOD(NAME) void NAME() { static_cast<MapBase *>(_mapArea)->NAME(); }
+	PASS_METHOD(enter)
+	PASS_METHOD(inform)
+	PASS_METHOD(climb)
+	PASS_METHOD(steal)
+	PASS_METHOD(talk)
 };
 
 } // End of namespace Maps

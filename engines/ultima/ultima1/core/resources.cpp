@@ -548,8 +548,7 @@ const char *const SRC_LAND_NAMES[4] = {
 };
 
 const char *const SRC_BLOCKED = "Blocked!";
-const char *const SRC_ENTER_QUESTION = "Enter?";
-const char *const SRC_ENTERING = "Entering...";
+const char *const SRC_ENTERING = "ing...";
 const char *const SRC_THE_CITY_OF = "The city of";
 const char *const SRC_DUNGEON_LEVEL = " Level    ";
 const char *const SRC_ATTACKED_BY = "Attacked by %s!";
@@ -576,7 +575,7 @@ const char *const SRC_FIND = "Thou dost find %s";
 const char *const SRC_A_SECRET_DOOR = "a secret door!";
 
 const char *const SRC_ACTION_NAMES[26] = {
-	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, "Inform and search", nullptr,
+	nullptr, nullptr, nullptr, nullptr, "Enter", nullptr, nullptr, nullptr, "Inform and search", nullptr,
 	"K-Limb", nullptr, nullptr, nullptr, nullptr, "Pass", nullptr, nullptr, "Steal", "Transact",
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 };
@@ -635,7 +634,6 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(&SRC_LAND_NAMES[0], &SRC_LAND_NAMES[4], LAND_NAMES);
 
 	BLOCKED = SRC_BLOCKED;
-	ENTER_QUESTION = SRC_ENTER_QUESTION;
 	ENTERING = SRC_ENTERING;
 	THE_CITY_OF = SRC_THE_CITY_OF;
 	DUNGEON_LEVEL = SRC_DUNGEON_LEVEL;
@@ -709,7 +707,6 @@ void GameResources::synchronize() {
 	syncStrings(LAND_NAMES, 4);
 
 	syncString(BLOCKED);
-	syncString(ENTER_QUESTION);
 	syncString(ENTERING);
 	syncString(THE_CITY_OF);
 	syncString(DUNGEON_LEVEL);
