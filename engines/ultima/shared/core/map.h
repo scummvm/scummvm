@@ -29,6 +29,10 @@
 #include "ultima/shared/gfx/dungeon_surface.h"
 
 namespace Ultima {
+namespace Core {
+	class WidgetTransport;
+}
+
 namespace Shared {
 
 enum Direction {
@@ -36,79 +40,14 @@ enum Direction {
 };
 
 typedef byte MapCell;
+typedef int MapId;
 
 class Game;
-class Map;
-
-/**
- * Base class for things that appear within a map, such as monsters, transports, or people
- */
-class MapWidget {
-protected:
-	Game *_game;						// Game reference
-	Map *_map;							// Map reference
-public:
-	Point _position;					// Position within the map
-	Common::String _name;				// Name of widget
-public:
-	/**
-	 * Constructor
-	 */
-	MapWidget(Game *game, Map *map) : _game(game), _map(map) {}
-	MapWidget(Game *game, Map *map, const Point &pt) : _game(game), _map(map), _position(pt) {}
-	MapWidget(Game *game, Map *map, const Point &pt, const Common::String &name) :
-		_game(game), _map(map), _position(pt), _name(name) {}
-
-	/**
-	 * Destructor
-	 */
-	virtual ~MapWidget() {}
-
-	/**
-	 * Get the tile for the widget
-	 */
-	virtual uint getTileNum() const { return 0; }
-
-	/**
-	 * Returns true if the player can move onto a tile the widget occupies
-	 */
-	virtual bool isBlocking() const { return false; }
-};
+class MapWidget;
 
 typedef Common::SharedPtr<MapWidget> MapWidgetPtr;
 
 /**
-<<<<<<< HEAD
- * Base class for items that appear within the dungeons
- */
-class MapItem {
-protected:
-	Game *_game;						// Game reference
-	Map *_map;							// Map reference
-public:
-	Point _position;					// Position within the map
-public:
-	/**
-	* Constructor
-	*/
-	MapItem(Game *game, Map *map) : _game(game), _map(map) {}
-
-	/**
- 	 * Destructor
-	 */
-	virtual ~MapItem() {}
-
-	/**
-	 * Draw the item
-	 */
-	virtual void draw(Shared::DungeonSurface &s, uint distance) {}
-};
-
-typedef Common::SharedPtr<MapItem> MapItemPtr;
-
-/**
-=======
->>>>>>> 04ee1c8... ULTIMA1: Merging map _items array into _widgets
  * Contains data about a given position within the map
  */
 class MapTile {
@@ -127,7 +66,7 @@ public:
 	 * Constructor
 	 */
 	MapTile() : _tileNum(-1), _tileId(-1), _widgetNum(-1), _widget(nullptr), _itemNum(-1),
-	_isDoor(false), _isSecretDoor(false), _isLadderUp(false), _isLadderDown(false), _isWall(false),
+		_isDoor(false), _isSecretDoor(false), _isLadderUp(false), _isLadderDown(false), _isWall(false),
 		_isHallway(false), _isBeams(false) {}
 
 	/**
@@ -172,7 +111,7 @@ class Map {
 	struct ViewportPosition {
 		Point _topLeft;					// Top, left tile position for viewport
 		Point _size;					// Size of the viewport. Just in case we ever allow it to change
-		int _mapId;						// Maze the viewport is for. Used to detect when the map changes
+		MapId _mapId;					// Maze the viewport is for. Used to detect when the map changes
 
 		/**
 		 * Constructor
@@ -201,29 +140,138 @@ class Map {
 		byte &operator[](int idx) { return _data[idx]; }
 		byte operator[](int idx) const { return _data[idx]; }
 	};
-protected:
-	byte _mapId;						// The map Id
-	Common::Array<MapWidgetPtr> _widgets;	// Party, monsteres, transports, etc.
-	Common::Array<MapCellsRow> _data;	// Data for the map
-	Point _position;					// Current position within the map
-	ViewportPosition _viewportPos;		// Viewport position
-protected:
-	/**
-	 * Set the size of the map
-	 */
-	void setDimensions(const Point &size);
 public:
-	Point _size;						// X, Y size of the map
-	Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile
-	Direction _direction;				// Current direction being faced in the underworld
-	bool _fixed;						// Town/city type maps that don't scroll as the player moves
-	uint _dungeonLevel;					// Dungeon level number
+	/**
+	 * Base class for specific map types
+	 */
+	class MapBase {
+	private:
+		Game *_game;						// Game reference
+	protected:
+		MapId _mapId;						// The map Id
+		uint _mapIndex;						// Index of map within the group of same maps
+		uint _mapStyle;						// Map style category for towns & castles
+		Point _position;					// Current position within the map
+		ViewportPosition _viewportPos;		// Viewport position
+	protected:
+		/**
+		 * Set the size of the map
+		 */
+		void setDimensions(const Point &size);
+	public:
+		Point _size;						// X, Y size of the map
+		Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile
+		Direction _direction;				// Current direction being faced in the underworld
+		Common::String _name;				// Name of map, if applicable
+		MapWidget *_currentTransport;		// Current means of transport, even if on foot
+		Common::Array<MapWidgetPtr> _widgets;	// Party, monsteres, transports, etc.
+		Common::Array<MapCellsRow> _data;	// Data for the map
+	public:
+		/**
+		 * Constructor
+		 */
+		MapBase(Game *game) : _game(game), _currentTransport(nullptr), _mapId(0), _mapIndex(0),
+			_direction(DIR_UP), _mapStyle(0) {}
+
+		/**
+		 * Destructor
+		 */
+		virtual ~MapBase() {}
+
+		/**
+		 * Clears all map data
+		 */
+		virtual void clear();
+
+		/**
+		 * Gets a tile at a given position
+		 */
+		virtual void getTileAt(const Point &pt, MapTile *tile);
+
+		/**
+		 * Get the viewport position
+		 */
+		virtual Point getViewportPosition(const Point &viewportSize);
+
+		/**
+		 * Load the map
+		 */
+		virtual void load(MapId mapId);
+
+		/**
+		 * Changes the level. Only applicable to dungeon maps which have levels
+		 * @param delta		Delta to change dungeon level by
+		 * @returns			False if dungeon left, true if still within dungeon
+		 */
+		virtual bool changeLevel(int delta) { return true; }
+
+		/**
+		 * Get the current map level
+		 */
+		virtual uint getLevel() const { return 0; }
+
+		/**
+		 * Returns the width of the map
+		 */
+		size_t width() const { return _size.x; }
+
+		/**
+		 * Returns the height of the map
+		 */
+		size_t height() const { return _size.y; }
+
+		/**
+		 * Return the current position
+		 */
+		Point getPosition() const { return _position; }
+
+		/**
+		 * Returns a delta for the cell in front of the player based on the direction they're facing
+		 */
+		Point getDirectionDelta() const;
+
+		/**
+		 * Gets a point relative to the current position
+		 */
+		virtual Point getDeltaPosition(const Point &delta);
+
+		/**
+		 * Gets the map Index
+		 */
+		uint getMapIndex() const { return _mapIndex; }
+
+		/**
+		 * Set the position
+		 */
+		void setPosition(const Point &pt);
+
+		/**
+		 * Shifts the viewport by a given delta
+		 */
+		virtual void shiftViewport(const Point &delta);
+
+		/**
+		 * Adds a widget to the map
+		 */
+		void addWidget(MapWidget *widget);
+	};
+protected:
+	MapBase *_mapArea;
 public:
 	/**
 	 * Constructor
 	 */
-	Map();
+	Map() : _mapArea(nullptr) {}
+
+	/**
+	 * Destructor
+	 */
 	virtual ~Map() {}
+
+	/**
+	 * Load a given map
+	 */
+	virtual void load(MapId mapId);
 
 	/**
 	 * Clears all map data
@@ -231,59 +279,169 @@ public:
 	virtual void clear();
 
 	/**
-	 * Returns the width of the map
+	 * Gets a tile at a given position
 	 */
-	size_t width() const { return _size.x; }
-
-	/**
-	 * Returns the height of the map
-	 */
-	size_t height() const { return _size.y; }
-
-	/**
-	 * Return the current position
-	 */
-	Point getPosition() const { return _position; }
-
-	/**
-	 * Returns a delta for the cell in front of the player based on the direction they're facing
-	 */
-	Point getDirectionDelta() const;
-
-	/**
-	 * Gets a point relative to the current position
-	 */
-	Point getDeltaPosition(const Point &delta);
-
-	/**
-	 * Set the position
-	 */
-	void setPosition(const Point &pt);
+	void getTileAt(const Point &pt, MapTile *tile) {
+		assert(_mapArea);
+		return _mapArea->getTileAt(pt, tile);
+	}
 
 	/**
 	 * Get the viewport position
 	 */
-	Point getViewportPosition(const Point &viewportSize);
+	Point getViewportPosition(const Point &viewportSize) {
+		assert(_mapArea);
+		return _mapArea->getViewportPosition(viewportSize);
+	}
+
+	/**
+	 * Return the width of the map
+	 */
+	size_t width() const {
+		assert(_mapArea);
+		return _mapArea->width();
+	}
+
+	/**
+	 * Return the height of the map
+	 */
+	size_t height() const {
+		assert(_mapArea);
+		return _mapArea->height();
+	}
+
+	/**
+	 * Return the current position
+	 */
+	Point getPosition() const {
+		assert(_mapArea);
+		return _mapArea->getPosition();
+	}
+
+	/**
+	 * Set the position
+	 */
+	void setPosition(const Point &pt) {
+		assert(_mapArea);
+		_mapArea->setPosition(pt);
+	}
+
+	/**
+	 * The current direction
+	 */
+	Shared::Direction getDirection() const {
+		assert(_mapArea);
+		return _mapArea->_direction;
+	}
+
+	/**
+	 * Set the curren direction
+	 */
+	void setDirection(Shared::Direction dir) {
+		assert(_mapArea);
+		_mapArea->_direction = dir;
+	}
+
+	/**
+	 * Returns a delta for the cell in front of the player based on the direction they're facing
+	 */
+	Point getDirectionDelta() const {
+		assert(_mapArea);
+		return _mapArea->getDirectionDelta();
+	}
+
+	/**
+	 * Gets a point relative to the current position
+	 */
+	Point getDeltaPosition(const Point &delta) {
+		assert(_mapArea);
+		return _mapArea->getDeltaPosition(delta);
+	}
 
 	/**
 	 * Shifts the viewport by a given delta
 	 */
-	void shiftViewport(const Point &delta);
+	void shiftViewport(const Point &delta) {
+		assert(_mapArea);
+		_mapArea->shiftViewport(delta);
+	}
 
 	/**
-	 * Adds a widget to the map
+	 * Returns the number of tiles in the map there are for each tile in the original game.
+	 * This allows for more detailed maps in the enhanced game modes
 	 */
-	void addWidget(MapWidget *widget);
+	Point getTilesPerOrigTile() const {
+		assert(_mapArea);
+		return _mapArea->_tilesPerOrigTile;
+	}
 
 	/**
-	 * Gets a tile at a given position
+	 * Return the name of the map
 	 */
-	virtual void getTileAt(const Point &pt, MapTile *tile);
+	Common::String getName() const {
+		assert(_mapArea);
+		return _mapArea->_name;
+	}
 
 	/**
-	 * Load a given map
+	 * Returns the currently active transport on the map
 	 */
-	virtual void loadMap(int mapId);
+	MapWidget *getCurrentTransport() const {
+		assert(_mapArea);
+		return _mapArea->_currentTransport;
+	}
+
+	/**
+	 * @param delta		Delta to change dungeon level by
+	 * @returns			False if dungeon left, true if still within dungeon
+	 */
+	bool changeLevel(int delta) {
+		assert(_mapArea);
+		return _mapArea->changeLevel(delta);
+	}
+
+	/**
+	 * Get the current map level
+	 */
+	uint getLevel() const {
+		assert(_mapArea);
+		return _mapArea->getLevel();
+	}
+};
+
+/**
+ * Base class for things that appear within a map, such as monsters, transports, or people
+ */
+class MapWidget {
+protected:
+	Game *_game;						// Game reference
+	Map::MapBase *_map;					// Map reference
+public:
+	Point _position;					// Position within the map
+	Common::String _name;				// Name of widget
+public:
+	/**
+	 * Constructor
+	 */
+	MapWidget(Game *game, Map::MapBase *map) : _game(game), _map(map) {}
+	MapWidget(Game *game, Map::MapBase *map, const Point &pt) : _game(game), _map(map), _position(pt) {}
+	MapWidget(Game *game, Map::MapBase *map, const Point &pt, const Common::String &name) :
+		_game(game), _map(map), _position(pt), _name(name) {}
+
+	/**
+	 * Destructor
+	 */
+	virtual ~MapWidget() {}
+
+	/**
+	 * Get the tile for the widget
+	 */
+	virtual uint getTileNum() const { return 0; }
+
+	/**
+	 * Returns true if the player can move onto a tile the widget occupies
+	 */
+	virtual bool isBlocking() const { return false; }
 };
 
 } // End of namespace Shared

@@ -24,7 +24,7 @@
 #define ULTIMA_ULTIMA1_GFX_VIEWPORT_MAP_H
 
 #include "ultima/shared/gfx/viewport_map.h"
-#include "ultima/ultima1/core/map.h"
+#include "ultima/ultima1/map/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,7 +32,7 @@ namespace U1Gfx {
 
 class ViewportMap : public Shared::ViewportMap {
 private:
-	MapType _mapType;
+	Map::MapType _mapType;
 public:
 	/**
 	 * Constructor

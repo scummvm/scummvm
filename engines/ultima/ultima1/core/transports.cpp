@@ -22,7 +22,9 @@
 
 #include "ultima/ultima1/core/transports.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/map.h"
+#include "ultima/ultima1/map/map.h"
+#include "ultima/ultima1/map/map_dungeon.h"
+#include "ultima/ultima1/map/map_overworld.h"
 #include "common/algorithm.h"
 
 namespace Ultima {
@@ -32,26 +34,26 @@ Ultima1Game *WidgetTransport::getGame() const {
 	return static_cast<Ultima1Game *>(_game);
 }
 
-Ultima1Map *WidgetTransport::getMap() const {
-	return static_cast<Ultima1Map *>(_map);
+Map::Ultima1Map::MapBase *WidgetTransport::getMap() const {
+	return static_cast<Map::Ultima1Map::MapBase *>(_map);
 }
 
 /*-------------------------------------------------------------------*/
 
 uint TransportOnFoot::getTileNum() const {
-	Ultima1Map *map = getMap();
-	return map->_mapType == MAP_OVERWORLD ? 8 : 18;
+	Map::Ultima1Map::MapBase *map = getMap();
+	return dynamic_cast<Map::MapOverworld *>(map) ? 8 : 18;
 }
 
 bool TransportOnFoot::canMoveTo(const Point &destPos) {
-	Ultima1Map *map = getMap();
+	Map::Ultima1Map::MapBase *map = getMap();
 
 	// If beyond the end of the map, must be in a location map returning to the overworld
 	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)map->width() || destPos.y >= (int)map->height())
 		return true;
 
 	// Get the details of the position
-	U1MapTile currTile, destTile;
+	Map::U1MapTile currTile, destTile;
 	map->getTileAt(map->getPosition(), &currTile);
 	map->getTileAt(destPos, &destTile);
 
@@ -59,7 +61,7 @@ bool TransportOnFoot::canMoveTo(const Point &destPos) {
 	if (destTile._widget && destTile._widget->isBlocking())
 		return false;
 
-	if (map->_mapType == MAP_DUNGEON) {
+	if (dynamic_cast<Map::MapDungeon *>(map)) {
 		// Can't move onto certain dungeon tile types
 		if (destTile._isWall || destTile._isSecretDoor || destTile._isBeams)
 			return false;
@@ -75,22 +77,22 @@ bool TransportOnFoot::canMoveTo(const Point &destPos) {
 }
 
 bool TransportOnFoot::moveTo(const Point &destPos) {
-	Ultima1Map *map = getMap();
+	Map::Ultima1Map::MapBase *map = getMap();
 
 	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)map->width() || destPos.y >= (int)map->height()) {
 		// Handling for leaving locations by walking off the edge of the map
 		Ultima1Game *game = getGame();
 
-		if (map->_mapType == MAP_CASTLE && isPrincessSaved())
+		if (isPrincessSaved())
 			princessSaved();
 
 		// Load the overworld map
-		map->loadMap(MAP_OVERWORLD);
+		map->load(Map::MAP_OVERWORLD);
 
 		// Get the world map position from the game state, and scan through the tiles representing that tile
 		// in the original map to find the one that was used to enter the location, then set the position to it
 		const Point &worldPos = game->_gameState->_worldMapPos;
-		U1MapTile mapTile;
+		Map::U1MapTile mapTile;
 		for (int tileY = 0; tileY < map->_tilesPerOrigTile.y; ++tileY) {
 			for (int tileX = 0; tileX < map->_tilesPerOrigTile.x; ++tileX) {
 				Point mapPos(worldPos.x * map->_tilesPerOrigTile.x + tileX, worldPos.y * map->_tilesPerOrigTile.y + tileY);

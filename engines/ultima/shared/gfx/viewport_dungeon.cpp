@@ -40,7 +40,7 @@ void ViewportDungeon::draw() {
 	Point delta = map->getDirectionDelta();
 
 	Point leftDelta, rightDelta;
-	switch (map->_direction) {
+	switch (map->getDirection()) {
 	case DIR_LEFT:
 		leftDelta.y = 1;
 		rightDelta.y = -1;
@@ -208,7 +208,7 @@ void ViewportDungeon::drawCell(uint distance, const Point &pt) {
 			break;
 		case 6:
 			// Ladder down
-			if (map->_direction == DIR_UP || map->_direction == DIR_DOWN) {
+			if (map->getDirection() == DIR_UP || map->getDirection() == DIR_DOWN) {
 				s.drawLadderDownFaceOn(distance + 1);
 			} else {
 				s.drawLadderDownSideOn(distance + 1);
@@ -216,7 +216,7 @@ void ViewportDungeon::drawCell(uint distance, const Point &pt) {
 			break;
 		case 7:
 			// Ladder up
-			if (map->_direction == DIR_UP || map->_direction == DIR_DOWN) {
+			if (map->getDirection() == DIR_UP || map->getDirection() == DIR_DOWN) {
 				s.drawLadderUpFaceOn(distance + 1);
 			} else {
 				s.drawLadderUpSideOn(distance + 1);

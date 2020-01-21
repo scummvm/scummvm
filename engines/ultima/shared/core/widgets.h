@@ -36,9 +36,9 @@ public:
 	/**
 	 * Constructor
 	 */
-	Monster(Game *game, Map *map) : MapWidget(game, map), _hitPoints(0) {}
-	Monster(Game *game, Map *map, int hitPoints) : MapWidget(game, map), _hitPoints(hitPoints) {}
-	Monster(Game *game, Map *map, const Point &pt, int hitPoints) : MapWidget(game, map, pt), _hitPoints(hitPoints) {}
+	Monster(Game *game, Map::MapBase *map) : MapWidget(game, map), _hitPoints(0) {}
+	Monster(Game *game, Map::MapBase *map, int hitPoints) : MapWidget(game, map), _hitPoints(hitPoints) {}
+	Monster(Game *game, Map::MapBase *map, const Point &pt, int hitPoints) : MapWidget(game, map, pt), _hitPoints(hitPoints) {}
 
 	/**
 	 * Destructor
@@ -55,9 +55,9 @@ public:
 	/**
 	* Constructor
 	*/
-	DungeonWidget(Game *game, Map *map) : MapWidget(game, map) {}
-	DungeonWidget(Game *game, Map *map, const Point &pt) : MapWidget(game, map, pt) {}
-	DungeonWidget(Game *game, Map *map, const Point &pt, const Common::String &name) :
+	DungeonWidget(Game *game, Map::MapBase *map) : MapWidget(game, map) {}
+	DungeonWidget(Game *game, Map::MapBase *map, const Point &pt) : MapWidget(game, map, pt) {}
+	DungeonWidget(Game *game, Map::MapBase *map, const Point &pt, const Common::String &name) :
 		MapWidget(game, map, pt, name) {}
 
 	/**
@@ -71,8 +71,8 @@ public:
 	/**
 	 * Constructor
 	 */
-	DungeonMonster(Game *game, Map *map, int hitPoints) : Monster(game, map, hitPoints) {}
-	DungeonMonster(Game *game, Map *map, const Point &pt, int hitPoints) :
+	DungeonMonster(Game *game, Map::MapBase *map, int hitPoints) : Monster(game, map, hitPoints) {}
+	DungeonMonster(Game *game, Map::MapBase *map, const Point &pt, int hitPoints) :
 		Monster(game, map, pt, hitPoints) {}
 
 	/**

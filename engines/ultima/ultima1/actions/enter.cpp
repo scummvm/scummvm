@@ -22,7 +22,7 @@
 
 #include "ultima/ultima1/actions/enter.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/map.h"
+#include "ultima/ultima1/map/map.h"
 #include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
@@ -35,8 +35,8 @@ END_MESSAGE_MAP()
 
 bool Enter::EnterMsg(CEnterMsg &msg) {
 	Ultima1Game *game = getGame();
-	Ultima1Map *map = getMap();
-	U1MapTile mapTile;
+	Map::Ultima1Map *map = getMap();
+	Map::U1MapTile mapTile;
 
 	map->getTileAt(map->getPosition(), &mapTile);
 	
@@ -45,15 +45,15 @@ bool Enter::EnterMsg(CEnterMsg &msg) {
 		playFX(1);
 	} else {
 		// Save the position on the world map
-		game->_gameState->_worldMapPos = Point(map->getPosition().x / map->_tilesPerOrigTile.x,
-			map->getPosition().y / map->_tilesPerOrigTile.y);
+		game->_gameState->_worldMapPos = Point(map->getPosition().x / map->getTilesPerOrigTile().x,
+			map->getPosition().y / map->getTilesPerOrigTile().y);
 
 		// Load the location
-		map->loadMap(mapTile._locationNum);
+		map->load(mapTile._locationNum);
 
 		// Add message for location having been entered
 		addInfoMsg(game->_res->ENTERING);
-		addInfoMsg(map->_name);
+		addInfoMsg(map->getName());
 	}
 
 	return true;

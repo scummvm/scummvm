@@ -22,7 +22,7 @@
 
 #include "ultima/ultima1/actions/move.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/map.h"
+#include "ultima/ultima1/map/map.h"
 #include "ultima/ultima1/core/transports.h"
 #include "ultima/ultima1/core/resources.h"
 
@@ -35,9 +35,9 @@ BEGIN_MESSAGE_MAP(Move, Action)
 END_MESSAGE_MAP()
 
 bool Move::MoveMsg(CMoveMsg &msg) {
-	Ultima1Map *map = getMap();
+	Map::Ultima1Map *map = getMap();
 	
-	if (map->_mapType == MAP_DUNGEON) {
+	if (map->_mapType == Map::MAP_DUNGEON) {
 		switch (msg._direction) {
 		case Shared::DIR_LEFT:
 			dungeonTurnLeft();
@@ -53,7 +53,8 @@ bool Move::MoveMsg(CMoveMsg &msg) {
 			break;
 		}
 	} else {
-		WidgetTransport *transport = map->_currentTransport;
+		WidgetTransport *transport = dynamic_cast<WidgetTransport *>(map->getCurrentTransport());
+		assert(transport);
 
 		// Figure out the new position
 		Point delta;
@@ -92,66 +93,67 @@ bool Move::MoveMsg(CMoveMsg &msg) {
 }
 
 void Move::dungeonTurnLeft() {
-	Ultima1Map *map = getMap();
+	Map::Ultima1Map *map = getMap();
 
-	switch (map->_direction) {
+	switch (map->getDirection()) {
 	case Shared::DIR_LEFT:
-		map->_direction = Shared::DIR_DOWN;
+		map->setDirection(Shared::DIR_DOWN);
 		break;
 	case Shared::DIR_RIGHT:
-		map->_direction = Shared::DIR_UP;
+		map->setDirection(Shared::DIR_UP);
 		break;
 	case Shared::DIR_DOWN:
-		map->_direction = Shared::DIR_RIGHT;
+		map->setDirection(Shared::DIR_RIGHT);
 		break;
 	case Shared::DIR_UP:
-		map->_direction = Shared::DIR_LEFT;
+		map->setDirection(Shared::DIR_LEFT);
 		break;
 	}
 }
 
 void Move::dungeonTurnRight() {
-	Ultima1Map *map = getMap();
+	Map::Ultima1Map *map = getMap();
 
-	switch (map->_direction) {
+	switch (map->getDirection()) {
 	case Shared::DIR_LEFT:
-		map->_direction = Shared::DIR_UP;
+		map->setDirection(Shared::DIR_UP);
 		break;
 	case Shared::DIR_RIGHT:
-		map->_direction = Shared::DIR_DOWN;
+		map->setDirection(Shared::DIR_DOWN);
 		break;
 	case Shared::DIR_DOWN:
-		map->_direction = Shared::DIR_LEFT;
+		map->setDirection(Shared::DIR_LEFT);
 		break;
 	case Shared::DIR_UP:
-		map->_direction = Shared::DIR_RIGHT;
+		map->setDirection(Shared::DIR_RIGHT);
 		break;
 	}
 }
 
 void Move::dungeonTurnAround() {
-	Ultima1Map *map = getMap();
+	Map::Ultima1Map *map = getMap();
 
-	switch (map->_direction) {
+	switch (map->getDirection()) {
 	case Shared::DIR_LEFT:
-		map->_direction = Shared::DIR_RIGHT;
+		map->setDirection(Shared::DIR_RIGHT);
 		break;
 	case Shared::DIR_RIGHT:
-		map->_direction = Shared::DIR_LEFT;
+		map->setDirection(Shared::DIR_LEFT);
 		break;
 	case Shared::DIR_DOWN:
-		map->_direction = Shared::DIR_UP;
+		map->setDirection(Shared::DIR_UP);
 		break;
 	case Shared::DIR_UP:
-		map->_direction = Shared::DIR_DOWN;
+		map->setDirection(Shared::DIR_DOWN);
 		break;
 	}
 }
 
 void Move::dungeonMoveForward() {
-	Ultima1Map *map = getMap();
-	WidgetTransport *transport = map->_currentTransport;
+	Map::Ultima1Map *map = getMap();
 	Point delta = map->getDirectionDelta();
+	WidgetTransport *transport = dynamic_cast<WidgetTransport *>(map->getCurrentTransport());
+	assert(transport);
 
 	if (transport->canMoveTo(map->getPosition() + delta)) {
 		map->setPosition(map->getPosition() + delta);

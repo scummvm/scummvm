@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima1/core/people.h"
-#include "ultima/ultima1/core/map.h"
+#include "ultima/ultima1/map/map.h"
 #include "common/algorithm.h"
 
 namespace Ultima {

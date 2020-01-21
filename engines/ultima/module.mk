@@ -56,10 +56,13 @@ MODULE_OBJS += \
 	ultima1/actions/enter.o \
 	ultima1/actions/move.o \
 	ultima1/core/dungeon_widgets.o \
-	ultima1/core/map.o \
 	ultima1/core/people.o \
 	ultima1/core/resources.o \
 	ultima1/core/transports.o \
+	ultima1/map/map.o \
+	ultima1/map/map_city_castle.o \
+	ultima1/map/map_dungeon.o \
+	ultima1/map/map_overworld.o \
 	ultima1/u1gfx/drawing_support.o \
 	ultima1/u1gfx/game_view.o \
 	ultima1/u1gfx/info.o \

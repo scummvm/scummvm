@@ -20,36 +20,65 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_CORE_PEOPLE_H
-#define ULTIMA_ULTIMA1_CORE_PEOPLE_H
+#ifndef ULTIMA_ULTIMA1_MAP_MAP_CITY_CASTLE_H
+#define ULTIMA_ULTIMA1_MAP_MAP_CITY_CASTLE_H
 
-#include "ultima/shared/core/map.h"
+#include "ultima/ultima1/map/map.h"
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Map {
 
-class Person : public Shared::MapWidget {
+enum CityTile {
+	CTILE_GATE = 11
+};
+
+class MapCityCastle : public Ultima1Map::MapBase {
 private:
-	uint _tileNum;
-	int _hitPoints;
+	/**
+	 * Load widget list for the map
+	 */
+	void loadWidgets();
+
+	/**
+	 * Load the base map for towns and castles
+	 */
+	void loadTownCastleData();
+
+	/**
+	 * Loads a town/city
+	 */
+	void loadTown();
+
+	/**
+	 * Loads a castle
+	 */
+	void loadCastle();
+public:
+	uint _castleKey;					// Key for castle map lock
 public:
 	/**
 	 * Constructor
 	 */
-	Person(Shared::Game *game, Shared::Map::MapBase *map, uint tileNum, int hitPoints) :
-		Shared::MapWidget(game, map), _tileNum(tileNum), _hitPoints(hitPoints) {}
+	MapCityCastle(Ultima1Game *game) : Ultima1Map::MapBase(game), _castleKey(0) {}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~Person() {}
+	virtual ~MapCityCastle() {}
 
 	/**
-	 * Get the tile number for the person
+	 * Load the map
 	 */
-	virtual uint getTileNum() const { return _tileNum; }
+	virtual void load(Shared::MapId mapId);
+
+	/**
+	 * Get the viewport position
+	 */
+	virtual Point getViewportPosition(const Point &viewportSize);
 };
 
+} // End of namespace Map
 } // End of namespace Ultima1
 } // End of namespace Ultima
 
