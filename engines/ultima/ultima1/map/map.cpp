@@ -25,7 +25,6 @@
 #include "ultima/ultima1/map/map_dungeon.h"
 #include "ultima/ultima1/map/map_overworld.h"
 #include "ultima/ultima1/core/dungeon_widgets.h"
-#include "ultima/ultima1/core/people.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/shared/core/game_state.h"

@@ -20,13 +20,36 @@
  *
  */
 
-#include "ultima/ultima1/core/people.h"
-#include "ultima/ultima1/map/map.h"
-#include "common/algorithm.h"
+#ifndef ULTIMA_ULTIMA1_PEOPLE_KING_H
+#define ULTIMA_ULTIMA1_PEOPLE_KING_H
+
+#include "ultima/ultima1/people/person.h"
 
 namespace Ultima {
 namespace Ultima1 {
+namespace People {
 
+class King : public Person {
+public:
+	/**
+	 * Constructor
+	 */
+	King(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
+		Person(game, map, 20, hitPoints) {}
 
+	/**
+	 * Destructor
+	 */
+	virtual ~King() {}
+
+	/**
+	 * Called to update the character at the end of a turn
+	 */
+	virtual void update();
+};
+
+} // End of namespace People
 } // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif
