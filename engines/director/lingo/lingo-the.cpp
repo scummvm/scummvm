@@ -898,4 +898,13 @@ void Lingo::setObjectField(Common::String &obj, int field, Datum &d) {
 	warning("STUB: setObjectField(\"%s\", %d, ...)", obj.c_str(), field);
 }
 
+Datum Lingo::getObjectRef(Common::String &obj, Common::String &field) {
+	warning("STUB: getObjectRef(\"%s\", \"%s\")", obj.c_str(), field.c_str());
+
+	Datum d;
+	d.type = VOID;
+
+	return d;
+}
+
 } // End of namespace Director

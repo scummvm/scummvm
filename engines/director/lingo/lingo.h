@@ -269,6 +269,7 @@ public:
 	Datum getTheCast(Datum &id, int field);
 	Datum getObjectField(Common::String &obj, int field);
 	void setObjectField(Common::String &obj, int field, Datum &d);
+	Datum getObjectRef(Common::String &obj, Common::String &field);
 	const char *entity2str(int id);
 	const char *field2str(int id);
 

@@ -107,6 +107,7 @@ static struct FuncDescr {
 	{ LC::c_not,			"c_not",			"" },
 	{ LC::c_objectfieldassign,"c_objectfieldassign","sF" },
 	{ LC::c_objectfieldpush,"c_objectfieldpush","sF" }, // object, field
+	{ LC::c_objectrefpush,	"c_objectrefpush",	"ss" }, // object, field
 	{ LC::c_of,				"c_of",				"" },
 	{ LC::c_open,			"c_open",			"" },
 	{ LC::c_or,				"c_or",				"" },
@@ -454,6 +455,14 @@ void LC::c_objectfieldassign() {
 	Datum d = g_lingo->pop();
 
 	g_lingo->setObjectField(object, field, d);
+}
+
+void LC::c_objectrefpush() {
+	Common::String object(g_lingo->readString());
+	Common::String field(g_lingo->readString());
+
+	Datum d = g_lingo->getObjectRef(object, field);
+	g_lingo->push(d);
 }
 
 void LC::c_swap() {
