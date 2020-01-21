@@ -279,12 +279,18 @@ void SdlGraphicsManager::saveScreenshot() {
 	if (sdl_g_system)
 		screenshotsPath = sdl_g_system->getScreenshotsPath();
 
-	for (int n = 0;; n++) {
+	// Use the name of the running target as a base for screenshot file names
+	Common::String currentTarget = ConfMan.getActiveDomainName();
+
 #ifdef USE_PNG
-		filename = Common::String::format("scummvm%05d.png", n);
+	const char *extension = "png";
 #else
-		filename = Common::String::format("scummvm%05d.bmp", n);
+	const char *extension = "bmp";
 #endif
+
+	for (int n = 0;; n++) {
+		filename = Common::String::format("scummvm%s%s-%05d.%s", currentTarget.empty() ? "" : "-",
+		                                  currentTarget.c_str(), n, extension);
 
 		Common::FSNode file = Common::FSNode(screenshotsPath + filename);
 		if (!file.exists()) {
