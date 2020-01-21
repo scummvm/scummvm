@@ -82,6 +82,7 @@ namespace LC {
 	void c_themenuitementityassign();
 	void c_objectfieldpush();
 	void c_objectfieldassign();
+	void c_objectrefpush();
 
 	void c_repeatwhilecode();
 	void c_repeatwithcode();

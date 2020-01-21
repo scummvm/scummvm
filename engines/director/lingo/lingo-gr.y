@@ -96,6 +96,11 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 		Common::String *os;
 		int oe;
 	} objectfield;
+
+	struct {
+		Common::String *obj;
+		Common::String *field;
+	} objectref;
 }
 
 %token UNARY
@@ -107,6 +112,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token<s> ID STRING HANDLER SYMBOL
 %token<s> ENDCLAUSE tPLAYACCEL tMETHOD
 %token<objectfield> THEOBJECTFIELD
+%token<objectref> THEOBJECTREF
 %token tDOWN tELSE tELSIF tEXIT tGLOBAL tGO tIF tIN tINTO tLOOP tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tOPEN tPLAY tDONE tINSTANCE
@@ -431,6 +437,12 @@ expr: simpleexpr { $$ = $simpleexpr; }
 		g_lingo->codeString($THEOBJECTFIELD.os->c_str());
 		g_lingo->codeInt($THEOBJECTFIELD.oe);
 		delete $THEOBJECTFIELD.os; }
+	| THEOBJECTREF {
+		g_lingo->code1(LC::c_objectrefpush);
+		g_lingo->codeString($THEOBJECTREF.obj->c_str());
+		g_lingo->codeString($THEOBJECTREF.field->c_str());
+		delete $THEOBJECTREF.obj;
+		delete $THEOBJECTREF.field; }
 	| asgn
 	| expr '+' expr				{ g_lingo->code1(LC::c_add); }
 	| expr '-' expr				{ g_lingo->code1(LC::c_sub); }

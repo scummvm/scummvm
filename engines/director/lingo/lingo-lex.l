@@ -295,11 +295,13 @@ the[ \t]+[[:alpha:]]+[ \t]+of[ \t]+{identifier}	{
 				return THEENTITY;
 		} else {
 			if (g_director->getVersion() >= 4) {
-				field = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
+				Common::String key = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
 
-				if (!g_lingo->_theEntityFields.contains(field)) {
-					warning("LEXER: Unhandled the field '%s' for object", field.c_str());
-					return LEXERROR;
+				if (!g_lingo->_theEntityFields.contains(key)) { // Okay, this must be an object reference
+					yylval.objectref.obj = new Common::String(ptr);
+					yylval.objectref.field = new Common::String(field);
+
+					return THEOBJECTREF;
 				}
 
 				yylval.objectfield.os = new Common::String(ptr);
