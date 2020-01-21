@@ -88,7 +88,7 @@ public:
 	/**
 	 * Draw a monster
 	 */
-	virtual void draw(DungeonSurface &s, uint distance) = 0; 
+	virtual void draw(DungeonSurface &s, uint distance) {}
 };
 
 } // End of namespace Shared

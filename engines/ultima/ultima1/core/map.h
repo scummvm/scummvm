@@ -169,6 +169,16 @@ private:
 	 * Gets a random number
 	 */
 	uint getRandomNumber(uint min, uint max) { return min + _random.getRandomNumber(max - min); }
+
+	/**
+	 * Gets a random number
+	 */
+	uint getRandomNumber(uint max) { return getRandomNumber(0, max); }
+
+	/**
+	 * Spawns a monster at a given position in the dungeon map
+	 */
+	void spawnMonsterAt(const Point &pt);
 public:
 	MapType _mapType;					// Type of map
 	uint _mapStyle;						// Map style category for towns & castles
