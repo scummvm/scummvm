@@ -27,6 +27,10 @@
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Widgets {
+class DungeonItem;
+}
+
 namespace Maps {
 
 enum TileId {
@@ -44,7 +48,13 @@ private:
 	MapBase *_map;
 public:
 	int _locationNum;
+	Widgets::DungeonItem *_item;
 public:
+	/**
+	 * Constructor
+	 */
+	U1MapTile() : Shared::Maps::MapTile(), _item(0), _locationNum(-1) {}
+
 	/**
 	 * Set the active map
 	 */

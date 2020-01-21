@@ -98,6 +98,7 @@ public:
 	const char *NOTHING;
 	const char *NONE;
 	const char *NOTHING_HERE;
+	const char *NONE_HERE;
 	const char *SOLD;
 	const char *CANT_AFFORD;
 	const char *DROP_PENCE_WEAPON_ARMOR;

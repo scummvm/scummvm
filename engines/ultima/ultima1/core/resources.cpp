@@ -594,6 +594,7 @@ const char *const SRC_BUY_SELL = "-Buy, Sell: ";
 const char *const SRC_NOTHING = "nothing";
 const char *const SRC_NONE = "none";
 const char *const SRC_NOTHING_HERE = " - nothing here!";
+const char *const SRC_NONE_HERE = " - none here!";
 const char *const SRC_SOLD = "Sold!";
 const char *const SRC_CANT_AFFORD = "Thou canst not afford it!";
 const char *const SRC_DROP_PENCE_WEAPON_ARMOR = "Drop Pence,Weapon,Armour:";
@@ -681,6 +682,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	NOTHING = SRC_NOTHING;
 	NONE = SRC_NONE;
 	NOTHING_HERE = SRC_NOTHING_HERE;
+	NONE_HERE = SRC_NONE_HERE;
 	SOLD = SRC_SOLD;
 	CANT_AFFORD = SRC_CANT_AFFORD;
 	DROP_PENCE_WEAPON_ARMOR = SRC_DROP_PENCE_WEAPON_ARMOR;
@@ -765,6 +767,7 @@ void GameResources::synchronize() {
 	syncString(NOTHING);
 	syncString(NONE);
 	syncString(NOTHING_HERE);
+	syncString(NONE_HERE);
 	syncString(SOLD);
 	syncString(CANT_AFFORD);
 	syncString(DROP_PENCE_WEAPON_ARMOR);

@@ -31,7 +31,6 @@ void MapTile::clear() {
 	_tileId = _tileDisplayNum = -1;
 	_widgetNum = -1;
 	_widget = nullptr;
-	_itemNum = -1;
 	_isDoor = _isSecretDoor = false;
 	_isLadderUp = _isLadderDown = false;
 	_isWall = _isHallway = _isBeams = false;

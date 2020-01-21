@@ -66,7 +66,7 @@ ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	_viewportMap = new ViewportMap(this);
 	
-	_actions.resize(11);
+	_actions.resize(13);
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Shared::Actions::Huh(this, game->_res->HUH);
 	_actions[2] = new Actions::Drop(this);
@@ -75,9 +75,11 @@ ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect
 	_actions[5] = new Actions::HyperJump(this);
 	_actions[6] = new Actions::Inform(this);
 	_actions[7] = new Actions::Climb(this);
-	_actions[8] = new Shared::Actions::Pass(this, game->_res->ACTION_NAMES[15]);
-	_actions[9] = new Actions::Steal(this);
-	_actions[10] = new Actions::Transact(this);
+	_actions[8] = new Actions::Open(this);
+	_actions[9] = new Shared::Actions::Pass(this, game->_res->ACTION_NAMES[15]);
+	_actions[10] = new Actions::Steal(this);
+	_actions[11] = new Actions::Transact(this);
+	_actions[12] = new Actions::Unlock(this);
 }
 
 ViewGame::~ViewGame() {
@@ -215,6 +217,11 @@ bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
 		climb.execute(this);
 		break;
 	}
+	case Common::KEYCODE_o: {
+		Shared::COpenMsg open;
+		open.execute(this);
+		break;
+	}
 	case Common::KEYCODE_s: {
 		Shared::CStealMsg steal;
 		steal.execute(this);
@@ -223,6 +230,11 @@ bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
 	case Common::KEYCODE_t: {
 		Shared::CTransactMsg transact;
 		transact.execute(this);
+		break;
+	}
+	case Common::KEYCODE_u: {
+		Shared::CUnlockMsg unlock;
+		unlock.execute(this);
 		break;
 	}
 	case Common::KEYCODE_SPACE: {

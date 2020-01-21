@@ -213,7 +213,25 @@ void MapDungeon::update() {
 }
 
 void MapDungeon::open() {
-	// TODO
+	U1MapTile tile;
+	getTileAt(getPosition(), &tile);
+	addInfoMsg(Common::String::format(" %s", _game->_res->DUNGEON_ITEM_NAMES[1]), false);
+
+	if (!tile._item || !tile._item->open()) {
+		addInfoMsg(_game->_res->NONE_HERE);
+		_game->playFX(1);
+	}
+}
+
+void MapDungeon::unlock() {
+	U1MapTile tile;
+	getTileAt(getPosition(), &tile);
+	addInfoMsg(Common::String::format(" %s", _game->_res->DUNGEON_ITEM_NAMES[0]), false);
+
+	if (!tile._item || !tile._item->unlock()) {
+		addInfoMsg(_game->_res->NONE_HERE);
+		_game->playFX(1);
+	}
 }
 
 void MapDungeon::inform() {

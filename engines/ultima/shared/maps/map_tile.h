@@ -39,7 +39,6 @@ public:
 											// city for talking/stealing to merchants showing as ground
 	int _widgetNum;							// Widget number, if any
 	MapWidget *_widget;						// Widget pointer
-	int _itemNum;							// Item number, if any
 	// Dungeon tile flags 
 	bool _isDoor, _isSecretDoor;
 	bool _isLadderUp, _isLadderDown;
@@ -48,7 +47,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	MapTile() : _tileDisplayNum(-1), _tileId(-1), _widgetNum(-1), _widget(0), _itemNum(-1),
+	MapTile() : _tileDisplayNum(-1), _tileId(-1), _widgetNum(-1), _widget(0),
 		_isDoor(false), _isSecretDoor(false), _isLadderUp(false), _isLadderDown(false), _isWall(false),
 		_isHallway(false), _isBeams(false) {}
 
