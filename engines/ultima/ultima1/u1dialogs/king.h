@@ -45,6 +45,7 @@ class King : public Dialog {
 	enum KingMode { SELECT, PENCE, SERVICE };
 private:
 	KingMode _mode;
+	uint _kingIndex;
 private:
 	/**
 	 * Set the mode
@@ -67,16 +68,26 @@ private:
 	void notThatMuch();
 
 	/**
+	 * Already on a quest
+	 */
+	void alreadyOnQuest();
+
+	/**
 	 * Give hit points
 	 */
 	void giveHitPoints(uint amount);
+
+	/**
+	 * Write a text line to the dialog
+	 */
+	void centerText(const Common::String &line, int yp);
 public:
 	CLASSDEF;
 
 	/**
 	 * Constructor
 	 */
-	King(Ultima1Game *game);
+	King(Ultima1Game *game, uint kingIndex);
 
 	/**
 	 * Draws the visual item on the screen

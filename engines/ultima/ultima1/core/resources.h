@@ -159,7 +159,7 @@ public:
 	const char *WITH_KING;
 	const char *HE_IS_NOT_HERE;
 	const char *HE_REJECTS_OFFER;
-	const char *KING_TEXT[10];
+	const char *KING_TEXT[12];
 
 public:
 	GameResources();

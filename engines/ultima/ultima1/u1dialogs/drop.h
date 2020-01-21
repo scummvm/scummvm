@@ -30,7 +30,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-using Shared::CKeypressMsg;
+using Shared::CShowMsg;
+using Shared::CCharacterInputMsg;
 using Shared::CTextInputMsg;
 
 /**
@@ -38,13 +39,13 @@ using Shared::CTextInputMsg;
  */
 class Drop : public FullScreenDialog {
 	DECLARE_MESSAGE_MAP;
-	bool KeypressMsg(CKeypressMsg &msg);
+	bool ShowMsg(CShowMsg &msg);
+	bool CharacterInputMsg(CCharacterInputMsg &msg);
 	bool TextInputMsg(CTextInputMsg &msg);
 
 	enum Mode { SELECT, DROP_PENCE, DROP_WEAPON, DROP_ARMOR };
 private:
 	Mode _mode;
-	Shared::Gfx::TextInput _textInput;
 private:
 	/**
 	 * Sets the mode
@@ -60,16 +61,6 @@ private:
 	 * None response
 	 */
 	void none();
-
-	/**
-	 * Draw the initial mode selection display
-	 */
-	void drawSelection();
-
-	/**
-	 * Draw the drop pence display
-	 */
-	void drawDropPence();
 
 	/**
 	 * Draw the drop weapon display

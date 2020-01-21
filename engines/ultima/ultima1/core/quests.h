@@ -73,6 +73,11 @@ public:
 	bool isComplete() const { return _state == COMPLETED; }
 
 	/**
+	 * Mark a quest as in progress
+	 */
+	void start();
+
+	/**
 	 * Complete an in-progress quest
 	 */
 	void complete();
