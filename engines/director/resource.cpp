@@ -250,8 +250,11 @@ void DirectorEngine::loadMac(const Common::String movie) {
 			startOffset = 0;
 		}
 
-		if (!_mainArchive->openStream(dataFork, startOffset))
-			error("Failed to load RIFX from Mac binary");
+		if (!_mainArchive->openStream(dataFork, startOffset)) {
+			warning("Failed to load RIFX from Mac binary");
+			delete _currentScore;
+			_currentScore = nullptr;
+		}
 	}
 }
 

@@ -184,7 +184,8 @@ Common::Error DirectorEngine::run() {
 		loadInitialMovie(getEXEName());
 	}
 
-	_currentScore->setArchive(_mainArchive);
+	if (_currentScore)
+		_currentScore->setArchive(_mainArchive);
 
 	bool loop = true;
 
