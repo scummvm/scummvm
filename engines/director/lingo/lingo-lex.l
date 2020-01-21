@@ -305,7 +305,7 @@ the[ \t]+[[:alpha:]]+[ \t]+of[ \t]+{identifier}	{
 				}
 
 				yylval.objectfield.os = new Common::String(ptr);
-				yylval.objectfield.oe = g_lingo->_theEntityFields[field]->field;
+				yylval.objectfield.oe = g_lingo->_theEntityFields[key]->field;
 
 				return THEOBJECTFIELD;
 			}
