@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-20 21:33+0000\n"
+"PO-Revision-Date: 2020-01-24 17:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -10132,31 +10132,31 @@ msgstr "5 coins - ideal."
 
 #: invtxt.txt:64
 msgid "powłoka - Niewielki kawałek materiału."
-msgstr ""
+msgstr "coating - A small piece of material."
 
 #: invtxt.txt:65
 msgid "powłoka - Ćwiczenia rozciągające czynią cuda."
-msgstr ""
+msgstr "coating - Stretching exercises do wonders."
 
 #: invtxt.txt:66
 msgid "powłoka - Coś zaczyna się wykluwać..."
-msgstr ""
+msgstr "coating - Something is starting to form..."
 
 #: invtxt.txt:67
 msgid "powłoka - Ryzykowne wdzianko..."
-msgstr ""
+msgstr "coating - Risky outfit..."
 
 #: invtxt.txt:68
 msgid "świeczka - Magiczna - nigdy nie gaśnie."
-msgstr ""
+msgstr "candle - Magical - never goes out."
 
 #: invtxt.txt:69
 msgid "rozgrzany węgiel - Cieplutki."
-msgstr ""
+msgstr "hot coal - Warmy."
 
 #: invtxt.txt:70
 msgid "letni węgiel - Prawie zimny."
-msgstr ""
+msgstr "warm coal - Almost cold."
 
 #: mob.lst:1001
 msgid "grabarz - Wygląda gorzej niż ja się czuję."
@@ -10417,22 +10417,28 @@ msgstr "exit - Exit to the fresh air."
 #: mob.lst:5002
 msgid "ogłoszenie - \"Nie obsługujemy na kredyt. Nie przyjmujemy|w zastaw żon, psów ani dzieci. Złote|i srebrne przedmioty mile widziane.\""
 msgstr ""
+"announcement - \"We do not serve on credit. We do not accept|as guarantee "
+"deposit wives, dogs or children.|Gold and silver items are welcome.\""
 
 #: mob.lst:5003
 msgid "zakonnik - Albo miał nieszczęśliwy wypadek u golibrody,|albo zbyt mocno nachylił się nad ogniskiem."
 msgstr ""
+"monk - Either he had an unfortunate accident at the barber,|or he leaned too "
+"far over the fire."
 
 #: mob.lst:5004
 msgid "krasnolud - Całkiem spory, jak na krasnoluda.*+Ba, całkiem spory jak na człowieka."
-msgstr ""
+msgstr "dwarf - Quite big for a dwarf.*+Oh, quite big for a human."
 
 #: mob.lst:5005
 msgid "Arivald - No, nareszcie będziemy mogli dłużej|porozmawiać!"
-msgstr ""
+msgstr "Arivald - Well, finally we can talk longer!"
 
 #: mob.lst:5006
 msgid "Arivald - Mój ukochany przyjaciel, moja ostoja|w trudnych czasach i nieskażone|źródło czystej mądrości."
 msgstr ""
+"Arivald - My beloved friend, my refuge in difficult|times and an "
+"uncontaminated source|of pure wisdom."
 
 #: mob.lst:5007
 msgid "ognisko - Cieplutki, przyjemny ogień."
@@ -10441,10 +10447,12 @@ msgstr "bonfire - A warm, pleasant fire."
 #: mob.lst:5008
 msgid "skrzynka - Skoro stoi na widoku publicznym, to|chyba jest pusta. A pieniądze pewnie|w skarpecie."
 msgstr ""
+"chest - Since it's in public view, it's probably empty.|And the money "
+"probably in the treasury."
 
 #: mob.lst:5009
 msgid "karczmarz - Prawidłowo rozwinięty mięsień piwny..."
-msgstr ""
+msgstr "innkeeper - Properly developed beer muscle..."
 
 #: mob.lst:5010
 msgid "beka piwa - Uchh... Imponująca..."
@@ -10453,10 +10461,16 @@ msgstr "beer barrel - Ugh... Impressive..."
 #: mob.lst:5011
 msgid "drzwi - Zapachy stamtąd docierające zniechęciłyby|nawet najbardziej zdesperowanego złodzieja."
 msgstr ""
+"door - The smells coming from there would discourage|even the most desperate "
+"thief."
 
 #: mob.lst:5012
 msgid "bard - Zakola jak królewski dziedziniec, nos jak|pazur smoka, obślinione usta i czarny wąsik.+Teoretycznie wszystko jest przeciwko niemu,|ale coś mi mówi, że widoczna w jego oczach|pasja zaimponowała niejednej kobiecie..."
 msgstr ""
+"bard - Receding hairline like a royal courtyard,|nose like a dragon's claw, "
+"curled lips and black moustache.+Theoretically everything is against him,|"
+"but something tells me that the passion visible|in his eyes has impressed "
+"many women..."
 
 #: mob.lst:5013
 msgid "plakat - \"Kto odnajdzie moją jedyną i ukochaną córkę|Shandrię otrzyma tyle złota, ile potrafi|unieść. Nie będę zmuszał do małżeństwa\".+\"...Zaginęła roku Kozła, zimą, i do dziś los|jest jej nieznany. Pogrążony w smutku, król|Badurrae, Rawet\".+Jest jeszcze portret, ale już mało wyraźny.|Ten plakat wisi tu chyba ładnych parę lat..."
@@ -10470,22 +10484,23 @@ msgstr ""
 #: mob.lst:5014
 msgid "butelki - Butelki trochę brudne, ale zawartość|chyba... hm...  czysta."
 msgstr ""
+"bottles - The bottles are a bit dirty, but the content|seems... hm... clean."
 
 #: mob.lst:5015
 msgid "rulonik - To może być coś fascynującego albo|...kompromitującego..."
-msgstr ""
+msgstr "scroll - It can be something fascinating or|...discreditable..."
 
 #: mob.lst:5016
 msgid "linka - Pasek dla ubogich."
-msgstr ""
+msgstr "cord - Belt for the poor."
 
 #: mob.lst:5017
 msgid "kufel - Iście krasnoludzki rozmach."
-msgstr ""
+msgstr "pint - Truly dwarven size."
 
 #: mob.lst:5018
 msgid "nieznajoma - Bardzo tajemnicza osóbka..."
-msgstr ""
+msgstr "stranger - A very mysterious person..."
 
 #: mob.lst:6001
 msgid "drzwi - Z powrotem do rynku."
@@ -10494,30 +10509,40 @@ msgstr "door - Back to the market."
 #: mob.lst:6002
 msgid "alchemik - Palce pożółkłe od kwasów, oczy oślepłe|od czytania ksiąg - oto prawdziwy|fachowiec!"
 msgstr ""
+"alchemist - Fingers yellowed with acids, eyes blind|from reading books - "
+"this is a real|expert!"
 
 #: mob.lst:6003
 msgid "księga - Zapewne zbiór alchemicznych przepisów."
-msgstr ""
+msgstr "book - Probably a collection of alchemical recipes."
 
 #: mob.lst:6004
 msgid "dziwne stworzenie - Wygląda jak mały człowieczek, ale|jest w nim coś magicznego..."
 msgstr ""
+"strange creature - It looks like a little man, but there is|something "
+"magical about it..."
 
 #: mob.lst:6005
 msgid "homunkulus - Biedaczysko... Jak wielu z nas, widzi|tylko część problemu, i dlatego nie|potrafi znaleźć rozwiązania."
 msgstr ""
+"homunculus - Poor fella... Like many of us, he sees|only part of the "
+"problem, and therefore|cannot find the solution."
 
 #: mob.lst:6006
 msgid "jaszczur - Przyszły obiad czy obiekt eksperymentów?|A może ukochana maskotka?"
 msgstr ""
+"lizard - The next dinner or the object of experiments?|Or maybe a beloved "
+"mascot?"
 
 #: mob.lst:6007
 msgid "półka - Mnóstwo różnych preparatów i ksiąg."
-msgstr ""
+msgstr "shelf - Lots of different preparations and books."
 
 #: mob.lst:6008
 msgid "krzesło - Im dłużej się w nie wpatruję tym bardziej|uświadczam się w przekonaniu, iż jest to|krzesło."
 msgstr ""
+"chair - The longer I stare at it, the more|I become convinced that it is a "
+"chair."
 
 #: mob.lst:6009
 msgid "księga - \"Transmutacja - nowa moda czy realna szansa?\""
@@ -10525,23 +10550,27 @@ msgstr "book - \"Transmutation - new hype or real chance?\""
 
 #: mob.lst:6010
 msgid "pergaminy - Rozmaite notatki alchemika, mnóstwo|akademickiego żargonu."
-msgstr ""
+msgstr "parchments - Various alchemist's notes, lots of academic jargon."
 
 #: mob.lst:6011
 msgid "rozmaite tajemnicze urządzenia - Albo to jest jakiś naukowy eksperyment,|albo mamy do czynienia z klasyczną|nalewką z ziemniaków."
 msgstr ""
+"various mysterious devices - Either this is a scientific experiment|or we "
+"are dealing with a classic potato liquor."
 
 #: mob.lst:6012
 msgid "zegar - Być może jest to magiczny chronometr|odmierzający czas do końca świata.+A może po prostu ktoś oddał zegar do|reperacji."
 msgstr ""
+"clock - Perhaps it is a magic chronometer measuring|the time until the end "
+"of the world.+Or maybe someone just gave the clock|to repair."
 
 #: mob.lst:7001
 msgid "wyjście - Powrót z alejki na obrzeża rynku."
-msgstr ""
+msgstr "exit - Return from the alley to the outskirts of the market."
 
 #: mob.lst:7002
 msgid "wyjście - Z powrotem między kupieckie stragany."
-msgstr ""
+msgstr "exit - Back between the merchants' stalls."
 
 #: mob.lst:7003
 msgid "drzwi - Drzwi do mieszkania barda."
@@ -10550,10 +10579,15 @@ msgstr "doors - Door to the bard's house."
 #: mob.lst:7004
 msgid "znak - Albo bard jest bardzo poważany w tym mieście,|albo uważa, że trochę autoreklamy nigdy nie|zaszkodzi."
 msgstr ""
+"sign - Either the bard is very respected in this city|or he thinks that some "
+"self-ads will never hurt."
 
 #: mob.lst:7005
 msgid "balkon - Bardzo romantyczne miejsce...+Księżycowa noc, smutna melodia fletu|unosząca się pod niebiosa...*+Tylko ta wyprana bielizna trochę|psuje wrażenie."
 msgstr ""
+"balcony - A very romantic place...+Moonlit night, a sad melody of the flute "
+"hovering|under the heavens...*+Only this washed underwear spoils|the "
+"impression a little."
 
 #: mob.lst:7006
 msgid "stary wóz - Kompletna ruina."
@@ -10566,26 +10600,30 @@ msgstr "cat - A typical sissy."
 #: mob.lst:7008
 msgid "słowik - Ludzie prości nazwą to stworzenie słowikiem,|ludzie znający związki przyczynowo-skutkowe|powiedzą, iż to koci obiad."
 msgstr ""
+"nightingale - Simple people call this creation a nightingale,|people who "
+"know cause-and-effect relationships|will say it's a cat's dinner."
 
 #: mob.lst:7009
 msgid "rupiecie - Różne starocie, nowością wyróżnia się|tylko lutnia."
-msgstr ""
+msgstr "junk - Various antiques, only the lute stands out|with its novelty."
 
 #: mob.lst:7010
 msgid "szlafmyca - Że też musiała utkwić akurat w takim|miejscu!"
-msgstr ""
+msgstr "nightcap - And it also had to get stuck in such a place!"
 
 #: mob.lst:7011
 msgid "szlafmyca - Że też dorośli ludzie noszą takie|rzeczy na głowie!..."
-msgstr ""
+msgstr "nightcap - And adults also wear such things on their heads!..."
 
 #: mob.lst:7012
 msgid "kobieta - Zastanawiam się ile musieliby mi zapłacić,|żebym zechciał...+Nie, nie, nie... to zbyt obrzydliwe."
 msgstr ""
+"woman - I wonder how much they would have to pay me|to make me want...+No, "
+"no, no... it's too disgusting."
 
 #: mob.lst:8001
 msgid "zamek - Klasyka. Tak mały, że znalezienie go|graniczyło z cudem."
-msgstr ""
+msgstr "castle - Classic. So small that finding it was almost a miracle."
 
 #: mob.lst:8002
 msgid "słowik - Biedny ptak..."
@@ -10593,11 +10631,11 @@ msgstr "nightingale - Poor bird..."
 
 #: mob.lst:8003
 msgid "klatka - Co za okrucieństwo i brak gustu!"
-msgstr ""
+msgstr "cage - What cruelty and lack of taste!"
 
 #: mob.lst:8004
 msgid "flakonik - Flakonik z dziwnym płynem."
-msgstr ""
+msgstr "flask - A flask with a strange liquid."
 
 #: mob.lst:8005
 msgid "wyjście - Schodki w dół."
@@ -10605,11 +10643,13 @@ msgstr "exit - Steps go downstairs."
 
 #: mob.lst:8006
 msgid "wyjście na balkon - Wolę nie kręcić się w pobliżu|gaci barda."
-msgstr ""
+msgstr "exit to the balcony - I prefer not to hang around the bard's pants."
 
 #: mob.lst:8007
 msgid "stół - Rękopisy, pióro, tusz i butelka wina.+Wszystko, czego artysta potrzebuje do|tworzenia.*+Może jednak za mało wina."
 msgstr ""
+"table - Manuscripts, pen, ink and a bottle of wine.+Everything an artist "
+"needs for creativity.*+Maybe not enough wine, however."
 
 #: mob.lst:8008
 msgid "miotła - Na pewno środek lokomocji żony barda."
@@ -10636,6 +10676,8 @@ msgstr "exit - Back to the mountain."
 #: mob.lst:9004
 msgid "sztandar - Jeden w wielu przedmiotów w tym miejscu,|który wygląda jak nowy, ale czuć od|niego dziwną starość..."
 msgstr ""
+"banner - One of many items in this place that looks like|new, but I feel "
+"strange old age from it..."
 
 #: mob.lst:9005
 msgid "okno - O, widać stąd miasteczko..."
@@ -10652,10 +10694,12 @@ msgstr "runes - Hmmm... I wonder if it's some kind of spell."
 #: mob.lst:9008
 msgid "runy - Wiem, co to znaczy, ale nie chcę mówić na głos,|bo się znowu pojawi duch bóstwa i mogą być|kłopoty."
 msgstr ""
+"runes - I know what this means, but I do not want to speak out|loud, because "
+"the spirit of the deity will appear again|and there may be trouble."
 
 #: mob.lst:9009
 msgid "ołtarz - Przypomina tron jakiegoś wyjątkowo|wojowniczo usposobionego króla."
-msgstr ""
+msgstr "altar - Reminds the throne of some exceptionally militant king."
 
 #: mob.lst:10001
 msgid "wyjście - Ścieżka do miasteczka."
@@ -10691,15 +10735,17 @@ msgstr "castle gate - It leads directly to the courtyard."
 
 #: mob.lst:11001
 msgid "wyjście - Widać schody w dół na dziedziniec zamkowy."
-msgstr ""
+msgstr "exit - You can see the stairs down to the castle courtyard."
 
 #: mob.lst:11002
 msgid "sztandar - Ponoć są już kraje, gdzie|taki orzeł ma koronę."
-msgstr ""
+msgstr "flag - Apparently there are countries where such an eagle has a crown."
 
 #: mob.lst:11003
 msgid "zbroja - W środku ciemno i duszno, ale za to|ni miecz, ni kop w klejnoty nie|straszny."
 msgstr ""
+"armor - Dark and stuffy inside, but from the other|side, no sword, no "
+"basking in jewels."
 
 #: mob.lst:11004
 msgid "drzwi - Wyglądają zwyczajnie. Pewnie są od jakiejś|zwyczajnej komnaty."
