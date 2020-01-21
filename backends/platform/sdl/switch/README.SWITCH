@@ -43,9 +43,9 @@ switch-pkg-config
 
  - Create a subdirectory somewhere outside the source folder for your ScummVM build and cd into it
 
- - Execute the command (once a curl-config script exists for devkitA64, the --disable-libcurl could be omitted)
+ - Execute the command
 ```
-../scummvm/configure --host=switch --disable-libcurl
+../scummvm/configure --host=switch
 ```
 
  - Execute the command
@@ -56,6 +56,7 @@ make scummvm_switch.zip
 Port Authors
 ============
 cpasjuste
+rsn8887
 
 Thanks
 ======

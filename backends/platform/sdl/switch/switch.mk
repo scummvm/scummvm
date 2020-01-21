@@ -17,6 +17,7 @@ ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) ./switch_release/scummvm/data
 endif
 	cp $(DIST_FILES_DOCS) ./switch_release/scummvm/doc/
+	cp $(srcdir)/backends/platform/sdl/switch/README.SWITCH ./switch_release/scummvm/doc/
 
 scummvm_switch.zip: switch_release
 	cd ./switch_release && zip -r ../scummvm_switch.zip . && cd ..
