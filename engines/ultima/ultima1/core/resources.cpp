@@ -467,6 +467,15 @@ static const byte SRC_DUNGEON_DRAW_DATA[1964] = {
 	0xEC, 0xD3, 0x14, 0xD3, 0x7E, 0xEC, 0xF1, 0x14, 0xF1, 0x7F, 0x7E, 0x00, 0x88, 0x00, 0x00, 0x7F
 };
 
+const char *const SRC_OVERWORLD_MONSTER_NAMES[15] = {
+	"Ness creature", "Giant squid", "Dragon turtle", "Pirate ship", "Hood", "Bear", "Hidden archer",
+	"Dark knight", "Evil trent", "Thief", "Orc", "Knight", "Necromancer", "Evil ranger", "Wandering warlock"
+};
+const char *const SRC_DUNGEON_MONSTER_NAMES[25] = {
+	"Ranger", "Skeleton", "Thief", "Giant rat", "Bat", "Spider", "Viper", "Orc", "Cyclops", "Gelatinous cube",
+	"Ettin", "Chest", "Lizard man", "Minatour", "Carrion creeper", "Tangler", "Gremlin", "Wandering eyes",
+	"Wraith", "Lich", "Invisible seeker", "Mind whipper", "Zorn", "Daemon", "Balron"
+};
 
 const char *const SRC_BLOCKED = "Blocked!";
 const char *const SRC_ENTER_QUESTION = "Enter?";
@@ -504,6 +513,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(&SRC_WEAPON_NAMES_LOWERCASE[0], &SRC_WEAPON_NAMES_LOWERCASE[16], WEAPON_NAMES_LOWERCASE);
 	Common::copy(&SRC_ARMOR_NAMES[0], &SRC_ARMOR_NAMES[16], ARMOR_NAMES);
 	Common::copy(&SRC_SPELL_NAMES[0], &SRC_SPELL_NAMES[16], SPELL_NAMES);
+	Common::copy(&SRC_OVERWORLD_MONSTER_NAMES[0], &SRC_OVERWORLD_MONSTER_NAMES[15], OVERWORLD_MONSTER_NAMES);
+	Common::copy(&SRC_DUNGEON_MONSTER_NAMES[0], &SRC_DUNGEON_MONSTER_NAMES[25], DUNGEON_MONSTER_NAMES);
 
 	BLOCKED = SRC_BLOCKED;
 	ENTER_QUESTION = SRC_ENTER_QUESTION;
@@ -537,6 +548,8 @@ void GameResources::synchronize() {
 	syncStrings(WEAPON_NAMES_LOWERCASE, 16);
 	syncStrings(ARMOR_NAMES, 6);
 	syncStrings(SPELL_NAMES, 11);
+	syncStrings(OVERWORLD_MONSTER_NAMES, 15);
+	syncStrings(DUNGEON_MONSTER_NAMES, 25);
 
 	syncString(BLOCKED);
 	syncString(ENTER_QUESTION);

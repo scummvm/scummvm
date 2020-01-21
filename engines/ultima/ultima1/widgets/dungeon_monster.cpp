@@ -56,7 +56,7 @@ void DungeonMonster::update(bool isPreUpdate) {
 	int distance = ABS(delta.x) + ABS(delta.y);
 
 	if (distance == 1) {
-		attack(true);
+		attack();
 	} else if (distance < 8) {
 		movement();
 	}
@@ -97,7 +97,7 @@ bool DungeonMonster::canMoveTo(Shared::Map::MapBase *map, MapWidget *widget, con
 	return true;
 }
 
-void DungeonMonster::attack(bool isAllowed) {
+void DungeonMonster::attack() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
 	Point playerPos = _map->_currentTransport->_position;
 	Point delta = playerPos - _position;
@@ -141,8 +141,8 @@ void DungeonMonster::attack(bool isAllowed) {
 			isHit = false;
 		} else if (_monsterId == MONSTER_THIEF) {
 			// Thief will steal the first spare weapon player has that isn't equipped
-			for (uint weaponNum = 1; weaponNum < c->_weapons.size(); ++weaponNum) {
-				if ((int)weaponNum != c->_equippedWeapon && c->_weapons[weaponNum]._quantity > 0) {
+			for (int weaponNum = 1; weaponNum < (int)c->_weapons.size(); ++weaponNum) {
+				if (weaponNum != c->_equippedWeapon && c->_weapons[weaponNum]._quantity > 0) {
 					// TODO: May need to worry about word wrapping long line
 					addInfoMsg(Common::String::format(game->_res->THIEF_STOLE,
 						Shared::isVowel(c->_weapons[weaponNum]._longName.firstChar()) ? game->_res->AN : game->_res->A
@@ -152,14 +152,13 @@ void DungeonMonster::attack(bool isAllowed) {
 				}
 			}
 		}
+
+		if (isHit) {
+			addInfoMsg(Common::String::format(game->_res->HIT_DAMAGE, damage));
+			c->_hitPoints -= damage;
+		}
 	} else {
 		addInfoMsg(game->_res->MISSED);
-		isHit = false;
-	}
-
-	if (isHit) {
-		addInfoMsg(Common::String::format(game->_res->HIT_DAMAGE, damage));
-		c->_hitPoints -= damage;
 	}
 }
 
