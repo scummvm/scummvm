@@ -30,29 +30,83 @@
 namespace Ultima {
 namespace Shared {
 
+class Game;
+
+/**
+ * Base class for class types that have a quantity
+ */
+class Itemized {
+public:
+	uint _quantity;
+public:
+	/**
+	 * Constructor
+	 */
+	Itemized() : _quantity(0) {}
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Itemized() {}
+
+	/**
+	 * Synchronize data
+	 */
+	void synchronize(Common::Serializer &s) {
+		s.syncAsUint16LE(_quantity);
+	}
+
+	/**
+	 * Change the quantity by a given amount
+	 */
+	void changeQuantity(int delta) {
+		_quantity = (uint)CLIP((int)_quantity + delta, 0, 9999);
+	}
+
+	/**
+	 * Increase the quantity by 1
+	 */
+	void incrQuantity() { changeQuantity(1); }
+
+	/**
+	 * Decrease the quantity by 1
+	 */
+	void decrQuantity() { changeQuantity(-1); }
+};
+
 /**
  * Weapon entry
  */
-struct Weapon {
+class Weapon : public Itemized {
+public:
 	Common::String _shortName, _longName;
 	uint _distance;
-	uint _quantity;
+public:
+	/**
+	 * Constructor
+	 */
+	Weapon() : Itemized(), _distance(0) {}
 };
 
 /**
  * Armor entry
  */
-struct Armor {
+class Armor : public Itemized {
+public:
 	Common::String _name;
-	uint _quantity;
 };
 
 /**
  * Spell entry
  */
-struct Spell {
+class Spell : public Itemized {
+public:
 	Common::String _name;
-	uint _quantity;
+public:
+	/**
+	 * Cast the spell
+	 */
+	virtual void cast() = 0;
 };
 
 template<class T>
@@ -71,6 +125,9 @@ public:
 	}
 };
 
+/**
+ * Implements the data for a playable character within the game
+ */
 class Character {
 public:
 	Common::String _name;
@@ -93,7 +150,7 @@ public:
 	int _equippedSpell;
 	ItemArray<Weapon> _weapons;
 	ItemArray<Armor> _armor;
-	ItemArray<Spell> _spells;
+	ItemArray<Spell *> _spells;
 public:
 	/**
 	 * Constructor

@@ -309,7 +309,7 @@ void MapCastle::dropCoins(uint coins) {
 			if (spellNum == SPELL_MAGIC_MISSILE)
 				spellNum = SPELL_STEAL;
 		
-			c._spells[spellNum]._quantity++;
+			c._spells[spellNum]->incrQuantity();
 			addInfoMsg(_game->_res->ALAKAZOT);
 		}
 	} else {

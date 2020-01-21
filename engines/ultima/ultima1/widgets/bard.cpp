@@ -55,7 +55,7 @@ bool Bard::stealWeapon() {
 	Shared::Character *c = _game->_party._currentCharacter;
 	for (uint idx = 1; idx < c->_weapons.size(); ++idx) {
 		if (c->_weapons[idx]._quantity > 0 && (int)idx != c->_equippedWeapon) {
-			c->_weapons[idx]._quantity--;
+			c->_weapons[idx].decrQuantity();
 
 			if (_game->getRandomNumber(1, 255) < (c->_agility + 128)) {
 

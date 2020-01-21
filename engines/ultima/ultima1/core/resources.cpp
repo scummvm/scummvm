@@ -586,7 +586,7 @@ const char *const SRC_FIND = "Thou dost find %s";
 const char *const SRC_A_SECRET_DOOR = "a secret door!";
 
 const char *const SRC_ACTION_NAMES[26] = {
-	"Attack with", nullptr, nullptr, "Drop", "Enter", "Fire", "Get", "HyperJump", "Inform and search",
+	"Attack with", nullptr, "Cast", "Drop", "Enter", "Fire", "Get", "HyperJump", "Inform and search",
 	nullptr, "K-Limb", nullptr, nullptr, nullptr, "Open", "Pass", "Quit", "Ready", "Steal", "Transact",
 	"Unlock", "View", nullptr, "X-it", nullptr, "Ztats"
 };
@@ -631,6 +631,7 @@ const char *const SRC_MORE = " More ";
 const char *const SRC_READY_WEAPON_ARMOR_SPELL = "Ready Weapon,Armor,Spell:";
 const char *const SRC_WEAPON_ARMOR_SPELL[3] = { "weapon", "armor", "spell" };
 const char *const SRC_TRANSPORT_WEAPONS[2] = { "cannons", "lasers" };
+const char *const SRC_NO_EFFECT = "Hmmmm... no effect!";
 
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
 const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
@@ -737,6 +738,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	READY_WEAPON_ARMOR_SPELL = SRC_READY_WEAPON_ARMOR_SPELL;
 	Common::copy(SRC_WEAPON_ARMOR_SPELL, SRC_WEAPON_ARMOR_SPELL + 3, WEAPON_ARMOR_SPELL);
 	Common::copy(SRC_TRANSPORT_WEAPONS, SRC_TRANSPORT_WEAPONS + 2, TRANSPORT_WEAPONS);
+	NO_EFFECT = SRC_NO_EFFECT;
 
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
 	GROCERY_SELL = SRC_GROCERY_SELL;
@@ -840,6 +842,7 @@ void GameResources::synchronize() {
 	syncString(READY_WEAPON_ARMOR_SPELL);
 	syncStrings(WEAPON_ARMOR_SPELL, 3);
 	syncStrings(TRANSPORT_WEAPONS, 2);
+	syncString(NO_EFFECT);
 
 	syncStrings(GROCERY_NAMES, 8);
 	syncString(GROCERY_SELL);
