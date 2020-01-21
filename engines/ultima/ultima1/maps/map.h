@@ -120,6 +120,7 @@ public:
 	 * Action pass-throughs
 	 */
 	#define PASS_METHOD(NAME) void NAME() { static_cast<MapBase *>(_mapArea)->NAME(); }
+	PASS_METHOD(drop)
 	PASS_METHOD(enter)
 	PASS_METHOD(inform)
 	PASS_METHOD(climb)

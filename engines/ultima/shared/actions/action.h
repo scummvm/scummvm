@@ -63,10 +63,11 @@ public:
 
 	/**
 	 * Adds a text string to the info area
-	 * @param text		Text to add
-	 * @param newLine	Whether to apply a newline at the end
+	 * @param text			Text to add
+	 * @param newLine		Whether to apply a newline at the end
+	 * @param replaceLine	If true, replaces the current last line
 	 */
-	void addInfoMsg(const Common::String &text, bool newLine = true);
+	void addInfoMsg(const Common::String &text, bool newLine = true, bool replaceLine = false);
 
 	/**
 	 * Play a sound effect

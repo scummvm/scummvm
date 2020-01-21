@@ -99,6 +99,7 @@ public:
 	const char *NOTHING_HERE;
 	const char *SOLD;
 	const char *CANT_AFFORD;
+	const char *DROP_PENCE_WEAPON_ARMOR;
 	const char *GROCERY_NAMES[8];
 	const char *GROCERY_SELL;
 	const char *GROCERY_PACKS1;

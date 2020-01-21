@@ -40,25 +40,30 @@ namespace U1Dialogs {
  */
 class Dialog : public Shared::Gfx::Popup {
 protected:
+	Ultima1Game *_game;
+protected:
 	/**
 	 * Jumps up through the parents to find the root game
 	 */
-	Ultima1Game *getGame();
+	Ultima1Game *getGame() { return _game; }
 
 	/**
 	 * Return the game's map
 	 */
 	Maps::Ultima1Map *getMap();
+
+	/**
+	 * Adds a text string to the info area
+	 * @param text			Text to add
+	 * @param newLine		Whether to apply a newline at the end
+	 * @param replaceLine	If true, replaces the current last line
+	 */
+	void addInfoMsg(const Common::String &text, bool newLine = true, bool replaceLine = false);
 public:
 	/**
 	 * Constructor
 	 */
 	Dialog(Ultima1Game *game);
-
-	/**
-	 * Draws the visual item on the screen
-	 */
-	virtual void draw();
 };
 
 } // End of namespace U1Dialogs

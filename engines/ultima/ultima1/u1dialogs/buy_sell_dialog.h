@@ -42,10 +42,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	BuySellDialog(Ultima1Game *game, BuySell buySell, const Common::String &title) : Dialog(game),
-		_buySell(buySell), _title(title) {
-		assert(buySell == BUY || buySell == SOLD);
-	}
+	BuySellDialog(Ultima1Game *game, BuySell buySell, const Common::String &title);
 
 	/**
 	 * Draws the visual item on the screen

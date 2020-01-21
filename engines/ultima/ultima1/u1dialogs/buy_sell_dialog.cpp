@@ -30,10 +30,20 @@ namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
+BuySellDialog::BuySellDialog(Ultima1Game *game, BuySell buySell, const Common::String &title) : Dialog(game),
+	_buySell(buySell), _title(title) {
+	assert(buySell == BUY || buySell == SOLD);
+	_bounds = Rect(31, 23, 287, 127);
+}
+
 void BuySellDialog::draw() {
 	Dialog::draw();
 	Gfx::VisualSurface s = getSurface();
 	
+	// Draw the background and frame
+	s.clear();
+	s.frameRect(Rect(3, 3, _bounds.width() - 3, _bounds.height() - 3), getGame()->_borderColor);
+
 	// Draw the title
 	byte color = getGame()->_textColor;
 	s.writeString(_title, Point((_bounds.width() - _title.size() * 8) / 2, 9), color);

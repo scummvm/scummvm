@@ -33,11 +33,13 @@
 #include "ultima/ultima1/actions/move.h"
 #include "ultima/ultima1/actions/map_action.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/shared/gfx/text_cursor.h"
 #include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Actions {
+MAP_ACTION(Drop, 3, drop)
 MAP_ACTION(Enter, 4, enter)
 MAP_ACTION(Inform, 8, inform)
 MAP_ACTION(Climb, 10, climb)
@@ -60,15 +62,16 @@ ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	_viewportMap = new ViewportMap(this);
 	
-	_actions.resize(8);
+	_actions.resize(9);
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Shared::Actions::Huh(this, game->_res->HUH);
-	_actions[2] = new Actions::Enter(this);
-	_actions[3] = new Actions::Inform(this);
-	_actions[4] = new Actions::Climb(this);
-	_actions[5] = new Shared::Actions::Pass(this, game->_res->ACTION_NAMES[15]);
-	_actions[6] = new Actions::Steal(this);
-	_actions[7] = new Actions::Transact(this);
+	_actions[2] = new Actions::Drop(this);
+	_actions[3] = new Actions::Enter(this);
+	_actions[4] = new Actions::Inform(this);
+	_actions[5] = new Actions::Climb(this);
+	_actions[6] = new Shared::Actions::Pass(this, game->_res->ACTION_NAMES[15]);
+	_actions[7] = new Actions::Steal(this);
+	_actions[8] = new Actions::Transact(this);
 }
 
 ViewGame::~ViewGame() {
@@ -89,10 +92,12 @@ void ViewGame::draw() {
 		DrawingSupport ds(s);
 		ds.drawGameFrame();
 		drawIndicators();
-		_isDirty = false;
+
+		setDirty();
 	}
 
-	_info->draw();
+	if (_info->isDirty())
+		_info->draw();
 	if (_status->isDirty())
 		_status->draw();
 
@@ -105,6 +110,8 @@ void ViewGame::draw() {
 		_viewportMap->draw();
 		break;
 	}
+
+	_isDirty = false;
 }
 
 void ViewGame::drawIndicators() {
@@ -145,6 +152,8 @@ bool ViewGame::FrameMsg(CFrameMsg &msg) {
 }
 
 bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
+	getGame()->_textCursor->setVisible(false);
+
 	switch (msg._keyState.keycode) {
 	case Common::KEYCODE_LEFT:
 	case Common::KEYCODE_KP4: {
@@ -168,6 +177,11 @@ bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
 	case Common::KEYCODE_KP2: {
 		Shared::CMoveMsg move(Shared::Maps::DIR_DOWN);
 		move.execute(this);
+		break;
+	}
+	case Common::KEYCODE_d: {
+		Shared::CDropMsg drop;
+		drop.execute(this);
 		break;
 	}
 	case Common::KEYCODE_e: {

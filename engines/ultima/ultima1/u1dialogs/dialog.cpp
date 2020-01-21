@@ -23,30 +23,21 @@
 #include "ultima/ultima1/u1dialogs/dialog.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map.h"
-#include "ultima/shared/gfx/visual_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace U1Dialogs {
 
-Dialog::Dialog(Ultima1Game *game) : Popup(game) {
-	_bounds = Rect(31, 23, 287, 127);
-}
-
-Ultima1Game *Dialog::getGame() {
-	return static_cast<Ultima1Game *>(TreeItem::getGame());
+Dialog::Dialog(Ultima1Game *game) : Popup(game), _game(game) {
 }
 
 Maps::Ultima1Map *Dialog::getMap() {
-	return static_cast<Maps::Ultima1Map *>(getGame()->getMap());
+	return static_cast<Maps::Ultima1Map *>(_game->getMap());
 }
 
-void Dialog::draw() {
-	Shared::Gfx::VisualSurface s = getSurface();
-	s.clear();
-
-	// Draw the frame
-	s.frameRect(Rect(3, 3, _bounds.width() - 3, _bounds.height() - 3), getGame()->_borderColor);
+void Dialog::addInfoMsg(const Common::String &text, bool newLine, bool replaceLine) {
+	Shared::CInfoMsg msg(text, newLine, replaceLine);
+	msg.execute(_game->getView());
 }
 
 } // End of namespace U1Dialogs

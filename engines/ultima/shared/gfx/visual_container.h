@@ -64,7 +64,7 @@ public:
 	/**
 	 * Flags the item as being changed, requiring a redraw
 	 */
-	virtual void setDirty() override;
+	virtual void setDirty(bool dirty = true) override;
 
 	/**
 	 * Returns true if the item is dirty, requiring a redraw

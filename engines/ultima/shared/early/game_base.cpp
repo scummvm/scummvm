@@ -190,6 +190,7 @@ void GameBase::update() {
 		// Draw the view
 		if (_currentView->isDirty()) {
 			_currentView->draw();
+			_currentView->clearDirty();
 		} else if (_pendingPopup) {
 			// There's a pending popup to display, so make it active
 			_currentView = _pendingPopup;
