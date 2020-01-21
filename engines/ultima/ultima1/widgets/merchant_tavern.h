@@ -29,9 +29,14 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+/**
+ * Implements the tavern keeper
+ */
 class MerchantTavern : public Merchant {
+	DECLARE_MESSAGE_MAP;
 public:
 	DECLARE_WIDGET(MerchantTavern)
+	CLASSDEF;
 
 	/**
 	 * Constructor

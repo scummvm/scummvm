@@ -27,8 +27,13 @@
 #include "ultima/ultima1/maps/map_overworld.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/widgets/merchant.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/widgets/merchant_armor.h"
+#include "ultima/ultima1/widgets/merchant_grocer.h"
+#include "ultima/ultima1/widgets/merchant_magic.h"
+#include "ultima/ultima1/widgets/merchant_tavern.h"
+#include "ultima/ultima1/widgets/merchant_transport.h"
+#include "ultima/ultima1/widgets/merchant_weapons.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -63,17 +68,29 @@ void MapBase::steal() {
 	U1MapTile tile;
 	getTileAt(getPosition(), &tile);
 
-	//Widgets::Merchant *merchant = nullptr;
+	// Scan for the correct merchant depending on the tile player is on
+	Widgets::Merchant *merchant = nullptr;
 	switch (tile._tileId) {
+	case 55:
+		merchant = dynamic_cast<Widgets::MerchantArmor *>(_widgets.findByClass(Widgets::MerchantArmor::type()));
+		break;
 	case 57:
+		merchant = dynamic_cast<Widgets::MerchantGrocer *>(_widgets.findByClass(Widgets::MerchantGrocer::type()));
+		break;
+	case 59:
+		merchant = dynamic_cast<Widgets::MerchantWeapons *>(_widgets.findByClass(Widgets::MerchantWeapons::type()));
 		break;
 	default:
 		break;
 	}
 
-
-	addInfoMsg("?");
-	_game->playFX(1);
+	if (merchant) {
+		// Found a merchant, so call their steal handler
+		merchant->steal();
+	} else {
+		addInfoMsg("?");
+		_game->playFX(1);
+	}
 }
 
 void MapBase::talk() {

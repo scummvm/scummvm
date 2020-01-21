@@ -20,11 +20,13 @@
  *
  */
 
-#include "ultima/ultima1/widgets/merchant_armor.h"
+#include "ultima/ultima1/widgets/merchant_magic.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
+
+EMPTY_MESSAGE_MAP(MerchantMagic, Merchant);
 
 } // End of namespace Widgets
 } // End of namespace Ultima1

@@ -29,9 +29,14 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+/**
+ * Implements the transport merchant
+ */
 class MerchantTransport : public Merchant {
+	DECLARE_MESSAGE_MAP;
 public:
 	DECLARE_WIDGET(MerchantTransport)
+	CLASSDEF;
 
 	/**
 	 * Constructor

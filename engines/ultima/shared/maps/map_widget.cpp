@@ -30,6 +30,8 @@ namespace Ultima {
 namespace Shared {
 namespace Maps {
 
+EMPTY_MESSAGE_MAP(MapWidget, MessageTarget);
+
 void MapWidget::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_position.x);
 	s.syncAsSint16LE(_position.y);
