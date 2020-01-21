@@ -305,6 +305,10 @@ MESSAGE0(CDropMsg);
  */
 MESSAGE0(CEnterMsg);
 
+/**
+ * Used to trigger a Get action
+ */
+MESSAGE0(CGetMsg);
 
 /**
  * Used to trigger an inform action

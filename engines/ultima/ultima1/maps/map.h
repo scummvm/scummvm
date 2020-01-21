@@ -124,6 +124,7 @@ public:
 	PASS_METHOD(enter)
 	PASS_METHOD(inform)
 	PASS_METHOD(climb)
+	PASS_METHOD(get)
 	PASS_METHOD(steal)
 	PASS_METHOD(talk)
 

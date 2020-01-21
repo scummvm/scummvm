@@ -157,6 +157,26 @@ void MapCityCastle::loadTownCastleData() {
 	}
 }
 
+Widgets::Merchant *MapCityCastle::getStealMerchant() {
+	U1MapTile tile;
+	getTileAt(getPosition(), &tile);
+
+	// Scan for the correct merchant depending on the tile player is on
+	switch (tile._tileId) {
+	case 55:
+		return dynamic_cast<Widgets::MerchantArmor *>(_widgets.findByClass(Widgets::MerchantArmor::type()));
+		break;
+	case 57:
+		return dynamic_cast<Widgets::MerchantGrocer *>(_widgets.findByClass(Widgets::MerchantGrocer::type()));
+		break;
+	case 59:
+		return dynamic_cast<Widgets::MerchantWeapons *>(_widgets.findByClass(Widgets::MerchantWeapons::type()));
+		break;
+	default:
+		return nullptr;
+	}
+}
+
 void MapCityCastle::drop() {
 	U1Dialogs::Drop *drop = new U1Dialogs::Drop(_game);
 	drop->show();
@@ -168,24 +188,7 @@ void MapCityCastle::inform() {
 }
 
 void MapCityCastle::steal() {
-	U1MapTile tile;
-	getTileAt(getPosition(), &tile);
-
-	// Scan for the correct merchant depending on the tile player is on
-	Widgets::Merchant *merchant = nullptr;
-	switch (tile._tileId) {
-	case 55:
-		merchant = dynamic_cast<Widgets::MerchantArmor *>(_widgets.findByClass(Widgets::MerchantArmor::type()));
-		break;
-	case 57:
-		merchant = dynamic_cast<Widgets::MerchantGrocer *>(_widgets.findByClass(Widgets::MerchantGrocer::type()));
-		break;
-	case 59:
-		merchant = dynamic_cast<Widgets::MerchantWeapons *>(_widgets.findByClass(Widgets::MerchantWeapons::type()));
-		break;
-	default:
-		break;
-	}
+	Widgets::Merchant *merchant = getStealMerchant();
 
 	if (merchant) {
 		// Found a merchant, so call their steal handler
@@ -251,6 +254,11 @@ void MapCity::dropCoins(uint coins) {
 	}
 }
 
+void MapCity::get() {
+	addInfoMsg(_game->_res->WHAT);
+	_game->playFX(1);
+}
+
 /*-------------------------------------------------------------------*/
 
 void MapCastle::load(Shared::Maps::MapId mapId) {
@@ -260,6 +268,7 @@ void MapCastle::load(Shared::Maps::MapId mapId) {
 	_mapStyle = _mapIndex % 2;
 	_name = _game->_res->LOCATION_NAMES[_mapId - 1];
 	_castleKey = _game->getRandomNumber(255) & 1 ? 61 : 60;
+	_getCounter = 0;
 
 	loadTownCastleData();
 
@@ -270,6 +279,12 @@ void MapCastle::load(Shared::Maps::MapId mapId) {
 	// Load up the widgets for the given map
 	loadWidgets();
 	setPosition(Common::Point(0, height() / 2));		// Start at center left edge of map
+}
+
+void MapCastle::synchronize(Common::Serializer &s) {
+	MapCityCastle::synchronize(s);
+	s.syncAsByte(_castleKey);
+	s.syncAsByte(_getCounter);
 }
 
 void MapCastle::dropCoins(uint coins) {
@@ -293,6 +308,18 @@ void MapCastle::dropCoins(uint coins) {
 		}
 	} else {
 		addInfoMsg(_game->_res->OK);
+	}
+}
+
+void MapCastle::get() {
+	Widgets::Merchant *merchant = getStealMerchant();
+
+	if (merchant) {
+		// Found a merchant, so call their get handler
+		merchant->get();
+	} else {
+		addInfoMsg(_game->_res->NOTHING_HERE);
+		_game->playFX(1);
 	}
 }
 

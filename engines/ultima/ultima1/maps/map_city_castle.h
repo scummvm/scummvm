@@ -27,6 +27,10 @@
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Widgets {
+	class Merchant;
+}
+
 namespace Maps {
 
 enum CityTile {
@@ -48,6 +52,11 @@ protected:
 	 * Load the base map for towns and castles
 	 */
 	void loadTownCastleData();
+
+	/**
+	 * Get a merchant for a given steal-type tile
+	 */
+	Widgets::Merchant *getStealMerchant();
 public:
 	bool _guardsHostile;			// Flag for whether guards are hostile
 public:
@@ -121,6 +130,11 @@ public:
 	 * Handles dropping an amount of coins
 	 */
 	virtual void dropCoins(uint coins) override;
+
+	/**
+	 * Do an get action
+	 */
+	virtual void get() override;
 };
 
 /**
@@ -129,11 +143,12 @@ public:
 class MapCastle : public MapCityCastle {
 public:
 	uint _castleKey;					// Key for castle map lock
+	int _getCounter;					// Counter for allowed gets without stealing check
 public:
 	/**
 	 * Constructor
 	 */
-	MapCastle(Ultima1Game *game, Ultima1Map *map) : MapCityCastle(game, map), _castleKey(0) {}
+	MapCastle(Ultima1Game *game, Ultima1Map *map) : MapCityCastle(game, map), _castleKey(0), _getCounter(0) {}
 
 	/**
 	 * Destructor
@@ -146,9 +161,19 @@ public:
 	virtual void load(Shared::Maps::MapId mapId) override;
 
 	/**
+	 * Handles loading and saving the map's data
+	 */
+	virtual void synchronize(Common::Serializer &s) override;
+
+	/**
 	 * Handles dropping an amount of coins
 	 */
 	virtual void dropCoins(uint coins) override;
+
+	/**
+	 * Do an get action
+	 */
+	virtual void get() override;
 };
 
 } // End of namespace Maps

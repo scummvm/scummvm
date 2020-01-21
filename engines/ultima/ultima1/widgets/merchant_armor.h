@@ -62,9 +62,14 @@ public:
 	MerchantArmor(Ultima1Game *game, Maps::MapBase *map) : Merchant(game, map, 50) {}
 
 	/**
+	 * Does the get action
+	 */
+	virtual void get() override;
+
+	/**
 	 * Does the steal action
 	 */
-	virtual void steal();
+	virtual void steal() override;
 };
 
 } // End of namespace Widgets

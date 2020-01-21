@@ -39,6 +39,11 @@ protected:
 	 * Checks whether the player is caught stealing, and if so, makes the guards hostile
 	 */
 	bool checkCuaghtStealing();
+
+	/**
+	 * Adds a response that you don't have the king's permission
+	 */
+	void noKingsPermission();
 public:
 	CLASSDEF;
 
@@ -58,6 +63,11 @@ public:
 	 * Constructor
 	 */
 	Merchant(Ultima1Game *game, Maps::MapBase *map) : Person(game, map, 50) {}
+
+	/**
+	 * Does the get action
+	 */
+	virtual void get() {}
 
 	/**
 	 * Does the steal action
