@@ -113,12 +113,20 @@ private:
 	int _fingersDown;
 	bool _swap_menu_and_back;
 
+#ifdef ENABLE_KEYMAPPER
+	Common::KeymapperDefaultBindings *_keymapperDefaultBindings;
+#endif
+
 	void clipMouse(Common::Point &p);
 	void scaleMouse(Common::Point &p, int x, int y, bool deductDrawRect = true, bool touchpadMode = false);
 
 public:
 	virtual void pushEvent(const Common::Event &event);
 	virtual bool pollEvent(Common::Event &event);
+#ifdef ENABLE_KEYMAPPER
+	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() { return _keymapperDefaultBindings; }
+#endif
+
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
 

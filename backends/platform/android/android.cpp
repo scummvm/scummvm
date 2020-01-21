@@ -56,6 +56,7 @@
 #include "common/config-manager.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
+#include "backends/keymapper/keymapper-defaults.h"
 #include "backends/mutex/pthread/pthread-mutex.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -340,6 +341,21 @@ void OSystem_Android::initBackend() {
 
 	_event_queue_lock = createMutex();
 
+#ifdef ENABLE_KEYMAPPER
+	if (_keymapperDefaultBindings == 0)
+		_keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
+
+	if (_swap_menu_and_back) {
+		_keymapperDefaultBindings->setDefaultBinding("global", "MENU", "AC_BACK");
+		_keymapperDefaultBindings->setDefaultBinding("global", "SKCT", "MENU");
+		_keymapperDefaultBindings->setDefaultBinding("gui", "CLOS", "MENU");
+	} else {
+		_keymapperDefaultBindings->setDefaultBinding("global", "MENU", "MENU");
+		_keymapperDefaultBindings->setDefaultBinding("global", "SKCT", "AC_BACK");
+		_keymapperDefaultBindings->setDefaultBinding("gui", "CLOS", "AC_BACK");
+	}
+#endif
+
 	gettimeofday(&_startTime, 0);
 
 	_mixer = new Audio::MixerImpl(_audio_sample_rate);
@@ -367,7 +383,9 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureOpenUrl ||
 			f == kFeatureTouchpadMode ||
 			f == kFeatureOnScreenControl ||
+#ifndef ENABLE_KEYMAPPER
 			f == kFeatureSwapMenuAndBackButtons ||
+#endif
 			f == kFeatureClipboardSupport) {
 		return true;
 	}
@@ -390,10 +408,12 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 		ConfMan.setBool("onscreen_control", enable);
 		JNI::showKeyboardControl(enable);
 		break;
+#ifndef ENABLE_KEYMAPPER
 	case kFeatureSwapMenuAndBackButtons:
 		ConfMan.setBool("swap_menu_and_back_buttons", enable);
 		_swap_menu_and_back = enable;
 		break;
+#endif
 	default:
 		ModularBackend::setFeatureState(f, enable);
 		break;
@@ -408,8 +428,10 @@ bool OSystem_Android::getFeatureState(Feature f) {
 		return ConfMan.getBool("touchpad_mouse_mode");
 	case kFeatureOnScreenControl:
 		return ConfMan.getBool("onscreen_control");
+#ifndef ENABLE_KEYMAPPER
 	case kFeatureSwapMenuAndBackButtons:
 		return ConfMan.getBool("swap_menu_and_back_buttons");
+#endif
 	default:
 		return ModularBackend::getFeatureState(f);
 	}

@@ -58,6 +58,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 	switch (type) {
 	case JE_SYS_KEY:
+#ifndef ENABLE_KEYMAPPER
 		switch (arg1) {
 		case JACTION_DOWN:
 			e.type = Common::EVENT_KEYDOWN;
@@ -125,7 +126,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		default:
 			break;
 		}
-
+#endif
 		// fall through
 
 	case JE_KEY:
