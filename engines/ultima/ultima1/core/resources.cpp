@@ -83,6 +83,11 @@ const char *const SRC_SEX_NAMES[3] = { "Male", "Female", "Yes Please" };
 
 const char *const SRC_CLASS_NAMES[4] = { "Fighter", "Cleric", "Wizard", "Thief" };
 
+const char *const SRC_STAT_NAMES[10] = {
+	"Hit Points" "Strength", "Agility", "Stamina", "Charisma", "Wisdom", "Intelligence"
+	"Copper pence.", "Silver pieces", "Gold crowns..", "Enemy vessels"
+};
+
 const char *const SRC_STATUS_TEXT[4] = { "Hits:", "Food:",  "Exp.:", "Coin:" };
 
 const char *const SRC_DIRECTION_NAMES[4] = { "West", "East", "North", "South" };
@@ -577,7 +582,7 @@ const char *const SRC_A_SECRET_DOOR = "a secret door!";
 const char *const SRC_ACTION_NAMES[26] = {
 	nullptr, nullptr, nullptr, "Drop", "Enter", nullptr, "Get", "HyperJump", "Inform and search", nullptr,
 	"K-Limb", nullptr, nullptr, nullptr, "Open", "Pass", nullptr, nullptr, "Steal", "Transact",
-	"Unlock", "View", nullptr, "X-it", nullptr, nullptr
+	"Unlock", "View", nullptr, "X-it", nullptr, "Ztats"
 };
 const char *const SRC_HUH = "Huh?";
 const char *const SRC_WHAT = " what?";
@@ -612,6 +617,9 @@ const char *const SRC_NO_KEY = "Thou hast not a key!";
 const char *const SRC_INCORRECT_KEY = "Thou has not\x1F""the correct key!";
 const char *const SRC_DOOR_IS_OPEN = "The door is open";
 const char *const SRC_CANT_LEAVE_IT_HERE = "Thy canst not leave it here!";
+const char *const SRC_INVENTORY = "Inventory";
+const char *const SRC_PLAYER_DESC = "A Level %d %s %s %s";
+const char *const SRC_PRESS_SPACE_TO_CONTINUE = "Press Space to continue: ";
 
 const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
 const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %d pence";
@@ -632,6 +640,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(SRC_RACE_NAMES, SRC_RACE_NAMES + 4, RACE_NAMES);
 	Common::copy(SRC_SEX_NAMES, SRC_SEX_NAMES + 3, SEX_NAMES);
 	Common::copy(SRC_CLASS_NAMES, SRC_CLASS_NAMES + 4, CLASS_NAMES);
+	Common::copy(SRC_STAT_NAMES, SRC_STAT_NAMES + 10, STAT_NAMES);
 	Common::copy(SRC_STATUS_TEXT, SRC_STATUS_TEXT + 4, STATUS_TEXT);
 	Common::copy(SRC_DIRECTION_NAMES, SRC_DIRECTION_NAMES + 4, DIRECTION_NAMES);
 	Common::copy(SRC_DUNGEON_MOVES, SRC_DUNGEON_MOVES + 4, DUNGEON_MOVES);
@@ -706,6 +715,9 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	INCORRECT_KEY = SRC_INCORRECT_KEY;
 	DOOR_IS_OPEN = SRC_DOOR_IS_OPEN;
 	CANT_LEAVE_IT_HERE = SRC_CANT_LEAVE_IT_HERE;
+	INVENTORY = SRC_INVENTORY;
+	PLAYER_DESC = SRC_PLAYER_DESC;
+	PRESS_SPACE_TO_CONTINUE = SRC_PRESS_SPACE_TO_CONTINUE;
 
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
 	GROCERY_SELL = SRC_GROCERY_SELL;
@@ -723,6 +735,7 @@ void GameResources::synchronize() {
 	syncStrings(RACE_NAMES, 4);
 	syncStrings(SEX_NAMES, 3);
 	syncStrings(CLASS_NAMES, 4);
+	syncStrings(STAT_NAMES, 10);
 	syncStrings(STATUS_TEXT, 4);
 	syncStrings(DIRECTION_NAMES, 4);
 	syncStrings(DUNGEON_MOVES, 4);
@@ -797,6 +810,9 @@ void GameResources::synchronize() {
 	syncString(INCORRECT_KEY);
 	syncString(DOOR_IS_OPEN);
 	syncString(CANT_LEAVE_IT_HERE);
+	syncString(INVENTORY);
+	syncString(PLAYER_DESC);
+	syncString(PRESS_SPACE_TO_CONTINUE);
 
 	syncStrings(GROCERY_NAMES, 8);
 	syncString(GROCERY_SELL);

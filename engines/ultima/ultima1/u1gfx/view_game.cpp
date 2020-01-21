@@ -32,6 +32,7 @@
 #include "ultima/ultima1/u1gfx/viewport_map.h"
 #include "ultima/ultima1/actions/move.h"
 #include "ultima/ultima1/actions/map_action.h"
+#include "ultima/ultima1/actions/stats.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/shared/gfx/text_cursor.h"
 #include "ultima/shared/engine/messages.h"
@@ -68,7 +69,7 @@ ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	_viewportMap = new ViewportMap(this);
 	
-	_actions.resize(15);
+	_actions.resize(16);
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Shared::Actions::Huh(this, game->_res->HUH);
 	_actions[2] = new Actions::Drop(this);
@@ -84,6 +85,7 @@ ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect
 	_actions[12] = new Actions::Unlock(this);
 	_actions[13] = new Actions::ViewChange(this);
 	_actions[14] = new Actions::ExitTransport(this);
+	_actions[15] = new Actions::Stats(this);
 }
 
 ViewGame::~ViewGame() {
@@ -249,6 +251,11 @@ bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
 	case Common::KEYCODE_x: {
 		Shared::CExitTransportMsg exit;
 		exit.execute(this);
+		break;
+	}
+	case Common::KEYCODE_z: {
+		Shared::CStatsMsg stats;
+		stats.execute(this);
 		break;
 	}
 	case Common::KEYCODE_SPACE: {
