@@ -20,20 +20,21 @@
  *
  */
 
-#include "ultima/ultima1/core/dungeon_widgets.h"
+#include "ultima/ultima1/widgets/dungeon_widget.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Widgets {
 
-bool U1DungeonMonster::isBlockingView() const {
+bool DungeonMonster::isBlockingView() const {
 	return _monsterId != MONSTER_INVISIBLE_SEEKER && _monsterId != MONSTER_MIMIC
 		&& _monsterId != MONSTER_GELATINOUS_CUBE;
 }
 
-void U1DungeonMonster::draw(Shared::DungeonSurface &s, uint distance) {
+void DungeonMonster::draw(Shared::DungeonSurface &s, uint distance) {
 	if (distance < 5) {
 		if (_monsterId == MONSTER_GELATINOUS_CUBE) {
 			s.drawWall(distance);
@@ -105,5 +106,6 @@ void DungeonWidget::draw(Shared::DungeonSurface &s, uint distance) {
 	drawWidget(s, _widgetId, distance, game->_edgeColor);
 }
 
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima

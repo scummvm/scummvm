@@ -20,14 +20,15 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_CORE_MONSTERS_H
-#define ULTIMA_ULTIMA1_CORE_MONSTERS_H
+#ifndef ULTIMA_ULTIMA1_WIDGETS_DUNGEON_WIDGET_H
+#define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_WIDGET_H
 
 #include "ultima/shared/core/widgets.h"
 #include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
+namespace Widgets {
 
 enum DungeonWidgetId {
 	MONSTER_NONE = -1, MONSTER_RANGER = 0, MONSTER_SKELETON = 1, MONSTER_THIEF = 2, MONSTER_GIANT_RAT = 3,
@@ -43,21 +44,21 @@ enum DungeonItemId {
 	DITEM_CHEST = 4, DITEM_COFFIN = 5
 };
 
-class U1DungeonMonster : public Shared::DungeonMonster {
+class DungeonMonster : public Shared::DungeonMonster {
 private:
 	DungeonWidgetId _monsterId;
 public:
 	/**
 	 * Constructor
 	 */
-	U1DungeonMonster(Shared::Game *game, Shared::Map::MapBase *map, DungeonWidgetId monsterId,
+	DungeonMonster(Shared::Game *game, Shared::Map::MapBase *map, DungeonWidgetId monsterId,
 		const Point &pt, int hitPoints) :
 		Shared::DungeonMonster(game, map, pt, hitPoints), _monsterId(monsterId) {}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~U1DungeonMonster() {}
+	virtual ~DungeonMonster() {}
 
 	/**
 	 * Returns true if a monster blocks the background behind him
@@ -111,6 +112,7 @@ public:
 	virtual void draw(Shared::DungeonSurface &s, uint distance);
 };
 
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

@@ -23,7 +23,7 @@
 #include "ultima/ultima1/map/map_dungeon.h"
 #include "ultima/ultima1/map/map.h"
 #include "ultima/ultima1/core/transports.h"
-#include "ultima/ultima1/core/dungeon_widgets.h"
+#include "ultima/ultima1/widgets/dungeon_widget.h"
 #include "ultima/ultima1/game.h"
 
 namespace Ultima {
@@ -100,8 +100,8 @@ bool MapDungeon::changeLevel(int delta) {
 		byte currTile = _data[pt.y][pt.x];
 
 		if (currTile != DTILE_WALL && currTile != DTILE_SECRET_DOOR && currTile != DTILE_BEAMS) {
-			_widgets.push_back(Shared::MapWidgetPtr(new DungeonWidget(_game, this, pt,
-				(getDeterministicRandomNumber(1, 100) & 1) ? DITEM_COFFIN : DITEM_CHEST)));
+			_widgets.push_back(Shared::MapWidgetPtr(new Widgets::DungeonWidget(_game, this, pt,
+				(getDeterministicRandomNumber(1, 100) & 1) ? Widgets::DITEM_COFFIN : Widgets::DITEM_CHEST)));
 		}
 	}
 
@@ -155,12 +155,12 @@ void MapDungeon::spawnMonster() {
 void MapDungeon::spawnMonsterAt(const Point &pt) {
 	// Try up 50 times to randomly pick a monster not already present in the dungeon map
 	for (int tryNum = 0; tryNum < 50; ++tryNum) {
-		DungeonWidgetId monsterId = (DungeonWidgetId)((_dungeonLevel - 1) / 2 * 5 + _game->getRandomNumber(4));
+		Widgets::DungeonWidgetId monsterId = (Widgets::DungeonWidgetId)((_dungeonLevel - 1) / 2 * 5 + _game->getRandomNumber(4));
 
 		// Only allow one of every type of monster on the map at the same time
 		uint monsIdx;
 		for (monsIdx = 0; monsIdx < _widgets.size(); ++monsIdx) {
-			U1DungeonMonster *mons = dynamic_cast<U1DungeonMonster *>(_widgets[monsIdx].get());
+			Widgets::DungeonMonster *mons = dynamic_cast<Widgets::DungeonMonster *>(_widgets[monsIdx].get());
 			if (mons && mons->id() == monsterId)
 				break;
 		}
@@ -169,7 +169,7 @@ void MapDungeon::spawnMonsterAt(const Point &pt) {
 			// Monster not present, so can be added
 			uint hp = _game->getRandomNumber(1, _dungeonLevel * _dungeonLevel + 1) +
 				(int)monsterId + 10;
-			U1DungeonMonster *monster = new U1DungeonMonster(_game, this, monsterId, pt, hp);
+			Widgets::DungeonMonster *monster = new Widgets::DungeonMonster(_game, this, monsterId, pt, hp);
 			addWidget(monster);
 			return;
 		}
