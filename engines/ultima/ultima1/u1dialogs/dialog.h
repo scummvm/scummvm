@@ -24,6 +24,7 @@
 #define ULTIMA_ULTIMA1_U1DIALOGS_DIALOG_H
 
 #include "ultima/shared/gfx/popup.h"
+#include "ultima/shared/gfx/character_input.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -41,6 +42,7 @@ namespace U1Dialogs {
 class Dialog : public Shared::Gfx::Popup {
 protected:
 	Ultima1Game *_game;
+	Common::String _prompt;
 protected:
 	/**
 	 * Jumps up through the parents to find the root game
@@ -58,12 +60,22 @@ protected:
 	 * @param newLine		Whether to apply a newline at the end
 	 * @param replaceLine	If true, replaces the current last line
 	 */
-	void addInfoMsg(const Common::String &text, bool newLine = true);
+	void addInfoMsg(const Common::String &text, bool newLine = true, bool replaceLine = false);
+
+	/**
+	 * Prompts for a keypress
+	 */
+	void getKeypress();
 public:
 	/**
 	 * Constructor
 	 */
 	Dialog(Ultima1Game *game);
+
+	/**
+	 * Draws the visual item on the screen
+	 */
+	virtual void draw();
 
 	/**
 	 * Hide the dialog

@@ -222,8 +222,8 @@ void MapBase::setDirection(Direction dir) {
 	_playerWidget->_direction = dir;
 }
 
-void MapBase::addInfoMsg(const Common::String &text, bool newLine) {
-	CInfoMsg msg(text, newLine);
+void MapBase::addInfoMsg(const Common::String &text, bool newLine, bool replaceLine) {
+	CInfoMsg msg(text, newLine, replaceLine);
 	msg.execute(_game->getView());
 }
 

@@ -71,7 +71,7 @@ public:
 	 * @param text			Text to add
 	 * @param newLine		Whether to apply a newline at the end
 	 */
-	void addInfoMsg(const Common::String &text, bool newLine = true);
+	void addInfoMsg(const Common::String &text, bool newLine = true, bool replaceLine = false);
 
 	/**
 	 * Play a sound effect

@@ -31,6 +31,11 @@
 namespace Ultima {
 namespace Shared {
 
+using Shared::CInfoMsg;
+using Shared::CInfoGetCommandKeypress;
+using Shared::CInfoGetInput;
+using Shared::CKeypressMsg;
+
 /**
  * Textual info area, showing what commands area done, and any responses to them
  */

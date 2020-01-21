@@ -667,7 +667,7 @@ const char *const SRC_WITH_KING = " with king";
 const char *const SRC_HE_IS_NOT_HERE = "He is not here!";
 const char *const SRC_HE_REJECTS_OFFER = "He rejects thine offer!";
 const char *const SRC_KING_TEXT[11] = {
-	"Dost thou offer pence or service: ", "neither", "pence", "service", "How much? ",
+	"Dost thou offer pence\ror service: ", "neither", "pence", "service", "How much? ",
 	"none", "Thou hast not that much!", "In return I give unto thee %u hit points",
 	"Thou art on a quest for me already!", "Go now and kill a", "Go forth and find a"
 };

@@ -31,12 +31,15 @@ int String::indexOf(char c) const {
 }
 
 int String::indexOf(const String &chars) const {
-	int minIndex = size();
+	uint minIndex = size();
 
-	for (uint idx = 0; idx < size(); ++idx)
-		minIndex = MIN(minIndex, indexOf(chars[idx]));
-
-	return minIndex == (int)size() ? -1 : minIndex;
+	for (uint idx = 0; idx < chars.size(); ++idx) {
+		int charIndex = indexOf(chars[idx]);
+		if (charIndex != -1 && charIndex < (int)minIndex)
+			minIndex = charIndex;
+	}
+	
+	return minIndex == size() ? -1 : minIndex;
 }
 
 StringArray String::split(char c) const {

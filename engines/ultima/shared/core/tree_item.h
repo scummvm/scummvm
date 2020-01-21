@@ -83,12 +83,6 @@ public:
 	}
 
 	/**
-	 * Allows the item to draw itself
-	 */
-	virtual void draw(void *screenManager) {
-	}
-
-	/**
 	 * Called when the view changes
 	 */
 	virtual void viewChange() {

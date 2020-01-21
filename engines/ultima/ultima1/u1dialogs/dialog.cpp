@@ -23,7 +23,7 @@
 #include "ultima/ultima1/u1dialogs/dialog.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/maps/map.h"
-#include "ultima/shared/gfx/text_cursor.h"
+#include "ultima/ultima1/u1gfx/info.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -36,9 +36,24 @@ Maps::Ultima1Map *Dialog::getMap() {
 	return static_cast<Maps::Ultima1Map *>(_game->getMap());
 }
 
-void Dialog::addInfoMsg(const Common::String &text, bool newLine) {
-	Shared::CInfoMsg msg(text, newLine);
-	msg.execute(_parentView);
+void Dialog::addInfoMsg(const Common::String &text, bool newLine, bool replaceLine) {
+	Shared::TreeItem *infoArea = _game->findByName("Info");
+
+	Shared::CInfoMsg msg(text, newLine, replaceLine);
+	msg.execute(infoArea);
+}
+
+void Dialog::getKeypress() {
+	Shared::TreeItem *infoArea = _game->findByName("Info");
+
+	Shared::CInfoGetKeypress msg(this);
+	msg.execute(infoArea);
+}
+
+void Dialog::draw() {
+	// Redraw the game's info area
+	U1Gfx::Info *infoArea = dynamic_cast<U1Gfx::Info *>(_game->findByName("Info"));
+	infoArea->draw();
 }
 
 void Dialog::hide() {
