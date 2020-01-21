@@ -159,7 +159,7 @@ void MapCityCastle::loadTownCastleData() {
 
 void MapCityCastle::drop() {
 	U1Dialogs::Drop *drop = new U1Dialogs::Drop(_game);
-	_game->setPopup(drop);
+	drop->show();
 }
 
 void MapCityCastle::inform() {

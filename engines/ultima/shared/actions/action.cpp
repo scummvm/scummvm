@@ -43,8 +43,8 @@ Maps::Map *Action::getMap() {
 	return static_cast<Maps::Map *>(getGame()->getMap());
 }
 
-void Action::addInfoMsg(const Common::String &text, bool newLine, bool replaceLine) {
-	CInfoMsg msg(text, newLine, replaceLine);
+void Action::addInfoMsg(const Common::String &text, bool newLine) {
+	CInfoMsg msg(text, newLine);
 	msg.execute(getView());
 }
 
@@ -55,3 +55,4 @@ void Action::playFX(uint effectId) {
 } // End of namespace Actions
 } // End of namespace Shared
 } // End of namespace Ultima
+

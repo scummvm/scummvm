@@ -214,7 +214,7 @@ void MapWidget::synchronize(Common::Serializer &s) {
 }
 
 void MapWidget::addInfoMsg(const Common::String &text, bool newLine) {
-	CInfoMsg msg(text, newLine, false);
+	CInfoMsg msg(text, newLine);
 	msg.execute(_game->getView());
 }
 

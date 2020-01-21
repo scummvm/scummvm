@@ -23,6 +23,7 @@
 #include "ultima/ultima1/u1dialogs/drop.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/shared/gfx/text_cursor.h"
 #include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
@@ -30,36 +31,86 @@ namespace Ultima1 {
 namespace U1Dialogs {
 
 BEGIN_MESSAGE_MAP(Drop, Dialog)
-	ON_MESSAGE(ShowMsg)
-	ON_MESSAGE(TextInputMsg)
+	ON_MESSAGE(KeypressMsg)
 END_MESSAGE_MAP()
 
 Drop::Drop(Ultima1Game *game) : Dialog(game), _mode(SELECT) {
-	// The dialog itself doesn't initially display, instead we add a prompt to the info area for
-	// what kind of thing to drop
+	// The drop dialog covers the entire screen, but doesn't erase what's under it
+	_bounds = Common::Rect(0, 0, 320, 200);
 }
 
-void Drop::draw() {
-	return;
-}
+bool Drop::KeypressMsg(CKeypressMsg &msg) {
+	switch (_mode) {
+	case SELECT:
+		_game->_textCursor->setVisible(false);
 
-bool Drop::ShowMsg(CShowMsg &msg) {
-	// Add a prompt in the info area for what kind of thing to drop
-	addInfoMsg(getGame()->_res->DROP_PENCE_WEAPON_ARMOR);
-	Shared::CInfoGetKeypress keyMsg(this);
-	keyMsg.execute(_game);
+		switch (msg._keyState.keycode) {
+		case Common::KEYCODE_p:
+			_mode = DROP_PENCE;
+			setDirty();
+			break;
+		case Common::KEYCODE_w:
+			_mode = DROP_WEAPON;
+			setDirty();
+			break;
+		case Common::KEYCODE_a:
+			_mode = DROP_ARMOR;
+			setDirty();
+			break;
+		default:
+			nothing();
+			break;
+		}
+		break;
 
-	return true;
-}
-
-bool Drop::TextInputMsg(CTextInputMsg &msg) {
-	if (msg._escaped) {
-		addInfoMsg(Common::String::format("%s %s", _game->_res->ACTION_NAMES[3], _game->_res->NOTHING), true, true);
-		hide();
-		delete this;
+	default:
+		break;
 	}
 
 	return true;
+}
+
+void Drop::nothing() {
+	addInfoMsg(Common::String::format(" %s", _game->_res->NOTHING));
+	hide();
+	delete this;
+}
+
+void Drop::draw() {
+	switch (_mode) {
+	case SELECT:
+		drawSelection();
+		break;
+	case DROP_PENCE:
+		drawDropPence();
+		break;
+	case DROP_WEAPON:
+		drawDropWeapon();
+		break;
+	case DROP_ARMOR:
+		drawDropArmor();
+		break;
+	}
+}
+
+void Drop::drawSelection() {
+	Shared::Gfx::VisualSurface s = getSurface();
+	s.writeString(_game->_res->DROP_PENCE_WEAPON_ARMOR, TextPoint(1, 24), _game->_textColor);
+
+	_game->_textCursor->setPosition(TextPoint(1 + strlen(_game->_res->DROP_PENCE_WEAPON_ARMOR), 24));
+	_game->_textCursor->setVisible(true);
+}
+
+void Drop::drawDropPence() {
+	// TODO
+}
+
+void Drop::drawDropWeapon() {
+	// TODO
+}
+
+void Drop::drawDropArmor() {
+	// TODO
 }
 
 } // End of namespace U1Dialogs

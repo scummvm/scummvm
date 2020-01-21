@@ -35,9 +35,9 @@ Maps::Ultima1Map *Dialog::getMap() {
 	return static_cast<Maps::Ultima1Map *>(_game->getMap());
 }
 
-void Dialog::addInfoMsg(const Common::String &text, bool newLine, bool replaceLine) {
-	Shared::CInfoMsg msg(text, newLine, replaceLine);
-	msg.execute(_game->getView());
+void Dialog::addInfoMsg(const Common::String &text, bool newLine) {
+	Shared::CInfoMsg msg(text, newLine);
+	msg.execute(_parentView);
 }
 
 } // End of namespace U1Dialogs

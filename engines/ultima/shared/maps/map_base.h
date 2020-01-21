@@ -126,7 +126,7 @@ protected:
 	 * @param newLine		Whether to apply a newline at the end
 	 * @param replaceLine	If true, replaces the current last line
 	 */
-	void addInfoMsg(const Common::String &text, bool newLine = true, bool replaceLine = false);
+	void addInfoMsg(const Common::String &text, bool newLine = true);
 public:
 	Point _size;						// X, Y size of the map
 	Point _tilesPerOrigTile;			// For enhanced modes, number of tiles per original game tile
