@@ -94,7 +94,7 @@ public:
 	/**
 	 * Returns true if the player can move onto a tile the widget occupies
 	 */
-	virtual bool isBlocking() const { return false; }
+	virtual bool isBlocking() const { return true; }
 
 	/**
 	 * Called to update the widget at the end of a turn
