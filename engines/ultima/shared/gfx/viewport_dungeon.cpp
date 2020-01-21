@@ -36,7 +36,7 @@ void ViewportDungeon::draw() {
 	s.clear();
 
 	// Get the position delta for the facing direction, and the cells to the left and right of that
-	Map *map = getMap();
+	Map *map = getGame()->getMap();
 	Point delta = map->getDirectionDelta();
 
 	Point leftDelta, rightDelta;
@@ -158,7 +158,7 @@ uint ViewportDungeon::distanceToOccupiedCell(const Point &delta) {
 }
 
 bool ViewportDungeon::isCellOccupied(const Point &delta) {
-	Map *map = getMap();
+	Map *map = getGame()->getMap();
 	Point pt = map->getPosition() + delta;
 	
 	MapTile tile;
@@ -171,7 +171,7 @@ bool ViewportDungeon::isCellOccupied(const Point &delta) {
 
 bool ViewportDungeon::isMonsterBlocking(const Point &pt) {
 	MapTile tile;
-	getMap()->getTileAt(pt, &tile);
+	getGame()->getMap()->getTileAt(pt, &tile);
 	DungeonCreature *monster = dynamic_cast<DungeonCreature *>(tile._widget);
 	return monster != nullptr && monster->isBlockingView();
 }
@@ -179,7 +179,7 @@ bool ViewportDungeon::isMonsterBlocking(const Point &pt) {
 void ViewportDungeon::drawCell(uint distance, const Point &pt) {
 	Game *game = getGame();
 	DungeonSurface s = getSurface();
-	Map *map = getMap();
+	Map *map = game->getMap();
 
 	MapTile tile;
 	map->getTileAt(pt, &tile);

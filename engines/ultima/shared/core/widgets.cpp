@@ -22,7 +22,6 @@
 
 #include "ultima/shared/core/widgets.h"
 #include "ultima/shared/early/game.h"
-#include "ultima/shared/core/game_state.h"
 
 namespace Ultima {
 namespace Shared {
@@ -34,7 +33,7 @@ void Creature::update(bool isPreUpdate) {
 		// Check whether creature can attack
 		movement();
 		_isAttacking = attackDistance() != 0;
-	} else if (_isAttacking && !_game->_gameState->isPartyDead()) {
+	} else if (_isAttacking && !_game->_party.isDead()) {
 		attack();
 	}
 }

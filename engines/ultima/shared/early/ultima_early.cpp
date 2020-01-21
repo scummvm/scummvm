@@ -23,7 +23,13 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/system.h"
+#include "common/translation.h"
+#include "graphics/thumbnail.h"
+#include "graphics/scaler.h"
+#include "gui/saveload.h"
 #include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/engine/ultima.h"
 #include "ultima/shared/engine/debugger.h"
 #include "ultima/shared/engine/events.h"
 #include "ultima/shared/engine/resources.h"
@@ -76,6 +82,13 @@ bool UltimaEarlyEngine::initialize() {
 	// Load cursors
 	_mouseCursor = new MouseCursor();
 
+	// If requested, load a savegame instead of showing the intro
+	if (ConfMan.hasKey("save_slot")) {
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0 && saveSlot <= 999)
+			loadGameState(saveSlot);
+	}
+
 	return true;
 }
 
@@ -99,6 +112,10 @@ void UltimaEarlyEngine::playGame() {
 	}
 }
 
+Graphics::Screen *UltimaEarlyEngine::getScreen() const {
+	return _screen;
+}
+
 Game *UltimaEarlyEngine::createGame() const {
 	switch (getGameId()) {
 	case GAME_ULTIMA1:
@@ -108,15 +125,49 @@ Game *UltimaEarlyEngine::createGame() const {
 	}
 }
 
+Common::Error UltimaEarlyEngine::loadGameState(int slot) {
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
+		Common::String::format("%s.%.3d", _targetName.c_str(), slot));
+	if (!saveFile)
+		return Common::kReadingFailed;
+
+	// Read in the game's data
+	Common::Serializer s(saveFile, nullptr);
+	_game->synchronize(s);
+
+	delete saveFile;
+	return Common::kNoError;
+}
+
+Common::Error UltimaEarlyEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
+		Common::String::format("%s.%.3d", _targetName.c_str(), slot));
+	if (!saveFile)
+		return Common::kCreatingFileFailed;
+
+	// Write out the game's data
+	Common::Serializer s(nullptr, saveFile);
+	_game->synchronize(s);
+
+	saveFile->finalize();
+	delete saveFile;
+
+	return Common::kNoError;
+}
+
+bool UltimaEarlyEngine::canLoadGameStateCurrently(bool isAutosave) {
+	return _game->canLoadGameStateCurrently();
+}
+
+bool UltimaEarlyEngine::canSaveGameStateCurrently(bool isAutosave) {
+	return _game->canSaveGameStateCurrently();
+}
+
 bool UltimaEarlyEngine::isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) {
 	folder = "ultima1";
 	majorVersion = 1;
 	minorVersion = 0;
 	return true;
-}
-
-Graphics::Screen *UltimaEarlyEngine::getScreen() const {
-	return _screen;
 }
 
 } // End of namespace Shared

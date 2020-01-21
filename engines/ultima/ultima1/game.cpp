@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima1/game.h"
-#include "ultima/ultima1/core/game_state.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/u1gfx/view_game.h"
 #include "ultima/ultima1/u1gfx/view_char_gen.h"
@@ -37,7 +36,6 @@ namespace Ultima1 {
 EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
 
 Ultima1Game::Ultima1Game() : Shared::Game() {
-	_gameState = new GameState(this);
 	_res = new GameResources();
 	_textCursor = new U1Gfx::U1TextCursor(_textColor, _bgColor);
 	g_vm->_screen->setCursor(_textCursor);
@@ -63,8 +61,30 @@ Ultima1Game::~Ultima1Game() {
 
 void Ultima1Game::starting() {
 	_res->load();
-	_gameState->setup();
+	setup();
 	_gameView->setView(g_vm->isEnhanced() ? "Game" : "Title");
+}
+
+void Ultima1Game::setup() {
+	Shared::Character &c = *_party._currentCharacter;
+
+	c._weapons.resize(16);
+	for (int idx = 0; idx < 16; ++idx) {
+		c._weapons[idx]._longName = _res->WEAPON_NAMES_UPPERCASE[idx];
+		c._weapons[idx]._longName = _res->WEAPON_NAMES_LOWERCASE[idx];
+	}
+
+	c._armor.resize(6);
+	for (int idx = 0; idx < 6; ++idx)
+		c._armor[idx]._name = _res->ARMOR_NAMES[idx];
+
+	c._spells.resize(11);
+	for (int idx = 0; idx < 11; ++idx)
+		c._spells[idx]._name = _res->SPELL_NAMES[idx];
+}
+
+bool Ultima1Game::canSaveGameStateCurrently() {
+	return _currentView->getName() == "Game";
 }
 
 } // End of namespace Ultima1

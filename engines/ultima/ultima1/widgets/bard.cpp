@@ -52,7 +52,7 @@ void Bard::movement() {
 }
 
 bool Bard::stealWeapon() {
-	Shared::Character *c = _game->_gameState->_currentCharacter;
+	Shared::Character *c = _game->_party._currentCharacter;
 	for (uint idx = 1; idx < c->_weapons.size(); ++idx) {
 		if (c->_weapons[idx]._quantity > 0 && (int)idx != c->_equippedWeapon) {
 			c->_weapons[idx]._quantity--;

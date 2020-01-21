@@ -52,33 +52,12 @@ void TransportOnFoot::moveTo(const Point &destPos, Shared::Direction dir) {
 
 	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)map->width() || destPos.y >= (int)map->height()) {
 		// Handling for leaving locations by walking off the edge of the map
-		Ultima1Game *game = getGame();
-
 		if (isPrincessSaved())
 			princessSaved();
 
 		// Load the overworld map
 		map->load(Map::MAP_OVERWORLD);
-
-		// Get the world map position from the game state, and scan through the tiles representing that tile
-		// in the original map to find the one that was used to enter the location, then set the position to it
-		const Point &worldPos = game->_gameState->_worldMapPos;
-		Map::U1MapTile mapTile;
-		for (int tileY = 0; tileY < map->_tilesPerOrigTile.y; ++tileY) {
-			for (int tileX = 0; tileX < map->_tilesPerOrigTile.x; ++tileX) {
-				Point mapPos(worldPos.x * map->_tilesPerOrigTile.x + tileX, worldPos.y * map->_tilesPerOrigTile.y + tileY);
-				map->getTileAt(mapPos, &mapTile);
-				if (mapTile._locationNum != -1) {
-					// We've found the location tile
-					map->setPosition(mapPos);
-				}
-			}
-		}
-
-		// Couldn't find where to place player. Shouldn't happen, but if so, simply place them at the middle position
-		Point mapPos(worldPos.x * map->_tilesPerOrigTile.x - ((map->_tilesPerOrigTile.x - 1) / 2),
-			worldPos.y * map->_tilesPerOrigTile.y - ((map->_tilesPerOrigTile.y - 1) / 2));
-		map->setPosition(mapPos);
+		map->setPosition(destPos);
 	}
 }
 

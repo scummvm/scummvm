@@ -25,8 +25,8 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/serializer.h"
 #include "ultima/shared/engine/events.h"
-#include "ultima/shared/core/game_state.h"
 #include "ultima/shared/engine/input_handler.h"
 #include "ultima/shared/engine/input_translator.h"
 
@@ -73,7 +73,6 @@ protected:
 	InputTranslator _inputTranslator;
 	Gfx::Font *_font;
 public:
-	GameState *_gameState;
 	Gfx::TextCursor *_textCursor;
 	Gfx::TextInput *_textInput;
 	uint _videoMode;
@@ -154,6 +153,11 @@ public:
 	Gfx::Font *getFont() const { return _font; }
 
 	/**
+	 * Returns the map
+	 */
+	virtual Shared::Map *getMap() const { return nullptr; }
+
+	/**
 	 * Gets a random number
 	 */
 	uint getRandomNumber(uint max);
@@ -172,6 +176,21 @@ public:
 	 * Return the current time
 	 */
 	uint32 getMillis() const;
+
+	/**
+	 * Returns true if a savegame can currently be loaded
+	 */
+	virtual bool canLoadGameStateCurrently() { return true; }
+
+	/**
+	 * Returns true if the game can currently be saved
+	 */
+	virtual bool canSaveGameStateCurrently() { return false; }
+
+	/**
+	 * Handles loading and saving games
+	 */
+	virtual void synchronize(Common::Serializer &s) {}
 };
 
 } // End of namespace Shared

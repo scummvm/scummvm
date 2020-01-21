@@ -27,7 +27,6 @@
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/widgets/dungeon_widget.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/shared/core/game_state.h"
 #include "ultima/shared/core/file.h"
 #include "ultima/shared/early/ultima_early.h"
 
@@ -158,6 +157,10 @@ void Ultima1Map::clear() {
 }
 
 void Ultima1Map::load(Shared::MapId mapId) {
+	// If we're leaving the overworld, update the cached copy of the position in the overworld
+	if (_mapType == MAP_OVERWORLD)
+		_worldPos = _mapArea->getPosition();
+
 	Shared::Map::load(mapId);
 
 	// Switch to the correct map area

@@ -23,6 +23,18 @@
 #ifndef ULTIMA_SHARED_EARLY_ULTIMA_EARLY_H
 #define ULTIMA_SHARED_EARLY_ULTIMA_EARLY_H
 
+#include "common/scummsys.h"
+#include "common/array.h"
+#include "common/endian.h"
+#include "common/hash-str.h"
+#include "common/serializer.h"
+#include "common/random.h"
+#include "common/savefile.h"
+#include "common/util.h"
+#include "graphics/surface.h"
+#include "engines/engine.h"
+#include "ultima/detection.h"
+
 #include "ultima/shared/engine/ultima.h"
 
 namespace Ultima {
@@ -30,6 +42,18 @@ namespace Ultima {
 struct UltimaGameDescription;
 
 namespace Shared {
+
+struct UltimaSavegameHeader {
+	uint8 _version;
+	uint8 _gameId;
+	uint8 _language;
+	uint8 _videoMode;
+	Common::String _saveName;
+	Graphics::Surface *_thumbnail;
+	int _year, _month, _day;
+	int _hour, _minute;
+	int _totalFrames;
+};
 
 class Debugger;
 class Events;
@@ -80,23 +104,23 @@ public:
 	/**
 	 * Get the screen
 	 */
-	virtual Graphics::Screen *getScreen() const;
-
+	virtual Graphics::Screen *getScreen() const override;
 	/**
 	 * Indicates whether a game state can be loaded.
 	 * @param isAutosave	Flags whether it's an autosave check
 	 */
-	virtual bool canLoadGameStateCurrently(bool isAutosave) override {
-		return false;
-	}
+	virtual bool canLoadGameStateCurrently(bool isAutosave) override;
 
 	/**
 	 * Indicates whether a game state can be saved.
 	 * @param isAutosave	Flags whether it's an autosave check
 	 */
-	virtual bool canSaveGameStateCurrently(bool isAutosave) override {
-		return false;
-	}
+	virtual bool canSaveGameStateCurrently(bool isAutosave) override;
+
+	/**
+	 * Load a savegame
+	 */
+	virtual Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Save a game state.
@@ -105,9 +129,7 @@ public:
 	 * @param isAutosave If true, autosave is being created
 	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-		return Common::kWritingFailed;
-	}
+	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave);
 
 	/*
 	 * Creates a new hierarchy for the game, that contains all the logic for playing that particular game.

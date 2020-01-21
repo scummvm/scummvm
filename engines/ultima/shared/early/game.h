@@ -24,6 +24,7 @@
 #define ULTIMA_SHARED_EARLY_GAME_H
 
 #include "ultima/shared/early/game_base.h"
+#include "ultima/shared/core/character.h"
 
 namespace Ultima {
 namespace Shared {
@@ -32,6 +33,32 @@ class GameView;
 class GameState;
 class FontResources;
 
+/**
+ * Party definition
+ */
+class Party : public CharacterArray {
+public:
+	Party();
+
+	/**
+	 * Currently active character. In earlier Ultima games, this is the single party member
+	 */
+	Character *_currentCharacter;
+
+	/**
+	 * Returns true if the party is dead
+	 */
+	bool isDead() const;
+
+	/**
+	 * Returns true if the party has no food
+	 */
+	bool isFoodless() const;
+};
+
+/**
+ * More specialized base class for earlier Ultima games
+ */
 class Game : public GameBase {
 	DECLARE_MESSAGE_MAP;
 protected:
@@ -55,6 +82,27 @@ public:
 	byte _color1;
 	byte _bgColor;
 	byte _whiteColor;
+
+	/**
+	 * Player party. In the earlier Ultima games, this is a single character
+	 */
+	Party _party;
+
+	/**
+	 * Pointer to the map manager for the game
+	 */
+	Map *_map;
+
+	/**
+	 * The number of hit points to generate when a dungeon is left
+	 */
+	uint _dungeonExitHitPoints;
+
+	/**
+	 * Stores the base random seed used for generating deterministic dungeon levels
+	 */
+	uint32 _randomSeed;
+
 public:
 	CLASSDEF;
 
@@ -87,6 +135,11 @@ public:
 	 * Sets up a CGA palette
 	 */
 	void setCGAPalette();
+
+	/**
+	 * Returns the map
+	 */
+	virtual Shared::Map *getMap() const override { return _map; }
 };
 
 } // End of namespace Shared

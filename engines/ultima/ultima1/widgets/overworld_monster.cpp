@@ -57,7 +57,7 @@ void OverworldMonster::attack() {
 	Point tempDiff;
 	int maxDistance = attackDistance();
 	Shared::MapTile mapTile;
-	Shared::Character *c = _game->_gameState->_currentCharacter;
+	Shared::Character *c = _game->_party._currentCharacter;
 	uint threshold, damage;
 
 	// Print out the monster attacking
@@ -86,7 +86,7 @@ void OverworldMonster::attack() {
 		_game->playFX(2);
 
 		damage = _game->getRandomNumber(1, _attackStrength * 2 + 1);
-		game->_gameState->_currentCharacter->_hitPoints -= damage;
+		game->_party._currentCharacter->_hitPoints -= damage;
 
 		if (_name.size() > 8) {
 			addInfoMsg("");

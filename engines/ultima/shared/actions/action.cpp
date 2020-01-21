@@ -40,7 +40,7 @@ Game *Action::getGame() {
 }
 
 Map *Action::getMap() {
-	return static_cast<Map *>(TreeItem::getMap());
+	return static_cast<Map *>(getGame()->getMap());
 }
 
 void Action::addInfoMsg(const Common::String &text, bool newLine) {

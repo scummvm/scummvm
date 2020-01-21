@@ -21,9 +21,8 @@
  */
 
 #include "ultima/shared/early/game.h"
-#include "ultima/shared/core/game_state.h"
-#include "ultima/shared/engine/resources.h"
 #include "ultima/shared/early/font_resources.h"
+#include "ultima/shared/core/map.h"
 #include "ultima/shared/early/ultima_early.h"
 #include "ultima/shared/gfx/font.h"
 #include "ultima/shared/gfx/screen.h"
@@ -33,7 +32,8 @@ namespace Shared {
 
 EMPTY_MESSAGE_MAP(Game, GameBase);
 
-Game::Game() : GameBase() {
+Game::Game() : GameBase(), _dungeonExitHitPoints(0), _randomSeed(0), _gameView(nullptr), _map(nullptr),
+		_edgeColor(0), _borderColor(0), _highlightColor(0), _textColor(0), _color1(0), _bgColor(0), _whiteColor(0) {
 	_fontResources = new FontResources();
 	_fontResources->load();
 	setFont(new Gfx::Font((const byte *)&_fontResources->_font8x8[0][0]));
@@ -41,7 +41,6 @@ Game::Game() : GameBase() {
 
 Game::~Game() {
 	delete _fontResources;
-	delete _gameState;
 }
 
 void Game::setCGAPalette() {
@@ -122,7 +121,32 @@ void Game::playFX(uint effectId) {
 
 void Game::endOfTurn() {
 	// Update things on the map
-	_gameState->_map->update();
+	_map->update();
+}
+
+/*-------------------------------------------------------------------*/
+
+Party::Party() : CharacterArray() {
+	resize(1);
+	_currentCharacter = &(*this)[0];
+}
+
+bool Party::isDead() const {
+	for (uint idx = 0; idx < size(); ++idx) {
+		if ((*this)[idx]._hitPoints > 0)
+			return false;
+	}
+
+	return true;
+}
+
+bool Party::isFoodless() const {
+	for (uint idx = 0; idx < size(); ++idx) {
+		if ((*this)[idx]._food > 0)
+			return false;
+	}
+
+	return true;
 }
 
 } // End of namespace Shared

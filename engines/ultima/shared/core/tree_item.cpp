@@ -45,20 +45,12 @@ Game *TreeItem::getGame() {
 	return dynamic_cast<Game *>(treeItem);
 }
 
-GameState *TreeItem::getGameState() {
-	return getGame()->_gameState;
-}
-
 TreeItem *TreeItem::getLastSibling() {
 	TreeItem *item = this;
 	while (item->getNextSibling())
 		item = item->getNextSibling();
 
 	return item;
-}
-
-Map *TreeItem::getMap() {
-	return getGameState()->_map;
 }
 
 Gfx::VisualItem *TreeItem::getView() {

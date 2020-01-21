@@ -22,7 +22,6 @@
 
 #include "ultima/ultima1/u1gfx/status.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/shared/core/game_state.h"
 #include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
@@ -33,12 +32,11 @@ EMPTY_MESSAGE_MAP(Status, Shared::Gfx::VisualItem);
 
 void Status::draw() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	Shared::GameState *gameState = getGameState();
 	Shared::Gfx::VisualSurface s = getSurface();
 	s.clear();
 
 	// Iterate through displaying the values
-	Shared::Character &c = gameState->_characters.front();
+	Shared::Character &c = *game->_party._currentCharacter;
 	const uint *vals[4] = { &c._hitPoints, &c._food, &c._experience, &c._coins };
 	int count = game->isVGA() ? 3 : 4;
 
