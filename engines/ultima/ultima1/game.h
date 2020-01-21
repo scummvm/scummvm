@@ -25,6 +25,7 @@
 
 #include "ultima/shared/early/game.h"
 #include "ultima/shared/gfx/visual_container.h"
+#include "ultima/ultima1/spells/prayer.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -58,6 +59,7 @@ public:
 	Shared::Gfx::VisualItem *_titleView;
 	Shared::Gfx::VisualItem *_charGenView;
 	uint _gems[4];
+	Spells::Prayer _spellPrayer;
 public:
 	CLASSDEF;
 	Ultima1Game();

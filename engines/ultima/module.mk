@@ -74,6 +74,7 @@ MODULE_OBJS += \
 	ultima1/maps/map_dungeon.o \
 	ultima1/maps/map_overworld.o \
 	ultima1/maps/map_tile.o \
+	ultima1/spells/prayer.o \
 	ultima1/u1dialogs/combat.o \
 	ultima1/u1dialogs/dialog.o \
 	ultima1/u1dialogs/drop.o \

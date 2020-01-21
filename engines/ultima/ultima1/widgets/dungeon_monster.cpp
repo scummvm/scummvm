@@ -153,7 +153,7 @@ void DungeonMonster::attack() {
 
 		if (_monsterId == MONSTER_GELATINOUS_CUBE && c->isArmorEquipped()) {
 			addInfoMsg(game->_res->ARMOR_DESTROYED);
-			c->_armor[c->_equippedArmor]._quantity--;
+			c->_armor[c->_equippedArmor].decrQuantity();
 			c->removeArmor();
 			isHit = false;
 		} else if (_monsterId == MONSTER_GREMLIN) {
@@ -172,7 +172,7 @@ void DungeonMonster::attack() {
 					addInfoMsg(Common::String::format(game->_res->THIEF_STOLE,
 						Shared::isVowel(c->_weapons[weaponNum]._longName.firstChar()) ? game->_res->AN : game->_res->A
 					));
-					c->_weapons[weaponNum]._quantity--;
+					c->_weapons[weaponNum].decrQuantity();
 					break;
 				}
 			}

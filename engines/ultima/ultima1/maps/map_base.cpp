@@ -77,9 +77,13 @@ void MapBase::unknownAction() {
 
 void MapBase::attack(int direction) {
 	addInfoMsg(": ");
-
+	// TODO
 }
 
+void MapBase::cast() {
+	addInfoMsg(Common::String::format(" -- %s", _game->_res->NO_EFFECT));
+	_game->playFX(6);
+}
 
 } // End of namespace Maps
 } // End of namespace Ultima1

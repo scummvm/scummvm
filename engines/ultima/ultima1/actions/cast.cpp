@@ -20,42 +20,27 @@
  *
  */
 
-#include "ultima/ultima1/widgets/merchant_weapons.h"
-#include "ultima/ultima1/maps/map_city_castle.h"
+#include "ultima/ultima1/actions/cast.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
+#include "ultima/shared/core/character.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Widgets {
+namespace Actions {
 
-EMPTY_MESSAGE_MAP(MerchantWeapons, Merchant);
+BEGIN_MESSAGE_MAP(Cast, Action)
+	ON_MESSAGE(CastMsg)
+END_MESSAGE_MAP()
 
-void MerchantWeapons::get() {
-	Maps::MapCastle *map = dynamic_cast<Maps::MapCastle *>(_map);
-	assert(map);
-	if (map->_getCounter > 0) {
-		--map->_getCounter;
-		findWeapon(false);
-	} else {
-		noKingsPermission();
-	}
+bool Cast::CastMsg(CCastMsg &msg) {
+	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+	addInfoMsg(game->_res->ACTION_NAMES[17], false);
+
+
+	return true;
 }
 
-void MerchantWeapons::steal() {
-	findWeapon(true);
-}
-
-void MerchantWeapons::findWeapon(bool checkStealing) {
-	if (!checkStealing || !checkCuaghtStealing()) {
-		uint weaponNum = _game->getRandomNumber(1, 15);
-		const char *weaponStr = _game->_res->WEAPON_NAMES_ARTICLE[weaponNum];
-
-		_game->_party._currentCharacter->_weapons[weaponNum].incrQuantity();
-		addInfoMsg("");
-		addInfoMsg(Common::String::format(_game->_res->FIND, weaponStr));
-	}
-}
-
-} // End of namespace Widgets
+} // End of namespace Actions
 } // End of namespace Ultima1
 } // End of namespace Ultima

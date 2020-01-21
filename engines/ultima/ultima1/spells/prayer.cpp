@@ -20,42 +20,23 @@
  *
  */
 
-#include "ultima/ultima1/widgets/merchant_weapons.h"
-#include "ultima/ultima1/maps/map_city_castle.h"
+#include "ultima/ultima1/spells/prayer.h"
+#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Widgets {
+namespace Spells {
 
-EMPTY_MESSAGE_MAP(MerchantWeapons, Merchant);
-
-void MerchantWeapons::get() {
-	Maps::MapCastle *map = dynamic_cast<Maps::MapCastle *>(_map);
-	assert(map);
-	if (map->_getCounter > 0) {
-		--map->_getCounter;
-		findWeapon(false);
-	} else {
-		noKingsPermission();
-	}
+Prayer::Prayer() : Spell(), _game(nullptr) {
+//	_name = game->_res->SPELL_NAMES[0];
+	_quantity = 0xffff;			// Prayer has unlimited uses
 }
 
-void MerchantWeapons::steal() {
-	findWeapon(true);
+void Prayer::cast() {
+	// TODO
 }
 
-void MerchantWeapons::findWeapon(bool checkStealing) {
-	if (!checkStealing || !checkCuaghtStealing()) {
-		uint weaponNum = _game->getRandomNumber(1, 15);
-		const char *weaponStr = _game->_res->WEAPON_NAMES_ARTICLE[weaponNum];
-
-		_game->_party._currentCharacter->_weapons[weaponNum].incrQuantity();
-		addInfoMsg("");
-		addInfoMsg(Common::String::format(_game->_res->FIND, weaponStr));
-	}
-}
-
-} // End of namespace Widgets
+} // End of namespace Spells
 } // End of namespace Ultima1
 } // End of namespace Ultima

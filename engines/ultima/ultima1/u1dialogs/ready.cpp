@@ -84,7 +84,7 @@ bool Ready::KeypressMsg(CKeypressMsg &msg) {
 			c._equippedSpell = msg._keyState.keycode - Common::KEYCODE_a;
 
 		addInfoMsg(Common::String::format(" %s: %s", _game->_res->WEAPON_ARMOR_SPELL[2],
-			c._spells[c._equippedSpell]._name.c_str()));
+			c._spells[c._equippedSpell]->_name.c_str()));
 		hide();
 		break;
 
@@ -221,19 +221,19 @@ void Ready::drawReadySpell() {
 	Shared::Gfx::VisualSurface s = getSurface();
 	drawFrame(_game->_res->ACTION_NAMES[17]);
 
-	// Count the number of different types of weapons
+	// Count the number of different types of spells
 	const Shared::Character &c = *_game->_party._currentCharacter;
 	int numLines = 0;
 	for (uint idx = 0; idx < c._spells.size(); ++idx) {
-		if (c._spells[idx]._quantity)
+		if (c._spells[idx]->_quantity)
 			++numLines;
 	}
 
 	// Draw lines for weapons the player has
 	int yp = 10 - (numLines / 2);
 	for (uint idx = 0; idx < c._spells.size(); ++idx) {
-		if (c._spells[idx]._quantity) {
-			Common::String text = Common::String::format("%c) %s", 'a' + idx, c._spells[idx]._name.c_str());
+		if (c._spells[idx]->_quantity) {
+			Common::String text = Common::String::format("%c) %s", 'a' + idx, c._spells[idx]->_name.c_str());
 			s.writeString(text, TextPoint(15, yp++), (int)idx == c._equippedSpell ? _game->_highlightColor : _game->_textColor);
 		}
 	}

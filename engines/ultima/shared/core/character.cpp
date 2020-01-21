@@ -26,14 +26,25 @@ namespace Ultima {
 namespace Shared {
 
 template<typename T>
-void syncItems(Common::Array<T> &items, Common::Serializer &s) {
+void syncArray(Common::Array<T> &items, Common::Serializer &s) {
 	uint count = items.size();
 	s.syncAsByte(count);
 	if (s.isLoading())
 		assert(count == items.size());
 
 	for (uint idx = 0; idx < items.size(); ++idx)
-		s.syncAsUint16LE(items[idx]._quantity);
+		items[idx].synchronize(s);
+}
+
+template<typename T>
+void syncArrayPtrs(Common::Array<T *> &items, Common::Serializer &s) {
+	uint count = items.size();
+	s.syncAsByte(count);
+	if (s.isLoading())
+		assert(count == items.size());
+
+	for (uint idx = 0; idx < items.size(); ++idx)
+		items[idx]->synchronize(s);
 }
 
 void Character::synchronize(Common::Serializer &s) {
@@ -55,9 +66,9 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsSByte(_equippedArmor);
 	s.syncAsSByte(_equippedSpell);
 
-	syncItems<Weapon>(_weapons, s);
-	syncItems<Armor>(_armor, s);
-	syncItems<Spell>(_spells, s);
+	syncArray<Weapon>(_weapons, s);
+	syncArray<Armor>(_armor, s);
+	syncArrayPtrs<Spell>(_spells, s);
 }
 
 } // End of namespace Shared

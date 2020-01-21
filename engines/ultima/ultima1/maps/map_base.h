@@ -85,6 +85,11 @@ public:
 	virtual void attack(int direction);
 
 	/**
+	 * Cast a spell
+	 */
+	virtual void cast();
+
+	/**
 	 * Handles dropping an amount of coins
 	 */
 	virtual void dropCoins(uint coins) {}

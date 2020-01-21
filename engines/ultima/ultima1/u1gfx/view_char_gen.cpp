@@ -399,7 +399,6 @@ bool ViewCharacterGeneration::save() {
 	_character->_armor[0]._quantity = 0xffff;		// Bare skin
 	_character->_armor[1]._quantity = 1;			// Leather armour
 	_character->_equippedSpell = 0;
-	_character->_spells[0]._quantity = 0xffff;		// Prayer
 
 	return g_vm->saveGame();
 }

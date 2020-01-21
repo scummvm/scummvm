@@ -88,8 +88,8 @@ void Stats::load() {
 				(int)idx == c._equippedWeapon ? _game->_highlightColor : _game->_textColor));
 	}
 	for (uint idx = 1; idx < c._spells.size(); ++idx) {
-		if (c._spells[idx]._quantity > 0)
-			_stats.push_back(StatEntry(formatStat(c._spells[idx]._name.c_str(), c._spells[idx]._quantity),
+		if (c._spells[idx]->_quantity > 0)
+			_stats.push_back(StatEntry(formatStat(c._spells[idx]->_name.c_str(), c._spells[idx]->_quantity),
 				(int)idx == c._equippedSpell ? _game->_highlightColor : _game->_textColor));
 	}
 

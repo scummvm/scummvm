@@ -296,6 +296,11 @@ MESSAGE1(CMoveMsg, int, direction, 0);
 MESSAGE1(CAttackMsg, int, direction, 0);
 
 /**
+ * Used to trigger a cast action
+ */
+MESSAGE0(CCastMsg);
+
+/**
  * Climb up or down
  */
 MESSAGE0(CClimbMsg);
