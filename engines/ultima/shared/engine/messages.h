@@ -60,29 +60,25 @@ class Popup;
 #define MESSAGE1(NAME, F1, N1, V1) \
 	class NAME: public CMessage { \
 	public: F1 _##N1; \
-	NAME() : CMessage(), _##N1(V1) {} \
-	NAME(F1 N1) : CMessage(), _##N1(N1) {} \
+	NAME(F1 N1 = V1) : CMessage(), _##N1(N1) {} \
 	MESSAGEDEF(NAME); \
 	}
 #define MESSAGE2(NAME, F1, N1, V1, F2, N2, V2) \
 	class NAME: public CMessage { \
 	public: F1 _##N1; F2 _##N2; \
-	NAME() : CMessage(), _##N1(V1), _##N2(V2) {} \
-	NAME(F1 N1, F2 N2) : CMessage(), _##N1(N1), _##N2(N2) {} \
+	NAME(F1 N1 = V1, F2 N2 = V2) : CMessage(), _##N1(N1), _##N2(N2) {} \
 	MESSAGEDEF(NAME); \
 	}
 #define MESSAGE3(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3) \
 	class NAME: public CMessage { \
 	public: F1 _##N1; F2 _##N2; F3 _##N3; \
-	NAME() : CMessage(), _##N1(V1), _##N2(V2), _##N3(V3) {} \
-	NAME(F1 N1, F2 N2, F3 N3) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3) {} \
+	NAME(F1 N1 = V1, F2 N2 = V2, F3 N3 = V3) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3) {} \
 	MESSAGEDEF(NAME); \
 	}
 #define MESSAGE4(NAME, F1, N1, V1, F2, N2, V2, F3, N3, V3, F4, N4, V4) \
 	class NAME: public CMessage { \
 	public: F1 _##N1; F2 _##N2; F3 _##N3; F4 _##N4; \
-	NAME() : CMessage(), _##N1(V1), _##N2(V2), _##N3(V3), _##N4(V4) {} \
-	NAME(F1 N1, F2 N2, F3 N3, F4 N4) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3), _##N4(N4) {} \
+	NAME(F1 N1 = V1, F2 N2 = V2, F3 N3 = V3, F4 N4 = V4) : CMessage(), _##N1(N1), _##N2(N2), _##N3(N3), _##N4(N4) {} \
 	MESSAGEDEF(NAME); \
 	}
 
@@ -252,7 +248,7 @@ MESSAGE3(CInfoGetInput, TreeItem *, responder, (TreeItem *)nullptr, bool, isNume
 /**
  * Adds text strings to the info area
  */
-MESSAGE2(CInfoMsg, Common::String, text, "", bool, newLine, true);
+MESSAGE3(CInfoMsg, Common::String, text, "", bool, newLine, true, bool, replaceLine, false);
 
 /**
  * Signals an unknown/unhandled keypress

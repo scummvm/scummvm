@@ -20,36 +20,56 @@
  *
  */
 
-#include "ultima/ultima1/widgets/king.h"
-#include "ultima/ultima1/maps/map_city_castle.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/u1dialogs/king.h"
+#ifndef ULTIMA_ULTIMA1_U1DIALOGS_KING_H
+#define ULTIMA_ULTIMA1_U1DIALOGS_KING_H
+
+#include "ultima/ultima1/u1dialogs/dialog.h"
+#include "ultima/shared/gfx/character_input.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Widgets {
+namespace U1Dialogs {
 
-void King::movement() {
-}
+using Shared::CShowMsg;
+using Shared::CCharacterInputMsg;
 
-bool King::subtractHitPoints(uint amount) {
-	Maps::MapCastle *map = static_cast<Maps::MapCastle *>(_map);
+/**
+  * Dialog for talking to kings
+  */
+class King : public Dialog {
+	DECLARE_MESSAGE_MAP;
+	bool ShowMsg(CShowMsg &msg);
+	bool CharacterInputMsg(CCharacterInputMsg &msg);
 
-	// Lord British is invincible, the nasty git
-	return map->isLordBritishCastle() ? false : Person::subtractHitPoints(amount);
-}
+	enum KingMode { SELECT, PENCE, SERVICE };
+private:
+	KingMode _mode;
+private:
+	/**
+	 * Nothing selected
+	 */
+	void nothing();
 
-void King::talk() {
-	if (areGuardsHostile()) {
-		addInfoMsg(_game->_res->HE_REJECTS_OFFER);
-		_game->endOfTurn();
-	
-	} else {
-		U1Dialogs::King *dialog = new U1Dialogs::King(_game);
-		dialog->show();
-	}
-}
+	/**
+	 * Set the mode
+	 */
+	void setMode(KingMode mode);
+public:
+	CLASSDEF;
 
-} // End of namespace Widgets
+	/**
+	 * Constructor
+	 */
+	King(Ultima1Game *game);
+
+	/**
+	 * Draws the visual item on the screen
+	 */
+	virtual void draw();
+};
+
+} // End of namespace U1Dialogs
 } // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

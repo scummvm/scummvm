@@ -94,7 +94,7 @@ public:
 	 * @param newLine		Whether to apply a newline at the end
 	 * @param replaceLine	If true, replaces the current last line
 	 */
-	void addInfoMsg(const Common::String &text, bool newLine = true);
+	void addInfoMsg(const Common::String &text, bool newLine = true, bool replaceLine = false);
 
 	/**
 	 * Get the tile for the widget

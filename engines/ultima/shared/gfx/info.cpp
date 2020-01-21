@@ -23,13 +23,15 @@
 #include "ultima/shared/gfx/info.h"
 #include "ultima/shared/early/game.h"
 #include "ultima/shared/gfx/text_cursor.h"
+#include "ultima/shared/core/str.h"
 
 namespace Ultima {
 namespace Shared {
 
 #define PROMPT_CHAR '\x1'
+#define SUGGESTED_CR '\r'
 
-BEGIN_MESSAGE_MAP(Info, Gfx::VisualItem)
+BEGIN_MESSAGE_MAP(Info, Shared::Gfx::VisualItem)
 	ON_MESSAGE(InfoMsg)
 	ON_MESSAGE(InfoGetCommandKeypress)
 	ON_MESSAGE(InfoGetKeypress)
@@ -49,12 +51,20 @@ Info::~Info() {
 }
 
 bool Info::InfoMsg(CInfoMsg &msg) {
-	// Add new text
-	if (_lines.empty())
-		_lines.push_back(" ");
+	// Iterate through text, dealing with lines one at a time
+	StringArray lines = String(msg._text).split("\r\n");
 
-	_lines.back() += msg._text;
+	if (!_lines.empty() && msg._replaceLine)
+		_lines.back() = " ";
 
+	for (uint idx = 0; idx < lines.size(); ++idx) {
+		if (_lines.empty())
+			_lines.push_back(" ");
+
+		_lines.back() += lines[idx];
+	}
+
+	// Add newline if necessary
 	if (msg._newLine)
 		_lines.push_back(" ");
 
