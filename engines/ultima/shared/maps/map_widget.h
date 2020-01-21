@@ -26,7 +26,7 @@
 #include "common/ptr.h"
 #include "common/serializer.h"
 #include "common/str.h"
-#include "ultima/shared/core/base_object.h"
+#include "ultima/shared/core/message_target.h"
 #include "ultima/shared/core/rect.h"
 
 namespace Ultima {
@@ -47,7 +47,8 @@ class MapBase;
 /**
  * Base class for things that appear within a map, such as monsters, transports, or people
  */
-class MapWidget : public BaseObject {
+class MapWidget : public MessageTarget {
+	DECLARE_MESSAGE_MAP;
 protected:
 	Game *_game;						// Game reference
 	MapBase *_map;						// Map reference
@@ -56,6 +57,8 @@ public:
 	Direction _direction;				// Direction
 	Common::String _name;				// Name of widget
 public:
+	CLASSDEF;
+
 	/**
 	 * Constructor
 	 */

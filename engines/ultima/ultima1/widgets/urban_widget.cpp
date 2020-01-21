@@ -28,6 +28,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+EMPTY_MESSAGE_MAP(UrbanWidget, Shared::Maps::MapWidget);
+
 Shared::Maps::MapWidget::CanMove UrbanWidget::canMoveTo(const Point &destPos) {
 	Shared::Maps::MapWidget::CanMove result = Shared::Maps::MapWidget::canMoveTo(destPos);
 	if (result != UNSET)

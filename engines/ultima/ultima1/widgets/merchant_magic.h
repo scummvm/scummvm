@@ -29,9 +29,14 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+/**
+ * Implements the magic merchant
+ */
 class MerchantMagic : public Merchant {
+	DECLARE_MESSAGE_MAP;
 public:
 	DECLARE_WIDGET(MerchantMagic)
+	CLASSDEF;
 
 	/**
 	 * Constructor

@@ -29,9 +29,14 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+/**
+ * Implements the armor merchant
+ */
 class MerchantArmor : public Merchant {
+	DECLARE_MESSAGE_MAP;
 public:
 	DECLARE_WIDGET(MerchantArmor)
+	CLASSDEF;
 
 	/**
 	 * Constructor

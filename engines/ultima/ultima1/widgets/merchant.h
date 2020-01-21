@@ -33,8 +33,9 @@ namespace Widgets {
  * Base class for merchants in the cities and castles
  */
 class Merchant : public Person {
+	DECLARE_MESSAGE_MAP;
 public:
-	DECLARE_WIDGET(Merchant)
+	CLASSDEF;
 
 	/**
 	 * Constructor

@@ -37,6 +37,7 @@ namespace Widgets {
  * Base class for NPC creatures
  */
 class Person : public UrbanWidget, Shared::Maps::Creature {
+	DECLARE_MESSAGE_MAP;
 protected:
 	Ultima1Game *_game;
 	Maps::MapBase *_map;
@@ -58,6 +59,8 @@ protected:
 		return Point(getRandomDelta(), getRandomDelta());
 	}
 public:
+	CLASSDEF;
+
 	/**
 	 * Constructor
 	 */

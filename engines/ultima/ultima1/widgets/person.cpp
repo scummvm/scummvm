@@ -27,6 +27,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+EMPTY_MESSAGE_MAP(Person, UrbanWidget);
+
 bool Person::areGuardsHostile() const {
 	Maps::MapCityCastle *cityCastle = static_cast<Maps::MapCityCastle *>(_map);
 	return cityCastle->_guardsHostile;

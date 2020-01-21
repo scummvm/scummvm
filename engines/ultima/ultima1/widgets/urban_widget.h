@@ -34,9 +34,12 @@ namespace Widgets {
  * Base class for widgets in urban maps 
  */
 class UrbanWidget : public Shared::Maps::MapWidget {
+	DECLARE_MESSAGE_MAP;
 private:
 	uint _tileNum;
 protected:
+	CLASSDEF;
+
 	/**
 	 * Moves by a given delta if the destination is available
 	 * @param delta		Delta to move character by

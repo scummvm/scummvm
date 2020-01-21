@@ -54,7 +54,7 @@ class MapBase {
 		/**
 		 * Finds a widget by class
 		 */
-		MapWidget *findByClass(ClassDef *classDef);
+		MapWidget *findByClass(const ClassDef &classDef);
 	};
 
 	/**

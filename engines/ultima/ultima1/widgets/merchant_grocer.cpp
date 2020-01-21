@@ -26,6 +26,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+EMPTY_MESSAGE_MAP(MerchantGrocer, Merchant);
+
 void MerchantGrocer::steal() {
 	// TODO
 }

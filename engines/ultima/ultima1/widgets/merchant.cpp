@@ -26,6 +26,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+EMPTY_MESSAGE_MAP(Merchant, Person);
 
 } // End of namespace Widgets
 } // End of namespace Ultima1
