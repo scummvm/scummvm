@@ -20,44 +20,30 @@
  *
  */
 
-#include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/game_state.h"
-#include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/u1gfx/game_view.h"
-#include "ultima/ultima1/u1gfx/text_cursor.h"
-#include "ultima/ultima1/u6gfx/game_view.h"
-#include "ultima/shared/early/font_resources.h"
-#include "ultima/shared/early/ultima_early.h"
+#include "ultima/ultima1/map/map.h"
+#include "ultima/ultima1/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
-EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
+GameState::GameState(Ultima1Game *game) : Shared::GameState(game) {
+	setupParty();
 
-Ultima1Game::Ultima1Game() : Shared::Game() {
-	_gameState = new GameState(this);
-	_res = new GameResources();
-	delete _textCursor;
-	_textCursor = new U1Gfx::U1TextCursor(_textColor, _bgColor);
-
-	if (g_vm->getFeatures() & GF_VGA_ENHANCED) {
-		_videoMode = VIDEOMODE_VGA;
-		loadU6Palette();
-		setFont(new Shared::Gfx::Font((const byte *)&_fontResources->_fontU6[0][0]));
-		_gameView = new U6Gfx::GameView(this);
-	} else {
-		setEGAPalette();
-		_gameView = new U1Gfx::GameView(this);
-	}
+	_map = new Map::Ultima1Map(static_cast<Ultima1Game *>(game));
+	// Load the default overworld map
+	_map->load(Ultima1::Map::MAPID_OVERWORLD);
+	//_map->setPosition(Point(49, 40));
+	_map->setPosition(Point(62, 49));
 }
 
-Ultima1Game::~Ultima1Game() {
-	delete _gameView;
-}
-
-void Ultima1Game::starting() {
-	_res->load();
-	_gameView->setView("GameView");
+void GameState::setupParty() {
+	// Setup characters array
+	_characters.resize(1);
+	_currentCharacter = &_characters.front();
+	_currentCharacter->_armor.resize(5);
+	_currentCharacter->_weapons.resize(15);
+	_currentCharacter->_spells.resize(10);
 }
 
 } // End of namespace Ultima1
