@@ -38,6 +38,7 @@ void OpenUnlock::dungeonCast(Maps::MapDungeon *map) {
 	if (item) {
 		addInfoMsg(item->_name, false);
 		openItem(map, item);
+		_game->endOfTurn();
 	} else {
 		Spell::dungeonCast(map);
 	}

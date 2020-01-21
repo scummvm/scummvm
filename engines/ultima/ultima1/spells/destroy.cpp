@@ -44,6 +44,7 @@ void Destroy::dungeonCast(Maps::MapDungeon *map) {
 		// Destroy the beams in front of the player
 		map->setTileAt(newPos, Maps::DTILE_HALLWAY);
 		addInfoMsg(_game->_res->FIELD_DESTROYED);
+		_game->endOfTurn();
 	} else {
 		// Failed
 		Spell::dungeonCast(map);

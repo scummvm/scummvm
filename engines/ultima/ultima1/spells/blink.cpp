@@ -46,6 +46,7 @@ void Blink::dungeonCast(Maps::MapDungeon *map) {
 	// And teleport there
 	addInfoMsg(_game->_res->TELEPORTED);
 	map->setPosition(newPos);
+	_game->endOfTurn();
 }
 
 } // End of namespace Spells

@@ -32,6 +32,29 @@ namespace Maps {
 
 EMPTY_MESSAGE_MAP(MapWidget, MessageTarget);
 
+Direction MapWidget::directionFromKey(Common::KeyCode keycode) {
+	switch (keycode) {
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_KP4:
+		return DIR_WEST;
+
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_KP6:
+		return DIR_EAST;
+
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
+		return DIR_NORTH;
+
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2:
+		return DIR_SOUTH;
+
+	default:
+		return DIR_NONE;
+	}
+}
+
 void MapWidget::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_position.x);
 	s.syncAsSint16LE(_position.y);

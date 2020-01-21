@@ -45,18 +45,18 @@ namespace Ultima1 {
 namespace Actions {
 MAP_ACTION(Cast, 2, cast)
 MAP_ACTION(Drop, 3, drop)
-MAP_ACTION(Enter, 4, enter)
-MAP_ACTION(Fire, 5, fire)
-MAP_ACTION(Get, 6, get)
-MAP_ACTION(HyperJump, 7, hyperjump)
-MAP_ACTION(Inform, 8, inform)
-MAP_ACTION(Climb, 10, climb)
-MAP_ACTION(Open, 14, open)
-MAP_ACTION(Steal, 18, steal)
-MAP_ACTION(Transact, 19, talk)
-MAP_ACTION(Unlock, 20, unlock)
-MAP_ACTION(ViewChange, 21, view)
-MAP_ACTION(ExitTransport, 23, disembark)
+MAP_ACTION_END_TURN(Enter, 4, enter)
+MAP_ACTION_END_TURN(Fire, 5, fire)
+MAP_ACTION_END_TURN(Get, 6, get)
+MAP_ACTION_END_TURN(HyperJump, 7, hyperjump)
+MAP_ACTION_END_TURN(Inform, 8, inform)
+MAP_ACTION_END_TURN(Climb, 10, climb)
+MAP_ACTION_END_TURN(Open, 14, open)
+MAP_ACTION_END_TURN(Steal, 18, steal)
+MAP_ACTION_END_TURN(Transact, 19, talk)
+MAP_ACTION_END_TURN(Unlock, 20, unlock)
+MAP_ACTION_END_TURN(ViewChange, 21, view)
+MAP_ACTION_END_TURN(ExitTransport, 23, disembark)
 }
 
 namespace U1Gfx {
@@ -204,9 +204,10 @@ void dispatchKey(ViewGame *game) {
 #define CHECK(KEYCODE, MSG_CLASS) else if (msg._keyState.keycode == KEYCODE) { dispatchKey<MSG_CLASS>(this); }
 
 bool ViewGame::checkMovement(const Common::KeyState &keyState) {
-	switch (keyState.keycode) {
-	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_KP4: {
+	Shared::Maps::Direction dir = Shared::Maps::MapWidget::directionFromKey(keyState.keycode);
+
+	switch (dir) {
+	case Shared::Maps::DIR_WEST: {
 		if (keyState.flags & Common::KBD_SHIFT) {
 			Shared::CAttackMsg attack(Shared::Maps::DIR_LEFT);
 			attack.execute(this);
@@ -216,8 +217,7 @@ bool ViewGame::checkMovement(const Common::KeyState &keyState) {
 		}
 		break;
 	}
-	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_KP6: {
+	case Shared::Maps::DIR_EAST: {
 		if (keyState.flags & Common::KBD_SHIFT) {
 			Shared::CAttackMsg attack(Shared::Maps::DIR_RIGHT);
 			attack.execute(this);
@@ -227,8 +227,7 @@ bool ViewGame::checkMovement(const Common::KeyState &keyState) {
 		}
 		break;
 	}
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_KP8: {
+	case Shared::Maps::DIR_UP: {
 		if (keyState.flags & Common::KBD_SHIFT) {
 			Shared::CAttackMsg attack(Shared::Maps::DIR_UP);
 			attack.execute(this);
@@ -238,8 +237,7 @@ bool ViewGame::checkMovement(const Common::KeyState &keyState) {
 		}
 		break;
 	}
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_KP2: {
+	case Shared::Maps::DIR_DOWN: {
 		if (keyState.flags & Common::KBD_SHIFT) {
 			Shared::CAttackMsg attack(Shared::Maps::DIR_DOWN);
 			attack.execute(this);
