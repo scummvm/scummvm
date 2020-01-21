@@ -1620,7 +1620,10 @@ void GlobalOptionsDialog::build() {
 		tab->addTab(_("Misc"), "GlobalOptions_Misc");
 	else
 		tab->addTab(_c("Misc", "lowres"), "GlobalOptions_Misc");
-	addMiscControls(tab, "GlobalOptions_Misc.", g_system->getOverlayWidth() <= 320);
+	ScrollContainerWidget *miscContainer = new ScrollContainerWidget(tab, "GlobalOptions_Misc.Container", "GlobalOptions_Misc_Container");
+	miscContainer->setTarget(this);
+	miscContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
+	addMiscControls(miscContainer, "GlobalOptions_Misc_Container.", g_system->getOverlayWidth() <= 320);
 
 #ifdef USE_CLOUD
 #ifdef USE_LIBCURL
