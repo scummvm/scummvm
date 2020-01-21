@@ -153,6 +153,10 @@ Shared::Maps::MapWidget *Ultima1Map::createWidget(Shared::Maps::MapBase *map, co
 	error("Unknown widget type '%s'", name.c_str());
 }
 
+void Ultima1Map::inform() {
+	static_cast<MapBase *>(_mapArea)->inform();
+}
+
 void Ultima1Map::steal() {
 	static_cast<MapBase *>(_mapArea)->steal();
 }

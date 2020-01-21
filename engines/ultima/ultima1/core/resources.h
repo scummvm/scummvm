@@ -61,6 +61,7 @@ public:
 	byte OVERWORLD_MONSTER_DAMAGE[15];
 	const char *OVERWORLD_MONSTER_NAMES[15];
 	const char *DUNGEON_MONSTER_NAMES[99];
+	const char *LAND_NAMES[4];
 	const char *BLOCKED;
 	const char *ENTER_QUESTION;
 	const char *ENTERING;
@@ -82,6 +83,11 @@ public:
 	const char *JESTER_SPEECH2;
 	const char *BARD_STOLEN;
 	const char *JESTER_STOLEN;
+	const char *YOU_ARE_AT_SEA;
+	const char *YOU_ARE_IN_WOODS;
+	const char *YOU_ARE_IN_LANDS;
+	const char *FIND;
+	const char *A_SECRET_DOOR;
 
 	const char *ACTION_NAMES[26];
 	const char *HUH;
@@ -99,8 +105,6 @@ public:
 	const char *GROCERY_PACKS3;
 	const char *GROCERY_PACKS_FOOD;
 	const char *GROCERY_FIND_PACKS;
-	const char *FIND;
-
 public:
 	GameResources();
 	GameResources(Shared::Resources *resManager);

@@ -156,6 +156,11 @@ void MapCityCastle::loadTownCastleData() {
 	}
 }
 
+void MapCityCastle::inform() {
+	addInfoMsg("");
+	addInfoMsg(_name);
+}
+
 void MapCityCastle::steal() {
 	U1MapTile tile;
 	getTileAt(getPosition(), &tile);
