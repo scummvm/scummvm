@@ -577,10 +577,12 @@ const char *const SRC_A_SECRET_DOOR = "a secret door!";
 
 const char *const SRC_ACTION_NAMES[26] = {
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, "Inform and search", nullptr,
-	nullptr, nullptr, nullptr, nullptr, nullptr, "Pass", nullptr, nullptr, "Steal", "Transact",
+	"K-Limb", nullptr, nullptr, nullptr, nullptr, "Pass", nullptr, nullptr, "Steal", "Transact",
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 };
 const char *const SRC_HUH = "Huh?";
+const char *const SRC_WHAT = " what?";
+const char *const SRC_FACE_THE_LADDER = "Thou must face the ladder!";
 const char *const SRC_CAUGHT = "Oh no!  Thou wert caught!";
 const char *const SRC_NONE_WILL_TALK = "None will talk to thee!";
 
@@ -662,6 +664,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 
 	Common::copy(&SRC_ACTION_NAMES[0], &SRC_ACTION_NAMES[26], ACTION_NAMES);
 	HUH = SRC_HUH;
+	WHAT = SRC_WHAT;
+	FACE_THE_LADDER = SRC_FACE_THE_LADDER;
 	CAUGHT = SRC_CAUGHT;
 	NONE_WILL_TALK = SRC_NONE_WILL_TALK;
 	BUY_SELL = SRC_BUY_SELL;
@@ -734,6 +738,8 @@ void GameResources::synchronize() {
 
 	syncStrings(ACTION_NAMES, 26);
 	syncString(HUH);
+	syncString(WHAT);
+	syncString(FACE_THE_LADDER);
 	syncString(CAUGHT);
 	syncString(NONE_WILL_TALK);
 	syncString(BUY_SELL);

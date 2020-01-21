@@ -122,6 +122,11 @@ public:
 	void inform();
 
 	/**
+	 * Do a klimb (climb) action
+	 */
+	void climb();
+
+	/**
 	 * Do a steal action
 	 */
 	void steal();

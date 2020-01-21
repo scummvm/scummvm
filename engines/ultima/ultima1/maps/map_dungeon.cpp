@@ -223,6 +223,25 @@ void MapDungeon::inform() {
 	}
 }
 
+void MapDungeon::climb() {
+	Maps::U1MapTile tile;
+	getTileAt(getPosition(), &tile);
+
+	if (!tile._isLadderUp && !tile._isLadderDown) {
+		addInfoMsg(_game->_res->WHAT);
+		_game->playFX(1);
+	} else if (getDirection() == Shared::Maps::DIR_LEFT || getDirection() == Shared::Maps::DIR_RIGHT) {
+		addInfoMsg("");
+		addInfoMsg(_game->_res->FACE_THE_LADDER);
+		_game->playFX(1);
+	} else if (tile._isLadderUp) {
+		if (!changeLevel(-1))
+			_game->getMap()->load(MAPID_OVERWORLD);
+	} else {
+		changeLevel(1);
+	}
+}
+
 } // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima

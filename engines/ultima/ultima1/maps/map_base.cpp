@@ -64,12 +64,7 @@ void MapBase::getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool inclu
 	}
 }
 
-void MapBase::steal() {
-	addInfoMsg("?");
-	_game->playFX(1);
-}
-
-void MapBase::talk() {
+void MapBase::unknownAction() {
 	addInfoMsg("?");
 	_game->playFX(1);
 }

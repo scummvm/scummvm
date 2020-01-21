@@ -38,6 +38,11 @@ class Ultima1Map;
  * Intermediate base class for Ultima 1 maps
  */
 class MapBase : public Shared::Maps::MapBase {
+private:
+	/**
+	 * Default unknown/question mark display
+	 */
+	void unknownAction();
 protected:
 	Ultima1Game *_game;
 public:
@@ -62,14 +67,19 @@ public:
 	virtual void inform() = 0;
 
 	/**
+	 * Do a climb action/
+	 */
+	virtual void climb() { unknownAction(); }
+
+	/**
 	 * Do a steal action
 	 */
-	virtual void steal();
+	virtual void steal() { unknownAction(); }
 
 	/**
 	 * Do a talk action
 	 */
-	void talk();
+	void talk() { unknownAction(); }
 };
 
 } // End of namespace Maps
