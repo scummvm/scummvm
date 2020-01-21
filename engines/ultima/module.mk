@@ -78,6 +78,7 @@ MODULE_OBJS += \
 	ultima1/widgets/dungeon_widget.o \
 	ultima1/widgets/guard.o \
 	ultima1/widgets/king.o \
+	ultima1/widgets/overworld_monster.o \
 	ultima1/widgets/person.o \
 	ultima1/widgets/princess.o \
 	ultima1/widgets/transport.o \

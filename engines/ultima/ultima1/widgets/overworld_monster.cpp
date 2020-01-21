@@ -20,25 +20,25 @@
  *
  */
 
-#include "ultima/shared/core/widgets.h"
-#include "ultima/shared/early/game.h"
-#include "ultima/shared/core/game_state.h"
+#include "ultima/ultima1/widgets/overworld_monster.h"
 
 namespace Ultima {
-namespace Shared {
+namespace Ultima1 {
+namespace Widgets {
 
-/*------------------------------------------------------------------------*/
+bool OverworldMonster::canAttack() const {
+	Point playerPos = _map->_currentTransport->_position;
+	Point diff = playerPos - _position;
 
-void Creature::update(bool isPreUpdate) {
-	if (isPreUpdate) {
-		// Check whether creature can attack
-		_isAttacking = canAttack();
-		if (!_isAttacking)
-			movement();
-	} else if (_isAttacking && !_game->_gameState->isPartyDead()) {
-		attack();
-	}
+	int threshold = _tileNum == 23 || _tileNum == 25 || _tileNum == 31 || _tileNum == 47 ? 3 : 1;
+	int distance = MIN(diff.x, diff.y);
+	return distance <= threshold;
 }
 
+void OverworldMonster::attack() {
+
+}
+
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima

@@ -20,22 +20,38 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_WIDGETS_DUNGEON_MONSTER_H
-#define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_MONSTER_H
+#ifndef ULTIMA_ULTIMA1_WIDGETS_OVERWORLD_MONSTER_H
+#define ULTIMA_ULTIMA1_WIDGETS_OVERWORLD_MONSTER_H
 
-#include "ultima/ultima1/widgets/dungeon_widget.h"
+#include "ultima/shared/core/widgets.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+enum OverworldMonsterId {
+	NESS_CREATURE = 0, GIANT_SQUID, DRAGON_TURTLE, PIRATE_SHIP, HOOD, BEAR, HIDDEN_ARCHER, DARK_KNIGHT,
+	EVIL_TRENT, THIEF, ORC, KNIGHT, NECROMANCER, EVIL_RANGER, WANDERING_WARLOCK
+};
+
 /**
- * Implements monsters within the dungeons
+ * Implements monsters on the overworld
  */
-class DungeonMonster : public Shared::Creature, public Shared::DungeonCreature {
+class OverworldMonster : public Shared::Creature {
 private:
-	DungeonWidgetId _monsterId;
+	uint _tileNum;
+	OverworldMonsterId _monsterId;
 protected:
+	/**
+	 * Returns the distance a creature can attack from
+	 */
+	virtual bool canAttack() const;
+
+	/**
+	 * Handles attacks
+	 */
+	virtual void attack();
+
 	/**
 	 * Handles moving creatures
 	 */
@@ -49,46 +65,20 @@ public:
 	/**
 	 * Constructor
 	 */
-	DungeonMonster(Shared::Game *game, Shared::Map::MapBase *map, DungeonWidgetId monsterId, int hitPoints,
+	OverworldMonster(Shared::Game *game, Shared::Map::MapBase *map, uint tileNum, int hitPoints,
 		const Point &pt, Shared::Direction dir = Shared::DIR_NONE) :
-		Shared::Creature(game, map, hitPoints, pt, dir), Shared::DungeonCreature(), _monsterId(monsterId) {}
+		Shared::Creature(game, map, hitPoints, pt, dir), _tileNum(tileNum),
+		_monsterId((OverworldMonsterId)((tileNum - 19) / 2)) {}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~DungeonMonster() {}
+	virtual ~OverworldMonster() {}
 
 	/**
 	 * Returns the monster's type
 	 */
-	DungeonWidgetId id() const { return _monsterId; }
-
-	/**
-	 * Returns true if a monster blocks the background behind him
-	 */
-	virtual bool isBlockingView() const;
-
-	/**
-	 * Draw a monster
-	 */
-	virtual void draw(Shared::DungeonSurface &s, uint distance);
-
-	/**
-	 * Called to update the widget at the end of a turn
-	 * @param isPreUpdate		Update is called twice in succesion during the end of turn update.
-	 *		Once with true for all widgets, then with it false
-	 */
-	virtual void update(bool isPreUpdate);
-
-	/**
-	 * Returns true if the given widget can move to a given position on the map
-	 */
-	virtual bool canMoveTo(const Point &destPos);
-
-	/**
-	 * Handles attacks
-	 */
-	virtual void attack();
+	OverworldMonsterId id() const { return _monsterId; }
 };
 
 } // End of namespace Widgets

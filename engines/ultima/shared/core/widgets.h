@@ -64,7 +64,7 @@ protected:
 	/**
 	 * Handles attacks
 	 */
-	virtual void attack(bool isAllowed) {}
+	virtual void attack() {}
 public:
 	/**
 	 * Constructor
