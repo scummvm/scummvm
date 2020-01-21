@@ -28,6 +28,11 @@ namespace Shared {
 
 EMPTY_MESSAGE_MAP(Info, Gfx::VisualItem);
 
+bool Info::InfoMsg(CInfoMsg &msg) {
+
+	return true;
+}
+
 void Info::draw() {
 
 }

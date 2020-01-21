@@ -48,9 +48,9 @@ GameResources *Action::getRes() {
 	return getGame()->_res;
 }
 
-void Action::addStatusMsg(const Common::String &text) {
-	Shared::CStatusMsg msg(text);
-	msg.execute(getView());
+void Action::addInfoMsg(const Common::String &text, bool newLine) {
+	Shared::CInfoMsg msg(text, newLine);
+	msg.execute(getView(), nullptr, Shared::MSGFLAG_BREAK_IF_HANDLED);
 }
 
 void Action::playFX(uint effectId) {

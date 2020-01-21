@@ -109,8 +109,8 @@ void Ultima1Map::clear() {
 	_currentTransport = nullptr;
 }
 
-void Ultima1Map::loadMap(int mapId, uint videoMode) {
-	Map::loadMap(mapId, videoMode);
+void Ultima1Map::loadMap(int mapId) {
+	Map::loadMap(mapId);
 
 	if (mapId == MAPID_OVERWORLD)
 		loadOverworldMap();

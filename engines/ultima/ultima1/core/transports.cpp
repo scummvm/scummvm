@@ -85,7 +85,7 @@ bool TransportOnFoot::moveTo(const Point &destPos) {
 			princessSaved();
 
 		// Load the overworld map
-		map->loadMap(MAP_OVERWORLD, game->_gameState->_videoMode);
+		map->loadMap(MAP_OVERWORLD);
 
 		// Get the world map position from the game state, and scan through the tiles representing that tile
 		// in the original map to find the one that was used to enter the location, then set the position to it

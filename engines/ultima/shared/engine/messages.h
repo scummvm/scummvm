@@ -247,9 +247,9 @@ MESSAGE2(CHideMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fa
 MESSAGE1(CFrameMsg, uint, ticks, 0);
 
 /**
- * Adds text strings to the status area
+ * Adds text strings to the info area
  */
-MESSAGE1(CStatusMsg, Common::String, text, "");
+MESSAGE2(CInfoMsg, Common::String, text, "", bool, newLine, true);
 
 /**
  * Used to trigger a party movement

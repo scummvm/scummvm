@@ -190,7 +190,7 @@ public:
 	/**
 	 * Load a given map
 	 */
-	virtual void loadMap(int mapId, uint videoMode);
+	virtual void loadMap(int mapId);
 
 	/**
 	 * Gets a tile at a given position

@@ -57,7 +57,7 @@ void Climb::ladderUp() {
 	Shared::GameState *gs = getGameState();
 
 	if (!map->changeDungeonLevel(-1)) {
-		map->loadMap(MAPID_OVERWORLD, 0);
+		map->loadMap(MAPID_OVERWORLD);
 		map->setPosition(gs->_worldMapPos);
 	}
 }

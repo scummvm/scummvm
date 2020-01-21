@@ -283,7 +283,7 @@ public:
 	/**
 	 * Load a given map
 	 */
-	virtual void loadMap(int mapId, uint videoMode);
+	virtual void loadMap(int mapId);
 };
 
 } // End of namespace Shared
