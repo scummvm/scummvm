@@ -22,9 +22,12 @@
 
 #include "ultima/ultima1/map/map_city_castle.h"
 #include "ultima/ultima1/core/transports.h"
-#include "ultima/ultima1/core/people.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/people/bard.h"
+#include "ultima/ultima1/people/guard.h"
+#include "ultima/ultima1/people/king.h"
+#include "ultima/ultima1/people/princess.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -47,7 +50,24 @@ void MapCityCastle::loadWidgets() {
 		if (lp[0] == -1)
 			break;
 
-		Person *person = new Person(_game, this, lp[0], lp[3]);
+		People::Person *person;
+		switch (lp[0]) {
+		case 17:
+			person = new People::Guard(_game, this, lp[3]);
+			break;
+		case 19:
+			person = new People::Bard(_game, this, lp[3]);
+			break;
+		case 20:
+			person = new People::King(_game, this, lp[3]);
+			break;
+		case 22:
+			person = new People::Princess(_game, this, lp[3]);
+			break;
+		default:
+			error("Unknown NPC type %d", lp[0]);
+		}
+		
 		person->_position = Point(lp[1], lp[2]);
 		addWidget(person);
 	}
