@@ -33,8 +33,9 @@
 #include "ultima/ultima1/actions/move.h"
 #include "ultima/ultima1/actions/climb.h"
 #include "ultima/ultima1/actions/enter.h"
+#include "ultima/ultima1/actions/transact.h"
 #include "ultima/ultima1/core/resources.h"
-#include "ultima/shared/early/font_resources.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -55,8 +56,9 @@ ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Actions::Climb(this);
 	_actions[2] = new Actions::Enter(this);
-	_actions[3] = new Shared::Actions::Pass(this, game->_res->PASS);
-	_actions[4] = new Shared::Actions::Huh(this, game->_res->HUH);
+	_actions[3] = new Shared::Actions::Pass(this, game->_res->ACTION_NAMES[15]);
+	_actions[4] = new Actions::Transact(this);
+	_actions[5] = new Shared::Actions::Huh(this, game->_res->HUH);
 }
 
 ViewGame::~ViewGame() {
@@ -166,6 +168,11 @@ bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
 	case Common::KEYCODE_k: {
 		Shared::CClimbMsg climb;
 		climb.execute(this);
+		break;
+	}
+	case Common::KEYCODE_t: {
+		Shared::CTransactMsg transact;
+		transact.execute(this);
 		break;
 	}
 	case Common::KEYCODE_SPACE: {

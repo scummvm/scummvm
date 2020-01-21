@@ -34,13 +34,15 @@ namespace U1Dialogs {
  */
 class Grocery : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
+private:
+	uint _costPerPack;
 public:
 	CLASSDEF;
 
 	/**
 	 * Constructor
 	 */
-	Grocery(Ultima1Game *game, BuySell buySell, int groceryNum);
+	Grocery(Ultima1Game *game, BuySell buySell, int groceryNum, uint costPerPack = 0);
 
 	/**
 	 * Draws the visual item on the screen

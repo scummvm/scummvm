@@ -64,8 +64,6 @@ public:
 	const char *ENTERING;
 	const char *THE_CITY_OF;
 	const char *DUNGEON_LEVEL;
-	const char *PASS;
-	const char *HUH;
 	const char *ATTACKED_BY;
 	const char *ARMOR_DESTROYED;
 	const char *GREMLIN_STOLE;
@@ -83,6 +81,10 @@ public:
 	const char *BARD_STOLEN;
 	const char *JESTER_STOLEN;
 
+	const char *ACTION_NAMES[26];
+	const char *HUH;
+	const char *NONE_WILL_TALK;
+	const char *BUY_SELL;
 	const char *NOTHING;
 	const char *SOLD;
 	const char *CANT_AFFORD;

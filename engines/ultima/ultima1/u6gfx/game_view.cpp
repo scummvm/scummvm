@@ -52,7 +52,7 @@ GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", 
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Actions::Climb(this);
 	_actions[2] = new Actions::Enter(this);
-	_actions[3] = new Shared::Actions::Pass(this, game->_res->PASS);
+	_actions[3] = new Shared::Actions::Pass(this, game->_res->ACTION_NAMES[15]);
 	loadBackground();
 }
 

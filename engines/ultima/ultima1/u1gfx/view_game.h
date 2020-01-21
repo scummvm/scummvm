@@ -57,7 +57,7 @@ private:
 	Shared::ViewportDungeon *_viewportDungeon;
 	ViewportMap *_viewportMap;
 	Status *_status;
-	Shared::Actions::Action *_actions[5];
+	Shared::Actions::Action *_actions[6];
 	int _frameCtr;
 private:
 	/**
