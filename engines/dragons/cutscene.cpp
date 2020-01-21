@@ -229,25 +229,25 @@ void CutScene::scene1() {
 																									DAT_80072de8->setFlag(ACTOR_FLAG_100);
 																									DAT_80072de8->setFlag(ACTOR_FLAG_800);
 																									DAT_80072de8->setFlag(ACTOR_FLAG_8000);
-																									DAT_80072de8->field_7c = 0x20000;
+																									DAT_80072de8->_walkSpeed = 0x20000;
 																									DAT_80072de8->priorityLayer = 3;
 
 																									DAT_80072dec->setFlag(ACTOR_FLAG_100);
 																									DAT_80072dec->setFlag(ACTOR_FLAG_800);
 																									DAT_80072dec->setFlag(ACTOR_FLAG_8000);
-																									DAT_80072dec->field_7c = 0x18000;
+																									DAT_80072dec->_walkSpeed = 0x18000;
 																									DAT_80072dec->priorityLayer = 3;
 
 																									DAT_80072df0->setFlag(ACTOR_FLAG_100);
 																									DAT_80072df0->setFlag(ACTOR_FLAG_800);
 																									DAT_80072df0->setFlag(ACTOR_FLAG_8000);
-																									DAT_80072df0->field_7c = 0x14000;
+																									DAT_80072df0->_walkSpeed = 0x14000;
 																									DAT_80072df0->priorityLayer = 3;
 
 																									DAT_80072df4->setFlag(ACTOR_FLAG_100);
 																									DAT_80072df4->setFlag(ACTOR_FLAG_800);
 																									DAT_80072df4->setFlag(ACTOR_FLAG_8000);
-																									DAT_80072df4->field_7c = 0x1c000;
+																									DAT_80072df4->_walkSpeed = 0x1c000;
 																									DAT_80072df4->priorityLayer = 3;
 
 																									DAT_80072df8->setFlag(ACTOR_FLAG_100);
@@ -257,13 +257,13 @@ void CutScene::scene1() {
 
 																									_vm->waitForFramesAllowSkip(0xe);
 																									// call_fade_related_1f();
-																									DAT_80072df0->pathfinding_maybe(0xe8,0xa8,2);
+																									DAT_80072df0->startWalk(0xe8,0xa8,2);
 																									while (DAT_80072df0->isFlagSet(ACTOR_FLAG_10)) {
 																										_vm->waitForFrames(1);
 																									}
-																									DAT_80072de8->pathfinding_maybe(0x97,0x37,2);
-																									DAT_80072dec->pathfinding_maybe(0x97,0x37,2);
-																									DAT_80072df4->pathfinding_maybe(0x97,0x37,2);
+																									DAT_80072de8->startWalk(0x97,0x37,2);
+																									DAT_80072dec->startWalk(0x97,0x37,2);
+																									DAT_80072df4->startWalk(0x97,0x37,2);
 																									DAT_80072df0->waitUntilFlag8SetThenSet1000AndWaitFor4();
 																									DAT_80072df0->updateSequence(6);
 																									uint16 dialog[2000];
@@ -274,7 +274,7 @@ void CutScene::scene1() {
 																									DAT_80072df0->waitUntilFlag8And4AreSet();
 																									DAT_80072df0->x_pos = 0xcf;
 																									DAT_80072df0->y_pos = 0x90;
-																									DAT_80072df0->pathfinding_maybe(0x97, 0x37, 2);
+																									DAT_80072df0->startWalk(0x97, 0x37, 2);
 																									DAT_80072df0->updateSequence(7);
 //TODO
 //																									if (((DAT_8008e7e8 != 0) || (DAT_8008e848 != 0))
@@ -588,10 +588,10 @@ void CutScene::knightsSavedBackAtCastle() {
 			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072de8,3,0,0x78e8,0x2e01) != 2) {
 				wideAngleEveryoneAtTable();
 				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072e04,0x1a,0x19,0x7a1e,0x3e01) != 2) {
-					DAT_80072e04->field_7c = 0x10000;
+					DAT_80072e04->_walkSpeed = 0x10000;
 					DAT_80072e04->setFlag(ACTOR_FLAG_800);
 					DAT_80072e04->updateSequence(0x21);
-					DAT_80072e04->pathfinding_maybe(0x13f,0x6e,2);
+					DAT_80072e04->startWalk(0x13f,0x6e,2);
 					// wait for pathfinding to complete
 					while (DAT_80072e04->isFlagSet(ACTOR_FLAG_10)) { //TODO move to method on Actor waitForPathfinding() ??
 						//empty
@@ -688,21 +688,21 @@ void CutScene::flameReturnsCutScene() {
 	DAT_80072e04->y_pos = 99;
 	DAT_80072de8->x_pos = 0x10a;
 	DAT_80072de8->y_pos = 0x5a;
-	DAT_80072de8->field_7c = 0x10000;
-	DAT_80072e04->field_7c = 0x10000;
+	DAT_80072de8->_walkSpeed = 0x10000;
+	DAT_80072e04->_walkSpeed = 0x10000;
 	DAT_80072de8->setFlag(ACTOR_FLAG_800);
 	DAT_80072e04->setFlag(ACTOR_FLAG_800);
 	//	call_fade_related_1f();
 	_vm->setFlags(ENGINE_FLAG_20000);
 	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072dec,4,0,0x8ab2,0x2e01) != 2) {
 		DAT_80072de8->updateSequence(0x1e);
-		DAT_80072de8->pathfinding_maybe(0xb0,0x6b,2);
+		DAT_80072de8->startWalk(0xb0,0x6b,2);
 		do {
 		} while (DAT_80072de8->isFlagSet(ACTOR_FLAG_10));
 		DAT_80072de8->updateSequence(0x1f);
 		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072dec,4,0,0x8b40,0x2e01) != 2) {
 			DAT_80072e04->updateSequence(0x1b);
-			DAT_80072e04->pathfinding_maybe(0xd5,0x6b,2);
+			DAT_80072e04->startWalk(0xd5,0x6b,2);
 			do {
 			} while (DAT_80072e04->isFlagSet(ACTOR_FLAG_10));
 			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(DAT_80072e04,0x1a,0x19,0x8bb6,0x3e01) != 2) {

@@ -612,11 +612,11 @@ void ScriptOpcodes::opUnkE(ScriptOpCall &scriptOpCall) {
 				ini->actor->flags |= Dragons::ACTOR_FLAG_800;
 				ini->actor->updateSequence(field6 & 0x7fff);
 			}
-			ini->actor->field_7c = field4 & 0x8000 ? (field4 & 0x7fff) << 7 : field4 << 0x10;
+			ini->actor->_walkSpeed = field4 & 0x8000 ? (field4 & 0x7fff) << 7 : field4 << 0x10;
 		}
 
 		bool isFlicker = _vm->_dragonINIResource->isFlicker(ini);
-		ini->actor->pathfinding_maybe(point.x, point.y, isFlicker ? 0 : 1);
+		ini->actor->startWalk(point.x, point.y, isFlicker ? 0 : 1);
 
 		if(s3 == 0) {
 			while (ini->actor->flags & Dragons::ACTOR_FLAG_10) {
@@ -634,7 +634,7 @@ void ScriptOpcodes::opUnkE(ScriptOpCall &scriptOpCall) {
 		ini->actor->y_pos = point.y;
 
 		if (field4 != field6) {
-			ini->actor->field_7c = field4;
+			ini->actor->_walkSpeed = field4;
 			ini->actor->updateSequence(field6 & 0x7fff);
 		}
 	}
@@ -666,10 +666,10 @@ void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
 				ini->actor->flags |= Dragons::ACTOR_FLAG_800;
 				ini->actor->updateSequence(field6 & 0x7fff);
 			}
-			ini->actor->field_7c = field4 & 0x8000 ? (field4 & 0x7fff) << 7 : field4 << 0x10;
+			ini->actor->_walkSpeed = field4 & 0x8000 ? (field4 & 0x7fff) << 7 : field4 << 0x10;
 		}
 		bool isFlicker = _vm->_dragonINIResource->isFlicker(ini);
-		ini->actor->pathfinding_maybe(field8, fieldA, isFlicker ? 0 : 1);
+		ini->actor->startWalk(field8, fieldA, isFlicker ? 0 : 1);
 
 		if(s3 == 0) {
 			while (ini->actor->flags & Dragons::ACTOR_FLAG_10) {
@@ -688,7 +688,7 @@ void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
 		ini->actor->y_pos = fieldA;
 
 		if (field4 != field6) {
-			ini->actor->field_7c = field4;
+			ini->actor->_walkSpeed = field4;
 			ini->actor->updateSequence(field6 & 0x7fff);
 		}
 	}
@@ -738,7 +738,7 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 			secondIni->actor->x_pos = someXParam;
 		}
 		if (field6 != -1) {
-			secondIni->actor->field_7c = -1;
+			secondIni->actor->_walkSpeed = -1;
 			secondIni->actor->updateSequence(field6 & 0x7fff);
 		}
 		secondIni->x = someXParam;
@@ -756,7 +756,7 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 			secondIni->actor->setFlag(ACTOR_FLAG_800);
 			secondIni->actor->updateSequence(field6 & 0x7fff);
 		}
-		secondIni->actor->field_7c =
+		secondIni->actor->_walkSpeed =
 				someBooleanFlag;
 	}
 	int16 newXPosAgain = 0;
@@ -781,7 +781,7 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 			someBooleanFlag = 0;
 		}
 	}
-	secondIni->actor->pathfinding_maybe(newXPosAgain, newYPosAgain, someBooleanFlag);
+	secondIni->actor->startWalk(newXPosAgain, newYPosAgain, someBooleanFlag);
 	if (!bVar1) {
 		while (secondIni->actor->flags & Dragons::ACTOR_FLAG_10) {
 			_vm->waitForFrames(1);
