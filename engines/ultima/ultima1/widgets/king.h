@@ -58,6 +58,11 @@ public:
 	 * @returns				Returns true if kills the creature
 	 */
 	virtual bool subtractHitPoints(uint amount) override;
+
+	/**
+	 * Do a talk action
+	 */
+	virtual void talk() override;
 };
 
 } // End of namespace Widgets

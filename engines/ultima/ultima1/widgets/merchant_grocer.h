@@ -70,6 +70,11 @@ public:
 	 * Does the steal action
 	 */
 	virtual void steal() override;
+
+	/**
+	 * Talk to an NPC
+	 */
+	virtual void talk() override;
 };
 
 } // End of namespace Widgets

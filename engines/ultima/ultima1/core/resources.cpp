@@ -614,6 +614,8 @@ const char *const SRC_GROCERY_NAMES[8] = {
 };
 
 const char *const SRC_BUY_SELL = "-Buy, Sell: ";
+const char *const SRC_BUY = "-Buy: ";
+const char *const SRC_SELL = "-Sell: ";
 const char *const SRC_NOTHING = "nothing";
 const char *const SRC_NONE = "none";
 const char *const SRC_NOTHING_HERE = " - nothing here!";
@@ -660,6 +662,15 @@ const char *const SRC_GROCERY_PACKS2 = "each.  How many dost thou";
 const char *const SRC_GROCERY_PACKS3 = "wish to purchase?";
 const char *const SRC_GROCERY_PACKS_FOOD = "%d packs food";
 const char *const SRC_GROCERY_FIND_PACKS = "Thou dost find %d bags of food!";
+
+const char *const SRC_WITH_KING = " with king";
+const char *const SRC_HE_IS_NOT_HERE = "He is not here!";
+const char *const SRC_HE_REJECTS_OFFER = "He rejects thine offer!";
+const char *const SRC_KING_TEXT[11] = {
+	"Dost thou offer pence or service: ", "neither", "pence", "service", "How much? ",
+	"none", "Thou hast not that much!", "In return I give unto thee %u hit points",
+	"Thou art on a quest for me already!", "Go now and kill a", "Go forth and find a"
+};
 
 /*-------------------------------------------------------------------*/
 
@@ -737,6 +748,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	CAUGHT = SRC_CAUGHT;
 	NONE_WILL_TALK = SRC_NONE_WILL_TALK;
 	BUY_SELL = SRC_BUY_SELL;
+	BUY = SRC_BUY;
+	SELL = SRC_SELL;
 	NOTHING = SRC_NOTHING;
 	NONE = SRC_NONE;
 	NOTHING_HERE = SRC_NOTHING_HERE;
@@ -784,6 +797,11 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	GROCERY_PACKS3 = SRC_GROCERY_PACKS3;
 	GROCERY_PACKS_FOOD = SRC_GROCERY_PACKS_FOOD;
 	GROCERY_FIND_PACKS = SRC_GROCERY_FIND_PACKS;
+
+	WITH_KING = SRC_WITH_KING;
+	HE_IS_NOT_HERE = SRC_HE_IS_NOT_HERE;
+	HE_REJECTS_OFFER = SRC_HE_REJECTS_OFFER;
+	Common::copy(&SRC_KING_TEXT[0], &SRC_KING_TEXT[11], KING_TEXT);
 }
 
 void GameResources::synchronize() {
@@ -857,6 +875,8 @@ void GameResources::synchronize() {
 	syncString(CAUGHT);
 	syncString(NONE_WILL_TALK);
 	syncString(BUY_SELL);
+	syncString(BUY);
+	syncString(SELL);
 	syncString(NOTHING);
 	syncString(NONE);
 	syncString(NOTHING_HERE);
@@ -904,6 +924,11 @@ void GameResources::synchronize() {
 	syncString(GROCERY_PACKS3);
 	syncString(GROCERY_PACKS_FOOD);
 	syncString(GROCERY_FIND_PACKS);
+
+	syncString(WITH_KING);
+	syncString(HE_IS_NOT_HERE);
+	syncString(HE_REJECTS_OFFER);
+	syncStrings(KING_TEXT, 11);
 }
 
 } // End of namespace Ultima1

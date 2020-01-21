@@ -31,9 +31,9 @@ namespace U1Dialogs {
 
 EMPTY_MESSAGE_MAP(Grocery, BuySellDialog);
 
-Grocery::Grocery(Ultima1Game *game, BuySell buySell, int groceryNum, uint costPerPack) :
-		BuySellDialog(game, buySell, game->_res->GROCERY_NAMES[groceryNum]) {
-	assert(buySell == SELL || costPerPack > 0);
+Grocery::Grocery(Ultima1Game *game, int groceryNum) : BuySellDialog(game, game->_res->GROCERY_NAMES[groceryNum]) {
+	Shared::Character &c = *game->_party;
+	_costPerPack = 5 - c._intelligence / 20;
 }
 
 void Grocery::draw() {
@@ -41,15 +41,15 @@ void Grocery::draw() {
 	Shared::Gfx::VisualSurface s = getSurface();
 	Ultima1Game *game = getGame();
 
-	switch (_buySell) {
+	switch (_mode) {
 	case BUY:
-		s.writeString(game->_res->GROCERY_PACKS1, TextPoint(5, 5));
-		s.writeString(game->_res->GROCERY_PACKS2, TextPoint(5, 5));
-		s.writeString(game->_res->GROCERY_PACKS3, TextPoint(5, 5));
+		s.writeString(game->_res->GROCERY_PACKS1, TextPoint(5, 8));
+		s.writeString(game->_res->GROCERY_PACKS2, TextPoint(8, 9));
+		s.writeString(game->_res->GROCERY_PACKS3, TextPoint(15, 10));
 		break;
 
 	case SELL:
-		s.writeString(game->_res->GROCERY_SELL, TextPoint(5, 5));
+		s.writeString(game->_res->GROCERY_SELL, TextPoint(9, 8));
 		break;
 
 	default:

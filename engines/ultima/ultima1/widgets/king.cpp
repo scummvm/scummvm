@@ -22,6 +22,7 @@
 
 #include "ultima/ultima1/widgets/king.h"
 #include "ultima/ultima1/maps/map_city_castle.h"
+#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -35,6 +36,16 @@ bool King::subtractHitPoints(uint amount) {
 
 	// Lord British is invincible, the nasty git
 	return map->isLordBritishCastle() ? false : Person::subtractHitPoints(amount);
+}
+
+void King::talk() {
+	if (areGuardsHostile()) {
+		addInfoMsg(_game->_res->HE_REJECTS_OFFER);
+		_game->endOfTurn();
+	
+	} else {
+		// TODO
+	}
 }
 
 } // End of namespace Widgets
