@@ -575,7 +575,7 @@ const char *const SRC_FIND = "Thou dost find %s";
 const char *const SRC_A_SECRET_DOOR = "a secret door!";
 
 const char *const SRC_ACTION_NAMES[26] = {
-	nullptr, nullptr, nullptr, "Drop", "Enter", nullptr, "Get", nullptr, "Inform and search", nullptr,
+	nullptr, nullptr, nullptr, "Drop", "Enter", nullptr, "Get", "HyperJump", "Inform and search", nullptr,
 	"K-Limb", nullptr, nullptr, nullptr, nullptr, "Pass", nullptr, nullptr, "Steal", "Transact",
 	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 };
