@@ -41,11 +41,11 @@ bool Climb::ClimbMsg(CClimbMsg &msg) {
 
 	map->getTileAt(map->getPosition(), &mapTile);
 	
-	if (mapTile._tileNum != Maps::DTILE_LADDER_UP && mapTile._tileNum != Maps::DTILE_LADDER_DOWN) {
+	if (mapTile._tileId != Maps::DTILE_LADDER_UP && mapTile._tileId != Maps::DTILE_LADDER_DOWN) {
 		playFX(1);
 	} else if (map->getDirection() == Shared::Maps::DIR_LEFT || map->getDirection() == Shared::Maps::DIR_RIGHT) {
 		playFX(1);
-	} else if (mapTile._tileNum == Maps::DTILE_LADDER_UP) {
+	} else if (mapTile._tileId == Maps::DTILE_LADDER_UP) {
 		ladderUp();
 	} else {
 		ladderDown();

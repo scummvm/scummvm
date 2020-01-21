@@ -50,7 +50,7 @@ void ViewportMap::draw() {
 
 			// Get the next tile to display and draw it
 			map->getTileAt(Point(topLeft.x + x, topLeft.y + y), &tile);
-			(*_sprites)[tile._tileNum].draw(s, drawPos);
+			(*_sprites)[tile._tileDisplayNum].draw(s, drawPos);
 
 			// Draw any widget on the tile
 			if (tile._widget)

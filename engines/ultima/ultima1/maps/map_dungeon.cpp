@@ -45,13 +45,13 @@ void MapDungeon::load(Shared::Maps::MapId mapId) {
 void MapDungeon::getTileAt(const Point &pt, Shared::Maps::MapTile *tile) {
 	MapBase::MapBase::getTileAt(pt, tile);
 
-	tile->_isHallway = tile->_tileNum == DTILE_HALLWAY;
-	tile->_isDoor = tile->_tileNum == DTILE_DOOR;
-	tile->_isSecretDoor = tile->_tileNum == DTILE_SECRET_DOOR;
-	tile->_isWall = tile->_tileNum == DTILE_WALL;
-	tile->_isLadderUp = tile->_tileNum == DTILE_LADDER_UP;
-	tile->_isLadderDown = tile->_tileNum == DTILE_LADDER_DOWN;
-	tile->_isBeams = tile->_tileNum == DTILE_BEAMS;
+	tile->_isHallway = tile->_tileId == DTILE_HALLWAY;
+	tile->_isDoor = tile->_tileId == DTILE_DOOR;
+	tile->_isSecretDoor = tile->_tileId == DTILE_SECRET_DOOR;
+	tile->_isWall = tile->_tileId == DTILE_WALL;
+	tile->_isLadderUp = tile->_tileId == DTILE_LADDER_UP;
+	tile->_isLadderDown = tile->_tileId == DTILE_LADDER_DOWN;
+	tile->_isBeams = tile->_tileId == DTILE_BEAMS;
 }
 
 bool MapDungeon::changeLevel(int delta) {
@@ -159,7 +159,7 @@ void MapDungeon::spawnMonster() {
 		Point newPos(_game->getRandomNumber(242) % 9 + 1, _game->getRandomNumber(242) % 9 + 1);
 		getTileAt(newPos, &tile);
 
-		if (tile._tileNum == 0 && tile._widgetNum == -1) {
+		if (tile._tileId == DTILE_HALLWAY && tile._widgetNum == -1) {
 			// Found a free spot
 			spawnMonsterAt(newPos);
 			break;

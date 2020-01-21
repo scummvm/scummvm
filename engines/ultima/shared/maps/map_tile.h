@@ -34,8 +34,9 @@ class MapWidget;
  */
 class MapTile {
 public:
-	int _tileId;							// Tile Id
-	int _tileNum;							// Tile number to display. Normally equals Tile Id, but can differ in rare cases
+	int _tileId;							// Original tile Id
+	int _tileDisplayNum;					// Tile number to display. Can differ from tileId, such as tiles in the
+											// city for talking/stealing to merchants showing as ground
 	int _widgetNum;							// Widget number, if any
 	MapWidget *_widget;						// Widget pointer
 	int _itemNum;							// Item number, if any
@@ -47,7 +48,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	MapTile() : _tileNum(-1), _tileId(-1), _widgetNum(-1), _widget(0), _itemNum(-1),
+	MapTile() : _tileDisplayNum(-1), _tileId(-1), _widgetNum(-1), _widget(0), _itemNum(-1),
 		_isDoor(false), _isSecretDoor(false), _isLadderUp(false), _isLadderDown(false), _isWall(false),
 		_isHallway(false), _isBeams(false) {}
 

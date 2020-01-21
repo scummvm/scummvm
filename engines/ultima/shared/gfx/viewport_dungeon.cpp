@@ -186,21 +186,22 @@ void ViewportDungeon::drawCell(uint distance, const Point &pt) {
 	Maps::MapTile tile;
 	map->getTileAt(pt, &tile);
 
+	// TODO: This currently contains dungeon cell types specific to Ultima 1
 	Maps::DungeonCreature *monster = dynamic_cast<Maps::DungeonCreature *>(tile._widget);
 	if (monster) {
 		// Draw a monster
 		if (tile.isWallOrDoorway())
 			s.drawWall(distance);
-		if (tile._tileNum == 7)
+		if (tile._tileId == 7)
 			// Ladder down
 			s.drawWidget(27, distance + 1, game->_edgeColor);
-		if (tile._tileNum == 6)
+		if (tile._tileId == 6)
 			// Ladder up
 			s.drawWidget(26, distance + 1, game->_edgeColor);
 
 		monster->draw(s, distance);
 	} else {
-		switch (tile._tileNum) {
+		switch (tile._tileId) {
 		case 1:
 		case 2:
 			// Wall or secret door

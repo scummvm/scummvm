@@ -91,8 +91,8 @@ void MapCityCastle::getTileAt(const Point &pt, Shared::Maps::MapTile *tile) {
 	MapBase::getTileAt(pt, tile);
 
 	// Special handling for the cells indicating various merchant talk/steal positions
-	if (tile->_tileNum >= 51)
-		tile->_tileNum = 1;
+	if (tile->_tileDisplayNum >= 51)
+		tile->_tileDisplayNum = 1;
 }
 
 Point MapCityCastle::getViewportPosition(const Point &viewportSize) {
