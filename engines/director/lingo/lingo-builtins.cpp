@@ -228,6 +228,7 @@ static struct BuiltinProto {
 	{ "numberOfItems",	LB::b_numberofitems,1, 1, false, 4, FBLTIN },	//			D4 f
 	{ "numberOfLines",	LB::b_numberoflines,1, 1, false, 4, FBLTIN },	//			D4 f
 	{ "numberOfWords",	LB::b_numberofwords,1, 1, false, 4, FBLTIN },	//			D4 f
+	{ "numberOfMenuItems",LB::b_numberofMenuItems,1, 1, false, 4, FBLTIN },	//		D4 f
 	{ "lastCharOf",		LB::b_lastcharof,	1, 1, false, 4, FBLTIN },	//			D4 f
 	{ "lastItemOf",		LB::b_lastitemof,	1, 1, false, 4, FBLTIN },	//			D4 f
 	{ "lastLineOf",		LB::b_lastlineof,	1, 1, false, 4, FBLTIN },	//			D4 f
@@ -1806,6 +1807,16 @@ void LB::b_numberofwords(int nargs) {
 	Datum d = g_lingo->pop();
 
 	warning("STUB: b_numberofwords");
+	d.toInt();
+	d.u.i = 0;
+
+	g_lingo->push(d);
+}
+
+void LB::b_numberofMenuItems(int nargs) {
+	Datum d = g_lingo->pop();
+
+	warning("STUB: b_numberofMenuItems");
 	d.toInt();
 	d.u.i = 0;
 
