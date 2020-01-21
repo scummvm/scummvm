@@ -69,6 +69,11 @@ public:
 	virtual Point getDeltaPosition(const Point &delta) override;
 
 	/**
+	 * Do an enter action
+	 */
+	virtual void enter();
+
+	/**
 	 * Do an inform action
 	 */
 	virtual void inform();

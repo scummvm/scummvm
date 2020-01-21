@@ -115,6 +115,24 @@ void MapOverworld::shiftViewport(const Point &delta) {
 		topLeft.y -= height();
 }
 
+void MapOverworld::enter() {
+	Maps::U1MapTile tile;
+	getTileAt(getPosition(), &tile);
+
+	if (tile._locationNum == -1) {
+		// Fall back to base unknown action
+		MapBase::enter();
+	} else {
+		// Load the location
+		Shared::Maps::Map *map = _game->getMap();
+		map->load(tile._locationNum);
+
+		// Add message for location having been entered
+		addInfoMsg(_game->_res->ENTERING);
+		addInfoMsg(map->getName());
+	}
+}
+
 void MapOverworld::inform() {
 	Maps::U1MapTile tile;
 	getTileAt(getPosition(), &tile, false);

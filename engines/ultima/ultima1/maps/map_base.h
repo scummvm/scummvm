@@ -62,6 +62,11 @@ public:
 	virtual void getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer = true) override;
 
 	/**
+	 * Do an enter action
+	 */
+	virtual void enter() { unknownAction(); }
+
+	/**
 	 * Do an inform action
 	 */
 	virtual void inform() = 0;
