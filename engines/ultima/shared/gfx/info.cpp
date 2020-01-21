@@ -49,8 +49,6 @@ bool Info::InfoMsg(CInfoMsg &msg) {
 	// Add new text
 	if (_lines.empty())
 		_lines.push_back(" ");
-	if (msg._replaceLine)
-		_lines.back() = _lines.back().firstChar();
 
 	_lines.back() += msg._text;
 

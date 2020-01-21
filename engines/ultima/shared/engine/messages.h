@@ -246,7 +246,7 @@ MESSAGE3(CInfoGetInput, MessageTarget *, responder, (MessageTarget *)nullptr, bo
 /**
  * Adds text strings to the info area
  */
-MESSAGE3(CInfoMsg, Common::String, text, "", bool, newLine, true, bool, replaceLine, false);
+MESSAGE2(CInfoMsg, Common::String, text, "", bool, newLine, true);
 
 /**
  * Signals an unknown/unhandled keypress

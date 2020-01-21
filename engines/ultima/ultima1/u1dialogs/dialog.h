@@ -58,7 +58,7 @@ protected:
 	 * @param newLine		Whether to apply a newline at the end
 	 * @param replaceLine	If true, replaces the current last line
 	 */
-	void addInfoMsg(const Common::String &text, bool newLine = true, bool replaceLine = false);
+	void addInfoMsg(const Common::String &text, bool newLine = true);
 public:
 	/**
 	 * Constructor
