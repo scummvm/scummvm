@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/widgets/merchant_weapons.h"
+#include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
@@ -28,6 +29,17 @@ namespace Ultima1 {
 namespace Widgets {
 
 EMPTY_MESSAGE_MAP(MerchantWeapons, Merchant);
+
+void MerchantWeapons::get() {
+	Maps::MapCastle *map = dynamic_cast<Maps::MapCastle *>(_map);
+	assert(map);
+	if (map->_getCounter > 0) {
+		--map->_getCounter;
+		findWeapon(false);
+	} else {
+		noKingsPermission();
+	}
+}
 
 void MerchantWeapons::steal() {
 	findWeapon(true);

@@ -46,6 +46,12 @@ bool Merchant::checkCuaghtStealing() {
 	return true;
 }
 
+void Merchant::noKingsPermission() {
+	addInfoMsg("");
+	addInfoMsg(_game->_res->NO_KINGS_PERMISSION);
+	_game->playFX(1);
+}
+
 } // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima

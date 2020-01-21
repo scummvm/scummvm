@@ -72,6 +72,11 @@ public:
 	virtual void enter() { unknownAction(); }
 
 	/**
+	 * Do an get action
+	 */
+	virtual void get() { unknownAction(); }
+
+	/**
 	 * Do an inform action
 	 */
 	virtual void inform() = 0;

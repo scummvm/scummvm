@@ -41,6 +41,7 @@ namespace Ultima1 {
 namespace Actions {
 MAP_ACTION(Drop, 3, drop)
 MAP_ACTION(Enter, 4, enter)
+MAP_ACTION(Get, 6, get)
 MAP_ACTION(Inform, 8, inform)
 MAP_ACTION(Climb, 10, climb)
 MAP_ACTION(Steal, 18, steal)
@@ -62,16 +63,17 @@ ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	_viewportMap = new ViewportMap(this);
 	
-	_actions.resize(9);
+	_actions.resize(10);
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Shared::Actions::Huh(this, game->_res->HUH);
 	_actions[2] = new Actions::Drop(this);
 	_actions[3] = new Actions::Enter(this);
-	_actions[4] = new Actions::Inform(this);
-	_actions[5] = new Actions::Climb(this);
-	_actions[6] = new Shared::Actions::Pass(this, game->_res->ACTION_NAMES[15]);
-	_actions[7] = new Actions::Steal(this);
-	_actions[8] = new Actions::Transact(this);
+	_actions[4] = new Actions::Get(this);
+	_actions[5] = new Actions::Inform(this);
+	_actions[6] = new Actions::Climb(this);
+	_actions[7] = new Shared::Actions::Pass(this, game->_res->ACTION_NAMES[15]);
+	_actions[8] = new Actions::Steal(this);
+	_actions[9] = new Actions::Transact(this);
 }
 
 ViewGame::~ViewGame() {
@@ -187,6 +189,11 @@ bool ViewGame::KeypressMsg(CKeypressMsg &msg) {
 	case Common::KEYCODE_e: {
 		Shared::CEnterMsg enter;
 		enter.execute(this);
+		break;
+	}
+	case Common::KEYCODE_g: {
+		Shared::CGetMsg get;
+		get.execute(this);
 		break;
 	}
 	case Common::KEYCODE_i: {
