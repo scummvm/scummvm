@@ -23,7 +23,8 @@
 #ifndef ULTIMA_ULTIMA1_WIDGETS_DUNGEON_WIDGET_H
 #define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_WIDGET_H
 
-#include "ultima/shared/core/widgets.h"
+#include "ultima/shared/maps/map.h"
+#include "ultima/shared/maps/dungeon_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -46,7 +47,7 @@ enum DungeonItemId {
 /**
  * Encapsulated class for drawing widgets within dungeons
  */
-class DungeonWidget : public Shared::DungeonWidget {
+class DungeonWidget : public Shared::Maps::DungeonWidget {
 private:
 	DungeonItemId _itemId;
 	DungeonWidgetId _widgetId;
@@ -68,12 +69,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	DungeonWidget(Shared::Game *game, Shared::Map::MapBase *map, const Point &pt, DungeonItemId itemId);
+	DungeonWidget(Shared::Game *game, Shared::Maps::MapBase *map, const Point &pt, DungeonItemId itemId);
 
 	/**
 	 * Constructor
 	 */
-	DungeonWidget(Shared::Game *game, Shared::Map::MapBase *map) : Shared::DungeonWidget(game, map) {}
+	DungeonWidget(Shared::Game *game, Shared::Maps::MapBase *map) : Shared::Maps::DungeonWidget(game, map) {}
 
 	/**
 	 * Draws a dungeon widget onto the passed surface

@@ -37,12 +37,16 @@ class UltimaEngine;
 class GameState;
 
 namespace Gfx {
-	class Dialog;
-	class Font;
-	class TextCursor;
-	class TextInput;
-	class VisualItem;
-}
+class Dialog;
+class Font;
+class TextCursor;
+class TextInput;
+class VisualItem;
+} // End of namespace Gfx
+
+namespace Maps {
+class Map;
+} // End of namespace Maps
 
 /**
  * Base class for the game implementations
@@ -157,7 +161,7 @@ public:
 	/**
 	 * Returns the map
 	 */
-	virtual Shared::Map *getMap() const { return nullptr; }
+	virtual Maps::Map *getMap() const { return nullptr; }
 
 	/**
 	 * Gets a random number

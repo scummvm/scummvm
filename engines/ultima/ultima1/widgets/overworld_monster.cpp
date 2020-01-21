@@ -24,14 +24,16 @@
 #include "ultima/ultima1/widgets/hit.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
+#include "ultima/shared/maps/map_widget.h"
 #include "ultima/shared/core/utils.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-OverworldMonster::OverworldMonster(Shared::Game *game, Shared::Map::MapBase *map, uint tileNum, int hitPoints,
-		const Point &pt, Shared::Direction dir) : Shared::Creature(game, map, hitPoints, pt, dir), _tileNum(tileNum) {
+OverworldMonster::OverworldMonster(Shared::Game *game, Shared::Maps::MapBase *map, uint tileNum, int hitPoints,
+		const Point &pt, Shared::Maps::Direction dir) : Shared::Maps::MapWidget(game, map, pt, dir),
+		Shared::Maps::Creature(game, map, hitPoints), _tileNum(tileNum) {
 	_monsterId = (OverworldMonsterId)((tileNum - 19) / 2);
 	
 	Ultima1Game *g = static_cast<Ultima1Game *>(game);
@@ -40,10 +42,10 @@ OverworldMonster::OverworldMonster(Shared::Game *game, Shared::Map::MapBase *map
 }
 
 void OverworldMonster::synchronize(Common::Serializer &s) {
-	Shared::Creature::synchronize(s);
 	s.syncAsUint16LE(_tileNum);
 	s.syncAsUint16LE(_monsterId);
 	s.syncAsUint16LE(_attackStrength);
+	s.syncAsSint16LE(_hitPoints);
 }
 
 uint OverworldMonster::attackDistance() const {
@@ -66,7 +68,7 @@ void OverworldMonster::attack() {
 	Point delta(SGN(diff.x), SGN(diff.y));
 	Point tempDiff;
 	int maxDistance = attackDistance();
-	Shared::MapTile mapTile;
+	Shared::Maps::MapTile mapTile;
 	Shared::Character *c = _game->_party._currentCharacter;
 	uint threshold, damage;
 

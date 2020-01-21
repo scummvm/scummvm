@@ -20,56 +20,23 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_WIDGETS_GUARD_H
-#define ULTIMA_ULTIMA1_WIDGETS_GUARD_H
-
-#include "ultima/ultima1/widgets/person.h"
+#include "ultima/shared/maps/creature.h"
+#include "ultima/shared/early/game.h"
 
 namespace Ultima {
-namespace Ultima1 {
-namespace Widgets {
+namespace Shared {
+namespace Maps {
 
-class Guard : public Person {
-private:
-	bool _moved;
-protected:
-	/**
-	 * Returns the attack distance for the guard
-	 */
-	virtual uint attackDistance() const override;
+void Creature::update(bool isPreUpdate) {
+	if (isPreUpdate) {
+		// Check whether creature can attack
+		movement();
+		_isAttacking = attackDistance() != 0;
+	} else if (_isAttacking && !_gameRef->_party.isDead()) {
+		attack();
+	}
+}
 
-	/**
-	 * Handles moving creatures
-	 */
-	virtual void movement() override;
-
-	/**
-	 * Handles attacks
-	 */
-	virtual void attack();
-public:
-	DECLARE_WIDGET(Guard)
-
-	/**
-	 * Constructor
-	 */
-	Guard(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Person(game, map, 17, hitPoints), _moved(false) {}
-
-	/**
-	 * Constructor
-	 */
-	Guard(Ultima1Game *game, Maps::MapBase *map) :
-		Person(game, map, 17), _moved(false) {}
-
-	/**
-	 * Destructor
-	 */
-	virtual ~Guard() {}
-};
-
-} // End of namespace Widgets
-} // End of namespace Ultima1
+} // End of namespace Maps
+} // End of namespace Shared
 } // End of namespace Ultima
-
-#endif

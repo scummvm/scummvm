@@ -23,13 +23,13 @@
 #ifndef ULTIMA_ULTIMA1_MAP_MAP_DUNGEON_H
 #define ULTIMA_ULTIMA1_MAP_MAP_DUNGEON_H
 
-#include "ultima/ultima1/map/map.h"
+#include "ultima/ultima1/maps/map_base.h"
 #include "ultima/shared/core/rect.h"
 #include "common/random.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Map {
+namespace Maps {
 
 #define DUNGEON_WIDTH 11
 #define DUNGEON_HEIGHT 11
@@ -39,7 +39,7 @@ enum DungeonTile {
 	DTILE_LADDER_UP = 7, DTILE_BEAMS = 8
 };
 
-class MapDungeon : public Ultima1Map::MapBase {
+class MapDungeon : public MapBase {
 private:
 	Common::RandomSource _random;
 	uint _dungeonLevel;					// Dungeon level number
@@ -60,14 +60,14 @@ private:
 	 */
 	void spawnMonsterAt(const Point &pt);
 public:
-	MapDungeon(Ultima1Game *game, Ultima1Map *map) : Ultima1Map::MapBase(game, map), _dungeonLevel(0),
+	MapDungeon(Ultima1Game *game, Ultima1Map *map) : MapBase(game, map), _dungeonLevel(0),
 		_random("UltimaDungeons") {}
 	virtual ~MapDungeon() {}
 
 	/**
 	 * Load the map
 	 */
-	virtual void load(Shared::MapId mapId);
+	virtual void load(Shared::Maps::MapId mapId);
 
 	/**
 	 * Changes the dungeon level by a given delta amount, and generates a new map
@@ -92,7 +92,7 @@ public:
 	void spawnMonster();
 };
 
-} // End of namespace Map
+} // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

@@ -21,7 +21,7 @@
  */
 
 #include "ultima/shared/gfx/viewport_map.h"
-#include "ultima/shared/core/map.h"
+#include "ultima/shared/maps/map.h"
 #include "ultima/shared/early/game.h"
 
 namespace Ultima {
@@ -39,11 +39,11 @@ void ViewportMap::draw() {
 	const Point visibleTiles(_bounds.width() / spriteSize.x, _bounds.height() / spriteSize.y);
 
 	// Get a reference to the map and get the starting tile position
-	Map *map = getGame()->getMap();
+	Maps::Map *map = getGame()->getMap();
 	const Point topLeft = map->getViewportPosition(visibleTiles);
 
 	// Iterate through drawing the map
-	MapTile tile;
+	Maps::MapTile tile;
 	for (int y = 0; y < visibleTiles.y; ++y) {
 		for (int x = 0; x < visibleTiles.x; ++x) {
 			Point drawPos(x * spriteSize.x, y * spriteSize.y);

@@ -50,13 +50,13 @@ public:
 	/**
 	 * Constructor
 	 */
-	Bard(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
+	Bard(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
 		Person(game, map, 19, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
-	Bard(Ultima1Game *game, Map::Ultima1Map::MapBase *map) : Person(game, map, 19) {}
+	Bard(Ultima1Game *game, Maps::MapBase *map) : Person(game, map, 19) {}
 
 	/**
 	 * Destructor

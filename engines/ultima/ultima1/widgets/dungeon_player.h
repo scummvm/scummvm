@@ -23,24 +23,25 @@
 #ifndef ULTIMA_ULTIMA1_WIDGETS_DUNGEON_PLAYER_H
 #define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_PLAYER_H
 
-#include "ultima/shared/core/widgets.h"
+#include "ultima/shared/maps/dungeon_widget.h"
+#include "ultima/shared/maps/map_widget.h"
 #include "ultima/shared/early/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-class DungeonPlayer : public Shared::DungeonWidget {
+class DungeonPlayer : public Shared::Maps::DungeonWidget {
 public:
 	DECLARE_WIDGET(DungeonPlayer)
 
 	/**
 	 * Constructor
 	 */
-	DungeonPlayer(Shared::Game *game, Shared::Map::MapBase *map) : Shared::DungeonWidget(game, map) {}
-	DungeonPlayer(Shared::Game *game, Shared::Map::MapBase *map, const Point &pt, Shared::Direction dir = Shared::DIR_NONE) : Shared::DungeonWidget(game, map, pt, dir) {}
-	DungeonPlayer(Shared::Game *game, Shared::Map::MapBase *map, const Common::String &name, const Point &pt, Shared::Direction dir = Shared::DIR_NONE) :
-		Shared::DungeonWidget(game, map, name, pt, dir) {}
+	DungeonPlayer(Shared::Game *game, Shared::Maps::MapBase *map) : Shared::Maps::DungeonWidget(game, map) {}
+	DungeonPlayer(Shared::Game *game, Shared::Maps::MapBase *map, const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) : Shared::Maps::DungeonWidget(game, map, pt, dir) {}
+	DungeonPlayer(Shared::Game *game, Shared::Maps::MapBase *map, const Common::String &name, const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) :
+		Shared::Maps::DungeonWidget(game, map, name, pt, dir) {}
 
 	/**
 	 * Destructor

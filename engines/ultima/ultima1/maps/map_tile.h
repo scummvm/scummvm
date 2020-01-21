@@ -20,55 +20,74 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_WIDGETS_GUARD_H
-#define ULTIMA_ULTIMA1_WIDGETS_GUARD_H
+#ifndef ULTIMA_ULTIMA1_MAPS_MAP_TILE_H
+#define ULTIMA_ULTIMA1_MAPS_MAP_TILE_H
 
-#include "ultima/ultima1/widgets/person.h"
+#include "ultima/shared/maps/map_tile.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Widgets {
+namespace Maps {
 
-class Guard : public Person {
+class MapBase;
+class Ultima1Map;
+
+/**
+ * Derived map tile class for Ultima 1 that adds extra properties
+ */
+class U1MapTile : public Shared::Maps::MapTile {
 private:
-	bool _moved;
-protected:
-	/**
-	 * Returns the attack distance for the guard
-	 */
-	virtual uint attackDistance() const override;
-
-	/**
-	 * Handles moving creatures
-	 */
-	virtual void movement() override;
-
-	/**
-	 * Handles attacks
-	 */
-	virtual void attack();
+	MapBase *_map;
 public:
-	DECLARE_WIDGET(Guard)
+	int _locationNum;
+public:
+	/**
+	 * Set the active map
+	 */
+	void setMap(MapBase *map) { _map = map; }
 
 	/**
-	 * Constructor
+	 * Clears tile data
 	 */
-	Guard(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Person(game, map, 17, hitPoints), _moved(false) {}
+	virtual void clear();
 
 	/**
-	 * Constructor
+	 * Return true if the tile base is water
 	 */
-	Guard(Ultima1Game *game, Maps::MapBase *map) :
-		Person(game, map, 17), _moved(false) {}
+	bool isWater() const;
 
 	/**
-	 * Destructor
+	 * Return true if the tile base is grass
 	 */
-	virtual ~Guard() {}
+	bool isGrass() const;
+
+	/**
+	 * Return true if the tile base is woods
+	 */
+	bool isWoods() const;
+
+	/**
+	 * Return true if the tile base in the original map is water
+	 */
+	bool isOriginalWater() const;
+
+	/**
+	 * Return true if the tile base in the original map is grass
+	 */
+	bool isOriginalGrass() const;
+
+	/**
+	 * Return true if the tile base in the original map is woods
+	 */
+	bool isOriginalWoods() const;
+
+	/**
+	 * Returns true if the tile is a ground type tool
+	 */
+	bool isGround() const;
 };
 
-} // End of namespace Widgets
+} // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

@@ -24,6 +24,8 @@
 #define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_MONSTER_H
 
 #include "ultima/ultima1/widgets/dungeon_widget.h"
+#include "ultima/shared/maps/creature.h"
+#include "ultima/shared/maps/dungeon_creature.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -32,7 +34,7 @@ namespace Widgets {
 /**
  * Implements monsters within the dungeons
  */
-class DungeonMonster : public Shared::Creature, public Shared::DungeonCreature {
+class DungeonMonster : public Shared::Maps::DungeonWidget, public Shared::Maps::DungeonCreature {
 private:
 	DungeonWidgetId _monsterId;
 protected:
@@ -44,22 +46,22 @@ public:
 	/**
 	 * Returns true if the given widget can move to a given position on the map
 	 */
-	static Shared::MapWidget::CanMove canMoveTo(Shared::Map::MapBase *map, MapWidget *widget, const Point &destPos);
+	static Shared::Maps::MapWidget::CanMove canMoveTo(Shared::Maps::MapBase *map, MapWidget *widget, const Point &destPos);
 public:
 	DECLARE_WIDGET(DungeonMonster)
 
 	/**
 	 * Constructor
 	 */
-	DungeonMonster(Shared::Game *game, Shared::Map::MapBase *map, DungeonWidgetId monsterId, int hitPoints,
-		const Point &pt, Shared::Direction dir = Shared::DIR_NONE) :
-		Shared::Creature(game, map, hitPoints, pt, dir), Shared::DungeonCreature(), _monsterId(monsterId) {}
+	DungeonMonster(Shared::Game *game, Shared::Maps::MapBase *map, DungeonWidgetId monsterId, int hitPoints,
+		const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) :
+		Shared::Maps::DungeonWidget(game, map, pt, dir), Shared::Maps::DungeonCreature(game, map, hitPoints), _monsterId(monsterId) {}
 
 	/**
 	 * Constructor
 	 */
-	DungeonMonster(Shared::Game *game, Shared::Map::MapBase *map) :
-		Shared::Creature(game, map), Shared::DungeonCreature(), _monsterId(MONSTER_NONE) {}
+	DungeonMonster(Shared::Game *game, Shared::Maps::MapBase *map) :
+		Shared::Maps::DungeonWidget(game, map), Shared::Maps::DungeonCreature(game, map), _monsterId(MONSTER_NONE) {}
 
 	/**
 	 * Destructor

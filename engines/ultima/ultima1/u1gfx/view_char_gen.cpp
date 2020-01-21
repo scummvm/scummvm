@@ -23,11 +23,11 @@
 #include "ultima/ultima1/u1gfx/view_char_gen.h"
 #include "ultima/ultima1/u1gfx/drawing_support.h"
 #include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/map/map.h"
+#include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/u1gfx/text_cursor.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/shared/gfx/text_input.h"
-#include "ultima/shared/engine/messages.h"
+#include "ultima/shared/early/font_resources.h"
 #include "ultima/shared/early/ultima_early.h"
 
 namespace Ultima {
@@ -378,8 +378,8 @@ bool ViewCharacterGeneration::save() {
 	game->_randomSeed = game->getRandomNumber(0xfffffff);
 
 	// Set the default position
-	Shared::Map *map = game->_map;
-	map->load(Ultima1::Map::MAPID_OVERWORLD);
+	Shared::Maps::Map *map = game->_map;
+	map->load(Ultima1::Maps::MAPID_OVERWORLD);
 	map->setPosition(Point(49, 40));
 
 	// Set other character properties

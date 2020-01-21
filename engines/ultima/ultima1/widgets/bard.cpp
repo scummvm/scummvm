@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima1/widgets/bard.h"
-#include "ultima/ultima1/map/map_city_castle.h"
+#include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
@@ -69,7 +69,7 @@ bool Bard::stealWeapon() {
 }
 
 void Bard::talk() {
-	if (dynamic_cast<Map::MapCity *>(_map)) {
+	if (dynamic_cast<Maps::MapCity *>(_map)) {
 		addInfoMsg(_game->_res->BARD_SPEECH1);
 		addInfoMsg(_game->_res->BARD_SPEECH2);
 	} else {

@@ -21,16 +21,16 @@
  */
 
 #include "ultima/ultima1/widgets/urban_player.h"
-#include "ultima/ultima1/map/map.h"
+#include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-void UrbanPlayer::moveTo(const Point &destPos, Shared::Direction dir) {
+void UrbanPlayer::moveTo(const Point &destPos, Shared::Maps::Direction dir) {
 	Person::moveTo(destPos, dir);
-	Shared::Map *map = _game->getMap();
+	Shared::Maps::Map *map = _game->getMap();
 
 	if (destPos.x < 0 || destPos.y < 0 || destPos.x >= (int)map->width() || destPos.y >= (int)map->height()) {
 		// Handling for leaving locations by walking off the edge of the map
@@ -38,7 +38,7 @@ void UrbanPlayer::moveTo(const Point &destPos, Shared::Direction dir) {
 			princessSaved();
 
 		// Load the overworld map
-		map->load(Map::MAP_OVERWORLD);
+		map->load(Maps::MAP_OVERWORLD);
 	}
 }
 

@@ -20,55 +20,52 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_WIDGETS_GUARD_H
-#define ULTIMA_ULTIMA1_WIDGETS_GUARD_H
+#ifndef ULTIMA_ULTIMA1_MAP_MAP_OVERWORLD_H
+#define ULTIMA_ULTIMA1_MAP_MAP_OVERWORLD_H
 
-#include "ultima/ultima1/widgets/person.h"
+#include "ultima/ultima1/maps/map_base.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Widgets {
+namespace Maps {
 
-class Guard : public Person {
+class MapOverworld : public MapBase {
 private:
-	bool _moved;
-protected:
 	/**
-	 * Returns the attack distance for the guard
+	 * Load widget list for the map
 	 */
-	virtual uint attackDistance() const override;
-
-	/**
-	 * Handles moving creatures
-	 */
-	virtual void movement() override;
-
-	/**
-	 * Handles attacks
-	 */
-	virtual void attack();
+	void loadWidgets();
 public:
-	DECLARE_WIDGET(Guard)
+	MapOverworld(Ultima1Game *game, Ultima1Map *map) : MapBase(game, map) {}
+	virtual ~MapOverworld() {}
 
 	/**
-	 * Constructor
+	 * Load the map
 	 */
-	Guard(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Person(game, map, 17, hitPoints), _moved(false) {}
+	virtual void load(Shared::Maps::MapId mapId);
 
 	/**
-	 * Constructor
+	 * Returns whether the map wraps around to the other side at it's edges (i.e. the overworld)
 	 */
-	Guard(Ultima1Game *game, Maps::MapBase *map) :
-		Person(game, map, 17), _moved(false) {}
+	virtual bool isMapWrapped() const override { return true; }
 
 	/**
-	 * Destructor
+	 * Shifts the viewport by a given delta
 	 */
-	virtual ~Guard() {}
+	virtual void shiftViewport(const Point &delta) override;
+
+	/**
+	 * Get the viewport position
+	 */
+	virtual Point getViewportPosition(const Point &viewportSize) override;
+
+	/**
+	 * Gets a point relative to the current position
+	 */
+	virtual Point getDeltaPosition(const Point &delta) override;
 };
 
-} // End of namespace Widgets
+} // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

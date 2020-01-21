@@ -22,7 +22,7 @@
 
 #include "ultima/ultima1/actions/move.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/ultima1/map/map.h"
+#include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/widgets/transport.h"
 #include "ultima/ultima1/core/resources.h"
 
@@ -35,47 +35,47 @@ BEGIN_MESSAGE_MAP(Move, Action)
 END_MESSAGE_MAP()
 
 bool Move::MoveMsg(CMoveMsg &msg) {
-	Map::Ultima1Map *map = getMap();
+	Maps::Ultima1Map *map = getMap();
 	
-	if (map->_mapType == Map::MAP_DUNGEON) {
+	if (map->_mapType == Maps::MAP_DUNGEON) {
 		switch (msg._direction) {
-		case Shared::DIR_LEFT:
+		case Shared::Maps::DIR_LEFT:
 			dungeonTurnLeft();
 			break;
-		case Shared::DIR_RIGHT:
+		case Shared::Maps::DIR_RIGHT:
 			dungeonTurnRight();
 			break;
-		case Shared::DIR_DOWN:
+		case Shared::Maps::DIR_DOWN:
 			dungeonTurnAround();
 			break;
-		case Shared::DIR_UP:
+		case Shared::Maps::DIR_UP:
 			dungeonMoveForward();
 			break;
 		}
 	} else {
-		Shared::MapWidget *player = map->getPlayerWidget();
+		Shared::Maps::MapWidget *player = map->getPlayerWidget();
 		assert(player);
 
 		// Figure out the new position
 		Point delta;
 		switch (msg._direction) {
-		case Shared::DIR_LEFT:
+		case Shared::Maps::DIR_WEST:
 			delta = Point(-1, 0);
 			break;
-		case Shared::DIR_RIGHT:
+		case Shared::Maps::DIR_EAST:
 			delta = Point(1, 0);
 			break;
-		case Shared::DIR_UP:
+		case Shared::Maps::DIR_NORTH:
 			delta = Point(0, -1);
 			break;
-		case Shared::DIR_DOWN:
+		case Shared::Maps::DIR_SOUTH:
 			delta = Point(0, 1);
 			break;
 		}
 
 		// Check if the player's widget type can move to the new position
 		Point newPos = map->getDeltaPosition(delta);
-		if (player->canMoveTo(newPos) == Shared::MapWidget::YES) {
+		if (player->canMoveTo(newPos) == Shared::Maps::MapWidget::YES) {
 			// Shift the viewport
 			map->shiftViewport(delta);
 
@@ -93,87 +93,87 @@ bool Move::MoveMsg(CMoveMsg &msg) {
 }
 
 void Move::dungeonTurnLeft() {
-	Map::Ultima1Map *map = getMap();
+	Maps::Ultima1Map *map = getMap();
 
 	switch (map->getDirection()) {
-	case Shared::DIR_LEFT:
-		map->setDirection(Shared::DIR_DOWN);
+	case Shared::Maps::DIR_LEFT:
+		map->setDirection(Shared::Maps::DIR_DOWN);
 		break;
-	case Shared::DIR_RIGHT:
-		map->setDirection(Shared::DIR_UP);
+	case Shared::Maps::DIR_RIGHT:
+		map->setDirection(Shared::Maps::DIR_UP);
 		break;
-	case Shared::DIR_DOWN:
-		map->setDirection(Shared::DIR_RIGHT);
+	case Shared::Maps::DIR_DOWN:
+		map->setDirection(Shared::Maps::DIR_RIGHT);
 		break;
-	case Shared::DIR_UP:
-		map->setDirection(Shared::DIR_LEFT);
+	case Shared::Maps::DIR_UP:
+		map->setDirection(Shared::Maps::DIR_LEFT);
 		break;
 	default:
 		break;
 	}
 
-	addInfoMsg(getGame()->_res->DUNGEON_MOVES[Shared::DIR_LEFT - 1]);
+	addInfoMsg(getGame()->_res->DUNGEON_MOVES[Shared::Maps::DIR_LEFT - 1]);
 }
 
 void Move::dungeonTurnRight() {
-	Map::Ultima1Map *map = getMap();
+	Maps::Ultima1Map *map = getMap();
 
 	switch (map->getDirection()) {
-	case Shared::DIR_LEFT:
-		map->setDirection(Shared::DIR_UP);
+	case Shared::Maps::DIR_LEFT:
+		map->setDirection(Shared::Maps::DIR_UP);
 		break;
-	case Shared::DIR_RIGHT:
-		map->setDirection(Shared::DIR_DOWN);
+	case Shared::Maps::DIR_RIGHT:
+		map->setDirection(Shared::Maps::DIR_DOWN);
 		break;
-	case Shared::DIR_DOWN:
-		map->setDirection(Shared::DIR_LEFT);
+	case Shared::Maps::DIR_DOWN:
+		map->setDirection(Shared::Maps::DIR_LEFT);
 		break;
-	case Shared::DIR_UP:
-		map->setDirection(Shared::DIR_RIGHT);
+	case Shared::Maps::DIR_UP:
+		map->setDirection(Shared::Maps::DIR_RIGHT);
 		break;
 	default:
 		break;
 	}
 
-	addInfoMsg(getGame()->_res->DUNGEON_MOVES[Shared::DIR_RIGHT - 1]);
+	addInfoMsg(getGame()->_res->DUNGEON_MOVES[Shared::Maps::DIR_RIGHT - 1]);
 }
 
 void Move::dungeonTurnAround() {
-	Map::Ultima1Map *map = getMap();
+	Maps::Ultima1Map *map = getMap();
 
 	switch (map->getDirection()) {
-	case Shared::DIR_LEFT:
-		map->setDirection(Shared::DIR_RIGHT);
+	case Shared::Maps::DIR_LEFT:
+		map->setDirection(Shared::Maps::DIR_RIGHT);
 		break;
-	case Shared::DIR_RIGHT:
-		map->setDirection(Shared::DIR_LEFT);
+	case Shared::Maps::DIR_RIGHT:
+		map->setDirection(Shared::Maps::DIR_LEFT);
 		break;
-	case Shared::DIR_DOWN:
-		map->setDirection(Shared::DIR_UP);
+	case Shared::Maps::DIR_DOWN:
+		map->setDirection(Shared::Maps::DIR_UP);
 		break;
-	case Shared::DIR_UP:
-		map->setDirection(Shared::DIR_DOWN);
+	case Shared::Maps::DIR_UP:
+		map->setDirection(Shared::Maps::DIR_DOWN);
 		break;
 	default:
 		break;
 	}
 
-	addInfoMsg(getGame()->_res->DUNGEON_MOVES[Shared::DIR_DOWN - 1]);
+	addInfoMsg(getGame()->_res->DUNGEON_MOVES[Shared::Maps::DIR_DOWN - 1]);
 }
 
 void Move::dungeonMoveForward() {
-	Map::Ultima1Map *map = getMap();
+	Maps::Ultima1Map *map = getMap();
 	Point delta = map->getDirectionDelta();
-	Shared::MapWidget *player = map->getPlayerWidget();
+	Shared::Maps::MapWidget *player = map->getPlayerWidget();
 	assert(player);
 
-	if (player->canMoveTo(map->getPosition() + delta) == Shared::MapWidget::YES) {
+	if (player->canMoveTo(map->getPosition() + delta) == Shared::Maps::MapWidget::YES) {
 		map->setPosition(map->getPosition() + delta);
 	} else {
 		playFX(0);
 	}
 
-	addInfoMsg(getGame()->_res->DUNGEON_MOVES[Shared::DIR_UP - 1]);
+	addInfoMsg(getGame()->_res->DUNGEON_MOVES[Shared::Maps::DIR_UP - 1]);
 }
 
 } // End of namespace Actions

@@ -47,7 +47,12 @@ MODULE_OBJS += \
 	shared/gfx/viewport_map.o \
 	shared/gfx/visual_container.o \
 	shared/gfx/visual_item.o \
-	shared/gfx/visual_surface.o
+	shared/gfx/visual_surface.o \
+	shared/maps/map.o \
+	shared/maps/map_base.o \
+	shared/maps/map_tile.o \
+	shared/maps/map_widget.o \
+	shared/maps/creature.o
 endif
 
 ifdef ENABLE_ULTIMA1
@@ -60,10 +65,12 @@ MODULE_OBJS += \
 	ultima1/actions/enter.o \
 	ultima1/actions/move.o \
 	ultima1/core/resources.o \
-	ultima1/map/map.o \
-	ultima1/map/map_city_castle.o \
-	ultima1/map/map_dungeon.o \
-	ultima1/map/map_overworld.o \
+	ultima1/maps/map.o \
+	ultima1/maps/map_base.o \
+	ultima1/maps/map_city_castle.o \
+	ultima1/maps/map_dungeon.o \
+	ultima1/maps/map_overworld.o \
+	ultima1/maps/map_tile.o \
 	ultima1/u1gfx/drawing_support.o \
 	ultima1/u1gfx/info.o \
 	ultima1/u1gfx/sprites.o \
@@ -88,6 +95,7 @@ MODULE_OBJS += \
 	ultima1/widgets/princess.o \
 	ultima1/widgets/transport.o \
 	ultima1/widgets/urban_player.o \
+	ultima1/widgets/urban_widget.o \
 	ultima1/widgets/wench.o \
 	ultima1/game.o
 endif

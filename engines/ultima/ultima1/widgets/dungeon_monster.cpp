@@ -21,7 +21,8 @@
  */
 
 #include "ultima/ultima1/widgets/dungeon_monster.h"
-#include "ultima/ultima1/map/map.h"
+#include "ultima/ultima1/maps/map.h"
+#include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/shared/core/utils.h"
@@ -76,17 +77,17 @@ void DungeonMonster::movement() {
 		_position.y += SGN(delta.y);
 }
 
-Shared::MapWidget::CanMove DungeonMonster::canMoveTo(const Point &destPos) {
-	Shared::MapWidget::CanMove result = MapWidget::canMoveTo(destPos);
+Shared::Maps::MapWidget::CanMove DungeonMonster::canMoveTo(const Point &destPos) {
+	Shared::Maps::MapWidget::CanMove result = MapWidget::canMoveTo(destPos);
 	if (result != UNSET)
 		return result;
 
 	return DungeonMonster::canMoveTo(_map, this, destPos);
 }
 
-Shared::MapWidget::CanMove DungeonMonster::canMoveTo(Shared::Map::MapBase *map, MapWidget *widget, const Point &destPos) {
+Shared::Maps::MapWidget::CanMove DungeonMonster::canMoveTo(Shared::Maps::MapBase *map, MapWidget *widget, const Point &destPos) {
 	// Get the details of the position
-	Shared::MapTile currTile, destTile;
+	Shared::Maps::MapTile currTile, destTile;
 	
 	map->getTileAt(map->getPosition(), &currTile);
 	map->getTileAt(destPos, &destTile);
@@ -111,7 +112,7 @@ void DungeonMonster::attack() {
 	bool isHit = true;
 
 	// Get tile details for both the player and the attacking creature
-	Map::U1MapTile playerTile,creatureTile;
+	Maps::U1MapTile playerTile,creatureTile;
 	_map->getTileAt(playerPos, &playerTile);
 	_map->getTileAt(_position, &creatureTile);
 

@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima1/widgets/wench.h"
-#include "ultima/ultima1/map/map.h"
+#include "ultima/ultima1/maps/map.h"
 
 namespace Ultima {
 namespace Ultima1 {

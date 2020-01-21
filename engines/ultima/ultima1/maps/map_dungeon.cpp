@@ -20,8 +20,9 @@
 *
 */
 
-#include "ultima/ultima1/map/map_dungeon.h"
-#include "ultima/ultima1/map/map.h"
+#include "ultima/ultima1/maps/map_dungeon.h"
+#include "ultima/ultima1/maps/map.h"
+#include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/widgets/dungeon_widget.h"
 #include "ultima/ultima1/widgets/dungeon_monster.h"
 #include "ultima/ultima1/widgets/dungeon_player.h"
@@ -29,16 +30,16 @@
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Map {
+namespace Maps {
 
-void MapDungeon::load(Shared::MapId mapId) {
-	Shared::Map::MapBase::load(mapId);
+void MapDungeon::load(Shared::Maps::MapId mapId) {
+	Shared::Maps::MapBase::load(mapId);
 
 	_tilesPerOrigTile = Point(1, 1);
 	_dungeonLevel = 1;
 
 	changeLevel(0);
-	_playerWidget->moveTo(Point(1, 1), Shared::DIR_SOUTH);
+	_playerWidget->moveTo(Point(1, 1), Shared::Maps::DIR_SOUTH);
 }
 
 bool MapDungeon::changeLevel(int delta) {
@@ -102,7 +103,7 @@ bool MapDungeon::changeLevel(int delta) {
 		byte currTile = _data[pt.y][pt.x];
 
 		if (currTile != DTILE_WALL && currTile != DTILE_SECRET_DOOR && currTile != DTILE_BEAMS) {
-			_widgets.push_back(Shared::MapWidgetPtr(new Widgets::DungeonWidget(_game, this, pt,
+			_widgets.push_back(Shared::Maps::MapWidgetPtr(new Widgets::DungeonWidget(_game, this, pt,
 				(getDeterministicRandomNumber(1, 100) & 1) ? Widgets::DITEM_COFFIN : Widgets::DITEM_CHEST)));
 		}
 	}
@@ -188,13 +189,13 @@ void MapDungeon::update() {
 			// Check for a widget at the given position
 			getTileAt(pt, &tile);
 
-			Shared::Creature *creature = dynamic_cast<Shared::Creature *>(tile._widget);
+			Shared::Maps::Creature *creature = dynamic_cast<Shared::Maps::Creature *>(tile._widget);
 			if (creature)
 				creature->update(true);
 		}
 	}
 }
 
-} // End of namespace Map
+} // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima

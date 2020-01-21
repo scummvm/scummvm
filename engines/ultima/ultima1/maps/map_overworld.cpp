@@ -20,17 +20,17 @@
  *
  */
 
-#include "ultima/ultima1/map/map_overworld.h"
+#include "ultima/ultima1/maps/map_overworld.h"
 #include "ultima/ultima1/widgets/transport.h"
-#include "ultima/ultima1/map/map.h"
+#include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Map {
+namespace Maps {
 
-void MapOverworld::load(Shared::MapId mapId) {
-	Shared::Map::MapBase::load(mapId);
+void MapOverworld::load(Shared::Maps::MapId mapId) {
+	Shared::Maps::MapBase::load(mapId);
 	setDimensions(Point(168, 156));
 	_tilesPerOrigTile = Point(1, 1);
 
@@ -113,6 +113,6 @@ void MapOverworld::shiftViewport(const Point &delta) {
 		topLeft.y -= height();
 }
 
-} // End of namespace Map
+} // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima

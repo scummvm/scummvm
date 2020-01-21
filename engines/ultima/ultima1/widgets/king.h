@@ -41,13 +41,13 @@ public:
 	/**
 	 * Constructor
 	 */
-	King(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
+	King(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
 		Person(game, map, 20, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
-	King(Ultima1Game *game, Map::Ultima1Map::MapBase *map) : Person(game, map, 20) {}
+	King(Ultima1Game *game, Maps::MapBase *map) : Person(game, map, 20) {}
 
 	/**
 	 * Destructor

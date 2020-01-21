@@ -22,7 +22,7 @@
 
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
-#include "ultima/ultima1/map/map.h"
+#include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/u1gfx/view_game.h"
 #include "ultima/ultima1/u1gfx/view_char_gen.h"
 #include "ultima/ultima1/u1gfx/view_title.h"
@@ -38,7 +38,7 @@ EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
 
 Ultima1Game::Ultima1Game() : Shared::Game() {
 	_res = new GameResources();
-	_map = new Map::Ultima1Map(this);
+	_map = new Maps::Ultima1Map(this);
 	_textCursor = new U1Gfx::U1TextCursor(_textColor, _bgColor);
 	g_vm->_screen->setCursor(_textCursor);
 

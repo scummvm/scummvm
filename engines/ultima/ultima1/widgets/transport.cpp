@@ -22,9 +22,9 @@
 
 #include "ultima/ultima1/widgets/transport.h"
 #include "ultima/ultima1/game.h"
-#include "ultima/ultima1/map/map.h"
-#include "ultima/ultima1/map/map_dungeon.h"
-#include "ultima/ultima1/map/map_overworld.h"
+#include "ultima/ultima1/maps/map.h"
+#include "ultima/ultima1/maps/map_dungeon.h"
+#include "ultima/ultima1/maps/map_overworld.h"
 #include "common/algorithm.h"
 
 namespace Ultima {
@@ -35,8 +35,8 @@ Ultima1Game *Transport::getGame() const {
 	return static_cast<Ultima1Game *>(_game);
 }
 
-Map::Ultima1Map::MapBase *Transport::getMap() const {
-	return static_cast<Map::Ultima1Map::MapBase *>(_map);
+Maps::MapBase *Transport::getMap() const {
+	return static_cast<Maps::MapBase *>(_map);
 }
 
 /*-------------------------------------------------------------------*/

@@ -20,17 +20,18 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_CORE_MAP_H
-#define ULTIMA_ULTIMA1_CORE_MAP_H
+#ifndef ULTIMA_ULTIMA1_MAPS_MAP_H
+#define ULTIMA_ULTIMA1_MAPS_MAP_H
 
-#include "ultima/shared/core/map.h"
+#include "ultima/shared/maps/map.h"
+#include "ultima/shared/maps/map_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
 class Ultima1Game;
 
-namespace Map {
+namespace Maps {
 
 enum MapType {
 	MAP_OVERWORLD = 0, MAP_CITY = 1, MAP_CASTLE = 2, MAP_DUNGEON = 3, MAP_UNKNOWN = 4
@@ -40,12 +41,12 @@ enum MapIdent {
 	MAPID_OVERWORLD = 0
 };
 
-class U1MapTile;
 class Ultima1Map;
 class MapCity;
 class MapCastle;
 class MapDungeon;
 class MapOverworld;
+class MapBase;
 
 /**
  * Used to hold the total number of tiles surrounding location entrances
@@ -69,31 +70,7 @@ struct SurroundingTotals {
 /**
  * Ultima 1 map manager
  */
-class Ultima1Map : public Shared::Map {
-public:
-	/**
-	 * Intermediate base class for Ultima 1 map types
-	 */
-	class MapBase : public Shared::Map::MapBase {
-	protected:
-		Ultima1Game *_game;
-	public:
-		/**
-		 * Constructor
-		 */
-		MapBase(Ultima1Game *game, Ultima1Map *map);
-		
-		/**
-		 * Destructor
-		 */
-		virtual ~MapBase() {}
-
-		/**
-		 * Gets a tile at a given position
-		 */
-		virtual void getTileAt(const Point &pt, Shared::MapTile *tile) override;
-	};
-
+class Ultima1Map : public Shared::Maps::Map {
 private:
 	Ultima1Game *_game;
 	MapCity *_mapCity;
@@ -122,7 +99,7 @@ public:
 	/**
 	 * Load a given map
 	 */
-	virtual void load(Shared::MapId mapId) override;
+	virtual void load(Shared::Maps::MapId mapId) override;
 
 	/**
 	 * Handles loading and saving the map's data
@@ -137,61 +114,10 @@ public:
 	/**
 	 * Instantiates a widget type by name
 	*/
-	virtual Shared::MapWidget *createWidget(Shared::Map::MapBase *map, const Common::String &name) override;
+	virtual Shared::Maps::MapWidget *createWidget(Shared::Maps::MapBase *map, const Common::String &name) override;
 };
 
-/**
- * Derived map tile class for Ultima 1 that adds extra properties
- */
-class U1MapTile : public Shared::MapTile {
-	friend class Ultima1Map;
-private:
-	Ultima1Map::MapBase *_map;
-public:
-	int _locationNum;
-public:
-	/**
-	 * Clears tile data
-	 */
-	virtual void clear();
-
-	/**
-	 * Return true if the tile base is water
-	 */
-	bool isWater() const;
-
-	/**
-	 * Return true if the tile base is grass
-	 */
-	bool isGrass() const;
-
-	/**
-	 * Return true if the tile base is woods
-	 */
-	bool isWoods() const;
-
-	/**
-	 * Return true if the tile base in the original map is water
-	 */
-	bool isOriginalWater() const;
-
-	/**
-	 * Return true if the tile base in the original map is grass
-	 */
-	bool isOriginalGrass() const;
-
-	/**
-	 * Return true if the tile base in the original map is woods
-	 */
-	bool isOriginalWoods() const;
-
-	/**
-	 * Returns true if the tile is a ground type tool
-	 */
-	bool isGround() const;
-};
-
-} // End of namespace Map
+} // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

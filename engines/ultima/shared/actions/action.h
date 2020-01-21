@@ -29,10 +29,16 @@ namespace Ultima {
 namespace Shared {
 
 class Game;
+
+namespace Maps {
 class Map;
+}
 
 namespace Actions {
 
+/**
+ * Base class for implementing the various actions the player can do, such as moving, climbing, entering, etc.
+ */
 class Action : public TreeItem {
 public:
 	/**
@@ -53,7 +59,7 @@ public:
 	/**
 	 * Return the game's map
 	 */
-	Map *getMap();
+	Maps::Map *getMap();
 
 	/**
 	 * Adds a text string to the info area
