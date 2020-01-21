@@ -88,7 +88,7 @@ void OverworldMonster::attack() {
 		hit->_position = playerPos + tempDiff;
 		_game->sleep(50);
 
-	} while (++distance <= maxDistance && mapTile._tileNum != 3 && (tempDiff.x != 0 || tempDiff.y != 0));
+	} while (++distance <= maxDistance && mapTile._tileId != 3 && (tempDiff.x != 0 || tempDiff.y != 0));
 
 	// Calculate damage threshold
 	threshold = (c->_stamina / 2) + (c->_equippedArmor * 8) + 56;

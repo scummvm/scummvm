@@ -28,7 +28,7 @@ namespace Shared {
 namespace Maps {
 
 void MapTile::clear() {
-	_tileId = _tileNum = -1;
+	_tileId = _tileDisplayNum = -1;
 	_widgetNum = -1;
 	_widget = nullptr;
 	_itemNum = -1;

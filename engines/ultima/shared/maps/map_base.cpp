@@ -156,7 +156,7 @@ void MapBase::getTileAt(const Point &pt, MapTile *tile) {
 	tile->clear();
 
 	// Get the base tile
-	tile->_tileNum = tile->_tileId = _data[pt.y][pt.x];
+	tile->_tileDisplayNum = tile->_tileId = _data[pt.y][pt.x];
 
 	// Check for any widget on that map tile
 	for (int idx = (int)_widgets.size() - 1; idx >= 0; --idx) {
