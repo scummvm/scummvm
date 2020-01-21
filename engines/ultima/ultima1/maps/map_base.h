@@ -62,39 +62,17 @@ public:
 	virtual void getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer = true) override;
 
 	/**
-	 * Do a drop action
+	 * Default implementation for actions
 	 */
-	virtual void drop() { unknownAction(); }
-
-	/**
-	 * Do an enter action
-	 */
-	virtual void enter() { unknownAction(); }
-
-	/**
-	 * Do an get action
-	 */
-	virtual void get() { unknownAction(); }
-
-	/**
-	 * Do an inform action
-	 */
-	virtual void inform() = 0;
-
-	/**
-	 * Do a climb action/
-	 */
-	virtual void climb() { unknownAction(); }
-
-	/**
-	 * Do a steal action
-	 */
-	virtual void steal() { unknownAction(); }
-
-	/**
-	 * Do a talk action
-	 */
-	void talk() { unknownAction(); }
+	#define DEFAULT_ACTION(NAME) virtual void NAME() { unknownAction(); }
+	DEFAULT_ACTION(drop)
+	DEFAULT_ACTION(enter)
+	DEFAULT_ACTION(get)
+	DEFAULT_ACTION(hyperjump)
+	DEFAULT_ACTION(inform)
+	DEFAULT_ACTION(climb)
+	DEFAULT_ACTION(steal)
+	DEFAULT_ACTION(talk)
 
 	/**
 	 * Handles dropping an amount of coins

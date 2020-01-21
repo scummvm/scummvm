@@ -311,6 +311,11 @@ MESSAGE0(CEnterMsg);
 MESSAGE0(CGetMsg);
 
 /**
+ * Used to trigger a HyperJump action
+ */
+MESSAGE0(CHyperJumpMsg);
+
+/**
  * Used to trigger an inform action
  */
 MESSAGE0(CInformMsg);
