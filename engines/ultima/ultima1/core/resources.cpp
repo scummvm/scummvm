@@ -543,8 +543,6 @@ const char *const SRC_ENTER_QUESTION = "Enter?";
 const char *const SRC_ENTERING = "Entering...";
 const char *const SRC_THE_CITY_OF = "The city of";
 const char *const SRC_DUNGEON_LEVEL = " Level    ";
-const char *const SRC_PASS = "Pass";
-const char *const SRC_HUH = "Huh?";
 const char *const SRC_ATTACKED_BY = "Attacked by %s!";
 const char *const SRC_ARMOR_DESTROYED = "Armor destroyed!";
 const char *const SRC_GREMLIN_STOLE = "A gremlin stole some food!";
@@ -563,11 +561,20 @@ const char *const SRC_JESTER_SPEECH2 = "I've got the key!";
 const char *const SRC_BARD_STOLEN = "Iolo stole something!";
 const char *const SRC_JESTER_STOLEN = "The jester stole something!";
 
+const char *const SRC_ACTION_NAMES[26] = {
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	nullptr, nullptr, nullptr, nullptr, nullptr, "Pass", nullptr, nullptr, nullptr, "Transact",
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+};
+const char *const SRC_HUH = "Huh?";
+const char *const SRC_NONE_WILL_TALK = "None will talk to thee!";
+
 const char *const SRC_GROCERY_NAMES[8] = {
 	"Li'l Karelia's Finnish Grocery", "Adventurer's Supply Post", "", "The Brown Bag", "Fresh Food Marketplace",
 	"Rations Unlimited", "Fastest Freshest Food Market", "Exploration Provisioners"
 };
 
+const char *const SRC_BUY_SELL = "-Buy, Sell: ";
 const char *const SRC_NOTHING = "nothing";
 const char *const SRC_SOLD = "Sold!";
 const char *const SRC_CANT_AFFORD = "Thou canst not afford it!";
@@ -611,8 +618,6 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	ENTERING = SRC_ENTERING;
 	THE_CITY_OF = SRC_THE_CITY_OF;
 	DUNGEON_LEVEL = SRC_DUNGEON_LEVEL;
-	PASS = SRC_PASS;
-	HUH = SRC_HUH;
 	ATTACKED_BY = SRC_ATTACKED_BY;
 	ARMOR_DESTROYED = SRC_ARMOR_DESTROYED;
 	GREMLIN_STOLE = SRC_GREMLIN_STOLE;
@@ -631,6 +636,10 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	BARD_STOLEN = SRC_BARD_STOLEN;
 	JESTER_STOLEN = SRC_JESTER_STOLEN;
 
+	Common::copy(&SRC_ACTION_NAMES[0], &SRC_ACTION_NAMES[26], ACTION_NAMES);
+	HUH = SRC_HUH;
+	NONE_WILL_TALK = SRC_NONE_WILL_TALK;
+	BUY_SELL = SRC_BUY_SELL;
 	NOTHING = SRC_NOTHING;
 	SOLD = SRC_SOLD;
 	CANT_AFFORD = SRC_CANT_AFFORD;
@@ -671,8 +680,6 @@ void GameResources::synchronize() {
 	syncString(ENTERING);
 	syncString(THE_CITY_OF);
 	syncString(DUNGEON_LEVEL);
-	syncString(PASS);
-	syncString(HUH);
 	syncString(ATTACKED_BY);
 	syncString(ARMOR_DESTROYED);
 	syncString(GREMLIN_STOLE);
@@ -689,6 +696,10 @@ void GameResources::synchronize() {
 	syncString(JESTER_SPEECH1);
 	syncString(JESTER_SPEECH2);
 
+	syncStrings(ACTION_NAMES, 26);
+	syncString(HUH);
+	syncString(NONE_WILL_TALK);
+	syncString(BUY_SELL);
 	syncString(NOTHING);
 	syncString(SOLD);
 	syncString(CANT_AFFORD);

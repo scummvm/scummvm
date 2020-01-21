@@ -298,6 +298,11 @@ MESSAGE2(CShowMsg, Gfx::VisualItem *, view, (Gfx::VisualItem *)nullptr, bool, fa
  */
 MESSAGE2(CTextInputMsg, Common::String, text, "", bool, escaped, false);
 
+/**
+ * Used to trigger a Transact action
+ */
+MESSAGE0(CTransactMsg);
+
 } // End of namespace Shared
 } // End of namespace Ultima
 
