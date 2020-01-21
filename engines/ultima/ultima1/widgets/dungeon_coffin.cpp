@@ -20,46 +20,28 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_WIDGETS_DUNGEON_ITEM_H
-#define ULTIMA_ULTIMA1_WIDGETS_DUNGEON_ITEM_H
-
-#include "ultima/ultima1/widgets/dungeon_widget.h"
+#include "ultima/ultima1/widgets/dungeon_coffin.h"
+#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
+DungeonCoffin::DungeonCoffin(Ultima1Game *game, Maps::MapBase *map, const Point &pt) :
+		DungeonItem(game, map, UITEM_COFFIN, pt) {
+	_name = game->_res->DUNGEON_ITEM_NAMES[1];
+}
 
-/**
- * Encapsulated class for drawing widgets within dungeons
- */
-class DungeonItem : public DungeonWidget {
-protected:
-	/**
-	 * Constructor
-	 */
-	DungeonItem(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId widgetId, const Point &pt);
+DungeonCoffin::DungeonCoffin(Ultima1Game *game, Maps::MapBase *map) : DungeonItem(game, map, UITEM_COFFIN) {
+	_name = game->_res->DUNGEON_ITEM_NAMES[1];
+}
 
-	/**
-	 * Constructor
-	 */
-	DungeonItem(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId widgetId);
-public:
-	/**
-	 * Try to open the item
-	 * @returns		True if item was capable of being open
-	 */
-	virtual bool open() { return false; }
-
-	/**
-	 * Try to unlock the item
-	 * @returns		True if item was capable of being unlock
-	 */
-	virtual bool unlock() { return false; }
-};
+bool DungeonCoffin::open() {
+	// TODO
+	return true;
+}
 
 } // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
-
-#endif

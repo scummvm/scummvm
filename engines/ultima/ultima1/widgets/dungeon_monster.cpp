@@ -32,14 +32,14 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-DungeonMonster::DungeonMonster(Shared::Game *game, Shared::Maps::MapBase *map, DungeonWidgetId monsterId,
+DungeonMonster::DungeonMonster(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId monsterId,
 		int hitPoints, const Point &pt) :
 		DungeonWidget(game, map, monsterId, pt), Shared::Maps::DungeonCreature(game, map, hitPoints),
 		_monsterId(monsterId) {
 	_name = getGame()->_res->DUNGEON_MONSTER_NAMES[_monsterId];
 }
 
-DungeonMonster::DungeonMonster(Shared::Game *game, Shared::Maps::MapBase *map) :
+DungeonMonster::DungeonMonster(Ultima1Game *game, Maps::MapBase *map) :
 		DungeonWidget(game, map), Shared::Maps::DungeonCreature(game, map), _monsterId(MONSTER_NONE) {
 }
 

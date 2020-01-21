@@ -30,8 +30,11 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-DungeonWidget::DungeonWidget(Shared::Game *game, Shared::Maps::MapBase *map, DungeonWidgetId widgetId,
+DungeonWidget::DungeonWidget(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId widgetId,
 		const Point &pt) : Shared::Maps::DungeonWidget(game, map, pt), _widgetId(widgetId) {
+}
+
+DungeonWidget::DungeonWidget(Ultima1Game *game, Maps::MapBase *map) : Shared::Maps::DungeonWidget(game, map) {
 }
 
 Ultima1Game *DungeonWidget::getGame() const {

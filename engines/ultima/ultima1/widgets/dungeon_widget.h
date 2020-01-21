@@ -79,12 +79,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	DungeonWidget(Shared::Game *game, Shared::Maps::MapBase *map, DungeonWidgetId widgetId, const Point &pt);
+	DungeonWidget(Ultima1Game *game, Maps::MapBase *map, DungeonWidgetId widgetId, const Point &pt);
 
 	/**
 	 * Constructor
 	 */
-	DungeonWidget(Shared::Game *game, Shared::Maps::MapBase *map) : Shared::Maps::DungeonWidget(game, map) {}
+	DungeonWidget(Ultima1Game *game, Maps::MapBase *map);
 
 	/**
 	 * Draws a dungeon widget onto the passed surface

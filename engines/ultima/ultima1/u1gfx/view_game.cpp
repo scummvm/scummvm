@@ -45,8 +45,10 @@ MAP_ACTION(Get, 6, get)
 MAP_ACTION(HyperJump, 7, hyperjump)
 MAP_ACTION(Inform, 8, inform)
 MAP_ACTION(Climb, 10, climb)
+MAP_ACTION(Open, 14, open)
 MAP_ACTION(Steal, 18, steal)
 MAP_ACTION(Transact, 19, talk)
+MAP_ACTION(Unlock, 20, unlock)
 }
 
 namespace U1Gfx {
