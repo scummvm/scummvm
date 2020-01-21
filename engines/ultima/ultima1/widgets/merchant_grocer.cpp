@@ -23,6 +23,7 @@
 #include "ultima/ultima1/widgets/merchant_grocer.h"
 #include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/u1dialogs/grocery.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -54,6 +55,11 @@ void MerchantGrocer::findFood(bool checkStealing) {
 		addInfoMsg("");
 		addInfoMsg(Common::String::format(_game->_res->GROCERY_FIND_PACKS, food));
 	}
+}
+
+void MerchantGrocer::talk() {
+	U1Dialogs::Grocery *grocery = new U1Dialogs::Grocery(_game, _map->getMapIndex());
+	grocery->show();
 }
 
 } // End of namespace Widgets

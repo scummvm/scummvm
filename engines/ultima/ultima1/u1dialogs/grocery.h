@@ -42,7 +42,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Grocery(Ultima1Game *game, BuySell buySell, int groceryNum, uint costPerPack = 0);
+	Grocery(Ultima1Game *game, int groceryNum);
 
 	/**
 	 * Draws the visual item on the screen

@@ -106,6 +106,8 @@ public:
 	const char *CAUGHT;
 	const char *NONE_WILL_TALK;
 	const char *BUY_SELL;
+	const char *BUY;
+	const char *SELL;
 	const char *NOTHING;
 	const char *NONE;
 	const char *NOTHING_HERE;
@@ -153,6 +155,12 @@ public:
 	const char *GROCERY_PACKS3;
 	const char *GROCERY_PACKS_FOOD;
 	const char *GROCERY_FIND_PACKS;
+
+	const char *WITH_KING;
+	const char *HE_IS_NOT_HERE;
+	const char *HE_REJECTS_OFFER;
+	const char *KING_TEXT[11];
+
 public:
 	GameResources();
 	GameResources(Shared::Resources *resManager);

@@ -28,6 +28,7 @@
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
+	class Person;
 	class Merchant;
 }
 
@@ -57,6 +58,11 @@ protected:
 	 * Get a merchant for a given steal-type tile
 	 */
 	Widgets::Merchant *getStealMerchant();
+
+	/**
+	 * Get a person to talk to based on the tile the player is on
+	 */
+	Widgets::Person *getTalkPerson();
 public:
 	bool _guardsHostile;			// Flag for whether guards are hostile
 public:
@@ -153,6 +159,11 @@ public:
 	virtual void get() override;
 
 	/**
+	 * Do a talk action
+	 */
+	virtual void talk() override;
+
+	/**
 	 * Do an unlock action
 	 */
 	virtual void unlock() override;
@@ -192,6 +203,11 @@ public:
 	 * Do an get action
 	 */
 	virtual void get() override;
+
+	/**
+	 * Do a talk action
+	 */
+	virtual void talk() override;
 
 	/**
 	 * Do an unlock action

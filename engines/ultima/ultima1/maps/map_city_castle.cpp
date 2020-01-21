@@ -179,6 +179,39 @@ Widgets::Merchant *MapCityCastle::getStealMerchant() {
 	}
 }
 
+Widgets::Person *MapCityCastle::getTalkPerson() {
+	U1MapTile tile;
+	getTileAt(getPosition(), &tile);
+
+	switch (tile._tileId) {
+	case 54:
+	case 55:
+		return dynamic_cast<Widgets::Person *>(_widgets.findByClass(Widgets::MerchantArmor::type()));
+
+	case 56:
+	case 57:
+		return dynamic_cast<Widgets::Person *>(_widgets.findByClass(Widgets::MerchantGrocer::type()));
+
+	case 58:
+	case 59:
+		return dynamic_cast<Widgets::Person *>(_widgets.findByClass(Widgets::MerchantWeapons::type()));
+
+	case 60:
+		return dynamic_cast<Widgets::Person *>(_widgets.findByClass(Widgets::MerchantMagic::type()));
+
+	case 61:
+		return dynamic_cast<Widgets::Person *>(_widgets.findByClass(Widgets::MerchantTavern::type()));
+
+	case 62:
+		return dynamic_cast<Widgets::Person *>(_widgets.findByClass(
+			dynamic_cast<MapCity *>(this) ? Widgets::MerchantTransport::type() : Widgets::King::type() ));
+
+	default:
+		return nullptr;
+	}
+
+}
+
 void MapCityCastle::cast() {
 	addInfoMsg(Common::String::format(" -- %s", _game->_res->NO_EFFECT));
 	_game->playFX(6);
@@ -301,6 +334,15 @@ void MapCity::get() {
 	_game->playFX(1);
 }
 
+void MapCity::talk() {
+	if (_guardsHostile) {
+		addInfoMsg(_game->_res->NONE_WILL_TALK);
+	
+	}
+
+	// TODO
+}
+
 void MapCity::unlock() {
 	addInfoMsg(_game->_res->WHAT);
 	_game->playFX(1);
@@ -368,6 +410,18 @@ void MapCastle::get() {
 	} else {
 		addInfoMsg(_game->_res->NOTHING_HERE);
 		_game->playFX(1);
+	}
+}
+
+void MapCastle::talk() {
+	addInfoMsg(_game->_res->WITH_KING);
+	Widgets::Person *person = getTalkPerson();
+
+	if (person) {
+		person->talk();
+	} else {
+		addInfoMsg(_game->_res->HE_IS_NOT_HERE);
+		_game->endOfTurn();
 	}
 }
 
