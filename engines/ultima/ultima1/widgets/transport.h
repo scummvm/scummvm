@@ -64,9 +64,9 @@ public:
 	virtual void disembark();
 
 	/**
-	 * Fire a transport's weapons
+	 * Get the name of a transport's weapons
 	 */
-	virtual bool fire() { return false; }
+	virtual Common::String getWeaponsName() { return ""; }
 };
 
 /**
@@ -113,9 +113,9 @@ public:
 	Frigate(Ultima1Game *game, Maps::MapBase *map);
 
 	/**
-	 * Fire a transport's weapons
+	 * Get the name of a transport's weapons
 	 */
-	virtual bool fire();
+	virtual Common::String getWeaponsName();
 };
 
 /**
@@ -129,9 +129,9 @@ public:
 	Aircar(Ultima1Game *game, Maps::MapBase *map);
 
 	/**
-	 * Fire a transport's weapons
+	 * Get the name of a transport's weapons
 	 */
-	virtual bool fire();
+	virtual Common::String getWeaponsName();
 };
 
 /**

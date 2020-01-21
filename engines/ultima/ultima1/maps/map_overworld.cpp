@@ -135,13 +135,6 @@ void MapOverworld::enter() {
 	}
 }
 
-void MapOverworld::fire() {
-	Widgets::Transport *transport = dynamic_cast<Widgets::Transport *>(_playerWidget);
-
-	if (!transport || !transport->fire())
-		addInfoMsg(_game->_res->WHAT);
-}
-
 void MapOverworld::inform() {
 	Maps::U1MapTile tile;
 	getTileAt(getPosition(), &tile, false);

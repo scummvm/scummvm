@@ -30,7 +30,29 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Actions {
 
-BEGIN_MESSAGE_MAP(Attack, Action)
+BEGIN_MESSAGE_MAP(AttackFire, Action)
+	ON_MESSAGE(CharacterInputMsg)
+END_MESSAGE_MAP()
+
+bool AttackFire::CharacterInputMsg(CCharacterInputMsg &msg) {
+	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
+	Shared::Maps::Direction dir = Shared::Maps::MapWidget::directionFromKey(msg._keyState.keycode);
+
+	if (dir == Shared::Maps::DIR_NONE) {
+		addInfoMsg(game->_res->NOTHING);
+		playFX(1);
+		game->endOfTurn();
+	} else {
+		addInfoMsg(game->_res->DIRECTION_NAMES[(int)dir - 1]);
+		doAttack(dir);
+	}
+
+	return true;
+}
+
+/*-------------------------------------------------------------------*/
+
+BEGIN_MESSAGE_MAP(Attack, AttackFire)
 	ON_MESSAGE(AttackMsg)
 	ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
@@ -61,24 +83,49 @@ bool Attack::AttackMsg(CAttackMsg &msg) {
 	return true;
 }
 
-bool Attack::CharacterInputMsg(CCharacterInputMsg &msg) {
+void Attack::doAttack(Shared::Maps::Direction dir) {
+	getMap()->attack(dir, 7);
+}
+
+/*-------------------------------------------------------------------*/
+
+BEGIN_MESSAGE_MAP(Fire, AttackFire)
+	ON_MESSAGE(FireMsg)
+END_MESSAGE_MAP()
+
+bool Fire::FireMsg(CFireMsg &msg) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	Shared::Maps::Direction dir = Shared::Maps::MapWidget::directionFromKey(msg._keyState.keycode);
-//	Shared::Character &c = *getGame()->_party;
+	Maps::Ultima1Map *map = static_cast<Maps::Ultima1Map *>(getMap());
+	addInfoMsg(game->_res->ACTION_NAMES[5], false);
 
-	if (dir == Shared::Maps::DIR_NONE) {
-		addInfoMsg(game->_res->NONE);
+	if (map->_mapType != Maps::MAP_OVERWORLD) {
+		// Not on the overworld
+		addInfoMsg("?");
 		playFX(1);
-		game->endOfTurn();
+		endOfTurn();
 	} else {
-		addInfoMsg(game->_res->DIRECTION_NAMES[(int)dir - 1]);
-
-		getMap()->attack(dir, 7);
+		Widgets::Transport *transport = dynamic_cast<Widgets::Transport *>(getMap()->getPlayerWidget());
+		if (transport && !transport->getWeaponsName().empty()) {
+			// Prompt user for direction
+			addInfoMsg(Common::String::format(" %s: ", transport->getWeaponsName().c_str()), false);
+			Shared::CInfoGetKeypress keyMsg(this);
+			keyMsg.execute(getGame());
+		} else {
+			// Not in a transport that has weapons
+			addInfoMsg(game->_res->WHAT);
+			playFX(1);
+			endOfTurn();
+		}
 	}
 
 	return true;
 }
 
+void Fire::doAttack(Shared::Maps::Direction dir) {
+	getMap()->attack(dir, 8);
+}
+
 } // End of namespace Actions
 } // End of namespace Ultima1
 } // End of namespace Ultima
+

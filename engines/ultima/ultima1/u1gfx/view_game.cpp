@@ -46,7 +46,6 @@ namespace Actions {
 MAP_ACTION(Cast, 2, cast)
 MAP_ACTION(Drop, 3, drop)
 MAP_ACTION_END_TURN(Enter, 4, enter)
-MAP_ACTION_END_TURN(Fire, 5, fire)
 MAP_ACTION_END_TURN(Get, 6, get)
 MAP_ACTION_END_TURN(HyperJump, 7, hyperjump)
 MAP_ACTION_END_TURN(Inform, 8, inform)

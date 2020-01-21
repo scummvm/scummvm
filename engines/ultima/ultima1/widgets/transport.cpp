@@ -91,11 +91,9 @@ Frigate::Frigate(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
 	_name = game->_res->TRANSPORT_NAMES[4];
 }
 
-bool Frigate::fire() {
+Common::String Frigate::getWeaponsName() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
-	addInfoMsg(Common::String::format(" %s: ", game->_res->TRANSPORT_WEAPONS[0]), false);
-	// TODO: combat(-1, 8);
-	return true;
+	return game->_res->TRANSPORT_WEAPONS[0];
 }
 
 /*-------------------------------------------------------------------*/
@@ -104,11 +102,9 @@ Aircar::Aircar(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map) {
 	_name = game->_res->TRANSPORT_NAMES[5];
 }
 
-bool Aircar::fire() {
+Common::String Aircar::getWeaponsName() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
-	addInfoMsg(Common::String::format(" %s: ", game->_res->TRANSPORT_WEAPONS[1]), false);
-	// TODO: combat(-1, 8);
-	return true;
+	return game->_res->TRANSPORT_WEAPONS[1];
 }
 
 /*-------------------------------------------------------------------*/

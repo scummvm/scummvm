@@ -24,31 +24,76 @@
 #define ULTIMA_ULTIMA1_ACTIONS_ATTACK_H
 
 #include "ultima/ultima1/actions/action.h"
+#include "ultima/shared/maps/map_widget.h"
 #include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Actions {
 
-using Shared::CAttackMsg;
 using Shared::CCharacterInputMsg;
+using Shared::CAttackMsg;
+using Shared::CFireMsg;
 
-class Attack : public Action {
+/**
+ * Common base class for attack and fire actions
+ */
+class AttackFire : public Action {
 	DECLARE_MESSAGE_MAP;
-	bool AttackMsg(CAttackMsg &msg);
 	bool CharacterInputMsg(CCharacterInputMsg &msg);
+protected:
+	/**
+	 * Do the attack in a given direction
+	 */
+	virtual void doAttack(Shared::Maps::Direction dir) = 0;
 public:
 	CLASSDEF;
 
 	/**
-	* Constructor
-	*/
-	Attack(TreeItem *parent) : Action(parent) {}
+	 * Constructor
+	 */
+	AttackFire(TreeItem *parent) : Action(parent) {}
+
+};
+
+/**
+ * Attack action
+ */
+class Attack : public AttackFire {
+	DECLARE_MESSAGE_MAP;
+	bool AttackMsg(CAttackMsg &msg);
+protected:
+	/**
+	 * Do the attack in a given direction
+	 */
+	virtual void doAttack(Shared::Maps::Direction dir);
+public:
+	CLASSDEF;
 
 	/**
-	 * Destructor
+	 * Constructor
 	 */
-	virtual ~Attack() {}
+	Attack(TreeItem *parent) : AttackFire(parent) {}
+};
+
+/**
+ * Fire action
+ */
+class Fire : public AttackFire {
+	DECLARE_MESSAGE_MAP;
+	bool FireMsg(CFireMsg &msg);
+protected:
+	/**
+	 * Do the attack in a given direction
+	 */
+	virtual void doAttack(Shared::Maps::Direction dir);
+public:
+	CLASSDEF;
+
+	/**
+	 * Constructor
+	 */
+	Fire(TreeItem *parent) : AttackFire(parent) {}
 };
 
 } // End of namespace Actions
