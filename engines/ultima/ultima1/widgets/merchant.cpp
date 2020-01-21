@@ -32,10 +32,11 @@ namespace Widgets {
 EMPTY_MESSAGE_MAP(Merchant, Person);
 
 bool Merchant::checkCuaghtStealing() {
+	Shared::Character &c = *_game->_party;
 	int randVal = _game->getRandomNumber(1, 255);
 	bool flag = areGuardsHostile() || randVal < 38;
 
-	if (!flag && _game->_party._currentCharacter->_class == CLASS_THIEF)
+	if (!flag && c._class == CLASS_THIEF)
 		return false;
 	if (!flag && randVal > 77)
 		return false;

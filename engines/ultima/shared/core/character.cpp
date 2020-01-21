@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/shared/core/character.h"
+#include "ultima/shared/core/party.h"
 
 namespace Ultima {
 namespace Shared {

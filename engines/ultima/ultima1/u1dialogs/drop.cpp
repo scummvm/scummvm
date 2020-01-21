@@ -39,7 +39,7 @@ Drop::Drop(Ultima1Game *game) : FullScreenDialog(game), _mode(SELECT), _textInpu
 }
 
 bool Drop::KeypressMsg(CKeypressMsg &msg) {
-	Shared::Character &c = *_game->_party._currentCharacter;
+	Shared::Character &c = *_game->_party;
 
 	switch (_mode) {
 	case SELECT:
@@ -99,7 +99,7 @@ bool Drop::KeypressMsg(CKeypressMsg &msg) {
 }
 
 bool Drop::TextInputMsg(CTextInputMsg &msg) {
-	Shared::Character &c = *_game->_party._currentCharacter;
+	Shared::Character &c = *_game->_party;
 	assert(_mode == DROP_PENCE);
 	Ultima1Game *game = _game;
 	Maps::Ultima1Map *map = getMap();
@@ -130,7 +130,7 @@ void Drop::setMode(Mode mode) {
 	setDirty();
 	_mode = mode;
 
-	const Shared::Character &c = *_game->_party._currentCharacter;
+	const Shared::Character &c = *_game->_party;
 	switch (mode) {
 	case DROP_WEAPON:
 		if (c._weapons.hasNothing()) {
@@ -198,7 +198,7 @@ void Drop::drawDropWeapon() {
 	drawFrame(_game->_res->ACTION_NAMES[3]);
 
 	// Count the number of different types of weapons
-	const Shared::Character &c = *_game->_party._currentCharacter;
+	const Shared::Character &c = *_game->_party;
 	int numLines = 0;
 	for (uint idx = 1; idx < c._weapons.size(); ++idx) {
 		if (c._weapons[idx]._quantity)
@@ -229,7 +229,7 @@ void Drop::drawDropArmor() {
 	drawFrame(_game->_res->ACTION_NAMES[3]);
 
 	// Count the number of different types of armor
-	const Shared::Character &c = *_game->_party._currentCharacter;
+	const Shared::Character &c = *_game->_party;
 	int numLines = 0;
 	for (uint idx = 1; idx < c._armor.size(); ++idx) {
 		if (c._armor[idx]._quantity)

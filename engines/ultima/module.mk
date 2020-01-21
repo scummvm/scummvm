@@ -22,6 +22,7 @@ MODULE_OBJS += \
 	shared/core/message_target.o \
 	shared/core/mouse_cursor.o \
 	shared/core/named_item.o \
+	shared/core/party.o \
 	shared/core/tree_item.o \
 	shared/core/utils.o \
 	shared/core/widgets.o \
@@ -67,6 +68,7 @@ MODULE_OBJS += \
 	ultima1/actions/quit.o \
 	ultima1/actions/ready.o \
 	ultima1/actions/stats.o \
+	ultima1/core/party.o \
 	ultima1/core/resources.o \
 	ultima1/maps/map.o \
 	ultima1/maps/map_base.o \

@@ -36,7 +36,7 @@ void Creature::update(bool isPreUpdate) {
 		// Check whether creature can attack
 		movement();
 		_isAttacking = attackDistance() != 0;
-	} else if (_isAttacking && !_game->_party.isDead()) {
+	} else if (_isAttacking && !_game->_party->isDead()) {
 		attack();
 	}
 }

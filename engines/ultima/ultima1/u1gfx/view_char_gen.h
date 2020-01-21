@@ -25,7 +25,7 @@
 
 #include "ultima/shared/gfx/visual_container.h"
 #include "ultima/shared/gfx/text_input.h"
-#include "ultima/shared/core/character.h"
+#include "ultima/shared/core/party.h"
 #include "graphics/managed_surface.h"
 
 namespace Ultima {

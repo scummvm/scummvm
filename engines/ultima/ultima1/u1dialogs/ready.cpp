@@ -39,7 +39,7 @@ Ready::Ready(Ultima1Game *game) : FullScreenDialog(game), _mode(SELECT) {
 }
 
 bool Ready::KeypressMsg(CKeypressMsg &msg) {
-	Shared::Character &c = *_game->_party._currentCharacter;
+	Shared::Character &c = *_game->_party;
 
 	switch (_mode) {
 	case SELECT:
@@ -99,7 +99,7 @@ void Ready::setMode(Mode mode) {
 	setDirty();
 	_mode = mode;
 
-	const Shared::Character &c = *_game->_party._currentCharacter;
+	const Shared::Character &c = *_game->_party;
 	switch (mode) {
 	case READY_WEAPON:
 		if (c._weapons.hasNothing()) {
@@ -158,7 +158,7 @@ void Ready::drawReadyWeapon() {
 	drawFrame(_game->_res->ACTION_NAMES[17]);
 
 	// Count the number of different types of weapons
-	const Shared::Character &c = *_game->_party._currentCharacter;
+	const Shared::Character &c = *_game->_party;
 	int numLines = 0;
 	for (uint idx = 0; idx < c._weapons.size(); ++idx) {
 		if (c._weapons[idx]._quantity)
@@ -190,7 +190,7 @@ void Ready::drawReadyArmor() {
 	drawFrame(_game->_res->ACTION_NAMES[17]);
 
 	// Count the number of different types of weapons
-	const Shared::Character &c = *_game->_party._currentCharacter;
+	const Shared::Character &c = *_game->_party;
 	int numLines = 0;
 	for (uint idx = 0; idx < c._armor.size(); ++idx) {
 		if (c._armor[idx]._quantity)
@@ -222,7 +222,7 @@ void Ready::drawReadySpell() {
 	drawFrame(_game->_res->ACTION_NAMES[17]);
 
 	// Count the number of different types of spells
-	const Shared::Character &c = *_game->_party._currentCharacter;
+	const Shared::Character &c = *_game->_party;
 	int numLines = 0;
 	for (uint idx = 0; idx < c._spells.size(); ++idx) {
 		if (c._spells[idx]->_quantity)

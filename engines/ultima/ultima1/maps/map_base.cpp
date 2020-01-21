@@ -82,7 +82,7 @@ void MapBase::attack(int direction) {
 }
 
 void MapBase::cast() {
-	const Shared::Character &c = *_game->_party._currentCharacter;
+	const Shared::Character &c = *_game->_party;
 	Shared::Spell &spell = *c._spells[c._equippedSpell];
 	addInfoMsg(Common::String::format(" %s", spell._name.c_str()), false);
 
@@ -99,7 +99,7 @@ void MapBase::cast() {
 }
 
 void MapBase::castSpell(uint spellId) {
-	const Shared::Character &c = *_game->_party._currentCharacter;
+	const Shared::Character &c = *_game->_party;
 	static_cast<Spells::Spell *>(c._spells[spellId])->cast(this);
 }
 

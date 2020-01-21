@@ -125,45 +125,8 @@ void Game::endOfTurn() {
 }
 
 void Game::synchronize(Common::Serializer &s) {
-	_party.synchronize(s);
+	_party->synchronize(s);
 	_map->synchronize(s);
-}
-
-/*-------------------------------------------------------------------*/
-
-Party::Party() : CharacterArray() {
-	resize(1);
-	_currentCharacter = &(*this)[0];
-}
-
-bool Party::isDead() const {
-	for (uint idx = 0; idx < size(); ++idx) {
-		if ((*this)[idx]._hitPoints > 0)
-			return false;
-	}
-
-	return true;
-}
-
-bool Party::isFoodless() const {
-	for (uint idx = 0; idx < size(); ++idx) {
-		if ((*this)[idx]._food > 0)
-			return false;
-	}
-
-	return true;
-}
-
-void Party::synchronize(Common::Serializer &s) {
-	// Store the party count
-	uint partyCount = size();
-	s.syncAsByte(partyCount);
-	if (s.isLoading() && size() != partyCount)
-		resize(partyCount);
-
-	// Synchronize the data for each character
-	for (uint idx = 0; idx < size(); ++idx)
-		(*this)[idx].synchronize(s);
 }
 
 } // End of namespace Shared

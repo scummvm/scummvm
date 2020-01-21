@@ -46,9 +46,11 @@ void MerchantGrocer::steal() {
 }
 
 void MerchantGrocer::findFood(bool checkStealing) {
+	Shared::Character &c = *_game->_party;
+
 	if (!checkStealing || !checkCuaghtStealing()) {
 		uint food = _game->getRandomNumber(2, 31);
-		_game->_party._currentCharacter->_food += food;
+		c._food += food;
 		addInfoMsg("");
 		addInfoMsg(Common::String::format(_game->_res->GROCERY_FIND_PACKS, food));
 	}

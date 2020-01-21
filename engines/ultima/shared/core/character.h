@@ -30,8 +30,6 @@
 namespace Ultima {
 namespace Shared {
 
-class Game;
-
 /**
  * Base class for class types that have a quantity
  */
@@ -194,8 +192,6 @@ public:
 	 */
 	uint getLevel() const { return (_experience / 1000) + 1; }
 };
-
-typedef Common::Array<Character> CharacterArray;
 
 } // End of namespace Shared
 } // End of namespace Ultima

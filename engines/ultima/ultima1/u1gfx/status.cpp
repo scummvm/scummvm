@@ -39,7 +39,7 @@ Status::Status(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("Status", Tex
 bool Status::FrameMsg(CFrameMsg &msg) {
 	// If any of the figures have changed, mark the display as dirty
 	const Ultima1Game *game = static_cast<const Ultima1Game *>(getGame());
-	const Shared::Character &c = *game->_party._currentCharacter;
+	const Shared::Character &c = *game->_party;
 
 	if (c._hitPoints != _hitPoints || c._food != _food || c._experience != _experience || c._coins != _coins)
 		setDirty(true);
@@ -49,7 +49,7 @@ bool Status::FrameMsg(CFrameMsg &msg) {
 
 void Status::draw() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	const Shared::Character &c = *game->_party._currentCharacter;
+	const Shared::Character &c = *game->_party;
 
 	// Update the local copy of the fields
 	_hitPoints = c._hitPoints;

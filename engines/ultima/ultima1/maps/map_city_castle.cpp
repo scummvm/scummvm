@@ -222,7 +222,7 @@ void MapCity::load(Shared::Maps::MapId mapId) {
 }
 
 void MapCity::dropCoins(uint coins) {
-	Shared::Character &c = *_game->_party._currentCharacter;
+	Shared::Character &c = *_game->_party;
 	U1MapTile tile;
 	getTileAt(getPosition(), &tile);
 
@@ -300,7 +300,7 @@ void MapCastle::synchronize(Common::Serializer &s) {
 }
 
 void MapCastle::dropCoins(uint coins) {
-	Shared::Character &c = *_game->_party._currentCharacter;
+	Shared::Character &c = *_game->_party;
 	U1MapTile tile;
 	getTileAt(getPosition(), &tile);
 

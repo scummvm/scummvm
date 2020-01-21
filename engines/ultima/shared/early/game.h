@@ -24,7 +24,7 @@
 #define ULTIMA_SHARED_EARLY_GAME_H
 
 #include "ultima/shared/early/game_base.h"
-#include "ultima/shared/core/character.h"
+#include "ultima/shared/core/party.h"
 
 namespace Ultima {
 namespace Shared {
@@ -36,34 +36,6 @@ class FontResources;
 namespace Maps {
 class Map;
 }
-
-/**
- * Party definition
- */
-class Party : public CharacterArray {
-public:
-	Party();
-
-	/**
-	 * Currently active character. In earlier Ultima games, this is the single party member
-	 */
-	Character *_currentCharacter;
-
-	/**
-	 * Returns true if the party is dead
-	 */
-	bool isDead() const;
-
-	/**
-	 * Returns true if the party has no food
-	 */
-	bool isFoodless() const;
-
-	/**
-	 * Handles loading and saving games
-	 */
-	void synchronize(Common::Serializer &s);
-};
 
 /**
  * More specialized base class for earlier Ultima games
@@ -95,7 +67,7 @@ public:
 	/**
 	 * Player party. In the earlier Ultima games, this is a single character
 	 */
-	Party _party;
+	Party *_party;
 
 	/**
 	 * Pointer to the map manager for the game

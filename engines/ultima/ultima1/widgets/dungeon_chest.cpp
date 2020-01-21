@@ -41,7 +41,7 @@ DungeonChest::DungeonChest(Ultima1Game *game, Maps::MapBase *map) : DungeonItem(
 bool DungeonChest::open() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
 	Maps::MapDungeon *map = static_cast<Maps::MapDungeon *>(getMap());
-	Shared::Character &c = *_game->_party._currentCharacter;
+	Shared::Character &c = *_game->_party;
 
 	if (_game->getRandomNumber(1, 75) <= c._agility || c._class == CLASS_THIEF) {
 		// Successfully opened

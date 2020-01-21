@@ -20,43 +20,15 @@
  *
  */
 
-#include "ultima/ultima1/widgets/merchant_weapons.h"
-#include "ultima/ultima1/maps/map_city_castle.h"
-#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/core/party.h"
+#include "ultima/ultima1/game.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Widgets {
 
-EMPTY_MESSAGE_MAP(MerchantWeapons, Merchant);
-
-void MerchantWeapons::get() {
-	Maps::MapCastle *map = dynamic_cast<Maps::MapCastle *>(_map);
-	assert(map);
-	if (map->_getCounter > 0) {
-		--map->_getCounter;
-		findWeapon(false);
-	} else {
-		noKingsPermission();
-	}
+Party::Party(Ultima1Game *game) {
+	add(new Character(game));
 }
 
-void MerchantWeapons::steal() {
-	findWeapon(true);
-}
-
-void MerchantWeapons::findWeapon(bool checkStealing) {
-	Shared::Character &c = *_game->_party;
-	if (!checkStealing || !checkCuaghtStealing()) {
-		uint weaponNum = _game->getRandomNumber(1, 15);
-		const char *weaponStr = _game->_res->WEAPON_NAMES_ARTICLE[weaponNum];
-
-		c._weapons[weaponNum].incrQuantity();
-		addInfoMsg("");
-		addInfoMsg(Common::String::format(_game->_res->FIND, weaponStr));
-	}
-}
-
-} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima

@@ -22,6 +22,7 @@
 
 #include "ultima/ultima1/widgets/overworld_monster.h"
 #include "ultima/ultima1/widgets/hit.h"
+#include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/shared/maps/map_widget.h"
@@ -69,7 +70,7 @@ void OverworldMonster::attackParty() {
 	Point tempDiff;
 	int maxDistance = attackDistance();
 	Shared::Maps::MapTile mapTile;
-	Shared::Character *c = _game->_party._currentCharacter;
+	Shared::Character &c = *_game->_party;
 	uint threshold, damage;
 
 	// Print out the monster attacking
@@ -91,14 +92,14 @@ void OverworldMonster::attackParty() {
 	} while (++distance <= maxDistance && mapTile._tileId != 3 && (tempDiff.x != 0 || tempDiff.y != 0));
 
 	// Calculate damage threshold
-	threshold = (c->_stamina / 2) + (c->_equippedArmor * 8) + 56;
+	threshold = (c._stamina / 2) + (c._equippedArmor * 8) + 56;
 
 	if (tempDiff.x == 0 && tempDiff.y == 0 && _game->getRandomNumber(1, 255) > threshold) {
 		hit->_position = playerPos;
 		_game->playFX(2);
 
 		damage = _game->getRandomNumber(1, _attackStrength * 2 + 1);
-		game->_party._currentCharacter->_hitPoints -= damage;
+		c._hitPoints -= damage;
 
 		if (_name.size() > 8) {
 			addInfoMsg("");

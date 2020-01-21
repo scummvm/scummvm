@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima1/game.h"
+#include "ultima/ultima1/core/party.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/u1gfx/view_game.h"
@@ -42,6 +43,8 @@ EMPTY_MESSAGE_MAP(Ultima1Game, Shared::Game);
 Ultima1Game::Ultima1Game() : Shared::Game() {
 	_res = new GameResources();
 	_map = new Maps::Ultima1Map(this);
+	_party = new Party(this);
+
 	_textCursor = new U1Gfx::U1TextCursor(_textColor, _bgColor);
 	g_vm->_screen->setCursor(_textCursor);
 
@@ -70,6 +73,7 @@ Ultima1Game::~Ultima1Game() {
 
 	delete _map;
 	delete _gameView;
+	delete _party;
 }
 
 void Ultima1Game::synchronize(Common::Serializer &s) {
@@ -90,7 +94,7 @@ void Ultima1Game::starting(bool isLoading) {
 }
 
 void Ultima1Game::setup() {
-	Shared::Character &c = *_party._currentCharacter;
+	Shared::Character &c = *_party;
 
 	// Weapons setup
 	c._weapons.resize(16);
