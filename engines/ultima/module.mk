@@ -87,6 +87,7 @@ MODULE_OBJS += \
 	ultima1/widgets/person.o \
 	ultima1/widgets/princess.o \
 	ultima1/widgets/transport.o \
+	ultima1/widgets/urban_player.o \
 	ultima1/widgets/wench.o \
 	ultima1/game.o
 endif

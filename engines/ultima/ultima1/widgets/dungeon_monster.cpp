@@ -51,7 +51,7 @@ void DungeonMonster::draw(Shared::DungeonSurface &s, uint distance) {
 
 void DungeonMonster::update(bool isPreUpdate) {
 	assert(isPreUpdate);
-	Point playerPos = _map->_currentTransport->_position;
+	Point playerPos = _map->_playerWidget->_position;
 	Point delta = playerPos - _position;
 	int distance = ABS(delta.x) + ABS(delta.y);
 
@@ -67,7 +67,7 @@ void DungeonMonster::movement() {
 		// Dungeon monsters don't move if they're already in attack range
 		return;
 
-	Point playerPos = _map->_currentTransport->_position;
+	Point playerPos = _map->_playerWidget->_position;
 	Point delta = playerPos - _position;
 
 	if (delta.x != 0 && canMoveTo(Point(_position.x + SGN(delta.x), _position.y)))
@@ -103,7 +103,7 @@ bool DungeonMonster::canMoveTo(Shared::Map::MapBase *map, MapWidget *widget, con
 
 void DungeonMonster::attack() {
 	Ultima1Game *game = static_cast<Ultima1Game *>(_game);
-	Point playerPos = _map->_currentTransport->_position;
+	Point playerPos = _map->_playerWidget->_position;
 	//Point delta = playerPos - _position;
 	Shared::Character *c = _game->_party._currentCharacter;
 	uint threshold, damage;

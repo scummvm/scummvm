@@ -53,8 +53,8 @@ bool Move::MoveMsg(CMoveMsg &msg) {
 			break;
 		}
 	} else {
-		Widgets::Transport *transport = dynamic_cast<Widgets::Transport *>(map->getCurrentTransport());
-		assert(transport);
+		Shared::MapWidget *player = map->getPlayerWidget();
+		assert(player);
 
 		// Figure out the new position
 		Point delta;
@@ -73,14 +73,14 @@ bool Move::MoveMsg(CMoveMsg &msg) {
 			break;
 		}
 
-		// Check if the given transport type can move to the new position
+		// Check if the player's widget type can move to the new position
 		Point newPos = map->getDeltaPosition(delta);
-		if (transport->canMoveTo(newPos)) {
+		if (player->canMoveTo(newPos)) {
 			// Shift the viewport
 			map->shiftViewport(delta);
 
 			// Move to the new position
-			transport->moveTo(newPos);
+			player->moveTo(newPos);
 			addInfoMsg(getRes()->DIRECTION_NAMES[msg._direction - 1]);
 		} else {
 			// Nope, so show a blocked message
@@ -164,10 +164,10 @@ void Move::dungeonTurnAround() {
 void Move::dungeonMoveForward() {
 	Map::Ultima1Map *map = getMap();
 	Point delta = map->getDirectionDelta();
-	Shared::MapWidget *widget = map->getCurrentTransport();
-	assert(widget);
+	Shared::MapWidget *player = map->getPlayerWidget();
+	assert(player);
 
-	if (widget->canMoveTo(map->getPosition() + delta)) {
+	if (player->canMoveTo(map->getPosition() + delta)) {
 		map->setPosition(map->getPosition() + delta);
 	} else {
 		playFX(0);

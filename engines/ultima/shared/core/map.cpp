@@ -61,7 +61,7 @@ void Map::MapBase::synchronize(Common::Serializer &s) {
 		for (uint idx = 0; idx < _widgets.size(); ++idx) {
 			if (_widgets[idx]->getClassName())
 				++size;
-			if (_currentTransport == _widgets[idx].get())
+			if (_playerWidget == _widgets[idx].get())
 				transportIndex = (int)idx;
 		}
 		assert(transportIndex >= 0);
@@ -89,7 +89,7 @@ void Map::MapBase::synchronize(Common::Serializer &s) {
 		}
 
 		s.syncAsUint16LE(transportIndex);
-		_currentTransport = _widgets[transportIndex].get();
+		_playerWidget = _widgets[transportIndex].get();
 	}
 }
 
@@ -101,7 +101,7 @@ void Map::MapBase::setDimensions(const Point &size) {
 }
 
 Point Map::MapBase::getDirectionDelta() const {
-	switch (_currentTransport->_direction) {
+	switch (_playerWidget->_direction) {
 	case DIR_LEFT:
 		return Point(-1, 0);
 	case DIR_RIGHT:
@@ -114,7 +114,7 @@ Point Map::MapBase::getDirectionDelta() const {
 }
 
 Point Map::MapBase::getDeltaPosition(const Point &delta) {
-	return _currentTransport->_position + delta;
+	return _playerWidget->_position + delta;
 } 
 
 void Map::MapBase::resetViewport() {
@@ -127,8 +127,8 @@ Point Map::MapBase::getViewportPosition(const Point &viewportSize) {
 
 	if (!_viewportPos.isValid() || _viewportPos._size != viewportSize) {
 		// Calculate the new position
-		topLeft.x = _currentTransport->_position.x - (viewportSize.x - 1) / 2;
-		topLeft.y = _currentTransport->_position.y - (viewportSize.y - 1) / 2;
+		topLeft.x = _playerWidget->_position.x - (viewportSize.x - 1) / 2;
+		topLeft.y = _playerWidget->_position.y - (viewportSize.y - 1) / 2;
 
 		// Fixed maps, so constrain top left corner so the map fills the viewport.
 		// This will accomodate future renderings with more tiles, or greater tile size
@@ -189,19 +189,19 @@ void Map::MapBase::update() {
 }
 
 Point Map::MapBase::getPosition() const {
-	return _currentTransport->_position;
+	return _playerWidget->_position;
 }
 
 void Map::MapBase::setPosition(const Point &pt) {
-	_currentTransport->_position = pt;
+	_playerWidget->_position = pt;
 }
 
 Direction Map::MapBase::getDirection() const {
-	return _currentTransport->_direction;
+	return _playerWidget->_direction;
 }
 
 void Map::MapBase::setDirection(Shared::Direction dir) {
-	_currentTransport->_direction = dir;
+	_playerWidget->_direction = dir;
 }
 
 /*------------------------------------------------------------------------*/
