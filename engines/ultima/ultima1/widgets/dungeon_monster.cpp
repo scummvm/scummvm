@@ -89,12 +89,12 @@ void DungeonMonster::movement() {
 		return;
 
 	Point playerPos = _map->_playerWidget->_position;
-	Point delta = playerPos - _position;
+	Point diff = playerPos - _position;
 
-	if (delta.x != 0 && canMoveTo(Point(_position.x + SGN(delta.x), _position.y)))
-		_position.x += SGN(delta.x);
-	else if (delta.y != 0 && canMoveTo(Point(_position.x, _position.y + SGN(delta.y))))
-		_position.y += SGN(delta.y);
+	if (diff.x != 0 && canMoveTo(Point(_position.x + SGN(diff.x), _position.y)))
+		_position.x += SGN(diff.x);
+	else if (diff.y != 0 && canMoveTo(Point(_position.x, _position.y + SGN(diff.y))))
+		_position.y += SGN(diff.y);
 }
 
 Shared::Maps::MapWidget::CanMove DungeonMonster::canMoveTo(const Point &destPos) {
