@@ -126,6 +126,7 @@ public:
 	const char *MORE;
 	const char *READY_WEAPON_ARMOR_SPELL;
 	const char *WEAPON_ARMOR_SPELL[3];
+	const char *TRANSPORT_WEAPONS[2];
 
 	const char *GROCERY_NAMES[8];
 	const char *GROCERY_SELL;
