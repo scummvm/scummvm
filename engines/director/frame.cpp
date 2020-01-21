@@ -636,6 +636,12 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 					continue;
 				}
 
+				InkType ink;
+				if (i == _vm->getCurrentScore()->_currentMouseDownSpriteId)
+					ink = kInkTypeReverse;
+				else
+					ink = _sprites[i]->_ink;
+
 				BitmapCast *bc = (BitmapCast *)_sprites[i]->_cast;
 
 				int32 regX = bc->_regX;
@@ -649,7 +655,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				int width = _vm->getVersion() > 4 ? bc->_initialRect.width() : _sprites[i]->_width;
 				Common::Rect drawRect(x, y, x + width, y + height);
 				addDrawRect(i, drawRect);
-				inkBasedBlit(surface, *(bc->_surface), _sprites[i]->_ink, drawRect);
+				inkBasedBlit(surface, *(bc->_surface), ink, drawRect);
 			}
 		}
 	}
@@ -1039,7 +1045,7 @@ void Frame::drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::
 		for (int j = 0; j < srcRect.width(); j++) {
 			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0)) {
 				if (*src != skipColor) {
-					*dst = (*dst == *src ? (*src == 0 ? 0xff : 0) : *src);
+					*dst = 0xff - *src;
 				}
 			} else if (*src != skipColor) {
 				*dst = *src;
