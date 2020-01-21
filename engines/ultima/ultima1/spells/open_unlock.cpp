@@ -20,19 +20,37 @@
  *
  */
 
-#include "ultima/ultima1/spells/unlock.h"
+#include "ultima/ultima1/spells/open_unlock.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/maps/map_tile.h"
+#include "ultima/ultima1/widgets/dungeon_item.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
-Unlock::Unlock() : Spell(SPELL_UNLOCK) {
+void OpenUnlock::dungeonCast(Maps::MapDungeon *map) {
+	Maps::U1MapTile tile;
+	map->getTileAt(map->getPosition(), &tile);
+
+	Widgets::DungeonItem *item = dynamic_cast<Widgets::DungeonItem *>(tile._widget);
+	if (item) {
+		addInfoMsg(item->_name, false);
+		openItem(map, item);
+	} else {
+		Spell::dungeonCast(map);
+	}
 }
 
-void Unlock::dungeonCast(Maps::MapDungeon *map) {
-	// TODO
+void OpenUnlock::openItem(Maps::MapDungeon *map, Widgets::DungeonItem *item) {
+	// Say opened, and remove the coffin/chest
+	map->removeWidget(item);
+	addInfoMsg(Common::String::format(" %s", _game->_res->OPENED));
+	addInfoMsg(_game->_res->THOU_DOST_FIND, false);
+
+	uint coins = _game->getRandomNumber(3, map->getLevel() * map->getLevel() + 9);
+	_game->giveTreasure(coins, 0);
 }
 
 } // End of namespace Spells

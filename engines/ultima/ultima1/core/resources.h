@@ -95,6 +95,7 @@ public:
 	const char *FIND;
 	const char *A_SECRET_DOOR;
 	const char *GAIN_HIT_POINTS;
+	const char *OPENED;
 
 	const char *ACTION_NAMES[26];
 	const char *HUH;

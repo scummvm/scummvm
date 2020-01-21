@@ -593,6 +593,7 @@ const char *const SRC_YOU_ARE_IN_LANDS = "You are in the lands";
 const char *const SRC_FIND = "Thou dost find %s";
 const char *const SRC_A_SECRET_DOOR = "a secret door!";
 const char *const SRC_GAIN_HIT_POINTS = "Thou dost gain %u hit points";
+const char *const SRC_OPENED = "opened!";
 
 const char *const SRC_ACTION_NAMES[26] = {
 	"Attack with", nullptr, "Cast", "Drop", "Enter", "Fire", "Get", "HyperJump", "Inform and search",
@@ -723,6 +724,7 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	FIND = SRC_FIND;
 	A_SECRET_DOOR = SRC_A_SECRET_DOOR;
 	GAIN_HIT_POINTS = SRC_GAIN_HIT_POINTS;
+	OPENED = SRC_OPENED;
 
 	Common::copy(&SRC_ACTION_NAMES[0], &SRC_ACTION_NAMES[26], ACTION_NAMES);
 	HUH = SRC_HUH;
@@ -840,6 +842,7 @@ void GameResources::synchronize() {
 	syncString(FIND);
 	syncString(A_SECRET_DOOR);
 	syncString(GAIN_HIT_POINTS);
+	syncString(OPENED);
 
 	syncStrings(ACTION_NAMES, 26);
 	syncString(HUH);
