@@ -5621,12 +5621,8 @@ fi
 echo_n "Enabling Address Sanitizer... "
 
 if test "$_enable_asan" = yes ; then
-	if test "$have_clang" = yes ; then
-		append_var CXXFLAGS "-fsanitize=address -fno-omit-frame-pointer"
-		append_var LDFLAGS "-fsanitize=address -fno-omit-frame-pointer"
-	else
-		_enable_asan="disabled, clang-only"
-	fi
+	append_var CXXFLAGS "-fsanitize=address -fno-omit-frame-pointer"
+	append_var LDFLAGS "-fsanitize=address -fno-omit-frame-pointer"
 fi
 echo "$_enable_asan"
 
