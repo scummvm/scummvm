@@ -26,10 +26,35 @@
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/maps/map_tile.h"
 #include "ultima/ultima1/widgets/dungeon_monster.h"
+#include "ultima/shared/maps/map_widget.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
+
+BEGIN_MESSAGE_MAP(KillMagicMIssile, Spell)
+	ON_MESSAGE(CharacterInputMsg)
+END_MESSAGE_MAP()
+
+void KillMagicMIssile::cast(Maps::MapBase *map) {
+	// Prompt for a direction
+	addInfoMsg(": ", false);
+	Shared::CInfoGetKeypress keyMsg(this);
+	keyMsg.execute(_game);
+}
+
+bool KillMagicMIssile::CharacterInputMsg(CCharacterInputMsg &msg) {
+	Shared::Maps::Direction dir = Shared::Maps::MapWidget::directionFromKey(msg._keyState.keycode);
+
+	if (dir == Shared::Maps::DIR_NONE) {
+		addInfoMsg(_game->_res->NONE);
+	} else {
+		addInfoMsg(_game->_res->DIRECTION_NAMES[(int)dir - 1]);
+	}
+
+	_game->endOfTurn();
+	return true;
+}
 
 /*-------------------------------------------------------------------*/
 
@@ -46,6 +71,7 @@ void Kill::dungeonCast(Maps::MapDungeon *map) {
 	Widgets::DungeonMonster *monster = dynamic_cast<Widgets::DungeonMonster *>(tile._widget);
 	if (monster) {
 		monster->attackMonster(5, 101, Widgets::ITS_OVER_9000);
+		_game->endOfTurn();
 	} else {
 		// Failed
 		KillMagicMIssile::dungeonCast(map);

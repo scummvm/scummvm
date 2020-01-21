@@ -40,6 +40,7 @@ void LadderDown::dungeonCast(Maps::MapDungeon *map) {
 	if (map->getLevel() < 10 && !tile._isBeams && ((pt.x & 1) || (pt.y & 1))) {
 		map->setTileAt(pt, Maps::DTILE_LADDER_DOWN);
 		addInfoMsg(_game->_res->LADDER_CREATED);
+		_game->endOfTurn();
 	} else {
 		// Failed
 		Spell::dungeonCast(map);

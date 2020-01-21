@@ -23,6 +23,7 @@
 #ifndef ULTIMA_SHARED_MAPS_MAP_WIDGET_H
 #define ULTIMA_SHARED_MAPS_MAP_WIDGET_H
 
+#include "common/events.h"
 #include "common/ptr.h"
 #include "common/serializer.h"
 #include "common/str.h"
@@ -56,6 +57,11 @@ public:
 	Point _position;					// Position within the map
 	Direction _direction;				// Direction
 	Common::String _name;				// Name of widget
+public:
+	/**
+	 * Support method to get a direction from a keycode
+	 */
+	static Direction directionFromKey(Common::KeyCode keycode);
 public:
 	CLASSDEF;
 

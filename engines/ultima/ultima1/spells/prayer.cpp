@@ -67,6 +67,8 @@ void Prayer::cast(Maps::MapBase *map) {
 		addInfoMsg(_game->_res->NO_EFFECT);
 		_game->playFX(6);
 	}
+
+	_game->endOfTurn();
 }
 
 void Prayer::dungeonCast(Maps::MapDungeon *map) {

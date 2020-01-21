@@ -24,20 +24,32 @@
 #define ULTIMA_ULTIMA1_U1DIALOGS_KILL_MAGIC_MISSILE_H
 
 #include "ultima/ultima1/spells/spell.h"
+#include "ultima/shared/engine/messages.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Spells {
 
+using Shared::CCharacterInputMsg;
+
 /**
  * Common intermediate base class for both the Kill and Magic Missile spells
  */
 class KillMagicMIssile : public Spell {
+	DECLARE_MESSAGE_MAP;
+	bool CharacterInputMsg(CCharacterInputMsg &msg);
 public:
+	CLASSDEF;
+
 	/**
 	 * Constructor
 	 */
 	KillMagicMIssile(SpellId spellId) : Spell(spellId) {}
+
+	/**
+	 * Cast the spell outside a dungeon
+	 */
+	virtual void cast(Maps::MapBase *map) override;
 };
 
 /**

@@ -44,6 +44,7 @@ void Create::dungeonCast(Maps::MapDungeon *map) {
 		// Create beams on the tile in front of the player
 		map->setTileAt(newPos, Maps::DTILE_BEAMS);
 		addInfoMsg(_game->_res->FIELD_CREATED);
+		_game->endOfTurn();
 	} else {
 		// Failed
 		Spell::dungeonCast(map);

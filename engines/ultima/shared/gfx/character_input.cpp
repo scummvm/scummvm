@@ -34,7 +34,7 @@ BEGIN_MESSAGE_MAP(CharacterInput, Popup)
 END_MESSAGE_MAP()
 
 void CharacterInput::show(const Point &pt, byte color, TreeItem *respondTo) {
-	Popup::show(_respondTo);
+	Popup::show(respondTo);
 	_color = color;
 	_bounds = Rect(pt.x, pt.y, pt.x + 8, pt.y + 8);
 
@@ -43,16 +43,10 @@ void CharacterInput::show(const Point &pt, byte color, TreeItem *respondTo) {
 }
 
 bool CharacterInput::KeypressMsg(CKeypressMsg &msg) {
-	uint16 c = msg._keyState.ascii;
+	hide();
 
-	if (msg._keyState.keycode == Common::KEYCODE_ESCAPE) {
-		CTextInputMsg inputMsg("", true);
-		inputMsg.execute(_respondTo);
-	} else if (c >= ' ' && c <= 0x7f) {
-		// Printable character
-		CTextInputMsg inputMsg(Common::String(c), false);
-		inputMsg.execute(_respondTo);
-	}
+	CCharacterInputMsg inputMsg(msg._keyState);
+	inputMsg.execute(_respondTo);
 
 	return true;
 }

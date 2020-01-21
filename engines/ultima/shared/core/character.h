@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/str.h"
 #include "common/serializer.h"
+#include "ultima/shared/core/named_item.h"
 
 namespace Ultima {
 namespace Shared {
@@ -97,9 +98,7 @@ public:
 /**
  * Spell entry
  */
-class Spell : public Itemized {
-public:
-	Common::String _name;
+class Spell : public Itemized, public NamedItem {
 };
 
 template<class T>

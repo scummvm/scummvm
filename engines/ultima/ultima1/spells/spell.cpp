@@ -35,7 +35,7 @@ void Spell::setGame(Ultima1Game *game) {
 
 void Spell::addInfoMsg(const Common::String &text, bool newLine) {
 	Shared::CInfoMsg msg(text, newLine);
-	msg.execute(_game->getView());
+	msg.execute("Game");
 }
 
 void Spell::cast(Maps::MapBase *map) {
@@ -43,12 +43,14 @@ void Spell::cast(Maps::MapBase *map) {
 	addInfoMsg("");
 	addInfoMsg(_game->_res->DUNGEON_SPELL_ONLY);
 	_game->playFX(6);
+	_game->endOfTurn();
 }
 
 void Spell::dungeonCast(Maps::MapDungeon *map) {
 	// This is the fallback the spells call if it fails
 	addInfoMsg(_game->_res->FAILED);
 	_game->playFX(6);
+	_game->endOfTurn();
 }
 
 } // End of namespace Spells
