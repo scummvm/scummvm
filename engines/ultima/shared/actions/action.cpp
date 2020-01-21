@@ -22,7 +22,7 @@
 
 #include "ultima/shared/actions/action.h"
 #include "ultima/shared/early/game.h"
-#include "ultima/shared/core/map.h"
+#include "ultima/shared/maps/map.h"
 #include "ultima/shared/gfx/visual_item.h"
 #include "ultima/shared/engine/messages.h"
 
@@ -39,8 +39,8 @@ Game *Action::getGame() {
 	return static_cast<Game *>(TreeItem::getGame());
 }
 
-Map *Action::getMap() {
-	return static_cast<Map *>(getGame()->getMap());
+Maps::Map *Action::getMap() {
+	return static_cast<Maps::Map *>(getGame()->getMap());
 }
 
 void Action::addInfoMsg(const Common::String &text, bool newLine) {

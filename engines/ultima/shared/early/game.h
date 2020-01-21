@@ -33,6 +33,10 @@ class GameView;
 class GameState;
 class FontResources;
 
+namespace Maps {
+class Map;
+}
+
 /**
  * Party definition
  */
@@ -96,7 +100,7 @@ public:
 	/**
 	 * Pointer to the map manager for the game
 	 */
-	Map *_map;
+	Maps::Map *_map;
 
 	/**
 	 * The number of hit points to generate when a dungeon is left
@@ -144,7 +148,7 @@ public:
 	/**
 	 * Returns the map
 	 */
-	virtual Shared::Map *getMap() const override { return _map; }
+	virtual Maps::Map *getMap() const override { return _map; }
 
 	/**
 	 * Handles loading and saving games

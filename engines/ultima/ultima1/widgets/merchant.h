@@ -36,19 +36,19 @@ public:
 	/**
 	 * Constructor
 	 */
-	Merchant(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
+	Merchant(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
 		Person(game, map, 50, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
-	Merchant(Ultima1Game *game, Map::Ultima1Map::MapBase *map, uint tileNum, int hitPoints) :
+	Merchant(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) :
 		Person(game, map, tileNum, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
-	Merchant(Ultima1Game *game, Map::Ultima1Map::MapBase *map) : Person(game, map, 50) {}
+	Merchant(Ultima1Game *game, Maps::MapBase *map) : Person(game, map, 50) {}
 
 	/**
 	 * Destructor

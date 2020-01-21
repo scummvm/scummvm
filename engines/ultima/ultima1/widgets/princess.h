@@ -44,13 +44,13 @@ public:
 	/**
 	 * Constructor
 	 */
-	Princess(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
+	Princess(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
 		Wench(game, map, 22, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
-	Princess(Ultima1Game *game, Map::Ultima1Map::MapBase *map) : Wench(game, map, 22) {}
+	Princess(Ultima1Game *game, Maps::MapBase *map) : Wench(game, map, 22) {}
 
 	/**
 	 * Destructor

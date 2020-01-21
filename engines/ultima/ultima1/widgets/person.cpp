@@ -21,42 +21,19 @@
  */
 
 #include "ultima/ultima1/widgets/person.h"
-#include "ultima/ultima1/map/map_city_castle.h"
+#include "ultima/ultima1/maps/map_city_castle.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
 bool Person::areGuardsHostile() const {
-	Map::MapCityCastle *cityCastle = static_cast<Map::MapCityCastle *>(_map);
+	Maps::MapCityCastle *cityCastle = static_cast<Maps::MapCityCastle *>(_map);
 	return cityCastle->_guardsHostile;
 }
 
 int Person::getRandomDelta() const {
 	return _game->getRandomNumber(2) - 1;
-}
-
-Shared::MapWidget::CanMove Person::canMoveTo(const Point &destPos) {
-	Shared::MapWidget::CanMove result = Creature::canMoveTo(destPos);
-	if (result != UNSET)
-		return result;
-
-	// Get the details of the position
-	Map::U1MapTile destTile;
-	_map->getTileAt(destPos, &destTile);
-
-	return destTile._tileNum == Map::CTILE_1 || destTile._tileNum == Map::CTILE_51 ? YES : NO;
-}
-
-bool Person::moveBy(const Point &delta) {
-	// TODO: Movement allowed on tile 63.. is this the gate of the princess' cells?
-	Point newPos = _position + delta;
-	if (canMoveTo(newPos) == YES) {
-		_position = newPos;
-		return true;
-	} else {
-		return false;
-	}
 }
 
 } // End of namespace Widgets

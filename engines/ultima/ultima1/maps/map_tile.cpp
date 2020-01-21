@@ -20,53 +20,51 @@
  *
  */
 
-#include "ultima/ultima1/actions/climb.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/maps/map.h"
 #include "ultima/ultima1/maps/map_tile.h"
-#include "ultima/ultima1/maps/map_dungeon.h"
-#include "ultima/ultima1/core/resources.h"
+#include "ultima/ultima1/maps/map_overworld.h"
+#include "ultima/ultima1/maps/map_city_castle.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Actions {
+namespace Maps {
 
-BEGIN_MESSAGE_MAP(Climb, Action)
-	ON_MESSAGE(ClimbMsg)
-END_MESSAGE_MAP()
-
-bool Climb::ClimbMsg(CClimbMsg &msg) {
-	Maps::Ultima1Map *map = getMap();
-	Maps::U1MapTile mapTile;
-
-	map->getTileAt(map->getPosition(), &mapTile);
-	
-	if (mapTile._tileNum != Maps::DTILE_LADDER_UP && mapTile._tileNum != Maps::DTILE_LADDER_DOWN) {
-		playFX(1);
-	} else if (map->getDirection() == Shared::Maps::DIR_LEFT || map->getDirection() == Shared::Maps::DIR_RIGHT) {
-		playFX(1);
-	} else if (mapTile._tileNum == Maps::DTILE_LADDER_UP) {
-		ladderUp();
-	} else {
-		ladderDown();
-	}
-
-	return true;
+void U1MapTile::clear() {
+	_map = nullptr;
+	_locationNum = -1;
 }
 
-void Climb::ladderUp() {
-	Maps::Ultima1Map *map = getMap();
-
-	if (!map->changeLevel(-1)) {
-		map->load(Maps::MAPID_OVERWORLD);
-	}
+bool U1MapTile::isWater() const {
+	return dynamic_cast<MapOverworld *>(_map) && _tileId == 0;
 }
 
-void Climb::ladderDown() {
-	Maps::Ultima1Map *map = getMap();
-	map->changeLevel(1);
+bool U1MapTile::isGrass() const {
+	return dynamic_cast<MapOverworld *>(_map) && _tileId == 1;
 }
 
-} // End of namespace Actions
+bool U1MapTile::isWoods() const {
+	return dynamic_cast<MapOverworld *>(_map) && _tileId == 2;
+}
+
+bool U1MapTile::isOriginalWater() const {
+	return dynamic_cast<MapOverworld *>(_map) && _tileId == 0;
+}
+
+bool U1MapTile::isOriginalGrass() const {
+	return dynamic_cast<MapOverworld *>(_map) && _tileId == 1;
+}
+
+bool U1MapTile::isOriginalWoods() const {
+	return dynamic_cast<MapOverworld *>(_map) && _tileId == 2;
+}
+
+bool U1MapTile::isGround() const {
+	if (dynamic_cast<MapCityCastle *>(_map) && (_tileId == 1 || _tileId >= 51))
+		return true;
+	else if (dynamic_cast<MapOverworld *>(_map))
+		return _tileId != 0;
+	return false;
+}
+
+} // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima

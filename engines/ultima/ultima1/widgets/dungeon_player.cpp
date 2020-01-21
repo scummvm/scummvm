@@ -22,18 +22,18 @@
 
 #include "ultima/ultima1/widgets/dungeon_player.h"
 #include "ultima/ultima1/widgets/dungeon_widget.h"
-#include "ultima/ultima1/widgets/dungeon_monster.h"
 
 namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-Shared::MapWidget::CanMove DungeonPlayer::canMoveTo(const Point &destPos) {
-	Shared::MapWidget::CanMove result = MapWidget::canMoveTo(destPos);
-	if (result != UNSET)
+Shared::Maps::MapWidget::CanMove DungeonPlayer::canMoveTo(const Point &destPos) {
+	Shared::Maps::MapWidget::CanMove result = Shared::Maps::DungeonWidget::canMoveTo(destPos);
+	if (result != Shared::Maps::DungeonWidget::UNSET)
 		return result;
 
-	return DungeonMonster::canMoveTo(_map, this, destPos);
+	return Shared::Maps::DungeonWidget::UNSET;
+	//return Shared::Maps::DungeonWidget::canMoveTo(_map, this, destPos);
 }
 
 } // End of namespace Widgets

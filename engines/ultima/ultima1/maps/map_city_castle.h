@@ -23,11 +23,11 @@
 #ifndef ULTIMA_ULTIMA1_MAP_MAP_CITY_CASTLE_H
 #define ULTIMA_ULTIMA1_MAP_MAP_CITY_CASTLE_H
 
-#include "ultima/ultima1/map/map.h"
+#include "ultima/ultima1/maps/map_base.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Map {
+namespace Maps {
 
 enum CityTile {
 	CTILE_1 = 1, CTILE_51 = 51, CTILE_GATE = 11
@@ -36,7 +36,7 @@ enum CityTile {
 /**
  * Common base class for city and castle maps
  */
-class MapCityCastle : public Ultima1Map::MapBase {
+class MapCityCastle : public MapBase {
 protected:
 	/**
 	 * Load widget list for the map
@@ -53,7 +53,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	MapCityCastle(Ultima1Game *game, Ultima1Map *map) : Ultima1Map::MapBase(game, map), _guardsHostile(false) {}
+	MapCityCastle(Ultima1Game *game, Ultima1Map *map) : MapBase(game, map), _guardsHostile(false) {}
 
 	/**
 	 * Destructor
@@ -63,7 +63,7 @@ public:
 	/**
 	 * Load the map
 	 */
-	virtual void load(Shared::MapId mapId) override;
+	virtual void load(Shared::Maps::MapId mapId) override;
 
 	/**
 		* Clears all map data
@@ -94,7 +94,7 @@ public:
 	/**
 	 * Load the map
 	 */
-	virtual void load(Shared::MapId mapId) override;
+	virtual void load(Shared::Maps::MapId mapId) override;
 };
 
 /**
@@ -117,10 +117,10 @@ public:
 	/**
 	 * Load the map
 	 */
-	virtual void load(Shared::MapId mapId) override;
+	virtual void load(Shared::Maps::MapId mapId) override;
 };
 
-} // End of namespace Map
+} // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

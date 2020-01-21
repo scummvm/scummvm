@@ -20,56 +20,49 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_WIDGETS_GUARD_H
-#define ULTIMA_ULTIMA1_WIDGETS_GUARD_H
+#ifndef ULTIMA_SHARED_MAPS_DUNGEON_WIDGET_H
+#define ULTIMA_SHARED_MAPS_DUNGEON_WIDGET_H
 
-#include "ultima/ultima1/widgets/person.h"
+#include "ultima/shared/maps/map_widget.h"
+#include "ultima/shared/maps/map.h"
+#include "ultima/shared/gfx/dungeon_surface.h"
+#include "common/serializer.h"
+#include "common/str.h"
 
 namespace Ultima {
-namespace Ultima1 {
-namespace Widgets {
+namespace Shared {
 
-class Guard : public Person {
-private:
-	bool _moved;
-protected:
-	/**
-	 * Returns the attack distance for the guard
-	 */
-	virtual uint attackDistance() const override;
+class Game;
+class Map;
 
-	/**
-	 * Handles moving creatures
-	 */
-	virtual void movement() override;
+namespace Maps {
 
-	/**
-	 * Handles attacks
-	 */
-	virtual void attack();
+/**
+ * Base class for things that appear within the dungeons
+ */
+class DungeonWidget : public MapWidget {
 public:
-	DECLARE_WIDGET(Guard)
-
 	/**
 	 * Constructor
 	 */
-	Guard(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Person(game, map, 17, hitPoints), _moved(false) {}
-
-	/**
-	 * Constructor
-	 */
-	Guard(Ultima1Game *game, Maps::MapBase *map) :
-		Person(game, map, 17), _moved(false) {}
+	DungeonWidget(Game *game, Maps::MapBase *map) : MapWidget(game, map) {}
+	DungeonWidget(Game *game, Maps::MapBase *map, const Point &pt, Direction dir = DIR_NONE) : MapWidget(game, map, pt, dir) {}
+	DungeonWidget(Game *game, Maps::MapBase *map, const Common::String &name, const Point &pt, Direction dir = DIR_NONE) :
+		MapWidget(game, map, name, pt, dir) {}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~Guard() {}
+	virtual ~DungeonWidget() {}
+
+	/**
+	 * Draws an item
+	 */
+	virtual void draw(DungeonSurface &s, uint distance) = 0;
 };
 
-} // End of namespace Widgets
-} // End of namespace Ultima1
+} // End of namespace Maps
+} // End of namespace Shared
 } // End of namespace Ultima
 
 #endif

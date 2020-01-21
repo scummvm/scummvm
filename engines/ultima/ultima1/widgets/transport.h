@@ -23,16 +23,22 @@
 #ifndef ULTIMA_ULTIMA1_WIDGETS_TRANSPORT_H
 #define ULTIMA_ULTIMA1_WIDGETS_TRANSPORT_H
 
-#include "ultima/ultima1/map/map.h"
+#include "ultima/shared/maps/map.h"
+#include "ultima/shared/maps/map_widget.h"
+#include "ultima/shared/maps/map_base.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
 class Ultima1Game;
 
+namespace Maps {
+class MapBase;
+}
+
 namespace Widgets {
 
-class Transport : public Shared::MapWidget {
+class Transport : public Shared::Maps::MapWidget {
 protected:
 	/**
 	 * Gets the Ultima 1 game
@@ -42,12 +48,12 @@ protected:
 	/**
 	 * Gets the Ultima 1 map
 	 */
-	Map::Ultima1Map::MapBase *getMap() const;
+	Maps::MapBase *getMap() const;
 public:
 	/**
 	 * Constructor
 	 */
-	Transport(Shared::Game *game, Shared::Map::MapBase *map) : Shared::MapWidget(game, map) {}
+	Transport(Shared::Game *game, Shared::Maps::MapBase *map) : Shared::Maps::MapWidget(game, map) {}
 
 	/**
 	 * Destructor
@@ -62,7 +68,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	TransportOnFoot(Shared::Game *game, Shared::Map::MapBase *map) : Transport(game, map) {}
+	TransportOnFoot(Shared::Game *game, Shared::Maps::MapBase *map) : Transport(game, map) {}
 
 	/**
 	 * Destructor

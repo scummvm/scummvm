@@ -41,19 +41,19 @@ public:
 	/**
 	 * Constructor
 	 */
-	Wench(Ultima1Game *game, Map::Ultima1Map::MapBase *map, int hitPoints) :
+	Wench(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
 		Person(game, map, 50, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
-	Wench(Ultima1Game *game, Map::Ultima1Map::MapBase *map, uint tileNum, int hitPoints) :
+	Wench(Ultima1Game *game, Maps::MapBase *map, uint tileNum, int hitPoints) :
 		Person(game, map, tileNum, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
-	Wench(Ultima1Game *game, Map::Ultima1Map::MapBase *map) : Person(game, map, 50) {}
+	Wench(Ultima1Game *game, Maps::MapBase *map) : Person(game, map, 50) {}
 
 	/**
 	 * Destructor

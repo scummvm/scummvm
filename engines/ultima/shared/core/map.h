@@ -273,7 +273,7 @@ public:
 		/**
 		 * Set the current direction
 		 */
-		void setDirection(Shared::Direction dir);
+		void setDirection(Direction dir);
 
 		/**
 		 * Returns a delta for the cell in front of the player based on the direction they're facing
@@ -336,7 +336,7 @@ public:
 	/**
 	 * Instantiates a widget type by name
 	 */
-	virtual MapWidget *createWidget(Shared::Map::MapBase *map, const Common::String &name) = 0;
+	virtual MapWidget *createWidget(Map::MapBase *map, const Common::String &name) = 0;
 
 	/**
 	 * Gets a tile at a given position
@@ -389,7 +389,7 @@ public:
 	/**
 	 * Get the current direction
 	 */
-	Shared::Direction getDirection() const {
+	Direction getDirection() const {
 		assert(_mapArea);
 		return _mapArea->getDirection();
 	}
@@ -397,7 +397,7 @@ public:
 	/**
 	 * Set the current direction
 	 */
-	void setDirection(Shared::Direction dir) {
+	void setDirection(Direction dir) {
 		assert(_mapArea);
 		_mapArea->setDirection(dir);
 	}

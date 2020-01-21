@@ -49,7 +49,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	UrbanPlayer(Ultima1Game *game, Map::Ultima1Map::MapBase *map) : Person(game, map, 18) {}
+	UrbanPlayer(Ultima1Game *game, Maps::MapBase *map) : Person(game, map, 18) {}
 
 	/**
 	 * Moves to a given position
@@ -57,7 +57,7 @@ public:
 	 * @param dir			Optional explicit direction to set. If not specified,
 	 *		the direction will be set relative to the position moved from
 	 */
-	virtual void moveTo(const Point &destPos, Shared::Direction dir = Shared::DIR_NONE) override;
+	virtual void moveTo(const Point &destPos, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) override;
 };
 
 } // End of namespace Widgets

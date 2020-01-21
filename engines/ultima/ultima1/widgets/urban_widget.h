@@ -20,53 +20,54 @@
  *
  */
 
-#include "ultima/ultima1/actions/climb.h"
-#include "ultima/ultima1/game.h"
+#ifndef ULTIMA_ULTIMA1_WIDGETS_URBAN_WIDGET_H
+#define ULTIMA_ULTIMA1_WIDGETS_URBAN_WIDGET_H
+
+#include "ultima/shared/maps/map_widget.h"
 #include "ultima/ultima1/maps/map.h"
-#include "ultima/ultima1/maps/map_tile.h"
-#include "ultima/ultima1/maps/map_dungeon.h"
-#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Actions {
+namespace Widgets {
 
-BEGIN_MESSAGE_MAP(Climb, Action)
-	ON_MESSAGE(ClimbMsg)
-END_MESSAGE_MAP()
+/**
+ * Base class for widgets in urban maps 
+ */
+class UrbanWidget : public Shared::Maps::MapWidget {
+private:
+	uint _tileNum;
+protected:
+	/**
+	 * Moves by a given delta if the destination is available
+	 * @param delta		Delta to move character by
+	 * @returns			True if the move was able to be done
+	 */
+	bool moveBy(const Point &delta);
+public:
+	/**
+	 * Constructor
+	 */
+	UrbanWidget(Shared::Game *game, Shared::Maps::MapBase *map, uint tileNum) :
+		Shared::Maps::MapWidget(game, map), _tileNum(tileNum) {}
 
-bool Climb::ClimbMsg(CClimbMsg &msg) {
-	Maps::Ultima1Map *map = getMap();
-	Maps::U1MapTile mapTile;
+	/**
+	 * Destructor
+	 */
+	virtual ~UrbanWidget() {}
 
-	map->getTileAt(map->getPosition(), &mapTile);
-	
-	if (mapTile._tileNum != Maps::DTILE_LADDER_UP && mapTile._tileNum != Maps::DTILE_LADDER_DOWN) {
-		playFX(1);
-	} else if (map->getDirection() == Shared::Maps::DIR_LEFT || map->getDirection() == Shared::Maps::DIR_RIGHT) {
-		playFX(1);
-	} else if (mapTile._tileNum == Maps::DTILE_LADDER_UP) {
-		ladderUp();
-	} else {
-		ladderDown();
-	}
+	/**
+	 * Get the tile number for the person
+	 */
+	virtual uint getTileNum() const override { return _tileNum; }
 
-	return true;
-}
+	/**
+	 * Returns true if the given widget can move to a given position on the map
+	 */
+	virtual CanMove canMoveTo(const Point &destPos);
+};
 
-void Climb::ladderUp() {
-	Maps::Ultima1Map *map = getMap();
-
-	if (!map->changeLevel(-1)) {
-		map->load(Maps::MAPID_OVERWORLD);
-	}
-}
-
-void Climb::ladderDown() {
-	Maps::Ultima1Map *map = getMap();
-	map->changeLevel(1);
-}
-
-} // End of namespace Actions
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
+
+#endif

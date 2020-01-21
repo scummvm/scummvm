@@ -20,55 +20,44 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_WIDGETS_GUARD_H
-#define ULTIMA_ULTIMA1_WIDGETS_GUARD_H
+#ifndef ULTIMA_ULTIMA1_MAPS_MAP_BASE_H
+#define ULTIMA_ULTIMA1_MAPS_MAP_BASE_H
 
-#include "ultima/ultima1/widgets/person.h"
+#include "ultima/shared/maps/map_base.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Widgets {
 
-class Guard : public Person {
-private:
-	bool _moved;
+class Ultima1Game;
+
+namespace Maps {
+
+class Ultima1Map;
+
+/**
+ * Intermediate base class for Ultima 1 maps
+ */
+class MapBase : public Shared::Maps::MapBase {
 protected:
-	/**
-	 * Returns the attack distance for the guard
-	 */
-	virtual uint attackDistance() const override;
-
-	/**
-	 * Handles moving creatures
-	 */
-	virtual void movement() override;
-
-	/**
-	 * Handles attacks
-	 */
-	virtual void attack();
+	Ultima1Game *_game;
 public:
-	DECLARE_WIDGET(Guard)
-
 	/**
 	 * Constructor
 	 */
-	Guard(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Person(game, map, 17, hitPoints), _moved(false) {}
-
-	/**
-	 * Constructor
-	 */
-	Guard(Ultima1Game *game, Maps::MapBase *map) :
-		Person(game, map, 17), _moved(false) {}
-
+	MapBase(Ultima1Game *game, Ultima1Map *map);
+		
 	/**
 	 * Destructor
 	 */
-	virtual ~Guard() {}
+	virtual ~MapBase() {}
+
+	/**
+	 * Gets a tile at a given position
+	 */
+	virtual void getTileAt(const Point &pt, Shared::Maps::MapTile *tile) override;
 };
 
-} // End of namespace Widgets
+} // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima
 

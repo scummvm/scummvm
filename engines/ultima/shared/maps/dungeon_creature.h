@@ -20,53 +20,48 @@
  *
  */
 
-#ifndef ULTIMA_ULTIMA1_MAP_MAP_OVERWORLD_H
-#define ULTIMA_ULTIMA1_MAP_MAP_OVERWORLD_H
+#ifndef ULTIMA_SHARED_MAPS_DUNGEON_CREATURE_H
+#define ULTIMA_SHARED_MAPS_DUNGEON_CREATURE_H
 
-#include "ultima/ultima1/map/map.h"
+#include "ultima/shared/maps/creature.h"
 
 namespace Ultima {
-namespace Ultima1 {
-namespace Map {
+namespace Shared {
 
-class MapOverworld : public Ultima1Map::MapBase {
-private:
-	/**
-	 * Load widget list for the map
-	 */
-	void loadWidgets();
+class Game;
+class Map;
+
+namespace Maps {
+
+/**
+ * Stub class for dungeon creatures
+ */
+class DungeonCreature : public Creature {
 public:
-	MapOverworld(Ultima1Game *game, Ultima1Map *map) : Ultima1Map::MapBase(game, map) {}
-	virtual ~MapOverworld() {}
+	/**
+	 * Constructor
+	 */
+	DungeonCreature(Game *game, MapBase *map) : Creature(game, map) {}
+	DungeonCreature(Game *game, MapBase *map, int hitPoints) : Creature(game, map, hitPoints) {}
 
 	/**
-	 * Load the map
+	 * Destructor
 	 */
-	virtual void load(Shared::MapId mapId);
+	virtual ~DungeonCreature() {}
 
 	/**
-	 * Returns whether the map wraps around to the other side at it's edges (i.e. the overworld)
+	 * Returns true if a monster blocks the background behind him
 	 */
-	virtual bool isMapWrapped() const override { return true; }
+	virtual bool isBlockingView() const = 0;
 
 	/**
-	 * Shifts the viewport by a given delta
+	 * Draw a monster
 	 */
-	virtual void shiftViewport(const Point &delta) override;
-
-	/**
-	 * Get the viewport position
-	 */
-	virtual Point getViewportPosition(const Point &viewportSize) override;
-
-	/**
-	 * Gets a point relative to the current position
-	 */
-	virtual Point getDeltaPosition(const Point &delta) override;
+	virtual void draw(DungeonSurface &s, uint distance) = 0;
 };
 
-} // End of namespace Map
-} // End of namespace Ultima1
+} // End of namespace Maps
+} // End of namespace Shared
 } // End of namespace Ultima
 
 #endif

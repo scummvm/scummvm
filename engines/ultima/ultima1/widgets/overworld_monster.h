@@ -23,7 +23,9 @@
 #ifndef ULTIMA_ULTIMA1_WIDGETS_OVERWORLD_MONSTER_H
 #define ULTIMA_ULTIMA1_WIDGETS_OVERWORLD_MONSTER_H
 
-#include "ultima/shared/core/widgets.h"
+#include "ultima/shared/maps/map.h"
+#include "ultima/shared/maps/map_widget.h"
+#include "ultima/shared/maps/creature.h"
 
 namespace Ultima {
 namespace Ultima1 {
@@ -37,7 +39,7 @@ enum OverworldMonsterId {
 /**
  * Implements monsters on the overworld
  */
-class OverworldMonster : public Shared::Creature {
+class OverworldMonster : public Shared::Maps::MapWidget, public Shared::Maps::Creature {
 private:
 	uint _tileNum;
 	OverworldMonsterId _monsterId;
@@ -62,21 +64,21 @@ public:
 	/**
 	 * Returns true if the given widget can move to a given position on the map
 	 */
-	static bool canMoveTo(Shared::Map::MapBase *map, MapWidget *widget, const Point &destPos);
+	static bool canMoveTo(Shared::Maps::MapBase *map, Shared::Maps::MapWidget *widget, const Point &destPos);
 public:
 	DECLARE_WIDGET(OverworldMonster)
 
 	/**
 	 * Constructor
 	 */
-	OverworldMonster(Shared::Game *game, Shared::Map::MapBase *map, uint tileNum, int hitPoints,
-		const Point &pt, Shared::Direction dir = Shared::DIR_NONE);
+	OverworldMonster(Shared::Game *game, Shared::Maps::MapBase *map, uint tileNum, int hitPoints,
+		const Point &pt, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE);
 
 	/**
 	 * Constructor
 	 */
-	OverworldMonster(Shared::Game *game, Shared::Map::MapBase *map) : Shared::Creature(game, map),
-		_tileNum(0), _monsterId(NESS_CREATURE), _attackStrength(0) {}
+	OverworldMonster(Shared::Game *game, Shared::Maps::MapBase *map) : Shared::Maps::MapWidget(game, map),
+		Shared::Maps::Creature(game, map), _tileNum(0), _monsterId(NESS_CREATURE), _attackStrength(0) {}
 
 	/**
 	 * Destructor

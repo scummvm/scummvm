@@ -29,8 +29,8 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Widgets {
 
-DungeonWidget::DungeonWidget(Shared::Game *game, Shared::Map::MapBase *map, const Point &pt,
-		DungeonItemId itemId) : Shared::DungeonWidget(game, map, pt), _itemId(itemId) {
+DungeonWidget::DungeonWidget(Shared::Game *game, Shared::Maps::MapBase *map, const Point &pt,
+		DungeonItemId itemId) : Shared::Maps::DungeonWidget(game, map, pt), _itemId(itemId) {
 	_widgetId = (_itemId == DITEM_CHEST) ? MONSTER_MIMIC : UITEM_COFFIN;
 	
 	GameResources &res = *static_cast<Ultima1Game *>(game)->_res;

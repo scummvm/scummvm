@@ -32,6 +32,10 @@ namespace Gfx {
 class VisualItem;
 } // End of namespace Gfx
 
+namespace Maps {
+class Map;
+} // End of namespace Maps
+
 class Game;
 class GameManager;
 class GameState;
@@ -105,7 +109,7 @@ public:
 	/**
 	 * Jumps up through the parents to find the root game
 	 */
-	const Shared::Game *getGame() const;
+	const Game *getGame() const;
 
 	/**
 	 * Returns the currently active game view

@@ -20,7 +20,7 @@
  *
  */
 
-#include "ultima/ultima1/map/map_city_castle.h"
+#include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/core/resources.h"
 #include "ultima/ultima1/game.h"
 #include "ultima/ultima1/widgets/urban_player.h"
@@ -33,18 +33,18 @@
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Map {
+namespace Maps {
 
-void MapCityCastle::load(Shared::MapId mapId) {
+void MapCityCastle::load(Shared::Maps::MapId mapId) {
 	clear();
-	Shared::Map::MapBase::load(mapId);
+	Shared::Maps::MapBase::load(mapId);
 
 	setDimensions(Point(38, 18));
 	_tilesPerOrigTile = Point(1, 1);
 }
 
 void MapCityCastle::clear() {
-	Shared::Map::MapBase::clear();
+	Shared::Maps::MapBase::clear();
 	_guardsHostile = false;
 }
 
@@ -119,7 +119,7 @@ void MapCityCastle::loadTownCastleData() {
 
 /*-------------------------------------------------------------------*/
 
-void MapCity::load(Shared::MapId mapId) {
+void MapCity::load(Shared::Maps::MapId mapId) {
 	MapCityCastle::load(mapId);
 
 	_mapStyle = (_mapId % 8) + 2;
@@ -135,7 +135,7 @@ void MapCity::load(Shared::MapId mapId) {
 
 /*-------------------------------------------------------------------*/
 
-void MapCastle::load(Shared::MapId mapId) {
+void MapCastle::load(Shared::Maps::MapId mapId) {
 	MapCityCastle::load(mapId);
 
 	_mapIndex = _mapId - 33;
@@ -154,6 +154,6 @@ void MapCastle::load(Shared::MapId mapId) {
 	setPosition(Common::Point(0, height() / 2));		// Start at center left edge of map
 }
 
-} // End of namespace Map
+} // End of namespace Maps
 } // End of namespace Ultima1
 } // End of namespace Ultima

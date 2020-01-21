@@ -30,7 +30,7 @@ namespace Ultima1 {
 
 class Ultima1Game;
 class GameResources;
-namespace Map {
+namespace Maps {
 	class Ultima1Map;
 }
 
@@ -56,7 +56,7 @@ public:
 	/**
 	 * Return the game's map
 	 */
-	Map::Ultima1Map *getMap();
+	Maps::Ultima1Map *getMap();
 
 	/**
 	 * Gets the data resources for the game

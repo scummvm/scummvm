@@ -20,53 +20,37 @@
  *
  */
 
-#include "ultima/ultima1/actions/climb.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/maps/map.h"
+#include "ultima/ultima1/widgets/urban_widget.h"
+#include "ultima/ultima1/maps/map_city_castle.h"
 #include "ultima/ultima1/maps/map_tile.h"
-#include "ultima/ultima1/maps/map_dungeon.h"
-#include "ultima/ultima1/core/resources.h"
 
 namespace Ultima {
 namespace Ultima1 {
-namespace Actions {
+namespace Widgets {
 
-BEGIN_MESSAGE_MAP(Climb, Action)
-	ON_MESSAGE(ClimbMsg)
-END_MESSAGE_MAP()
+Shared::Maps::MapWidget::CanMove UrbanWidget::canMoveTo(const Point &destPos) {
+	Shared::Maps::MapWidget::CanMove result = Shared::Maps::MapWidget::canMoveTo(destPos);
+	if (result != UNSET)
+		return result;
 
-bool Climb::ClimbMsg(CClimbMsg &msg) {
-	Maps::Ultima1Map *map = getMap();
-	Maps::U1MapTile mapTile;
+	// Get the details of the position
+	Maps::U1MapTile destTile;
+	_map->getTileAt(destPos, &destTile);
 
-	map->getTileAt(map->getPosition(), &mapTile);
-	
-	if (mapTile._tileNum != Maps::DTILE_LADDER_UP && mapTile._tileNum != Maps::DTILE_LADDER_DOWN) {
-		playFX(1);
-	} else if (map->getDirection() == Shared::Maps::DIR_LEFT || map->getDirection() == Shared::Maps::DIR_RIGHT) {
-		playFX(1);
-	} else if (mapTile._tileNum == Maps::DTILE_LADDER_UP) {
-		ladderUp();
+	return destTile._tileNum == Maps::CTILE_1 || destTile._tileNum == Maps::CTILE_51 ? YES : NO;
+}
+
+bool UrbanWidget::moveBy(const Point &delta) {
+	// TODO: Movement allowed on tile 63.. is this the gate of the princess' cells?
+	Point newPos = _position + delta;
+	if (canMoveTo(newPos) == YES) {
+		_position = newPos;
+		return true;
 	} else {
-		ladderDown();
-	}
-
-	return true;
-}
-
-void Climb::ladderUp() {
-	Maps::Ultima1Map *map = getMap();
-
-	if (!map->changeLevel(-1)) {
-		map->load(Maps::MAPID_OVERWORLD);
+		return false;
 	}
 }
 
-void Climb::ladderDown() {
-	Maps::Ultima1Map *map = getMap();
-	map->changeLevel(1);
-}
-
-} // End of namespace Actions
+} // End of namespace Widgets
 } // End of namespace Ultima1
 } // End of namespace Ultima
