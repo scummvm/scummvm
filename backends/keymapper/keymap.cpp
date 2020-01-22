@@ -29,6 +29,7 @@
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/hardware-input.h"
+#include "backends/keymapper/keymapper-defaults.h"
 
 #define KEYMAP_KEY_PREFIX "keymap_"
 
@@ -39,7 +40,8 @@ Keymap::Keymap(KeymapType type, const String &name) :
 		_name(name),
 		_configDomain(nullptr),
 		_enabled(true),
-		_hardwareInputSet(nullptr) {
+		_hardwareInputSet(nullptr),
+		_backendDefaultBindings(nullptr) {
 
 }
 
@@ -123,12 +125,33 @@ void Keymap::setHardwareInputs(HardwareInputSet *hardwareInputSet) {
 	_hardwareInputSet = hardwareInputSet;
 }
 
+void Keymap::setBackendDefaultBindings(const Common::KeymapperDefaultBindings *backendDefaultBindings) {
+	_backendDefaultBindings = backendDefaultBindings;
+}
+
+void Keymap::registerBackendDefaultMappings() {
+	assert(_backendDefaultBindings);
+
+	for (ActionArray::const_iterator it = _actions.begin(); it != _actions.end(); ++it) {
+		Action *action = *it;
+		Common::String defaultHwId = _backendDefaultBindings->getDefaultBinding(_name, action->id);
+
+		if (!defaultHwId.empty()) {
+			action->addDefaultInputMapping(defaultHwId);
+		}
+	}
+}
+
 void Keymap::loadMappings() {
 	assert(_configDomain);
 	assert(_hardwareInputSet);
 
 	if (_actions.empty()) {
 		return;
+	}
+
+	if (_backendDefaultBindings) {
+		registerBackendDefaultMappings();
 	}
 
 	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
