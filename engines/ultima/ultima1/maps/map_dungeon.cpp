@@ -332,7 +332,7 @@ void MapDungeon::attack(int direction, int effectId) {
 }
 
 void MapDungeon::attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) {
-	const Character &c = *static_cast<Party *>(_game->_party);
+	//const Character &c = *static_cast<Party *>(_game->_party);
 	Widgets::DungeonMonster *monster = findCreatureInCurrentDirection(maxDistance);
 	_game->playFX(effectId);
 

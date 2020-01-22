@@ -53,8 +53,8 @@ bool KillMagicMIssile::CharacterInputMsg(CCharacterInputMsg &msg) {
 	} else {
 		addInfoMsg(_game->_res->DIRECTION_NAMES[(int)dir - 1]);
 		addInfoMsg(_game->_res->SPELL_PHRASES[_spellId == SPELL_MAGIC_MISSILE ? 12 : 13], false);
-		uint damage = _spellId == SPELL_MAGIC_MISSILE ?
-			c.equippedWeapon()->getMagicDamage() : 9999;
+		//uint damage = _spellId == SPELL_MAGIC_MISSILE ?
+		//	c.equippedWeapon()->getMagicDamage() : 9999;
 
 		if (c._class == CLASS_CLERIC || _game->getRandomNumber(1, 100) < c._wisdom) {
 			_game->playFX(5);

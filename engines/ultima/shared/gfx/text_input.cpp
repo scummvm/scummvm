@@ -62,7 +62,7 @@ void TextInput::draw() {
 
 bool TextInput::KeypressMsg(CKeypressMsg &msg) {
 	uint16 c = msg._keyState.ascii;
-	TreeItem *respondTo = _respondTo;
+	//TreeItem *respondTo = _respondTo;
 
 	if (c >= ' ' && c <= 0x7f) {
 		// Printable character
