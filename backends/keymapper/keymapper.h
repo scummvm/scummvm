@@ -41,6 +41,7 @@ const char *const kGlobalKeymapName = "global";
 class Action;
 class HardwareInput;
 class HardwareInputSet;
+class KeymapperDefaultBindings;
 
 class Keymapper : public Common::DefaultEventMapper {
 public:
@@ -56,6 +57,11 @@ public:
 	 * @note should only be called once (during backend initialisation)
 	 */
 	void registerHardwareInputSet(HardwareInputSet *inputs);
+
+	/**
+	 * Registers platform-specific default mappings for keymap actions
+	 */
+	void registerBackendDefaultBindings(const KeymapperDefaultBindings *backendDefaultBindings);
 
 	/**
 	 * Add a keymap to the global domain.
@@ -122,6 +128,7 @@ private:
 	void initKeymap(Keymap *keymap, ConfigManager::Domain *domain);
 
 	HardwareInputSet *_hardwareInputs;
+	const KeymapperDefaultBindings *_backendDefaultBindings;
 
 	Event executeAction(const Action *act, IncomingEventType incomingType);
 	EventType convertDownToUp(EventType eventType);

@@ -355,10 +355,12 @@ static void setupKeymapper(OSystem &system) {
 
 	Keymapper *mapper = system.getEventManager()->getKeymapper();
 
+	// Query the backend for hardware keys and default bindings and register them
 	HardwareInputSet *inputSet = system.getHardwareInputSet();
+	const Common::KeymapperDefaultBindings *backendDefaultBindings = system.getKeymapperDefaultBindings();
 
-	// Query backend for hardware keys and register them
 	mapper->registerHardwareInputSet(inputSet);
+	mapper->registerBackendDefaultBindings(backendDefaultBindings);
 
 	// Now create the global keymap
 	Keymap *primaryGlobalKeymap = new Keymap(Keymap::kKeymapTypeGlobal, kGlobalKeymapName);

@@ -38,6 +38,7 @@ namespace Common {
 class Action;
 class HardwareInput;
 class HardwareInputSet;
+class KeymapperDefaultBindings;
 
 class Keymap {
 public:
@@ -53,6 +54,7 @@ public:
 	~Keymap();
 	void setConfigDomain(ConfigManager::Domain *configDomain);
 	void setHardwareInputs(HardwareInputSet *hardwareInputSet);
+	void setBackendDefaultBindings(const KeymapperDefaultBindings *backendDefaultBindings);
 
 	/**
 	* Registers a HardwareInput to the given Action
@@ -141,7 +143,9 @@ private:
 
 	ConfigManager::Domain *_configDomain;
 	HardwareInputSet *_hardwareInputSet;
+	const KeymapperDefaultBindings *_backendDefaultBindings;
 
+	void registerBackendDefaultMappings();
 };
 
 
