@@ -879,47 +879,51 @@ void MohawkEngine_Riven::initKeymap() {
 	Common::Keymapper *const mapper = _eventMan->getKeymapper();
 
 	// Do not try to recreate same keymap over again
-	if (mapper->getKeymap(kKeymapName) != 0)
+	if (mapper->getKeymap(kKeymapName))
 		return;
 
 	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
 
 	const Common::KeyActionEntry keyActionEntries[] = {
-		{ Common::KEYCODE_UP, "UP", _("Move Forward") },
-		{ Common::KEYCODE_DOWN, "DWN", _("Move Back") },
-		{ Common::KEYCODE_LEFT, "TL", _("Turn Left") },
-		{ Common::KEYCODE_RIGHT, "TR", _("Turn Right") },
-		{ Common::KEYCODE_PAGEUP, "LKUP", _("Look Up") },
-		{ Common::KEYCODE_PAGEDOWN, "LKDN", _("Look Down") },
-		{ Common::KEYCODE_F5, "OPTS", _("Show/Hide Options Menu") },
-		{ Common::KEYCODE_SPACE, "PAUS", _("Pause") },
-		{ Common::KeyState(Common::KEYCODE_o, 'o', Common::KBD_CTRL), "LOAD", _("Load Game State") },
-		{ Common::KeyState(Common::KEYCODE_s, 's', Common::KBD_CTRL), "SAVE", _("Save Game State") }
+		{ "UP",   Common::KEYCODE_UP,                                         "UP",       _("Move Forward")           },
+		{ "DWN",  Common::KEYCODE_DOWN,                                       "DOWN",     _("Move Back")              },
+		{ "TL",   Common::KEYCODE_LEFT,                                       "LEFT",     _("Turn Left")              },
+		{ "TR",   Common::KEYCODE_RIGHT,                                      "RIGHT",    _("Turn Right")             },
+		{ "LKUP", Common::KEYCODE_PAGEUP,                                     "PAGEUP",   _("Look Up")                },
+		{ "LKDN", Common::KEYCODE_PAGEDOWN,                                   "PAGEDOWN", _("Look Down")              },
+		{ "OPTS", Common::KEYCODE_F5,                                         "F5",       _("Show/Hide Options Menu") },
+		{ "PAUS", Common::KEYCODE_SPACE,                                      "SPACE",    _("Pause")                  },
+		{ "LOAD", Common::KeyState(Common::KEYCODE_o, 'o', Common::KBD_CTRL), "C+o",      _("Load Game State")        },
+		{ "SAVE", Common::KeyState(Common::KEYCODE_s, 's', Common::KBD_CTRL), "C+s",      _("Save Game State")        }
 	};
 
 	const Common::KeyActionEntry keyActionEntriesDemo[] = {
-		{ Common::KeyState(Common::KEYCODE_r, 'r', Common::KBD_CTRL), "RMM", _("Return To Main Menu") },
-		{ Common::KeyState(Common::KEYCODE_p, 'p', Common::KBD_CTRL), "INTV", _("Play Intro Videos") }
+		{ "RMM",  Common::KeyState(Common::KEYCODE_r, 'r', Common::KBD_CTRL), "C+r",      _("Return To Main Menu")    },
+		{ "INTV", Common::KeyState(Common::KEYCODE_p, 'p', Common::KBD_CTRL), "C+p",      _("Play Intro Videos")      }
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
 		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
 		act->setKeyEvent(keyActionEntries[i].ks);
+		act->addDefaultInputMapping(keyActionEntries[i].defaultHwId);
 	}
 
 	if (getFeatures() & GF_DEMO) {
 		for (uint i = 0; i < ARRAYSIZE(keyActionEntriesDemo); i++) {
 			Common::Action* const act = new Common::Action(engineKeyMap, keyActionEntriesDemo[i].id, keyActionEntriesDemo[i].description);
 			act->setKeyEvent(keyActionEntriesDemo[i].ks);
+			act->addDefaultInputMapping(keyActionEntriesDemo[i].defaultHwId);
 		}
 	}
 
 	if (getFeatures() & GF_25TH) {
 		Common::Action* const act = new Common::Action(engineKeyMap, "SMNU", _("Skip / Open main menu"));
 		act->setKeyEvent(Common::KEYCODE_ESCAPE);
+		act->addDefaultInputMapping("ESCAPE");
 	} else {
 		Common::Action* const act = new Common::Action(engineKeyMap, "SKIP", _("Skip"));
 		act->setKeyEvent(Common::KEYCODE_ESCAPE);
+		act->addDefaultInputMapping("ESCAPE");
 	}
 
 	mapper->addGameKeymap(engineKeyMap);
