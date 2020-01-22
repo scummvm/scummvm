@@ -1420,12 +1420,13 @@ void KyraEngine_HoF::snd_playVoiceFile(int id) {
 	sprintf(vocFile, "%07d", id);
 	if (_sound->isVoicePresent(vocFile)) {
 		// Unlike the original I have added a timeout here. I have chosen a size that makes sure that it
-		// won't get triggered in any of the bug #11309 situations, but still avoids infinite hangups if
-		// something goes wrong.
-		uint32 end = _system->getMillis() + 2500;
-		while (snd_voiceIsPlaying() && _system->getMillis() < end && !skipFlag())
+		// won't get triggered in any of the bug #11309 or bug #3721 situations, but still avoids infinite
+		// hangups if something goes wrong.
+		uint32 timeout = _system->getMillis() + 5000;
+		while (_sound->voiceIsPlaying() && _system->getMillis() < timeout && !skipFlag())
 			delay(10);
-		if (_system->getMillis() >= end && !skipFlag())
+		_chatEndTime += (_system->getMillis() + 5000 - timeout);
+		if (_system->getMillis() >= timeout && !skipFlag())
 			debugC(3, kDebugLevelSound, "KyraEngine_HoF::snd_playVoiceFile(): Speech finish wait timeout");
 
 		snd_stopVoice();
