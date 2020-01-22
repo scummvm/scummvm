@@ -248,6 +248,7 @@ TheEntityField fields[] = {
 	{ kTheMenuItem, "enabled",		kTheEnabled,	3 },//		D3 p
 	{ kTheMenuItem, "name",			kTheName,		3 },//		D3 p
 	{ kTheMenuItem, "script",		kTheScript,		3 },//		D3 p
+	{ kTheMenuItems,"number",		kTheNumber,		3 },//		D3 p 			// number of menuitems of menu <xx>
 
 	{ kTheMenu,		"name",			kTheName,		3 },//		D3 p
 

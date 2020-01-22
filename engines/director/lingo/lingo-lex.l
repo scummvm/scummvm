@@ -196,7 +196,7 @@ the[ \t]+sqrt[ \t]+of[ \t]+	{
 
 		return THEENTITYWITHID;
 	}
-the[ \t]+value[ \t]+of[ \t]*	{
+the[ \t]+value[ \t]+of[ \t]+	{
 		count();
 
 		yylval.s = new Common::String("value");
@@ -218,6 +218,16 @@ the[ \t]+number[ \t]+of[ \t]+[[:alpha:]]+[ \t](in|of)[ \t]	{
 		Common::String field;
 		while (*ptr != ' ' && *ptr != '\t')
 			field += *ptr++;
+
+		// the number of menuItems of menu <xx>
+		if (!field.compareToIgnoreCase("menuItems")) {
+			Common::String key = Common::String::format("%dnumber", kTheMenuItems);
+
+			yylval.e[0] = kTheMenuItems;
+			yylval.e[1] = g_lingo->_theEntityFields[key]->field;
+
+			return THEMENUITEMSENTITY;
+		}
 
 		yylval.s = new Common::String(Common::String::format("numberOf%s", field.c_str()));
 

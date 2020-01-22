@@ -106,7 +106,7 @@ void checkEnd(Common::String *token, const char *expect, bool required) {
 %token UNARY
 %token CASTREF VOID VAR POINT RECT ARRAY OBJECT REFERENCE LEXERROR
 %token<i> INT ARGC ARGCNORET
-%token<e> THEENTITY THEENTITYWITHID THEMENUITEMENTITY
+%token<e> THEENTITY THEENTITYWITHID THEMENUITEMENTITY THEMENUITEMSENTITY
 %token<f> FLOAT
 %token<s> BLTIN FBLTIN RBLTIN
 %token<s> ID STRING HANDLER SYMBOL
@@ -154,6 +154,18 @@ asgn: tPUT expr tINTO ID 		{
 		delete $ID; }
 	| tPUT expr tINTO reference 		{
 		g_lingo->code1(LC::c_assign);
+		$$ = $expr; }
+	// {put the number of menuItems of} menu into <expr>
+	| tPUT THEMENUITEMSENTITY ID simpleexpr tINTO expr	{
+		if (!$ID->equalsIgnoreCase("menu")) {
+			warning("LEXER: keyword 'menu' expected");
+			YYERROR;
+		}
+
+		warning("STUB: menuItems entity");
+		g_lingo->code1(LC::c_themenuitementityassign);
+		g_lingo->codeInt($THEMENUITEMSENTITY[0]);
+		g_lingo->codeInt($THEMENUITEMSENTITY[1]);
 		$$ = $expr; }
 	| tPUT expr tAFTER expr 		{ $$ = g_lingo->code1(LC::c_after); }		// D3
 	| tPUT expr tBEFORE expr 		{ $$ = g_lingo->code1(LC::c_before); }		// D3
