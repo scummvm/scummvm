@@ -160,6 +160,7 @@ static const char *const selectorNameTable[] = {
 	"format",       // Phant2
 	"setSize",      // Phant2
 	"iconV",        // Phant2
+	"track",        // Phant2
 	"update",       // Phant2
 	"xOff",         // Phant2
 	"fore",         // KQ7
@@ -275,6 +276,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_format,
 	SELECTOR_setSize,
 	SELECTOR_iconV,
+	SELECTOR_track,
 	SELECTOR_update,
 	SELECTOR_xOff,
 	SELECTOR_fore,
@@ -8707,6 +8709,46 @@ static const uint16 phant2DocuStoreEmailPlacementPatch[] = {
 	PATCH_END
 };
 
+// The scrollbars in the DocuStore computer crash when clicking on the thumb,
+//  dragging the cursor off of the scrollbar, and then releasing. This calls
+//  Thumb:action with no event parameter, which Thumb:action expects, but after
+//  handling this it proceeds to use the uninitialized parameter anyway.
+//  DItem:track then errors by sending a message to this non-object.
+//
+// We fix this by passing the current event instead of the potentially
+//  nonexistent event parameter to DItem:track.
+//
+// Applies to at least: English PC, French PC, probably all versions
+// Responsible method: Thumb:action
+// Fixes bug: #10391
+static const uint16 phant2ComputerScrollbarCrashSignature[] = {
+	0x7e, SIG_ADDTOOFFSET(+2),          // line
+	0x38, SIG_SELECTOR16(track),        // pushi track
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp 01
+	0x54, SIG_UINT16(0x0006),           // self 06 [ self track: param1 ]
+	0x7e, SIG_ADDTOOFFSET(+2),          // line
+	SIG_MAGICDWORD,
+	0x76,                               // push0
+	0x43, 0x21, SIG_UINT16(0x0000),     // callk FrameOut
+	0x7e,                               // line
+	SIG_END
+};
+
+static const uint16 phant2ComputerScrollbarCrashPatch[] = {
+	0x38, PATCH_SELECTOR16(track),      // pushi track
+	0x78,                               // push1
+	0x38, PATCH_SELECTOR16(curEvent),   // pushi curEvent
+	0x76,                               // push0
+	0x80, PATCH_UINT16(0x0050),         // lag 0050
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ p2User curEvent? ]
+	0x36,                               // push
+	0x54, PATCH_UINT16(0x0006),         // self 06 [ self track: (p2User curEvent?) ]
+	0x76,                               // push0
+	0x43, 0x21, PATCH_UINT16(0x0000),   // callk FrameOut
+	PATCH_END
+};
+
 //          script, description,                                      signature                                  patch
 static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true,     0, "speed up interface fades",                    3, phant2SlowIFadeSignature,                  phant2SlowIFadePatch },
@@ -8724,6 +8766,7 @@ static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 	{  true, 63019, "fix bad folder/doc icon refresh",             2, phant2BadIconSignature,                    phant2BadIconPatch },
 	{  true, 63019, "fix file and note content placement",         1, phant2DocuStoreFileNotePlacementSignature, phant2DocuStoreFileNotePlacementPatch },
 	{  true, 63019, "fix email content placement",                 1, phant2DocuStoreEmailPlacementSignature,    phant2DocuStoreEmailPlacementPatch },
+	{  true, 64926, "fix computer scrollbar crash",                1, phant2ComputerScrollbarCrashSignature,     phant2ComputerScrollbarCrashPatch },
 	{  true, 64990, "remove save game name mangling (1/2)",        1, phant2SaveNameSignature1,                  phant2SaveNamePatch1 },
 	{  true, 64990, "increase number of save games (1/2)",         1, phant2NumSavesSignature1,                  phant2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         2, phant2NumSavesSignature2,                  phant2NumSavesPatch2 },
