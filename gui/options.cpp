@@ -1800,7 +1800,7 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 		new ButtonWidget(boss, prefix + "PluginsButton", _c("Plugins Path:", "lowres"), nullptr, kChoosePluginsDirCmd);
 	_pluginsPath = new StaticTextWidget(boss, prefix + "PluginsPath", _c("None", "path"));
 
-	_pluginsPathClearButton = addClearButton(tab, "GlobalOptions_Paths.PluginsPathClearButton", kPluginsPathClearCmd);
+	_pluginsPathClearButton = addClearButton(boss, "GlobalOptions_Paths.PluginsPathClearButton", kPluginsPathClearCmd);
 #endif
 #endif
 }
