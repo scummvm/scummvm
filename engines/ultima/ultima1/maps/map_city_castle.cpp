@@ -244,14 +244,14 @@ void MapCityCastle::attack(int direction, int effectId, uint maxDistance, uint a
 	Point delta = getDirectionDelta();
 	U1MapTile tile;
 	Widgets::Person *person;
-	int currTile;
+	//int currTile;
 
 	// Scan in the given direction for a person to attack
 	uint distance = 1;
 	do {
 		Point pt = getPosition() + Point(delta.x * distance, delta.y * distance);
 		getTileAt(pt, &tile);
-		currTile = tile._tileId == CTILE_63 ? -1 : tile._tileId;
+		//currTile = tile._tileId == CTILE_63 ? -1 : tile._tileId;
 		person = dynamic_cast<Widgets::Person *>(tile._widget);
 
 	} while (++distance <= maxDistance && !person && (tile._tileId == CTILE_GROUND || tile._tileId >= CTILE_POND_EDGE1));

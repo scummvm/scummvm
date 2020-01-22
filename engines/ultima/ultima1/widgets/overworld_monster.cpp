@@ -68,10 +68,10 @@ void OverworldMonster::attackParty() {
 	Point diff = playerPos - _position;
 	Point delta(SGN(diff.x), SGN(diff.y));
 	Point tempDiff;
-	int maxDistance = attackDistance();
+	//int maxDistance = attackDistance();
 	Shared::Maps::MapTile mapTile;
-	Shared::Character &c = *_game->_party;
-	uint threshold, damage;
+	//Shared::Character &c = *_game->_party;
+	//uint threshold, damage;
 
 	// Print out the monster attacking
 	
