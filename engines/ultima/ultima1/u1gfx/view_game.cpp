@@ -43,6 +43,7 @@
 namespace Ultima {
 namespace Ultima1 {
 namespace Actions {
+MAP_ACTION(Board, 1, board)
 MAP_ACTION(Cast, 2, cast)
 MAP_ACTION(Drop, 3, drop)
 MAP_ACTION_END_TURN(Enter, 4, enter)
@@ -75,28 +76,29 @@ ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	_viewportMap = new ViewportMap(this);
 	
-	_actions.resize(21);
+	_actions.resize(22);
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Shared::Actions::Huh(this, game->_res->HUH);
 	_actions[2] = new Actions::Attack(this);
-	_actions[3] = new Actions::Cast(this);
-	_actions[4] = new Actions::Drop(this);
-	_actions[5] = new Actions::Enter(this);
-	_actions[6] = new Actions::Fire(this);
-	_actions[7] = new Actions::Get(this);
-	_actions[8] = new Actions::HyperJump(this);
-	_actions[9] = new Actions::Inform(this);
-	_actions[10] = new Actions::Climb(this);
-	_actions[11] = new Actions::Open(this);
-	_actions[12] = new Shared::Actions::Pass(this, game->_res->ACTION_NAMES[15]);
-	_actions[13] = new Actions::Quit(this);
-	_actions[14] = new Actions::Ready(this);
-	_actions[15] = new Actions::Steal(this);
-	_actions[16] = new Actions::Transact(this);
-	_actions[17] = new Actions::Unlock(this);
-	_actions[18] = new Actions::ViewChange(this);
-	_actions[19] = new Actions::ExitTransport(this);
-	_actions[20] = new Actions::Stats(this);
+	_actions[3] = new Actions::Board(this);
+	_actions[4] = new Actions::Cast(this);
+	_actions[5] = new Actions::Drop(this);
+	_actions[6] = new Actions::Enter(this);
+	_actions[7] = new Actions::Fire(this);
+	_actions[8] = new Actions::Get(this);
+	_actions[9] = new Actions::HyperJump(this);
+	_actions[10] = new Actions::Inform(this);
+	_actions[11] = new Actions::Climb(this);
+	_actions[12] = new Actions::Open(this);
+	_actions[13] = new Shared::Actions::Pass(this, game->_res->ACTION_NAMES[15]);
+	_actions[14] = new Actions::Quit(this);
+	_actions[15] = new Actions::Ready(this);
+	_actions[16] = new Actions::Steal(this);
+	_actions[17] = new Actions::Transact(this);
+	_actions[18] = new Actions::Unlock(this);
+	_actions[19] = new Actions::ViewChange(this);
+	_actions[20] = new Actions::ExitTransport(this);
+	_actions[21] = new Actions::Stats(this);
 }
 
 ViewGame::~ViewGame() {
@@ -257,6 +259,7 @@ bool ViewGame::checkMovement(const Common::KeyState &keyState) {
 bool ViewGame::CharacterInputMsg(CCharacterInputMsg &msg) {
 	if (checkMovement(msg._keyState)) {}
 	CHECK(Common::KEYCODE_a, Shared::CAttackMsg)
+	CHECK(Common::KEYCODE_b, Shared::CBoardMsg)
 	CHECK(Common::KEYCODE_c, Shared::CCastMsg)
 	CHECK(Common::KEYCODE_d, Shared::CDropMsg)
 	CHECK(Common::KEYCODE_e, Shared::CEnterMsg)

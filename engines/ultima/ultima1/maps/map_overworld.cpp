@@ -117,6 +117,24 @@ void MapOverworld::shiftViewport(const Point &delta) {
 		topLeft.y -= height();
 }
 
+void MapOverworld::board() {
+	Maps::U1MapTile tile;
+	getTileAt(getPosition(), &tile);
+	Widgets::Transport *transport = dynamic_cast<Widgets::Transport *>(tile._widget);
+
+	if (!dynamic_cast<Widgets::TransportOnFoot *>(_playerWidget)) {
+		addInfoMsg(_game->_res->EXIT_CRAFT_FIRST, true, true);
+		_game->playFX(1);
+		_game->endOfTurn();
+	} else if (!transport) {
+		addInfoMsg(_game->_res->NOTHING_TO_BOARD, true, true);
+		_game->playFX(1);
+		_game->endOfTurn();
+	} else {
+		transport->board();
+	}
+}
+
 void MapOverworld::enter() {
 	Maps::U1MapTile tile;
 	getTileAt(getPosition(), &tile);

@@ -109,6 +109,11 @@ void MapBase::attack(int direction, int effectId) {
 	attack(direction, effectId, maxDistance, damage, agility, "PhysicalAttack");
 }
 
+void MapBase::board() {
+	unknownAction();
+	_game->endOfTurn();
+}
+
 void MapBase::cast() {
 	const Shared::Character &c = *_game->_party;
 	Shared::Spell &spell = *c._spells[c._equippedSpell];
