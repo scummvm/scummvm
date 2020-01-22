@@ -49,8 +49,6 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 
-	_vSyncInterrupt = false;
-
 	_console = 0;
 	_sound = 0;
 	_speed = 1;
@@ -276,26 +274,21 @@ DreamWebEngine::~DreamWebEngine() {
 	delete _sound;
 }
 
-static void vSyncInterrupt(void *refCon) {
-	DreamWebEngine *vm = (DreamWebEngine *)refCon;
-
-	if (!vm->isPaused()) {
-		vm->setVSyncInterrupt(true);
-	}
-}
-
-void DreamWebEngine::setVSyncInterrupt(bool flag) {
-	_vSyncInterrupt = flag;
-}
-
 void DreamWebEngine::waitForVSync() {
+	const uint32 previousTicks = _system->getMillis();
+	// Originally, this was an interval for a thread that was
+	// called every 1000000 / 70 nanoseconds. It has been
+	// adjusted to be a delay instead.
+	const uint32 delay = 800 / 70 / _speed;
+
+	if (isPaused())
+		return;
+
 	processEvents();
 
-	if (!_turbo) {
-		while (!_vSyncInterrupt) {
-			_system->delayMillis(10);
-		}
-		setVSyncInterrupt(false);
+	while (!_turbo && _system->getMillis() - previousTicks < delay) {
+		processEvents(false);
+		_system->delayMillis(10);
 	}
 
 	doShake();
@@ -308,13 +301,15 @@ void DreamWebEngine::quit() {
 	_lastHardKey = Common::KEYCODE_ESCAPE;
 }
 
-void DreamWebEngine::processEvents() {
+void DreamWebEngine::processEvents(bool processSoundEvents) {
 	if (_eventMan->shouldQuit()) {
 		quit();
 		return;
 	}
 
-	_sound->soundHandler();
+	if (processSoundEvents)
+		_sound->soundHandler();
+
 	Common::Event event;
 	int softKey;
 	while (_eventMan->pollEvent(event)) {
@@ -411,12 +406,9 @@ Common::Error DreamWebEngine::run() {
 	_brightPalette = ConfMan.getBool("bright_palette");
 	_copyProtection = ConfMan.getBool("copy_protection");
 
-	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
 	dreamweb();
 	dreamwebFinalize();
 	_quitRequested = false;
-
-	_timer->removeTimerProc(vSyncInterrupt);
 
 	return Common::kNoError;
 }
@@ -424,8 +416,6 @@ Common::Error DreamWebEngine::run() {
 void DreamWebEngine::setSpeed(uint speed) {
 	debug(0, "setting speed %u", speed);
 	_speed = speed;
-	_timer->removeTimerProc(vSyncInterrupt);
-	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70 / speed, this, "dreamwebVSync");
 }
 
 Common::String DreamWebEngine::getSavegameFilename(int slot) const {
