@@ -1774,20 +1774,33 @@ void LB::b_window(int nargs) {
 
 void LB::b_numberofchars(int nargs) {
 	Datum d = g_lingo->pop();
+	d.toString();
 
-	warning("STUB: b_numberofchars");
-	d.toInt();
-	d.u.i = 0;
+	int len = strlen(d.u.s->c_str());
+	delete d.u.s;
 
+	d.u.i = len;
+	d.type = INT;
 	g_lingo->push(d);
 }
 
 void LB::b_numberofitems(int nargs) {
 	Datum d = g_lingo->pop();
 
-	warning("STUB: b_numberofitems");
-	d.toInt();
-	d.u.i = 0;
+	d.toString();
+	int numberofitems = 1;
+	Common::String contents = d.u.s->c_str();
+	uint32 i = 0;
+	while (i < d.u.s->size()){
+		if (contents[i] == ',') {
+			numberofitems++;
+		}
+		++i;
+	}
+	delete d.u.s;
+
+	d.u.i = numberofitems;
+	d.type = INT;
 
 	g_lingo->push(d);
 }
@@ -1795,9 +1808,20 @@ void LB::b_numberofitems(int nargs) {
 void LB::b_numberoflines(int nargs) {
 	Datum d = g_lingo->pop();
 
-	warning("STUB: b_numberoflines");
-	d.toInt();
-	d.u.i = 0;
+	d.toString();
+	int numberoflines = 1;
+	Common::String contents = d.u.s->c_str();
+	uint32 i = 0;
+	while (i < d.u.s->size()){
+		if (contents[i] == '\n') {
+			numberoflines++;
+		}
+		++i;
+	}
+	delete d.u.s;
+
+	d.u.i = numberoflines;
+	d.type = INT;
 
 	g_lingo->push(d);
 }
