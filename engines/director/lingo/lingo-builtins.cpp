@@ -1789,13 +1789,10 @@ void LB::b_numberofitems(int nargs) {
 
 	d.toString();
 	int numberofitems = 1;
-	Common::String contents = d.u.s->c_str();
-	uint32 i = 0;
-	while (i < d.u.s->size()){
-		if (contents[i] == ',') {
+	Common::String contents = *d.u.s;
+	for (uint32 i = 0;  i < d.u.s->size(); i++) {
+		if (contents[i] == ',')
 			numberofitems++;
-		}
-		++i;
 	}
 	delete d.u.s;
 
@@ -1811,12 +1808,9 @@ void LB::b_numberoflines(int nargs) {
 	d.toString();
 	int numberoflines = 1;
 	Common::String contents = d.u.s->c_str();
-	uint32 i = 0;
-	while (i < d.u.s->size()){
-		if (contents[i] == '\n') {
+	for (uint32 i = 0; i < d.u.s->size(); i++) {
+		if (contents[i] == '\n')
 			numberoflines++;
-		}
-		++i;
 	}
 	delete d.u.s;
 
