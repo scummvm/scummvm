@@ -66,6 +66,11 @@ public:
 	virtual bool isBlocking() const { return false; }
 
 	/**
+	 * Board a transport
+	 */
+	virtual void board();
+
+	/**
 	 * Disembarks from the transport
 	 */
 	virtual void disembark();
@@ -236,6 +241,11 @@ public:
 	 * Get the tile for the transport method
 	 */
 	virtual uint getTileNum() const override { return 16; }
+
+	/**
+	 * Board a transport
+	 */
+	virtual void board() override;
 };
 
 } // End of namespace Widgets

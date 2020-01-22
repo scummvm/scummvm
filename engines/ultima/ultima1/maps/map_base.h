@@ -100,6 +100,11 @@ public:
 	virtual void attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) = 0;
 
 	/**
+	 * Board a transport
+	 */
+	virtual void board();
+
+	/**
 	 * Cast a spell
 	 */
 	virtual void cast();

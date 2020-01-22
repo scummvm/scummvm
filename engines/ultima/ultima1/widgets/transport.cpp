@@ -47,6 +47,15 @@ Transport::Transport(Ultima1Game *game, Maps::MapBase *map, uint transportId) :
 	_name = game->_res->TRANSPORT_NAMES[transportId];
 }
 
+void Transport::board() {
+	assert(dynamic_cast<Widgets::TransportOnFoot *>(_map->_playerWidget));
+	_map->removeWidget(_map->_playerWidget);
+	_map->_playerWidget = this;
+
+	addInfoMsg(Common::String::format(" %s", _name.c_str()));
+	_game->endOfTurn();
+}
+
 void Transport::disembark() {
 	Maps::U1MapTile tile;
 	Point pt = _map->getPosition();
@@ -134,6 +143,12 @@ EMPTY_MESSAGE_MAP(TimeMachine, Transport);
 
 TimeMachine::TimeMachine(Ultima1Game *game, Maps::MapBase *map) : Transport(game, map, 7) {
 }
+
+void TimeMachine::board() {
+	// TODO
+	Transport::board();
+}
+
 
 } // End of namespace Widgets
 } // End of namespace Ultima1

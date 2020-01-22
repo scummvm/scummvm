@@ -598,7 +598,7 @@ const char *const SRC_GAIN_HIT_POINTS = "Thou dost gain %u hit points";
 const char *const SRC_OPENED = "opened!";
 
 const char *const SRC_ACTION_NAMES[26] = {
-	"Attack with", nullptr, "Cast", "Drop", "Enter", "Fire", "Get", "HyperJump", "Inform and search",
+	"Attack with", "Board", "Cast", "Drop", "Enter", "Fire", "Get", "HyperJump", "Inform and search",
 	nullptr, "K-Limb", nullptr, nullptr, nullptr, "Open", "Pass", "Quit", "Ready", "Steal", "Transact",
 	"Unlock", "View", nullptr, "X-it", nullptr, "Ztats"
 };
@@ -652,7 +652,9 @@ const char *const SRC_FIELD_CREATED = "Field created!";
 const char *const SRC_FIELD_DESTROYED = "Field destroyed!";
 const char *const SRC_LADDER_CREATED = "Ladder created!";
 const char *const SRC_QUEST_COMPLETED = "A quest has been completed!";
-
+const char *const SRC_EXIT_CRAFT_FIRST = "X-it thy craft first!";
+const char *const SRC_NOTHING_TO_BOARD = "Nothing to Board!";
+const char *const SRC_CANNOT_OPERATE = "Thou canst not determine how\rto operate the craft at this\rtime";
 
 const char *const SRC_GROCERY_NAMES[8] = {
 	"Li'l Karelia's Finnish Grocery", "Adventurer's Supply Post", "", "The Brown Bag", "Fresh Food Marketplace",
@@ -845,6 +847,9 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	FIELD_DESTROYED = SRC_FIELD_DESTROYED;
 	LADDER_CREATED = SRC_LADDER_CREATED;
 	QUEST_COMPLETED = SRC_QUEST_COMPLETED;
+	EXIT_CRAFT_FIRST = SRC_EXIT_CRAFT_FIRST;
+	NOTHING_TO_BOARD = SRC_NOTHING_TO_BOARD;
+	CANNOT_OPERATE = SRC_CANNOT_OPERATE;
 
 	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
 	GROCERY_SELL = SRC_GROCERY_SELL;
@@ -984,6 +989,9 @@ void GameResources::synchronize() {
 	syncString(FIELD_DESTROYED);
 	syncString(LADDER_CREATED);
 	syncString(QUEST_COMPLETED);
+	syncString(EXIT_CRAFT_FIRST);
+	syncString(NOTHING_TO_BOARD);
+	syncString(CANNOT_OPERATE);
 
 	syncStrings(GROCERY_NAMES, 8);
 	syncString(GROCERY_SELL);

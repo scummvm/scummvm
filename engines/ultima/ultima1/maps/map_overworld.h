@@ -80,6 +80,11 @@ public:
 	virtual void attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) override;
 
 	/**
+	 * Board a transport
+	 */
+	virtual void board() override;
+
+	/**
 	 * Do an enter action
 	 */
 	virtual void enter() override;

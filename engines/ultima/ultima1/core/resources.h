@@ -149,6 +149,9 @@ public:
 	const char *FIELD_DESTROYED;
 	const char *LADDER_CREATED;
 	const char *QUEST_COMPLETED;
+	const char *EXIT_CRAFT_FIRST;
+	const char *NOTHING_TO_BOARD;
+	const char *CANNOT_OPERATE;
 
 	const char *GROCERY_NAMES[8];
 	const char *GROCERY_SELL;
