@@ -38,8 +38,9 @@ struct HardwareInput;
 class Keymap;
 
 struct KeyActionEntry {
-	const KeyState ks;
 	const char *id;
+	const KeyState ks;
+	const char *defaultHwId;
 	const char *description;
 };
 

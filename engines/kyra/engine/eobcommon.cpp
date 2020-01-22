@@ -354,33 +354,35 @@ void EoBCoreEngine::initKeymap() {
 	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
 
 	const Common::KeyActionEntry keyActionEntries[] = {
-		{ Common::KeyState(Common::KEYCODE_UP), "MVF", _("Move Forward") },
-		{ Common::KeyState(Common::KEYCODE_DOWN), "MVB", _("Move Back") },
-		{ Common::KeyState(Common::KEYCODE_LEFT), "MVL", _("Move Left") },
-		{ Common::KeyState(Common::KEYCODE_RIGHT), "MVR", _("Move Right") },
-		{ Common::KeyState(Common::KEYCODE_HOME), "TL", _("Turn Left") },
-		{ Common::KeyState(Common::KEYCODE_PAGEUP), "TR", _("Turn Right") },
-		{ Common::KeyState(Common::KEYCODE_i), "INV", _("Open/Close Inventory") },
-		{ Common::KeyState(Common::KEYCODE_p), "SCE", _("Switch Inventory/Character screen") },
-		{ Common::KeyState(Common::KEYCODE_c), "CMP", _("Camp") },
-		{ Common::KeyState(Common::KEYCODE_SPACE), "CSP", _("Cast Spell") },
+		{ "MVF", Common::KEYCODE_UP,     "UP",     _("Move Forward")                      },
+		{ "MVB", Common::KEYCODE_DOWN,   "DOWN",   _("Move Back")                         },
+		{ "MVL", Common::KEYCODE_LEFT,   "LEFT",   _("Move Left")                         },
+		{ "MVR", Common::KEYCODE_RIGHT,  "RIGHT",  _("Move Right")                        },
+		{ "TL",  Common::KEYCODE_HOME,   "HOME",   _("Turn Left")                         },
+		{ "TR",  Common::KEYCODE_PAGEUP, "PAGEUP", _("Turn Right")                        },
+		{ "INV", Common::KEYCODE_i,      "i",      _("Open/Close Inventory")              },
+		{ "SCE", Common::KEYCODE_p,      "p",      _("Switch Inventory/Character screen") },
+		{ "CMP", Common::KEYCODE_c,      "c",      _("Camp")                              },
+		{ "CSP", Common::KEYCODE_SPACE,  "SPACE",  _("Cast Spell")                        },
 		// TODO: Spell cursor, but this needs more thought, since different
 		// game versions use different keycodes.
-		{ Common::KeyState(Common::KEYCODE_1), "SL1", _("Spell Level 1") },
-		{ Common::KeyState(Common::KEYCODE_2), "SL2", _("Spell Level 2") },
-		{ Common::KeyState(Common::KEYCODE_3), "SL3", _("Spell Level 3") },
-		{ Common::KeyState(Common::KEYCODE_4), "SL4", _("Spell Level 4") },
-		{ Common::KeyState(Common::KEYCODE_5), "SL5", _("Spell Level 5") }
+		{ "SL1", Common::KEYCODE_1,      "1",      _("Spell Level 1")                     },
+		{ "SL2", Common::KEYCODE_2,      "2",      _("Spell Level 2")                     },
+		{ "SL3", Common::KEYCODE_3,      "3",      _("Spell Level 3")                     },
+		{ "SL4", Common::KEYCODE_4,      "4",      _("Spell Level 4")                     },
+		{ "SL5", Common::KEYCODE_5,      "5",      _("Spell Level 5")                     }
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); ++i) {
 		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
 		act->setKeyEvent(keyActionEntries[i].ks);
+		act->addDefaultInputMapping(keyActionEntries[i].defaultHwId);
 	}
 
 	if (_flags.gameID == GI_EOB2) {
 		Common::Action *const act = new Common::Action(engineKeyMap, "SL6", _("Spell Level 6"));
 		act->setKeyEvent(Common::KeyState(Common::KEYCODE_6));
+		act->addDefaultInputMapping("6");
 	}
 
 	mapper->addGameKeymap(engineKeyMap);

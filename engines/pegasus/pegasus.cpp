@@ -2503,22 +2503,23 @@ void PegasusEngine::initKeymap() {
 	// Since the game has multiple built-in keys for each of these anyway,
 	// this just attempts to remap one of them.
 	const Common::KeyActionEntry keyActionEntries[] = {
-		{ Common::KEYCODE_UP, "UP", _("Up/Zoom In/Move Forward/Open Doors") },
-		{ Common::KEYCODE_DOWN, "DWN", _("Down/Zoom Out") },
-		{ Common::KEYCODE_LEFT, "TL", _("Turn Left") },
-		{ Common::KEYCODE_RIGHT, "TR", _("Turn Right") },
-		{ Common::KEYCODE_BACKQUOTE, "TIV", _("Display/Hide Inventory Tray") },
-		{ Common::KEYCODE_BACKSPACE, "TBI", _("Display/Hide Biochip Tray") },
-		{ Common::KEYCODE_RETURN, "ENT", _("Action/Select") },
-		{ Common::KEYCODE_t, "TMA", _("Toggle Center Data Display") },
-		{ Common::KEYCODE_i, "TIN", _("Display/Hide Info Screen") },
-		{ Common::KEYCODE_ESCAPE, "PM", _("Display/Hide Pause Menu") },
-		{ Common::KEYCODE_e, "WTF", "???" } // easter egg key (without being completely upfront about it)
+		{ "UP",  Common::KEYCODE_UP,        "UP",        _("Up/Zoom In/Move Forward/Open Doors") },
+		{ "DWN", Common::KEYCODE_DOWN,      "DOWN",      _("Down/Zoom Out")                      },
+		{ "TL",  Common::KEYCODE_LEFT,      "LEFT",      _("Turn Left")                          },
+		{ "TR",  Common::KEYCODE_RIGHT,     "RIGHT",     _("Turn Right")                         },
+		{ "TIV", Common::KEYCODE_BACKQUOTE, "BACKQUOTE", _("Display/Hide Inventory Tray")        },
+		{ "TBI", Common::KEYCODE_BACKSPACE, "BACKSPACE", _("Display/Hide Biochip Tray")          },
+		{ "ENT", Common::KEYCODE_RETURN,    "RETURN",    _("Action/Select")                      },
+		{ "TMA", Common::KEYCODE_t,         "t",         _("Toggle Center Data Display")         },
+		{ "TIN", Common::KEYCODE_i,         "i",         _("Display/Hide Info Screen")           },
+		{ "PM",  Common::KEYCODE_ESCAPE,    "ESCAPE",    _("Display/Hide Pause Menu")            },
+		{ "WTF", Common::KEYCODE_e,         "e",         "???" } // easter egg key (without being completely upfront about it)
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
 		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
 		act->setKeyEvent(keyActionEntries[i].ks);
+		act->addDefaultInputMapping(keyActionEntries[i].defaultHwId);
 	}
 
 	mapper->addGameKeymap(engineKeyMap);
