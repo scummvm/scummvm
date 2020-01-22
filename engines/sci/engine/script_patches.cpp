@@ -3280,6 +3280,33 @@ static const uint16 gk1RestartInventoryPatch[] = {
 	PATCH_END
 };
 
+// On day 6 in Jackson Square, if you never gave Madame Lorelei her veil on an
+//  earlier day, then looking at her empty booth says that she's sitting there.
+//  Clicking Operate also says the wrong message. The logic in the booth and
+//  chair doVerb methods doesn't consider that this optional action might not
+//  occur by day 6. We add the missing day check by overwriting a redundant
+//  local variable test.
+//
+// Applies to: All versions
+// Responsible methods: booth:doVerb, chair1:doVerb, chair2:doVerb
+static const uint16 gk1EmptyBoothMessageSignature[] = {
+	SIG_MAGICDWORD,
+	0x30, SIG_UINT16(0x001a),               // bnt 001a [ skip lorelei message ]
+	0x83, 0x01,                             // lal 01   [ always zero ]
+	0x18,                                   // not
+	0x30, SIG_UINT16(0x0014),               // bnt 0014 [ skip lorelei message ]
+	SIG_END
+};
+
+static const uint16 gk1EmptyBoothMessagePatch[] = {
+	0x31, 0x1b,                             // bnt 1b [ skip lorelei message ]
+	0x89, 0x7b,                             // lsg 7b
+	0x35, 0x05,                             // ldi 05
+	0x24,                                   // le?    [ day <= 5 ]
+	0x31, 0x14,                             // bnt 14 [ skip lorelei message ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,     0, "remove alt+n syslogger hotkey",               1, gk1SysLoggerHotKeySignature,      gk1SysLoggerHotKeyPatch },
@@ -3301,6 +3328,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   280, "fix pathfinding in Madame Cazanoux's house",  1, gk1CazanouxPathfindingSignature,  gk1CazanouxPathfindingPatch },
 	{  true,   380, "fix Gran's room obstacles and ego flicker",   1, gk1GranRoomInitSignature,         gk1GranRoomInitPatch },
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
+	{  true,   420, "fix day 6 empty booth message",               6, gk1EmptyBoothMessageSignature,    gk1EmptyBoothMessagePatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   710, "fix day 9 mummy animation (floppy)",          1, gk1MummyAnimateFloppySignature,   gk1MummyAnimateFloppyPatch },
 	{  true,   710, "fix day 9 mummy animation (cd)",              1, gk1MummyAnimateCDSignature,       gk1MummyAnimateCDPatch },
