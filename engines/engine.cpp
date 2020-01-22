@@ -629,14 +629,15 @@ void Engine::initKeymap() {
 	// Since the game has multiple built-in keys for each of these anyway,
 	// this just attempts to remap one of them.
 	const Common::KeyActionEntry keyActionEntries[] = {
-		{ Common::KeyState(Common::KEYCODE_SPACE, ' ', 0),                   "PAUS",  _("Pause")     },
-		{ Common::KeyState(Common::KEYCODE_ESCAPE, Common::ASCII_ESCAPE, 0), "SKCT", _("Skip")      },
-		{ Common::KeyState(Common::KEYCODE_PERIOD, '.', 0),                  "SKLI", _("Skip line") }
+		{ "PAUS", Common::KeyState(Common::KEYCODE_SPACE, ' ', 0),                   "SPACE",  _("Pause")     },
+		{ "SKCT", Common::KeyState(Common::KEYCODE_ESCAPE, Common::ASCII_ESCAPE, 0), "ESCAPE", _("Skip")      },
+		{ "SKLI", Common::KeyState(Common::KEYCODE_PERIOD, '.', 0),                  "PERIOD", _("Skip line") }
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
 		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
 		act->setKeyEvent(keyActionEntries[i].ks);
+		act->addDefaultInputMapping(keyActionEntries[i].defaultHwId);
 	}
 
 	mapper->addGameKeymap(engineKeyMap);
