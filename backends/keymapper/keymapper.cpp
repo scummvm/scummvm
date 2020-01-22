@@ -39,7 +39,8 @@ Keymapper::Keymapper(EventManager *evtMgr) :
 		_eventMan(evtMgr),
 		_enabled(true),
 		_enabledKeymapType(Keymap::kKeymapTypeGlobal),
-		_hardwareInputs(nullptr) {
+		_hardwareInputs(nullptr),
+		_backendDefaultBindings(nullptr) {
 }
 
 Keymapper::~Keymapper() {
@@ -59,6 +60,13 @@ void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {
 	}
 
 	_hardwareInputs = inputs;
+}
+
+void Keymapper::registerBackendDefaultBindings(const Common::KeymapperDefaultBindings *backendDefaultBindings) {
+	if (!_keymaps.empty())
+		error("Backend default bindings must be defined before adding keymaps");
+
+	_backendDefaultBindings = backendDefaultBindings;
 }
 
 void Keymapper::addGlobalKeymap(Keymap *keymap) {
@@ -93,6 +101,7 @@ void Keymapper::initKeymap(Keymap *keymap, ConfigManager::Domain *domain) {
 
 	keymap->setConfigDomain(domain);
 	keymap->setHardwareInputs(_hardwareInputs);
+	keymap->setBackendDefaultBindings(_backendDefaultBindings);
 	keymap->loadMappings();
 }
 
