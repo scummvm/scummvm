@@ -102,7 +102,6 @@ class DreamWebEngine : public Engine {
 private:
 	DreamWebConsole			*_console;
 	DreamWebSound *_sound;
-	bool					_vSyncInterrupt;
 
 protected:
 	// Engine APIs
@@ -115,7 +114,6 @@ public:
 	DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc);
 	virtual ~DreamWebEngine();
 
-	void setVSyncInterrupt(bool flag);
 	void waitForVSync();
 
 	Common::Error loadGameState(int slot);
@@ -127,7 +125,7 @@ public:
 	uint8 randomNumber() { return _rnd.getRandomNumber(255); }
 
 	void mouseCall(uint16 *x, uint16 *y, uint16 *state); //fill mouse pos and button state
-	void processEvents();
+	void processEvents(bool processSoundEvents = true);
 	void blit(const uint8 *src, int pitch, int x, int y, int w, int h);
 	void cls();
 	bool isCD();
