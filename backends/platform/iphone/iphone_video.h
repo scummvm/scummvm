@@ -101,6 +101,9 @@
 
 - (void)deviceOrientationChanged:(UIDeviceOrientation)orientation;
 
+- (void)disableIdleTimer;
+- (void)enableIdleTimer;
+
 - (void)applicationSuspend;
 
 - (void)applicationResume;

@@ -28,6 +28,18 @@
 
 #include "graphics/conversion.h"
 
+void OSystem_IPHONE::engineInit() {
+	EventsBaseBackend::engineInit();
+	// Prevent the device going to sleep during game play (and in particular cut scenes)
+	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(disableIdleTimer) withObject:nil waitUntilDone: NO];
+}
+
+void OSystem_IPHONE::engineDone() {
+	EventsBaseBackend::engineDone();
+	// Allow the device going to sleep if idle while in the Launcher
+	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(enableIdleTimer) withObject:nil waitUntilDone: NO];
+}
+
 void OSystem_IPHONE::initVideoContext() {
 	_videoContext = [g_iPhoneViewInstance getVideoContext];
 }

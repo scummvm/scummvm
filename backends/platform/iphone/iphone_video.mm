@@ -778,6 +778,14 @@ const char *iPhone_getDocumentsDir() {
 	return 0;
 }
 
+- (void)disableIdleTimer {
+	[[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+}
+
+- (void)enableIdleTimer {
+	[[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+}
+
 - (void)applicationSuspend {
 	[self addEvent:InternalEvent(kInputApplicationSuspended, 0, 0)];
 }
