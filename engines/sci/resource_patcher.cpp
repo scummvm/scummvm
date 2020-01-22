@@ -528,6 +528,8 @@ void ResourcePatcher::patchResource(Resource &resource, const GameResourcePatch 
 				}
 				WRITE_SCI11ENDIAN_UINT32(target, value);
 				break;
+			default:
+				break;
 			}
 
 			patchData += sizeof(int32);
