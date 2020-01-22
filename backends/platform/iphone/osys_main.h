@@ -116,6 +116,9 @@ public:
 
 	virtual void initBackend();
 
+	virtual void engineInit();
+	virtual void engineDone();
+
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
