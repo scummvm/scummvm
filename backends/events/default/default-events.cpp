@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "backends/events/default/default-events.h"
+#include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/remap-dialog.h"
 #include "backends/vkeybd/virtual-keyboard.h"
@@ -316,5 +317,53 @@ void DefaultEventManager::purgeMouseEvents() {
 	}
 	_eventQueue = filteredQueue;
 }
+
+#ifdef ENABLE_KEYMAPPER
+
+Common::Keymap *DefaultEventManager::getGlobalKeymap() {
+	using namespace Common;
+
+	// Now create the global keymap
+	Keymap *globalKeymap = new Keymap(Keymap::kKeymapTypeGlobal, kGlobalKeymapName);
+
+	Action *act;
+	act = new Action("MENU", _("Menu"));
+	act->addDefaultInputMapping("C+F5");
+	act->setEvent(EVENT_MAINMENU);
+	globalKeymap->addAction(act);
+
+#ifdef ENABLE_VKEYBD
+	act = new Action("VIRT", _("Display keyboard"));
+	act->addDefaultInputMapping("C+F7");
+	act->setEvent(EVENT_VIRTUAL_KEYBOARD);
+	globalKeymap->addAction(act);
+#endif
+
+	act = new Action("REMP", _("Remap keys"));
+	act->addDefaultInputMapping("C+F8");
+	act->setEvent(EVENT_KEYMAPPER_REMAP);
+	globalKeymap->addAction(act);
+
+	act = new Action("FULS", _("Toggle fullscreen"));
+	act->addDefaultInputMapping("A+RETURN");
+	act->setKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
+	globalKeymap->addAction(act);
+
+	act = new Action("LCLK", _("Left Click"));
+	act->setLeftClickEvent();
+	globalKeymap->addAction(act);
+
+	act = new Action("MCLK", _("Middle Click"));
+	act->setMiddleClickEvent();
+	globalKeymap->addAction(act);
+
+	act = new Action("RCLK", _("Right Click"));
+	act->setRightClickEvent();
+	globalKeymap->addAction(act);
+
+	return globalKeymap;
+}
+
+#endif
 
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)
