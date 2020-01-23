@@ -41,6 +41,10 @@
 #include "backends/cloud/storage.h"
 #endif
 
+namespace Common {
+class RemapWidget;
+}
+
 namespace GUI {
 class LauncherDialog;
 
@@ -70,6 +74,8 @@ public:
 	virtual void apply();
 	void close() override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleTickle() override;
+
 	const Common::String& getDomain() const { return _domain; }
 
 	void reflowLayout() override;
@@ -88,6 +94,7 @@ protected:
 
 
 	void addControlControls(GuiObject *boss, const Common::String &prefix);
+	void addKeyMapperControls(GuiObject *boss, const Common::String &prefix, const Common::Array<Common::Keymap *> &keymaps);
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
 	void addShaderControls(GuiObject *boss, const Common::String &prefix);
 	void addAudioControls(GuiObject *boss, const Common::String &prefix);
@@ -133,6 +140,11 @@ private:
 	StaticTextWidget *_joystickDeadzoneDesc;
 	SliderWidget *_joystickDeadzoneSlider;
 	StaticTextWidget *_joystickDeadzoneLabel;
+
+	//
+	// KeyMapper controls
+	//
+	Common::RemapWidget *_keymapperWidget;
 
 	//
 	// Graphics controls

@@ -108,7 +108,7 @@ MODULE_OBJS += \
 	keymapper/input-watcher.o \
 	keymapper/keymap.o \
 	keymapper/keymapper.o \
-	keymapper/remap-dialog.o
+	keymapper/remap-widget.o
 endif
 
 ifdef ENABLE_VKEYBD

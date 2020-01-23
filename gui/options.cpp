@@ -30,6 +30,9 @@
 #include "gui/ThemeEval.h"
 #include "gui/launcher.h"
 
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/remap-widget.h"
+
 #include "common/fs.h"
 #include "common/config-manager.h"
 #include "common/gui_options.h"
@@ -156,6 +159,7 @@ void OptionsDialog::init() {
 	_joystickDeadzoneDesc = nullptr;
 	_joystickDeadzoneSlider = nullptr;
 	_joystickDeadzoneLabel = nullptr;
+	_keymapperWidget = nullptr;
 	_enableGraphicSettings = false;
 	_gfxPopUp = nullptr;
 	_gfxPopUpDesc = nullptr;
@@ -262,6 +266,13 @@ void OptionsDialog::build() {
 			_joystickDeadzoneLabel->setValue(value);
 		}
 	}
+
+#ifdef ENABLE_KEYMAPPER
+	// Keymapper options
+	if (_keymapperWidget) {
+		_keymapperWidget->build();
+	}
+#endif
 
 	// Graphic options
 	if (_fullscreenCheckbox) {
@@ -619,6 +630,16 @@ void OptionsDialog::apply() {
 		}
 	}
 
+#ifdef ENABLE_KEYMAPPER
+	if (_keymapperWidget) {
+		bool changes = _keymapperWidget->save();
+		if (changes) {
+			Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+			keymapper->reloadAllMappings();
+		}
+	}
+#endif
+
 	// Control options
 	if (_enableControlSettings) {
 		if (g_system->hasFeature(OSystem::kFeatureOnScreenControl)) {
@@ -862,6 +883,16 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	}
 }
 
+void OptionsDialog::handleTickle() {
+	Dialog::handleTickle();
+
+#ifdef ENABLE_KEYMAPPER
+	if (_keymapperWidget) {
+		_keymapperWidget->handleTickle();
+	}
+#endif
+}
+
 void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 
@@ -1031,6 +1062,12 @@ void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &pr
 	}
 	_enableControlSettings = true;
 }
+
+#ifdef ENABLE_KEYMAPPER
+void OptionsDialog::addKeyMapperControls(GuiObject *boss, const Common::String &prefix, const Common::KeymapArray &keymaps) {
+	_keymapperWidget = new Common::RemapWidget(boss, prefix + "Container", keymaps);
+}
+#endif
 
 void OptionsDialog::addShaderControls(GuiObject *boss, const Common::String &prefix) {
 	// Shader selector
@@ -1576,6 +1613,40 @@ void GlobalOptionsDialog::build() {
 		tab->addTab(_("Control"), "GlobalOptions_Control");
 		addControlControls(tab, "GlobalOptions_Control.");
 	}
+
+	//
+	// The Keymap tab
+	//
+#ifdef ENABLE_KEYMAPPER
+	Common::KeymapArray keymaps;
+
+	Common::Keymap *primaryGlobalKeymap = g_system->getEventManager()->getGlobalKeymap();
+	if (primaryGlobalKeymap && !primaryGlobalKeymap->getActions().empty()) {
+		keymaps.push_back(primaryGlobalKeymap);
+	}
+
+	Common::Keymap *platformGlobalKeymap = g_system->getGlobalKeymap();
+	if (platformGlobalKeymap && !platformGlobalKeymap->getActions().empty()) {
+		keymaps.push_back(platformGlobalKeymap);
+	}
+
+	Common::Keymap *guiKeymap = g_gui.getKeymap();
+	if (guiKeymap && !guiKeymap->getActions().empty()) {
+		keymaps.push_back(guiKeymap);
+	}
+
+	Common::Keymapper *mapper = g_system->getEventManager()->getKeymapper();
+	Common::ConfigManager::Domain *keymapperDomain = ConfMan.getDomain(Common::ConfigManager::kKeymapperDomain);
+
+	for (uint i = 0; i < keymaps.size(); i++) {
+		mapper->initKeymap(keymaps[i], keymapperDomain);
+	}
+
+	if (!keymaps.empty()) {
+		tab->addTab(_("Keymaps"), "GlobalOptions_KeyMapper");
+		addKeyMapperControls(tab, "GlobalOptions_KeyMapper.", keymaps);
+	}
+#endif
 
 	//
 	// 2) The audio tab

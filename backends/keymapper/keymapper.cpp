@@ -128,6 +128,12 @@ Keymap *Keymapper::getKeymap(const String &name) {
 	return nullptr;
 }
 
+void Keymapper::reloadAllMappings() {
+	for (uint i = 0; i < _keymaps.size(); i++) {
+		_keymaps[i]->loadMappings();
+	}
+}
+
 void Keymapper::setEnabledKeymapType(Keymap::KeymapType type) {
 	_enabledKeymapType = type;
 }
