@@ -204,11 +204,13 @@ void Score::loadArchive() {
 	if (_vm->getVersion() >= 4) {
 		Common::Array<uint16> lnam =  _movieArchive->getResourceIDList(MKTAG('L','n','a','m'));
 		if (lnam.size() > 0) {
-			debugC(2, kDebugLoading, "****** Loading %d Lnam resources", lnam.size());
 
+			int maxLnam = -1;
 			for (Common::Array<uint16>::iterator iterator = lnam.begin(); iterator != lnam.end(); ++iterator) {
-				loadLingoNames(*_movieArchive->getResource(MKTAG('L','n','a','m'), *iterator));
+				maxLnam = MAX(maxLnam, (int)*iterator);
 			}
+			debugC(2, kDebugLoading, "****** Loading Lnam resource with highest ID (%d)", maxLnam);
+			loadLingoNames(*_movieArchive->getResource(MKTAG('L','n','a','m'), maxLnam));
 		}
 	}
 
