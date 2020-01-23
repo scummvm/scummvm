@@ -66,6 +66,7 @@ public:
 	virtual bool setViewport(Rect32 *rect);
 	virtual Rect32 getViewPort() = 0;
 	virtual bool setScreenViewport();
+	virtual void setWindowed(bool windowed) = 0;
 
 	virtual Graphics::PixelFormat getPixelFormat() const = 0;
 	/**

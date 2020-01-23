@@ -2006,7 +2006,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetScreenType") == 0) {
 		stack->correctParams(0);
-		int type = !g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
+		int type = _renderer->isWindowed() ? 1 : 0;
 		stack->pushInt(type);
 
 		return STATUS_OK;
@@ -2065,9 +2065,8 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		int type = stack->pop()->getInt();
 		stack->pop()->getInt(); //mode is unused
-		g_system->beginGFXTransaction();
-		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !type);
-		g_system->endGFXTransaction();
+
+		_renderer->setWindowed(type);
 		stack->pushNULL();
 
 		return STATUS_OK;
