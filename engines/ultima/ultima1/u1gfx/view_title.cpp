@@ -37,6 +37,16 @@ BEGIN_MESSAGE_MAP(ViewTitle, Shared::Gfx::VisualContainer)
 	ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
+void load16(Graphics::ManagedSurface &s, Common::ReadStream &in) {
+	byte *destP = (byte *)s.getPixels();
+	byte v;
+	for (int idx = 0; idx < (s.w * s.h); idx += 2) {
+		v = in.readByte();
+		*destP++ = v & 0xf;
+		*destP++ = v >> 4;
+	}
+}
+
 ViewTitle::ViewTitle(TreeItem *parent) : Shared::Gfx::VisualContainer("Title", Rect(0, 0, 320, 200), parent),
 		_mode(TITLEMODE_COPYRIGHT), _counter(0) {
 	_expiryTime = getGame()->getMillis() + 2000;
@@ -46,10 +56,19 @@ ViewTitle::ViewTitle(TreeItem *parent) : Shared::Gfx::VisualContainer("Title", R
 	Image::BitmapDecoder bmp;
 	if (!bmp.loadStream(f))
 		error("Couldn't load logo");
+	f.close();
 
 	const Graphics::Surface *src = bmp.getSurface();
 	_logo.create(src->w, src->h);
 	_logo.blitFrom(*src);
+
+	// Load the Ultima castle bitmap
+	f.open("castle.16");
+	_castle.create(320, 200);
+	load16(_castle, f);
+	f.close();
+
+	_mode = TITLEMODE_CASTLE;
 }
 
 ViewTitle::~ViewTitle() {
@@ -65,12 +84,10 @@ void ViewTitle::draw() {
 		drawPresentsView();
 		break;
 
-	default:
+	case TITLEMODE_CASTLE:
 		drawCastleView();
 		break;
 	}
-
-
 }
 
 void ViewTitle::drawCopyrightView() {
@@ -106,14 +123,15 @@ void ViewTitle::drawPresentsView() {
 	case 2:
 		s.writeString(game->_res->TITLE_MESSAGES[7], TextPoint(6, 12), game->_textColor);
 		s.writeString(game->_res->TITLE_MESSAGES[8], TextPoint(6, 13), game->_textColor);
-
+		break;
+	default:
+		break;
 	}
-
 }
 
 void ViewTitle::drawCastleView() {
 	Shared::Gfx::VisualSurface s = getSurface();
-
+	s.blitFrom(_castle);
 }
 
 bool ViewTitle::FrameMsg(CFrameMsg &msg) {
@@ -139,7 +157,13 @@ bool ViewTitle::FrameMsg(CFrameMsg &msg) {
 		}
 		break;
 
-	default:
+	case TITLEMODE_CASTLE:
+		_expiryTime = time + 50;
+		if (++_counter == 100) {
+			_mode = TITLEMODE_PRESENTS;
+			_counter = 0;
+			_expiryTime = time + 3000;
+		}
 		break;
 	}
 
