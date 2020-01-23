@@ -39,6 +39,7 @@ class Font;
 
 namespace Common {
 	struct Event;
+	class Keymap;
 }
 
 namespace GUI {
@@ -75,6 +76,7 @@ public:
 	void runLoop();
 
 	void processEvent(const Common::Event &event, Dialog *const activeDialog);
+	Common::Keymap *getKeymap() const;
 	void scheduleTopDialogRedraw();
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
