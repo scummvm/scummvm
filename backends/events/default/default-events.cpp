@@ -30,7 +30,7 @@
 #include "backends/events/default/default-events.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
-#include "backends/keymapper/remap-dialog.h"
+#include "backends/keymapper/remap-widget.h"
 #include "backends/vkeybd/virtual-keyboard.h"
 
 #include "engines/engine.h"
@@ -167,20 +167,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			if (g_engine)
 				g_engine->pauseEngine(false);
 			forwardEvent = false;
-		}
-		break;
-#endif
-#ifdef ENABLE_KEYMAPPER
-	case Common::EVENT_KEYMAPPER_REMAP:
-		if (!_remap) {
-			_remap = true;
-			Common::RemapDialog _remapDialog;
-			if (g_engine)
-				g_engine->pauseEngine(true);
-			_remapDialog.runModal();
-			if (g_engine)
-				g_engine->pauseEngine(false);
-			_remap = false;
 		}
 		break;
 #endif
@@ -338,11 +324,6 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	act->setEvent(EVENT_VIRTUAL_KEYBOARD);
 	globalKeymap->addAction(act);
 #endif
-
-	act = new Action("REMP", _("Remap keys"));
-	act->addDefaultInputMapping("C+F8");
-	act->setEvent(EVENT_KEYMAPPER_REMAP);
-	globalKeymap->addAction(act);
 
 	act = new Action("FULS", _("Toggle fullscreen"));
 	act->addDefaultInputMapping("A+RETURN");
