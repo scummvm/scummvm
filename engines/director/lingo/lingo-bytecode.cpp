@@ -553,6 +553,11 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	_currentEntityId = id;
 	_scriptContexts[type][id] = _currentScriptContext;
 
+	if (stream.size() < 0x5c) {
+		warning("Lscr header too small");
+		return;
+	}
+
 	if (debugChannelSet(5, kDebugLoading)) {
 		debugC(5, kDebugLoading, "Lscr header:");
 		stream.hexdump(0x5c);
@@ -586,6 +591,11 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	/*uint16 constsBase = */stream.readUint16();
 
 	// initialise each global variable
+	if (stream.size() < globalsOffset + globalsCount * 2) {
+		warning("Lscr globals store missing");
+		return;
+	}
+
 	debugC(5, kDebugLoading, "Lscr globals list:");
 	stream.seek(globalsOffset);
 	for (uint16 i = 0; i < globalsCount; i++) {
@@ -605,6 +615,12 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	// copy the storage area first.
 	uint32 constsStoreOffset = constsOffset + 6 * constsCount;
 	uint32 constsStoreSize = stream.size() - constsStoreOffset;
+
+	if ((uint32)stream.size() < constsStoreOffset) {
+		warning("Lscr consts store missing");
+		return;
+	}
+
 	stream.seek(constsStoreOffset);
 
 	if (debugChannelSet(5, kDebugLoading)) {
@@ -687,6 +703,11 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	// these are stored as a code storage area, followed by a reference table of 42 byte entries.
 
 	// copy the storage area first.
+	if (stream.size() < functionsOffset) {
+		warning("Lscr functions store missing");
+		return;
+	}
+
 	uint32 codeStoreSize = functionsOffset - codeStoreOffset;
 	stream.seek(codeStoreOffset);
 	byte *codeStore = (byte *)malloc(codeStoreSize);
@@ -900,6 +921,11 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 void Lingo::addNamesV4(Common::SeekableSubReadStreamEndian &stream) {
 	debugC(1, kDebugLingoCompile, "Add V4 script name index");
 
+	if (stream.size() < 0x14) {
+		warning("Lnam header too small");
+		return;
+	}
+
 	// read the Lnam header!
 	if (debugChannelSet(5, kDebugLoading)) {
 		debugC(5, kDebugLoading, "Lnam header:");
@@ -916,6 +942,11 @@ void Lingo::addNamesV4(Common::SeekableSubReadStreamEndian &stream) {
 	stream.readUint16();
 	uint16 offset = stream.readUint16();
 	uint16 count = stream.readUint16();
+
+	if (stream.size() < offset) {
+		warning("Lnam content missing");
+		return;
+	}
 
 	stream.seek(offset);
 
