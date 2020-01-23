@@ -635,9 +635,10 @@ void Engine::initKeymap() {
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
-		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
+		Common::Action *const act = new Common::Action(keyActionEntries[i].id, keyActionEntries[i].description);
 		act->setKeyEvent(keyActionEntries[i].ks);
 		act->addDefaultInputMapping(keyActionEntries[i].defaultHwId);
+		engineKeyMap->addAction(act);
 	}
 
 	mapper->addGameKeymap(engineKeyMap);

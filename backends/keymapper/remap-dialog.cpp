@@ -47,8 +47,11 @@ enum {
 	kReflowCmd = 'REFL'
 };
 
-RemapDialog::RemapDialog()
-	: Dialog("KeyMapper"), _remapTimeout(0), _remapAction(nullptr) {
+RemapDialog::RemapDialog() :
+		Dialog("KeyMapper"),
+		_remapKeymap(nullptr),
+		_remapAction(nullptr),
+		_remapTimeout(0) {
 
 	_keymapper = g_system->getEventManager()->getKeymapper();
 	assert(_keymapper);
@@ -162,7 +165,7 @@ void RemapDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 d
 void RemapDialog::clearMapping(uint i) {
 	debug(3, "clear the mapping %u", i);
 	Action *action = _actions[i].action;
-	Keymap *keymap = action->getParent();
+	Keymap *keymap = _actions[i].keymap;
 	keymap->unregisterMapping(action);
 
 	_changes = true;
@@ -174,7 +177,7 @@ void RemapDialog::clearMapping(uint i) {
 void RemapDialog::resetMapping(uint i) {
 	debug(3, "Reset the mapping %u", i);
 	Action *action = _actions[i].action;
-	Keymap *keymap = action->getParent();
+	Keymap *keymap = _actions[i].keymap;
 	keymap->resetMapping(action);
 
 	_changes = true;
@@ -190,6 +193,7 @@ void RemapDialog::startRemapping(uint i) {
 		return;
 	}
 
+	_remapKeymap = _actions[i].keymap;
 	_remapAction = _actions[i].action;
 	_remapTimeout = g_system->getMillis() + kRemapTimeoutDelay;
 	_remapInputWatcher->startWatching();
@@ -199,6 +203,7 @@ void RemapDialog::startRemapping(uint i) {
 }
 
 void RemapDialog::stopRemapping() {
+	_remapKeymap = nullptr;
 	_remapAction = nullptr;
 
 	refreshKeymap();
@@ -216,8 +221,7 @@ void RemapDialog::handleMouseDown(int x, int y, int button, int clickCount) {
 void RemapDialog::handleTickle() {
 	const HardwareInput *hardwareInput = _remapInputWatcher->checkForCapturedInput();
 	if (hardwareInput) {
-		Keymap *keymap = _remapAction->getParent();
-		keymap->registerMapping(_remapAction, hardwareInput);
+		_remapKeymap->registerMapping(_remapAction, hardwareInput);
 
 		_changes = true;
 		stopRemapping();
@@ -251,6 +255,7 @@ void RemapDialog::loadKeymap() {
 	Keymap *km = _keymapTable[_kmPopUp->getSelectedTag()];
 	for (Keymap::ActionArray::const_iterator it = km->getActions().begin(); it != km->getActions().end(); ++it) {
 		ActionRow row;
+		row.keymap = km;
 		row.action = *it;
 
 		_actions.push_back(row);
@@ -273,9 +278,7 @@ void RemapDialog::refreshKeymap() {
 
 		row.actionText->setLabel(row.action->description);
 
-		Keymap *keymap = row.action->getParent();
-
-		Array<const HardwareInput *> mappedInputs = keymap->getActionMapping(row.action);
+		Array<const HardwareInput *> mappedInputs = row.keymap->getActionMapping(row.action);
 
 		String keysLabel;
 		for (uint j = 0; j < mappedInputs.size(); j++) {

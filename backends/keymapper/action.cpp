@@ -28,12 +28,10 @@
 
 namespace Common {
 
-Action::Action(Keymap *boss, const char *i,	String des)
-	: _boss(boss), description(des), id(i) {
+Action::Action(const char *i, const String &des) :
+		id(i),
+		description(des) {
 	assert(i);
-	assert(_boss);
-
-	_boss->addAction(this);
 }
 
 void Action::addDefaultInputMapping(const String &hwId) {

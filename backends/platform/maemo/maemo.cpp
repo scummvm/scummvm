@@ -202,20 +202,24 @@ Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
 
 	Action *act;
 
-	act = new Action(globalMap, "CLKM", _("Click Mode"));
+	act = new Action("CLKM", _("Click Mode"));
 	Event evt = Event();
 	evt.type = EVENT_CUSTOM_BACKEND_ACTION;
 	evt.customType = Maemo::kEventClickMode;
 	act->setEvent(evt);
+	globalMap->addAction(act);
 
-	act = new Action(globalMap, "LCLK", _("Left Click"));
+	act = new Action("LCLK", _("Left Click"));
 	act->setLeftClickEvent();
+	globalMap->addAction(act);
 
-	act = new Action(globalMap, "MCLK", _("Middle Click"));
+	act = new Action("MCLK", _("Middle Click"));
 	act->setMiddleClickEvent();
+	globalMap->addAction(act);
 
-	act = new Action(globalMap, "RCLK", _("Right Click"));
+	act = new Action("RCLK", _("Right Click"));
 	act->setRightClickEvent();
+	globalMap->addAction(act);
 
 	return globalMap;
 }
