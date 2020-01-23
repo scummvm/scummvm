@@ -55,6 +55,7 @@ public:
 
 protected:
 	struct ActionRow {
+		Keymap *keymap;
 		Common::Action *action;
 
 		GUI::StaticTextWidget *actionText;
@@ -62,7 +63,7 @@ protected:
 		GUI::ButtonWidget *clearButton;
 		GUI::ButtonWidget *resetButton;
 
-		ActionRow() : action(nullptr), actionText(nullptr), keyButton(nullptr), clearButton(nullptr), resetButton(nullptr) { }
+		ActionRow() : keymap(nullptr), action(nullptr), actionText(nullptr), keyButton(nullptr), clearButton(nullptr), resetButton(nullptr) { }
 	};
 
 	void loadKeymap();
@@ -78,6 +79,7 @@ protected:
 	Common::Array<Keymap *> _keymapTable;
 
 	InputWatcher *_remapInputWatcher;
+	Keymap *_remapKeymap;
 	Action *_remapAction;
 	uint32 _remapTimeout;
 

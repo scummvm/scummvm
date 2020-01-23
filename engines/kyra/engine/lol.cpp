@@ -488,9 +488,10 @@ void LoLEngine::initKeymap() {
 	};
 
 	for (const Common::KeyActionEntry *entry = keyActionEntries; entry->id; ++entry) {
-		Common::Action *const act = new Common::Action(engineKeyMap, entry->id, entry->description);
+		Common::Action *const act = new Common::Action(entry->id, entry->description);
 		act->setKeyEvent(entry->ks);
 		act->addDefaultInputMapping(entry->defaultHwId);
+		engineKeyMap->addAction(act);
 	}
 
 	mapper->addGameKeymap(engineKeyMap);

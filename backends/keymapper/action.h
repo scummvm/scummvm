@@ -29,13 +29,9 @@
 
 #include "common/array.h"
 #include "common/events.h"
-#include "common/func.h"
 #include "common/str.h"
 
 namespace Common {
-
-struct HardwareInput;
-class Keymap;
 
 struct KeyActionEntry {
 	const char *id;
@@ -54,12 +50,10 @@ struct Action {
 	Event event;
 
 private:
-	Keymap *_boss;
-
 	Array<String> _defaultInputMapping;
 
 public:
-	Action(Keymap *boss, const char *id, String des = "");
+	Action(const char *id, const String &description = "");
 
 	void setEvent(const Event &evt) {
 		event = evt;
@@ -101,10 +95,6 @@ public:
 
 	const Array<String> &getDefaultInputMapping() const {
 		return _defaultInputMapping;
-	}
-
-	Keymap *getParent() {
-		return _boss;
 	}
 
 };

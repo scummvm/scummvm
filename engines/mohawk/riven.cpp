@@ -903,27 +903,31 @@ void MohawkEngine_Riven::initKeymap() {
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
-		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
+		Common::Action *const act = new Common::Action(keyActionEntries[i].id, keyActionEntries[i].description);
 		act->setKeyEvent(keyActionEntries[i].ks);
 		act->addDefaultInputMapping(keyActionEntries[i].defaultHwId);
+		engineKeyMap->addAction(act);
 	}
 
 	if (getFeatures() & GF_DEMO) {
 		for (uint i = 0; i < ARRAYSIZE(keyActionEntriesDemo); i++) {
-			Common::Action* const act = new Common::Action(engineKeyMap, keyActionEntriesDemo[i].id, keyActionEntriesDemo[i].description);
+			Common::Action* const act = new Common::Action(keyActionEntriesDemo[i].id, keyActionEntriesDemo[i].description);
 			act->setKeyEvent(keyActionEntriesDemo[i].ks);
 			act->addDefaultInputMapping(keyActionEntriesDemo[i].defaultHwId);
+			engineKeyMap->addAction(act);
 		}
 	}
 
 	if (getFeatures() & GF_25TH) {
-		Common::Action* const act = new Common::Action(engineKeyMap, "SMNU", _("Skip / Open main menu"));
+		Common::Action* const act = new Common::Action("SMNU", _("Skip / Open main menu"));
 		act->setKeyEvent(Common::KEYCODE_ESCAPE);
 		act->addDefaultInputMapping("ESCAPE");
+		engineKeyMap->addAction(act);
 	} else {
-		Common::Action* const act = new Common::Action(engineKeyMap, "SKIP", _("Skip"));
+		Common::Action* const act = new Common::Action("SKIP", _("Skip"));
 		act->setKeyEvent(Common::KEYCODE_ESCAPE);
 		act->addDefaultInputMapping("ESCAPE");
+		engineKeyMap->addAction(act);
 	}
 
 	mapper->addGameKeymap(engineKeyMap);
