@@ -78,6 +78,7 @@ public:
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
 
 	BaseImage *takeScreenshot() override;
+	void onWindowChange() override;
 
 	void invalidateTicket(RenderTicket *renderTicket);
 	void invalidateTicketsFromSurface(BaseSurfaceOSystem *surf);

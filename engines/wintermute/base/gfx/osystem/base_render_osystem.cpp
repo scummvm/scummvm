@@ -214,6 +214,11 @@ bool BaseRenderOSystem::flip() {
 	return STATUS_OK;
 }
 
+//////////////////////////////////////////////////////////////////////
+void BaseRenderOSystem::onWindowChange() {
+	_windowed = !g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
+}
+
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	_clearColor = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
