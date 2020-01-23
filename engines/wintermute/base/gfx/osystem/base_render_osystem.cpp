@@ -219,6 +219,14 @@ void BaseRenderOSystem::onWindowChange() {
 	_windowed = !g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
 }
 
+//////////////////////////////////////////////////////////////////////
+void BaseRenderOSystem::setWindowed(bool windowed) {
+	ConfMan.setBool("fullscreen", !windowed);
+	g_system->beginGFXTransaction();
+	g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !windowed);
+	g_system->endGFXTransaction();
+}
+
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderOSystem::fill(byte r, byte g, byte b, Common::Rect *rect) {
 	_clearColor = _renderSurface->format.ARGBToColor(0xFF, r, g, b);
