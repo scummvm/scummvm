@@ -20,22 +20,15 @@
  *
  */
 
- // Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
-// HACK to allow building with the SDL backend on MinGW
-// see bug #1800764 "TOOLS: MinGW tools building broken"
-#ifdef main
-#undef main
-#endif // main
-
-#include "ultima1_resources.h"
+#include "create_ultima.h"
 #include "file.h"
 
 #define FILE_BUFFER_SIZE 1024
 #define MD5_COMPUTE_SIZE 1024
 
-uint32 computeMD5(Common::File &f) {
+typedef unsigned int uint32;
+
+uint32 computeMD5(File &f) {
 	uint32 total = 0;
 	f.seek(0);
 	for (int idx = 0; idx < MD5_COMPUTE_SIZE; ++idx)
@@ -51,8 +44,12 @@ uint32 computeMD5(Common::File &f) {
 #define LOGO_WIDTH2 76
 #define LOGO_TABLE1 0x3262
 #define LOGO_TABLE2 0x4320
+#define FLAG_WIDTH 8
+#define FLAG_HEIGHT 8
+#define NUM_FLAGS 3
 
-void createLogo(Common::File &in, Common::MemFile &out) {
+// Creates the logo.bmp file
+void createLogo(File &in) {
 	int offsets[LOGO_HEIGHT][2];
 	char buffer[LOGO_WIDTH1 + LOGO_WIDTH2 + 1];
 
@@ -64,6 +61,11 @@ void createLogo(Common::File &in, Common::MemFile &out) {
 	for (int y = 0; y < LOGO_HEIGHT; ++y)
 		offsets[y][1] = in.readWord();
 
+	// Set up a surface
+	Surface out(LOGO_WIDTH1 + LOGO_WIDTH2, LOGO_HEIGHT);
+	out.setPaletteEntry(0, 0, 0, 0);
+	out.setPaletteEntry(1, 0xff, 0xff, 0xff);
+
 	// Convert the lines
 	for (int y = 0; y < LOGO_HEIGHT; ++y) {
 		in.seek(DATA_SEGMENT_OFFSET + offsets[y][0]);
@@ -74,30 +76,40 @@ void createLogo(Common::File &in, Common::MemFile &out) {
 		in.read(buffer + LOGO_WIDTH1, LOGO_WIDTH2 + 1);
 		assert(buffer[LOGO_WIDTH1 + LOGO_WIDTH2] == '\0');
 
-		for (int x = 0; x < (LOGO_WIDTH1 + LOGO_WIDTH2); ++x)
-			out.writeByte(buffer[x] == '*' ? 1 : 0);
+		byte *line = out.getBasePtr(0, y);
+		for (int x = 0; x < (LOGO_WIDTH1 + LOGO_WIDTH2); ++x, ++line)
+			*line = buffer[x] == '*' ? 1 : 0;
 	}
+
+	out.saveToFile("logo.bmp");
 }
 
-void writeUltima1Resources(Archive &a) {
+// Creates the flags.bmp file
+void createFlags(File &in) {
+	Surface out(FLAG_WIDTH * NUM_FLAGS, FLAG_HEIGHT);
+	out.setPaletteEntry(10, 0, 0, 0);
+	out.setPaletteEntry(11, 0xff, 0xff, 0xff);
+
+	in.seek(DATA_SEGMENT_OFFSET + 0x124);
+
+	for (int flagNum = 0; flagNum < NUM_FLAGS; ++flagNum) {
+		for (int yp = 0; yp < FLAG_HEIGHT; ++yp) {
+			byte *line = out.getBasePtr(flagNum * FLAG_WIDTH, yp);
+			for (int xp = 0; xp < FLAG_WIDTH; ++xp)
+				*line++ = in.readByte() ? 10 : 11;
+		}
+	}
+
+	out.saveToFile("flags.bmp");
+}
+
+void extractUltima1Resources() {
 	// Open up ultima1.exe for logo
-	Common::File u1;
-	if (!u1.open("Ultima 1/ultima.exe"))
-		error("Could not find ultima.exe");
+	File u1("ultima.exe");
 	if (computeMD5(u1) != 64620)
 		error("Unknown version of Ultima 1 ultima.exe");
 
-	// Add the Origin logo
-	Common::MemFile logo;
-	createLogo(u1, logo);
-	a.add("ULTIMA1/LOGO", logo);
-
-	// Add the flag data for the castle title screen
-	Common::MemFile flags;
-	u1.seek(DATA_SEGMENT_OFFSET + 0x124);
-	for (int idx = 0; idx < 64 * 3; ++idx)
-		flags.writeByte(u1.readByte() ? 10 : 11);
-	a.add("ULTIMA1/FLAGS", flags);
-
-	u1.close();
+	// Extract the Origin logo and flag animation data
+	createLogo(u1);
+	createFlags(u1);
 }

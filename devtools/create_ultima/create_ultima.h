@@ -20,11 +20,9 @@
  *
  */
 
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#ifndef CREATE_ULTIMA_H
+#define CREATE_ULTIMA_H
 
-#include "archive.h"
-
-extern void writeUltima1EnhancedMap(Archive &a);
+extern void error(const char *s, ...);
 
 #endif

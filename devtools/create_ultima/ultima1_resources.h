@@ -23,8 +23,6 @@
 #ifndef ULTIMA1_RESOURCES_H
 #define ULTIMA1_RESOURCES_H
 
-#include "archive.h"
-
-extern void writeUltima1Resources(Archive &a);
+extern void extractUltima1Resources();
 
 #endif
