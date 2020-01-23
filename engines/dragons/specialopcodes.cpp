@@ -542,7 +542,6 @@ void SpecialOpcodes::spcClearEngineFlag0x2000000() {
 }
 
 void SpecialOpcodes::spcZigmondFraudSceneLogic() {
-	//TODO
 	sceneUpdater.numSteps[0] = 2;
 	sceneUpdater.numSteps[1] = 2;
 	sceneUpdater.numSteps[2] = 1;
@@ -551,7 +550,7 @@ void SpecialOpcodes::spcZigmondFraudSceneLogic() {
 	sceneUpdater.numSteps[5] = 2;
 	sceneUpdater.numSteps[6] = 2;
 	sceneUpdater.numSteps[7] = 2;
-
+//TODO do we need this -> DAT_80072dc0 = 2;
 	sceneUpdater.iniIDTbl[0][0] = 0x19E;
 	sceneUpdater.iniIDTbl[0][1] = 0x197;
 	sceneUpdater.iniIDTbl[1][0] = 0x19E;
@@ -582,7 +581,21 @@ void SpecialOpcodes::spcZigmondFraudSceneLogic() {
 	sceneUpdater.sequenceIDTbl[7][0] = 2;
 	sceneUpdater.sequenceIDTbl[7][1] = 0xe;
 
-	//TODO field4
+	sceneUpdater.textTbl[0][0] = 0x2D000;
+	sceneUpdater.textTbl[0][1] = 0x2D044;
+	sceneUpdater.textTbl[1][0] = 0x2D0B2;
+	sceneUpdater.textTbl[1][1] = 0x2D0D6;
+	sceneUpdater.textTbl[2][0] = 0x2D152;
+	sceneUpdater.textTbl[3][0] = 0x2D1A4;
+	sceneUpdater.textTbl[4][0] = 0x2D20A;
+	sceneUpdater.textTbl[4][1] = 0x2D27C;
+	sceneUpdater.textTbl[5][0] = 0x2D2EC;
+	sceneUpdater.textTbl[5][1] = 0x2D336;
+	sceneUpdater.textTbl[6][0] = 0x2D3E0;
+	sceneUpdater.textTbl[6][1] = 0x2D456;
+	sceneUpdater.textTbl[7][0] = 0x2D4A8;
+	sceneUpdater.textTbl[7][1] = 0x2D504;
+
 	setupTableBasedSceneUpdateFunction(0x168,8,0xb4);
 }
 
