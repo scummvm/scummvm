@@ -421,6 +421,7 @@ private:
 	void dispatchPoll();
 };
 
+class Keymap;
 class Keymapper;
 
 /**
@@ -503,6 +504,7 @@ public:
 	// replacing it by a generic getScreenChangeID method here
 #ifdef ENABLE_KEYMAPPER
 	virtual Keymapper *getKeymapper() = 0;
+	virtual Keymap *getGlobalKeymap() = 0;
 #endif
 
 	enum {

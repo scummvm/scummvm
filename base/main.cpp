@@ -366,50 +366,15 @@ static void setupKeymapper(OSystem &system) {
 
 	// Query the backend for hardware keys and default bindings and register them
 	HardwareInputSet *inputSet = system.getHardwareInputSet();
-	const Common::KeymapperDefaultBindings *backendDefaultBindings = system.getKeymapperDefaultBindings();
+	const KeymapperDefaultBindings *backendDefaultBindings = system.getKeymapperDefaultBindings();
 
 	mapper->registerHardwareInputSet(inputSet);
 	mapper->registerBackendDefaultBindings(backendDefaultBindings);
 
-	// Now create the global keymap
-	Keymap *primaryGlobalKeymap = new Keymap(Keymap::kKeymapTypeGlobal, kGlobalKeymapName);
-
-	Action *act;
-	act = new Action("MENU", _("Menu"));
-	act->addDefaultInputMapping("C+F5");
-	act->setEvent(EVENT_MAINMENU);
-	primaryGlobalKeymap->addAction(act);
-
-#ifdef ENABLE_VKEYBD
-	act = new Action("VIRT", _("Display keyboard"));
-	act->addDefaultInputMapping("C+F7");
-	act->setEvent(EVENT_VIRTUAL_KEYBOARD);
-	primaryGlobalKeymap->addAction(act);
-#endif
-
-	act = new Action("REMP", _("Remap keys"));
-	act->addDefaultInputMapping("C+F8");
-	act->setEvent(EVENT_KEYMAPPER_REMAP);
-	primaryGlobalKeymap->addAction(act);
-
-	act = new Action("FULS", _("Toggle fullscreen"));
-	act->addDefaultInputMapping("A+RETURN");
-	act->setKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
-	primaryGlobalKeymap->addAction(act);
-
-	act = new Action("LCLK", _("Left Click"));
-	act->setLeftClickEvent();
-	primaryGlobalKeymap->addAction(act);
-
-	act = new Action("MCLK", _("Middle Click"));
-	act->setMiddleClickEvent();
-	primaryGlobalKeymap->addAction(act);
-
-	act = new Action("RCLK", _("Right Click"));
-	act->setRightClickEvent();
-	primaryGlobalKeymap->addAction(act);
-
-	mapper->addGlobalKeymap(primaryGlobalKeymap);
+	Keymap *primaryGlobalKeymap = system.getEventManager()->getGlobalKeymap();
+	if (primaryGlobalKeymap) {
+		mapper->addGlobalKeymap(primaryGlobalKeymap);
+	}
 
 	// Get the platform-specific global keymap (if it exists)
 	Keymap *platformGlobalKeymap = system.getGlobalKeymap();
