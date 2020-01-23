@@ -83,6 +83,7 @@ public:
 	bool canSaveGameStateCurrently();
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
+	static Common::Keymap *initKeymap();
 
 	// Base classes
 	GraphicsManager *_gfx;
@@ -272,7 +273,6 @@ private:
 	void doSubChase();
 	uint getNeighborhoodCD(const NeighborhoodID neighborhood) const;
 	uint _currentCD;
-	void initKeymap();
 	InputBits getInputFilter();
 
 	// Menu

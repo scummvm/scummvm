@@ -22,6 +22,9 @@
 
 #include "base/plugins.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+
 #include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -223,6 +226,7 @@ public:
 	int getMaximumSaveSlot() const override { return 999; }
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	Common::Keymap *initKeymap(const char *target) const override;
 };
 
 bool MohawkMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -325,6 +329,16 @@ SaveStateDescriptor MohawkMetaEngine::querySaveMetaInfos(const char *target, int
 	{
 		return SaveStateDescriptor();
 	}
+}
+
+Common::Keymap *MohawkMetaEngine::initKeymap(const char *target) const {
+	Common::String gameId = ConfMan.get("gameid", target);
+
+	if (gameId == "riven") {
+		return Mohawk::MohawkEngine_Riven::initKeymap(target);
+	}
+
+	return AdvancedMetaEngine::initKeymap(target);
 }
 
 bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

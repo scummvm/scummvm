@@ -154,6 +154,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const { return 999; }
 	virtual void removeSaveState(const char *target, int slot) const;
+	Common::Keymap *initKeymap(const char *target) const override;
 };
 
 bool PegasusMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -186,6 +187,10 @@ void PegasusMetaEngine::removeSaveState(const char *target, int slot) const {
 	// See listSaves() for info on the pattern
 	Common::StringArray fileNames = Pegasus::PegasusEngine::listSaveFiles();
 	g_system->getSavefileManager()->removeSavefile(fileNames[slot].c_str());
+}
+
+Common::Keymap *PegasusMetaEngine::initKeymap(const char *target) const {
+	return Pegasus::PegasusEngine::initKeymap();
 }
 
 bool PegasusMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
