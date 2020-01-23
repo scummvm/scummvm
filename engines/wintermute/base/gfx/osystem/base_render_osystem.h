@@ -79,6 +79,7 @@ public:
 
 	BaseImage *takeScreenshot() override;
 	void onWindowChange() override;
+	void setWindowed(bool windowed) override;
 
 	void invalidateTicket(RenderTicket *renderTicket);
 	void invalidateTicketsFromSurface(BaseSurfaceOSystem *surf);
