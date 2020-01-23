@@ -110,6 +110,22 @@ GuiManager::~GuiManager() {
 }
 
 #ifdef ENABLE_KEYMAPPER
+
+Common::Keymap *GuiManager::getKeymap() const {
+	using namespace Common;
+
+	Keymap *guiMap = new Keymap(Keymap::kKeymapTypeGui, kGuiKeymapName);
+
+	Action *act;
+
+	act = new Action("CLOS", _("Close"));
+	act->addDefaultInputMapping("ESCAPE");
+	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
+	guiMap->addAction(act);
+
+	return guiMap;
+}
+
 void GuiManager::initKeymap() {
 	using namespace Common;
 
@@ -119,14 +135,7 @@ void GuiManager::initKeymap() {
 	if (mapper->getKeymap(kGuiKeymapName) != 0)
 		return;
 
-	Action *act;
-	Keymap *guiMap = new Keymap(Keymap::kKeymapTypeGui, kGuiKeymapName);
-
-	act = new Action("CLOS", _("Close"));
-	act->addDefaultInputMapping("ESCAPE");
-	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
-	guiMap->addAction(act);
-
+	Keymap *guiMap = getKeymap();
 	mapper->addGlobalKeymap(guiMap);
 }
 
