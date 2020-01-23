@@ -141,8 +141,6 @@ public:
 
 	void quit();
 
-	bool loadSpeech(const Common::String &filename);
-
 	Common::Language getLanguage() const;
 	uint8 modifyChar(uint8 c) const;
 	Common::String modifyFileName(const char *);
@@ -236,7 +234,6 @@ protected:
 	Common::List<ObjPos> _exList;
 	Common::List<People> _peopleList;
 	uint8 _zoomSpace[46*40];
-	// _printedList (unused?)
 	Change _listOfChanges[kNumChanges]; // Note: this array is saved
 	uint8 _underTimedText[kUnderTimedTextBufSize];
 	Common::List<Rain> _rainList;
@@ -298,8 +295,6 @@ protected:
 	TextFile _exText;
 
 public:
-	DreamWebEngine(/*DreamWeb::DreamWebEngine *en*/);
-
 	bool _quitRequested;
 	bool _subtitles;
 	bool _foreignRelease;
@@ -755,7 +750,6 @@ public:
 	uint16 readMouseState();
 	void hangOn(uint16 frameCount);
 	void lockMon();
-	uint8 *textUnder();
 	void readKey();
 	void findOrMake(uint8 index, uint8 value, uint8 type);
 	DynObject *getFreeAd(uint8 index);
@@ -914,7 +908,6 @@ public:
 	void dreamweb();
 	void screenUpdate();
 	void startup1();
-	void readOneBlock();
 	bool checkIfPerson(uint8 x, uint8 y);
 	bool checkIfFree(uint8 x, uint8 y);
 	bool checkIfEx(uint8 x, uint8 y);
