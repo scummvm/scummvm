@@ -90,6 +90,15 @@ public:
 	const ActionArray &getMappedActions(const HardwareInput *hardwareInput) const;
 
 	/**
+	 * Adds a new Action to this Map
+	 *
+	 * Takes ownership of the action.
+	 *
+	 * @param action the Action to add
+	 */
+	void addAction(Action *action);
+
+	/**
 	 * Get the list of all the Actions contained in this Keymap
 	 */
 	const ActionArray &getActions() const { return _actions; }
@@ -117,14 +126,6 @@ public:
 	void setEnabled(bool enabled) { _enabled = enabled; }
 
 private:
-	friend struct Action;
-
-	/**
-	 * Adds a new Action to this Map,
-	 * adding it at the back of the internal array
-	 * @param action the Action to add
-	 */
-	void addAction(Action *action);
 
 	const Action *findAction(const char *id) const;
 

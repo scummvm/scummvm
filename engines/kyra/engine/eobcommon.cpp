@@ -374,15 +374,17 @@ void EoBCoreEngine::initKeymap() {
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); ++i) {
-		Common::Action *const act = new Common::Action(engineKeyMap, keyActionEntries[i].id, keyActionEntries[i].description);
+		Common::Action *const act = new Common::Action(keyActionEntries[i].id, keyActionEntries[i].description);
 		act->setKeyEvent(keyActionEntries[i].ks);
 		act->addDefaultInputMapping(keyActionEntries[i].defaultHwId);
+		engineKeyMap->addAction(act);
 	}
 
 	if (_flags.gameID == GI_EOB2) {
-		Common::Action *const act = new Common::Action(engineKeyMap, "SL6", _("Spell Level 6"));
+		Common::Action *const act = new Common::Action("SL6", _("Spell Level 6"));
 		act->setKeyEvent(Common::KeyState(Common::KEYCODE_6));
 		act->addDefaultInputMapping("6");
+		engineKeyMap->addAction(act);
 	}
 
 	mapper->addGameKeymap(engineKeyMap);
