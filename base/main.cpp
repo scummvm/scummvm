@@ -219,8 +219,8 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	Common::String caption(ConfMan.get("description"));
 
 	if (caption.empty()) {
-		QualifiedGameDescriptor game = EngineMan.findTarget(target);
-		if (!game.description.empty()) {
+		PlainGameDescriptor game = metaEngine.findGame(ConfMan.get("gameid").c_str());
+		if (game.description) {
 			caption = game.description;
 		}
 	}
