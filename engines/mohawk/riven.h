@@ -33,6 +33,10 @@
 
 #include "graphics/surface.h"
 
+namespace Common {
+class Keymap;
+}
+
 namespace Mohawk {
 
 struct MohawkGameDescription;
@@ -104,6 +108,7 @@ public:
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	bool hasFeature(EngineFeature f) const override;
+	static Common::Keymap *initKeymap(const char *target);
 
 	void doFrame();
 	void processInput();
@@ -134,7 +139,6 @@ private:
 	// Variables
 	void initVars();
 
-	void initKeymap();
 	void pauseEngineIntern(bool) override;
 	uint32 sanitizeTransitionMode(uint32 mode);
 public:

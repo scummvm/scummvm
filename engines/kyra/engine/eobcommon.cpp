@@ -343,14 +343,8 @@ EoBCoreEngine::~EoBCoreEngine() {
 	_txt = 0;
 }
 
-void EoBCoreEngine::initKeymap() {
+Common::Keymap *EoBCoreEngine::initKeymap(const Common::String &gameId) {
 #ifdef ENABLE_KEYMAPPER
-	Common::Keymapper *const mapper = _eventMan->getKeymapper();
-
-	// Do not try to recreate same keymap over again
-	if (mapper->getKeymap(kKeymapName) != 0)
-		return;
-
 	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
 
 	const Common::KeyActionEntry keyActionEntries[] = {
@@ -380,14 +374,16 @@ void EoBCoreEngine::initKeymap() {
 		engineKeyMap->addAction(act);
 	}
 
-	if (_flags.gameID == GI_EOB2) {
+	if (gameId == "eob2") {
 		Common::Action *const act = new Common::Action("SL6", _("Spell Level 6"));
 		act->setKeyEvent(Common::KeyState(Common::KEYCODE_6));
 		act->addDefaultInputMapping("6");
 		engineKeyMap->addAction(act);
 	}
 
-	mapper->addGameKeymap(engineKeyMap);
+	return engineKeyMap;
+#else
+	return nullptr;
 #endif
 }
 

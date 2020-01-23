@@ -155,6 +155,7 @@ void saveLastLaunchedTarget(const Common::String &target) {
 static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common::String &edebuglevels) {
 	// Determine the game data path, for validation and error messages
 	Common::FSNode dir(ConfMan.get("path"));
+	Common::String target = ConfMan.getActiveDomainName();
 	Common::Error err = Common::kNoError;
 	Engine *engine = 0;
 
@@ -179,8 +180,8 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	}
 
 	// Create the game engine
+	const MetaEngine &metaEngine = plugin->get<MetaEngine>();
 	if (err.getCode() == Common::kNoError) {
-		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
 		// Set default values for all of the custom engine options
 		// Apparently some engines query them in their constructor, thus we
 		// need to set this up before instance creation.
@@ -200,7 +201,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 		warning("%s failed to instantiate engine: %s (target '%s', path '%s')",
 			plugin->getName(),
 			err.getDesc().c_str(),
-			ConfMan.getActiveDomainName().c_str(),
+			target.c_str(),
 			dir.getPath().c_str()
 			);
 
@@ -208,7 +209,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 		// so it not visible in the launcher.
 		// Temporary targets are created when starting games from the command line using the game id.
 		if (ConfMan.hasKey("id_came_from_command_line")) {
-			ConfMan.removeGameDomain(ConfMan.getActiveDomainName().c_str());
+			ConfMan.removeGameDomain(target.c_str());
 		}
 
 		return err;
@@ -218,13 +219,13 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	Common::String caption(ConfMan.get("description"));
 
 	if (caption.empty()) {
-		QualifiedGameDescriptor game = EngineMan.findTarget(ConfMan.getActiveDomainName());
+		QualifiedGameDescriptor game = EngineMan.findTarget(target);
 		if (!game.description.empty()) {
 			caption = game.description;
 		}
 	}
 	if (caption.empty())
-		caption = ConfMan.getActiveDomainName(); // Use the domain (=target) name
+		caption = target;
 	if (!caption.empty())	{
 		system.setWindowCaption(caption.c_str());
 	}
@@ -280,8 +281,14 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	}
 #endif // USE_TRANSLATION
 
+#ifdef ENABLE_KEYMAPPER
 	// Initialize any game-specific keymaps
-	engine->initKeymap();
+	Common::Keymap *gameKeymap = metaEngine.initKeymap(target.c_str());
+	Common::Keymapper *keymapper = system.getEventManager()->getKeymapper();
+	if (gameKeymap) {
+		keymapper->addGameKeymap(gameKeymap);
+	}
+#endif
 
 	// Inform backend that the engine is about to be run
 	system.engineInit();
@@ -293,7 +300,9 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	system.engineDone();
 
 	// Clean up any game-specific keymaps
-	engine->deinitKeymap();
+#ifdef ENABLE_KEYMAPPER
+	keymapper->cleanupGameKeymaps();
+#endif
 
 	// Free up memory
 	delete engine;

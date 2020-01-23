@@ -461,14 +461,8 @@ Common::Error LoLEngine::init() {
 	return Common::kNoError;
 }
 
-void LoLEngine::initKeymap() {
+Common::Keymap *LoLEngine::initKeymap() {
 #ifdef ENABLE_KEYMAPPER
-	Common::Keymapper *const mapper = _eventMan->getKeymapper();
-
-	// Do not try to recreate same keymap over again
-	if (mapper->getKeymap(kKeymapName) != 0)
-		return;
-
 	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
 
 	const Common::KeyActionEntry keyActionEntries[] = {
@@ -494,7 +488,9 @@ void LoLEngine::initKeymap() {
 		engineKeyMap->addAction(act);
 	}
 
-	mapper->addGameKeymap(engineKeyMap);
+	return engineKeyMap;
+#else
+	return nullptr;
 #endif
 }
 

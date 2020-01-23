@@ -36,6 +36,7 @@ class Engine;
 class OSystem;
 
 namespace Common {
+class Keymap;
 class FSList;
 class OutSaveFile;
 class String;
@@ -215,6 +216,11 @@ public:
 	 * @param target		game target. If omitted, then the engine id is used
 	 */
 	virtual const char *getSavegamePattern(const char *target = nullptr) const;
+
+	/**
+	 * Return the keymap used by the target.
+	 */
+	virtual Common::Keymap *initKeymap(const char *target) const;
 
 	/** @name MetaEngineFeature flags */
 	//@{

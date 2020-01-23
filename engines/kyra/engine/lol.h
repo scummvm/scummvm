@@ -37,6 +37,10 @@ namespace Audio {
 class SeekableAudioStream;
 } // End of namespace Audio
 
+namespace Common {
+class Keymap;
+}
+
 namespace Kyra {
 
 class Screen_LoL;
@@ -268,7 +272,7 @@ public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
 	virtual ~LoLEngine();
 
-	virtual void initKeymap();
+	static Common::Keymap *initKeymap();
 
 	void pauseEngineIntern(bool pause);
 

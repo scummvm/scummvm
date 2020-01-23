@@ -205,16 +205,6 @@ public:
 	 */
 	virtual void syncSoundSettings();
 
-	/*
-	 * Initialize any engine-specific keymaps.
-	 */
-	virtual void initKeymap();
-
-	/*
-	 * Cleanup any engine-specific keymaps.
-	 */
-	virtual void deinitKeymap();
-
 	/**
 	 * Flip mute all sound option.
 	 */
