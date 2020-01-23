@@ -114,6 +114,11 @@ void BasePlatform::handleEvent(Common::Event *event) {
 			_gameRef->handleMouseWheel(event->mouse.y);
 		}
 		break;
+	case Common::EVENT_SCREEN_CHANGED:
+		if (_gameRef) {
+			_gameRef->_renderer->onWindowChange();
+		}
+		break;
 // Focus-events have been removed (_gameRef->onActivate originally)
 	case Common::EVENT_RTL:
 		_gameRef->_quitting = true;
