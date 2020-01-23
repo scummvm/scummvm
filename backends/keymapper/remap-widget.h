@@ -20,14 +20,16 @@
  *
  */
 
-#ifndef REMAP_DIALOG_H
-#define REMAP_DIALOG_H
+#ifndef REMAP_WIDGET_H
+#define REMAP_WIDGET_H
 
 #include "common/scummsys.h"
 
 #ifdef ENABLE_KEYMAPPER
 
-#include "gui/dialog.h"
+#include "common/hash-ptr.h"
+
+#include "gui/widget.h"
 
 namespace GUI {
 class ButtonWidget;
@@ -43,15 +45,17 @@ class Keymap;
 class Keymapper;
 class InputWatcher;
 
-class RemapDialog : public GUI::Dialog {
+class RemapWidget : public GUI::Widget {
 public:
-	RemapDialog();
-	virtual ~RemapDialog();
-	virtual void open();
-	virtual void close();
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void handleMouseDown(int x, int y, int button, int clickCount);
-	virtual void handleTickle();
+	typedef Common::Array<Keymap *> KeymapArray;
+
+	RemapWidget(GuiObject *boss, const Common::String &name, const KeymapArray &keymaps);
+	~RemapWidget() override;
+	void build();
+	bool save();
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleTickle() override;
 
 protected:
 	struct ActionRow {
@@ -66,25 +70,25 @@ protected:
 		ActionRow() : keymap(nullptr), action(nullptr), actionText(nullptr), keyButton(nullptr), clearButton(nullptr), resetButton(nullptr) { }
 	};
 
+	void drawWidget() override {}
+	void reflowLayout() override;
+	Widget *findWidget(int x, int y) override;
+
 	void loadKeymap();
 	void refreshKeymap();
-	void clearKeymap();
 	void reflowActionWidgets();
 	void clearMapping(uint i);
 	void resetMapping(uint i);
 	void startRemapping(uint i);
 	void stopRemapping();
 
-	Keymapper *_keymapper;
-	Common::Array<Keymap *> _keymapTable;
+	KeymapArray _keymapTable;
 
 	InputWatcher *_remapInputWatcher;
 	Keymap *_remapKeymap;
 	Action *_remapAction;
 	uint32 _remapTimeout;
 
-	GUI::StaticTextWidget *_kmPopUpDesc;
-	GUI::PopUpWidget *_kmPopUp;
 	GUI::ScrollContainerWidget *_scrollContainer;
 
 	static const uint32 kRemapTimeoutDelay = 3000;
@@ -92,10 +96,11 @@ protected:
 	bool _changes;
 
 	Array<ActionRow> _actions;
+	HashMap<Keymap *, GUI::StaticTextWidget *> _keymapSeparators;
 };
 
 } // End of namespace Common
 
 #endif // #ifdef ENABLE_KEYMAPPER
 
-#endif // #ifndef REMAP_DIALOG_H
+#endif // #ifndef REMAP_WIDGET_H

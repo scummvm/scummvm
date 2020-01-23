@@ -282,6 +282,12 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'GlobalOptions_KeyMapper' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'/>
+		</layout>
+	</dialog>
+
 	<dialog name = 'GlobalOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'Container'/>
@@ -980,6 +986,12 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'GameOptions_KeyMapper' overlays = 'Dialog.GameOptions.TabWidget'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'Container'/>
+		</layout>
+	</dialog>
+
 	<dialog name = 'GameOptions_Graphics' overlays = 'Dialog.GameOptions.TabWidget'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'Container'/>
@@ -1667,30 +1679,6 @@
 						type = 'Button'
 				/>
 				<widget name = 'Cancel'
-						type = 'Button'
-				/>
-			</layout>
-		</layout>
-	</dialog>
-
-	<dialog name = 'KeyMapper' overlays = 'screen_center' shading = 'dim'>
-		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '10' align = 'center'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
-				<widget name = 'PopupDesc'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'Popup'
-						type = 'PopUp'
-						width = '150'
-						height = 'Globals.Line.Height'
-				/>
-			</layout>
-			<widget name = 'KeymapArea'
-					width = '300'
-					height = '120'
-			/>
-			<layout type = 'horizontal' padding = '8, 8, 8, 8' align = 'center'>
-				<widget name = 'Close'
 						type = 'Button'
 				/>
 			</layout>

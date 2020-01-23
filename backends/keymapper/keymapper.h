@@ -43,6 +43,8 @@ class HardwareInput;
 class HardwareInputSet;
 class KeymapperDefaultBindings;
 
+typedef Array<Keymap *> KeymapArray;
+
 class Keymapper : public Common::DefaultEventMapper {
 public:
 
@@ -98,7 +100,12 @@ public:
 	/**
 	 * Obtain a list of all the keymaps registered with the keymapper
 	 */
-	const Array<Keymap *> &getKeymaps() const { return _keymaps; }
+	const KeymapArray &getKeymaps() const { return _keymaps; }
+
+	/**
+	 * reload the mappings for all the keymaps from the configuration manager
+	 */
+	void reloadAllMappings();
 
 	/**
 	 * Set which kind of keymap is currently used to map events
@@ -117,6 +124,8 @@ public:
 	 */
 	const HardwareInput *findHardwareInput(const Event &event);
 
+	void initKeymap(Keymap *keymap, ConfigManager::Domain *domain);
+
 private:
 
 	enum IncomingEventType {
@@ -124,8 +133,6 @@ private:
 		kIncomingKeyUp,
 		kIncomingNonKey
 	};
-
-	void initKeymap(Keymap *keymap, ConfigManager::Domain *domain);
 
 	HardwareInputSet *_hardwareInputs;
 	const KeymapperDefaultBindings *_backendDefaultBindings;
@@ -139,7 +146,6 @@ private:
 	bool _enabled;
 	Keymap::KeymapType _enabledKeymapType;
 
-	typedef Array<Keymap *> KeymapArray;
 	KeymapArray _keymaps;
 
 };

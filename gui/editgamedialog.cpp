@@ -22,6 +22,8 @@
 
 #include "gui/editgamedialog.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "common/config-manager.h"
 #include "common/gui_options.h"
 #include "common/translation.h"
@@ -194,6 +196,28 @@ EditGameDialog::EditGameDialog(const String &domain)
 		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), nullptr, kCmdGlobalGraphicsOverride);
 
 	addGraphicControls(graphicsContainer, "GameOptions_Graphics_Container.");
+
+	//
+	// The Keymap tab
+	//
+#ifdef ENABLE_KEYMAPPER
+	Common::Keymap *keymap = nullptr;
+	if (plugin) {
+		keymap = plugin->get<MetaEngine>().initKeymap(domain.c_str());
+	}
+
+	if (keymap && !keymap->getActions().empty()) {
+		Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+
+		keymapper->initKeymap(keymap, ConfMan.getDomain(domain));
+
+		Common::KeymapArray keymaps;
+		keymaps.push_back(keymap);
+
+		tab->addTab(_("Keymaps"), "GameOptions_KeyMapper");
+		addKeyMapperControls(tab, "GameOptions_KeyMapper.", keymaps);
+	}
+#endif
 
 	//
 	// 4) The audio tab

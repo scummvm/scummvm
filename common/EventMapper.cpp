@@ -63,14 +63,6 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 			addDelayedEvent(100, ev);
 		}
 #endif
-#ifdef ENABLE_KEYMAPPER
-		else if (ev.kbd.hasFlags(KBD_CTRL) && ev.kbd.keycode == KEYCODE_F8) {
-			mappedEvent.type = EVENT_KEYMAPPER_REMAP;
-
-			// Avoid blocking CTRL-F8 events from engine.
-			addDelayedEvent(100, ev);
-		}
-#endif
 	}
 
 	if (ev.type == EVENT_JOYBUTTON_DOWN) {
