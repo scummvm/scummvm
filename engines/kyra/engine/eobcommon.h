@@ -29,6 +29,10 @@
 
 #ifdef ENABLE_EOB
 
+namespace Common {
+class Keymap;
+}
+
 namespace Kyra {
 
 struct DarkMoonShapeDef {
@@ -251,7 +255,7 @@ public:
 	EoBCoreEngine(OSystem *system, const GameFlags &flags);
 	virtual ~EoBCoreEngine();
 
-	virtual void initKeymap();
+	static Common::Keymap *initKeymap(const Common::String &ameId);
 
 	Screen *screen() { return _screen; }
 	GUI *gui() const { return _gui; }

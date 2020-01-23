@@ -615,42 +615,6 @@ void Engine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
 }
 
-void Engine::initKeymap() {
-#ifdef ENABLE_KEYMAPPER
-	static const char *const kKeymapName = "engine-default";
-	Common::Keymapper *const mapper = _eventMan->getKeymapper();
-
-	// Do not try to recreate same keymap over again
-	if (mapper->getKeymap(kKeymapName))
-		return;
-
-	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
-
-	// Since the game has multiple built-in keys for each of these anyway,
-	// this just attempts to remap one of them.
-	const Common::KeyActionEntry keyActionEntries[] = {
-		{ "PAUS", Common::KeyState(Common::KEYCODE_SPACE, ' ', 0),                   "SPACE",  _("Pause")     },
-		{ "SKCT", Common::KeyState(Common::KEYCODE_ESCAPE, Common::ASCII_ESCAPE, 0), "ESCAPE", _("Skip")      },
-		{ "SKLI", Common::KeyState(Common::KEYCODE_PERIOD, '.', 0),                  "PERIOD", _("Skip line") }
-	};
-
-	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
-		Common::Action *const act = new Common::Action(keyActionEntries[i].id, keyActionEntries[i].description);
-		act->setKeyEvent(keyActionEntries[i].ks);
-		act->addDefaultInputMapping(keyActionEntries[i].defaultHwId);
-		engineKeyMap->addAction(act);
-	}
-
-	mapper->addGameKeymap(engineKeyMap);
-#endif
-}
-
-void Engine::deinitKeymap() {
-#ifdef ENABLE_KEYMAPPER
-	_eventMan->getKeymapper()->cleanupGameKeymaps();
-#endif
-}
-
 void Engine::flipMute() {
 	// Mute will be set to true by default here. This has two reasons:
 	// - if the game already has an "mute" config entry, it will be overwritten anyway.

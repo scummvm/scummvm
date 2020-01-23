@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/gui_options.h"
 #include "common/keyboard.h"
 #include "common/translation.h"
 #include "common/system.h"
@@ -873,16 +874,9 @@ void MohawkEngine_Riven::runOptionsDialog() {
 	_card->initializeZipMode();
 }
 
-void MohawkEngine_Riven::initKeymap() {
+Common::Keymap *MohawkEngine_Riven::initKeymap(const char *target) {
 #ifdef ENABLE_KEYMAPPER
-	static const char *const kKeymapName = "riven";
-	Common::Keymapper *const mapper = _eventMan->getKeymapper();
-
-	// Do not try to recreate same keymap over again
-	if (mapper->getKeymap(kKeymapName))
-		return;
-
-	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
+	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "riven");
 
 	const Common::KeyActionEntry keyActionEntries[] = {
 		{ "UP",   Common::KEYCODE_UP,                                         "UP",       _("Move Forward")           },
@@ -909,7 +903,7 @@ void MohawkEngine_Riven::initKeymap() {
 		engineKeyMap->addAction(act);
 	}
 
-	if (getFeatures() & GF_DEMO) {
+	if (Common::checkGameGUIOption(GAMEOPTION_DEMO, ConfMan.get("guioptions", target))) {
 		for (uint i = 0; i < ARRAYSIZE(keyActionEntriesDemo); i++) {
 			Common::Action* const act = new Common::Action(keyActionEntriesDemo[i].id, keyActionEntriesDemo[i].description);
 			act->setKeyEvent(keyActionEntriesDemo[i].ks);
@@ -918,7 +912,7 @@ void MohawkEngine_Riven::initKeymap() {
 		}
 	}
 
-	if (getFeatures() & GF_25TH) {
+	if (Common::checkGameGUIOption(GAMEOPTION_25TH, ConfMan.get("guioptions", target))) {
 		Common::Action* const act = new Common::Action("SMNU", _("Skip / Open main menu"));
 		act->setKeyEvent(Common::KEYCODE_ESCAPE);
 		act->addDefaultInputMapping("ESCAPE");
@@ -930,7 +924,9 @@ void MohawkEngine_Riven::initKeymap() {
 		engineKeyMap->addAction(act);
 	}
 
-	mapper->addGameKeymap(engineKeyMap);
+	return engineKeyMap;
+#else
+	return nullptr;
 #endif
 }
 

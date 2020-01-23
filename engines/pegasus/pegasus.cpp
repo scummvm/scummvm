@@ -2489,16 +2489,9 @@ uint PegasusEngine::getNeighborhoodCD(const NeighborhoodID neighborhood) const {
 	return 1;
 }
 
-void PegasusEngine::initKeymap() {
+Common::Keymap *PegasusEngine::initKeymap() {
 #ifdef ENABLE_KEYMAPPER
-	static const char *const kKeymapName = "pegasus";
-	Common::Keymapper *const mapper = _eventMan->getKeymapper();
-
-	// Do not try to recreate same keymap over again
-	if (mapper->getKeymap(kKeymapName) != 0)
-		return;
-
-	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
+	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "pegasus");
 
 	// Since the game has multiple built-in keys for each of these anyway,
 	// this just attempts to remap one of them.
@@ -2523,7 +2516,9 @@ void PegasusEngine::initKeymap() {
 		engineKeyMap->addAction(act);
 	}
 
-	mapper->addGameKeymap(engineKeyMap);
+	return engineKeyMap;
+#else
+	return nullptr;
 #endif
 }
 
