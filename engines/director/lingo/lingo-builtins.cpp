@@ -1807,7 +1807,7 @@ void LB::b_numberoflines(int nargs) {
 
 	d.toString();
 	int numberoflines = 1;
-	Common::String contents = d.u.s->c_str();
+	Common::String contents = *d.u.s;
 	for (uint32 i = 0; i < d.u.s->size(); i++) {
 		if (contents[i] == '\n')
 			numberoflines++;
@@ -1823,9 +1823,19 @@ void LB::b_numberoflines(int nargs) {
 void LB::b_numberofwords(int nargs) {
 	Datum d = g_lingo->pop();
 
-	warning("STUB: b_numberofwords");
-	d.toInt();
-	d.u.i = 0;
+	d.toString();
+	int numberofwords = 0;
+	Common::String contents = *d.u.s;
+	for (uint32 i=1; i < d.u.s->size(); i++) {
+		if (not Common::isSpace(contents[i]) and not Common::isSpace(contents[i - 1]))
+			numberofwords++;
+	}
+	// Count the last word
+	if (not Common::isSpace(contents[d.u.s->size() - 1]))
+		numberofwords++;
+
+	d.u.i = numberofwords;
+	d.type = INT;
 
 	g_lingo->push(d);
 }
