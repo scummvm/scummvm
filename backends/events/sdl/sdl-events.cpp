@@ -761,40 +761,6 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		return false;
 	}
 
-#if defined(MACOSX)
-	// On Macintosh, Cmd-Q quits
-	if ((ev.key.keysym.mod & KMOD_META) && sdlKeycode == 'q') {
-		event.type = Common::EVENT_QUIT;
-		return true;
-	}
-#elif defined(POSIX)
-	// On other *nix systems, Control-Q quits
-	if ((ev.key.keysym.mod & KMOD_CTRL) && sdlKeycode == 'q') {
-		event.type = Common::EVENT_QUIT;
-		return true;
-	}
-#else
-	// Ctrl-z quits
-	if ((event.kbd.hasFlags(Common::KBD_CTRL) && sdlKeycode == 'z')) {
-		event.type = Common::EVENT_QUIT;
-		return true;
-	}
-
-	#ifdef WIN32
-	// On Windows, also use the default Alt-F4 quit combination
-	if ((ev.key.keysym.mod & KMOD_ALT) && sdlKeycode == SDLK_F4) {
-		event.type = Common::EVENT_QUIT;
-		return true;
-	}
-	#endif
-#endif
-
-	// Ctrl-u toggles mute
-	if ((ev.key.keysym.mod & KMOD_CTRL) && sdlKeycode == 'u') {
-		event.type = Common::EVENT_MUTE;
-		return true;
-	}
-
 	if (remapKey(ev, event))
 		return true;
 
@@ -821,23 +787,9 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	// Check if the Ctrl key is down, so that we can trap cases where the
 	// user has the Ctrl key down, and has just released a special key
 	if (mod & KMOD_CTRL) {
-		if (sdlKeycode == 'm' ||	// Ctrl-m toggles mouse capture
-#if defined(MACOSX)
-			// Meta - Q, handled below
-#elif defined(POSIX)
-			sdlKeycode == 'q' ||	// On other *nix systems, Control-Q quits
-#else
-			sdlKeycode == 'z' ||	// Ctrl-z quit
-#endif
-			sdlKeycode == 'u')	// Ctrl-u toggles mute
+		if (sdlKeycode == 'm')	// Ctrl-m toggles mouse capture
 			return false;
 	}
-
-	// Same for other keys (Meta and Alt)
-#if defined(MACOSX)
-	if ((mod & KMOD_META) && sdlKeycode == 'q')
-		return false;	// On Macintosh, Cmd-Q quits
-#endif
 
 	// If we reached here, this isn't an event handled by handleKeyDown(), thus
 	// continue normally
