@@ -131,13 +131,17 @@ class Resources : public Common::Archive {
 		Common::String _name;
 		Common::Array<byte> _data;
 	};
+	struct FileResource {
+		Common::String _name;
+		size_t _offset, _size;
+
+		/**
+		 * Load an index entry from the datafile
+		 */
+		void load(File &f);
+	};
 private:
 	Common::Array<LocalResource> _localResources;
-private:
-	/**
-	 * Scan the resource list for a given resource
-	 */
-	const LocalResource *getResource(const Common::String &name) const;
 public:
 	/**
 	 * Constructor
@@ -149,7 +153,7 @@ public:
 	 * Sets up the resources for the engine
 	 * @returns		False if setup failed
 	 */
-	bool setup();
+	bool open();
 
 	/**
 	 * Adds a resource created in memory to the ScummVM archive manager, so that it can be

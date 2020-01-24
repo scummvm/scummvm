@@ -39,7 +39,7 @@ void Archive::save() {
 	// Write identifying string and archive version
 	_file.write(ARCHIVE_IDENT, 4);
 	_file.writeWord(ARCHIVE_VERSION);
-	_file.writeWord(0);
+	_file.writeWord(_index.size());
 
 	// Figure out the size the entire index needs to be (i.e. where the data starts)
 	size_t dataOffset = 8;
