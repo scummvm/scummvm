@@ -701,6 +701,12 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 
 	if (id1.type == INT) {
 		id = id1.u.i;
+	} else if (id1.type == STRING) {
+		if (_vm->getCurrentScore()->_castsNames.contains(*id1.u.s)) {
+			id = _vm->getCurrentScore()->_castsNames[*id1.u.s];
+		} else {
+			warning("Lingo::getTheCast(): Unknown the cast \"%s\"", id1.u.s->c_str());
+		}
 	} else {
 		warning("Lingo::getTheCast(): Unknown the cast id type: %s", id1.type2str());
 		return d;
