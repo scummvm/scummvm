@@ -167,10 +167,12 @@ void EventsManager::nextFrame() {
 	if (!_eventTargets.empty())
 		eventTarget()->onIdle();
 
+	// Handle debugger updates
 	Debugger *debugger = _callback->getDebugger();
 	if (debugger)
 		debugger->onFrame();
 
+	// Render anything pending for the screen
 	Graphics::Screen *screen = _callback->getScreen();
 	if (screen)
 		screen->update();

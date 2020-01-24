@@ -20,40 +20,47 @@
  *
  */
 
-#include "ultima/ultima1/gfx/game_view.h"
-#include "ultima/shared/gfx/info.h"
-#include "ultima/shared/gfx/status.h"
-#include "ultima/shared/gfx/viewport_dungeon.h"
-#include "ultima/shared/gfx/viewport_map.h"
-#include "ultima/ultima1/game.h"
-#include "ultima/ultima1/gfx/drawing_support.h"
+#ifndef ULTIMA_ULTIMA1_GFX_DRAWING_SUPPORT_H
+#define ULTIMA_ULTIMA1_GFX_DRAWING_SUPPORT_H
+
+#include "ultima/shared/gfx/visual_surface.h"
 
 namespace Ultima {
 namespace Ultima1 {
 
-GameView::GameView(TreeItem *parent) : Shared::Gfx::VisualContainer("GameView", Common::Rect(0, 0, 320, 200), parent) {
-	_info = new Shared::Info(this);
-	_status = new Shared::Status(this);
-	_viewportDungeon = new Shared::ViewportDungeon(this);
-	_viewportMap = new Shared::ViewportMap(this);
-}
+class Ultima1Game;
 
-GameView::~GameView() {
-	delete _info;
-	delete _status;
-	delete _viewportDungeon;
-	delete _viewportMap;
-}
+/**
+ * Implements various support methods for drawing onto visual surfaces
+ */
+class DrawingSupport {
+private:
+	Shared::Gfx::VisualSurface _surface;
+	Ultima1Game *_game;
+private:
+	/**
+	 * Tweaks the edges of a drawn border to give it a rounded effect
+	 */
+	void roundFrameCorners(bool skipBottom = false);
+public:
+	/**
+	 * Constructor
+	 */
+	DrawingSupport(const Shared::Gfx::VisualSurface &s);
 
-void GameView::draw() {
-	DrawingSupport ds(getSurface());
-	ds.drawGameFrame();
-	Shared::Gfx::VisualContainer::draw();
-}
+	/**
+	 * Draws a frame around the entire screen
+	 */
+	void drawFrame();
 
-void GameView::drawFrame() {
-
-}
+	/**
+	 * Draw a frame around the viewport area of the screen, and a vertical seperator line
+	 * to the bottom of the screen to separate the status and info areas
+	 */
+	void drawGameFrame();
+};
 
 } // End of namespace Shared
-} // End of namespace Ultima
+} // End of namespace Xeen
+
+#endif

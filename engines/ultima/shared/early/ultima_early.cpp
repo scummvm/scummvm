@@ -32,9 +32,10 @@
 #include "ultima/ultima1/game.h"
 
 namespace Ultima {
-namespace Shared {
 
-UltimaEarlyEngine *g_vm;
+Shared::UltimaEarlyEngine *g_vm;
+
+namespace Shared {
 
 UltimaEarlyEngine::UltimaEarlyEngine(OSystem *syst, const UltimaGameDescription *gameDesc) :
 		UltimaEngine(syst, gameDesc) {
