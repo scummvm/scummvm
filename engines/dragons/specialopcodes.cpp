@@ -377,100 +377,80 @@ void SpecialOpcodes::spcSetEngineFlag8() {
 }
 
 void SpecialOpcodes::spcKnightPoolReflectionLogic() {
-	//TODO
-	/*
-	sceneUpdateTblTextId0[0] = DAT_80063c10;
-	sceneUpdateTblTextId0[1] = DAT_80063c14;
-	sceneUpdateTblTextId0[2] = DAT_80063c18;
-	sceneUpdateTblTextId0[3] = DAT_80063c1c;
-	sceneUpdateTblTextId1[0] = DAT_80063c20;
-	sceneUpdateTblTextId1[1] = DAT_80063c24;
-	sceneUpdateTblTextId2[0] = DAT_80063c28;
-	sceneUpdateTblTextId2[1] = DAT_80063c2c;
-	sceneUpdateTblTextId2[2] = DAT_80063c30;
-	sceneUpdateTblTextId2[3] = DAT_80063c34;
-	sceneUpdateTblTextId2[4] = DAT_80063c38;
-	sceneUpdateTblTextId3[0] = DAT_80063c3c;
-	sceneUpdateTblTextId3[1] = DAT_80063c40;
-	sceneUpdateTblTextId3[2] = DAT_80063c44;
-	sceneUpdateTblTextId3[3] = DAT_80063c48;
-	sceneUpdateTblTextId4[0] = DAT_80063c4c;
-	sceneUpdateTblTextId4[1] = DAT_80063c50;
-	sceneUpdateTblTextId4[2] = DAT_80063c54;
-	sceneUpdateTblTextId4[3] = DAT_80063c58;
-	sceneUpdateTblTextId5[0] = DAT_80063c5c;
-	sceneUpdateTblTextId5[1] = DAT_80063c60;
-	sceneUpdateTblTextId5[2] = DAT_80063c64;
-	sceneUpdateTblIniId0[0] = DAT_80063bb0;
-	sceneUpdateTblIniId0[1] = DAT_80063bac;
-	sceneUpdateTblIniId0[2] = DAT_80063bb0;
-	sceneUpdateTblIniId0[3] = DAT_80063bac;
-	sceneUpdateTblIniId1[0] = DAT_80063bb0;
-	sceneUpdateTblIniId1[1] = DAT_80063bac;
-	sceneUpdateTblIniId2[0] = DAT_80063bb0;
-	sceneUpdateTblIniId2[1] = DAT_80063bac;
-	sceneUpdateTblIniId2[2] = DAT_80063bb0;
-	sceneUpdateTblIniId2[3] = DAT_80063bac;
-	sceneUpdateTblIniId2[4] = DAT_80063bb0;
-	sceneUpdateTblIniId3[0] = DAT_80063bb0;
-	sceneUpdateTblIniId3[1] = DAT_80063bac;
-	sceneUpdateTblIniId3[2] = DAT_80063bb0;
-	sceneUpdateTblIniId3[3] = DAT_80063bac;
-	sceneUpdateTblIniId4[0] = DAT_80063bac;
-	sceneUpdateTblIniId4[1] = DAT_80063bb0;
-	sceneUpdateTblIniId4[2] = DAT_80063bac;
-	sceneUpdateTblIniId4[3] = DAT_80063bb0;
-	sceneUpdateTblIniId5[0] = DAT_80063bb0;
-	sceneUpdateTblIniId5[1] = DAT_80063bac;
-	sceneUpdateTblIniId5[2] = DAT_80063bb0;
-	sceneUpdateTblSeqId0[0] = 10;
-	sceneUpdateTblSeqId0[1] = 2;
-	sceneUpdateTblSeqId0[2] = 10;
-	sceneUpdateTblSeqId0[3] = 2;
-	sceneUpdateTblSeqId1[0] = 10;
-	sceneUpdateTblSeqId1[1] = 2;
-	sceneUpdateTblSeqId2[0] = 10;
-	sceneUpdateTblSeqId2[1] = 2;
-	sceneUpdateTblSeqId2[2] = 10;
-	sceneUpdateTblSeqId2[3] = 2;
-	sceneUpdateTblSeqId2[4] = 10;
-	sceneUpdateTblSeqId3[0] = 10;
-	sceneUpdateTblSeqId3[1] = 2;
-	sceneUpdateTblSeqId3[2] = 10;
-	sceneUpdateTblSeqId3[3] = 2;
-	sceneUpdateTblSeqId4[0] = 2;
-	sceneUpdateTblSeqId4[1] = 10;
-	sceneUpdateTblSeqId4[2] = 2;
-	sceneUpdateTblSeqId4[3] = 10;
-	sceneUpdateTblSeqId5[0] = 10;
-	sceneUpdateTblSeqId5[2] = 10;
-	sceneUpdateSequenceTbl[2].numSteps = 5;
-	sceneUpdateTblSeqId5[1] = 2;
-	sceneUpdateSequenceTbl[1].numSteps = 2;
-	sceneUpdateSequenceTbl[0].numSteps = 4;
-	sceneUpdateSequenceTbl[3].numSteps = 4;
-	sceneUpdateSequenceTbl[4].numSteps = 4;
-	sceneUpdateSequenceTbl[5].numSteps = 3;
-	sceneUpdateSequenceTbl[0].textTbl = sceneUpdateTblTextId0;
-	sceneUpdateSequenceTbl[1].textTbl = sceneUpdateTblTextId1;
-	sceneUpdateSequenceTbl[2].textTbl = sceneUpdateTblTextId2;
-	sceneUpdateSequenceTbl[3].textTbl = sceneUpdateTblTextId3;
-	sceneUpdateSequenceTbl[4].textTbl = sceneUpdateTblTextId4;
-	sceneUpdateSequenceTbl[5].textTbl = sceneUpdateTblTextId5;
-	sceneUpdateSequenceTbl[5].sequenceIdPtr = sceneUpdateTblSeqId5;
-	sceneUpdateSequenceTbl[4].sequenceIdPtr = sceneUpdateTblSeqId4;
-	sceneUpdateSequenceTbl[0].iniIdPtr = sceneUpdateTblIniId0;
-	sceneUpdateSequenceTbl[1].iniIdPtr = sceneUpdateTblIniId1;
-	sceneUpdateSequenceTbl[2].iniIdPtr = sceneUpdateTblIniId2;
-	sceneUpdateSequenceTbl[3].iniIdPtr = sceneUpdateTblIniId3;
-	sceneUpdateSequenceTbl[4].iniIdPtr = sceneUpdateTblIniId4;
-	sceneUpdateSequenceTbl[5].iniIdPtr = sceneUpdateTblIniId5;
-	sceneUpdateSequenceTbl[0].sequenceIdPtr = sceneUpdateTblSeqId0;
-	sceneUpdateSequenceTbl[1].sequenceIdPtr = sceneUpdateTblSeqId1;
-	sceneUpdateSequenceTbl[2].sequenceIdPtr = sceneUpdateTblSeqId2;
-	sceneUpdateSequenceTbl[3].sequenceIdPtr = sceneUpdateTblSeqId3;
+	sceneUpdater.textTbl[0][0] = 0x23E90;
+	sceneUpdater.textTbl[0][1] = 0x23EE6;
+	sceneUpdater.textTbl[0][2] = 0x23F0C;
+	sceneUpdater.textTbl[0][3] = 0x23F86;
+	sceneUpdater.textTbl[1][0] = 0x24000;
+	sceneUpdater.textTbl[1][1] = 0x2406A;
+	sceneUpdater.textTbl[2][0] = 0x240C2;
+	sceneUpdater.textTbl[2][1] = 0x2411E;
+	sceneUpdater.textTbl[2][2] = 0x24158;
+	sceneUpdater.textTbl[2][3] = 0x241BC;
+	sceneUpdater.textTbl[2][4] = 0x241EE;
+	sceneUpdater.textTbl[3][0] = 0x24240;
+	sceneUpdater.textTbl[3][1] = 0x24286;
+	sceneUpdater.textTbl[3][2] = 0x242B0;
+	sceneUpdater.textTbl[3][3] = 0x2431C;
+	sceneUpdater.textTbl[4][0] = 0x2437C;
+	sceneUpdater.textTbl[4][1] = 0x243B2;
+	sceneUpdater.textTbl[4][2] = 0x2440A;
+	sceneUpdater.textTbl[4][3] = 0x24432;
+	sceneUpdater.textTbl[5][0] = 0x24480;
+	sceneUpdater.textTbl[5][1] = 0x244EE;
+	sceneUpdater.textTbl[5][2] = 0x2453C;
+
+	sceneUpdater.iniIDTbl[0][0] = 0x155;
+	sceneUpdater.iniIDTbl[0][1] = 0x14B;
+	sceneUpdater.iniIDTbl[0][2] = 0x155;
+	sceneUpdater.iniIDTbl[0][3] = 0x14B;
+	sceneUpdater.iniIDTbl[1][0] = 0x155;
+	sceneUpdater.iniIDTbl[1][1] = 0x14B;
+	sceneUpdater.iniIDTbl[2][0] = 0x155;
+	sceneUpdater.iniIDTbl[2][1] = 0x14B;
+	sceneUpdater.iniIDTbl[2][2] = 0x155;
+	sceneUpdater.iniIDTbl[2][3] = 0x14B;
+	sceneUpdater.iniIDTbl[2][4] = 0x155;
+	sceneUpdater.iniIDTbl[3][0] = 0x155;
+	sceneUpdater.iniIDTbl[3][1] = 0x14B;
+	sceneUpdater.iniIDTbl[3][2] = 0x155;
+	sceneUpdater.iniIDTbl[3][3] = 0x14B;
+	sceneUpdater.iniIDTbl[4][0] = 0x14B;
+	sceneUpdater.iniIDTbl[4][1] = 0x155;
+	sceneUpdater.iniIDTbl[4][2] = 0x14B;
+	sceneUpdater.iniIDTbl[4][3] = 0x155;
+	sceneUpdater.iniIDTbl[5][0] = 0x155;
+	sceneUpdater.iniIDTbl[5][1] = 0x14B;
+	sceneUpdater.iniIDTbl[5][2] = 0x155;
+	sceneUpdater.sequenceIDTbl[0][0] = 10;
+	sceneUpdater.sequenceIDTbl[0][1] = 2;
+	sceneUpdater.sequenceIDTbl[0][2] = 10;
+	sceneUpdater.sequenceIDTbl[0][3] = 2;
+	sceneUpdater.sequenceIDTbl[1][0] = 10;
+	sceneUpdater.sequenceIDTbl[1][1] = 2;
+	sceneUpdater.sequenceIDTbl[2][0] = 10;
+	sceneUpdater.sequenceIDTbl[2][1] = 2;
+	sceneUpdater.sequenceIDTbl[2][2] = 10;
+	sceneUpdater.sequenceIDTbl[2][3] = 2;
+	sceneUpdater.sequenceIDTbl[2][4] = 10;
+	sceneUpdater.sequenceIDTbl[3][0] = 10;
+	sceneUpdater.sequenceIDTbl[3][1] = 2;
+	sceneUpdater.sequenceIDTbl[3][2] = 10;
+	sceneUpdater.sequenceIDTbl[3][3] = 2;
+	sceneUpdater.sequenceIDTbl[4][0] = 2;
+	sceneUpdater.sequenceIDTbl[4][1] = 10;
+	sceneUpdater.sequenceIDTbl[4][2] = 2;
+	sceneUpdater.sequenceIDTbl[4][3] = 10;
+	sceneUpdater.sequenceIDTbl[5][0] = 10;
+	sceneUpdater.sequenceIDTbl[5][2] = 10;
+	sceneUpdater.numSteps[2] = 5;
+	sceneUpdater.sequenceIDTbl[5][1] = 2;
+	sceneUpdater.numSteps[1] = 2;
+	sceneUpdater.numSteps[0] = 4;
+	sceneUpdater.numSteps[3] = 4;
+	sceneUpdater.numSteps[4] = 4;
+	sceneUpdater.numSteps[5] = 3;
 	setupTableBasedSceneUpdateFunction(0x168,6,300);
-	 */
 }
 
 void SpecialOpcodes::spcWalkOnStilts() {
@@ -655,7 +635,42 @@ void SpecialOpcodes::spcNoop1() {
 }
 
 void SpecialOpcodes::spcTownAngryVillagersSceneLogic() {
-	//TODO
+	sceneUpdater.textTbl[0][0] = 0x35946;
+	sceneUpdater.textTbl[0][1] = 0x359BC;
+	sceneUpdater.textTbl[1][0] = 0x35A38;
+	sceneUpdater.textTbl[1][1] = 0x35ABC;
+	sceneUpdater.textTbl[2][0] = 0x35B28;
+	sceneUpdater.textTbl[2][1] = 0x35B9C;
+	sceneUpdater.textTbl[3][0] = 0x35C10;
+	sceneUpdater.textTbl[3][1] = 0x35C80;
+	sceneUpdater.textTbl[4][0] = 0x35CFA;
+	sceneUpdater.textTbl[4][1] = 0x35D64;
+	sceneUpdater.iniIDTbl[0][0] = 0x1DC;
+	sceneUpdater.iniIDTbl[0][1] = 0x1DD;
+	sceneUpdater.iniIDTbl[1][0] = 0x1DC;
+	sceneUpdater.iniIDTbl[1][1] = 0x1DD;
+	sceneUpdater.iniIDTbl[2][0] = 0x1DC;
+	sceneUpdater.iniIDTbl[2][1] = 0x1DD;
+	sceneUpdater.iniIDTbl[3][0] = 0x1DC;
+	sceneUpdater.iniIDTbl[3][1] = 0x1DD;
+	sceneUpdater.iniIDTbl[4][0] = 0x1DC;
+	sceneUpdater.iniIDTbl[4][1] = 0x1DD;
+	sceneUpdater.sequenceIDTbl[0][0] = 0x11;
+	sceneUpdater.sequenceIDTbl[0][1] = 6;
+	sceneUpdater.sequenceIDTbl[1][0] = 0x11;
+	sceneUpdater.sequenceIDTbl[1][1] = 6;
+	sceneUpdater.sequenceIDTbl[2][0] = 0x11;
+	sceneUpdater.sequenceIDTbl[2][1] = 6;
+	sceneUpdater.sequenceIDTbl[3][0] = 0x11;
+	sceneUpdater.sequenceIDTbl[3][1] = 6;
+	sceneUpdater.sequenceIDTbl[4][0] = 0x11;
+	sceneUpdater.sequenceIDTbl[4][1] = 6;
+	sceneUpdater.numSteps[0] = 2;
+	sceneUpdater.numSteps[1] = 2;
+	sceneUpdater.numSteps[2] = 2;
+	sceneUpdater.numSteps[3] = 2;
+	sceneUpdater.numSteps[4] = 2;
+	setupTableBasedSceneUpdateFunction(0xf0,5,0x708);
 }
 
 void SpecialOpcodes::spcBlackDragonCrashThroughGate() {
@@ -741,22 +756,103 @@ void SpecialOpcodes::spcZigmondFraudSceneLogic1() {
 }
 
 void SpecialOpcodes::spcBrokenBlackDragonSceneLogic() {
-	//TODO spcBrokenBlackDragonSceneLogic
+	sceneUpdater.sequenceIDTbl[0][0] = 5;
+	sceneUpdater.sequenceIDTbl[1][0] = 5;
+	sceneUpdater.sequenceIDTbl[1][1] = 2;
+	sceneUpdater.sequenceIDTbl[2][0] = 5;
+	sceneUpdater.numSteps[0] = 1;
+	sceneUpdater.sequenceIDTbl[2][1] = 2;
+	sceneUpdater.numSteps[1] = 2;
+	sceneUpdater.numSteps[2] = 2;
+	sceneUpdater.textTbl[0][0] = 0x40802;
+	sceneUpdater.textTbl[1][0] = 0x40852;
+	sceneUpdater.textTbl[1][1] = 0x40896;
+	sceneUpdater.textTbl[2][0] = 0x408C0;
+	sceneUpdater.textTbl[2][1] = 0x4092A;
+	sceneUpdater.iniIDTbl[0][0] = 0x23B;
+	sceneUpdater.iniIDTbl[1][0] = 0x23B;
+	sceneUpdater.iniIDTbl[1][1] = 0x231;
+	sceneUpdater.iniIDTbl[2][0] = 0x23B;
+	sceneUpdater.iniIDTbl[2][1] = 0x231;
+	setupTableBasedSceneUpdateFunction(300,3,600);
 }
 
 void SpecialOpcodes::spcDodoUnderAttackSceneLogic() {
-	//TODO
-	sceneUpdater.sequenceID = -1;
+	sceneUpdater.sequenceIDTbl[0][0] = 8;
+	sceneUpdater.sequenceIDTbl[1][0] = 8;
+	sceneUpdater.sequenceIDTbl[2][0] = 8;
+	sceneUpdater.sequenceIDTbl[3][0] = 8;
+	sceneUpdater.sequenceIDTbl[4][0] = 8;
+	sceneUpdater.sequenceIDTbl[5][0] = 8;
+	sceneUpdater.numSteps[0] = 1;
+	sceneUpdater.numSteps[1] = 1;
+	sceneUpdater.textTbl[0][0] = 0x3353A;
+	sceneUpdater.iniIDTbl[0][0] = 0x1C4;
+	sceneUpdater.textTbl[1][0] = 0x335AC;
+	sceneUpdater.iniIDTbl[1][0] = 0x1C4;
+	sceneUpdater.textTbl[2][0] = 0x335F8;
+	sceneUpdater.iniIDTbl[2][0] = 0x1C4;
+	sceneUpdater.textTbl[3][0] = 0x33660;
+	sceneUpdater.iniIDTbl[3][0] = 0x1C4;
+	sceneUpdater.textTbl[4][0] = 0x336DE;
+	sceneUpdater.iniIDTbl[4][0] = 0x1C4;
+	sceneUpdater.textTbl[5][0] = 0x3375C;
+	sceneUpdater.iniIDTbl[5][0] = 0x1C4;
+	sceneUpdater.numSteps[2] = 1;
+	sceneUpdater.numSteps[3] = 1;
+	sceneUpdater.numSteps[4] = 1;
+	sceneUpdater.numSteps[5] = 1;
+	setupTableBasedSceneUpdateFunction(0x1e0,6,0x1e0);
 }
 
 void SpecialOpcodes::spcForestWithoutDodoSceneLogic() {
-	//TODO
-	sceneUpdater.sequenceID = -1;
+	sceneUpdater.sequenceIDTbl[0][0] = 5;
+	sceneUpdater.sequenceIDTbl[0][1] = 0xb;
+	sceneUpdater.sequenceIDTbl[1][0] = 0xb;
+	sceneUpdater.sequenceIDTbl[1][2] = 0xb;
+	sceneUpdater.numSteps[0] = 2;
+	sceneUpdater.numSteps[1] = 3;
+	sceneUpdater.sequenceIDTbl[1][1] = 5;
+	sceneUpdater.textTbl[0][0] = 0x33EA0;
+	sceneUpdater.iniIDTbl[0][0] = 0x1C5;
+	sceneUpdater.textTbl[0][1] = 0x33EFC;
+	sceneUpdater.iniIDTbl[0][1] = 0x1C4;
+	sceneUpdater.textTbl[1][0] = 0x33F34;
+	sceneUpdater.iniIDTbl[1][0] = 0x1C4;
+	sceneUpdater.textTbl[1][1] = 0x34000;
+	sceneUpdater.iniIDTbl[1][1] = 0x1C5;
+	sceneUpdater.textTbl[1][2] = 0x34074;
+	sceneUpdater.iniIDTbl[1][2] = 0x1C4;
+	setupTableBasedSceneUpdateFunction(300,2,600);
 }
 
 void SpecialOpcodes::spcBlackDragonOnHillSceneLogic() {
-	//TODO
-	sceneUpdater.sequenceID = -1;
+	sceneUpdater.sequenceIDTbl[0][0] = 3;
+	sceneUpdater.sequenceIDTbl[0][1] = 7;
+	sceneUpdater.sequenceIDTbl[1][0] = 3;
+	sceneUpdater.sequenceIDTbl[1][1] = 7;
+	sceneUpdater.sequenceIDTbl[2][0] = 3;
+	sceneUpdater.sequenceIDTbl[2][1] = 7;
+	sceneUpdater.sequenceIDTbl[3][0] = 3;
+	sceneUpdater.numSteps[0] = 2;
+	sceneUpdater.textTbl[0][0] = 0x325EA;
+	sceneUpdater.textTbl[0][1] = 0x3262A;
+	sceneUpdater.textTbl[1][0] = 0x32686;
+	sceneUpdater.textTbl[1][1] = 0x326D8;
+	sceneUpdater.textTbl[2][0] = 0x3270E;
+	sceneUpdater.textTbl[2][1] = 0x32774;
+	sceneUpdater.textTbl[3][0] = 0x32D72;
+	sceneUpdater.iniIDTbl[0][0] = 0x1B6;
+	sceneUpdater.iniIDTbl[0][1] = 0x1B7;
+	sceneUpdater.iniIDTbl[1][0] = 0x1B6;
+	sceneUpdater.iniIDTbl[1][1] = 0x1B7;
+	sceneUpdater.iniIDTbl[2][0] = 0x1B6;
+	sceneUpdater.iniIDTbl[2][1] = 0x1B7;
+	sceneUpdater.iniIDTbl[3][0] = 0x1B6;
+	sceneUpdater.numSteps[1] = 2;
+	sceneUpdater.numSteps[2] = 2;
+	sceneUpdater.numSteps[3] = 1;
+	setupTableBasedSceneUpdateFunction(300,4,300);
 }
 
 void SpecialOpcodes::spcUnk4e() {
@@ -1122,7 +1218,19 @@ void SpecialOpcodes::spcUseClickerOnLever() {
 }
 
 void SpecialOpcodes::spcJesterInLibrarySceneLogic() {
-	//TODO
+	sceneUpdater.sequenceIDTbl[0][0] = 0xffff;
+	sceneUpdater.sequenceIDTbl[1][0] = 0xffff;
+	sceneUpdater.sequenceIDTbl[2][0] = 0xffff;
+	sceneUpdater.numSteps[0] = 1;
+	sceneUpdater.numSteps[1] = 1;
+	sceneUpdater.numSteps[2] = 1;
+	sceneUpdater.textTbl[0][0] = 0x18502;
+	sceneUpdater.textTbl[1][0] = 0x185E0;
+	sceneUpdater.textTbl[2][0] = 0x18596;
+	sceneUpdater.iniIDTbl[0][0] = 0xD7;
+	sceneUpdater.iniIDTbl[1][0] = 0xD7;
+	sceneUpdater.iniIDTbl[2][0] = 0xD7;
+	setupTableBasedSceneUpdateFunction(300,3,0x708);
 }
 
 void SpecialOpcodes::pizzaMakerStopWorking() {
