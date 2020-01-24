@@ -727,6 +727,7 @@ begin_credits("Credits");
 			begin_section("Director");
 				add_person("Eugene Sandulenko", "sev", "");
 				add_person("Dmitry Iskrich", "", "");
+				add_person("Scott Percival", "moralrecordings", "");
 				add_person("Steven Hoefel", "", "");
 				add_person("Tobia Tesan", "", "");
 			end_section();
