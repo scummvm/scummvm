@@ -187,8 +187,10 @@ Common::HardwareInputSet *OSystem_SDL_Maemo::getHardwareInputSet() {
 	return new Common::HardwareInputSet(true, maemoKeys);
 }
 
-Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
+Common::KeymapArray OSystem_SDL_Maemo::getGlobalKeymaps() {
 	using namespace Common;
+	KeymapArray globalMaps = OSystem_POSIX::getGlobalKeymaps();
+
 	Keymap *globalMap = new Keymap(Keymap::kKeymapTypeGlobal, "maemo");
 
 	Action *act;
@@ -212,7 +214,9 @@ Common::Keymap *OSystem_SDL_Maemo::getGlobalKeymap() {
 	act->setRightClickEvent();
 	globalMap->addAction(act);
 
-	return globalMap;
+	globalMaps.push_back(globalMap);
+
+	return globalMaps;
 }
 
 void OSystem_SDL_Maemo::initObserver() {

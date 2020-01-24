@@ -1616,10 +1616,7 @@ void GlobalOptionsDialog::build() {
 		keymaps.push_back(primaryGlobalKeymap);
 	}
 
-	Common::Keymap *platformGlobalKeymap = g_system->getGlobalKeymap();
-	if (platformGlobalKeymap && !platformGlobalKeymap->getActions().empty()) {
-		keymaps.push_back(platformGlobalKeymap);
-	}
+	keymaps.push_back(g_system->getGlobalKeymaps());
 
 	Common::Keymap *guiKeymap = g_gui.getKeymap();
 	if (guiKeymap && !guiKeymap->getActions().empty()) {

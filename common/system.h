@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/noncopyable.h"
+#include "common/array.h" // For OSystem::getGlobalKeymaps()
 #include "common/list.h" // For OSystem::getSupportedFormats()
 #include "graphics/pixelformat.h"
 #include "graphics/mode.h"
@@ -62,6 +63,8 @@ class HardwareInputSet;
 class Keymap;
 class KeymapperDefaultBindings;
 class Encoding;
+
+typedef Array<Keymap *> KeymapArray;
 }
 
 class AudioCDManager;
@@ -1155,7 +1158,7 @@ public:
 	 *
 	 * See keymapper documentation for further reference.
 	 */
-	virtual Common::Keymap *getGlobalKeymap() { return nullptr; }
+	virtual Common::KeymapArray getGlobalKeymaps() { return Common::KeymapArray(); }
 
 	/**
 	 * Return platform-specific default keybindings

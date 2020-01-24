@@ -372,10 +372,9 @@ static void setupKeymapper(OSystem &system) {
 	}
 
 	// Get the platform-specific global keymap (if it exists)
-	Keymap *platformGlobalKeymap = system.getGlobalKeymap();
-	if (platformGlobalKeymap) {
-		String platformGlobalKeymapName = platformGlobalKeymap->getName();
-		mapper->addGlobalKeymap(platformGlobalKeymap);
+	KeymapArray platformKeymaps = system.getGlobalKeymaps();
+	for (uint i = 0; i < platformKeymaps.size(); i++) {
+		mapper->addGlobalKeymap(platformKeymaps[i]);
 	}
 }
 
