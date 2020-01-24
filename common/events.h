@@ -291,7 +291,7 @@ public:
 	/**
 	 * Map an incoming event to one or more action events
 	 */
-	virtual List<Event> mapEvent(const Event &ev, EventSource *source) = 0;
+	virtual List<Event> mapEvent(const Event &ev) = 0;
 
 	virtual List<Event> getDelayedEvents() = 0;
 };
@@ -300,7 +300,7 @@ class DefaultEventMapper : public EventMapper {
 public:
 	DefaultEventMapper() : _delayedEvents(), _delayedEffectiveTime(0) {}
 	// EventMapper interface
-	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
+	virtual List<Event> mapEvent(const Event &ev);
 	virtual List<Event> getDelayedEvents();
 protected:
 	virtual void addDelayedEvent(uint32 millis, Event ev);
