@@ -48,6 +48,7 @@ MODULE_OBJS += \
 	ultima0/resources.o \
 	ultima1/core/map.o \
 	ultima1/core/resources.o \
+	ultima1/gfx/drawing_support.o \
 	ultima1/gfx/game_view.o \
 	ultima1/game.o
 endif

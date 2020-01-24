@@ -116,9 +116,10 @@ public:
 	Game *createGame() const;
 };
 
-extern UltimaEarlyEngine *g_vm;
-
 } // End of namespace Shared
+
+extern Shared::UltimaEarlyEngine *g_vm;
+
 } // End of namespace Ultima
 
 #endif
