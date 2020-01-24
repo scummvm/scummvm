@@ -67,9 +67,11 @@ static LingoV4Bytecode lingoV4[] = {
 	// 0x44, push a constant
 	{ 0x45, LC::c_namepush,		"b" },
 	{ 0x49, LC::cb_globalpush,	"b" },
-	{ 0x4c, LC::cb_varpush,		"b" },
+	{ 0x4b, LC::cb_varpush,		"bpa" },
+	{ 0x4c, LC::cb_varpush,		"bpv" },
 	{ 0x4f, LC::cb_globalassign,"b" },
-	{ 0x52, LC::cb_varassign,	"b" },
+	{ 0x51, LC::cb_varassign,	"bpa" },
+	{ 0x52, LC::cb_varassign,	"bpv" },
 	{ 0x53, LC::c_jump,			"jb" },
 	{ 0x54, LC::c_jump,			"jbn" },
 	{ 0x55, LC::c_jumpifz,		"jb" },
@@ -84,9 +86,11 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x83, LC::c_argcpush,		"w" },
 	// 0x84, push a constant
 	{ 0x89, LC::cb_globalpush,	"w" },
-	{ 0x8c, LC::cb_varpush,		"w" },
+	{ 0x8b, LC::cb_varpush,		"wpa" },
+	{ 0x8c, LC::cb_varpush,		"wpv" },
 	{ 0x8f, LC::cb_globalassign,"w" },
-	{ 0x92, LC::cb_varassign,	"w" },
+	{ 0x91, LC::cb_varassign,	"wpa" },
+	{ 0x92, LC::cb_varassign,	"wpv" },
 	{ 0x93, LC::c_jump,			"jw" },
 	{ 0x94, LC::c_jump,			"jwn" },
 	{ 0x95, LC::c_jumpifz,		"jw" },
@@ -599,13 +603,13 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	debugC(5, kDebugLoading, "Lscr globals list:");
 	stream.seek(globalsOffset);
 	for (uint16 i = 0; i < globalsCount; i++) {
-		uint16 nameIndex = stream.readUint16();
-		if (nameIndex < _namelist.size()) {
-			const char *name = _namelist[nameIndex].c_str();
+		uint16 index = stream.readUint16();
+		if (index < _namelist.size()) {
+			const char *name = _namelist[index].c_str();
 			debugC(5, kDebugLoading, "%d: %s", i, name);
-			Symbol *s = g_lingo->lookupVar(name, true, true);
+			g_lingo->lookupVar(name, true, true);
 		} else {
-			warning("Global %d has unknown name id %d, skipping define", i, nameIndex);
+			warning("Global %d has unknown name id %d, skipping define", i, index);
 		}
 	}
 
@@ -721,17 +725,14 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			stream.hexdump(0x2a);
 		}
 
-		_currentScriptFunction = i;
-		_currentScript = new ScriptData;
-
 		uint16 nameIndex = stream.readUint16();
 		stream.readUint16();
 		uint32 length = stream.readUint32();
 		uint32 startOffset = stream.readUint32();
 		uint16 argCount = stream.readUint16();
-		/*uint32 argOffset = */stream.readUint32();
-		/*uint16 varCount = */stream.readUint16();
-		/*uint32 varNamesOffset = */stream.readUint32();
+		uint32 argOffset = stream.readUint32();
+		uint16 varCount = stream.readUint16();
+		uint32 varOffset = stream.readUint32();
 		stream.readUint16();
 		stream.readUint16();
 		stream.readUint16();
@@ -749,6 +750,61 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			warning("Function %d end offset is out of bounds", i);
 			continue;
 		}
+
+		// Fetch argument name list
+		Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
+		Common::HashMap<uint16, uint16> argMap;
+		if (argOffset < codeStoreOffset) {
+			warning("Function %d argument names start offset is out of bounds!", i);
+		} else if (argOffset + argCount*2 >= codeStoreOffset + codeStoreSize) {
+			warning("Function %d argument names end offset is out of bounds!", i);
+		} else {
+			debugC(5, kDebugLoading, "Function %d argument list:", i);
+			uint16 namePointer = argOffset - codeStoreOffset;
+			for (int j = 0; j < argCount; j++) {
+				uint16 index = (uint16)READ_BE_UINT16(&codeStore[namePointer]);
+				namePointer += 2;
+				Common::String name;
+				if (index < _namelist.size()) {
+					name = _namelist[index];
+					argMap[j] = index;
+				} else {
+					name = Common::String::format("arg_%d", j);
+					warning("Argument has unknown name id %d, using name %s", j, name.c_str());
+				}
+				debugC(5, kDebugLoading, "%d: %s", j, name.c_str());
+				argNames->push_back(name);
+			}
+		}
+
+		// Fetch variable name list
+		Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
+		Common::HashMap<uint16, uint16> varMap;
+		if (varOffset < codeStoreOffset) {
+			warning("Function %d variable names start offset is out of bounds!", i);
+		} else if (varOffset + varCount*2 >= codeStoreOffset + codeStoreSize) {
+			warning("Function %d variable names end offset is out of bounds!", i);
+		} else {
+			debugC(5, kDebugLoading, "Function %d variable list:", i);
+			uint16 namePointer = varOffset - codeStoreOffset;
+			for (int j = 0; j < varCount; j++) {
+				uint16 index = (uint16)READ_BE_UINT16(&codeStore[namePointer]);
+				namePointer += 2;
+				Common::String name;
+				if (index < _namelist.size()) {
+					name = _namelist[index];
+					varMap[j] = index;
+				} else {
+					name = Common::String::format("var_%d", j);
+					warning("Variable has unknown name id %d, using name %s", j, name.c_str());
+				}
+				debugC(5, kDebugLoading, "%d: %s", j, name.c_str());
+				varNames->push_back(name);
+			}
+		}
+
+		_currentScriptFunction = i;
+		_currentScript = new ScriptData;
 
 		if (debugChannelSet(5, kDebugLoading)) {
 			debugC(5, kDebugLoading, "Function %d code:", i);
@@ -839,6 +895,31 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 							// argument is negative
 							arg *= -1;
 							break;
+						case 'p':
+							// argument is some kind of denormalised offset
+							if (arg % 6) {
+								warning("Argument %d was expected to be a multiple of 6", arg);
+							}
+							arg /= 6;
+							break;
+						case 'a':
+							// argument is a function argument ID
+							if (argMap.contains(arg)) {
+								arg = argMap[arg];
+							} else {
+								warning("No argument name found for ID %d", arg);
+								arg = -1;
+							}
+							break;
+						case 'v':
+							// argument is a local variable ID
+							if (varMap.contains(arg)) {
+								arg = varMap[arg];
+							} else {
+								warning("No variable name found for ID %d", arg);
+								arg = -1;
+							}
+							break;
 						case 'j':
 							// argument refers to a code offset; fix alignment in post
 							jumpList.push_back(offsetList.size());
@@ -900,6 +981,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		// Attach to handlers
 		Symbol *sym = NULL;
 		if (nameIndex < _namelist.size()) {
+			debugC(5, kDebugLoading, "Function %d binding: %s()", i, _namelist[nameIndex].c_str());
 			sym = g_lingo->define(_namelist[nameIndex], argCount, _currentScript);
 		} else {
 			warning("Function has unknown name id %d, skipping define", nameIndex);
@@ -909,6 +991,8 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 			sym->nargs = argCount;
 			sym->maxArgs = argCount;
 		}
+		sym->argNames = argNames;
+		sym->varNames = varNames;
 		sym->ctx = _currentScriptContext;
 		_currentScriptContext->functions.push_back(sym);
 

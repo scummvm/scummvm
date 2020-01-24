@@ -85,6 +85,8 @@ struct Symbol {	/* symbol table entry */
 	bool parens;	/* whether parens required or not, for builitins */
 
 	bool global;
+	Common::Array<Common::String> *argNames;
+	Common::Array<Common::String> *varNames;
 	ScriptContext *ctx;		/* optional script context to execute with */
 
 	Symbol();

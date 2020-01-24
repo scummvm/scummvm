@@ -271,6 +271,9 @@ Symbol *Lingo::define(Common::String &name, int nargs, ScriptData *code) {
 	sym->u.defn = code;
 	sym->nargs = nargs;
 	sym->maxArgs = nargs;
+	// TODO: Assign these properties from here
+	sym->argNames = NULL;
+	sym->varNames = NULL;
 	sym->ctx = NULL;
 
 	if (debugChannelSet(1, kDebugLingoCompile)) {
