@@ -56,11 +56,13 @@ bool UltimaEarlyEngine::initialize() {
 	if (!UltimaEngine::initialize())
 		return false;
 
-	Resources *res = new Shared::Resources();
-	if (!res->setup()) {
-		delete res;
+	// Set up the resources datafile
+	Resources *res = new Resources();
+	if (!res->open()) {
+		GUIErrorMessage("Could not find correct ultima.dat datafile");
 		return false;
 	}
+	SearchMan.add("ultima", res);
 
 	_debugger = new Debugger();
 	_events = new EventsManager(this);
@@ -82,10 +84,11 @@ void UltimaEarlyEngine::deinitialize() {
 }
 
 Common::Error UltimaEarlyEngine::run() {
-	if (initialize()) {
+	// Initialize the engine and play the game
+	if (initialize())
 		playGame();
-	}
 
+	// Deinitialize and free the engine
 	deinitialize();
 	return Common::kNoError;
 }
