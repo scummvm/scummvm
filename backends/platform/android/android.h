@@ -118,6 +118,8 @@ private:
 public:
 	virtual void pushEvent(const Common::Event &event);
 	virtual bool pollEvent(Common::Event &event);
+	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings();
+
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
 

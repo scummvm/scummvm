@@ -60,6 +60,10 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/keymapper-defaults.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "backends/platform/android/jni-android.h"
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/graphics.h"
@@ -400,6 +404,22 @@ bool OSystem_Android::getFeatureState(Feature f) {
 	default:
 		return ModularBackend::getFeatureState(f);
 	}
+}
+
+Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings() {
+	Common::KeymapperDefaultBindings *keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
+
+	if (ConfMan.hasKey("swap_menu_and_back")  && ConfMan.getBool("swap_menu_and_back")) {
+		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "AC_BACK");
+		keymapperDefaultBindings->setDefaultBinding("engine-default", Common::kStandardActionSkip, "MENU");
+		keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "MENU");
+	} else {
+		keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "MENU");
+		keymapperDefaultBindings->setDefaultBinding("engine-default", Common::kStandardActionSkip, "AC_BACK");
+		keymapperDefaultBindings->setDefaultBinding(Common::kGuiKeymapName, "CLOS", "AC_BACK");
+	}
+
+	return keymapperDefaultBindings;
 }
 
 uint32 OSystem_Android::getMillis(bool skipRecord) {
