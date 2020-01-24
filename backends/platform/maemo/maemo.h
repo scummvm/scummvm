@@ -42,7 +42,7 @@ public:
 	virtual void fatalError();
 	virtual void setWindowCaption(const char *caption);
 	virtual Common::HardwareInputSet *getHardwareInputSet();
-	virtual Common::Keymap *getGlobalKeymap();
+	Common::KeymapArray getGlobalKeymaps() override;
 	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() { return _keymapperDefaultBindings; }
 
 	Model getModel() { return _model; }
