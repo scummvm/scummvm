@@ -1223,6 +1223,41 @@ void LC::call(Symbol *sym, int nargs) {
 
 	// Create new set of local variables
 	g_lingo->_localvars = new SymbolHash;
+	if (sym->argNames) {
+
+		if ((int)sym->argNames->size() < sym->nargs) {
+			int dropSize = sym->nargs - sym->argNames->size();
+			warning("%d arg names defined for %d args! Dropping the last %d values", sym->argNames->size(), sym->nargs, dropSize);
+			for (int i = 0; i < dropSize; i++) {
+				g_lingo->pop();
+				sym->nargs -= 1;
+			}
+		} else if ((int)sym->argNames->size() > sym->nargs) {
+			warning("%d arg names defined for %d args! Ignoring the last %d names", sym->argNames->size(), sym->nargs, sym->argNames->size() - sym->nargs);
+		}
+		for (int i = sym->nargs - 1; i >= 0; i--) {
+			Common::String name = (*sym->argNames)[i];
+			if (!g_lingo->_localvars->contains(name)) {
+				Datum arg;
+				arg.type = VAR;
+				arg.u.sym = g_lingo->lookupVar(name.c_str(), true, false);
+				Datum value = g_lingo->pop();
+				g_lingo->varAssign(arg, value);
+			} else {
+				warning("Argument %s already defined", name.c_str());
+			}
+		}
+	}
+	if (sym->varNames) {
+		for (Common::Array<Common::String>::iterator it = sym->varNames->begin(); it != sym->varNames->end(); ++it) {
+			Common::String name = *it;
+			if (!g_lingo->_localvars->contains(name)) {
+				g_lingo->lookupVar(name.c_str(), true, false);
+			} else {
+				warning("Variable %s already defined", name.c_str());
+			}
+		}
+	}
 
 	g_lingo->_callstack.push_back(fp);
 
