@@ -198,7 +198,7 @@ void VK::tick() {
 		&& !_vm->_actors[kActorAnsweringMachine]->isSpeeching()
 		&& !_isClosing
 	) {
-		_vm->_subtitles->setGameSubsText(Common::String::format("Calibration: %02d Ratio: %02d Anxiety: %02d%%\nReplicant: %02d%% Human: %02d%%", _calibration, _calibrationRatio, _anxiety, _replicantProbability, _humanProbability), true);
+		_vm->_subtitles->setGameSubsText(Common::String::format("Adjustment: %03d Calibration: %02d Ratio: %02d\nAnxiety: %02d%% Replicant: %02d%% Human: %02d%%", _adjustment, _calibration, _calibrationRatio, _anxiety, _replicantProbability, _humanProbability), true);
 		_vm->_subtitles->show();
 	}
 
