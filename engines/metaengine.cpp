@@ -48,22 +48,38 @@ const char *MetaEngine::getSavegamePattern(const char *target) const {
 }
 
 Common::Keymap *MetaEngine::initKeymap(const char *target) const {
-	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "engine-default");
+	using namespace Common;
+
+	Keymap *const engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "engine-default");
 
 	// Since the game has multiple built-in keys for each of these anyway,
 	// this just attempts to remap one of them.
-	const Common::KeyActionEntry keyActionEntries[] = {
-		{ "PAUS", Common::KeyState(Common::KEYCODE_SPACE, ' ', 0),                   "SPACE",  _("Pause")     },
-		{ "SKCT", Common::KeyState(Common::KEYCODE_ESCAPE, Common::ASCII_ESCAPE, 0), "ESCAPE", _("Skip")      },
-		{ "SKLI", Common::KeyState(Common::KEYCODE_PERIOD, '.', 0),                  "PERIOD", _("Skip line") }
+	const KeyActionEntry keyActionEntries[] = {
+		{ "PAUS", KeyState(KEYCODE_SPACE, ' ', 0),           "SPACE",  _("Pause")     },
+		{ "SKCT", KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0), "ESCAPE", _("Skip")      },
+		{ "SKLI", KeyState(KEYCODE_PERIOD, '.', 0),          "PERIOD", _("Skip line") }
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
-		Common::Action *const act = new Common::Action(keyActionEntries[i].id, keyActionEntries[i].description);
+		Action *const act = new Action(keyActionEntries[i].id, keyActionEntries[i].description);
 		act->setKeyEvent(keyActionEntries[i].ks);
 		act->addDefaultInputMapping(keyActionEntries[i].defaultHwId);
 		engineKeyMap->addAction(act);
 	}
+
+	Action *act;
+
+	act = new Action("LCLK", _("Left Click"));
+	act->setLeftClickEvent();
+	engineKeyMap->addAction(act);
+
+	act = new Action("MCLK", _("Middle Click"));
+	act->setMiddleClickEvent();
+	engineKeyMap->addAction(act);
+
+	act = new Action("RCLK", _("Right Click"));
+	act->setRightClickEvent();
+	engineKeyMap->addAction(act);
 
 	return engineKeyMap;
 }

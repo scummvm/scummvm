@@ -324,16 +324,30 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	act->setKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN, KBD_ALT));
 	globalKeymap->addAction(act);
 
-	act = new Action("LCLK", _("Left Click"));
-	act->setLeftClickEvent();
+	act = new Action("MUTE", _("Toggle mute"));
+	act->addDefaultInputMapping("C+u");
+	act->setEvent(EVENT_MUTE);
 	globalKeymap->addAction(act);
 
-	act = new Action("MCLK", _("Middle Click"));
-	act->setMiddleClickEvent();
-	globalKeymap->addAction(act);
+	act = new Action("QUIT", _("Quit"));
+	act->setEvent(EVENT_QUIT);
 
-	act = new Action("RCLK", _("Right Click"));
-	act->setRightClickEvent();
+#if defined(MACOSX)
+	// On Macintosh, Cmd-Q quits
+	act->addDefaultInputMapping("M+q");
+#elif defined(POSIX)
+	// On other *nix systems, Control-Q quits
+	act->addDefaultInputMapping("C+q");
+#else
+	// Ctrl-z quits
+	act->addDefaultInputMapping("C+z");
+
+#ifdef WIN32
+	// On Windows, also use the default Alt-F4 quit combination
+	act->addDefaultInputMapping("A+F4");
+#endif
+#endif
+
 	globalKeymap->addAction(act);
 
 	return globalKeymap;
