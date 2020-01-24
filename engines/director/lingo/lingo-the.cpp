@@ -782,6 +782,9 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	case kTheWidth:
 		d.u.i = _vm->getCurrentScore()->getCastMemberInitialRect(id).width();
 		break;
+	case kTheNumber:
+		d.u.i = id;
+		break;
 	default:
 		warning("Lingo::getTheCast(): Unprocessed getting field \"%s\" of cast %d", field2str(field), id);
 		d.type = VOID;
