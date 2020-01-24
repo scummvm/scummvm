@@ -56,6 +56,11 @@ void EventDispatcher::dispatch() {
 			if (i->source->allowMapping()) {
 				assert(_mapper);
 
+				// Backends may not produce directly action event types, those are meant
+				// to be the output of the event mapper.
+				assert(event.type != EVENT_CUSTOM_BACKEND_ACTION_START);
+				assert(event.type != EVENT_CUSTOM_BACKEND_ACTION_END);
+
 				List<Event> mappedEvents = _mapper->mapEvent(event);
 
 				for (List<Event>::iterator j = mappedEvents.begin(); j != mappedEvents.end(); ++j) {

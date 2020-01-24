@@ -77,7 +77,8 @@ enum EventType {
 #ifdef ENABLE_KEYMAPPER
 	// IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
 	// this, please talk to tsoliman and/or LordHoto.
-	EVENT_CUSTOM_BACKEND_ACTION = 18,
+	EVENT_CUSTOM_BACKEND_ACTION_START = 18,
+	EVENT_CUSTOM_BACKEND_ACTION_END = 19,
 	EVENT_CUSTOM_BACKEND_HARDWARE = 21,
 #endif
 #ifdef ENABLE_VKEYBD

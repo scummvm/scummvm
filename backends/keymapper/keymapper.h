@@ -129,16 +129,16 @@ public:
 private:
 
 	enum IncomingEventType {
-		kIncomingKeyDown,
-		kIncomingKeyUp,
-		kIncomingNonKey
+		kIncomingEventStart,
+		kIncomingEventEnd,
+		kIncomingEventInstant
 	};
 
 	HardwareInputSet *_hardwareInputs;
 	const KeymapperDefaultBindings *_backendDefaultBindings;
 
 	Event executeAction(const Action *act, IncomingEventType incomingType);
-	EventType convertDownToUp(EventType eventType);
+	EventType convertStartToEnd(EventType eventType);
 	IncomingEventType convertToIncomingEventType(const Event &ev) const;
 
 	EventManager *_eventMan;

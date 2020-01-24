@@ -190,7 +190,7 @@ MaemoSdlEventObserver::MaemoSdlEventObserver(MaemoSdlEventSource *eventSource) {
 
 bool MaemoSdlEventObserver::notifyEvent(const Common::Event &event) {
 #ifdef ENABLE_KEYMAPPER
-	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION)
+	if (event.type != Common::EVENT_CUSTOM_BACKEND_ACTION_START)
 		return false;
 	if (event.customType == kEventClickMode) {
 		assert(_eventSource);
