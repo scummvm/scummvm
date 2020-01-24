@@ -134,6 +134,7 @@ static const char *credits[] = {
 "C1""Director",
 "C0""Eugene Sandulenko",
 "C0""Dmitry Iskrich",
+"C0""Scott Percival",
 "C0""Steven Hoefel",
 "C0""Tobia Tesan",
 "",
