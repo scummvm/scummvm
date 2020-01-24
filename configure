@@ -188,7 +188,7 @@ _cloud=auto
 _pandoc=no
 # Default vkeybd/eventrec options
 _vkeybd=no
-_eventrec=auto
+_eventrec=no
 # GUI translation options
 _translation=yes
 # Default platform settings
@@ -3135,7 +3135,6 @@ if test -n "$_host"; then
 			# This is so optional OpenGL ES includes are found.
 			append_var CXXFLAGS "-I$RPI_ROOT/opt/vc/include"
 			_savegame_timestamp=no
-			_eventrec=no
 			_build_scalers=no
 			_build_hq_scalers=no
 			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it
@@ -3430,7 +3429,6 @@ if test -n "$_host"; then
 		ps3)
 			_timidity=no
 			_vkeybd=yes
-			_eventrec=no
 			_port_mk="backends/platform/sdl/ps3/ps3.mk"
 			;;
 		psp2)
@@ -3440,7 +3438,6 @@ if test -n "$_host"; then
 			_build_hq_scalers=no
 			_mt32emu=no
 			_timidity=no
-			_eventrec=no
 			_port_mk="backends/platform/sdl/psp2/psp2.mk"
 			;;
 		psp)
@@ -3866,9 +3863,6 @@ esac
 #
 case $_backend in
 	sdl)
-		if test "$_eventrec" = auto ; then
-			_eventrec=yes
-		fi
 		;;
 	*)
 		_eventrec=no
