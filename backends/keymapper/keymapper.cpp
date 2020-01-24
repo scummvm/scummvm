@@ -183,20 +183,20 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 
 Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &ev) const {
 	if (ev.type == EVENT_CUSTOM_BACKEND_HARDWARE) {
-		return kIncomingNonKey;
+		return kIncomingEventInstant;
 	} else if (ev.type == EVENT_KEYDOWN) {
-		return kIncomingKeyDown;
+		return kIncomingEventStart;
 	} else {
-		return kIncomingKeyUp;
+		return kIncomingEventEnd;
 	}
 }
 
 Event Keymapper::executeAction(const Action *action, IncomingEventType incomingType) {
 	Event evt = Event(action->event);
-	EventType convertedType = convertDownToUp(evt.type);
+	EventType convertedType = convertStartToEnd(evt.type);
 
 	// hardware keys need to send up instead when they are up
-	if (incomingType == kIncomingKeyUp) {
+	if (incomingType == kIncomingEventEnd) {
 		evt.type = convertedType;
 	}
 
@@ -204,7 +204,7 @@ Event Keymapper::executeAction(const Action *action, IncomingEventType incomingT
 
 	// Check if the event is coming from a non-key hardware event
 	// that is mapped to a key event
-	if (incomingType == kIncomingNonKey && convertedType != EVENT_INVALID) {
+	if (incomingType == kIncomingEventInstant && convertedType != EVENT_INVALID) {
 		// WORKAROUND: Delay the down events coming from non-key hardware events
 		// with a zero delay. This is to prevent DOWN1 DOWN2 UP1 UP2.
 		addDelayedEvent(0, evt);
@@ -220,7 +220,7 @@ Event Keymapper::executeAction(const Action *action, IncomingEventType incomingT
 	return evt;
 }
 
-EventType Keymapper::convertDownToUp(EventType type) {
+EventType Keymapper::convertStartToEnd(EventType type) {
 	EventType result = EVENT_INVALID;
 	switch (type) {
 	case EVENT_KEYDOWN:
@@ -234,6 +234,9 @@ EventType Keymapper::convertDownToUp(EventType type) {
 		break;
 	case EVENT_MBUTTONDOWN:
 		result = EVENT_MBUTTONUP;
+		break;
+	case EVENT_CUSTOM_BACKEND_ACTION_START:
+		result = EVENT_CUSTOM_BACKEND_ACTION_END;
 		break;
 	default:
 		break;
