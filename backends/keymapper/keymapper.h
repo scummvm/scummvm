@@ -52,7 +52,7 @@ public:
 	~Keymapper();
 
 	// EventMapper interface
-	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
+	virtual List<Event> mapEvent(const Event &ev);
 
 	/**
 	 * Registers a HardwareInputSet with the Keymapper

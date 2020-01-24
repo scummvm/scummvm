@@ -138,17 +138,14 @@ void Keymapper::setEnabledKeymapType(Keymap::KeymapType type) {
 	_enabledKeymapType = type;
 }
 
-List<Event> Keymapper::mapEvent(const Event &ev, EventSource *source) {
+List<Event> Keymapper::mapEvent(const Event &ev) {
 	if (!_enabled) {
-		return DefaultEventMapper::mapEvent(ev, source);
-	}
-	if (source && !source->allowMapping()) {
-		return DefaultEventMapper::mapEvent(ev, source);
+		return DefaultEventMapper::mapEvent(ev);
 	}
 
 	const HardwareInput *hwInput = findHardwareInput(ev);
 	if (!hwInput) {
-		return DefaultEventMapper::mapEvent(ev, source);
+		return DefaultEventMapper::mapEvent(ev);
 	}
 
 	IncomingEventType incomingEventType = convertToIncomingEventType(ev);
@@ -178,7 +175,7 @@ List<Event> Keymapper::mapEvent(const Event &ev, EventSource *source) {
 	}
 
 	if (mappedEvents.empty()) {
-		return DefaultEventMapper::mapEvent(ev, source);
+		return DefaultEventMapper::mapEvent(ev);
 	}
 
 	return mappedEvents;

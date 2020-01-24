@@ -27,7 +27,7 @@
 
 namespace Common {
 
-List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
+List<Event> DefaultEventMapper::mapEvent(const Event &ev) {
 	List<Event> events;
 	Event mappedEvent;
 #ifdef ENABLE_VKEYBD

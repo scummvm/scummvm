@@ -53,12 +53,17 @@ void EventDispatcher::dispatch() {
 		while (i->source->pollEvent(event)) {
 			// We only try to process the events via the setup event mapper, when
 			// we have a setup mapper and when the event source allows mapping.
-			assert(_mapper);
-			List<Event> mappedEvents = _mapper->mapEvent(event, i->source);
+			if (i->source->allowMapping()) {
+				assert(_mapper);
 
-			for (List<Event>::iterator j = mappedEvents.begin(); j != mappedEvents.end(); ++j) {
-				const Event mappedEvent = *j;
-				dispatchEvent(mappedEvent);
+				List<Event> mappedEvents = _mapper->mapEvent(event);
+
+				for (List<Event>::iterator j = mappedEvents.begin(); j != mappedEvents.end(); ++j) {
+					const Event mappedEvent = *j;
+					dispatchEvent(mappedEvent);
+				}
+			} else {
+				dispatchEvent(event);
 			}
 		}
 	}
