@@ -129,7 +129,7 @@ public:
 	RivenScriptPtr onMouseMove(const Common::Point &mouse);
 
 	/** Handle a keyboard action */
-	RivenScriptPtr onKeyAction(RivenKeyAction keyAction);
+	RivenScriptPtr onKeyAction(RivenAction keyAction);
 
 	/** General frame update handler */
 	RivenScriptPtr onFrame();

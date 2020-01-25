@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 #include "graphics/scaler.h"
 #include "gui/saveload.h"
 #include "gui/message.h"
@@ -221,7 +222,7 @@ void MohawkEngine_Riven::doFrame() {
 	_video->updateMovies();
 
 	if (!_scriptMan->hasQueuedScripts()) {
-		_stack->keyResetAction();
+		_stack->resetAction();
 	}
 
 	processInput();
@@ -263,70 +264,67 @@ void MohawkEngine_Riven::processInput() {
 			_stack->onMouseUp(_eventMan->getMousePos());
 			_inventory->checkClick(_eventMan->getMousePos());
 			break;
-		case Common::EVENT_KEYUP:
-			_stack->keyResetAction();
-			break;
-		case Common::EVENT_KEYDOWN:
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_d:
-				if (event.kbd.flags & Common::KBD_CTRL) {
-					_console->attach();
-					_console->onFrame();
-				}
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			switch ((RivenAction)event.customType) {
+			case kRivenActionInteract:
+				_stack->onMouseUp(_eventMan->getMousePos());
+				_inventory->checkClick(_eventMan->getMousePos());
 				break;
-			case Common::KEYCODE_SPACE:
+			default:
+				_stack->resetAction();
+				break;
+			}
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			switch ((RivenAction)event.customType) {
+			case kRivenActionInteract:
+				_stack->onMouseDown(_eventMan->getMousePos());
+				break;
+			case kRivenActionOpenDebugger:
+				_console->attach();
+				_console->onFrame();
+				break;
+			case kRivenActionPause:
 				pauseGame();
 				break;
-			case Common::KEYCODE_F5:
+			case kRivenActionOpenOptionsDialog:
 				runOptionsDialog();
 				break;
-			case Common::KEYCODE_r:
-				// Return to the main menu in the demo on ctrl+r
-				if (event.kbd.flags & Common::KBD_CTRL && getFeatures() & GF_DEMO) {
+			case kRivenActionOpenMainMenu:
+				if (getFeatures() & GF_DEMO) {
+					// Return to the main menu in the demo
 					if (_stack->getId() != kStackAspit)
 						changeToStack(kStackAspit);
 					changeToCard(1);
-				}
-				break;
-			case Common::KEYCODE_p:
-				// Play the intro videos in the demo on ctrl+p
-				if (event.kbd.flags & Common::KBD_CTRL && getFeatures() & GF_DEMO) {
-					if (_stack->getId() != kStackAspit)
-						changeToStack(kStackAspit);
-					changeToCard(6);
-				}
-				break;
-			case Common::KEYCODE_o:
-				if (event.kbd.flags & Common::KBD_CTRL) {
-					if (canLoadGameStateCurrently()) {
-						runLoadDialog();
-					}
-				}
-				break;
-			case Common::KEYCODE_s:
-				if (event.kbd.flags & Common::KBD_CTRL) {
-					if (canSaveGameStateCurrently()) {
-						runSaveDialog();
-					}
-				}
-				break;
-			case Common::KEYCODE_ESCAPE:
-				if (!_scriptMan->hasQueuedScripts() && getFeatures() & GF_25TH) {
+				} else if (!_scriptMan->hasQueuedScripts() && getFeatures() & GF_25TH) {
 					// Check if we haven't jumped to menu
 					if (_menuSavedStack == -1) {
 						goToMainMenu();
 					} else {
 						resumeFromMainMenu();
 					}
-				} else {
-					_stack->onKeyPressed(event.kbd);
+				}
+				break;
+			case kRivenActionPlayIntroVideos:
+				// Play the intro videos in the demo
+				if (getFeatures() & GF_DEMO) {
+					if (_stack->getId() != kStackAspit)
+						changeToStack(kStackAspit);
+					changeToCard(6);
+				}
+				break;
+			case kRivenActionLoadGameState:
+				if (canLoadGameStateCurrently()) {
+					runLoadDialog();
+				}
+				break;
+			case kRivenActionSaveGameState:
+				if (canSaveGameStateCurrently()) {
+					runSaveDialog();
 				}
 				break;
 			default:
-				if (event.kbdRepeat) {
-					continue;
-				}
-				_stack->onKeyPressed(event.kbd);
+				_stack->onAction((RivenAction)event.customType);
 				break;
 			}
 			break;
@@ -875,52 +873,61 @@ void MohawkEngine_Riven::runOptionsDialog() {
 }
 
 Common::Keymap *MohawkEngine_Riven::initKeymap(const char *target) {
-	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "riven");
+	using namespace Common;
 
-	const Common::KeyActionEntry keyActionEntries[] = {
-		{ "UP",   Common::KEYCODE_UP,                                         "UP",       _("Move Forward")           },
-		{ "DWN",  Common::KEYCODE_DOWN,                                       "DOWN",     _("Move Back")              },
-		{ "TL",   Common::KEYCODE_LEFT,                                       "LEFT",     _("Turn Left")              },
-		{ "TR",   Common::KEYCODE_RIGHT,                                      "RIGHT",    _("Turn Right")             },
-		{ "LKUP", Common::KEYCODE_PAGEUP,                                     "PAGEUP",   _("Look Up")                },
-		{ "LKDN", Common::KEYCODE_PAGEDOWN,                                   "PAGEDOWN", _("Look Down")              },
-		{ "OPTS", Common::KEYCODE_F5,                                         "F5",       _("Show/Hide Options Menu") },
-		{ "PAUS", Common::KEYCODE_SPACE,                                      "SPACE",    _("Pause")                  },
-		{ "LOAD", Common::KeyState(Common::KEYCODE_o, 'o', Common::KBD_CTRL), "C+o",      _("Load Game State")        },
-		{ "SAVE", Common::KeyState(Common::KEYCODE_s, 's', Common::KBD_CTRL), "C+s",      _("Save Game State")        }
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "riven");
+
+	if (checkGameGUIOption(GAMEOPTION_25TH, ConfMan.get("guioptions", target))) {
+		Action* const act = new Action(kStandardActionOpenMainMenu, _("Open main menu"));
+		act->setCustomEngineActionEvent(kRivenActionOpenMainMenu);
+		act->addDefaultInputMapping("ESCAPE");
+		engineKeyMap->addAction(act);
+	}
+
+	struct ActionEntry {
+		const char *id;
+		const RivenAction action;
+		const char *defaultHwId;
+		const char *description;
 	};
 
-	const Common::KeyActionEntry keyActionEntriesDemo[] = {
-		{ "RMM",  Common::KeyState(Common::KEYCODE_r, 'r', Common::KBD_CTRL), "C+r",      _("Return To Main Menu")    },
-		{ "INTV", Common::KeyState(Common::KEYCODE_p, 'p', Common::KBD_CTRL), "C+p",      _("Play Intro Videos")      }
+	const ActionEntry keyActionEntries[] = {
+		{ kStandardActionSkip,          kRivenActionSkip,              "ESCAPE",   _("Skip")                },
+		{ kStandardActionInteract,      kRivenActionInteract,          "RETURN",   _("Interact")            },
+		{ "LOAD",                       kRivenActionLoadGameState,     "C+o",      _("Load game state")     },
+		{ "SAVE",                       kRivenActionSaveGameState,     "C+s",      _("Save game state")     },
+		{ "OPTS",                       kRivenActionOpenOptionsDialog, "F5",       _("Show options menu")   },
+		{ kStandardActionPause,         kRivenActionPause,             "SPACE",    _("Pause")               },
+		{ kStandardActionMoveForward,   kRivenActionMoveForward,       "UP",       _("Move forward")        },
+		{ "FWDL",                       kRivenActionMoveForwardLeft,   "",         _("Move forward left")   },
+		{ "FWDR",                       kRivenActionMoveForwardRight,  "",         _("Move forward right")  },
+		{ kStandardActionMoveBackwards, kRivenActionMoveBack,          "DOWN",     _("Move backwards")      },
+		{ kStandardActionTurnLeft,      kRivenActionMoveLeft,          "LEFT",     _("Turn left")           },
+		{ kStandardActionTurnRight,     kRivenActionMoveRight,         "RIGHT",    _("Turn right")          },
+		{ kStandardActionMoveUpwards,   kRivenActionLookUp,            "PAGEUP",   _("Look up")             },
+		{ kStandardActionMoveDownwards, kRivenActionLookDown,          "PAGEDOWN", _("Look down")           },
+		{ kStandardActionOpenDebugger,  kRivenActionOpenDebugger,      "C+d",      _("Open debugger")       }
+	};
+
+	const ActionEntry keyActionEntriesDemo[] = {
+		{ kStandardActionOpenMainMenu,  kRivenActionOpenMainMenu,      "C+r",      _("Return to main menu") },
+		{ "INTV",                       kRivenActionPlayIntroVideos,   "C+p",      _("Play intro videos")   }
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
-		Common::Action *const act = new Common::Action(keyActionEntries[i].id, keyActionEntries[i].description);
-		act->setKeyEvent(keyActionEntries[i].ks);
+		Action *act = new Action(keyActionEntries[i].id, keyActionEntries[i].description);
+		act->setCustomEngineActionEvent(keyActionEntries[i].action);
 		act->addDefaultInputMapping(keyActionEntries[i].defaultHwId);
 		engineKeyMap->addAction(act);
 	}
 
-	if (Common::checkGameGUIOption(GAMEOPTION_DEMO, ConfMan.get("guioptions", target))) {
+	if (checkGameGUIOption(GAMEOPTION_DEMO, ConfMan.get("guioptions", target))) {
 		for (uint i = 0; i < ARRAYSIZE(keyActionEntriesDemo); i++) {
-			Common::Action* const act = new Common::Action(keyActionEntriesDemo[i].id, keyActionEntriesDemo[i].description);
-			act->setKeyEvent(keyActionEntriesDemo[i].ks);
+			Action *act = new Action(keyActionEntriesDemo[i].id, keyActionEntriesDemo[i].description);
+			act->setCustomEngineActionEvent(keyActionEntriesDemo[i].action);
 			act->addDefaultInputMapping(keyActionEntriesDemo[i].defaultHwId);
 			engineKeyMap->addAction(act);
 		}
-	}
-
-	if (Common::checkGameGUIOption(GAMEOPTION_25TH, ConfMan.get("guioptions", target))) {
-		Common::Action* const act = new Common::Action("SMNU", _("Skip / Open main menu"));
-		act->setKeyEvent(Common::KEYCODE_ESCAPE);
-		act->addDefaultInputMapping("ESCAPE");
-		engineKeyMap->addAction(act);
-	} else {
-		Common::Action* const act = new Common::Action("SKIP", _("Skip"));
-		act->setKeyEvent(Common::KEYCODE_ESCAPE);
-		act->addDefaultInputMapping("ESCAPE");
-		engineKeyMap->addAction(act);
 	}
 
 	return engineKeyMap;

@@ -36,6 +36,7 @@
 
 namespace Common {
 
+extern const char *kStandardActionInteract;
 extern const char *kStandardActionSkip;
 extern const char *kStandardActionPause;
 extern const char *kStandardActionMoveForward;

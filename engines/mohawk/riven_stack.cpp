@@ -41,7 +41,7 @@ RivenStack::RivenStack(MohawkEngine_Riven *vm, uint16 id) :
 		_id(id),
 		_mouseIsDown(false),
 		_shouldRefreshMouseCursor(false),
-		_keyAction(kKeyActionNone) {
+		_action(kRivenActionNone) {
 	removeTimer();
 
 	loadResourceNames();
@@ -351,77 +351,24 @@ void RivenStack::onFrame() {
 	_vm->_scriptMan->runScript(script, true);
 }
 
-RivenKeyAction RivenStack::keyGetAction() const {
-	return _keyAction;
+RivenAction RivenStack::getAction() const {
+	return _action;
 }
 
-void RivenStack::keyResetAction() {
-	_keyAction = kKeyActionNone;
+void RivenStack::resetAction() {
+	_action = kRivenActionNone;
 }
 
-void RivenStack::onKeyPressed(const Common::KeyState &keyState) {
-	_keyAction = mapKeyStateToKeyAction(keyState);
+void RivenStack::onAction(RivenAction action) {
+	_action = action;
 
 	if (_vm->getCard() && !_vm->_scriptMan->hasQueuedScripts()) {
-		RivenScriptPtr script = _vm->getCard()->onKeyAction(_keyAction);
+		RivenScriptPtr script = _vm->getCard()->onKeyAction(_action);
 
 		if (!script->empty()) {
 			_vm->_scriptMan->runScript(script, true);
 		}
 	}
-}
-
-RivenKeyAction RivenStack::mapKeyStateToKeyAction(const Common::KeyState &keyState) {
-	switch (keyState.keycode) {
-		case Common::KEYCODE_ESCAPE:
-			return kKeyActionSkip;
-		case Common::KEYCODE_KP8:
-			if (keyState.flags & Common::KBD_NUM) {
-				break;
-			}
-			// Fallthrough
-		case Common::KEYCODE_UP:
-			return kKeyActionMoveForward;
-		case Common::KEYCODE_KP7:
-			if (keyState.flags & Common::KBD_NUM) {
-				break;
-			}
-			return kKeyActionMoveForwardLeft;
-		case Common::KEYCODE_KP9:
-			if (keyState.flags & Common::KBD_NUM) {
-				break;
-			}
-			return kKeyActionMoveForwardRight;
-		case Common::KEYCODE_KP4:
-			if (keyState.flags & Common::KBD_NUM) {
-				break;
-			}
-			// Fallthrough
-		case Common::KEYCODE_LEFT:
-			return kKeyActionMoveLeft;
-		case Common::KEYCODE_KP6:
-			if (keyState.flags & Common::KBD_NUM) {
-				break;
-			}
-			// Fallthrough
-		case Common::KEYCODE_RIGHT:
-			return kKeyActionMoveRight;
-		case Common::KEYCODE_KP2:
-			if (keyState.flags & Common::KBD_NUM) {
-				break;
-			}
-			// Fallthrough
-		case Common::KEYCODE_DOWN:
-			return kKeyActionMoveBack;
-		case Common::KEYCODE_PAGEUP:
-			return kKeyActionLookUp;
-		case Common::KEYCODE_PAGEDOWN:
-			return kKeyActionLookDown;
-		default:
-			break;
-	}
-
-	return kKeyActionNone;
 }
 
 Common::Point RivenStack::getMousePosition() const {
@@ -474,7 +421,7 @@ void RivenStack::pageTurn(RivenTransition transition) {
 }
 
 bool RivenStack::keepTurningPages() {
-	return (mouseIsDown() || keyGetAction() != kKeyActionNone) && !_vm->shouldQuit();
+	return (mouseIsDown() || getAction() != kRivenActionNone) && !_vm->shouldQuit();
 }
 
 void RivenStack::waitForPageTurnSound() {
