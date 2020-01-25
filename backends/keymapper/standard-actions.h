@@ -20,28 +20,33 @@
  *
  */
 
-#include "backends/keymapper/action.h"
+#ifndef BACKENDS_KEYMAPPER_STANDARD_ACTIONS_H
+#define BACKENDS_KEYMAPPER_STANDARD_ACTIONS_H
 
-#include "backends/keymapper/keymap.h"
+/**
+ * @file
+ * @brief A set of well known keymapper actions.
+ *
+ * The actions in this file are meant to be used by game engines
+ * when defining their key mappings.
+ * Backends can provide default key mappings for some of these actions
+ * so users don't have to manually configure the action mappings for
+ * the input devices.
+ */
 
 namespace Common {
 
-Action::Action(const char *i, const String &des) :
-		id(i),
-		description(des) {
-	assert(i);
-}
+extern const char *kStandardActionSkip;
+extern const char *kStandardActionPause;
+extern const char *kStandardActionMoveForward;
+extern const char *kStandardActionMoveBackwards;
+extern const char *kStandardActionTurnLeft;
+extern const char *kStandardActionTurnRight;
+extern const char *kStandardActionMoveUpwards;
+extern const char *kStandardActionMoveDownwards;
+extern const char *kStandardActionOpenDebugger;
+extern const char *kStandardActionOpenMainMenu;
 
-void Action::addDefaultInputMapping(const String &hwId) {
-	if (hwId.empty()) {
-		return;
-	}
+} //namespace Common
 
-	// Don't allow an input to map to the same action multiple times
-	Array<String>::const_iterator found = find(_defaultInputMapping.begin(), _defaultInputMapping.end(), hwId);
-	if (found == _defaultInputMapping.end()) {
-		_defaultInputMapping.push_back(hwId);
-	}
-}
-
-} // End of namespace Common
+#endif // BACKENDS_KEYMAPPER_STANDARD_ACTIONS_H

@@ -20,28 +20,19 @@
  *
  */
 
-#include "backends/keymapper/action.h"
-
-#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
 
 namespace Common {
 
-Action::Action(const char *i, const String &des) :
-		id(i),
-		description(des) {
-	assert(i);
-}
+const char *kStandardActionSkip          = "SKIP";
+const char *kStandardActionPause         = "PAUSE";
+const char *kStandardActionMoveForward   = "FWD";
+const char *kStandardActionMoveBackwards = "BWD";
+const char *kStandardActionTurnLeft      = "TL";
+const char *kStandardActionTurnRight     = "TR";
+const char *kStandardActionMoveUpwards   = "UP";
+const char *kStandardActionMoveDownwards = "DOWN";
+const char *kStandardActionOpenDebugger  = "DBG";
+const char *kStandardActionOpenMainMenu  = "MENU";
 
-void Action::addDefaultInputMapping(const String &hwId) {
-	if (hwId.empty()) {
-		return;
-	}
-
-	// Don't allow an input to map to the same action multiple times
-	Array<String>::const_iterator found = find(_defaultInputMapping.begin(), _defaultInputMapping.end(), hwId);
-	if (found == _defaultInputMapping.end()) {
-		_defaultInputMapping.push_back(hwId);
-	}
-}
-
-} // End of namespace Common
+} //namespace Common

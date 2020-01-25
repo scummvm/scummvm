@@ -180,6 +180,13 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 		}
 	}
 
+	// Ignore keyboard repeat events. Repeat event are meant for text input,
+	// the keymapper / keymaps are supposed to be disabled during text input.
+	// TODO: Add a way to keep repeat events if needed.
+	if (!mappedEvents.empty() && ev.type == EVENT_KEYDOWN && ev.kbdRepeat) {
+		return List<Event>();
+	}
+
 	if (mappedEvents.empty()) {
 		// if it didn't get mapped, just pass it through
 		mappedEvents.push_back(ev);
@@ -244,6 +251,9 @@ EventType Keymapper::convertStartToEnd(EventType type) {
 		break;
 	case EVENT_CUSTOM_BACKEND_ACTION_START:
 		result = EVENT_CUSTOM_BACKEND_ACTION_END;
+		break;
+	case EVENT_CUSTOM_ENGINE_ACTION_START:
+		result = EVENT_CUSTOM_ENGINE_ACTION_END;
 		break;
 	default:
 		break;

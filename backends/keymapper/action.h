@@ -68,6 +68,12 @@ public:
 		event.customType = evtType;
 	}
 
+	void setCustomEngineActionEvent(const CustomEventType evtType) {
+		event = Event();
+		event.type = EVENT_CUSTOM_ENGINE_ACTION_START;
+		event.customType = evtType;
+	}
+
 	void setKeyEvent(const KeyState &ks) {
 		event = Event();
 		event.type = EVENT_KEYDOWN;
