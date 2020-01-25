@@ -20,12 +20,16 @@
  *
  */
 
+#include "backends/platform/3ds/osystem.h"
 #include "backends/platform/3ds/sprite.h"
 #include "common/algorithm.h"
 #include "common/util.h"
 
+namespace _3DS {
+
 Sprite::Sprite()
-	: dirtyPixels(true)
+	: textureTransferFlags(0)
+	, dirtyPixels(true)
 	, dirtyMatrix(true)
 	, actualWidth(0)
 	, actualHeight(0)
@@ -45,12 +49,13 @@ Sprite::~Sprite() {
 	//
 }
 
-void Sprite::create(uint16 width, uint16 height, const Graphics::PixelFormat &f) {
+void Sprite::create(uint16 width, uint16 height, const GfxMode3DS *mode) {
 	free();
 
 	actualWidth = width;
 	actualHeight = height;
-	format = f;
+	format = mode->surfaceFormat;
+	textureTransferFlags = mode->textureTransferFlags;
 	w = MAX<uint16>(Common::nextHigher2(width), 64u);
 	h = MAX<uint16>(Common::nextHigher2(height), 64u);
 	pitch = w * format.bytesPerPixel;
@@ -58,7 +63,7 @@ void Sprite::create(uint16 width, uint16 height, const Graphics::PixelFormat &f)
 
 	if (width && height) {
 		pixels = linearAlloc(h * pitch);
-		C3D_TexInit(&texture, w, h, GPU_RGBA8);
+		C3D_TexInit(&texture, w, h, mode->textureFormat);
 		C3D_TexSetFilter(&texture, GPU_LINEAR, GPU_LINEAR);
 		assert(pixels && texture.data);
 		clear();
@@ -94,7 +99,7 @@ void Sprite::transfer() {
 	if (pixels && dirtyPixels) {
 		dirtyPixels = false;
 		GSPGPU_FlushDataCache(pixels, w * h * format.bytesPerPixel);
-		C3D_SyncDisplayTransfer((u32*)pixels, GX_BUFFER_DIM(w, h), (u32*)texture.data, GX_BUFFER_DIM(w, h), TEXTURE_TRANSFER_FLAGS);
+		C3D_SyncDisplayTransfer((u32*)pixels, GX_BUFFER_DIM(w, h), (u32*)texture.data, GX_BUFFER_DIM(w, h), textureTransferFlags);
 	}
 }
 
@@ -143,3 +148,5 @@ C3D_Mtx* Sprite::getMatrix() {
 	}
 	return &modelview;
 }
+
+} // namespace _3DS

@@ -108,10 +108,12 @@ static void eventThreadFunc(void *arg) {
 
 		// C-Pad used to control the cursor
 		hidCircleRead(&circle);
-		if (circle.dx < circleDeadzone && circle.dx > -circleDeadzone)
+		if (circle.dx < circleDeadzone && circle.dx > -circleDeadzone) {
 			circle.dx = 0;
-		if (circle.dy < circleDeadzone && circle.dy > -circleDeadzone)
+		}
+		if (circle.dy < circleDeadzone && circle.dy > -circleDeadzone) {
 			circle.dy = 0;
+		}
 		cursorDeltaX = (0.0002f + config.sensitivity / 100000.f) * circle.dx * abs(circle.dx);
 		cursorDeltaY = (0.0002f + config.sensitivity / 100000.f) * circle.dy * abs(circle.dy);
 
@@ -119,14 +121,18 @@ static void eventThreadFunc(void *arg) {
 		if (held & KEY_TOUCH) {
 			hidTouchRead(&touch);
 			if (config.snapToBorder) {
-				if (touch.px < borderSnapZone)
+				if (touch.px < borderSnapZone) {
 					touch.px = 0;
-				if (touch.px > 319 - borderSnapZone)
+				}
+				if (touch.px > 319 - borderSnapZone) {
 					touch.px = 319;
-				if (touch.py < borderSnapZone)
+				}
+				if (touch.py < borderSnapZone) {
 					touch.py = 0;
-				if (touch.py > 239 - borderSnapZone)
+				}
+				if (touch.py > 239 - borderSnapZone) {
 					touch.py = 239;
+				}
 			}
 
 			osys->transformPoint(touch);
@@ -201,8 +207,9 @@ static void aptHookFunc(APT_HookType hookType, void *param) {
 	switch (hookType) {
 		case APTHOOK_ONSUSPEND:
 		case APTHOOK_ONSLEEP:
-			if (g_engine)
+			if (g_engine) {
 				g_engine->pauseEngine(true);
+			}
 			osys->sleeping = true;
 			if (R_SUCCEEDED(gspLcdInit())) {
 				GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
@@ -211,8 +218,9 @@ static void aptHookFunc(APT_HookType hookType, void *param) {
 			break;
 		case APTHOOK_ONRESTORE:
 		case APTHOOK_ONWAKEUP:
-			if (g_engine)
+			if (g_engine) {
 				g_engine->pauseEngine(false);
+			}
 			osys->sleeping = false;
 			loadConfig();
 			break;
@@ -348,8 +356,9 @@ bool OSystem_3DS::pollEvent(Common::Event &event) {
 
 	Common::StackLock lock(*eventMutex);
 
-	if (_eventQueue.empty())
+	if (_eventQueue.empty()) {
 		return false;
+	}
 
 	event = _eventQueue.pop();
 	return true;
@@ -381,7 +390,7 @@ bool OSystem_3DS::notifyEvent(const Common::Event &event) {
 		return true;
 
 	case k3DSEventToggleMagnifyMode:
-		if (g_gui.isActive()) {
+		if (_overlayVisible) {
 			displayMessageOnOSD(_("Magnify Mode cannot be activated in menus."));
 		} else if (config.screen != kScreenBoth && _magnifyMode == MODE_MAGOFF) {
 			// TODO: Automatically enable both screens while magnify mode is on
@@ -429,11 +438,13 @@ void OSystem_3DS::runOptionsDialog() {
 	optionsDialogRunning = true;
 
 	OptionsDialog dialog;
-	if (g_engine)
+	if (g_engine) {
 		g_engine->pauseEngine(true);
+	}
 	int result = dialog.runModal();
-	if (g_engine)
+	if (g_engine) {
 		g_engine->pauseEngine(false);
+	}
 
 	if (result > 0) {
 		int oldScreen = config.screen;

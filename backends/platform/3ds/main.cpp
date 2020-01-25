@@ -20,7 +20,7 @@
  *
  */
 
-#include "osystem.h"
+#include "backends/platform/3ds/osystem.h"
 #include "backends/plugins/3ds/3ds-provider.h"
 
 #include <3ds.h>
