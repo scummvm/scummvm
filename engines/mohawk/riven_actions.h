@@ -20,20 +20,33 @@
  *
  */
 
-#include "backends/keymapper/standard-actions.h"
+#ifndef MOHAWK_RIVEN_ACTIONS_H
+#define MOHAWK_RIVEN_ACTIONS_H
 
-namespace Common {
+namespace Mohawk {
 
-const char *kStandardActionInteract      = "INTCT";
-const char *kStandardActionSkip          = "SKIP";
-const char *kStandardActionPause         = "PAUSE";
-const char *kStandardActionMoveForward   = "FWD";
-const char *kStandardActionMoveBackwards = "BWD";
-const char *kStandardActionTurnLeft      = "TL";
-const char *kStandardActionTurnRight     = "TR";
-const char *kStandardActionMoveUpwards   = "UP";
-const char *kStandardActionMoveDownwards = "DOWN";
-const char *kStandardActionOpenDebugger  = "DBG";
-const char *kStandardActionOpenMainMenu  = "MENU";
+/** Actions that can be performed using the keyboard */
+enum RivenAction {
+	kRivenActionNone,
+	kRivenActionInteract,
+	kRivenActionSkip,
+	kRivenActionMoveForward,
+	kRivenActionMoveForwardLeft,
+	kRivenActionMoveForwardRight,
+	kRivenActionMoveLeft,
+	kRivenActionMoveRight,
+	kRivenActionMoveBack,
+	kRivenActionLookUp,
+	kRivenActionLookDown,
+	kRivenActionOpenMainMenu,
+	kRivenActionPause,
+	kRivenActionPlayIntroVideos,
+	kRivenActionLoadGameState,
+	kRivenActionSaveGameState,
+	kRivenActionOpenOptionsDialog,
+	kRivenActionOpenDebugger
+};
 
-} //namespace Common
+} // End of namespace Mohawk
+
+#endif // MOHAWK_RIVEN_ACTIONS_H

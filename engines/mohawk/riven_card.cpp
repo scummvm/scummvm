@@ -1068,7 +1068,7 @@ void RivenCard::playMovie(uint16 index, bool queue) {
 	}
 }
 
-RivenScriptPtr RivenCard::onKeyAction(RivenKeyAction keyAction) {
+RivenScriptPtr RivenCard::onKeyAction(RivenAction keyAction) {
 	static const char *forwardNames[] = {
 			"forward", "forward1", "forward2", "forward3",
 			"opendoor", "openhatch", "opentrap", "opengate", "opengrate",
@@ -1086,28 +1086,28 @@ RivenScriptPtr RivenCard::onKeyAction(RivenKeyAction keyAction) {
 
 	const char **hotspotNames = nullptr;
 	switch (keyAction) {
-		case kKeyActionMoveForward:
+		case kRivenActionMoveForward:
 			hotspotNames = forwardNames;
 			break;
-		case kKeyActionMoveForwardLeft:
+		case kRivenActionMoveForwardLeft:
 			hotspotNames = forwardLeftNames;
 			break;
-		case kKeyActionMoveForwardRight:
+		case kRivenActionMoveForwardRight:
 			hotspotNames = forwardRightNames;
 			break;
-		case kKeyActionMoveLeft:
+		case kRivenActionMoveLeft:
 			hotspotNames = leftNames;
 			break;
-		case kKeyActionMoveRight:
+		case kRivenActionMoveRight:
 			hotspotNames = rightNames;
 			break;
-		case kKeyActionMoveBack:
+		case kRivenActionMoveBack:
 			hotspotNames = backNames;
 			break;
-		case kKeyActionLookUp:
+		case kRivenActionLookUp:
 			hotspotNames = upNames;
 			break;
-		case kKeyActionLookDown:
+		case kRivenActionLookDown:
 			hotspotNames = downNames;
 			break;
 		default:
