@@ -281,9 +281,14 @@ void SoundMidiPC::playTrack(uint8 track) {
 
 	haltTrack();
 
-	Common::StackLock lock(_mutex);
+	// The following two lines are meant as a fix for bug #6314.
+	// It is on purpose that they are outside the mutex lock.
+	_output->allSoundsOff();
+	_vm->delay(250);
 
+	Common::StackLock lock(_mutex);
 	_fadeMusicOut = false;
+	
 	_output->setSourceVolume(0, _musicVolume, true);
 
 	_output->initSource(0);
