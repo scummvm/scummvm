@@ -422,7 +422,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = FLOAT;
 		d.u.f = sqrt(id.u.f);
 		break;
-		case kTheStillDown:
+	case kTheStillDown:
 		d.type = INT;
 		d.u.i = _vm->getCurrentScore()->_mouseIsDown;
 		break;
@@ -725,9 +725,8 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 	CastType castType;
 	CastInfo *castInfo;
 	if (!score->_loadedCast->contains(id)) {
-		if (field == kTheLoaded) {
+		if (field == kTheLoaded)
 			d.u.i = 0;
-		}
 
 		return d;
 	}
