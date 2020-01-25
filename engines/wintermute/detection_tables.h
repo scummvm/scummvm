@@ -4410,6 +4410,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("thelostcrowngha", "",
 		WME_ENTRY1s("theatre.dcp", "3deed61c6f6f02e7422b639c52b9169a", 78455706), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_2),
 
+	// The Lost Crown - A Ghost Hunting Adventure (DVD version) (Russian/Akella)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("thelostcrowngha", "",
+		WME_ENTRY1s("theatre.dcp", "01ab6ced306f11e0d0c7d1dfbc7a2658", 78352318), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_2),
+
 	// The Lost Crown - A Ghost Hunting Adventure (Steam, Jul 2014) (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("thelostcrowngha", "",
