@@ -13,26 +13,39 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed crash when switching certain languages in GUI.
    - Fixed ESC erroneously saving the changes in the options dialog.
    - Improvements in FM-TOWNS/PC-98 audio.
+   - Improved Greek language support in the GUI.
+
+ Networking:
+   - Improved error handling.
+   - Only download saves when necessary.
 
  Bladerunner:
    - Fixed buggy savestate in some scenes.
+   - Added engine checkbox to target 120fps.
+   - Fixed thumbnail portability.
+   - Use virtual keyboard on save screen on relevant platforms.
 
  Kyra:
    - Fixed EOB1-Amiga ending sequence (which would play only if you achieved all bonus quests).
    - Fixed monster random item drop chance in EOB1.
    - Added handling for the secret potion in the Legend of Kyrandia 2.
    - Fixed sound issues in the Legend of Kyrandia 2.
-   - Fixed minor graphics glitches in Legend of Kyrandia 1, EOB1 and EOB2-FM-TOWNS.
+   - Fixed graphics glitches in Legend of Kyrandia 1 and 3, EOB1 and EOB2-FM-TOWNS.
 
-Queen:
+ Mohawk:
+   - Persist changes in game options across sessions.
+
+ Queen:
    - Fixed regression with the display of the bellboy dialogue.
 
  SCI:
    - Numerous game script fixes in CAMELOT, ECO2, GK1, GK2,
      KQ7, PHANT1, PQ1VGA, QFG3, QFG4, SQ5 and SQ6.
+   - Implement horizontal and FM-TOWNS type screen shake.
    - Added support for Phantasmagoria 1 censored mode.
    - Added support for Polish LSL7.
    - Added support for Italian GK2.
+   - Added support for Portuguese GK2.
    - Added support for Russian KQ7.
    - Added support for Russian SQ1VGA.
    - Added support for GK2 fan-made subtitle patches.
@@ -52,7 +65,7 @@ Queen:
    - Fixed regression with stack handling.
    - Fixed the behavior of edit boxes.
    - Improved support for Chinese language game variants.
- 
+
  Xeen:
    - Fixed display of gold and gem amounts on the Switch.
    - Fixed tavern exit locations in Swords of Xeen.
@@ -72,18 +85,28 @@ Queen:
 
  Android port:
    - Improved filesystem navigation.
+   - Proper handling of HiDPI displays.
+   - Improved keyboard support.
 
- IOS port:
+ iOS port:
    - The home indicator is now automatically hidden on iPhone X and later models.
 
- NETWORKING:
-   - Improved error handling.
+ MacOS X port:
+   - Follow the OS dark theme for window decorations.
+
+ RISC OS port:
+   - Fixed crash when accessing an unavailable drive.
+   - Reduced the required DigitalRenderer version.
 
  Switch port:
    - Added cloud integration.
 
+ OpenPandora port:
+   - Minor improvements.
+
  Windows:
-   - Improvements to Text-to-Speech support.
+   - Added Text-to-Speech support.
+   - Fix screenshots with Unicode paths.
 
 
 #### 2.1.0 "Electric Sheep" (2019-10-11)

@@ -7,8 +7,107 @@ Programmcodes finden Sie auf Englisch unter:
  Kyra:
     - Unterstützung für die PC-98-Version von Eye of the Beholder I hinzugefügt.
 
+
+#### 2.1.1 (31.01.2020)
+
+ Allgemein:
+   - Absturz beim Wechsel zwischen einigen Sprachen der Benutzeroberfläche korrigiert.
+   - Ein Druck auf die ESC-Taste speichert nicht mehr irrtümlich Einstellungen im Optionen-Dialog ab.
+   - Verbesserte Audio-Wiedergabe für FM-TOWNS/PC-98.
+   - Unterstützung für Griechisch in der Benutzeroberfläche verbessert.
+
+ Netzwerk:
+   - Verbesserte Fehlerbehandlung.
+   - Spielstände werden nur wenn nötig heruntergeladen.
+
+ Bladerunner:
+   - Fehlerhafte Savestates in einigen Szenen korrigiert.
+   - Unterstützung für 120 FPS hinzugefügt.
+   - Unterstützung für Thumbnails verbessert.
+   - Unterstützung für virtuelle Keyboards im Speicherbildschirm auf betroffenen Plattformen hinzugefügt.
+
+ Kyra:
+   - End-Sequenz der Amiga-Version von EOB1 korrigiert (wird nur abgespielt, wenn alle Bonus-Quests erfüllt sind.
+   - Die Häufigkeit, mit der Monster in EOB1 Gegenstände fallen lassen wurde korrigiert.
+   - Geheimer Geheimtrank in Legend of Kyrandia 2 kann nun genutzt werden.
+   - Sound-Probleme in Legend of Kyrandia 2 korrigiert.
+   - Grafikfehler in Legend of Kyrandia 1 und 3, EOB1 und den FM-TOWNS-Versionen von EOB1 und EOB2 korrigiert.
+
+ Mohawk:
+   - Änderungen in den Spiele-Optionen werden nun über Sitzungen hinweg gespeichert.
+
+ Queen:
+   - Neu aufgetretener Fehler im Zusammenhang mit dem Dialog des Portiers behoben.
+
+ SCI:
+   - Zahlreiche Skript-Korrekturen in CAMELOT, ECO2, GK1, GK2, KQ7,
+     PHANT1, PQ1VG, QFG3, QFG4, SQ5 und SQ6.
+   - Unterstützung für den zensierten Modus in Phantasmagoria 1 hinzugefügt.
+   - Unterstützung für die polische Version von LSL7 hinzugefügt.
+   - Unterstützung für die italienische Version von GK2 hinzugefügt.
+   - Unterstützung für die portugiesische Version von GK2 hinzugefügt.
+   - Unterstützung für die russische Version von KQ7 hinzugefügt.
+   - Unterstützung für die russische Version von SQ1VGA hinzugefügt.
+   - Unterstützung für von Fans erstellte Untertitel für GK2 hinzugefügt.
+
+ SCUMM:
+   - Unterstützung für Pajama2 (UK-Version) hinzugefügt.
+
+ Supernova:
+   - F5 kann nun im Hauptmenü genutzt werden.
+
+ Toltecs:
+   - Unterstützung für die tschechische Version hinzugefügt.
+   - Fehler behoben, der dazu geführt hat, dass Spiele-Menüs bei der Rückker zum Launcher nicht geschlossen wurden.
+
+ Wintermute:
+   - Mehrere fehlende Spiel-Varianten und Demos zu den Erkennungstabellen hinzugefügt.
+   - Neu aufgetretener Fehler im Zusammenhang mit dem Stack-Handling behoben.
+   - Das Verhalten von Edit-Boxen wurde korrigiert.
+   - Verbesserung der Unterstützung von chinesischen Spielversionen.
+
  Xeen:
-    - Anzeige von Goldmünzen und Edelsteinen auf der Nintendo Switch korrigiert.
+   - Anzeige von Goldmünzen und Edelsteinen auf der Nintendo Switch korrigiert.
+   - Ausgänge zur Taverne in Swords of Xeen korrigiert.
+   - Absturz beim Laden von Deep Mine Alpha in der CD-Version von World of Xeen behoben.
+
+ GUI:
+   - Der Reiter zum Anpassen der MIDI-Optionen wird nicht mehr angezeigt, wenn das Spiel kein MIDI unterstützt.
+
+ Alle Portierungen:
+   - Bildschirmdarstellung in einigen Bildschirm-Modi korrigiert.
+
+ 3DS-Portierung:
+   - Erhebliche Verbesserungen.
+
+ AmigaOS4-Portierung:
+   - Kleinere Verbesserung (stack cookie, Build-Automatisierung).
+
+ Android-Portierung:
+   - Verbesserung der Dateisystem-Navigation.
+   - HiDPI-Displays werden nun korrekt unterstützt.
+   - Verbesserung der Keyboard-Unterstützung.
+
+ iOS-Portierung:
+   - Der Startbildschirm-Indikator wird nun automatisch auf dem iPhone X und späteren Modellen versteckt.
+
+ MacOS X-Portierung:
+   - Verbesserte Unterstützung für den "Dark Mode".
+
+ RISC OS-Portierung:
+   - Absturz behoben, der auftritt, wenn auf ein nicht verfügbares Laufwerk zugegriffen wird.
+   - Versions-Anforderungen für DigitalRenderer reduziert.
+
+ Switch-Portierung:
+   - Cloud-Integration hinzugefügt.
+
+ OpenPandora-Portierung:
+   - Kleinere Verbesserungen.
+
+ Windows-Portierung:
+   - Unterstützung für Sprachausgabe in der Benutzeroberfläche (Text-to-Speech) hinzugefügt.
+   - Bildschirmfotos können nun auch in Ordnern mit Unicode-Zeichen gespeichert werden.
+
 
 #### 2.1.0 "Electric Sheep" (13.10.2019)
 
