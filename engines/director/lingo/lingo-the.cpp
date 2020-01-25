@@ -324,7 +324,6 @@ const char *Lingo::field2str(int id) {
 	return (const char *)buf;
 }
 
-
 Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	Datum d;
 
@@ -470,6 +469,12 @@ void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &me
 Datum Lingo::getTheSprite(Datum &id1, int field) {
 	Datum d;
 	int id = 0;
+	Score *score = _vm->getCurrentScore();
+
+	if (!score) {
+		warning("Lingo::getTheSprite(): The sprite %d field \"%s\" setting over non-active score", id, field2str(field));
+		return d;
+	}
 
 	if (id1.type == INT) {
 		id = id1.u.i;
@@ -478,12 +483,7 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		return d;
 	}
 
-	if (!_vm->getCurrentScore()) {
-		warning("Lingo::getTheSprite(): The sprite %d field \"%s\" setting over non-active score", id, field2str(field));
-		return d;
-	}
-
-	Sprite *sprite = _vm->getCurrentScore()->getSpriteById(id);
+	Sprite *sprite = score->getSpriteById(id);
 
 	if (!sprite)
 		return d;
@@ -584,6 +584,14 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 
 void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	int id = 0;
+	Score *score = _vm->getCurrentScore();
+
+	d.toInt(); // Enforce Integer
+
+	if (!score) {
+		warning("Lingo::setTheSprite(): The sprite %d field \"%s\" setting over non-active score", id, field2str(field));
+		return;
+	}
 
 	if (id1.type == INT) {
 		id = id1.u.i;
@@ -592,14 +600,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		return;
 	}
 
-	d.toInt(); // Enforce Integer
-
-	if (!_vm->getCurrentScore()) {
-		warning("Lingo::setTheSprite(): The sprite %d field \"%s\" setting over non-active score", id, field2str(field));
-		return;
-	}
-
-	Sprite *sprite = _vm->getCurrentScore()->getSpriteById(id);
+	Sprite *sprite = score->getSpriteById(id);
 
 	if (!sprite)
 		return;
@@ -615,8 +616,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		sprite->_bottom = d.u.i;
 		break;
 	case kTheCastNum:
-		if (_vm->getCurrentScore()->_loadedCast->contains(d.u.i)) {
-			_vm->getCurrentScore()->loadCastInto(sprite, d.u.i);
+		if (score->_loadedCast->contains(d.u.i)) {
+			score->loadCastInto(sprite, d.u.i);
 			sprite->_castId = d.u.i;
 		}
 		break;
@@ -698,12 +699,18 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 Datum Lingo::getTheCast(Datum &id1, int field) {
 	Datum d;
 	int id = 0;
+	Score *score = _vm->getCurrentScore();
+
+	if (!score) {
+		warning("Lingo::getTheCast(): The cast %d field \"%s\" setting over non-active score", id, field2str(field));
+		return d;
+	}
 
 	if (id1.type == INT) {
 		id = id1.u.i;
 	} else if (id1.type == STRING) {
-		if (_vm->getCurrentScore()->_castsNames.contains(*id1.u.s)) {
-			id = _vm->getCurrentScore()->_castsNames[*id1.u.s];
+		if (score->_castsNames.contains(*id1.u.s)) {
+			id = score->_castsNames[*id1.u.s];
 		} else {
 			warning("Lingo::getTheCast(): Unknown the cast \"%s\"", id1.u.s->c_str());
 		}
@@ -712,26 +719,21 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		return d;
 	}
 
-	if (!_vm->getCurrentScore()) {
-		warning("Lingo::getTheCast(): The cast %d field \"%s\" setting over non-active score", id, field2str(field));
-		return d;
-	}
+	// Setting default type
+	d.type = INT;
 
 	CastType castType;
 	CastInfo *castInfo;
-	if (!_vm->getCurrentScore()->_loadedCast->contains(id)) {
+	if (!score->_loadedCast->contains(id)) {
 		if (field == kTheLoaded) {
-			d.type = INT;
 			d.u.i = 0;
 		}
 
 		return d;
 	}
 
-	castType = _vm->getCurrentScore()->_loadedCast->getVal(id)->_type;
-	castInfo = _vm->getCurrentScore()->_castsInfo[id];
-
-	d.type = INT;
+	castType = score->_loadedCast->getVal(id)->_type;
+	castInfo = score->_castsInfo[id];
 
 	switch (field) {
 	case kTheBackColor:
@@ -742,7 +744,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 				return d;
 			}
 
-			ShapeCast *shape = (ShapeCast *)_vm->getCurrentScore()->_loadedCast->getVal(id);
+			ShapeCast *shape = (ShapeCast *)score->_loadedCast->getVal(id);
 			d.u.i = shape->_bgCol;
 		}
 		break;
@@ -761,12 +763,12 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 				return d;
 			}
 
-			ShapeCast *shape = (ShapeCast *)_vm->getCurrentScore()->_loadedCast->getVal(id);
+			ShapeCast *shape = (ShapeCast *)score->_loadedCast->getVal(id);
 			d.u.i = shape->_fgCol;
 		}
 		break;
 	case kTheHeight:
-		d.u.i = _vm->getCurrentScore()->getCastMemberInitialRect(id).height();
+		d.u.i = score->getCastMemberInitialRect(id).height();
 		break;
 	case kTheLoaded:
 		d.u.i = 1; //Not loaded handled above
@@ -780,7 +782,7 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		d.u.s = &castInfo->script;
 		break;
 	case kTheWidth:
-		d.u.i = _vm->getCurrentScore()->getCastMemberInitialRect(id).width();
+		d.u.i = score->getCastMemberInitialRect(id).width();
 		break;
 	case kTheNumber:
 		d.u.i = id;
