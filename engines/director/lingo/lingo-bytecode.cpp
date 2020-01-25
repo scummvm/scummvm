@@ -690,8 +690,46 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 					warning("Constant float end offset is out of bounds");
 					break;
 				}
-				warning("Float constants not implemented yet");
-				constant.u.f = 0.0;
+
+				uint32 pointer = value;
+				uint32 length = READ_BE_UINT32(&constsStore[pointer]);
+				pointer += 4;
+				uint32 end = pointer + length;
+				if (end > constsStoreSize) {
+					error("Constant float is too large");
+					break;
+				}
+
+				// Floats are stored as an "80 bit IEEE Standard 754 floating
+				// point number (Standard Apple Numeric Environment [SANE] data type
+				// Extended).
+				if (length != 10) {
+					error("Constant float expected to be 10 bytes");
+					break;
+				}
+				uint16 exponent = READ_BE_UINT16(&constsStore[pointer]);
+				uint64 f64sign = exponent & 0x8000 ? 0x80000000 : 0;
+				exponent &= 0x7fff;
+				uint64 fraction = READ_BE_UINT64(&constsStore[pointer+2]);
+				fraction &= 0x7fffffffffffffff;
+				uint64 f64exp = 0;
+				if (exponent == 0) {
+					f64exp = 0;
+				} else if (exponent == 0x7fff) {
+					f64exp = 0x7ff;
+				} else {
+					int32 normexp = (int32)exponent - 0x3fff;
+					if ((-0x3fe > normexp) || (normexp >= 0x3ff)) {
+						error("Constant float exponent too big for a double");
+						break;
+					}
+					f64exp = (uint64)(normexp + 0x3ff);
+				}
+				f64exp <<= 52;
+				uint64 f64fract = fraction >> 11;
+				uint64 f64bin = f64sign | f64exp | f64fract;
+
+				constant.u.f = *(double *)(&f64bin);
 			}
 			break;
 		default:
