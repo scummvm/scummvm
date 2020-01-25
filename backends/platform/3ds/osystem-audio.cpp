@@ -20,7 +20,7 @@
  *
  */
 
-#include "osystem.h"
+#include "backends/platform/3ds/osystem.h"
 #include "audio/mixer.h"
 
 namespace _3DS {
@@ -55,7 +55,9 @@ static void audioThreadFunc(void *arg) {
 	while (!osys->exiting) {
 		svcSleepThread(5000 * 1000); // Wake up the thread every 5 ms
 
-		if (osys->sleeping) continue;
+		if (osys->sleeping) {
+			continue;
+		}
 
 		ndspWaveBuf *buf = &buffers[bufferIndex];
 		if (buf->status == NDSP_WBUF_FREE || buf->status == NDSP_WBUF_DONE) {

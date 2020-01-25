@@ -49,6 +49,48 @@ enum InputMode {
 	MODE_DRAG,
 };
 
+enum GraphicsModeID {
+	RGBA8,
+	RGB565,
+	RGB555,
+	RGB5A1,
+	CLUT8
+};
+
+enum TransactionState {
+	kTransactionNone = 0,
+	kTransactionActive = 1,
+	kTransactionRollback = 2
+};
+
+
+struct TransactionDetails {
+	bool formatChanged, modeChanged;
+
+	TransactionDetails() {
+		formatChanged = false;
+		modeChanged = false;
+	}
+};
+
+typedef struct GfxMode3DS {
+	Graphics::PixelFormat surfaceFormat;
+	GPU_TEXCOLOR textureFormat;
+	uint32 textureTransferFlags;
+} GfxMode3DS;
+
+struct GfxState {
+	bool setup;
+	GraphicsModeID gfxModeID;
+	const GfxMode3DS *gfxMode;
+
+	GfxState() {
+		setup = false;
+		gfxModeID = CLUT8;
+	}
+};
+
+
 class OSystem_3DS : public EventsBaseBackend, public PaletteManager, public Common::EventObserver {
 public:
 	OSystem_3DS();
@@ -95,6 +137,8 @@ public:
 	void initSize(uint width, uint height,
 	              const Graphics::PixelFormat *format = NULL);
 	virtual int getScreenChangeID() const { return _screenChangeId; };
+	GraphicsModeID chooseMode(Graphics::PixelFormat *format);
+	bool setGraphicsMode(GraphicsModeID modeID);
 
 	void beginGFXTransaction();
 	OSystem::TransactionError endGFXTransaction();
@@ -143,8 +187,8 @@ public:
 	void updateSize();
 
 private:
-	void initGraphics();
-	void destroyGraphics();
+	void init3DSGraphics();
+	void destroy3DSGraphics();
 	void initAudio();
 	void destroyAudio();
 	void initEvents();
@@ -166,8 +210,13 @@ private:
 	Thread audioThread;
 
 	// Graphics
-	Graphics::PixelFormat _pfGame;
-	Graphics::PixelFormat _pfGameTexture;
+	GraphicsModeID _graphicsModeID;
+	TransactionState _transactionState;
+	TransactionDetails _transactionDetails;
+
+	GfxState _gfxState, _oldGfxState;
+	Graphics::PixelFormat _pfDefaultTexture;
+	Graphics::PixelFormat _pfGame, _oldPfGame;
 	Graphics::PixelFormat _pfCursor;
 	byte _palette[3 * 256];
 	byte _cursorPalette[3 * 256];
@@ -221,7 +270,8 @@ private:
 	bool _cursorPaletteEnabled;
 	bool _cursorVisible;
 	bool _cursorScalable;
-	float _cursorX, _cursorY;
+	float _cursorScreenX, _cursorScreenY;
+	float _cursorOverlayX, _cursorOverlayY;
 	float _cursorDeltaX, _cursorDeltaY;
 	int _cursorHotspotX, _cursorHotspotY;
 	uint32 _cursorKeyColor;
