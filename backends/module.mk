@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	keymapper/keymap.o \
 	keymapper/keymapper.o \
 	keymapper/remap-widget.o \
+	keymapper/standard-actions.o \
 	log/log.o \
 	midi/alsa.o \
 	midi/dmedia.o \

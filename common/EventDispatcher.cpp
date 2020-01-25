@@ -60,6 +60,9 @@ void EventDispatcher::dispatch() {
 				// to be the output of the event mapper.
 				assert(event.type != EVENT_CUSTOM_BACKEND_ACTION_START);
 				assert(event.type != EVENT_CUSTOM_BACKEND_ACTION_END);
+				assert(event.type != EVENT_CUSTOM_ENGINE_ACTION_START);
+				assert(event.type != EVENT_CUSTOM_ENGINE_ACTION_END);
+
 
 				List<Event> mappedEvents = _mapper->mapEvent(event);
 

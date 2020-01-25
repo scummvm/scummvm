@@ -136,6 +136,13 @@ void Keymap::registerBackendDefaultMappings() {
 
 		if (!defaultHwId.empty()) {
 			action->addDefaultInputMapping(defaultHwId);
+			continue;
+		}
+
+		// If no keymap-specific default mapping was found, look for a standard action binding
+		defaultHwId = _backendDefaultBindings->getDefaultBinding(kStandardActionsKeymapName, action->id);
+		if (!defaultHwId.empty()) {
+			action->addDefaultInputMapping(defaultHwId);
 		}
 	}
 }

@@ -33,6 +33,8 @@
 
 namespace Common {
 
+const char *const kStandardActionsKeymapName = "standard-actions";
+
 class Action;
 struct HardwareInput;
 class HardwareInputSet;
