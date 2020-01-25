@@ -37,6 +37,7 @@ public:
 	void initSource(int source);
 	void deinitSource(int source);
 	void stopNotesOnChannel(int channel);
+	void allSoundsOff();
 
 	void setSoundSource(int source) { _curSource = source; }
 
