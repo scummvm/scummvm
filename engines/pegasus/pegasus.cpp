@@ -35,6 +35,7 @@
 #include "common/random.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 #include "base/plugins.h"
 #include "base/version.h"
 #include "gui/message.h"
@@ -157,7 +158,6 @@ Common::Error PegasusEngine::run() {
 	}
 
 	// Set up input
-	initKeymap();
 	InputHandler::setInputHandler(this);
 	allowInput(true);
 
@@ -2490,30 +2490,111 @@ uint PegasusEngine::getNeighborhoodCD(const NeighborhoodID neighborhood) const {
 }
 
 Common::Keymap *PegasusEngine::initKeymap() {
-	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "pegasus");
+	using namespace Common;
 
-	// Since the game has multiple built-in keys for each of these anyway,
-	// this just attempts to remap one of them.
-	const Common::KeyActionEntry keyActionEntries[] = {
-		{ "UP",  Common::KEYCODE_UP,        "UP",        _("Up/Zoom In/Move Forward/Open Doors") },
-		{ "DWN", Common::KEYCODE_DOWN,      "DOWN",      _("Down/Zoom Out")                      },
-		{ "TL",  Common::KEYCODE_LEFT,      "LEFT",      _("Turn Left")                          },
-		{ "TR",  Common::KEYCODE_RIGHT,     "RIGHT",     _("Turn Right")                         },
-		{ "TIV", Common::KEYCODE_BACKQUOTE, "BACKQUOTE", _("Display/Hide Inventory Tray")        },
-		{ "TBI", Common::KEYCODE_BACKSPACE, "BACKSPACE", _("Display/Hide Biochip Tray")          },
-		{ "ENT", Common::KEYCODE_RETURN,    "RETURN",    _("Action/Select")                      },
-		{ "TMA", Common::KEYCODE_t,         "t",         _("Toggle Center Data Display")         },
-		{ "TIN", Common::KEYCODE_i,         "i",         _("Display/Hide Info Screen")           },
-		{ "PM",  Common::KEYCODE_ESCAPE,    "ESCAPE",    _("Display/Hide Pause Menu")            },
-		{ "WTF", Common::KEYCODE_e,         "e",         "???" } // easter egg key (without being completely upfront about it)
-	};
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "pegasus");
 
-	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
-		Common::Action *const act = new Common::Action(keyActionEntries[i].id, keyActionEntries[i].description);
-		act->setKeyEvent(keyActionEntries[i].ks);
-		act->addDefaultInputMapping(keyActionEntries[i].defaultHwId);
-		engineKeyMap->addAction(act);
-	}
+	Action *act;
+
+	act = new Action(kStandardActionMoveForward, _("Up/Zoom In/Move Forward/Open Doors"));
+	act->setCustomEngineActionEvent(kPegasusActionUp);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("KP8");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveBackwards, _("Down/Zoom Out"));
+	act->setCustomEngineActionEvent(kPegasusActionDown);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("KP5");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionTurnLeft, _("Turn Left"));
+	act->setCustomEngineActionEvent(kPegasusActionLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("KP4");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionTurnRight, _("Turn Right"));
+	act->setCustomEngineActionEvent(kPegasusActionRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("KP6");
+	engineKeyMap->addAction(act);
+
+	act = new Action("ENT", _("Action/Select"));
+	act->setCustomEngineActionEvent(kPegasusActionInteract);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("KP_ENTER");
+	engineKeyMap->addAction(act);
+
+	// The original also used clear (aka "num lock" on Mac keyboards) here, but it doesn't
+	// work right on most systems. Either SDL or the OS treats num lock specially and the
+	// events don't come as expected. In many cases, the key down event is sent many times
+	// causing the drawer to open and close constantly until pressed again. It only causes
+	// more grief than anything else.
+
+	// The original doesn't use KP7 for inventory, but we're using it as an alternative for
+	// num lock. KP9 is used for the biochip drawer to balance things out.
+
+	act = new Action("TIV", _("Display/Hide Inventory Tray"));
+	act->setCustomEngineActionEvent(kPegasusActionShowInventory);
+	act->addDefaultInputMapping("BACKQUOTE");
+	act->addDefaultInputMapping("KP7");
+	engineKeyMap->addAction(act);
+
+	act = new Action("TBI", _("Display/Hide Biochip Tray"));
+	act->setCustomEngineActionEvent(kPegasusActionShowBiochip);
+	act->addDefaultInputMapping("BACKSPACE");
+	act->addDefaultInputMapping("KP9");
+	act->addDefaultInputMapping("KP_MULTIPLY");
+	engineKeyMap->addAction(act);
+
+	act = new Action("TMA", _("Toggle Center Data Display"));
+	act->setCustomEngineActionEvent(kPegasusActionToggleCenterDisplay);
+	act->addDefaultInputMapping("t");
+	act->addDefaultInputMapping("KP_EQUALS");
+	engineKeyMap->addAction(act);
+
+	act = new Action("TIN", _("Display/Hide Info Screen"));
+	act->setCustomEngineActionEvent(kPegasusActionShowInfoScreen);
+	act->addDefaultInputMapping("i");
+	act->addDefaultInputMapping("KP_DIVIDE");
+	engineKeyMap->addAction(act);
+
+	act = new Action("PM", _("Display/Hide Pause Menu"));
+	act->setCustomEngineActionEvent(kPegasusActionShowPauseMenu);
+	act->addDefaultInputMapping("p");
+	act->addDefaultInputMapping("ESCAPE");
+	engineKeyMap->addAction(act);
+
+	// TODO: Add back Alt to the default mappings
+	// WORKAROUND: I'm also accepting 'e' here since an
+	// alt+click is often intercepted by the OS. 'e' is used as the
+	// easter egg key in Buried in Time and Legacy of Time.
+	act = new Action("WTF", _("???"));
+	act->setCustomEngineActionEvent(kPegasusActionEnableEasterEgg);
+	act->addDefaultInputMapping("e");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionOpenDebugger, _("Open debugger"));
+	act->setCustomEngineActionEvent(kPegasusActionOpenDebugger);
+	act->addDefaultInputMapping("C+d");
+	engineKeyMap->addAction(act);
+
+	// We support meta where available and control elsewhere
+	act = new Action("SAVE", _("Save Game"));
+	act->setCustomEngineActionEvent(kPegasusActionSaveGameState);
+	act->addDefaultInputMapping("C+s");
+	act->addDefaultInputMapping("M+s");
+	engineKeyMap->addAction(act);
+
+	act = new Action("LOAD", _("Load Game"));
+	act->setCustomEngineActionEvent(kPegasusActionLoadGameState);
+	act->addDefaultInputMapping("C+o"); // o for open (original)
+	act->addDefaultInputMapping("M+o");
+	act->addDefaultInputMapping("C+l"); // l for load (ScummVM terminology)
+	act->addDefaultInputMapping("M+l");
+	engineKeyMap->addAction(act);
 
 	return engineKeyMap;
 }
