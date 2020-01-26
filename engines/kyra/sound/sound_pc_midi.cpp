@@ -403,7 +403,7 @@ Common::String SoundMidiPC::getFileName(const Common::String &str) {
 	else if (_type == kMidiGM)
 		file += ".C55";
 	else if (_type == kPCSpkr)
-		file += ".PCS";
+		file += ".SND";//".PCS";
 
 	if (_vm->resource()->exists(file.c_str()))
 		return file;

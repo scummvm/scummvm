@@ -25,7 +25,7 @@
 #include "kyra/engine/kyra_rpg.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound_intern.h"
-#include "kyra/sound/sound_adlib.h"
+#include "kyra/sound/sound_pc_v1.h"
 #include "kyra/script/script_eob.h"
 #include "kyra/engine/timer.h"
 #include "kyra/gui/debugger.h"
@@ -411,11 +411,10 @@ Common::Error EoBCoreEngine::init() {
 	// don't really need one). We just disable the sound in the settings.
 	MidiDriver::DeviceHandle dev = 0;
 	if (_flags.platform == Common::kPlatformDOS) {
-		dev = MidiDriver::detectDevice(/*MDT_PCSPK | */MDT_ADLIB);
-		//if (MidiDriver::getMusicType(dev) == MT_ADLIB)
-			_sound = new SoundAdLibPC(this, _mixer);
-		//else
-		//	_sound = new SoundPCS(this, _mixer);
+		int flags = MDT_ADLIB | MDT_PCSPK;
+		dev = MidiDriver::detectDevice(_flags.gameID == GI_EOB1 ? flags | MDT_PCJR : flags);
+		MusicType type = MidiDriver::getMusicType(dev);
+		_sound = new SoundPC_v1(this, _mixer, type == MT_ADLIB ? Sound::kAdLib : type == MT_PCSPK ? Sound::kPCSpkr : Sound::kPCjr);
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
 		dev = MidiDriver::detectDevice(MDT_TOWNS);
 		// SoundTowns_Darkmoon requires initialized _staticres
@@ -435,8 +434,8 @@ Common::Error EoBCoreEngine::init() {
 	assert(_sound);
 	_sound->init();
 
-	// This if for EOB1 PC-98 only
-	_sound->loadSfxFile("EFECT.OBJ");
+	if (_flags.platform == Common::kPlatformPC98)
+		_sound->loadSfxFile("EFECT.OBJ");
 
 	// Setup volume settings (and read in all ConfigManager settings)
 	_configNullSound = (MidiDriver::getMusicType(dev) == MT_NULL);

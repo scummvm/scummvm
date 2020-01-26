@@ -21,7 +21,7 @@
  */
 
 #include "kyra/sound/sound_intern.h"
-#include "kyra/sound/drivers/adlib.h"
+#include "kyra/sound/drivers/pc_base.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -34,14 +34,14 @@ namespace Kyra {
 // used in other places throughout the game, but the player is less likely to
 // spend enough time there to notice.
 
-const int SoundAdLibPC::_kyra1SoundTriggers[] = {
+const int SoundPC_v1::_kyra1SoundTriggers[] = {
 	0, 4, 5, 3
 };
 
-const int SoundAdLibPC::_kyra1NumSoundTriggers = ARRAYSIZE(SoundAdLibPC::_kyra1SoundTriggers);
+const int SoundPC_v1::_kyra1NumSoundTriggers = ARRAYSIZE(SoundPC_v1::_kyra1SoundTriggers);
 
-SoundAdLibPC::SoundAdLibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer)
-	: Sound(vm, mixer), _driver(0), _trackEntries(), _soundDataPtr(0) {
+SoundPC_v1::SoundPC_v1(KyraEngine_v1 *vm, Audio::Mixer *mixer, kType type)
+	: Sound(vm, mixer), _driver(0), _trackEntries(), _soundDataPtr(0), _type(type) {
 	memset(_trackEntries, 0, sizeof(_trackEntries));
 
 	_soundTriggers = 0;
@@ -73,23 +73,27 @@ SoundAdLibPC::SoundAdLibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 		break;
 	}
 
-	_driver = new AdLibDriver(mixer, _version);
+	// Correct the type to someting we support. NullSound is treated as a silent AdLib driver.
+	if (_type != kAdLib && _type != kPCSpkr)
+		_type = kAdLib;
+
+	_driver = (type == kAdLib) ? PCSoundDriver::createAdLib(mixer, _version) : PCSoundDriver::createPCSpk(mixer);
 	assert(_driver);
 }
 
-SoundAdLibPC::~SoundAdLibPC() {
+SoundPC_v1::~SoundPC_v1() {
 	delete _driver;
 	delete[] _soundDataPtr;
 	for (int i = 0; i < 3; i++)
 		initAudioResourceInfo(i, 0);
 }
 
-bool SoundAdLibPC::init() {
+bool SoundPC_v1::init() {
 	_driver->initDriver();
 	return true;
 }
 
-void SoundAdLibPC::process() {
+void SoundPC_v1::process() {
 	int trigger = _driver->getSoundTrigger();
 
 	if (trigger < _numSoundTriggers) {
@@ -103,7 +107,7 @@ void SoundAdLibPC::process() {
 	}
 }
 
-void SoundAdLibPC::updateVolumeSettings() {
+void SoundPC_v1::updateVolumeSettings() {
 	bool mute = false;
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
@@ -120,7 +124,7 @@ void SoundAdLibPC::updateVolumeSettings() {
 	_driver->setSfxVolume(newSfxVolume);
 }
 
-void SoundAdLibPC::playTrack(uint8 track) {
+void SoundPC_v1::playTrack(uint8 track) {
 	if (_musicEnabled) {
 		// WORKAROUND: There is a bug in the Kyra 1 "Pool of Sorrow"
 		// music which causes the channels to get progressively out of
@@ -135,22 +139,22 @@ void SoundAdLibPC::playTrack(uint8 track) {
 	}
 }
 
-void SoundAdLibPC::haltTrack() {
+void SoundPC_v1::haltTrack() {
 	play(0, 0);
 	play(0, 0);
 	//_vm->_system->delayMillis(3 * 60);
 }
 
-bool SoundAdLibPC::isPlaying() const {
+bool SoundPC_v1::isPlaying() const {
 	return _driver->isChannelPlaying(0);
 }
 
-void SoundAdLibPC::playSoundEffect(uint8 track, uint8 volume) {
+void SoundPC_v1::playSoundEffect(uint8 track, uint8 volume) {
 	if (_sfxEnabled)
 		play(track, volume);
 }
 
-void SoundAdLibPC::play(uint8 track, uint8 volume) {
+void SoundPC_v1::play(uint8 track, uint8 volume) {
 	uint16 soundId = 0;
 
 	if (_version == 4)
@@ -164,49 +168,51 @@ void SoundAdLibPC::play(uint8 track, uint8 volume) {
 	_driver->queueTrack(soundId, volume);
 }
 
-void SoundAdLibPC::beginFadeOut() {
+void SoundPC_v1::beginFadeOut() {
 	play(_version > 2 ? 1 : 15, 0xFF);
 }
 
-int SoundAdLibPC::checkTrigger() {
+int SoundPC_v1::checkTrigger() {
 	return _driver->getSoundTrigger();
 }
 
-void SoundAdLibPC::resetTrigger() {
+void SoundPC_v1::resetTrigger() {
 	_driver->resetSoundTrigger();
 }
 
-void SoundAdLibPC::initAudioResourceInfo(int set, void *info) {
+void SoundPC_v1::initAudioResourceInfo(int set, void *info) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		delete _resInfo[set];
 		_resInfo[set] = info ? new SoundResourceInfo_PC(*(SoundResourceInfo_PC*)info) : 0;
 	}
 }
 
-void SoundAdLibPC::selectAudioResourceSet(int set) {
+void SoundPC_v1::selectAudioResourceSet(int set) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		if (_resInfo[set])
 			_currentResourceSet = set;
 	}
 }
 
-bool SoundAdLibPC::hasSoundFile(uint file) const {
+bool SoundPC_v1::hasSoundFile(uint file) const {
 	if (file < res()->fileListSize)
 		return (res()->fileList[file] != 0);
 	return false;
 }
 
-void SoundAdLibPC::loadSoundFile(uint file) {
+void SoundPC_v1::loadSoundFile(uint file) {
+	if (_version == 1 && _type == kPCSpkr)
+		file += 1;
 	if (file < res()->fileListSize)
 		internalLoadFile(res()->fileList[file]);
 }
 
-void SoundAdLibPC::loadSoundFile(Common::String file) {
+void SoundPC_v1::loadSoundFile(Common::String file) {
 	internalLoadFile(file);
 }
 
-void SoundAdLibPC::internalLoadFile(Common::String file) {
-	file += ((_version == 1) ? ".DAT" : ".ADL");
+void SoundPC_v1::internalLoadFile(Common::String file) {
+	file += ((_version == 1) ? ".DAT" : (_type == kPCSpkr ? ".SND" : ".ADL"));
 	if (_soundFileLoaded == file)
 		return;
 

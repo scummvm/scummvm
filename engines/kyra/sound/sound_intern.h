@@ -25,7 +25,7 @@
 
 
 #include "kyra/sound/sound.h"
-#include "kyra/sound/sound_adlib.h"
+#include "kyra/sound/sound_pc_v1.h"
 
 #include "audio/midiparser.h"
 #include "audio/softsynth/emumidi.h"

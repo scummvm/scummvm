@@ -28,25 +28,31 @@
 #include "common/mutex.h"
 
 namespace Kyra {
-class AdLibDriver;
+class PCSoundDriver;
 
 /**
- * AdLib implementation of the sound output device.
+ * AdLib/PC Speaker (early version) implementation of the
+ * sound output device.
  *
- * It uses a special sound file format special to
- * Dune II, Kyrandia 1 and 2. While Dune II and
- * Kyrandia 1 are using exact the same format, the
- * one of Kyrandia 2 slightly differs.
+ * It uses a special sound file format special to EoB I, II,
+ * Dune II, Kyrandia 1 and 2 and LoL. EoB I has a slightly
+ * different (oldest) file format, EoB II, Dune II and
+ * Kyrandia 1 have the exact same format, Kyrandia 2  and
+ * LoL have a slightly different format.
  *
- * See AdLibDriver for more information.
+ * For PC Speaker this is a little different. Only the EoB
+ * games use the old driver with this data file format. The
+ * newer games use a MIDI-like driver (see pcspeaker_v2.cpp).
+ *
+ * See AdLibDriver / PCSpeakerDriver for more information.
  * @see AdLibDriver
  */
-class SoundAdLibPC : public Sound {
+class SoundPC_v1 : public Sound {
 public:
-	SoundAdLibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	~SoundAdLibPC();
+	SoundPC_v1(KyraEngine_v1 *vm, Audio::Mixer *mixer, kType type);
+	~SoundPC_v1();
 
-	virtual kType getMusicType() const { return kAdLib; }
+	virtual kType getMusicType() const { return _type; }
 
 	virtual bool init();
 	virtual void process();
@@ -78,9 +84,10 @@ private:
 	SoundResourceInfo_PC *_resInfo[3];
 	int _currentResourceSet;
 
-	AdLibDriver *_driver;
+	PCSoundDriver *_driver;
 
 	int _version;
+	kType _type;
 	uint8 _trackEntries[500];
 	uint8 *_soundDataPtr;
 	int _sfxPlayingSound;
