@@ -710,7 +710,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 					break;
 				}
 				uint16 exponent = READ_BE_UINT16(&constsStore[pointer]);
-				uint64 f64sign = exponent & 0x8000 ? 0x80000000 : 0;
+				uint64 f64sign = (uint64)(exponent & 0x8000) << 48;
 				exponent &= 0x7fff;
 				uint64 fraction = READ_BE_UINT64(&constsStore[pointer+2]);
 				fraction &= 0x7fffffffffffffff;
