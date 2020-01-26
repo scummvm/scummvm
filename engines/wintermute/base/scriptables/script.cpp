@@ -1534,6 +1534,19 @@ bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExter
 		return STATUS_OK;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// _InstallUtilAnsi@0
+	// Used to check if DVD is inserted at Art of Murder: FBI Confidential
+	// Specification: external "installutil.dll" stdcall long _InstallUtilAnsi@0()
+	// Known usage: _InstallUtilAnsi@0()
+	// Returns 1 on success, other value on fail (which leads to Game.QuitGame() in non-Debug mode)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "_InstallUtilAnsi@0") == 0 && strcmp(function->dll_name, "installutil.dll") == 0) {
+		stack->correctParams(0);
+		stack->pushInt(1);
+		return STATUS_OK;
+	}
+
 	_gameRef->LOG(0, "External functions are not supported on this platform.");
 	stack->correctParams(0);
 	stack->pushNULL();
