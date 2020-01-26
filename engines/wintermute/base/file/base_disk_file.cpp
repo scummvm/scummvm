@@ -131,6 +131,24 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 				"f:/quest!!!/engine/quest/data/" // Book of Gron Part One refers to several files named "f:\quest!!!\engine\quest\data\entities\dver\*"
 		};
 
+	// There are also some EDITOR_BG_FILE paths that refer to absolute paths
+	// However, EDITOR_BG_FILE is out of ScummVM scope, so there is currently no need to check for those prefixes:
+	// "c:\documents and settings\kumilanka\desktop\white.png" is used as EDITOR_BG_FILE at Alpha Polaris
+	// "c:\documents and settings\nir\desktop\untitled111.bmp" is used as EDITOR_BG_FILE at Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest
+	// "c:\documents and settings\user\desktop\untitled111.bmp" is used as EDITOR_BG_FILE at Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest
+	// "c:\dokumente und einstellungen\frank\desktop\position_qualm_auf_kaputter_jungfrau_2.png" is used as EDITOR_BG_FILE at 1 1/2 Ritter: Auf der Suche nach der hinreissenden Herzelinde
+	// "c:\tib_forest_d_2007120_111637000.jpg" is used as EDITOR_BG_FILE at Fairy Tales About Toshechka and Boshechka
+	// "c:\<0xC1><0xE5><0xE7><0xFB><0xEC><0xFF><0xED><0xFB><0xE9>.bmp" is used as EDITOR_BG_FILE at Fairy Tales About Toshechka and Boshechka
+	// "d:\projects\dirty split\tempfolder\background\sprite_help.png" is used as EDITOR_BG_FILE at Dirty Split
+	// "d:\<0xCE><0xE1><0xEC><0xE5><0xED>\*" are used as EDITOR_BG_FILE at Fairy Tales About Toshechka and Boshechka
+	// "e:\pictures\fraps screenshot\*" are used as EDITOR_BG_FILE at Fairy Tales About Toshechka and Boshechka
+	// "e:\work\!<0xC4><0xE5><0xEB><0xE0>\1 computergames\6 gamelet\work\*" are used as EDITOR_BG_FILE at Hamlet or the last game without MMORPG features, shaders and product placement
+	// "e:\<0xC4><0xE5><0xE5><0xE2>\graphics\*" are used as EDITOR_BG_FILE at Fairy Tales About Toshechka and Boshechka
+	// "f:\quest!!!\*" are used as EDITOR_BG_FILE at Book of Gron Part One
+	// "f:\<0xD2><0xE5><0xEA><0xF1><0xF2><0xF3><0xF0><0xFB>\<0xE1><0xEE><0xF2><0xE0><0xED><0xE8><0xEA><0xE0>\index\barks.jpg" is used as EDITOR_BG_FILE at Tanya Grotter and the Disappearing Floor
+	// "g:\<0xC4><0xEE><0xEA><0xF3><0xEC><0xE5><0xED><0xF2><0xFB>\<0xCF><0xF0><0xEE><0xE5><0xEA><0xF2><0xFB>\<0xD2><0xE8><0xC1>\*" are used as EDITOR_BG_FILE at Fairy Tales About Toshechka and Boshechka
+	// "untitled-1.jpg" & "untitled-1.png" with very various paths (including "c:\untitled-1.jpg" and "d:\untitled-1.jpg") are also used as EDITOR_BG_FILE at Fairy Tales About Toshechka and Boshechka
+
 		bool matched = false;
 
 		for (uint i = 0; i < ARRAYSIZE(knownPrefixes); i++) {
