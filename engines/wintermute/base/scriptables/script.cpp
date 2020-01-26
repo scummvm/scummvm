@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/base/gfx/base_renderer.h"
 #include "common/memstream.h"
 #if EXTENDED_DEBUGGER_ENABLED
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
@@ -1450,6 +1451,63 @@ bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExter
 		return STATUS_OK;
 	}
 		
+	//////////////////////////////////////////////////////////////////////////
+	// SetValueToReg
+	// Used to switch game's windowed/fullscreen mode at games by HeroCraft
+	// Specification: external "tools.dll" cdecl SetValueToReg(string, string, long)
+	// Known usage: SetValueToReg("Software\HeroCraft\<GameID>\Video", "Windowed", 1)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "SetValueToReg") == 0 && strcmp(function->dll_name, "tools.dll") == 0) {
+		stack->correctParams(3);
+		const char *regpath = stack->pop()->getString();
+		const char *key = stack->pop()->getString();
+		int value = stack->pop()->getInt();
+
+		if (strcmp(key, "Windowed") == 0) {
+			_gameRef->_renderer->setWindowed(value);
+		} else {
+			warning("SetValueToReg(\"%s\",\"%s\",%d) is not implemented", regpath, key, value);
+		}
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// changeWindowCaption
+	// Used to change game's window caption at games by HeroCraft
+	// Specification: external "img.dll" cdecl changeWindowCaption(long, string)
+	// Known usage: changeWindowCaption(Game.Hwnd, <Title>)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "changeWindowCaption") == 0 && strcmp(function->dll_name, "img.dll") == 0) {
+		stack->correctParams(2);
+		/*int hwnd =*/ stack->pop()->getInt();
+		/*const char *title =*/ stack->pop()->getString();
+
+		// do nothing
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// maximizedWindow
+	// Used to change game's window size at games by HeroCraft
+	// Specification: external "img.dll" cdecl maximizedWindow(long, long, long)
+	// Known usage: maximizedWindow(Game.Hwnd, 1024, 768)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "maximizedWindow") == 0 && strcmp(function->dll_name, "img.dll") == 0) {
+		stack->correctParams(3);
+		/*int hwnd =*/ stack->pop()->getInt();
+		/*int width =*/ stack->pop()->getInt();
+		/*int height =*/ stack->pop()->getInt();
+
+		// do nothing
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
 	_gameRef->LOG(0, "External functions are not supported on this platform.");
 	stack->correctParams(0);
 	stack->pushNULL();
