@@ -184,7 +184,11 @@ static const Common::KeyTableEntry maemoKeys[] = {
 };
 
 Common::HardwareInputSet *OSystem_SDL_Maemo::getHardwareInputSet() {
-	return new Common::HardwareInputSet(true, maemoKeys);
+	Common::CompositeHardwareInputSet inputSet = new Common::CompositeHardwareInputSet();
+	inputSet->addHardwareInputSet(new Common::KeyboardHardwareInputSet(maemoKeys, defaultModifiers));
+	inputSet->addHardwareInputSet(new Common::KeyboardHardwareInputSet(defaultKeys, defaultModifiers));
+
+	return inputSet;
 }
 
 Common::KeymapArray OSystem_SDL_Maemo::getGlobalKeymaps() {

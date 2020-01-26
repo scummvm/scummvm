@@ -56,7 +56,7 @@ void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {
 
 	if (!inputs) {
 		warning("No hardware input were defined, using defaults");
-		inputs = new HardwareInputSet(true);
+		inputs = new KeyboardHardwareInputSet(defaultKeys, defaultModifiers);
 	}
 
 	_hardwareInputs = inputs;
@@ -147,13 +147,6 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 
 	hardcodedEventMapping(ev);
 
-	const HardwareInput *hwInput = findHardwareInput(ev);
-	if (!hwInput) {
-		List<Event> originalEvent;
-		originalEvent.push_back(ev);
-		return originalEvent;
-	}
-
 	IncomingEventType incomingEventType = convertToIncomingEventType(ev);
 
 	List<Event> mappedEvents;
@@ -169,7 +162,7 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 
 		debug(5, "Keymapper::mapKey keymap: %s", _keymaps[i]->getName().c_str());
 
-		const Keymap::ActionArray &actions = _keymaps[i]->getMappedActions(hwInput);
+		const Keymap::ActionArray &actions = _keymaps[i]->getMappedActions(ev);
 		for (Keymap::ActionArray::const_iterator it = actions.begin(); it != actions.end(); it++) {
 			mappedEvents.push_back(executeAction(*it, incomingEventType));
 		}
@@ -261,16 +254,8 @@ EventType Keymapper::convertStartToEnd(EventType type) {
 	return result;
 }
 
-const HardwareInput *Keymapper::findHardwareInput(const Event &event) {
-	switch (event.type) {
-		case EVENT_KEYDOWN:
-		case EVENT_KEYUP:
-			return _hardwareInputs->findHardwareInput(event.kbd);
-		case EVENT_CUSTOM_BACKEND_HARDWARE:
-			return _hardwareInputs->findHardwareInput(event.customType);
-		default:
-			return nullptr;
-	}
+HardwareInput Keymapper::findHardwareInput(const Event &event) {
+	return _hardwareInputs->findHardwareInput(event);
 }
 
 void Keymapper::hardcodedEventMapping(Event ev) {

@@ -30,14 +30,13 @@ namespace Common {
 InputWatcher::InputWatcher(EventDispatcher *eventDispatcher, Keymapper *keymapper) :
 		_eventDispatcher(eventDispatcher),
 		_keymapper(keymapper),
-		_watching(false),
-		_hwInput(nullptr) {
+		_watching(false) {
 
 }
 
 void InputWatcher::startWatching() {
 	assert(!_watching);
-	assert(!_hwInput);
+	assert(_hwInput.type == kHardwareInputTypeInvalid);
 
 	_keymapper->setEnabled(false);
 	_eventDispatcher->registerObserver(this, EventManager::kEventRemapperPriority, false);
@@ -56,7 +55,7 @@ bool InputWatcher::isWatching() const {
 
 bool InputWatcher::notifyEvent(const Event &event) {
 	assert(_watching);
-	assert(!_hwInput);
+	assert(_hwInput.type == kHardwareInputTypeInvalid);
 
 	switch (event.type) {
 		case EVENT_KEYDOWN:
@@ -64,7 +63,7 @@ bool InputWatcher::notifyEvent(const Event &event) {
 		case EVENT_KEYUP:
 		case EVENT_CUSTOM_BACKEND_HARDWARE:
 			_hwInput = _keymapper->findHardwareInput(event);
-			if (_hwInput) {
+			if (_hwInput.type != kHardwareInputTypeInvalid) {
 				stopWatching();
 			}
 			return true;
@@ -75,9 +74,9 @@ bool InputWatcher::notifyEvent(const Event &event) {
 	return false;
 }
 
-const HardwareInput *InputWatcher::checkForCapturedInput() {
-	const HardwareInput *hwInput = _hwInput;
-	_hwInput = nullptr;
+HardwareInput InputWatcher::checkForCapturedInput() {
+	HardwareInput hwInput = _hwInput;
+	_hwInput = HardwareInput();
 	return hwInput;
 }
 

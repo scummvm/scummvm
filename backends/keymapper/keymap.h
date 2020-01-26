@@ -25,20 +25,43 @@
 
 #include "common/scummsys.h"
 
+#include "backends/keymapper/hardware-input.h"
+
 #include "common/config-manager.h"
 #include "common/func.h"
 #include "common/hashmap.h"
 #include "common/hash-ptr.h"
 #include "common/list.h"
+#include "common/str-array.h"
 
 namespace Common {
 
 const char *const kStandardActionsKeymapName = "standard-actions";
 
 class Action;
+class Event;
 struct HardwareInput;
 class HardwareInputSet;
 class KeymapperDefaultBindings;
+
+struct Event_EqualTo {
+	bool operator()(const HardwareInput& x, const HardwareInput& y) const {
+		return (x.type == y.type)
+		        && (x.key == y.key) // TODO: Remove the equality operator from KeyState
+		        && (x.inputCode == y.inputCode);
+	}
+};
+
+struct Event_Hash {
+	uint operator()(const HardwareInput& x) const {
+		uint hash = 7;
+		hash = 31 * hash + x.type;
+		hash = 31 * hash + x.key.keycode;
+		hash = 31 * hash + (x.key.flags & ~KBD_STICKY);
+		hash = 31 * hash + x.inputCode;
+		return hash;
+	}
+};
 
 class Keymap {
 public:
@@ -62,7 +85,7 @@ public:
 	* @param key pointer to HardwareInput to map
 	* @see Action::mapKey
 	*/
-	void registerMapping(Action *action, const HardwareInput *input);
+	void registerMapping(Action *action, const HardwareInput &input);
 
 	/**
 	* Unregisters a HardwareInput from the given Action (if one is mapped)
@@ -80,14 +103,14 @@ public:
 	/**
 	 * Find the hardware input an action is mapped to, if any
 	 */
-	Array<const HardwareInput *> getActionMapping(Action *action) const;
+	Array<HardwareInput> getActionMapping(Action *action) const;
 
 	/**
 	 * Find the Actions that a hardware input is mapped to
 	 * @param hardwareInput	the input that is mapped to the required Action
 	 * @return		an array containing pointers to the actions
 	 */
-	const ActionArray &getMappedActions(const HardwareInput *hardwareInput) const;
+	ActionArray getMappedActions(const Event &event) const;
 
 	/**
 	 * Adds a new Action to this Map
@@ -129,10 +152,10 @@ private:
 
 	const Action *findAction(const char *id) const;
 
-	void registerMappings(Action *action, const Array<String> &hwInputIds);
-	bool areMappingsIdentical(const Array<const HardwareInput *> &inputs, const Array <String> &mapping);
+	void registerMappings(Action *action, const StringArray &hwInputIds);
+	bool areMappingsIdentical(const Array<HardwareInput> &inputs, const StringArray &mapping);
 
-	typedef HashMap<const HardwareInput *, ActionArray> HardwareActionMap;
+	typedef HashMap<HardwareInput, ActionArray, Event_Hash, Event_EqualTo> HardwareActionMap;
 
 	KeymapType _type;
 	String _name;

@@ -51,7 +51,7 @@ private:
 	Array<String> _defaultInputMapping;
 
 public:
-	Action(const char *id, const String &description = "");
+	Action(const char *id, const String &description);
 
 	void setEvent(const Event &evt) {
 		event = evt;
