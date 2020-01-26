@@ -355,13 +355,17 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 Common::Keymap *KyraMetaEngine::initKeymap(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 
+#ifdef ENABLE_LOL
 	if (gameId.contains("lol")) {
 		return Kyra::LoLEngine::initKeymap();
 	}
+#endif
 
+#ifdef ENABLE_EOB
 	if (gameId.contains("eob")) {
 		return Kyra::EoBCoreEngine::initKeymap(gameId);
 	}
+#endif
 
 	return AdvancedMetaEngine::initKeymap(target);
 }
