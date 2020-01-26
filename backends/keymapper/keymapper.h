@@ -121,7 +121,7 @@ public:
 	/**
 	 * Return a HardwareInput pointer for the given event
 	 */
-	const HardwareInput *findHardwareInput(const Event &event);
+	HardwareInput findHardwareInput(const Event &event);
 
 	void initKeymap(Keymap *keymap, ConfigManager::Domain *domain);
 

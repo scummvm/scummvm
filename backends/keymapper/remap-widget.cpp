@@ -216,8 +216,8 @@ void RemapWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void RemapWidget::handleTickle() {
-	const HardwareInput *hardwareInput = _remapInputWatcher->checkForCapturedInput();
-	if (hardwareInput) {
+	const HardwareInput hardwareInput = _remapInputWatcher->checkForCapturedInput();
+	if (hardwareInput.type != kHardwareInputTypeInvalid) {
 		_remapKeymap->registerMapping(_remapAction, hardwareInput);
 
 		_changes = true;
@@ -260,7 +260,7 @@ void RemapWidget::refreshKeymap() {
 
 		row.actionText->setLabel(row.action->description);
 
-		Array<const HardwareInput *> mappedInputs = row.keymap->getActionMapping(row.action);
+		Array<HardwareInput> mappedInputs = row.keymap->getActionMapping(row.action);
 
 		String keysLabel;
 		for (uint j = 0; j < mappedInputs.size(); j++) {
@@ -268,7 +268,7 @@ void RemapWidget::refreshKeymap() {
 				keysLabel += ", ";
 			}
 
-			keysLabel += mappedInputs[j]->description;
+			keysLabel += mappedInputs[j].description;
 		}
 
 		if (!keysLabel.empty()) {

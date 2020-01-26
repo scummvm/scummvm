@@ -23,10 +23,11 @@
 #include "backends/keymapper/hardware-input.h"
 
 #include "backends/keymapper/keymapper.h"
+#include "common/tokenizer.h"
 
 namespace Common {
 
-static const KeyTableEntry defaultKeys[] = {
+const KeyTableEntry defaultKeys[] = {
 	{"BACKSPACE", KEYCODE_BACKSPACE, "Backspace"},
 	{"TAB", KEYCODE_TAB, "Tab"},
 	{"CLEAR", KEYCODE_CLEAR, "Clear"},
@@ -205,100 +206,175 @@ static const KeyTableEntry defaultKeys[] = {
 	{0, KEYCODE_INVALID, 0}
 };
 
-// TODO: Add META and NUM_LOCK
-static const ModifierTableEntry defaultModifiers[] = {
-	{ 0, "", "" },
-	{ KBD_CTRL, "C+", "Ctrl+" },
-	{ KBD_ALT, "A+", "Alt+" },
-	{ KBD_SHIFT, "S+", "Shift+" },
-	{ KBD_CTRL | KBD_ALT, "C+A+", "Ctrl+Alt+" },
-	{ KBD_SHIFT | KBD_CTRL, "S+C+", "Shift+Ctrl+" },
-	{ KBD_SHIFT | KBD_CTRL | KBD_ALT, "S+C+A+", "Shift+Ctrl+Alt+" },
-	{ 0, 0, 0 }
+// TODO: Add NUM_LOCK
+const ModifierTableEntry defaultModifiers[] = {
+	{ KBD_CTRL,  "C", "Ctrl+"  },
+	{ KBD_SHIFT, "S", "Shift+" },
+	{ KBD_ALT,   "A", "Alt+"   },
+	{ KBD_META,  "M", "Meta+"  },
+	{ 0,     nullptr, nullptr }
 };
 
-HardwareInputSet::HardwareInputSet(bool useDefault, const KeyTableEntry *keys, const ModifierTableEntry *modifiers) {
-	if (useDefault)
-		addHardwareInputs(defaultKeys, defaultModifiers);
-	if (keys)
-		addHardwareInputs(keys, modifiers ? modifiers : defaultModifiers);
-}
-
 HardwareInputSet::~HardwareInputSet() {
-	for (KeyInputMap::iterator it = _keyInput.begin(); it != _keyInput.end(); ++it)
-		delete it->_value;
-	for (CustomInputMap::iterator it = _customInput.begin(); it != _customInput.end(); ++it)
-		delete it->_value;
 }
 
-const HardwareInput *HardwareInputSet::findHardwareInput(const String &id) const {
-	for (KeyInputMap::const_iterator it = _keyInput.begin(); it != _keyInput.end(); ++it) {
-		if ((*it)._value->id == id)
-			return (*it)._value;
-	}
-	for (CustomInputMap::const_iterator it = _customInput.begin(); it != _customInput.end(); ++it) {
-		if ((*it)._value->id == id)
-			return (*it)._value;
-	}
-
-	return nullptr;
+KeyboardHardwareInputSet::KeyboardHardwareInputSet(const KeyTableEntry *keys, const ModifierTableEntry *modifiers) :
+		_keys(keys),
+		_modifiers(modifiers) {
+	assert(_keys);
+	assert(_modifiers);
 }
 
-const HardwareInput *HardwareInputSet::findHardwareInput(const HardwareInputCode code) const {
-	return _customInput[code];
-}
+HardwareInput KeyboardHardwareInputSet::findHardwareInput(const String &id) const {
+	StringTokenizer tokenizer(id, "+");
 
-const HardwareInput *HardwareInputSet::findHardwareInput(const KeyState &keystate) const {
-	return _keyInput[keystate];
-}
+	byte modifierFlags = 0;
 
-void HardwareInputSet::addHardwareInputs(const HardwareInputTableEntry inputs[]) {
-	for (const HardwareInputTableEntry *entry = inputs; entry->hwId; ++entry) {
-		const HardwareInput *existingInput = findHardwareInput(entry->code);
-		if (existingInput) {
-			warning("Ignoring hardware input %s (code %d) because an input with the same code is already defined",
-			        entry->desc, entry->code);
-			continue;
-		}
+	// TODO: Normalize modifier order
+	String fullKeyDesc;
 
-		existingInput = findHardwareInput(entry->hwId);
-		if (existingInput) {
-			warning("Ignoring hardware input %s (id %s) because an input with the same id is already defined",
-			        entry->desc, entry->hwId);
-			continue;
-		}
+	String token;
+	while (!tokenizer.empty()) {
+		token = tokenizer.nextToken();
 
-		_customInput[entry->code] = new HardwareInput(entry->hwId, entry->code, entry->desc);
-	}
-}
-
-void HardwareInputSet::addHardwareInputs(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]) {
-	const KeyTableEntry *key;
-	const ModifierTableEntry *mod;
-
-	for (mod = modifiers; mod->id; mod++) {
-		for (key = keys; key->hwId; key++) {
-			String keyId = String::format("%s%s", mod->id, key->hwId);
-			KeyState keystate = KeyState(key->keycode, 0, mod->flag);
-
-			const HardwareInput *existingInput = findHardwareInput(keystate);
-			if (existingInput) {
-				warning("Ignoring hardware input %s%s (id %s) because an input with the same keystate is already defined",
-				        keys->desc, mod->desc, keyId.c_str());
-				continue;
+		const ModifierTableEntry *modifier = nullptr;
+		for (modifier = _modifiers;  modifier->id; modifier++) {
+			if (token == modifier->id) {
+				break;
 			}
+		}
 
-			existingInput = findHardwareInput(keyId);
-			if (existingInput) {
-				warning("Ignoring hardware input %s%s (id %s) because an input with the same id is already defined",
-				        keys->desc, mod->desc, keyId.c_str());
-				continue;
-			}
-
-			String fullKeyDesc = String::format("%s%s", mod->desc, key->desc);
-			_keyInput[keystate] = new HardwareInput(keyId, keystate, fullKeyDesc);
+		if (modifier && modifier->id) {
+			modifierFlags |= modifier->flag;
+			fullKeyDesc += modifier->desc;
+		} else {
+			// We reached the end of the modifiers, the token is a keycode
+			break;
 		}
 	}
+
+	if (!tokenizer.empty()) {
+		return HardwareInput();
+	}
+
+	const KeyTableEntry *key = nullptr;
+	for (key = _keys;  key->hwId; key++) {
+		if (token.equals(key->hwId)) {
+			break;
+		}
+	}
+
+	if (!key || !key->hwId) {
+		return HardwareInput();
+	}
+
+	const KeyState keystate = KeyState(key->keycode, 0, modifierFlags);
+	return HardwareInput(id, keystate, fullKeyDesc + key->desc);
+}
+
+HardwareInput KeyboardHardwareInputSet::findHardwareInput(const Event &event) const {
+	switch (event.type) {
+	case EVENT_KEYDOWN:
+	case EVENT_KEYUP: {
+		const KeyTableEntry *key = nullptr;
+		for (key = _keys;  key->hwId; key++) {
+			if (event.kbd.keycode == key->keycode) {
+				break;
+			}
+		}
+
+		if (!key || !key->hwId) {
+			return HardwareInput();
+		}
+
+		String id;
+		String fullKeyDesc;
+		byte modifierFlags = 0;
+
+		for (const ModifierTableEntry *modifier = _modifiers;  modifier->id; modifier++) {
+			if (event.kbd.hasFlags(modifier->flag)) {
+				id += modifier->id;
+				id += "+";
+				fullKeyDesc += modifier->desc;
+				modifierFlags |= modifier->flag;
+			}
+		}
+
+		const KeyState keystate = KeyState(key->keycode, 0, modifierFlags);
+		return HardwareInput(id + key->hwId, keystate, fullKeyDesc + key->desc);
+	}
+	default:
+		return HardwareInput();
+	}
+}
+
+CustomHardwareInputSet::CustomHardwareInputSet(const HardwareInputTableEntry *hardwareEntries) :
+		_hardwareEntries(hardwareEntries) {
+	assert(_hardwareEntries);
+}
+
+HardwareInput CustomHardwareInputSet::findHardwareInput(const String &id) const {
+	const HardwareInputTableEntry *hw = nullptr;
+	for (hw = _hardwareEntries;  hw->hwId; hw++) {
+		if (id.equals(hw->hwId)) {
+			break;
+		}
+	}
+
+	if (!hw || !hw->hwId) {
+		return HardwareInput();
+	}
+
+	return HardwareInput(hw->hwId, hw->code, hw->desc);
+}
+
+HardwareInput CustomHardwareInputSet::findHardwareInput(const Event &event) const {
+	switch (event.type) {
+	case EVENT_CUSTOM_BACKEND_HARDWARE: {
+		const HardwareInputTableEntry *hw = nullptr;
+		for (hw = _hardwareEntries;  hw->hwId; hw++) {
+			if (event.customType == hw->code) {
+				break;
+			}
+		}
+
+		if (!hw || !hw->hwId) {
+			return HardwareInput();
+		}
+
+		return HardwareInput(hw->hwId, hw->code, hw->desc);
+	}
+	default:
+		return HardwareInput();
+	}
+}
+
+CompositeHardwareInputSet::~CompositeHardwareInputSet() {
+	for (uint i = 0; i < _inputSets.size(); i++) {
+		delete _inputSets[i];
+	}
+}
+
+HardwareInput CompositeHardwareInputSet::findHardwareInput(const String &id) const {
+	for (uint i = 0; i < _inputSets.size(); i++) {
+		HardwareInput hardwareInput = _inputSets[i]->findHardwareInput(id);
+		if (hardwareInput.type != kHardwareInputTypeInvalid) {
+			return hardwareInput;
+		}
+	}
+
+	return HardwareInput();
+}
+
+HardwareInput CompositeHardwareInputSet::findHardwareInput(const Event &event) const {
+	for (uint i = 0; i < _inputSets.size(); i++) {
+		HardwareInput hardwareInput = _inputSets[i]->findHardwareInput(event);
+		if (hardwareInput.type != kHardwareInputTypeInvalid) {
+			return hardwareInput;
+		}
+	}
+
+	return HardwareInput();
 }
 
 } //namespace Common

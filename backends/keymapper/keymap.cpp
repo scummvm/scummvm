@@ -55,7 +55,7 @@ void Keymap::addAction(Action *action) {
 	_actions.push_back(action);
 }
 
-void Keymap::registerMapping(Action *action, const HardwareInput *hwInput) {
+void Keymap::registerMapping(Action *action, const HardwareInput &hwInput) {
 	ActionArray &actionArray = _hwActionMap.getVal(hwInput);
 
 	// Don't allow an input to map to the same action multiple times
@@ -87,8 +87,8 @@ void Keymap::resetMapping(Action *action) {
 	registerMappings(action, hwInputIds);
 }
 
-Array<const HardwareInput *> Keymap::getActionMapping(Action *action) const {
-	Array<const HardwareInput *> inputs;
+Array<HardwareInput> Keymap::getActionMapping(Action *action) const {
+	Array<HardwareInput> inputs;
 
 	for (HardwareActionMap::iterator itInput = _hwActionMap.begin(); itInput != _hwActionMap.end(); itInput++) {
 		for (ActionArray::iterator itAction = itInput->_value.begin(); itAction != itInput->_value.end(); itAction++) {
@@ -111,8 +111,20 @@ const Action *Keymap::findAction(const char *id) const {
 	return nullptr;
 }
 
-const Keymap::ActionArray &Keymap::getMappedActions(const HardwareInput *hardwareInput) const {
-	return _hwActionMap[hardwareInput];
+Keymap::ActionArray Keymap::getMappedActions(const Event &event) const {
+	switch (event.type) {
+	case EVENT_KEYDOWN:
+	case EVENT_KEYUP: {
+		HardwareInput hardwareInput("", event.kbd, "");
+		return _hwActionMap[hardwareInput];
+	}
+	case EVENT_CUSTOM_BACKEND_HARDWARE: {
+		HardwareInput hardwareInput("", event.customType, "");
+		return _hwActionMap[hardwareInput];
+	}
+	default:
+		return ActionArray();
+	}
 }
 
 void Keymap::setConfigDomain(ConfigManager::Domain *configDomain) {
@@ -188,9 +200,9 @@ void Keymap::registerMappings(Action *action, const Array <String> &hwInputIds) 
 	assert(_hardwareInputSet);
 
 	for (uint i = 0; i < hwInputIds.size(); i++) {
-			const HardwareInput *hwInput = _hardwareInputSet->findHardwareInput(hwInputIds[i].c_str());
+			HardwareInput hwInput = _hardwareInputSet->findHardwareInput(hwInputIds[i].c_str());
 
-			if (!hwInput) {
+			if (hwInput.type == kHardwareInputTypeInvalid) {
 				// Silently ignore unknown hardware ids because the current device may not have inputs matching the defaults
 				debug(1, "HardwareInput with ID '%s' not known", hwInputIds[i].c_str());
 				continue;
@@ -209,7 +221,7 @@ void Keymap::saveMappings() {
 
 	for (ActionArray::const_iterator it = _actions.begin(); it != _actions.end(); it++) {
 		Action *action = *it;
-		Array<const HardwareInput *> mappedInputs = getActionMapping(action);
+		Array<HardwareInput> mappedInputs = getActionMapping(action);
 
 		if (areMappingsIdentical(mappedInputs, action->getDefaultInputMapping())) {
 			// If the current mapping is the default, don't write anything to the config manager
@@ -224,14 +236,14 @@ void Keymap::saveMappings() {
 				confValue += " ";
 			}
 
-			confValue += mappedInputs[j]->id;
+			confValue += mappedInputs[j].id;
 		}
 
 		_configDomain->setVal(prefix + action->id, confValue);
 	}
 }
 
-bool Keymap::areMappingsIdentical(const Array<const HardwareInput *> &inputs, const Array<String> &mapping) {
+bool Keymap::areMappingsIdentical(const Array<HardwareInput> &inputs, const StringArray &mapping) {
 	if (inputs.size() != mapping.size()) {
 		return false;
 	}
@@ -241,7 +253,7 @@ bool Keymap::areMappingsIdentical(const Array<const HardwareInput *> &inputs, co
 	uint foundCount = 0;
 	for (uint i = 0; i < inputs.size(); i++) {
 		for (uint j = 0; j < mapping.size(); j++) {
-			if (inputs[i]->id == mapping[j]) {
+			if (inputs[i].id == mapping[j]) {
 				foundCount++;
 				break;
 			}

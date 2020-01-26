@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 
+#include "backends/keymapper/hardware-input.h"
 #include "common/events.h"
 
 namespace Common {
@@ -48,7 +49,7 @@ public:
 	void stopWatching();
 
 	bool isWatching() const;
-	const HardwareInput *checkForCapturedInput();
+	HardwareInput checkForCapturedInput();
 
 private:
 	bool notifyEvent(const Event &event) override;
@@ -57,7 +58,7 @@ private:
 	Keymapper *_keymapper;
 
 	bool _watching;
-	const HardwareInput *_hwInput;
+	HardwareInput _hwInput;
 };
 
 } // End of namespace Common

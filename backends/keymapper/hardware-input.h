@@ -25,16 +25,18 @@
 
 #include "common/scummsys.h"
 
-#include "common/hashmap.h"
+#include "common/array.h"
+#include "common/events.h"
 #include "common/keyboard.h"
 #include "common/str.h"
-#include "common/textconsole.h"
 
 namespace Common {
 
 typedef uint32 HardwareInputCode;
 
 enum HardwareInputType {
+	/** Empty / invalid input type */
+	kHardwareInputTypeInvalid,
 	/** Input that sends single events */
 	kHardwareInputTypeGeneric,
 	/** Input that usually send -up and -down events */
@@ -51,7 +53,8 @@ struct HardwareInput {
 	/** Human readable description */
 	String description;
 
-	const HardwareInputType type;
+	/** Type tag */
+	HardwareInputType type;
 
 	/**
 	 * A platform specific unique identifier for an input event
@@ -67,13 +70,19 @@ struct HardwareInput {
 	 */
 	KeyState key;
 
-	HardwareInput(const String &i, HardwareInputCode ic = 0, const String &desc = "")
+	HardwareInput()
+		: inputCode(0), type(kHardwareInputTypeInvalid) { }
+
+	HardwareInput(const String &i, HardwareInputCode ic, const String &desc)
 		: id(i), inputCode(ic), description(desc), type(kHardwareInputTypeGeneric) { }
 
-	HardwareInput(const String &i, KeyState ky, const String &desc = "")
-		: id(i), key(ky), description(desc), type(kHardwareInputTypeKeyboard) { }
+	HardwareInput(const String &i, KeyState ky, const String &desc)
+		: id(i), inputCode(0), key(ky), description(desc), type(kHardwareInputTypeKeyboard) { }
 };
 
+/**
+ * Entry in a static table of custom backend hardware inputs
+ */
 struct HardwareInputTableEntry {
 	const char *hwId;
 	HardwareInputCode code;
@@ -99,61 +108,94 @@ struct ModifierTableEntry {
 };
 
 /**
- * Hash function for KeyState
- */
-template<> struct Hash<KeyState>
-		: public UnaryFunction<KeyState, uint> {
-
-	uint operator()(const KeyState &val) const {
-		return (uint)val.keycode | ((uint)val.flags << 24);
-	}
-};
-
-/**
- * Simple class to encapsulate a device's set of HardwareInputs.
- * Each device should instantiate this and call addHardwareInput a number of times
- * in its constructor to define the device's available keys.
+ * Interface for querying information about a hardware input device
  */
 class HardwareInputSet {
 public:
-
-	/**
-	 * Add hardware input keys to the set out of key and modifier tables.
-	 * @param useDefault	auto-add the built-in default inputs
-	 * @param keys       	table of available keys
-	 * @param modifiers  	table of available modifiers
-	 */
-	HardwareInputSet(bool useDefault = false, const KeyTableEntry keys[] = 0, const ModifierTableEntry modifiers[] = 0);
-
 	virtual ~HardwareInputSet();
 
-	const HardwareInput *findHardwareInput(const String &id) const;
-
-	const HardwareInput *findHardwareInput(const HardwareInputCode code) const;
-
-	const HardwareInput *findHardwareInput(const KeyState &keystate) const;
+	/**
+	 * Retrieve a hardware input description from an unique identifier
+	 *
+	 * In case no input was found with the specified id, an empty
+	 * HardwareInput structure is return with the type set to
+	 * kHardwareInputTypeInvalid.
+	 */
+	virtual HardwareInput findHardwareInput(const String &id) const = 0;
 
 	/**
-	 * Add hardware inputs to the set out of a table.
-	 * @param inputs       table of available inputs
+	 * Retrieve a hardware input description from one of the events
+	 * produced when the input is triggered.
+	 *
+	 * In case the specified event is not produced by this device,
+	 * an empty HardwareInput structure is return with the type set to
+	 * kHardwareInputTypeInvalid.
 	 */
-	void addHardwareInputs(const HardwareInputTableEntry inputs[]);
+	virtual HardwareInput findHardwareInput(const Event &event) const = 0;
+};
 
-	/**
-	 * Add hardware inputs to the set out of key and modifier tables.
-	 * @param keys       table of available keys
-	 * @param modifiers  table of available modifiers
-	 */
-	void addHardwareInputs(const KeyTableEntry keys[], const ModifierTableEntry modifiers[]);
+/**
+ * A keyboard input device
+ *
+ * Describes the keys and key + modifiers combinations as HardwareInputs
+ */
+class KeyboardHardwareInputSet : public HardwareInputSet {
+public:
+	KeyboardHardwareInputSet(const KeyTableEntry *keys, const ModifierTableEntry *modifiers);
+
+	// HardwareInputSet API
+	HardwareInput findHardwareInput(const String &id) const override;
+	HardwareInput findHardwareInput(const Event &event) const override;
 
 private:
-
-	typedef HashMap<KeyState, const HardwareInput *> KeyInputMap;
-	typedef HashMap<HardwareInputCode, const HardwareInput *> CustomInputMap;
-
-	KeyInputMap _keyInput;
-	CustomInputMap _customInput;
+	const KeyTableEntry *_keys;
+	const ModifierTableEntry *_modifiers;
 };
+
+/**
+ * A custom backend input device
+ *
+ * @todo This is currently unused. Perhaps it should be removed.
+ */
+class CustomHardwareInputSet : public HardwareInputSet {
+public:
+	CustomHardwareInputSet(const HardwareInputTableEntry *hardwareEntries);
+
+	// HardwareInputSet API
+	HardwareInput findHardwareInput(const String &id) const override;
+	HardwareInput findHardwareInput(const Event &event) const override;
+
+private:
+	const HardwareInputTableEntry *_hardwareEntries;
+};
+
+/**
+ * A composite input device that delegates to a set of actual input devices.
+ */
+class CompositeHardwareInputSet : public HardwareInputSet {
+public:
+	~CompositeHardwareInputSet() override;
+
+	// HardwareInputSet API
+	HardwareInput findHardwareInput(const String &id) const override;
+	HardwareInput findHardwareInput(const Event &event) const override;
+
+	/**
+	 * Add an input device to this composite device
+	 *
+	 * Takes ownership of the hardware input set
+	 */
+	void addHardwareInputSet(HardwareInputSet *hardwareInputSet);
+
+private:
+	Array<HardwareInputSet *> _inputSets;
+};
+
+/** A standard set of keyboard keys */
+extern const KeyTableEntry defaultKeys[];
+
+/** A standard set of keyboard modifiers */
+extern const ModifierTableEntry defaultModifiers[];
 
 } // End of namespace Common
 
