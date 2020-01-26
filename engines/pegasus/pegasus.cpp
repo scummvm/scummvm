@@ -2500,24 +2500,28 @@ Common::Keymap *PegasusEngine::initKeymap() {
 	act->setCustomEngineActionEvent(kPegasusActionUp);
 	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("KP8");
+	act->addDefaultInputMapping("JOY_UP");
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveBackwards, _("Down/Zoom Out"));
 	act->setCustomEngineActionEvent(kPegasusActionDown);
 	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("KP5");
+	act->addDefaultInputMapping("JOY_DOWN");
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionTurnLeft, _("Turn Left"));
 	act->setCustomEngineActionEvent(kPegasusActionLeft);
 	act->addDefaultInputMapping("LEFT");
 	act->addDefaultInputMapping("KP4");
+	act->addDefaultInputMapping("JOY_LEFT");
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionTurnRight, _("Turn Right"));
 	act->setCustomEngineActionEvent(kPegasusActionRight);
 	act->addDefaultInputMapping("RIGHT");
 	act->addDefaultInputMapping("KP6");
+	act->addDefaultInputMapping("JOY_RIGHT");
 	engineKeyMap->addAction(act);
 
 	act = new Action("ENT", _("Action/Select"));
@@ -2525,6 +2529,10 @@ Common::Keymap *PegasusEngine::initKeymap() {
 	act->addDefaultInputMapping("SPACE");
 	act->addDefaultInputMapping("RETURN");
 	act->addDefaultInputMapping("KP_ENTER");
+	act->addDefaultInputMapping("JOY_A");
+	// We're treating both mouse buttons as the same for ease of use.
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("MOUSE_RIGHT");
 	engineKeyMap->addAction(act);
 
 	// The original also used clear (aka "num lock" on Mac keyboards) here, but it doesn't
@@ -2540,6 +2548,7 @@ Common::Keymap *PegasusEngine::initKeymap() {
 	act->setCustomEngineActionEvent(kPegasusActionShowInventory);
 	act->addDefaultInputMapping("BACKQUOTE");
 	act->addDefaultInputMapping("KP7");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	engineKeyMap->addAction(act);
 
 	act = new Action("TBI", _("Display/Hide Biochip Tray"));
@@ -2547,24 +2556,28 @@ Common::Keymap *PegasusEngine::initKeymap() {
 	act->addDefaultInputMapping("BACKSPACE");
 	act->addDefaultInputMapping("KP9");
 	act->addDefaultInputMapping("KP_MULTIPLY");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	engineKeyMap->addAction(act);
 
 	act = new Action("TMA", _("Toggle Center Data Display"));
 	act->setCustomEngineActionEvent(kPegasusActionToggleCenterDisplay);
 	act->addDefaultInputMapping("t");
 	act->addDefaultInputMapping("KP_EQUALS");
+	act->addDefaultInputMapping("JOY_Y");
 	engineKeyMap->addAction(act);
 
 	act = new Action("TIN", _("Display/Hide Info Screen"));
 	act->setCustomEngineActionEvent(kPegasusActionShowInfoScreen);
 	act->addDefaultInputMapping("i");
 	act->addDefaultInputMapping("KP_DIVIDE");
+	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
 	act = new Action("PM", _("Display/Hide Pause Menu"));
 	act->setCustomEngineActionEvent(kPegasusActionShowPauseMenu);
 	act->addDefaultInputMapping("p");
 	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_BACK");
 	engineKeyMap->addAction(act);
 
 	// TODO: Add back Alt to the default mappings
