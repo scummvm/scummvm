@@ -54,13 +54,13 @@ public:
 
 	virtual void initDriver() override;
 	virtual void setSoundData(uint8 *data, uint32 size) override;
-	virtual void queueTrack(int track, int volume) override;
+	virtual void startSound(int track, int volume) override;
 	virtual bool isChannelPlaying(int channel) const override;
 	virtual void stopAllChannels() override;
-	virtual int getSoundTrigger() const override { return _soundTrigger; }
-	virtual void resetSoundTrigger() override { _soundTrigger = 0; }
+	int getSoundTrigger() const { return _soundTrigger; }
+	void resetSoundTrigger() { _soundTrigger = 0; }
 
-	virtual void callback() override;
+	void callback();
 
 	virtual void setSyncJumpMask(uint16 mask) override { _syncJumpMask = mask; }
 
@@ -178,24 +178,6 @@ private:
 	//
 	// * One for programs, starting at offset 0.
 	// * One for instruments, starting at offset 500.
-
-	uint8 *getProgram(int progId) {
-		const uint16 offset = READ_LE_UINT16(_soundData + 2 * progId);
-
-		// In case an invalid offset is specified we return nullptr to
-		// indicate an error. 0xFFFF seems to indicate "this is not a valid
-		// program/instrument". However, 0 is also invalid because it points
-		// inside the offset table itself. We also ignore any offsets outside
-		// of the actual data size.
-		// The original does not contain any safety checks and will simply
-		// read outside of the valid sound data in case an invalid offset is
-		// encountered.
-		if (offset == 0 || offset >= _soundDataSize) {
-			return nullptr;
-		} else {
-			return _soundData + offset;
-		}
-	}
 
 	const uint8 *getInstrument(int instrumentId) {
 		return getProgram(_numPrograms + instrumentId);
@@ -326,9 +308,6 @@ private:
 
 	OPL::OPL *_adlib;
 
-	uint8 *_soundData;
-	uint32 _soundDataSize;
-
 	struct QueueEntry {
 		QueueEntry() : data(0), id(0), volume(0) {}
 		QueueEntry(uint8 *ptr, uint8 track, uint8 vol) : data(ptr), id(track), volume(vol) {}
@@ -390,8 +369,6 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) : PCSoundDriver() {
 		error("Failed to create OPL");
 
 	memset(_channels, 0, sizeof(_channels));
-	_soundData = 0;
-	_soundDataSize = 0;
 
 	_vibratoAndAMDepthBits = _curRegOffset = 0;
 
@@ -504,7 +481,7 @@ void AdLibDriver::setSoundData(uint8 *data, uint32 size) {
 	_soundDataSize = size;
 }
 
-void AdLibDriver::queueTrack(int track, int volume) {
+void AdLibDriver::startSound(int track, int volume) {
 	Common::StackLock lock(_mutex);
 
 	uint8 *trackData = getProgram(track);
@@ -624,7 +601,7 @@ void AdLibDriver::setupPrograms() {
 
 	if (retrySound.data) {
 		debugC(9, kDebugLevelSound, "AdLibDriver::setupPrograms(): WORKAROUND - Restarting skipped sound %d)", retrySound.id);
-		queueTrack(retrySound.id, retrySound.volume);
+		startSound(retrySound.id, retrySound.volume);
 	}
 }
 

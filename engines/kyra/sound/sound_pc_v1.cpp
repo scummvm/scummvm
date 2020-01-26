@@ -74,10 +74,10 @@ SoundPC_v1::SoundPC_v1(KyraEngine_v1 *vm, Audio::Mixer *mixer, kType type)
 	}
 
 	// Correct the type to someting we support. NullSound is treated as a silent AdLib driver.
-	if (_type != kAdLib && _type != kPCSpkr)
+	if (_type != kAdLib && _type != kPCSpkr && _type != kPCjr)
 		_type = kAdLib;
 
-	_driver = (type == kAdLib) ? PCSoundDriver::createAdLib(mixer, _version) : PCSoundDriver::createPCSpk(mixer);
+	_driver = (type == kAdLib) ? PCSoundDriver::createAdLib(mixer, _version) : PCSoundDriver::createPCSpk(mixer, _type == kPCjr);
 	assert(_driver);
 }
 
@@ -165,7 +165,7 @@ void SoundPC_v1::play(uint8 track, uint8 volume) {
 	if ((soundId == 0xFFFF && _version == 4) || (soundId == 0xFF && _version < 4) || !_soundDataPtr)
 		return;
 
-	_driver->queueTrack(soundId, volume);
+	_driver->startSound(soundId, volume);
 }
 
 void SoundPC_v1::beginFadeOut() {
@@ -201,7 +201,7 @@ bool SoundPC_v1::hasSoundFile(uint file) const {
 }
 
 void SoundPC_v1::loadSoundFile(uint file) {
-	if (_version == 1 && _type == kPCSpkr)
+	if (_version == 1 && (_type == kPCSpkr || _type == kPCjr))
 		file += 1;
 	if (file < res()->fileListSize)
 		internalLoadFile(res()->fileList[file]);

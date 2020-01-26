@@ -1719,7 +1719,7 @@ void DarkmoonSequenceHelper::delay(uint32 ticks) {
 void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim) {
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
 		index = _sndMarkersFMTowns[index - 1];
-	else if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+	else if (_vm->sound()->getMusicType() != Sound::kAdLib)
 		return;
 
 	int seq = 0;

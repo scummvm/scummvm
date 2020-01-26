@@ -34,28 +34,50 @@ namespace Kyra {
 
 class PCSoundDriver {
 public:
-	PCSoundDriver() {}
+	PCSoundDriver() : _soundData(0), _soundDataSize(0) {}
 	virtual ~PCSoundDriver() {}
 
 	virtual void initDriver() = 0;
 	virtual void setSoundData(uint8 *data, uint32 size) = 0;
-	virtual void queueTrack(int track, int volume) = 0;
+	virtual void startSound(int track, int volume) = 0;
 	virtual bool isChannelPlaying(int channel) const = 0;
 	virtual void stopAllChannels() = 0;
-	virtual int getSoundTrigger() const = 0;
-	virtual void resetSoundTrigger() = 0;
 
-	virtual void callback() = 0;
-
-	// AdLiB specific
-	virtual void setSyncJumpMask(uint16) {}
+	virtual int getSoundTrigger() const { return 0; }
+	virtual void resetSoundTrigger() {}
 
 	virtual void setMusicVolume(uint8 volume) = 0;
 	virtual void setSfxVolume(uint8 volume) = 0;
 
+	// AdLiB (Kyra 1) specific
+	virtual void setSyncJumpMask(uint16) {}
+
+protected:
+	uint8 *getProgram(int progId) {
+		const uint16 offset = READ_LE_UINT16(_soundData + 2 * progId);
+
+		// In case an invalid offset is specified we return nullptr to
+		// indicate an error. 0xFFFF seems to indicate "this is not a valid
+		// program/instrument". However, 0 is also invalid because it points
+		// inside the offset table itself. We also ignore any offsets outside
+		// of the actual data size.
+		// The original does not contain any safety checks and will simply
+		// read outside of the valid sound data in case an invalid offset is
+		// encountered.
+		if (offset == 0 || offset >= _soundDataSize) {
+			return nullptr;
+		} else {
+			return _soundData + offset;
+		}
+	}
+
+	uint8 *_soundData;
+	uint32 _soundDataSize;
+
+public:
 	static PCSoundDriver *createAdLib(Audio::Mixer *mixer, int version);
 #ifdef ENABLE_EOB
-	static PCSoundDriver *createPCSpk(Audio::Mixer *mixer);
+	static PCSoundDriver *createPCSpk(Audio::Mixer *mixer, bool pcJRMode);
 #endif
 };
 

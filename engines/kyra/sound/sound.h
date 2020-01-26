@@ -101,6 +101,7 @@ public:
 		kTowns,
 		kPC98,
 		kPCSpkr,
+		kPCjr,
 		kAmiga
 	};
 
