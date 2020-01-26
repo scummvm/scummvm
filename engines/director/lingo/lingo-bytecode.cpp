@@ -713,7 +713,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 				uint64 f64sign = (uint64)(exponent & 0x8000) << 48;
 				exponent &= 0x7fff;
 				uint64 fraction = READ_BE_UINT64(&constsStore[pointer+2]);
-				fraction &= 0x7fffffffffffffff;
+				fraction &= 0x7fffffffffffffffULL;
 				uint64 f64exp = 0;
 				if (exponent == 0) {
 					f64exp = 0;
