@@ -60,6 +60,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"devilincapital",  "Devil In The Capital"},
 	{"dfafadventure",   "DFAF Adventure"},
 	{"drbohus",         "Dr. Bohus"},
+	{"drdoylemotch",    "Dr. Doyle - Mystery Of The Cloche Hat"},
 	{"dreamcat",        "Dreamcat"},
 	{"dreaming",        "Des Reves Elastiques Avec Mille Insectes Nommes Georges"},
 	{"driller",         "The Driller Incident"},
@@ -671,6 +672,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Dr. Bohus
 	WME_WINENTRY("drbohus", "",
 		WME_ENTRY1s("data.dcp","a79e640ea15f7ca36addc08ab7b1db49", 59344013), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_2_43),
+
+	// Dr. Doyle - Mystery Of The Cloche Hat
+	WME_WINENTRY("drdoylemotch", "",
+		WME_ENTRY1s("data.dcp","9276850f89f71c5e9ab173ce6788daa8", 45779909), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Dreamcat
 	WME_WINENTRY("dreamcat", "",
