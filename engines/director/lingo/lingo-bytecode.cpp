@@ -327,10 +327,12 @@ void LC::cb_globalassign() {
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (!s) {
-		warning("Variable %s not found", name.c_str());
-		g_lingo->pop();
-		return;
-	} else if (s && !s->global) {
+		// Lingo lets you declare globals inside a method.
+		// This doesn't define them in the script list, but you can still
+		// read and write to them???
+		s = g_lingo->lookupVar(name.c_str(), true, true);
+	}
+	if (s && !s->global) {
 		warning("Variable %s is local, not global", name.c_str());
 	}
 
