@@ -120,10 +120,15 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	// We try to turn the known ones into relative paths.
 	if (fixedFilename.contains(':')) {
 		const char* const knownPrefixes[] = { // Known absolute paths
+				"c:/documents and settings/radimk/plocha/projekt/", // Basis Octavus refers to several files named "c:\documents and settings\radimk\plocha\projekt\sprites\clock*.bmp"
+				"c:/program files/wme devkit beta/projects/amu/data/", // Five Magical Amulets refers to "c:\program files\wme devkit beta\projects\amu\data\scenes\prvnimenu\scr\scene_init.script"
+				"c:/users/mathieu/desktop/wintermute engine development kit/jeu verve/vervegame/data/", // Machu Mayu refers to "c:\users\mathieu\desktop\wintermute engine development kit\jeu verve\vervegame\data\interface\system\cr<0xE9>dits.script"
 				"c:/windows/fonts/", // East Side Story refers to "c:\windows\fonts\framd.ttf"
 				"c:/carol6/svn/data/", // Carol Reed 6: Black Circle refers to "c:\carol6\svn\data\sprites\system\help.png"
 				"d:/engine/\322\3032/tg_ie_080128_1005/data/", // Tanya Grotter and the Disappearing Floor refers to "d:\engine\<0xD2><0xC3>2\tg_ie_080128_1005\data\interface\pixel\pixel.png"
-				"f:/dokument/spel 5/demo/data/" // Carol Reed 5 (non-demo) refers to "f:\dokument\spel 5\demo\data\scenes\credits\op_cred_00\op_cred_00.jpg"
+				"e:/users/jonathan/onedrive/knossos/data/", // K'NOSSOS refers to "e:\users\jonathan\onedrive\knossos\data\entities\helprobot\helprobot.script"
+				"f:/dokument/spel 5/demo/data/", // Carol Reed 5 (non-demo) refers to "f:\dokument\spel 5\demo\data\scenes\credits\op_cred_00\op_cred_00.jpg"
+				"f:/quest!!!/engine/quest/data/" // Book of Gron Part One refers to several files named "f:\quest!!!\engine\quest\data\entities\dver\*"
 		};
 
 		bool matched = false;
