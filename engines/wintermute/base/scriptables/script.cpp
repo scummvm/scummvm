@@ -1636,6 +1636,66 @@ bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExter
 		return STATUS_OK;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// LoadLibraryA
+	// Used for checking library availability at games by Corbomite Games
+	// Specification: external "kernel32.dll" stdcall long LoadLibraryA(string)
+	// Known usage: LoadLibraryA("httpconnect.dll"), LoadLibraryA("dlltest.dll")
+	// Return values are only compared with zero and are never used in other APIs
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "LoadLibraryA") == 0 && strcmp(function->dll_name, "kernel32.dll") == 0) {
+		stack->correctParams(1);
+		const char *dllName = stack->pop()->getString();
+		int result = 0;
+
+		if (strcmp(dllName, "httpconnect.dll") == 0) {
+			result = 1; // some non-zero value
+		} else if (strcmp(dllName, "dlltest.dll") == 0) {
+			result = 2; // some other non-zero value
+		} else {
+			warning("LoadLibraryA(\"%s\") is not implemented", dllName);
+		}
+
+		stack->pushInt(result);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// FreeLibrary
+	// Declared at games by Corbomite Games
+	// Seems to be unused, probably was used for unloading IRC & HTTP libraries
+	// Specification: external "kernel32.dll" stdcall FreeLibrary(long)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "FreeLibrary") == 0 && strcmp(function->dll_name, "kernel32.dll") == 0) {
+		stack->correctParams(1);
+		/*int dllId =*/ stack->pop()->getInt();
+
+		// do nothing
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// GetEnvironmentVariableA
+	// Used for getting environment variables at Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest
+	// Specification: external "kernel32.dll" stdcall long GetEnvironmentVariableA(string, string, long)
+	// Known usage: GetEnvironmentVariableA(<EnvName>, <buffer>, 65535)
+	// Known EnvName values used in debug code: "USERKEY", "ALTUSERNAME", "ENHFINGERPRINT", "EXTRAINFO", "FINGERPRINT", "KEYSTRING", "STOLENKEY", "TRIAL"
+	// Known EnvName values used in licensing code: "FULLGAME"
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "GetEnvironmentVariableA") == 0 && strcmp(function->dll_name, "kernel32.dll") == 0) {
+		stack->correctParams(3);
+		const char *name = stack->pop()->getString();
+		/*ScValue *buf =*/ stack->pop();
+		/*int bufMaxLen =*/ stack->pop()->getInt();
+
+		warning("Assuming variable \"%s\" is not set", name);
+
+		stack->pushInt(0);
+		return STATUS_OK;
+	}
+
 	_gameRef->LOG(0, "External functions are not supported on this platform.");
 	stack->correctParams(0);
 	stack->pushNULL();
