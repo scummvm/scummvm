@@ -1508,6 +1508,32 @@ bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExter
 		return STATUS_OK;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// ShellExecuteA
+	// Used to open URL in browser at Wilma Tetris
+	// Specification: external "shell32.dll" stdcall long ShellExecuteA(long, string, string, string, string, long)
+	// Known usage: ShellExecuteA(0, "open", <URL>, "", "", 3)
+	// Returns value >32 on success
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "ShellExecuteA") == 0 && strcmp(function->dll_name, "shell32.dll") == 0) {
+		stack->correctParams(6);
+		int hwnd = stack->pop()->getInt();
+		const char *operation = stack->pop()->getString();
+		const char *file = stack->pop()->getString();
+		const char *params = stack->pop()->getString();
+		const char *directory = stack->pop()->getString();
+		int cmd = stack->pop()->getInt();
+
+		if (strcmp(operation, "open") == 0 && !strlen(params) && !strlen(directory)) {
+			g_system->openUrl(file);
+		} else {
+			warning("ShellExecuteA(%d,\"%s\",\"%s\",\"%s\",\"%s\",%d) is not implemented", hwnd, operation, file, params, directory, cmd);
+		}
+
+		stack->pushInt(42);
+		return STATUS_OK;
+	}
+
 	_gameRef->LOG(0, "External functions are not supported on this platform.");
 	stack->correctParams(0);
 	stack->pushNULL();
