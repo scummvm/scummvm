@@ -68,6 +68,10 @@ public:
 	virtual void uncache(uint32 index);
 	virtual bool isCached(uint32 index);
 
+	uint8 *getRawObject(uint32 index, uint32 *sizep = 0) {
+		return Pentagram::Archive::getRawObject(index, sizep);
+	}
+
 private:
 	SongInfo        *info[128];
 	XMidiFile       **songs;

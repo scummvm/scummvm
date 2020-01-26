@@ -343,6 +343,7 @@ MODULE_OBJS += \
 	ultima8/audio/audio_mixer.o \
 	ultima8/audio/audio_process.o \
 	ultima8/audio/audio_sample.o \
+	ultima8/audio/midi_player.o \
 	ultima8/audio/music_flex.o \
 	ultima8/audio/music_process.o \
 	ultima8/audio/raw_audio_sample.o \

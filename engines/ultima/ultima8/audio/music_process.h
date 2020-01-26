@@ -31,10 +31,34 @@
 namespace Ultima {
 namespace Ultima8 {
 
+class MidiPlayer;
+
 class MusicProcess : public Process {
+	enum MusicStates {
+		MUSIC_NORMAL = 1,
+		MUSIC_TRANSITION = 2,
+		MUSIC_PLAY_WANTED = 3
+	};
+private:
+	virtual void saveData(ODataSource *ods);
+
+	//! Play a music track
+	//! \param track The track number to play. Pass 0 to stop music
+	void playMusic_internal(int track);
+
+	static MusicProcess *the_music_process;
+
+	MidiPlayer *_midiPlayer;
+	MusicStates _state;
+	int _currentTrack;      // Currently playing track (don't save)
+	int _wantedTrack;       // Track we want to play (save this)
+	int _songBranches[128];
+
+	int _lastRequest;       // Last requested track
+	int _queuedTrack;       // Track queued to start after current
 public:
 	MusicProcess();
-	MusicProcess(::MidiDriver *); // Note that this does NOT delete the driver
+	MusicProcess(MidiPlayer *player); // Note that this does NOT delete the driver
 	virtual ~MusicProcess();
 
 	// p_dynamic_cast stuff
@@ -57,7 +81,7 @@ public:
 
 	//! Get the number of the current or wanted track
 	int getTrack() const {
-		return wanted_track;
+		return _wantedTrack;
 	}
 
 	virtual void run();
@@ -66,30 +90,6 @@ public:
 
 	// MusicProcess::playMusic console command
 	static void ConCmd_playMusic(const Console::ArgvType &argv);
-
-private:
-	virtual void saveData(ODataSource *ods);
-
-	//! Play a music track
-	//! \param track The track number to play. Pass 0 to stop music
-	void playMusic_internal(int track);
-
-	static MusicProcess    *the_music_process;
-
-	::MidiDriver *driver;
-	int         state;
-	int         current_track;      // Currently playing track (don't save)
-	int         wanted_track;       // Track we want to play (save this)
-	int         song_branches[128];
-
-	int         last_request;       // Last requested track
-	int         queued_track;       // Track queued to start after current
-
-	enum MusicStates {
-		MUSIC_NORMAL                = 1,
-		MUSIC_TRANSITION            = 2,
-		MUSIC_PLAY_WANTED           = 3
-	};
 };
 
 } // End of namespace Ultima8

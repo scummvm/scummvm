@@ -33,6 +33,8 @@ namespace Ultima8 {
 #define SAMPLE_RATE 22050
 #define CHANNEL_COUNT 8
 
+class MidiPlayer;
+
 namespace Pentagram {
 class AudioChannel;
 class AudioSample;
@@ -41,32 +43,17 @@ class AudioMixer {
 private:
 	static AudioMixer *the_audio_mixer;
 	Audio::Mixer *_mixer;
-	::MidiDriver *_midiDriver;
+	MidiPlayer *_midiPlayer;
 	Common::Array<AudioChannel *> _channels;
 
-/*
-	bool            audio_ok;
-	uint32          sample_rate;
-	bool            stereo;
-	MidiDriver     *midi_driver;
-	int             midi_volume;
-
-	int             num_channels;
-	AudioChannel    **channels;
-
-	void            init_midi();
-	static void     sdlAudioCallback(void *userdata, uint8 *stream, int len);
-
-	void            MixAudio(int16 *stream, uint32 bytes);
-*/
 	void            Lock();
 	void            Unlock();
 public:
 	AudioMixer(Audio::Mixer *mixer);
 	~AudioMixer();
 
-	::MidiDriver *getMidiDriver() const {
-		return _midiDriver;
+	MidiPlayer *getMidiPlayer() const {
+		return _midiPlayer;
 	}
 
 	static AudioMixer  *get_instance() {
