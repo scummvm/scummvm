@@ -95,13 +95,6 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 	if (_keysDown[kPegasusActionShowBiochip])
 		currentBits |= (kRawButtonDown << kRightFireButtonShift);
 
-	// Update mouse button state
-	// Note that we don't use EVENT_LBUTTONUP/EVENT_LBUTTONDOWN because
-	// they do not show if the button is being held down. We're treating
-	// both mouse buttons as the same for ease of use.
-	if (g_system->getEventManager()->getButtonState() != 0)
-		currentBits |= (kRawButtonDown << kTwoButtonShift);
-
 	// Update the mouse position too
 	input.setInputLocation(g_system->getEventManager()->getMousePos());
 
