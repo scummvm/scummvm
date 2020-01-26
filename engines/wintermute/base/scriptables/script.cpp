@@ -1419,6 +1419,37 @@ ScScript::TExternalFunction *ScScript::getExternal(char *name) {
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function) {
 
+	//////////////////////////////////////////////////////////////////////////
+	// getURLContent
+	// Used to download news headlines at Demo 2012 of James Peris
+	// HTTP GET result is stored in 3rd param of the call as a plain string
+	// Specification: external "geturl.dll" cdecl getURLContent(string, string, string)
+	// Known usage: getURLContent("http://www.lacosaweb.com", <DirURL>, <Buffer>)
+	// Sets 3rd param to "Request Error." on error
+	//////////////////////////////////////////////////////////////////////////
+	if (strcmp(function->name, "getURLContent") == 0 && strcmp(function->dll_name, "geturl.dll") == 0) {
+		stack->correctParams(3);
+		const char *domain = stack->pop()->getString();
+		const char *dirurl = stack->pop()->getString();
+		ScValue *buf = stack->pop();
+
+		if (strcmp(dirurl, "jpnews/demo-es1.txt") == 0) {
+			buf->setString("Ya disponible el juego completo en jamesperis.com");
+		} else if (strcmp(dirurl, "jpnews/demo-es2.txt") == 0) {
+			buf->setString("Cons\355guelo por solo 3,95 euros");
+		} else if (strcmp(dirurl, "jpnews/demo-en1.txt") == 0) {
+			buf->setString("You can get the full game in jamesperis.com");
+		} else if (strcmp(dirurl, "jpnews/demo-en2.txt") == 0) {
+			buf->setString("Get it for 3.95 euros");
+		} else {
+			warning("getURLContent(\"%s\",\"%s\",buf) is not implemented", domain, dirurl);
+			buf->setString("Request Error.");
+		}
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+		
 	_gameRef->LOG(0, "External functions are not supported on this platform.");
 	stack->correctParams(0);
 	stack->pushNULL();
