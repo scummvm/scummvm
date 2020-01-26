@@ -1547,6 +1547,95 @@ bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExter
 		return STATUS_OK;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
+	// IRC_init
+	// Used to connect to debug IRC server at games by Corbomite Games
+	// Specification: external "dlltest.dll" cdecl long IRC_init(string)
+	// Known usage: IRC_init(<PlayerName>)
+	// Known actions:
+	//  1. Connect to irc.starchat.net
+	//  2. Send "NICK ZU_<PlayerName>/"
+	//  3. Send "USER Blah ZbengHost ZbengServer ZbengRealname"
+	//  4. Send "Join #Zbeng"
+	// Returns 0 on success, other value on error
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "IRC_init") == 0 && strcmp(function->dll_name, "dlltest.dll") == 0) {
+		stack->correctParams(1);
+		/*const char *name =*/ stack->pop()->getString();
+
+		// do nothing
+
+		stack->pushInt(0);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// ChangeNick
+	// Used to update nick at debug IRC server at games by Corbomite Games
+	// Specification: external "dlltest.dll" cdecl long ChangeNick(string)
+	// Known usage: ChangeNick(<PlayerName>)
+	// Return value is never used
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "ChangeNick") == 0 && strcmp(function->dll_name, "dlltest.dll") == 0) {
+		stack->correctParams(1);
+		/*const char *name =*/ stack->pop()->getString();
+
+		// do nothing
+
+		stack->pushInt(0);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// IRC_SendString
+	// Used to send debug and chat lines to an IRC server at games by Corbomite Games
+	// Specification: external "dlltest.dll" cdecl IRC_SendString(string, string)
+	// Known usage: IRC_SendString(<Message>, <Channel>)
+	// Known Channel values are: "#Zbeng" and "#ZbengDebug"
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "IRC_SendString") == 0 && strcmp(function->dll_name, "dlltest.dll") == 0) {
+		stack->correctParams(2);
+		const char *message = stack->pop()->getString();
+		const char *channel = stack->pop()->getString();
+
+		_gameRef->LOG(0, "IRC logging: [%s] %s", channel, message);
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// IRC_GetChatStrings
+	// Used to get chat lines from an IRC server at games by Corbomite Games
+	// Specification: external "dlltest.dll" cdecl IRC_GetChatStrings(string, long)
+	// Known usage: IRC_GetChatStrings(<Buffer>, 65535)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "IRC_GetChatStrings") == 0 && strcmp(function->dll_name, "dlltest.dll") == 0) {
+		stack->correctParams(2);
+		/*const char *buffer =*/ stack->pop()->getString();
+		/*int bufferMaxSize =*/ stack->pop()->getInt();
+
+		// do nothing
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+	
+	//////////////////////////////////////////////////////////////////////////
+	// IRC_quit
+	// Used to disconnect from debug IRC server at games by Corbomite Games
+	// Specification: external "dlltest.dll" cdecl IRC_quit()
+	// Known usage: IRC_quit()
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(function->name, "IRC_quit") == 0 && strcmp(function->dll_name, "dlltest.dll") == 0) {
+		stack->correctParams(0);
+
+		// do nothing
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
 	_gameRef->LOG(0, "External functions are not supported on this platform.");
 	stack->correctParams(0);
 	stack->pushNULL();
