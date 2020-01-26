@@ -334,9 +334,11 @@ SaveStateDescriptor MohawkMetaEngine::querySaveMetaInfos(const char *target, int
 Common::Keymap *MohawkMetaEngine::initKeymap(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 
+#ifdef ENABLE_RIVEN
 	if (gameId == "riven") {
 		return Mohawk::MohawkEngine_Riven::initKeymap(target);
 	}
+#endif
 
 	return AdvancedMetaEngine::initKeymap(target);
 }
