@@ -25,7 +25,7 @@
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/audio/audio_channel.h"
-#include "ultima/ultima8/audio/midi/midi_driver.h"
+#include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "audio/decoders/raw.h"
@@ -36,7 +36,7 @@ namespace Pentagram {
 
 AudioMixer *AudioMixer::the_audio_mixer = 0;
 
-AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiDriver(0) {
+AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiPlayer(0) {
 	the_audio_mixer = this;
 	
 	_channels.resize(CHANNEL_COUNT);
@@ -52,10 +52,8 @@ void AudioMixer::createProcesses() {
 	// Create the Audio Process
 	kernel->addProcess(new AudioProcess());
 
-#ifdef TODO
 	// Create the Music Process
-	kernel->addProcess(new MusicProcess(midi_driver));
-#endif
+	kernel->addProcess(new MusicProcess(_midiPlayer));
 }
 
 AudioMixer::~AudioMixer(void) {
@@ -179,45 +177,12 @@ void AudioMixer::getVolume(int chan, int &lvol, int &rvol) {
 }
 
 void AudioMixer::openMidiOutput() {
-/*
-	if (midi_driver) return;
-	if (!audio_ok) return;
-
-	MidiDriver *new_driver = 0;
-	con->Print(MM_INFO, "Initializing MidiDriver...\n");
-
-	SettingManager *settingman = SettingManager::get_instance();
-
-	// First thing attempt to find the Midi driver as specified in the config
-	std::string desired_driver;
-	settingman->setDefault("midi_driver", "default");
-	settingman->get("midi_driver", desired_driver);
-
-	// Has the config file specified disabled midi?
-	if (audio_ok) new_driver = MidiDriver::createInstance(desired_driver, sample_rate, stereo);
-
-	// If the driver is a 'sample' producer we need to hook it to SDL
-	if (new_driver) {
-		Lock();
-		midi_driver = new_driver;
-		Unlock();
-		midi_driver->setGlobalVolume(midi_volume);
-	}
-*/
+	_midiPlayer = new MidiPlayer();
 }
 
 void AudioMixer::closeMidiOutput() {
-/*
-	if (!midi_driver) return;
-	con->Print(MM_INFO, "Destroying MidiDriver...\n");
-
-	midi_driver->destroyMidiDriver();
-
-	Lock();
-	delete midi_driver;
-	midi_driver = 0;
-	Unlock();
-*/
+	delete _midiPlayer;
+	_midiPlayer = nullptr;
 }
 
 } // End of namespace Pentagram

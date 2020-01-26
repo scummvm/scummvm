@@ -24,15 +24,11 @@
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/audio/music_flex.h"
-#include "ultima/ultima8/audio/midi/midi_driver.h"
-#include "ultima/ultima8/audio/midi/xmidi_file.h"
-#include "ultima/ultima8/audio/midi/xmidi_event_list.h"
+#include "ultima/ultima8/audio/midi_player.h"
 #include "ultima/ultima8/audio/audio_mixer.h"
-
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-
 #include "ultima/ultima8/filesys/idata_source.h"
 #include "ultima/ultima8/filesys/odata_source.h"
 
@@ -44,15 +40,15 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MusicProcess, Process)
 
 MusicProcess *MusicProcess::the_music_process = 0;
 
-MusicProcess::MusicProcess()
-	: current_track(0) {
-	std::memset(song_branches, (byte)-1, 128 * sizeof(int));
+MusicProcess::MusicProcess() : _midiPlayer(0), _state(MUSIC_NORMAL),
+		_currentTrack(0), _wantedTrack(0), _lastRequest(0), _queuedTrack(0) {
+	std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
 }
 
-MusicProcess::MusicProcess(::MidiDriver *drv) :
-	driver(drv), state(MUSIC_NORMAL), current_track(0),
-	wanted_track(0), last_request(0), queued_track(0) {
-	std::memset(song_branches, (byte)-1, 128 * sizeof(int));
+MusicProcess::MusicProcess(MidiPlayer *player) : _midiPlayer(player),
+		_state(MUSIC_NORMAL), _currentTrack(0), _wantedTrack(0),
+		_lastRequest(0), _queuedTrack(0) {
+	std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
 
 	the_music_process = this;
 	flags |= PROC_RUNPAUSED;
@@ -64,7 +60,7 @@ MusicProcess::~MusicProcess() {
 }
 
 void MusicProcess::playMusic(int track) {
-	last_request = track;
+	_lastRequest = track;
 
 	ObjectManager *om = ObjectManager::get_instance();
 	if (om && getMainActor()) {
@@ -75,8 +71,8 @@ void MusicProcess::playMusic(int track) {
 		}
 	}
 
-	if (queued_track) {
-		queued_track = track;
+	if (_queuedTrack) {
+		_queuedTrack = track;
 		return;
 	}
 
@@ -88,21 +84,19 @@ void MusicProcess::playCombatMusic(int track) {
 }
 
 void MusicProcess::queueMusic(int track) {
-	if (wanted_track != track) {
-		queued_track = track;
+	if (_wantedTrack != track) {
+		_queuedTrack = track;
 	}
 }
 
 void MusicProcess::unqueueMusic() {
-	queued_track = 0;
+	_queuedTrack = 0;
 }
 
 void MusicProcess::restoreMusic() {
-	queued_track = 0;
-	playMusic_internal(last_request);
+	_queuedTrack = 0;
+	playMusic_internal(_lastRequest);
 }
-
-
 
 void MusicProcess::playMusic_internal(int track) {
 	if (track < 0 || track > 128) {
@@ -110,31 +104,32 @@ void MusicProcess::playMusic_internal(int track) {
 		return;
 	}
 
-#ifdef TODO
 	// No current track if not playing
-	if (driver && !driver->isSequencePlaying(0))
-		wanted_track = current_track = 0;
+	if (_midiPlayer && !_midiPlayer->isPlaying())
+		_wantedTrack = _currentTrack = 0;
 
 	// It's already playing and we are not transitioning
-	if (current_track == track && state == MUSIC_NORMAL) {
+	if (_currentTrack == track && _state == MUSIC_NORMAL) {
 		return;
-	} else if (current_track == 0 || state != MUSIC_NORMAL || !driver) {
-		wanted_track = track;
-		state = MUSIC_PLAY_WANTED;
-	}
-	// We want to do a transition
-	else {
-		const MusicFlex::SongInfo *info = GameData::get_instance()->getMusic()->getSongInfo(current_track);
+	} else if (_currentTrack == 0 || _state != MUSIC_NORMAL || !_midiPlayer) {
+		_wantedTrack = track;
+		_state = MUSIC_PLAY_WANTED;
 
-		uint32 measure = driver->getSequenceCallbackData(0);
+	} else {
+		// We want to do a transition
+		// TODO: Properly handle transitions under ScummVM
+#ifdef TODO
+		const MusicFlex::SongInfo *info = GameData::get_instance()->getMusic()->getSongInfo(_currentTrack);
+
+		uint32 measure = _midiPlayer->getSequenceCallbackData(0);
 
 		// No transition info, or invalid measure, so fast change
 		if (!info || (measure >= (uint32)info->num_measures) ||
 		        !info->transitions[track] || !info->transitions[track][measure]) {
-			current_track = 0;
+			_currentTrack = 0;
 			if (track == 0) {
-				wanted_track = 0;
-				state = MUSIC_PLAY_WANTED;
+				_wantedTrack = 0;
+				_state = MUSIC_PLAY_WANTED;
 			} else {
 				playMusic_internal(track);
 			}
@@ -149,12 +144,12 @@ void MusicProcess::playMusic_internal(int track) {
 			trans = (-trans) - 1;
 			speed_hack = true;
 		} else {
-			driver->finishSequence(0);
+			_midiPlayer->finishSequence(0);
 			trans = trans - 1;
 		}
 
 		// Now get the transition midi
-		int xmidi_index = driver->isFMSynth() ? 260 : 258;
+		int xmidi_index = _midiPlayer->isFMSynth() ? 260 : 258;
 		XMidiFile *xmidi = GameData::get_instance()->getMusic()->getXMidi(xmidi_index);
 		XMidiEventList *list;
 
@@ -162,103 +157,95 @@ void MusicProcess::playMusic_internal(int track) {
 		else list = 0;
 
 		if (list) {
-			driver->startSequence(1, list, false, 255, song_branches[track]);
-			if (speed_hack) driver->setSequenceSpeed(1, 200);
-		} else driver->finishSequence(1);
-		wanted_track = track;
-
-		state = MUSIC_TRANSITION;
-	}
+			_midiPlayer->startSequence(1, list, false, 255, _songBranches[track]);
+			if (speed_hack) _midiPlayer->setSequenceSpeed(1, 200);
+		} else _midiPlayer->finishSequence(1);
 #endif
+		_wantedTrack = track;
+		_state = MUSIC_TRANSITION;
+	}
 }
 
 void MusicProcess::run() {
-#ifdef TODO
-	switch (state) {
+	switch (_state) {
 	case MUSIC_NORMAL:
-		if (driver && !driver->isSequencePlaying(0) && queued_track) {
-			wanted_track = queued_track;
-			state = MUSIC_PLAY_WANTED;
-			queued_track = 0;
+		if (_midiPlayer && !_midiPlayer->isPlaying() && _queuedTrack) {
+			_wantedTrack = _queuedTrack;
+			_state = MUSIC_PLAY_WANTED;
+			_queuedTrack = 0;
 		}
 
 		break;
 
 	case MUSIC_TRANSITION:
-		if (!driver) {
-			state = MUSIC_PLAY_WANTED;
-		} else if (!driver->isSequencePlaying(1)) {
-			state = MUSIC_PLAY_WANTED;
-			driver->pauseSequence(0);
-			driver->finishSequence(0);
+		if (!_midiPlayer) {
+			_state = MUSIC_PLAY_WANTED;
+		} else if (!_midiPlayer->isPlaying()) {
+			_state = MUSIC_PLAY_WANTED;
+			_midiPlayer->stop();
 		}
 		break;
 
 	case MUSIC_PLAY_WANTED: {
-		if (driver) {
-			driver->finishSequence(0);
-			driver->finishSequence(1);
-		}
+		if (_midiPlayer)
+			_midiPlayer->stop();
 
-		XMidiFile *xmidi = 0;
-		if (wanted_track) {
-			int xmidi_index = wanted_track;
-			if (driver && driver->isFMSynth())
+		byte *data = nullptr;
+		uint32 size = 0;
+
+		if (_wantedTrack) {
+			int xmidi_index = _wantedTrack;
+			if (_midiPlayer && _midiPlayer->isFMSynth())
 				xmidi_index += 128;
 
-			xmidi = GameData::get_instance()->getMusic()->getXMidi(xmidi_index);
+			data = GameData::get_instance()->getMusic()->getRawObject(xmidi_index, &size);
 		}
 
-		if (xmidi) {
-			XMidiEventList *list = xmidi->GetEventList(0);
-			if (song_branches[wanted_track] != -1) {
-				XMidiEvent *event = list->findBranchEvent(song_branches[wanted_track]);
-				if (!event) song_branches[wanted_track] = 0;
-			}
-
-			if (driver) {
+		if (data) {
+			if (_midiPlayer) {
 				// if there's a track queued, only play this one once
-				bool repeat = (queued_track == 0);
-				driver->startSequence(0, list, repeat, 255, song_branches[wanted_track]);
+				bool repeat = (_queuedTrack == 0);
+				_midiPlayer->play(data, size);
+				_midiPlayer->setLooping(repeat);
 			}
-			current_track = wanted_track;
-			song_branches[wanted_track]++;
+
+			_currentTrack = _wantedTrack;
+			_songBranches[_wantedTrack]++;
 		} else {
-			current_track = wanted_track = 0;
+			_currentTrack = _wantedTrack = 0;
 		}
-		state = MUSIC_NORMAL;
+		_state = MUSIC_NORMAL;
 	}
 	break;
 	}
-#endif
 }
 
 void MusicProcess::saveData(ODataSource *ods) {
 	Process::saveData(ods);
 
-	ods->write4(static_cast<uint32>(wanted_track));
-	ods->write4(static_cast<uint32>(last_request));
-	ods->write4(static_cast<uint32>(queued_track));
+	ods->write4(static_cast<uint32>(_wantedTrack));
+	ods->write4(static_cast<uint32>(_lastRequest));
+	ods->write4(static_cast<uint32>(_queuedTrack));
 }
 
 bool MusicProcess::loadData(IDataSource *ids, uint32 version) {
 	if (!Process::loadData(ids, version)) return false;
 
-	wanted_track = static_cast<int32>(ids->read4());
+	_wantedTrack = static_cast<int32>(ids->read4());
 
 	if (version >= 4) {
-		last_request = static_cast<int32>(ids->read4());
-		queued_track = static_cast<int32>(ids->read4());
+		_lastRequest = static_cast<int32>(ids->read4());
+		_queuedTrack = static_cast<int32>(ids->read4());
 	} else {
-		last_request = wanted_track;
-		queued_track = 0;
+		_lastRequest = _wantedTrack;
+		_queuedTrack = 0;
 	}
 
-	state = MUSIC_PLAY_WANTED;
+	_state = MUSIC_PLAY_WANTED;
 
 	the_music_process = this;
 
-	driver = Pentagram::AudioMixer::get_instance()->getMidiDriver();
+	_midiPlayer = Pentagram::AudioMixer::get_instance()->getMidiPlayer();
 
 	return true;
 }
