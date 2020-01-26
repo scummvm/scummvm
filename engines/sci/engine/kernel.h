@@ -585,6 +585,7 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv);
 reg_t kListSort(EngineState *s, int argc, reg_t *argv);
 
 reg_t kEditText(EngineState *s, int argc, reg_t *argv);
+reg_t kInputText(EngineState *s, int argc, reg_t *argv);
 reg_t kSetScroll(EngineState *s, int argc, reg_t *argv);
 
 reg_t kPaletteSetFromResource32(EngineState *s, int argc, reg_t *argv);
