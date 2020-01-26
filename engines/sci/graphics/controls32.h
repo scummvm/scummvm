@@ -401,6 +401,7 @@ private:
 #pragma mark Text input control
 public:
 	reg_t kernelEditText(const reg_t controlObject);
+	reg_t kernelInputText(const reg_t textObject, const reg_t titleTextObject, const int16 maxTextLength);
 
 private:
 	/**
@@ -429,6 +430,12 @@ private:
 	 * erased.
 	 */
 	void flashCursor(TextEditor &editor);
+
+	/**
+	* Processes an edit text event during a text box event loop. Returns true if
+	* the event changed the text.
+	*/
+	bool processEditTextEvent(const SciEvent &event, TextEditor &editor, ScreenItem *screenItem, bool &clearTextOnInput);
 
 #pragma mark -
 #pragma mark Scrollable window control

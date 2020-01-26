@@ -43,6 +43,7 @@ public:
 	virtual byte getHeight() { return 0; }
 	virtual bool isDoubleByte(uint16 chr) { return false; }
 	virtual byte getCharWidth(uint16 chr) { return 0; }
+	virtual byte getCharHeight(uint16 chr) { return 0; }
 	virtual void draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput) {}
 	virtual void drawToBuffer(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput, byte *buffer, int16 width, int16 height) {}
 };
