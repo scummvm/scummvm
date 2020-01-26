@@ -24,7 +24,7 @@
 
 namespace Common {
 
-const char *kStandardActionInteract      = "INTCT";
+const char *kStandardActionInteract      = "INTRCT";
 const char *kStandardActionSkip          = "SKIP";
 const char *kStandardActionPause         = "PAUSE";
 const char *kStandardActionMoveForward   = "FWD";

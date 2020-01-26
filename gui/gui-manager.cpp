@@ -33,6 +33,7 @@
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "gui/gui-manager.h"
 #include "gui/dialog.h"
@@ -116,8 +117,14 @@ Common::Keymap *GuiManager::getKeymap() const {
 
 	Action *act;
 
+	act = new Action(Common::kStandardActionInteract, _("Interact"));
+	act->addDefaultInputMapping("JOY_A");
+	act->setLeftClickEvent();
+	guiMap->addAction(act);
+
 	act = new Action("CLOS", _("Close"));
 	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
 	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
 	guiMap->addAction(act);
 

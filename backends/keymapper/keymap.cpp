@@ -115,11 +115,16 @@ Keymap::ActionArray Keymap::getMappedActions(const Event &event) const {
 	switch (event.type) {
 	case EVENT_KEYDOWN:
 	case EVENT_KEYUP: {
-		HardwareInput hardwareInput("", event.kbd, "");
+		HardwareInput hardwareInput = HardwareInput::createKeyboard("", event.kbd, "");
+		return _hwActionMap[hardwareInput];
+	}
+	case EVENT_JOYBUTTON_DOWN:
+	case EVENT_JOYBUTTON_UP: {
+		HardwareInput hardwareInput = HardwareInput::createJoystick("", event.joystick.button, "");
 		return _hwActionMap[hardwareInput];
 	}
 	case EVENT_CUSTOM_BACKEND_HARDWARE: {
-		HardwareInput hardwareInput("", event.customType, "");
+		HardwareInput hardwareInput = HardwareInput::createCustom("", event.customType, "");
 		return _hwActionMap[hardwareInput];
 	}
 	default:

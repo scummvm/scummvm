@@ -136,37 +136,6 @@ void InputDeviceManager::waitInput(const InputBits filter) {
 	}
 }
 
-PegasusAction InputDeviceManager::convertJoystickToKey(uint joybutton) {
-	switch (joybutton) {
-	case Common::JOYSTICK_BUTTON_A:
-		return kPegasusActionInteract;
-	case Common::JOYSTICK_BUTTON_B:
-		// nothing
-		break;
-	case Common::JOYSTICK_BUTTON_X:
-		return kPegasusActionShowInfoScreen;
-	case Common::JOYSTICK_BUTTON_Y:
-		return kPegasusActionToggleCenterDisplay;
-	case Common::JOYSTICK_BUTTON_LEFT_SHOULDER:
-		return kPegasusActionShowInventory;
-	case Common::JOYSTICK_BUTTON_RIGHT_SHOULDER:
-		return kPegasusActionShowBiochip;
-	case Common::JOYSTICK_BUTTON_BACK:
-		return kPegasusActionShowPauseMenu;
-	case Common::JOYSTICK_BUTTON_DPAD_UP:
-		return kPegasusActionUp;
-	case Common::JOYSTICK_BUTTON_DPAD_DOWN:
-		return kPegasusActionDown;
-	case Common::JOYSTICK_BUTTON_DPAD_LEFT:
-		return kPegasusActionLeft;
-	case Common::JOYSTICK_BUTTON_DPAD_RIGHT:
-		return kPegasusActionRight;
-	default:
-		break;
-	}
-	return kPegasusActionNone;
-}
-
 bool InputDeviceManager::notifyEvent(const Common::Event &event) {
 	if (GUI::GuiManager::instance().isActive()) {
 		// For some reason, the engine hooks in the event system using an EventObserver.
@@ -200,16 +169,6 @@ bool InputDeviceManager::notifyEvent(const Common::Event &event) {
 		// Set the key to up if we have it
 		if (event.customType != kPegasusActionNone && event.customType < kPegasusActionCount)
 			_keysDown[event.customType] = false;
-		break;
-	case Common::EVENT_JOYAXIS_MOTION:
-		break;
-	case Common::EVENT_JOYBUTTON_DOWN:
-		if (convertJoystickToKey(event.joystick.button) != kPegasusActionNone)
-			_keysDown[convertJoystickToKey(event.joystick.button)] = true;
-		break;
-	case Common::EVENT_JOYBUTTON_UP:
-		if (convertJoystickToKey(event.joystick.button) != kPegasusActionNone)
-			_keysDown[convertJoystickToKey(event.joystick.button)] = false;
 		break;
 	default:
 		break;

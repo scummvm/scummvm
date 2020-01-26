@@ -41,6 +41,7 @@
 
 #include "backends/events/default/default-events.h"
 #include "backends/events/sdl/sdl-events.h"
+#include "backends/keymapper/hardware-input.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
@@ -396,6 +397,20 @@ Common::KeymapArray OSystem_SDL::getGlobalKeymaps() {
 	globalMaps.push_back(graphicsManager->getKeymap());
 
 	return globalMaps;
+}
+
+Common::HardwareInputSet *OSystem_SDL::getHardwareInputSet() {
+	using namespace Common;
+
+	CompositeHardwareInputSet *inputSet = new CompositeHardwareInputSet();
+	inputSet->addHardwareInputSet(new KeyboardHardwareInputSet(defaultKeys, defaultModifiers));
+
+	bool joystickSupportEnabled = ConfMan.getInt("joystick_num") >= 0;
+	if (joystickSupportEnabled) {
+		inputSet->addHardwareInputSet(new JoystickHardwareInputSet(defaultJoystickButtons));
+	}
+
+	return inputSet;
 }
 
 void OSystem_SDL::logMessage(LogMessageType::Type type, const char *message) {

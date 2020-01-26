@@ -309,12 +309,14 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	Action *act;
 	act = new Action("MENU", _("Menu"));
 	act->addDefaultInputMapping("C+F5");
+	act->addDefaultInputMapping("JOY_START");
 	act->setEvent(EVENT_MAINMENU);
 	globalKeymap->addAction(act);
 
 #ifdef ENABLE_VKEYBD
 	act = new Action("VIRT", _("Display keyboard"));
 	act->addDefaultInputMapping("C+F7");
+	act->addDefaultInputMapping("JOY_BACK");
 	act->setEvent(EVENT_VIRTUAL_KEYBOARD);
 	globalKeymap->addAction(act);
 #endif

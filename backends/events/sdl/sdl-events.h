@@ -155,8 +155,6 @@ protected:
 	virtual bool handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event);
 #endif
 
-	bool shouldGenerateMouseEvents();
-
 	//@}
 
 	/**
