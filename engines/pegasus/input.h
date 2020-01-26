@@ -71,8 +71,6 @@ public:
 
 	void pumpEvents();
 
-	PegasusAction convertJoystickToKey(uint joybutton);
-
 protected:
 	friend class Common::Singleton<SingletonBaseType>;
 

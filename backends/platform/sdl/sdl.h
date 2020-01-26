@@ -64,6 +64,7 @@ public:
 	virtual void quit();
 	virtual void fatalError();
 	Common::KeymapArray getGlobalKeymaps() override;
+	Common::HardwareInputSet *getHardwareInputSet() override;
 
 	// Logging
 	virtual void logMessage(LogMessageType::Type type, const char *message);

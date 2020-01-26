@@ -33,23 +33,9 @@
 #include "engines/engine.h"
 #include "gui/gui-manager.h"
 
-// FIXME move joystick defines out and replace with confile file options
-// we should really allow users to map any key to a joystick button
-
 // #define JOY_INVERT_Y
 #define JOY_XAXIS 0
 #define JOY_YAXIS 1
-// buttons
-#define JOY_BUT_LMOUSE 0
-#define JOY_BUT_RMOUSE 2
-#define JOY_BUT_ESCAPE 3
-#define JOY_BUT_PERIOD 1
-#define JOY_BUT_SPACE 4
-#define JOY_BUT_F5 5
-#ifdef ENABLE_VKEYBD
-#define JOY_BUT_VKEYBOARD 7
-#endif
-
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #define GAMECONTROLLERDB_FILE "gamecontrollerdb.txt"
@@ -881,17 +867,6 @@ void SdlEventSource::closeJoystick() {
 	}
 }
 
-bool SdlEventSource::shouldGenerateMouseEvents() {
-	// Engine doesn't support joystick -> emulate mouse events
-	if (g_engine && !g_engine->hasFeature(Engine::kSupportsJoystick)) {
-		return true;
-	}
-	if (g_gui.isActive()) {
-		return true;
-	}
-	return false;
-}
-
 int SdlEventSource::mapSDLJoystickButtonToOSystem(Uint8 sdlButton) {
 	Common::JoystickButton osystemButtons[] = {
 	    Common::JOYSTICK_BUTTON_A,
@@ -914,91 +889,27 @@ int SdlEventSource::mapSDLJoystickButtonToOSystem(Uint8 sdlButton) {
 }
 
 bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
-	if (!shouldGenerateMouseEvents()) {
-		event.type = Common::EVENT_JOYBUTTON_DOWN;
-		event.joystick.button = mapSDLJoystickButtonToOSystem(ev.jbutton.button);
-		return true;
+	int button = mapSDLJoystickButtonToOSystem(ev.jbutton.button);
+	if (button < 0) {
+		return false;
 	}
 
-	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
-		event.type = Common::EVENT_LBUTTONDOWN;
-		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
-		event.type = Common::EVENT_RBUTTONDOWN;
-		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-	} else {
-		event.type = Common::EVENT_KEYDOWN;
-		switch (ev.jbutton.button) {
-		case JOY_BUT_ESCAPE:
-			event.kbd.keycode = Common::KEYCODE_ESCAPE;
-			event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod)ev.key.keysym.mod, 0);
-			break;
-		case JOY_BUT_PERIOD:
-			event.kbd.keycode = Common::KEYCODE_PERIOD;
-			event.kbd.ascii = mapKey(SDLK_PERIOD, (SDLMod)ev.key.keysym.mod, 0);
-			break;
-		case JOY_BUT_SPACE:
-			event.kbd.keycode = Common::KEYCODE_SPACE;
-			event.kbd.ascii = mapKey(SDLK_SPACE, (SDLMod)ev.key.keysym.mod, 0);
-			break;
-		case JOY_BUT_F5:
-			event.kbd.keycode = Common::KEYCODE_F5;
-			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod)ev.key.keysym.mod, 0);
-			break;
-#ifdef ENABLE_VKEYBD
-		case JOY_BUT_VKEYBOARD: // Toggles virtual keyboard
-			event.type = Common::EVENT_VIRTUAL_KEYBOARD;
-			break;
-#endif
-		default:
-			break;
-		}
-		return true;
-	}
+	event.type = Common::EVENT_JOYBUTTON_DOWN;
+	event.joystick.button = button;
+
+	return true;
 }
 
 bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
-	if (!shouldGenerateMouseEvents()) {
-		event.type = Common::EVENT_JOYBUTTON_UP;
-		event.joystick.button = mapSDLJoystickButtonToOSystem(ev.jbutton.button);
-		return true;
+	int button = mapSDLJoystickButtonToOSystem(ev.jbutton.button);
+	if (button < 0) {
+		return false;
 	}
 
-	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
-		event.type = Common::EVENT_LBUTTONUP;
-		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
-		event.type = Common::EVENT_RBUTTONUP;
-		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-	} else {
-		event.type = Common::EVENT_KEYUP;
-		switch (ev.jbutton.button) {
-		case JOY_BUT_ESCAPE:
-			event.kbd.keycode = Common::KEYCODE_ESCAPE;
-			event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod)ev.key.keysym.mod, 0);
-			break;
-		case JOY_BUT_PERIOD:
-			event.kbd.keycode = Common::KEYCODE_PERIOD;
-			event.kbd.ascii = mapKey(SDLK_PERIOD, (SDLMod)ev.key.keysym.mod, 0);
-			break;
-		case JOY_BUT_SPACE:
-			event.kbd.keycode = Common::KEYCODE_SPACE;
-			event.kbd.ascii = mapKey(SDLK_SPACE, (SDLMod)ev.key.keysym.mod, 0);
-			break;
-		case JOY_BUT_F5:
-			event.kbd.keycode = Common::KEYCODE_F5;
-			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod)ev.key.keysym.mod, 0);
-			break;
-#ifdef ENABLE_VKEYBD
-		case JOY_BUT_VKEYBOARD: // Toggles virtual keyboard
-			// Handled in key down
-			break;
-#endif
-		default:
-			break;
-		}
-		return true;
-	}
+	event.type = Common::EVENT_JOYBUTTON_UP;
+	event.joystick.button = button;
+
+	return true;
 }
 
 bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
@@ -1036,9 +947,6 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	}
 
 bool SdlEventSource::handleJoyHatMotion(SDL_Event &ev, Common::Event &event) {
-	if (shouldGenerateMouseEvents())
-		return false;
-
 	event.type = Common::EVENT_JOYBUTTON_UP;
 	HANDLE_HAT_UP(ev.jhat.value, _lastHatPosition, SDL_HAT_UP, Common::JOYSTICK_BUTTON_DPAD_UP)
 	HANDLE_HAT_UP(ev.jhat.value, _lastHatPosition, SDL_HAT_DOWN, Common::JOYSTICK_BUTTON_DPAD_DOWN)
@@ -1121,102 +1029,20 @@ int SdlEventSource::mapSDLControllerButtonToOSystem(Uint8 sdlButton) {
 }
 
 bool SdlEventSource::handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp) {
-	using namespace Common;
+	int button = mapSDLControllerButtonToOSystem(ev.cbutton.button);
 
-	struct ControllerEventMapping {
-		EventType normalType;
-		KeyState normalKeystate;
-		EventType modifierType;
-		KeyState modifierKeystate;
-	};
-
-	static const ControllerEventMapping mapping[] = {
-			// SDL_CONTROLLER_BUTTON_A: Left mouse button
-			{ EVENT_LBUTTONDOWN, KeyState(), EVENT_LBUTTONDOWN, KeyState() },
-			// SDL_CONTROLLER_BUTTON_B: Right mouse button
-			{ EVENT_RBUTTONDOWN, KeyState(), EVENT_RBUTTONDOWN, KeyState() },
-			// SDL_CONTROLLER_BUTTON_X: Period (+R_trigger: Space)
-			{ EVENT_KEYDOWN, KeyState(KEYCODE_PERIOD, '.'), EVENT_KEYDOWN, KeyState(KEYCODE_SPACE, ASCII_SPACE) },
-			// SDL_CONTROLLER_BUTTON_Y: Escape (+R_trigger: Return)
-			{ EVENT_KEYDOWN, KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE), EVENT_KEYDOWN, KeyState(KEYCODE_RETURN, ASCII_RETURN) },
-			// SDL_CONTROLLER_BUTTON_BACK: Virtual keyboard (+R_trigger: Predictive Input Dialog)
-#ifdef ENABLE_VKEYBD
-			{ EVENT_VIRTUAL_KEYBOARD, KeyState(), EVENT_PREDICTIVE_DIALOG, KeyState() },
-#else
-			{ EVENT_INVALID, KeyState(), EVENT_PREDICTIVE_DIALOG, KeyState() },
-#endif
-			// SDL_CONTROLLER_BUTTON_GUIDE: Unmapped
-			{ EVENT_INVALID, KeyState(), EVENT_INVALID, KeyState() },
-			// SDL_CONTROLLER_BUTTON_START: ScummVM in game menu
-			{ EVENT_MAINMENU, KeyState(), EVENT_MAINMENU, KeyState() },
-			// SDL_CONTROLLER_BUTTON_LEFTSTICK: Unmapped
-			{ EVENT_INVALID, KeyState(), EVENT_INVALID, KeyState() },
-			// SDL_CONTROLLER_BUTTON_RIGHTSTICK: Unmapped
-			{ EVENT_INVALID, KeyState(), EVENT_INVALID, KeyState() },
-			// SDL_CONTROLLER_BUTTON_LEFTSHOULDER: Game menu
-			{ EVENT_KEYDOWN, KeyState(KEYCODE_F5, ASCII_F5), EVENT_KEYDOWN, KeyState(KEYCODE_F5, ASCII_F5) },
-			// SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: Modifier + Shift
-			{ EVENT_KEYDOWN, KeyState(KEYCODE_INVALID, 0, KBD_SHIFT), EVENT_KEYDOWN, KeyState(KEYCODE_INVALID, 0, 0) },
-			// SDL_CONTROLLER_BUTTON_DPAD_UP: Up (+R_trigger: Up+Right)
-			{ EVENT_KEYDOWN, KeyState(KEYCODE_KP8, 0), EVENT_KEYDOWN, KeyState(KEYCODE_KP9, 0) },
-			// SDL_CONTROLLER_BUTTON_DPAD_DOWN: Down (+R_trigger: Down+Left)
-			{ EVENT_KEYDOWN, KeyState(KEYCODE_KP2, 0), EVENT_KEYDOWN, KeyState(KEYCODE_KP1, 0) },
-			// SDL_CONTROLLER_BUTTON_DPAD_LEFT: Left (+R_trigger: Up+Left)
-			{ EVENT_KEYDOWN, KeyState(KEYCODE_KP4, 0), EVENT_KEYDOWN, KeyState(KEYCODE_KP7, 0) },
-			// SDL_CONTROLLER_BUTTON_DPAD_RIGHT: Right (+R_trigger: Down+Right)
-			{ EVENT_KEYDOWN, KeyState(KEYCODE_KP6, 0), EVENT_KEYDOWN, KeyState(KEYCODE_KP3, 0) }
-	};
-
-	if (!shouldGenerateMouseEvents()) {
-		event.type = buttonUp ? Common::EVENT_JOYBUTTON_UP : Common::EVENT_JOYBUTTON_DOWN;
-		event.joystick.button = mapSDLControllerButtonToOSystem(ev.cbutton.button);
-		if (event.joystick.button == -1)
-				return false;
-
-		return true;
-	}
-
-	if (ev.cbutton.button > SDL_CONTROLLER_BUTTON_DPAD_RIGHT) {
-		warning("Unknown SDL controller button: '%d'", ev.cbutton.button);
+	if (button < 0)
 		return false;
-	}
 
-	if (!_km.modifier) {
-		event.type = mapping[ev.cbutton.button].normalType;
-		event.kbd = mapping[ev.cbutton.button].normalKeystate;
-	} else {
-		event.type = mapping[ev.cbutton.button].modifierType;
-		event.kbd = mapping[ev.cbutton.button].modifierKeystate;
-	}
+	event.type = buttonUp ? Common::EVENT_JOYBUTTON_UP : Common::EVENT_JOYBUTTON_DOWN;
+	event.joystick.button = button;
 
-	// Setting the mouse speed modifier after filling the event structure above
-	// ensures that the shift key events are correctly handled
-	if (ev.cbutton.button == SDL_CONTROLLER_BUTTON_RIGHTSHOULDER) {
-		// Right shoulder is the modifier button that makes the mouse go slower
-		// and allows access to an extended layout while pressed.
+	if (event.joystick.button == Common::JOYSTICK_BUTTON_RIGHT_SHOULDER) {
+		// Right shoulder is the modifier button that makes the mouse go slower.
 		_km.modifier = !buttonUp;
 	}
 
-	if (event.type == EVENT_LBUTTONDOWN || event.type == EVENT_RBUTTONDOWN) {
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-	}
-
-	if (buttonUp) {
-		// The event mapping table is for button down events. If we received a button up event,
-		// transform the event type to the corresponding up type.
-		if (event.type == EVENT_KEYDOWN) {
-			event.type = EVENT_KEYUP;
-		} else if (event.type == EVENT_LBUTTONDOWN) {
-			event.type = EVENT_LBUTTONUP;
-		} else if (event.type == EVENT_RBUTTONDOWN) {
-			event.type = EVENT_RBUTTONUP;
-		} else {
-			// Handled in key down
-			event.type = EVENT_INVALID;
-		}
-	}
-
-	return event.type != EVENT_INVALID;
+	return true;
 }
 
 bool SdlEventSource::handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event) {

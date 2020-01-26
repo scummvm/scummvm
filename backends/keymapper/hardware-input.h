@@ -38,9 +38,11 @@ enum HardwareInputType {
 	/** Empty / invalid input type */
 	kHardwareInputTypeInvalid,
 	/** Input that sends single events */
-	kHardwareInputTypeGeneric,
-	/** Input that usually send -up and -down events */
-	kHardwareInputTypeKeyboard
+	kHardwareInputTypeCustom,
+	/** Keyboard input that sends -up and -down events */
+	kHardwareInputTypeKeyboard,
+	/** Joystick input that sends -up and -down events */
+	kHardwareInputTypeJoystick
 };
 
 /**
@@ -73,11 +75,33 @@ struct HardwareInput {
 	HardwareInput()
 		: inputCode(0), type(kHardwareInputTypeInvalid) { }
 
-	HardwareInput(const String &i, HardwareInputCode ic, const String &desc)
-		: id(i), inputCode(ic), description(desc), type(kHardwareInputTypeGeneric) { }
+	static HardwareInput createCustom(const String &i, HardwareInputCode ic, const String &desc) {
+		HardwareInput hardwareInput;
+		hardwareInput.id = i;
+		hardwareInput.description = desc;
+		hardwareInput.type = kHardwareInputTypeCustom;
+		hardwareInput.inputCode = ic;
+		return hardwareInput;
+	}
 
-	HardwareInput(const String &i, KeyState ky, const String &desc)
-		: id(i), inputCode(0), key(ky), description(desc), type(kHardwareInputTypeKeyboard) { }
+	static HardwareInput createKeyboard(const String &i, KeyState ky, const String &desc) {
+		HardwareInput hardwareInput;
+		hardwareInput.id = i;
+		hardwareInput.description = desc;
+		hardwareInput.type = kHardwareInputTypeKeyboard;
+		hardwareInput.inputCode = 0;
+		hardwareInput.key = ky;
+		return hardwareInput;
+	}
+
+	static HardwareInput createJoystick(const String &i, uint8 button, const String &desc) {
+		HardwareInput hardwareInput;
+		hardwareInput.id = i;
+		hardwareInput.description = desc;
+		hardwareInput.type = kHardwareInputTypeJoystick;
+		hardwareInput.inputCode = button;
+		return hardwareInput;
+	}
 };
 
 /**
@@ -153,6 +177,21 @@ private:
 };
 
 /**
+ * A joystick input device
+ */
+class JoystickHardwareInputSet : public HardwareInputSet {
+public:
+	JoystickHardwareInputSet(const HardwareInputTableEntry *buttonEntries);
+
+	// HardwareInputSet API
+	HardwareInput findHardwareInput(const String &id) const override;
+	HardwareInput findHardwareInput(const Event &event) const override;
+
+private:
+	const HardwareInputTableEntry *_buttonEntries;
+};
+
+/**
  * A custom backend input device
  *
  * @todo This is currently unused. Perhaps it should be removed.
@@ -196,6 +235,9 @@ extern const KeyTableEntry defaultKeys[];
 
 /** A standard set of keyboard modifiers */
 extern const ModifierTableEntry defaultModifiers[];
+
+/** A standard set of joystick buttons based on the ScummVM event model */
+extern const HardwareInputTableEntry defaultJoystickButtons[];
 
 } // End of namespace Common
 

@@ -191,7 +191,7 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &ev) const {
 	if (ev.type == EVENT_CUSTOM_BACKEND_HARDWARE) {
 		return kIncomingEventInstant;
-	} else if (ev.type == EVENT_KEYDOWN) {
+	} else if (ev.type == EVENT_KEYDOWN || ev.type == EVENT_JOYBUTTON_DOWN) {
 		return kIncomingEventStart;
 	} else {
 		return kIncomingEventEnd;
@@ -242,6 +242,9 @@ EventType Keymapper::convertStartToEnd(EventType type) {
 	case EVENT_MBUTTONDOWN:
 		result = EVENT_MBUTTONUP;
 		break;
+	case EVENT_JOYBUTTON_DOWN:
+		result = EVENT_JOYBUTTON_UP;
+		break;
 	case EVENT_CUSTOM_BACKEND_ACTION_START:
 		result = EVENT_CUSTOM_BACKEND_ACTION_END;
 		break;
@@ -282,12 +285,6 @@ void Keymapper::hardcodedEventMapping(Event ev) {
 		}
 	}
 #endif
-
-	if (ev.type == EVENT_JOYBUTTON_DOWN) {
-		if (ev.joystick.button == JOYSTICK_BUTTON_START || ev.joystick.button == JOYSTICK_BUTTON_GUIDE) {
-			ev.type = EVENT_MAINMENU;
-		}
-	}
 }
 
 void DelayedEventSource::scheduleEvent(const Event &ev, uint32 delayMillis) {

@@ -50,27 +50,13 @@ const char *MetaEngine::getSavegamePattern(const char *target) const {
 Common::Keymap *MetaEngine::initKeymap(const char *target) const {
 	using namespace Common;
 
-	Keymap *const engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "engine-default");
-
-	// Since the game has multiple built-in keys for each of these anyway,
-	// this just attempts to remap one of them.
-	const KeyActionEntry keyActionEntries[] = {
-		{ "PAUS", KeyState(KEYCODE_SPACE, ' ', 0),           "SPACE",  _("Pause")     },
-		{ "SKCT", KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0), "ESCAPE", _("Skip")      },
-		{ "SKLI", KeyState(KEYCODE_PERIOD, '.', 0),          "PERIOD", _("Skip line") }
-	};
-
-	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
-		Action *const act = new Action(keyActionEntries[i].id, keyActionEntries[i].description);
-		act->setKeyEvent(keyActionEntries[i].ks);
-		act->addDefaultInputMapping(keyActionEntries[i].defaultHwId);
-		engineKeyMap->addAction(act);
-	}
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "engine-default");
 
 	Action *act;
 
 	act = new Action("LCLK", _("Left Click"));
 	act->setLeftClickEvent();
+	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
 	act = new Action("MCLK", _("Middle Click"));
@@ -79,6 +65,57 @@ Common::Keymap *MetaEngine::initKeymap(const char *target) const {
 
 	act = new Action("RCLK", _("Right Click"));
 	act->setRightClickEvent();
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("PAUS", _("Pause"));
+	act->setKeyEvent(KeyState(KEYCODE_SPACE, ' '));
+	act->addDefaultInputMapping("SPACE");
+	engineKeyMap->addAction(act);
+
+	act = new Action("MNU", _("Game menu"));
+	act->setKeyEvent(KeyState(KEYCODE_F5, ASCII_F5));
+	act->addDefaultInputMapping("F5");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKCT", _("Skip"));
+	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
+	act->addDefaultInputMapping("ESCAPE");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKLI", _("Skip line"));
+	act->setKeyEvent(KeyState(KEYCODE_PERIOD, '.'));
+	act->addDefaultInputMapping("PERIOD");
+	engineKeyMap->addAction(act);
+
+	act = new Action("PIND", _("Predictive input dialog"));
+	act->setEvent(EVENT_PREDICTIVE_DIALOG);
+	engineKeyMap->addAction(act);
+
+	act = new Action("RETURN", _("Confirm"));
+	act->setKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN));
+	act->addDefaultInputMapping("RETURN");
+	engineKeyMap->addAction(act);
+
+	act = new Action("UP", _("Up"));
+	act->setKeyEvent(KEYCODE_KP8);
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Action("DOWN", _("Down"));
+	act->setKeyEvent(KEYCODE_KP2);
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Action("LEFT", _("Left"));
+	act->setKeyEvent(KEYCODE_KP4);
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("RIGHT", _("Right"));
+	act->setKeyEvent(KEYCODE_KP6);
+	act->addDefaultInputMapping("JOY_RIGHT");
 	engineKeyMap->addAction(act);
 
 	return engineKeyMap;
