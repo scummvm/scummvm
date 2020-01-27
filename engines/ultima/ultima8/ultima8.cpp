@@ -106,15 +106,14 @@
 #include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/world/actors/ambush_process.h"
 #include "ultima/ultima8/world/actors/pathfinder.h"
-
 #include "ultima/ultima8/gumps/movie_gump.h"
 #include "ultima/ultima8/gumps/shape_viewer_gump.h"
 #include "ultima/ultima8/audio/audio_mixer.h"
 #include "ultima/ultima8/graphics/xform_blend.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
-
 #include "ultima/ultima8/misc/util.h"
+#include "ultima/ultima8/audio/midi_player.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -1552,6 +1551,16 @@ bool Ultima8Engine::newGame(const std::string &savegame) {
 	settingman->set("lastSave", savegame);
 
 	return true;
+}
+
+void Ultima8Engine::syncSoundSettings() {
+	UltimaEngine::syncSoundSettings();
+
+	// Update music volume
+	Pentagram::AudioMixer *audioMixer = Pentagram::AudioMixer::get_instance();	
+	MidiPlayer *midiPlayer = audioMixer ? audioMixer->getMidiPlayer() : nullptr;
+	if (midiPlayer)
+		midiPlayer->setVolume(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
 }
 
 bool Ultima8Engine::loadGame() {

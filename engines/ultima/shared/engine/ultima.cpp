@@ -52,6 +52,9 @@ bool UltimaEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
 
+	// Call syncSoundSettings to get default volumes set
+	syncSoundSettings();
+
 	// Check if the game uses data from te ultima.dat archive
 	if (!isDataRequired(folder, reqMajorVersion, reqMinorVersion))
 		return true;
