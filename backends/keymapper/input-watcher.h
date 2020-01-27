@@ -31,7 +31,7 @@
 
 namespace Common {
 
-class HardwareInput;
+struct HardwareInput;
 
 /**
  * Watches events for inputs that can be bound to actions

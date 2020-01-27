@@ -36,7 +36,7 @@
 namespace Common {
 
 class Action;
-class HardwareInput;
+struct HardwareInput;
 class HardwareInputSet;
 class KeymapperDefaultBindings;
 

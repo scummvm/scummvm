@@ -39,7 +39,7 @@ const char *const kGuiKeymapName = "gui";
 const char *const kGlobalKeymapName = "global";
 
 class Action;
-class HardwareInput;
+struct HardwareInput;
 class HardwareInputSet;
 class KeymapperDefaultBindings;
 
