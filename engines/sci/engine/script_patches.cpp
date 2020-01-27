@@ -4442,6 +4442,65 @@ static const uint16 kq6CDPatchWallFlowerDanceFix[] = {
 	PATCH_END
 };
 
+// KQ6 truncates messages longer than 400 characters in the CD and Mac versions.
+//  This is most prominent when reading Cassima's letter to Alexander. When the
+//  Messager class was upgraded to support audio, a 400 character buffer was
+//  added to read messages into, but KQ6 has messages as long as 602 characters.
+//  This limitation is in other games with this same Messager class. LB2, for
+//  example, has the same class but no messages beyond 400 characters.
+//
+// We fix this by increasing the temporary variables in Messager:sayNext from
+//  202 to 303 to accommodate the longest message. This patch implicitly depends
+//  on the Audio+Subtitle patches below, as they coincidentally alter sayNext
+//  in a way that this patch would otherwise have to. The CD version uses
+//  temp201, which we would normally have to patch to temp302 since we're
+//  expanding the buffer before it, but the Audio+Subtitle patches happen to
+//  remove or disable all use of this variable.
+//
+// Applies to: PC CD, Macintosh
+// Responsible method: Messager:sayNext
+// Fixes bug: #10682
+static const uint16 kq6SignatureTruncatedMessagesFix[] = {
+	SIG_MAGICDWORD,
+	0x3f, 0xca,                         // link ca
+	0x87, 0x00,                         // lap 00
+	0x31, 0x18,                         // bnt 18
+	0x39, 0x07,                         // pushi 07
+	0x76,                               // push0
+	0x8f, 0x01,                         // lsp 01
+	0x8f, 0x02,                         // lsp 02
+	0x8f, 0x03,                         // lsp 03
+	0x8f, 0x04,                         // lsp 04
+	0x8f, 0x05,                         // lsp 05
+	0x5b, 0x04, 0x01,                   // lea 04 01
+	0x36,                               // push
+	0x43, 0x7c, 0x0e,                   // callk Message 0e
+	0xa5, 0x00,                         // sat 00
+	0x33, 0x0b,                         // jmp 0b
+	SIG_ADDTOOFFSET(+9),
+	0xa5, 0x00,                         // sat 00
+	SIG_END
+};
+
+static const uint16 kq6PatchTruncatedMessagesFix[] = {
+	0x3e, PATCH_UINT16(0x012f),         // link 012f
+	0x87, 0x00,                         // lap 00
+	0x31, 0x17,                         // bnt 17
+	0x39, 0x07,                         // pushi 07
+	0x76,                               // push0
+	0x8f, 0x01,                         // lsp 01
+	0x8f, 0x02,                         // lsp 02
+	0x8f, 0x03,                         // lsp 03
+	0x8f, 0x04,                         // lsp 04
+	0x8f, 0x05,                         // lsp 05
+	0x5b, 0x04, 0x01,                   // lea 04 01
+	0x36,                               // push
+	0x43, 0x7c, 0x0e,                   // callk Message 0e
+	0x32, PATCH_UINT16(0x0009),         // jmp 0009
+	PATCH_END
+};
+
+
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2.
 //  This patch gets enabled when the user selects "both" in the ScummVM
 //  "Speech + Subtitles" menu. We currently use global[98d] to hold a kMemory
@@ -4864,6 +4923,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   640, "fix 'Tickets, only' message",                    1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
 	{  true,   907, "fix inventory stack leak",                       1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
 	{  true,   907, "fix hair detection for ribbon's look msg",       1, kq6SignatureLookRibbonFix,                kq6PatchLookRibbonFix },
+	{  true,   924, "CD/Mac: fix truncated messages",                 1, kq6SignatureTruncatedMessagesFix,         kq6PatchTruncatedMessagesFix },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	// *** King's Quest 6 audio + text support ***
 	{ false,   924, "CD: audio + text support KQ6&LB2 1",             1, kq6laurabow2CDSignatureAudioTextSupport1,     kq6laurabow2CDPatchAudioTextSupport1 },
