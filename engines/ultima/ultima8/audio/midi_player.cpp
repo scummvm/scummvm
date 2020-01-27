@@ -21,6 +21,7 @@
  */
 
 #include "ultima/ultima8/audio/midi_player.h"
+#include "ultima/ultima8/ultima8.h"
 #include "audio/midiparser.h"
 #include "audio/miles.h"
 #include "common/config-manager.h"
@@ -72,7 +73,8 @@ void MidiPlayer::play(byte *data, size_t size) {
 		_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 		_parser->property(MidiParser::mpSendSustainOffOnNotesOff, 1);
 
-		setVolume(127);
+		int volume = g_engine->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
+		setVolume(volume);
 		_isPlaying = true;
 	}
 }

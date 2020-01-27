@@ -309,6 +309,11 @@ public:
 	}
 
 	/**
+	 * Notifies the engine that the sound settings may have changed
+	 */
+	virtual void syncSoundSettings() override;
+
+	/**
 	 * Returns true if a savegame can be loaded
 	 */
 	virtual bool canLoadGameStateCurrently(bool isAutosave = false) override { return true; }
