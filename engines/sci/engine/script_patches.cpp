@@ -153,6 +153,7 @@ static const char *const selectorNameTable[] = {
 	"test",         // Torin
 	"get",          // Torin, GK1
 	"normalize",    // GK1
+	"setReal",      // GK1
 	"set",          // Torin
 	"clear",        // Torin
 	"masterVolume", // SCI2 master volume reset
@@ -269,6 +270,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_test,
 	SELECTOR_get,
 	SELECTOR_normalize,
+	SELECTOR_setReal,
 	SELECTOR_set,
 	SELECTOR_clear,
 	SELECTOR_masterVolume,
@@ -3307,6 +3309,57 @@ static const uint16 gk1EmptyBoothMessagePatch[] = {
 	PATCH_END
 };
 
+// Madame Lorelei has an obscure timer bug that can cause events to repeat and
+//  award duplicate points. When exiting the conversation with her by selecting
+//  "Er...nothing.", fortuneTeller:cue resets the dance timer incorrectly.
+//  loreleiTimer's client is the room. When it fires, nwJackson:cue tests flags
+//  and room conditions before running the sLoreleiDance script, otherwise it
+//  resets the timer for 5 seconds. When fortuneTeller:cue resets the timer it
+//  changes the client to sLoreleiDance, bypassing the checks in nwJackson:cue.
+//  Madame Lorelei can then dance and drop her veil a second time while Gabriel
+//  already has it, among other edge cases.
+//
+// We fix this by setting the room as the client when resetting the timer. This
+//  requires calling dispose first since the timer is already running, which
+//  might have been what led to this script being written differently.
+//
+// Applies to: All versions
+// Responsible method: fortuneTeller:cue
+static const uint16 gk1LoreleiDanceTimerSignature[] = {
+	0x30, SIG_UINT16(0x0005),               // bnt 0005
+	0xc3, SIG_MAGICDWORD, 0x04,             // +al 04
+	0x32, SIG_UINT16(0x001f),               // jmp 001f
+	0x3c,                                   // dup
+	0x35, 0x10,                             // ldi 10 [ "Er...nothing." ]
+	0x1a,                                   // eq?
+	0x30, SIG_UINT16(0x0018),               // bnt 0018
+	0x38, SIG_SELECTOR16(setReal),          // pushi setReal
+	0x7a,                                   // push2
+	0x72, SIG_ADDTOOFFSET(+2),              // lofsa sLoreleiDance
+	0x36,                                   // push
+	SIG_ADDTOOFFSET(+13),
+	0x4a, SIG_UINT16(0x0008),               // send 08 [ loreleiTimer setReal: sLoreleiDance ... ]
+	SIG_END
+};
+
+static const uint16 gk1LoreleiDanceTimerPatch[] = {
+	0x30, PATCH_UINT16(0x0004),             // bnt 0004
+	PATCH_ADDTOOFFSET(+2),
+	0x33, 0x20,                             // jmp 20
+	0x3c,                                   // dup
+	0x35, 0x10,                             // ldi 10 [ "Er...nothing." ]
+	0x1a,                                   // eq?
+	0x31, 0x1a,                             // bnt 1a
+	0x38, PATCH_SELECTOR16(dispose),        // pushi dispose
+	0x76,                                   // push0
+	0x38, PATCH_SELECTOR16(setReal),        // pushi setReal
+	0x7a,                                   // push2
+	0x89, 0x02,                             // lsg 02
+	PATCH_ADDTOOFFSET(+13),
+	0x4a, PATCH_UINT16(0x000c),             // send 0c [ loreleiTimer dispose: setReal: nwJackson ... ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,     0, "remove alt+n syslogger hotkey",               1, gk1SysLoggerHotKeySignature,      gk1SysLoggerHotKeyPatch },
@@ -3329,6 +3382,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   380, "fix Gran's room obstacles and ego flicker",   1, gk1GranRoomInitSignature,         gk1GranRoomInitPatch },
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
 	{  true,   420, "fix day 6 empty booth message",               6, gk1EmptyBoothMessageSignature,    gk1EmptyBoothMessagePatch },
+	{  true,   420, "fix lorelei dance timer",                     1, gk1LoreleiDanceTimerSignature,    gk1LoreleiDanceTimerPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   710, "fix day 9 mummy animation (floppy)",          1, gk1MummyAnimateFloppySignature,   gk1MummyAnimateFloppyPatch },
 	{  true,   710, "fix day 9 mummy animation (cd)",              1, gk1MummyAnimateCDSignature,       gk1MummyAnimateCDPatch },
