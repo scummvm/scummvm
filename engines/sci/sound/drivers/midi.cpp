@@ -124,6 +124,26 @@ static const byte defaultSci32GMPatch[] = {
 };
 #endif
 
+static const uint8 gsDrumkitFallbackMap[] = {
+	 0,  0,  0,  0,  0,  0,  0,  0, // STANDARD
+	 8,  8,  8,  8,  8,  8,  8,  8, // ROOM
+	16, 16, 16, 16, 16, 16, 16, 16, // POWER
+	24, 25, 24, 24, 24, 24, 24, 24, // ELECTRONIC; TR-808 (25)
+	32, 32, 32, 32, 32, 32, 32, 32, // JAZZ
+	40, 40, 40, 40, 40, 40, 40, 40, // BRUSH
+	48, 48, 48, 48, 48, 48, 48, 48, // ORCHESTRA
+	56, 56, 56, 56, 56, 56, 56, 56, // SFX
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drum kit defined (fall back to STANDARD)
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drum kit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drum kit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drum kit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drum kit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drum kit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drum kit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drum kit defined
+	 0,  0,  0,  0,  0,  0,  0, 127 // No drum kit defined; CM-64/32L (127)
+};
+
 Mt32ToGmMapList *Mt32dynamicMappings = NULL;
 
 class MidiPlayer_Midi : public MidiPlayer {
@@ -357,46 +377,53 @@ void MidiPlayer_Midi::setPatch(int channel, int patch) {
 
 	assert(channel <= 15);
 
-	if ((channel == MIDI_RHYTHM_CHANNEL) || (_channels[channel].patch == patch))
+	if ((this->_mt32Type != kMt32TypeNone && channel == MIDI_RHYTHM_CHANNEL) || (_channels[channel].patch == patch))
 		return;
 
-	_channels[channel].patch = patch;
-	_channels[channel].velocityMapIdx = _velocityMapIdx[patch];
+	int patchToSend;
+	if (channel != MIDI_RHYTHM_CHANNEL) {
+		_channels[channel].patch = patch;
+		_channels[channel].velocityMapIdx = _velocityMapIdx[patch];
 
-	if (_channels[channel].mappedPatch == MIDI_UNMAPPED)
-		resetVol = true;
+		if (_channels[channel].mappedPatch == MIDI_UNMAPPED)
+			resetVol = true;
 
-	_channels[channel].mappedPatch = _patchMap[patch];
+		_channels[channel].mappedPatch = patchToSend = _patchMap[patch];
 
-	if (_patchMap[patch] == MIDI_UNMAPPED) {
-		debugC(kDebugLevelSound, "[Midi] Channel %i set to unmapped patch %i", channel, patch);
-		_driver->send(0xb0 | channel, 0x7b, 0);
-		_driver->send(0xb0 | channel, 0x40, 0);
-		return;
+		if (_patchMap[patch] == MIDI_UNMAPPED) {
+			debugC(kDebugLevelSound, "[Midi] Channel %i set to unmapped patch %i", channel, patch);
+			_driver->send(0xb0 | channel, 0x7b, 0);
+			_driver->send(0xb0 | channel, 0x40, 0);
+			return;
+		}
+
+		if (_patchMap[patch] >= 128) {
+			// Mapped to rhythm, don't send channel commands
+			return;
+		}
+
+		if (_channels[channel].keyShift != _keyShift[patch]) {
+			_channels[channel].keyShift = _keyShift[patch];
+			_driver->send(0xb0 | channel, 0x7b, 0);
+			_driver->send(0xb0 | channel, 0x40, 0);
+			resetVol = true;
+		}
+
+		if (resetVol || (_channels[channel].volAdjust != _volAdjust[patch])) {
+			_channels[channel].volAdjust = _volAdjust[patch];
+			controlChange(channel, 0x07, _channels[channel].volume);
+		}
+
+		uint8 bendRange = _pitchBendRange[patch];
+		if (bendRange != MIDI_UNMAPPED)
+			_driver->setPitchBendRange(channel, bendRange);
+	} else {
+		// Apply drumkit fallback to correct invalid drumkit numbers
+		patchToSend = gsDrumkitFallbackMap[patch];
+		_channels[channel].patch = patchToSend;
 	}
 
-	if (_patchMap[patch] >= 128) {
-		// Mapped to rhythm, don't send channel commands
-		return;
-	}
-
-	if (_channels[channel].keyShift != _keyShift[patch]) {
-		_channels[channel].keyShift = _keyShift[patch];
-		_driver->send(0xb0 | channel, 0x7b, 0);
-		_driver->send(0xb0 | channel, 0x40, 0);
-		resetVol = true;
-	}
-
-	if (resetVol || (_channels[channel].volAdjust != _volAdjust[patch])) {
-		_channels[channel].volAdjust = _volAdjust[patch];
-		controlChange(channel, 0x07, _channels[channel].volume);
-	}
-
-	uint8 bendRange = _pitchBendRange[patch];
-	if (bendRange != MIDI_UNMAPPED)
-		_driver->setPitchBendRange(channel, bendRange);
-
-	_driver->send(0xc0 | channel, _patchMap[patch], 0);
+	_driver->send(0xc0 | channel, patchToSend, 0);
 
 	// Send a pointless command to work around a firmware bug in common
 	// USB-MIDI cables. If the first MIDI command in a USB packet is a
