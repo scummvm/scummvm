@@ -39,6 +39,9 @@ SavegameReader::SavegameReader(IDataSource *ds, bool metadataOnly) : _file(ds), 
 	if (!MetaEngine::readSavegameHeader(ds->GetRawStream(), &_header, false))
 		return;
 
+	// Set total play time
+	g_engine->setTotalPlayTime(_header.playtime * 1000);
+
 	// Validate the identifier for a valid savegame
 	uint32 ident = ds->read4();
 	if (ident != SAVEGAME_IDENT)
@@ -121,7 +124,7 @@ bool SavegameWriter::finish() {
 	
 	// Handle adding savegame header
 	Common::OutSaveFile *dest = dynamic_cast<Common::OutSaveFile *>(_file->GetRawStream());
-	MetaEngine::appendExtendedSave(dest, Shared::g_ultima->getTotalPlayTime(), _description);
+	MetaEngine::appendExtendedSave(dest, Shared::g_ultima->getTotalPlayTime() / 1000, _description);
 	dest->finalize();
 
 	return true;
