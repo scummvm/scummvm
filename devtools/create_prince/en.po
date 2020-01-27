@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-24 17:17+0000\n"
+"PO-Revision-Date: 2020-01-27 21:08+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -10749,31 +10749,35 @@ msgstr ""
 
 #: mob.lst:11004
 msgid "drzwi - Wyglądają zwyczajnie. Pewnie są od jakiejś|zwyczajnej komnaty."
-msgstr ""
+msgstr "doors - They look ordinary. They're probably from some ordinary room."
 
 #: mob.lst:11005
 msgid "drzwi - Drzwi do jaskini smoka."
-msgstr ""
+msgstr "door - Door to dragon cave."
 
 #: mob.lst:11006
 msgid "zbroja - Taka zbroja to jest bardzo fajna rzecz.+Jak się człowiek wywróci, od razu służy|za trumnę."
 msgstr ""
+"armor - Such armor is a fine thing.+If the man inside|falls, you can "
+"instantly use it as a coffin."
 
 #: mob.lst:11007
 msgid "zamek - Kolejny zamek do zdobycia."
-msgstr ""
+msgstr "castle - Another castle to get."
 
 #: mob.lst:11008
 msgid "drzwi do skarbca - Impregnowane drewno wzmocnione żelaznymi|ćwiekami.+Nie do wyważenia. Nawet dla niedźwiedzia."
 msgstr ""
+"treasury door - Impregnated wood, reinforced with iron rivets.+It's "
+"unbreakable.|Not even by a bear."
 
 #: mob.lst:11009
 msgid "wejście do skarbca - Droga do szczęścia stoi otworem."
-msgstr ""
+msgstr "entrance to the treasury - The road to happiness stands open."
 
 #: mob.lst:12001
 msgid "wyjście - Przejście z dziedzińca na podzamcze."
-msgstr ""
+msgstr "exit - Passage from the courtyard to the castle."
 
 #: mob.lst:12002
 msgid "drzwi - Nie mam pojęcia, co się za nimi kryje."
@@ -10781,11 +10785,11 @@ msgstr "door - Have no idea what's behind it."
 
 #: mob.lst:12003
 msgid "drzwi - Sądząc po znaku, prowadzą do skarbca."
-msgstr ""
+msgstr "door - Judging by the sign, they lead to the treasury."
 
 #: mob.lst:12004
 msgid "tarcza - Drewniana... Hm... Pewnie niewiele|z niej było pożytku."
-msgstr ""
+msgstr "shield - Wooden... Hm. It looks barely used."
 
 #: mob.lst:12005
 msgid "drzwi - Droga do króla."
@@ -10794,34 +10798,42 @@ msgstr "door - Road to the king."
 #: mob.lst:12006
 msgid "drzwi - Jedyne, które nie mają klamki.+Nic dziwnego, skoro kryją drogę|do skarbca."
 msgstr ""
+"door - The only door without handle.+No wonder as it hides|the way to the "
+"treasury."
 
 #: mob.lst:12007
 msgid "łańcuch - Arivald oddał mi niedźwiedzią przysługę|skuwając mnie tak mocnym łańcuchem."
 msgstr ""
+"chain - Arivald gave me a disservice, forging me with such|a strong chain."
 
 #: mob.lst:12008
 msgid "zerwany łańcuch - Trochę nadszarpnięty, ale coś tam|jeszcze z niego zostało."
-msgstr ""
+msgstr "broken chain - a bit tore, but there is something left of it."
 
 #: mob.lst:13001
 msgid "skrzynia z ciuchami - Z daleka niespecjalnie dokładnie widać,|a póki dziewczę zajęte jest sobą,|lepiej zostanę na miejscu."
 msgstr ""
+"box of clothes - You can't tell from afar, bug as long as|the girl is busy "
+"with herself, I'd better stay here."
 
 #: mob.lst:13002
 msgid "okno - Nie chcę podchodzić, lepiej, żeby|dziewczę pozostało skupione na sobie."
 msgstr ""
+"window - I do not want to approach, better|keep the girl focused on herself."
 
 #: mob.lst:13003
 msgid "złota klatka - Lepiej nie będę oglądał tej klatki|z bliska, bo jeszcze dziewczę zechce|mi się dokładniej przyjrzeć...+Zresztą, klatka i tak jest pusta."
 msgstr ""
+"golden cage - I better not get to close to it|otherwise the girl will|want "
+"to take a closer look at me...+Anyway, the cage is empty."
 
 #: mob.lst:13004
 msgid "lustro - Że też jeszcze nie pękło..."
-msgstr ""
+msgstr "mirror - This one isn't broken yet..."
 
 #: mob.lst:13005
 msgid "portret - Młody, przystojny, podobny do szympansa."
-msgstr ""
+msgstr "portrait - Young, handsome, chimpanzee-like."
 
 #: mob.lst:13006
 msgid "brzydka dziewczyna - Ponoć był taki podróżnik, który brał na|długie wyprawy najbrzydszą dziewczynę|w okolicy.+Kiedy po miesiącach pobytu na pustkowiu|dziewczyna zaczynała mu się podobać|wiedział, że czas wracać do ludzi.+Ale gdyby miał tę dziewczynę u boku...+...nigdy byśmy go już nie zobaczyli..."
@@ -10842,10 +10854,14 @@ msgstr ""
 #: mob.lst:13008
 msgid "wstążki - Lubię ozdoby, ale wstążki w łóżku to już|chyba lekka przesada."
 msgstr ""
+"ribbons - I like decorations, but ribbons in bed|are probably a slight "
+"exaggeration."
 
 #: mob.lst:13009
 msgid "łoże - Jest tak obrzydliwie słodkodziewczęcoróżowe,|że chyba wolałbym spać na podłodze."
 msgstr ""
+"bed - It is so disgustingly sweet pink, that I would rather|sleep on the "
+"floor."
 
 #: mob.lst:13010
 msgid "skóra - U-hu. Chyba z niedźwiedzia..."
@@ -10853,7 +10869,7 @@ msgstr "skin - Yep. I think from a bear..."
 
 #: mob.lst:13011
 msgid "sekretera - Pfuj, same babskie rzeczy."
-msgstr ""
+msgstr "secretary - Yuck, that's women's stuff."
 
 #: mob.lst:13012
 msgid "wyjście - Droga do normalnego świata."
@@ -10865,23 +10881,27 @@ msgstr "exit - There is a way out, but for what?"
 
 #: mob.lst:14002
 msgid "tabliczka - Podręczna pomoc królewskiego rachmistrza."
-msgstr ""
+msgstr "tablet - Handy help from the royal accountant."
 
 #: mob.lst:14003
 msgid "skrzynia pełna skarbów - O mamo mamo mamo...+...Mamo...mamo...mamo...+...Mamo...mamo...mamo...*+Ad infinitum."
 msgstr ""
+"treasure chest full of treasures - Oh my god...+Oh yes, oh yes!+...YES!...*+"
+"Ad infinitum."
 
 #: mob.lst:14004
 msgid "lustro - Niestety, sama rama."
-msgstr ""
+msgstr "mirror - Sadly only the frame."
 
 #: mob.lst:14005
 msgid "kobierzec - Szyty grubymi, złotymi nićmi."
-msgstr ""
+msgstr "carpet - Woven from thick, golden thread."
 
 #: mob.lst:14006
 msgid "miecze w beczce - Stłoczone jak śledzie, ale piękne,|zdobione rubinami na głowni miecze."
 msgstr ""
+"swords in the barrel - They are fit tight like herrings in the barrel,but "
+"they're|pretty|and their handles are decorated with rubies."
 
 #: mob.lst:14007
 msgid "tarcza - Model dziecięcy."
@@ -10890,18 +10910,24 @@ msgstr "shield - Model for kids."
 #: mob.lst:14008
 msgid "skrzynka - Gdybym ją oworzył, miałbym... miałbym...+...zmarnowany rok na liczenie dukatów."
 msgstr ""
+"chest - If I'd open it, I would... I would...+... have spent a year counting "
+"ducats."
 
 #: mob.lst:14009
 msgid "skrzynia pełna złota - O mamo...+Kupiłbym sobie za to...+O, mamo, czego ja bym sobie|za to NIE kupił?"
 msgstr ""
+"chest full of gold - Oh mother...+I would buy myself for it...+Oh, mother, "
+"what would I NOT buy for it?"
 
 #: mob.lst:14010
 msgid "zbroja - Nie wiem, co to jest, ale zbroja|wykonana jest z ciemnoniebieskiej,|podobnej do kryształu materii."
 msgstr ""
+"armor - I don't know what it is, but the armor is made of dark blue, crystal-"
+"like matter."
 
 #: mob.lst:14011
 msgid "skrzynia - Śliczna, zgrabna skrzynka z eleganckim|wiekiem."
-msgstr ""
+msgstr "chest - A beautiful, neat case with an elegant lid."
 
 #: mob.lst:14012
 msgid "księgi - Skoro znajdują się w takim miejscu, to pewnie|są wiele warte...+Może opowiadają o sztuce czarodziejskiej?+Albo są rodowymi pamiętnikami pełnymi|namiętności i zbrodni?*+No cóż, mogą też być zwykłe księgi|rachunkowe.+Albo spis mieszkańców królestwa.+Eee tam, na pewno nic ciekawego."
@@ -10913,11 +10939,11 @@ msgstr ""
 
 #: mob.lst:14013
 msgid "zasłona - Chroni skarbiec przed wzrokiem ciekawskich|ptaków?..."
-msgstr ""
+msgstr "curtain - Protects the treasury from the eyes of curious birds?..."
 
 #: mob.lst:14014
 msgid "pusta skrzynka - W środku nie ma nic więcej."
-msgstr ""
+msgstr "empty chest - There is nothing more inside."
 
 #: mob.lst:15001
 msgid "wyjście - Z powrotem na ścieżkę."
