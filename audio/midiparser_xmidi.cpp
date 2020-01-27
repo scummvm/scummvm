@@ -372,6 +372,12 @@ bool MidiParser_XMIDI::loadMusic(byte *data, uint32 size) {
 				len = read4high(pos);
 				pos += (len + 1) & ~1;
 				++tracksRead;
+			} else if (!memcmp(pos, "RBRN", 4)) {
+				// optional branch point offsets. Ignored
+				pos += 4;
+				len = read4high(pos);
+				pos += (len + 1) & ~1;
+
 			} else {
 				warning("Hit invalid block '%c%c%c%c' while scanning for track locations", pos[0], pos[1], pos[2], pos[3]);
 				return false;
