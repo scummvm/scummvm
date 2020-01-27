@@ -180,7 +180,7 @@ void MusicProcess::run() {
 	case MUSIC_TRANSITION:
 		if (!_midiPlayer) {
 			_state = MUSIC_PLAY_WANTED;
-		} else if (!_midiPlayer->isPlaying()) {
+		} else {
 			_state = MUSIC_PLAY_WANTED;
 			_midiPlayer->stop();
 		}
