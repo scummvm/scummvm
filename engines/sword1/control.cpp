@@ -237,7 +237,7 @@ Control::Control(Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMa
 	_mouse = pMouse;
 	_music = pMusic;
 	_sound = pSound;
-	_lStrings = _languageStrings + SwordEngine::_systemVars.language * 20;
+	_lStrings = loadCustomStrings("strings.txt") ? _customStrings : _languageStrings + SwordEngine::_systemVars.language * 20;
 	_selectedButton = 255;
 	_panelShown = false;
 	_tempThumbnail = 0;
@@ -635,7 +635,7 @@ void Control::setupVolumePanel() {
 
 	renderText(_lStrings[STR_MUSIC], 149, 39 + 40, TEXT_LEFT_ALIGN);
 	renderText(_lStrings[STR_SPEECH], 320, 39 + 40, TEXT_CENTER);
-	renderText(_lStrings[STR_FX], 438, 39 + 40, TEXT_LEFT_ALIGN);
+	renderText(_lStrings[STR_FX], 449, 39 + 40, TEXT_CENTER);
 
 	createButtons(_volumeButtons, 4);
 	renderText(_lStrings[STR_DONE], _volumeButtons[0].x - 10, _volumeButtons[0].y, TEXT_RIGHT_ALIGN);
@@ -1443,6 +1443,26 @@ const ButtonInfo Control::_volumeButtons[4] = {
 	{ 273, 135, SR_VKNOB, 0, 0 },
 	{ 404, 135, SR_VKNOB, 0, 0 },
 };
+
+bool Control::loadCustomStrings(const char *filename) {
+	Common::File f;
+
+	if (f.open(filename)) {
+		Common::String line;
+
+		for (int lineNo = 0; lineNo < 20; lineNo++) {
+			line = f.readLine();
+
+			if (f.eos())
+				return false;
+
+			memset((void*)_customStrings[lineNo], 0, 43);
+			strncpy((char*)_customStrings[lineNo], line.c_str(), 42);
+		}
+	}
+
+	return true;
+}
 
 const uint8 Control::_languageStrings[8 * 20][43] = {
 	// BS1_ENGLISH:
