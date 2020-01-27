@@ -23,7 +23,6 @@
 #include "ultima/ultima8/misc/pent_include.h"
 
 #include "ultima/ultima8/audio/music_flex.h"
-#include "ultima/ultima8/audio/midi/xmidi_file.h"
 #include "ultima/ultima8/filesys/idata_source.h"
 
 namespace Ultima {
@@ -62,38 +61,11 @@ MusicFlex::SongInfo::~SongInfo() {
 }
 
 void MusicFlex::cache(uint32 index) {
-	if (index >= count) return;
-
-	if (!songs) {
-		songs = new XMidiFile * [count];
-		std::memset(songs, 0, sizeof(XMidiFile *) * count);
-	}
-
-	if (songs[index]) return;
-
-	// This will cache the data
-	uint32 size;
-	uint8 *buf = getRawObject(index, &size);
-
-	if (!buf || !size) return;
-	IBufferDataSource ds(buf, size);
-
-	XMidiFile *x = new XMidiFile(&ds, XMIDIFILE_CONVERT_NOCONVERSION);
-
-	if (x->number_of_tracks())
-		songs[index] = x;
-	else
-		delete x;
-
-	delete [] buf;
+	// Caching not currently supported
 }
 
 void MusicFlex::uncache(uint32 index) {
-	if (index >= count) return;
-	if (!songs) return;
-
-	delete songs[index];
-	songs[index] = 0;
+	// Caching not currently supported
 }
 
 bool MusicFlex::isCached(uint32 index) {

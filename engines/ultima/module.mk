@@ -350,33 +350,6 @@ MODULE_OBJS += \
 	ultima8/audio/sonarc_audio_sample.o \
 	ultima8/audio/sound_flex.o \
 	ultima8/audio/speech_flex.o \
-	ultima8/audio/midi/alsa_midi_driver.o \
-	ultima8/audio/midi/core_audio_midi_driver.o \
-	ultima8/audio/midi/core_midi_driver.o \
-	ultima8/audio/midi/fluid_synth_midi_driver.o \
-	ultima8/audio/midi/fm_opl.o \
-	ultima8/audio/midi/fm_opl_midi_driver.o \
-	ultima8/audio/midi/low_level_midi_driver.o \
-	ultima8/audio/midi/midi_driver.o \
-	ultima8/audio/midi/timidity_midi_driver.o \
-	ultima8/audio/midi/unix_seq_midi_driver.o \
-	ultima8/audio/midi/windows_midi_driver.o \
-	ultima8/audio/midi/xmidi_event_list.o \
-	ultima8/audio/midi/xmidi_file.o \
-	ultima8/audio/midi/xmidi_sequence.o \
-	ultima8/audio/midi/timidity/timidity.o \
-	ultima8/audio/midi/timidity/timidity_common.o \
-	ultima8/audio/midi/timidity/timidity_controls.o \
-	ultima8/audio/midi/timidity/timidity_filter.o \
-	ultima8/audio/midi/timidity/timidity_instrum.o \
-	ultima8/audio/midi/timidity/timidity_mix.o \
-	ultima8/audio/midi/timidity/timidity_output.o \
-	ultima8/audio/midi/timidity/timidity_playmidi.o \
-	ultima8/audio/midi/timidity/timidity_readmidi.o \
-	ultima8/audio/midi/timidity/timidity_resample.o \
-	ultima8/audio/midi/timidity/timidity_sdl_a.o \
-	ultima8/audio/midi/timidity/timidity_sdl_c.o \
-	ultima8/audio/midi/timidity/timidity_tables.o \
 	ultima8/conf/config_file_manager.o \
 	ultima8/conf/ini_file.o \
 	ultima8/conf/setting_manager.o \
