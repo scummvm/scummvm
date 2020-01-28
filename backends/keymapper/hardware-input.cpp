@@ -225,22 +225,22 @@ const HardwareInputTableEntry defaultMouseButtons[] = {
 };
 
 const HardwareInputTableEntry defaultJoystickButtons[] = {
-    { "JOY_A",              JOYSTICK_BUTTON_A,              _s("Joy A")              },
-    { "JOY_B",              JOYSTICK_BUTTON_B,              _s("Joy B")              },
-    { "JOY_X",              JOYSTICK_BUTTON_X,              _s("Joy X")              },
-    { "JOY_Y",              JOYSTICK_BUTTON_Y,              _s("Joy Y")              },
-    { "JOY_BACK",           JOYSTICK_BUTTON_BACK,           _s("Joy Back")           },
-    { "JOY_GUIDE",          JOYSTICK_BUTTON_GUIDE,          _s("Joy Guide")          },
-    { "JOY_START",          JOYSTICK_BUTTON_START,          _s("Joy Start")          },
-    { "JOY_LEFT_STICK",     JOYSTICK_BUTTON_LEFT_STICK,     _s("Joy Left Stick")     },
-    { "JOY_RIGHT_STICK",    JOYSTICK_BUTTON_RIGHT_STICK,    _s("Joy Right Stick")    },
-    { "JOY_LEFT_SHOULDER",  JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("Joy Left Shoulder")  },
-    { "JOY_RIGHT_SHOULDER", JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("Joy Right Shoulder") },
-    { "JOY_UP",             JOYSTICK_BUTTON_DPAD_UP,        _s("Joy D-pad Up")       },
-    { "JOY_DOWN",           JOYSTICK_BUTTON_DPAD_DOWN,      _s("Joy D-pad Down")     },
-    { "JOY_LEFT",           JOYSTICK_BUTTON_DPAD_LEFT,      _s("Joy D-pad Left")     },
-    { "JOY_RIGHT",          JOYSTICK_BUTTON_DPAD_RIGHT,     _s("Joy D-pad Right")    },
-    { nullptr,              0,                              nullptr                 }
+    { "JOY_A",              JOYSTICK_BUTTON_A,              _s("Joy A")          },
+    { "JOY_B",              JOYSTICK_BUTTON_B,              _s("Joy B")          },
+    { "JOY_X",              JOYSTICK_BUTTON_X,              _s("Joy X")          },
+    { "JOY_Y",              JOYSTICK_BUTTON_Y,              _s("Joy Y")          },
+    { "JOY_BACK",           JOYSTICK_BUTTON_BACK,           _s("Joy Back")       },
+    { "JOY_GUIDE",          JOYSTICK_BUTTON_GUIDE,          _s("Joy Guide")      },
+    { "JOY_START",          JOYSTICK_BUTTON_START,          _s("Joy Start")      },
+    { "JOY_LEFT_STICK",     JOYSTICK_BUTTON_LEFT_STICK,     _s("Left Stick")     },
+    { "JOY_RIGHT_STICK",    JOYSTICK_BUTTON_RIGHT_STICK,    _s("Right Stick")    },
+    { "JOY_LEFT_SHOULDER",  JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("Left Shoulder")  },
+    { "JOY_RIGHT_SHOULDER", JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("Right Shoulder") },
+    { "JOY_UP",             JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")       },
+    { "JOY_DOWN",           JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")     },
+    { "JOY_LEFT",           JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")     },
+    { "JOY_RIGHT",          JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right")    },
+    { nullptr,              0,                              nullptr              }
 };
 
 HardwareInputSet::~HardwareInputSet() {
