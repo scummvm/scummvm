@@ -22,6 +22,7 @@
 
 #include "ultima/ultima6/core/nuvie_defs.h"
 #include "ultima/ultima6/screen/surface.h"
+#include "ultima/shared/std/misc.h"
 #include "common/algorithm.h"
 
 namespace Ultima {
