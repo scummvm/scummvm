@@ -23,7 +23,12 @@
 #ifndef ULTIMA6_SCRIPT_SCRIPT_CUTSCENE_H
 #define ULTIMA6_SCRIPT_SCRIPT_CUTSCENE_H
 
+#ifdef USE_COMMON_LUA
+#include "common/lua/lua.h"
+#else
 #include "ultima/ultima6/lua/lua.h"
+#endif
+
 #include "ultima/ultima6/gui/gui.h"
 #include "ultima/ultima6/gui/widgets/gui_widget.h"
 #include "ultima/ultima6/files/u6_shape.h"

@@ -23,7 +23,11 @@
 #ifndef ULTIMA6_SCRIPT_SCRIPT_ACTOR_H
 #define ULTIMA6_SCRIPT_SCRIPT_ACTOR_H
 
+#ifdef USE_COMMON_LUA
+#include "common/lua/lua.h"
+#else
 #include "ultima/ultima6/lua/lua.h"
+#endif
 
 namespace Ultima {
 namespace Ultima6 {
