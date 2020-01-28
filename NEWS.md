@@ -3,6 +3,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.2.0 (XXXX-XX-XX)
 
+ Dreamweb:
+   - Added support for Russian fan-translation.
+
  Kyra:
    - Added support for the PC-98 version of Eye of the Beholder I.
 
