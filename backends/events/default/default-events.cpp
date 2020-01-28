@@ -42,7 +42,7 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_shouldQuit(false),
 	_shouldRTL(false),
 	_confirmExitDialogActive(false),
-	_shouldGenerateKeyRepeatEvents(true) {
+	_shouldGenerateKeyRepeatEvents(false) {
 
 	assert(boss);
 

@@ -207,9 +207,9 @@ void OSystem_SDL::initBackend() {
 
 	if (_eventManager == nullptr) {
 		DefaultEventManager *eventManager = new DefaultEventManager(_eventSource);
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		// SDL 2 generates its own keyboard repeat events.
-		eventManager->setGenerateKeyRepeatEvents(false);
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+		// SDL 1 does not generate its own keyboard repeat events.
+		eventManager->setGenerateKeyRepeatEvents(true);
 #endif
 		_eventManager = eventManager;
 	}
