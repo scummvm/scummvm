@@ -88,6 +88,15 @@ void Keymap::resetMapping(Action *action) {
 	registerMappings(action, hwInputIds);
 }
 
+struct HardwareInputTypeIdComparator {
+	bool operator()(const HardwareInput &x, const HardwareInput &y) const {
+		if (x.type != y.type) {
+			return x.type < y.type;
+		}
+		return x.id.compareTo(y.id);
+	}
+};
+
 Array<HardwareInput> Keymap::getActionMapping(Action *action) const {
 	Array<HardwareInput> inputs;
 
@@ -99,6 +108,9 @@ Array<HardwareInput> Keymap::getActionMapping(Action *action) const {
 			}
 		}
 	}
+
+	// Sort the inputs by type and then id for the remap dialog
+	Common::sort(inputs.begin(), inputs.end(), HardwareInputTypeIdComparator());
 
 	return inputs;
 }
