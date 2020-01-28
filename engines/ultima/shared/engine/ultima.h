@@ -140,7 +140,7 @@ public:
 	/**
 	 * Return the debugger
 	 */
-	virtual Debugger *getDebugger() const {
+	virtual GUI::Debugger *getDebugger() override {
 		return _debugger;
 	}
 

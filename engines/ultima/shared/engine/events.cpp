@@ -80,7 +80,7 @@ bool EventsManager::pollEvent(Common::Event &event) {
 			handleKbdSpecial(event.kbd);
 
 			// Check for debugger
-			Debugger *debugger = _callback->getDebugger();
+			GUI::Debugger *debugger = _callback->getDebugger();
 			if (debugger != nullptr && event.kbd.keycode == Common::KEYCODE_d
 					&& (event.kbd.flags & Common::KBD_CTRL)) {
 				// Attach to the debugger
@@ -168,7 +168,7 @@ void EventsManager::nextFrame() {
 		eventTarget()->onIdle();
 
 	// Handle debugger updates
-	Debugger *debugger = _callback->getDebugger();
+	GUI::Debugger *debugger = _callback->getDebugger();
 	if (debugger)
 		debugger->onFrame();
 

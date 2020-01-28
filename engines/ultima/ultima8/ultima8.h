@@ -241,7 +241,7 @@ public:
 	void menuInitMinimal(Pentagram::istring game);
 
 	void changeVideoMode(int width, int height, int fullscreen = -1); // -1 = no change, -2 = fullscreen toggle
-	RenderSurface *getScreen() {
+	RenderSurface *getRenderScreen() {
 		return screen;
 	}
 

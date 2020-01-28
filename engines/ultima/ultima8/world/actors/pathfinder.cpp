@@ -245,7 +245,7 @@ unsigned int Pathfinder::costHeuristic(PathNode *node) {
 // (and the whole system is generally a very big hack...)
 
 static void drawbox(Item *item) {
-	RenderSurface *screen = Ultima8Engine::get_instance()->getScreen();
+	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	int32 cx, cy, cz;
 
 	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
@@ -285,7 +285,7 @@ static void drawbox(Item *item) {
 }
 
 static void drawdot(int32 x, int32 y, int32 z, int size, uint32 rgb) {
-	RenderSurface *screen = Ultima8Engine::get_instance()->getScreen();
+	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	int32 cx, cy, cz;
 
 	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
@@ -302,7 +302,7 @@ static void drawdot(int32 x, int32 y, int32 z, int size, uint32 rgb) {
 }
 
 static void drawedge(PathNode *from, PathNode *to, uint32 rgb) {
-	RenderSurface *screen = Ultima8Engine::get_instance()->getScreen();
+	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	int32 cx, cy, cz;
 
 	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
@@ -405,7 +405,7 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 
 #ifdef DEBUG
 	if (actor->getObjId() == visualdebug_actor) {
-		RenderSurface *screen = Ultima8Engine::get_instance()->getScreen();
+		RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 		screen->BeginPainting();
 		drawpath(newnode, 0xFFFFFF00, done);
 		screen->EndPainting();
@@ -515,7 +515,7 @@ bool Pathfinder::pathfind(std::vector<PathfindingAction> &path) {
 
 #ifdef DEBUG
 	if (actor->getObjId() == visualdebug_actor) {
-		RenderSurface *screen = Ultima8Engine::get_instance()->getScreen();
+		RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 		screen->BeginPainting();
 		if (targetitem)
 			drawbox(targetitem);
