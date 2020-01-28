@@ -23,6 +23,8 @@
 #ifndef FILE_H
 #define FILE_H
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,7 +37,7 @@ private:
 	FILE *_file;
 public:
 	File(const char *filename) {
-		fopen_s(&_file, filename, "rb");
+		_file = fopen(filename, "rb");
 		assert(_file);
 	}
 	~File() {
@@ -69,7 +71,7 @@ private:
 	FILE *_file;
 public:
 	WriteFile(const char *filename) {
-		fopen_s(&_file, filename, "wb");
+		_file = fopen(filename, "wb");
 		assert(_file);
 	}
 	~WriteFile() {
