@@ -462,7 +462,7 @@ Common::Error LoLEngine::init() {
 }
 
 Common::Keymap *LoLEngine::initKeymap() {
-	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
+	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName, "Lands of Lore");
 
 	const Common::KeyActionEntry keyActionEntries[] = {
 		{ "AT1", Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1), "F1",     _("Attack 1")     },

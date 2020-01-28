@@ -355,7 +355,7 @@ void SdlGraphicsManager::toggleFullScreen() {
 Common::Keymap *SdlGraphicsManager::getKeymap() {
 	using namespace Common;
 
-	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGlobal, "sdl-graphics");
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGlobal, "sdl-graphics", _("Graphics"));
 	Action *act;
 
 	if (hasFeature(OSystem::kFeatureFullscreenMode)) {

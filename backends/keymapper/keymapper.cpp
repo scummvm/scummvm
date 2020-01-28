@@ -95,7 +95,7 @@ void Keymapper::addGameKeymap(Keymap *keymap) {
 
 void Keymapper::initKeymap(Keymap *keymap, ConfigManager::Domain *domain) {
 	if (!_hardwareInputs) {
-		warning("No hardware inputs were registered yet (%s)", keymap->getName().c_str());
+		warning("No hardware inputs were registered yet (%s)", keymap->getId().c_str());
 		return;
 	}
 
@@ -118,9 +118,9 @@ void Keymapper::cleanupGameKeymaps() {
 	}
 }
 
-Keymap *Keymapper::getKeymap(const String &name) {
+Keymap *Keymapper::getKeymap(const String &id) const {
 	for (KeymapArray::const_iterator it = _keymaps.begin(); it != _keymaps.end(); it++) {
-		if ((*it)->getName() == name) {
+		if ((*it)->getId() == id) {
 			return *it;
 		}
 	}
@@ -160,7 +160,7 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 			continue; // Ignore GUI keymaps while in game and vice versa
 		}
 
-		debug(5, "Keymapper::mapKey keymap: %s", _keymaps[i]->getName().c_str());
+		debug(5, "Keymapper::mapKey keymap: %s", _keymaps[i]->getId().c_str());
 
 		const Keymap::ActionArray &actions = _keymaps[i]->getMappedActions(ev);
 		for (Keymap::ActionArray::const_iterator it = actions.begin(); it != actions.end(); it++) {

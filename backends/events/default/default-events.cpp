@@ -304,7 +304,7 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	using namespace Common;
 
 	// Now create the global keymap
-	Keymap *globalKeymap = new Keymap(Keymap::kKeymapTypeGlobal, kGlobalKeymapName);
+	Keymap *globalKeymap = new Keymap(Keymap::kKeymapTypeGlobal, kGlobalKeymapName, _("Global"));
 
 	Action *act;
 	act = new Action("MENU", _("Menu"));

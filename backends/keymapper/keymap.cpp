@@ -33,11 +33,12 @@
 
 namespace Common {
 
-Keymap::Keymap(KeymapType type, const String &name) :
+Keymap::Keymap(KeymapType type, const String &id, const String &description) :
 		_type(type),
-		_name(name),
-		_configDomain(nullptr),
+		_id(id),
+		_description(description),
 		_enabled(true),
+		_configDomain(nullptr),
 		_hardwareInputSet(nullptr),
 		_backendDefaultBindings(nullptr) {
 
@@ -149,7 +150,7 @@ void Keymap::registerBackendDefaultMappings() {
 
 	for (ActionArray::const_iterator it = _actions.begin(); it != _actions.end(); ++it) {
 		Action *action = *it;
-		Common::String defaultHwId = _backendDefaultBindings->getDefaultBinding(_name, action->id);
+		Common::String defaultHwId = _backendDefaultBindings->getDefaultBinding(_id, action->id);
 
 		if (!defaultHwId.empty()) {
 			action->addDefaultInputMapping(defaultHwId);
@@ -176,7 +177,7 @@ void Keymap::loadMappings() {
 		registerBackendDefaultMappings();
 	}
 
-	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
+	String prefix = KEYMAP_KEY_PREFIX + _id + "_";
 
 	_hwActionMap.clear();
 	for (ActionArray::const_iterator it = _actions.begin(); it != _actions.end(); ++it) {
@@ -222,7 +223,7 @@ void Keymap::saveMappings() {
 	if (!_configDomain)
 		return;
 
-	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
+	String prefix = KEYMAP_KEY_PREFIX + _id + "_";
 
 	for (ActionArray::const_iterator it = _actions.begin(); it != _actions.end(); it++) {
 		Action *action = *it;

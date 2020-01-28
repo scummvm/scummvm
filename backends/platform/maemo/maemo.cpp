@@ -195,7 +195,7 @@ Common::KeymapArray OSystem_SDL_Maemo::getGlobalKeymaps() {
 	using namespace Common;
 	KeymapArray globalMaps = OSystem_POSIX::getGlobalKeymaps();
 
-	Keymap *globalMap = new Keymap(Keymap::kKeymapTypeGlobal, "maemo");
+	Keymap *globalMap = new Keymap(Keymap::kKeymapTypeGlobal, "maemo", "Maemo");
 
 	Action *act;
 

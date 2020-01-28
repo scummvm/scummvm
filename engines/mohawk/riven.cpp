@@ -875,7 +875,7 @@ void MohawkEngine_Riven::runOptionsDialog() {
 Common::Keymap *MohawkEngine_Riven::initKeymap(const char *target) {
 	using namespace Common;
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "riven");
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "riven", "Riven");
 
 	if (checkGameGUIOption(GAMEOPTION_25TH, ConfMan.get("guioptions", target))) {
 		Action* const act = new Action(kStandardActionOpenMainMenu, _("Open main menu"));

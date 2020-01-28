@@ -113,7 +113,7 @@ GuiManager::~GuiManager() {
 Common::Keymap *GuiManager::getKeymap() const {
 	using namespace Common;
 
-	Keymap *guiMap = new Keymap(Keymap::kKeymapTypeGui, kGuiKeymapName);
+	Keymap *guiMap = new Keymap(Keymap::kKeymapTypeGui, kGuiKeymapName, _("GUI"));
 
 	Action *act;
 

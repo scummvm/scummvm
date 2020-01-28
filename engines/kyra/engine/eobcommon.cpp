@@ -344,7 +344,7 @@ EoBCoreEngine::~EoBCoreEngine() {
 }
 
 Common::Keymap *EoBCoreEngine::initKeymap(const Common::String &gameId) {
-	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName);
+	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName, "Eye of the Beholder");
 
 	const Common::KeyActionEntry keyActionEntries[] = {
 		{ "MVF", Common::KEYCODE_UP,     "UP",     _("Move Forward")                      },

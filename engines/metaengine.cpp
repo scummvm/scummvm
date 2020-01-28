@@ -50,7 +50,7 @@ const char *MetaEngine::getSavegamePattern(const char *target) const {
 Common::Keymap *MetaEngine::initKeymap(const char *target) const {
 	using namespace Common;
 
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "engine-default");
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "engine-default", _("Default game keymap"));
 
 	Action *act;
 

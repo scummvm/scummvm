@@ -73,7 +73,7 @@ public:
 
 	typedef Array<Action *> ActionArray;
 
-	Keymap(KeymapType type, const String &name);
+	Keymap(KeymapType type, const String &id, const String &description);
 	~Keymap();
 	void setConfigDomain(ConfigManager::Domain *configDomain);
 	void setHardwareInputs(HardwareInputSet *hardwareInputSet);
@@ -139,7 +139,8 @@ public:
 	 */
 	void saveMappings();
 
-	const String &getName() const { return _name; }
+	const String &getId() const { return _id; }
+	const String &getDescription() const { return _description; }
 	KeymapType getType() const { return _type; }
 
 	/**
@@ -158,7 +159,8 @@ private:
 	typedef HashMap<HardwareInput, ActionArray, Event_Hash, Event_EqualTo> HardwareActionMap;
 
 	KeymapType _type;
-	String _name;
+	String _id;
+	String _description;
 
 	bool _enabled;
 

@@ -284,7 +284,7 @@ void RemapWidget::refreshKeymap() {
 		row.resetButton->setTooltip(_("Reset to defaults"));
 
 		if (!_keymapSeparators.contains(row.keymap)) {
-			_keymapSeparators[row.keymap] = new GUI::StaticTextWidget(_scrollContainer, 0, 0, 0, 0, row.keymap->getName(), Graphics::kTextAlignLeft);
+			_keymapSeparators[row.keymap] = new GUI::StaticTextWidget(_scrollContainer, 0, 0, 0, 0, row.keymap->getDescription(), Graphics::kTextAlignLeft);
 		}
 	}
 }

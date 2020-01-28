@@ -92,9 +92,9 @@ public:
 	/**
 	 * Obtain a keymap of the given name from the keymapper.
 	 * Game keymaps have priority over global keymaps
-	 * @param name		name of the keymap to return
+	 * @param id		name of the keymap to return
 	 */
-	Keymap *getKeymap(const String &name);
+	Keymap *getKeymap(const String &id) const;
 
 	/**
 	 * Obtain a list of all the keymaps registered with the keymapper
