@@ -84,7 +84,7 @@ void Keymap::unregisterMapping(Action *action) {
 void Keymap::resetMapping(Action *action) {
 	unregisterMapping(action);
 
-	const Array<String> &hwInputIds = action->getDefaultInputMapping();
+	StringArray hwInputIds = getActionDefaultMappings(action);
 	registerMappings(action, hwInputIds);
 }
 
@@ -168,28 +168,33 @@ void Keymap::setHardwareInputs(HardwareInputSet *hardwareInputSet) {
 	_hardwareInputSet = hardwareInputSet;
 }
 
-void Keymap::setBackendDefaultBindings(const Common::KeymapperDefaultBindings *backendDefaultBindings) {
+void Keymap::setBackendDefaultBindings(const KeymapperDefaultBindings *backendDefaultBindings) {
 	_backendDefaultBindings = backendDefaultBindings;
 }
 
-void Keymap::registerBackendDefaultMappings() {
-	assert(_backendDefaultBindings);
-
-	for (ActionArray::const_iterator it = _actions.begin(); it != _actions.end(); ++it) {
-		Action *action = *it;
-		Common::String defaultHwId = _backendDefaultBindings->getDefaultBinding(_id, action->id);
-
-		if (!defaultHwId.empty()) {
-			action->addDefaultInputMapping(defaultHwId);
-			continue;
+StringArray Keymap::getActionDefaultMappings(Action *action) {
+	// Backend default mappings overrides keymap default mappings, so backends can resolve mapping conflicts.
+	// Empty mappings are valid and mean the action should not be mapped by default.
+	if (_backendDefaultBindings) {
+		KeymapperDefaultBindings::const_iterator it = _backendDefaultBindings->findDefaultBinding(_id, action->id);
+		if (it != _backendDefaultBindings->end()) {
+			if (it->_value.empty()) {
+				return StringArray();
+			}
+			return StringArray(1, it->_value);
 		}
 
 		// If no keymap-specific default mapping was found, look for a standard action binding
-		defaultHwId = _backendDefaultBindings->getDefaultBinding(kStandardActionsKeymapName, action->id);
-		if (!defaultHwId.empty()) {
-			action->addDefaultInputMapping(defaultHwId);
+		it = _backendDefaultBindings->findDefaultBinding(kStandardActionsKeymapName, action->id);
+		if (it != _backendDefaultBindings->end()) {
+			if (it->_value.empty()) {
+				return StringArray();
+			}
+			return StringArray(1, it->_value);
 		}
 	}
+
+	return action->getDefaultInputMapping();
 }
 
 void Keymap::loadMappings() {
@@ -200,10 +205,6 @@ void Keymap::loadMappings() {
 		return;
 	}
 
-	if (_backendDefaultBindings) {
-		registerBackendDefaultMappings();
-	}
-
 	String prefix = KEYMAP_KEY_PREFIX + _id + "_";
 
 	_hwActionMap.clear();
@@ -211,29 +212,28 @@ void Keymap::loadMappings() {
 		Action *action = *it;
 		String confKey = prefix + action->id;
 
-		Array<String> hwInputIds;
+		StringArray hwInputIds;
 		if (_configDomain->contains(confKey)) {
 			// The configuration value is a list of space separated hardware input ids
 			StringTokenizer hwInputTokenizer = _configDomain->getVal(confKey);
 
-			String hwInputId;
-			while ((hwInputId = hwInputTokenizer.nextToken()) != "") {
-				hwInputIds.push_back(hwInputId);
+			while (!hwInputTokenizer.empty()) {
+				hwInputIds.push_back(hwInputTokenizer.nextToken());
 			}
 		} else {
 			// If the configuration key was not found, use the default mapping
-			hwInputIds = action->getDefaultInputMapping();
+			hwInputIds = getActionDefaultMappings(action);
 		}
 
 		registerMappings(action, hwInputIds);
 	}
 }
 
-void Keymap::registerMappings(Action *action, const Array <String> &hwInputIds) {
+void Keymap::registerMappings(Action *action, const StringArray &hwInputIds) {
 	assert(_hardwareInputSet);
 
 	for (uint i = 0; i < hwInputIds.size(); i++) {
-			HardwareInput hwInput = _hardwareInputSet->findHardwareInput(hwInputIds[i].c_str());
+			HardwareInput hwInput = _hardwareInputSet->findHardwareInput(hwInputIds[i]);
 
 			if (hwInput.type == kHardwareInputTypeInvalid) {
 				// Silently ignore unknown hardware ids because the current device may not have inputs matching the defaults
@@ -256,7 +256,7 @@ void Keymap::saveMappings() {
 		Action *action = *it;
 		Array<HardwareInput> mappedInputs = getActionMapping(action);
 
-		if (areMappingsIdentical(mappedInputs, action->getDefaultInputMapping())) {
+		if (areMappingsIdentical(mappedInputs, getActionDefaultMappings(action))) {
 			// If the current mapping is the default, don't write anything to the config manager
 			_configDomain->erase(prefix + action->id);
 			continue;
@@ -276,24 +276,24 @@ void Keymap::saveMappings() {
 	}
 }
 
-bool Keymap::areMappingsIdentical(const Array<HardwareInput> &inputs, const StringArray &mapping) {
-	if (inputs.size() != mapping.size()) {
-		return false;
-	}
-
+bool Keymap::areMappingsIdentical(const Array<HardwareInput> &mappingsA, const StringArray &mappingsB) {
 	// Assumes array values are not duplicated, but registerMapping and addDefaultInputMapping ensure that
 
 	uint foundCount = 0;
-	for (uint i = 0; i < inputs.size(); i++) {
-		for (uint j = 0; j < mapping.size(); j++) {
-			if (inputs[i].id == mapping[j]) {
+	for (uint i = 0; i < mappingsB.size(); i++) {
+		// We resolve the hardware input to make sure it is not a default for some hardware we don't have currently
+		HardwareInput mappingB = _hardwareInputSet->findHardwareInput(mappingsB[i]);
+		if (mappingB.type == kHardwareInputTypeInvalid) continue;
+
+		for (uint j = 0; j < mappingsA.size(); j++) {
+			if (mappingsA[j].id == mappingB.id) {
 				foundCount++;
 				break;
 			}
 		}
 	}
 
-	return foundCount == inputs.size();
+	return foundCount == mappingsA.size();
 }
 
 } // End of namespace Common

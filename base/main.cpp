@@ -361,7 +361,7 @@ static void setupKeymapper(OSystem &system) {
 
 	// Query the backend for hardware keys and default bindings and register them
 	HardwareInputSet *inputSet = system.getHardwareInputSet();
-	const KeymapperDefaultBindings *backendDefaultBindings = system.getKeymapperDefaultBindings();
+	KeymapperDefaultBindings *backendDefaultBindings = system.getKeymapperDefaultBindings();
 
 	mapper->registerHardwareInputSet(inputSet);
 	mapper->registerBackendDefaultBindings(backendDefaultBindings);

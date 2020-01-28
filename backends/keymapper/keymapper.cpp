@@ -24,6 +24,7 @@
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/hardware-input.h"
+#include "backends/keymapper/keymapper-defaults.h"
 
 #include "common/system.h"
 
@@ -35,19 +36,20 @@ static const uint32 kDelayMouseEventMillis = 50;
 
 Keymapper::Keymapper(EventManager *eventMan) :
 		_eventMan(eventMan),
-		_enabled(true),
-		_enabledKeymapType(Keymap::kKeymapTypeGlobal),
 		_hardwareInputs(nullptr),
 		_backendDefaultBindings(nullptr),
-		_delayedEventSource(new DelayedEventSource()) {
+		_delayedEventSource(new DelayedEventSource()),
+		_enabled(true),
+		_enabledKeymapType(Keymap::kKeymapTypeGlobal) {
 	_eventMan->getEventDispatcher()->registerSource(_delayedEventSource, true);
 }
 
 Keymapper::~Keymapper() {
-	delete _hardwareInputs;
 	for (KeymapArray::iterator it = _keymaps.begin(); it != _keymaps.end(); it++) {
 		delete *it;
 	}
+	delete _backendDefaultBindings;
+	delete _hardwareInputs;
 }
 
 void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {
@@ -65,7 +67,7 @@ void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {
 	_hardwareInputs = inputs;
 }
 
-void Keymapper::registerBackendDefaultBindings(const Common::KeymapperDefaultBindings *backendDefaultBindings) {
+void Keymapper::registerBackendDefaultBindings(KeymapperDefaultBindings *backendDefaultBindings) {
 	if (!_keymaps.empty())
 		error("Backend default bindings must be defined before adding keymaps");
 

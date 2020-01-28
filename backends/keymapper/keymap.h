@@ -127,6 +127,14 @@ public:
 	const ActionArray &getActions() const { return _actions; }
 
 	/**
+	 * Get the default input mappings for an action.
+	 *
+	 * Backend-specific mappings replace the default mappings
+	 * specified when creating the keymap.
+	 */
+	StringArray getActionDefaultMappings(Action *action);
+
+	/**
 	 * Load this keymap's mappings from the config manager.
 	 * @param hwInputs	the set to retrieve hardware input pointers from
 	 */
@@ -175,8 +183,6 @@ private:
 	ConfigManager::Domain *_configDomain;
 	HardwareInputSet *_hardwareInputSet;
 	const KeymapperDefaultBindings *_backendDefaultBindings;
-
-	void registerBackendDefaultMappings();
 };
 
 typedef Array<Keymap *> KeymapArray;

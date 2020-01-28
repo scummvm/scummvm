@@ -54,13 +54,17 @@ public:
 	/**
 	 * Registers a HardwareInputSet with the Keymapper
 	 * @note should only be called once (during backend initialisation)
+	 *
+	 * Transfers ownership to the Keymapper
 	 */
 	void registerHardwareInputSet(HardwareInputSet *inputs);
 
 	/**
 	 * Registers platform-specific default mappings for keymap actions
+	 *
+	 * Transfers ownership to the Keymapper
 	 */
-	void registerBackendDefaultBindings(const KeymapperDefaultBindings *backendDefaultBindings);
+	void registerBackendDefaultBindings(KeymapperDefaultBindings *backendDefaultBindings);
 
 	/**
 	 * Add a keymap to the global domain.
@@ -126,7 +130,7 @@ public:
 private:
 	EventManager *_eventMan;
 	HardwareInputSet *_hardwareInputs;
-	const KeymapperDefaultBindings *_backendDefaultBindings;
+	KeymapperDefaultBindings *_backendDefaultBindings;
 	DelayedEventSource *_delayedEventSource;
 
 	enum IncomingEventType {
