@@ -193,6 +193,7 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	void tryAutoSaving();
 	bool hasFeature(EngineFeature f) const override;
+	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
 
 	void resumeFromMainMenu();
 

@@ -121,7 +121,7 @@ bool MohawkEngine_Myst::hasFeature(EngineFeature f) const {
 	return
 		MohawkEngine::hasFeature(f)
 		|| (f == kSupportsLoadingDuringRuntime)
-		|| (f == kSupportsSavingDuringRuntime);
+	        || (f == kSupportsSavingDuringRuntime);
 }
 
 #endif
@@ -334,6 +334,11 @@ SaveStateDescriptor MohawkMetaEngine::querySaveMetaInfos(const char *target, int
 Common::KeymapArray MohawkMetaEngine::initKeymaps(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 
+#ifdef ENABLE_MYST
+	if (gameId == "myst" || gameId == "makingofmyst") {
+		return Mohawk::MohawkEngine_Myst::initKeymaps(target);
+	}
+#endif
 #ifdef ENABLE_RIVEN
 	if (gameId == "riven") {
 		return Mohawk::MohawkEngine_Riven::initKeymaps(target);
