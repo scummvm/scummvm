@@ -98,12 +98,10 @@ void RemapWidget::reflowActionWidgets() {
 
 	int spacing = g_gui.xmlEval()->getVar("Globals.KeyMapper.Spacing");
 	int keyButtonWidth = g_gui.xmlEval()->getVar("Globals.KeyMapper.ButtonWidth");
-	int clearButtonWidth = g_gui.xmlEval()->getVar("Globals.Line.Height");
-	int clearButtonHeight = g_gui.xmlEval()->getVar("Globals.Line.Height");
-	int labelWidth = getWidth() - (spacing + keyButtonWidth + spacing + clearButtonWidth + spacing);
+	int resetButtonWidth = g_gui.xmlEval()->getVar("Globals.KeyMapper.ResetWidth");
+	int labelWidth = getWidth() - (spacing + keyButtonWidth + spacing);
 
 	uint textYOff = (buttonHeight - kLineHeight) / 2;
-	uint clearButtonYOff = (buttonHeight - clearButtonHeight) / 2;
 
 	uint y = spacing;
 
@@ -118,17 +116,17 @@ void RemapWidget::reflowActionWidgets() {
 			previousKeymap = row.keymap;
 
 			// Insert a keymap separator
-			x = 4 * spacing + keyButtonWidth + 2 * clearButtonWidth;
+			x = 2 * spacing + keyButtonWidth;
 
 			KeymapTitleRow keymapTitle = _keymapSeparators[row.keymap];
 			if (keymapTitle.descriptionText) {
-				uint descriptionWidth = getWidth() - x - spacing - keyButtonWidth - spacing;
+				uint descriptionWidth = getWidth() - x - spacing - resetButtonWidth - spacing;
 
-				keymapTitle.descriptionText->resize(x, y, descriptionWidth, kLineHeight);
-				keymapTitle.resetButton->resize(x + descriptionWidth, y, keyButtonWidth, buttonHeight);
+				keymapTitle.descriptionText->resize(x, y + textYOff, descriptionWidth, kLineHeight);
+				keymapTitle.resetButton->resize(x + descriptionWidth, y, resetButtonWidth, buttonHeight);
 			}
 
-			y += kLineHeight + spacing;
+			y += buttonHeight + spacing;
 		}
 
 		x = spacing;
@@ -136,12 +134,6 @@ void RemapWidget::reflowActionWidgets() {
 		row.keyButton->resize(x, y, keyButtonWidth, buttonHeight);
 
 		x += keyButtonWidth + spacing;
-		row.clearButton->resize(x, y + clearButtonYOff, clearButtonWidth, clearButtonHeight);
-
-		x += clearButtonWidth + spacing;
-		row.resetButton->resize(x, y + clearButtonYOff, clearButtonWidth, clearButtonHeight);
-
-		x += clearButtonWidth + spacing;
 		row.actionText->resize(x, y + textYOff, labelWidth, kLineHeight);
 
 		y += buttonHeight + spacing;
@@ -270,20 +262,17 @@ void RemapWidget::loadKeymap() {
 }
 
 void RemapWidget::refreshKeymap() {
-	int clearButtonWidth = g_gui.xmlEval()->getVar("Globals.Line.Height");
-	int clearButtonHeight = g_gui.xmlEval()->getVar("Globals.Line.Height");
-
 	for (uint i = 0; i < _actions.size(); i++) {
 		ActionRow &row = _actions[i];
 
 		if (!row.actionText) {
 			row.actionText = new GUI::StaticTextWidget(_scrollContainer, 0, 0, 0, 0, "", Graphics::kTextAlignLeft, nullptr, GUI::ThemeEngine::kFontStyleNormal);
-			row.keyButton = new GUI::ButtonWidget(_scrollContainer, 0, 0, 0, 0, "", nullptr, kRemapCmd + i);
-			row.clearButton = addClearButton(_scrollContainer, "", kClearCmd + i, 0, 0, clearButtonWidth, clearButtonHeight);
-			row.resetButton = new GUI::ButtonWidget(_scrollContainer, 0, 0, 0, 0, "", nullptr, kResetActionCmd + i);
-		}
+			row.actionText->setLabel(row.action->description);
 
-		row.actionText->setLabel(row.action->description);
+			row.keyButton = new GUI::DropdownButtonWidget(_scrollContainer, 0, 0, 0, 0, "", nullptr, kRemapCmd + i);
+			row.keyButton->appendEntry(_("Reset to defaults"), kResetActionCmd + i);
+			row.keyButton->appendEntry(_("Clear mapping"), kClearCmd + i);
+		}
 
 		Array<HardwareInput> mappedInputs = row.keymap->getActionMapping(row.action);
 
@@ -303,10 +292,6 @@ void RemapWidget::refreshKeymap() {
 			row.keyButton->setLabel("-");
 			row.keyButton->setTooltip("");
 		}
-
-		// I18N: Button to reset key mapping to defaults
-		row.resetButton->setLabel(_("R"));
-		row.resetButton->setTooltip(_("Reset to defaults"));
 
 		KeymapTitleRow &keymapTitle = _keymapSeparators[row.keymap];
 		if (!keymapTitle.descriptionText) {

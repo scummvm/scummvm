@@ -30,6 +30,7 @@
 
 namespace GUI {
 class ButtonWidget;
+class DropdownButtonWidget;
 class PopUpWidget;
 class ScrollContainerWidget;
 class StaticTextWidget;
@@ -60,11 +61,9 @@ protected:
 		Common::Action *action;
 
 		GUI::StaticTextWidget *actionText;
-		GUI::ButtonWidget *keyButton;
-		GUI::ButtonWidget *clearButton;
-		GUI::ButtonWidget *resetButton;
+		GUI::DropdownButtonWidget *keyButton;
 
-		ActionRow() : keymap(nullptr), action(nullptr), actionText(nullptr), keyButton(nullptr), clearButton(nullptr), resetButton(nullptr) { }
+		ActionRow() : keymap(nullptr), action(nullptr), actionText(nullptr), keyButton(nullptr) {}
 	};
 
 	struct KeymapTitleRow {

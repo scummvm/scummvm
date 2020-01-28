@@ -214,7 +214,7 @@ const ModifierTableEntry defaultModifiers[] = {
 	{ KBD_SHIFT, "S", "Shift+" },
 	{ KBD_ALT,   "A", "Alt+"   },
 	{ KBD_META,  "M", "Meta+"  },
-	{ 0,     nullptr, nullptr }
+	{ 0,     nullptr, nullptr  }
 };
 
 const HardwareInputTableEntry defaultMouseButtons[] = {

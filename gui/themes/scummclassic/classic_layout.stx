@@ -41,8 +41,8 @@
 		<def var = 'OnScreenDialog.ShowPics' value = '0'/>
 
 		<def var = 'KeyMapper.Spacing' value = '10'/>
-		<def var = 'KeyMapper.LabelWidth' value = '100'/>
-		<def var = 'KeyMapper.ButtonWidth' value = '80'/>
+		<def var = 'KeyMapper.ButtonWidth' value = '140'/>
+		<def var = 'KeyMapper.ResetWidth' value = '80'/>
 
 		<def var = 'Tooltip.MaxWidth' value = '200'/>
 		<def var = 'Tooltip.XDelta' value = '16'/> <!-- basically cursor size -->
