@@ -63,7 +63,8 @@ backends/graphics/opengl/opengl-graphics.cpp
 backends/graphics/openglsdl/openglsdl-graphics.cpp
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/graphics/sdl/sdl-graphics.cpp
-backends/keymapper/remap-dialog.cpp
+backends/keymapper/hardware-input.cpp
+backends/keymapper/remap-widget.cpp
 backends/midi/windows.cpp
 backends/networking/sdl_net/handlers/createdirectoryhandler.cpp
 backends/networking/sdl_net/handlers/downloadfilehandler.cpp
@@ -81,6 +82,7 @@ backends/platform/ios7/ios7_osys_events.cpp
 backends/platform/iphone/osys_events.cpp
 backends/platform/maemo/maemo.cpp
 backends/platform/sdl/macosx/appmenu_osx.mm
+backends/platform/sdl/ps3/ps3.cpp
 backends/platform/symbian/src/SymbianActions.cpp
 backends/platform/tizen/form.cpp
 backends/platform/tizen/fs.cpp
