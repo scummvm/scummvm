@@ -27,12 +27,13 @@
 
 class OSystem_PS3 : public OSystem_SDL {
 public:
-	virtual void init();
-	virtual void initBackend();
+	void init() override;
+	void initBackend() override;
+	Common::HardwareInputSet *getHardwareInputSet() override;
 
 protected:
-	virtual Common::String getDefaultConfigFileName();
-	virtual Common::String getDefaultLogFileName();
+	Common::String getDefaultConfigFileName() override;
+	Common::String getDefaultLogFileName() override;
 };
 
 #endif
