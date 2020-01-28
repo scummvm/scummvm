@@ -67,6 +67,13 @@ protected:
 		ActionRow() : keymap(nullptr), action(nullptr), actionText(nullptr), keyButton(nullptr), clearButton(nullptr), resetButton(nullptr) { }
 	};
 
+	struct KeymapTitleRow {
+		GUI::StaticTextWidget *descriptionText;
+		GUI::ButtonWidget *resetButton;
+
+		KeymapTitleRow() : descriptionText(nullptr), resetButton(nullptr) {}
+	};
+
 	void drawWidget() override {}
 	void reflowLayout() override;
 	Widget *findWidget(int x, int y) override;
@@ -74,9 +81,10 @@ protected:
 	void loadKeymap();
 	void refreshKeymap();
 	void reflowActionWidgets();
-	void clearMapping(uint i);
-	void resetMapping(uint i);
-	void startRemapping(uint i);
+	void clearMapping(uint actionIndex);
+	void resetMapping(uint actionIndex);
+	void resetKeymap(uint actionIndex);
+	void startRemapping(uint actionIndex);
 	void stopRemapping();
 
 	KeymapArray _keymapTable;
@@ -93,7 +101,7 @@ protected:
 	bool _changes;
 
 	Array<ActionRow> _actions;
-	HashMap<Keymap *, GUI::StaticTextWidget *> _keymapSeparators;
+	HashMap<Keymap *, KeymapTitleRow> _keymapSeparators;
 };
 
 } // End of namespace Common

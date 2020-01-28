@@ -37,11 +37,12 @@
 namespace Common {
 
 enum {
-	kRemapCmd  = 'REMP',
-	kClearCmd  = 'CLER',
-	kResetCmd  = 'RSET',
-	kCloseCmd  = 'CLOS',
-	kReflowCmd = 'REFL'
+	kRemapCmd        = 'REMP',
+	kClearCmd        = 'CLER',
+	kResetActionCmd  = 'RTAC',
+	kResetKeymapCmd  = 'RTKM',
+	kCloseCmd        = 'CLOS',
+	kReflowCmd       = 'REFL'
 };
 
 RemapWidget::RemapWidget(GuiObject *boss, const Common::String &name, const KeymapArray &keymaps) :
@@ -119,8 +120,13 @@ void RemapWidget::reflowActionWidgets() {
 			// Insert a keymap separator
 			x = 4 * spacing + keyButtonWidth + 2 * clearButtonWidth;
 
-			GUI::StaticTextWidget *serarator = _keymapSeparators[row.keymap];
-			serarator->resize(x, y, getWidth() - x - spacing, kLineHeight);
+			KeymapTitleRow keymapTitle = _keymapSeparators[row.keymap];
+			if (keymapTitle.descriptionText) {
+				uint descriptionWidth = getWidth() - x - spacing - keyButtonWidth - spacing;
+
+				keymapTitle.descriptionText->resize(x, y, descriptionWidth, kLineHeight);
+				keymapTitle.resetButton->resize(x + descriptionWidth, y, keyButtonWidth, buttonHeight);
+			}
 
 			y += kLineHeight + spacing;
 		}
@@ -149,8 +155,10 @@ void RemapWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 d
 		startRemapping(cmd - kRemapCmd);
 	} else if (cmd >= kClearCmd && cmd < kClearCmd + _actions.size()) {
 		clearMapping(cmd - kClearCmd);
-	} else if (cmd >= kResetCmd && cmd < kResetCmd + _actions.size()) {
-		resetMapping(cmd - kResetCmd);
+	} else if (cmd >= kResetActionCmd && cmd < kResetActionCmd + _actions.size()) {
+		resetMapping(cmd - kResetActionCmd);
+	} else if (cmd >= kResetKeymapCmd && cmd < kResetKeymapCmd + _actions.size()) {
+		resetKeymap(cmd - kResetKeymapCmd);
 	} else if (cmd == kReflowCmd) {
 		reflowActionWidgets();
 	} else {
@@ -158,10 +166,10 @@ void RemapWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 d
 	}
 }
 
-void RemapWidget::clearMapping(uint i) {
-	debug(3, "clear the mapping %u", i);
-	Action *action = _actions[i].action;
-	Keymap *keymap = _actions[i].keymap;
+void RemapWidget::clearMapping(uint actionIndex) {
+	debug(3, "clear the mapping %u", actionIndex);
+	Action *action = _actions[actionIndex].action;
+	Keymap *keymap = _actions[actionIndex].keymap;
 	keymap->unregisterMapping(action);
 
 	_changes = true;
@@ -170,10 +178,10 @@ void RemapWidget::clearMapping(uint i) {
 	refreshKeymap();
 }
 
-void RemapWidget::resetMapping(uint i) {
-	debug(3, "Reset the mapping %u", i);
-	Action *action = _actions[i].action;
-	Keymap *keymap = _actions[i].keymap;
+void RemapWidget::resetMapping(uint actionIndex) {
+	debug(3, "Reset the mapping %u", actionIndex);
+	Action *action = _actions[actionIndex].action;
+	Keymap *keymap = _actions[actionIndex].keymap;
 	keymap->resetMapping(action);
 
 	_changes = true;
@@ -182,21 +190,38 @@ void RemapWidget::resetMapping(uint i) {
 	refreshKeymap();
 }
 
-void RemapWidget::startRemapping(uint i) {
+void RemapWidget::resetKeymap(uint actionIndex) {
+	debug(3, "Reset the keymap %u", actionIndex);
+	Keymap *keymap = _actions[actionIndex].keymap;
+
+	for (uint i = 0; i < _actions.size(); i++) {
+		ActionRow &row = _actions[i];
+		if (row.keymap == keymap) {
+			keymap->resetMapping(row.action);
+		}
+	}
+
+	_changes = true;
+
+	stopRemapping();
+	refreshKeymap();
+}
+
+void RemapWidget::startRemapping(uint actionIndex) {
 	if (_remapInputWatcher->isWatching()) {
 		// Handle a second click on the button as a stop to remapping
 		stopRemapping();
 		return;
 	}
 
-	_remapKeymap = _actions[i].keymap;
-	_remapAction = _actions[i].action;
+	_remapKeymap = _actions[actionIndex].keymap;
+	_remapAction = _actions[actionIndex].action;
 	_remapTimeout = g_system->getMillis() + kRemapTimeoutDelay;
 	_remapInputWatcher->startWatching();
 
-	_actions[i].keyButton->setLabel("...");
-	_actions[i].keyButton->setTooltip("");
-	_actions[i].keyButton->markAsDirty();
+	_actions[actionIndex].keyButton->setLabel("...");
+	_actions[actionIndex].keyButton->setTooltip("");
+	_actions[actionIndex].keyButton->markAsDirty();
 }
 
 void RemapWidget::stopRemapping() {
@@ -253,9 +278,9 @@ void RemapWidget::refreshKeymap() {
 
 		if (!row.actionText) {
 			row.actionText = new GUI::StaticTextWidget(_scrollContainer, 0, 0, 0, 0, "", Graphics::kTextAlignLeft, nullptr, GUI::ThemeEngine::kFontStyleNormal);
-			row.keyButton = new GUI::ButtonWidget(_scrollContainer, 0, 0, 0, 0, "", 0, kRemapCmd + i);
+			row.keyButton = new GUI::ButtonWidget(_scrollContainer, 0, 0, 0, 0, "", nullptr, kRemapCmd + i);
 			row.clearButton = addClearButton(_scrollContainer, "", kClearCmd + i, 0, 0, clearButtonWidth, clearButtonHeight);
-			row.resetButton = new GUI::ButtonWidget(_scrollContainer, 0, 0, 0, 0, "", 0, kResetCmd + i);
+			row.resetButton = new GUI::ButtonWidget(_scrollContainer, 0, 0, 0, 0, "", nullptr, kResetActionCmd + i);
 		}
 
 		row.actionText->setLabel(row.action->description);
@@ -283,8 +308,14 @@ void RemapWidget::refreshKeymap() {
 		row.resetButton->setLabel(_("R"));
 		row.resetButton->setTooltip(_("Reset to defaults"));
 
-		if (!_keymapSeparators.contains(row.keymap)) {
-			_keymapSeparators[row.keymap] = new GUI::StaticTextWidget(_scrollContainer, 0, 0, 0, 0, row.keymap->getDescription(), Graphics::kTextAlignLeft);
+		KeymapTitleRow &keymapTitle = _keymapSeparators[row.keymap];
+		if (!keymapTitle.descriptionText) {
+			keymapTitle.descriptionText = new GUI::StaticTextWidget(_scrollContainer, 0, 0, 0, 0, row.keymap->getDescription(), Graphics::kTextAlignLeft);
+			keymapTitle.resetButton = new GUI::ButtonWidget(_scrollContainer, 0, 0, 0, 0, "", nullptr, kResetKeymapCmd + i);
+
+			// I18N: Button to reset keymap mappings to defaults
+			keymapTitle.resetButton->setLabel(_("Reset"));
+			keymapTitle.resetButton->setTooltip(_("Reset to defaults"));
 		}
 	}
 }
