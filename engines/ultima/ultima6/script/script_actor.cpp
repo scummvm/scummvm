@@ -20,9 +20,13 @@
  *
  */
 
+#ifdef USE_COMMON_LUA
+#include "common/lua/lauxlib.h"
+#else
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
 #include "ultima/ultima6/lua/lauxlib.h"
+#endif
 
 #include "ultima/ultima6/actors/actor.h"
 #include "ultima/ultima6/core/nuvie_defs.h"
