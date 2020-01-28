@@ -142,7 +142,7 @@ bool Mouse::isMouseDownEvent(Shared::MouseButton button) {
 
 int Mouse::getMouseLength(int mx, int my) {
 	Pentagram::Rect dims;
-	RenderSurface *screen = Ultima8Engine::get_instance()->getScreen();
+	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
 
 	// For now, reference point is (near) the center of the screen
@@ -173,7 +173,7 @@ int Mouse::getMouseLength(int mx, int my) {
 
 int Mouse::getMouseDirection(int mx, int my) {
 	Pentagram::Rect dims;
-	RenderSurface *screen = Ultima8Engine::get_instance()->getScreen();
+	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
 
 	// For now, reference point is (near) the center of the screen
@@ -255,7 +255,7 @@ int Mouse::getMouseFrame() {
 
 void Mouse::setMouseCoords(int mx, int my) {
 	Pentagram::Rect dims;
-	RenderSurface *screen = Ultima8Engine::get_instance()->getScreen();
+	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
 
 	if (mx < dims.x)
@@ -527,7 +527,7 @@ Gump *Mouse::getMouseOverGump() const {
 }
 
 void Mouse::paint() {
-	RenderSurface *screen = Ultima8Engine::get_instance()->getScreen();
+	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	GameData *gamedata = GameData::get_instance();
 
 	if (gamedata) {

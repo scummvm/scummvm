@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/events.h"
 #include "common/stack.h"
+#include "gui/debugger.h"
 #include "graphics/screen.h"
 #include "ultima/shared/core/rect.h"
 
@@ -49,8 +50,6 @@ enum MouseButton {
 enum SpecialButtons {
 	MK_LBUTTON = 1, MK_RBUTTON = 2, MK_MBUTTON = 4, MK_SHIFT = 8, MK_CONTROL = 0x10	
 };
-
-class Debugger;
 
 /**
  * A base class for windows that can receive event messages
@@ -138,7 +137,7 @@ public:
 	/**
 	 * Get the debugger
 	 */
-	virtual Debugger *getDebugger() const = 0;
+	virtual GUI::Debugger *getDebugger() = 0;
 
 	/**
 	 * Get the screen
