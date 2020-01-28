@@ -490,12 +490,9 @@ void DreamWebEngine::cls() {
 }
 
 uint8 DreamWebEngine::modifyChar(uint8 c) const {
-	if (c < 128)
-		return c;
-
-	switch(getLanguage()) {
+	switch (getLanguage()) {
 	case Common::DE_DEU:
-		switch(c) {
+		switch (c) {
 		case 129:
 			return 'Z' + 3;
 		case 132:
@@ -570,6 +567,10 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 		default:
 			return c;
 		}
+	case Common::RU_RUS:
+		if (c >= 224)
+			c -= 48;
+		// fall through
 	default:
 		return c;
 	}

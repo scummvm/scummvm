@@ -103,7 +103,7 @@ uint8 DreamWebEngine::printSlow(const uint8 *string, uint16 x, uint16 y, uint8 m
 			}
 			if (charCount != 1) {
 				c1 = modifyChar(c1);
-				_charShift = 91;
+				_charShift = getLanguage() == Common::RU_RUS ? 182 : 91;
 				uint16 offset2 = offset;
 				printBoth(_charset1, &offset2, y, c1, c2);
 				_charShift = 0;
@@ -194,6 +194,16 @@ uint8 DreamWebEngine::getNumber(const GraphicsFile &charSet, const uint8 *string
 }
 
 uint8 DreamWebEngine::kernChars(uint8 firstChar, uint8 secondChar, uint8 width) {
+	if (getLanguage() == Common::RU_RUS) {
+		if ((firstChar == 'a') || (firstChar == 'u') || (firstChar == 0xa0)
+				|| (firstChar == 0xa8) || (firstChar == 0xa9) || (firstChar == 0xe9)) {
+			if ((secondChar == 0xe2) || (secondChar == 'n') || (secondChar == 't') || (secondChar == 'r') || (secondChar == 'i') || (secondChar == 'l'))
+				return width-1;
+
+		}
+		return width;
+	}
+
 	if ((firstChar == 'a') || (firstChar == 'u')) {
 		if ((secondChar == 'n') || (secondChar == 't') || (secondChar == 'r') || (secondChar == 'i') || (secondChar == 'l'))
 			return width-1;

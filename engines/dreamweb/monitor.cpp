@@ -344,7 +344,12 @@ void DreamWebEngine::printCurs() {
 		height = 11;
 	} else
 		height = 8;
-	multiGet(_textUnder, x, y, 6, height);
+
+	int w = 6;
+	if (getLanguage() == Common::RU_RUS)
+		w = 7;
+
+	multiGet(_textUnder, x, y, w, height);
 	++_mainTimer;
 	if ((_mainTimer & 16) == 0)
 		showFrame(_monitorCharset, x, y, '/' - 32, 0);

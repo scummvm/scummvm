@@ -776,6 +776,9 @@ public:
 	void loadRoomData(const Room &room, bool skipDat);
 	void useTempCharset(GraphicsFile *charset);
 	void useCharset1();
+	void useCharsetIcons1();
+	void useCharsetTempgraphics();
+	void resetCharset();
 	void printMessage(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered);
 	void printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWidth, bool centered, uint8 count);
 	bool isItDescribed(const ObjPos *objPos);
