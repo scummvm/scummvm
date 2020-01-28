@@ -533,6 +533,14 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				}
 			}
 
+			// LSL7 French has an invalid audio36 map entry for a narrator
+			//  message that was cut from the game. This resource existed
+			//  in the English version even though it was inaccessible.
+			if (g_sci->getGameId() == GID_LSL7 &&
+				map->_mapNumber == 999) {
+				continue;
+			}
+
 			// Map 800 and 4176 contain content that was cut from the game. The
 			// French version of the game includes map files from the US
 			// release, but the audio resources are French so the maps don't
