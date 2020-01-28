@@ -58,5 +58,7 @@
 	<string>residualvm.docktileplugin</string>
 	<key>NSRequiresAquaSystemAppearance</key>
 	<false/>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>ResidualVM saves and loads savegames in the Documents folder by default.</string>
 </dict>
 </plist>
