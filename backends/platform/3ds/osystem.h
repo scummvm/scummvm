@@ -49,7 +49,7 @@ enum InputMode {
 	MODE_DRAG,
 };
 
-class OSystem_3DS : public EventsBaseBackend, public PaletteManager {
+class OSystem_3DS : public EventsBaseBackend, public PaletteManager, public Common::EventObserver {
 public:
 	OSystem_3DS();
 	virtual ~OSystem_3DS();
@@ -63,7 +63,11 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
 	virtual bool getFeatureState(OSystem::Feature f);
 
-	virtual bool pollEvent(Common::Event &event);
+	bool pollEvent(Common::Event &event) override;
+	bool notifyEvent(const Common::Event &event) override;
+	Common::HardwareInputSet *getHardwareInputSet() override;
+	Common::KeymapArray getGlobalKeymaps() override;
+	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
@@ -137,8 +141,6 @@ public:
 	void updateMagnify();
 	void updateConfig();
 	void updateSize();
-	void setMagnifyMode(MagnifyMode mode);
-	MagnifyMode getMagnifyMode(){ return _magnifyMode; }
 
 private:
 	void initGraphics();
