@@ -6,6 +6,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Kyra:
    - Added support for the PC-98 version of Eye of the Beholder I.
 
+ Sword1:
+   - Added support for localized menus in Novy Disk Russian Trilogy release.
+
 
 #### 2.1.1 (2020-01-31)
 
