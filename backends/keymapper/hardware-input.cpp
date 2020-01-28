@@ -217,6 +217,13 @@ const ModifierTableEntry defaultModifiers[] = {
 	{ 0,     nullptr, nullptr }
 };
 
+const HardwareInputTableEntry defaultMouseButtons[] = {
+    { "MOUSE_LEFT",   MOUSE_BUTTON_LEFT,   _s("Left Mouse Button")   },
+    { "MOUSE_RIGHT",  MOUSE_BUTTON_RIGHT,  _s("Right Mouse Button")  },
+    { "MOUSE_MIDDLE", MOUSE_BUTTON_MIDDLE, _s("Middle Mouse Button") },
+    { nullptr,        0,                   nullptr                   }
+};
+
 const HardwareInputTableEntry defaultJoystickButtons[] = {
     { "JOY_A",              JOYSTICK_BUTTON_A,              _s("Joy A")              },
     { "JOY_B",              JOYSTICK_BUTTON_B,              _s("Joy B")              },
@@ -329,18 +336,59 @@ HardwareInput KeyboardHardwareInputSet::findHardwareInput(const Event &event) co
 	}
 }
 
+MouseHardwareInputSet::MouseHardwareInputSet(const HardwareInputTableEntry *buttonEntries) :
+		_buttonEntries(buttonEntries) {
+	assert(_buttonEntries);
+}
+
+HardwareInput MouseHardwareInputSet::findHardwareInput(const String &id) const {
+	const HardwareInputTableEntry *hw = HardwareInputTableEntry::findWithId(_buttonEntries, id);
+	if (!hw || !hw->hwId) {
+		return HardwareInput();
+	}
+
+	return HardwareInput::createMouse(hw->hwId, hw->code, hw->desc);
+}
+
+HardwareInput MouseHardwareInputSet::findHardwareInput(const Event &event) const {
+	int button;
+	switch (event.type) {
+	case EVENT_LBUTTONDOWN:
+	case EVENT_LBUTTONUP:
+		button = MOUSE_BUTTON_LEFT;
+		break;
+	case EVENT_RBUTTONDOWN:
+	case EVENT_RBUTTONUP:
+		button = MOUSE_BUTTON_RIGHT;
+		break;
+	case EVENT_MBUTTONDOWN:
+	case EVENT_MBUTTONUP:
+		button = MOUSE_BUTTON_MIDDLE;
+		break;
+	default:
+		button = -1;
+		break;
+	}
+
+	if (button == -1) {
+		return HardwareInput();
+	}
+
+	const HardwareInputTableEntry *hw = HardwareInputTableEntry::findWithCode(_buttonEntries, button);
+	if (!hw || !hw->hwId) {
+		return HardwareInput();
+	}
+
+	return HardwareInput::createMouse(hw->hwId, hw->code, hw->desc);
+}
+
 JoystickHardwareInputSet::JoystickHardwareInputSet(const HardwareInputTableEntry *buttonEntries) :
-    _buttonEntries(buttonEntries) {
+		_buttonEntries(buttonEntries) {
+	assert(_buttonEntries);
 }
 
 HardwareInput JoystickHardwareInputSet::findHardwareInput(const String &id) const {
-	const HardwareInputTableEntry *hw = nullptr;
-	for (hw = _buttonEntries;  hw->hwId; hw++) {
-		if (id.equals(hw->hwId)) {
-			break;
-		}
-	}
-
+	const HardwareInputTableEntry *hw = HardwareInputTableEntry::findWithId(_buttonEntries, id);
 	if (!hw || !hw->hwId) {
 		return HardwareInput();
 	}
@@ -352,13 +400,7 @@ HardwareInput JoystickHardwareInputSet::findHardwareInput(const Event &event) co
 	switch (event.type) {
 	case EVENT_JOYBUTTON_DOWN:
 	case EVENT_JOYBUTTON_UP: {
-		const HardwareInputTableEntry *hw = nullptr;
-		for (hw = _buttonEntries;  hw->hwId; hw++) {
-			if (event.joystick.button == hw->code) {
-				break;
-			}
-		}
-
+		const HardwareInputTableEntry *hw = HardwareInputTableEntry::findWithCode(_buttonEntries, event.joystick.button);
 		if (!hw || !hw->hwId) {
 			return HardwareInput();
 		}
@@ -376,13 +418,7 @@ CustomHardwareInputSet::CustomHardwareInputSet(const HardwareInputTableEntry *ha
 }
 
 HardwareInput CustomHardwareInputSet::findHardwareInput(const String &id) const {
-	const HardwareInputTableEntry *hw = nullptr;
-	for (hw = _hardwareEntries;  hw->hwId; hw++) {
-		if (id.equals(hw->hwId)) {
-			break;
-		}
-	}
-
+	const HardwareInputTableEntry *hw = HardwareInputTableEntry::findWithId(_hardwareEntries, id);
 	if (!hw || !hw->hwId) {
 		return HardwareInput();
 	}
@@ -393,13 +429,7 @@ HardwareInput CustomHardwareInputSet::findHardwareInput(const String &id) const 
 HardwareInput CustomHardwareInputSet::findHardwareInput(const Event &event) const {
 	switch (event.type) {
 	case EVENT_CUSTOM_BACKEND_HARDWARE: {
-		const HardwareInputTableEntry *hw = nullptr;
-		for (hw = _hardwareEntries;  hw->hwId; hw++) {
-			if (event.customType == hw->code) {
-				break;
-			}
-		}
-
+		const HardwareInputTableEntry *hw = HardwareInputTableEntry::findWithCode(_hardwareEntries, event.customType);
 		if (!hw || !hw->hwId) {
 			return HardwareInput();
 		}

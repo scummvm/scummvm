@@ -56,7 +56,10 @@ void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {
 
 	if (!inputs) {
 		warning("No hardware input were defined, using defaults");
-		inputs = new KeyboardHardwareInputSet(defaultKeys, defaultModifiers);
+		CompositeHardwareInputSet *compositeInputs = new CompositeHardwareInputSet();
+		compositeInputs->addHardwareInputSet(new MouseHardwareInputSet(defaultMouseButtons));
+		compositeInputs->addHardwareInputSet(new KeyboardHardwareInputSet(defaultKeys, defaultModifiers));
+		inputs = compositeInputs;
 	}
 
 	_hardwareInputs = inputs;
@@ -191,7 +194,11 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &ev) const {
 	if (ev.type == EVENT_CUSTOM_BACKEND_HARDWARE) {
 		return kIncomingEventInstant;
-	} else if (ev.type == EVENT_KEYDOWN || ev.type == EVENT_JOYBUTTON_DOWN) {
+	} else if (ev.type == EVENT_KEYDOWN
+	           || ev.type == EVENT_LBUTTONDOWN
+	           || ev.type == EVENT_RBUTTONDOWN
+	           || ev.type == EVENT_MBUTTONDOWN
+	           || ev.type == EVENT_JOYBUTTON_DOWN) {
 		return kIncomingEventStart;
 	} else {
 		return kIncomingEventEnd;

@@ -403,6 +403,7 @@ Common::HardwareInputSet *OSystem_SDL::getHardwareInputSet() {
 	using namespace Common;
 
 	CompositeHardwareInputSet *inputSet = new CompositeHardwareInputSet();
+	inputSet->addHardwareInputSet(new MouseHardwareInputSet(defaultMouseButtons));
 	inputSet->addHardwareInputSet(new KeyboardHardwareInputSet(defaultKeys, defaultModifiers));
 
 	bool joystickSupportEnabled = ConfMan.getInt("joystick_num") >= 0;

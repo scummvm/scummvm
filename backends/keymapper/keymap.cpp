@@ -119,6 +119,21 @@ Keymap::ActionArray Keymap::getMappedActions(const Event &event) const {
 		HardwareInput hardwareInput = HardwareInput::createKeyboard("", event.kbd, "");
 		return _hwActionMap[hardwareInput];
 	}
+	case EVENT_LBUTTONDOWN:
+	case EVENT_LBUTTONUP: {
+		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_BUTTON_LEFT, "");
+		return _hwActionMap[hardwareInput];
+	}
+	case EVENT_RBUTTONDOWN:
+	case EVENT_RBUTTONUP: {
+		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_BUTTON_RIGHT, "");
+		return _hwActionMap[hardwareInput];
+	}
+	case EVENT_MBUTTONDOWN:
+	case EVENT_MBUTTONUP: {
+		HardwareInput hardwareInput = HardwareInput::createMouse("", MOUSE_BUTTON_MIDDLE, "");
+		return _hwActionMap[hardwareInput];
+	}
 	case EVENT_JOYBUTTON_DOWN:
 	case EVENT_JOYBUTTON_UP: {
 		HardwareInput hardwareInput = HardwareInput::createJoystick("", event.joystick.button, "");

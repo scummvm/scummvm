@@ -137,6 +137,15 @@ enum JoystickButton {
 	JOYSTICK_BUTTON_DPAD_RIGHT
 };
 
+/**
+ *  The list named buttons available from a mouse
+ */
+enum MouseButton {
+	MOUSE_BUTTON_LEFT   = 0,
+	MOUSE_BUTTON_RIGHT  = 1,
+	MOUSE_BUTTON_MIDDLE = 2
+};
+
 typedef uint32 CustomEventType;
 
 /**
@@ -407,8 +416,8 @@ public:
 	virtual ~EventManager() {}
 
 	enum {
-		LBUTTON = 1 << 0,
-		RBUTTON = 1 << 1
+		LBUTTON = 1 << MOUSE_BUTTON_LEFT,
+		RBUTTON = 1 << MOUSE_BUTTON_RIGHT
 	};
 
 

@@ -37,12 +37,14 @@ typedef uint32 HardwareInputCode;
 enum HardwareInputType {
 	/** Empty / invalid input type */
 	kHardwareInputTypeInvalid,
-	/** Input that sends single events */
-	kHardwareInputTypeCustom,
 	/** Keyboard input that sends -up and -down events */
 	kHardwareInputTypeKeyboard,
+	/** Mouse input that sends -up and -down events */
+	kHardwareInputTypeMouse,
 	/** Joystick input that sends -up and -down events */
-	kHardwareInputTypeJoystick
+	kHardwareInputTypeJoystick,
+	/** Input that sends single events */
+	kHardwareInputTypeCustom
 };
 
 /**
@@ -76,12 +78,7 @@ struct HardwareInput {
 		: inputCode(0), type(kHardwareInputTypeInvalid) { }
 
 	static HardwareInput createCustom(const String &i, HardwareInputCode ic, const String &desc) {
-		HardwareInput hardwareInput;
-		hardwareInput.id = i;
-		hardwareInput.description = desc;
-		hardwareInput.type = kHardwareInputTypeCustom;
-		hardwareInput.inputCode = ic;
-		return hardwareInput;
+		return createSimple(kHardwareInputTypeCustom, i, ic, desc);
 	}
 
 	static HardwareInput createKeyboard(const String &i, KeyState ky, const String &desc) {
@@ -95,11 +92,21 @@ struct HardwareInput {
 	}
 
 	static HardwareInput createJoystick(const String &i, uint8 button, const String &desc) {
+		return createSimple(kHardwareInputTypeJoystick, i, button, desc);
+	}
+
+	static HardwareInput createMouse(const String &i, uint8 button, const String &desc) {
+		return createSimple(kHardwareInputTypeMouse, i, button, desc);
+
+	}
+
+private:
+	static HardwareInput createSimple(HardwareInputType type, const String &i, HardwareInputCode ic, const String &desc) {
 		HardwareInput hardwareInput;
 		hardwareInput.id = i;
 		hardwareInput.description = desc;
-		hardwareInput.type = kHardwareInputTypeJoystick;
-		hardwareInput.inputCode = button;
+		hardwareInput.type = type;
+		hardwareInput.inputCode = ic;
 		return hardwareInput;
 	}
 };
@@ -111,6 +118,24 @@ struct HardwareInputTableEntry {
 	const char *hwId;
 	HardwareInputCode code;
 	const char *desc;
+
+	static const HardwareInputTableEntry *findWithCode(const HardwareInputTableEntry *_entries, HardwareInputCode code) {
+		for (const HardwareInputTableEntry *hw = _entries;  hw->hwId; hw++) {
+			if (hw->code == code) {
+				return hw;
+			}
+		}
+		return nullptr;
+	}
+
+	static const HardwareInputTableEntry *findWithId(const HardwareInputTableEntry *_entries, const String &id) {
+		for (const HardwareInputTableEntry *hw = _entries;  hw->hwId; hw++) {
+			if (id.equals(hw->hwId)) {
+				return hw;
+			}
+		}
+		return nullptr;
+	}
 };
 
 /**
@@ -177,6 +202,23 @@ private:
 };
 
 /**
+ * A mouse input device
+ *
+ * Describes the mouse buttons
+ */
+class MouseHardwareInputSet : public HardwareInputSet {
+public:
+	MouseHardwareInputSet(const HardwareInputTableEntry *buttonEntries);
+
+	// HardwareInputSet API
+	HardwareInput findHardwareInput(const String &id) const override;
+	HardwareInput findHardwareInput(const Event &event) const override;
+
+private:
+	const HardwareInputTableEntry *_buttonEntries;
+};
+
+/**
  * A joystick input device
  */
 class JoystickHardwareInputSet : public HardwareInputSet {
@@ -235,6 +277,9 @@ extern const KeyTableEntry defaultKeys[];
 
 /** A standard set of keyboard modifiers */
 extern const ModifierTableEntry defaultModifiers[];
+
+/** A standard set of mouse buttons */
+extern const HardwareInputTableEntry defaultMouseButtons[];
 
 /** A standard set of joystick buttons based on the ScummVM event model */
 extern const HardwareInputTableEntry defaultJoystickButtons[];
