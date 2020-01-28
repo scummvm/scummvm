@@ -257,13 +257,6 @@ void MohawkEngine_Riven::processInput() {
 		case Common::EVENT_MOUSEMOVE:
 			_stack->onMouseMove(event.mouse);
 			break;
-		case Common::EVENT_LBUTTONDOWN:
-			_stack->onMouseDown(_eventMan->getMousePos());
-			break;
-		case Common::EVENT_LBUTTONUP:
-			_stack->onMouseUp(_eventMan->getMousePos());
-			_inventory->checkClick(_eventMan->getMousePos());
-			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 			switch ((RivenAction)event.customType) {
 			case kRivenActionInteract:
@@ -877,57 +870,105 @@ Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "riven", "Riven");
 
+	Action *act;
+
 	if (checkGameGUIOption(GAMEOPTION_25TH, ConfMan.get("guioptions", target))) {
-		Action* const act = new Action(kStandardActionOpenMainMenu, _("Open main menu"));
+		act = new Action(kStandardActionOpenMainMenu, _("Open main menu"));
 		act->setCustomEngineActionEvent(kRivenActionOpenMainMenu);
 		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_X");
 		engineKeyMap->addAction(act);
 	}
 
-	struct ActionEntry {
-		const char *id;
-		const RivenAction action;
-		const char *defaultHwId;
-		const char *description;
-	};
+	act = new Action(kStandardActionSkip, _("Skip"));
+	act->setCustomEngineActionEvent(kRivenActionSkip);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
 
-	const ActionEntry keyActionEntries[] = {
-		{ kStandardActionSkip,          kRivenActionSkip,              "ESCAPE",   _("Skip")                },
-		{ kStandardActionInteract,      kRivenActionInteract,          "RETURN",   _("Interact")            },
-		{ "LOAD",                       kRivenActionLoadGameState,     "C+o",      _("Load game state")     },
-		{ "SAVE",                       kRivenActionSaveGameState,     "C+s",      _("Save game state")     },
-		{ "OPTS",                       kRivenActionOpenOptionsDialog, "F5",       _("Show options menu")   },
-		{ kStandardActionPause,         kRivenActionPause,             "SPACE",    _("Pause")               },
-		{ kStandardActionMoveForward,   kRivenActionMoveForward,       "UP",       _("Move forward")        },
-		{ "FWDL",                       kRivenActionMoveForwardLeft,   "",         _("Move forward left")   },
-		{ "FWDR",                       kRivenActionMoveForwardRight,  "",         _("Move forward right")  },
-		{ kStandardActionMoveBackwards, kRivenActionMoveBack,          "DOWN",     _("Move backwards")      },
-		{ kStandardActionTurnLeft,      kRivenActionMoveLeft,          "LEFT",     _("Turn left")           },
-		{ kStandardActionTurnRight,     kRivenActionMoveRight,         "RIGHT",    _("Turn right")          },
-		{ kStandardActionMoveUpwards,   kRivenActionLookUp,            "PAGEUP",   _("Look up")             },
-		{ kStandardActionMoveDownwards, kRivenActionLookDown,          "PAGEDOWN", _("Look down")           },
-		{ kStandardActionOpenDebugger,  kRivenActionOpenDebugger,      "C+d",      _("Open debugger")       }
-	};
+	act = new Action(kStandardActionInteract, _("Interact"));
+	act->setCustomEngineActionEvent(kRivenActionInteract);
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
 
-	const ActionEntry keyActionEntriesDemo[] = {
-		{ kStandardActionOpenMainMenu,  kRivenActionOpenMainMenu,      "C+r",      _("Return to main menu") },
-		{ "INTV",                       kRivenActionPlayIntroVideos,   "C+p",      _("Play intro videos")   }
-	};
+	act = new Action(kStandardActionLoad, _("Load game state"));
+	act->setCustomEngineActionEvent(kRivenActionLoadGameState);
+	act->addDefaultInputMapping("C+o");
+	engineKeyMap->addAction(act);
 
-	for (uint i = 0; i < ARRAYSIZE(keyActionEntries); i++) {
-		Action *act = new Action(keyActionEntries[i].id, keyActionEntries[i].description);
-		act->setCustomEngineActionEvent(keyActionEntries[i].action);
-		act->addDefaultInputMapping(keyActionEntries[i].defaultHwId);
-		engineKeyMap->addAction(act);
-	}
+	act = new Action(kStandardActionSave, _("Save game state"));
+	act->setCustomEngineActionEvent(kRivenActionSaveGameState);
+	act->addDefaultInputMapping("C+s");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionOpenSettings, _("Show options menu"));
+	act->setCustomEngineActionEvent(kRivenActionOpenOptionsDialog);
+	act->addDefaultInputMapping("F5");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionPause, _("Pause"));
+	act->setCustomEngineActionEvent(kRivenActionPause);
+	act->addDefaultInputMapping("SPACE");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveUp, _("Move forward"));
+	act->setCustomEngineActionEvent(kRivenActionMoveForward);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Action("FWDL", _("Move forward left"));
+	act->setCustomEngineActionEvent(kRivenActionMoveForwardLeft);
+	engineKeyMap->addAction(act);
+
+	act = new Action("FWDR", _("Move forward right"));
+	act->setCustomEngineActionEvent(kRivenActionMoveForwardRight);
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveDown, _("Move backwards"));
+	act->setCustomEngineActionEvent(kRivenActionMoveBack);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("Turn left"));
+	act->setCustomEngineActionEvent(kRivenActionMoveLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("Turn right"));
+	act->setCustomEngineActionEvent(kRivenActionMoveRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("LKUP", _("Look up"));
+	act->setCustomEngineActionEvent(kRivenActionMoveRight);
+	act->addDefaultInputMapping("PAGEUP");
+	engineKeyMap->addAction(act);
+
+	act = new Action("LKDN", _("Look down"));
+	act->setCustomEngineActionEvent(kRivenActionMoveRight);
+	act->addDefaultInputMapping("PAGEDOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionOpenDebugger, _("Open debugger"));
+	act->setCustomEngineActionEvent(kRivenActionOpenDebugger);
+	act->addDefaultInputMapping("C+d");
+	engineKeyMap->addAction(act);
 
 	if (checkGameGUIOption(GAMEOPTION_DEMO, ConfMan.get("guioptions", target))) {
-		for (uint i = 0; i < ARRAYSIZE(keyActionEntriesDemo); i++) {
-			Action *act = new Action(keyActionEntriesDemo[i].id, keyActionEntriesDemo[i].description);
-			act->setCustomEngineActionEvent(keyActionEntriesDemo[i].action);
-			act->addDefaultInputMapping(keyActionEntriesDemo[i].defaultHwId);
-			engineKeyMap->addAction(act);
-		}
+		act = new Action(kStandardActionOpenMainMenu, _("Return to main menu"));
+		act->setCustomEngineActionEvent(kRivenActionOpenMainMenu);
+		act->addDefaultInputMapping("C+r");
+		engineKeyMap->addAction(act);
+
+		act = new Action("INTV", _("Play intro videos"));
+		act->setCustomEngineActionEvent(kRivenActionPlayIntroVideos);
+		act->addDefaultInputMapping("C+p");
+		engineKeyMap->addAction(act);
 	}
 
 	return Keymap::arrayOf(engineKeyMap);

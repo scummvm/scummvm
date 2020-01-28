@@ -24,6 +24,7 @@
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "common/savefile.h"
 #include "common/system.h"
@@ -71,20 +72,21 @@ Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
-	act = new Action("PAUS", _("Pause"));
+	act = new Action(kStandardActionPause, _("Pause"));
 	act->setKeyEvent(KeyState(KEYCODE_SPACE, ' '));
 	act->addDefaultInputMapping("SPACE");
 	engineKeyMap->addAction(act);
 
-	act = new Action("MNU", _("Game menu"));
+	act = new Action(kStandardActionOpenMainMenu, _("Game menu"));
 	act->setKeyEvent(KeyState(KEYCODE_F5, ASCII_F5));
 	act->addDefaultInputMapping("F5");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	engineKeyMap->addAction(act);
 
-	act = new Action("SKCT", _("Skip"));
+	act = new Action(kStandardActionSkip, _("Skip"));
 	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
 	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
 	engineKeyMap->addAction(act);
 
 	act = new Action("SKLI", _("Skip line"));
@@ -101,22 +103,22 @@ Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("RETURN");
 	engineKeyMap->addAction(act);
 
-	act = new Action("UP", _("Up"));
+	act = new Action(kStandardActionMoveUp, _("Up"));
 	act->setKeyEvent(KEYCODE_KP8);
 	act->addDefaultInputMapping("JOY_UP");
 	engineKeyMap->addAction(act);
 
-	act = new Action("DOWN", _("Down"));
+	act = new Action(kStandardActionMoveDown, _("Down"));
 	act->setKeyEvent(KEYCODE_KP2);
 	act->addDefaultInputMapping("JOY_DOWN");
 	engineKeyMap->addAction(act);
 
-	act = new Action("LEFT", _("Left"));
+	act = new Action(kStandardActionMoveLeft, _("Left"));
 	act->setKeyEvent(KEYCODE_KP4);
 	act->addDefaultInputMapping("JOY_LEFT");
 	engineKeyMap->addAction(act);
 
-	act = new Action("RIGHT", _("Right"));
+	act = new Action(kStandardActionMoveRight, _("Right"));
 	act->setKeyEvent(KEYCODE_KP6);
 	act->addDefaultInputMapping("JOY_RIGHT");
 	engineKeyMap->addAction(act);

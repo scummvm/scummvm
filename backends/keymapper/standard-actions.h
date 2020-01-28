@@ -39,14 +39,15 @@ namespace Common {
 extern const char *kStandardActionInteract;
 extern const char *kStandardActionSkip;
 extern const char *kStandardActionPause;
-extern const char *kStandardActionMoveForward;
-extern const char *kStandardActionMoveBackwards;
-extern const char *kStandardActionTurnLeft;
-extern const char *kStandardActionTurnRight;
-extern const char *kStandardActionMoveUpwards;
-extern const char *kStandardActionMoveDownwards;
-extern const char *kStandardActionOpenDebugger;
+extern const char *kStandardActionMoveUp;
+extern const char *kStandardActionMoveDown;
+extern const char *kStandardActionMoveLeft;
+extern const char *kStandardActionMoveRight;
 extern const char *kStandardActionOpenMainMenu;
+extern const char *kStandardActionLoad;
+extern const char *kStandardActionSave;
+extern const char *kStandardActionOpenSettings;
+extern const char *kStandardActionOpenDebugger;
 
 } //namespace Common
 

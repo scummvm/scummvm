@@ -307,7 +307,7 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	Keymap *globalKeymap = new Keymap(Keymap::kKeymapTypeGlobal, kGlobalKeymapName, _("Global"));
 
 	Action *act;
-	act = new Action("MENU", _("Menu"));
+	act = new Action("MENU", _("Global Main Menu"));
 	act->addDefaultInputMapping("C+F5");
 	act->addDefaultInputMapping("JOY_START");
 	act->setEvent(EVENT_MAINMENU);

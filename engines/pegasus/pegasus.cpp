@@ -2496,35 +2496,35 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 
 	Action *act;
 
-	act = new Action(kStandardActionMoveForward, _("Up/Zoom In/Move Forward/Open Doors"));
+	act = new Action(kStandardActionMoveUp, _("Up/Zoom In/Move Forward/Open Doors"));
 	act->setCustomEngineActionEvent(kPegasusActionUp);
 	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("KP8");
 	act->addDefaultInputMapping("JOY_UP");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionMoveBackwards, _("Down/Zoom Out"));
+	act = new Action(kStandardActionMoveDown, _("Down/Zoom Out"));
 	act->setCustomEngineActionEvent(kPegasusActionDown);
 	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("KP5");
 	act->addDefaultInputMapping("JOY_DOWN");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionTurnLeft, _("Turn Left"));
+	act = new Action(kStandardActionMoveLeft, _("Turn Left"));
 	act->setCustomEngineActionEvent(kPegasusActionLeft);
 	act->addDefaultInputMapping("LEFT");
 	act->addDefaultInputMapping("KP4");
 	act->addDefaultInputMapping("JOY_LEFT");
 	engineKeyMap->addAction(act);
 
-	act = new Action(kStandardActionTurnRight, _("Turn Right"));
+	act = new Action(kStandardActionMoveRight, _("Turn Right"));
 	act->setCustomEngineActionEvent(kPegasusActionRight);
 	act->addDefaultInputMapping("RIGHT");
 	act->addDefaultInputMapping("KP6");
 	act->addDefaultInputMapping("JOY_RIGHT");
 	engineKeyMap->addAction(act);
 
-	act = new Action("ENT", _("Action/Select"));
+	act = new Action(kStandardActionInteract, _("Action/Select"));
 	act->setCustomEngineActionEvent(kPegasusActionInteract);
 	act->addDefaultInputMapping("SPACE");
 	act->addDefaultInputMapping("RETURN");
@@ -2573,7 +2573,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
-	act = new Action("PM", _("Display/Hide Pause Menu"));
+	act = new Action(kStandardActionOpenMainMenu, _("Display/Hide Pause Menu"));
 	act->setCustomEngineActionEvent(kPegasusActionShowPauseMenu);
 	act->addDefaultInputMapping("p");
 	act->addDefaultInputMapping("ESCAPE");
@@ -2595,13 +2595,13 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	engineKeyMap->addAction(act);
 
 	// We support meta where available and control elsewhere
-	act = new Action("SAVE", _("Save Game"));
+	act = new Action(kStandardActionSave, _("Save Game"));
 	act->setCustomEngineActionEvent(kPegasusActionSaveGameState);
 	act->addDefaultInputMapping("C+s");
 	act->addDefaultInputMapping("M+s");
 	engineKeyMap->addAction(act);
 
-	act = new Action("LOAD", _("Load Game"));
+	act = new Action(kStandardActionLoad, _("Load Game"));
 	act->setCustomEngineActionEvent(kPegasusActionLoadGameState);
 	act->addDefaultInputMapping("C+o"); // o for open (original)
 	act->addDefaultInputMapping("M+o");
