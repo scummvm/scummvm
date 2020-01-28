@@ -282,10 +282,10 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 #endif // USE_TRANSLATION
 
 	// Initialize any game-specific keymaps
-	Common::Keymap *gameKeymap = metaEngine.initKeymap(target.c_str());
+	Common::KeymapArray gameKeymaps = metaEngine.initKeymaps(target.c_str());
 	Common::Keymapper *keymapper = system.getEventManager()->getKeymapper();
-	if (gameKeymap) {
-		keymapper->addGameKeymap(gameKeymap);
+	for (uint i = 0; i < gameKeymaps.size(); i++) {
+		keymapper->addGameKeymap(gameKeymaps[i]);
 	}
 
 	// Inform backend that the engine is about to be run

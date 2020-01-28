@@ -872,7 +872,7 @@ void MohawkEngine_Riven::runOptionsDialog() {
 	_card->initializeZipMode();
 }
 
-Common::Keymap *MohawkEngine_Riven::initKeymap(const char *target) {
+Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 	using namespace Common;
 
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "riven", "Riven");
@@ -930,7 +930,7 @@ Common::Keymap *MohawkEngine_Riven::initKeymap(const char *target) {
 		}
 	}
 
-	return engineKeyMap;
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 bool ZipMode::operator== (const ZipMode &z) const {

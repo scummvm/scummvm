@@ -272,7 +272,7 @@ public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
 	virtual ~LoLEngine();
 
-	static Common::Keymap *initKeymap();
+	static Common::Array<Common::Keymap *> initKeymaps();
 
 	void pauseEngineIntern(bool pause);
 

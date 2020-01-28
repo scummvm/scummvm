@@ -220,7 +220,7 @@ public:
 	/**
 	 * Return the keymap used by the target.
 	 */
-	virtual Common::Keymap *initKeymap(const char *target) const;
+	virtual Common::Array<Common::Keymap *> initKeymaps(const char *target) const;
 
 	/** @name MetaEngineFeature flags */
 	//@{

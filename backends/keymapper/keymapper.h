@@ -42,8 +42,6 @@ struct HardwareInput;
 class HardwareInputSet;
 class KeymapperDefaultBindings;
 
-typedef Array<Keymap *> KeymapArray;
-
 class Keymapper : public Common::EventMapper {
 public:
 

@@ -2489,7 +2489,7 @@ uint PegasusEngine::getNeighborhoodCD(const NeighborhoodID neighborhood) const {
 	return 1;
 }
 
-Common::Keymap *PegasusEngine::initKeymap() {
+Common::KeymapArray PegasusEngine::initKeymaps() {
 	using namespace Common;
 
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "pegasus", "Pegasus Prime");
@@ -2609,7 +2609,7 @@ Common::Keymap *PegasusEngine::initKeymap() {
 	act->addDefaultInputMapping("M+l");
 	engineKeyMap->addAction(act);
 
-	return engineKeyMap;
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 } // End of namespace Pegasus

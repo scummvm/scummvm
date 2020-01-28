@@ -255,7 +255,7 @@ public:
 	EoBCoreEngine(OSystem *system, const GameFlags &flags);
 	virtual ~EoBCoreEngine();
 
-	static Common::Keymap *initKeymap(const Common::String &ameId);
+	static Common::Array<Common::Keymap *> initKeymaps(const Common::String &ameId);
 
 	Screen *screen() { return _screen; }
 	GUI *gui() const { return _gui; }

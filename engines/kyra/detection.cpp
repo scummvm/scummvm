@@ -182,7 +182,7 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	Common::Keymap *initKeymap(const char *target) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -352,22 +352,22 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 	return desc;
 }
 
-Common::Keymap *KyraMetaEngine::initKeymap(const char *target) const {
+Common::KeymapArray KyraMetaEngine::initKeymaps(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 
 #ifdef ENABLE_LOL
 	if (gameId.contains("lol")) {
-		return Kyra::LoLEngine::initKeymap();
+		return Kyra::LoLEngine::initKeymaps();
 	}
 #endif
 
 #ifdef ENABLE_EOB
 	if (gameId.contains("eob")) {
-		return Kyra::EoBCoreEngine::initKeymap(gameId);
+		return Kyra::EoBCoreEngine::initKeymaps(gameId);
 	}
 #endif
 
-	return AdvancedMetaEngine::initKeymap(target);
+	return AdvancedMetaEngine::initKeymaps(target);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(KYRA)

@@ -83,7 +83,7 @@ public:
 	bool canSaveGameStateCurrently();
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
-	static Common::Keymap *initKeymap();
+	static Common::Array<Common::Keymap *> initKeymaps();
 
 	// Base classes
 	GraphicsManager *_gfx;

@@ -149,6 +149,11 @@ public:
 	bool isEnabled() const { return _enabled; }
 	void setEnabled(bool enabled) { _enabled = enabled; }
 
+	/** Helper to return an array with a single keymap element */
+	static Array<Keymap *> arrayOf(Keymap *keymap) {
+		return Array<Keymap *>(1, keymap);
+	}
+
 private:
 
 	const Action *findAction(const char *id) const;
@@ -174,6 +179,7 @@ private:
 	void registerBackendDefaultMappings();
 };
 
+typedef Array<Keymap *> KeymapArray;
 
 } // End of namespace Common
 

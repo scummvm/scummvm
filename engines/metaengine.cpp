@@ -47,7 +47,7 @@ const char *MetaEngine::getSavegamePattern(const char *target) const {
 	return buffer;
 }
 
-Common::Keymap *MetaEngine::initKeymap(const char *target) const {
+Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "engine-default", _("Default game keymap"));
@@ -118,7 +118,7 @@ Common::Keymap *MetaEngine::initKeymap(const char *target) const {
 	act->addDefaultInputMapping("JOY_RIGHT");
 	engineKeyMap->addAction(act);
 
-	return engineKeyMap;
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime, Common::String desc) {

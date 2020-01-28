@@ -200,21 +200,14 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	// The Keymap tab
 	//
-	Common::Keymap *keymap = nullptr;
+	Common::KeymapArray keymaps;
 	if (plugin) {
-		keymap = plugin->get<MetaEngine>().initKeymap(domain.c_str());
+		keymaps = plugin->get<MetaEngine>().initKeymaps(domain.c_str());
 	}
 
-	if (keymap && !keymap->getActions().empty()) {
-		Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
-
-		keymapper->initKeymap(keymap, ConfMan.getDomain(domain));
-
-		Common::KeymapArray keymaps;
-		keymaps.push_back(keymap);
-
+	if (!keymaps.empty()) {
 		tab->addTab(_("Keymaps"), "GameOptions_KeyMapper");
-		addKeyMapperControls(tab, "GameOptions_KeyMapper.", keymaps);
+		addKeyMapperControls(tab, "GameOptions_KeyMapper.", keymaps, domain);
 	}
 
 	//

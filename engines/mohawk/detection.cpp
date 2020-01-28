@@ -226,7 +226,7 @@ public:
 	int getMaximumSaveSlot() const override { return 999; }
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	Common::Keymap *initKeymap(const char *target) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool MohawkMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -331,16 +331,16 @@ SaveStateDescriptor MohawkMetaEngine::querySaveMetaInfos(const char *target, int
 	}
 }
 
-Common::Keymap *MohawkMetaEngine::initKeymap(const char *target) const {
+Common::KeymapArray MohawkMetaEngine::initKeymaps(const char *target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 
 #ifdef ENABLE_RIVEN
 	if (gameId == "riven") {
-		return Mohawk::MohawkEngine_Riven::initKeymap(target);
+		return Mohawk::MohawkEngine_Riven::initKeymaps(target);
 	}
 #endif
 
-	return AdvancedMetaEngine::initKeymap(target);
+	return AdvancedMetaEngine::initKeymaps(target);
 }
 
 bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

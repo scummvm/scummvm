@@ -343,7 +343,7 @@ EoBCoreEngine::~EoBCoreEngine() {
 	_txt = 0;
 }
 
-Common::Keymap *EoBCoreEngine::initKeymap(const Common::String &gameId) {
+Common::KeymapArray EoBCoreEngine::initKeymaps(const Common::String &gameId) {
 	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName, "Eye of the Beholder");
 
 	const Common::KeyActionEntry keyActionEntries[] = {
@@ -380,7 +380,7 @@ Common::Keymap *EoBCoreEngine::initKeymap(const Common::String &gameId) {
 		engineKeyMap->addAction(act);
 	}
 
-	return engineKeyMap;
+	return Common::Keymap::arrayOf(engineKeyMap);
 }
 
 Common::Error EoBCoreEngine::init() {

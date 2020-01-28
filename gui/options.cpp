@@ -1057,7 +1057,12 @@ void OptionsDialog::addControlControls(GuiObject *boss, const Common::String &pr
 	_enableControlSettings = true;
 }
 
-void OptionsDialog::addKeyMapperControls(GuiObject *boss, const Common::String &prefix, const Common::KeymapArray &keymaps) {
+void OptionsDialog::addKeyMapperControls(GuiObject *boss, const Common::String &prefix, const Common::KeymapArray &keymaps, const Common::String &domain) {
+	Common::Keymapper *mapper = g_system->getEventManager()->getKeymapper();
+	for (uint i = 0; i < keymaps.size(); i++) {
+		mapper->initKeymap(keymaps[i], ConfMan.getDomain(domain));
+	}
+
 	_keymapperWidget = new Common::RemapWidget(boss, prefix + "Container", keymaps);
 }
 
@@ -1623,16 +1628,9 @@ void GlobalOptionsDialog::build() {
 		keymaps.push_back(guiKeymap);
 	}
 
-	Common::Keymapper *mapper = g_system->getEventManager()->getKeymapper();
-	Common::ConfigManager::Domain *keymapperDomain = ConfMan.getDomain(Common::ConfigManager::kKeymapperDomain);
-
-	for (uint i = 0; i < keymaps.size(); i++) {
-		mapper->initKeymap(keymaps[i], keymapperDomain);
-	}
-
 	if (!keymaps.empty()) {
 		tab->addTab(_("Keymaps"), "GlobalOptions_KeyMapper");
-		addKeyMapperControls(tab, "GlobalOptions_KeyMapper.", keymaps);
+		addKeyMapperControls(tab, "GlobalOptions_KeyMapper.", keymaps, Common::ConfigManager::kKeymapperDomain);
 	}
 
 	//

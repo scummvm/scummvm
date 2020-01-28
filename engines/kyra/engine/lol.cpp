@@ -461,8 +461,8 @@ Common::Error LoLEngine::init() {
 	return Common::kNoError;
 }
 
-Common::Keymap *LoLEngine::initKeymap() {
-	Common::Keymap *const engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName, "Lands of Lore");
+Common::KeymapArray LoLEngine::initKeymaps() {
+	Common::Keymap *engineKeyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName, "Lands of Lore");
 
 	const Common::KeyActionEntry keyActionEntries[] = {
 		{ "AT1", Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1), "F1",     _("Attack 1")     },
@@ -487,7 +487,7 @@ Common::Keymap *LoLEngine::initKeymap() {
 		engineKeyMap->addAction(act);
 	}
 
-	return engineKeyMap;
+	return Common::Keymap::arrayOf(engineKeyMap);
 }
 
 void LoLEngine::pauseEngineIntern(bool pause) {
