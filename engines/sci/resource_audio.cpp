@@ -532,6 +532,15 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 					continue;
 				}
 			}
+			
+			// Lighthouse German has invalid audio36 map entries for
+			//  content that was cut from the game. These resources
+			//  existed in the English version even though they were
+			//  inaccessible.
+			if (g_sci->getGameId() == GID_LIGHTHOUSE &&
+				map->_mapNumber == 800) {
+				continue;
+			}
 
 			// LSL7 French has an invalid audio36 map entry for a narrator
 			//  message that was cut from the game. This resource existed
