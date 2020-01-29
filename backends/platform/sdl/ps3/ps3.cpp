@@ -40,7 +40,7 @@
 static const Common::HardwareInputTableEntry playstationJoystickButtons[] = {
     { "JOY_A",              Common::JOYSTICK_BUTTON_A,              _s("Cross")       },
     { "JOY_B",              Common::JOYSTICK_BUTTON_B,              _s("Circle")      },
-    { "JOY_X",              Common::JOYSTICK_BUTTON_X,              _s("Rectangle")   },
+    { "JOY_X",              Common::JOYSTICK_BUTTON_X,              _s("Square")      },
     { "JOY_Y",              Common::JOYSTICK_BUTTON_Y,              _s("Triangle")    },
     { "JOY_BACK",           Common::JOYSTICK_BUTTON_BACK,           _s("Select")      },
     { "JOY_GUIDE",          Common::JOYSTICK_BUTTON_GUIDE,          _s("PS")          },
