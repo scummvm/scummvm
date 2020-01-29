@@ -36,7 +36,7 @@ public:
 	MDActor(Map *m, ObjManager *om, GameClock *c);
 	~MDActor();
 
-	bool init();
+	virtual bool init(uint8 unused = 0) override;
 	bool will_not_talk();
 	uint8 get_maxhp() {
 		return (((level * 24 + strength * 2) < 255) ? (level * 24 + strength * 2) : 255);
