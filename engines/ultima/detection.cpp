@@ -27,29 +27,17 @@
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/translation.h"
-#ifdef ENABLE_ULTIMA1
 #include "ultima/shared/early/ultima_early.h"
-#endif
-#ifdef ENABLE_ULTIMA6
 #include "ultima/ultima6/ultima6.h"
-#endif
-#ifdef ENABLE_ULTIMA8
 #include "ultima/ultima8/ultima8.h"
-#endif
 
 namespace Ultima {
 
 static const PlainGameDescriptor ULTIMA_GAMES[] = {
-#ifdef ENABLE_ULTIMA1
 	{ "ultima1", "Ultima I - The First Age of Darkness" },
-#endif
-#ifdef ENABLE_ULTIMA6
 	{ "ultima6", "Ultima VI - The False Prophet" },
 	{ "ultima6_enh", "Ultima VI - The False Prophet - Enhanced" },
-#endif
-#ifdef ENABLE_ULTIMA8
 	{ "ultima8", "Ultima VIII - Pagan" },
-#endif
 	{ 0, 0 }
 };
 
@@ -66,11 +54,9 @@ UltimaMetaEngine::UltimaMetaEngine() : AdvancedMetaEngine(Ultima::GAME_DESCRIPTI
 	        sizeof(Ultima::UltimaGameDescription), Ultima::ULTIMA_GAMES) {
 	Ultima::g_metaEngine = this;
 
-#ifdef ENABLE_ULTIMA8
 	static const char *const DIRECTORY_GLOBS[2] = { "usecode", 0 };
 	_maxScanDepth = 2;
 	_directoryGlobs = DIRECTORY_GLOBS;
-#endif
 }
 
 UltimaMetaEngine::~UltimaMetaEngine() {
@@ -93,21 +79,15 @@ bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 	const Ultima::UltimaGameDescription *gd = (const Ultima::UltimaGameDescription *)desc;
 	if (gd) {
 		switch (gd->gameId) {
-#ifdef ENABLE_ULTIMA1
 		case Ultima::GAME_ULTIMA1:
 			*engine = new Ultima::Shared::UltimaEarlyEngine(syst, gd);
 			break;
-#endif
-#ifdef ENABLE_ULTIMA6
 		case Ultima::GAME_ULTIMA6:
 			*engine = new Ultima::Ultima6::Ultima6Engine(syst, gd);
 			break;
-#endif
-#ifdef ENABLE_ULTIMA8
 		case Ultima::GAME_ULTIMA8:
 			*engine = new Ultima::Ultima8::Ultima8Engine(syst, gd);
 			break;
-#endif
 		default:
 			error("Unsupported game specified");
 		}
