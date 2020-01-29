@@ -2646,8 +2646,8 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		_forceRedraw = true;
 		internUpdateScreen();
 		return true;
-#endif
 	}
+#endif
 
 	case kActionIncreaseScaleFactor:
 		handleScalerHotkeys(_videoMode.scaleFactor + 1, _scalerType);
