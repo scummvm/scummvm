@@ -2,15 +2,6 @@ MODULE := engines/ultima
 
 MODULE_OBJS := \
 	detection.o \
-	shared/engine/ultima.o \
-	shared/engine/data_archive.o \
-	shared/engine/debugger.o \
-	shared/engine/events.o \
-	shared/std/misc.o \
-	shared/std/string.o
-
-ifdef ENABLE_ULTIMA1
-MODULE_OBJS += \
 	shared/actions/action.o \
 	shared/actions/huh.o \
 	shared/actions/pass.o \
@@ -31,6 +22,10 @@ MODULE_OBJS += \
 	shared/early/game.o \
 	shared/early/game_base.o \
 	shared/early/ultima_early.o \
+	shared/engine/ultima.o \
+	shared/engine/data_archive.o \
+	shared/engine/debugger.o \
+	shared/engine/events.o \
 	shared/engine/debugger.o \
 	shared/engine/input_handler.o \
 	shared/engine/input_translator.o \
@@ -55,11 +50,9 @@ MODULE_OBJS += \
 	shared/maps/map_base.o \
 	shared/maps/map_tile.o \
 	shared/maps/map_widget.o \
-	shared/maps/creature.o
-endif
-
-ifdef ENABLE_ULTIMA1
-MODULE_OBJS += \
+	shared/maps/creature.o \
+	shared/std/misc.o \
+	shared/std/string.o \
 	ultima0/core/resources.o \
 	ultima0/game.o \
 	ultima0/resources.o \
@@ -138,11 +131,7 @@ MODULE_OBJS += \
 	ultima1/widgets/urban_player.o \
 	ultima1/widgets/urban_widget.o \
 	ultima1/widgets/wench.o \
-	ultima1/game.o
-endif
-
-ifdef ENABLE_ULTIMA6
-MODULE_OBJS += \
+	ultima1/game.o \
 	ultima6/ultima6.o \
 	ultima6/actors/actor.o \
 	ultima6/actors/actor_manager.o \
@@ -333,11 +322,7 @@ MODULE_OBJS += \
 	ultima6/lua/lundump.o \
 	ultima6/lua/lvm.o \
 	ultima6/lua/lzio.o \
-	ultima6/lua/scummvm_file.o
-endif
-
-ifdef ENABLE_ULTIMA8
-MODULE_OBJS += \
+	ultima6/lua/scummvm_file.o \
 	ultima8/ultima8.o \
 	ultima8/audio/audio_channel.o \
 	ultima8/audio/audio_mixer.o \
@@ -533,7 +518,6 @@ MODULE_OBJS += \
 	ultima8/world/actors/scheduler_process.o \
 	ultima8/world/actors/targeted_anim_process.o \
 	ultima8/world/actors/teleport_to_egg_process.o
-endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ULTIMA), DYNAMIC_PLUGIN)
