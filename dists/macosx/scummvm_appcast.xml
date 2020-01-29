@@ -6,20 +6,20 @@
 		<description>Most recent changes with links to updates.</description>
 		<language>en</language>
 		<item>
-			<title>Version 2.1.0</title>
+			<title>Version 2.1.1</title>
 			<sparkle:releaseNotesLink>
-				https://scummvm.org/frs/scummvm/2.1.0/ReleaseNotes.html
+				https://scummvm.org/frs/scummvm/2.1.1/ReleaseNotes.html
 			</sparkle:releaseNotesLink>
-			<pubDate>Fri, 11 Oct 2019 22:00:00 +0000</pubDate>
-			<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.0/scummvm-2.1.0-macosx.dmg"
-						sparkle:version="2.1.0" length="24491805" type="application/octet-stream"
-						sparkle:dsaSignature="MC0CFQClWYx0yEihPP+rHF0TDKZ58i0x/gIUG1Qa/Ps2GQv0mDmEy/vdLjivvH0="
-						sparkle:edSignature="gMZN2CBmD8xfp5ZecHA+QHLP691LPadxGM813wNSv/IE3kXj6BhycPFKshzp07OIuK9i6JGnkHvpYAYUhb5BCQ=="/>
+			<pubDate>Fri, 31 Jan 2020 23:59:58 +0000</pubDate>
+			<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.1/scummvm-2.1.1-macosx.dmg"
+						sparkle:version="2.1.1" length="25617880" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFF9HC7ImZEipQf4afnMvTEmduM7KAhUArjLWI9VdCgxm720S4UysRgUcDhI="
+						sparkle:edSignature="js40WmEnNG4ab0nSNrzRo4z5jnUlDOE63iqpgpy8Brpxh9CFnnc8bBQ9LlHjujUPbG6A30pyihtAsozZi1gZAg=="/>
 
 			<enclosure sparkle:os="windows"
-						url="https://www.scummvm.org/frs/scummvm/2.1.0/scummvm-2.1.0-win32.exe"
-						sparkle:version="2.1.0" length="19382458" type="application/octet-stream"
-						sparkle:dsaSignature="MC0CFGbQGP4xlylID83atOlkqMHwaH7FAhUAyMhJBVry27rG9ytvKafDNHwIJ80==" />
+						url="https://www.scummvm.org/frs/scummvm/2.1.1/scummvm-2.1.0-win32.exe"
+						sparkle:version="2.1.1" length="39273606" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFQDImHNkK3Oru/lLIFS8bXfh1bI9cQIUOHAUHKd8wNvYbETTLw4DtAAiO7c=" />
 		</item>
 	</channel>
 </rss>
