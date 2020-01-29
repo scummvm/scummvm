@@ -1120,9 +1120,12 @@ int KyraEngine_LoK::seq_playEnd() {
 				_finalA->displayFrame(i, 0, 8, 8, 0, 0, 0);
 				_screen->updateScreen();
 			}
-			delete _finalA;
 
+			nextTime = _system->getMillis() + 300 * _tickLength;
+			delete _finalA;
 			_finalA = 0;
+			delayUntil(nextTime);
+
 			seq_playEnding();
 			return 1;
 		}
