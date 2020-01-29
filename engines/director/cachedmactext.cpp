@@ -49,14 +49,7 @@ void CachedMacText::makeMacText() {
 		_textCast->_fontId, _textCast->_fontSize, _textCast->_textSlant, macFont->getName().c_str(),
 		Common::toPrintable(_textCast->_ftext).c_str());
 
-	_macText = new Graphics::MacText(_textCast->_ftext,
-										_wm,
-										macFont,
-										0x00,
-										0xff,
-										_width,
-										_align,
-										1);
+	_macText = new Graphics::MacText(_textCast->_ftext, _wm, macFont, 0x00, 0xff, _width, _align, 1);
 	// TODO destroy me
 }
 
