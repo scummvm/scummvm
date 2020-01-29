@@ -1018,6 +1018,15 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'GameOptions_Shader' overlays = 'Dialog.GameOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<widget name = 'EnableTabCheckbox'
+					type = 'Checkbox'
+			/>
+			<import layout = 'Dialog.GlobalOptions_Shader' />
+		</layout>
+	</dialog>
+
 	<dialog name = 'GameOptions_Audio' overlays = 'Dialog.GameOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<widget name = 'EnableTabCheckbox'

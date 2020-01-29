@@ -222,6 +222,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("render_mode", "default");
 	ConfMan.registerDefault("desired_screen_aspect_ratio", "auto");
 	ConfMan.registerDefault("stretch_mode", "default");
+	ConfMan.registerDefault("shader", 0);
 
 	// Sound & Music
 	ConfMan.registerDefault("music_volume", 192);

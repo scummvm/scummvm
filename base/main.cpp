@@ -339,6 +339,8 @@ static void setupGraphics(OSystem &system) {
 			system.setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
 		if (ConfMan.hasKey("stretch_mode"))
 			system.setStretchMode(ConfMan.get("stretch_mode").c_str());
+		if (ConfMan.hasKey("shader"))
+			system.setShader(ConfMan.getInt("shader"));
 	system.endGFXTransaction();
 
 	// When starting up launcher for the first time, the user might have specified
