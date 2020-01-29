@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-27 21:08+0000\n"
+"PO-Revision-Date: 2020-01-29 13:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -10947,31 +10947,35 @@ msgstr "empty chest - There is nothing more inside."
 
 #: mob.lst:15001
 msgid "wyjście - Z powrotem na ścieżkę."
-msgstr ""
+msgstr "exit - Back to the path."
 
 #: mob.lst:15002
 msgid "zamek - Dziwny ten zamek. Porozrzucany po|całej okolicy."
-msgstr ""
+msgstr "castle - This castle is strange. Scattered around the area."
 
 #: mob.lst:15003
 msgid "brama zamkowa - Wejście w czeluście zamczyska..."
-msgstr ""
+msgstr "castle gate - Entrance into the innards of the castle..."
 
 #: mob.lst:15004
 msgid "posąg - Gdybym powiedział, że jest trochę|przerażający byłoby to za dużo.*+Za dużo o słowo \"trochę\"."
 msgstr ""
+"statue - If I said it was a bit scary it would be|too much.*+Too much for "
+"the word \"a bit\"."
 
 #: mob.lst:15005
 msgid "posąg - Może i wygląda jak wykuty z kamienia,|ale mój tyłek ma inne zdanie."
 msgstr ""
+"statue - It may look like made from stone, but my butt has a different "
+"opinion."
 
 #: mob.lst:15006
 msgid "łuska - Nie mam pojęcia, czyja to łuska."
-msgstr ""
+msgstr "scale - I have no idea whose scale it is."
 
 #: mob.lst:16001
 msgid "brama zamkowa - Jedyna droga ucieczki..."
-msgstr ""
+msgstr "castle gate - The only way to escape..."
 
 #: mob.lst:16002
 msgid "drzwi - Wejście do wylęgarni potworów."
@@ -10983,47 +10987,55 @@ msgstr ""
 
 #: mob.lst:16004
 msgid "kościotrup - Jakiś śmiałek nie zdążył uciec..."
-msgstr ""
+msgstr "skeleton - Some daredevil did not manage to escape..."
 
 #: mob.lst:16005
 msgid "wejście - Rzeźba przy wejściu mówi mi wszystko."
-msgstr ""
+msgstr "entrance - The sculpture at the entrance tells me everything."
 
 #: mob.lst:17001
 msgid "brama zamkowa - Nadal sporo tu cienia."
-msgstr ""
+msgstr "castle gate - There is still a lot of shade here."
 
 #: mob.lst:17002
 msgid "drzwi - Wejście do wylęgarni potworów."
-msgstr ""
+msgstr "door - Entrance to the monster hatchery."
 
 #: mob.lst:17003
 msgid "przejście - Wąski most prowadzący do drugiej części zamczyska."
-msgstr ""
+msgstr "passage - A narrow bridge leading to the second part of the castle."
 
 #: mob.lst:17004
 msgid "kościotrup - W słońcu wygląda równie przerażająco, co w mroku."
-msgstr ""
+msgstr "skeleton - It looks as scary in the sunlight as it does in the dark."
 
 #: mob.lst:17005
 msgid "wejście - Wejście do komnaty nekromanty."
-msgstr ""
+msgstr "entrance - Entrance to the necromancer's chamber."
 
 #: mob.lst:18001
 msgid "klucz - Wszyscy w okolicy mają jakąś obsesję na punkcie|olbrzymich kluczy.+Jakaś rekompensata czy co?"
 msgstr ""
+"key - Everyone in the area is obsessed with giant keys.+Is it recompensation "
+"or what?"
 
 #: mob.lst:18002
 msgid "szafa - Mnóstwo pomocy naukowych nekromanty.+Zupełnie jak u alchemika, tylko trochę|bardziej podniszczone."
 msgstr ""
+"wardrobe - Plenty of necromancer's scientific aids.+Just like an alchemist, "
+"just a little more shabby."
 
 #: mob.lst:18003
 msgid "kielich - Nie dość, że wino czerwone jak krew, to|jeszcze kielich zgnieciony potężną siłą.+Co tu się działo?!"
 msgstr ""
+"goblet - Not only the wine is red as blood but|also the goblet is crushed by "
+"some|powerful force.+What happened here?!"
 
 #: mob.lst:18004
 msgid "pergamin - To chyba jakieś motto...+\"Jeśli zbyt długo patrzysz w otchłań,|otchłań zaczyna patrzeć w ciebie\"."
 msgstr ""
+"parchment - This is probably a motto...+\"If you gaze long into an abyss, "
+"the abyss also gazes into you.\""
 
 #: mob.lst:18005
 msgid "kartka - To pewnie jakaś ważna czarnoksięska uwaga,|albo zapis bluźnierczego czaru...+Nie, zaraz...+To jakaś lista...+\"Kupić mleko... Posprzątać po Zraleimchu....|Pomodlić się do potężnego Kecaja Arakeipa|jeszcze przed śniadaniem....\"+\"Załatwić dostawę bułeczek...\"+Och..."
@@ -11063,27 +11075,32 @@ msgstr "cape - Red cape...+Cloth for horned demons?"
 
 #: mob.lst:18010
 msgid "stołek - Najwyraźniej przewrócony w trakcie jakiejś|brutalnej walki."
-msgstr ""
+msgstr "stool - Apparently overturned during some brutal fight."
 
 #: mob.lst:18011
 msgid "świecznik - Cały czarny. Ani chybi atrybut nekromanty."
-msgstr ""
+msgstr "candle holder - All black. No doubt it is a necromancer's attribute."
 
 #: mob.lst:18012
 msgid "ślady pazurów - Za żadne skarby świata nie chciałbym stanąć oko|w oko z istotą posiadającą takie szpony."
 msgstr ""
+"claw marks - For no treasures of the world I would like to face|a creature "
+"with such claws."
 
 #: mob.lst:18013
 msgid "pentagram - Przerażający znak. Wygląda na|niedokończony albo zatarty."
-msgstr ""
+msgstr "Pentagram - Scary sign. It looks unfinished or wiped out."
 
 #: mob.lst:18014
 msgid "drzwi - To chyba ślady włamania. Chyba że komuś|się bardzo spieszyło..."
 msgstr ""
+"door - I think it's signs of a burglary. Unless someone|was in a hurry..."
 
 #: mob.lst:18015
 msgid "ślady krwi - Mam dziwną pewność, że nie są to ślady|po rozlanym, czerwonym winie."
 msgstr ""
+"traces of blood - I'm strangely convinced, that these are not|traces of "
+"spilt red wine."
 
 #: mob.lst:18016
 msgid "kreda - Ta sama, którą wyrysowano pentagram."
@@ -11191,38 +11208,54 @@ msgstr "puddle - A strange greenish goo."
 #: mob.lst:21003
 msgid "uschłe drzewo - Zdaje się, że substancja w bajorze nie służy|tutejszej roślinności."
 msgstr ""
+"dead tree - It seems that the substance in the puddle does not|serve well "
+"the local vegetation."
 
 #: mob.lst:22001
 msgid "ptak - Jedyny świadek rozkładu dawnego|centrum intelektualnego.+A może ...strażnik?"
 msgstr ""
+"bird - The only witness of the decay of the former intellectual center.+Or "
+"...a guard?"
 
 #: mob.lst:22002
 msgid "księga - Wygląda na zupełnie nieruszoną zębem czasu|ni dziobem tego ptaszyska."
 msgstr ""
+"book - It looks completely untouched by the ravages of time|nor by the beak "
+"of this bird."
 
 #: mob.lst:22003
 msgid "ścieżka - W oddali widać kilka uschniętych drzew."
-msgstr ""
+msgstr "path - In the distance you can see several withered trees."
 
 #: mob.lst:22004
 msgid "pożółkły pergamin - Czas i deszcz zrobiły swoje.+Widzę tylko pojedyncze znaki i nie mogę|zrozumieć treści."
 msgstr ""
+"yellowed parchment - Time and rain have done their job.+I can only see "
+"individual characters and I cannot|understand the content."
 
 #: mob.lst:22005
 msgid "strona z książki - Widzę tytuł jakiegoś rozdziału...+\"Ciepła posadka, czyli palenie czarownic\".*+Hm, ciekawe czy mieli tu też słynne dzieło:|\"Jak rzucić palenie czarownic w tydzień\"."
 msgstr ""
+"page from the book - I see the title of a chapter...+\"Warm job, or burning "
+"witches\".*+ Hm, I wonder if they also had the famous work:|\"How to quit "
+"burning witches in a week.\""
 
 #: mob.lst:22006
 msgid "resztki bramy - Mam nieodparte wrażenie, że przestała spełniać|swoją pierwotną rolę.+W przypadku tego gruzowiska pojęcie wyjścia|jest naprawdę szerokie."
 msgstr ""
+"remains of the gate - I have the impression that it ceased to fulfil|its "
+"original role.+In this rubble the concept of exit is really broad."
 
 #: mob.lst:22007
 msgid "stos kamieni - Kupa drobnych kamyczków. Dowód zwycięstwa|materii nad duchem."
 msgstr ""
+"pile of stones - A pile of small pebbles. Proof of the victory of|matter "
+"over spirit."
 
 #: mob.lst:22008
 msgid "księga - \"O skutecznym zdejmowaniu klątw\".+Och...+Lepiej wcale niż późno."
 msgstr ""
+"book - \"On effective removal of curses.\"+Oh...+Better never than later."
 
 #: mob.lst:22009
 msgid "księga - \"Czwarty wymiar\".+Hmmm... Pewnie polityczna."
@@ -11234,7 +11267,7 @@ msgstr "book - Looks tempting."
 
 #: mob.lst:22011
 msgid "Arivald - Mój chyba nieoceniony wybawca. On pewnie|nie ma co do tego wątpliwości."
-msgstr ""
+msgstr "Arivald - My invaluable savior. He probably has no doubt about that."
 
 #: mob.lst:23001
 msgid "wejście - Ciemno jak w hebanowej rzyci."
@@ -11242,7 +11275,7 @@ msgstr "entrance - Pitch dark."
 
 #: mob.lst:23002
 msgid "łagodny stok - Widać drogę do miasteczka."
-msgstr ""
+msgstr "gentle slope - You can see the road to the town."
 
 #: mob.lst:24001
 msgid "kastet - Git."
@@ -11250,15 +11283,17 @@ msgstr "knuckles - Cool."
 
 #: mob.lst:24002
 msgid "dźwignia - Założę się, że to jakaś forma pułapki."
-msgstr ""
+msgstr "leverage - I bet it's a form of trap."
 
 #: mob.lst:24003
 msgid "dźwignia - Odblokowana.+Niezła ze mnie złota rączka.+I to dosłownie."
-msgstr ""
+msgstr "lever - Unlocked.+Not bad hand craft.+Literally."
 
 #: mob.lst:24004
 msgid "wyjście - Umpff...+Dlaczego nic w życiu, oprócz zdobywania|kobiet, nie przychodzi bez trudu?..."
 msgstr ""
+"exit - Ughhh...+Why nothing in life, except for getting women,|comes "
+"easily?..."
 
 #: mob.lst:24005
 msgid "wyjście - Wolny! Nareszcie!"
@@ -11267,34 +11302,43 @@ msgstr "exit - Freedom! Finally!"
 #: mob.lst:24006
 msgid "olbrzymi szkielet - O rany! Kiedy ten wojownik żył, to pewnie|przyjacielskim klapsem potrafił zabić trolla.+Ten miecz waży chyba więcej niż cały ja."
 msgstr ""
+"giant skeleton - Oh boy! When this warrior was alive, he probably managed|to "
+"kill a troll with a friendly slap.+This sword probably weighs more than me."
 
 #: mob.lst:24007
 msgid "tarcza - Dziwny herb: trójgłowy smok...+Chyba że to hydra mająca symbolizować|trwałość rodu."
 msgstr ""
+"shield - Strange coat of arms: three-headed dragon...+Unless the hydra meant "
+"to symbolize the family's longevity."
 
 #: mob.lst:25001
 msgid "wyjście - Cudowne, świeże powietrze bez siarki i dymu."
-msgstr ""
+msgstr "exit - Wonderful, fresh air without sulfur and smoke."
 
 #: mob.lst:25002
 msgid "zbroja - Opakowanie po jedzeniu powinno się wyrzucać|do śmieci, a nie na ziemię!"
 msgstr ""
+"armor - Food packaging should be disposed of in|the garbage, not on the "
+"ground!"
 
 #: mob.lst:25003
 msgid "czaszka - Dla kogoś taki czerep to było kiedyś|być albo nie być..."
-msgstr ""
+msgstr "skull - For somebody, it was once|to be or not to be..."
 
 #: mob.lst:25004
 msgid "żelazne obręcze - Niejedną parę przegubów już gościły."
-msgstr ""
+msgstr "iron rims - Not just a pair of knuckles have been here."
 
 #: mob.lst:25005
 msgid "smok - Stwierdzam bez przekąsu, że widziałem|dziewice brzydsze od niego."
 msgstr ""
+"dragon - I state without exaggeration, that I saw virgins uglier than him."
 
 #: mob.lst:25006
 msgid "dziewczyna - Łoł!...+Co my tu mamy...+Mocne, żelazne kajdany...+Piękna dziewczyna, całkowicie bezwolna.+Może by tak..."
 msgstr ""
+"girl - Wow!...+What do we have here...+Strong iron shackles...+Beautiful "
+"girl, completely passive.+Maybe I should..."
 
 #: mob.lst:25007
 msgid "dziewczyna - Smaczny kąsek!"
@@ -11310,7 +11354,7 @@ msgstr "rock - A protruding piece of rock."
 
 #: mob.lst:26001
 msgid "droga - Szeroka i dobrze ubita, choć nierówna."
-msgstr ""
+msgstr "road - Broad and well-stomped, though uneven."
 
 #: mob.lst:26002
 msgid "pomost - Stąd pewnie wypływały barki z mąką."
@@ -11319,18 +11363,22 @@ msgstr ""
 #: mob.lst:26003
 msgid "podnośnik - Niestety, już nieczynny, a lina ucięta.+Mam nadzieję, że nie ma to nic wspólnego|ze zbankrutowanym młynarzem."
 msgstr ""
+"lift - Unfortunately, it is out of order and the rope is cut.+I hope it has "
+"nothing to do with the bankrupt miller."
 
 #: mob.lst:26004
 msgid "beczka - Pusta jak kufel Arivalda po półtorej|sekundy."
-msgstr ""
+msgstr "barrel - Empty as an Arivald's pint after one and a half|seconds."
 
 #: mob.lst:26005
 msgid "wejście - Czy to jakaś moda, czy w tej okolicy| wszyscy po prostu mocno pukają?"
 msgstr ""
+"entrance - Is it some fashion or is everyone|just knock hard in this area?"
 
 #: mob.lst:26006
 msgid "młyńskie koło - Jeżeli będę się w nie wystarczająco mocno|i długo wpatrywał, na pewno ruszy."
 msgstr ""
+"mill wheel - If I stare at it hard and long enough, it will|definitely move."
 
 #: mob.lst:26007
 msgid "wyjście - Polna dróżka."
@@ -11338,27 +11386,29 @@ msgstr "exit - A field path."
 
 #: mob.lst:27001
 msgid "droga - Szeroko i dobrze ubita, choć nierówna."
-msgstr ""
+msgstr "Road - Broad and well stomped, though uneven."
 
 #: mob.lst:27002
 msgid "pomost - Stąd pewnie wypływały barki z mąką."
-msgstr ""
+msgstr "bridge - Apparently, barges with flour were floating from there."
 
 #: mob.lst:28001
 msgid "wejście - Pomyśleć, że z drugiej strony to już|jest coś dokładnie odwrotnego."
 msgstr ""
+"entrance - I think, that from the other side it is exactly the opposite."
 
 #: mob.lst:28002
 msgid "worki - Dziwne, młyn opuszczony, ale worki pełne|są mąki."
-msgstr ""
+msgstr "bags - Strange, the mill is abandoned, but the bags are full of flour."
 
 #: mob.lst:28003
 msgid "szczelina - Interesujący otwór, ale trzeba uważać,|żeby nie wpaść."
 msgstr ""
+"crack - An interesting hole, but I need to be careful not to fall into it."
 
 #: mob.lst:28004
 msgid "mąka - Pełno w niej robactwa.+Kto chce placuszka?"
-msgstr ""
+msgstr "flour - It's full of vermin.+Anyone wants a cake?"
 
 #: mob.lst:28005
 msgid "żarna - Nieco nadgryzione zębem czasu."
@@ -11367,6 +11417,11 @@ msgstr "quern - Slightly bitten by the tooth of time."
 #: mob.lst:28006
 msgid "super tajny piksel - Brawo! Znalazłeś super tajny piksel!+Co prawda nic to zmienia w dalszym biegu|wydarzeń, ale wyrażamy nasz podziw dla|Twojej kontroli nad myszką.+Bo chyba nie zaciąłeś się w grze i nie|szukasz desperacko piksel po pikselu|jakiegoś obiektu, który może ominąłeś?..."
 msgstr ""
+"super secret pixel - Well done! You found a super secret pixel!+Although "
+"nothing changes in the course of events, but we express our admiration|for "
+"your control over the mouse.+Apparently you did not get stuck in the game|"
+"and not desperately looking for pixel by pixel|for any object that you may "
+"have missed?..."
 
 #: mob.lst:28007
 msgid "dziewczyna - Lubię patrzeć, jak tak kręci|i potrząsa."
@@ -11411,34 +11466,45 @@ msgstr "merchant - He looks like a very nice man."
 #: mob.lst:30003
 msgid "drzwi - Te drzwi prowadzą do jakiegoś rodzaju świątyni.+Mam nadzieję, że nie składa się tu ofiar|z ludzi."
 msgstr ""
+"door - This door leads to some kind of temple.+I hope there are no human "
+"sacrifices there."
 
 #: mob.lst:30004
 msgid "stalowa maszkara - Wygląda tak, jakby była sterowana przez kogoś|od wewnątrz.+Ciekawe przez kogo? Może krasnoludy, bo człowiek|na pewno się w środku nie zmieści."
 msgstr ""
+"steel mascara - It looks as if it was controlled by someone from the inside.+"
+"I wonder by whom? Maybe dwarves, because a human|will certainly not fit in "
+"it."
 
 #: mob.lst:30005
 msgid "drzwi - To drzwi do jakiegoś publicznie dostępnego|budynku."
-msgstr ""
+msgstr "door - This is the door to some publicly accessible building."
 
 #: mob.lst:30006
 msgid "skrzynka - Znak złotej trąbki niedwuznacznie wskazuje, że|nie mam pojęcia, do czego ta skrzynka może|służyć."
 msgstr ""
+"box - The sign of the golden trumpet clearly indicates that|I have no idea "
+"what this box can be used for."
 
 #: mob.lst:30007
 msgid "drzwi - Tutaj pewnie tubylcy składają ofiary|ze zwierząt."
-msgstr ""
+msgstr "the door - This is where the locals probably make animal sacrifices."
 
 #: mob.lst:30008
 msgid "drzwi - Widać znak węża owiniętego dookoła słupa.+To pewnie miejsce pracy jakiegoś tutejszego|czarnoksiężnika."
 msgstr ""
+"door - You can see the sign of the snake wrapped around the pole.+This is "
+"probably the workplace of some|black wizard."
 
 #: mob.lst:30009
 msgid "stragan - Niektóre warzywa i owoce znam, ale niektórych|nigdy wcześniej nie widziałem."
 msgstr ""
+"stall - I recognize some vegetables and fruits, but I have never seen some "
+"before."
 
 #: mob.lst:30010
 msgid "dziwna machina - Kołyska na kółkach - to po prostu genialne!"
-msgstr ""
+msgstr "strange machine - Cradle on wheels - it's simply brilliant!"
 
 #: mob.lst:30011
 msgid "przechodzień - Co za dziwna moda..."
@@ -11447,10 +11513,14 @@ msgstr "passerby - What a strange fashion..."
 #: mob.lst:31001
 msgid "kapłan - Dziwne: ubrany na czarno, ale nie sprawia|wrażenia adepta czarnej magii."
 msgstr ""
+"priest - Strange: dressed in black but does not seem to be an adopt of black "
+"magic."
 
 #: mob.lst:31002
 msgid "obraz - Artysta uwiecznił jakiegoś potężnego maga, który|ruchem dłoni ujarzmił morze."
 msgstr ""
+"painting - The artist has immortalized some powerful magician who,|with a "
+"movement of his hand, tamed the sea."
 
 #: mob.lst:31003
 msgid "drzwi - Prowadzą na zaplecze świątyni."
@@ -11466,7 +11536,7 @@ msgstr "benches - Empty.+Unfortunately."
 
 #: mob.lst:31006
 msgid "kropielnica - Wyschnięta, kamień jest tylko lekko wilgotny."
-msgstr ""
+msgstr "stoup - Dried, the stone is only slightly moist."
 
 #: mob.lst:31007
 msgid "wyjście - Powrót do ulicznego zgiełku."
@@ -11475,6 +11545,8 @@ msgstr "exit - Back to the street noise."
 #: mob.lst:32001
 msgid "człowiek o twarzy sadystycznego mordercy - Chyba wykonuje zawód zgodny z zainteresowaniami."
 msgstr ""
+"man with the face of a sadistic murderer - I think he is pursuing a "
+"profession consistent with his interests."
 
 #: mob.lst:32002
 msgid "drzwi - Jedyna droga ucieczki."
@@ -11483,6 +11555,8 @@ msgstr "door - The only way to escape."
 #: mob.lst:32003
 msgid "certyfikat - Nie znam tutejszego języka, ale założyłbym się,|że ten dokument ma coś wspólnego z oceną|umiejętności machania toporkiem."
 msgstr ""
+"certificate - I do not know the local language, but I would bet|that this "
+"document has something to do with the assessment|of the axe swinging skills."
 
 #: mob.lst:32004
 msgid "wędliny - Mniam, mniam."
@@ -11491,10 +11565,12 @@ msgstr "meat - Yum, yum."
 #: mob.lst:32005
 msgid "mózg - No, to teraz już jasne, dlaczego ten|za ladą ma taki głupi wyraz twarzy."
 msgstr ""
+"brain - Well, it is now clear why the one behind the counter|has such a "
+"stupid expression on his face."
 
 #: mob.lst:32006
 msgid "pojemnik - Zwierzęta mają bardzo bogate życie|wewnętrzne..."
-msgstr ""
+msgstr "container - Animals have a very rich internal life..."
 
 #: mob.lst:32007
 msgid "siekiera - Gdyby nie drzwi... byłbym niższy|o głowę."
@@ -11502,7 +11578,7 @@ msgstr "axe - If it weren't for the door... I'd be shorter by a head."
 
 #: mob.lst:33001
 msgid "strażnik - Idiotów z bejzbolami chyba nigdy nie zabraknie..."
-msgstr ""
+msgstr "guard - You probably never run out of idiots with basebal bats..."
 
 #: mob.lst:33002
 msgid "wejście - Ciepło, ciepło..."
@@ -11510,31 +11586,35 @@ msgstr "entrance - Warm, warm..."
 
 #: mob.lst:34001
 msgid "wyjście - Któżby chciał opuszczać piekielne otchłanie?"
-msgstr ""
+msgstr "exit - Who would want to leave the infernal abyss?"
 
 #: mob.lst:34002
 msgid "tabliczka - \"Wstęp tylko dla diabłów i zmarłych. Obsługujemy|tylko jedną parę naraz. Przed wejściem należy|przygotować listę grzechów.\""
 msgstr ""
+"placard - \"Admission only for devils and dead. We serve|only one pair at a "
+"time. Before entering please|prepare a list of sins.\""
 
 #: mob.lst:34003
 msgid "drzwi - Solidne drewno z metalowymi okuciami.+Mucha nie siada."
-msgstr ""
+msgstr "doors - Solid wood with metal fittings.+So clean, you could eat it."
 
 #: mob.lst:34004
 msgid "krata więzienna - Lepsza taka wentylacja niż żadna."
-msgstr ""
+msgstr "prison grille - Better such ventilation than none."
 
 #: mob.lst:34005
 msgid "zamek - Widzę, że nowoczesna technika sięgnęła nawet|Piekła."
-msgstr ""
+msgstr "lock - I can see that modern technology has even reached Hell."
 
 #: mob.lst:34006
 msgid "drzwi - Nie do pokonania, chyba że ma się do dyspozycji|wściekłego słonia.*+Albo klucz."
 msgstr ""
+"door - Unbreakable unless you have an angry elephant|in your possession.*+Or "
+"a key."
 
 #: mob.lst:34007
 msgid "czarka - Pewnie to właśnie naczynie trafia do więźniów."
-msgstr ""
+msgstr "bowl - Probably it is the utensil that goes to prisoners."
 
 #: mob.lst:34008
 msgid "przejście - Droga w czeluście piekieł."
@@ -11551,6 +11631,8 @@ msgstr "pass - To other parts of the Hell."
 #: mob.lst:35003
 msgid "wnęka - Wnęka dość mroczna, ale widzę dwa pilnujące|czegoś diabły."
 msgstr ""
+"niche - The niche is quite dark, but I can see two devils watching over "
+"something."
 
 #: mob.lst:35004
 msgid "drzwi - Stare, ale jare."
@@ -11567,6 +11649,8 @@ msgstr "valve - Strange metal tap..."
 #: mob.lst:35007
 msgid "zbiornik - Tutaj lawa znajduje swoje ujście.+Ciekawe, co się z nią dalej dzieje."
 msgstr ""
+"reservoir - Here the lava finds its outlet.+I wonder what is happening to it "
+"further."
 
 #: mob.lst:35008
 msgid "kawałek różka - Rozdzielnicowy."
@@ -11579,14 +11663,20 @@ msgstr "devil - splitting one."
 #: mob.lst:36002
 msgid "biała świeca - Mała, krótka świeca; stoi najbliżej drzwi do|sali z napisem \"Grzechy lekkie\"."
 msgstr ""
+"white candle - A small, short candle; stands closest to the door to the "
+"chamber|with the words \"Light sins\"."
 
 #: mob.lst:36003
 msgid "czerwona świeca - Średniej wielkości świeca, stoi blisko drzwi|z napisem \"Grzechy ciężkie\"."
 msgstr ""
+"red candle - Medium-sized candle, stands near the door with|the words \""
+"Heavy sins\"."
 
 #: mob.lst:36004
 msgid "czarna świeca - Olbrzymia, gruba świeca. Jest najbliżej drzwi|z napisem \"V.I.P.\"."
 msgstr ""
+"black candle - A huge, thick candle. It is closest to the door with|the "
+"inscription \"V.I.P.\""
 
 #: mob.lst:36005
 msgid "drzwi - \"Wirtualna sala grzechów lekkich.\""
@@ -11602,7 +11692,7 @@ msgstr "door - \"Virtual hall of heavy sins.\""
 
 #: mob.lst:36008
 msgid "wyjście - Zejście w głąb korytarzy Piekła."
-msgstr ""
+msgstr "exit - Descent into the corridors of Hell."
 
 #: mob.lst:36009
 msgid "diabeł - Jedzonko nie posłużyło."
@@ -11618,7 +11708,7 @@ msgstr "devil - Food did not help."
 
 #: mob.lst:37001
 msgid "kociołek - Pusty, bez żadnej strawy.+Najprawdopodobniej nigdy jej tutaj nie było."
-msgstr ""
+msgstr "cauldron - Empty, no food.+Most likely it has never been there."
 
 #: mob.lst:37002
 msgid "żar - Ognisko gorące, ale płomień wygaszony."
@@ -11719,19 +11809,21 @@ msgstr "exit - Exit to the corridor."
 
 #: mob.lst:40010
 msgid "pomoce naukowe - Podręczny zestaw każdego szanującego się|poszukiwacza wrażeń."
-msgstr ""
+msgstr "teaching aids - A handy set for every respectful experience seeker."
 
 #: mob.lst:40011
 msgid "madejowe łoże - Nie ma to jak wyciągnąć się na łóżku, co?"
-msgstr ""
+msgstr "wooden rack - Stretching on a bed is not enough, huh?"
 
 #: mob.lst:40012
 msgid "żelazna dziewica - Teraz już wiem, dlaczego smoków coraz mniej."
-msgstr ""
+msgstr "iron maiden - I now know why the number of dragons is decreasing."
 
 #: mob.lst:40013
 msgid "zużyte narzędzia - Widać na nich lata intensywnej pracy.+Dla dobra ludzkości, rzecz jasna."
 msgstr ""
+"used tools - You can see years of intense work on them.+For the good of "
+"humanity, of course."
 
 #: mob.lst:40014
 msgid "hak - Na każdego jest jakiś hak."
@@ -11740,10 +11832,12 @@ msgstr "hook - There's a hook for everyone."
 #: mob.lst:40015
 msgid "wrzątek - Trochę to dziwnie brzmi, ale wrzątek ostudził|pewnie niejednego grzesznika."
 msgstr ""
+"boiling water - It sounds a bit strange, but boiling water has|probably "
+"cooled down many sinners."
 
 #: mob.lst:41001
 msgid "kamień - Jest przeogromny. Żaden człowiek nie jest|w stanie go poruszyć."
-msgstr ""
+msgstr "stone - It is enormous. No man can move him."
 
 #: mob.lst:41002
 msgid "łańcuch - Grube, solidne ogniwa."
@@ -11751,19 +11845,21 @@ msgstr "chain - Thick, solid links."
 
 #: mob.lst:41003
 msgid "prycza - Malutka. Widać nie przewidują gości."
-msgstr ""
+msgstr "wooden cot - Tiny. You can see they don't expect guests."
 
 #: mob.lst:41004
 msgid "latarnia - No tak, nic dziwnego, w końcu do Piekła|światło słoneczne nie dochodzi."
-msgstr ""
+msgstr "lantern - Well, no wonder, after all sunlight|does not reach Hell."
 
 #: mob.lst:42001
 msgid "magiczne drzwi - Dlaczego nie ma tu Arivalda? Rozbiłby|je w puch jednym zaklęciem!"
 msgstr ""
+"magic door - Why is Arivald not here? He would smash|them down with single "
+"spell!"
 
 #: mob.lst:42002
 msgid "wyjście - Powrót na główny korytarz."
-msgstr ""
+msgstr "exit - Return to the main corridor."
 
 #: mob.lst:42003
 msgid "diabeł - Lewy."
@@ -11776,6 +11872,8 @@ msgstr "devil - Right one."
 #: mob.lst:43001
 msgid "maszyna muzyczna - To chyba jakaś tajna broń Piekła w walce|z Niebem.+Może ma zakłócić brzmienie anielskich|chórów?"
 msgstr ""
+"music machine - This is probably some secret weapon of Hell|in the fight "
+"against Heaven.+Maybe it will disturb the sound of|the angel's choirs?"
 
 #: mob.lst:43002
 msgid "wejście - Jestem u celu. Raz kozie śmierć, jak|mawiał rzeźnik."
