@@ -25,6 +25,7 @@
 
 #include "common/file.h"
 #include "ultima/shared/std/misc.h"
+#include "ultima/shared/std/string.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -91,7 +92,7 @@ public:
 	}
 
 	void readline(Std::string &str) {
-		str.erase();
+		str.clear();
 		while (!eof()) {
 			char character =  static_cast<char>(read1());
 

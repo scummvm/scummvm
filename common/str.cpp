@@ -434,6 +434,8 @@ void String::deleteChar(uint32 p) {
 }
 
 void String::erase(uint32 p, uint32 len) {
+	if (p == npos)
+		return;
 	assert(p < _size);
 
 	makeUnique();
@@ -450,6 +452,11 @@ void String::erase(uint32 p, uint32 len) {
 		_str[p] = _str[p + len];
 	}
 	_size -= len;
+}
+
+String::iterator String::erase(iterator it) {
+	this->deleteChar(it - _str);
+	return it;
 }
 
 void String::clear() {
@@ -694,6 +701,95 @@ String String::vformat(const char *fmt, va_list args) {
 	return output;
 }
 
+
+size_t String::find(char c, size_t pos) const {
+	const char *p = strchr(_str + pos, c);
+	return p ? p - _str : npos;
+}
+
+size_t String::find(const char *s) const {
+	const char *str = strstr(_str, s);
+	return str ? str - _str : npos;
+}
+
+size_t String::rfind(const char *s) const {
+	int sLen = strlen(s);
+
+	for (int idx = (int)_size - sLen; idx >= 0; --idx) {
+		if (!strncmp(_str + idx, s, sLen))
+			return idx;
+	}
+
+	return npos;
+}
+
+size_t String::rfind(char c, size_t pos) const {
+	for (int idx = MIN((int)_size - 1, (int)pos); idx >= 0; --idx) {
+		if ((*this)[idx] == c)
+			return idx;
+	}
+
+	return npos;
+}
+
+size_t String::find_first_of(char c, size_t pos) const {
+	const char *strP = (pos >= _size) ? 0 : strchr(_str + pos, c);
+	return strP ? strP - _str : npos;
+}
+
+size_t String::find_first_of(const char *chars, size_t pos) const {
+	for (uint idx = pos; idx < _size; ++idx) {
+		if (strchr(chars, (*this)[idx]))
+			return idx;
+	}
+
+	return npos;
+}
+
+size_t String::find_first_not_of(char c, size_t pos) const {
+	for (uint idx = pos; idx < _size; ++idx) {
+		if ((*this)[idx] != c)
+			return idx;
+	}
+
+	return npos;
+}
+
+size_t String::find_first_not_of(const char *chars, size_t pos) const {
+	for (uint idx = pos; idx < _size; ++idx) {
+		if (!strchr(chars, (*this)[idx]))
+			return idx;
+	}
+
+	return npos;
+}
+
+size_t String::find_last_not_of(char c) const {
+	for (int idx = (int)_size - 1; idx >= 0; --idx) {
+		if ((*this)[idx] != c)
+			return c;
+	}
+
+	return npos;
+}
+
+size_t String::find_last_not_of(const char *chars) const {
+	for (int idx = (int)_size - 1; idx >= 0; --idx) {
+		if (!strchr(chars, (*this)[idx]))
+			return idx;
+	}
+
+	return npos;
+}
+
+String String::substr(size_t pos, size_t len) const {
+	if (pos >= _size)
+		return String();
+	else if (len == npos)
+		return String(_str + pos);
+	else
+		return String(_str + pos, MIN(_size - pos, len));
+}
 
 #pragma mark -
 
