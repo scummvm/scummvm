@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 namespace Ultima {
 namespace Ultima8 {
 
-typedef std::map<Pentagram::istring, TreasureInfo, Common::IgnoreCase_Hash> TreasureMap;
+typedef Std::map<Pentagram::istring, TreasureInfo, Common::IgnoreCase_Hash> TreasureMap;
 
 class TreasureLoader {
 public:
@@ -37,17 +37,17 @@ public:
 	void loadDefaults();
 
 	//! parse treasure string into vector of TreasureInfo objects
-	bool parse(std::string, std::vector<TreasureInfo> &treasure);
+	bool parse(Std::string, Std::vector<TreasureInfo> &treasure);
 
 private:
 	TreasureMap defaultTreasure;
 
-	bool internalParse(std::string desc, TreasureInfo &ti, bool loadingDefault);
+	bool internalParse(Std::string desc, TreasureInfo &ti, bool loadingDefault);
 
-	bool parseUInt32Vector(std::string val, std::vector<uint32> &vec);
-	bool parseUIntRange(std::string val, unsigned int &min, unsigned int &max);
-	bool parseDouble(std::string val, double &d);
-	bool parseInt(std::string val, int &i);
+	bool parseUInt32Vector(Std::string val, Std::vector<uint32> &vec);
+	bool parseUIntRange(Std::string val, unsigned int &min, unsigned int &max);
+	bool parseDouble(Std::string val, double &d);
+	bool parseInt(Std::string val, int &i);
 };
 
 } // End of namespace Ultima8

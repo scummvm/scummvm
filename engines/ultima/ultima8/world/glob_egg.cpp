@@ -60,7 +60,7 @@ void GlobEgg::enterFastArea() {
 		MapGlob *glob = GameData::get_instance()->getGlob(quality);
 		if (!glob) return;
 
-		std::vector<GlobItem>::iterator iter;
+		Std::vector<GlobItem>::iterator iter;
 		for (iter = glob->contents.begin(); iter != glob->contents.end(); ++iter) {
 			GlobItem &globitem = *iter;
 			Item *item = ItemFactory::createItem(globitem.shape, globitem.frame,

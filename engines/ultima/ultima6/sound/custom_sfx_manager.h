@@ -44,12 +44,12 @@ public:
 	void playSoundSample(uint16 sample_num, Audio::SoundHandle *looping_handle, uint8 volume);
 
 private:
-	bool loadSfxMapFile(std::string cfg_filename, std::map<uint16, uint16> *m);
+	bool loadSfxMapFile(Std::string cfg_filename, Std::map<uint16, uint16> *m);
 
 private:
-	std::string custom_filepath;
+	Std::string custom_filepath;
 
-	std::map<uint16, uint16> *sfx_map;
+	Std::map<uint16, uint16> *sfx_map;
 };
 
 } // End of namespace Ultima6

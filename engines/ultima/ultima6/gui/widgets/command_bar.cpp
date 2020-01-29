@@ -49,7 +49,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::string;
+using Std::string;
 
 static Tile placeholder_tile = {
 	0,
@@ -104,7 +104,7 @@ CommandBar::CommandBar(Game *g) : GUI_Widget(NULL) {
 
 	if (!game->is_orig_style()) {
 		cfg = game->get_config();
-		std::string pos_str;
+		Std::string pos_str;
 		cfg->value(config_get_game_key(cfg) + "/cb_position", pos_str, "default");
 		if (pos_str == "default")
 			right_pos_cb = !game->is_new_style();

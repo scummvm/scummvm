@@ -61,7 +61,7 @@ ConverseGumpWOU::ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s) {
 
 	set_scroll_dimensions(18, 18);
 
-	std::string height_str;
+	Std::string height_str;
 	uint16 x_off = game->get_game_x_offset();
 	uint16 y_off = game->get_game_y_offset();
 
@@ -69,8 +69,8 @@ ConverseGumpWOU::ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s) {
 		GUI_Widget::Init(NULL, x_off + 8, y_off + 8, 160, 160);
 		bg_color = converse_bg_color = 0x31; //17;
 		if (game->get_game_width() >= 335) {
-			std::string imagefile;
-			std::string datadir = GUI::get_gui()->get_data_dir();
+			Std::string imagefile;
+			Std::string datadir = GUI::get_gui()->get_data_dir();
 			build_path(datadir, "U6_WOU_Scroll_bg.bmp", imagefile);
 			NuvieBmpFile bmp;
 			bg_image = bmp.getSdlSurface32(imagefile);

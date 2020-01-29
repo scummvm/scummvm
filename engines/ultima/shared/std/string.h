@@ -26,7 +26,7 @@
 #include "common/str.h"
 
 namespace Ultima {
-namespace std {
+namespace Std {
 
 class string : public Common::String {
 public:
@@ -249,7 +249,7 @@ public:
 
 extern const char *const endl;
 
-} // End of namespace std
+} // End of namespace Std
 } // End of namespace Ultima
 
 #endif

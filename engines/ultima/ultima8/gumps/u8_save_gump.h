@@ -49,7 +49,7 @@ public:
 	virtual void ChildNotify(Gump *child, uint32 message);
 	virtual void OnFocus(bool gain);
 
-	static std::string getFilename(int index);
+	static Std::string getFilename(int index);
 
 	static Gump *showLoadSaveGump(Gump *parent, bool save);
 
@@ -57,13 +57,13 @@ protected:
 	bool save;
 	int page;
 
-	std::vector<EditWidget *> editwidgets;
-	std::vector<std::string> descriptions;
+	Std::vector<EditWidget *> editwidgets;
+	Std::vector<Std::string> descriptions;
 
 	void loadDescriptions();
 
 	bool loadgame(int saveIndex);
-	bool savegame(int saveIndex, const std::string &name);
+	bool savegame(int saveIndex, const Std::string &name);
 };
 
 } // End of namespace Ultima8

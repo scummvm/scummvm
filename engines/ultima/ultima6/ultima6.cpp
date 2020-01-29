@@ -198,7 +198,7 @@ void Ultima6Engine::initConfig() {
 }
 
 void Ultima6Engine::assignGameConfigValues(uint8 gameType) {
-	std::string game_name, game_id;
+	Std::string game_name, game_id;
 
 	_config->set("config/GameType", gameType);
 
@@ -224,7 +224,7 @@ void Ultima6Engine::assignGameConfigValues(uint8 gameType) {
 }
 
 bool Ultima6Engine::checkGameDir(uint8 gameType) {
-	std::string path;
+	Std::string path;
 
 	config_get_path(_config, "", path);
 	ConsoleAddInfo("gamedir: \"%s\"", path.c_str());
@@ -233,7 +233,7 @@ bool Ultima6Engine::checkGameDir(uint8 gameType) {
 }
 
 bool Ultima6Engine::checkDataDir() {
-	std::string path;
+	Std::string path;
 	_config->value("config/datadir", path, "");
 	ConsoleAddInfo("datadir: \"%s\"", path.c_str());
 
@@ -348,7 +348,7 @@ bool Ultima6Engine::quickSave(int saveSlot, bool isLoad) {
 	if (saveSlot < 0 || saveSlot > 99)
 		return false;
 
-	std::string text;
+	Std::string text;
 	MsgScroll *scroll = _game->get_scroll();
 
 	if (isLoad) {
@@ -363,7 +363,7 @@ bool Ultima6Engine::quickSave(int saveSlot, bool isLoad) {
 		text = _("saving quick save %d");
 	}
 
-	text = std::string::format(text.c_str(), saveSlot);
+	text = Std::string::format(text.c_str(), saveSlot);
 	scroll->display_string(text);
 
 	if (isLoad) {

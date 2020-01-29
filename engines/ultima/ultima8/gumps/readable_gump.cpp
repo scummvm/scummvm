@@ -51,7 +51,7 @@ ReadableGump::ReadableGump()
 
 }
 
-ReadableGump::ReadableGump(ObjId owner_, uint16 shape_, int font, std::string msg) :
+ReadableGump::ReadableGump(ObjId owner_, uint16 shape_, int font, Std::string msg) :
 	ModalGump(0, 0, 100, 100, owner_), shapenum(shape_), fontnum(font), text(msg) {
 }
 
@@ -74,10 +74,10 @@ void ReadableGump::InitGump(Gump *newparent, bool take_focus) {
 	if (CoreApp::get_instance()->getGameInfo()->language ==
 	        GameInfo::GAMELANG_JAPANESE) {
 		// Japanese subtitles
-		std::string::size_type pos;
+		Std::string::size_type pos;
 		pos = text.find('%');
-		if (pos != std::string::npos) {
-			std::string jpsub = text.substr(pos + 1);
+		if (pos != Std::string::npos) {
+			Std::string jpsub = text.substr(pos + 1);
 			text = text.substr(0, pos);
 
 			Gump *subwidget = new TextWidget(0, 0, jpsub, true, jpsub_font, 0, 0, Pentagram::Font::TEXT_CENTER);

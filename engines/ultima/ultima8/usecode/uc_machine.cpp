@@ -144,7 +144,7 @@ void UCMachine::reset() {
 	globals->setSize(0x1000);
 
 	// clear strings, lists
-	std::map<uint16, UCList *>::iterator iter;
+	Std::map<uint16, UCList *>::iterator iter;
 	for (iter = listHeap.begin(); iter != listHeap.end(); ++iter)
 		delete(iter->_value);
 	listHeap.clear();
@@ -166,10 +166,10 @@ void UCMachine::execProcess(UCProcess *p) {
 
 #ifdef DEBUG
 	if (trace_show(p->pid, p->item_num, p->classid)) {
-		pout << std::hex << "running process " << p->pid
+		pout << Std::hex << "running process " << p->pid
 		     << ", item " << p->item_num << ", type " << p->type
 		     << ", class " << p->classid << ", offset " << p->ip
-		     << std::dec << std::endl;
+		     << Std::dec << Std::endl;
 	}
 #endif
 
@@ -265,7 +265,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			UCList *l = getList(ui16b);
 			if (!l) {
 				perr << "assign element to an invalid list (" << ui16b << ")"
-				     << std::endl;
+				     << Std::endl;
 				error = true;
 				break;
 			}
@@ -274,7 +274,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				// probably just that the overwritten element has to be freed?
 				if (ui32a != 2) {
 					perr << "Unhandled operand " << ui32a << " to pop slist"
-					     << std::endl;
+					     << Std::endl;
 					error = true; // um?
 				}
 				l->assign(ui16a, p->stack.access());
@@ -335,7 +335,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui16b = cs.read1();
 			if (ui16b != 0) {
 				perr << "Zero terminator missing in push string"
-				     << std::endl;
+				     << Std::endl;
 				error = true;
 			}
 			p->stack.push2(assignString(str));
@@ -379,12 +379,12 @@ void UCMachine::execProcess(UCProcess *p) {
 			// !constants
 			if (func >= intrinsiccount || intrinsics[func] == 0) {
 				p->temp32 = 0;
-				perr << "Unhandled intrinsic \'" << convuse->intrinsics()[func] << "\' (" << std::hex << func << std::dec << ") called" << std::endl;
+				perr << "Unhandled intrinsic \'" << convuse->intrinsics()[func] << "\' (" << Std::hex << func << Std::dec << ") called" << Std::endl;
 			} else {
 				//!! hackish
 				if (intrinsics[func] == UCMachine::I_dummyProcess ||
 				        intrinsics[func] == UCMachine::I_true) {
-//						perr << "Unhandled intrinsic \'" << convuse->intrinsics()[func] << "\' (" << std::hex << func << std::dec << ") called" << std::endl;
+//						perr << "Unhandled intrinsic \'" << convuse->intrinsics()[func] << "\' (" << Std::hex << func << Std::dec << ") called" << Std::endl;
 				}
 				uint8 *argbuf = new uint8[arg_bytes];
 				p->stack.pop(argbuf, arg_bytes);
@@ -480,7 +480,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui16a = p->stack.pop2();
 			ui16b = p->stack.pop2();
 			if (ui16b == 0) {
-				perr << "Trying to append to string 0." << std::endl;
+				perr << "Trying to append to string 0." << Std::endl;
 				error = true;
 				break;
 			}
@@ -504,7 +504,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				if (listA->getElementSize() != listB->getElementSize()) {
 					perr << "Trying to append lists with different element "
 					     << "sizes (" << listB->getElementSize() << " != "
-					     << listA->getElementSize() << ")" << std::endl;
+					     << listA->getElementSize() << ")" << Std::endl;
 					error = true;
 				} else {
 					listB->appendList(*listA);
@@ -536,7 +536,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			ui32a = cs.read1();
 			if (ui32a != 2) {
 				perr << "Unhandled operand " << ui32a << " to union slist"
-				     << std::endl;
+				     << Std::endl;
 				error = true;
 			}
 			ui16a = p->stack.pop2();
@@ -933,7 +933,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (ui32a) { // stringlist
 				if (ui16a != 2) {
 					perr << "Unhandled operand " << ui16a << " to in slist"
-					     << std::endl;
+					     << Std::endl;
 					error = true;
 				}
 				if (getList(ui16b)->stringInList(p->stack.pop2()))
@@ -1054,7 +1054,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			} else {
 				// trying to push non-existent list. Error or not?
 				// Not: for example, function 01E3::0080, offset 0112
-				// perr << "Pushing non-existent list" << std::endl;
+				// perr << "Pushing non-existent list" << Std::endl;
 				// error = true;
 			}
 			uint16 newlistid = assignList(l);
@@ -1079,7 +1079,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			} else {
 				// trying to push non-existent list. Error or not?
 				// (Devon's talk code seems to use it; so no error for now)
-				// perr << "Pushing non-existent slist" << std::endl;
+				// perr << "Pushing non-existent slist" << Std::endl;
 				// error = true;
 			}
 			p->stack.push2(assignList(l));
@@ -1105,7 +1105,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			UCList *l = getList(ui16b);
 			if (!l) {
 //				perr << "push element from invalid list (" << ui16b << ")"
-//					 << std::endl;
+//					 << Std::endl;
 				// This is necessary for closing the backpack to work
 				p->stack.push0(ui32a);
 //				error = true;
@@ -1203,7 +1203,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			globals->setBits(ui16a, ui16b, ui32a);
 
 			if (ui32a & ~(((1 << ui16b) - 1))) {
-				perr << "Warning: value popped into a bitflag it doesn't fit in" << std::endl;
+				perr << "Warning: value popped into a bitflag it doesn't fit in" << Std::endl;
 			}
 
 			// paranoid :-)
@@ -1312,7 +1312,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				} else {
 					perr << ui16a;
 				}
-				perr << ") in implies." << std::endl;
+				perr << ") in implies." << Std::endl;
 				// This condition triggers in 057C:1090 when talking
 				// to a child (class 02C4), directly after the conversation
 				// Specifically, it occurs because there is no
@@ -1356,10 +1356,10 @@ void UCMachine::execProcess(UCProcess *p) {
 
 #ifdef DEBUG
 			if (trace_show(p->pid, p->item_num, p->classid)) {
-				pout << std::hex << "(still) running process " << p->pid
+				pout << Std::hex << "(still) running process " << p->pid
 				     << ", item " << p->item_num << ", type " << p->type
 				     << ", class " << p->classid << ", offset " << p->ip
-				     << std::dec << std::endl;
+				     << Std::dec << Std::endl;
 			}
 #endif
 
@@ -1400,9 +1400,9 @@ void UCMachine::execProcess(UCProcess *p) {
 
 #ifdef DEBUG
 			if (trace_show(p->pid, p->item_num, p->classid)) {
-				pout << std::hex << "(still) running process " << p->pid
+				pout << Std::hex << "(still) running process " << p->pid
 				     << ", item " << p->item_num << ", class " << p->classid
-				     << ", offset " << p->ip << std::dec << std::endl;
+				     << ", offset " << p->ip << Std::dec << Std::endl;
 			}
 #endif
 
@@ -1580,7 +1580,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			default:
 				ui16b = 0;
 				perr << "Error: invalid param pid change type (" << ui8a
-				     << ")" << std::endl;
+				     << ")" << Std::endl;
 				error = true;
 			}
 			p->stack.assign2(p->bp + si8a, ui16b); // assign new index
@@ -1651,7 +1651,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			//    loopscript of 0x20 bytes)
 
 			if (scriptsize > 0x20) {
-				perr << "Loopscript too long" << std::endl;
+				perr << "Loopscript too long" << Std::endl;
 				error = true;
 				break;
 			}
@@ -1685,7 +1685,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				} else {
 					// return error or return empty list?
 					perr << "Warning: invalid item passed to area search"
-					     << std::endl;
+					     << Std::endl;
 				}
 				break;
 			}
@@ -1704,7 +1704,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 				if (ui16a != 0xFFFF) {
 					perr << "Warning: non-FFFF value passed to "
-					     << "container search" << std::endl;
+					     << "container search" << Std::endl;
 				}
 
 				if (container) {
@@ -1713,7 +1713,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				} else {
 					// return error or return empty list?
 					perr << "Warning: invalid container passed to "
-					     << "container search" << std::endl;
+					     << "container search" << Std::endl;
 				}
 				break;
 			}
@@ -1733,12 +1733,12 @@ void UCMachine::execProcess(UCProcess *p) {
 				} else {
 					// return error or return empty list?
 					perr << "Warning: invalid item passed to surface search"
-					     << std::endl;
+					     << Std::endl;
 				}
 				break;
 			}
 			default:
-				perr << "Unhandled search type " << searchtype << std::endl;
+				perr << "Unhandled search type " << searchtype << Std::endl;
 				error = true;
 				delete[] script;
 				break;
@@ -1773,7 +1773,7 @@ void UCMachine::execProcess(UCProcess *p) {
 #endif
 
 			if (!itemlist) {
-				perr << "Invalid item list in loopnext!" << std::endl;
+				perr << "Invalid item list in loopnext!" << Std::endl;
 				error = true;
 				break;
 			}
@@ -1984,10 +1984,10 @@ void UCMachine::execProcess(UCProcess *p) {
 }
 
 
-std::string &UCMachine::getString(uint16 str) {
-	static std::string emptystring("");
+Std::string &UCMachine::getString(uint16 str) {
+	static Std::string emptystring("");
 
-	std::map<uint16, std::string>::iterator iter = stringHeap.find(str);
+	Std::map<uint16, Std::string>::iterator iter = stringHeap.find(str);
 
 	if (iter != stringHeap.end())
 		return iter->_value;
@@ -1996,7 +1996,7 @@ std::string &UCMachine::getString(uint16 str) {
 }
 
 UCList *UCMachine::getList(uint16 l) {
-	std::map<uint16, UCList *>::iterator iter = listHeap.find(l);
+	Std::map<uint16, UCList *>::iterator iter = listHeap.find(l);
 
 	if (iter != listHeap.end())
 		return iter->_value;
@@ -2035,7 +2035,7 @@ void UCMachine::freeString(uint16 s) {
 	//! (when something accesses stringHeap[0])
 	//! This may not be desirable, but OTOH the created string will be
 	//! empty, so not too much of a problem.
-	std::map<uint16, std::string>::iterator iter = stringHeap.find(s);
+	Std::map<uint16, Std::string>::iterator iter = stringHeap.find(s);
 	if (iter != stringHeap.end()) {
 		stringHeap.erase(iter);
 		stringIDs->clearID(s);
@@ -2043,7 +2043,7 @@ void UCMachine::freeString(uint16 s) {
 }
 
 void UCMachine::freeList(uint16 l) {
-	std::map<uint16, UCList *>::iterator iter = listHeap.find(l);
+	Std::map<uint16, UCList *>::iterator iter = listHeap.find(l);
 	if (iter != listHeap.end() && iter->_value) {
 		iter->_value->free();
 		delete iter->_value;
@@ -2053,7 +2053,7 @@ void UCMachine::freeList(uint16 l) {
 }
 
 void UCMachine::freeStringList(uint16 l) {
-	std::map<uint16, UCList *>::iterator iter = listHeap.find(l);
+	Std::map<uint16, UCList *>::iterator iter = listHeap.find(l);
 	if (iter != listHeap.end() && iter->_value) {
 		iter->_value->freeStrings();
 		delete iter->_value;
@@ -2121,7 +2121,7 @@ bool UCMachine::assignPointer(uint32 ptr, const uint8 *data, uint32 size) {
 		if (!proc) {
 			// segfault :-)
 			perr << "Trying to access stack of non-existent "
-			     << "process (pid: " << segment << ")" << std::endl;
+			     << "process (pid: " << segment << ")" << Std::endl;
 			return false;
 		} else {
 			proc->stack.assign(offset, data, size);
@@ -2129,8 +2129,8 @@ bool UCMachine::assignPointer(uint32 ptr, const uint8 *data, uint32 size) {
 	} else if (segment == SEG_GLOBAL) {
 		CANT_HAPPEN_MSG("pointers to globals not implemented yet");
 	} else {
-		perr << "Trying to access segment " << std::hex
-		     << segment << std::dec << std::endl;
+		perr << "Trying to access segment " << Std::hex
+		     << segment << Std::dec << Std::endl;
 		return false;
 	}
 
@@ -2158,15 +2158,15 @@ bool UCMachine::dereferencePointer(uint32 ptr, uint8 *data, uint32 size) {
 		if (!proc) {
 			// segfault :-)
 			perr << "Trying to access stack of non-existent "
-			     << "process (pid: " << segment << ")" << std::endl;
+			     << "process (pid: " << segment << ")" << Std::endl;
 			return false;
 		} else {
-			std::memcpy(data, proc->stack.access(offset), size);
+			Std::memcpy(data, proc->stack.access(offset), size);
 		}
 	} else if (segment == SEG_OBJ) {
 		if (size != 2) {
 			perr << "Trying to read other than 2 bytes from objptr"
-			     << std::endl;
+			     << Std::endl;
 			return false;
 		} else {
 			// push objref
@@ -2176,8 +2176,8 @@ bool UCMachine::dereferencePointer(uint32 ptr, uint8 *data, uint32 size) {
 	} else if (segment == SEG_GLOBAL) {
 		CANT_HAPPEN_MSG("pointers to globals not implemented yet");
 	} else {
-		perr << "Trying to access segment " << std::hex
-		     << segment << std::dec << std::endl;
+		perr << "Trying to access segment " << Std::hex
+		     << segment << Std::dec << Std::endl;
 		return false;
 	}
 	return true;
@@ -2197,7 +2197,7 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 		if (!proc) {
 			// segfault :-)
 			perr << "Trying to access stack of non-existent "
-			     << "process (pid: " << segment << ")" << std::endl;
+			     << "process (pid: " << segment << ")" << Std::endl;
 			return 0;
 		} else {
 			return proc->stack.access2(offset);
@@ -2208,26 +2208,26 @@ uint16 UCMachine::ptrToObject(uint32 ptr) {
 		CANT_HAPPEN_MSG("pointers to globals not implemented yet");
 		return 0;
 	} else {
-		perr << "Trying to access segment " << std::hex
-		     << segment << std::dec << std::endl;
+		perr << "Trying to access segment " << Std::hex
+		     << segment << Std::dec << Std::endl;
 		return 0;
 	}
 }
 
 void UCMachine::usecodeStats() {
-	pout << "Usecode Machine memory stats:" << std::endl;
-	pout << "Strings    : " << stringHeap.size() << "/65534" << std::endl;
+	pout << "Usecode Machine memory stats:" << Std::endl;
+	pout << "Strings    : " << stringHeap.size() << "/65534" << Std::endl;
 #ifdef DUMPHEAP
-	std::map<uint16, std::string>::iterator iter;
+	Std::map<uint16, Std::string>::iterator iter;
 	for (iter = stringHeap.begin(); iter != stringHeap.end(); ++iter)
-		pout << iter->first << ":" << iter->_value << std::endl;
+		pout << iter->first << ":" << iter->_value << Std::endl;
 #endif
-	pout << "Lists      : " << listHeap.size() << "/65534" << std::endl;
+	pout << "Lists      : " << listHeap.size() << "/65534" << Std::endl;
 #ifdef DUMPHEAP
-	std::map<uint16, UCList *>::iterator iterl;
+	Std::map<uint16, UCList *>::iterator iterl;
 	for (iterl = listHeap.begin(); iterl != listHeap.end(); ++iterl) {
 		if (!iterl->_value) {
-			pout << iterl->first << ": <null>" << std::endl;
+			pout << iterl->first << ": <null>" << Std::endl;
 			continue;
 		}
 		if (iterl->_value->getElementSize() == 2) {
@@ -2236,11 +2236,11 @@ void UCMachine::usecodeStats() {
 				if (i > 0) pout << ",";
 				pout << iterl->_value->getuint16(i);
 			}
-			pout << std::endl;
+			pout << Std::endl;
 		} else {
 			pout << iterl->first << ": " << iterl->_value->getSize()
 			     << " elements of size " << iterl->_value->getElementSize()
-			     << std::endl;
+			     << Std::endl;
 		}
 	}
 #endif
@@ -2254,7 +2254,7 @@ void UCMachine::saveStrings(ODataSource *ods) {
 	stringIDs->save(ods);
 	ods->write4(static_cast<uint32>(stringHeap.size()));
 
-	std::map<uint16, std::string>::iterator iter;
+	Std::map<uint16, Std::string>::iterator iter;
 	for (iter = stringHeap.begin(); iter != stringHeap.end(); ++iter) {
 		ods->write2((*iter)._key);
 		ods->write4((*iter)._value.size());
@@ -2266,7 +2266,7 @@ void UCMachine::saveLists(ODataSource *ods) {
 	listIDs->save(ods);
 	ods->write4(listHeap.size());
 
-	std::map<uint16, UCList *>::iterator iter;
+	Std::map<uint16, UCList *>::iterator iter;
 	for (iter = listHeap.begin(); iter != listHeap.end(); ++iter) {
 		ods->write2((*iter)._key);
 		(*iter)._value->save(ods);
@@ -2362,7 +2362,7 @@ uint32 UCMachine::I_rndRange(const uint8 *args, unsigned int /*argsize*/) {
 void UCMachine::ConCmd_getGlobal(const Console::ArgvType &argv) {
 	UCMachine *uc = UCMachine::get_instance();
 	if (argv.size() != 3) {
-		pout << "usage: UCMachine::getGlobal offset size" << std::endl;
+		pout << "usage: UCMachine::getGlobal offset size" << Std::endl;
 		return;
 	}
 
@@ -2376,7 +2376,7 @@ void UCMachine::ConCmd_getGlobal(const Console::ArgvType &argv) {
 void UCMachine::ConCmd_setGlobal(const Console::ArgvType &argv) {
 	UCMachine *uc = UCMachine::get_instance();
 	if (argv.size() != 4) {
-		pout << "usage: UCMachine::setGlobal offset size value" << std::endl;
+		pout << "usage: UCMachine::setGlobal offset size value" << Std::endl;
 		return;
 	}
 
@@ -2394,7 +2394,7 @@ void UCMachine::ConCmd_setGlobal(const Console::ArgvType &argv) {
 
 void UCMachine::ConCmd_tracePID(const Console::ArgvType &argv) {
 	if (argv.size() != 2) {
-		pout << "Usage: UCMachine::tracePID pid" << std::endl;
+		pout << "Usage: UCMachine::tracePID pid" << Std::endl;
 		return;
 	}
 
@@ -2404,12 +2404,12 @@ void UCMachine::ConCmd_tracePID(const Console::ArgvType &argv) {
 	uc->tracing_enabled = true;
 	uc->trace_PIDs.insert(pid);
 
-	pout << "UCMachine: tracing process " << pid << std::endl;
+	pout << "UCMachine: tracing process " << pid << Std::endl;
 }
 
 void UCMachine::ConCmd_traceObjID(const Console::ArgvType &argv) {
 	if (argv.size() != 2) {
-		pout << "Usage: UCMachine::traceObjID objid" << std::endl;
+		pout << "Usage: UCMachine::traceObjID objid" << Std::endl;
 		return;
 	}
 
@@ -2419,12 +2419,12 @@ void UCMachine::ConCmd_traceObjID(const Console::ArgvType &argv) {
 	uc->tracing_enabled = true;
 	uc->trace_ObjIDs.insert(objid);
 
-	pout << "UCMachine: tracing object " << objid << std::endl;
+	pout << "UCMachine: tracing object " << objid << Std::endl;
 }
 
 void UCMachine::ConCmd_traceClass(const Console::ArgvType &argv) {
 	if (argv.size() != 2) {
-		pout << "Usage: UCMachine::traceClass class" << std::endl;
+		pout << "Usage: UCMachine::traceClass class" << Std::endl;
 		return;
 	}
 
@@ -2434,7 +2434,7 @@ void UCMachine::ConCmd_traceClass(const Console::ArgvType &argv) {
 	uc->tracing_enabled = true;
 	uc->trace_classes.insert(ucclass);
 
-	pout << "UCMachine: tracing class " << ucclass << std::endl;
+	pout << "UCMachine: tracing class " << ucclass << Std::endl;
 }
 
 void UCMachine::ConCmd_traceAll(const Console::ArgvType &argv) {
@@ -2442,7 +2442,7 @@ void UCMachine::ConCmd_traceAll(const Console::ArgvType &argv) {
 	uc->tracing_enabled = true;
 	uc->trace_all = true;
 
-	pout << "UCMachine: tracing all usecode" << std::endl;
+	pout << "UCMachine: tracing all usecode" << Std::endl;
 }
 
 void UCMachine::ConCmd_traceEvents(const Console::ArgvType &argv) {
@@ -2450,7 +2450,7 @@ void UCMachine::ConCmd_traceEvents(const Console::ArgvType &argv) {
 	uc->tracing_enabled = true;
 	uc->trace_events = true;
 
-	pout << "UCMachine: tracing usecode events" << std::endl;
+	pout << "UCMachine: tracing usecode events" << Std::endl;
 }
 
 

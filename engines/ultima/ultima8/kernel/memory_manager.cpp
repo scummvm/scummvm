@@ -101,11 +101,11 @@ void MemoryManager::ConCmd_MemInfo(const Console::ArgvType &argv) {
 		return;
 
 	count = mm->getAllocatorCount();
-	pout << "Allocators: " << count << std::endl;
+	pout << "Allocators: " << count << Std::endl;
 	for (i = 0; i < count; ++i) {
-		pout << " Allocator " << i << ": " << std::endl;
+		pout << " Allocator " << i << ": " << Std::endl;
 		mm->getAllocator(i)->printInfo();
-		pout << "==============" << std::endl;
+		pout << "==============" << Std::endl;
 	}
 }
 

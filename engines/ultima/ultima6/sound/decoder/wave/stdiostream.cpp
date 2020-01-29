@@ -78,7 +78,7 @@ bool StdioStream::flush() {
 	return true;
 }
 
-StdioStream *StdioStream::makeFromPath(const std::string &path) {
+StdioStream *StdioStream::makeFromPath(const Std::string &path) {
 	NuvieIOFileRead *niofr = new NuvieIOFileRead();
 
 	if (niofr == NULL || niofr->open(path) == false)

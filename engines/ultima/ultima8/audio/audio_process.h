@@ -43,7 +43,7 @@ class AudioProcess :
 		ObjId       objid;
 		int32       loops;
 		int32       channel;
-		std::string barked;
+		Std::string barked;
 		uint32      curspeech_start, curspeech_end;
 		uint32      pitch_shift;    // 0x10000 is normal
 		uint16      volume;         // 0-256
@@ -54,14 +54,14 @@ class AudioProcess :
 		SampleInfo(int32 s, int32 p, ObjId o, int32 l, int32 c, uint32 ps, uint16 v, int16 lv, int16 rv) :
 			sfxnum(s), priority(p), objid(o), loops(l), channel(c),
 			pitch_shift(ps), volume(v), lvol(lv), rvol(rv) { }
-		SampleInfo(std::string &b, int32 shpnum, ObjId o, int32 c,
+		SampleInfo(Std::string &b, int32 shpnum, ObjId o, int32 c,
 		           uint32 s, uint32 e, uint32 ps, uint16 v, int16 lv, int16 rv) :
 			sfxnum(-1), priority(shpnum), objid(o), loops(0), channel(c), barked(b),
 			curspeech_start(s), curspeech_end(e), pitch_shift(ps), volume(v),
 			lvol(lv), rvol(rv) { }
 	};
 
-	std::list<SampleInfo>   sample_info;
+	Std::list<SampleInfo>   sample_info;
 
 public:
 	// p_dynamic_class stuff
@@ -102,13 +102,13 @@ public:
 	bool isSFXPlaying(int sfxnum);
 	void setVolumeSFX(int sfxnum, uint8 volume);
 
-	bool playSpeech(std::string &barked, int shapenum, ObjId objid,
+	bool playSpeech(Std::string &barked, int shapenum, ObjId objid,
 	                uint32 pitch_shift = 0x10000, uint16 volume = 256);
-	void stopSpeech(std::string &barked, int shapenum, ObjId objid);
-	bool isSpeechPlaying(std::string &barked, int shapenum);
+	void stopSpeech(Std::string &barked, int shapenum, ObjId objid);
+	bool isSpeechPlaying(Std::string &barked, int shapenum);
 
 	//! get length (in milliseconds) of speech
-	uint32 getSpeechLength(std::string &barked, int shapenum) const;
+	uint32 getSpeechLength(Std::string &barked, int shapenum) const;
 
 	//! play a sample (without storing a SampleInfo)
 	//! returns channel sample is played on, or -1

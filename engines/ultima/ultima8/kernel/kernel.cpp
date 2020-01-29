@@ -32,7 +32,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-typedef std::list<Process *>::iterator ProcessIterator;
+typedef Std::list<Process *>::iterator ProcessIterator;
 
 Kernel *Kernel::kernel = 0;
 
@@ -97,7 +97,7 @@ ProcId Kernel::addProcess(Process *proc) {
 
 #if 0
 	perr << "[Kernel] Adding process " << proc
-	     << ", pid = " << proc->pid << std::endl;
+	     << ", pid = " << proc->pid << Std::endl;
 #endif
 
 //	processes.push_back(proc);
@@ -118,7 +118,7 @@ ProcId Kernel::addProcessExec(Process *proc) {
 
 #if 0
 	perr << "[Kernel] Adding process " << proc
-	     << ", pid = " << proc->pid << std::endl;
+	     << ", pid = " << proc->pid << Std::endl;
 #endif
 
 	processes.push_back(proc);
@@ -138,13 +138,13 @@ void Kernel::removeProcess(Process *proc) {
 	//! removing/deleting it or something
 	//! also have to look out for deleting processes while iterating
 	//! over the list. (Hence the special 'erase' in runProcs below, which
-	//! is very std::list-specific, incidentally)
+	//! is very Std::list-specific, incidentally)
 
 	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
 		if (*it == proc) {
 			proc->flags &= ~Process::PROC_ACTIVE;
 
-			perr << "[Kernel] Removing process " << proc << std::endl;
+			perr << "[Kernel] Removing process " << proc << Std::endl;
 
 			processes.erase(it);
 
@@ -240,20 +240,20 @@ Process *Kernel::getProcess(ProcId pid) {
 }
 
 void Kernel::kernelStats() {
-	pout << "Kernel memory stats:" << std::endl;
-	pout << "Processes  : " << processes.size() << "/32765" << std::endl;
+	pout << "Kernel memory stats:" << Std::endl;
+	pout << "Processes  : " << processes.size() << "/32765" << Std::endl;
 }
 
 void Kernel::processTypes() {
-	pout << "Current process types:" << std::endl;
-	std::map<Common::String, unsigned int> processtypes;
+	pout << "Current process types:" << Std::endl;
+	Std::map<Common::String, unsigned int> processtypes;
 	for (ProcessIterator it = processes.begin(); it != processes.end(); ++it) {
 		Process *p = *it;
 		processtypes[p->GetClassType().class_name]++;
 	}
-	std::map<Common::String, unsigned int>::iterator iter;
+	Std::map<Common::String, unsigned int>::iterator iter;
 	for (iter = processtypes.begin(); iter != processtypes.end(); ++iter) {
-		pout << (*iter)._key << ": " << (*iter)._value << std::endl;
+		pout << (*iter)._key << ": " << (*iter)._value << Std::endl;
 	}
 }
 
@@ -263,7 +263,7 @@ void Kernel::ConCmd_processTypes(const Console::ArgvType & /*argv*/) {
 
 void Kernel::ConCmd_listProcesses(const Console::ArgvType &argv) {
 	if (argv.size() > 2) {
-		pout << "usage: listProcesses [<itemnum>]" << std::endl;
+		pout << "usage: listProcesses [<itemnum>]" << Std::endl;
 		return;
 	}
 
@@ -271,9 +271,9 @@ void Kernel::ConCmd_listProcesses(const Console::ArgvType &argv) {
 	ObjId item = 0;
 	if (argv.size() == 2) {
 		item = static_cast<ObjId>(strtol(argv[1].c_str(), 0, 0));
-		pout << "Processes for item " << item << ":" << std::endl;
+		pout << "Processes for item " << item << ":" << Std::endl;
 	} else {
-		pout << "Processes:" << std::endl;
+		pout << "Processes:" << Std::endl;
 	}
 	for (ProcessIterator it = kern->processes.begin();
 	        it != kern->processes.end(); ++it) {
@@ -286,7 +286,7 @@ void Kernel::ConCmd_listProcesses(const Console::ArgvType &argv) {
 
 void Kernel::ConCmd_processInfo(const Console::ArgvType &argv) {
 	if (argv.size() != 2) {
-		pout << "usage: processInfo <objectnum>" << std::endl;
+		pout << "usage: processInfo <objectnum>" << Std::endl;
 		return;
 	}
 
@@ -296,7 +296,7 @@ void Kernel::ConCmd_processInfo(const Console::ArgvType &argv) {
 
 	Process *p = kern->getProcess(procid);
 	if (p == 0) {
-		pout << "No such process: " << procid << std::endl;
+		pout << "No such process: " << procid << Std::endl;
 	} else {
 		p->dumpInfo();
 	}
@@ -306,7 +306,7 @@ void Kernel::ConCmd_toggleFrameByFrame(const Console::ArgvType &argv) {
 	Kernel *kern = Kernel::get_instance();
 	bool fbf = !kern->isFrameByFrame();
 	kern->setFrameByFrame(fbf);
-	pout << "FrameByFrame = " << fbf << std::endl;
+	pout << "FrameByFrame = " << fbf << Std::endl;
 	if (fbf)
 		kern->pause();
 	else
@@ -317,7 +317,7 @@ void Kernel::ConCmd_advanceFrame(const Console::ArgvType &argv) {
 	Kernel *kern = Kernel::get_instance();
 	if (kern->isFrameByFrame()) {
 		kern->unpause();
-		pout << "FrameByFrame: Next Frame" << std::endl;
+		pout << "FrameByFrame: Next Frame" << Std::endl;
 	}
 }
 
@@ -418,14 +418,14 @@ Process *Kernel::loadProcess(IDataSource *ids, uint32 version) {
 	ids->read(buf, classlen);
 	buf[classlen] = 0;
 
-	std::string classname = buf;
+	Std::string classname = buf;
 	delete[] buf;
 
-	std::map<Common::String, ProcessLoadFunc>::iterator iter;
+	Std::map<Common::String, ProcessLoadFunc>::iterator iter;
 	iter = processloaders.find(classname);
 
 	if (iter == processloaders.end()) {
-		perr << "Unknown Process class: " << classname << std::endl;
+		perr << "Unknown Process class: " << classname << Std::endl;
 		return 0;
 	}
 

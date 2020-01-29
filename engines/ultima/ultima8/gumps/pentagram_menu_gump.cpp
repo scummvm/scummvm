@@ -63,7 +63,7 @@ void PentagramMenuGump::InitGump(Gump *newparent, bool take_focus) {
 	GameWidget *g;
 	int y_ = 50;
 
-	std::vector<Pentagram::istring> games;
+	Std::vector<Pentagram::istring> games;
 	// TODO: listGames() should probably be in CoreApp
 	games = SettingManager::get_instance()->listGames();
 	unsigned int gameIndex = 0;
@@ -121,8 +121,8 @@ void PentagramMenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /
 
 void PentagramMenuGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	// Iterate all children
-	std::list<Gump *>::iterator it = children.begin();
-	std::list<Gump *>::iterator end = children.end();
+	Std::list<Gump *>::iterator it = children.begin();
+	Std::list<Gump *>::iterator end = children.end();
 
 	Pentagram::Rect game_clip_rect(0, 45, SCREEN_WIDTH, dims.h - 58);
 	Pentagram::Rect cur_clip_rect;
@@ -227,10 +227,10 @@ bool PentagramMenuGump::OnKeyDown(int key, int mod) {
 	return false;
 }
 
-void PentagramMenuGump::ProcessCallback(std::string gamename, int message) {
+void PentagramMenuGump::ProcessCallback(Std::string gamename, int message) {
 	if (message != 0) {
 		SettingManager *settingman = SettingManager::get_instance();
-		settingman->set("lastSave", message != 1 ? U8SaveGump::getFilename(message) : std::string());
+		settingman->set("lastSave", message != 1 ? U8SaveGump::getFilename(message) : Std::string());
 		Ultima8Engine::get_instance()->changeGame(gamename);
 	}
 

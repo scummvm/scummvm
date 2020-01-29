@@ -43,7 +43,7 @@ TextWidget::TextWidget()
 
 }
 
-TextWidget::TextWidget(int X, int Y, std::string txt, bool gamefont_, int font,
+TextWidget::TextWidget(int X, int Y, Std::string txt, bool gamefont_, int font,
                        int w, int h, Font::TextAlign align) :
 	Gump(X, Y, w, h), text(txt), gamefont(gamefont_), fontnum(font),
 	blendColour(0), current_start(0), current_end(0),

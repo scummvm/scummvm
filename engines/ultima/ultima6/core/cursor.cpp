@@ -34,8 +34,8 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::string;
-using std::vector;
+using Std::string;
+using Std::vector;
 
 
 Cursor::Cursor() {
@@ -54,7 +54,7 @@ Cursor::Cursor() {
 /* Returns true if mouse pointers file was loaded.
  */
 bool Cursor::init(Configuration *c, Screen *s, nuvie_game_t game_type) {
-	std::string file, filename;
+	Std::string file, filename;
 	bool enable_cursors;
 
 	config = c;
@@ -91,7 +91,7 @@ bool Cursor::init(Configuration *c, Screen *s, nuvie_game_t game_type) {
 /* Load pointers from `filename'. (lzw -> s_lib_32 -> shapes)
  * Returns the number found in the file.
  */
-uint32 Cursor::load_all(std::string filename, nuvie_game_t game_type) {
+uint32 Cursor::load_all(Std::string filename, nuvie_game_t game_type) {
 	U6Lzw decompressor;
 	U6Lib_n pointer_list;
 	NuvieIOBuffer iobuf;

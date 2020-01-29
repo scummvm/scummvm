@@ -89,12 +89,12 @@ public:
 	// Push an arbitrary number of bytes of 0
 	inline void push0(const uint32 count) {
 		buf_ptr -= count;
-		std::memset(buf_ptr, 0, count);
+		Std::memset(buf_ptr, 0, count);
 	}
 	// Push an arbitrary number of bytes
 	inline void push(const uint8 *in, const uint32 count) {
 		buf_ptr -= count;
-		std::memcpy(buf_ptr, in, count);
+		Std::memcpy(buf_ptr, in, count);
 	}
 
 	//
@@ -116,7 +116,7 @@ public:
 		return (b0 | (b1 << 8) | (b2 << 16) | (b3 << 24));
 	}
 	inline void pop(uint8 *out, const uint32 count) {
-		std::memcpy(out, buf_ptr, count);
+		Std::memcpy(out, buf_ptr, count);
 		buf_ptr += count;
 	}
 
@@ -159,7 +159,7 @@ public:
 		const_cast<uint8 *>(buf)[offset + 3] = static_cast<uint8>((val >> 24) & 0xFF);
 	}
 	inline void assign(const uint32 offset, const uint8 *in, const uint32 len) {
-		std::memcpy(const_cast<uint8 *>(buf) + offset, in, len);
+		Std::memcpy(const_cast<uint8 *>(buf) + offset, in, len);
 	}
 };
 

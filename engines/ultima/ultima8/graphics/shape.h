@@ -89,7 +89,7 @@ protected:
 	// Crusader shapes must be loaded this way
 	void LoadGenericFormat(const uint8 *data, uint32 size, const ConvertShapeFormat *format);
 
-	std::vector<ShapeFrame *> frames;
+	Std::vector<ShapeFrame *> frames;
 
 	const Pentagram::Palette *palette;
 

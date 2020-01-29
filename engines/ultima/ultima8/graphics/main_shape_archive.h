@@ -48,7 +48,7 @@ public:
 	MainShapeArchive(IDataSource *ds, uint16 id_, Pentagram::Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(ds, id_, pal_, format_), typeFlags(0), animdat(0) { }
-	MainShapeArchive(const std::string &path, uint16 id_,
+	MainShapeArchive(const Std::string &path, uint16 id_,
 	                 Pentagram::Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(path, id_, pal_, format_), typeFlags(0), animdat(0) { }

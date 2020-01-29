@@ -167,7 +167,7 @@ public:
 	void unblock() {
 		block_input = false;
 	}
-	std::string get_data_dir();
+	Std::string get_data_dir();
 
 	uint16 get_width() {
 		return screen->get_width();

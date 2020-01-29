@@ -52,7 +52,7 @@ void FontShapeArchive::cache(uint32 shapenum) {
 
 	if (!format) {
 		delete [] data;
-		perr << "Error: Unable to detect shape format for flex." << std::endl;
+		perr << "Error: Unable to detect shape format for flex." << Std::endl;
 		return;
 	}
 
@@ -69,19 +69,19 @@ void FontShapeArchive::setHVLeads() {
 	KeyMap::iterator iter;
 
 	for (iter = leadkeyvals.begin(); iter != leadkeyvals.end(); ++iter) {
-		int fontnum = std::atoi(iter->_key.c_str());
-		std::string leaddesc = iter->_value;
+		int fontnum = Std::atoi(iter->_key.c_str());
+		Std::string leaddesc = iter->_value;
 
-		std::vector<std::string> vals;
+		Std::vector<Std::string> vals;
 		Pentagram::SplitString(leaddesc, ',', vals);
 		if (vals.size() != 2) {
 			perr << "Invalid hlead/vlead description: " << leaddesc
-			     << std::endl;
+			     << Std::endl;
 			continue;
 		}
 
-		int hlead = std::atoi(vals[0].c_str());
-		int vlead = std::atoi(vals[1].c_str());
+		int hlead = Std::atoi(vals[0].c_str());
+		int vlead = Std::atoi(vals[1].c_str());
 
 		ShapeFont *font = getFont(fontnum);
 		if (font) {

@@ -32,13 +32,13 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using namespace std;
+using namespace Std;
 
-bool find_casesensitive_path(std::string path, std::string filename, std::string &new_path);
-bool find_path(std::string path, std::string &dir_str);
+bool find_casesensitive_path(Std::string path, Std::string filename, Std::string &new_path);
+bool find_path(Std::string path, Std::string &dir_str);
 
-void Tokenise(const std::string &str, std::vector<std::string> &tokens, char delimiter = ' ') {
-	std::string delimiters(delimiter);
+void Tokenise(const Std::string &str, Std::vector<Std::string> &tokens, char delimiter = ' ') {
+	Std::string delimiters(delimiter);
 
 	// Skip delimiters at beginning.
 	string::size_type lastPos = str.find_first_not_of(delimiters, 0);
@@ -53,8 +53,8 @@ void Tokenise(const std::string &str, std::vector<std::string> &tokens, char del
 	}
 }
 
-std::string config_get_game_key(Configuration *config) {
-	std::string game_key, game_name;
+Std::string config_get_game_key(Configuration *config) {
+	Std::string game_key, game_name;
 
 	config->value("config/GameName", game_name);
 
@@ -77,8 +77,8 @@ const char *get_game_tag(int game_type) {
 	return "";
 }
 
-void config_get_path(Configuration *config, std::string filename, std::string &path) {
-	std::string key, game_name, game_dir, tmp_path;
+void config_get_path(Configuration *config, Std::string filename, Std::string &path) {
+	Std::string key, game_name, game_dir, tmp_path;
 
 	config->value("config/GameName", game_name);
 
@@ -93,13 +93,13 @@ void config_get_path(Configuration *config, std::string filename, std::string &p
 	path = tmp_path;
 }
 
-bool find_casesensitive_path(std::string path, std::string filename, std::string &new_path) {
+bool find_casesensitive_path(Std::string path, Std::string filename, Std::string &new_path) {
 	vector<string> directories;
 	string tmp_path = path;
 
 	Tokenise(filename, directories, U6PATH_DELIMITER);
 
-	std::vector<string>::iterator dir_iter;
+	Std::vector<string>::iterator dir_iter;
 
 	for (dir_iter = directories.begin(); dir_iter != directories.end();) {
 		string dir = *dir_iter;
@@ -123,7 +123,7 @@ bool find_casesensitive_path(std::string path, std::string filename, std::string
 	return true;
 }
 
-bool find_path(std::string path, std::string &dir_str) {
+bool find_path(Std::string path, Std::string &dir_str) {
 	dir_str = path;
 	return true;
 #if 0
@@ -146,26 +146,26 @@ bool find_path(std::string path, std::string &dir_str) {
 #endif
 }
 
-void stringToUpper(std::string &str) {
+void stringToUpper(Std::string &str) {
 	for (size_t i = 0; i < str.length(); ++i) {
 		str[i] = toupper(str[i]);
 	}
 }
 
-void stringToLower(std::string &str) {
+void stringToLower(Std::string &str) {
 	for (size_t i = 0; i < str.length(); ++i) {
 		str[i] = tolower(str[i]);
 	}
 }
 
-int mkdir_recursive(std::string path, int mode) {
+int mkdir_recursive(Std::string path, int mode) {
 #ifdef TODO
 	vector<string> directories;
 	string tmp_path;
 
 	Tokenise(path, directories, U6PATH_DELIMITER);
 
-	std::vector<string>::iterator dir_iter;
+	Std::vector<string>::iterator dir_iter;
 
 	if (path.find(U6PATH_DELIMITER) == 0)
 		tmp_path += U6PATH_DELIMITER;
@@ -216,7 +216,7 @@ nuvie_game_t get_game_type(Configuration *config) {
 	return (nuvie_game_t)game_type;
 }
 
-void build_path(std::string path, std::string filename, std::string &full_path) {
+void build_path(Std::string path, Std::string filename, Std::string &full_path) {
 	full_path = path;
 
 	if (full_path.length() > 0 && full_path[full_path.length() - 1] != U6PATH_DELIMITER)
@@ -228,7 +228,7 @@ void build_path(std::string path, std::string filename, std::string &full_path) 
 }
 
 bool has_fmtowns_support(Configuration *config) {
-	std::string townsdir;
+	Std::string townsdir;
 	config->value("config/ultima6/townsdir", townsdir, "");
 	if (townsdir != "" && directory_exists(townsdir.c_str()))
 		return true;
@@ -287,7 +287,7 @@ void print_bool(DebugLevelType level, bool state, const char *yes, const char *n
 
 
 void print_flags(DebugLevelType level, uint8 num, const char *f[8]) {
-	std::string complete_flags = "";
+	Std::string complete_flags = "";
 	print_b(level, num);
 	if (num != 0)
 		complete_flags += "(";
@@ -599,7 +599,7 @@ void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, ui
 
 	// vertical
 	if (sx == ex) {
-		//std::cout << "Vertical" << std::endl;
+		//Std::cout << "Vertical" << Std::endl;
 		// start is below end
 		while (pixptr != pixend) {
 			if (no_clip || (cury >= 0 && cury < height)) *pixptr = col;
@@ -609,7 +609,7 @@ void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, ui
 	}
 	// Horizontal
 	else if (sy == ey) {
-		//std::cout << "Horizontal" << std::endl;
+		//Std::cout << "Horizontal" << Std::endl;
 		while (pixptr != pixend) {
 			if (no_clip || (curx >= 0 && curx < width)) *pixptr = col;
 			pixptr += xinc;
@@ -617,9 +617,9 @@ void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, ui
 		}
 	}
 	// Diagonal xdiff >= ydiff
-	else if (std::labs(sx - ex) >= std::labs(sy - ey)) {
-		//std::cout << "Diagonal 1" << std::endl;
-		uint32 fraction = std::labs((LINE_FRACTION * (sy - ey)) / (sx - ex));
+	else if (Std::labs(sx - ex) >= Std::labs(sy - ey)) {
+		//Std::cout << "Diagonal 1" << Std::endl;
+		uint32 fraction = Std::labs((LINE_FRACTION * (sy - ey)) / (sx - ex));
 		uint32 ycounter = 0;
 
 		for (; ;) {
@@ -640,8 +640,8 @@ void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, ui
 	}
 	// Diagonal ydiff > xdiff
 	else {
-		//std::cout << "Diagonal 2" << std::endl;
-		uint32 fraction = std::labs((LINE_FRACTION * (sx - ex)) / (sy - ey));
+		//Std::cout << "Diagonal 2" << Std::endl;
+		uint32 fraction = Std::labs((LINE_FRACTION * (sx - ex)) / (sy - ey));
 		uint32 xcounter = 0;
 
 		for (; ;) {
@@ -663,7 +663,7 @@ void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, ui
 
 }
 
-bool string_i_compare(const std::string &s1, const std::string &s2) {
+bool string_i_compare(const Std::string &s1, const Std::string &s2) {
 	return scumm_stricmp(s1.c_str(), s2.c_str()) == 0;
 }
 
@@ -775,7 +775,7 @@ sint8 get_wrapped_rel_dir(sint16 p1, sint16 p2, uint8 level) {
 	return ret;
 }
 
-std::string encode_xml_entity(const std::string &s) {
+Std::string encode_xml_entity(const Std::string &s) {
 	string  ret;
 
 	for (string::const_iterator it = s.begin(); it != s.end(); ++it) {

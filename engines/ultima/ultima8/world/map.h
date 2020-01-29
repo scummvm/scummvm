@@ -54,7 +54,7 @@ public:
 private:
 
 	// load items from something formatted like 'fixed.dat'
-	void loadFixedFormatObjects(std::list<Item *> &itemlist, IDataSource *ds,
+	void loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
 	                            uint32 extendedflags);
 
 	// Q: How should we store the items in a map.
@@ -70,8 +70,8 @@ private:
 	// since fixed items will be cached out most of the time)
 
 
-	std::list<Item *> fixeditems;
-	std::list<Item *> dynamicitems;
+	Std::list<Item *> fixeditems;
+	Std::list<Item *> dynamicitems;
 
 	uint32 mapnum;
 };

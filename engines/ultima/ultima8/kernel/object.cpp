@@ -63,7 +63,7 @@ void Object::clearObjId() {
 
 void Object::dumpInfo() {
 	pout << "Object " << getObjId() << " (class "
-	     << GetClassType().class_name << ")" << std::endl;
+	     << GetClassType().class_name << ")" << Std::endl;
 }
 
 ProcId Object::callUsecode(uint16 classid, uint16 offset,

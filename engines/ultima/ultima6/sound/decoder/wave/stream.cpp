@@ -183,9 +183,9 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 	return buf;
 }
 
-std::string SeekableReadStream::readLine() {
+Std::string SeekableReadStream::readLine() {
 	// Read a line
-	std::string line;
+	Std::string line;
 
 	while (!line.length() || line[line.length() - 1] != '\n') {
 		char buf[256];

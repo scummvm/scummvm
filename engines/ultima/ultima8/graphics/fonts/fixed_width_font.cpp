@@ -31,27 +31,27 @@
 namespace Ultima {
 namespace Ultima8 {
 
-FixedWidthFont *FixedWidthFont::Create(std::string iniroot) {
+FixedWidthFont *FixedWidthFont::Create(Std::string iniroot) {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 	FileSystem *filesys = FileSystem::get_instance();
 
-	std::string filename;
+	Std::string filename;
 	if (!config->get(iniroot + "/font/path", filename)) {
-		perr << "Error: 'path' key not found in font ini" << std::endl;
+		perr << "Error: 'path' key not found in font ini" << Std::endl;
 		return 0;
 	}
 
 	IDataSource *ds = filesys->ReadFile(filename);
 
 	if (!ds) {
-		perr << "Error: Unable to open file " << filename << std::endl;
+		perr << "Error: Unable to open file " << filename << Std::endl;
 		return 0;
 	}
 
 	Texture *fonttex = Texture::Create(ds, filename.c_str());
 
 	if (!fonttex) {
-		perr << "Error: Unable to read texture " << filename << std::endl;
+		perr << "Error: Unable to read texture " << filename << Std::endl;
 		return 0;
 	}
 

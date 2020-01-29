@@ -45,10 +45,10 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::string;
-using std::list;
-using std::map;
-using std::vector;
+using Std::string;
+using Std::list;
+using Std::map;
+using Std::vector;
 
 class Sound {
 public:

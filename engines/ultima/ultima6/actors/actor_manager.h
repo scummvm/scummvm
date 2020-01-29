@@ -137,10 +137,10 @@ protected:
 private:
 
 	bool loadCustomTiles(nuvie_game_t game_type);
-	void loadNPCTiles(std::string datadir);
-	void loadAvatarTiles(std::string datadir);
-	void loadCustomBaseTiles(std::string datadir);
-	std::set<std::string> getCustomTileFilenames(std::string datadir, std::string filenamePrefix);
+	void loadNPCTiles(Std::string datadir);
+	void loadAvatarTiles(Std::string datadir);
+	void loadCustomBaseTiles(Std::string datadir);
+	Std::set<Std::string> getCustomTileFilenames(Std::string datadir, Std::string filenamePrefix);
 };
 
 } // End of namespace Ultima6

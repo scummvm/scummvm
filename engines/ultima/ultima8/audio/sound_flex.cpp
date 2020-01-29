@@ -46,7 +46,7 @@ void SoundFlex::cache(uint32 index) {
 
 	if (!samples) {
 		samples = new Pentagram::AudioSample * [count];
-		std::memset(samples, 0, sizeof(Pentagram::AudioSample *) * count);
+		Std::memset(samples, 0, sizeof(Pentagram::AudioSample *) * count);
 	}
 
 	if (samples[index]) return;

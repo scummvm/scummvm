@@ -52,7 +52,7 @@ static iAVLKey get_iAVLKey(const void *item) {
 
 ObjManager::ObjManager(Configuration *cfg, TileManager *tm, EggManager *em) {
 	uint8 i;
-	std::string show_eggs_key;
+	Std::string show_eggs_key;
 
 	config = cfg;
 	tile_manager = tm;
@@ -89,7 +89,7 @@ ObjManager::ObjManager(Configuration *cfg, TileManager *tm, EggManager *em) {
 //if(!show_eggs)
 //  show_egg_objs(false);
 
-	std::string custom_tile_str;
+	Std::string custom_tile_str;
 	config->value(config_get_game_key(config) + "/custom_actor_tiles", custom_tile_str, "default");
 	if (custom_tile_str == "default") {
 		if (Game::get_game()->is_new_style())
@@ -120,7 +120,7 @@ ObjManager::~ObjManager() {
 }
 
 bool ObjManager::load_basetile() {
-	std::string filename;
+	Std::string filename;
 	NuvieIOFileRead basetile;
 	uint16 i;
 
@@ -138,7 +138,7 @@ bool ObjManager::load_basetile() {
 }
 
 bool ObjManager::load_weight_table() {
-	std::string filename;
+	Std::string filename;
 	NuvieIOFileRead tileflag;
 
 	config_get_path(config, "tileflag", filename);
@@ -260,8 +260,8 @@ bool ObjManager::save_super_chunk(NuvieIO *save_buf, uint8 level, uint8 chunk_of
 bool ObjManager::save_eggs(NuvieIO *save_buf) {
 	uint32 start_pos;
 	uint32 finish_pos;
-	std::list<Egg *> *egg_list;
-	std::list<Egg *>::iterator egg;
+	Std::list<Egg *> *egg_list;
+	Std::list<Egg *>::iterator egg;
 
 	start_pos = save_buf->position();
 
@@ -406,7 +406,7 @@ void ObjManager::clean() {
 // remove the temporary object list. The objects were deleted from the surface and dungeon trees.
 	temp_obj_list.clear();
 
-	for (std::list<Obj *>::iterator it = tile_obj_list.begin(); it != tile_obj_list.end(); ++it) {
+	for (Std::list<Obj *>::iterator it = tile_obj_list.begin(); it != tile_obj_list.end(); ++it) {
 		delete *it;
 	}
 	tile_obj_list.clear();
@@ -1247,7 +1247,7 @@ Obj *ObjManager::get_objBasedAt(uint16 x, uint16 y, uint8 level, bool top_obj, b
 // ObjManager keeps one instance of tile_obj per object.
 // SE has 3 tile objects (Trees, Yucca Plants, and Oven Fires)
 Obj *ObjManager::get_tile_obj(uint16 obj_n) {
-	for (std::list<Obj *>::iterator it = tile_obj_list.begin(); it != tile_obj_list.end(); ++it) {
+	for (Std::list<Obj *>::iterator it = tile_obj_list.begin(); it != tile_obj_list.end(); ++it) {
 		if ((*it)->obj_n == obj_n) {
 			return *it;
 		}
@@ -1775,7 +1775,7 @@ void ObjManager::remove_temp_obj(Obj *tmp_obj) {
 
 // clean objects from a whole level.
 void ObjManager::temp_obj_list_clean_level(uint8 z) {
-	std::list<Obj *>::iterator obj;
+	Std::list<Obj *>::iterator obj;
 	Obj *tmp_obj;
 
 	for (obj = temp_obj_list.begin(); obj != temp_obj_list.end();) {
@@ -1792,7 +1792,7 @@ void ObjManager::temp_obj_list_clean_level(uint8 z) {
 
 // Clean objects more than 19 tiles from position
 void ObjManager::temp_obj_list_clean_area(uint16 x, uint16 y) {
-	std::list<Obj *>::iterator obj;
+	Std::list<Obj *>::iterator obj;
 	Obj *tmp_obj;
 	sint16 dist_x, dist_y;
 

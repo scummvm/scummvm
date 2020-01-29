@@ -34,7 +34,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::list;
+using Std::list;
 
 
 class Configuration;
@@ -43,10 +43,10 @@ class MsgScroll;
 class Actor;
 
 class ConverseGump: public MsgScroll {
-	std::list<MsgText> conv_keywords;
-	std::list<MsgText> permitted_input_keywords;
+	Std::list<MsgText> conv_keywords;
+	Std::list<MsgText> permitted_input_keywords;
 
-	std::list<MsgText> *keyword_list;
+	Std::list<MsgText> *keyword_list;
 
 	unsigned char *npc_portrait;
 	unsigned char *avatar_portrait;
@@ -74,8 +74,8 @@ public:
 	void set_actor_portrait(Actor *a);
 	unsigned char *create_framed_portrait(Actor *a);
 	virtual bool parse_token(MsgText *token);
-	virtual std::string get_token_string_at_pos(uint16 x, uint16 y);
-	virtual void display_string(std::string s, Font *f, bool include_on_map_window);
+	virtual Std::string get_token_string_at_pos(uint16 x, uint16 y);
+	virtual void display_string(Std::string s, Font *f, bool include_on_map_window);
 	virtual void set_talking(bool state, Actor *actor = NULL);
 	virtual void set_font(uint8 font_type) {}
 //bool get_solid_bg() { return solid_bg; }
@@ -127,8 +127,8 @@ public:
 	virtual void drawCursor(uint16 x, uint16 y);
 
 protected:
-	std::string strip_whitespace_after_break(std::string s);
-	void add_keyword(std::string keyword);
+	Std::string strip_whitespace_after_break(Std::string s);
+	void add_keyword(Std::string keyword);
 
 	virtual void set_permitted_input(const char *allowed);
 	virtual void clear_permitted_input();
@@ -143,11 +143,11 @@ protected:
 		cursor_position = keyword_list ? keyword_list->size() : 0;
 	}
 
-	void input_add_string(std::string token_str);
+	void input_add_string(Std::string token_str);
 
-	std::string get_token_at_cursor();
+	Std::string get_token_at_cursor();
 
-	bool is_permanent_keyword(std::string keyword);
+	bool is_permanent_keyword(Std::string keyword);
 	void parse_fm_towns_token(MsgText *token);
 
 private:

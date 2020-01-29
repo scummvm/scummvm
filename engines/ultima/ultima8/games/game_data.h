@@ -91,7 +91,7 @@ public:
 	Shape *getShape(FrameID frameid) const;
 	ShapeFrame *getFrame(FrameID frameid) const;
 
-	std::string translate(std::string text);
+	Std::string translate(Std::string text);
 	FrameID translate(FrameID frame);
 
 	enum ShapeFlexId {
@@ -107,7 +107,7 @@ private:
 	RawArchive *fixed;
 	MainShapeArchive *mainshapes;
 	Usecode *mainusecode;
-	std::vector<MapGlob *> globs;
+	Std::vector<MapGlob *> globs;
 	FontShapeArchive *fonts;
 	GumpShapeArchive *gumps;
 	Shape *mouse;
@@ -115,7 +115,7 @@ private:
 	WpnOvlayDat *weaponoverlay;
 
 	SoundFlex *soundflex;
-	std::vector<SpeechFlex **> speech;
+	Std::vector<SpeechFlex **> speech;
 	GameInfo *gameinfo;
 
 	static GameData *gamedata;

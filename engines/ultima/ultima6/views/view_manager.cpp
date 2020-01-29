@@ -322,7 +322,7 @@ Actor *ViewManager::doll_view_get_next_party_member() {
 }
 
 DollViewGump *ViewManager::get_doll_view(Actor *actor) {
-	std::list<DraggableView *>::iterator iter;
+	Std::list<DraggableView *>::iterator iter;
 	for (iter = doll_gumps.begin(); iter != doll_gumps.end(); iter++) {
 		DollViewGump *view = (DollViewGump *)*iter;
 		if (view->get_actor() == actor) {
@@ -334,7 +334,7 @@ DollViewGump *ViewManager::get_doll_view(Actor *actor) {
 }
 
 ContainerViewGump *ViewManager::get_container_view(Actor *actor, Obj *obj) {
-	std::list<DraggableView *>::iterator iter;
+	Std::list<DraggableView *>::iterator iter;
 	for (iter = container_gumps.begin(); iter != container_gumps.end(); iter++) {
 		ContainerViewGump *view = (ContainerViewGump *)*iter;
 		if (actor) {
@@ -466,7 +466,7 @@ void ViewManager::close_gump(DraggableView *gump) {
 }
 
 void ViewManager::close_all_gumps() {
-	std::list<DraggableView *>::iterator iter;
+	Std::list<DraggableView *>::iterator iter;
 	for (iter = gumps.begin(); iter != gumps.end();) {
 		DraggableView *gump = *iter;
 		iter++;
@@ -533,11 +533,11 @@ unsigned int ViewManager::get_display_weight(float weight) {
 }
 
 // beginning of custom doll functions shared between DollWidget and DollViewGump
-std::string ViewManager::getDollDataDirString() {
+Std::string ViewManager::getDollDataDirString() {
 	if (!DollDataDirString.empty())
 		return DollDataDirString;
 	DollDataDirString = GUI::get_gui()->get_data_dir();
-	std::string path;
+	Std::string path;
 	build_path(DollDataDirString, "images", path);
 	DollDataDirString = path;
 	build_path(DollDataDirString, "gumps", path);
@@ -550,7 +550,7 @@ std::string ViewManager::getDollDataDirString() {
 
 Graphics::ManagedSurface *ViewManager::loadAvatarDollImage(Graphics::ManagedSurface *avatar_doll, bool orig) {
 	char filename[17]; //avatar_nn_nn.bmp\0
-	std::string imagefile;
+	Std::string imagefile;
 	uint8 portrait_num = Game::get_game()->get_portrait()->get_avatar_portrait_num();
 
 	sprintf(filename, "avatar_%s_%02d.bmp", get_game_tag(Game::get_game()->get_game_type()), portrait_num);
@@ -571,7 +571,7 @@ Graphics::ManagedSurface *ViewManager::loadAvatarDollImage(Graphics::ManagedSurf
 
 Graphics::ManagedSurface *ViewManager::loadCustomActorDollImage(Graphics::ManagedSurface *actor_doll, uint8 actor_num, bool orig) {
 	char filename[17]; //actor_nn_nnn.bmp\0
-	std::string imagefile;
+	Std::string imagefile;
 
 	if (actor_doll != NULL)
 		SDL_FreeSurface(actor_doll);
@@ -593,7 +593,7 @@ Graphics::ManagedSurface *ViewManager::loadCustomActorDollImage(Graphics::Manage
 
 Graphics::ManagedSurface *ViewManager::loadGenericDollImage(bool orig) {
 	char filename[14]; //avatar_nn.bmp\0
-	std::string imagefile;
+	Std::string imagefile;
 
 	sprintf(filename, "actor_%s.bmp", get_game_tag(Game::get_game()->get_game_type()));
 	if (orig) {

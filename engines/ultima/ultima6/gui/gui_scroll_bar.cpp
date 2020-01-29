@@ -69,8 +69,8 @@ GUI_ScrollBar::GUI_ScrollBar(int x, int y, int h, GUI_CallBack *callback)
 
 
 void GUI_ScrollBar::loadButtons() {
-	std::string datadir = GUI::get_gui()->get_data_dir();
-	std::string imagefile;
+	Std::string datadir = GUI::get_gui()->get_data_dir();
+	Std::string imagefile;
 	Graphics::ManagedSurface *image, *image1;
 
 	build_path(datadir, "ScrollBarUp_1.bmp", imagefile);

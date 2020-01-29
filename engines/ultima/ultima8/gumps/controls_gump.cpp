@@ -50,7 +50,7 @@ public:
 	void init();
 protected:
 	Pentagram::istring bindingName;
-	std::string displayedName;
+	Std::string displayedName;
 	Gump *button;
 };
 
@@ -71,14 +71,14 @@ void ControlEntryGump::InitGump(Gump *newparent, bool take_focus) {
 
 void ControlEntryGump::init() {
 	// close all children so we can simply use this method to re init
-	std::list<Gump *>::iterator it;
+	Std::list<Gump *>::iterator it;
 	for (it = children.begin(); it != children.end(); ++it) {
 		Gump *g = *it;
 		if (! g->IsClosing())
 			g->Close();
 	}
 
-	std::vector<const char *> controls;
+	Std::vector<const char *> controls;
 
 	Pentagram::Rect rect;
 	button = new ButtonWidget(0, 0, displayedName, true, font, 0x80D000D0);
@@ -90,7 +90,7 @@ void ControlEntryGump::init() {
 	//HIDManager * hidmanager = HIDManager::get_instance();
 	//hidmanager->getBindings(bindingName, controls);
 	/*  int x = 120;
-	    std::vector<const char *>::iterator i;
+	    Std::vector<const char *>::iterator i;
 	    for (i = controls.begin(); i != controls.end(); ++i)
 	    {
 	        Gump * widget;
@@ -145,7 +145,7 @@ void ControlsGump::addEntry(const char *binding, const char *name, int &x_, int 
 
 void ControlsGump::ChildNotify(Gump *child, uint32 message) {
 	if (message == BindGump::UPDATE) {
-		std::list<Gump *>::iterator it;
+		Std::list<Gump *>::iterator it;
 		for (it = children.begin(); it != children.end(); ++it) {
 			ControlEntryGump *g =  p_dynamic_cast<ControlEntryGump *>(*it);
 			if (g)

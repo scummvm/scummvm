@@ -108,11 +108,11 @@ SoundManager::~SoundManager() {
 }
 
 bool SoundManager::nuvieStartup(Configuration *config) {
-	std::string config_key;
-	std::string music_style;
-	std::string music_cfg_file; //full path and filename to music.cfg
-	std::string sound_dir;
-	std::string sfx_style;
+	Std::string config_key;
+	Std::string music_style;
+	Std::string music_cfg_file; //full path and filename to music.cfg
+	Std::string sound_dir;
+	Std::string sfx_style;
 
 	m_Config = config;
 	m_Config->value("config/audio/enabled", audio_enabled, true);
@@ -246,8 +246,8 @@ bool SoundManager::LoadCustomSongs(string sound_dir) {
 	char *sz;
 	NuvieIOFileRead niof;
 	Song *song;
-	std::string scriptname;
-	std::string filename;
+	Std::string scriptname;
+	Std::string filename;
 
 	build_path(sound_dir, "music.cfg", scriptname);
 
@@ -303,7 +303,7 @@ bool SoundManager::groupAddSong(const char *group, Song *song) {
 	if (song != NULL) {
 		//we have a valid song
 		SoundCollection *psc;
-		std::map <Common::String, SoundCollection * >::iterator it;
+		Std::map <Common::String, SoundCollection * >::iterator it;
 		it = m_MusicMap.find(group);
 		if (it == m_MusicMap.end()) {
 			//is there already a collection for this entry?
@@ -360,13 +360,13 @@ bool SoundManager::LoadObjectSamples (string sound_dir)
       if (ps != NULL)
         {                       //we have a valid sound
           SoundCollection *psc;
-          std::map < int, SoundCollection * >::iterator it;
+          Std::map < int, SoundCollection * >::iterator it;
           it = m_ObjectSampleMap.find (id);
           if (it == m_ObjectSampleMap.end ())
             {                   //is there already a collection for this entry?
               psc = new SoundCollection;        //no, create a new sound collection
               psc->m_Sounds.push_back (ps);     //add this sound to the collection
-              m_ObjectSampleMap.insert (std::make_pair (id, psc));      //insert this pair into the map
+              m_ObjectSampleMap.insert (Std::make_pair (id, psc));      //insert this pair into the map
             }
           else
             {
@@ -422,13 +422,13 @@ bool SoundManager::LoadTileSamples (string sound_dir)
       if (ps != NULL)
         {                       //we have a valid sound
           SoundCollection *psc;
-          std::map < int, SoundCollection * >::iterator it;
+          Std::map < int, SoundCollection * >::iterator it;
           it = m_TileSampleMap.find (id);
           if (it == m_TileSampleMap.end ())
             {                   //is there already a collection for this entry?
               psc = new SoundCollection;        //no, create a new sound collection
               psc->m_Sounds.push_back (ps);     //add this sound to the collection
-              m_TileSampleMap.insert (std::make_pair (id, psc));        //insert this pair into the map
+              m_TileSampleMap.insert (Std::make_pair (id, psc));        //insert this pair into the map
             }
           else
             {
@@ -530,7 +530,7 @@ void SoundManager::musicStop() {
 	m_pCurrentSong = NULL;
 }
 
-std::list < SoundManagerSfx >::iterator SoundManagerSfx_find(std::list < SoundManagerSfx >::iterator first, std::list < SoundManagerSfx >::iterator last, const SfxIdType &value) {
+Std::list < SoundManagerSfx >::iterator SoundManagerSfx_find(Std::list < SoundManagerSfx >::iterator first, Std::list < SoundManagerSfx >::iterator last, const SfxIdType &value) {
 	for (; first != last; first++) {
 		if ((*first).sfx_id == value)
 			break;
@@ -571,7 +571,7 @@ void SoundManager::update_map_sfx() {
 				vol = 0;
 			//sp->SetVolume(vol);
 			//need the map to adjust volume according to number of active elements
-			std::map < SfxIdType, float >::iterator it;
+			Std::map < SfxIdType, float >::iterator it;
 			it = volumeLevels.find(sfx_id);
 			if (it != volumeLevels.end()) {
 				if (volumeLevels[sfx_id] < vol)
@@ -600,7 +600,7 @@ void SoundManager::update_map_sfx() {
 	          vol = 0;
 	        //sp->SetVolume(vol);
 	        //need the map to adjust volume according to number of active elements
-	        std::map < Sound *, float >::iterator it;
+	        Std::map < Sound *, float >::iterator it;
 	        it = volumeLevels.find (sp);
 	        if (it != volumeLevels.end ())
 	          {
@@ -613,7 +613,7 @@ void SoundManager::update_map_sfx() {
 	          }
 	        else
 	          {
-	            volumeLevels.insert (std::make_pair (sp, vol));
+	            volumeLevels.insert (Std::make_pair (sp, vol));
 	          }
 	        //add to currently active list
 	        currentlyActiveSounds.push_back (sp);
@@ -623,7 +623,7 @@ void SoundManager::update_map_sfx() {
 	//DEBUG(1,LEVEL_DEBUGGING,"\n");
 	//is this sound new? - activate it.
 	for (i = 0; i < currentlyActiveSounds.size(); i++) {
-		std::list < SoundManagerSfx >::iterator it;
+		Std::list < SoundManagerSfx >::iterator it;
 		it = SoundManagerSfx_find(m_ActiveSounds.begin(), m_ActiveSounds.end(), currentlyActiveSounds[i]);          //is the sound already active?
 		if (it == m_ActiveSounds.end()) {
 			//this is a new sound, add it to the active list
@@ -637,10 +637,10 @@ void SoundManager::update_map_sfx() {
 		}
 	}
 	//is this sound old? - deactivate it
-	std::list < SoundManagerSfx >::iterator it;
+	Std::list < SoundManagerSfx >::iterator it;
 	it = m_ActiveSounds.begin();
 	while (it != m_ActiveSounds.end()) {
-		std::vector<SfxIdType>::iterator fit;
+		Std::vector<SfxIdType>::iterator fit;
 		SoundManagerSfx sfx = (*it);
 		fit = Common::find(currentlyActiveSounds.begin(), currentlyActiveSounds.end(), sfx.sfx_id);          //is the sound in the new active list?
 		if (fit == currentlyActiveSounds.end()) {
@@ -678,7 +678,7 @@ void SoundManager::update() {
 
 
 Sound *SoundManager::SongExists(string name) {
-	std::list < Sound * >::iterator it;
+	Std::list < Sound * >::iterator it;
 	for (it = m_Songs.begin(); it != m_Songs.end(); ++it) {
 		if ((*it)->GetName() == name)
 			return *it;
@@ -688,7 +688,7 @@ Sound *SoundManager::SongExists(string name) {
 }
 
 Sound *SoundManager::SampleExists(string name) {
-	std::list < Sound * >::iterator it;
+	Std::list < Sound * >::iterator it;
 	for (it = m_Samples.begin(); it != m_Samples.end(); ++it) {
 		if ((*it)->GetName() == name)
 			return *it;
@@ -698,7 +698,7 @@ Sound *SoundManager::SampleExists(string name) {
 }
 
 Sound *SoundManager::RequestTileSound(int id) {
-	std::map < int, SoundCollection * >::iterator it;
+	Std::map < int, SoundCollection * >::iterator it;
 	it = m_TileSampleMap.find(id);
 	if (it != m_TileSampleMap.end()) {
 		SoundCollection *psc;
@@ -709,7 +709,7 @@ Sound *SoundManager::RequestTileSound(int id) {
 }
 
 Sound *SoundManager::RequestObjectSound(int id) {
-	std::map < int, SoundCollection * >::iterator it;
+	Std::map < int, SoundCollection * >::iterator it;
 	it = m_ObjectSampleMap.find(id);
 	if (it != m_ObjectSampleMap.end()) {
 		SoundCollection *psc;
@@ -731,7 +731,7 @@ uint16 SoundManager::RequestObjectSfxId(uint16 obj_n) {
 }
 
 Sound *SoundManager::RequestSong(string group) {
-	std::map<Common::String, SoundCollection * >::iterator it;
+	Std::map<Common::String, SoundCollection * >::iterator it;
 	it = m_MusicMap.find(group);
 	if (it != m_MusicMap.end()) {
 		SoundCollection *psc;
@@ -741,7 +741,7 @@ Sound *SoundManager::RequestSong(string group) {
 	return NULL;
 }
 
-Audio::SoundHandle SoundManager::playTownsSound(std::string filename, uint16 sample_num) {
+Audio::SoundHandle SoundManager::playTownsSound(Std::string filename, uint16 sample_num) {
 	FMtownsDecoderStream *stream = new FMtownsDecoderStream(filename, sample_num);
 	Audio::SoundHandle handle;
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, -1, music_volume);

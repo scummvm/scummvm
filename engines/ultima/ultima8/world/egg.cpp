@@ -53,7 +53,7 @@ uint16 Egg::hatch() {
 void Egg::dumpInfo() {
 	Item::dumpInfo();
 	pout << "range: " << getXRange() << "," << getYRange()
-	     << ", hatched=" << hatched << std::endl;
+	     << ", hatched=" << hatched << Std::endl;
 }
 
 void Egg::leaveFastArea() {

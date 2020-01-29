@@ -46,7 +46,7 @@ class TimedEvent;
 /* A queue for our events.
  */
 class TimeQueue {
-	std::list<TimedEvent *> tq;
+	Std::list<TimedEvent *> tq;
 public:
 	TimeQueue() : tq() { }
 	~TimeQueue() {
@@ -122,7 +122,7 @@ public:
 /* Print to stdout. (timer test)
  */
 class TimedMessage : public TimedEvent {
-	std::string msg;
+	Std::string msg;
 public:
 	TimedMessage(uint32 reltime, const char *m, bool repeat = false)
 		: TimedEvent(reltime), msg(m) {
@@ -242,14 +242,14 @@ protected:
 
 public:
 	TimedAdvance(uint8 hours, uint16 r = 60);
-	TimedAdvance(std::string timestring, uint16 r = 60); // "HH:MM"
+	TimedAdvance(Std::string timestring, uint16 r = 60); // "HH:MM"
 	virtual ~TimedAdvance() { }
 
 	void init(uint16 min, uint16 r); // start time advance
 
 	virtual void timed(uint32 evtime);
 	bool time_passed(); // returns true if stop time has passed
-	void get_time_from_string(uint8 &hour, uint8 &minute, std::string timestring);
+	void get_time_from_string(uint8 &hour, uint8 &minute, Std::string timestring);
 };
 
 

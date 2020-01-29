@@ -110,9 +110,9 @@ struct SortItem {
 
 	int32   order;      // Rendering order. -1 is not yet drawn
 
-	// Note that std::priority_queue could be used here, BUT there is no guarentee that it's implementation
+	// Note that Std::priority_queue could be used here, BUT there is no guarentee that it's implementation
 	// will be friendly to insertions
-	// Alternatively i could use std::list, BUT there is no guarentee that it will keep wont delete
+	// Alternatively i could use Std::list, BUT there is no guarentee that it will keep wont delete
 	// the unused nodes after doing a clear
 	// So the only reasonable solution is to write my own list
 	struct DependsList {
@@ -210,8 +210,8 @@ struct SortItem {
 		}
 	};
 
-	//std::vector<SortItem *>   depends;    // All this Items dependencies (i.e. all objects behind)
-	//std::list<SortItem *> depends;    // All this Items dependencies (i.e. all objects behind)
+	//Std::vector<SortItem *>   depends;    // All this Items dependencies (i.e. all objects behind)
+	//Std::list<SortItem *> depends;    // All this Items dependencies (i.e. all objects behind)
 	DependsList depends;
 
 	// Functions
@@ -412,57 +412,57 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 #define COMPARISON_RETURN(val,op,tab)                               \
 	pout << tab"if (si1."#val" != si2."#val") -> ("             \
 	     << si1.val << " != " << si2.val << ") -> "          \
-	     << (si1.val != si2.val) << std::endl;               \
-	pout << tab"{" << std::endl;                                \
+	     << (si1.val != si2.val) << Std::endl;               \
+	pout << tab"{" << Std::endl;                                \
 	if (si1.val != si2.val)                                     \
 	{                                                           \
 		pout << tab"\treturn si1."#val" "#op" si2."#val"; -> (" \
 		     << si1.val << " "#op" " << si2.val << ") -> "\
-		     << (si1.val op si2.val) << std::endl;       \
+		     << (si1.val op si2.val) << Std::endl;       \
 		return si1.val op si2.val;                              \
 	}                                                           \
-	pout << tab"}" << std::endl;
+	pout << tab"}" << Std::endl;
 
 #define COMPARISON_RETURN_EX(val1,op,val2,tab)                      \
 	pout << tab"if ("#val1" != "#val2") -> ("                   \
 	     << val1 << " != " << val2 << ") -> "                \
-	     << (val1 != val2) << std::endl;                     \
-	pout << tab"{" << std::endl;                                \
+	     << (val1 != val2) << Std::endl;                     \
+	pout << tab"{" << Std::endl;                                \
 	if (val1 != val2)                                           \
 	{                                                           \
 		pout << tab"\treturn "#val1" "#op" "#val2"; -> ("       \
 		     << val1 << " "#op" " << val2 << ") -> "     \
-		     << (val1 op val2) << std::endl;             \
+		     << (val1 op val2) << Std::endl;             \
 		return val1 op val2;                                    \
 	}                                                           \
-	pout << tab"}" << std::endl;
+	pout << tab"}" << Std::endl;
 
 #define COMPARISON_RETURN_TF(val1,op,val2,tf,tab)                   \
 	pout << tab "if ("#val1" "#op" "#val2") -> ("                   \
 	     << val1 << " "#op" " << val2 << ") -> "             \
-	     << (val1 op val2) << std::endl;                     \
-	pout << tab"{" << std::endl;                                \
+	     << (val1 op val2) << Std::endl;                     \
+	pout << tab"{" << Std::endl;                                \
 	if (val1 op val2)                                           \
 	{                                                           \
-		pout << tab"\treturn " << tf << std::endl;              \
+		pout << tab"\treturn " << tf << Std::endl;              \
 		return tf;                                              \
 	}                                                           \
-	pout << tab"}" << std::endl;
+	pout << tab"}" << Std::endl;
 
 inline bool SortItem::operator<<(const SortItem &si2) const {
 	const SortItem &si1 = *this;
 
-	if (si2.overlap(si1)) pout << "Overlaping" << std::endl;
+	if (si2.overlap(si1)) pout << "Overlaping" << Std::endl;
 	else {
-		pout << "Not Overlaping" << std::endl;
+		pout << "Not Overlaping" << Std::endl;
 		return false;
 	}
 
 	// Specialist z flat handling
 	pout << "if (si1.flat && si2.flat) -> if ("
 	     << si1.flat << " && " << si2.flat << ") -> "
-	     << (si1.flat && si2.flat) << std::endl;
-	pout << "{" << std::endl;
+	     << (si1.flat && si2.flat) << Std::endl;
+	pout << "{" << Std::endl;
 
 	if (si1.flat && si2.flat) {
 		// Differing z is easy for flats
@@ -497,9 +497,9 @@ inline bool SortItem::operator<<(const SortItem &si2) const {
 	}
 	// Mixed, or non flat
 	else {
-		pout << "}" << std::endl;
-		pout << "else" << std::endl;
-		pout << "{" << std::endl;
+		pout << "}" << Std::endl;
+		pout << "else" << Std::endl;
+		pout << "{" << Std::endl;
 
 		// Clearly X, Y and Z  (useful?)
 		//if (si1.x <= si2.xleft && si1.y <= si2.yfar && si1.ztop <= si2.z) return true;
@@ -525,7 +525,7 @@ inline bool SortItem::operator<<(const SortItem &si2) const {
 		// Partial in z
 		//if (si1.ztop != si2.ztop) return si1.ztop < si2.ztop;
 	}
-	pout << "}" << std::endl;
+	pout << "}" << Std::endl;
 
 	// Clearly in x and y? (useful?)
 	//if (si1.x <= si2.xleft && si1.y <= si2.yfar) return true;
@@ -658,7 +658,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shape_num, uint32 fra
 	ShapeFrame *frame = si->shape->getFrame(si->frame);
 	if (!frame) {
 		perr << "Invalid shape: " << si->shape_num << "," << si->frame
-		     << std::endl;
+		     << Std::endl;
 		return;
 	}
 
@@ -837,7 +837,7 @@ void ItemSorter::AddItem(Item *add) {
 	ShapeFrame *frame = si->shape->getFrame(si->frame);
 	if (!frame) {
 		perr << "Invalid shape: " << si->shape_num << "," << si->frame
-		     << std::endl;
+		     << Std::endl;
 		return;
 	}
 
@@ -1090,7 +1090,7 @@ bool ItemSorter::PaintSortItem(SortItem *si) {
 			int z2 = si->ztop;
 			if (!previt || previt != si->item_num) {
 				previt = si->item_num;
-				pout << si->shape_num << ":" << si->frame << " (" << x1 << "," << y1 << "," << si->z << ") (" << si->x << "," << si->y << "," << z2 << ")" << std::endl;
+				pout << si->shape_num << ":" << si->frame << " (" << x1 << "," << y1 << "," << si->z << ") (" << si->x << "," << si->y << "," << z2 << ")" << Std::endl;
 				//  ss->info->print();
 				if (prev) *prev << *si;
 			}

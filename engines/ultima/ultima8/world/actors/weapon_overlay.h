@@ -36,7 +36,7 @@ struct WeaponOverlayFrame {
 
 struct WeaponOverlay {
 	unsigned int dircount;
-	std::vector<WeaponOverlayFrame> *frames; // 8 or 16 directions
+	Std::vector<WeaponOverlayFrame> *frames; // 8 or 16 directions
 
 	WeaponOverlay() {
 		frames = NULL;
@@ -61,7 +61,7 @@ struct AnimWeaponOverlay {
 		return &(overlay[type].frames[direction][frame]);
 	}
 
-	std::vector<WeaponOverlay> overlay;
+	Std::vector<WeaponOverlay> overlay;
 };
 
 } // End of namespace Ultima8

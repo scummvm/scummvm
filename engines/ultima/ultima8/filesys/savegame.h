@@ -57,30 +57,30 @@ public:
 
 	uint32 getVersion() const { return _version; }
 
-	std::string getDescription() const { return _header.description; }
+	Std::string getDescription() const { return _header.description; }
 
 	/**
 	 * Get an entry/section within the save
 	 */
-	IDataSource *getDataSource(const std::string &name);
+	IDataSource *getDataSource(const Std::string &name);
 };
 
 class SavegameWriter {
 	class FileEntry : public Common::Array<byte> {
 	public:
-		std::string _name;
+		Std::string _name;
 		FileEntry() : Common::Array<byte>() {}
 	};
 private:
 	ODataSource *_file;
 	Common::Array<FileEntry> _index;
-	std::string _description;
+	Std::string _description;
 public:
 	explicit SavegameWriter(ODataSource *ds);
 	virtual ~SavegameWriter();
 
 	//! write the savegame's description.
-	bool writeDescription(const std::string &desc) {
+	bool writeDescription(const Std::string &desc) {
 		_description = desc;
 		return true;
 	}
@@ -89,12 +89,12 @@ public:
 	//! \param name name of the file
 	//! \param data the data
 	//! \param size (in bytes) of data
-	bool writeFile(const std::string &name, const uint8 *data, uint32 size);
+	bool writeFile(const Std::string &name, const uint8 *data, uint32 size);
 
 	//! write a file to the savegame from an OAutoBufferDataSource
 	//! \param name name of the file
 	//! \param buf the OBufferDataSource to save
-	bool writeFile(const std::string &name, OAutoBufferDataSource *buf);
+	bool writeFile(const Std::string &name, OAutoBufferDataSource *buf);
 
 	//! finish savegame
 	bool finish();

@@ -54,13 +54,13 @@ private:
 	/**
 	 * An array of audio streams.
 	 */
-	std::vector<Audio::RewindableAudioStream *> _streams;
+	Std::vector<Audio::RewindableAudioStream *> _streams;
 
 	DisposeAfterUse::Flag _disposeAfterUse;
 
 	Audio::RewindableAudioStream *_currentStream;
 public:
-	RandomCollectionAudioStreamImpl(int rate, bool stereo, std::vector<Audio::RewindableAudioStream *> streams, DisposeAfterUse::Flag disposeAfterUse)
+	RandomCollectionAudioStreamImpl(int rate, bool stereo, Std::vector<Audio::RewindableAudioStream *> streams, DisposeAfterUse::Flag disposeAfterUse)
 		: _rate(rate), _stereo(stereo), _finished(false), _streams(streams), _disposeAfterUse(disposeAfterUse) {
 		if (_streams.size() > 0)
 			_currentStream = _streams[NUVIE_RAND() % _streams.size()];
@@ -126,7 +126,7 @@ int RandomCollectionAudioStreamImpl::readBuffer(int16 *buffer, const int numSamp
 }
 
 RandomCollectionAudioStream *makeRandomCollectionAudioStream(int rate, bool stereo,
-		std::vector<Audio::RewindableAudioStream *> streams, DisposeAfterUse::Flag disposeAfterUse) {
+		Std::vector<Audio::RewindableAudioStream *> streams, DisposeAfterUse::Flag disposeAfterUse) {
 	return new RandomCollectionAudioStreamImpl(rate, stereo, streams, disposeAfterUse);
 }
 

@@ -33,12 +33,12 @@ namespace Ultima8 {
 class ReadableGump : public ModalGump {
 	uint16 shapenum;
 	int fontnum;
-	std::string text;
+	Std::string text;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ReadableGump();
-	ReadableGump(ObjId owner, uint16 shape, int font, std::string msg);
+	ReadableGump(ObjId owner, uint16 shape, int font, Std::string msg);
 	virtual ~ReadableGump();
 
 	// Close on mouse click on key press

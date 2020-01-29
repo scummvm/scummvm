@@ -40,7 +40,7 @@ void InitJoystick() {
 	for (i = 0; i < joys; ++i) {
 		if (i >= JOY_LAST) {
 			perr << "Additional joysticks detected. Cannot initialize more than "
-			     << JOY_LAST << "." << std::endl;
+			     << JOY_LAST << "." << Std::endl;
 			break;
 		}
 
@@ -54,14 +54,14 @@ void InitJoystick() {
 				balls = SDL_JoystickNumBalls(joy[i]);
 				hats = SDL_JoystickNumHats(joy[i]);
 
-				pout << "Initialized joystick " << i + 1 << "." << std::endl;
-				pout << "\tButtons: " << buttons << std::endl;
-				pout << "\tAxes: " << axes << std::endl;
-				pout << "\tBalls: " << balls << std::endl;
-				pout << "\tHats: " << hats << std::endl;
+				pout << "Initialized joystick " << i + 1 << "." << Std::endl;
+				pout << "\tButtons: " << buttons << Std::endl;
+				pout << "\tAxes: " << axes << Std::endl;
+				pout << "\tBalls: " << balls << Std::endl;
+				pout << "\tHats: " << hats << Std::endl;
 			} else {
 				perr << "Error while initializing joystick " << i + 1 << "."
-				     << std::endl;
+				     << Std::endl;
 			}
 		}
 	}
@@ -95,7 +95,7 @@ JoystickCursorProcess::JoystickCursorProcess(Joystick js_, int x_axis_, int y_ax
 	if (joy[js] && js < JOY_LAST) {
 		int axes = SDL_JoystickNumAxes(joy[js]);
 		if (x_axis >= axes && y_axis >= axes) {
-			perr << "Failed to start JoystickCursorProcess: illegal axis for x (" << x_axis << ") or y (" << y_axis << ")" << std::endl;
+			perr << "Failed to start JoystickCursorProcess: illegal axis for x (" << x_axis << ") or y (" << y_axis << ")" << Std::endl;
 			terminate();
 		}
 	} else {

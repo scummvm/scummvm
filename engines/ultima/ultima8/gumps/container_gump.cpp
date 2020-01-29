@@ -81,8 +81,8 @@ void ContainerGump::InitGump(Gump *newparent, bool take_focus) {
 
 	if (!c) return; // Container gone!?
 
-	std::list<Item *> &contents = c->contents;
-	std::list<Item *>::iterator iter;
+	Std::list<Item *> &contents = c->contents;
+	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		(*iter)->enterFastArea();
 	}
@@ -122,13 +122,13 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 		return;
 	}
 
-	std::list<Item *> &contents = c->contents;
+	Std::list<Item *> &contents = c->contents;
 	int32 gametick = Kernel::get_instance()->getFrameNum();
 
 	//!! TODO: check these painting commands (flipped? translucent?)
 	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
 
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		Item *item = *iter;
 		item->setupLerp(gametick);
@@ -170,8 +170,8 @@ uint16 ContainerGump::TraceObjId(int mx, int my) {
 
 	bool paintEditorItems = Ultima8Engine::get_instance()->isPaintEditorItems();
 
-	std::list<Item *> &contents = c->contents;
-	std::list<Item *>::reverse_iterator iter;
+	Std::list<Item *> &contents = c->contents;
+	Std::list<Item *>::reverse_iterator iter;
 
 	// iterate backwards, since we're painting from begin() to end()
 	for (iter = contents.rbegin(); iter != contents.rend(); ++iter) {
@@ -261,8 +261,8 @@ void ContainerGump::Close(bool no_del) {
 	Container *c = getContainer(owner);
 	if (!c) return; // Container gone!?
 
-	std::list<Item *> &contents = c->contents;
-	std::list<Item *>::iterator iter = contents.begin();
+	Std::list<Item *> &contents = c->contents;
+	Std::list<Item *>::iterator iter = contents.begin();
 	while (iter != contents.end()) {
 		Item *item = *iter;
 		++iter;
@@ -318,7 +318,7 @@ Gump *ContainerGump::OnMouseDown(int button, int mx, int my) {
 void ContainerGump::OnMouseClick(int button, int mx, int my) {
 	if (button == Shared::BUTTON_LEFT) {
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-			pout << "Can't: avatarInStasis" << std::endl;
+			pout << "Can't: avatarInStasis" << Std::endl;
 			return;
 		}
 
@@ -337,7 +337,7 @@ void ContainerGump::OnMouseClick(int button, int mx, int my) {
 void ContainerGump::OnMouseDouble(int button, int mx, int my) {
 	if (button == Shared::BUTTON_LEFT) {
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-			pout << "Can't: avatarInStasis" << std::endl;
+			pout << "Can't: avatarInStasis" << Std::endl;
 			return;
 		}
 
@@ -469,7 +469,7 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 			if (!splittarget) {
 				perr << "ContainerGump failed to create item ("
 				     << item->getShape() << "," << item->getFrame()
-				     << ") while splitting" << std::endl;
+				     << ") while splitting" << Std::endl;
 				return;
 			}
 

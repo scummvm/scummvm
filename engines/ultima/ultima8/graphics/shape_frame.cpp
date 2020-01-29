@@ -140,8 +140,8 @@ void ShapeFrame::LoadU8CMPFormat(const uint8 *data, uint32 size, const ConvertSh
 	xoff = f.xoff;
 	yoff = f.yoff;
 
-	std::memcpy(line_offsets, f.line_offsets, f.height * 4);
-	std::memcpy(const_cast<uint8 *>(rle_data), f.rle_data, f.bytes_rle);
+	Std::memcpy(line_offsets, f.line_offsets, f.height * 4);
+	Std::memcpy(const_cast<uint8 *>(rle_data), f.rle_data, f.bytes_rle);
 
 	f.Free();
 }

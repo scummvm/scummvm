@@ -31,7 +31,7 @@
 #include "common/stack.h"
 
 namespace Ultima {
-namespace std {
+namespace Std {
 
 template<class T>
 class vector : public Common::Array<T> {
@@ -269,7 +269,7 @@ protected:
 	_Pr comp;
 };
 
-} // End of namespace std
+} // End of namespace Std
 } // End of namespace Ultima
 
 #endif

@@ -179,12 +179,12 @@ public:
 	//!         true if any items were hit.
 	bool sweepTest(const int32 start[3], const int32 end[3],
 	               const int32 dims[3], uint32 shapeflags,
-	               ObjId item, bool solid_only, std::list<SweepItem> *hit);
+	               ObjId item, bool solid_only, Std::list<SweepItem> *hit);
 
 	TeleportEgg *findDestination(uint16 id);
 
 	// Not allowed to modify the list. Remember to use const_iterator
-	const std::list<Item *> *getItemList(int32 gx, int32 gy) {
+	const Std::list<Item *> *getItemList(int32 gx, int32 gy) {
 		// CONSTANTS!
 		if (gx < 0 || gy < 0 || gx >= MAP_NUM_CHUNKS || gy >= MAP_NUM_CHUNKS)
 			return 0;
@@ -210,14 +210,14 @@ public:
 	INTRINSIC(I_canExistAt);
 
 private:
-	void loadItems(std::list<Item *> itemlist, bool callCacheIn);
+	void loadItems(Std::list<Item *> itemlist, bool callCacheIn);
 	void createEggHatcher();
 
 	Map *current_map;
 
 	// item lists. Lots of them :-)
 	// items[x][y]
-	std::list<Item *> **items;
+	Std::list<Item *> **items;
 
 	ProcId egghatcher;
 

@@ -55,7 +55,7 @@ protected:
 	ObjId targetitem;
 	bool hitmode;
 
-	std::vector<PathfindingAction> path;
+	Std::vector<PathfindingAction> path;
 	unsigned int currentstep;
 };
 

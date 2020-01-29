@@ -30,22 +30,22 @@
 namespace Ultima {
 namespace Ultima6 {
 
-std::string to_uppercase(std::string s);
+Std::string to_uppercase(Std::string s);
 
 class XMLNode;
 
 class XMLTree {
 public:
 	XMLTree();
-	XMLTree(std::string fname, std::string root);
+	XMLTree(Std::string fname, Std::string root);
 	~XMLTree();
 
-	bool readConfigFile(std::string fname);
-	bool readConfigString(std::string s);
+	bool readConfigFile(Std::string fname);
+	bool readConfigString(Std::string s);
 
-	void clear(std::string root);
+	void clear(Std::string root);
 
-	std::string dump();
+	Std::string dump();
 	void write();
 
 	void setReadonly() {
@@ -55,34 +55,34 @@ public:
 		return readonly;
 	}
 
-	bool hasNode(std::string key) const;
-	bool checkRoot(std::string key) const;
+	bool hasNode(Std::string key) const;
+	bool checkRoot(Std::string key) const;
 
 	// get value
-	void value(std::string key, std::string &ret,
+	void value(Std::string key, Std::string &ret,
 	           const char *defaultvalue = "") const;
-	void value(std::string key, int &ret,
+	void value(Std::string key, int &ret,
 	           int defaultvalue = 0) const;
-	void value(std::string key, bool &ret,
+	void value(Std::string key, bool &ret,
 	           bool defaultvalue = false) const;
 
 	// set value
-	void set(std::string key, std::string value);
-	void set(std::string key, const char *value);
-	void set(std::string key, int value);
-	void set(std::string key, bool value);
+	void set(Std::string key, Std::string value);
+	void set(Std::string key, const char *value);
+	void set(Std::string key, int value);
+	void set(Std::string key, bool value);
 
-	std::vector<std::string> listKeys(std::string key, bool longformat = false);
+	Std::vector<Std::string> listKeys(Std::string key, bool longformat = false);
 
-	typedef std::pair<std::string, std::string> KeyType;
-	typedef std::vector<KeyType> KeyTypeList;
+	typedef Std::pair<Std::string, Std::string> KeyType;
+	typedef Std::vector<KeyType> KeyTypeList;
 
-	void getSubkeys(KeyTypeList &ktl, std::string basekey);
+	void getSubkeys(KeyTypeList &ktl, Std::string basekey);
 
 private:
 	XMLNode *tree;
-	std::string filename;
-	std::string root;
+	Std::string filename;
+	Std::string root;
 	bool is_file;
 	bool readonly;
 };

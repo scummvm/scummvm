@@ -765,8 +765,8 @@ bool U6UseCode::use_rune(Obj *obj, UseCodeEvent ev) {
 }
 
 void U6UseCode::remove_gargoyle_egg(uint16 x, uint16 y, uint8 z) {
-	std::list<Egg *> *egg_list;
-	std::list<Egg *>::iterator egg_itr;
+	Std::list<Egg *> *egg_list;
+	Std::list<Egg *>::iterator egg_itr;
 
 	egg_list = game->get_egg_manager()->get_egg_list();
 
@@ -1431,7 +1431,7 @@ bool U6UseCode::use_rubber_ducky(Obj *obj, UseCodeEvent ev) {
 	return (true);
 }
 
-sint16 U6UseCode::parseLatLongString(U6UseCodeLatLonEnum mode, std::string *input) {
+sint16 U6UseCode::parseLatLongString(U6UseCodeLatLonEnum mode, Std::string *input) {
 	uint16 len = input->length();
 	sint16 val = 0;
 	for (uint16 i = 0; i < len; i++) {

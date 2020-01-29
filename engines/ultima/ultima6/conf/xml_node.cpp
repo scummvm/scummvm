@@ -28,19 +28,19 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::string;
-using std::vector;
-//using std::endl;
+using Std::string;
+using Std::vector;
+//using Std::endl;
 
 static  string  encode_entity(const string &s);
 static  string  close_tag(const string &s);
 
-static const std::string c_empty_string;
+static const Std::string c_empty_string;
 
 
 
 XMLNode::~XMLNode() {
-	for (std::vector<XMLNode *>::iterator i = nodelist.begin();
+	for (Std::vector<XMLNode *>::iterator i = nodelist.begin();
 	        i != nodelist.end(); ++i) {
 		delete *i;
 	}
@@ -61,7 +61,7 @@ const string &XMLNode::reference(const string &h, bool &exists) {
 		string k;
 		k = h.substr(h.find('/') + 1);
 		string k2 = k.substr(0, k.find('/'));
-		for (std::vector<XMLNode *>::iterator it = nodelist.begin();
+		for (Std::vector<XMLNode *>::iterator it = nodelist.begin();
 		        it != nodelist.end(); ++it) {
 			if ((*it)->id == k2)
 				return (*it)->reference(k, exists);
@@ -86,7 +86,7 @@ const XMLNode *XMLNode::subtree(const string &h) const {
 		string k;
 		k = h.substr(h.find('/') + 1);
 		string k2 = k.substr(0, k.find('/'));
-		for (std::vector<XMLNode *>::const_iterator it = nodelist.begin();
+		for (Std::vector<XMLNode *>::const_iterator it = nodelist.begin();
 		        it != nodelist.end(); ++it) {
 			if (string_i_compare((*it)->id, k2)) {
 				return (*it)->subtree(k);
@@ -107,7 +107,7 @@ string XMLNode::dump(int depth) {
 	if (id[id.length() - 1] != '/') {
 		if (nodelist.empty() == false)
 			s += "\n";
-		for (std::vector<XMLNode *>::const_iterator it = nodelist.begin();
+		for (Std::vector<XMLNode *>::const_iterator it = nodelist.begin();
 		        it != nodelist.end(); ++it) {
 			s += (**it).dump(depth + 1);
 		}
@@ -147,7 +147,7 @@ void XMLNode::xmlassign(const string &key, const string &value) {
 	string k;
 	k = key.substr(key.find('/') + 1);
 	string k2 = k.substr(0, k.find('/'));
-	for (std::vector<XMLNode *>::iterator it = nodelist.begin();
+	for (Std::vector<XMLNode *>::iterator it = nodelist.begin();
 	        it != nodelist.end(); ++it) {
 		if ((*it)->id == k2) {
 			(**it).xmlassign(k, value);
@@ -167,7 +167,7 @@ void XMLNode::listkeys(const string &key, vector<string> &vs,
 	string s(key);
 	s += "/";
 
-	for (std::vector<XMLNode *>::const_iterator it = nodelist.begin();
+	for (Std::vector<XMLNode *>::const_iterator it = nodelist.begin();
 	        it != nodelist.end(); ++it) {
 		if (!longformat)
 			vs.push_back((*it)->id);
@@ -215,7 +215,7 @@ static string decode_entity(const string &s, size_t &pos) {
 
 	pos += entity_name_len + 2;
 
-	// std::cout << "DECODE: " << entity_name << endl;
+	// Std::cout << "DECODE: " << entity_name << endl;
 
 	if (entity_name == "amp")  return string("&");
 	else if (entity_name == "apos") return string("'");
@@ -315,7 +315,7 @@ bool XMLNode::searchpairs(KeyTypeList &ktl, const string &basekey,
 		/* If we've found it, return every key->value pair under this key,
 		    then return true, since we've found the key we were looking for.*/
 		if (basekey == currkey + id) {
-			for (std::vector<XMLNode *>::iterator i = nodelist.begin();
+			for (Std::vector<XMLNode *>::iterator i = nodelist.begin();
 			        i != nodelist.end(); ++i)
 				if ((*i)->id[0] != '!')
 					(*i)->selectpairs(ktl, "");
@@ -323,7 +323,7 @@ bool XMLNode::searchpairs(KeyTypeList &ktl, const string &basekey,
 		}
 		/* Else, keep searching for the key under it's subnodes */
 		else
-			for (std::vector<XMLNode *>::iterator i = nodelist.begin();
+			for (Std::vector<XMLNode *>::iterator i = nodelist.begin();
 			        i != nodelist.end(); ++i)
 				if ((*i)->searchpairs(ktl, basekey, currkey + id + '/', pos))
 					return true;
@@ -332,10 +332,10 @@ bool XMLNode::searchpairs(KeyTypeList &ktl, const string &basekey,
 }
 
 /* Just adds every key->value pair under the this node to the ktl */
-void XMLNode::selectpairs(KeyTypeList &ktl, const std::string currkey) {
+void XMLNode::selectpairs(KeyTypeList &ktl, const Std::string currkey) {
 	ktl.push_back(KeyType(currkey + id, content));
 
-	for (std::vector<XMLNode *>::iterator i = nodelist.begin();
+	for (Std::vector<XMLNode *>::iterator i = nodelist.begin();
 	        i != nodelist.end(); ++i) {
 		(*i)->selectpairs(ktl, currkey + id + '/');
 	}

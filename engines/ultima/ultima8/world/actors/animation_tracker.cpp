@@ -88,8 +88,8 @@ bool AnimationTracker::init(Actor *actor_, Animation::Sequence action_,
 #ifdef WATCHACTOR
 	if (actor_ && actor_->getObjId() == watchactor) {
 		pout << "AnimationTracker: playing " << startframe << "-" << endframe
-		     << " (animaction flags: " << std::hex << animaction->flags
-		     << std::dec << ")" << std::endl;
+		     << " (animaction flags: " << Std::hex << animaction->flags
+		     << Std::dec << ")" << Std::endl;
 
 	}
 #endif
@@ -267,8 +267,8 @@ bool AnimationTracker::step() {
 		int32 dims[3] = { xd, yd, zd };
 
 		// Do the sweep test
-		std::list<CurrentMap::SweepItem> collisions;
-		std::list<CurrentMap::SweepItem>::iterator it;
+		Std::list<CurrentMap::SweepItem> collisions;
+		Std::list<CurrentMap::SweepItem>::iterator it;
 		cm->sweepTest(start, end, dims, a->getShapeInfo()->flags, a->getObjId(),
 		              false, &collisions);
 
@@ -279,7 +279,7 @@ bool AnimationTracker::step() {
 #ifdef WATCHACTOR
 				if (a->getObjId() == watchactor) {
 					pout << "AnimationTracker: did sweepTest for large step; "
-					     << "collision at time " << it->hit_time << std::endl;
+					     << "collision at time " << it->hit_time << Std::endl;
 				}
 #endif
 				blocked = true;
@@ -350,7 +350,7 @@ bool AnimationTracker::step() {
 				if (a->getObjId() == watchactor) {
 					pout << "AnimationTracker: adjusted step: "
 					     << tx - (x + dx) << "," << ty - (y + dy) << "," << tz - (z + dz)
-					     << std::endl;
+					     << Std::endl;
 				}
 #endif
 			}
@@ -365,7 +365,7 @@ bool AnimationTracker::step() {
 #ifdef WATCHACTOR
 	if (a->getObjId() == watchactor) {
 		pout << "AnimationTracker: step (" << tx - x << "," << ty - y
-		     << "," << tz - z << ")" << std::endl;
+		     << "," << tz - z << ")" << Std::endl;
 	}
 #endif
 
@@ -503,7 +503,7 @@ void AnimationTracker::checkWeaponHit() {
 
 #ifdef WATCHACTOR
 	if (a->getObjId() == watchactor && !hit) {
-		pout << "nothing" << std::endl;
+		pout << "nothing" << Std::endl;
 	}
 #endif
 

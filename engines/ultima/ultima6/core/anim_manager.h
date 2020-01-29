@@ -36,9 +36,9 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::list;
-using std::string;
-using std::vector;
+using Std::list;
+using Std::string;
+using Std::vector;
 
 class Actor;
 class CallBack;
@@ -49,7 +49,7 @@ class Font;
 
 #define MESG_TIMED CB_TIMED
 
-typedef std::list<NuvieAnim *>::iterator AnimIterator;
+typedef Std::list<NuvieAnim *>::iterator AnimIterator;
 
 /* Each viewable area has it's own AnimManager. (but I can only think of
  * animations in the MapWindow using this, so that could very well change)
@@ -58,7 +58,7 @@ class AnimManager {
 	MapWindow *map_window;
 	Screen *viewsurf;
 	Common::Rect viewport; // clip anims to location
-	std::list<NuvieAnim *> anim_list; // in paint order
+	Std::list<NuvieAnim *> anim_list; // in paint order
 	uint32 next_id;
 
 	uint8 tile_pitch;
@@ -458,12 +458,12 @@ public:
 };
 
 class TextAnim : public TimedAnim {
-	std::string text;
+	Std::string text;
 	Font *font;
 	uint32 duration;
 
 public:
-	TextAnim(std::string text, MapCoord loc, uint32 dur);
+	TextAnim(Std::string text, MapCoord loc, uint32 dur);
 	~TextAnim();
 	uint16 callback(uint16 msg, CallBack *caller, void *msg_data);
 	void start()                    {

@@ -43,7 +43,7 @@ public:
 	AnimAction *getAnim(uint32 shape, uint32 action) const;
 
 private:
-	std::vector<ActorAnim *> anims;
+	Std::vector<ActorAnim *> anims;
 };
 
 } // End of namespace Ultima8

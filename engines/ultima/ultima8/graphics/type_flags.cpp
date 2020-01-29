@@ -176,9 +176,9 @@ void TypeFlags::loadWeaponInfo() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 
 	// load weapons
-	std::vector<Pentagram::istring> weaponkeys;
+	Std::vector<Pentagram::istring> weaponkeys;
 	weaponkeys = config->listSections("weapons", true);
-	for (std::vector<Pentagram::istring>::iterator iter = weaponkeys.begin();
+	for (Std::vector<Pentagram::istring>::iterator iter = weaponkeys.begin();
 	        iter != weaponkeys.end(); ++iter) {
 		Pentagram::istring k = *iter;
 		WeaponInfo *wi = new WeaponInfo;
@@ -228,9 +228,9 @@ void TypeFlags::loadArmourInfo() {
 	MainShapeArchive *msf = GameData::get_instance()->getMainShapes();
 
 	// load armour
-	std::vector<Pentagram::istring> armourkeys;
+	Std::vector<Pentagram::istring> armourkeys;
 	armourkeys = config->listSections("armour", true);
-	for (std::vector<Pentagram::istring>::iterator iter = armourkeys.begin();
+	for (Std::vector<Pentagram::istring>::iterator iter = armourkeys.begin();
 	        iter != armourkeys.end(); ++iter) {
 		Pentagram::istring k = *iter;
 		ArmourInfo ai;
@@ -285,9 +285,9 @@ void TypeFlags::loadMonsterInfo() {
 	treasureLoader.loadDefaults();
 
 	// load monsters
-	std::vector<Pentagram::istring> monsterkeys;
+	Std::vector<Pentagram::istring> monsterkeys;
 	monsterkeys = config->listSections("monsters", true);
-	for (std::vector<Pentagram::istring>::iterator iter = monsterkeys.begin();
+	for (Std::vector<Pentagram::istring>::iterator iter = monsterkeys.begin();
 	        iter != monsterkeys.end(); ++iter) {
 		Pentagram::istring k = *iter;
 		MonsterInfo *mi = new MonsterInfo;
@@ -350,12 +350,12 @@ void TypeFlags::loadMonsterInfo() {
 		else
 			mi->explode = 0;
 
-		std::string treasure;
+		Std::string treasure;
 		if (config->get(k + "/treasure", treasure)) {
 			bool ok = treasureLoader.parse(treasure, mi->treasure);
 			if (!ok) {
 				perr << "failed to parse treasure info for monster '" << k
-				     << "'"  << std::endl;
+				     << "'"  << Std::endl;
 				mi->treasure.clear();
 			}
 		} else {

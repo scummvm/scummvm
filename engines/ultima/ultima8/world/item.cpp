@@ -99,8 +99,8 @@ void Item::dumpInfo() {
 
 	pout << ") q:" << getQuality()
 	     << ", m:" << getMapNum() << ", n:" << getNpcNum()
-	     << ", f:" << std::hex << getFlags() << ", ef:"
-	     << getExtFlags() << ")" << std::dec << std::endl;
+	     << ", f:" << Std::hex << getFlags() << ", ef:"
+	     << getExtFlags() << ")" << Std::dec << Std::endl;
 }
 
 Container *Item::getParentAsContainer() const {
@@ -110,7 +110,7 @@ Container *Item::getParentAsContainer() const {
 	Container *p = getContainer(parent);
 
 	if (!p) {
-		perr << "Item " << getObjId() << " parent (" << parent << ") is an invalid Container ObjID" << std::endl;
+		perr << "Item " << getObjId() << " parent (" << parent << ") is an invalid Container ObjID" << Std::endl;
 		CANT_HAPPEN();
 	}
 
@@ -160,7 +160,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 				if (p) p->removeItem(this);
 			}
 		} else
-			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no parent" << std::endl;
+			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no parent" << Std::endl;
 
 		// Clear our owner.
 		parent = 0;
@@ -232,7 +232,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 bool Item::moveToContainer(Container *container, bool checkwghtvol) {
 	// Null container, report an error message
 	if (!container) {
-		perr << "NULL container passed to Item::moveToContainer" << std::endl;
+		perr << "NULL container passed to Item::moveToContainer" << Std::endl;
 		return false;
 	}
 
@@ -263,7 +263,7 @@ bool Item::moveToContainer(Container *container, bool checkwghtvol) {
 				if (p) p->removeItem(this);
 			}
 		} else
-			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no parent" << std::endl;
+			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no parent" << Std::endl;
 
 		// Clear our owner.
 		parent = 0;
@@ -335,7 +335,7 @@ void Item::moveToEtherealVoid() {
 			Container *p = getParentAsContainer();
 			if (p) p->removeItem(this);
 		} else
-			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no parent" << std::endl;
+			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no parent" << Std::endl;
 	} else if (extendedflags & EXT_INCURMAP) {
 		World::get_instance()->getCurrentMap()->removeItem(this);
 	}
@@ -353,7 +353,7 @@ void Item::returnFromEtherealVoid() {
 	if (flags & (FLG_CONTAINED | FLG_EQUIPPED)) {
 		Container *p = getParentAsContainer();
 		if (!p) {
-			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no valid parent" << std::endl;
+			perr << "Item " << getObjId() << " FLG_CONTAINED or FLG_EQUIPPED set but item has no valid parent" << Std::endl;
 			CANT_HAPPEN();
 		}
 		moveToContainer(p);
@@ -860,8 +860,8 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 	getFootpadWorld(dims[0], dims[1], dims[2]);
 
 	// Do the sweep test
-	std::list<CurrentMap::SweepItem> collisions;
-	std::list<CurrentMap::SweepItem>::iterator it;
+	Std::list<CurrentMap::SweepItem> collisions;
+	Std::list<CurrentMap::SweepItem>::iterator it;
 	map->sweepTest(start, end, dims, getShapeInfo()->flags, objid,
 	               false, &collisions);
 
@@ -944,13 +944,13 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 
 			if (hit != 0x4000) {
 #if 0
-				pout << " Hit time: " << hit << std::endl;
-				pout << "    Start: " << start[0] << ", " << start[1] << ", " << start[2] << std::endl;
-				pout << "      End: " << end[0] << ", " << end[1] << ", " << end[2] << std::endl;
+				pout << " Hit time: " << hit << Std::endl;
+				pout << "    Start: " << start[0] << ", " << start[1] << ", " << start[2] << Std::endl;
+				pout << "      End: " << end[0] << ", " << end[1] << ", " << end[2] << Std::endl;
 #endif
 				it->GetInterpolatedCoords(end, start, end);
 #if 0
-				pout << "Collision: " << end[0] << ", " << end[1] << ", " << end[2] << std::endl;
+				pout << "Collision: " << end[0] << ", " << end[1] << ", " << end[2] << Std::endl;
 #endif
 			}
 		}
@@ -1284,7 +1284,7 @@ void Item::animateItem() {
 		break;
 
 	default:
-		pout << "type " << info->animtype << " data " << anim_data << std::endl;
+		pout << "type " << info->animtype << " data " << anim_data << Std::endl;
 		break;
 	}
 	//return dirty;
@@ -1396,7 +1396,7 @@ void Item::clearGump() {
 }
 
 int32 Item::ascend(int delta) {
-//	pout << "Ascend: objid=" << getObjId() << ", delta=" << delta << std::endl;
+//	pout << "Ascend: objid=" << getObjId() << ", delta=" << delta << Std::endl;
 
 	if (delta == 0) return 0x4000;
 
@@ -1425,7 +1425,7 @@ int32 Item::ascend(int delta) {
 	int dist = collideMove(xv, yv, zv + delta, false, false);
 	delta = (delta * dist) / 0x4000;
 
-//	pout << "Ascend: dist=" << dist << std::endl;
+//	pout << "Ascend: dist=" << dist << Std::endl;
 
 	// move other items
 	for (uint32 i = 0; i < uclist.getSize(); i++) {
@@ -1607,9 +1607,9 @@ int Item::getThrowRange() {
 }
 
 static bool checkLineOfSightCollisions(
-    const std::list<CurrentMap::SweepItem> &collisions,
+    const Std::list<CurrentMap::SweepItem> &collisions,
     bool usingAlternatePos, ObjId item, ObjId other) {
-	std::list<CurrentMap::SweepItem>::const_iterator it;
+	Std::list<CurrentMap::SweepItem>::const_iterator it;
 	int32 other_hit_time = 0x4000;
 	int32 blocked_time = 0x4000;
 	for (it = collisions.begin(); it != collisions.end(); it++) {
@@ -1679,8 +1679,8 @@ bool Item::canReach(Item *other, int range,
 	if (otherZ > thisZ && otherZ < thisZ + thisZd)
 		start[2] = end[2]; // bottom of other between bottom and top of this
 
-	std::list<CurrentMap::SweepItem> collisions;
-	std::list<CurrentMap::SweepItem>::iterator it;
+	Std::list<CurrentMap::SweepItem> collisions;
+	Std::list<CurrentMap::SweepItem>::iterator it;
 	World *world = World::get_instance();
 	CurrentMap *map = world->getCurrentMap();
 	map->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
@@ -2090,9 +2090,9 @@ uint32 Item::I_getTypeFlag(const uint8 *args, unsigned int /*argsize*/) {
 	ShapeInfo *info = item->getShapeInfo();
 
 	if (GAME_IS_U8 && typeflag >= 64)
-		perr << "Invalid TypeFlag greater than 63 requested (" << typeflag << ") by Usecode" << std::endl;
+		perr << "Invalid TypeFlag greater than 63 requested (" << typeflag << ") by Usecode" << Std::endl;
 	if (GAME_IS_CRUSADER && typeflag >= 72)
-		perr << "Invalid TypeFlag greater than 63 requested (" << typeflag << ") by Usecode" << std::endl;
+		perr << "Invalid TypeFlag greater than 63 requested (" << typeflag << ") by Usecode" << Std::endl;
 
 	if (info->getTypeFlag(typeflag))
 		return 1;
@@ -2234,7 +2234,7 @@ uint32 Item::I_legalCreateAtPoint(const uint8 *args, unsigned int /*argsize*/) {
 	Item *newitem = ItemFactory::createItem(shape, frame, 0, 0, 0, 0, 0, true);
 	if (!newitem) {
 		perr << "I_legalCreateAtPoint failed to create item (" << shape
-		     << "," << frame << ")." << std::endl;
+		     << "," << frame << ")." << Std::endl;
 		return 0;
 	}
 	uint16 objID = newitem->getObjId();
@@ -2266,7 +2266,7 @@ uint32 Item::I_legalCreateAtCoords(const uint8 *args, unsigned int /*argsize*/) 
 	Item *newitem = ItemFactory::createItem(shape, frame, 0, 0, 0, 0, 0, true);
 	if (!newitem) {
 		perr << "I_legalCreateAtCoords failed to create item (" << shape
-		     << "," << frame << ")." << std::endl;
+		     << "," << frame << ")." << Std::endl;
 		return 0;
 	}
 	uint16 objID = newitem->getObjId();
@@ -2298,7 +2298,7 @@ uint32 Item::I_legalCreateInCont(const uint8 *args, unsigned int /*argsize*/) {
 	Item *newitem = ItemFactory::createItem(shape, frame, 0, 0, 0, 0, 0, true);
 	if (!newitem) {
 		perr << "I_legalCreateInCont failed to create item (" << shape
-		     << "," << frame << ")." << std::endl;
+		     << "," << frame << ")." << Std::endl;
 		return 0;
 	}
 
@@ -2313,7 +2313,7 @@ uint32 Item::I_legalCreateInCont(const uint8 *args, unsigned int /*argsize*/) {
 		return 1;
 	} else {
 		perr << "I_legalCreateInCont failed to add item to container ("
-		     << container->getObjId() << ")" << std::endl;
+		     << container->getObjId() << ")" << Std::endl;
 		// failed to add; clean up
 		newitem->destroy();
 
@@ -2416,14 +2416,14 @@ uint32 Item::I_create(const uint8 *args, unsigned int /*argsize*/) {
 	Item *newitem = ItemFactory::createItem(shape, frame, 0, 0, 0, 0, 0, true);
 	if (!newitem) {
 		perr << "I_create failed to create item (" << shape
-		     << "," << frame << ")." << std::endl;
+		     << "," << frame << ")." << Std::endl;
 		return 0;
 	}
 	uint16 objID = newitem->getObjId();
 
 #if 0
 	pout << "Item::create: created item " << objID << " (" << shape
-	     << "," << frame << ")" << std::endl;
+	     << "," << frame << ")" << Std::endl;
 #endif
 
 	newitem->moveToEtherealVoid();
@@ -2453,7 +2453,7 @@ uint32 Item::I_pop(const uint8 *args, unsigned int /*argsize*/) {
 	item->returnFromEtherealVoid();
 
 #if 0
-	perr << "Popping item to original location: " << item->getShape() << "," << item->getFrame() << std::endl;
+	perr << "Popping item to original location: " << item->getShape() << "," << item->getFrame() << Std::endl;
 #endif
 
 	//! Anything else?
@@ -2481,7 +2481,7 @@ uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	item->move(x, y, z);
 
 #if 0
-	perr << "Popping item into map: " << item->getShape() << "," << item->getFrame() << " at (" << x << "," << y << "," << z << ")" << std::endl;
+	perr << "Popping item into map: " << item->getShape() << "," << item->getFrame() << " at (" << x << "," << y << "," << z << ")" << Std::endl;
 #endif
 
 	//! Anything else?
@@ -2494,7 +2494,7 @@ uint32 Item::I_popToContainer(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_CONTAINER_FROM_ID(container);
 
 	if (!container) {
-		perr << "Trying to pop item to invalid container (" << id_container << ")." << std::endl;
+		perr << "Trying to pop item to invalid container (" << id_container << ")." << Std::endl;
 		return 0;
 	}
 
@@ -2521,7 +2521,7 @@ uint32 Item::I_popToEnd(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_CONTAINER_FROM_ID(container);
 
 	if (!container) {
-		perr << "Trying to pop item to invalid container (" << id_container << ")." << std::endl;
+		perr << "Trying to pop item to invalid container (" << id_container << ")." << Std::endl;
 		return 0;
 	}
 
@@ -2725,7 +2725,7 @@ uint32 Item::I_getSliderInput(const uint8 *args, unsigned int /*argsize*/) {
 	UCProcess *current = p_dynamic_cast<UCProcess *>(Kernel::get_instance()->getRunningProcess());
 	assert(current);
 
-//	pout << "SliderGump: min=" << minval << ", max=" << maxval << ", step=" << step << std::endl;
+//	pout << "SliderGump: min=" << minval << ", max=" << maxval << ", step=" << step << Std::endl;
 
 	SliderGump *gump = new SliderGump(100, 100, minval, maxval, minval, step);
 	gump->InitGump(0); // modal gump

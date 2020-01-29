@@ -61,7 +61,7 @@ int JPFont::getBaselineSkip() {
 }
 
 
-void JPFont::getStringSize(const std::string &text, int &width, int &height) {
+void JPFont::getStringSize(const Std::string &text, int &width, int &height) {
 	int hlead = shapefont->getHlead();
 	width = hlead;
 	height = getHeight();
@@ -80,24 +80,24 @@ void JPFont::getStringSize(const std::string &text, int &width, int &height) {
 	}
 }
 
-void JPFont::getTextSize(const std::string &text,
+void JPFont::getTextSize(const Std::string &text,
                          int &resultwidth, int &resultheight,
                          unsigned int &remaining,
                          int width, int height, TextAlign align,
                          bool u8specials) {
-	std::list<PositionedText> tmp;
+	Std::list<PositionedText> tmp;
 	tmp = typesetText<SJISTraits>(this, text, remaining,
 	                              width, height, align, u8specials,
 	                              resultwidth, resultheight);
 }
 
-RenderedText *JPFont::renderText(const std::string &text,
+RenderedText *JPFont::renderText(const Std::string &text,
                                  unsigned int &remaining,
                                  int width, int height, TextAlign align,
                                  bool u8specials,
-                                 std::string::size_type cursor) {
+                                 Std::string::size_type cursor) {
 	int resultwidth, resultheight;
-	std::list<PositionedText> lines;
+	Std::list<PositionedText> lines;
 	lines = typesetText<SJISTraits>(this, text, remaining,
 	                                width, height, align, u8specials,
 	                                resultwidth, resultheight,

@@ -58,8 +58,8 @@ GUI_Dialog::~GUI_Dialog() {
 void GUI_Dialog::loadBorderImages() {
 	uint8 i;
 	char filename[15]; // BorderU6_x.bmp\0
-	std::string datadir = GUI::get_gui()->get_data_dir();
-	std::string imagefile;
+	Std::string datadir = GUI::get_gui()->get_data_dir();
+	Std::string imagefile;
 
 	for (i = 0; i < 8; i++) {
 		sprintf(filename, "Border%s_%d.bmp", "U6", i + 1);

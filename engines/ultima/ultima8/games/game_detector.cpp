@@ -32,7 +32,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-bool GameDetector::detect(std::string path, GameInfo *info) {
+bool GameDetector::detect(Std::string path, GameInfo *info) {
 	FileSystem *fs = FileSystem::get_instance();
 	if (!fs->AddVirtualPath("@detect", path))
 		return false;
@@ -58,7 +58,7 @@ bool GameDetector::detect(std::string path, GameInfo *info) {
 	Pentagram::md5_file(ids, info->md5, 0);
 	delete ids;
 
-	std::string md5s = info->getPrintableMD5();
+	Std::string md5s = info->getPrintableMD5();
 
 	int i = 0;
 	while (Pentagram::md5table[i].md5) {
@@ -72,7 +72,7 @@ bool GameDetector::detect(std::string path, GameInfo *info) {
 	}
 
 	perr << "MD5-based game autodetection failed (" << md5s << "). "
-	     << std::endl << "Trying manual detection." << std::endl;
+	     << Std::endl << "Trying manual detection." << Std::endl;
 
 
 

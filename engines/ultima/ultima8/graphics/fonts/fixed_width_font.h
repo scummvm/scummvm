@@ -41,7 +41,7 @@ struct FixedWidthFont {
 
 	~FixedWidthFont();
 
-	static FixedWidthFont *Create(std::string iniroot);
+	static FixedWidthFont *Create(Std::string iniroot);
 };
 
 } // End of namespace Ultima8

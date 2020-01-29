@@ -92,7 +92,7 @@ bool PathfindingState::checkItem(Item *item, int xyRange, int zRange) {
 
 bool PathfindingState::checkHit(Actor *actor, Actor *target) {
 #if 0
-	pout << "Trying hit in direction " << actor->getDirToItemCentre(*target) << std::endl;
+	pout << "Trying hit in direction " << actor->getDirToItemCentre(*target) << Std::endl;
 #endif
 	AnimationTracker tracker;
 	if (!tracker.init(actor, Animation::attack,
@@ -121,11 +121,11 @@ Pathfinder::Pathfinder() {
 Pathfinder::~Pathfinder() {
 #if 1
 	pout << "~Pathfinder: " << nodelist.size() << " nodes, "
-	     << expandednodes << " expanded nodes in " << expandtime << "ms." << std::endl;
+	     << expandednodes << " expanded nodes in " << expandtime << "ms." << Std::endl;
 #endif
 
 	// clean up nodes
-	std::list<PathNode *>::iterator iter;
+	Std::list<PathNode *>::iterator iter;
 	for (iter = nodelist.begin(); iter != nodelist.end(); ++iter)
 		delete *iter;
 	nodelist.clear();
@@ -169,14 +169,14 @@ void Pathfinder::setTarget(Item *item, bool hit) {
 }
 
 bool Pathfinder::canReach() {
-	std::vector<PathfindingAction> path;
+	Std::vector<PathfindingAction> path;
 	return pathfind(path);
 }
 
 bool Pathfinder::alreadyVisited(int32 x, int32 y, int32 z) {
 	//! this may need optimization
 
-	std::list<PathfindingState>::iterator iter;
+	Std::list<PathfindingState>::iterator iter;
 
 	for (iter = visited.begin(); iter != visited.end(); ++iter)
 		if (iter->checkPoint(x, y, z, 8))
@@ -211,7 +211,7 @@ unsigned int Pathfinder::costHeuristic(PathNode *node) {
 	sqrddist += (targety - node->state.y + actor_yd / 2) *
 	            (targety - node->state.y + actor_yd / 2);
 
-	unsigned int dist = static_cast<unsigned int>(std::sqrt(sqrddist));
+	unsigned int dist = static_cast<unsigned int>(Std::sqrt(sqrddist));
 #else
 	// This calculates the distance to the target using only lines in
 	// the 8 available directions (instead of the straight line above)
@@ -372,7 +372,7 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 	             (newnode->state.z - oldnode->state.z));
 
 	unsigned int dist;
-	dist = static_cast<unsigned int>(std::sqrt(sqrddist));
+	dist = static_cast<unsigned int>(Std::sqrt(sqrddist));
 
 	int turn = 0;
 
@@ -400,7 +400,7 @@ void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
 	     << oldnode->state.x << "," << oldnode->state.y << ") to ("
 	     << newnode->state.x << "," << newnode->state.y
 	     << "), cost = " << newnode->cost << ", heurtotcost = "
-	     << newnode->heuristicTotalCost << std::endl;
+	     << newnode->heuristicTotalCost << Std::endl;
 #endif
 
 #ifdef DEBUG
@@ -501,7 +501,7 @@ void Pathfinder::expandNode(PathNode *node) {
 	}
 }
 
-bool Pathfinder::pathfind(std::vector<PathfindingAction> &path) {
+bool Pathfinder::pathfind(Std::vector<PathfindingAction> &path) {
 #if 0
 	pout << "Actor " << actor->getObjId();
 
@@ -509,7 +509,7 @@ bool Pathfinder::pathfind(std::vector<PathfindingAction> &path) {
 		pout << " pathfinding to item: ";
 		targetitem->dumpInfo();
 	} else {
-		pout << " pathfinding to (" << targetx << "," << targety << "," << targetz << ")" << std::endl;
+		pout << " pathfinding to (" << targetx << "," << targety << "," << targetz << ")" << Std::endl;
 	}
 #endif
 
@@ -550,7 +550,7 @@ bool Pathfinder::pathfind(std::vector<PathfindingAction> &path) {
 #if 0
 		pout << "Trying node: (" << node->state.x << "," << node->state.y
 		     << "," << node->state.z << ") target=(" << targetx << ","
-		     << targety << "," << targetz << ")" << std::endl;
+		     << targety << "," << targetz << ")" << Std::endl;
 #endif
 
 		if (checkTarget(node)) {
@@ -565,7 +565,7 @@ bool Pathfinder::pathfind(std::vector<PathfindingAction> &path) {
 			}
 #if 0
 			pout << "Pathfinder: path found (length = " << length << ")"
-			     << std::endl;
+			     << Std::endl;
 #endif
 
 			unsigned int i = length;
@@ -582,7 +582,7 @@ bool Pathfinder::pathfind(std::vector<PathfindingAction> &path) {
 #if 0
 				pout << "anim = " << node->state.lastanim << ", dir = "
 				     << node->state.direction << ", steps = "
-				     << node->stepsfromparent << std::endl;
+				     << node->stepsfromparent << Std::endl;
 #endif
 
 				//TODO: check how turns work
@@ -619,7 +619,7 @@ bool Pathfinder::pathfind(std::vector<PathfindingAction> &path) {
 	static int32 pftotaltime = 0;
 	pfcalls++;
 	pftotaltime += expandtime;
-	pout << "maxout average = " << (pftotaltime / pfcalls) << "ms." << std::endl;
+	pout << "maxout average = " << (pftotaltime / pfcalls) << "ms." << Std::endl;
 #endif
 
 	return false;
@@ -629,17 +629,17 @@ bool Pathfinder::pathfind(std::vector<PathfindingAction> &path) {
 #ifdef DEBUG
 void Pathfinder::ConCmd_visualDebug(const Console::ArgvType &argv) {
 	if (argv.size() != 2) {
-		pout << "Usage: Pathfinder::visualDebug objid" << std::endl;
-		pout << "Specify objid -1 to stop tracing." << std::endl;
+		pout << "Usage: Pathfinder::visualDebug objid" << Std::endl;
+		pout << "Specify objid -1 to stop tracing." << Std::endl;
 		return;
 	}
 	int p = strtol(argv[1].c_str(), 0, 0);
 	if (p == -1) {
 		visualdebug_actor = 0xFFFF;
-		pout << "Pathfinder: stopped visual tracing" << std::endl;
+		pout << "Pathfinder: stopped visual tracing" << Std::endl;
 	} else {
 		visualdebug_actor = (uint16)p;
-		pout << "Pathfinder: visually tracing actor " << visualdebug_actor << std::endl;
+		pout << "Pathfinder: visually tracing actor " << visualdebug_actor << Std::endl;
 	}
 }
 #endif

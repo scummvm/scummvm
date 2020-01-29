@@ -57,12 +57,12 @@ void ShapeArchive::cache(uint32 shapenum) {
 	// Auto detect format
 	if (!format) {
 		format = Shape::DetectShapeFormat(data, shpsize);
-		if (format) pout << "Detected Shape Format: " << format->name << std::endl;
+		if (format) pout << "Detected Shape Format: " << format->name << Std::endl;
 	}
 
 	if (!format) {
 		delete [] data;
-		perr << "Error: Unable to detect shape format for flex." << std::endl;
+		perr << "Error: Unable to detect shape format for flex." << Std::endl;
 		return;
 	}
 

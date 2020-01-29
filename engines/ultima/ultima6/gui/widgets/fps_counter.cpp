@@ -37,7 +37,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::string;
+using Std::string;
 
 FpsCounter::FpsCounter(Game *g) : GUI_Widget(NULL) {
 	game = g;

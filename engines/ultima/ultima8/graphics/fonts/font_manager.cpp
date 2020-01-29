@@ -91,7 +91,7 @@ Pentagram::Font *FontManager::getTTFont(unsigned int fontnum) {
 }
 
 
-Graphics::Font *FontManager::getTTF_Font(std::string filename, int pointsize) {
+Graphics::Font *FontManager::getTTF_Font(Std::string filename, int pointsize) {
 	TTFId id;
 	id.filename = filename;
 	id.pointsize = pointsize;
@@ -105,7 +105,7 @@ Graphics::Font *FontManager::getTTF_Font(std::string filename, int pointsize) {
 	IDataSource *fontids;
 	fontids = FileSystem::get_instance()->ReadFile("@data/" + filename);
 	if (!fontids) {
-		perr << "Failed to open TTF: @data/" << filename << std::endl;
+		perr << "Failed to open TTF: @data/" << filename << Std::endl;
 		return 0;
 	}
 
@@ -115,14 +115,14 @@ Graphics::Font *FontManager::getTTF_Font(std::string filename, int pointsize) {
 	Graphics::Font *font = Graphics::loadTTFFont(*rs, pointsize);
 
 	if (!font) {
-		perr << "Failed to open TTF: @data/" << filename << std::endl;
+		perr << "Failed to open TTF: @data/" << filename << Std::endl;
 		return 0;
 	}
 
 	ttf_fonts[id] = font;
 
 #ifdef DEBUG
-	pout << "Opened TTF: @data/" << filename << "." << std::endl;
+	pout << "Opened TTF: @data/" << filename << "." << Std::endl;
 #endif
 
 	return font;
@@ -139,7 +139,7 @@ void FontManager::setOverride(unsigned int fontnum, Pentagram::Font *newFont) {
 }
 
 
-bool FontManager::addTTFOverride(unsigned int fontnum, std::string filename,
+bool FontManager::addTTFOverride(unsigned int fontnum, Std::string filename,
                                  int pointsize, uint32 rgb, int bordersize,
                                  bool SJIS) {
 	Graphics::Font *f = getTTF_Font(filename, pointsize);
@@ -155,7 +155,7 @@ bool FontManager::addTTFOverride(unsigned int fontnum, std::string filename,
 	setOverride(fontnum, font);
 
 #ifdef DEBUG
-	pout << "Added TTF override for font " << fontnum << std::endl;
+	pout << "Added TTF override for font " << fontnum << Std::endl;
 #endif
 
 	return true;
@@ -187,14 +187,14 @@ bool FontManager::addJPOverride(unsigned int fontnum,
 	palman->updatedFont(fontpal);
 
 #ifdef DEBUG
-	pout << "Added JP override for font " << fontnum << std::endl;
+	pout << "Added JP override for font " << fontnum << Std::endl;
 #endif
 
 	return true;
 }
 
 
-bool FontManager::loadTTFont(unsigned int fontnum, std::string filename,
+bool FontManager::loadTTFont(unsigned int fontnum, Std::string filename,
                              int pointsize, uint32 rgb, int bordersize) {
 	Graphics::Font *f = getTTF_Font(filename, pointsize);
 	if (!f)

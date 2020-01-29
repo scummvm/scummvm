@@ -37,9 +37,9 @@ namespace Ultima {
 namespace Ultima6 {
 
 CustomSfxManager::CustomSfxManager(Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
-	std::string cfg_filename;
+	Std::string cfg_filename;
 
-	sfx_map = new std::map<uint16, uint16>();
+	sfx_map = new Std::map<uint16, uint16>();
 
 	config->pathFromValue("config/ultima6/sfxdir", "", custom_filepath);
 
@@ -53,7 +53,7 @@ CustomSfxManager::~CustomSfxManager() {
 }
 
 
-bool CustomSfxManager::loadSfxMapFile(std::string cfg_filename, std::map<uint16, uint16> *m) {
+bool CustomSfxManager::loadSfxMapFile(Std::string cfg_filename, Std::map<uint16, uint16> *m) {
 	char seps[] = ";\r\n";
 	char *token1;
 	char *token2;
@@ -89,7 +89,7 @@ bool CustomSfxManager::playSfx(SfxIdType sfx_id, uint8 volume) {
 
 
 bool CustomSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume) {
-	std::map < uint16, uint16 >::iterator it;
+	Std::map < uint16, uint16 >::iterator it;
 
 	it = sfx_map->find((uint16)sfx_id);
 	if (it != sfx_map->end()) {
@@ -103,7 +103,7 @@ bool CustomSfxManager::playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *hand
 void CustomSfxManager::playSoundSample(uint16 sample_num, Audio::SoundHandle *looping_handle, uint8 volume) {
 	Audio::AudioStream *stream = NULL;
 	Audio::SoundHandle handle;
-	std::string filename;
+	Std::string filename;
 	char wavefile[10]; // "nnnnn.wav\0"
 
 	sprintf(wavefile, "%d.wav", sample_num);

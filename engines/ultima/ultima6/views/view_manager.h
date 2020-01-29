@@ -51,7 +51,7 @@ class DraggableView;
 class SunMoonRibbon;
 class MDSkyStripWidget;
 
-using std::list;
+using Std::list;
 
 typedef enum { CURSOR_HEAD, CURSOR_NECK, CURSOR_CHEST, CURSOR_RIGHT_HAND, CURSOR_LEFT_HAND, CURSOR_RIGHT_RING, CURSOR_LEFT_RING, CURSOR_FEET,
                CURSOR_LEFT, CURSOR_RIGHT, CURSOR_COMBAT, CURSOR_CHECK, CURSOR_HEART, CURSOR_PARTY, CURSOR_INVENTORY
@@ -77,16 +77,16 @@ protected:
 
 	View *current_view;
 
-	std::list<DraggableView *> container_gumps;
-	std::list<DraggableView *> doll_gumps;
-	std::list<DraggableView *> gumps;
+	Std::list<DraggableView *> container_gumps;
+	Std::list<DraggableView *> doll_gumps;
+	Std::list<DraggableView *> gumps;
 
 	uint8 doll_next_party_member;
 
 	SunMoonRibbon *ribbon;
 	MDSkyStripWidget *mdSkyWidget;
 
-	std::string DollDataDirString;
+	Std::string DollDataDirString;
 
 public:
 
@@ -156,7 +156,7 @@ public:
 	unsigned int get_display_weight(float weight);
 
 // custom doll functions shared between DollWidget and DollViewGump
-	std::string getDollDataDirString();
+	Std::string getDollDataDirString();
 	Graphics::ManagedSurface *loadAvatarDollImage(Graphics::ManagedSurface *avatar_doll, bool orig = false);
 	Graphics::ManagedSurface *loadCustomActorDollImage(Graphics::ManagedSurface *actor_doll, uint8 actor_num, bool orig = false);
 	Graphics::ManagedSurface *loadGenericDollImage(bool orig);

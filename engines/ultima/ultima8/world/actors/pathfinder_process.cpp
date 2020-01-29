@@ -51,7 +51,7 @@ PathfinderProcess::PathfinderProcess(Actor *actor_, ObjId item_, bool hit) {
 
 	Item *item = getItem(item_);
 	if (!item) {
-		perr << "PathfinderProcess: non-existent target" << std::endl;
+		perr << "PathfinderProcess: non-existent target" << Std::endl;
 		// can't get there...
 		result = PATH_FAILED;
 		terminateDeferred();
@@ -73,7 +73,7 @@ PathfinderProcess::PathfinderProcess(Actor *actor_, ObjId item_, bool hit) {
 
 	if (!ok) {
 		perr << "PathfinderProcess: actor " << item_num
-		     << " failed to find path" << std::endl;
+		     << " failed to find path" << Std::endl;
 		// can't get there...
 		result = PATH_FAILED;
 		terminateDeferred();
@@ -104,7 +104,7 @@ PathfinderProcess::PathfinderProcess(Actor *actor_,
 
 	if (!ok) {
 		perr << "PathfinderProcess: actor " << item_num
-		     << " failed to find path" << std::endl;
+		     << " failed to find path" << Std::endl;
 		// can't get there...
 		result = PATH_FAILED;
 		terminateDeferred();
@@ -143,7 +143,7 @@ void PathfinderProcess::run() {
 		int32 curx, cury, curz;
 		Item *item = getItem(targetitem);
 		if (!item) {
-			perr << "PathfinderProcess: target missing" << std::endl;
+			perr << "PathfinderProcess: target missing" << Std::endl;
 			result = PATH_FAILED;
 			terminate();
 			return;
@@ -160,7 +160,7 @@ void PathfinderProcess::run() {
 	if (ok && currentstep >= path.size()) {
 		// done
 #if 0
-		pout << "PathfinderProcess: done" << std::endl;
+		pout << "PathfinderProcess: done" << Std::endl;
 #endif
 		result = PATH_OK;
 		terminate();
@@ -170,7 +170,7 @@ void PathfinderProcess::run() {
 	// try to take the next step
 
 #if 0
-	pout << "PathfinderProcess: trying step" << std::endl;
+	pout << "PathfinderProcess: trying step" << Std::endl;
 #endif
 
 	// if actor is still animating for whatever reason, wait until he stopped
@@ -178,7 +178,7 @@ void PathfinderProcess::run() {
 	// since the running animation may move the actor, which could break
 	// the found path.
 	if (actor->getActorFlags() & Actor::ACT_ANIMLOCK) {
-		perr << "PathfinderProcess: ANIMLOCK, waiting" << std::endl;
+		perr << "PathfinderProcess: ANIMLOCK, waiting" << Std::endl;
 		return;
 	}
 
@@ -190,7 +190,7 @@ void PathfinderProcess::run() {
 
 	if (!ok) {
 #if 0
-		pout << "PathfinderProcess: recalculating path" << std::endl;
+		pout << "PathfinderProcess: recalculating path" << Std::endl;
 #endif
 
 		// need to redetermine path
@@ -218,7 +218,7 @@ void PathfinderProcess::run() {
 		currentstep = 0;
 		if (!ok) {
 			perr << "PathfinderProcess: actor " << item_num
-			     << " failed to find path" << std::endl;
+			     << " failed to find path" << Std::endl;
 			// can't get there anymore
 			result = PATH_FAILED;
 			terminate();
@@ -228,7 +228,7 @@ void PathfinderProcess::run() {
 
 	if (currentstep >= path.size()) {
 #if 0
-		pout << "PathfinderProcess: done" << std::endl;
+		pout << "PathfinderProcess: done" << Std::endl;
 #endif
 		// done
 		result = PATH_OK;
@@ -242,7 +242,7 @@ void PathfinderProcess::run() {
 #if 0
 	pout << "PathfinderProcess(" << getPid() << "): taking step "
 	     << path[currentstep].action << "," << path[currentstep].direction
-	     << " (animpid=" << animpid << ")" << std::endl;
+	     << " (animpid=" << animpid << ")" << Std::endl;
 #endif
 	currentstep++;
 

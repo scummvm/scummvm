@@ -36,7 +36,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	CreditsGump();
-	CreditsGump(const std::string &text, int parskip = 24,
+	CreditsGump(const Std::string &text, int parskip = 24,
 	            uint32 _Flags = 0, int32 layer_ = LAYER_MODAL);
 	virtual ~CreditsGump(void);
 
@@ -44,7 +44,7 @@ public:
 	virtual void InitGump(Gump *newparent, bool take_focus = true);
 
 	// Set a configuration option to true when user watches entire sequence
-	void SetFlagWhenFinished(std::string configkey_) {
+	void SetFlagWhenFinished(Std::string configkey_) {
 		configkey = configkey_;
 	}
 
@@ -59,9 +59,9 @@ public:
 
 protected:
 
-	void extractLine(std::string &text_, char &modifier, std::string &line);
+	void extractLine(Std::string &text_, char &modifier, Std::string &line);
 
-	std::string text;
+	Std::string text;
 	int parskip;
 
 	enum CreditsState {
@@ -81,7 +81,7 @@ protected:
 	int currentsurface;
 	int currenty;
 
-	std::string configkey;
+	Std::string configkey;
 };
 
 } // End of namespace Ultima8

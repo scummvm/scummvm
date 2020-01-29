@@ -48,7 +48,7 @@ public:
 private:
 	virtual void saveData(ODataSource *ods);
 
-	std::vector<uint16> eggs;
+	Std::vector<uint16> eggs;
 };
 
 } // End of namespace Ultima8

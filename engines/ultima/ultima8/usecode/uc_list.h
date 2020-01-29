@@ -43,7 +43,7 @@ class ODataSource;
 // Question: does substractList remove _all_ occurences of elements or only 1?
 
 class UCList {
-	std::vector<uint8> elements;
+	Std::vector<uint8> elements;
 	unsigned int elementsize;
 	unsigned int size;
 
@@ -162,7 +162,7 @@ public:
 	bool load(IDataSource *ids, uint32 version);
 
 private:
-	std::string &getString(uint32 index);
+	Std::string &getString(uint32 index);
 };
 
 } // End of namespace Ultima8

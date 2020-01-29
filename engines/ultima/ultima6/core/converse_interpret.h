@@ -29,9 +29,9 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::string;
-using std::stack;
-using std::vector;
+using Std::string;
+using Std::stack;
+using Std::vector;
 
 /* Control and value opcodes for op() & evop() (U6) */
 #define U6OP_GT         0x81
@@ -150,7 +150,7 @@ protected:
 	vector<struct in_val_s> in; // control values (input/instruction)
 	uint32 in_start;
 	string text; // input text from script
-	vector<std::string> rstrings; // string value(s) returned by op
+	vector<Std::string> rstrings; // string value(s) returned by op
 	string ystring; // modified by SETNAME, accessed with "$Y"
 	uint8 decl_v; // declared/initialized variable number
 	uint8 decl_t; // declared variable type: 0x00=none,0xb2=int,0xb3=string
@@ -245,7 +245,7 @@ protected:
 	uint8 get_val_size(uint32 vi);
 	converse_value pop_val();
 	uint8 pop_val_size();
-	const std::string &get_text() {
+	const Std::string &get_text() {
 		return text;
 	}
 	void flush() {
@@ -270,7 +270,7 @@ protected:
 
 public:
 	virtual uint8 npc_num(uint32 n);//uint8 npc_num(uint32 n){return((n!=0xeb)?n:converse->npc_num);}
-	bool check_keywords(std::string keystr, std::string instr);
+	bool check_keywords(Std::string keystr, Std::string instr);
 	bool var_input() {
 		return (decl_t != 0x00);
 	}

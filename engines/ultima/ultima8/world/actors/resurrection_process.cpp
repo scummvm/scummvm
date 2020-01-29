@@ -70,7 +70,7 @@ void ResurrectionProcess::run() {
 	// reload stats
 	if (!a->loadMonsterStats()) {
 		perr << "ResurrectionProcess::run failed to reset stats for actor ("
-		     << a->getShape() << ")." << std::endl;
+		     << a->getShape() << ")." << Std::endl;
 	}
 
 	// go into combat mode

@@ -273,7 +273,7 @@ bool U6Lzw::decompress_buffer(unsigned char *source, uint32 source_length, unsig
 // -----------------
 // from file to file
 // -----------------
-unsigned char *U6Lzw::decompress_file(std::string filename, uint32 &destination_length) {
+unsigned char *U6Lzw::decompress_file(Std::string filename, uint32 &destination_length) {
 	unsigned char *source_buffer;
 	unsigned char *destination_buffer;
 	uint32 source_buffer_size;

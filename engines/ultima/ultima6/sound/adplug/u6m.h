@@ -41,13 +41,13 @@ public:
 
 
 
-	bool load(const std::string &filename);
+	bool load(const Std::string &filename);
 	bool update();
 	void rewind(int subsong);
 	float getrefresh();
 
-	std::string gettype() {
-		return std::string("Ultima 6 Music");
+	Std::string gettype() {
+		return Std::string("Ultima 6 Music");
 	};
 
 

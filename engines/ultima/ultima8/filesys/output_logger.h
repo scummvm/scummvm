@@ -34,7 +34,7 @@ class OutputLogger {
 	int         fd;             //< Original fd of file being redirected
 	Common::WriteStream *fileOld;       //< Duplicated stream that points to the original file
 
-	std::string filenameLog;    //< Name of log file
+	Std::string filenameLog;    //< Name of log file
 	Common::WriteStream *fileLog;       //< Stream for log file
 
 	int         fdPipeRead;     //< file descriptor to the read end of the pipe
@@ -45,7 +45,7 @@ class OutputLogger {
 //	static int SDLCALL sThreadMain(OutputLogger *instance) { return instance->ThreadMain(); }
 
 public:
-	OutputLogger(Common::WriteStream *file, const std::string &filename);   // Should be using unicode in this day and age
+	OutputLogger(Common::WriteStream *file, const Std::string &filename);   // Should be using unicode in this day and age
 	~OutputLogger(void);
 };
 

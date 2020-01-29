@@ -72,7 +72,7 @@ protected:
 
 	//! Paint a single stat
 	void PaintStat(RenderSurface *surf, unsigned int n,
-	               std::string text, int val);
+	               Std::string text, int val);
 
 	RenderedText *cached_text[14]; // constant!!
 	int cached_val[7]; // constant!!

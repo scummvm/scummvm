@@ -36,7 +36,7 @@ CPlayer *Cu6mPlayer::factory(Copl *newopl) {
 	return new Cu6mPlayer(newopl);
 }
 
-bool Cu6mPlayer::load(const std::string &filename) {
+bool Cu6mPlayer::load(const Std::string &filename) {
 	uint32 decompressed_filesize;
 	U6Lzw lzw;
 

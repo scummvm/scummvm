@@ -50,7 +50,7 @@ Dither::~Dither() {
 }
 
 bool Dither::load_data() {
-	std::string path;
+	Std::string path;
 	NuvieIOFileRead file;
 
 	config_get_path(config, "dither", path);
@@ -69,7 +69,7 @@ bool Dither::load_data() {
 }
 
 void Dither::set_mode() {
-	std::string str_dither_mode;
+	Std::string str_dither_mode;
 
 	config->value("config/general/dither_mode", str_dither_mode);
 

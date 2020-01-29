@@ -35,14 +35,14 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! create DirFile from path
-	explicit DirFile(const std::string &path);
+	explicit DirFile(const Std::string &path);
 	virtual ~DirFile();
 
-	virtual bool exists(const std::string &name);
+	virtual bool exists(const Std::string &name);
 
-	virtual uint8 *getObject(const std::string &name, uint32 *size = 0);
+	virtual uint8 *getObject(const Std::string &name, uint32 *size = 0);
 
-	virtual uint32 getSize(const std::string &name);
+	virtual uint32 getSize(const Std::string &name);
 
 	virtual uint32 getCount() {
 		return count;
@@ -51,7 +51,7 @@ public:
 protected:
 	bool readMetadata();
 
-	std::string path;
+	Std::string path;
 	uint32 count;
 };
 

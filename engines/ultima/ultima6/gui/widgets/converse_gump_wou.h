@@ -34,7 +34,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::list;
+using Std::list;
 
 
 class Configuration;
@@ -98,7 +98,7 @@ public:
 
 protected:
 
-	void input_add_string(std::string token_str);
+	void input_add_string(Std::string token_str);
 	virtual void process_page_break();
 	virtual uint8 get_input_font_color() {
 		return FONT_COLOR_WOU_CONVERSE_INPUT;

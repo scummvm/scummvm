@@ -47,12 +47,12 @@ typedef enum {
 	FORCE_MOVE
 } MovementStatus;
 
-std::string config_get_game_key(Configuration *config);
+Std::string config_get_game_key(Configuration *config);
 const char *get_game_tag(int game_type);
-void config_get_path(Configuration *config, std::string filename, std::string &path);
+void config_get_path(Configuration *config, Std::string filename, Std::string &path);
 uint8 get_game_type(const char *string);
 nuvie_game_t get_game_type(Configuration *config);
-void build_path(std::string path, std::string filename, std::string &full_path);
+void build_path(Std::string path, Std::string filename, Std::string &full_path);
 bool directory_exists(const char *directory);
 bool file_exists(const char *path);
 void print_b(DebugLevelType level, uint8 num);
@@ -69,7 +69,7 @@ void get_relative_dir(uint8 dir, sint16 *rel_x, sint16 *rel_y);
 const char *get_direction_name(uint8 dir);
 const char *get_direction_name(sint16 rel_x, sint16 rel_y);
 int str_bsearch(const char *str[], int max, const char *value);
-void stringToLower(std::string &str);
+void stringToLower(Std::string &str);
 /* Is point x,y within rect?
  */
 inline bool point_in_rect(uint16 x, uint16 y, Common::Rect *rect) {
@@ -98,11 +98,11 @@ inline uint32 divide_time(uint32 this_time, uint32 &last_time, uint32 *passed_ti
 	return (fraction);
 }
 
-int mkdir_recursive(std::string path, int mode);
+int mkdir_recursive(Std::string path, int mode);
 
 void draw_line_8bit(int sx, int sy, int ex, int ey, uint8 col, uint8 *pixels, uint16 w, uint16 h);
 
-bool string_i_compare(const std::string &s1, const std::string &s2);
+bool string_i_compare(const Std::string &s1, const Std::string &s2);
 
 void *nuvie_realloc(void *ptr, size_t size);
 
@@ -117,7 +117,7 @@ bool has_fmtowns_support(Configuration *config);
 uint16 wrap_signed_coord(sint16 coord, uint8 level);
 sint8 get_wrapped_rel_dir(sint16 p1, sint16 p2, uint8 level);
 
-std::string encode_xml_entity(const std::string &s);
+Std::string encode_xml_entity(const Std::string &s);
 
 } // End of namespace Ultima6
 } // End of namespace Ultima

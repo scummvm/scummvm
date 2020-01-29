@@ -249,7 +249,7 @@ bool VideoDialog::init() {
 	widget = (GUI_Widget *) new GUI_Text(colX[1], textY += row_h, 0, 0, 0, "Use custom actor tiles:", gui->get_font());
 	AddWidget(widget);
 	const char *const sprite_text[] = { "no", "yes", "default" };
-	std::string custom_tile_str;
+	Std::string custom_tile_str;
 	int custom_tiles;
 	config->value(config_get_game_key(config) + "/custom_actor_tiles", custom_tile_str, "default");
 	if (custom_tile_str == "default")

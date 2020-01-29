@@ -386,7 +386,7 @@ const char *Map::look(uint16 x, uint16 y, uint8 level) {
 
 
 bool Map::loadMap(TileManager *tm, ObjManager *om) {
-	std::string filename;
+	Std::string filename;
 	NuvieIOFileRead map_file;
 	NuvieIOFileRead chunks_file;
 	unsigned char *map_data;
@@ -480,8 +480,8 @@ bool Map::has_roof(uint16 x, uint16 y, uint8 level) {
 	return false;
 }
 
-std::string Map::getRoofDataFilename() {
-	std::string game_type, datadir, path, mapfile;
+Std::string Map::getRoofDataFilename() {
+	Std::string game_type, datadir, path, mapfile;
 
 	config->value("config/datadir", datadir, "");
 	config->value("config/GameID", game_type);
@@ -495,10 +495,10 @@ std::string Map::getRoofDataFilename() {
 	return mapfile;
 }
 
-std::string Map::getRoofTilesetFilename() {
-	std::string datadir;
-	std::string imagefile;
-	std::string path;
+Std::string Map::getRoofTilesetFilename() {
+	Std::string datadir;
+	Std::string imagefile;
+	Std::string path;
 
 	config->value("config/datadir", datadir, "");
 	build_path(datadir, "images", path);

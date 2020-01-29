@@ -80,7 +80,7 @@ public:
 	void resetTransforms();
 
 private:
-	std::vector<Pentagram::Palette *> palettes;
+	Std::vector<Pentagram::Palette *> palettes;
 	RenderSurface *rendersurface;
 
 	static PaletteManager *palettemanager;

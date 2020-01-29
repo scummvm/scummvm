@@ -75,7 +75,7 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 			// get Avatar's animation
 			AnimAction *anim = msf->getAnim(1, action);
 			if (!anim) {
-				perr << "Skipping wpnovlay action " << action << " because animation doesn't exist." << std::endl;
+				perr << "Skipping wpnovlay action " << action << " because animation doesn't exist." << Std::endl;
 				continue;
 			}
 
@@ -91,7 +91,7 @@ void WpnOvlayDat::load(RawArchive *overlaydat) {
 			for (unsigned int type = 0; type < typecount; type++) {
 				awo->overlay[type].dircount = dircount;
 				awo->overlay[type].frames =
-				    new std::vector<WeaponOverlayFrame>[dircount];
+				    new Std::vector<WeaponOverlayFrame>[dircount];
 				for (unsigned int dir = 0; dir < dircount; dir++) {
 					awo->overlay[type].frames[dir].resize(animlength);
 					for (unsigned int frame = 0; frame < animlength; frame++) {

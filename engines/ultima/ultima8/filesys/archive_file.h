@@ -52,7 +52,7 @@ public:
 	//! If the Flex is not named, name must be an integer with
 	//!  an optional extension
 	//! \param name name of object to check for
-	virtual bool exists(const std::string &name) = 0;
+	virtual bool exists(const Std::string &name) = 0;
 
 
 	//! Get object from file; returns NULL if index is invalid.
@@ -64,10 +64,10 @@ public:
 
 	//! Get named object from file; returns NULL if name is invalid.
 	//! Must delete the returned buffer afterwards.
-	//! See also exists(std::string name)
+	//! See also exists(Std::string name)
 	//! \param name name of object to fetch
 	//! \param size if non-NULL, size of object is stored in *size
-	virtual uint8 *getObject(const std::string &name, uint32 *size = 0) = 0;
+	virtual uint8 *getObject(const Std::string &name, uint32 *size = 0) = 0;
 
 
 	//! Get size of object; returns zero if index is invalid.
@@ -76,9 +76,9 @@ public:
 	virtual uint32 getSize(uint32 index) = 0;
 
 	//! Get size of named object; returns zero if name is invalid
-	//! See also exists(std::string name)
+	//! See also exists(Std::string name)
 	//! \param index index of object to get size of
-	virtual uint32 getSize(const std::string &name) = 0;
+	virtual uint32 getSize(const Std::string &name) = 0;
 
 	//! Get object as an IDataSource
 	//! Delete the IDataSource afterwards; that will delete the data as well
@@ -86,7 +86,7 @@ public:
 
 	//! Get named object as an IDataSource
 	//! Delete the IDataSource afterwards; that will delete the data as well
-	IDataSource *getDataSource(const std::string &name, bool is_text = false);
+	IDataSource *getDataSource(const Std::string &name, bool is_text = false);
 
 	//! Get upper bound for number of objects.
 	//! In an indexed file this is (probably) the highest index plus one,
@@ -105,7 +105,7 @@ public:
 	virtual bool isNamed() const = 0;
 
 protected:
-	static bool extractIndexFromName(const std::string &name, uint32 &index);
+	static bool extractIndexFromName(const Std::string &name, uint32 &index);
 
 	bool valid;
 };

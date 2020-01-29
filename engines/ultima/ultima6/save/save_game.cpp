@@ -81,7 +81,7 @@ void SaveGame::init(ObjManager *obj_manager) {
 
 
 bool SaveGame::load_new() {
-	std::string filename;
+	Std::string filename;
 	U6Lzw lzw;
 	NuvieIOBuffer buf;
 	unsigned char *data;
@@ -134,7 +134,7 @@ bool SaveGame::load_new() {
 }
 
 bool SaveGame::load_original() {
-	std::string path, objlist_filename, objblk_filename;
+	Std::string path, objlist_filename, objblk_filename;
 	unsigned char *data;
 	char x, y;
 	uint16 len;
@@ -430,7 +430,7 @@ void SaveGame::update_objlist_for_new_game() {
 }
 
 void SaveGame::update_objlist_for_new_game_u6() {
-	std::string name = "";
+	Std::string name = "";
 
 	config->value("config/newgamedata/name", name, "Avatar");
 	objlist.seek(0xf00);
@@ -476,7 +476,7 @@ void SaveGame::update_objlist_for_new_game_u6() {
 }
 
 void SaveGame::update_objlist_for_new_game_se() {
-	std::string name = "";
+	Std::string name = "";
 
 	config->value("config/newgamedata/name", name, "Avatar");
 	objlist.seek(0xf00);
@@ -507,7 +507,7 @@ void SaveGame::update_objlist_for_new_game_se() {
 }
 
 void SaveGame::update_objlist_for_new_game_md() {
-	std::string name = "";
+	Std::string name = "";
 
 	int gender;
 	config->value("config/newgamedata/gender", gender, 0);

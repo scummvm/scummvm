@@ -58,10 +58,10 @@ public:
 	virtual ~U6Shape();
 
 	bool init(uint16 w, uint16 h, uint16 hx = 0, uint16 hy = 0);
-	virtual bool load(std::string filename);
+	virtual bool load(Std::string filename);
 	bool load(U6Lib_n *file, uint32 index);
 	virtual bool load(unsigned char *buf);
-	bool load_from_lzc(std::string filename, uint32 idx, uint32 sub_idx);
+	bool load_from_lzc(Std::string filename, uint32 idx, uint32 sub_idx);
 	bool load_WoU_background(Configuration *config, nuvie_game_t game_type);
 
 	unsigned char *get_data();

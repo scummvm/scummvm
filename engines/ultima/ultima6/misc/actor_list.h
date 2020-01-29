@@ -31,8 +31,8 @@ namespace Ultima6 {
 
 class Actor;
 
-typedef std::vector<Actor *> ActorList;
-typedef std::vector<Actor *>::iterator ActorIterator;
+typedef Std::vector<Actor *> ActorList;
+typedef Std::vector<Actor *>::iterator ActorIterator;
 
 } // End of namespace Ultima6
 } // End of namespace Ultima

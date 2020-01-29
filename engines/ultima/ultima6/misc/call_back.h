@@ -41,7 +41,7 @@ typedef enum {
 	EFFECT_CB_COMPLETE,      /* effect has finished */
 
 	CB_DATA_READY,           /* some data is ready to be retrieved (data=char)*/
-	MSGSCROLL_CB_TEXT_READY, /* text is ready to be retrieved (data=std::string)*/
+	MSGSCROLL_CB_TEXT_READY, /* text is ready to be retrieved (data=Std::string)*/
 	CB_INPUT_CANCELED        /* input canceled by user */
 } CallbackMessage;
 

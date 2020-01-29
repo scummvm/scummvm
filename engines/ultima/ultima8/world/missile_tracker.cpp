@@ -150,8 +150,8 @@ bool MissileTracker::isPathClear() {
 		end[2] = start[2] + sz;
 
 		// Do the sweep test
-		std::list<CurrentMap::SweepItem> collisions;
-		std::list<CurrentMap::SweepItem>::iterator it;
+		Std::list<CurrentMap::SweepItem> collisions;
+		Std::list<CurrentMap::SweepItem>::iterator it;
 		map->sweepTest(start, end, dims, item->getShapeInfo()->flags, objid,
 		               false, &collisions);
 

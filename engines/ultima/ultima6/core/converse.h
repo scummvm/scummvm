@@ -51,7 +51,7 @@ class ConverseInterpret;
 class ConverseSpeech;
 class ConvScript;
 
-using std::string;
+using Std::string;
 
 
 #define CONVERSE_GUMP_DEFAULT   0
@@ -114,7 +114,7 @@ class Converse {
 	Actor *npc;
 	uint8 npc_num;
 	uint8 script_num; //this could differ from npc_num when talking to guards or wisps etc.
-	std::string _name, _desc;
+	Std::string _name, _desc;
 
 	bool active; // running npc script? (either paused or unpaused)
 	bool need_input; // waiting for text input
@@ -142,7 +142,7 @@ public:
 	          GameClock *c, Player *p, ViewManager *v, ObjManager *o);
 
 	uint32 get_script_num(uint8 a);
-	void load_conv(const std::string &convfilename);
+	void load_conv(const Std::string &convfilename);
 	uint32 load_conv(uint8 a);
 	void unload_conv() {
 		delete src;
@@ -171,16 +171,16 @@ public:
 
 	bool input();
 	void print(const char *s = NULL);
-	const std::string &get_input()  {
+	const Std::string &get_input()  {
 		return in_str;
 	}
-	const std::string &get_output() {
+	const Std::string &get_output() {
 		return out_str;
 	}
-	void set_input(std::string s) {
+	void set_input(Std::string s) {
 		in_str = s;
 	}
-	void set_output(std::string s) {
+	void set_output(Std::string s) {
 		out_str = s;
 	}
 

@@ -52,13 +52,13 @@ public:
 	};
 
 	typedef void (*ConfigCallback)(Pentagram::istring key);
-	typedef std::map<Common::String, std::vector<ConfigCallback>, Common::IgnoreCase_Hash > Callbacks;
+	typedef Std::map<Common::String, Std::vector<ConfigCallback>, Common::IgnoreCase_Hash > Callbacks;
 
 	//! read a config file. Multiple files may be read. Order is important.
 	//! \param fname The file to read
 	//! \param readonly If true, don't write to this file's tree (or the file)
 	//! \return true if succesful
-	bool readConfigFile(std::string fname, bool readonly = false);
+	bool readConfigFile(Std::string fname, bool readonly = false);
 
 	//! write all (writable) config files
 	void write();
@@ -67,14 +67,14 @@ public:
 	bool exists(Pentagram::istring key, Domain dom = DOM_CURRENT);
 
 	//! get value
-	bool get(Pentagram::istring key, std::string &ret, Domain dom = DOM_CURRENT);
+	bool get(Pentagram::istring key, Std::string &ret, Domain dom = DOM_CURRENT);
 	//! get value
 	bool get(Pentagram::istring key, int &ret, Domain dom = DOM_CURRENT);
 	//! get value
 	bool get(Pentagram::istring key, bool &ret, Domain dom = DOM_CURRENT);
 
 	//! set value
-	void set(Pentagram::istring key, std::string value, Domain dom = DOM_CURRENT);
+	void set(Pentagram::istring key, Std::string value, Domain dom = DOM_CURRENT);
 	//! set value
 	void set(Pentagram::istring key, const char *value, Domain dom = DOM_CURRENT);
 	//! set value
@@ -86,7 +86,7 @@ public:
 	void unset(Pentagram::istring key, Domain dom = DOM_CURRENT);
 
 	//! set default value
-	void setDefault(Pentagram::istring key, std::string value);
+	void setDefault(Pentagram::istring key, Std::string value);
 	//! set default value
 	void setDefault(Pentagram::istring key, const char *value);
 	//! set default value
@@ -105,12 +105,12 @@ public:
 	void unregisterCallback(Pentagram::istring key, ConfigCallback callback);
 
 	//! list all games
-	std::vector<Pentagram::istring> listGames();
+	Std::vector<Pentagram::istring> listGames();
 
 	//! list all keys in a game data section
 	//! \param section The section to return setkeys of
 	//! \return the keys. They have no guaranteed order.
-	std::vector<Pentagram::istring> listDataKeys(Pentagram::istring section);
+	Std::vector<Pentagram::istring> listDataKeys(Pentagram::istring section);
 
 	//! list all key-value pairs in the given section.
 	//! \param section The section to list
@@ -125,7 +125,7 @@ private:
 	void setupScummVMSettings();
 
 	Callbacks callbacks;
-	std::vector<Pentagram::istring> domains;
+	Std::vector<Pentagram::istring> domains;
 
 	Domain currentDomain;
 

@@ -43,7 +43,7 @@ public:
 /**
  * Factory function for an QueuingAudioStream.
  */
-RandomCollectionAudioStream *makeRandomCollectionAudioStream(int rate, bool stereo, std::vector<Audio::RewindableAudioStream *>streams, DisposeAfterUse::Flag disposeAfterUse);
+RandomCollectionAudioStream *makeRandomCollectionAudioStream(int rate, bool stereo, Std::vector<Audio::RewindableAudioStream *>streams, DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace U6Audio
 } // End of namespace Ultima6

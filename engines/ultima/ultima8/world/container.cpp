@@ -55,7 +55,7 @@ Container::~Container() {
 
 	// if we don't have an objid, we _must_ delete children
 	if (objid == 0xFFFF) {
-		std::list<Item *>::iterator iter;
+		Std::list<Item *>::iterator iter;
 		for (iter = contents.begin(); iter != contents.end(); ++iter) {
 			delete(*iter);
 		}
@@ -66,7 +66,7 @@ Container::~Container() {
 ObjId Container::assignObjId() {
 	ObjId id = Item::assignObjId();
 
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		(*iter)->assignObjId();
 		(*iter)->setParent(id);
@@ -78,7 +78,7 @@ ObjId Container::assignObjId() {
 void Container::clearObjId() {
 	Item::clearObjId();
 
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		// make sure we don't clear the ObjId of an Actor
 		assert((*iter)->getObjId() >= 256);
@@ -156,7 +156,7 @@ bool Container::addItem(Item *item, bool checkwghtvol) {
 
 
 bool Container::removeItem(Item *item) {
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		if (*iter == item) {
@@ -168,7 +168,7 @@ bool Container::removeItem(Item *item) {
 }
 
 bool Container::moveItemToEnd(Item *item) {
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		if (*iter == item) {
@@ -216,7 +216,7 @@ void Container::destroyContents() {
 void Container::setFlagRecursively(uint32 mask) {
 	setFlag(mask);
 
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		(*iter)->setFlag(mask);
 		Container *cont = p_dynamic_cast<Container *>(*iter);
@@ -248,7 +248,7 @@ uint32 Container::getTotalWeight() {
 		weight = 300;
 	}
 
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		weight += (*iter)->getTotalWeight();
@@ -266,7 +266,7 @@ uint32 Container::getCapacity() {
 uint32 Container::getContentVolume() {
 	uint32 volume = 0;
 
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		volume += (*iter)->getVolume();
@@ -277,7 +277,7 @@ uint32 Container::getContentVolume() {
 
 void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
                                 uint32 scriptsize, bool recurse) {
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		// check item against loopscript
 		if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
@@ -302,13 +302,13 @@ void Container::dumpInfo() {
 	Item::dumpInfo();
 
 	pout << "Volume: " << getContentVolume() << "/" << getCapacity()
-	     << ", total weight: " << getTotalWeight() << std::endl;
+	     << ", total weight: " << getTotalWeight() << Std::endl;
 }
 
 void Container::saveData(ODataSource *ods) {
 	Item::saveData(ods);
 	ods->write4(static_cast<uint32>(contents.size()));
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		(*iter)->save(ods);
 	}

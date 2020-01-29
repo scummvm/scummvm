@@ -51,7 +51,7 @@ public:
 
 	//! create Archive with a single directory input source
 	//! Will create DirFile.
-	explicit Archive(const std::string &path);
+	explicit Archive(const Std::string &path);
 
 	virtual ~Archive();
 
@@ -65,7 +65,7 @@ public:
 	bool addSource(IDataSource *ids);
 
 	//! add directory input source (as the constructor)
-	bool addSource(const std::string &path);
+	bool addSource(const Std::string &path);
 
 
 	//! Cache all objects
@@ -97,7 +97,7 @@ protected:
 	uint32 getRawSize(uint32 index);
 
 private:
-	std::vector<ArchiveFile *> sources;
+	Std::vector<ArchiveFile *> sources;
 
 	ArchiveFile *findArchiveFile(uint32 index);
 };

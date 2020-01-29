@@ -97,7 +97,7 @@ uint32 FlexFile::getSize(uint32 index) {
 	return length;
 }
 
-bool FlexFile::nameToIndex(const std::string &name, uint32 &index) {
+bool FlexFile::nameToIndex(const Std::string &name, uint32 &index) {
 	return extractIndexFromName(name, index);
 }
 

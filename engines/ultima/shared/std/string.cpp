@@ -24,7 +24,7 @@
 #include "common/algorithm.h"
 
 namespace Ultima {
-namespace std {
+namespace Std {
 
 const char *const endl = "\n";
 
@@ -150,5 +150,5 @@ void string::resize(size_t count) {
 	}
 }
 
-} // End of namespace std
+} // End of namespace Std
 } // End of namespace Ultima

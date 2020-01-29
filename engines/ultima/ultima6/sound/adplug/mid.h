@@ -34,22 +34,22 @@ public:
 	CmidPlayer(Copl *newopl);
 	~CmidPlayer();
 
-	bool load(const std::string &filename);
-	bool load(std::string &filename, int song_index);
-	//bool load(const std::string &filename, const CFileProvider &fp);
+	bool load(const Std::string &filename);
+	bool load(Std::string &filename, int song_index);
+	//bool load(const Std::string &filename, const CFileProvider &fp);
 	bool update();
 	void rewind(int subsong);
 	float getrefresh();
 
-	std::string gettype();
-	std::string gettitle() {
-		return std::string(title);
+	Std::string gettype();
+	Std::string gettitle() {
+		return Std::string(title);
 	}
-	std::string getauthor() {
-		return std::string(author);
+	Std::string getauthor() {
+		return Std::string(author);
 	}
-	std::string getdesc() {
-		return std::string(remarks);
+	Std::string getdesc() {
+		return Std::string(remarks);
 	}
 	unsigned int getinstruments() {
 		return tins;

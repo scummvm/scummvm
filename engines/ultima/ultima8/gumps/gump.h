@@ -64,7 +64,7 @@ protected:
 
 	//! The Gump list for this gump. This will contain all child gumps,
 	//! as well as all gump widgets.
-	std::list<Gump *>    children;      // List of all gumps
+	Std::list<Gump *>    children;      // List of all gumps
 	Gump               *focus_child;    // The child that has focus
 
 	uint16              notifier;       // Process to notify when we're closing

@@ -32,7 +32,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeRenderedText, RenderedText)
 
 
-ShapeRenderedText::ShapeRenderedText(std::list<PositionedText> &lines_,
+ShapeRenderedText::ShapeRenderedText(Std::list<PositionedText> &lines_,
                                      int width_, int height_, int vlead_,
                                      ShapeFont *font_)
 	: lines(lines_), font(font_) {
@@ -48,7 +48,7 @@ ShapeRenderedText::~ShapeRenderedText() {
 void ShapeRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmasked*/) {
 	// TODO support masking here???
 
-	std::list<PositionedText>::iterator iter;
+	Std::list<PositionedText>::iterator iter;
 
 	for (iter = lines.begin(); iter != lines.end(); ++iter) {
 		int line_x = x + iter->dims.x;
@@ -79,7 +79,7 @@ void ShapeRenderedText::drawBlended(RenderSurface *surface, int x, int y,
                                     uint32 col, bool /*destmasked*/) {
 	// TODO Support masking here ????
 
-	std::list<PositionedText>::iterator iter;
+	Std::list<PositionedText>::iterator iter;
 
 	for (iter = lines.begin(); iter != lines.end(); ++iter) {
 		int line_x = x + iter->dims.x;

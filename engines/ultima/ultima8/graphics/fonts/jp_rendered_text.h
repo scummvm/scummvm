@@ -34,7 +34,7 @@ class ShapeFont;
 
 class JPRenderedText : public RenderedText {
 public:
-	JPRenderedText(std::list<PositionedText> &lines,
+	JPRenderedText(Std::list<PositionedText> &lines,
 	               int width, int height, int vlead, ShapeFont *font,
 	               unsigned int fontnum);
 	virtual ~JPRenderedText();
@@ -45,7 +45,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 protected:
-	std::list<PositionedText> lines;
+	Std::list<PositionedText> lines;
 	ShapeFont *font;
 	unsigned int fontnum;
 };

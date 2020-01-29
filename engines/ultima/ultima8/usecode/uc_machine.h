@@ -51,7 +51,7 @@ public:
 
 	void execProcess(UCProcess *proc);
 
-	std::string &getString(uint16 str);
+	Std::string &getString(uint16 str);
 	UCList *getList(uint16 l);
 
 	void freeString(uint16 s);
@@ -100,8 +100,8 @@ private:
 
 	BitSet *globals;
 
-	std::map<uint16, UCList *> listHeap;
-	std::map<uint16, std::string> stringHeap;
+	Std::map<uint16, UCList *> listHeap;
+	Std::map<uint16, Std::string> stringHeap;
 
 	uint16 assignString(const char *str);
 	uint16 assignList(UCList *l);
@@ -120,9 +120,9 @@ private:
 	bool tracing_enabled;
 	bool trace_all;
 	bool trace_events;
-	std::set<ObjId> trace_ObjIDs;
-	std::set<ProcId> trace_PIDs;
-	std::set<uint16> trace_classes;
+	Std::set<ObjId> trace_ObjIDs;
+	Std::set<ProcId> trace_PIDs;
+	Std::set<uint16> trace_classes;
 
 	inline bool trace_show(ProcId pid, ObjId objid, uint16 ucclass) {
 		if (!tracing_enabled) return false;

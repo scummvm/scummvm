@@ -42,7 +42,7 @@ HIDManager::HIDManager() {
 }
 
 HIDManager::~HIDManager() {
-	std::vector<Console::ArgvType *>::iterator it;
+	Std::vector<Console::ArgvType *>::iterator it;
 	con->Print(MM_INFO, "Destroying HIDManager...\n");
 
 	for (it = _commands.begin(); it != _commands.end(); ++it) {
@@ -69,7 +69,7 @@ bool HIDManager::handleEvent(HID_Key key, HID_Events events) {
 }
 
 void HIDManager::resetBindings() {
-	std::vector<Console::ArgvType *>::iterator it;
+	Std::vector<Console::ArgvType *>::iterator it;
 
 	_bindings.clear();
 
@@ -136,7 +136,7 @@ void HIDManager::saveBindings() {
 void HIDManager::bind(const Pentagram::istring &control, const Console::ArgvType &argv) {
 	HID_Key key = HID_LAST;
 	HID_Events event = HID_EVENT_DEPRESS;
-	std::vector<Pentagram::istring> ctrl_argv;
+	Std::vector<Pentagram::istring> ctrl_argv;
 
 	Pentagram::StringToArgv(control, ctrl_argv);
 	if (ctrl_argv.size() == 1) {
@@ -161,7 +161,7 @@ void HIDManager::bind(HID_Key key, HID_Events event, const Console::ArgvType &ar
 
 	Console::ArgvType *command = 0;
 	if (! argv.empty()) {
-		std::vector<Console::ArgvType *>::iterator it;
+		Std::vector<Console::ArgvType *>::iterator it;
 		for (it = _commands.begin(); it != _commands.end(); ++it) {
 			if (argv == (**it)) {
 				// Change from iterator to pointer
@@ -197,7 +197,7 @@ void HIDManager::ConCmd_bind(const Console::ArgvType &argv) {
 	Console::ArgvType::const_iterator it;
 	if (argv.size() < 3) {
 		if (! argv.empty())
-			pout << "Usage: " << argv[0] << " <key> <action> [<arg> ...]: binds a key or button to an action" << std::endl;
+			pout << "Usage: " << argv[0] << " <key> <action> [<arg> ...]: binds a key or button to an action" << Std::endl;
 		return;
 	}
 	HIDManager *hid = HIDManager::get_instance();
@@ -215,7 +215,7 @@ void HIDManager::ConCmd_bind(const Console::ArgvType &argv) {
 void HIDManager::ConCmd_unbind(const Console::ArgvType &argv) {
 	if (argv.size() != 2) {
 		if (! argv.empty())
-			pout << "Usage: " << argv[0] << " <key>: unbinds a key or button" << std::endl;
+			pout << "Usage: " << argv[0] << " <key>: unbinds a key or button" << Std::endl;
 		return;
 	}
 	HIDManager *hid = HIDManager::get_instance();
@@ -248,10 +248,10 @@ void HIDManager::listBindings() {
 		Pentagram::ArgvToString(*(it->_value), command);
 
 		if (event == HID_EVENT_DEPRESS) {
-			pout << HID_GetKeyName((HID_Key)key) << " = " << command << std::endl;
+			pout << HID_GetKeyName((HID_Key)key) << " = " << command << Std::endl;
 		} else {
 			pout << HID_GetEventsName((HID_Events)event);
-			pout << ' ' << HID_GetKeyName((HID_Key) key) << " = " << command << std::endl;
+			pout << ' ' << HID_GetKeyName((HID_Key) key) << " = " << command << Std::endl;
 		}
 	}
 }

@@ -72,7 +72,7 @@ void GumpNotifyProcess::run() {
 
 void GumpNotifyProcess::dumpInfo() {
 	Process::dumpInfo();
-	pout << " gump: " << gump << std::endl;
+	pout << " gump: " << gump << Std::endl;
 }
 
 void GumpNotifyProcess::saveData(ODataSource *ods) {

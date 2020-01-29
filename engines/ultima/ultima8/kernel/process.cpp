@@ -53,7 +53,7 @@ void Process::terminate() {
 	Kernel *kernel = Kernel::get_instance();
 
 	// wake up waiting processes
-	for (std::vector<ProcId>::iterator i = waiting.begin();
+	for (Std::vector<ProcId>::iterator i = waiting.begin();
 	        i != waiting.end(); ++i) {
 		Process *p = kernel->getProcess(*i);
 		if (p)
@@ -110,13 +110,13 @@ void Process::dumpInfo() {
 	if (flags & PROC_RUNPAUSED) pout << "R";
 	if (!waiting.empty()) {
 		pout << ", notify: ";
-		for (std::vector<ProcId>::iterator i = waiting.begin();
+		for (Std::vector<ProcId>::iterator i = waiting.begin();
 		        i != waiting.end(); ++i) {
 			if (i != waiting.begin()) pout << ", ";
 			pout << *i;
 		}
 	}
-	pout << std::endl;
+	pout << Std::endl;
 }
 
 void Process::save(ODataSource *ods) {

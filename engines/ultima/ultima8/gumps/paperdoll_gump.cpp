@@ -129,8 +129,8 @@ void PaperdollGump::Close(bool no_del) {
 	Container *c = getContainer(owner);
 	if (!c) return; // Container gone!?
 
-	std::list<Item *> &contents = c->contents;
-	std::list<Item *>::iterator iter = contents.begin();
+	Std::list<Item *> &contents = c->contents;
+	Std::list<Item *>::iterator iter = contents.begin();
 	while (iter != contents.end()) {
 		Item *item = *iter;
 		++iter;
@@ -145,7 +145,7 @@ void PaperdollGump::Close(bool no_del) {
 }
 
 void PaperdollGump::PaintStat(RenderSurface *surf, unsigned int n,
-                              std::string text, int val) {
+                              Std::string text, int val) {
 	assert(n < 7); // constant!
 
 	Pentagram::Font *font, *descfont;

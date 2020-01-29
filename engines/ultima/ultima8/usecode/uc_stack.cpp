@@ -43,7 +43,7 @@ bool UCStack::load(IDataSource *ids, uint32 version) {
 	buf = new uint8[size];
 #else
 	if (size > sizeof(buf_array)) {
-		perr << "Error: UCStack size mismatch (buf_array too small)" << std::endl;
+		perr << "Error: UCStack size mismatch (buf_array too small)" << Std::endl;
 		return false;
 	}
 	buf = buf_array;

@@ -73,7 +73,7 @@ public:
 	bool canReach();
 
 	//! pathfind. If true, the found path is returned in path
-	bool pathfind(std::vector<PathfindingAction> &path);
+	bool pathfind(Std::vector<PathfindingAction> &path);
 
 #ifdef DEBUG
 	//! "visualDebug" console command
@@ -92,10 +92,10 @@ protected:
 
 	int32 actor_xd, actor_yd, actor_zd;
 
-	std::list<PathfindingState> visited;
-	std::priority_queue<PathNode *, std::vector<PathNode *>, PathNodeCmp> nodes;
+	Std::list<PathfindingState> visited;
+	Std::priority_queue<PathNode *, Std::vector<PathNode *>, PathNodeCmp> nodes;
 
-	std::list<PathNode *> nodelist;
+	Std::list<PathNode *> nodelist;
 
 	bool alreadyVisited(int32 x, int32 y, int32 z);
 	void newNode(PathNode *oldnode, PathfindingState &state, unsigned int steps);

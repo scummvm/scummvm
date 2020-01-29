@@ -70,10 +70,10 @@ U8Game::~U8Game() {
 
 bool U8Game::loadFiles() {
 	// Load palette
-	pout << "Load Palette" << std::endl;
+	pout << "Load Palette" << Std::endl;
 	IDataSource *pf = FileSystem::get_instance()->ReadFile("@game/static/u8pal.pal");
 	if (!pf) {
-		perr << "Unabl-e to load static/u8pal.pal." << std::endl;
+		perr << "Unabl-e to load static/u8pal.pal." << Std::endl;
 		return false;
 	}
 	pf->seek(4); // seek past header
@@ -82,7 +82,7 @@ bool U8Game::loadFiles() {
 	PaletteManager::get_instance()->load(PaletteManager::Pal_Game, *pf, xfds);
 	delete pf;
 
-	pout << "Load GameData" << std::endl;
+	pout << "Load GameData" << Std::endl;
 	GameData::get_instance()->loadU8Data();
 
 	return true;
@@ -91,7 +91,7 @@ bool U8Game::loadFiles() {
 bool U8Game::startGame() {
 	// NOTE: assumes the entire engine has been reset!
 
-	pout << "Starting new Ultima 8 game." << std::endl;
+	pout << "Starting new Ultima 8 game." << Std::endl;
 
 	ObjectManager *objman = ObjectManager::get_instance();
 
@@ -104,26 +104,26 @@ bool U8Game::startGame() {
 
 	IDataSource *saveds = FileSystem::get_instance()->ReadFile("@game/savegame/u8save.000");
 	if (!saveds) {
-		perr << "Unable to load savegame/u8save.000." << std::endl;
+		perr << "Unable to load savegame/u8save.000." << Std::endl;
 		return false;
 	}
 	U8SaveFile *u8save = new U8SaveFile(saveds);
 
 	IDataSource *nfd = u8save->getDataSource("NONFIXED.DAT");
 	if (!nfd) {
-		perr << "Unable to load savegame/u8save.000/NONFIXED.DAT." << std::endl;
+		perr << "Unable to load savegame/u8save.000/NONFIXED.DAT." << Std::endl;
 		return false;
 	}
 	World::get_instance()->loadNonFixed(nfd); // deletes nfd
 
 	IDataSource *icd = u8save->getDataSource("ITEMCACH.DAT");
 	if (!icd) {
-		perr << "Unable to load savegame/u8save.000/ITEMCACH.DAT." << std::endl;
+		perr << "Unable to load savegame/u8save.000/ITEMCACH.DAT." << Std::endl;
 		return false;
 	}
 	IDataSource *npcd = u8save->getDataSource("NPCDATA.DAT");
 	if (!npcd) {
-		perr << "Unable to load savegame/u8save.000/NPCDATA.DAT." << std::endl;
+		perr << "Unable to load savegame/u8save.000/NPCDATA.DAT." << Std::endl;
 		return false;
 	}
 
@@ -148,7 +148,7 @@ bool U8Game::startGame() {
 
 void U8Game::ConCmd_cheatItems(const Console::ArgvType &argv) {
 	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		pout << "Cheats are disabled" << std::endl;
+		pout << "Cheats are disabled" << Std::endl;
 		return;
 	}
 	MainActor *av = getMainActor();
@@ -295,7 +295,7 @@ void U8Game::ConCmd_cheatItems(const Console::ArgvType &argv) {
 
 void U8Game::ConCmd_cheatEquip(const Console::ArgvType &argv) {
 	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		pout << "Cheats are disabled" << std::endl;
+		pout << "Cheats are disabled" << Std::endl;
 		return;
 	}
 	MainActor *av = getMainActor();
@@ -341,7 +341,7 @@ void U8Game::ConCmd_cheatEquip(const Console::ArgvType &argv) {
 	av->setEquip(item, false);
 }
 
-bool U8Game::startInitialUsecode(const std::string &savegame) {
+bool U8Game::startInitialUsecode(const Std::string &savegame) {
 	Process *proc = new StartU8Process(savegame);
 	Kernel::get_instance()->addProcess(proc);
 
@@ -353,18 +353,18 @@ ProcId U8Game::playIntroMovie() {
 	GameInfo *gameinfo = CoreApp::get_instance()->getGameInfo();
 	char langletter = gameinfo->getLanguageFileLetter();
 	if (!langletter) {
-		perr << "U8Game::playIntro: Unknown language." << std::endl;
+		perr << "U8Game::playIntro: Unknown language." << Std::endl;
 		return 0;
 	}
 
-	std::string filename = "@game/static/";
+	Std::string filename = "@game/static/";
 	filename += langletter;
 	filename += "intro.skf";
 
 	FileSystem *filesys = FileSystem::get_instance();
 	IDataSource *skf = filesys->ReadFile(filename);
 	if (!skf) {
-		pout << "U8Game::playIntro: movie not found." << std::endl;
+		pout << "U8Game::playIntro: movie not found." << Std::endl;
 		return 0;
 	}
 
@@ -373,11 +373,11 @@ ProcId U8Game::playIntroMovie() {
 }
 
 ProcId U8Game::playEndgameMovie() {
-	std::string filename = "@game/static/endgame.skf";
+	Std::string filename = "@game/static/endgame.skf";
 	FileSystem *filesys = FileSystem::get_instance();
 	IDataSource *skf = filesys->ReadFile(filename);
 	if (!skf) {
-		pout << "U8Game::playEndgame: movie not found." << std::endl;
+		pout << "U8Game::playEndgame: movie not found." << Std::endl;
 		return 0;
 	}
 
@@ -389,20 +389,20 @@ void U8Game::playCredits() {
 	GameInfo *gameinfo = CoreApp::get_instance()->getGameInfo();
 	char langletter = gameinfo->getLanguageFileLetter();
 	if (!langletter) {
-		perr << "U8Game::playCredits: Unknown language." << std::endl;
+		perr << "U8Game::playCredits: Unknown language." << Std::endl;
 		return;
 	}
-	std::string filename = "@game/static/";
+	Std::string filename = "@game/static/";
 	filename += langletter;
 	filename += "credits.dat";
 
 	IDataSource *ids = FileSystem::get_instance()->ReadFile(filename);
 	if (!ids) {
 		perr << "U8Game::playCredits: error opening credits file: "
-		     << filename << std::endl;
+		     << filename << Std::endl;
 		return;
 	}
-	std::string text = getCreditText(ids);
+	Std::string text = getCreditText(ids);
 	delete ids;
 
 	MusicProcess *musicproc = MusicProcess::get_instance();
@@ -415,15 +415,15 @@ void U8Game::playCredits() {
 }
 
 void U8Game::playQuotes() {
-	std::string filename = "@game/static/quotes.dat";
+	Std::string filename = "@game/static/quotes.dat";
 
 	IDataSource *ids = FileSystem::get_instance()->ReadFile(filename);
 	if (!ids) {
 		perr << "U8Game::playCredits: error opening credits file: "
-		     << filename << std::endl;
+		     << filename << Std::endl;
 		return;
 	}
-	std::string text = getCreditText(ids);
+	Std::string text = getCreditText(ids);
 	delete ids;
 
 	MusicProcess *musicproc = MusicProcess::get_instance();
@@ -439,7 +439,7 @@ void U8Game::writeSaveInfo(ODataSource *ods) {
 	MainActor *av = getMainActor();
 	int32 x, y, z;
 
-	std::string avname = av->getName();
+	Std::string avname = av->getName();
 	uint8 namelength = static_cast<uint8>(avname.size());
 	ods->write1(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)
@@ -475,8 +475,8 @@ void U8Game::writeSaveInfo(ODataSource *ods) {
 }
 
 
-std::string U8Game::getCreditText(IDataSource *ids) {
-	std::string text;
+Std::string U8Game::getCreditText(IDataSource *ids) {
+	Std::string text;
 	unsigned int size = ids->getSize();
 	text.resize(size);
 	for (unsigned int i = 0; i < size; ++i) {

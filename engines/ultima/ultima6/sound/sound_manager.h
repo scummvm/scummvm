@@ -70,7 +70,7 @@ public:
 	void musicPlay(const char *filename, uint16 song_num = 0);
 
 	void musicStop(); // SB-X
-	Audio::SoundHandle playTownsSound(std::string filename, uint16 sample_num);
+	Audio::SoundHandle playTownsSound(Std::string filename, uint16 sample_num);
 	bool isSoundPLaying(Audio::SoundHandle handle);
 
 	bool playSfx(uint16 sfx_id, bool async = false);

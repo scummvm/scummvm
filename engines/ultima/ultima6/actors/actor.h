@@ -32,10 +32,10 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::map;
-using std::list;
-using std::string;
-using std::vector;
+using Std::map;
+using Std::list;
+using Std::string;
+using Std::vector;
 
 #define ACTOR_NO_READIABLE_LOCATION -1
 #define ACTOR_HEAD   0
@@ -298,7 +298,7 @@ protected:
 	uint16 sched_pos;
 
 	list<Obj *> surrounding_objects; //used for multi-tile actors.
-	std::map<uint16, uint16> *custom_tile_tbl;
+	Std::map<uint16, uint16> *custom_tile_tbl;
 
 public:
 

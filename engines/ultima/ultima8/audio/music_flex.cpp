@@ -33,7 +33,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(MusicFlex, Pentagram::Archive)
 
 MusicFlex::MusicFlex(IDataSource *ds) : Archive(ds) {
 	songs = 0;
-	std::memset(info, 0, sizeof(SongInfo *) * 128);
+	Std::memset(info, 0, sizeof(SongInfo *) * 128);
 	loadSongInfo();
 }
 
@@ -49,8 +49,8 @@ MusicFlex::~MusicFlex() {
 }
 
 MusicFlex::SongInfo::SongInfo() : num_measures(0), loop_jump(0) {
-	std::memset(filename, 0, 16);
-	std::memset(transitions, 0, 128 * sizeof(int *));
+	Std::memset(filename, 0, 16);
+	Std::memset(transitions, 0, 128 * sizeof(int *));
 }
 
 MusicFlex::SongInfo::~SongInfo() {
@@ -89,7 +89,7 @@ void MusicFlex::loadSongInfo() {
 		error("Unable to load song info from sound/music.flx");
 	}
 	IBufferDataSource ds(buf, size);
-	std::string line;
+	Std::string line;
 
 	// Read first section till we hit a #
 	for (;;) {
@@ -98,12 +98,12 @@ void MusicFlex::loadSongInfo() {
 		// We have hit the end of the section
 		if (line.at(0) == '#') break;
 
-		std::string::size_type  begIdx, endIdx;
+		Std::string::size_type  begIdx, endIdx;
 
 		// Find the first not space, which will get us the name
 		begIdx = line.find_first_not_of(' ');
 		endIdx = line.find_first_of(' ', begIdx);
-		std::string name = line.substr(begIdx, endIdx - begIdx);
+		Std::string name = line.substr(begIdx, endIdx - begIdx);
 
 		// Now find the first not space after the name, which will get us the num
 		begIdx = line.find_first_not_of(' ', endIdx);
@@ -113,12 +113,12 @@ void MusicFlex::loadSongInfo() {
 		// Now number of measures
 		begIdx = line.find_first_not_of(' ', endIdx);
 		endIdx = line.find_first_of(' ', begIdx);
-		int measures = std::atoi(line.substr(begIdx, endIdx - begIdx).c_str());
+		int measures = Std::atoi(line.substr(begIdx, endIdx - begIdx).c_str());
 
 		// Now finally loop_jump
 		begIdx = line.find_first_not_of(' ', endIdx);
 		endIdx = line.find_first_of(' ', begIdx);
-		int loop_jump = std::atoi(line.substr(begIdx, endIdx - begIdx).c_str());
+		int loop_jump = Std::atoi(line.substr(begIdx, endIdx - begIdx).c_str());
 
 		// Uh oh
 		if (num < 0 || num > 127)
@@ -129,7 +129,7 @@ void MusicFlex::loadSongInfo() {
 
 		info[num] = new SongInfo();
 
-		std::strncpy(info[num]->filename, name.c_str(), 16);
+		Std::strncpy(info[num]->filename, name.c_str(), 16);
 		info[num]->num_measures = measures;
 		info[num]->loop_jump = loop_jump;
 	};
@@ -158,17 +158,17 @@ void MusicFlex::loadSongInfo() {
 		// We have hit the end of the section
 		if (line.at(0) == '#') break;
 
-		std::string::size_type  begIdx, endIdx;
+		Std::string::size_type  begIdx, endIdx;
 
 		// Get 'from' name
 		begIdx = line.find_first_not_of(' ');
 		endIdx = line.find_first_of(' ', begIdx);
-		std::string from = line.substr(begIdx, endIdx - begIdx);
+		Std::string from = line.substr(begIdx, endIdx - begIdx);
 
 		// Get 'to' name
 		begIdx = line.find_first_not_of(' ', endIdx);
 		endIdx = line.find_first_of(' ', begIdx);
-		std::string to = line.substr(begIdx, endIdx - begIdx);
+		Std::string to = line.substr(begIdx, endIdx - begIdx);
 
 		// Find index of from name
 		int fi;
@@ -197,10 +197,10 @@ void MusicFlex::loadSongInfo() {
 			begIdx = line.find_first_not_of(' ', endIdx);
 			endIdx = line.find_first_of(' ', begIdx);
 
-			if (begIdx == std::string::npos)
+			if (begIdx == Std::string::npos)
 				error("Invalid Section 4 song info data. Unable to read transitions for all measures");
 
-			std::string trans = line.substr(begIdx, endIdx - begIdx);
+			Std::string trans = line.substr(begIdx, endIdx - begIdx);
 			const char *str = trans.c_str();
 
 			int num = 0;

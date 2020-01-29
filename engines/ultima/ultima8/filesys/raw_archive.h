@@ -39,7 +39,7 @@ public:
 	RawArchive() : Archive() { }
 	explicit RawArchive(ArchiveFile *af) : Archive(af) { }
 	explicit RawArchive(IDataSource *ids) : Archive(ids) { }
-	explicit RawArchive(const std::string &path) : Archive(path) { }
+	explicit RawArchive(const Std::string &path) : Archive(path) { }
 
 	virtual ~RawArchive();
 
@@ -61,7 +61,7 @@ public:
 	virtual IDataSource *get_datasource(uint32 index);
 
 protected:
-	std::vector<uint8 *> objects;
+	Std::vector<uint8 *> objects;
 };
 
 } // End of namespace Ultima8

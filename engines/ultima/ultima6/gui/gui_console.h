@@ -39,7 +39,7 @@ class GUI_Console : public GUI_Widget {
 	GUI_Font *font;
 	uint16 num_cols;
 	uint16 num_rows;
-	std::list<std::string> data;
+	Std::list<Std::string> data;
 
 public:
 	GUI_Console(uint16 x, uint16 y, uint16 w, uint16 h);
@@ -56,7 +56,7 @@ public:
 	GUI_status MouseUp(int x, int y, Shared::MouseButton button);
 	GUI_status MouseMotion(int x, int y, uint8 state);
 
-	virtual void AddLine(std::string line);
+	virtual void AddLine(Std::string line);
 
 protected:
 

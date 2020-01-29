@@ -48,7 +48,7 @@ Shape::Shape(const uint8 *data_, uint32 size_, const ConvertShapeFormat *format,
 
 	if (!format) {
 		// Should be fatal?
-		perr << "Error: Unable to detect shape format" << std::endl;
+		perr << "Error: Unable to detect shape format" << Std::endl;
 		return;
 	}
 
@@ -75,7 +75,7 @@ Shape::Shape(IDataSource *src, const ConvertShapeFormat *format)
 
 	if (!format) {
 		// Should be fatal?
-		perr << "Error: Unable to detect shape format" << std::endl;
+		perr << "Error: Unable to detect shape format" << Std::endl;
 		return;
 	}
 
@@ -154,7 +154,7 @@ void Shape::LoadGenericFormat(const uint8 *data_, uint32 size_, const ConvertSha
 	if (format->bytes_ident) {
 		uint8 *ident = new uint8[format->bytes_ident];
 		ds.read(ident, format->bytes_ident);
-		bool match = std::memcmp(ident, format->ident, format->bytes_ident) == 0;
+		bool match = Std::memcmp(ident, format->ident, format->bytes_ident) == 0;
 		delete[] ident;
 
 		if (!match) {

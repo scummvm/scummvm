@@ -83,7 +83,7 @@ SavegameReader::State SavegameReader::isValid() const {
 		return SAVE_VALID;
 }
 
-IDataSource *SavegameReader::getDataSource(const std::string &name) {
+IDataSource *SavegameReader::getDataSource(const Std::string &name) {
 	assert(_index.contains(name));
 
 	const FileEntry &fe = _index[name];
@@ -130,7 +130,7 @@ bool SavegameWriter::finish() {
 	return true;
 }
 
-bool SavegameWriter::writeFile(const std::string &name, const uint8 *data, uint32 size) {
+bool SavegameWriter::writeFile(const Std::string &name, const uint8 *data, uint32 size) {
 	assert(name.size() <= 11);
 	_index.push_back(FileEntry());
 
@@ -142,7 +142,7 @@ bool SavegameWriter::writeFile(const std::string &name, const uint8 *data, uint3
 	return true;
 }
 
-bool SavegameWriter::writeFile(const std::string &name, OAutoBufferDataSource *ods) {
+bool SavegameWriter::writeFile(const Std::string &name, OAutoBufferDataSource *ods) {
 	return writeFile(name, ods->getBuf(), ods->getSize());
 }
 

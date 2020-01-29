@@ -481,7 +481,7 @@ uint16 HitEffect::callback(uint16 msg, CallBack *caller, void *msg_data) {
 	return (0);
 }
 
-TextEffect::TextEffect(std::string text) { // default somewhat centered on player for cheat messages
+TextEffect::TextEffect(Std::string text) { // default somewhat centered on player for cheat messages
 	MapWindow *map_window = game->get_map_window();
 	if (!map_window || map_window->Status() != WIDGET_VISIBLE) // scripted sequence like intro and intro menu
 		return;
@@ -495,7 +495,7 @@ TextEffect::TextEffect(std::string text) { // default somewhat centered on playe
 /*** TextEffect ***/
 /* Print Text to MapWindow for duration
  */
-TextEffect::TextEffect(std::string text, MapCoord location) {
+TextEffect::TextEffect(Std::string text, MapCoord location) {
 	add_anim(new TextAnim(text, location, 1500));
 }
 
@@ -842,7 +842,7 @@ void MissileEffect::hit_blocking() {
 
 /*** SleepEffect ***/
 /* The TimedAdvance is started after the fade-out completes. */
-SleepEffect::SleepEffect(std::string until)
+SleepEffect::SleepEffect(Std::string until)
 	: timer(NULL),
 	  stop_hour(0),
 	  stop_minute(0),
@@ -1332,10 +1332,10 @@ void TileFadeEffect::add_actor_anim() {
 	Tile *from = actor->get_tile();
 	add_tile_anim(loc, from);
 
-	std::list<Obj *> *surrounding_objs = actor->get_surrounding_obj_list();
+	Std::list<Obj *> *surrounding_objs = actor->get_surrounding_obj_list();
 
 	if (surrounding_objs) {
-		std::list<Obj *>::iterator obj_iter;
+		Std::list<Obj *>::iterator obj_iter;
 		for (obj_iter = surrounding_objs->begin(); obj_iter != surrounding_objs->end(); obj_iter++) {
 			add_obj_anim(*obj_iter);
 		}
@@ -1437,10 +1437,10 @@ void TileBlackFadeEffect::add_actor_anim() {
 	Tile *from = actor->get_tile();
 	add_tile_anim(loc, from);
 
-	std::list<Obj *> *surrounding_objs = actor->get_surrounding_obj_list();
+	Std::list<Obj *> *surrounding_objs = actor->get_surrounding_obj_list();
 
 	if (surrounding_objs) {
-		std::list<Obj *>::iterator obj_iter;
+		Std::list<Obj *>::iterator obj_iter;
 		for (obj_iter = surrounding_objs->begin(); obj_iter != surrounding_objs->end(); obj_iter++) {
 			add_obj_anim(*obj_iter);
 		}
@@ -1675,7 +1675,7 @@ TextInputEffect::TextInputEffect(const char *allowed_chars, bool can_escape) {
 /* The effect ends when this is called. (if input is correct) */
 uint16 TextInputEffect::callback(uint16 msg, CallBack *caller, void *data) {
 	if (msg == MESG_INPUT_READY) {
-		input = *(std::string *)data;
+		input = *(Std::string *)data;
 		game->unpause_world();
 		delete_self();
 	}

@@ -31,13 +31,13 @@ namespace Ultima {
 namespace Ultima8 {
 
 class ScrollGump : public ModalGump {
-	std::string text;
+	Std::string text;
 	ObjId textwidget;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ScrollGump();
-	ScrollGump(ObjId owner, std::string msg);
+	ScrollGump(ObjId owner, Std::string msg);
 	virtual ~ScrollGump();
 
 	// Go to the next page on mouse click

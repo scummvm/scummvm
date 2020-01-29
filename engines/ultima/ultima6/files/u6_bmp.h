@@ -39,7 +39,7 @@ public:
 	U6Bmp();
 	~U6Bmp();
 
-	bool load(std::string filename);
+	bool load(Std::string filename);
 
 };
 

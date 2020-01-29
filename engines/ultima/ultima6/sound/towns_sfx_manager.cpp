@@ -72,7 +72,7 @@ TownsSfxManager::~TownsSfxManager() {
 }
 
 void TownsSfxManager::loadSound1Dat() {
-	std::string filename;
+	Std::string filename;
 	U6Lzw decompressor;
 	U6Lib_n lib;
 	NuvieIOBuffer iobuf;
@@ -97,7 +97,7 @@ void TownsSfxManager::loadSound1Dat() {
 	}
 
 	//Fire SFX is made up of three individual samples played in a random sequence
-	std::vector<Audio::RewindableAudioStream *> streams;
+	Std::vector<Audio::RewindableAudioStream *> streams;
 	streams.push_back(new FMtownsDecoderStream(sounds1_dat[6].buf, sounds1_dat[6].len));
 	streams.push_back(new FMtownsDecoderStream(sounds1_dat[7].buf, sounds1_dat[7].len));
 	streams.push_back(new FMtownsDecoderStream(sounds1_dat[8].buf, sounds1_dat[8].len));

@@ -43,7 +43,7 @@ MsgText::MsgText() {
 	color = 0;
 }
 
-MsgText::MsgText(std::string new_string, Font *f) {
+MsgText::MsgText(Std::string new_string, Font *f) {
 	s.assign(new_string);
 	font = f;
 	color = 0;
@@ -55,7 +55,7 @@ MsgText::MsgText(std::string new_string, Font *f) {
 MsgText::~MsgText() {
 }
 
-void MsgText::append(std::string new_string) {
+void MsgText::append(Std::string new_string) {
 	s.append(new_string);
 }
 
@@ -74,7 +74,7 @@ uint16 MsgText::getDisplayWidth() {
 }
 
 MsgLine::~MsgLine() {
-	std::list<MsgText *>::iterator iter;
+	Std::list<MsgText *>::iterator iter;
 
 	for (iter = text.begin(); iter != text.end(); iter++) {
 		delete *iter;
@@ -127,7 +127,7 @@ uint32 MsgLine::length() {
 // gets the MsgText object that contains the text at line position pos
 MsgText *MsgLine::get_text_at_pos(uint16 pos) {
 	uint16 i;
-	std::list<MsgText *>::iterator iter;
+	Std::list<MsgText *>::iterator iter;
 
 	if (pos > total_length)
 		return NULL;
@@ -144,7 +144,7 @@ MsgText *MsgLine::get_text_at_pos(uint16 pos) {
 
 uint16 MsgLine::get_display_width() {
 	uint16 len = 0;
-	std::list<MsgText *>::iterator iter;
+	Std::list<MsgText *>::iterator iter;
 	for (iter = text.begin(); iter != text.end() ; iter++) {
 		MsgText *token = *iter;
 
@@ -243,8 +243,8 @@ MsgScroll::MsgScroll(Configuration *cfg, Font *f) : GUI_Widget(NULL, 0, 0, 0, 0)
 }
 
 MsgScroll::~MsgScroll() {
-	std::list<MsgLine *>::iterator msg_line;
-	std::list<MsgText *>::iterator msg_text;
+	Std::list<MsgLine *>::iterator msg_line;
+	Std::list<MsgText *>::iterator msg_text;
 
 // delete the scroll buffer
 	for (msg_line = msg_buf.begin(); msg_line != msg_buf.end(); msg_line++)
@@ -257,7 +257,7 @@ MsgScroll::~MsgScroll() {
 }
 
 bool MsgScroll::init(const char *player_name) {
-	std::string prompt_string;
+	Std::string prompt_string;
 
 	prompt_string.append(player_name);
 	if (game_type == NUVIE_GAME_U6) {
@@ -288,7 +288,7 @@ void MsgScroll::set_scroll_dimensions(uint16 w, uint16 h) {
 	display_pos = 0;
 }
 
-int MsgScroll::print(std::string format, ...) {
+int MsgScroll::print(Std::string format, ...) {
 
 	va_list ap;
 	int printed = 0;
@@ -350,23 +350,23 @@ void MsgScroll::display_fmt_string(const char *format, ...) {
 	display_string(buf);
 }
 
-void MsgScroll::display_string(std::string s, uint16 length, uint8 lang_num) {
+void MsgScroll::display_string(Std::string s, uint16 length, uint8 lang_num) {
 
 }
 
-void MsgScroll::display_string(std::string s, bool include_on_map_window) {
+void MsgScroll::display_string(Std::string s, bool include_on_map_window) {
 	display_string(s, font, include_on_map_window);
 }
 
-void MsgScroll::display_string(std::string s, uint8 color, bool include_on_map_window) {
+void MsgScroll::display_string(Std::string s, uint8 color, bool include_on_map_window) {
 	display_string(s, font, color, include_on_map_window);
 }
 
-void MsgScroll::display_string(std::string s, Font *f, bool include_on_map_window) {
+void MsgScroll::display_string(Std::string s, Font *f, bool include_on_map_window) {
 	display_string(s, f, font_color, include_on_map_window);
 }
 
-void MsgScroll::display_string(std::string s, Font *f, uint8 color, bool include_on_map_window) {
+void MsgScroll::display_string(Std::string s, Font *f, uint8 color, bool include_on_map_window) {
 	MsgText *msg_text;
 
 	if (s.empty())
@@ -547,7 +547,7 @@ bool MsgScroll::is_garg_font() {
 }
 
 void MsgScroll::clear_scroll() {
-	std::list<MsgLine *>::iterator iter;
+	Std::list<MsgLine *>::iterator iter;
 
 	for (iter = msg_buf.begin(); iter != msg_buf.end(); iter++) {
 		MsgLine *line = *iter;
@@ -660,7 +660,7 @@ void MsgScroll::set_input_mode(bool state, const char *allowed, bool can_escape,
 		char *user_data = callback_user_data;
 		cancel_input_request(); // clear originals (callback may request again)
 
-		std::string input_str = input_buf;
+		Std::string input_str = input_buf;
 		requestor->set_user_data(user_data); // use temp requestor/user_data
 		requestor->callback(MSGSCROLL_CB_TEXT_READY, this, &input_str);
 	}
@@ -871,7 +871,7 @@ GUI_status MsgScroll::MouseWheel(sint32 x, sint32 y) {
 
 GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
 	uint16 i;
-	std::string token_str;
+	Std::string token_str;
 
 	if (page_break) { // any click == scroll-to-end
 		process_page_break();
@@ -909,11 +909,11 @@ GUI_status MsgScroll::MouseUp(int x, int y, Shared::MouseButton button) {
 	return (GUI_PASS);
 }
 
-std::string MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {
+Std::string MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {
 	uint16 i;
 	sint32 buf_x, buf_y;
 	MsgText *token = NULL;
-	std::list<MsgLine *>::iterator iter;
+	Std::list<MsgLine *>::iterator iter;
 
 	buf_x = (x - area.left) / 8;
 	buf_y = (y - area.top) / 8;
@@ -947,7 +947,7 @@ std::string MsgScroll::get_token_string_at_pos(uint16 x, uint16 y) {
 
 void MsgScroll::Display(bool full_redraw) {
 	uint16 i;
-	std::list<MsgLine *>::iterator iter;
+	Std::list<MsgLine *>::iterator iter;
 	MsgLine *msg_line = NULL;
 
 
@@ -989,7 +989,7 @@ void MsgScroll::Display(bool full_redraw) {
 
 inline void MsgScroll::drawLine(Screen *theScreen, MsgLine *msg_line, uint16 line_y) {
 	MsgText *token;
-	std::list<MsgText *>::iterator iter;
+	Std::list<MsgText *>::iterator iter;
 	uint16 total_length = 0;
 
 	for (iter = msg_line->text.begin(); iter != msg_line->text.end() ; iter++) {
@@ -1075,9 +1075,9 @@ bool MsgScroll::has_input() {
 	return false;
 }
 
-std::string MsgScroll::get_input() {
+Std::string MsgScroll::get_input() {
 // MsgScroll sets input_mode to false when it receives Common::KEYCODE_ENTER
-	std::string s;
+	Std::string s;
 
 	if (input_mode == false) {
 		s.assign(input_buf);

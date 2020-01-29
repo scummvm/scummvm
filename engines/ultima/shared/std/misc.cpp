@@ -24,7 +24,7 @@
 #include "common/algorithm.h"
 
 namespace Ultima {
-namespace std {
+namespace Std {
 
 void memset(void *data, byte val, size_t count) {
 	::memset(data, val, count);
@@ -103,5 +103,5 @@ void free(void *&p) {
 	p = 0;
 }
 
-} // End of namespace std
+} // End of namespace Std
 } // End of namespace Ultima

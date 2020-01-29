@@ -29,26 +29,26 @@
 namespace Ultima {
 namespace Ultima8 {
 
-int FileSystem::ListFiles(const std::string mask, FileList &files) {
+int FileSystem::ListFiles(const Std::string mask, FileList &files) {
 	// TODO: Figure out if this is for standard filesystem or saves
 #ifdef TODO
 	glob_t globres;
-	std::string name(mask);
+	Std::string name(mask);
 
 	// get the 'root' (@u8 or whatever) stub
-	const std::string rootpath(name.substr(0, name.find('/')));
+	const Std::string rootpath(name.substr(0, name.find('/')));
 
 	// munge the path to a 'real' one.
 	if (!rewrite_virtual_path(name)) {
 		perr << "Warning: FileSystem sandbox violation when accessing:"
-		     << std::endl << "\t" << mask << std::endl;
+		     << Std::endl << "\t" << mask << Std::endl;
 		return -1;
 	}
 
 #if 0
-	pout << "Root: " << rootpath << std::endl;
-	pout << name << "\t" << name.size() << std::endl;
-	pout << mask << '\t' << mask.size() << std::endl;
+	pout << "Root: " << rootpath << Std::endl;
+	pout << name << "\t" << name.size() << Std::endl;
+	pout << mask << '\t' << mask.size() << Std::endl;
 #endif
 
 	// calculate the difference in length between the real path, the
@@ -60,15 +60,15 @@ int FileSystem::ListFiles(const std::string mask, FileList &files) {
 	switch (err) {
 	case 0:  //OK
 		for (unsigned int i = 0; i < globres.gl_pathc; i++) {
-			std::string newfname(globres.gl_pathv[i]);
+			Std::string newfname(globres.gl_pathv[i]);
 #if 0
-			pout << newfname << std::endl;
+			pout << newfname << Std::endl;
 #endif
 			newfname = rootpath + newfname.substr(newplen);
 			// If the OS uses anything other then / as a path seperator,
 			// they probably need to swap it back here...
 #if 0
-			pout << newfname << std::endl;
+			pout << newfname << Std::endl;
 #endif
 			files.push_back(newfname);
 		}
@@ -77,7 +77,7 @@ int FileSystem::ListFiles(const std::string mask, FileList &files) {
 	case 3:  //no matches
 		return 0;
 	default: //error
-		perr << "Glob error " << err << std::endl;
+		perr << "Glob error " << err << Std::endl;
 		return err;
 	}
 #else

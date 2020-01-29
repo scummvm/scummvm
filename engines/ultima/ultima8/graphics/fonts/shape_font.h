@@ -60,16 +60,16 @@ public:
 		hlead = hl;
 	}
 
-	virtual void getStringSize(const std::string &text,
+	virtual void getStringSize(const Std::string &text,
 	                           int &width, int &height);
 
-	virtual RenderedText *renderText(const std::string &text,
+	virtual RenderedText *renderText(const Std::string &text,
 	                                 unsigned int &remaining,
 	                                 int width = 0, int height = 0,
 	                                 TextAlign align = TEXT_LEFT,
 	                                 bool u8specials = false,
-	                                 std::string::size_type cursor
-	                                 = std::string::npos);
+	                                 Std::string::size_type cursor
+	                                 = Std::string::npos);
 
 	ENABLE_RUNTIME_CLASSTYPE()
 };

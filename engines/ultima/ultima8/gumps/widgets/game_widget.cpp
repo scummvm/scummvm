@@ -58,18 +58,18 @@ void GameWidget::InitGump(Gump *newparent, bool take_focus) {
 	w->InitGump(this, false);
 
 	// FIXME: localize these strings
-	std::string gamename = "Game:";
+	Std::string gamename = "Game:";
 	gamename += " ";
 	gamename += info->name;
 	w = new TextWidget(65, 29, gamename, false, 0, 350, 180);
 	w->InitGump(this, false);
 
-	std::string path = "Path:";
+	Std::string path = "Path:";
 	path += " ";
 	w = new TextWidget(65, 50, path, false, 0, 350, 180);
 	w->InitGump(this, false);
 
-	std::string version = info->getPrintableVersion();
+	Std::string version = info->getPrintableVersion();
 	w = new TextWidget(360, 70, version, false, 2, 70, 0, Font::TEXT_RIGHT);
 	w->InitGump(this, false);
 
@@ -167,7 +167,7 @@ void GameWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*scaled
 	surf->Fill32(0xFF404040, 13, 104, 87, 1);
 
 	unsigned int rem;
-	std::string button = "Play Game";
+	Std::string button = "Play Game";
 	RenderedText *t = font->renderText(button, rem, 0, 0);
 	t->draw(surf, 19, 99);
 	delete t;

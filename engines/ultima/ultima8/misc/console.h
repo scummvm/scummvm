@@ -251,7 +251,7 @@ public:
 	//
 
 	typedef Pentagram::istring ArgsType;
-	typedef std::vector<ArgsType> ArgvType;
+	typedef Std::vector<ArgsType> ArgvType;
 	typedef void (*Function)(const ArgvType &argv);
 
 	//! Add a command to the console
@@ -328,7 +328,7 @@ private:
 	ArgsType                    commandBuffer;
 	int                         commandCursorPos;
 	bool                        commandInsert;
-	std::vector<ArgsType>       commandHistory;
+	Std::vector<ArgsType>       commandHistory;
 	int                         commandHistoryPos;
 
 	typedef Common::HashMap<Common::String, Function> CommandsMap;
@@ -346,11 +346,11 @@ extern  Console *con;
 //
 // Standard Output Streambuf
 //
-template<class _E, class _Tr = std::char_traits<_E> >
-class console_streambuf : public std::basic_streambuf<_E, _Tr>
+template<class _E, class _Tr = Std::char_traits<_E> >
+class console_streambuf : public Std::basic_streambuf<_E, _Tr>
 {
 public:
-    console_streambuf() : std::basic_streambuf<_E, _Tr>() { }
+    console_streambuf() : Std::basic_streambuf<_E, _Tr>() { }
     virtual ~console_streambuf() { }
     typedef typename _Tr::int_type int_type;
     typedef typename _Tr::char_type char_type;
@@ -374,16 +374,16 @@ protected:
 //
 // Standard Output Stream
 //
-template<class _E, class _Tr = std::char_traits<_E> >
-class console_ostream : public std::basic_ostream<_E, _Tr>
+template<class _E, class _Tr = Std::char_traits<_E> >
+class console_ostream : public Std::basic_ostream<_E, _Tr>
 {
 //#ifndef SAFE_CONSOLE_STREAMS
     console_streambuf<_E, _Tr> _Fb;
 //#endif
 
 public:
-    console_ostream() : std::basic_ostream<_E, _Tr>(&_Fb), _Fb() {}
-    console_ostream(console_streambuf<_E, _Tr> *Fb) : std::basic_ostream<_E, _Tr>(Fb) {}
+    console_ostream() : Std::basic_ostream<_E, _Tr>(&_Fb), _Fb() {}
+    console_ostream(console_streambuf<_E, _Tr> *Fb) : Std::basic_ostream<_E, _Tr>(Fb) {}
     virtual ~console_ostream() { }
 
 #if defined(MACOSX) && defined(__GNUC__)
@@ -404,9 +404,9 @@ public:
 
 class ConsoleStream : public Common::WriteStream {
 private:
-	std::Precision _precision;
+	Std::Precision _precision;
 public:
-	ConsoleStream() : Common::WriteStream(), _precision(std::dec) {}
+	ConsoleStream() : Common::WriteStream(), _precision(Std::dec) {}
 
 	virtual int32 pos() const override {
 		return 0;

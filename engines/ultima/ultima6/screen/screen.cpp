@@ -59,7 +59,7 @@ Screen::Screen(Configuration *cfg) {
 	width = 320;
 	height = 200;
 
-	std::string str_lighting_style;
+	Std::string str_lighting_style;
 	config->value("config/general/lighting", str_lighting_style);
 
 	if (str_lighting_style == "none")
@@ -86,7 +86,7 @@ Screen::~Screen() {
 }
 
 bool Screen::init() {
-	std::string str;
+	Std::string str;
 
 	int new_width, new_height;
 	config->value("config/video/screen_width", new_width, 320);
@@ -1225,7 +1225,7 @@ void Screen::unlock() {
 }
 
 bool Screen::initScaler() {
-	std::string scaler_name;
+	Std::string scaler_name;
 
 	return true;
 }

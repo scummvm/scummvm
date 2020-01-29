@@ -49,7 +49,7 @@ MsgScrollNewUI::MsgScrollNewUI(Configuration *cfg, Screen *s) {
 
 	init(cfg, font_normal);
 
-	std::string new_scroll_cfg = config_get_game_key(config) + "/newscroll";
+	Std::string new_scroll_cfg = config_get_game_key(config) + "/newscroll";
 
 	cfg->value(new_scroll_cfg + "/solid_bg", solid_bg, false);
 
@@ -100,14 +100,14 @@ bool MsgScrollNewUI::can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token)
 	return true;
 }
 
-void MsgScrollNewUI::display_string(std::string s, Font *f, bool include_on_map_window) {
+void MsgScrollNewUI::display_string(Std::string s, Font *f, bool include_on_map_window) {
 	if (s.empty())
 		return;
 	bool has_trailing_whitespace = (!trailing_whitespace.empty());
 	s = trailing_whitespace + s;
 	trailing_whitespace.clear();
 
-	std::string::reverse_iterator iter;
+	Std::string::reverse_iterator iter;
 	uint16 i;
 	for (i = 0, iter = s.rbegin(); iter != s.rend(); iter++, i++) {
 		char c = *iter;
@@ -134,8 +134,8 @@ void MsgScrollNewUI::display_string(std::string s, Font *f, bool include_on_map_
 	}
 }
 
-uint16 MsgScrollNewUI::count_empty_lines(std::string s) {
-	std::string::iterator iter;
+uint16 MsgScrollNewUI::count_empty_lines(Std::string s) {
+	Std::string::iterator iter;
 	uint16 count = 0;
 	for (iter = s.begin(); iter != s.end(); iter++) {
 		char c = *iter;
@@ -189,7 +189,7 @@ void MsgScrollNewUI::Display(bool full_redraw) {
 
 	uint16 y = area.top + 4;
 	uint16 total_length = 0;
-	std::list<MsgLine *>::iterator iter;
+	Std::list<MsgLine *>::iterator iter;
 
 	iter = msg_buf.begin();
 	for (uint16 i = 0; i < position && iter != msg_buf.end(); i++)
@@ -197,7 +197,7 @@ void MsgScrollNewUI::Display(bool full_redraw) {
 
 	for (uint16 i = 0; i < scroll_height && iter != msg_buf.end(); i++, iter++) {
 		MsgLine *msg_line = *iter;
-		std::list<MsgText *>::iterator iter1;
+		Std::list<MsgText *>::iterator iter1;
 
 		iter1 = msg_line->text.begin();
 

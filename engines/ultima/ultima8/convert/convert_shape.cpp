@@ -45,9 +45,9 @@ void ConvertShape::Read(IDataSource *source, const ConvertShapeFormat *csf, uint
 		char ident[4];
 		source->read(ident, csf->bytes_ident);
 
-		if (std::memcmp (ident, csf->ident, csf->bytes_ident))
+		if (Std::memcmp (ident, csf->ident, csf->bytes_ident))
 		{
-			perr << "Warning: Corrupt shape!" << std::endl;
+			perr << "Warning: Corrupt shape!" << Std::endl;
 			return;
 		}
 	}
@@ -63,7 +63,7 @@ void ConvertShape::Read(IDataSource *source, const ConvertShapeFormat *csf, uint
 	if (csf->bytes_header_unk) source->read(header_unknown, csf->bytes_header_unk);
 
 #ifdef COMP_SHAPENUM
-	if (shapenum == COMP_SHAPENUM) pout << std::hex;
+	if (shapenum == COMP_SHAPENUM) pout << Std::hex;
 #endif
 
 	// Now read num_frames
@@ -72,12 +72,12 @@ void ConvertShape::Read(IDataSource *source, const ConvertShapeFormat *csf, uint
 	if (num_frames == 0) num_frames = CalcNumFrames(source,csf,real_len,start_pos);
 
 #ifdef COMP_SHAPENUM
-	if (shapenum == COMP_SHAPENUM) pout << "num_frames " << num_frames << std::endl;
+	if (shapenum == COMP_SHAPENUM) pout << "num_frames " << num_frames << Std::endl;
 #endif
 
 //	if (num_frames == 0xFFFF || num_frames == 0xFFFFFF || num_frames == -1)
 //	{
-//		perr << "Corrupt shape? " << std::endl;
+//		perr << "Corrupt shape? " << Std::endl;
 //		num_frames = 0;
 //		frames = 0;
 //		return;
@@ -85,32 +85,32 @@ void ConvertShape::Read(IDataSource *source, const ConvertShapeFormat *csf, uint
 
 	// Create frames array
 	frames = new ConvertShapeFrame[num_frames];
-	std::memset (frames, 0, num_frames * sizeof(ConvertShapeFrame));
+	Std::memset (frames, 0, num_frames * sizeof(ConvertShapeFrame));
 
 	// Now read the frames
 	for(uint32 f = 0; f < num_frames; ++f) 
 	{
 #ifdef COMP_SHAPENUM
-		if (shapenum == COMP_SHAPENUM) pout << "Frame " << f << std::endl;
+		if (shapenum == COMP_SHAPENUM) pout << "Frame " << f << Std::endl;
 #endif
 		ConvertShapeFrame *frame = frames+f;
 
 #ifdef COMP_SHAPENUM
-		if (shapenum == COMP_SHAPENUM) pout << "Seeking to " << (csf->len_header + (csf->len_frameheader*f)) << std::endl;
-		if (shapenum == COMP_SHAPENUM) pout << "Real " << (start_pos + csf->len_header + (csf->len_frameheader*f)) << std::endl;
+		if (shapenum == COMP_SHAPENUM) pout << "Seeking to " << (csf->len_header + (csf->len_frameheader*f)) << Std::endl;
+		if (shapenum == COMP_SHAPENUM) pout << "Real " << (start_pos + csf->len_header + (csf->len_frameheader*f)) << Std::endl;
 #endif
 		// Seek to initial pos
 		source->seek(start_pos + csf->len_header + (csf->len_frameheader*f));
 
 #ifdef COMP_SHAPENUM
-		if (shapenum == COMP_SHAPENUM) pout << "seeked to " << source->getPos() << std::endl;
+		if (shapenum == COMP_SHAPENUM) pout << "seeked to " << source->getPos() << Std::endl;
 #endif
 
 		// Read the offset
 		uint32 frame_offset = csf->len_header + (csf->len_frameheader*f);
 		if (csf->bytes_frame_offset) frame_offset = source->readX(csf->bytes_frame_offset);
 #ifdef COMP_SHAPENUM
-		if (shapenum == COMP_SHAPENUM) pout << "frame_offset " << frame_offset << std::endl;
+		if (shapenum == COMP_SHAPENUM) pout << "frame_offset " << frame_offset << Std::endl;
 #endif
 
 		// Read the unknown
@@ -120,7 +120,7 @@ void ConvertShape::Read(IDataSource *source, const ConvertShapeFormat *csf, uint
 		uint32 frame_length = real_len-frame_offset;
 		if (csf->bytes_frame_length) frame_length = source->readX(csf->bytes_frame_length) + csf->bytes_frame_length_kludge;
 #ifdef COMP_SHAPENUM
-		if (shapenum == COMP_SHAPENUM) pout << "frame_length " << frame_length << std::endl;
+		if (shapenum == COMP_SHAPENUM) pout << "frame_length " << frame_length << Std::endl;
 #endif
 
 		// Seek to start of frame
@@ -133,7 +133,7 @@ void ConvertShape::Read(IDataSource *source, const ConvertShapeFormat *csf, uint
 	}
 
 #ifdef COMP_SHAPENUM
-	if (shapenum == COMP_SHAPENUM) pout << std::dec;
+	if (shapenum == COMP_SHAPENUM) pout << Std::dec;
 #endif
 }
 
@@ -152,11 +152,11 @@ void ConvertShapeFrame::Read(IDataSource *source, const ConvertShapeFormat *csf,
 #ifdef COMP_SHAPENUM
 	if (width <= 0 || height <= 0  ||shapenum == COMP_SHAPENUM )
 	{
-		pout << "compression " << compression << std::endl;
-		pout << "width " << width << std::endl;
-		pout << "height " << height << std::endl;
-		pout << "xoff " << xoff << std::endl;
-		pout << "yoff " << yoff << std::endl;
+		pout << "compression " << compression << Std::endl;
+		pout << "width " << width << Std::endl;
+		pout << "height " << height << Std::endl;
+		pout << "xoff " << xoff << Std::endl;
+		pout << "yoff " << yoff << Std::endl;
 	}
 #endif
 
@@ -166,8 +166,8 @@ void ConvertShapeFrame::Read(IDataSource *source, const ConvertShapeFormat *csf,
 		height = 0;
 		xoff = 0;
 		yoff = 0;
-		//perr << "Corrupt frame? (frame " << f << ")" << std::endl;
-		perr << "Corrupt frame?" << std::endl;
+		//perr << "Corrupt frame? (frame " << f << ")" << Std::endl;
+		perr << "Corrupt frame?" << Std::endl;
 	}
 
 	if (height) {
@@ -191,7 +191,7 @@ void ConvertShapeFrame::Read(IDataSource *source, const ConvertShapeFormat *csf,
 		if (bytes_rle < 0)
 		{
 			bytes_rle = 0;
-			perr << "Corrupt frame?" << std::endl;
+			perr << "Corrupt frame?" << Std::endl;
 		}
 		
 #endif
@@ -296,7 +296,7 @@ void ConvertShapeFrame::ReadCmpFrame(IDataSource *source, const ConvertShapeForm
 				}
 
 				if (((dlen+extra) << compression) > 255) {
-					perr << "Error! Corrupt Frame. RLE dlen too large" << std::endl;
+					perr << "Error! Corrupt Frame. RLE dlen too large" << Std::endl;
 				}
 
 				rlebuf->write1((dlen+extra) << compression);
@@ -418,7 +418,7 @@ int ConvertShape::CalcNumFrames(IDataSource *source, const ConvertShapeFormat *c
 bool ConvertShape::Check(IDataSource *source, const ConvertShapeFormat *csf, uint32 real_len)
 {
 #if 0
-	pout << "Testing " << csf->name << "..." << std::endl;
+	pout << "Testing " << csf->name << "..." << Std::endl;
 #endif
 	bool result = true;
 
@@ -432,7 +432,7 @@ bool ConvertShape::Check(IDataSource *source, const ConvertShapeFormat *csf, uin
 		ident[csf->bytes_ident] = 0;
 		source->read(ident, csf->bytes_ident);
 
-		if (std::memcmp (ident, csf->ident, csf->bytes_ident))
+		if (Std::memcmp (ident, csf->ident, csf->bytes_ident))
 		{
 			// Return to start position
 			source->seek(start_pos);
@@ -453,7 +453,7 @@ bool ConvertShape::Check(IDataSource *source, const ConvertShapeFormat *csf, uin
 
 	// Create frames array
 	ConvertShapeFrame oneframe;
-	std::memset (&oneframe, 0, sizeof(ConvertShapeFrame));
+	Std::memset (&oneframe, 0, sizeof(ConvertShapeFrame));
 
 	// Now read the frames
 	for (int f = 0; f < num_frames; f++) 
@@ -608,7 +608,7 @@ bool ConvertShape::Check(IDataSource *source, const ConvertShapeFormat *csf, uin
 bool ConvertShape::CheckUnsafe(IDataSource *source, const ConvertShapeFormat *csf, uint32 real_len)
 {
 #if 0
-	pout << "Testing " << csf->name << "..." << std::endl;
+	pout << "Testing " << csf->name << "..." << Std::endl;
 #endif
 	bool result = true;
 
@@ -622,7 +622,7 @@ bool ConvertShape::CheckUnsafe(IDataSource *source, const ConvertShapeFormat *cs
 		ident[csf->bytes_ident] = 0;
 		source->read(ident, csf->bytes_ident);
 
-		if (std::memcmp (ident, csf->ident, csf->bytes_ident))
+		if (Std::memcmp (ident, csf->ident, csf->bytes_ident))
 		{
 			// Return to start position
 			source->seek(start_pos);
@@ -643,7 +643,7 @@ bool ConvertShape::CheckUnsafe(IDataSource *source, const ConvertShapeFormat *cs
 
 	// Create frames array
 	ConvertShapeFrame oneframe;
-	std::memset (&oneframe, 0, sizeof(ConvertShapeFrame));
+	Std::memset (&oneframe, 0, sizeof(ConvertShapeFrame));
 
 	// Now read the frames
 	for (int f = 0; f < num_frames; f++) 
@@ -734,7 +734,7 @@ void ConvertShape::Write(ODataSource *dest, const ConvertShapeFormat *csf, uint3
 	if (csf->bytes_num_frames) dest->writeX(num_frames, csf->bytes_num_frames);
 	else if (!csf->bytes_num_frames && num_frames > 1)
 	{
-		perr << "Error: Unable to convert multiple frame shapes to " << csf->name << std::endl; 
+		perr << "Error: Unable to convert multiple frame shapes to " << csf->name << Std::endl; 
 		return;
 	}
 

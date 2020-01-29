@@ -161,7 +161,7 @@ struct EventInput_s {
 	Common::KeyCode key; // last key entered, if capturing input
 	ActionKeyType action_key_type; // last ActionKeyType entered if capturing input
 	MapCoord *loc; // target location, or direction if relative ???
-	std::string *str; // ???
+	Std::string *str; // ???
 //    };
 	void set_loc(MapCoord c);
 	EventInput_s() : loc(0), str(0), obj(0), actor(0), get_direction(false), get_text(false), target_init(0), select_from_inventory(false), select_range(0) {
@@ -202,7 +202,7 @@ private:
 	Common::Event event;
 	EventMode mode, last_mode;
 	EventInput input; // collected/received input (of any type)
-// std::vector<EventMode> mode_stack; // current mode is at the end of the list
+// Std::vector<EventMode> mode_stack; // current mode is at the end of the list
 	int ts; //timestamp for TimeLeft() method.
 	char alt_code_str[4]; // string representation of alt-code input
 	uint8 alt_code_len; // how many characters have been input for alt-code

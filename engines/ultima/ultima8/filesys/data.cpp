@@ -40,14 +40,14 @@ void FileSystem::initBuiltinData(bool allowoverride) {
 		PentagramData::DataFile &file = PentagramData::files[i++];
 		if (!file.name) break;
 
-		std::string vp = "@data/";
+		Std::string vp = "@data/";
 		vp += file.name;
 
-		std::map<Common::String, MemoryFile *>::iterator p = memoryfiles.find(vp);
+		Std::map<Common::String, MemoryFile *>::iterator p = memoryfiles.find(vp);
 
 		if (p != memoryfiles.end()) {
 			perr << "Warning: duplicate builtin data file: " << vp
-			     << std::endl;
+			     << Std::endl;
 			continue;
 		}
 

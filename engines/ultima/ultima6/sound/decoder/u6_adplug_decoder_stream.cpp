@@ -27,7 +27,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-U6AdPlugDecoderStream::U6AdPlugDecoderStream(CEmuopl *o, std::string filename, uint16 song_num) {
+U6AdPlugDecoderStream::U6AdPlugDecoderStream(CEmuopl *o, Std::string filename, uint16 song_num) {
 	is_midi_track = false;
 	opl = o;
 	samples_left = 0;

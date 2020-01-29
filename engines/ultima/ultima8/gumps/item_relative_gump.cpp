@@ -140,7 +140,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 
 		if (!gump) {
 			perr << "ItemRelativeGump::GetItemLocation(): "
-			     << "Unable to find GameMapGump!?!?" << std::endl;
+			     << "Unable to find GameMapGump!?!?" << Std::endl;
 			return;
 		}
 

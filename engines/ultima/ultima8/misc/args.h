@@ -44,7 +44,7 @@ public:
 			/**_bool_val=_bool_default;*/ /* Odd... looks like the 'default' value for bool, isn't. It's the value you set it to, if the flag is found*/
 		};
 		// string
-		Option(const char *option_cstr, std::string *value, const char *defaultvalue = 0)
+		Option(const char *option_cstr, Std::string *value, const char *defaultvalue = 0)
 			: option(option_cstr), _str_val(value),
 			  _str_default(defaultvalue ? defaultvalue : ""), valuetype(Option::type_str) {
 			*_str_val = _str_default;
@@ -64,29 +64,29 @@ public:
 
 		~Option() { };
 
-		std::string option;
+		Std::string option;
 
 		bool        *_bool_val;
-		std::string *_str_val;
+		Std::string *_str_val;
 		int32      *_sint_val;
 		uint32      *_uint_val;
 
 		bool        _bool_default;
-		std::string _str_default;
+		Std::string _str_default;
 		int32      _sint_default;
 		uint32      _uint_default;
 
 		enum { no_type = 0, type_bool, type_str, type_sint, type_uint } valuetype;
 	};
 
-	std::vector<Option> options;
+	Std::vector<Option> options;
 
 	// bool
 	inline void declare(const char *option_cstr, bool *value, const bool defaultvalue = true) {
 		options.push_back(Option(option_cstr, value, defaultvalue));
 	};
 	// string
-	inline void declare(const char *option_cstr, std::string *value, const char *defaultvalue = 0) {
+	inline void declare(const char *option_cstr, Std::string *value, const char *defaultvalue = 0) {
 		options.push_back(Option(option_cstr, value, defaultvalue));
 	};
 	// sint

@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::vector;
+using Std::vector;
 
 #define GAMECLOCK_TICKS_PER_MINUTE   4
 

@@ -138,7 +138,7 @@ ShapeFrame *GameData::getFrame(FrameID f) const {
 
 void GameData::loadTranslation() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-	std::string translationfile;
+	Std::string translationfile;
 
 	if (gameinfo->type == GameInfo::GAME_U8) {
 		switch (gameinfo->language) {
@@ -158,7 +158,7 @@ void GameData::loadTranslation() {
 			translationfile = "u8japanese.ini";
 			break;
 		default:
-			perr << "Unknown language." << std::endl;
+			perr << "Unknown language." << Std::endl;
 			break;
 		}
 	}
@@ -166,13 +166,13 @@ void GameData::loadTranslation() {
 	if (!translationfile.empty()) {
 		translationfile = "@data/" + translationfile;
 
-		pout << "Loading translation: " << translationfile << std::endl;
+		pout << "Loading translation: " << translationfile << Std::endl;
 
 		config->readConfigFile(translationfile, "language", true);
 	}
 }
 
-std::string GameData::translate(std::string text) {
+Std::string GameData::translate(Std::string text) {
 	// TODO: maybe cache these lookups? config calls may be expensive
 
 	ConfigFileManager *config = ConfigFileManager::get_instance();
@@ -180,7 +180,7 @@ std::string GameData::translate(std::string text) {
 	if (!config->exists(key))
 		return text;
 
-	std::string trans;
+	Std::string trans;
 	config->get(key, trans);
 	return trans;
 }
@@ -207,14 +207,14 @@ FrameID GameData::translate(FrameID f) {
 	if (!config->exists(key))
 		return f;
 
-	std::string trans;
+	Std::string trans;
 	config->get(key, trans);
 
 	FrameID t;
 	t.flexid = f.flexid;
 	int n = sscanf(trans.c_str(), "%u,%u", &t.shapenum, &t.framenum);
 	if (n != 2) {
-		perr << "Invalid shape translation: " << trans << std::endl;
+		perr << "Invalid shape translation: " << trans << Std::endl;
 		return f;
 	}
 
@@ -234,7 +234,7 @@ void GameData::loadU8Data() {
 	if (!langletter)
 		error("Unknown language. Unable to open usecode");;
 
-	std::string filename = "@game/usecode/";
+	Std::string filename = "@game/usecode/";
 	filename += langletter;
 	filename += "usecode.flx";
 
@@ -246,7 +246,7 @@ void GameData::loadU8Data() {
 	mainusecode = new UsecodeFlex(uds);
 
 	// Load main shapes
-	pout << "Load Shapes" << std::endl;
+	pout << "Load Shapes" << Std::endl;
 	IDataSource *sf = filesystem->ReadFile("@game/static/u8shapes.flx");
 	if (!sf) sf = filesystem->ReadFile("@game/static/u8shapes.cmp");
 
@@ -375,22 +375,22 @@ void GameData::setupJPOverrides() {
 
 	jpkeyvals = config->listKeyValues("language/jpfonts");
 	for (iter = jpkeyvals.begin(); iter != jpkeyvals.end(); ++iter) {
-		int fontnum = std::atoi(iter->_key.c_str());
-		std::string fontdesc = iter->_value;
+		int fontnum = Std::atoi(iter->_key.c_str());
+		Std::string fontdesc = iter->_value;
 
-		std::vector<std::string> vals;
+		Std::vector<Std::string> vals;
 		Pentagram::SplitString(fontdesc, ',', vals);
 		if (vals.size() != 2) {
-			perr << "Invalid jpfont override: " << fontdesc << std::endl;
+			perr << "Invalid jpfont override: " << fontdesc << Std::endl;
 			continue;
 		}
 
-		unsigned int jpfontnum = std::atoi(vals[0].c_str());
-		uint32 col32 = std::strtol(vals[1].c_str(), 0, 0);
+		unsigned int jpfontnum = Std::atoi(vals[0].c_str());
+		uint32 col32 = Std::strtol(vals[1].c_str(), 0, 0);
 
 		if (!fontmanager->addJPOverride(fontnum, jpfontnum, col32)) {
 			perr << "failed to setup jpfont override for font " << fontnum
-			     << std::endl;
+			     << Std::endl;
 		}
 	}
 
@@ -413,25 +413,25 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 
 	ttfkeyvals = config->listKeyValues(configkey);
 	for (iter = ttfkeyvals.begin(); iter != ttfkeyvals.end(); ++iter) {
-		int fontnum = std::atoi(iter->_key.c_str());
-		std::string fontdesc = iter->_value;
+		int fontnum = Std::atoi(iter->_key.c_str());
+		Std::string fontdesc = iter->_value;
 
-		std::vector<std::string> vals;
+		Std::vector<Std::string> vals;
 		Pentagram::SplitString(fontdesc, ',', vals);
 		if (vals.size() != 4) {
-			perr << "Invalid ttf override: " << fontdesc << std::endl;
+			perr << "Invalid ttf override: " << fontdesc << Std::endl;
 			continue;
 		}
 
-		std::string filename = vals[0];
-		int pointsize = std::atoi(vals[1].c_str());
-		uint32 col32 = std::strtol(vals[2].c_str(), 0, 0);
-		int border = std::atoi(vals[3].c_str());
+		Std::string filename = vals[0];
+		int pointsize = Std::atoi(vals[1].c_str());
+		uint32 col32 = Std::strtol(vals[2].c_str(), 0, 0);
+		int border = Std::atoi(vals[3].c_str());
 
 		if (!fontmanager->addTTFOverride(fontnum, filename, pointsize,
 		                                 col32, border, SJIS)) {
 			perr << "failed to setup ttf override for font " << fontnum
-			     << std::endl;
+			     << Std::endl;
 		}
 	}
 }
@@ -447,13 +447,13 @@ SpeechFlex *GameData::getSpeechFlex(uint32 shapenum) {
 
 	FileSystem *filesystem = FileSystem::get_instance();
 
-	std::string u8_sound_ = "@game/sound/";
+	Std::string u8_sound_ = "@game/sound/";
 	char num_flx [32];
 	snprintf(num_flx , 32, "%i.flx", shapenum);
 
 	char langletter = gameinfo->getLanguageFileLetter();
 	if (!langletter) {
-		perr << "GameData::getSpeechFlex: Unknown language." << std::endl;
+		perr << "GameData::getSpeechFlex: Unknown language." << Std::endl;
 		return 0;
 	}
 
@@ -481,7 +481,7 @@ void GameData::loadRemorseData() {
 	if (!langletter)
 		error("Unknown language. Unable to open usecode");
 
-	std::string filename = "@game/usecode/";
+	Std::string filename = "@game/usecode/";
 	filename += langletter;
 	filename += "usecode.flx";
 
@@ -493,7 +493,7 @@ void GameData::loadRemorseData() {
 	mainusecode = new UsecodeFlex(uds);
 
 	// Load main shapes
-	pout << "Load Shapes" << std::endl;
+	pout << "Load Shapes" << Std::endl;
 	IDataSource *sf = filesystem->ReadFile("@game/static/shapes.flx");
 
 	if (!sf)

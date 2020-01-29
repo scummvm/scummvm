@@ -36,7 +36,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::list;
+using Std::list;
 
 
 class Configuration;
@@ -65,7 +65,7 @@ class ScrollWidgetGump: public MsgScroll {
 	uint8 font_highlight;
 	uint16 position;
 
-	std::string trailing_whitespace;
+	Std::string trailing_whitespace;
 
 	bool show_up_arrow;
 	bool show_down_arrow;
@@ -84,7 +84,7 @@ public:
 	void Display(bool full_redraw);
 
 	void display_prompt() {}
-	void display_string(std::string s);
+	void display_string(Std::string s);
 
 	void set_font(uint8 font_type);
 	bool is_garg_font();

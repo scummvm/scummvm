@@ -33,7 +33,7 @@ namespace Ultima6 {
 class U6Lib_n;
 class U6Lzw;
 class NuvieIOBuffer;
-using std::string;
+using Std::string;
 
 class U6AdPlugDecoderStream : public Audio::RewindableAudioStream {
 public:
@@ -43,7 +43,7 @@ public:
 		player_refresh_count = 0;
 	}
 
-	U6AdPlugDecoderStream(CEmuopl *o, std::string filename, uint16 song_num);
+	U6AdPlugDecoderStream(CEmuopl *o, Std::string filename, uint16 song_num);
 	~U6AdPlugDecoderStream();
 
 	int readBuffer(sint16 *buffer, const int numSamples);

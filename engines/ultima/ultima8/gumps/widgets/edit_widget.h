@@ -43,7 +43,7 @@ class EditWidget : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	EditWidget(int X, int Y, std::string txt, bool gamefont, int fontnum,
+	EditWidget(int X, int Y, Std::string txt, bool gamefont, int fontnum,
 	           int width, int height, unsigned int maxlength = 0,
 	           bool multiline = false);
 	virtual ~EditWidget(void);
@@ -59,10 +59,10 @@ public:
 	virtual bool OnTextInput(int unicode);
 
 	//! get the current text
-	std::string getText() const {
+	Std::string getText() const {
 		return text;
 	}
-	void setText(const std::string &t);
+	void setText(const Std::string &t);
 
 	enum Message {
 		EDIT_ENTER = 16,
@@ -71,8 +71,8 @@ public:
 
 
 protected:
-	std::string text;
-	std::string::size_type cursor;
+	Std::string text;
+	Std::string::size_type cursor;
 	bool gamefont;
 	int fontnum;
 	unsigned int maxlength;
@@ -82,7 +82,7 @@ protected:
 	bool cursor_visible;
 
 	void ensureCursorVisible();
-	bool textFits(std::string &t);
+	bool textFits(Std::string &t);
 	void renderText();
 	Pentagram::Font *getFont() const;
 

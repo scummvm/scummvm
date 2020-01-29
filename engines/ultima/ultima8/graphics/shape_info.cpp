@@ -80,7 +80,7 @@ bool ShapeInfo::getTypeFlagCrusader(int typeflag) {
 	} else if (typeflag <= 16) { // family       Byte 1:4-7,2:0  Bits 12-16
 		return (family >> (typeflag - 12)) & 1;
 	} else if (typeflag <= 20) { // unknown      Byte 2:0-3      Bits 17-20
-		perr << "Warning: unknown typeflag requested." << std::endl;
+		perr << "Warning: unknown typeflag requested." << Std::endl;
 	} else if (typeflag <= 26) { // x            Byte 2:4-7,3:0-1    Bits 21-26
 		return (x >> (typeflag - 21)) & 1;
 	} else if (typeflag <= 31) { // y            Byte 3:2-6      Bits 27-31
@@ -88,11 +88,11 @@ bool ShapeInfo::getTypeFlagCrusader(int typeflag) {
 	} else if (typeflag <= 36) { // z            Byte 3:7,4:0-3  Bits 32-36
 		return (z >> (typeflag - 32)) & 1;
 	} else if (typeflag <= 47) {
-		perr << "Warning: unknown typeflag requested." << std::endl;
+		perr << "Warning: unknown typeflag requested." << Std::endl;
 	} else if (typeflag <= 55) { // flags        Byte 6: 0-7     Bits 48-55
 		return (flags >> (12 + typeflag - 55)) & 1;
 	} else if (typeflag <= 71) {
-		perr << "Warning: unknown typeflag requested." << std::endl;
+		perr << "Warning: unknown typeflag requested." << Std::endl;
 	}
 
 	return false;

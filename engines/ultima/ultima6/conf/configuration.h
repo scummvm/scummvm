@@ -59,10 +59,10 @@ class ConfigNode;
  */
 class Configuration {
 private:
-	std::vector<XMLTree*> _trees;
+	Std::vector<XMLTree*> _trees;
     Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash,
         Common::IgnoreCase_EqualTo> _localKeys;
-	std::string _configFilename;
+	Std::string _configFilename;
     bool _configChanged;
 
     // Sets default configurations common to both enhanced and unhenaced
@@ -72,7 +72,7 @@ public:
 	~Configuration();
 
 	// read config file. Multiple files may be read. Order is important.
-	bool readConfigFile(std::string fname, std::string root, bool readonly = true);
+	bool readConfigFile(Std::string fname, Std::string root, bool readonly = true);
 
     // Returns true if default settings for game have previously been set
     bool isDefaultsSet() const;
@@ -88,33 +88,33 @@ public:
 	// clear everything
 	void clear();
 
-	std::string filename() const {
+	Std::string filename() const {
 		return _configFilename;
 	}
 
 	// get value
-	void value(const std::string &key, std::string &ret, const char *defaultvalue = "");
-	void value(const std::string &key, int &ret, int defaultvalue = 0);
-	void value(const std::string &key, bool &ret, bool defaultvalue = false);
+	void value(const Std::string &key, Std::string &ret, const char *defaultvalue = "");
+	void value(const Std::string &key, int &ret, int defaultvalue = 0);
+	void value(const Std::string &key, bool &ret, bool defaultvalue = false);
 
-	void pathFromValue(const std::string &key, std::string file, std::string &full_path);
+	void pathFromValue(const Std::string &key, Std::string file, Std::string &full_path);
 
 	// set value
-	bool set(const std::string &key, const std::string &value);
-	bool set(const std::string &key, const char *value);
-	bool set(const std::string &key, int value);
-	bool set(const std::string &key, bool value);
+	bool set(const Std::string &key, const Std::string &value);
+	bool set(const Std::string &key, const char *value);
+	bool set(const Std::string &key, int value);
+	bool set(const Std::string &key, bool value);
 
 	// get node ref. (delete it afterwards)
-	ConfigNode *getNode(const std::string &key);
+	ConfigNode *getNode(const Std::string &key);
 
 	// list all subkeys of a key. (no guaranteed order in result)
-	std::set<std::string> listKeys(const std::string &key, bool longformat = false);
+	Std::set<Std::string> listKeys(const Std::string &key, bool longformat = false);
 
-	typedef std::pair<std::string, std::string> KeyType;
-	typedef std::vector<KeyType> KeyTypeList;
+	typedef Std::pair<Std::string, Std::string> KeyType;
+	typedef Std::vector<KeyType> KeyTypeList;
 
-	void getSubkeys(KeyTypeList &ktl, std::string basekey);
+	void getSubkeys(KeyTypeList &ktl, Std::string basekey);
 };
 
 } // End of namespace Ultima6

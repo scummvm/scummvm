@@ -50,7 +50,7 @@ namespace Ultima6 {
 
 
 bool PortraitU6::init() {
-	std::string filename;
+	Std::string filename;
 
 	avatar_portrait_num = 0;
 

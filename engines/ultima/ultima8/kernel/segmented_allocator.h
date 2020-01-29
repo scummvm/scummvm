@@ -51,7 +51,7 @@ public:
 	void printInfo();
 
 private:
-	std::vector<SegmentedPool *> pools;
+	Std::vector<SegmentedPool *> pools;
 
 	size_t nodeCapacity;
 	uint32 nodes;

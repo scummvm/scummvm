@@ -79,7 +79,7 @@ uint16 Actor::assignObjId() {
 	if (objid == 0xFFFF)
 		objid = ObjectManager::get_instance()->assignActorObjId(this);
 
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		(*iter)->assignObjId();
 		(*iter)->setParent(objid);
@@ -132,7 +132,7 @@ bool Actor::giveTreasure() {
 	if (!mi)
 		return false;
 
-	std::vector<TreasureInfo> &treasure = mi->treasure;
+	Std::vector<TreasureInfo> &treasure = mi->treasure;
 
 	for (unsigned int i = 0; i < treasure.size(); ++i) {
 		TreasureInfo &ti = treasure[i];
@@ -172,7 +172,7 @@ bool Actor::giveTreasure() {
 					int r = getRandom() % 100;
 #if 0
 					pout << "weapon (" << s << ") chance: " << r << "/"
-					     << chance << std::endl;
+					     << chance << Std::endl;
 #endif
 					if (r >= chance) continue;
 
@@ -279,7 +279,7 @@ bool Actor::giveTreasure() {
 
 			} else {
 				pout << "Unhandled special treasure: " << ti.special
-				     << std::endl;
+				     << Std::endl;
 			}
 			continue;
 		}
@@ -292,7 +292,7 @@ bool Actor::giveTreasure() {
 			ShapeInfo *si = mainshapes->getShapeInfo(shapeNum);
 			if (!si) {
 				perr << "Trying to create treasure with an invalid shapeNum ("
-				     << shapeNum << ")" << std::endl;
+				     << shapeNum << ")" << Std::endl;
 				continue;
 			}
 			if (si->hasQuantity()) {
@@ -312,7 +312,7 @@ bool Actor::giveTreasure() {
 		}
 
 		if (ti.shapes.empty() || ti.frames.empty()) {
-			perr << "No shape/frame set in treasure" << std::endl;
+			perr << "No shape/frame set in treasure" << Std::endl;
 			continue;
 		}
 
@@ -330,7 +330,7 @@ bool Actor::giveTreasure() {
 			                getShapeInfo(shapeNum);
 			if (!si) {
 				perr << "Trying to create treasure with an invalid shapeNum ("
-				     << shapeNum << ")" << std::endl;
+				     << shapeNum << ")" << Std::endl;
 				continue;
 			}
 			uint16 qual = 0;
@@ -371,7 +371,7 @@ bool Actor::setEquip(Item *item, bool checkwghtvol) {
 
 	// now check 'equipment slots'
 	// we can have one item of each equipment type, plus one backpack
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		if ((*iter)->getObjId() == item->getObjId()) continue;
 
@@ -393,7 +393,7 @@ bool Actor::setEquip(Item *item, bool checkwghtvol) {
 uint16 Actor::getEquip(uint32 type) {
 	const unsigned int backpack_shape = 529; //!! *cough* constant
 
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		uint32 cet = (*iter)->getShapeInfo()->equiptype;
 		bool cbackpack = ((*iter)->getShape() == backpack_shape);
@@ -420,7 +420,7 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 	if (newmapnum == World::get_instance()->getCurrentMap()->getNum()) {
 #ifdef DEBUG
 		perr << "Actor::teleport: " << getObjId() << " to " << newmap << ","
-		     << newx << "," << newy << "," << newz << std::endl;
+		     << newx << "," << newy << "," << newz << Std::endl;
 #endif
 		move(newx, newy, newz);
 	}
@@ -435,15 +435,15 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 
 uint16 Actor::doAnim(Animation::Sequence anim, int dir, unsigned int steps) {
 	if (dir < 0 || dir > 8) {
-		perr << "Actor::doAnim: Invalid direction (" << dir << ")" << std::endl;
+		perr << "Actor::doAnim: Invalid direction (" << dir << ")" << Std::endl;
 		return 0;
 	}
 
 #if 0
 	if (tryAnim(anim, dir)) {
-		perr << "Actor::doAnim: tryAnim = Ok!" << std::endl;
+		perr << "Actor::doAnim: tryAnim = Ok!" << Std::endl;
 	} else {
-		perr << "Actor::doAnim: tryAnim = bad!" << std::endl;
+		perr << "Actor::doAnim: tryAnim = bad!" << Std::endl;
 	}
 #endif
 
@@ -530,7 +530,7 @@ uint16 Actor::cSetActivity(int activity) {
 
 	default:
 		perr << "Actor::cSetActivity: invalid activity (" << activity << ")"
-		     << std::endl;
+		     << Std::endl;
 	}
 
 	return 0;
@@ -607,15 +607,15 @@ void Actor::receiveHit(uint16 other, int dir, int damage, uint16 damage_type) {
 	}
 
 	pout << "Actor " << getObjId() << " received hit from " << other
-	     << " (dmg=" << damage << ",type=" << std::hex << damage_type
-	     << std::dec << "). ";
+	     << " (dmg=" << damage << ",type=" << Std::hex << damage_type
+	     << Std::dec << "). ";
 
 	damage = calculateAttackDamage(other, damage, damage_type);
 
 	if (!damage) {
-		pout << "No damage." << std::endl;
+		pout << "No damage." << Std::endl;
 	} else {
-		pout << "Damage: " << damage << std::endl;
+		pout << "Damage: " << damage << Std::endl;
 	}
 
 	if (damage >= 4 && objid == 1 && attacker) {
@@ -761,7 +761,7 @@ ProcId Actor::die(uint16 damageType) {
 	if (mi && mi->resurrection && !(damageType & WeaponInfo::DMG_FIRE)) {
 		// this monster will be resurrected after a while
 
-		pout << "Actor::die: scheduling resurrection" << std::endl;
+		pout << "Actor::die: scheduling resurrection" << Std::endl;
 
 		int timeout = ((getRandom() % 25) + 5) * 30; // 5-30 seconds
 
@@ -782,7 +782,7 @@ ProcId Actor::die(uint16 damageType) {
 	if (mi && mi->explode) {
 		// this monster explodes when it dies
 
-		pout << "Actor::die: exploding" << std::endl;
+		pout << "Actor::die: exploding" << Std::endl;
 
 		int count = 5;
 		Shape *explosionshape = GameData::get_instance()->getMainShapes()
@@ -1054,7 +1054,7 @@ Actor *Actor::createActor(uint32 shape, uint32 frame) {
 	// set stats
 	if (!newactor->loadMonsterStats()) {
 		perr << "I_createActor failed to set stats for actor (" << shape
-		     << ")." << std::endl;
+		     << ")." << Std::endl;
 	}
 
 	Actor *av = getMainActor();
@@ -1072,10 +1072,10 @@ void Actor::dumpInfo() {
 
 	pout << "hp: " << hitpoints << ", mp: " << mana << ", str: " << strength
 	     << ", dex: " << dexterity << ", int: " << intelligence
-	     << ", ac: " << getArmourClass() << ", defense: " << std::hex
+	     << ", ac: " << getArmourClass() << ", defense: " << Std::hex
 	     << getDefenseType() << " align: " << getAlignment() << " enemy: "
 	     << getEnemyAlignment() << ", flags: " << actorflags
-	     << std::dec << std::endl;
+	     << Std::dec << Std::endl;
 }
 
 void Actor::saveData(ODataSource *ods) {
@@ -1319,7 +1319,7 @@ uint32 Actor::I_setTarget(const uint8 *args, unsigned int /*argsize*/) {
 	}
 	if (!cp) {
 		perr << "Actor::I_setTarget: failed to enter combat mode"
-		     << std::endl;
+		     << Std::endl;
 		return 0;
 	}
 
@@ -1542,7 +1542,7 @@ uint32 Actor::I_createActor(const uint8 *args, unsigned int /*argsize*/) {
 	Actor *newactor = createActor(shape, frame);
 	if (!newactor) {
 		perr << "I_createActor failed to create actor (" << shape
-		     << ")." << std::endl;
+		     << ")." << Std::endl;
 		return 0;
 	}
 	uint16 objID = newactor->getObjId();
@@ -1553,7 +1553,7 @@ uint32 Actor::I_createActor(const uint8 *args, unsigned int /*argsize*/) {
 	UCMachine::get_instance()->assignPointer(ptr, buf, 2);
 
 #if 0
-	perr << "I_createActor: created actor #" << objID << " with shape " << shape << std::endl;
+	perr << "I_createActor: created actor #" << objID << " with shape " << shape << Std::endl;
 #endif
 
 	return objID;

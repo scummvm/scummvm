@@ -199,9 +199,9 @@ public:
 	Tile *get_use_tile();
 	const Tile *get_gump_cursor_tile();
 
-	Tile *loadCustomTiles(const std::string filename, bool overwrite_tiles, bool copy_tileflags, uint16 tile_num_start_offset);
+	Tile *loadCustomTiles(const Std::string filename, bool overwrite_tiles, bool copy_tileflags, uint16 tile_num_start_offset);
 	void freeCustomTiles();
-	void exportTilesetToBmpFile(std::string filename, bool fixupU6Shoreline = true);
+	void exportTilesetToBmpFile(Std::string filename, bool fixupU6Shoreline = true);
 protected:
 
 	bool loadAnimData();

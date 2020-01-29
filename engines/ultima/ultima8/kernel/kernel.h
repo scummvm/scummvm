@@ -35,7 +35,7 @@ class IDataSource;
 class ODataSource;
 
 typedef Process *(*ProcessLoadFunc)(IDataSource *, uint32 version);
-typedef std::list<Process *>::const_iterator ProcessIter;
+typedef Std::list<Process *>::const_iterator ProcessIter;
 
 class Kernel {
 public:
@@ -114,7 +114,7 @@ public:
 		return framebyframe;
 	}
 
-	void addProcessLoader(std::string classname, ProcessLoadFunc func) {
+	void addProcessLoader(Std::string classname, ProcessLoadFunc func) {
 		processloaders[classname] = func;
 	}
 
@@ -139,12 +139,12 @@ public:
 private:
 	Process *loadProcess(IDataSource *ids, uint32 version);
 
-	std::list<Process *> processes;
+	Std::list<Process *> processes;
 	idMan   *pIDs;
 
-	std::list<Process *>::iterator current_process;
+	Std::list<Process *>::iterator current_process;
 
-	std::map<Common::String, ProcessLoadFunc> processloaders;
+	Std::map<Common::String, ProcessLoadFunc> processloaders;
 
 	bool loading;
 

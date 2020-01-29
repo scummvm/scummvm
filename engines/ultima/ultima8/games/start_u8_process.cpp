@@ -41,7 +41,7 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(StartU8Process, Process)
 
-StartU8Process::StartU8Process(const std::string &saveName) : Process(),
+StartU8Process::StartU8Process(const Std::string &saveName) : Process(),
 		_init(false), _saveName(saveName), _skipStart(!saveName.empty()) {
 }
 
@@ -70,7 +70,7 @@ void StartU8Process::run() {
 		currentmap->areaSearch(&uclist, script, sizeof(script),
 		                       0, 256, false, 16188, 7500);
 		if (uclist.getSize() < 1) {
-			perr << "Unable to find FIRST egg!" << std::endl;
+			perr << "Unable to find FIRST egg!" << Std::endl;
 			return;
 		}
 
@@ -91,7 +91,7 @@ void StartU8Process::run() {
 	                       0, 256, false, 11551, 2079);
 
 	if (uclist.getSize() < 1) {
-		perr << "Unable to find MUSIC egg!" << std::endl;
+		perr << "Unable to find MUSIC egg!" << Std::endl;
 	} else {
 		ObjId objid = uclist.getuint16(0);
 		Item *musicEgg = getItem(objid);

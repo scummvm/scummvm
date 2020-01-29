@@ -38,9 +38,9 @@ namespace Ultima6 {
 SignViewGump::SignViewGump(Configuration *cfg) : DraggableView(cfg) {
 	font = new BMPFont();
 
-	std::string datadir = GUI::get_gui()->get_data_dir();
-	std::string imagefile;
-	std::string path;
+	Std::string datadir = GUI::get_gui()->get_data_dir();
+	Std::string imagefile;
+	Std::string path;
 
 	build_path(datadir, "images", path);
 	datadir = path;
@@ -75,9 +75,9 @@ bool SignViewGump::init(Screen *tmp_screen, void *view_manager, Font *f, Party *
 	View::init(x_off, y_off, f, p, tm, om);
 	SetRect(area.left, area.top, SIGN_BG_W, SIGN_BG_H);
 
-	std::string datadir = GUI::get_gui()->get_data_dir();
-	std::string imagefile;
-	std::string path;
+	Std::string datadir = GUI::get_gui()->get_data_dir();
+	Std::string imagefile;
+	Std::string path;
 
 	build_path(datadir, "images", path);
 	datadir = path;

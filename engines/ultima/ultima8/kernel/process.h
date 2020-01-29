@@ -129,7 +129,7 @@ protected:
 
 	//! Processes waiting for this one to finish.
 	//! When this process terminates, awaken them and pass them the result val.
-	std::vector<ProcId> waiting;
+	Std::vector<ProcId> waiting;
 
 public:
 

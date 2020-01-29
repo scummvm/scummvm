@@ -34,7 +34,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-using std::string;
+using Std::string;
 
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(CoreApp)
@@ -112,7 +112,7 @@ void CoreApp::sysInit() {
 
 // load configuration files
 void CoreApp::loadConfig() {
-	pout << "Loading configuration files:" << std::endl;
+	pout << "Loading configuration files:" << Std::endl;
 
 	bool dataconf, homeconf;
 
@@ -123,31 +123,31 @@ void CoreApp::loadConfig() {
 	homeconf = settingman->readConfigFile("@home/pentagram.ini");
 
 	if (!homeconf && !dataconf) {
-		pout << "No configuration files found." << std::endl;
+		pout << "No configuration files found." << Std::endl;
 	} else {
 
 		if (dataconf)
-			pout << "@data/pentagram.ini" << std::endl;
+			pout << "@data/pentagram.ini" << Std::endl;
 		if (homeconf)
-			pout << "@home/pentagram.ini" << std::endl;
+			pout << "@home/pentagram.ini" << Std::endl;
 	}
 
 	//  load pentagram specific data path
-	std::string data;
+	Std::string data;
 	if (settingman->get("data", data, SettingManager::DOM_GLOBAL)) {
-		pout << "Setting custom data path: " << data << std::endl;
+		pout << "Setting custom data path: " << data << Std::endl;
 		bool ok = filesystem->AddVirtualPath("@data", data);
 		if (!ok) {
-			perr << "Error opening data directory." << std::endl;
+			perr << "Error opening data directory." << Std::endl;
 		}
 	}
 }
 
 void CoreApp::setupGameList() {
-	std::vector<Pentagram::istring> gamelist;
+	Std::vector<Pentagram::istring> gamelist;
 	gamelist = settingman->listGames();
 	con->Print(MM_INFO, "Scanning config file for games:\n");
-	std::vector<Pentagram::istring>::iterator iter;
+	Std::vector<Pentagram::istring>::iterator iter;
 	Pentagram::istring gamename;
 
 	for (iter = gamelist.begin(); iter != gamelist.end(); ++iter) {
@@ -161,7 +161,7 @@ void CoreApp::setupGameList() {
 			// add game to games map
 			games[game] = info;
 
-			std::string details = info->getPrintDetails();
+			Std::string details = info->getPrintDetails();
 			con->Print(MM_INFO, details.c_str());
 		} else {
 			con->Print(MM_INFO, "unknown, skipping");
@@ -173,7 +173,7 @@ void CoreApp::setupGameList() {
 GameInfo *CoreApp::getDefaultGame() {
 	Pentagram::istring gamename;
 
-	std::string defaultgame;
+	Std::string defaultgame;
 	bool defaultset = settingman->get("defaultgame", defaultgame,
 	                                  SettingManager::DOM_GLOBAL);
 
@@ -197,20 +197,20 @@ GameInfo *CoreApp::getDefaultGame() {
 
 	} else {
 		perr << "Multiple games found in configuration, but no default "
-		     << "game is selected." << std::endl
+		     << "game is selected." << Std::endl
 		     << "Either start Pentagram with the \"--game <gamename>\","
-		     << std::endl
+		     << Std::endl
 		     << "or set pentagram/defaultgame in pentagram.ini"
-		     << std::endl;  // FIXME - report more useful error message
+		     << Std::endl;  // FIXME - report more useful error message
 		return 0;
 	}
 
-	pout << "Default game: " << gamename << std::endl;
+	pout << "Default game: " << gamename << Std::endl;
 
 	GameInfo *info = getGameInfo(gamename);
 
 	if (!info) {
-		perr << "Game \"" << gamename << "\" not found." << std::endl;
+		perr << "Game \"" << gamename << "\" not found." << Std::endl;
 	}
 
 	// We've got a default game name, doesn't mean it will work though
@@ -223,8 +223,8 @@ bool CoreApp::setupGame(GameInfo *info) {
 
 	gameinfo = info;
 
-	pout << "Selected game: " << info->name << std::endl;
-	pout << info->getPrintDetails() << std::endl;
+	pout << "Selected game: " << info->name << Std::endl;
+	pout << info->getPrintDetails() << Std::endl;
 
 	setupGamePaths(info);
 
@@ -233,7 +233,7 @@ bool CoreApp::setupGame(GameInfo *info) {
 
 void CoreApp::killGame() {
 	// Save the settings!
-	pout << "Saving settings" << std::endl;
+	pout << "Saving settings" << Std::endl;
 	settingman->write();
 
 	filesystem->RemoveVirtualPath("@game");
@@ -310,13 +310,13 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 	settingman->setCurrentDomain(SettingManager::DOM_GAME);
 
 	// load main game data path
-	std::string gpath;
+	Std::string gpath;
 	settingman->get("path", gpath, SettingManager::DOM_GAME);
 	filesystem->AddVirtualPath("@game", gpath);
 
 	// load work path. Default is @home/game-work
 	// where 'game' in the above is the specified 'game' loaded
-	std::string work;
+	Std::string work;
 	if (!settingman->get("work", work, SettingManager::DOM_GAME))
 		work = "@home/" + game + "-work";
 
@@ -337,7 +337,7 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 #endif
 
 	// load savegame path. Default is @home/game-save
-	std::string save;
+	Std::string save;
 	if (!settingman->get("save", save, SettingManager::DOM_GAME))
 		save = "@home/" + game + "-save";
 

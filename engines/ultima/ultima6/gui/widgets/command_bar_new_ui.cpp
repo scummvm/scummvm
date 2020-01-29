@@ -45,7 +45,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::string;
+using Std::string;
 
 #define btn_size 17
 #define SELECTED_COLOR 248

@@ -39,12 +39,12 @@ Font::~Font() {
 }
 
 
-void Font::getTextSize(const std::string &text,
+void Font::getTextSize(const Std::string &text,
                        int &resultwidth, int &resultheight,
                        unsigned int &remaining,
                        int width, int height, TextAlign align,
                        bool u8specials) {
-	std::list<PositionedText> tmp;
+	Std::list<PositionedText> tmp;
 	tmp = typesetText<Traits>(this, text, remaining,
 	                          width, height, align, u8specials,
 	                          resultwidth, resultheight);
@@ -52,7 +52,7 @@ void Font::getTextSize(const std::string &text,
 
 
 //static
-bool Font::Traits::canBreakAfter(std::string::const_iterator &i) {
+bool Font::Traits::canBreakAfter(Std::string::const_iterator &i) {
 	// It's not really relevant what we do here, because this probably will
 	// not be used at normal font sizes.
 	return true;
@@ -60,8 +60,8 @@ bool Font::Traits::canBreakAfter(std::string::const_iterator &i) {
 
 
 //static
-bool Font::SJISTraits::canBreakAfter(std::string::const_iterator &i) {
-	std::string::const_iterator j = i;
+bool Font::SJISTraits::canBreakAfter(Std::string::const_iterator &i) {
+	Std::string::const_iterator j = i;
 	uint32 u1 = unicode(j);
 
 	// See: http://www.wesnoth.org/wiki/JapaneseTranslation#Word-Wrapping
@@ -151,8 +151,8 @@ bool Font::SJISTraits::canBreakAfter(std::string::const_iterator &i) {
 } // End of namespace Pentagram
 
 template<class T>
-static void findWordEnd(const std::string &text,
-                        std::string::const_iterator &iter, bool u8specials) {
+static void findWordEnd(const Std::string &text,
+                        Std::string::const_iterator &iter, bool u8specials) {
 	while (iter != text.end()) {
 		if (T::isSpace(iter, u8specials)) return;
 		T::advance(iter);
@@ -160,8 +160,8 @@ static void findWordEnd(const std::string &text,
 }
 
 template<class T>
-static void passSpace(const std::string &text,
-                      std::string::const_iterator &iter, bool u8specials) {
+static void passSpace(const Std::string &text,
+                      Std::string::const_iterator &iter, bool u8specials) {
 	while (iter != text.end()) {
 		if (!T::isSpace(iter, u8specials)) return;
 		T::advance(iter);
@@ -184,34 +184,34 @@ CHECKME: any others? (page breaks for books?)
 */
 
 template<class T>
-std::list<PositionedText> typesetText(Pentagram::Font *font,
-                                      const std::string &text,
+Std::list<PositionedText> typesetText(Pentagram::Font *font,
+                                      const Std::string &text,
                                       unsigned int &remaining,
                                       int width, int height,
                                       Pentagram::Font::TextAlign align,
                                       bool u8specials,
                                       int &resultwidth, int &resultheight,
-                                      std::string::size_type cursor) {
+                                      Std::string::size_type cursor) {
 #if 0
 	pout << "typeset (" << width << "," << height << ") : "
-	     << text << std::endl;
+	     << text << Std::endl;
 #endif
 
 	// be optimistic and assume everything will fit
 	remaining = text.size();
 
-	std::string curline;
+	Std::string curline;
 
 	int totalwidth = 0;
 	int totalheight = 0;
 
-	std::list<PositionedText> lines;
+	Std::list<PositionedText> lines;
 	PositionedText line;
 
-	std::string::const_iterator iter = text.begin();
-	std::string::const_iterator cursoriter = text.begin();
-	if (cursor != std::string::npos) cursoriter += cursor;
-	std::string::const_iterator curlinestart = text.begin();
+	Std::string::const_iterator iter = text.begin();
+	Std::string::const_iterator cursoriter = text.begin();
+	if (cursor != Std::string::npos) cursoriter += cursor;
+	Std::string::const_iterator curlinestart = text.begin();
 
 	bool breakhere = false;
 	while (true) {
@@ -224,8 +224,8 @@ std::list<PositionedText> typesetText(Pentagram::Font *font,
 			line.dims.w = stringwidth;
 			line.dims.h = stringheight;
 			line.text = curline;
-			line.cursor = std::string::npos;
-			if (cursor != std::string::npos && cursoriter >= curlinestart &&
+			line.cursor = Std::string::npos;
+			if (cursor != Std::string::npos && cursoriter >= curlinestart &&
 			        (cursoriter < iter || (!breakhere && cursoriter == iter))) {
 				line.cursor = cursoriter - curlinestart;
 				if (line.dims.w == 0) {
@@ -259,12 +259,12 @@ std::list<PositionedText> typesetText(Pentagram::Font *font,
 		} else {
 
 			// see if next word still fits on the current line
-			std::string::const_iterator nextword = iter;
+			Std::string::const_iterator nextword = iter;
 			passSpace<T>(text, nextword, u8specials);
 
 			// process spaces
 			bool foundLF = false;
-			std::string spaces;
+			Std::string spaces;
 			for (; iter < nextword; T::advance(iter)) {
 				if (T::isBreak(iter, u8specials)) {
 					foundLF = true;
@@ -278,10 +278,10 @@ std::list<PositionedText> typesetText(Pentagram::Font *font,
 			if (foundLF) continue;
 
 			// process word
-			std::string::const_iterator endofnextword = iter;
+			Std::string::const_iterator endofnextword = iter;
 			findWordEnd<T>(text, endofnextword, u8specials);
 			int stringwidth = 0, stringheight = 0;
-			std::string newline = curline + spaces +
+			Std::string newline = curline + spaces +
 			                      text.substr(nextword - text.begin(), endofnextword - nextword);
 			font->getStringSize(newline, stringwidth, stringheight);
 
@@ -294,9 +294,9 @@ std::list<PositionedText> typesetText(Pentagram::Font *font,
 					// FIXME: this is rather inefficient; binary search?
 					// FIXME: clean up...
 					iter = nextword;
-					std::string::const_iterator saveiter = nextword;	// Dummy initialization
-					std::string::const_iterator saveiter_fail;
-					std::string curline_fail;
+					Std::string::const_iterator saveiter = nextword;	// Dummy initialization
+					Std::string::const_iterator saveiter_fail;
+					Std::string curline_fail;
 					newline = spaces;
 					bool breakok = true;
 					int breakcount = -1;
@@ -348,7 +348,7 @@ std::list<PositionedText> typesetText(Pentagram::Font *font,
 	totalheight += font->getHeight();
 
 	// fixup x coordinates of lines
-	std::list<PositionedText>::iterator lineiter;
+	Std::list<PositionedText>::iterator lineiter;
 	for (lineiter = lines.begin(); lineiter != lines.end(); ++lineiter) {
 		switch (align) {
 		case Pentagram::Font::TEXT_LEFT:
@@ -363,7 +363,7 @@ std::list<PositionedText> typesetText(Pentagram::Font *font,
 #if 0
 		pout << lineiter->dims.x << "," << lineiter->dims.y << " "
 		     << lineiter->dims.w << "," << lineiter->dims.h << ": "
-		     << lineiter->text << std::endl;
+		     << lineiter->text << Std::endl;
 #endif
 	}
 
@@ -376,18 +376,18 @@ std::list<PositionedText> typesetText(Pentagram::Font *font,
 
 // explicit instantiations
 template
-std::list<PositionedText> typesetText<Pentagram::Font::Traits>
-(Pentagram::Font *font, const std::string &text,
+Std::list<PositionedText> typesetText<Pentagram::Font::Traits>
+(Pentagram::Font *font, const Std::string &text,
  unsigned int &remaining, int width, int height,
  Pentagram::Font::TextAlign align, bool u8specials,
- int &resultwidth, int &resultheight, std::string::size_type cursor);
+ int &resultwidth, int &resultheight, Std::string::size_type cursor);
 
 template
-std::list<PositionedText> typesetText<Pentagram::Font::SJISTraits>
-(Pentagram::Font *font, const std::string &text,
+Std::list<PositionedText> typesetText<Pentagram::Font::SJISTraits>
+(Pentagram::Font *font, const Std::string &text,
  unsigned int &remaining, int width, int height,
  Pentagram::Font::TextAlign align, bool u8specials,
- int &resultwidth, int &resultheight, std::string::size_type cursor);
+ int &resultwidth, int &resultheight, Std::string::size_type cursor);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

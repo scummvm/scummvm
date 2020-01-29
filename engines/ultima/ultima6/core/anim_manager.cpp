@@ -345,7 +345,7 @@ PositionedTile *TileAnim::add_tile(Tile *tile, sint16 x, sint16 y,
 void TileAnim::remove_tile(uint32 i) {
 	if (i < tiles.size()) {
 		//vector<PositionedTile*>::iterator ti = &tiles[i];
-		std::vector<PositionedTile *>::iterator ti = tiles.begin();
+		Std::vector<PositionedTile *>::iterator ti = tiles.begin();
 		for (uint32 j = 0; j < i; j++)
 			ti++;
 
@@ -355,7 +355,7 @@ void TileAnim::remove_tile(uint32 i) {
 }
 
 void TileAnim::remove_tile(PositionedTile *p_tile) {
-	std::vector<PositionedTile *>::iterator ti = tiles.begin();
+	Std::vector<PositionedTile *>::iterator ti = tiles.begin();
 	for (; ti != tiles.end(); ti++) {
 		if (*ti == p_tile) {
 			delete *ti;
@@ -450,7 +450,7 @@ uint16 HitAnim::callback(uint16 msg, CallBack *caller, void *msg_data) {
 
 /*** TextAnim ***/
 
-TextAnim::TextAnim(std::string t, MapCoord loc, uint32 dur) {
+TextAnim::TextAnim(Std::string t, MapCoord loc, uint32 dur) {
 	px = loc.x;
 	py = loc.y;
 	duration = dur;

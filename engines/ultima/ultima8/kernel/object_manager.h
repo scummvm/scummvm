@@ -68,24 +68,24 @@ public:
 	bool load(IDataSource *ids, uint32 version);
 
 	Object *loadObject(IDataSource *ids, uint32 version);
-	Object *loadObject(IDataSource *ids, std::string classname, uint32 version);
+	Object *loadObject(IDataSource *ids, Std::string classname, uint32 version);
 
 	//! "ObjectManager::objectTypes" console command
 	static void ConCmd_objectTypes(const Console::ArgvType &argv);
 	//! "ObjectManager::objectInfo" console command
 	static void ConCmd_objectInfo(const Console::ArgvType &argv);
 
-	std::vector<Object *> objects;
+	Std::vector<Object *> objects;
 	idMan *objIDs;
 	idMan *actorIDs;
 
 private:
 	void setupLoaders();
 
-	void addObjectLoader(std::string classname, ObjectLoadFunc func) {
+	void addObjectLoader(Std::string classname, ObjectLoadFunc func) {
 		objectloaders[classname] = func;
 	}
-	std::map<Common::String, ObjectLoadFunc> objectloaders;
+	Std::map<Common::String, ObjectLoadFunc> objectloaders;
 
 	static ObjectManager *objectmanager;
 };

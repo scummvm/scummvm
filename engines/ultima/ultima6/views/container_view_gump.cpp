@@ -65,9 +65,9 @@ bool ContainerViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, u
 
 	//actor = p->get_actor(p->get_leader()); don't have party leader as default, get owner of container obj or leave NULL (moved to init_container_type)
 
-	std::string datadir = GUI::get_gui()->get_data_dir();
-	std::string imagefile;
-	std::string path;
+	Std::string datadir = GUI::get_gui()->get_data_dir();
+	Std::string imagefile;
+	Std::string path;
 
 	build_path(datadir, "images", path);
 	datadir = path;
@@ -85,7 +85,7 @@ bool ContainerViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, u
 	return true;
 }
 
-void ContainerViewGump::init_container_type(std::string datadir, Obj *obj_type) {
+void ContainerViewGump::init_container_type(Std::string datadir, Obj *obj_type) {
 
 
 	if (obj_type != NULL) {
@@ -115,8 +115,8 @@ void ContainerViewGump::init_container_type(std::string datadir, Obj *obj_type) 
 	return init_backpack(datadir, obj_type ? !obj_type->is_in_inventory() : true);
 }
 
-void ContainerViewGump::init_backpack(std::string datadir, bool extend_area_w) {
-	std::string imagefile, path;
+void ContainerViewGump::init_backpack(Std::string datadir, bool extend_area_w) {
+	Std::string imagefile, path;
 	uint8 check_y = 27;
 	gump_button = loadButton(datadir, "gump", CHECK_X, check_y);
 
@@ -145,8 +145,8 @@ void ContainerViewGump::init_backpack(std::string datadir, bool extend_area_w) {
 		area.right += 4;
 }
 
-void ContainerViewGump::init_chest(std::string datadir) {
-	std::string imagefile, path;
+void ContainerViewGump::init_chest(Std::string datadir) {
+	Std::string imagefile, path;
 	uint8 check_y = 56;
 	gump_button = loadButton(datadir, "gump", CHECK_X, check_y);
 
@@ -169,8 +169,8 @@ void ContainerViewGump::init_chest(std::string datadir) {
 	AddWidget(container_widget);
 }
 
-void ContainerViewGump::init_crate(std::string datadir) {
-	std::string imagefile, path;
+void ContainerViewGump::init_crate(Std::string datadir) {
+	Std::string imagefile, path;
 	uint8 check_y = 63;
 	gump_button = loadButton(datadir, "gump", CHECK_X, check_y);
 
@@ -193,8 +193,8 @@ void ContainerViewGump::init_crate(std::string datadir) {
 	AddWidget(container_widget);
 }
 
-void ContainerViewGump::init_barrel(std::string datadir) {
-	std::string imagefile, path;
+void ContainerViewGump::init_barrel(Std::string datadir) {
+	Std::string imagefile, path;
 	uint8 check_y = 55;
 	gump_button = loadButton(datadir, "gump", CHECK_X, check_y);
 
@@ -217,8 +217,8 @@ void ContainerViewGump::init_barrel(std::string datadir) {
 	AddWidget(container_widget);
 }
 
-void ContainerViewGump::init_corpse(std::string datadir, std::string bg_filename) {
-	std::string imagefile, path;
+void ContainerViewGump::init_corpse(Std::string datadir, Std::string bg_filename) {
+	Std::string imagefile, path;
 	uint8 check_y = 25;
 	gump_button = loadButton(datadir, "gump", CHECK_X, check_y);
 

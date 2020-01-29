@@ -60,7 +60,7 @@ Archive::Archive(IDataSource *ids) {
 	addSource(ids);
 }
 
-Archive::Archive(const std::string &path) {
+Archive::Archive(const Std::string &path) {
 	count = 0;
 	addSource(path);
 }
@@ -94,7 +94,7 @@ bool Archive::addSource(IDataSource *ids) {
 	return addSource(s);
 }
 
-bool Archive::addSource(const std::string &path) {
+bool Archive::addSource(const Std::string &path) {
 	ArchiveFile *s = new DirFile(path);
 	if (!s->isValid()) {
 		delete s;

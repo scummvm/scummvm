@@ -31,7 +31,7 @@ namespace Ultima8 {
 
 class BarkGump : public ItemRelativeGump {
 protected:
-	std::string barked;
+	Std::string barked;
 	int32 counter;
 	ObjId textwidget;
 	uint32 speechshapenum;
@@ -42,7 +42,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	BarkGump();
-	BarkGump(uint16 owner_, std::string msg, uint32 speechshapenum = 0);
+	BarkGump(uint16 owner_, Std::string msg, uint32 speechshapenum = 0);
 	virtual ~BarkGump(void);
 
 	// Run the gump (decrement the counter)

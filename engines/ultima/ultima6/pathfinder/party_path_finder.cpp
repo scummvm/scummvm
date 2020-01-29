@@ -31,7 +31,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::vector;
+using Std::vector;
 
 PartyPathFinder::PartyPathFinder(Party *p) {
 	assert(p);

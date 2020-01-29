@@ -45,7 +45,7 @@ public:
 	GumpShapeArchive(IDataSource *ds, uint16 id_, Pentagram::Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(ds, id_, pal_, format_) { }
-	GumpShapeArchive(const std::string &path, uint16 id_,
+	GumpShapeArchive(const Std::string &path, uint16 id_,
 	                 Pentagram::Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(path, id_, pal_, format_) { }
@@ -56,7 +56,7 @@ public:
 	Pentagram::Rect *getGumpItemArea(uint32 shapenum);
 
 protected:
-	std::vector<Pentagram::Rect *> gumpItemArea;
+	Std::vector<Pentagram::Rect *> gumpItemArea;
 };
 
 } // End of namespace Ultima8

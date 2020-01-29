@@ -61,7 +61,7 @@ void GUI_Console:: Display(bool full_redraw) {
 	SDL_FillRect(surface, &framerect, bg_color->sdl_color);
 
 	uint16 i = 0;
-	for (std::list<std::string>::iterator it = data.begin(); it != data.end(); it++) {
+	for (Std::list<Std::string>::iterator it = data.begin(); it != data.end(); it++) {
 		font->textOut(surface, area.left, area.top + i * font->charHeight(), (*it).c_str(), false);
 		i++;
 	}
@@ -70,16 +70,16 @@ void GUI_Console:: Display(bool full_redraw) {
 	return;
 }
 
-void GUI_Console::AddLine(std::string line) {
+void GUI_Console::AddLine(Std::string line) {
 	uint16 len = line.length();
 	uint16 i;
 
 	if (len > num_cols) {
 		for (i = 0; i + num_cols < len; i += num_cols)
-			data.push_back(std::string(line.substr(i, num_cols)));
+			data.push_back(Std::string(line.substr(i, num_cols)));
 
 		if (i < len)
-			data.push_back(std::string(line.substr(i, len - i)));
+			data.push_back(Std::string(line.substr(i, len - i)));
 	} else
 		data.push_back(line);
 

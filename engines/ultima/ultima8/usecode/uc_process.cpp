@@ -58,7 +58,7 @@ UCProcess::~UCProcess() {
 void UCProcess::load(uint16 classid_, uint16 offset_, uint32 this_ptr,
                      int thissize, const uint8 *args, int argsize) {
 	if (usecode->get_class_size(classid_) == 0)
-		perr << "Class is empty..." << std::endl;
+		perr << "Class is empty..." << Std::endl;
 
 	classid = 0xFFFF;
 	ip = 0xFFFF;
@@ -118,7 +118,7 @@ bool UCProcess::ret() {
 void UCProcess::freeOnTerminate(uint16 index, int type_) {
 	assert(type_ >= 1 && type_ <= 3);
 
-	std::pair<uint16, int> p;
+	Std::pair<uint16, int> p;
 	p.first = index;
 	p.second = type_;
 
@@ -126,7 +126,7 @@ void UCProcess::freeOnTerminate(uint16 index, int type_) {
 }
 
 void UCProcess::terminate() {
-	std::list<std::pair<uint16, int> >::iterator i;
+	Std::list<Std::pair<uint16, int> >::iterator i;
 
 	for (i = freeonterminate.begin(); i != freeonterminate.end(); ++i) {
 		uint16 index = (*i).first;
@@ -170,7 +170,7 @@ void UCProcess::saveData(ODataSource *ods) {
 	ods->write2(ip);
 	ods->write4(temp32);
 	ods->write4(static_cast<uint32>(freeonterminate.size()));
-	std::list<std::pair<uint16, int> >::iterator iter;
+	Std::list<Std::pair<uint16, int> >::iterator iter;
 	for (iter = freeonterminate.begin(); iter != freeonterminate.end(); ++iter) {
 		ods->write2(iter->first);
 		ods->write4(static_cast<uint32>(iter->second));
@@ -187,7 +187,7 @@ bool UCProcess::loadData(IDataSource *ids, uint32 version) {
 	temp32 = ids->read4();
 	uint32 freecount = ids->read4();
 	for (unsigned int i = 0; i < freecount; ++i) {
-		std::pair<uint16, int> p;
+		Std::pair<uint16, int> p;
 		p.first = ids->read2();
 		p.second = static_cast<int>(ids->read4());
 		freeonterminate.push_back(p);
