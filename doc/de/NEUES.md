@@ -4,6 +4,9 @@ Programmcodes finden Sie auf Englisch unter:
 
 #### 2.2.0 (DD.MM.YYYY)
 
+ Dreamweb:
+   - Unterstützung für russische Fan-Übersetzung hinzugefügt.
+
  Kyra:
    - Unterstützung für die PC-98-Version von Eye of the Beholder I hinzugefügt.
 
