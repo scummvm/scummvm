@@ -1833,4 +1833,34 @@
 			</layout>
 		</layout>
 	</dialog>
+
+	<dialog name = 'TestbedOptions' overlays = 'screen_center'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
+			<widget name = 'Headline'
+					height = 'Globals.Line.Height'
+					width = '400'
+			/>
+			<widget name = 'Info'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'List'
+					height = '200'
+					/>
+			<layout type = 'vertical' padding = '0, 0, 16, 0'>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+					<widget name = 'SelectAll'
+							type = 'Button'
+					/>
+					<space/>
+					<widget name = 'RunTests'
+							type = 'Button'
+					/>
+					<widget name = 'Quit'
+							type = 'Button'
+					/>
+				</layout>
+			</layout>
+		</layout>
+	</dialog>
+
 </layout_info>
