@@ -165,7 +165,7 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 			continue; // Ignore GUI keymaps while in game and vice versa
 		}
 
-		debug(5, "Keymapper::mapKey keymap: %s", _keymaps[i]->getId().c_str());
+		debug(9, "Keymapper::mapKey keymap: %s", _keymaps[i]->getId().c_str());
 
 		const Keymap::ActionArray &actions = _keymaps[i]->getMappedActions(ev);
 		for (Keymap::ActionArray::const_iterator it = actions.begin(); it != actions.end(); it++) {
