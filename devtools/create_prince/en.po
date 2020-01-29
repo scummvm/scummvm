@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-29 13:05+0000\n"
+"PO-Revision-Date: 2020-01-29 13:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -20,9 +20,8 @@ msgstr ""
 "X-Generator: Weblate 3.10.1\n"
 
 #: dialog0001.txt:1
-#,fuzzy
 msgid "HERO: Przeppp... raszam..."
-msgstr "HERO: Ahem... Excuse me..."
+msgstr "HERO: Sorrr... rrry..."
 
 #: dialog0001.txt:2
 msgid "OTHER: Nie ma mowy. Idź sobie. Nie widzisz, że|staram się ciebie ignorować?"
@@ -3809,7 +3808,7 @@ msgstr "OTHER: A common spell but the side effects|hmmm."
 
 #: dialog0084.txt:3
 msgid "HERO: Wiedziałem, że gdzieś tkwi jakiś|haczyk."
-msgstr "HERO: I knew there's|a catch."
+msgstr "HERO: I knew there's a catch."
 
 #: dialog0084.txt:4
 msgid "OTHER: To czar zamiany w zwierzę."
@@ -9066,7 +9065,7 @@ msgstr "OTHER: And then you take it back..."
 
 #: dialog0312.txt:5
 msgid "OTHER: Dziwne."
-msgstr "OTHER: Weird."
+msgstr "HERO: Weird."
 
 #: dialog0312.txt:6
 msgid "HERO: Daję i odbieram? Po co?"
@@ -11004,7 +11003,7 @@ msgstr "door - Entrance to the monster hatchery."
 
 #: mob.lst:17003
 msgid "przejście - Wąski most prowadzący do drugiej części zamczyska."
-msgstr "passage - A narrow bridge leading to the second part of the castle."
+msgstr "door - Entrance to the monster hatchery."
 
 #: mob.lst:17004
 msgid "kościotrup - W słońcu wygląda równie przerażająco, co w mroku."
@@ -11391,7 +11390,7 @@ msgstr "Road - Broad and well stomped, though uneven."
 
 #: mob.lst:27002
 msgid "pomost - Stąd pewnie wypływały barki z mąką."
-msgstr "bridge - Apparently, barges with flour were floating from there."
+msgstr "pier - Apparently, barges with flour were floating from there."
 
 #: mob.lst:28001
 msgid "wejście - Pomyśleć, że z drugiej strony to już|jest coś dokładnie odwrotnego."
