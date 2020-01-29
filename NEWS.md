@@ -13,7 +13,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for localized menus in Novy Disk Russian Trilogy release.
 
 
-#### 2.1.1 (2020-01-31)
+#### 2.1.1 ":More sheep:" (2020-01-31)
 
  General:
    - Fixed crash when switching certain languages in GUI.
