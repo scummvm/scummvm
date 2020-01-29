@@ -202,7 +202,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 			stream.readUint16BE();
 	}
 
-	if (pixels.size() < _surface->w * _surface->h) {
+	if (pixels.size() < (uint32)_surface->w * _surface->h) {
 		int tail = _surface->w * _surface->h - pixels.size();
 
 		warning("BITDDecoder::loadStream(): premature end of stream (%d of %d pixels)",
