@@ -232,6 +232,14 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 		if (!g_gui.xmlEval()->getWidgetData(_overlays, _x, _y, (uint16 &) _w, (uint16 &) _h)) {
 			warning("Unable to retrieve overlayed dialog position %s", _overlays.c_str());
 		}
+
+		if (_w == -1 || _h == -1) {
+			warning("The overlayed dialog %s has not been sized, using a default size for %s", _overlays.c_str(), _name.c_str());
+			_x = g_system->getOverlayWidth()      / 10;
+			_y = g_system->getOverlayHeight()     / 10;
+			_w = g_system->getOverlayWidth()  * 8 / 10;
+			_h = g_system->getOverlayHeight() * 8 / 10;
+		}
 	}
 
 	if (_x >= 0) _x += _inset;
