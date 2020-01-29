@@ -661,18 +661,12 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 		name.deleteChar(0);
 	}
 
-	// Special case for SQ4 floppy: This game has hardcoded names for all of
-	// its savegames, and they are all named "sq4sg.xxx", where xxx is the
-	// slot. We just take the slot number here, and delete the appropriate
-	// save game.
 	if (name.hasPrefix("sq4sg.")) {
-		// Special handling for SQ4... get the slot number and construct the
-		// save game name.
-		int slotNum = atoi(name.c_str() + name.size() - 3);
-		Common::Array<SavegameDesc> saves;
-		listSavegames(saves);
-		int savedir_nr = saves[slotNum].id;
-		name = g_sci->getSavegameName(savedir_nr);
+		// Special case for SQ4 floppy: This game has hardcoded save game names.
+		// They are named "sq4sg.xxx", where xxx is the virtual ID. We construct
+		// the appropriate save game name and delete it.
+		const int savegameId = atoi(name.c_str() + name.size() - 3) - SAVEGAMEID_OFFICIALRANGE_START;
+		name = g_sci->getSavegameName(savegameId);
 		result = saveFileMan->removeSavefile(name);
 #ifdef ENABLE_SCI32
 	} else if (getSciVersion() >= SCI_VERSION_2) {
