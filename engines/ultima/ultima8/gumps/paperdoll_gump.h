@@ -78,6 +78,8 @@ protected:
 	int cached_val[7]; // constant!!
 
 	uint16 statbuttongid;
+private:
+	const Pentagram::Rect backpack_rect;
 };
 
 } // End of namespace Ultima8

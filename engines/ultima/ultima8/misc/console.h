@@ -438,7 +438,8 @@ public:
 	}
 
 	ConsoleStream &operator<<(int val) {
-		Common::String str = Common::String::format("%d", val);
+		Common::String str = Common::String::format(
+			(_precision == Std::hex) ? "%x" : "%d", val);
 		write(str.c_str(), str.size());
 		return *this;
 	}

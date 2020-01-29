@@ -88,18 +88,20 @@ static const int statbuttonx = 81;
 static const int statbuttony = 84;
 
 
-PaperdollGump::PaperdollGump()
-	: ContainerGump() {
-	for (int i = 0; i < 14; ++i) // ! constant
-		cached_text[i] = 0;
+PaperdollGump::PaperdollGump() : ContainerGump(), statbuttongid(0),
+		backpack_rect(49, 25, 10, 25) {
+	Common::fill(cached_text, cached_text + 14, (RenderedText *)nullptr);
+	Common::fill(cached_val, cached_val + 7, 0);
 }
 
 PaperdollGump::PaperdollGump(Shape *shape_, uint32 framenum_, uint16 owner_,
-                             uint32 Flags_, int32 layer_)
-	: ContainerGump(shape_, framenum_, owner_, Flags_, layer_) {
+		uint32 Flags_, int32 layer_)
+		: ContainerGump(shape_, framenum_, owner_, Flags_, layer_),
+		statbuttongid(0), backpack_rect(49, 25, 10, 25) {
 	statbuttongid = 0;
-	for (int i = 0; i < 14; ++i) // ! constant
-		cached_text[i] = 0;
+
+	Common::fill(cached_text, cached_text + 14, (RenderedText *)nullptr);
+	Common::fill(cached_val, cached_val + 7, 0);
 }
 
 PaperdollGump::~PaperdollGump() {

@@ -214,15 +214,15 @@ public:
 		buf_ptr = const_cast<unsigned char *>(buf) + pos;
 	};
 
-	virtual void skip(int32 pos) {
+	virtual void skip(int32 pos) override {
 		buf_ptr += pos;
 	};
 
-	virtual uint32 getSize() {
+	virtual uint32 getSize() const override {
 		return size;
 	};
 
-	virtual uint32 getPos() {
+	virtual uint32 getPos() const override {
 		return static_cast<uint32>(buf_ptr - buf);
 	};
 };
@@ -293,18 +293,17 @@ public:
 	virtual void seek(uint32 /*pos*/) {
 		/*_out->seekp(pos); FIXME: Do something here. */
 	}
-	virtual void skip(int32 /*pos*/) {
+	virtual void skip(int32 /*pos*/) override {
 		/*_out->seekp(pos, Std::ios::cur); FIXME: Do something here. */
 	}
 
-	virtual uint32 getSize()      {
+	virtual uint32 getSize() const override {
 		return static_cast<uint32>(_out.size());
 	}
 
-	virtual uint32 getPos() {
+	virtual uint32 getPos() const override {
 		return static_cast<uint32>(_out.size()); /*return _out->tellp(); FIXME: Do something here. */
 	}
-
 };
 
 class OAutoBufferDataSource: public ODataSource {
