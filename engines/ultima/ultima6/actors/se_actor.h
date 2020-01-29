@@ -37,7 +37,7 @@ public:
 	SEActor(Map *m, ObjManager *om, GameClock *c);
 	~SEActor();
 
-	bool init();
+	virtual bool init(uint8 unused = 0) override;
 	bool will_not_talk();
 	uint8 get_maxhp() {
 		return (((level * 4 + strength * 2) < 255) ? (level * 4 + strength * 2) : 255);

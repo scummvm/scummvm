@@ -38,7 +38,7 @@ MDActor::MDActor(Map *m, ObjManager *om, GameClock *c) : WOUActor(m, om, c) {
 MDActor::~MDActor() {
 }
 
-bool MDActor::init() {
+bool MDActor::init(uint8) {
 	Actor::init();
 	return true;
 }

@@ -65,7 +65,7 @@ public:
 		        && loc.z == goal.z);
 	}
 
-	virtual bool check_dir(const MapCoord &from, const MapCoord &rel);
+	virtual bool check_dir(const MapCoord &from, const MapCoord &rel, sint8 unused = 0);
 	virtual bool check_loc(const MapCoord &loc) = 0;
 	bool check_loc(uint16 x, uint16 y, uint8 z);
 
