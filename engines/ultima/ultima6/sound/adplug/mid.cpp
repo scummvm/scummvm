@@ -113,11 +113,11 @@ unsigned long CmidPlayer::getval() {
 	return (v);
 }
 
-bool CmidPlayer::load(const std::string &filename) {
+bool CmidPlayer::load(const Std::string &filename) {
 	return false;
 }
 
-bool CmidPlayer::load(std::string &filename, int song_index) {
+bool CmidPlayer::load(Std::string &filename, int song_index) {
 	U6Lib_n f;
 	f.open(filename, 4, NUVIE_GAME_MD);
 	//binistream *f = fp.open(filename); if(!f) return false;
@@ -550,22 +550,22 @@ void CmidPlayer::load_ultima_midi_tracks() {
 	}
 }
 
-std::string CmidPlayer::gettype() {
+Std::string CmidPlayer::gettype() {
 	switch (type) {
 	case FILE_LUCAS:
-		return std::string("LucasArts AdLib MIDI");
+		return Std::string("LucasArts AdLib MIDI");
 	case FILE_MIDI:
-		return std::string("General MIDI");
+		return Std::string("General MIDI");
 	case FILE_CMF:
-		return std::string("Creative Music Format (CMF MIDI)");
+		return Std::string("Creative Music Format (CMF MIDI)");
 	case FILE_OLDLUCAS:
-		return std::string("Lucasfilm Adlib MIDI");
+		return Std::string("Lucasfilm Adlib MIDI");
 	case FILE_ADVSIERRA:
-		return std::string("Sierra On-Line VGA MIDI");
+		return Std::string("Sierra On-Line VGA MIDI");
 	case FILE_SIERRA:
-		return std::string("Sierra On-Line EGA MIDI");
+		return Std::string("Sierra On-Line EGA MIDI");
 	default:
-		return std::string("MIDI unknown");
+		return Std::string("MIDI unknown");
 	}
 }
 

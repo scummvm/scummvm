@@ -63,12 +63,12 @@ struct GameInfo {
 
 	char getLanguageFileLetter() const;
 	char getLanguageUsecodeLetter() const;
-	std::string getLanguage() const;
-	std::string getGameTitle() const;
-	std::string getPrintableVersion() const;
+	Std::string getLanguage() const;
+	Std::string getGameTitle() const;
+	Std::string getPrintableVersion() const;
 
-	std::string getPrintDetails() const;
-	std::string getPrintableMD5() const;
+	Std::string getPrintDetails() const;
+	Std::string getPrintableMD5() const;
 
 	bool match(GameInfo &other, bool ignoreMD5 = false) const;
 

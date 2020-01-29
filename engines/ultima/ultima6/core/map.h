@@ -195,10 +195,10 @@ public:
 	bool testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResult &Result, Obj *excluded_obj = NULL); // excluded_obj only works for LT_HitUnpassable
 
 	void saveRoofData();
-	std::string getRoofTilesetFilename();
+	Std::string getRoofTilesetFilename();
 
 protected:
-	std::string getRoofDataFilename();
+	Std::string getRoofDataFilename();
 	void insertSurfaceSuperChunk(unsigned char *schunk_ptr, unsigned char *chunk_data, uint8 schunk_num);
 	void insertSurfaceChunk(unsigned char *chunk, uint16 x, uint16 y);
 

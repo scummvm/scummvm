@@ -47,11 +47,11 @@ public:
 	virtual const char* const *event_names()=0;
 	virtual void readheader(IDataSource *ucfile, UsecodeHeader &uch, uint32 &curOffset)=0;
 	virtual void readevents(IDataSource *ucfile, const UsecodeHeader &uch)=0;
-	virtual void readOp(TempOp &op, IDataSource *ucfile, uint32 &dbg_symbol_offset, std::vector<DebugSymbol> &debugSymbols, bool &done)=0;
-	virtual Node *readOp(IDataSource *ucfile, uint32 &dbg_symbol_offset, std::vector<DebugSymbol> &debugSymbols, bool &done)=0;
-	void readOpGeneric(TempOp &, IDataSource *, uint32 &, std::vector<DebugSymbol> &,
+	virtual void readOp(TempOp &op, IDataSource *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done)=0;
+	virtual Node *readOp(IDataSource *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done)=0;
+	void readOpGeneric(TempOp &, IDataSource *, uint32 &, Std::vector<DebugSymbol> &,
 		bool &, const bool ) { }
-	Node *readOpGeneric(IDataSource *, uint32 &, std::vector<DebugSymbol> &,
+	Node *readOpGeneric(IDataSource *, uint32 &, Std::vector<DebugSymbol> &,
 		bool &, const bool ) { return 0; }
 };
 
@@ -77,15 +77,15 @@ public:
 			uint32 offset = read4(ucfile);
 			EventMap[offset] = i;
 #ifdef DISASM_DEBUG
-			pout << "Event " << i << ": " << std::hex << std::setw(4) << offset << std::dec << endl;
+			pout << "Event " << i << ": " << Std::hex << Std::setw(4) << offset << Std::dec << endl;
 #endif
 		}
 #endif
 	}
 
-	void readOp(TempOp &op, IDataSource *ucfile, uint32 &dbg_symbol_offset, std::vector<DebugSymbol> &debugSymbols, bool &done)
+	void readOp(TempOp &op, IDataSource *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done)
 	{ readOpGeneric(op, ucfile, dbg_symbol_offset, debugSymbols, done, false); };
-	Node *readOp(IDataSource *ucfile, uint32 &dbg_symbol_offset, std::vector<DebugSymbol> &debugSymbols, bool &done)
+	Node *readOp(IDataSource *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done)
 	{ return readOpGeneric(ucfile, dbg_symbol_offset, debugSymbols, done, false); };
 
 	
@@ -411,11 +411,11 @@ const char * const ConvertUsecodeU8::_event_names[] = {
 
 void ConvertUsecodeU8::readheader(IDataSource *ucfile, UsecodeHeader &uch, uint32 &curOffset_) {
 	#ifdef DISASM_DEBUG
-	perr << std::setfill('0') << std::hex;
-	perr << "unknown1: " << std::setw(4) << read4(ucfile) << endl; // unknown
+	perr << Std::setfill('0') << Std::hex;
+	perr << "unknown1: " << Std::setw(4) << read4(ucfile) << endl; // unknown
 	uch.maxOffset = read4(ucfile) - 0x0C; // file size
-	perr << "maxoffset: " << std::setw(4) << maxOffset << endl;
-	perr << "unknown2: " << std::setw(4) << read4(ucfile) << endl; // unknown
+	perr << "maxoffset: " << Std::setw(4) << maxOffset << endl;
+	perr << "unknown2: " << Std::setw(4) << read4(ucfile) << endl; // unknown
 	curOffset_ = 0;
 	#else
 	read4(ucfile); // unknown

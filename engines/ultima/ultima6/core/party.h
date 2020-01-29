@@ -207,7 +207,7 @@ public:
 	}
 	void rest_gather();
 	void rest_sleep(uint8 hours, sint16 guard);
-	bool can_rest(std::string &err_str);
+	bool can_rest(Std::string &err_str);
 
 	void set_combat_target(uint8 member_num, Actor *target);
 	void set_combat_target(uint8 member_num, MapCoord target);

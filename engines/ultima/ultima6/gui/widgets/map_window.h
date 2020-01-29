@@ -142,8 +142,8 @@ class MapWindow: public GUI_Widget {
 
 	bool draw_brit_lens_anim;
 	bool draw_garg_lens_anim;
-// std::vector<TileInfo> m_ViewableObjTiles; // shouldn't need this for in_town checks
-	std::vector<TileInfo> m_ViewableMapTiles;
+// Std::vector<TileInfo> m_ViewableObjTiles; // shouldn't need this for in_town checks
+	Std::vector<TileInfo> m_ViewableMapTiles;
 
 	bool lighting_update_required;
 
@@ -280,7 +280,7 @@ public:
 	bool in_town();
 // can put object at world location x,y?
 	CanDropOrMoveMsg can_drop_or_move_obj(uint16 x, uint16 y, Actor *actor, Obj *obj);
-	void display_can_drop_or_move_msg(CanDropOrMoveMsg msg, std::string msg_text = "");
+	void display_can_drop_or_move_msg(CanDropOrMoveMsg msg, Std::string msg_text = "");
 	bool can_get_obj(Actor *actor, Obj *obj);
 	bool blocked_by_wall(Actor *actor, Obj *obj);
 	void display_move_text(Actor *target_actor, Obj *obj);
@@ -325,7 +325,7 @@ public:
 		return roof_tiles;
 	}
 
-	std::vector<Obj *> m_ViewableObjects; //^^ dodgy public buffer
+	Std::vector<Obj *> m_ViewableObjects; //^^ dodgy public buffer
 
 	void wizard_eye_start(MapCoord location, uint16 duration, CallBack *caller);
 

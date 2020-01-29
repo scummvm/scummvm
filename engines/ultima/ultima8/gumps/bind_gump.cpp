@@ -48,7 +48,7 @@ void BindGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
 
 	//! English ! - TODO: Externalize string.
-	std::string bindtext = "Press any key or button.\n\nPress ESCAPE to cancel\nor BACKSPACE to clear";
+	Std::string bindtext = "Press any key or button.\n\nPress ESCAPE to cancel\nor BACKSPACE to clear";
 	Gump *widget = new TextWidget(0, 0, bindtext, true, 6, 0, 0,
 	                              Pentagram::Font::TEXT_CENTER);
 	widget->InitGump(this);

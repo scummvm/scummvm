@@ -45,7 +45,7 @@ public:
 	BMPFont();
 	~BMPFont();
 
-	bool init(std::string bmp_filename, bool dual_fontmap = false);
+	bool init(Std::string bmp_filename, bool dual_fontmap = false);
 
 	uint16 getCharWidth(uint8 c);
 	uint16 getCharHeight() {

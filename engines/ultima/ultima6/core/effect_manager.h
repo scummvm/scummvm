@@ -34,17 +34,17 @@ class Effect;
  */
 class EffectManager {
 	friend class Effect;
-	typedef std::vector<Effect *>::iterator EffectIterator;
+	typedef Std::vector<Effect *>::iterator EffectIterator;
 	/* For each EffectWatch, a message will be sent to "watcher" when
 	   "effect" is deleted. */
 	typedef struct {
 		CallBack *watcher;
 		Effect *effect;
 	} EffectWatch;
-	typedef std::vector<EffectWatch>::iterator WatchIterator;
+	typedef Std::vector<EffectWatch>::iterator WatchIterator;
 
-	std::vector<Effect *> effects; // the simple list
-	std::vector<EffectWatch> watched;
+	Std::vector<Effect *> effects; // the simple list
+	Std::vector<EffectWatch> watched;
 
 	void add_effect(Effect *eff); // only effects can add themselves
 	void signal_watch(Effect *effect);

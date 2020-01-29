@@ -32,11 +32,11 @@ SegmentedAllocator::SegmentedAllocator(size_t nodeCapacity_, uint32 nodes_): All
 	pools.push_back(new SegmentedPool(nodeCapacity_, nodes_));
 	nodeCapacity = pools[0]->getNodeCapacity();
 //	pout << "Initial Pool Created: Nodes - " << nodes << ", Node Capacity - "
-//		<< nodeCapacity << std::endl;
+//		<< nodeCapacity << Std::endl;
 }
 
 SegmentedAllocator::~SegmentedAllocator() {
-	std::vector<SegmentedPool *>::iterator i;
+	Std::vector<SegmentedPool *>::iterator i;
 	for (i = pools.begin(); i != pools.end(); ++i) {
 		delete *i;
 	}
@@ -45,7 +45,7 @@ SegmentedAllocator::~SegmentedAllocator() {
 }
 
 void *SegmentedAllocator::allocate(size_t size) {
-	std::vector<SegmentedPool *>::iterator i;
+	Std::vector<SegmentedPool *>::iterator i;
 	SegmentedPool *p;
 
 	if (size > nodeCapacity)
@@ -60,7 +60,7 @@ void *SegmentedAllocator::allocate(size_t size) {
 	p = new SegmentedPool(nodeCapacity, nodes);
 	if (p) {
 //		pout << "New Pool Created: Nodes - " << nodes << ", Node Capacity - "
-//			<< nodeCapacity << std::endl;
+//			<< nodeCapacity << Std::endl;
 
 		pools.push_back(p);
 		return p->allocate(size);
@@ -71,7 +71,7 @@ void *SegmentedAllocator::allocate(size_t size) {
 }
 
 Pool *SegmentedAllocator::findPool(void *ptr) {
-	std::vector<SegmentedPool *>::iterator i;
+	Std::vector<SegmentedPool *>::iterator i;
 	for (i = pools.begin(); i != pools.end(); ++i) {
 		if ((*i)->inPool(ptr))
 			return *i;
@@ -94,12 +94,12 @@ void SegmentedAllocator::freeResources() {
 }
 
 void SegmentedAllocator::printInfo() {
-	std::vector<SegmentedPool *>::iterator it;
+	Std::vector<SegmentedPool *>::iterator it;
 	int i = 0;
 
-	pout << "Pools: " <<  pools.size() << std::endl;
+	pout << "Pools: " <<  pools.size() << Std::endl;
 	for (it = pools.begin(); it != pools.end(); ++it) {
-		pout << "  Pool " << i++ << ":" << std::endl;
+		pout << "  Pool " << i++ << ":" << Std::endl;
 		(*it)->printInfo();
 	}
 }

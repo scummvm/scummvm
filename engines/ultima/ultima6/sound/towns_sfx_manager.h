@@ -49,7 +49,7 @@ public:
 	bool playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume);
 
 private:
-	std::string sounds2dat_filepath;
+	Std::string sounds2dat_filepath;
 	TownsSampleData sounds1_dat[TOWNS_SFX_SOUNDS1_SIZE];
 	U6Audio::RandomCollectionAudioStream *fireStream;
 

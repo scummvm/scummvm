@@ -35,13 +35,13 @@ namespace Ultima6 {
  */
 class SeekPath: public Path {
 protected:
-	std::vector<MapCoord> A_scan, B_scan; // nodes of a line scanned by trace_obstacle()
+	Std::vector<MapCoord> A_scan, B_scan; // nodes of a line scanned by trace_obstacle()
 
 	void create_path(MapCoord &start, MapCoord &goal);
-	std::vector<MapCoord> *get_best_scan(MapCoord &start, MapCoord &goal);
+	Std::vector<MapCoord> *get_best_scan(MapCoord &start, MapCoord &goal);
 	void delete_nodes();
-	bool trace_check_obstacle(bool &turned, MapCoord &line, sint32 &deltax, sint32 &deltay, sint32 &xdir, sint32 &ydir, std::vector<MapCoord> *scan);
-	void trace_around_corner(MapCoord &line, sint32 &deltax, sint32 &deltay, sint32 &xdir, sint32 &ydir, std::vector<MapCoord> *scan);
+	bool trace_check_obstacle(bool &turned, MapCoord &line, sint32 &deltax, sint32 &deltay, sint32 &xdir, sint32 &ydir, Std::vector<MapCoord> *scan);
+	void trace_around_corner(MapCoord &line, sint32 &deltax, sint32 &deltay, sint32 &xdir, sint32 &ydir, Std::vector<MapCoord> *scan);
 
 public:
 	SeekPath();
@@ -56,7 +56,7 @@ public:
 	}
 
 	/* Trace obstacle towards xdir,ydir for a possible opening. */
-	bool trace_obstacle(MapCoord line, sint32 deltax, sint32 deltay, sint32 xdir, sint32 ydir, std::vector<MapCoord> *scan);
+	bool trace_obstacle(MapCoord line, sint32 deltax, sint32 deltay, sint32 xdir, sint32 ydir, Std::vector<MapCoord> *scan);
 	/* Get two relative directions that a line can travel to trace around an
 	   obstacle towards `xdir',`ydir'. */
 	bool get_obstacle_tracer(MapCoord &start, sint32 xdir, sint32 ydir,

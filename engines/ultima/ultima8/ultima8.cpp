@@ -118,7 +118,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-using std::string;
+using Std::string;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(Ultima8Engine, CoreApp)
 
@@ -327,7 +327,7 @@ void Ultima8Engine::startup() {
 	// Set the console to auto paint, till we have finished initing
 	con->SetAutoPaint(conAutoPaint);
 
-	pout << "-- Initializing Pentagram -- " << std::endl;
+	pout << "-- Initializing Pentagram -- " << Std::endl;
 
 	// parent's startup first
 	CoreApp::startup();
@@ -423,7 +423,7 @@ void Ultima8Engine::startup() {
 	// Audio Mixer
 	audiomixer = new Pentagram::AudioMixer(_mixer);
 
-	pout << "-- Pentagram Initialized -- " << std::endl << std::endl;
+	pout << "-- Pentagram Initialized -- " << Std::endl << Std::endl;
 
 	// We Attempt to startup game
 	setupGameList();
@@ -436,14 +436,14 @@ void Ultima8Engine::startup() {
 	// Unset the console auto paint, since we have finished initing
 	con->SetAutoPaint(0);
 
-	//	pout << "Paint Initial display" << std::endl;
+	//	pout << "Paint Initial display" << Std::endl;
 	paint();
 }
 
 void Ultima8Engine::startupGame() {
 	con->SetAutoPaint(conAutoPaint);
 
-	pout  << std::endl << "-- Initializing Game: " << gameinfo->name << " --" << std::endl;
+	pout  << Std::endl << "-- Initializing Game: " << gameinfo->name << " --" << Std::endl;
 
 	GraphicSysInit();
 
@@ -489,7 +489,7 @@ void Ultima8Engine::startupGame() {
 
 	gamedata = new GameData(gameinfo);
 
-	std::string bindingsfile;
+	Std::string bindingsfile;
 	if (GAME_IS_U8) {
 		bindingsfile = "@data/u8bindings.ini";
 	} else if (GAME_IS_REMORSE) {
@@ -548,7 +548,7 @@ void Ultima8Engine::startupGame() {
 	if (getGameInfo()->type == GameInfo::GAME_U8)
 		audiomixer->openMidiOutput();
 
-	std::string savegame;
+	Std::string savegame;
 	settingman->setDefault("lastSave", "");
 	settingman->get("lastSave", savegame);
 
@@ -556,13 +556,13 @@ void Ultima8Engine::startupGame() {
 
 	consoleGump->HideConsole();
 
-	pout << "-- Game Initialized --" << std::endl << std::endl;
+	pout << "-- Game Initialized --" << Std::endl << Std::endl;
 }
 
 void Ultima8Engine::startupPentagramMenu() {
 	con->SetAutoPaint(conAutoPaint);
 
-	pout << std::endl << "-- Initializing Pentagram Menu -- " << std::endl;
+	pout << Std::endl << "-- Initializing Pentagram Menu -- " << Std::endl;
 
 	setupGame(getGameInfo("pentagram"));
 	assert(gameinfo);
@@ -585,7 +585,7 @@ void Ultima8Engine::shutdown() {
 }
 
 void Ultima8Engine::shutdownGame(bool reloading) {
-	pout << "-- Shutting down Game -- " << std::endl;
+	pout << "-- Shutting down Game -- " << Std::endl;
 
 	// Save config here....
 
@@ -653,7 +653,7 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 	// Kill Game
 	CoreApp::killGame();
 
-	pout << "-- Game Shutdown -- " << std::endl;
+	pout << "-- Game Shutdown -- " << Std::endl;
 
 	if (reloading) {
 		Pentagram::Rect dims;
@@ -695,7 +695,7 @@ void Ultima8Engine::menuInitMinimal(Pentagram::istring gamename) {
 	if (!info) info = getGameInfo("pentagram");
 	assert(info);
 
-	pout  << std::endl << "-- Loading minimal game data for: " << info->name << " --" << std::endl;
+	pout  << Std::endl << "-- Loading minimal game data for: " << info->name << " --" << Std::endl;
 
 	FORGET_OBJECT(game);
 	FORGET_OBJECT(gamedata);
@@ -711,7 +711,7 @@ void Ultima8Engine::menuInitMinimal(Pentagram::istring gamename) {
 	game->loadFiles();
 	gamedata->setupFontOverrides();
 
-	pout << "-- Finished loading minimal--" << std::endl << std::endl;
+	pout << "-- Finished loading minimal--" << Std::endl << Std::endl;
 }
 
 void Ultima8Engine::DeclareArgs() {
@@ -745,9 +745,9 @@ void Ultima8Engine::runGame() {
 				kernel->runProcesses();
 				desktopGump->run();
 #if 0
-				perr << "--------------------------------------" << std::endl;
-				perr << "NEW FRAME" << std::endl;
-				perr << "--------------------------------------" << std::endl;
+				perr << "--------------------------------------" << Std::endl;
+				perr << "NEW FRAME" << Std::endl;
+				perr << "--------------------------------------" << Std::endl;
 #endif
 				inBetweenFrame = false;
 
@@ -763,7 +763,7 @@ void Ultima8Engine::runGame() {
 
 			// Calculate the lerp_factor
 			lerpFactor = ((animationRate - diff) * 256) / animationRate;
-			//pout << "lerpFactor: " << lerpFactor << " framenum: " << framenum << std::endl;
+			//pout << "lerpFactor: " << lerpFactor << " framenum: " << framenum << Std::endl;
 			if (!interpolate || kernel->isPaused() || lerpFactor > 256)
 				lerpFactor = 256;
 		}
@@ -778,7 +778,7 @@ void Ultima8Engine::runGame() {
 		paint();
 
 		if (!change_gamename.empty()) {
-			pout << "Changing Game to: " << change_gamename << std::endl;
+			pout << "Changing Game to: " << change_gamename << Std::endl;
 
 			GameInfo *info = getGameInfo(change_gamename);
 
@@ -792,7 +792,7 @@ void Ultima8Engine::runGame() {
 				else
 					startupPentagramMenu();
 			} else {
-				perr << "Game '" << change_gamename << "' not found" << std::endl;
+				perr << "Game '" << change_gamename << "' not found" << Std::endl;
 				change_gamename.clear();
 			}
 		}
@@ -928,7 +928,7 @@ void Ultima8Engine::GraphicSysInit() {
 	RenderSurface *new_screen = RenderSurface::SetVideoMode(width, height, bpp);
 
 	if (!new_screen) {
-		perr << "Unable to set new video mode. Trying 640x480x32" << std::endl;
+		perr << "Unable to set new video mode. Trying 640x480x32" << Std::endl;
 		new_screen = RenderSurface::SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 32);
 	}
 
@@ -948,7 +948,7 @@ void Ultima8Engine::GraphicSysInit() {
 	con->Print(MM_INFO, "Loading Default Mouse Cursor...\n");
 	_mouse->setup();
 
-	std::string alt_confont;
+	Std::string alt_confont;
 	bool confont_loaded = false;
 
 	if (settingman->get("console_font", alt_confont)) {
@@ -1013,20 +1013,20 @@ void Ultima8Engine::changeVideoMode(int width, int height, int new_fullscreen) {
 	GraphicSysInit();
 }
 
-bool Ultima8Engine::LoadConsoleFont(std::string confontini) {
+bool Ultima8Engine::LoadConsoleFont(Std::string confontini) {
 	// try to load the file
 	con->Printf(MM_INFO, "Loading console font config: %s... ", confontini.c_str());
 	if (configfileman->readConfigFile(confontini, "confont", true))
-		pout << "Ok" << std::endl;
+		pout << "Ok" << Std::endl;
 	else {
-		pout << "Failed" << std::endl;
+		pout << "Failed" << Std::endl;
 		return false;
 	}
 
 	FixedWidthFont *confont = FixedWidthFont::Create("confont");
 
 	if (!confont) {
-		perr << "Failed to load Console Font." << std::endl;
+		perr << "Failed to load Console Font." << Std::endl;
 		return false;
 	}
 
@@ -1332,15 +1332,15 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 }
 
 Common::Error Ultima8Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	return saveGame(std::string::format("@save/%d", slot), desc) ?
+	return saveGame(Std::string::format("@save/%d", slot), desc) ?
 		Common::kNoError : Common::kWritingFailed;
 }
 
-bool Ultima8Engine::saveGame(std::string filename, std::string desc,
+bool Ultima8Engine::saveGame(Std::string filename, Std::string desc,
 	bool ignore_modals) {
 	// Don't allow saving with Modals open
 	if (!ignore_modals && desktopGump->FindGump<ModalGump>()) {
-		pout << "Can't save: modal gump open." << std::endl;
+		pout << "Can't save: modal gump open." << Std::endl;
 		return false;
 	}
 
@@ -1348,14 +1348,14 @@ bool Ultima8Engine::saveGame(std::string filename, std::string desc,
 	// (Avatar is flagged dead by usecode when you finish the game as well.)
 	MainActor *av = getMainActor();
 	if (!av || (av->getActorFlags() & Actor::ACT_DEAD)) {
-		pout << "Can't save: game over." << std::endl;
+		pout << "Can't save: game over." << Std::endl;
 		return false;
 	}
 
-	pout << "Saving..." << std::endl;
+	pout << "Saving..." << Std::endl;
 
-	pout << "Savegame file: " << filename << std::endl;
-	pout << "Description: " << desc << std::endl;
+	pout << "Savegame file: " << filename << Std::endl;
+	pout << "Description: " << desc << Std::endl;
 
 	// Hack - don't save mouse over status for gumps
 	Gump *gump = _mouse->getMouseOverGump();
@@ -1426,7 +1426,7 @@ bool Ultima8Engine::saveGame(std::string filename, std::string desc,
 
 	settingman->set("lastSave", filename);
 
-	pout << "Done" << std::endl;
+	pout << "Done" << Std::endl;
 
 	return true;
 }
@@ -1515,7 +1515,7 @@ void Ultima8Engine::setupCoreGumps() {
 		objectmanager->reserveObjId(i);
 }
 
-bool Ultima8Engine::newGame(const std::string &savegame) {
+bool Ultima8Engine::newGame(const Std::string &savegame) {
 	con->Print(MM_INFO, "Starting New Game...\n");
 
 	resetEngine();
@@ -1583,11 +1583,11 @@ bool Ultima8Engine::loadGame() {
 }
 
 Common::Error Ultima8Engine::loadGameState(int slot) {
-	return loadGame(std::string::format("@save/%d", slot)) ?
+	return loadGame(Std::string::format("@save/%d", slot)) ?
 		Common::kNoError : Common::kReadingFailed;
 }
 
-bool Ultima8Engine::loadGame(std::string filename) {
+bool Ultima8Engine::loadGame(Std::string filename) {
 	con->Print(MM_INFO, "Loading...\n");
 
 	IDataSource *ids = filesystem->ReadFile(filename);
@@ -1626,7 +1626,7 @@ bool Ultima8Engine::loadGame(std::string filename) {
 	}
 
 	if (!gameinfo->match(saveinfo)) {
-		std::string message = "Game mismatch\n";
+		Std::string message = "Game mismatch\n";
 		message += "Running game: " + gameinfo->getPrintDetails()  + "\n";
 		message += "Savegame    : " + saveinfo.getPrintDetails();
 
@@ -1640,7 +1640,7 @@ bool Ultima8Engine::loadGame(std::string filename) {
 			delete sg;
 			return false;
 		}
-		perr << message << std::endl;
+		perr << message << Std::endl;
 #else
 		settingman->set("lastSave", "");
 		Error(message, "Error Loading savegame " + filename);
@@ -1655,28 +1655,28 @@ bool Ultima8Engine::loadGame(std::string filename) {
 	// and load everything back (order matters)
 	bool totalok = true;
 
-	std::string message;
+	Std::string message;
 
 	// UCSTRINGS, UCGLOBALS, UCLISTS don't depend on anything else,
 	// so load these first
 	ds = sg->getDataSource("UCSTRINGS");
 	ok = ucmachine->loadStrings(ds, version);
 	totalok &= ok;
-	perr << "UCSTRINGS: " << (ok ? "ok" : "failed") << std::endl;
+	perr << "UCSTRINGS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "UCSTRINGS: failed\n";
 	delete ds;
 
 	ds = sg->getDataSource("UCGLOBALS");
 	ok = ucmachine->loadGlobals(ds, version);
 	totalok &= ok;
-	perr << "UCGLOBALS: " << (ok ? "ok" : "failed") << std::endl;
+	perr << "UCGLOBALS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "UCGLOBALS: failed\n";
 	delete ds;
 
 	ds = sg->getDataSource("UCLISTS");
 	ok = ucmachine->loadLists(ds, version);
 	totalok &= ok;
-	perr << "UCLISTS: " << (ok ? "ok" : "failed") << std::endl;
+	perr << "UCLISTS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "UCLISTS: failed\n";
 	delete ds;
 
@@ -1685,14 +1685,14 @@ bool Ultima8Engine::loadGame(std::string filename) {
 	ds = sg->getDataSource("KERNEL");
 	ok = kernel->load(ds, version);
 	totalok &= ok;
-	perr << "KERNEL: " << (ok ? "ok" : "failed") << std::endl;
+	perr << "KERNEL: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "KERNEL: failed\n";
 	delete ds;
 
 	ds = sg->getDataSource("APP");
 	ok = load(ds, version);
 	totalok &= ok;
-	perr << "APP: " << (ok ? "ok" : "failed") << std::endl;
+	perr << "APP: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "APP: failed\n";
 	delete ds;
 
@@ -1700,28 +1700,28 @@ bool Ultima8Engine::loadGame(std::string filename) {
 	ds = sg->getDataSource("WORLD");
 	ok = world->load(ds, version);
 	totalok &= ok;
-	perr << "WORLD: " << (ok ? "ok" : "failed") << std::endl;
+	perr << "WORLD: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "WORLD: failed\n";
 	delete ds;
 
 	ds = sg->getDataSource("CURRENTMAP");
 	ok = world->getCurrentMap()->load(ds, version);
 	totalok &= ok;
-	perr << "CURRENTMAP: " << (ok ? "ok" : "failed") << std::endl;
+	perr << "CURRENTMAP: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "CURRENTMAP: failed\n";
 	delete ds;
 
 	ds = sg->getDataSource("OBJECTS");
 	ok = objectmanager->load(ds, version);
 	totalok &= ok;
-	perr << "OBJECTS: " << (ok ? "ok" : "failed") << std::endl;
+	perr << "OBJECTS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "OBJECTS: failed\n";
 	delete ds;
 
 	ds = sg->getDataSource("MAPS");
 	ok = world->loadMaps(ds, version);
 	totalok &= ok;
-	perr << "MAPS: " << (ok ? "ok" : "failed") << std::endl;
+	perr << "MAPS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "MAPS: failed\n";
 	delete ds;
 
@@ -1731,7 +1731,7 @@ bool Ultima8Engine::loadGame(std::string filename) {
 		return false;
 	}
 
-	pout << "Done" << std::endl;
+	pout << "Done" << Std::endl;
 
 	settingman->set("lastSave", filename);
 
@@ -1739,10 +1739,10 @@ bool Ultima8Engine::loadGame(std::string filename) {
 	return true;
 }
 
-void Ultima8Engine::Error(std::string message, std::string title, bool exit_to_menu) {
+void Ultima8Engine::Error(Std::string message, Std::string title, bool exit_to_menu) {
 	if (title.empty()) title = exit_to_menu ? "Fatal Game Error" : "Error";
 
-	perr << title << ": " << message << std::endl;
+	perr << title << ": " << message << Std::endl;
 
 	error_message = message;
 	error_title = title;
@@ -1864,7 +1864,7 @@ void Ultima8Engine::ConCmd_loadGame(const Console::ArgvType &argv) {
 }
 
 void Ultima8Engine::ConCmd_newGame(const Console::ArgvType &argv) {
-	Ultima8Engine::get_instance()->newGame(std::string());
+	Ultima8Engine::get_instance()->newGame(Std::string());
 }
 
 void Ultima8Engine::ConCmd_quit(const Console::ArgvType &argv) {
@@ -1873,9 +1873,9 @@ void Ultima8Engine::ConCmd_quit(const Console::ArgvType &argv) {
 
 void Ultima8Engine::ConCmd_drawRenderStats(const Console::ArgvType &argv) {
 	if (argv.size() == 1) {
-		pout << "Ultima8Engine::drawRenderStats = " << Ultima8Engine::get_instance()->drawRenderStats << std::endl;
+		pout << "Ultima8Engine::drawRenderStats = " << Ultima8Engine::get_instance()->drawRenderStats << Std::endl;
 	} else {
-		Ultima8Engine::get_instance()->drawRenderStats = std::strtol(argv[1].c_str(), 0, 0) != 0;
+		Ultima8Engine::get_instance()->drawRenderStats = Std::strtol(argv[1].c_str(), 0, 0) != 0;
 	}
 }
 
@@ -1888,7 +1888,7 @@ void Ultima8Engine::ConCmd_engineStats(const Console::ArgvType &argv) {
 
 void Ultima8Engine::ConCmd_changeGame(const Console::ArgvType &argv) {
 	if (argv.size() == 1) {
-		pout << "Current game is: " << Ultima8Engine::get_instance()->gameinfo->name << std::endl;
+		pout << "Current game is: " << Ultima8Engine::get_instance()->gameinfo->name << Std::endl;
 	} else {
 		Ultima8Engine::get_instance()->changeGame(argv[1]);
 	}
@@ -1896,15 +1896,15 @@ void Ultima8Engine::ConCmd_changeGame(const Console::ArgvType &argv) {
 
 void Ultima8Engine::ConCmd_listGames(const Console::ArgvType &argv) {
 	Ultima8Engine *app = Ultima8Engine::get_instance();
-	std::vector<Pentagram::istring> games;
+	Std::vector<Pentagram::istring> games;
 	games = app->settingman->listGames();
-	std::vector<Pentagram::istring>::iterator iter;
+	Std::vector<Pentagram::istring>::iterator iter;
 	for (iter = games.begin(); iter != games.end(); ++iter) {
 		Pentagram::istring game = *iter;
 		GameInfo *info = app->getGameInfo(game);
 		con->Printf(MM_INFO, "%s: ", game.c_str());
 		if (info) {
-			std::string details = info->getPrintDetails();
+			Std::string details = info->getPrintDetails();
 			con->Print(MM_INFO, details.c_str());
 		} else {
 			con->Print(MM_INFO, "(unknown)");
@@ -1921,8 +1921,8 @@ void Ultima8Engine::ConCmd_setVideoMode(const Console::ArgvType &argv) {
 	//  else fullscreen = 0;
 	//} else
 	if (argv.size() != 3) {
-		//pout << "Usage: Ultima8Engine::setVidMode width height [fullscreen/windowed]" << std::endl;
-		pout << "Usage: Ultima8Engine::setVidMode width height" << std::endl;
+		//pout << "Usage: Ultima8Engine::setVidMode width height [fullscreen/windowed]" << Std::endl;
+		pout << "Usage: Ultima8Engine::setVidMode width height" << Std::endl;
 		return;
 	}
 
@@ -1932,19 +1932,19 @@ void Ultima8Engine::ConCmd_setVideoMode(const Console::ArgvType &argv) {
 void Ultima8Engine::ConCmd_toggleAvatarInStasis(const Console::ArgvType &argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
 	g->toggleAvatarInStasis();
-	pout << "avatarInStasis = " << g->isAvatarInStasis() << std::endl;
+	pout << "avatarInStasis = " << g->isAvatarInStasis() << Std::endl;
 }
 
 void Ultima8Engine::ConCmd_togglePaintEditorItems(const Console::ArgvType &argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
 	g->togglePaintEditorItems();
-	pout << "paintEditorItems = " << g->isPaintEditorItems() << std::endl;
+	pout << "paintEditorItems = " << g->isPaintEditorItems() << Std::endl;
 }
 
 void Ultima8Engine::ConCmd_toggleShowTouchingItems(const Console::ArgvType &argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
 	g->toggleShowTouchingItems();
-	pout << "ShowTouchingItems = " << g->isShowTouchingItems() << std::endl;
+	pout << "ShowTouchingItems = " << g->isShowTouchingItems() << Std::endl;
 }
 
 void Ultima8Engine::ConCmd_closeItemGumps(const Console::ArgvType &argv) {
@@ -1955,12 +1955,12 @@ void Ultima8Engine::ConCmd_closeItemGumps(const Console::ArgvType &argv) {
 void Ultima8Engine::ConCmd_toggleCheatMode(const Console::ArgvType &argv) {
 	Ultima8Engine *g = Ultima8Engine::get_instance();
 	g->setCheatMode(!g->areCheatsEnabled());
-	pout << "Cheats = " << g->areCheatsEnabled() << std::endl;
+	pout << "Cheats = " << g->areCheatsEnabled() << Std::endl;
 }
 
 void Ultima8Engine::ConCmd_memberVar(const Console::ArgvType &argv) {
 	if (argv.size() == 1) {
-		pout << "Usage: Ultima8Engine::memberVar <member> [newvalue] [updateini]" << std::endl;
+		pout << "Usage: Ultima8Engine::memberVar <member> [newvalue] [updateini]" << Std::endl;
 		return;
 	}
 
@@ -1969,7 +1969,7 @@ void Ultima8Engine::ConCmd_memberVar(const Console::ArgvType &argv) {
 	// Set the pointer to the correct type
 	bool *b = 0;
 	int *i = 0;
-	std::string *str = 0;
+	Std::string *str = 0;
 	Pentagram::istring *istr = 0;
 
 	// ini entry name if supported
@@ -1985,7 +1985,7 @@ void Ultima8Engine::ConCmd_memberVar(const Console::ArgvType &argv) {
 		b = &g->interpolate;
 		ini = "interpolate";
 	} else {
-		pout << "Unknown member: " << argv[1] << std::endl;
+		pout << "Unknown member: " << argv[1] << Std::endl;
 		return;
 	}
 
@@ -1993,7 +1993,7 @@ void Ultima8Engine::ConCmd_memberVar(const Console::ArgvType &argv) {
 	if (argv.size() >= 3) {
 		if (b) *b = (argv[2] == "yes" || argv[2] == "true");
 		else if (istr) *istr = argv[2];
-		else if (i) *i = std::strtol(argv[2].c_str(), 0, 0);
+		else if (i) *i = Std::strtol(argv[2].c_str(), 0, 0);
 		else if (str) *str = argv[2];
 
 		// Set config value
@@ -2011,7 +2011,7 @@ void Ultima8Engine::ConCmd_memberVar(const Console::ArgvType &argv) {
 	else if (istr) pout << *istr;
 	else if (i) pout << *i;
 	else if (str) pout << *str;
-	pout << std::endl;
+	pout << Std::endl;
 
 	return;
 }

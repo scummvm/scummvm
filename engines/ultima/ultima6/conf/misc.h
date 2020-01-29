@@ -29,9 +29,9 @@
 namespace Ultima {
 namespace Ultima6 {
 
-extern bool string_i_compare(const std::string &s1, const std::string &s2);
+extern bool string_i_compare(const Std::string &s1, const Std::string &s2);
 
-extern std::string readLine(Common::ReadStream *stream);
+extern Std::string readLine(Common::ReadStream *stream);
 
 } // End of namespace Ultima6
 } // End of namespace Ultima

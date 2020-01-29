@@ -266,7 +266,7 @@ const Action doNothingAction = { "DO_NOTHING", ActionDoNothing, "", Action::dont
 KeyBinder::KeyBinder(Configuration *config) {
 	FillParseMaps();
 
-	std::string keyfilename, dir;
+	Std::string keyfilename, dir;
 	config->value("config/keys", keyfilename, "(default)");
 	bool key_file_exists = fileExists(keyfilename.c_str());
 
@@ -283,7 +283,7 @@ KeyBinder::KeyBinder(Configuration *config) {
 
 #ifdef HAVE_JOYSTICK_SUPPORT
 	joystick = NULL;
-	std::string enable_joystick_str;
+	Std::string enable_joystick_str;
 	config->value("config/joystick/enable_joystick", enable_joystick_str, "no");
 
 	if (enable_joystick_str == "no")
@@ -455,7 +455,7 @@ void KeyBinder::ShowKeys() const { // FIXME This doesn't look very good, the fon
 	// some characters, and it is longer than msgscroll can hold
 //	if(Game::get_game()->is_orig_style())
 	{
-		std::vector<string>::const_iterator iter;
+		Std::vector<string>::const_iterator iter;
 		string keysStr;
 		MsgScroll *scroll = Game::get_game()->get_scroll();
 		scroll->set_autobreak(true);

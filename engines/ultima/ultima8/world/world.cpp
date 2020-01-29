@@ -156,13 +156,13 @@ bool World::switchMap(uint32 newmap) {
 
 	uint32 oldmap = currentmap->getNum();
 	if (oldmap != 0) {
-		perr << "Unloading map " << oldmap << std::endl;
+		perr << "Unloading map " << oldmap << Std::endl;
 
 		assert(oldmap < maps.size() && maps[oldmap] != 0);
 
 		currentmap->writeback();
 
-		perr << "Unloading Fixed items from map " << oldmap << std::endl;
+		perr << "Unloading Fixed items from map " << oldmap << Std::endl;
 
 		maps[oldmap]->unloadFixed();
 	}
@@ -170,7 +170,7 @@ bool World::switchMap(uint32 newmap) {
 	// Kill any processes that need killing (those with type != 1 && item != 0)
 	Kernel::get_instance()->killProcessesNotOfType(0, 1, true);
 
-	pout << "Loading Fixed items in map " << newmap << std::endl;
+	pout << "Loading Fixed items in map " << newmap << Std::endl;
 	IDataSource *items = GameData::get_instance()->getFixed()
 	                     ->get_datasource(newmap);
 	maps[newmap]->loadFixed(items);
@@ -190,7 +190,7 @@ bool World::switchMap(uint32 newmap) {
 void World::loadNonFixed(IDataSource *ds) {
 	FlexFile *f = new FlexFile(ds);
 
-	pout << "Loading NonFixed items" << std::endl;
+	pout << "Loading NonFixed items" << Std::endl;
 
 	for (unsigned int i = 0; i < f->getCount(); ++i) {
 
@@ -221,7 +221,7 @@ void World::loadItemCachNPCData(IDataSource *itemcach, IDataSource *npcdata) {
 	delete itemcachflex;
 	delete npcdataflex;
 
-	pout << "Loading NPCs" << std::endl;
+	pout << "Loading NPCs" << Std::endl;
 
 	for (uint32 i = 1; i < 256; ++i) { // Get rid of constants?
 		// These are ALL unsigned on disk
@@ -259,7 +259,7 @@ void World::loadItemCachNPCData(IDataSource *itemcach, IDataSource *npcdata) {
 		}
 
 #ifdef DUMP_ITEMS
-		pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << std::hex << flags << std::dec << ", " << quality << ", " << npcnum << ", " << mapnum << ", " << next << std::endl;
+		pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << Std::hex << flags << Std::dec << ", " << quality << ", " << npcnum << ", " << mapnum << ", " << next << Std::endl;
 #endif
 
 		Actor *actor = ItemFactory::createActor(shape, frame, quality,
@@ -268,7 +268,7 @@ void World::loadItemCachNPCData(IDataSource *itemcach, IDataSource *npcdata) {
 		                                        Item::EXT_PERMANENT_NPC, false);
 		if (!actor) {
 #ifdef DUMP_ITEMS
-			pout << "Couldn't create actor" << std::endl;
+			pout << "Couldn't create actor" << Std::endl;
 #endif
 			continue;
 		}
@@ -323,17 +323,17 @@ void World::worldStats() {
 			mapcount++;
 	}
 
-	pout << "World memory stats:" << std::endl;
-	pout << "Maps       : " << mapcount << "/256" << std::endl;
+	pout << "World memory stats:" << Std::endl;
+	pout << "Maps       : " << mapcount << "/256" << Std::endl;
 	Actor *av = getMainActor();
 	pout << "Avatar pos.: ";
 	if (av) {
 		pout << "map " << av->getMapNum() << ", (";
 		int32 x, y, z;
 		av->getLocation(x, y, z);
-		pout << x << "," << y << "," << z << ")" << std::endl;
+		pout << x << "," << y << "," << z << ")" << Std::endl;
 	} else {
-		pout << "missing (null)" << std::endl;
+		pout << "missing (null)" << Std::endl;
 	}
 }
 
@@ -347,7 +347,7 @@ void World::save(ODataSource *ods) {
 
 	// empty stack and refill it again
 	uint16 *e = new uint16[es];
-	std::list<ObjId>::iterator it = ethereal.begin();
+	Std::list<ObjId>::iterator it = ethereal.begin();
 	unsigned int i;
 	for (i = 0; i < es; ++i) {
 		e[es - i] = *it;

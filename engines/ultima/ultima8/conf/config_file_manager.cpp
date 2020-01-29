@@ -24,7 +24,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 using Pentagram::istring;
-using std::string;
+using Std::string;
 
 ConfigFileManager *ConfigFileManager::configfilemanager = 0;
 
@@ -72,7 +72,7 @@ bool ConfigFileManager::readConfigString(string config, istring root,
 }
 
 void ConfigFileManager::write(istring root) {
-	for (std::vector<INIFile *>::iterator i = inifiles.begin();
+	for (Std::vector<INIFile *>::iterator i = inifiles.begin();
 	        i != inifiles.end(); ++i) {
 		if (!(*i)->isReadonly() && (root == "" || (*i)->checkRoot(root)))
 			(*i)->write();
@@ -80,7 +80,7 @@ void ConfigFileManager::write(istring root) {
 }
 
 void ConfigFileManager::clear() {
-	for (std::vector<INIFile *>::iterator i = inifiles.begin();
+	for (Std::vector<INIFile *>::iterator i = inifiles.begin();
 	        i != inifiles.end(); ++i) {
 		delete(*i);
 	}
@@ -88,7 +88,7 @@ void ConfigFileManager::clear() {
 }
 
 void ConfigFileManager::clearRoot(Pentagram::istring root) {
-	std::vector<INIFile *>::iterator i = inifiles.begin();
+	Std::vector<INIFile *>::iterator i = inifiles.begin();
 
 	while (i != inifiles.end()) {
 		if ((*i)->checkRoot(root)) {
@@ -166,14 +166,14 @@ void ConfigFileManager::unset(istring key) {
 
 
 
-std::vector<istring> ConfigFileManager::listKeys(istring section,
+Std::vector<istring> ConfigFileManager::listKeys(istring section,
         bool longformat) {
-	std::vector<istring> keys;
+	Std::vector<istring> keys;
 
-	std::set<istring> keyset;
-	std::set<istring>::iterator iter;
+	Std::set<istring> keyset;
+	Std::set<istring>::iterator iter;
 
-	for (std::vector<INIFile *>::iterator i = inifiles.begin();
+	for (Std::vector<INIFile *>::iterator i = inifiles.begin();
 	        i != inifiles.end(); ++i) {
 		if ((*i)->checkRoot(section)) {
 			(*i)->listKeys(keyset, section, longformat);
@@ -187,14 +187,14 @@ std::vector<istring> ConfigFileManager::listKeys(istring section,
 	return keys;
 }
 
-std::vector<istring> ConfigFileManager::listSections(istring root,
+Std::vector<istring> ConfigFileManager::listSections(istring root,
         bool longformat) {
-	std::vector<istring> sections;
+	Std::vector<istring> sections;
 
-	std::set<istring> sectionset;
-	std::set<istring>::iterator iter;
+	Std::set<istring> sectionset;
+	Std::set<istring>::iterator iter;
 
-	for (std::vector<INIFile *>::iterator i = inifiles.begin();
+	for (Std::vector<INIFile *>::iterator i = inifiles.begin();
 	        i != inifiles.end(); ++i) {
 		if ((*i)->checkRoot(root)) {
 			(*i)->listSections(sectionset, longformat);
@@ -212,7 +212,7 @@ KeyMap ConfigFileManager::listKeyValues(istring section,
         bool longformat) {
 	KeyMap values;
 
-	for (std::vector<INIFile *>::iterator i = inifiles.begin();
+	for (Std::vector<INIFile *>::iterator i = inifiles.begin();
 	        i != inifiles.end(); ++i) {
 		if ((*i)->checkRoot(section)) {
 			(*i)->listKeyValues(values, section, longformat);
@@ -224,7 +224,7 @@ KeyMap ConfigFileManager::listKeyValues(istring section,
 
 
 INIFile *ConfigFileManager::findKeyINI(istring key) {
-	for (std::vector<INIFile *>::reverse_iterator i = inifiles.rbegin();
+	for (Std::vector<INIFile *>::reverse_iterator i = inifiles.rbegin();
 	        i != inifiles.rend(); ++i) {
 		if ((*i)->hasKey(key))
 			return (*i);
@@ -234,7 +234,7 @@ INIFile *ConfigFileManager::findKeyINI(istring key) {
 }
 
 INIFile *ConfigFileManager::findWriteINI(istring key) {
-	for (std::vector<INIFile *>::reverse_iterator i = inifiles.rbegin();
+	for (Std::vector<INIFile *>::reverse_iterator i = inifiles.rbegin();
 	        i != inifiles.rend(); ++i) {
 		if (!(*i)->isReadonly() && (*i)->checkRoot(key))
 			return (*i);

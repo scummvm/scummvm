@@ -52,7 +52,7 @@ class idMan {
 
 	uint16      usedcount;      //!< number of IDs currently in use
 
-	std::vector<uint16> ids;    //!< the 'next' field in a list of free IDs
+	Std::vector<uint16> ids;    //!< the 'next' field in a list of free IDs
 	uint16      first;          //!< the first ID in the free list
 	uint16      last;           //!< the last ID in the last list
 public:

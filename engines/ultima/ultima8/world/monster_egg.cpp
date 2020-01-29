@@ -65,7 +65,7 @@ uint16 MonsterEgg::hatch() {
 	                  0, 0, 0, true);
 	if (!newactor) {
 		perr << "MonsterEgg::hatch failed to create actor (" << shapeNum
-		     << ")." << std::endl;
+		     << ")." << Std::endl;
 		return 0;
 	}
 	uint16 objID = newactor->getObjId();
@@ -73,7 +73,7 @@ uint16 MonsterEgg::hatch() {
 	// set stats
 	if (!newactor->loadMonsterStats()) {
 		perr << "MonsterEgg::hatch failed to set stats for actor (" << shapeNum
-		     << ")." << std::endl;
+		     << ")." << Std::endl;
 	}
 
 	if (!newactor->canExistAt(x, y, z)) {

@@ -29,8 +29,8 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::list;
-using std::string;
+using Std::list;
+using Std::string;
 
 
 #define NUVIE_SORT_TIME_DESC 0x1
@@ -43,7 +43,7 @@ class Configuration;
 class NuvieFileDesc {
 public:
 
-	std::string filename;
+	Std::string filename;
 	time_t m_time;
 
 	bool operator<(const NuvieFileDesc &rhs) const {
@@ -56,10 +56,10 @@ public:
 
 class NuvieFileList {
 protected:
-	std::list<NuvieFileDesc> file_list;
-	std::list<NuvieFileDesc>::iterator list_ptr;
+	Std::list<NuvieFileDesc> file_list;
+	Std::list<NuvieFileDesc>::iterator list_ptr;
 
-	std::string search_prefix;
+	Std::string search_prefix;
 	uint8 sort_mode;
 protected:
 	bool add_filename(const Common::FSNode &file);
@@ -71,11 +71,11 @@ public:
 	bool open(const char *directory, const char *restrict, uint8 sort_mode);
 
 
-	std::string *next();
-	std::string *get_latest();
+	Std::string *next();
+	Std::string *get_latest();
 	uint32 get_num_files();
 
-	std::set<std::string> get_filenames();
+	Std::set<Std::string> get_filenames();
 
 	void close();
 };

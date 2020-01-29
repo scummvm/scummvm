@@ -51,7 +51,7 @@ Map::~Map() {
 }
 
 void Map::clear() {
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 
 	for (iter = fixeditems.begin(); iter != fixeditems.end(); ++iter) {
 		delete *iter;
@@ -240,7 +240,7 @@ void Map::loadFixed(IDataSource *ds) {
 
 	if (GAME_IS_U8 && mapnum == 49) {
 		// Map 49 has some water tiles at the wrong z
-		std::list<Item *>::iterator iter;
+		Std::list<Item *>::iterator iter;
 
 		for (iter = fixeditems.begin(); iter != fixeditems.end(); ++iter) {
 			if ((*iter)->getShape() == 347 && (*iter)->getZ() == 96) {
@@ -257,7 +257,7 @@ void Map::loadFixed(IDataSource *ds) {
 
 	if (GAME_IS_U8 && mapnum == 21) {
 		// Map 21 has some ground and wall tiles at the wrong z
-		std::list<Item *>::iterator iter;
+		Std::list<Item *>::iterator iter;
 
 		for (iter = fixeditems.begin(); iter != fixeditems.end(); ++iter) {
 			int32 z = (*iter)->getZ();
@@ -275,7 +275,7 @@ void Map::loadFixed(IDataSource *ds) {
 
 	if (GAME_IS_U8 && mapnum == 5) {
 		// Map 5 has some ground tiles at the wrong z
-		std::list<Item *>::iterator iter;
+		Std::list<Item *>::iterator iter;
 
 		for (iter = fixeditems.begin(); iter != fixeditems.end(); ++iter) {
 			if ((*iter)->getShape() == 71 && (*iter)->getFrame() == 8 && (*iter)->getZ() == 0) {
@@ -295,7 +295,7 @@ void Map::loadFixed(IDataSource *ds) {
 }
 
 void Map::unloadFixed() {
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 
 	for (iter = fixeditems.begin(); iter != fixeditems.end(); ++iter) {
 		delete *iter;
@@ -303,7 +303,7 @@ void Map::unloadFixed() {
 	fixeditems.clear();
 }
 
-void Map::loadFixedFormatObjects(std::list<Item *> &itemlist, IDataSource *ds,
+void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist, IDataSource *ds,
                                  uint32 extendedflags) {
 	if (!ds) return;
 	uint32 size = ds->getSize();
@@ -311,7 +311,7 @@ void Map::loadFixedFormatObjects(std::list<Item *> &itemlist, IDataSource *ds,
 
 	uint32 itemcount = size / 16;
 
-	std::stack<Container *> cont;
+	Std::stack<Container *> cont;
 	int contdepth = 0;
 
 	for (uint32 i = 0; i < itemcount; ++i) {
@@ -341,25 +341,25 @@ void Map::loadFixedFormatObjects(std::list<Item *> &itemlist, IDataSource *ds,
 			cont.pop();
 			contdepth--;
 #ifdef DUMP_ITEMS
-			pout << "---- Ending container ----" << std::endl;
+			pout << "---- Ending container ----" << Std::endl;
 #endif
 		}
 
 #ifdef DUMP_ITEMS
-		pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << std::hex << flags << std::dec << ", " << quality << ", " << npcNum << ", " << mapNum << ", " << next << std::endl;
+		pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << Std::hex << flags << Std::dec << ", " << quality << ", " << npcNum << ", " << mapNum << ", " << next << Std::endl;
 #endif
 
 		Item *item = ItemFactory::createItem(shape, frame, quality, flags, npcNum,
 		                                     mapNum, extendedflags, false);
 		if (!item) {
-			pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << std::hex << flags << std::dec << ", " << quality << ", " << npcNum << ", " << mapNum << ", " << next;
+			pout << shape << "," << frame << ":\t(" << x << "," << y << "," << z << "),\t" << Std::hex << flags << Std::dec << ", " << quality << ", " << npcNum << ", " << mapNum << ", " << next;
 
 			ShapeInfo *info = GameData::get_instance()->getMainShapes()->
 			                  getShapeInfo(shape);
 			if (info) pout << ", family = " << info->family;
-			pout << std::endl;
+			pout << Std::endl;
 
-			pout << "Couldn't create item" << std::endl;
+			pout << "Couldn't create item" << Std::endl;
 			continue;
 		}
 		item->setLocation(x, y, z);
@@ -376,7 +376,7 @@ void Map::loadFixedFormatObjects(std::list<Item *> &itemlist, IDataSource *ds,
 			contdepth++;
 			cont.push(c);
 #ifdef DUMP_ITEMS
-			pout << "---- Starting container ----" << std::endl;
+			pout << "---- Starting container ----" << Std::endl;
 #endif
 		}
 	}
@@ -386,7 +386,7 @@ void Map::loadFixedFormatObjects(std::list<Item *> &itemlist, IDataSource *ds,
 void Map::save(ODataSource *ods) {
 	ods->write4(static_cast<uint32>(dynamicitems.size()));
 
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 	for (iter = dynamicitems.begin(); iter != dynamicitems.end(); ++iter) {
 		(*iter)->save(ods);
 	}

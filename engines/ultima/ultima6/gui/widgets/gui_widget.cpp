@@ -101,7 +101,7 @@ void GUI_Widget:: Delete(void) {
 }
 
 void GUI_Widget::MoveRelative(int dx, int dy) {
-	std::list<GUI_Widget *>::iterator child;
+	Std::list<GUI_Widget *>::iterator child;
 
 	area.translate(dx, dy);
 
@@ -112,7 +112,7 @@ void GUI_Widget::MoveRelative(int dx, int dy) {
 }
 
 void GUI_Widget::Move(int new_x, int new_y) {
-	std::list<GUI_Widget *>::iterator child;
+	Std::list<GUI_Widget *>::iterator child;
 
 	area.moveTo(new_x + offset_x, new_y + offset_y);
 
@@ -123,7 +123,7 @@ void GUI_Widget::Move(int new_x, int new_y) {
 }
 
 void GUI_Widget::MoveRelativeToParent(int dx, int dy) {
-	std::list<GUI_Widget *>::iterator child;
+	Std::list<GUI_Widget *>::iterator child;
 
 	area.left = (area.left - offset_x) + dx;
 	area.top = (area.top - offset_y) + dy;
@@ -156,7 +156,7 @@ void GUI_Widget::moveToFront() {
 }
 
 void GUI_Widget::PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) {
-	std::list<GUI_Widget *>::iterator child;
+	Std::list<GUI_Widget *>::iterator child;
 
 	if (screen != NULL)
 		return;
@@ -260,7 +260,7 @@ void GUI_Widget::DisplayChildren(bool full_redraw) {
 		full_redraw = true;
 
 	if (children.empty() == false) {
-		std::list<GUI_Widget *>::iterator child;
+		Std::list<GUI_Widget *>::iterator child;
 
 		/* display our children */
 		for (child = children.begin(); child != children.end(); child++) {
@@ -288,7 +288,7 @@ void GUI_Widget::Redraw(void) {
 // Idle and HandleEvent produce delayed clicks. Don't override if using those. -- SB-X
 GUI_status GUI_Widget::Idle(void) {
 	if (children.empty() == false) {
-		std::list<GUI_Widget *>::iterator child;
+		Std::list<GUI_Widget *>::iterator child;
 		/* idle our children */
 		for (child = children.begin(); child != children.end(); child++) {
 			GUI_status idleStatus = (*child)->Idle();
@@ -340,7 +340,7 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 		return GUI_PASS;
 
 	if (children.empty() == false) {
-		std::list<GUI_Widget *>::iterator child;
+		Std::list<GUI_Widget *>::iterator child;
 
 		/* handle our children */
 		for (child = children.begin(); child != children.end(); child++) {
@@ -455,7 +455,7 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 // iterate through children if present to hit the correct drag area.
 bool GUI_Widget::drag_accept_drop(int x, int y, int message, void *data) {
 	if (children.empty() == false) {
-		std::list<GUI_Widget *>::iterator child;
+		Std::list<GUI_Widget *>::iterator child;
 
 		for (child = children.begin(); child != children.end(); child++) {
 			if ((*child)->HitRect(x, y)) {
@@ -471,7 +471,7 @@ bool GUI_Widget::drag_accept_drop(int x, int y, int message, void *data) {
 
 void GUI_Widget::drag_perform_drop(int x, int y, int message, void *data) {
 	if (children.empty() == false) {
-		std::list<GUI_Widget *>::iterator child;
+		Std::list<GUI_Widget *>::iterator child;
 
 		for (child = children.begin(); child != children.end(); child++) {
 			if ((*child)->HitRect(x, y)) {

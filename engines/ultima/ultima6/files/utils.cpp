@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::string;
+using Std::string;
 
 /*
  *  Open a file for input,

@@ -93,7 +93,7 @@ bool MainActor::CanAddItem(Item *item, bool checkwghtvol) {
 	// valid item type?
 	if (equiptype == ShapeInfo::SE_NONE && !backpack) return false;
 
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		uint32 cet = (*iter)->getShapeInfo()->equiptype;
 		bool cbackpack = ((*iter)->getShape() == backpack_shape);
@@ -121,7 +121,7 @@ void MainActor::teleport(int mapNum_, int32 x_, int32 y_, int32 z_) {
 
 	// (attempt to) load the new map
 	if (!world->switchMap(mapNum_)) {
-		perr << "MainActor::teleport(): switchMap() failed!" << std::endl;
+		perr << "MainActor::teleport(): switchMap() failed!" << Std::endl;
 		return;
 	}
 
@@ -141,13 +141,13 @@ void MainActor::teleport(int mapNum_, int teleport_id) {
 	CurrentMap *currentmap = world->getCurrentMap();
 
 	pout << "MainActor::teleport(): teleporting to map " << mapNum_
-	     << ", egg " << teleport_id << std::endl;
+	     << ", egg " << teleport_id << Std::endl;
 
 	setMapNum(mapNum_);
 
 	// (attempt to) load the new map
 	if (!world->switchMap(mapNum_)) {
-		perr << "MainActor::teleport(): switchMap() failed!" << std::endl;
+		perr << "MainActor::teleport(): switchMap() failed!" << Std::endl;
 		setMapNum(oldmap);
 		return;
 	}
@@ -156,14 +156,14 @@ void MainActor::teleport(int mapNum_, int teleport_id) {
 	TeleportEgg *egg = currentmap->findDestination(teleport_id);
 	if (!egg) {
 		perr << "MainActor::teleport(): destination egg not found!"
-		     << std::endl;
+		     << Std::endl;
 		teleport(oldmap, oldx, oldy, oldz);
 		return;
 	}
 	int32 xv, yv, zv;
 	egg->getLocation(xv, yv, zv);
 
-	pout << "Found destination: " << xv << "," << yv << "," << zv << std::endl;
+	pout << "Found destination: " << xv << "," << yv << "," << zv << Std::endl;
 	egg->dumpInfo();
 
 	Actor::teleport(mapNum_, xv, yv, zv);
@@ -173,7 +173,7 @@ void MainActor::teleport(int mapNum_, int teleport_id) {
 uint16 MainActor::getDefenseType() {
 	uint16 type = 0;
 
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		uint32 frameNum = (*iter)->getFrame();
 		ShapeInfo *si = (*iter)->getShapeInfo();
@@ -188,7 +188,7 @@ uint16 MainActor::getDefenseType() {
 uint32 MainActor::getArmourClass() {
 	uint32 armour = 0;
 
-	std::list<Item *>::iterator iter;
+	Std::list<Item *>::iterator iter;
 	for (iter = contents.begin(); iter != contents.end(); ++iter) {
 		uint32 frameNum = (*iter)->getFrame();
 		ShapeInfo *si = (*iter)->getShapeInfo();
@@ -333,7 +333,7 @@ ProcId MainActor::die(uint16 damageType) {
 
 void MainActor::ConCmd_teleport(const Console::ArgvType &argv) {
 	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		pout << "Cheats are disabled" << std::endl;
+		pout << "Cheats are disabled" << Std::endl;
 		return;
 	}
 	MainActor *mainactor = getMainActor();
@@ -361,18 +361,18 @@ void MainActor::ConCmd_teleport(const Console::ArgvType &argv) {
 		                    strtol(argv[4].c_str(), 0, 0));
 		break;
 	default:
-		pout << "teleport usage:" << std::endl;
-		pout << "teleport <mapnum> <x> <y> <z>: teleport to (x,y,z) on map mapnum" << std::endl;
-		pout << "teleport <x> <y> <z>: teleport to (x,y,z) on current map" << std::endl;
-		pout << "teleport <mapnum> <eggnum>: teleport to target egg eggnum on map mapnum" << std::endl;
-		pout << "teleport <eggnum>: teleport to target egg eggnum on current map" << std::endl;
+		pout << "teleport usage:" << Std::endl;
+		pout << "teleport <mapnum> <x> <y> <z>: teleport to (x,y,z) on map mapnum" << Std::endl;
+		pout << "teleport <x> <y> <z>: teleport to (x,y,z) on current map" << Std::endl;
+		pout << "teleport <mapnum> <eggnum>: teleport to target egg eggnum on map mapnum" << Std::endl;
+		pout << "teleport <eggnum>: teleport to target egg eggnum on current map" << Std::endl;
 		break;
 	}
 }
 
 void MainActor::ConCmd_mark(const Console::ArgvType &argv) {
 	if (argv.size() == 1) {
-		pout << "Usage: mark <mark>: set named mark to this location" << std::endl;
+		pout << "Usage: mark <mark>: set named mark to this location" << Std::endl;
 		return;
 	}
 
@@ -389,32 +389,32 @@ void MainActor::ConCmd_mark(const Console::ArgvType &argv) {
 	settings->set(confkey, buf);
 	settings->write(); //!! FIXME: clean this up
 
-	pout << "Set mark \"" << argv[1].c_str() << "\" to " << buf << std::endl;
+	pout << "Set mark \"" << argv[1].c_str() << "\" to " << buf << Std::endl;
 }
 
 void MainActor::ConCmd_recall(const Console::ArgvType &argv) {
 	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		pout << "Cheats are disabled" << std::endl;
+		pout << "Cheats are disabled" << Std::endl;
 		return;
 	}
 	if (argv.size() == 1) {
-		pout << "Usage: recall <mark>: recall to named mark" << std::endl;
+		pout << "Usage: recall <mark>: recall to named mark" << Std::endl;
 		return;
 	}
 
 	SettingManager *settings = SettingManager::get_instance();
 	MainActor *mainactor = getMainActor();
 	Pentagram::istring confkey = "marks/" + argv[1];
-	std::string target;
+	Std::string target;
 	if (!settings->get(confkey, target)) {
-		pout << "recall: no such mark" << std::endl;
+		pout << "recall: no such mark" << Std::endl;
 		return;
 	}
 
 	int t[4];
 	int n = sscanf(target.c_str(), "%d%d%d%d", &t[0], &t[1], &t[2], &t[3]);
 	if (n != 4) {
-		pout << "recall: invalid mark" << std::endl;
+		pout << "recall: invalid mark" << Std::endl;
 		return;
 	}
 
@@ -423,17 +423,17 @@ void MainActor::ConCmd_recall(const Console::ArgvType &argv) {
 
 void MainActor::ConCmd_listmarks(const Console::ArgvType &argv) {
 	SettingManager *settings = SettingManager::get_instance();
-	std::vector<Pentagram::istring> marks;
+	Std::vector<Pentagram::istring> marks;
 	marks = settings->listDataKeys("marks");
-	for (std::vector<Pentagram::istring>::iterator iter = marks.begin();
+	for (Std::vector<Pentagram::istring>::iterator iter = marks.begin();
 	        iter != marks.end(); ++iter) {
-		pout << (*iter) << std::endl;
+		pout << (*iter) << Std::endl;
 	}
 }
 
 void MainActor::ConCmd_maxstats(const Console::ArgvType &argv) {
 	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		pout << "Cheats are disabled" << std::endl;
+		pout << "Cheats are disabled" << Std::endl;
 		return;
 	}
 	MainActor *mainactor = getMainActor();
@@ -451,7 +451,7 @@ void MainActor::ConCmd_maxstats(const Console::ArgvType &argv) {
 
 void MainActor::ConCmd_heal(const Console::ArgvType &argv) {
 	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		pout << "Cheats are disabled" << std::endl;
+		pout << "Cheats are disabled" << Std::endl;
 		return;
 	}
 	MainActor *mainactor = getMainActor();
@@ -471,7 +471,7 @@ void MainActor::accumulateStr(int n) {
 		accumStr = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
-		pout << "Gained strength!" << std::endl;
+		pout << "Gained strength!" << Std::endl;
 	}
 }
 
@@ -485,7 +485,7 @@ void MainActor::accumulateDex(int n) {
 		accumDex = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
-		pout << "Gained dexterity!" << std::endl;
+		pout << "Gained dexterity!" << Std::endl;
 	}
 }
 
@@ -499,7 +499,7 @@ void MainActor::accumulateInt(int n) {
 		accumInt = 0;
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
-		pout << "Gained intelligence!" << std::endl;
+		pout << "Gained intelligence!" << Std::endl;
 	}
 }
 
@@ -624,12 +624,12 @@ void MainActor::ConCmd_name(const Console::ArgvType &argv) {
 	if (argv.size() > 1)
 		av->setName(argv[1]);
 
-	pout << "MainActor::name = \"" << av->getName() << "\"" << std::endl;
+	pout << "MainActor::name = \"" << av->getName() << "\"" << Std::endl;
 }
 
 void MainActor::ConCmd_useBackpack(const Console::ArgvType &argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		pout << "Can't: avatarInStasis" << std::endl;
+		pout << "Can't: avatarInStasis" << Std::endl;
 		return;
 	}
 	MainActor *av = getMainActor();
@@ -640,7 +640,7 @@ void MainActor::ConCmd_useBackpack(const Console::ArgvType &argv) {
 
 void MainActor::ConCmd_useInventory(const Console::ArgvType &argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		pout << "Can't: avatarInStasis" << std::endl;
+		pout << "Can't: avatarInStasis" << Std::endl;
 		return;
 	}
 	MainActor *av = getMainActor();
@@ -649,7 +649,7 @@ void MainActor::ConCmd_useInventory(const Console::ArgvType &argv) {
 
 void MainActor::useInventoryItem(uint32 shapenum) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		pout << "Can't: avatarInStasis" << std::endl;
+		pout << "Can't: avatarInStasis" << Std::endl;
 		return;
 	}
 	LOOPSCRIPT(script, LS_SHAPE_EQUAL(shapenum));
@@ -681,7 +681,7 @@ void MainActor::ConCmd_useKeyring(const Console::ArgvType &argv) {
 
 void MainActor::ConCmd_toggleCombat(const Console::ArgvType &argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-		pout << "Can't: avatarInStasis" << std::endl;
+		pout << "Can't: avatarInStasis" << Std::endl;
 		return;
 	}
 	MainActor *av = getMainActor();
@@ -690,7 +690,7 @@ void MainActor::ConCmd_toggleCombat(const Console::ArgvType &argv) {
 
 void MainActor::ConCmd_toggleInvincibility(const Console::ArgvType &argv) {
 	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		pout << "Cheats are disabled" << std::endl;
+		pout << "Cheats are disabled" << Std::endl;
 		return;
 	}
 	MainActor *av = getMainActor();
@@ -698,13 +698,13 @@ void MainActor::ConCmd_toggleInvincibility(const Console::ArgvType &argv) {
 	if (av->getActorFlags() & Actor::ACT_INVINCIBLE) {
 
 		av->clearActorFlag(Actor::ACT_INVINCIBLE);
-		pout << "Avatar is no longer invincible." << std::endl;
+		pout << "Avatar is no longer invincible." << Std::endl;
 
 
 	} else {
 
 		av->setActorFlag(Actor::ACT_INVINCIBLE);
-		pout << "Avatar invincible." << std::endl;
+		pout << "Avatar invincible." << Std::endl;
 
 	}
 }

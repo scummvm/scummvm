@@ -63,7 +63,7 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 	int mapChunkSize = currentmap->getChunkSize();
 
 	if (currentmap->getNum() != lastMapNum) {
-		std::memset(texbuffer, 0, sizeof(texbuffer));
+		Std::memset(texbuffer, 0, sizeof(texbuffer));
 		lastMapNum = currentmap->getNum();
 	}
 

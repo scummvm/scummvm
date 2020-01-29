@@ -93,7 +93,7 @@ void CombatProcess::run() {
 		}
 
 		pout << "[COMBAT " << item_num << "] target found: "
-		     << target << std::endl;
+		     << target << Std::endl;
 		combatmode = CM_WAITING;
 	}
 
@@ -107,7 +107,7 @@ void CombatProcess::run() {
 		combatmode = CM_ATTACKING;
 
 		pout << "[COMBAT " << item_num << "] target (" << target
-		     << ") in range" << std::endl;
+		     << ") in range" << Std::endl;
 
 		bool hasidle1 = a->hasAnim(Animation::idle1);
 		bool hasidle2 = a->hasAnim(Animation::idle2);
@@ -328,7 +328,7 @@ void CombatProcess::waitForTarget() {
 
 void CombatProcess::dumpInfo() {
 	Process::dumpInfo();
-	pout << "Target: " << target << std::endl;
+	pout << "Target: " << target << Std::endl;
 }
 
 void CombatProcess::saveData(ODataSource *ods) {

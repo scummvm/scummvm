@@ -175,10 +175,10 @@ const ScalerStruct ScalerRegistry::scaler_array[] = {
 ScalerRegistry::ScalerRegistry() : num_scalers(0) {
 	// Count number of scalers
 	while (scaler_array[num_scalers].name) {
-//		std::cout << "Scaler " << num_scalers << ": " << scaler_array[num_scalers].name << std::endl;
+//		Std::cout << "Scaler " << num_scalers << ": " << scaler_array[num_scalers].name << Std::endl;
 		num_scalers++;
 	}
-//	std::cout << num_scalers << " Scalers." << std::endl;
+//	Std::cout << num_scalers << " Scalers." << Std::endl;
 }
 
 //
@@ -190,14 +190,14 @@ ScalerRegistry::~ScalerRegistry() {
 //
 // Get the Index of a scaler from it's Name
 //
-int ScalerRegistry::GetIndexForName(const std::string &name) {
+int ScalerRegistry::GetIndexForName(const Std::string &name) {
 	// Make the name uppercase
-	//FIX std::string sclr = to_uppercase(name);
+	//FIX Std::string sclr = to_uppercase(name);
 
 	for (int index = 0; index < num_scalers; index++) {
 
 		// Make this name also uppercase
-		//  std::string sclr2 = to_uppercase(scaler_array[index].name);
+		//  Std::string sclr2 = to_uppercase(scaler_array[index].name);
 
 //		if (sclr == sclr2) return index;
 		if (string_i_compare(name, scaler_array[index].name)) return index;

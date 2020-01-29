@@ -39,7 +39,7 @@ namespace Ultima {
 namespace Ultima6 {
 
 bool PortraitMD::init() {
-	std::string filename;
+	Std::string filename;
 
 	avatar_portrait_num = 0;
 
@@ -111,7 +111,7 @@ unsigned char *PortraitMD::get_portrait_data(Actor *actor) {
 U6Shape *PortraitMD::get_background_shape(uint8 actor_num) {
 	U6Lib_n file;
 	U6Shape *bg = new U6Shape();
-	std::string filename;
+	Std::string filename;
 	config_get_path(config, "mdback.lzc", filename);
 	file.open(filename, 4, NUVIE_GAME_MD);
 	unsigned char *temp_buf = file.get_item(get_background_shape_num(actor_num));

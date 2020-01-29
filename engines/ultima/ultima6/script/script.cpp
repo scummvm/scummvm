@@ -896,12 +896,12 @@ Script::~Script() {
 }
 
 bool Script::init() {
-	std::string dir, path;
+	Std::string dir, path;
 	config->value("config/datadir", dir, "");
 	build_path(dir, "scripts", path);
 	dir = path;
 
-	std::string game_tag = get_game_tag(gametype);
+	Std::string game_tag = get_game_tag(gametype);
 	stringToLower(game_tag);
 
 	build_path(dir, game_tag, path);
@@ -910,12 +910,12 @@ bool Script::init() {
 	build_path(dir, "init.lua", path);
 	ConsoleAddInfo("Loading init.lua");
 
-	std::string init_str = "init = nuvie_load(\"";
+	Std::string init_str = "init = nuvie_load(\"";
 	init_str.append(game_tag);
 	init_str.append("/init.lua\"); init()");
 
 	if (run_script(init_str.c_str()) == false) {
-		std::string errorStr = "Loading ";
+		Std::string errorStr = "Loading ";
 		errorStr.append(path);
 		ConsoleAddError(errorStr);
 		return false;
@@ -1401,7 +1401,7 @@ ScriptThread *Script::call_function_in_thread(const char *function_name) {
 }
 
 bool Script::run_lua_file(const char *filename) {
-	std::string dir, path;
+	Std::string dir, path;
 	Script::get_script()->get_config()->value("config/datadir", dir, "");
 
 	build_path(dir, "scripts", path);
@@ -2290,8 +2290,8 @@ static int nscript_u6link_gc(lua_State *L) {
 
 /* free up resources for a recursive U6Link iterator. */
 static int nscript_u6link_recursive_gc(lua_State *L) {
-	std::stack<U6Link *> **s_stack = (std::stack<U6Link *> **)luaL_checkudata(L, 1, "nuvie.U6LinkRecursive");
-	std::stack<U6Link *> *s = *s_stack;
+	Std::stack<U6Link *> **s_stack = (Std::stack<U6Link *> **)luaL_checkudata(L, 1, "nuvie.U6LinkRecursive");
+	Std::stack<U6Link *> *s = *s_stack;
 
 	if (s->empty() == false) {
 		for (; !s->empty(); s->pop()) {
@@ -2391,7 +2391,7 @@ static int nscript_load(lua_State *L) {
 static int nscript_config_get_boolean_value(lua_State *L) {
 	bool value;
 	const char *config_key = luaL_checkstring(L, 1);
-	Script::get_script()->get_config()->value(std::string(config_key), value);
+	Script::get_script()->get_config()->value(Std::string(config_key), value);
 
 	lua_pushboolean(L, value);
 	return 1;
@@ -2413,7 +2413,7 @@ static int nscript_config_get_game_type(lua_State *L) {
    @return a two character string representing the currently selected language. "en" is the default if no language has been selected.
  */
 static int nscript_config_get_language(lua_State *L) {
-	std::string value;
+	Std::string value;
 	Script::get_script()->get_config()->value(config_get_game_key(Script::get_script()->get_config()) + "/language", value, "en");
 	lua_pushstring(L, value.c_str());
 	return 1;
@@ -3228,7 +3228,7 @@ static int nscript_tileset_export(lua_State *L) {
 		overwriteFile = (bool)lua_toboolean(L, 1);
 	}
 
-	std::string path;
+	Std::string path;
 	path = "data";
 	build_path(path, "images", path);
 	build_path(path, "tiles", path);
@@ -3817,8 +3817,8 @@ int nscript_u6llist_iter(lua_State *L) {
 }
 
 int nscript_u6llist_iter_recursive(lua_State *L) {
-	std::stack<U6Link *> **s_stack = (std::stack<U6Link *> **)luaL_checkudata(L, 1, "nuvie.U6LinkRecursive");
-	std::stack<U6Link *> *s = *s_stack;
+	Std::stack<U6Link *> **s_stack = (Std::stack<U6Link *> **)luaL_checkudata(L, 1, "nuvie.U6LinkRecursive");
+	Std::stack<U6Link *> *s = *s_stack;
 
 	if (s->empty() || s->top() == NULL)
 		return 0;
@@ -4257,7 +4257,7 @@ static int nscript_input_select(lua_State *L) {
 	AsyncEffect *e = new AsyncEffect(inputEffect);
 	e->run(EFFECT_PROCESS_GUI_INPUT);
 
-	std::string input = inputEffect->get_input();
+	Std::string input = inputEffect->get_input();
 
 	lua_pushstring(L, input.c_str());
 
@@ -4286,7 +4286,7 @@ static int nscript_input_select_integer(lua_State *L) {
 	AsyncEffect *e = new AsyncEffect(inputEffect);
 	e->run(EFFECT_PROCESS_GUI_INPUT);
 
-	std::string input = inputEffect->get_input();
+	Std::string input = inputEffect->get_input();
 
 	int num = (int)strtol(input.c_str(), (char **)NULL, 10);
 	lua_pushinteger(L, num);
@@ -4407,8 +4407,8 @@ int nscript_init_u6link_iter(lua_State *L, U6LList *list, bool is_recursive) {
 	if (is_recursive) {
 		lua_pushcfunction(L, nscript_u6llist_iter_recursive);
 
-		std::stack<U6Link *> **p_stack = (std::stack<U6Link *> **)lua_newuserdata(L, sizeof(std::stack<U6Link *> *));
-		*p_stack = new std::stack<U6Link *>();
+		Std::stack<U6Link *> **p_stack = (Std::stack<U6Link *> **)lua_newuserdata(L, sizeof(Std::stack<U6Link *> *));
+		*p_stack = new Std::stack<U6Link *>();
 		(*p_stack)->push(link);
 
 		luaL_getmetatable(L, "nuvie.U6LinkRecursive");
@@ -4600,10 +4600,10 @@ Loads text from a given LZC file.
  */
 static int nscript_load_text_from_lzc(lua_State *L) {
 	unsigned char *buf = NULL;
-	std::string filename(lua_tostring(L, 1));
+	Std::string filename(lua_tostring(L, 1));
 	U6Lib_n lib_n;
 
-	std::string path;
+	Std::string path;
 
 	config_get_path(Game::get_game()->get_config(), filename, path);
 

@@ -34,7 +34,7 @@ class ShapeFont;
 
 class ShapeRenderedText : public RenderedText {
 public:
-	ShapeRenderedText(std::list<PositionedText> &lines,
+	ShapeRenderedText(Std::list<PositionedText> &lines,
 	                  int width, int height, int vlead, ShapeFont *font);
 	virtual ~ShapeRenderedText();
 
@@ -44,7 +44,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 protected:
-	std::list<PositionedText> lines;
+	Std::list<PositionedText> lines;
 	ShapeFont *font;
 };
 

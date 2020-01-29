@@ -57,7 +57,7 @@ protected:
 
 	sint8 selected_action; // underlined icon (-1 = none)
 	bool combat_mode; // state of combat icon
-	std::string wind; // wind direction
+	Std::string wind; // wind direction
 	void fill_square(uint8 pal_index);
 
 	uint8 bg_color, font_color;
@@ -80,7 +80,7 @@ public:
 
 	void select_action(sint8 activate);
 	void set_combat_mode(bool mode);
-//    void set_wind(std::string dir)        { wind = dir; update_display = true; }
+//    void set_wind(Std::string dir)        { wind = dir; update_display = true; }
 	void set_selected_action(sint8 action) {
 		selected_action = action;
 		update_display = true;

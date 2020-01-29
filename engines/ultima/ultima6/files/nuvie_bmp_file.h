@@ -70,8 +70,8 @@ public:
 
 	bool initNewBlankImage(sint32 width, sint32 height, const unsigned char *palette);
 
-	bool load(std::string filename);
-	bool save(std::string filename);
+	bool load(Std::string filename);
+	bool save(Std::string filename);
 
 	uint16 getWidth() {
 		return (uint16)infoHeader.width;
@@ -85,10 +85,10 @@ public:
 	unsigned char *getRawIndexedData();
 	unsigned char *getRawIndexedDataCopy();
 	Graphics::ManagedSurface *getSdlSurface32();
-	Graphics::ManagedSurface *getSdlSurface32(std::string filename);
+	Graphics::ManagedSurface *getSdlSurface32(Std::string filename);
 
 private:
-	bool handleError(std::string error);
+	bool handleError(Std::string error);
 	void write8BitData(NuvieIOFileWrite *file);
 };
 

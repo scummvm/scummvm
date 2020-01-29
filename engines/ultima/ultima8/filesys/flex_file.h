@@ -43,7 +43,7 @@ public:
 	virtual bool exists(uint32 index) {
 		return getSize(index) > 0;
 	}
-	virtual bool exists(const std::string &name) {
+	virtual bool exists(const Std::string &name) {
 		uint32 index;
 		if (nameToIndex(name, index))
 			return exists(index);
@@ -52,7 +52,7 @@ public:
 	}
 
 	virtual uint8 *getObject(uint32 index, uint32 *size = 0);
-	virtual uint8 *getObject(const std::string &name, uint32 *size = 0) {
+	virtual uint8 *getObject(const Std::string &name, uint32 *size = 0) {
 		uint32 index;
 		if (nameToIndex(name, index))
 			return getObject(index, size);
@@ -62,7 +62,7 @@ public:
 
 
 	virtual uint32 getSize(uint32 index);
-	virtual uint32 getSize(const std::string &name) {
+	virtual uint32 getSize(const Std::string &name) {
 		uint32 index;
 		if (nameToIndex(name, index))
 			return getSize(index);
@@ -88,7 +88,7 @@ public:
 	static bool isFlexFile(IDataSource *ds);
 
 protected:
-	bool nameToIndex(const std::string &name, uint32 &index);
+	bool nameToIndex(const Std::string &name, uint32 &index);
 
 	IDataSource *ds;
 	uint32 count;

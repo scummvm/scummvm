@@ -85,12 +85,12 @@ public:
 		else
 			exponent = 1;
 
-		float f = std::ldexp(mantissa / 8388608.0, exponent - 127);
+		float f = Std::ldexp(mantissa / 8388608.0, exponent - 127);
 		return (i >> 31) ? -f : f;
 #endif
 	}
 
-	void readline(std::string &str) {
+	void readline(Std::string &str) {
 		str.erase();
 		while (!eof()) {
 			char character =  static_cast<char>(read1());
@@ -371,7 +371,7 @@ public:
 		int32 count = num_bytes;
 		if (buf_ptr + num_bytes > buf + size)
 			count = static_cast<int32>(buf - buf_ptr + size);
-		std::memcpy(str, buf_ptr, count);
+		Std::memcpy(str, buf_ptr, count);
 		buf_ptr += count;
 		return count;
 	}

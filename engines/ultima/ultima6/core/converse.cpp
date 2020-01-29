@@ -81,7 +81,7 @@ Converse::Converse() {
 void
 Converse::init(Configuration *cfg, nuvie_game_t t, MsgScroll *s, ActorManager *a,
                GameClock *c, Player *p, ViewManager *v, ObjManager *o) {
-	std::string townsdir;
+	Std::string townsdir;
 
 	config = cfg;
 	scroll = s;
@@ -142,7 +142,7 @@ void Converse::reset() {
 
 /* Load `convfilename' as src.
  */
-void Converse::load_conv(const std::string &convfilename) {
+void Converse::load_conv(const Std::string &convfilename) {
 	string conv_lib_str;
 	if (gametype == NUVIE_GAME_U6 && using_fmtowns) {
 		config->pathFromValue("config/ultima6/townsdir", convfilename, conv_lib_str); //FIXME handle case insensitive filename here.
@@ -417,7 +417,7 @@ void Converse::stop() {
  */
 bool Converse::input() {
 	if (scroll->has_input()) {
-		std::string s = scroll->get_input();
+		Std::string s = scroll->get_input();
 		set_input(s);
 #ifdef CONVERSE_DEBUG
 		DEBUG(0, LEVEL_DEBUGGING, "Converse: INPUT \"%s\"\n\n", get_input().c_str());
@@ -751,7 +751,7 @@ void ConvScript::write2(converse_value val) {
 
 
 uint8 get_converse_gump_type_from_config(Configuration *config) {
-	std::string configvalue;
+	Std::string configvalue;
 	config->value("config/general/converse_gump", configvalue, "default");
 
 	if (string_i_compare(configvalue, "default")) {

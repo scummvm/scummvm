@@ -36,7 +36,7 @@ class Scaler;
 // This entire class is just static
 //
 class ScalerManager {
-	std::vector<const Pentagram::Scaler *>       scalers;
+	Std::vector<const Pentagram::Scaler *>       scalers;
 
 	static ScalerManager *scaler_man;
 

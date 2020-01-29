@@ -50,7 +50,7 @@ void DelayProcess::run() {
 
 void DelayProcess::dumpInfo() {
 	Process::dumpInfo();
-	pout << "Frames left: " << count << std::endl;
+	pout << "Frames left: " << count << Std::endl;
 }
 
 

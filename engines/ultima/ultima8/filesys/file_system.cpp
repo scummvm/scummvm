@@ -31,7 +31,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-using std::string;
+using Std::string;
 
 FileSystem *FileSystem::filesystem = 0;
 
@@ -98,8 +98,8 @@ bool FileSystem::rawOpen(Common::SeekableReadStream *&in, const string &fname) {
 
 	// Handle opening savegames
 	if (name.hasPrefix("@save/")) {
-		int slotNumber = std::atoi(name.c_str() + 6);
-		std::string saveFilename = Ultima8Engine::get_instance()->getSaveFilename(slotNumber);
+		int slotNumber = Std::atoi(name.c_str() + 6);
+		Std::string saveFilename = Ultima8Engine::get_instance()->getSaveFilename(slotNumber);
 
 		in = g_system->getSavefileManager()->openForLoading(saveFilename);
 		return in != 0;
@@ -130,8 +130,8 @@ bool FileSystem::rawOpen(Common::WriteStream *&out,  const string &fname) {
 	switch_slashes(name);
 
 	if (name.hasPrefix("@save/")) {
-		int slotNumber = std::atoi(name.c_str() + 6);
-		std::string saveFilename = Ultima8Engine::get_instance()->getSaveFilename(slotNumber);
+		int slotNumber = Std::atoi(name.c_str() + 6);
+		Std::string saveFilename = Ultima8Engine::get_instance()->getSaveFilename(slotNumber);
 
 		out = g_system->getSavefileManager()->openForSaving(saveFilename, false);
 		return out != 0;
@@ -182,7 +182,7 @@ bool FileSystem::base_to_uppercase(string &str, int count) {
 		if (todo <= 0)
 			break;
 
-		*X = static_cast<char>(std::toupper(*X));
+		*X = static_cast<char>(Std::toupper(*X));
 	}
 	if (X == str.rend())
 		todo--; // start of pathname counts as separator too
@@ -249,7 +249,7 @@ bool FileSystem::RemoveVirtualPath(const string &vpath) {
 	if (vp.rfind('/') == vp.size() - 1)
 		vp.erase(vp.rfind('/'));
 
-	std::map<Common::String, string>::iterator i = virtualpaths.find(vp);
+	Std::map<Common::String, string>::iterator i = virtualpaths.find(vp);
 
 	if (i == virtualpaths.end()) {
 		return false;
@@ -259,9 +259,9 @@ bool FileSystem::RemoveVirtualPath(const string &vpath) {
 	}
 }
 
-IDataSource *FileSystem::checkBuiltinData(const std::string &vfn, bool is_text) {
+IDataSource *FileSystem::checkBuiltinData(const Std::string &vfn, bool is_text) {
 	// Is it a Memory file?
-	std::map<Common::String, MemoryFile *>::iterator mf = memoryfiles.find(vfn);
+	Std::map<Common::String, MemoryFile *>::iterator mf = memoryfiles.find(vfn);
 
 	if (mf != memoryfiles.end())
 		return new IBufferDataSource(mf->_value->data,
@@ -274,9 +274,9 @@ bool FileSystem::rewrite_virtual_path(string &vfn) {
 	bool ret = false;
 	string::size_type pos = vfn.size();
 
-	while ((pos = vfn.rfind('/', pos)) != std::string::npos) {
-//		perr << vfn << ", " << vfn.substr(0, pos) << ", " << pos << std::endl;
-		std::map<Common::String, string>::iterator p = virtualpaths.find(
+	while ((pos = vfn.rfind('/', pos)) != Std::string::npos) {
+//		perr << vfn << ", " << vfn.substr(0, pos) << ", " << pos << Std::endl;
+		Std::map<Common::String, string>::iterator p = virtualpaths.find(
 		            vfn.substr(0, pos));
 
 		if (p != virtualpaths.end()) {
@@ -316,7 +316,7 @@ bool FileSystem::MkDir(const string &path) {
  *  Get the current users pentagram home path
  */
 
-std::string FileSystem::getHomePath() {
+Std::string FileSystem::getHomePath() {
 	Common::FSNode gameDir = Ultima8Engine::get_instance()->getGameDirectory();
 	return gameDir.getPath();
 }

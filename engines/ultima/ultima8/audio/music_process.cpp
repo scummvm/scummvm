@@ -42,13 +42,13 @@ MusicProcess *MusicProcess::the_music_process = 0;
 
 MusicProcess::MusicProcess() : _midiPlayer(0), _state(MUSIC_NORMAL),
 		_currentTrack(0), _wantedTrack(0), _lastRequest(0), _queuedTrack(0) {
-	std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
+	Std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
 }
 
 MusicProcess::MusicProcess(MidiPlayer *player) : _midiPlayer(player),
 		_state(MUSIC_NORMAL), _currentTrack(0), _wantedTrack(0),
 		_lastRequest(0), _queuedTrack(0) {
-	std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
+	Std::memset(_songBranches, (byte)-1, 128 * sizeof(int));
 
 	the_music_process = this;
 	flags |= PROC_RUNPAUSED;
@@ -267,13 +267,13 @@ uint32 MusicProcess::I_playMusic(const uint8 *args,
 void MusicProcess::ConCmd_playMusic(const Console::ArgvType &argv) {
 	if (the_music_process) {
 		if (argv.size() != 2) {
-			pout << "MusicProcess::playMusic (tracknum)" << std::endl;
+			pout << "MusicProcess::playMusic (tracknum)" << Std::endl;
 		} else {
-			pout << "Playing track " << argv[1] << std::endl;
+			pout << "Playing track " << argv[1] << Std::endl;
 			the_music_process->playMusic_internal(atoi(argv[1].c_str()));
 		}
 	} else {
-		pout << "No Music Process" << std::endl;
+		pout << "No Music Process" << Std::endl;
 	}
 }
 

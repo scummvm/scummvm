@@ -55,11 +55,11 @@ void GamePalette::set_palette() {
 
 bool GamePalette::loadPalette() {
 	uint16 i, j;
-	std::string filename;
+	Std::string filename;
 	NuvieIOFileRead file;
 	unsigned char *buf;
 	uint8 *pal_ptr;
-	std::string game_name, game_id, pal_name;
+	Std::string game_name, game_id, pal_name;
 	uint8 dither_mode;
 
 	config->value("config/GameName", game_name);
@@ -114,11 +114,11 @@ bool GamePalette::loadPalette() {
 
 bool GamePalette::loadPaletteIntoBuffer(unsigned char *pal) {
 	uint16 i, j;
-	std::string filename;
+	Std::string filename;
 	NuvieIOFileRead file;
 	unsigned char *buf;
 	uint8 *pal_ptr;
-	std::string game_name, game_id, pal_name;
+	Std::string game_name, game_id, pal_name;
 
 	config->value("config/GameName", game_name);
 	config->value("config/GameID", game_id);

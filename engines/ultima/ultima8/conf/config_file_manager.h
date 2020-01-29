@@ -41,9 +41,9 @@ public:
 	//! \param root The name of the root node in the file
 	//! \param readonly If true, don't write to this file's tree (or the file)
 	//! \return true if succesful
-	bool readConfigFile(std::string fname, Pentagram::istring root,
+	bool readConfigFile(Std::string fname, Pentagram::istring root,
 	                    bool readonly = false);
-	bool readConfigString(std::string config, Pentagram::istring root,
+	bool readConfigString(Std::string config, Pentagram::istring root,
 	                      bool readonly = false);
 
 	//! write all (writable) config files in the given root
@@ -60,14 +60,14 @@ public:
 	bool exists(Pentagram::istring key);
 
 	//! get value
-	bool get(Pentagram::istring key, std::string &ret);
+	bool get(Pentagram::istring key, Std::string &ret);
 	//! get value
 	bool get(Pentagram::istring key, int &ret);
 	//! get value
 	bool get(Pentagram::istring, bool &ret);
 
 	//! set value
-	void set(Pentagram::istring key, std::string value);
+	void set(Pentagram::istring key, Std::string value);
 	//! set value
 	void set(Pentagram::istring key, const char *value);
 	//! set value
@@ -83,14 +83,14 @@ public:
 	//! \param longformat If true, return the full key name, instead of
 	//!                   just the last part
 	//! \return the keys. They have no guaranteed order.
-	std::vector<Pentagram::istring> listKeys(Pentagram::istring section,
+	Std::vector<Pentagram::istring> listKeys(Pentagram::istring section,
 	        bool longformat = false);
 
 	//! list all sections
 	//! \param root The config root to list all sections in
 	//! \param longformat If true, return the full key name (including section)
 	//! \return the sections. They have no guaranteed order.
-	std::vector<Pentagram::istring> listSections(Pentagram::istring root,
+	Std::vector<Pentagram::istring> listSections(Pentagram::istring root,
 	        bool longformat = false);
 
 	//! list all key-value pairs in the given section.
@@ -104,7 +104,7 @@ private:
 	INIFile *findKeyINI(Pentagram::istring key);
 	INIFile *findWriteINI(Pentagram::istring key);
 
-	std::vector<INIFile *> inifiles;
+	Std::vector<INIFile *> inifiles;
 
 	static ConfigFileManager *configfilemanager;
 };

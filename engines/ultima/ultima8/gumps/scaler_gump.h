@@ -63,7 +63,7 @@ public:
 		sw = swidth1;
 		sh = sheight1;
 	}
-	void ChangeScaler(std::string scalername, int scalex, int scaley);
+	void ChangeScaler(Std::string scalername, int scalex, int scaley);
 
 protected:
 	int                     swidth1;

@@ -47,7 +47,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::list;
+using Std::list;
 
 
 class Configuration;
@@ -58,14 +58,14 @@ class MsgText {
 public:
 
 	Font *font;
-	std::string s;
+	Std::string s;
 	uint8 color;
 
 	MsgText();
-	MsgText(std::string new_string, Font *f);
+	MsgText(Std::string new_string, Font *f);
 	~MsgText();
 
-	void append(std::string new_string);
+	void append(Std::string new_string);
 	void copy(MsgText *msg_text);
 	uint32 length();
 
@@ -78,7 +78,7 @@ public:
 class MsgLine {
 public:
 
-	std::list<MsgText *> text;
+	Std::list<MsgText *> text;
 	uint32 total_length;
 
 	MsgLine() {
@@ -116,9 +116,9 @@ protected:
 	bool just_finished_page_break;
 	bool just_displayed_prompt;
 	virtual void process_page_break();
-	std::list<MsgLine *> msg_buf;
+	Std::list<MsgLine *> msg_buf;
 
-	std::string input_buf;
+	Std::string input_buf;
 	bool permit_inputescape; // can RETURN or ESCAPE be used to escape input entry
 
 	uint16 cursor_wait;
@@ -142,7 +142,7 @@ private:
 
 
 	MsgText prompt;
-	std::list<MsgText *> holding_buffer;
+	Std::list<MsgText *> holding_buffer;
 
 
 	bool show_cursor;
@@ -236,13 +236,13 @@ public:
 	virtual void set_font(uint8 font_type);
 	virtual bool is_garg_font();
 
-	int print(const std::string format, ...);
+	int print(const Std::string format, ...);
 
-	virtual void display_string(std::string s, Font *f, bool include_on_map_window);
-	void display_string(std::string s, Font *f, uint8 color, bool include_on_map_window);
-	void display_string(std::string s, uint16 length, uint8 lang_num);
-	void display_string(std::string s, bool include_on_map_window = true);
-	void display_string(std::string s, uint8 color, bool include_on_map_window);
+	virtual void display_string(Std::string s, Font *f, bool include_on_map_window);
+	void display_string(Std::string s, Font *f, uint8 color, bool include_on_map_window);
+	void display_string(Std::string s, uint16 length, uint8 lang_num);
+	void display_string(Std::string s, bool include_on_map_window = true);
+	void display_string(Std::string s, uint8 color, bool include_on_map_window);
 	void display_fmt_string(const char *format, ...);
 	void message(const char *string) {
 		display_string(string);
@@ -283,7 +283,7 @@ public:
 	GUI_status KeyDown(const Common::KeyState &key);
 	GUI_status MouseUp(int x, int y, Shared::MouseButton button);
 	GUI_status MouseWheel(sint32 x, sint32 y);
-	virtual std::string get_token_string_at_pos(uint16 x, uint16 y);
+	virtual Std::string get_token_string_at_pos(uint16 x, uint16 y);
 //void updateScroll();
 	void Display(bool full_redraw);
 
@@ -301,7 +301,7 @@ public:
 	}
 
 	bool has_input();
-	std::string get_input();
+	Std::string get_input();
 	const char *peek_at_input();
 	void request_input(CallBack *caller, void *user_data);
 	void cancel_input_request() {

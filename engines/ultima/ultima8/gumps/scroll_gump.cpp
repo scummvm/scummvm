@@ -47,7 +47,7 @@ ScrollGump::ScrollGump()
 
 }
 
-ScrollGump::ScrollGump(ObjId owner_, std::string msg) :
+ScrollGump::ScrollGump(ObjId owner_, Std::string msg) :
 	ModalGump(0, 0, 100, 100, owner_), text(msg) {
 }
 

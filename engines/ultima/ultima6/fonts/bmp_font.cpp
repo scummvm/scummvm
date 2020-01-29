@@ -51,11 +51,11 @@ BMPFont::~BMPFont() {
 	}
 }
 
-bool BMPFont::init(std::string bmp_filename, bool dual_fontmap) {
+bool BMPFont::init(Std::string bmp_filename, bool dual_fontmap) {
 	dual_font_mode = dual_fontmap;
 	num_chars = 256;
 
-	std::string full_filename = bmp_filename;
+	Std::string full_filename = bmp_filename;
 
 	full_filename += ".bmp";
 

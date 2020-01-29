@@ -35,7 +35,7 @@ namespace Ultima8 {
 class HIDManager {
 private:
 	static HIDManager *_hidManager;
-	std::vector<Console::ArgvType *> _commands;
+	Std::vector<Console::ArgvType *> _commands;
 	typedef Common::HashMap<uint32, Console::ArgvType *> Bindings;
 	Bindings _bindings;
 

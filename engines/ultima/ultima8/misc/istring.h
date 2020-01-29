@@ -51,26 +51,26 @@ template<size_t size> inline void strcpy_s(char (& dest)[size], const char *src)
 
 //! Safe strcat with size checking
 inline char *strcat_s(char *dest, size_t size, const char *src) {
-	size_t cur = std::strlen(dest);
+	size_t cur = Std::strlen(dest);
 	if (cur < size) strcpy_s(dest + cur, size - cur, src);
 	return dest;
 }
 //! Safe strcat with size checking from dest array size
 template<size_t size> inline char (&strcat_s(char (& dest)[size], const char *src))[size]  {
-	size_t cur = std::strlen(dest);
+	size_t cur = Std::strlen(dest);
 	if (cur < size) strcpy_s(dest + cur, size - cur, src);
 	return dest;
 }
 
-class istring : public std::string {
+class istring : public Std::string {
 public:
-	istring() : std::string() {}
-	istring(const char *str) : std::string(str) {}
-	istring(const char *str, uint32 len) : std::string(str, len) {}
-	istring(const char *beginP, const char *endP) : std::string(beginP, endP) {}
-	istring(const String &str) : std::string(str) {}
-	explicit istring(char c) : std::string(c) {}
-	istring(size_t n, char c) : std::string(n, c) {}
+	istring() : Std::string() {}
+	istring(const char *str) : Std::string(str) {}
+	istring(const char *str, uint32 len) : Std::string(str, len) {}
+	istring(const char *beginP, const char *endP) : Std::string(beginP, endP) {}
+	istring(const String &str) : Std::string(str) {}
+	explicit istring(char c) : Std::string(c) {}
+	istring(size_t n, char c) : Std::string(n, c) {}
 	virtual ~istring() {}
 
 	virtual int Compare(const string &s) const override {

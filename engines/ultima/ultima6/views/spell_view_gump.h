@@ -71,8 +71,8 @@ protected:
 	sint16 getSpell(int x, int y);
 
 	virtual uint8 fill_cur_spell_list();
-	void loadCircleString(std::string datadir);
-	void loadCircleSuffix(std::string datadir, std::string image);
+	void loadCircleString(Std::string datadir);
+	void loadCircleSuffix(Std::string datadir, Std::string image);
 	void printSpellQty(uint8 spell_num, uint16 x, uint16 y);
 
 	void close_spellbook();

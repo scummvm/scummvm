@@ -105,7 +105,7 @@ void AudioProcess::run() {
 	AudioMixer *mixer = AudioMixer::get_instance();
 
 	// Update the channels
-	std::list<SampleInfo>::iterator it;
+	Std::list<SampleInfo>::iterator it;
 	for (it = sample_info.begin(); it != sample_info.end();) {
 		bool finished = false;
 		if (!mixer->isPlaying(it->channel)) {
@@ -165,7 +165,7 @@ void AudioProcess::saveData(ODataSource *ods) {
 
 	ods->write1(static_cast<uint8>(sample_info.size()));
 
-	std::list<SampleInfo>::iterator it;
+	Std::list<SampleInfo>::iterator it;
 	for (it = sample_info.begin(); it != sample_info.end(); ++it) {
 		ods->write2(it->sfxnum);
 		ods->write2(it->priority);
@@ -208,7 +208,7 @@ bool AudioProcess::loadData(IDataSource *ids, uint32 version) {
 			char *buf = new char[slen + 1];
 			ids->read(buf, slen);
 			buf[slen] = 0;
-			std::string text = buf;
+			Std::string text = buf;
 			delete[] buf;
 
 			playSpeech(text, priority, objid, pitch_shift, volume);
@@ -225,7 +225,7 @@ int AudioProcess::playSample(AudioSample *sample, int priority, int loops, uint3
 	if (channel == -1) return channel;
 
 	// Erase old sample using channel (if any)
-	std::list<SampleInfo>::iterator it;
+	Std::list<SampleInfo>::iterator it;
 	for (it = sample_info.begin(); it != sample_info.end();) {
 		if (it->channel == channel) {
 			it = sample_info.erase(it);
@@ -247,7 +247,7 @@ void AudioProcess::playSFX(int sfxnum, int priority, ObjId objid, int loops,
 	AudioMixer *mixer = AudioMixer::get_instance();
 
 	if (no_duplicates) {
-		std::list<SampleInfo>::iterator it;
+		Std::list<SampleInfo>::iterator it;
 		for (it = sample_info.begin(); it != sample_info.end();) {
 			if (it->sfxnum == sfxnum && it->objid == objid &&
 			        it->loops == loops) {
@@ -255,7 +255,7 @@ void AudioProcess::playSFX(int sfxnum, int priority, ObjId objid, int loops,
 				// Exactly the same (and playing) so just return
 				//if (it->priority == priority)
 				if (mixer->isPlaying(it->channel)) {
-					pout << "Sound already playing" << std::endl;
+					pout << "Sound already playing" << Std::endl;
 					return;
 				} else {
 					it = sample_info.erase(it);
@@ -288,7 +288,7 @@ void AudioProcess::stopSFX(int sfxnum, ObjId objid) {
 
 	AudioMixer *mixer = AudioMixer::get_instance();
 
-	std::list<SampleInfo>::iterator it;
+	Std::list<SampleInfo>::iterator it;
 	for (it = sample_info.begin(); it != sample_info.end();) {
 		if (it->sfxnum == sfxnum && it->objid == objid) {
 			if (mixer->isPlaying(it->channel)) mixer->stopSample(it->channel);
@@ -302,7 +302,7 @@ void AudioProcess::stopSFX(int sfxnum, ObjId objid) {
 bool AudioProcess::isSFXPlaying(int sfxnum) {
 	//con->Printf("isSFXPlaying(%i)\n", sfxnum);
 
-	std::list<SampleInfo>::iterator it;
+	Std::list<SampleInfo>::iterator it;
 	for (it = sample_info.begin(); it != sample_info.end(); ++it) {
 		if (it->sfxnum == sfxnum)
 			return true;
@@ -315,7 +315,7 @@ void AudioProcess::setVolumeSFX(int sfxnum, uint8 volume) {
 	//con->Printf("setVolumeSFX(%i, %i)\n", sfxnum, volume);
 	AudioMixer *mixer = AudioMixer::get_instance();
 
-	std::list<SampleInfo>::iterator it;
+	Std::list<SampleInfo>::iterator it;
 	for (it = sample_info.begin(); it != sample_info.end(); ++it) {
 		if (it->sfxnum == sfxnum && it->sfxnum != -1) {
 			it->volume = volume;
@@ -331,21 +331,21 @@ void AudioProcess::setVolumeSFX(int sfxnum, uint8 volume) {
 // Speech
 //
 
-bool AudioProcess::playSpeech(std::string &barked, int shapenum, ObjId objid, uint32 pitch_shift, uint16 volume) {
+bool AudioProcess::playSpeech(Std::string &barked, int shapenum, ObjId objid, uint32 pitch_shift, uint16 volume) {
 	SpeechFlex *speechflex = GameData::get_instance()->getSpeechFlex(shapenum);
 
 	if (!speechflex) return false;
 
 	AudioMixer *mixer = AudioMixer::get_instance();
 
-	std::list<SampleInfo>::iterator it;
+	Std::list<SampleInfo>::iterator it;
 	for (it = sample_info.begin(); it != sample_info.end();) {
 
 		if (it->sfxnum == -1 && it->barked == barked &&
 		        it->priority == shapenum && it->objid == objid) {
 
 			if (mixer->isPlaying(it->channel)) {
-				pout << "Speech already playing" << std::endl;
+				pout << "Speech already playing" << Std::endl;
 				return true;
 			} else {
 				it = sample_info.erase(it);
@@ -375,7 +375,7 @@ bool AudioProcess::playSpeech(std::string &barked, int shapenum, ObjId objid, ui
 	return true;
 }
 
-uint32 AudioProcess::getSpeechLength(std::string &barked, int shapenum) const {
+uint32 AudioProcess::getSpeechLength(Std::string &barked, int shapenum) const {
 	SpeechFlex *speechflex = GameData::get_instance()->getSpeechFlex(shapenum);
 	if (!speechflex) return 0;
 
@@ -383,10 +383,10 @@ uint32 AudioProcess::getSpeechLength(std::string &barked, int shapenum) const {
 }
 
 
-void AudioProcess::stopSpeech(std::string &barked, int shapenum, ObjId objid) {
+void AudioProcess::stopSpeech(Std::string &barked, int shapenum, ObjId objid) {
 	AudioMixer *mixer = AudioMixer::get_instance();
 
-	std::list<SampleInfo>::iterator it;
+	Std::list<SampleInfo>::iterator it;
 	for (it = sample_info.begin(); it != sample_info.end();) {
 		if (it->sfxnum == -1 && it->priority == shapenum &&
 		        it->objid == objid && it->barked == barked) {
@@ -398,8 +398,8 @@ void AudioProcess::stopSpeech(std::string &barked, int shapenum, ObjId objid) {
 	}
 }
 
-bool AudioProcess::isSpeechPlaying(std::string &barked, int shapenum) {
-	std::list<SampleInfo>::iterator it;
+bool AudioProcess::isSpeechPlaying(Std::string &barked, int shapenum) {
+	Std::list<SampleInfo>::iterator it;
 	for (it = sample_info.begin(); it != sample_info.end(); ++it) {
 		if (it->sfxnum == -1 && it->priority == shapenum &&
 		        it->barked == barked) {
@@ -416,7 +416,7 @@ void AudioProcess::pauseAllSamples() {
 
 	AudioMixer *mixer = AudioMixer::get_instance();
 
-	std::list<SampleInfo>::iterator it;
+	Std::list<SampleInfo>::iterator it;
 	for (it = sample_info.begin(); it != sample_info.end();) {
 		if (mixer->isPlaying(it->channel)) {
 			mixer->setPaused(it->channel, true);
@@ -435,7 +435,7 @@ void AudioProcess::unpauseAllSamples() {
 
 	AudioMixer *mixer = AudioMixer::get_instance();
 
-	std::list<SampleInfo>::iterator it;
+	Std::list<SampleInfo>::iterator it;
 	for (it = sample_info.begin(); it != sample_info.end();) {
 		if (mixer->isPlaying(it->channel)) {
 			mixer->setPaused(it->channel, false);
@@ -451,7 +451,7 @@ void AudioProcess::unpauseAllSamples() {
 void AudioProcess::stopAllExceptSpeech() {
 	AudioMixer *mixer = AudioMixer::get_instance();
 
-	std::list<SampleInfo>::iterator it;
+	Std::list<SampleInfo>::iterator it;
 	for (it = sample_info.begin(); it != sample_info.end();) {
 		if (it->barked.empty()) {
 			if (mixer->isPlaying(it->channel)) mixer->stopSample(it->channel);
@@ -483,7 +483,7 @@ uint32 AudioProcess::I_playSFX(const uint8 *args, unsigned int argsize) {
 
 	AudioProcess *ap = AudioProcess::get_instance();
 	if (ap) ap->playSFX(sfxnum, priority, objid, 0);
-	else perr << "Error: No AudioProcess" << std::endl;
+	else perr << "Error: No AudioProcess" << Std::endl;
 
 	return 0;
 }
@@ -506,7 +506,7 @@ uint32 AudioProcess::I_playAmbientSFX(const uint8 *args, unsigned int argsize) {
 //	con->Printf("playAmbientSFX(%i, %i, 0x%X)\n", sfxnum, priority, objID);
 	AudioProcess *ap = AudioProcess::get_instance();
 	if (ap) ap->playSFX(sfxnum, priority, objid, -1, true);
-	else perr << "Error: No AudioProcess" << std::endl;
+	else perr << "Error: No AudioProcess" << Std::endl;
 
 	return 0;
 }
@@ -516,7 +516,7 @@ uint32 AudioProcess::I_isSFXPlaying(const uint8 *args, unsigned int argsize) {
 
 	AudioProcess *ap = AudioProcess::get_instance();
 	if (ap) return ap->isSFXPlaying(sfxnum);
-	else perr << "Error: No AudioProcess" << std::endl;
+	else perr << "Error: No AudioProcess" << Std::endl;
 	return 0;
 }
 
@@ -527,7 +527,7 @@ uint32 AudioProcess::I_setVolumeSFX(const uint8 *args, unsigned int /*argsize*/)
 
 	AudioProcess *ap = AudioProcess::get_instance();
 	if (ap) ap->setVolumeSFX(sfxnum, volume);
-	else perr << "Error: No AudioProcess" << std::endl;
+	else perr << "Error: No AudioProcess" << Std::endl;
 
 	return 0;
 }
@@ -543,7 +543,7 @@ uint32 AudioProcess::I_stopSFX(const uint8 *args, unsigned int argsize) {
 
 	AudioProcess *ap = AudioProcess::get_instance();
 	if (ap) ap->stopSFX(sfxnum, objid);
-	else perr << "Error: No AudioProcess" << std::endl;
+	else perr << "Error: No AudioProcess" << Std::endl;
 
 	return 0;
 }
@@ -552,18 +552,18 @@ uint32 AudioProcess::I_stopSFX(const uint8 *args, unsigned int argsize) {
 void AudioProcess::ConCmd_listSFX(const Console::ArgvType &argv) {
 	AudioProcess *ap = AudioProcess::get_instance();
 	if (!ap) {
-		perr << "Error: No AudioProcess" << std::endl;
+		perr << "Error: No AudioProcess" << Std::endl;
 		return;
 	}
 
-	std::list<SampleInfo>::iterator it;
+	Std::list<SampleInfo>::iterator it;
 	for (it = ap->sample_info.begin(); it != ap->sample_info.end(); ++it) {
 		pout.Print("Sample: num %d, obj %d, loop %d, prio %d",
 		            it->sfxnum, it->objid, it->loops, it->priority);
 		if (!it->barked.empty()) {
 			pout << ", speech: \"" << it->barked.substr(it->curspeech_start, it->curspeech_end - it->curspeech_start) << "\"";
 		}
-		pout << std::endl;
+		pout << Std::endl;
 	}
 }
 
@@ -571,12 +571,12 @@ void AudioProcess::ConCmd_listSFX(const Console::ArgvType &argv) {
 void AudioProcess::ConCmd_stopSFX(const Console::ArgvType &argv) {
 	AudioProcess *ap = AudioProcess::get_instance();
 	if (!ap) {
-		perr << "Error: No AudioProcess" << std::endl;
+		perr << "Error: No AudioProcess" << Std::endl;
 		return;
 	}
 
 	if (argv.size() < 2) {
-		pout << "usage: stopSFX <sfxnum> [<objid>]" << std::endl;
+		pout << "usage: stopSFX <sfxnum> [<objid>]" << Std::endl;
 		return;
 	}
 
@@ -590,12 +590,12 @@ void AudioProcess::ConCmd_stopSFX(const Console::ArgvType &argv) {
 void AudioProcess::ConCmd_playSFX(const Console::ArgvType &argv) {
 	AudioProcess *ap = AudioProcess::get_instance();
 	if (!ap) {
-		perr << "Error: No AudioProcess" << std::endl;
+		perr << "Error: No AudioProcess" << Std::endl;
 		return;
 	}
 
 	if (argv.size() < 2) {
-		pout << "usage: playSFX <sfxnum>" << std::endl;
+		pout << "usage: playSFX <sfxnum>" << Std::endl;
 		return;
 	}
 

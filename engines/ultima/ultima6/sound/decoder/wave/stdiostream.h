@@ -44,7 +44,7 @@ public:
 	 * Given a path, invokes NuvieIOFileRead class on that path and wrap the result in a
 	 * StdioStream instance.
 	 */
-	static StdioStream *makeFromPath(const std::string &path);
+	static StdioStream *makeFromPath(const Std::string &path);
 
 	StdioStream(NuvieIOFileRead *handle, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO);
 	virtual ~StdioStream();

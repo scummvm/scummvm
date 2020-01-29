@@ -26,7 +26,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-OutputLogger::OutputLogger(Common::WriteStream *file, const std::string &filename) :
+OutputLogger::OutputLogger(Common::WriteStream *file, const Std::string &filename) :
 	fd(-1), fileOld(NULL), filenameLog(filename), fileLog(NULL),
 	fdPipeRead(-1) {//, pThread(NULL)
 #ifdef TODO
@@ -57,15 +57,15 @@ OutputLogger::OutputLogger(Common::WriteStream *file, const std::string &filenam
 	int fdPipeWrite = fdsPipe[1];
 
 	// Make sure that buffering is turned off on the incoming file
-	std::setvbuf(file, NULL, _IONBF, 0);
+	Std::setvbuf(file, NULL, _IONBF, 0);
 
 	// Duplicate the fd and create new filestream for it
 	fileOld = _fdopen(_dup(fd), "w");
 	// If the file was stderr, make sure the new file doesn't have buffering
-	if (fileOld && file == stderr) std::setvbuf(fileOld, NULL, _IONBF, 0);
+	if (fileOld && file == stderr) Std::setvbuf(fileOld, NULL, _IONBF, 0);
 
 	// Create the output log file
-	fileLog =  std::fopen(filenameLog.c_str(), "w");
+	fileLog =  Std::fopen(filenameLog.c_str(), "w");
 
 	// Duplicate pipe write file descriptor and replace original
 	_dup2(fdPipeWrite, fd);
@@ -101,7 +101,7 @@ OutputLogger::~OutputLogger(void) {
 
 	// Close the duplicated original file
 	if (fileOld) {
-		std::fclose(fileOld);
+		Std::fclose(fileOld);
 		fileOld = NULL;
 	}
 
@@ -121,14 +121,14 @@ OutputLogger::~OutputLogger(void) {
 #endif
 
 		// Get the size written to the log file
-		int sizeLog = std::ftell(fileLog);
+		int sizeLog = Std::ftell(fileLog);
 
-		std::fclose(fileLog);
+		Std::fclose(fileLog);
 		fileLog = NULL;
 
 		// Delete the log file if it was empty
-		if (!sizeLog) std::remove(filenameLog.c_str());
-		filenameLog = std::string();
+		if (!sizeLog) Std::remove(filenameLog.c_str());
+		filenameLog = Std::string();
 	}
 #endif
 }

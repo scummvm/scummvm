@@ -172,7 +172,7 @@ protected:
 		Actor *actor_ref, *actor2_ref;
 		MapCoord *mapcoord_ref;
 		CallbackMessage *msg_ref;
-		std::string *string_ref;
+		Std::string *string_ref;
 		MapEntity *ent_ref;
 		char *data_ref;
 	} items;

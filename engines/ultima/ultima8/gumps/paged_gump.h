@@ -57,10 +57,10 @@ public:
 protected:
 	virtual void saveData(ODataSource *ods);
 	int leftOff, rightOff, topOff, gumpShape;
-	std::vector<Gump *> gumps;
+	Std::vector<Gump *> gumps;
 	Gump *nextButton;
 	Gump *prevButton;
-	std::vector<Gump *>::iterator current;
+	Std::vector<Gump *>::iterator current;
 	bool buttonsEnabled;
 };
 

@@ -234,7 +234,7 @@ GUI_status JoystickDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 		kb->set_hat_repeating(hat_repeating_b->GetSelection() == 1);
 		config->set("config/joystick/repeat_hat", hat_repeating_b->GetSelection() == 1 ? "yes" : "no");
 // Axes Pairs
-		std::string axes_str[] = { "axes_pair1/x_axis", "axes_pair1/y_axis", "axes_pair2/x_axis", "axes_pair2/y_axis",
+		Std::string axes_str[] = { "axes_pair1/x_axis", "axes_pair1/y_axis", "axes_pair2/x_axis", "axes_pair2/y_axis",
 		                           "axes_pair3/x_axis", "axes_pair3/y_axis", "axes_pair4/x_axis", "axes_pair4/y_axis"
 		                         };
 		for (int i = 0; i < 8; i++) {

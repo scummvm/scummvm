@@ -97,7 +97,7 @@ protected:
 
 	bool isRunning;
 
-	typedef std::map<Common::String, GameInfo *, Common::IgnoreCase_Hash> GameMap;
+	typedef Std::map<Common::String, GameInfo *, Common::IgnoreCase_Hash> GameMap;
 	GameMap games;
 	GameInfo *gameinfo;
 
@@ -147,7 +147,7 @@ protected:
 	//! Specifically, @game and @work
 	void setupGamePaths(GameInfo *gameinfo);
 
-	std::string oGamename;
+	Std::string oGamename;
 	bool oHelp;
 	bool oQuiet;
 	bool oVQuiet;

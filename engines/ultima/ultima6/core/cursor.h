@@ -49,7 +49,7 @@ class Cursor {
 	Screen *screen;
 	Configuration *config;
 	sint32 cur_x, cur_y; // location on screen, unused normally
-	std::vector<MousePointer *> cursors; // pointer list
+	Std::vector<MousePointer *> cursors; // pointer list
 	uint8 cursor_id; // which pointer is active
 
 	unsigned char *cleanup; // restore image behind cursor
@@ -70,7 +70,7 @@ public:
 		unload_all();
 	}
 	bool init(Configuration *c, Screen *s, nuvie_game_t game_type);
-	uint32 load_all(std::string filename, nuvie_game_t game_type);
+	uint32 load_all(Std::string filename, nuvie_game_t game_type);
 	void unload_all();
 	bool set_pointer(uint8 ptr_num);
 

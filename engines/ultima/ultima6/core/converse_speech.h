@@ -35,10 +35,10 @@ class U6Lib_n;
 class U6Lzw;
 class NuvieIOBuffer;
 
-using std::string;
+using Std::string;
 
 typedef struct TownsSound {
-	std::string filename;
+	Std::string filename;
 	uint16 sample_num;
 } TownsSound;
 
@@ -47,7 +47,7 @@ class ConverseSpeech {
 	Configuration *config;
 	bool audio_enabled;
 	Audio::SoundHandle handle;
-	std::list<TownsSound> list;
+	Std::list<TownsSound> list;
 
 public:
 	ConverseSpeech();
@@ -57,7 +57,7 @@ public:
 	void play_speech(uint16 actor_num, uint16 sample_num);
 
 protected:
-	NuvieIOBuffer *load_speech(std::string filename, uint16 sample_num);
+	NuvieIOBuffer *load_speech(Std::string filename, uint16 sample_num);
 	inline sint16 convert_sample(uint16 raw_sample);
 	void wav_init_header(NuvieIOBuffer *wav_buffer, uint32 audio_length);
 };

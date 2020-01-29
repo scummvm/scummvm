@@ -88,8 +88,8 @@ void ScalerGump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	int32 scaley = (height << 16) / sheight1;
 
 	// Iterate all children
-	std::list<Gump *>::reverse_iterator it = children.rbegin();
-	std::list<Gump *>::reverse_iterator end = children.rend();
+	Std::list<Gump *>::reverse_iterator it = children.rbegin();
+	Std::list<Gump *>::reverse_iterator end = children.rend();
 
 	while (it != end) {
 		Gump *g = *it;
@@ -178,7 +178,7 @@ void ScalerGump::RenderSurfaceChanged() {
 	Gump::RenderSurfaceChanged();
 }
 
-void ScalerGump::ChangeScaler(std::string scalername, int scalex, int scaley) {
+void ScalerGump::ChangeScaler(Std::string scalername, int scalex, int scaley) {
 	SettingManager *settingman = SettingManager::get_instance();
 
 	if (scalex != 0) settingman->set("scalex", scalex);
@@ -203,8 +203,8 @@ void ScalerGump::SetupScalers() {
 	settingman->setDefault("scaley2", 0);
 	settingman->setDefault("scaler2", "point");
 
-	std::string scaler1name;
-	std::string scaler2name;
+	Std::string scaler1name;
+	Std::string scaler2name;
 	settingman->get("scalex", swidth1);
 	settingman->get("scaley", sheight1);
 	settingman->get("scaler", scaler1name);
@@ -279,7 +279,7 @@ void ScalerGump::SetupScalers() {
 
 void ScalerGump::ConCmd_changeScaler(const Console::ArgvType &argv) {
 	if (argv.size() != 4 && argv.size() != 2) {
-		pout << "Usage: ScalerGump::changeScaler scaler [scalex] [scaley]" << std::endl;
+		pout << "Usage: ScalerGump::changeScaler scaler [scalex] [scaley]" << Std::endl;
 		return;
 	}
 
@@ -305,7 +305,7 @@ void ScalerGump::ConCmd_listScalers(const Console::ArgvType &argv) {
 		if (s->ScaleArbitrary()) pout << " Arbitrary";
 		else for (int b = 0; b < 32; b++) if (s->ScaleBits() & (1 << b)) pout << " " << b << "x";
 
-		pout << std::endl;
+		pout << Std::endl;
 	}
 }
 

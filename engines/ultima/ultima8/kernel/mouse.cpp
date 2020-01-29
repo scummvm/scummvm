@@ -275,8 +275,8 @@ void Mouse::setMouseCoords(int mx, int my) {
 	Gump *gump = desktopGump->OnMouseMotion(mx, my);
 	if (gump && _mouseOverGump != gump->getObjId()) {
 		Gump *oldGump = getGump(_mouseOverGump);
-		std::list<Gump *> oldgumplist;
-		std::list<Gump *> newgumplist;
+		Std::list<Gump *> oldgumplist;
+		Std::list<Gump *> newgumplist;
 
 		// create lists of parents of old and new 'mouseover' gumps
 		if (oldGump) {
@@ -291,8 +291,8 @@ void Mouse::setMouseCoords(int mx, int my) {
 			newGump = newGump->GetParent();
 		}
 
-		std::list<Gump *>::iterator olditer = oldgumplist.begin();
-		std::list<Gump *>::iterator newiter = newgumplist.begin();
+		Std::list<Gump *>::iterator olditer = oldgumplist.begin();
+		Std::list<Gump *>::iterator newiter = newgumplist.begin();
 
 		// strip common prefix from lists
 		while (olditer != oldgumplist.end() &&
@@ -392,7 +392,7 @@ void Mouse::startDragging(int startx, int starty) {
 
 #if 0
 	Object *obj = ObjectManager::get_instance()->getObject(_dragging_objId);
-	perr << "Dragging object " << _dragging_objId << " (class=" << (obj ? obj->GetClassType().class_name : "NULL") << ")" << std::endl;
+	perr << "Dragging object " << _dragging_objId << " (class=" << (obj ? obj->GetClassType().class_name : "NULL") << ")" << Std::endl;
 #endif
 
 	pushMouseCursor();
@@ -454,7 +454,7 @@ void Mouse::moveDragging(int mx, int my) {
 
 
 void Mouse::stopDragging(int mx, int my) {
-	//	perr << "Dropping object " << _dragging_objId << std::endl;
+	//	perr << "Dropping object " << _dragging_objId << Std::endl;
 
 	Gump *gump = getGump(_dragging_objId);
 	Item *item = getItem(_dragging_objId);

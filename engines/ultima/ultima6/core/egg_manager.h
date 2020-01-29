@@ -52,7 +52,7 @@ class EggManager {
 	ObjManager *obj_manager;
 	nuvie_game_t gametype; // what game is being played?
 
-	std::list<Egg *> egg_list;
+	Std::list<Egg *> egg_list;
 
 public:
 
@@ -73,7 +73,7 @@ public:
 	void set_egg_visibility(bool show_eggs);
 	bool spawn_egg(Obj *egg, uint8 hatch_probability);
 	void spawn_eggs(uint16 x, uint16 y, uint8 z, bool teleport = false);
-	std::list<Egg *> *get_egg_list() {
+	Std::list<Egg *> *get_egg_list() {
 		return &egg_list;
 	};
 	bool is_spawning_actors() {

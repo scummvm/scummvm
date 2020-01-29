@@ -73,7 +73,7 @@ SKFPlayer::SKFPlayer(RawArchive *movie, int width_, int height_, bool introMusic
 	  introMusicHack(introMusicHack_) {
 	IDataSource *eventlist = skf->get_datasource(0);
 	if (!eventlist) {
-		perr << "No eventlist found in SKF" << std::endl;
+		perr << "No eventlist found in SKF" << Std::endl;
 		return;
 	}
 
@@ -151,7 +151,7 @@ void SKFPlayer::run() {
 			fadelevel--;
 			if (fadelevel == 0) curaction = 0; // done
 		} else {
-			pout << "Unknown fade action: " << curaction << std::endl;
+			pout << "Unknown fade action: " << curaction << Std::endl;
 		}
 	}
 
@@ -175,32 +175,32 @@ void SKFPlayer::run() {
 
 	// handle events for the current frame
 	while (curevent < events.size() && events[curevent]->frame <= curframe) {
-//		pout << "event " << curevent << std::endl;
+//		pout << "event " << curevent << Std::endl;
 		switch (events[curevent]->action) {
 		case SKF_FadeOut:
 			curaction = SKF_FadeOut;
 			fadecolour = 0;
 			fadelevel = 0;
-//			pout << "FadeOut" << std::endl;
+//			pout << "FadeOut" << Std::endl;
 			break;
 		case SKF_FadeIn:
 			curaction = SKF_FadeIn;
 			fadelevel = FADESTEPS;
-//			pout << "FadeIn" << std::endl;
+//			pout << "FadeIn" << Std::endl;
 			break;
 		case SKF_FadeWhite:
 			curaction = SKF_FadeWhite;
 			fadecolour = 0xFF;
 			fadelevel = 0;
-//			pout << "FadeWhite" << std::endl;
+//			pout << "FadeWhite" << Std::endl;
 			break;
 		case SKF_Wait:
-//			pout << "Wait " << events[curevent]->data << std::endl;
+//			pout << "Wait " << events[curevent]->data << Std::endl;
 			timer = events[curevent]->data;
 			curevent++;
 			return;
 		case SKF_PlayMusic:
-//			pout << "PlayMusic " << events[curevent]->data << std::endl;
+//			pout << "PlayMusic " << events[curevent]->data << Std::endl;
 			if (musicproc) musicproc->playMusic(events[curevent]->data);
 			break;
 		case SKF_SlowStopMusic:
@@ -208,11 +208,11 @@ void SKFPlayer::run() {
 			if (musicproc && !introMusicHack) musicproc->playMusic(0);
 			break;
 		case SKF_PlaySFX:
-//			pout << "PlaySFX " << events[curevent]->data << std::endl;
+//			pout << "PlaySFX " << events[curevent]->data << Std::endl;
 			if (audioproc) audioproc->playSFX(events[curevent]->data, 0x60, 0, 0);
 			break;
 		case SKF_StopSFX:
-//			pout << "StopSFX" << events[curevent]->data << std::endl;
+//			pout << "StopSFX" << events[curevent]->data << Std::endl;
 			if (audioproc) audioproc->stopSFX(events[curevent]->data, 0);
 			break;
 		case SKF_SetSpeed:
@@ -220,7 +220,7 @@ void SKFPlayer::run() {
 //			framerate = events[curevent]->data;
 			break;
 		case SKF_PlaySound: {
-//			pout << "PlaySound " << events[curevent]->data << std::endl;
+//			pout << "PlaySound " << events[curevent]->data << Std::endl;
 
 			if (audioproc) {
 				uint8 *buf = skf->get_object(events[curevent]->data);
@@ -239,7 +239,7 @@ void SKFPlayer::run() {
 			                    skf->get_object(events[curevent]->data - 1));
 			uint32 textsize = skf->get_size(events[curevent]->data - 1);
 			if (textsize > 7) {
-				std::string subtitle = (textbuf + 6);
+				Std::string subtitle = (textbuf + 6);
 				delete subs;
 				subtitley = textbuf[4] + (textbuf[5] << 8);
 				unsigned int remaining;
@@ -252,12 +252,12 @@ void SKFPlayer::run() {
 			break;
 		}
 		case SKF_ClearSubs:
-//			pout << "ClearSubs" << std::endl;
+//			pout << "ClearSubs" << Std::endl;
 			delete subs;
 			subs = 0;
 			break;
 		default:
-			pout << "Unknown action" << std::endl;
+			pout << "Unknown action" << Std::endl;
 			break;
 		}
 
@@ -285,7 +285,7 @@ void SKFPlayer::run() {
 		objecttype = object->read2();
 
 //		pout << "Object " << curobject << "/" << skf->getCount()
-//			 << ", type = " << objecttype << std::endl;
+//			 << ", type = " << objecttype << Std::endl;
 
 
 		if (objecttype == 1) {

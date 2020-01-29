@@ -155,7 +155,7 @@ void QuickAvatarMoverProcess::startMover(int x, int y, int z, int _dir) {
 		Process *p = new QuickAvatarMoverProcess(x, y, z, _dir);
 		Kernel::get_instance()->addProcess(p);
 	} else {
-		pout << "Can't: avatarInStasis" << std::endl;
+		pout << "Can't: avatarInStasis" << Std::endl;
 	}
 }
 
@@ -241,7 +241,7 @@ void QuickAvatarMoverProcess::ConCmd_toggleQuarterSpeed(const Console::ArgvType 
 void QuickAvatarMoverProcess::ConCmd_toggleClipping(const Console::ArgvType &argv) {
 	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) return;
 	QuickAvatarMoverProcess::toggleClipping();
-	pout << "QuickAvatarMoverProcess::clipping = " << QuickAvatarMoverProcess::isClipping() << std::endl;
+	pout << "QuickAvatarMoverProcess::clipping = " << QuickAvatarMoverProcess::isClipping() << Std::endl;
 }
 
 } // End of namespace Ultima8

@@ -34,7 +34,7 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::list;
+using Std::list;
 
 class Configuration;
 class Font;
@@ -60,7 +60,7 @@ class MsgScrollNewUI: public MsgScroll {
 	uint8 border_color;
 	uint16 position;
 
-	std::string trailing_whitespace;
+	Std::string trailing_whitespace;
 
 public:
 
@@ -78,7 +78,7 @@ public:
 
 	void display_prompt() {}
 
-	void display_string(std::string s, Font *f, bool include_on_map_window);
+	void display_string(Std::string s, Font *f, bool include_on_map_window);
 
 	void set_font(uint8 font_type);
 	bool is_garg_font();
@@ -100,7 +100,7 @@ protected:
 
 private:
 	GUI_status scroll_movement_event(ScrollEventType event);
-	uint16 count_empty_lines(std::string s);
+	uint16 count_empty_lines(Std::string s);
 
 };
 

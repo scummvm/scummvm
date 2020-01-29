@@ -40,7 +40,7 @@ Configuration::Configuration() : _configChanged(false) {
 }
 
 Configuration::~Configuration() {
-	for (std::vector<XMLTree *>::iterator i = _trees.begin();
+	for (Std::vector<XMLTree *>::iterator i = _trees.begin();
 	        i != _trees.end(); ++i) {
 		delete(*i);
 	}
@@ -49,7 +49,7 @@ Configuration::~Configuration() {
 		ConfMan.flushToDisk();
 }
 
-bool Configuration::readConfigFile(std::string fname, std::string root,
+bool Configuration::readConfigFile(Std::string fname, Std::string root,
                                    bool readonly) {
 	_configFilename = fname;
 	XMLTree *tree = new XMLTree();
@@ -64,7 +64,7 @@ bool Configuration::readConfigFile(std::string fname, std::string root,
 }
 
 void Configuration::write() {
-	for (std::vector<XMLTree *>::iterator i = _trees.begin();
+	for (Std::vector<XMLTree *>::iterator i = _trees.begin();
 	        i != _trees.end(); ++i) {
 		if (!(*i)->isReadonly())
 			(*i)->write();
@@ -72,17 +72,17 @@ void Configuration::write() {
 }
 
 void Configuration::clear() {
-	for (std::vector<XMLTree *>::iterator i = _trees.begin();
+	for (Std::vector<XMLTree *>::iterator i = _trees.begin();
 	        i != _trees.end(); ++i) {
 		delete(*i);
 	}
 	_trees.clear();
 }
 
-void Configuration::value(const std::string &key, std::string &ret,
+void Configuration::value(const Std::string &key, Std::string &ret,
                           const char *defaultvalue) {
 	// Check for a .cfg file value in the trees
-	for (std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
@@ -91,7 +91,7 @@ void Configuration::value(const std::string &key, std::string &ret,
 	}
 
 	assert(key.hasPrefix("config/"));
-	std::string k = key.substr(7);
+	Std::string k = key.substr(7);
 
 	// Check for local entry
 	if (_localKeys.contains(k)) {
@@ -108,9 +108,9 @@ void Configuration::value(const std::string &key, std::string &ret,
 	ret = defaultvalue;
 }
 
-void Configuration::value(const std::string &key, int &ret, int defaultvalue) {
+void Configuration::value(const Std::string &key, int &ret, int defaultvalue) {
 	// Check for a .cfg file value in the trees
-	for (std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
@@ -119,7 +119,7 @@ void Configuration::value(const std::string &key, int &ret, int defaultvalue) {
 	}
 
 	assert(key.hasPrefix("config/"));
-	std::string k = key.substr(7);
+	Std::string k = key.substr(7);
 
 	// Check for local entry
 	if (_localKeys.contains(k)) {
@@ -136,9 +136,9 @@ void Configuration::value(const std::string &key, int &ret, int defaultvalue) {
 	ret = defaultvalue;
 }
 
-void Configuration::value(const std::string &key, bool &ret, bool defaultvalue) {
+void Configuration::value(const Std::string &key, bool &ret, bool defaultvalue) {
 	// Check for a .cfg file value in the trees
-	for (std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if ((*i)->hasNode(key)) {
 			(*i)->value(key, ret, defaultvalue);
@@ -147,7 +147,7 @@ void Configuration::value(const std::string &key, bool &ret, bool defaultvalue) 
 	}
 
 	assert(key.hasPrefix("config/"));
-	std::string k = key.substr(7);
+	Std::string k = key.substr(7);
 
 	// Check for local entry
 	assert(!_localKeys.contains(k));
@@ -161,7 +161,7 @@ void Configuration::value(const std::string &key, bool &ret, bool defaultvalue) 
 	ret = defaultvalue;
 }
 
-void Configuration::pathFromValue(const std::string &key, std::string file, std::string &full_path) {
+void Configuration::pathFromValue(const Std::string &key, Std::string file, Std::string &full_path) {
 	value(key, full_path);
 
 	if (full_path.length() > 0 && full_path[full_path.length() - 1] != U6PATH_DELIMITER)
@@ -172,11 +172,11 @@ void Configuration::pathFromValue(const std::string &key, std::string file, std:
 	return;
 }
 
-bool Configuration::set(const std::string &key, const std::string &value) {
+bool Configuration::set(const Std::string &key, const Std::string &value) {
 	// Currently a value is written to the last writable tree with
 	// the correct root.
 
-	for (std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if (!((*i)->isReadonly()) &&
 		        (*i)->checkRoot(key)) {
@@ -186,7 +186,7 @@ bool Configuration::set(const std::string &key, const std::string &value) {
 	}
 
 	assert(key.hasPrefix("config/"));
-	std::string k = key.substr(7);
+	Std::string k = key.substr(7);
 
 	if (_localKeys.contains(k)) {
 		_localKeys[k] = value;
@@ -199,16 +199,16 @@ bool Configuration::set(const std::string &key, const std::string &value) {
 	return true;
 }
 
-bool Configuration::set(const std::string &key, const char *value) {
-	return set(key, std::string(value));
+bool Configuration::set(const Std::string &key, const char *value) {
+	return set(key, Std::string(value));
 }
 
 
-bool Configuration::set(const std::string &key, int value) {
+bool Configuration::set(const Std::string &key, int value) {
 	// Currently a value is written to the last writable tree with
 	// the correct root.
 
-	for (std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if (!((*i)->isReadonly()) &&
 		        (*i)->checkRoot(key)) {
@@ -218,7 +218,7 @@ bool Configuration::set(const std::string &key, int value) {
 	}
 
 	assert(key.hasPrefix("config/"));
-	std::string k = key.substr(7);
+	Std::string k = key.substr(7);
 
 	if (_localKeys.contains(k)) {
 		_localKeys[k] = Common::String::format("%d", value);
@@ -231,11 +231,11 @@ bool Configuration::set(const std::string &key, int value) {
 	return true;
 }
 
-bool Configuration::set(const std::string &key, bool value) {
+bool Configuration::set(const Std::string &key, bool value) {
 	// Currently a value is written to the last writable tree with
 	// the correct root.
 
-	for (std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
+	for (Std::vector<XMLTree *>::reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {
 		if (!((*i)->isReadonly()) &&
 		        (*i)->checkRoot(key)) {
@@ -245,7 +245,7 @@ bool Configuration::set(const std::string &key, bool value) {
 	}
 
 	assert(key.hasPrefix("config/"));
-	std::string k = key.substr(7);
+	Std::string k = key.substr(7);
 	assert(!_localKeys.contains(k));
 
 	ConfMan.setBool(k, value);
@@ -254,16 +254,16 @@ bool Configuration::set(const std::string &key, bool value) {
 	return true;
 }
 
-ConfigNode *Configuration::getNode(const std::string &key) {
+ConfigNode *Configuration::getNode(const Std::string &key) {
 	return new ConfigNode(*this, key);
 }
 
-std::set<std::string> Configuration::listKeys(const std::string &key, bool longformat) {
-	std::set<std::string> keys;
-	for (std::vector<XMLTree *>::iterator i = _trees.begin();
+Std::set<Std::string> Configuration::listKeys(const Std::string &key, bool longformat) {
+	Std::set<Std::string> keys;
+	for (Std::vector<XMLTree *>::iterator i = _trees.begin();
 	        i != _trees.end(); ++i) {
-		std::vector<std::string> k = (*i)->listKeys(key, longformat);
-		for (std::vector<std::string>::iterator iter = k.begin();
+		Std::vector<Std::string> k = (*i)->listKeys(key, longformat);
+		for (Std::vector<Std::string>::iterator iter = k.begin();
 		        iter != k.end(); ++iter) {
 			keys.insert(*iter);
 		}
@@ -271,8 +271,8 @@ std::set<std::string> Configuration::listKeys(const std::string &key, bool longf
 	return keys;
 }
 
-void Configuration::getSubkeys(KeyTypeList &ktl, std::string basekey) {
-	for (std::vector<XMLTree *>::iterator tree = _trees.begin();
+void Configuration::getSubkeys(KeyTypeList &ktl, Std::string basekey) {
+	for (Std::vector<XMLTree *>::iterator tree = _trees.begin();
 	        tree != _trees.end(); ++tree) {
 		KeyTypeList l;
 		(*tree)->getSubkeys(l, basekey);

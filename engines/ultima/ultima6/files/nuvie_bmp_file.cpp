@@ -79,7 +79,7 @@ bool NuvieBmpFile::initNewBlankImage(sint32 width, sint32 height, const unsigned
 	return true;
 }
 
-bool NuvieBmpFile::load(std::string filename) {
+bool NuvieBmpFile::load(Std::string filename) {
 	NuvieIOFileRead file;
 
 	if (filename.length() == 0)
@@ -170,7 +170,7 @@ bool NuvieBmpFile::load(std::string filename) {
 	return true;
 }
 
-bool NuvieBmpFile::save(std::string filename) {
+bool NuvieBmpFile::save(Std::string filename) {
 	NuvieIOFileWrite file;
 
 	if (!file.open(filename)) {
@@ -224,7 +224,7 @@ void NuvieBmpFile::write8BitData(NuvieIOFileWrite *file) {
 	}
 }
 
-bool NuvieBmpFile::handleError(std::string error) {
+bool NuvieBmpFile::handleError(Std::string error) {
 	if (data) {
 		free(data);
 		data = NULL;
@@ -271,7 +271,7 @@ unsigned char *NuvieBmpFile::getRawIndexedDataCopy() {
 	return copy;
 }
 
-Graphics::ManagedSurface *NuvieBmpFile::getSdlSurface32(std::string filename) {
+Graphics::ManagedSurface *NuvieBmpFile::getSdlSurface32(Std::string filename) {
 	load(filename);
 	return getSdlSurface32();
 }

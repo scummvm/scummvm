@@ -213,7 +213,7 @@ uint16 Actor::get_tile_num(uint16 obj_num) {
 
 uint16 Actor::get_custom_tile_num(uint16 obj_num) {
 	if (custom_tile_tbl) {
-		std::map<uint16, uint16>::iterator it;
+		Std::map<uint16, uint16>::iterator it;
 		it = custom_tile_tbl->find(obj_num);
 		if (it != custom_tile_tbl->end()) {
 			return it->_value;
@@ -366,7 +366,7 @@ void Actor::add_surrounding_obj(Obj *obj) {
 void Actor::unlink_surrounding_objects(bool make_objects_temporary) {
 //	if(make_objects_temporary)
 	{
-		std::list<Obj *>::iterator obj;
+		Std::list<Obj *>::iterator obj;
 
 		for (obj = surrounding_objects.begin(); obj != surrounding_objects.end(); obj++) {
 			if (make_objects_temporary)
@@ -1443,7 +1443,7 @@ void Actor::clear() {
 void Actor::show() {
 	visible_flag = true;
 
-	std::list<Obj *>::iterator obj_iter;
+	Std::list<Obj *>::iterator obj_iter;
 	for (obj_iter = surrounding_objects.begin(); obj_iter != surrounding_objects.end(); obj_iter++) {
 		(*obj_iter)->set_invisible(false);
 	}
@@ -1453,7 +1453,7 @@ void Actor::show() {
 void Actor::hide() {
 	visible_flag = false;
 
-	std::list<Obj *>::iterator obj_iter;
+	Std::list<Obj *>::iterator obj_iter;
 	for (obj_iter = surrounding_objects.begin(); obj_iter != surrounding_objects.end(); obj_iter++) {
 		(*obj_iter)->set_invisible(true);
 	}
@@ -1963,7 +1963,7 @@ void Actor::cure() {
 
 void Actor::set_custom_tile_num(uint16 obj_num, uint16 tile_num) {
 	if (custom_tile_tbl == NULL) {
-		custom_tile_tbl = new std::map<uint16, uint16>();
+		custom_tile_tbl = new Std::map<uint16, uint16>();
 	}
 
 	(*custom_tile_tbl)[obj_num] = tile_num;

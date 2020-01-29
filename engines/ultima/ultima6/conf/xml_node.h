@@ -32,15 +32,15 @@ namespace Ultima6 {
 
 class   XMLNode {
 protected:
-	std::string             id;
-	std::string             content;
-	std::vector<XMLNode *>   nodelist;
+	Std::string             id;
+	Std::string             content;
+	Std::vector<XMLNode *>   nodelist;
 	bool                    no_close;
 
 public:
 	XMLNode() : no_close(false) {
 	}
-	XMLNode(const std::string &i) : id(i), no_close(false) {
+	XMLNode(const Std::string &i) : id(i), no_close(false) {
 	}
 	XMLNode(const XMLNode &n)
 		: id(n.id), content(n.content), nodelist(n.nodelist), no_close(false) {
@@ -55,26 +55,26 @@ public:
 		return *this;
 	}
 
-	const std::string &reference(const std::string &, bool &);
-	const XMLNode *subtree(const std::string &) const;
+	const Std::string &reference(const Std::string &, bool &);
+	const XMLNode *subtree(const Std::string &) const;
 
-	const std::string &value(void) const {
+	const Std::string &value(void) const {
 		return content;
 	}
 
-	typedef std::pair<std::string, std::string> KeyType;
-	typedef std::vector<KeyType> KeyTypeList;
+	typedef Std::pair<Std::string, Std::string> KeyType;
+	typedef Std::vector<KeyType> KeyTypeList;
 
-	bool searchpairs(KeyTypeList &ktl, const std::string &basekey,
-	                 const std::string currkey, const unsigned int pos);
-	void selectpairs(KeyTypeList &ktl, const std::string currkey);
+	bool searchpairs(KeyTypeList &ktl, const Std::string &basekey,
+	                 const Std::string currkey, const unsigned int pos);
+	void selectpairs(KeyTypeList &ktl, const Std::string currkey);
 
-	std::string dump(int depth = 0);
+	Std::string dump(int depth = 0);
 
-	void xmlassign(const std::string &key, const std::string &value);
-	void xmlparse(const std::string &s, size_t &pos);
+	void xmlassign(const Std::string &key, const Std::string &value);
+	void xmlparse(const Std::string &s, size_t &pos);
 
-	void listkeys(const std::string &, std::vector<std::string> &,
+	void listkeys(const Std::string &, Std::vector<Std::string> &,
 	              bool longformat = true) const;
 };
 

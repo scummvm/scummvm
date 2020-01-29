@@ -60,7 +60,7 @@ protected:
 
 	bool focused;
 
-	std::list<GUI_Widget *>children;
+	Std::list<GUI_Widget *>children;
 	GUI_Widget *parent;
 
 	char *error;

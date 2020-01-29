@@ -29,18 +29,18 @@ namespace Pentagram {
 
 template<class T> T to_uppercase(const T s);
 
-template<class T> void StringToArgv(const T &args, std::vector<T> &argv);
-template<class T> void ArgvToString(const std::vector<T> &argv, T &args);
+template<class T> void StringToArgv(const T &args, Std::vector<T> &argv);
+template<class T> void ArgvToString(const Std::vector<T> &argv, T &args);
 
 
 template<class T> void TrimSpaces(T &str);
 
 template<class T> void TabsToSpaces(T &str, unsigned int nspaces);
 
-template<class T> void SplitString(const T &args, char sep, std::vector<T> &argv);
+template<class T> void SplitString(const T &args, char sep, Std::vector<T> &argv);
 
 template<class T> void SplitStringKV(const T &args, char sep,
-                                     std::vector<std::pair<T, T> > &argv);
+                                     Std::vector<Std::pair<T, T> > &argv);
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8

@@ -43,7 +43,7 @@ ButtonWidget::ButtonWidget()
 	: Gump() {
 }
 
-ButtonWidget::ButtonWidget(int X, int Y, std::string txt, bool gamefont,
+ButtonWidget::ButtonWidget(int X, int Y, Std::string txt, bool gamefont,
                            int font, uint32 mouseOverBlendCol_,
                            int w, int h, int32 layer_) :
 	Gump(X, Y, w, h, 0, 0, layer_), shape_up(0), shape_down(0),

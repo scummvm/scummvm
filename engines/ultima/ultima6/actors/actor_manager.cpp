@@ -50,7 +50,7 @@ namespace Ultima6 {
 #define ACTOR_TEMP_INIT 255
 #define SCHEDULE_SIZE 5
 
-void config_get_path(Configuration *config, std::string filename, std::string &path);
+void config_get_path(Configuration *config, Std::string filename, Std::string &path);
 
 ActorManager::ActorManager(Configuration *cfg, Map *m, TileManager *tm, ObjManager *om, GameClock *c) {
 	uint16 i;
@@ -687,7 +687,7 @@ void ActorManager::moveActors() {
 }
 
 bool ActorManager::loadActorSchedules() {
-	std::string filename;
+	Std::string filename;
 	NuvieIOFileRead schedule;
 	uint16 i;
 	uint16 total_schedules;
@@ -1102,8 +1102,8 @@ bool ActorManager::loadCustomTiles(nuvie_game_t game_type) {
 		return false;
 	}
 
-	std::string datadir = "images";
-	std::string path;
+	Std::string datadir = "images";
+	Std::string path;
 
 	build_path(datadir, "tiles", path);
 	datadir = path;
@@ -1119,34 +1119,34 @@ bool ActorManager::loadCustomTiles(nuvie_game_t game_type) {
 	return true;
 }
 
-void ActorManager::loadCustomBaseTiles(std::string datadir) {
-	std::string imagefile;
+void ActorManager::loadCustomBaseTiles(Std::string datadir) {
+	Std::string imagefile;
 	build_path(datadir, "custom_tiles.bmp", imagefile);
 
 	//attempt to load custom base tiles if the file exists.
 	tile_manager->loadCustomTiles(Game::get_game()->get_data_file_path(imagefile), true, true, 0);
 }
 
-void ActorManager::loadAvatarTiles(std::string datadir) {
-	std::string imagefile;
+void ActorManager::loadAvatarTiles(Std::string datadir) {
+	Std::string imagefile;
 
 	uint8 avatar_portrait = Game::get_game()->get_portrait()->get_avatar_portrait_num();
 
-	std::set<std::string> files = getCustomTileFilenames(datadir, "avatar_");
+	Std::set<Std::string> files = getCustomTileFilenames(datadir, "avatar_");
 
-	for (std::set<std::string>::iterator iter = files.begin(); iter != files.end(); iter++) {
-		std::string filename = *iter;
+	for (Std::set<Std::string>::iterator iter = files.begin(); iter != files.end(); iter++) {
+		Std::string filename = *iter;
 		if (filename.length() != 19) { // avatar_nnn_nnnn.bmp
 			continue;
 		}
-		std::string num_str = filename.substr(7, 3);
+		Std::string num_str = filename.substr(7, 3);
 		uint8 portrait_num = (uint8)strtol(num_str.c_str(), NULL, 10);
 
 		if (portrait_num == avatar_portrait) {
 			num_str = filename.substr(11, 4);
 			uint16 obj_n = (uint16)strtol(num_str.c_str(), NULL, 10);
 
-			std::string path;
+			Std::string path;
 			build_path(datadir, filename, path);
 			imagefile = Game::get_game()->get_data_file_path(path);
 			Tile *start_tile = tile_manager->loadCustomTiles(imagefile, false, true, actors[1]->get_tile_num());
@@ -1158,23 +1158,23 @@ void ActorManager::loadAvatarTiles(std::string datadir) {
 	return;
 }
 
-void ActorManager::loadNPCTiles(std::string datadir) {
-	std::string imagefile;
+void ActorManager::loadNPCTiles(Std::string datadir) {
+	Std::string imagefile;
 
-	std::set<std::string> files = getCustomTileFilenames(datadir, "actor_");
+	Std::set<Std::string> files = getCustomTileFilenames(datadir, "actor_");
 
-	for (std::set<std::string>::iterator iter = files.begin(); iter != files.end(); iter++) {
-		std::string filename = *iter;
+	for (Std::set<Std::string>::iterator iter = files.begin(); iter != files.end(); iter++) {
+		Std::string filename = *iter;
 		if (filename.length() != 18) { // actor_nnn_nnnn.bmp
 			continue;
 		}
-		std::string num_str = filename.substr(6, 3);
+		Std::string num_str = filename.substr(6, 3);
 		uint8 actor_num = (uint8)strtol(num_str.c_str(), NULL, 10);
 
 		num_str = filename.substr(10, 4);
 		uint16 obj_n = (uint16)strtol(num_str.c_str(), NULL, 10);
 
-		std::string path;
+		Std::string path;
 		build_path(datadir, filename, path);
 		imagefile = Game::get_game()->get_data_file_path(path);
 		Tile *start_tile = tile_manager->loadCustomTiles(imagefile, false, true, actors[actor_num]->get_tile_num());
@@ -1185,10 +1185,10 @@ void ActorManager::loadNPCTiles(std::string datadir) {
 	return;
 }
 
-std::set<std::string> ActorManager::getCustomTileFilenames(std::string datadir, std::string filenamePrefix) {
+Std::set<Std::string> ActorManager::getCustomTileFilenames(Std::string datadir, Std::string filenamePrefix) {
 	NuvieFileList filelistDataDir;
 	NuvieFileList filelistSaveGameDir;
-	std::string path;
+	Std::string path;
 
 	build_path(GUI::get_gui()->get_data_dir(), datadir, path);
 	filelistDataDir.open(path.c_str(), filenamePrefix.c_str(), NUVIE_SORT_NAME_ASC);
@@ -1197,8 +1197,8 @@ std::set<std::string> ActorManager::getCustomTileFilenames(std::string datadir, 
 	build_path(path, datadir, path);
 	filelistSaveGameDir.open(path.c_str(), filenamePrefix.c_str(), NUVIE_SORT_NAME_ASC);
 
-	std::set<std::string> files = filelistSaveGameDir.get_filenames();
-	std::set<std::string> dataFiles = filelistDataDir.get_filenames();
+	Std::set<Std::string> files = filelistSaveGameDir.get_filenames();
+	Std::set<Std::string> dataFiles = filelistDataDir.get_filenames();
 	files.insert(dataFiles.begin(), dataFiles.end());
 	return files;
 }

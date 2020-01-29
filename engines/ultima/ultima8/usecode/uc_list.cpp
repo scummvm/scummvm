@@ -34,7 +34,7 @@ uint16 UCList::getStringIndex(uint32 index) {
 	return elements[index * 2] + (elements[index * 2 + 1] << 8);
 }
 
-std::string &UCList::getString(uint32 index) {
+Std::string &UCList::getString(uint32 index) {
 	uint16 sindex = getStringIndex(index);
 	return UCMachine::get_instance()->getString(sindex);
 }
@@ -80,7 +80,7 @@ void UCList::substractStringList(UCList &l) {
 }
 
 bool UCList::stringInList(uint16 s) {
-	std::string str = UCMachine::get_instance()->getString(s);
+	Std::string str = UCMachine::get_instance()->getString(s);
 	for (unsigned int i = 0; i < size; i++)
 		if (getString(i) == str)
 			return true;
@@ -100,7 +100,7 @@ void UCList::assignString(uint32 index, uint16 str) {
 void UCList::removeString(uint16 s, bool nodel) {
 	// do we need to erase all occurences of str or just the first one?
 	// (deleting all, currently)
-	std::string str = UCMachine::get_instance()->getString(s);
+	Std::string str = UCMachine::get_instance()->getString(s);
 	for (unsigned int i = 0; i < size; i++) {
 		if (getString(i) == str) {
 			// free string

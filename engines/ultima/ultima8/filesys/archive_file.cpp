@@ -31,13 +31,13 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(ArchiveFile)
 
 //static
-bool ArchiveFile::extractIndexFromName(const std::string &name, uint32 &index) {
+bool ArchiveFile::extractIndexFromName(const Std::string &name, uint32 &index) {
 	if (name.size() == 0) return false;
 
 	char *endptr;
 	long val;
 
-	val = std::strtol(name.c_str(), &endptr, 10);
+	val = Std::strtol(name.c_str(), &endptr, 10);
 
 	// if remainder of name doesn't start with a '.', invalid name
 	if (*endptr != '\0' && *endptr != '.') return false;
@@ -58,7 +58,7 @@ IDataSource *ArchiveFile::getDataSource(uint32 index, bool is_text) {
 	return new IBufferDataSource(buf, size, is_text, true);
 }
 
-IDataSource *ArchiveFile::getDataSource(const std::string &name, bool is_text) {
+IDataSource *ArchiveFile::getDataSource(const Std::string &name, bool is_text) {
 	uint32 size;
 	uint8 *buf = getObject(name, &size);
 

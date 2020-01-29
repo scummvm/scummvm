@@ -34,7 +34,7 @@ class OriginFXAdLibDriver;
 class Configuration;
 
 
-using std::string;
+using Std::string;
 
 class AdLibSfxStream : public Audio::RewindableAudioStream {
 public:

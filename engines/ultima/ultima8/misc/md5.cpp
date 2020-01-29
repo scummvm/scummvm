@@ -191,7 +191,7 @@ static void md5_update(md5_context *ctx, const uint8 *input, uint32 length) {
 		ctx->total[1]++;
 
 	if (left && length >= fill) {
-		std::memcpy((void *)(ctx->buffer + left), (const void *)input, fill);
+		Std::memcpy((void *)(ctx->buffer + left), (const void *)input, fill);
 		md5_process(ctx, ctx->buffer);
 		length -= fill;
 		input  += fill;

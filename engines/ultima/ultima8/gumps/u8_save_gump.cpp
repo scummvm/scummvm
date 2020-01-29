@@ -234,7 +234,7 @@ void U8SaveGump::ChildNotify(Gump *child, uint32 message) {
 		EditWidget *widget = p_dynamic_cast<EditWidget *>(child);
 		assert(widget);
 
-		std::string name = widget->getText();
+		Std::string name = widget->getText();
 		if (name.empty()) return;
 
 		if (savegame(widget->GetIndex() + 6 * page, name))
@@ -269,30 +269,30 @@ bool U8SaveGump::OnKeyDown(int key, int mod) {
 	return false;
 }
 
-std::string U8SaveGump::getFilename(int index) {
-	return std::string::format("@save/%d", index);
+Std::string U8SaveGump::getFilename(int index) {
+	return Std::string::format("@save/%d", index);
 }
 
 bool U8SaveGump::loadgame(int saveIndex) {
 	if (saveIndex == 1) {
-		Ultima8Engine::get_instance()->newGame(std::string());
+		Ultima8Engine::get_instance()->newGame(Std::string());
 		return true;
 	}
 
-	pout << "Load " << saveIndex << std::endl;
+	pout << "Load " << saveIndex << Std::endl;
 
-	std::string filename = getFilename(saveIndex);
+	Std::string filename = getFilename(saveIndex);
 	Ultima8Engine::get_instance()->loadGame(filename);
 
 	return true;
 }
 
-bool U8SaveGump::savegame(int saveIndex, const std::string &name) {
-	pout << "Save " << saveIndex << ": \"" << name << "\"" << std::endl;
+bool U8SaveGump::savegame(int saveIndex, const Std::string &name) {
+	pout << "Save " << saveIndex << ": \"" << name << "\"" << Std::endl;
 
 	if (name.empty()) return false;
 
-	std::string filename = getFilename(saveIndex);
+	Std::string filename = getFilename(saveIndex);
 	Ultima8Engine::get_instance()->saveGame(filename, name, true);
 	return true;
 }
@@ -303,7 +303,7 @@ void U8SaveGump::loadDescriptions() {
 	for (int i = 0; i < 6; ++i) {
 		int saveIndex = 6 * page + i + 1;
 
-		std::string filename = getFilename(saveIndex);
+		Std::string filename = getFilename(saveIndex);
 		IDataSource *ids = FileSystem::get_instance()->ReadFile(filename);
 		if (!ids) continue;
 

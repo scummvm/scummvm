@@ -62,8 +62,8 @@ void DesktopGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 
 void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	// Iterate all children
-	std::list<Gump *>::iterator it = children.begin();
-	std::list<Gump *>::iterator end = children.end();
+	Std::list<Gump *>::iterator it = children.begin();
+	Std::list<Gump *>::iterator end = children.end();
 
 	while (it != end) {
 		Gump *g = *it;

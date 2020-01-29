@@ -48,7 +48,7 @@ void SettingManager::setupScummVMSettings() {
 
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	if (saveSlot != -1)
-		set("lastSave", std::string::format("@save/%d", saveSlot), DOM_SCUMMVM);
+		set("lastSave", Std::string::format("@save/%d", saveSlot), DOM_SCUMMVM);
 }
 
 SettingManager::~SettingManager() {
@@ -57,7 +57,7 @@ SettingManager::~SettingManager() {
 	settingmanager = 0;
 }
 
-bool SettingManager::readConfigFile(std::string fname, bool readonly) {
+bool SettingManager::readConfigFile(Std::string fname, bool readonly) {
 	return conffileman->readConfigFile(fname, "settings", readonly);
 }
 
@@ -71,7 +71,7 @@ bool SettingManager::exists(istring key, Domain dom) {
 	return findKeyDomain(key, dom, temp);
 }
 
-bool SettingManager::get(istring key, std::string &ret, Domain dom) {
+bool SettingManager::get(istring key, Std::string &ret, Domain dom) {
 	Domain keydom;
 	bool found = findKeyDomain(key, dom, keydom);
 	if (!found) return false;
@@ -102,7 +102,7 @@ bool SettingManager::get(istring key, bool &ret, Domain dom) {
 }
 
 
-void SettingManager::set(istring key, std::string value, Domain dom) {
+void SettingManager::set(istring key, Std::string value, Domain dom) {
 	conffileman->set(getConfigKey(key, dom), value);
 
 	callCallbacks(key);
@@ -135,7 +135,7 @@ void SettingManager::unset(istring key, Domain dom) {
 
 
 
-void SettingManager::setDefault(istring key, std::string value) {
+void SettingManager::setDefault(istring key, Std::string value) {
 	set(key, value, DOM_DEFAULTS);
 }
 
@@ -173,8 +173,8 @@ void SettingManager::unregisterCallback(istring key, ConfigCallback callback) {
 	if (i == callbacks.end())
 		return;
 
-	std::vector<ConfigCallback> &cb = (*i)._value;
-	std::vector<ConfigCallback>::iterator iter;
+	Std::vector<ConfigCallback> &cb = (*i)._value;
+	Std::vector<ConfigCallback>::iterator iter;
 	for (iter = cb.begin(); iter != cb.end(); ++iter) {
 		if (*iter == callback) {
 			cb.erase(iter);
@@ -183,15 +183,15 @@ void SettingManager::unregisterCallback(istring key, ConfigCallback callback) {
 	}
 }
 
-std::vector<istring> SettingManager::listGames() {
-	std::vector<istring> games;
+Std::vector<istring> SettingManager::listGames() {
+	Std::vector<istring> games;
 	games.push_back("pentagram");
 	games.push_back("ultima8");
 
 	return games;
 }
 
-std::vector<istring> SettingManager::listDataKeys(istring section) {
+Std::vector<istring> SettingManager::listDataKeys(istring section) {
 	istring csection = "settings/" + domains[DOM_GAME] + ":" + section;
 
 	return conffileman->listKeys(csection, false);
@@ -253,8 +253,8 @@ void SettingManager::callCallbacks(istring key) {
 
 	if (i == callbacks.end()) return;
 
-	std::vector<ConfigCallback> &cb = (*i)._value;
-	std::vector<ConfigCallback>::iterator iter;
+	Std::vector<ConfigCallback> &cb = (*i)._value;
+	Std::vector<ConfigCallback>::iterator iter;
 	for (iter = cb.begin(); iter != cb.end(); ++iter) {
 		(*iter)(key);
 	}

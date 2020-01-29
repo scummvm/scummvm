@@ -53,8 +53,8 @@ bool MapEditorView::init(Screen *tmp_screen, void *view_manager, uint16 x, uint1
 	SetRect(area.left, area.top, 90, 200);
 	bg_color = 119;
 
-	std::string datadir = GUI::get_gui()->get_data_dir();
-	std::string path;
+	Std::string datadir = GUI::get_gui()->get_data_dir();
+	Std::string path;
 
 	build_path(datadir, "images", path);
 	datadir = path;

@@ -28,8 +28,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "common/file.h"
 #include "common/debug.h"
 
-using namespace std;
-
 namespace Ultima {
 namespace Ultima8 {
 
@@ -70,7 +68,7 @@ Console::Console() : current(0), xoff(0), display(0), linewidth(-1),
 
 	CheckResize(0);
 
-	std::memset(times, 0, sizeof(times));
+	Std::memset(times, 0, sizeof(times));
 
 	// Lets try adding a Console command!
 	AddConsoleCommand("Console::CmdList", ConCmd_CmdList);
@@ -96,7 +94,7 @@ Con_Clear_f
 ================
 */
 void Console::Clear() {
-	std::memset(text, ' ', CON_TEXTSIZE);
+	Std::memset(text, ' ', CON_TEXTSIZE);
 	putchar_count = 0;
 }
 
@@ -138,7 +136,7 @@ void Console::Dump(const char *name) {
 	buffer[linewidth] = 0;
 	for (; l <= current ; l++) {
 		line = text + (l % totallines) * linewidth;
-		std::strncpy(buffer, line, linewidth);
+		Std::strncpy(buffer, line, linewidth);
 		for (x = linewidth - 1 ; x >= 0 ; x--) {
 			if (buffer[x] == ' ')
 				buffer[x] = 0;
@@ -182,7 +180,7 @@ void Console::CheckResize(int scrwidth) {
 		width = 78;
 		linewidth = width;
 		totallines = CON_TEXTSIZE / linewidth;
-		std::memset(text, ' ', CON_TEXTSIZE);
+		Std::memset(text, ' ', CON_TEXTSIZE);
 	} else {
 		oldwidth = linewidth;
 		linewidth = width;
@@ -198,8 +196,8 @@ void Console::CheckResize(int scrwidth) {
 		if (linewidth < numchars)
 			numchars = linewidth;
 
-		std::memcpy(tbuf, text, CON_TEXTSIZE);
-		std::memset(text, ' ', CON_TEXTSIZE);
+		Std::memcpy(tbuf, text, CON_TEXTSIZE);
+		Std::memset(text, ' ', CON_TEXTSIZE);
 
 		for (i = 0 ; i < numlines ; i++) {
 			for (j = 0 ; j < numchars ; j++) {
@@ -333,7 +331,7 @@ void Console::Linefeed(void) {
 	xoff = 0;
 	display++;
 	current++;
-	std::memset(&text[(current % totallines)*linewidth], ' ', linewidth);
+	Std::memset(&text[(current % totallines)*linewidth], ' ', linewidth);
 
 	if (auto_paint) auto_paint();
 }
@@ -378,7 +376,7 @@ void Console::Print(const char *txt) {
 		debug("%s", txt);
 
 	if (stdout_redir)
-		stdout_redir->write(txt, std::strlen(txt));
+		stdout_redir->write(txt, Std::strlen(txt));
 	PrintInternal(txt);
 }
 
@@ -456,7 +454,7 @@ void Console::Print_err(const char *txt) {
 	if (std_output_enabled & CON_STDERR)
 		debug("%s", txt);
 
-	if (stderr_redir) stderr_redir->write(txt, std::strlen(txt));
+	if (stderr_redir) stderr_redir->write(txt, Std::strlen(txt));
 	PrintInternal(txt);
 }
 
@@ -539,7 +537,7 @@ void Console::AddConsoleCommand(const ArgsType &command, Console::Function funct
 void Console::RemoveConsoleCommand(Console::Function function) {
 	for (CommandsMap::iterator it = ConsoleCommands.begin(); it != ConsoleCommands.end(); ++it) {
 		if (it->_value == function) {
-			//pout << "Removing command: " << it->_key << std::endl;
+			//pout << "Removing command: " << it->_key << Std::endl;
 			it->_value = 0;
 		}
 	}
@@ -579,7 +577,7 @@ void Console::ExecuteCommandBuffer() {
 	commandBuffer.clear();
 
 	// TODO: Fix this
-	//pout << "]" << args << std::endl;
+	//pout << "]" << args << Std::endl;
 
 	ExecuteConsoleCommand(args);
 
@@ -665,7 +663,7 @@ void Console::AddCharacterToCommandBuffer(int ch) {
 #ifdef TODO
 
 				if (count > 1) {
-					pout << "]" << commandBuffer << std::endl;
+					pout << "]" << commandBuffer << Std::endl;
 
 					ArgsType args = "CmdList \"";
 					args += commandBuffer;
@@ -726,7 +724,7 @@ void Console::ConCmd_CmdList(const Console::ArgvType &argv) {
 	CommandsMap::iterator it;
 	int i = 0;
 
-	//pout << std::endl;
+	//pout << Std::endl;
 
 	if (argv.size() > 1) {
 		for (size_t a = 1; a < argv.size(); a++) {
@@ -737,7 +735,7 @@ void Console::ConCmd_CmdList(const Console::ArgvType &argv) {
 					if (it->_key.compareToIgnoreCase(arg)) continue;
 
 					// TODO: Fix this
-					//pout << " " << it->_key << std::endl;
+					//pout << " " << it->_key << Std::endl;
 					i ++;
 				}
 		}
@@ -745,23 +743,23 @@ void Console::ConCmd_CmdList(const Console::ArgvType &argv) {
 		for (it = con->ConsoleCommands.begin(); it != con->ConsoleCommands.end(); ++it)
 			if (it->_value) {
 				// TODO
-				//pout << " " << it->_key << std::endl;
+				//pout << " " << it->_key << Std::endl;
 				i ++;
 			}
 	}
 
 	// TODO
-	//pout << i << " commands" << std::endl;
+	//pout << i << " commands" << Std::endl;
 }
 
 void Console::ConCmd_CmdHistory(const Console::ArgvType & /*argv*/) {
 #ifdef TODO
-	std::vector<ArgsType>::iterator it;
+	Std::vector<ArgsType>::iterator it;
 
 	for (it = con->commandHistory.begin(); it != con->commandHistory.end(); ++it)
-		pout << " " << *it << std::endl;
+		pout << " " << *it << Std::endl;
 
-	pout << con->commandHistory.size() << " commands" << std::endl;
+	pout << con->commandHistory.size() << " commands" << Std::endl;
 #endif
 }
 

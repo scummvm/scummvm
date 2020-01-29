@@ -35,14 +35,14 @@ struct Texture;
 
 class PentagramMenuGump : public ModalGump {
 	class PentagramMenuCallbackProcess : public Process {
-		std::string game;
+		Std::string game;
 	public:
-		PentagramMenuCallbackProcess(ObjId id, std::string game_) : Process(id), game(game_) {
+		PentagramMenuCallbackProcess(ObjId id, Std::string game_) : Process(id), game(game_) {
 			flags |= PROC_RUNPAUSED;
 		}
 
 		virtual void run() {
-			pout << "Gump returned: " << result << std::endl;
+			pout << "Gump returned: " << result << Std::endl;
 			PentagramMenuGump *menu = p_dynamic_cast<PentagramMenuGump *>(ObjectManager::get_instance()->getObject(getItemNum()));
 			if (menu) menu->ProcessCallback(game, result);
 			terminate();
@@ -101,7 +101,7 @@ private:
 	Texture *coversImage;
 	Texture *flagsImage;
 
-	void ProcessCallback(std::string gamename, int message);
+	void ProcessCallback(Std::string gamename, int message);
 
 };
 

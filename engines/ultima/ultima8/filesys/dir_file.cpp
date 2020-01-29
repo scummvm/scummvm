@@ -31,7 +31,7 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(DirFile, NamedArchiveFile)
 
-DirFile::DirFile(const std::string &path_) {
+DirFile::DirFile(const Std::string &path_) {
 	path = path_;
 	if (path.size() == 0) {
 		valid = false;
@@ -61,11 +61,11 @@ bool DirFile::readMetadata() {
 	FileSystem::FileList::iterator iter;
 
 	for (iter = files.begin(); iter != files.end(); ++iter) {
-		std::string name = *iter;
-		std::string::size_type pos = name.rfind("/");
-		if (pos != std::string::npos) {
+		Std::string name = *iter;
+		Std::string::size_type pos = name.rfind("/");
+		if (pos != Std::string::npos) {
 			name.erase(0, pos + 1);
-			//pout << "DirFile: " << name << std::endl;
+			//pout << "DirFile: " << name << Std::endl;
 			storeIndexedName(name);
 		}
 	}
@@ -73,7 +73,7 @@ bool DirFile::readMetadata() {
 	return true;
 }
 
-bool DirFile::exists(const std::string &name) {
+bool DirFile::exists(const Std::string &name) {
 	FileSystem *filesys = FileSystem::get_instance();
 	IDataSource *ids = filesys->ReadFile(path + name);
 	if (!ids) return false;
@@ -82,7 +82,7 @@ bool DirFile::exists(const std::string &name) {
 	return true;
 }
 
-uint32 DirFile::getSize(const std::string &name) {
+uint32 DirFile::getSize(const Std::string &name) {
 	FileSystem *filesys = FileSystem::get_instance();
 	IDataSource *ids = filesys->ReadFile(path + name);
 	if (!ids) return 0;
@@ -92,7 +92,7 @@ uint32 DirFile::getSize(const std::string &name) {
 	return size;
 }
 
-uint8 *DirFile::getObject(const std::string &name, uint32 *sizep) {
+uint8 *DirFile::getObject(const Std::string &name, uint32 *sizep) {
 	FileSystem *filesys = FileSystem::get_instance();
 	IDataSource *ids = filesys->ReadFile(path + name);
 	if (!ids) return 0;

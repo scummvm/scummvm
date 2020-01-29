@@ -348,7 +348,7 @@ bool Game::loadGame(Script *s) {
 			command_bar->Show();
 		else {
 			bool show;
-			std::string show_cb;
+			Std::string show_cb;
 			config->value(config_get_game_key(config) + "/show_orig_style_cb", show_cb, "default");
 			if (show_cb == "default") {
 				if (is_new_style())
@@ -384,7 +384,7 @@ void Game::init_converse_gump_settings() {
 	else {
 		converse_gump_type = get_converse_gump_type_from_config(config);
 	}
-	std::string width_str;
+	Std::string width_str;
 	int gump_w = get_game_width();
 
 	if (game_type == NUVIE_GAME_MD)
@@ -711,8 +711,8 @@ void Game::update_once_display() {
 /* return the fullpath to the datafile. First look for it in the savegame directory.
  * Then in the app data directory.
  */
-std::string Game::get_data_file_path(std::string datafile) {
-	std::string path;
+Std::string Game::get_data_file_path(Std::string datafile) {
+	Std::string path;
 	build_path("data", datafile, path);
 
 	if (!file_exists(path.c_str())) {

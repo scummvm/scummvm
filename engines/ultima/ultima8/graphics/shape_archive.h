@@ -48,7 +48,7 @@ public:
 	ShapeArchive(IDataSource *ds, uint16 id_, Pentagram::Palette *pal_ = 0,
 	             const ConvertShapeFormat *format_ = 0)
 		: Archive(ds), id(id_), format(format_), palette(pal_) { }
-	ShapeArchive(const std::string &path, uint16 id_,
+	ShapeArchive(const Std::string &path, uint16 id_,
 	             Pentagram::Palette *pal_ = 0,
 	             const ConvertShapeFormat *format_ = 0)
 		: Archive(path), id(id_), format(format_), palette(pal_) { }
@@ -65,7 +65,7 @@ protected:
 	uint16 id;
 	const ConvertShapeFormat *format;
 	Pentagram::Palette *palette;
-	std::vector<Shape *> shapes;
+	Std::vector<Shape *> shapes;
 };
 
 } // End of namespace Ultima8

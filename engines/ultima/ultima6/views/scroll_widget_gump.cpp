@@ -99,7 +99,7 @@ bool ScrollWidgetGump::parse_token(MsgText *token) {
 	return MsgScroll::parse_token(token);
 }
 
-void ScrollWidgetGump::display_string(std::string s) {
+void ScrollWidgetGump::display_string(Std::string s) {
 	MsgScroll::display_string(s);
 	update_arrows();
 }
@@ -108,7 +108,7 @@ void ScrollWidgetGump::Display(bool full_redraw) {
 	MsgText *token;
 
 	uint16 y = area.top + 4;
-	std::list<MsgLine *>::iterator iter;
+	Std::list<MsgLine *>::iterator iter;
 
 	if (show_up_arrow) {
 		font_normal->drawChar(screen, FONT_UP_ARROW_CHAR, area.left + SCROLLWIDGETGUMP_W - 8, area.top + 4);
@@ -124,7 +124,7 @@ void ScrollWidgetGump::Display(bool full_redraw) {
 
 	for (uint16 i = 0; i < scroll_height && iter != msg_buf.end(); i++, iter++) {
 		MsgLine *msg_line = *iter;
-		std::list<MsgText *>::iterator iter1;
+		Std::list<MsgText *>::iterator iter1;
 
 		iter1 = msg_line->text.begin();
 

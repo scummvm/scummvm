@@ -81,10 +81,10 @@ public:
 
 	virtual ProcId die(uint16 DamageType);
 
-	std::string getName() {
+	Std::string getName() {
 		return name;
 	}
-	void setName(std::string name_) {
+	void setName(Std::string name_) {
 		name = name_;
 	}
 
@@ -148,7 +148,7 @@ protected:
 	int accumDex;
 	int accumInt;
 
-	std::string name;
+	Std::string name;
 };
 
 } // End of namespace Ultima8

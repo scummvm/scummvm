@@ -94,7 +94,7 @@ public:
 	}
 
 	// Get the Scaler Index from it's name
-	int             GetIndexForName(const std::string &name);
+	int             GetIndexForName(const Std::string &name);
 
 	// Get Name of a Scaler from its Index
 	const char      *GetNameForIndex(int index);

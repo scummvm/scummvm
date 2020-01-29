@@ -47,7 +47,7 @@ PagedGump::~PagedGump(void) {
 
 void PagedGump::Close(bool no_del) {
 	Mouse::get_instance()->popMouseCursor();
-	std::vector<Gump *>::iterator iter;
+	Std::vector<Gump *>::iterator iter;
 	for (iter = gumps.begin(); iter != gumps.end(); ++iter) {
 		(*iter)->Close(no_del); // CHECKME: no_del?
 	}

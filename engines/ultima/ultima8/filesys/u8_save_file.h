@@ -41,11 +41,11 @@ public:
 	explicit U8SaveFile(IDataSource *ds);
 	virtual ~U8SaveFile();
 
-	virtual bool exists(const std::string &name);
+	virtual bool exists(const Std::string &name);
 
-	virtual uint8 *getObject(const std::string &name, uint32 *size = 0);
+	virtual uint8 *getObject(const Std::string &name, uint32 *size = 0);
 
-	virtual uint32 getSize(const std::string &name);
+	virtual uint32 getSize(const Std::string &name);
 
 	virtual uint32 getCount() {
 		return count;
@@ -57,13 +57,13 @@ protected:
 	IDataSource *ds;
 	uint32 count;
 
-	std::map<Common::String, uint32> indices;
-	std::vector<uint32> offsets;
-	std::vector<uint32> sizes;
+	Std::map<Common::String, uint32> indices;
+	Std::vector<uint32> offsets;
+	Std::vector<uint32> sizes;
 
 private:
 	bool readMetadata();
-	bool findIndex(const std::string &name, uint32 &index);
+	bool findIndex(const Std::string &name, uint32 &index);
 };
 
 } // End of namespace Ultima8

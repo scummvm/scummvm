@@ -89,7 +89,7 @@ sint16 OriginFXAdLibDriver::read_sint16(unsigned char *buf) {
 
 void OriginFXAdLibDriver::load_tim_file() {
 	U6Lib_n f;
-	std::string filename;
+	Std::string filename;
 
 	nuvie_game_t game_type = get_game_type(config);
 	if (game_type == NUVIE_GAME_SE) {

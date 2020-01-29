@@ -34,7 +34,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(JPRenderedText, RenderedText)
 
 
-JPRenderedText::JPRenderedText(std::list<PositionedText> &lines_,
+JPRenderedText::JPRenderedText(Std::list<PositionedText> &lines_,
                                int width_, int height_, int vlead_,
                                ShapeFont *font_, unsigned int fontnum_)
 	: lines(lines_), font(font_), fontnum(fontnum_) {
@@ -57,7 +57,7 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 	const Pentagram::Palette *savepal = font->getPalette();
 	font->setPalette(pal);
 
-	std::list<PositionedText>::iterator iter;
+	Std::list<PositionedText>::iterator iter;
 
 	for (iter = lines.begin(); iter != lines.end(); ++iter) {
 		int line_x = x + iter->dims.x;
@@ -102,7 +102,7 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 	const Pentagram::Palette *savepal = font->getPalette();
 	font->setPalette(pal);
 
-	std::list<PositionedText>::iterator iter;
+	Std::list<PositionedText>::iterator iter;
 
 	for (iter = lines.begin(); iter != lines.end(); ++iter) {
 		int line_x = x + iter->dims.x;

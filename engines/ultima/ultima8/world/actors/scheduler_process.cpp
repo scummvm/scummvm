@@ -59,7 +59,7 @@ void SchedulerProcess::run() {
 			nextActor = 0; // done
 #if 0
 			pout << "Scheduler: finished run at "
-			     << Kernel::get_instance()->getFrameNum() << std::endl;
+			     << Kernel::get_instance()->getFrameNum() << Std::endl;
 #endif
 		}
 
@@ -75,7 +75,7 @@ void SchedulerProcess::run() {
 		nextActor = 1;
 #if 0
 		pout << "Scheduler:  " << Kernel::get_instance()->getFrameNum()
-		     << std::endl;
+		     << Std::endl;
 #endif
 	}
 }

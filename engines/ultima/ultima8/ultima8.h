@@ -79,7 +79,7 @@ class AudioMixer;
 
 class Ultima8Engine : public Shared::UltimaEngine, public CoreApp {
 private:
-	std::list<ObjId> textmodes;      //!< Gumps that want text mode
+	Std::list<ObjId> textmodes;      //!< Gumps that want text mode
 	
 	/**
 	 * Does engine deinitialization
@@ -143,8 +143,8 @@ private:
 	// full system
 	Game *game;
 	Pentagram::istring change_gamename;
-	std::string error_message;
-	std::string error_title;
+	Std::string error_message;
+	Std::string error_title;
 
 	Kernel *kernel;
 	MemoryManager *_memoryManager;
@@ -169,7 +169,7 @@ private:
 
 	// called depending upon command line arguments
 	void GraphicSysInit(); // starts/restarts the graphics subsystem
-	bool LoadConsoleFont(std::string confontini); // loads the console font
+	bool LoadConsoleFont(Std::string confontini); // loads the console font
 
 	void handleDelayedEvents();
 
@@ -342,7 +342,7 @@ public:
 	//! save a game
 	//! \param filename the file to save to
 	//! \return true if succesful
-	bool saveGame(std::string filename, std::string desc,
+	bool saveGame(Std::string filename, Std::string desc,
 	              bool ignore_modals = false);
 
 	bool loadGame();
@@ -350,11 +350,11 @@ public:
 	//! load a game
 	//! \param filename the savegame to load
 	//! \return true if succesful.
-	bool loadGame(std::string filename);
+	bool loadGame(Std::string filename);
 
 	//! start a new game
 	//! \return true if succesful.
-	bool newGame(const std::string &savegame);
+	bool newGame(const Std::string &savegame);
 
 	//! Enter gump text mode (aka SDL Unicode keyhandling)
 	void enterTextMode(Gump *);
@@ -365,7 +365,7 @@ public:
 	//! Display an error message box
 	//! \param message The message to display on the box
 	//! \param exit_to_menu If true, then exit to the Pentagram menu then display the message
-	void Error(std::string message, std::string title = std::string(), bool exit_to_menu = false);
+	void Error(Std::string message, Std::string title = Std::string(), bool exit_to_menu = false);
 public:
 	unsigned int getInversion() const {
 		return inversion;

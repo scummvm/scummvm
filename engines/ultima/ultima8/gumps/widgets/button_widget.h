@@ -36,7 +36,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ButtonWidget();
-	ButtonWidget(int X, int Y, std::string txt, bool gamefont, int font,
+	ButtonWidget(int X, int Y, Std::string txt, bool gamefont, int font,
 	             uint32 mouseOverBlendCol = 0, int width = 0, int height = 0,
 	             int32 layer = LAYER_NORMAL);
 	ButtonWidget(int X, int Y, FrameID frame_up, FrameID frame_down,

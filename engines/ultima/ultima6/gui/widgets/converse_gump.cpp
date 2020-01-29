@@ -57,7 +57,7 @@ ConverseGump::ConverseGump(Configuration *cfg, Font *f, Screen *s) {
 // y = 8;
 	int gump_h;
 	uint8 min_h, default_c;
-	std::string height_str;
+	Std::string height_str;
 	min_w = game->get_min_converse_gump_width();
 	uint16 x_off = game->get_game_x_offset();
 	uint16 y_off = game->get_game_y_offset();
@@ -331,15 +331,15 @@ void ConverseGump::add_token(MsgText *token)
 }
 */
 
-void ConverseGump::display_string(std::string s, Font *f,  bool include_on_map_window) {
+void ConverseGump::display_string(Std::string s, Font *f,  bool include_on_map_window) {
 	if (s.empty())
 		return;
 
 	MsgScroll::display_string(strip_whitespace_after_break(s), f, include_on_map_window);//, MSGSCROLL_NO_MAP_DISPLAY);
 }
 
-std::string ConverseGump::strip_whitespace_after_break(std::string s) {
-	std::string::iterator iter;
+Std::string ConverseGump::strip_whitespace_after_break(Std::string s) {
+	Std::string::iterator iter;
 	for (iter = s.begin(); iter != s.end();) {
 		if (found_break_char == true) {
 			char c = *iter;
@@ -366,7 +366,7 @@ bool ConverseGump::parse_token(MsgText *token) {
 	int i = 0;
 	int len = (int)token->s.length();
 	while (at_idx != -1 && i < len) {
-		std::string keyword = "";
+		Std::string keyword = "";
 		for (i = at_idx + 1; i < len; i++) {
 			char c = token->s[i];
 			if (Common::isAlpha(c)) {
@@ -411,7 +411,7 @@ void ConverseGump::parse_fm_towns_token(MsgText *token) {
 				i++;
 		}
 
-		std::string keyword = "";
+		Std::string keyword = "";
 		for (; i < len; i++) {
 			char ch = token->s[i];
 
@@ -436,10 +436,10 @@ void ConverseGump::parse_fm_towns_token(MsgText *token) {
 	return;
 }
 
-void ConverseGump::add_keyword(std::string keyword) {
+void ConverseGump::add_keyword(Std::string keyword) {
 	keyword = " *" + keyword;
 
-	std::list<MsgText>::iterator iter;
+	Std::list<MsgText>::iterator iter;
 	for (iter = keyword_list->begin(); iter != keyword_list->end(); iter++) {
 		if (string_i_compare((*iter).s, keyword)) {
 			return;
@@ -452,10 +452,10 @@ void ConverseGump::add_keyword(std::string keyword) {
 	keyword_list->push_back(m_text);
 }
 
-std::string ConverseGump::get_token_string_at_pos(uint16 x, uint16 y) {
+Std::string ConverseGump::get_token_string_at_pos(uint16 x, uint16 y) {
 	uint16 total_length = 0;
 	uint16 tmp_y = area.top + portrait_height + 8 + 3 + 4;
-	std::list<MsgText>::iterator iter;
+	Std::list<MsgText>::iterator iter;
 	for (iter = keyword_list->begin(); iter != keyword_list->end(); iter++) {
 		MsgText t = *iter;
 		uint16 token_len = font->getStringWidth(t.s.c_str());
@@ -478,12 +478,12 @@ std::string ConverseGump::get_token_string_at_pos(uint16 x, uint16 y) {
 	return "";
 }
 
-std::string ConverseGump::get_token_at_cursor() {
+Std::string ConverseGump::get_token_at_cursor() {
 	uint16 i = 0;
-	std::list<MsgText>::iterator iter;
+	Std::list<MsgText>::iterator iter;
 	for (iter = keyword_list->begin(); iter != keyword_list->end(); i++, iter++) {
 		if (i == cursor_position) {
-			std::string keyword = (*iter).s;
+			Std::string keyword = (*iter).s;
 			if (!is_permanent_keyword(keyword)) {
 				keyword_list->erase(iter);
 				if (permit_input)
@@ -515,7 +515,7 @@ bool ConverseGump::input_buf_remove_char() {
 
 void ConverseGump::Display(bool full_redraw) {
 	MsgText *token;
-	//std::list<MsgText>::iterator iter;
+	//Std::list<MsgText>::iterator iter;
 	uint16 total_length = 0;
 	uint16 y = area.top + portrait_height + 8 + 3;
 
@@ -534,7 +534,7 @@ void ConverseGump::Display(bool full_redraw) {
 
 	if (!page_break && input_mode && avatar_portrait && is_talking()) {
 		screen->blit(area.left + portrait_width / 2 + 4, y, avatar_portrait, 8, frame_w, frame_h, frame_w, use_transparency);
-		std::list<MsgText>::iterator iter;
+		Std::list<MsgText>::iterator iter;
 		sint16 i = 0;
 		for (iter = keyword_list->begin(); iter != keyword_list->end(); i++, iter++) {
 			MsgText t = *iter;
@@ -562,10 +562,10 @@ void ConverseGump::Display(bool full_redraw) {
 
 	y = area.top + 4;
 	total_length = 0;
-	std::list<MsgLine *>::iterator iter;
+	Std::list<MsgLine *>::iterator iter;
 	for (iter = msg_buf.begin(); iter != msg_buf.end(); iter++) {
 		MsgLine *msg_line = *iter;
-		std::list<MsgText *>::iterator iter1;
+		Std::list<MsgText *>::iterator iter1;
 
 		for (iter1 = msg_line->text.begin(); iter1 != msg_line->text.end() ; iter1++) {
 			token = *iter1;
@@ -709,7 +709,7 @@ GUI_status ConverseGump::KeyDown(const Common::KeyState &keyState) {
 }
 
 GUI_status ConverseGump::MouseUp(int x, int y, Shared::MouseButton button) {
-	std::string token_str;
+	Std::string token_str;
 
 	if (page_break || !is_talking()) { // any click == scroll-to-end
 		page_break = false;
@@ -744,7 +744,7 @@ GUI_status ConverseGump::MouseUp(int x, int y, Shared::MouseButton button) {
 	return (GUI_YUM);
 }
 
-void ConverseGump::input_add_string(std::string token_str) {
+void ConverseGump::input_add_string(Std::string token_str) {
 	input_buf.clear();
 	for (uint16 i = 0; i < token_str.length(); i++) {
 		if (Common::isAlnum(token_str[i]) && (!permit_input || strchr(permit_input, token_str[i])
@@ -753,7 +753,7 @@ void ConverseGump::input_add_string(std::string token_str) {
 	}
 }
 
-bool ConverseGump::is_permanent_keyword(std::string keyword) {
+bool ConverseGump::is_permanent_keyword(Std::string keyword) {
 	return (string_i_compare(keyword, " *buy") || string_i_compare(keyword, " *sell")
 	        || string_i_compare(keyword, " *bye") || string_i_compare(keyword, " *spells")
 	        || string_i_compare(keyword, " *reagents"));

@@ -43,7 +43,7 @@ class TTFont;
 class FontManager {
 private:
 	struct TTFId {
-		std::string filename;
+		Std::string filename;
 		int pointsize;
 		bool operator<(const TTFId &other) const {
 			return (pointsize < other.pointsize ||
@@ -65,20 +65,20 @@ private:
 		}
 	};
 
-	typedef std::map<TTFId, Graphics::Font *, TTFHash, TTFEqual> TTFFonts;
+	typedef Std::map<TTFId, Graphics::Font *, TTFHash, TTFEqual> TTFFonts;
 	TTFFonts ttf_fonts;
 	bool ttf_antialiasing;
 
 	//! Get a (possibly cached) TTF_Font structure for filename/pointsize,
 	//! loading it if necessary.
-	Graphics::Font *getTTF_Font(std::string filename, int pointsize);
+	Graphics::Font *getTTF_Font(Std::string filename, int pointsize);
 
 	//! Override fontnum with specified font
 	void setOverride(unsigned int fontnum, Pentagram::Font *newFont);
 
-	std::vector<Pentagram::Font *> overrides;
+	Std::vector<Pentagram::Font *> overrides;
 
-	std::vector<Pentagram::Font *> ttfonts;
+	Std::vector<Pentagram::Font *> ttfonts;
 
 	static FontManager *fontmanager;
 public:
@@ -105,7 +105,7 @@ public:
 	//! \param rgb the color to use for the font
 	//! \param bordersize the size of the black border to add
 	//! \param SJIS true for a Japanese game font
-	bool addTTFOverride(unsigned int fontnum, std::string filename,
+	bool addTTFOverride(unsigned int fontnum, Std::string filename,
 	                    int pointsize, uint32 rgb, int bordersize,
 	                    bool SJIS = false);
 
@@ -116,7 +116,7 @@ public:
 	bool addJPOverride(unsigned int fontnum, unsigned int jpfont, uint32 rgb);
 
 	//! load a TTF (for non-game fonts)
-	bool loadTTFont(unsigned int ttfnum, std::string filename,
+	bool loadTTFont(unsigned int ttfnum, Std::string filename,
 	                int pointsize, uint32 rgb, int bordersize);
 
 	// Reset the game fonts

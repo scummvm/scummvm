@@ -801,7 +801,7 @@ void MapWindow::updateLighting() {
 			}
 		}
 
-		for (std::vector<TileInfo>::iterator ti = m_ViewableMapTiles.begin();
+		for (Std::vector<TileInfo>::iterator ti = m_ViewableMapTiles.begin();
 		        ti != m_ViewableMapTiles.end(); ti++) {
 			if (GET_TILE_LIGHT_LEVEL((*ti).t) > 0)
 				screen->drawalphamap8globe((*ti).x, (*ti).y, GET_TILE_LIGHT_LEVEL((*ti).t));
@@ -1013,10 +1013,10 @@ inline void MapWindow::drawActor(Actor *actor) {
 			drawTile(tile, wrapped_x, actor->y - cur_y, false);
 			drawTile(tile, wrapped_x, actor->y - cur_y, true);
 			if (game->get_clock()->get_timer(GAMECLOCK_TIMER_U6_INFRAVISION) != 0) {
-				std::list<Obj *> *surrounding_objs = actor->get_surrounding_obj_list();
+				Std::list<Obj *> *surrounding_objs = actor->get_surrounding_obj_list();
 
 				if (surrounding_objs) {
-					std::list<Obj *>::iterator obj_iter;
+					Std::list<Obj *>::iterator obj_iter;
 					for (obj_iter = surrounding_objs->begin(); obj_iter != surrounding_objs->end(); obj_iter++) {
 						Obj *obj = *obj_iter;
 						Tile *t = tile_manager->get_original_tile(obj_manager->get_obj_tile_num(obj->obj_n) + obj->frame_n);
@@ -2050,7 +2050,7 @@ bool MapWindow::move_on_drop(Obj *obj) {
 }
 
 void MapWindow::set_interface() {
-	std::string interface_str;
+	Std::string interface_str;
 	config->value("config/input/interface", interface_str, "normal");
 	if (interface_str == "ignore_block" ||  Game::get_game()->using_hackmove()) // game variable is not initialized
 		interface = INTERFACE_IGNORE_BLOCK;
@@ -2606,7 +2606,7 @@ void MapWindow::set_overlay(Graphics::ManagedSurface *surfpt) {
 bool MapWindow::in_town() {
 	MapCoord player_loc = actor_manager->get_player()->get_location();
 
-	for (std::vector<TileInfo>::iterator ti = m_ViewableMapTiles.begin();
+	for (Std::vector<TileInfo>::iterator ti = m_ViewableMapTiles.begin();
 	        ti != m_ViewableMapTiles.end(); ti++)
 		if (MapCoord((*ti).x + cur_x, (*ti).y + cur_y, cur_level).distance(player_loc) <= 5 && // make sure tile is close enough
 		        ((*ti).t->flags1 & TILEFLAG_WALL) && ((*ti).t->flags1 & TILEFLAG_WALL_MASK)) { //only wall tiles with wall direction bits set.
@@ -2665,7 +2665,7 @@ void MapWindow::set_roof_mode(bool roofs) {
 }
 
 void MapWindow::loadRoofTiles() {
-	std::string imagefile = map->getRoofTilesetFilename();
+	Std::string imagefile = map->getRoofTilesetFilename();
 	roof_tiles = SDL_LoadBMP(imagefile.c_str());
 	if (roof_tiles && game->is_orig_style()) {
 		SDL_SetColorKey(roof_tiles, SDL_TRUE, SDL_MapRGB(roof_tiles->format, 0, 0x70, 0xfc));

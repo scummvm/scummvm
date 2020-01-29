@@ -68,9 +68,9 @@ bool DollViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint16
 
 	AddWidget(doll_widget);
 
-	std::string datadir = GUI::get_gui()->get_data_dir();
-	std::string imagefile;
-	std::string path;
+	Std::string datadir = GUI::get_gui()->get_data_dir();
+	Std::string imagefile;
+	Std::string path;
 
 	Graphics::ManagedSurface *image, *image1;
 

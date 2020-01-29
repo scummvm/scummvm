@@ -77,7 +77,7 @@ public:
 protected:
 
 	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
-	GUI_Button *loadButton(std::string dir, std::string name, uint16 x, uint16 y);
+	GUI_Button *loadButton(Std::string dir, Std::string name, uint16 x, uint16 y);
 };
 
 } // End of namespace Ultima6

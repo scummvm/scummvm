@@ -152,7 +152,7 @@ public:
 	 * Write the given string to the stream.
 	 * This writes str.size() characters, but no terminating zero byte.
 	 */
-	void writeString(const std::string &str);
+	void writeString(const Std::string &str);
 };
 
 /**
@@ -394,7 +394,7 @@ public:
 	 * does not indicate whether an error occurred. Callers must use
 	 * err() or eos() to determine whether an exception occurred.
 	 */
-	virtual std::string readLine();
+	virtual Std::string readLine();
 };
 
 /**

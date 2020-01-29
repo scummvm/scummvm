@@ -30,8 +30,8 @@
 namespace Ultima {
 namespace Ultima6 {
 
-using std::string;
-//using std::vector;
+using Std::string;
+//using Std::vector;
 
 class NuvieIO;
 
@@ -57,10 +57,10 @@ public:
 	U6Lib_n();
 	~U6Lib_n();
 
-	bool open(std::string &filename, uint8 size, uint8 type = NUVIE_GAME_U6);
+	bool open(Std::string &filename, uint8 size, uint8 type = NUVIE_GAME_U6);
 	bool open(NuvieIO *new_data, uint8 size, uint8 type = NUVIE_GAME_U6);
 	void close();
-	bool create(std::string &filename, uint8 size, uint8 type = NUVIE_GAME_U6);
+	bool create(Std::string &filename, uint8 size, uint8 type = NUVIE_GAME_U6);
 	uint8 get_game_type() {
 		return game_type;
 	}

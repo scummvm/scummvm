@@ -202,10 +202,10 @@ GUI_status View::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 	return GUI_PASS;
 }
 
-GUI_Button *View::loadButton(std::string dir, std::string name, uint16 x, uint16 y) {
+GUI_Button *View::loadButton(Std::string dir, Std::string name, uint16 x, uint16 y) {
 	GUI_Button *button;
-	std::string imagefile;
-	std::string path;
+	Std::string imagefile;
+	Std::string path;
 
 	Graphics::ManagedSurface *image, *image1;
 	build_path(dir, name + "_btn_up.bmp", imagefile);

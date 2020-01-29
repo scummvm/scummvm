@@ -48,22 +48,22 @@ void TreasureLoader::loadDefaults() {
 			defaultTreasure[defaultiter->_key] = ti;
 		} else {
 			perr << "Failed to parse treasure type '" << defaultiter->_key
-			     << "': " << defaultiter->_value << std::endl;
+			     << "': " << defaultiter->_value << Std::endl;
 		}
 	}
 
 }
 
-bool TreasureLoader::parse(std::string desc,
-                           std::vector<TreasureInfo> &treasure) {
+bool TreasureLoader::parse(Std::string desc,
+                           Std::vector<TreasureInfo> &treasure) {
 	treasure.clear();
 
-	std::vector<std::string> tr;
+	Std::vector<Std::string> tr;
 	Pentagram::SplitString(desc, ';', tr);
 
 	TreasureInfo ti;
 	for (unsigned int i = 0; i < tr.size(); ++i) {
-//		pout << "parse: item=" << tr[i] << std::endl;
+//		pout << "parse: item=" << tr[i] << Std::endl;
 		if (internalParse(tr[i], ti, false)) {
 			treasure.push_back(ti);
 		} else {
@@ -74,7 +74,7 @@ bool TreasureLoader::parse(std::string desc,
 	return true;
 }
 
-bool TreasureLoader::internalParse(std::string desc, TreasureInfo &ti,
+bool TreasureLoader::internalParse(Std::string desc, TreasureInfo &ti,
                                    bool loadingDefault) {
 	ti.special = "";
 	ti.chance = 1;
@@ -85,13 +85,13 @@ bool TreasureLoader::internalParse(std::string desc, TreasureInfo &ti,
 
 	bool loadedDefault = false;
 
-	std::vector<std::pair<std::string, std::string> > kv;
+	Std::vector<Std::pair<Std::string, Std::string> > kv;
 	Pentagram::SplitStringKV(desc, ' ', kv);
 
 	for (unsigned int i = 0; i < kv.size(); ++i) {
-		std::string key = kv[i].first;
-		std::string val = kv[i].second;
-//		pout << "internalParse: key=" << key << " val=" << val << std::endl;
+		Std::string key = kv[i].first;
+		Std::string val = kv[i].second;
+//		pout << "internalParse: key=" << key << " val=" << val << Std::endl;
 
 		if (key == "shape") {
 			if (!parseUInt32Vector(val, ti.shapes))
@@ -145,17 +145,17 @@ bool TreasureLoader::internalParse(std::string desc, TreasureInfo &ti,
 	return true;
 }
 
-bool TreasureLoader::parseUInt32Vector(std::string val,
-                                       std::vector<uint32> &vec) {
+bool TreasureLoader::parseUInt32Vector(Std::string val,
+                                       Std::vector<uint32> &vec) {
 	vec.clear();
 
-	std::string::size_type pos;
+	Std::string::size_type pos;
 	while (!val.empty()) {
 		pos = val.find(',');
-		std::string item = val.substr(0, pos);
+		Std::string item = val.substr(0, pos);
 
-		std::string::size_type itempos = val.find('-');
-		if (itempos != std::string::npos) {
+		Std::string::size_type itempos = val.find('-');
+		if (itempos != Std::string::npos) {
 			unsigned int min, max;
 			if (!parseUIntRange(item, min, max))
 				return false;
@@ -168,17 +168,17 @@ bool TreasureLoader::parseUInt32Vector(std::string val,
 			vec.push_back(x);
 		}
 
-		if (pos != std::string::npos) pos++;
+		if (pos != Std::string::npos) pos++;
 		val.erase(0, pos);
 	}
 
 	return true;
 }
 
-bool TreasureLoader::parseUIntRange(std::string val,
+bool TreasureLoader::parseUIntRange(Std::string val,
                                     unsigned int &min, unsigned int &max) {
-	std::string::size_type pos = val.find('-');
-	if (pos == 0 || pos == std::string::npos || pos + 1 >= val.size())
+	Std::string::size_type pos = val.find('-');
+	if (pos == 0 || pos == Std::string::npos || pos + 1 >= val.size())
 		return false;
 	int t1, t2;
 	bool ok = true;
@@ -191,15 +191,15 @@ bool TreasureLoader::parseUIntRange(std::string val,
 	return ok;
 }
 
-bool TreasureLoader::parseDouble(std::string val, double &d) {
+bool TreasureLoader::parseDouble(Std::string val, double &d) {
 	// TODO: error checking
-	d = std::atof(val.c_str());
+	d = Std::atof(val.c_str());
 	return true;
 }
 
-bool TreasureLoader::parseInt(std::string val, int &i) {
+bool TreasureLoader::parseInt(Std::string val, int &i) {
 	// TODO: error checking
-	i = std::strtol(val.c_str(), 0, 0);
+	i = Std::strtol(val.c_str(), 0, 0);
 	return true;
 }
 

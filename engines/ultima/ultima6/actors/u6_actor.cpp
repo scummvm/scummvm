@@ -700,10 +700,10 @@ bool U6Actor::weapon_can_hit(const CombatType *weapon, Actor *target, uint16 *hi
 		return true;
 	}
 
-	std::list<Obj *> *surrounding_objs = target->get_surrounding_obj_list();
+	Std::list<Obj *> *surrounding_objs = target->get_surrounding_obj_list();
 
 	if (surrounding_objs) {
-		std::list<Obj *>::iterator obj_iter;
+		Std::list<Obj *>::iterator obj_iter;
 		for (obj_iter = surrounding_objs->begin(); obj_iter != surrounding_objs->end(); obj_iter++) {
 			Obj *obj = *obj_iter;
 			if (Actor::weapon_can_hit(weapon, obj->x, obj->y)) {
@@ -1017,7 +1017,7 @@ inline bool U6Actor::has_surrounding_objs() {
 }
 
 inline void U6Actor::remove_surrounding_objs_from_map() {
-	std::list<Obj *>::iterator obj;
+	Std::list<Obj *>::iterator obj;
 
 	for (obj = surrounding_objects.begin(); obj != surrounding_objects.end(); obj++)
 		obj_manager->remove_obj_from_map((*obj));
@@ -1026,7 +1026,7 @@ inline void U6Actor::remove_surrounding_objs_from_map() {
 }
 
 inline void U6Actor::add_surrounding_objs_to_map() {
-	std::list<Obj *>::reverse_iterator obj;
+	Std::list<Obj *>::reverse_iterator obj;
 
 	for (obj = surrounding_objects.rbegin(); obj != surrounding_objects.rend(); ++obj)
 		obj_manager->add_obj((*obj), OBJ_ADD_TOP);
@@ -1035,7 +1035,7 @@ inline void U6Actor::add_surrounding_objs_to_map() {
 }
 
 inline void U6Actor::move_surrounding_objs_relative(sint16 rel_x, sint16 rel_y) {
-	std::list<Obj *>::iterator obj_iter;
+	Std::list<Obj *>::iterator obj_iter;
 	Obj *obj;
 
 	if (obj_n == OBJ_U6_SILVER_SERPENT) {
@@ -1052,7 +1052,7 @@ inline void U6Actor::move_surrounding_objs_relative(sint16 rel_x, sint16 rel_y) 
 }
 
 inline void U6Actor::move_silver_serpent_objs_relative(sint16 rel_x, sint16 rel_y) {
-	std::list<Obj *>::iterator obj;
+	Std::list<Obj *>::iterator obj;
 	uint8 objFrameN;
 	uint8 tmp_frame_n;
 	uint16 old_x, old_y;
@@ -1147,7 +1147,7 @@ inline void U6Actor::set_direction_of_surrounding_objs(uint8 new_direction) {
 }
 
 inline void U6Actor::set_direction_of_surrounding_ship_objs(uint8 new_direction) {
-	std::list<Obj *>::iterator obj;
+	Std::list<Obj *>::iterator obj;
 	uint16 pitch = map->get_width(z);
 
 	obj = surrounding_objects.begin();
@@ -1278,7 +1278,7 @@ inline void U6Actor::set_direction_of_surrounding_splitactor_objs(uint8 new_dire
 }
 
 inline void U6Actor::set_direction_of_surrounding_dragon_objs(uint8 new_direction) {
-	std::list<Obj *>::iterator obj;
+	Std::list<Obj *>::iterator obj;
 	uint8 frame_offset = (new_direction * actor_type->tiles_per_direction + actor_type->tiles_per_frame - 1);
 	Obj *head, *tail, *wing1, *wing2;
 
@@ -1349,7 +1349,7 @@ inline void U6Actor::set_direction_of_surrounding_dragon_objs(uint8 new_directio
 }
 
 inline void U6Actor::twitch_surrounding_objs() {
-	std::list<Obj *>::iterator obj;
+	Std::list<Obj *>::iterator obj;
 
 	for (obj = surrounding_objects.begin(); obj != surrounding_objects.end(); obj++) {
 		twitch_obj(*obj);
@@ -1362,7 +1362,7 @@ inline void U6Actor::twitch_surrounding_dragon_objs() {
 
 inline void U6Actor::twitch_surrounding_hydra_objs() {
 	uint8 i;
-	std::list<Obj *>::iterator obj;
+	Std::list<Obj *>::iterator obj;
 
 //Note! list order is important here. As it corresponds to the frame order in the tile set. This is defined in init_hydra()
 
@@ -1402,7 +1402,7 @@ inline void U6Actor::twitch_obj(Obj *obj) {
 }
 
 inline void U6Actor::clear_surrounding_objs_list(bool delete_objs) {
-	std::list<Obj *>::iterator obj;
+	Std::list<Obj *>::iterator obj;
 
 	if (surrounding_objects.empty())
 		return;

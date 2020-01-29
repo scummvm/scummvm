@@ -46,19 +46,19 @@ public:
 
 	//! Get the current users pentagram home path
 	//! \returns ~/.pentagram or equivilant
-	static std::string getHomePath();
+	static Std::string getHomePath();
 
 	//! Open a file as readable. Streamed.
 	//! \param vfn the (virtual) filename
 	//! \param is_text open in text mode?
 	//! \return 0 on failure
-	IDataSource *ReadFile(const std::string &vfn, bool is_text = false);
+	IDataSource *ReadFile(const Std::string &vfn, bool is_text = false);
 
 	//! Open a file as writable. Streamed.
 	//! \param vfn the (virtual) filename
 	//! \param is_text open in text mode?
 	//! \return 0 on failure
-	ODataSource *WriteFile(const std::string &vfn, bool is_text = false);
+	ODataSource *WriteFile(const Std::string &vfn, bool is_text = false);
 
 	//! Mount a virtual path
 	//! \param vpath the name of the vpath (should start with '@')
@@ -66,30 +66,30 @@ public:
 	//!                 be a virtual path itself)
 	//! \param create create realpath directory if it doesn't exist?
 	//! \return true if succesful
-	bool AddVirtualPath(const std::string &vpath, const std::string &realpath,
+	bool AddVirtualPath(const Std::string &vpath, const Std::string &realpath,
 	                    bool create = false);
 
 	//! Unmount a virtual path
-	bool RemoveVirtualPath(const std::string &vpath);
+	bool RemoveVirtualPath(const Std::string &vpath);
 
 	//! Create a directory
 	//! \param path the directory to create. (Can be virtual)
 	//! \return true if successful; otherwise, false.
-	bool MkDir(const std::string &path); // can handle both paths and vpaths
+	bool MkDir(const Std::string &path); // can handle both paths and vpaths
 
-	typedef Common::List<std::string> FileList;
+	typedef Common::List<Std::string> FileList;
 
 	//! List files matching a mask
 	//! \param mask the mask to match
 	//! \param files the FileList to which the found files are appended
 	//! \param return OS-specific (FIXME!)
-	int ListFiles(const std::string mask, FileList &files);
+	int ListFiles(const Std::string mask, FileList &files);
 
 private:
-	static void switch_slashes(std::string &name);
-	static bool base_to_uppercase(std::string &str, int count);
+	static void switch_slashes(Std::string &name);
+	static bool base_to_uppercase(Std::string &str, int count);
 
-	static bool IsDir(const std::string &path);
+	static bool IsDir(const Std::string &path);
 
 	static FileSystem *filesystem;
 
@@ -97,13 +97,13 @@ private:
 	 *	Open a file for reading,
 	 *	Output: false if couldn't open.
 	 */
-	bool rawOpen(Common::SeekableReadStream *&in, const std::string &fname);
+	bool rawOpen(Common::SeekableReadStream *&in, const Std::string &fname);
 
 	/**
 	 *	Open a file for writing,
 	 *	Output: false if couldn't open.
 	 */
-	bool rawOpen(Common::WriteStream *&out, const std::string &fname);
+	bool rawOpen(Common::WriteStream *&out, const Std::string &fname);
 
 	// This will disable the usage of forced virtual paths.
 	// It's useful for 'tools'
@@ -114,13 +114,13 @@ private:
 
 	// rewrite virtual path in-place (i.e., fvn is replaced)
 	// returns false if no rewriting was done
-	bool rewrite_virtual_path(std::string &vfn);
+	bool rewrite_virtual_path(Std::string &vfn);
 
-	std::map<Common::String, std::string> virtualpaths;
+	Std::map<Common::String, Std::string> virtualpaths;
 
 	//! Check if the given file is a builtin data file.
 	//! If so, return an IDataSource for it. If not, return 0.
-	IDataSource *checkBuiltinData(const std::string &vfn, bool is_text = false);
+	IDataSource *checkBuiltinData(const Std::string &vfn, bool is_text = false);
 
 	struct MemoryFile {
 		MemoryFile(const uint8 *_data, const uint32 _len)
@@ -128,7 +128,7 @@ private:
 		const uint8     *data;
 		const uint32    len;
 	};
-	std::map<Common::String, MemoryFile *> memoryfiles; // Files mounted in memory
+	Std::map<Common::String, MemoryFile *> memoryfiles; // Files mounted in memory
 };
 
 } // End of namespace Ultima8

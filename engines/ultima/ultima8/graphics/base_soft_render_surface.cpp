@@ -273,7 +273,7 @@ ECode BaseSoftRenderSurface::BeginPainting() {
 
 	if (pixels00 == 0) {
 		// TODO: SetLastError(GR_SOFT_ERROR_LOCKED_NULL_PIXELS, "Surface Locked with NULL BaseSoftRenderSurface::pixels pointer!");
-		perr << "Error: Surface Locked with NULL BaseSoftRenderSurface::pixels pointer!" << std::endl;
+		perr << "Error: Surface Locked with NULL BaseSoftRenderSurface::pixels pointer!" << Std::endl;
 		return GR_SOFT_ERROR_LOCKED_NULL_PIXELS;
 	}
 
@@ -295,7 +295,7 @@ ECode BaseSoftRenderSurface::EndPainting() {
 	// Already Unlocked
 	if (!lock_count) {
 		// TODO: SetLastError(GR_SOFT_ERROR_BEGIN_END_MISMATCH, "BeginPainting()/EndPainting() Mismatch!");
-		perr << "Error: BeginPainting()/EndPainting() Mismatch!" << std::endl;
+		perr << "Error: BeginPainting()/EndPainting() Mismatch!" << Std::endl;
 		return GR_SOFT_ERROR_BEGIN_END_MISMATCH;
 	}
 
@@ -329,7 +329,7 @@ ECode BaseSoftRenderSurface::EndPainting() {
 //
 Texture *BaseSoftRenderSurface::GetSurfaceAsTexture() {
 	if (!rtt_tex) {
-		perr << "Error: GetSurfaceAsTexture(): Surface doesn't render-to-texture" << std::endl;
+		perr << "Error: GetSurfaceAsTexture(): Surface doesn't render-to-texture" << Std::endl;
 	}
 
 	return rtt_tex;

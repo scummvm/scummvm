@@ -47,7 +47,7 @@ public:
 	Console(Configuration *c, Screen *s, GUI *g, uint16 x, uint16 y, uint16 w, uint16 h);
 	~Console();
 
-	void AddLine(std::string line);
+	void AddLine(Std::string line);
 
 protected:
 
@@ -56,8 +56,8 @@ protected:
 void ConsoleInit(Configuration *c, Screen *s, GUI *gui, uint16 w, uint16 h);
 void ConsoleDelete();
 void ConsoleAddInfo(const char *s, ...);
-void ConsoleAddError(std::string s);
-void ConsoleAddWarning(std::string s);
+void ConsoleAddError(Std::string s);
+void ConsoleAddWarning(Std::string s);
 void ConsolePause();
 void ConsoleShow();
 void ConsoleHide();

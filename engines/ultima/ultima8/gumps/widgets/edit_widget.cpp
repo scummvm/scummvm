@@ -38,7 +38,7 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(EditWidget, Gump)
 
-EditWidget::EditWidget(int X, int Y, std::string txt, bool gamefont_, int font,
+EditWidget::EditWidget(int X, int Y, Std::string txt, bool gamefont_, int font,
                        int w, int h, unsigned int maxlength_, bool multiline_)
 	: Gump(X, Y, w, h), text(txt), gamefont(gamefont_), fontnum(font),
 	  maxlength(maxlength_), multiline(multiline_),
@@ -76,7 +76,7 @@ Pentagram::Font *EditWidget::getFont() const {
 		return FontManager::get_instance()->getTTFont(fontnum);
 }
 
-void EditWidget::setText(const std::string &t) {
+void EditWidget::setText(const Std::string &t) {
 	text = t;
 	cursor = text.size();
 	FORGET_OBJECT(cached_text);
@@ -87,7 +87,7 @@ void EditWidget::ensureCursorVisible() {
 	cursor_changed = g_system->getMillis();
 }
 
-bool EditWidget::textFits(std::string &t) {
+bool EditWidget::textFits(Std::string &t) {
 	Pentagram::Font *font = getFont();
 
 	unsigned int remaining;
@@ -146,7 +146,7 @@ void EditWidget::renderText() {
 		cached_text = font->renderText(text, remaining,
 		                               max_width, max_height,
 		                               Pentagram::Font::TEXT_LEFT,
-		                               false, cv ? cursor : std::string::npos);
+		                               false, cv ? cursor : Std::string::npos);
 	}
 }
 
@@ -244,7 +244,7 @@ bool EditWidget::OnTextInput(int unicode) {
 		c = Pentagram::reverse_encoding[unicode];
 	if (!c) return true;
 
-	std::string newtext = text;
+	Std::string newtext = text;
 	newtext.insert(cursor, 1, c);
 
 	if (textFits(newtext)) {

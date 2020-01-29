@@ -77,7 +77,7 @@ void AskGump::InitGump(Gump *newparent, bool take_focus) {
 	ItemRelativeGump::InitGump(newparent, take_focus);
 
 	for (unsigned int i = 0; i < answers->getSize(); ++i) {
-		std::string str_answer = "@ ";
+		Std::string str_answer = "@ ";
 		str_answer += UCMachine::get_instance()->getString(answers->getStringIndex(i));
 
 		ButtonWidget *child = new ButtonWidget(px, py, str_answer,
@@ -142,7 +142,7 @@ bool AskGump::loadData(IDataSource *ids, uint32 version) {
 
 		ButtonWidget *child = 0;
 
-		std::list<Gump *>::iterator it;
+		Std::list<Gump *>::iterator it;
 		for (it = children.begin(); it != children.end(); ++it) {
 			if ((*it)->GetIndex() != (int)i) continue;
 			child = p_dynamic_cast<ButtonWidget *>(*it);

@@ -138,23 +138,23 @@ void ObjectManager::objectStats() {
 			objcount++;
 	}
 
-	pout << "Object memory stats:" << std::endl;
-	pout << "NPCs       : " << npccount << "/255" << std::endl;
-	pout << "Objects    : " << objcount << "/32511" << std::endl;
+	pout << "Object memory stats:" << Std::endl;
+	pout << "NPCs       : " << npccount << "/255" << Std::endl;
+	pout << "Objects    : " << objcount << "/32511" << Std::endl;
 }
 
 void ObjectManager::objectTypes() {
-	pout << "Current object types:" << std::endl;
-	std::map<Common::String, unsigned int> objecttypes;
+	pout << "Current object types:" << Std::endl;
+	Std::map<Common::String, unsigned int> objecttypes;
 	for (unsigned int i = 1; i < objects.size(); ++i) {
 		Object *o = objects[i];
 		if (!o) continue;
 		objecttypes[o->GetClassType().class_name]++;
 	}
 
-	std::map<Common::String, unsigned int>::iterator iter;
+	Std::map<Common::String, unsigned int>::iterator iter;
 	for (iter = objecttypes.begin(); iter != objecttypes.end(); ++iter) {
-		pout << (*iter)._key << ": " << (*iter)._value << std::endl;
+		pout << (*iter)._key << ": " << (*iter)._value << Std::endl;
 	}
 }
 
@@ -164,7 +164,7 @@ void ObjectManager::ConCmd_objectTypes(const Console::ArgvType & /*argv*/) {
 
 void ObjectManager::ConCmd_objectInfo(const Console::ArgvType &argv) {
 	if (argv.size() != 2) {
-		pout << "usage: objectInfo <objectnum>" << std::endl;
+		pout << "usage: objectInfo <objectnum>" << Std::endl;
 		return;
 	}
 
@@ -180,9 +180,9 @@ void ObjectManager::ConCmd_objectInfo(const Console::ArgvType &argv) {
 		else
 			reserved = objman->actorIDs->isIDUsed(objid);
 		if (reserved)
-			pout << "Reserved objid: " << objid << std::endl;
+			pout << "Reserved objid: " << objid << Std::endl;
 		else
-			pout << "No such object: " << objid << std::endl;
+			pout << "No such object: " << objid << Std::endl;
 	} else {
 		obj->dumpInfo();
 	}
@@ -281,7 +281,7 @@ bool ObjectManager::load(IDataSource *ids, uint32 version) {
 		ids->read(buf, classlen);
 		buf[classlen] = 0;
 
-		std::string classname = buf;
+		Std::string classname = buf;
 		delete[] buf;
 
 		Object *obj = loadObject(ids, classname, version);
@@ -308,7 +308,7 @@ bool ObjectManager::load(IDataSource *ids, uint32 version) {
 	// have caused serious issues when critical objects haven't been created.
 	if (objIDs->isFull()) {
 		perr << "Savegame has been corrupted by running out of objIDs."
-		     << std::endl;
+		     << Std::endl;
 		return false;
 	}
 	unsigned int count = 0;
@@ -318,7 +318,7 @@ bool ObjectManager::load(IDataSource *ids, uint32 version) {
 			count++;
 		}
 	}
-	pout << "Reclaimed " << count << " objIDs on load." << std::endl;
+	pout << "Reclaimed " << count << " objIDs on load." << Std::endl;
 
 	return true;
 }
@@ -329,26 +329,26 @@ Object *ObjectManager::loadObject(IDataSource *ids, uint32 version) {
 	ids->read(buf, classlen);
 	buf[classlen] = 0;
 
-	std::string classname = buf;
+	Std::string classname = buf;
 	delete[] buf;
 
 	return loadObject(ids, classname, version);
 }
 
-Object *ObjectManager::loadObject(IDataSource *ids, std::string classname,
+Object *ObjectManager::loadObject(IDataSource *ids, Std::string classname,
                                   uint32 version) {
-	std::map<Common::String, ObjectLoadFunc>::iterator iter;
+	Std::map<Common::String, ObjectLoadFunc>::iterator iter;
 	iter = objectloaders.find(classname);
 
 	if (iter == objectloaders.end()) {
-		perr << "Unknown Object class: " << classname << std::endl;
+		perr << "Unknown Object class: " << classname << Std::endl;
 		return 0;
 	}
 
 	Object *obj = (*(iter->_value))(ids, version);
 
 	if (!obj) {
-		perr << "Error loading object of type " << classname << std::endl;
+		perr << "Error loading object of type " << classname << Std::endl;
 		return 0;
 	}
 	uint16 objid = obj->getObjId();
@@ -362,7 +362,7 @@ Object *ObjectManager::loadObject(IDataSource *ids, std::string classname,
 			used = actorIDs->isIDUsed(objid);
 		if (!used) {
 			perr << "Error: object ID " << objid
-			     << " used but marked available. " << std::endl;
+			     << " used but marked available. " << Std::endl;
 			return 0;
 		}
 	}

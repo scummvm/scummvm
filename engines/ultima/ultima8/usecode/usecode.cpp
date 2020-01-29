@@ -32,7 +32,7 @@ uint32 Usecode::get_class_event(uint32 classid, uint32 eventid) {
 	if (get_class_size(classid) == 0) return 0;
 
 	if (eventid >= get_class_event_count(classid)) {
-		perr << "eventid too high: " << eventid << " >= " << get_class_event_count(classid) << " for class " << classid << std::endl;
+		perr << "eventid too high: " << eventid << " >= " << get_class_event_count(classid) << " for class " << classid << Std::endl;
 		CANT_HAPPEN();
 	}
 

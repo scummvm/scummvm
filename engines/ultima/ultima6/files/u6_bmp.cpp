@@ -45,7 +45,7 @@ U6Bmp::~U6Bmp() {
 }
 
 
-bool U6Bmp::load(std::string filename) {
+bool U6Bmp::load(Std::string filename) {
 	U6Lzw lzw;
 	uint32 data_size;
 

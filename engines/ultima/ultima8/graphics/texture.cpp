@@ -74,15 +74,15 @@ Texture *Texture::Create(IDataSource *ds, const char *filename) {
 
 	if (filename) {
 		// Looks like it's a PNG
-		if (std::strstr(filename, ".png")) {
+		if (Std::strstr(filename, ".png")) {
 			TRY_TYPE(TexturePNG);
 		}
 		// Looks like it's a BMP
-		if (std::strstr(filename, ".bmp")) {
+		if (Std::strstr(filename, ".bmp")) {
 			TRY_TYPE(TextureBitmap);
 		}
 		// Looks like it's a TGA
-		if (std::strstr(filename, ".tga")) {
+		if (Std::strstr(filename, ".tga")) {
 			TRY_TYPE(TextureTarga);
 		}
 	}

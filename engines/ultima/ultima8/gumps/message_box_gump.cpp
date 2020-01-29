@@ -54,14 +54,14 @@ MessageBoxGump::MessageBoxGump()
 
 }
 
-MessageBoxGump::MessageBoxGump(const std::string &title_, const std::string &message_, uint32 title_colour_,
-                               std::vector<std::string> *buttons_) :
+MessageBoxGump::MessageBoxGump(const Std::string &title_, const Std::string &message_, uint32 title_colour_,
+                               Std::vector<Std::string> *buttons_) :
 		ModalGump(0, 0, 100, 100), title(title_), message(message_), title_colour(title_colour_) {
 	if (buttons_)
 		buttons_->swap(buttons);
 	
 	if (buttons.empty())
-		buttons.push_back(std::string("Ok"));
+		buttons.push_back(Std::string("Ok"));
 }
 
 MessageBoxGump::~MessageBoxGump(void) {
@@ -162,7 +162,7 @@ void MessageBoxGump::ChildNotify(Gump *child, uint32 msg) {
 	}
 }
 
-ProcId MessageBoxGump::Show(std::string title, std::string message, uint32 title_colour, std::vector<std::string> *buttons) {
+ProcId MessageBoxGump::Show(Std::string title, Std::string message, uint32 title_colour, Std::vector<Std::string> *buttons) {
 	Gump *gump = new MessageBoxGump(title, message, title_colour, buttons);
 	gump->InitGump(0);
 	gump->setRelativePosition(CENTER);

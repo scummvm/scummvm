@@ -31,7 +31,7 @@ namespace Ultima6 {
 
 class ConfigNode {
 	friend class Configuration;
-	ConfigNode(Configuration &config_, std::string key_)
+	ConfigNode(Configuration &config_, Std::string key_)
 		: config(config_), key(key_) {
 	}
 
@@ -45,8 +45,8 @@ public:
 		return *this;
 	}
 
-	std::string get_string(const char *defaultvalue = "") {
-		std::string s;
+	Std::string get_string(const char *defaultvalue = "") {
+		Std::string s;
 		config.value(key, s, defaultvalue);
 		return s;
 	}
@@ -61,7 +61,7 @@ public:
 		return b;
 	}
 
-	void set(std::string value) {
+	void set(Std::string value) {
 		config.set(key, value);
 	}
 	void set(const char *value) {
@@ -76,7 +76,7 @@ public:
 
 private:
 	Configuration &config;
-	std::string key;
+	Std::string key;
 
 };
 

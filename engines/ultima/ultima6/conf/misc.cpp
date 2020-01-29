@@ -25,8 +25,8 @@
 namespace Ultima {
 namespace Ultima6 {
 
-std::string readLine(Common::ReadStream *stream) {
-	std::string line;
+Std::string readLine(Common::ReadStream *stream) {
+	Std::string line;
 	char c;
 	while (!stream->eos() && (c = stream->readByte()) != '\n')
 		line += c;

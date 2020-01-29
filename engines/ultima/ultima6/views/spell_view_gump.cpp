@@ -55,9 +55,9 @@ bool SpellViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, uint1
 
 	SetRect(area.left, area.top, 162, 108);
 
-	std::string datadir = GUI::get_gui()->get_data_dir();
-	std::string imagefile;
-	std::string path;
+	Std::string datadir = GUI::get_gui()->get_data_dir();
+	Std::string imagefile;
+	Std::string path;
 
 	Graphics::ManagedSurface *image, *image1;
 
@@ -104,8 +104,8 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 	//load spell images
 	uint8 i;
 	char filename[24]; // spellbook_spell_xxx.bmp\0
-	std::string datadir = GUI::get_gui()->get_data_dir();
-	std::string path;
+	Std::string datadir = GUI::get_gui()->get_data_dir();
+	Std::string path;
 
 	build_path(datadir, "images", path);
 	datadir = path;
@@ -114,7 +114,7 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 	build_path(datadir, "spellbook", path);
 	datadir = path;
 
-	std::string imagefile;
+	Std::string imagefile;
 
 	SDL_FreeSurface(bg_image);
 
@@ -157,8 +157,8 @@ uint8 SpellViewGump::fill_cur_spell_list() {
 	return count;
 }
 
-void SpellViewGump::loadCircleString(std::string datadir) {
-	std::string imagefile;
+void SpellViewGump::loadCircleString(Std::string datadir) {
+	Std::string imagefile;
 	char filename[7]; // n.bmp\0
 
 	sprintf(filename, "%d.bmp", level);
@@ -186,8 +186,8 @@ void SpellViewGump::loadCircleString(std::string datadir) {
 	}
 }
 
-void SpellViewGump::loadCircleSuffix(std::string datadir, std::string image) {
-	std::string imagefile;
+void SpellViewGump::loadCircleSuffix(Std::string datadir, Std::string image) {
+	Std::string imagefile;
 
 	build_path(datadir, image, imagefile);
 	Graphics::ManagedSurface *s = bmp.getSdlSurface32(imagefile);

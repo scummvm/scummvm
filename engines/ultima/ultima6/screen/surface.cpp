@@ -279,7 +279,7 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 
 	// vertical
 	if (sx == ex) {
-		//std::cout << "Vertical" << std::endl;
+		//Std::cout << "Vertical" << Std::endl;
 		// start is below end
 		while (pixptr != pixend) {
 			if (no_clip || (cury >= 0 && cury < height)) *pixptr = col32;
@@ -289,7 +289,7 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 	}
 	// Horizontal
 	else if (sy == ey) {
-		//std::cout << "Horizontal" << std::endl;
+		//Std::cout << "Horizontal" << Std::endl;
 		while (pixptr != pixend) {
 			if (no_clip || (curx >= 0 && curx < width)) *pixptr = col32;
 			pixptr += xinc;
@@ -297,9 +297,9 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 		}
 	}
 	// Diagonal xdiff >= ydiff
-	else if (std::labs(sx - ex) >= std::labs(sy - ey)) {
-		//std::cout << "Diagonal 1" << std::endl;
-		uint32 fraction = std::labs((LINE_FRACTION * (sy - ey)) / (sx - ex));
+	else if (Std::labs(sx - ex) >= Std::labs(sy - ey)) {
+		//Std::cout << "Diagonal 1" << Std::endl;
+		uint32 fraction = Std::labs((LINE_FRACTION * (sy - ey)) / (sx - ex));
 		uint32 ycounter = 0;
 
 		for (; ;) {
@@ -320,8 +320,8 @@ void RenderSurface::draw_line16(int sx, int sy, int ex, int ey, unsigned char co
 	}
 	// Diagonal ydiff > xdiff
 	else {
-		//std::cout << "Diagonal 2" << std::endl;
-		uint32 fraction = std::labs((LINE_FRACTION * (sx - ex)) / (sy - ey));
+		//Std::cout << "Diagonal 2" << Std::endl;
+		uint32 fraction = Std::labs((LINE_FRACTION * (sx - ex)) / (sy - ey));
 		uint32 xcounter = 0;
 
 		for (; ;) {
@@ -397,7 +397,7 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 
 	// vertical
 	if (sx == ex) {
-		//std::cout << "Vertical" << std::endl;
+		//Std::cout << "Vertical" << Std::endl;
 		// start is below end
 		while (pixptr != pixend) {
 			if (no_clip || (cury >= 0 && cury < height)) *pixptr = col32;
@@ -407,7 +407,7 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 	}
 	// Horizontal
 	else if (sy == ey) {
-		//std::cout << "Horizontal" << std::endl;
+		//Std::cout << "Horizontal" << Std::endl;
 		while (pixptr != pixend) {
 			if (no_clip || (curx >= 0 && curx < width)) *pixptr = col32;
 			pixptr += xinc;
@@ -415,9 +415,9 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 		}
 	}
 	// Diagonal xdiff >= ydiff
-	else if (std::labs(sx - ex) >= std::labs(sy - ey)) {
-		//std::cout << "Diagonal 1" << std::endl;
-		uint32 fraction = std::labs((LINE_FRACTION * (sy - ey)) / (sx - ex));
+	else if (Std::labs(sx - ex) >= Std::labs(sy - ey)) {
+		//Std::cout << "Diagonal 1" << Std::endl;
+		uint32 fraction = Std::labs((LINE_FRACTION * (sy - ey)) / (sx - ex));
 		uint32 ycounter = 0;
 
 		for (; ;) {
@@ -438,8 +438,8 @@ void RenderSurface::draw_line32(int sx, int sy, int ex, int ey, unsigned char co
 	}
 	// Diagonal ydiff > xdiff
 	else {
-		//std::cout << "Diagonal 2" << std::endl;
-		uint32 fraction = std::labs((LINE_FRACTION * (sx - ex)) / (sy - ey));
+		//Std::cout << "Diagonal 2" << Std::endl;
+		uint32 fraction = Std::labs((LINE_FRACTION * (sx - ex)) / (sy - ey));
 		uint32 xcounter = 0;
 
 		for (; ;) {

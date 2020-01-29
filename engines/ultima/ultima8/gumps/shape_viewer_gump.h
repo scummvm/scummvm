@@ -40,7 +40,7 @@ public:
 
 	ShapeViewerGump();
 	ShapeViewerGump(int width, int height,
-	                std::vector<std::pair<std::string, ShapeArchive *> > &flexes,
+	                Std::vector<Std::pair<Std::string, ShapeArchive *> > &flexes,
 	                uint32 _Flags = 0, int32 layer = LAYER_MODAL);
 	virtual ~ShapeViewerGump(void);
 
@@ -56,7 +56,7 @@ public:
 protected:
 	virtual void saveData(ODataSource *ods);
 
-	std::vector<std::pair<std::string, ShapeArchive *> > flexes;
+	Std::vector<Std::pair<Std::string, ShapeArchive *> > flexes;
 	unsigned int curflex;
 	ShapeArchive *flex;
 	uint32 curshape;

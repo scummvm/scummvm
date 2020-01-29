@@ -101,35 +101,35 @@ char GameInfo::getLanguageUsecodeLetter() const {
 	}
 }
 
-std::string GameInfo::getLanguage() const {
+Std::string GameInfo::getLanguage() const {
 	unsigned int l = static_cast<unsigned int>(language);
 	assert(l < (sizeof(gamelangs) / sizeof(gamelangs[0])) - 1);
 
 	return gamelangs[l].name;
 }
 
-std::string GameInfo::getGameTitle() const {
+Std::string GameInfo::getGameTitle() const {
 	unsigned int t = static_cast<unsigned int>(type);
 	assert(t < (sizeof(gametypes) / sizeof(gametypes[0])) - 1);
 
 	return gametypes[t].longname;
 }
 
-std::string GameInfo::getPrintableVersion() const {
+Std::string GameInfo::getPrintableVersion() const {
 	char buf[32];
 	sprintf(buf, "%d.%02d", version / 100, version % 100);
 	return buf;
 }
 
-std::string GameInfo::getPrintDetails() const {
-	std::string ret;
+Std::string GameInfo::getPrintDetails() const {
+	Std::string ret;
 
-	std::string title = getGameTitle();
+	Std::string title = getGameTitle();
 	if (title == "") title = "Unknown";
 
 	ret = title + ", ";
 
-	std::string lang = getLanguage();
+	Std::string lang = getLanguage();
 	if (lang == "") lang = "Unknown";
 	ret += lang;
 
@@ -147,8 +147,8 @@ std::string GameInfo::getPrintDetails() const {
 }
 
 
-std::string GameInfo::getPrintableMD5() const {
-	std::string ret;
+Std::string GameInfo::getPrintableMD5() const {
+	Std::string ret;
 
 	char buf[33];
 	for (int i = 0; i < 16; ++i) {
@@ -167,7 +167,7 @@ bool GameInfo::match(GameInfo &other, bool ignoreMD5) const {
 
 	if (ignoreMD5) return true;
 
-	return (std::memcmp(md5, other.md5, 16) == 0);
+	return (Std::memcmp(md5, other.md5, 16) == 0);
 }
 
 void GameInfo::save(ODataSource *ods) {
@@ -176,21 +176,21 @@ void GameInfo::save(ODataSource *ods) {
 	unsigned int t = static_cast<unsigned int>(type);
 	assert(t < (sizeof(gametypes) / sizeof(gametypes[0])) - 1);
 
-	std::string game = gametypes[t].shortname;
-	std::string lang = gamelangs[l].name;
+	Std::string game = gametypes[t].shortname;
+	Std::string lang = gamelangs[l].name;
 
 	char buf[16];
 	sprintf(buf, "%d", version);
-	std::string ver = buf;
-	std::string md5Str = getPrintableMD5();
+	Std::string ver = buf;
+	Std::string md5Str = getPrintableMD5();
 
-	std::string d = game + "," + lang + "," + ver + "," + md5Str + "\n";
+	Std::string d = game + "," + lang + "," + ver + "," + md5Str + "\n";
 	ods->write(d.c_str(), d.size());
 }
 
 bool GameInfo::load(IDataSource *ids, uint32 version_) {
-	std::string s;
-	std::vector<std::string> parts;
+	Std::string s;
+	Std::vector<Std::string> parts;
 
 	ids->readline(s);
 	Pentagram::SplitString(s, ',', parts);
@@ -216,14 +216,14 @@ bool GameInfo::load(IDataSource *ids, uint32 version_) {
 	}
 	if (!gamelangs[i].name) return false;
 
-	this->version = std::strtol(parts[2].c_str(), 0, 0);
+	this->version = Std::strtol(parts[2].c_str(), 0, 0);
 
 	for (i = 0; i < 16; ++i) {
 		char buf[3];
 		buf[0] = parts[3][2 * i];
 		buf[1] = parts[3][2 * i + 1];
 		buf[2] = 0;
-		long x = std::strtol(buf, 0, 16);
+		long x = Std::strtol(buf, 0, 16);
 		md5[i] = static_cast<uint8>(x);
 	}
 

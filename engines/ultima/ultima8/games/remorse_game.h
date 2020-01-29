@@ -36,7 +36,7 @@ public:
 	virtual bool startGame();
 
 	//! start initial usecode
-	virtual bool startInitialUsecode(const std::string &savegame);
+	virtual bool startInitialUsecode(const Std::string &savegame);
 
 	//! write game-specific savegame info (avatar stats, equipment, ...)
 	virtual void writeSaveInfo(ODataSource *ods);

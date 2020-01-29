@@ -133,7 +133,7 @@ CameraProcess::CameraProcess(int32 x_, int32 y_, int32 z_, int32 time_) :
 	ex(x_), ey(y_), ez(z_), _time(time_), elapsed(0), itemnum(0), last_framenum(0) {
 	GetCameraLocation(sx, sy, sz);
 	//pout << "Scrolling from (" << sx << "," << sy << "," << sz << ") to (" <<
-	//  ex << "," << ey << "," << ez << ") in " << _time << " frames" << std::endl;
+	//  ex << "," << ey << "," << ez << ") in " << _time << " frames" << Std::endl;
 }
 
 void CameraProcess::terminate() {

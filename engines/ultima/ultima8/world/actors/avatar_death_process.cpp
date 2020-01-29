@@ -50,14 +50,14 @@ void AvatarDeathProcess::run() {
 	MainActor *av = getMainActor();
 
 	if (!av) {
-		perr << "AvatarDeathProcess: MainActor object missing" << std::endl;
+		perr << "AvatarDeathProcess: MainActor object missing" << Std::endl;
 		// avatar gone??
 		terminate();
 		return;
 	}
 
 	if (!(av->getActorFlags() & Actor::ACT_DEAD)) {
-		perr << "AvatarDeathProcess: MainActor not dead" << std::endl;
+		perr << "AvatarDeathProcess: MainActor not dead" << Std::endl;
 		// avatar not dead?
 		terminate();
 		return;

@@ -229,14 +229,14 @@ public:
 
 class ODequeDataSource : public ODataSource {
 private:
-	std::deque<byte> _out;
+	Std::deque<byte> _out;
 
 public:
 	ODequeDataSource() {}
 
 	virtual ~ODequeDataSource() {}
 
-	const std::deque<byte> &buf() const {
+	const Std::deque<byte> &buf() const {
 		return _out;
 	}
 
@@ -294,7 +294,7 @@ public:
 		/*_out->seekp(pos); FIXME: Do something here. */
 	}
 	virtual void skip(int32 /*pos*/) {
-		/*_out->seekp(pos, std::ios::cur); FIXME: Do something here. */
+		/*_out->seekp(pos, Std::ios::cur); FIXME: Do something here. */
 	}
 
 	virtual uint32 getSize()      {

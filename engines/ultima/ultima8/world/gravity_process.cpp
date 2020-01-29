@@ -176,7 +176,7 @@ void GravityProcess::run() {
 #ifdef BOUNCE_DIAG
 			pout << "item " << item_num << " bounce ["
 			     << Kernel::get_instance()->getFrameNum()
-			     << "]: hit " << hititem->getObjId() << std::endl;
+			     << "]: hit " << hititem->getObjId() << Std::endl;
 #endif
 
 			if (!hititem->getShapeInfo()->is_land() || zspeed < -2 * gravity) {
@@ -229,20 +229,20 @@ void GravityProcess::run() {
 				     << zspeed << " heading " << headingold_r
 				     << " impulse " << heading_r << " ("
 				     << (xspeed - xspeedold) << "," << (yspeed - yspeedold)
-				     << "), terminate: " << terminate << std::endl;
+				     << "), terminate: " << terminate << Std::endl;
 #endif
 			} else {
 #ifdef BOUNCE_DIAG
 				pout << "item " << item_num << " bounce ["
 				     << Kernel::get_instance()->getFrameNum()
-				     << "]: no bounce" << std::endl;
+				     << "]: no bounce" << Std::endl;
 #endif
 			}
 		} else {
 #ifdef BOUNCE_DIAG
 			pout << "item " << item_num << " bounce ["
 			     << Kernel::get_instance()->getFrameNum()
-			     << "]: slow hit" << std::endl;
+			     << "]: slow hit" << Std::endl;
 #endif
 		}
 		if (terminate) {
@@ -277,7 +277,7 @@ void GravityProcess::run() {
 		     << Kernel::get_instance()->getFrameNum()
 		     << "]: speed was (" << xspeedold << ","
 		     << yspeedold << "," << zspeedold << ") new speed ("
-		     << xspeed << "," << yspeed << "," << zspeed << ")" << std::endl;
+		     << xspeed << "," << yspeed << "," << zspeed << ")" << Std::endl;
 #endif
 
 		item->setFlag(Item::FLG_BOUNCING);
@@ -347,7 +347,7 @@ void GravityProcess::dumpInfo() {
 	Process::dumpInfo();
 
 	pout << "gravity: " << gravity << ", speed: (" << xspeed << ","
-	     << yspeed << "," << zspeed << ")" << std::endl;
+	     << yspeed << "," << zspeed << ")" << Std::endl;
 }
 
 

@@ -143,10 +143,10 @@ public:
 private:
 	static World *world;
 
-	std::vector<Map *> maps;
+	Std::vector<Map *> maps;
 	CurrentMap *currentmap;
 
-	std::list<ObjId> ethereal;
+	Std::list<ObjId> ethereal;
 };
 
 } // End of namespace Ultima8

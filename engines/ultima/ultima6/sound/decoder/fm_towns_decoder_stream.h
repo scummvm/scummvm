@@ -29,7 +29,7 @@ class U6Lib_n;
 class U6Lzw;
 class NuvieIOBuffer;
 
-using std::string;
+using Std::string;
 
 class FMtownsDecoderStream : public Audio::RewindableAudioStream {
 public:
@@ -39,7 +39,7 @@ public:
 	}
 
 	FMtownsDecoderStream(unsigned char *buf, uint32 len);
-	FMtownsDecoderStream(std::string filename, uint16 sample_num, bool isCompressed = true);
+	FMtownsDecoderStream(Std::string filename, uint16 sample_num, bool isCompressed = true);
 	~FMtownsDecoderStream();
 
 	uint32 getLengthInMsec();

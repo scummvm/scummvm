@@ -51,10 +51,10 @@ struct ActionType {
 	int params[c_maxparams];
 };
 
-typedef std::map<uint32, ActionType> KeyMap;
+typedef Std::map<uint32, ActionType> KeyMap;
 
-typedef std::map<Common::String, Common::KeyCode> ParseKeyMap;
-typedef std::map<Common::String, const void *> ParseActionMap;
+typedef Std::map<Common::String, Common::KeyCode> ParseKeyMap;
+typedef Std::map<Common::String, const void *> ParseActionMap;
 
 class Configuration;
 
@@ -64,8 +64,8 @@ class KeyBinder {
 private:
 	KeyMap _bindings;
 
-	std::vector<std::string> _keyHelp;
-	std::vector<std::string> _cheatHelp;
+	Std::vector<Std::string> _keyHelp;
+	Std::vector<Std::string> _cheatHelp;
 	ParseKeyMap _keys;
 	ParseActionMap _actions;
 

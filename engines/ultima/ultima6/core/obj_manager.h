@@ -92,8 +92,8 @@ class ObjManager {
 
 	UseCode *usecode;
 
-	std::list<Obj *> temp_obj_list;
-	std::list<Obj *> tile_obj_list; // SE single instance 'map tile' objects
+	Std::list<Obj *> temp_obj_list;
+	Std::list<Obj *> tile_obj_list; // SE single instance 'map tile' objects
 	uint16 last_obj_blk_x, last_obj_blk_y;
 	uint8 last_obj_blk_z;
 

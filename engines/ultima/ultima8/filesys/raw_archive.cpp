@@ -75,7 +75,7 @@ uint8 *RawArchive::get_object(uint32 index) {
 		uint32 size = getRawSize(index);
 		if (size == 0) return 0;
 		uint8 *object = new uint8[size];
-		std::memcpy(object, objects[index], size);
+		Std::memcpy(object, objects[index], size);
 		return object;
 	}
 

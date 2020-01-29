@@ -114,7 +114,7 @@ TileManager::~TileManager() {
 }
 
 bool TileManager::loadTiles() {
-	std::string maptiles_path, masktype_path, path;
+	Std::string maptiles_path, masktype_path, path;
 	NuvieIOFileRead objtiles_vga;
 	NuvieIOFileRead tileindx_vga;
 	NuvieIOFileRead file;
@@ -398,7 +398,7 @@ void TileManager::update() {
 
 
 bool TileManager::loadTileFlag() {
-	std::string filename;
+	Std::string filename;
 	NuvieIOFileRead file;
 	uint16 i;
 
@@ -460,7 +460,7 @@ bool TileManager::loadTileFlag() {
 }
 
 bool TileManager::loadAnimData() {
-	std::string filename;
+	Std::string filename;
 	NuvieIOFileRead file;
 	uint8 i;
 	int gameType;
@@ -554,7 +554,7 @@ void TileManager::decodePixelBlockTile(unsigned char *tile_data, uint16 tile_num
 
 
 bool TileManager::loadAnimMask() {
-	std::string filename;
+	Std::string filename;
 	U6Lzw lzw;
 	uint16 i;
 	unsigned char *animmask;
@@ -799,7 +799,7 @@ const Tile *TileManager::get_gump_cursor_tile() {
 	return &gump_cursor;
 }
 
-Tile *TileManager::loadCustomTiles(const std::string filename, bool overwrite_tiles, bool copy_tileflags, uint16 tile_num_start_offset) {
+Tile *TileManager::loadCustomTiles(const Std::string filename, bool overwrite_tiles, bool copy_tileflags, uint16 tile_num_start_offset) {
 	NuvieBmpFile bmp;
 
 	if (bmp.load(filename) == false) {
@@ -899,7 +899,7 @@ void TileManager::freeCustomTiles() {
 	}
 }
 
-void TileManager::exportTilesetToBmpFile(std::string filename, bool fixupU6Shoreline) {
+void TileManager::exportTilesetToBmpFile(Std::string filename, bool fixupU6Shoreline) {
 	NuvieBmpFile bmp;
 
 	unsigned char pal[256 * 4];

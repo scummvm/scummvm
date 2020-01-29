@@ -431,8 +431,8 @@ void GUI::lock_input(GUI_Widget *widget) {
 			locked_widget = widget;
 }
 
-std::string GUI::get_data_dir() {
-	std::string datadir;
+Std::string GUI::get_data_dir() {
+	Std::string datadir;
 
 	config->value("config/datadir", datadir, "");
 

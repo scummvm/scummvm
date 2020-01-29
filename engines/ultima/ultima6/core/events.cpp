@@ -61,7 +61,7 @@ namespace Ultima6 {
 
 Events *Events::g_events;
 
-using std::string;
+using Std::string;
 
 EventInput_s::~EventInput_s() {
 	if (target_init) delete target_init;

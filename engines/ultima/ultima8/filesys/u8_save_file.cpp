@@ -51,7 +51,7 @@ bool U8SaveFile::isU8SaveFile(IDataSource *ds) {
 	ds->read(buf, 23);
 	buf[23] = '\0';
 
-	return (std::strncmp(buf, "Ultima 8 SaveGame File.", 23) == 0);
+	return (Std::strncmp(buf, "Ultima 8 SaveGame File.", 23) == 0);
 }
 
 bool U8SaveFile::readMetadata() {
@@ -65,7 +65,7 @@ bool U8SaveFile::readMetadata() {
 		uint32 namelen = ds->read4();
 		char *buf = new char[namelen];
 		ds->read(buf, static_cast<int32>(namelen));
-		std::string filename = buf;
+		Std::string filename = buf;
 		indices[filename] = i;
 		storeIndexedName(filename);
 		delete[] buf;
@@ -77,20 +77,20 @@ bool U8SaveFile::readMetadata() {
 	return true;
 }
 
-bool U8SaveFile::findIndex(const std::string &name, uint32 &index) {
-	std::map<Common::String, uint32>::iterator iter;
+bool U8SaveFile::findIndex(const Std::string &name, uint32 &index) {
+	Std::map<Common::String, uint32>::iterator iter;
 	iter = indices.find(name);
 	if (iter == indices.end()) return false;
 	index = iter->_value;
 	return true;
 }
 
-bool U8SaveFile::exists(const std::string &name) {
+bool U8SaveFile::exists(const Std::string &name) {
 	uint32 index;
 	return findIndex(name, index);
 }
 
-uint8 *U8SaveFile::getObject(const std::string &name, uint32 *sizep) {
+uint8 *U8SaveFile::getObject(const Std::string &name, uint32 *sizep) {
 	uint32 index;
 	if (!findIndex(name, index)) return 0;
 
@@ -109,7 +109,7 @@ uint8 *U8SaveFile::getObject(const std::string &name, uint32 *sizep) {
 }
 
 
-uint32 U8SaveFile::getSize(const std::string &name) {
+uint32 U8SaveFile::getSize(const Std::string &name) {
 	uint32 index;
 	if (!findIndex(name, index)) return 0;
 

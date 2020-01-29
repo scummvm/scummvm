@@ -37,7 +37,7 @@ class Font;
 class FontManager {
 	Configuration *config;
 
-	std::vector<Font *> fonts;
+	Std::vector<Font *> fonts;
 	uint16 num_fonts;
 	Font *conv_font;
 	Font *conv_garg_font;
@@ -62,7 +62,7 @@ public:
 protected:
 
 	bool initU6();
-	bool initWOU(std::string filename);
+	bool initWOU(Std::string filename);
 	bool initWOUSystemFont();
 	bool initConvFonts(nuvie_game_t game_type);
 };

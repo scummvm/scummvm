@@ -69,7 +69,7 @@ void TimeQueue::clear() {
  * `evtime'.
  */
 void TimeQueue::add_timer(TimedEvent *tevent) {
-	std::list<TimedEvent *>::iterator t;
+	Std::list<TimedEvent *>::iterator t;
 	if (tq.empty()) {
 		tq.push_front(tevent);
 		return;
@@ -86,7 +86,7 @@ void TimeQueue::add_timer(TimedEvent *tevent) {
 /* Remove timed event from queue.
  */
 void TimeQueue::remove_timer(TimedEvent *tevent) {
-	std::list<TimedEvent *>::iterator t;
+	Std::list<TimedEvent *>::iterator t;
 	t = tq.begin();
 	while (t != tq.end()) {
 		if (*t == tevent) {
@@ -558,7 +558,7 @@ TimedAdvance::TimedAdvance(uint8 hours, uint16 r)
 
 /* Advance to time indicated by timestring, of the format "HH:MM".
  */
-TimedAdvance::TimedAdvance(std::string timestring, uint16 r)
+TimedAdvance::TimedAdvance(Std::string timestring, uint16 r)
 	: TimedCallback(NULL, NULL, 1000 / TIMEADVANCE_PER_SECOND, true),
 	  _clock(Game::get_game()->get_clock()),
 	  minutes_this_hour(0), minutes(0) {
@@ -638,7 +638,7 @@ bool TimedAdvance::time_passed() {
 
 /* Set hour and minute from "HH:MM" string.
  */
-void TimedAdvance::get_time_from_string(uint8 &hour, uint8 &minute, std::string timestring) {
+void TimedAdvance::get_time_from_string(uint8 &hour, uint8 &minute, Std::string timestring) {
 	char *hour_s = NULL, *minute_s = NULL;
 	hour_s = scumm_strdup(timestring.c_str());
 	for (uint32 c = 0; c < strlen(hour_s); c++)

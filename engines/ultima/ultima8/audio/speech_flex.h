@@ -31,7 +31,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 class SpeechFlex : public SoundFlex {
-	std::vector<Pentagram::istring> phrases;
+	Std::vector<Pentagram::istring> phrases;
 
 public:
 	// p_dynamic_class stuff
@@ -40,11 +40,11 @@ public:
 	SpeechFlex(IDataSource *ds);
 	virtual ~SpeechFlex(void);
 
-	int getIndexForPhrase(const std::string &phrase,
+	int getIndexForPhrase(const Std::string &phrase,
 	                      uint32 start, uint32 &end) const;
 
 	//! get total length (in milliseconds) of speech for a phrase
-	uint32 getSpeechLength(const std::string &phrase);
+	uint32 getSpeechLength(const Std::string &phrase);
 };
 
 } // End of namespace Ultima8

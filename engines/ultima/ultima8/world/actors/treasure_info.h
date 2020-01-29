@@ -30,11 +30,11 @@ namespace Ultima {
 namespace Ultima8 {
 
 struct TreasureInfo {
-	std::string special;
+	Std::string special;
 	double chance;
 	int map;
-	std::vector<uint32> shapes;
-	std::vector<uint32> frames;
+	Std::vector<uint32> shapes;
+	Std::vector<uint32> frames;
 	unsigned int mincount, maxcount;
 
 	TreasureInfo() : chance(1), map(0), mincount(1), maxcount(1) {}

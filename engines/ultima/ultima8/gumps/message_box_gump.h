@@ -33,15 +33,15 @@ namespace Ultima {
 namespace Ultima8 {
 
 class MessageBoxGump : public ModalGump {
-	std::string title;
-	std::string message;
-	std::vector<std::string> buttons;
+	Std::string title;
+	Std::string message;
+	Std::vector<Std::string> buttons;
 	int title_colour;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	MessageBoxGump();
-	MessageBoxGump(const std::string &title, const std::string &message, uint32 title_colour, std::vector<std::string> *buttons);
+	MessageBoxGump(const Std::string &title, const Std::string &message, uint32 title_colour, Std::vector<Std::string> *buttons);
 	virtual ~MessageBoxGump();
 
 	// Init the gump, call after construction
@@ -58,8 +58,8 @@ public:
 	//! \param title_colour The colour to be displayed behind the title bar
 	//! \param buttons Array of button names to be displayed. Default is "Ok"
 	//! \return Pid of process that will have the result when finished
-	static ProcId Show(std::string title, std::string message, uint32 title_colour = 0xFF30308F, std::vector<std::string> *buttons = 0);
-	static ProcId Show(std::string title, std::string message, std::vector<std::string> *buttons) {
+	static ProcId Show(Std::string title, Std::string message, uint32 title_colour = 0xFF30308F, Std::vector<Std::string> *buttons = 0);
+	static ProcId Show(Std::string title, Std::string message, Std::vector<Std::string> *buttons) {
 		return Show(title, message, 0xFF30308F, buttons);
 	}
 

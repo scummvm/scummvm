@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 
 namespace Ultima {
-namespace std {
+namespace Std {
 
 enum Precision { hex = 16, dec = 10 };
 
@@ -60,7 +60,7 @@ extern void *malloc(size_t size);
 extern void *calloc(size_t num, size_t size);
 extern void free(void *&p);
 
-} // End of namespace std
+} // End of namespace Std
 } // End of namespace Ultima
 
 #endif

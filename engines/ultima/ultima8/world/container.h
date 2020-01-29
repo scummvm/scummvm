@@ -117,7 +117,7 @@ protected:
 	//! save Container data
 	virtual void saveData(ODataSource *ods);
 
-	std::list<Item *> contents;
+	Std::list<Item *> contents;
 };
 
 } // End of namespace Ultima8

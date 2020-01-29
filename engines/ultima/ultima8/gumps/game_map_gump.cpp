@@ -72,7 +72,7 @@ GameMapGump::GameMapGump(int X, int Y, int Width, int Height) :
 	dims.x -= dims.w / 2;
 	dims.y -= dims.h / 2;
 
-	pout << "Create display_list ItemSorter object" << std::endl;
+	pout << "Create display_list ItemSorter object" << Std::endl;
 	display_list = new ItemSorter();
 }
 
@@ -135,12 +135,12 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 			// Not fast, ignore
 			if (!map->isChunkFast(cx, cy)) continue;
 
-			const std::list<Item *> *items = map->getItemList(cx, cy);
+			const Std::list<Item *> *items = map->getItemList(cx, cy);
 
 			if (!items) continue;
 
-			std::list<Item *>::const_iterator it = items->begin();
-			std::list<Item *>::const_iterator end = items->end();
+			Std::list<Item *>::const_iterator it = items->begin();
+			Std::list<Item *>::const_iterator end = items->end();
 			for (; it != end; ++it) {
 				Item *item = *it;
 				if (!item) continue;
@@ -315,7 +315,7 @@ void GameMapGump::OnMouseClick(int button, int mx, int my) {
 		if (Mouse::get_instance()->isMouseDownEvent(Shared::BUTTON_RIGHT)) break;
 
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-			pout << "Can't: avatarInStasis" << std::endl;
+			pout << "Can't: avatarInStasis" << Std::endl;
 			break;
 		}
 
@@ -383,7 +383,7 @@ void GameMapGump::OnMouseDouble(int button, int mx, int my) {
 		if (Mouse::get_instance()->isMouseDownEvent(Shared::BUTTON_RIGHT)) break;
 
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
-			pout << "Can't: avatarInStasis" << std::endl;
+			pout << "Can't: avatarInStasis" << Std::endl;
 			break;
 		}
 
@@ -511,7 +511,7 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 		ObjId bp = avatar->getEquip(7); // !! constant
 		Container *backpack = getContainer(bp);
 		if (backpack && item->moveToContainer(backpack)) {
-			pout << "Dropped item in backpack" << std::endl;
+			pout << "Dropped item in backpack" << Std::endl;
 			item->randomGumpLocation();
 			return;
 		}
@@ -521,7 +521,7 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 	                      dragging_pos[0], dragging_pos[1], dragging_pos[2])) {
 		// can't reach, so throw
 		pout << "Throwing item to (" << dragging_pos[0] << ","
-		     << dragging_pos[1] << "," << dragging_pos[2] << ")" << std::endl;
+		     << dragging_pos[1] << "," << dragging_pos[2] << ")" << Std::endl;
 		int speed = 64 - item->getTotalWeight() + avatar->getStr();
 		if (speed < 1) speed = 1;
 		int32 ax, ay, az;
@@ -549,7 +549,7 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 #endif
 	} else {
 		pout << "Dropping item at (" << dragging_pos[0] << ","
-		     << dragging_pos[1] << "," << dragging_pos[2] << ")" << std::endl;
+		     << dragging_pos[1] << "," << dragging_pos[2] << ")" << Std::endl;
 
 		// CHECKME: collideMove and grab (in StopDraggingItem)
 		// both call release on supporting items.
@@ -571,7 +571,7 @@ void GameMapGump::ConCmd_dumpMap(const Console::ArgvType &) {
 
 	// Save because we're going to potentially break the game by enlarging
 	// the fast area and available object IDs.
-	std::string savefile = "@save/dumpmap";
+	Std::string savefile = "@save/dumpmap";
 	Ultima8Engine::get_instance()->saveGame(savefile, "Pre-dumpMap save");
 
 	// Increase number of available object IDs.
@@ -595,7 +595,7 @@ void GameMapGump::ConCmd_dumpMap(const Console::ArgvType &) {
 	// Now render the map
 	for (int32 y = 0; y < 64; y++) {
 		for (int32 x = 0; x < 64; x++) {
-			const std::list<Item *> *list =
+			const Std::list<Item *> *list =
 			    World::get_instance()->getCurrentMap()->getItemList(x, y);
 
 			// Should iterate the items!
@@ -649,17 +649,17 @@ void GameMapGump::ConCmd_dumpMap(const Console::ArgvType &) {
 	                   bheight);
 	Texture *t = s->GetSurfaceAsTexture();
 	// clear buffer
-	std::memset(t->buffer, 0, 4 * bwidth * bheight);
+	Std::memset(t->buffer, 0, 4 * bwidth * bheight);
 
 
 	// Write tga header
-	std::string filename = "@home/mapdump";
+	Std::string filename = "@home/mapdump";
 	char buf[32];
 	sprintf(buf, "%02d",  World::get_instance()->getCurrentMap()->getNum());
 	filename += buf;
 	filename += ".png";
 	ODataSource *ds = FileSystem::get_instance()->WriteFile(filename);
-	std::string pngcomment = "Map ";
+	Std::string pngcomment = "Map ";
 	pngcomment += buf;
 	pngcomment += ", dumped by Pentagram.";
 
@@ -698,7 +698,7 @@ void GameMapGump::ConCmd_dumpMap(const Console::ArgvType &) {
 			pngw->writeRows(bheight, t);
 
 			// clear buffer for next set
-			std::memset(t->buffer, 0, 4 * bwidth * bheight);
+			Std::memset(t->buffer, 0, 4 * bwidth * bheight);
 		}
 	}
 
@@ -713,7 +713,7 @@ void GameMapGump::ConCmd_dumpMap(const Console::ArgvType &) {
 	// Reload
 	Ultima8Engine::get_instance()->loadGame(savefile);
 
-	pout << "Map stored in " << filename << "." << std::endl;
+	pout << "Map stored in " << filename << "." << Std::endl;
 #endif
 }
 

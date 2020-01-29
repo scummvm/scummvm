@@ -48,7 +48,7 @@
 // Empty string
 namespace Ultima {
 namespace Ultima8 {
-extern const std::string c_empty_string;
+extern const Std::string c_empty_string;
 } // End of namespace Ultima8
 } // End of namespace Ultima
 
@@ -70,8 +70,8 @@ extern const std::string c_empty_string;
 // Debugging
 //
 #ifdef DEBUG
-#  define POUT(x)       do { pout << x << std::endl; pout.flush(); } while (0)
-#  define PERR(x)       do { perr << x << std::endl; perr.flush(); } while (0)
+#  define POUT(x)       do { pout << x << Std::endl; pout.flush(); } while (0)
+#  define PERR(x)       do { perr << x << Std::endl; perr.flush(); } while (0)
 #else
 #  define POUT(x)       do { } while(0)
 #  define PERR(x)       do { } while(0)

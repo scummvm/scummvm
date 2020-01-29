@@ -172,7 +172,7 @@ void AvatarMoverProcess::handleCombatMode() {
 	// if we were blocking, and no longer holding the mouse, stop
 	if (lastanim == Animation::startBlock &&
 	        !(mouseButton[0].state & MBS_DOWN)) {
-//		pout << "AvatarMover: combat stop blocking" << std::endl;
+//		pout << "AvatarMover: combat stop blocking" << Std::endl;
 		waitFor(avatar->doAnim(Animation::stopBlock, direction));
 		return;
 	}
@@ -208,7 +208,7 @@ void AvatarMoverProcess::handleCombatMode() {
 		if (lastanim == Animation::startBlock)
 			return;
 
-//		pout << "AvatarMover: combat block" << std::endl;
+//		pout << "AvatarMover: combat block" << Std::endl;
 
 		if (checkTurn(mousedir, false)) return;
 
@@ -224,7 +224,7 @@ void AvatarMoverProcess::handleCombatMode() {
 
 		if (canAttack()) {
 			// double left click = attack
-//			pout << "AvatarMover: combat attack" << std::endl;
+//			pout << "AvatarMover: combat attack" << Std::endl;
 
 			if (checkTurn(mousedir, true)) return;
 
@@ -255,7 +255,7 @@ void AvatarMoverProcess::handleCombatMode() {
 
 		if (canAttack()) {
 			// double right click = kick
-//			pout << "AvatarMover: combat kick" << std::endl;
+//			pout << "AvatarMover: combat kick" << Std::endl;
 
 			if (checkTurn(mousedir, false)) return;
 
@@ -347,7 +347,7 @@ void AvatarMoverProcess::handleNormalMode() {
 	// If Avatar has fallen down, stand up.
 	if (lastanim == Animation::die || lastanim == Animation::fallBackwards) {
 		if (!stasis) {
-//			pout << "AvatarMover: standing up" << std::endl;
+//			pout << "AvatarMover: standing up" << Std::endl;
 			waitFor(avatar->doAnim(Animation::standUp, direction));
 		}
 		return;
@@ -355,7 +355,7 @@ void AvatarMoverProcess::handleNormalMode() {
 
 	// If still in combat stance, sheathe weapon
 	if (!stasis && Animation::isCombatAnim(lastanim)) {
-//		pout << "AvatarMover: sheathing weapon" << std::endl;
+//		pout << "AvatarMover: sheathing weapon" << Std::endl;
 
 		ProcId anim1 = avatar->doAnim(Animation::unreadyWeapon, direction);
 		ProcId anim2 = avatar->doAnim(Animation::stand, direction);
@@ -490,11 +490,11 @@ void AvatarMoverProcess::handleNormalMode() {
 		// check if we need to do a running jump
 		if (lastanim == Animation::run ||
 		        lastanim == Animation::runningJump) {
-			pout << "AvatarMover: running jump" << std::endl;
+			pout << "AvatarMover: running jump" << Std::endl;
 			jump(Animation::runningJump, direction);
 			return;
 		} else if (mouselength > 0) {
-			pout << "AvatarMover: jump" << std::endl;
+			pout << "AvatarMover: jump" << Std::endl;
 			jump(Animation::jump, direction);
 			return;
 		}

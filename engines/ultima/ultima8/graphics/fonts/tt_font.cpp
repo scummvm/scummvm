@@ -89,10 +89,10 @@ int TTFont::getBaselineSkip() {
 
 #ifdef TODO
 template<class T>
-static uint16 *toUnicode(const std::string &text, uint16 bullet) {
-	std::string::size_type l = T::length(text);
+static uint16 *toUnicode(const Std::string &text, uint16 bullet) {
+	Std::string::size_type l = T::length(text);
 	Common::U32String unicodeText = new uint16[l + 1];
-	std::string::const_iterator iter = text.begin();
+	Std::string::const_iterator iter = text.begin();
 	for (unsigned int i = 0; i < l; ++i) {
 		uint32 u = T::unicode(iter);
 		if (u > 0xFFFF) {
@@ -109,12 +109,12 @@ static uint16 *toUnicode(const std::string &text, uint16 bullet) {
 }
 #else
 template<class T>
-static Common::U32String toUnicode(const std::string &text, uint16 bullet) {
+static Common::U32String toUnicode(const Std::string &text, uint16 bullet) {
 	return Common::U32String(text);
 }
 #endif
 
-void TTFont::getStringSize(const std::string &text, int &width, int &height) {
+void TTFont::getStringSize(const Std::string &text, int &width, int &height) {
 	// convert to unicode
 	Common::U32String unicodeText;
 	if (!SJIS)
@@ -129,12 +129,12 @@ void TTFont::getStringSize(const std::string &text, int &width, int &height) {
 	height += 2 * bordersize;
 }
 
-void TTFont::getTextSize(const std::string &text,
+void TTFont::getTextSize(const Std::string &text,
                          int &resultwidth, int &resultheight,
                          unsigned int &remaining,
                          int width, int height, TextAlign align,
                          bool u8specials) {
-	std::list<PositionedText> tmp;
+	Std::list<PositionedText> tmp;
 	if (!SJIS)
 		tmp = typesetText<Traits>(this, text, remaining,
 		                          width, height, align, u8specials,
@@ -146,13 +146,13 @@ void TTFont::getTextSize(const std::string &text,
 }
 
 
-RenderedText *TTFont::renderText(const std::string &text,
+RenderedText *TTFont::renderText(const Std::string &text,
                                  unsigned int &remaining,
                                  int width, int height,
                                  TextAlign align, bool u8specials,
-                                 std::string::size_type cursor) {
+                                 Std::string::size_type cursor) {
 	int resultwidth, resultheight;
-	std::list<PositionedText> lines;
+	Std::list<PositionedText> lines;
 	if (!SJIS)
 		lines = typesetText<Traits>(this, text, remaining,
 		                            width, height, align, u8specials,
@@ -172,10 +172,10 @@ RenderedText *TTFont::renderText(const std::string &text,
 	texture->height = resultheight;
 
 #if 0
-	pout << "Total size: " << resultwidth << "," << resultheight << std::endl;
+	pout << "Total size: " << resultwidth << "," << resultheight << Std::endl;
 #endif
 
-	std::list<PositionedText>::iterator iter;
+	Std::list<PositionedText>::iterator iter;
 	for (iter = lines.begin(); iter != lines.end(); ++iter) {
 		// convert to unicode
 		Common::U32String unicodeText;
@@ -204,7 +204,7 @@ RenderedText *TTFont::renderText(const std::string &text,
 #if 0
 		pout << iter->dims.w << "," << iter->dims.h << " vs. "
 			    << textSurf.w << "," << textSurf.h << ": " << iter->text
-			    << std::endl;
+			    << Std::endl;
 #endif
 
 		// render the text surface into our texture buffer
@@ -291,7 +291,7 @@ RenderedText *TTFont::renderText(const std::string &text,
 			}
 		}
 
-		if (iter->cursor != std::string::npos) {
+		if (iter->cursor != Std::string::npos) {
 			assert(iter->cursor <= iter->text.size());
 			unicodeText = Common::U32String(unicodeText.c_str(), iter->cursor);
 

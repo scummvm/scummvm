@@ -42,7 +42,7 @@ CreditsGump::CreditsGump()
 
 }
 
-CreditsGump::CreditsGump(const std::string &text_, int parskip_,
+CreditsGump::CreditsGump(const Std::string &text_, int parskip_,
                          uint32 _Flags, int32 layer_)
 	: ModalGump(0, 0, 320, 200, 0, _Flags, layer_) {
 	text = text_;
@@ -96,8 +96,8 @@ void CreditsGump::Close(bool no_del) {
 	if (musicproc) musicproc->playMusic(0);
 }
 
-void CreditsGump::extractLine(std::string &text_,
-                              char &modifier, std::string &line) {
+void CreditsGump::extractLine(Std::string &text_,
+                              char &modifier, Std::string &line) {
 	if (text_.empty()) {
 		line = "";
 		modifier = 0;
@@ -112,18 +112,18 @@ void CreditsGump::extractLine(std::string &text_,
 		modifier = 0;
 	}
 
-	std::string::size_type starpos = text_.find('*');
+	Std::string::size_type starpos = text_.find('*');
 
 	line = text_.substr(0, starpos);
 
 	// replace '%%' by '%'.
 	// (Original interpreted these strings as format strings??)
-	std::string::size_type ppos;
-	while ((ppos = line.find("%%")) != std::string::npos) {
+	Std::string::size_type ppos;
+	while ((ppos = line.find("%%")) != Std::string::npos) {
 		line.replace(ppos, 2, "%");
 	}
 
-	if (starpos != std::string::npos) starpos++;
+	if (starpos != Std::string::npos) starpos++;
 	text_.erase(0, starpos);
 }
 
@@ -137,7 +137,7 @@ void CreditsGump::run() {
 	}
 
 	if (state == CS_CLOSING) {
-		// pout << "CreditsGump: closing" << std::endl;
+		// pout << "CreditsGump: closing" << Std::endl;
 		Close();
 		return;
 	}
@@ -154,7 +154,7 @@ void CreditsGump::run() {
 	if (available == 0) nextblock = 0;
 
 	if (state == CS_FINISHING && available <= 156) {
-		// pout << "CreditsGump: waiting before closing" << std::endl;
+		// pout << "CreditsGump: waiting before closing" << Std::endl;
 		timer = 120;
 		state = CS_CLOSING;
 
@@ -182,15 +182,15 @@ void CreditsGump::run() {
 		bool done = false;
 		bool firstline = true;
 		while (!text.empty() && !done) {
-			std::string::size_type endline = text.find('\n');
-			std::string line = text.substr(0, endline);
+			Std::string::size_type endline = text.find('\n');
+			Std::string line = text.substr(0, endline);
 
 			if (line.empty()) {
 				text.erase(0, 1);
 				continue;
 			}
 
-			// pout << "Rendering paragraph: " << line << std::endl;
+			// pout << "Rendering paragraph: " << line << Std::endl;
 
 			if (line[0] == '+') {
 				// set title
@@ -201,7 +201,7 @@ void CreditsGump::run() {
 					continue;
 				}
 
-				std::string titletext;
+				Std::string titletext;
 				char modifier;
 
 				extractLine(line, modifier, titletext);
@@ -227,12 +227,12 @@ void CreditsGump::run() {
 				int indent = 0;
 
 				while (!line.empty()) {
-					std::string outline;
+					Std::string outline;
 					char modifier;
 					unsigned int remaining;
 					extractLine(line, modifier, outline);
 
-					// pout << "Rendering line: " << outline << std::endl;
+					// pout << "Rendering line: " << outline << Std::endl;
 
 					switch (modifier) {
 					case '&':
@@ -249,7 +249,7 @@ void CreditsGump::run() {
 						indent = 32;
 						break;
 					case '@':
-						// pout << "CreditsGump: done, finishing" << std::endl;
+						// pout << "CreditsGump: done, finishing" << Std::endl;
 						state = CS_FINISHING;
 						break;
 					default:
@@ -319,7 +319,7 @@ void CreditsGump::run() {
 			}
 
 
-			if (endline != std::string::npos) endline++;
+			if (endline != Std::string::npos) endline++;
 			text.erase(0, endline);
 
 			firstline = false;

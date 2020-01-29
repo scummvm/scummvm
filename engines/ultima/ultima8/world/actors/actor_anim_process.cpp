@@ -108,7 +108,7 @@ bool ActorAnimProcess::init() {
 		//! Or maybe wait until the previous one finishes?
 
 		perr << "ActorAnimProcess [" << getPid() << "]: ANIMLOCK set on actor "
-		     << item_num << std::endl;
+		     << item_num << Std::endl;
 
 		// for now, just don't play this one.
 		return false;
@@ -131,7 +131,7 @@ bool ActorAnimProcess::init() {
 	if (item_num == watchactor)
 		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
 		     << "] ActorAnimProcess " << getPid() << " created ("
-		     << action << "," << dir << ") steps " << steps << std::endl;
+		     << action << "," << dir << ") steps " << steps << Std::endl;
 #endif
 
 	return true;
@@ -182,7 +182,7 @@ void ActorAnimProcess::run() {
 			pout << "Animation ["
 			     << Kernel::get_instance()->getFrameNum()
 			     << "] ActorAnimProcess left fastarea; terminating"
-			     << std::endl;
+			     << Std::endl;
 #endif
 		terminate();
 		return;
@@ -207,7 +207,7 @@ void ActorAnimProcess::run() {
 					pout << "Animation ["
 					     << Kernel::get_instance()->getFrameNum()
 					     << "] ActorAnimProcess done; terminating"
-					     << std::endl;
+					     << Std::endl;
 #endif
 
 				// TODO: there are _three_ places where we can fall; clean up
@@ -216,7 +216,7 @@ void ActorAnimProcess::run() {
 					if (item_num == watchactor) {
 						pout << "Animation ["
 						     << Kernel::get_instance()->getFrameNum()
-						     << "] falling" << std::endl;
+						     << "] falling" << Std::endl;
 					}
 #endif
 					int32 dx, dy, dz;
@@ -240,7 +240,7 @@ void ActorAnimProcess::run() {
 					pout << "Animation ["
 					     << Kernel::get_instance()->getFrameNum()
 					     << "] ActorAnimProcess blocked; terminating"
-					     << std::endl;
+					     << Std::endl;
 #endif
 
 				if (tracker->isUnsupported()) {
@@ -248,7 +248,7 @@ void ActorAnimProcess::run() {
 					if (item_num == watchactor) {
 						pout << "Animation ["
 						     << Kernel::get_instance()->getFrameNum()
-						     << "] falling" << std::endl;
+						     << "] falling" << Std::endl;
 					}
 #endif
 					// no inertia here because we just crashed into something
@@ -299,7 +299,7 @@ void ActorAnimProcess::run() {
 #ifdef WATCHACTOR
 		if (item_num == watchactor) {
 			pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-			     << "] moved, so aborting this frame." << std::endl;
+			     << "] moved, so aborting this frame." << Std::endl;
 		}
 #endif
 	}
@@ -311,7 +311,7 @@ void ActorAnimProcess::run() {
 			pout << "Animation ["
 			     << Kernel::get_instance()->getFrameNum()
 			     << "] ActorAnimProcess left fastarea; terminating"
-			     << std::endl;
+			     << Std::endl;
 #endif
 		terminate();
 		return;
@@ -329,7 +329,7 @@ void ActorAnimProcess::run() {
 		if (tracker->isBlocked()) pout << "B";
 		if (tracker->isUnsupported()) pout << "U";
 		if (tracker->hitSomething()) pout << "H";
-		pout << std::endl;
+		pout << Std::endl;
 	}
 #endif
 
@@ -341,7 +341,7 @@ void ActorAnimProcess::run() {
 #ifdef WATCHACTOR
 			if (item_num == watchactor) {
 				pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-				     << "] falling" << std::endl;
+				     << "] falling" << Std::endl;
 			}
 #endif
 
@@ -602,7 +602,7 @@ void ActorAnimProcess::terminate() {
 		pout << "Animation ["
 		     << Kernel::get_instance()->getFrameNum()
 		     << "] ActorAnimProcess terminating"
-		     << std::endl;
+		     << Std::endl;
 #endif
 	Actor *a = getActor(item_num);
 	if (a) {
@@ -615,7 +615,7 @@ void ActorAnimProcess::terminate() {
 					pout << "Animation ["
 					     << Kernel::get_instance()->getFrameNum()
 					     << "] ActorAnimProcess destroying actor " << item_num
-					     << std::endl;
+					     << Std::endl;
 #endif
 				Process *vanishproc = new DestroyItemProcess(a);
 				Kernel::get_instance()->addProcess(vanishproc);
@@ -632,7 +632,7 @@ void ActorAnimProcess::terminate() {
 
 void ActorAnimProcess::dumpInfo() {
 	Process::dumpInfo();
-	pout << "action: " << action << ", dir: " << dir << std::endl;
+	pout << "action: " << action << ", dir: " << dir << Std::endl;
 }
 
 void ActorAnimProcess::saveData(ODataSource *ods) {

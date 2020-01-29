@@ -48,7 +48,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-using std::list; // too messy otherwise
+using Std::list; // too messy otherwise
 using Pentagram::Rect;
 typedef list<Item *> item_list;
 
@@ -63,7 +63,7 @@ CurrentMap::CurrentMap()
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
 		items[i] = new list<Item *>[MAP_NUM_CHUNKS];
 		fast[i] = new uint32[MAP_NUM_CHUNKS / 32];
-		std::memset(fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
+		Std::memset(fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
 	}
 
 	if (GAME_IS_U8) {
@@ -95,7 +95,7 @@ void CurrentMap::clear() {
 				delete *iter;
 			items[i][j].clear();
 		}
-		std::memset(fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
+		Std::memset(fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
 	}
 
 	fast_x_min =  fast_y_min = fast_x_max = fast_y_max = -1;
@@ -201,7 +201,7 @@ void CurrentMap::loadMap(Map *map) {
 
 	// Clear fast area
 	for (unsigned int i = 0; i < MAP_NUM_CHUNKS; i++) {
-		std::memset(fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
+		Std::memset(fast[i], false, sizeof(uint32)*MAP_NUM_CHUNKS / 32);
 	}
 	fast_x_min = -1;
 	fast_y_min = -1;
@@ -246,7 +246,7 @@ void CurrentMap::addItem(Item *item) {
 	if (ix < 0 || ix >= mapChunkSize * MAP_NUM_CHUNKS ||
 	        iy < 0 || iy >= mapChunkSize * MAP_NUM_CHUNKS) {
 		perr << "Skipping item " << item->getObjId() << ": out of range ("
-		     << ix << "," << iy << ")" << std::endl;
+		     << ix << "," << iy << ")" << Std::endl;
 		return;
 	}
 
@@ -272,7 +272,7 @@ void CurrentMap::addItemToEnd(Item *item) {
 	if (ix < 0 || ix >= mapChunkSize * MAP_NUM_CHUNKS ||
 	        iy < 0 || iy >= mapChunkSize * MAP_NUM_CHUNKS) {
 		perr << "Skipping item " << item->getObjId() << ": out of range ("
-		     << ix << "," << iy << ")" << std::endl;
+		     << ix << "," << iy << ")" << Std::endl;
 		return;
 	}
 
@@ -307,7 +307,7 @@ void CurrentMap::removeItemFromList(Item *item, int32 oldx, int32 oldy) {
 	if (oldx < 0 || oldx >= mapChunkSize * MAP_NUM_CHUNKS ||
 	        oldy < 0 || oldy >= mapChunkSize * MAP_NUM_CHUNKS) {
 		perr << "Skipping item " << item->getObjId() << ": out of range ("
-		     << oldx << "," << oldy << ")" << std::endl;
+		     << oldx << "," << oldy << ")" << Std::endl;
 		return;
 	}
 
@@ -705,8 +705,8 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 				if (item->getShape() == 145) {
 					perr << "Shape 145: (" << ix - ixd << "," << iy - iyd << ","
 					     << iz << ")-(" << ix << "," << iy << "," << iz + izd
-					     << ")" << std::endl;
-					if (!si->is_solid()) perr << "not solid" << std::endl;
+					     << ")" << Std::endl;
+					if (!si->is_solid()) perr << "not solid" << Std::endl;
 				}
 #endif
 
@@ -926,7 +926,7 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, Item *item,
 bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
                            const int32 dims[3], uint32 shapeflags,
                            ObjId item, bool blocking_only,
-                           std::list<SweepItem> *hit) {
+                           Std::list<SweepItem> *hit) {
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
 
 	int i;
@@ -968,12 +968,12 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 	centre[1] = start[1] - ext[1];
 	centre[2] = start[2] + ext[2];
 
-//	pout << "Sweeping from (" << -ext[0] << ", " << -ext[1] << ", " << -ext[2] << ")" << std::endl;
-//	pout << "              (" << ext[0] << ", " << ext[1] << ", " << ext[2] << ")" << std::endl;
-//	pout << "Sweeping to   (" << vel[0]-ext[0] << ", " << vel[1]-ext[1] << ", " << vel[2]-ext[2] << ")" << std::endl;
-//	pout << "              (" << vel[0]+ext[0] << ", " << vel[1]+ext[1] << ", " << vel[2]+ext[2] << ")" << std::endl;
+//	pout << "Sweeping from (" << -ext[0] << ", " << -ext[1] << ", " << -ext[2] << ")" << Std::endl;
+//	pout << "              (" << ext[0] << ", " << ext[1] << ", " << ext[2] << ")" << Std::endl;
+//	pout << "Sweeping to   (" << vel[0]-ext[0] << ", " << vel[1]-ext[1] << ", " << vel[2]-ext[2] << ")" << Std::endl;
+//	pout << "              (" << vel[0]+ext[0] << ", " << vel[1]+ext[1] << ", " << vel[2]+ext[2] << ")" << Std::endl;
 
-	std::list<SweepItem>::iterator sw_it;
+	Std::list<SweepItem>::iterator sw_it;
 	if (hit) sw_it = hit->end();
 
 	for (int cx = minx; cx <= maxx; cx++) {
@@ -1104,7 +1104,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 				//the first time of overlap occurred
 				//before the last time of overlap
 				if (first <= last) {
-					//pout << "Hit item " << other_item->getObjId() << " at first: " << first << "  last: " << last << std::endl;
+					//pout << "Hit item " << other_item->getObjId() << " at first: " << first << "  last: " << last << Std::endl;
 
 					if (!hit) return true;
 
@@ -1127,11 +1127,11 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
 
 					// Now add it
 					sw_it = hit->insert(sw_it, SweepItem(other_item->getObjId(), first, last, touch, touch_floor, blocking, dirs));
-//					pout << "Hit item " << other_item->getObjId() << " at (" << first << "," << last << ")" << std::endl;
-//					pout << "hit item      (" << other[0] << ", " << other[1] << ", " << other[2] << ")" << std::endl;
+//					pout << "Hit item " << other_item->getObjId() << " at (" << first << "," << last << ")" << Std::endl;
+//					pout << "hit item      (" << other[0] << ", " << other[1] << ", " << other[2] << ")" << Std::endl;
 //					pout << "hit item time (" << u_0[0] << "-" << u_1[0] << ") (" << u_0[1] << "-" << u_1[1] << ") ("
-//						 << u_0[2] << "-" << u_1[2] << ")" << std::endl;
-//					pout << "touch: " << touch << ", floor: " << touch_floor << ", block: " << blocking << std::endl;
+//						 << u_0[2] << "-" << u_1[2] << ")" << Std::endl;
+//					pout << "touch: " << touch << ", floor: " << touch_floor << ", block: " << blocking << Std::endl;
 				}
 			}
 		}

@@ -70,7 +70,7 @@ void SplitItemProcess::run() {
 	uint16 targetcount = targetitem->getQuality() + movecount;
 
 	pout << "SplitItemProcess splitting: " << movecount << ": "
-	     << origcount << "-" << targetcount << std::endl;
+	     << origcount << "-" << targetcount << Std::endl;
 
 	if (targetcount > 0) {
 		targetitem->setQuality(targetcount);

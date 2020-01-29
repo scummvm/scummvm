@@ -44,7 +44,7 @@ bool NuvieFileList::open(const char *directory, const char *search, uint8 s_mode
 	sort_mode = s_mode;
 
 	if (!dir.isDirectory()) {
-		ConsoleAddWarning(std::string("Failed to open ") + directory);
+		ConsoleAddWarning(Std::string("Failed to open ") + directory);
 		return false;
 	}
 
@@ -69,10 +69,10 @@ bool NuvieFileList::add_filename(const Common::FSNode &file) {
 	return true;
 }
 
-std::string *NuvieFileList::next() {
+Std::string *NuvieFileList::next() {
 	if (list_ptr != file_list.end()) {
 
-		std::string *filename = &((*list_ptr).filename);
+		Std::string *filename = &((*list_ptr).filename);
 		list_ptr++;
 
 		return filename;
@@ -81,13 +81,13 @@ std::string *NuvieFileList::next() {
 	return NULL;
 }
 
-std::string *NuvieFileList::get_latest() {
-	std::list<NuvieFileDesc>::iterator iter;
+Std::string *NuvieFileList::get_latest() {
+	Std::list<NuvieFileDesc>::iterator iter;
 
 	iter = file_list.begin();
 
 	if (iter != file_list.end()) {
-		std::string *filename = &((*iter).filename);
+		Std::string *filename = &((*iter).filename);
 
 		return filename;
 	}
@@ -103,9 +103,9 @@ void NuvieFileList::close() {
 	return;
 }
 
-std::set<std::string> NuvieFileList::get_filenames() {
-	std::set<std::string> filenames;
-	std::list<NuvieFileDesc>::iterator iter = file_list.begin();
+Std::set<Std::string> NuvieFileList::get_filenames() {
+	Std::set<Std::string> filenames;
+	Std::list<NuvieFileDesc>::iterator iter = file_list.begin();
 
 	while (iter != file_list.end()) {
 		filenames.insert((*iter).filename);

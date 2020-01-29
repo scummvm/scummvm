@@ -108,7 +108,7 @@ void idMan::expand() {
 
 #if 0
 	perr << "Expanding idMan from (" << begin << "-" << old_end << ") to ("
-	     << begin << "-" << end << ")" << std::endl;
+	     << begin << "-" << end << ")" << Std::endl;
 #endif
 
 	// insert the new free IDs at the start

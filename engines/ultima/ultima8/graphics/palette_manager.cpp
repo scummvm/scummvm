@@ -288,7 +288,7 @@ void PaletteManager::getTransformMatrix(int16 matrix[12], Pentagram::PalTransfor
 
 	// Unknown
 	default: {
-		perr << "Unknown Palette Transformation: " << trans << std::endl;
+		perr << "Unknown Palette Transformation: " << trans << Std::endl;
 		matrix[0] = 0x800;
 		matrix[1] = 0;
 		matrix[2]  = 0;

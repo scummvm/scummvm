@@ -92,7 +92,7 @@ struct CSSprite {
 	CSImage *image;
 	bool visible;
 	Common::Rect clip_rect;
-	std::string text;
+	Std::string text;
 	uint16 text_color;
 	uint8 text_align;
 
@@ -110,8 +110,8 @@ struct CSSprite {
 };
 
 struct CSMidGameData {
-	std::vector<std::string> text;
-	std::vector<CSImage *> images;
+	Std::vector<Std::string> text;
+	Std::vector<CSImage *> images;
 };
 
 void nscript_init_cutscene(lua_State *L, Configuration *cfg, GUI *gui, SoundManager *sm);
@@ -121,7 +121,7 @@ private:
 	Configuration *config;
 	GUI *gui;
 	Cursor *cursor;
-	std::list<CSSprite *> sprite_list; // in paint order
+	Std::list<CSSprite *> sprite_list; // in paint order
 	Screen *screen;
 	uint8 *palette;
 	SoundManager *sound_manager;
@@ -139,12 +139,12 @@ public:
 	ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm);
 	~ScriptCutscene();
 
-	std::vector<std::string> load_text(const char *filename, uint8 idx);
+	Std::vector<Std::string> load_text(const char *filename, uint8 idx);
 
-	std::vector<CSMidGameData> load_midgame_file(const char *filename);
+	Std::vector<CSMidGameData> load_midgame_file(const char *filename);
 
 	CSImage *load_image(const char *filename, int idx, int sub_idx = 0);
-	std::vector<std::vector<CSImage *> > load_all_images(const char *filename);
+	Std::vector<Std::vector<CSImage *> > load_all_images(const char *filename);
 	void add_sprite(CSSprite *s) {
 		sprite_list.push_back(s);
 	}
@@ -206,9 +206,9 @@ public:
 
 private:
 	bool is_lzc(const char *filename);
-	CSImage *load_image_from_lzc(std::string filename, uint16 idx, uint16 sub_idx);
+	CSImage *load_image_from_lzc(Std::string filename, uint16 idx, uint16 sub_idx);
 	void display_wrapped_text(CSSprite *s);
-	int display_wrapped_text_line(std::string str, uint8 text_color, int x, int y, uint8 align_val);
+	int display_wrapped_text_line(Std::string str, uint8 text_color, int x, int y, uint8 align_val);
 };
 
 ScriptCutscene *get_cutscene();

@@ -49,10 +49,10 @@ RemorseGame::~RemorseGame() {
 
 bool RemorseGame::loadFiles() {
 	// Load palette
-	pout << "Load Palette" << std::endl;
+	pout << "Load Palette" << Std::endl;
 	IDataSource *pf = FileSystem::get_instance()->ReadFile("@game/static/gamepal.pal");
 	if (!pf) {
-		perr << "Unable to load static/gamepal.pal." << std::endl;
+		perr << "Unable to load static/gamepal.pal." << Std::endl;
 		return false;
 	}
 
@@ -60,7 +60,7 @@ bool RemorseGame::loadFiles() {
 	PaletteManager::get_instance()->load(PaletteManager::Pal_Game, *pf, xfds);
 	delete pf;
 
-	pout << "Load GameData" << std::endl;
+	pout << "Load GameData" << Std::endl;
 	GameData::get_instance()->loadRemorseData();
 
 	return true;
@@ -69,7 +69,7 @@ bool RemorseGame::loadFiles() {
 bool RemorseGame::startGame() {
 	// NOTE: assumes the entire engine has been reset!
 
-	pout << "Starting new Crusader: No Remorse game." << std::endl;
+	pout << "Starting new Crusader: No Remorse game." << Std::endl;
 
 	ObjectManager *objman = ObjectManager::get_instance();
 
@@ -95,7 +95,7 @@ bool RemorseGame::startGame() {
 	return true;
 }
 
-bool RemorseGame::startInitialUsecode(const std::string &) {
+bool RemorseGame::startInitialUsecode(const Std::string &) {
 //	Process* proc = new StartU8Process();
 //	Kernel::get_instance()->addProcess(proc);
 
@@ -120,7 +120,7 @@ void RemorseGame::writeSaveInfo(ODataSource *ods) {
 	MainActor *av = getMainActor();
 	int32 x, y, z;
 
-	std::string avname = av->getName();
+	Std::string avname = av->getName();
 	uint8 namelength = static_cast<uint8>(avname.size());
 	ods->write1(namelength);
 	for (unsigned int i = 0; i < namelength; ++i)

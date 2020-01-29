@@ -64,9 +64,9 @@ bool PortraitViewGump::init(Screen *tmp_screen, void *view_manager, uint16 x, ui
 	portrait = por;
 	set_actor(a);
 
-	std::string datadir = GUI::get_gui()->get_data_dir();
-	std::string imagefile;
-	std::string path;
+	Std::string datadir = GUI::get_gui()->get_data_dir();
+	Std::string imagefile;
+	Std::string path;
 
 	build_path(datadir, "images", path);
 	datadir = path;

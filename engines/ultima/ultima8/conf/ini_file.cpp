@@ -26,7 +26,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 using Pentagram::istring;
-using std::string;
+using Std::string;
 
 INIFile::INIFile()
 	: is_file(false), readonly(false) {
@@ -47,7 +47,7 @@ bool INIFile::Section::hasKey(istring key) {
 }
 
 INIFile::KeyValue *INIFile::Section::getKey(istring key) {
-	std::list<KeyValue>::iterator i;
+	Std::list<KeyValue>::iterator i;
 	for (i = keys.begin(); i != keys.end(); ++i) {
 		if (i->key == key) {
 			return &(*i);
@@ -71,7 +71,7 @@ void INIFile::Section::setKey(istring key, string value) {
 }
 
 void INIFile::Section::unsetKey(istring key) {
-	std::list<KeyValue>::iterator i;
+	Std::list<KeyValue>::iterator i;
 	for (i = keys.begin(); i != keys.end(); ++i) {
 		if (i->key == key) {
 			i = keys.erase(i);
@@ -82,7 +82,7 @@ void INIFile::Section::unsetKey(istring key) {
 string INIFile::Section::dump() {
 	string s = comment;
 	s += "[" + name + "]\n";
-	std::list<KeyValue>::iterator i;
+	Std::list<KeyValue>::iterator i;
 	for (i = keys.begin(); i != keys.end(); ++i) {
 		s += i->comment;
 		s += i->key + "=" + i->value + "\n";
@@ -173,7 +173,7 @@ bool INIFile::readConfigString(string config) {
 
 			if (line[p] == ']') {
 				perr << "Config file buggy: empty section name in line "
-				     << lineno << std::endl;
+				     << lineno << Std::endl;
 				return false;
 			}
 
@@ -186,13 +186,13 @@ bool INIFile::readConfigString(string config) {
 
 			if (p >= line.size()) {
 				perr << "Config file buggy: missing ] in line " << lineno
-				     << ": '" << line << "'" << std::endl;
+				     << ": '" << line << "'" << Std::endl;
 				return false;
 			}
 			if (line[p] != ']') {
 				perr << "Config file buggy: Invalid character '" << line[p]
 				     << "' occured in section name in line " << lineno
-				     << std::endl;
+				     << Std::endl;
 				return false;
 			}
 
@@ -220,7 +220,7 @@ bool INIFile::readConfigString(string config) {
 			// If no section has been set, this config file is invalid!
 			if (section.name.empty()) {
 				perr << "Config file buggy: Key/value pair found outside "
-				     << "a section in line " << lineno << std::endl;
+				     << "a section in line " << lineno << Std::endl;
 				return false;
 			}
 
@@ -228,7 +228,7 @@ bool INIFile::readConfigString(string config) {
 			string::size_type p = line.find('=');
 			if (p == string::npos || p == 0) {
 				perr << "Config file buggy: Junk found in line " << lineno
-				     << ": '" << line << "'" << std::endl;
+				     << ": '" << line << "'" << Std::endl;
 				return false;
 			}
 
@@ -250,7 +250,7 @@ bool INIFile::readConfigString(string config) {
 
 #if 0
 			pout << "section: " << section.name << ", key: " << v.key
-			     << ", value: " << v.value << std::endl;
+			     << ", value: " << v.value << Std::endl;
 #endif
 
 			section.keys.push_back(v);
@@ -276,7 +276,7 @@ void INIFile::clear(istring root_) {
 string INIFile::dump() {
 	string s;
 
-	std::list<Section>::iterator i;
+	Std::list<Section>::iterator i;
 	for (i = sections.begin(); i != sections.end(); ++i) {
 		if (i != sections.begin())
 			s += "\n";
@@ -294,7 +294,7 @@ void INIFile::write() {
 	ODataSource *f = FileSystem::get_instance()->WriteFile(filename, true);
 	if (!f) return;
 
-	std::string s = dump();
+	Std::string s = dump();
 	const char *cstr = s.c_str();
 	f->write(cstr, strlen(cstr));
 
@@ -314,7 +314,7 @@ bool INIFile::stripRoot(istring &key) {
 }
 
 INIFile::Section *INIFile::getSection(istring section) {
-	std::list<Section>::iterator i;
+	Std::list<Section>::iterator i;
 	for (i = sections.begin(); i != sections.end(); ++i) {
 		if (i->name == section) {
 			return &(*i);
@@ -377,7 +377,7 @@ bool INIFile::value(istring key, int &ret) {
 
 	if (!found) return false;
 
-	ret = std::strtol(stringval.c_str(), 0, 0);
+	ret = Std::strtol(stringval.c_str(), 0, 0);
 	return true;
 }
 
@@ -438,14 +438,14 @@ void INIFile::unset(istring key) {
 	}
 }
 
-void INIFile::listKeys(std::set<istring> &keys, istring section_,
+void INIFile::listKeys(Std::set<istring> &keys, istring section_,
                        bool longformat) {
 	if (!stripRoot(section_)) return;
 
 	Section *section = getSection(section_);
 	if (!section) return;
 
-	std::list<KeyValue>::iterator i;
+	Std::list<KeyValue>::iterator i;
 	for (i = section->keys.begin(); i != section->keys.end(); ++i) {
 		istring k;
 		if (longformat)
@@ -457,8 +457,8 @@ void INIFile::listKeys(std::set<istring> &keys, istring section_,
 	}
 }
 
-void INIFile::listSections(std::set<istring> &sections_, bool longformat) {
-	std::list<Section>::iterator i;
+void INIFile::listSections(Std::set<istring> &sections_, bool longformat) {
+	Std::list<Section>::iterator i;
 	for (i = sections.begin(); i != sections.end(); ++i) {
 		istring s;
 		if (longformat)
@@ -476,7 +476,7 @@ void INIFile::listKeyValues(KeyMap &keyvalues, istring section_, bool longformat
 	Section *section = getSection(section_);
 	if (!section) return;
 
-	std::list<KeyValue>::iterator i;
+	Std::list<KeyValue>::iterator i;
 	for (i = section->keys.begin(); i != section->keys.end(); ++i) {
 		istring k;
 		if (longformat)

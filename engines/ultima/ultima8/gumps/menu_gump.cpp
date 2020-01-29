@@ -132,7 +132,7 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 		}
 
 		MainActor *av = getMainActor();
-		std::string name;
+		Std::string name;
 		if (av)
 			name = av->getName();
 
@@ -187,7 +187,7 @@ void MenuGump::ChildNotify(Gump *child, uint32 message) {
 	if (child->IsOfType<EditWidget>() && message == EditWidget::EDIT_ENTER) {
 		EditWidget *editwidget = p_dynamic_cast<EditWidget *>(child);
 		assert(editwidget);
-		std::string name = editwidget->getText();
+		Std::string name = editwidget->getText();
 		if (!name.empty()) {
 			MainActor *av = getMainActor();
 			av->setName(name);
