@@ -80,7 +80,7 @@ class GameView : public Shared::Gfx::VisualContainer {
 private:
 	Shared::Info *_info;
 	U1Gfx::Status *_status;
-	Shared::ViewportDungeon *_viewportDungeon;
+//	Shared::ViewportDungeon *_viewportDungeon;
 	Shared::Actions::Action *_actions[4];
 	Graphics::ManagedSurface _background;
 private:

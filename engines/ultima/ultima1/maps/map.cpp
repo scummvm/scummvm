@@ -34,7 +34,7 @@ namespace Ultima {
 namespace Ultima1 {
 namespace Maps {
 
-Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Maps::Map(), _game(game),
+Ultima1Map::Ultima1Map(Ultima1Game *game) : Shared::Maps::Map(),
 		_mapType(MAP_UNKNOWN), _moveCounter(0) {
 	Ultima1Map::clear();
 	_mapCity = new MapCity(game, this);

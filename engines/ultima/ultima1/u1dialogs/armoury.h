@@ -36,7 +36,7 @@ class Armoury : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
 	virtual bool CharacterInputMsg(CCharacterInputMsg &msg) override;
 private:
-	uint _armouryNum;
+//	uint _armouryNum;
 	uint _startIndex, _endIndex;
 private:
 	/**
