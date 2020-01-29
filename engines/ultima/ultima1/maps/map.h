@@ -72,7 +72,7 @@ struct SurroundingTotals {
  */
 class Ultima1Map : public Shared::Maps::Map {
 private:
-	Ultima1Game *_game;
+//	Ultima1Game *_game;
 	MapCity *_mapCity;
 	MapCastle *_mapCastle;
 	MapDungeon *_mapDungeon;

@@ -39,7 +39,7 @@ END_MESSAGE_MAP()
 
 Tavern::Tavern(Ultima1Game *game, Maps::MapCityCastle *map, int tavernNum) :
 		BuySellDialog(game, game->_res->TAVERN_NAMES[tavernNum]), _map(map),
-		_tavernNum(tavernNum), _countdown(0), _tipNumber(0), _buyDisplay(INITIAL) {
+		_countdown(0), _tipNumber(0), _buyDisplay(INITIAL) {
 }
 
 void Tavern::setMode(BuySell mode) {

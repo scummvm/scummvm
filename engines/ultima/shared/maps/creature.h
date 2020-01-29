@@ -41,7 +41,7 @@ namespace Maps {
 class Creature {
 private:
 	Game *_gameRef;
-	MapBase *_mapRef;
+//	MapBase *_mapRef;
 protected:
 	int _hitPoints;
 	bool _isAttacking;
@@ -65,8 +65,8 @@ public:
 	/**
 	 * Constructor
 	 */
-	Creature(Game *game, MapBase *map) : _gameRef(game), _mapRef(map), _hitPoints(0), _isAttacking(false) {}
-	Creature(Game *game, MapBase *map, int hitPoints) : _gameRef(game), _mapRef(map),
+	Creature(Game *game, MapBase *) : _gameRef(game), _hitPoints(0), _isAttacking(false) {}
+	Creature(Game *game, MapBase *, int hitPoints) : _gameRef(game),
 		_hitPoints(hitPoints), _isAttacking(false) {}
 
 	/**

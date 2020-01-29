@@ -31,7 +31,7 @@ namespace Widgets {
 
 class Guard : public Person {
 private:
-	bool _moved;
+//	bool _moved;
 protected:
 	/**
 	 * Returns the attack distance for the guard
@@ -54,13 +54,13 @@ public:
 	 * Constructor
 	 */
 	Guard(Ultima1Game *game, Maps::MapBase *map, int hitPoints) :
-		Person(game, map, 17, hitPoints), _moved(false) {}
+		Person(game, map, 17, hitPoints) {}
 
 	/**
 	 * Constructor
 	 */
 	Guard(Ultima1Game *game, Maps::MapBase *map) :
-		Person(game, map, 17), _moved(false) {}
+		Person(game, map, 17) {}
 
 	/**
 	 * Destructor

@@ -67,7 +67,7 @@ void Transport::disembark() {
 	for (int deltaY = -1; deltaY <= 1 && !hasGround; ++deltaY) {
 		for (int deltaX = -1; deltaX <= 1 && !hasGround; ++deltaX) {
 			_map->getTileAt(pt + Point(deltaX, deltaY), &tile);
-			hasGround = !tile._tileId != Maps::OTILE_OCEAN;
+			hasGround = tile._tileId != Maps::OTILE_OCEAN;
 		}
 	}
 

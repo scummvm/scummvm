@@ -34,8 +34,8 @@ namespace U1Dialogs {
 
 EMPTY_MESSAGE_MAP(Weaponry, BuySellDialog);
 
-Weaponry::Weaponry(Ultima1Game *game, int weaponryNum) : BuySellDialog(game, game->_res->WEAPONRY_NAMES[weaponryNum]),
-		_weaponryNum(weaponryNum) {
+Weaponry::Weaponry(Ultima1Game *game, int weaponryNum) : BuySellDialog(game, game->_res->WEAPONRY_NAMES[weaponryNum]) {
+	//, _weaponryNum(weaponryNum) {
 	Maps::Ultima1Map *map = static_cast<Maps::Ultima1Map *>(game->_map);
 
 	int offset = (weaponryNum + 1) % 2 + 1;

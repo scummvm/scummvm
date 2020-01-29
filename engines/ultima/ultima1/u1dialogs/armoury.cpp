@@ -34,8 +34,7 @@ namespace U1Dialogs {
 
 EMPTY_MESSAGE_MAP(Armoury, BuySellDialog);
 
-Armoury::Armoury(Ultima1Game *game, int armouryNum) : BuySellDialog(game, game->_res->ARMOURY_NAMES[armouryNum]),
-		_armouryNum(armouryNum) {
+Armoury::Armoury(Ultima1Game *game, int armouryNum) : BuySellDialog(game, game->_res->ARMOURY_NAMES[armouryNum]) {
 	Maps::Ultima1Map *map = static_cast<Maps::Ultima1Map *>(game->_map);
 
 	_startIndex = 1;

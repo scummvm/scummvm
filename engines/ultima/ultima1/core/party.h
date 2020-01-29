@@ -95,7 +95,7 @@ public:
  */
 class Armour : public Shared::Armour {
 private:
-	Ultima1Game *_game;
+//	Ultima1Game *_game;
 	Character *_character;
 	ArmorType _type;
 public:	
@@ -129,7 +129,7 @@ public:
  */
 class Character : public Shared::Character {
 private:
-	Ultima1Game *_game;
+//	Ultima1Game *_game;
 
 	Weapon _weaponHands;
 	Weapon _weaponDagger;

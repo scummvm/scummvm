@@ -42,9 +42,8 @@ class Configuration;
 
 class NuvieFileDesc {
 public:
-
 	Std::string filename;
-	time_t m_time;
+	uint32 m_time;
 
 	bool operator<(const NuvieFileDesc &rhs) const {
 		return (rhs.m_time < this->m_time);

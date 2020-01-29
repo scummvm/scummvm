@@ -34,8 +34,7 @@ namespace U1Dialogs {
 
 EMPTY_MESSAGE_MAP(Magic, BuySellDialog);
 
-Magic::Magic(Ultima1Game *game, int magicNum) : BuySellDialog(game, game->_res->MAGIC_NAMES[magicNum]),
-		_magicNum(magicNum) {
+Magic::Magic(Ultima1Game *game, int magicNum) : BuySellDialog(game, game->_res->MAGIC_NAMES[magicNum]) {
 	const Shared::Character &c = *game->_party;
 	_startIndex = 1 + (magicNum & 1);
 	_endIndex = (c._class == CLASS_WIZARD) ? c._spells.size() - 1 : 5;

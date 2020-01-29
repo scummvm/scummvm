@@ -37,7 +37,7 @@ void Party::setup() {
 
 /*-------------------------------------------------------------------*/
 
-Character::Character(Ultima1Game *game) : Shared::Character(), _game(game),
+Character::Character(Ultima1Game *game) : Shared::Character(),
 		_weaponHands(game, this, WEAPON_HANDS),
 		_weaponDagger(game, this, WEAPON_DAGGER),
 		_weaponMace(game, this, WEAPON_MACE),
@@ -162,7 +162,7 @@ uint Weapon::getSellCost() const {
 /*-------------------------------------------------------------------*/
 
 Armour::Armour(Ultima1Game *game, Character *c, ArmorType armorType) :
-		_game(game), _character(c), _type(armorType) {
+		_character(c), _type(armorType) {
 	_name = game->_res->ARMOR_NAMES[armorType];
 
 	if (armorType == ARMOR_SKIN)

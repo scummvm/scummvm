@@ -107,7 +107,7 @@ class MapBase {
 	};
 
 private:
-	Map *_map;							// Map manager reference
+//	Map *_map;							// Map manager reference
 	Game *_game;						// Game reference
 	bool _mapModified;					// Tiles have been dynamically changed
 protected:
@@ -139,7 +139,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	MapBase(Game *game, Map *map) : _game(game), _map(map), _playerWidget(nullptr),
+	MapBase(Game *game, Map *) : _game(game),_playerWidget(nullptr),
 		_mapModified(false), _mapId(0), _mapIndex(0), _mapStyle(0) {}
 
 	/**

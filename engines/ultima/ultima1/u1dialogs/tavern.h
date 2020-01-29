@@ -41,7 +41,7 @@ class Tavern : public BuySellDialog {
 	bool FrameMsg(CFrameMsg &msg);
 private:
 	Maps::MapCityCastle *_map;
-	uint _tavernNum;
+	//uint _tavernNum;
 	uint _tipNumber;
 	uint _countdown;
 	enum { INITIAL, TIP0, TIP_PAGE1, TIP_PAGE2 } _buyDisplay;

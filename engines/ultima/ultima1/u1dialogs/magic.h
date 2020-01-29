@@ -38,7 +38,7 @@ class Magic : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
 	virtual bool CharacterInputMsg(CCharacterInputMsg &msg) override;
 private:
-	uint _magicNum;
+//	uint _magicNum;
 	uint _startIndex, _endIndex;
 private:
 	/**
