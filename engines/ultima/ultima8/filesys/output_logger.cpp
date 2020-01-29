@@ -26,9 +26,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-OutputLogger::OutputLogger(Common::WriteStream *file, const Std::string &filename) :
-	fd(-1), fileOld(NULL), filenameLog(filename), fileLog(NULL),
-	fdPipeRead(-1) {//, pThread(NULL)
+OutputLogger::OutputLogger(Common::WriteStream *file, const Std::string &filename) {
 #ifdef TODO
 	// Get the underlying file descriptor for the FILE stream
 	fd = _fileno(file);

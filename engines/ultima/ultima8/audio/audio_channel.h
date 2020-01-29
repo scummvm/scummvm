@@ -43,9 +43,6 @@ private:
 	uint32          _decompressorSize;  // Persistent data for the decompressor
 	uint32          _frameSize;         //
 
-	uint32          _sampleRate;
-	bool            _stereo;
-
 	int32           _loop;
 	AudioSample     *_sample;
 
@@ -90,8 +87,8 @@ public:
 		_rVol = rvol;
 	}
 	void getVolume(int &lvol, int &rvol) const {
-		lvol = lvol;
-		rvol = rvol;
+		lvol = _lVol;
+		rvol = _rVol;
 	}
 
 	void setPriority(int priority) {

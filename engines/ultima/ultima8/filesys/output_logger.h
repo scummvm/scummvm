@@ -31,21 +31,9 @@ namespace Ultima8 {
 
 //! Class that will duplicate output sent to FILE into another file
 class OutputLogger {
-	int         fd;             //< Original fd of file being redirected
-	Common::WriteStream *fileOld;       //< Duplicated stream that points to the original file
-
-	Std::string filenameLog;    //< Name of log file
-	Common::WriteStream *fileLog;       //< Stream for log file
-
-	int         fdPipeRead;     //< file descriptor to the read end of the pipe
-
-//	SDL_Thread*  pThread;        //< Pointer to the thread that reads the pipe
-
 	int ThreadMain();
-//	static int SDLCALL sThreadMain(OutputLogger *instance) { return instance->ThreadMain(); }
-
 public:
-	OutputLogger(Common::WriteStream *file, const Std::string &filename);   // Should be using unicode in this day and age
+	OutputLogger(Common::WriteStream *file, const Std::string &filename);
 	~OutputLogger(void);
 };
 

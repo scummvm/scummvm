@@ -21,7 +21,7 @@
  */
 
 #ifndef ULTIMA8_GUMPS_MINIMAPGUMP_H
-#define ULTIMA8_GUMPS_MiniMapGump_H
+#define ULTIMA8_GUMPS_MINIMAPGUMP_H
 
 #include "ultima/ultima8/gumps/gump.h"
 #include "ultima/ultima8/graphics/texture.h"
