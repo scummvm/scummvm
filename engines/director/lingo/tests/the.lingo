@@ -39,3 +39,5 @@ set the checkMark of menuItem "Horizontal" of menu "The Ball" to False
 put the number of castMembers into field 5
 
 put the number of menuItems of menu "sam" into field 3
+
+put abs( the locH of sprite 2 - the mouseH) into field 4
