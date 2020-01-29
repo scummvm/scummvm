@@ -38,7 +38,7 @@ class StaticTextWidget;
 
 namespace Common {
 
-class Action;
+struct Action;
 class Keymap;
 class Keymapper;
 class InputWatcher;

@@ -36,7 +36,7 @@ namespace Common {
 const char *const kGuiKeymapName = "gui";
 const char *const kGlobalKeymapName = "global";
 
-class Action;
+struct Action;
 class DelayedEventSource;
 struct HardwareInput;
 class HardwareInputSet;

@@ -38,8 +38,8 @@ namespace Common {
 
 const char *const kStandardActionsKeymapName = "standard-actions";
 
-class Action;
-class Event;
+struct Action;
+struct Event;
 struct HardwareInput;
 class HardwareInputSet;
 class KeymapperDefaultBindings;
