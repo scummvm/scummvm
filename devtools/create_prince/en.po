@@ -20,6 +20,7 @@ msgstr ""
 "X-Generator: Weblate 3.10.1\n"
 
 #: dialog0001.txt:1
+#,fuzzy
 msgid "HERO: Przeppp... raszam..."
 msgstr "HERO: Ahem... Excuse me..."
 
