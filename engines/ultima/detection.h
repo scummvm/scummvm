@@ -72,7 +72,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const override {
-		return "Ultima games (C) Origin Systems Inc.";
+		return "Ultima Games (C) 1980-1995 Origin Systems Inc.";
 	}
 
 	virtual const char *getSavegamePattern(const char *target = nullptr) const override;
