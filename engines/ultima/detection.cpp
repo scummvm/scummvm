@@ -38,6 +38,11 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 	{ "ultima6", "Ultima VI - The False Prophet" },
 	{ "ultima6_enh", "Ultima VI - The False Prophet - Enhanced" },
 	{ "ultima8", "Ultima VIII - Pagan" },
+
+	{ "martiandreams", "Worlds of Ultima: Martian Dreams" },
+	{ "martiandreams_enh", "Worlds of Ultima: Martian Dreams - Enhanced" },
+	{ "thesavageempire", "Worlds of Ultima: The Savage Empire" },
+	{ "thesavageempire_enh", "Worlds of Ultima: The Savage Empire - Enhanced" },
 	{ 0, 0 }
 };
 
@@ -83,6 +88,8 @@ bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 			*engine = new Ultima::Shared::UltimaEarlyEngine(syst, gd);
 			break;
 		case Ultima::GAME_ULTIMA6:
+		case Ultima::GAME_MARTIAN_DREAMS:
+		case Ultima::GAME_SAVAGE_EMPIRE:
 			*engine = new Ultima::Ultima6::Ultima6Engine(syst, gd);
 			break;
 		case Ultima::GAME_ULTIMA8:
