@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-29 15:07+0000\n"
+"PO-Revision-Date: 2020-01-31 17:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -563,28 +563,28 @@ msgstr ""
 "prohibited in the area?"
 
 #: dialog0011.txt:11
-#, fuzzy
 msgid "OTHER: Do zobaczenia i pamiętaj: jeżeli dzieje|się coś złego, usiądź sobie spokojnie|i wychyl kufelek piwa."
-msgstr "OTHER: Goodbye young man, and remember:|if something bad happens, first sit|down and drink a mug of beer."
+msgstr ""
+"OTHER: Goodbye young man, and remember:|if something bad happens, first sit|"
+"down and drink a mug of beer."
 
 #: dialog0011.txt:12
 msgid "OTHER: Świat od razu stanie się lepszy."
 msgstr "OTHER: The world will look better right away."
 
 #: dialog0011.txt:13
-#, fuzzy
 msgid "OTHER: Przy okazji: jestem Arivald z Silmaniony.|Arcymag Tajemnego Bractwa i mistrz sztuk|magicznych."
-msgstr "OTHER: By the way, I'm Arivald of Silmanion,|Archmage of the Secret Brotherhood|and Master of the Magical Arts."
+msgstr ""
+"OTHER: By the way, I'm Arivald of Silmanion,|Archmage of the Secret "
+"Brotherhood|and Master of the Magical Arts."
 
 #: dialog0012.txt:1
-#, fuzzy
 msgid "HERO: A ja ...chyba Galador..."
 msgstr "HERO: And I'm... Galador. At least I think so..."
 
 #: dialog0013.txt:101
-#, fuzzy
 msgid "$0: Został jeszcze jeden grób, proszę..."
-msgstr "$0: There is still one grave left over here."
+msgstr "$0: One more grave left, please..."
 
 #: dialog0013.txt:102
 msgid "$1: Skoro tak, to chyba zamieszkamy tu razem."
@@ -609,17 +609,16 @@ msgstr ""
 "in his sleep into centipedes."
 
 #: dialog0013.txt:100003
-#, fuzzy
 msgid "OTHER: Swoją drogą zjadłbym jakąś tłuściutką|stonogę."
-msgstr "OTHER: Speaking of centipedes, I'd love a nice|juicy one right now..."
+msgstr "OTHER: By the way, I'd eat some fat centipede."
 
 #: dialog0013.txt:100004
-#, fuzzy
 msgid "P#OTHER: Chyba lepiej zaryzykować niż znosić|dłużej twoją obecność.#X1"
-msgstr "P#OTHER: I decided risk it! Anything would be|better than having to endure your|presence any longer!#X1"
+msgstr ""
+"P#OTHER: I think it's better to take a chance than|suffer from your presence "
+"longer.#X1"
 
 #: dialog0013.txt:100101
-#, fuzzy
 msgid "P#OTHER: Wstrętny szantażysta.#X1"
 msgstr "P#OTHER: You dirty blackmailing rat!#X1"
 
@@ -629,12 +628,10 @@ msgid "OTHER: Ha!"
 msgstr "OTHER: Ha!"
 
 #: dialog0013.txt:100202
-#, fuzzy
 msgid "OTHER: Igrasz z moją ambicją, człowieczku."
-msgstr "OTHER: I see what you're trying to do there..."
+msgstr "OTHER: You play with my ambition, little man."
 
 #: dialog0013.txt:100203
-#, fuzzy
 msgid "P#OTHER: Udało ci się.#X1"
 msgstr "P#OTHER: Okay, you win!#X1"
 
@@ -645,31 +642,31 @@ msgstr ""
 "met in my life."
 
 #: dialog0013.txt:100302
-#, fuzzy
 msgid "OTHER: Zawsze uważałem ludzi za słabeuszy."
-msgstr "OTHER: And here I've always thought you|Humans were weaklings..."
+msgstr "OTHER: I've always considered humans as weaklings."
 
 #: dialog0013.txt:100303
-#, fuzzy
 msgid "OTHER: Nie potrafią nawet zgryźć naprawdę małego|brukowca, żeby od razu nie pluć zębami."
-msgstr "OTHER: I mean, you can't even chow a rock|without spitting out half of your teeth."
+msgstr ""
+"OTHER: I mean, you can't even chew a cablestone|without spitting out half of "
+"your teeth."
 
 #: dialog0013.txt:100304
-#, fuzzy
 msgid "OTHER: I nawet ten tu rycerz nie zmienił mojego|zdania, ale to..."
-msgstr "OTHER: Even that noble Knight over there|couldn't change my opinion,|but you..."
+msgstr ""
+"OTHER: Even that knight over there|couldn't change my opinion, but that..."
 
 #: dialog0013.txt:100305
 msgid "OTHER: To już jest niesmaczne.|Par excellence."
-msgstr "OTHER: You're simply too annoying!|Par excellence."
+msgstr "OTHER: That is already distasteful.|Par excellence."
 
 #: dialog0013.txt:100306
-#, fuzzy
 msgid "P#OTHER: Chyba jednak wskrzeszenie nawet tak groźnego|czarodzieja jak Arivald będzie lepsze niż|twoja obecność.#X1"
-msgstr "P#OTHER: I'd rather face the fearsome Wizard Arivald,|raised from his eternal slumber, than|spend another minute with you!#X1"
+msgstr ""
+"P#OTHER: I guess even resurrecting even such a fearsome wizard|like Arivald "
+"will be better than your presence.!#X1"
 
 #: dialog0014.txt:1
-#, fuzzy
 msgid "OTHER: Na robale i larwy Payehu!"
 msgstr "OTHER: By all the worms in my compost!"
 
@@ -678,49 +675,41 @@ msgid "OTHER: Co tu się działo?!"
 msgstr "OTHER: What had happened here?!"
 
 #: dialog0014.txt:3
-#, fuzzy
 msgid "OTHER: COŚ TY ZROBIŁ, BARBARZYŃCO?!"
 msgstr "OTHER: WHAT DID YOU DO, BARBARIAN?!"
 
 #: dialog0014.txt:104
-#, fuzzy
 msgid "$0: Eeee... Eeee..."
 msgstr "$0: Umm... Umm..."
 
 #: dialog0014.txt:105
-#, fuzzy
 msgid "$1: No co, przecież i tak wszystkie były puste!"
-msgstr "$1: What? They were all empty in the first place!"
+msgstr "$1: Well, they were all empty anyway!"
 
 #: dialog0014.txt:106
-#, fuzzy
 msgid "$2: Nie mam pojęcia o czym pan mówi..."
 msgstr "$2: I've no idea what you're talking about..."
 
 #: dialog0014.txt:107
-#, fuzzy
 msgid "$3: Cholerne krety, zawsze się gdzieś wkręcą..."
 msgstr "$3: Damn moles, digging holes wherever they like..."
 
 #: dialog0014.txt:100001
-#, fuzzy
 msgid "OTHER: Cmentarna hiena i na dodatek debil!"
 msgstr "OTHER: So, you're not only a grave robber,|you're an IDIOT too!"
 
 #: dialog0014.txt:100002
-#, fuzzy
 msgid "OTHER: O nie, człowieczku..."
 msgstr "OTHER: Oh no, my little man..."
 
 #: dialog0014.txt:100003
-#, fuzzy
 msgid "OTHER: Nie ujdzie ci to na sucho..."
 msgstr "OTHER: I won't let that pass..."
 
 #: dialog0014.txt:100101
-#, fuzzy
 msgid "OTHER: Twoja głowa też, a jednak pewnie nie|pozwoliłbyś sobie w niej pogrzebać."
-msgstr "OTHER: The only empty thing here was your head!|And even that doesn't justify|your actions."
+msgstr ""
+"OTHER: Your head as well, but you probably wouldn't allow digging in it."
 
 #: dialog0014.txt:100102
 msgid "OTHER: Zresztą, hańbą byłaby dalsza dysputa..."
@@ -731,22 +720,18 @@ msgid "OTHER: Nawet kłamać trzeba umieć, złodzieju grobów."
 msgstr "OTHER: Even for lying the skills are needed, grave looter."
 
 #: dialog0014.txt:100202
-#, fuzzy
 msgid "OTHER: Mam tu dla ciebie odpowiednią karę, nędzna|kreaturo..."
-msgstr "OTHER: But I know the perfect punishment for you,|you wretched creature..."
+msgstr "OTHER: I know the perfect punishment for you,|you miserable creature..."
 
 #: dialog0014.txt:100301
-#, fuzzy
 msgid "OTHER: Już od kilkuset lat nie widziałem tu|żadnego kreta."
-msgstr "OTHER: I've been around for hundreds|of years and I haven't seen|a single mole yet..."
+msgstr "OTHER: I haven't seen any mole here for several|hundred years..."
 
 #: dialog0014.txt:100302
-#, fuzzy
 msgid "OTHER: Za wyjątkiem tych, które przyrządzam|w piołunowym sosie."
-msgstr "OTHER: Although, there were some similar|rodents, which I usually cooked|with bile sauce..."
+msgstr "OTHER: Except the ones I cooked in wormwood sauce."
 
 #: dialog0014.txt:100303
-#, fuzzy
 msgid "OTHER: Więc nie sil się na kłamstwa, ty mała,|biała glisto!"
 msgstr "OTHER: Anyway, your lie was too obvious,|you miserable little worm!"
 
@@ -755,12 +740,10 @@ msgid "OTHER: I zaznaj smak mojej przewrotności..."
 msgstr "OTHER: It's time to feel the|taste of my revenge..."
 
 #: dialog0015.txt:1
-#, fuzzy
 msgid "OTHER: Przeklinam wszystkie rzeczy, jakie|ukradłeś z tego świętego cmentarza!"
-msgstr "OTHER: Objects removed from this Sacred|Cemetery, I now put a curse on thee!"
+msgstr "OTHER: I curse all the things you stole from|this holy cemetery!"
 
 #: dialog0016.txt:1
-#, fuzzy
 msgid "HERO: Dzień dobry!"
 msgstr "HERO: Good day!"
 
@@ -769,17 +752,14 @@ msgid "$0: Miłe gniazdko... Z daleka od smrodu wielkich miast..."
 msgstr "$0: Nice place... And far from the stench of the big cities..."
 
 #: dialog0016.txt:103
-#, fuzzy
 msgid "$3: Skoro jest tak źle, to co tu jeszcze robisz?"
 msgstr "$3: Why are you still living here if things are so bad?"
 
 #: dialog0016.txt:104
-#, fuzzy
 msgid "$1: Wszystko w porządku? Dobrze się czujesz?"
 msgstr "$1: Are you okay? Do you feel well?"
 
 #: dialog0016.txt:105
-#, fuzzy
 msgid "$2: Jeszcze wrócę, ale na razie muszę już iść."
 msgstr "$2: I have to go now, but I'll come back."
 
@@ -808,54 +788,48 @@ msgid "$9: Wzorcowo."
 msgstr "$9: Exemplary."
 
 #: dialog0016.txt:412
-#, fuzzy
 msgid "$10: Świeżego powietrza?"
 msgstr "$10: Fresh air?"
 
 #: dialog0016.txt:413
-#, fuzzy
 msgid "$11: Niedozwolonych środków dopingujących?"
 msgstr "$11: Illegal narcotic substances?"
 
 #: dialog0016.txt:414
-#, fuzzy
 msgid "$12: Ziółek?"
 msgstr "$12: Strange herbs?"
 
 #: dialog0016.txt:100001
-#, fuzzy
 msgid "OTHER: I blisko mrówek, szczypawic, komarów, szerszeni,|much, ciem, korników, glizd, larw..."
-msgstr "OTHER: Yeah, and close to ants, mosquitoes, hornets, flies,|moths, dung beetles, worms, maggots..."
+msgstr ""
+"OTHER: Yeah, and close to ants, mosquitoes, hornets, flies,|moths, dung "
+"beetles, worms, maggots..."
 
 #: dialog0016.txt:100002
-#, fuzzy
 msgid "HERO: Dobrze już dobrze, zrozumiałem."
 msgstr "HERO: Okay, okay, I get your point..."
 
 #: dialog0016.txt:100003
-#, fuzzy
 msgid "OTHER: ...że nie wspomnę o dzikich zwierzętach, chłodzie|w zimie, powodziach wiosną, podrapaniach od..."
-msgstr "OTHER: Not to mention the predators, the cold|in the winter, the floods in spring|and the bites of..."
+msgstr ""
+"OTHER: ...I won't even mention wild animals, cold weather|in winter, spring "
+"floods, scratches from..."
 
 #: dialog0016.txt:100004
-#, fuzzy
 msgid "HERO: ZROZUMIAŁEM!#E3#B0"
 msgstr "HERO: I SAID I GET YOUR POINT!#E3#B0"
 
 #: dialog0016.txt:100101
-#, fuzzy
 msgid "OTHER: Mimo wszystko bardzo dobrze."
 msgstr "OTHER: Yes, despite everything,|I'm feeling very good."
 
 #: dialog0016.txt:100102
-#, fuzzy
 msgid "OTHER: Powiem więcej, czuję się jak w niebie."
 msgstr "OTHER: Actually, I feel like I'm in Heaven..."
 
 #: dialog0016.txt:100103
-#, fuzzy
 msgid "OTHER: <głupawy chichot>#B0"
-msgstr "OTHER: He, he, he, he...#B0"
+msgstr "OTHER: <stupid giggling>#B0"
 
 #: dialog0016.txt:100201
 #, fuzzy
@@ -863,19 +837,18 @@ msgid "#E2#X0"
 msgstr "#E2#X0"
 
 #: dialog0016.txt:100301
-#, fuzzy
 msgid "OTHER: A jak ci się wydaje, co robi pustelnik?#B1"
-msgstr "OTHER: Why do you think somebody decides to become a hermit?#B1"
+msgstr "OTHER: And what do you think hermits is do?#B1"
 
 #: dialog0016.txt:100401
-#, fuzzy
 msgid "OTHER: Tak, to ciekawe co według ciebie, młodzieńcze,|robi właściciel spółki..."
-msgstr "OTHER: Well, I can assure you that's not it. So..."
+msgstr ""
+"OTHER: Yes, it's interesting what you think, young man,|does the owner of "
+"the partnership..."
 
 #: dialog0016.txt:100402
-#, fuzzy
 msgid "OTHER: Próbuj dalej.#B1"
-msgstr "OTHER: ...wanna try again?#B1"
+msgstr "OTHER: Try again.#B1"
 
 #: dialog0016.txt:100501
 #, fuzzy
@@ -887,9 +860,8 @@ msgid "OTHER: Bez sensu."
 msgstr "OTHER: No sense."
 
 #: dialog0016.txt:100503
-#, fuzzy
 msgid "OTHER: Czy ja wyglądam na wariata?#B2"
-msgstr "OTHER: Do I look like a madman to you?#B2"
+msgstr "OTHER: Do I look crazy?#B2"
 
 #: dialog0016.txt:100601
 #, fuzzy
@@ -902,9 +874,8 @@ msgid "OTHER: Co prawda, niewielu wie o mojej pustelni,|ale to jeszcze o niczym 
 msgstr "OTHER: And yes it's true, not many people|know about this hut, but that|doesn't mean anything."
 
 #: dialog0016.txt:100603
-#, fuzzy
 msgid "OTHER: A, przy okazji, nie przypominaj o mnie|w zamku Garrahan."
-msgstr "OTHER: Oh, by the way, I'd rather you don't|mention me around Castle Gallahan."
+msgstr "OTHER: Oh, by the way, don't mention me around |castle Gallahan."
 
 #: dialog0016.txt:100604
 #, fuzzy
@@ -927,7 +898,6 @@ msgstr ""
 "do?#B1"
 
 #: dialog0016.txt:100701
-#, fuzzy
 msgid "OTHER: Tak jest, mój panie!"
 msgstr "OTHER: Exactly, my Lord!"
 
@@ -977,44 +947,36 @@ msgid "P#OTHER: Na razie jest dwa zero dla słabości, ale|to się wkrótce zmie
 msgstr "P#OTHER: Unfortunately, the weakness is winning|two to zero at the moment, but I'm|not giving up yet!#B0"
 
 #: dialog0016.txt:100801
-#, fuzzy
 msgid "OTHER: Brbrłełe..."
 msgstr "OTHER: Blurblrele..."
 
 #: dialog0016.txt:100802
-#, fuzzy
 msgid "P#OTHER: No właśnie.#B1"
 msgstr "P#OTHER: There you are then.#B1"
 
 #: dialog0016.txt:100901
-#, fuzzy
 msgid "OTHER: E tam..."
 msgstr "OTHER: Oh, well..."
 
 #: dialog0016.txt:100902
-#, fuzzy
 msgid "OTHER: To tylko złudzenie."
-msgstr "OTHER: ...that's all because..."
+msgstr "OTHER: It's just an illusion."
 
 #: dialog0016.txt:100903
-#, fuzzy
 msgid "OTHER: Wszystko przez ten nadmiar..."
-msgstr "OTHER: ...of all that..."
+msgstr "OTHER: All because of excess of..."
 
 #: dialog0016.txt:100904
-#, fuzzy
 msgid "OTHER: ...nadmiar..."
-msgstr "OTHER: ...of too much..."
+msgstr "OTHER: ...excess..."
 
 #: dialog0016.txt:100905
-#, fuzzy
 msgid "OTHER: ...hmmm..."
-msgstr "OTHER: ..ummm..."
+msgstr "OTHER: ...ummm..."
 
 #: dialog0016.txt:100906
-#, fuzzy
 msgid "OTHER: ...nadmiar...#B3"
-msgstr "OTHER: ...too much of...#B3"
+msgstr "OTHER: ...excess of...#B3"
 
 #: dialog0016.txt:101001
 msgid "OTHER: O, świeżego powietrza. Właśnie."
@@ -1082,9 +1044,8 @@ msgid "OTHER: \"...a nawet do przebywania na terenie Królestwa.|Jego imię ma b
 msgstr "OTHER: \"He is NOT welcome in the territory|of our Kingdom. His name should be forgotten|and let it be known that he is no|longer welcome under our roof.\""
 
 #: dialog0017.txt:5
-#, fuzzy
 msgid "OTHER: \"Jego Wysokość Król, ple-ple-ple.\""
-msgstr "OTHER: \"Your Royal Majesty bla-bla-bla.\""
+msgstr "OTHER: \"Your Royal Majesty blah-blah-blah.\""
 
 #: dialog0017.txt:6
 msgid "OTHER: Thank you, drive through."
@@ -1106,21 +1067,18 @@ msgid "OTHER: Mhm..."
 msgstr "OTHER: Mmmm..."
 
 #: dialog0019.txt:3
-#, fuzzy
 msgid "HERO: To dobry dzień, by rozpocząć|nowe życie."
 msgstr "HERO: It's a good day to start a new life."
 
 #: dialog0019.txt:4
-#, fuzzy
 msgid "OTHER: Jasne..."
-msgstr "OTHER: Sure is..."
+msgstr "OTHER: Sure it is..."
 
 #: dialog0019.txt:5
 msgid "HERO: Znaleźć pracę."
 msgstr "HERO: To find a job."
 
 #: dialog0019.txt:6
-#, fuzzy
 msgid "OTHER: Taaa..."
 msgstr "OTHER: Sure..."
 
@@ -1129,12 +1087,10 @@ msgid "P#HERO: P-r-a-c-ę."
 msgstr "P#HERO: A J-O-B."
 
 #: dialog0019.txt:8
-#, fuzzy
 msgid "OTHER: Tak tak..."
-msgstr "OTHER: Yeah, yeah.."
+msgstr "OTHER: Yeah, yeah..."
 
 #: dialog0019.txt:109
-#, fuzzy
 msgid "$0: Twój książę mówi do ciebie!"
 msgstr "$0: Your Prince is talking to you!"
 
@@ -1148,14 +1104,12 @@ msgid "$2: Paluszki swędzą, dobry człowieku?"
 msgstr "$2: Are your feet itching, my good man?"
 
 #: dialog0019.txt:112
-#, fuzzy
 msgid "$3: Do zobaczenia."
 msgstr "$3: See you later."
 
 #: dialog0019.txt:213
-#, fuzzy
 msgid "$4: ...dlaczego tak postępujesz?"
-msgstr "$4: ... Why are you acting like that?"
+msgstr "$4: ...why are you acting like that?"
 
 #: dialog0019.txt:214
 #, fuzzy
@@ -1163,9 +1117,8 @@ msgid "$5: ...a nie lepiej spróbować czegoś dokładnie odwrotnego?"
 msgstr "$5: ... Wouldn't you like to start over?"
 
 #: dialog0019.txt:100001
-#, fuzzy
 msgid "OTHER: Mhm."
-msgstr "OTHER: Pff..."
+msgstr "OTHER: Pff."
 
 #: dialog0019.txt:100002
 msgid "HERO: Ignorujesz mnie?"
@@ -1200,7 +1153,6 @@ msgid "HERO: Grhm."
 msgstr "HERO: Grrr..."
 
 #: dialog0019.txt:100101
-#, fuzzy
 msgid "OTHER: To nie takie trudne."
 msgstr "OTHER: It's not that difficult, you know."
 
@@ -1211,7 +1163,6 @@ msgstr ""
 "boss and your customers,|harass wives of others…"
 
 #: dialog0019.txt:100103
-#, fuzzy
 msgid "HERO: Eee..."
 msgstr "HERO: Um..."
 
@@ -1235,7 +1186,6 @@ msgid "HERO: Miałem raczej na myśli pytanie...#B1"
 msgstr "HERO: The thing I want to ask you is...#B1"
 
 #: dialog0019.txt:100201
-#, fuzzy
 msgid "OTHER: Nie, ale lubię lepić kulki."
 msgstr "OTHER: No, but I like making little balls."
 
@@ -1245,12 +1195,10 @@ msgid "OTHER: Z nosa, z brudu między palcami,|mnie tam obojętne."
 msgstr "OTHER: From toe jam, boogers, dirt|under the fingernails...|I don't care what."
 
 #: dialog0019.txt:100203
-#, fuzzy
 msgid "OTHER: Takie małe hobby."
 msgstr "OTHER: It's just a little hobby of mine."
 
 #: dialog0019.txt:100204
-#, fuzzy
 msgid "HERO: Błe!#B0"
 msgstr "HERO: Yuck!#B0"
 
@@ -1414,14 +1362,12 @@ msgid "OTHER: Przepraszam, książę, ale nie mogę zdradzać|swoich skromnych t
 msgstr "OTHER: I'm sorry, my Prince, but I can't|reveal my little secrets,|not even to you.#B0"
 
 #: dialog0020.txt:100201
-#, fuzzy
 msgid "#E2#X0"
 msgstr "#E2#X0"
 
 #: dialog0020.txt:100301
-#, fuzzy
 msgid "OTHER: Naprawdę naprawdę.#E7#E8#B0"
-msgstr "OTHER: Really really!#E7#E8#B0"
+msgstr "OTHER: Really, really!#E7#E8#B0"
 
 #: dialog0020.txt:100401
 msgid "OTHER: Dlaczego?"
@@ -1464,17 +1410,14 @@ msgid "OTHER: <chlipanie>#E7#E8#B0"
 msgstr "OTHER: <sob>#E7#E8#B0"
 
 #: dialog0020.txt:100701
-#, fuzzy
 msgid "OTHER: Niewinny jak córka moja jedyna..."
-msgstr "OTHER: I'm as pure and innocent as|my little girl..."
+msgstr "OTHER: I'm as pure and innocent as my only daughter..."
 
 #: dialog0020.txt:100702
-#, fuzzy
 msgid "P#OTHER: No, to akurat zły przykład."
-msgstr "P#OTHER: Actually no, scratch that,|that's a bad example."
+msgstr "P#OTHER: Well, that's exactly a bad example."
 
 #: dialog0020.txt:100703
-#, fuzzy
 msgid "OTHER: Niewinny jak kwiat lilijki, o panie.#E7#B2"
 msgstr "OTHER: I'm as pure and innocent as a white|lily, my Lord.#E7#B2"
 
@@ -1488,32 +1431,26 @@ msgid "OTHER: Znaczy, zupełnym przypadkiem złapał|za moją rękę."
 msgstr "OTHER: And, purely by chance, the hand|he grabbed was mine."
 
 #: dialog0020.txt:100803
-#, fuzzy
 msgid "OTHER: Ja się pytam: czy to jest dowód?!#E8#B3"
-msgstr "OTHER: And I'm asking you: How is|that even proof?!#E8#B3"
+msgstr "OTHER: And I'm asking myself: How is that even a proof?!#E8#B3"
 
 #: dialog0020.txt:100901
-#, fuzzy
 msgid "OTHER: Honorem, dobytkiem, moimi kozami..."
-msgstr "OTHER: I swear on my Honour, on my Life,|on my goats..."
+msgstr "OTHER: I swear on my honour, on my possessions,|on my goats..."
 
 #: dialog0020.txt:100902
-#, fuzzy
 msgid "OTHER: Albo nie, kozami nie."
-msgstr "OTHER: Um, actually no, not on my goats..."
+msgstr "OTHER: Um, actually no, not on my goats."
 
 #: dialog0020.txt:100903
-#, fuzzy
 msgid "HERO: A dlaczego nie?"
-msgstr "HERO: Why not?"
+msgstr "HERO: And why not?"
 
 #: dialog0020.txt:100904
-#, fuzzy
 msgid "OTHER: Bo kozy akurat mam."
-msgstr "OTHER: Because I don't have any goats."
+msgstr "OTHER: Because I actually have goats."
 
 #: dialog0020.txt:100905
-#, fuzzy
 msgid "P#HERO: Rozumiem...#E9"
 msgstr "P#HERO: I see...#E9"
 
@@ -1558,9 +1495,8 @@ msgid "P#HERO: Rozumiem...#E10"
 msgstr "P#HERO: I see...#E10"
 
 #: dialog0020.txt:101101
-#, fuzzy
 msgid "OTHER: A moje słowo nie wystarczy?!"
-msgstr "OTHER: What, my Word is not enough?!"
+msgstr "OTHER: And my word is not enough?!"
 
 #: dialog0020.txt:101102
 #, fuzzy
@@ -1593,19 +1529,16 @@ msgid "OTHER: Ha!"
 msgstr "OTHER: Puah!"
 
 #: dialog0020.txt:101402
-#, fuzzy
 msgid "OTHER: Wszyscy tylko ta logika i logika."
-msgstr "OTHER: Everybody talks about \"logic\"|and stuff..."
+msgstr "OTHER: Everybody talks about \"logic\" and stuff."
 
 #: dialog0020.txt:101403
-#, fuzzy
 msgid "OTHER: Dedukcja i dedukcja."
-msgstr "OTHER: Deduction and induction..."
+msgstr "OTHER: Deduction and induction."
 
 #: dialog0020.txt:101404
-#, fuzzy
 msgid "OTHER: A ja przecież nic nie zrobiłem!#B2"
-msgstr "OTHER: I'm telling you, I didn't|do anything!#B2"
+msgstr "OTHER: And I didn't do anything!#B2"
 
 #: dialog0020.txt:101501
 msgid "P#OTHER: Poważnie?"
@@ -2486,7 +2419,6 @@ msgid "OTHER: Fru!"
 msgstr "OTHER: Now!"
 
 #: dialog0029.txt:1
-#, fuzzy
 msgid "OTHER: Hopsa!"
 msgstr "OTHER: Go!"
 
@@ -2499,34 +2431,28 @@ msgid "OTHER: Kto chce jeść, ten ma sześć!"
 msgstr "OTHER: He who thinks of sex, gets a six!"
 
 #: dialog0032.txt:1
-#, fuzzy
 msgid "OTHER: Będzie wziątko, mam szóściątko!"
-msgstr "OTHER: I'll roll a six and make you eat your tongue!"
+msgstr "OTHER: I'll now get it, rolling six!"
 
 #: dialog0033.txt:1
-#, fuzzy
 msgid "OTHER: W porządalu, po szóstalu!"
-msgstr "OTHER: One more Six and I'm the winner!"
+msgstr "OTHER: I'm all righty, six is coming!"
 
 #: dialog0034.txt:1
-#, fuzzy
 msgid "OTHER: Kości pieść i mam sześć!"
-msgstr "OTHER: When the bones are in my hand,|a Six is always near!"
+msgstr "OTHER: Itchy bones, give me six!"
 
 #: dialog0035.txt:1
-#, fuzzy
 msgid "OTHER: Na początek, trochę szóściątek!"
-msgstr "OTHER: Not bad! A Six for a start!"
+msgstr "OTHER: Not too bad! A six for a start!"
 
 #: dialog0036.txt:1
-#, fuzzy
 msgid "OTHER: Przed moje oczy szóstka się toczy!"
-msgstr "OTHER: I can feel a Six coming!"
+msgstr "OTHER: I can feel it, six coming!"
 
 #: dialog0037.txt:1
-#, fuzzy
 msgid "OTHER: Mam na dzieweczki, rzucam szósteczki!"
-msgstr "OTHER: Just one more Six!"
+msgstr "OTHER: Now get six, then get girls!"
 
 #: dialog0038.txt:1
 msgid "OTHER: Z radości płacze, znowu szóstaczek."
@@ -2537,7 +2463,6 @@ msgid "OTHER: Się nie wstydzę, szóstkę widzę!"
 msgstr "OTHER: I'm not ashamed, I see the Six!"
 
 #: dialog0040.txt:1
-#, fuzzy
 msgid "OTHER: Cholerny oszust!"
 msgstr "OTHER: Damn cheater!"
 
@@ -2554,14 +2479,12 @@ msgid "OTHER: No, to jest oszustwo!"
 msgstr "OTHER: Well, that's cheating!"
 
 #: dialog0044.txt:1
-#, fuzzy
 msgid "OTHER: Przeklęty szczęściarz!"
 msgstr "OTHER: You lucky bastard!"
 
 #: dialog0045.txt:1
-#, fuzzy
 msgid "OTHER: Klasyczny cud!"
-msgstr "OTHER: It's a miracle!"
+msgstr "OTHER: A classic miracle!"
 
 #: dialog0046.txt:1
 msgid "OTHER: Ale dam ci jeszcze szansę."
@@ -3227,7 +3150,6 @@ msgid "OTHER: <piski kurczęcia>#B0"
 msgstr "OTHER: <chicken squeaks>#B0"
 
 #: dialog0060.txt:100601
-#, fuzzy
 msgid "#E6#X3"
 msgstr "#E6#X3"
 
@@ -3316,17 +3238,14 @@ msgid "$3: A pocałuj się gdzieś."
 msgstr "$3: And let's kiss."
 
 #: dialog0064.txt:100001
-#, fuzzy
 msgid "#E4#B0"
 msgstr "#E4#B0"
 
 #: dialog0064.txt:100101
-#, fuzzy
 msgid "#E8#B0"
 msgstr "#E8#B0"
 
 #: dialog0064.txt:100201
-#, fuzzy
 msgid "#E12#B0"
 msgstr "#E12#B0"
 
@@ -3336,17 +3255,14 @@ msgid "#E3#X0"
 msgstr "#E3#X0"
 
 #: dialog0064.txt:100401
-#, fuzzy
 msgid "#E5#B0"
 msgstr "#E5#B0"
 
 #: dialog0064.txt:100501
-#, fuzzy
 msgid "#E6#B0"
 msgstr "#E6#B0"
 
 #: dialog0064.txt:100601
-#, fuzzy
 msgid "#E7#B0"
 msgstr "#E7#B0"
 
@@ -3356,17 +3272,14 @@ msgid "#B0"
 msgstr "#B0"
 
 #: dialog0064.txt:100801
-#, fuzzy
 msgid "#E9#B0"
 msgstr "#E9#B0"
 
 #: dialog0064.txt:100901
-#, fuzzy
 msgid "#E10#B0"
 msgstr "#E10#B0"
 
 #: dialog0064.txt:101001
-#, fuzzy
 msgid "#E11#B0"
 msgstr "#E11#B0"
 
@@ -3376,17 +3289,14 @@ msgid "#B0"
 msgstr "#B0"
 
 #: dialog0064.txt:101201
-#, fuzzy
 msgid "#E13#B0"
 msgstr "#E13#B0"
 
 #: dialog0064.txt:101301
-#, fuzzy
 msgid "#E14#B0"
 msgstr "#E14#B0"
 
 #: dialog0064.txt:101401
-#, fuzzy
 msgid "#E15#B0"
 msgstr "#E15#B0"
 
@@ -5272,7 +5182,6 @@ msgid "#E3"
 msgstr "#E3"
 
 #: dialog0146.txt:100401
-#, fuzzy
 msgid "#X1"
 msgstr "#X1"
 
@@ -8944,7 +8853,7 @@ msgstr "OTHER: And it will be a long conversation."
 
 #: dialog0273.txt:1
 msgid "HERO: Ładna dzisiaj pogoda."
-msgstr ""
+msgstr "HERO: Lovely weather today."
 
 #: dialog0273.txt:2
 msgid "OTHER: Kyytzaz oz ysokai-ert, de'ien syp|fijunok elintishetem olczoban."
@@ -9500,7 +9409,6 @@ msgid "#B0"
 msgstr "#B0"
 
 #: dialog0316.txt:100301
-#, fuzzy
 msgid "#B0"
 msgstr "#B0"
 
@@ -9651,9 +9559,8 @@ msgid "OTHER: Przygody..."
 msgstr "OTHER: Adventures..."
 
 #: dialog0351.txt:1
-#, fuzzy
 msgid "OTHER: Ha!"
-msgstr "OTHER: Ha, ha, ha!"
+msgstr "OTHER: Ha!"
 
 #: dialog0352.txt:1
 msgid "OTHER: Najlepsi rachmistrze z Silmaniony|nie zliczyliby ile miałem ich w życiu."
