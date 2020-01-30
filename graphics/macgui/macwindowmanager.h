@@ -221,7 +221,7 @@ public:
 	void setEngineRedrawCallback(void *engine, void (*redrawCallback)(void *engine));
 
 	void passPalette(const byte *palette, uint size);
-	uint findBestColor(uint32 rgb);
+	uint findBestColor(byte cr, byte cg, byte cb);
 
 public:
 	MacFontManager *_fontMan;
