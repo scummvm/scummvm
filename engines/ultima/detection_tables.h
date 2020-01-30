@@ -88,6 +88,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
+	// GOG Ultima 8
 	{
 		{
 			"ultima8",
@@ -138,6 +139,67 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		},
 		GAME_ULTIMA8,
 		0
+	},
+
+	// GOG Martian Dreams
+	{
+		{
+			"martiandreams",
+			0,
+			AD_ENTRY1s("talk.lzc", "6efafc030cb552028c564897e40d87b5", 409705),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			0,
+			GUIO0()
+		},
+		GAME_MARTIAN_DREAMS,
+		0
+	},
+
+	// GOG Martian Dreams - Enhanced
+	{
+		{
+			"martiandreams_enh",
+			0,
+			AD_ENTRY1s("talk.lzc", "6efafc030cb552028c564897e40d87b5", 409705),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			0,
+			GUIO0()
+		},
+		GAME_MARTIAN_DREAMS,
+		GF_VGA_ENHANCED
+	},
+
+
+	// GOG The Savage Empire
+	{
+		{
+			"thesavageempire",
+			0,
+			AD_ENTRY1s("talk.lzc", "bef60fbc3cc478b2a2e8f0883652b2f3", 160784),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			0,
+			GUIO0()
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+
+	// GOG The Savage Empire
+	{
+		{
+			"thesavageempire_enh",
+			0,
+			AD_ENTRY1s("talk.lzc", "bef60fbc3cc478b2a2e8f0883652b2f3", 160784),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			0,
+			GUIO0()
+		},
+		GAME_SAVAGE_EMPIRE,
+		GF_VGA_ENHANCED
 	},
 
 	{ AD_TABLE_END_MARKER, (GameId)0, 0 }
