@@ -625,7 +625,13 @@ void Sound::cdPlay(const Common::String &trackName) {
 // name in the scripts, and therefore doesn't play. This fixes the problem.
 	if ((_vm->getGameType() == kGameTypeFascination) && trackName.equalsIgnoreCase("boscle"))
 		_cdrom->startTrack("bosscle");
-	else
+// WORKAROUND - In Goblins 3 CD, in the chess room, a couple of tracks have the wrong name
+// in the scripts, and therefore don't play. This fixes the problem (ticket #11335). 
+	else if ((_vm->getGameType() == kGameTypeGob3) && trackName.matchString("ECHEQUI?")) {
+		char name[] = "ECHIQUI1";
+		name[7] = trackName[7];
+		_cdrom->startTrack(name);
+	} else
 		_cdrom->startTrack(trackName.c_str());
 }
 
