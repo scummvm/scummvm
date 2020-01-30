@@ -92,7 +92,7 @@ bool UltimaEngine::hasFeature(EngineFeature f) const {
 }
 
 uint32 UltimaEngine::getFeatures() const {
-	return _gameDescription->desc.flags;
+	return _gameDescription->features;
 }
 
 Common::Language UltimaEngine::getLanguage() const {
