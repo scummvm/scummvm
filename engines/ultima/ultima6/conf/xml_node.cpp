@@ -205,7 +205,7 @@ static string encode_entity(const string &s) {
 
 static string decode_entity(const string &s, size_t &pos) {
 	size_t old_pos = pos;
-	string::size_type entity_name_len = s.find_first_of("; \t\r\n", pos) - pos - 1;
+	string::size_type entity_name_len = s.findFirstOf("; \t\r\n", pos) - pos - 1;
 
 	/* Call me paranoid... but I don't think having an end-of-line or similar
 	    inside a &...; expression is 'good', valid though it may be. */

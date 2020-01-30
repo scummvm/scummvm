@@ -324,30 +324,30 @@ public:
 	size_t rfind(char c, size_t pos = npos) const;
 
 	/** Find first character in the string matching the passed character */
-	size_t find_first_of(char c, size_t pos = 0) const;
+	size_t findFirstOf(char c, size_t pos = 0) const;
 
 	/** Find first character in the string that's any character of the passed string */
-	size_t find_first_of(const char *chars, size_t pos = 0) const;
-	size_t find_first_of(const String &chars, size_t pos = 0) const {
-		return find_first_of(chars.c_str(), pos);
+	size_t findFirstOf(const char *chars, size_t pos = 0) const;
+	size_t findFirstOf(const String &chars, size_t pos = 0) const {
+		return findFirstOf(chars.c_str(), pos);
 	}
 
 	/** Find first character in the string that's not the specified character */
-	size_t find_first_not_of(char c, size_t pos = 0) const;
+	size_t findFirstNotOf(char c, size_t pos = 0) const;
 
 	/** Find first character in the string that's not any character of the passed string */
-	size_t find_first_not_of(const char *chars, size_t pos = 0) const;
-	size_t find_first_not_of(const String &chars, size_t pos = 0) const {
-		return find_first_not_of(chars.c_str(), pos);
+	size_t findFirstNotOf(const char *chars, size_t pos = 0) const;
+	size_t findFirstNotOf(const String &chars, size_t pos = 0) const {
+		return findFirstNotOf(chars.c_str(), pos);
 	}
 
 	/** Find the last character in the string that's not the specified character */
-	size_t find_last_not_of(char c) const;
+	size_t findLastNotOf(char c) const;
 
 	/** Find the last character in the string that's not in any of the passed characters */
-	size_t find_last_not_of(const char *chars) const;
-	size_t find_last_not_of(const String &chars) const {
-		return find_last_not_of(chars.c_str());
+	size_t findLastNotOf(const char *chars) const;
+	size_t findLastNotOf(const String &chars) const {
+		return findLastNotOf(chars.c_str());
 	}
 
 	/** Return a substring of this string */

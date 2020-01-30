@@ -420,7 +420,7 @@ MsgText *MsgScroll::holding_buffer_get_token() {
 		return NULL;
 	}
 
-	i = input->s.find_first_of(" \t\n*<>`", 0);
+	i = input->s.findFirstOf(" \t\n*<>`", 0);
 	if (i == 0) i++;
 
 	if (i == -1)

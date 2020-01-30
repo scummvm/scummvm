@@ -98,7 +98,7 @@ bool INIFile::readConfigFile(string fname) {
 	string sbuf, line;
 	while (!f->eof()) {
 		f->readline(line);
-		string::size_type pos = line.find_first_of("\n\r");
+		string::size_type pos = line.findFirstOf("\n\r");
 		if (pos != string::npos) {
 			sbuf += line.substr(0, pos) + "\n";
 		} else {
@@ -118,7 +118,7 @@ bool INIFile::readConfigFile(string fname) {
 
 
 static void rtrim(string &s) {
-	string::size_type pos = s.find_last_not_of(" \t");
+	string::size_type pos = s.findLastNotOf(" \t");
 	if (pos != string::npos) {
 		if (pos + 1 < s.size())
 			s.erase(pos + 1);
@@ -128,7 +128,7 @@ static void rtrim(string &s) {
 }
 
 static void ltrim(string &s) {
-	string::size_type pos = s.find_first_not_of(" \t");
+	string::size_type pos = s.findFirstNotOf(" \t");
 	if (pos != string::npos) {
 		if (pos > 0)
 			s.erase(0, pos - 1);

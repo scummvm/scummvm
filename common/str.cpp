@@ -732,12 +732,12 @@ size_t String::rfind(char c, size_t pos) const {
 	return npos;
 }
 
-size_t String::find_first_of(char c, size_t pos) const {
+size_t String::findFirstOf(char c, size_t pos) const {
 	const char *strP = (pos >= _size) ? 0 : strchr(_str + pos, c);
 	return strP ? strP - _str : npos;
 }
 
-size_t String::find_first_of(const char *chars, size_t pos) const {
+size_t String::findFirstOf(const char *chars, size_t pos) const {
 	for (uint idx = pos; idx < _size; ++idx) {
 		if (strchr(chars, (*this)[idx]))
 			return idx;
@@ -746,7 +746,7 @@ size_t String::find_first_of(const char *chars, size_t pos) const {
 	return npos;
 }
 
-size_t String::find_first_not_of(char c, size_t pos) const {
+size_t String::findFirstNotOf(char c, size_t pos) const {
 	for (uint idx = pos; idx < _size; ++idx) {
 		if ((*this)[idx] != c)
 			return idx;
@@ -755,7 +755,7 @@ size_t String::find_first_not_of(char c, size_t pos) const {
 	return npos;
 }
 
-size_t String::find_first_not_of(const char *chars, size_t pos) const {
+size_t String::findFirstNotOf(const char *chars, size_t pos) const {
 	for (uint idx = pos; idx < _size; ++idx) {
 		if (!strchr(chars, (*this)[idx]))
 			return idx;
@@ -764,7 +764,7 @@ size_t String::find_first_not_of(const char *chars, size_t pos) const {
 	return npos;
 }
 
-size_t String::find_last_not_of(char c) const {
+size_t String::findLastNotOf(char c) const {
 	for (int idx = (int)_size - 1; idx >= 0; --idx) {
 		if ((*this)[idx] != c)
 			return c;
@@ -773,7 +773,7 @@ size_t String::find_last_not_of(char c) const {
 	return npos;
 }
 
-size_t String::find_last_not_of(const char *chars) const {
+size_t String::findLastNotOf(const char *chars) const {
 	for (int idx = (int)_size - 1; idx >= 0; --idx) {
 		if (!strchr(chars, (*this)[idx]))
 			return idx;
