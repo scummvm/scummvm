@@ -63,10 +63,10 @@ int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
 	Std::string text = phrase.substr(start);
 	Pentagram::TabsToSpaces(text, 1);
 
-	Std::string::size_type pos1 = text.find_first_not_of(' ');
+	Std::string::size_type pos1 = text.findFirstNotOf(' ');
 	if (pos1 == Std::string::npos) return 0;
 
-	Std::string::size_type pos2 = text.find_last_not_of(' ');
+	Std::string::size_type pos2 = text.findLastNotOf(' ');
 	text = text.substr(pos1, pos2 - pos1 + 1);
 
 //	pout << "Looking for string: \"" << text << "\"" << Std::endl;

@@ -484,7 +484,7 @@ void KeyBinder::ParseText(char *text, int len) {
 }
 
 static void skipspace(string &s) {
-	size_t i = s.find_first_not_of(chardata.whitespace);
+	size_t i = s.findFirstNotOf(chardata.whitespace);
 	if (i && i != string::npos)
 		s.erase(0, i);
 }
@@ -525,7 +525,7 @@ void KeyBinder::ParseLine(char *line) {
 			s.erase(0, 6);
 			u.erase(0, 6);
 		} else {
-			i = s.find_first_of(chardata.whitespace);
+			i = s.findFirstOf(chardata.whitespace);
 
 			keycode = s.substr(0, i);
 			s.erase(0, i);
@@ -563,7 +563,7 @@ void KeyBinder::ParseLine(char *line) {
 	// get function
 	skipspace(s);
 
-	i = s.find_first_of(chardata.whitespace);
+	i = s.findFirstOf(chardata.whitespace);
 	string t = s.substr(0, i);
 	s.erase(0, i);
 	t = to_uppercase(t);
@@ -581,7 +581,7 @@ void KeyBinder::ParseLine(char *line) {
 
 	int np = 0;
 	while (!s.empty() && s[0] != '#' && np < c_maxparams) {
-		i = s.find_first_of(chardata.whitespace);
+		i = s.findFirstOf(chardata.whitespace);
 		string tmp = s.substr(0, i);
 		s.erase(0, i);
 		skipspace(s);

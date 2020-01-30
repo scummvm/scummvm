@@ -41,15 +41,15 @@ void Tokenise(const Std::string &str, Std::vector<Std::string> &tokens, char del
 	Std::string delimiters(delimiter);
 
 	// Skip delimiters at beginning.
-	string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+	string::size_type lastPos = str.findFirstNotOf(delimiters, 0);
 
-	for (string::size_type pos = str.find_first_of(delimiters, lastPos) ;
+	for (string::size_type pos = str.findFirstOf(delimiters, lastPos) ;
 	        string::npos != pos || string::npos != lastPos ;
-	        pos = str.find_first_of(delimiters, lastPos)) {
+	        pos = str.findFirstOf(delimiters, lastPos)) {
 		// Found a token, add it to the vector.
 		tokens.push_back(str.substr(lastPos, pos - lastPos));
 		// Skip delimiters.  Note the "not_of"
-		lastPos = str.find_first_not_of(delimiters, pos);
+		lastPos = str.findFirstNotOf(delimiters, pos);
 	}
 }
 

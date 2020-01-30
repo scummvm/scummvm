@@ -139,13 +139,13 @@ template void ArgvToString<Pentagram::istring>(const Std::vector<Pentagram::istr
 template<class T> void TrimSpaces(T &str) {
 	if (str.empty()) return;
 
-	typename T::size_type pos1 = str.find_first_not_of(' ');
+	typename T::size_type pos1 = str.findFirstNotOf(' ');
 	if (pos1 == T::npos) {
 		str = "";
 		return;
 	}
 
-	typename T::size_type pos2 = str.find_last_not_of(' ');
+	typename T::size_type pos2 = str.findLastNotOf(' ');
 	str = str.substr(pos1, pos2 - pos1 + 1);
 }
 

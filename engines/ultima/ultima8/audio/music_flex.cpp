@@ -101,23 +101,23 @@ void MusicFlex::loadSongInfo() {
 		Std::string::size_type  begIdx, endIdx;
 
 		// Find the first not space, which will get us the name
-		begIdx = line.find_first_not_of(' ');
-		endIdx = line.find_first_of(' ', begIdx);
+		begIdx = line.findFirstNotOf(' ');
+		endIdx = line.findFirstOf(' ', begIdx);
 		Std::string name = line.substr(begIdx, endIdx - begIdx);
 
 		// Now find the first not space after the name, which will get us the num
-		begIdx = line.find_first_not_of(' ', endIdx);
-		endIdx = line.find_first_of(' ', begIdx);
+		begIdx = line.findFirstNotOf(' ', endIdx);
+		endIdx = line.findFirstOf(' ', begIdx);
 		int num = line.at(begIdx);
 
 		// Now number of measures
-		begIdx = line.find_first_not_of(' ', endIdx);
-		endIdx = line.find_first_of(' ', begIdx);
+		begIdx = line.findFirstNotOf(' ', endIdx);
+		endIdx = line.findFirstOf(' ', begIdx);
 		int measures = Std::atoi(line.substr(begIdx, endIdx - begIdx).c_str());
 
 		// Now finally loop_jump
-		begIdx = line.find_first_not_of(' ', endIdx);
-		endIdx = line.find_first_of(' ', begIdx);
+		begIdx = line.findFirstNotOf(' ', endIdx);
+		endIdx = line.findFirstOf(' ', begIdx);
 		int loop_jump = Std::atoi(line.substr(begIdx, endIdx - begIdx).c_str());
 
 		// Uh oh
@@ -161,13 +161,13 @@ void MusicFlex::loadSongInfo() {
 		Std::string::size_type  begIdx, endIdx;
 
 		// Get 'from' name
-		begIdx = line.find_first_not_of(' ');
-		endIdx = line.find_first_of(' ', begIdx);
+		begIdx = line.findFirstNotOf(' ');
+		endIdx = line.findFirstOf(' ', begIdx);
 		Std::string from = line.substr(begIdx, endIdx - begIdx);
 
 		// Get 'to' name
-		begIdx = line.find_first_not_of(' ', endIdx);
-		endIdx = line.find_first_of(' ', begIdx);
+		begIdx = line.findFirstNotOf(' ', endIdx);
+		endIdx = line.findFirstOf(' ', begIdx);
 		Std::string to = line.substr(begIdx, endIdx - begIdx);
 
 		// Find index of from name
@@ -194,8 +194,8 @@ void MusicFlex::loadSongInfo() {
 		// Now attempt to read the trans info for the
 		for (int m = 0; m < info[fi]->num_measures; m++) {
 			// Get trans info name
-			begIdx = line.find_first_not_of(' ', endIdx);
-			endIdx = line.find_first_of(' ', begIdx);
+			begIdx = line.findFirstNotOf(' ', endIdx);
+			endIdx = line.findFirstOf(' ', begIdx);
 
 			if (begIdx == Std::string::npos)
 				error("Invalid Section 4 song info data. Unable to read transitions for all measures");

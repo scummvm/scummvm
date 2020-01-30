@@ -362,7 +362,7 @@ Std::string ConverseGump::strip_whitespace_after_break(Std::string s) {
 }
 
 bool ConverseGump::parse_token(MsgText *token) {
-	int at_idx = token->s.find_first_of('@', 0);
+	int at_idx = token->s.findFirstOf('@', 0);
 	int i = 0;
 	int len = (int)token->s.length();
 	while (at_idx != -1 && i < len) {
@@ -376,7 +376,7 @@ bool ConverseGump::parse_token(MsgText *token) {
 			if (!Common::isAlpha(c) || i == len - 1) {
 				token->s.erase(at_idx, 1);
 				i--;
-				at_idx = token->s.find_first_of('@', i);
+				at_idx = token->s.findFirstOf('@', i);
 				break;
 			}
 		}
@@ -391,7 +391,7 @@ bool ConverseGump::parse_token(MsgText *token) {
 // Add FM-Towns keywords which take the form. +actor_numKeyword+ eg. +5runes+
 // Only add keyword if the player has met the actor given by the actor_num
 void ConverseGump::parse_fm_towns_token(MsgText *token) {
-	int at_idx = token->s.find_first_of('+', 0);
+	int at_idx = token->s.findFirstOf('+', 0);
 	int i = 0;
 	int len = (int)token->s.length();
 	bool has_met = false;
@@ -422,7 +422,7 @@ void ConverseGump::parse_fm_towns_token(MsgText *token) {
 			if (!Common::isAlpha(ch) || i == len - 1) {
 				token->s.erase(at_idx, (i - at_idx) + 1);
 				i -= i - at_idx;
-				at_idx = token->s.find_first_of('+', i);
+				at_idx = token->s.findFirstOf('+', i);
 				break;
 			}
 		}

@@ -1382,7 +1382,7 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 	int space_width = font->getStringWidth(" ");
 	//uint16 x1 = startx;
 
-	found = str.find_first_of(" ", start);
+	found = str.findFirstOf(" ", start);
 	while (found != string::npos) {
 		Std::string token = str.substr(start, found - start);
 
@@ -1410,7 +1410,7 @@ void ScriptCutscene::print_text(CSImage *image, const char *s, uint16 *x, uint16
 		}
 
 		start = found + 1;
-		found = str.find_first_of(" ", start);
+		found = str.findFirstOf(" ", start);
 	}
 
 	list<Std::string>::iterator it;
@@ -1613,14 +1613,14 @@ void ScriptCutscene::display_wrapped_text(CSSprite *s) {
 
 	Std::string line = "";
 
-	found = str.find_first_of("^", start);
+	found = str.findFirstOf("^", start);
 	while (found != string::npos) {
 		Std::string token = str.substr(start, found - start);
 
 		y = display_wrapped_text_line(token, text_color, s->x, y, s->text_align);
 
 		start = found + 1;
-		found = str.find_first_of("^", start);
+		found = str.findFirstOf("^", start);
 	}
 }
 
@@ -1640,7 +1640,7 @@ int ScriptCutscene::display_wrapped_text_line(Std::string str, uint8 text_color,
 
 	Std::string line = "";
 
-	found = str.find_first_of(" ", start);
+	found = str.findFirstOf(" ", start);
 	while (found != string::npos) {
 		Std::string token = str.substr(start, found - start);
 
@@ -1660,7 +1660,7 @@ int ScriptCutscene::display_wrapped_text_line(Std::string str, uint8 text_color,
 		line = line + token + " ";
 
 		start = found + 1;
-		found = str.find_first_of(" ", start);
+		found = str.findFirstOf(" ", start);
 	}
 
 	if (len > 0) {
