@@ -517,7 +517,9 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 		if (_colorBlack == -1 && p[0] == 0x00 && p[1] == 0x00 && p[2] == 0x00)
 			_colorBlack = i;
 
-		p += 3;
+		_palette[i * 3 + 0] = *p++;
+		_palette[i * 3 + 1] = *p++;
+		_palette[i * 3 + 2] = *p++;
 	}
 
 	if (_colorWhite != -1 && _colorBlack != -1)
