@@ -791,8 +791,8 @@ static const uint16 sciPatchTimerRollover[] = {
 // ===========================================================================
 // Conquests of Camelot
 // At the bazaar in Jerusalem, it's possible to see a girl taking a shower.
-//  If you get too close, you get warned by the father - if you don't get away,
-//  he will kill you.
+//  If you get too close, you get warned by Merlin - if you don't get away,
+//  the girl's father will kill you.
 // Instead of walking there manually, it's also possible to enter "look window"
 //  and ego will automatically walk to the window. It seems that this is something
 //  that wasn't properly implemented, because instead of getting killed, you will
