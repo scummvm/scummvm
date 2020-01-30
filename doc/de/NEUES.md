@@ -13,7 +13,7 @@ Programmcodes finden Sie auf Englisch unter:
  Sword1:
    - Unterstützung für lokalisierte Menüs in der russischen Version der Novy Disk Trilogy hinzugefügt.
 
-#### 2.1.1 (31.01.2020)
+#### 2.1.1 ":More sheep:" (31.01.2020)
 
  Allgemein:
    - Absturz beim Wechsel zwischen einigen Sprachen der Benutzeroberfläche korrigiert.
