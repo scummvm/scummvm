@@ -66,7 +66,7 @@ namespace Common {
 
 namespace Graphics {
 class MacMenu;
-class WinCursorGroup;
+struct WinCursorGroup;
 }
 
 namespace Pink {
