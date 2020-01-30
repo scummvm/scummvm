@@ -28,7 +28,7 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "ultima/shared/early/ultima_early.h"
-#include "ultima/ultima6/ultima6.h"
+#include "ultima/nuvie/nuvie.h"
 #include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
@@ -90,7 +90,7 @@ bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 		case Ultima::GAME_ULTIMA6:
 		case Ultima::GAME_MARTIAN_DREAMS:
 		case Ultima::GAME_SAVAGE_EMPIRE:
-			*engine = new Ultima::Ultima6::Ultima6Engine(syst, gd);
+			*engine = new Ultima::Nuvie::NuvieEngine(syst, gd);
 			break;
 		case Ultima::GAME_ULTIMA8:
 			*engine = new Ultima::Ultima8::Ultima8Engine(syst, gd);
