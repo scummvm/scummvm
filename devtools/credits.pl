@@ -1018,6 +1018,7 @@ begin_credits("Credits");
 				add_person("Dominik Reichardt", "Dominus Dragon", "(Pentagram)");
 				add_person("Eric Fry", "yuv422", "(Nuvie)");
 				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Willem Jan Palenstijn", "wjp", "(Pentagram)");
 			end_section();
 
 			begin_section("Voyeur");
