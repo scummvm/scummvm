@@ -30,7 +30,7 @@ namespace ZVision {
 
 Clock::Clock(OSystem *system)
 	: _system(system),
-	  _lastTime(0),
+	  _lastTime(system->getMillis()),
 	  _deltaTime(0),
 	  _pausedTime(0),
 	  _paused(false) {
