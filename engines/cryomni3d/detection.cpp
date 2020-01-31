@@ -67,8 +67,8 @@ Common::Language CryOmni3DEngine::getLanguage() const {
 
 bool CryOmni3DEngine::hasFeature(EngineFeature f) const {
 	return
-	    (f == kSupportsRTL)
-	    || (f == kSupportsSubtitleOptions);
+		(f == kSupportsRTL)
+		|| (f == kSupportsSubtitleOptions);
 }
 
 static const PlainGameDescriptor cryomni3DGames[] = {
@@ -85,13 +85,13 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class CryOmni3DMetaEngine : public AdvancedMetaEngine {
 public:
 	CryOmni3DMetaEngine() : AdvancedMetaEngine(CryOmni3D::gameDescriptions,
-		        sizeof(CryOmni3DGameDescription), cryomni3DGames, optionsList) {
+				sizeof(CryOmni3DGameDescription), cryomni3DGames, optionsList) {
 		_directoryGlobs = directoryGlobs;
 		_maxScanDepth = 5;
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles,
-	                              const Common::FSList &fslist) const override {
+								  const Common::FSList &fslist) const override {
 		return detectGameFilebased(allFiles, fslist, fileBased);
 	}
 
@@ -116,10 +116,10 @@ public:
 
 bool CryOmni3DMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-	    (f == kSupportsListSaves)
-	    || (f == kSupportsLoadingDuringStartup)
-	    || (f == kSupportsDeleteSave)
-	    || (f == kSimpleSavesNames);
+		(f == kSupportsListSaves)
+		|| (f == kSupportsLoadingDuringStartup)
+		|| (f == kSupportsDeleteSave)
+		|| (f == kSimpleSavesNames);
 }
 
 SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
@@ -138,7 +138,7 @@ SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
 	int slotNum;
 
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end();
-	        ++file) {
+			++file) {
 		// Obtain the last 4 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(file->c_str() + file->size() - 4);
 
@@ -163,7 +163,7 @@ void CryOmni3DMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 bool CryOmni3DMetaEngine::createInstance(OSystem *syst, Engine **engine,
-        const ADGameDescription *desc) const {
+		const ADGameDescription *desc) const {
 	const CryOmni3DGameDescription *gd = (const CryOmni3DGameDescription *)desc;
 
 	if (gd) {
