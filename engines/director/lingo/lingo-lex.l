@@ -40,6 +40,8 @@
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/lingo-the.h"
 
+#define register
+
 using namespace Director;
 
 int yyparse();
