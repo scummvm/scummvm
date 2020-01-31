@@ -1076,7 +1076,7 @@ noun inside information; this is used by agtout */
 	if (aver >= AGT18 && aver <= AGT18MAX) {
 		bold_mode = 1;
 		build_fixchar();
-		fixchar['\\'] = FORMAT_CODE;
+		fixchar[(int)'\\'] = FORMAT_CODE;
 	}
 
 	if (aver < AGTME10) {

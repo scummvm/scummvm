@@ -737,7 +737,7 @@ void Window::getSize(uint *width, uint *height) const {
 
 void Window::bringToFront() {
 	PairWindow *pairWin = dynamic_cast<PairWindow *>(_parent);
-	
+
 	if (pairWin && pairWin->_dir == winmethod_Arbitrary && pairWin->_children.back() != this) {
 		pairWin->_children.remove(this);
 		pairWin->_children.push_back(this);

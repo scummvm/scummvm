@@ -59,7 +59,7 @@ public:
 		/**
 		 * Constructor
 		 */
-		iterator(Windows *windows, Window *start) : _windows(windows), _current(start) {}
+		iterator(Windows *windows, Window *start) : _current(start) { _windows = windows; }
 
 		/**
 		 * Dereference

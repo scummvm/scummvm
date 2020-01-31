@@ -937,7 +937,7 @@ void prop_debug_dump(sc_prop_setref_t bundle) {
 	sc_trace("bundle->dictionary =\n");
 	for (index_ = 0; index_ < bundle->dictionary_length; index_++) {
 		sc_trace("%3ld : %p \"%s\"\n", index_,
-		         bundle->dictionary[index_], bundle->dictionary[index_]);
+		         (void *)bundle->dictionary[index_], bundle->dictionary[index_]);
 	}
 
 	sc_trace("bundle->node_pools_length = %ld\n", bundle->node_pools_length);
