@@ -82,19 +82,19 @@ public:
 		_maxScanDepth = 1;
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "sludge";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Sludge";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Sludge (C) 2000-2014 Hungry Software and contributors";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		const Sludge::SludgeGameDescription *gd = (const Sludge::SludgeGameDescription *)desc;
 			if (gd) {
 				*engine = new Sludge::SludgeEngine(syst, gd);
