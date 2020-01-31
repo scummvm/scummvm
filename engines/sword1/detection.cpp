@@ -79,27 +79,27 @@ static const char *const g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files h
 
 class SwordMetaEngine : public MetaEngine {
 public:
-	virtual const char *getEngineId() const {
+	virtual const char *getEngineId() const override {
 		return "sword1";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Broken Sword: The Shadow of the Templars";
 	}
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Broken Sword: The Shadow of the Templars (C) Revolution";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	PlainGameList getSupportedGames() const override;
 	PlainGameDescriptor findGame(const char *gameId) const override;
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 };
 
 bool SwordMetaEngine::hasFeature(MetaEngineFeature f) const {
