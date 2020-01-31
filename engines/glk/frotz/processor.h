@@ -204,7 +204,7 @@ protected:
 	 * it according to err_report_mode.
 	 * @param errNum		Numeric code for error (1 to ERR_NUM_ERRORS)
 	 */
-	void runtimeError(ErrorCode errNum);
+	void runtimeError(ErrorCode errNum) override;
 
 	/**@}*/
 
@@ -1027,7 +1027,7 @@ protected:
 	 * \defgroup Object Opcode methods
 	 * @{
 	 */
-	
+
 	/**
 	 * Branch if the first object is inside the second.
 	 *
@@ -1087,7 +1087,7 @@ protected:
 	 *        zargs[0] = object
 	 */
 	void z_get_sibling();
-	
+
 	/**
 	 * Make an object the first child of another object.
 	 *

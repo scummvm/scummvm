@@ -83,7 +83,7 @@ protected:
 	bool _quitFlag;
 
 	// Engine APIs
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 
 	/**
 	  * Returns true whether a given feature is supported by the engine

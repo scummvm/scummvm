@@ -790,7 +790,7 @@ private:
 	 * 5.  If all is well, return to match the objects that were previously skipped over,
 	 * loading them into objlist[]. Once again, this is done by MatchObject().
 	 *
-	 * (The reason the objects are initially skipped is because it may be necessary to know 
+	 * (The reason the objects are initially skipped is because it may be necessary to know
 	 * where to look for them--this may require knowing what the xobject is, if the syntax
 	 * is something like:
 	 *
@@ -947,7 +947,7 @@ private:
 	/**
 	 * This is the main loop for running each line of code in sequence;
 	 * the main switch statement is based on the first token in each line.
-	 * 
+	 *
 	 * This routine is relatively complex, especially given the addition of debugger control.
 	 * Basically it is structured like this:
 	 *
@@ -1161,7 +1161,7 @@ private:
 	void SwitchtoDebugger() {}
 
 	void Debugger() {}
-	
+
 	void UpdateDebugScreen() {}
 
 	void SwitchtoGame() {}
@@ -1185,7 +1185,7 @@ public:
 	/**
 	 * Run the game
 	 */
-	void runGame();
+	void runGame() override;
 
 	/**
 	 * Returns the running interpreter type
