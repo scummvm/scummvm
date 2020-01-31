@@ -2962,6 +2962,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LSL7 },
 
+	// Larry 7 - English Macintosh CD
+	{"lsl7", "", {
+		{"Data1", 0, "824a48b794c334b4bcf37e80fcc5f82e", 913286},
+		{"Data2", 0, "be36c59a3a694e14ed6d86e6ccc180a4", 7549943},
+		{"Data3", 0, "8325c7d702ffa8dd2854135e0f42b0d0", 6815697},
+		{"Data4", 0, "4584f786e0b5a502938d3cd90e6fab56", 8169195},
+		{"Data5", 0, "94bd026d27ba526d1f8d86d8e783acdd", 7452479},
+		{"Data6", 0, "c6a60210244a8591ecf10a50975ab9db", 8119360},
+		{"Data7", 0, "0d52c9764e047169f3d50f76d0cb5ae5", 8164785},
+		{"Data8", 0, "6f4838585ceb8a9ac277d13291c81235", 7754883},
+		{"Data9", 0, "68c0b7bd4aebf57e215f0517247a11d1", 8079211},
+		{"Data10", 0, "3dbacbcf4bd6d1b25aa8baeb3e2c4dab", 6446948},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_LSL7 },
+
 #undef GUIO_LSL7_DEMO
 #undef GUIO_LSL7
 
