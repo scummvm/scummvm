@@ -33,8 +33,10 @@ namespace Quest {
 
 void report_error(const String &s);
 
+// FIXME: This requires global constructor
 reserved_words obj_tag_property("look", "examine", "speak", "take", "alias", "prefix", "suffix", "detail", "displaytype", "gender", "article", "hidden", "invisible", (char *) NULL);
 
+// FIXME: This requires global constructor
 reserved_words room_tag_property("look", "alias", "prefix", "indescription", "description", "north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *) NULL);
 
 void GeasFile::debug_print(String s) const {

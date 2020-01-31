@@ -30,6 +30,7 @@ namespace Archetype {
 const char *const CANT_PEEK = "Internal error:  cannot peek into heap";
 const char *const CANT_POKE = "Internal error:  cannot poke into heap";
 
+// FIXME: This requires global constructor
 HeapType H;
 
 void heap_sort_init() {
@@ -51,10 +52,10 @@ static void heapup() {
 			parent = L / 2;
 		else
 			parent = (L - 1) / 2;
-	
+
 		if (!(access_xarray(H, L, Lp, PEEK_ACCESS) && access_xarray(H, parent, parentp, PEEK_ACCESS)))
 			g_vm->writeln(CANT_PEEK);
-		
+
 		if (lighter(Lp, parentp)) {
 			temp = parentp;
 			if (!(access_xarray(H, parent, Lp, POKE_ACCESS) && access_xarray(H, L, temp, POKE_ACCESS)))
@@ -82,7 +83,7 @@ static void heapdown() {
 			rc = lc + 1;
 			if (!access_xarray(H, lc, lcp, PEEK_ACCESS))
 				g_vm->writeln(CANT_PEEK);
-			
+
 			if (rc > H.size()) {
 				compare = lc;
 				comparep = lcp;
@@ -97,7 +98,7 @@ static void heapdown() {
 					comparep = rcp;
 				}
 			}
-			
+
 			if (!access_xarray(H, L, lp, PEEK_ACCESS))
 				g_vm->writeln(CANT_PEEK);
 			if (!lighter(comparep, lp)) {
@@ -121,7 +122,7 @@ bool pop_heap(Element &e) {
 		if (!(access_xarray(H, 0, e, PEEK_ACCESS) && access_xarray(H, H.size() - 1, temp, PEEK_ACCESS)
 				&&  access_xarray(H, 0, temp, POKE_ACCESS)))
 			g_vm->writeln(CANT_PEEK);
-		
+
 		shrink_xarray(H);
 		heapdown();
 		return true;

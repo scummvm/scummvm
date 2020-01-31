@@ -74,7 +74,7 @@ Magnetic::Magnetic(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(s
 	Common::fill(&dreg[0], &dreg[8], 0);
 	Common::fill(&areg[0], &areg[8], 0);
 	Common::fill(&tmparg[0], &tmparg[4], 0);
-	Common::fill(&undo_regs[0][0], &undo_regs[3][0], 0);
+	Common::fill(&undo_regs[0][0], &undo_regs[2][0], 0);
 	undo[0] = undo[1] = nullptr;
 	undo_stat[0] = undo_stat[1] = 0;
 	Common::fill(&buffer[0], &buffer[80], 0);

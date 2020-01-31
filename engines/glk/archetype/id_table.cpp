@@ -30,6 +30,7 @@ ClassifyType DefaultClassification;
 
 // Static variables
 IdRecPtr hash[BUCKETS];
+// FIXME: This requires global constructor
 XArrayType h_index;
 
 int add_ident(const String &id_str) {
@@ -39,7 +40,7 @@ int add_ident(const String &id_str) {
 	hasher = (int)(toupper(id_str[1])) - 65;	// A..Z => 65..90 => 0..25
 	if (hasher < 0 || hasher > 25)
 		hasher = 26;
-  
+
 	p = hash[hasher];
 	while (p->next && *p->next->id_name < id_str)
 		p = p->next;
@@ -47,7 +48,7 @@ int add_ident(const String &id_str) {
 	if (p->next == nullptr || *p->next->id_name > id_str) {
 		new_rec = new IdRecType();
 		append_to_xarray(h_index, new_rec);
-		
+
 		new_rec->id_kind    = DefaultClassification;
 		new_rec->id_index   = h_index.size();
 		new_rec->id_integer = new_rec->id_index;

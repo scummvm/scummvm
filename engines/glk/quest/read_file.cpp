@@ -132,6 +132,7 @@ bool is_end_define(String s) {
 
 extern Common::Array<String> split_lines(String data);
 
+// FIXME: This requires global constructor
 reserved_words dir_tag_property("north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *) NULL);
 
 void GeasFile::read_into(const Common::Array<String> &in_data,
@@ -433,11 +434,7 @@ Common::WriteStream &operator<<(Common::WriteStream &o, const GeasFile &gf) {
 	return o;
 }
 
-
-
-
-
-String compilation_tokens[256] = {
+const char *compilation_tokens[256] = {
 	"", "game", "procedure", "room", "object", "character", "text", "selection",
 	"define", "end", "", "asl-version", "game", "version", "author", "copyright",
 	"info", "start", "possitems", "startitems", "prefix", "look", "out", "gender",
