@@ -1852,7 +1852,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 
 		return kCursorHand;
 
-	case SceneHotspot::kActionCatchBeetle:
+	case SceneHotspot::kActionCatchBeetleHS:
 		if (!getBeetle()->isLoaded())
 			return kCursorNormal;
 
@@ -1897,7 +1897,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 LABEL_KEY:
 	// Handle compartment action
 	case SceneHotspot::kActionCompartment:
-	case SceneHotspot::kActionExitCompartment:
+	case SceneHotspot::kActionExitCompartmentHS:
 		debugC(2, kLastExpressDebugScenes, "================================= DOOR %03d =================================", object);
 		if (object >= kObjectMax)
 			return kCursorNormal;
