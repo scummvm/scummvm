@@ -43,7 +43,7 @@ protected:
 	class CelVideoTrack : public FlicVideoTrack {
 	public:
 		CelVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader = false);
-		virtual void readHeader();
+		virtual void readHeader() override;
 
 		uint16 getTransparentColourIndex();
 
@@ -59,7 +59,7 @@ protected:
 		bool rewind() override;
 
 	private:
-		const Graphics::Surface *decodeNextFrame();
+		const Graphics::Surface *decodeNextFrame() override;
 		void readPrefixChunk();
 
 		Common::Point _center;

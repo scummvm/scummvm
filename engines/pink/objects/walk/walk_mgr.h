@@ -44,7 +44,7 @@ class WalkMgr : public Object {
 public:
 	WalkMgr();
 	~WalkMgr() override;
-	virtual void deserialize(Archive &archive);
+	virtual void deserialize(Archive &archive) override;
 	void toConsole() override;
 
 	WalkLocation *findLocation(const Common::String &name);
