@@ -222,7 +222,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("render_mode", "default");
 	ConfMan.registerDefault("desired_screen_aspect_ratio", "auto");
 	ConfMan.registerDefault("stretch_mode", "default");
-	ConfMan.registerDefault("shader", 0);
+	ConfMan.registerDefault("shader", "default");
 
 	// Sound & Music
 	ConfMan.registerDefault("music_volume", 192);
@@ -589,6 +589,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("stretch-mode")
+			END_OPTION
+
+			DO_LONG_OPTION("shader")
 			END_OPTION
 
 			DO_OPTION_INT('m', "music-volume")

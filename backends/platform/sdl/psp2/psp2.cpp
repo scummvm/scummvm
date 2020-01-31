@@ -100,7 +100,6 @@ void OSystem_PSP2::initBackend() {
 	ConfMan.registerDefault("filtering", true);
 	ConfMan.registerDefault("kbdmouse_speed", 3);
 	ConfMan.registerDefault("joystick_deadzone", 2);
-	ConfMan.registerDefault("shader", 0);
 	ConfMan.registerDefault("touchpad_mouse_mode", false);
 	ConfMan.registerDefault("frontpanel_touchpad_mode", false);
 
@@ -114,9 +113,6 @@ void OSystem_PSP2::initBackend() {
 	}
 	if (!ConfMan.hasKey("filtering")) {
 		ConfMan.setBool("filtering", true);
-	}
-	if (!ConfMan.hasKey("shader")) {
-		ConfMan.setInt("shader", 2);
 	}
 	if (!ConfMan.hasKey("touchpad_mouse_mode")) {
 		ConfMan.setBool("touchpad_mouse_mode", false);

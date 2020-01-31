@@ -646,6 +646,16 @@ public:
 	}
 
 	/**
+	 * Return the ID of the 'default' shader mode. What exactly this means
+	 * is up to the backend. This mode is set by the client code when no user
+	 * overrides are present (i.e. if no custom shader mode is selected via
+	 * the command line or a config file).
+	 *
+	 * @return the ID of the 'default' shader mode
+	 */
+	virtual int getDefaultShader() const { return 0; }
+
+	/**
 	 * Switch to the specified shader mode. If switching to the new mode
 	 * failed, this method returns false.
 	 *
@@ -653,6 +663,18 @@ public:
 	 * @return true if the switch was successful, false otherwise
 	 */
 	virtual bool setShader(int id) { return false; }
+
+	/**
+	 * Switch to the shader mode with the given name. If 'name' is unknown,
+	 * or if switching to the new mode failed, this method returns false.
+	 *
+	 * @param name	the name of the new shader mode
+	 * @return true if the switch was successful, false otherwise
+	 * @note This is implemented via the setShader(int) method, as well
+	 *       as getSupportedShaders() and getDefaultShader().
+	 *       In particular, backends do not have to overload this!
+	 */
+	bool setShader(const char *name);
 
 	/**
 	 * Determine which shader is currently active.
