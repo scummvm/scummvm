@@ -1,6 +1,6 @@
 targetEncoding=windows-1252
 asciiCharList=!!"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—™š›œžŸ¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþ
-explicitKerningList=i:-1,ì:-1,í:-1,î:-1,ï:-1,u:-1,T:1,A:1,Y:1
-explicitWidthIncrement=i:0,j:1,l:1
+explicitKerningList=Î:1,Ï:1,ì:1,í:2,î:1,ï:1
+explicitWidthIncrement=1:2
 originalFontName=SUBLTS
 specialOutOfOrderGlyphsUTF8ToAsciiTargetEncoding=ÿ:€
