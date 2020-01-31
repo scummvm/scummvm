@@ -195,11 +195,11 @@ public:
 
 	bool getIsLoading() const { return _loading; }
 
-	virtual bool handleMouseWheel(int32 delta);
+	virtual bool handleMouseWheel(int32 delta) override;
 	bool _quitting;
 	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const;
 
-	virtual bool handleKeypress(Common::Event *event, bool printable = false);
+	virtual bool handleKeypress(Common::Event *event, bool printable = false) override;
 	virtual void handleKeyRelease(Common::Event *event);
 
 	bool unfreeze();
@@ -219,7 +219,7 @@ public:
 	bool loadGame(uint32 slot);
 	bool loadGame(const char *filename);
 	bool saveGame(int32 slot, const char *desc, bool quickSave = false);
-	virtual bool showCursor();
+	virtual bool showCursor() override;
 
 	BaseObject *_activeObject;
 
@@ -295,8 +295,8 @@ private:
 
 	int32 _soundBufferSizeSec;
 
-	virtual bool invalidateDeviceObjects();
-	virtual bool restoreDeviceObjects();
+	virtual bool invalidateDeviceObjects() override;
+	virtual bool restoreDeviceObjects() override;
 
 	// TODO: This can probably be removed completely:
 	bool _saveDirChecked;

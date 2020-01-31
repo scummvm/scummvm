@@ -42,7 +42,7 @@ public:
 
 	bool getTotalOffset(int *offsetX, int *offsetY);
 	bool focus();
-	virtual bool handleMouse(TMouseEvent event, TMouseButton button);
+	virtual bool handleMouse(TMouseEvent event, TMouseButton button) override;
 	bool isFocused();
 
 	DECLARE_PERSISTENT(UIObject, BaseObject)

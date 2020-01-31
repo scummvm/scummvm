@@ -109,7 +109,7 @@ public:
 	uint32 _scrollTimeH;
 	uint32 _lastTimeH;
 
-	virtual bool display();
+	virtual bool display() override;
 	uint32 _pfMaxTime;
 	bool initLoop();
 	void pathFinderStep();
@@ -152,7 +152,7 @@ public:
 	BaseArray<AdScaleLevel *> _scaleLevels;
 	BaseArray<AdRotLevel *> _rotLevels;
 
-	virtual bool restoreDeviceObjects();
+	virtual bool restoreDeviceObjects() override;
 	int getPointsDist(const BasePoint &p1, const BasePoint &p2, BaseObject *requester = nullptr);
 
 	// scripting interface

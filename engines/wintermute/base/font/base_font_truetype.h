@@ -111,8 +111,8 @@ public:
 		return _lineHeight;
 	}
 
-	void afterLoad();
-	void initLoop();
+	void afterLoad() override;
+	void initLoop() override;
 
 private:
 	bool parseLayer(BaseTTFontLayer *layer, char *buffer);

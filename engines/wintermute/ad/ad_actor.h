@@ -48,11 +48,11 @@ public:
 	TDirection angleToDirection(int angle);
 	DECLARE_PERSISTENT(AdActor, AdTalkHolder)
 	virtual int32 getHeight() override;
-	BaseSprite *getTalkStance(const char *stance);
+	BaseSprite *getTalkStance(const char *stance) override;
 	virtual void goTo(int x, int y, TDirection afterWalkDir = DI_NONE);
 	BasePoint *_targetPoint;
-	virtual bool update();
-	virtual bool display();
+	virtual bool update() override;
+	virtual bool display() override;
 	virtual void turnTo(TDirection dir);
 	AdActor(BaseGame *inGame/*=nullptr*/);
 	virtual ~AdActor();
@@ -79,7 +79,7 @@ private:
 	Common::String _turnLeftAnimName;
 	Common::String _turnRightAnimName;
 	BaseArray<AdSpriteSet *> _anims;
-	virtual bool playAnim(const char *filename);
+	virtual bool playAnim(const char *filename) override;
 	AdSpriteSet *getAnimByName(const Common::String &animName);
 
 	// scripting interface

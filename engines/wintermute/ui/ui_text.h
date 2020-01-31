@@ -40,7 +40,7 @@ private:
 	TTextAlign _textAlign;
 	TVerticalAlign _verticalAlign;
 public:
-	virtual bool display(int offsetX, int offsetY);
+	virtual bool display(int offsetX, int offsetY) override;
 	DECLARE_PERSISTENT(UIText, UIObject)
 	UIText(BaseGame *inGame = nullptr);
 	virtual ~UIText();

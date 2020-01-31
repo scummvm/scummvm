@@ -39,8 +39,8 @@ public:
 	DECLARE_PERSISTENT(SXDirectory, BaseScriptable)
 	SXDirectory(BaseGame *inGame);
 	virtual ~SXDirectory();
-	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 };
 
 } // End of namespace Wintermute

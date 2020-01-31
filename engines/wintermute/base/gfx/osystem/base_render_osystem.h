@@ -64,12 +64,12 @@ public:
 
 	typedef Common::List<RenderTicket *>::iterator RenderQueueIterator;
 
-	Common::String getName() const;
+	Common::String getName() const override;
 
 	bool initRenderer(int width, int height, bool windowed) override;
 	bool flip() override;
-	virtual bool indicatorFlip();
-	virtual bool forcedFlip();
+	virtual bool indicatorFlip() override;
+	virtual bool forcedFlip() override;
 	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
 	Graphics::PixelFormat getPixelFormat() const override;
 	void fade(uint16 alpha) override;
@@ -112,7 +112,7 @@ public:
 	}
 	virtual bool startSpriteBatch() override;
 	virtual bool endSpriteBatch() override;
-	void endSaveLoad();
+	void endSaveLoad() override;
 	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Graphics::TransformStruct &transform);
 	BaseSurface *createSurface() override;
 private:

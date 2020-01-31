@@ -42,15 +42,15 @@ public:
 	bool getWindowObjects(BaseArray<UIObject *> &Objects, bool InteractiveOnly);
 
 	void cleanup();
-	virtual void makeFreezable(bool freezable);
+	virtual void makeFreezable(bool freezable) override;
 
-	virtual bool handleMouseWheel(int delta);
+	virtual bool handleMouseWheel(int delta) override;
 
 	bool close();
 	bool goSystemExclusive();
 	bool goExclusive();
 	bool moveFocus(bool forward = true);
-	virtual bool handleMouse(TMouseEvent Event, TMouseButton Button);
+	virtual bool handleMouse(TMouseEvent Event, TMouseButton Button) override;
 	DECLARE_PERSISTENT(UIWindow, UIObject)
 	bool showWidget(const char *name, bool visible = true);
 	bool enableWidget(const char *name, bool enable = true);
@@ -64,14 +64,14 @@ public:
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 
-	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
+	virtual bool listen(BaseScriptHolder *param1, uint32 param2) override;
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	// scripting interface
 	virtual ScValue *scGetProperty(const Common::String &name) override;
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString();
+	virtual const char *scToString() override;
 
 	bool getInGame() const;
 	TWindowMode getMode() const;

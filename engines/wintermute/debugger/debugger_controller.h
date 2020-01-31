@@ -109,8 +109,8 @@ public:
 	/**
 	 * Inherited from ScriptMonitor
 	 */
-	void onBreakpoint(const Breakpoint *breakpoint, DebuggableScript *script);
-	void onWatch(const Watch *watch, DebuggableScript *script);
+	void onBreakpoint(const Breakpoint *breakpoint, DebuggableScript *script) override;
+	void onWatch(const Watch *watch, DebuggableScript *script) override;
 	void notifyStep(DebuggableScript *script) override;
 };
 }

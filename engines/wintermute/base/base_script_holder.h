@@ -41,14 +41,14 @@ public:
 
 	BaseScriptHolder(BaseGame *inGame);
 	virtual ~BaseScriptHolder();
-	virtual ScScript *invokeMethodThread(const char *methodName);
+	virtual ScScript *invokeMethodThread(const char *methodName) override;
 	virtual void makeFreezable(bool freezable);
 	bool canHandleEvent(const char *eventName) const;
-	virtual bool canHandleMethod(const char *eventMethod) const;
+	virtual bool canHandleMethod(const char *eventMethod) const override;
 	bool cleanup();
 	bool removeScript(ScScript *script);
 	bool addScript(const char *filename);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
 	bool applyEvent(const char *eventName, bool unbreakable = false);
 	void setFilename(const char *filename);

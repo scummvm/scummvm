@@ -89,22 +89,22 @@ class WintermuteMetaEngine : public AdvancedMetaEngine {
 public:
 	WintermuteMetaEngine() : AdvancedMetaEngine(Wintermute::gameDescriptions, sizeof(WMEGameDescription), Wintermute::wintermuteGames, gameGuiOptions) {
 		// Use kADFlagUseExtraAsHint to distinguish between SD and HD versions
-		// of J.U.L.I.A. when their datafiles sit in the same directory (e.g. in Steam distribution). 
+		// of J.U.L.I.A. when their datafiles sit in the same directory (e.g. in Steam distribution).
 		_flags = kADFlagUseExtraAsHint;
 		_guiOptions = GUIO3(GUIO_NOMIDI, GAMEOPTION_SHOW_FPS, GAMEOPTION_BILINEAR);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "wintermute";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Wintermute";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Copyright (C) 2011 Jan Nedoma";
 	}
 
@@ -154,7 +154,7 @@ public:
 		return game;
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		assert(syst);
 		assert(engine);
 		const WMEGameDescription *gd = (const WMEGameDescription *)desc;
@@ -162,7 +162,7 @@ public:
 		return true;
 	}
 
-	bool hasFeature(MetaEngineFeature f) const {
+	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
 		case MetaEngine::kSupportsListSaves:
 			return true;
@@ -181,7 +181,7 @@ public:
 		}
 	}
 
-	SaveStateList listSaves(const char *target) const {
+	SaveStateList listSaves(const char *target) const override {
 		SaveStateList saves;
 		Wintermute::BasePersistenceManager pm(target, true);
 		for (int i = 0; i < getMaximumSaveSlot(); i++) {
@@ -194,16 +194,16 @@ public:
 		return saves;
 	}
 
-	int getMaximumSaveSlot() const {
+	int getMaximumSaveSlot() const override {
 		return 100;
 	}
 
-	void removeSaveState(const char *target, int slot) const {
+	void removeSaveState(const char *target, int slot) const override {
 		Wintermute::BasePersistenceManager pm(target, true);
 		pm.deleteSaveSlot(slot);
 	}
 
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
 		Wintermute::BasePersistenceManager pm(target, true);
 		SaveStateDescriptor retVal;
 		retVal.setDescription("Invalid savegame");

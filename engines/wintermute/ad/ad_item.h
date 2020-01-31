@@ -38,10 +38,10 @@ class AdItem : public AdTalkHolder {
 	using Wintermute::AdObject::display;
 
 public:
-	bool update();
+	bool update() override;
 	DECLARE_PERSISTENT(AdItem, AdTalkHolder)
 	bool display(int x, int y);
-	bool getExtendedFlag(const char *flagName);
+	bool getExtendedFlag(const char *flagName) override;
 	bool _inInventory;
 	bool _cursorCombined;
 	BaseSprite *_spriteHover;

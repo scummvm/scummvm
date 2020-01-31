@@ -61,7 +61,7 @@ public:
 	bool deleteItem(AdItem *Item);
 	char *_itemsFile;
 	bool _tempDisableSaveState;
-	virtual bool resetContent();
+	virtual bool resetContent() override;
 	bool addItem(AdItem *item);
 	AdItem *getItemByName(const char *name) const;
 
@@ -99,11 +99,11 @@ public:
 	void setPrevSceneFilename(const char *name);
 
 	AdItem *_selectedItem;
-	bool cleanup();
+	bool cleanup() override;
 	DECLARE_PERSISTENT(AdGame, BaseGame)
 
 	void finishSentences();
-	bool showCursor();
+	bool showCursor() override;
 
 	TGameStateEx _stateEx;
 
@@ -119,8 +119,8 @@ public:
 
 	BaseArray<AdObject *> _objects;
 
-	virtual bool loadFile(const char *filename);
-	virtual bool loadBuffer(char *buffer, bool complete = true);
+	virtual bool loadFile(const char *filename) override;
+	virtual bool loadBuffer(char *buffer, bool complete = true) override;
 
 	bool loadItemsFile(const char *filename, bool merge = false);
 	bool loadItemsBuffer(char *buffer, bool merge = false);
