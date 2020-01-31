@@ -968,25 +968,25 @@ using namespace Scumm;
 
 class ScummMetaEngine : public MetaEngine {
 public:
-	virtual const char *getEngineId() const {
+	virtual const char *getEngineId() const override {
 		return "scumm";
 	}
 
-	virtual const char *getName() const;
-	virtual const char *getOriginalCopyright() const;
+	virtual const char *getName() const override;
+	virtual const char *getOriginalCopyright() const override;
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	PlainGameList getSupportedGames() const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
 	virtual DetectedGames detectGames(const Common::FSList &fslist) const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
 
 bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {
