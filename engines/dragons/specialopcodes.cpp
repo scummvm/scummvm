@@ -555,7 +555,7 @@ void SpecialOpcodes::spcMenInMinesSceneLogic() {
 }
 
 void SpecialOpcodes::spcStopMenInMinesSceneLogic() {
-	if (_vm->getSceneUpdateFunction() == monksAtBarSceneUpdateFunction) {
+	if (_vm->getSceneUpdateFunction() == menInMinesSceneUpdateFunction) {
 		_vm->setSceneUpdateFunction(NULL);
 		if (0x3c < _specialOpCounter) {
 			_specialOpCounter = 0x3c;
@@ -631,6 +631,8 @@ void SpecialOpcodes::spcCastleMoatUpdateActorSceneScalePoints() {
 
 void SpecialOpcodes::spcCastleGateMoatDrainedSceneLogic() {
 	// TODO spcCastleGateMoatDrainedSceneLogic
+	setSpecialOpCounter(-1);
+
 }
 void SpecialOpcodes::spcUnk34() {
 	Actor *flicker = _vm->_dragonINIResource->getFlickerRecord()->actor;
