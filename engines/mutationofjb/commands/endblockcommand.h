@@ -66,7 +66,7 @@ public:
 
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Command *next() const override;
-	virtual Common::String debugString() const;
+	virtual Common::String debugString() const override;
 private:
 	Command *_nextCmd;
 };

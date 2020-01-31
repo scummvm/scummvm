@@ -114,7 +114,7 @@ public:
 		: ChangeCommand(sceneId, doorId, reg, op, val)
 	{}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const;
+	virtual Common::String debugString() const override;
 };
 
 class ChangeObjectCommand : public ChangeCommand {
@@ -123,7 +123,7 @@ public:
 		: ChangeCommand(sceneId, objectId, reg, op, val)
 	{}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const;
+	virtual Common::String debugString() const override;
 };
 
 class ChangeStaticCommand : public ChangeCommand {
@@ -132,7 +132,7 @@ public:
 		: ChangeCommand(sceneId, staticId, reg, op, val)
 	{}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const;
+	virtual Common::String debugString() const override;
 };
 
 class ChangeSceneCommand : public ChangeCommand {
@@ -141,7 +141,7 @@ public:
 		: ChangeCommand(sceneId, staticId, reg, op, val)
 	{}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const;
+	virtual Common::String debugString() const override;
 };
 
 }

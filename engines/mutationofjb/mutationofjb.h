@@ -60,7 +60,7 @@ public:
 	MutationOfJBEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~MutationOfJBEngine();
 
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 	Graphics::Screen *getScreen() const;
 	Game &getGame();
 	void setCursorState(CursorState cursorState);

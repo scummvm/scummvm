@@ -41,7 +41,7 @@ public:
 	IfCommand(uint8 sceneId, uint8 objectId, uint16 value, bool negative);
 
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const;
+	virtual Common::String debugString() const override;
 
 private:
 	uint8 _sceneId;

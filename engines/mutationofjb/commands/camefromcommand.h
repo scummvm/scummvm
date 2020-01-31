@@ -38,7 +38,7 @@ class CameFromCommand : public ConditionalCommand {
 public:
 	CameFromCommand(uint8 sceneId) : _sceneId(sceneId) {}
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const;
+	virtual Common::String debugString() const override;
 private:
 	uint8 _sceneId;
 };
@@ -46,4 +46,3 @@ private:
 }
 
 #endif
-
