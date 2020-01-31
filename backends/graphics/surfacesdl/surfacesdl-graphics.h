@@ -425,7 +425,7 @@ protected:
 	virtual void setAspectRatioCorrection(bool enable);
 	void setFilteringMode(bool enable);
 
-	virtual bool saveScreenshot(const Common::String &filename) const;
+	virtual bool saveScreenshot(const Common::String &filename) const override;
 	virtual void setGraphicsModeIntern();
 
 private:
