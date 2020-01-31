@@ -17,7 +17,7 @@
 						sparkle:edSignature="js40WmEnNG4ab0nSNrzRo4z5jnUlDOE63iqpgpy8Brpxh9CFnnc8bBQ9LlHjujUPbG6A30pyihtAsozZi1gZAg=="/>
 
 			<enclosure sparkle:os="windows"
-						url="https://www.scummvm.org/frs/scummvm/2.1.1/scummvm-2.1.0-win32.exe"
+						url="https://www.scummvm.org/frs/scummvm/2.1.1/scummvm-2.1.1-win32.exe"
 						sparkle:version="2.1.1" length="39273606" type="application/octet-stream"
 						sparkle:dsaSignature="MC0CFQDImHNkK3Oru/lLIFS8bXfh1bI9cQIUOHAUHKd8wNvYbETTLw4DtAAiO7c=" />
 		</item>
