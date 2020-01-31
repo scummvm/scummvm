@@ -262,6 +262,7 @@ private:
 	 */
 	reg_t promptSaveRestoreHoyle5(EngineState *s, int argc, reg_t *argv) const;
 
+public:
 	/**
 	 * Prompts the user to save or load a game.
 	 *

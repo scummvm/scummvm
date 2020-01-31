@@ -785,6 +785,14 @@ bool SciEngine::hasMacIconBar() const {
 			(getGameId() == GID_KQ6 || getGameId() == GID_FREDDYPHARKAS);
 }
 
+bool SciEngine::hasMacSaveRestoreDialogs() const {
+    return _gameDescription->platform == Common::kPlatformMacintosh &&
+			(getSciVersion() <= SCI_VERSION_2_1_EARLY ||
+			 getGameId() == GID_GK2 ||
+			 getGameId() == GID_SQ6 ||
+			 getGameId() == GID_LIGHTHOUSE);
+}
+
 Common::String SciEngine::getSavegameName(int nr) const {
 	return _targetName + Common::String::format(".%03d", nr);
 }

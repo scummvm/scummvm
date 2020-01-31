@@ -1333,10 +1333,22 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
 	const Common::String gameName = s->_segMan->getString(argv[0]);
 	int16 saveNo = argv[1].toSint16();
-	const Common::String saveDescription = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
+	Common::String saveDescription = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
 	const Common::String gameVersion = (argc <= 3 || argv[3].isNull()) ? "" : s->_segMan->getString(argv[3]);
 
 	debugC(kDebugLevelFile, "Game name %s save %d desc %s ver %s", gameName.c_str(), saveNo, saveDescription.c_str(), gameVersion.c_str());
+
+	// Display the save prompt for Mac games with native dialogs. Passing
+	//  zero for the save number would trigger these, but we can't act solely
+	//  on that since we shift save numbers around to accommodate autosave
+	//  slots, causing some games to pass zero that normally wouldn't.
+	if (g_sci->hasMacSaveRestoreDialogs() && saveNo == 0) {
+		saveNo = g_sci->_guestAdditions->runSaveRestore(true, argv[2]);
+		if (saveNo == -1) {
+			return NULL_REG;
+		}
+		saveDescription = s->_segMan->getString(argv[2]);
+	}
 
 	// Auto-save system used by Torin and LSL7
 	if (gameName == "Autosave" || gameName == "Autosv") {
@@ -1401,6 +1413,17 @@ reg_t kRestoreGame32(EngineState *s, int argc, reg_t *argv) {
 	const Common::String gameName = s->_segMan->getString(argv[0]);
 	int16 saveNo = argv[1].toSint16();
 	const Common::String gameVersion = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
+
+	// Display the restore prompt for Mac games with native dialogs. Passing
+	//  zero for the save number would trigger these, but we can't act solely
+	//  on that since we shift save numbers around to accommodate autosave
+	//  slots, causing some games to pass zero that normally wouldn't.
+	if (g_sci->hasMacSaveRestoreDialogs() && saveNo == 0) {
+		saveNo = g_sci->_guestAdditions->runSaveRestore(false, NULL_REG, s->_delayedRestoreGameId);
+		if (saveNo == -1) {
+			return NULL_REG;
+		}
+	}
 
 	if (gameName == "Autosave" || gameName == "Autosv") {
 		if (saveNo == 0) {
