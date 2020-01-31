@@ -547,12 +547,6 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 		// Subop 0 has changed a few times
 		// In SCI1, its usage is still unknown
 		// In SCI1.1, it's NOP
-		// In SCI32, it's used for remapping cursor ID's
-#ifdef ENABLE_SCI32
-		if (getSciVersion() >= SCI_VERSION_2_1_EARLY) // Set Mac cursor remap
-			g_sci->_gfxCursor32->setMacCursorRemapList(argc - 1, argv + 1);
-		else
-#endif
 		if (getSciVersion() != SCI_VERSION_1_1)
 			warning("Unknown SCI1 kMacPlatform(0) call");
 		break;
@@ -564,7 +558,7 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 		break;	// removed warning, as it produces a lot of spam in the console
 	case 2: // Unknown, "UseNextWaitEvent" (Various)
 	case 3: // Unknown, "ProcessOpenDocuments" (Various)
-	case 5: // Unknown, plays a sound (KQ7)
+	case 5: // Unknown
 	case 6: // Unknown, menu-related (Unused?)
 		warning("Unhandled kMacPlatform(%d)", argv[0].toUint16());
 		break;
@@ -574,6 +568,58 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
+
+#ifdef ENABLE_SCI32
+reg_t kMacPlatform32(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case 0: // build cursor view map
+		g_sci->_gfxCursor32->setMacCursorRemapList(argc - 1, argv + 1);
+		break;
+
+	case 1: // compact/purge mac memory
+	case 2: // hands-off/hands-on for mac menus
+		break;
+
+	// TODO: Save game handling in KQ7, Shivers, and Lighthouse.
+	// - KQ7 uses all three with no parameters; the interpreter would
+	//   remember the current save file.
+	// - Shivers uses all three but passes parameters in a similar
+	//   manner as the normal kSave\kRestore calls.
+	// - Lighthouse goes insane and only uses subop 3 but adds sub-subops
+	//   which appear to do the three operations.
+	// Temporarily stubbing these out with success values so that KQ7 can start.
+	case 3: // initialize save game file
+		warning("Unimplemented kMacPlatform32(%d): Initialize save game file", argv[0].toUint16());
+		return TRUE_REG;
+	case 4: // save game
+		warning("Unimplemented kMacPlatform32(%d): Save game", argv[0].toUint16());
+		return TRUE_REG;
+	case 5: // restore game
+		warning("Unimplemented kMacPlatform32(%d): Restore game", argv[0].toUint16());
+		break;
+
+	// TODO: Mother Goose save game handling
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+		error("Unimplemented kMacPlatform32(%d) save game operation", argv[0].toUint16());
+		break;
+
+	// TODO: Phantasmagoria music volume adjustment [ 0-15 ]
+	case 12:
+		warning("Unimplemented kMacPlatform32(%d): Set volume: %d", argv[0].toUint16(), argv[1].toUint16());
+		break;
+
+	default:
+		error("Unknown kMacPlatform32(%d)", argv[0].toUint16());
+	}
+
+	return s->r_acc;
+}
+#endif
 
 enum kSciPlatforms {
 	kSciPlatformMacintosh = 0,
@@ -666,7 +712,7 @@ reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 		case Common::kPlatformMacintosh:
 			// For Mac versions, kPlatform(0) with other args has more functionality
 			if (argc > 1) {
-				return kMacPlatform(s, argc - 1, argv + 1);
+				return kMacPlatform32(s, argc - 1, argv + 1);
 			} else {
 				// SCI32 Mac claims to be DOS. GK1 depends on this in order to play its
 				//  view-based slideshow movies. It appears that Sierra opted to change
