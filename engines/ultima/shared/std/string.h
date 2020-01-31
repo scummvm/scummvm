@@ -31,7 +31,6 @@ namespace Std {
 class string : public Common::String {
 public:
 	typedef size_t size_type;
-	static const size_type npos = (size_type) - 1;
 
 	struct reverse_iterator {
 	private:
