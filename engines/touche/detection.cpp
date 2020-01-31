@@ -136,23 +136,23 @@ public:
 		return detectGameFilebased(allFiles, fslist, Touche::fileBasedFallback);
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "touche";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Touche: The Adventures of the Fifth Musketeer";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Touche: The Adventures of the Fifth Musketeer (C) Clipper Software";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
 };
 
 bool ToucheMetaEngine::hasFeature(MetaEngineFeature f) const {
