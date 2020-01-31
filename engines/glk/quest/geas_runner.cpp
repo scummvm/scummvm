@@ -1070,7 +1070,7 @@ void geas_implementation::run_command(String s) {
 		oss << state;
 		print_normal(oss.str());
 		return;
-	
+
 	} else if (s == "undo") {
 		if (undo_buffer.size() < 2) {
 			print_formatted("(No more undo information available!)");
@@ -1080,12 +1080,12 @@ void geas_implementation::run_command(String s) {
 		state = undo_buffer.peek();
 		print_formatted("Undone.");
 		return;
-	
+
 	} else if (s == "save") {
 		if (g_vm->saveGame().getCode() == Common::kNoError)
 			print_formatted("Saved.");
 		return;
-	
+
 	} else if (s == "restore") {
 		if (g_vm->loadGame().getCode() == Common::kNoError)
 			run_command("look");
@@ -1425,7 +1425,7 @@ bool geas_implementation::run_commands(String cmd, const GeasBlock *room, bool i
 					Common::Array<String> tmp = split_param(param_contents(tok));
 
 					for (uint j = 0; j < tmp.size(); j++)
-						if (match = match_command(cmd, tmp[j])) {
+						if ((match = match_command(cmd, tmp[j]))) {
 							if (!dereference_vars(match.bindings, is_internal))
 								return false;
 							set_vars(match.bindings);
@@ -1505,12 +1505,12 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 		return true;
 	}
 
-	if (match = match_command(cmd, "look")) {
+	if ((match = match_command(cmd, "look"))) {
 		look();
 		return true;
 	}
 
-	if (match = match_command(cmd, "give #@first# to #@second#")) {
+	if ((match = match_command(cmd, "give #@first# to #@second#"))) {
 		if (!dereference_vars(match.bindings, is_internal))
 			return true;
 		String script, first = match.bindings[0].var_text, second = match.bindings[1].var_text;
@@ -1572,7 +1572,7 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 		return true;
 	}
 
-	if (match = match_command(cmd, "use #@first#")) {
+	if ((match = match_command(cmd, "use #@first#"))) {
 		if (!dereference_vars(match.bindings, is_internal))
 			return true;
 		String tmp, obj = match.bindings[0].var_text;
@@ -1621,7 +1621,7 @@ bool geas_implementation::try_match(String cmd, bool is_internal, bool is_normal
 	}
 
 
-	if (match = match_command(cmd, "drop #@object#")) {
+	if ((match = match_command(cmd, "drop #@object#"))) {
 		if (!dereference_vars(match.bindings, is_internal))
 			return true;
 		String scr, obj = match.bindings[0].var_text;

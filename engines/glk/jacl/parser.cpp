@@ -547,7 +547,7 @@ struct word_type *object_match(struct word_type *iterator, int noun_number) {
 	do {
 		/* THIS LOOP MEANS THAT CERTAIN ERRORS SUCH AS TAKING FROM A
 		 * CLOSED CONTAINER CAN OCCUR MORE THAN ONCE */
-		if ((iterator->word[0] == '*')) {
+		if (iterator->word[0] == '*') {
 			object_was_option = TRUE;
 			if (build_object_list(iterator, noun_number)) {
 				/* RETURN THE POINT IN THE GRAMMAR TREE THAT MATCHED TO
