@@ -145,24 +145,24 @@ public:
 		return detectGameFilebased(allFiles, fslist, Toon::fileBasedFallback);
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "toon";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Toonstruck";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Toonstruck (C) 1996 Virgin Interactive";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual SaveStateList listSaves(const char *target) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	virtual void removeSaveState(const char *target, int slot) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual int getMaximumSaveSlot() const override;
+	virtual SaveStateList listSaves(const char *target) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
 };
 
 bool ToonMetaEngine::hasFeature(MetaEngineFeature f) const {
