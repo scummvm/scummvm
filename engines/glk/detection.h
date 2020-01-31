@@ -41,9 +41,9 @@ public:
 		return "Glk";
 	}
 
-        const char *getEngineId() const override {
-                return "glk";
-        }
+	const char *getEngineId() const override {
+		return "glk";
+	}
 
 	virtual const char *getOriginalCopyright() const override {
 		return "Infocom games (C) Infocom\nScott Adams games (C) Scott Adams";
