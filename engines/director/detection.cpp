@@ -123,7 +123,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const override {
-		return "Macromedia Director (C) Macromedia";
+		return "Macromedia Director (C) 1990-1995 Macromedia";
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
