@@ -484,23 +484,23 @@ public:
 	QueenMetaEngine() : AdvancedMetaEngine(Queen::gameDescriptions, sizeof(Queen::QueenGameDescription), queenGames, optionsList) {
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "queen";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Flight of the Amazon Queen";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Flight of the Amazon Queen (C) John Passfield and Steve Stamatiadis";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const { return 99; }
-	virtual void removeSaveState(const char *target, int slot) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override { return 99; }
+	virtual void removeSaveState(const char *target, int slot) const override;
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 };
