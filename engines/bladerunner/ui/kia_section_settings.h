@@ -76,7 +76,7 @@ private:
 	static void mouseInCallback(int buttonId, void *callbackData);
 	static void mouseUpCallback(int buttonId, void *callbackData);
 
-	void onButtonPressed(int buttonId);
+	void onButtonPressed(int buttonId) override;
 
 	void initConversationChoices();
 };

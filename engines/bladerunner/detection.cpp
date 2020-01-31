@@ -87,7 +87,7 @@ class BladeRunnerMetaEngine : public AdvancedMetaEngine {
 public:
 	BladeRunnerMetaEngine();
 
-	const char *getEngineId() const;
+	const char *getEngineId() const override;
 	const char *getName() const override;
 	const char *getOriginalCopyright() const override;
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;

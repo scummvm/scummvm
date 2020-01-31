@@ -85,7 +85,7 @@ private:
 	static void scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);
 	static void mouseUpCallback(int buttonId, void *callbackData);
 
-	void onButtonPressed(int buttonId);
+	void onButtonPressed(int buttonId) override;
 
 	void enableAllFilters();
 	void disableAllFilters();

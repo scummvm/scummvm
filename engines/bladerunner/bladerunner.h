@@ -301,7 +301,7 @@ public:
 	bool closeArchive(const Common::String &name);
 	bool isArchiveOpen(const Common::String &name) const;
 
-	void syncSoundSettings();
+	void syncSoundSettings() override;
 	bool isSubtitlesEnabled();
 	void setSubtitlesEnabled(bool newVal);
 
@@ -322,7 +322,7 @@ public:
 	void blitToScreen(const Graphics::Surface &src) const;
 	Graphics::Surface generateThumbnail() const;
 
-	GUI::Debugger *getDebugger();
+	GUI::Debugger *getDebugger() override;
 	Common::String getTargetName() const;
 };
 

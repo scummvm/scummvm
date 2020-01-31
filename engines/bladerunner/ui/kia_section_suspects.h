@@ -110,7 +110,7 @@ private:
 	static void checkBoxCallback(void *callbackData, void *source);
 	static void mouseUpCallback(int buttonId, void *callbackData);
 
-	void onButtonPressed(int buttonId);
+	void onButtonPressed(int buttonId) override;
 
 	void populateAcquiredClues();
 	void populateSuspects();
