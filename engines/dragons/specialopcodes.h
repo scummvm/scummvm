@@ -212,6 +212,9 @@ private:
 
 // update functions
 
+void menInMinesSceneUpdateFunction();
+void monksAtBarSceneUpdateFunction();
+void flameEscapeSceneUpdateFunction();
 void pizzaUpdateFunction();
 void tableBasedSceneUpdateFunction();
 void castleBuildingBlackDragon2UpdateFunction();
