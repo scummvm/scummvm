@@ -117,14 +117,14 @@ public:
 	 */
 	const char *getName() const { return _name.c_str(); }
 
-	bool err() const;	// implement abstract Stream method
-	void clearErr();	// implement abstract Stream method
-	bool eos() const;	// implement abstract SeekableReadStream method
+	bool err() const override;	// implement abstract Stream method
+	void clearErr() override;	// implement abstract Stream method
+	bool eos() const override;	// implement abstract SeekableReadStream method
 
-	int32 pos() const;	// implement abstract SeekableReadStream method
-	int32 size() const;	// implement abstract SeekableReadStream method
-	bool seek(int32 offs, int whence = SEEK_SET);	// implement abstract SeekableReadStream method
-	uint32 read(void *dataPtr, uint32 dataSize);	// implement abstract SeekableReadStream method
+	int32 pos() const override;	// implement abstract SeekableReadStream method
+	int32 size() const override;	// implement abstract SeekableReadStream method
+	bool seek(int32 offs, int whence = SEEK_SET) override;	// implement abstract SeekableReadStream method
+	uint32 read(void *dataPtr, uint32 dataSize) override;	// implement abstract SeekableReadStream method
 };
 
 
@@ -155,8 +155,8 @@ public:
 	 */
 	bool isOpen() const;
 
-	bool err() const;
-	void clearErr();
+	bool err() const override;
+	void clearErr() override;
 
 	virtual uint32 write(const void *dataPtr, uint32 dataSize) override;
 
