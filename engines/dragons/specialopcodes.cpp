@@ -547,61 +547,73 @@ void SpecialOpcodes::spcFlickerSetPriority2() {
 }
 
 void SpecialOpcodes::spcMenInMinesSceneLogic() {
+	_vm->setSceneUpdateFunction(menInMinesSceneUpdateFunction);
 	//TODO
+//	uint16_t_80083154 = 0;
+//	DAT_80083148 = 0;
+	setSpecialOpCounter(0);
 }
 
 void SpecialOpcodes::spcStopMenInMinesSceneLogic() {
-	//TODO
+	if (_vm->getSceneUpdateFunction() == monksAtBarSceneUpdateFunction) {
+		_vm->setSceneUpdateFunction(NULL);
+		if (0x3c < _specialOpCounter) {
+			_specialOpCounter = 0x3c;
+		}
+		for (; _specialOpCounter > 0; _specialOpCounter--) {
+			_vm->waitForFrames(1);
+		}
+		//TODO
+		//FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)uint16_t_80083154,(uint)DAT_80083158);
+	}
 }
 
 void SpecialOpcodes::spcMonksAtBarSceneLogic() {
+	setSpecialOpCounter(-1);
+	_vm->setSceneUpdateFunction(monksAtBarSceneUpdateFunction);
 	//TODO
+//	uint16_t_80083154 = 0;
+//	DAT_80083148 = 0;
 }
 
 void SpecialOpcodes::spcStopMonksAtBarSceneLogic() {
-	//TODO
+	if (_vm->getSceneUpdateFunction() == monksAtBarSceneUpdateFunction) {
+		_vm->setSceneUpdateFunction(NULL);
+		//TODO
+//		if ((DAT_80083148 != 0) && (uint16_t_80083154 != 0)) {
+//			FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)uint16_t_80083154,
+//						 (uint)DAT_80083158);
+//		}
+		setSpecialOpCounter(0);
+//		uint16_t_80083154 = 0;
+//		DAT_80083148 = 0;
+	}
+
 }
 
 void SpecialOpcodes::spcFlameBedroomEscapeSceneLogic() {
+	setSpecialOpCounter(-1);
 	//TODO
-//	local_fc8 = DAT_80063cb8;
-//	local_fc4 = DAT_80063cbc;
-//	local_fc0 = DAT_80063cc0;
-//	local_fbc = DAT_80063cc0;
-//	local_fb8 = DAT_80063cc8;
-//	local_fb4 = DAT_80063ccc;
-//	local_ff0[0] = DAT_80063cb8;
-//	local_ff0[1] = DAT_80063cbc;
-//	local_ff0[2] = DAT_80063cc0;
-//	local_ff0[3] = DAT_80063cc0;
-//	local_fe0 = DAT_80063cc8;
-//	local_fdc = DAT_80063ccc;
-//	DisableVSyncEvent();
-//	uVar13 = 0;
-//	uVar7 = 0;
-//	do {
-//		uVar13 = uVar13 + 1;
-//		(&DAT_800832d8)[uVar7] = local_ff0[uVar7];
-//		uVar7 = (uint)uVar13;
-//	} while (uVar13 < 6);
-//	EnableVSyncEvent();
-//	DAT_80072898 = 0xffff;
 //	if ((DAT_80083148 != 0) && (DAT_80083154 != 0)) {
 //		FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)DAT_80083154,(uint)DAT_80083158);
 //	}
-//	func_ptr_unk = FUN_80038164;
+	_vm->setSceneUpdateFunction(flameEscapeSceneUpdateFunction);
+	//TODO
+//	DAT_80083154 = 0;
+//	DAT_80083148 = 0;
+
 }
 
 void SpecialOpcodes::spcStopFlameBedroomEscapeSceneLogic() {
+	setSpecialOpCounter(0);
 	//TODO
-//	DAT_80072898 = 0;
-//	FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)DAT_80083154,(uint)DAT_80083158);
+//	FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)uint16_t_80083154,(uint)DAT_80083158);
 //	DAT_80083154 = 0;
 //	DAT_80083148 = 0;
-//	actor_update_sequenceID((uint)(ushort)dragon_ini_pointer[DAT_80063a3c + -1].field_0x1c,0);
-//	if (func_ptr_unk == FUN_80038164) {
-//		func_ptr_unk = 0;
-//	}
+	_vm->_dragonINIResource->getRecord(0x96)->actor->updateSequence(0);
+	if (_vm->getSceneUpdateFunction() == flameEscapeSceneUpdateFunction) {
+		_vm->setSceneUpdateFunction(NULL);
+	}
 }
 
 void SpecialOpcodes::spcCastleMoatFull() {
@@ -1455,6 +1467,268 @@ void ladyOfTheLakeCapturedUpdateFunction() {
 				ladyOfLakeDialogIndex++;
 			}
 			ladyofLakeCountdownTimer = 0x708;
+		}
+	}
+}
+
+void menInMinesSceneUpdateFunction() {
+	static const uint32_t sceneUpdateFuncDialogTbl[] = {
+			0x4590A, 0x45994, 0x459F4, 0x45A60
+	};
+	DragonsEngine *vm = getEngine();
+	uint16_t sequenceId;
+	Actor *actor = vm->_dragonINIResource->getRecord(0x293)->actor;
+
+	if (!vm->isFlagSet(ENGINE_FLAG_8000)) {
+		uint16 specialOpCounter = vm->_scriptOpcodes->_specialOpCodes->getSpecialOpCounter();
+		if (specialOpCounter != 0) {
+			if (actor->_sequenceID != 0) {
+				actor->updateSequence(0);
+			}
+			vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(specialOpCounter - 1);
+			return;
+		}
+		vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(vm->getRand(5) * 0x3c + 0x708);
+		vm->_talk->playDialogAudioDontWait(sceneUpdateFuncDialogTbl[vm->getRand(4)]);
+		sequenceId = 2;
+	}
+	else {
+		if (vm->data_800633fc == 0) {
+			return;
+		}
+		sequenceId = 0;
+	}
+	actor->updateSequence(sequenceId);
+}
+
+void monksAtBarSceneUpdateFunction() {
+	static uint8 monksAtBarCurrentState = 0;
+	static const uint32_t sceneUpdateFuncDialogTbl[] = {
+			0x37800, 0x37854, 0x378CA,
+			0x39152, 0x3919A, 0x3922C
+	};
+	static const uint32_t barKeeperTextIdTbl[] = {
+			0x38C68, 0x38CE2, 0x38D4E, 0x38CE2,
+			0x38DC2, 0x38E0C, 0x38C68, 0x38E5C,
+			0x38ED0, 0x38CE2
+	};
+	static const uint32_t DAT_800832f0[] = {0x38F2A, 0x39000, 0x39084, 0x390E8};
+
+	DragonsEngine *vm = getEngine();
+	Actor *barKeeper = vm->_dragonINIResource->getRecord(0x1e7)->actor;
+	Actor *monk1 = vm->_dragonINIResource->getRecord(0x1ec)->actor;
+	Actor *monk2 = vm->_dragonINIResource->getRecord(0x1ed)->actor;
+	DragonINI *ini = vm->_dragonINIResource->getRecord(0x1e6);
+	bool bVar1;
+	short sVar2;
+	uint32_t textIndex;
+	uint16_t sequenceId;
+	int16 specialOpCounter = vm->_scriptOpcodes->_specialOpCodes->getSpecialOpCounter();
+	if (specialOpCounter == -1) {
+		monksAtBarCurrentState = vm->getRand(2) * 2;
+		specialOpCounter = 600;
+	}
+	if (vm->isFlagSet(ENGINE_FLAG_8000)) {
+		if (vm->data_800633fc == 0) {
+			return;
+		}
+		monk1->updateSequence(0);
+		monk2->updateSequence(8);
+		return;
+	}
+	bVar1 = ini->sceneId != 0;
+	if (specialOpCounter != 0) {
+		specialOpCounter = specialOpCounter + -1;
+	}
+	if (specialOpCounter == 0) {
+
+
+		switch (monksAtBarCurrentState) {
+			case 0:
+				if (0x31 < vm->getRand(100)) {
+					sVar2 = vm->getRand(3);
+					specialOpCounter = (sVar2 + 3) * 0x3c;
+					monksAtBarCurrentState = 2;
+					break;
+				}
+				if (bVar1) {
+					barKeeper->updateSequence(0xc);
+					textIndex = sceneUpdateFuncDialogTbl[vm->getRand(3) + 3];
+				} else {
+					barKeeper->updateSequence(2);
+					textIndex = sceneUpdateFuncDialogTbl[vm->getRand(3)];
+				}
+				vm->_talk->playDialogAudioDontWait(textIndex);
+				monksAtBarCurrentState = 1;
+				specialOpCounter = 0;
+				break;
+			case 1:
+				if (bVar1) {
+					sequenceId = 8;
+				} else {
+					sequenceId = 0;
+				}
+				barKeeper->updateSequence(sequenceId);
+				specialOpCounter = 0x168;
+				monksAtBarCurrentState = 2;
+				break;
+			case 2: {
+				uint16 randTextId = vm->getRand(10);
+				if ((randTextId & 1) == 0) {
+					monk1->updateSequence(2);
+				} else {
+					monk2->updateSequence(10);
+				}
+				vm->_talk->playDialogAudioDontWait(barKeeperTextIdTbl[randTextId]);
+				monksAtBarCurrentState = 3;
+				specialOpCounter = 0;
+				break;
+			}
+			case 3:
+				monk1->updateSequence(0);
+				monk2->updateSequence(8);
+				specialOpCounter = 0x3c;
+				monksAtBarCurrentState = 4;
+				break;
+			case 4:
+				if (bVar1) {
+					barKeeper->updateSequence(0xc);
+					textIndex = sceneUpdateFuncDialogTbl[vm->getRand(3) + 3];
+				} else {
+					barKeeper->updateSequence(2);
+					textIndex = DAT_800832f0[vm->getRand(4)];
+				}
+				vm->_talk->playDialogAudioDontWait(textIndex);
+				monksAtBarCurrentState = 5;
+				specialOpCounter = 0;
+				break;
+			case 5:
+				if (bVar1) {
+					sequenceId = 8;
+				} else {
+					sequenceId = 0;
+				}
+				barKeeper->updateSequence(sequenceId);
+				specialOpCounter = 0x78;
+				if (!bVar1) {
+					monksAtBarCurrentState = 0x37;
+					break;
+				}
+				monksAtBarCurrentState = 6;
+				break;
+			case 6:
+				if (bVar1) {
+					barKeeper->updateSequence(0xb);
+					ini->actor->updateSequence(7);
+					monksAtBarCurrentState = 10;
+				} else {
+					barKeeper->updateSequence(0xd);
+					monk1->updateSequence(0x14);
+					monksAtBarCurrentState = 0x41;
+				}
+				specialOpCounter = 0;
+				break;
+			case 7:
+				if (!barKeeper->isFlagSet(ACTOR_FLAG_4)) {
+					break;
+				}
+				barKeeper->updateSequence(0xe);
+				monk2->updateSequence(0x15);
+				monksAtBarCurrentState = 8;
+				specialOpCounter = 0;
+				break;
+			case 8:
+				if (barKeeper->isFlagSet(ACTOR_FLAG_4)) {
+					monk2->updateSequence(8);
+					barKeeper->updateSequence(0);
+					monksAtBarCurrentState = 9;
+					specialOpCounter = 300;
+				}
+				break;
+			case 9:
+				sequenceId = 0x10;
+				if (0x31 < vm->getRand(100)) {
+					sequenceId = 0x16;
+				}
+				monk1->updateSequence(sequenceId);
+				sequenceId = 0x11;
+				if (0x31 < vm->getRand(100)) {
+					sequenceId = 0x17;
+				}
+				monk2->updateSequence(sequenceId);
+				monksAtBarCurrentState = 0;
+				sVar2 = vm->getRand(10);
+				specialOpCounter = (sVar2 + 10) * 0x3c;
+				break;
+			case 10:
+				if (!barKeeper->isFlagSet(ACTOR_FLAG_4)) {
+					break;
+				}
+				ini->actor->updateSequence(0);
+				sequenceId = 8;
+				monk2 = barKeeper;
+				monk2->updateSequence(sequenceId);
+				monksAtBarCurrentState = 0;
+				sVar2 = vm->getRand(10);
+				specialOpCounter = (sVar2 + 10) * 0x3c;
+				break;
+			case 0x37:
+				barKeeper->updateSequence(0x11);
+				specialOpCounter = 0x14;
+				monksAtBarCurrentState = 6;
+				break;
+			case 0x41:
+				if (!barKeeper->isFlagSet(ACTOR_FLAG_4)) {
+					break;
+				}
+				barKeeper->updateSequence(0xf);
+				monk1->updateSequence(0);
+				monksAtBarCurrentState = 7;
+				specialOpCounter = 0;
+				break;
+		}
+	}
+	vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(specialOpCounter);
+	vm->_dragonINIResource->getRecord(0)->field_12 = 0;
+}
+
+void flameEscapeSceneUpdateFunction() {
+	static const uint32 dialogTbl[] = {
+			0x10458, 0x104A0, 0x10500, 0x10500, 0x10550, 0x10578 //TODO support multiple languages
+	};
+	static bool DAT_800634c0 = false;
+	DragonsEngine *vm = getEngine();
+	Actor *flame = vm->_dragonINIResource->getRecord(0x96)->actor;
+
+	if (!vm->isFlagSet(ENGINE_FLAG_8000)) {
+		int16 specialOpCounter = vm->_scriptOpcodes->_specialOpCodes->getSpecialOpCounter();
+		if (specialOpCounter == -1) {
+			DAT_800634c0 = false;
+			specialOpCounter = 300;
+		}
+		if (specialOpCounter != 0) {
+			specialOpCounter = specialOpCounter + -1;
+		}
+		if (specialOpCounter == 0) {
+			if (DAT_800634c0 == 0) {
+				flame->updateSequence(0x12);
+				vm->_talk->playDialogAudioDontWait(dialogTbl[vm->getRand(6)]);
+				specialOpCounter = 0;
+				DAT_800634c0 = 1;
+			}
+			else {
+				if (DAT_800634c0 == 1) {
+					flame->updateSequence(0x10);
+					specialOpCounter = (vm->getRand(0x14) + 10) * 0x3c;
+					DAT_800634c0 = 0;
+				}
+			}
+		}
+		vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(specialOpCounter);
+	}
+	else {
+		if ((vm->data_800633fc != 0) && flame->_sequenceID != 0x10) {
+			flame->updateSequence(0x10);
 		}
 	}
 }
