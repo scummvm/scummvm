@@ -87,7 +87,7 @@ public:
 	bool updateOneSound(BaseSound *sound);
 	int32 _sFXVolume;
 
-	virtual bool handleMouseWheel(int delta);
+	virtual bool handleMouseWheel(int32 delta);
 	virtual bool handleMouse(TMouseEvent event, TMouseButton button);
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	virtual int32 getHeight();
