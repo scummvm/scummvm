@@ -259,7 +259,7 @@ private:
 
 	MacPatterns _patterns;
 	byte *_palette;
-	int _paletteSize;
+	uint _paletteSize;
 
 	MacMenu *_menu;
 	uint32 _menuDelay;
