@@ -14,6 +14,14 @@
   <string name="no_sdcard">Unable to read your SD card.  This usually
   means you still have it mounted on your PC.  Unmount, reinsert,
   whatever and then try again.</string>
+  <string name="no_external_files_dir_access_title">External storage error</string>
+  <string name="no_external_files_dir_access">Unable to access external storage
+  to retrieve ScummVM config info! Please grant storage access permissions to
+  the ScummVM app, in order to function properly!</string>
+  <string name="no_config_file_title">Config File Error</string>
+  <string name="no_config_file">Unable to read ScummVM config file or create a new one!</string>
+  <string name="no_save_path_title">Save Path Error</string>
+  <string name="no_save_path_configured">Unable to create or access default save path!</string>
   <string name="no_plugins_title">No plugins found</string>
   <string name="no_plugins_found">ScummVM requires at least one <i>game
   engine</i> to be useful.  Engines are available as separate plugin
