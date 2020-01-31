@@ -1220,7 +1220,7 @@ bool UIWindow::handleKeypress(Common::Event *event, bool printable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool UIWindow::handleMouseWheel(int Delta) {
+bool UIWindow::handleMouseWheel(int32 Delta) {
 	if (_focusedWidget) {
 		return _focusedWidget->handleMouseWheel(Delta);
 	} else {

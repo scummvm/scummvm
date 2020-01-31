@@ -1057,7 +1057,7 @@ bool BaseObject::handleKeypress(Common::Event *event, bool printable) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseObject::handleMouseWheel(int delta) {
+bool BaseObject::handleMouseWheel(int32 delta) {
 	return false;
 }
 
