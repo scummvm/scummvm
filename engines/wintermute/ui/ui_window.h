@@ -44,7 +44,7 @@ public:
 	void cleanup();
 	virtual void makeFreezable(bool freezable) override;
 
-	virtual bool handleMouseWheel(int delta) override;
+	virtual bool handleMouseWheel(int32 delta) override;
 
 	bool close();
 	bool goSystemExclusive();
