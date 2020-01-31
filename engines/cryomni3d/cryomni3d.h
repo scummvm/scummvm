@@ -99,7 +99,7 @@ enum DragStatus {
 
 class CryOmni3DEngine : public ::Engine {
 protected:
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 
 public:
 	CryOmni3DEngine(OSystem *syst, const CryOmni3DGameDescription *gamedesc);
@@ -121,7 +121,7 @@ public:
 	void setCanLoadSave(bool canLoadSave) { _canLoadSave = canLoadSave; }
 	static const uint kSaveDescriptionLen = 20;
 private:
-	void pauseEngineIntern(bool);
+	void pauseEngineIntern(bool) override;
 
 public:
 	Image::ImageDecoder *loadHLZ(const Common::String &filename);

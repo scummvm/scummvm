@@ -261,7 +261,7 @@ private:
 	void loadStaticData();
 
 	void syncOmni3DSettings();
-	void syncSoundSettings();
+	void syncSoundSettings() override;
 
 	void playTransitionEndLevel(int level);
 	void changeLevel(int level);
