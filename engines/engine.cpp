@@ -217,7 +217,7 @@ void initCommonGFX() {
 			g_system->setStretchMode(ConfMan.get("stretch_mode").c_str());
 
 		if (gameDomain->contains("shader"))
-			g_system->setShader(ConfMan.getInt("shader"));
+			g_system->setShader(ConfMan.get("shader").c_str());
 	}
 }
 

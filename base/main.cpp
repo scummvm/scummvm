@@ -340,7 +340,7 @@ static void setupGraphics(OSystem &system) {
 		if (ConfMan.hasKey("stretch_mode"))
 			system.setStretchMode(ConfMan.get("stretch_mode").c_str());
 		if (ConfMan.hasKey("shader"))
-			system.setShader(ConfMan.getInt("shader"));
+			system.setShader(ConfMan.get("shader").c_str());
 	system.endGFXTransaction();
 
 	// When starting up launcher for the first time, the user might have specified

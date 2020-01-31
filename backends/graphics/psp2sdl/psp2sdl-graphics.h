@@ -33,6 +33,7 @@ public:
 
 	virtual OSystem::TransactionError endGFXTransaction() override;
 	virtual const OSystem::GraphicsMode *getSupportedShaders() const override;
+	virtual int getDefaultShader() const override;
 
 protected:
 	virtual void setGraphicsModeIntern() override;
