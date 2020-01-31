@@ -48,13 +48,13 @@ public:
 	AnimationResource(const Common::String &filename);
 	virtual ~AnimationResource();
 
-	virtual const Frame &getFrame(uint index) const {
+	virtual const Frame &getFrame(uint index) const override {
 		return _frames[index];
 	}
-	virtual uint getFrameCount() const {
+	virtual uint getFrameCount() const override {
 		return _frames.size();
 	}
-	virtual void unlock() {
+	virtual void unlock() override {
 		release();
 	}
 
