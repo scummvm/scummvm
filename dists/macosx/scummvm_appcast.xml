@@ -10,7 +10,7 @@
 			<sparkle:releaseNotesLink>
 				https://scummvm.org/frs/scummvm/2.1.1/ReleaseNotes.html
 			</sparkle:releaseNotesLink>
-			<pubDate>Fri, 31 Jan 2020 23:59:58 +0000</pubDate>
+			<pubDate>Fri, 31 Jan 2020 18:02:05 +0000</pubDate>
 			<enclosure url="https://www.scummvm.org/frs/scummvm/2.1.1/scummvm-2.1.1-macosx.dmg"
 						sparkle:version="2.1.1" length="25617880" type="application/octet-stream"
 						sparkle:dsaSignature="MC0CFF9HC7ImZEipQf4afnMvTEmduM7KAhUArjLWI9VdCgxm720S4UysRgUcDhI="
