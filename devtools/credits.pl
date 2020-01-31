@@ -1015,10 +1015,14 @@ begin_credits("Credits");
 			end_section();
 
 			begin_section("Ultima");
-				add_person("Dominik Reichardt", "Dominus Dragon", "(Pentagram)");
-				add_person("Eric Fry", "yuv422", "(Nuvie)");
 				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Eric Fry", "yuv422", "(Nuvie)");
+				add_person("", "malignantmanor", "(Nuvie)");
+				add_person("", "sb-x", "(Nuvie)");
+				add_person("Dominik Reichardt", "Dominus Dragon", "(Pentagram)");
 				add_person("Willem Jan Palenstijn", "wjp", "(Pentagram)");
+				add_person("", "Colourless Dragon", "(Pentagram)");
+				add_person("", "mjimenez", "(Pentagram)");
 			end_section();
 
 			begin_section("Voyeur");
