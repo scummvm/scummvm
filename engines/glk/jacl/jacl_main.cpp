@@ -1243,7 +1243,7 @@ int restore_interaction() {
 glui32 glk_get_bin_line_stream(strid_t file_stream, char *buffer, glui32 max_length) {
 	int character = 0;
 
-	register int index = 0;
+	int index = 0;
 
 	character = g_vm->glk_get_char_stream(file_stream);
 	while (character != -1 && index < (int) max_length) {
