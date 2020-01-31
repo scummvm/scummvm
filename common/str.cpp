@@ -434,7 +434,7 @@ void String::deleteChar(uint32 p) {
 }
 
 void String::erase(uint32 p, uint32 len) {
-	if (p == npos)
+	if (p == npos || len == 0)
 		return;
 	assert(p < _size);
 
