@@ -296,6 +296,11 @@ void ScriptBase::Actor_Says(int actorId, int sentenceId, int animationMode) {
 	Actor_Says_With_Pause(actorId, sentenceId, 0.5f, animationMode);
 }
 
+/**
+* Actor actorId says the sentenceId, and then
+* if pause > 0.0f there will be a delay for "pause" seconds.
+* pause can be 0.0f
+*/
 void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause, int animationMode) {
 	debugC(kDebugScript, "Actor_Says_With_Pause(%d, %d, %f, %d)", actorId, sentenceId, pause, animationMode);
 	_vm->gameWaitForActive();

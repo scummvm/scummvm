@@ -336,14 +336,16 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 				Game_Flag_Set(kFlagRC01McCoyAndOfficerLearyTalking);
 				if (Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewA) && !Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewA)) {
 					Actor_Face_Object(kActorOfficerLeary, "70_1", true);
-					Actor_Says(kActorOfficerLeary, 100, 15);
 					if (_vm->_cutContent
 					    && (_vm->_language == Common::ES_ESP
 					        || _vm->_language == Common::IT_ITA)
 					) {
 						// this is the second half of the sentence about Lucy hanging around with Zuben ("a fat guy")
 						// in ENG, DEU and FRA it is redundant, but it's needed in ESP and ITA
-						Actor_Says(kActorOfficerLeary, 110, 15);
+						Actor_Says_With_Pause(kActorOfficerLeary, 100, 0.0f, 15);
+						Actor_Says(kActorOfficerLeary, 110, kAnimationModeTalk);
+					} else {
+						Actor_Says(kActorOfficerLeary, 100, 15);
 					}
 					Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
 					Actor_Clue_Acquire(kActorMcCoy, kClueCrowdInterviewA, true, kActorOfficerLeary);
@@ -640,7 +642,7 @@ void SceneScriptRC01::interrogateCrowd() {
 		    || (Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewA)
 		        && Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewB) )
 		) {
-			Actor_Says(kActorMcCoy, 8525, 3); // generic "hmph"
+			Actor_Says(kActorMcCoy, 8525, kAnimationModeTalk); // generic "hmph"
 			return;
 		}
 #endif // BLADERUNNER_ORIGINAL_BUGS
