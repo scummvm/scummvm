@@ -119,9 +119,8 @@ bool Path::remove_first_step() {
 	return false;
 }
 
-bool Path::check_dir(const MapCoord &loc, const MapCoord &rel) {
-	MapCoord tempRel = rel;
-	return pf->check_dir(loc, tempRel);
+bool Path::check_dir(const MapCoord &loc, MapCoord &rel) {
+	return pf->check_dir(loc, rel);
 }
 
 bool Path::check_loc(const MapCoord &loc) {
