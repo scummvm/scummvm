@@ -46,17 +46,6 @@ namespace Nuvie {
 #define ACTION_BUTTON 3
 #define DRAG_BUTTON 1
 
-static Common::Rect item_hit_rects[8] = {
-	Common::Rect(24, 0,  24 + 16,  0 + 16), // ACTOR_HEAD
-	Common::Rect( 0, 8,   0 + 16,  8 + 16), // ACTOR_NECK
-	Common::Rect(48, 8,  48 + 16,  8 + 16), // ACTOR_BODY
-	Common::Rect( 0, 24,  0 + 16, 24 + 16), // ACTOR_ARM
-	Common::Rect(48, 24, 48 + 16, 24 + 16), // ACTOR_ARM_2
-	Common::Rect( 0, 40,  0 + 16, 40 + 16), // ACTOR_HAND
-	Common::Rect(48, 40, 48 + 16, 40 + 16), // ACTOR_HAND_2
-	Common::Rect(24, 48, 24 + 16, 48 + 16)  // ACTOR_FOOT
-}; 
-
 static const byte gump_blocked_tile_data[] = {
 	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
 	170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170, 170,
@@ -115,6 +104,16 @@ DollWidget::DollWidget(Configuration *cfg, GUI_CallBack *callback): GUI_Widget(N
 	actor_doll = NULL;
 	doll_bg = NULL;
 	md_doll_shp = NULL;
+
+	// Set up hit rects
+	item_hit_rects[0] = Common::Rect(24, 0,  24 + 16,  0 + 16); // ACTOR_HEAD
+	item_hit_rects[1] = Common::Rect(0, 8,   0 + 16,  8 + 16);  // ACTOR_NECK
+	item_hit_rects[2] = Common::Rect(48, 8,  48 + 16,  8 + 16); // ACTOR_BODY
+	item_hit_rects[3] = Common::Rect(0, 24,  0 + 16, 24 + 16);  // ACTOR_ARM
+	item_hit_rects[4] = Common::Rect(48, 24, 48 + 16, 24 + 16); // ACTOR_ARM_2
+	item_hit_rects[5] = Common::Rect(0, 40,  0 + 16, 40 + 16);  // ACTOR_HAND
+	item_hit_rects[6] = Common::Rect(48, 40, 48 + 16, 40 + 16); // ACTOR_HAND_2
+	item_hit_rects[7] = Common::Rect(24, 48, 24 + 16, 48 + 16); // ACTOR_FOOT
 }
 
 DollWidget::~DollWidget() {

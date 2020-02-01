@@ -36,7 +36,8 @@ class Actor;
 class Font;
 
 class InventoryWidget : public GUI_Widget {
-
+private:
+	Common::Rect arrow_rects[2];
 protected:
 	Configuration *config;
 
@@ -120,8 +121,6 @@ public:
 	bool up_arrow();
 	bool down_arrow();
 	Obj *get_obj_at_location(int x, int y);
-
-
 };
 
 } // End of namespace Nuvie

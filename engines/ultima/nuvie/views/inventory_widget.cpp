@@ -46,11 +46,6 @@ namespace Nuvie {
 #define ACTION_BUTTON 3
 #define DRAG_BUTTON 1
 
-static const Common::Rect arrow_rects[2] = {
-	Common::Rect(0, 16, 0 + 8, 16 + 8),
-	Common::Rect(0, 3 * 16 + 8, 0 + 8, 3 * 16 + 8 + 8)
-};
-
 InventoryWidget::InventoryWidget(Configuration *cfg, GUI_CallBack *callback): GUI_Widget(NULL, 0, 0, 0, 0) {
 	config = cfg;
 	callback_object = callback;
@@ -68,6 +63,9 @@ InventoryWidget::InventoryWidget(Configuration *cfg, GUI_CallBack *callback): GU
 	row_offset = 0;
 
 	config->value("config/GameType", game_type);
+
+	arrow_rects[0] = Common::Rect(0, 16, 0 + 8, 16 + 8);
+	arrow_rects[1] = Common::Rect(0, 3 * 16 + 8, 0 + 8, 3 * 16 + 8 + 8);
 }
 
 InventoryWidget::~InventoryWidget() {

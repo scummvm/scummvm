@@ -53,7 +53,6 @@ private:
 	bool is_no_darkness;
 	bool non_square_pixels;
 
-	uint8 palette[768];
 	uint16 width;
 	uint16 height;
 

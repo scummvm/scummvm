@@ -42,7 +42,11 @@ namespace Nuvie {
 
 // ScrollWidgetGump Class
 
-ScrollWidgetGump::ScrollWidgetGump(Configuration *cfg, Screen *s) {
+ScrollWidgetGump::ScrollWidgetGump(Configuration *cfg, Screen *s) :
+		arrow_up_rect(SCROLLWIDGETGUMP_W - 8 - 1, 4 + 1,
+			SCROLLWIDGETGUMP_W - 8 - 1 + 7, 4 + 1 + 5),
+		arrow_down_rect(SCROLLWIDGETGUMP_W - 8 - 1, SCROLLWIDGETGUMP_H - 8 + 3,
+			SCROLLWIDGETGUMP_W - 8 - 1 + 7, SCROLLWIDGETGUMP_H - 8 + 3 + 5) {
 	drop_target = false; //we don't participate in drag and drop.
 
 	font_normal = Game::get_game()->get_font_manager()->get_conv_font();
@@ -181,14 +185,6 @@ GUI_status ScrollWidgetGump::KeyDown(const Common::KeyState &key) {
 	return MsgScroll::KeyDown(key);
 }
 
-static Common::Rect arrow_up_rect[1] = {
-	Common::Rect(SCROLLWIDGETGUMP_W - 8 - 1, 4 + 1, SCROLLWIDGETGUMP_W - 8 - 1 + 7, 4 + 1 + 5)
-};
-static Common::Rect arrow_down_rect[1] = {
-	Common::Rect(SCROLLWIDGETGUMP_W - 8 - 1, SCROLLWIDGETGUMP_H - 8 + 3, SCROLLWIDGETGUMP_W - 8 - 1 + 7,
-		SCROLLWIDGETGUMP_H - 8 + 3 + 5)
-};
-
 GUI_status ScrollWidgetGump::MouseWheel(sint32 x, sint32 y) {
 	ScrollEventType event = SCROLL_ESCAPE;
 
@@ -207,9 +203,9 @@ GUI_status ScrollWidgetGump::MouseDown(int x, int y, Shared::MouseButton button)
 	case Shared::BUTTON_LEFT : {
 		x -= area.left;
 		y -= area.top;
-		if (HitRect(x, y, arrow_up_rect[0]))
+		if (HitRect(x, y, arrow_up_rect))
 			event = SCROLL_UP;
-		else if (HitRect(x, y, arrow_down_rect[0]))
+		else if (HitRect(x, y, arrow_down_rect))
 			event = SCROLL_DOWN;
 // FIXME - uncomment when we get a checkmark
 //	                       else if(show_down_arrow || show_up_arrow) // don't close if scrollable
