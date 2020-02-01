@@ -27,8 +27,6 @@
 
 namespace Plumbers {
 
-class PlumbersGame;
-
 class Console : public GUI::Debugger {
 public:
 	bool _allowSkip;

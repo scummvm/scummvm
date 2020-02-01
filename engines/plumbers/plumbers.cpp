@@ -20,22 +20,29 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "plumbers/plumbers.h"
+#include "plumbers/console.h"
 
-#include "common/config-manager.h"
-#include "common/error.h"
-#include "graphics/cursorman.h"
-#include "graphics/surface.h"
-#include "graphics/screen.h"
-#include "graphics/palette.h"
-#include "graphics/font.h"
-#include "graphics/fontman.h"
-#include "common/system.h"
-#include "engines/util.h"
+#include "audio/decoders/wave.h"
+#include "audio/audiostream.h"
+
 #include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/error.h"
+#include "common/events.h"
+#include "common/file.h"
+#include "common/system.h"
+#include "common/timer.h"
 
-#include "plumbers/plumbers.h"
+#include "engines/util.h"
+
+#include "graphics/cursorman.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+#include "graphics/palette.h"
+#include "graphics/surface.h"
+
+#include "image/bmp.h"
 
 namespace Plumbers {
 

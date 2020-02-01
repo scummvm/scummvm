@@ -20,9 +20,6 @@
  *
  */
 
-#include "gui/debugger.h"
-
-#include "plumbers/plumbers.h"
 #include "plumbers/console.h"
 
 namespace Plumbers {
