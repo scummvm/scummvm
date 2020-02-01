@@ -512,16 +512,10 @@ static int getBits(uint mask) {
 	return count;
 }
 
-Graphics::ManagedSurface *RenderSurface::createSurface(int w, int h, int rMask, int gMask,
-		int bMask, int rShift, int gShift, int bShift) {
-	int rBits = getBits(rMask), gBits = getBits(gMask), bBits = getBits(bMask);
-	int bytesPerPixel = (rBits + gBits + bBits + 7) / 8;
-
-	return new Graphics::ManagedSurface(w, h,
-		Graphics::PixelFormat(bytesPerPixel, rBits, gBits, bBits, 0,
-			rShift, gShift, bShift, 0));
+Graphics::ManagedSurface *RenderSurface::createSurface(int w, int h,
+		const Graphics::PixelFormat &format) {
+	return new Graphics::ManagedSurface(w, h, format);
 }
-
 
 Graphics::ManagedSurface *RenderSurface::get_sdl_surface() {
 	if (_rawSurface == NULL) {

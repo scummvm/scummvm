@@ -96,6 +96,11 @@ public:
 	// Set a custom 888 format
 	void set_format888(int rsft = 16, int gsft = 8, int bsft = 0);
 
+	// Get the pixel format
+	const Graphics::PixelFormat &getFormat() const {
+		return _rawSurface->format;
+	}
+
 	// Draw Lines
 	void draw_line(int sx, int sy, int ex, int ey, unsigned char col);
 	void draw_3d_line(int x, int y, int sx, int sy, int sz, int ex, int ey, int ez, unsigned char col);
@@ -135,8 +140,8 @@ public:
 	Graphics::ManagedSurface *get_sdl_surface();
 	const unsigned char *get_pixels();
 
-	static Graphics::ManagedSurface *createSurface(int w, int h, int rMask, int gMask,
-		int bMask, int rShift, int gShift, int bShift);
+	static Graphics::ManagedSurface *createSurface(int w, int h,
+		const Graphics::PixelFormat &format);
 private:
 
 	// Draw Lines
