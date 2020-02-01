@@ -9,11 +9,6 @@ APP_RSF         := $(srcdir)/backends/platform/3ds/app/scummvm.rsf
 APP_BANNER_IMAGE:= $(srcdir)/backends/platform/3ds/app/banner.png
 APP_BANNER_AUDIO:= $(srcdir)/backends/platform/3ds/app/banner.wav
 
-ARCH     := -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
-CXXFLAGS += -std=gnu++11
-ASFLAGS  += -mfloat-abi=hard
-LDFLAGS  += -specs=3dsx.specs $(ARCH) -L$(DEVKITPRO)/libctru/lib -L$(DEVKITPRO)/portlibs/3ds/lib
-
 .PHONY: clean_3ds dist_3ds
 
 clean: clean_3ds
