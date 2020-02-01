@@ -152,8 +152,6 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 
 	hardcodedEventMapping(ev);
 
-	IncomingEventType incomingEventType = convertToIncomingEventType(ev);
-
 	List<Event> mappedEvents;
 	for (int i = _keymaps.size() - 1; i >= 0; --i) {
 		if (!_keymaps[i]->isEnabled()) {
@@ -169,7 +167,21 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 
 		const Keymap::ActionArray &actions = _keymaps[i]->getMappedActions(ev);
 		for (Keymap::ActionArray::const_iterator it = actions.begin(); it != actions.end(); it++) {
-			mappedEvents.push_back(executeAction(*it, incomingEventType));
+			Event mappedEvent = executeAction(*it, ev);
+
+			// In case we mapped a mouse event to something else, we need to generate an artificial
+			// mouse move event so event observers can keep track of the mouse position.
+			// Makes it possible to reliably use the mouse position from EventManager when consuming
+			// custom action events.
+			if (isMouseEvent(ev) && !isMouseEvent(mappedEvent)) {
+				Event fakeMouseEvent;
+				fakeMouseEvent.type  = EVENT_MOUSEMOVE;
+				fakeMouseEvent.mouse = ev.mouse;
+
+				mappedEvents.push_back(fakeMouseEvent);
+			}
+
+			mappedEvents.push_back(mappedEvent);
 		}
 		if (!actions.empty()) {
 			// If we found actions matching this input in a keymap, no need to look at the other keymaps.
@@ -207,33 +219,50 @@ Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &
 	}
 }
 
-Event Keymapper::executeAction(const Action *action, IncomingEventType incomingType) {
-	Event evt = Event(action->event);
-	EventType convertedType = convertStartToEnd(evt.type);
+bool Keymapper::isMouseEvent(const Event &event) {
+	return event.type == EVENT_LBUTTONDOWN
+	        || event.type == EVENT_LBUTTONUP
+	        || event.type == EVENT_RBUTTONDOWN
+	        || event.type == EVENT_RBUTTONUP
+	        || event.type == EVENT_MBUTTONDOWN
+	        || event.type == EVENT_MBUTTONUP
+	        || event.type == EVENT_MOUSEMOVE;
+}
+
+Event Keymapper::executeAction(const Action *action, const Event &incomingEvent) {
+	IncomingEventType incomingType = convertToIncomingEventType(incomingEvent);
+	Event outgoingEvent = Event(action->event);
+	EventType convertedType = convertStartToEnd(outgoingEvent.type);
 
 	// hardware keys need to send up instead when they are up
 	if (incomingType == kIncomingEventEnd) {
-		evt.type = convertedType;
+		outgoingEvent.type = convertedType;
 	}
 
-	evt.mouse = _eventMan->getMousePos();
+	if (isMouseEvent(outgoingEvent)) {
+		if (isMouseEvent(incomingEvent)) {
+			outgoingEvent.mouse = incomingEvent.mouse;
+		} else {
+			outgoingEvent.mouse = _eventMan->getMousePos();
+		}
+	}
 
 	// Check if the event is coming from a non-key hardware event
 	// that is mapped to a key event
 	if (incomingType == kIncomingEventInstant && convertedType != EVENT_INVALID) {
 		// WORKAROUND: Delay the down events coming from non-key hardware events
 		// with a zero delay. This is to prevent DOWN1 DOWN2 UP1 UP2.
-		_delayedEventSource->scheduleEvent(evt, 0);
+		_delayedEventSource->scheduleEvent(outgoingEvent, 0);
 
 		// non-keys need to send up as well
 		// WORKAROUND: Delay the up events coming from non-key hardware events
 		// This is for engines that run scripts that check on key being down
-		evt.type = convertedType;
+		outgoingEvent.type = convertedType;
 		const uint32 delay = (convertedType == EVENT_KEYUP ? kDelayKeyboardEventMillis : kDelayMouseEventMillis);
-		_delayedEventSource->scheduleEvent(evt, delay);
+		_delayedEventSource->scheduleEvent(outgoingEvent, delay);
 	}
 
-	return evt;
+	return outgoingEvent;
 }
 
 EventType Keymapper::convertStartToEnd(EventType type) {
