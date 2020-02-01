@@ -59,7 +59,8 @@ protected:
      * Returns the data archive folder and version that's required
      */
     virtual bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
-
+public:
+	const Std::string c_empty_string;
 public:
 	NuvieEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
 	~NuvieEngine();

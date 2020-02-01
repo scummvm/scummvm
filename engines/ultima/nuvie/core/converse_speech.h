@@ -45,7 +45,6 @@ typedef struct TownsSound {
 class ConverseSpeech {
 	// game system objects from nuvie
 	Configuration *config;
-	bool audio_enabled;
 	Audio::SoundHandle handle;
 	Std::list<TownsSound> list;
 

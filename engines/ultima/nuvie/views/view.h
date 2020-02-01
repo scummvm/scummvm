@@ -60,7 +60,7 @@ public:
 	View(Configuration *cfg);
 	virtual ~View();
 
-	virtual bool init(uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);
+	bool init(uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);
 
 	virtual bool set_party_member(uint8 party_member);
 	uint8 get_party_member_num() {
