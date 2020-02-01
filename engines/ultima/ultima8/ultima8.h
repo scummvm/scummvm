@@ -37,12 +37,12 @@
 #include "ultima/shared/engine/ultima.h"
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/args.h"
-
 #include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/kernel/mouse.h"
 #include "ultima/ultima8/kernel/hid_keys.h"
 #include "ultima/ultima8/misc/console.h"
 #include "ultima/ultima8/misc/p_dynamic_cast.h"
+#include "ultima/ultima8/graphics/point_scaler.h"
 #include "common/events.h"
 
 namespace Ultima {
@@ -164,7 +164,6 @@ private:
 	GameMapGump *gameMapGump;
 	ScalerGump *scalerGump;
 	InverterGump *inverterGump;
-
 	AvatarMoverProcess *avatarMoverProcess;
 
 	// called depending upon command line arguments
@@ -216,7 +215,8 @@ protected:
 	 * Returns the data archive folder and version that's required
 	 */
 	virtual bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
-
+public:
+	Pentagram::PointScaler point_scaler;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 

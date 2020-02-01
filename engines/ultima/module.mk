@@ -368,8 +368,8 @@ MODULE_OBJS := \
 	ultima8/graphics/palette.o \
 	ultima8/graphics/palette_fader_process.o \
 	ultima8/graphics/palette_manager.o \
+	ultima8/graphics/point_scaler.o \
 	ultima8/graphics/render_surface.o \
-	ultima8/graphics/scaler_manager.o \
 	ultima8/graphics/shape.o \
 	ultima8/graphics/shape_archive.o \
 	ultima8/graphics/shape_frame.o \
@@ -394,12 +394,6 @@ MODULE_OBJS := \
 	ultima8/graphics/fonts/shape_rendered_text.o \
 	ultima8/graphics/fonts/ttf_rendered_text.o \
 	ultima8/graphics/fonts/tt_font.o \
-	ultima8/graphics/scalers/bilinear_scaler.o \
-	ultima8/graphics/scalers/bilinear_scaler_internal_2x.o \
-	ultima8/graphics/scalers/bilinear_scaler_internal_arb.o \
-	ultima8/graphics/scalers/bilinear_scaler_internal_x1y12.o \
-	ultima8/graphics/scalers/bilinear_scaler_internal_x2y24.o \
-	ultima8/graphics/scalers/point_scaler.o \
 	ultima8/gumps/ask_gump.o \
 	ultima8/gumps/bark_gump.o \
 	ultima8/gumps/bind_gump.o \

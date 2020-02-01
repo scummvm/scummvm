@@ -25,7 +25,6 @@
 
 #include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/graphics/render_surface.h"
-#include "ultima/ultima8/graphics/scaler_manager.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -34,7 +33,6 @@ namespace Pentagram {
 /// Base Scaler class
 class Scaler {
 	friend class hqScaler;
-
 protected:
 	// Basic scaler function template
 	typedef bool (*ScalerFunc)(Texture *tex, int32 sx, int32 sy, int32 sw, int32 sh,
@@ -51,9 +49,7 @@ protected:
 	ScalerFunc  Scale32_A888;
 	ScalerFunc  Scale32_888A;
 
-	Scaler() {
-		ScalerManager::get_instance()->AddScaler(this);
-	}
+	Scaler() {}
 public:
 	//
 	// Scaler Capabilites
@@ -61,10 +57,6 @@ public:
 
 	virtual uint32    ScaleBits() const = 0;          //< bits for supported integer scaling
 	virtual bool      ScaleArbitrary() const = 0;     //< supports arbitrary scaling of any degree
-
-	virtual const char     *ScalerName() const = 0;         //< Name Of the Scaler (1 word)
-	virtual const char     *ScalerDesc() const = 0;         //< Desciption of the Scaler
-	virtual const char     *ScalerCopyright() const = 0;    //< Scaler Copyright info
 
 	//
 	// Maybe one day... for now we just grab everything from RenderSurface

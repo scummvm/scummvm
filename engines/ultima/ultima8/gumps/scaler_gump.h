@@ -63,7 +63,6 @@ public:
 		sw = swidth1;
 		sh = sheight1;
 	}
-	void ChangeScaler(Std::string scalername, int scalex, int scaley);
 
 protected:
 	int                     swidth1;
@@ -80,13 +79,9 @@ protected:
 	int32                   height;
 
 private:
-	void SetupScalers();
+	void setupScaling();
 
 	void DoScalerBlit(Texture *src, int swidth, int sheight, RenderSurface *dest, int dwidth, int dheight, const Pentagram::Scaler *scaler);
-
-	static void         ConCmd_changeScaler(const Console::ArgvType &argv);     //!< "GuiApp::changeScaler" console command
-	static void         ConCmd_listScalers(const Console::ArgvType &argv);      //!< "GuiApp::changeScaler" console command
-
 };
 
 } // End of namespace Ultima8

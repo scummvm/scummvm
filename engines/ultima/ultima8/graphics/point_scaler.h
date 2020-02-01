@@ -20,33 +20,25 @@
  *
  */
 
-#ifndef ULTIMA8_GRAPHICS_SCALERS_HQ3XSCALER_H
-#define ULTIMA8_GRAPHICS_SCALERS_HQ3XSCALER_H
-
-#ifdef USE_HQ3X_SCALER
+#ifndef ULTIMA8_GRAPHICS_SCALERS_POINTSCALER_H
+#define ULTIMA8_GRAPHICS_SCALERS_POINTSCALER_H
 
 #include "ultima/ultima8/graphics/scaler.h"
 
+namespace Ultima {
+namespace Ultima8 {
 namespace Pentagram {
 
-class hq3xScaler : public Scaler {
+class PointScaler : public Scaler {
 public:
-	hq3xScaler();
+	PointScaler();
 
 	virtual uint32    ScaleBits() const;          //< bits for supported integer scaling
 	virtual bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
-
-	virtual const char     *ScalerName() const;         //< Name Of the Scaler (1 word)
-	virtual const char     *ScalerDesc() const;         //< Desciption of the Scaler
-	virtual const char     *ScalerCopyright() const;    //< Scaler Copyright info
-private:
-	template<class uintX, class Manip, class uintS> ScalerFunc GetScaler();
 };
 
-extern const hq3xScaler hq3x_scaler;
-
-};
-
-#endif
+} // End of namespace Pentagram
+} // End of namespace Ultima8
+} // End of namespace Ultima
 
 #endif

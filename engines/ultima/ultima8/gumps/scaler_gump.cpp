@@ -26,7 +26,6 @@
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/graphics/scaler.h"
-#include "ultima/ultima8/graphics/scaler_manager.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/ultima8.h"
 
@@ -40,16 +39,11 @@ ScalerGump::ScalerGump(int32 _x, int32 _y, int32 _width, int32 _height) :
 	swidth1(_width), sheight1(_height), scaler1(0), buffer1(0),
 	swidth2(_width), sheight2(_height), scaler2(0), buffer2(0),
 	width(_width), height(_height) {
-	con->AddConsoleCommand("ScalerGump::changeScaler", ConCmd_changeScaler);
-	con->AddConsoleCommand("ScalerGump::listScalers", ConCmd_listScalers);
 
-	SetupScalers();
+	setupScaling();
 }
 
 ScalerGump::~ScalerGump() {
-	con->RemoveConsoleCommand(ConCmd_changeScaler);
-	con->RemoveConsoleCommand(ConCmd_listScalers);
-
 	FORGET_OBJECT(buffer1);
 	FORGET_OBJECT(buffer2);
 }
@@ -173,52 +167,21 @@ void ScalerGump::RenderSurfaceChanged() {
 	width = new_dims.w;
 	height = new_dims.h;
 
-	SetupScalers();
+	setupScaling();
 
 	Gump::RenderSurfaceChanged();
 }
 
-void ScalerGump::ChangeScaler(Std::string scalername, int scalex, int scaley) {
-	SettingManager *settingman = SettingManager::get_instance();
-
-	if (scalex != 0) settingman->set("scalex", scalex);
-	if (scaley != 0) settingman->set("scaley", scaley);
-	if (scalername != "") settingman->set("scaler", scalername);
-
-	SetupScalers();
-
-	Gump::RenderSurfaceChanged();
-}
-
-void ScalerGump::SetupScalers() {
+void ScalerGump::setupScaling() {
 	FORGET_OBJECT(buffer1);
 	FORGET_OBJECT(buffer2);
 
-	SettingManager *settingman = SettingManager::get_instance();
-
-	settingman->setDefault("scalex", 320);
-	settingman->setDefault("scaley", 200);
-	settingman->setDefault("scaler", "point");
-	settingman->setDefault("scalex2", 0);
-	settingman->setDefault("scaley2", 0);
-	settingman->setDefault("scaler2", "point");
-
-	Std::string scaler1name;
-	Std::string scaler2name;
-	settingman->get("scalex", swidth1);
-	settingman->get("scaley", sheight1);
-	settingman->get("scaler", scaler1name);
-	settingman->get("scaler2", scaler2name);
-	settingman->get("scalex2", swidth2);
-	settingman->get("scaley2", sheight2);
-
-	const Pentagram::Scaler *point = ScalerManager::get_instance()->GetPointScaler();
-
-	scaler1 = ScalerManager::get_instance()->GetScaler(scaler1name);
-	if (!scaler1) scaler1 = point ;
-
-	scaler2 = ScalerManager::get_instance()->GetScaler(scaler2name);
-	if (!scaler2 || !scaler2->ScaleArbitrary()) scaler2 = point ;
+	swidth1 = 320;
+	sheight1 = 200;
+	swidth2 = 0;
+	sheight2 = 0;
+	const Pentagram::Scaler *point = &Ultima8Engine::get_instance()->point_scaler;
+	scaler1 = scaler2 = point;
 
 	if (swidth1 < 0) swidth1 = -swidth1;
 	else if (swidth1 == 0) swidth1 = width;
@@ -241,11 +204,9 @@ void ScalerGump::SetupScalers() {
 	if (swidth1 == width && sheight1 == height) return;
 
 	buffer1 = RenderSurface::CreateSecondaryRenderSurface(swidth1, sheight1);
-	con->Printf(MM_INFO, "Using Scaler: %s. %s\n", scaler1->ScalerDesc(), scaler1->ScalerCopyright());
 
 	// scaler2's factor isn't set so auto detect
 	if (swidth2 == 0 || sheight2 == 0) {
-
 		// scaler 1 is arbitrary so scaler2 not required
 		if (scaler1->ScaleArbitrary()) return;
 
@@ -267,45 +228,11 @@ void ScalerGump::SetupScalers() {
 		// scaler2 not required
 		if (width == 640 && height == 480 &&
 		        swidth2 == 640 && sheight2 == 400 &&
-		        swidth1 == 320 && sheight2 == 200 &&
-		        scaler2 == point) {
+		        swidth1 == 320 && sheight2 == 200) {
 			return;
 		}
 
 		buffer2 = RenderSurface::CreateSecondaryRenderSurface(swidth2, sheight2);
-		con->Printf(MM_INFO, "Using Secondary Scaler: %s. %s\n", scaler2->ScalerDesc(), scaler2->ScalerCopyright());
-	}
-}
-
-void ScalerGump::ConCmd_changeScaler(const Console::ArgvType &argv) {
-	if (argv.size() != 4 && argv.size() != 2) {
-		pout << "Usage: ScalerGump::changeScaler scaler [scalex] [scaley]" << Std::endl;
-		return;
-	}
-
-	ScalerGump *scalerGump = static_cast<ScalerGump *>(Ultima8Engine::get_instance()->getDesktopGump()->FindGump<ScalerGump>());
-
-	if (scalerGump) {
-		if (argv.size() != 2)
-			scalerGump->ChangeScaler(argv[1], strtol(argv[2].c_str(), 0, 0), strtol(argv[3].c_str(), 0, 0));
-		else
-			scalerGump->ChangeScaler(argv[1], 0, 0);
-	}
-}
-
-void ScalerGump::ConCmd_listScalers(const Console::ArgvType &argv) {
-	ScalerManager *scaleman = ScalerManager::get_instance();
-	uint32 numScalers = scaleman->GetNumScalers();
-
-	for (uint32 i = 0; i < numScalers; i++) {
-		const Pentagram::Scaler *s = scaleman->GetScaler(i);
-
-		pout << s->ScalerName() << ": " << s->ScalerDesc() << " -";
-
-		if (s->ScaleArbitrary()) pout << " Arbitrary";
-		else for (int b = 0; b < 32; b++) if (s->ScaleBits() & (1 << b)) pout << " " << b << "x";
-
-		pout << Std::endl;
 	}
 }
 

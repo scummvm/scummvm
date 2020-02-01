@@ -21,7 +21,6 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-
 #include "ultima/ultima8/graphics/soft_render_surface.h"
 #include "ultima/ultima8/graphics/texture.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -29,10 +28,9 @@
 #include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/graphics/fonts/fixed_width_font.h"
 #include "ultima/ultima8/misc/memset_n.h"
-
 #include "ultima/ultima8/graphics/xform_blend.h"
-#include "ultima/ultima8/graphics/scalers/point_scaler.h"
-#include "ultima/ultima8/graphics/scalers/bilinear_scaler.h"
+#include "ultima/ultima8/graphics/point_scaler.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -711,7 +709,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *tex, in
 
 
 //
-// void SoftRenderSurface::StretchBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, bool bilinear, bool clampedges)
+// void SoftRenderSurface::StretchBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, bool clampedges)
 //
 // Desc: Blit a region from a Texture, and arbitrarily stretch it to fit the dest region
 //
@@ -719,7 +717,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(Texture *tex, in
 template<class uintX> void SoftRenderSurface<uintX>::StretchBlit(Texture *texture,
         int32 sx, int32 sy, int32 sw, int32 sh,
         int32 dx, int32 dy, int32 dw, int32 dh,
-        bool bilinear, bool clampedges) {
+        bool clampedges) {
 	// Nothing we can do
 	if ((sh <= 0) || (dh <= 0) || (sw <= 0) || (dw <= 0)) return;
 
@@ -730,14 +728,7 @@ template<class uintX> void SoftRenderSurface<uintX>::StretchBlit(Texture *textur
 	}
 
 	uint8 *pixel = pixels + dy * pitch + dx * sizeof(uintX);
-
-	if (bilinear) {
-		if (Pentagram::bilinear_scaler.Scale(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clampedges))
-			return;
-	}
-	// Ok easy simple scale
-
-	Pentagram::point_scaler.Scale(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clampedges);
+	Ultima8Engine::get_instance()->point_scaler.Scale(texture, sx, sy, sw, sh, pixel, dw, dh, pitch, clampedges);
 }
 
 //

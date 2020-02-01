@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima8/misc/pent_include.h"
-#include "ultima/ultima8/graphics/scalers/point_scaler.h"
+#include "ultima/ultima8/graphics/point_scaler.h"
 #include "ultima/ultima8/graphics/manips.h"
 
 namespace Ultima {
@@ -301,18 +301,6 @@ uint32 PointScaler::ScaleBits() const {
 bool PointScaler::ScaleArbitrary() const {
 	return true;
 }
-
-const char *PointScaler::ScalerName() const {
-	return "point";
-}
-const char *PointScaler::ScalerDesc() const {
-	return "Fast Simple Point Scaler";
-}
-const char *PointScaler::ScalerCopyright() const {
-	return "Copyright (C) 2005 The Pentagram Team";
-}
-
-const PointScaler point_scaler;
 
 } // End of namespace Pentagram
 } // End of namespace Ultima8

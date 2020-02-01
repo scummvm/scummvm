@@ -245,7 +245,7 @@ public:
 	virtual void MaskedBlit(Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) = 0;
 
 	//! Blit a stretched region from a Texture (Alpha == 0 -> skipped???)
-	virtual void StretchBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, bool bilinear = false, bool clampedges = false) = 0;
+	virtual void StretchBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, bool clampedges = false) = 0;
 
 	//! Blit a region from a Texture using a scaler
 	virtual bool ScalerBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Pentagram::Scaler *, bool clampedges = false) = 0;
