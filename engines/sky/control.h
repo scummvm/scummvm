@@ -180,7 +180,7 @@ private:
 
 class Control {
 public:
-	Control(Common::SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, SkyCompact *skyCompact, OSystem *system);
+	Control(Common::SaveFileManager *saveFileMan, Screen *screen, Disk *disk, Mouse *mouse, Text *text, MusicBase *music, Logic *logic, Sound *sound, SkyCompact *skyCompact, OSystem *system, Common::Keymap *shortcutsKeymap);
 	void doControlPanel();
 	void doLoadSavePanel();
 	void restartGame();
@@ -248,7 +248,9 @@ private:
 	OSystem *_system;
 	bool _mouseClicked;
 	Common::KeyState _keyPressed;
+	Common::CustomEventType _action;
 	int _mouseWheel;
+	Common::Keymap *_shortcutsKeymap;
 
 	struct {
 		uint8 *controlPanel;

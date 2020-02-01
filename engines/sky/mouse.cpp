@@ -185,8 +185,8 @@ void Mouse::waitMouseNotPressed(int minDelay) {
 
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kSkyActionSkip) {
 					minDelay = 0;
 					mousePressed = false;
 				}

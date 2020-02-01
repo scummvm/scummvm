@@ -61,8 +61,20 @@ class MusicBase;
 class Debugger;
 class SkyCompact;
 
+enum SkyAction {
+	kSkyActionNone,
+	kSkyActionToggleFastMode,
+	kSkyActionToggleReallyFastMode,
+	kSkyActionOpenControlPanel,
+	kSkyActionConfirm,
+	kSkyActionSkip,
+	kSkyActionSkipLine,
+	kSkyActionPause
+};
+
 class SkyEngine : public Engine {
 protected:
+	SkyAction _action;
 	Common::KeyState _keyPressed;
 
 	Sound *_skySound;
@@ -98,6 +110,8 @@ public:
 	static void *_itemList[300];
 
 	static SystemVars _systemVars;
+
+	static const char *shortcutsKeymapId;
 
 protected:
 	// Engine APIs
