@@ -73,11 +73,15 @@ SoundPC_v1::SoundPC_v1(KyraEngine_v1 *vm, Audio::Mixer *mixer, kType type)
 		break;
 	}
 
+#ifdef ENABLE_EOB
 	// Correct the type to someting we support. NullSound is treated as a silent AdLib driver.
 	if (_type != kAdLib && _type != kPCSpkr && _type != kPCjr)
 		_type = kAdLib;
-
 	_driver = (type == kAdLib) ? PCSoundDriver::createAdLib(mixer, _version) : PCSoundDriver::createPCSpk(mixer, _type == kPCjr);
+#else
+	_type = kAdLib;
+	_driver = PCSoundDriver::createAdLib(mixer, _version);
+#endif
 	assert(_driver);
 }
 
