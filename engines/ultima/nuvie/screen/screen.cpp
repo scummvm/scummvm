@@ -1147,8 +1147,8 @@ Graphics::ManagedSurface *Screen::create_sdl_surface_from(byte *src_buf, uint16 
 	Graphics::ManagedSurface *new_surface;
 	uint16 i, j;
 
-	new_surface = RenderSurface::createSurface(src_w, src_h, _renderSurface->Rmask, _renderSurface->Gmask,
-		_renderSurface->Bmask, _renderSurface->Rshift, _renderSurface->Gshift, _renderSurface->Bshift);
+	new_surface = RenderSurface::createSurface(src_w, src_h,
+		_renderSurface->getFormat());
 
 	if (_renderSurface->bits_per_pixel == 16) {
 		uint16 *pixels = (uint16 *)new_surface->getPixels();
