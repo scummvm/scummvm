@@ -91,6 +91,7 @@ protected:
 	void display_readied_object(uint8 location, uint16 x, uint16 y, Actor *actor, Tile *emptyTile);
 
 private:
+	Common::Rect item_hit_rects[8];
 
 	void load_md_doll_shp();
 };

@@ -82,6 +82,9 @@ public:
 
 	void display_prompt() {}
 	void display_string(Std::string s);
+	virtual void display_string(Std::string s, Font *f, bool include_on_map_window) override {
+		return MsgScroll::display_string(s, f, include_on_map_window);
+	}
 
 	void set_font(uint8 font_type);
 	bool is_garg_font();
@@ -108,10 +111,11 @@ protected:
 
 
 private:
+	const Common::Rect arrow_up_rect;
+	const Common::Rect arrow_down_rect;
+
 	GUI_status scroll_movement_event(ScrollEventType event);
 	void update_arrows();
-
-
 };
 
 } // End of namespace Nuvie
