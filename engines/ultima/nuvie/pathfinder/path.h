@@ -42,7 +42,7 @@ protected:
 	PathFinder *pf;
 
 	void add_step(MapCoord loc);
-	bool check_dir(const MapCoord &loc, const MapCoord &rel);
+	bool check_dir(const MapCoord &loc, MapCoord &rel);
 	bool check_loc(const MapCoord &loc);
 	void set_path_size(int alloc_size);
 
