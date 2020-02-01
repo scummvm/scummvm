@@ -3496,7 +3496,7 @@ bool Events::newAction(EventMode new_mode) {
 		break;
 	case DROP_MODE:
 		drop_start();
-	// drop to EQUIP_MODE (move cursor to inventory)
+		// fall through
 	case EQUIP_MODE: // if this was called from moveCursorToInventory, the
 		// mode has now changed, so it wont be called again
 		moveCursorToInventory();

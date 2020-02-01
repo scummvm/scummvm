@@ -54,7 +54,7 @@ public:
 	};
 
 	unsigned char *readAll();
-	unsigned char *readBuf(uint32 read_size, unsigned int *bytes_read);
+	unsigned char *readBuf(uint32 read_size, uint32 *bytes_read);
 	virtual bool readToBuf(unsigned char *buf, uint32 buf_size) {
 		return false;
 	};
