@@ -55,6 +55,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_trackMapSize = 0;
 	_lastMusicCommand = -1;
 	_curSfxFile = _curMusicTheme = -1;
+	_preventScriptSfx = false;
 
 	_gameToLoad = -1;
 

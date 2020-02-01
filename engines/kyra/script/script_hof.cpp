@@ -445,6 +445,23 @@ int KyraEngine_HoF::o2_getTimerDelay(EMCState *script) {
 	return _timer->getDelay(stackPos(0));
 }
 
+int KyraEngine_HoF::o2_playCompleteSoundEffect(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_playCompleteSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
+	snd_playSoundEffect(stackPos(0));
+	// The following code is derived from HOFCD MAINWIN.EXE. MAINDOS.EXE has the "normal" o1_playSoundEffect() opcode here (the
+	// way we had implemented it before this fix). This was actually the cause of bug #3721. I have verified with the DOSBox
+	// debugger that it really runs the MAINWIN.EXE code and in particular this opcode with the wait loop.
+	// This loop waits for complete silence on all 4 pcm sound channels. Meanwhile it prevents any scripts from starting more
+	// sound effects while the loop is active (actually, only opcode 0x59 gets blocked). The whole thing looks a bit like a last
+	// minute hack....
+	while (_sound->voiceIsPlaying() && !skipFlag() && !shouldQuit()) {
+		_preventScriptSfx = true;
+		delay(10, true);
+		_preventScriptSfx = false;
+	}
+	return 0;
+}
+
 int KyraEngine_HoF::o2_delaySecs(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_delaySecs(%p) (%d)", (const void *)script, stackPos(0));
 	delay(stackPos(0) * 1000, true);
@@ -1548,7 +1565,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_getElapsedSecs);
 	// 0x34
 	Opcode(o2_getTimerDelay);
-	Opcode(o1_playSoundEffect);
+	Opcode(o2_playCompleteSoundEffect);
 	Opcode(o2_delaySecs);
 	Opcode(o2_delay);
 	// 0x38

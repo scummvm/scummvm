@@ -522,6 +522,7 @@ protected:
 	int o2_wipeDownMouseItem(EMCState *script);
 	int o2_getElapsedSecs(EMCState *script);
 	int o2_getTimerDelay(EMCState *script);
+	int o2_playCompleteSoundEffect(EMCState *script);
 	int o2_delaySecs(EMCState *script);
 	int o2_setTimerDelay(EMCState *script);
 	int o2_setScaleTableItem(EMCState *script);

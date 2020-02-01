@@ -365,6 +365,8 @@ protected:
 	const int8 *_trackMap;
 	int _trackMapSize;
 
+	bool _preventScriptSfx;
+
 	virtual int convertVolumeToMixer(int value);
 	virtual int convertVolumeFromMixer(int value);
 
