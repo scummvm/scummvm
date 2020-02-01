@@ -465,7 +465,6 @@ MODULE_OBJS := \
 	ultima8/misc/md5.o \
 	ultima8/misc/pent_include.o \
 	ultima8/misc/util.o \
-	ultima8/misc/version.o \
 	ultima8/usecode/bit_set.o \
 	ultima8/usecode/uc_list.o \
 	ultima8/usecode/uc_machine.o \

@@ -80,9 +80,6 @@ static const int statwidth = 15;
 static const int statheight = 8;
 static const int statfont = 7;
 static const int statdescfont = 0;
-
-const Pentagram::Rect backpack_rect(49, 25, 10, 25);
-
 static const int statbuttonshape = 38;
 static const int statbuttonx = 81;
 static const int statbuttony = 84;
