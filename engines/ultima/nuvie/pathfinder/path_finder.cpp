@@ -39,7 +39,7 @@ PathFinder::~PathFinder() {
 	delete search;
 }
 
-bool PathFinder::check_dir(const MapCoord &from, const MapCoord &rel, sint8) {
+bool PathFinder::check_dir(const MapCoord &from, MapCoord &rel, sint8) {
 	return check_loc(MapCoord(from.x + rel.sx, from.y + rel.sy, from.z));
 }
 
