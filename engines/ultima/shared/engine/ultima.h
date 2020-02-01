@@ -76,7 +76,7 @@ public:
 	/**
 	 * Returns supported engine features
 	 */
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	/**
 	 * Returns game features

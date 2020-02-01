@@ -59,8 +59,8 @@ private:
 	 */
 	int getSavegameSlot();
 
-	void leftButtonDoubleClick(const Point &mousePos);
-	void middleButtonDoubleClick(const Point &mousePos);
+	void leftButtonDoubleClick(const Point &mousePos) override;
+	void middleButtonDoubleClick(const Point &mousePos) override;
 	void rightButtonDoubleClick(const Point &mousePos);
 
 	/**
@@ -86,7 +86,7 @@ public:
 	 * Constructor
 	 */
 	GameBase();
-	
+
 	/**
 	 * Destructor
 	 */
@@ -95,7 +95,7 @@ public:
 	/**
 	 * Called to handle any regular updates the game requires
 	 */
-	virtual void onIdle();
+	virtual void onIdle() override;
 
 	virtual void mouseMove(const Point &mousePos) override;
 	virtual void leftButtonDown(const Point &mousePos) override;
@@ -111,7 +111,7 @@ public:
 	 * Called when the game starts
 	 */
 	virtual void starting(bool isLoading) {}
-	
+
 	/**
 	 * Returns true if the current video mode is VGA
 	 */

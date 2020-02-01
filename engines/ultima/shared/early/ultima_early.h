@@ -129,7 +129,7 @@ public:
 	 * @param isAutosave If true, autosave is being created
 	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 
 	/*
 	 * Creates a new hierarchy for the game, that contains all the logic for playing that particular game.
