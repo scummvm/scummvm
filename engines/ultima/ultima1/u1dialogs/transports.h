@@ -38,7 +38,6 @@ class Transports : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
 	virtual bool CharacterInputMsg(CCharacterInputMsg &msg) override;
 private:
-	uint _transportsNum;
 	uint _water, _woods, _grass;
 	bool _hasFreeTiles, _hasShuttle, _isClosed;
 	uint _transportCount;

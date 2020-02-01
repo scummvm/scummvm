@@ -167,7 +167,7 @@ public:
 	const char *MAGIC_NAMES[8];
 	const char *DONT_BUY_SPELLS;
 	const char *TAVERN_NAMES[8];
-	const char *TAVERN_TEXT[10];
+	const char *TAVERN_TEXT[4];
 	const char *TAVERN_TIPS[13];
 	const char *TRANSPORTS_NAMES[8];
 	const char *TRANSPORTS_TEXT[2];
