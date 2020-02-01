@@ -26,7 +26,6 @@ MODULE_OBJS := \
 	shared/engine/data_archive.o \
 	shared/engine/debugger.o \
 	shared/engine/events.o \
-	shared/engine/debugger.o \
 	shared/engine/input_handler.o \
 	shared/engine/input_translator.o \
 	shared/engine/messages.o \
@@ -380,7 +379,6 @@ MODULE_OBJS := \
 	ultima8/graphics/texture.o \
 	ultima8/graphics/texture_bitmap.o \
 	ultima8/graphics/texture_png.o \
-	ultima8/graphics/texture_targa.o \
 	ultima8/graphics/type_flags.o \
 	ultima8/graphics/wpn_ovlay_dat.o \
 	ultima8/graphics/xform_blend.o \
