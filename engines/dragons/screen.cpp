@@ -289,10 +289,12 @@ void Screen::updatePaletteTransparency(uint16 paletteNum, uint16 startOffset, ui
 	assert(endOffset < 256);
 
 	// TODO
-	// this is needed for palette 0 for some reason.
-//	DAT_80069638 = DAT_80069638 | 0x50000000;
-//	DAT_8006965c = DAT_8006965c | 0x50000000;
-//	DAT_80069680 = DAT_80069680 | 0x50000000;
+	if (paletteNum == 0) {
+		// set all layers to pixel addition blending (100% back + 100% sprite)
+//		BgLayerGsSprite[0].attribute = BgLayerGsSprite[0].attribute | 0x50000000;
+//		BgLayerGsSprite[1].attribute = BgLayerGsSprite[1].attribute | 0x50000000;
+//		BgLayerGsSprite[2].attribute = BgLayerGsSprite[2].attribute | 0x50000000;
+	}
 
 	for (int i = startOffset; i <= endOffset; i++) {
 		if (isTransparent) {
