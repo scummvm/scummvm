@@ -23,6 +23,7 @@
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/misc.h"
 #include "ultima/nuvie/conf/xml_node.h"
+#include "ultima/nuvie/nuvie.h"
 #include "ultima/shared/std/string.h"
 
 namespace Ultima {
@@ -30,14 +31,9 @@ namespace Nuvie {
 
 using Std::string;
 using Std::vector;
-//using Std::endl;
 
 static  string  encode_entity(const string &s);
 static  string  close_tag(const string &s);
-
-static const Std::string c_empty_string;
-
-
 
 XMLNode::~XMLNode() {
 	for (Std::vector<XMLNode *>::iterator i = nodelist.begin();
@@ -69,7 +65,7 @@ const string &XMLNode::reference(const string &h, bool &exists) {
 	}
 
 	exists = false;
-	return c_empty_string;
+	return g_engine->c_empty_string;
 }
 
 

@@ -381,7 +381,6 @@ class ProjectileAnim : public TileAnim {
 	uint8 speed; //number of pixels to move in a single update.
 
 	bool leaveTrailFlag;
-	bool rotateFlag;
 public:
 	ProjectileAnim(uint16 tileNum, MapCoord *start, vector<MapCoord> target, uint8 animSpeed, bool leaveTrailFlag = false, uint16 initialTileRotation = 0, uint16 rotationAmount = 0, uint8 src_y_offset = 0);
 	~ProjectileAnim();
