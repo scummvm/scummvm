@@ -43,11 +43,11 @@ GUI_YesNoDialog::GUI_YesNoDialog(GUI *gui, int x, int y, int w, int h, const cha
 	yes_callback_object = yesCallback;
 	no_callback_object = noCallback;
 
-	yes_button = new GUI_Button(this, 100, 50, 40, 18, "Yes", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, (GUI_CallBack *)this, 0);
+	yes_button = new GUI_Button(this, 100, 50, 40, 18, "Yes", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(yes_button);
 	button_index[0] = yes_button;
 
-	no_button = new GUI_Button(this, 30, 50, 40, 18, "No", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, (GUI_CallBack *)this, 0);
+	no_button = new GUI_Button(this, 30, 50, 40, 18, "No", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(no_button);
 	button_index[1] = no_button;
 
@@ -90,10 +90,10 @@ GUI_status GUI_YesNoDialog::KeyDown(const Common::KeyState &key) {
 }
 
 GUI_status GUI_YesNoDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
-	if (caller == (GUI_CallBack *)yes_button)
+	if (caller == yes_button)
 		return (GUI_status)yes_callback_object->callback(YESNODIALOG_CB_YES, nullptr);
 
-	if (caller == (GUI_CallBack *)no_button)
+	if (caller == no_button)
 		return (GUI_status)no_callback_object->callback(YESNODIALOG_CB_NO, nullptr);
 
 	return GUI_PASS;

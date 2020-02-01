@@ -50,7 +50,7 @@ namespace Nuvie {
 #define GMD_HEIGHT 135
 #endif
 
-GameMenuDialog::GameMenuDialog(GUI_CallBack *callback)
+GameMenuDialog::GameMenuDialog(CallBack *callback)
 	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - GMD_WIDTH) / 2,
 	             Game::get_game()->get_game_y_offset() + (Game::get_game()->get_game_height() - GMD_HEIGHT) / 2,
 	             GMD_WIDTH, GMD_HEIGHT, 244, 216, 131, GUI_DIALOG_UNMOVABLE) {
@@ -110,7 +110,7 @@ GameMenuDialog::~GameMenuDialog() {
 
 GUI_status GameMenuDialog::close_dialog() {
 	Delete(); // mark dialog as deleted. it will be freed by the GUI object
-	callback_object->callback(GAMEMENUDIALOG_CB_DELETE, this, this);
+	callback_object->callback(GAMEMENUDIALOG_CB_DELETE, nullptr, this);
 	GUI::get_gui()->unlock_input();
 	return GUI_YUM;
 }
@@ -157,45 +157,45 @@ GUI_status GameMenuDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 
 	if (caller == this) {
 		close_dialog();
-	} else if (caller == (GUI_CallBack *)save_button) {
+	} else if (caller == save_button) {
 		g_engine->saveGame();
-	} else if (caller == (GUI_CallBack *)load_button) {
+	} else if (caller == load_button) {
 		g_engine->loadGame();
-	} else if (caller == (GUI_CallBack *)video_button) {
+	} else if (caller == video_button) {
 		GUI_Widget *video_dialog;
-		video_dialog = (GUI_Widget *) new VideoDialog((GUI_CallBack *)this);
+		video_dialog = (GUI_Widget *) new VideoDialog(this);
 		GUI::get_gui()->AddWidget(video_dialog);
 		gui->lock_input(video_dialog);
-	} else if (caller == (GUI_CallBack *)audio_button) {
+	} else if (caller == audio_button) {
 		GUI_Widget *audio_dialog;
-		audio_dialog = (GUI_Widget *) new AudioDialog((GUI_CallBack *)this);
+		audio_dialog = (GUI_Widget *) new AudioDialog(this);
 		GUI::get_gui()->AddWidget(audio_dialog);
 		gui->lock_input(audio_dialog);
-	} else if (caller == (GUI_CallBack *)input_button) {
+	} else if (caller == input_button) {
 		GUI_Widget *input_dialog;
-		input_dialog = (GUI_Widget *) new InputDialog((GUI_CallBack *)this);
+		input_dialog = (GUI_Widget *) new InputDialog(this);
 		GUI::get_gui()->AddWidget(input_dialog);
 		gui->lock_input(input_dialog);
 #ifdef HAVE_JOYSTICK_SUPPORT
-	} else if (caller == (GUI_CallBack *)joystick_button) {
+	} else if (caller == joystick_button) {
 		GUI_Widget *joystick_dialog;
-		joystick_dialog = (GUI_Widget *) new JoystickDialog((GUI_CallBack *)this);
+		joystick_dialog = (GUI_Widget *) new JoystickDialog(this);
 		GUI::get_gui()->AddWidget(joystick_dialog);
 		gui->lock_input(joystick_dialog);
 #endif
-	} else if (caller == (GUI_CallBack *)gameplay_button) {
+	} else if (caller == gameplay_button) {
 		GUI_Widget *gameplay_dialog;
-		gameplay_dialog = (GUI_Widget *) new GameplayDialog((GUI_CallBack *)this);
+		gameplay_dialog = (GUI_Widget *) new GameplayDialog(this);
 		GUI::get_gui()->AddWidget(gameplay_dialog);
 		gui->lock_input(gameplay_dialog);
-	} else if (caller == (GUI_CallBack *)cheats_button) {
+	} else if (caller == cheats_button) {
 		GUI_Widget *cheats_dialog;
-		cheats_dialog = (GUI_Widget *) new CheatsDialog((GUI_CallBack *)this);
+		cheats_dialog = (GUI_Widget *) new CheatsDialog(this);
 		GUI::get_gui()->AddWidget(cheats_dialog);
 		gui->lock_input(cheats_dialog);
-	} else if (caller == (GUI_CallBack *)continue_button) {
+	} else if (caller == continue_button) {
 		return close_dialog();
-	} else if (caller == (GUI_CallBack *)quit_button) {
+	} else if (caller == quit_button) {
 		Game::get_game()->get_event()->quitDialog();
 	} else {
 		gui->lock_input(this);

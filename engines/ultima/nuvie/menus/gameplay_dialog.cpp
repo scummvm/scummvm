@@ -254,9 +254,9 @@ const char *get_converse_gump_config_string(int selected_index) {
 }
 
 GUI_status GameplayDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
-	if (caller == (GUI_CallBack *)cancel_button) {
+	if (caller == cancel_button) {
 		return close_dialog();
-	} else if (caller == (GUI_CallBack *)save_button) {
+	} else if (caller == save_button) {
 		Game *game  = Game::get_game();
 		Configuration *config = game->get_config();
 		Std::string key = config_get_game_key(config);
