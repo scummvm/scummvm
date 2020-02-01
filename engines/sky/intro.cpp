@@ -927,8 +927,8 @@ bool Intro::escDelay(uint32 msecs) {
 	int32 nDelay = 0;
 	do {
 		while (eventMan->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN) {
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				if (event.customType == kSkyActionSkip)
 					return false;
 			} else if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RTL) {
 				return false;
