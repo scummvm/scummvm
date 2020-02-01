@@ -20,19 +20,13 @@
  *
  */
 
-//#include <cassert>
-//#include <cstring>
-////#include <iostream>
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
-
 #include "ultima/nuvie/usecode/usecode.h"
-
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_yes_no_dialog.h"
 #include "ultima/nuvie/gui/widgets/console.h"

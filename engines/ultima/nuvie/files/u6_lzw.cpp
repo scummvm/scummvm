@@ -29,12 +29,7 @@
 // This program decompresses Ultima_6-style LZW-compressed files
 // =============================================================
 
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-
 #include "ultima/shared/std/string.h"
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/files/u6_lzw.h"

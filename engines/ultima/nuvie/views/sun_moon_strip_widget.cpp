@@ -20,10 +20,6 @@
  *
  */
 
-//#include <cassert>
-
-//#include <math.h>
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/player.h"
 #include "ultima/nuvie/core/weather.h"

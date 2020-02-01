@@ -25,6 +25,7 @@
 
 #include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
+#include "ultima/shared/std/containers.h"
 
 #define MSGSCROLL_U6_WIDTH 17
 #define MSGSCROLL_U6_HEIGHT 10
@@ -40,9 +41,6 @@
 #define MSGSCROLL_SCROLLBACK_HEIGHT 100
 
 #define MSGSCROLL_NO_MAP_DISPLAY false
-
-//#include <list>
-#include "ultima/shared/std/containers.h"
 
 namespace Ultima {
 namespace Nuvie {

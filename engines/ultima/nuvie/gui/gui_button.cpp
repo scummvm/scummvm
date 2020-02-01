@@ -20,10 +20,6 @@
  *
  */
 
-//#include <string.h>
-
-
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/gui_button.h"
 #include "ultima/nuvie/gui/gui_load_image.h"
@@ -32,7 +28,6 @@ namespace Ultima {
 namespace Nuvie {
 
 /* the check marks bitmap */
-//#include "the_checker.h"
 Graphics::ManagedSurface *checkmarks = NULL;
 
 

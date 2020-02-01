@@ -20,11 +20,8 @@
  *
  */
 
-//#include <ctype.h>
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
-
 #include "ultima/nuvie/core/player.h"
 #include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/usecode/u6_usecode.h"

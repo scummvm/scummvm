@@ -20,14 +20,6 @@
  *
  */
 
-/*
- * ==========
- *  Includes
- * ==========
- */
-//#include <string.h>
-//#include <stdlib.h>
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/files/u6_lzw.h"

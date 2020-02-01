@@ -24,8 +24,6 @@
 #include "ultima/ultima8/kernel/joystick.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/shared/std/string.h"
- //#include "SDL_timer.h"
- //#include "SDL_events.h"
 
 namespace Ultima {
 namespace Ultima8 {

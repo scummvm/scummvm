@@ -20,9 +20,7 @@
  *
  */
 
-//#include <cassert>
 #include "ultima/nuvie/core/nuvie_defs.h"
-
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/misc/u6_llist.h"
@@ -36,7 +34,6 @@
 #include "ultima/nuvie/core/effect.h" /* for initial fade-in */
 #include "ultima/nuvie/core/tile_manager.h"
 #include "ultima/nuvie/sound/sound_manager.h"
-
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/core/game_clock.h"
 #include "ultima/nuvie/screen/game_palette.h"

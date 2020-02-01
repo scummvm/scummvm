@@ -23,11 +23,8 @@
 #ifndef NUVIE_CORE_CONVERSE_H
 #define NUVIE_CORE_CONVERSE_H
 
-//#include <cstdio>
 #include "ultima/shared/std/string.h"
-//#include <stack>
 #include "ultima/shared/std/containers.h"
-
 #include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"
 #include "ultima/nuvie/files/u6_lib_n.h"

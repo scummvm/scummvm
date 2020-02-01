@@ -20,8 +20,6 @@
  *
  */
 
-//#include <assert.h>
-//#include <cmath>
 #include "ultima/shared/std/string.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"

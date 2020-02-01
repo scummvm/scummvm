@@ -20,7 +20,6 @@
  *
  */
 
-//#include <ctype.height()>
 #include "ultima/shared/std/string.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"

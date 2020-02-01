@@ -23,13 +23,10 @@
 #ifndef NUVIE_MISC_U6_LIST_H
 #define NUVIE_MISC_U6_LIST_H
 
-//#include <stdio.h>
-
 namespace Ultima {
 namespace Nuvie {
 
 #define U6LLIST_FREE_DATA true
-
 
 struct U6Link {
 	U6Link *next;

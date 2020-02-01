@@ -20,10 +20,6 @@
  *
  */
 
-//#include <cassert>
-
-//#include <math.h>
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/files/nuvie_bmp_file.h"

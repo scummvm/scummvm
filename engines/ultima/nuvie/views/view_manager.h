@@ -23,8 +23,6 @@
 #ifndef NUVIE_VIEWS_VIEW_MANAGER_H
 #define NUVIE_VIEWS_VIEW_MANAGER_H
 
-//#include <list>
-
 namespace Ultima {
 namespace Nuvie {
 

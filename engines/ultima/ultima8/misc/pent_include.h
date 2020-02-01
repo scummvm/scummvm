@@ -40,17 +40,8 @@
 //
 // Strings
 //
-//#include "ultima/shared/std/string.h"
-//#include <cstring>
-//#include <cstdlib>
-#include "ultima/ultima8/misc/istring.h"
 
-// Empty string
-namespace Ultima {
-namespace Ultima8 {
-extern const Std::string c_empty_string;
-} // End of namespace Ultima8
-} // End of namespace Ultima
+#include "ultima/ultima8/misc/istring.h"
 
 //
 // Base Errors

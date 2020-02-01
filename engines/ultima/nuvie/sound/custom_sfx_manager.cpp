@@ -20,9 +20,6 @@
  *
  */
 
-//#include <string.h>
-//#include <map>
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "audio/mixer.h"
@@ -30,7 +27,6 @@
 #include "ultima/nuvie/files/nuvie_io.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/sound/custom_sfx_manager.h"
-//#include "decoder/wave/stdiostream.h"
 #include "common/file.h"
 
 namespace Ultima {

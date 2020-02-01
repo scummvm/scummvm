@@ -34,13 +34,9 @@ namespace Nuvie {
 Std::string to_uppercase(Std::string s) {
 	Std::string str = s;
 	Std::string::iterator X;
-	for (X = str.begin(); X != str.end(); ++X) {
-#if (defined(BEOS) || defined(OPENBSD) || defined(CYGWIN) || defined(__MORPHOS__) || defined(_MSC_VER))
-		if ((*X >= 'a') && (*X <= 'z')) *X -= 32;
-#else
+	for (X = str.begin(); X != str.end(); ++X)
 		*X = Std::toupper(*X);
-#endif
-	}
+
 	return str;
 }
 

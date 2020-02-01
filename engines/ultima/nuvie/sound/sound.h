@@ -24,23 +24,8 @@
 #define NUVIE_SOUND_SOUND_H
 
 #include "ultima/nuvie/core/game.h"
-
-//disable some annoying MSC warnings
-#if defined(_MSC_VER)
-#pragma warning( disable : 4503 ) // warning: decorated name length exceeded
-#if _MSC_VER <= 1200
-#pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
-#endif
-#endif
-
-
-
 #include "ultima/shared/std/string.h"
-//#include <stdlib.h>
-//#include <list>
 #include "ultima/shared/std/containers.h"
-//#include <map>
-//#include <iterator>
 
 namespace Ultima {
 namespace Nuvie {
