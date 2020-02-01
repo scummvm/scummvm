@@ -158,7 +158,7 @@ void OSystem_iOS7::initBackend() {
 
 	_timerManager = new DefaultTimerManager();
 
-	gettimeofday(&_startTime, NULL);
+	_startTime = CACurrentMediaTime();
 
 	setupMixer();
 
@@ -242,7 +242,7 @@ void OSystem_iOS7::suspendLoop() {
 
 uint32 OSystem_iOS7::getMillis(bool skipRecord) {
 	CFTimeInterval timeInSeconds = CACurrentMediaTime();
-	return (uint32) (timeInSeconds * 1000.0);
+	return (uint32) ((timeInSeconds - _startTime) * 1000.0) - _timeSuspended;
 }
 
 void OSystem_iOS7::delayMillis(uint msecs) {
