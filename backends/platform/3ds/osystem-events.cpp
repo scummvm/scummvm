@@ -301,17 +301,17 @@ Common::KeymapArray OSystem_3DS::getGlobalKeymaps() {
 
 	act = new Action("DRAGM", _("Toggle Drag Mode"));
 	act->setCustomBackendActionEvent(k3DSEventToggleDragMode);
-	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
 	keymap->addAction(act);
 
 	act = new Action("MAGM", _("Toggle Magnify Mode"));
 	act->setCustomBackendActionEvent(k3DSEventToggleMagnifyMode);
-	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	keymap->addAction(act);
 
 	act = new Action("OPTS", _("Open 3DS Settings"));
 	act->setCustomBackendActionEvent(k3DSEventOpenSettings);
-	act->addDefaultInputMapping("JOY_SELECT");
+	act->addDefaultInputMapping("JOY_BACK");
 	keymap->addAction(act);
 
 	return Keymap::arrayOf(keymap);
