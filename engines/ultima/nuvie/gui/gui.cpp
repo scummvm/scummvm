@@ -22,11 +22,8 @@
 
 /* This is a C++ class for handling a GUI, and associated widgets */
 
-//#include <stdlib.h>
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
-
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_types.h"
 

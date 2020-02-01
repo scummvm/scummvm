@@ -20,10 +20,8 @@
  *
  */
 
-//#include <cstring>
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/game.h"
-
 #include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/core/map.h"
 #include "ultima/nuvie/core/party.h"
@@ -40,8 +38,6 @@
 #include "ultima/nuvie/core/u6_objects.h"
 #include "ultima/nuvie/core/effect.h"
 #include "ultima/nuvie/core/player.h"
-
-//#include <cassert>
 
 namespace Ultima {
 namespace Nuvie {

@@ -20,13 +20,11 @@
  *
  */
 
-//#include <cassert>
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_button.h"
-
 #include "ultima/nuvie/core/u6_objects.h"
 #include "ultima/nuvie/core/party.h"
 #include "ultima/nuvie/actors/actor.h"

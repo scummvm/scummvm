@@ -20,13 +20,9 @@
  *
  */
 
-//#include <cstdio>
-
 #include "ultima/nuvie/core/nuvie_defs.h"
-
 #include "ultima/nuvie/gui/gui_drag_area.h"
 #include "ultima/nuvie/gui/gui_drag_manager.h"
-
 #include "ultima/nuvie/core/game.h"  // -+- Included so we can set WAIT_MODE while dragging.
 #include "ultima/nuvie/core/events.h" // /
 #include "ultima/nuvie/gui/widgets/msg_scroll.h"

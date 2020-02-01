@@ -20,17 +20,10 @@
  *
  */
 
-//#include <string.h>
-//#include <cstdlib>
-//#include <cstdio>
-//#include <cctype>
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
-
 #include "ultima/nuvie/files/nuvie_io_file.h"
 #include "ultima/nuvie/files/u6_lzw.h"
-
 #include "ultima/nuvie/files/u6_lib_n.h"
 
 namespace Ultima {

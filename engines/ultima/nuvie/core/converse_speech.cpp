@@ -20,18 +20,12 @@
  *
  */
 
-//#include <cstdlib>
-//#include <cctype>
-//#include <cstring>
-//#include <cmath>
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/core/game.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/files/nuvie_io.h"
 #include "ultima/nuvie/files/u6_lib_n.h"
 #include "ultima/nuvie/files/u6_lzw.h"
-
 #include "ultima/nuvie/core/converse_speech.h"
 #include "ultima/nuvie/sound/sound_manager.h"
 

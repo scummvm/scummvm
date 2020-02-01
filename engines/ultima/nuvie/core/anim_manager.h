@@ -23,9 +23,6 @@
 #ifndef NUVIE_CORE_ANIM_MANAGER_H
 #define NUVIE_CORE_ANIM_MANAGER_H
 
-//#include <list>
-//#include <cassert>
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
 #include "ultima/nuvie/core/timed_event.h"

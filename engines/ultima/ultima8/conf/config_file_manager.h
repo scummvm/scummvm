@@ -48,7 +48,7 @@ public:
 
 	//! write all (writable) config files in the given root
 	//! \param root The root to write, or empty string to write everything
-	void write(Pentagram::istring root = c_empty_string);
+	void write(Pentagram::istring root = "");
 
 	//! clear everything
 	void clear();

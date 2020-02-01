@@ -20,12 +20,7 @@
  *
  */
 
-//#include <cstdio>
-//#include <cstdlib>
-//#include <cstring>
-
 #include "ultima/nuvie/core/nuvie_defs.h"
-
 #include "ultima/nuvie/files/nuvie_io.h"
 
 namespace Ultima {

@@ -36,8 +36,6 @@
 #include "ultima/nuvie/sound/towns_sfx_manager.h"
 #include "ultima/nuvie/sound/custom_sfx_manager.h"
 #include "audio/mixer.h"
-//#include "doublebuffersdl-mixer.h"
-//#include "decoder/FMtownsDecoderStream.h"
 #include "common/algorithm.h"
 
 namespace Ultima {

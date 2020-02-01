@@ -20,7 +20,6 @@
  *
  */
 
-//#include <cmath>
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_area.h"

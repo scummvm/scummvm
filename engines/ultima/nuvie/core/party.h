@@ -24,7 +24,6 @@
 #define NUVIE_CORE_PARTY_H
 
 #include "ultima/shared/std/string.h"
-////#include <cassert>
 #include "ultima/nuvie/core/obj_manager.h"
 #include "ultima/nuvie/core/map.h"
 

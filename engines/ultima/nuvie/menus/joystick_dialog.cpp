@@ -35,7 +35,6 @@
 #include "JoystickDialog.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/keybinding/keys.h"
-////#include <math.h>
 
 namespace Ultima {
 namespace Nuvie {
@@ -211,7 +210,7 @@ GUI_status JoystickDialog::KeyDown(const Common::KeyState &key) {
 	}
 	return GUI_YUM;
 }
-//#include <cassert>
+
 GUI_status JoystickDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 	if (caller == cancel_button) {
 		return close_dialog();

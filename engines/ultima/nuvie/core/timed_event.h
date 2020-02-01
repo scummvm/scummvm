@@ -23,9 +23,7 @@
 #ifndef NUVIE_CORE_TIMED_EVENT_H
 #define NUVIE_CORE_TIMED_EVENT_H
 
-//#include <list>
 #include "ultima/shared/std/string.h"
-//#include <cstdio>
 #include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/core/obj_manager.h"
 

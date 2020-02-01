@@ -25,7 +25,6 @@
 #include "ultima/nuvie/gui/gui_text_input.h"
 #include "ultima/nuvie/gui/gui_font.h"
 #include "ultima/nuvie/keybinding/keys.h"
-//#include <stdlib.h>
 
 namespace Ultima {
 namespace Nuvie {

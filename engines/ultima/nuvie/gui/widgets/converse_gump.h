@@ -25,9 +25,6 @@
 
 #include "ultima/nuvie/misc/call_back.h"
 #include "ultima/nuvie/gui/widgets/gui_widget.h"
-//#include <stdarg.h>
-
-//#include <list>
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/std/string.h"
 

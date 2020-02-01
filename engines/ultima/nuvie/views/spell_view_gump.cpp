@@ -20,14 +20,12 @@
  *
  */
 
-//#include <cassert>
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_button.h"
 #include "ultima/nuvie/core/magic.h"
-
 #include "ultima/nuvie/views/spell_view_gump.h"
 #include "ultima/nuvie/gui/widgets/map_window.h"
 #include "ultima/nuvie/files/nuvie_bmp_file.h"

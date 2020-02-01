@@ -20,9 +20,7 @@
  *
  */
 
-//#include <cassert>
 #include "ultima/nuvie/core/nuvie_defs.h"
-
 #include "ultima/nuvie/screen/screen.h"
 #include "ultima/nuvie/misc/u6_llist.h"
 #include "ultima/nuvie/misc/u6_misc.h"

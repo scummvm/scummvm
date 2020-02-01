@@ -23,7 +23,6 @@
 #ifndef NUVIE_PATHFINDER_ASTAR_PATH_H
 #define NUVIE_PATHFINDER_ASTAR_PATH_H
 
-//#include <list>
 #include "ultima/nuvie/core/map.h"
 #include "ultima/nuvie/pathfinder/path.h"
 

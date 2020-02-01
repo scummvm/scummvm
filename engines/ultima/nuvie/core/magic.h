@@ -23,7 +23,6 @@
 #ifndef NUVIE_CORE_MAGIC_H
 #define NUVIE_CORE_MAGIC_H
 
-//#include <stdlib.h>
 #include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/misc/call_back.h"
 

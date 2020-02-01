@@ -20,8 +20,6 @@
  *
  */
 
-//#include <cstdlib>
-
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/misc/u6_llist.h"

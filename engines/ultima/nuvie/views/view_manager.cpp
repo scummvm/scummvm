@@ -20,17 +20,12 @@
  *
  */
 
-//#include <math.h>
 #include "ultima/nuvie/core/nuvie_defs.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/misc/u6_misc.h"
-
 #include "ultima/nuvie/gui/gui.h"
-
 #include "ultima/nuvie/views/view_manager.h"
-
 #include "ultima/nuvie/actors/actor.h"
-
 #include "ultima/nuvie/views/actor_view.h"
 #include "ultima/nuvie/views/portrait_view.h"
 #include "ultima/nuvie/views/inventory_view.h"

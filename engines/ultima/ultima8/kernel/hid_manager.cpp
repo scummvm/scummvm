@@ -26,7 +26,6 @@
 #include "ultima/ultima8/misc/console.h"
 #include "ultima/ultima8/misc/util.h"
 #include "ultima/ultima8/conf/config_file_manager.h" // temporary!
- //#include "SDL_timer.h"
 
 namespace Ultima {
 namespace Ultima8 {
