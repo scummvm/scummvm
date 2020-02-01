@@ -38,8 +38,7 @@ namespace U1Dialogs {
 
 EMPTY_MESSAGE_MAP(Transports, BuySellDialog);
 
-Transports::Transports(Ultima1Game *game, int transportsNum) : BuySellDialog(game, game->_res->WEAPONRY_NAMES[transportsNum]),
-		_transportsNum(transportsNum) {
+Transports::Transports(Ultima1Game *game, int transportsNum) : BuySellDialog(game, game->_res->WEAPONRY_NAMES[transportsNum]) {
 	loadOverworldFreeTiles();
 }
 

@@ -26,7 +26,7 @@
 namespace Ultima {
 namespace Ultima1 {
 
-const char *const SRC_TITLE_MESSAGES[13] = {
+static const char *const SRC_TITLE_MESSAGES[13] = {
 	"Ultima I",
 	"The First Age of Darkness",
 	"Copyright (C) 1987 Origin Systems, Inc.",
@@ -42,12 +42,12 @@ const char *const SRC_TITLE_MESSAGES[13] = {
 	"Conversion by: John Fachini"
 };
 
-const char *const SRC_MAIN_MENU_TEXT[7] = {
+static const char *const SRC_MAIN_MENU_TEXT[7] = {
 	"*** Ultima I ***",  "from darkest", "dungeons, to", "deepest space!",
 	"a) Generate new character", "b) Continue previous game", "Thy choice: "
 };
 
-const char *const SRC_CHAR_GEN_TEXT[14] = {
+static const char *const SRC_CHAR_GEN_TEXT[14] = {
 	" Character Generation ",
 	"Points left to distribute: %2d",
 	"Strength........%d\n"
@@ -77,26 +77,26 @@ const char *const SRC_CHAR_GEN_TEXT[14] = {
 	"Save this character? (Y-N)"
 };
 
-const char *const SRC_RACE_NAMES[4] = { "Human", "Elf", "Dwarf", "Bobbit" };
+static const char *const SRC_RACE_NAMES[4] = { "Human", "Elf", "Dwarf", "Bobbit" };
 
-const char *const SRC_SEX_NAMES[3] = { "Male", "Female", "Yes Please" };
+static const char *const SRC_SEX_NAMES[3] = { "Male", "Female", "Yes Please" };
 
-const char *const SRC_CLASS_NAMES[4] = { "Fighter", "Cleric", "Wizard", "Thief" };
+static const char *const SRC_CLASS_NAMES[4] = { "Fighter", "Cleric", "Wizard", "Thief" };
 
-const char *const SRC_TRANSPORT_NAMES[8] = { "Foot", "Horse", "Cart", "Raft", "Frigate", "Aircar", "Shuttle", "Time Machine" };
+static const char *const SRC_TRANSPORT_NAMES[8] = { "Foot", "Horse", "Cart", "Raft", "Frigate", "Aircar", "Shuttle", "Time Machine" };
 
-const char *const SRC_STAT_NAMES[11] = {
+static const char *const SRC_STAT_NAMES[11] = {
 	"Hit Points", "Strength", "Agility", "Stamina", "Charisma", "Wisdom", "Intelligence",
 	"Copper pence", "Silver pieces", "Gold crowns", "Enemy vessels"
 };
 
-const char *const SRC_STATUS_TEXT[4] = { "Hits:", "Food:",  "Exp.:", "Coin:" };
+static const char *const SRC_STATUS_TEXT[4] = { "Hits:", "Food:",  "Exp.:", "Coin:" };
 
-const char *const SRC_DIRECTION_NAMES[4] = { "West", "East", "North", "South" };
+static const char *const SRC_DIRECTION_NAMES[4] = { "West", "East", "North", "South" };
 
-const char *const SRC_DUNGEON_MOVES[4] = { "Turn left", "Turn right", "Forward", "Turn around" };
+static const char *const SRC_DUNGEON_MOVES[4] = { "Turn left", "Turn right", "Forward", "Turn around" };
 
-const char *const SRC_LOCATION_NAMES[LOCATION_COUNT] = {
+static const char *const SRC_LOCATION_NAMES[LOCATION_COUNT] = {
 	"Britain",
 	"Moon",
 	"Fawn",
@@ -205,7 +205,7 @@ static const char *SRC_WEAPON_NAMES_ARTICLE[16] = {
 
 static const byte SRC_WEAPON_DISTANCES[16] = { 1, 1, 1, 1, 0, 1, 1, 3, 0, 0, 0, 1, 3, 1, 3, 3 };
 
-static const char *SRC_armour_NAMES[6] = {
+static const char *SRC_ARMOUR_NAMES[6] = {
 	"Skin", "Leather armor", "Chain mail", "Plate mail", "Vacuum suit", "Reflect suit"
 };
 
@@ -222,7 +222,7 @@ static const char *SRC_SPELL_PHRASES[14] = {
 
 static const char *SRC_GEM_NAMES[4] = { "Red Gem", "Green Gem", "Blue Gem", "White Gem" };
 
-const byte SRC_LOCATION_X[LOCATION_COUNT] = {
+static const byte SRC_LOCATION_X[LOCATION_COUNT] = {
 	39, 66, 25, 46, 52, 18, 70, 64, 126, 128, 148, 115, 150, 121,
 	150, 109, 42, 44, 64, 31, 66, 37, 66, 25, 128, 101, 142, 121,
 	115, 149, 97, 103, 40, 32, 125, 114, 41, 30, 127, 135, 36, 69,
@@ -230,7 +230,7 @@ const byte SRC_LOCATION_X[LOCATION_COUNT] = {
 	38, 130, 100, 124, 155, 147, 98, 109, 116, 136, 52, 32, 25, 14,
 	63, 71, 40, 16, 46, 119, 149, 114, 108, 138, 154, 105, 128, 129
 };
-const byte SRC_LOCATION_Y[LOCATION_COUNT] = {
+static const byte SRC_LOCATION_Y[LOCATION_COUNT] = {
 	39, 41, 61, 28, 63, 34, 63, 22, 36, 63, 22, 43, 49, 15,
 	67, 61, 119, 92, 133, 112, 106, 140, 88, 94, 117, 119, 139, 106,
 	141, 112, 141, 100, 38, 27, 37, 29, 118, 126, 116, 105, 9, 10,
@@ -546,154 +546,155 @@ static const byte SRC_DUNGEON_DRAW_DATA[1964] = {
 	0xEC, 0xD3, 0x14, 0xD3, 0x7E, 0xEC, 0xF1, 0x14, 0xF1, 0x7F, 0x7E, 0x00, 0x88, 0x00, 0x00, 0x7F
 };
 
-const byte SRC_OVERWORLD_MONSTER_DAMAGE[15] = {
+static const byte SRC_OVERWORLD_MONSTER_DAMAGE[15] = {
 	10, 5, 4, 3, 2, 1, 4, 6, 8, 10, 1, 2, 4, 6, 8
 };
 
-const char *const SRC_OVERWORLD_MONSTER_NAMES[15] = {
+static const char *const SRC_OVERWORLD_MONSTER_NAMES[15] = {
 	"Ness creature", "Giant squid", "Dragon turtle", "Pirate ship", "Hood", "Bear", "Hidden archer",
 	"Dark knight", "Evil trent", "Thief", "Orc", "Knight", "Necromancer", "Evil ranger", "Wandering warlock"
 };
-const char *const SRC_DUNGEON_MONSTER_NAMES[25] = {
+
+static const char *const SRC_DUNGEON_MONSTER_NAMES[25] = {
 	"Ranger", "Skeleton", "Thief", "Giant rat", "Bat", "Spider", "Viper", "Orc", "Cyclops", "Gelatinous cube",
 	"Ettin", "Chest", "Lizard man", "Minotour", "Carrion creeper", "Tangler", "Gremlin", "Wandering eyes",
 	"Wraith", "Lich", "Invisible seeker", "Mind whipper", "Zorn", "Daemon", "Balron"
 };
 
-const char *const SRC_LAND_NAMES[4] = {
+static const char *const SRC_LAND_NAMES[4] = {
 	"of Lord British",  "of the Feudal Lords", "of the Dark Unknown", "of Danger and Despair"
 };
 
-const char *const SRC_BLOCKED = "Blocked!";
-const char *const SRC_ENTERING = "ing...";
-const char *const SRC_THE_CITY_OF = "The city of";
-const char *const SRC_DUNGEON_LEVEL = " Level    ";
-const char *const SRC_ATTACKED_BY = "Attacked by %s!";
-const char *const SRC_armour_DESTROYED = "Armor destroyed!";
-const char *const SRC_GREMLIN_STOLE = "A gremlin stole some food!";
-const char *const SRC_MENTAL_ATTACK = "Mental attack!";
-const char *const SRC_MISSED = "Missed!";
-const char *const SRC_KILLED = "killed!";
-const char *const SRC_DESTROYED = "destroyed!";
-const char *const SRC_THIEF_STOLE = "Thief stole %s %s";
-const char *const SRC_A = "a";
-const char *const SRC_AN = "an";
-const char *const SRC_HIT = "Hit!";
-const char *const SRC_HIT_CREATURE = "Hit %s! ";
-const char *const SRC_ATTACKS = "attacks!";
-const char *const SRC_DAMAGE = "damage";
-const char *const SRC_BARD_SPEECH1 = "Iolo the Bard sings:";
-const char *const SRC_BARD_SPEECH2 = "Ho eyoh he hum!";
-const char *const SRC_JESTER_SPEECH1 = "Gwino the jester sings:";
-const char *const SRC_JESTER_SPEECH2 = "I've got the key!";
-const char *const SRC_FOUND_KEY = "Thou hast found a key!";
-const char *const SRC_BARD_STOLEN = "Iolo stole something!";
-const char *const SRC_JESTER_STOLEN = "The jester stole something!";
-const char *const SRC_YOU_ARE_AT_SEA = "You are at sea";
-const char *const SRC_YOU_ARE_IN_WOODS = "You are in the woods";
-const char *const SRC_YOU_ARE_IN_LANDS = "You are in the lands";
-const char *const SRC_FIND = "Thou dost find %s";
-const char *const SRC_A_SECRET_DOOR = "a secret door!";
-const char *const SRC_GAIN_HIT_POINTS = "Thou dost gain %u hit points";
-const char *const SRC_OPENED = "opened!";
+static const char *const SRC_BLOCKED = "Blocked!";
+static const char *const SRC_ENTERING = "ing...";
+static const char *const SRC_THE_CITY_OF = "The city of";
+static const char *const SRC_DUNGEON_LEVEL = " Level    ";
+static const char *const SRC_ATTACKED_BY = "Attacked by %s!";
+static const char *const SRC_armour_DESTROYED = "Armor destroyed!";
+static const char *const SRC_GREMLIN_STOLE = "A gremlin stole some food!";
+static const char *const SRC_MENTAL_ATTACK = "Mental attack!";
+static const char *const SRC_MISSED = "Missed!";
+static const char *const SRC_KILLED = "killed!";
+static const char *const SRC_DESTROYED = "destroyed!";
+static const char *const SRC_THIEF_STOLE = "Thief stole %s %s";
+static const char *const SRC_A = "a";
+static const char *const SRC_AN = "an";
+static const char *const SRC_HIT = "Hit!";
+static const char *const SRC_HIT_CREATURE = "Hit %s! ";
+static const char *const SRC_ATTACKS = "attacks!";
+static const char *const SRC_DAMAGE = "damage";
+static const char *const SRC_BARD_SPEECH1 = "Iolo the Bard sings:";
+static const char *const SRC_BARD_SPEECH2 = "Ho eyoh he hum!";
+static const char *const SRC_JESTER_SPEECH1 = "Gwino the jester sings:";
+static const char *const SRC_JESTER_SPEECH2 = "I've got the key!";
+static const char *const SRC_FOUND_KEY = "Thou hast found a key!";
+static const char *const SRC_BARD_STOLEN = "Iolo stole something!";
+static const char *const SRC_JESTER_STOLEN = "The jester stole something!";
+static const char *const SRC_YOU_ARE_AT_SEA = "You are at sea";
+static const char *const SRC_YOU_ARE_IN_WOODS = "You are in the woods";
+static const char *const SRC_YOU_ARE_IN_LANDS = "You are in the lands";
+static const char *const SRC_FIND = "Thou dost find %s";
+static const char *const SRC_A_SECRET_DOOR = "a secret door!";
+static const char *const SRC_GAIN_HIT_POINTS = "Thou dost gain %u hit points";
+static const char *const SRC_OPENED = "opened!";
 
-const char *const SRC_ACTION_NAMES[26] = {
+static const char *const SRC_ACTION_NAMES[26] = {
 	"Attack with", "Board", "Cast", "Drop", "Enter", "Fire", "Get", "HyperJump", "Inform and search",
 	nullptr, "K-Limb", nullptr, nullptr, nullptr, "Open", "Pass", "Quit", "Ready", "Steal", "Transact",
 	"Unlock", "View", nullptr, "X-it", nullptr, "Ztats"
 };
-const char *const SRC_HUH = "Huh?";
-const char *const SRC_WHAT = " what?";
-const char *const SRC_FACE_THE_LADDER = "Thou must face the ladder!";
-const char *const SRC_CAUGHT = "Oh no!  Thou wert caught!";
-const char *const SRC_NONE_WILL_TALK = "None will talk to thee!";
-const char *const SRC_NOT_BY_COUNTER = "Thou art not by a counter!";
+static const char *const SRC_HUH = "Huh?";
+static const char *const SRC_WHAT = " what?";
+static const char *const SRC_FACE_THE_LADDER = "Thou must face the ladder!";
+static const char *const SRC_CAUGHT = "Oh no!  Thou wert caught!";
+static const char *const SRC_NONE_WILL_TALK = "None will talk to thee!";
+static const char *const SRC_NOT_BY_COUNTER = "Thou art not by a counter!";
 
-const char *const SRC_BUY_SELL = "-Buy, Sell: ";
-const char *const SRC_BUY = "-Buy: ";
-const char *const SRC_SELL = "-Sell: ";
-const char *const SRC_NOTHING = "nothing";
-const char *const SRC_NONE = "none";
-const char *const SRC_NOTHING_HERE = " - nothing here!";
-const char *const SRC_NONE_HERE = " - none here!";
-const char *const SRC_SOLD = "Sold!";
-const char *const SRC_CANT_AFFORD = "Thou canst not afford it!";
-const char *const SRC_DONE = "Done!";
-const char *const SRC_DROP_PENCE_WEAPON_armour = " Pence,Weapon,Armor:";
-const char *const SRC_DROP_PENCE = "Drop pence: ";
-const char *const SRC_DROP_WEAPON = "Drop weapon: ";
-const char *const SRC_DROP_armour = "Drop armor: ";
-const char *const SRC_NOT_THAT_MUCH = "Thou hast not that much!";
-const char *const SRC_OK = "Ok!";
-const char *const SRC_SHAZAM = "Shazam!";
-const char *const SRC_ALAKAZOT = "Alakazot!";
-const char *const SRC_NO_KINGS_PERMISSION = "Thou hast not the king's permission!";
-const char *const SRC_SET_OFF_TRAP = "Thou hast set off a trap!";
-const char *const SRC_THOU_DOST_FIND = "Thou dost find: ";
-const char *const SRC_NO_KEY = "Thou hast not a key!";
-const char *const SRC_INCORRECT_KEY = "Thou has not\x1F""the correct key!";
-const char *const SRC_DOOR_IS_OPEN = "The door is open";
-const char *const SRC_CANT_LEAVE_IT_HERE = "Thy canst not leave it here!";
-const char *const SRC_INVENTORY = "Inventory";
-const char *const SRC_PLAYER = "Player: %s";
-const char *const SRC_PLAYER_DESC = "A Level %u %s %s %s";
-const char *const SRC_PRESS_SPACE_TO_CONTINUE = "Press Space to continue: ";
-const char *const SRC_MORE = " More ";
-const char *const SRC_READY_WEAPON_armour_SPELL = " Weapon,Armor,Spell:";
-const char *const SRC_WEAPON_armour_SPELL[3] = { "weapon", "armor", "spell" };
-const char *const SRC_TRANSPORT_WEAPONS[2] = { "cannons", "lasers" };
-const char *const SRC_NO_EFFECT = "Hmmmm... no effect!";
-const char *const SRC_USED_UP_SPELL = "You've used up that spell!";
-const char *const SRC_DUNGEON_SPELL_ONLY = "Failed, dungeon spell only!";
-const char *const SRC_MONSTER_REMOVED = "Monster removed!";
-const char *const SRC_FAILED = "Failed!";
-const char *const SRC_TELEPORTED = "Teleported!";
-const char *const SRC_FIELD_CREATED = "Field created!";
-const char *const SRC_FIELD_DESTROYED = "Field destroyed!";
-const char *const SRC_LADDER_CREATED = "Ladder created!";
-const char *const SRC_QUEST_COMPLETED = "A quest has been completed!";
-const char *const SRC_EXIT_CRAFT_FIRST = "X-it thy craft first!";
-const char *const SRC_NOTHING_TO_BOARD = "Nothing to Board!";
-const char *const SRC_CANNOT_OPERATE = "Thou canst not determine how\rto operate the craft at this\rtime";
+static const char *const SRC_BUY_SELL = "-Buy, Sell: ";
+static const char *const SRC_BUY = "-Buy: ";
+static const char *const SRC_SELL = "-Sell: ";
+static const char *const SRC_NOTHING = "nothing";
+static const char *const SRC_NONE = "none";
+static const char *const SRC_NOTHING_HERE = " - nothing here!";
+static const char *const SRC_NONE_HERE = " - none here!";
+static const char *const SRC_SOLD = "Sold!";
+static const char *const SRC_CANT_AFFORD = "Thou canst not afford it!";
+static const char *const SRC_DONE = "Done!";
+static const char *const SRC_DROP_PENCE_WEAPON_armour = " Pence,Weapon,Armor:";
+static const char *const SRC_DROP_PENCE = "Drop pence: ";
+static const char *const SRC_DROP_WEAPON = "Drop weapon: ";
+static const char *const SRC_DROP_armour = "Drop armor: ";
+static const char *const SRC_NOT_THAT_MUCH = "Thou hast not that much!";
+static const char *const SRC_OK = "Ok!";
+static const char *const SRC_SHAZAM = "Shazam!";
+static const char *const SRC_ALAKAZOT = "Alakazot!";
+static const char *const SRC_NO_KINGS_PERMISSION = "Thou hast not the king's permission!";
+static const char *const SRC_SET_OFF_TRAP = "Thou hast set off a trap!";
+static const char *const SRC_THOU_DOST_FIND = "Thou dost find: ";
+static const char *const SRC_NO_KEY = "Thou hast not a key!";
+static const char *const SRC_INCORRECT_KEY = "Thou has not\x1F""the correct key!";
+static const char *const SRC_DOOR_IS_OPEN = "The door is open";
+static const char *const SRC_CANT_LEAVE_IT_HERE = "Thy canst not leave it here!";
+static const char *const SRC_INVENTORY = "Inventory";
+static const char *const SRC_PLAYER = "Player: %s";
+static const char *const SRC_PLAYER_DESC = "A Level %u %s %s %s";
+static const char *const SRC_PRESS_SPACE_TO_CONTINUE = "Press Space to continue: ";
+static const char *const SRC_MORE = " More ";
+static const char *const SRC_READY_WEAPON_armour_SPELL = " Weapon,Armor,Spell:";
+static const char *const SRC_WEAPON_armour_SPELL[3] = { "weapon", "armor", "spell" };
+static const char *const SRC_TRANSPORT_WEAPONS[2] = { "cannons", "lasers" };
+static const char *const SRC_NO_EFFECT = "Hmmmm... no effect!";
+static const char *const SRC_USED_UP_SPELL = "You've used up that spell!";
+static const char *const SRC_DUNGEON_SPELL_ONLY = "Failed, dungeon spell only!";
+static const char *const SRC_MONSTER_REMOVED = "Monster removed!";
+static const char *const SRC_FAILED = "Failed!";
+static const char *const SRC_TELEPORTED = "Teleported!";
+static const char *const SRC_FIELD_CREATED = "Field created!";
+static const char *const SRC_FIELD_DESTROYED = "Field destroyed!";
+static const char *const SRC_LADDER_CREATED = "Ladder created!";
+static const char *const SRC_QUEST_COMPLETED = "A quest has been completed!";
+static const char *const SRC_EXIT_CRAFT_FIRST = "X-it thy craft first!";
+static const char *const SRC_NOTHING_TO_BOARD = "Nothing to Board!";
+static const char *const SRC_CANNOT_OPERATE = "Thou canst not determine how\rto operate the craft at this\rtime";
 
-const char *const SRC_GROCERY_NAMES[8] = {
+static const char *const SRC_GROCERY_NAMES[8] = {
 	"Li'l Karelia's Finnish Grocery", "Adventurer's Supply Post", "", "The Brown Bag", "Fresh Food Marketplace",
 	"Rations Unlimited", "Fastest Freshest Food Market", "Exploration Provisioners"
 };
-const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
-const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %u pence";
-const char *const SRC_GROCERY_PACKS2 = "each.  How many dost thou";
-const char *const SRC_GROCERY_PACKS3 = "wish to purchase?";
-const char *const SRC_GROCERY_PACKS_FOOD = "%u packs food";
-const char *const SRC_GROCERY_FIND_PACKS = "Thou dost find %d bags of food!";
+static const char *const SRC_GROCERY_SELL = "Used food?  No thanks!";
+static const char *const SRC_GROCERY_PACKS1 = "Packs of 10 food cost %u pence";
+static const char *const SRC_GROCERY_PACKS2 = "each.  How many dost thou";
+static const char *const SRC_GROCERY_PACKS3 = "wish to purchase?";
+static const char *const SRC_GROCERY_PACKS_FOOD = "%u packs food";
+static const char *const SRC_GROCERY_FIND_PACKS = "Thou dost find %d bags of food!";
 
-const char *const SRC_WEAPONRY_NAMES[8] = {
+static const char *const SRC_WEAPONRY_NAMES[8] = {
 	"The Weapon Shop of\nLord Eldric D'Charbonneux", "The Tempered Steel",
 	"The Razor's Edge", "Cold Steel Creations", "The Bloody Blade",
 	"The Duelo Shop", "Weaponry Supply", "Cold Steel Creations"
 };
-const char *const SRC_NO_WEAPONRY_TO_SELL = "Thou hast no weaponry to sell!";
-const char *const SRC_ARMOURY_NAMES[8] = {
+static const char *const SRC_NO_WEAPONRY_TO_SELL = "Thou hast no weaponry to sell!";
+static const char *const SRC_ARMOURY_NAMES[8] = {
 	"The Armour Shop of\nLord Eldric D'Charbonneux",  "Max's Armoury", "The Iron Fist",
 	"The Hammer -n- Anvil", nullptr, "Defense Specialties Unlimited", nullptr,
 	"Custom Armor Works"
 };
-const char *const SRC_NO_ARMOUR_TO_SELL = "Thou hast no armour to sell!";
-const char *const SRC_MAGIC_NAMES[8] = {
+static const char *const SRC_NO_ARMOUR_TO_SELL = "Thou hast no armour to sell!";
+static const char *const SRC_MAGIC_NAMES[8] = {
 	"Mad Chad's Magic Shoppe", "Mystic Melinda's", "Words of Power",
 	"Psychic Sam's Magical Emporium", nullptr, nullptr, nullptr, "The Unleashed Spell"
 };
-const char *const SRC_DONT_BUY_SPELLS = "Sorry, we don't buy spells!";
-const char *SRC_TAVERN_NAMES[8] = {
+static const char *const SRC_DONT_BUY_SPELLS = "Sorry, we don't buy spells!";
+static const char *SRC_TAVERN_NAMES[8] = {
 	"Pub de Varg", "Ye Olde Local Pub", "Dr. Cat's Lair", "Teaser's House", nullptr,
 	"Mary's Midway", "Kurtstable's Korner", "Dav's House-o-Suds"
 };
-const char *SRC_TAVERN_TEXT[4] = {
+static const char *SRC_TAVERN_TEXT[4] = {
 	"Thou art broke!\nCome back when thou hast\nsome money to spend.",
 	"We have plenty of booze\nalready!",
 	"The tavern keeper sayeth:\nHere, have a cold one!", "ale"
 };
-const char *SRC_TAVERN_TIPS[13] = {
+static const char *SRC_TAVERN_TIPS[13] = {
 	"Thou had best know",
 	"Thou hast been seduced!\nAfter a long night,\nthou art back.",
 	"about space travel!\nThou must destroy at\nleast 20 enemy vessels\nto become an ace!",
@@ -710,18 +711,18 @@ const char *SRC_TAVERN_TIPS[13] = {
 		"days before Mondain created\nthe evil gem and destroy him!",
 	"wench", "lecher"
 };
-const char *SRC_TRANSPORTS_NAMES[8] = {
+static const char *SRC_TRANSPORTS_NAMES[8] = {
 	"Scooter's Super Duper\nTransport, Inc.", nullptr, nullptr, "Quality Transport Ltd.",
 	nullptr, "O.K. New and Used Transport", nullptr, "Sly Sam's Transportation\nSpecialists"
 };
-const char *SRC_TRANSPORTS_TEXT[2] = {
+static const char *SRC_TRANSPORTS_TEXT[2] = {
 	"Sorry, we don't deal in\nused stuff.", "Closed for the day."
 
 };
-const char *const SRC_WITH_KING = " with king";
-const char *const SRC_HE_IS_NOT_HERE = "He is not here!";
-const char *const SRC_HE_REJECTS_OFFER = "He rejects thine offer!";
-const char *const SRC_KING_TEXT[12] = {
+static const char *const SRC_WITH_KING = " with king";
+static const char *const SRC_HE_IS_NOT_HERE = "He is not here!";
+static const char *const SRC_HE_REJECTS_OFFER = "He rejects thine offer!";
+static const char *const SRC_KING_TEXT[12] = {
 	"Dost thou offer pence\ror service: ", "neither", "pence", "service", "How much? ",
 	"Thou hast not that much!", "In return I give unto\rthee %u hit points",
 	"Thou art on a quest\rfor me already!", "Go now and kill a", "Go forth and find",
@@ -755,8 +756,8 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	Common::copy(&SRC_WEAPON_NAMES_LOWERCASE[0], &SRC_WEAPON_NAMES_LOWERCASE[16], WEAPON_NAMES_LOWERCASE);
 	Common::copy(&SRC_WEAPON_NAMES_ARTICLE[0], &SRC_WEAPON_NAMES_ARTICLE[16], WEAPON_NAMES_ARTICLE);
 	Common::copy(SRC_WEAPON_DISTANCES, SRC_WEAPON_DISTANCES + 16, WEAPON_DISTANCES);
-	Common::copy(&SRC_armour_NAMES[0], &SRC_armour_NAMES[16], ARMOR_NAMES);
-	Common::copy(&SRC_SPELL_NAMES[0], &SRC_SPELL_NAMES[16], SPELL_NAMES);
+	Common::copy(SRC_ARMOUR_NAMES, SRC_ARMOUR_NAMES + 6, ARMOR_NAMES);
+	Common::copy(SRC_SPELL_NAMES, SRC_SPELL_NAMES + 11, SPELL_NAMES);
 	Common::copy(SRC_SPELL_PHRASES, SRC_SPELL_PHRASES + 14, SPELL_PHRASES);
 	Common::copy(&SRC_GEM_NAMES[0], &SRC_GEM_NAMES[4], GEM_NAMES);
 	Common::copy(&SRC_OVERWORLD_MONSTER_DAMAGE[0], &SRC_OVERWORLD_MONSTER_DAMAGE[15], OVERWORLD_MONSTER_DAMAGE);
@@ -851,24 +852,24 @@ GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(
 	NOTHING_TO_BOARD = SRC_NOTHING_TO_BOARD;
 	CANNOT_OPERATE = SRC_CANNOT_OPERATE;
 
-	Common::copy(&SRC_GROCERY_NAMES[0], &SRC_GROCERY_NAMES[8], GROCERY_NAMES);
+	Common::copy(SRC_GROCERY_NAMES, SRC_GROCERY_NAMES + 8, GROCERY_NAMES);
 	GROCERY_SELL = SRC_GROCERY_SELL;
 	GROCERY_PACKS1 = SRC_GROCERY_PACKS1;
 	GROCERY_PACKS2 = SRC_GROCERY_PACKS2;
 	GROCERY_PACKS3 = SRC_GROCERY_PACKS3;
 	GROCERY_PACKS_FOOD = SRC_GROCERY_PACKS_FOOD;
 	GROCERY_FIND_PACKS = SRC_GROCERY_FIND_PACKS;
-	Common::copy(&SRC_WEAPONRY_NAMES[0], &SRC_WEAPONRY_NAMES[8], WEAPONRY_NAMES);
+	Common::copy(SRC_WEAPONRY_NAMES, SRC_WEAPONRY_NAMES + 8, WEAPONRY_NAMES);
 	NO_WEAPONRY_TO_SELL = SRC_NO_WEAPONRY_TO_SELL;
-	Common::copy(&SRC_ARMOURY_NAMES[0], &SRC_ARMOURY_NAMES[8], ARMOURY_NAMES);
+	Common::copy(SRC_ARMOURY_NAMES, SRC_ARMOURY_NAMES + 8, ARMOURY_NAMES);
 	NO_ARMOUR_TO_SELL = SRC_NO_ARMOUR_TO_SELL;
-	Common::copy(&SRC_MAGIC_NAMES[0], &SRC_MAGIC_NAMES[8], MAGIC_NAMES);
+	Common::copy(SRC_MAGIC_NAMES, SRC_MAGIC_NAMES + 8, MAGIC_NAMES);
 	DONT_BUY_SPELLS = SRC_DONT_BUY_SPELLS;
-	Common::copy(&SRC_TAVERN_NAMES[0], &SRC_TAVERN_NAMES[8], TAVERN_NAMES);
-	Common::copy(&SRC_TAVERN_TEXT[0], &SRC_TAVERN_TEXT[10], TAVERN_TEXT);
-	Common::copy(&SRC_TAVERN_TIPS[0], &SRC_TAVERN_TIPS[13], TAVERN_TIPS);
-	Common::copy(&SRC_TRANSPORTS_NAMES[0], &SRC_TRANSPORTS_NAMES[8], TRANSPORTS_NAMES);
-	Common::copy(&SRC_TRANSPORTS_TEXT[0], &SRC_TRANSPORTS_TEXT[2], TRANSPORTS_TEXT);
+	Common::copy(SRC_TAVERN_NAMES, SRC_TAVERN_NAMES + 8, TAVERN_NAMES);
+	Common::copy(SRC_TAVERN_TEXT, SRC_TAVERN_TEXT + 4, TAVERN_TEXT);
+	Common::copy(SRC_TAVERN_TIPS, SRC_TAVERN_TIPS + 13, TAVERN_TIPS);
+	Common::copy(SRC_TRANSPORTS_NAMES, SRC_TRANSPORTS_NAMES + 8, TRANSPORTS_NAMES);
+	Common::copy(SRC_TRANSPORTS_TEXT, SRC_TRANSPORTS_TEXT + 2, TRANSPORTS_TEXT);
 	WITH_KING = SRC_WITH_KING;
 	HE_IS_NOT_HERE = SRC_HE_IS_NOT_HERE;
 	HE_REJECTS_OFFER = SRC_HE_REJECTS_OFFER;
