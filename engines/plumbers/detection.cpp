@@ -20,13 +20,11 @@
  *
  */
 
+#include "plumbers/plumbers.h"
+
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
-#include "common/file.h"
-
-#include "plumbers/plumbers.h"
-
 
 namespace Plumbers {
 const char *PlumbersGame::getGameId() const { return _gameDescription->gameId; }
