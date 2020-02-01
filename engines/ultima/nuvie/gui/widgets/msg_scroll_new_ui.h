@@ -64,6 +64,9 @@ public:
 	MsgScrollNewUI(Configuration *cfg, Screen *s);
 	~MsgScrollNewUI();
 
+	virtual GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override {
+		return GUI_PASS;
+	}
 	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	bool can_display_prompt() {
 		return false;

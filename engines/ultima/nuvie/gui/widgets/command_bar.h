@@ -90,7 +90,10 @@ public:
 		return selected_action;
 	}
 
-	uint16 callback(uint16 msg, CallBack *caller, void *data);
+	virtual GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override {
+		return GUI_PASS;
+	}
+	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	bool load(NuvieIO *objlist);
 	bool save(NuvieIO *objlist);
 	bool drag_accept_drop(int x, int y, int message, void *data); // needed for !orig_style
