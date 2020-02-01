@@ -120,7 +120,8 @@ bool Path::remove_first_step() {
 }
 
 bool Path::check_dir(const MapCoord &loc, const MapCoord &rel) {
-	return pf->check_dir(loc, rel);
+	MapCoord tempRel = rel;
+	return pf->check_dir(loc, tempRel);
 }
 
 bool Path::check_loc(const MapCoord &loc) {
