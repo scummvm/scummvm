@@ -24,12 +24,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-
-// We will define c_empty_string here, unless we say not to
-#ifndef DONT_DEFINE_C_EMPTY_STRING
-const Std::string c_empty_string;
-#endif
-
 namespace Pentagram {
 
 allocFunc palloc = malloc;

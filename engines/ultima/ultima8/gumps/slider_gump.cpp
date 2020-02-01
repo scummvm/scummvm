@@ -69,7 +69,6 @@ SliderGump::~SliderGump() {
 */
 
 static const int gumpshape = 41;
-static const int gumpframe = 0;
 static const int okshape = 42;
 static const int leftshape = 43;
 static const int rightshape = 44;
