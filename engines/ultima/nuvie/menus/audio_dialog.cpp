@@ -223,9 +223,9 @@ GUI_status AudioDialog::KeyDown(const Common::KeyState &key) {
 }
 
 GUI_status AudioDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
-	if (caller == (GUI_CallBack *)cancel_button) {
+	if (caller == cancel_button) {
 		return close_dialog();
-	} else if (caller == (GUI_CallBack *)save_button) {
+	} else if (caller == save_button) {
 		Configuration *config = Game::get_game()->get_config();
 		SoundManager *sm = Game::get_game()->get_sound_manager();
 

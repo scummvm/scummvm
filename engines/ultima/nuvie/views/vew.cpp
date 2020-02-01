@@ -171,29 +171,29 @@ uint8 View::get_combat_mode_index(Actor *actor) {
 GUI_status View::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 	ViewManager *view_manager;
 
-	if (caller == (GUI_CallBack *)left_button) {
+	if (caller == left_button) {
 		prev_party_member();
 		return GUI_YUM;
 	}
 
-	if (caller == (GUI_CallBack *)right_button) {
+	if (caller == right_button) {
 		next_party_member();
 		return GUI_YUM;
 	}
 
-	if (caller == (GUI_CallBack *)actor_button) {
+	if (caller == actor_button) {
 		view_manager = (ViewManager *)data;
 		view_manager->set_actor_mode();
 		return GUI_YUM;
 	}
 
-	if (caller == (GUI_CallBack *)party_button) {
+	if (caller == party_button) {
 		view_manager = (ViewManager *)data;
 		view_manager->set_party_mode();
 		return GUI_YUM;
 	}
 
-	if (caller == (GUI_CallBack *)inventory_button) {
+	if (caller == inventory_button) {
 		view_manager = (ViewManager *)data;
 		view_manager->set_inventory_mode();
 		return GUI_YUM;

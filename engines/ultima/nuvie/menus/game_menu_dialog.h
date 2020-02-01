@@ -39,7 +39,7 @@ class GameMenuDialog : public GUI_Dialog {
 protected:
 	uint8 last_index;
 	sint8 b_index_num;
-	GUI_CallBack *callback_object;
+	CallBack *callback_object;
 	GUI_Button *load_button, *save_button, *video_button, *audio_button, *input_button,
 		*gameplay_button, *cheats_button, *continue_button, *quit_button;
 #ifdef HAVE_JOYSTICK_SUPPORT
@@ -49,7 +49,7 @@ protected:
 	GUI_Button *button_index[9]; // add to here when you add a button. Keep buttons in order by height
 #endif
 public:
-	GameMenuDialog(GUI_CallBack *callback);
+	GameMenuDialog(CallBack *callback);
 	~GameMenuDialog();
 	bool init();
 

@@ -218,9 +218,9 @@ GUI_status InputDialog::KeyDown(const Common::KeyState &key) {
 }
 
 GUI_status InputDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
-	if (caller == (GUI_CallBack *)cancel_button) {
+	if (caller == cancel_button) {
 		return close_dialog();
-	} else if (caller == (GUI_CallBack *)save_button) {
+	} else if (caller == save_button) {
 		Game *game = Game::get_game();
 		MapWindow *map_window = game->get_map_window();
 		Configuration *config = Game::get_game()->get_config();

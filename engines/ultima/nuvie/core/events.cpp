@@ -2454,7 +2454,7 @@ void Events::gameMenuDialog() {
 		showingDialog = true;
 		map_window->set_looking(false);
 		map_window->set_walking(false);
-		gamemenu_dialog = new GameMenuDialog((GUI_CallBack *) this);
+		gamemenu_dialog = new GameMenuDialog(this);
 		gui->AddWidget(gamemenu_dialog);
 		gui->lock_input(gamemenu_dialog);
 #ifdef HAVE_JOYSTICK_SUPPORT
@@ -2473,7 +2473,7 @@ uint16 Events::callback(uint16 msg, CallBack *caller, void *data) {
 		game->get_gui()->unlock_input();
 		return GUI_QUIT;
 	case YESNODIALOG_CB_NO :
-		widget = (GUI_Widget *) data;
+		widget = (GUI_Widget *)data;
 		widget->Delete();
 
 		showingDialog = false;

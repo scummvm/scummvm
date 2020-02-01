@@ -386,12 +386,12 @@ GUI_status VideoDialog::KeyDown(const Common::KeyState &key) {
 }
 
 GUI_status VideoDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
-	if (caller == (GUI_CallBack *)cancel_button) {
+	if (caller == cancel_button) {
 		return close_dialog();
-	} else if (fullscreen_button && caller == (GUI_CallBack *)fullscreen_button) {
+	} else if (fullscreen_button && caller == fullscreen_button) {
 		rebuild_buttons(false);
 #ifndef SCALER_AND_SCALE_CANNOT_BE_CHANGED
-	} else if (caller == (GUI_CallBack *)scaler_button) {
+	} else if (caller == scaler_button) {
 		if (scaler_button->GetSelection() > 1) {
 			scale_button->Hide();
 			only2x_button->Show();
@@ -399,7 +399,7 @@ GUI_status VideoDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 			scale_button->Show();
 			only2x_button->Hide();
 		}
-	} else if (caller == (GUI_CallBack *)scaler_win_button) {
+	} else if (caller == scaler_win_button) {
 		if (scaler_win_button->GetSelection() > 1) {
 			scale_win_button->Hide();
 			only2x_button->Show();
@@ -408,7 +408,7 @@ GUI_status VideoDialog::callback(uint16 msg, GUI_CallBack *caller, void *data) {
 			only2x_button->Hide();
 		}
 #endif /* !SCALER_AND_SCALE_CANNOT_BE_CHANGED */
-	} else if (caller == (GUI_CallBack *)save_button) {
+	} else if (caller == save_button) {
 		Game *game = Game::get_game();
 		Screen *scr = Game::get_game()->get_screen();
 		Configuration *config = Game::get_game()->get_config();
