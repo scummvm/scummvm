@@ -29,6 +29,15 @@
 namespace Dragons {
 #define DRAGONS_NUM_PALETTES 5
 #define DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE 256
+
+enum AlphaBlendMode {
+	NONE,
+	NORMAL,       // 50% x Back + 50% x Sprite
+	ADDITIVE,     // 100% x Back + 100% x Sprite
+	ADDITIVE_50,  // 100% x Back + 50% x Sprite
+	SUBTRACTIVE   // 100% x Back - 100% x Sprite
+};
+
 class Screen {
 private:
 	Graphics::PixelFormat _pixelFormat;

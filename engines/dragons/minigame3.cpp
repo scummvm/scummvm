@@ -791,7 +791,8 @@ void Minigame3::FUN_80017f70_paletteRelated(uint16 param_1) {
 }
 
 void Minigame3::FUN_80017ef0() {
-	//TODO DAT_80069680 = DAT_80069680 | 0x50000000;
+	//TODO BgLayerGsSprite[2].attribute = BgLayerGsSprite[2].attribute | 0x50000000;
+	// this sets the FG layer to additive colour blending (100% x Back + 100% x Sprite)
 	FUN_80017f70_paletteRelated(0);
 }
 

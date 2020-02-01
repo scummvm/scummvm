@@ -58,6 +58,8 @@ const int16 shakeTbl[16] = {
 
 SpecialOpcodes::SpecialOpcodes(DragonsEngine *vm)
 	: _vm(vm), _specialOpCounter(0) {
+	DAT_80083148 = 0;
+	uint16_t_80083154 = 0;
 	initOpcodes();
 }
 
@@ -324,21 +326,19 @@ void SpecialOpcodes::spcFadeScreen() {
 }
 
 void SpecialOpcodes::spcLadyOfTheLakeCapturedSceneLogic() {
-	//TODO
-	//DAT_80083148 = 0;
-	//DAT_80083154 = 0;
+	DAT_80083148 = 0;
+	uint16_t_80083154 = 0;
 	_vm->setSceneUpdateFunction(ladyOfTheLakeCapturedUpdateFunction);
 }
 
 void SpecialOpcodes::spcStopLadyOfTheLakeCapturedSceneLogic() {
 	_vm->setSceneUpdateFunction(NULL);
-// TODO
 	_vm->_sound->PauseCDMusic();
-//	if ((DAT_80083148 != 0) || (DAT_80083154 != 0)) {
-//		FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)DAT_80083154,(uint)DAT_80083158);
-//	}
-//	DAT_80083148 = 0;
-//	DAT_80083154 = 0;
+	if ((DAT_80083148 != 0) || (uint16_t_80083154 != 0)) {
+		//TODO FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)uint16_t_80083154,(uint)DAT_80083158);
+	}
+	DAT_80083148 = 0;
+	uint16_t_80083154 = 0;
 }
 
 void SpecialOpcodes::spc11ShakeScreen() {
@@ -548,9 +548,8 @@ void SpecialOpcodes::spcFlickerSetPriority2() {
 
 void SpecialOpcodes::spcMenInMinesSceneLogic() {
 	_vm->setSceneUpdateFunction(menInMinesSceneUpdateFunction);
-	//TODO
-//	uint16_t_80083154 = 0;
-//	DAT_80083148 = 0;
+	uint16_t_80083154 = 0;
+	DAT_80083148 = 0;
 	setSpecialOpCounter(0);
 }
 
@@ -571,45 +570,38 @@ void SpecialOpcodes::spcStopMenInMinesSceneLogic() {
 void SpecialOpcodes::spcMonksAtBarSceneLogic() {
 	setSpecialOpCounter(-1);
 	_vm->setSceneUpdateFunction(monksAtBarSceneUpdateFunction);
-	//TODO
-//	uint16_t_80083154 = 0;
-//	DAT_80083148 = 0;
+	uint16_t_80083154 = 0;
+	DAT_80083148 = 0;
 }
 
 void SpecialOpcodes::spcStopMonksAtBarSceneLogic() {
 	if (_vm->getSceneUpdateFunction() == monksAtBarSceneUpdateFunction) {
 		_vm->setSceneUpdateFunction(NULL);
-		//TODO
-//		if ((DAT_80083148 != 0) && (uint16_t_80083154 != 0)) {
-//			FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)uint16_t_80083154,
-//						 (uint)DAT_80083158);
-//		}
+		if ((DAT_80083148 != 0) && (uint16_t_80083154 != 0)) {
+			//TODO FUN_8001ac5c((uint)DAT_80083148, (uint)DAT_80083150, (uint)uint16_t_80083154, (uint)DAT_80083158);
+		}
 		setSpecialOpCounter(0);
-//		uint16_t_80083154 = 0;
-//		DAT_80083148 = 0;
+		uint16_t_80083154 = 0;
+		DAT_80083148 = 0;
 	}
 
 }
 
 void SpecialOpcodes::spcFlameBedroomEscapeSceneLogic() {
 	setSpecialOpCounter(-1);
-	//TODO
-//	if ((DAT_80083148 != 0) && (DAT_80083154 != 0)) {
-//		FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)DAT_80083154,(uint)DAT_80083158);
-//	}
+	if ((DAT_80083148 != 0) && (uint16_t_80083154 != 0)) {
+		//TODO FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)uint16_t_80083154,(uint)DAT_80083158);
+	}
 	_vm->setSceneUpdateFunction(flameEscapeSceneUpdateFunction);
-	//TODO
-//	DAT_80083154 = 0;
-//	DAT_80083148 = 0;
-
+	uint16_t_80083154 = 0;
+	DAT_80083148 = 0;
 }
 
 void SpecialOpcodes::spcStopFlameBedroomEscapeSceneLogic() {
 	setSpecialOpCounter(0);
-	//TODO
-//	FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)uint16_t_80083154,(uint)DAT_80083158);
-//	DAT_80083154 = 0;
-//	DAT_80083148 = 0;
+//	TODO FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)uint16_t_80083154,(uint)DAT_80083158);
+	uint16_t_80083154 = 0;
+	DAT_80083148 = 0;
 	_vm->_dragonINIResource->getRecord(0x96)->actor->updateSequence(0);
 	if (_vm->getSceneUpdateFunction() == flameEscapeSceneUpdateFunction) {
 		_vm->setSceneUpdateFunction(NULL);
@@ -997,7 +989,11 @@ void SpecialOpcodes::spcInsideBlackDragonUpdatePalette() {
 }
 
 void SpecialOpcodes::spcCastleGateSceneLogic() {
-//TODO spcCastleGateSceneLogic
+	_vm->_screen->updatePaletteTransparency(0, 0xc0,0xff, true);
+	//TODO FUN_80017d68(3,0);
+	setSpecialOpCounter(-1);
+	_vm->clearFlags(ENGINE_FLAG_1);
+	_vm->setSceneUpdateFunction(castleFogUpdateFunction);
 }
 
 // 0x80038c1c
@@ -1286,10 +1282,9 @@ void SpecialOpcodes::pizzaMakerStopWorking() {
 }
 
 void SpecialOpcodes::clearSceneUpdateFunction() {
-//TODO
-//	if (DAT_80083148 != DAT_80083154) {
-//		FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)DAT_80083154,(uint)DAT_80083158);
-//	}
+	if (DAT_80083148 != uint16_t_80083154) {
+		//TODO FUN_8001ac5c((uint)DAT_80083148, (uint)DAT_80083150, (uint)uint16_t_80083154, (uint)DAT_80083158);
+	}
 	if (sceneUpdater.sequenceID != -1) {
 		_vm->getINI(sceneUpdater.iniID)->actor->updateSequence(sceneUpdater.sequenceID);
 	}
@@ -1299,9 +1294,9 @@ void SpecialOpcodes::clearSceneUpdateFunction() {
 void SpecialOpcodes::setupTableBasedSceneUpdateFunction(uint16 initialCounter, uint16 numSequences,
 														uint16 sequenceDuration) {
 	sceneUpdater.sequenceID = -1;
+	uint16_t_80083154 = 0;
+	DAT_80083148 = 0;
 //TODO
-//	DAT_80083154 = 0;
-//	DAT_80083148 = 0;
 //	DAT_80072858 = 0;
 	sceneUpdater.curSequenceIndex = 0;
 	sceneUpdater.numTotalSequences = numSequences;
@@ -1471,6 +1466,28 @@ void ladyOfTheLakeCapturedUpdateFunction() {
 			ladyofLakeCountdownTimer = 0x708;
 		}
 	}
+}
+
+void castleFogUpdateFunction() {
+	static int16 castleFogXOffset = 0;
+	DragonsEngine *vm = getEngine();
+	int16 specialOpCounter = vm->_scriptOpcodes->_specialOpCodes->getSpecialOpCounter();
+	if (specialOpCounter == -1) {
+		castleFogXOffset = 0;
+		specialOpCounter = 6;
+	}
+	if (specialOpCounter == 0) {
+		castleFogXOffset--;
+		if (castleFogXOffset < 0) {
+			castleFogXOffset = 0x13f;
+		}
+		vm->_scene->setLayerOffset(2, Common::Point(castleFogXOffset, 0));
+		specialOpCounter = 6;
+	}
+	else {
+		specialOpCounter--;
+	}
+	vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(specialOpCounter);
 }
 
 void menInMinesSceneUpdateFunction() {
