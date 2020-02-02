@@ -135,8 +135,7 @@ public:
 	//! If this gump doesn't want to set the cursor, the gump list will
 	//! attempt to get the cursor shape from the next lower gump.
 	//! \return true if this gump wants to set the cursor, false otherwise
-	virtual bool        GetMouseCursor(int mx, int my, Shape &shape_,
-	                                   int32 &frame);
+	virtual bool GetMouseCursor(int32 mx, int32 my, Shape &shape_, int32 &frame);
 
 	// Notify gumps the render surface changed.
 	virtual void        RenderSurfaceChanged();
@@ -258,36 +257,36 @@ public:
 	};
 
 	//! Convert a screen space point to a gump point
-	virtual void        ScreenSpaceToGump(int &sx, int &sy,
-	                                      PointRoundDir r = ROUND_TOPLEFT);
+	virtual void ScreenSpaceToGump(int32 &sx, int32 &sy,
+		PointRoundDir r = ROUND_TOPLEFT);
 
 	//! Convert a gump point to a screen space point
-	virtual void        GumpToScreenSpace(int &gx, int &gy,
-	                                      PointRoundDir r = ROUND_TOPLEFT);
+	virtual void GumpToScreenSpace(int32 &gx, int32 &gy,
+		PointRoundDir r = ROUND_TOPLEFT);
 
 	//! Convert a parent relative point to a gump point
-	virtual void        ParentToGump(int &px, int &py,
-	                                 PointRoundDir r = ROUND_TOPLEFT);
+	virtual void ParentToGump(int32 &px, int32 &py,
+		PointRoundDir r = ROUND_TOPLEFT);
 
 	//! Convert a gump point to parent relative point
-	virtual void        GumpToParent(int &gx, int &gy,
-	                                 PointRoundDir r = ROUND_TOPLEFT);
+	virtual void GumpToParent(int32 &gx, int32 &gy,
+		PointRoundDir r = ROUND_TOPLEFT);
 
 	//! Transform a rectangle to screenspace from gumpspace
-	virtual void        GumpRectToScreenSpace(int &gx, int &gy, int &gw, int &gh,
-	        RectRoundDir r = ROUND_OUTSIDE);
+	virtual void GumpRectToScreenSpace(int32 &gx, int32 &gy,
+		int32 &gw, int32 &gh, RectRoundDir r = ROUND_OUTSIDE);
 
 	//! Transform a rectangle to gumpspace from screenspace
-	virtual void        ScreenSpaceToGumpRect(int &sx, int &sy, int &sw, int &sh,
-	        RectRoundDir r = ROUND_OUTSIDE);
+	virtual void ScreenSpaceToGumpRect(int32 &sx, int32 &sy,
+		int32 &sw, int32 &sh, RectRoundDir r = ROUND_OUTSIDE);
 
 	//! Trace a click, and return ObjId
-	virtual uint16      TraceObjId(int mx, int my);
+	virtual uint16 TraceObjId(int32 mx, int32 my);
 
 	//! Get the location of an item in the gump (coords relative to this).
 	//! \return false on failure
-	virtual bool        GetLocationOfItem(uint16 itemid, int &gx, int &gy,
-	                                      int32 lerp_factor = 256);
+	virtual bool GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
+		int32 lerp_factor = 256);
 
 
 	//
@@ -308,11 +307,11 @@ public:
 	//
 
 	// Return Gump that handled event
-	virtual Gump       *OnMouseDown(int button, int mx, int my);
-	virtual void        OnMouseUp(int  button, int mx, int my) { }
-	virtual void        OnMouseClick(int button, int mx, int my) { }
-	virtual void        OnMouseDouble(int button, int mx, int my) { }
-	virtual Gump       *OnMouseMotion(int mx, int my);
+	virtual Gump       *OnMouseDown(int button, int32 mx, int32 my);
+	virtual void        OnMouseUp(int button, int32 mx, int32 my) { }
+	virtual void        OnMouseClick(int button, int32 mx, int32 my) { }
+	virtual void        OnMouseDouble(int button, int32 mx, int32 my) { }
+	virtual Gump       *OnMouseMotion(int32 mx, int32 my);
 
 	// OnMouseOver is only call when the mouse first passes over the gump
 	// OnMouseLeft is call as the mouse leaves the gump.
@@ -383,7 +382,7 @@ public:
 	// Dragging
 	//! Called when a child gump starts to be dragged.
 	//! \return false if the child isn't allowed to be dragged.
-	virtual bool        StartDraggingChild(Gump *gump, int mx, int my);
+	virtual bool        StartDraggingChild(Gump *gump, int32 mx, int32 my);
 	virtual void        DraggingChild(Gump *gump, int mx, int my);
 	virtual void        StopDraggingChild(Gump *gump);
 

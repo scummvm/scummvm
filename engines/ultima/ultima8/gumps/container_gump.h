@@ -55,11 +55,11 @@ public:
 	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
 
 	// Trace a click, and return ObjId
-	virtual uint16 TraceObjId(int mx, int my);
+	virtual uint16 TraceObjId(int32 mx, int32 my);
 
 	// Get the location of an item in the gump (coords relative to this).
 	// Returns false on failure.
-	virtual bool GetLocationOfItem(uint16 itemid, int &gx, int &gy,
+	virtual bool GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 	                               int32 lerp_factor = 256);
 
 
@@ -69,9 +69,9 @@ public:
 	virtual void StopDraggingItem(Item *item, bool moved);
 	virtual void DropItem(Item *item, int mx, int my);
 
-	virtual Gump *OnMouseDown(int button, int mx, int my);
-	virtual void OnMouseClick(int button, int mx, int my);
-	virtual void OnMouseDouble(int button, int mx, int my);
+	virtual Gump *OnMouseDown(int button, int32 mx, int32 my);
+	virtual void OnMouseClick(int button, int32 mx, int32 my);
+	virtual void OnMouseDouble(int button, int32 mx, int32 my);
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:

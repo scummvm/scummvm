@@ -44,13 +44,13 @@ public:
 	virtual ~ButtonWidget(void);
 
 	virtual void InitGump(Gump *newparent, bool take_focus = true);
-	virtual uint16 TraceObjId(int mx, int my);
+	virtual uint16 TraceObjId(int32 mx, int32 my);
 	virtual bool PointOnGump(int mx, int my);
 
-	virtual Gump *OnMouseDown(int button, int mx, int my);
-	virtual void OnMouseUp(int  button, int mx, int my);
-	virtual void OnMouseClick(int button, int mx, int my);
-	virtual void OnMouseDouble(int button, int mx, int my);
+	virtual Gump *OnMouseDown(int button, int32 mx, int32 my);
+	virtual void OnMouseUp(int button, int32 mx, int32 my);
+	virtual void OnMouseClick(int button, int32 mx, int32 my);
+	virtual void OnMouseDouble(int button, int32 mx, int32 my);
 
 	virtual void OnMouseOver();
 	virtual void OnMouseLeft();

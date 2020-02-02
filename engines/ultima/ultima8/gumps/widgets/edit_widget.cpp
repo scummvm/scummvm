@@ -64,7 +64,7 @@ void EditWidget::InitGump(Gump *newparent, bool take_focus) {
 	dims.x = 0;
 
 	if (gamefont && getFont()->isHighRes()) {
-		int x_ = 0, y_ = 0, w = 0;
+		int32 x_ = 0, y_ = 0, w = 0;
 		ScreenSpaceToGumpRect(x_, y_, w, dims.y, ROUND_OUTSIDE);
 	}
 }
@@ -91,12 +91,12 @@ bool EditWidget::textFits(Std::string &t) {
 	Pentagram::Font *font = getFont();
 
 	unsigned int remaining;
-	int width, height;
+	int32 width, height;
 
-	int max_width = multiline ? dims.w : 0;
-	int max_height = dims.h;
+	int32 max_width = multiline ? dims.w : 0;
+	int32 max_height = dims.h;
 	if (gamefont && font->isHighRes()) {
-		int x_ = 0, y_ = 0;
+		int32 x_ = 0, y_ = 0;
 		GumpRectToScreenSpace(x_, y_, max_width, max_height, ROUND_INSIDE);
 	}
 
@@ -105,7 +105,7 @@ bool EditWidget::textFits(Std::string &t) {
 	                  Pentagram::Font::TEXT_LEFT, false);
 
 	if (gamefont && font->isHighRes()) {
-		int x_ = 0, y_ = 0;
+		int32 x_ = 0, y_ = 0;
 		ScreenSpaceToGumpRect(x_, y_, width, height, ROUND_OUTSIDE);
 	}
 
@@ -135,10 +135,10 @@ void EditWidget::renderText() {
 	if (!cached_text) {
 		Pentagram::Font *font = getFont();
 
-		int max_width = multiline ? dims.w : 0;
-		int max_height = dims.h;
+		int32 max_width = multiline ? dims.w : 0;
+		int32 max_height = dims.h;
 		if (gamefont && font->isHighRes()) {
-			int x_ = 0, y_ = 0;
+			int32 x_ = 0, y_ = 0;
 			GumpRectToScreenSpace(x_, y_, max_width, max_height, ROUND_INSIDE);
 		}
 
@@ -170,20 +170,20 @@ void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	if (!gamefont || !font->isHighRes()) return;
 
-	int x_ = 0, y_ = 0;
+	int32 x_ = 0, y_ = 0;
 	GumpToScreenSpace(x_, y_, ROUND_BOTTOMRIGHT);
 
 	cached_text->draw(surf, x_, y_, true);
 
 	x_ = dims.x;
 	y_ = dims.y;
-	int w = dims.w, h = dims.h;
+	int32 w = dims.w, h = dims.h;
 	GumpRectToScreenSpace(x_, y_, w, h, ROUND_OUTSIDE);
 	surf->FillAlpha(0x00, x_, y_, w, h);
 }
 
 // don't handle any mouse motion events, so let parent handle them for us.
-Gump *EditWidget::OnMouseMotion(int mx, int my) {
+Gump *EditWidget::OnMouseMotion(int32 mx, int32 my) {
 	return 0;
 }
 

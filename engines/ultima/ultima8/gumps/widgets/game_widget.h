@@ -43,11 +43,11 @@ public:
 
 	virtual void InitGump(Gump *newparent, bool take_focus = true);
 
-	virtual uint16 TraceObjId(int mx, int my);
+	virtual uint16 TraceObjId(int32 mx, int32 my);
 
 	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
 
-	virtual Gump *OnMouseDown(int button, int mx, int my);
+	virtual Gump *OnMouseDown(int button, int32 mx, int32 my);
 	virtual void OnMouseOver();
 	virtual void OnMouseLeft();
 

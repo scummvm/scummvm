@@ -75,8 +75,7 @@ void MessageBoxGump::InitGump(Gump *newparent, bool take_focus) {
 	// work out sizes of the text
 	Pentagram::Font *font = FontManager::get_instance()->getTTFont(0);
 
-	int width;
-	int height;
+	int32 width, height;
 	unsigned int rem;
 
 	// Title width

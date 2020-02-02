@@ -80,7 +80,7 @@ bool TargetGump::PointOnGump(int mx, int my) {
 	return ModalGump::PointOnGump(mx, my);
 }
 
-void TargetGump::OnMouseUp(int button, int mx, int my) {
+void TargetGump::OnMouseUp(int button, int32 mx, int32 my) {
 	target_tracing = true;
 
 	parent->GumpToScreenSpace(mx, my);

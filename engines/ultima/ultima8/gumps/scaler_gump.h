@@ -54,9 +54,9 @@ public:
 
 	virtual void Paint(RenderSurface *surf, int32 lerp_factor, bool scaled);
 	virtual void RenderSurfaceChanged();
-	virtual void ParentToGump(int &px, int &py,
+	virtual void ParentToGump(int32 &px, int32 &py,
 	                          PointRoundDir r = ROUND_TOPLEFT);
-	virtual void GumpToParent(int &gx, int &gy,
+	virtual void GumpToParent(int32 &gx, int32 &gy,
 	                          PointRoundDir r = ROUND_TOPLEFT);
 
 	void GetScaledSize(int32 &sw, int32 &sh) const {

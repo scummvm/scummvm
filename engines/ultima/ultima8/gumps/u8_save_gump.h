@@ -43,8 +43,8 @@ public:
 	virtual void InitGump(Gump *newparent, bool take_focus = true);
 	virtual void Close(bool no_del = false);
 
-	virtual Gump *OnMouseDown(int button, int mx, int my);
-	virtual void OnMouseClick(int button, int mx, int my);
+	virtual Gump *OnMouseDown(int button, int32 mx, int32 my);
+	virtual void OnMouseClick(int button, int32 mx, int32 my);
 	virtual bool OnKeyDown(int key, int mod);
 	virtual void ChildNotify(Gump *child, uint32 message);
 	virtual void OnFocus(bool gain);

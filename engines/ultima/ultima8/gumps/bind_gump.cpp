@@ -79,7 +79,7 @@ bool BindGump::OnKeyDown(int key, int mod) {
 	return true;
 }
 
-Gump *BindGump::OnMouseDown(int button, int mx, int my) {
+Gump *BindGump::OnMouseDown(int button, int32 mx, int32 my) {
 	//Pentagram::istring control = GetMouseButtonName(static_cast<MouseButton>(button));
 //	HIDManager * hidmanager = HIDManager::get_instance();
 //	if (binding)

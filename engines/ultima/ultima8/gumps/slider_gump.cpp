@@ -202,7 +202,7 @@ void SliderGump::Close(bool no_del) {
 	ModalGump::Close(no_del);
 }
 
-bool SliderGump::StartDraggingChild(Gump *gump, int mx, int my) {
+bool SliderGump::StartDraggingChild(Gump *gump, int32 mx, int32 my) {
 	if (gump->GetIndex() == SLIDER_INDEX) {
 		gump->ParentToGump(mx, my);
 		Mouse::get_instance()->setDraggingOffset(mx, 0);
@@ -214,7 +214,7 @@ bool SliderGump::StartDraggingChild(Gump *gump, int mx, int my) {
 
 void SliderGump::DraggingChild(Gump *gump, int mx, int my) {
 	if (gump->GetIndex() == SLIDER_INDEX) {
-		int dox, doy;
+		int32 dox, doy;
 		Mouse::get_instance()->getDraggingOffset(dox, doy);
 		setValueFromSlider(mx - dox);
 		gump->Move(getSliderPos(), slidery);

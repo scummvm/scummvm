@@ -189,7 +189,7 @@ void MiniMapGump::ConCmd_generateWholeMap(const Console::ArgvType &argv) {
 	currentmap->setWholeMapFast();
 }
 
-uint16 MiniMapGump::TraceObjId(int mx, int my) {
+uint16 MiniMapGump::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = Gump::TraceObjId(mx, my);
 
 	if (!objId_ || objId_ == 65535)

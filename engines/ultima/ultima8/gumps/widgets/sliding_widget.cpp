@@ -56,7 +56,7 @@ void SlidingWidget::InitGump(Gump *newparent, bool take_focus) {
 	dims.h = sf->height;
 }
 
-uint16 SlidingWidget::TraceObjId(int mx, int my) {
+uint16 SlidingWidget::TraceObjId(int32 mx, int32 my) {
 	if (PointOnGump(mx, my))
 		return getObjId();
 	else

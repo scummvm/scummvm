@@ -158,7 +158,7 @@ void ContainerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 // Find object (if any) at (mx,my)
 // (mx,my) are relative to parent
-uint16 ContainerGump::TraceObjId(int mx, int my) {
+uint16 ContainerGump::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = Gump::TraceObjId(mx, my);
 	if (objId_ && objId_ != 65535) return objId_;
 
@@ -196,7 +196,7 @@ uint16 ContainerGump::TraceObjId(int mx, int my) {
 }
 
 // get item coords relative to self
-bool ContainerGump::GetLocationOfItem(uint16 itemid, int &gx, int &gy,
+bool ContainerGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
                                       int32 lerp_factor) {
 	Item *item = getItem(itemid);
 	Item *parent_ = item->getParentAsContainer();
@@ -226,7 +226,7 @@ void ContainerGump::GetItemLocation(int32 lerp_factor) {
 		return;
 	}
 
-	int gx, gy;
+	int32 gx, gy;
 	Item *topitem = it;
 
 	Container *p = it->getParentAsContainer();
@@ -281,7 +281,7 @@ void ContainerGump::Close(bool no_del) {
 }
 
 Container *ContainerGump::getTargetContainer(Item *item, int mx, int my) {
-	int px = mx, py = my;
+	int32 px = mx, py = my;
 	GumpToParent(px, py);
 	Container *targetcontainer = getContainer(TraceObjId(px, py));
 
@@ -304,7 +304,7 @@ Container *ContainerGump::getTargetContainer(Item *item, int mx, int my) {
 }
 
 
-Gump *ContainerGump::OnMouseDown(int button, int mx, int my) {
+Gump *ContainerGump::OnMouseDown(int button, int32 mx, int32 my) {
 	Gump *handled = Gump::OnMouseDown(button, mx, my);
 	if (handled) return handled;
 
@@ -315,7 +315,7 @@ Gump *ContainerGump::OnMouseDown(int button, int mx, int my) {
 	return 0;
 }
 
-void ContainerGump::OnMouseClick(int button, int mx, int my) {
+void ContainerGump::OnMouseClick(int button, int32 mx, int32 my) {
 	if (button == Shared::BUTTON_LEFT) {
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << Std::endl;
@@ -334,7 +334,7 @@ void ContainerGump::OnMouseClick(int button, int mx, int my) {
 	}
 }
 
-void ContainerGump::OnMouseDouble(int button, int mx, int my) {
+void ContainerGump::OnMouseDouble(int button, int32 mx, int32 my) {
 	if (button == Shared::BUTTON_LEFT) {
 		if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 			pout << "Can't: avatarInStasis" << Std::endl;
@@ -393,7 +393,7 @@ bool ContainerGump::DraggingItem(Item *item, int mx, int my) {
 		return false;
 	}
 
-	int dox, doy;
+	int32 dox, doy;
 	Mouse::get_instance()->getDraggingOffset(dox, doy);
 	Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_TARGET);
 	display_dragging = true;
@@ -442,7 +442,7 @@ void ContainerGump::StopDraggingItem(Item *item, bool moved) {
 void ContainerGump::DropItem(Item *item, int mx, int my) {
 	display_dragging = false;
 
-	int px = mx, py = my;
+	int32 px = mx, py = my;
 	GumpToParent(px, py);
 	// see what the item is being dropped on
 	Item *targetitem = getItem(TraceObjId(px, py));
@@ -531,7 +531,7 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 			item->moveToContainer(targetcontainer);
 		}
 
-		int dox, doy;
+		int32 dox, doy;
 		Mouse::get_instance()->getDraggingOffset(dox, doy);
 		dragging_x = mx - itemarea.x - dox;
 		dragging_y = my - itemarea.y - doy;

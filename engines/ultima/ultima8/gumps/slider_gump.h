@@ -49,7 +49,7 @@ public:
 	void setUsecodeNotify(UCProcess *ucp);
 
 	// Dragging
-	virtual bool StartDraggingChild(Gump *gump, int mx, int my);
+	virtual bool StartDraggingChild(Gump *gump, int32 mx, int32 my);
 	virtual void DraggingChild(Gump *gump, int mx, int my);
 	virtual void StopDraggingChild(Gump *gump);
 

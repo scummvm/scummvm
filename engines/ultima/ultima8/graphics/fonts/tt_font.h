@@ -45,21 +45,17 @@ public:
 	}
 
 	virtual void getStringSize(const Std::string &text,
-	                           int &width, int &height);
+		int32 &width, int32 &height) override;
 
 	virtual void getTextSize(const Std::string &text,
-	                         int &resultwidth, int &resultheight,
-	                         unsigned int &remaining,
-	                         int width = 0, int height = 0,
-	                         TextAlign align = TEXT_LEFT, bool u8specials = false);
+		int32 &resultwidth, int32 &resultheight, unsigned int &remaining,
+		int32 width = 0, int32 height = 0, TextAlign align = TEXT_LEFT,
+		bool u8specials = false) override;
 
 	virtual RenderedText *renderText(const Std::string &text,
-	                                 unsigned int &remaining,
-	                                 int width = 0, int height = 0,
-	                                 TextAlign align = TEXT_LEFT,
-	                                 bool u8specials = false,
-	                                 Std::string::size_type cursor
-	                                 = Std::string::npos);
+		unsigned int &remaining, int32 width = 0, int32 height = 0,
+		TextAlign align = TEXT_LEFT, bool u8specials = false,
+		Std::string::size_type cursor = Std::string::npos) override;
 
 	ENABLE_RUNTIME_CLASSTYPE()
 protected:

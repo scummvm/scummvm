@@ -207,7 +207,7 @@ public:
 	int32   Printf(const MsgMask mm, const char *fmt, ...); // with msg filtering
 
 	// printf, and output to stdout (va_list)
-	int     vPrintf(const char *fmt, va_list);
+	int32   vPrintf(const char *fmt, va_list);
 
 	// putchar, and output to stdout
 	void    Putchar(int c);
@@ -229,7 +229,7 @@ public:
 	int32   Printf_err(const MsgMask mm, const char *fmt, ...);
 
 	// printf, and output to stderr (va_list)
-	int     vPrintf_err(const char *fmt, va_list);
+	int32   vPrintf_err(const char *fmt, va_list);
 
 	// putchar, and output to stderr
 	void    Putchar_err(int c);

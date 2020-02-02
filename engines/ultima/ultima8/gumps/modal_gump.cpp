@@ -72,7 +72,7 @@ bool ModalGump::PointOnGump(int mx, int my) {
 	return true; // we take all mouse input
 }
 
-uint16 ModalGump::TraceObjId(int mx, int my) {
+uint16 ModalGump::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = Gump::TraceObjId(mx, my);
 	if (!objId_) objId_ = getObjId();
 
@@ -91,7 +91,7 @@ void ModalGump::Close(bool no_del) {
 	Gump::Close(no_del);
 }
 
-Gump *ModalGump::OnMouseDown(int button, int mx, int my) {
+Gump *ModalGump::OnMouseDown(int button, int32 mx, int32 my) {
 	Gump *handled = Gump::OnMouseDown(button, mx, my);
 	if (!handled) handled = this;
 	return handled;

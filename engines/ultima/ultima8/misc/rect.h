@@ -98,7 +98,8 @@ struct Rect {
 	}
 
 	// Intersect/Clip this another with this
-	void    IntersectOther(int &ox, int &oy, int &ow, int &oh) const {
+	template<typename T>
+	void IntersectOther(T &ox, T &oy, T &ow, T &oh) const {
 		int x2 = x + w,     y2 = y + h;
 		int ox2 = ox + ow,  oy2 = oy + oh;
 

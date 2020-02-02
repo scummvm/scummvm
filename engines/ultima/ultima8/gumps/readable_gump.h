@@ -42,7 +42,7 @@ public:
 	virtual ~ReadableGump();
 
 	// Close on mouse click on key press
-	virtual Gump *OnMouseDown(int button, int mx, int my);
+	virtual Gump *OnMouseDown(int button, int32 mx, int32 my);
 	virtual bool OnKeyDown(int key, int mod);
 
 	// Init the gump, call after construction

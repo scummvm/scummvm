@@ -114,7 +114,7 @@ static Common::U32String toUnicode(const Std::string &text, uint16 bullet) {
 }
 #endif
 
-void TTFont::getStringSize(const Std::string &text, int &width, int &height) {
+void TTFont::getStringSize(const Std::string &text, int32 &width, int32 &height) {
 	// convert to unicode
 	Common::U32String unicodeText;
 	if (!SJIS)
@@ -130,9 +130,9 @@ void TTFont::getStringSize(const Std::string &text, int &width, int &height) {
 }
 
 void TTFont::getTextSize(const Std::string &text,
-                         int &resultwidth, int &resultheight,
+                         int32 &resultwidth, int32 &resultheight,
                          unsigned int &remaining,
-                         int width, int height, TextAlign align,
+                         int32 width, int32 height, TextAlign align,
                          bool u8specials) {
 	Std::list<PositionedText> tmp;
 	if (!SJIS)
@@ -148,10 +148,10 @@ void TTFont::getTextSize(const Std::string &text,
 
 RenderedText *TTFont::renderText(const Std::string &text,
                                  unsigned int &remaining,
-                                 int width, int height,
+                                 int32 width, int32 height,
                                  TextAlign align, bool u8specials,
                                  Std::string::size_type cursor) {
-	int resultwidth, resultheight;
+	int32 resultwidth, resultheight;
 	Std::list<PositionedText> lines;
 	if (!SJIS)
 		lines = typesetText<Traits>(this, text, remaining,

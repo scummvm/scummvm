@@ -48,7 +48,7 @@ public:
 	virtual ~MiniMapGump(void);
 
 	virtual void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled);
-	virtual uint16      TraceObjId(int mx, int my);
+	virtual uint16      TraceObjId(int32 mx, int32 my);
 
 	static void         ConCmd_toggle(const Console::ArgvType &argv);   //!< "MiniMapGump::toggle" console command
 	static void         ConCmd_generateWholeMap(const Console::ArgvType &argv); //!< "MiniMapGump::generateWholeMap" console command

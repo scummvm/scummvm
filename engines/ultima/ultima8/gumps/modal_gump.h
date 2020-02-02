@@ -45,9 +45,9 @@ public:
 
 	virtual bool PointOnGump(int mx, int my);
 	virtual Gump *FindGump(int mx, int my);
-	virtual uint16 TraceObjId(int mx, int my);
+	virtual uint16 TraceObjId(int32 mx, int32 my);
 
-	virtual Gump *OnMouseDown(int button, int mx, int my);
+	virtual Gump *OnMouseDown(int button, int32 mx, int32 my);
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:

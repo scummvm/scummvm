@@ -40,7 +40,7 @@ public:
 
 	virtual void run();
 
-	void OnMouseDown(int button, int mx, int my);
+	void OnMouseDown(int button, int32 mx, int32 my);
 	void OnMouseUp(int button);
 
 	void resetIdleTime() {

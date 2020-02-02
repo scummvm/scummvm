@@ -99,7 +99,7 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 
 
 	// Get the camera location
-	int lx, ly, lz;
+	int32 lx, ly, lz;
 	GetCameraLocation(lx, ly, lz, lerp_factor);
 
 	CameraProcess *camera = CameraProcess::GetCameraProcess();
@@ -186,7 +186,7 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 }
 
 // Trace a click, and return ObjId
-uint16 GameMapGump::TraceObjId(int mx, int my) {
+uint16 GameMapGump::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = Gump::TraceObjId(mx, my);
 	if (objId_ && objId_ != 65535) return objId_;
 
@@ -246,7 +246,7 @@ uint16 GameMapGump::TraceCoordinates(int mx, int my, int32 coords[3],
 	return trace;
 }
 
-bool GameMapGump::GetLocationOfItem(uint16 itemid, int &gx, int &gy,
+bool GameMapGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
                                     int32 lerp_factor) {
 	Item *item = getItem(itemid);
 
@@ -280,8 +280,8 @@ bool GameMapGump::GetLocationOfItem(uint16 itemid, int &gx, int &gy,
 	return true;
 }
 
-Gump *GameMapGump::OnMouseDown(int button, int mx, int my) {
-	int sx = mx, sy = my;
+Gump *GameMapGump::OnMouseDown(int button, int32 mx, int32 my) {
+	int32 sx = mx, sy = my;
 	ParentToGump(sx, sy);
 	GumpToScreenSpace(sx, sy);
 
@@ -299,14 +299,14 @@ Gump *GameMapGump::OnMouseDown(int button, int mx, int my) {
 	return 0;
 }
 
-void GameMapGump::OnMouseUp(int button, int mx, int my) {
+void GameMapGump::OnMouseUp(int button, int32 mx, int32 my) {
 	AvatarMoverProcess *amp = Ultima8Engine::get_instance()->getAvatarMoverProcess();
 	if (button == Shared::BUTTON_RIGHT || button == Shared::BUTTON_LEFT) {
 		amp->OnMouseUp(button);
 	}
 }
 
-void GameMapGump::OnMouseClick(int button, int mx, int my) {
+void GameMapGump::OnMouseClick(int button, int32 mx, int32 my) {
 	MainActor *avatar = getMainActor();
 	switch (button) {
 	case Shared::BUTTON_LEFT: {
@@ -374,7 +374,7 @@ void GameMapGump::OnMouseClick(int button, int mx, int my) {
 	}
 }
 
-void GameMapGump::OnMouseDouble(int button, int mx, int my) {
+void GameMapGump::OnMouseDouble(int button, int32 mx, int32 my) {
 	MainActor *avatar = getMainActor();
 	switch (button) {
 	case Shared::BUTTON_LEFT: {
@@ -423,7 +423,7 @@ bool GameMapGump::StartDraggingItem(Item *item, int mx, int my) {
 	if (!avatar->canReach(item, 128)) return false;  // CONSTANT!
 
 	// get item offset
-	int itemx, itemy;
+	int32 itemx, itemy;
 	GetLocationOfItem(item->getObjId(), itemx, itemy);
 	Mouse::get_instance()->setDraggingOffset(mx - itemx, my - itemy);
 
@@ -432,7 +432,7 @@ bool GameMapGump::StartDraggingItem(Item *item, int mx, int my) {
 
 bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 	// determine target location and set dragging_x/y/z
-	int dox, doy;
+	int32 dox, doy;
 	Mouse::get_instance()->getDraggingOffset(dox, doy);
 
 	dragging_shape = item->getShape();
@@ -500,7 +500,7 @@ void GameMapGump::StopDraggingItem(Item *item, bool moved) {
 }
 
 void GameMapGump::DropItem(Item *item, int mx, int my) {
-	int dox, doy;
+	int32 dox, doy;
 	Mouse::get_instance()->getDraggingOffset(dox, doy);
 
 	display_dragging = false;

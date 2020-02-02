@@ -68,7 +68,7 @@ public:
 	//! \param width Returns the width
 	//! \param height Returns the height
 	virtual void getStringSize(const Std::string &text,
-	                           int &width, int &height) = 0;
+		int32 &width, int32 &height) = 0;
 
 	//! render a string
 	//! \param text The text
@@ -79,12 +79,9 @@ public:
 	//! \param u8specials If true, interpret the special characters U8 uses
 	//! \return the rendered text in a RenderedText object
 	virtual RenderedText *renderText(const Std::string &text,
-	                                 unsigned int &remaining,
-	                                 int width = 0, int height = 0,
-	                                 TextAlign align = TEXT_LEFT,
-	                                 bool u8specials = false,
-	                                 Std::string::size_type cursor
-	                                 = Std::string::npos) = 0;
+	    unsigned int &remaining, int32 width = 0, int32 height = 0,
+		TextAlign align = TEXT_LEFT, bool u8specials = false,
+		Std::string::size_type cursor = Std::string::npos) = 0;
 
 	//! get the dimensions of a rendered string
 	//! \param text The text
@@ -96,10 +93,9 @@ public:
 	//! \param u8specials If true, interpret the special characters U8 uses
 	//! \param align Alignment of the text (left, right, center)
 	virtual void getTextSize(const Std::string &text,
-	                         int &resultwidth, int &resultheight,
-	                         unsigned int &remaining,
-	                         int width = 0, int height = 0,
-	                         TextAlign align = TEXT_LEFT, bool u8specials = false);
+		int32 &resultwidth, int32 &resultheight, unsigned int &remaining,
+		int32 width = 0, int32 height = 0, TextAlign align = TEXT_LEFT,
+		bool u8specials = false);
 
 	void setHighRes(bool hr) {
 		highRes = hr;
@@ -174,14 +170,10 @@ protected:
 
 template<class T>
 Std::list<PositionedText> typesetText(Pentagram::Font *font,
-                                      const Std::string &text,
-                                      unsigned int &remaining,
-                                      int width, int height,
-                                      Pentagram::Font::TextAlign align,
-                                      bool u8specials,
-                                      int &resultwidth, int &resultheight,
-                                      Std::string::size_type cursor
-                                      = Std::string::npos);
+	const Std::string &text, unsigned int &remaining,
+	int32 width, int32 height, Pentagram::Font::TextAlign align,
+	bool u8specials, int32 &resultwidth, int32 &resultheight,
+	Std::string::size_type cursor = Std::string::npos);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

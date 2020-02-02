@@ -445,7 +445,9 @@ Graphics::ManagedSurface *Screen::get_sdl_surface() {
 	return NULL;
 }
 
-bool Screen::blit(sint32 dest_x, sint32 dest_y, const byte *src_buf, uint16 src_bpp, uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans, Common::Rect *clip_rect, uint8 opacity) {
+bool Screen::blit(int32 dest_x, int32 dest_y, const byte *src_buf, uint16 src_bpp,
+		uint16 src_w, uint16 src_h, uint16 src_pitch, bool trans,
+		Common::Rect *clip_rect, uint8 opacity) {
 	uint16 src_x = 0;
 	uint16 src_y = 0;
 

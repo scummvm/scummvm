@@ -41,7 +41,7 @@ public:
 	virtual void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled);
 	virtual void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled);
 
-	virtual bool StartDraggingChild(Gump *gump, int mx, int my);
+	virtual bool StartDraggingChild(Gump *gump, int32 mx, int32 my);
 	virtual void DraggingChild(Gump *gump, int mx, int my);
 	virtual void StopDraggingChild(Gump *gump);
 

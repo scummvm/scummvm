@@ -45,7 +45,7 @@ public:
 	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
 
 	virtual bool OnKeyDown(int key, int mod);
-	virtual Gump   *OnMouseDown(int button, int mx, int my);
+	virtual Gump   *OnMouseDown(int button, int32 mx, int32 my);
 
 	bool loadData(IDataSource *ids);
 

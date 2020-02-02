@@ -87,7 +87,7 @@ bool Mouse::buttonDown(Shared::MouseButton button) {
 		if (_dragging == Mouse::DRAG_NOT) {
 			Gump *gump = getGump(_mouseButton[button].downGump);
 			if (gump) {
-				int mx2 = _mousePos.x, my2 = _mousePos.y;
+				int32 mx2 = _mousePos.x, my2 = _mousePos.y;
 				Gump *parent = gump->GetParent();
 				if (parent) parent->ScreenSpaceToGump(mx2, my2);
 				gump->OnMouseDouble(button, mx2, my2);
@@ -115,7 +115,7 @@ bool Mouse::buttonUp(Shared::MouseButton button) {
 	// Always send mouse up to the gump
 	Gump *gump = getGump(_mouseButton[button].downGump);
 	if (gump) {
-		int mx2 = _mousePos.x, my2 = _mousePos.y;
+		int32 mx2 = _mousePos.x, my2 = _mousePos.y;
 		Gump *parent = gump->GetParent();
 		if (parent)
 			parent->ScreenSpaceToGump(mx2, my2);
@@ -358,7 +358,7 @@ void Mouse::startDragging(int startx, int starty) {
 	if (gump) {
 		Gump *parent = gump->GetParent();
 		assert(parent); // can't drag root gump
-		int px = startx, py = starty;
+		int32 px = startx, py = starty;
 		parent->ScreenSpaceToGump(px, py);
 		if (gump->IsDraggable() && parent->StartDraggingChild(gump, px, py))
 			_dragging = DRAG_OK;
@@ -371,7 +371,7 @@ void Mouse::startDragging(int startx, int starty) {
 
 		// find gump item was in
 		gump = desktopGump->FindGump(startx, starty);
-		int gx = startx, gy = starty;
+		int32 gx = startx, gy = starty;
 		gump->ScreenSpaceToGump(gx, gy);
 		bool ok = !Ultima8Engine::get_instance()->isAvatarInStasis() &&
 			gump->StartDraggingItem(item, gx, gy);
@@ -418,7 +418,7 @@ void Mouse::moveDragging(int mx, int my) {
 	if (gump) {
 		Gump *parent = gump->GetParent();
 		assert(parent); // can't drag root gump
-		int px = mx, py = my;
+		int32 px = mx, py = my;
 		parent->ScreenSpaceToGump(px, py);
 		parent->DraggingChild(gump, px, py);
 	} else {
@@ -434,7 +434,7 @@ void Mouse::moveDragging(int mx, int my) {
 				if (last) last->DraggingItemLeftGump(item);
 			}
 			_draggingItem_lastGump = gump->getObjId();
-			int gx = mx, gy = my;
+			int32 gx = mx, gy = my;
 			gump->ScreenSpaceToGump(gx, gy);
 			bool ok = gump->DraggingItem(item, gx, gy);
 			if (!ok) {
@@ -484,7 +484,7 @@ void Mouse::stopDragging(int mx, int my) {
 
 			Gump *desktopGump = Ultima8Engine::get_instance()->getDesktopGump();
 			gump = desktopGump->FindGump(mx, my);
-			int gx = mx, gy = my;
+			int32 gx = mx, gy = my;
 			gump->ScreenSpaceToGump(gx, gy);
 			gump->DropItem(item, gx, gy);
 		}
@@ -507,8 +507,8 @@ void Mouse::handleDelayedEvents() {
 			now - _mouseButton[button].lastDown > DOUBLE_CLICK_TIMEOUT) {
 			Gump *gump = getGump(_mouseButton[button].downGump);
 			if (gump) {
-				int mx = _mouseButton[button].downX;
-				int my = _mouseButton[button].downY;
+				int32 mx = _mouseButton[button].downX;
+				int32 my = _mouseButton[button].downY;
 				Gump *parent = gump->GetParent();
 				if (parent)
 					parent->ScreenSpaceToGump(mx, my);

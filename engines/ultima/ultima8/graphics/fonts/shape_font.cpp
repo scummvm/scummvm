@@ -77,7 +77,7 @@ int ShapeFont::getBaselineSkip() {
 	return getHeight() + getVlead();
 }
 
-void ShapeFont::getStringSize(const Std::string &text, int &width, int &height_) {
+void ShapeFont::getStringSize(const Std::string &text, int32 &width, int32 &height_) {
 	width = hlead;
 	height_ = getHeight();
 
@@ -92,10 +92,10 @@ void ShapeFont::getStringSize(const Std::string &text, int &width, int &height_)
 
 RenderedText *ShapeFont::renderText(const Std::string &text,
                                     unsigned int &remaining,
-                                    int width, int height_, TextAlign align,
+                                    int32 width, int32 height_, TextAlign align,
                                     bool u8specials,
                                     Std::string::size_type cursor) {
-	int resultwidth, resultheight;
+	int32 resultwidth, resultheight;
 	Std::list<PositionedText> lines;
 	lines = typesetText<Traits>(this, text, remaining,
 	                            width, height_, align, u8specials,

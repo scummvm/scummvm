@@ -69,12 +69,12 @@ void TextWidget::InitGump(Gump *newparent, bool take_focus) {
 	dims.x = 0;
 
 	if (gamefont && getFont()->isHighRes()) {
-		int w = 0;
-		int x_ = 0, y_ = 0;
+		int32 w = 0;
+		int32 x_ = 0, y_ = 0;
 		ScreenSpaceToGumpRect(x_, y_, w, dims.y, ROUND_OUTSIDE);
 
-		int tx_ = dims.x;
-		int ty_ = dims.y;
+		int32 tx_ = dims.x;
+		int32 ty_ = dims.y;
 
 		// Note that GumpRectToScreenSpace is guaranteed to keep
 		// targetwidth/targetheight zero if they already were.
@@ -94,10 +94,10 @@ int TextWidget::getVlead() {
 	renderText();
 	assert(cached_text);
 
-	int vlead = cached_text->getVlead();
+	int32 vlead = cached_text->getVlead();
 
 	if (gamefont && getFont()->isHighRes()) {
-		int xv = 0, yv = 0, w = 0;
+		int32 xv = 0, yv = 0, w = 0;
 		ScreenSpaceToGumpRect(xv, yv, w, vlead, ROUND_OUTSIDE);
 	}
 
@@ -135,10 +135,10 @@ bool TextWidget::setupNextText() {
 	if (gamefont) {
 		Pentagram::Font *fontP = getFont();
 		if (fontP->isHighRes()) {
-			int x_ = 0, y_ = 0;
+			int32 x_ = 0, y_ = 0;
 			ScreenSpaceToGumpRect(x_, y_, dims.w, dims.h, ROUND_OUTSIDE);
 
-			int w = 0;
+			int32 w = 0;
 			x_ = 0;
 			y_ = 0;
 			ScreenSpaceToGumpRect(x_, y_, w, dims.y, ROUND_OUTSIDE);
@@ -189,7 +189,7 @@ void TextWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	if (!gamefont || !font->isHighRes()) return;
 
-	int x_ = 0, y_ = 0;
+	int32 x_ = 0, y_ = 0;
 	GumpToScreenSpace(x_, y_, ROUND_BOTTOMRIGHT);
 
 	if (!blendColour)
@@ -203,13 +203,13 @@ void TextWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	x_ = dims.x;
 	y_ = dims.y;
-	int w = dims.w, h = dims.h;
+	int32 w = dims.w, h = dims.h;
 	GumpRectToScreenSpace(x_, y_, w, h, ROUND_OUTSIDE);
 	surf->FillAlpha(0x00, x_, y_, w, h);
 }
 
 // don't handle any mouse motion events, so let parent handle them for us.
-Gump *TextWidget::OnMouseMotion(int mx, int my) {
+Gump *TextWidget::OnMouseMotion(int32 mx, int32 my) {
 	return 0;
 }
 
@@ -256,7 +256,7 @@ bool TextWidget::loadData(IDataSource *ids, uint32 version) {
 	// after loading.
 	Pentagram::Font *font = getFont();
 
-	int tx_, ty_;
+	int32 tx_, ty_;
 	unsigned int remaining;
 	font->getTextSize(text.substr(current_start), tx_, ty_, remaining,
 	                  targetwidth, targetheight, textalign, true);

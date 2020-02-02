@@ -41,10 +41,10 @@ public:
 	virtual ~ScrollGump();
 
 	// Go to the next page on mouse click
-	virtual void OnMouseClick(int button, int mx, int my);
+	virtual void OnMouseClick(int button, int32 mx, int32 my);
 
 	// Close on double click
-	virtual void OnMouseDouble(int button, int mx, int my);
+	virtual void OnMouseDouble(int button, int32 mx, int32 my);
 
 	// Init the gump, call after construction
 	virtual void InitGump(Gump *newparent, bool take_focus = true);

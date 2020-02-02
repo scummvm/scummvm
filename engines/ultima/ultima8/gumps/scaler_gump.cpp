@@ -130,7 +130,7 @@ void ScalerGump::DoScalerBlit(Texture *src, int swidth, int sheight, RenderSurfa
 }
 
 // Convert a parent relative point to a gump point
-void ScalerGump::ParentToGump(int &px, int &py, PointRoundDir r) {
+void ScalerGump::ParentToGump(int32 &px, int32 &py, PointRoundDir r) {
 	px -= x;
 	px *= dims.w;
 	if (px < 0 && r == ROUND_TOPLEFT) px -= (width - 1);
@@ -145,7 +145,7 @@ void ScalerGump::ParentToGump(int &px, int &py, PointRoundDir r) {
 }
 
 // Convert a gump point to parent relative point
-void ScalerGump::GumpToParent(int &gx, int &gy, PointRoundDir r) {
+void ScalerGump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir r) {
 	gx *= width;
 	if (gx < 0 && r == ROUND_TOPLEFT) gx -= (dims.w - 1);
 	if (gx > 0 && r == ROUND_BOTTOMRIGHT) gx += (dims.w - 1);

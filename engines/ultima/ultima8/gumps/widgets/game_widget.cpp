@@ -100,13 +100,13 @@ void GameWidget::ChildNotify(Gump *child, uint32 message) {
 	}
 }
 
-uint16 GameWidget::TraceObjId(int mx, int my) {
+uint16 GameWidget::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = Gump::TraceObjId(mx, my);
 	if (!objId_) objId_ = getObjId();
 	return objId_;
 }
 
-Gump *GameWidget::OnMouseDown(int button, int mx, int my) {
+Gump *GameWidget::OnMouseDown(int button, int32 mx, int32 my) {
 	Gump *g = Gump::OnMouseDown(button, mx, my);
 	if (!g) g = this;
 	return g;

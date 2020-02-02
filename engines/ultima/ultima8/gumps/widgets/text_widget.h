@@ -44,12 +44,12 @@ protected:
 	bool            gamefont;
 	int             fontnum;
 	uint32          blendColour;
-	int             tx, ty;
+	int32           tx, ty;
 
 	unsigned int    current_start; //!< start of currently displaying text
 	unsigned int    current_end;   //!< start of remaining text
 
-	int targetwidth, targetheight;
+	int32 targetwidth, targetheight;
 
 	RenderedText *cached_text;
 	Font::TextAlign textalign;
@@ -70,7 +70,7 @@ public:
 
 	virtual void            PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 scalex, int32 scaley);
 
-	virtual Gump *OnMouseMotion(int mx, int my);
+	virtual Gump *OnMouseMotion(int32 mx, int32 my);
 
 	//! display the next part of the text
 	//! \return false if there is no more text to display

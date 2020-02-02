@@ -121,7 +121,7 @@ public:
 	int getMouseDirection(int mx, int my);
 
 	//! get current mouse cursor location
-	void getMouseCoords(int &mx, int &my) const {
+	void getMouseCoords(int32 &mx, int32 &my) const {
 		mx = _mousePos.x;
 		my = _mousePos.y;
 	}
@@ -151,11 +151,11 @@ public:
 
 	DraggingState dragging() const { return _dragging; }
 
-	void setDraggingOffset(int x, int y) {
+	void setDraggingOffset(int32 x, int32 y) {
 		_draggingOffset.x = x;
 		_draggingOffset.y = y;
 	}
-	void getDraggingOffset(int &x, int &y) {
+	void getDraggingOffset(int32 &x, int32 &y) {
 		x = _draggingOffset.x;
 		y = _draggingOffset.y;
 	}

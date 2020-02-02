@@ -91,7 +91,7 @@ void ReadableGump::InitGump(Gump *newparent, bool take_focus) {
 	widget->setRelativePosition(CENTER);
 }
 
-Gump *ReadableGump::OnMouseDown(int button, int mx, int my) {
+Gump *ReadableGump::OnMouseDown(int button, int32 mx, int32 my) {
 	Close();
 	return this;
 }

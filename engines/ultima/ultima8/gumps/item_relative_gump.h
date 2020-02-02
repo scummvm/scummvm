@@ -46,12 +46,12 @@ public:
 	// Calls PaintThis and PaintChildren.
 	virtual void        Paint(RenderSurface *, int32 lerp_factor, bool scaled);
 
-	virtual void        ParentToGump(int &px, int &py,
+	virtual void        ParentToGump(int32 &px, int32 &py,
 	                                 PointRoundDir r = ROUND_TOPLEFT);
-	virtual void        GumpToParent(int &gx, int &gy,
+	virtual void        GumpToParent(int32 &gx, int32 &gy,
 	                                 PointRoundDir r = ROUND_TOPLEFT);
 
-	virtual void        Move(int x, int y);
+	virtual void        Move(int32 x, int32 y);
 
 	bool                loadData(IDataSource *ids, uint32 version);
 protected:

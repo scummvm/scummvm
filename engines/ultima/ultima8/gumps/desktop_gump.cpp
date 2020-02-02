@@ -83,7 +83,7 @@ void DesktopGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool sca
 	}
 }
 
-bool DesktopGump::StartDraggingChild(Gump *gump, int mx, int my) {
+bool DesktopGump::StartDraggingChild(Gump *gump, int32 mx, int32 my) {
 	gump->ParentToGump(mx, my);
 	Mouse::get_instance()->setDraggingOffset(mx, my);
 	MoveChildToFront(gump);
@@ -91,7 +91,7 @@ bool DesktopGump::StartDraggingChild(Gump *gump, int mx, int my) {
 }
 
 void DesktopGump::DraggingChild(Gump *gump, int mx, int my) {
-	int dx, dy;
+	int32 dx, dy;
 	Mouse::get_instance()->getDraggingOffset(dx, dy);
 	gump->Move(mx - dx, my - dy);
 }

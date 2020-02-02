@@ -67,16 +67,16 @@ public:
 	virtual void run();
 
 #if 0
-	virtual uint16 TraceObjId(int mx, int my);
+	virtual uint16 TraceObjId(int32 mx, int32 my);
 
-	virtual bool StartDraggingChild(Gump *gump, int mx, int my);
+	virtual bool StartDraggingChild(Gump *gump, int32 mx, int32 my);
 	virtual void DraggingChild(Gump *gump, int mx, int my);
 	virtual void StopDraggingChild(Gump *gump);
 
-	virtual Gump *OnMouseDown(int button, int mx, int my);
-	virtual void OnMouseUp(int button, int mx, int my);
-	virtual void OnMouseClick(int button, int mx, int my);
-	virtual void OnMouseDouble(int button, int mx, int my);
+	virtual Gump *OnMouseDown(int button, int32 mx, int32 my);
+	virtual void OnMouseUp(int button, int32 mx, int32 my);
+	virtual void OnMouseClick(int button, int32 mx, int32 my);
+	virtual void OnMouseDouble(int button, int32 mx, int32 my);
 
 	virtual void RenderSurfaceChanged();
 #endif

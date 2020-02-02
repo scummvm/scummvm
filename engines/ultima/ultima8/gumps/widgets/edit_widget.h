@@ -53,7 +53,7 @@ public:
 	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
 	virtual void PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 sx, int32 sy);
 
-	virtual Gump *OnMouseMotion(int mx, int my);
+	virtual Gump *OnMouseMotion(int32 mx, int32 my);
 	virtual bool OnKeyDown(int key, int mod);
 	virtual bool OnKeyUp(int key);
 	virtual bool OnTextInput(int unicode);

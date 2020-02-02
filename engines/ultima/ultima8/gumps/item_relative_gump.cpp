@@ -39,7 +39,7 @@ ItemRelativeGump::ItemRelativeGump()
 	: Gump(), ix(0), iy(0) {
 }
 
-ItemRelativeGump::ItemRelativeGump(int x_, int y_, int width, int height,
+ItemRelativeGump::ItemRelativeGump(int32 x_, int32 y_, int32 width, int32 height,
                                    uint16 owner_, uint32 _Flags, int32 _Layer)
 	: Gump(x_, y_, width, height, owner_, _Flags, _Layer), ix(0), iy(0) {
 }
@@ -98,14 +98,14 @@ void ItemRelativeGump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled
 
 
 // Convert a parent relative point to a gump point
-void ItemRelativeGump::ParentToGump(int &px, int &py, PointRoundDir r) {
+void ItemRelativeGump::ParentToGump(int32 &px, int32 &py, PointRoundDir r) {
 	px -= ix;
 	py -= iy;
 	Gump::ParentToGump(px, py, r);
 }
 
 // Convert a gump point to parent relative point
-void ItemRelativeGump::GumpToParent(int &gx, int &gy, PointRoundDir r) {
+void ItemRelativeGump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir r) {
 	Gump::GumpToParent(gx, gy, r);
 	gx += ix;
 	gy += iy;
@@ -133,7 +133,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 		if (gump) break;
 	}
 
-	int gx, gy;
+	int32 gx, gy;
 
 	if (!gump) {
 		gump = GetRootGump()->FindGump(GameMapGump::ClassType);
@@ -167,7 +167,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 		MoveOnScreen();
 }
 
-void ItemRelativeGump::Move(int x_, int y_) {
+void ItemRelativeGump::Move(int32 x_, int32 y_) {
 	ParentToGump(x_, y_);
 	x += x_;
 	y += y_;

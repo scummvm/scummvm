@@ -166,7 +166,7 @@ void BarkGump::run() {
 	}
 }
 
-Gump *BarkGump::OnMouseDown(int button, int mx, int my) {
+Gump *BarkGump::OnMouseDown(int button, int32 mx, int32 my) {
 	Gump *g = ItemRelativeGump::OnMouseDown(button, mx, my);
 	if (g) return g;
 

@@ -106,7 +106,7 @@ void MiniStatsGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	}
 }
 
-uint16 MiniStatsGump::TraceObjId(int mx, int my) {
+uint16 MiniStatsGump::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = Gump::TraceObjId(mx, my);
 	if (objId_ && objId_ != 65535) return objId_;
 
@@ -115,14 +115,14 @@ uint16 MiniStatsGump::TraceObjId(int mx, int my) {
 	return 0;
 }
 
-Gump *MiniStatsGump::OnMouseDown(int button, int mx, int my) {
+Gump *MiniStatsGump::OnMouseDown(int button, int32 mx, int32 my) {
 	if (button == Shared::BUTTON_LEFT)
 		return this;
 
 	return 0;
 }
 
-void MiniStatsGump::OnMouseDouble(int button, int mx, int my) {
+void MiniStatsGump::OnMouseDouble(int button, int32 mx, int32 my) {
 	// check if there already is an open PaperdollGump
 	MainActor *av = getMainActor();
 	if (!av->getGump()) {

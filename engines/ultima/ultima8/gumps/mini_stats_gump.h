@@ -45,10 +45,10 @@ public:
 	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
 
 	// Trace a click, and return ObjId
-	virtual uint16 TraceObjId(int mx, int my);
+	virtual uint16 TraceObjId(int32 mx, int32 my);
 
-	virtual Gump *OnMouseDown(int button, int mx, int my);
-	virtual void OnMouseDouble(int button, int mx, int my);
+	virtual Gump *OnMouseDown(int button, int32 mx, int32 my);
+	virtual void OnMouseDouble(int button, int32 mx, int32 my);
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:

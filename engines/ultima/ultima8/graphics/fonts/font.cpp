@@ -40,9 +40,9 @@ Font::~Font() {
 
 
 void Font::getTextSize(const Std::string &text,
-                       int &resultwidth, int &resultheight,
+                       int32 &resultwidth, int32 &resultheight,
                        unsigned int &remaining,
-                       int width, int height, TextAlign align,
+                       int32 width, int32 height, TextAlign align,
                        bool u8specials) {
 	Std::list<PositionedText> tmp;
 	tmp = typesetText<Traits>(this, text, remaining,
@@ -185,13 +185,9 @@ CHECKME: any others? (page breaks for books?)
 
 template<class T>
 Std::list<PositionedText> typesetText(Pentagram::Font *font,
-                                      const Std::string &text,
-                                      unsigned int &remaining,
-                                      int width, int height,
-                                      Pentagram::Font::TextAlign align,
-                                      bool u8specials,
-                                      int &resultwidth, int &resultheight,
-                                      Std::string::size_type cursor) {
+	const Std::string &text, unsigned int &remaining, int32 width, int32 height,
+	Pentagram::Font::TextAlign align, bool u8specials, int32 &resultwidth,
+	int32 &resultheight, Std::string::size_type cursor) {
 #if 0
 	pout << "typeset (" << width << "," << height << ") : "
 	     << text << Std::endl;
@@ -217,7 +213,7 @@ Std::list<PositionedText> typesetText(Pentagram::Font *font,
 	while (true) {
 		if (iter == text.end() || breakhere || T::isBreak(iter, u8specials)) {
 			// break here
-			int stringwidth = 0, stringheight = 0;
+			int32 stringwidth = 0, stringheight = 0;
 			font->getStringSize(curline, stringwidth, stringheight);
 			line.dims.x = 0;
 			line.dims.y = totalheight;
@@ -280,7 +276,7 @@ Std::list<PositionedText> typesetText(Pentagram::Font *font,
 			// process word
 			Std::string::const_iterator endofnextword = iter;
 			findWordEnd<T>(text, endofnextword, u8specials);
-			int stringwidth = 0, stringheight = 0;
+			int32 stringwidth = 0, stringheight = 0;
 			Std::string newline = curline + spaces +
 			                      text.substr(nextword - text.begin(), endofnextword - nextword);
 			font->getStringSize(newline, stringwidth, stringheight);
@@ -378,16 +374,16 @@ Std::list<PositionedText> typesetText(Pentagram::Font *font,
 template
 Std::list<PositionedText> typesetText<Pentagram::Font::Traits>
 (Pentagram::Font *font, const Std::string &text,
- unsigned int &remaining, int width, int height,
+ unsigned int &remaining, int32 width, int32 height,
  Pentagram::Font::TextAlign align, bool u8specials,
- int &resultwidth, int &resultheight, Std::string::size_type cursor);
+ int32 &resultwidth, int32 &resultheight, Std::string::size_type cursor);
 
 template
 Std::list<PositionedText> typesetText<Pentagram::Font::SJISTraits>
 (Pentagram::Font *font, const Std::string &text,
- unsigned int &remaining, int width, int height,
+ unsigned int &remaining, int32 width, int32 height,
  Pentagram::Font::TextAlign align, bool u8specials,
- int &resultwidth, int &resultheight, Std::string::size_type cursor);
+ int32 &resultwidth, int32 &resultheight, Std::string::size_type cursor);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

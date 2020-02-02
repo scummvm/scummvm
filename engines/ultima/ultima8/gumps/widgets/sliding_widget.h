@@ -38,7 +38,7 @@ public:
 	virtual ~SlidingWidget();
 
 	virtual void InitGump(Gump *newparent, bool take_focus = true);
-	virtual uint16 TraceObjId(int mx, int my);
+	virtual uint16 TraceObjId(int32 mx, int32 my);
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:

@@ -49,7 +49,7 @@ public:
 	virtual void        run();
 
 	// Got to the next page on mouse click
-	virtual Gump       *OnMouseDown(int button, int mx, int my);
+	virtual Gump       *OnMouseDown(int button, int32 mx, int32 my);
 
 	// Init the gump, call after construction
 	virtual void        InitGump(Gump *newparent, bool take_focus = true);

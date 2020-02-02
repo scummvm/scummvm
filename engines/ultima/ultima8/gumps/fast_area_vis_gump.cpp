@@ -65,7 +65,7 @@ void FastAreaVisGump::ConCmd_toggle(const Console::ArgvType &argv) {
 	}
 }
 
-uint16 FastAreaVisGump::TraceObjId(int mx, int my) {
+uint16 FastAreaVisGump::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = Gump::TraceObjId(mx, my);
 
 	if (!objId_ || objId_ == 65535)

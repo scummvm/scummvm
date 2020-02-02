@@ -226,7 +226,7 @@ void PaperdollGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 // Find object (if any) at (mx,my)
 // (mx,my) are relative to parent
-uint16 PaperdollGump::TraceObjId(int mx, int my) {
+uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 	uint16 objId_ = Gump::TraceObjId(mx, my);
 	if (objId_ && objId_ != 65535) return objId_;
 
@@ -266,7 +266,7 @@ uint16 PaperdollGump::TraceObjId(int mx, int my) {
 }
 
 // get item coords relative to self
-bool PaperdollGump::GetLocationOfItem(uint16 itemid, int &gx, int &gy,
+bool PaperdollGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
                                       int32 lerp_factor) {
 
 	Item *item = getItem(itemid);

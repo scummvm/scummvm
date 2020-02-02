@@ -152,7 +152,7 @@ void AvatarMoverProcess::handleCombatMode() {
 	uint32 now = g_system->getMillis();
 	bool stasis = guiapp->isAvatarInStasis();
 
-	int mx, my;
+	int32 mx, my;
 	mouse->getMouseCoords(mx, my);
 	unsigned int mouselength = mouse->getMouseLength(mx, my);
 
@@ -327,7 +327,7 @@ void AvatarMoverProcess::handleNormalMode() {
 	bool stasis = guiapp->isAvatarInStasis();
 	bool combatRun = (avatar->getActorFlags() & Actor::ACT_COMBATRUN) != 0;
 
-	int mx, my;
+	int32 mx, my;
 	mouse->getMouseCoords(mx, my);
 	unsigned int mouselength = mouse->getMouseLength(mx, my);
 
@@ -643,7 +643,7 @@ void AvatarMoverProcess::jump(Animation::Sequence action, int direction) {
 	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
 	Mouse *mouse = Mouse::get_instance();
 	MainActor *avatar = getMainActor();
-	int mx, my;
+	int32 mx, my;
 	mouse->getMouseCoords(mx, my);
 
 	// running jump
@@ -780,7 +780,7 @@ bool AvatarMoverProcess::canAttack() {
 	return (lastframe > lastAttack + (25 - avatar->getDex()));
 }
 
-void AvatarMoverProcess::OnMouseDown(int button, int mx, int my) {
+void AvatarMoverProcess::OnMouseDown(int button, int32 mx, int32 my) {
 	int bid = 0;
 
 	switch (button) {
