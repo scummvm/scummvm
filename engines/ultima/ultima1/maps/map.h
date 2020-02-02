@@ -95,7 +95,7 @@ public:
 	/**
 	 * Clears all map data
 	 */
-	virtual void clear();
+	virtual void clear() override;
 
 	/**
 	 * Load a given map

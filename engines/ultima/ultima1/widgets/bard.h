@@ -61,7 +61,7 @@ public:
 	/**
 	 * Talk to an NPC
 	 */
-	virtual void talk();
+	virtual void talk() override;
 
 	/**
 	 * Removes hit points from a creature

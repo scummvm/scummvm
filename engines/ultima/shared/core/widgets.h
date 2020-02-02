@@ -91,7 +91,7 @@ public:
 	 * @param isPreUpdate		Update is called twice in succesion during the end of turn update.
 	 *		Once with true for all widgets, then with it false
 	 */
-	virtual void update(bool isPreUpdate);
+	virtual void update(bool isPreUpdate) override;
 
 	/**
 	 * True true if the creature is dead

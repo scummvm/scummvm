@@ -66,7 +66,7 @@ protected:
 	/**
 	 * Do the attack in a given direction
 	 */
-	virtual void doAttack(Shared::Maps::Direction dir);
+	virtual void doAttack(Shared::Maps::Direction dir) override;
 public:
 	CLASSDEF;
 
@@ -86,7 +86,7 @@ protected:
 	/**
 	 * Do the attack in a given direction
 	 */
-	virtual void doAttack(Shared::Maps::Direction dir);
+	virtual void doAttack(Shared::Maps::Direction dir) override;
 public:
 	CLASSDEF;
 

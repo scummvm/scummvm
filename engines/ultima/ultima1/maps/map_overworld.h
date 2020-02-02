@@ -46,7 +46,7 @@ public:
 	/**
 	 * Load the map
 	 */
-	virtual void load(Shared::Maps::MapId mapId);
+	virtual void load(Shared::Maps::MapId mapId) override;
 
 	/**
 	 * Returns whether the map wraps around to the other side at it's edges (i.e. the overworld)

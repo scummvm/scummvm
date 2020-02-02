@@ -163,7 +163,7 @@ public:
 	/**
 	 * Get the name of a transport's weapons
 	 */
-	virtual Common::String getWeaponsName();
+	virtual Common::String getWeaponsName() override;
 
 	/**
 	 * Get the tile for the transport method
@@ -188,7 +188,7 @@ public:
 	/**
 	 * Get the name of a transport's weapons
 	 */
-	virtual Common::String getWeaponsName();
+	virtual Common::String getWeaponsName() override;
 
 	/**
 	 * Get the tile for the transport method

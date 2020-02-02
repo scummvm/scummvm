@@ -53,7 +53,7 @@ public:
 	/**
 	 * Update the cursor
 	 */
-	virtual void update();
+	virtual void update() override;
 
 	/**
 	 * Draw the cursor

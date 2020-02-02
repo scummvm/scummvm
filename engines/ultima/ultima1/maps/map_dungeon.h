@@ -76,12 +76,12 @@ public:
 	/**
 	 * Handles loading and saving viewport
 	 */
-	void synchronize(Common::Serializer &s);
+	void synchronize(Common::Serializer &s) override;
 
 	/**
 	 * Load the map
 	 */
-	virtual void load(Shared::Maps::MapId mapId);
+	virtual void load(Shared::Maps::MapId mapId) override;
 
 	/**
 	 * Gets a tile at a given position
@@ -103,7 +103,7 @@ public:
 	/**
 	 * Updates the map at the end of a turn
 	 */
-	void update();
+	void update() override;
 
 	/**
 	 * Spawns a monster within dungeons

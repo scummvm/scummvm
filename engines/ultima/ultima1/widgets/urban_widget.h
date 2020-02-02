@@ -31,7 +31,7 @@ namespace Ultima1 {
 namespace Widgets {
 
 /**
- * Base class for widgets in urban maps 
+ * Base class for widgets in urban maps
  */
 class UrbanWidget : public Shared::Maps::MapWidget {
 	DECLARE_MESSAGE_MAP;
@@ -66,7 +66,7 @@ public:
 	/**
 	 * Returns true if the given widget can move to a given position on the map
 	 */
-	virtual CanMove canMoveTo(const Point &destPos);
+	virtual CanMove canMoveTo(const Point &destPos) override;
 
 	/**
 	 * Handles loading and saving games

@@ -50,7 +50,7 @@ public:
 	 * Constructor
 	 */
 	MapBase(Ultima1Game *game, Ultima1Map *map);
-		
+
 	/**
 	 * Destructor
 	 */
@@ -112,7 +112,7 @@ public:
 	/**
 	 * Cast a specific spell
 	 */
-	virtual void castSpell(uint spell);
+	virtual void castSpell(uint spell) override;
 
 	/**
 	 * Handles dropping an amount of coins

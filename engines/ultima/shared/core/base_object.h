@@ -64,14 +64,15 @@ public:
 
 #define CLASSDEF \
 	static ::Ultima::Shared::ClassDef type(); \
-	virtual ::Ultima::Shared::ClassDef getType() const { return type(); }
+	virtual ::Ultima::Shared::ClassDef getType() const override { return type(); }
 
 /**
  * Defines the most basic root of the engine's object hierarchy.
  */
 class BaseObject {
 public:
-	CLASSDEF
+		static ::Ultima::Shared::ClassDef type();
+		virtual ::Ultima::Shared::ClassDef getType() const { return type(); }
 		virtual ~BaseObject() {
 	}
 

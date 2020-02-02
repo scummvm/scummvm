@@ -46,6 +46,11 @@ struct MSGMAP {
 #define DECLARE_MESSAGE_MAP \
 protected: \
 	static const Ultima::Shared::MSGMAP *getThisMessageMap(); \
+	virtual const Ultima::Shared::MSGMAP *getMessageMap() const override
+
+#define DECLARE_MESSAGE_MAP_BASE \
+protected: \
+	static const Ultima::Shared::MSGMAP *getThisMessageMap(); \
 	virtual const Ultima::Shared::MSGMAP *getMessageMap() const
 
 #define BEGIN_MESSAGE_MAP(theClass, baseClass) \
@@ -91,7 +96,7 @@ protected: \
  * that can receive messages
  */
 class MessageTarget: public BaseObject {
-	DECLARE_MESSAGE_MAP;
+	DECLARE_MESSAGE_MAP_BASE;
 public:
 	CLASSDEF;
 };

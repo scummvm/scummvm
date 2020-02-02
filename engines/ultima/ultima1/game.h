@@ -62,7 +62,7 @@ public:
 	/**
 	 * Returns true if the current video mode is VGA
 	 */
-	virtual bool isVGA() const { return _videoMode == VIDEOMODE_VGA; }
+	virtual bool isVGA() const override { return _videoMode == VIDEOMODE_VGA; }
 
 	/**
 	 * Called when the game starts
@@ -72,7 +72,7 @@ public:
 	/**
 	 * Returns true if the game can currently be saved
 	 */
-	virtual bool canSaveGameStateCurrently();
+	virtual bool canSaveGameStateCurrently() override;
 
 	/**
 	 * Give some treasure
