@@ -345,6 +345,48 @@ void GfxFrameout::deletePlane(Plane &planeToFind) {
 	}
 }
 
+void GfxFrameout::deletePlanesForMacRestore() {
+	// SCI32 PC games delete planes and screen items from
+	//  their Game:restore script before calling kRestore.
+	//  In Mac this work was moved into the interpreter.
+	for (PlaneList::size_type i = 0; i < _planes.size(); ) {
+		Plane *plane = _planes[i];
+
+		// don't delete the default plane
+		if (plane->isDefaultPlane()) {
+			i++;
+			continue;
+		}
+
+		// delete all inserted screen items from the plane
+		for (ScreenItemList::size_type j = 0; j < plane->_screenItemList.size(); ++j) {
+			ScreenItem *screenItem = plane->_screenItemList[j];
+			if (screenItem != nullptr &&
+				!screenItem->_object.isNumber() &&
+				_segMan->getObject(screenItem->_object)->isInserted()) {
+
+				// delete the screen item
+				if (screenItem->_created) {
+					plane->_screenItemList.erase_at(j);
+				} else {
+					screenItem->_updated = 0;
+					screenItem->_deleted = getScreenCount();
+				}
+			}
+		}
+		plane->_screenItemList.pack();
+
+		// delete the plane
+		if (plane->_created) {
+			_planes.erase(plane);
+		} else {
+			plane->_moved = 0;
+			plane->_deleted = getScreenCount();
+			i++;
+		}
+	}
+}
+
 void GfxFrameout::kernelMovePlaneItems(const reg_t object, const int16 deltaX, const int16 deltaY, const bool scrollPics) {
 	Plane *plane = _planes.findByObject(object);
 	if (plane == nullptr) {

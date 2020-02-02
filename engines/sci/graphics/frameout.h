@@ -157,6 +157,11 @@ public:
 	 */
 	void deletePlane(Plane &plane);
 
+	/**
+	 * Deletes planes when restoring a Mac game.
+	 */
+	void deletePlanesForMacRestore();
+
 	const PlaneList &getPlanes() const {
 		return _planes;
 	}

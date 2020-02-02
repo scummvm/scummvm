@@ -421,6 +421,12 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	if (getSciVersion() >= SCI_VERSION_2) {
 		g_sci->_video32->beforeSaveLoadWithSerializer(s);
 	}
+
+	if (getSciVersion() >= SCI_VERSION_2 &&
+		s.isLoading() &&
+		g_sci->getPlatform() == Common::kPlatformMacintosh) {
+		g_sci->_gfxFrameout->deletePlanesForMacRestore();
+	}
 #endif
 
 	_segMan->saveLoadWithSerializer(s);
