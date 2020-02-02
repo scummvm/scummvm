@@ -108,7 +108,18 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorRunciter, 290);
 		break;
 	case kClueCrowdInterviewA:
-		KIA_Play_Actor_Dialogue(kActorOfficerLeary, 100);
+		if (_vm->_cutContent
+			&& (_vm->_language == Common::ES_ESP
+				|| _vm->_language == Common::IT_ITA)
+		) {
+			// Same fix as in RC01:
+			// this is the second half of the sentence about Lucy hanging around with Zuben ("a fat guy")
+			// in ENG, DEU and FRA it is redundant, but it's needed in ESP and ITA
+			KIA_Play_Actor_Dialogue(kActorOfficerLeary, 100);
+			KIA_Play_Actor_Dialogue(kActorOfficerLeary, 110);
+		} else {
+			KIA_Play_Actor_Dialogue(kActorOfficerLeary, 100);
+		}
 		break;
 	case kClueCrowdInterviewB:
 		KIA_Play_Actor_Dialogue(kActorOfficerLeary, 120);
