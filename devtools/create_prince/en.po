@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-01-31 17:44+0000\n"
+"PO-Revision-Date: 2020-02-03 15:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -864,14 +864,14 @@ msgid "OTHER: Czy ja wyglądam na wariata?#B2"
 msgstr "OTHER: Do I look crazy?#B2"
 
 #: dialog0016.txt:100601
-#, fuzzy
 msgid "OTHER: Skądże znowu! To się oczywiście czasem|zdarza, ale nie mnie."
-msgstr "OTHER: Why would you say that? Although, I have|to admit it's a valid reason. In any|case it doesn't apply to me."
+msgstr "OTHER: Not at all! This, of course, sometimes happens, but not to me."
 
 #: dialog0016.txt:100602
-#, fuzzy
 msgid "OTHER: Co prawda, niewielu wie o mojej pustelni,|ale to jeszcze o niczym nie świadczy."
-msgstr "OTHER: And yes it's true, not many people|know about this hut, but that|doesn't mean anything."
+msgstr ""
+"OTHER: And yes it's true, not many people know about this hut,|but that "
+"doesn't mean anything."
 
 #: dialog0016.txt:100603
 msgid "OTHER: A, przy okazji, nie przypominaj o mnie|w zamku Garrahan."
