@@ -214,7 +214,6 @@ MODULE_OBJS := \
 	nuvie/menus/gameplay_dialog.o \
 	nuvie/menus/game_menu_dialog.o \
 	nuvie/menus/input_dialog.o \
-	nuvie/menus/joystick_dialog.o \
 	nuvie/menus/video_dialog.o \
 	nuvie/misc/sdl_compat.o \
 	nuvie/misc/iavl_tree.o \

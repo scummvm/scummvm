@@ -26,10 +26,7 @@
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/gui/gui.h"
 #include "ultima/nuvie/gui/gui_types.h"
-
-#ifdef HAVE_JOYSTICK_SUPPORT
 #include "ultima/nuvie/keybinding/keys.h"
-#endif
 
 namespace Ultima {
 namespace Nuvie {
@@ -265,18 +262,19 @@ GUI_status GUI:: HandleEvent(Common::Event *event) {
 			}
 		}
 	} else if (!block_input) {
-#ifdef HAVE_JOYSTICK_SUPPORT
-		if (event->type >= SDL_JOYAXISMOTION && event->type <= SDL_JOYBUTTONUP) {
-			event->key.keysym.sym = Game::get_game()->get_keybinder()->get_key_from_joy_events(event);
-			if (event->key.keysym.sym == Common::KEYCODE_INVALID) { // isn't mapped, is in deadzone, or axis didn't return to center before moving again
+		if (event->type == Common::EVENT_JOYAXIS_MOTION ||
+				event->type == Common::EVENT_JOYBUTTON_DOWN ||
+				event->type == Common::EVENT_JOYBUTTON_UP) {
+			event->kbd.keycode = Game::get_game()->get_keybinder()->get_key_from_joy_events(event);
+			if (event->kbd.keycode == Common::KEYCODE_INVALID) { // isn't mapped, is in deadzone, or axis didn't return to center before moving again
 				HandleStatus(status);
 				CleanupDeletedWidgets(status != GUI_QUIT);
 				return status; // pretend nothing happened
 			}
-			event->type = SDL_KEYDOWN;
-			event->key.keysym.mod = Common::KBD_NONE;
+			event->type = Common::EVENT_KEYDOWN;
+			event->kbd.flags = 0;
 		}
-#endif
+
 		switch (event->type) {
 		/* SDL_QUIT events quit the GUI */
 		// case SDL_QUIT:

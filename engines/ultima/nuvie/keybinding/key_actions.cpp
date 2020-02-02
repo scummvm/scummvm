@@ -162,9 +162,7 @@ void ActionSelectNewCommandBar(int const *params) {
 
 	cb->grab_focus();
 	cb->Show();
-#ifdef HAVE_JOYSTICK_SUPPORT
 	GAME->get_keybinder()->set_enable_joy_repeat(false);
-#endif
 }
 
 void ActionDollGump(int const *params) {

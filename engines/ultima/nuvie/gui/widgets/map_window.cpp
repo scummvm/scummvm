@@ -670,27 +670,20 @@ void MapWindow::update() {
 		} else
 			walking = false;
 	}
-#ifdef HAVE_JOYSTICK_SUPPORT // repeat axis or hat when walking or wizard_eye_mode
+
 	KeyBinder *keybinder = game->get_keybinder();
-	if (keybinder->get_joystick() && keybinder->is_joy_repeat_enabled() && (event->get_mode() == MOVE_MODE || is_wizard_eye_mode())
-	        && keybinder->get_next_joy_repeat_time() < clock->get_ticks())
-// !game->user_paused(), !game->get_view_manager()->gumps_are_active() - I don't think these are needed but may need them later
-	{
-		Common::KeyCode key;
-		if (keybinder->is_hat_repeating())
-			key = keybinder->get_key_from_joy_hat_button(SDL_JoystickGetHat(keybinder->get_joystick(), 0));
-		else
-			key = keybinder->get_key_from_joy_walk_axes();
+	if (keybinder->is_joy_repeat_enabled() && (event->get_mode() == MOVE_MODE || is_wizard_eye_mode())
+	        && keybinder->get_next_joy_repeat_time() < clock->get_ticks()) {
+		Common::KeyCode key = keybinder->get_key_from_joy_walk_axes();
 		if (key != Common::KEYCODE_INVALID) {
 			Common::Event sdl_event;
-			sdl_event.type = SDL_KEYDOWN;
-			sdl_event.key.keysym.sym = key;
-			sdl_event.key.keysym.mod = Common::KBD_NONE;
+			sdl_event.type = Common::EVENT_KEYDOWN;
+			sdl_event.kbd.keycode = key;
+			sdl_event.kbd.flags = 0;
 			if (GUI::get_gui()->HandleEvent(&sdl_event) == GUI_PASS)
 				event->handleEvent(&sdl_event);
 		}
 	}
-#endif
 }
 
 // moved from updateBlacking() so you don't have to update all blacking (SB-X)

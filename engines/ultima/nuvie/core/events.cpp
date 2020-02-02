@@ -2457,9 +2457,7 @@ void Events::gameMenuDialog() {
 		gamemenu_dialog = new GameMenuDialog(this);
 		gui->AddWidget(gamemenu_dialog);
 		gui->lock_input(gamemenu_dialog);
-#ifdef HAVE_JOYSTICK_SUPPORT
 		keybinder->set_enable_joy_repeat(false);
-#endif
 	} else
 		cancelAction();
 }
@@ -2485,9 +2483,7 @@ uint16 Events::callback(uint16 msg, CallBack *caller, void *data) {
 	case GAMEMENUDIALOG_CB_DELETE :
 		showingDialog = false;
 		gamemenu_dialog = NULL;
-#ifdef HAVE_JOYSTICK_SUPPORT
 		keybinder->set_enable_joy_repeat(true);
-#endif
 		return GUI_YUM;
 	}
 

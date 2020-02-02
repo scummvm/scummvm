@@ -149,9 +149,7 @@ GUI_status CommandBarNewUI::MouseDown(int x, int y, Shared::MouseButton button) 
 			if (pos < num_icons) {
 				cur_pos = pos;
 				hit((sint8)cur_pos);
-#ifdef HAVE_JOYSTICK_SUPPORT
 				Game::get_game()->get_keybinder()->set_enable_joy_repeat(true);
-#endif
 				Hide();
 			}
 		}
@@ -211,17 +209,13 @@ GUI_status CommandBarNewUI::KeyDown(const Common::KeyState &key) {
 	case DO_ACTION_KEY:
 		if (cur_pos < num_icons) {
 			hit((sint8)cur_pos);
-#ifdef HAVE_JOYSTICK_SUPPORT
 			keybinder->set_enable_joy_repeat(true);
-#endif
 			Hide();
 		}
 		break;
 	case CANCEL_ACTION_KEY:
 	case NEW_COMMAND_BAR_KEY:
-#ifdef HAVE_JOYSTICK_SUPPORT
 		keybinder->set_enable_joy_repeat(true);
-#endif
 		Hide();
 		break;
 

@@ -41,14 +41,7 @@ namespace Ultima {
 namespace Nuvie {
 
 #define GMD_WIDTH 150
-
-#ifdef HAVE_JOYSTICK_SUPPORT
-#include "JoystickDialog.h"
-
-#define GMD_HEIGHT 148 // 13 bigger
-#else
 #define GMD_HEIGHT 135
-#endif
 
 GameMenuDialog::GameMenuDialog(CallBack *callback)
 	: GUI_Dialog(Game::get_game()->get_game_x_offset() + (Game::get_game()->get_game_width() - GMD_WIDTH) / 2,
@@ -84,11 +77,6 @@ bool GameMenuDialog::init() {
 	input_button = new GUI_Button(this, buttonX, buttonY += row_h, width, height, "Input Options", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(input_button);
 	button_index[++last_index] = input_button;
-#ifdef HAVE_JOYSTICK_SUPPORT
-	joystick_button = new GUI_Button(this, buttonX, buttonY += row_h, width, height, "Joystick Options", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
-	AddWidget(joystick_button);
-	button_index[++last_index] = joystick_button;
-#endif
 	gameplay_button = new GUI_Button(this, buttonX, buttonY += row_h, width, height, "Gameplay Options", gui->get_font(), BUTTON_TEXTALIGN_CENTER, 0, this, 0);
 	AddWidget(gameplay_button);
 	button_index[++last_index] = gameplay_button;
@@ -176,13 +164,6 @@ GUI_status GameMenuDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 		input_dialog = (GUI_Widget *) new InputDialog(this);
 		GUI::get_gui()->AddWidget(input_dialog);
 		gui->lock_input(input_dialog);
-#ifdef HAVE_JOYSTICK_SUPPORT
-	} else if (caller == joystick_button) {
-		GUI_Widget *joystick_dialog;
-		joystick_dialog = (GUI_Widget *) new JoystickDialog(this);
-		GUI::get_gui()->AddWidget(joystick_dialog);
-		gui->lock_input(joystick_dialog);
-#endif
 	} else if (caller == gameplay_button) {
 		GUI_Widget *gameplay_dialog;
 		gameplay_dialog = (GUI_Widget *) new GameplayDialog(this);

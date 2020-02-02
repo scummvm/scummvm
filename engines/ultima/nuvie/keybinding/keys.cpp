@@ -281,25 +281,9 @@ KeyBinder::KeyBinder(Configuration *config) {
 	LoadGameSpecificKeys(); // won't load if file isn't found
 	LoadFromPatch(); // won't load if file isn't found
 
-#ifdef HAVE_JOYSTICK_SUPPORT
-	joystick = NULL;
-	Std::string enable_joystick_str;
-	config->value("config/joystick/enable_joystick", enable_joystick_str, "no");
-
-	if (enable_joystick_str == "no")
-		enable_joystick =  -1;
-#if SDL_VERSION_ATLEAST(2,0,0)
-	else if (enable_joystick_str == "auto")
-		init_joystick(127);
-#endif
-	else
-		init_joystick(clamp(atoi(enable_joystick_str.c_str()), 0, 9));
-
 	int config_int;
 	uint16 max_delay = 10000; // 10 seconds but means no repeat
-	uint16 max_deadzone = 32766; // one less than highest possible
 	config->value("config/joystick/repeat_hat", repeat_hat, false);
-
 
 	config->value("config/joystick/repeat_delay", config_int, 50);
 	joy_repeat_delay = config_int < max_delay ? config_int : max_delay;
@@ -308,54 +292,39 @@ KeyBinder::KeyBinder(Configuration *config) {
 	else
 		joy_repeat_enabled = true;
 
-// AXES_PAIR1
+	Common::fill(_joyAxisPositions, _joyAxisPositions + 8, 0);
+
+	// AXES_PAIR1
 	config->value("config/joystick/axes_pair1/x_axis", config_int, 0);
 	x_axis = config_int < 255 ? config_int : 255;
 	config->value("config/joystick/axes_pair1/y_axis", config_int, 1);
 	y_axis = config_int < 255 ? config_int : 255;
-	config->value("config/joystick/axes_pair1/x_deadzone", config_int, 8000);
-	x_axis_deadzone = config_int < max_deadzone ? config_int : max_deadzone;
-	config->value("config/joystick/axes_pair1/y_deadzone", config_int, 8000);
-	y_axis_deadzone = config_int < max_deadzone ? config_int : max_deadzone;
 	config->value("config/joystick/axes_pair1/delay", config_int, 110);
 	pair1_delay = config_int < max_delay ? config_int : max_delay;
-// AXES_PAIR2
+	// AXES_PAIR2
 	config->value("config/joystick/axes_pair2/x_axis", config_int, 3);
 	x_axis2 = config_int < 255 ? config_int : 255;
 	config->value("config/joystick/axes_pair2/y_axis", config_int, 2);
 	y_axis2 = config_int < 255 ? config_int : 255;
-	config->value("config/joystick/axes_pair2/x_deadzone", config_int, 8000);
-	x_axis2_deadzone = config_int < max_deadzone ? config_int : max_deadzone;
-	config->value("config/joystick/axes_pair2/y_deadzone", config_int, 8000);
-	y_axis2_deadzone = config_int < max_deadzone ? config_int : max_deadzone;
 	config->value("config/joystick/axes_pair2/delay", config_int, 110);
 	pair2_delay = config_int < max_delay ? config_int : max_delay;
-// AXES_PAIR3
+	// AXES_PAIR3
 	config->value("config/joystick/axes_pair3/x_axis", config_int, 4);
 	x_axis3 = config_int < 255 ? config_int : 255;
 	config->value("config/joystick/axes_pair3/y_axis", config_int, 5);
 	y_axis3 = config_int < 255 ? config_int : 255;
-	config->value("config/joystick/axes_pair3/x_deadzone", config_int, 8000);
-	x_axis3_deadzone = config_int < max_deadzone ? config_int : max_deadzone;
-	config->value("config/joystick/axes_pair3/y_deadzone", config_int, 8000);
-	y_axis3_deadzone = config_int < max_deadzone ? config_int : max_deadzone;
 	config->value("config/joystick/axes_pair3/delay", config_int, 110);
 	pair3_delay = config_int < max_delay ? config_int : max_delay;
-// AXES_PAIR4
+	// AXES_PAIR4
 	config->value("config/joystick/axes_pair4/x_axis", config_int, 6);
 	x_axis4 = config_int < 255 ? config_int : 255;
 	config->value("config/joystick/axes_pair4/y_axis", config_int, 7);
 	y_axis4 = config_int < 255 ? config_int : 255;
-	config->value("config/joystick/axes_pair4/x_deadzone", config_int, 8000);
-	x_axis4_deadzone = config_int < max_deadzone ? config_int : max_deadzone;
-	config->value("config/joystick/axes_pair4/y_deadzone", config_int, 8000);
-	y_axis4_deadzone = config_int < max_deadzone ? config_int : max_deadzone;
 	config->value("config/joystick/axes_pair4/delay", config_int, 110);
 	pair4_delay = config_int < max_delay ? config_int : max_delay;
 
 	next_axes_pair_update = next_axes_pair2_update = next_axes_pair3_update = 0;
 	next_axes_pair4_update = next_joy_repeat_time = 0;
-#endif
 }
 
 KeyBinder::~KeyBinder() {
@@ -705,8 +674,6 @@ void KeyBinder::FillParseMaps() {
 		_actions[NuvieActions[i].s] = &(NuvieActions[i]);
 }
 
-#ifdef HAVE_JOYSTICK_SUPPORT
-
 uint8 KeyBinder::get_axis(uint8 index) {
 	switch (index) {
 	case 0:
@@ -764,41 +731,11 @@ joy_axes_pairs KeyBinder::get_axes_pair(int axis) {
 		return UNHANDLED_AXES_PAIR;
 }
 
-uint16 KeyBinder::get_x_axis_deadzone(joy_axes_pairs axes_pair) {
-	switch (axes_pair) {
-	case AXES_PAIR1:
-		return x_axis_deadzone;
-	case AXES_PAIR2:
-		return x_axis2_deadzone;
-	case AXES_PAIR3:
-		return x_axis3_deadzone;
-	case AXES_PAIR4:
-		return x_axis4_deadzone;
-	default:
-		return 0; // shouldn't happen
-	}
-}
-
-uint16 KeyBinder::get_y_axis_deadzone(joy_axes_pairs axes_pair) {
-	switch (axes_pair) {
-	case AXES_PAIR1:
-		return y_axis_deadzone;
-	case AXES_PAIR2:
-		return y_axis2_deadzone;
-	case AXES_PAIR3:
-		return y_axis3_deadzone;
-	case AXES_PAIR4:
-		return y_axis4_deadzone;
-	default:
-		return 0; // shouldn't happen
-	}
-}
-
 Common::KeyCode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating) {
 	joy_axes_pairs axes_pair =  get_axes_pair(axis);
-
-	if (axes_pair == UNHANDLED_AXES_PAIR) // joystick NULL check doesn't seem to be needed - It is also checked before tring to repeat
+	if (axes_pair == UNHANDLED_AXES_PAIR)
 		return Common::KEYCODE_INVALID;
+
 	sint8 xoff = 0;
 	sint8 yoff = 0;
 	int xaxis, yaxis;
@@ -824,10 +761,10 @@ Common::KeyCode KeyBinder::get_key_from_joy_axis_motion(int axis, bool repeating
 		return Common::KEYCODE_INVALID; // shouldn't happen
 	}
 
-	if (xaxis != 255 && abs(SDL_JoystickGetAxis(joystick, xaxis)) > get_x_axis_deadzone(axes_pair))
-		xoff = (SDL_JoystickGetAxis(joystick, xaxis) < 0 ? -1 : 1);
-	if (yaxis != 255 && abs(SDL_JoystickGetAxis(joystick, yaxis)) > get_y_axis_deadzone(axes_pair))
-		yoff = (SDL_JoystickGetAxis(joystick, yaxis) < 0 ? -1 : 1);
+	if (xaxis != 255 && _joyAxisPositions[xaxis] != 0)
+		xoff = _joyAxisPositions[xaxis] < 0 ? -1 : 1;
+	if (yaxis != 255 && _joyAxisPositions[yaxis] != 0)
+		yoff = _joyAxisPositions[yaxis] < 0 ? -1 : 1;
 
 	uint8 dir = get_direction_code(xoff, yoff);
 	if (axes_pair == AXES_PAIR1) {
@@ -996,92 +933,16 @@ Common::KeyCode KeyBinder::get_key_from_joy_button(uint8 button) {
 	}
 }
 
-Common::KeyCode KeyBinder::get_key_from_joy_hat(SDL_JoyHatEvent jhat) {
-//	if(jhat.which == 0) // only handling one jhat for now and some devices don't start at 0
-	return get_key_from_joy_hat_button(jhat.value);
-//	else
-//		return Common::KEYCODE_INVALID; // unhandled hat
-}
-
-Common::KeyCode KeyBinder::get_key_from_joy_hat_button(uint8 hat_button) {
-	if (repeat_hat)
-		next_joy_repeat_time = SDL_GetTicks() + joy_repeat_delay;
-	switch (hat_button) {
-	case SDL_HAT_UP:
-		return JOY_HAT_UP;
-	case SDL_HAT_DOWN:
-		return JOY_HAT_DOWN;
-	case SDL_HAT_LEFT:
-		return JOY_HAT_LEFT;
-	case SDL_HAT_RIGHT:
-		return JOY_HAT_RIGHT;
-	case SDL_HAT_RIGHTUP:
-		return JOY_HAT_RIGHTUP;
-	case SDL_HAT_RIGHTDOWN:
-		return JOY_HAT_RIGHTDOWN;
-	case SDL_HAT_LEFTUP:
-		return JOY_HAT_LEFTUP;
-	case SDL_HAT_LEFTDOWN:
-		return JOY_HAT_LEFTDOWN;
-	default:
-		return Common::KEYCODE_INVALID; // center or unhandled position
-	}
-}
-
 Common::KeyCode KeyBinder::get_key_from_joy_events(Common::Event *event) {
-	if (event->type == SDL_JOYBUTTONUP)
-		return get_key_from_joy_button(event->jbutton.button);
-	else if (event->type == SDL_JOYHATMOTION)
-		return get_key_from_joy_hat(event->jhat);
-	else if (event->type == SDL_JOYAXISMOTION)
-		return get_key_from_joy_axis_motion(event->jaxis.axis, false);
-	else
+	if (event->type == Common::EVENT_JOYBUTTON_UP) {
+		return get_key_from_joy_button(event->joystick.button);
+	} else if (event->type == Common::EVENT_JOYAXIS_MOTION && event->joystick.axis < 8) {
+		_joyAxisPositions[event->joystick.axis] = event->joystick.position;
+		return get_key_from_joy_axis_motion(event->joystick.axis, false);
+	} else {
 		return Common::KEYCODE_INVALID;
-}
-
-void KeyBinder::init_joystick(sint8 joy_num) {
-	enable_joystick = joy_num;
-	if (joystick) {
-		SDL_JoystickClose(joystick);
-		joystick = NULL;
-		if (enable_joystick == - 1)
-			SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
-	}
-	enable_joystick = joy_num;
-
-	if (enable_joystick > - 1) {
-		int joystick_index = (int)enable_joystick;
-		SDL_InitSubSystem(SDL_INIT_JOYSTICK);
-
-		if (SDL_NumJoysticks() > 0) {
-			for (int i = 0; i < SDL_NumJoysticks(); i++)
-				fprintf(stdout, "Joystick %i is %s.\n", i, SDL_JoystickNameForIndex(i));
-#if SDL_VERSION_ATLEAST(2,0,0)
-//can use SDL_GameControllerGetAttached(SDL_GameController* gamecontroller) when we implement SDL2
-			if (enable_joystick == 127) { // autodetect - seems to always pick joystick 0 but there is some possiblity that SDL couldn't open it
-				for (int i = 0; joystick == NULL && i < SDL_NumJoysticks(); i++) {
-					joystick_index = i;
-					joystick = SDL_JoystickOpen(i);
-				}
-			} else
-#endif
-				joystick = SDL_JoystickOpen(joystick_index);
-		}
-		if (joystick == NULL) {
-			if (enable_joystick == 127 || SDL_NumJoysticks() == 0)
-				fprintf(stderr, "Couldn't find any joysticks.\n");
-			else
-				fprintf(stderr, "Joysticks number %d was not found.\n", joystick_index);
-			SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
-		} else {
-			fprintf(stdout, "Using joystick #%u, \"%s\". It has %u axes, %u %s, and %u buttons.\n", joystick_index, SDL_JoystickNameForIndex(joystick_index),
-			        SDL_JoystickNumAxes(joystick), SDL_JoystickNumHats(joystick), SDL_JoystickNumHats(joystick) == 1 ? "hat" : "hats", SDL_JoystickNumButtons(joystick));
-			SDL_JoystickEventState(SDL_ENABLE);
-		}
 	}
 }
-
-#endif /* HAVE_JOYSTICK_SUPPORT */
 
 char get_ascii_char_from_keysym(Common::KeyState keysym) {
 	char ascii = 0;

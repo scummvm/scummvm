@@ -30,13 +30,12 @@
 #include "common/events.h"
 #include "common/hash-str.h"
 
-#ifdef HAVE_JOYSTICK_SUPPORT
-typedef enum { AXES_PAIR1, AXES_PAIR2, AXES_PAIR3, AXES_PAIR4, UNHANDLED_AXES_PAIR } joy_axes_pairs;
-#endif
-
-
 namespace Ultima {
 namespace Nuvie {
+
+enum joy_axes_pairs {
+	AXES_PAIR1, AXES_PAIR2, AXES_PAIR3, AXES_PAIR4, UNHANDLED_AXES_PAIR
+};
 
 struct str_int_pair {
 	const char *str;
@@ -68,19 +67,15 @@ private:
 	Std::vector<Std::string> _cheatHelp;
 	ParseKeyMap _keys;
 	ParseActionMap _actions;
+	int16 _joyAxisPositions[8];
 
-
-#ifdef HAVE_JOYSTICK_SUPPORT
-	SDL_Joystick *joystick;
 	bool repeat_hat, joy_repeat_enabled; // repeat hat instead of axis when hat is found
 	uint32 next_axes_pair_update, next_axes_pair2_update, next_axes_pair3_update,
-	       next_axes_pair4_update, next_joy_repeat_time;
-	uint16 pair1_delay, pair2_delay, pair3_delay, pair4_delay, joy_repeat_delay, x_axis_deadzone,
-	       y_axis_deadzone, x_axis2_deadzone, y_axis2_deadzone, x_axis3_deadzone, y_axis3_deadzone,
-	       x_axis4_deadzone, y_axis4_deadzone;
+		next_axes_pair4_update, next_joy_repeat_time;
+	uint16 pair1_delay, pair2_delay, pair3_delay, pair4_delay, joy_repeat_delay;
 	uint8 x_axis, y_axis, x_axis2, y_axis2, x_axis3, y_axis3, x_axis4, y_axis4;
 	sint8 enable_joystick;
-#endif
+
 	void LoadFromFileInternal(const char *filename);
 public:
 	KeyBinder(Configuration *config);
@@ -111,7 +106,7 @@ public:
 	bool handle_always_available_keys(ActionType a);
 
 	void ShowKeys() const;
-#ifdef HAVE_JOYSTICK_SUPPORT
+
 	uint8 get_axis(uint8 index);
 	void set_axis(uint8 index, uint8 value);
 	Common::KeyCode get_key_from_joy_walk_axes() {
@@ -121,9 +116,7 @@ public:
 	Common::KeyCode get_key_from_joy_hat_button(uint8 hat_button);
 	Common::KeyCode get_key_from_joy_events(Common::Event *event);
 	void init_joystick(sint8 joy_num);
-	SDL_Joystick *get_joystick() {
-		return joystick;
-	}
+//	SDL_Joystick *get_joystick() { return joystick; }
 	uint32 get_next_joy_repeat_time() {
 		return next_joy_repeat_time;
 	}
@@ -146,19 +139,14 @@ public:
 	void set_enable_joystick(bool val) {
 		enable_joystick = val;
 	}
-#endif
 
 private:
 	void ParseText(char *text, int len);
 	void ParseLine(char *line);
 	void FillParseMaps();
-#ifdef HAVE_JOYSTICK_SUPPORT
+
 	joy_axes_pairs get_axes_pair(int axis);
-	uint16 get_x_axis_deadzone(joy_axes_pairs axes_pair);
-	uint16 get_y_axis_deadzone(joy_axes_pairs axes_pair);
 	Common::KeyCode get_key_from_joy_button(uint8 button);
-	Common::KeyCode get_key_from_joy_hat(SDL_JoyHatEvent);
-#endif
 };
 
 } // End of namespace Nuvie

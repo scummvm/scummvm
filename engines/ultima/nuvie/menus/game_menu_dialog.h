@@ -42,12 +42,7 @@ protected:
 	CallBack *callback_object;
 	GUI_Button *load_button, *save_button, *video_button, *audio_button, *input_button,
 		*gameplay_button, *cheats_button, *continue_button, *quit_button;
-#ifdef HAVE_JOYSTICK_SUPPORT
-	GUI_Button *joystick_button;
-	GUI_Button *button_index[10]; // needs to be one bigger
-#else
 	GUI_Button *button_index[9]; // add to here when you add a button. Keep buttons in order by height
-#endif
 public:
 	GameMenuDialog(CallBack *callback);
 	~GameMenuDialog();

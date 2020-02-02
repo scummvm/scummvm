@@ -999,15 +999,19 @@ static int nscript_input_poll(lua_State *L) {
 	while (Events::get()->pollEvent(event)) {
 		//FIXME do something here.
 		KeyBinder *keybinder = Game::get_game()->get_keybinder();
-#ifdef HAVE_JOYSTICK_SUPPORT
-		if (event.type >= SDL_JOYAXISMOTION && event.type <= SDL_JOYBUTTONUP) {
-			event.key.keysym.sym = keybinder->get_key_from_joy_events(&event);
-			if (event.key.keysym.sym == Common::KEYCODE_INVALID) // make sure button isn't mapped or is in deadzone
+
+		if (event.type == Common::EVENT_JOYAXIS_MOTION ||
+				event.type == Common::EVENT_JOYBUTTON_DOWN ||
+				event.type == Common::EVENT_JOYBUTTON_UP) {
+			event.kbd.flags = 0;
+			event.kbd.keycode = keybinder->get_key_from_joy_events(&event);
+			if (event.kbd.keycode == Common::KEYCODE_INVALID)
+				// button isn't mapped or was in deadzone
 				return 0; // pretend nothing happened
-			event.type = SDL_KEYDOWN;
-			event.key.keysym.mod = Common::KBD_NONE;
+
+			event.type = Common::EVENT_KEYDOWN;
 		}
-#endif
+
 		if (event.type == Common::EVENT_KEYDOWN) {
 			Common::KeyState key = event.kbd;
 
