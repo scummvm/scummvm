@@ -30,6 +30,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "gui/EventRecorder.h"
+#include "gui/gui-manager.h"
 #include "gui/message.h"
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
@@ -134,8 +135,10 @@ bool cleanupPirated(ADDetectedGames &matched) {
 		// We ruled out all variants and now have nothing
 		if (matched.empty()) {
 			warning("Illegitimate game copy detected. We provide no support in such cases");
-			GUI::MessageDialog dialog("Illegitimate game copy detected. We provide no support in such cases", "OK");
-			dialog.runModal();
+			if (GUI::GuiManager::hasInstance()) {
+				GUI::MessageDialog dialog("Illegitimate game copy detected. We provide no support in such cases", "OK");
+				dialog.runModal();
+			};
 			return true;
 		}
 	}
