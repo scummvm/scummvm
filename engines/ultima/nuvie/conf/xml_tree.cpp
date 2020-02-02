@@ -35,7 +35,7 @@ Std::string to_uppercase(Std::string s) {
 	Std::string str = s;
 	Std::string::iterator X;
 	for (X = str.begin(); X != str.end(); ++X)
-		*X = Std::toupper(*X);
+		*X = Std::toUpper(*X);
 
 	return str;
 }

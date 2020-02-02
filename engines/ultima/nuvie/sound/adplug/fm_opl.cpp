@@ -145,7 +145,7 @@ typedef struct{
 	uint32	Cnt;		/* frequency counter			*/
 	uint32	Incr;		/* frequency counter step		*/
 	uint8   FB;			/* feedback shift value			*/
-	int32   *connect1;	/* slot1 output pointer			*/
+	signed int *connect1;	/* slot1 output pointer			*/
 	int32   op1_out[2];	/* slot1 output for feedback	*/
 	uint8   CON;		/* connection (algorithm) type	*/
 

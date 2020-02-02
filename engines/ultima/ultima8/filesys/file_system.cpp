@@ -182,7 +182,7 @@ bool FileSystem::base_to_uppercase(string &str, int count) {
 		if (todo <= 0)
 			break;
 
-		*X = static_cast<char>(Std::toupper(*X));
+		*X = static_cast<char>(Std::toUpper(*X));
 	}
 	if (X == str.rend())
 		todo--; // start of pathname counts as separator too

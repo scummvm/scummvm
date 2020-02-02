@@ -132,11 +132,11 @@ public:
 	/**
 	 * Append another string to this one
 	 */
-	void append(const string &str, size_t size = npos) {
-		if (size == npos)
+	void append(const string &str, size_t theSize = npos) {
+		if (theSize == npos)
 			*this += str;
 		else
-			*this += Common::String(str.c_str(), size);
+			*this += Common::String(str.c_str(), theSize);
 	}
 
 	/**

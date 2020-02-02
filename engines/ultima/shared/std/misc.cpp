@@ -46,11 +46,11 @@ size_t strlen(const char *str) {
 	return ::strlen(str);
 }
 
-int toupper(int ch) {
+int toUpper(int ch) {
 	return ::toupper(ch);
 }
 
-int tolower(int ch) {
+int toLower(int ch) {
 	return ::tolower(ch);
 }
 

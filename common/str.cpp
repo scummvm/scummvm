@@ -788,7 +788,7 @@ String String::substr(size_t pos, size_t len) const {
 	else if (len == npos)
 		return String(_str + pos);
 	else
-		return String(_str + pos, MIN(_size - pos, len));
+		return String(_str + pos, MIN((size_t)_size - pos, len));
 }
 
 #pragma mark -
