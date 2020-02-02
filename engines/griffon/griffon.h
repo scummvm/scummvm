@@ -413,10 +413,12 @@ private:
 	void loadObjectDB();
 
 	// saveload.cpp
-	Common::String makeSaveGameName(int slot);
-	int loadState(int slotnum);
+	virtual Common::String getSaveStateName(int slot) const override;
 	int loadPlayer(int slotnum);
-	int saveState(int slotnum);
+	virtual Common::Error loadGameState(int slot) override;
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	virtual Common::Error loadGameStream(Common::SeekableReadStream *file) override;
+	virtual Common::Error saveGameStream(Common::WriteStream *file) override;
 
 	// sound.cpp
 	void setChannelVolume(int channel, int volume);
@@ -428,13 +430,6 @@ private:
 	bool isSoundChannelPlaying(int channel);
 	void setupAudio();
 	void updateMusic();
-
-	Common::Error loadGameState(int slot) {
-		return loadState(slot) ? Common::kNoError : Common::kUnknownError;
-	}
-	Common::Error saveGameState(int slot, const Common::String &description) {
-		return saveState(slot) ? Common::kNoError : Common::kUnknownError;
-	}
 
 	virtual bool canLoadGameStateCurrently() { return true; }
 	virtual bool canSaveGameStateCurrently() { return _gameMode == kGameModePlay; }
