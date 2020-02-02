@@ -40,10 +40,10 @@ public:
 	explicit FlexFile(IDataSource *ds);
 	virtual ~FlexFile();
 
-	virtual bool exists(uint32 index) {
+	virtual bool exists(uint32 index) override {
 		return getSize(index) > 0;
 	}
-	virtual bool exists(const Std::string &name) {
+	virtual bool exists(const Std::string &name) override {
 		uint32 index;
 		if (nameToIndex(name, index))
 			return exists(index);
@@ -51,8 +51,8 @@ public:
 			return false;
 	}
 
-	virtual uint8 *getObject(uint32 index, uint32 *size = 0);
-	virtual uint8 *getObject(const Std::string &name, uint32 *size = 0) {
+	virtual uint8 *getObject(uint32 index, uint32 *size = 0) override;
+	virtual uint8 *getObject(const Std::string &name, uint32 *size = 0) override {
 		uint32 index;
 		if (nameToIndex(name, index))
 			return getObject(index, size);
@@ -61,8 +61,8 @@ public:
 	}
 
 
-	virtual uint32 getSize(uint32 index);
-	virtual uint32 getSize(const Std::string &name) {
+	virtual uint32 getSize(uint32 index) override;
+	virtual uint32 getSize(const Std::string &name) override {
 		uint32 index;
 		if (nameToIndex(name, index))
 			return getSize(index);
@@ -70,18 +70,18 @@ public:
 			return 0;
 	}
 
-	virtual uint32 getCount() {
+	virtual uint32 getCount() override {
 		return count;
 	}
 
-	virtual uint32 getIndexCount() {
+	virtual uint32 getIndexCount() override {
 		return count;
 	}
 
-	virtual bool isIndexed() const {
+	virtual bool isIndexed() const override {
 		return true;
 	}
-	virtual bool isNamed() const {
+	virtual bool isNamed() const override {
 		return false;
 	}
 

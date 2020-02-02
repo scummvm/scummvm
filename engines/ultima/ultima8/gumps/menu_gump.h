@@ -39,15 +39,15 @@ public:
 	virtual ~MenuGump(void);
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true);
-	virtual void Close(bool no_del = false);
+	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
+	virtual void Close(bool no_del = false) override;
 
 	// Paint the Gump
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
+	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual bool OnKeyDown(int key, int mod);
-	virtual bool OnTextInput(int unicode);
-	virtual void ChildNotify(Gump *child, uint32 message);
+	virtual bool OnKeyDown(int key, int mod) override;
+	virtual bool OnTextInput(int unicode) override;
+	virtual void ChildNotify(Gump *child, uint32 message) override;
 
 	static void showMenu();
 	static void ConCmd_showMenu(const Console::ArgvType &argv);

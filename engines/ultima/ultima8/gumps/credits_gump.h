@@ -41,21 +41,21 @@ public:
 	virtual ~CreditsGump(void);
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true);
+	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Set a configuration option to true when user watches entire sequence
 	void SetFlagWhenFinished(Std::string configkey_) {
 		configkey = configkey_;
 	}
 
-	virtual void Close(bool no_del = false);
+	virtual void Close(bool no_del = false) override;
 
-	virtual void run();
+	virtual void run() override;
 
 	// Paint the Gump
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
+	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual bool OnKeyDown(int key, int mod);
+	virtual bool OnKeyDown(int key, int mod) override;
 
 protected:
 

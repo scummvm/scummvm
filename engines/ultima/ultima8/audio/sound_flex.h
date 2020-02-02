@@ -46,9 +46,9 @@ public:
 		return samples[index];
 	}
 
-	virtual void cache(uint32 index);
-	virtual void uncache(uint32 index);
-	virtual bool isCached(uint32 index);
+	virtual void cache(uint32 index) override;
+	virtual void uncache(uint32 index) override;
+	virtual bool isCached(uint32 index) override;
 
 private:
 	Pentagram::AudioSample      **samples;

@@ -56,7 +56,7 @@ public:
 
 	ShapeFont *getFont(uint32 fontnum);
 
-	virtual void cache(uint32 fontnum);
+	virtual void cache(uint32 fontnum) override;
 };
 
 } // End of namespace Ultima8

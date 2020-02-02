@@ -64,9 +64,9 @@ public:
 	//! Get the Adlib Timbres (index 259)
 	IDataSource *getAdlibTimbres();
 
-	virtual void cache(uint32 index);
-	virtual void uncache(uint32 index);
-	virtual bool isCached(uint32 index);
+	virtual void cache(uint32 index) override;
+	virtual void uncache(uint32 index) override;
+	virtual bool isCached(uint32 index) override;
 
 	uint8 *getRawObject(uint32 index, uint32 *sizep = 0) {
 		return Pentagram::Archive::getRawObject(index, sizep);

@@ -44,11 +44,11 @@ public:
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void run();
+	virtual void run() override;
 
-	virtual void terminate();
+	virtual void terminate() override;
 
-	virtual void dumpInfo();
+	virtual void dumpInfo() override;
 
 	Animation::Sequence getAction() const {
 		return action;
@@ -56,7 +56,7 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 	virtual bool init();
 

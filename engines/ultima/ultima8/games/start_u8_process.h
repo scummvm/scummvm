@@ -33,14 +33,14 @@ protected:
 	bool _skipStart;
 	Std::string _saveName;
 
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 public:
 	StartU8Process(const Std::string &saveName);
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void run();
+	virtual void run() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 };

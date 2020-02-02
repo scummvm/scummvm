@@ -57,9 +57,9 @@ public:
 
 	Shape *getShape(uint32 shapenum);
 
-	virtual void cache(uint32 shapenum);
-	virtual void uncache(uint32 shapenum);
-	virtual bool isCached(uint32 shapenum);
+	virtual void cache(uint32 shapenum) override;
+	virtual void uncache(uint32 shapenum) override;
+	virtual bool isCached(uint32 shapenum) override;
 
 protected:
 	uint16 id;

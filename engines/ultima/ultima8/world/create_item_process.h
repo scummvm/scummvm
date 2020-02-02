@@ -40,11 +40,11 @@ public:
 	                  uint32 extendedflags, int32 x, int32 y, int32 z);
 	virtual ~CreateItemProcess(void);
 
-	virtual void run();
+	virtual void run() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 	uint32 shape;
 	uint32 frame;

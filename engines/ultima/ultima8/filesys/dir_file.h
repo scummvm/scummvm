@@ -38,13 +38,13 @@ public:
 	explicit DirFile(const Std::string &path);
 	virtual ~DirFile();
 
-	virtual bool exists(const Std::string &name);
+	virtual bool exists(const Std::string &name) override;
 
 	virtual uint8 *getObject(const Std::string &name, uint32 *size = 0);
 
-	virtual uint32 getSize(const Std::string &name);
+	virtual uint32 getSize(const Std::string &name) override;
 
-	virtual uint32 getCount() {
+	virtual uint32 getCount() override {
 		return count;
 	}
 
