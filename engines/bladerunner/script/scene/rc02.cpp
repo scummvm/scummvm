@@ -184,6 +184,19 @@ bool SceneScriptRC02::ClickedOn3DObject(const char *objectName, bool a2) {
 		    || (Player_Query_Agenda() == kPlayerAgendaErratic && Random_Query(0, 1) == 1)
 		) {
 			Actor_Voice_Over(1940, kActorVoiceOver);
+			// Note: Quote 1950 is *boop* in ENG version
+			//       However it is voiced in FRA, DEU, ESP and ITA versions
+			//       In ESP and FRA this quote roughly translates to:
+			//       "Seeing them slaughtered was worse than any of my nightmares."
+			//       In DEU and ITA it seems to be the second (missing) half of the previous quote (1940)
+			//       and it is required for those.
+			if (_vm->_language == Common::FR_FRA
+			    || _vm->_language == Common::DE_DEU
+			    || _vm->_language == Common::ES_ESP
+			    || _vm->_language == Common::IT_ITA
+			) {
+				Actor_Voice_Over(1950, kActorVoiceOver);
+			}
 		} else {
 			Actor_Voice_Over(9010, kActorMcCoy);
 			Actor_Voice_Over(9015, kActorMcCoy);

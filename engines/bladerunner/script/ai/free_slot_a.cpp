@@ -213,6 +213,10 @@ void AIScriptFreeSlotA::ClickedByPlayer() {
 		if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnHoodooRats)) {
 			Game_Flag_Set(kFlagMcCoyCommentsOnHoodooRats);
 			Actor_Voice_Over(1060, kActorVoiceOver);  // Hoodoo rats
+			// Note: Quote 1070 is *boop* in ENG version.
+			// However, it is similar to 1060 quote in FRA, DEU, ESP and ITA versions
+			//          with the only difference being not mentioning the "Hoodoo Rats" name.
+			//          It uses a generic "rats" in its place.
 			Actor_Voice_Over(1080, kActorVoiceOver);
 			Actor_Voice_Over(1090, kActorVoiceOver);
 		} else {

@@ -218,9 +218,8 @@ void SceneScriptRC01::SceneLoaded() {
 			Actor_Voice_Over(1860, kActorVoiceOver);
 #else
 			// Quote 1860 is muted in the DEU version
-			// TODO: When mixing DEU voiceover with subtitles from other languages,
-			//       those subtitles would have to be merged with the previous quote
-			//       in order to show up in the DEU version
+			// The quote "No self-respecting human would own one of those frauds."
+			// is completely missing from the DEU sound files (it's not part of the previous quote)
 			if (_vm->_language != Common::DE_DEU) {
 				Actor_Voice_Over(1860, kActorVoiceOver);
 			}

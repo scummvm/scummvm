@@ -139,6 +139,15 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 				Actor_Says(kActorKlein, 130, 15);
 				Actor_Says(kActorMcCoy, 4160, 13);
 				Actor_Says(kActorKlein, 140, 16);
+				// quote 150 is *boop* in ENG version
+				// it is redundant in DEU and FRA versions (identical to second half of quote 140)
+				// it is required in ESP and ITA versions. It is the missing second half of quote 140.
+				if (_vm->_cutContent
+				    && (_vm->_language == Common::ES_ESP
+				        || _vm->_language == Common::IT_ITA)
+				) {
+					Actor_Says(kActorKlein, 150, kAnimationModeTalk);
+				}
 				Actor_Says(kActorMcCoy, 4165, 18);
 				Actor_Says(kActorKlein, 160, 13);
 				Actor_Says(kActorMcCoy, 4170, 19);
@@ -182,6 +191,14 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 				if (_vm->_cutContent) {
 					Actor_Says(kActorMcCoy, 4195, 13);
 					Actor_Says(kActorKlein, 240, 16); // Car VIN
+					// quote 250 is *boop* in ENG version
+					// it is redundant in DEU and FRA versions (identical to second half of quote 240)
+					// it is required in ESP and ITA versions. It is the missing second half of quote 240.
+					if (_vm->_language == Common::ES_ESP
+					    || _vm->_language == Common::IT_ITA
+					) {
+						Actor_Says(kActorKlein, 250, kAnimationModeTalk);
+					}
 				}
 				Actor_Set_Goal_Number(kActorKlein, kGoalKleinMovingInLab01);
 				return true;

@@ -84,6 +84,16 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		break;
 	case kClueLabCorpses:
 		KIA_Play_Actor_Dialogue(kActorKlein, 140);
+		// Similar fix to PS07:
+		// quote 150 is *boop* in ENG version
+		// it is redundant in DEU and FRA versions (identical to second half of quote 140)
+		// it is required in ESP and ITA versions. It is the missing second half of quote 140.
+		if (_vm->_cutContent
+		    && (_vm->_language == Common::ES_ESP
+		        || _vm->_language == Common::IT_ITA)
+		) {
+			KIA_Play_Actor_Dialogue(kActorKlein, 150);
+		}
 		break;
 	case kClueLabShellCasings:
 		KIA_Play_Actor_Dialogue(kActorKlein, 50);

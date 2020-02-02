@@ -24,6 +24,43 @@
 
 namespace BladeRunner {
 
+// Notes:
+// kActorBlimpGuy's speech appears
+// in specific scenes:
+//  - AR01, AR02
+//  - BB01
+//  - CT01, CT02, CT03, CT04, CT06, CT07, CT08, CT12
+//  - DR01, DR04
+//  - MA05
+//  - RC03
+// and one cutscene:
+//  - TB_FLY
+// In the in-game scene his speech is played as ambient sound using Ambient_Sounds_Add_Speech_Sound()
+// It is thus not subtitled as of yet.
+// TODO: maybe if we support dual subtitles being displayed on-screen
+// The Blimp Guy's speech in the TB_FLY VQA cutscene is subtitled.
+//
+// The FRA and ESP versions do not use the Blimp's horn sound at all during any of the announcements
+//
+// From the available quotes for kActorBlimpGuy, only quotes with id 0, 20, 40, 50 are used.
+// Quote 10 is unused:
+//    "A new life awaits you in the Off-World colonies."
+//    "The chance to begin again in a golden land of opportunity and adventure."
+//    - In ENG and DEU versions it is identical with the second half of quote id 0 and thus redundant
+//    - In FRA, ESP and ITA versions it is the missing second half of quote id 0 and is thus "required"
+//      TODO: Figure out a way to restore this quote as a continuation of the previous quote
+//            given that this is ambient sound!
+//
+// Quote 30 is unused:
+//    Roughly translates to: "What are you waiting for? Emigrate to the colonies!"
+//    - In ENG version this is a *boop* sound
+//    - In DEU version this is the start of a new announcement (the Blimp horn plays)
+//    - In ITA version this should be a continuation of an announcement (the Blimp horn does not play)
+//    - In FRA and ESP version this can be either a new announcement or a continuation of the previous announcement
+//      (the Blimp horn does not play ever in FRA and ESP versions)
+//      TODO: Figure out a way to restore this quote as a continuation of the previous quote
+//            given that this is ambient sound!
+//
 AIScriptBlimpGuy::AIScriptBlimpGuy(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 }
 
