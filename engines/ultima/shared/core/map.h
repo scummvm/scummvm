@@ -30,7 +30,6 @@
 #include "ultima/shared/gfx/dungeon_surface.h"
 
 namespace Ultima {
-
 namespace Shared {
 
 #define REGISTER_WIDGET(NAME) if (name == #NAME) return new Widgets::NAME(_game, (Ultima1Map::MapBase *)map) 
@@ -144,8 +143,7 @@ class Map {
 	 * Internal class used for storing the data for a row
 	 */
 	struct MapCellsRow {
-		friend class Map;
-	private:
+	public:
 		Common::Array<MapCell> _data;
 	public:
 		byte &operator[](int idx) { return _data[idx]; }

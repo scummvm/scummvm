@@ -47,11 +47,11 @@ size_t strlen(const char *str) {
 }
 
 int toUpper(int ch) {
-	return ::toupper(ch);
+	return toupper(ch);
 }
 
 int toLower(int ch) {
-	return ::tolower(ch);
+	return tolower(ch);
 }
 
 int strcmp(const char *leftStr, const char *rightStr) {
