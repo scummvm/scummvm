@@ -55,16 +55,26 @@ namespace Griffon {
 		sscanf(line.c_str(), A, B); \
 	} while(0)
 
-Common::String GriffonEngine::makeSaveGameName(int slot) {
+Common::String GriffonEngine::getSaveStateName(int slot) const {
 	return (_targetName + Common::String::format(".s%02d", slot));
 }
 
-int GriffonEngine::loadState(int slotnum) {
-	Common::String filename = makeSaveGameName(slotnum);
-	Common::InSaveFile *file;
-	if (!(file = _saveFileMan->openForLoading(filename)))
-		return 0;
+Common::Error GriffonEngine::loadGameState(int slot) {
+	Common::Error result = Engine::loadGameState(slot);
+	if (result.getCode() == Common::kNoError) {
+		_saveSlot = slot;
+		_gameMode = kGameModeLoadGame;
+	}
 
+	return result;
+}
+
+Common::Error GriffonEngine::saveGameState(int slot, const Common::String &desc) {
+	Common::String saveDesc = Common::String::format("Level: %d Map: %d", _player.level, _curMap);
+	return Engine::saveGameState(slot, saveDesc);
+}
+
+Common::Error GriffonEngine::loadGameStream(Common::SeekableReadStream *file) {
 	INPUT("%i", &_player.level);
 
 	if (_player.level > 0) {
@@ -123,18 +133,15 @@ int GriffonEngine::loadState(int slotnum) {
 
 		INPUT("%f", &_player.spellStrength);
 
-		_saveSlot = slotnum;
-		_gameMode = kGameModeLoadGame;
-
-		return 1; // success
+		return Common::kNoError;
 	}
 
-	return 0; // failure
+	return Common::kReadingFailed;
 }
 
 /* fill PLAYERTYPE _playera; */
 int GriffonEngine::loadPlayer(int slotnum) {
-	Common::String filename = makeSaveGameName(slotnum);
+	Common::String filename = getSaveStateName(slotnum);
 	Common::InSaveFile *file;
 
 	_playera.level = 0;
@@ -186,15 +193,7 @@ int GriffonEngine::loadPlayer(int slotnum) {
 	return 0; // fail
 }
 
-int GriffonEngine::saveState(int slotnum) {
-	Common::String filename = makeSaveGameName(slotnum);
-	Common::OutSaveFile *file;
-
-	if (!(file = _saveFileMan->openForSaving(filename))) {
-		warning("Cannot open %s for saving", filename.c_str());
-		return 0;
-	}
-
+Common::Error GriffonEngine::saveGameStream(Common::WriteStream *file) {
 	PRINT("%i", _player.level);
 
 	if (_player.level > 0) {
@@ -254,13 +253,7 @@ int GriffonEngine::saveState(int slotnum) {
 
 	drawView();
 
-	Common::String desc = Common::String::format("Level: %d Map: %d", _player.level, _curMap);
-
-	MetaEngine::appendExtendedSave(file, (_secStart + _secsInGame) * 1000, desc);
-
-	file->finalize();
-
-	return 1; // success
+	return Common::kNoError;
 }
 
 } // end of namespace Griffon
