@@ -570,12 +570,32 @@ void SceneScriptAR02::dialogueWithHassan() {
 	case 570: // DONE
 		if (!Actor_Clue_Query(kActorMcCoy, kClueHasanInterview)) {
 			Actor_Says(kActorMcCoy, 940, 13);
-			Actor_Says(kActorHasan, 70, 12);
+			// Quote 80 is *boop* in ENG and DEU versions
+			// In FRA, ITA versions it is identical to the second half of quote 70, and thus redundant
+			// In ESP version it is the missing second half of quote 70, and is required!
+			if (_vm->_cutContent
+			    && _vm->_language == Common::ES_ESP
+			) {
+				Actor_Says_With_Pause(kActorHasan, 70, 0.0f, 12);
+				Actor_Says(kActorHasan, 80, kAnimationModeTalk);
+			} else {
+				Actor_Says(kActorHasan, 70, 12);
+			}
 			Actor_Says(kActorHasan, 90, 12);
 			Actor_Says(kActorMcCoy, 180, 15);
 			Actor_Says(kActorHasan, 100, 14);
 			Actor_Says(kActorHasan, 110, 12);
-			Actor_Says(kActorHasan, 120, 13);
+			// Quote 130 is *boop* in ENG and DEU versions
+			// In FRA, ITA versions it is identical to the second half of quote 120, and thus redundant
+			// In ESP version it is the missing second half of quote 120, and is required!
+			if (_vm->_cutContent
+			    && _vm->_language == Common::ES_ESP
+			) {
+				Actor_Says_With_Pause(kActorHasan, 120, 0.0f, 13);
+				Actor_Says(kActorHasan, 130, kAnimationModeTalk);
+			} else {
+				Actor_Says(kActorHasan, 120, 13);
+			}
 			Actor_Modify_Friendliness_To_Other(kActorHasan, kActorMcCoy, -1);
 			Actor_Clue_Acquire(kActorMcCoy, kClueHasanInterview, false, kActorHasan);
 		} else {

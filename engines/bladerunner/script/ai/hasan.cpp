@@ -360,13 +360,13 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptHasan::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		_animationState = 0;
 		_var6 = 0;
 		_animationFrame = 0;
 		break;
 
-	case 3:
+	case kAnimationModeTalk:
 		_animationState = 1;
 		_var6 = 0;
 		_animationFrame = 0;

@@ -205,7 +205,18 @@ void SceneScriptCT09::PlayerWalkedIn() {
 			Actor_Says(kActorMcCoy, 605, 13);
 			Actor_Says(kActorDeskClerk, 90, 15);
 		} else {
-			Actor_Says(kActorDeskClerk, 20, 12);
+			// Quote 30 is *boop* in ENG and DEU versions
+			// In FRA version it is muted
+			// In ESP and ITA versions it is the missing second half of quote 20, and is required!
+			if (_vm->_cutContent
+			    && (_vm->_language == Common::ES_ESP
+			        || _vm->_language == Common::IT_ITA)
+			) {
+				Actor_Says_With_Pause(kActorDeskClerk, 20, 0.0f, 12);
+				Actor_Says(kActorDeskClerk, 30, kAnimationModeTalk);
+			} else {
+				Actor_Says(kActorDeskClerk, 20, 12);
+			}
 			Actor_Face_Actor(kActorMcCoy, kActorDeskClerk, true);
 			Actor_Says(kActorMcCoy, 585, 18);
 			Actor_Says(kActorDeskClerk, 40, 15);
