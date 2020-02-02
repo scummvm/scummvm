@@ -41,6 +41,8 @@ class EventManager;
 class SaveFileManager;
 class TimerManager;
 class FSNode;
+class SeekableReadStream;
+class WriteStream;
 }
 namespace GUI {
 class Debugger;
@@ -203,11 +205,25 @@ public:
 	virtual void flipMute();
 
 	/**
+	 * Generates the savegame filename
+	 */
+	virtual Common::String getSaveStateName(int slot) const {
+		return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+	}
+
+	/**
 	 * Load a game state.
 	 * @param slot	the slot from which a savestate should be loaded
 	 * @return returns kNoError on success, else an error code.
 	 */
 	virtual Common::Error loadGameState(int slot);
+
+	/**
+	 * Load a game state.
+	 * @param stream	the stream to load the savestate from
+	 * @return returns kNoError on success, else an error code.
+	 */
+	virtual Common::Error loadGameStream(Common::SeekableReadStream *stream);
 
 	/**
 	 * Sets the game slot for a savegame to be loaded after global
@@ -230,6 +246,13 @@ public:
 	 * @return returns kNoError on success, else an error code.
 	 */
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+
+	/**
+	 * Save a game state.
+	 * @param stream	The write stream to save the savegame data to
+	 * @return returns kNoError on success, else an error code.
+	 */
+	virtual Common::Error saveGameStream(Common::WriteStream *stream);
 
 	/**
 	 * Indicates whether a game state can be saved.
