@@ -196,7 +196,7 @@ public:
 	}
 
 	//  Read a 2-byte value, hsb first.
-	virtual uint16 read2high() {
+	virtual uint16 read2high() override {
 		return _in->readUint16BE();
 	}
 

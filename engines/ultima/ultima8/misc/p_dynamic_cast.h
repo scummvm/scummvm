@@ -44,6 +44,13 @@ struct RunTimeClassType {
 //
 #define ENABLE_RUNTIME_CLASSTYPE()                                              \
 	static const RunTimeClassType   ClassType;                                  \
+	virtual bool IsOfType(const RunTimeClassType & type) override;              \
+	virtual bool IsOfType(const char * type) override;                          \
+	template<class Type> inline bool IsOfType() { return IsOfType(Type::ClassType); }   \
+	virtual const RunTimeClassType & GetClassType() override { return ClassType; }
+
+#define ENABLE_RUNTIME_CLASSTYPE_BASE()                                         \
+	static const RunTimeClassType   ClassType;                                  \
 	virtual bool IsOfType(const RunTimeClassType & type);                       \
 	virtual bool IsOfType(const char * type);                                   \
 	template<class Type> inline bool IsOfType() { return IsOfType(Type::ClassType); }   \

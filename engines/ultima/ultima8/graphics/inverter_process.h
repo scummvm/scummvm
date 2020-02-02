@@ -43,7 +43,7 @@ public:
 		targetstate = target;
 	}
 
-	virtual void run();
+	virtual void run() override;
 
 	static ProcId invertScreen();
 	static void ConCmd_invertScreen(const Console::ArgvType &argv);
@@ -52,7 +52,7 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 	static InverterProcess *inverter;
 	unsigned int targetstate;

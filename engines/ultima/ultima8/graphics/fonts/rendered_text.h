@@ -57,7 +57,7 @@ public:
 		return vlead;
 	}
 
-	ENABLE_RUNTIME_CLASSTYPE()
+	ENABLE_RUNTIME_CLASSTYPE_BASE()
 
 protected:
 	int width, height;

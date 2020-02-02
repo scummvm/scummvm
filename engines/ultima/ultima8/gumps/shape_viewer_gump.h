@@ -44,17 +44,17 @@ public:
 	                uint32 _Flags = 0, int32 layer = LAYER_MODAL);
 	virtual ~ShapeViewerGump(void);
 
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
+	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual bool OnKeyDown(int key, int mod);
-	virtual bool OnTextInput(int unicode);
+	virtual bool OnKeyDown(int key, int mod) override;
+	virtual bool OnTextInput(int unicode) override;
 
 	static void U8ShapeViewer();
 	static void ConCmd_U8ShapeViewer(const Console::ArgvType &argv);
 
 	bool loadData(IDataSource *ids);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 	Std::vector<Std::pair<Std::string, ShapeArchive *> > flexes;
 	unsigned int curflex;

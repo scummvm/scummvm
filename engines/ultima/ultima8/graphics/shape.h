@@ -73,7 +73,7 @@ public:
 	static const ConvertShapeFormat *DetectShapeFormat(const uint8 *data, uint32 size);
 	static const ConvertShapeFormat *DetectShapeFormat(IDataSource *ds, uint32 size);
 
-	ENABLE_RUNTIME_CLASSTYPE()
+	ENABLE_RUNTIME_CLASSTYPE_BASE()
 
 	ENABLE_CUSTOM_MEMORY_ALLOCATION()
 

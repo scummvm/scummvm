@@ -39,14 +39,14 @@ public:
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void run();
+	virtual void run() override;
 
 	void addEgg(Egg *egg);
 	void addEgg(uint16 egg);
 
 	bool loadData(IDataSource *ids, uint32 version);
 private:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 	Std::vector<uint16> eggs;
 };

@@ -146,7 +146,7 @@ public:
 		return _out->pos();
 	}
 
-	virtual Common::WriteStream *GetRawStream() {
+	virtual Common::WriteStream *GetRawStream() override {
 		return _out;
 	}
 };
@@ -171,46 +171,46 @@ public:
 
 	virtual ~OBufferDataSource() {};
 
-	virtual void write1(uint32 val) {
+	virtual void write1(uint32 val) override {
 		*buf_ptr++ = val & 0xff;
 	};
 
-	virtual void write2(uint16 val) {
+	virtual void write2(uint16 val) override {
 		*buf_ptr++ = val & 0xff;
 		*buf_ptr++ = (val >> 8) & 0xff;
 	};
 
-	virtual void write2high(uint16 val) {
+	virtual void write2high(uint16 val) override {
 		*buf_ptr++ = (val >> 8) & 0xff;
 		*buf_ptr++ = val & 0xff;
 	};
 
-	virtual void write3(uint32 val) {
+	virtual void write3(uint32 val) override {
 		*buf_ptr++ = val & 0xff;
 		*buf_ptr++ = (val >> 8) & 0xff;
 		*buf_ptr++ = (val >> 16) & 0xff;
 	};
 
-	virtual void write4(uint32 val) {
+	virtual void write4(uint32 val) override {
 		*buf_ptr++ = val & 0xff;
 		*buf_ptr++ = (val >> 8) & 0xff;
 		*buf_ptr++ = (val >> 16) & 0xff;
 		*buf_ptr++ = (val >> 24) & 0xff;
 	};
 
-	virtual void write4high(uint32 val) {
+	virtual void write4high(uint32 val) override {
 		*buf_ptr++ = (val >> 24) & 0xff;
 		*buf_ptr++ = (val >> 16) & 0xff;
 		*buf_ptr++ = (val >> 8) & 0xff;
 		*buf_ptr++ = val & 0xff;
 	};
 
-	virtual void write(const void *b, uint32 len) {
+	virtual void write(const void *b, uint32 len) override {
 		Common::copy((const byte *)b, (const byte *)b + len, buf_ptr);
 		buf_ptr += len;
 	};
 
-	virtual void seek(uint32 pos) {
+	virtual void seek(uint32 pos) override {
 		buf_ptr = const_cast<unsigned char *>(buf) + pos;
 	};
 
@@ -240,41 +240,41 @@ public:
 		return _out;
 	}
 
-	virtual void write1(uint32 val) {
+	virtual void write1(uint32 val) override {
 		_out.push_back(static_cast<byte>(val & 0xff));
 	}
 
-	virtual void write2(uint16 val) {
+	virtual void write2(uint16 val) override {
 		_out.push_back(static_cast<byte>(val & 0xff));
 		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
 	}
 
-	virtual void write2high(uint16 val) {
+	virtual void write2high(uint16 val) override {
 		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
 		_out.push_back(static_cast<byte>(val & 0xff));
 	}
 
-	virtual void write3(uint32 val) {
+	virtual void write3(uint32 val) override {
 		_out.push_back(static_cast<byte>(val & 0xff));
 		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
 		_out.push_back(static_cast<byte>((val >> 16) & 0xff));
 	}
 
-	virtual void write4(uint32 val) {
+	virtual void write4(uint32 val) override {
 		_out.push_back(static_cast<byte>(val & 0xff));
 		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
 		_out.push_back(static_cast<byte>((val >> 16) & 0xff));
 		_out.push_back(static_cast<byte>((val >> 24) & 0xff));
 	}
 
-	virtual void write4high(uint32 val) {
+	virtual void write4high(uint32 val) override {
 		_out.push_back(static_cast<byte>((val >> 24) & 0xff));
 		_out.push_back(static_cast<byte>((val >> 16) & 0xff));
 		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
 		_out.push_back(static_cast<byte>(val & 0xff));
 	}
 
-	virtual void write(const void *b, uint32 length) {
+	virtual void write(const void *b, uint32 length) override {
 		write(b, length, length);
 	}
 
@@ -290,7 +290,7 @@ public:
 		_out.clear();
 	}
 
-	virtual void seek(uint32 /*pos*/) {
+	virtual void seek(uint32 /*pos*/) override {
 		/*_out->seekp(pos); FIXME: Do something here. */
 	}
 	virtual void skip(int32 /*pos*/) override {

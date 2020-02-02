@@ -46,7 +46,7 @@ public:
 	Font();
 	virtual ~Font();
 
-	ENABLE_RUNTIME_CLASSTYPE()
+	ENABLE_RUNTIME_CLASSTYPE_BASE()
 
 	enum TextAlign {
 		TEXT_LEFT,

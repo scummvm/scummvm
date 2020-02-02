@@ -80,11 +80,11 @@ class AudioMixer;
 class Ultima8Engine : public Shared::UltimaEngine, public CoreApp {
 private:
 	Std::list<ObjId> textmodes;      //!< Gumps that want text mode
-	
+
 	/**
 	 * Does engine deinitialization
 	 */
-	void deinitialize();
+	void deinitialize() override;
 
 	// Load and save games from arbitrary filenames from the console
 	static void ConCmd_saveGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::saveGame <optional filename>" console command
@@ -209,7 +209,7 @@ protected:
 
 	virtual bool initialize() override;
 
-	virtual void DeclareArgs();
+	virtual void DeclareArgs() override;
 
 	/**
 	 * Returns the data archive folder and version that's required
