@@ -31,6 +31,7 @@
 #include "engines/engine.h"
 #include "engines/dialogs.h"
 #include "engines/util.h"
+#include "engines/metaengine.h"
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -40,6 +41,7 @@
 #include "common/error.h"
 #include "common/list.h"
 #include "common/memstream.h"
+#include "common/savefile.h"
 #include "common/scummsys.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
@@ -631,8 +633,25 @@ void Engine::flipMute() {
 }
 
 Common::Error Engine::loadGameState(int slot) {
-	// Do nothing by default
-	return Common::kNoError;
+	Common::InSaveFile *saveFile = _saveFileMan->openForLoading(getSaveStateName(slot));
+
+	if (!saveFile)
+		return Common::kReadingFailed;
+
+	Common::Error result = loadGameStream(saveFile);
+	if (result.getCode() == Common::kNoError) {
+		ExtendedSavegameHeader header;
+		if (MetaEngine::readSavegameHeader(saveFile, &header))
+			setTotalPlayTime(header.playtime);
+	}
+
+	delete saveFile;
+	return result;
+}
+
+Common::Error Engine::loadGameStream(Common::SeekableReadStream *stream) {
+	// Default to returning an error when not implemented
+	return Common::kReadingFailed;
 }
 
 bool Engine::canLoadGameStateCurrently() {
@@ -641,8 +660,25 @@ bool Engine::canLoadGameStateCurrently() {
 }
 
 Common::Error Engine::saveGameState(int slot, const Common::String &desc) {
-	// Do nothing by default
-	return Common::kNoError;
+	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(getSaveStateName(slot));
+
+	if (!saveFile)
+		return Common::kWritingFailed;
+
+	Common::Error result = saveGameStream(saveFile);
+	if (result.getCode() == Common::kNoError) {
+		MetaEngine::appendExtendedSave(saveFile, getTotalPlayTime() / 1000, desc);
+
+		saveFile->finalize();
+	}
+
+	delete saveFile;
+	return result;
+}
+
+Common::Error Engine::saveGameStream(Common::WriteStream *stream) {
+	// Default to returning an error when not implemented
+	return Common::kWritingFailed;
 }
 
 bool Engine::canSaveGameStateCurrently() {
