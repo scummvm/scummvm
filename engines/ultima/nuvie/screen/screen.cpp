@@ -1190,7 +1190,7 @@ void Screen::update() {
 }
 
 
-void Screen::update(sint32 x, sint32 y, uint16 w, uint16 h) {
+void Screen::update(int x, int y, uint16 w, uint16 h) {
 	if (x < 0)
 		x = 0;
 	if (y < 0)
@@ -1595,7 +1595,7 @@ void Screen::draw_line(int sx, int sy, int ex, int ey, uint8 color) {
 }
 
 
-void Screen::get_mouse_location(sint32 *x, sint32 *y) {
+void Screen::get_mouse_location(int *x, int *y) {
 	Common::Point pt = Events::get()->getMousePos();
 	*x = pt.x;
 	*y = pt.y;

@@ -170,7 +170,7 @@ bool Cursor::set_pointer(uint8 ptr_num) {
 /* Draw self on screen at px,py, or at mouse location if px or py is -1.
  * Returns false on failure.
  */
-bool Cursor::display(sint32 px, sint32 py) {
+bool Cursor::display(int px, int py) {
 	if (cursors.empty() || !cursors[cursor_id])
 		return (false);
 	if (hidden)
@@ -208,7 +208,7 @@ void Cursor::clear() {
 
 /* Offset requested position px,py by pointer hotspot, and screen boundary.
  */
-inline void Cursor::fix_position(MousePointer *ptr, sint32 &px, sint32 &py) {
+inline void Cursor::fix_position(MousePointer *ptr, int &px, int &py) {
 	if ((px - ptr->point_x) < 0) // offset by hotspot
 		px = 0;
 	else

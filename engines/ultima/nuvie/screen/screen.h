@@ -137,7 +137,7 @@ public:
 	}
 
 	void update();
-	void update(sint32 x, sint32 y, uint16 w, uint16 h);
+	void update(int x, int y, uint16 w, uint16 h);
 	void preformUpdate();
 	void lock();
 	void unlock();
@@ -151,7 +151,7 @@ public:
 
 	void draw_line(int sx, int sy, int ex, int ey, uint8 color);
 
-	void get_mouse_location(sint32 *x, sint32 *y);
+	void get_mouse_location(int *x, int *y);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	void scale_sdl_window_coords(sint32 *x, sint32 *y);
