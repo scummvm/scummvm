@@ -76,38 +76,38 @@ public:
 	U6UseCode(Game *g, Configuration *cfg);
 	~U6UseCode();
 
-	bool use_obj(Obj *obj, Actor *actor);
-	bool look_obj(Obj *obj, Actor *actor);
-	bool pass_obj(Obj *obj, Actor *actor, uint16 x, uint16 y);
-	bool search_obj(Obj *obj, Actor *actor);
-	bool move_obj(Obj *obj, sint16 rel_x, sint16 rel_y);
-	bool load_obj(Obj *obj);
-	bool message_obj(Obj *obj, CallbackMessage msg, void *msg_data);
-	bool ready_obj(Obj *obj, Actor *actor);
-	bool get_obj(Obj *obj, Actor *actor);
-	bool drop_obj(Obj *obj, Actor *actor, uint16 x, uint16 y, uint16 qty = 0);
+	bool use_obj(Obj *obj, Actor *actor) override;
+	bool look_obj(Obj *obj, Actor *actor) override;
+	bool pass_obj(Obj *obj, Actor *actor, uint16 x, uint16 y) override;
+	bool search_obj(Obj *obj, Actor *actor) override;
+	bool move_obj(Obj *obj, sint16 rel_x, sint16 rel_y) override;
+	bool load_obj(Obj *obj) override;
+	bool message_obj(Obj *obj, CallbackMessage msg, void *msg_data) override;
+	bool ready_obj(Obj *obj, Actor *actor) override;
+	bool get_obj(Obj *obj, Actor *actor) override;
+	bool drop_obj(Obj *obj, Actor *actor, uint16 x, uint16 y, uint16 qty = 0) override;
 
-	bool has_usecode(Obj *obj, UseCodeEvent ev = USE_EVENT_USE);
-	bool has_usecode(Actor *actor, UseCodeEvent ev = USE_EVENT_USE);
-	bool cannot_unready(Obj *obj);
+	bool has_usecode(Obj *obj, UseCodeEvent ev = USE_EVENT_USE) override;
+	bool has_usecode(Actor *actor, UseCodeEvent ev = USE_EVENT_USE) override;
+	bool cannot_unready(Obj *obj) override;
 
 	bool is_door(Obj *obj) {
 		return (obj->obj_n >= 297 && obj->obj_n <= 300);
 	}
-	bool is_unlocked_door(Obj *obj) {
+	bool is_unlocked_door(Obj *obj) override {
 		return (is_door(obj) && obj->frame_n != 9 && obj->frame_n != 11);
 	}
-	bool is_locked_door(Obj *obj)   {
+	bool is_locked_door(Obj *obj) override {
 		return (is_door(obj) && (obj->frame_n == 9 || obj->frame_n == 11));
 	}
 	bool is_magically_locked_door(Obj *obj) {
 		return (is_door(obj) && (obj->frame_n == 13 || obj->frame_n == 15));
 	}
-	bool is_closed_door(Obj *obj)   {
+	bool is_closed_door(Obj *obj) override {
 		return (is_door(obj) && obj->frame_n > 3);
 	}
 
-	bool is_chest(Obj *obj) {
+	bool is_chest(Obj *obj) override {
 		return (obj->obj_n == OBJ_U6_CHEST);
 	}
 	bool is_closed_chest(Obj *obj) {
@@ -137,10 +137,10 @@ public:
 	void unlock(Obj *obj);
 	void lock(Obj *obj);
 
-	bool is_food(Obj *obj);
-	bool is_container(Obj *obj);
-	bool is_container(uint16 obj_n, uint8 frame_n);
-	bool is_readable(Obj *obj);
+	bool is_food(Obj *obj) override;
+	bool is_container(Obj *obj) override;
+	bool is_container(uint16 obj_n, uint8 frame_n) override;
+	bool is_readable(Obj *obj) override;
 
 	virtual uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
 
@@ -221,7 +221,7 @@ protected:
 	void sundial_set_shadow(Obj *sundial, uint8 hour);
 	void extinguish_torch(Obj *obj);
 	void light_torch(Obj *obj);
-	bool process_effects(Obj *container_obj, Actor *actor);
+	bool process_effects(Obj *container_obj, Actor *actor) override;
 	sint16 parseLatLongString(U6UseCodeLatLonEnum mode, Std::string *input);
 
 	inline bool use_find_water(uint16 *x, uint16 *y, uint8 *z);

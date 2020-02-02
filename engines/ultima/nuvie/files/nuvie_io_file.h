@@ -91,15 +91,15 @@ public:
 	virtual void close() override;
 	virtual void seek(uint32 new_pos) override;
 
-	bool write1(uint8 src);
-	bool write2(uint16 src);
-	bool write4(uint32 src);
+	bool write1(uint8 src) override;
+	bool write2(uint16 src) override;
+	bool write4(uint32 src) override;
 	void writeDesc(const Common::String &desc) {
 		_description = desc;
 	}
 
 	virtual uint32 writeBuf(const unsigned char *src, uint32 src_size) override;
-	uint32 write(NuvieIO *src);
+	uint32 write(NuvieIO *src) override;
 };
 
 } // End of namespace Nuvie

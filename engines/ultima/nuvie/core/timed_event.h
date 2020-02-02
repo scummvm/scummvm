@@ -153,7 +153,7 @@ public:
 	TimedPartyMove(uint32 step_delay = 500);
 	~TimedPartyMove();
 	void init(MapCoord *d, MapCoord *t, Obj *use_obj);
-	void timed(uint32 evtime);
+	void timed(uint32 evtime) override;
 
 	virtual uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
 

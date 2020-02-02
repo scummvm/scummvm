@@ -347,9 +347,9 @@ class ExplosiveAnim : public TimedAnim {
 public:
 	ExplosiveAnim(MapCoord *start, uint32 size);
 	~ExplosiveAnim();
-	void start();
+	void start() override;
 	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
-	bool update();
+	bool update() override;
 	bool already_hit(MapEntity ent);
 	void hit_object(Obj *obj);
 	void hit_actor(Actor *actor);
@@ -441,14 +441,14 @@ protected:
 class HitAnim : public TimedAnim {
 	Actor *hit_actor;
 
-	bool update();
+	bool update() override;
 
 public:
 	HitAnim(MapCoord *loc);
 	HitAnim(Actor *actor);
 
 	virtual uint16 callback(uint16 msg, CallBack *caller, void *msg_data) override;
-	void start()                    {
+	void start() override {
 		start_timer(300);
 	}
 };

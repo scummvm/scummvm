@@ -72,36 +72,36 @@ public:
 	ScrollWidgetGump(Configuration *cfg, Screen *s);
 	~ScrollWidgetGump();
 
-	bool parse_token(MsgText *token);
+	bool parse_token(MsgText *token) override;
 
-	bool can_display_prompt() {
+	bool can_display_prompt() override {
 		return false;
 	}
 
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
-	void display_prompt() {}
+	void display_prompt() override {}
 	void display_string(Std::string s);
 	virtual void display_string(Std::string s, Font *f, bool include_on_map_window) override {
 		return MsgScroll::display_string(s, f, include_on_map_window);
 	}
 
-	void set_font(uint8 font_type);
-	bool is_garg_font();
+	void set_font(uint8 font_type) override;
+	bool is_garg_font() override;
 
-	bool can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token);
+	bool can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token) override;
 
-	GUI_status KeyDown(const Common::KeyState &key);
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) {
+	GUI_status KeyDown(const Common::KeyState &key) override;
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override {
 		return GUI_YUM;    // otherwise we do Msgscroll::MouseUp
 	}
-	GUI_status MouseWheel(sint32 x, sint32 y);
+	GUI_status MouseWheel(sint32 x, sint32 y) override;
 
-	void move_scroll_down() {
+	void move_scroll_down() override {
 		scroll_movement_event(SCROLL_DOWN);
 	}
-	void move_scroll_up() {
+	void move_scroll_up() override {
 		scroll_movement_event(SCROLL_UP);
 	}
 

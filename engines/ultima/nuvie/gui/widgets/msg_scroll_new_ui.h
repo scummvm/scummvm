@@ -68,35 +68,35 @@ public:
 		return GUI_PASS;
 	}
 	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
-	bool can_display_prompt() {
+	bool can_display_prompt() override {
 		return false;
 	}
 
-	bool can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token);
+	bool can_fit_token_on_msgline(MsgLine *msg_line, MsgText *token) override;
 
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
-	void display_prompt() {}
+	void display_prompt() override {}
 
-	void display_string(Std::string s, Font *f, bool include_on_map_window);
+	void display_string(Std::string s, Font *f, bool include_on_map_window) override;
 
-	void set_font(uint8 font_type);
-	bool is_garg_font();
+	void set_font(uint8 font_type) override;
+	bool is_garg_font() override;
 
-	GUI_status KeyDown(const Common::KeyState &key);
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
+	GUI_status KeyDown(const Common::KeyState &key) override;
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
 
-	void move_scroll_down() {
+	void move_scroll_down() override {
 		scroll_movement_event(SCROLL_DOWN);
 	}
-	void move_scroll_up() {
+	void move_scroll_up() override {
 		scroll_movement_event(SCROLL_UP);
 	}
 
 protected:
 
 
-	MsgLine *add_new_line();
+	MsgLine *add_new_line() override;
 
 private:
 	GUI_status scroll_movement_event(ScrollEventType event);

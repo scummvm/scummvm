@@ -72,8 +72,8 @@ public:
 	~CommandBar();
 	virtual bool init_buttons();
 
-	virtual void Display(bool full_redraw);
-	virtual GUI_status MouseDown(int x, int y, Shared::MouseButton button);
+	virtual void Display(bool full_redraw) override;
+	virtual GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
 	void update() {
 		update_display = true;
 	}
@@ -96,8 +96,8 @@ public:
 	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	bool load(NuvieIO *objlist);
 	bool save(NuvieIO *objlist);
-	bool drag_accept_drop(int x, int y, int message, void *data); // needed for !orig_style
-	void drag_perform_drop(int x, int y, int message, void *data); // needed for !orig_style
+	bool drag_accept_drop(int x, int y, int message, void *data) override; // needed for !orig_style
+	void drag_perform_drop(int x, int y, int message, void *data) override; // needed for !orig_style
 };
 
 } // End of namespace Nuvie
