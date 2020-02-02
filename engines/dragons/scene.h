@@ -24,6 +24,7 @@
 
 #include "common/rect.h"
 #include "common/system.h"
+#include "screen.h"
 
 namespace Dragons {
 
@@ -85,6 +86,7 @@ public:
 	void setLayerOffset(uint8 layerNumber, Common::Point offset);
 	Common::Point getLayerOffset(uint8 layerNumber);
 	ScaleLayer *getScaleLayer();
+	void setLayerAlphaMode(uint8 layerNumber, AlphaBlendMode mode);
 private:
 	void resetActorFrameFlags();
 	void drawActorNumber(int16 x, int16 y, uint16 actorId);

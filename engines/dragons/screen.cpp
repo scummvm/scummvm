@@ -61,10 +61,10 @@ Screen::~Screen() {
 }
 
 void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY) {
-	copyRectToSurface(srcSurface.getBasePtr(0, 0), srcSurface.pitch, srcSurface.w, 0, destX, destY, srcSurface.w, srcSurface.h, false, 255);
+	copyRectToSurface(srcSurface.getBasePtr(0, 0), srcSurface.pitch, srcSurface.w, 0, destX, destY, srcSurface.w, srcSurface.h, false, NONE);
 }
 
-void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect, bool flipX, uint8 alpha) {
+void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect, bool flipX, AlphaBlendMode alpha) {
 	Common::Rect clipRect = clipRectToScreen( destX,  destY, srcRect);
 	if (clipRect.width() == 0 || clipRect.height() == 0) {
 		return;
@@ -80,7 +80,7 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 	copyRectToSurface(srcSurface.getBasePtr(clipRect.left, clipRect.top), srcSurface.pitch, srcSurface.w, clipRect.left, destX, destY, clipRect.width(), clipRect.height(), flipX, alpha);
 }
 
-void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *palette, int destX, int destY, const Common::Rect srcRect, bool flipX, uint8 alpha, uint16 scale) {
+void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *palette, int destX, int destY, const Common::Rect srcRect, bool flipX, AlphaBlendMode alpha, uint16 scale) {
 	if (scale != DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) {
 		drawScaledSprite(_backSurface, (byte *)srcSurface.getBasePtr(0, 0),
 				srcRect.width(), srcRect.height(),
@@ -118,7 +118,29 @@ uint16 alphaBlendRGB555( uint32 fg, uint32 bg, uint8 alpha ){
 	return (uint16_t)((result >> 16) | result);
 }
 
-void Screen::copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, uint8 alpha) {
+uint16 alphaBlendAdditiveRGB555( uint32 fg, uint32 bg){
+	bg = (bg | (bg << 16)) & 0b00000011111000000111110000011111;
+	fg = (fg | (fg << 16)) & 0b00000011111000000111110000011111;
+
+	uint32_t result = bg + fg;
+	if (result & (0b111111 << 26)) {
+		result &= 0x1fffff;
+		result |= 0x3E00000;
+	}
+
+	if (result & 0x1F8000) {
+		result &= 0b00000011111000000111111111111111;
+		result |= 0x7C00;
+	}
+
+	if (result & 0x3E0) {
+		result &= 0b00000011111000000111110000011111;
+		result |= 0x1f;
+	}
+	return (uint16_t)((result >> 16) | result);
+}
+
+void Screen::copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha) {
 	assert(buffer);
 
 	assert(destX >= 0 && destX < _backSurface->w);
@@ -133,12 +155,12 @@ void Screen::copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, i
 		for (int j = 0; j < width; j++) {
 			int32 srcIdx = flipX ? srcWidth - (srcXOffset * 2) - j - 1 : j;
 			if (src[srcIdx * 2] != 0 || src[srcIdx * 2 + 1] != 0) {
-				if ((src[srcIdx * 2 + 1] & 0x80) == 0 || alpha == 255) {
+				if ((src[srcIdx * 2 + 1] & 0x80) == 0 || alpha == NONE) {
 					// only copy opaque pixels
 					dst[j * 2] = src[srcIdx * 2];
 					dst[j * 2 + 1] = src[srcIdx * 2 + 1];
 				} else {
-					WRITE_LE_UINT16(&dst[j * 2], alphaBlendRGB555(READ_LE_INT16(&src[srcIdx * 2]), READ_LE_INT16(&dst[j * 2]), alpha));
+					WRITE_LE_UINT16(&dst[j * 2], alphaBlendRGB555(READ_LE_INT16(&src[srcIdx * 2]), READ_LE_INT16(&dst[j * 2]), 128));
 					// semi-transparent pixels.
 				}
 			}
@@ -148,7 +170,7 @@ void Screen::copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, i
 	}
 }
 
-void Screen::copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, uint8 alpha) {
+void Screen::copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha) {
 	assert(buffer);
 
 	assert(destX >= 0 && destX < _backSurface->w);
@@ -164,11 +186,11 @@ void Screen::copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPit
 			int32 srcIdx = flipX ? srcWidth - (srcXOffset * 2) - j - 1 : j;
 			uint16 c = READ_LE_UINT16(&palette[src[srcIdx] * 2]);
 			if (c != 0) {
-				if (!(c & 0x8000) || alpha == 255) {
+				if (!(c & 0x8000) || alpha == NONE) {
 					// only copy opaque pixels
 					WRITE_LE_UINT16(&dst[j * 2], c & ~0x8000);
 				} else {
-					WRITE_LE_UINT16(&dst[j * 2], alphaBlendRGB555(c, READ_LE_INT16(&dst[j * 2]), alpha));
+					WRITE_LE_UINT16(&dst[j * 2], alpha == NORMAL ? alphaBlendRGB555(c, READ_LE_INT16(&dst[j * 2]), 128) : alphaBlendAdditiveRGB555(c, READ_LE_INT16(&dst[j * 2])));
 					// semi-transparent pixels.
 				}
 			}
@@ -288,12 +310,12 @@ void Screen::updatePaletteTransparency(uint16 paletteNum, uint16 startOffset, ui
 	assert(startOffset < 256);
 	assert(endOffset < 256);
 
-	// TODO
 	if (paletteNum == 0) {
 		// set all layers to pixel addition blending (100% back + 100% sprite)
-//		BgLayerGsSprite[0].attribute = BgLayerGsSprite[0].attribute | 0x50000000;
-//		BgLayerGsSprite[1].attribute = BgLayerGsSprite[1].attribute | 0x50000000;
-//		BgLayerGsSprite[2].attribute = BgLayerGsSprite[2].attribute | 0x50000000;
+		DragonsEngine *vm = getEngine();
+		vm->_scene->setLayerAlphaMode(0, ADDITIVE);
+		vm->_scene->setLayerAlphaMode(1, ADDITIVE);
+		vm->_scene->setLayerAlphaMode(2, ADDITIVE);
 	}
 
 	for (int i = startOffset; i <= endOffset; i++) {
