@@ -38,19 +38,19 @@ public:
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void run();
+	virtual void run() override;
 
-	virtual void terminate();
+	virtual void terminate() override;
 
 	ObjId getTarget();
 	void setTarget(ObjId target_);
 	ObjId seekTarget();
 
-	virtual void dumpInfo();
+	virtual void dumpInfo() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 	bool isValidTarget(Actor *target_);
 	bool isEnemy(Actor *target_);

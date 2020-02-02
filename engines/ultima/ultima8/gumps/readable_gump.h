@@ -42,18 +42,18 @@ public:
 	virtual ~ReadableGump();
 
 	// Close on mouse click on key press
-	virtual Gump *OnMouseDown(int button, int32 mx, int32 my);
-	virtual bool OnKeyDown(int key, int mod);
+	virtual Gump *OnMouseDown(int button, int32 mx, int32 my) override;
+	virtual bool OnKeyDown(int key, int mod) override;
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true);
+	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	INTRINSIC(I_readGrave);
 	INTRINSIC(I_readPlaque);
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

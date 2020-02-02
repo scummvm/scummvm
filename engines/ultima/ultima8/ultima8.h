@@ -245,11 +245,11 @@ public:
 		return screen;
 	}
 
-	virtual void runGame();
+	virtual void runGame() override;
 	virtual void handleEvent(const Common::Event &event);
 
-	virtual void paint();
-	virtual bool isPainting() {
+	virtual void paint() override;
+	virtual bool isPainting() override {
 		return painting;
 	}
 
@@ -337,7 +337,7 @@ public:
 	 */
 	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 
-	bool saveGame();
+	bool saveGame() override;
 
 	//! save a game
 	//! \param filename the file to save to
@@ -345,7 +345,7 @@ public:
 	bool saveGame(Std::string filename, Std::string desc,
 	              bool ignore_modals = false);
 
-	bool loadGame();
+	bool loadGame() override;
 
 	//! load a game
 	//! \param filename the savegame to load

@@ -38,7 +38,7 @@ public:
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void run();
+	virtual void run() override;
 
 	void OnMouseDown(int button, int32 mx, int32 my);
 	void OnMouseUp(int button);
@@ -49,7 +49,7 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 	void handleHangingMode();
 	void handleCombatMode();

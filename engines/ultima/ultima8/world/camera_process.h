@@ -51,7 +51,7 @@ public:
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void run();
+	virtual void run() override;
 
 	// You will notice that this isn't the same as how Item::GetLerped works
 	void GetLerped(int32 &x, int32 &y, int32 &z, int32 factor, bool noupdate = false);
@@ -81,11 +81,11 @@ public:
 
 	void                    ItemMoved();
 
-	virtual void terminate();   // Terminate NOW!
+	virtual void terminate() override;   // Terminate NOW!
 
 	bool loadData(IDataSource *ids, uint32 version);
 private:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 	int32 sx, sy, sz;
 	int32 ex, ey, ez;
