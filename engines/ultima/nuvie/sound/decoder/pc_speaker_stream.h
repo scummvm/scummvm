@@ -78,7 +78,7 @@ public:
 
 	}
 
-	PCSpeakerFreqStream(uint32 start, uint16 d);
+	PCSpeakerFreqStream(uint start, uint16 d);
 	~PCSpeakerFreqStream();
 	uint32 getLengthInMsec();
 	int readBuffer(sint16 *buffer, const int numSamples);
@@ -172,14 +172,14 @@ protected:
 
 };
 
-Audio::AudioStream *makePCSpeakerSlugDissolveSfxStream(uint32 rate);
-Audio::AudioStream *makePCSpeakerGlassSfxStream(uint32 rate);
-Audio::AudioStream *makePCSpeakerMagicCastingP1SfxStream(uint32 rate, uint8 magic_circle);
-Audio::AudioStream *makePCSpeakerMagicCastingP2SfxStream(uint32 rate, uint8 magic_circle);
-Audio::AudioStream *makePCSpeakerAvatarDeathSfxStream(uint32 rate);
-Audio::AudioStream *makePCSpeakerKalLorSfxStream(uint32 rate);
-Audio::AudioStream *makePCSpeakerHailStoneSfxStream(uint32 rate);
-Audio::AudioStream *makePCSpeakerEarthQuakeSfxStream(uint32 rate);
+Audio::AudioStream *makePCSpeakerSlugDissolveSfxStream(uint rate);
+Audio::AudioStream *makePCSpeakerGlassSfxStream(uint rate);
+Audio::AudioStream *makePCSpeakerMagicCastingP1SfxStream(uint rate, uint8 magic_circle);
+Audio::AudioStream *makePCSpeakerMagicCastingP2SfxStream(uint rate, uint8 magic_circle);
+Audio::AudioStream *makePCSpeakerAvatarDeathSfxStream(uint rate);
+Audio::AudioStream *makePCSpeakerKalLorSfxStream(uint rate);
+Audio::AudioStream *makePCSpeakerHailStoneSfxStream(uint rate);
+Audio::AudioStream *makePCSpeakerEarthQuakeSfxStream(uint rate);
 
 } // End of namespace Nuvie
 } // End of namespace Ultima

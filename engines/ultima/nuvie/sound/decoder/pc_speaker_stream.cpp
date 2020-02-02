@@ -24,7 +24,7 @@
 namespace Ultima {
 namespace Nuvie {
 
-PCSpeakerFreqStream::PCSpeakerFreqStream(uint32 freq, uint16 d) {
+PCSpeakerFreqStream::PCSpeakerFreqStream(uint freq, uint16 d) {
 	frequency = freq;
 
 	duration = d * (SPKR_OUTPUT_RATE / 1255);
@@ -327,7 +327,7 @@ int PCSpeakerStutterStream::readBuffer(sint16 *buffer, const int numSamples) {
 	return s;
 }
 
-Audio::AudioStream *makePCSpeakerSlugDissolveSfxStream(uint32 rate) {
+Audio::AudioStream *makePCSpeakerSlugDissolveSfxStream(uint rate) {
 	Audio::QueuingAudioStream *stream = Audio::makeQueuingAudioStream(rate, false);
 	for (uint16 i = 0; i < 20; i++) {
 		stream->queueAudioStream(new PCSpeakerRandomStream((NUVIE_RAND() % 0x1068) + 0x258, 0x15e, 1), DisposeAfterUse::YES);
@@ -336,7 +336,7 @@ Audio::AudioStream *makePCSpeakerSlugDissolveSfxStream(uint32 rate) {
 	return stream;
 }
 
-Audio::AudioStream *makePCSpeakerGlassSfxStream(uint32 rate) {
+Audio::AudioStream *makePCSpeakerGlassSfxStream(uint rate) {
 	Audio::QueuingAudioStream *stream = Audio::makeQueuingAudioStream(rate, false);
 	for (uint16 i = 0x7d0; i < 0x4e20; i += 0x3e8) {
 		stream->queueAudioStream(new PCSpeakerRandomStream(i, 0x78, 0x28), DisposeAfterUse::YES);
@@ -346,7 +346,7 @@ Audio::AudioStream *makePCSpeakerGlassSfxStream(uint32 rate) {
 }
 
 
-Audio::AudioStream *makePCSpeakerMagicCastingP1SfxStream(uint32 rate, uint8 magic_circle) {
+Audio::AudioStream *makePCSpeakerMagicCastingP1SfxStream(uint rate, uint8 magic_circle) {
 	//Audio::QueuingAudioStream *stream = Audio::makeQueuingAudioStream(rate, false);
 
 	return new PCSpeakerRandomStream(0x2bc, 0x640 * magic_circle + 0x1f40, 0x320);
@@ -354,7 +354,7 @@ Audio::AudioStream *makePCSpeakerMagicCastingP1SfxStream(uint32 rate, uint8 magi
 	//return stream;
 }
 
-Audio::AudioStream *makePCSpeakerMagicCastingP2SfxStream(uint32 rate, uint8 magic_circle) {
+Audio::AudioStream *makePCSpeakerMagicCastingP2SfxStream(uint rate, uint8 magic_circle) {
 	Audio::QueuingAudioStream *stream = Audio::makeQueuingAudioStream(rate, false);
 
 	const sint16 word_30188[] = {3, 2, 2, 2, 1, 1, 1, 1, 1};
@@ -370,7 +370,7 @@ Audio::AudioStream *makePCSpeakerMagicCastingP2SfxStream(uint32 rate, uint8 magi
 	return stream;
 }
 
-Audio::AudioStream *makePCSpeakerAvatarDeathSfxStream(uint32 rate) {
+Audio::AudioStream *makePCSpeakerAvatarDeathSfxStream(uint rate) {
 	const uint16 avatar_death_tune[] = {0x12C, 0x119, 0x12C, 0xFA, 0x119, 0xDE, 0xFA, 0xFA};
 
 	Audio::QueuingAudioStream *stream = Audio::makeQueuingAudioStream(rate, false);
@@ -381,7 +381,7 @@ Audio::AudioStream *makePCSpeakerAvatarDeathSfxStream(uint32 rate) {
 	return stream;
 }
 
-Audio::AudioStream *makePCSpeakerKalLorSfxStream(uint32 rate) {
+Audio::AudioStream *makePCSpeakerKalLorSfxStream(uint rate) {
 	Audio::QueuingAudioStream *stream = Audio::makeQueuingAudioStream(rate, false);
 	for (uint8 i = 0; i < 0x32; i++) {
 		stream->queueAudioStream(new PCSpeakerStutterStream((0x32 - i) << 2, 0x2710 - (i << 6), 0x3e8, 1, (i << 4) + 0x320));
@@ -392,7 +392,7 @@ Audio::AudioStream *makePCSpeakerKalLorSfxStream(uint32 rate) {
 	return stream;
 }
 
-Audio::AudioStream *makePCSpeakerHailStoneSfxStream(uint32 rate) {
+Audio::AudioStream *makePCSpeakerHailStoneSfxStream(uint rate) {
 	//FIXME This doesn't sound right. It should probably use a single pcspkr object. The original also plays the hailstones individually not all at once like we do. :(
 	Audio::QueuingAudioStream *stream = Audio::makeQueuingAudioStream(rate, false);
 
@@ -414,7 +414,7 @@ Audio::AudioStream *makePCSpeakerHailStoneSfxStream(uint32 rate) {
 	return stream;
 }
 
-Audio::AudioStream *makePCSpeakerEarthQuakeSfxStream(uint32 rate) {
+Audio::AudioStream *makePCSpeakerEarthQuakeSfxStream(uint rate) {
 	Audio::QueuingAudioStream *stream = Audio::makeQueuingAudioStream(rate, false);
 
 	for (uint16 i = 0; i < 0x28; i++) {
