@@ -1118,8 +1118,11 @@ Optional Libraries:
   --disable-osx-dock-plugin    disable the NSDockTilePlugin support
                                [Mac OS X only - autodetect]
 
-  --with-sdl-prefix=DIR    prefix where the sdl-config script is
-                           installed (optional)
+  --with-sdl-prefix=DIR    prefix where the SDL package is installed (optional)
+                           e.g., if sdl-config script is at:
+                           /opt/mxe/usr/i686-w64-mingw32.static/bin/sdl2-config
+                           then you should pass:
+                           '--with-sdl-prefix=/opt/mxe/usr/i686-w64-mingw32.static'
 
   --with-freetype2-prefix=DIR  prefix where the freetype-config script is
                                installed (optional)
