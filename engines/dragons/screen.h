@@ -51,8 +51,8 @@ public:
 
 	Graphics::PixelFormat getPixelFormat() { return _pixelFormat; }
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY);
-	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, Common::Rect srcRect, bool flipX = false, uint8 alpha = 255);
-	void copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *palette, int destX, int destY, Common::Rect srcRect, bool flipX = false, uint8 alpha = 255, uint16 scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE);
+	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, Common::Rect srcRect, bool flipX = false, AlphaBlendMode alpha = NONE);
+	void copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *palette, int destX, int destY, Common::Rect srcRect, bool flipX = false, AlphaBlendMode alpha = NONE, uint16 scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE);
 	void updateScreen();
 	void loadPalette(uint16 paletteNum, byte *palette);
 	byte *getPalette(uint16 paletteNum);
@@ -68,8 +68,8 @@ public:
 	void copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, byte *palette, int yOffset);
 
 private:
-	void copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, uint8 alpha);
-	void copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, uint8 alpha);
+	void copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha);
+	void copyRectToSurface8bpp(const void *buffer, byte* palette, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha);
 	void drawScaledSprite(Graphics::Surface *destSurface, byte *source, int sourceWidth, int sourceHeight, int destX, int destY, int destWidth, int destHeight, byte *palette, bool flipX, uint8 alpha);
 };
 

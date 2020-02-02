@@ -380,7 +380,7 @@ void Scene::draw() {
 					debug(4, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d Scale: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
 						  y,
 						  s->w, s->h, actor->priorityLayer, actor->scale);
-						_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->frame->flags & Dragons::FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? 255 : 128, actor->scale);
+						_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->frame->flags & Dragons::FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? NONE : NORMAL, actor->scale);
 					if (_vm->isDebugMode()) {
 						_screen->drawRect(0x7fff, Common::Rect(x, y, x + s->w, y + s->h), actor->_actorID);
 						drawActorNumber(x + s->w, y + 8, actor->_actorID);
@@ -514,11 +514,15 @@ void Scene::drawBgLayer(uint8 layerNumber, Common::Rect rect, Graphics::Surface 
 		rect.bottom += offset.y;
 	}
 //	clippedRect.bottom += offset.y < 0 ? -offset.y : 0;
-	_screen->copyRectToSurface8bpp(*surface, _screen->getPalette(0), 0, 0, rect, false, 128);
+	_screen->copyRectToSurface8bpp(*surface, _screen->getPalette(0), 0, 0, rect, false, _stage->getLayerAlphaMode(layerNumber));
 }
 
 ScaleLayer *Scene::getScaleLayer() {
 	return _stage->getScaleLayer();
+}
+
+void Scene::setLayerAlphaMode(uint8 layerNumber, AlphaBlendMode mode) {
+	_stage->setLayerAlphaMode(layerNumber, mode);
 }
 
 } // End of namespace Dragons

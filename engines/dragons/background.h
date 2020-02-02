@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "bigfile.h"
 #include "dragonrms.h"
+#include "screen.h"
 
 namespace Dragons {
 class PriorityLayer;
@@ -84,6 +85,8 @@ private:
 	Common::Point *_points2;
 	uint8 layerPriority[3];
 	Common::Point layerOffset[3];
+	AlphaBlendMode layerAlphaMode[3];
+
 public:
 	Background();
 	~Background();
@@ -114,6 +117,10 @@ public:
 	void setLayerOffset(uint8 layerNumber, Common::Point offset);
 	Common::Point getLayerOffset(uint8 layerNumber);
 	ScaleLayer *getScaleLayer() { return &_scaleLayer; }
+
+	Dragons::AlphaBlendMode getLayerAlphaMode(uint8 layerNumber);
+	void setLayerAlphaMode(uint8 layerNumber, Dragons::AlphaBlendMode mode);
+
 private:
 	Common::Point *loadPoints(Common::SeekableReadStream &stream);
 	Graphics::Surface *initGfxLayer(TileMap &tileMap);

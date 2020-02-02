@@ -123,7 +123,7 @@ void FontManager::draw() {
 	Common::List<ScreenTextEntry*>::iterator it = _screenTexts.begin();
 	while (it != _screenTexts.end()) {
 		ScreenTextEntry *entry = *it;
-		_screen->copyRectToSurface8bpp(*entry->surface, _screen->getPalette(2), entry->position.x, entry->position.y, Common::Rect(entry->surface->w, entry->surface->h), false, 128);
+		_screen->copyRectToSurface8bpp(*entry->surface, _screen->getPalette(2), entry->position.x, entry->position.y, Common::Rect(entry->surface->w, entry->surface->h), false, NORMAL);
 		it++;
 	}
 }

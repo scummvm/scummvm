@@ -92,6 +92,9 @@ Background::Background() : _priorityLayer(0), _points2(0), _data(0) {
 	layerOffset[0] = Common::Point(0,0);
 	layerOffset[1] = Common::Point(0,0);
 	layerOffset[2] = Common::Point(0,0);
+	layerAlphaMode[0] = NORMAL;
+	layerAlphaMode[1] = NORMAL;
+	layerAlphaMode[2] = NORMAL;
 }
 
 Background::~Background() {
@@ -285,6 +288,16 @@ void Background::setLayerOffset(uint8 layerNumber, Common::Point offset) {
 Common::Point Background::getLayerOffset(uint8 layerNumber) {
 	assert(layerNumber < 4);
 	return layerOffset[layerNumber];
+}
+
+Dragons::AlphaBlendMode Background::getLayerAlphaMode(uint8 layerNumber) {
+	assert(layerNumber < 4);
+	return layerAlphaMode[layerNumber];
+}
+
+void Background::setLayerAlphaMode(uint8 layerNumber, Dragons::AlphaBlendMode mode) {
+	assert(layerNumber < 4);
+	layerAlphaMode[layerNumber] = mode;
 }
 
 BackgroundResourceLoader::BackgroundResourceLoader(BigfileArchive *bigFileArchive, DragonRMS *dragonRMS) : _bigFileArchive(
