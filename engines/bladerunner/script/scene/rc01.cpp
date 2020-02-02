@@ -214,7 +214,17 @@ void SceneScriptRC01::SceneLoaded() {
 		Actor_Voice_Over(1830, kActorVoiceOver);
 		Actor_Voice_Over(1850, kActorVoiceOver);
 		if (!Game_Flag_Query(kFlagDirectorsCut)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Voice_Over(1860, kActorVoiceOver);
+#else
+			// Quote 1860 is muted in the DEU version
+			// TODO: When mixing DEU voiceover with subtitles from other languages,
+			//       those subtitles would have to be merged with the previous quote
+			//       in order to show up in the DEU version
+			if (_vm->_language != Common::DE_DEU) {
+				Actor_Voice_Over(1860, kActorVoiceOver);
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			I_Sez("MG: Is David Leary a self-respecting human or is he powered by rechargeable");
 			I_Sez("batteries?\n");
 		}
@@ -340,7 +350,7 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 					    && (_vm->_language == Common::ES_ESP
 					        || _vm->_language == Common::IT_ITA)
 					) {
-						// this is the second half of the sentence about Lucy hanging around with Zuben ("a fat guy")
+						// Quote 110 is the second half of the sentence about Lucy hanging around with Zuben ("a fat guy")
 						// in ENG, DEU and FRA it is redundant, but it's needed in ESP and ITA
 						Actor_Says_With_Pause(kActorOfficerLeary, 100, 0.0f, 15);
 						Actor_Says(kActorOfficerLeary, 110, kAnimationModeTalk);

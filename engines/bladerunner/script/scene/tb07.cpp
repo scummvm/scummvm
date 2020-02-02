@@ -258,7 +258,7 @@ void SceneScriptTB07::McCoyTalkWithRachaelAndTyrell() {
 	    && (_vm->_language == Common::ES_ESP
 	        || _vm->_language == Common::IT_ITA)
 	) {
-		// this is the second half of the sentence about Tyrell having important meetings to attend to
+		// Quote 560 is the second half of the sentence about Tyrell having important meetings to attend to
 		// In ENG, DEU and FRA it is redundant because it, instead, re-uses a cut line from the removed elevator scene "Copies, only copies"
 		// However, it's needed in ESP and ITA
 		Actor_Says_With_Pause(kActorRachael, 550, 0.0f, 13);

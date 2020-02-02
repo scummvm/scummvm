@@ -1522,8 +1522,20 @@ void VKScript::askDektora(int questionId) {
 		} else {
 			VK_Subject_Reacts(90, 15, -5, 10);
 			VK_Play_Speech_Line(kActorDektora, 1870, 0.5f);
+#if BLADERUNNER_ORIGINAL_BUGS
 			VK_Play_Speech_Line(kActorMcCoy, 8532, 0.5f);
 			VK_Play_Speech_Line(kActorDektora, 1890, 0.5f);
+#else
+			// Quotes 8532 (McCoy) and 1890 (Dektora) are muted in the ESP version
+			// They are completely missing from the ESP version (they don't appear elsewhere).
+			// The quotes here are:
+			// McCoy: "That's not a single word."
+			// Dektora: "All right. Aggressive. Powerful."
+			if (_vm->_language != Common::ES_ESP) {
+				VK_Play_Speech_Line(kActorMcCoy, 8532, 0.5f);
+				VK_Play_Speech_Line(kActorDektora, 1890, 0.5f);
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		break;
 	case 7475:                          // Medium 01

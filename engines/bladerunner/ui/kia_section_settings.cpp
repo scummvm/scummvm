@@ -66,11 +66,14 @@ KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 #endif
 
 	if (_vm->_language == Common::RU_RUS) {
-		_directorsCut         = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 436, 374), 0, false); // expanded click-bounding box x-axis
-		_subtitlesEnable      = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(276, 376, 345, 386), 0, false); // moved to new line
+		// expanded click-bounding box x-axis
+		_directorsCut         = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 436, 374), 0, false);
+		// moved to new line
+		_subtitlesEnable      = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(276, 376, 345, 386), 0, false);
 	} else {
 		_directorsCut         = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 270, 374), 0, false);
-		_subtitlesEnable      = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(311, 364, 380, 374), 0, false); // moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
+		// moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
+		_subtitlesEnable      = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(311, 364, 380, 374), 0, false);
 	}
 	_playerAgendaSelector = new UIImagePicker(_vm, 5);
 
@@ -215,7 +218,8 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 				subtitlesTranslation = "Sottotitoli";
 				break;
 			case Common::ES_ESP:
-				subtitlesTranslation = "Subt\xa1tulos"; // the spanish text must have accented í
+				// the spanish text must have accented í
+				subtitlesTranslation = "Subt\xa1tulos";
 				break;
 			case Common::RU_RUS:
 				// субтитры
@@ -228,13 +232,15 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 				}
 				break;
 		}
-
-		const char *textSubtitles  = strcmp(_vm->_textOptions->getText(42), "") == 0 ? subtitlesTranslation : _vm->_textOptions->getText(42); // +1 to the max of original index of textOptions which is 41
+		// +1 to the max of original index of textOptions which is 41
+		const char *textSubtitles  = strcmp(_vm->_textOptions->getText(42), "") == 0 ? subtitlesTranslation : _vm->_textOptions->getText(42);
 
 		if (_vm->_language == Common::RU_RUS) {
-			_vm->_mainFont->drawString(&surface, textSubtitles, 288, 376, surface.w, surface.format.RGBToColor(232, 208, 136)); // special case for Russian version, put the option in a new line to avoid overlap
+			// special case for Russian version, put the option in a new line to avoid overlap
+			_vm->_mainFont->drawString(&surface, textSubtitles, 288, 376, surface.w, surface.format.RGBToColor(232, 208, 136));
 		} else {
-			_vm->_mainFont->drawString(&surface, textSubtitles, 323, 365, surface.w, surface.format.RGBToColor(232, 208, 136)); // moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
+			// moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
+			_vm->_mainFont->drawString(&surface, textSubtitles, 323, 365, surface.w, surface.format.RGBToColor(232, 208, 136));
 		}
 	}
 

@@ -157,7 +157,12 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 				Actor_Says(kActorKlein, 170, 14);
 				Actor_Says(kActorMcCoy, 4180, 13);
 				Actor_Says(kActorKlein, 180, 12);
+#if BLADERUNNER_ORIGINAL_BUGS
 				Actor_Says(kActorKlein, 190, 13);
+#else
+				// Dino's quote 190 is continued in quote 200, and needs 0.0f pause to sound better flowing
+				Actor_Says_With_Pause(kActorKlein, 190, 0.0f, 13);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 				Actor_Says(kActorKlein, 200, 16);
 				Actor_Says(kActorMcCoy, 4185, 18);
 				Actor_Says(kActorKlein, 210, 12);

@@ -33,7 +33,7 @@
 namespace BladeRunner {
 
 static const ADGameDescription gameDescriptions[] = {
-	// BladeRunner (English)
+	// BladeRunner (English) - ENG
 	{
 		"bladerunner",
 		0,
@@ -44,7 +44,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO5(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GUIO_NOMIDI)
 	},
 
-	// BladeRunner (German)
+	// BladeRunner (German) - DEU
 	{
 		"bladerunner",
 		0,
@@ -55,7 +55,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO5(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GUIO_NOMIDI)
 	},
 
-	// BladeRunner (French) - Bug #9722
+	// BladeRunner (French) - FRA - Bug #9722
 	{
 		"bladerunner",
 		0,
@@ -66,7 +66,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO5(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GUIO_NOMIDI)
 	},
 
-	// BladeRunner (Italian)
+	// BladeRunner (Italian) - ITA
 	{
 		"bladerunner",
 		0,
@@ -77,7 +77,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO5(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GUIO_NOMIDI)
 	},
 
-	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc.)
+	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc.) - RUS
 	{
 		"bladerunner",
 		0,
@@ -88,7 +88,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO5(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GUIO_NOMIDI)
 	},
 
-	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc. + Siberian Studio, R3)
+	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc. + Siberian Studio, R3) - RUS
 	{
 		"bladerunner",
 		0,
@@ -99,7 +99,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO5(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GUIO_NOMIDI)
 	},
 
-	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc. + Siberian Studio, R4)
+	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc. + Siberian Studio, R4) - RUS
 	{
 		"bladerunner",
 		0,
@@ -110,7 +110,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO5(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GUIO_NOMIDI)
 	},
 
-	// BladeRunner (Spanish)
+	// BladeRunner (Spanish) - ESP
 	{
 		"bladerunner",
 		0,
@@ -123,7 +123,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 	// Versions with restored content
 
-	// BladeRunner (English)
+	// BladeRunner (English) - ENG
 	{
 		"bladerunner-final",
 		0,
@@ -134,7 +134,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO5(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GUIO_NOMIDI)
 	},
 
-	// BladeRunner (German)
+	// BladeRunner (German) - DEU
 	{
 		"bladerunner-final",
 		0,
@@ -145,7 +145,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO5(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GUIO_NOMIDI)
 	},
 
-	// BladeRunner (French)
+	// BladeRunner (French) - FRA
 	{
 		"bladerunner-final",
 		0,
@@ -156,7 +156,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO5(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GUIO_NOMIDI)
 	},
 
-	// BladeRunner (Italian)
+	// BladeRunner (Italian) - ITA
 	{
 		"bladerunner-final",
 		0,
@@ -167,7 +167,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO5(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GUIO_NOMIDI)
 	},
 
-	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc.)
+	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc.) - RUS
 	{
 		"bladerunner-final",
 		0,
@@ -178,7 +178,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO5(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GUIO_NOMIDI)
 	},
 
-	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc. + Siberian Studio, R3)
+	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc. + Siberian Studio, R3) - RUS
 	{
 		"bladerunner-final",
 		0,
@@ -189,7 +189,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO5(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GUIO_NOMIDI)
 	},
 
-	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc. + Siberian Studio, R4)
+	// BladeRunner (Russian - Fargus Multimedia + Home Systems, Inc. + Siberian Studio, R4) - RUS
 	{
 		"bladerunner-final",
 		0,
@@ -200,7 +200,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO5(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GUIO_NOMIDI)
 	},
 
-	// BladeRunner (Spanish)
+	// BladeRunner (Spanish) - ESP
 	{
 		"bladerunner-final",
 		0,
