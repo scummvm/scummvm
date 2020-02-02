@@ -27,10 +27,15 @@ namespace Ultima {
 namespace Nuvie {
 
 /* typedef the keytype */
-typedef long iAVLKey;
+// TODO: Clean up object manager so it isn't intermixing pointers and ints
+//typedef long iAVLKey;
+union iAVLKey {
+	void *_ptr;
+	long _int;
+};
 
 /* Comparison function for integers is subtraction. */
-#define iAVLKey_cmp(tree, a, b) ((a) - (b))
+#define iAVLKey_cmp(tree, a, b) ((a._int) - (b._int))
 
 
 typedef struct _iAVLNode {

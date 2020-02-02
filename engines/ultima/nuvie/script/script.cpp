@@ -124,7 +124,7 @@ struct ScriptObjRef {
 
 	ScriptObjRef() {
 		refcount = 0;
-		key = -1;
+		key._int = -1;
 	};
 };
 
@@ -1676,13 +1676,14 @@ int nscript_obj_new(lua_State *L, Obj *obj) {
 
 sint32 nscript_inc_obj_ref_count(Obj *obj) {
 	ScriptObjRef *obj_ref;
-	iAVLKey key = (iAVLKey)obj;
+	iAVLKey key;
+	key._ptr = obj;
 
 	obj_ref = (ScriptObjRef *)iAVLSearch(script_obj_list, key);
 	if (obj_ref == NULL) {
 		obj->set_in_script(true); // mark as being used by script engine.
 		obj_ref =  new ScriptObjRef();
-		obj_ref->key = (iAVLKey)obj;
+		obj_ref->key._ptr = obj;
 		iAVLInsert(script_obj_list, obj_ref);
 	}
 
@@ -1693,7 +1694,8 @@ sint32 nscript_inc_obj_ref_count(Obj *obj) {
 
 sint32 nscript_dec_obj_ref_count(Obj *obj) {
 	ScriptObjRef *obj_ref;
-	iAVLKey key = (iAVLKey)obj;
+	iAVLKey key;
+	key._ptr = obj;
 
 	obj_ref = (ScriptObjRef *)iAVLSearch(script_obj_list, key);
 	if (obj_ref == NULL)

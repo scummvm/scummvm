@@ -1708,10 +1708,13 @@ inline iAVLKey ObjManager::get_obj_tree_key(Obj *obj) {
 }
 
 iAVLKey ObjManager::get_obj_tree_key(uint16 x, uint16 y, uint8 level) {
+	iAVLKey key;
 	if (level == 0)
-		return y * 1024 + x;
+		key._int = y * 1024 + x;
 	else
-		return y * 256 + x;
+		key._int = y * 256 + x;
+
+	return key;
 }
 
 void ObjManager::update(uint16 x, uint16 y, uint8 z, bool teleport) {
