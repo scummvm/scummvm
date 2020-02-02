@@ -48,7 +48,7 @@ public:
 	PaletteFaderProcess(int16 from[12], int16 to[12], int priority, int frames);
 	virtual ~PaletteFaderProcess(void);
 
-	virtual void run();
+	virtual void run() override;
 
 	INTRINSIC(I_fadeToPaletteTransform);
 	INTRINSIC(I_fadeToBlack);
@@ -59,7 +59,7 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

@@ -76,7 +76,7 @@ public:
 	void destroyContents();
 
 	//! Set flag on container and all its contents recursively
-	virtual void setFlagRecursively(uint32 mask);
+	virtual void setFlagRecursively(uint32 mask) override;
 
 	//! Search the container for items matching the given loopscript.
 	//! \param itemlist The matching items are appended to this list
@@ -88,7 +88,7 @@ public:
 
 	//! Get the weight of the container and its contents
 	//! \return weight
-	virtual uint32 getTotalWeight();
+	virtual uint32 getTotalWeight() override;
 
 	//! Get the container's capacity
 	virtual uint32 getCapacity();
@@ -98,15 +98,15 @@ public:
 
 	//! Assign self and contents an objID
 	//! \return the assiged ID
-	virtual ObjId assignObjId();
+	virtual ObjId assignObjId() override;
 
 	//! Clear objIDs of self and contents
-	virtual void clearObjId();
+	virtual void clearObjId() override;
 
 	//! Destroy self
-	virtual void destroy(bool delnow = false);
+	virtual void destroy(bool delnow = false) override;
 
-	virtual void dumpInfo();
+	virtual void dumpInfo() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 
@@ -115,7 +115,7 @@ public:
 
 protected:
 	//! save Container data
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 	Std::list<Item *> contents;
 };

@@ -45,9 +45,9 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 
-	virtual uint16 hatch();
+	virtual uint16 hatch() override;
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 };
 

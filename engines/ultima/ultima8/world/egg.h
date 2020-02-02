@@ -56,14 +56,14 @@ public:
 	virtual uint16 hatch();
 
 	//! The item has left the fast area
-	virtual void leaveFastArea();
+	virtual void leaveFastArea() override;
 
 	//! clear the 'hatched' flag
 	void reset() {
 		hatched = false;
 	}
 
-	virtual void dumpInfo();
+	virtual void dumpInfo() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 
@@ -75,7 +75,7 @@ public:
 	INTRINSIC(I_setEggId);
 
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 	bool hatched;
 };

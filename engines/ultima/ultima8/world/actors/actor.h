@@ -146,7 +146,7 @@ public:
 
 	virtual void teleport(int mapnum, int32 x, int32 y, int32 z);
 
-	virtual bool removeItem(Item *item);
+	virtual bool removeItem(Item *item) override;
 
 	//! \return the PID of the spawned usecode process if any (otherwise 0)
 	uint16 schedule(uint32 time);
@@ -159,7 +159,7 @@ public:
 	virtual int16 getAttackingDex();
 	virtual int16 getDefendingDex();
 
-	virtual uint16 getDamageType();
+	virtual uint16 getDamageType() override;
 	virtual int getDamageAmount();
 
 	//! calculate the damage an attack against this Actor does.
@@ -172,7 +172,7 @@ public:
 	//! receive a hit
 	//! \param damage base damage (or zero to use attacker's default damage)
 	//! \param type damage type (or zero to use attacker's default type)
-	virtual void receiveHit(uint16 other, int dir, int damage, uint16 type);
+	virtual void receiveHit(uint16 other, int dir, int damage, uint16 type) override;
 
 	//! die
 	//! \param damageType damage type that caused the death
@@ -212,9 +212,9 @@ public:
 	//! create an actor, assign objid, make it ethereal and load monster stats.
 	static Actor *createActor(uint32 shape, uint32 frame);
 
-	virtual uint16 assignObjId(); // assign an NPC objid
+	virtual uint16 assignObjId() override; // assign an NPC objid
 
-	virtual void dumpInfo();
+	virtual void dumpInfo() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 
@@ -292,7 +292,7 @@ public:
 	};
 
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 	int16 strength;
 	int16 dexterity;

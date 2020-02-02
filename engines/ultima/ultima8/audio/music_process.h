@@ -40,7 +40,7 @@ class MusicProcess : public Process {
 		MUSIC_PLAY_WANTED = 3
 	};
 private:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 	//! Play a music track
 	//! \param track The track number to play. Pass 0 to stop music
@@ -84,7 +84,7 @@ public:
 		return _wantedTrack;
 	}
 
-	virtual void run();
+	virtual void run() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 

@@ -440,7 +440,7 @@ public:
 	virtual void leaveFastArea();
 
 	//! dump some info about this item to pout
-	virtual void dumpInfo();
+	virtual void dumpInfo() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 
@@ -561,7 +561,7 @@ protected:
 	ProcId gravitypid;      // Item's GravityTracker (or 0)
 
 	//! save the actual Item data
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 private:
 
