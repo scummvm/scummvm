@@ -786,6 +786,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("dists/engine-data/titanic.dat");
 		files.push_back("dists/engine-data/tony.dat");
 		files.push_back("dists/engine-data/toon.dat");
+		files.push_back("dists/engine-data/ultima.dat");
 		files.push_back("dists/engine-data/wintermute.zip");
 		files.push_back("dists/engine-data/macventure.dat");
 		files.push_back("dists/engine-data/xeen.ccs");

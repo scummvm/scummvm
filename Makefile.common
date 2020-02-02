@@ -365,6 +365,9 @@ endif
 ifdef ENABLE_TOON
 DIST_FILES_ENGINEDATA+=toon.dat
 endif
+ifdef ENABLE_ULTIMA
+DIST_FILES_ENGINEDATA+=ultima.dat
+endif
 ifdef ENABLE_WINTERMUTE
 DIST_FILES_ENGINEDATA+=wintermute.zip
 endif
