@@ -48,21 +48,21 @@ public:
 
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void *allocate(size_t size);
-	virtual void deallocate(void *ptr);
+	virtual void *allocate(size_t size) override;
+	virtual void deallocate(void *ptr) override;
 
-	virtual bool isFull() {
+	virtual bool isFull() override {
 		return freeNodeCount == 0;
 	}
-	virtual bool isEmpty() {
+	virtual bool isEmpty() override {
 		return freeNodeCount == nodes;
 	}
 
-	virtual bool inPool(void *ptr) {
+	virtual bool inPool(void *ptr) override {
 		return (ptr > startOfPool && ptr < endOfPool);
 	}
 
-	void printInfo();
+	virtual void printInfo() override;
 
 	size_t getNodeCapacity() {
 		return nodeCapacity;

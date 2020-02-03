@@ -38,17 +38,17 @@ public:
 
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void *allocate(size_t size);
+	virtual void *allocate(size_t size) override;
 
-	virtual Pool *findPool(void *ptr);
+	virtual Pool *findPool(void *ptr) override;
 
-	virtual void freeResources();
+	virtual void freeResources() override;
 
-	virtual size_t getCapacity() {
+	virtual size_t getCapacity() override {
 		return nodeCapacity;
 	}
 
-	void printInfo();
+	virtual void printInfo() override;
 
 private:
 	Std::vector<SegmentedPool *> pools;

@@ -40,11 +40,11 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! The item has entered the fast area
-	virtual void enterFastArea();
+	virtual void enterFastArea() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8
