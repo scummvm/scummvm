@@ -982,7 +982,7 @@ void ResourceManager::init() {
 #ifdef ENABLE_SCI32
 	_currentDiscNo = 1;
 #endif
-	if(g_sci) {
+	if (g_sci) {
 		_patcher = new ResourcePatcher(g_sci->getGameId(), g_sci->getLanguage());
 		addSource(_patcher);
 	} else {
