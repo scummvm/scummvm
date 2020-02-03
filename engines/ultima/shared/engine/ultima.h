@@ -174,26 +174,6 @@ public:
 	virtual bool canSaveGameStateCurrently() override {
 		return canSaveGameStateCurrently(false);
 	}
-
-	/**
-	 * Save a game state.
-	 * @param slot	the slot into which the savestate should be stored
-	 * @param desc	a description for the savestate, entered by the user
-	 * @param isAutosave If true, autosave is being created
-	 * @return returns kNoError on success, else an error code.
-	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override {
-		return saveGameState(slot, desc, false);
-	}
-
-	/**
-	 * Save a game state.
-	 * @param slot	the slot into which the savestate should be stored
-	 * @param desc	a description for the savestate, entered by the user
-	 * @param isAutosave If true, autosave is being created
-	 * @return returns kNoError on success, else an error code.
-	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) = 0;
 };
 
 extern UltimaEngine *g_ultima;

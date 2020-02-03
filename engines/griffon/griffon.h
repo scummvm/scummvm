@@ -418,7 +418,7 @@ private:
 	virtual Common::Error loadGameState(int slot) override;
 	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
 	virtual Common::Error loadGameStream(Common::SeekableReadStream *file) override;
-	virtual Common::Error saveGameStream(Common::WriteStream *file) override;
+	virtual Common::Error saveGameStream(Common::WriteStream *file, bool autoSave) override;
 
 	// sound.cpp
 	void setChannelVolume(int channel, int volume);

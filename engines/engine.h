@@ -249,10 +249,20 @@ public:
 
 	/**
 	 * Save a game state.
-	 * @param stream	The write stream to save the savegame data to
+	 * @param slot	the slot into which the savestate should be stored
+	 * @param desc	a description for the savestate, entered by the user
+	 * @param isAutosave	Expected to be true if an autosave is being created
 	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual Common::Error saveGameStream(Common::WriteStream *stream);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave);
+
+	/**
+	 * Save a game state.
+	 * @param stream	The write stream to save the savegame data to
+	 * @param isAutosave	Expected to be true if an autosave is being created
+	 * @return returns kNoError on success, else an error code.
+	 */
+	virtual Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false);
 
 	/**
 	 * Indicates whether a game state can be saved.
