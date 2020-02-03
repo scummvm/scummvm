@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-02-03 15:17+0000\n"
+"PO-Revision-Date: 2020-02-04 21:08+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -875,17 +875,17 @@ msgstr ""
 
 #: dialog0016.txt:100603
 msgid "OTHER: A, przy okazji, nie przypominaj o mnie|w zamku Garrahan."
-msgstr "OTHER: Oh, by the way, don't mention me around |castle Gallahan."
+msgstr "OTHER: Oh, by the way, don't mention me around |castle Garrahan."
 
 #: dialog0016.txt:100604
-#, fuzzy
 msgid "OTHER: Kiedyś miałem tam drobny spór dotyczący|kości."
-msgstr "OTHER: There was a small misunderstanding at|a game of dice last time I was there..."
+msgstr "OTHER: I used to have a small dispute regarding dice there."
 
 #: dialog0016.txt:100605
-#, fuzzy
 msgid "OTHER: Strażnik twierdził, iż to dziwne, kiedy|czterdzieści trzy razy pod rząd wypada|szóstka."
-msgstr "OTHER: The Watchman found it a bit suspicious|when I hit sixes for the fortieth|time in a row."
+msgstr ""
+"OTHER: The guard found it suspicious when I hit sixes|for the sixty-three "
+"times in a row."
 
 #: dialog0016.txt:100606
 msgid "OTHER: Czyżby nie wiedział, że istnieje coś takiego|jak szczęśliwy traf?"
@@ -912,14 +912,16 @@ msgstr ""
 "living fire!"
 
 #: dialog0016.txt:100704
-#, fuzzy
 msgid "OTHER: Bynajmniej nie jest to grzech oszustwa,|nie dawaj wiary plotkom opowiadającym|o tej historii..."
-msgstr "OTHER: But I haven't commited the Sin of Fraud,|no matter what the rumors say."
+msgstr ""
+"OTHER: At least is not a sin of deception, don't believe|the gossips about "
+"this story..."
 
 #: dialog0016.txt:100705
-#, fuzzy
 msgid "OTHER: ...jak to spotkało się dwóch zacnych|mieszczan, aby założyć spółkę kupiecką."
-msgstr "OTHER: Those filthy rumors about two honorable|townspeople who joined forces|to build a Company ..."
+msgstr ""
+"OTHER: ...about two honorable townspeople who joined|forces to form a "
+"company..."
 
 #: dialog0016.txt:100706
 #, fuzzy
@@ -1021,7 +1023,7 @@ msgstr "OTHER: In fact, I've done it a|thousand times already."
 
 #: dialog0016.txt:101204
 msgid "OTHER: A więc pustelnik?...#B1"
-msgstr "OTHER: Now, what does a hermit do?#B1"
+msgstr "OTHER: And why a hermit?...#B1"
 
 #: dialog0017.txt:1
 #, fuzzy
@@ -1606,7 +1608,7 @@ msgstr ""
 
 #: dialog0020.txt:101804
 msgid "OTHER: Tylko może nie mów o tym w zamku."
-msgstr "OTHER: Just don't talk about it in Castle Garrahan."
+msgstr "OTHER: Just don't talk about it in the castle."
 
 #: dialog0020.txt:101805
 msgid "OTHER: Nie oparł się nim nawet ten zdzierca|podatkowy Gandar! Zabrałem mu dwakroć|tyle, co on mi!"
@@ -9578,9 +9580,8 @@ msgid "P#OTHER: Zdarzyła się bowiem, kiedy byłem już martwy."
 msgstr "P#OTHER: It happened when I was already dead."
 
 #: dialog0354.txt:1
-#, fuzzy
 msgid "OTHER: Martwy od tysiąca lat!"
-msgstr "OTHER: I was dead for thousands of years!"
+msgstr "OTHER: Dead for a thousand years!"
 
 #: dialog0355.txt:1
 #, fuzzy
@@ -10030,7 +10031,7 @@ msgstr ""
 
 #: dialog0413.txt:1
 msgid "OTHER: Ale..."
-msgstr ""
+msgstr "OTHER: But..."
 
 #: dialog0414.txt:1
 msgid "OTHER: ...dość o tym! Szczerze mówiąc strasznie|zaschło mi w ustach."
@@ -10646,26 +10647,22 @@ msgid "wyjście - Wyjście na świeże powietrze."
 msgstr "exit - Exit to the fresh air."
 
 #: mob.lst:5002
-#, fuzzy
 msgid "ogłoszenie - \"Nie obsługujemy na kredyt. Nie przyjmujemy|w zastaw żon, psów ani dzieci. Złote|i srebrne przedmioty mile widziane.\""
 msgstr ""
 "announcement - \"We do not serve on credit. We do not accept|as guarantee "
 "deposit wives, dogs or children.|Gold and silver items are welcome.\""
 
 #: mob.lst:5003
-#, fuzzy
 msgid "zakonnik - Albo miał nieszczęśliwy wypadek u golibrody,|albo zbyt mocno nachylił się nad ogniskiem."
 msgstr ""
 "monk - Either he had an unfortunate accident at the barber,|or he leaned too "
 "far over the fire."
 
 #: mob.lst:5004
-#, fuzzy
 msgid "krasnolud - Całkiem spory, jak na krasnoluda.*+Ba, całkiem spory jak na człowieka."
 msgstr "dwarf - Quite big for a dwarf.*+Oh, quite big for a human."
 
 #: mob.lst:5005
-#, fuzzy
 msgid "Arivald - No, nareszcie będziemy mogli dłużej|porozmawiać!"
 msgstr "Arivald - Well, finally we can talk longer!"
 
@@ -10676,36 +10673,30 @@ msgstr ""
 "uncontaminated source|of pure wisdom."
 
 #: mob.lst:5007
-#, fuzzy
 msgid "ognisko - Cieplutki, przyjemny ogień."
 msgstr "bonfire - A warm, pleasant fire."
 
 #: mob.lst:5008
-#, fuzzy
 msgid "skrzynka - Skoro stoi na widoku publicznym, to|chyba jest pusta. A pieniądze pewnie|w skarpecie."
 msgstr ""
 "chest - Since it's in public view, it's probably empty.|And the money "
 "probably in the treasury."
 
 #: mob.lst:5009
-#, fuzzy
 msgid "karczmarz - Prawidłowo rozwinięty mięsień piwny..."
 msgstr "innkeeper - Properly developed beer muscle..."
 
 #: mob.lst:5010
-#, fuzzy
 msgid "beka piwa - Uchh... Imponująca..."
 msgstr "beer barrel - Ugh... Impressive..."
 
 #: mob.lst:5011
-#, fuzzy
 msgid "drzwi - Zapachy stamtąd docierające zniechęciłyby|nawet najbardziej zdesperowanego złodzieja."
 msgstr ""
 "door - The smells coming from there would discourage|even the most desperate "
 "thief."
 
 #: mob.lst:5012
-#, fuzzy
 msgid "bard - Zakola jak królewski dziedziniec, nos jak|pazur smoka, obślinione usta i czarny wąsik.+Teoretycznie wszystko jest przeciwko niemu,|ale coś mi mówi, że widoczna w jego oczach|pasja zaimponowała niejednej kobiecie..."
 msgstr ""
 "bard - Receding hairline like a royal courtyard,|nose like a dragon's claw, "
@@ -10714,7 +10705,6 @@ msgstr ""
 "many women..."
 
 #: mob.lst:5013
-#, fuzzy
 msgid "plakat - \"Kto odnajdzie moją jedyną i ukochaną córkę|Shandrię otrzyma tyle złota, ile potrafi|unieść. Nie będę zmuszał do małżeństwa\".+\"...Zaginęła roku Kozła, zimą, i do dziś los|jest jej nieznany. Pogrążony w smutku, król|Badurrae, Rawet\".+Jest jeszcze portret, ale już mało wyraźny.|Ten plakat wisi tu chyba ładnych parę lat..."
 msgstr ""
 "poster - \"Who will find my only and beloved daughter|Shandria will receive "
@@ -10724,129 +10714,107 @@ msgstr ""
 "clear.|This poster probably hangs here quite a few years..."
 
 #: mob.lst:5014
-#, fuzzy
 msgid "butelki - Butelki trochę brudne, ale zawartość|chyba... hm...  czysta."
 msgstr ""
 "bottles - The bottles are a bit dirty, but the content|seems... hm... clean."
 
 #: mob.lst:5015
-#, fuzzy
 msgid "rulonik - To może być coś fascynującego albo|...kompromitującego..."
 msgstr "scroll - It can be something fascinating or|...discreditable..."
 
 #: mob.lst:5016
-#, fuzzy
 msgid "linka - Pasek dla ubogich."
 msgstr "cord - Belt for the poor."
 
 #: mob.lst:5017
-#, fuzzy
 msgid "kufel - Iście krasnoludzki rozmach."
 msgstr "pint - Truly dwarven size."
 
 #: mob.lst:5018
-#, fuzzy
 msgid "nieznajoma - Bardzo tajemnicza osóbka..."
 msgstr "stranger - A very mysterious person..."
 
 #: mob.lst:6001
-#, fuzzy
 msgid "drzwi - Z powrotem do rynku."
 msgstr "door - Back to the market."
 
 #: mob.lst:6002
-#, fuzzy
 msgid "alchemik - Palce pożółkłe od kwasów, oczy oślepłe|od czytania ksiąg - oto prawdziwy|fachowiec!"
 msgstr ""
 "alchemist - Fingers yellowed with acids, eyes blind|from reading books - "
 "this is a real|expert!"
 
 #: mob.lst:6003
-#, fuzzy
 msgid "księga - Zapewne zbiór alchemicznych przepisów."
 msgstr "book - Probably a collection of alchemical recipes."
 
 #: mob.lst:6004
-#, fuzzy
 msgid "dziwne stworzenie - Wygląda jak mały człowieczek, ale|jest w nim coś magicznego..."
 msgstr ""
 "strange creature - It looks like a little man, but there is|something "
 "magical about it..."
 
 #: mob.lst:6005
-#, fuzzy
 msgid "homunkulus - Biedaczysko... Jak wielu z nas, widzi|tylko część problemu, i dlatego nie|potrafi znaleźć rozwiązania."
 msgstr ""
 "homunculus - Poor fella... Like many of us, he sees|only part of the "
-"problem, and therefore|cannot find the solution."
+"problem, and therefore|can not find the solution."
 
 #: mob.lst:6006
-#, fuzzy
 msgid "jaszczur - Przyszły obiad czy obiekt eksperymentów?|A może ukochana maskotka?"
 msgstr ""
 "lizard - The next dinner or the object of experiments?|Or maybe a beloved "
 "mascot?"
 
 #: mob.lst:6007
-#, fuzzy
 msgid "półka - Mnóstwo różnych preparatów i ksiąg."
 msgstr "shelf - Lots of different preparations and books."
 
 #: mob.lst:6008
-#, fuzzy
 msgid "krzesło - Im dłużej się w nie wpatruję tym bardziej|uświadczam się w przekonaniu, iż jest to|krzesło."
 msgstr ""
 "chair - The longer I stare at it, the more|I become convinced that it is a "
 "chair."
 
 #: mob.lst:6009
-#, fuzzy
 msgid "księga - \"Transmutacja - nowa moda czy realna szansa?\""
 msgstr "book - \"Transmutation - new hype or real chance?\""
 
 #: mob.lst:6010
-#, fuzzy
 msgid "pergaminy - Rozmaite notatki alchemika, mnóstwo|akademickiego żargonu."
 msgstr "parchments - Various alchemist's notes, lots of academic jargon."
 
 #: mob.lst:6011
-#, fuzzy
 msgid "rozmaite tajemnicze urządzenia - Albo to jest jakiś naukowy eksperyment,|albo mamy do czynienia z klasyczną|nalewką z ziemniaków."
 msgstr ""
 "various mysterious devices - Either this is a scientific experiment|or we "
 "are dealing with a classic potato liquor."
 
 #: mob.lst:6012
-#, fuzzy
 msgid "zegar - Być może jest to magiczny chronometr|odmierzający czas do końca świata.+A może po prostu ktoś oddał zegar do|reperacji."
 msgstr ""
 "clock - Perhaps it is a magic chronometer measuring|the time until the end "
 "of the world.+Or maybe someone just gave the clock|to repair."
 
 #: mob.lst:7001
-#, fuzzy
 msgid "wyjście - Powrót z alejki na obrzeża rynku."
 msgstr "exit - Return from the alley to the outskirts of the market."
 
 #: mob.lst:7002
-#, fuzzy
 msgid "wyjście - Z powrotem między kupieckie stragany."
 msgstr "exit - Back between the merchants' stalls."
 
 #: mob.lst:7003
-#, fuzzy
 msgid "drzwi - Drzwi do mieszkania barda."
 msgstr "doors - Door to the bard's house."
 
 #: mob.lst:7004
-#, fuzzy
 msgid "znak - Albo bard jest bardzo poważany w tym mieście,|albo uważa, że trochę autoreklamy nigdy nie|zaszkodzi."
 msgstr ""
 "sign - Either the bard is very respected in this city|or he thinks that some "
 "self-ads will never hurt."
 
 #: mob.lst:7005
-#, fuzzy
 msgid "balkon - Bardzo romantyczne miejsce...+Księżycowa noc, smutna melodia fletu|unosząca się pod niebiosa...*+Tylko ta wyprana bielizna trochę|psuje wrażenie."
 msgstr ""
 "balcony - A very romantic place...+Moonlit night, a sad melody of the flute "
@@ -10854,29 +10822,24 @@ msgstr ""
 "impression a little."
 
 #: mob.lst:7006
-#, fuzzy
 msgid "stary wóz - Kompletna ruina."
 msgstr "old carriage - Completely trashed."
 
 #: mob.lst:7007
-#, fuzzy
 msgid "kot - Typowy piecuch."
 msgstr "cat - A typical sissy."
 
 #: mob.lst:7008
-#, fuzzy
 msgid "słowik - Ludzie prości nazwą to stworzenie słowikiem,|ludzie znający związki przyczynowo-skutkowe|powiedzą, iż to koci obiad."
 msgstr ""
 "nightingale - Simple people call this creation a nightingale,|people who "
 "know cause-and-effect relationships|will say it's a cat's dinner."
 
 #: mob.lst:7009
-#, fuzzy
 msgid "rupiecie - Różne starocie, nowością wyróżnia się|tylko lutnia."
 msgstr "junk - Various antiques, only the lute stands out|with its novelty."
 
 #: mob.lst:7010
-#, fuzzy
 msgid "szlafmyca - Że też musiała utkwić akurat w takim|miejscu!"
 msgstr "nightcap - And it also had to get stuck in such a place!"
 
@@ -10885,7 +10848,6 @@ msgid "szlafmyca - Że też dorośli ludzie noszą takie|rzeczy na głowie!..."
 msgstr "nightcap - And adults also wear such things on their heads!..."
 
 #: mob.lst:7012
-#, fuzzy
 msgid "kobieta - Zastanawiam się ile musieliby mi zapłacić,|żebym zechciał...+Nie, nie, nie... to zbyt obrzydliwe."
 msgstr ""
 "woman - I wonder how much they would have to pay me|to make me want...+No, "
@@ -10904,7 +10866,6 @@ msgid "klatka - Co za okrucieństwo i brak gustu!"
 msgstr "cage - What cruelty and lack of taste!"
 
 #: mob.lst:8004
-#, fuzzy
 msgid "flakonik - Flakonik z dziwnym płynem."
 msgstr "flask - A flask with a strange liquid."
 
@@ -10923,28 +10884,24 @@ msgstr ""
 "needs for creativity.*+Maybe not enough wine, however."
 
 #: mob.lst:8008
-#, fuzzy
 msgid "miotła - Na pewno środek lokomocji żony barda."
 msgstr "broom - Certainly the means of transportation of the bard's wife."
 
 #: mob.lst:8009
-#, fuzzy
 msgid "lustro - Całe brudne i porysowane. Nic dziwnego, że|żona barda wygląda jak wygląda..."
 msgstr ""
-"mirror - All dirty and scratched. No wonder|the bard's wife looks like that "
-"..."
+"mirror - All dirty and scratched. No wonder|the bard's wife looks like "
+"that..."
 
 #: mob.lst:9001
 msgid "wyjście - Wyjście na drogę."
 msgstr "exit - Exit to the road."
 
 #: mob.lst:9002
-#, fuzzy
 msgid "przejście - Widać kręte, wąskie schody w dół."
 msgstr "pass - A narrow, winding staircase going down."
 
 #: mob.lst:9003
-#, fuzzy
 msgid "wyjście - Powrót na górę."
 msgstr "exit - Back to the mountain."
 
@@ -10959,47 +10916,39 @@ msgid "okno - O, widać stąd miasteczko..."
 msgstr "window - Oh, you can see the town from here..."
 
 #: mob.lst:9006
-#, fuzzy
 msgid "dziwne znaki - Nie mam pojęcia, co ten napis oznacza."
 msgstr "mysterious sign - No idea what this inscription means."
 
 #: mob.lst:9007
-#, fuzzy
 msgid "runy - Hmmm... Ciekawe, czy to jakiś rodzaj zaklęcia."
 msgstr "runes - Hmmm... I wonder if it's some kind of spell."
 
 #: mob.lst:9008
-#, fuzzy
 msgid "runy - Wiem, co to znaczy, ale nie chcę mówić na głos,|bo się znowu pojawi duch bóstwa i mogą być|kłopoty."
 msgstr ""
 "runes - I know what this means, but I do not want to speak out|loud, because "
 "the spirit of the deity will appear again|and there may be trouble."
 
 #: mob.lst:9009
-#, fuzzy
 msgid "ołtarz - Przypomina tron jakiegoś wyjątkowo|wojowniczo usposobionego króla."
 msgstr "altar - Reminds the throne of some exceptionally militant king."
 
 #: mob.lst:10001
-#, fuzzy
 msgid "wyjście - Ścieżka do miasteczka."
 msgstr "path - It leads to the town."
 
 #: mob.lst:10002
-#, fuzzy
 msgid "przetarta lina - Budynek i okolica są wyraźnie niedoinwestowane."
 msgstr ""
 "frayed rope - It's obvious that no one has spent|any money on this castle or "
 "the|surrounding area lately."
 
 #: mob.lst:10003
-#, fuzzy
 msgid "ptaszysko - Nie wiem, co to za ptak, ale ma|cztery jaja."
 msgstr ""
 "birdy - No idea what kind of a bird it is,|but at least it has four eggs."
 
 #: mob.lst:10004
-#, fuzzy
 msgid "strażnik - Albo hodował wąsy przez dwadzieścia|lat, albo podkleił pod nosem zdechłą|wiewiórkę.+Tak czy inaczej, robi wrażenie."
 msgstr ""
 "guard - He either hasn't trimmed his moustache|in the last 20 years, or he "
@@ -11007,7 +10956,6 @@ msgstr ""
 "impression."
 
 #: mob.lst:10005
-#, fuzzy
 msgid "godło zamku - G... Zapewne od \"Garrahan\".*+Nie ma to jak umiejętność wyciągania|prawidłowych wniosków."
 msgstr ""
 "castle coat of arms - G... It probably says \"Garrahan\".*+There is nothing "
@@ -11018,12 +10966,10 @@ msgid "brama zamkowa - Prowadzi wprost na zamkowy dziedziniec."
 msgstr "castle gate - It leads directly to the courtyard."
 
 #: mob.lst:11001
-#, fuzzy
 msgid "wyjście - Widać schody w dół na dziedziniec zamkowy."
 msgstr "exit - You can see the stairs down to the castle courtyard."
 
 #: mob.lst:11002
-#, fuzzy
 msgid "sztandar - Ponoć są już kraje, gdzie|taki orzeł ma koronę."
 msgstr "flag - Apparently there are countries where such an eagle has a crown."
 
@@ -11034,41 +10980,34 @@ msgstr ""
 "basking in jewels."
 
 #: mob.lst:11004
-#, fuzzy
 msgid "drzwi - Wyglądają zwyczajnie. Pewnie są od jakiejś|zwyczajnej komnaty."
 msgstr "doors - They look ordinary. They're probably from some ordinary room."
 
 #: mob.lst:11005
-#, fuzzy
 msgid "drzwi - Drzwi do jaskini smoka."
 msgstr "door - Door to dragon cave."
 
 #: mob.lst:11006
-#, fuzzy
 msgid "zbroja - Taka zbroja to jest bardzo fajna rzecz.+Jak się człowiek wywróci, od razu służy|za trumnę."
 msgstr ""
 "armor - Such armor is a fine thing.+If the man inside|falls, you can "
 "instantly use it as a coffin."
 
 #: mob.lst:11007
-#, fuzzy
 msgid "zamek - Kolejny zamek do zdobycia."
 msgstr "castle - Another castle to get."
 
 #: mob.lst:11008
-#, fuzzy
 msgid "drzwi do skarbca - Impregnowane drewno wzmocnione żelaznymi|ćwiekami.+Nie do wyważenia. Nawet dla niedźwiedzia."
 msgstr ""
 "treasury door - Impregnated wood, reinforced with iron rivets.+It's "
 "unbreakable.|Not even by a bear."
 
 #: mob.lst:11009
-#, fuzzy
 msgid "wejście do skarbca - Droga do szczęścia stoi otworem."
 msgstr "entrance to the treasury - The road to happiness stands open."
 
 #: mob.lst:12001
-#, fuzzy
 msgid "wyjście - Przejście z dziedzińca na podzamcze."
 msgstr "exit - Passage from the courtyard to the castle."
 
@@ -11077,7 +11016,6 @@ msgid "drzwi - Nie mam pojęcia, co się za nimi kryje."
 msgstr "door - Have no idea what's behind it."
 
 #: mob.lst:12003
-#, fuzzy
 msgid "drzwi - Sądząc po znaku, prowadzą do skarbca."
 msgstr "door - Judging by the sign, they lead to the treasury."
 
@@ -11086,12 +11024,10 @@ msgid "tarcza - Drewniana... Hm... Pewnie niewiele|z niej było pożytku."
 msgstr "shield - Wooden... Hm. It looks barely used."
 
 #: mob.lst:12005
-#, fuzzy
 msgid "drzwi - Droga do króla."
 msgstr "door - Road to the king."
 
 #: mob.lst:12006
-#, fuzzy
 msgid "drzwi - Jedyne, które nie mają klamki.+Nic dziwnego, skoro kryją drogę|do skarbca."
 msgstr ""
 "door - The only door without handle.+No wonder as it hides|the way to the "
@@ -11103,42 +11039,35 @@ msgstr ""
 "chain - Arivald gave me a disservice, forging me with such|a strong chain."
 
 #: mob.lst:12008
-#, fuzzy
 msgid "zerwany łańcuch - Trochę nadszarpnięty, ale coś tam|jeszcze z niego zostało."
 msgstr "broken chain - a bit tore, but there is something left of it."
 
 #: mob.lst:13001
-#, fuzzy
 msgid "skrzynia z ciuchami - Z daleka niespecjalnie dokładnie widać,|a póki dziewczę zajęte jest sobą,|lepiej zostanę na miejscu."
 msgstr ""
 "box of clothes - You can't tell from afar, bug as long as|the girl is busy "
 "with herself, I'd better stay here."
 
 #: mob.lst:13002
-#, fuzzy
 msgid "okno - Nie chcę podchodzić, lepiej, żeby|dziewczę pozostało skupione na sobie."
 msgstr ""
 "window - I do not want to approach, better|keep the girl focused on herself."
 
 #: mob.lst:13003
-#, fuzzy
 msgid "złota klatka - Lepiej nie będę oglądał tej klatki|z bliska, bo jeszcze dziewczę zechce|mi się dokładniej przyjrzeć...+Zresztą, klatka i tak jest pusta."
 msgstr ""
 "golden cage - I better not get to close to it|otherwise the girl will|want "
 "to take a closer look at me...+Anyway, the cage is empty."
 
 #: mob.lst:13004
-#, fuzzy
 msgid "lustro - Że też jeszcze nie pękło..."
 msgstr "mirror - This one isn't broken yet..."
 
 #: mob.lst:13005
-#, fuzzy
 msgid "portret - Młody, przystojny, podobny do szympansa."
 msgstr "portrait - Young, handsome, chimpanzee-like."
 
 #: mob.lst:13006
-#, fuzzy
 msgid "brzydka dziewczyna - Ponoć był taki podróżnik, który brał na|długie wyprawy najbrzydszą dziewczynę|w okolicy.+Kiedy po miesiącach pobytu na pustkowiu|dziewczyna zaczynała mu się podobać|wiedział, że czas wracać do ludzi.+Ale gdyby miał tę dziewczynę u boku...+...nigdy byśmy go już nie zobaczyli..."
 msgstr ""
 "ugly girl - Apparently there was such a traveller who took|the ugliest girl "
@@ -11147,7 +11076,6 @@ msgstr ""
 "But if he had this girl next to him...+...we would never see him again..."
 
 #: mob.lst:13007
-#, fuzzy
 msgid "Sheila - Ponoć był taki podróżnik, który brał na|długie wyprawy najbrzydszą dziewczynę|w okolicy.+Kiedy po miesiącach pobytu na pustkowiu|dziewczyna zaczynała mu się podobać|wiedział, że czas wracać do ludzi.+Ale gdyby miał Sheilę u boku...+...nigdy byśmy go już nie zobaczyli..."
 msgstr ""
 "Sheila - Apparently there was such a traveller who took|the ugliest girl in "
@@ -11156,101 +11084,84 @@ msgstr ""
 "But if he had this girl next to him...+...we would never see him again..."
 
 #: mob.lst:13008
-#, fuzzy
 msgid "wstążki - Lubię ozdoby, ale wstążki w łóżku to już|chyba lekka przesada."
 msgstr ""
 "ribbons - I like decorations, but ribbons in bed|are probably a slight "
 "exaggeration."
 
 #: mob.lst:13009
-#, fuzzy
 msgid "łoże - Jest tak obrzydliwie słodkodziewczęcoróżowe,|że chyba wolałbym spać na podłodze."
 msgstr ""
 "bed - It is so disgustingly sweet pink, that I would rather|sleep on the "
 "floor."
 
 #: mob.lst:13010
-#, fuzzy
 msgid "skóra - U-hu. Chyba z niedźwiedzia..."
 msgstr "skin - Yep. I think from a bear..."
 
 #: mob.lst:13011
-#, fuzzy
 msgid "sekretera - Pfuj, same babskie rzeczy."
 msgstr "secretary - Yuck, that's women's stuff."
 
 #: mob.lst:13012
-#, fuzzy
 msgid "wyjście - Droga do normalnego świata."
 msgstr "exit - Path to the normal world."
 
 #: mob.lst:14001
-#, fuzzy
 msgid "wyjście - Wyjście stąd jest, ale po co?"
 msgstr "exit - There is a way out, but for what?"
 
 #: mob.lst:14002
-#, fuzzy
 msgid "tabliczka - Podręczna pomoc królewskiego rachmistrza."
 msgstr "tablet - Handy help from the royal accountant."
 
 #: mob.lst:14003
-#, fuzzy
 msgid "skrzynia pełna skarbów - O mamo mamo mamo...+...Mamo...mamo...mamo...+...Mamo...mamo...mamo...*+Ad infinitum."
 msgstr ""
 "treasure chest full of treasures - Oh my god...+Oh yes, oh yes!+...YES!...*+"
 "Ad infinitum."
 
 #: mob.lst:14004
-#, fuzzy
 msgid "lustro - Niestety, sama rama."
 msgstr "mirror - Sadly only the frame."
 
 #: mob.lst:14005
-#, fuzzy
 msgid "kobierzec - Szyty grubymi, złotymi nićmi."
 msgstr "carpet - Woven from thick, golden thread."
 
 #: mob.lst:14006
-#, fuzzy
 msgid "miecze w beczce - Stłoczone jak śledzie, ale piękne,|zdobione rubinami na głowni miecze."
 msgstr ""
-"swords in the barrel - They are fit tight like herrings in the barrel,but "
-"they're|pretty|and their handles are decorated with rubies."
+"swords in the barrel - They are fit tight like herrings in the barrel, but "
+"they're|pretty and their handles are decorated with rubies."
 
 #: mob.lst:14007
-#, fuzzy
 msgid "tarcza - Model dziecięcy."
 msgstr "shield - Model for kids."
 
 #: mob.lst:14008
-#, fuzzy
 msgid "skrzynka - Gdybym ją oworzył, miałbym... miałbym...+...zmarnowany rok na liczenie dukatów."
 msgstr ""
-"chest - If I'd open it, I would... I would...+... have spent a year counting "
+"chest - If I'd open it, I would... I would...+...have spent a year counting "
 "ducats."
 
 #: mob.lst:14009
-#, fuzzy
 msgid "skrzynia pełna złota - O mamo...+Kupiłbym sobie za to...+O, mamo, czego ja bym sobie|za to NIE kupił?"
 msgstr ""
 "chest full of gold - Oh mother...+I would buy myself for it...+Oh, mother, "
 "what would I NOT buy for it?"
 
 #: mob.lst:14010
-#, fuzzy
 msgid "zbroja - Nie wiem, co to jest, ale zbroja|wykonana jest z ciemnoniebieskiej,|podobnej do kryształu materii."
 msgstr ""
 "armor - I don't know what it is, but the armor is made of dark blue, crystal-"
 "like matter."
 
 #: mob.lst:14011
-#, fuzzy
 msgid "skrzynia - Śliczna, zgrabna skrzynka z eleganckim|wiekiem."
 msgstr "chest - A beautiful, neat case with an elegant lid."
 
 #: mob.lst:14012
-#, fuzzy
 msgid "księgi - Skoro znajdują się w takim miejscu, to pewnie|są wiele warte...+Może opowiadają o sztuce czarodziejskiej?+Albo są rodowymi pamiętnikami pełnymi|namiętności i zbrodni?*+No cóż, mogą też być zwykłe księgi|rachunkowe.+Albo spis mieszkańców królestwa.+Eee tam, na pewno nic ciekawego."
 msgstr ""
 "books - If they are in such a place, they are probably|worth a lot...+Maybe "
@@ -11259,27 +11170,22 @@ msgstr ""
 "residents of the kingdom.+Uhm, there certainly nothing interesting."
 
 #: mob.lst:14013
-#, fuzzy
 msgid "zasłona - Chroni skarbiec przed wzrokiem ciekawskich|ptaków?..."
 msgstr "curtain - Protects the treasury from the eyes of curious birds?..."
 
 #: mob.lst:14014
-#, fuzzy
 msgid "pusta skrzynka - W środku nie ma nic więcej."
 msgstr "empty chest - There is nothing more inside."
 
 #: mob.lst:15001
-#, fuzzy
 msgid "wyjście - Z powrotem na ścieżkę."
 msgstr "exit - Back to the path."
 
 #: mob.lst:15002
-#, fuzzy
 msgid "zamek - Dziwny ten zamek. Porozrzucany po|całej okolicy."
 msgstr "castle - This castle is strange. Scattered around the area."
 
 #: mob.lst:15003
-#, fuzzy
 msgid "brama zamkowa - Wejście w czeluście zamczyska..."
 msgstr "castle gate - Entrance into the innards of the castle..."
 
@@ -11290,7 +11196,6 @@ msgstr ""
 "the word \"a bit\"."
 
 #: mob.lst:15005
-#, fuzzy
 msgid "posąg - Może i wygląda jak wykuty z kamienia,|ale mój tyłek ma inne zdanie."
 msgstr ""
 "statue - It may look like made from stone, but my butt has a different "
@@ -11317,12 +11222,10 @@ msgid "kościotrup - Jakiś śmiałek nie zdążył uciec..."
 msgstr "skeleton - Some daredevil did not manage to escape..."
 
 #: mob.lst:16005
-#, fuzzy
 msgid "wejście - Rzeźba przy wejściu mówi mi wszystko."
 msgstr "entrance - The sculpture at the entrance tells me everything."
 
 #: mob.lst:17001
-#, fuzzy
 msgid "brama zamkowa - Nadal sporo tu cienia."
 msgstr "castle gate - There is still a lot of shade here."
 
@@ -11335,12 +11238,10 @@ msgid "przejście - Wąski most prowadzący do drugiej części zamczyska."
 msgstr "passage - A narrow bridge leading to the second part of the castle."
 
 #: mob.lst:17004
-#, fuzzy
 msgid "kościotrup - W słońcu wygląda równie przerażająco, co w mroku."
 msgstr "skeleton - It looks as scary in the sunlight as it does in the dark."
 
 #: mob.lst:17005
-#, fuzzy
 msgid "wejście - Wejście do komnaty nekromanty."
 msgstr "entrance - Entrance to the necromancer's chamber."
 
@@ -11351,7 +11252,6 @@ msgstr ""
 "or what?"
 
 #: mob.lst:18002
-#, fuzzy
 msgid "szafa - Mnóstwo pomocy naukowych nekromanty.+Zupełnie jak u alchemika, tylko trochę|bardziej podniszczone."
 msgstr ""
 "wardrobe - Plenty of necromancer's scientific aids.+Just like an alchemist, "
@@ -11364,14 +11264,12 @@ msgstr ""
 "some|powerful force.+What happened here?!"
 
 #: mob.lst:18004
-#, fuzzy
 msgid "pergamin - To chyba jakieś motto...+\"Jeśli zbyt długo patrzysz w otchłań,|otchłań zaczyna patrzeć w ciebie\"."
 msgstr ""
 "parchment - This is probably a motto...+\"If you gaze long into an abyss, "
 "the abyss also gazes into you.\""
 
 #: mob.lst:18005
-#, fuzzy
 msgid "kartka - To pewnie jakaś ważna czarnoksięska uwaga,|albo zapis bluźnierczego czaru...+Nie, zaraz...+To jakaś lista...+\"Kupić mleko... Posprzątać po Zraleimchu....|Pomodlić się do potężnego Kecaja Arakeipa|jeszcze przed śniadaniem....\"+\"Załatwić dostawę bułeczek...\"+Och..."
 msgstr ""
 "card - This is probably some important sorcery note,|or a record of a "
@@ -11380,12 +11278,10 @@ msgstr ""
 "+\"Arrange delivery of pastry...\"+Oh..."
 
 #: mob.lst:18006
-#, fuzzy
 msgid "kartka - Kahem, nic ważnego."
 msgstr "card - Ahem, nothing important."
 
 #: mob.lst:18007
-#, fuzzy
 msgid "papiery - Pamiętnik nekromanty...*+Wynika z niego, że to właśnie on pomagał Księciu|Wampirów zabezpieczyć jakąś część zamku przed|wzrokiem śmiertelników...+Czyżby chodziło o wieczną noc na dziedzińcu?|Nie... O tym jest w innym miejscu pamiętnika:+\"...będzie tu panować noc tak ciemna, jak ciemne|są myśli tego, co potęgę swą znalazł w czeluściach|najgłębszych otchłani\".+Hmm, co za styl!+\"Nigdy parzące promienie słońca nie oświetlą tego|zamku, tak jak nigdy dusza mroczna nie zazna|świetlistej tortury, wolna od jasności, która by...\"+Ufff!+\"Pan Słońce (niech będzie przeklęte jego imię, niech|jego ciało spotka wieczna tortura wśród lodowych|pustkowi wiecznej nocy!) nie zagości nad zamkiem Fjord...\"+\"...który pozostanie wolny od plugawego dotyku światła|na wieki wieków i po wsze czasy. A oprócz tego...\"*+Hmmm... Niestety, brakuje ostatniej, najnowszej|strony."
 msgstr ""
 "papers - The necromancer's diary...* + It shows that it was him who was "
@@ -11402,39 +11298,32 @@ msgstr ""
 "Unfortunately, the last page|is missing."
 
 #: mob.lst:18008
-#, fuzzy
 msgid "papiery - Pamiętnik nekromanty...+Nic nowego się już z niego nie dowiem."
 msgstr "papers - The necromancer's diary...+I won't learn anything new from it."
 
 #: mob.lst:18009
-#, fuzzy
 msgid "peleryna - Czerwona pelerynka...+Płachta na rogate demony?"
 msgstr "cape - Red cape...+Cloth for horned demons?"
 
 #: mob.lst:18010
-#, fuzzy
 msgid "stołek - Najwyraźniej przewrócony w trakcie jakiejś|brutalnej walki."
 msgstr "stool - Apparently overturned during some brutal fight."
 
 #: mob.lst:18011
-#, fuzzy
 msgid "świecznik - Cały czarny. Ani chybi atrybut nekromanty."
 msgstr "candle holder - All black. No doubt it is a necromancer's attribute."
 
 #: mob.lst:18012
-#, fuzzy
 msgid "ślady pazurów - Za żadne skarby świata nie chciałbym stanąć oko|w oko z istotą posiadającą takie szpony."
 msgstr ""
 "claw marks - For no treasures of the world I would like to face|a creature "
 "with such claws."
 
 #: mob.lst:18013
-#, fuzzy
 msgid "pentagram - Przerażający znak. Wygląda na|niedokończony albo zatarty."
-msgstr "Pentagram - Scary sign. It looks unfinished or wiped out."
+msgstr "pentagram - Scary sign. It looks unfinished or wiped out."
 
 #: mob.lst:18014
-#, fuzzy
 msgid "drzwi - To chyba ślady włamania. Chyba że komuś|się bardzo spieszyło..."
 msgstr ""
 "door - I think it's signs of a burglary. Unless someone|was in a hurry..."
@@ -11446,167 +11335,136 @@ msgstr ""
 "spilt red wine."
 
 #: mob.lst:18016
-#, fuzzy
 msgid "kreda - Ta sama, którą wyrysowano pentagram."
 msgstr "chalk - The one which was used to draw the pentagram."
 
 #: mob.lst:18017
-#, fuzzy
 msgid "wyjście - Drzwi stoją szeroko otworem.+Bardzo szeroko."
 msgstr "exit - Door is wide open.+Very wide."
 
 #: mob.lst:18018
-#, fuzzy
 msgid "kominek - W środku są tylko zwęglone resztki."
 msgstr "fireplace - Only ashes are in it."
 
 #: mob.lst:18019
-#, fuzzy
 msgid "pogrzebacz - Tu chyba nie potrzeba pogrzebacza, ale|pogrzebu..."
-msgstr "poker - You don't need a poker here, but a|burrier..."
+msgstr "poker - You don't need a poker here, but a burrier..."
 
 #: mob.lst:18020
-#, fuzzy
 msgid "skrzynia - Stara lina, wyszczerbiony miecz, skrzynka|z dziurą...+Trofea?..."
 msgstr "chest - Old rope, chipped sword, some box|with a hole...+Trophies?..."
 
 #: mob.lst:18021
-#, fuzzy
 msgid "księga - \"Księga Szarej Magii\""
 msgstr "book - \"Book of Grey Magic\""
 
 #: mob.lst:18022
-#, fuzzy
 msgid "talizman - To chyba talizman nekromanty. Mam wrażenie, że|nie przyniósł mu szczęścia..."
 msgstr ""
 "talisman - This is probably a necromancer's talisman. I have the impression "
 "that|it didn't bring him luck..."
 
 #: mob.lst:19001
-#, fuzzy
 msgid "wyjście - Powrót do głównej części zamku."
 msgstr "exit - Back to the main part of the castle."
 
 #: mob.lst:19002
-#, fuzzy
 msgid "Książę Wampirów - W jego pobliżu boję się nawet mrugnąć, żeby|mnie nie usłyszał."
-msgstr ""
-"The Vampire Prince - I'm even afraid to blink near him|so he won't hear me."
+msgstr "Vampire Prince - I'm even afraid to blink near him|so he won't hear me."
 
 #: mob.lst:19003
-#, fuzzy
 msgid "trumna - Atłasowe wnętrze, okuta srebrem,|gustowna trupia czaszka...+Trumna de luxe.+Lepiej się nie zbliżać."
 msgstr ""
 "coffin - Satin interior, wrapped in silver,|tasteful corpse skull...+Casket "
 "deluxe.+You'd better not come close."
 
 #: mob.lst:19004
-#, fuzzy
 msgid "trumna - Zaraz, coś tu w środku leży...|Jakaś kartka..."
 msgstr "coffin - Wait, there is something inside...|Some card..."
 
 #: mob.lst:19005
-#, fuzzy
 msgid "trumna - Teraz przynajmniej spełnia właściwą rolę."
 msgstr "coffin - At least now it serves its purpose."
 
 #: mob.lst:20001
-#, fuzzy
 msgid "kamienna płyta - Wielka, kamienna płyta z jakimiś|dziwnymi wypustkami."
 msgstr "stone slab - A large, stone slab with some strange insets."
 
 #: mob.lst:20002
-#, fuzzy
 msgid "przepaść - Wydaje mi się, że nie dałbym rady spaść|żywy. W locie umarłbym z głodu."
 msgstr ""
-"the abyss - I don't think I could fall down alive.|I would starve to death "
-"in flight."
+"abyss - I don't think I could fall down alive.|I would starve to death in "
+"flight."
 
 #: mob.lst:20003
-#, fuzzy
 msgid "Pan Słońce - Wygląda na znudzonego nawet jak śpi."
 msgstr "Lord Sun - He looks bored even when he sleeps."
 
 #: mob.lst:20004
-#, fuzzy
 msgid "nałożnica - Eeech, ładna."
-msgstr "concubine - Eeech, pretty."
+msgstr "concubine - Sigh, pretty."
 
 #: mob.lst:20005
-#, fuzzy
 msgid "nałożnica - Ech, jak już się to wszystko uspokoi..."
-msgstr "concubine - Once when everything settles down..."
+msgstr "concubine - As soon everything settles down..."
 
 #: mob.lst:20006
-#, fuzzy
 msgid "wodospad - Panu Słońce pewnie się dobrze zasypia|przy jego delikatnym szumie."
 msgstr "waterfall - Lord Sun probably falls asleep well|with its gentle noise."
 
 #: mob.lst:20007
-#, fuzzy
 msgid "rzeczka - Ciekawe, dokąd uchodzi woda|z takiej wysokości..."
 msgstr "river - I wonder where the water is going to|from such a height..."
 
 #: mob.lst:20008
-#, fuzzy
 msgid "kosz z owocami - Kosz pełen słodkich, soczystych owoców."
 msgstr "fruit basket - A basket full of sweet, juicy fruit."
 
 #: mob.lst:20009
-#, fuzzy
 msgid "instrukcja obsługi - Jakieś hieroglify."
 msgstr "user manual - Some hieroglyphics."
 
 #: mob.lst:20010
-#, fuzzy
 msgid "wyjście - Powrót na ziemię."
 msgstr "exit - Back to earth."
 
 #: mob.lst:21001
-#, fuzzy
 msgid "ścieżka - Piękna okolica..."
 msgstr "path - Beautiful surroundings..."
 
 #: mob.lst:21002
-#, fuzzy
 msgid "bajoro - Dziwna, zielonkawa maź."
 msgstr "puddle - A strange greenish goo."
 
 #: mob.lst:21003
-#, fuzzy
 msgid "uschłe drzewo - Zdaje się, że substancja w bajorze nie służy|tutejszej roślinności."
 msgstr ""
 "dead tree - It seems that the substance in the puddle does not|serve well "
 "the local vegetation."
 
 #: mob.lst:22001
-#, fuzzy
 msgid "ptak - Jedyny świadek rozkładu dawnego|centrum intelektualnego.+A może ...strażnik?"
 msgstr ""
 "bird - The only witness of the decay of the former intellectual center.+Or "
 "...a guard?"
 
 #: mob.lst:22002
-#, fuzzy
 msgid "księga - Wygląda na zupełnie nieruszoną zębem czasu|ni dziobem tego ptaszyska."
 msgstr ""
 "book - It looks completely untouched by the ravages of time|nor by the beak "
 "of this bird."
 
 #: mob.lst:22003
-#, fuzzy
 msgid "ścieżka - W oddali widać kilka uschniętych drzew."
-msgstr "path - In the distance you can see several withered trees."
+msgstr "path - In the distance, you can see several withered trees."
 
 #: mob.lst:22004
-#, fuzzy
 msgid "pożółkły pergamin - Czas i deszcz zrobiły swoje.+Widzę tylko pojedyncze znaki i nie mogę|zrozumieć treści."
 msgstr ""
 "yellowed parchment - Time and rain have done their job.+I can only see "
 "individual characters and I cannot|understand the content."
 
 #: mob.lst:22005
-#, fuzzy
 msgid "strona z książki - Widzę tytuł jakiegoś rozdziału...+\"Ciepła posadka, czyli palenie czarownic\".*+Hm, ciekawe czy mieli tu też słynne dzieło:|\"Jak rzucić palenie czarownic w tydzień\"."
 msgstr ""
 "page from the book - I see the title of a chapter...+\"Warm job, or burning "
@@ -11614,79 +11472,65 @@ msgstr ""
 "burning witches in a week.\""
 
 #: mob.lst:22006
-#, fuzzy
 msgid "resztki bramy - Mam nieodparte wrażenie, że przestała spełniać|swoją pierwotną rolę.+W przypadku tego gruzowiska pojęcie wyjścia|jest naprawdę szerokie."
 msgstr ""
 "remains of the gate - I have the impression that it ceased to fulfil|its "
 "original role.+In this rubble the concept of exit is really broad."
 
 #: mob.lst:22007
-#, fuzzy
 msgid "stos kamieni - Kupa drobnych kamyczków. Dowód zwycięstwa|materii nad duchem."
 msgstr ""
 "pile of stones - A pile of small pebbles. Proof of the victory of|matter "
 "over spirit."
 
 #: mob.lst:22008
-#, fuzzy
 msgid "księga - \"O skutecznym zdejmowaniu klątw\".+Och...+Lepiej wcale niż późno."
 msgstr ""
 "book - \"On effective removal of curses.\"+Oh...+Better never than later."
 
 #: mob.lst:22009
-#, fuzzy
 msgid "księga - \"Czwarty wymiar\".+Hmmm... Pewnie polityczna."
 msgstr "book - \"Fourth dimension\".+Hmmm... Must be on politics."
 
 #: mob.lst:22010
-#, fuzzy
 msgid "księga - Wygląda zachęcająco."
 msgstr "book - Looks tempting."
 
 #: mob.lst:22011
-#, fuzzy
 msgid "Arivald - Mój chyba nieoceniony wybawca. On pewnie|nie ma co do tego wątpliwości."
 msgstr "Arivald - My invaluable savior. He probably has no doubt about that."
 
 #: mob.lst:23001
-#, fuzzy
 msgid "wejście - Ciemno jak w hebanowej rzyci."
 msgstr "entrance - Pitch dark."
 
 #: mob.lst:23002
-#, fuzzy
 msgid "łagodny stok - Widać drogę do miasteczka."
 msgstr "gentle slope - You can see the road to the town."
 
 #: mob.lst:24001
-#, fuzzy
 msgid "kastet - Git."
 msgstr "knuckles - Cool."
 
 #: mob.lst:24002
-#, fuzzy
 msgid "dźwignia - Założę się, że to jakaś forma pułapki."
 msgstr "leverage - I bet it's a form of trap."
 
 #: mob.lst:24003
-#, fuzzy
 msgid "dźwignia - Odblokowana.+Niezła ze mnie złota rączka.+I to dosłownie."
 msgstr "lever - Unlocked.+Not bad hand craft.+Literally."
 
 #: mob.lst:24004
-#, fuzzy
 msgid "wyjście - Umpff...+Dlaczego nic w życiu, oprócz zdobywania|kobiet, nie przychodzi bez trudu?..."
 msgstr ""
 "exit - Ughhh...+Why nothing in life, except for getting women,|comes "
 "easily?..."
 
 #: mob.lst:24005
-#, fuzzy
 msgid "wyjście - Wolny! Nareszcie!"
 msgstr "exit - Freedom! Finally!"
 
 #: mob.lst:24006
-#, fuzzy
 msgid "olbrzymi szkielet - O rany! Kiedy ten wojownik żył, to pewnie|przyjacielskim klapsem potrafił zabić trolla.+Ten miecz waży chyba więcej niż cały ja."
 msgstr ""
 "giant skeleton - Oh boy! When this warrior was alive, he probably managed|to "
@@ -11699,57 +11543,47 @@ msgstr ""
 "to symbolize the family's longevity."
 
 #: mob.lst:25001
-#, fuzzy
 msgid "wyjście - Cudowne, świeże powietrze bez siarki i dymu."
 msgstr "exit - Wonderful, fresh air without sulfur and smoke."
 
 #: mob.lst:25002
-#, fuzzy
 msgid "zbroja - Opakowanie po jedzeniu powinno się wyrzucać|do śmieci, a nie na ziemię!"
 msgstr ""
 "armor - Food packaging should be disposed of in|the garbage, not on the "
 "ground!"
 
 #: mob.lst:25003
-#, fuzzy
 msgid "czaszka - Dla kogoś taki czerep to było kiedyś|być albo nie być..."
 msgstr "skull - For somebody, it was once|to be or not to be..."
 
 #: mob.lst:25004
-#, fuzzy
 msgid "żelazne obręcze - Niejedną parę przegubów już gościły."
 msgstr "iron rims - Not just a pair of knuckles have been here."
 
 #: mob.lst:25005
-#, fuzzy
 msgid "smok - Stwierdzam bez przekąsu, że widziałem|dziewice brzydsze od niego."
 msgstr ""
 "dragon - I state without exaggeration, that I saw virgins uglier than him."
 
 #: mob.lst:25006
-#, fuzzy
 msgid "dziewczyna - Łoł!...+Co my tu mamy...+Mocne, żelazne kajdany...+Piękna dziewczyna, całkowicie bezwolna.+Może by tak..."
 msgstr ""
 "girl - Wow!...+What do we have here...+Strong iron shackles...+Beautiful "
 "girl, completely passive.+Maybe I should..."
 
 #: mob.lst:25007
-#, fuzzy
 msgid "dziewczyna - Smaczny kąsek!"
 msgstr "girl - A tasty treat!"
 
 #: mob.lst:25008
-#, fuzzy
 msgid "pajęczyna - Obrzydliwa, zaczarowana pajęczyna."
 msgstr "cobweb - A disgusting, enchanted cobweb."
 
 #: mob.lst:25009
-#, fuzzy
 msgid "skała - Wystający kawałek skały."
 msgstr "rock - A protruding piece of rock."
 
 #: mob.lst:26001
-#, fuzzy
 msgid "droga - Szeroka i dobrze ubita, choć nierówna."
 msgstr "road - Broad and well-stomped, though uneven."
 
@@ -11759,25 +11593,21 @@ msgid "pomost - Stąd pewnie wypływały barki z mąką."
 msgstr ""
 
 #: mob.lst:26003
-#, fuzzy
 msgid "podnośnik - Niestety, już nieczynny, a lina ucięta.+Mam nadzieję, że nie ma to nic wspólnego|ze zbankrutowanym młynarzem."
 msgstr ""
 "lift - Unfortunately, it is out of order and the rope is cut.+I hope it has "
 "nothing to do with the bankrupt miller."
 
 #: mob.lst:26004
-#, fuzzy
 msgid "beczka - Pusta jak kufel Arivalda po półtorej|sekundy."
 msgstr "barrel - Empty as an Arivald's pint after one and a half|seconds."
 
 #: mob.lst:26005
-#, fuzzy
 msgid "wejście - Czy to jakaś moda, czy w tej okolicy| wszyscy po prostu mocno pukają?"
 msgstr ""
-"entrance - Is it some fashion or is everyone|just knock hard in this area?"
+"entrance - Is it some fashion or is everyone|just knocks hard in this area?"
 
 #: mob.lst:26006
-#, fuzzy
 msgid "młyńskie koło - Jeżeli będę się w nie wystarczająco mocno|i długo wpatrywał, na pewno ruszy."
 msgstr ""
 "mill wheel - If I stare at it hard and long enough, it will|definitely move."
@@ -11795,34 +11625,28 @@ msgid "pomost - Stąd pewnie wypływały barki z mąką."
 msgstr "pier - Apparently, barges with flour were floating from there."
 
 #: mob.lst:28001
-#, fuzzy
 msgid "wejście - Pomyśleć, że z drugiej strony to już|jest coś dokładnie odwrotnego."
 msgstr ""
 "entrance - I think, that from the other side it is exactly the opposite."
 
 #: mob.lst:28002
-#, fuzzy
 msgid "worki - Dziwne, młyn opuszczony, ale worki pełne|są mąki."
 msgstr "bags - Strange, the mill is abandoned, but the bags are full of flour."
 
 #: mob.lst:28003
-#, fuzzy
 msgid "szczelina - Interesujący otwór, ale trzeba uważać,|żeby nie wpaść."
 msgstr ""
 "crack - An interesting hole, but I need to be careful not to fall into it."
 
 #: mob.lst:28004
-#, fuzzy
 msgid "mąka - Pełno w niej robactwa.+Kto chce placuszka?"
 msgstr "flour - It's full of vermin.+Anyone wants a cake?"
 
 #: mob.lst:28005
-#, fuzzy
 msgid "żarna - Nieco nadgryzione zębem czasu."
 msgstr "quern - Slightly bitten by the tooth of time."
 
 #: mob.lst:28006
-#, fuzzy
 msgid "super tajny piksel - Brawo! Znalazłeś super tajny piksel!+Co prawda nic to zmienia w dalszym biegu|wydarzeń, ale wyrażamy nasz podziw dla|Twojej kontroli nad myszką.+Bo chyba nie zaciąłeś się w grze i nie|szukasz desperacko piksel po pikselu|jakiegoś obiektu, który może ominąłeś?..."
 msgstr ""
 "super secret pixel - Well done! You found a super secret pixel!+Although "
@@ -11832,17 +11656,14 @@ msgstr ""
 "have missed?..."
 
 #: mob.lst:28007
-#, fuzzy
 msgid "dziewczyna - Lubię patrzeć, jak tak kręci|i potrząsa."
 msgstr "girl - I like to watch how she shakes|and bumps."
 
 #: mob.lst:28008
-#, fuzzy
 msgid "linka - Aż sama zaprasza..."
 msgstr "cord - It's so inviting..."
 
 #: mob.lst:29001
-#, fuzzy
 msgid "szczur - Szczur. Ratus maior czy może ratus minor?+Obojętne. I tak jest tylko małym owrzodzonym|paskudztwem roznoszącym zarazki dżumy."
 msgstr ""
 "rat - Rat. Ratus maior or maybe ratus minor?+Doesn't matter. And so it is "
@@ -11854,41 +11675,34 @@ msgid "wyjście - Z kolan na nogi."
 msgstr ""
 
 #: mob.lst:29003
-#, fuzzy
 msgid "wyjście - Z kolan na nogi."
 msgstr "exit - From my knees to my legs."
 
 #: mob.lst:29004
-#, fuzzy
 msgid "butelki - Puste jak głowa Sheili."
 msgstr "bottles - Empty as Sheila's head."
 
 #: mob.lst:29005
-#, fuzzy
 msgid "pajęczyna - Pajączek, pajączek bez nóżek i bez rączek."
 msgstr "spider web - Spider, spider without legs and without hands."
 
 #: mob.lst:30001
-#, fuzzy
 msgid "elegancka dama - Nigdy nie widziałem wcześniej tak wystrojonej|kobiety.+Pewnie to jakaś ważna osobistość, ciesząca się|wielkim szacunkiem."
 msgstr ""
 "elegant lady - I have never seen a woman dressed like that before.+Surely "
 "she is an important person who enjoys|great respect."
 
 #: mob.lst:30002
-#, fuzzy
 msgid "kupiec - Wygląda na bardzo miłego człowieka."
 msgstr "merchant - He looks like a very nice man."
 
 #: mob.lst:30003
-#, fuzzy
 msgid "drzwi - Te drzwi prowadzą do jakiegoś rodzaju świątyni.+Mam nadzieję, że nie składa się tu ofiar|z ludzi."
 msgstr ""
 "door - This door leads to some kind of temple.+I hope there are no human "
 "sacrifices there."
 
 #: mob.lst:30004
-#, fuzzy
 msgid "stalowa maszkara - Wygląda tak, jakby była sterowana przez kogoś|od wewnątrz.+Ciekawe przez kogo? Może krasnoludy, bo człowiek|na pewno się w środku nie zmieści."
 msgstr ""
 "steel mascara - It looks as if it was controlled by someone from the inside.+"
@@ -11896,7 +11710,6 @@ msgstr ""
 "it."
 
 #: mob.lst:30005
-#, fuzzy
 msgid "drzwi - To drzwi do jakiegoś publicznie dostępnego|budynku."
 msgstr "door - This is the door to some publicly accessible building."
 
@@ -11907,12 +11720,10 @@ msgstr ""
 "what this box can be used for."
 
 #: mob.lst:30007
-#, fuzzy
 msgid "drzwi - Tutaj pewnie tubylcy składają ofiary|ze zwierząt."
-msgstr "the door - This is where the locals probably make animal sacrifices."
+msgstr "door - This is where the locals probably make animal sacrifices."
 
 #: mob.lst:30008
-#, fuzzy
 msgid "drzwi - Widać znak węża owiniętego dookoła słupa.+To pewnie miejsce pracy jakiegoś tutejszego|czarnoksiężnika."
 msgstr ""
 "door - You can see the sign of the snake wrapped around the pole.+This is "
@@ -11925,17 +11736,14 @@ msgstr ""
 "before."
 
 #: mob.lst:30010
-#, fuzzy
 msgid "dziwna machina - Kołyska na kółkach - to po prostu genialne!"
 msgstr "strange machine - Cradle on wheels - it's simply brilliant!"
 
 #: mob.lst:30011
-#, fuzzy
 msgid "przechodzień - Co za dziwna moda..."
 msgstr "passerby - What a strange fashion..."
 
 #: mob.lst:31001
-#, fuzzy
 msgid "kapłan - Dziwne: ubrany na czarno, ale nie sprawia|wrażenia adepta czarnej magii."
 msgstr ""
 "priest - Strange: dressed in black but does not seem to be an adopt of black "
@@ -11948,32 +11756,26 @@ msgstr ""
 "movement of his hand, tamed the sea."
 
 #: mob.lst:31003
-#, fuzzy
 msgid "drzwi - Prowadzą na zaplecze świątyni."
 msgstr "doors - They lead to the back of the temple."
 
 #: mob.lst:31004
-#, fuzzy
 msgid "ambona - Chwała na wysokości."
 msgstr "pulpit - Glory to the highest."
 
 #: mob.lst:31005
-#, fuzzy
 msgid "ławy - Puste.+Niestety."
 msgstr "benches - Empty.+Unfortunately."
 
 #: mob.lst:31006
-#, fuzzy
 msgid "kropielnica - Wyschnięta, kamień jest tylko lekko wilgotny."
 msgstr "stoup - Dried, the stone is only slightly moist."
 
 #: mob.lst:31007
-#, fuzzy
 msgid "wyjście - Powrót do ulicznego zgiełku."
 msgstr "exit - Back to the street noise."
 
 #: mob.lst:32001
-#, fuzzy
 msgid "człowiek o twarzy sadystycznego mordercy - Chyba wykonuje zawód zgodny z zainteresowaniami."
 msgstr ""
 "man with the face of a sadistic murderer - I think he is pursuing a "
@@ -11994,51 +11796,42 @@ msgid "wędliny - Mniam, mniam."
 msgstr "meat - Yum, yum."
 
 #: mob.lst:32005
-#, fuzzy
 msgid "mózg - No, to teraz już jasne, dlaczego ten|za ladą ma taki głupi wyraz twarzy."
 msgstr ""
 "brain - Well, it is now clear why the one behind the counter|has such a "
 "stupid expression on his face."
 
 #: mob.lst:32006
-#, fuzzy
 msgid "pojemnik - Zwierzęta mają bardzo bogate życie|wewnętrzne..."
 msgstr "container - Animals have a very rich internal life..."
 
 #: mob.lst:32007
-#, fuzzy
 msgid "siekiera - Gdyby nie drzwi... byłbym niższy|o głowę."
 msgstr "axe - If it weren't for the door... I'd be shorter by a head."
 
 #: mob.lst:33001
-#, fuzzy
 msgid "strażnik - Idiotów z bejzbolami chyba nigdy nie zabraknie..."
-msgstr "guard - You probably never run out of idiots with basebal bats..."
+msgstr "guard - You probably never run out of idiots with baseball bats..."
 
 #: mob.lst:33002
-#, fuzzy
 msgid "wejście - Ciepło, ciepło..."
 msgstr "entrance - Warm, warm..."
 
 #: mob.lst:34001
-#, fuzzy
 msgid "wyjście - Któżby chciał opuszczać piekielne otchłanie?"
 msgstr "exit - Who would want to leave the infernal abyss?"
 
 #: mob.lst:34002
-#, fuzzy
 msgid "tabliczka - \"Wstęp tylko dla diabłów i zmarłych. Obsługujemy|tylko jedną parę naraz. Przed wejściem należy|przygotować listę grzechów.\""
 msgstr ""
 "placard - \"Admission only for devils and dead. We serve|only one pair at a "
 "time. Before entering please|prepare a list of sins.\""
 
 #: mob.lst:34003
-#, fuzzy
 msgid "drzwi - Solidne drewno z metalowymi okuciami.+Mucha nie siada."
 msgstr "doors - Solid wood with metal fittings.+So clean, you could eat it."
 
 #: mob.lst:34004
-#, fuzzy
 msgid "krata więzienna - Lepsza taka wentylacja niż żadna."
 msgstr "prison grille - Better such ventilation than none."
 
@@ -12047,109 +11840,91 @@ msgid "zamek - Widzę, że nowoczesna technika sięgnęła nawet|Piekła."
 msgstr "lock - I can see that modern technology has even reached Hell."
 
 #: mob.lst:34006
-#, fuzzy
 msgid "drzwi - Nie do pokonania, chyba że ma się do dyspozycji|wściekłego słonia.*+Albo klucz."
 msgstr ""
 "door - Unbreakable unless you have an angry elephant|in your possession.*+Or "
 "a key."
 
 #: mob.lst:34007
-#, fuzzy
 msgid "czarka - Pewnie to właśnie naczynie trafia do więźniów."
 msgstr "bowl - Probably it is the utensil that goes to prisoners."
 
 #: mob.lst:34008
-#, fuzzy
 msgid "przejście - Droga w czeluście piekieł."
 msgstr "pass - Road to the depths of hell."
 
 #: mob.lst:35001
-#, fuzzy
 msgid "przejście - Prowadzi do znanych mi już obszarów piekielnych."
 msgstr "pass - It leads to the Hell areas I already know."
 
 #: mob.lst:35002
-#, fuzzy
 msgid "przejście - W inne rejony Piekła."
 msgstr "pass - To other parts of the Hell."
 
 #: mob.lst:35003
-#, fuzzy
 msgid "wnęka - Wnęka dość mroczna, ale widzę dwa pilnujące|czegoś diabły."
 msgstr ""
 "niche - The niche is quite dark, but I can see two devils watching over "
 "something."
 
 #: mob.lst:35004
-#, fuzzy
 msgid "drzwi - Stare, ale jare."
 msgstr "door - Old but good."
 
 #: mob.lst:35005
-#, fuzzy
 msgid "wejście - Pukajcie, a będzie wam otworzone."
 msgstr "entrance - Keep knocking and it will be opened to you."
 
 #: mob.lst:35006
-#, fuzzy
 msgid "zawór - Kurek z dziwnego metalu..."
 msgstr "valve - Strange metal tap..."
 
 #: mob.lst:35007
-#, fuzzy
 msgid "zbiornik - Tutaj lawa znajduje swoje ujście.+Ciekawe, co się z nią dalej dzieje."
 msgstr ""
 "reservoir - Here the lava finds its outlet.+I wonder what is happening to it "
 "further."
 
 #: mob.lst:35008
-#, fuzzy
 msgid "kawałek różka - Rozdzielnicowy."
 msgstr "horn piece - splitting one."
 
 #: mob.lst:36001
-#, fuzzy
 msgid "diabeł - Rozdzielnicowy."
 msgstr "devil - splitting one."
 
 #: mob.lst:36002
-#, fuzzy
 msgid "biała świeca - Mała, krótka świeca; stoi najbliżej drzwi do|sali z napisem \"Grzechy lekkie\"."
 msgstr ""
 "white candle - A small, short candle; stands closest to the door to the "
 "chamber|with the words \"Light sins\"."
 
 #: mob.lst:36003
-#, fuzzy
 msgid "czerwona świeca - Średniej wielkości świeca, stoi blisko drzwi|z napisem \"Grzechy ciężkie\"."
 msgstr ""
 "red candle - Medium-sized candle, stands near the door with|the words \""
 "Heavy sins\"."
 
 #: mob.lst:36004
-#, fuzzy
 msgid "czarna świeca - Olbrzymia, gruba świeca. Jest najbliżej drzwi|z napisem \"V.I.P.\"."
 msgstr ""
 "black candle - A huge, thick candle. It is closest to the door with|the "
 "inscription \"V.I.P.\""
 
 #: mob.lst:36005
-#, fuzzy
 msgid "drzwi - \"Wirtualna sala grzechów lekkich.\""
 msgstr "door - \"Virtual hall of light sins.\""
 
 #: mob.lst:36006
-#, fuzzy
 msgid "drzwi - \"Wirtualna sala tylko dla V.I.P.-ów.\"+Jest jeszcze dopisek: \"Wersja beta.\""
-msgstr "door - \"Virtual hall VIP only.\"+There is also note: \"Beta version.\""
+msgstr ""
+"door - \"Virtual hall VIP only.\"+There is also a note: \"Beta version.\""
 
 #: mob.lst:36007
-#, fuzzy
 msgid "drzwi - \"Wirtualna sala grzechów ciężkich.\""
 msgstr "door - \"Virtual hall of heavy sins.\""
 
 #: mob.lst:36008
-#, fuzzy
 msgid "wyjście - Zejście w głąb korytarzy Piekła."
 msgstr "exit - Descent into the corridors of Hell."
 
@@ -12159,12 +11934,10 @@ msgid "diabeł - Jedzonko nie posłużyło."
 msgstr ""
 
 #: mob.lst:36010
-#, fuzzy
 msgid "różki - Śliczne!"
 msgstr "little horns - Cute!"
 
 #: mob.lst:36011
-#, fuzzy
 msgid "diabeł - Jedzonko nie posłużyło."
 msgstr "devil - Food did not help."
 
@@ -12173,7 +11946,6 @@ msgid "kociołek - Pusty, bez żadnej strawy.+Najprawdopodobniej nigdy jej tutaj
 msgstr "cauldron - Empty, no food.+Most likely it has never been there."
 
 #: mob.lst:37002
-#, fuzzy
 msgid "żar - Ognisko gorące, ale płomień wygaszony."
 msgstr "embers - Bonfire is still hot, but the flame extinguished."
 
@@ -12188,7 +11960,6 @@ msgstr ""
 "in Hell...+And it's good that they haven't nailed anything|alive here."
 
 #: mob.lst:37005
-#, fuzzy
 msgid "fotel - Mebel dwuosobowy, ale karę odbywa się|w samotności.+Nuda, samotność, pustka... I to tylko kara za|grzechy lekkie..."
 msgstr ""
 "armchair - Double furniture, but the punishment takes place|in loneliness.+"
@@ -12196,195 +11967,161 @@ msgstr ""
 "sins..."
 
 #: mob.lst:37006
-#, fuzzy
 msgid "węgielek - Superrozgrzany."
 msgstr "coal - Superhot."
 
 #: mob.lst:37007
-#, fuzzy
 msgid "węgielek - Rozgrzany."
 msgstr "coal - Hot."
 
 #: mob.lst:38001
-#, fuzzy
 msgid "fake - Nic. Tego tutaj nie ma. Zapomnij."
 msgstr "fake - Nothing. It's not here. Forget it."
 
 #: mob.lst:39001
-#, fuzzy
 msgid "udziec - Tłuściutki kawał mięcha."
 msgstr "leg - A fat piece of meat."
 
 #: mob.lst:39002
-#, fuzzy
 msgid "łóżko - Wygląda na mięciutkie i przytulne.|W rzeczywistości jest zimne i twarde."
 msgstr "bed - It looks soft and cosy.|In fact, it's cold and hard."
 
 #: mob.lst:39003
-#, fuzzy
 msgid "potrawy - Widok cudowny, rozczulający i ślinopędny, ale|nawet smoczy żołądek nie potrafi trawić|kamieni..."
 msgstr ""
 "dishes - A wonderful, affectionate and salivary view, but|even the dragon's "
 "stomach cannot digest|stones..."
 
 #: mob.lst:39004
-#, fuzzy
 msgid "wino i słodycze - Torcik palce lizać, a wino aż błyszczy.|Doprawdy, perfidny miraż..."
 msgstr ""
 "wine and sweets - Small cake lick your fingers, and the wine shines.|A truly "
 "perfidious mirage..."
 
 #: mob.lst:39005
-#, fuzzy
 msgid "owoce - Wyglądają bardzo smacznie, ale są|z polakierowanego drewna.+Chociaż banan mógłby się komuś przydać."
 msgstr ""
 "fruits - They look very tasty, but they are made of varnished wood.+Although "
 "the banana could be useful to someone."
 
 #: mob.lst:40001
-#, fuzzy
 msgid "kukła - Model najwyraźniej symbolizujący niegrzeczne|dzieci i krasnoludy."
 msgstr "puppet - Model apparently symbolizing naughty children and dwarves."
 
 #: mob.lst:40002
-#, fuzzy
 msgid "wygasłe palenisko - Nic poza zwęglonym pyłem."
 msgstr "extinct bonfire - Nothing but charred dust."
 
 #: mob.lst:40003
-#, fuzzy
 msgid "palenisko - Buzuje aż miło."
-msgstr "fireplace - buzzing nicely."
+msgstr "fireplace - Buzzing nicely."
 
 #: mob.lst:40004
-#, fuzzy
 msgid "zastygła smoła - \"Model wycofany z produkcji. Napęd węglowy.\""
 msgstr "solidified tar - \"Model discontinued. Coal energy.\""
 
 #: mob.lst:40005
-#, fuzzy
 msgid "smoła - Diabelskie jakuzi..."
 msgstr "tar - Devil's jacuzzi..."
 
 #: mob.lst:40006
-#, fuzzy
 msgid "wiadro - Wrrr... Jak wyobrażę to sobie w działaniu..."
 msgstr "bucket - Whiiirl... When I imagine it in action ..."
 
 #: mob.lst:40007
-#, fuzzy
 msgid "probówki - Mają bardzo fantazyjne kształty, ale|nie wiem, do czego mogłyby służyć.+I nawet nie chcę wiedzieć."
 msgstr ""
 "test tubes - They have very fancy shapes, but|I don't know what they could "
 "be used for.+And I don't even want to know."
 
 #: mob.lst:40008
-#, fuzzy
 msgid "klepsydra - Odmierzała czas oprawcom."
 msgstr "hourglass - Measuring the time of the torturers."
 
 #: mob.lst:40009
-#, fuzzy
 msgid "wyjście - Wyjście na korytarz."
 msgstr "exit - Exit to the corridor."
 
 #: mob.lst:40010
-#, fuzzy
 msgid "pomoce naukowe - Podręczny zestaw każdego szanującego się|poszukiwacza wrażeń."
 msgstr "teaching aids - A handy set for every respectful experience seeker."
 
 #: mob.lst:40011
-#, fuzzy
 msgid "madejowe łoże - Nie ma to jak wyciągnąć się na łóżku, co?"
 msgstr "wooden rack - Stretching on a bed is not enough, huh?"
 
 #: mob.lst:40012
-#, fuzzy
 msgid "żelazna dziewica - Teraz już wiem, dlaczego smoków coraz mniej."
 msgstr "iron maiden - I now know why the number of dragons is decreasing."
 
 #: mob.lst:40013
-#, fuzzy
 msgid "zużyte narzędzia - Widać na nich lata intensywnej pracy.+Dla dobra ludzkości, rzecz jasna."
 msgstr ""
 "used tools - You can see years of intense work on them.+For the good of "
 "humanity, of course."
 
 #: mob.lst:40014
-#, fuzzy
 msgid "hak - Na każdego jest jakiś hak."
 msgstr "hook - There's a hook for everyone."
 
 #: mob.lst:40015
-#, fuzzy
 msgid "wrzątek - Trochę to dziwnie brzmi, ale wrzątek ostudził|pewnie niejednego grzesznika."
 msgstr ""
 "boiling water - It sounds a bit strange, but boiling water has|probably "
 "cooled down many sinners."
 
 #: mob.lst:41001
-#, fuzzy
 msgid "kamień - Jest przeogromny. Żaden człowiek nie jest|w stanie go poruszyć."
 msgstr "stone - It is enormous. No man can move him."
 
 #: mob.lst:41002
-#, fuzzy
 msgid "łańcuch - Grube, solidne ogniwa."
 msgstr "chain - Thick, solid links."
 
 #: mob.lst:41003
-#, fuzzy
 msgid "prycza - Malutka. Widać nie przewidują gości."
 msgstr "wooden cot - Tiny. You can see they don't expect guests."
 
 #: mob.lst:41004
-#, fuzzy
 msgid "latarnia - No tak, nic dziwnego, w końcu do Piekła|światło słoneczne nie dochodzi."
 msgstr "lantern - Well, no wonder, after all sunlight|does not reach Hell."
 
 #: mob.lst:42001
-#, fuzzy
 msgid "magiczne drzwi - Dlaczego nie ma tu Arivalda? Rozbiłby|je w puch jednym zaklęciem!"
 msgstr ""
 "magic door - Why is Arivald not here? He would smash|them down with single "
 "spell!"
 
 #: mob.lst:42002
-#, fuzzy
 msgid "wyjście - Powrót na główny korytarz."
 msgstr "exit - Return to the main corridor."
 
 #: mob.lst:42003
-#, fuzzy
 msgid "diabeł - Lewy."
 msgstr "devil - Left one."
 
 #: mob.lst:42004
-#, fuzzy
 msgid "diabeł - Prawy."
 msgstr "devil - Right one."
 
 #: mob.lst:43001
-#, fuzzy
 msgid "maszyna muzyczna - To chyba jakaś tajna broń Piekła w walce|z Niebem.+Może ma zakłócić brzmienie anielskich|chórów?"
 msgstr ""
 "music machine - This is probably some secret weapon of Hell|in the fight "
 "against Heaven.+Maybe it will disturb the sound of|the angel's choirs?"
 
 #: mob.lst:43002
-#, fuzzy
 msgid "wejście - Jestem u celu. Raz kozie śmierć, jak|mawiał rzeźnik."
 msgstr ""
 "exit - I'm at my destination. Man can die just once, as|one "
 "pathologoanatomist said."
 
 #: mob.lst:43003
-#, fuzzy
 msgid "Lucyfer - Lucyfer. Wygląda może nie tak|przerażająco, ale...+Ci, którzy go zlekceważyli zostali|tu pewnie na zawsze.+Na godziny długie jak miesiące, miesiące|długie jak lata...+... i tak dalej."
 msgstr ""
 "Lucifer - Lucifer. It looks not so scary, but...+Those who disregarded it "
 "must have been here|forever.+For hours as long as months, months as long as "
-"years...+... and so on."
+"years...+...and so on."
 
 #: mob.lst:50001
 msgid "Zapomniany cmentarz - "
@@ -12407,9 +12144,8 @@ msgid "Świątynia - "
 msgstr "Temple - "
 
 #: mob.lst:50006
-#, fuzzy
 msgid "Zamek Garrahan - "
-msgstr "Castle Gallahan - "
+msgstr "Castle Garrahan - "
 
 #: mob.lst:50007
 #, fuzzy
@@ -12582,17 +12318,14 @@ msgstr ""
 "only|for my own purposes."
 
 #: variatxt.txt:501
-#, fuzzy
 msgid "Translokacja!"
 msgstr "Translocation!"
 
 #: variatxt.txt:502
-#, fuzzy
 msgid "Dość już tych manipulacji."
 msgstr "Enough of these manipulations."
 
 #: variatxt.txt:503
-#, fuzzy
 msgid "Zdobycie kufla kosztowało mnie zbyt|wiele wysiłku... Najpierw coś muszę|z nim zrobić."
 msgstr ""
 "It took me too much effort to get|the mug... First, I have to do|something "
@@ -12619,7 +12352,6 @@ msgid "Jeden z opisów pasuje jak ulał!|Łuska jest ...smocza!"
 msgstr "One of the descriptions fits perfectly!|The scale of a... dragon!"
 
 #: variatxt.txt:701
-#, fuzzy
 msgid "Nikt nie odpowiada. Pewnie trwa rozruch|narzędzi tortur."
 msgstr "Nobody answers. They're probably warming up|the torture tools."
 
@@ -12738,12 +12470,10 @@ msgstr ""
 "time for acting independently."
 
 #: variatxt.txt:2301
-#, fuzzy
 msgid "To była tylko iluzja..."
 msgstr "That was just an illusion..."
 
 #: variatxt.txt:2302
-#, fuzzy
 msgid "O-o!..."
 msgstr "O-oh!..."
 
@@ -12753,52 +12483,42 @@ msgid "Wiedziałem."
 msgstr ""
 
 #: variatxt.txt:2402
-#, fuzzy
 msgid "Jest chyba zrośnięty z właścicielem."
 msgstr "It probably got fused with the owner."
 
 #: variatxt.txt:2403
-#, fuzzy
 msgid "Zacięła się!"
 msgstr "Jammed!"
 
 #: variatxt.txt:2404
-#, fuzzy
 msgid "Dziękuję."
 msgstr "Thanks."
 
 #: variatxt.txt:2405
-#, fuzzy
 msgid "Wiedziałem."
 msgstr "I know."
 
 #: variatxt.txt:2406
-#, fuzzy
 msgid "Magia mapy nie działa..."
 msgstr "Map magic doesn't work..."
 
 #: variatxt.txt:2501
-#, fuzzy
 msgid "Nigdy w życiu, nienawidzę pajęczyn, a tym|bardziej takich, które wyglądają na|magiczne."
 msgstr "I never hated cobwebs, let alone ones that look|magical."
 
 #: variatxt.txt:2502
-#, fuzzy
 msgid "Ciepło tu jakoś."
 msgstr "It's warm here somehow."
 
 #: variatxt.txt:2503
-#, fuzzy
 msgid "Zły moment..."
 msgstr "Bad moment..."
 
 #: variatxt.txt:2504
-#, fuzzy
 msgid "I po co?"
 msgstr "And why?"
 
 #: variatxt.txt:2505
-#, fuzzy
 msgid "Rozumiem."
 msgstr "I see."
 
@@ -12808,62 +12528,50 @@ msgid "Eeee..."
 msgstr "?????..."
 
 #: variatxt.txt:2601
-#, fuzzy
 msgid "Nikt nie uwierzy, że jesteśmy martwi..."
 msgstr "Nobody will believe that we are dead..."
 
 #: variatxt.txt:2602
-#, fuzzy
 msgid "Brak jakiegoś znaku, specjalnego znaku|pochówku..."
 msgstr "No sign, no special sign of burial..."
 
 #: variatxt.txt:2801
-#, fuzzy
 msgid "Moje nowe ciało jest najwyraźniej za|szerokie w ramionach"
 msgstr "My new body is obviously too wide|in my shoulders"
 
 #: variatxt.txt:2802
-#, fuzzy
 msgid "Ups."
 msgstr "Oops."
 
 #: variatxt.txt:2803
-#, fuzzy
 msgid "Nie chce ryzykować kolejnego ataku."
 msgstr "I don't want to risk another attack."
 
 #: variatxt.txt:2804
-#, fuzzy
 msgid "Otwór jest już wystarczająco szeroki."
 msgstr "The hole is already wide enough."
 
 #: variatxt.txt:2805
-#, fuzzy
 msgid "Nie widzę potrzeby."
 msgstr "I see no need."
 
 #: variatxt.txt:2806
-#, fuzzy
 msgid "Nie ma tam nic ciekawego."
 msgstr "There is nothing interesting there."
 
 #: variatxt.txt:3001
-#, fuzzy
 msgid "Najpierw muszę wykorzystać sytuację|na swoją korzyść."
-msgstr "First I have to use the situation|in my favor."
+msgstr "First I have to use the situation in my favor."
 
 #: variatxt.txt:3002
-#, fuzzy
 msgid "Nie działa!"
 msgstr "Doesn't work!"
 
 #: variatxt.txt:3003
-#, fuzzy
 msgid "Gdzie ja jestem?!..."
 msgstr "Where am I?!..."
 
 #: variatxt.txt:3101
-#, fuzzy
 msgid "Od tego rozmawiania już mnie ręce bolą."
 msgstr "My hands hurt from this conversation."
 
@@ -12878,32 +12586,26 @@ msgid "[To już jest w DIALOGACH]"
 msgstr ""
 
 #: variatxt.txt:3203
-#, fuzzy
 msgid "[To już jest w DIALOGACH]"
 msgstr "[This is already in the DIALOGUES]"
 
 #: variatxt.txt:3204
-#, fuzzy
 msgid "Wrrrrrrrr..."
 msgstr "Wrrrrrrrr..."
 
 #: variatxt.txt:3205
-#, fuzzy
 msgid "Po co od razu się denerwować?..."
 msgstr "Why get upset right away?..."
 
 #: variatxt.txt:3206
-#, fuzzy
 msgid "Nigdy. Nie znam małpiego."
-msgstr "Never. I don't speak Monkey language."
+msgstr "Never. I don't speak monkey language."
 
 #: variatxt.txt:3301
-#, fuzzy
 msgid "Kobiety..."
 msgstr "Girls..."
 
 #: variatxt.txt:3302
-#, fuzzy
 msgid "Chyba czeka nas rozwiązanie siłowe."
 msgstr "I think we need a solution by brute force."
 
@@ -12912,11 +12614,9 @@ msgid "Macha nią jak lekką trzcinką...|Jest dla mnie zbyt szybki."
 msgstr "He waves it like a lightweight cane...|It's too fast for me."
 
 #: variatxt.txt:3304
-#, fuzzy
 msgid "Grzeczny diabełek."
 msgstr "Good little devil."
 
 #: variatxt.txt:3501
-#, fuzzy
 msgid "Zawór już odkręcony."
-msgstr "Valve already opened."
+msgstr "Valve is already opened."
