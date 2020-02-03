@@ -136,7 +136,7 @@ bool cleanupPirated(ADDetectedGames &matched) {
 		if (matched.empty()) {
 			warning("Illegitimate game copy detected. We provide no support in such cases");
 			if (GUI::GuiManager::hasInstance()) {
-				GUI::MessageDialog dialog("Illegitimate game copy detected. We provide no support in such cases", "OK");
+				GUI::MessageDialog dialog(_("Illegitimate game copy detected. We provide no support in such cases"));
 				dialog.runModal();
 			};
 			return true;
