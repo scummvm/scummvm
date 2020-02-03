@@ -167,7 +167,7 @@ void ItemRelativeGump::GetItemLocation(int32 lerp_factor) {
 		MoveOnScreen();
 }
 
-void ItemRelativeGump::Move(int32 x_, int32 y_) {
+void ItemRelativeGump::Move(int x_, int y_) {
 	ParentToGump(x_, y_);
 	x += x_;
 	y += y_;
