@@ -304,7 +304,7 @@ bool ViewTitle::KeypressMsg(CKeypressMsg &msg) {
 			if (msg._keyState.keycode == Common::KEYCODE_a) {
 				setView("CharGen");
 			} else {
-				if (!g_vm->loadGame())
+				if (!g_vm->loadGameDialog())
 					textCursor->setVisible(true);
 			}
 		}

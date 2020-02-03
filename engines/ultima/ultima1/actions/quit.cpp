@@ -37,7 +37,7 @@ END_MESSAGE_MAP()
 bool Quit::QuitMsg(CQuitMsg &msg) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	addInfoMsg(game->_res->ACTION_NAMES[16]);
-	g_vm->saveGame();
+	g_vm->saveGameDialog();
 
 	return true;
 }

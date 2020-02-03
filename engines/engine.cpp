@@ -56,6 +56,7 @@
 #include "gui/debugger.h"
 #include "gui/dialog.h"
 #include "gui/message.h"
+#include "gui/saveload.h"
 
 #include "audio/mixer.h"
 
@@ -683,6 +684,43 @@ Common::Error Engine::saveGameStream(Common::WriteStream *stream) {
 
 bool Engine::canSaveGameStateCurrently() {
 	// Do not allow saving by default
+	return false;
+}
+
+bool Engine::loadGameDialog() {
+	if (!canLoadGameStateCurrently())
+		return false;
+
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+	pauseEngine(true);
+	int slotNum = dialog->runModalWithCurrentTarget();
+	pauseEngine(false);
+	delete dialog;
+
+	if (slotNum != -1)
+		return loadGameState(slotNum).getCode() == Common::kNoError;
+
+	return false;
+}
+
+bool Engine::saveGameDialog() {
+	if (!canSaveGameStateCurrently())
+		return false;
+
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	pauseEngine(true);
+	int slotNum = dialog->runModalWithCurrentTarget();
+	pauseEngine(false);
+
+	Common::String desc = dialog->getResultString();
+	if (desc.empty())
+		desc = dialog->createDefaultSaveDescription(slotNum);
+
+	delete dialog;
+
+	if (slotNum != -1)
+		return saveGameState(slotNum, desc).getCode() == Common::kNoError;
+
 	return false;
 }
 

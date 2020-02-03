@@ -398,7 +398,7 @@ bool ViewCharacterGeneration::save() {
 	_character->_armour[1]->_quantity = 1;			// Leather armour
 	_character->_equippedSpell = 0;
 
-	return g_vm->saveGame();
+	return g_vm->saveGameDialog();
 }
 
 } // End of namespace U1Gfx

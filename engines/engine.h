@@ -259,6 +259,16 @@ public:
 	 */
 	virtual bool canSaveGameStateCurrently();
 
+	/**
+	 * Shows the ScummVM save dialog, allowing users to save their game
+	 */
+	bool saveGameDialog();
+
+	/**
+	 * Shows the ScummVM Restore dialog, allowing users to load a game
+	 */
+	bool loadGameDialog();
+
 protected:
 
 	/**
