@@ -194,16 +194,6 @@ public:
 	 * and if it exists, returns it's description
 	 */
 	CString getSavegameName(int slot);
-
-	/**
-	 * Shows the ScummVM GMM save dialog
-	 */
-	void showScummVMSaveDialog();
-
-	/**
-	 * Shows the ScummVM GMM load dialog
-	 */
-	void showScummVMRestoreDialog();
 };
 
 extern TitanicEngine *g_vm;
