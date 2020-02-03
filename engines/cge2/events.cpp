@@ -60,25 +60,10 @@ bool Keyboard::getKey(Common::Event &event) {
 			_vm->_commandHandler->addCommand(kCmdInf, 1, kShowScummVMVersion + i, NULL);
 		return false;
 	case Common::KEYCODE_F5:
-		if (_vm->canSaveGameStateCurrently()) {
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-			int16 savegameId = dialog->runModalWithCurrentTarget();
-			Common::String savegameDescription = dialog->getResultString();
-			delete dialog;
-
-			if (savegameId != -1)
-				_vm->saveGameState(savegameId, savegameDescription);
-		}
+		_vm->saveGameDialog();
 		return false;
 	case Common::KEYCODE_F7:
-		if (_vm->canLoadGameStateCurrently()) {
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
-			int16 savegameId = dialog->runModalWithCurrentTarget();
-			delete dialog;
-
-			if (savegameId != -1)
-				_vm->loadGameState(savegameId);
-		}
+		_vm->loadGameDialog();
 		return false;
 	case Common::KEYCODE_d:
 		if (event.kbd.flags & Common::KBD_CTRL) {
