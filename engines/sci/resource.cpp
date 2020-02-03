@@ -420,7 +420,9 @@ void ResourceManager::disposeVolumeFileStream(Common::SeekableReadStream *fileSt
 
 void ResourceManager::loadResource(Resource *res) {
 	res->_source->loadResource(this, res);
-	_patcher->applyPatch(*res);
+	if (_patcher) {
+		_patcher->applyPatch(*res);
+	};
 }
 
 
@@ -980,8 +982,12 @@ void ResourceManager::init() {
 #ifdef ENABLE_SCI32
 	_currentDiscNo = 1;
 #endif
-	_patcher = new ResourcePatcher(g_sci->getGameId(), g_sci->getLanguage());
-	addSource(_patcher);
+	if (g_sci) {
+		_patcher = new ResourcePatcher(g_sci->getGameId(), g_sci->getLanguage());
+		addSource(_patcher);
+	} else {
+		_patcher = NULL;
+	};
 
 	// FIXME: put this in an Init() function, so that we can error out if detection fails completely
 
