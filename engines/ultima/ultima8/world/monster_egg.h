@@ -55,7 +55,7 @@ public:
 	INTRINSIC(I_getMonId);
 
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

@@ -40,22 +40,22 @@ public:
 	ItemRelativeGump(int32 x, int32 y, int32 width, int32 height, uint16 owner, uint32 _Flags = 0, int32 layer = LAYER_NORMAL);
 	virtual ~ItemRelativeGump(void);
 
-	virtual void        InitGump(Gump *newparent, bool take_focus = true);
+	virtual void        InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Paint the Gump (RenderSurface is relative to parent).
 	// Calls PaintThis and PaintChildren.
-	virtual void        Paint(RenderSurface *, int32 lerp_factor, bool scaled);
+	virtual void        Paint(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
 	virtual void        ParentToGump(int32 &px, int32 &py,
-	                                 PointRoundDir r = ROUND_TOPLEFT);
+	                                 PointRoundDir r = ROUND_TOPLEFT) override;
 	virtual void        GumpToParent(int32 &gx, int32 &gy,
-	                                 PointRoundDir r = ROUND_TOPLEFT);
+	                                 PointRoundDir r = ROUND_TOPLEFT) override;
 
-	virtual void        Move(int32 x, int32 y);
+	virtual void        Move(int32 x, int32 y) override;
 
 	bool                loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void        saveData(ODataSource *ods);
+	virtual void        saveData(ODataSource *ods) override;
 
 	virtual void        GetItemLocation(int32 lerp_factor);
 

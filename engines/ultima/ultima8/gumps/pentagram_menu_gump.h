@@ -55,16 +55,16 @@ public:
 	PentagramMenuGump(int x, int y, int w, int h);
 	virtual ~PentagramMenuGump();
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true);
+	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
 
-	virtual void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled);
-	virtual void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled);
+	virtual void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	virtual void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 
-	virtual void ChildNotify(Gump *child, uint32 message);
+	virtual void ChildNotify(Gump *child, uint32 message) override;
 
-	virtual bool OnKeyDown(int key, int mod);
+	virtual bool OnKeyDown(int key, int mod) override;
 
-	virtual void run();
+	virtual void run() override;
 
 #if 0
 	virtual uint16 TraceObjId(int32 mx, int32 my);

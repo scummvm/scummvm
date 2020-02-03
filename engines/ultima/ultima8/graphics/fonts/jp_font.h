@@ -38,9 +38,9 @@ public:
 
 	int getWidth(int c);
 
-	virtual int getHeight();
-	virtual int getBaseline();
-	virtual int getBaselineSkip();
+	virtual int getHeight() override;
+	virtual int getBaseline() override;
+	virtual int getBaselineSkip() override;
 
 	virtual void getStringSize(const Std::string &text,
 		int32 &width, int32 &height) override;

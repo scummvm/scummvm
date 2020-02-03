@@ -40,7 +40,7 @@ public:
 
 	virtual bool exists(const Std::string &name) override;
 
-	virtual uint8 *getObject(const Std::string &name, uint32 *size = 0);
+	virtual uint8 *getObject(const Std::string &name, uint32 *size = 0) override;
 
 	virtual uint32 getSize(const Std::string &name) override;
 

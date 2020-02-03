@@ -41,9 +41,9 @@ public:
 	          const uint16 flexId, const uint32 shapenum);
 	virtual ~ShapeFont();
 
-	virtual int getHeight();
-	virtual int getBaseline();
-	virtual int getBaselineSkip();
+	virtual int getHeight() override;
+	virtual int getBaseline() override;
+	virtual int getBaselineSkip() override;
 
 	int getWidth(char c);
 	int getVlead() const {

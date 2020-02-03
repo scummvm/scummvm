@@ -41,13 +41,13 @@ public:
 	virtual ~ScrollGump();
 
 	// Go to the next page on mouse click
-	virtual void OnMouseClick(int button, int32 mx, int32 my);
+	virtual void OnMouseClick(int button, int32 mx, int32 my) override;
 
 	// Close on double click
-	virtual void OnMouseDouble(int button, int32 mx, int32 my);
+	virtual void OnMouseDouble(int button, int32 mx, int32 my) override;
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true);
+	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	INTRINSIC(I_readScroll);
 
@@ -57,7 +57,7 @@ protected:
 public:
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

@@ -36,9 +36,9 @@ public:
 	       bool antiAliased, bool SJIS);
 	virtual ~TTFont();
 
-	virtual int getHeight();
-	virtual int getBaseline();
-	virtual int getBaselineSkip();
+	virtual int getHeight() override;
+	virtual int getBaseline() override;
+	virtual int getBaselineSkip() override;
 
 	bool isAntialiased() {
 		return antiAliased;

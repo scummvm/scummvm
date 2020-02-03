@@ -36,13 +36,13 @@ public:
 	QuitGump();
 	virtual ~QuitGump(void);
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true);
+	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
 
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
+	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual bool OnKeyDown(int key, int mod);
-	virtual bool OnTextInput(int unicode);
-	virtual void ChildNotify(Gump *child, uint32 message);
+	virtual bool OnKeyDown(int key, int mod) override;
+	virtual bool OnTextInput(int unicode) override;
+	virtual void ChildNotify(Gump *child, uint32 message) override;
 
 	static void verifyQuit();
 	//! "QuitGump::verifyQuit" console command
@@ -50,7 +50,7 @@ public:
 
 	bool loadData(IDataSource *ids);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 	ObjId yesWidget, noWidget;
 };
 

@@ -52,12 +52,12 @@ public:
 	ScalerGump(int32 x, int32 y, int32 width, int32 height);
 	virtual ~ScalerGump(void);
 
-	virtual void Paint(RenderSurface *surf, int32 lerp_factor, bool scaled);
-	virtual void RenderSurfaceChanged();
+	virtual void Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	virtual void RenderSurfaceChanged() override;
 	virtual void ParentToGump(int32 &px, int32 &py,
-	                          PointRoundDir r = ROUND_TOPLEFT);
+	                          PointRoundDir r = ROUND_TOPLEFT) override;
 	virtual void GumpToParent(int32 &gx, int32 &gy,
-	                          PointRoundDir r = ROUND_TOPLEFT);
+	                          PointRoundDir r = ROUND_TOPLEFT) override;
 
 	void GetScaledSize(int32 &sw, int32 &sh) const {
 		sw = swidth1;

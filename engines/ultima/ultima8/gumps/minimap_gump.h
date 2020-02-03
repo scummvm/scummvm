@@ -47,15 +47,15 @@ public:
 	MiniMapGump(int x, int y);
 	virtual ~MiniMapGump(void);
 
-	virtual void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled);
-	virtual uint16      TraceObjId(int32 mx, int32 my);
+	virtual void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	virtual uint16      TraceObjId(int32 mx, int32 my) override;
 
 	static void         ConCmd_toggle(const Console::ArgvType &argv);   //!< "MiniMapGump::toggle" console command
 	static void         ConCmd_generateWholeMap(const Console::ArgvType &argv); //!< "MiniMapGump::generateWholeMap" console command
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

@@ -39,15 +39,15 @@ public:
 	InverterGump(int32 x, int32 y, int32 width, int32 height);
 	virtual ~InverterGump(void);
 
-	virtual void Paint(RenderSurface *surf, int32 lerp_factor, bool scaled);
-	virtual void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled);
+	virtual void Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	virtual void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 
 	virtual void ParentToGump(int32 &px, int32 &py,
-	                          PointRoundDir r = ROUND_TOPLEFT);
+	                          PointRoundDir r = ROUND_TOPLEFT) override;
 	virtual void GumpToParent(int32 &gx, int32 &gy,
-	                          PointRoundDir r = ROUND_TOPLEFT);
+	                          PointRoundDir r = ROUND_TOPLEFT) override;
 
-	virtual void RenderSurfaceChanged();
+	virtual void RenderSurfaceChanged() override;
 
 protected:
 	RenderSurface *buffer;
