@@ -36,7 +36,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GAME_ULTIMA1,
@@ -51,7 +51,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("map.bin", "f99633a0110ccf90837ab161be56cf1c", 13104),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GAME_ULTIMA1,
@@ -66,7 +66,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("converse.a", "5065716423ef1389e3f7b4946d815c26", 162615),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			0,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GAME_ULTIMA6,
@@ -81,7 +81,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("converse.a", "5065716423ef1389e3f7b4946d815c26", 162615),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			0,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GAME_ULTIMA6,
@@ -96,7 +96,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("eusecode.flx", "c61f1dacde591cb39d452264e281f234", 1251108),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			0,
+			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_ULTIMA8,
@@ -115,7 +115,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			},			
 			Common::FR_FRA,
 			Common::kPlatformDOS,
-			0,
+			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_ULTIMA8,
@@ -134,7 +134,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			0,
+			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOMIDI)
 		},
 		GAME_ULTIMA8,
@@ -149,7 +149,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("talk.lzc", "6efafc030cb552028c564897e40d87b5", 409705),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			0,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GAME_MARTIAN_DREAMS,
@@ -164,7 +164,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("talk.lzc", "6efafc030cb552028c564897e40d87b5", 409705),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			0,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GAME_MARTIAN_DREAMS,
@@ -180,7 +180,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("talk.lzc", "bef60fbc3cc478b2a2e8f0883652b2f3", 160784),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			0,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GAME_SAVAGE_EMPIRE,
@@ -195,7 +195,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			AD_ENTRY1s("talk.lzc", "bef60fbc3cc478b2a2e8f0883652b2f3", 160784),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			0,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		GAME_SAVAGE_EMPIRE,
