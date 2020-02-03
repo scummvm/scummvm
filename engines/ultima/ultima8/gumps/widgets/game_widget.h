@@ -41,17 +41,17 @@ public:
 
 	Pentagram::istring getGameName();
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true);
+	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
 
-	virtual uint16 TraceObjId(int32 mx, int32 my);
+	virtual uint16 TraceObjId(int32 mx, int32 my) override;
 
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
+	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual Gump *OnMouseDown(int button, int32 mx, int32 my);
-	virtual void OnMouseOver();
-	virtual void OnMouseLeft();
+	virtual Gump *OnMouseDown(int button, int32 mx, int32 my) override;
+	virtual void OnMouseOver() override;
+	virtual void OnMouseLeft() override;
 
-	virtual void ChildNotify(Gump *child, uint32 message);
+	virtual void ChildNotify(Gump *child, uint32 message) override;
 
 	enum Message {
 		GAME_PLAY     = 1,

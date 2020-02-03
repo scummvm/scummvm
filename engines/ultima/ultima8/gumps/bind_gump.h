@@ -39,13 +39,13 @@ public:
 	virtual ~BindGump(void);
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true);
+	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Paint the Gump
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
+	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual bool OnKeyDown(int key, int mod);
-	virtual Gump   *OnMouseDown(int button, int32 mx, int32 my);
+	virtual bool OnKeyDown(int key, int mod) override;
+	virtual Gump   *OnMouseDown(int button, int32 mx, int32 my) override;
 
 	bool loadData(IDataSource *ids);
 
@@ -54,7 +54,7 @@ public:
 		UPDATE = 10
 	};
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 	Pentagram::istring *binding;
 	Gump *invoker;
 };

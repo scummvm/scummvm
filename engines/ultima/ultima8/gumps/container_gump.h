@@ -46,38 +46,38 @@ public:
 	}
 
 	// Close the gump
-	virtual void Close(bool no_del = false);
+	virtual void Close(bool no_del = false) override;
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true);
+	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Paint the Gump
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
+	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
 	// Trace a click, and return ObjId
-	virtual uint16 TraceObjId(int32 mx, int32 my);
+	virtual uint16 TraceObjId(int32 mx, int32 my) override;
 
 	// Get the location of an item in the gump (coords relative to this).
 	// Returns false on failure.
 	virtual bool GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
-	                               int32 lerp_factor = 256);
+	                               int32 lerp_factor = 256) override;
 
 
-	virtual bool StartDraggingItem(Item *item, int mx, int my);
-	virtual bool DraggingItem(Item *item, int mx, int my);
-	virtual void DraggingItemLeftGump(Item *item);
-	virtual void StopDraggingItem(Item *item, bool moved);
-	virtual void DropItem(Item *item, int mx, int my);
+	virtual bool StartDraggingItem(Item *item, int mx, int my) override;
+	virtual bool DraggingItem(Item *item, int mx, int my) override;
+	virtual void DraggingItemLeftGump(Item *item) override;
+	virtual void StopDraggingItem(Item *item, bool moved) override;
+	virtual void DropItem(Item *item, int mx, int my) override;
 
-	virtual Gump *OnMouseDown(int button, int32 mx, int32 my);
-	virtual void OnMouseClick(int button, int32 mx, int32 my);
-	virtual void OnMouseDouble(int button, int32 mx, int32 my);
+	virtual Gump *OnMouseDown(int button, int32 mx, int32 my) override;
+	virtual void OnMouseClick(int button, int32 mx, int32 my) override;
+	virtual void OnMouseDouble(int button, int32 mx, int32 my) override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
-	virtual void GetItemLocation(int32 lerp_factor);
+	virtual void GetItemLocation(int32 lerp_factor) override;
 
 	virtual Container *getTargetContainer(Item *item, int mx, int my);
 

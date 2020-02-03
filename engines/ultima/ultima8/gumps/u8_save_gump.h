@@ -40,14 +40,14 @@ public:
 	U8SaveGump(bool save, int page);
 	virtual ~U8SaveGump();
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true);
-	virtual void Close(bool no_del = false);
+	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
+	virtual void Close(bool no_del = false) override;
 
-	virtual Gump *OnMouseDown(int button, int32 mx, int32 my);
-	virtual void OnMouseClick(int button, int32 mx, int32 my);
-	virtual bool OnKeyDown(int key, int mod);
-	virtual void ChildNotify(Gump *child, uint32 message);
-	virtual void OnFocus(bool gain);
+	virtual Gump *OnMouseDown(int button, int32 mx, int32 my) override;
+	virtual void OnMouseClick(int button, int32 mx, int32 my) override;
+	virtual bool OnKeyDown(int key, int mod) override;
+	virtual void ChildNotify(Gump *child, uint32 message) override;
+	virtual void OnFocus(bool gain) override;
 
 	static Std::string getFilename(int index);
 

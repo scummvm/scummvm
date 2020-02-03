@@ -39,20 +39,20 @@ public:
 	virtual ~MiniStatsGump(void);
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true);
+	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Paint this Gump
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
+	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
 	// Trace a click, and return ObjId
-	virtual uint16 TraceObjId(int32 mx, int32 my);
+	virtual uint16 TraceObjId(int32 mx, int32 my) override;
 
-	virtual Gump *OnMouseDown(int button, int32 mx, int32 my);
-	virtual void OnMouseDouble(int button, int32 mx, int32 my);
+	virtual Gump *OnMouseDown(int button, int32 mx, int32 my) override;
+	virtual void OnMouseDouble(int button, int32 mx, int32 my) override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

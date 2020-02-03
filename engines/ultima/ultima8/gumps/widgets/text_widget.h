@@ -63,14 +63,14 @@ public:
 	virtual ~TextWidget(void);
 
 	// Init the gump, call after construction
-	virtual void            InitGump(Gump *newparent, bool take_focus = true);
+	virtual void            InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Overloadable method to Paint just this Gump (RenderSurface is relative to this)
-	virtual void            PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
+	virtual void            PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual void            PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 scalex, int32 scaley);
+	virtual void            PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 scalex, int32 scaley) override;
 
-	virtual Gump *OnMouseMotion(int32 mx, int32 my);
+	virtual Gump *OnMouseMotion(int32 mx, int32 my) override;
 
 	//! display the next part of the text
 	//! \return false if there is no more text to display
@@ -104,7 +104,7 @@ public:
 	bool loadData(IDataSource *ids, uint32 version);
 
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

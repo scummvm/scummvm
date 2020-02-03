@@ -40,9 +40,9 @@ public:
 	virtual ~TTFRenderedText();
 
 	virtual void draw(RenderSurface *surface, int x, int y,
-	                  bool destmasked = false);
+	                  bool destmasked = false) override;
 	virtual void drawBlended(RenderSurface *surface, int x, int y, uint32 col,
-	                         bool destmasked = false);
+	                         bool destmasked = false) override;
 
 	ENABLE_RUNTIME_CLASSTYPE()
 

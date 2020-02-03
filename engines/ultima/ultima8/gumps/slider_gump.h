@@ -41,23 +41,23 @@ public:
 	           int16 value, int16 delta = 1);
 	virtual ~SliderGump(void);
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true);
-	virtual void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled);
-	virtual void Close(bool no_del = false);
-	virtual void ChildNotify(Gump *child, uint32 message);
+	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
+	virtual void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	virtual void Close(bool no_del = false) override;
+	virtual void ChildNotify(Gump *child, uint32 message) override;
 
 	void setUsecodeNotify(UCProcess *ucp);
 
 	// Dragging
-	virtual bool StartDraggingChild(Gump *gump, int32 mx, int32 my);
-	virtual void DraggingChild(Gump *gump, int mx, int my);
-	virtual void StopDraggingChild(Gump *gump);
+	virtual bool StartDraggingChild(Gump *gump, int32 mx, int32 my) override;
+	virtual void DraggingChild(Gump *gump, int mx, int my) override;
+	virtual void StopDraggingChild(Gump *gump) override;
 
-	virtual bool OnKeyDown(int key, int mod);
+	virtual bool OnKeyDown(int key, int mod) override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 	int16 min;
 	int16 max;

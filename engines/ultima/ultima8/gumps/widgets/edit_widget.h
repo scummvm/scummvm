@@ -48,15 +48,15 @@ public:
 	           bool multiline = false);
 	virtual ~EditWidget(void);
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true);
+	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
 
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
-	virtual void PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 sx, int32 sy);
+	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	virtual void PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 sx, int32 sy) override;
 
-	virtual Gump *OnMouseMotion(int32 mx, int32 my);
-	virtual bool OnKeyDown(int key, int mod);
-	virtual bool OnKeyUp(int key);
-	virtual bool OnTextInput(int unicode);
+	virtual Gump *OnMouseMotion(int32 mx, int32 my) override;
+	virtual bool OnKeyDown(int key, int mod) override;
+	virtual bool OnKeyUp(int key) override;
+	virtual bool OnTextInput(int unicode) override;
 
 	//! get the current text
 	Std::string getText() const {

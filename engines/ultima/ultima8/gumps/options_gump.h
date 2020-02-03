@@ -37,17 +37,17 @@ public:
 	virtual ~OptionsGump(void);
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true);
+	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Paint the Gump
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled);
+	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual bool OnKeyDown(int key, int mod);
-	virtual void ChildNotify(Gump *child, uint32 message);
+	virtual bool OnKeyDown(int key, int mod) override;
+	virtual void ChildNotify(Gump *child, uint32 message) override;
 
 	bool loadData(IDataSource *ids);
 protected:
-	virtual void saveData(ODataSource *ods);
+	virtual void saveData(ODataSource *ods) override;
 
 	virtual void selectEntry(int entry);
 };
