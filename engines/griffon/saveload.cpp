@@ -193,7 +193,7 @@ int GriffonEngine::loadPlayer(int slotnum) {
 	return 0; // fail
 }
 
-Common::Error GriffonEngine::saveGameStream(Common::WriteStream *file) {
+Common::Error GriffonEngine::saveGameStream(Common::WriteStream *file, bool) {
 	PRINT("%i", _player.level);
 
 	if (_player.level > 0) {

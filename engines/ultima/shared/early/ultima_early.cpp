@@ -125,33 +125,17 @@ Game *UltimaEarlyEngine::createGame() const {
 	}
 }
 
-Common::Error UltimaEarlyEngine::loadGameState(int slot) {
-	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-		Common::String::format("%s.%.3d", _targetName.c_str(), slot));
-	if (!saveFile)
-		return Common::kReadingFailed;
-
+Common::Error UltimaEarlyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	// Read in the game's data
-	Common::Serializer s(saveFile, nullptr);
+	Common::Serializer s(stream, nullptr);
 	_game->synchronize(s);
-
-	delete saveFile;
 	return Common::kNoError;
 }
 
-Common::Error UltimaEarlyEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
-		Common::String::format("%s.%.3d", _targetName.c_str(), slot));
-	if (!saveFile)
-		return Common::kCreatingFileFailed;
-
+Common::Error UltimaEarlyEngine::saveGameStream(Common::WriteStream *stream, bool) {
 	// Write out the game's data
-	Common::Serializer s(nullptr, saveFile);
+	Common::Serializer s(nullptr, stream);
 	_game->synchronize(s);
-
-	saveFile->finalize();
-	delete saveFile;
-
 	return Common::kNoError;
 }
 

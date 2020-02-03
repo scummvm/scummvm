@@ -661,12 +661,16 @@ bool Engine::canLoadGameStateCurrently() {
 }
 
 Common::Error Engine::saveGameState(int slot, const Common::String &desc) {
+	return saveGameState(slot, desc, false);
+}
+
+Common::Error Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(getSaveStateName(slot));
 
 	if (!saveFile)
 		return Common::kWritingFailed;
 
-	Common::Error result = saveGameStream(saveFile);
+	Common::Error result = saveGameStream(saveFile, isAutosave);
 	if (result.getCode() == Common::kNoError) {
 		MetaEngine::appendExtendedSave(saveFile, getTotalPlayTime() / 1000, desc);
 
@@ -677,7 +681,7 @@ Common::Error Engine::saveGameState(int slot, const Common::String &desc) {
 	return result;
 }
 
-Common::Error Engine::saveGameStream(Common::WriteStream *stream) {
+Common::Error Engine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
 	// Default to returning an error when not implemented
 	return Common::kWritingFailed;
 }

@@ -120,16 +120,12 @@ public:
 	/**
 	 * Load a savegame
 	 */
-	virtual Common::Error loadGameState(int slot) override;
+	virtual Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	/**
 	 * Save a game state.
-	 * @param slot	the slot into which the savestate should be stored
-	 * @param desc	a description for the savestate, entered by the user
-	 * @param isAutosave If true, autosave is being created
-	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
+	virtual Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 
 	/*
 	 * Creates a new hierarchy for the game, that contains all the logic for playing that particular game.
