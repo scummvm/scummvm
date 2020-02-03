@@ -29,7 +29,7 @@
 #include "ultima/nuvie/gui/gui_drag_area.h"
 #include "ultima/nuvie/gui/gui_drag_manager.h"
 #include "ultima/nuvie/screen/screen.h"
-#include "ultima/nuvie/core/events.h" 
+#include "ultima/nuvie/core/events.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -99,7 +99,7 @@ public:
 	virtual void Delete(void);
 
 	virtual void MoveRelative(int dx, int dy);
-	virtual void Move(int new_x, int new_y);
+	virtual void Move(int32 new_x, int32 new_y);
 	void MoveRelativeToParent(int dx, int dy);
 	bool has_focus() {
 		return focused;

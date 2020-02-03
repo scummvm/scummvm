@@ -111,7 +111,7 @@ void GUI_Widget::MoveRelative(int dx, int dy) {
 	return;
 }
 
-void GUI_Widget::Move(int new_x, int new_y) {
+void GUI_Widget::Move(int32 new_x, int32 new_y) {
 	Std::list<GUI_Widget *>::iterator child;
 
 	area.moveTo(new_x + offset_x, new_y + offset_y);

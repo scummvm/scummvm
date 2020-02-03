@@ -51,7 +51,7 @@ public:
 	virtual void        GumpToParent(int32 &gx, int32 &gy,
 	                                 PointRoundDir r = ROUND_TOPLEFT) override;
 
-	virtual void        Move(int x, int y) override;
+	virtual void        Move(int32 x, int32 y) override;
 
 	bool                loadData(IDataSource *ids, uint32 version);
 protected:
