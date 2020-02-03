@@ -21,6 +21,7 @@
  */
 
 #include "base/plugins.h"
+#include "common/config-manager.h"
 #include "engines/advancedDetector.h"
 
 #include "griffon/griffon.h"
@@ -59,7 +60,9 @@ public:
 		return "Griffon Engine";
 	}
 
-	virtual int getMaximumSaveSlot() const { return 3; }
+	virtual int getMaximumSaveSlot() const {
+		return ConfMan.getInt("autosave_period") ? 4 : 3;
+	}
 
 	virtual const char *getOriginalCopyright() const {
 		return "The Griffon Legend (c) 2005 Syn9 (Daniel Kennedy)";

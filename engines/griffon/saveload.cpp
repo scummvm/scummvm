@@ -69,9 +69,9 @@ Common::Error GriffonEngine::loadGameState(int slot) {
 	return result;
 }
 
-Common::Error GriffonEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error GriffonEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::String saveDesc = Common::String::format("Level: %d Map: %d", _player.level, _curMap);
-	return Engine::saveGameState(slot, saveDesc);
+	return Engine::saveGameState(slot, isAutosave ? desc : saveDesc, isAutosave);
 }
 
 Common::Error GriffonEngine::loadGameStream(Common::SeekableReadStream *file) {

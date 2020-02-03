@@ -97,6 +97,7 @@ void GriffonEngine::mainLoop() {
 
 		checkTrigger();
 		checkInputs();
+		autoSaveCheck();
 
 		if (!_forcePause)
 			handleWalking();
