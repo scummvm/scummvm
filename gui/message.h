@@ -41,7 +41,7 @@ enum {
  */
 class MessageDialog : public Dialog {
 public:
-	MessageDialog(const Common::String &message, const char *defaultButton = "OK", const char *altButton = nullptr);
+	MessageDialog(const Common::String &message, const char *defaultButton = "OK", const char *altButton = nullptr, Graphics::TextAlign alignment = Graphics::kTextAlignCenter);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 };

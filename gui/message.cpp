@@ -35,9 +35,10 @@ enum {
 };
 
 
+
 // TODO: The default button should be visibly distinct from the alternate button
 
-MessageDialog::MessageDialog(const Common::String &message, const char *defaultButton, const char *altButton)
+MessageDialog::MessageDialog(const Common::String &message, const char *defaultButton, const char *altButton, Graphics::TextAlign alignment)
 	: Dialog(30, 20, 260, 124) {
 
 	const int screenW = g_system->getOverlayWidth();
@@ -79,7 +80,7 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 	// Each line is represented by one static text item.
 	for (int i = 0; i < lineCount; i++) {
 		new StaticTextWidget(this, 10, 10 + i * kLineHeight, maxlineWidth, kLineHeight,
-								lines[i], Graphics::kTextAlignCenter);
+								lines[i], alignment);
 	}
 
 	if (defaultButton && altButton) {
