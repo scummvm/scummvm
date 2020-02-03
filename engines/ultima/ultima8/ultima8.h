@@ -337,15 +337,11 @@ public:
 	 */
 	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 
-	bool saveGame() override;
-
 	//! save a game
 	//! \param filename the file to save to
 	//! \return true if succesful
 	bool saveGame(Std::string filename, Std::string desc,
 	              bool ignore_modals = false);
-
-	bool loadGame() override;
 
 	//! load a game
 	//! \param filename the savegame to load

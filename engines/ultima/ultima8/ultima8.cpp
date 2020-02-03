@@ -1291,33 +1291,6 @@ void Ultima8Engine::writeSaveInfo(ODataSource *ods) {
 	game->writeSaveInfo(ods);
 }
 
-bool Ultima8Engine::saveGame() {
-	if (!canSaveGameStateCurrently(false))
-		return false;
-
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-	bool result = false;
-
-	pauseEngine(true);
-	int slot = dialog->runModalWithCurrentTarget();
-	pauseEngine(false);
-
-	if (slot >= 0) {
-		Common::String desc = dialog->getResultString();
-
-		if (desc.empty()) {
-			// create our own description for the saved game, the user didn't enter it
-			desc = dialog->createDefaultSaveDescription(slot);
-		}
-
-		// Save the game
-		result = saveGameState(slot, desc, false).getCode() == Common::kNoError;
-	}
-
-	delete dialog;
-	return result;
-}
-
 bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 	if (desktopGump->FindGump<ModalGump>())
 		// Can't save when a modal gump is open
@@ -1561,25 +1534,6 @@ void Ultima8Engine::syncSoundSettings() {
 	MidiPlayer *midiPlayer = audioMixer ? audioMixer->getMidiPlayer() : nullptr;
 	if (midiPlayer)
 		midiPlayer->setVolume(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
-}
-
-bool Ultima8Engine::loadGame() {
-	if (!canLoadGameStateCurrently())
-		return false;
-
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
-	bool result = false;
-
-	pauseEngine(true);
-	int slot = dialog->runModalWithCurrentTarget();
-	pauseEngine(false);
-
-	if (slot >= 0) {
-		result = loadGameState(slot).getCode() == Common::kNoError;
-	}
-
-	delete dialog;
-	return result;
 }
 
 Common::Error Ultima8Engine::loadGameState(int slot) {
@@ -1849,7 +1803,7 @@ void Ultima8Engine::ConCmd_saveGame(const Console::ArgvType &argv) {
 		// Save a game with the given name into the quicksave slot
 		Ultima8Engine::get_instance()->saveGame("@save/1", argv[1]);
 	} else {
-		Ultima8Engine::get_instance()->saveGame();
+		Ultima8Engine::get_instance()->saveGameDialog();
 	}
 }
 
@@ -1859,7 +1813,7 @@ void Ultima8Engine::ConCmd_loadGame(const Console::ArgvType &argv) {
 		// it just needs to be present to differentiate from showing the GUI load dialog
 		Ultima8Engine::get_instance()->loadGame("@save/1");
 	} else {
-		Ultima8Engine::get_instance()->loadGame();
+		Ultima8Engine::get_instance()->loadGameDialog();
 	}
 }
 

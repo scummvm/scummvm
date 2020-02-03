@@ -28,7 +28,6 @@
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/translation.h"
-#include "gui/saveload.h"
 
 namespace Ultima {
 namespace Shared {
@@ -105,35 +104,6 @@ GameId UltimaEngine::getGameId() const {
 
 Common::FSNode UltimaEngine::getGameDirectory() const {
 	return Common::FSNode(ConfMan.get("path"));
-}
-
-bool UltimaEngine::loadGame() {
-	if (!canLoadGameStateCurrently())
-		return false;
-
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
-	int slotNum = dialog->runModalWithCurrentTarget();
-	delete dialog;
-
-	if (slotNum != -1)
-		return loadGameState(slotNum).getCode() == Common::kNoError;
-
-	return false;
-}
-
-bool UltimaEngine::saveGame() {
-	if (!canSaveGameStateCurrently())
-		return false;
-
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-	int slotNum = dialog->runModalWithCurrentTarget();
-	Common::String saveName = dialog->getResultString();
-	delete dialog;
-
-	if (slotNum != -1)
-		return saveGameState(slotNum, saveName).getCode() == Common::kNoError;
-
-	return false;
 }
 
 UltimaMetaEngine *UltimaEngine::getMetaEngine() const {

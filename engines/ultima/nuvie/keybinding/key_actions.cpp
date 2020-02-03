@@ -313,7 +313,7 @@ void ActionPartyMode(int const *params) {
 }
 
 void ActionSaveDialog(int const *params) {
-	g_engine->saveGame();
+	g_engine->saveGameDialog();
 }
 
 void ActionLoadLatestSave(int const *params) {

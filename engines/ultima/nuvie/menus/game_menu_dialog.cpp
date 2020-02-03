@@ -146,9 +146,9 @@ GUI_status GameMenuDialog::callback(uint16 msg, GUI_CallBack *caller, void *data
 	if (caller == this) {
 		close_dialog();
 	} else if (caller == save_button) {
-		g_engine->saveGame();
+		g_engine->saveGameDialog();
 	} else if (caller == load_button) {
-		g_engine->loadGame();
+		g_engine->loadGameDialog();
 	} else if (caller == video_button) {
 		GUI_Widget *video_dialog;
 		video_dialog = (GUI_Widget *) new VideoDialog(this);

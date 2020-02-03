@@ -150,16 +150,6 @@ public:
 	Common::FSNode getGameDirectory() const;
 
 	/**
-	 * Shows the ScummVM save dialog, allowing users to save their game
-	 */
-	virtual bool saveGame();
-
-	/**
-	 * Shows the ScummVM Restore dialog, allowing users to restore a game
-	 */
-	virtual bool loadGame();
-
-	/**
 	 * Indicates whether a game state can be loaded.
 	 * @param isAutosave	Flags whether it's an autosave check
 	 */
