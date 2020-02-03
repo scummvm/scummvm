@@ -630,7 +630,7 @@ void GriffonEngine::saveLoadNew() {
 						}
 					}
 					if (lowerLock && tickPause < _ticks) {
-						if ((curCol == 1) && saveGameState(curRow - 1, "").getCode() == Common::kNoError) {
+						if ((curCol == 1) && saveGameState(curRow - 1, "", false).getCode() == Common::kNoError) {
 							_secStart += _secsInGame;
 							_secsInGame = 0;
 							lowerLock = false;
