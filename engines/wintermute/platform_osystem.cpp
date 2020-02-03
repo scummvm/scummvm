@@ -111,7 +111,7 @@ void BasePlatform::handleEvent(Common::Event *event) {
 	case Common::EVENT_WHEELUP:
 	case Common::EVENT_WHEELDOWN:
 		if (_gameRef) {
-			_gameRef->handleMouseWheel(event->mouse.y);
+			_gameRef->handleMouseWheel(event->type == Common::EVENT_WHEELUP ? 1 : -1);
 		}
 		break;
 	case Common::EVENT_SCREEN_CHANGED:
