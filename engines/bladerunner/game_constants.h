@@ -222,7 +222,7 @@ enum Clues {
 	kClueCrazylegsInterview1               = 116,
 	kClueCrazylegsInterview2               = 117,
 	kClueLichenDogWrapper                  = 118,
-	kClueRequisitionForm                   = 119,
+	kClueRequisitionForm                   = 119, // original: Never acquired
 	kClueScaryChair                        = 120,
 	kClueIzosStashRaided                   = 121,
 	kClueHomelessManInterview1             = 122,
@@ -230,7 +230,7 @@ enum Clues {
 	kClueHomelessManKid                    = 124,
 	kClueFolder                            = 125,
 	kClueGuzzaFramedMcCoy                  = 126,
-	kClueOriginalShippingForm              = 127,
+	kClueOriginalShippingForm              = 127, // original: Never acquired
 	kClueOriginalRequisitionForm           = 128,
 	kClueCandyWrapper                      = 129,
 	kClueGordoBlabs                        = 130,
@@ -1107,7 +1107,7 @@ enum Flags {
 	kFlagUG19Available                        = 665,
 	kFlagMcCoyFreedOfAccusations              = 666,
 	// 667 is never used
-	// 668 is never used
+	kFlagUG13OriginalRequisitionFormPlaced    = 668, // Re-purposed. Original: 668 is never used
 	kFlagKP02DispatchOnToxicKipple            = 669, // Re-purposed. Original: 669 is never used
 	kFlagCallWithGuzza                        = 670,
 	kFlagUG18GuzzaScene                       = 671,
@@ -1928,7 +1928,7 @@ enum GameModelAnimations {
 	kModelAnimationMaggieBracelet              = 956,
 	kModelAnimationGrigoriansNote              = 957,
 	kModelAnimationOriginalRequisitionForm     = 958,
-	kModelAnimationOriginalShippingForm        = 959,
+	kModelAnimationOriginalShippingForm        = 959, // original: Never placed in game world
 	kModelAnimationPowerSource                 = 960,
 	kModelAnimationCollectionReceipt           = 961,
 	kModelAnimationRequisitionForm             = 962,

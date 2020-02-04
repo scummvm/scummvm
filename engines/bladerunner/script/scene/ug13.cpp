@@ -94,14 +94,18 @@ void SceneScriptUG13::SceneLoaded() {
 	Clickable_Object("BOLLARD");
 	Unclickable_Object("BASKET");
 
-	if ( Global_Variable_Query(kVariableChapter) >= 3
-	 && !Actor_Clue_Query(kActorMcCoy, kClueOriginalRequisitionForm)
-	 &&  Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
-	 &&  (Actor_Clue_Query(kActorMcCoy, kClueShippingForm)
-	  ||  Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
-	 )
+	if (Global_Variable_Query(kVariableChapter) >= 3
+	    && !Actor_Clue_Query(kActorMcCoy, kClueOriginalRequisitionForm)
+	    && Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
+	    && (Actor_Clue_Query(kActorMcCoy, kClueShippingForm)
+	        || Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm))
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	    && !Game_Flag_Query(kFlagUG13OriginalRequisitionFormPlaced)
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	) {
-		Item_Add_To_World(kItemWeaponsOrderForm, kModelAnimationOriginalRequisitionForm, 85, -209.01f, 70.76f, -351.79f, 0, 16, 12, false, true, false, true);
+		Game_Flag_Set(kFlagUG13OriginalRequisitionFormPlaced);
+		Item_Add_To_World(kItemWeaponsOrderForm, kModelAnimationOriginalRequisitionForm, kSetUG13, -209.01f, 70.76f, -351.79f, 0, 16, 12, false, true, false, true);
 	}
 }
 

@@ -62,7 +62,7 @@ void SceneScriptCT11::SceneLoaded() {
 	Unobstacle_Object("BOX SOUTH 1", true);
 	if (Global_Variable_Query(kVariableChapter) < 4) {
 		if (!Game_Flag_Query(kFlagCT11DogWrapperTaken)) {
-			Item_Add_To_World(kItemDogWrapper, kModelAnimationLichenDogWrapper, 33, 640.21f, 30.0f, 470.0f, 512, 12, 12, false, true, false, true);
+			Item_Add_To_World(kItemDogWrapper, kModelAnimationLichenDogWrapper, kSetCT11, 640.21f, 30.0f, 470.0f, 512, 12, 12, false, true, false, true);
 			Scene_2D_Region_Add(0, 505, 316, 513, 321);
 			Game_Flag_Set(kFlagCT11DogWrapperAvailable);
 		}
