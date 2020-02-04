@@ -179,6 +179,8 @@ public:
 
 	static const byte _mt32ToGm[128];
 	static const byte _gmToMt32[128];
+	// Map for correcting Roland GS drumkit numbers.
+	static const uint8 _gsDrumkitFallbackMap[128];
 
 	/**
 	 * Error codes returned by open.
