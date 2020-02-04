@@ -692,8 +692,11 @@ bool Engine::canSaveGameStateCurrently() {
 }
 
 bool Engine::loadGameDialog() {
-	if (!canLoadGameStateCurrently())
+	if (!canLoadGameStateCurrently()) {
+		GUI::MessageDialog dialog(_("Loading game is currently unavailable"));
+		dialog.runModal();
 		return false;
+	}
 
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
 	pauseEngine(true);
@@ -708,8 +711,11 @@ bool Engine::loadGameDialog() {
 }
 
 bool Engine::saveGameDialog() {
-	if (!canSaveGameStateCurrently())
+	if (!canSaveGameStateCurrently()) {
+		GUI::MessageDialog dialog(_("Saving game is currently unavailable"));
+		dialog.runModal();
 		return false;
+	}
 
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 	pauseEngine(true);
