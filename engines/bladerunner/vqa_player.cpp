@@ -53,6 +53,15 @@ bool VQAPlayer::open() {
 		// This has still frames in the end that so it looked as if the smoke was "frozen"
 		_decoder._loopInfo.loops[0].end  = 58; // 59 up to 74 are still frames
 	}
+//	else if (_name.equals("MA05_3.VQA")) {
+//		// loops[1] 60 up to 90 (it will be followed by loops[2] which will play from 30 to 90
+//		// this is to address the issue of non-aligned headlight rotation in the
+//		// InShot transition in Act 5. However, this is still glitchy
+//		// and results in bad z-buffer for the duration of the truncated loop 1
+//		// TODO is there a way to get and use the z-buffering info from start frame without displaying it?
+//		_decoder._loopInfo.loops[1].begin = 60;
+//		_decoder._loopInfo.loops[2].begin = 30;
+//	}
 #endif
 
 	_hasAudio = _decoder.hasAudio();
