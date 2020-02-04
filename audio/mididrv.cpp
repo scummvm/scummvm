@@ -56,6 +56,29 @@ const byte MidiDriver::_gmToMt32[128] = {
 	101, 103, 100, 120, 117, 113,  99, 128, 128, 128, 128, 124, 123, 128, 128, 128, // 7x
 };
 
+// This is the drum map for the Roland Sound Canvas SC-55 v1.xx. It had a fallback mechanism 
+// to correct invalid drumkit selections. Some games rely on this mechanism to select the 
+// correct Roland GS drumkit. Use this map to emulate this mechanism.
+// E.g. correct invalid drumkit 50: _gsDrumkitFallbackMap[50] == 48
+const uint8 MidiDriver::_gsDrumkitFallbackMap[128] = {
+	 0,  0,  0,  0,  0,  0,  0,  0, // STANDARD
+	 8,  8,  8,  8,  8,  8,  8,  8, // ROOM
+	16, 16, 16, 16, 16, 16, 16, 16, // POWER
+	24, 25, 24, 24, 24, 24, 24, 24, // ELECTRONIC; TR-808 (25)
+	32, 32, 32, 32, 32, 32, 32, 32, // JAZZ
+	40, 40, 40, 40, 40, 40, 40, 40, // BRUSH
+	48, 48, 48, 48, 48, 48, 48, 48, // ORCHESTRA
+	56, 56, 56, 56, 56, 56, 56, 56, // SFX
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined (fall back to STANDARD)
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
+	 0,  0,  0,  0,  0,  0,  0,  0, // No drumkit defined
+	 0,  0,  0,  0,  0,  0,  0, 127 // No drumkit defined; CM-64/32L (127)
+};
+
 static const struct {
 	uint32      type;
 	const char *guio;
