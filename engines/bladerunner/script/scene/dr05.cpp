@@ -25,8 +25,8 @@
 namespace BladeRunner {
 
 enum kDR05Loops {
-	kDR05LoopMainLoop      = 0,
-	kDR05LoopMainDestroyed = 2
+	kDR05LoopMainLoop      = 0, //  0 -  60
+	kDR05LoopMainDestroyed = 2  // 61 - 121
 };
 
 void SceneScriptDR05::InitializeScene() {

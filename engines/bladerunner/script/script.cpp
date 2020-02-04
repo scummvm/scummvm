@@ -897,22 +897,37 @@ void ScriptBase::Set_Subtitle_Text_On_Screen(Common::String displayText) {
 
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-void ScriptBase::Screen_Effect_Skip(int effectInc) {
+/**
+* USE WITH CAUTION
+* Methods to remove a rogue effect from a scene
+*
+* In UG01 we need a forced frame skip to make the effect disappear properly (without delay)
+* However other times we might not need this extra frame skip (eg. in transition pan from DR04 to DR01)
+* -- especially in scenes where events, effects, sounds etc are triggered at specific frames
+* TODO: Is there a better way to update the effect state without force skipping a frame?
+*/
+void ScriptBase::Screen_Effect_Skip(int effectInc, bool forceExtraFrameSkip) {
 	debugC(kDebugScript, "Screen_Effect_Skip(%d)", effectInc);
 	_vm->_screenEffects->toggleEntry(effectInc, true);
-	_vm->_scene->advanceFrame(false);
+	if (forceExtraFrameSkip) {
+		_vm->_scene->advanceFrame(false);
+	}
 }
 
-void ScriptBase::Screen_Effect_Restore(int effectInc) {
+void ScriptBase::Screen_Effect_Restore(int effectInc, bool forceExtraFrameSkip) {
 	debugC(kDebugScript, "Screen_Effect_Restore(%d)", effectInc);
 	_vm->_screenEffects->toggleEntry(effectInc, false);
-	_vm->_scene->advanceFrame(false);
+	if (forceExtraFrameSkip) {
+		_vm->_scene->advanceFrame(false);
+	}
 }
 
-void ScriptBase::Screen_Effect_Restore_All() {
+void ScriptBase::Screen_Effect_Restore_All(bool forceExtraFrameSkip) {
 	debugC(kDebugScript, "Screen_Effect_Restore_All()");
 	_vm->_screenEffects->toggleEntry(-1, false);
-	_vm->_scene->advanceFrame(false);
+	if (forceExtraFrameSkip) {
+		_vm->_scene->advanceFrame(false);
+	}
 }
 #endif // BLADERUNNER_ORIGINAL_BUGS
 

@@ -157,7 +157,13 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	if (_specialLoopMode == kSceneLoopModeNone) {
 		startDefaultLoop();
 	}
+
+#if BLADERUNNER_ORIGINAL_BUGS
+	// TODO Is this advanced frame (frame skip) required here?
+	// For a little testing without it, it seems to be redundant (or even unwanted)
+	// and it is contributing to the barrel flame glitch in pan from DR04 to DR01
 	advanceFrame();
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	_vm->_playerActor->setAtXYZ(_actorStartPosition, _actorStartFacing);
 	_vm->_playerActor->setSetId(setId);

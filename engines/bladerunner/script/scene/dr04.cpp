@@ -25,11 +25,11 @@
 namespace BladeRunner {
 
 enum kDR04Loops {
-	kDR04LoopPanFromDR01PostExplosion = 0,
-	kDR04LoopMainPostExplosion        = 1,
-	kDR04LoopPanFromDR01PreExplosion  = 3,
-	kDR04LoopMainPreExplosion         = 4,
-	kDR04LoopDR04Explosion            = 6
+	kDR04LoopPanFromDR01PostExplosion = 0, //   0 -  27
+	kDR04LoopMainPostExplosion        = 1, //  28 -  88
+	kDR04LoopPanFromDR01PreExplosion  = 3, //  89 - 116
+	kDR04LoopMainPreExplosion         = 4, // 117 - 177
+	kDR04LoopDR04Explosion            = 6  // 178 - 237
 };
 
 void SceneScriptDR04::InitializeScene() {

@@ -25,11 +25,11 @@
 namespace BladeRunner {
 
 enum kDR01Loops {
-	kDR01LoopBikerInshot          = 0,
-	kDR01LoopPanFromDR02          = 1,
-	kDR01LoopPanFromDR04Pre       = 2,
-	kDR01LoopPanFromDR04Post      = 3,
-	kDR01LoopMainLoop             = 4
+	kDR01LoopBikerInshot          = 0, //   0 -  74
+	kDR01LoopPanFromDR02          = 1, //  75 -  88
+	kDR01LoopPanFromDR04Pre       = 2, //  89 - 116
+	kDR01LoopPanFromDR04Post      = 3, // 117 - 144
+	kDR01LoopMainLoop             = 4  // 145 - 205
 };
 
 void SceneScriptDR01::InitializeScene() {
@@ -273,13 +273,27 @@ bool SceneScriptDR01::ClickedOn2DRegion(int region) {
 
 void SceneScriptDR01::SceneFrameAdvanced(int frame) {
 	if (frame < 75) {
+		// TODO This keeps setting McCoy as invisible while in this frame range
+		//      However the performance impact is negligible from this call
 		Actor_Set_Invisible(kActorMcCoy, true);
 	} else {
+		// TODO This keeps setting McCoy as visible while in this frame range
+		//      However the performance impact is negligible from this call
 		Actor_Set_Invisible(kActorMcCoy, false);
 	}
 	if (frame == 2) {
 		Ambient_Sounds_Play_Sound(kSfxBIKEMIX4, 40, -40, 100, 99);
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// Disable rogue barrel flame effect during the pan from DR04 to DR01
+	if (frame == 89 || frame == 117 ){
+		Screen_Effect_Skip(0, false);
+	}
+	if (frame == 116 || frame == 144) {
+		Screen_Effect_Restore_All(false);
+	}
+#endif
 }
 
 void SceneScriptDR01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {

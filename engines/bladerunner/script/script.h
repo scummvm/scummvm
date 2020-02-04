@@ -132,9 +132,9 @@ protected:
 	void Set_Subtitle_Text_On_Screen(Common::String displayText);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-	void Screen_Effect_Skip(int effectInc);
-	void Screen_Effect_Restore(int effectInc);
-	void Screen_Effect_Restore_All();
+	void Screen_Effect_Skip(int effectInc, bool forceExtraSceneFrameSkip);
+	void Screen_Effect_Restore(int effectInc, bool forceExtraSceneFrameSkip);
+	void Screen_Effect_Restore_All(bool forceExtraSceneFrameSkip);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	int Animation_Open();
 	int Animation_Close();

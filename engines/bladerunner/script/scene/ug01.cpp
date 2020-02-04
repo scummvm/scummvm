@@ -86,7 +86,23 @@ void SceneScriptUG01::SceneLoaded() {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	if (Game_Flag_Query(kFlagUG01SteamOff)) {
-		Screen_Effect_Skip(0);
+		Screen_Effect_Skip(0, true);
+	}
+
+	// TODO: Is there a possibility that the fog boxes
+	//       start with this density by default,
+	//       so we don't have to set it explicitly?
+	if (!Game_Flag_Query(kFlagUG01SteamOff)) {
+		float density = 60.0f / 29500.0f;
+		Set_Fog_Density("BoxFog01", density);
+		Set_Fog_Density("BoxFog02", density);
+		Set_Fog_Density("BoxFog03", density);
+		Set_Fog_Density("BoxFog04", density);
+	} else {
+		Set_Fog_Density("BoxFog01", 0.0f);
+		Set_Fog_Density("BoxFog02", 0.0f);
+		Set_Fog_Density("BoxFog03", 0.0f);
+		Set_Fog_Density("BoxFog04", 0.0f);
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 }
@@ -98,7 +114,7 @@ bool SceneScriptUG01::MouseClick(int x, int y) {
 bool SceneScriptUG01::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("PIPES_FG_LFT", objectName)) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -9.0f, -50.13f, -148.0f, 0, true, false, false)
-		 && !Game_Flag_Query(kFlagUG01SteamOff)
+		    && !Game_Flag_Query(kFlagUG01SteamOff)
 		) {
 #if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorMcCoy, 8525, 13);
@@ -106,7 +122,7 @@ bool SceneScriptUG01::ClickedOn3DObject(const char *objectName, bool a2) {
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, kUG01LoopSteamDissapating, true);
 #else
 			Sound_Play(kSfxSQUEAK1,  40, 0, 0, 50);
-			Screen_Effect_Skip(0);
+			Screen_Effect_Skip(0, true);
 			Scene_Loop_Set_Default(kUG01LoopMainLoopNoSteam);
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, kUG01LoopSteamDissapating, false);
 			Sound_Play(kSfxSTEAM6A,  40, 0, 0, 50);
@@ -164,15 +180,17 @@ bool SceneScriptUG01::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptUG01::SceneFrameAdvanced(int frame) {
-	if (frame >= 61
-	 && frame <= 120
-	) {
-		float density = (120 - frame) / 29500.0f; // why is this so big?
+	if (frame >= 61 && frame <= 120) {
+		// fog dispersing
+		// Divide with a large number because otherwise, thick fog appears too white
+		float density = (120.0f - frame) / 29500.0f;
 		Set_Fog_Density("BoxFog01", density);
 		Set_Fog_Density("BoxFog02", density);
 		Set_Fog_Density("BoxFog03", density);
 		Set_Fog_Density("BoxFog04", density);
 	} else if (frame > 120) {
+		// fog dispersed
+		// TODO does it have to constantly be set?
 		Set_Fog_Density("BoxFog01", 0.0f);
 		Set_Fog_Density("BoxFog02", 0.0f);
 		Set_Fog_Density("BoxFog03", 0.0f);
@@ -209,7 +227,7 @@ void SceneScriptUG01::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-	Screen_Effect_Restore_All();
+	Screen_Effect_Restore_All(false);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
