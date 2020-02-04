@@ -361,6 +361,7 @@ Common::Keymap *SdlGraphicsManager::getKeymap() {
 	if (hasFeature(OSystem::kFeatureFullscreenMode)) {
 		act = new Action("FULS", _("Toggle fullscreen"));
 		act->addDefaultInputMapping("A+RETURN");
+		act->addDefaultInputMapping("A+KP_ENTER");
 		act->setCustomBackendActionEvent(kActionToggleFullscreen);
 		keymap->addAction(act);
 	}
