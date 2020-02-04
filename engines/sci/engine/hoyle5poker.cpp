@@ -42,20 +42,39 @@ enum Hoyle5PokerSuits {
 	kSuitHearts = 3
 };
 
+enum Hoyle5Operations {
+	kCheckPlayerAction = 1,	// localproc_0df8
+	kCheckWinner = 2,	// localproc_3020
+	kCheckDiscard = 3,	// PokerHand::think
+	kCheckHand = 4		// PokerHand::whatAmI
+};
+
+enum Hoyle5PlayerActions {
+	kPlayerActionCheck = -2,
+	kPlayerActionFold = -1,
+	kPlayerActionCall = 0,
+	kPlayerActionRaise = 1
+};
+
 enum Hoyle5PokerData {
+	kOperation = 0,
 	kTotalChips = 1,
 	kCurrentPot = 2,
 	kCurrentBet = 3,
-	kChipsPlayer1 = 4,
-	kChipsPlayer2 = 5,
-	kChipsPlayer3 = 6,
-	kChipsPlayer4 = 7,
+	kTotalChipsPlayer1 = 4,
+	kTotalChipsPlayer2 = 5,
+	kTotalChipsPlayer3 = 6,
+	kTotalChipsPlayer4 = 7,
 	kStatusPlayer1 = 8,
 	kStatusPlayer2 = 9,
 	kStatusPlayer3 = 10,
 	kStatusPlayer4 = 11,
-	// 12 - 16 seem to be unused?
-	kCurrentPlayer = 17,
+	kTotalBetPlayer1 = 12,
+	kTotalBetPlayer2 = 13,
+	kTotalBetPlayer3 = 14,
+	kTotalBetPlayer4 = 15,
+	// 16: related to the current bet
+	kCurrentPlayer = 17,	// hand number
 	kCurrentStage = 18,	// Stage 1: Card changes, 2: Betting
 	kCard0 = 19,
 	kSuit0 = 20,
@@ -71,16 +90,31 @@ enum Hoyle5PokerData {
 	// 29 - 38: next clockwise player's cards (number + suit)
 	// 39 - 48: next clockwise player's cards (number + suit)
 	// 49 - 58: next clockwise player's cards (number + suit)
-	// 59 - 60 seem to be unused?
-	// ---- Return values -----------------------------------
+	kUnkVar = 59,		  // set by localproc_0df8 to global 906
+	// ---- Return values - start ---------------------------
+	kPlayerAction = 60,    // flag, checked by localproc_0df8
 	kWhatAmIResult = 61,  // bitmask, 0 - 128, checked by PokerHand::whatAmI. Determines what kind of card each player has
 	kWinningPlayers = 62, // bitmask, winning players (0000 - 1111 binary), checked by localproc_3020
 	kDiscardCard0 = 63,	  // flag, checked by PokerHand::think
 	kDiscardCard1 = 64,	  // flag, checked by PokerHand::think
 	kDiscardCard2 = 65,	  // flag, checked by PokerHand::think
 	kDiscardCard3 = 66,	  // flag, checked by PokerHand::think
-	kDiscardCard4 = 67	  // flag, checked by PokerHand::think
-	// 77 seems to be a bit array?
+	kDiscardCard4 = 67,	  // flag, checked by PokerHand::think
+	// ---- Return values - end -----------------------------
+	// 77 is a random number (0 - 32767)
+	kLastRaise1 = 78,
+	kLastRaise2 = 79,
+	kLastRaise3 = 80,
+	kLastRaise4 = 81,
+	kLastSaw1 = 82,
+	kLastSaw2 = 83,
+	kLastSaw3 = 84,
+	kLastSaw4 = 85,
+	kTookCard1 = 86,
+	kTookCard2 = 87,
+	kTookCard3 = 88,
+	kTookCard4 = 89
+	// 90 is a number
 };
 
 #if 0
@@ -114,13 +148,47 @@ Common::String getCardDescription(int16 card, int16 suit) {
 	}
 }
 
-void printPlayerCards(int player, SciArray *data) {
-	debug("Player %d cards:", player);
-	for (int i = 19 + player * 10; i < 29 + player * 10; i += 2) {
-		if (data->getAsInt16(i) > 0)
-			debug("- %s", getCardDescription(data->getAsInt16(i), data->getAsInt16(i + 1)).c_str());
+void debugInputData(SciArray* data) {
+	debug("Player %d's turn", data->getAsInt16(kCurrentPlayer));
+
+	debug("Pot: %d, bet: %d", data->getAsInt16(kCurrentPot), data->getAsInt16(kCurrentBet));
+
+	debug("Chips: %d %d %d %d - %d in total",
+		data->getAsInt16(kTotalChipsPlayer1),
+		data->getAsInt16(kTotalChipsPlayer2),
+		data->getAsInt16(kTotalChipsPlayer3),
+		data->getAsInt16(kTotalChipsPlayer4),
+		data->getAsInt16(kTotalChips)
+	);
+
+	debug("Player status: %d %d %d %d",
+		data->getAsInt16(kStatusPlayer1),
+		data->getAsInt16(kStatusPlayer2),
+		data->getAsInt16(kStatusPlayer3),
+		data->getAsInt16(kStatusPlayer4)
+	);
+
+	for (int player = 0; player < 4; player++) {
+		debug("Player %d cards:", player);
+		for (int i = 19 + player * 10; i < 29 + player * 10; i += 2) {
+			if (data->getAsInt16(i) > 0)
+				debug("- %s", getCardDescription(data->getAsInt16(i), data->getAsInt16(i + 1)).c_str());
+		}
+	}
+
+	for (int i = 0; i < data->size(); i++) {
+		if (i >= kTotalChipsPlayer1 && i <= kTotalChipsPlayer4)
+			continue;
+		if (i >= 8 && i <= 11)
+			continue;
+		if (i >= 19 && i <= 58)
+			continue;
+
+		if (data->getAsInt16(i) != 0)
+			debug("%d: %d", i, data->getAsInt16(i));
 	}
 }
+
 #endif
 
 int getCardValue(int card) {
@@ -265,56 +333,40 @@ int getWinner(SciArray *data) {
 }
 
 reg_t hoyle5PokerEngine(SciArray *data) {
-#if 0
-	debug("Player %d's turn", data->getAsInt16(kCurrentPlayer));
+	int16 operation = data->getAsInt16(kOperation);
+	Common::RandomSource& rng = g_sci->getRNG();
 
-	debug("Pot: %d, bet: %d", data->getAsInt16(kCurrentPot), data->getAsInt16(kCurrentBet));
+	//debugInputData(data);
 
-	debug("Chips: %d %d %d %d - %d in total",
-		data->getAsInt16(kChipsPlayer1),
-		data->getAsInt16(kChipsPlayer2),
-		data->getAsInt16(kChipsPlayer3),
-		data->getAsInt16(kChipsPlayer4),
-		data->getAsInt16(kTotalChips)
-	);
-
-	debug("Player status: %d %d %d %d",
-		data->getAsInt16(kStatusPlayer1),
-		data->getAsInt16(kStatusPlayer2),
-		data->getAsInt16(kStatusPlayer3),
-		data->getAsInt16(kStatusPlayer4)
-	);
-
-	for (int i = 0; i < 4; i++)
-		printPlayerCards(i, data);
-
-	for (int i = 0; i < data->size(); i++) {
-		if (i >= kChipsPlayer1 && i <= kChipsPlayer4)
-			continue;
-		if (i >= 8 && i <= 11)
-			continue;
-		if (i >= 19 && i <= 58)
-			continue;
-
-		if (data->getAsInt16(i) != 0)
-			debug("%d: %d", i, data->getAsInt16(i));
+	switch (operation) {
+	case kCheckPlayerAction:
+		// TODO: logic for player actions
+		data->setFromInt16(kPlayerAction, (int16)rng.getRandomNumber(3) - 2);
+		warning("The Poker player action logic has not been implemented yet");
+		break;
+	case kCheckWinner:
+		data->setFromInt16(kWinningPlayers, 1 << getWinner(data));
+		break;
+	case kCheckDiscard:
+		// TODO: logic for card discard
+		data->setFromInt16(kDiscardCard0, (int16)rng.getRandomBit());
+		data->setFromInt16(kDiscardCard1, (int16)rng.getRandomBit());
+		data->setFromInt16(kDiscardCard2, (int16)rng.getRandomBit());
+		data->setFromInt16(kDiscardCard3, (int16)rng.getRandomBit());
+		data->setFromInt16(kDiscardCard4, (int16)rng.getRandomBit());
+		warning("The Poker card discard logic has not been implemented yet");
+		break;
+	case kCheckHand:
+		data->setFromInt16(kWhatAmIResult, checkHand(data));
+		break;
+	default:
+		error("Unknown Poker logic operation: %d", operation);
+		break;
 	}
-#endif
-
-	data->setFromInt16(kWhatAmIResult, checkHand(data));
-	data->setFromInt16(kWinningPlayers, 1 << getWinner(data));
-
-	// Dummy logic for card discard
-	Common::RandomSource &rng = g_sci->getRNG();
-	data->setFromInt16(kDiscardCard0,  (int)rng.getRandomBit());
-	data->setFromInt16(kDiscardCard1,  (int)rng.getRandomBit());
-	data->setFromInt16(kDiscardCard2,  (int)rng.getRandomBit());
-	data->setFromInt16(kDiscardCard3,  (int)rng.getRandomBit());
-	data->setFromInt16(kDiscardCard4,  (int)rng.getRandomBit());
-
-	warning("The Poker game logic has not been implemented yet");
+	
 	return TRUE_REG;
 }
+
 #endif
 
 }
