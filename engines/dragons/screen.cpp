@@ -100,7 +100,7 @@ void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *pa
 	if (destY < 0) {
 		destY = 0;
 	}
-
+	//TODO should we have different methods for alpha modes?
 	copyRectToSurface8bpp(srcSurface.getBasePtr(clipRect.left, clipRect.top), palette, srcSurface.pitch, srcSurface.w, clipRect.left, destX, destY, clipRect.width(), clipRect.height(), flipX, alpha);
 }
 
@@ -123,6 +123,7 @@ uint16 alphaBlendAdditiveRGB555( uint32 fg, uint32 bg){
 	fg = (fg | (fg << 16)) & 0b00000011111000000111110000011111;
 
 	uint32_t result = bg + fg;
+	//clip r g b values to 565.
 	if (result & (0b111111 << 26)) {
 		result &= 0x1fffff;
 		result |= 0x3E00000;
