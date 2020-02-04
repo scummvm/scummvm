@@ -109,7 +109,7 @@ protected:
 	void opUnk17(ScriptOpCall &scriptOpCall);
 	void opUnk18(ScriptOpCall &scriptOpCall);
 	void opUnk19(ScriptOpCall &scriptOpCall);
-	void opUnk1A(ScriptOpCall &scriptOpCall);
+	void opUpdatePaletteCycling(ScriptOpCall &scriptOpCall);
 	void opUnk1B(ScriptOpCall &scriptOpCall);
 	void opUnk1DClearActorFlag0x400(ScriptOpCall &scriptOpCall);
 	void opUnk1ESetActorFlag0x400(ScriptOpCall &scriptOpCall);
