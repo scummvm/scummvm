@@ -1572,7 +1572,7 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 					            _vm->_items->isTarget(itemId)?  "T" : "F",
 					            _vm->_items->isVisible(itemId)? "T" : "F",
 					            xpos_curr, ypos_curr, zpos_curr,
-					            facing_curr, currWidth, currHeight, itemAnimationId,
+					            facing_curr, currHeight, currWidth, itemAnimationId,
 					            screenRect.top, screenRect.left, screenRect.bottom, screenRect.right,
 					            x0_curr, y0_curr, z0_curr, x1_curr, y1_curr, z1_curr);
 				} else if (modeName == "remove") {
@@ -1938,24 +1938,36 @@ bool Debugger::cmdList(int argc, const char **argv) {
 					SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
 
 					if (sceneObject->type == kSceneObjectTypeActor) {
+
 						Actor *actor = _vm->_actors[sceneObject->id - kSceneObjectOffsetActors];
-						debugPrintf("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s)\n    Goal: %d, Set: %d, Anim mode: %d id:%d showDmg: %s inCombat: %s\n    Pos(%02.2f,%02.2f,%02.2f)\n",
-									 sceneObject->id - kSceneObjectOffsetActors,
-									 _vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors),
-									 sceneObject->isClickable? "T" : "F",
-									 sceneObject->isTarget?    "T" : "F",
-									 sceneObject->isPresent?   "T" : "F",
-									 sceneObject->isObstacle?  "T" : "F",
-									 sceneObject->isMoving?    "T" : "F",
-									 actor->getGoal(),
-									 actor->getSetId(),
-									 actor->getAnimationMode(),
-									 actor->getAnimationId(),
-									 actor->getFlagDamageAnimIfMoving()? "T" : "F",
-									 actor->inCombat()? "T" : "F",
-									 actor->getPosition().x,
-									 actor->getPosition().y,
-									 actor->getPosition().z);
+						const Common::Rect &screenRect = actor->getScreenRectangle();
+						const BoundingBox &bbox = actor->getBoundingBox();
+						Vector3 a, b;
+						bbox.getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
+
+						debugPrintf("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s)\n",
+						             sceneObject->id - kSceneObjectOffsetActors,
+						             _vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors),
+						             sceneObject->isClickable? "T" : "F",
+						             sceneObject->isTarget?    "T" : "F",
+						             sceneObject->isPresent?   "T" : "F",
+						             sceneObject->isObstacle?  "T" : "F",
+						             sceneObject->isMoving?    "T" : "F");
+						debugPrintf("    Goal: %d, Set: %d, Anim mode: %d id:%d showDmg: %s inCombat: %s\n",
+						             actor->getGoal(),
+						             actor->getSetId(),
+						             actor->getAnimationMode(),
+						             actor->getAnimationId(),
+						             actor->getFlagDamageAnimIfMoving()? "T" : "F",
+						             actor->inCombat()? "T" : "F");
+						debugPrintf("    Pos(%02.2f,%02.2f,%02.2f)\n",
+						             actor->getPosition().x,
+						             actor->getPosition().y,
+						             actor->getPosition().z);
+						debugPrintf("    ScreenRect(%03d,%03d,%03d,%03d)\n",
+						             screenRect.top, screenRect.left, screenRect.bottom, screenRect.right);
+						debugPrintf("    Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
+						             a.x, a.y, a.z, b.x, b.y, b.z);
 						++count;
 					}
 				}
