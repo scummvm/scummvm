@@ -807,6 +807,7 @@ void Actor::setSetId(int setId) {
 
 	int i;
 
+	// leaving _setId for setId
 	if (_setId > 0) {
 		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 			if (_vm->_actors[i]->_id != _id && _vm->_actors[i]->_setId == _setId) {
@@ -814,6 +815,7 @@ void Actor::setSetId(int setId) {
 			}
 		}
 	}
+	// _setId updated to new (arrived in) setId
 	_setId = setId;
 	_vm->_aiScripts->enteredScene(_id, _setId);
 	if (_setId > 0) {
