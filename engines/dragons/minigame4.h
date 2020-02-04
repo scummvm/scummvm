@@ -42,7 +42,7 @@ private:
 
 
 public:
-	uint16 DAT_80090428_videoUpdateRelated;
+	uint16 _layer2XOffset;
 
 	Minigame4(DragonsEngine *vm);
 

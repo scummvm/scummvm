@@ -30,6 +30,8 @@
 
 namespace Dragons {
 
+static void videoUpdaterFunction();
+
 Minigame4::Minigame4(DragonsEngine *vm) : _vm(vm) {}
 
 void Minigame4::run() {
@@ -56,8 +58,8 @@ void Minigame4::run() {
 	_vm->clearFlags(ENGINE_FLAG_80);
 	// DisableVSyncEvent();
 	_vm->clearFlags(ENGINE_FLAG_1);
-	DAT_80090428_videoUpdateRelated = 0;
-	//TODO vsync_updater_function = videoUpdateFunction;
+	_layer2XOffset = 0;
+	_vm->setVsyncUpdateFunction(videoUpdaterFunction);
 	_vm->_screen->loadPalette(4, _vm->_scene->getPalette());
 	_vm->_screen->updatePaletteTransparency(4,1,0xff,true);
 	_vm->videoFlags |= 4;
@@ -97,7 +99,7 @@ void Minigame4::run() {
 	_vm->waitForFrames(2 * 0x3c);
 //	fade_related_calls_with_1f();
 	//DisableVSyncEvent();
-	//vsync_updater_function = (code *)0x0;
+	_vm->setVsyncUpdateFunction(NULL);
 	_vm->setFlags(ENGINE_FLAG_1);
 	_vm->videoFlags &= ~(uint16)4;
 	// EnableVSyncEvent();
@@ -315,6 +317,16 @@ uint16 Minigame4::FUN_8009009c(uint16 unk) {
 
 	} while (flickerActor->isFlagSet(ACTOR_FLAG_4));
 	return (uint)unk;
+}
+
+void videoUpdaterFunction() {
+	static uint16 layer2XOffset = 0;
+	static uint16 layer0XOffset = 0;
+	DragonsEngine *vm = getEngine();
+	vm->_scene->setLayerOffset(2, Common::Point(layer2XOffset, 0));
+	layer2XOffset = (layer2XOffset + 3) % 512;
+	vm->_scene->setLayerOffset(0, Common::Point(layer0XOffset, 0));
+	layer0XOffset = (layer0XOffset + 4) % 512;
 }
 
 
