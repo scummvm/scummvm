@@ -123,7 +123,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(0x17, opUnk17);
 	OPCODE(0x18, opUnk18);
 	OPCODE(0x19, opUnk19);
-	OPCODE(0x1A, opUnk1A);
+	OPCODE(0x1A, opUpdatePaletteCycling);
 	OPCODE(0x1B, opUnk1B);
 	OPCODE(0x1C, opSetActorFlag0x1000);
 	OPCODE(0x1D, opUnk1DClearActorFlag0x400);
@@ -1088,7 +1088,7 @@ void ScriptOpcodes::opUnk19(ScriptOpCall &scriptOpCall) {
 
 }
 
-void ScriptOpcodes::opUnk1A(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opUpdatePaletteCycling(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
 	ARG_INT16(index);
 	ARG_INT16(field4);
