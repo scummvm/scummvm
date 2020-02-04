@@ -945,12 +945,12 @@ Common::KeymapArray MohawkEngine_Riven::initKeymaps(const char *target) {
 	engineKeyMap->addAction(act);
 
 	act = new Action("LKUP", _("Look up"));
-	act->setCustomEngineActionEvent(kRivenActionMoveRight);
+	act->setCustomEngineActionEvent(kRivenActionLookUp);
 	act->addDefaultInputMapping("PAGEUP");
 	engineKeyMap->addAction(act);
 
 	act = new Action("LKDN", _("Look down"));
-	act->setCustomEngineActionEvent(kRivenActionMoveRight);
+	act->setCustomEngineActionEvent(kRivenActionLookDown);
 	act->addDefaultInputMapping("PAGEDOWN");
 	engineKeyMap->addAction(act);
 
