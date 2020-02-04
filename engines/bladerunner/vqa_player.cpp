@@ -48,6 +48,10 @@ bool VQAPlayer::open() {
 	// TB05 has wrong end of a loop and this will load empty zbuffer from next loop, which will lead to broken pathfinding
 	if (_name.equals("TB05_2.VQA")) {
 		_decoder._loopInfo.loops[1].end = 60;
+	} else if (_name.equals("DR04OVER.VQA")) {
+		// smoke (overlay) after explosion of Dermo Labs in DR04
+		// This has still frames in the end that so it looked as if the smoke was "frozen"
+		_decoder._loopInfo.loops[0].end  = 58; // 59 up to 74 are still frames
 	}
 #endif
 
