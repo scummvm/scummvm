@@ -622,9 +622,13 @@ void SpecialOpcodes::spcCastleMoatUpdateActorSceneScalePoints() {
 }
 
 void SpecialOpcodes::spcCastleGateMoatDrainedSceneLogic() {
-	// TODO spcCastleGateMoatDrainedSceneLogic
 	setSpecialOpCounter(-1);
-
+	if ((DAT_80083148 != 0) && (uint16_t_80083154 != 0)) {
+		//TODO FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)uint16_t_80083154,(uint)DAT_80083158);
+	}
+	_vm->setSceneUpdateFunction(moatDrainedSceneUpdateFunction);
+	uint16_t_80083154 = 0;
+	DAT_80083148 = 0;
 }
 void SpecialOpcodes::spcUnk34() {
 	Actor *flicker = _vm->_dragonINIResource->getFlickerRecord()->actor;
@@ -937,7 +941,9 @@ void SpecialOpcodes::spcResetInventorySequence() {
 }
 
 void SpecialOpcodes::spcUnk65ScenePaletteRelated() {
-	//TODO
+	byte *palette = _vm->_scene->getPalette();
+	memset(palette + 0xb1 * 2, 0, 32); //zero out 16 palette records from index 0xb1 to 0xc0
+	//TODO Check above logic works. triggers on dodo under attack scene.
 //	uint uVar1;
 //	ushort uVar2;
 //	RECT local_10;
@@ -990,7 +996,7 @@ void SpecialOpcodes::spcInsideBlackDragonUpdatePalette() {
 
 void SpecialOpcodes::spcCastleGateSceneLogic() {
 	_vm->_screen->updatePaletteTransparency(0, 0xc0,0xff, true);
-	//TODO FUN_80017d68(3,0);
+	//TODO FUN_80017d68(3,0); sets sprite layer attribute from layers 0 and 1. Doesn't seem to be needed.
 	setSpecialOpCounter(-1);
 	_vm->clearFlags(ENGINE_FLAG_1);
 	_vm->setSceneUpdateFunction(castleFogUpdateFunction);
@@ -1033,6 +1039,7 @@ void SpecialOpcodes::spcBlackDragonDialogForCamelhot() {
 	uint16 buffer[1024];
 	_vm->_talk->loadText(0x30DD8, buffer, 1024); //TODO might need to check dialog in other game versions
 	_vm->_talk->displayDialogAroundPoint(buffer,0x27,0xc,0xc01,0,0x30DD8);
+	//TODO this isn't quite right. The audio isn't played and it's not waiting long enough.
 }
 
 void SpecialOpcodes::spcSetCameraXToZero() {
@@ -1054,11 +1061,13 @@ void SpecialOpcodes::spcLoadFileS10a7act() {
 }
 
 void SpecialOpcodes::spcFlickerPutOnStGeorgeArmor() {
-	//TODO here.....
+	Actor *actor = _vm->_dragonINIResource->getRecord(0x21f)->actor;
+	actor->setFlag(ACTOR_FLAG_100);
+	actor->priorityLayer = 1;
 }
 
 void SpecialOpcodes::spc82CallResetDataMaybe() {
-	//TODO callMaybeResetData();
+	//TODO callMaybeResetData(); LOOKS like it clears text from the screen.
 }
 
 void SpecialOpcodes::spcStopScreenShakeUpdater() {
@@ -1782,4 +1791,38 @@ void caveOfDilemmaUpdateFunction() {
 		counter--;
 	}
 }
+
+void moatDrainedSceneUpdateFunction() {
+	static const uint32 moatDrainedTextIdTbl[] {
+			0x3C97A, 0x3C9AC, 0x3C9F8, 0x3CA48
+	};
+	static uint16 moatDrainedUpdateCounter = 0;
+	static bool moatDrainedStatus = false;
+	DragonsEngine *vm = getEngine();
+
+	if (vm->_scriptOpcodes->_specialOpCodes->getSpecialOpCounter() == -1) {
+		moatDrainedUpdateCounter = 600;
+	}
+	castleFogUpdateFunction();
+	if (((vm->_dragonINIResource->getRecord(0x208)->field_14 == 2) &&
+		 !vm->isFlagSet(ENGINE_FLAG_8000))) {
+		if (moatDrainedUpdateCounter != 0) {
+			moatDrainedUpdateCounter--;
+		}
+		if (moatDrainedUpdateCounter <= 0) {
+			if (!moatDrainedStatus) {
+				vm->_talk->playDialogAudioDontWait(moatDrainedTextIdTbl[vm->getRand(4)]);
+				moatDrainedStatus = true;
+				moatDrainedUpdateCounter = 0x1e;
+			} else {
+				if (moatDrainedStatus) {
+					vm->_dragonINIResource->getRecord(0x1fa)->actor->updateSequence(7);
+					moatDrainedUpdateCounter = vm->getRand(300) + 0x4b0;
+					moatDrainedStatus = false;
+				}
+			}
+		}
+	}
+}
+
 } // End of namespace Dragons

@@ -224,6 +224,7 @@ void castleBuildingBlackDragon2UpdateFunction();
 void shakeScreenUpdateFunction();
 void ladyOfTheLakeCapturedUpdateFunction();
 void caveOfDilemmaUpdateFunction();
+void moatDrainedSceneUpdateFunction();
 
 } // End of namespace Dragons
 
