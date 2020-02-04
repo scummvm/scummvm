@@ -256,7 +256,7 @@ public:
 	void func_gotoprevious();
 	void func_play(Datum &frame, Datum &movie);
 	void func_playdone();
-	void func_cursor(int c);
+	void func_cursor(int c, int mask);
 	int func_marker(int m);
 
 	// lingo-the.cpp

@@ -1064,9 +1064,19 @@ void LB::b_clearGlobals(int nargs) {
 }
 
 void LB::b_cursor(int nargs) {
+	int mask = -1;
+
 	Datum d = g_lingo->pop();
 	d.toInt();
-	g_lingo->func_cursor(d.u.i);
+
+	if (nargs == 2) {
+		d = g_lingo->pop();
+		d.toInt();
+
+		mask = d.u.i;
+	}
+
+	g_lingo->func_cursor(d.u.i, mask);
 }
 
 void LB::b_showGlobals(int nargs) {

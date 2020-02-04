@@ -326,10 +326,15 @@ void Lingo::func_playdone() {
 	func_goto(f, m);
 }
 
-void Lingo::func_cursor(int c) {
+void Lingo::func_cursor(int c, int mask) {
 	if (_cursorOnStack) {
 		// pop cursor
 		_vm->getMacWindowManager()->popCursor();
+	}
+
+	if (mask != -1) {
+		warning("STUB: func_cursor(%d, %d)", c, mask);
+		return;
 	}
 
 	// and then push cursor.
