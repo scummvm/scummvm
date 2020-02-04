@@ -51,7 +51,7 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 
 	for (int i = 0; i < 8; i++) {
-		_vm->opCode1A_tbl[i].field6 = 0;
+		_vm->_paletteCyclingTbl[i].updateInterval = 0;
 	}
 
 	// TODO

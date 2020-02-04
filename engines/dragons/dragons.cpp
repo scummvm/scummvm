@@ -92,6 +92,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_pKeyDown = false;
 
 	_debugMode = false;
+	_isGamePaused = false;
 
 	reset();
 }
@@ -671,6 +672,7 @@ void DragonsEngine::updateHandler() {
 	}
 
 	// TODO 0x8001bed0
+	updatePaletteCycling();
 
 	// 0x8001c294
 	if (!(_unkFlags1 & ENGINE_UNK1_FLAG_8)) {
@@ -1294,11 +1296,11 @@ void DragonsEngine::reset() {
 	data_800633fa = 0;
 
 	for(int i = 0; i < 8; i++) {
-		opCode1A_tbl[i].paletteType = 0;
-		opCode1A_tbl[i].field2 = 0;
-		opCode1A_tbl[i].field4 = 0;
-		opCode1A_tbl[i].field6 = 0;
-		opCode1A_tbl[i].field8 = 0;
+		_paletteCyclingTbl[i].paletteType = 0;
+		_paletteCyclingTbl[i].startOffset = 0;
+		_paletteCyclingTbl[i].endOffset = 0;
+		_paletteCyclingTbl[i].updateInterval = 0;
+		_paletteCyclingTbl[i].updateCounter = 0;
 	}
 
 	setSceneUpdateFunction(NULL);
@@ -1399,6 +1401,52 @@ void DragonsEngine::runVsyncUpdaterFunction() {
 
 void DragonsEngine::loadCurrentSceneMsf() {
 	_sound->loadMsf(getCurrentSceneId());
+}
+
+void DragonsEngine::updatePaletteCycling() {
+	if (!_isGamePaused) {
+		for (int loopIndex = 0; loopIndex < 8 ; loopIndex++) {
+			if (_paletteCyclingTbl[loopIndex].updateInterval != 0) {
+				if (_paletteCyclingTbl[loopIndex].updateCounter == 0) {
+					uint16 *palette = (uint16 *)_screen->getPalette(_paletteCyclingTbl[loopIndex].paletteType);
+					int16 uVar14 = (uint)(ushort)_paletteCyclingTbl[loopIndex].startOffset;
+					int16 uVar8 = (uint)(ushort)_paletteCyclingTbl[loopIndex].endOffset;
+					if (uVar14 < uVar8) {
+						uint16 uVar11 = palette[uVar8];
+						int uVar15 = uVar8;
+						if (uVar14 < uVar8) {
+							do {
+								uVar8--;
+								palette[uVar15] = palette[uVar15 - 1];
+								uVar15 = uVar8 & 0xffff;
+							} while ((uint)(ushort)_paletteCyclingTbl[loopIndex].startOffset < (uVar8 & 0xffff));
+						}
+						palette[(ushort)_paletteCyclingTbl[loopIndex].startOffset] = uVar11;
+						_paletteCyclingTbl[loopIndex].updateCounter = _paletteCyclingTbl[loopIndex].updateInterval;
+					}
+					else {
+						if (uVar8 < uVar14) {
+							uint16 uVar11 = palette[uVar14];
+							uint16 uVar15 = uVar8;
+							if (uVar8 < uVar14) {
+								do {
+									uVar8--;
+									palette[uVar15] = palette[uVar15 + 1];
+									uVar15 = uVar8 & 0xffff;
+								} while ((uVar8 & 0xffff) < (uint)(ushort)_paletteCyclingTbl[loopIndex].startOffset);
+							}
+							palette[(ushort)_paletteCyclingTbl[loopIndex].endOffset] = uVar11;
+							_paletteCyclingTbl[loopIndex].updateCounter =
+									_paletteCyclingTbl[loopIndex].updateInterval;
+						}
+					}
+				}
+				else {
+					_paletteCyclingTbl[loopIndex].updateCounter = _paletteCyclingTbl[loopIndex].updateCounter + -1;
+				}
+			}
+		}
+	}
 }
 
 void (*DragonsEngine::getSceneUpdateFunction())() {
