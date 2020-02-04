@@ -941,26 +941,8 @@ void SpecialOpcodes::spcResetInventorySequence() {
 }
 
 void SpecialOpcodes::spcUnk65ScenePaletteRelated() {
-	byte *palette = _vm->_scene->getPalette();
+	byte *palette = _vm->_screen->getPalette(0);
 	memset(palette + 0xb1 * 2, 0, 32); //zero out 16 palette records from index 0xb1 to 0xc0
-	//TODO Check above logic works. triggers on dodo under attack scene.
-//	uint uVar1;
-//	ushort uVar2;
-//	RECT local_10;
-//
-//	uVar2 = 0xb1;
-//	local_10.y = 0xf1;
-//	local_10.w = 0x100;
-//	local_10.x = 0;
-//	local_10.h = 1;
-//	uVar1 = 0xb1;
-//	do {
-//		uVar2 = uVar2 + 1;
-//		*(undefined2 *)(uVar1 * 2 + scrFileData_maybe) = 0;
-//		uVar1 = (uint)uVar2;
-//	} while (uVar2 < 0xc0);
-//	LoadImage(&local_10,&palette_data);
-//	DrawSync(0);
 }
 
 void SpecialOpcodes::spcUnk66() {

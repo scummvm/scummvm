@@ -1102,11 +1102,11 @@ void ScriptOpcodes::opUnk1A(ScriptOpCall &scriptOpCall) {
 
 	assert(index < 8);
 
-	_vm->opCode1A_tbl[index].paletteType = field4;
-	_vm->opCode1A_tbl[index].field2 = field6;
-	_vm->opCode1A_tbl[index].field4 = field8;
-	_vm->opCode1A_tbl[index].field6 = fieldA;
-	_vm->opCode1A_tbl[index].field8 = 0;
+	_vm->_paletteCyclingTbl[index].paletteType = field4;
+	_vm->_paletteCyclingTbl[index].startOffset = field6;
+	_vm->_paletteCyclingTbl[index].endOffset = field8;
+	_vm->_paletteCyclingTbl[index].updateInterval = fieldA;
+	_vm->_paletteCyclingTbl[index].updateCounter = 0;
 }
 
 void ScriptOpcodes::opUnk1B(ScriptOpCall &scriptOpCall) {

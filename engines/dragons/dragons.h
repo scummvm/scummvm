@@ -96,12 +96,12 @@ enum UnkFlags {
 	ENGINE_UNK1_FLAG_80 = 0x80
 };
 
-struct opCode1AStruct {
+struct PaletteCyclingInstruction {
 	int16 paletteType;
-	int16 field2;
-	int16 field4;
-	int16 field6;
-	int16 field8;
+	int16 startOffset;
+	int16 endOffset;
+	int16 updateInterval;
+	int16 updateCounter;
 };
 
 class BigfileArchive;
@@ -143,7 +143,7 @@ public:
 	Talk *_talk;
 	SoundManager *_sound;
 
-	opCode1AStruct opCode1A_tbl[8];
+	PaletteCyclingInstruction _paletteCyclingTbl[8];
 
 	uint16 data_800633fc;
 	uint16 videoFlags; // TODO move to screen?
@@ -191,6 +191,7 @@ private:
 	bool _pKeyDown;
 
 	bool _debugMode;
+	bool _isGamePaused;
 
 	void (*_sceneUpdateFunction)();
 	void (*_vsyncUpdateFunction)();
@@ -283,6 +284,7 @@ private:
 	void gameLoop();
 	void updateHandler();
 	void updatePathfindingActors();
+	void updatePaletteCycling();
 	uint32 calulateTimeLeft();
 	void wait();
 	uint16 getIniFromImg();
