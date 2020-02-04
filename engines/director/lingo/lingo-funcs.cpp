@@ -354,8 +354,6 @@ void Lingo::func_cursor(int c) {
 	}
 
 	_cursorOnStack = true;
-
-	warning("STUB: func_cursor(%d)", c);
 }
 
 void Lingo::func_beep(int repeats) {
