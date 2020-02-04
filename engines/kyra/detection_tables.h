@@ -382,6 +382,22 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_CD_FLAGS
 	},
+	{ // Polish fan translation of Macintosh CD version
+		{
+			"kyra1",
+			"CD",
+			{
+				{ "GEMCUT.PAK", 0, "8ddf09fd6bfafdb27b4cf31c5a6fc91d", -1 },
+				{ "BEAD.CPS", 0, "3038466f65b7751451844707187aa401", -1 },
+				{ NULL, 0, NULL, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_CD,
+			GUIO0()
+		},
+		KYRA1_CD_FLAGS
+	},
 	{
 		{
 			"kyra1",
