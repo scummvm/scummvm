@@ -151,8 +151,8 @@ private:
 	uint8 _cheatBuffer[KEYBUF_SIZE];
 
 public:
-	Common::Error run();
-	void pauseEngineIntern(bool pause);
+	Common::Error run() override;
+	void pauseEngineIntern(bool pause) override;
 
 	ZVisionGameId getGameId() const;
 	Common::Language getLanguage() const;
@@ -231,8 +231,8 @@ public:
 		return _fps;
 	}
 
-	GUI::Debugger *getDebugger();
-	void syncSoundSettings();
+	GUI::Debugger *getDebugger() override;
+	void syncSoundSettings() override;
 
 	void loadSettings();
 	void saveSettings();
@@ -241,10 +241,10 @@ public:
 
 	// Engine features
 	bool hasFeature(EngineFeature f) const override;
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 private:
 	void initialize();
