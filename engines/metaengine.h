@@ -318,9 +318,7 @@ public:
 	 * Determine whether the engine supports the specified MetaEngine feature.
 	 * Used by e.g. the launcher to determine whether to enable the "Load" button.
 	 */
-	virtual bool hasFeature(MetaEngineFeature f) const {
-		return false;
-	}
+	virtual bool hasFeature(MetaEngineFeature f) const;
 
 	static void appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime, Common::String desc);
 	static void parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDescriptor *desc);

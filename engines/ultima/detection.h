@@ -78,7 +78,6 @@ public:
 	virtual const char *getSavegamePattern(const char *target = nullptr) const override;
 	virtual const char *getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	virtual int getMaximumSaveSlot() const override;
 };

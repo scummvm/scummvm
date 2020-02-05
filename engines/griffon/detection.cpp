@@ -68,21 +68,8 @@ public:
 		return "The Griffon Legend (c) 2005 Syn9 (Daniel Kennedy)";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
-
-bool GriffonMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSavesUseExtendedFormat);
-}
 
 bool Griffon::GriffonEngine::hasFeature(EngineFeature f) const {
 	return

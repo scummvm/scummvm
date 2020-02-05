@@ -129,6 +129,18 @@ Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	return Keymap::arrayOf(engineKeyMap);
 }
 
+bool MetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSavesUseExtendedFormat);
+}
+
 void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime, Common::String desc) {
 	ExtendedSavegameHeader header;
 

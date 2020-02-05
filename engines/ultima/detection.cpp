@@ -68,18 +68,6 @@ UltimaMetaEngine::~UltimaMetaEngine() {
 	Ultima::g_metaEngine = nullptr;
 }
 
-bool UltimaMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSavesUseExtendedFormat);
-}
-
 bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Ultima::UltimaGameDescription *gd = (const Ultima::UltimaGameDescription *)desc;
 	if (gd) {
