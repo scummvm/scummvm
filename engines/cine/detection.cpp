@@ -75,27 +75,27 @@ public:
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD);
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "cine";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Cinematique evo 1";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Cinematique evo 1 (C) Delphine Software";
 	}
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override {
 		return AdvancedMetaEngine::createInstance(syst, engine);
 	}
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
 };
 
 bool CineMetaEngine::hasFeature(MetaEngineFeature f) const {
