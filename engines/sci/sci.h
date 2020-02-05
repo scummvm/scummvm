@@ -254,16 +254,16 @@ public:
 	~SciEngine();
 
 	// Engine APIs
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
-	void pauseEngineIntern(bool pause);
-	virtual GUI::Debugger *getDebugger();
+	void pauseEngineIntern(bool pause) override;
+	virtual GUI::Debugger *getDebugger() override;
 	Console *getSciDebugger();
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
-	void syncSoundSettings(); ///< from ScummVM to the game
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	void syncSoundSettings() override; ///< from ScummVM to the game
 	void updateSoundMixerVolumes();
 	uint32 getTickCount();
 	void setTickCount(const uint32 ticks);
