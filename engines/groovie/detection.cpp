@@ -347,25 +347,25 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "groovie";
 	}
 
-	const char *getName() const {
+	const char *getName() const override {
 		return "Groovie";
 	}
 
-	const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Groovie Engine (C) 1990-1996 Trilobyte";
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	SaveStateList listSaves(const char *target) const;
-	int getMaximumSaveSlot() const;
-	void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool GroovieMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
