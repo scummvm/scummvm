@@ -123,7 +123,6 @@ Common::Error ComposerEngine::run() {
 	else
 		warning("FPS in book.ini is zero. Defaulting to 8...");
 	uint32 lastDrawTime = 0;
-	_lastSaveTime = _system->getMillis();
 
 	bool loadFromLauncher = ConfMan.hasKey("save_slot");
 
@@ -179,8 +178,7 @@ Common::Error ComposerEngine::run() {
 			loadGameState(ConfMan.getInt("save_slot"));
 			loadFromLauncher = false;
 		}
-		if (shouldPerformAutoSave(_lastSaveTime))
-			saveGameState(0, "Autosave");
+
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:
