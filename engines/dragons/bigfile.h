@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_BIGFILE_H
-#define SCUMMVM_BIGFILE_H
+#ifndef DRAGONS_BIGFILE_H
+#define DRAGONS_BIGFILE_H
 
 #include "common/file.h"
 #include "common/language.h"
@@ -41,4 +41,4 @@ public:
 
 } // End of namespace dragons
 
-#endif //SCUMMVM_BIGFILE_H
+#endif //DRAGONS_BIGFILE_H

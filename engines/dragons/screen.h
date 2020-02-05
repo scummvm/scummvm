@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_SCREEN_H
-#define SCUMMVM_SCREEN_H
+#ifndef DRAGONS_SCREEN_H
+#define DRAGONS_SCREEN_H
 
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
@@ -75,4 +75,4 @@ private:
 
 } // End of namespace Dragons
 
-#endif //SCUMMVM_SCREEN_H
+#endif //DRAGONS_SCREEN_H

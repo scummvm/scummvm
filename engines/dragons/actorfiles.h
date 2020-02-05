@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_ACTORFILES_H
-#define SCUMMVM_ACTORFILES_H
+#ifndef DRAGONS_ACTORFILES_H
+#define DRAGONS_ACTORFILES_H
 
 #define DRAGONS_NUM_ACTOR_FILES 219
 
@@ -245,4 +245,4 @@ const char actorResourceFiles[DRAGONS_NUM_ACTOR_FILES][13] = {
 		"titles.act",
 		"dem11.act"
 };
-#endif //SCUMMVM_ACTORFILES_H
+#endif //DRAGONS_ACTORFILES_H

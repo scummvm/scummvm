@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_BACKGROUND_H
-#define SCUMMVM_BACKGROUND_H
+#ifndef DRAGONS_BACKGROUND_H
+#define DRAGONS_BACKGROUND_H
 
 #include "common/rect.h"
 #include "common/system.h"
@@ -143,4 +143,4 @@ protected:
 
 } // End of namespace Dragons
 
-#endif //SCUMMVM_BACKGROUND_H
+#endif //DRAGONS_BACKGROUND_H
