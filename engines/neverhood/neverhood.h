@@ -59,7 +59,7 @@ struct GameState {
 class NeverhoodEngine : public ::Engine {
 protected:
 
-	Common::Error run();
+	Common::Error run() override;
 	void mainLoop();
 
 public:
@@ -90,7 +90,7 @@ public:
 	GameModule *_gameModule;
 	StaticData *_staticData;
 	Console *_console;
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	SoundMan *_soundMan;
 	AudioResourceMan *_audioResourceMan;
@@ -119,11 +119,11 @@ public:
 
 	bool _isSaveAllowed;
 
-	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
+	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
+	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
 
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &description);
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &description) override;
 	Common::Error removeGameState(int slot);
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);
