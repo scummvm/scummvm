@@ -89,6 +89,10 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		handleKeyRepeat();
 	}
 
+	if (g_engine)
+		// Handle autosaves if enabled
+		g_engine->handleAutoSave();
+
 	if (_eventQueue.empty()) {
 		return false;
 	}

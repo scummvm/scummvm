@@ -92,6 +92,16 @@ private:
 	int32 _engineStartTime;
 
 	/**
+	 * Autosave interval
+	 */
+	const int _autosaveInterval;
+
+	/**
+	 * The last time an autosave was done
+	 */
+	int _lastAutosaveTime;
+
+	/**
 	 * Save slot selected via global main menu.
 	 * This slot will be loaded after main menu execution (not from inside
 	 * the menu loop, to avoid bugs like #2822778).
@@ -290,7 +300,6 @@ public:
 	bool loadGameDialog();
 
 protected:
-
 	/**
 	 * Actual implementation of pauseEngine by subclasses. See there
 	 * for details.
@@ -367,17 +376,27 @@ public:
 	inline Common::SaveFileManager *getSaveFileManager() { return _saveFileMan; }
 
 public:
-
 	/** On some systems, check if the game appears to be run from CD. */
 	void checkCD();
 
-protected:
 
 	/**
-	 * Indicate whether an autosave should be performed.
+	 * Checks for whether it's time to do an autosave, and if so, does it.
 	 */
-	bool shouldPerformAutoSave(int lastSaveTime);
+	void handleAutoSave();
 
+	/**
+	 * Returns the slot that should be used for autosaves
+	 */
+	virtual int getAutosaveSlot() const {
+		return 0;
+	}
+
+	bool shouldPerformAutoSave(int lastSaveTime) {
+		// TODO: Remove deprecated method once all engines are refactored
+		// to no longer do autosaves directly themselves
+		return false;
+	}
 };
 
 // Chained games
