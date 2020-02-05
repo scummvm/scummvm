@@ -21,7 +21,7 @@
  */
 #include <common/debug.h>
 #include "common/memstream.h"
-#include "dragonini.h"
+#include "dragons/dragonini.h"
 
 namespace Dragons {
 

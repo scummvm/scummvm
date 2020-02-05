@@ -20,11 +20,11 @@
  *
  */
 #include <common/debug.h>
-#include "dragons.h"
-#include "dragonini.h"
-#include "actorresource.h"
-#include "actor.h"
-#include "scene.h"
+#include "dragons/dragons.h"
+#include "dragons/dragonini.h"
+#include "dragons/actorresource.h"
+#include "dragons/actor.h"
+#include "dragons/scene.h"
 #include "dragons/screen.h"
 
 namespace Dragons {
@@ -66,7 +66,7 @@ Actor *ActorManager::findFreeActor(int16 resourceId) {
 	int i = 0;
 	for (ActorsIterator it = _actors.begin(); it != _actors.end() && i < 23; ++it, i++) {
 		Actor *actor = it;
-		if (!(actor->flags & Dragons::ACTOR_FLAG_40)) {
+		if (!(actor->_flags & Dragons::ACTOR_FLAG_40)) {
 			actor->resourceID = resourceId;
 			actor->_walkSpeed = 0x100000;
 			return actor;
@@ -83,7 +83,7 @@ Actor *ActorManager::getActor(uint16 actorId) {
 void ActorManager::clearActorFlags(uint16 startingActorId) {
 	assert(startingActorId < DRAGONS_ENGINE_NUM_ACTORS);
 	for(uint16 i = startingActorId; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
-		_actors[i].flags = 0;
+		_actors[i]._flags = 0;
 	}
 }
 
@@ -142,7 +142,7 @@ Actor::Actor(uint16 id) : _actorID(id) {
 	_walkDestX = 0;
 	_walkDestY = 0;
 	_walkSpeed = 0;
-	flags = 0;
+	_flags = 0;
 	frame_width = 0;
 	frame_height = 0;
 	frame_flags = 0;
@@ -161,7 +161,7 @@ void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 	_walkDestY = y;
 	scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_sequenceID2 = 0;
-	flags = (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_4);
+	_flags = (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_4);
 	frame_width = 0;
 	frame_height = 0;
 	frame_flags = 4;
@@ -173,8 +173,8 @@ void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 
 void Actor::updateSequence(uint16 newSequenceID) {
 	_sequenceID = newSequenceID;
-	flags &= 0xfbf1;
-	flags |= Dragons::ACTOR_FLAG_1;
+	_flags &= 0xfbf1;
+	_flags |= Dragons::ACTOR_FLAG_1;
 }
 
 void Actor::resetSequenceIP() {
@@ -196,7 +196,7 @@ void Actor::loadFrame(uint16 frameOffset) {
 
 	debug(5, "ActorId: %d load frame header: (%d,%d)", _actorID, frame->width, frame->height);
 
-	flags |= Dragons::ACTOR_FLAG_8; //TODO check if this is the right spot. engine sets it at 0x800185b0
+	_flags |= Dragons::ACTOR_FLAG_8; //TODO check if this is the right spot. engine sets it at 0x800185b0
 
 }
 
@@ -212,53 +212,10 @@ byte *Actor::getSeqIpAtOffset(uint32 offset) {
 }
 
 void Actor::reset_maybe() {
-	flags = 0;
+	_flags = 0;
 	//TODO actor_find_by_resourceId_and_remove_resource_from_mem_maybe(resourceID);
 	freeFrame();
 }
-
-static const int32 pathfinderXYOffsetTbl[32] =
-		{
-				0x00000100,
-				0x000000fb,
-				0x000000ec,
-				0x000000d4,
-
-				0x000000b5,
-				0x0000008e,
-				0x00000061,
-				0x00000031,
-
-				-0x00000000,
-				-0x31,
-				-0x61,
-				-0x8e,
-
-				-0xb5,
-				-0xd4,
-				-0xec,
-				-0xfb,
-
-				-0xff,
-				-0xfb,
-				-0xec,
-				-0xd4,
-
-				-0xb5,
-				-0x8e,
-				-0x61,
-				-0x31,
-
-				0x00000000,
-				0x00000031,
-				0x00000061,
-				0x0000008e,
-
-				0x000000b5,
-				0x000000d4,
-				0x000000ec,
-				0x000000fb
-		};
 
 uint32 calcDistance(int32 x1, int32 y1, int32 x2, int32 y2) {
 	return ABS(x2 - x1) * ABS(x2 - x1) + ABS(y2 - y1) * ABS(y2 - y1);
@@ -519,7 +476,7 @@ void Actor::stopWalk() {
 	_finalWalkDestY = -1;
 	setFlag(Dragons::ACTOR_FLAG_4);
 
-	if (flags & Dragons::ACTOR_FLAG_200) {
+	if (_flags & Dragons::ACTOR_FLAG_200) {
 		clearFlag(Dragons::ACTOR_FLAG_800);
 	}
 }
@@ -531,11 +488,11 @@ void Actor::waitUntilFlag4IsSet() {
 }
 
 void Actor::waitUntilFlag8IsSet() {
-	if (flags & Dragons::ACTOR_FLAG_8) {
+	if (_flags & Dragons::ACTOR_FLAG_8) {
 		return;
 	}
 
-	while(!(flags & Dragons::ACTOR_FLAG_8)) {
+	while(!(_flags & Dragons::ACTOR_FLAG_8)) {
 		getEngine()->waitForFrames(1);
 	}
 }
@@ -556,27 +513,27 @@ void Actor::waitUntilFlag8SetThenSet1000AndWaitFor4() {
 }
 
 void Actor::clearFlag(uint32 flag) {
-	flags &= ~flag;
+	_flags &= ~flag;
 }
 
 void Actor::setFlag(uint32 flag) {
-	flags |= flag;
+	_flags |= flag;
 }
 
 bool Actor::isFlagSet(uint32 flag) {
-	return (flags & flag) == flag;
+	return (_flags & flag) == flag;
 }
 
-uint16 Actor::canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, uint16 flags) {
-	debug(1, "canWalkLine. (%X,%X) -> (%X,%X) %d", x_pos, y_pos, target_x, target_y, flags);
+uint16 Actor::canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, uint16 walkFlags) {
+	debug(1, "canWalkLine. (%X,%X) -> (%X,%X) %d", x_pos, y_pos, target_x, target_y, walkFlags);
 
-	if (flags == 2) {
+	if (walkFlags == 2) {
 		return 1;
 	}
 	uint16 width = getEngine()->_scene->getStageWidth();
 	uint16 height = getEngine()->_scene->getStageHeight();
 
-	if (flags & 0x8000) {
+	if (walkFlags & 0x8000) {
 		if (actor_x < 0
 			|| width - 1 < actor_x
 			|| actor_y < 0
@@ -637,11 +594,11 @@ uint16 Actor::canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 ta
 		if ( priority < 0) {
 			priority = 1;
 		}
-		if (!(flags & 0x7fff) && (priority == 0 || priority >= 8)) {
+		if (!(walkFlags & 0x7fff) && (priority == 0 || priority >= 8)) {
 			return 0;
 		}
 
-		if ((flags & 0x7fff) == 1) {
+		if ((walkFlags & 0x7fff) == 1) {
 			if (priority == 0 || priority >= 0x10) {
 				return 0;
 			}
@@ -774,7 +731,7 @@ int Actor::startMoveToPoint(int destX, int destY) {
 				if(direction != -1 && !isFlagSet(ACTOR_FLAG_800)) {
 					_sequenceID2 = direction;
 				}
-				if (_sequenceID != _sequenceID2 + 8 && _sequenceID2 != -1 && !(flags & ACTOR_FLAG_800)) {
+				if (_sequenceID != _sequenceID2 + 8 && _sequenceID2 != -1 && !isFlagSet(ACTOR_FLAG_800)) {
 					updateSequence(_sequenceID2 + 8);
 				}
 				setFlag(ACTOR_FLAG_10);

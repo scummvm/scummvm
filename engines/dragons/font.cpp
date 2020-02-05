@@ -21,12 +21,12 @@
  */
 #include <common/memstream.h>
 #include <common/textconsole.h>
-#include "bigfile.h"
-#include "cursor.h"
-#include "font.h"
-#include "scene.h"
-#include "screen.h"
-#include "dragons.h"
+#include "dragons/bigfile.h"
+#include "dragons/cursor.h"
+#include "dragons/font.h"
+#include "dragons/scene.h"
+#include "dragons/screen.h"
+#include "dragons/dragons.h"
 
 
 namespace Dragons {
@@ -76,7 +76,7 @@ void Font::renderToSurface(Graphics::Surface *surface, int16 x, int16 y, uint16 
 		pixels += i * 8;
 //		debug("char: %d size: %d %d", (text[i] - 0x20), _numChars, (30 + i));
 		byte *data = _pixels + mapChar(text[i]) * 64;
-		for (int y = 0; y < 8; y++) {
+		for (int j = 0; j < 8; j++) {
 			memcpy(pixels, data, 8);
 			data += 8;
 			pixels += surface->pitch;
@@ -110,7 +110,6 @@ FontManager::~FontManager() {
 void FontManager::addText(int16 x, int16 y, uint16 *text, uint16 length, uint8 fontType) {
 	assert(length < 1024);
 	assert(fontType < 4);
-	byte *palette = _vm->_cursor->getPalette();
 	ScreenTextEntry *screenTextEntry = new ScreenTextEntry();
 	screenTextEntry->position = Common::Point(x, y);
 	screenTextEntry->surface = _fonts[fontType]->render(text, length);

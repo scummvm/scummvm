@@ -20,8 +20,8 @@
  *
  */
 #include "common/memstream.h"
-#include "dragonobd.h"
-#include "bigfile.h"
+#include "dragons/dragonobd.h"
+#include "dragons/bigfile.h"
 
 namespace Dragons {
 

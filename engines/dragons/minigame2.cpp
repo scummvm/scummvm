@@ -19,10 +19,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "minigame2.h"
-#include "actor.h"
+#include "dragons/minigame2.h"
+#include "dragons/actor.h"
 #include "dragons/actorresource.h"
-#include "dragons.h"
+#include "dragons/dragons.h"
 #include "dragons/dragonini.h"
 #include "dragons/talk.h"
 #include "dragons/inventory.h"
@@ -435,7 +435,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 										DAT_80093cb4 = DAT_80093cb4 + 1;
 									}
 								}
-								if ((uVar12->flags & 4) != 0) {
+								if ((uVar12->_flags & 4) != 0) {
 									if (DAT_80093cc0 != 0) {
 										DAT_80093cc0 = DAT_80093cc0 - 1;
 									}
@@ -459,11 +459,11 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 							_vm->waitForFrames(2 * 0x3c);
 //							DisableVSyncEvent();
 							memset(paletteData,0,0x200);
-							uVar5->flags = uVar5->flags & 0xfbff;
+							uVar5->_flags = uVar5->_flags & 0xfbff;
 							loungealotHeadActor->setFlag(ACTOR_FLAG_400);
 							loungealotLeftUpperArm->setFlag(ACTOR_FLAG_400);
 							loungealotRightArm->setFlag(ACTOR_FLAG_400);
-							uVar8->flags = uVar8->flags | 0x400;
+							uVar8->_flags = uVar8->_flags | 0x400;
 							flickerArm->setFlag(ACTOR_FLAG_400);
 							loungealotThumb->setFlag(ACTOR_FLAG_400);
 							uVar12->setFlag(ACTOR_FLAG_400);
@@ -506,7 +506,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 					if (loungealotLeftUpperArm->_sequenceID != local_268) {
 						loungealotLeftUpperArm->updateSequence(local_268);
 					}
-					if ((flickerArm->flags & 4) != 0) {
+					if ((flickerArm->_flags & 4) != 0) {
 						if (_vm->isRightKeyPressed() && (local_288 != 0)) {
 							local_288 = local_288 - 1;
 						}
@@ -546,7 +546,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 					else {
 						local_264 = 0;
 					}
-					if ((uVar12->flags & 4) != 0) {
+					if ((uVar12->_flags & 4) != 0) {
 						if (FUN_80093248() && (local_284 != 0)) {
 							local_284 = local_284 - 1;
 						}
@@ -647,8 +647,8 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 								}
 							}
 						}
-						uVar12->flags = uVar12->flags | 0x400;
-						uVar13->flags = uVar13->flags | 0x400;
+						uVar12->_flags = uVar12->_flags | 0x400;
+						uVar13->_flags = uVar13->_flags | 0x400;
 						flickerArm->updateSequence((uint)local_28 + 0xf);
 						loungealotThumb->updateSequence((uint)local_28 + 0xf);
 						DAT_80093c94 = 1;
@@ -658,10 +658,10 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 			}
 			else {
 				if (DAT_80093c94 == 2) {
-					uVar12->flags = uVar12->flags | 0x1000;
-					uVar13->flags = uVar13->flags | 0x1000;
-					flickerArm->flags = flickerArm->flags | 0x1000;
-					loungealotThumb->flags = loungealotThumb->flags | 0x1000;
+					uVar12->_flags = uVar12->_flags | 0x1000;
+					uVar13->_flags = uVar13->_flags | 0x1000;
+					flickerArm->_flags = flickerArm->_flags | 0x1000;
+					loungealotThumb->_flags = loungealotThumb->_flags | 0x1000;
 					_vm->_screen->setScreenShakeOffset(0, 0);
 					if (local_258 == 1) {
 //						playSoundFromTxtIndex(DAT_80063ad0);
@@ -751,8 +751,8 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 				DAT_80093cbc = 1;
 				DAT_80093cb8 = 0;
 				DAT_80093cc0 = 1;
-				uVar12->flags = uVar12->flags & 0xfbff;
-				uVar13->flags = uVar13->flags & 0xfbff;
+				uVar12->_flags = uVar12->_flags & 0xfbff;
+				uVar13->_flags = uVar13->_flags & 0xfbff;
 				flickerArm->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc]);
 				loungealotThumb->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc]);
 				uVar12->updateSequence((uint)(ushort)actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0]);

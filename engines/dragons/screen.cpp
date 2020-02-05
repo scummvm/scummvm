@@ -19,13 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include <common/endian.h>
+#include "common/endian.h"
 #include "common/system.h"
 #include "common/rect.h"
 #include "engines/util.h"
 #include "dragons/dragons.h"
 #include "dragons/scene.h"
-#include "screen.h"
+#include "dragons/screen.h"
 
 namespace Dragons {
 

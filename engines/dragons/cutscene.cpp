@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "cutscene.h"
-#include "dragons.h"
+#include "dragons/cutscene.h"
+#include "dragons/dragons.h"
 #include "dragons/actor.h"
 #include "dragons/actorresource.h"
 #include "dragons/background.h"

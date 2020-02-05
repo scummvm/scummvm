@@ -21,10 +21,10 @@
  */
 
 #include <common/memstream.h>
-#include "bigfile.h"
-#include "screen.h"
-#include "bag.h"
-#include "background.h"
+#include "dragons/bigfile.h"
+#include "dragons/screen.h"
+#include "dragons/bag.h"
+#include "dragons/background.h"
 
 namespace Dragons {
 

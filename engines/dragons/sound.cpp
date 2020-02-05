@@ -19,17 +19,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "sound.h"
-#include "dragons.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/xa.h"
 #include "common/file.h"
 #include "common/memstream.h"
-#include "bigfile.h"
-#include "dragonrms.h"
-#include "VabSound.h"
+#include "dragons/dragons.h"
+#include "dragons/sound.h"
+#include "dragons/bigfile.h"
+#include "dragons/dragonrms.h"
+#include "dragons/VabSound.h"
 
 #define RAW_CD_SECTOR_SIZE 2352
 
@@ -393,8 +393,10 @@ void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
 		stopVoicePlaying(soundId);
 	}
 
-		Audio::SoundHandle *handle = getVoiceHandle(soundId);
+	Audio::SoundHandle *handle = getVoiceHandle(soundId);
+	if (handle) {
 		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, vabSound->getAudioStream(program, key));
+	}
 }
 
 void SoundManager::stopSound(uint16 soundId, uint16 volumeId) {
@@ -443,6 +445,7 @@ Audio::SoundHandle *SoundManager::getVoiceHandle(uint16 soundID) {
 			return &_voice[i].handle;
 		}
 	}
+	return NULL;
 }
 
 void SoundManager::stopVoicePlaying(uint16 soundID) {

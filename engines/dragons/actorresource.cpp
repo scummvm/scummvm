@@ -22,9 +22,9 @@
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "graphics/surface.h"
-#include "actorfiles.h"
-#include "bigfile.h"
-#include "actorresource.h"
+#include "dragons/actorfiles.h"
+#include "dragons/bigfile.h"
+#include "dragons/actorresource.h"
 
 namespace Dragons {
 

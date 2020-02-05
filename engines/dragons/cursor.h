@@ -23,7 +23,7 @@
 #define DRAGONS_CURSOR_H
 
 #include "common/system.h"
-#include "scriptopcodes.h"
+#include "dragons/scriptopcodes.h"
 
 namespace Dragons {
 

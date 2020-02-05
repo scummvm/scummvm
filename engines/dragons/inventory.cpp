@@ -20,15 +20,14 @@
  *
  */
 
-#include "actor.h"
-#include "dragons.h"
-#include "dragonrms.h"
-#include "dragonini.h"
-#include "background.h"
-#include "inventory.h"
-#include "bag.h"
-#include "scene.h"
-#include "talk.h"
+#include "dragons/actor.h"
+#include "dragons/dragons.h"
+#include "dragons/dragonini.h"
+#include "dragons/background.h"
+#include "dragons/inventory.h"
+#include "dragons/bag.h"
+#include "dragons/scene.h"
+#include "dragons/talk.h"
 #include "dragons/screen.h"
 
 namespace Dragons {
@@ -81,11 +80,11 @@ void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backg
 	_actor->x_pos = 2;
 	_actor->y_pos = 0;
 	_actor->priorityLayer = 6;
-	_actor->flags = 0;
+	_actor->_flags = 0;
 	_actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_actor->updateSequence(0);
-	_actor->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
-						 Dragons::ACTOR_FLAG_200);
+	_actor->_flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
+					   Dragons::ACTOR_FLAG_200);
 	_sequenceId = 0;
 	_type = 0;
 	_old_showing_value = 0;
@@ -174,7 +173,7 @@ void Inventory::openInventory() {
 		item->y_pos = item->_walkDestY = invYPosTable[i] + 0xc;
 
 		if (inventoryItemTbl[i]) {
-			item->flags = 0; //clear all flags
+			item->_flags = 0; //clear all flags
 			item->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 			item->priorityLayer = 0;
 			item->updateSequence(_vm->getINI(inventoryItemTbl[i] - 1)->field_8 * 2 + 10);

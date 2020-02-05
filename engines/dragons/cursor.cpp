@@ -19,16 +19,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "cursor.h"
-#include "actor.h"
-#include "actorresource.h"
-#include "dragons.h"
-#include "dragonimg.h"
-#include "dragonini.h"
-#include "dragonobd.h"
-#include "inventory.h"
-#include "scene.h"
-#include "scriptopcodes.h"
+#include "dragons/cursor.h"
+#include "dragons/actor.h"
+#include "dragons/actorresource.h"
+#include "dragons/dragons.h"
+#include "dragons/dragonimg.h"
+#include "dragons/dragonini.h"
+#include "dragons/dragonobd.h"
+#include "dragons/inventory.h"
+#include "dragons/scene.h"
+#include "dragons/scriptopcodes.h"
 #include "dragons/screen.h"
 
 namespace Dragons {
@@ -43,11 +43,11 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	_actor->x_pos = _x = 160;
 	_actor->y_pos = _y = 100;
 	_actor->priorityLayer = 6;
-	_actor->flags = 0;
+	_actor->_flags = 0;
 	_actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_actor->updateSequence(_sequenceID);
-	_actor->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
-					  Dragons::ACTOR_FLAG_200);
+	_actor->_flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
+					   Dragons::ACTOR_FLAG_200);
 
 	dragonINIResource->getFlickerRecord()->actor = _actor; //TODO is this correct?
 	dragonINIResource->getFlickerRecord()->field_1a_flags_maybe |= Dragons::INI_FLAG_1;
@@ -240,7 +240,6 @@ int16 Cursor::updateIniFromScene() {
 			}
 			if (cursorOverIni != 0) {
 				// 0x80028bf0
-				debug(1, "here OK!!!");
 				// _iniUnderCursor = cursorOverIni;
 				data_80072890 = _iniUnderCursor;
 				data_800728b0_cursor_seqID = _sequenceID;

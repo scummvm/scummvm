@@ -25,8 +25,8 @@
 #include <audio/audiostream.h>
 #include <audio/mixer.h>
 #include "common/memstream.h"
-#include "VabSound.h"
-#include "dragons.h"
+#include "dragons/VabSound.h"
+#include "dragons/dragons.h"
 
 namespace Dragons {
 	VabSound::VabSound(Common::SeekableReadStream *msfData, const DragonsEngine *_vm): _toneAttrs(NULL), _vbData(NULL) {

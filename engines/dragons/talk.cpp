@@ -21,19 +21,19 @@
  */
 
 #include <common/debug.h>
-#include "bigfile.h"
-#include "actor.h"
-#include "cursor.h"
-#include "actorresource.h"
-#include "talk.h"
-#include "sound.h"
-#include "dragons.h"
-#include "dragonini.h"
-#include "dragonimg.h"
-#include "dragonobd.h"
-#include "scene.h"
-#include "font.h"
-#include "scriptopcodes.h"
+#include "dragons/bigfile.h"
+#include "dragons/actor.h"
+#include "dragons/cursor.h"
+#include "dragons/actorresource.h"
+#include "dragons/talk.h"
+#include "dragons/sound.h"
+#include "dragons/dragons.h"
+#include "dragons/dragonini.h"
+#include "dragons/dragonimg.h"
+#include "dragons/dragonobd.h"
+#include "dragons/scene.h"
+#include "dragons/font.h"
+#include "dragons/scriptopcodes.h"
 
 namespace Dragons {
 

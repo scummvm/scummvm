@@ -99,7 +99,7 @@ public:
 	uint16 _sequenceID;
 	int16 _sequenceID2;
 	int16 priorityLayer;
-	uint16 flags;
+	uint16 _flags;
 	int16 x_pos;
 	int16 y_pos;
 	int16 _walkDestX;
@@ -150,7 +150,7 @@ public:
 	byte *getPalette();
 private:
 	void stopWalk();
-	uint16 canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, uint16 flags);
+	uint16 canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, uint16 walkFlags);
 	int16 pathfindingFindClosestPoint(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, int16 unkType,
 									  bool *pointsInUseTbl);
 	int startMoveToPoint(int destX, int destY);

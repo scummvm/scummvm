@@ -21,8 +21,6 @@
  */
 
 #include "dragons/dragons.h"
-
-#include "common/config-manager.h"
 #include "engines/advancedDetector.h"
 #include "common/savefile.h"
 #include "common/system.h"

@@ -19,9 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "minigame4.h"
-#include "actor.h"
-#include "dragons.h"
+#include "dragons/minigame4.h"
+#include "dragons/actor.h"
+#include "dragons/dragons.h"
 #include "dragons/dragonini.h"
 #include "dragons/talk.h"
 #include "dragons/inventory.h"

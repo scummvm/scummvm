@@ -36,9 +36,7 @@
 #include "dragons/actor.h"
 #include "dragons/minigame1.h"
 #include "dragons/talk.h"
-#include "dragons/specialopcodes.h"
 #include "dragons/screen.h"
-#include "dragons/minigame1.h"
 #include "dragons/minigame2.h"
 #include "dragons/minigame3.h"
 #include "dragons/minigame4.h"
@@ -304,7 +302,7 @@ void SpecialOpcodes::spcUnk9() {
 	assert(flicker);
 	flicker->field_1a_flags_maybe |= Dragons::INI_FLAG_20;
 	assert(flicker->actor);
-	flicker->actor->flags |= Dragons::ACTOR_FLAG_100;
+	flicker->actor->_flags |= Dragons::ACTOR_FLAG_100;
 	flicker->actor->priorityLayer = 0;
 	_vm->getINI(1)->field_1a_flags_maybe |= Dragons::INI_FLAG_20;
 }
@@ -313,7 +311,7 @@ void SpecialOpcodes::spcUnk9() {
 void SpecialOpcodes::spcUnkA() {
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 	flicker->field_1a_flags_maybe &= ~Dragons::INI_FLAG_20;
-	flicker->actor->flags &= ~Dragons::ACTOR_FLAG_100;
+	flicker->actor->_flags &= ~Dragons::ACTOR_FLAG_100;
 	_vm->getINI(1)->field_1a_flags_maybe &= ~Dragons::INI_FLAG_20;
 }
 
@@ -1203,7 +1201,7 @@ void SpecialOpcodes::spcLoadLadyOfTheLakeActor() {
 //	actors[uVar17].﻿actorFileDictionaryIndex = (uint16_t)uVar7;
 //	actors[uVar17].﻿resourceID = 0xcd;
 //	iVar18 = DAT_8006398c;
-//	actors[uVar17].flags = actors[uVar17].flags | 4;
+//	actors[uVar17]._flags = actors[uVar17]._flags | 4;
 //	dragon_ini_pointer[iVar18 + -1].x = 0xcd;
 //	LAB_8002ad94:
 	//EnableVSyncEvent();
