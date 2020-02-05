@@ -68,7 +68,7 @@ public:
 
 protected:
 	// Engine APIs
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 	virtual bool hasFeature(EngineFeature f) const override;
 
 	void initialize();

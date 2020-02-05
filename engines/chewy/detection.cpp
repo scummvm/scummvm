@@ -117,24 +117,24 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "chewy";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Chewy: Esc from F5";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Chewy: Esc from F5 (C) 1995 New Generation Software";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool ChewyMetaEngine::hasFeature(MetaEngineFeature f) const {
