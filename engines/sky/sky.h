@@ -81,15 +81,15 @@ public:
 	SkyEngine(OSystem *syst);
 	virtual ~SkyEngine();
 
-	virtual void syncSoundSettings();
+	virtual void syncSoundSettings() override;
 
 	static bool isDemo();
 	static bool isCDVersion();
 
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 
 	static void *fetchItem(uint32 num);
 	static void *_itemList[300];
@@ -100,14 +100,14 @@ protected:
 	// Engine APIs
 	Common::Error init();
 	Common::Error go();
-	virtual Common::Error run() {
+	virtual Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}
-	virtual GUI::Debugger *getDebugger();
+	virtual GUI::Debugger *getDebugger() override;
 	virtual bool hasFeature(EngineFeature f) const override;
 
 	byte _fastMode;
