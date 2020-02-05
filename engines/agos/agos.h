@@ -216,17 +216,17 @@ protected:
 	// Engine APIs
 	Common::Error init();
 	virtual Common::Error go();
-	virtual Common::Error run() {
+	virtual Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}
-	virtual GUI::Debugger *getDebugger();
+	virtual GUI::Debugger *getDebugger() override;
 	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void syncSoundSettings();
-	virtual void pauseEngineIntern(bool pause);
+	virtual void syncSoundSettings() override;
+	virtual void pauseEngineIntern(bool pause) override;
 
 	virtual void setupOpcodes();
 	uint16 _numOpcodes, _opcode;
