@@ -69,7 +69,7 @@ public:
 
 	MemoryManager _memoryManager;
 	Debugger *_debugger;
-	GUI::Debugger *getDebugger() { return _debugger; }
+	GUI::Debugger *getDebugger() override { return _debugger; }
 
 	const char *getGameId() const;
 	uint32 getGameID() const;
@@ -77,12 +77,12 @@ public:
 	Common::String getPrimaryFilename() const;
 
 	virtual Common::Error init();
-	virtual Common::Error run();
-	virtual bool canLoadGameStateCurrently();
-	virtual bool canSaveGameStateCurrently();
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual void syncSoundSettings();
+	virtual Common::Error run() override;
+	virtual bool canLoadGameStateCurrently() override;
+	virtual bool canSaveGameStateCurrently() override;
+	virtual Common::Error loadGameState(int slot) override;
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	virtual void syncSoundSettings() override;
 	Common::String generateSaveName(int slot);
 
 	void initialize();
