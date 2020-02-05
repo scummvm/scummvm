@@ -59,8 +59,6 @@ struct RivenSaveMetadata {
 
 class RivenSaveLoad {
 public:
-	static const int kAutoSaveSlot;
-
 	RivenSaveLoad(MohawkEngine_Riven*, Common::SaveFileManager*);
 	~RivenSaveLoad();
 

@@ -189,7 +189,8 @@ public:
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-	void tryAutoSaving();
+	virtual bool canSaveAutosaveCurrently() override;
+
 	bool hasFeature(EngineFeature f) const override;
 	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
 
@@ -207,7 +208,6 @@ private:
 
 	MystCardPtr _card;
 	MystCardPtr _prevCard;
-	uint32 _lastSaveTime;
 
 	bool hasGameSaveSupport() const;
 	void pauseEngineIntern(bool pause) override;

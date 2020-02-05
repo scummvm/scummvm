@@ -60,8 +60,6 @@ bool RivenSaveMetadata::sync(Common::Serializer &s) {
 	return true;
 }
 
-const int RivenSaveLoad::kAutoSaveSlot = 0;
-
 RivenSaveLoad::RivenSaveLoad(MohawkEngine_Riven *vm, Common::SaveFileManager *saveFileMan) : _vm(vm), _saveFileMan(saveFileMan) {
 }
 
@@ -110,7 +108,6 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 	Common::String filename = buildSaveFilename(slot);
 	Common::InSaveFile *loadFile = g_system->getSavefileManager()->openForLoading(filename);
 	SaveStateDescriptor descriptor;
-	descriptor.setWriteProtectedFlag(slot == kAutoSaveSlot);
 
 	if (!loadFile) {
 		return descriptor;
@@ -142,8 +139,6 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 	descriptor.setPlayTime(metadata.totalPlayTime);
 	descriptor.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
 	descriptor.setSaveTime(metadata.saveHour, metadata.saveMinute);
-	if (metadata.autoSave) // Allow non-saves to be deleted, but not autosaves
-		descriptor.setDeletableFlag(slot != kAutoSaveSlot);	
 
 	delete metaStream;
 
@@ -171,7 +166,7 @@ bool RivenSaveLoad::isAutoSaveAllowed() {
 	// Open autosave slot and see if it an autosave
 	// Autosaving will be enabled if it is an autosave or if there is no save in that slot
 
-	Common::String filename = buildSaveFilename(kAutoSaveSlot);
+	Common::String filename = buildSaveFilename(_vm->getAutosaveSlot());
 	Common::InSaveFile *loadFile = g_system->getSavefileManager()->openForLoading(filename);
 	if (!loadFile) {
 		return true; // There is no save in the autosave slot, enable autosave

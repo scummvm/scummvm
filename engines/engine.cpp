@@ -489,7 +489,8 @@ void Engine::handleAutoSave() {
 
 	if (_autosaveInterval != 0 && diff > (_autosaveInterval * 1000)) {
 		// Save the autosave
-		saveGameState(getAutosaveSlot(), _("Autosave"), true);
+		if (canSaveAutosaveCurrently())
+			saveGameState(getAutosaveSlot(), _("Autosave"), true);
 
 		// Reset the last autosave time
 		_lastAutosaveTime = _system->getMillis();

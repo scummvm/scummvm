@@ -386,6 +386,13 @@ public:
 	void handleAutoSave();
 
 	/**
+	 * Indicates whether an autosave can currently be saved.
+	 */
+	virtual bool canSaveAutosaveCurrently() {
+		return canSaveGameStateCurrently();
+	}
+
+	/**
 	 * Returns the slot that should be used for autosaves
 	 */
 	virtual int getAutosaveSlot() const {

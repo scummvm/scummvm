@@ -229,10 +229,6 @@ void MohawkEngine_Riven::doFrame() {
 		_scriptMan->runQueuedScripts();
 	}
 
-	if (shouldPerformAutoSave(_lastSaveTime)) {
-		tryAutoSaving();
-	}
-
 	_inventory->onFrame();
 
 	// Update the screen once per frame
@@ -314,7 +310,6 @@ void MohawkEngine_Riven::processInput() {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
 			// Attempt to autosave before exiting
-			tryAutoSaving();
 			break;
 		default:
 			break;
@@ -751,22 +746,9 @@ void MohawkEngine_Riven::saveGameStateAndDisplayError(int slot, const Common::St
 	}
 }
 
-void MohawkEngine_Riven::tryAutoSaving() {
-	if (!canSaveGameStateCurrently() || _gameEnded) {
-		return; // Can't save right now, try again on the next frame
-	}
-
-	_lastSaveTime = _system->getMillis();
-
-	if (!_saveLoad->isAutoSaveAllowed()) {
-		return; // Can't autosave ever, try again after the next autosave delay
-	}
-
-	Common::Error saveError = saveGameState(RivenSaveLoad::kAutoSaveSlot, "Autosave", true);
-	if (saveError.getCode() != Common::kNoError)
-		warning("Attempt to autosave has failed.");
+bool MohawkEngine_Riven::canSaveAutosaveCurrently() {
+	return canSaveGameStateCurrently() && !_gameEnded;
 }
-
 
 void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {
 	Common::String cardName = getStack()->getName(kCardNames, cardNameId);
@@ -844,7 +826,6 @@ void MohawkEngine_Riven::runOptionsDialog() {
 
 	if (hasGameEnded()) {
 		// Attempt to autosave before exiting
-		tryAutoSaving();
 	}
 
 	_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
