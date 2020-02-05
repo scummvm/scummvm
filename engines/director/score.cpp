@@ -420,11 +420,24 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		uint16 version = stream.readUint16();
 		uint16 spriteRecordSize = stream.readUint16();
 		uint16 numChannels = stream.readUint16();
-		uint16 unk1 = stream.readUint16();
-		size -= 16;
+		uint16 numChannelsDisplayed;
+		size -= 14;
 
-		warning("STUB: Score::loadFrames. frame1Offset: %x numFrames: %x version: %x spriteRecordSize: %x numChannels: %x unk1: %x",
-			frame1Offset, numFrames, version, spriteRecordSize, numChannels, unk1);
+		if (version > 13) {
+			numChannelsDisplayed = stream.readUint16();
+		} else {
+			if (version <= 7)	// Director5
+				numChannelsDisplayed = 28;
+			else
+				numChannelsDisplayed = 120;	// D6
+
+			stream.readUint16(); // Skip
+		}
+
+		size -= 2;
+
+		warning("STUB: Score::loadFrames. frame1Offset: %x numFrames: %x version: %x spriteRecordSize: %x numChannels: %x numChannelsDisplayed: %x",
+			frame1Offset, numFrames, version, spriteRecordSize, numChannels, numChannelsDisplayed);
 		// Unknown, some bytes - constant (refer to contuinity).
 	} else if (_vm->getVersion() > 4) {
 		//what data is up the top of D5 VWSC?
