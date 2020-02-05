@@ -94,7 +94,7 @@ public:
 
 	OSystem *_system;
 
-	GUI::Debugger *getDebugger();
+	GUI::Debugger *getDebugger() override;
 
 	Common::RandomSource *_rnd;
 	LilliputScript *_scriptHandler;
@@ -327,7 +327,7 @@ public:
 	const char *getCopyrightString() const;
 
 	Common::String getSavegameFilename(int slot);
-	void syncSoundSettings();
+	void syncSoundSettings() override;
 
 	Common::Point _mousePos;
 	Common::Point _oldMousePos;
@@ -366,7 +366,7 @@ protected:
 	int _lastTime;
 
 	// Engine APIs
-	Common::Error run();
+	Common::Error run() override;
 	void handleMenu();
 
 private:
