@@ -24,7 +24,7 @@
 #define DRAGONS_TALK_H
 
 #include <common/str.h>
-#include "scriptopcodes.h"
+#include "dragons/scriptopcodes.h"
 
 namespace Dragons {
 

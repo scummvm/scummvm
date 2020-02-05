@@ -23,7 +23,7 @@
 #define SCUMMVM_DRAGONINI_H
 
 #include "common/system.h"
-#include "bigfile.h"
+#include "dragons/bigfile.h"
 
 namespace Dragons {
 

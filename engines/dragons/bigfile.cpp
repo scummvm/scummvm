@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "bigfile.h"
+#include "dragons/bigfile.h"
 
 namespace Dragons {
 typedef struct FileInfo {
@@ -652,4 +652,4 @@ bool BigfileArchive::doesFileExist(const char *filename) {
 }
 
 
-} // End of namespace Illusions
+} // End of namespace Dragons

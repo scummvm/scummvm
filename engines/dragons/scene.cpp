@@ -19,25 +19,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "scene.h"
-#include "dragons.h"
-#include "actor.h"
-#include "background.h"
-#include "cursor.h"
-#include "credits.h"
-#include "dragonini.h"
-#include "dragonimg.h"
-#include "font.h"
-#include "inventory.h"
-#include "screen.h"
-#include "actorresource.h"
-#include "scriptopcodes.h"
+#include "dragons/scene.h"
+#include "dragons/dragons.h"
+#include "dragons/actor.h"
+#include "dragons/background.h"
+#include "dragons/cursor.h"
+#include "dragons/credits.h"
+#include "dragons/dragonini.h"
+#include "dragons/dragonimg.h"
+#include "dragons/font.h"
+#include "dragons/inventory.h"
+#include "dragons/screen.h"
+#include "dragons/actorresource.h"
+#include "dragons/scriptopcodes.h"
 
 namespace Dragons {
 
 
-Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *dragonRMS, DragonINIResource *dragonINIResource, BackgroundResourceLoader *backgroundResourceLoader)
-		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _bigfileArchive(bigfileArchive), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource), _backgroundLoader(backgroundResourceLoader) {
+Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, ActorManager *actorManager, DragonRMS *dragonRMS, DragonINIResource *dragonINIResource, BackgroundResourceLoader *backgroundResourceLoader)
+		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource), _backgroundLoader(backgroundResourceLoader) {
 	data_80063392 = 2;
 	_data_800633ee = 0;
 }
@@ -240,27 +240,27 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 					actor->_sequenceID2 = ini->field_20_actor_field_14;
 
 					if (ini->field_1a_flags_maybe & 2) {
-						actor->flags |= Dragons::ACTOR_FLAG_80;
+						actor->_flags |= Dragons::ACTOR_FLAG_80;
 					} else {
-						actor->flags &= 0xfeff;
+						actor->_flags &= 0xfeff;
 					}
 
 					if (ini->field_1a_flags_maybe & 0x20) {
-						actor->flags |= Dragons::ACTOR_FLAG_100;
+						actor->_flags |= Dragons::ACTOR_FLAG_100;
 					} else {
-						actor->flags &= 0xfeff;
+						actor->_flags &= 0xfeff;
 					}
 
 					if (ini->field_1a_flags_maybe & 4) {
-						actor->flags |= Dragons::ACTOR_FLAG_8000;
+						actor->_flags |= Dragons::ACTOR_FLAG_8000;
 					} else {
-						actor->flags &= 0x7fff;
+						actor->_flags &= 0x7fff;
 					}
 
 					if (ini->field_1a_flags_maybe & 0x100) {
-						actor->flags |= Dragons::ACTOR_FLAG_4000;
+						actor->_flags |= Dragons::ACTOR_FLAG_4000;
 					} else {
-						actor->flags &= 0xbfff;
+						actor->_flags &= 0xbfff;
 					}
 //
 //				Graphics::Surface *s = actor->getCurrentFrame();
@@ -363,8 +363,8 @@ void Scene::draw() {
 				continue;
 			}
 
-			if (actor->flags & Dragons::ACTOR_FLAG_40 &&
-				!(actor->flags & Dragons::ACTOR_FLAG_400) &&
+			if (actor->_flags & Dragons::ACTOR_FLAG_40 &&
+				!(actor->_flags & Dragons::ACTOR_FLAG_400) &&
 				actor->surface &&
 				actor->frame->width != 0 &&
 				actor->frame->height != 0

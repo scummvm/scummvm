@@ -25,7 +25,7 @@
 #include "dragons/bigfile.h"
 #include "dragons/dragons.h"
 #include "dragons/screen.h"
-#include "font.h"
+#include "dragons/font.h"
 
 namespace Dragons {
 

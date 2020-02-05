@@ -20,8 +20,8 @@
  *
  */
 #include <common/debug.h>
-#include "dragonflg.h"
-#include "bigfile.h"
+#include "dragons/dragonflg.h"
+#include "dragons/bigfile.h"
 
 
 namespace Dragons {

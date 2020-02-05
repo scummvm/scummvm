@@ -23,12 +23,12 @@
 
 #include "graphics/thumbnail.h"
 
-#include "dragons.h"
-#include "dragonflg.h"
-#include "dragonini.h"
-#include "dragonvar.h"
-#include "scene.h"
-#include "cursor.h"
+#include "dragons/dragons.h"
+#include "dragons/dragonflg.h"
+#include "dragons/dragonini.h"
+#include "dragons/dragonvar.h"
+#include "dragons/scene.h"
+#include "dragons/cursor.h"
 
 
 namespace Dragons {

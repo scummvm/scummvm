@@ -35,10 +35,17 @@
 #include "dragons/sound.h"
 #include "dragons/talk.h"
 #include "dragons/screen.h"
-#include "scriptopcodes.h"
 
 
 namespace Dragons {
+
+// Convenience macros
+#define ARG_SKIP(x) scriptOpCall.skip(x);
+#define ARG_BYTE(name) byte name = scriptOpCall.readByte(); debug(5, "ARG_BYTE(" #name " = %d)", name);
+#define ARG_INT8(name) int8 name = scriptOpCall.readByte(); debug(5, "ARG_INT8(" #name " = %d)", name);
+#define ARG_INT16(name) int16 name = scriptOpCall.readSint16(); debug(5, "ARG_INT16(" #name " = %d)", name);
+#define ARG_UINT32(name) uint32 name = scriptOpCall.readUint32(); debug(5, "ARG_UINT32(" #name " = %08X)", name);
+
 // ScriptOpCall
 
 void ScriptOpCall::skip(uint size) {
@@ -361,7 +368,7 @@ void ScriptOpcodes::opActorLoadSequence(ScriptOpCall &scriptOpCall) {
 
 	bool isFlicker = _vm->_dragonINIResource->isFlicker(field2 - 1);
 	if (isFlicker) {
-		ini->actor->flags |= Dragons::ACTOR_FLAG_2000;
+		ini->actor->_flags |= Dragons::ACTOR_FLAG_2000;
 	}
 
 	if (!ini->actor->_actorResource || ini->actor->_actorResource->_id != ini->actorResourceId) {
@@ -375,7 +382,7 @@ void ScriptOpcodes::opActorLoadSequence(ScriptOpCall &scriptOpCall) {
 	}
 
 	if (isFlicker) {
-		ini->actor->flags &= ~Dragons::ACTOR_FLAG_2000;
+		ini->actor->_flags &= ~Dragons::ACTOR_FLAG_2000;
 	}
 }
 
@@ -609,7 +616,7 @@ void ScriptOpcodes::opUnkE(ScriptOpCall &scriptOpCall) {
 		if (field6 != -1) {
 			if (!(field0 & 0x8000)) {
 				assert(ini->actor);
-				ini->actor->flags |= Dragons::ACTOR_FLAG_800;
+				ini->actor->_flags |= Dragons::ACTOR_FLAG_800;
 				ini->actor->updateSequence(field6 & 0x7fff);
 			}
 			ini->actor->_walkSpeed = field4 & 0x8000 ? (field4 & 0x7fff) << 7 : field4 << 0x10;
@@ -619,7 +626,7 @@ void ScriptOpcodes::opUnkE(ScriptOpCall &scriptOpCall) {
 		ini->actor->startWalk(point.x, point.y, isFlicker ? 0 : 1);
 
 		if(s3 == 0) {
-			while (ini->actor->flags & Dragons::ACTOR_FLAG_10) {
+			while (ini->actor->_flags & Dragons::ACTOR_FLAG_10) {
 				_vm->waitForFrames(1);
 			}
 		}
@@ -663,7 +670,7 @@ void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
 		if (field6 != -1) {
 			if (!(field0 & 0x8000)) {
 				assert(ini->actor);
-				ini->actor->flags |= Dragons::ACTOR_FLAG_800;
+				ini->actor->_flags |= Dragons::ACTOR_FLAG_800;
 				ini->actor->updateSequence(field6 & 0x7fff);
 			}
 			ini->actor->_walkSpeed = field4 & 0x8000 ? (field4 & 0x7fff) << 7 : field4 << 0x10;
@@ -672,13 +679,13 @@ void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
 		ini->actor->startWalk(field8, fieldA, isFlicker ? 0 : 1);
 
 		if(s3 == 0) {
-			while (ini->actor->flags & Dragons::ACTOR_FLAG_10) {
+			while (ini->actor->_flags & Dragons::ACTOR_FLAG_10) {
 				_vm->waitForFrames(1);
 			}
 		}
 		ini->x = field8;
 		ini->y = fieldA;
-		ini->actor->flags &= ~Dragons::ACTOR_FLAG_800;
+		ini->actor->_flags &= ~Dragons::ACTOR_FLAG_800;
 
 	} else {
 		assert(ini->actor);
@@ -783,7 +790,7 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 	}
 	secondIni->actor->startWalk(newXPosAgain, newYPosAgain, someBooleanFlag);
 	if (!bVar1) {
-		while (secondIni->actor->flags & Dragons::ACTOR_FLAG_10) {
+		while (secondIni->actor->_flags & Dragons::ACTOR_FLAG_10) {
 			_vm->waitForFrames(1);
 		}
 	}
@@ -932,16 +939,16 @@ void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
 
 		if (field2 == 0x1a && ini->field_1a_flags_maybe & 1 && ini->sceneId == _vm->getCurrentSceneId()) {
 			if (s1 & 2) {
-				ini->actor->flags |= Dragons::ACTOR_FLAG_80;
+				ini->actor->_flags |= Dragons::ACTOR_FLAG_80;
 				ini->actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 			} else {
-				ini->actor->flags &= ~Dragons::ACTOR_FLAG_80;
+				ini->actor->_flags &= ~Dragons::ACTOR_FLAG_80;
 			}
 
 			if (s1 & 4) {
-				ini->actor->flags |= Dragons::ACTOR_FLAG_8000;
+				ini->actor->_flags |= Dragons::ACTOR_FLAG_8000;
 			} else {
-				ini->actor->flags &= ~Dragons::ACTOR_FLAG_8000;
+				ini->actor->_flags &= ~Dragons::ACTOR_FLAG_8000;
 			}
 		}
 
@@ -1042,7 +1049,7 @@ void ScriptOpcodes::opUnk17(ScriptOpCall &scriptOpCall) {
 
 	DragonINI *ini = _vm->getINI(iniId - 1);
 	if (ini->field_1a_flags_maybe & 1) {
-		while (!(ini->actor->flags & Dragons::ACTOR_FLAG_4)) {
+		while (!(ini->actor->_flags & Dragons::ACTOR_FLAG_4)) {
 			_vm->waitForFrames(1);
 		}
 	}
@@ -1178,27 +1185,27 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 				ini->actor = _vm->_actorManager->loadActor(ini->actorResourceId, ini->sequenceId, ini->x, ini->y, 0);
 				ini->actor->_sequenceID2 = ini->field_20_actor_field_14;
 				if (ini->field_1a_flags_maybe & 2) {
-					ini->actor->flags |= Dragons::ACTOR_FLAG_80;
+					ini->actor->_flags |= Dragons::ACTOR_FLAG_80;
 				} else {
-					ini->actor->flags &= ~Dragons::ACTOR_FLAG_80;
+					ini->actor->_flags &= ~Dragons::ACTOR_FLAG_80;
 				}
 
 				if (ini->field_1a_flags_maybe & 0x20) {
-					ini->actor->flags |= Dragons::ACTOR_FLAG_100;
+					ini->actor->_flags |= Dragons::ACTOR_FLAG_100;
 				} else {
-					ini->actor->flags &= ~Dragons::ACTOR_FLAG_100;
+					ini->actor->_flags &= ~Dragons::ACTOR_FLAG_100;
 				}
 
 				if (ini->field_1a_flags_maybe & 4) {
-					ini->actor->flags |= Dragons::ACTOR_FLAG_8000;
+					ini->actor->_flags |= Dragons::ACTOR_FLAG_8000;
 				} else {
-					ini->actor->flags &= ~Dragons::ACTOR_FLAG_8000;
+					ini->actor->_flags &= ~Dragons::ACTOR_FLAG_8000;
 				}
 
 				if (ini->field_1a_flags_maybe & 0x100) {
-					ini->actor->flags |= Dragons::ACTOR_FLAG_4000;
+					ini->actor->_flags |= Dragons::ACTOR_FLAG_4000;
 				} else {
-					ini->actor->flags &= ~Dragons::ACTOR_FLAG_4000;
+					ini->actor->_flags &= ~Dragons::ACTOR_FLAG_4000;
 				}
 			}
 		} else {
@@ -1230,7 +1237,7 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 				_vm->_inventory->addItem(_vm->_cursor->iniItemInHand);
 				if (_vm->_inventory->getType() == 1) {
 					Actor *actor = _vm->_inventory->getInventoryItemActor(_vm->_cursor->iniItemInHand);
-					actor->flags = 0;
+					actor->_flags = 0;
 					actor->priorityLayer = 0;
 					actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 					actor->updateSequence((_vm->getINI(_vm->_cursor->iniItemInHand - 1)->field_8 * 2 + 10) & 0xfffe);

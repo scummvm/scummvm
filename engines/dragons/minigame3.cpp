@@ -29,7 +29,7 @@
 #include "dragons/screen.h"
 #include "dragons/sound.h"
 #include "dragons/talk.h"
-#include "dragons.h"
+#include "dragons/dragons.h"
 
 namespace Dragons {
 
@@ -221,7 +221,7 @@ void Minigame3::run() {
 		if (tearActorTbl[(int16)i] == NULL) {
 			error("Couldn't alloc tear");
 		}
-		tearActorTbl[(int16)i]->flags = tearActorTbl[(int16)i]->flags | 0x380;
+		tearActorTbl[(int16)i]->_flags = tearActorTbl[(int16)i]->_flags | 0x380;
 		tearActorTbl[(int16)i]->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 		tearActorTbl[(int16)i]->priorityLayer = 0;
 		local_208[(int16)i] = -1;
@@ -249,7 +249,7 @@ void Minigame3::run() {
 		if (tearBlinkActorTbl[(int16)i] == NULL) {
 			error("Couldn't alloc tear blink");
 		}
-		tearBlinkActorTbl[(int16)i]->flags = tearBlinkActorTbl[(int16)i]->flags | 0x4384;
+		tearBlinkActorTbl[(int16)i]->_flags = tearBlinkActorTbl[(int16)i]->_flags | 0x4384;
 		tearBlinkActorTbl[(int16)i]->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 		tearBlinkActorTbl[(int16)i]->priorityLayer = 0;
 		i = i + 1;
@@ -355,7 +355,7 @@ void Minigame3::run() {
 		_vm->waitForFrames(1);
 		switch(currentState) {
 			case 1:
-				if ((bunnyActorTbl[local_1a]->_sequenceID != 5) || ((bunnyActorTbl[local_1a]->flags & 4) != 0)) {
+				if ((bunnyActorTbl[local_1a]->_sequenceID != 5) || ((bunnyActorTbl[local_1a]->_flags & 4) != 0)) {
 					if ((local_56 < 1) ||
 						(((int)bunnyInfo[local_20].x >> 9 <= (int)(uint)(uint16)bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].x ||
 																				((int)(uint)(uint16)bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].x <= (int)bunnyInfo[local_1e].x >> 9)))) {
@@ -697,8 +697,8 @@ void Minigame3::run() {
 		}
 		i = i + 1;
 	}
-	tearBlinkActorTbl[0]->flags = tearBlinkActorTbl[0]->flags | 4;
-	tearBlinkActorTbl[1]->flags = tearBlinkActorTbl[1]->flags | 4;
+	tearBlinkActorTbl[0]->_flags = tearBlinkActorTbl[0]->_flags | 4;
+	tearBlinkActorTbl[1]->_flags = tearBlinkActorTbl[1]->_flags | 4;
 	updateBackgroundLayerOffset(2, 0x280, 0);
 	updateBackgroundLayerOffset(1, 0, 0);
 	updateBackgroundLayerOffset(0, 0, 0);

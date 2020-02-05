@@ -19,23 +19,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_SCENE_H
-#define SCUMMVM_SCENE_H
+#ifndef DRAGONS_SCENE_H
+#define DRAGONS_SCENE_H
 
 #include "common/rect.h"
 #include "common/system.h"
-#include "screen.h"
+#include "dragons/screen.h"
 
 namespace Dragons {
 
 class DragonsEngine;
 class ActorManager;
 class Background;
-class Bag;
 class DragonRMS;
 class BackgroundResourceLoader;
 class DragonINIResource;
-class BigfileArchive;
 class Screen;
 class ScriptOpcodes;
 class ScaleLayer;
@@ -51,7 +49,6 @@ private:
 	Screen *_screen;
 	ActorManager *_actorManager;
 	Background *_stage;
-	BigfileArchive *_bigfileArchive;
 	DragonRMS *_dragonRMS;
 	DragonINIResource *_dragonINIResource;
 	BackgroundResourceLoader *_backgroundLoader;
@@ -59,10 +56,9 @@ private:
 
 	int16 _currentSceneId;
 	int16 _data_800633ee;
-	Bag *bag;
 
 public:
-	Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *_dragonRMS, DragonINIResource *_dragonINIResource, BackgroundResourceLoader *backgroundResourceLoader);
+	Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, ActorManager *actorManager, DragonRMS *_dragonRMS, DragonINIResource *_dragonINIResource, BackgroundResourceLoader *backgroundResourceLoader);
 
 	void loadScene(uint32 sceneId, uint32 cameraPointId);
 	void loadSceneData(uint32 sceneId, uint32 cameraPointId);
@@ -95,4 +91,4 @@ private:
 
 } // End of namespace Dragons
 
-#endif //SCUMMVM_SCENE_H
+#endif //DRAGONS_SCENE_H

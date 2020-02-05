@@ -19,11 +19,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include <common/memstream.h>
-#include "graphics/screen.h"
+#include "common/memstream.h"
 #include "common/endian.h"
-#include "background.h"
-#include "screen.h"
+#include "dragons/background.h"
+#include "dragons/screen.h"
 
 namespace Dragons {
 

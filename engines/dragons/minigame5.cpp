@@ -19,9 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "minigame5.h"
-#include "actor.h"
-#include "dragons.h"
+#include "dragons/minigame5.h"
+#include "dragons/actor.h"
+#include "dragons/dragons.h"
 #include "dragons/dragonini.h"
 #include "dragons/talk.h"
 #include "dragons/scene.h"
@@ -107,7 +107,7 @@ void Minigame5::run() {
 	_vm->clearFlags(ENGINE_FLAG_80);
 	_vm->_dragonINIResource->setFlickerRecord(_vm->_dragonINIResource->getRecord(DAT_80063a40 - 1));
 	flickerActor = _vm->_dragonINIResource->getFlickerRecord()->actor;
-	flickerActor->flags = flickerActor->flags | 0x380;
+	flickerActor->_flags = flickerActor->_flags | 0x380;
 	flickerActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	flickerActor->priorityLayer = 4;
 	flickerActor->_sequenceID2 = -1;
@@ -124,7 +124,7 @@ void Minigame5::run() {
 	if (pusherActor == NULL) {
 		error("Couldn't alloc pusher!");
 	}
-	pusherActor->flags = pusherActor->flags | 0x380;
+	pusherActor->_flags = pusherActor->_flags | 0x380;
 	pusherActor->x_pos = flickerActor->x_pos + -0xe;
 	pusherActor->y_pos = flickerActor->y_pos + 7;
 	pusherActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
@@ -135,7 +135,7 @@ void Minigame5::run() {
 	if (wheelsActor == NULL) {
 		error("Couldn't alloc wheels!");
 	}
-	wheelsActor->flags = wheelsActor->flags | 0x380;
+	wheelsActor->_flags = wheelsActor->_flags | 0x380;
 	wheelsActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	wheelsActor->x_pos = flickerActor->x_pos;
 	wheelsActor->y_pos = flickerActor->y_pos;
@@ -148,7 +148,7 @@ void Minigame5::run() {
 	if (bombActor == NULL) {
 		error("Couldn't alloc bomb!");
 	}
-	bombActor->flags = bombActor->flags | 0x380;
+	bombActor->_flags = bombActor->_flags | 0x380;
 	bombActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	bombActor->priorityLayer = 0;
 //	DisableVSyncEvent();
@@ -157,7 +157,7 @@ void Minigame5::run() {
 	if (dustActor == NULL) {
 		error("Couldn't alloc dust sprite!");
 	}
-	dustActor->flags = dustActor->flags | 0x380;
+	dustActor->_flags = dustActor->_flags | 0x380;
 	dustActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	local_4e = _vm->_dragonINIResource->getRecord(DAT_80063a48 + -1)->actor;
 	local_4c = 0;
@@ -182,7 +182,7 @@ void Minigame5::run() {
 									if ((((flickerActor->_sequenceID != 0) &&
 										  (flickerActor->_sequenceID != 5)) &&
 										 (flickerActor->_sequenceID != 6)) ||
-										((flickerActor->flags & 4) != 0)) {
+										((flickerActor->_flags & 4) != 0)) {
 										flickerActor->updateSequence(0x19);
 									}
 								}
@@ -262,7 +262,7 @@ void Minigame5::run() {
 							break;
 						case 2:
 							if (flickerActor->_sequenceID == 0x1b) {
-								if ((flickerActor->flags & 4) != 0) {
+								if ((flickerActor->_flags & 4) != 0) {
 									if ((((int)(uint)local_850 < (int)((local_30[0]) - 6)) ||
 										 ((uint)local_30[1] + 6 < (uint)local_850)) || (local_72 != local_30[2])) {
 										local_42 = 8;
@@ -395,7 +395,7 @@ void Minigame5::run() {
 							pusherActor->updateSequence(7);
 							_vm->_talk->loadText(DAT_8006391c, auStack2120, 1000);
 							_vm->_talk->displayDialogAroundPoint(auStack2120, (int)(short)(local_850 >> 3),0xc,0,1,DAT_8006391c);
-							pusherActor->flags = pusherActor->flags | 0x1000;
+							pusherActor->_flags = pusherActor->_flags | 0x1000;
 							local_10 = 2;
 							local_48 = 1;
 							currentState = 6;

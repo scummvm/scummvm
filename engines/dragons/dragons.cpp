@@ -22,30 +22,29 @@
 #include "common/config-manager.h"
 #include "engines/util.h"
 #include "graphics/thumbnail.h"
-#include "graphics/surface.h"
 #include "common/error.h"
-#include "actor.h"
-#include "actorresource.h"
-#include "background.h"
-#include "bigfile.h"
-#include "cursor.h"
-#include "credits.h"
-#include "dragonflg.h"
-#include "dragonimg.h"
-#include "dragonini.h"
-#include "dragonobd.h"
-#include "dragonrms.h"
-#include "dragonvar.h"
-#include "dragons.h"
-#include "font.h"
-#include "inventory.h"
-#include "scene.h"
-#include "screen.h"
-#include "sequenceopcodes.h"
-#include "scriptopcodes.h"
-#include "bag.h"
-#include "talk.h"
-#include "sound.h"
+#include "dragons/actor.h"
+#include "dragons/actorresource.h"
+#include "dragons/background.h"
+#include "dragons/bigfile.h"
+#include "dragons/cursor.h"
+#include "dragons/credits.h"
+#include "dragons/dragonflg.h"
+#include "dragons/dragonimg.h"
+#include "dragons/dragonini.h"
+#include "dragons/dragonobd.h"
+#include "dragons/dragonrms.h"
+#include "dragons/dragonvar.h"
+#include "dragons/dragons.h"
+#include "dragons/font.h"
+#include "dragons/inventory.h"
+#include "dragons/scene.h"
+#include "dragons/screen.h"
+#include "dragons/sequenceopcodes.h"
+#include "dragons/scriptopcodes.h"
+#include "dragons/bag.h"
+#include "dragons/talk.h"
+#include "dragons/sound.h"
 
 namespace Dragons {
 
@@ -204,7 +203,7 @@ Common::Error DragonsEngine::run() {
 	_actorManager = new ActorManager(actorResourceLoader);
 	_scriptOpcodes = new ScriptOpcodes(this, _dragonFLG);
 	_backgroundResourceLoader = new BackgroundResourceLoader(_bigfileArchive, _dragonRMS);
-	_scene = new Scene(this, _screen, _scriptOpcodes, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource, _backgroundResourceLoader);
+	_scene = new Scene(this, _screen, _scriptOpcodes, _actorManager, _dragonRMS, _dragonINIResource, _backgroundResourceLoader);
 
 	_sound = new SoundManager(this, _bigfileArchive, _dragonRMS);
 
@@ -258,18 +257,13 @@ uint16 DragonsEngine::ipt_img_file_related()
 
 void DragonsEngine::gameLoop()
 {
-	bool bVar1;
 	uint uVar3;
-	uint32_t uVar4;
 	uint actorId;
-	int iVar5;
 	ushort uVar6;
 	ushort uVar7;
 	uint actorId_00;
-	void *buffer;
 	uint16_t sequenceId;
 	DragonINI *pDVar8;
-	ushort *puVar9;
 
 	_cursor->_cursorActivationSeqOffset = 0;
 	bit_flags_8006fbd8 = 0;
@@ -566,7 +560,7 @@ void DragonsEngine::gameLoop()
 				_cursor->_sequenceID = 5;
 				actorId = uVar3;
 				if (tmpId != 0) {
-					actor->flags = 0;
+					actor->_flags = 0;
 					actor->priorityLayer = 0;
 					actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 					actor->updateSequence(getINI(tmpId - 1)->field_8 * 2 + 10);
@@ -583,7 +577,7 @@ void DragonsEngine::gameLoop()
 			//drop item back into inventory
 			if (_inventory->addItemIfPositionIsEmpty(_cursor->iniItemInHand, _cursor->_x, _cursor->_y)) {
 				Actor *invActor = _inventory->getInventoryItemActor(_cursor->iniItemInHand);
-				invActor->flags = 0;
+				invActor->_flags = 0;
 				invActor->priorityLayer = 0;
 				invActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 				invActor->updateSequence(
@@ -629,8 +623,8 @@ void DragonsEngine::updateHandler() {
 	//TODO logic here
 	for (uint16 i = 0; i < 0x17; i++) {
 		Actor *actor = _actorManager->getActor(i);
-		if (actor->flags & Dragons::ACTOR_FLAG_40) {
-			if (!(actor->flags & Dragons::ACTOR_FLAG_100)) {
+		if (actor->_flags & Dragons::ACTOR_FLAG_40) {
+			if (!(actor->_flags & Dragons::ACTOR_FLAG_100)) {
 				int16 priority = _scene->getPriorityAtPosition(Common::Point(actor->x_pos, actor->y_pos));
 				DragonINI *flicker = _dragonINIResource->getFlickerRecord();
 				if (flicker && _scene->contains(flicker) && flicker->actor->_actorID == i) {
@@ -724,13 +718,13 @@ void DragonsEngine::updateActorSequences() {
 			continue;
 		}
 
-		if (actor->flags & Dragons::ACTOR_FLAG_40 &&
-			!(actor->flags & Dragons::ACTOR_FLAG_4) &&
-			!(actor->flags & Dragons::ACTOR_FLAG_400) &&
-			(actor->sequenceTimer == 0 || actor->flags & Dragons::ACTOR_FLAG_1)) {
+		if (actor->_flags & Dragons::ACTOR_FLAG_40 &&
+			!(actor->_flags & Dragons::ACTOR_FLAG_4) &&
+			!(actor->_flags & Dragons::ACTOR_FLAG_400) &&
+			(actor->sequenceTimer == 0 || actor->_flags & Dragons::ACTOR_FLAG_1)) {
 			debug(5, "Actor[%d] execute sequenceOp", actorId);
 
-			if (actor->flags & Dragons::ACTOR_FLAG_1) {
+			if (actor->_flags & Dragons::ACTOR_FLAG_1) {
 				actor->resetSequenceIP();
 				//clear flag mask 0xeff6;
 				actor->clearFlag(ACTOR_FLAG_1);
@@ -884,7 +878,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 				if ((bit_flags_8006fbd8 & 2) == 0) {
 					bit_flags_8006fbd8 = bit_flags_8006fbd8 | 2;
 				}
-//				if (((((actors[actorId].flags & 0x2000) == 0) && ((actors[actorId].flags & 4) != 0)) &&
+//				if (((((actors[actorId]._flags & 0x2000) == 0) && ((actors[actorId]._flags & 4) != 0)) &&
 //					 (actors[actorId].﻿_sequenceID2 != actors[actorId].﻿_sequenceID)) &&
 //				(actors[actorId].﻿_sequenceID2 != -1)) {
 //					actor_update_sequenceID(actorId,actors[actorId].﻿_sequenceID2);

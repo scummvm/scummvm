@@ -46,13 +46,6 @@ struct ScriptOpCall {
 	uint32 readUint32();
 };
 
-// Convenience macros
-#define ARG_SKIP(x) scriptOpCall.skip(x);
-#define ARG_BYTE(name) byte name = scriptOpCall.readByte(); debug(5, "ARG_BYTE(" #name " = %d)", name);
-#define ARG_INT8(name) int8 name = scriptOpCall.readByte(); debug(5, "ARG_INT8(" #name " = %d)", name);
-#define ARG_INT16(name) int16 name = scriptOpCall.readSint16(); debug(5, "ARG_INT16(" #name " = %d)", name);
-#define ARG_UINT32(name) uint32 name = scriptOpCall.readUint32(); debug(5, "ARG_UINT32(" #name " = %08X)", name);
-
 typedef Common::Functor1<ScriptOpCall&, void> ScriptOpcode;
 
 class DragonFLG;

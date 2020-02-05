@@ -24,9 +24,9 @@
 
 #include "common/rect.h"
 #include "common/system.h"
-#include "bigfile.h"
-#include "dragonrms.h"
-#include "screen.h"
+#include "dragons/bigfile.h"
+#include "dragons/dragonrms.h"
+#include "dragons/screen.h"
 
 namespace Dragons {
 class PriorityLayer;

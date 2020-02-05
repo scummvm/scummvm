@@ -24,7 +24,7 @@
 
 #include "gui/EventRecorder.h"
 #include "engines/engine.h"
-#include "specialopcodes.h"
+#include "dragons/specialopcodes.h"
 
 namespace Dragons {
 
