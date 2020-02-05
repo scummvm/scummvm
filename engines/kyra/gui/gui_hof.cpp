@@ -961,8 +961,6 @@ int GUI_HoF::gameOptionsTalkie(Button *caller) {
 		_vm->saveGameStateIntern(999, "Autosave", &thumb);
 		thumb.free();
 
-		_vm->_lastAutosave = _vm->_system->getMillis();
-
 		_vm->loadCCodeBuffer("C_CODE.XXX");
 		if (_vm->_flags.isTalkie)
 			_vm->loadOptionsBuffer("OPTIONS.XXX");

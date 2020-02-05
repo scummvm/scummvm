@@ -388,13 +388,11 @@ protected:
 	// save/load
 	int _gameToLoad;
 
-	uint32 _lastAutosave;
-	void checkAutosave();
-
 	bool _isSaveAllowed;
 
 	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
 	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
+	virtual int getAutosaveSlot() const override { return 999; }
 
 	const char *getSavegameFilename(int num);
 	Common::String _savegameFilename;

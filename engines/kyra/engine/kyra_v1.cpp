@@ -194,9 +194,6 @@ Common::Error KyraEngine_v1::init() {
 
 	setupKeyMap();
 
-	// Prevent autosave on game startup
-	_lastAutosave = _system->getMillis();
-
 	return Common::kNoError;
 }
 
@@ -250,9 +247,6 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 	_isSaveAllowed = mainLoop;
 	updateInput();
 	_isSaveAllowed = false;
-
-	if (mainLoop)
-		checkAutosave();
 
 	int keys = 0;
 	int8 mouseWheel = 0;
