@@ -203,7 +203,7 @@ public:
 	}
 
 	//! Move this gump
-	virtual void        Move(int x_, int y_) {
+	virtual void        Move(int32 x_, int32 y_) {
 		x = x_;
 		y = y_;
 	}
