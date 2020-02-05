@@ -74,24 +74,24 @@ public:
 		_guiOptions = GUIO1(GUIO_NOMIDI);
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "dreamweb";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "DreamWeb";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "DreamWeb (C) Creative Reality";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {

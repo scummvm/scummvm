@@ -105,10 +105,10 @@ private:
 
 protected:
 	// Engine APIs
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 	virtual bool hasFeature(EngineFeature f) const override;
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 public:
 	DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc);
@@ -116,11 +116,11 @@ public:
 
 	void waitForVSync();
 
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 
 	uint8 randomNumber() { return _rnd.getRandomNumber(255); }
 
