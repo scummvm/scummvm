@@ -95,7 +95,7 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		},
 		GType_ST25,
 		GF_CDROM,
-	},	
+	},
 
 	{ // ST25 DOS CD-ROM edition (FR)
 		{
@@ -322,25 +322,25 @@ public:
 	StarTrekMetaEngine() : AdvancedMetaEngine(StarTrek::gameDescriptions, sizeof(StarTrek::StarTrekGameDescription), starTrekGames) {
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "startrek";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Star Trek";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Star Trek: 25th Anniversary, Star Trek: Judgment Rites (C) Interplay";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool StarTrekMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -480,4 +480,3 @@ REGISTER_PLUGIN_DYNAMIC(STARTREK, PLUGIN_TYPE_ENGINE, StarTrekMetaEngine);
 #else
 REGISTER_PLUGIN_STATIC(STARTREK, PLUGIN_TYPE_ENGINE, StarTrekMetaEngine);
 #endif
-
