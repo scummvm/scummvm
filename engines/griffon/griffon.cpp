@@ -61,7 +61,6 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 
 	_shouldQuit = false;
 	_gameMode = kGameModeIntro;
-	_lastAutosaveTime = g_system->getMillis();
 
 	_musicChannel = -1;
 	_menuChannel = -1;
@@ -185,13 +184,6 @@ Common::Error GriffonEngine::run() {
 	}
 
 	return Common::kNoError;
-}
-
-void GriffonEngine::autoSaveCheck() {
-	if (shouldPerformAutoSave(_lastAutosaveTime) && canSaveGameStateCurrently()) {
-		saveGameState(4, _("Autosave"), true);
-		_lastAutosaveTime = g_system->getMillis();
-	}
 }
 
 }
