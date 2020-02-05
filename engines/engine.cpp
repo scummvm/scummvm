@@ -703,10 +703,17 @@ bool Engine::loadGameDialog() {
 	pauseEngine(false);
 	delete dialog;
 
-	if (slotNum != -1)
-		return loadGameState(slotNum).getCode() == Common::kNoError;
+	if (slotNum < 0)
+		return false;
 
-	return false;
+	Common::Error loadError = loadGameState(slotNum);
+	if (loadError.getCode() != Common::kNoError) {
+		GUI::MessageDialog errorDialog(loadError.getDesc());
+		errorDialog.runModal();
+		return false;
+	}
+
+	return true;
 }
 
 bool Engine::saveGameDialog() {
@@ -726,10 +733,17 @@ bool Engine::saveGameDialog() {
 
 	delete dialog;
 
-	if (slotNum != -1)
-		return saveGameState(slotNum, desc).getCode() == Common::kNoError;
+	if (slotNum < 0)
+		return false;
 
-	return false;
+	Common::Error saveError = saveGameState(slotNum, desc);
+	if (saveError.getCode() != Common::kNoError) {
+		GUI::MessageDialog errorDialog(saveError.getDesc());
+		errorDialog.runModal();
+		return false;
+	}
+
+	return true;
 }
 
 void Engine::quitGame() {
