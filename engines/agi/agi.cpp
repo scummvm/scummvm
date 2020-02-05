@@ -399,8 +399,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	_setVolumeBrokenFangame = false; // for further study see AgiEngine::setVolumeViaScripts()
 
-	_lastSaveTime = 0;
-
 	_playTimeInSecondsAdjust = 0;
 	_lastUsedPlayTimeInCycles = 0;
 	_lastUsedPlayTimeInSeconds = 0;
@@ -484,8 +482,6 @@ void AgiEngine::initialize() {
 	_text->charAttrib_Set(15, 0);
 
 	_game.name[0] = '\0';
-
-	_lastSaveTime = 0;
 
 	debugC(2, kDebugLevelMain, "Detect game");
 

@@ -840,8 +840,6 @@ protected:
 
 	void initialize() override;
 
-	uint32 _lastSaveTime;
-
 public:
 	AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	~AgiEngine() override;
@@ -870,7 +868,6 @@ public:
 	StringData _stringdata;
 
 	SavedGameSlotIdArray getSavegameSlotIds();
-	Common::String getSavegameFilename(int16 slotId) const;
 	bool getSavegameInformation(int16 slotId, Common::String &saveDescription, uint32 &saveDate, uint32 &saveTime, bool &saveIsValid);
 
 	int saveGame(const Common::String &fileName, const Common::String &descriptionString);

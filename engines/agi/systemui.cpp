@@ -745,7 +745,7 @@ void SystemUI::drawSavedGameSlotSelector(bool active) {
 bool SystemUI::askForSavedGameVerification(const char *verifyText, const char *verifyButton1, const char *verifyButton2, const char *actualDescription, int16 slotId) {
 	char displayDescription[SYSTEMUI_SAVEDGAME_DISPLAYTEXT_LEN + 1];
 	Common::String userActionVerify;
-	Common::String savedGameFilename = _vm->getSavegameFilename(slotId);
+	Common::String savedGameFilename = _vm->getSaveStateName(slotId);
 
 	createSavedGameDisplayText(displayDescription, actualDescription, slotId, false);
 	userActionVerify = Common::String::format(verifyText, displayDescription, savedGameFilename.c_str());
