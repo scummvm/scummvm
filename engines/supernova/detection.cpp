@@ -102,26 +102,26 @@ public:
 	SupernovaMetaEngine() : AdvancedMetaEngine(Supernova::gameDescriptions, sizeof(ADGameDescription), supernovaGames, optionsList) {
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "supernova";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Mission Supernova";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Mission Supernova (C) 1994 Thomas and Steffen Dingel";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	virtual int getMaximumSaveSlot() const {
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual SaveStateList listSaves(const char *target) const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
+	virtual int getMaximumSaveSlot() const override {
 		return 99;
 	}
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool SupernovaMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -210,7 +210,7 @@ SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, 
 
 	if (savefile) {
 		uint saveHeader = savefile->readUint32LE();
-		if ((!strncmp(target, "msn1", 4) && saveHeader != SAVEGAME_HEADER) || 
+		if ((!strncmp(target, "msn1", 4) && saveHeader != SAVEGAME_HEADER) ||
 			(!strncmp(target, "msn2", 4) && saveHeader != SAVEGAME_HEADER2)) {
 			delete savefile;
 			return SaveStateDescriptor();
