@@ -98,7 +98,7 @@ public:
 	~AvalancheEngine();
 
 	Common::ErrorCode initialize();
-	GUI::Debugger *getDebugger();
+	GUI::Debugger *getDebugger() override;
 
 	Common::RandomSource *_rnd;
 
@@ -110,12 +110,12 @@ public:
 	const char *getCopyrightString() const;
 
 	void synchronize(Common::Serializer &sz);
-	virtual bool canSaveGameStateCurrently();
-	Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual bool canSaveGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	bool saveGame(const int16 slot, const Common::String &desc);
 	Common::String getSaveFileName(const int slot);
-	virtual bool canLoadGameStateCurrently();
-	Common::Error loadGameState(int slot);
+	virtual bool canLoadGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
 	bool loadGame(const int16 slot);
 	Common::String expandDate(int d, int m, int y);
 	uint32 getTimeInSeconds();
@@ -126,7 +126,7 @@ public:
 
 protected:
 	// Engine APIs
-	Common::Error run();
+	Common::Error run() override;
 
 private:
 	AvalancheConsole *_console;
