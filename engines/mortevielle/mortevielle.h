@@ -440,13 +440,13 @@ public:
 	MortevielleEngine(OSystem *system, const MortevielleGameDescription *gameDesc);
 	~MortevielleEngine();
 	virtual bool hasFeature(EngineFeature f) const override;
-	virtual bool canLoadGameStateCurrently();
-	virtual bool canSaveGameStateCurrently();
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual Common::Error run();
-	virtual void pauseEngineIntern(bool pause);
-	virtual GUI::Debugger *getDebugger() {return _debugger;}
+	virtual bool canLoadGameStateCurrently() override;
+	virtual bool canSaveGameStateCurrently() override;
+	virtual Common::Error loadGameState(int slot) override;
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	virtual Common::Error run() override;
+	virtual void pauseEngineIntern(bool pause) override;
+	virtual GUI::Debugger *getDebugger() override { return _debugger; }
 	uint32 getGameFlags() const;
 	Common::Language getLanguage() const;
 	Common::Language getOriginalLanguage() const;
