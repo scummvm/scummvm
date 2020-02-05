@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SCUMMVM_BAG_H
-#define SCUMMVM_BAG_H
+#ifndef DRAGONS_BAG_H
+#define DRAGONS_BAG_H
 
 #include <graphics/surface.h>
 #include <common/rect.h>
@@ -50,4 +50,4 @@ private:
 
 } // End of namespace Dragons
 
-#endif //SCUMMVM_BAG_H
+#endif //DRAGONS_BAG_H

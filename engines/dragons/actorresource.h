@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_ACTORRESOURCE_H
-#define SCUMMVM_ACTORRESOURCE_H
+#ifndef DRAGONS_ACTORRESOURCE_H
+#define DRAGONS_ACTORRESOURCE_H
 
 #include "common/system.h"
 
@@ -82,4 +82,4 @@ private:
 
 } // End of namespace Dragons
 
-#endif //SCUMMVM_ACTORRESOURCE_H
+#endif //DRAGONS_ACTORRESOURCE_H
