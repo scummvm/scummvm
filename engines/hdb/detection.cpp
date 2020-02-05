@@ -169,24 +169,24 @@ public:
 	HDBMetaEngine() : AdvancedMetaEngine(HDB::gameDescriptions, sizeof(ADGameDescription), hdbGames, optionsList) {
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "hdb";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Hyperspace Delivery Boy!";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Hyperspace Delivery Boy! (C) 2001 Monkeystone Games";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	virtual SaveStateList listSaves(const char *target) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual int getMaximumSaveSlot() const override;
+	virtual void removeSaveState(const char *target, int slot) const override;
+	virtual SaveStateList listSaves(const char *target) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool HDBMetaEngine::hasFeature(MetaEngineFeature f) const {
