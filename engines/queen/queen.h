@@ -94,10 +94,10 @@ public:
 	void update(bool checkPlayerInput = false);
 
 	bool canLoadOrSave() const;
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	Common::Error loadGameState(int slot);
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error loadGameState(int slot) override;
 	void makeGameStateName(int slot, char *buf) const;
 	int getGameStateSlot(const char *filename) const;
 	void findGameStateDescriptions(char descriptions[100][32]);
@@ -119,10 +119,10 @@ public:
 protected:
 
 	// Engine APIs
-	virtual Common::Error run();
-	virtual GUI::Debugger *getDebugger();
+	virtual Common::Error run() override;
+	virtual GUI::Debugger *getDebugger() override;
 	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void syncSoundSettings();
+	virtual void syncSoundSettings() override;
 
 
 	int _talkSpeed;
