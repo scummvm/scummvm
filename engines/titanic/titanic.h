@@ -105,8 +105,8 @@ protected:
 	const TitanicGameDescription *_gameDescription;
 
 	// Engine APIs
-	virtual void initializePath(const Common::FSNode &gamePath);
-	virtual Common::Error run();
+	virtual void initializePath(const Common::FSNode &gamePath) override;
+	virtual Common::Error run() override;
 	virtual bool hasFeature(EngineFeature f) const override;
 public:
 	Debugger *_debugger;
@@ -136,27 +136,27 @@ public:
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	virtual bool canLoadGameStateCurrently();
+	virtual bool canLoadGameStateCurrently() override;
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	virtual bool canSaveGameStateCurrently();
+	virtual bool canSaveGameStateCurrently() override;
 
 	/**
 	 * Called by the GMM to load a savegame
 	 */
-	virtual Common::Error loadGameState(int slot);
+	virtual Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Called by the GMM to save the game
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	/**
 	 * Handles updates to the sound levels
 	 */
-	virtual void syncSoundSettings();
+	virtual void syncSoundSettings() override;
 
 	/**
 	 * Gets the game features
@@ -181,7 +181,7 @@ public:
 	/**
 	 * Returns a uniform random floating point number in the interval [0.0, 65535.0]
 	 */
-	double getRandomFloat() { return getRandomNumber(0xfffffffe) * 0.00001525855623540901; } // fffffffe=4294967294 and 0.00001525855623540901 ~= 1/65537.0 
+	double getRandomFloat() { return getRandomNumber(0xfffffffe) * 0.00001525855623540901; } // fffffffe=4294967294 and 0.00001525855623540901 ~= 1/65537.0
 
 	/**
 	 * Support method that generates a savegame name
