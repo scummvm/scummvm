@@ -96,7 +96,7 @@ class ToltecsEngine : public ::Engine {
 	Common::KeyState _keyPressed;
 
 protected:
-	Common::Error run();
+	Common::Error run() override;
 //	void shutdown();
 
 public:
@@ -110,9 +110,9 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	const Common::String& getTargetName() const { return _targetName; }
-	void syncSoundSettings();
+	void syncSoundSettings() override;
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	void setupSysStrings();
 	void requestSavegame(int slotNum, Common::String &description);
@@ -215,10 +215,10 @@ public:
 
 	bool _isSaveAllowed;
 
-	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &description);
+	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
+	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &description) override;
 	void savegame(const char *filename, const char *description);
 	void loadgame(const char *filename);
 
