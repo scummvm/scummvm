@@ -148,7 +148,9 @@ Engine::Engine(OSystem *syst)
 		_saveSlotToLoad(-1),
 		_engineStartTime(_system->getMillis()),
 		_mainMenuDialog(NULL),
-		_debugger(NULL) {
+		_debugger(NULL),
+		_autosaveInterval(ConfMan.getInt("autosave_period")),
+		_lastAutosaveTime(_system->getMillis()) {
 
 	g_engine = this;
 	Common::setErrorOutputFormatter(defaultOutputFormatter);
@@ -482,10 +484,16 @@ void Engine::checkCD() {
 #endif
 }
 
-bool Engine::shouldPerformAutoSave(int lastSaveTime) {
-	const int diff = _system->getMillis() - lastSaveTime;
-	const int autosavePeriod = ConfMan.getInt("autosave_period");
-	return autosavePeriod != 0 && diff > autosavePeriod * 1000;
+void Engine::handleAutoSave() {
+	const int diff = _system->getMillis() - _lastAutosaveTime;
+
+	if (_autosaveInterval != 0 && diff > (_autosaveInterval * 1000)) {
+		// Save the autosave
+		saveGameState(getAutosaveSlot(), _("Autosave"), true);
+
+		// Reset the last autosave time
+		_lastAutosaveTime = _system->getMillis();
+	}
 }
 
 void Engine::errorString(const char *buf1, char *buf2, int size) {
