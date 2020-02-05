@@ -145,8 +145,16 @@ void PinkEngine::executeMenuCommand(uint id) {
 		break;
 	}
 	case kLoadSave:
+		loadGameDialog();
+		break;
+
 	case kSaveAction:
 	case kSaveAsAction:
+		//FIXME: Somehow messes up the pause system causing issues such as
+		//frozen animations and BGM disappearing
+		saveGameDialog();
+		break;
+
 	case kSoundSettingsAction:
 	case kLastSavesAction:
 	case kPauseAction:
