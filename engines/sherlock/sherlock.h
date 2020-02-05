@@ -142,32 +142,32 @@ public:
 	/**
 	 * Main method for running the game
 	 */
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	virtual bool canLoadGameStateCurrently();
+	virtual bool canLoadGameStateCurrently() override;
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	virtual bool canSaveGameStateCurrently();
+	virtual bool canSaveGameStateCurrently() override;
 
 	/**
 	 * Called by the GMM to load a savegame
 	 */
-	virtual Common::Error loadGameState(int slot);
+	virtual Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Called by the GMM to save the game
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	/**
 	 * Called by the engine when sound settings are updated
 	 */
-	virtual void syncSoundSettings();
+	virtual void syncSoundSettings() override;
 
 	/**
 	 * Saves game configuration information

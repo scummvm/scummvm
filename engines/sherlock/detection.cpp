@@ -151,22 +151,22 @@ public:
 	SherlockMetaEngine() : AdvancedMetaEngine(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription),
 		sherlockGames, optionsList) {}
 
-	virtual const char *getEngineId() const {
+	virtual const char *getEngineId() const override {
 		return "sherlock";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Sherlock";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Sherlock (C) 1992-1996 Mythos Software, (C) 1992-1996 Electronic Arts";
 	}
 
 	/**
 	 * Creates an instance of the game engine
 	 */
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	/**
 	 * Returns a list of features the game's MetaEngine support
@@ -176,22 +176,22 @@ public:
 	/**
 	 * Return a list of savegames
 	 */
-	virtual SaveStateList listSaves(const char *target) const;
+	virtual SaveStateList listSaves(const char *target) const override;
 
 	/**
 	 * Returns the maximum number of allowed save slots
 	 */
-	virtual int getMaximumSaveSlot() const;
+	virtual int getMaximumSaveSlot() const override;
 
 	/**
 	 * Deletes a savegame in the specified slot
 	 */
-	virtual void removeSaveState(const char *target, int slot) const;
+	virtual void removeSaveState(const char *target, int slot) const override;
 
 	/**
 	 * Given a specified savegame slot, returns extended information for the save
 	 */
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool SherlockMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
