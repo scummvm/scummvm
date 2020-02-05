@@ -86,14 +86,14 @@ public:
 	TeenAgentEngine(OSystem *system, const ADGameDescription *gd);
 	~TeenAgentEngine();
 
-	virtual Common::Error run();
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual bool canLoadGameStateCurrently() { return true; }
-	virtual bool canSaveGameStateCurrently() { return !_sceneBusy; }
+	virtual Common::Error run() override;
+	virtual Common::Error loadGameState(int slot) override;
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	virtual bool canLoadGameStateCurrently() override { return true; }
+	virtual bool canSaveGameStateCurrently() override { return !_sceneBusy; }
 	virtual bool hasFeature(EngineFeature f) const override;
 
-	GUI::Debugger *getDebugger() { return console; }
+	GUI::Debugger *getDebugger() override { return console; }
 
 	void init();
 
