@@ -366,17 +366,12 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	if (!_mixer->isSoundHandleActive(_soundHandle))
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream);
 
-
-	// Reset autosave duration on load
-	_lastSaveTime = _system->getMillis();
-
 	return Common::kNoError;
 }
 
 Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::String filename = makeSaveGameName(slot);
 	Common::OutSaveFile *out;
-	_lastSaveTime = _system->getMillis();
 	if (!(out = _saveFileMan->openForSaving(filename)))
 		return Common::kWritingFailed;
 
