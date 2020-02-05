@@ -97,16 +97,18 @@ void Actor::setup(int actorId) {
 	_retiredHeight            = 0;
 	_scale                    = 1.0f;
 
-	_timer4RemainDefault      = 60000u;
+	_timer4RemainDefault      = 60000;
 
 	_movementTrackWalkingToWaypointId = -1;
 	_movementTrackDelayOnNextWaypoint = -1;
 
 	for (int i = 0; i != kActorTimers; ++i) {
-		_timersLeft[i] = 0u;
+		_timersLeft[i] = 0;
 		_timersLast[i] = _vm->_time->current();
 	}
-	_timersLeft[kActorTimerClueExchange] = _timer4RemainDefault; // This was in original code. We need to init this timer in order to kick off periodic updates for acquireCluesByRelations
+	// This was in original code.
+	// We need to init this timer in order to kick off periodic updates for acquireCluesByRelations
+	_timersLeft[kActorTimerClueExchange] = _timer4RemainDefault;
 
 	_honesty                     = 50;
 	_intelligence                = 50;
@@ -216,51 +218,76 @@ void Actor::setFPS(int fps) {
 }
 
 void Actor::increaseFPS() {
+#if BLADERUNNER_ORIGINAL_BUGS
 	int fps = MIN(_fps + 3, 30);
 	setFPS(fps);
+#else
+	int oldFps = _fps; // new aux variable
+	int fps = MIN(_fps + 3, 30);
+	setFPS(fps);
+
+	// Only McCoy is using the stamina timer in the game
+	if (_id == kActorMcCoy) {
+		if (_vm->_cutContent) {
+			if (_fps > 20 && oldFps < _fps) {
+				// only start the stamina timer
+				// when McCoy's fps are more than 20 fps and purely increased
+				// and only if the new drain interval is smaller than the previous one
+				// the start drain interval is supposed to be slow
+				// starting from 10 seconds and decreasing as low as 1 second
+				// (It will barely come into play basically)
+				int nextStaminaDrainInterval = (31 - _fps) * 1000;
+				if (nextStaminaDrainInterval < timerLeft(kActorTimerRunningStaminaFPS)) {
+					timerStart(kActorTimerRunningStaminaFPS, nextStaminaDrainInterval);
+				}
+			}
+		} else {
+			// just prevent any rogue state for stamina timer being 0
+			// at any time when McCoy's fps get increased
+			if (timerLeft(kActorTimerRunningStaminaFPS) == 0) {
+				timerStart(kActorTimerRunningStaminaFPS, 200);
+			}
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void Actor::timerStart(int timerId, int32 interval) {
 	assert(timerId >= 0 && timerId < kActorTimers);
-	if (interval < 0 ) {
-		interval = 0;
-	}
-	_timersLeft[timerId] = (uint32)interval;
+
+	_timersLeft[timerId] = interval;
 	_timersLast[timerId] = _vm->_time->current();
 }
 
 void Actor::timerReset(int timerId) {
 	assert(timerId >= 0 && timerId < kActorTimers);
-	_timersLeft[timerId] = 0u;
+	_timersLeft[timerId] = 0;
 }
 
-uint32 Actor::timerLeft(int timerId) {
+// timerLeft can be negative - This is required for
+// the actor's animation update timer mostly (timer kActorTimerAnimationFrame)
+int32 Actor::timerLeft(int timerId) {
 	assert(timerId >= 0 && timerId < kActorTimers);
 	return _timersLeft[timerId];
 }
 
 void Actor::timersUpdate() {
-	for (int i = 0; i <= 6; i++) {
+	for (int i = 0; i < kActorTimers; i++) {
 		timerUpdate(i);
 	}
 }
 
 void Actor::timerUpdate(int timerId) {
-	if (_timersLeft[timerId] == 0u) {
+	if (_timersLeft[timerId] == 0) {
 		return;
 	}
 
 	uint32 timeNow = _vm->_time->current();
 	uint32 timeDiff = timeNow - _timersLast[timerId]; // unsigned difference is intentional
 	_timersLast[timerId] = timeNow;
-	// new check is safe-guard against old saves, _timersLeft should never have very big value anyway
-	if ((int32)_timersLeft[timerId] < 0 ) {
-		// this will make it 0u in the next command below
-		_timersLeft[timerId] = 0u;
-	}
-	_timersLeft[timerId] = (_timersLeft[timerId] < timeDiff) ? 0u : (_timersLeft[timerId] - timeDiff);
 
-	if (_timersLeft[timerId] == 0u) { // original check was <= 0
+	_timersLeft[timerId] = _timersLeft[timerId] - timeDiff;
+	if (_timersLeft[timerId] <= 0) {
 		switch (timerId) {
 		case kActorTimerAIScriptCustomTask0:
 			// fall through
@@ -269,15 +296,15 @@ void Actor::timerUpdate(int timerId) {
 		case kActorTimerAIScriptCustomTask2:
 			if (!_vm->_aiScripts->isInsideScript() && !_vm->_sceneScript->isInsideScript()) {
 				_vm->_aiScripts->timerExpired(_id, timerId);
-				_timersLeft[timerId] = 0u;
+				_timersLeft[timerId] = 0;
 			} else {
-				_timersLeft[timerId] = 1u;
+				_timersLeft[timerId] = 1;
 			}
 			break;
 		case kActorTimerMovementTrack:
-			_timersLeft[kActorTimerMovementTrack] = 0u;
+			_timersLeft[kActorTimerMovementTrack] = 0;
 			if (_movementTrack->isPaused()) {
-				_timersLeft[kActorTimerMovementTrack] = 1u;
+				_timersLeft[kActorTimerMovementTrack] = 1;
 			} else {
 				movementTrackNext(false);
 			}
@@ -300,7 +327,21 @@ void Actor::timerUpdate(int timerId) {
 					setFPS(newFps);
 				}
 			}
-			_timersLeft[kActorTimerRunningStaminaFPS] = 200u;
+#if BLADERUNNER_ORIGINAL_BUGS
+			_timersLeft[kActorTimerRunningStaminaFPS] = 200;
+#else
+			if (_vm->_cutContent) {
+				if (isRunning()) {
+					// drain faster if closer to max fps (30), else slower
+					_timersLeft[kActorTimerRunningStaminaFPS] = (31 - _fps) * 200;
+				} else {
+					// not running - stop the timer
+					timerReset(kActorTimerRunningStaminaFPS);
+				}
+			} else {
+				_timersLeft[kActorTimerRunningStaminaFPS] = 200;
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			break;
 		default:
 			break;
@@ -620,17 +661,17 @@ void Actor::run() {
 }
 
 bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
-	uint32 timeLeft = 0u;
+	int32 timeLeft = 0;
 	bool needsUpdate = false;
 	if (_fps > 0) {
 		timerUpdate(kActorTimerAnimationFrame);
 		timeLeft = timerLeft(kActorTimerAnimationFrame);
-		needsUpdate = (timeLeft == 0); // original was <= 0, with timeLeft int
+		needsUpdate = (timeLeft <= 0);
 	} else if (_fps == 0) {
 		needsUpdate = false;
 	} else if (forceDraw) {
 		needsUpdate = true;
-		timeLeft = 0u;
+		timeLeft = 0;
 	}
 
 	if (needsUpdate) {
@@ -751,7 +792,8 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 	}
 
 	if (needsUpdate) {
-		int nextFrameTime = (int)(timeLeft + _frameMs); // Should be ok
+		// timeLeft is supposed to be negative or 0 here in the original!
+		int32 nextFrameTime = timeLeft + _frameMs;
 		if (nextFrameTime <= 0) {
 			nextFrameTime = 1;
 		}
@@ -1526,12 +1568,26 @@ void Actor::load(SaveFileReadStream &f) {
 	_scale = f.readFloat();
 
 	for (int i = 0; i < kActorTimers; ++i) {
-		_timersLeft[i] = f.readUint32LE();
+		_timersLeft[i] = (int32)f.readUint32LE();
 	}
+
 	// Bugfix: Special initialization case for timer 4 (kActorTimerClueExchange) when its value is restored as 0
 	// This should be harmless, but will remedy any broken save-games where the timer 4 was saved as 0.
-	if (_timersLeft[kActorTimerClueExchange] == 0u) {
+	if (_timersLeft[kActorTimerClueExchange] == 0) {
 		_timersLeft[kActorTimerClueExchange] = _timer4RemainDefault;
+	}
+
+	// Bugfix: Similar to the above
+	// Special initialization case for timer 6 (kActorTimerRunningStaminaFPS) when its value is restored as 0
+	// This was due to an original game bug and it concerns only McCoy (player's actor)
+	// This should be harmless, but will remedy any broken save-games where the timer 6 was saved as 0.
+	// Also, in restored content mode we allow this counter to be 0 and only start it
+	// when McCoy's FPS get increased (starts running with sufficient speed),
+	// so the fix is not needed for RC mode
+	if (!_vm->_cutContent) {
+		if (_id == kActorMcCoy && _timersLeft[kActorTimerRunningStaminaFPS] == 0) {
+			_timersLeft[kActorTimerClueExchange] = 200;
+		}
 	}
 
 	uint32 now = _vm->_time->getPauseStart();

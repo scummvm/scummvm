@@ -863,7 +863,7 @@ bool Debugger::cmdTimer(int argc, const char **argv) {
 	}
 
 	for (int i = 0; i < 7; ++i) {
-		debugPrintf("actorTimer(%i, %i) = %u ms\n", actorId, i, actor->timerLeft(i));
+		debugPrintf("actorTimer(%i, %i) = %d ms\n", actorId, i, actor->timerLeft(i));
 	}
 
 	return true;

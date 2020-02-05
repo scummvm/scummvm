@@ -110,7 +110,7 @@ private:
 	int _retiredWidth;
 	int _retiredHeight;
 
-	uint32 _timersLeft[kActorTimers]; // this keeps time difference, and it is stored during save() (saveInt actually saves a uint32)
+	int32 _timersLeft[kActorTimers];  // this keeps time difference, and it is stored during save() (saveInt actually saves a uint32)
 	uint32 _timersLast[kActorTimers]; // this keeps actual time, and is not stored during save(), so it can be a uint32
 
 	float _scale;
@@ -145,7 +145,7 @@ public:
 
 	void   timerStart(int timerId, int32 interval);
 	void   timerReset(int timerId);
-	uint32 timerLeft(int timerId);
+	int32 timerLeft(int timerId);
 	void   timersUpdate();
 	void   timerUpdate(int timerId);
 

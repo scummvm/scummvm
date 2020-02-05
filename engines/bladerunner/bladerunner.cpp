@@ -393,7 +393,6 @@ Common::Error BladeRunnerEngine::run() {
 		//  else {
 		// 	newGame(kGameDifficultyMedium);
 		// }
-
 		gameLoop();
 
 		_mouse->disable();
@@ -466,7 +465,7 @@ bool BladeRunnerEngine::checkFiles(Common::Array<Common::String> &missingFiles) 
 }
 
 bool BladeRunnerEngine::startup(bool hasSavegames) {
-		// Assign default values to the ScummVM configuration manager, in case settings are missing
+	// Assign default values to the ScummVM configuration manager, in case settings are missing
 	ConfMan.registerDefault("subtitles", "true");
 	ConfMan.registerDefault("sfx_volume", 192);
 	ConfMan.registerDefault("music_volume", 192);
@@ -609,8 +608,16 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_actors[kActorVoiceOver] = new Actor(this, kActorVoiceOver);
 	_playerActor = _actors[_gameInfo->getPlayerId()];
 
-	_playerActor->setFPS(15);
+	_playerActor->setFPS(15); // this seems redundant
+#if BLADERUNNER_ORIGINAL_BUGS
 	_playerActor->timerStart(kActorTimerRunningStaminaFPS, 200);
+#else
+	// Make code here similar to the bugfix in newGame in that
+	// we only start the timer in vanilla game mode (not Restored Content mode)
+	if (!_cutContent) {
+		_playerActor->timerStart(kActorTimerRunningStaminaFPS, 200);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	_policeMaze = new PoliceMaze(this);
 
@@ -695,7 +702,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_aiScripts = new AIScripts(this, actorCount);
 
 	initChapterAndScene();
-
 	return true;
 }
 
@@ -1145,8 +1151,8 @@ void BladeRunnerEngine::actorsUpdate() {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	uint32 timeNow = _time->current();
-	// Don't update actors more than 60 times per second
-	if (timeNow - _actorUpdateTimeLast < 1000 / 60) {
+	// Don't update actors more than 60 or 120 times per second
+	if (timeNow - _actorUpdateTimeLast < 1000 / ( _framesPerSecondMax? 120 : 60)) {
 		return;
 	}
 	_actorUpdateTimeLast = timeNow;
@@ -1673,7 +1679,7 @@ void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &scenePositi
 		}
 
 		bool shouldRun = _playerActor->isRunning();
-		if (_mouseClickTimeDiff <= 10000 && xDist < 10 && yDist < 10) {
+		if (_mouseClickTimeDiff <= 10000 && xDist <= 10 && yDist <= 10) {
 			shouldRun = true;
 		}
 
@@ -2211,6 +2217,17 @@ void BladeRunnerEngine::newGame(int difficulty) {
 		_actors[i]->setup(i);
 	}
 	_actors[kActorVoiceOver]->setup(kActorVoiceOver);
+
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// Special settings for McCoy that are in BladeRunnerEngine::startup()
+	// but are overridden here, resulting to the stamina counter
+	// never being initialized in the original game
+	_playerActor->setFPS(15); // this seems redundant
+	if (!_cutContent) {
+		_playerActor->timerStart(kActorTimerRunningStaminaFPS, 200);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	for (uint i = 0; i < _gameInfo->getSuspectCount(); ++i) {
 		_suspectsDatabase->get(i)->reset();
