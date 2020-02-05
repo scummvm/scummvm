@@ -147,7 +147,7 @@ public:
 	Common::List<MovieReference> _movieStack;
 
 protected:
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 
 private:
 	const DirectorGameDescription *_gameDescription;
