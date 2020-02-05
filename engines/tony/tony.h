@@ -95,7 +95,7 @@ private:
 
 protected:
 	// Engine APIs
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 	virtual bool hasFeature(EngineFeature f) const override;
 public:
 	LPCUSTOMFUNCTION _funcList[300];
@@ -110,7 +110,7 @@ public:
 	Common::List<FPSfx *> _activeSfx;
 	Globals _globals;
 	Debugger *_debugger;
-	GUI::Debugger *getDebugger() { return _debugger; }
+	GUI::Debugger *getDebugger() override { return _debugger; }
 
 	int16 _cTableDialog[256];
 	int16 _lTableDialog[256];
@@ -164,10 +164,10 @@ public:
 		return &_theEngine;
 	}
 
-	virtual bool canLoadGameStateCurrently();
-	virtual bool canSaveGameStateCurrently();
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual bool canLoadGameStateCurrently() override;
+	virtual bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	void play();
 	void close();
@@ -230,7 +230,7 @@ public:
 	void openInitLoadMenu(CORO_PARAM);
 	void openInitOptions(CORO_PARAM);
 
-	virtual void syncSoundSettings();
+	virtual void syncSoundSettings() override;
 	void saveSoundSettings();
 };
 
