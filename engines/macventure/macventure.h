@@ -194,13 +194,13 @@ public:
 
 	virtual bool hasFeature(EngineFeature f) const override;
 
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 
 	bool scummVMSaveLoadDialog(bool isSave);
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	virtual Common::Error loadGameState(int slot) override;
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
 	void newGame();
 	void setInitialFlags();
 	void setNewGameState();
