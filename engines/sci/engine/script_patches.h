@@ -120,6 +120,10 @@ private:
 	// Applies a patch to a given script + offset (overwrites parts)
 	void applyPatch(const SciScriptPatcherEntry *patchEntry, SciSpan<byte> scriptData, int32 signatureOffset);
 
+	// suggest to download GK2 subtitles patch
+	// in the future, we might refactor it to something more generic, if will needed
+	void suggestDownloadGK2SubTitlesPatch();
+
 	Selector *_selectorIdTable;
 	SciScriptPatcherRuntimeEntry *_runtimeTable;
 	bool _isMacSci11;
