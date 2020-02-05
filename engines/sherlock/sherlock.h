@@ -162,7 +162,7 @@ public:
 	/**
 	 * Called by the GMM to save the game
 	 */
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 	/**
 	 * Called by the engine when sound settings are updated

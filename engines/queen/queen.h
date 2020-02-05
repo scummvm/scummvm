@@ -96,7 +96,7 @@ public:
 	bool canLoadOrSave() const;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
 	void makeGameStateName(int slot, char *buf) const;
 	int getGameStateSlot(const char *filename) const;

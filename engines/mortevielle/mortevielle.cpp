@@ -203,7 +203,7 @@ Common::Error MortevielleEngine::loadGameState(int slot) {
 /**
  * Save the current game
  */
-Common::Error MortevielleEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error MortevielleEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	if (slot == 0)
 		return Common::kWritingFailed;
 

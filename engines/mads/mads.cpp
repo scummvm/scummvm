@@ -215,7 +215,7 @@ Common::Error MADSEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error MADSEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error MADSEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	_game->saveGame(slot, desc);
 	return Common::kNoError;
 }

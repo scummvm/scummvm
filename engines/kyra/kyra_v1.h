@@ -424,7 +424,9 @@ protected:
 
 	void loadGameStateCheck(int slot);
 	Common::Error loadGameState(int slot) override = 0;
-	Common::Error saveGameState(int slot, const Common::String &desc) override { return saveGameStateIntern(slot, desc.c_str(), 0); }
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override {
+		return saveGameStateIntern(slot, desc.c_str(), 0);
+	}
 	virtual Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 
 	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header, bool checkID = true);

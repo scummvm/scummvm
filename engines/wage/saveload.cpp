@@ -734,7 +734,7 @@ Common::Error WageEngine::loadGameState(int slot) {
 		return Common::kUnknownError;
 }
 
-Common::Error WageEngine::saveGameState(int slot, const Common::String &description) {
+Common::Error WageEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
 	Common::String saveLoadSlot = getSavegameFilename(slot);
 	if (saveGame(saveLoadSlot, description) == 0)
 		return Common::kNoError;

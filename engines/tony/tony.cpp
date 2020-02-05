@@ -752,7 +752,7 @@ Common::Error TonyEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error TonyEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error TonyEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	if (!GLOBALS._gfxEngine)
 		return Common::kUnknownError;
 

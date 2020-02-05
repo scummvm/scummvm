@@ -164,7 +164,7 @@ protected:
 	bool hasFeature(EngineFeature f) const override;
 	Common::Error loadGameState(int slot) override;
 #if 0
-	Common::Error saveGameState(int slot, const Common::String &desc);
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
 #endif
 	bool canLoadGameStateCurrently() override;
 #if 0

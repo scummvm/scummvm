@@ -285,7 +285,7 @@ public:
 	void pauseEngineIntern(bool pause) override;
 	bool canSaveGameStateCurrently() override;
 	bool canLoadGameStateCurrently() override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
 
 	void playVideo(Common::String videoFilename);

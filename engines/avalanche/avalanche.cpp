@@ -331,7 +331,7 @@ bool AvalancheEngine::canSaveGameStateCurrently() {
 	return (_animationsEnabled && _alive);
 }
 
-Common::Error AvalancheEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error AvalancheEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	return (saveGame(slot, desc) ? Common::kNoError : Common::kWritingFailed);
 }
 

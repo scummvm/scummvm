@@ -527,7 +527,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 #endif
 }
 
-Common::Error GnapEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error GnapEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
 		generateSaveName(slot));
 	if (!out)

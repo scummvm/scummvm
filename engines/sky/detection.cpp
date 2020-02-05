@@ -317,7 +317,7 @@ Common::Error SkyEngine::loadGameState(int slot) {
 	return (result == GAME_RESTORED) ? Common::kNoError : Common::kUnknownError;
 }
 
-Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	if (slot == 0)
 		return Common::kWritePermissionDenied;	// we can't overwrite the auto save
 

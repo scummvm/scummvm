@@ -79,7 +79,7 @@ public:
 	/**
 	 * Save the game to a given slot
 	 */
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 	/**
 	 * Loading method not used for Frotz sub-engine

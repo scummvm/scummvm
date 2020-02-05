@@ -417,7 +417,7 @@ private:
 	Common::String getSaveStateName(int slot) const override;
 	int loadPlayer(int slotnum);
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *file) override;
 	Common::Error saveGameStream(Common::WriteStream *file, bool isAutosave) override;
 	void autoSaveCheck();

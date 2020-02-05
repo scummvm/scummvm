@@ -211,7 +211,7 @@ public:
 	void saveGame();
 
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &description) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool scummVMSaveLoadDialog(bool isSave);
 
 private:

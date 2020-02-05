@@ -1083,7 +1083,7 @@ Common::Error AgiEngine::loadGameState(int slot) {
 	}
 }
 
-Common::Error AgiEngine::saveGameState(int slot, const Common::String &description) {
+Common::Error AgiEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
 	Common::String saveLoadSlot = getSavegameFilename(slot);
 	if (saveGame(saveLoadSlot, description) == errOK)
 		return Common::kNoError;

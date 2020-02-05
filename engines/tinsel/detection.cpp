@@ -440,7 +440,7 @@ Common::Error TinselEngine::loadGameState(int slot) {
 }
 
 #if 0
-Common::Error TinselEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error TinselEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::String saveName = _vm->getSavegameFilename((int16)(slot + 1));
 	char saveDesc[SG_DESC_LEN];
 	Common::strlcpy(saveDesc, desc, SG_DESC_LEN);

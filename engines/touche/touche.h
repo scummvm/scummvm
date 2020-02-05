@@ -604,7 +604,7 @@ protected:
 
 	void saveGameStateData(Common::WriteStream *stream);
 	void loadGameStateData(Common::ReadStream *stream);
-	Common::Error saveGameState(int num, const Common::String &description) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int num) override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;

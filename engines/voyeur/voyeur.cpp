@@ -806,7 +806,7 @@ void VoyeurEngine::loadGame(int slot) {
 /**
  * Save the game to the given slot index, and with the given name
  */
-Common::Error VoyeurEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error VoyeurEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	// Open the save file for writing
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(generateSaveName(slot));
 	if (!saveFile)

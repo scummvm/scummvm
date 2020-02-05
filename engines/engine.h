@@ -261,18 +261,10 @@ public:
 	 * Save a game state.
 	 * @param slot	the slot into which the savestate should be stored
 	 * @param desc	a description for the savestate, entered by the user
-	 * @return returns kNoError on success, else an error code.
-	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-
-	/**
-	 * Save a game state.
-	 * @param slot	the slot into which the savestate should be stored
-	 * @param desc	a description for the savestate, entered by the user
 	 * @param isAutosave	Expected to be true if an autosave is being created
 	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
 
 	/**
 	 * Save a game state.

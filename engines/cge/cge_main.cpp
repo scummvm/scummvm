@@ -298,7 +298,7 @@ void CGEEngine::resetGame() {
 	_commandHandler->reset();
 }
 
-Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error CGEEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	sceneDown();
 	_hero->park();
 	_oldLev = _lev;

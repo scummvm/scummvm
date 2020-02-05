@@ -315,7 +315,7 @@ public:
 
 	int readSavegameDescription(int savegameNum, Common::String &description);
 	int loadSavegame(int savegameNum);
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
 	Common::String generateSaveName(int slot);
 	void synchronize(Common::Serializer &s);

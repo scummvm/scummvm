@@ -373,7 +373,7 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error ComposerEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::String filename = makeSaveGameName(slot);
 	Common::OutSaveFile *out;
 	_lastSaveTime = _system->getMillis();

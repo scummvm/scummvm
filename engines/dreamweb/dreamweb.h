@@ -114,7 +114,7 @@ public:
 	void waitForVSync();
 
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;

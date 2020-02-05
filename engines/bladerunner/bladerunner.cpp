@@ -283,7 +283,7 @@ bool BladeRunnerEngine::canSaveGameStateCurrently() {
 		!_elevator->isOpen();
 }
 
-Common::Error BladeRunnerEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error BladeRunnerEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::OutSaveFile *saveFile = BladeRunner::SaveFileManager::openForSaving(_targetName, slot);
 	if (saveFile == nullptr || saveFile->err()) {
 		delete saveFile;

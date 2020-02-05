@@ -968,7 +968,7 @@ Common::Error MohawkEngine_Myst::loadGameState(int slot) {
 	return Common::kUnknownError;
 }
 
-Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &desc) {
+Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	const Graphics::Surface *thumbnail = nullptr;
 	if (_stack->getStackId() == kMenuStack) {
 		thumbnail = _gfx->getThumbnailForMainMenu();

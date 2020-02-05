@@ -260,7 +260,7 @@ public:
 	void severeError();
 	Console *getSciDebugger();
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	void syncSoundSettings() override; ///< from ScummVM to the game

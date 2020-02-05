@@ -666,7 +666,7 @@ bool SupernovaEngine::canSaveGameStateCurrently() {
 	return _allowSaveGame && _gm->canSaveGameStateCurrently();
 }
 
-Common::Error SupernovaEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error SupernovaEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	return (saveGame(slot, desc) ? Common::kNoError : Common::kWritingFailed);
 }
 

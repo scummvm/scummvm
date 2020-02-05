@@ -144,7 +144,7 @@ bool PrinceEngine::canLoadGameStateCurrently() {
 	return false;
 }
 
-Common::Error PrinceEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error PrinceEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	// Set up the serializer
 	Common::String slotName = generateSaveName(slot);
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(slotName);

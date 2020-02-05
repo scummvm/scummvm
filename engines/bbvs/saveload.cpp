@@ -187,7 +187,7 @@ Common::Error BbvsEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error BbvsEngine::saveGameState(int slot, const Common::String &description) {
+Common::Error BbvsEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
 	const char *fileName = getSavegameFilename(slot);
 	savegame(fileName, description.c_str());
 	return Common::kNoError;

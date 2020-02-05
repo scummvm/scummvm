@@ -88,7 +88,7 @@ public:
 
 	Common::Error run() override;
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canLoadGameStateCurrently() override { return true; }
 	bool canSaveGameStateCurrently() override { return !_sceneBusy; }
 	bool hasFeature(EngineFeature f) const override;

@@ -36,7 +36,7 @@ bool HDBGame::canSaveGameStateCurrently() {
 	return (_gameState == GAME_PLAY && !_ai->cinematicsActive());
 }
 
-Common::Error HDBGame::saveGameState(int slot, const Common::String &desc) {
+Common::Error HDBGame::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 
 	// If no map is loaded, don't try to save
 	if (!g_hdb->_map->isLoaded())

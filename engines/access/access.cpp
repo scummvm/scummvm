@@ -455,7 +455,7 @@ void AccessEngine::freeChar() {
 	_animation->freeAnimationData();
 }
 
-Common::Error AccessEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error AccessEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
 		generateSaveName(slot));
 	if (!out)

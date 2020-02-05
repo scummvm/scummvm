@@ -36,7 +36,7 @@ Common::Error CryOmni3DEngine_Versailles::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error CryOmni3DEngine_Versailles::saveGameState(int slot, const Common::String &desc) {
+Common::Error CryOmni3DEngine_Versailles::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	saveGame(_isVisiting, slot + 1, desc);
 	return Common::kNoError;
 }
