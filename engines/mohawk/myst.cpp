@@ -624,6 +624,11 @@ void MohawkEngine_Myst::doFrame() {
 				break;
 			}
 			break;
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RTL:
+			// Attempt to autosave before exiting
+			saveAutosaveIfEnabled();
+			break;
 		default:
 			break;
 		}

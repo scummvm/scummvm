@@ -310,6 +310,7 @@ void MohawkEngine_Riven::processInput() {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
 			// Attempt to autosave before exiting
+			saveAutosaveIfEnabled();
 			break;
 		default:
 			break;
@@ -826,6 +827,7 @@ void MohawkEngine_Riven::runOptionsDialog() {
 
 	if (hasGameEnded()) {
 		// Attempt to autosave before exiting
+		saveAutosaveIfEnabled();
 	}
 
 	_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
