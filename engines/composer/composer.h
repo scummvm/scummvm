@@ -156,7 +156,7 @@ struct OldScript {
 
 class ComposerEngine : public Engine {
 protected:
-	Common::Error run();
+	Common::Error run() override;
 
 	template <typename T>
 	void syncArray(Common::Serializer &ser, Common::Array<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
@@ -166,10 +166,10 @@ protected:
 	void syncListReverse(Common::Serializer &ser, Common::List<T> &data, Common::Serializer::Version minVersion = 0, Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 	template <typename T>
 	void sync(Common::Serializer &ser, T &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion);
-	bool canLoadGameStateCurrently() { return true; }
-	Common::Error loadGameState(int slot);
-	bool canSaveGameStateCurrently() { return true; }
-	Common::Error saveGameState(int slot, const Common::String &desc);
+	bool canLoadGameStateCurrently() override { return true; }
+	Common::Error loadGameState(int slot) override;
+	bool canSaveGameStateCurrently() override { return true; }
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 public:
 	ComposerEngine(OSystem *syst, const ComposerGameDescription *gameDesc);
@@ -187,7 +187,7 @@ public:
 	const ComposerGameDescription *_gameDescription;
 
 	Console *_console;
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 private:
 	Common::RandomSource *_rnd;

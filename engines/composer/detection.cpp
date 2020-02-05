@@ -721,22 +721,22 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "composer";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Magic Composer";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Copyright (C) 1995-1999 Animation Magic";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual int getMaximumSaveSlot() const;
-	virtual SaveStateList listSaves(const char* target) const;
+	virtual int getMaximumSaveSlot() const override;
+	virtual SaveStateList listSaves(const char* target) const override;
 };
 
 bool ComposerMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
