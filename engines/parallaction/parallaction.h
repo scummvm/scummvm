@@ -263,7 +263,7 @@ public:
 	// Engine APIs
 	virtual Common::Error init();
 	virtual Common::Error go() = 0;
-	virtual Common::Error run() {
+	virtual Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
@@ -272,8 +272,8 @@ public:
 	}
 
 	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void pauseEngineIntern(bool pause);
-	virtual GUI::Debugger *getDebugger();
+	virtual void pauseEngineIntern(bool pause) override;
+	virtual GUI::Debugger *getDebugger() override;
 
 	// info
 	int32			_screenWidth;
