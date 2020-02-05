@@ -57,8 +57,8 @@ public:
 	virtual void startSound(int track, int volume) override;
 	virtual bool isChannelPlaying(int channel) const override;
 	virtual void stopAllChannels() override;
-	int getSoundTrigger() const { return _soundTrigger; }
-	void resetSoundTrigger() { _soundTrigger = 0; }
+	int getSoundTrigger() const override { return _soundTrigger; }
+	void resetSoundTrigger() override { _soundTrigger = 0; }
 
 	void callback();
 
@@ -1253,7 +1253,7 @@ uint8 AdLibDriver::calculateOpLevel1(Channel &channel) {
 	// volume settings and use a simpler calculation of the total level (just adding the three
 	// opExtraLevels to the opLevel).
 	// The later (HOF/LOL) original drivers do the same wrong clipping, too. But original LOL floppy
-	// doesn't have volume settings either. And with max volume the logo sound is okay... 
+	// doesn't have volume settings either. And with max volume the logo sound is okay...
 	if (value & 0x80)
 		debugC(3, kDebugLevelSound, "AdLibDriver::calculateOpLevel1(): WORKAROUND - total level clipping uint/int bug encountered");
 	value = CLIP<uint8>(value, 0, 0x3F);
