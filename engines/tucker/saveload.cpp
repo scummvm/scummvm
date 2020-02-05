@@ -234,7 +234,7 @@ TuckerEngine::SavegameError TuckerEngine::writeSavegameHeader(Common::OutSaveFil
 	return (file->err() ? kSavegameIoError : kSavegameNoError);
 }
 
-Common::Error TuckerEngine::saveGameState(int slot, const Common::String &description) {
+Common::Error TuckerEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
 	return writeSavegame(slot, description, false);
 }
 

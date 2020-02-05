@@ -216,7 +216,7 @@ Common::Error LabEngine::loadGameState(int slot) {
 	return (result) ? Common::kNoError : Common::kUserCanceled;
 }
 
-Common::Error LabEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error LabEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	bool result = saveGame(slot, desc);
 	return (result) ? Common::kNoError : Common::kUserCanceled;
 }

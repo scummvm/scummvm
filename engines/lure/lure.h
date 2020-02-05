@@ -121,7 +121,7 @@ public:
 	Common::Error loadGameState(int slot) override {
 		return loadGame(slot) ? Common::kNoError : Common::kReadingFailed;
 	}
-	Common::Error saveGameState(int slot, const Common::String &desc) override {
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override {
 		Common::String s(desc);
 		return saveGame(slot, s) ? Common::kNoError : Common::kReadingFailed;
 	}

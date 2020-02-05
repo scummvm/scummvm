@@ -65,7 +65,7 @@ public:
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
 	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently() override;
 	// For detection-purposes:
 	static bool getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption);

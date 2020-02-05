@@ -696,7 +696,7 @@ static bool isValidSaveFileName(const Common::String &desc) {
 	return true;
 }
 
-Common::Error PegasusEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error PegasusEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	if (!isValidSaveFileName(desc))
 		return Common::Error(Common::kCreatingFileFailed, _("Invalid file name for saving"));
 

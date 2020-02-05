@@ -47,7 +47,7 @@ bool CGE2Engine::canSaveGameStateCurrently() {
 		_commandHandler->idle() && (_soundStat._wait == nullptr);
 }
 
-Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc) {
+Common::Error CGE2Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	storeHeroPos();
 	saveGame(slot, desc);
 	sceneUp(_now);

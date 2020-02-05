@@ -205,7 +205,7 @@ bool CruiseEngine::canLoadGameStateCurrently() {
 	return playerMenuEnabled != 0;
 }
 
-Common::Error CruiseEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error CruiseEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	return saveSavegameData(slot, desc);
 }
 

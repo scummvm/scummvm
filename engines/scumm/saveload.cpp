@@ -102,7 +102,7 @@ bool ScummEngine::canLoadGameStateCurrently() {
 	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
 }
 
-Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	requestSave(slot, desc);
 	return Common::kNoError;
 }

@@ -182,7 +182,7 @@ bool QueenEngine::canSaveGameStateCurrently() {
 	return canLoadOrSave();
 }
 
-Common::Error QueenEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error QueenEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	debug(3, "Saving game to slot %d", slot);
 	char name[20];
 	Common::Error err = Common::kNoError;

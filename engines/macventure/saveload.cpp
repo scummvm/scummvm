@@ -149,7 +149,7 @@ Common::Error MacVentureEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error MacVentureEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error MacVentureEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::String saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
 	Common::SaveFileManager *manager = getSaveFileManager();
 	// HACK Get a real name!

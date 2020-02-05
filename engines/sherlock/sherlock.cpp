@@ -279,7 +279,7 @@ Common::Error SherlockEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error SherlockEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error SherlockEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	_saves->saveGame(slot, desc);
 	return Common::kNoError;
 }

@@ -849,7 +849,7 @@ public:
 	bool promptIsEnabled() override;
 
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &description) override;
+	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
 
 private:
 	int _keyQueue[KEY_QUEUE_SIZE];

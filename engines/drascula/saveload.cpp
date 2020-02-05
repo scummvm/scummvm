@@ -199,7 +199,7 @@ bool DrasculaEngine::canLoadGameStateCurrently() {
 	return _canSaveLoad;
 }
 
-Common::Error DrasculaEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error DrasculaEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	saveGame(slot, desc);
 	return Common::kNoError;
 }

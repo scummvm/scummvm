@@ -106,7 +106,7 @@ Common::Error HopkinsEngine::loadGameState(int slot) {
 /**
  * Save the game to the given slot index, and with the given name
  */
-Common::Error HopkinsEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error HopkinsEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	return _saveLoad->saveGame(slot, desc);
 }
 

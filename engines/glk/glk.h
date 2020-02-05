@@ -201,7 +201,7 @@ public:
 	/**
 	 * Save the game to a given slot
 	 */
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
 	/**
 	 * Load a savegame from the passed Quetzal file chunk stream

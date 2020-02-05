@@ -223,7 +223,7 @@ Common::Error CineEngine::loadGameState(int slot) {
 	return gameLoaded ? Common::kNoError : Common::kUnknownError;
 }
 
-Common::Error CineEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error CineEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	// Load savegame descriptions from index file
 	loadSaveDirectory();
 

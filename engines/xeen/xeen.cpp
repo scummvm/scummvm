@@ -184,7 +184,7 @@ int XeenEngine::getRandomNumber(int minNumber, int maxNumber) {
 	return getRandomNumber(maxNumber - minNumber) + minNumber;
 }
 
-Common::Error XeenEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error XeenEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	return _saves->saveGameState(slot, desc);
 }
 

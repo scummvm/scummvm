@@ -322,7 +322,7 @@ Common::Error WintermuteEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error WintermuteEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error WintermuteEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	BaseEngine::instance().getGameRef()->saveGame(slot, desc.c_str(), false);
 	return Common::kNoError;
 }

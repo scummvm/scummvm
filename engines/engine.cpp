@@ -662,10 +662,6 @@ bool Engine::canLoadGameStateCurrently() {
 	return false;
 }
 
-Common::Error Engine::saveGameState(int slot, const Common::String &desc) {
-	return saveGameState(slot, desc, false);
-}
-
 Common::Error Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(getSaveStateName(slot));
 

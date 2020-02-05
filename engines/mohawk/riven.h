@@ -104,7 +104,7 @@ public:
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool hasFeature(EngineFeature f) const override;
 	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
 
@@ -168,7 +168,6 @@ public:
 	void runSaveDialog();
 	void tryAutoSaving();
 	void loadGameStateAndDisplayError(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc, bool autosave) override;
 	void saveGameStateAndDisplayError(int slot, const Common::String &desc);
 
 	/**

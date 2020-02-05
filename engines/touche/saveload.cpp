@@ -319,7 +319,7 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	debug(0, "Loaded state, current episode %d", _currentEpisodeNum);
 }
 
-Common::Error ToucheEngine::saveGameState(int num, const Common::String &description) {
+Common::Error ToucheEngine::saveGameState(int num, const Common::String &description, bool isAutosave) {
 	bool saveOk = false;
 	Common::String gameStateFileName = generateGameStateFileName(_targetName.c_str(), num);
 	Common::OutSaveFile *f = _saveFileMan->openForSaving(gameStateFileName);

@@ -317,7 +317,7 @@ public:
 		return _shouldQuit;
 	}
 
-	Common::Error saveGameState(int slot, const Common::String &desc) override {
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override {
 		return (saveGame(slot, desc) ? Common::kNoError : Common::kWritingFailed);
 	}
 

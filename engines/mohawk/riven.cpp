@@ -723,18 +723,14 @@ void MohawkEngine_Riven::loadGameStateAndDisplayError(int slot) {
 	}
 }
 
-Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {
-	return saveGameState(slot, desc, false);
-}
-
-Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc, bool autosave) {
+Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	if (_menuSavedStack != -1) {
 		_vars["CurrentStackID"] = _menuSavedStack;
 		_vars["CurrentCardID"] = _menuSavedCard;
 	}
 
 	const Graphics::Surface *thumbnail = _menuSavedStack != -1 ? _menuThumbnail.get() : nullptr;
-	Common::Error error = _saveLoad->saveGame(slot, desc, thumbnail, autosave);
+	Common::Error error = _saveLoad->saveGame(slot, desc, thumbnail, isAutosave);
 
 	if (_menuSavedStack != -1) {
 		_vars["CurrentStackID"] = 1;

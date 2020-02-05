@@ -228,7 +228,7 @@ Common::Error GlkEngine::loadGameState(int slot) {
 	return errCode;
 }
 
-Common::Error GlkEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error GlkEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::String msg;
 	FileReference ref(slot, desc, fileusage_BinaryMode | fileusage_SavedGame);
 

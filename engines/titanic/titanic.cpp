@@ -231,7 +231,7 @@ Common::Error TitanicEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error TitanicEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error TitanicEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	_window->_project->saveGame(slot, desc);
 	return Common::kNoError;
 }

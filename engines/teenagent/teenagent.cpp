@@ -263,7 +263,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error TeenAgentEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error TeenAgentEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	debug(0, "saving to slot %d", slot);
 	Common::ScopedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(Common::String::format("teenagent.%02d", slot)));
 	if (!out)

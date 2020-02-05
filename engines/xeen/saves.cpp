@@ -115,7 +115,7 @@ void SavesManager::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHea
 	out->writeUint32LE(events.playTime());
 }
 
-Common::Error SavesManager::saveGameState(int slot, const Common::String &desc) {
+Common::Error SavesManager::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
 		generateSaveName(slot));
 	if (!out)

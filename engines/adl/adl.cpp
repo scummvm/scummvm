@@ -924,7 +924,7 @@ void AdlEngine::saveState(Common::WriteStream &stream) {
 		stream.writeByte(_state.vars[i]);
 }
 
-Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::String fileName = Common::String::format("%s.s%02d", _targetName.c_str(), slot);
 	Common::OutSaveFile *outFile = getSaveFileManager()->openForSaving(fileName);
 

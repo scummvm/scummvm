@@ -147,7 +147,7 @@ bool MutationOfJBEngine::canSaveGameStateCurrently() {
 	return _game->loadSaveAllowed();
 }
 
-Common::Error MutationOfJBEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error MutationOfJBEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	const Common::String saveName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
 	Common::OutSaveFile *const saveFile = g_system->getSavefileManager()->openForSaving(saveName);
 	if (!saveFile)

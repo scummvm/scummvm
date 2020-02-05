@@ -195,7 +195,7 @@ public:
 		_changeLevel = true;
 	}
 
-	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;

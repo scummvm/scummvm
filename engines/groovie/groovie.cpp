@@ -391,7 +391,7 @@ Common::Error GroovieEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-Common::Error GroovieEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error GroovieEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	_script->directGameSave(slot,desc);
 
 	// TODO: Use specific error codes
