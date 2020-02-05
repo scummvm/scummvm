@@ -333,8 +333,8 @@ public:
 	GriffonEngine(OSystem *syst);
 	~GriffonEngine();
 
-	virtual Common::Error run();
-	virtual void syncSoundSettings();
+	virtual Common::Error run() override;
+	virtual void syncSoundSettings() override;
 
 private:
 	Common::RandomSource *_rnd;
@@ -433,8 +433,8 @@ private:
 	void setupAudio();
 	void updateMusic();
 
-	virtual bool canLoadGameStateCurrently() { return true; }
-	virtual bool canSaveGameStateCurrently() { return _gameMode == kGameModePlay; }
+	virtual bool canLoadGameStateCurrently() override { return true; }
+	virtual bool canSaveGameStateCurrently() override { return _gameMode == kGameModePlay; }
 	virtual bool hasFeature(EngineFeature f) const override;
 
 private:
