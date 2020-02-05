@@ -120,29 +120,29 @@ public:
 		_flags = kADFlagUseExtraAsHint;
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "lab";
 	}
 
-	virtual const char *getName() const {
+	virtual const char *getName() const override {
 		return "Labyrinth of Time";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	virtual const char *getOriginalCopyright() const override {
 		return "Labyrinth of Time (C) 2004 The Wyrmkeep Entertainment Co. and Terra Nova Development";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		// Instantiate Engine even if the game data is not found.
 		*engine = new Lab::LabEngine(syst, desc);
 		return true;
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const override;
-	SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	SaveStateList listSaves(const char *target) const override;
+	virtual int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool LabMetaEngine::hasFeature(MetaEngineFeature f) const {
