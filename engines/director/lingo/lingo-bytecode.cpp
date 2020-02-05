@@ -259,6 +259,28 @@ void LC::cb_v4assign() {
 			LC::c_assign();
 		}
 		break;
+	case 0x26:
+		// put value after field textVar
+		{
+			LB::b_field(1);
+			Datum field = g_lingo->pop();
+			g_lingo->push(field);
+			LC::c_after();
+			g_lingo->push(field);
+			LC::c_assign();
+		}
+		break;
+	case 0x36:
+		// put value before field textVar
+		{
+			LB::b_field(1);
+			Datum field = g_lingo->pop();
+			g_lingo->push(field);
+			LC::c_before();
+			g_lingo->push(field);
+			LC::c_assign();
+		}
+		break;
 	default:
 		warning("cb_v4assign: unknown operator %d", op);
 		break;

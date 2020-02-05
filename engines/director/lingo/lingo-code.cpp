@@ -566,17 +566,7 @@ void LC::c_ampersand() {
 }
 
 void LC::c_after() {
-	Datum d2 = g_lingo->pop();
-	Datum d1 = g_lingo->pop();
-
-	d1.toString();
-	d2.toString();
-
-	warning("STUB: c_after");
-
-	delete d2.u.s;
-
-	g_lingo->push(d1);
+	LC::c_ampersand();
 }
 
 void LC::c_before() {
@@ -586,7 +576,7 @@ void LC::c_before() {
 	d1.toString();
 	d2.toString();
 
-	warning("STUB: c_before");
+	*d1.u.s = *d2.u.s + *d1.u.s;
 
 	delete d2.u.s;
 
