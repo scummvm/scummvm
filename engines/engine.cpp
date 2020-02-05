@@ -489,12 +489,16 @@ void Engine::handleAutoSave() {
 
 	if (_autosaveInterval != 0 && diff > (_autosaveInterval * 1000)) {
 		// Save the autosave
-		if (canSaveAutosaveCurrently())
-			saveGameState(getAutosaveSlot(), _("Autosave"), true);
-
-		// Reset the last autosave time
-		_lastAutosaveTime = _system->getMillis();
+		saveAutosaveIfEnabled();
 	}
+}
+
+void Engine::saveAutosaveIfEnabled() {
+	if (_autosaveInterval != 0 && canSaveAutosaveCurrently())
+		saveGameState(getAutosaveSlot(), _("Autosave"), true);
+
+	// Reset the last autosave time
+	_lastAutosaveTime = _system->getMillis();
 }
 
 void Engine::errorString(const char *buf1, char *buf2, int size) {
@@ -645,6 +649,9 @@ void Engine::flipMute() {
 }
 
 Common::Error Engine::loadGameState(int slot) {
+	// In case autosaves are on, do a save first before loading the new save
+	saveAutosaveIfEnabled();
+
 	Common::InSaveFile *saveFile = _saveFileMan->openForLoading(getSaveStateName(slot));
 
 	if (!saveFile)

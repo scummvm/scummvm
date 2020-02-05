@@ -386,6 +386,11 @@ public:
 	void handleAutoSave();
 
 	/**
+	 * Does an autosave immediately if autosaves are turned on
+	 */
+	void saveAutosaveIfEnabled();
+
+	/**
 	 * Indicates whether an autosave can currently be saved.
 	 */
 	virtual bool canSaveAutosaveCurrently() {
