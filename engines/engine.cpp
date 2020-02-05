@@ -693,8 +693,7 @@ bool Engine::canSaveGameStateCurrently() {
 
 bool Engine::loadGameDialog() {
 	if (!canLoadGameStateCurrently()) {
-		GUI::MessageDialog dialog(_("Loading game is currently unavailable"));
-		dialog.runModal();
+		g_system->displayMessageOnOSD(_("Loading game is currently unavailable"));
 		return false;
 	}
 
@@ -712,8 +711,7 @@ bool Engine::loadGameDialog() {
 
 bool Engine::saveGameDialog() {
 	if (!canSaveGameStateCurrently()) {
-		GUI::MessageDialog dialog(_("Saving game is currently unavailable"));
-		dialog.runModal();
+		g_system->displayMessageOnOSD(_("Saving game is currently unavailable"));
 		return false;
 	}
 
