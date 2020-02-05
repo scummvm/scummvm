@@ -77,7 +77,7 @@ private:
 	Sword25Console *_console;
 
 protected:
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 // 	void pauseEngineIntern(bool pause);	// TODO: Implement this!!!
 // 	void syncSoundSettings();	// TODO: Implement this!!!
@@ -86,7 +86,7 @@ protected:
 // 	bool canLoadGameStateCurrently();	// TODO: Implement this?
 // 	bool canSaveGameStateCurrently();	// TODO: Implement this?
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	void shutdown();
 
