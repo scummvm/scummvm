@@ -222,7 +222,7 @@ struct GnapSavegameHeader {
 
 class GnapEngine : public Engine {
 protected:
-	Common::Error run();
+	Common::Error run() override;
 	virtual bool hasFeature(EngineFeature f) const override;
 public:
 	GnapEngine(OSystem *syst, const ADGameDescription *gd);
@@ -315,8 +315,8 @@ public:
 
 	int readSavegameDescription(int savegameNum, Common::String &description);
 	int loadSavegame(int savegameNum);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error loadGameState(int slot) override;
 	Common::String generateSaveName(int slot);
 	void synchronize(Common::Serializer &s);
 	void writeSavegameHeader(Common::OutSaveFile *out, GnapSavegameHeader &header);
