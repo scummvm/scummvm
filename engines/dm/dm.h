@@ -225,19 +225,19 @@ public:
 	~DMEngine();
 	virtual bool hasFeature(EngineFeature f) const override;
 
-	virtual Common::Error loadGameState(int slot);
-	virtual bool canLoadGameStateCurrently();
+	virtual Common::Error loadGameState(int slot) override;
+	virtual bool canLoadGameStateCurrently() override;
 
 	bool isDemo() const;
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	void delay(uint16 verticalBlank); // @ F0022_MAIN_Delay
 	uint16 getScaledProduct(uint16 val, uint16 scale, uint16 vale2); // @ F0030_MAIN_GetScaledProduct
 	uint16 getRandomNumber(uint32 max) { return _rnd->getRandomNumber(max - 1); }
 	int16 ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
 	int16 indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
-	virtual Common::Error run(); // @ main
+	virtual Common::Error run() override; // @ main
 	void saveGame(); // @ F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF
 	LoadgameResult loadgame(int16 slot); // @ F0435_STARTEND_LoadGame_CPSF
 	void endGame(bool doNotDrawCreditsOnly); // @ F0444_STARTEND_Endgame
