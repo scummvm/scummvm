@@ -111,7 +111,13 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 		return false;
 	}
 
-	header._name = s.readStringSz(kNameLength);
+	if (header._version < 3) {
+		// this includes versions 0 and 1 here (even though they are non-existent)
+		header._name = s.readStringSz(kNameLengthV2);
+	} else {
+		// Version 3
+		header._name = s.readStringSz(kNameLength);
+	}
 
 	header._year   = s.readUint16LE();
 	header._month  = s.readUint16LE();

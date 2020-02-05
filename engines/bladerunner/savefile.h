@@ -60,10 +60,15 @@ struct SaveFileHeader {
 class SaveFileManager {
 private:
 	static const uint32 kTag = MKTAG('B', 'R', 'S', 'V');
-	static const uint32 kVersion = 2;
+	static const uint32 kVersion = 3; // kVersion: 3 as of Feb 5th 2020 (UTC) - ScummVM development version 2.2.0git
 
 public:
-	static const uint32 kNameLength = 32;
+	// kVersion
+	// ----------
+	//        2:: max of 32 characters for the saved game name
+	//        3:: max of 41 characters for the saved game name (this matches the original game's setting)
+	static const uint32 kNameLengthV2  = 32;
+	static const uint32 kNameLength    = 41;
 	static const uint32 kThumbnailSize = 9600; // 80x60x16bpp
 
 	static SaveStateList list(const Common::String &target);
