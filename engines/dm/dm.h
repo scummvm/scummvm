@@ -223,7 +223,7 @@ private:
 public:
 	explicit DMEngine(OSystem *syst, const DMADGameDescription *gameDesc);
 	~DMEngine();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	virtual Common::Error loadGameState(int slot);
 	virtual bool canLoadGameStateCurrently();

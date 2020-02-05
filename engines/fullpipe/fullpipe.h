@@ -365,7 +365,7 @@ public:
 
 	virtual bool canLoadGameStateCurrently() { return true; }
 	virtual bool canSaveGameStateCurrently() { return _isSaveAllowed; }
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 };
 

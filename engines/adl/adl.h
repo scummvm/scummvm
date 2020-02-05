@@ -446,7 +446,7 @@ private:
 	Common::String getScriptLine() const;
 	// Engine
 	Common::Error run();
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently();
 
 	// Text input

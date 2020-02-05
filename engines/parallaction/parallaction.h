@@ -271,7 +271,7 @@ public:
 		return go();
 	}
 
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 	virtual void pauseEngineIntern(bool pause);
 	virtual GUI::Debugger *getDebugger();
 

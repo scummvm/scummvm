@@ -78,7 +78,7 @@ private:
 
 protected:
 	virtual Common::Error run();
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 // 	void pauseEngineIntern(bool pause);	// TODO: Implement this!!!
 // 	void syncSoundSettings();	// TODO: Implement this!!!
 // 	Common::Error loadGameState(int slot);	// TODO: Implement this?

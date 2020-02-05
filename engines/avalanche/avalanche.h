@@ -106,7 +106,7 @@ public:
 	uint32 getFeatures() const;
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 	const char *getCopyrightString() const;
 
 	void synchronize(Common::Serializer &sz);

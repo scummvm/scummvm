@@ -192,7 +192,7 @@ public:
 	MacVentureEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~MacVentureEngine();
 
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	virtual Common::Error run();
 

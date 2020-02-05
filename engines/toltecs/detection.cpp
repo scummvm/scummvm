@@ -248,7 +248,7 @@ public:
 		return "3 Skulls of the Toltecs (C) Revistronic 1996";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	SaveStateList listSaves(const char *target) const;

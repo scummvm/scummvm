@@ -99,7 +99,7 @@ public:
 			return err;
 		return go();
 	}
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 	virtual void syncSoundSettings();
 	virtual void pauseEngineIntern(bool pause);
 

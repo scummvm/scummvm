@@ -71,7 +71,7 @@ class LastExpressEngine : public Engine {
 protected:
 	// Engine APIs
 	Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 	virtual Debugger *getDebugger() { return _debugger; }
 
 public:

@@ -138,7 +138,7 @@ public:
 		return true;
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	void removeSaveState(const char *target, int slot) const;

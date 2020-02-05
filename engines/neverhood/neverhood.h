@@ -73,7 +73,7 @@ public:
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 	Common::Language getLanguage() const;
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 	bool isDemo() const;
 	bool applyResourceFixes() const;
 	Common::String getTargetName() { return _targetName; };

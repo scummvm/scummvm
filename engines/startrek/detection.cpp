@@ -334,7 +334,7 @@ public:
 		return "Star Trek: 25th Anniversary, Star Trek: Judgment Rites (C) Interplay";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 
 	virtual SaveStateList listSaves(const char *target) const;

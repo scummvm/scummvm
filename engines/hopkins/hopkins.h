@@ -129,7 +129,7 @@ private:
 protected:
 	// Engine APIs
 	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	GUI::Debugger *getDebugger() { return _debug; }
 

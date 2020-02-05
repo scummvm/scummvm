@@ -223,7 +223,7 @@ struct GnapSavegameHeader {
 class GnapEngine : public Engine {
 protected:
 	Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 public:
 	GnapEngine(OSystem *syst, const ADGameDescription *gd);
 	~GnapEngine();

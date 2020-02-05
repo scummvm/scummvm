@@ -163,7 +163,7 @@ protected:
 	// Engine APIs
 	virtual void initializePath(const Common::FSNode &gamePath);
 	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 	Common::Error loadGameState(int slot);
 #if 0
 	Common::Error saveGameState(int slot, const Common::String &desc);

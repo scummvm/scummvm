@@ -103,7 +103,7 @@ public:
 	ToltecsEngine(OSystem *syst, const ToltecsGameDescription *gameDesc);
 	virtual ~ToltecsEngine();
 
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	Common::RandomSource *_rnd;
 	const ToltecsGameDescription *_gameDescription;

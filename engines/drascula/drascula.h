@@ -324,7 +324,7 @@ protected:
 public:
 	DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc);
 	virtual ~DrasculaEngine();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	virtual void syncSoundSettings();
 

@@ -430,7 +430,7 @@ public:
 	}
 	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size);
 	virtual GUI::Debugger *getDebugger();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 	virtual void syncSoundSettings();
 
 	virtual Common::Error loadGameState(int slot);

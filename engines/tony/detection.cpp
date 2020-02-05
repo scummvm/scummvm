@@ -83,7 +83,7 @@ public:
 		return "Tony Tough and the Night of Roasted Moths (C) Protonic Interactive";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;

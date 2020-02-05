@@ -281,7 +281,7 @@ public:
 
 	bool scummVMSaveLoadDialog(bool isSave);
 
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 	virtual void pauseEngineIntern(bool pause);
 	virtual bool canSaveGameStateCurrently();
 	virtual bool canLoadGameStateCurrently();

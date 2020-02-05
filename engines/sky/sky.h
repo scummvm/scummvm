@@ -108,7 +108,7 @@ protected:
 		return go();
 	}
 	virtual GUI::Debugger *getDebugger();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	byte _fastMode;
 

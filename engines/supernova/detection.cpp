@@ -114,7 +114,7 @@ public:
 		return "Mission Supernova (C) 1994 Thomas and Steffen Dingel";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual void removeSaveState(const char *target, int slot) const;

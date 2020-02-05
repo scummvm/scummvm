@@ -91,7 +91,7 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual bool canLoadGameStateCurrently() { return true; }
 	virtual bool canSaveGameStateCurrently() { return !_sceneBusy; }
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	GUI::Debugger *getDebugger() { return console; }
 

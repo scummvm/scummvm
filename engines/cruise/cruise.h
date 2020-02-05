@@ -80,7 +80,7 @@ protected:
 public:
 	CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc);
 	virtual ~ CruiseEngine();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	int getGameType() const;
 	const char *getGameId() const;

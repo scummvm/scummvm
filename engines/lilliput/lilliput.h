@@ -323,7 +323,7 @@ public:
 	GameType getGameType() const;
 	Common::Platform getPlatform() const;
 
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 	const char *getCopyrightString() const;
 
 	Common::String getSavegameFilename(int slot);

@@ -92,7 +92,7 @@ public:
 	}
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;

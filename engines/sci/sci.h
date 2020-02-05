@@ -255,7 +255,7 @@ public:
 
 	// Engine APIs
 	virtual Common::Error run();
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 	void pauseEngineIntern(bool pause);
 	virtual GUI::Debugger *getDebugger();
 	Console *getSciDebugger();

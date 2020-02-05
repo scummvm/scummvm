@@ -435,7 +435,7 @@ private:
 
 	virtual bool canLoadGameStateCurrently() { return true; }
 	virtual bool canSaveGameStateCurrently() { return _gameMode == kGameModePlay; }
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 private:
 	Graphics::TransparentSurface *_video, *_videoBuffer, *_videoBuffer2, *_videoBuffer3;

@@ -124,7 +124,7 @@ public:
 		return "Inherit the Earth (C) Wyrmkeep Entertainment";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
 		return AdvancedMetaEngine::createInstance(syst, engine);

@@ -96,7 +96,7 @@ private:
 protected:
 	// Engine APIs
 	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 public:
 	LPCUSTOMFUNCTION _funcList[300];
 	Common::String _funcListStrings[300];

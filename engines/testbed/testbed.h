@@ -52,7 +52,7 @@ public:
 	 */
 	void invokeTestsuites(TestbedConfigManager &cfMan);
 
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 
 private:
 	Common::Array<Testsuite *> _testsuiteList;

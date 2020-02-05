@@ -109,7 +109,7 @@ public:
 	Common::String getCurrentPath() const { return _currentPath; }
 	void setPalette(int id);
 	void setPalette(byte *palette, uint16 count);
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 	void loadPalettes();
 	const byte *getPalette() const { return _currentPalette; }
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }

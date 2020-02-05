@@ -132,7 +132,7 @@ private:
 
 	// Engine APIs
 	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	/**
 	 * Outer gameplay loop responsible for dispatching control to game-specific

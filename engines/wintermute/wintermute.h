@@ -62,7 +62,7 @@ public:
 	void trigDebugger() { _trigDebug = true; }
 
 	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
 	virtual Common::Error loadGameState(int slot);
 	virtual bool canLoadGameStateCurrently();

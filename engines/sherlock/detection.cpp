@@ -171,7 +171,7 @@ public:
 	/**
 	 * Returns a list of features the game's MetaEngine support
 	 */
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 
 	/**
 	 * Return a list of savegames

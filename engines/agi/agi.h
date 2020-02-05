@@ -720,7 +720,7 @@ protected:
 			return err;
 		return go();
 	}
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	virtual void initialize() = 0;
 

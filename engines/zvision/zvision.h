@@ -240,7 +240,7 @@ public:
 	bool ifQuit();
 
 	// Engine features
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 	Common::Error loadGameState(int slot);

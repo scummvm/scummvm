@@ -181,7 +181,7 @@ public:
 		return "Hyperspace Delivery Boy! (C) 2001 Monkeystone Games";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 	virtual SaveStateList listSaves(const char *target) const;

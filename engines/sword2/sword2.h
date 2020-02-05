@@ -144,7 +144,7 @@ protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual GUI::Debugger *getDebugger();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 	virtual void syncSoundSettings();
 	virtual void pauseEngineIntern(bool pause);
 

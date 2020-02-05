@@ -100,7 +100,7 @@ protected:
 	// Engine APIs
 	Common::Error run();
 
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();

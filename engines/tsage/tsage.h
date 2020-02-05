@@ -65,7 +65,7 @@ private:
 public:
 	TSageEngine(OSystem *system, const tSageGameDescription *gameDesc);
 	~TSageEngine();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	MemoryManager _memoryManager;
 	Debugger *_debugger;

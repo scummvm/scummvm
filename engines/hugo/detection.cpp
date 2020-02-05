@@ -149,7 +149,7 @@ public:
 	}
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
-	bool hasFeature(MetaEngineFeature f) const;
+	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const;
 	SaveStateList listSaves(const char *target) const;

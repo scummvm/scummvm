@@ -81,7 +81,7 @@ public:
 	IllusionsEngine_Duckman(OSystem *syst, const IllusionsGameDescription *gd);
 protected:
 	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 public:
 
 	uint32 _prevSceneId;

@@ -63,7 +63,7 @@ public:
 	IllusionsEngine_BBDOU(OSystem *syst, const IllusionsGameDescription *gd);
 protected:
 	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 public:
 	ScriptMan *_scriptMan;
 	TriggerFunctions *_triggerFunctions;

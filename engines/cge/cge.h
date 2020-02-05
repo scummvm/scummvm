@@ -137,7 +137,7 @@ private:
 public:
 	CGEEngine(OSystem *syst, const ADGameDescription *gameDescription);
 	~CGEEngine();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();
 	virtual Common::Error loadGameState(int slot);

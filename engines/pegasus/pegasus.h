@@ -77,7 +77,7 @@ public:
 
 	// Engine stuff
 	const PegasusGameDescription *_gameDescription;
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 	GUI::Debugger *getDebugger();
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();

@@ -78,7 +78,7 @@ public:
 	MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc);
 	virtual ~MadeEngine();
 
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 	virtual void syncSoundSettings();
 
 	virtual GUI::Debugger *getDebugger();

@@ -69,7 +69,7 @@ public:
 	virtual bool canLoadGameStateCurrently();
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual bool canSaveGameStateCurrently();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 	virtual void pauseEngineIntern(bool pause);
 
 	GameManager *_gm;

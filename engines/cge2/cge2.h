@@ -156,7 +156,7 @@ private:
 	void resetGame();
 public:
 	CGE2Engine(OSystem *syst, const ADGameDescription *gameDescription);
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 	virtual bool canSaveGameStateCurrently();
 	virtual bool canLoadGameStateCurrently();
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);

@@ -103,7 +103,7 @@ protected:
 	/**
 	 * Returns a list of features the game itself supports
 	 */
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	/**
 	 * Load game configuration esttings

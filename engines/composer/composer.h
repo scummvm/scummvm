@@ -175,7 +175,7 @@ public:
 	ComposerEngine(OSystem *syst, const ComposerGameDescription *gameDesc);
 	virtual ~ComposerEngine();
 
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	int getGameType() const;
 	const char *getGameId() const;

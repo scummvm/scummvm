@@ -107,7 +107,7 @@ protected:
 	// Engine APIs
 	virtual void initializePath(const Common::FSNode &gamePath);
 	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 public:
 	Debugger *_debugger;
 	Events *_events;

@@ -467,7 +467,7 @@ class SagaEngine : public Engine {
 public:
 	// Engine APIs
 	virtual Common::Error run();
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 	void syncSoundSettings();
 	void pauseEngineIntern(bool pause);
 

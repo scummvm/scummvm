@@ -116,7 +116,7 @@ public:
 	WageEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~WageEngine();
 
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	virtual Common::Error run();
 

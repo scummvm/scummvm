@@ -259,7 +259,7 @@ public:
 		return "Lure of the Temptress (C) Revolution";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;

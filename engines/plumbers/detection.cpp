@@ -85,7 +85,7 @@ public:
 		return "Plumbers Don't Wear Ties (C) 1993-94 Kirin Entertainment";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 

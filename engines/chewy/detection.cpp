@@ -129,7 +129,7 @@ public:
 		return "Chewy: Esc from F5 (C) 1995 New Generation Software";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;

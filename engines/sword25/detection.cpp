@@ -70,7 +70,7 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual int getMaximumSaveSlot() const { return Sword25::PersistenceService::getSlotCount(); }
 	virtual SaveStateList listSaves(const char *target) const;

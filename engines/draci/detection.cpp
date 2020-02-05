@@ -98,7 +98,7 @@ public:
 		return "Draci Historie (C) 1995 NoSense";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	virtual int getMaximumSaveSlot() const { return 99; }
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual void removeSaveState(const char *target, int slot) const;

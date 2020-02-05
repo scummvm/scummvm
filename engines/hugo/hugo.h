@@ -287,7 +287,7 @@ public:
 	void setMaxScore(const int newScore);
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	Common::Error loadGameState(int slot);
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 	const char *getCopyrightString() const;
 
 	Common::String getSavegameFilename(int slot);

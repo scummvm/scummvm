@@ -449,7 +449,7 @@ public:
 	virtual ~TuckerEngine();
 
 	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 	GUI::Debugger *getDebugger() { return _console; }
 
 	WARN_UNUSED_RESULT static SavegameError readSavegameHeader(Common::InSaveFile *file, SavegameHeader &header, bool skipThumbnail = true);

@@ -439,7 +439,7 @@ public:
 
 	MortevielleEngine(OSystem *system, const MortevielleGameDescription *gameDesc);
 	~MortevielleEngine();
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();
 	virtual Common::Error loadGameState(int slot);
