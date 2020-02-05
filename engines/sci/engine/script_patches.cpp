@@ -30,7 +30,12 @@
 #include "sci/engine/guest_additions.h"
 #endif
 
+#include "common/config-manager.h"
 #include "common/util.h"
+#include "common/translation.h"
+#include "common/system.h"
+#include "gui/message.h"
+
 
 namespace Sci {
 
@@ -18435,6 +18440,42 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, SciSpan<
 	}
 }
 
+
+// TODO: suggest automatic installation
+void ScriptPatcher::suggestDownloadGK2SubTitlesPatch() {
+	if (ConfMan.getBool("subtitles")) {
+
+		const char *altButton;
+		Common::String downloadMessage;
+
+		if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
+			altButton = _("Download patch");
+			downloadMessage = _("(or click 'Download patch' button. But note - it only downloads, you will have to continue from there)\n");
+		} else {
+			altButton = nullptr;
+			downloadMessage = "";
+		}
+
+		GUI::MessageDialog dialog(_("GK2 has a fan made subtitles, available thanks to the good persons at SierraHelp.\n\n"
+			"Installation:\n"
+			"- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip\n" +
+			downloadMessage +
+			"- extract zip file\n"
+			"- no need to run the .exe file\n"
+			"- extract the .exe file with a file archiver, like 7-zip\n"
+			"- create a PATCHES subdirectory inside your GK2 directory\n"
+			"- copy the content of GK2Subtitles\\SUBPATCH to the PATCHES subdirectory\n"
+			"- replace files with similar names\n"
+			"- restart the game\n"), _("OK"), altButton, Graphics::kTextAlignLeft);
+		int result = dialog.runModal();
+		if (!result) {
+			char url[] = "http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles.zip";
+			g_system->openUrl(url);
+		}
+
+	}
+}
+
 bool ScriptPatcher::verifySignature(uint32 byteOffset, const uint16 *signatureData, const char *signatureDescription, const SciSpan<const byte> &scriptData) {
 	uint16 sigSelector = 0;
 
@@ -18922,6 +18963,8 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 				// Enable subtitle compatibility if a sync resource is present
 				if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeSync, 10))) {
 					enablePatch(signatureTable, "subtitle patch compatibility");
+				} else {
+					suggestDownloadGK2SubTitlesPatch();
 				}
 				break;
 			case GID_KQ5:
