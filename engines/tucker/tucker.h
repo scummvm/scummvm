@@ -448,9 +448,9 @@ public:
 	TuckerEngine(OSystem *system, Common::Language language, uint32 flags);
 	virtual ~TuckerEngine();
 
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 	virtual bool hasFeature(EngineFeature f) const override;
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	WARN_UNUSED_RESULT static SavegameError readSavegameHeader(Common::InSaveFile *file, SavegameHeader &header, bool skipThumbnail = true);
 	WARN_UNUSED_RESULT static SavegameError readSavegameHeader(const char *target, int slot, SavegameHeader &header);
@@ -743,14 +743,14 @@ protected:
 	void updateSprite_locationNum82(int i);
 
 	template<class S> SavegameError saveOrLoadGameStateData(S &s);
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &description);
+	virtual Common::Error loadGameState(int slot) override;
+	virtual Common::Error saveGameState(int slot, const Common::String &description) override;
 	Common::Error writeSavegame(int slot, const Common::String &description, bool autosave = false);
 	SavegameError writeSavegameHeader(Common::OutSaveFile *file, SavegameHeader &header);
 	void writeAutosave();
 	bool canLoadOrSave() const;
-	virtual bool canLoadGameStateCurrently();
-	virtual bool canSaveGameStateCurrently();
+	virtual bool canLoadGameStateCurrently() override;
+	virtual bool canSaveGameStateCurrently() override;
 	virtual bool existsSavegame();
 
 	TuckerConsole *_console;
