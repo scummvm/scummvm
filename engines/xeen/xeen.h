@@ -131,7 +131,7 @@ private:
 	void loadSettings();
 
 	// Engine APIs
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 	virtual bool hasFeature(EngineFeature f) const override;
 
 	/**
@@ -259,27 +259,27 @@ public:
 	/**
 	 * Load a savegame
 	 */
-	virtual Common::Error loadGameState(int slot);
+	virtual Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Save the game
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	/**
 	 * Updates sound settings
 	 */
-	virtual void syncSoundSettings();
+	virtual void syncSoundSettings() override;
 
 	/**
 	 * Returns true if a savegame can currently be loaded
 	 */
-	virtual bool canLoadGameStateCurrently();
+	virtual bool canLoadGameStateCurrently() override;
 
 	/**
 	* Returns true if the game can currently be saved
 	*/
-	virtual bool canSaveGameStateCurrently();
+	virtual bool canSaveGameStateCurrently() override;
 
 	/**
 	 * Show a cutscene
