@@ -45,7 +45,7 @@ public:
 	TestbedEngine(OSystem *syst);
 	~TestbedEngine();
 
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 
 	/**
 	 * Invokes configured testsuites.
