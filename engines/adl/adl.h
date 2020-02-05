@@ -249,9 +249,9 @@ protected:
 	AdlEngine(OSystem *syst, const AdlGameDescription *gd);
 
 	// Engine
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool canSaveGameStateCurrently();
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canSaveGameStateCurrently() override;
 
 	Common::String getDiskImageName(byte volume) const { return Adl::getDiskImageName(*_gameDescription, volume); }
 	GameType getGameType() const { return Adl::getGameType(*_gameDescription); }
@@ -445,16 +445,16 @@ private:
 	void setScriptDelay(uint scriptDelay) const { _scriptDelay = scriptDelay; }
 	Common::String getScriptLine() const;
 	// Engine
-	Common::Error run();
+	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
-	bool canLoadGameStateCurrently();
+	bool canLoadGameStateCurrently() override;
 
 	// Text input
 	byte convertKey(uint16 ascii) const;
 	Common::String getWord(const Common::String &line, uint &index) const;
 
 	Console *_console;
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 	byte _saveVerb, _saveNoun, _restoreVerb, _restoreNoun;
 };
 
