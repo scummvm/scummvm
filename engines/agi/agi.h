@@ -713,7 +713,7 @@ protected:
 	// Engine API
 	Common::Error init();
 	virtual Common::Error go() = 0;
-	virtual Common::Error run() {
+	virtual Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
@@ -786,8 +786,8 @@ public:
 
 	const char *getDiskName(uint16 id);
 
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 
 	const byte *getFontData();
 
