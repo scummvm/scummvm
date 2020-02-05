@@ -69,6 +69,9 @@ public:
 		return true;
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const override {
+		return false;
+	}
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(TESTBED)
