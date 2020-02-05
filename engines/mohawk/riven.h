@@ -166,7 +166,7 @@ public:
 	// Save / Load
 	void runLoadDialog();
 	void runSaveDialog();
-	void tryAutoSaving();
+	virtual bool canSaveAutosaveCurrently() override;
 	void loadGameStateAndDisplayError(int slot);
 	void saveGameStateAndDisplayError(int slot, const Common::String &desc);
 

@@ -89,7 +89,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_currentCursor = 0;
 	_mainCursor = kDefaultMystCursor;
 	_showResourceRects = false;
-	_lastSaveTime = 0;
 
 	_sound = nullptr;
 	_video = nullptr;
@@ -560,10 +559,6 @@ void MohawkEngine_Myst::doFrame() {
 		_waitingOnBlockingOperation = false;
 	}
 
-	if (shouldPerformAutoSave(_lastSaveTime)) {
-		tryAutoSaving();
-	}
-
 	Common::Event event;
 	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -628,11 +623,6 @@ void MohawkEngine_Myst::doFrame() {
 			default:
 				break;
 			}
-			break;
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RTL:
-			// Attempt to autosave before exiting
-			tryAutoSaving();
 			break;
 		default:
 			break;
@@ -960,8 +950,6 @@ MystArea *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstStream
 }
 
 Common::Error MohawkEngine_Myst::loadGameState(int slot) {
-	tryAutoSaving();
-
 	if (_gameState->load(slot))
 		return Common::kNoError;
 
@@ -977,24 +965,8 @@ Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &d
 	return _gameState->save(slot, desc, thumbnail, false) ? Common::kNoError : Common::kUnknownError;
 }
 
-void MohawkEngine_Myst::tryAutoSaving() {
-	if (!canSaveGameStateCurrently()) {
-		return; // Can't save right now, try again on the next frame
-	}
-
-	_lastSaveTime = _system->getMillis();
-
-	if (!_gameState->isAutoSaveAllowed()) {
-		return; // Can't autosave ever, try again after the next autosave delay
-	}
-
-	const Graphics::Surface *thumbnail = nullptr;
-	if (_stack->getStackId() == kMenuStack) {
-		thumbnail = _gfx->getThumbnailForMainMenu();
-	}
-
-	if (!_gameState->save(MystGameState::kAutoSaveSlot, "Autosave", thumbnail, true))
-		warning("Attempt to autosave has failed.");
+bool MohawkEngine_Myst::canSaveAutosaveCurrently() {
+	return canSaveGameStateCurrently() && _gameState->isAutoSaveAllowed();
 }
 
 bool MohawkEngine_Myst::hasGameSaveSupport() const {
