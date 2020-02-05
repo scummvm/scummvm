@@ -452,30 +452,24 @@ void SpecialOpcodes::spcKnightPoolReflectionLogic() {
 }
 
 void SpecialOpcodes::spcWalkOnStilts() {
-	//TODO
-	ushort uVar1;
-	bool bVar2;
-	void *pvVar3;
-	uint actorId;
-	uint uVar4;
+	bool isInWater = false;
 
-	Actor *actor = _vm->_dragonINIResource->getRecord(0x2a0)->actor;
-	Actor *actor1 = _vm->_dragonINIResource->getRecord(0x2a9)->actor;
+	Actor *flickerOnStilts = _vm->_dragonINIResource->getRecord(0x2a0)->actor;
+	Actor *waterRipples = _vm->_dragonINIResource->getRecord(0x2a9)->actor;
 
-	actor->_walkSlopeX = actor->_walkSlopeX / 3;
-	actor->_walkSlopeY = actor->_walkSlopeY / 3;
-	bVar2 = false;
-	while (actor->isFlagSet(ACTOR_FLAG_10)) {
-		//pvVar3 = actor->frame_pointer_maybe;
-		if (actor->frame->field_c == 0) { //*(short *)((int)pvVar3 + 0xc) == 0) {
-			bVar2 = false;
+	flickerOnStilts->_walkSlopeX = flickerOnStilts->_walkSlopeX / 3;
+	flickerOnStilts->_walkSlopeY = flickerOnStilts->_walkSlopeY / 3;
+
+	while (flickerOnStilts->isFlagSet(ACTOR_FLAG_10)) {
+		if (flickerOnStilts->frame->field_c == 0) {
+			isInWater = false;
 		}
 		else {
-			if (((!bVar2) && (0x6a < actor->y_pos)) && (actor->y_pos < 0x96)) {
-				bVar2 = true;
-				actor1->x_pos = actor->x_pos - READ_LE_INT16(actor->frame->frameDataOffset); //*(short *)((int)pvVar3 + 0xe);
-				actor1->y_pos = actor->y_pos - READ_LE_INT16(actor->frame->frameDataOffset + 2); //*(short *)((int)pvVar3 + 0x10);
-				actor1->updateSequence(9);
+			if (!isInWater && flickerOnStilts->y_pos >= 0x6a && flickerOnStilts->y_pos < 0x96) {
+				isInWater = true;
+				waterRipples->x_pos = flickerOnStilts->x_pos - flickerOnStilts->frame->field_e;
+				waterRipples->y_pos = flickerOnStilts->y_pos - flickerOnStilts->frame->field_10;
+				waterRipples->updateSequence(9);
 			}
 		}
 		_vm->waitForFrames(1);
@@ -514,7 +508,7 @@ void SpecialOpcodes::spcStGeorgeDragonLanded() {
 	Actor *origActor = ini121->actor;
 	ini121->actor = _vm->_actorManager->loadActor(0x48, 4, ini121->actor->x_pos, ini121->actor->y_pos);
 	origActor->reset_maybe();
-//	reset_actor_maybe();
+//TODO	reset_actor_maybe();
 	ini121->actor->setFlag(ACTOR_FLAG_80);
 	ini121->actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	ini121->actor->priorityLayer = 2;
