@@ -98,7 +98,7 @@ protected:
 	// Engine APIs
 	Common::Error init();
 	Common::Error go();
-	virtual Common::Error run() {
+	virtual Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
@@ -106,14 +106,14 @@ protected:
 		return go();
 	}
 	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void syncSoundSettings();
+	virtual void syncSoundSettings() override;
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
-	Common::Error loadGameState(int slot);
-	bool canLoadGameStateCurrently();
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool canSaveGameStateCurrently();
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canSaveGameStateCurrently() override;
 
 private:
 	void delay(int32 amount);
