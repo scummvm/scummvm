@@ -273,7 +273,7 @@ enum Type {
 
 class PrinceEngine : public Engine {
 protected:
-	Common::Error run();
+	Common::Error run() override;
 
 public:
 	PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc);
@@ -282,11 +282,11 @@ public:
 	bool scummVMSaveLoadDialog(bool isSave);
 
 	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void pauseEngineIntern(bool pause);
-	virtual bool canSaveGameStateCurrently();
-	virtual bool canLoadGameStateCurrently();
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual Common::Error loadGameState(int slot);
+	virtual void pauseEngineIntern(bool pause) override;
+	virtual bool canSaveGameStateCurrently() override;
+	virtual bool canLoadGameStateCurrently() override;
+	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	virtual Common::Error loadGameState(int slot) override;
 
 	void playVideo(Common::String videoFilename);
 
@@ -340,7 +340,7 @@ public:
 
 	void setVoice(uint16 slot, uint32 sampleSlot, uint16 flag);
 
-	virtual GUI::Debugger *getDebugger();
+	virtual GUI::Debugger *getDebugger() override;
 
 	void changeCursor(uint16 curId);
 	void printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y);
