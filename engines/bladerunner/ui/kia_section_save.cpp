@@ -154,7 +154,7 @@ void KIASectionSave::draw(Graphics::Surface &surface) {
 
 		// Original game shows warnings/error here, but we don't have any
 
-		const char *textTypeName = _vm->_textOptions->getText(24); // Type a name ...
+		const char *textTypeName = _vm->_textOptions->getText(25); // Type a name ...
 		int textTypeNameWidth = _vm->_mainFont->getStringWidth(textTypeName);
 		_vm->_mainFont->drawString(&surface, textTypeName, 308 - textTypeNameWidth / 2, 352, surface.w, surface.format.RGBToColor(240, 232, 192));
 
