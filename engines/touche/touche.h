@@ -472,10 +472,10 @@ public:
 	virtual ~ToucheEngine();
 
 	// Engine APIs
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void syncSoundSettings();
-	GUI::Debugger *getDebugger() { return _console; }
+	virtual void syncSoundSettings() override;
+	GUI::Debugger *getDebugger() override { return _console; }
 
 protected:
 
@@ -605,10 +605,10 @@ protected:
 
 	void saveGameStateData(Common::WriteStream *stream);
 	void loadGameStateData(Common::ReadStream *stream);
-	virtual Common::Error saveGameState(int num, const Common::String &description);
-	virtual Common::Error loadGameState(int num);
-	virtual bool canLoadGameStateCurrently();
-	virtual bool canSaveGameStateCurrently();
+	virtual Common::Error saveGameState(int num, const Common::String &description) override;
+	virtual Common::Error loadGameState(int num) override;
+	virtual bool canLoadGameStateCurrently() override;
+	virtual bool canSaveGameStateCurrently() override;
 
 	ToucheConsole *_console;
 
