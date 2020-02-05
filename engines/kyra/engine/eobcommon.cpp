@@ -560,9 +560,6 @@ Common::Error EoBCoreEngine::init() {
 	memset(_monsterStoneOverlay, (_flags.platform == Common::kPlatformAmiga) ? guiSettings()->colors.guiColorWhite : 0x0D, 16 * sizeof(uint8));
 	_monsterFlashOverlay[0] = _monsterStoneOverlay[0] = 0;
 
-	// Prevent autosave on game startup
-	_lastAutosave = _system->getMillis();
-
 	return Common::kNoError;
 }
 
