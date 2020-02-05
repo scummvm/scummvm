@@ -249,7 +249,6 @@ void ScriptOpcodes::opUnk2(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(fieldE);
 
 	if (scriptOpCall._field8 == 2) {
-		//TODO do something here.
 		TalkDialogEntry *talkDialogEntry = new TalkDialogEntry();
 
 		talkDialogEntry->hasText = _vm->_talk->loadText(field2, (uint16 *)(&talkDialogEntry->dialogText[10]), 295);
@@ -438,7 +437,8 @@ void ScriptOpcodes::opUnk20(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
 	ARG_INT16(field2);
 
-	_vm->data_800633fc = 0;
+	_vm->_sound->PauseCDMusic();
+	_vm->data_800633fc = 1;
 
 	if (field2 >= 2) {
 		//TODO do we need this? It looks like it is pre-loading the next scene's data.
@@ -825,7 +825,6 @@ void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {
 
 	if (newSceneID != 0) {
 		// load scene here.
-		//TODO
 		_vm->_scene->data_80063392 = _vm->_scene->getSceneId();
 		_vm->_scene->setSceneId(newSceneID);
 		_vm->data_800633fa = field6;
@@ -853,7 +852,7 @@ void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 	uint16 dialog[2048];
 	dialog[0] = 0;
 
-	int sVar2 = -1; //TODO FUN_8001ca48(textIndex);
+	int sVar2 = -1; //TODO findTextToDtSpeechIndex(textIndex);
 
 	if (!_vm->isUnkFlagSet(1) && (!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED) || sVar2 == -1)) {
 		_vm->_talk->loadText(textIndex, dialog, 2048);
