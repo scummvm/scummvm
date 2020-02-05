@@ -118,10 +118,10 @@ public:
 
 	virtual bool hasFeature(EngineFeature f) const override;
 
-	virtual Common::Error run();
+	virtual Common::Error run() override;
 
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 
 	const char *getGameFile() const;
 	void processTurn(Common::String *textInput, Designed *clickInput);
@@ -212,8 +212,8 @@ public:
 	void redrawScene();
 	void saveGame();
 
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &description);
+	virtual Common::Error loadGameState(int slot) override;
+	virtual Common::Error saveGameState(int slot, const Common::String &description) override;
 	bool scummVMSaveLoadDialog(bool isSave);
 
 private:
@@ -229,7 +229,7 @@ private:
 
 public:
 
-	virtual GUI::Debugger *getDebugger() { return _debugger; }
+	virtual GUI::Debugger *getDebugger() override { return _debugger; }
 
 private:
 	Console *_console;
