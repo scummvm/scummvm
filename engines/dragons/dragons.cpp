@@ -133,53 +133,53 @@ void DragonsEngine::updateEvents() {
 				_rightMouseButtonUp = true;
 				break;
 			case Common::EVENT_KEYUP:
-				if (event.kbd.keycode == Common::KeyCode::KEYCODE_i) {
+				if (event.kbd.keycode == Common::KEYCODE_i) {
 					_iKeyUp = true;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_DOWN) {
+				} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
 					_downKeyUp = true;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_UP) {
+				} else if (event.kbd.keycode == Common::KEYCODE_UP) {
 					_upKeyUp = true;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_RETURN ||
-							event.kbd.keycode == Common::KeyCode::KEYCODE_KP_ENTER) {
+				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+							event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
 					_enterKeyUp = true;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_LEFT) {
+				} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
 					_leftKeyUp = true;
 					_leftKeyDown = false;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_RIGHT) {
+				} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
 					_rightKeyUp = true;
 					_rightKeyDown = false;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_w) {
+				} else if (event.kbd.keycode == Common::KEYCODE_w) {
 					_wKeyDown = false;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_a) {
+				} else if (event.kbd.keycode == Common::KEYCODE_a) {
 					_aKeyDown = false;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_s) {
+				} else if (event.kbd.keycode == Common::KEYCODE_s) {
 					_sKeyDown = false;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_d) {
+				} else if (event.kbd.keycode == Common::KEYCODE_d) {
 					_dKeyDown = false;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_o) {
+				} else if (event.kbd.keycode == Common::KEYCODE_o) {
 					_oKeyDown = false;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_p) {
+				} else if (event.kbd.keycode == Common::KEYCODE_p) {
 					_pKeyDown = false;
 				}
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KeyCode::KEYCODE_LEFT) {
+				if (event.kbd.keycode == Common::KEYCODE_LEFT) {
 					_leftKeyDown = true;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_RIGHT) {
+				} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
 					_rightKeyDown = true;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_w) {
+				} else if (event.kbd.keycode == Common::KEYCODE_w) {
 					_wKeyDown = true;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_a) {
+				} else if (event.kbd.keycode == Common::KEYCODE_a) {
 					_aKeyDown = true;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_s) {
+				} else if (event.kbd.keycode == Common::KEYCODE_s) {
 					_sKeyDown = true;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_d) {
+				} else if (event.kbd.keycode == Common::KEYCODE_d) {
 					_dKeyDown = true;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_o) {
+				} else if (event.kbd.keycode == Common::KEYCODE_o) {
 					_oKeyDown = true;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_p) {
+				} else if (event.kbd.keycode == Common::KEYCODE_p) {
 					_pKeyDown = true;
-				} else if (event.kbd.keycode == Common::KeyCode::KEYCODE_TAB) {
+				} else if (event.kbd.keycode == Common::KEYCODE_TAB) {
 					_debugMode = !_debugMode;
 				}
 				break;
@@ -191,7 +191,7 @@ void DragonsEngine::updateEvents() {
 
 Common::Error DragonsEngine::run() {
 	_screen = new Screen();
-	_bigfileArchive = new BigfileArchive("bigfile.dat", Common::Language::EN_ANY);
+	_bigfileArchive = new BigfileArchive("bigfile.dat", Common::EN_ANY);
 	_talk = new Talk(this, _bigfileArchive);
 	_dragonFLG = new DragonFLG(_bigfileArchive);
 	_dragonIMG = new DragonIMG(_bigfileArchive);
@@ -245,7 +245,7 @@ uint16 DragonsEngine::ipt_img_file_related()
 	int16 tileX = flicker->actor->x_pos / 32;
 	int16 tileY = flicker->actor->y_pos / 8;
 
-	for(int i=0;i < _dragonINIResource->totalRecords(); i++) {
+	for (int i=0;i < _dragonINIResource->totalRecords(); i++) {
 		ini = getINI(i);
 		if ((ini->sceneId == getCurrentSceneId()) && (ini->field_1a_flags_maybe == 0)) {
 			IMG *img = _dragonIMG->getIMG(ini->field_2);
@@ -273,7 +273,7 @@ void DragonsEngine::gameLoop()
 	setFlags(ENGINE_FLAG_8);
 	actorId = 0;
 
-	while(!shouldQuit()) {
+	while (!shouldQuit()) {
 		_scene->draw();
 		_screen->updateScreen();
 		wait();
@@ -318,7 +318,7 @@ void DragonsEngine::gameLoop()
 				byte *obd = _dragonOBD->getFromOpt(actorId_00 - 1);
 				ScriptOpCall scriptOpCall(obd + 8, READ_LE_UINT32(obd));
 
-				if(_scriptOpcodes->runScript4(scriptOpCall)) {
+				if (_scriptOpcodes->runScript4(scriptOpCall)) {
 					scriptOpCall._codeEnd = scriptOpCall._code + 4 + READ_LE_UINT16(scriptOpCall._code + 2);
 					scriptOpCall._code += 4;
 					_scriptOpcodes->runScript(scriptOpCall);
@@ -444,7 +444,7 @@ void DragonsEngine::gameLoop()
 									}
 								}
 								else {
-									if(_inventory->addItem(_cursor->iniItemInHand)) {
+									if (_inventory->addItem(_cursor->iniItemInHand)) {
 										_cursor->_sequenceID = 1;
 										waitForFrames(1);
 										_cursor->iniItemInHand = 0;
@@ -1273,7 +1273,7 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 
 	_inventory->loadInventoryItemsFromSave();
 
-	if(getINI(0)->sceneId == 0) {
+	if (getINI(0)->sceneId == 0) {
 		getINI(0)->sceneId = sceneId; //TODO
 	} else {
 		_scene->setSceneId(getINI(0)->sceneId);
@@ -1291,7 +1291,7 @@ void DragonsEngine::reset() {
 	videoFlags = 0;
 	data_800633fa = 0;
 
-	for(int i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		_paletteCyclingTbl[i].paletteType = 0;
 		_paletteCyclingTbl[i].startOffset = 0;
 		_paletteCyclingTbl[i].endOffset = 0;

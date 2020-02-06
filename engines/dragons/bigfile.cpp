@@ -610,7 +610,7 @@ FileInfo fileInfo[TOTAL_FILES] = {
 };
 
 uint32 getResourceId(const char *filename) {
-	for(uint32 i=0; i < TOTAL_FILES; i++) {
+	for (uint32 i=0; i < TOTAL_FILES; i++) {
 		if (scumm_stricmp(fileInfo[i].filename, filename) == 0) {
 			return i;
 		}

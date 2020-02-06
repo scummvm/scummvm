@@ -351,7 +351,7 @@ void Minigame3::run() {
 	tearBlinkActorTbl[0]->updateSequence(0);
 	tearBlinkActorTbl[1]->updateSequence(1);
 	local_1c2 = 0;
-	while( true ) {
+	while ( true ) {
 		_vm->waitForFrames(1);
 		switch(currentState) {
 			case 1:

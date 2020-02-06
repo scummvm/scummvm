@@ -327,7 +327,7 @@ void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
 	_vm->_cursor->_iniUnderCursor = field4;
 	_vm->_cursor->_sequenceID = 0;
 
-	for(int16 i = field2 >> 1; i != 0; i = i >> 1) {
+	for (int16 i = field2 >> 1; i != 0; i = i >> 1) {
 		_vm->_cursor->_sequenceID++;
 	}
 
@@ -472,7 +472,7 @@ bool ScriptOpcodes::evaluateExpression(ScriptOpCall &scriptOpCall) {
 	int16 t2 = 0;
 	int16 t0 = 0;
 
-	for(;;) {
+	for (;;) {
 		byte value = 0;
 		if (*codePtrOffsetA & 1) {
 			uint32 propId = READ_LE_UINT16(codePtrOffset2) * 8 + READ_LE_UINT16(codePtrOffsetA - 6);
@@ -625,7 +625,7 @@ void ScriptOpcodes::opUnkE(ScriptOpCall &scriptOpCall) {
 		bool isFlicker = _vm->_dragonINIResource->isFlicker(ini);
 		ini->actor->startWalk(point.x, point.y, isFlicker ? 0 : 1);
 
-		if(s3 == 0) {
+		if (s3 == 0) {
 			while (ini->actor->_flags & Dragons::ACTOR_FLAG_10) {
 				_vm->waitForFrames(1);
 			}
@@ -678,7 +678,7 @@ void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
 		bool isFlicker = _vm->_dragonINIResource->isFlicker(ini);
 		ini->actor->startWalk(field8, fieldA, isFlicker ? 0 : 1);
 
-		if(s3 == 0) {
+		if (s3 == 0) {
 			while (ini->actor->_flags & Dragons::ACTOR_FLAG_10) {
 				_vm->waitForFrames(1);
 			}

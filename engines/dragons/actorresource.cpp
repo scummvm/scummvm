@@ -110,7 +110,7 @@ Graphics::Surface *ActorResource::loadFrame(ActorFrame &actorFrame, byte *palett
 
 	byte *data = actorFrame.frameDataOffset;
 
-	while(blockSize > 0) {
+	while (blockSize > 0) {
 		int32 size = READ_BE_INT32(data);
 		data += 4;
 		if (size >= 0) {
@@ -131,7 +131,7 @@ Graphics::Surface *ActorResource::loadFrame(ActorFrame &actorFrame, byte *palett
 			}
 			blockSize -= size;
 			if (size != 0) {
-				for(int32 i = size; i != 0; i--) {
+				for (int32 i = size; i != 0; i--) {
 					memcpy(pixels, data, 4);
 					pixels += 4;
 				}

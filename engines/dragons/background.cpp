@@ -97,7 +97,7 @@ Background::Background() : _priorityLayer(0), _points2(0), _data(0) {
 }
 
 Background::~Background() {
-	if(_data) {
+	if (_data) {
 		delete _data;
 	}
 
@@ -125,7 +125,7 @@ bool Background::load(byte *dataStart, uint32 size) {
 	stream.seek(0x308);
 
 	uint32 tilemapOffset = 0x324;
-	for(int i=0;i< 3;i++) {
+	for (int i=0;i< 3;i++) {
 		_tileMap[i].w = stream.readUint16LE();
 		_tileMap[i].h = stream.readUint16LE();
 		_tileMap[i].size = stream.readUint32LE();
@@ -156,7 +156,7 @@ bool Background::load(byte *dataStart, uint32 size) {
 	debug("Tiles: %X", tilesOffset);
 	debug("tileIndexOffset: %d", _tileMap[0].tileIndexOffset);
 
-	for(int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		_layerSurface[i] = initGfxLayer(_tileMap[i]);
 		loadGfxLayer(_layerSurface[i], _tileMap[i], _tileDataOffset);
 	}
@@ -186,8 +186,8 @@ Graphics::Surface *Background::initGfxLayer(TileMap &tileMap) {
 }
 
 void Background::loadGfxLayer(Graphics::Surface *surface, TileMap &tileMap, byte *tiles) {
-	for(int y = 0; y < tileMap.h; y++) {
-		for(int x = 0; x < tileMap.w; x++) {
+	for (int y = 0; y < tileMap.h; y++) {
+		for (int x = 0; x < tileMap.w; x++) {
 			uint16 idx = READ_LE_UINT16(&tileMap.map[(y * tileMap.w + x) * 2]) + tileMap.tileIndexOffset;
 			//debug("tileIdx: %d", idx);
 			drawTileToSurface(surface, _palette, tiles + idx * 0x100, x * TILE_WIDTH, y * TILE_HEIGHT);
@@ -198,8 +198,8 @@ void Background::loadGfxLayer(Graphics::Surface *surface, TileMap &tileMap, byte
 void drawTileToSurface(Graphics::Surface *surface, byte *palette, byte *tile, uint32 x, uint32 y) {
 	byte *pixels = (byte *)surface->getPixels();
 	if (surface->format.bpp() == 16) {
-		for(int ty = 0; ty < TILE_HEIGHT; ty++) {
-			for(int tx = 0; tx < TILE_WIDTH; tx++) {
+		for (int ty = 0; ty < TILE_HEIGHT; ty++) {
+			for (int tx = 0; tx < TILE_WIDTH; tx++) {
 				uint32 cidx = *tile;
 				uint32 offset = (y + ty) * surface->pitch + (x + tx) * 2;
 				pixels[offset] = palette[cidx * 2];
@@ -239,8 +239,8 @@ int16 Background::getPriorityAtPoint(Common::Point pos) {
 }
 
 void Background::overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int16 w, int16 h) {
-	for(int i = 0; i < h; i++ ) {
-		for(int j = 0; j < w; j++ ) {
+	for (int i = 0; i < h; i++ ) {
+		for (int j = 0; j < w; j++ ) {
 			int16 idx = READ_LE_UINT16(data) + _tileMap[layerNum].tileIndexOffset;
 			drawTileToSurface(_layerSurface[layerNum],
 					_palette,
@@ -255,8 +255,8 @@ void Background::overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int
 void Background::restoreTiles(uint16 layerNum, int16 x, int16 y, int16 w, int16 h) {
 	int16 tmw = x + w;
 	int16 tmh = y + h;
-	for(int y = 0; y < tmh; y++) {
-		for(int x = 0; x < tmw; x++) {
+	for (int y = 0; y < tmh; y++) {
+		for (int x = 0; x < tmw; x++) {
 			uint16 idx = READ_LE_UINT16(&_tileMap[layerNum].map[(y * _tileMap[layerNum].w + x) * 2]) + _tileMap[layerNum].tileIndexOffset;
 			//debug("tileIdx: %d", idx);
 			drawTileToSurface(_layerSurface[layerNum], _palette, _tileDataOffset + idx * 0x100, x * TILE_WIDTH, y * TILE_HEIGHT);

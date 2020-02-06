@@ -641,7 +641,7 @@ void CutScene::knightsSavedBackAtCastle() {
 	//DisableVSyncEvent();
 //	file_read_to_buffer(s_cursor.act_80011c44,actor_dictionary);
 	//EnableVSyncEvent();
-	if(isFlag0x10Set) {
+	if (isFlag0x10Set) {
 		_vm->setFlags(ENGINE_FLAG_10);
 	}
 	_vm->clearFlags(ENGINE_FLAG_20000);
@@ -731,7 +731,7 @@ void CutScene::flameReturnsCutScene() {
 //	file_read_to_buffer(s_cursor.act_80011c44,actor_dictionary);
 //	EnableVSyncEvent();
 	_vm->clearFlags(ENGINE_FLAG_20000);
-	if(engineFlag10Set) {
+	if (engineFlag10Set) {
 		_vm->setFlags(ENGINE_FLAG_10);
 	}
 	_vm->_dragonINIResource->setFlickerRecord(uVar1);
@@ -811,7 +811,7 @@ void CutScene::knightsSavedAgain() {
 //	file_read_to_buffer(s_cursor.act_80011c44,actor_dictionary);
 //	EnableVSyncEvent();
 	_vm->clearFlags(ENGINE_FLAG_20000);
-	if(engineFlag10Set) {
+	if (engineFlag10Set) {
 		_vm->setFlags(ENGINE_FLAG_10);
 	}
 	_vm->_dragonINIResource->setFlickerRecord(flicker);

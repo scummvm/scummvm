@@ -40,7 +40,7 @@ void DragonINIResource::reset() {
 		_dragonINI = new DragonINI[_count];
 	}
 
-	for(int i=0; i < _count; i++) {
+	for (int i=0; i < _count; i++) {
 		_dragonINI[i].id = (uint16)i;
 		_dragonINI[i].iptIndex_maybe = readStream->readSint16LE();
 		_dragonINI[i].field_2 = readStream->readSint16LE();
