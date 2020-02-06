@@ -236,6 +236,7 @@ void DirectorEngine::loadMac(const Common::String movie) {
 
 		Common::SeekableReadStream *dataFork = _macBinary->getDataFork();
 		_mainArchive = new RIFXArchive();
+		_mainArchive->setFileName(movie);
 
 		// First we need to detect PPC vs. 68k
 

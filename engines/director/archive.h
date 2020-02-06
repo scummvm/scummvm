@@ -53,6 +53,7 @@ public:
 	virtual void close();
 
 	Common::String getFileName() const { return _fileName; }
+	void setFileName(const Common::String &name) { _fileName = name; }
 
 	bool isOpen() const { return _stream != 0; }
 

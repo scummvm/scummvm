@@ -49,12 +49,12 @@ bool Archive::openFile(const Common::String &fileName) {
 		return false;
 	}
 
+	_fileName = fileName;
+
 	if (!openStream(file)) {
 		close();
 		return false;
 	}
-
-	_fileName = fileName;
 
 	return true;
 }
@@ -460,6 +460,41 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 				 tag == MKTAG('L', 's', 'c', 'r'))
 			_types[tag][i] = res;
 	}
+
+	if (ConfMan.getBool("dump_scripts")) {
+		debug("Dumping %d resources", resources.size());
+
+		byte *data = nullptr;
+		int dataSize = 0;
+		Common::DumpFile out;
+
+		for (uint i = 0; i < resources.size(); i++) {
+			stream->seek(resources[i].offset);
+
+			uint32 len = resources[i].size;
+
+			if (dataSize < resources[i].size) {
+				free(data);
+				data = (byte *)malloc(resources[i].size);
+				dataSize = resources[i].size;
+			}
+
+			Common::String filename = Common::String::format("./dumps/%s-%s-%d", _fileName.c_str(), tag2str(resources[i].tag), i);
+			stream->read(data, len);
+
+			if (!out.open(filename)) {
+				warning("MacResManager::dumpRaw(): Can not open dump file %s", filename.c_str());
+				break;
+			}
+
+			out.write(data, len);
+
+			out.flush();
+			out.close();
+		}
+	}
+
+
 
 	// We need to have found the 'File' resource already
 	if (rifxType == MKTAG('A', 'P', 'P', 'L')) {
