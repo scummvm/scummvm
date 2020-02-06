@@ -132,11 +132,6 @@ public:
 	}
 
 	/**
-	 * Checks if an auto save should be done, and if so, takes care of it
-	 */
-	bool autoSaveCheck(int lastSaveTime) override;
-
-	/**
 	 * Returns a file system node for the game directory
 	 */
 	Common::FSNode getGameDirectory() const;

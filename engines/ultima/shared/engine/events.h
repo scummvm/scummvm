@@ -129,11 +129,6 @@ public:
 	 */
 	virtual ~EventsCallback() {}
 
-    /**
-     * Checks if an auto save should be done, and if so, takes care of it
-     */
-	virtual bool autoSaveCheck(int lastSaveTime) = 0;
-
 	/**
 	 * Get the screen
 	 */
@@ -149,7 +144,6 @@ private:
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
 	uint32 _priorFrameCounterTime;
-	uint32 _lastAutosaveTime;
 	uint32 _gameCounter;
 	uint32 _playTime;
 	Point _mousePos;
