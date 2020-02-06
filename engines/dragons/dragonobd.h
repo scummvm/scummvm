@@ -31,7 +31,7 @@ class BigfileArchive;
 class DragonOBD {
 private:
 	byte *_data;
-	uint32_t _dataSize;
+	uint32 _dataSize;
 	Common::SeekableReadStream *optReadStream;
 	Common::SeekableReadStream *sptReadStream;
 
