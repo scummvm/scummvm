@@ -74,15 +74,6 @@ void UltimaEngine::GUIError(const Common::String &msg) {
 	GUIErrorMessage(msg);
 }
 
-bool UltimaEngine::autoSaveCheck(int lastSaveTime) {
-	if (shouldPerformAutoSave(lastSaveTime) && canSaveGameStateCurrently(true)) {
-		saveGameState(0, _("Autosave"), true);
-		return true;
-	}
-
-	return false;
-}
-
 bool UltimaEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||

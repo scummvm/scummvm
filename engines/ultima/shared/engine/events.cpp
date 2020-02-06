@@ -33,8 +33,8 @@ namespace Ultima {
 namespace Shared {
 
 EventsManager::EventsManager(EventsCallback *callback) : _callback(callback), _playTime(0),
-		_gameCounter(0), _frameCounter(0), _priorFrameCounterTime(0), _lastAutosaveTime(0),
-		_buttonsDown(0), _specialButtons(0) {
+		_gameCounter(0), _frameCounter(0), _priorFrameCounterTime(0), _buttonsDown(0),
+		_specialButtons(0) {
 }
 
 void EventsManager::showCursor() {
@@ -57,11 +57,6 @@ bool EventsManager::pollEvent(Common::Event &event) {
 		_priorFrameCounterTime = timer;
 		nextFrame();
 	}
-
-	// Handle auto saves
-	if (!_lastAutosaveTime)
-		_lastAutosaveTime = timer;
-	_callback->autoSaveCheck(_lastAutosaveTime);
 
 	// Event handling
 	if (g_system->getEventManager()->pollEvent(event)) {
