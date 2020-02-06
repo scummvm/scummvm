@@ -69,7 +69,7 @@ void Talk::printWideText(byte *text) {
 	char buf[2000];
 	int i = 0;
 	for (; READ_LE_INT16(text) != 0 && i < 1999; i++) {
-	    auto c = *text;
+	    char c = *text;
 	    if (c < 0x20) {
 	        buf[i++] = '0';
 	        buf[i++] = 'x';

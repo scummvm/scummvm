@@ -90,7 +90,7 @@ void SoundManager::playSpeech(uint32 textIndex) {
 	}
 	CdIntToPos_0(speechLocation.sectorStart * 32);
 	fd->seek(((speechLocation.sectorStart * 32) + speechLocation.startOffset) * RAW_CD_SECTOR_SIZE);
-	PSXAudioTrack *_audioTrack = new PSXAudioTrack(fd, Audio::Mixer::SoundType::kSpeechSoundType);
+	PSXAudioTrack *_audioTrack = new PSXAudioTrack(fd, Audio::Mixer::kSpeechSoundType);
 	for (int i = 0x0; i < speechLocation.sectorEnd - speechLocation.sectorStart;i++) {
 		fd->seek(((speechLocation.sectorStart * 32) + speechLocation.startOffset + i * 32) * RAW_CD_SECTOR_SIZE);
 		_audioTrack->queueAudioFromSector(fd);
@@ -340,11 +340,11 @@ void SoundManager::loadMusAndGlob() {
 VabSound * SoundManager::loadVab(const char *headerFilename, const char *bodyFilename) {
 	uint32 headSize, bodySize;
 
-	auto headData = _bigFileArchive->load(headerFilename, headSize);
-	auto bodyData = _bigFileArchive->load(bodyFilename, bodySize);
+	byte *headData = _bigFileArchive->load(headerFilename, headSize);
+	byte *bodyData = _bigFileArchive->load(bodyFilename, bodySize);
 
-	auto *headStream = new Common::MemoryReadStream(headData, headSize, DisposeAfterUse::YES);
-	auto *bodyStream = new Common::MemoryReadStream(bodyData, bodySize, DisposeAfterUse::YES);
+	Common::SeekableReadStream *headStream = new Common::MemoryReadStream(headData, headSize, DisposeAfterUse::YES);
+	Common::SeekableReadStream *bodyStream = new Common::MemoryReadStream(bodyData, bodySize, DisposeAfterUse::YES);
 
 	return new VabSound(headStream, bodyStream);
 }
@@ -374,19 +374,19 @@ void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
 	volume = _soundArr[volumeId];
 	_soundArr[volumeId] = _soundArr[volumeId] | 0x40u;      // Set bit 0x40
 
-	auto vabSound = ((soundId & 0x8000u) != 0) ? _vabGlob : _vabMusx;
+	VabSound *vabSound = ((soundId & 0x8000u) != 0) ? _vabGlob : _vabMusx;
 
 	// TODO: CdVolume!
-	auto cdVolume = 1;
-	auto newVolume = cdVolume * volume;
+	int cdVolume = 1;
+	int newVolume = cdVolume * volume;
 	if (newVolume < 0) {
 		newVolume += 0xf;
 	}
 
-	auto realId = soundId & 0x7fffu;
+	uint16 realId = soundId & 0x7fffu;
 
-	auto program = realId >> 4u;
-	auto key = ((realId & 0xfu) << 1u | 0x40u);
+	uint16 program = realId >> 4u;
+	uint16 key = ((realId & 0xfu) << 1u | 0x40u);
 
 	// TODO: Volume
 	if (isVoicePlaying(soundId)) {
@@ -402,7 +402,7 @@ void SoundManager::playSound(uint16 soundId, uint16 volumeId) {
 void SoundManager::stopSound(uint16 soundId, uint16 volumeId) {
 	_soundArr[volumeId] = _soundArr[volumeId] & 0xbfu;      // Clear bit 0x40
 
-//	auto vabId = getVabFromSoundId(soundId);
+//	uint16 vabId = getVabFromSoundId(soundId);
 
 	stopVoicePlaying(soundId & ~0x4000u);
 }
@@ -420,7 +420,7 @@ void SoundManager::loadMsf(uint32 sceneId) {
 		uint32 msfSize;
 		byte *msfData = _bigFileArchive->load(msfFileName, msfSize);
 
-		auto *msfStream = new Common::MemoryReadStream(msfData, msfSize, DisposeAfterUse::YES);
+		Common::SeekableReadStream *msfStream = new Common::MemoryReadStream(msfData, msfSize, DisposeAfterUse::YES);
 
 		stopAllVoices();
 
