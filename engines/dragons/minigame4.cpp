@@ -224,11 +224,11 @@ uint16 Minigame4::runDanceBattle() {
 	return 1;
 }
 
-const static uint16 xDancePosTbl[] = { 0xAC, 0xB5, 0xBC, 0xB3, 0xB4, 0xAF };
-const static uint16 yDancePosTbl[] = { 0x1C, 0x23, 0x1A, 0x14, 0x12, 0xF };
+const static uint16 xDancePosTbl[6] = { 0xAC, 0xB5, 0xBC, 0xB3, 0xB4, 0xAF };
+const static uint16 yDancePosTbl[6] = { 0x1C, 0x23, 0x1A, 0x14, 0x12, 0xF };
 
-const static uint16 uint16_t_ARRAY_80090400[] = { 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F };
-const static uint16 uint16_t_ARRAY_800903e8[] = { 1, 2, 3, 4, 5, 6 };
+const static uint16 uint16_t_ARRAY_80090400[6] = { 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F };
+const static uint16 uint16_t_ARRAY_800903e8[6] = { 1, 2, 3, 4, 5, 6 };
 
 uint16 Minigame4::singleDanceRound(uint16 currentDancePosition, uint16 duration) {
 	DAT_80090438->x_pos = xDancePosTbl[(uint)currentDancePosition];
