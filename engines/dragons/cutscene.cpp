@@ -831,7 +831,7 @@ void tournamentUpdateFunction() {
 
 void CutScene::tournamentCutScene() {
 	uint actorId;
-	ushort uVar1;
+	uint16 uVar1;
 	uint16 dialogText[1000];
 //	undefined2 local_218 [256];
 

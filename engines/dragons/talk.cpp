@@ -112,8 +112,8 @@ Talk::FUN_8003239c(uint16 *dialog, int16 x, int16 y, int32 param_4, uint16 param
 
 uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId,
 									  int16 param_7) {
-		uint32_t *puVar1;
-		uint32_t *puVar2;
+		uint32 *puVar1;
+		uint32 *puVar2;
 		short sVar3;
 		short sVar4;
 		uint16 *tmpTextPtr;
@@ -123,32 +123,32 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 		int iVar8;
 		uint uVar9;
 		uint uVar10;
-		ushort uVar11;
-		uint32_t uVar12;
-		ushort *puVar13;
-		uint32_t uVar14;
-		uint32_t uVar15;
-		uint32_t *puVar16;
-		uint32_t *puVar17;
-		ushort *dialogTextLinePtr;
-		ushort *puVar18;
-		ushort *curDialogTextPtr;
+		uint16 uVar11;
+		uint32 uVar12;
+		uint16 *puVar13;
+		uint32 uVar14;
+		uint32 uVar15;
+		uint32 *puVar16;
+		uint32 *puVar17;
+		uint16 *dialogTextLinePtr;
+		uint16 *puVar18;
+		uint16 *curDialogTextPtr;
 		int unaff_s4;
-		ushort uVar19;
+		uint16 uVar19;
 		short sVar20;
 		uint32 maxLineLengthMaybe;
 		uint16 currentLine [44];
 		uint16 asStack2592 [1208];
-		uint32_t local_b0 [14];
-		ushort local_58;
-		ushort returnStatus;
+		uint32 local_b0 [14];
+		uint16 local_58;
+		uint16 returnStatus;
 		byte *lineTblPtr;
 		uint oldEngineFlags;
 
 		bool isFlag8Set = _vm->isFlagSet(ENGINE_FLAG_8);
 		returnStatus = 0;
 // TODO what does this do?
-//		puVar1 = uint32_t_ARRAY_80011a60;
+//		puVar1 = uint32_ARRAY_80011a60;
 //		puVar2 = local_b0;
 //		do {
 //			puVar17 = puVar2;
@@ -162,7 +162,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 //			puVar17[3] = uVar15;
 //			puVar1 = puVar16 + 4;
 //			puVar2 = puVar17 + 4;
-//		} while (puVar16 + 4 != (uint32_t *)&DAT_80011a80);
+//		} while (puVar16 + 4 != (uint32 *)&DAT_80011a80);
 //		uVar12 = puVar16[5];
 //		puVar17[4] = _DAT_80011a80;
 //		puVar17[5] = uVar12;
@@ -338,7 +338,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 				iVar5 = (iVar5 >> 0x10) * (uint)DAT_800726f0_tfont_field2 + -1;
 				uVar19 = y;
 				if ((int)(short)y < iVar5) {
-					uVar19 = (ushort)iVar5;
+					uVar19 = (uint16)iVar5;
 				}
 				if (0x16 < (short)uVar19) {
 					uVar19 = 0x16;
@@ -443,12 +443,12 @@ uint32 Talk::displayDialogAroundINI(uint32 iniId, uint16 *dialogText, uint32 tex
 		IMG *local_v1_184 = _vm->_dragonIMG->getIMG(ini->field_2);
 		int x, y;
 		if (local_v1_184->field_e == 0) {
-			y = (uint)(ushort)local_v1_184->y;
+			y = (uint)(uint16)local_v1_184->y;
 			x = local_v1_184->field_a;
 		}
 		else {
 			x = local_v1_184->field_a;
-			y = (uint)(ushort)local_v1_184->y << 3;
+			y = (uint)(uint16)local_v1_184->y << 3;
 		}
 		displayDialogAroundPoint
 				(dialogText,
@@ -499,8 +499,8 @@ Talk::displayDialogAroundPoint(uint16 *dialogText, uint16 x, uint16 y, uint16 pa
 		// sVar3 = FUN_8001d1ac(0,textId,0);
 		_vm->_sound->playSpeech(textId);
 
-//		if (dialogText == (uint16_t *)0x0) {
-//			dialogText = (uint16_t *)local_58;
+//		if (dialogText == (uint16 *)0x0) {
+//			dialogText = (uint16 *)local_58;
 //		}
 		conversation_related_maybe(dialogText,x,y,param_4,param_5,textId,0); // sVar3); TODO I think this is audio status
 }
@@ -508,7 +508,7 @@ Talk::displayDialogAroundPoint(uint16 *dialogText, uint16 x, uint16 y, uint16 pa
 void Talk::displayDialogAroundActor(Actor *actor, uint16 param_2, uint16 *dialogText, uint32 textIndex) {
 	int16 frameYOffset = actor->frame ? actor->frame->yOffset : 0;
 	displayDialogAroundPoint
-			(dialogText,(ushort)((int)(((uint)actor->x_pos - _vm->_scene->_camera.x) * 0x10000) >> 0x13),
+			(dialogText,(uint16)((int)(((uint)actor->x_pos - _vm->_scene->_camera.x) * 0x10000) >> 0x13),
 			 (short)((int)((((uint)actor->y_pos - (uint)frameYOffset) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13) - 3,
 			 param_2,1,textIndex);
 }
@@ -544,7 +544,7 @@ void callMaybeResetData() {
 bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 	uint16 numEntries;
 
-	uint16_t sequenceId;
+	uint16 sequenceId;
 	TalkDialogEntry *selectedDialogText;
 	uint iniId;
 	short local_990 [5];
@@ -650,19 +650,19 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 	short sVar2;
 	uint uVar3;
 	uint uVar4;
-	ushort y;
-	ushort x;
+	uint16 y;
+	uint16 x;
 	uint uVar6;
 	uint uVar7;
-	ushort uVar8;
+	uint16 uVar8;
 	TalkDialogEntry *talkDialogEntry;
 	uint16 local_430 [80];
 	uint16 local_390[5];
 	uint16 local_386 [195];
 	uint16 asStack512 [200];
 	uint16 numEntries;
-	ushort local_60;
-	ushort local_58;
+	uint16 local_60;
+	uint16 local_58;
 	short local_50;
 	uint16 *local_40;
 	uint local_38;
@@ -724,7 +724,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 			uVar3 = (uint)x;
 		} while (x < numEntries);
 	}
-	_vm->_cursor->updateActorPosition(0xf, (((ushort)talkDialogEntry->xPosMaybe + 0x18) - local_58) * 8 + 5);
+	_vm->_cursor->updateActorPosition(0xf, (((uint16)talkDialogEntry->xPosMaybe + 0x18) - local_58) * 8 + 5);
 
 	if (!_vm->isFlagSet(ENGINE_FLAG_8)) {
 		_vm->waitForFrames(1);
@@ -941,7 +941,7 @@ uint32 Talk::getDefaultResponseTextIndex() {
 	return defaultResponseTbl[(_vm->_cursor->data_800728b0_cursor_seqID - 1) * 9 + rand];
 }
 
-uint32_t extractTextIndex(Common::File *fd, uint16_t offset) {
+uint32 extractTextIndex(Common::File *fd, uint16 offset) {
 	fd->seek(0x541b0 + offset * 4);
 	return fd->readUint32LE();
 }
@@ -1063,11 +1063,11 @@ uint16 Talk::FindLastPositionOf5cChar(uint16 *text) {
 }
 
 uint32 Talk::FUN_80031c28(uint16 *srcText, uint16 *destText, uint32 cutLength, uint16 param_4) {
-	ushort destCurIndex;
-	ushort uVar1;
-	ushort uVar2;
+	uint16 destCurIndex;
+	uint16 uVar1;
+	uint16 uVar2;
 	uint srcCurIndex;
-	ushort uVar3;
+	uint16 uVar3;
 	uint uVar4;
 	short chr;
 	bool finished;
@@ -1089,8 +1089,8 @@ uint32 Talk::FUN_80031c28(uint16 *srcText, uint16 *destText, uint32 cutLength, u
 			if ((srcText + (srcCurIndex & 0xffff))[1] == 0x5c) {
 				uVar1 = destCurIndex + 3;
 				destText[(uint)destCurIndex] = 0x2e;
-				destText[(uint)(ushort)(destCurIndex + 1)] = 0x2e;
-				destText[(uint)(ushort)(destCurIndex + 2)] = 0x2e;
+				destText[(uint)(uint16)(destCurIndex + 1)] = 0x2e;
+				destText[(uint)(uint16)(destCurIndex + 2)] = 0x2e;
 			}
 			destCurIndex = uVar1 - 1;
 			uVar1 = uVar3;

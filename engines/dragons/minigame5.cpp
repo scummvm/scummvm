@@ -41,31 +41,31 @@ namespace Dragons {
 Minigame5::Minigame5(DragonsEngine *vm) : _vm(vm), DAT_800633e6(0) {}
 
 void Minigame5::run() {
-	ushort uVar1;
+	uint16 uVar1;
 	int iVar2;
 	byte *local_v0_7008;
 	void *local_v0_7256;
 	byte *uVar3;
 	uint uVar4;
-	ushort local_850;
+	uint16 local_850;
 	uint16 auStack2120 [1000];
 	DragonINI*local_78;
 	uint16 local_76;
-	ushort local_74;
-	ushort local_72;
-	ushort bombScale;
+	uint16 local_74;
+	uint16 local_72;
+	uint16 bombScale;
 	Actor *bombActor;
 	Actor *flickerActor;
 	Actor *pusherActor;
 	Actor *dustActor;
-	ushort local_66;
+	uint16 local_66;
 	Actor *wheelsActor;
-	ushort local_62;
-	ushort local_60;
-	ushort local_5e;
+	uint16 local_62;
+	uint16 local_60;
+	uint16 local_5e;
 	short local_5c;
 	short local_5a;
-	ushort currentState;
+	uint16 currentState;
 	short local_50;
 	Actor *local_4e;
 	uint16 local_4c;
@@ -455,7 +455,7 @@ void Minigame5::run() {
 					}
 					else {
 						local_50 = 0;
-						local_66 = (ushort)(currentState != 1);
+						local_66 = (uint16)(currentState != 1);
 						if (pusherActor->_sequenceID != 3) {
 							pusherActor->updateSequence(3);
 						}

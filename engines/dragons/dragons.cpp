@@ -259,8 +259,8 @@ void DragonsEngine::gameLoop()
 {
 	uint uVar3;
 	uint actorId;
-	ushort uVar6;
-	ushort uVar7;
+	uint16 uVar6;
+	uint16 uVar7;
 	uint actorId_00;
 	uint16_t sequenceId;
 	DragonINI *pDVar8;
@@ -595,7 +595,7 @@ void DragonsEngine::gameLoop()
 		}
 		LAB_8002790c:
 		if ((_cursor->iniItemInHand == 0) ||
-			(((ushort)(_cursor->_x - 10U) < 300 && ((ushort)(_cursor->_y - 10U) < 0xb4))))
+			(((uint16)(_cursor->_x - 10U) < 300 && ((uint16)(_cursor->_y - 10U) < 0xb4))))
 			goto LAB_80027b58;
 		_cursor->_sequenceID = 5;
 		waitForFrames(2);
@@ -844,11 +844,11 @@ void DragonsEngine::runINIScripts() {
 /*
 void DragonsEngine::engineFlag0x20UpdateFunction() {
 {
-	ushort uVar1;
+	uint16 uVar1;
 	uint16_t uVar2;
 	DragonINI *pDVar3;
 	DragonINI *pDVar4;
-	ushort uVar5;
+	uint16 uVar5;
 	uint actorId;
 
 	DragonINI *flickerINI = _dragonINIResource->getFlickerRecord();
@@ -1032,7 +1032,7 @@ void DragonsEngine::call_fade_related_1f() {
 
 void DragonsEngine::performAction() {
 	uint uVar1;
-	ushort uVar2;
+	uint16 uVar2;
 	uint uVar4;
 	uint uVar5;
 	uint uVar6;
@@ -1141,8 +1141,8 @@ void DragonsEngine::FUN_80038890() {
 
 void DragonsEngine::walkFlickerToObject()
 {
-	ushort targetX;
-	ushort targetY;
+	uint16 targetX;
+	uint16 targetY;
 	uint uVar7;
 	uint uVar8;
 	DragonINI *targetINI;
@@ -1193,8 +1193,8 @@ void DragonsEngine::walkFlickerToObject()
 			return;
 		}
 		if (_inventory->getType() == 0 && !isFlagSet(ENGINE_FLAG_200000)) {
-			uVar7 = (uint)(ushort)_cursor->_x;
-			uVar8 = (uint)(ushort)_cursor->_y;
+			uVar7 = (uint)(uint16)_cursor->_x;
+			uVar8 = (uint)(uint16)_cursor->_y;
 			flickerINI->actor->_walkSpeed = 0x10000;
 			flickerINI->actor->startWalk(
 					(int)((uVar7 + (uint)_scene->_camera.x) * 0x10000) >> 0x10,
@@ -1403,8 +1403,8 @@ void DragonsEngine::updatePaletteCycling() {
 			if (_paletteCyclingTbl[loopIndex].updateInterval != 0) {
 				if (_paletteCyclingTbl[loopIndex].updateCounter == 0) {
 					uint16 *palette = (uint16 *)_screen->getPalette(_paletteCyclingTbl[loopIndex].paletteType);
-					int16 uVar14 = (uint)(ushort)_paletteCyclingTbl[loopIndex].startOffset;
-					int16 uVar8 = (uint)(ushort)_paletteCyclingTbl[loopIndex].endOffset;
+					int16 uVar14 = (uint)(uint16)_paletteCyclingTbl[loopIndex].startOffset;
+					int16 uVar8 = (uint)(uint16)_paletteCyclingTbl[loopIndex].endOffset;
 					if (uVar14 < uVar8) {
 						uint16 uVar11 = palette[uVar8];
 						int uVar15 = uVar8;
@@ -1413,9 +1413,9 @@ void DragonsEngine::updatePaletteCycling() {
 								uVar8--;
 								palette[uVar15] = palette[uVar15 - 1];
 								uVar15 = uVar8 & 0xffff;
-							} while ((uint)(ushort)_paletteCyclingTbl[loopIndex].startOffset < (uVar8 & 0xffff));
+							} while ((uint)(uint16)_paletteCyclingTbl[loopIndex].startOffset < (uVar8 & 0xffff));
 						}
-						palette[(ushort)_paletteCyclingTbl[loopIndex].startOffset] = uVar11;
+						palette[(uint16)_paletteCyclingTbl[loopIndex].startOffset] = uVar11;
 						_paletteCyclingTbl[loopIndex].updateCounter = _paletteCyclingTbl[loopIndex].updateInterval;
 					}
 					else {
@@ -1427,9 +1427,9 @@ void DragonsEngine::updatePaletteCycling() {
 									uVar8--;
 									palette[uVar15] = palette[uVar15 + 1];
 									uVar15 = uVar8 & 0xffff;
-								} while ((uVar8 & 0xffff) < (uint)(ushort)_paletteCyclingTbl[loopIndex].startOffset);
+								} while ((uVar8 & 0xffff) < (uint)(uint16)_paletteCyclingTbl[loopIndex].startOffset);
 							}
-							palette[(ushort)_paletteCyclingTbl[loopIndex].endOffset] = uVar11;
+							palette[(uint16)_paletteCyclingTbl[loopIndex].endOffset] = uVar11;
 							_paletteCyclingTbl[loopIndex].updateCounter =
 									_paletteCyclingTbl[loopIndex].updateInterval;
 						}

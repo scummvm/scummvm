@@ -943,7 +943,7 @@ void SpecialOpcodes::spcUnk66() {
 	uint16 bVar1 = (var & 1) == 0;
 	uint16 uVar9 = bVar1;
 	if ((var & 4) == 0) {
-		uVar9 = (ushort)bVar1 + 1;
+		uVar9 = (uint16)bVar1 + 1;
 	}
 	if ((var & 2) == 0) {
 		uVar9 = uVar9 + 1;
@@ -1160,7 +1160,7 @@ void SpecialOpcodes::spcRunCredits() {
 	_vm->setFlags(ENGINE_FLAG_8000000);
 //	iVar1 = file_read_to_buffer(strCredits_txt);
 //	DAT_800728ec = iVar1 + (int)DAT_8007273c;
-//	buf2048bytes = (int32_t *)((iVar1 + 3U & 0xfffffffc) + (int)buf2048bytes);
+//	buf2048bytes = (int32 *)((iVar1 + 3U & 0xfffffffc) + (int)buf2048bytes);
 //	memcpy2((byte *)buf2048bytes,scrFileData_maybe,0x200);
 //	buf2048bytes = buf2048bytes + 0x80;
 	_vm->_screen->loadPalette(0, _vm->_dragonINIResource->getRecord(0x2C8)->actor->_actorResource->getPalette());
@@ -1189,7 +1189,7 @@ void SpecialOpcodes::spcLoadLadyOfTheLakeActor() {
 	ini->actor->setFlag(ACTOR_FLAG_4);
 	ini->actorResourceId = 0xcd;
 	//DisableVSyncEvent();
-//	uVar17 = (uint)(ushort)dragon_ini_pointer[DAT_8006398c + -1].field_0x1c;
+//	uVar17 = (uint)(uint16)dragon_ini_pointer[DAT_8006398c + -1].field_0x1c;
 //	uVar7 = load_actor_file(0xcc);
 //	file_read_to_buffer(s_s12a6.act_80011740,(&actor_dictionary)[(uVar7 & 0xffff) * 2]);
 //	actors[uVar17].﻿actorFileDictionaryIndex = (uint16_t)uVar7;
@@ -1474,7 +1474,7 @@ void castleFogUpdateFunction() {
 }
 
 void menInMinesSceneUpdateFunction() {
-	static const uint32_t sceneUpdateFuncDialogTbl[] = {
+	static const uint32 sceneUpdateFuncDialogTbl[] = {
 			0x4590A, 0x45994, 0x459F4, 0x45A60
 	};
 	DragonsEngine *vm = getEngine();
@@ -1505,16 +1505,16 @@ void menInMinesSceneUpdateFunction() {
 
 void monksAtBarSceneUpdateFunction() {
 	static uint8 monksAtBarCurrentState = 0;
-	static const uint32_t sceneUpdateFuncDialogTbl[] = {
+	static const uint32 sceneUpdateFuncDialogTbl[] = {
 			0x37800, 0x37854, 0x378CA,
 			0x39152, 0x3919A, 0x3922C
 	};
-	static const uint32_t barKeeperTextIdTbl[] = {
+	static const uint32 barKeeperTextIdTbl[] = {
 			0x38C68, 0x38CE2, 0x38D4E, 0x38CE2,
 			0x38DC2, 0x38E0C, 0x38C68, 0x38E5C,
 			0x38ED0, 0x38CE2
 	};
-	static const uint32_t DAT_800832f0[] = {0x38F2A, 0x39000, 0x39084, 0x390E8};
+	static const uint32 DAT_800832f0[] = {0x38F2A, 0x39000, 0x39084, 0x390E8};
 
 	DragonsEngine *vm = getEngine();
 	Actor *barKeeper = vm->_dragonINIResource->getRecord(0x1e7)->actor;
@@ -1523,7 +1523,7 @@ void monksAtBarSceneUpdateFunction() {
 	DragonINI *ini = vm->_dragonINIResource->getRecord(0x1e6);
 	bool bVar1;
 	short sVar2;
-	uint32_t textIndex;
+	uint32 textIndex;
 	uint16_t sequenceId;
 	int16 specialOpCounter = vm->_scriptOpcodes->_specialOpCodes->getSpecialOpCounter();
 	if (specialOpCounter == -1) {
