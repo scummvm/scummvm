@@ -48,7 +48,7 @@ static const GfxMode3DS _modeRGBA8 = { Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 
                                        GPU_RGBA8, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8) };
 static const GfxMode3DS _modeRGB565 = { Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
                                         GPU_RGB565, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565) };
-static const GfxMode3DS _modeRGB555 = { Graphics::PixelFormat(2, 5, 5, 5, 0, 11, 6, 1, 0),
+static const GfxMode3DS _modeRGB555 = { Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),
                                         GPU_RGBA5551, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB5A1) };
 static const GfxMode3DS _modeRGB5A1 = { Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),
                                         GPU_RGBA5551, TEXTURE_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB5A1) };
@@ -264,7 +264,7 @@ Common::List<Graphics::PixelFormat> OSystem_3DS::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> list;
 	list.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)); // GPU_RGBA8
 	list.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)); // GPU_RGB565
-	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 11, 6, 1, 0)); // RGB555 (needed for FMTOWNS?)
+	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)); // RGB555 (needed for FMTOWNS?)
 	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0)); // GPU_RGBA5551
 	list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 	return list;
@@ -340,6 +340,18 @@ void OSystem_3DS::grabPalette(byte *colors, uint start, uint num) const {
 	memcpy(colors, _palette + 3 * start, 3 * num);
 }
 
+static void copyRect555To5551(const Graphics::Surface &srcSurface, Graphics::Surface &destSurface, uint16 destX, uint16 destY, const Common::Rect &srcRect) {
+	const uint16 *src = (const uint16 *)srcSurface.getBasePtr(srcRect.left, srcRect.top);
+	uint16 *dst = (uint16 *)destSurface.getBasePtr(destX, destY);
+	for (int i = 0; i < srcRect.height(); i++) {
+		for (int j = 0; j < srcRect.width(); j++) {
+			*dst++ = (*src++ << 1) | 1;
+		}
+		src += srcSurface.pitch / 2 - srcRect.width();
+		dst += destSurface.pitch / 2 - srcRect.width();
+	}
+}
+
 void OSystem_3DS::copyRectToScreen(const void *buf, int pitch, int x,
                                    int y, int w, int h) {
 	Common::Rect rect(x, y, x+w, y+h);
@@ -348,6 +360,8 @@ void OSystem_3DS::copyRectToScreen(const void *buf, int pitch, int x,
 
 	if (_pfGame == _gameTopTexture.format) {
 		_gameTopTexture.copyRectToSurface(subSurface, x, y, Common::Rect(w, h));
+	} else if (_gfxState.gfxMode == &_modeRGB555) {
+		copyRect555To5551(subSurface, _gameTopTexture, x, y, Common::Rect(w, h));
 	} else {
 		Graphics::Surface *convertedSubSurface = subSurface.convertTo(_gameTopTexture.format, _palette);
 		_gameTopTexture.copyRectToSurface(*convertedSubSurface, x, y, Common::Rect(w, h));
@@ -361,6 +375,8 @@ void OSystem_3DS::copyRectToScreen(const void *buf, int pitch, int x,
 void OSystem_3DS::flushGameScreen() {
 	if (_pfGame == _gameTopTexture.format) {
 		_gameTopTexture.copyRectToSurface(_gameScreen, 0, 0, Common::Rect(_gameScreen.w, _gameScreen.h));
+	} else if (_gfxState.gfxMode == &_modeRGB555) {
+		copyRect555To5551(_gameScreen, _gameTopTexture, 0, 0, Common::Rect(_gameScreen.w, _gameScreen.h));
 	} else {
 		Graphics::Surface *converted = _gameScreen.convertTo(_gameTopTexture.format, _palette);
 		_gameTopTexture.copyRectToSurface(*converted, 0, 0, Common::Rect(converted->w, converted->h));
