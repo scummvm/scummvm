@@ -49,7 +49,7 @@ private:
 class DragonFLG {
 private:
 	byte *_data;
-	uint32_t _dataSize;
+	uint32 _dataSize;
 	Properties *properties;
 public:
 	virtual ~DragonFLG();

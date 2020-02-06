@@ -54,7 +54,7 @@ int16 PriorityLayer::getPriority(Common::Point pos) {
 	uint16 mapIndex = READ_LE_UINT16(_map + 2 * (tx + ty * _mapWidth));
 
 //
-//	byte priority = *(byte *)((((uint)*(ushort *)
+//	byte priority = *(byte *)((((uint)*(uint16 *)
 //			(((int)pos.x / 32) * 2 +
 //			 ((int)pos.y / 8) * (uint)_mapWidth * 2 +
 //					_map) * 32) * 8) +
@@ -347,7 +347,7 @@ uint16 ScaleLayer::getScale(uint16 y) {
 	}
 //	iVar3 = 0x1f0000;
 //	do {
-//		yBand = *(ushort *)((int)&scaleBandTbl->y + (iVar3 >> 0xe));
+//		yBand = *(uint16 *)((int)&scaleBandTbl->y + (iVar3 >> 0xe));
 //		if ((yBand != 0xffff) && (yBand <= y)) break;
 //		i = i + -1;
 //		iVar3 = i * 0x10000;
@@ -364,7 +364,7 @@ uint16 ScaleLayer::getScale(uint16 y) {
 //	iVar3 = 0;
 //	do {
 //		lowerYBandIdx = (short)j;
-//		yBand = *(ushort *)((int)&scaleBandTbl->y + (iVar3 >> 0xe));
+//		yBand = *(uint16 *)((int)&scaleBandTbl->y + (iVar3 >> 0xe));
 //		if ((yBand != 0xffff) && (y <= yBand)) break;
 //		j = j + 1;
 //		lowerYBandIdx = (short)j;

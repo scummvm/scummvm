@@ -38,7 +38,7 @@ void Minigame4::run() {
 	uint16 uVar1;
 	DragonINI *flicker;
 	uint uVar4;
-	ushort result;
+	uint16 result;
 	int16_t uVar3;
 
 	uVar4 = _vm->getAllFlags();
@@ -105,7 +105,7 @@ void Minigame4::run() {
 	// EnableVSyncEvent();
 	_vm->_dragonINIResource->setFlickerRecord(flicker);
 	_vm->_inventory->setType(uVar3);
-//	_vm->_screen->loadPalette(4,(uint)*(ushort *)
+//	_vm->_screen->loadPalette(4,(uint)*(uint16 *)
 //					(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10)
 //			   + *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
 	_vm->_screen->updatePaletteTransparency(4,1,0xff,true);

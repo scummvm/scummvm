@@ -114,7 +114,7 @@ uint16 alphaBlendRGB555( uint32 fg, uint32 bg, uint8 alpha ){
 	alpha = ( alpha + 4 ) >> 3;
 	bg = (bg | (bg << 16)) & 0b00000011111000000111110000011111;
 	fg = (fg | (fg << 16)) & 0b00000011111000000111110000011111;
-	uint32_t result = ((((fg - bg) * alpha) >> 5) + bg) & 0b00000011111000000111110000011111;
+	uint32 result = ((((fg - bg) * alpha) >> 5) + bg) & 0b00000011111000000111110000011111;
 	return (uint16_t)((result >> 16) | result);
 }
 
@@ -122,7 +122,7 @@ uint16 alphaBlendAdditiveRGB555( uint32 fg, uint32 bg){
 	bg = (bg | (bg << 16)) & 0b00000011111000000111110000011111;
 	fg = (fg | (fg << 16)) & 0b00000011111000000111110000011111;
 
-	uint32_t result = bg + fg;
+	uint32 result = bg + fg;
 	//clip r g b values to 565.
 	if (result & (0b111111 << 26)) {
 		result &= 0x1fffff;
@@ -354,7 +354,7 @@ void Screen::loadPalette(uint16 paletteNum, byte *palette) {
 			}
 		} else {
 			//TODO is this needed? see load_palette_into_frame_buffer()
-//			c = (ushort)(((uint)c & 0x1f) << 10) | (ushort)(((uint)c & 0x7c00) >> 10) |
+//			c = (uint16)(((uint)c & 0x1f) << 10) | (uint16)(((uint)c & 0x7c00) >> 10) |
 //					(c & 0x3e0) | (c & 0x8000);
 		}
 	}

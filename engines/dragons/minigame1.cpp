@@ -82,11 +82,11 @@ void Minigame1::run() {
 	uint16 i;
 	uint16 local_16e;
 	short local_16a;
-	uint32_t local_168;
+	uint32 local_168;
 	uint16 auStack352 [24];
 	uint16_t local_130 [10];
-	int32_t local_118 [22];
-	uint32_t local_c0 [22];
+	int32 local_118 [22];
+	uint32 local_c0 [22];
 	uint16_t actorFieldC;
 
 	Actor *catActor;

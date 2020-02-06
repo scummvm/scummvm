@@ -69,7 +69,7 @@ void Bag::load(BigfileArchive *bigFileArchive) {
 		if ( c == 0 ) {
 			c = 0x8000;
 		} else {
-			//c = (ushort)(((uint)c & 0x1f) << 10) | (ushort)(((uint)c & 0x7c00) >> 10) | c & 0x3e0;
+			//c = (uint16)(((uint)c & 0x1f) << 10) | (uint16)(((uint)c & 0x7c00) >> 10) | c & 0x3e0;
 		}
 		WRITE_LE_UINT16(&pal[i * 2], c);
 	}
