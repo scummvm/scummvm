@@ -282,6 +282,11 @@ public:
 	bool canSaveGameStateCurrently() override;
 
 	/**
+	* Returns true if an autosave can be created
+	*/
+	virtual bool canSaveAutosaveCurrently() override;
+
+	/**
 	 * Show a cutscene
 	 * @param name		Name of cutscene
 	 * @param status	For World of Xeen, Goober status
@@ -309,11 +314,6 @@ public:
 	 * Show an error message in a GUI dialog
 	 */
 	void GUIError(const Common::String &msg);
-
-	/**
-	 * Checks if an auto save should be done, and if so, takes care of it
-	 */
-	void autoSaveCheck(int &lastSaveTime);
 };
 
 extern XeenEngine *g_vm;
