@@ -1430,7 +1430,7 @@ void shakeScreenUpdateFunction() {
 }
 
 void ladyOfTheLakeCapturedUpdateFunction() {
-	const uint32 dialogTbl[] = {
+	const uint32 dialogTbl[3] = {
 			0x490C8, 0x490FC, 0x4913A
 	};
 	static int ladyofLakeCountdownTimer = 0x12c;
@@ -1474,7 +1474,7 @@ void castleFogUpdateFunction() {
 }
 
 void menInMinesSceneUpdateFunction() {
-	static const uint32 sceneUpdateFuncDialogTbl[] = {
+	const uint32 sceneUpdateFuncDialogTbl[4] = {
 			0x4590A, 0x45994, 0x459F4, 0x45A60
 	};
 	DragonsEngine *vm = getEngine();
@@ -1505,16 +1505,16 @@ void menInMinesSceneUpdateFunction() {
 
 void monksAtBarSceneUpdateFunction() {
 	static uint8 monksAtBarCurrentState = 0;
-	static const uint32 sceneUpdateFuncDialogTbl[] = {
+	static const uint32 sceneUpdateFuncDialogTbl[6] = {
 			0x37800, 0x37854, 0x378CA,
 			0x39152, 0x3919A, 0x3922C
 	};
-	static const uint32 barKeeperTextIdTbl[] = {
+	static const uint32 barKeeperTextIdTbl[10] = {
 			0x38C68, 0x38CE2, 0x38D4E, 0x38CE2,
 			0x38DC2, 0x38E0C, 0x38C68, 0x38E5C,
 			0x38ED0, 0x38CE2
 	};
-	static const uint32 DAT_800832f0[] = {0x38F2A, 0x39000, 0x39084, 0x390E8};
+	static const uint32 DAT_800832f0[4] = {0x38F2A, 0x39000, 0x39084, 0x390E8};
 
 	DragonsEngine *vm = getEngine();
 	Actor *barKeeper = vm->_dragonINIResource->getRecord(0x1e7)->actor;
@@ -1695,7 +1695,7 @@ void monksAtBarSceneUpdateFunction() {
 }
 
 void flameEscapeSceneUpdateFunction() {
-	static const uint32 dialogTbl[] = {
+	static const uint32 dialogTbl[6] = {
 			0x10458, 0x104A0, 0x10500, 0x10500, 0x10550, 0x10578 //TODO support multiple languages
 	};
 	static bool DAT_800634c0 = false;
@@ -1767,7 +1767,7 @@ void caveOfDilemmaUpdateFunction() {
 }
 
 void moatDrainedSceneUpdateFunction() {
-	static const uint32 moatDrainedTextIdTbl[] {
+	static const uint32 moatDrainedTextIdTbl[4] {
 			0x3C97A, 0x3C9AC, 0x3C9F8, 0x3CA48
 	};
 	static uint16 moatDrainedUpdateCounter = 0;

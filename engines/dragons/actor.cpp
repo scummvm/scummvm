@@ -222,7 +222,7 @@ uint32 calcDistance(int32 x1, int32 y1, int32 x2, int32 y2) {
 }
 
 bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
-	static const int kCosTbl[] = {
+	static const int kCosTbl[40] = {
 			// cos table
 			256, 251, 236, 212, 181, 142, 97, 49,
 			0, -49, -97, -142, -181, -212, -236, -251,
@@ -230,10 +230,10 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 			0, 49, 97, 142, 181, 212, 236, 251,
 			11, 0, 0, 0, 0, 0, 0, 0
 	};
-	static const int kAdjustXTbl[] = {
+	static const int kAdjustXTbl[8] = {
 			1, -1, 0, 0, 1, -1, 1, -1
 	};
-	static const int kAdjustYTbl[] = {
+	static const int kAdjustYTbl[8] = {
 			0, 0, 1, -1, 1, 1, -1, -1
 	};
 
