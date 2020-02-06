@@ -892,14 +892,22 @@ RivenScriptPtr RivenCard::onFrame() {
 }
 
 RivenScriptPtr RivenCard::onMouseUpdate() {
-	RivenScriptPtr script;
+	RivenScriptPtr script(new RivenScript());
+
 	if (_hoveredHotspot) {
-		script = _hoveredHotspot->getScript(kMouseInsideScript);
+		script += _hoveredHotspot->getScript(kMouseInsideScript);
 	}
 
-	if (!script || script->empty()) {
+	if (script->empty()) {
 		updateMouseCursor();
 	}
+
+	// Clear the pressed hotspot, in case we missed the mouse up event
+	// because we were running a script when it fired.
+	if (_pressedHotspot && _pressedHotspot == _hoveredHotspot) {
+		script += _pressedHotspot->getScript(kMouseUpScript);
+	}
+	_pressedHotspot = nullptr;
 
 	return script;
 }
@@ -1069,6 +1077,10 @@ void RivenCard::playMovie(uint16 index, bool queue) {
 }
 
 RivenScriptPtr RivenCard::onKeyAction(RivenAction keyAction) {
+	if (_pressedHotspot) {
+		return RivenScriptPtr(new RivenScript());
+	}
+
 	static const char *forwardNames[] = {
 			"forward", "forward1", "forward2", "forward3",
 			"opendoor", "openhatch", "opentrap", "opengate", "opengrate",
