@@ -765,7 +765,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 			}
 		}
 		
-	} while( true );
+	} while ( true );
 
 }
 

@@ -514,10 +514,10 @@ void Talk::displayDialogAroundActor(Actor *actor, uint16 param_2, uint16 *dialog
 }
 
 void Talk::copyTextToBuffer(uint16 *destBuffer, byte *src, uint32 destBufferLength) {
-	for(int i = 0; i < destBufferLength - 1; i++) {
+	for (int i = 0; i < destBufferLength - 1; i++) {
 		destBuffer[i] = READ_LE_UINT16(src);
 		src += 2;
-		if(destBuffer[i] == 0) {
+		if (destBuffer[i] == 0) {
 			return;
 		}
 	}
@@ -527,7 +527,7 @@ void Talk::copyTextToBuffer(uint16 *destBuffer, byte *src, uint32 destBufferLeng
 
 uint32 Talk::wideStrLen(uint16 *text) {
 	int i = 0;
-	while(text[i] != 0) {
+	while (text[i] != 0) {
 		i++;
 	}
 	return i;

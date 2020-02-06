@@ -31,7 +31,7 @@ namespace Dragons {
 Properties::Properties(uint count)
 		: _count(count) {
 	_properties = (byte *)malloc(getSize());
-	if(!_properties) {
+	if (!_properties) {
 		error("Failed to allocate mem for properties");
 	}
 	memset(_properties, 0, getSize());
@@ -89,7 +89,7 @@ void Properties::save(uint numberToWrite, Common::WriteStream *out) {
 void Properties::print(char *prefix) {
 	char *str = new char[_count + 1];
 	int i = 0;
-	for(; i < _count; i++) {
+	for (; i < _count; i++) {
 		str[i] = get(i) ? '1' : '0';
 	}
 	str[i] = 0;

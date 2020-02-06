@@ -200,7 +200,7 @@ void SequenceOpcodes::opSetField7a(Actor *actor, OpCall &opCall) {
 }
 
 void SequenceOpcodes::opUpdateFlags(Actor *actor, OpCall &opCall) {
-	if(actor->isFlagSet(ACTOR_FLAG_1000)) {
+	if (actor->isFlagSet(ACTOR_FLAG_1000)) {
 		actor->setFlag(ACTOR_FLAG_4);
 	}
 	updateReturn(opCall, 0);

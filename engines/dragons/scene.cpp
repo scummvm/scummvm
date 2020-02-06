@@ -87,7 +87,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	_vm->setUnkFlags(Dragons::ENGINE_UNK1_FLAG_2 | Dragons::ENGINE_UNK1_FLAG_8);
 
-	for(int i=0;i < _dragonINIResource->totalRecords(); i++) {
+	for (int i=0;i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _dragonINIResource->getRecord(i);
 		ini->field_10 = -1;
 		ini->field_1a_flags_maybe &= ~Dragons::INI_FLAG_10;
@@ -157,7 +157,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 			stagePalette[i * 2 + 1] = cursorPalette[(i-0xc0) * 2 + 1];
 		}
 	}
-	for(int i = 1; i < 0x100; i ++) {
+	for (int i = 1; i < 0x100; i ++) {
 		byte *stagePalette = _stage->getPalette();
 		uint16 c = READ_LE_INT16(stagePalette + i * 2);
 		if ((c & 0x7fff) == 0) {
@@ -166,7 +166,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	}
 	_screen->loadPalette(0, _stage->getPalette());
 
-	for(int i = 1; i < 0x100; i ++) {
+	for (int i = 1; i < 0x100; i ++) {
 		byte *stagePalette = _stage->getPalette();
 		uint16 c = READ_LE_INT16(stagePalette + i * 2);
 		if ((c & 0x7fff) == 0) {
@@ -219,7 +219,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	_vm->data_800633fc = 0;
 	// TODO 0x8002fff0
 
-	for(int i=0;i < _dragonINIResource->totalRecords(); i++) {
+	for (int i=0;i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _dragonINIResource->getRecord(i);
 		if (ini->sceneId == sceneIdStripped) {
 			if (ini->field_1a_flags_maybe & 1) {
@@ -339,7 +339,7 @@ void Scene::draw() {
 	Common::Rect rect(_camera.x, _camera.y, _camera.x + 320, _camera.y + 200);
 	_vm->_screen->clearScreen();
 
-	for(uint16 priority = 1; priority < 16; priority++) {
+	for (uint16 priority = 1; priority < 16; priority++) {
 		if (priority == 7 && _vm->isFlagSet(ENGINE_FLAG_200)) {
 			_vm->_fontManager->updatePalette();
 		}
@@ -483,7 +483,7 @@ void Scene::drawActorNumber(int16 x, int16 y, uint16 actorId) {
 
 	sprintf(text8, "%d", actorId);
 
-	for(int i = 0; i < strlen(text8); i++) {
+	for (int i = 0; i < strlen(text8); i++) {
 		text[i] = text8[i];
 	}
 	_vm->_fontManager->addText(x, y, text, strlen(text8), 1);

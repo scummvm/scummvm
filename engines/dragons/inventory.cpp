@@ -90,7 +90,7 @@ void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backg
 	_old_showing_value = 0;
 	_bag = bag;
 
-	for(int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
+	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		actorManager->loadActor(0, i + ACTOR_INVENTORY_OFFSET); // TODO need to share resource between inventory item actors.
 	}
 
@@ -166,7 +166,7 @@ void Inventory::openInventory() {
 
 	//TODO 0x800310e0 update cursor position.
 
-	for(int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
+	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		Actor *item = _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
 
 		item->x_pos = item->_walkDestX = invXPosTable[i] + 0x10;
@@ -252,7 +252,7 @@ void Inventory::closeInventory() {
 }
 
 void Inventory::draw() {
-	if(_bag) {
+	if (_bag) {
 		_bag->draw();
 	}
 }
@@ -390,7 +390,7 @@ bool Inventory::addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y) {
 
 bool Inventory::clearItem(uint16 iniId) {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
-		if(inventoryItemTbl[i] == iniId) {
+		if (inventoryItemTbl[i] == iniId) {
 			inventoryItemTbl[i] = 0;
 		}
 	}

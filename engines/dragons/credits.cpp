@@ -57,7 +57,7 @@ bool Credits::isRunning() {
 }
 
 void Credits::draw() {
-	if(_running) {
+	if (_running) {
 		_vm->_screen->copyRectToSurface8bppWrappedY(*_surface, _vm->_screen->getPalette(2), _yOffset);
 	}
 }

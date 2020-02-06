@@ -87,8 +87,8 @@ void Bag::load(BigfileArchive *bigFileArchive) {
 	Graphics::PixelFormat pixelFormat16(2, 5, 5, 5, 1, 10, 5, 0, 15); //TODO move this to a better location.
 	_surface->create(320, 200, pixelFormat16);
 
-	for(int y = 0; y < TILEMAP_HEIGHT; y++) {
-		for(int x = 0; x < TILEMAP_WIDTH; x++) {
+	for (int y = 0; y < TILEMAP_HEIGHT; y++) {
+		for (int x = 0; x < TILEMAP_WIDTH; x++) {
 			uint16 idx = READ_LE_UINT16(&tilemap[(y * TILEMAP_WIDTH + x) * 2]);
 			//debug("tileIdx: %d", idx);
 			drawTileToSurface(_surface, pal, tiles + idx * 0x100, x * 32, y * 8);

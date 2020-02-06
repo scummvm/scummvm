@@ -41,7 +41,7 @@ ActorManager::ActorManager(ActorResourceLoader *actorResourceLoader) : _actorRes
 
 Actor *ActorManager::loadActor(uint32 resourceId, uint32 sequenceId, int16 x, int16 y, uint16 priorityLayer) {
 	Actor *actor = loadActor(resourceId, sequenceId, x, y);
-	if(actor) {
+	if (actor) {
 		actor->priorityLayer = priorityLayer;
 	}
 	return actor;
@@ -82,7 +82,7 @@ Actor *ActorManager::getActor(uint16 actorId) {
 
 void ActorManager::clearActorFlags(uint16 startingActorId) {
 	assert(startingActorId < DRAGONS_ENGINE_NUM_ACTORS);
-	for(uint16 i = startingActorId; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
+	for (uint16 i = startingActorId; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
 		_actors[i]._flags = 0;
 	}
 }
@@ -100,7 +100,7 @@ ActorResource *ActorManager::getActorResource(uint32 resourceId) {
 void ActorManager::updateActorDisplayOrder() {
 	bool shouldContinue = true;
 
-	while(shouldContinue) {
+	while (shouldContinue) {
 		shouldContinue = false;
 		for (int i = 0; i < DRAGONS_ENGINE_NUM_ACTORS - 1; i++) {
 			Actor *curActor = getActor(_displayOrder[i]);
@@ -482,7 +482,7 @@ void Actor::stopWalk() {
 }
 
 void Actor::waitUntilFlag4IsSet() {
-	while(!isFlagSet(ACTOR_FLAG_4)) {
+	while (!isFlagSet(ACTOR_FLAG_4)) {
 		getEngine()->waitForFrames(1);
 	}
 }
@@ -492,7 +492,7 @@ void Actor::waitUntilFlag8IsSet() {
 		return;
 	}
 
-	while(!(_flags & Dragons::ACTOR_FLAG_8)) {
+	while (!(_flags & Dragons::ACTOR_FLAG_8)) {
 		getEngine()->waitForFrames(1);
 	}
 }
@@ -586,7 +586,7 @@ uint16 Actor::canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 ta
 	// 0x80034d28
 	int32 x = actor_x << 0x10;
 	int32 y = actor_y << 0x10;
-	for(;;) {
+	for (;;) {
 		if ((x+0x8000) >> 0x10 == target_x && (y+0x8000) >> 0x10 == target_y) {
 			return 1;
 		}
@@ -728,7 +728,7 @@ int Actor::startMoveToPoint(int destX, int destY) {
 				}
 				// 0x8001bcc8
 				int direction = startMoveToPoint(_walkDestX, _walkDestY);
-				if(direction != -1 && !isFlagSet(ACTOR_FLAG_800)) {
+				if (direction != -1 && !isFlagSet(ACTOR_FLAG_800)) {
 					_sequenceID2 = direction;
 				}
 				if (_sequenceID != _sequenceID2 + 8 && _sequenceID2 != -1 && !isFlagSet(ACTOR_FLAG_800)) {
@@ -767,7 +767,7 @@ bool Actor::actorSetSequenceAndWaitAllowSkip(uint16 newSequenceID) {
 }
 
 bool Actor::waitUntilFlag4IsSetAllowSkip() {
-	while(!isFlagSet(ACTOR_FLAG_4)) {
+	while (!isFlagSet(ACTOR_FLAG_4)) {
 		getEngine()->waitForFrames(1);
 		if (getEngine()->checkForActionButtonRelease()) {
 			return true;

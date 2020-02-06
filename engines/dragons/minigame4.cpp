@@ -198,7 +198,7 @@ uint16 Minigame4::runDanceBattle() {
 	resetActors();
 	actorTalk(bruteActor,0x3321, 0x4B6A);
 	currentStep = 0;
-	while( true ) {
+	while ( true ) {
 		if (0x11 < currentStep) {
 			_vm->_talk->loadText(0x4C0C, auStack2192, 1000);
 			_vm->_talk->displayDialogAroundPoint(auStack2192, 0x27,0xc,0x3321,0,0x4C0C);

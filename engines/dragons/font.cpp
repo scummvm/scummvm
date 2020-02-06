@@ -205,7 +205,7 @@ void FontManager::updatePalette() {
 //	if (( != 0 && ((engine_flags_maybe & 0x200) != 0))) {
 	uint16 *palette_f2_font_maybe = (uint16 *)_screen->getPalette(2);
 	uint16 cursor3 = 0x14a5 | 0x8000;
-	if(_vm->isFlagSet(ENGINE_FLAG_200)) {
+	if (_vm->isFlagSet(ENGINE_FLAG_200)) {
 		if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
 			updatePalEntry(palette_f2_font_maybe, 16, cursor3);
 		} else {

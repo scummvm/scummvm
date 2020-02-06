@@ -139,7 +139,7 @@ bool SoundManager::getSpeechLocation(uint32 talkId, struct SpeechLocation *locat
 
 void SoundManager::PauseCDMusic() {
 	//TODO check PauseCDMusic() to see if we need any more logic.
-	if(isSpeechPlaying()) {
+	if (isSpeechPlaying()) {
 		_vm->_mixer->stopHandle(_speechHandle);
 		_vm->clearFlags(ENGINE_FLAG_8000);
 	}

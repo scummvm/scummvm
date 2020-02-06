@@ -205,7 +205,7 @@ int16 Cursor::updateIniFromScene() {
 	int16 cursorTileY = cursorY / 8;
 	int16 data_80072890_orig = data_80072890;
 	int16 data_800728b0_cursor_seqID_orig = data_800728b0_cursor_seqID;
-	for(int i=0;i <_vm->_dragonINIResource->totalRecords(); i++) {
+	for (int i=0;i <_vm->_dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _vm->_dragonINIResource->getRecord(i);
 		if (ini->sceneId != _vm->_scene->getSceneId()) {
 			// 0x80028be4
@@ -246,7 +246,7 @@ int16 Cursor::updateIniFromScene() {
 				if (ini->field_1a_flags_maybe & 0x800) {
 					data_80072890 = cursorOverIni;
 					uint32 newSeqId = 1;
-					for(int idx=0; idx < 5; idx++) {
+					for (int idx=0; idx < 5; idx++) {
 						data_800728b0_cursor_seqID = idx;
 						byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getObdDataFieldC(sceneId);
 						ScriptOpCall scriptOpCall(obd + 8, READ_LE_UINT32(obd));
@@ -281,7 +281,7 @@ int16 Cursor::updateIniFromScene() {
 //				local_48 = dragon_Obd_Offset + *(int *)(uVar16 * 8 + dragon_Opt_Offset + -8) + 8;
 //				local_44 = read_int32();
 //				local_44 = local_44 + local_48;
-				if(executeScript(scriptOpCall, 0)) {
+				if (executeScript(scriptOpCall, 0)) {
 					_iniUnderCursor = cursorOverIni;
 					data_80072890 = data_80072890_orig;
 					data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;

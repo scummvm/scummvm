@@ -886,7 +886,7 @@ void Minigame1::run() {
 			_vm->getINI(DAT_80063a40 - 1)->actor->clearFlag(ACTOR_FLAG_100);
 			break;
 		}
-	} while( true );
+	} while ( true );
 
 	//TODO callMaybeResetData();
 	flickerActor->updateSequence(0x15);
