@@ -90,6 +90,9 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
+	virtual Common::String getSaveStateName(int slot) const override {
+		return Common::String::format("SKY-VM.%03d", slot);
+	}
 
 	static void *fetchItem(uint32 num);
 	static void *_itemList[300];
@@ -114,8 +117,6 @@ protected:
 
 	void delay(int32 amount);
 	void handleKey();
-
-	uint32 _lastSaveTime;
 
 	void initItemList();
 

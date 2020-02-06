@@ -827,14 +827,8 @@ uint16 Control::shiftUp(uint8 speed) {
 
 bool Control::autoSaveExists() {
 	bool test = false;
-	Common::InSaveFile *f;
-	char fName[20];
-	if (SkyEngine::isCDVersion())
-		strcpy(fName, "SKY-VM-CD.ASD");
-	else
-		sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
-
-	f = _saveFileMan->openForLoading(fName);
+	Common::InSaveFile *f = _saveFileMan->openForLoading(
+		g_engine->getSaveStateName(g_engine->getAutosaveSlot()));
 	if (f != NULL) {
 		test = true;
 		delete f;
@@ -1124,24 +1118,10 @@ void Control::saveDescriptions(const Common::StringArray &list) {
 		displayMessage(NULL, "Unable to store Savegame names to file SKY-VM.SAV. (%s)", _saveFileMan->popErrorDesc().c_str());
 }
 
-void Control::doAutoSave() {
-	char fName[20];
-	if (SkyEngine::isCDVersion())
-		strcpy(fName, "SKY-VM-CD.ASD");
-	else
-		sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
-
-	uint16 res = saveGameToFile(false, fName);
-
-	if (res != GAME_SAVED)
-		displayMessage(0, "Unable to perform autosave to '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
-
-}
-
-uint16 Control::saveGameToFile(bool fromControlPanel, const char *filename) {
+uint16 Control::saveGameToFile(bool fromControlPanel, const char *filename, bool isAutosave) {
 	char fName[20];
 	if (!filename) {
-		sprintf(fName,"SKY-VM.%03d", _selectedGame);
+		sprintf(fName,"SKY-VM.%03d", isAutosave ? 0 : _selectedGame + 1);
 		filename = fName;
 	}
 
@@ -1420,17 +1400,11 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 
 
 uint16 Control::restoreGameFromFile(bool autoSave) {
-	char fName[20];
-	if (autoSave) {
-		if (SkyEngine::isCDVersion())
-			strcpy(fName, "SKY-VM-CD.ASD");
-		else
-			sprintf(fName, "SKY-VM%03d.ASD", SkyEngine::_systemVars.gameVersion);
-	} else
-		sprintf(fName,"SKY-VM.%03d", _selectedGame);
+	int slot = autoSave ? g_engine->getAutosaveSlot() : _selectedGame + 1;
+	Common::String filename = g_engine->getSaveStateName(slot);
 
 	Common::InSaveFile *inf;
-	inf = _saveFileMan->openForLoading(fName);
+	inf = _saveFileMan->openForLoading(filename);
 	if (inf == NULL) {
 		return RESTORE_FAILED;
 	}
@@ -1441,7 +1415,7 @@ uint16 Control::restoreGameFromFile(bool autoSave) {
 	*(uint32 *)saveData = TO_LE_32(infSize);
 
 	if (inf->read(saveData+4, infSize-4) != infSize-4) {
-		displayMessage(NULL, "Can't read from file '%s'", fName);
+		displayMessage(NULL, "Can't read from file '%s'", filename.c_str());
 		free(saveData);
 		delete inf;
 		return RESTORE_FAILED;

@@ -186,17 +186,8 @@ Common::Error SkyEngine::go() {
 		}
 	}
 
-	_lastSaveTime = _system->getMillis();
-
 	uint32 delayCount = _system->getMillis();
 	while (!shouldQuit()) {
-		if (shouldPerformAutoSave(_lastSaveTime)) {
-			if (_skyControl->loadSaveAllowed()) {
-				_lastSaveTime = _system->getMillis();
-				_skyControl->doAutoSave();
-			} else
-				_lastSaveTime += 30 * 1000; // try again in 30 secs
-		}
 		_skySound->checkFxQueue();
 		_skyMouse->mouseEngine();
 		handleKey();

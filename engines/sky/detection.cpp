@@ -233,11 +233,6 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles("SKY-VM.###");
 
-	// Slot 0 is the autosave, if it exists.
-	// TODO: Check for the existence of the autosave -- but this require us
-	// to know which SKY variant we are looking at.
-	saveList.insert_at(0, SaveStateDescriptor(0, "*AUTOSAVE*"));
-
 	// Prepare the list of savestates by looping over all matching savefiles
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Extract the extension
@@ -246,7 +241,8 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(ext.c_str());
 		Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 		if (in) {
-			saveList.push_back(SaveStateDescriptor(slotNum+1, savenames[slotNum]));
+			saveList.push_back(SaveStateDescriptor(slotNum,
+				(slotNum == 0) ? _("Autosave") : savenames[slotNum - 1]));
 			delete in;
 		}
 	}
@@ -264,7 +260,7 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	char fName[20];
-	sprintf(fName,"SKY-VM.%03d", slot - 1);
+	sprintf(fName,"SKY-VM.%03d", slot);
 	saveFileMan->removeSavefile(fName);
 
 	// Load current save game descriptions
@@ -285,7 +281,7 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 	}
 
 	// Update the save game description at the given slot
-	savenames[slot - 1] = "";
+	savenames[slot] = "";
 
 	// Save the updated descriptions
 	Common::OutSaveFile *outf;
@@ -313,17 +309,14 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 
 namespace Sky {
 Common::Error SkyEngine::loadGameState(int slot) {
-	uint16 result = _skyControl->quickXRestore(slot);
+	uint16 result = _skyControl->quickXRestore(slot - 1);
 	return (result == GAME_RESTORED) ? Common::kNoError : Common::kUnknownError;
 }
 
 Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	if (slot == 0)
-		return Common::kWritePermissionDenied;	// we can't overwrite the auto save
-
 	// Set the save slot and save the game
-	_skyControl->_selectedGame = slot - 1;
-	if (_skyControl->saveGameToFile(false) != GAME_SAVED)
+	_skyControl->_selectedGame = isAutosave ? 0 : slot - 1;
+	if (_skyControl->saveGameToFile(false, nullptr, isAutosave) != GAME_SAVED)
 		return Common::kWritePermissionDenied;
 
 	// Load current save game descriptions
@@ -332,7 +325,9 @@ Common::Error SkyEngine::saveGameState(int slot, const Common::String &desc, boo
 	_skyControl->loadDescriptions(saveGameTexts);
 
 	// Update the save game description at the given slot
-	saveGameTexts[slot - 1] = desc;
+	if (!isAutosave)
+		saveGameTexts[slot - 1] = desc;
+
 	// Save the updated descriptions
 	_skyControl->saveDescriptions(saveGameTexts);
 
