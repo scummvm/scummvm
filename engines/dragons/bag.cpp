@@ -20,7 +20,7 @@
  *
  */
 
-#include <common/memstream.h>
+#include "common/memstream.h"
 #include "dragons/bigfile.h"
 #include "dragons/screen.h"
 #include "dragons/bag.h"

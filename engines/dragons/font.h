@@ -22,10 +22,10 @@
 #ifndef DRAGONS_FONT_H
 #define DRAGONS_FONT_H
 
-#include <common/scummsys.h>
-#include <common/stream.h>
-#include <graphics/surface.h>
-#include <common/rect.h>
+#include "common/scummsys.h"
+#include "common/stream.h"
+#include "graphics/surface.h"
+#include "common/rect.h"
 
 namespace Dragons {
 

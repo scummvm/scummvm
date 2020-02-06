@@ -20,7 +20,7 @@
  *
  */
 
-#include <common/debug.h>
+#include "common/debug.h"
 #include "dragons/bigfile.h"
 #include "dragons/actor.h"
 #include "dragons/cursor.h"

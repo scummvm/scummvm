@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include <common/memstream.h>
-#include <common/textconsole.h>
+#include "common/memstream.h"
+#include "common/textconsole.h"
 #include "dragons/bigfile.h"
 #include "dragons/cursor.h"
 #include "dragons/font.h"
