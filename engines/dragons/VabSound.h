@@ -23,7 +23,7 @@
 #ifndef DRAGONS_VABSOUND_H
 #define DRAGONS_VABSOUND_H
 
-#include <common/scummsys.h>
+#include "common/scummsys.h"
 
 namespace Common {
 	class SeekableReadStream;

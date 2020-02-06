@@ -23,7 +23,7 @@
 #ifndef DRAGONS_TALK_H
 #define DRAGONS_TALK_H
 
-#include <common/str.h>
+#include "common/str.h"
 #include "dragons/scriptopcodes.h"
 
 namespace Dragons {
