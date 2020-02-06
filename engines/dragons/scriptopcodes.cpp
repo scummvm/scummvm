@@ -1073,7 +1073,7 @@ void ScriptOpcodes::opUnk18(ScriptOpCall &scriptOpCall) {
 	_vm->_talk->loadText(field2, dialog, 2000);
 
 //	if (((unkFlags1 & 1) == 0) && (((engine_flags_maybe & 0x1000) == 0 || (sVar1 == -1)))) {
-//		dialogText = (uint8_t *)load_string_from_dragon_txt(offset,acStack2016);
+//		dialogText = (uint8 *)load_string_from_dragon_txt(offset,acStack2016);
 //	}
 
 	if (fieldA != 0) {

@@ -84,10 +84,10 @@ void Minigame1::run() {
 	short local_16a;
 	uint32 local_168;
 	uint16 auStack352 [24];
-	uint16_t local_130 [10];
+	uint16 local_130 [10];
 	int32 local_118 [22];
 	uint32 local_c0 [22];
-	uint16_t actorFieldC;
+	uint16 actorFieldC;
 
 	Actor *catActor;
 	Actor *pusherActor;

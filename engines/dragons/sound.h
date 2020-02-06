@@ -67,7 +67,7 @@ private:
 	DragonRMS *_dragonRMS;
 
 	// SOUND_ARR_DAT_80071f6c
-	uint8_t _soundArr[0x780];
+	uint8 _soundArr[0x780];
 
 	VabSound* _vabMusx;
 	VabSound* _vabGlob;

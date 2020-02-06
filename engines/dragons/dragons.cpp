@@ -20,6 +20,8 @@
  *
  */
 #include "common/config-manager.h"
+#include "common/keyboard.h"
+#include "common/language.h"
 #include "engines/util.h"
 #include "graphics/thumbnail.h"
 #include "common/error.h"
@@ -262,7 +264,7 @@ void DragonsEngine::gameLoop()
 	uint16 uVar6;
 	uint16 uVar7;
 	uint actorId_00;
-	uint16_t sequenceId;
+	uint16 sequenceId;
 	DragonINI *pDVar8;
 
 	_cursor->_cursorActivationSeqOffset = 0;
@@ -845,7 +847,7 @@ void DragonsEngine::runINIScripts() {
 void DragonsEngine::engineFlag0x20UpdateFunction() {
 {
 	uint16 uVar1;
-	uint16_t uVar2;
+	uint16 uVar2;
 	DragonINI *pDVar3;
 	DragonINI *pDVar4;
 	uint16 uVar5;
