@@ -154,10 +154,6 @@ void QueenEngine::update(bool checkPlayerInput) {
 			_input->quickLoadReset();
 			loadGameState(SLOT_QUICKSAVE);
 		}
-		if (shouldPerformAutoSave(_lastSaveTime)) {
-			saveGameState(SLOT_AUTOSAVE, "Autosave");
-			_lastSaveTime = _system->getMillis();
-		}
 	}
 	if (!_input->cutawayRunning()) {
 		if (checkPlayerInput) {
@@ -274,15 +270,20 @@ Common::InSaveFile *QueenEngine::readGameStateHeader(int slot, GameStateHeader *
 	return file;
 }
 
-void QueenEngine::makeGameStateName(int slot, char *buf) const {
+Common::String QueenEngine::getSaveStateName(int slot) const {
 	if (slot == SLOT_LISTPREFIX) {
-		strcpy(buf, "queen.s??");
+		return "queen.s??";
 	} else if (slot == SLOT_AUTOSAVE) {
-		strcpy(buf, "queen.asd");
-	} else {
-		assert(slot >= 0);
-		sprintf(buf, "queen.s%02d", slot);
+		slot = getAutosaveSlot();
 	}
+
+	assert(slot >= 0);
+	return Common::String::format("queen.s%02d", slot);
+}
+
+void QueenEngine::makeGameStateName(int slot, char *buf) const {
+	Common::String name = getSaveStateName(slot);
+	strcpy(buf, name.c_str());
 }
 
 int QueenEngine::getGameStateSlot(const char *filename) const {
@@ -354,7 +355,6 @@ Common::Error QueenEngine::run() {
 	if (ConfMan.hasKey("save_slot") && canLoadOrSave()) {
 		loadGameState(ConfMan.getInt("save_slot"));
 	}
-	_lastSaveTime = _lastUpdateTime = _system->getMillis();
 
 	while (!shouldQuit()) {
 		if (_logic->newRoom() > 0) {
