@@ -348,10 +348,6 @@ Common::Error ZVision::run() {
 			delay >>= 1;
 		}
 
-		if (canSaveGameStateCurrently() && shouldPerformAutoSave(_saveManager->getLastSaveTime())) {
-			_saveManager->autoSave();
-		}
-
 		_system->delayMillis(delay);
 	}
 
