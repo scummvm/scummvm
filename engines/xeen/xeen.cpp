@@ -202,6 +202,11 @@ bool XeenEngine::canSaveGameStateCurrently() {
 		&& (_map->mazeData()._mazeFlags & RESTRICTION_SAVE) == 0;
 }
 
+bool XeenEngine::canSaveAutosaveCurrently() {
+	return canSaveGameStateCurrently() &&
+		(_map && !(_map->mazeData()._mazeFlags & RESTRICTION_SAVE));
+}
+
 void XeenEngine::playGame() {
 	_files->setGameCc(0);
 	_sound->stopAllAudio();
@@ -325,14 +330,6 @@ void XeenEngine::saveSettings() {
 
 void XeenEngine::GUIError(const Common::String &msg) {
 	GUIErrorMessage(msg);
-}
-
-void XeenEngine::autoSaveCheck(int &lastSaveTime) {
-	if (shouldPerformAutoSave(lastSaveTime) && canSaveGameStateCurrently() &&
-			(_map && !(_map->mazeData()._mazeFlags & RESTRICTION_SAVE))) {
-		_saves->doAutosave();
-		lastSaveTime = g_system->getMillis();
-	}
 }
 
 } // End of namespace Xeen
