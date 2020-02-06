@@ -73,11 +73,6 @@ private:
 
 public:
 	/**
-	 * Called every room change. Saves the state of the room just before
-	 * the room changes.
-	 */
-	void autoSave();
-	/**
 	 * Copies the data from the last auto-save into a new save file. We
 	 * can't use the current state data because the save menu *IS* a room.
 	 * The file is named using ZVision::generateSaveFileName(slot)

@@ -100,10 +100,6 @@ void SaveManager::saveGame(uint slot, const Common::String &saveName, bool useSa
 	_lastSaveTime = g_system->getMillis();
 }
 
-void SaveManager::autoSave() {
-	saveGame(0, "Auto save", false);
-}
-
 void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::String &saveName, bool useSaveBuffer) {
 	file->writeUint32BE(SAVEGAME_ID);
 
