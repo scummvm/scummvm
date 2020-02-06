@@ -694,7 +694,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 				}
 				uVar3 = FindLastPositionOf5cChar(DAT_80083104);
 				sVar2 = FUN_80031c28(DAT_80083104,asStack512,uVar3 & 0xffff,0x20);
-				talkDialogEntry->xPosMaybe = (uint8_t)local_58;
+				talkDialogEntry->xPosMaybe = (uint8)local_58;
 				local_58 = local_58 + sVar2;
 				talkDialogEntry->yPosMaybe = talkDialogEntry->yPosMaybe + (char)sVar2;
 			}

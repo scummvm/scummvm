@@ -69,14 +69,14 @@ void Minigame5::run() {
 	short local_50;
 	Actor *local_4e;
 	uint16 local_4c;
-	uint16_t local_4a;
+	uint16 local_4a;
 	uint16 local_48;
 	int16_t local_46;
 	int16_t local_44;
 	short local_42;
-	uint16_t local_30 [4];
-	uint16_t uStack42;
-	uint16_t local_28 [10];
+	uint16 local_30 [4];
+	uint16 uStack42;
+	uint16 local_28 [10];
 	short local_10;
 	uint32 savedEngineFlags;
 

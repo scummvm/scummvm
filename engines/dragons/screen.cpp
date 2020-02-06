@@ -106,8 +106,8 @@ void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *pa
 
 /**
  * Fast RGB555 pixel blending
- * @param fg      The foreground color in uint16_t RGB565 format
- * @param bg      The background color in uint16_t RGB565 format
+ * @param fg      The foreground color in uint16 RGB565 format
+ * @param bg      The background color in uint16 RGB565 format
  * @param alpha   The alpha in range 0-255
  **/
 uint16 alphaBlendRGB555( uint32 fg, uint32 bg, uint8 alpha ){
@@ -115,7 +115,7 @@ uint16 alphaBlendRGB555( uint32 fg, uint32 bg, uint8 alpha ){
 	bg = (bg | (bg << 16)) & 0b00000011111000000111110000011111;
 	fg = (fg | (fg << 16)) & 0b00000011111000000111110000011111;
 	uint32 result = ((((fg - bg) * alpha) >> 5) + bg) & 0b00000011111000000111110000011111;
-	return (uint16_t)((result >> 16) | result);
+	return (uint16)((result >> 16) | result);
 }
 
 uint16 alphaBlendAdditiveRGB555( uint32 fg, uint32 bg){
@@ -138,7 +138,7 @@ uint16 alphaBlendAdditiveRGB555( uint32 fg, uint32 bg){
 		result &= 0b00000011111000000111110000011111;
 		result |= 0x1f;
 	}
-	return (uint16_t)((result >> 16) | result);
+	return (uint16)((result >> 16) | result);
 }
 
 void Screen::copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX, AlphaBlendMode alpha) {

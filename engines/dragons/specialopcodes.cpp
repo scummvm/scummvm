@@ -1478,7 +1478,7 @@ void menInMinesSceneUpdateFunction() {
 			0x4590A, 0x45994, 0x459F4, 0x45A60
 	};
 	DragonsEngine *vm = getEngine();
-	uint16_t sequenceId;
+	uint16 sequenceId;
 	Actor *actor = vm->_dragonINIResource->getRecord(0x293)->actor;
 
 	if (!vm->isFlagSet(ENGINE_FLAG_8000)) {
@@ -1524,7 +1524,7 @@ void monksAtBarSceneUpdateFunction() {
 	bool bVar1;
 	short sVar2;
 	uint32 textIndex;
-	uint16_t sequenceId;
+	uint16 sequenceId;
 	int16 specialOpCounter = vm->_scriptOpcodes->_specialOpCodes->getSpecialOpCounter();
 	if (specialOpCounter == -1) {
 		monksAtBarCurrentState = vm->getRand(2) * 2;
