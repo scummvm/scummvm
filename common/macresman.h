@@ -181,6 +181,11 @@ public:
 	 */
 	bool loadFromMacBinary(SeekableReadStream &stream);
 
+	/**
+	 * Dump contents of the archive to ./dumps directory
+	 */
+	 void dumpRaw();
+
 private:
 	SeekableReadStream *_stream;
 	String _baseFileName;
