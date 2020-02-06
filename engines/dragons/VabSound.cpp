@@ -32,7 +32,7 @@ namespace Dragons {
 	VabSound::VabSound(Common::SeekableReadStream *msfData, const DragonsEngine *_vm): _toneAttrs(NULL), _vbData(NULL) {
 		loadHeader(msfData);
 
-		auto dataSize = msfData->size() - msfData->pos();
+		int32 dataSize = msfData->size() - msfData->pos();
 		_vbData = new byte[dataSize];
 		msfData->read(_vbData, dataSize);
 
