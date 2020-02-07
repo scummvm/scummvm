@@ -35,40 +35,40 @@ static const PlainGameDescriptor dragonsGames[] = {
 namespace Dragons {
 
 static const DragonsGameDescription gameDescriptions[] = {
-		{
-				{
-						"dragons",
-						0,
-						AD_ENTRY1s("bigfile.dat", "02c26712bee57266f28235fdc0207725", 44990464),
-						Common::EN_USA,
-						Common::kPlatformPSX,
-						ADGF_DROPPLATFORM,
-						GUIO0()
-				},
-				kGameIdDragons
-		},
+	{
+			{
+					"dragons",
+					0,
+					AD_ENTRY1s("bigfile.dat", "02c26712bee57266f28235fdc0207725", 44990464),
+					Common::EN_USA,
+					Common::kPlatformPSX,
+					ADGF_DROPPLATFORM,
+					GUIO0()
+			},
+			kGameIdDragons
+	},
 
-		{
-				{
-						"dragons",
-						0,
-						AD_ENTRY1s("bigfile.dat", "234234234234", 29779968),
-						Common::DE_DEU,
-						Common::kPlatformPSX,
-						ADGF_DROPPLATFORM,
-						GUIO0()
-				},
-				kGameIdDragons
-		},
+	{
+			{
+					"dragons",
+					0,
+					AD_ENTRY1s("bigfile.dat", "234234234234", 29779968),
+					Common::DE_DEU,
+					Common::kPlatformPSX,
+					ADGF_DROPPLATFORM,
+					GUIO0()
+			},
+			kGameIdDragons
+	},
 
-		{AD_TABLE_END_MARKER, 0}
+	{ AD_TABLE_END_MARKER, 0 }
 };
 
 } // End of namespace Dragons
 
 static const char * const directoryGlobs[] = {
-		"resource",
-		0
+	"resource",
+	0
 };
 
 class DragonsMetaEngine : public AdvancedMetaEngine {
@@ -169,12 +169,12 @@ bool DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 	const Dragons::DragonsGameDescription *gd = (const Dragons::DragonsGameDescription *)desc;
 	if (gd) {
 		switch (gd->gameId) {
-			case Dragons::kGameIdDragons:
-				*engine = new Dragons::DragonsEngine(syst);
-				break;
-			default:
-				error("Unknown game id");
-				break;
+		case Dragons::kGameIdDragons:
+			*engine = new Dragons::DragonsEngine(syst);
+			break;
+		default:
+			error("Unknown game id");
+			break;
 		}
 	}
 	return desc != 0;

@@ -103,9 +103,8 @@ void Credits::update() {
 }
 
 void Credits::convertToWideChar(uint16 *destBuf, byte *text, uint16 maxLength) {
-	int i = 0;
 	bool finished = false;
-	for (; i < maxLength; i++) {
+	for (int i = 0; i < maxLength; i++) {
 		if (text[i] == 0) {
 			finished = true;
 		}

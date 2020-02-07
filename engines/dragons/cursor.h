@@ -43,10 +43,10 @@ public:
 	int16 data_8007283c;
 	int16 _cursorActivationSeqOffset;
 	uint16 _iniItemInHand;
+
 private:
 	DragonsEngine *_vm;
 	Actor *_actor;
-
 
 public:
 	Cursor(DragonsEngine *vm);
@@ -63,6 +63,7 @@ public:
 	void setActorFlag400();
 	void clearActorFlag400();
 	byte *getPalette();
+
 private:
 	int16 updateIniFromScene();
 };

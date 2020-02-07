@@ -76,9 +76,8 @@ void Cursor::update() {
 
 	// 0x80028104
 	if (_iniUnderCursor != 0
-	&& ((_iniUnderCursor & 0x8000 && (_vm->_inventory->getType() == 1 || _vm->_inventory->getType() == 2))
-		||(!(_iniUnderCursor & 0x8000) && _vm->getINI(_iniUnderCursor - 1)->field_1a_flags_maybe & 0x80))
-	) {
+			&& ((_iniUnderCursor & 0x8000 && (_vm->_inventory->getType() == 1 || _vm->_inventory->getType() == 2))
+			||(!(_iniUnderCursor & 0x8000) && _vm->getINI(_iniUnderCursor - 1)->field_1a_flags_maybe & 0x80))) {
 		if (_actor->_sequenceID != 0x84) {
 			_actor->updateSequence(0x84);
 		}
@@ -124,8 +123,7 @@ void Cursor::update() {
 			_actor->updateSequence(0x84);
 		}
 		return;
-	}
-	else {
+	} else {
 		if ((uint)_actor->_sequenceID != (uint)data_8007283c + 1) {
 			_actor->updateSequence((uint)data_8007283c + 1);
 		}
@@ -157,19 +155,19 @@ int16 Cursor::updateINIUnderCursor() {
 		}
 		Common::Point inventoryPosition = _vm->_inventory->getPosition();
 		if (_x >= inventoryPosition.x + 0xa + xOffset
-			&& _x < inventoryPosition.x + 0x35 + xOffset
-			&& _y >= inventoryPosition.y + 0xa
-			&& _y < inventoryPosition.y + 0x25) {
+				&& _x < inventoryPosition.x + 0x35 + xOffset
+				&& _y >= inventoryPosition.y + 0xa
+				&& _y < inventoryPosition.y + 0x25) {
 			_iniUnderCursor = 0x8001;
 			return _iniUnderCursor;
 		}
 
 		if (_x >= inventoryPosition.x + 0x36
-			&& _x < inventoryPosition.x + 0x5f
-			&& _y >= inventoryPosition.y + 0xa
-			&& _y < inventoryPosition.y + 0x25
-			&& _vm->_inventory->getPositionIndex() != 0
-			&& _vm->_inventory->getPositionIndex() != 2) {
+				&& _x < inventoryPosition.x + 0x5f
+				&& _y >= inventoryPosition.y + 0xa
+				&& _y < inventoryPosition.y + 0x25
+				&& _vm->_inventory->getPositionIndex() != 0
+				&& _vm->_inventory->getPositionIndex() != 2) {
 			_iniUnderCursor = 0x8002;
 			return _iniUnderCursor;
 		}
@@ -186,8 +184,7 @@ int16 Cursor::updateINIUnderCursor() {
 				_iniUnderCursor = 0;
 				return 0;
 			}
-		}
-		else {
+		} else {
 			if (inventoryType != 2) {
 				_iniUnderCursor = 0;
 				return 0;
@@ -203,8 +200,9 @@ int16 Cursor::updateIniFromScene() {
 	int16 cursorY = _y + _vm->_scene->_camera.y;
 	int16 cursorTileX = cursorX / 32;
 	int16 cursorTileY = cursorY / 8;
-	int16 _data_80072890_orig = _data_80072890;
-	int16 _data_800728b0_cursor_seqID_orig = _data_800728b0_cursor_seqID;
+	int16 data_80072890_orig = _data_80072890;
+	int16 data_800728b0_cursor_seqID_orig = _data_800728b0_cursor_seqID;
+
 	for (int i = 0;i <_vm->_dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _vm->_dragonINIResource->getRecord(i);
 		if (ini->sceneId != _vm->_scene->getSceneId()) {
@@ -243,10 +241,11 @@ int16 Cursor::updateIniFromScene() {
 				// _iniUnderCursor = cursorOverIni;
 				_data_80072890 = _iniUnderCursor;
 				_data_800728b0_cursor_seqID = _sequenceID;
+
 				if (ini->field_1a_flags_maybe & 0x800) {
 					_data_80072890 = cursorOverIni;
 					uint32 newSeqId = 1;
-					for (int idx=0; idx < 5; idx++) {
+					for (int idx = 0; idx < 5; idx++) {
 						_data_800728b0_cursor_seqID = idx;
 						byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getObdDataFieldC(sceneId);
 						ScriptOpCall scriptOpCall(obd + 8, READ_LE_UINT32(obd));
@@ -272,7 +271,7 @@ int16 Cursor::updateIniFromScene() {
 				if (_sequenceID != 0) {
 					_iniUnderCursor = cursorOverIni;
 					_data_80072890 = _data_80072890_orig;
-					_data_800728b0_cursor_seqID = _data_800728b0_cursor_seqID_orig;
+					_data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
 					return _iniUnderCursor;
 				}
 				byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getObdDataFieldC(sceneId);
@@ -284,21 +283,22 @@ int16 Cursor::updateIniFromScene() {
 				if (executeScript(scriptOpCall, 0)) {
 					_iniUnderCursor = cursorOverIni;
 					_data_80072890 = _data_80072890_orig;
-					_data_800728b0_cursor_seqID = _data_800728b0_cursor_seqID_orig;
+					_data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
 					return _iniUnderCursor;
 				}
 			}
 		}
 	}
 	_iniUnderCursor = 0;
-	_data_80072890 = _data_80072890_orig;
-	_data_800728b0_cursor_seqID = _data_800728b0_cursor_seqID_orig;
+	_data_80072890 = data_80072890_orig;
+	_data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
 	return 0;
 }
 
 int16 Cursor::executeScript(ScriptOpCall &scriptOpCall, uint16 unkFlag) {
 	int16 temp = _vm->_scriptOpcodes->_scriptTargetINI;
 	byte *codeStart = scriptOpCall._code;
+
 	scriptOpCall._field8 = 1;
 	scriptOpCall._result = 0;
 	_vm->_scriptOpcodes->_data_80071f5c = 0;
@@ -340,7 +340,6 @@ void Cursor::selectPreviousCursor() {
 void Cursor::updateSequenceID(int16 sequenceID) {
 	_sequenceID = sequenceID;
 	_actor->updateSequence(_sequenceID);
-
 }
 
 void Cursor::setActorFlag400() {

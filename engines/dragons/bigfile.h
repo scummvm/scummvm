@@ -31,6 +31,7 @@ class BigfileArchive {
 private:
 	Common::Language _language;
 	Common::File *_fd;
+
 public:
 	BigfileArchive(const char *filename, Common::Language language);
 	virtual ~BigfileArchive();

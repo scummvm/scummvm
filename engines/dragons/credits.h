@@ -46,6 +46,7 @@ private:
 	char *_curPtr;
 	uint32 _dataLength;
 	uint32 _curPosition;
+
 public:
 	Credits(DragonsEngine *vm, FontManager *fontManager, BigfileArchive *bigfileArchive);
 	void start();
