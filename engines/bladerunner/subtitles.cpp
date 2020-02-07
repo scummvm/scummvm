@@ -142,11 +142,10 @@ void Subtitles::init(void) {
 			_subtitlesInfo.fontName = SUBTITLES_FONT_FILENAME_EXTERNAL;
 		}
 
-		debug("Subtitles version info: v%s (%s) %s by: %s",
+		debug("Subtitles version info: v%s (%s) %s",
 		       _subtitlesInfo.versionStr.c_str(),
 		       _subtitlesInfo.dateOfCompile.c_str(),
-		       _subtitlesInfo.languageMode.c_str(),
-		       _subtitlesInfo.credits.c_str());
+		       _subtitlesInfo.languageMode.c_str());
 
 	} else {
 		debug("Subtitles version info: N/A");

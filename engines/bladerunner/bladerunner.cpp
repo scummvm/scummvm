@@ -510,7 +510,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_time = new Time(this);
 
-	debug("_framesPerSecondMax:: %s", _framesPerSecondMax? "true" : "false");
+//	debug("_framesPerSecondMax:: %s", _framesPerSecondMax? "true" : "false");
 	_framelimiter = new Framelimiter(this, _framesPerSecondMax? 120 : 60);
 
 	// Try to load the SUBTITLES.MIX first, before Startup.MIX

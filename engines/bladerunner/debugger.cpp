@@ -1291,7 +1291,7 @@ bool Debugger::cmdSubtitle(int argc, const char **argv) {
 
 		Common::String subtitleText = argv[1];
 		if (subtitleText == "info") {
-			debugPrintf("Subtitles version info: v%s (%s) %s by: %s\n",
+			debugPrintf("Subtitles version info: v%s (%s) %s\nCredits:\n%s\n",
 			            _vm->_subtitles->getSubtitlesInfo().versionStr.c_str(),
 			            _vm->_subtitles->getSubtitlesInfo().dateOfCompile.c_str(),
 			            _vm->_subtitles->getSubtitlesInfo().languageMode.c_str(),
