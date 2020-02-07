@@ -465,7 +465,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		debug("Dumping %d resources", resources.size());
 
 		byte *data = nullptr;
-		int dataSize = 0;
+		uint dataSize = 0;
 		Common::DumpFile out;
 
 		for (uint i = 0; i < resources.size(); i++) {
