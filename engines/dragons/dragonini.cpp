@@ -47,7 +47,8 @@ void DragonINIResource::reset() {
 		_dragonINI[i].actorResourceId = readStream->readSint16LE();
 		_dragonINI[i].sequenceId = readStream->readSint16LE();
 		_dragonINI[i].field_8 = readStream->readSint16LE();
-		assert(readStream->readUint16LE() == 0); // actorId
+		uint16 v = readStream->readUint16LE();
+		assert(v == 0); // actorId
 		_dragonINI[i].actor = NULL;
 		_dragonINI[i].sceneId = readStream->readUint16LE();
 		_dragonINI[i].field_e = readStream->readSint16LE();
