@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Prince\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-17 19:53+0100\n"
-"PO-Revision-Date: 2020-02-04 21:08+0000\n"
+"PO-Revision-Date: 2020-02-08 10:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: English <https://translations.scummvm.org/projects/prince/"
 "prince/en/>\n"
@@ -924,14 +924,14 @@ msgstr ""
 "company..."
 
 #: dialog0016.txt:100706
-#, fuzzy
 msgid "OTHER: Jeden miał mnóstwo pieniędzy, a drugi za|to spore doświadczenie."
-msgstr "OTHER: One of them had a lot of money,|the other a lot of experience."
+msgstr "OTHER: One of them had a lot of money|the other a lot of experience."
 
 #: dialog0016.txt:100707
-#, fuzzy
 msgid "OTHER: Po pewnym czasie role się jednak zmieniły|i pierwszy miał wielkie doświadczenie,|a drugi jego pieniądze."
-msgstr "OTHER: But in the end, the first ended|with a lot of experience, while the other|ended with all the money."
+msgstr ""
+"OTHER: But in the end, the first ended|with a lot of experience, while the "
+"other|ended with all the money."
 
 #: dialog0016.txt:100708
 #, fuzzy
