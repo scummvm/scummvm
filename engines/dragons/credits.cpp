@@ -33,7 +33,8 @@ void creditsUpdateFunction() {
 	getEngine()->_credits->update();
 }
 
-Credits::Credits(DragonsEngine *vm, FontManager *fontManager, BigfileArchive *bigfileArchive) : _vm(vm), _fontManager(fontManager), _bigfileArchive(bigfileArchive), _surface(NULL) {
+Credits::Credits(DragonsEngine *vm, FontManager *fontManager, BigfileArchive *bigfileArchive) : _vm(vm),
+				_fontManager(fontManager), _bigfileArchive(bigfileArchive), _surface(NULL), _curPtr(NULL) {
 	_running = false;
 	_updateCounter = 0;
 	_yOffset = 0;

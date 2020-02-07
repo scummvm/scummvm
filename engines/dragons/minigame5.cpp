@@ -170,241 +170,240 @@ void Minigame5::run() {
 		while ( true ) {
 			do {
 				_vm->waitForFrames(1);
-				if ((uint)currentState - 1 < 8) {
-					switch(currentState) {
-						case 1:
-							if (local_66 != 8) {
-								local_66 = 0;
+				switch (currentState) {
+				case 1:
+					if (local_66 != 8) {
+						local_66 = 0;
+					}
+					//iVar2 = IsButtonBeingPressed((uint)DAT_800728ac,0);
+					if (!_vm->isActionButtonPressed()) {
+						if (local_74 == 0) {
+							if ((((flickerActor->_sequenceID != 0) &&
+								  (flickerActor->_sequenceID != 5)) &&
+								 (flickerActor->_sequenceID != 6)) ||
+								((flickerActor->_flags & 4) != 0)) {
+								flickerActor->updateSequence(0x19);
 							}
-							//iVar2 = IsButtonBeingPressed((uint)DAT_800728ac,0);
-							if (!_vm->isActionButtonPressed()) {
-								if (local_74 == 0) {
-									if ((((flickerActor->_sequenceID != 0) &&
-										  (flickerActor->_sequenceID != 5)) &&
-										 (flickerActor->_sequenceID != 6)) ||
-										((flickerActor->_flags & 4) != 0)) {
-										flickerActor->updateSequence(0x19);
+						}
+						else {
+							local_66 = 1;
+							local_50 = 0;
+							pusherActor->updateSequence(1);
+							currentState = 2;
+							if (local_74 < 0x14) {
+								local_72 = 1;
+							}
+							else {
+								if (local_74 < 0x2d) {
+									local_72 = 2;
+								}
+								else {
+									if (local_74 < 0x169) {
+										local_72 = 3;
+									}
+								}
+							}
+						}
+						local_74 = 0;
+					}
+					else {
+						pusherActor->x_pos = flickerActor->x_pos + -0xe;
+						pusherActor->y_pos = flickerActor->y_pos + 7;
+						if (local_74 < 0x168) {
+							local_74 = local_74 + 1;
+							if (local_74 < 0x14) {
+								if (((pusherActor->_sequenceID != 4) &&
+									 (pusherActor->_sequenceID != 2)) &&
+									(pusherActor->_sequenceID != 3)) {
+									pusherActor->updateSequence(4);
+								}
+								if (flickerActor->_sequenceID != 0x1a) {
+									flickerActor->updateSequence(0x1a);
+									_vm->playOrStopSound(2);
+								}
+							}
+							else {
+								if (local_74 < 0x2d) {
+									if (((pusherActor->_sequenceID != 5) &&
+										 (pusherActor->_sequenceID != 2)) &&
+										(pusherActor->_sequenceID != 3)) {
+										pusherActor->updateSequence(5);
+									}
+									if (flickerActor->_sequenceID != 0x1e) {
+										flickerActor->updateSequence(0x1e);
+										_vm->playOrStopSound(3);
 									}
 								}
 								else {
-									local_66 = 1;
-									local_50 = 0;
-									pusherActor->updateSequence(1);
-									currentState = 2;
-									if (local_74 < 0x14) {
-										local_72 = 1;
-									}
-									else {
-										if (local_74 < 0x2d) {
-											local_72 = 2;
-										}
-										else {
-											if (local_74 < 0x169) {
-												local_72 = 3;
-											}
-										}
-									}
-								}
-								local_74 = 0;
-							}
-							else {
-								pusherActor->x_pos = flickerActor->x_pos + -0xe;
-								pusherActor->y_pos = flickerActor->y_pos + 7;
-								if (local_74 < 0x168) {
-									local_74 = local_74 + 1;
-									if (local_74 < 0x14) {
-										if (((pusherActor->_sequenceID != 4) &&
+									if (local_74 < 0x169) {
+										if (((pusherActor->_sequenceID != 6) &&
 											 (pusherActor->_sequenceID != 2)) &&
 											(pusherActor->_sequenceID != 3)) {
-											pusherActor->updateSequence(4);
+											pusherActor->updateSequence(6);
 										}
-										if (flickerActor->_sequenceID != 0x1a) {
-											flickerActor->updateSequence(0x1a);
-											_vm->playOrStopSound(2);
-										}
-									}
-									else {
-										if (local_74 < 0x2d) {
-											if (((pusherActor->_sequenceID != 5) &&
-												 (pusherActor->_sequenceID != 2)) &&
-												(pusherActor->_sequenceID != 3)) {
-												pusherActor->updateSequence(5);
-											}
-											if (flickerActor->_sequenceID != 0x1e) {
-												flickerActor->updateSequence(0x1e);
-												_vm->playOrStopSound(3);
-											}
-										}
-										else {
-											if (local_74 < 0x169) {
-												if (((pusherActor->_sequenceID != 6) &&
-													 (pusherActor->_sequenceID != 2)) &&
-													(pusherActor->_sequenceID != 3)) {
-													pusherActor->updateSequence(6);
-												}
-												if (flickerActor->_sequenceID != 0x1f) {
-													flickerActor->updateSequence(0x1f);
-													_vm->playOrStopSound(4);
-												}
-											}
+										if (flickerActor->_sequenceID != 0x1f) {
+											flickerActor->updateSequence(0x1f);
+											_vm->playOrStopSound(4);
 										}
 									}
 								}
-								else {
-									if (pusherActor->_sequenceID != 6) {
-										pusherActor->updateSequence(6);
-									}
-									if (flickerActor->_sequenceID != 0x1f) {
-										flickerActor->updateSequence(0x1f);
-									}
-								}
 							}
-							break;
-						case 2:
-							if (flickerActor->_sequenceID == 0x1b) {
-								if ((flickerActor->_flags & 4) != 0) {
-									if ((((int)(uint)local_850 < (int)((local_30[0]) - 6)) ||
-										 ((uint)local_30[1] + 6 < (uint)local_850)) || (local_72 != local_30[2])) {
-										local_42 = 8;
-									}
-									else {
-										local_42 = 0;
-									}
-									local_5c = 0;
-									if ((local_42 != 8) && ((local_850 < local_30[0] || (local_30[1] < local_850)))) {
-										local_5c = (short)((int)(((local_30[0]) + 0x17) * 0x80) / 0x2a) -
-												   (short)((int)((uint)local_850 << 7) / 0x2a);
-									}
-									local_60 = local_850 << 7;
-									bombActor->x_pos = local_850 & 0x1ff;
-									local_5e = 0x2d00;
-									local_5a = (local_72 + 3) * 0x80;
-									bombActor->y_pos = 0x5a;
-									bombScale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-									bombActor->scale = bombScale;
-									_vm->playOrStopSound(10);
-									bombActor->priorityLayer = 3;
-									flickerActor->updateSequence(8);
-									currentState = 3;
-								}
+						}
+						else {
+							if (pusherActor->_sequenceID != 6) {
+								pusherActor->updateSequence(6);
 							}
-							else {
-								flickerActor->updateSequence(0x1b);
-								_vm->playOrStopSound(1);
+							if (flickerActor->_sequenceID != 0x1f) {
+								flickerActor->updateSequence(0x1f);
 							}
-							break;
-						case 3:
-							local_60 = local_60 + local_5c;
-							if ((uint)local_72 * 2 + 0xb4 < (uint)bombScale) {
-								local_5e = local_5e - local_5a;
-								local_5a = local_5a - local_28[((uint)local_72 - 1) * 3];
-								if (local_5a < 0) {
-									local_5a = 0;
-								}
-							}
-							else {
-								if ((int)(uint)bombScale < (int)((uint)local_72 * -4 + 0xba)) {
-									local_5e = local_5e + local_5a;
-									local_5a = local_5a + local_28[((uint)local_72 - 1) * 3 + 2];
-								}
-								else {
-									local_5a = 0;
-								}
-							}
-							bombActor->x_pos = local_60 >> 7;
-							bombActor->y_pos = local_5e >> 7;
-							bombScale = bombScale - 3;
-							bombActor->scale = bombScale;
-							if (bombScale == 0x7f) {
-								if (((local_60 >> 7 < local_30[0]) || (local_30[1] < local_60 >> 7)) ||
-									(local_72 != local_30[2])) {
-									local_42 = 8;
-								}
-								else {
-									local_42 = 0;
-								}
-								if (local_42 == 8) {
-									if ((((local_72 == 1) && (local_60 >> 7 < 0x10e)) ||
-										 ((local_72 == 2 &&
-										   ((((0x7f < local_60 >> 7 && (local_60 >> 7 < 0xad)) ||
-											  ((0x30 < local_60 >> 7 && (local_60 >> 7 < 0x4a)))) ||
-											 ((0xf8 < local_60 >> 7 && (local_60 >> 7 < 0x10f)))))))) ||
-										((local_72 == 3 &&
-										  (((0x3c < local_60 >> 7 && (local_60 >> 7 < 0x46)) ||
-											((0x101 < local_60 >> 7 && (local_60 >> 7 < 0x10a)))))))) {
-										bombActor->priorityLayer = 0;
-										dustActor->priorityLayer = 4;
-										dustActor->x_pos = bombActor->x_pos;
-										dustActor->y_pos = bombActor->y_pos;
-										dustActor->updateSequence(9);
-										currentState = 4;
-									}
-								}
-								else {
-									local_4e->field_c = 2;
-									local_4c = 0x3c;
-									bombActor->priorityLayer = 0;
-									currentState = 8;
-								}
-							}
-							if (bombScale < 0x7f) {
-								bombActor->priorityLayer = 2;
-							}
-							if ((0xc < bombScale) && (bombScale < 0x41)) {
-								bombActor->priorityLayer = 0;
-							}
-							if ((short)bombScale < 2) {
-								currentState = 5;
-							}
-							break;
-						case 4:
-							pusherActor->updateSequence(9);
-							_vm->waitForFrames(0x3c);
-							pusherActor->updateSequence(0xb);
-							if (DAT_800633e6 == 0) {
-								_vm->_talk->loadText(DAT_8006393c,auStack2120, 1000);
-								_vm->_talk->displayDialogAroundPoint(auStack2120,(int)(short)(local_850 >> 3),0xc,0,1,DAT_8006393c);
-								DAT_800633e6 = 1;
-							}
-							else {
-								_vm->_talk->loadText(DAT_80063938, auStack2120, 1000);
-								_vm->_talk->displayDialogAroundPoint(auStack2120,(int)(short)(local_850 >> 3),0xc,0,1, DAT_80063938);
-							}
-							_vm->waitForFrames(10);
-							local_10 = 1;
-							currentState = 6;
-							break;
-						case 5:
-							currentState = 4;
-							break;
-						case 6:
-							currentState = 7;
-							break;
-						case 7:
-							break;
-						case 8:
-							bombActor->priorityLayer = 0;
-							pusherActor->updateSequence(0);
-							_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->updateSequence(2);
-							_vm->waitForFrames(0x12);
-							_vm->_talk->loadText(DAT_80063e38, auStack2120, 1000);
-							_vm->_talk->displayDialogAroundPoint(auStack2120,0xf,2,0x501,0,DAT_80063e38);
-//						TODO	callMaybeResetData();
-							_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->updateSequence(3);
-							_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->waitUntilFlag8And4AreSet();
-							pusherActor->updateSequence(7);
-							_vm->_talk->loadText(DAT_8006391c, auStack2120, 1000);
-							_vm->_talk->displayDialogAroundPoint(auStack2120, (int)(short)(local_850 >> 3),0xc,0,1,DAT_8006391c);
-							pusherActor->_flags = pusherActor->_flags | 0x1000;
-							local_10 = 2;
-							local_48 = 1;
-							currentState = 6;
+						}
 					}
-				}
-				else {
+					break;
+				case 2:
+					if (flickerActor->_sequenceID == 0x1b) {
+						if ((flickerActor->_flags & 4) != 0) {
+							if ((((int)(uint)local_850 < (int)((local_30[0]) - 6)) ||
+								 ((uint)local_30[1] + 6 < (uint)local_850)) || (local_72 != local_30[2])) {
+								local_42 = 8;
+							}
+							else {
+								local_42 = 0;
+							}
+							local_5c = 0;
+							if ((local_42 != 8) && ((local_850 < local_30[0] || (local_30[1] < local_850)))) {
+								local_5c = (short)((int)(((local_30[0]) + 0x17) * 0x80) / 0x2a) -
+										   (short)((int)((uint)local_850 << 7) / 0x2a);
+							}
+							local_60 = local_850 << 7;
+							bombActor->x_pos = local_850 & 0x1ff;
+							local_5e = 0x2d00;
+							local_5a = (local_72 + 3) * 0x80;
+							bombActor->y_pos = 0x5a;
+							bombScale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+							bombActor->scale = bombScale;
+							_vm->playOrStopSound(10);
+							bombActor->priorityLayer = 3;
+							flickerActor->updateSequence(8);
+							currentState = 3;
+						}
+					}
+					else {
+						flickerActor->updateSequence(0x1b);
+						_vm->playOrStopSound(1);
+					}
+					break;
+				case 3:
+					local_60 = local_60 + local_5c;
+					if ((uint)local_72 * 2 + 0xb4 < (uint)bombScale) {
+						local_5e = local_5e - local_5a;
+						local_5a = local_5a - local_28[((uint)local_72 - 1) * 3];
+						if (local_5a < 0) {
+							local_5a = 0;
+						}
+					}
+					else {
+						if ((int)(uint)bombScale < (int)((uint)local_72 * -4 + 0xba)) {
+							local_5e = local_5e + local_5a;
+							local_5a = local_5a + local_28[((uint)local_72 - 1) * 3 + 2];
+						}
+						else {
+							local_5a = 0;
+						}
+					}
+					bombActor->x_pos = local_60 >> 7;
+					bombActor->y_pos = local_5e >> 7;
+					bombScale = bombScale - 3;
+					bombActor->scale = bombScale;
+					if (bombScale == 0x7f) {
+						if (((local_60 >> 7 < local_30[0]) || (local_30[1] < local_60 >> 7)) ||
+							(local_72 != local_30[2])) {
+							local_42 = 8;
+						}
+						else {
+							local_42 = 0;
+						}
+						if (local_42 == 8) {
+							if ((((local_72 == 1) && (local_60 >> 7 < 0x10e)) ||
+								 ((local_72 == 2 &&
+								   ((((0x7f < local_60 >> 7 && (local_60 >> 7 < 0xad)) ||
+									  ((0x30 < local_60 >> 7 && (local_60 >> 7 < 0x4a)))) ||
+									 ((0xf8 < local_60 >> 7 && (local_60 >> 7 < 0x10f)))))))) ||
+								((local_72 == 3 &&
+								  (((0x3c < local_60 >> 7 && (local_60 >> 7 < 0x46)) ||
+									((0x101 < local_60 >> 7 && (local_60 >> 7 < 0x10a)))))))) {
+								bombActor->priorityLayer = 0;
+								dustActor->priorityLayer = 4;
+								dustActor->x_pos = bombActor->x_pos;
+								dustActor->y_pos = bombActor->y_pos;
+								dustActor->updateSequence(9);
+								currentState = 4;
+							}
+						}
+						else {
+							local_4e->field_c = 2;
+							local_4c = 0x3c;
+							bombActor->priorityLayer = 0;
+							currentState = 8;
+						}
+					}
+					if (bombScale < 0x7f) {
+						bombActor->priorityLayer = 2;
+					}
+					if ((0xc < bombScale) && (bombScale < 0x41)) {
+						bombActor->priorityLayer = 0;
+					}
+					if ((short)bombScale < 2) {
+						currentState = 5;
+					}
+					break;
+				case 4:
+					pusherActor->updateSequence(9);
+					_vm->waitForFrames(0x3c);
+					pusherActor->updateSequence(0xb);
+					if (DAT_800633e6 == 0) {
+						_vm->_talk->loadText(DAT_8006393c,auStack2120, 1000);
+						_vm->_talk->displayDialogAroundPoint(auStack2120,(int)(short)(local_850 >> 3),0xc,0,1,DAT_8006393c);
+						DAT_800633e6 = 1;
+					}
+					else {
+						_vm->_talk->loadText(DAT_80063938, auStack2120, 1000);
+						_vm->_talk->displayDialogAroundPoint(auStack2120,(int)(short)(local_850 >> 3),0xc,0,1, DAT_80063938);
+					}
+					_vm->waitForFrames(10);
+					local_10 = 1;
+					currentState = 6;
+					break;
+				case 5:
+					currentState = 4;
+					break;
+				case 6:
+					currentState = 7;
+					break;
+				case 7:
+					break;
+				case 8:
+					bombActor->priorityLayer = 0;
+					pusherActor->updateSequence(0);
+					_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->updateSequence(2);
+					_vm->waitForFrames(0x12);
+					_vm->_talk->loadText(DAT_80063e38, auStack2120, 1000);
+					_vm->_talk->displayDialogAroundPoint(auStack2120,0xf,2,0x501,0,DAT_80063e38);
+//						TODO	callMaybeResetData();
+					_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->updateSequence(3);
+					_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->waitUntilFlag8And4AreSet();
+					pusherActor->updateSequence(7);
+					_vm->_talk->loadText(DAT_8006391c, auStack2120, 1000);
+					_vm->_talk->displayDialogAroundPoint(auStack2120, (int)(short)(local_850 >> 3),0xc,0,1,DAT_8006391c);
+					pusherActor->_flags = pusherActor->_flags | 0x1000;
+					local_10 = 2;
+					local_48 = 1;
+					currentState = 6;
+					break;
+				default:
 					debug("undefined state!");
 					currentState = 1;
 					bombActor->priorityLayer = 0;
+					break;
 				}
 				if ((local_10 == 0) && (currentState != 2)) {
 					if (!_vm->isLeftKeyPressed() || (local_850 < 0x37)) {

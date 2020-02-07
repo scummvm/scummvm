@@ -64,7 +64,6 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	uint uVar19;
 	int iVar20;
 	bool shouldShakeScreen;
-	byte *actorFrameData;
 	uint16 local_2e6;
 	int16 actorSequenceIdTbl [15];
 	uint32 textIdTbl [4];
@@ -239,12 +238,10 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	uVar8->waitUntilFlag8And4AreSet();
 
 	uVar5->setFlag(ACTOR_FLAG_400);
-	actorFrameData = loungealotLeftUpperArm->frame->frameDataOffset;
 	flickerArm->x_pos = loungealotLeftUpperArm->x_pos - loungealotLeftUpperArm->frame->field_e;
 	flickerArm->y_pos = loungealotLeftUpperArm->y_pos - loungealotLeftUpperArm->frame->field_10;
 	loungealotThumb->x_pos = loungealotLeftUpperArm->x_pos - loungealotLeftUpperArm->frame->field_e;
 	loungealotThumb->y_pos = loungealotLeftUpperArm->y_pos - loungealotLeftUpperArm->frame->field_10;
-	actorFrameData = flickerArm->frame->frameDataOffset;
 	uVar12->x_pos = loungealotLeftUpperArm->x_pos - flickerArm->frame->field_e;
 	uVar12->y_pos = loungealotLeftUpperArm->y_pos - flickerArm->frame->field_10;
 	uVar13->x_pos = loungealotLeftUpperArm->x_pos - flickerArm->frame->field_e;

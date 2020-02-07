@@ -268,7 +268,7 @@ void Minigame1::run() {
 			if (local_21e != 0) {
 				local_21e = local_21e + -1;
 			}
-			switch(gameState) {
+			switch (gameState) {
 				case 0:
 					break;
 				case 1: //cat in the catapult ready to fire.

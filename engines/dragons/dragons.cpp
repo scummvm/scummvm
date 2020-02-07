@@ -236,9 +236,7 @@ Common::Error DragonsEngine::run() {
 	return Common::kNoError;
 }
 
-uint16 DragonsEngine::ipt_img_file_related()
-{
-	DragonINI *ini;
+uint16 DragonsEngine::ipt_img_file_related() {
     DragonINI *flicker = _dragonINIResource->getFlickerRecord();
 	assert(flicker);
 
@@ -246,7 +244,7 @@ uint16 DragonsEngine::ipt_img_file_related()
 	int16 tileY = flicker->actor->y_pos / 8;
 
 	for (int i=0;i < _dragonINIResource->totalRecords(); i++) {
-		ini = getINI(i);
+		DragonINI *ini = getINI(i);
 		if ((ini->sceneId == getCurrentSceneId()) && (ini->field_1a_flags_maybe == 0)) {
 			IMG *img = _dragonIMG->getIMG(ini->field_2);
 			if ((img->x <= tileX) && (((tileX <= img->x + img->w && (img->y <= tileY)) && (tileY <= img->y + img->h)))) {
@@ -257,8 +255,7 @@ uint16 DragonsEngine::ipt_img_file_related()
 	return 0;
 }
 
-void DragonsEngine::gameLoop()
-{
+void DragonsEngine::gameLoop() {
 	uint uVar3;
 	uint actorId;
 	uint16 uVar6;
@@ -1185,7 +1182,6 @@ void DragonsEngine::walkFlickerToObject()
 			flickerINI = _dragonINIResource->getFlickerRecord();
 			if (flickerINI != NULL && flickerINI->actor != NULL) {
 				flickerINI->actor->clearFlag(ACTOR_FLAG_10);
-				uVar8 = (uint)_cursor->data_80072890;
 				flickerINI->actor->setFlag(ACTOR_FLAG_4);
 				targetINI = getINI(_cursor->data_80072890 - 1);
 				flickerINI->field_20_actor_field_14 = targetINI->field_e;
