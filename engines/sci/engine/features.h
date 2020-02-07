@@ -161,6 +161,17 @@ public:
 			g_sci->getGameId() != GID_GK2;
 	}
 
+	inline bool useDoSoundMac32() const {
+		// Several SCI 2.1 Middle Mac games use a modified kDoSound with
+		//  different subop numbers.
+		return g_sci->getPlatform() == Common::kPlatformMacintosh &&
+			(g_sci->getGameId() == GID_HOYLE5 ||
+			 g_sci->getGameId() == GID_PHANTASMAGORIA ||
+			 g_sci->getGameId() == GID_PQSWAT ||
+			 g_sci->getGameId() == GID_SHIVERS ||
+			 g_sci->getGameId() == GID_SQ6);
+	}
+
 	inline bool usesAlternateSelectors() const {
 		return g_sci->getGameId() == GID_PHANTASMAGORIA2;
 	}

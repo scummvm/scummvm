@@ -250,7 +250,7 @@ private:
 	/**
 	 * Maps kernel functions.
 	 */
-	void mapFunctions();
+	void mapFunctions(GameFeatures *features);
 
 	ResourceManager *_resMan;
 	SegManager *_segMan;
@@ -649,8 +649,8 @@ reg_t kDeleteLine(EngineState *s, int argc, reg_t *argv);
 
 reg_t kWinDLL(EngineState *s, int argc, reg_t *argv);
 
-// Phantasmagoria Mac Special Kernel Function
-reg_t kDoSoundPhantasmagoriaMac(EngineState *s, int argc, reg_t *argv);
+// SCI 2.1 Middle Mac modified kDoSound
+reg_t kDoSoundMac32(EngineState *s, int argc, reg_t *argv);
 
 // SCI3 Kernel functions
 reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv);
