@@ -34,11 +34,11 @@ class Minigame4 {
 private:
 	DragonsEngine *_vm;
 
-	Actor *flickerActor;
-	Actor *bruteActor;
-	Actor *ps1ControllerActor;
-	Actor *DAT_80090438;
-	Actor *DAT_8009043c;
+	Actor *_flickerActor;
+	Actor *_bruteActor;
+	Actor *_ps1ControllerActor;
+	Actor *_dat_80090438;
+	Actor *_dat_8009043c;
 
 
 public:
@@ -54,7 +54,7 @@ private:
 	uint16 singleDanceRound(uint16 desiredPosition, uint16 duration);
 	void resetActors();
 	void updateFlickerFromInput();
-	uint16 FUN_8009009c(uint16 unk);
+	uint16 fun_8009009c(uint16 unk);
 };
 
 } // End of namespace Dragons

@@ -59,7 +59,7 @@ public:
 	void PauseCDMusic();
 
 public:
-	uint16 DAT_8006bb60_sound_related;
+	uint16 _dat_8006bb60_sound_related;
 
 private:
 	DragonsEngine *_vm;

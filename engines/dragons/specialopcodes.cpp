@@ -56,8 +56,8 @@ const int16 shakeTbl[16] = {
 
 SpecialOpcodes::SpecialOpcodes(DragonsEngine *vm)
 	: _vm(vm), _specialOpCounter(0) {
-	DAT_80083148 = 0;
-	uint16_t_80083154 = 0;
+	_dat_80083148 = 0;
+	_uint16_t_80083154 = 0;
 	initOpcodes();
 }
 
@@ -324,19 +324,19 @@ void SpecialOpcodes::spcFadeScreen() {
 }
 
 void SpecialOpcodes::spcLadyOfTheLakeCapturedSceneLogic() {
-	DAT_80083148 = 0;
-	uint16_t_80083154 = 0;
+	_dat_80083148 = 0;
+	_uint16_t_80083154 = 0;
 	_vm->setSceneUpdateFunction(ladyOfTheLakeCapturedUpdateFunction);
 }
 
 void SpecialOpcodes::spcStopLadyOfTheLakeCapturedSceneLogic() {
 	_vm->setSceneUpdateFunction(NULL);
 	_vm->_sound->PauseCDMusic();
-	if ((DAT_80083148 != 0) || (uint16_t_80083154 != 0)) {
-		//TODO FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)uint16_t_80083154,(uint)DAT_80083158);
+	if ((_dat_80083148 != 0) || (_uint16_t_80083154 != 0)) {
+		//TODO FUN_8001ac5c((uint)_dat_80083148,(uint)DAT_80083150,(uint)_uint16_t_80083154,(uint)DAT_80083158);
 	}
-	DAT_80083148 = 0;
-	uint16_t_80083154 = 0;
+	_dat_80083148 = 0;
+	_uint16_t_80083154 = 0;
 }
 
 void SpecialOpcodes::spc11ShakeScreen() {
@@ -540,8 +540,8 @@ void SpecialOpcodes::spcFlickerSetPriority2() {
 
 void SpecialOpcodes::spcMenInMinesSceneLogic() {
 	_vm->setSceneUpdateFunction(menInMinesSceneUpdateFunction);
-	uint16_t_80083154 = 0;
-	DAT_80083148 = 0;
+	_uint16_t_80083154 = 0;
+	_dat_80083148 = 0;
 	setSpecialOpCounter(0);
 }
 
@@ -555,45 +555,45 @@ void SpecialOpcodes::spcStopMenInMinesSceneLogic() {
 			_vm->waitForFrames(1);
 		}
 		//TODO
-		//FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)uint16_t_80083154,(uint)DAT_80083158);
+		//FUN_8001ac5c((uint)_dat_80083148,(uint)DAT_80083150,(uint)_uint16_t_80083154,(uint)DAT_80083158);
 	}
 }
 
 void SpecialOpcodes::spcMonksAtBarSceneLogic() {
 	setSpecialOpCounter(-1);
 	_vm->setSceneUpdateFunction(monksAtBarSceneUpdateFunction);
-	uint16_t_80083154 = 0;
-	DAT_80083148 = 0;
+	_uint16_t_80083154 = 0;
+	_dat_80083148 = 0;
 }
 
 void SpecialOpcodes::spcStopMonksAtBarSceneLogic() {
 	if (_vm->getSceneUpdateFunction() == monksAtBarSceneUpdateFunction) {
 		_vm->setSceneUpdateFunction(NULL);
-		if ((DAT_80083148 != 0) && (uint16_t_80083154 != 0)) {
-			//TODO FUN_8001ac5c((uint)DAT_80083148, (uint)DAT_80083150, (uint)uint16_t_80083154, (uint)DAT_80083158);
+		if ((_dat_80083148 != 0) && (_uint16_t_80083154 != 0)) {
+			//TODO FUN_8001ac5c((uint)_dat_80083148, (uint)DAT_80083150, (uint)_uint16_t_80083154, (uint)DAT_80083158);
 		}
 		setSpecialOpCounter(0);
-		uint16_t_80083154 = 0;
-		DAT_80083148 = 0;
+		_uint16_t_80083154 = 0;
+		_dat_80083148 = 0;
 	}
 
 }
 
 void SpecialOpcodes::spcFlameBedroomEscapeSceneLogic() {
 	setSpecialOpCounter(-1);
-	if ((DAT_80083148 != 0) && (uint16_t_80083154 != 0)) {
-		//TODO FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)uint16_t_80083154,(uint)DAT_80083158);
+	if ((_dat_80083148 != 0) && (_uint16_t_80083154 != 0)) {
+		//TODO FUN_8001ac5c((uint)_dat_80083148,(uint)DAT_80083150,(uint)_uint16_t_80083154,(uint)DAT_80083158);
 	}
 	_vm->setSceneUpdateFunction(flameEscapeSceneUpdateFunction);
-	uint16_t_80083154 = 0;
-	DAT_80083148 = 0;
+	_uint16_t_80083154 = 0;
+	_dat_80083148 = 0;
 }
 
 void SpecialOpcodes::spcStopFlameBedroomEscapeSceneLogic() {
 	setSpecialOpCounter(0);
-//	TODO FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)uint16_t_80083154,(uint)DAT_80083158);
-	uint16_t_80083154 = 0;
-	DAT_80083148 = 0;
+//	TODO FUN_8001ac5c((uint)_dat_80083148,(uint)DAT_80083150,(uint)_uint16_t_80083154,(uint)DAT_80083158);
+	_uint16_t_80083154 = 0;
+	_dat_80083148 = 0;
 	_vm->_dragonINIResource->getRecord(0x96)->actor->updateSequence(0);
 	if (_vm->getSceneUpdateFunction() == flameEscapeSceneUpdateFunction) {
 		_vm->setSceneUpdateFunction(NULL);
@@ -615,12 +615,12 @@ void SpecialOpcodes::spcCastleMoatUpdateActorSceneScalePoints() {
 
 void SpecialOpcodes::spcCastleGateMoatDrainedSceneLogic() {
 	setSpecialOpCounter(-1);
-	if ((DAT_80083148 != 0) && (uint16_t_80083154 != 0)) {
-		//TODO FUN_8001ac5c((uint)DAT_80083148,(uint)DAT_80083150,(uint)uint16_t_80083154,(uint)DAT_80083158);
+	if ((_dat_80083148 != 0) && (_uint16_t_80083154 != 0)) {
+		//TODO FUN_8001ac5c((uint)_dat_80083148,(uint)DAT_80083150,(uint)_uint16_t_80083154,(uint)DAT_80083158);
 	}
 	_vm->setSceneUpdateFunction(moatDrainedSceneUpdateFunction);
-	uint16_t_80083154 = 0;
-	DAT_80083148 = 0;
+	_uint16_t_80083154 = 0;
+	_dat_80083148 = 0;
 }
 void SpecialOpcodes::spcUnk34() {
 	Actor *flicker = _vm->_dragonINIResource->getFlickerRecord()->actor;
@@ -1265,8 +1265,8 @@ void SpecialOpcodes::pizzaMakerStopWorking() {
 }
 
 void SpecialOpcodes::clearSceneUpdateFunction() {
-	if (DAT_80083148 != uint16_t_80083154) {
-		//TODO FUN_8001ac5c((uint)DAT_80083148, (uint)DAT_80083150, (uint)uint16_t_80083154, (uint)DAT_80083158);
+	if (_dat_80083148 != _uint16_t_80083154) {
+		//TODO FUN_8001ac5c((uint)_dat_80083148, (uint)DAT_80083150, (uint)_uint16_t_80083154, (uint)DAT_80083158);
 	}
 	if (sceneUpdater.sequenceID != -1) {
 		_vm->getINI(sceneUpdater.iniID)->actor->updateSequence(sceneUpdater.sequenceID);
@@ -1277,8 +1277,8 @@ void SpecialOpcodes::clearSceneUpdateFunction() {
 void SpecialOpcodes::setupTableBasedSceneUpdateFunction(uint16 initialCounter, uint16 numSequences,
 														uint16 sequenceDuration) {
 	sceneUpdater.sequenceID = -1;
-	uint16_t_80083154 = 0;
-	DAT_80083148 = 0;
+	_uint16_t_80083154 = 0;
+	_dat_80083148 = 0;
 //TODO
 //	DAT_80072858 = 0;
 	sceneUpdater.curSequenceIndex = 0;

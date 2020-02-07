@@ -184,7 +184,7 @@ void Minigame3::run() {
 	_vm->_screen->loadPalette(1, _vm->_scene->getPalette());
 	_vm->_screen->loadPalette(4, _vm->_scene->getPalette());
 	_vm->_screen->updatePaletteTransparency(4, 1, 0xff, true);
-	FUN_80017ef0();
+	fun_80017ef0();
 	oldEngineFlags = _vm->getAllFlags();
 	_vm->clearFlags(ENGINE_FLAG_80);
 	_vm->clearFlags(ENGINE_FLAG_20);
@@ -558,7 +558,7 @@ void Minigame3::run() {
 					local_1e0 = 0;
 					local_1de = 0;
 					local_1e8 = 0;
-					FUN_80017f70_paletteRelated(0);
+					fun_80017f70_paletteRelated(0);
 					local_1b8 = 0;
 					flags = (flags & 0xfffd) | 4;
 					local_1c8 = 2;
@@ -615,7 +615,7 @@ void Minigame3::run() {
 		if (((uint)local_210 % 10 == 0) && (0x1d < local_210)) {
 			if ((int16)local_1b8 < 0x1e) {
 				local_1b8 = local_1b8 + 1;
-				FUN_80017f70_paletteRelated((uint)local_1b8);
+				fun_80017f70_paletteRelated((uint)local_1b8);
 			}
 			if (100 < tearBlinkActorTbl[0]->_y_pos) {
 				tearBlinkActorTbl[0]->_y_pos = tearBlinkActorTbl[0]->_y_pos + -3;
@@ -678,7 +678,7 @@ void Minigame3::run() {
 		if ((int16)local_1b8 < 0) {
 			local_1b8 = 0;
 		}
-		FUN_80017f70_paletteRelated((uint)local_1b8);
+		fun_80017f70_paletteRelated((uint)local_1b8);
 		tearBlinkActorTbl[0]->_y_pos = tearBlinkActorTbl[0]->_y_pos + 0x1e;
 		if (199 < tearBlinkActorTbl[0]->_y_pos) {
 			tearBlinkActorTbl[0]->_y_pos = 199;
@@ -753,7 +753,7 @@ void Minigame3::run() {
 	_vm->waitForFrames(0x3c * 2);
 	_vm->_sound->PauseCDMusic();
 //	fade_related_calls_with_1f();
-//	FUN_80017f28_noop();
+//	fun_80017f28_noop();
 //	DAT_80093234 = DAT_80093234 + 1;
 	_vm->_dragonINIResource->setFlickerRecord(flicker);
 	flicker->sceneId = 1;
@@ -774,7 +774,7 @@ void Minigame3::updateBackgroundLayerOffset(uint32 layerNumber, int16 xOffset, i
 	_vm->_scene->setLayerOffset(layerNumber, Common::Point(xOffset, yOffset));
 }
 
-void Minigame3::FUN_80017f70_paletteRelated(uint16 param_1) {
+void Minigame3::fun_80017f70_paletteRelated(uint16 param_1) {
 	if (param_1 > 0x1f) {
 		param_1 = 0x1f;
 	}
@@ -789,10 +789,10 @@ void Minigame3::FUN_80017f70_paletteRelated(uint16 param_1) {
 //	}
 }
 
-void Minigame3::FUN_80017ef0() {
+void Minigame3::fun_80017ef0() {
 	//TODO BgLayerGsSprite[2].attribute = BgLayerGsSprite[2].attribute | 0x50000000;
 	// this sets the FG layer to additive colour blending (100% x Back + 100% x Sprite)
-	FUN_80017f70_paletteRelated(0);
+	fun_80017f70_paletteRelated(0);
 }
 
 } // End of namespace Dragons

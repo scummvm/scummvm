@@ -65,29 +65,29 @@ void Minigame4::run() {
 	_vm->_videoFlags |= 4;
 	_vm->_scene->setBgLayerPriority(2);
 	_vm->_scene->setMgLayerPriority(1);
-	flickerActor = _vm->_actorManager->loadActor(0x18,0,0xcb,0x79,1);
-	bruteActor = _vm->_actorManager->loadActor(0x17,0,0x68,0x7b,1);
-	ps1ControllerActor = _vm->_actorManager->loadActor(0x17,0x16,0x9f,0x19,1);
-	DAT_80090438 = _vm->_actorManager->loadActor(0x17,0xb,400,400,1);
-	DAT_8009043c = _vm->_actorManager->loadActor(0x17,0xb,400,400,1);
+	_flickerActor = _vm->_actorManager->loadActor(0x18,0,0xcb,0x79,1);
+	_bruteActor = _vm->_actorManager->loadActor(0x17,0,0x68,0x7b,1);
+	_ps1ControllerActor = _vm->_actorManager->loadActor(0x17,0x16,0x9f,0x19,1);
+	_dat_80090438 = _vm->_actorManager->loadActor(0x17,0xb,400,400,1);
+	_dat_8009043c = _vm->_actorManager->loadActor(0x17,0xb,400,400,1);
 	//EnableVSyncEvent();
-	flickerActor->setFlag(ACTOR_FLAG_80);
-	flickerActor->setFlag(ACTOR_FLAG_100);
-	flickerActor->setFlag(ACTOR_FLAG_200);
-	flickerActor->_priorityLayer = 3;
-	bruteActor->setFlag(ACTOR_FLAG_80);
-	bruteActor->setFlag(ACTOR_FLAG_100);
-	bruteActor->setFlag(ACTOR_FLAG_200);
-	bruteActor->_priorityLayer = 3;
+	_flickerActor->setFlag(ACTOR_FLAG_80);
+	_flickerActor->setFlag(ACTOR_FLAG_100);
+	_flickerActor->setFlag(ACTOR_FLAG_200);
+	_flickerActor->_priorityLayer = 3;
+	_bruteActor->setFlag(ACTOR_FLAG_80);
+	_bruteActor->setFlag(ACTOR_FLAG_100);
+	_bruteActor->setFlag(ACTOR_FLAG_200);
+	_bruteActor->_priorityLayer = 3;
 	//DAT_800830e0_soundRelated = 0xf;
 	//UnkSoundFunc5(0xf);
 	//call_fade_related_1f();
 	if (_vm->_dragonINIResource->getRecord(0x1f5)->field_12 == 3) {
-		actorTalk(bruteActor,0x3321,0x4A84);
+		actorTalk(_bruteActor,0x3321,0x4A84);
 	}
 	else {
-		actorTalk(bruteActor,0x3321,0x49A2);
-		actorTalk(flickerActor,0,0x4A56);
+		actorTalk(_bruteActor,0x3321,0x49A2);
+		actorTalk(_flickerActor,0,0x4A56);
 	}
 	result = runDanceBattle();
 	/* field_0x12 */
@@ -118,20 +118,20 @@ void Minigame4::run() {
 void Minigame4::actorTalk(Actor *actorId,uint16 param_2,uint32 textIndex)
 {
 	actorId->waitUntilFlag8SetThenSet1000AndWaitFor4();
-	if (actorId == bruteActor) {
-		bruteActor->updateSequence(9);
+	if (actorId == _bruteActor) {
+		_bruteActor->updateSequence(9);
 	}
 	else {
-		flickerActor->updateSequence(9);
+		_flickerActor->updateSequence(9);
 	}
 
 	actorDialog(actorId, (uint)param_2, textIndex);
 	actorId->waitUntilFlag8SetThenSet1000AndWaitFor4();
-	if (actorId == bruteActor) {
-		bruteActor->updateSequence(0);
+	if (actorId == _bruteActor) {
+		_bruteActor->updateSequence(0);
 	}
 	else {
-		flickerActor->updateSequence(0);
+		_flickerActor->updateSequence(0);
 	}
 }
 
@@ -180,38 +180,38 @@ uint16 Minigame4::runDanceBattle() {
 	currentStep = 0;
 	while (currentStep < 0xc) {
 		if (singleDanceRound(round1StepPositionTbl[(uint)currentStep], round1DurationTbl[(uint)currentStep])) {
-			actorTalk(bruteActor,0x3321, 0x4D50);
+			actorTalk(_bruteActor,0x3321, 0x4D50);
 			return 1;
 		}
 		currentStep = currentStep + 1;
 	}
 	resetActors();
-	actorTalk(bruteActor,0x3321, 0x4ADE);
+	actorTalk(_bruteActor,0x3321, 0x4ADE);
 	currentStep = 0;
 	while (currentStep < 0xc) {
 		if (singleDanceRound(round2StepPositionTbl[(uint)currentStep], round2DurationTbl[(uint)currentStep])) {
-			actorTalk(bruteActor,0x3321,0x4DD4);
+			actorTalk(_bruteActor,0x3321,0x4DD4);
 			return 1;
 		}
 		currentStep = currentStep + 1;
 	}
 	resetActors();
-	actorTalk(bruteActor,0x3321, 0x4B6A);
+	actorTalk(_bruteActor,0x3321, 0x4B6A);
 	currentStep = 0;
 	while ( true ) {
 		if (0x11 < currentStep) {
 			_vm->_talk->loadText(0x4C0C, auStack2192, 1000);
 			_vm->_talk->displayDialogAroundPoint(auStack2192, 0x27,0xc,0x3321,0,0x4C0C);
 			_vm->waitForFrames(0x10a);
-			bruteActor->updateSequence(8);
+			_bruteActor->updateSequence(8);
 			//TODO
 //			if ((((DAT_8008e7e8 != 0) || (DAT_8008e848 != 0)) || (DAT_8008e844 != 0)) ||
 //				(DAT_8008e874 != 0)) {
 //				FUN_8001a7c4((uint)DAT_8008e7e8,(uint)DAT_8008e844,(uint)DAT_8008e848,(uint)DAT_8008e874);
 //			}
-			flickerActor->waitUntilFlag8SetThenSet1000AndWaitFor4();
-			flickerActor->updateSequence(7);
-			actorTalk(flickerActor,0, 0x4CC8);
+			_flickerActor->waitUntilFlag8SetThenSet1000AndWaitFor4();
+			_flickerActor->updateSequence(7);
+			actorTalk(_flickerActor,0, 0x4CC8);
 			return 0;
 		}
 
@@ -220,7 +220,7 @@ uint16 Minigame4::runDanceBattle() {
 		}
 		currentStep = currentStep + 1;
 	}
-	actorTalk(bruteActor,0x3321, 0x4DEE);
+	actorTalk(_bruteActor,0x3321, 0x4DEE);
 	return 1;
 }
 
@@ -231,91 +231,91 @@ const static uint16 uint16_t_ARRAY_80090400[6] = { 0x1A, 0x1B, 0x1C, 0x1D, 0x1E,
 const static uint16 uint16_t_ARRAY_800903e8[6] = { 1, 2, 3, 4, 5, 6 };
 
 uint16 Minigame4::singleDanceRound(uint16 currentDancePosition, uint16 duration) {
-	DAT_80090438->_x_pos = xDancePosTbl[(uint)currentDancePosition];
-	DAT_80090438->_y_pos = yDancePosTbl[(uint)currentDancePosition];
-	DAT_80090438->updateSequence(10);
-	ps1ControllerActor->updateSequence(uint16_t_ARRAY_80090400[(uint)currentDancePosition]);
-	bruteActor->updateSequence(uint16_t_ARRAY_800903e8[(uint)currentDancePosition]);
-	while ((flickerActor->_sequenceID != uint16_t_ARRAY_800903e8[(uint)currentDancePosition] &&
+	_dat_80090438->_x_pos = xDancePosTbl[(uint)currentDancePosition];
+	_dat_80090438->_y_pos = yDancePosTbl[(uint)currentDancePosition];
+	_dat_80090438->updateSequence(10);
+	_ps1ControllerActor->updateSequence(uint16_t_ARRAY_80090400[(uint)currentDancePosition]);
+	_bruteActor->updateSequence(uint16_t_ARRAY_800903e8[(uint)currentDancePosition]);
+	while ((_flickerActor->_sequenceID != uint16_t_ARRAY_800903e8[(uint)currentDancePosition] &&
 			(duration = duration + -1, duration != 0))) {
 		_vm->waitForFrames(1);
 		updateFlickerFromInput();
 	}
-	if (flickerActor->_sequenceID == uint16_t_ARRAY_800903e8[(uint)currentDancePosition]) {
+	if (_flickerActor->_sequenceID == uint16_t_ARRAY_800903e8[(uint)currentDancePosition]) {
 		while (duration = duration + -1, duration != 0) {
 			_vm->waitForFrames(1);
 		}
-		DAT_80090438->_x_pos = xDancePosTbl[(uint)currentDancePosition];
-		DAT_8009043c->_x_pos = DAT_80090438->_x_pos;
-		DAT_80090438->_y_pos = yDancePosTbl[(uint)currentDancePosition];
-		DAT_8009043c->_y_pos = DAT_80090438->_y_pos;
-		DAT_8009043c->updateSequence(0xb);
-		ps1ControllerActor->updateSequence(0x16);
+		_dat_80090438->_x_pos = xDancePosTbl[(uint)currentDancePosition];
+		_dat_8009043c->_x_pos = _dat_80090438->_x_pos;
+		_dat_80090438->_y_pos = yDancePosTbl[(uint)currentDancePosition];
+		_dat_8009043c->_y_pos = _dat_80090438->_y_pos;
+		_dat_8009043c->updateSequence(0xb);
+		_ps1ControllerActor->updateSequence(0x16);
 		return 0;
 	}
 
-	return FUN_8009009c(1);
+	return fun_8009009c(1);
 }
 
 void Minigame4::resetActors() {
-	bruteActor->waitUntilFlag8SetThenSet1000();
-	flickerActor->waitUntilFlag8SetThenSet1000();
-	while (bruteActor->_sequenceID != 0 || flickerActor->_sequenceID != 0) {
+	_bruteActor->waitUntilFlag8SetThenSet1000();
+	_flickerActor->waitUntilFlag8SetThenSet1000();
+	while (_bruteActor->_sequenceID != 0 || _flickerActor->_sequenceID != 0) {
 		_vm->waitForFrames(1);
-		if (bruteActor->_sequenceID != 0 &&
-			bruteActor->isFlagSet(ACTOR_FLAG_4) &&
-			bruteActor->isFlagSet(ACTOR_FLAG_8)) {
-			bruteActor->updateSequence(0);
+		if (_bruteActor->_sequenceID != 0 &&
+			_bruteActor->isFlagSet(ACTOR_FLAG_4) &&
+			_bruteActor->isFlagSet(ACTOR_FLAG_8)) {
+			_bruteActor->updateSequence(0);
 		}
-		if (flickerActor->_sequenceID != 0 &&
-			flickerActor->isFlagSet(ACTOR_FLAG_4) &&
-			flickerActor->isFlagSet(ACTOR_FLAG_8)) {
-			flickerActor->updateSequence(0);
+		if (_flickerActor->_sequenceID != 0 &&
+			_flickerActor->isFlagSet(ACTOR_FLAG_4) &&
+			_flickerActor->isFlagSet(ACTOR_FLAG_8)) {
+			_flickerActor->updateSequence(0);
 		}
 	}
 }
 
 void Minigame4::updateFlickerFromInput() {
-	if (_vm->isSquareButtonPressed() && flickerActor->_sequenceID != 1) {
-		flickerActor->updateSequence(1);
+	if (_vm->isSquareButtonPressed() && _flickerActor->_sequenceID != 1) {
+		_flickerActor->updateSequence(1);
 	}
 
-	if (_vm->isCrossButtonPressed() && flickerActor->_sequenceID != 2) {
-		flickerActor->updateSequence(2);
+	if (_vm->isCrossButtonPressed() && _flickerActor->_sequenceID != 2) {
+		_flickerActor->updateSequence(2);
 	}
 
-	if (_vm->isCircleButtonPressed() && flickerActor->_sequenceID != 3) {
-		flickerActor->updateSequence(3);
+	if (_vm->isCircleButtonPressed() && _flickerActor->_sequenceID != 3) {
+		_flickerActor->updateSequence(3);
 	}
 
-	if (_vm->isTriangleButtonPressed() && flickerActor->_sequenceID != 4) {
-		flickerActor->updateSequence(4);
+	if (_vm->isTriangleButtonPressed() && _flickerActor->_sequenceID != 4) {
+		_flickerActor->updateSequence(4);
 	}
 
-	if (_vm->isR1ButtonPressed() && flickerActor->_sequenceID != 5) {
-		flickerActor->updateSequence(5);
+	if (_vm->isR1ButtonPressed() && _flickerActor->_sequenceID != 5) {
+		_flickerActor->updateSequence(5);
 	}
 
-	if (_vm->isL1ButtonPressed() && flickerActor->_sequenceID != 6) {
-		flickerActor->updateSequence(6);
+	if (_vm->isL1ButtonPressed() && _flickerActor->_sequenceID != 6) {
+		_flickerActor->updateSequence(6);
 	}
 }
 
-uint16 Minigame4::FUN_8009009c(uint16 unk) {
+uint16 Minigame4::fun_8009009c(uint16 unk) {
 	resetActors();
 	if (unk == 0) {
-		bruteActor->updateSequence(8);
-		flickerActor->updateSequence(7);
+		_bruteActor->updateSequence(8);
+		_flickerActor->updateSequence(7);
 	}
 	else {
-		bruteActor->updateSequence(7);
-		flickerActor->updateSequence(8);
+		_bruteActor->updateSequence(7);
+		_flickerActor->updateSequence(8);
 	}
 	do {
 		do {
-		} while (bruteActor->isFlagSet(ACTOR_FLAG_4));
+		} while (_bruteActor->isFlagSet(ACTOR_FLAG_4));
 
-	} while (flickerActor->isFlagSet(ACTOR_FLAG_4));
+	} while (_flickerActor->isFlagSet(ACTOR_FLAG_4));
 	return (uint)unk;
 }
 

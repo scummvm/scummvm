@@ -49,20 +49,20 @@ struct TalkDialogEntry {
 
 class Talk {
 public:
-	uint32 DAT_8008e7e8_dialogBox_x1;
-	uint32 DAT_8008e844_dialogBox_y1;
-	uint32 DAT_8008e848_dialogBox_x2;
-	uint32 DAT_8008e874_dialogBox_y2;
+	uint32 _dat_8008e7e8_dialogBox_x1;
+	uint32 _dat_8008e844_dialogBox_y1;
+	uint32 _dat_8008e848_dialogBox_x2;
+	uint32 _dat_8008e874_dialogBox_y2;
 private:
 	DragonsEngine *_vm;
 	BigfileArchive *_bigfileArchive;
 	Common::Array<TalkDialogEntry*> _dialogEntries;
-	uint32 defaultResponseTbl[45];
+	uint32 _defaultResponseTbl[45];
 
-	uint8 DAT_800726ec_tfont_field0;
-	uint8 DAT_800726f0_tfont_field2;
+	uint8 _dat_800726ec_tfont_field0;
+	uint8 _dat_800726f0_tfont_field2;
 
-	uint8 DAT_800633f8_talkDialogFlag;
+	uint8 _dat_800633f8_talkDialogFlag;
 
 public:
 	Talk(DragonsEngine *vm, BigfileArchive *bigfileArchive);
@@ -91,6 +91,7 @@ public:
 	void FUN_8001a7c4_clearDialogBoxMaybe(); //clear box maybe?
 
 	void playDialogAudioDontWait(uint32 textIndex);
+
 private:
 	void FUN_8001a7c4(uint32 x1, uint32 y1, uint32 x2, uint32 y2); //clear box maybe?
 	void copyTextToBuffer(uint16 *destBuffer, byte *src, uint32 destBufferLength);

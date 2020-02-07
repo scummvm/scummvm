@@ -38,14 +38,14 @@
 namespace Dragons {
 
 Talk::Talk(DragonsEngine *vm, BigfileArchive *bigfileArchive): _vm(vm), _bigfileArchive(bigfileArchive) {
-	DAT_800726ec_tfont_field0 = 1; //TODO source from font file
-	DAT_800726f0_tfont_field2 = 1; // TODO source from font file
+	_dat_800726ec_tfont_field0 = 1; //TODO source from font file
+	_dat_800726f0_tfont_field2 = 1; // TODO source from font file
 }
 
 void Talk::init() {
-	memset(defaultResponseTbl, 0, sizeof(defaultResponseTbl));
+	memset(_defaultResponseTbl, 0, sizeof(_defaultResponseTbl));
 	initDefaultResponseTable();
-	DAT_800633f8_talkDialogFlag = 0;
+	_dat_800633f8_talkDialogFlag = 0;
 }
 
 bool Talk::loadText(uint32 textIndex, uint16 *textBuffer, uint16 bufferLength) {
@@ -162,9 +162,9 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 //			puVar17[3] = uVar15;
 //			puVar1 = puVar16 + 4;
 //			puVar2 = puVar17 + 4;
-//		} while (puVar16 + 4 != (uint32 *)&DAT_80011a80);
+//		} while (puVar16 + 4 != (uint32 *)&_dat_80011a80);
 //		uVar12 = puVar16[5];
-//		puVar17[4] = _DAT_80011a80;
+//		puVar17[4] = __dat_80011a80;
 //		puVar17[5] = uVar12;
 		if (param_5 != 0) {
 			_vm->clearFlags(ENGINE_FLAG_8);
@@ -200,13 +200,13 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 			local_58 = 0x27 - x;
 		}
 		iVar5 = ((int)((uint)local_58 << 0x10) >> 0xf) + 2;
-//		if (DAT_800726ec_tfont_field0 == 0) {
+//		if (_dat_800726ec_tfont_field0 == 0) {
 //			trap(0x1c00);
 //		}
-//		if (((uint)DAT_800726ec_tfont_field0 == 0xffffffff) && (iVar5 == -0x80000000)) {
+//		if (((uint)_dat_800726ec_tfont_field0 == 0xffffffff) && (iVar5 == -0x80000000)) {
 //			trap(0x1800);
 //		}
-		sVar3 = (short)(iVar5 / (int)(uint)DAT_800726ec_tfont_field0);
+		sVar3 = (short)(iVar5 / (int)(uint)_dat_800726ec_tfont_field0);
 		if (*dialogText != 0) {
 			/* check for space or hyphen */
 			curDialogTextPtr = dialogText;
@@ -335,7 +335,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 					puVar18 = curDialogTextPtr;
 				}
 				LAB_80032a70:
-				iVar5 = (iVar5 >> 0x10) * (uint)DAT_800726f0_tfont_field2 + -1;
+				iVar5 = (iVar5 >> 0x10) * (uint)_dat_800726f0_tfont_field2 + -1;
 				uVar19 = y;
 				if ((int)(short)y < iVar5) {
 					uVar19 = (uint16)iVar5;
@@ -343,39 +343,39 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 				if (0x16 < (short)uVar19) {
 					uVar19 = 0x16;
 				}
-				uVar11 = sVar20 * DAT_800726ec_tfont_field0 + 3 & 0xfffe;
+				uVar11 = sVar20 * _dat_800726ec_tfont_field0 + 3 & 0xfffe;
 				sVar20 = (short)uVar11 >> 1;
 				if ((short)x < 0x14) {
-					DAT_8008e7e8_dialogBox_x1 = (x - sVar20) + 1;
+					_dat_8008e7e8_dialogBox_x1 = (x - sVar20) + 1;
 				}
 				else {
-					DAT_8008e7e8_dialogBox_x1 = x - sVar20;
+					_dat_8008e7e8_dialogBox_x1 = x - sVar20;
 				}
-				DAT_8008e848_dialogBox_x2 = (uVar11 + DAT_8008e7e8_dialogBox_x1) - 1;
-				DAT_8008e844_dialogBox_y1 = (uVar19 - sVar4 * DAT_800726f0_tfont_field2) + 1;
-				DAT_8008e874_dialogBox_y2 = DAT_8008e844_dialogBox_y1 + sVar4 * DAT_800726f0_tfont_field2 + 1;
+				_dat_8008e848_dialogBox_x2 = (uVar11 + _dat_8008e7e8_dialogBox_x1) - 1;
+				_dat_8008e844_dialogBox_y1 = (uVar19 - sVar4 * _dat_800726f0_tfont_field2) + 1;
+				_dat_8008e874_dialogBox_y2 = _dat_8008e844_dialogBox_y1 + sVar4 * _dat_800726f0_tfont_field2 + 1;
 				if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) && ((!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED) || (param_7 != 0)))) {
 					unaff_s4 = 0;
-					FUN_8001a4e4_draw_dialogbox((uint) DAT_8008e7e8_dialogBox_x1, (uint) DAT_8008e844_dialogBox_y1,
-												(uint) DAT_8008e848_dialogBox_x2, (uint) DAT_8008e874_dialogBox_y2, 0);
+					FUN_8001a4e4_draw_dialogbox((uint) _dat_8008e7e8_dialogBox_x1, (uint) _dat_8008e844_dialogBox_y1,
+												(uint) _dat_8008e848_dialogBox_x2, (uint) _dat_8008e874_dialogBox_y2, 0);
 					if (sVar4 > 0) {
 						for (; unaff_s4 < sVar4; unaff_s4++) {
 							if ((short)x < 0x14) {
 								dialogTextLinePtr = asStack2592 + unaff_s4 * 0x29;
 								uVar9 = strlenUTF16(dialogTextLinePtr);
-								uVar9 = ((uint)x - ((int)((uint)DAT_800726ec_tfont_field0 * (uVar9 & 0xffff) + 1) >> 1)) + 1;
+								uVar9 = ((uint)x - ((int)((uint)_dat_800726ec_tfont_field0 * (uVar9 & 0xffff) + 1) >> 1)) + 1;
 							}
 							else {
 								dialogTextLinePtr = asStack2592 + unaff_s4 * 0x29;
 								uVar9 = strlenUTF16(dialogTextLinePtr);
-								uVar9 = (uint)x - ((int)((uint)DAT_800726ec_tfont_field0 * (uVar9 & 0xffff) + 1) >> 1);
+								uVar9 = (uint)x - ((int)((uint)_dat_800726ec_tfont_field0 * (uVar9 & 0xffff) + 1) >> 1);
 							}
 							_vm->_fontManager->addText(uVar9 * 8,
-													   ((uint)DAT_8008e844_dialogBox_y1 + unaff_s4 * (uint)DAT_800726f0_tfont_field2 + 1) * 8,
+													   ((uint)_dat_8008e844_dialogBox_y1 + unaff_s4 * (uint)_dat_800726f0_tfont_field2 + 1) * 8,
 									dialogTextLinePtr, wideStrLen(dialogTextLinePtr), 0);
 //							ProbablyShowUTF16Msg3
 //									(dialogTextLinePtr,uVar9 & 0xffff,
-//									 (uint)DAT_8008e844_dialogBox_y1 + iVar5 * (uint)DAT_800726f0_tfont_field2 + 1
+//									 (uint)_dat_8008e844_dialogBox_y1 + iVar5 * (uint)_dat_800726f0_tfont_field2 + 1
 //									 & 0xffff,(uint)param_4, 0xffffffff);
 						}
 					}
@@ -392,8 +392,8 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 					curDialogTextPtr = puVar18;
 					if (!_vm->isFlagSet(ENGINE_FLAG_8000)) goto LAB_80032e18;
 					_vm->waitForFrames(1);
-					if (_vm->_sound->DAT_8006bb60_sound_related != 0) {
-						_vm->_sound->DAT_8006bb60_sound_related = 0;
+					if (_vm->_sound->_dat_8006bb60_sound_related != 0) {
+						_vm->_sound->_dat_8006bb60_sound_related = 0;
 						curDialogTextPtr = dialogText;
 						if (!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED)) {
 							returnStatus = 1;
@@ -416,8 +416,8 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 				LAB_80032e18:
 				//TODO CheckIfCdShellIsOpen();
 				if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
-					FUN_8001a7c4((uint)DAT_8008e7e8_dialogBox_x1,(uint)DAT_8008e844_dialogBox_y1,
-								 (uint)DAT_8008e848_dialogBox_x2,(uint)DAT_8008e874_dialogBox_y2);
+					FUN_8001a7c4((uint)_dat_8008e7e8_dialogBox_x1,(uint)_dat_8008e844_dialogBox_y1,
+								 (uint)_dat_8008e848_dialogBox_x2,(uint)_dat_8008e874_dialogBox_y2);
 				}
 			} while (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) &&
 					 (((!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED) || (param_7 != 0)) && (*curDialogTextPtr != 0))));
@@ -476,7 +476,7 @@ void
 Talk::displayDialogAroundPoint(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId) {
 // TODO
 //
-//		puVar1 = &DAT_80011a60;
+//		puVar1 = &_dat_80011a60;
 //		puVar2 = local_58;
 //		do {
 //			puVar8 = puVar2;
@@ -490,9 +490,9 @@ Talk::displayDialogAroundPoint(uint16 *dialogText, uint16 x, uint16 y, uint16 pa
 //			puVar8[3] = uVar6;
 //			puVar1 = puVar7 + 4;
 //			puVar2 = puVar8 + 4;
-//		} while (puVar7 + 4 != (undefined4 *)&DAT_80011a80);
+//		} while (puVar7 + 4 != (undefined4 *)&_dat_80011a80);
 //		uVar4 = puVar7[5];
-//		puVar8[4] = _DAT_80011a80;
+//		puVar8[4] = __dat_80011a80;
 //		puVar8[5] = uVar4;
 		_vm->_data_800633fc = 1;
 
@@ -667,7 +667,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 	uint16 *local_40;
 	uint local_38;
 	bool hasDialogEntries;
-	uint16 *DAT_80083104;
+	uint16 *_dat_80083104;
 
 	talkDialogEntry = NULL;
 	for (int i = 0; i < 0x24; i++) {
@@ -688,12 +688,12 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 				talkDialogEntry->yPosMaybe = '\0';
 				strcpy((char *)&local_390,(char *)talkDialogEntry->dialogText);
 				UTF16ToUTF16Z(local_386, (uint16 *)(&talkDialogEntry->dialogText[10]));
-				DAT_80083104 = local_386;
+				_dat_80083104 = local_386;
 				if (*local_386 == 0x20) {
-					DAT_80083104 = &local_386[1];
+					_dat_80083104 = &local_386[1];
 				}
-				uVar3 = FindLastPositionOf5cChar(DAT_80083104);
-				sVar2 = FUN_80031c28(DAT_80083104,asStack512,uVar3 & 0xffff,0x20);
+				uVar3 = FindLastPositionOf5cChar(_dat_80083104);
+				sVar2 = FUN_80031c28(_dat_80083104,asStack512,uVar3 & 0xffff,0x20);
 				talkDialogEntry->xPosMaybe = (uint8)local_58;
 				local_58 = local_58 + sVar2;
 				talkDialogEntry->yPosMaybe = talkDialogEntry->yPosMaybe + (char)sVar2;
@@ -707,7 +707,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 	_vm->_cursor->updateSequenceID(3);
 	local_50 = -2;
 	local_38 = (uint)numEntries;
-	DAT_800633f8_talkDialogFlag = 1;
+	_dat_800633f8_talkDialogFlag = 1;
 	hasDialogEntries = (numEntries != 0);
 	local_40 = asStack512;
 	LAB_800317a4:
@@ -744,7 +744,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 					y = y + 1;
 					if ((talkDialogEntry->flags & 1) == 0) {
 						if (uVar8 == 0) {
-							DAT_800633f8_talkDialogFlag = 0;
+							_dat_800633f8_talkDialogFlag = 0;
 							return talkDialogEntry;
 						}
 						uVar8--;
@@ -777,13 +777,13 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 					sVar2 = local_50 + 1;
 					local_50 = sVar2;
 					UTF16ToUTF16Z(local_386, (uint16 *)(&talkDialogEntry->dialogText[10]));
-					DAT_80083104 = local_386;
+					_dat_80083104 = local_386;
 					if (local_386[0] == 0x20) {
-						DAT_80083104 = &local_386[1];
+						_dat_80083104 = &local_386[1];
 					}
-					uVar4 = FindLastPositionOf5cChar(DAT_80083104);
-					uVar4 = FUN_80031c28(DAT_80083104,local_40,uVar4 & 0xffff,0x20);
-					DAT_80083104 = local_40;
+					uVar4 = FindLastPositionOf5cChar(_dat_80083104);
+					uVar4 = FUN_80031c28(_dat_80083104,local_40,uVar4 & 0xffff,0x20);
+					_dat_80083104 = local_40;
 					if ((int)sVar2 == (uint)uVar8) {
 						uVar7 = 0;
 						if (uVar6 < (uVar4 & 0xffff)) {
@@ -792,15 +792,15 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 								if ((uVar7 & 0xffff) == 0) {
 									x = 4;
 								}
-								//TODO ProbablyShowUTF16Msg(DAT_80083104,x,y,0,-1);
-								_vm->_fontManager->addText(x * 8, y * 8, DAT_80083104, wideStrLen(DAT_80083104), 0);
-								sVar2 = *DAT_80083104;
+								//TODO ProbablyShowUTF16Msg(_dat_80083104,x,y,0,-1);
+								_vm->_fontManager->addText(x * 8, y * 8, _dat_80083104, wideStrLen(_dat_80083104), 0);
+								sVar2 = *_dat_80083104;
 								while (sVar2 != 0) {
-									sVar2 = DAT_80083104[1];
-									DAT_80083104 = DAT_80083104 + 1;
+									sVar2 = _dat_80083104[1];
+									_dat_80083104 = _dat_80083104 + 1;
 								}
 								uVar7 = uVar7 + 1;
-								DAT_80083104 = DAT_80083104 + 1;
+								_dat_80083104 = _dat_80083104 + 1;
 								y = y + 1;
 							} while ((uVar7 & 0xffff) < (uVar4 & 0xffff));
 						}
@@ -813,15 +813,15 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 								if ((uVar7 & 0xffff) == 0) {
 									x = 4;
 								}
-								//TODO ProbablyShowUTF16Msg2(DAT_80083104,x,(uint)y,0x401,0xffffffff);
-								_vm->_fontManager->addText(x * 8, y * 8, DAT_80083104, wideStrLen(DAT_80083104), 1);
-								sVar2 = *DAT_80083104;
+								//TODO ProbablyShowUTF16Msg2(_dat_80083104,x,(uint)y,0x401,0xffffffff);
+								_vm->_fontManager->addText(x * 8, y * 8, _dat_80083104, wideStrLen(_dat_80083104), 1);
+								sVar2 = *_dat_80083104;
 								while (sVar2 != 0) {
-									sVar2 = DAT_80083104[1];
-									DAT_80083104 = DAT_80083104 + 1;
+									sVar2 = _dat_80083104[1];
+									_dat_80083104 = _dat_80083104 + 1;
 								}
 								uVar7 = uVar7 + 1;
-								DAT_80083104 = DAT_80083104 + 1;
+								_dat_80083104 = _dat_80083104 + 1;
 								y = y + 1;
 							} while ((uVar7 & 0xffff) < (uVar4 & 0xffff));
 						}
@@ -938,7 +938,7 @@ void Talk::flickerRandomDefaultResponse() {
 
 uint32 Talk::getDefaultResponseTextIndex() {
 	uint16 rand = _vm->getRand(9);
-	return defaultResponseTbl[(_vm->_cursor->_data_800728b0_cursor_seqID - 1) * 9 + rand];
+	return _defaultResponseTbl[(_vm->_cursor->_data_800728b0_cursor_seqID - 1) * 9 + rand];
 }
 
 uint32 extractTextIndex(Common::File *fd, uint16 offset) {
@@ -952,55 +952,55 @@ void Talk::initDefaultResponseTable() {
 		error("Failed to open dragon.exe");
 	}
 
-	defaultResponseTbl[0] = extractTextIndex(fd, 19);
-	defaultResponseTbl[1] = extractTextIndex(fd, 20);
-	defaultResponseTbl[2] = extractTextIndex(fd, 21);
-	defaultResponseTbl[3] = extractTextIndex(fd, 22);
-	defaultResponseTbl[4] = extractTextIndex(fd, 19);
-	defaultResponseTbl[5] = extractTextIndex(fd, 20);
-	defaultResponseTbl[6] = extractTextIndex(fd, 21);
-	defaultResponseTbl[7] = extractTextIndex(fd, 22);
-	defaultResponseTbl[8] = extractTextIndex(fd, 19);
+	_defaultResponseTbl[0] = extractTextIndex(fd, 19);
+	_defaultResponseTbl[1] = extractTextIndex(fd, 20);
+	_defaultResponseTbl[2] = extractTextIndex(fd, 21);
+	_defaultResponseTbl[3] = extractTextIndex(fd, 22);
+	_defaultResponseTbl[4] = extractTextIndex(fd, 19);
+	_defaultResponseTbl[5] = extractTextIndex(fd, 20);
+	_defaultResponseTbl[6] = extractTextIndex(fd, 21);
+	_defaultResponseTbl[7] = extractTextIndex(fd, 22);
+	_defaultResponseTbl[8] = extractTextIndex(fd, 19);
 
-	defaultResponseTbl[9] = extractTextIndex(fd, 0);
-	defaultResponseTbl[10] = extractTextIndex(fd, 1);
-	defaultResponseTbl[11] = extractTextIndex(fd, 2);
-	defaultResponseTbl[12] = extractTextIndex(fd, 3);
-	defaultResponseTbl[13] = extractTextIndex(fd, 4);
-	defaultResponseTbl[14] = extractTextIndex(fd, 5);
-	defaultResponseTbl[15] = extractTextIndex(fd, 2);
-	defaultResponseTbl[16] = extractTextIndex(fd, 3);
-	defaultResponseTbl[17] = extractTextIndex(fd, 4);
+	_defaultResponseTbl[9] = extractTextIndex(fd, 0);
+	_defaultResponseTbl[10] = extractTextIndex(fd, 1);
+	_defaultResponseTbl[11] = extractTextIndex(fd, 2);
+	_defaultResponseTbl[12] = extractTextIndex(fd, 3);
+	_defaultResponseTbl[13] = extractTextIndex(fd, 4);
+	_defaultResponseTbl[14] = extractTextIndex(fd, 5);
+	_defaultResponseTbl[15] = extractTextIndex(fd, 2);
+	_defaultResponseTbl[16] = extractTextIndex(fd, 3);
+	_defaultResponseTbl[17] = extractTextIndex(fd, 4);
 
-	defaultResponseTbl[18] = extractTextIndex(fd, 6);
-	defaultResponseTbl[19] = extractTextIndex(fd, 7);
-	defaultResponseTbl[20] = extractTextIndex(fd, 8);
-	defaultResponseTbl[21] = extractTextIndex(fd, 9);
-	defaultResponseTbl[22] = extractTextIndex(fd, 7);
-	defaultResponseTbl[23] = extractTextIndex(fd, 8);
-	defaultResponseTbl[24] = extractTextIndex(fd, 9);
-	defaultResponseTbl[25] = extractTextIndex(fd, 6);
-	defaultResponseTbl[26] = extractTextIndex(fd, 7);
+	_defaultResponseTbl[18] = extractTextIndex(fd, 6);
+	_defaultResponseTbl[19] = extractTextIndex(fd, 7);
+	_defaultResponseTbl[20] = extractTextIndex(fd, 8);
+	_defaultResponseTbl[21] = extractTextIndex(fd, 9);
+	_defaultResponseTbl[22] = extractTextIndex(fd, 7);
+	_defaultResponseTbl[23] = extractTextIndex(fd, 8);
+	_defaultResponseTbl[24] = extractTextIndex(fd, 9);
+	_defaultResponseTbl[25] = extractTextIndex(fd, 6);
+	_defaultResponseTbl[26] = extractTextIndex(fd, 7);
 
-	defaultResponseTbl[27] = extractTextIndex(fd, 10);
-	defaultResponseTbl[28] = extractTextIndex(fd, 11);
-	defaultResponseTbl[29] = extractTextIndex(fd, 12);
-	defaultResponseTbl[30] = extractTextIndex(fd, 13);
-	defaultResponseTbl[31] = extractTextIndex(fd, 14);
-	defaultResponseTbl[32] = extractTextIndex(fd, 15);
-	defaultResponseTbl[33] = extractTextIndex(fd, 16);
-	defaultResponseTbl[34] = extractTextIndex(fd, 17);
-	defaultResponseTbl[35] = extractTextIndex(fd, 18);
+	_defaultResponseTbl[27] = extractTextIndex(fd, 10);
+	_defaultResponseTbl[28] = extractTextIndex(fd, 11);
+	_defaultResponseTbl[29] = extractTextIndex(fd, 12);
+	_defaultResponseTbl[30] = extractTextIndex(fd, 13);
+	_defaultResponseTbl[31] = extractTextIndex(fd, 14);
+	_defaultResponseTbl[32] = extractTextIndex(fd, 15);
+	_defaultResponseTbl[33] = extractTextIndex(fd, 16);
+	_defaultResponseTbl[34] = extractTextIndex(fd, 17);
+	_defaultResponseTbl[35] = extractTextIndex(fd, 18);
 
-	defaultResponseTbl[36] = extractTextIndex(fd, 23);
-	defaultResponseTbl[37] = extractTextIndex(fd, 24);
-	defaultResponseTbl[38] = extractTextIndex(fd, 25);
-	defaultResponseTbl[39] = extractTextIndex(fd, 26);
-	defaultResponseTbl[40] = extractTextIndex(fd, 27);
-	defaultResponseTbl[41] = extractTextIndex(fd, 28);
-	defaultResponseTbl[42] = extractTextIndex(fd, 29);
-	defaultResponseTbl[43] = extractTextIndex(fd, 30);
-	defaultResponseTbl[44] = extractTextIndex(fd, 31);
+	_defaultResponseTbl[36] = extractTextIndex(fd, 23);
+	_defaultResponseTbl[37] = extractTextIndex(fd, 24);
+	_defaultResponseTbl[38] = extractTextIndex(fd, 25);
+	_defaultResponseTbl[39] = extractTextIndex(fd, 26);
+	_defaultResponseTbl[40] = extractTextIndex(fd, 27);
+	_defaultResponseTbl[41] = extractTextIndex(fd, 28);
+	_defaultResponseTbl[42] = extractTextIndex(fd, 29);
+	_defaultResponseTbl[43] = extractTextIndex(fd, 30);
+	_defaultResponseTbl[44] = extractTextIndex(fd, 31);
 
 	fd->close();
 	delete fd;
@@ -1123,8 +1123,8 @@ void Talk::clearDialogEntries() {
 }
 
 void Talk::FUN_8001a7c4_clearDialogBoxMaybe() {
-	FUN_8001a7c4((uint)DAT_8008e7e8_dialogBox_x1,(uint)DAT_8008e844_dialogBox_y1,
-			(uint)DAT_8008e848_dialogBox_x2,(uint)DAT_8008e874_dialogBox_y2);
+	FUN_8001a7c4((uint)_dat_8008e7e8_dialogBox_x1,(uint)_dat_8008e844_dialogBox_y1,
+			(uint)_dat_8008e848_dialogBox_x2,(uint)_dat_8008e874_dialogBox_y2);
 }
 
 void Talk::playDialogAudioDontWait(uint32 textIndex) {

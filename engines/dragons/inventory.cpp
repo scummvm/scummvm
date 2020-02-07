@@ -69,10 +69,10 @@ Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
 	_old_showing_value = 0;
 	_bag = NULL;
 
-	inventionBookPrevSceneUpdateFunc = NULL;
-	inventionBookPrevSceneId = 0;
-	inventionBookPrevFlickerINISceneId = 0;
-	inventionBookPrevFlickerINIPosition = Common::Point(0,0);
+	_inventionBookPrevSceneUpdateFunc = NULL;
+	_inventionBookPrevSceneId = 0;
+	_inventionBookPrevFlickerINISceneId = 0;
+	_inventionBookPrevFlickerINIPosition = Common::Point(0,0);
 }
 
 void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backgroundResourceLoader, Bag *bag, DragonINIResource *dragonIniResource) {
@@ -172,11 +172,11 @@ void Inventory::openInventory() {
 		item->_x_pos = item->_walkDestX = invXPosTable[i] + 0x10;
 		item->_y_pos = item->_walkDestY = invYPosTable[i] + 0xc;
 
-		if (inventoryItemTbl[i]) {
+		if (_inventoryItemTbl[i]) {
 			item->_flags = 0; //clear all flags
 			item->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 			item->_priorityLayer = 0;
-			item->updateSequence(_vm->getINI(inventoryItemTbl[i] - 1)->field_8 * 2 + 10);
+			item->updateSequence(_vm->getINI(_inventoryItemTbl[i] - 1)->field_8 * 2 + 10);
 			item->setFlag(ACTOR_FLAG_200);
 			item->setFlag(ACTOR_FLAG_100);
 			item->setFlag(ACTOR_FLAG_80);
@@ -259,11 +259,11 @@ void Inventory::draw() {
 
 uint16 Inventory::getIniAtPosition(int16 x, int16 y) {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
-		if (inventoryItemTbl[i]) {
+		if (_inventoryItemTbl[i]) {
 			Actor *item = _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
 			if (item->_x_pos - 0x10 <= x && x < item->_x_pos + 0x10
 				&& item->_y_pos - 0xc <= y && y < item->_y_pos + 0xc) {
-				return inventoryItemTbl[i];
+				return _inventoryItemTbl[i];
 			}
 		}
 	}
@@ -271,27 +271,27 @@ uint16 Inventory::getIniAtPosition(int16 x, int16 y) {
 }
 
 void Inventory::loadInventoryItemsFromSave() {
-	memset(inventoryItemTbl, 0, sizeof(inventoryItemTbl));
+	memset(_inventoryItemTbl, 0, sizeof(_inventoryItemTbl));
 	int j = 0;
 	for (int i = 0; i < _vm->_dragonINIResource->totalRecords() && j < DRAGONS_MAX_INVENTORY_ITEMS; i++ ) {
 		DragonINI *ini = _vm->_dragonINIResource->getRecord(i);
 		if (ini->sceneId == 1) {
-			inventoryItemTbl[j++] = i + 1;
+			_inventoryItemTbl[j++] = i + 1;
 		}
 	}
 }
 
 void Inventory::openInventionBook() {
-	inventionBookPrevSceneUpdateFunc = _vm->getSceneUpdateFunction();
+	_inventionBookPrevSceneUpdateFunc = _vm->getSceneUpdateFunction();
 	_vm->setSceneUpdateFunction(NULL);
 //	fade_related_calls_with_1f();
 	_sequenceId = 2;
 	_actor->updateSequence(2);
-	inventionBookPrevSceneId = _vm->getCurrentSceneId();
+	_inventionBookPrevSceneId = _vm->getCurrentSceneId();
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 	if (flicker && flicker->actor) {
-		inventionBookPrevFlickerINISceneId = flicker->sceneId;
-		inventionBookPrevFlickerINIPosition = Common::Point(flicker->actor->_x_pos, flicker->actor->_y_pos);
+		_inventionBookPrevFlickerINISceneId = flicker->sceneId;
+		_inventionBookPrevFlickerINIPosition = Common::Point(flicker->actor->_x_pos, flicker->actor->_y_pos);
 		flicker->sceneId = 0;
 	}
 	_vm->_scene->setSceneId(2);
@@ -306,15 +306,15 @@ void Inventory::closeInventionBook() {
 
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 	if (flicker && flicker->actor) {
-		flicker->actor->_x_pos = inventionBookPrevFlickerINIPosition.x;
-		flicker->actor->_y_pos = inventionBookPrevFlickerINIPosition.y;
-		flicker->sceneId = inventionBookPrevFlickerINISceneId;
+		flicker->actor->_x_pos = _inventionBookPrevFlickerINIPosition.x;
+		flicker->actor->_y_pos = _inventionBookPrevFlickerINIPosition.y;
+		flicker->sceneId = _inventionBookPrevFlickerINISceneId;
 	}
-	_vm->_scene->setSceneId(inventionBookPrevSceneId);
+	_vm->_scene->setSceneId(_inventionBookPrevSceneId);
 
 	_sequenceId = 0;
 	setActorSequenceId(0);
-	setPositionFromSceneId(inventionBookPrevSceneId);
+	setPositionFromSceneId(_inventionBookPrevSceneId);
 	uVar2 = _vm->_scene->getSceneId();
 	if (((((uVar2 == 0x23) || (uVar2 == 0x2d)) || (uVar2 == 0x2e)) || ((uVar2 == 0x31 || (uVar2 == 0x32)))) || (uVar2 == 0x28)) {
 		LAB_80038b9c:
@@ -331,7 +331,7 @@ void Inventory::closeInventionBook() {
 	uVar1 = (uint)_vm->_scene->getSceneId();
 	LAB_80038be8:
 	_vm->_scene->loadScene(uVar1,0x1e);
-	_vm->setSceneUpdateFunction(inventionBookPrevSceneUpdateFunc);
+	_vm->setSceneUpdateFunction(_inventionBookPrevSceneUpdateFunc);
 	return;
 }
 
@@ -347,8 +347,8 @@ void Inventory::setPositionFromSceneId(uint32 sceneId) {
 
 bool Inventory::addItem(uint16 initId) {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
-		if (inventoryItemTbl[i] == 0) {
-			inventoryItemTbl[i] = initId;
+		if (_inventoryItemTbl[i] == 0) {
+			_inventoryItemTbl[i] = initId;
 			return true;
 		}
 	}
@@ -358,7 +358,7 @@ bool Inventory::addItem(uint16 initId) {
 
 Actor *Inventory::getInventoryItemActor(uint16 iniId) {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
-		if (inventoryItemTbl[i] == iniId) {
+		if (_inventoryItemTbl[i] == iniId) {
 			return _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
 		}
 	}
@@ -367,8 +367,8 @@ Actor *Inventory::getInventoryItemActor(uint16 iniId) {
 
 void Inventory::replaceItem(uint16 existingIniId, uint16 newIniId) {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
-		if (inventoryItemTbl[i] == existingIniId) {
-			inventoryItemTbl[i] = newIniId;
+		if (_inventoryItemTbl[i] == existingIniId) {
+			_inventoryItemTbl[i] = newIniId;
 			return;
 		}
 	}
@@ -381,7 +381,7 @@ bool Inventory::addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y) {
 			  (x < actor->_x_pos + 0x10)) &&
 			 (actor->_y_pos - 0xc <= y)) &&
 			(y < actor->_y_pos + 0xc)) {
-			inventoryItemTbl[i] = iniId;
+			_inventoryItemTbl[i] = iniId;
 			return true;
 		}
 	}
@@ -390,8 +390,8 @@ bool Inventory::addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y) {
 
 bool Inventory::clearItem(uint16 iniId) {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
-		if (inventoryItemTbl[i] == iniId) {
-			inventoryItemTbl[i] = 0;
+		if (_inventoryItemTbl[i] == iniId) {
+			_inventoryItemTbl[i] = 0;
 		}
 	}
 	return false;
