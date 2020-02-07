@@ -112,7 +112,6 @@ public:
 	bool canSaveGameStateCurrently() override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool saveGame(const int16 slot, const Common::String &desc);
-	Common::String getSaveFileName(const int slot);
 	bool canLoadGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
 	bool loadGame(const int16 slot);

@@ -105,6 +105,9 @@ public:
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+	Common::String getSaveStateName(int slot) const override {
+		return Common::String::format("riven-%03d.rvn", slot);
+	}
 	bool hasFeature(EngineFeature f) const override;
 	static Common::Array<Common::Keymap *> initKeymaps(const char *target);
 

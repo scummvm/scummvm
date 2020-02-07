@@ -364,10 +364,6 @@ void ZVision::pauseEngineIntern(bool pause) {
 	}
 }
 
-Common::String ZVision::generateSaveFileName(uint slot) {
-	return Common::String::format("%s.%03u", _targetName.c_str(), slot);
-}
-
 void ZVision::setRenderDelay(uint delay) {
 	_frameRenderDelay = delay;
 }

@@ -543,6 +543,10 @@ Common::String TonyEngine::getSaveStateFileName(int n) {
 	return Common::String::format("tony.%03d", n);
 }
 
+Common::String TonyEngine::getSaveStateName(int slot) const {
+	return getSaveStateFileName(slot);
+}
+
 void TonyEngine::autoSave(CORO_PARAM) {
 	CORO_BEGIN_CONTEXT;
 	Common::String buf;

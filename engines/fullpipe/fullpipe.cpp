@@ -246,6 +246,9 @@ Common::Error FullpipeEngine::saveGameState(int slot, const Common::String &desc
 		return Common::kUnknownError;
 }
 
+Common::String FullpipeEngine::getSaveStateName(int slot) const {
+	return Common::String::format("fullpipe.s%02d", slot);
+}
 
 Common::Error FullpipeEngine::run() {
 	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);

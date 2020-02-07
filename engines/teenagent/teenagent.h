@@ -84,9 +84,10 @@ const uint16 kScreenHeight = 200;
 class TeenAgentEngine : public Engine {
 public:
 	TeenAgentEngine(OSystem *system, const ADGameDescription *gd);
-	~TeenAgentEngine() override;
+	~TeenAgentEngine();
 
 	Common::Error run() override;
+	Common::String getSaveStateName(int slot) const override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canLoadGameStateCurrently() override { return true; }

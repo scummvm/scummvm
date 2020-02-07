@@ -450,7 +450,9 @@ public:
 	Common::Language getOriginalLanguage() const;
 	bool useOriginalData() const;
 	static Common::String generateSaveFilename(const Common::String &target, int slot);
-	Common::String generateSaveFilename(int slot) { return generateSaveFilename(_targetName, slot); }
+	Common::String getSaveStateName(int slot) const override {
+		return generateSaveFilename(_targetName, slot);
+	}
 
 	int getChar();
 	bool keyPressed();

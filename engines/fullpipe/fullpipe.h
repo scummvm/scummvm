@@ -357,6 +357,7 @@ public:
 
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
+	virtual Common::String getSaveStateName(int slot) const override;
 
 	bool canLoadGameStateCurrently() override { return true; }
 	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }

@@ -220,8 +220,6 @@ public:
 	void playVideo(Video::VideoDecoder &videoDecoder, const Common::Rect &destRect = Common::Rect(0, 0, 0, 0), bool skippable = true, Subtitle *sub = NULL);
 	Video::VideoDecoder *loadAnimation(const Common::String &fileName);
 
-	Common::String generateSaveFileName(uint slot);
-
 	void setRenderDelay(uint);
 	bool canRender();
 	static void fpsTimerCallback(void *refCon);

@@ -90,6 +90,7 @@ public:
 
 	Common::Error loadGameStrings();
 	void init();
+	virtual Common::String getSaveStateName(int slot) const override;
 	bool loadGame(int slot);
 	bool saveGame(int slot, const Common::String &description);
 	bool serialize(Common::WriteStream *out);

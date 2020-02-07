@@ -212,7 +212,6 @@ public:
 	uint32 getFeatures() const;
 
 	bool hasFeature(EngineFeature f) const override;
-	Common::String generateSaveFileName(uint slot);
 
 	void changeVolume(int delta);
 	uint16 getDirection() { return _direction; }

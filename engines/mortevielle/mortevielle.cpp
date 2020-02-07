@@ -433,7 +433,7 @@ Common::Error MortevielleEngine::run() {
 	adzon();
 	resetVariables();
 	if (loadSlot != 0)
-		_savegameManager->loadSavegame(generateSaveFilename(loadSlot));
+		_savegameManager->loadSavegame(getSaveStateName(loadSlot));
 
 	// Run the main game loop
 	mainGame();

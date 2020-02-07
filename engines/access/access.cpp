@@ -457,7 +457,7 @@ void AccessEngine::freeChar() {
 
 Common::Error AccessEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
-		generateSaveName(slot));
+		getSaveStateName(slot));
 	if (!out)
 		return Common::kCreatingFileFailed;
 
@@ -476,7 +476,7 @@ Common::Error AccessEngine::saveGameState(int slot, const Common::String &desc, 
 
 Common::Error AccessEngine::loadGameState(int slot) {
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-		generateSaveName(slot));
+		getSaveStateName(slot));
 	if (!saveFile)
 		return Common::kReadingFailed;
 
@@ -497,10 +497,6 @@ Common::Error AccessEngine::loadGameState(int slot) {
 	_events->clearEvents();
 
 	return Common::kNoError;
-}
-
-Common::String AccessEngine::generateSaveName(int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
 bool AccessEngine::canLoadGameStateCurrently() {

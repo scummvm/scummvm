@@ -81,7 +81,6 @@ public:
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	void syncSoundSettings() override;
-	Common::String generateSaveName(int slot);
 
 	void initialize();
 	void deinitialize();

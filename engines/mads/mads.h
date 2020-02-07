@@ -137,12 +137,6 @@ public:
 	bool canSaveGameStateCurrently() override;
 
 	/**
-	* Support method that generates a savegame name
-	* @param slot		Slot number
-	*/
-	Common::String generateSaveName(int slot);
-
-	/**
 	 * Handles loading a game via the GMM
 	 */
 	Common::Error loadGameState(int slot) override;

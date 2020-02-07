@@ -200,14 +200,6 @@ void MADSEngine::syncSoundSettings() {
 	loadOptions();
 }
 
-/**
-* Support method that generates a savegame name
-* @param slot		Slot number
-*/
-Common::String MADSEngine::generateSaveName(int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
-}
-
 Common::Error MADSEngine::loadGameState(int slot) {
 	_game->_loadGameSlot = slot;
 	_game->_scene._currentSceneId = -1;

@@ -125,7 +125,7 @@ bool MutationOfJBEngine::canLoadGameStateCurrently() {
 }
 
 Common::Error MutationOfJBEngine::loadGameState(int slot) {
-	const Common::String saveName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
+	const Common::String saveName = getSaveStateName(slot);
 	Common::InSaveFile *const saveFile = g_system->getSavefileManager()->openForLoading(saveName);
 	if (!saveFile)
 		return Common::kReadingFailed;
@@ -148,8 +148,8 @@ bool MutationOfJBEngine::canSaveGameStateCurrently() {
 }
 
 Common::Error MutationOfJBEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	const Common::String saveName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
-	Common::OutSaveFile *const saveFile = g_system->getSavefileManager()->openForSaving(saveName);
+	Common::OutSaveFile *const saveFile = g_system->getSavefileManager()->openForSaving(
+		getSaveStateName(slot));
 	if (!saveFile)
 		return Common::kWritingFailed;
 

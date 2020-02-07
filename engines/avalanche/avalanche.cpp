@@ -336,7 +336,7 @@ Common::Error AvalancheEngine::saveGameState(int slot, const Common::String &des
 }
 
 bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
-	Common::String fileName = getSaveFileName(slot);
+	Common::String fileName = getSaveStateName(slot);
 	Common::OutSaveFile *f = g_system->getSavefileManager()->openForSaving(fileName);
 	if (!f) {
 		warning("Can't create file '%s', game not saved.", fileName.c_str());
@@ -368,10 +368,6 @@ bool AvalancheEngine::saveGame(const int16 slot, const Common::String &desc) {
 	return true;
 }
 
-Common::String AvalancheEngine::getSaveFileName(const int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
-}
-
 bool AvalancheEngine::canLoadGameStateCurrently() {
 	return (_animationsEnabled);
 }
@@ -381,7 +377,7 @@ Common::Error AvalancheEngine::loadGameState(int slot) {
 }
 
 bool AvalancheEngine::loadGame(const int16 slot) {
-	Common::String fileName = getSaveFileName(slot);
+	Common::String fileName = getSaveStateName(slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
 	if (!f)
 		return false;
