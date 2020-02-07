@@ -125,7 +125,7 @@ from struct import *
 from subtlsVersTextResource import *
 
 COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
-APP_VERSION = "1.60"
+APP_VERSION = "1.70"
 APP_NAME = "packBladeRunnerMIXFromPCTLKXLS"
 APP_WRAPPER_NAME = "mixResourceCreator.py"
 APP_NAME_SPACED = "Blade Runner MIX Resource Creator"
@@ -170,7 +170,7 @@ SUPPORTED_TRANSLATION_SHEETS = [('OPTIONS.TR', 'KIA6PT'),
 								('CLUETYPE.TR', 'KIA6PT'),
 								('ENDCRED.TR', 'TAHOMA'),
 								('POGO.TR', 'KIA6PT'),
-								(SUPPORTED_DIALOGUE_VERSION_SHEET[:-1], 'KIA6PT')]
+								(SUPPORTED_DIALOGUE_VERSION_SHEET[:-1], SUBTITLES_FONT_NAME_CATEGORY)]
 # The FON files that are identically named to the originals are supposed to override them (needs ScummVM compatible functionality for that)
 # We don't deal with 10PT.FON since it's not used.
 # Also we don't deal with the SYSTEM (external OS font) that ERRORMSG.TRx uses!
@@ -668,7 +668,7 @@ def translateQuoteToAsciiProper(cellObj, pSheetName):
 
 		if(len(gListOfFontNamesToOutOfOrderGlyphs) > 0):
 			for (tmpFontName, tmpOOOList) in gListOfFontNamesToOutOfOrderGlyphs:
-				if tmpFontName ==  pertinentFontType:
+				if tmpFontName == pertinentFontType:
 					pertinentListOfOutOfOrderGlyphs = tmpOOOList
 					break
 
