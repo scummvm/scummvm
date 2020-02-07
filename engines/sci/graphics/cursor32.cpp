@@ -206,9 +206,6 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 				viewNum = (i + 1) * 0x100 + loopNo * 0x10 + celNo;
 				break;
 			}
-
-			if (i == _macCursorRemap.size())
-				error("Unmatched Mac cursor %d", viewNum);
 		}
 
 		_cursorInfo.resourceId = viewNum;
