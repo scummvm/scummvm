@@ -721,7 +721,7 @@ String MacResManager::disassembleAppleDoubleName(String name, bool *isAppleDoubl
 
 void MacResManager::dumpRaw() {
 	byte *data = nullptr;
-	int dataSize = 0;
+	uint dataSize = 0;
 	Common::DumpFile out;
 
 	for (int i = 0; i < _resMap.numTypes; i++) {
