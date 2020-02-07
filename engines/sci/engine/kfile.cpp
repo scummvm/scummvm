@@ -206,6 +206,9 @@ reg_t kCD(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kCheckCD(EngineState *s, int argc, reg_t *argv) {
+	// Mac interpreters would display a dialog prompting for the disc.
+	//  kCheckCD took an optional second boolean parameter, which we
+	//  ignore, that affected the dialog's text.
 	const int16 cdNo = argc > 0 ? argv[0].toSint16() : 0;
 
 	if (cdNo) {

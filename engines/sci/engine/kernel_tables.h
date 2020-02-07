@@ -404,7 +404,7 @@ static const SciKernelMapSubEntry kBitmap_subops[] = {
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kCD_subops[] = {
-	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(CheckCD),                   "(i)",                  NULL },
+	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(CheckCD),                   "(i)(i)",               NULL },
 	{ SIG_SINCE_SCI21MID,  1, MAP_CALL(GetSavedCD),                "",                     NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
