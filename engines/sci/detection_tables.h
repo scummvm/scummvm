@@ -4458,6 +4458,25 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_DROPPLATFORM, GUIO_SHIVERS },
 
+	// Shivers - English Macintosh CD
+	{"shivers", "", {
+		{"Data1", 0, "7154f2fc5466f0cd6923deb1a6f6729a", 4635483},
+		{"Data2", 0, "499e46f2b9d1c1485eca53cb90d60a18", 518575},
+		{"Data3", 0, "8f874e8207f3bf0f1d089fb3af01c1ad", 10159733},
+		{"Data4", 0, "af5e6582a7157eb2a8784fa7098cf1b1", 15479074},
+		{"Data5", 0, "1db5025dce818f35bab9acd6e67b5e31", 15635028},
+		{"Data6", 0, "d64c3acef05ffe1ae09173fdc7fad1fa", 15536868},
+		{"Data7", 0, "e0ff5994850499fe80024af11291e9db", 14592851},
+		{"Data8", 0, "2add76cb84e374c1cd56469b9fc85f3d", 15777002},
+		{"Data9", 0, "5415a1b9634fcdd8ce5ce736ee97ff92", 14644368},
+		{"Data10", 0, "4f2c24bcc71a35654b39ad8faa537f96", 16371379},
+		{"Data11", 0, "821e464fd28e5a2e9ca084cde9daeac6", 15270009},
+		{"Data12", 0, "85e6c8edf7899fc52864b83ede54a38a", 14970109},
+		{"Data13", 0, "cfb0bbb2bedb00be4849e3796abad3f8", 15182978},
+		// goes up to Data20
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK | ADGF_UNSTABLE, GUIO_SHIVERS },
+
 #undef GUIO_SHIVERS_DEMO
 #undef GUIO_SHIVERS
 
