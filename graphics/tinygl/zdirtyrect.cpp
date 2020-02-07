@@ -115,7 +115,7 @@ void tglDisposeDrawCallLists(TinyGL::GLContext *c) {
 
 static inline void _appendDirtyRectangle(const Graphics::DrawCall &call, Common::List<DirtyRectangle> &rectangles, int r, int g, int b) {
 	Common::Rect dirty_region = call.getDirtyRegion();
-	if (rectangles.empty() || dirty_region != (*rectangles.end()).rectangle)
+	if (rectangles.empty() || dirty_region != rectangles.back().rectangle)
 		rectangles.push_back(DirtyRectangle(dirty_region, r, g, b));
 }
 
