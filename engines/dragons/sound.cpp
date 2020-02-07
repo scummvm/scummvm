@@ -46,8 +46,7 @@ struct SpeechLocation {
 	uint16 sectorEnd;
 } SpeechLocation;
 
-void CdIntToPos_0(uint32 param_1)//, byte *param_2)
-{
+void CdIntToPos_0(uint32 param_1) { //, byte *param_2)
 	int iVar1;
 	int iVar2;
 	int iVar3;
@@ -163,11 +162,11 @@ SoundManager::PSXAudioTrack::~PSXAudioTrack() {
 #define AUDIO_DATA_SAMPLE_COUNT 4032
 
 static const int s_xaTable[5][2] = {
-		{   0,   0 },
-		{  60,   0 },
-		{ 115, -52 },
-		{  98, -55 },
-		{ 122, -60 }
+	{   0,   0 },
+	{  60,   0 },
+	{ 115, -52 },
+	{  98, -55 },
+	{ 122, -60 }
 };
 
 void SoundManager::PSXAudioTrack::queueAudioFromSector(Common::SeekableReadStream *sector) {

@@ -352,115 +352,115 @@ void Minigame3::run() {
 	while ( true ) {
 		_vm->waitForFrames(1);
 		switch (currentState) {
-			case 1:
-				if ((bunnyActorTbl[local_1a]->_sequenceID != 5) || ((bunnyActorTbl[local_1a]->_flags & 4) != 0)) {
-					if ((local_56 < 1) ||
+		case 1:
+			if ((bunnyActorTbl[local_1a]->_sequenceID != 5) || ((bunnyActorTbl[local_1a]->_flags & 4) != 0)) {
+				if ((local_56 < 1) ||
 						(((int)bunnyInfo[local_20].x >> 9 <= (int)(uint)(uint16)bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].x ||
-																				((int)(uint)(uint16)bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].x <= (int)bunnyInfo[local_1e].x >> 9)))) {
-						bunnyActorTbl[local_1c]->_x_pos = bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].x;
-						bunnyActorTbl[local_1a]->_x_pos = bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].x;
-						bunnyActorTbl[local_1c]->_y_pos = bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].y;
-						bunnyActorTbl[local_1a]->_y_pos = bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].y;
-						currentState = 5;
+						((int)(uint)(uint16)bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].x <= (int)bunnyInfo[local_1e].x >> 9)))) {
+					bunnyActorTbl[local_1c]->_x_pos = bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].x;
+					bunnyActorTbl[local_1a]->_x_pos = bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].x;
+					bunnyActorTbl[local_1c]->_y_pos = bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].y;
+					bunnyActorTbl[local_1a]->_y_pos = bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].y;
+					currentState = 5;
+				} else {
+					if (bunnyActorTbl[local_1a]->_sequenceID == 5) {
+						bunnyActorTbl[local_1a]->updateSequence(6);
+						bunnyActorTbl[local_1c]->updateSequence(0xd);
 					} else {
-						if (bunnyActorTbl[local_1a]->_sequenceID == 5) {
-							bunnyActorTbl[local_1a]->updateSequence(6);
-							bunnyActorTbl[local_1c]->updateSequence(0xd);
-						} else {
-							local_56 = local_56 - *(int16 *)&UnkStruct_ARRAY_800931a0[local_50].field_0x14;
-							bunnyInfo[local_20].x = bunnyInfo[local_20].x + UnkStruct_ARRAY_800931a0[local_50].field_0x14 * -0x200;
-							bunnyInfo[local_20].y = bunnyInfo[local_20].y - bunnyInfo[local_20].field_0xc;
-							bunnyInfo[local_20].field_0xc = bunnyInfo[local_20].field_0xc + bunnyInfo[local_20].field_0x10;
-							bunnyActorTbl[local_1c]->_x_pos = (int16_t)((int)bunnyInfo[local_20].x >> 9);
-							bunnyActorTbl[local_1c]->_y_pos = (int16_t)((int)bunnyInfo[local_20].y >> 9);
-							bunnyInfo[local_1e].x = bunnyInfo[local_1e].x + UnkStruct_ARRAY_800931a0[local_50].field_0x14 * 0x200;
-							bunnyInfo[local_1e].y = bunnyInfo[local_1e].y - bunnyInfo[local_1e].field_0xc;
-							bunnyInfo[local_1e].field_0xc = bunnyInfo[local_1e].field_0xc + bunnyInfo[local_1e].field_0x10;
-							bunnyActorTbl[local_1a]->_x_pos = (int16_t)((int)bunnyInfo[local_1e].x >> 9);
-							bunnyActorTbl[local_1a]->_y_pos = (int16_t)((int)bunnyInfo[local_1e].y >> 9);
-							if ((local_228 < 4) && unkXPosTbl[local_50 * 4 + local_228] < bunnyActorTbl[local_1a]->_x_pos) {
-								local_228 = local_228 + 1;
-								bunnyActorTbl[local_1a]->updateSequence((uint)local_228 + 6 & 0xffff);
-								bunnyActorTbl[local_1c]->updateSequence((uint)local_228 + 0xd & 0xffff);
-							}
+						local_56 = local_56 - *(int16 *)&UnkStruct_ARRAY_800931a0[local_50].field_0x14;
+						bunnyInfo[local_20].x = bunnyInfo[local_20].x + UnkStruct_ARRAY_800931a0[local_50].field_0x14 * -0x200;
+						bunnyInfo[local_20].y = bunnyInfo[local_20].y - bunnyInfo[local_20].field_0xc;
+						bunnyInfo[local_20].field_0xc = bunnyInfo[local_20].field_0xc + bunnyInfo[local_20].field_0x10;
+						bunnyActorTbl[local_1c]->_x_pos = (int16_t)((int)bunnyInfo[local_20].x >> 9);
+						bunnyActorTbl[local_1c]->_y_pos = (int16_t)((int)bunnyInfo[local_20].y >> 9);
+						bunnyInfo[local_1e].x = bunnyInfo[local_1e].x + UnkStruct_ARRAY_800931a0[local_50].field_0x14 * 0x200;
+						bunnyInfo[local_1e].y = bunnyInfo[local_1e].y - bunnyInfo[local_1e].field_0xc;
+						bunnyInfo[local_1e].field_0xc = bunnyInfo[local_1e].field_0xc + bunnyInfo[local_1e].field_0x10;
+						bunnyActorTbl[local_1a]->_x_pos = (int16_t)((int)bunnyInfo[local_1e].x >> 9);
+						bunnyActorTbl[local_1a]->_y_pos = (int16_t)((int)bunnyInfo[local_1e].y >> 9);
+						if ((local_228 < 4) && unkXPosTbl[local_50 * 4 + local_228] < bunnyActorTbl[local_1a]->_x_pos) {
+							local_228 = local_228 + 1;
+							bunnyActorTbl[local_1a]->updateSequence((uint)local_228 + 6 & 0xffff);
+							bunnyActorTbl[local_1c]->updateSequence((uint)local_228 + 0xd & 0xffff);
 						}
 					}
 				}
-				break;
-			case 2:
-				if (local_58 == 0) {
-					currentState = 4;
-				}
-				break;
-			case 3:
-				if (local_58 == 0) {
-					currentState = 4;
-				}
-				break;
-			case 4:
-				local_50 = _vm->getRand(4);
-				if (local_50 < 2) {
-					i = _vm->getRand(2);
-				} else {
-					i = 0;
-				}
-				bunnyInfo[(int16)i].positionIdx = (uint)UnkStruct_ARRAY_800931a0[local_50].position1;
-				bunnyInfo[(int16)i].x = (uint)(uint16)bunnyPositionsTbl[bunnyInfo[(int16)i].positionIdx].x << 9;
-				bunnyInfo[(int16)i].y = (uint)(uint16)bunnyPositionsTbl[bunnyInfo[(int16)i].positionIdx].y << 9;
-				bunnyInfo[(int16)i].field_0xc = UnkStruct_ARRAY_800931a0[local_50].unk4;
-				bunnyInfo[(int16)i].field_0x10 = UnkStruct_ARRAY_800931a0[local_50].unk8;
-				i = i ^ 1;
-				bunnyInfo[(int16)i].positionIdx = (uint)UnkStruct_ARRAY_800931a0[local_50].position2;
-				bunnyInfo[(int16)i].x = (uint)(uint16)bunnyPositionsTbl[bunnyInfo[(int16)i].positionIdx].x << 9;
-				bunnyInfo[(int16)i].y = (uint)(uint16)bunnyPositionsTbl[bunnyInfo[(int16)i].positionIdx].y << 9;
-				bunnyInfo[(int16)i].field_0xc = UnkStruct_ARRAY_800931a0[local_50].unk12;
-				bunnyInfo[(int16)i].field_0x10 = UnkStruct_ARRAY_800931a0[local_50].unk16;
-				local_56 = bunnyPositionsTbl[UnkStruct_ARRAY_800931a0[local_50].position2].x - bunnyPositionsTbl[UnkStruct_ARRAY_800931a0[local_50].position1].x;
-				local_1e = (uint16)((int)bunnyInfo[1].x <= (int)bunnyInfo[0].x);
-				local_20 = (int16)((uint)local_1e + 1) + (int16)((int)((uint)local_1e + 1) / 2) * -2;
-				local_1a = bunnyPositionTbl[bunnyInfo[local_1e].positionIdx];
-				local_1c = bunnyPositionTbl[bunnyInfo[local_20].positionIdx];
-				bunnyActorTbl[local_1a]->updateSequence(5);
-				bunnyActorTbl[local_1c]->updateSequence(0xc);
-				if (hopCounter == 0x1d) {
-					_vm->playOrStopSound(2);
-				} else {
-					_vm->playOrStopSound((uint)local_1c2);
-					local_1c2 = 1 - local_1c2;
-				}
-				local_228 = 0;
-				i = goodRabbitPositionTbl[bunnyInfo[local_1e].positionIdx];
-				goodRabbitPositionTbl[bunnyInfo[local_1e].positionIdx] = goodRabbitPositionTbl[bunnyInfo[local_20].positionIdx];
-				goodRabbitPositionTbl[bunnyInfo[local_20].positionIdx] = i;
-				i = bunnyPositionTbl[bunnyInfo[local_1e].positionIdx];
-				bunnyPositionTbl[bunnyInfo[local_1e].positionIdx] = bunnyPositionTbl[bunnyInfo[local_20].positionIdx];
-				bunnyPositionTbl[bunnyInfo[local_20].positionIdx] = i;
-				currentState = 1;
-				break;
-			case 5:
-				hopCounter = hopCounter + 1;
-				local_5a = local_5a + 1;
-				bunnyActorTbl[local_1a]->updateSequence(0xb);
-				bunnyActorTbl[local_1c]->updateSequence(0x12);
-				if (local_5a == local_5c) {
-					local_5a = 0;
-					local_5c = _vm->getRand(2);
-					local_5c = local_5c + 5;
-					currentState = 3;
-					local_58 = 0x3c;
-				} else {
-					currentState = 2;
-					local_58 = 2;
-				}
-				break;
-			case 6:
-				local_10 = 0;
-				if (local_1e8 == 0) {
-					flags = flags | 8;
-				}
-				break;
-			default:
-				error("Unknown state");
+			}
+			break;
+		case 2:
+			if (local_58 == 0) {
+				currentState = 4;
+			}
+			break;
+		case 3:
+			if (local_58 == 0) {
+				currentState = 4;
+			}
+			break;
+		case 4:
+			local_50 = _vm->getRand(4);
+			if (local_50 < 2) {
+				i = _vm->getRand(2);
+			} else {
+				i = 0;
+			}
+			bunnyInfo[(int16)i].positionIdx = (uint)UnkStruct_ARRAY_800931a0[local_50].position1;
+			bunnyInfo[(int16)i].x = (uint)(uint16)bunnyPositionsTbl[bunnyInfo[(int16)i].positionIdx].x << 9;
+			bunnyInfo[(int16)i].y = (uint)(uint16)bunnyPositionsTbl[bunnyInfo[(int16)i].positionIdx].y << 9;
+			bunnyInfo[(int16)i].field_0xc = UnkStruct_ARRAY_800931a0[local_50].unk4;
+			bunnyInfo[(int16)i].field_0x10 = UnkStruct_ARRAY_800931a0[local_50].unk8;
+			i = i ^ 1;
+			bunnyInfo[(int16)i].positionIdx = (uint)UnkStruct_ARRAY_800931a0[local_50].position2;
+			bunnyInfo[(int16)i].x = (uint)(uint16)bunnyPositionsTbl[bunnyInfo[(int16)i].positionIdx].x << 9;
+			bunnyInfo[(int16)i].y = (uint)(uint16)bunnyPositionsTbl[bunnyInfo[(int16)i].positionIdx].y << 9;
+			bunnyInfo[(int16)i].field_0xc = UnkStruct_ARRAY_800931a0[local_50].unk12;
+			bunnyInfo[(int16)i].field_0x10 = UnkStruct_ARRAY_800931a0[local_50].unk16;
+			local_56 = bunnyPositionsTbl[UnkStruct_ARRAY_800931a0[local_50].position2].x - bunnyPositionsTbl[UnkStruct_ARRAY_800931a0[local_50].position1].x;
+			local_1e = (uint16)((int)bunnyInfo[1].x <= (int)bunnyInfo[0].x);
+			local_20 = (int16)((uint)local_1e + 1) + (int16)((int)((uint)local_1e + 1) / 2) * -2;
+			local_1a = bunnyPositionTbl[bunnyInfo[local_1e].positionIdx];
+			local_1c = bunnyPositionTbl[bunnyInfo[local_20].positionIdx];
+			bunnyActorTbl[local_1a]->updateSequence(5);
+			bunnyActorTbl[local_1c]->updateSequence(0xc);
+			if (hopCounter == 0x1d) {
+				_vm->playOrStopSound(2);
+			} else {
+				_vm->playOrStopSound((uint)local_1c2);
+				local_1c2 = 1 - local_1c2;
+			}
+			local_228 = 0;
+			i = goodRabbitPositionTbl[bunnyInfo[local_1e].positionIdx];
+			goodRabbitPositionTbl[bunnyInfo[local_1e].positionIdx] = goodRabbitPositionTbl[bunnyInfo[local_20].positionIdx];
+			goodRabbitPositionTbl[bunnyInfo[local_20].positionIdx] = i;
+			i = bunnyPositionTbl[bunnyInfo[local_1e].positionIdx];
+			bunnyPositionTbl[bunnyInfo[local_1e].positionIdx] = bunnyPositionTbl[bunnyInfo[local_20].positionIdx];
+			bunnyPositionTbl[bunnyInfo[local_20].positionIdx] = i;
+			currentState = 1;
+			break;
+		case 5:
+			hopCounter = hopCounter + 1;
+			local_5a = local_5a + 1;
+			bunnyActorTbl[local_1a]->updateSequence(0xb);
+			bunnyActorTbl[local_1c]->updateSequence(0x12);
+			if (local_5a == local_5c) {
+				local_5a = 0;
+				local_5c = _vm->getRand(2);
+				local_5c = local_5c + 5;
+				currentState = 3;
+				local_58 = 0x3c;
+			} else {
+				currentState = 2;
+				local_58 = 2;
+			}
+			break;
+		case 6:
+			local_10 = 0;
+			if (local_1e8 == 0) {
+				flags = flags | 8;
+			}
+			break;
+		default:
+			error("Unknown state");
 		}
 		i = 0;
 		while ((int16)i < 8) {

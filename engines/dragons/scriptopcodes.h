@@ -66,6 +66,7 @@ public:
 	int16 _data_80071f5c;
 	int16 _scriptTargetINI;
 	SpecialOpcodes *_specialOpCodes;
+
 protected:
 	DragonsEngine *_vm;
 	DragonFLG *_dragonFLG;

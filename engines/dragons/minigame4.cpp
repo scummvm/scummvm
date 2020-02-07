@@ -114,8 +114,7 @@ void Minigame4::run() {
 	_vm->_scene->loadScene(uVar1,0x1e);
 }
 
-void Minigame4::actorTalk(Actor *actorId,uint16 param_2,uint32 textIndex)
-{
+void Minigame4::actorTalk(Actor *actorId, uint16 param_2, uint32 textIndex) {
 	actorId->waitUntilFlag8SetThenSet1000AndWaitFor4();
 	if (actorId == _bruteActor) {
 		_bruteActor->updateSequence(9);

@@ -166,8 +166,8 @@ void Minigame5::run() {
 	currentState = 1;
 	local_66 = 0;
 	local_50 = 0;
-	while ( true ) {
-		while ( true ) {
+	while (true) {
+		while (true) {
 			do {
 				_vm->waitForFrames(1);
 				switch (currentState) {
