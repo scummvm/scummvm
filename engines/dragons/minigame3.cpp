@@ -135,7 +135,7 @@ void Minigame3::run() {
 	fd->seek(0x2c);
 	for (i = 0; i < 30; i++) {
 		tearInfo[i].x = fd->readUint16LE();
-		tearInfo[i].x = fd->readUint16LE();
+		tearInfo[i].y = fd->readUint16LE();
 		tearInfo[i].unk = fd->readUint16LE();
 		tearInfo[i].yRelated = fd->readUint16LE();
 	}
@@ -353,7 +353,7 @@ void Minigame3::run() {
 	local_1c2 = 0;
 	while ( true ) {
 		_vm->waitForFrames(1);
-		switch(currentState) {
+		switch (currentState) {
 			case 1:
 				if ((bunnyActorTbl[local_1a]->_sequenceID != 5) || ((bunnyActorTbl[local_1a]->_flags & 4) != 0)) {
 					if ((local_56 < 1) ||

@@ -830,18 +830,7 @@ void tournamentUpdateFunction() {
 }
 
 void CutScene::tournamentCutScene() {
-	uint actorId;
-	uint16 uVar1;
 	uint16 dialogText[1000];
-//	undefined2 local_218 [256];
-
-	uVar1 = 0;
-	actorId = 0;
-//	do {
-//		uVar1 = uVar1 + 1;
-//		local_218[actorId] = *(undefined2 *)(actorId * 2 + scrFileData_maybe);
-//		actorId = (uint)uVar1;
-//	} while (uVar1 < 0x100);
 
 	tournamentUpdateCameraX = 0x140;
 	_vm->setVsyncUpdateFunction(tournamentUpdateFunction);
