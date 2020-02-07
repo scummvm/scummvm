@@ -66,7 +66,7 @@ Actor *ActorManager::findFreeActor(int16 resourceId) {
 	int i = 0;
 	for (ActorsIterator it = _actors.begin(); it != _actors.end() && i < 23; ++it, i++) {
 		Actor *actor = it;
-		if (!(actor->_flags & Dragons::ACTOR_FLAG_40)) {
+		if (!(actor->_flags & ACTOR_FLAG_40)) {
 			actor->_resourceID = resourceId;
 			actor->_walkSpeed = 0x100000;
 			return actor;
@@ -161,7 +161,7 @@ void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 	_walkDestY = y;
 	_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_sequenceID2 = 0;
-	_flags = (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_4);
+	_flags = (ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_4);
 	_frame_width = 0;
 	_frame_height = 0;
 	_frame_flags = 4;
@@ -174,7 +174,7 @@ void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 void Actor::updateSequence(uint16 newSequenceID) {
 	_sequenceID = newSequenceID;
 	_flags &= 0xfbf1;
-	_flags |= Dragons::ACTOR_FLAG_1;
+	_flags |= ACTOR_FLAG_1;
 }
 
 void Actor::resetSequenceIP() {
@@ -196,7 +196,7 @@ void Actor::loadFrame(uint16 frameOffset) {
 
 	debug(5, "ActorId: %d load frame header: (%d,%d)", _actorID, _frame->width, _frame->height);
 
-	_flags |= Dragons::ACTOR_FLAG_8; //TODO check if this is the right spot. engine sets it at 0x800185b0
+	_flags |= ACTOR_FLAG_8; //TODO check if this is the right spot. engine sets it at 0x800185b0
 
 }
 
@@ -468,16 +468,16 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 }
 
 void Actor::stopWalk() {
-	clearFlag(Dragons::ACTOR_FLAG_10);
+	clearFlag(ACTOR_FLAG_10);
 	_walkPointsIndex = 0;
 	_walkDestX = _x_pos;
 	_walkDestY = _y_pos;
 	_finalWalkDestX = -1;
 	_finalWalkDestY = -1;
-	setFlag(Dragons::ACTOR_FLAG_4);
+	setFlag(ACTOR_FLAG_4);
 
-	if (_flags & Dragons::ACTOR_FLAG_200) {
-		clearFlag(Dragons::ACTOR_FLAG_800);
+	if (_flags & ACTOR_FLAG_200) {
+		clearFlag(ACTOR_FLAG_800);
 	}
 }
 
@@ -488,11 +488,11 @@ void Actor::waitUntilFlag4IsSet() {
 }
 
 void Actor::waitUntilFlag8IsSet() {
-	if (_flags & Dragons::ACTOR_FLAG_8) {
+	if (_flags & ACTOR_FLAG_8) {
 		return;
 	}
 
-	while (!(_flags & Dragons::ACTOR_FLAG_8)) {
+	while (!(_flags & ACTOR_FLAG_8)) {
 		getEngine()->waitForFrames(1);
 	}
 }
@@ -689,7 +689,7 @@ int Actor::startMoveToPoint(int destX, int destY) {
 }
 
 void Actor::walkPath() {
-	if (isFlagClear(Dragons::ACTOR_FLAG_400) && isFlagSet(Dragons::ACTOR_FLAG_40) && isFlagSet(Dragons::ACTOR_FLAG_10)) {
+	if (isFlagClear(ACTOR_FLAG_400) && isFlagSet(Dragons::ACTOR_FLAG_40) && isFlagSet(Dragons::ACTOR_FLAG_10)) {
 		_xShl16 += (((_scale * _walkSlopeX) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
 		_yShl16 += (((_scale * _walkSlopeY) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
 

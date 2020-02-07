@@ -83,8 +83,8 @@ void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backg
 	_actor->_flags = 0;
 	_actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_actor->updateSequence(0);
-	_actor->_flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
-					   Dragons::ACTOR_FLAG_200);
+	_actor->_flags |= (ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
+					   ACTOR_FLAG_200);
 	_sequenceId = 0;
 	_type = 0;
 	_old_showing_value = 0;
@@ -100,7 +100,7 @@ void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backg
 
 void Inventory::loadScene(uint32 sceneId) {
 	if (!_type) {
-		_sequenceId = _vm->isFlagSet(Dragons::ENGINE_FLAG_400000) ? 1 : 0;
+		_sequenceId = _vm->isFlagSet(ENGINE_FLAG_400000) ? 1 : 0;
 	}
 
 	if (_sequenceId == 0 && _vm->getVar(7) == 1) {
@@ -113,7 +113,7 @@ void Inventory::loadScene(uint32 sceneId) {
 }
 
 void Inventory::updateVisibility() {
-	_actor->_priorityLayer = _vm->isFlagSet(Dragons::ENGINE_FLAG_10) ? (int16)6 : (int16)0;
+	_actor->_priorityLayer = _vm->isFlagSet(ENGINE_FLAG_10) ? (int16)6 : (int16)0;
 }
 
 Common::Point Inventory::getPosition() {

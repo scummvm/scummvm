@@ -83,14 +83,14 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 }
 
 void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
-	bool isUnkFlag2Set = _vm->isUnkFlagSet(Dragons::ENGINE_UNK1_FLAG_2);
+	bool isUnkFlag2Set = _vm->isUnkFlagSet(ENGINE_UNK1_FLAG_2);
 
-	_vm->setUnkFlags(Dragons::ENGINE_UNK1_FLAG_2 | Dragons::ENGINE_UNK1_FLAG_8);
+	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2 | Dragons::ENGINE_UNK1_FLAG_8);
 
 	for (int i=0;i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _dragonINIResource->getRecord(i);
 		ini->field_10 = -1;
-		ini->field_1a_flags_maybe &= ~Dragons::INI_FLAG_10;
+		ini->field_1a_flags_maybe &= ~INI_FLAG_10;
 	}
 
 	uint16 sceneIdStripped = (uint16)sceneId & ~0x8000;
@@ -125,8 +125,8 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	// Loading animation logic would go here. 0x8002f538
 
-	_vm->clearFlags(Dragons::ENGINE_FLAG_20);
-	_vm->setUnkFlags(Dragons::ENGINE_UNK1_FLAG_10);
+	_vm->clearFlags(ENGINE_FLAG_20);
+	_vm->setUnkFlags(ENGINE_UNK1_FLAG_10);
 
 	_vm->call_fade_related_1f();
 	// TODO 0x8002f7c4
@@ -210,11 +210,11 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	// 0x8002ff80
 	// TODO fade_related_calls_with_1f();
-	_vm->clearUnkFlags(Dragons::ENGINE_UNK1_FLAG_10);
-	_vm->setFlags(Dragons::ENGINE_FLAG_20);
+	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_10);
+	_vm->setFlags(ENGINE_FLAG_20);
 	// TODO reset vsync_updater_function
 
-	_vm->setFlags(Dragons::ENGINE_FLAG_200);
+	_vm->setFlags(ENGINE_FLAG_200);
 	_actorManager->clearActorFlags(2);
 	_vm->data_800633fc = 0;
 	// TODO 0x8002fff0
@@ -240,25 +240,25 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 					actor->_sequenceID2 = ini->field_20_actor_field_14;
 
 					if (ini->field_1a_flags_maybe & 2) {
-						actor->_flags |= Dragons::ACTOR_FLAG_80;
+						actor->_flags |= ACTOR_FLAG_80;
 					} else {
 						actor->_flags &= 0xfeff;
 					}
 
 					if (ini->field_1a_flags_maybe & 0x20) {
-						actor->_flags |= Dragons::ACTOR_FLAG_100;
+						actor->_flags |= ACTOR_FLAG_100;
 					} else {
 						actor->_flags &= 0xfeff;
 					}
 
 					if (ini->field_1a_flags_maybe & 4) {
-						actor->_flags |= Dragons::ACTOR_FLAG_8000;
+						actor->_flags |= ACTOR_FLAG_8000;
 					} else {
 						actor->_flags &= 0x7fff;
 					}
 
 					if (ini->field_1a_flags_maybe & 0x100) {
-						actor->_flags |= Dragons::ACTOR_FLAG_4000;
+						actor->_flags |= ACTOR_FLAG_4000;
 					} else {
 						actor->_flags &= 0xbfff;
 					}
@@ -284,7 +284,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	// 0x80030458
 	DragonINI *ini = _vm->getINI(1);
 	if (ini->actor && _vm->_dragonINIResource->getFlickerRecord() && _vm->_dragonINIResource->getFlickerRecord()->sceneId == _currentSceneId) {
-		ini->actor->setFlag(Dragons::ACTOR_FLAG_100);
+		ini->actor->setFlag(ACTOR_FLAG_100);
 		ini->actor->_priorityLayer = 0;
 	}
 
@@ -293,7 +293,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 		flicker->field_20_actor_field_14 = _vm->data_800633fa;
 		if (flicker->actor) {
 			flicker->actor->_sequenceID2 = _vm->data_800633fa;
-			flicker->actor->setFlag(Dragons::ACTOR_FLAG_4);
+			flicker->actor->setFlag(ACTOR_FLAG_4);
 		}
 	}
 
@@ -307,24 +307,24 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 		_vm->_inventory->hide();
 	}
 
-	if (!_vm->isFlagSet(Dragons::ENGINE_FLAG_10000)) {
-		_vm->setFlags(Dragons::ENGINE_FLAG_10);
+	if (!_vm->isFlagSet(ENGINE_FLAG_10000)) {
+		_vm->setFlags(ENGINE_FLAG_10);
 	}
 
-	_vm->setFlags(Dragons::ENGINE_FLAG_1);
-	_vm->setFlags(Dragons::ENGINE_FLAG_200);
-	_vm->setFlags(Dragons::ENGINE_FLAG_4000000);
+	_vm->setFlags(ENGINE_FLAG_1);
+	_vm->setFlags(ENGINE_FLAG_200);
+	_vm->setFlags(ENGINE_FLAG_4000000);
 
 	if (flicker && flicker->sceneId == _currentSceneId) {
 
 		flicker->actor->updateSequence((uint16)flicker->actor->_sequenceID2);
 	}
 
-	_vm->clearUnkFlags(Dragons::ENGINE_UNK1_FLAG_2);
-	_vm->clearUnkFlags(Dragons::ENGINE_UNK1_FLAG_8);
+	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);
+	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_8);
 
 	if (isUnkFlag2Set) {
-		_vm->setUnkFlags(Dragons::ENGINE_UNK1_FLAG_2);
+		_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
 	}
 
 	if (!(sceneId & 0x8000)) {
@@ -363,8 +363,8 @@ void Scene::draw() {
 				continue;
 			}
 
-			if (actor->_flags & Dragons::ACTOR_FLAG_40 &&
-				!(actor->_flags & Dragons::ACTOR_FLAG_400) &&
+			if (actor->_flags & ACTOR_FLAG_40 &&
+				!(actor->_flags & ACTOR_FLAG_400) &&
 				actor->_surface &&
 				actor->_frame->width != 0 &&
 				actor->_frame->height != 0
@@ -380,7 +380,7 @@ void Scene::draw() {
 					debug(4, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d Scale: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
 						  y,
 						  s->w, s->h, actor->_priorityLayer, actor->_scale);
-						_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->_frame->flags & Dragons::FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? NONE : NORMAL, actor->_scale);
+						_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->_frame->flags & FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? NONE : NORMAL, actor->_scale);
 					if (_vm->isDebugMode()) {
 						_screen->drawRect(0x7fff, Common::Rect(x, y, x + s->w, y + s->h), actor->_actorID);
 						drawActorNumber(x + s->w, y + 8, actor->_actorID);

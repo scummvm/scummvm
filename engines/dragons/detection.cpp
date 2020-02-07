@@ -34,7 +34,7 @@ static const PlainGameDescriptor dragonsGames[] = {
 
 namespace Dragons {
 
-static const Dragons::DragonsGameDescription gameDescriptions[] = {
+static const DragonsGameDescription gameDescriptions[] = {
 		{
 				{
 						"dragons",

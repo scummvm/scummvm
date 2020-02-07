@@ -237,11 +237,11 @@ void SpecialOpcodes::spcThumbWrestlingMiniGame() {
 }
 
 void SpecialOpcodes::spcClearEngineFlag10() {
-	_vm->clearFlags(Dragons::ENGINE_FLAG_10);
+	_vm->clearFlags(ENGINE_FLAG_10);
 }
 
 void SpecialOpcodes::spcSetEngineFlag10() {
-	_vm->setFlags(Dragons::ENGINE_FLAG_10);
+	_vm->setFlags(ENGINE_FLAG_10);
 }
 
 void SpecialOpcodes::spcRabbitsMiniGame() {
@@ -300,19 +300,19 @@ void SpecialOpcodes::spcCastleGardenLogic() {
 void SpecialOpcodes::spcUnk9() {
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 	assert(flicker);
-	flicker->field_1a_flags_maybe |= Dragons::INI_FLAG_20;
+	flicker->field_1a_flags_maybe |= INI_FLAG_20;
 	assert(flicker->actor);
-	flicker->actor->_flags |= Dragons::ACTOR_FLAG_100;
+	flicker->actor->_flags |= ACTOR_FLAG_100;
 	flicker->actor->_priorityLayer = 0;
-	_vm->getINI(1)->field_1a_flags_maybe |= Dragons::INI_FLAG_20;
+	_vm->getINI(1)->field_1a_flags_maybe |= INI_FLAG_20;
 }
 
 
 void SpecialOpcodes::spcUnkA() {
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
-	flicker->field_1a_flags_maybe &= ~Dragons::INI_FLAG_20;
-	flicker->actor->_flags &= ~Dragons::ACTOR_FLAG_100;
-	_vm->getINI(1)->field_1a_flags_maybe &= ~Dragons::INI_FLAG_20;
+	flicker->field_1a_flags_maybe &= ~INI_FLAG_20;
+	flicker->actor->_flags &= ~ACTOR_FLAG_100;
+	_vm->getINI(1)->field_1a_flags_maybe &= ~INI_FLAG_20;
 }
 
 void SpecialOpcodes::spcUnkC() {
@@ -367,11 +367,11 @@ void SpecialOpcodes::spcUnk13InventionBookCloseRelated() {
 }
 
 void SpecialOpcodes::spcClearEngineFlag8() {
-	_vm->clearFlags(Dragons::ENGINE_FLAG_8);
+	_vm->clearFlags(ENGINE_FLAG_8);
 }
 
 void SpecialOpcodes::spcSetEngineFlag8() {
-	_vm->setFlags(Dragons::ENGINE_FLAG_8);
+	_vm->setFlags(ENGINE_FLAG_8);
 }
 
 void SpecialOpcodes::spcKnightPoolReflectionLogic() {
@@ -683,11 +683,11 @@ void SpecialOpcodes::spcBlackDragonCrashThroughGate() {
 }
 
 void SpecialOpcodes::spcSetEngineFlag0x2000000() {
-	_vm->setFlags(Dragons::ENGINE_FLAG_2000000);
+	_vm->setFlags(ENGINE_FLAG_2000000);
 }
 
 void SpecialOpcodes::spcClearEngineFlag0x2000000() {
-	_vm->clearFlags(Dragons::ENGINE_FLAG_2000000);
+	_vm->clearFlags(ENGINE_FLAG_2000000);
 }
 
 void SpecialOpcodes::spcZigmondFraudSceneLogic() {
@@ -886,11 +886,11 @@ void SpecialOpcodes::spcCloseInventionBook() {
 }
 
 void SpecialOpcodes::spcSetEngineFlag0x4000000() {
-	_vm->setFlags(Dragons::ENGINE_FLAG_4000000);
+	_vm->setFlags(ENGINE_FLAG_4000000);
 }
 
 void SpecialOpcodes::spcClearEngineFlag0x4000000() {
-	_vm->clearFlags(Dragons::ENGINE_FLAG_4000000);
+	_vm->clearFlags(ENGINE_FLAG_4000000);
 }
 
 void SpecialOpcodes::spcSetCursorSequenceIdToZero() {

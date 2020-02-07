@@ -31,7 +31,7 @@ namespace Dragons {
 #define TILE_SIZE (TILE_WIDTH * TILE_HEIGHT)
 
 
-void Dragons::PriorityLayer::load(TileMap &tileMap, byte *tiles) {
+void PriorityLayer::load(TileMap &tileMap, byte *tiles) {
 	_width = tileMap.w * TILE_WIDTH;
 	_height = tileMap.h * TILE_HEIGHT;
 	_mapWidth = tileMap.w;
@@ -289,12 +289,12 @@ Common::Point Background::getLayerOffset(uint8 layerNumber) {
 	return layerOffset[layerNumber];
 }
 
-Dragons::AlphaBlendMode Background::getLayerAlphaMode(uint8 layerNumber) {
+AlphaBlendMode Background::getLayerAlphaMode(uint8 layerNumber) {
 	assert(layerNumber < 4);
 	return layerAlphaMode[layerNumber];
 }
 
-void Background::setLayerAlphaMode(uint8 layerNumber, Dragons::AlphaBlendMode mode) {
+void Background::setLayerAlphaMode(uint8 layerNumber, AlphaBlendMode mode) {
 	assert(layerNumber < 4);
 	layerAlphaMode[layerNumber] = mode;
 }

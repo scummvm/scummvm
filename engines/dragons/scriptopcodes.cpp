@@ -183,14 +183,14 @@ void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 //		return;
 //	}
 //
-//	if (_vm->isFlagSet(Dragons::ENGINE_FLAG_100000)) {
+//	if (_vm->isFlagSet(ENGINE_FLAG_100000)) {
 //		return;
 //	}
 //
-//	if (_vm->isFlagSet(Dragons::ENGINE_FLAG_80000)) {
+//	if (_vm->isFlagSet(ENGINE_FLAG_80000)) {
 //		//TODO
 ////		if (IsPressedStart(0)) {
-////			Dragons::getEngine()->setFlags(Dragons::ENGINE_FLAG_100000);
+////			getEngine()->setFlags(Dragons::ENGINE_FLAG_100000);
 ////		}
 //	}
 //
@@ -203,14 +203,14 @@ void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 //
 	while (scriptOpCall._code < scriptOpCall._codeEnd && !(scriptOpCall._result & 1)) {
 
-		if (_vm->isFlagSet(Dragons::ENGINE_FLAG_100000)) {
+		if (_vm->isFlagSet(ENGINE_FLAG_100000)) {
 			return;
 		}
 
-		if (_vm->isFlagSet(Dragons::ENGINE_FLAG_80000)) {
+		if (_vm->isFlagSet(ENGINE_FLAG_80000)) {
 			//TODO
 //		if (IsPressedStart(0)) {
-//			Dragons::getEngine()->setFlags(Dragons::ENGINE_FLAG_100000);
+//			getEngine()->setFlags(Dragons::ENGINE_FLAG_100000);
 //		}
 		}
 
@@ -368,7 +368,7 @@ void ScriptOpcodes::opActorLoadSequence(ScriptOpCall &scriptOpCall) {
 
 	bool isFlicker = _vm->_dragonINIResource->isFlicker(field2 - 1);
 	if (isFlicker) {
-		ini->actor->_flags |= Dragons::ACTOR_FLAG_2000;
+		ini->actor->_flags |= ACTOR_FLAG_2000;
 	}
 
 	if (!ini->actor->_actorResource || ini->actor->_actorResource->_id != ini->actorResourceId) {
@@ -382,7 +382,7 @@ void ScriptOpcodes::opActorLoadSequence(ScriptOpCall &scriptOpCall) {
 	}
 
 	if (isFlicker) {
-		ini->actor->_flags &= ~Dragons::ACTOR_FLAG_2000;
+		ini->actor->_flags &= ~ACTOR_FLAG_2000;
 	}
 }
 
@@ -616,7 +616,7 @@ void ScriptOpcodes::opUnkE(ScriptOpCall &scriptOpCall) {
 		if (field6 != -1) {
 			if (!(field0 & 0x8000)) {
 				assert(ini->actor);
-				ini->actor->_flags |= Dragons::ACTOR_FLAG_800;
+				ini->actor->_flags |= ACTOR_FLAG_800;
 				ini->actor->updateSequence(field6 & 0x7fff);
 			}
 			ini->actor->_walkSpeed = field4 & 0x8000 ? (field4 & 0x7fff) << 7 : field4 << 0x10;
@@ -626,13 +626,13 @@ void ScriptOpcodes::opUnkE(ScriptOpCall &scriptOpCall) {
 		ini->actor->startWalk(point.x, point.y, isFlicker ? 0 : 1);
 
 		if (s3 == 0) {
-			while (ini->actor->_flags & Dragons::ACTOR_FLAG_10) {
+			while (ini->actor->_flags & ACTOR_FLAG_10) {
 				_vm->waitForFrames(1);
 			}
 		}
 		ini->x = point.x;
 		ini->y = point.y;
-		ini->actor->clearFlag(Dragons::ACTOR_FLAG_800);
+		ini->actor->clearFlag(ACTOR_FLAG_800);
 
 	} else {
 		ini->x = point.x;
@@ -670,7 +670,7 @@ void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
 		if (field6 != -1) {
 			if (!(field0 & 0x8000)) {
 				assert(ini->actor);
-				ini->actor->_flags |= Dragons::ACTOR_FLAG_800;
+				ini->actor->_flags |= ACTOR_FLAG_800;
 				ini->actor->updateSequence(field6 & 0x7fff);
 			}
 			ini->actor->_walkSpeed = field4 & 0x8000 ? (field4 & 0x7fff) << 7 : field4 << 0x10;
@@ -679,13 +679,13 @@ void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
 		ini->actor->startWalk(field8, fieldA, isFlicker ? 0 : 1);
 
 		if (s3 == 0) {
-			while (ini->actor->_flags & Dragons::ACTOR_FLAG_10) {
+			while (ini->actor->_flags & ACTOR_FLAG_10) {
 				_vm->waitForFrames(1);
 			}
 		}
 		ini->x = field8;
 		ini->y = fieldA;
-		ini->actor->_flags &= ~Dragons::ACTOR_FLAG_800;
+		ini->actor->_flags &= ~ACTOR_FLAG_800;
 
 	} else {
 		assert(ini->actor);
@@ -790,7 +790,7 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 	}
 	secondIni->actor->startWalk(newXPosAgain, newYPosAgain, someBooleanFlag);
 	if (!bVar1) {
-		while (secondIni->actor->_flags & Dragons::ACTOR_FLAG_10) {
+		while (secondIni->actor->_flags & ACTOR_FLAG_10) {
 			_vm->waitForFrames(1);
 		}
 	}
@@ -838,7 +838,7 @@ void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {
 
 		_vm->_scene->loadScene(newSceneID, cameraPointID);
 	} else {
-		_vm->setFlags(Dragons::ENGINE_FLAG_100000);
+		_vm->setFlags(ENGINE_FLAG_100000);
 	}
 }
 
@@ -939,16 +939,16 @@ void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
 
 		if (field2 == 0x1a && ini->field_1a_flags_maybe & 1 && ini->sceneId == _vm->getCurrentSceneId()) {
 			if (s1 & 2) {
-				ini->actor->_flags |= Dragons::ACTOR_FLAG_80;
+				ini->actor->_flags |= ACTOR_FLAG_80;
 				ini->actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 			} else {
-				ini->actor->_flags &= ~Dragons::ACTOR_FLAG_80;
+				ini->actor->_flags &= ~ACTOR_FLAG_80;
 			}
 
 			if (s1 & 4) {
-				ini->actor->_flags |= Dragons::ACTOR_FLAG_8000;
+				ini->actor->_flags |= ACTOR_FLAG_8000;
 			} else {
-				ini->actor->_flags &= ~Dragons::ACTOR_FLAG_8000;
+				ini->actor->_flags &= ~ACTOR_FLAG_8000;
 			}
 		}
 
@@ -1049,7 +1049,7 @@ void ScriptOpcodes::opUnk17(ScriptOpCall &scriptOpCall) {
 
 	DragonINI *ini = _vm->getINI(iniId - 1);
 	if (ini->field_1a_flags_maybe & 1) {
-		while (!(ini->actor->_flags & Dragons::ACTOR_FLAG_4)) {
+		while (!(ini->actor->_flags & ACTOR_FLAG_4)) {
 			_vm->waitForFrames(1);
 		}
 	}
@@ -1185,27 +1185,27 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 				ini->actor = _vm->_actorManager->loadActor(ini->actorResourceId, ini->sequenceId, ini->x, ini->y, 0);
 				ini->actor->_sequenceID2 = ini->field_20_actor_field_14;
 				if (ini->field_1a_flags_maybe & 2) {
-					ini->actor->_flags |= Dragons::ACTOR_FLAG_80;
+					ini->actor->_flags |= ACTOR_FLAG_80;
 				} else {
-					ini->actor->_flags &= ~Dragons::ACTOR_FLAG_80;
+					ini->actor->_flags &= ~ACTOR_FLAG_80;
 				}
 
 				if (ini->field_1a_flags_maybe & 0x20) {
-					ini->actor->_flags |= Dragons::ACTOR_FLAG_100;
+					ini->actor->_flags |= ACTOR_FLAG_100;
 				} else {
-					ini->actor->_flags &= ~Dragons::ACTOR_FLAG_100;
+					ini->actor->_flags &= ~ACTOR_FLAG_100;
 				}
 
 				if (ini->field_1a_flags_maybe & 4) {
-					ini->actor->_flags |= Dragons::ACTOR_FLAG_8000;
+					ini->actor->_flags |= ACTOR_FLAG_8000;
 				} else {
-					ini->actor->_flags &= ~Dragons::ACTOR_FLAG_8000;
+					ini->actor->_flags &= ~ACTOR_FLAG_8000;
 				}
 
 				if (ini->field_1a_flags_maybe & 0x100) {
-					ini->actor->_flags |= Dragons::ACTOR_FLAG_4000;
+					ini->actor->_flags |= ACTOR_FLAG_4000;
 				} else {
-					ini->actor->_flags &= ~Dragons::ACTOR_FLAG_4000;
+					ini->actor->_flags &= ~ACTOR_FLAG_4000;
 				}
 			}
 		} else {

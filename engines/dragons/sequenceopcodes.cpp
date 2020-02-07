@@ -117,7 +117,7 @@ void SequenceOpcodes::opSetFramePointer(Actor *actor, OpCall &opCall) {
 	ARG_INT16(framePointer);
 	debug(4, "set frame pointer %X", framePointer);
 	actor->loadFrame((uint16)framePointer);
-	actor->_flags |= Dragons::ACTOR_FLAG_2;
+	actor->_flags |= ACTOR_FLAG_2;
 	actor->_sequenceTimer = actor->_field_c;
 	updateReturn(opCall, 1);
 }
@@ -130,7 +130,7 @@ void SequenceOpcodes::opSetFramePointerAndStop(Actor *actor, OpCall &opCall) {
 void SequenceOpcodes::opJmp(Actor *actor, OpCall &opCall) {
 	ARG_INT16(newIp);
 
-	if (!(actor->_flags & Dragons::ACTOR_FLAG_1000)) {
+	if (!(actor->_flags & ACTOR_FLAG_1000)) {
 		byte *newOffset = actor->getSeqIpAtOffset((uint32)newIp);
 		opCall._deltaOfs = (int32)(newOffset - actor->_seqCodeIp); //opCall._code);
 		debug(5, "opJump delta: %d", opCall._deltaOfs);
@@ -171,19 +171,19 @@ void SequenceOpcodes::opUpdateXYResetSeqTimerAndStop(Actor *actor, OpCall &opCal
 }
 
 void SequenceOpcodes::opSetActorFlag4AndStop(Actor *actor, OpCall &opCall) {
-	actor->_flags |= Dragons::ACTOR_FLAG_4;
+	actor->_flags |= ACTOR_FLAG_4;
 	opCall._deltaOfs = 0;
 	opCall._result = 0;
 	//updateReturn(opCall, 1);
 }
 
 void SequenceOpcodes::opSetActorFlags404(Actor *actor, OpCall &opCall) {
-	actor->_flags |= (Dragons::ACTOR_FLAG_4 | Dragons::ACTOR_FLAG_400 );
+	actor->_flags |= (ACTOR_FLAG_4 | Dragons::ACTOR_FLAG_400 );
 	updateReturn(opCall, 1);
 }
 
 void SequenceOpcodes::opClearActorFlag400(Actor *actor, OpCall &opCall) {
-	actor->_flags &= ~Dragons::ACTOR_FLAG_400;
+	actor->_flags &= ~ACTOR_FLAG_400;
 	updateReturn(opCall, 1);
 }
 
