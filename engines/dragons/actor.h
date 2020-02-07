@@ -87,40 +87,40 @@ class Actor {
 public:
 	uint16 _actorID;
 	ActorResource* _actorResource;
-	uint16 actorFileDictionaryIndex;
-	int16 resourceID;
+	uint16 _actorFileDictionaryIndex;
+	int16 _resourceID;
 	byte *_seqCodeIp;
-	void* frame_pointer_maybe;
-	ActorFrame *frame;
-	Graphics::Surface *surface;
-	uint16 field_c;
-	int16 scale; // scale factor 0x100 is 100%
-	uint16 sequenceTimer;
+	void* _frame_pointer_maybe;
+	ActorFrame *_frame;
+	Graphics::Surface *_surface;
+	uint16 _field_c;
+	int16 _scale; // scale factor 0x100 is 100%
+	uint16 _sequenceTimer;
 	uint16 _sequenceID;
 	int16 _sequenceID2;
-	int16 priorityLayer;
+	int16 _priorityLayer;
 	uint16 _flags;
-	int16 x_pos;
-	int16 y_pos;
+	int16 _x_pos;
+	int16 _y_pos;
 	int16 _walkDestX;
 	int16 _walkDestY;
 	int32 _xShl16;
 	int32 _yShl16;
 	int32 _walkSlopeX;
 	int32 _walkSlopeY;
-	uint16 walkPointsTbl[32];
-	int16 walkPointsIndex;
+	uint16 _walkPointsTbl[32];
+	int16 _walkPointsIndex;
 	int16 _finalWalkDestX;
 	int16 _finalWalkDestY;
-	uint16 field_7a;
+	uint16 _field_7a;
 	int32 _walkSpeed;
-	uint16 field_80;
-	uint16 frame_vram_x;
-	uint16 frame_vram_y;
-	uint16 frame_width;
-	uint16 frame_height;
-	uint16 frame_flags;
-	uint16 clut;
+	uint16 _field_80;
+	uint16 _frame_vram_x;
+	uint16 _frame_vram_y;
+	uint16 _frame_width;
+	uint16 _frame_height;
+	uint16 _frame_flags;
+	uint16 _clut;
 public:
 
 	Actor(uint16 id);

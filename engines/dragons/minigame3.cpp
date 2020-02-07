@@ -210,9 +210,9 @@ void Minigame3::run() {
 		bunnyActorTbl[(int16)i]->setFlag(ACTOR_FLAG_200);
 		bunnyActorTbl[(int16)i]->setFlag(ACTOR_FLAG_4000);
 
-		bunnyActorTbl[(int16)i]->priorityLayer = 0;
-		bunnyActorTbl[(int16)i]->x_pos = bunnyPositionsTbl[(int16)i].x;
-		bunnyActorTbl[(int16)i]->y_pos = bunnyPositionsTbl[(int16)i].y;
+		bunnyActorTbl[(int16)i]->_priorityLayer = 0;
+		bunnyActorTbl[(int16)i]->_x_pos = bunnyPositionsTbl[(int16)i].x;
+		bunnyActorTbl[(int16)i]->_y_pos = bunnyPositionsTbl[(int16)i].y;
 		i = i + 1;
 	}
 	i = 0;
@@ -222,8 +222,8 @@ void Minigame3::run() {
 			error("Couldn't alloc tear");
 		}
 		tearActorTbl[(int16)i]->_flags = tearActorTbl[(int16)i]->_flags | 0x380;
-		tearActorTbl[(int16)i]->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-		tearActorTbl[(int16)i]->priorityLayer = 0;
+		tearActorTbl[(int16)i]->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+		tearActorTbl[(int16)i]->_priorityLayer = 0;
 		local_208[(int16)i] = -1;
 		local_208[(int)(int16)i + 8] = 0;
 		i = i + 1;
@@ -240,8 +240,8 @@ void Minigame3::run() {
 	handActorId->setFlag(ACTOR_FLAG_800);
 	handActorId->setFlag(ACTOR_FLAG_2000);
 	handActorId->setFlag(ACTOR_FLAG_4000);
-	handActorId->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-	handActorId->priorityLayer = 0;
+	handActorId->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	handActorId->_priorityLayer = 0;
 	handActorId->_walkSpeed = 0x40000;
 	i = 0;
 	while ((int16)i < 2) {
@@ -250,8 +250,8 @@ void Minigame3::run() {
 			error("Couldn't alloc tear blink");
 		}
 		tearBlinkActorTbl[(int16)i]->_flags = tearBlinkActorTbl[(int16)i]->_flags | 0x4384;
-		tearBlinkActorTbl[(int16)i]->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-		tearBlinkActorTbl[(int16)i]->priorityLayer = 0;
+		tearBlinkActorTbl[(int16)i]->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+		tearBlinkActorTbl[(int16)i]->_priorityLayer = 0;
 		i = i + 1;
 	}
 	i = 0;
@@ -262,18 +262,18 @@ void Minigame3::run() {
 		}
 		tearBlinkActorTbl2[(int16)i]->setFlag(ACTOR_FLAG_100);
 		tearBlinkActorTbl2[(int16)i]->setFlag(ACTOR_FLAG_800);
-		tearBlinkActorTbl2[(int16)i]->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-		tearBlinkActorTbl2[(int16)i]->priorityLayer = 0;
+		tearBlinkActorTbl2[(int16)i]->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+		tearBlinkActorTbl2[(int16)i]->_priorityLayer = 0;
 		i = i + 1;
 	}
-	tearBlinkActorTbl2[0]->x_pos = 0x56;
-	tearBlinkActorTbl2[0]->y_pos = 0x8c;
-	tearBlinkActorTbl2[1]->x_pos = 0xf0;
-	tearBlinkActorTbl2[1]->y_pos = 0x8c;
-	tearBlinkActorTbl[0]->x_pos = 0x23; //DAT_80093228_23;
-	tearBlinkActorTbl[1]->x_pos = 0xbf; //DAT_8009322a_bf;
-	tearBlinkActorTbl[0]->y_pos = 0xcc;
-	tearBlinkActorTbl[1]->y_pos = 0xcc;
+	tearBlinkActorTbl2[0]->_x_pos = 0x56;
+	tearBlinkActorTbl2[0]->_y_pos = 0x8c;
+	tearBlinkActorTbl2[1]->_x_pos = 0xf0;
+	tearBlinkActorTbl2[1]->_y_pos = 0x8c;
+	tearBlinkActorTbl[0]->_x_pos = 0x23; //DAT_80093228_23;
+	tearBlinkActorTbl[1]->_x_pos = 0xbf; //DAT_8009322a_bf;
+	tearBlinkActorTbl[0]->_y_pos = 0xcc;
+	tearBlinkActorTbl[1]->_y_pos = 0xcc;
 //	EnableVSyncEvent();
 	i = 0;
 	while ((int16)i < 4) {
@@ -285,7 +285,7 @@ void Minigame3::run() {
 	i = 0;
 	while ((int16)i < 4) {
 		bunnyPositionTbl[(int16)i] = i;
-		bunnyActorTbl[(int16)i]->priorityLayer = 2;
+		bunnyActorTbl[(int16)i]->_priorityLayer = 2;
 		bunnyActorTbl[(int16)i]->updateSequence(4);
 		i = i + 1;
 	}
@@ -346,8 +346,8 @@ void Minigame3::run() {
 	local_1b8 = 0;
 	local_10 = 0;
 	local_e = 0;
-	tearBlinkActorTbl[0]->priorityLayer = 3;
-	tearBlinkActorTbl[1]->priorityLayer = 3;
+	tearBlinkActorTbl[0]->_priorityLayer = 3;
+	tearBlinkActorTbl[1]->_priorityLayer = 3;
 	tearBlinkActorTbl[0]->updateSequence(0);
 	tearBlinkActorTbl[1]->updateSequence(1);
 	local_1c2 = 0;
@@ -359,10 +359,10 @@ void Minigame3::run() {
 					if ((local_56 < 1) ||
 						(((int)bunnyInfo[local_20].x >> 9 <= (int)(uint)(uint16)bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].x ||
 																				((int)(uint)(uint16)bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].x <= (int)bunnyInfo[local_1e].x >> 9)))) {
-						bunnyActorTbl[local_1c]->x_pos = bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].x;
-						bunnyActorTbl[local_1a]->x_pos = bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].x;
-						bunnyActorTbl[local_1c]->y_pos = bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].y;
-						bunnyActorTbl[local_1a]->y_pos = bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].y;
+						bunnyActorTbl[local_1c]->_x_pos = bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].x;
+						bunnyActorTbl[local_1a]->_x_pos = bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].x;
+						bunnyActorTbl[local_1c]->_y_pos = bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].y;
+						bunnyActorTbl[local_1a]->_y_pos = bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].y;
 						currentState = 5;
 					}
 					else {
@@ -375,14 +375,14 @@ void Minigame3::run() {
 							bunnyInfo[local_20].x = bunnyInfo[local_20].x + UnkStruct_ARRAY_800931a0[local_50].field_0x14 * -0x200;
 							bunnyInfo[local_20].y = bunnyInfo[local_20].y - bunnyInfo[local_20].field_0xc;
 							bunnyInfo[local_20].field_0xc = bunnyInfo[local_20].field_0xc + bunnyInfo[local_20].field_0x10;
-							bunnyActorTbl[local_1c]->x_pos = (int16_t)((int)bunnyInfo[local_20].x >> 9);
-							bunnyActorTbl[local_1c]->y_pos = (int16_t)((int)bunnyInfo[local_20].y >> 9);
+							bunnyActorTbl[local_1c]->_x_pos = (int16_t)((int)bunnyInfo[local_20].x >> 9);
+							bunnyActorTbl[local_1c]->_y_pos = (int16_t)((int)bunnyInfo[local_20].y >> 9);
 							bunnyInfo[local_1e].x = bunnyInfo[local_1e].x + UnkStruct_ARRAY_800931a0[local_50].field_0x14 * 0x200;
 							bunnyInfo[local_1e].y = bunnyInfo[local_1e].y - bunnyInfo[local_1e].field_0xc;
 							bunnyInfo[local_1e].field_0xc = bunnyInfo[local_1e].field_0xc + bunnyInfo[local_1e].field_0x10;
-							bunnyActorTbl[local_1a]->x_pos = (int16_t)((int)bunnyInfo[local_1e].x >> 9);
-							bunnyActorTbl[local_1a]->y_pos = (int16_t)((int)bunnyInfo[local_1e].y >> 9);
-							if ((local_228 < 4) && unkXPosTbl[local_50 * 4 + local_228] < bunnyActorTbl[local_1a]->x_pos) {
+							bunnyActorTbl[local_1a]->_x_pos = (int16_t)((int)bunnyInfo[local_1e].x >> 9);
+							bunnyActorTbl[local_1a]->_y_pos = (int16_t)((int)bunnyInfo[local_1e].y >> 9);
+							if ((local_228 < 4) && unkXPosTbl[local_50 * 4 + local_228] < bunnyActorTbl[local_1a]->_x_pos) {
 								local_228 = local_228 + 1;
 								bunnyActorTbl[local_1a]->updateSequence((uint)local_228 + 6 & 0xffff);
 								bunnyActorTbl[local_1c]->updateSequence((uint)local_228 + 0xd & 0xffff);
@@ -472,12 +472,12 @@ void Minigame3::run() {
 		i = 0;
 		while ((int16)i < 8) {
 			if (local_208[(int16)i] != -1) {
-				tearActorTbl[(int16)i]->y_pos = tearActorTbl[(int16)i]->y_pos + ((uint16)local_208[(int)(int16)i + 8] >> 6);
-				if (tearActorTbl[(int16)i]->y_pos < (int16)tearInfo[local_208[(int16)i]].yRelated) {
+				tearActorTbl[(int16)i]->_y_pos = tearActorTbl[(int16)i]->_y_pos + ((uint16)local_208[(int)(int16)i + 8] >> 6);
+				if (tearActorTbl[(int16)i]->_y_pos < (int16)tearInfo[local_208[(int16)i]].yRelated) {
 					local_208[(int)(int16)i + 8] = local_208[(int)(int16)i + 8] + 8;
 				}
 				else {
-					tearActorTbl[(int16)i]->priorityLayer = 0;
+					tearActorTbl[(int16)i]->_priorityLayer = 0;
 					local_1e8 = local_1e8 & ~(1 << ((int)local_208[(int16)i] & 0x1fU));
 					local_208[(int16)i] = -1;
 					local_1e0 = local_1e0 - 1;
@@ -502,11 +502,11 @@ void Minigame3::run() {
 				local_14 = local_14 + 1;
 			}
 			local_208[local_14] = sVar2;
-			tearActorTbl[local_14]->x_pos = tearInfo[sVar2].x;
-			tearActorTbl[local_14]->y_pos = tearInfo[sVar2].y;
+			tearActorTbl[local_14]->_x_pos = tearInfo[sVar2].x;
+			tearActorTbl[local_14]->_y_pos = tearInfo[sVar2].y;
 			local_208[(int)local_14 + 8] = 0x20;
 			tearActorTbl[local_14]->updateSequence(0x13);
-			tearActorTbl[local_14]->priorityLayer = 3;
+			tearActorTbl[local_14]->_priorityLayer = 3;
 			local_1e0 = local_1e0 + 1;
 		}
 		if ((flags & 1) == 0) {
@@ -535,8 +535,8 @@ void Minigame3::run() {
 								local_1c8 = 0;
 								local_1ba = 0;
 								flags = flags & 0xfffb;
-								tearBlinkActorTbl2[0]->priorityLayer = 0;
-								tearBlinkActorTbl2[1]->priorityLayer = 0;
+								tearBlinkActorTbl2[0]->_priorityLayer = 0;
+								tearBlinkActorTbl2[1]->_priorityLayer = 0;
 								tearBlinkActorTbl2[0]->updateSequence(0);
 								tearBlinkActorTbl2[1]->updateSequence(1);
 							}
@@ -551,7 +551,7 @@ void Minigame3::run() {
 				if (local_1c6 == 0) {
 					i = 0;
 					while ((int16)i < 8) {
-						tearActorTbl[(int16)i]->priorityLayer = 0;
+						tearActorTbl[(int16)i]->_priorityLayer = 0;
 						local_208[(int16)i] = -1;
 						i = i + 1;
 					}
@@ -565,8 +565,8 @@ void Minigame3::run() {
 					local_1c8 = 2;
 					local_1c6 = 3;
 					updateBackgroundLayerOffset(2, 0x780, 0);
-					tearBlinkActorTbl[0]->y_pos = 0xcc;
-					tearBlinkActorTbl[1]->y_pos = 0xcc;
+					tearBlinkActorTbl[0]->_y_pos = 0xcc;
+					tearBlinkActorTbl[1]->_y_pos = 0xcc;
 				}
 				else {
 					local_1c6 = local_1c6 + -1;
@@ -581,8 +581,8 @@ void Minigame3::run() {
 					updateBackgroundLayerOffset(2, 0x780, 0);
 					tearBlinkActorTbl2[0]->updateSequence(0);
 					tearBlinkActorTbl2[1]->updateSequence(1);
-					tearBlinkActorTbl2[0]->priorityLayer = 4;
-					tearBlinkActorTbl2[1]->priorityLayer = 4;
+					tearBlinkActorTbl2[0]->_priorityLayer = 4;
+					tearBlinkActorTbl2[1]->_priorityLayer = 4;
 				}
 				else {
 					if (local_1c8 == 2) {
@@ -618,9 +618,9 @@ void Minigame3::run() {
 				local_1b8 = local_1b8 + 1;
 				FUN_80017f70_paletteRelated((uint)local_1b8);
 			}
-			if (100 < tearBlinkActorTbl[0]->y_pos) {
-				tearBlinkActorTbl[0]->y_pos = tearBlinkActorTbl[0]->y_pos + -3;
-				tearBlinkActorTbl[1]->y_pos = tearBlinkActorTbl[1]->y_pos + -3;
+			if (100 < tearBlinkActorTbl[0]->_y_pos) {
+				tearBlinkActorTbl[0]->_y_pos = tearBlinkActorTbl[0]->_y_pos + -3;
+				tearBlinkActorTbl[1]->_y_pos = tearBlinkActorTbl[1]->_y_pos + -3;
 			}
 		}
 		if (hopCounter == 0x1e) {
@@ -680,13 +680,13 @@ void Minigame3::run() {
 			local_1b8 = 0;
 		}
 		FUN_80017f70_paletteRelated((uint)local_1b8);
-		tearBlinkActorTbl[0]->y_pos = tearBlinkActorTbl[0]->y_pos + 0x1e;
-		if (199 < tearBlinkActorTbl[0]->y_pos) {
-			tearBlinkActorTbl[0]->y_pos = 199;
+		tearBlinkActorTbl[0]->_y_pos = tearBlinkActorTbl[0]->_y_pos + 0x1e;
+		if (199 < tearBlinkActorTbl[0]->_y_pos) {
+			tearBlinkActorTbl[0]->_y_pos = 199;
 		}
-		tearBlinkActorTbl[1]->y_pos = tearBlinkActorTbl[1]->y_pos + 0x1e;
-		if (199 < tearBlinkActorTbl[1]->y_pos) {
-			tearBlinkActorTbl[1]->y_pos = 199;
+		tearBlinkActorTbl[1]->_y_pos = tearBlinkActorTbl[1]->_y_pos + 0x1e;
+		if (199 < tearBlinkActorTbl[1]->_y_pos) {
+			tearBlinkActorTbl[1]->_y_pos = 199;
 		}
 		_vm->waitForFrames(0xf);
 		local_16 = 1;
@@ -704,9 +704,9 @@ void Minigame3::run() {
 	updateBackgroundLayerOffset(0, 0, 0);
 	local_224 = _vm->getRand(2);
 	handActorId->updateSequence(0);
-	handActorId->x_pos = handPositionsTbl[local_224].x;
-	handActorId->y_pos = handPositionsTbl[local_224].y;
-	handActorId->priorityLayer = 2;
+	handActorId->_x_pos = handPositionsTbl[local_224].x;
+	handActorId->_y_pos = handPositionsTbl[local_224].y;
+	handActorId->_priorityLayer = 2;
 	bVar1 = false;
 	_vm->_talk->loadAndDisplayDialogAroundPoint(0x2958A,0x14,3,0x1e01,0);
 	while (_vm->isFlagSet(ENGINE_FLAG_8000)) {

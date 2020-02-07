@@ -165,7 +165,7 @@ void Minigame1::run() {
 
 	originalFlickerIniID = _vm->_dragonINIResource->getFlickerRecord();
 	originalFlickerIniID->actor->setFlag(ACTOR_FLAG_100);
-	originalFlickerIniID->actor->priorityLayer = 0;
+	originalFlickerIniID->actor->_priorityLayer = 0;
 
 	savedEngineFlags = _vm->getMultipleFlags(ENGINE_FLAG_8 | ENGINE_FLAG_10 | ENGINE_FLAG_20 | ENGINE_FLAG_80);
 	_vm->clearFlags(ENGINE_FLAG_8);
@@ -175,34 +175,34 @@ void Minigame1::run() {
 	_vm->_dragonINIResource->setFlickerRecord(_vm->getINI(DAT_80063a40 - 1));
 	flickerActor = _vm->getINI(DAT_80063a40 - 1)->actor;
 	flickerActor->_flags = flickerActor->_flags | 0x380;
-	flickerActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-	flickerActor->priorityLayer = 4;
+	flickerActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	flickerActor->_priorityLayer = 4;
 	flickerActor->_sequenceID2 = -1;
 	flickerActor->updateSequence(0x15);
 	hitCounter = 0;
 	local_254 = 0;
 	local_252 = 0;
-	flickerXPos = flickerActor->x_pos;
+	flickerXPos = flickerActor->_x_pos;
 	local_25c = 0;
 	pusherActor = _vm->_actorManager->loadActor(0x26,1, flickerXPos,
-								  (int)(((uint)(uint16)flickerActor->y_pos + 5) * 0x10000) >> 0x10);
+								  (int)(((uint)(uint16)flickerActor->_y_pos + 5) * 0x10000) >> 0x10);
 //	if (pusherActorId == -1) {
 //		ProbablyShowASCIIMessage(s_couldn't_alloc_pusher_8008e954,2,4,0,0xffffffff);
 //	}
 	pusherActor->_flags = pusherActor->_flags | 0x380;
-	pusherActor->x_pos = flickerActor->x_pos + -0xe;
-	pusherActor->y_pos = flickerActor->y_pos + 7;
-	pusherActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-	pusherActor->priorityLayer = 6;
+	pusherActor->_x_pos = flickerActor->_x_pos + -0xe;
+	pusherActor->_y_pos = flickerActor->_y_pos + 7;
+	pusherActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	pusherActor->_priorityLayer = 6;
 	wheelsActor = _vm->_actorManager->loadActor(7,0x11,0,0);
 //	if (wheelsActorId == -1) {
 //		ProbablyShowASCIIMessage(s_couldn't_alloc_wheels_8008e96c,2,4,0,0xffffffff);
 //	}
 	wheelsActor->_flags = wheelsActor->_flags | 0x380;
-	wheelsActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-	wheelsActor->x_pos = flickerActor->x_pos;
-	wheelsActor->y_pos = flickerActor->y_pos;
-	wheelsActor->priorityLayer = 5;
+	wheelsActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	wheelsActor->_x_pos = flickerActor->_x_pos;
+	wheelsActor->_y_pos = flickerActor->_y_pos;
+	wheelsActor->_priorityLayer = 5;
 	wheelsActor->updateSequence(0x11);
 	local_242 = 0;
 	catActor = _vm->_actorManager->loadActor(7,9,0,0);
@@ -210,8 +210,8 @@ void Minigame1::run() {
 //		ProbablyShowASCIIMessage(s_couldn't_alloc-cat_8008e984,2,4,0,0xffffffff);
 //	}
 	catActor->_flags = catActor->_flags | 0x380;
-	catActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-	catActor->priorityLayer = 0;
+	catActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	catActor->_priorityLayer = 0;
 	i = 0;
 	while (i < 3) {
 		targetActorIdTbl[(uint)i + 1] = _vm->_actorManager->loadActor(8,1,0,0,0);
@@ -219,7 +219,7 @@ void Minigame1::run() {
 //			ProbablyShowASCIIMessage(s_couldn't_alloc_target!_8008e998,2,4,0,0xffffffff);
 //		}
 		targetActorIdTbl[(uint)i + 1]->_flags = targetActorIdTbl[(uint)i + 1]->_flags | 0x380;
-		targetActorIdTbl[(uint)i + 1]->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+		targetActorIdTbl[(uint)i + 1]->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 		auStack378[(uint)i] = 0;
 		//TODO FUN_80017010_update_actor_texture_maybe(1);
 		i = i + 1;
@@ -234,20 +234,20 @@ void Minigame1::run() {
 //		ProbablyShowASCIIMessage(s_couldn't_alloc_dust_sprite!_8008e9b0,2,5,0,0xffffffff);
 //	}
 	dustSpriteActor->_flags = dustSpriteActor->_flags | 0x380;
-	dustSpriteActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	dustSpriteActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	uVar1 = _vm->getINI(DAT_80063a48 - 1)->actor; //dragon_ini_pointer[DAT_80063a48 + -1].actorId;
 	local_21e = 0;
-	actorFieldC = uVar1->field_c;
+	actorFieldC = uVar1->_field_c;
 	_vm->setFlags(ENGINE_FLAG_4000000);
 	local_23e = 0x3700;
 	local_23a = 0x100;
 	local_240 = 0x4a80;
 	local_238 = 0;
 	catFieldE_scaleMaybe = 0x30;
-	catActor->y_pos = 0x6e;
-	catActor->x_pos = 0x95;
-	catActor->scale = 0x30;
-	catActor->priorityLayer = 2;
+	catActor->_y_pos = 0x6e;
+	catActor->_x_pos = 0x95;
+	catActor->_scale = 0x30;
+	catActor->_priorityLayer = 2;
 	catActor->updateSequence(0xb);
 	gameState = 5;
 	local_246 = 1;
@@ -263,7 +263,7 @@ void Minigame1::run() {
 				_vm->_talk->FUN_8001a7c4_clearDialogBoxMaybe();
 			}
 			if ((local_21e == 1) && (local_252 == 0)) {
-				uVar1->field_c = actorFieldC;
+				uVar1->_field_c = actorFieldC;
 			}
 			if (local_21e != 0) {
 				local_21e = local_21e + -1;
@@ -308,8 +308,8 @@ void Minigame1::run() {
 							local_25c = 0;
 						}
 						else {
-							pusherActor->x_pos = flickerActor->x_pos + -0xe;
-							pusherActor->y_pos = flickerActor->y_pos + 7;
+							pusherActor->_x_pos = flickerActor->_x_pos + -0xe;
+							pusherActor->_y_pos = flickerActor->_y_pos + 7;
 							if (local_25c < 0x168) {
 								local_25c = local_25c + 1;
 								if (local_25c < 0x14) {
@@ -378,15 +378,15 @@ void Minigame1::run() {
 											(short)((int)((uint)flickerXPos << 7) / 0x2a);
 							}
 							local_240 = flickerXPos << 7;
-							catActor->x_pos = flickerXPos & 0x1ff;
+							catActor->_x_pos = flickerXPos & 0x1ff;
 							local_23e = 0x2d00;
 							local_23a = (local_25a + 3) * 0x80;
-							catActor->y_pos = 0x5a;
+							catActor->_y_pos = 0x5a;
 							catFieldE_scaleMaybe = 0x100;
-							catActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+							catActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 							catActor->updateSequence(0xc);
 							_vm->playOrStopSound(5);
-							catActor->priorityLayer = 3;
+							catActor->_priorityLayer = 3;
 							flickerActor->updateSequence(8);
 							gameState = 3;
 						}
@@ -414,10 +414,10 @@ void Minigame1::run() {
 							local_23a = 0;
 						}
 					}
-					catActor->x_pos = local_240 >> 7;
-					catActor->y_pos = local_23e >> 7;
+					catActor->_x_pos = local_240 >> 7;
+					catActor->_y_pos = local_23e >> 7;
 					catFieldE_scaleMaybe = catFieldE_scaleMaybe - 3;
-					catActor->scale = catFieldE_scaleMaybe;
+					catActor->_scale = catFieldE_scaleMaybe;
 					if (catFieldE_scaleMaybe == 0x7f) {
 						i = 0;
 						while ((i < 8 && (((local_240 >> 7 < auStack352[(uint)i * 3] ||
@@ -426,7 +426,7 @@ void Minigame1::run() {
 							i = i + 1;
 						}
 						if ((i != 8) && (local_188[(uint)i] != 0)) {
-							uVar1->field_c = 2;
+							uVar1->_field_c = 2;
 							local_21e = 0x3c;
 							if (local_250 != 0) {
 								_vm->_talk->FUN_8001a7c4_clearDialogBoxMaybe();
@@ -452,12 +452,12 @@ void Minigame1::run() {
 										 local_118[((uint)hitCounter - 1) * 2]);
 								local_250 = *(short *)(local_118 + ((uint)hitCounter - 1) * 2 + 1);
 							}
-							targetActorIdTbl[(uint)(uint16)local_188[(uint)i]]->priorityLayer = 3;
+							targetActorIdTbl[(uint)(uint16)local_188[(uint)i]]->_priorityLayer = 3;
 							if (i == 0) {
 								targetActorIdTbl[(uint)local_188[0]]->updateSequence(7);
 							}
 							else {
-								targetActorIdTbl[(uint)(uint16)local_188[(uint)i]]->y_pos -= 3;
+								targetActorIdTbl[(uint)(uint16)local_188[(uint)i]]->_y_pos -= 3;
 								targetActorIdTbl[(uint)(uint16)local_188[(uint)i]]->updateSequence(6);
 							}
 							auStack378[(uint)(uint16)local_188[(uint)i] - 1] = 0;
@@ -473,30 +473,30 @@ void Minigame1::run() {
 							  ((local_25a == 3 &&
 								(((0x3c < local_240 >> 7 && (local_240 >> 7 < 0x46)) ||
 								  ((0x101 < local_240 >> 7 && (local_240 >> 7 < 0x10a)))))))))) {
-							dustSpriteActor->x_pos = catActor->x_pos;
-							dustSpriteActor->y_pos = catActor->y_pos + 2;
+							dustSpriteActor->_x_pos = catActor->_x_pos;
+							dustSpriteActor->_y_pos = catActor->_y_pos + 2;
 							dustSpriteActor->updateSequence(8);
-							catActor->priorityLayer = 4;
-							dustSpriteActor->priorityLayer = 3;
+							catActor->_priorityLayer = 4;
+							dustSpriteActor->_priorityLayer = 3;
 							catActor->updateSequence(0xd);
 							gameState = 4;
 							_vm->playOrStopSound(6);
 						}
 					}
 					if (catFieldE_scaleMaybe < 0x7f) {
-						catActor->priorityLayer = 2;
+						catActor->_priorityLayer = 2;
 					}
 					if ((0xc < catFieldE_scaleMaybe) && (catFieldE_scaleMaybe < 0x41)) {
-						catActor->priorityLayer = 0;
+						catActor->_priorityLayer = 0;
 					}
 					if ((short)catFieldE_scaleMaybe < 2) {
 						local_23e = 0x3700;
 						local_23a = 0x100;
 						local_240 = 0x4a80;
 						catFieldE_scaleMaybe = 0x30;
-						catActor->y_pos = 0x6e;
-						catActor->x_pos = 0x95;
-						catActor->scale = 0x30;
+						catActor->_y_pos = 0x6e;
+						catActor->_x_pos = 0x95;
+						catActor->_scale = 0x30;
 						catActor->updateSequence(0xb);
 						gameState = 5;
 					}
@@ -508,7 +508,7 @@ void Minigame1::run() {
 							if (local_23e < 0x4300) {
 								local_23e = local_23e + local_23a;
 								local_23a = local_23a + 0x18;
-								catActor->y_pos = local_23e >> 7;
+								catActor->_y_pos = local_23e >> 7;
 							}
 							else {
 								catActor->updateSequence(0xf);
@@ -517,8 +517,8 @@ void Minigame1::run() {
 							}
 						}
 						else {
-							dustSpriteActor->priorityLayer = 0;
-							catActor->priorityLayer = 3;
+							dustSpriteActor->_priorityLayer = 0;
+							catActor->_priorityLayer = 3;
 							catActor->updateSequence(0xe);
 							_vm->playOrStopSound(8);
 							local_23a = 0x40;
@@ -529,8 +529,8 @@ void Minigame1::run() {
 					if (local_23e >> 7 < 0x86) {
 						local_23e = local_23e + local_23a;
 						catFieldE_scaleMaybe = catFieldE_scaleMaybe + 8;
-						catActor->y_pos = local_23e >> 7;
-						catActor->scale = catFieldE_scaleMaybe;
+						catActor->_y_pos = local_23e >> 7;
+						catActor->_scale = catFieldE_scaleMaybe;
 					}
 					else {
 						gameState = 6;
@@ -539,7 +539,7 @@ void Minigame1::run() {
 					}
 					break;
 				case 6: // cat run across field
-					catActor->priorityLayer = 3;
+					catActor->_priorityLayer = 3;
 					if (local_252 == 0) {
 						if (catActor->_sequenceID == 0xf) {
 							if ((catActor->_flags & 4) != 0) {
@@ -552,8 +552,8 @@ void Minigame1::run() {
 									catFieldE_scaleMaybe = 0x80;
 									local_23e = 0x4300;
 									local_23a = 0x100;
-									catActor->y_pos = 0x86;
-									catActor->scale = 0x80;
+									catActor->_y_pos = 0x86;
+									catActor->_scale = 0x80;
 									catActor->updateSequence(0xb);
 									if (flickerXPos < local_240 >> 7) {
 										sVar2 = flickerXPos + 0x32;
@@ -575,9 +575,9 @@ void Minigame1::run() {
 										if (0x100 < catFieldE_scaleMaybe) {
 											catFieldE_scaleMaybe = 0x100;
 										}
-										catActor->scale = catFieldE_scaleMaybe;
-										catActor->y_pos = local_23e >> 7;
-										catActor->x_pos = local_240 >> 7;
+										catActor->_scale = catFieldE_scaleMaybe;
+										catActor->_y_pos = local_23e >> 7;
+										catActor->_x_pos = local_240 >> 7;
 										local_238 = 1;
 									}
 									else {
@@ -587,20 +587,20 @@ void Minigame1::run() {
 								else {
 									if ((int)(uint)(local_240 >> 7) < (int)((uint)flickerXPos - 0x32)) {
 										if (catActor->_sequenceID != 9) {
-											catActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+											catActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 											catActor->updateSequence(9);
 										}
 										local_240 = local_240 + 0x180;
-										catActor->x_pos = local_240 >> 7;
+										catActor->_x_pos = local_240 >> 7;
 									}
 									else {
 										if ((uint)flickerXPos + 0x32 < (uint)(local_240 >> 7)) {
 											if (catActor->_sequenceID != 10) {
-												catActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+												catActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 												catActor->updateSequence(10);
 											}
 											local_240 = local_240 - 0x180;
-											catActor->x_pos = local_240 >> 7;
+											catActor->_x_pos = local_240 >> 7;
 										}
 										else {
 											gameState = 7;
@@ -612,11 +612,11 @@ void Minigame1::run() {
 					}
 					break;
 				case 7: // cat jumping into catapult
-					if (catActor->priorityLayer == 0) {
+					if (catActor->_priorityLayer == 0) {
 						gameState = 1;
 					}
 					else {
-						catActor->priorityLayer = 0;
+						catActor->_priorityLayer = 0;
 						if (local_240 >> 7 < flickerXPos) {
 							flickerActor->updateSequence(5);
 						}
@@ -632,7 +632,7 @@ void Minigame1::run() {
 						}
 						else {
 							local_23a--;
-							catActor->y_pos = catActor->y_pos + 2;
+							catActor->_y_pos = catActor->_y_pos + 2;
 						}
 					}
 					else {
@@ -646,17 +646,17 @@ void Minigame1::run() {
 							if (local_234 == 2) {
 								local_23e = 0x4100;
 								local_240 = 0x4a80;
-								catActor->y_pos = 0x82;
-								catActor->x_pos = 0x95;
-								catActor->priorityLayer = 3;
-								catActor->scale = 0x80;
+								catActor->_y_pos = 0x82;
+								catActor->_x_pos = 0x95;
+								catActor->_priorityLayer = 3;
+								catActor->_scale = 0x80;
 								catActor->updateSequence(0x10);
 								gameState = 6;
 							}
 							else {
 								if (local_234 == 3) {
 									if (local_232 == 0) {
-										catActor->priorityLayer = 2;
+										catActor->_priorityLayer = 2;
 										local_23a = 8;
 										local_234 = 1;
 									}
@@ -671,7 +671,7 @@ void Minigame1::run() {
 				default:
 					//ProbablyShowASCIIMessage(s_undefined_state!_8008e9cc,2,3,0,0xffffffff);
 					gameState = 1;
-					catActor->priorityLayer = 0;
+					catActor->_priorityLayer = 0;
 					flickerActor->updateSequence(0);
 			}
 			if ((local_252 == 0) && (gameState != 2)) {
@@ -683,12 +683,12 @@ void Minigame1::run() {
 						(pusherActor->_sequenceID != 6)))) {
 							pusherActor->updateSequence((uint)local_246);
 							if (bVar3) {
-								pusherActor->x_pos = flickerActor->x_pos + 2;
-								pusherActor->y_pos = flickerActor->y_pos;
+								pusherActor->_x_pos = flickerActor->_x_pos + 2;
+								pusherActor->_y_pos = flickerActor->_y_pos;
 							}
 							else {
-								pusherActor->x_pos = flickerActor->x_pos - 0xe;
-								pusherActor->y_pos = flickerActor->y_pos + 7;
+								pusherActor->_x_pos = flickerActor->_x_pos - 0xe;
+								pusherActor->_y_pos = flickerActor->_y_pos + 7;
 							}
 						}
 					}
@@ -713,14 +713,14 @@ void Minigame1::run() {
 						else {
 							local_242 = local_242 - 1;
 						}
-						flickerActor->x_pos = flickerXPos;
-						wheelsActor->x_pos = flickerXPos;
+						flickerActor->_x_pos = flickerXPos;
+						wheelsActor->_x_pos = flickerXPos;
 						if ((uint)wheelsActor->_sequenceID != (uint)local_242 / 3 + 0x11)
 						{
 							wheelsActor->updateSequence((uint)local_242 / 3 + 0x11);
 						}
-						pusherActor->x_pos = flickerActor->x_pos + 2;
-						pusherActor->y_pos = flickerActor->y_pos;
+						pusherActor->_x_pos = flickerActor->_x_pos + 2;
+						pusherActor->_y_pos = flickerActor->_y_pos;
 					}
 				}
 				else {
@@ -740,13 +740,13 @@ void Minigame1::run() {
 					}
 					local_242 = (short)((uint)local_242 + 1) +
 								(short)((int)((uint)local_242 + 1) / 6 >> 1) * -0xc;
-					flickerActor->x_pos = flickerXPos;
-					wheelsActor->x_pos = flickerXPos;
+					flickerActor->_x_pos = flickerXPos;
+					wheelsActor->_x_pos = flickerXPos;
 					if ((uint)wheelsActor->_sequenceID != (uint)local_242 / 3 + 0x11) {
 						wheelsActor->updateSequence((uint)local_242 / 3 + 0x11);
 					}
-					pusherActor->x_pos = flickerActor->x_pos + -2;
-					pusherActor->y_pos = flickerActor->y_pos;
+					pusherActor->_x_pos = flickerActor->_x_pos + -2;
+					pusherActor->_y_pos = flickerActor->_y_pos;
 				}
 			}
 			if ((local_22c < 0x16) && (auStack536[(uint)local_22c * 3 + 2] <= local_22e)) {
@@ -765,20 +765,20 @@ void Minigame1::run() {
 //							ProbablyShowASCIIMessage(s_too_many_targets!_8008e9e0,2,4,0,0xffffffff);
 						}
 						if (auStack536[(uint)local_22c * 3] == 0) {
-							targetActorIdTbl[(uint)i + 1]->x_pos = auStack352[(uint)auStack536[(uint)local_22c * 3] * 3] + 0xd;
+							targetActorIdTbl[(uint)i + 1]->_x_pos = auStack352[(uint)auStack536[(uint)local_22c * 3] * 3] + 0xd;
 						}
 						else {
-							targetActorIdTbl[(uint)i + 1]->x_pos = auStack352[(uint)auStack536[(uint)local_22c * 3] * 3] + 8;
+							targetActorIdTbl[(uint)i + 1]->_x_pos = auStack352[(uint)auStack536[(uint)local_22c * 3] * 3] + 8;
 						}
-						targetActorIdTbl[(uint)i + 1]->y_pos = (4 - auStack352[(uint)auStack536[(uint)local_22c * 3] * 3 + 2]) * 0x20;
-						targetActorIdTbl[(uint)i + 1]->priorityLayer = 2;
+						targetActorIdTbl[(uint)i + 1]->_y_pos = (4 - auStack352[(uint)auStack536[(uint)local_22c * 3] * 3 + 2]) * 0x20;
+						targetActorIdTbl[(uint)i + 1]->_priorityLayer = 2;
 						if (auStack536[(uint)local_22c * 3] == 0) {
 							targetActorIdTbl[(uint)i + 1]->updateSequence(3);
 						}
 						else {
 							targetActorIdTbl[(uint)i + 1]->updateSequence(0);
 						}
-						targetActorIdTbl[(uint)i + 1]->priorityLayer = 2;
+						targetActorIdTbl[(uint)i + 1]->_priorityLayer = 2;
 						local_188[(uint)auStack536[(uint)local_22c * 3]] = i + 1;
 						auStack378[(uint)i] = auStack536[(uint)local_22c * 3] + 1;
 					}
@@ -843,14 +843,14 @@ void Minigame1::run() {
 			}
 			local_22e = local_22e + 1;
 		} while (local_252 == 0);
-		if (flickerActor->x_pos < 0x118) {
-			flickerActor->x_pos = flickerActor->x_pos + 2;
+		if (flickerActor->_x_pos < 0x118) {
+			flickerActor->_x_pos = flickerActor->_x_pos + 2;
 			if (pusherActor->_sequenceID != 2) {
 				pusherActor->updateSequence(2);
 			}
-			pusherActor->x_pos = flickerActor->x_pos + 2;
-			pusherActor->y_pos = flickerActor->y_pos;
-			wheelsActor->x_pos = wheelsActor->x_pos + 2;
+			pusherActor->_x_pos = flickerActor->_x_pos + 2;
+			pusherActor->_y_pos = flickerActor->_y_pos;
+			wheelsActor->_x_pos = wheelsActor->_x_pos + 2;
 			if (local_242 == 0) {
 				local_242 = 0xb;
 			}
@@ -905,10 +905,10 @@ void Minigame1::run() {
 	_vm->_dragonINIResource->setFlickerRecord(originalFlickerIniID);
 	flickerActor = originalFlickerIniID->actor;
 	flickerActor->clearFlag(ACTOR_FLAG_100);
-	flickerActor->priorityLayer = 6; //TODO this is 2 in the original but that leave flicker invisible.
+	flickerActor->_priorityLayer = 6; //TODO this is 2 in the original but that leave flicker invisible.
 	_vm->clearFlags(ENGINE_FLAG_4000000);
 	_vm->setFlags(savedEngineFlags);
-	uVar1->field_c = actorFieldC;
+	uVar1->_field_c = actorFieldC;
 	return;
 }
 

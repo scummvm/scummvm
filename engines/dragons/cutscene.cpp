@@ -230,30 +230,30 @@ void CutScene::scene1() {
 																									DAT_80072de8->setFlag(ACTOR_FLAG_800);
 																									DAT_80072de8->setFlag(ACTOR_FLAG_8000);
 																									DAT_80072de8->_walkSpeed = 0x20000;
-																									DAT_80072de8->priorityLayer = 3;
+																									DAT_80072de8->_priorityLayer = 3;
 
 																									DAT_80072dec->setFlag(ACTOR_FLAG_100);
 																									DAT_80072dec->setFlag(ACTOR_FLAG_800);
 																									DAT_80072dec->setFlag(ACTOR_FLAG_8000);
 																									DAT_80072dec->_walkSpeed = 0x18000;
-																									DAT_80072dec->priorityLayer = 3;
+																									DAT_80072dec->_priorityLayer = 3;
 
 																									DAT_80072df0->setFlag(ACTOR_FLAG_100);
 																									DAT_80072df0->setFlag(ACTOR_FLAG_800);
 																									DAT_80072df0->setFlag(ACTOR_FLAG_8000);
 																									DAT_80072df0->_walkSpeed = 0x14000;
-																									DAT_80072df0->priorityLayer = 3;
+																									DAT_80072df0->_priorityLayer = 3;
 
 																									DAT_80072df4->setFlag(ACTOR_FLAG_100);
 																									DAT_80072df4->setFlag(ACTOR_FLAG_800);
 																									DAT_80072df4->setFlag(ACTOR_FLAG_8000);
 																									DAT_80072df4->_walkSpeed = 0x1c000;
-																									DAT_80072df4->priorityLayer = 3;
+																									DAT_80072df4->_priorityLayer = 3;
 
 																									DAT_80072df8->setFlag(ACTOR_FLAG_100);
 																									DAT_80072df8->setFlag(ACTOR_FLAG_800);
 																									DAT_80072df8->setFlag(ACTOR_FLAG_8000);
-																									DAT_80072df8->priorityLayer = 3;
+																									DAT_80072df8->_priorityLayer = 3;
 
 																									_vm->waitForFramesAllowSkip(0xe);
 																									// call_fade_related_1f();
@@ -272,8 +272,8 @@ void CutScene::scene1() {
 
 																									_vm->_talk->displayDialogAroundPoint(dialog,0x27,0xc,0xc01,0,0x5ea2);
 																									DAT_80072df0->waitUntilFlag8And4AreSet();
-																									DAT_80072df0->x_pos = 0xcf;
-																									DAT_80072df0->y_pos = 0x90;
+																									DAT_80072df0->_x_pos = 0xcf;
+																									DAT_80072df0->_y_pos = 0x90;
 																									DAT_80072df0->startWalk(0x97, 0x37, 2);
 																									DAT_80072df0->updateSequence(7);
 //TODO
@@ -399,7 +399,7 @@ void CutScene::FUN_8003d388() {
 	DAT_800830bc = _vm->_actorManager->loadActor(0xaa,1,0x115,0x22,1);
 	DAT_800830bc->setFlag(ACTOR_FLAG_100);
 	DAT_800830bc->setFlag(ACTOR_FLAG_8000);
-	DAT_800830bc->priorityLayer = 4;
+	DAT_800830bc->_priorityLayer = 4;
 	if ((DAT_80063514 & 0x100) != 0) {
 		DAT_800830c0 = _vm->_actorManager->loadActor(0x7e,0x1c,0x21,0x87,1);
 	}
@@ -461,7 +461,7 @@ void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
 		_vm->_screen->loadPalette(0, _palettes + 2 * 512);
 		for (int i = 2; i < 0x17; i++) {
 			Actor *actor = _vm->_actorManager->getActor(i);
-			actor->x_pos += 0x3c0;
+			actor->_x_pos += 0x3c0;
 		}
 	}
 	else {
@@ -508,7 +508,7 @@ void CutScene::diamondScene() {
 	actorId_03 = _vm->getINI(0x259)->actor;
 	actorId_01 = _vm->getINI(0x258)->actor;
 	actorId_03->setFlag(ACTOR_FLAG_100);
-	actorId_03->priorityLayer = 4;
+	actorId_03->_priorityLayer = 4;
 	actorId_00 = _vm->getINI(0x256)->actor;
 	_vm->setFlags(ENGINE_FLAG_20000);
 	actorId_02 = _vm->getINI(0x25a)->actor;
@@ -534,9 +534,9 @@ void CutScene::diamondScene() {
 					actorId->updateSequence(4);
 					_vm->waitForFramesAllowSkip(0x17);
 					actorId_03->updateSequence(9);
-					actorId_03->x_pos = 0x82;
-					actorId_03->y_pos = 0xc4;
-					actorId_03->priorityLayer = 4;
+					actorId_03->_x_pos = 0x82;
+					actorId_03->_y_pos = 0xc4;
+					actorId_03->_priorityLayer = 4;
 					if (!actorId->waitUntilFlag4IsSetAllowSkip()) {
 						actorId->updateSequence(5);
 						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_01,0x10,2,0x42ac2,0x3c01) != 2 &&
@@ -684,10 +684,10 @@ void CutScene::flameReturnsCutScene() {
 	DAT_80063514 = (DAT_80063514 & 0xfffe) | 0x600;
 	FUN_8003d388();
 	DAT_80072de8->updateSequence(0x1f);
-	DAT_80072e04->x_pos = 0x10b;
-	DAT_80072e04->y_pos = 99;
-	DAT_80072de8->x_pos = 0x10a;
-	DAT_80072de8->y_pos = 0x5a;
+	DAT_80072e04->_x_pos = 0x10b;
+	DAT_80072e04->_y_pos = 99;
+	DAT_80072de8->_x_pos = 0x10a;
+	DAT_80072de8->_y_pos = 0x5a;
 	DAT_80072de8->_walkSpeed = 0x10000;
 	DAT_80072e04->_walkSpeed = 0x10000;
 	DAT_80072de8->setFlag(ACTOR_FLAG_800);

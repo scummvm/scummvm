@@ -40,11 +40,11 @@ Cursor::Cursor(DragonsEngine *vm): _vm(vm), _actor(0), _x(0), _y(0) {
 void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResource) {
 	_sequenceID = 0;
 	_actor = actorManager->loadActor(0, 0); //Load cursor
-	_actor->x_pos = _x = 160;
-	_actor->y_pos = _y = 100;
-	_actor->priorityLayer = 6;
+	_actor->_x_pos = _x = 160;
+	_actor->_y_pos = _y = 100;
+	_actor->_priorityLayer = 6;
 	_actor->_flags = 0;
-	_actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	_actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_actor->updateSequence(_sequenceID);
 	_actor->_flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
 					   Dragons::ACTOR_FLAG_200);
@@ -71,8 +71,8 @@ void Cursor::update() {
 		_sequenceID = 1;
 	}
 
-	_actor->x_pos = _x;
-	_actor->y_pos = _y;
+	_actor->_x_pos = _x;
+	_actor->_y_pos = _y;
 
 	// 0x80028104
 	if (_iniUnderCursor != 0
@@ -136,9 +136,9 @@ void Cursor::update() {
 
 void Cursor::updateVisibility() {
 	if (_vm->isFlagSet(Dragons::ENGINE_FLAG_8) && !_vm->isUnkFlagSet(Dragons::ENGINE_UNK1_FLAG_10)) {
-		_actor->priorityLayer = 9;
+		_actor->_priorityLayer = 9;
 	} else {
-		_actor->priorityLayer = 0;
+		_actor->_priorityLayer = 0;
 	}
 }
 
@@ -215,10 +215,10 @@ int16 Cursor::updateIniFromScene() {
 			if (ini->field_1a_flags_maybe & 1) {
 				// 0x80028b18
 				if (ini->actor->isFlagSet(ACTOR_FLAG_40) && ini->actor->isFlagSet(ACTOR_FLAG_8)) {
-					int16 iniActorXPosition = ini->actor->x_pos - ini->actor->frame->xOffset;
-					int16 iniActorYPosition = ini->actor->y_pos - ini->actor->frame->yOffset;
-					if (cursorX >= iniActorXPosition && cursorX < iniActorXPosition + ini->actor->frame->width
-					&& cursorY >= iniActorYPosition && cursorY < iniActorYPosition + ini->actor->frame->height) {
+					int16 iniActorXPosition = ini->actor->_x_pos - ini->actor->_frame->xOffset;
+					int16 iniActorYPosition = ini->actor->_y_pos - ini->actor->_frame->yOffset;
+					if (cursorX >= iniActorXPosition && cursorX < iniActorXPosition + ini->actor->_frame->width
+							&& cursorY >= iniActorYPosition && cursorY < iniActorYPosition + ini->actor->_frame->height) {
 						cursorOverIni = i + 1;
 					}
 				}
@@ -357,8 +357,8 @@ byte *Cursor::getPalette() {
 
 void Cursor::updateActorPosition(int16 x, int16 y) {
 	updatePosition(x, y);
-	_actor->x_pos = _x;
-	_actor->y_pos = _y;
+	_actor->_x_pos = _x;
+	_actor->_y_pos = _y;
 }
 
 } // End of namespace Dragons

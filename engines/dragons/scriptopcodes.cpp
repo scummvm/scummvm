@@ -636,9 +636,9 @@ void ScriptOpcodes::opUnkE(ScriptOpCall &scriptOpCall) {
 
 	} else {
 		ini->x = point.x;
-		ini->actor->x_pos = point.x;
+		ini->actor->_x_pos = point.x;
 		ini->y = point.y;
-		ini->actor->y_pos = point.y;
+		ini->actor->_y_pos = point.y;
 
 		if (field4 != field6) {
 			ini->actor->_walkSpeed = field4;
@@ -690,9 +690,9 @@ void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
 	} else {
 		assert(ini->actor);
 		ini->x = field8;
-		ini->actor->x_pos = field8;
+		ini->actor->_x_pos = field8;
 		ini->y = fieldA;
-		ini->actor->y_pos = fieldA;
+		ini->actor->_y_pos = fieldA;
 
 		if (field4 != field6) {
 			ini->actor->_walkSpeed = field4;
@@ -730,19 +730,19 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 				IMG *firstDragonImg1 = _vm->_dragonIMG->getIMG(firstIni->field_2);
 				int16 newXPos1 = firstDragonImg1->field_a + firstIni->field_1c;
 				secondIni->x = newXPos1;
-				secondIni->actor->x_pos = newXPos1;
+				secondIni->actor->_x_pos = newXPos1;
 				int16 newYPos1 = firstDragonImg1->field_c + firstIni->field_1e;
 				secondIni->y = newYPos1;
-				secondIni->actor->y_pos = newYPos1;
+				secondIni->actor->_y_pos = newYPos1;
 			}
 		}
 		else {
-			int16 newYPos2 = firstIni->actor->y_pos + firstIni->field_1e;
+			int16 newYPos2 = firstIni->actor->_y_pos + firstIni->field_1e;
 			firstIni->y = newYPos2;
-			secondIni->actor->y_pos = newYPos2;
-			someXParam = firstIni->actor->x_pos + firstIni->field_1c;
+			secondIni->actor->_y_pos = newYPos2;
+			someXParam = firstIni->actor->_x_pos + firstIni->field_1c;
 			secondIni->x = someXParam;
-			secondIni->actor->x_pos = someXParam;
+			secondIni->actor->_x_pos = someXParam;
 		}
 		if (field6 != -1) {
 			secondIni->actor->_walkSpeed = -1;
@@ -782,8 +782,8 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 		}
 	}
 	else {
-		newXPosAgain = firstIni->actor->x_pos + firstIni->field_1c;
-		newYPosAgain = firstIni->actor->y_pos + firstIni->field_1e;
+		newXPosAgain = firstIni->actor->_x_pos + firstIni->field_1c;
+		newYPosAgain = firstIni->actor->_y_pos + firstIni->field_1e;
 		if (_vm->_dragonINIResource->isFlicker(secondIni)) {
 			someBooleanFlag = 0;
 		}
@@ -881,8 +881,8 @@ void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 	}
 	else {
 		_vm->_talk->FUN_8003239c(dialog,
-								 (int)(((uint)ini->actor->x_pos - (uint)_vm->_scene->_camera.x) * 0x10000) >> 0x13,
-								 (int)(((ini->actor->y_pos - ini->actor->frame->yOffset) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13,
+								 (int)(((uint)ini->actor->_x_pos - (uint)_vm->_scene->_camera.x) * 0x10000) >> 0x13,
+								 (int)(((ini->actor->_y_pos - ini->actor->_frame->yOffset) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13,
 								 READ_LE_INT16(_vm->_dragonOBD->getFromOpt(iniId) + 6),
 								 1,
 								 ini->actor, startSequenceId, endSequenceId, textIndex);
@@ -940,7 +940,7 @@ void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
 		if (field2 == 0x1a && ini->field_1a_flags_maybe & 1 && ini->sceneId == _vm->getCurrentSceneId()) {
 			if (s1 & 2) {
 				ini->actor->_flags |= Dragons::ACTOR_FLAG_80;
-				ini->actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+				ini->actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 			} else {
 				ini->actor->_flags &= ~Dragons::ACTOR_FLAG_80;
 			}
@@ -1238,19 +1238,19 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 				if (_vm->_inventory->getType() == 1) {
 					Actor *actor = _vm->_inventory->getInventoryItemActor(_vm->_cursor->iniItemInHand);
 					actor->_flags = 0;
-					actor->priorityLayer = 0;
-					actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+					actor->_priorityLayer = 0;
+					actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 					actor->updateSequence((_vm->getINI(_vm->_cursor->iniItemInHand - 1)->field_8 * 2 + 10) & 0xfffe);
 					actor->setFlag(ACTOR_FLAG_40);
 					actor->setFlag(ACTOR_FLAG_80);
 					actor->setFlag(ACTOR_FLAG_100);
 					actor->setFlag(ACTOR_FLAG_200);
-					actor->priorityLayer = 6;
+					actor->_priorityLayer = 6;
 				}
 			}
 			DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
-			_vm->_cursor->updatePosition(flicker->actor->x_pos - _vm->_scene->_camera.x,
-					flicker->actor->y_pos - (_vm->_scene->_camera.y + 0x1e));
+			_vm->_cursor->updatePosition(flicker->actor->_x_pos - _vm->_scene->_camera.x,
+					flicker->actor->_y_pos - (_vm->_scene->_camera.y + 0x1e));
 			_vm->_cursor->data_800728b0_cursor_seqID = 5;
 			_vm->_cursor->_sequenceID = 5;
 			_vm->_cursor->data_8007283c = _vm->getINI(field2 - 1)->field_8 * 2 + 10;

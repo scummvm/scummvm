@@ -42,7 +42,7 @@ ActorManager::ActorManager(ActorResourceLoader *actorResourceLoader) : _actorRes
 Actor *ActorManager::loadActor(uint32 resourceId, uint32 sequenceId, int16 x, int16 y, uint16 priorityLayer) {
 	Actor *actor = loadActor(resourceId, sequenceId, x, y);
 	if (actor) {
-		actor->priorityLayer = priorityLayer;
+		actor->_priorityLayer = priorityLayer;
 	}
 	return actor;
 }
@@ -67,7 +67,7 @@ Actor *ActorManager::findFreeActor(int16 resourceId) {
 	for (ActorsIterator it = _actors.begin(); it != _actors.end() && i < 23; ++it, i++) {
 		Actor *actor = it;
 		if (!(actor->_flags & Dragons::ACTOR_FLAG_40)) {
-			actor->resourceID = resourceId;
+			actor->_resourceID = resourceId;
 			actor->_walkSpeed = 0x100000;
 			return actor;
 		}
@@ -105,10 +105,10 @@ void ActorManager::updateActorDisplayOrder() {
 		for (int i = 0; i < DRAGONS_ENGINE_NUM_ACTORS - 1; i++) {
 			Actor *curActor = getActor(_displayOrder[i]);
 			Actor *nextActor = getActor(_displayOrder[i + 1]);
-			int16 curY = curActor->y_pos > 0 ? curActor->y_pos : 0;
-			int16 nextY = nextActor->y_pos > 0 ? nextActor->y_pos : 0;
-			if (nextActor->priorityLayer * 0x1000000 + nextY * 0x100 + nextActor->_actorID <
-				curActor->priorityLayer * 0x1000000 + curY * 0x100 + curActor->_actorID) {
+			int16 curY = curActor->_y_pos > 0 ? curActor->_y_pos : 0;
+			int16 nextY = nextActor->_y_pos > 0 ? nextActor->_y_pos : 0;
+			if (nextActor->_priorityLayer * 0x1000000 + nextY * 0x100 + nextActor->_actorID <
+				curActor->_priorityLayer * 0x1000000 + curY * 0x100 + curActor->_actorID) {
 				_displayOrder[i] = nextActor->_actorID;
 				_displayOrder[i + 1] = curActor->_actorID;
 				shouldContinue = true;
@@ -122,7 +122,7 @@ void ActorManager::resetDisplayOrder() {
 		Actor *actor = getActor(i);
 		_displayOrder[i] = i;
 		if (!actor->isFlagSet(ACTOR_FLAG_40)) {
-			actor->priorityLayer = 0;
+			actor->_priorityLayer = 0;
 		}
 	}
 }
@@ -133,38 +133,38 @@ Actor *ActorManager::getActorByDisplayOrder(uint16 position) {
 
 Actor::Actor(uint16 id) : _actorID(id) {
 	_actorResource = NULL;
-	resourceID = -1;
+	_resourceID = -1;
 	_seqCodeIp = 0;
-	frame_pointer_maybe = NULL;
-	priorityLayer = 3;
-	x_pos = 160;
-	y_pos = 110;
+	_frame_pointer_maybe = NULL;
+	_priorityLayer = 3;
+	_x_pos = 160;
+	_y_pos = 110;
 	_walkDestX = 0;
 	_walkDestY = 0;
 	_walkSpeed = 0;
 	_flags = 0;
-	frame_width = 0;
-	frame_height = 0;
-	frame_flags = 0;
-	clut = 0;
-	frame = NULL;
-	surface = NULL;
+	_frame_width = 0;
+	_frame_height = 0;
+	_frame_flags = 0;
+	_clut = 0;
+	_frame = NULL;
+	_surface = NULL;
 }
 
 void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 	debug(3, "actor %d Init", _actorID);
 	_actorResource = resource;
-	x_pos = x;
-	y_pos = y;
-	sequenceTimer = 0;
+	_x_pos = x;
+	_y_pos = y;
+	_sequenceTimer = 0;
 	_walkDestX = x;
 	_walkDestY = y;
-	scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_sequenceID2 = 0;
 	_flags = (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_4);
-	frame_width = 0;
-	frame_height = 0;
-	frame_flags = 4;
+	_frame_width = 0;
+	_frame_height = 0;
+	_frame_flags = 4;
 	//TODO sub_80017010();
 	freeFrame();
 
@@ -184,27 +184,27 @@ void Actor::resetSequenceIP() {
 void Actor::loadFrame(uint16 frameOffset) {
 	freeFrame();
 
-	frame = _actorResource->loadFrameHeader(frameOffset);
+	_frame = _actorResource->loadFrameHeader(frameOffset);
 
-	if (frame->flags & 0x800) {
-		frame_flags |= ACTOR_FRAME_FLAG_2;
+	if (_frame->flags & 0x800) {
+		_frame_flags |= ACTOR_FRAME_FLAG_2;
 	} else {
-		frame_flags &= ~ACTOR_FRAME_FLAG_2;
+		_frame_flags &= ~ACTOR_FRAME_FLAG_2;
 	}
 
-	surface = _actorResource->loadFrame(*frame, NULL); // TODO paletteId == 0xf1 ? getEngine()->getBackgroundPalette() : NULL);
+	_surface = _actorResource->loadFrame(*_frame, NULL); // TODO paletteId == 0xf1 ? getEngine()->getBackgroundPalette() : NULL);
 
-	debug(5, "ActorId: %d load frame header: (%d,%d)", _actorID, frame->width, frame->height);
+	debug(5, "ActorId: %d load frame header: (%d,%d)", _actorID, _frame->width, _frame->height);
 
 	_flags |= Dragons::ACTOR_FLAG_8; //TODO check if this is the right spot. engine sets it at 0x800185b0
 
 }
 
 void Actor::freeFrame() {
-	delete frame;
-	delete surface;
-	frame = NULL;
-	surface = NULL;
+	delete _frame;
+	delete _surface;
+	_frame = NULL;
+	_surface = NULL;
 }
 
 byte *Actor::getSeqIpAtOffset(uint32 offset) {
@@ -243,7 +243,7 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 	clearFlag(ACTOR_FLAG_10);
 
 	// Check if the actor already is at the destination
-	if (x_pos == destX && y_pos == destY) {
+	if (_x_pos == destX && _y_pos == destY) {
 		if (wasAlreadyWalking) {
 			stopWalk();
 		}
@@ -296,7 +296,7 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 	}
 
 	// Check if the actor already is at the adjusted destination
-	if (x_pos == destX && y_pos == destY) {
+	if (_x_pos == destX && _y_pos == destY) {
 		if (wasAlreadyWalking) {
 			stopWalk();
 		}
@@ -304,7 +304,7 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 	}
 
 	int tempDestX1 = destX, tempDestY1 = destY;
-	int actorX1 = x_pos, actorY1 = y_pos;
+	int actorX1 = _x_pos, actorY1 = _y_pos;
 	bool pathPointProcessed[kPathPointsCount];
 
 	for (int pointIndex = 0; pointIndex < kPathPointsCount; ++pointIndex) {
@@ -329,8 +329,8 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 							actorY1 += syd;
 							tempDestX1 += dxd;
 							tempDestY1 += dyd;
-							x_pos += sxd;
-							y_pos += syd;
+							_x_pos += sxd;
+							_y_pos += syd;
 						}
 					}
 				}
@@ -357,8 +357,8 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 					if (canWalkLine(actorX1 + deltaX, actorY1 + deltaY, pt.x, pt.y, flags)) {
 						actorX1 += deltaX;
 						actorY1 += deltaY;
-						x_pos += deltaX;
-						y_pos += deltaY;
+						_x_pos += deltaX;
+						_y_pos += deltaY;
 						needAdjustSourcePoint = false;
 					}
 				}
@@ -404,7 +404,7 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 		tempDestX1 = pt.x;
 		tempDestY1 = pt.y;
 		if (pathPointsIndex >= 2) {
-			const Common::Point prevPt = getEngine()->_scene->getPoint(walkPointsTbl[pathPointsIndex - 2]);
+			const Common::Point prevPt = getEngine()->_scene->getPoint(_walkPointsTbl[pathPointsIndex - 2]);
 			if (canWalkLine(pt.x, pt.y, prevPt.x, prevPt.y, flags)) {
 				--pathPointsIndex;
 			}
@@ -413,7 +413,7 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 				--pathPointsIndex;
 			}
 		}
-		walkPointsTbl[pathPointsIndex] = foundPointIndex;
+		_walkPointsTbl[pathPointsIndex] = foundPointIndex;
 		++pathPointsIndex;
 	}
 
@@ -445,14 +445,14 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 		}
 	}
 
-	walkPointsIndex = pathPointsIndex - 1;
+	_walkPointsIndex = pathPointsIndex - 1;
 	if (pathPointsIndex == 0) {
 		_walkDestX = tempDestX1;
 		_walkDestY = tempDestY1;
 		_finalWalkDestX = -1;
 		_finalWalkDestY = -1;
 	} else {
-		const Common::Point pt = getEngine()->_scene->getPoint(walkPointsTbl[walkPointsIndex]);
+		const Common::Point pt = getEngine()->_scene->getPoint(_walkPointsTbl[_walkPointsIndex]);
 		_walkDestX = pt.x;
 		_walkDestY = pt.y;
 	}
@@ -469,9 +469,9 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 
 void Actor::stopWalk() {
 	clearFlag(Dragons::ACTOR_FLAG_10);
-	walkPointsIndex = 0;
-	_walkDestX = x_pos;
-	_walkDestY = y_pos;
+	_walkPointsIndex = 0;
+	_walkDestX = _x_pos;
+	_walkDestY = _y_pos;
 	_finalWalkDestX = -1;
 	_finalWalkDestY = -1;
 	setFlag(Dragons::ACTOR_FLAG_4);
@@ -525,7 +525,7 @@ bool Actor::isFlagSet(uint32 flag) {
 }
 
 uint16 Actor::canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, uint16 walkFlags) {
-	debug(1, "canWalkLine. (%X,%X) -> (%X,%X) %d", x_pos, y_pos, target_x, target_y, walkFlags);
+	debug(1, "canWalkLine. (%X,%X) -> (%X,%X) %d", _x_pos, _y_pos, target_x, target_y, walkFlags);
 
 	if (walkFlags == 2) {
 		return 1;
@@ -611,14 +611,14 @@ uint16 Actor::canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 ta
 int Actor::startMoveToPoint(int destX, int destY) {
 	int direction = 0;
 	int quadrant = 0;
-	int deltaX = destX - x_pos;
-	int deltaY = (destY - y_pos) * 2;
+	int deltaX = destX - _x_pos;
+	int deltaY = (destY - _y_pos) * 2;
 	int absDeltaX = ABS(deltaX);
 	int absDeltaY = ABS(deltaY);
-	// debug("from: (%d, %d); to: (%d, %d); d: (%d, %d); actor._walkSpeed: %08X", x_pos, actor._y, destX, destY, deltaX, deltaY, actor._walkSpeed);
+	// debug("from: (%d, %d); to: (%d, %d); d: (%d, %d); actor._walkSpeed: %08X", _x_pos, actor._y, destX, destY, deltaX, deltaY, actor._walkSpeed);
 
-	_xShl16 = x_pos << 16;
-	_yShl16 = y_pos << 16;
+	_xShl16 = _x_pos << 16;
+	_yShl16 = _y_pos << 16;
 
 	// Walk slope is a fixed point value, where the upper 16 bits are the integral part,
 	// and the lower 16 bits the fractional part. 0x10000 is 1.0.
@@ -688,8 +688,8 @@ int Actor::startMoveToPoint(int destX, int destY) {
 
 	void Actor::walkPath() {
 		if (isFlagClear(Dragons::ACTOR_FLAG_400) && isFlagSet(Dragons::ACTOR_FLAG_40) && isFlagSet(Dragons::ACTOR_FLAG_10)) {
-			_xShl16 += (((scale * _walkSlopeX) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
-			_yShl16 += (((scale * _walkSlopeY) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
+			_xShl16 += (((_scale * _walkSlopeX) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
+			_yShl16 += (((_scale * _walkSlopeY) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
 
 			if ( (_walkSlopeX >= 0 && _walkDestX < (_xShl16 >> 0x10))
 			|| (_walkSlopeX < 0 && (_xShl16 >> 0x10) < _walkDestX)) {
@@ -701,11 +701,11 @@ int Actor::startMoveToPoint(int destX, int destY) {
 				_yShl16 = _walkDestY << 0x10;
 			}
 
-			x_pos = _xShl16 >> 0x10;
-			y_pos = _yShl16 >> 0x10;
+			_x_pos = _xShl16 >> 0x10;
+			_y_pos = _yShl16 >> 0x10;
 
-			if (x_pos == _walkDestX && y_pos == _walkDestY) {
-				if (walkPointsIndex <= 0) {
+			if (_x_pos == _walkDestX && _y_pos == _walkDestY) {
+				if (_walkPointsIndex <= 0) {
 					if (_finalWalkDestX < 0) {
 						clearFlag(ACTOR_FLAG_10);
 						if (isFlagClear(ACTOR_FLAG_200)) {
@@ -721,8 +721,8 @@ int Actor::startMoveToPoint(int destX, int destY) {
 						_finalWalkDestY = -1;
 					}
 				} else {
-					walkPointsIndex--;
-					Common::Point point = getEngine()->_scene->getPoint(walkPointsTbl[walkPointsIndex]);
+					_walkPointsIndex--;
+					Common::Point point = getEngine()->_scene->getPoint(_walkPointsTbl[_walkPointsIndex]);
 					_walkDestX = point.x;
 					_walkDestY = point.y;
 				}
@@ -780,7 +780,7 @@ bool Actor::waitUntilFlag4IsSetAllowSkip() {
 byte *Actor::getPalette() {
 	if (!isFlagSet(ACTOR_FLAG_4000)) {
 		if (!isFlagSet(ACTOR_FLAG_8000)) {
-			if ((frame_flags & 0x30) != 0) {
+			if ((_frame_flags & 0x30) != 0) {
 				return _actorResource->getPalette();
 			}
 			return getEngine()->_screen->getPalette(1);

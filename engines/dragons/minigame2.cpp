@@ -178,17 +178,17 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	uVar8 = _vm->_actorManager->loadActor(0xf,0,0x7d,199,4);
 	loungealotRightArm = _vm->_actorManager->loadActor(0x10, 0, 0x7d, 199, 4);
 	flickerArm = _vm->_actorManager->loadActor(9, (uint)(uint16)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc],
-											   loungealotLeftUpperArm->x_pos - loungealotLeftUpperArm->frame->field_e,
-											   loungealotLeftUpperArm->y_pos - loungealotLeftUpperArm->frame->field_10, 4);
+											   loungealotLeftUpperArm->_x_pos - loungealotLeftUpperArm->_frame->field_e,
+											   loungealotLeftUpperArm->_y_pos - loungealotLeftUpperArm->_frame->field_10, 4);
 	loungealotThumb = _vm->_actorManager->loadActor(0x12, (uint)(uint16)actorSequenceIdTbl[(uint)DAT_80093cb4 * 3 + (uint)DAT_80093cbc],
-													loungealotLeftUpperArm->x_pos - loungealotLeftUpperArm->frame->field_e,
-													loungealotLeftUpperArm->y_pos - loungealotLeftUpperArm->frame->field_10, 4);
+													loungealotLeftUpperArm->_x_pos - loungealotLeftUpperArm->_frame->field_e,
+													loungealotLeftUpperArm->_y_pos - loungealotLeftUpperArm->_frame->field_10, 4);
 	uVar12 = _vm->_actorManager->loadActor(10, (uint)(uint16)actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0],
-										   flickerArm->x_pos - flickerArm->frame->field_e,
-										   flickerArm->y_pos - flickerArm->frame->field_10, 4);
+										   flickerArm->_x_pos - flickerArm->_frame->field_e,
+										   flickerArm->_y_pos - flickerArm->_frame->field_10, 4);
 	uVar13 = _vm->_actorManager->loadActor(0x13, (uint)(uint16)actorSequenceIdTbl[(uint)DAT_80093cb8 * 3 + (uint)DAT_80093cc0],
-										   flickerArm->x_pos - flickerArm->frame->field_e,
-										   flickerArm->y_pos - flickerArm->frame->field_10, 4);
+										   flickerArm->_x_pos - flickerArm->_frame->field_e,
+										   flickerArm->_y_pos - flickerArm->_frame->field_10, 4);
 	uVar14 = _vm->_actorManager->loadActor(0x27,0,0x10,0xac,4);
 	uVar15 = _vm->_actorManager->loadActor(0x27,1,0x10,0x8c,4);
 	uVar5->setFlag(ACTOR_FLAG_100);
@@ -203,17 +203,17 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	uVar14->setFlag(ACTOR_FLAG_100);
 	uVar15->setFlag(ACTOR_FLAG_100);
 
-	uVar5->priorityLayer = 6;
-	flickerArm->priorityLayer = 5;
-	uVar12->priorityLayer = 5;
-	loungealotThumb->priorityLayer = 4;
-	uVar13->priorityLayer = 3;
-	loungealotRightArm->priorityLayer = 3;
-	loungealotLeftUpperArm->priorityLayer = 2;
-	loungealotHeadActor->priorityLayer = 2;
-	uVar8->priorityLayer = 1;
-	uVar14->priorityLayer = 0;
-	uVar15->priorityLayer = 0;
+	uVar5->_priorityLayer = 6;
+	flickerArm->_priorityLayer = 5;
+	uVar12->_priorityLayer = 5;
+	loungealotThumb->_priorityLayer = 4;
+	uVar13->_priorityLayer = 3;
+	loungealotRightArm->_priorityLayer = 3;
+	loungealotLeftUpperArm->_priorityLayer = 2;
+	loungealotHeadActor->_priorityLayer = 2;
+	uVar8->_priorityLayer = 1;
+	uVar14->_priorityLayer = 0;
+	uVar15->_priorityLayer = 0;
 	//TODO
 //	uVar16 = AddFlatShadedQuad(0x28,0xa8,0x67,0xa8,0x67,0xaf,0x28,0xaf,0x1f,7,0);
 //	uVar17 = AddFlatShadedQuad(0x28,0x88,0x67,0x88,0x67,0x8f,0x28,0x8f,0x3e0,7,0);
@@ -238,14 +238,14 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	uVar8->waitUntilFlag8And4AreSet();
 
 	uVar5->setFlag(ACTOR_FLAG_400);
-	flickerArm->x_pos = loungealotLeftUpperArm->x_pos - loungealotLeftUpperArm->frame->field_e;
-	flickerArm->y_pos = loungealotLeftUpperArm->y_pos - loungealotLeftUpperArm->frame->field_10;
-	loungealotThumb->x_pos = loungealotLeftUpperArm->x_pos - loungealotLeftUpperArm->frame->field_e;
-	loungealotThumb->y_pos = loungealotLeftUpperArm->y_pos - loungealotLeftUpperArm->frame->field_10;
-	uVar12->x_pos = loungealotLeftUpperArm->x_pos - flickerArm->frame->field_e;
-	uVar12->y_pos = loungealotLeftUpperArm->y_pos - flickerArm->frame->field_10;
-	uVar13->x_pos = loungealotLeftUpperArm->x_pos - flickerArm->frame->field_e;
-	uVar13->y_pos = loungealotLeftUpperArm->y_pos - flickerArm->frame->field_10;
+	flickerArm->_x_pos = loungealotLeftUpperArm->_x_pos - loungealotLeftUpperArm->_frame->field_e;
+	flickerArm->_y_pos = loungealotLeftUpperArm->_y_pos - loungealotLeftUpperArm->_frame->field_10;
+	loungealotThumb->_x_pos = loungealotLeftUpperArm->_x_pos - loungealotLeftUpperArm->_frame->field_e;
+	loungealotThumb->_y_pos = loungealotLeftUpperArm->_y_pos - loungealotLeftUpperArm->_frame->field_10;
+	uVar12->_x_pos = loungealotLeftUpperArm->_x_pos - flickerArm->_frame->field_e;
+	uVar12->_y_pos = loungealotLeftUpperArm->_y_pos - flickerArm->_frame->field_10;
+	uVar13->_x_pos = loungealotLeftUpperArm->_x_pos - flickerArm->_frame->field_e;
+	uVar13->_y_pos = loungealotLeftUpperArm->_y_pos - flickerArm->_frame->field_10;
 	_vm->waitForFrames(2);
 	// call_fade_related_1f();
 
@@ -308,9 +308,9 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 		if (DAT_80093c94 != 0) {
 			local_264 = 0;
 		}
-		if (uVar8->field_7a == 1) {
+		if (uVar8->_field_7a == 1) {
 			shouldShakeScreen = true;
-			uVar8->field_7a = 0;
+			uVar8->_field_7a = 0;
 			screenShakeCounter = 0;
 		}
 		if (shouldShakeScreen) {
@@ -369,30 +369,30 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 			if (!bVar4) {
 				//TODO FUN_8001a4e4_draw_dialogbox(4,0x14,0xd,0x16,1);
 				//TODO FUN_8001a4e4_draw_dialogbox(4,0x10,0xd,0x12,1);
-				uVar14->priorityLayer = 6;
-				uVar15->priorityLayer = 6;
+				uVar14->_priorityLayer = 6;
+				uVar15->_priorityLayer = 6;
 				bVar4 = true;
 			}
 		}
 		if ((((local_278 == 0) && (local_27a == 0)) && (local_258 == 0)) && (bVar4)) {
 			// TODO FUN_8001a7c4(4,0x14,0xd,0x16);
 			// TODO FUN_8001a7c4(4,0x10,0xd,0x12);
-			uVar14->priorityLayer = 0;
-			uVar15->priorityLayer = 0;
+			uVar14->_priorityLayer = 0;
+			uVar15->_priorityLayer = 0;
 			bVar4 = false;
 		}
 
 		//DisableVSyncEvent();
-		loungealotThumb->x_pos = loungealotLeftUpperArm->x_pos - loungealotLeftUpperArm->frame->field_e;
-		flickerArm->x_pos = loungealotThumb->x_pos;
-		sVar2 = flickerArm->x_pos;
-		loungealotThumb->y_pos = loungealotLeftUpperArm->y_pos - loungealotLeftUpperArm->frame->field_10;
-		flickerArm->y_pos = loungealotThumb->y_pos;
-		sVar3 = flickerArm->y_pos;
-		uVar13->x_pos = sVar2 - flickerArm->frame->field_e;
-		uVar12->x_pos = uVar13->x_pos;
-		uVar13->y_pos = sVar3 - flickerArm->frame->field_10;
-		uVar12->y_pos = uVar13->y_pos;
+		loungealotThumb->_x_pos = loungealotLeftUpperArm->_x_pos - loungealotLeftUpperArm->_frame->field_e;
+		flickerArm->_x_pos = loungealotThumb->_x_pos;
+		sVar2 = flickerArm->_x_pos;
+		loungealotThumb->_y_pos = loungealotLeftUpperArm->_y_pos - loungealotLeftUpperArm->_frame->field_10;
+		flickerArm->_y_pos = loungealotThumb->_y_pos;
+		sVar3 = flickerArm->_y_pos;
+		uVar13->_x_pos = sVar2 - flickerArm->_frame->field_e;
+		uVar12->_x_pos = uVar13->_x_pos;
+		uVar13->_y_pos = sVar3 - flickerArm->_frame->field_10;
+		uVar12->_y_pos = uVar13->_y_pos;
 //		EnableVSyncEvent();
 		local_282 = DAT_80093cc0;
 		local_286 = DAT_80093cbc;
@@ -761,7 +761,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 				DAT_80093c94 = 2;
 			}
 		}
-		
+
 	} while ( true );
 
 }

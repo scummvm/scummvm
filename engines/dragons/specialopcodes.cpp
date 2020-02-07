@@ -303,7 +303,7 @@ void SpecialOpcodes::spcUnk9() {
 	flicker->field_1a_flags_maybe |= Dragons::INI_FLAG_20;
 	assert(flicker->actor);
 	flicker->actor->_flags |= Dragons::ACTOR_FLAG_100;
-	flicker->actor->priorityLayer = 0;
+	flicker->actor->_priorityLayer = 0;
 	_vm->getINI(1)->field_1a_flags_maybe |= Dragons::INI_FLAG_20;
 }
 
@@ -461,14 +461,14 @@ void SpecialOpcodes::spcWalkOnStilts() {
 	flickerOnStilts->_walkSlopeY = flickerOnStilts->_walkSlopeY / 3;
 
 	while (flickerOnStilts->isFlagSet(ACTOR_FLAG_10)) {
-		if (flickerOnStilts->frame->field_c == 0) {
+		if (flickerOnStilts->_frame->field_c == 0) {
 			isInWater = false;
 		}
 		else {
-			if (!isInWater && flickerOnStilts->y_pos >= 0x6a && flickerOnStilts->y_pos < 0x96) {
+			if (!isInWater && flickerOnStilts->_y_pos >= 0x6a && flickerOnStilts->_y_pos < 0x96) {
 				isInWater = true;
-				waterRipples->x_pos = flickerOnStilts->x_pos - flickerOnStilts->frame->field_e;
-				waterRipples->y_pos = flickerOnStilts->y_pos - flickerOnStilts->frame->field_10;
+				waterRipples->_x_pos = flickerOnStilts->_x_pos - flickerOnStilts->_frame->field_e;
+				waterRipples->_y_pos = flickerOnStilts->_y_pos - flickerOnStilts->_frame->field_10;
 				waterRipples->updateSequence(9);
 			}
 		}
@@ -506,12 +506,12 @@ void SpecialOpcodes::spcStGeorgeDragonLanded() {
 //	DisableVSyncEvent();
 	DragonINI *ini121 = _vm->_dragonINIResource->getRecord(0x121);
 	Actor *origActor = ini121->actor;
-	ini121->actor = _vm->_actorManager->loadActor(0x48, 4, ini121->actor->x_pos, ini121->actor->y_pos);
+	ini121->actor = _vm->_actorManager->loadActor(0x48, 4, ini121->actor->_x_pos, ini121->actor->_y_pos);
 	origActor->reset_maybe();
 //TODO	reset_actor_maybe();
 	ini121->actor->setFlag(ACTOR_FLAG_80);
-	ini121->actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-	ini121->actor->priorityLayer = 2;
+	ini121->actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	ini121->actor->_priorityLayer = 2;
 	ini121->actorResourceId = 0x48;
 
 	_vm->updateActorSequences();
@@ -535,7 +535,7 @@ void SpecialOpcodes::spcClearEngineFlag0x200000() {
 }
 
 void SpecialOpcodes::spcFlickerSetPriority2() {
-	_vm->_dragonINIResource->getFlickerRecord()->actor->priorityLayer = 2;
+	_vm->_dragonINIResource->getFlickerRecord()->actor->_priorityLayer = 2;
 }
 
 void SpecialOpcodes::spcMenInMinesSceneLogic() {
@@ -625,7 +625,7 @@ void SpecialOpcodes::spcCastleGateMoatDrainedSceneLogic() {
 void SpecialOpcodes::spcUnk34() {
 	Actor *flicker = _vm->_dragonINIResource->getFlickerRecord()->actor;
 	flicker->setFlag(ACTOR_FLAG_80);
-	flicker->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	flicker->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 }
 
 void SpecialOpcodes::spcFlickerClearFlag0x80() {
@@ -1037,7 +1037,7 @@ void SpecialOpcodes::spcLoadFileS10a7act() {
 void SpecialOpcodes::spcFlickerPutOnStGeorgeArmor() {
 	Actor *actor = _vm->_dragonINIResource->getRecord(0x21f)->actor;
 	actor->setFlag(ACTOR_FLAG_100);
-	actor->priorityLayer = 1;
+	actor->_priorityLayer = 1;
 }
 
 void SpecialOpcodes::spc82CallResetDataMaybe() {
@@ -1234,14 +1234,14 @@ void SpecialOpcodes::pizzaMakerStopWorking() {
 		if (actorf4->_sequenceID == 1) {
 			actorf4->waitUntilFlag8And4AreSet();
 			actorf4->updateSequence(2);
-			actorf5->x_pos = 0x115;
-			actorf5->y_pos = 0x5c;
+			actorf5->_x_pos = 0x115;
+			actorf5->_y_pos = 0x5c;
 			actorf5->updateSequence(7);
 			_vm->waitForFrames(0x78);
 			actorf5->updateSequence(8);
 			actorf5->waitUntilFlag8And4AreSet();
-			actorf5->x_pos = 0xff9c;
-			actorf5->y_pos = 100;
+			actorf5->_x_pos = 0xff9c;
+			actorf5->_y_pos = 100;
 			actorf4->updateSequence(3);
 		}
 		else {
@@ -1249,8 +1249,8 @@ void SpecialOpcodes::pizzaMakerStopWorking() {
 				_vm->waitForFrames(0x78);
 				actorf5->updateSequence(8);
 				actorf5->waitUntilFlag8And4AreSet();
-				actorf5->x_pos = 0xff9c;
-				actorf5->y_pos = 100;
+				actorf5->_x_pos = 0xff9c;
+				actorf5->_y_pos = 100;
 				actorf4->updateSequence(3);
 			}
 			else {
@@ -1294,7 +1294,7 @@ void SpecialOpcodes::setupTableBasedSceneUpdateFunction(uint16 initialCounter, u
 
 void SpecialOpcodes::spcUnk80FlickerArmorOn() {
 	Actor *actor = _vm->_dragonINIResource->getRecord(0x21f)->actor;
-	actor->priorityLayer = 2;
+	actor->_priorityLayer = 2;
 	actor->clearFlag(ACTOR_FLAG_100);
 }
 
@@ -1325,8 +1325,8 @@ void pizzaUpdateFunction() {
 				} else {
 					if (actorf4->_sequenceID == 1) {
 						actorf4->updateSequence(2);
-						actorf5->x_pos = 0x115;
-						actorf5->y_pos = 0x5c;
+						actorf5->_x_pos = 0x115;
+						actorf5->_y_pos = 0x5c;
 						actorf5->updateSequence(7);
 						counter = 0x2d;
 						return;
@@ -1334,8 +1334,8 @@ void pizzaUpdateFunction() {
 					if (actorf4->_sequenceID == 2) {
 						if ((actorf5->_sequenceID == 8) &&
 							(actorf5->isFlagSet(ACTOR_FLAG_4))) {
-							actorf5->x_pos = -100;
-							actorf5->y_pos = 100;
+							actorf5->_x_pos = -100;
+							actorf5->_y_pos = 100;
 							actorf4->updateSequence(3);
 						} else {
 							if (actorf5->_sequenceID == 8) {
@@ -1746,19 +1746,19 @@ void caveOfDilemmaUpdateFunction() {
 	if (counter == 0) {
 		oldManActor = vm->_dragonINIResource->getRecord(0x161)->actor;
 		cloudChairActor = vm->_dragonINIResource->getRecord(0x160)->actor;
-		if (oldManActor->y_pos < 0x53) {
-			oldManActor->y_pos = 0x52;
-			cloudChairActor->y_pos = 0x52;
+		if (oldManActor->_y_pos < 0x53) {
+			oldManActor->_y_pos = 0x52;
+			cloudChairActor->_y_pos = 0x52;
 			direction = 1;
 		}
-		if (0x5b < oldManActor->y_pos) {
-			oldManActor->y_pos = 0x5c;
-			cloudChairActor->y_pos = 0x5c;
+		if (0x5b < oldManActor->_y_pos) {
+			oldManActor->_y_pos = 0x5c;
+			cloudChairActor->_y_pos = 0x5c;
 			direction = -1;
 		}
 		yOffset = direction * 2;
-		oldManActor->y_pos = oldManActor->y_pos + yOffset;
-		cloudChairActor->y_pos = cloudChairActor->y_pos + yOffset;
+		oldManActor->_y_pos = oldManActor->_y_pos + yOffset;
+		cloudChairActor->_y_pos = cloudChairActor->_y_pos + yOffset;
 		counter = 10;
 	}
 	else {
