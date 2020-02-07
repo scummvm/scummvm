@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/translation.h"
 #include "backends/platform/sdl/psp2/psp2.h"
 #include "backends/graphics/psp2sdl/psp2sdl-graphics.h"
 #include "backends/saves/default/default-saves.h"
@@ -33,11 +34,29 @@
 #include "backends/fs/psp2/psp2-fs-factory.h"
 #include "backends/events/psp2sdl/psp2sdl-events.h"
 #include "backends/fs/psp2/psp2-dirent.h"
+#include "backends/keymapper/hardware-input.h"
 #include <sys/stat.h>
 
 #ifdef __PSP2_DEBUG__
 #include <psp2shell.h>
 #endif
+
+static const Common::HardwareInputTableEntry psp2JoystickButtons[] = {
+    { "JOY_A",              Common::JOYSTICK_BUTTON_A,              _s("Cross")       },
+    { "JOY_B",              Common::JOYSTICK_BUTTON_B,              _s("Circle")      },
+    { "JOY_X",              Common::JOYSTICK_BUTTON_X,              _s("Square")      },
+    { "JOY_Y",              Common::JOYSTICK_BUTTON_Y,              _s("Triangle")    },
+    { "JOY_BACK",           Common::JOYSTICK_BUTTON_BACK,           _s("Select")      },
+    { "JOY_START",          Common::JOYSTICK_BUTTON_START,          _s("Start")       },
+    { "JOY_LEFT_SHOULDER",  Common::JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("L")          },
+    { "JOY_RIGHT_SHOULDER", Common::JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("R")          },
+    { "JOY_UP",             Common::JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")    },
+    { "JOY_DOWN",           Common::JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")  },
+    { "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")  },
+    { "JOY_RIGHT",          Common::JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right") },
+    { nullptr,              0,                                      nullptr           }
+};
+
 
 int access(const char *pathname, int mode) {
 	struct stat sb;
@@ -173,4 +192,17 @@ Common::String OSystem_PSP2::getDefaultConfigFileName() {
 
 Common::String OSystem_PSP2::getDefaultLogFileName() {
 	return "ux0:data/scummvm/scummvm.log";
+}
+
+Common::HardwareInputSet *OSystem_PSP2::getHardwareInputSet() {
+	using namespace Common;
+
+	CompositeHardwareInputSet *inputSet = new CompositeHardwareInputSet();
+
+	// Users may use USB / bluetooth mice and keyboards
+	inputSet->addHardwareInputSet(new MouseHardwareInputSet(defaultMouseButtons));
+	inputSet->addHardwareInputSet(new KeyboardHardwareInputSet(defaultKeys, defaultModifiers));
+	inputSet->addHardwareInputSet(new JoystickHardwareInputSet(psp2JoystickButtons));
+
+	return inputSet;
 }

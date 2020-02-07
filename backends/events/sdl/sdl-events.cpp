@@ -89,7 +89,7 @@ void SdlEventSource::loadGameControllerMappingFile() {
 SdlEventSource::SdlEventSource()
     : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0), _queuedFakeMouseMove(false), _lastHatPosition(SDL_HAT_CENTERED)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-      , _queuedFakeKeyUp(false), _fakeKeyUp(), _controller(nullptr)
+      , _queuedFakeKeyUp(false), _fakeKeyUp(), _controller(nullptr), _leftTriggerDown(false), _rightTriggerDown(false)
 #endif
       {
 	// Reset mouse state
@@ -1062,6 +1062,48 @@ bool SdlEventSource::handleControllerAxisMotion(const SDL_Event &ev, Common::Eve
 	} else if (ev.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY) {
 		_km.joy_y = ev.caxis.value;
 		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
+	}
+
+	// Left trigger is treated as axis in SDL
+	if (ev.caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT) {
+		if (ev.caxis.value < 8192) { // 25% pressed
+			if (_leftTriggerDown) {
+				_leftTriggerDown = false;
+				event.type = Common::EVENT_JOYBUTTON_UP;
+				event.joystick.button = Common::JOYSTICK_BUTTON_LEFT_TRIGGER;
+				return true;
+			} else
+				return false;
+		} else if (ev.caxis.value > 16384) { // 50% pressed
+			if (!_leftTriggerDown) {
+				_leftTriggerDown = true;
+				event.type = Common::EVENT_JOYBUTTON_DOWN;
+				event.joystick.button = Common::JOYSTICK_BUTTON_LEFT_TRIGGER;
+				return true;
+			} else
+				return false;
+		}
+	}
+
+	// Right trigger is treated as axis in SDL
+	if (ev.caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT) {
+		if (ev.caxis.value < 8192) { // 25% pressed
+			if (_rightTriggerDown) {
+				_rightTriggerDown = false;
+				event.type = Common::EVENT_JOYBUTTON_UP;
+				event.joystick.button = Common::JOYSTICK_BUTTON_RIGHT_TRIGGER;
+				return true;
+			} else
+				return false;
+		} else if (ev.caxis.value > 16384) { // 50% pressed
+			if (!_rightTriggerDown) {
+				_rightTriggerDown = true;
+				event.type = Common::EVENT_JOYBUTTON_DOWN;
+				event.joystick.button = Common::JOYSTICK_BUTTON_RIGHT_TRIGGER;
+				return true;
+			} else
+				return false;
+		}
 	}
 
 	return false;

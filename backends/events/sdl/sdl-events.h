@@ -84,6 +84,10 @@ protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	/** Game controller */
 	SDL_GameController *_controller;
+
+	/** keep memory of current trigger status */
+	bool _leftTriggerDown;
+	bool _rightTriggerDown;
 #endif
 
 	/** Last screen id for checking if it was modified */
