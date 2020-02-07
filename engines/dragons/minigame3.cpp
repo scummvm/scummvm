@@ -63,19 +63,19 @@ Minigame3::Minigame3(DragonsEngine *vm) : _vm(vm) {}
 void Minigame3::run() {
 	bool bVar1;
 	Actor *handActorId;
-	uint16 actorId;
+	//uint16 actorId;
 	int16 sVar2;
-	int iVar3;
+	//int iVar3;
 	uint tmpValue;
 	int iVar4;
 	DragonINI *flicker;
 	uint16 origSceneId;
-	byte auStack1584_palette [512]; //[126];
+	//byte auStack1584_palette [512]; //[126];
 	uint16 local_5b2;
-	byte auStack1072_palette [512];
+	//byte auStack1072_palette [512];
 	Actor *bunnyActorTbl [4];
 	uint16 local_228;
-	uint16 local_226;
+	//uint16 local_226;
 	int16 local_224;
 	Actor *tearActorTbl [8];
 	uint16 local_210;
@@ -113,7 +113,6 @@ void Minigame3::run() {
 	uint16 local_1e;
 	uint16 local_1c;
 	uint16 local_1a;
-	uint16 i;
 	int16 local_16;
 	int16 local_14;
 	int16 origInventoryType;
@@ -128,12 +127,12 @@ void Minigame3::run() {
 		error("Failed to open arc1.bin");
 	}
 
-	for (i = 0;i < 21; i++) {
+	for (int i = 0; i < 21; i++) {
 		eyeBgYOffsetTbl[i] = fd->readUint16LE();
 	}
 
 	fd->seek(0x2c);
-	for (i = 0; i < 30; i++) {
+	for (int i = 0; i < 30; i++) {
 		tearInfo[i].x = fd->readUint16LE();
 		tearInfo[i].y = fd->readUint16LE();
 		tearInfo[i].unk = fd->readUint16LE();
@@ -199,7 +198,7 @@ void Minigame3::run() {
 //	memcpy2(auStack1072_palette,scrFileData_maybe,0x200);
 	local_5b2 = 0x7fff;
 //	DisableVSyncEvent();
-	i = 0;
+	int i = 0;
 	while ((int16)i < 4) {
 		bunnyActorTbl[(int16)i] = _vm->_actorManager->loadActor(0x15,4,0,0);
 		if (bunnyActorTbl[(int16)i] == NULL) {
@@ -561,7 +560,7 @@ void Minigame3::run() {
 					local_1e8 = 0;
 					FUN_80017f70_paletteRelated(0);
 					local_1b8 = 0;
-					flags = flags & 0xfffd | 4;
+					flags = (flags & 0xfffd) | 4;
 					local_1c8 = 2;
 					local_1c6 = 3;
 					updateBackgroundLayerOffset(2, 0x780, 0);
@@ -591,7 +590,7 @@ void Minigame3::run() {
 						updateBackgroundLayerOffset(2, 0x8c0, 0);
 						tearBlinkActorTbl2[0]->updateSequence(2);
 						tearBlinkActorTbl2[1]->updateSequence(3);
-						flags = flags & 0xfffe | 2;
+						flags = (flags & 0xfffe) | 2;
 					}
 				}
 			}

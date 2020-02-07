@@ -619,7 +619,8 @@ uint32 getResourceId(const char *filename) {
 	return TOTAL_FILES;
 }
 
-BigfileArchive::BigfileArchive(const char *filename, Common::Language language) :_fd(0), _language(language) {
+BigfileArchive::BigfileArchive(const char *filename, Common::Language language) :_fd(0) {
+	_language = language;
 	_fd = new Common::File();
 	if (!_fd->open(filename))
 		error("BigfileArchive::BigfileArchive() Could not open %s", filename);

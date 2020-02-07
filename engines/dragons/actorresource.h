@@ -64,7 +64,7 @@ private:
 	uint16 _framesCount;
 	byte _palette[512];
 	uint16 _sequenceTableOffset;
-	uint16 _sequenceCount;
+	//uint16 _sequenceCount;
 
 public:
 	bool load(uint32 id, byte *dataStart, Common::SeekableReadStream &stream);

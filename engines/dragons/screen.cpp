@@ -112,30 +112,30 @@ void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *pa
  **/
 uint16 alphaBlendRGB555( uint32 fg, uint32 bg, uint8 alpha ){
 	alpha = ( alpha + 4 ) >> 3;
-	bg = (bg | (bg << 16)) & 0b00000011111000000111110000011111;
-	fg = (fg | (fg << 16)) & 0b00000011111000000111110000011111;
-	uint32 result = ((((fg - bg) * alpha) >> 5) + bg) & 0b00000011111000000111110000011111;
+	bg = (bg | (bg << 16)) & 0x3e07c1f;
+	fg = (fg | (fg << 16)) & 0x3e07c1f;
+	uint32 result = ((((fg - bg) * alpha) >> 5) + bg) & 0x3e07c1f;
 	return (uint16)((result >> 16) | result);
 }
 
 uint16 alphaBlendAdditiveRGB555( uint32 fg, uint32 bg){
-	bg = (bg | (bg << 16)) & 0b00000011111000000111110000011111;
-	fg = (fg | (fg << 16)) & 0b00000011111000000111110000011111;
+	bg = (bg | (bg << 16)) & 0x3e07c1f;
+	fg = (fg | (fg << 16)) & 0x3e07c1f;
 
 	uint32 result = bg + fg;
 	//clip r g b values to 565.
-	if (result & (0b111111 << 26)) {
+	if (result & (0x3f << 26)) {
 		result &= 0x1fffff;
 		result |= 0x3E00000;
 	}
 
 	if (result & 0x1F8000) {
-		result &= 0b00000011111000000111111111111111;
+		result &= 0x3e07fff;
 		result |= 0x7C00;
 	}
 
 	if (result & 0x3E0) {
-		result &= 0b00000011111000000111110000011111;
+		result &= 0x3e07c1f;
 		result |= 0x1f;
 	}
 	return (uint16)((result >> 16) | result);
