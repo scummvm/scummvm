@@ -832,7 +832,7 @@ void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {
 
 	if (newSceneID != 0) {
 		// load scene here.
-		_vm->_scene->data_80063392 = _vm->_scene->getSceneId();
+		_vm->_scene->_data_80063392 = _vm->_scene->getSceneId();
 		_vm->_scene->setSceneId(newSceneID);
 		_vm->_data_800633fa = field6;
 

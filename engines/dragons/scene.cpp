@@ -38,7 +38,7 @@ namespace Dragons {
 
 Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, ActorManager *actorManager, DragonRMS *dragonRMS, DragonINIResource *dragonINIResource, BackgroundResourceLoader *backgroundResourceLoader)
 		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource), _backgroundLoader(backgroundResourceLoader) {
-	data_80063392 = 2;
+	_data_80063392 = 2;
 	_data_800633ee = 0;
 }
 void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {

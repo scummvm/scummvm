@@ -39,6 +39,7 @@ struct OpCall {
 	int32 _deltaOfs;
 	byte *_code;
 	int _result;
+
 	void skip(uint size);
 	byte readByte();
 	int16 readSint16();

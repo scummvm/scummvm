@@ -42,7 +42,7 @@ struct DragonINI;
 class Scene {
 public:
 	Common::Point _camera;
-	int16 data_80063392;
+	int16 _data_80063392;
 
 private:
 	DragonsEngine *_vm;

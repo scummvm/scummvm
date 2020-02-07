@@ -38,7 +38,7 @@ namespace Dragons {
 #define DAT_8006391c 0x475DA
 
 
-Minigame5::Minigame5(DragonsEngine *vm) : _vm(vm), DAT_800633e6(0) {}
+Minigame5::Minigame5(DragonsEngine *vm) : _vm(vm), _dat_800633e6(0) {}
 
 void Minigame5::run() {
 	uint16 uVar1;
@@ -360,10 +360,10 @@ void Minigame5::run() {
 					pusherActor->updateSequence(9);
 					_vm->waitForFrames(0x3c);
 					pusherActor->updateSequence(0xb);
-					if (DAT_800633e6 == 0) {
+					if (_dat_800633e6 == 0) {
 						_vm->_talk->loadText(DAT_8006393c,auStack2120, 1000);
 						_vm->_talk->displayDialogAroundPoint(auStack2120,(int)(short)(local_850 >> 3),0xc,0,1,DAT_8006393c);
-						DAT_800633e6 = 1;
+						_dat_800633e6 = 1;
 					}
 					else {
 						_vm->_talk->loadText(DAT_80063938, auStack2120, 1000);

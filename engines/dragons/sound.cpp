@@ -259,7 +259,7 @@ SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, Dr
 		: _vm(vm),
 		  _bigFileArchive(bigFileArchive),
 		  _dragonRMS(dragonRMS) {
-	DAT_8006bb60_sound_related = 0;
+	_dat_8006bb60_sound_related = 0;
 	// TODO: Set volumes
 	SomeInitSound_FUN_8003f64c();
 	loadMusAndGlob();

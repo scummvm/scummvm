@@ -49,12 +49,12 @@ private:
 	int16 _type;
 	Bag *_bag;
 
-	void (*inventionBookPrevSceneUpdateFunc)();
-	uint16 inventionBookPrevSceneId;
-	uint16 inventionBookPrevFlickerINISceneId;
-	Common::Point inventionBookPrevFlickerINIPosition;
+	void (*_inventionBookPrevSceneUpdateFunc)();
+	uint16 _inventionBookPrevSceneId;
+	uint16 _inventionBookPrevFlickerINISceneId;
+	Common::Point _inventionBookPrevFlickerINIPosition;
 
-	uint16 inventoryItemTbl[DRAGONS_MAX_INVENTORY_ITEMS];
+	uint16 _inventoryItemTbl[DRAGONS_MAX_INVENTORY_ITEMS];
 public:
 	Inventory(DragonsEngine *vm);
 

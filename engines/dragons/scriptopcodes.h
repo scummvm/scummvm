@@ -39,6 +39,7 @@ struct ScriptOpCall {
 	byte *_codeEnd;
 	int _field8;
 	int _result;
+
 	ScriptOpCall(byte *start, uint32 length);
 	void skip(uint size);
 	byte readByte();

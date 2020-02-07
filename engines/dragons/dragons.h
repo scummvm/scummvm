@@ -163,7 +163,7 @@ private:
 	uint32 _unkFlags1;
 	Common::Point _cursorPosition;
 	uint32 _counter;
-	uint32 bit_flags_8006fbd8;
+	uint32 _bit_flags_8006fbd8;
 	//unk
 
 	uint16 _run_func_ptr_unk_countdown_timer;

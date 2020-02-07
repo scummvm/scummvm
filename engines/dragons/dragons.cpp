@@ -265,7 +265,7 @@ void DragonsEngine::gameLoop() {
 	DragonINI *pDVar8;
 
 	_cursor->_cursorActivationSeqOffset = 0;
-	bit_flags_8006fbd8 = 0;
+	_bit_flags_8006fbd8 = 0;
 	_counter = 0;
 	setFlags(ENGINE_FLAG_8);
 	actorId = 0;
@@ -304,7 +304,7 @@ void DragonsEngine::gameLoop() {
 			_counter = 0;
 			clearFlags(ENGINE_FLAG_80000000);
 		}
-		if (bit_flags_8006fbd8 == 0) {
+		if (_bit_flags_8006fbd8 == 0) {
 			setFlags(ENGINE_FLAG_8);
 		}
 		if (_dragonINIResource->getFlickerRecord()->sceneId == getCurrentSceneId()) {
@@ -370,8 +370,8 @@ void DragonsEngine::gameLoop() {
 //			continue;
 //		}
 
-		if (bit_flags_8006fbd8 == 3) {
-			bit_flags_8006fbd8 = 0;
+		if (_bit_flags_8006fbd8 == 3) {
+			_bit_flags_8006fbd8 = 0;
 			DragonINI *flicker = _dragonINIResource->getFlickerRecord();
 			if (flicker->sceneId == getCurrentSceneId() && flicker->actor->_sequenceID2 != -1) {
 				uVar6 = _scriptOpcodes->_scriptTargetINI;
@@ -398,7 +398,7 @@ void DragonsEngine::gameLoop() {
 			if (_inventory->getType() < 2) {
 				if (_inventory->getType() == 0) {
 					if ((checkForInventoryButtonRelease() && isInputEnabled()) &&
-						((bit_flags_8006fbd8 & 3) != 1)) {
+						((_bit_flags_8006fbd8 & 3) != 1)) {
 						sequenceId = _dragonVAR->getVar(7);
 						uVar7 = _inventory->_old_showing_value;
 						_inventory->_old_showing_value = _inventory->getType();
@@ -433,7 +433,7 @@ void DragonsEngine::gameLoop() {
 							if (_cursor->_iniUnderCursor == 0x8002) {
 								LAB_80027294:
 								if (_cursor->_iniItemInHand == 0) {
-									if ((bit_flags_8006fbd8 & 3) != 1) {
+									if ((_bit_flags_8006fbd8 & 3) != 1) {
 										sequenceId = _dragonVAR->getVar(7);
 										uVar7 = _inventory->_old_showing_value;
 										_inventory->_old_showing_value = _inventory->getType();
@@ -469,14 +469,14 @@ void DragonsEngine::gameLoop() {
 						if (_cursor->_sequenceID < 5) {
 							_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
 							walkFlickerToObject();
-							if (bit_flags_8006fbd8 != 0) {
+							if (_bit_flags_8006fbd8 != 0) {
 								clearFlags(ENGINE_FLAG_8);
 							}
 						}
 						else {
 							_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
 							walkFlickerToObject();
-							if (bit_flags_8006fbd8 != 0) {
+							if (_bit_flags_8006fbd8 != 0) {
 								clearFlags(ENGINE_FLAG_8);
 							}
 							_scriptOpcodes->_scriptTargetINI = _cursor->_data_80072890;
@@ -861,8 +861,8 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 		//LAB_80027d40:
 //		if ((flickerINI->sceneId == currentSceneId)
 //			&& (uVar5 != 0xffff)) {
-//			actors[(uint)uVar5].﻿_sequenceID = 8;
-//			actors[(uint)uVar5].﻿_priorityLayer_maybe = 0;
+//			actors[(uint)uVar5]._sequenceID = 8;
+//			actors[(uint)uVar5]._priorityLayer_maybe = 0;
 //		}
 	}
 	else {
@@ -870,22 +870,22 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 			if ((flickerINI == NULL) || flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
 				if ((flickerINI->sceneId == currentSceneId)
 					&& (uVar5 != 0xffff)) {
-//					actors[(uint)uVar5].﻿_sequenceID = 8;
-//					actors[(uint)uVar5].﻿_priorityLayer_maybe = 0;
+//					actors[(uint)uVar5]._sequenceID = 8;
+//					actors[(uint)uVar5]._priorityLayer_maybe = 0;
 				}
 			} else {
-				if ((bit_flags_8006fbd8 & 2) == 0) {
-					bit_flags_8006fbd8 = bit_flags_8006fbd8 | 2;
+				if ((_bit_flags_8006fbd8 & 2) == 0) {
+					_bit_flags_8006fbd8 = _bit_flags_8006fbd8 | 2;
 				}
 //				if (((((actors[actorId]._flags & 0x2000) == 0) && ((actors[actorId]._flags & 4) != 0)) &&
-//					 (actors[actorId].﻿_sequenceID2 != actors[actorId].﻿_sequenceID)) &&
-//				(actors[actorId].﻿_sequenceID2 != -1)) {
-//					actor_update_sequenceID(actorId,actors[actorId].﻿_sequenceID2);
+//					 (actors[actorId]._sequenceID2 != actors[actorId]._sequenceID)) &&
+//				(actors[actorId]._sequenceID2 != -1)) {
+//					actor_update_sequenceID(actorId,actors[actorId]._sequenceID2);
 //				}
 			}
 
 		} else {
-			//actors[(uint)uVar5].﻿_priorityLayer_maybe = 0;
+			//actors[(uint)uVar5]._priorityLayer_maybe = 0;
 		}
 
 	}
@@ -934,8 +934,8 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 			//error("LAB_80027d40"); //TODO is this logic required?
 //		if ((flickerINI->sceneId == currentSceneId)
 //			&& (uVar5 != 0xffff)) {
-//			actors[(uint)uVar5].﻿_sequenceID = 8;
-//			actors[(uint)uVar5].﻿_priorityLayer_maybe = 0;
+//			actors[(uint)uVar5]._sequenceID = 8;
+//			actors[(uint)uVar5]._priorityLayer_maybe = 0;
 //		}
 		}
 		else {
@@ -946,8 +946,8 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 						_inventory->setPriority(0);
 					}
 				} else {
-					if ((bit_flags_8006fbd8 & 2) == 0) {
-						bit_flags_8006fbd8 = bit_flags_8006fbd8 | 2;
+					if ((_bit_flags_8006fbd8 & 2) == 0) {
+						_bit_flags_8006fbd8 = _bit_flags_8006fbd8 | 2;
 					}
 					if (flickerINI->actor->isFlagClear(ACTOR_FLAG_2000)
 					&& flickerINI->actor->isFlagSet(ACTOR_FLAG_4)
@@ -1172,11 +1172,11 @@ void DragonsEngine::walkFlickerToObject()
 				}
 				flickerINI->actor->startWalk((int)(((uint)targetX + (uint)targetINI->field_1c) * 0x10000) >> 0x10,
 													(int)(((uint)targetY + (uint)targetINI->field_1e) * 0x10000) >> 0x10,0);
-				bit_flags_8006fbd8 = 1;
+				_bit_flags_8006fbd8 = 1;
 				return;
 			}
 			if (isFlagSet(ENGINE_FLAG_200000)) {
-				bit_flags_8006fbd8 = 3;
+				_bit_flags_8006fbd8 = 3;
 				return;
 			}
 			flickerINI = _dragonINIResource->getFlickerRecord();
@@ -1187,7 +1187,7 @@ void DragonsEngine::walkFlickerToObject()
 				flickerINI->field_20_actor_field_14 = targetINI->field_e;
 				flickerINI->actor->_sequenceID2 = targetINI->field_e;
 			}
-			bit_flags_8006fbd8 = 3;
+			_bit_flags_8006fbd8 = 3;
 			return;
 		}
 		if (_inventory->getType() == 0 && !isFlagSet(ENGINE_FLAG_200000)) {
@@ -1201,11 +1201,11 @@ void DragonsEngine::walkFlickerToObject()
 	}
 	else {
 		if (_cursor->_data_80072890 != 0) {
-			bit_flags_8006fbd8 = 3;
+			_bit_flags_8006fbd8 = 3;
 			return;
 		}
 	}
-	bit_flags_8006fbd8 = 0;
+	_bit_flags_8006fbd8 = 0;
 	return;
 }
 

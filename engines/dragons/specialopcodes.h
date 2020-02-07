@@ -61,8 +61,8 @@ protected:
 	SpecialOpcode *_opcodes[DRAGONS_NUM_SPECIAL_OPCODES];
 	Common::String _opcodeNames[DRAGONS_NUM_SPECIAL_OPCODES];
 	int16 _specialOpCounter;
-	uint8 DAT_80083148;
-	uint16 uint16_t_80083154;
+	uint8 _dat_80083148;
+	uint16 _uint16_t_80083154;
 
 public:
 	int16 getSpecialOpCounter();
