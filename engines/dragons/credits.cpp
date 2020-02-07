@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "credits.h"
+#include "dragons/credits.h"
 
 #include "common/system.h"
 #include "dragons/bigfile.h"
