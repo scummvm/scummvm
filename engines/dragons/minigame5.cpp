@@ -42,11 +42,11 @@ Minigame5::Minigame5(DragonsEngine *vm) : _vm(vm), DAT_800633e6(0) {}
 
 void Minigame5::run() {
 	uint16 uVar1;
-	int iVar2;
-	byte *local_v0_7008;
-	void *local_v0_7256;
-	byte *uVar3;
-	uint uVar4;
+	//int iVar2;
+	//byte *local_v0_7008;
+	//void *local_v0_7256;
+	//byte *uVar3;
+	//uint uVar4;
 	uint16 local_850;
 	uint16 auStack2120 [1000];
 	DragonINI*local_78;
@@ -75,7 +75,7 @@ void Minigame5::run() {
 	int16_t local_44;
 	short local_42;
 	uint16 local_30 [4];
-	uint16 uStack42;
+	//uint16 uStack42;
 	uint16 local_28 [10];
 	short local_10;
 	uint32 savedEngineFlags;
