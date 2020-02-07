@@ -19,14 +19,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef DRAGONS_DRAGONIMG_H
-#define DRAGONS_DRAGONIMG_H
+#ifndef DRAGONS_DRAGONImg_H
+#define DRAGONS_DRAGONImg_H
 
 #include "common/system.h"
 
 namespace Dragons {
 
-struct IMG {
+struct Img {
 	uint16 x;
 	uint16 y;
 	uint16 w;
@@ -40,17 +40,17 @@ struct IMG {
 
 class BigfileArchive;
 
-class DragonIMG {
+class DragonImg {
 private:
 	int16 _count;
-	IMG *_imgObjects;
+	Img *_imgObjects;
 	byte *_imgData;
 public:
-	DragonIMG(BigfileArchive *bigfileArchive);
-	~DragonIMG();
-	IMG *getIMG(uint32 iptId);
+	DragonImg(BigfileArchive *bigfileArchive);
+	~DragonImg();
+	Img *getImg(uint32 iptId);
 };
 
 } // End of namespace Dragons
 
-#endif //DRAGONS_DRAGONIMG_H
+#endif //DRAGONS_DRAGONImg_H

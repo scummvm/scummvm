@@ -57,7 +57,7 @@ class FontManager {
 public:
 	Font *_fonts[3];
 private:
-	uint16 DAT_80086f48_fontColor_flag;
+	uint16 _dat_80086f48_fontColor_flag;
 	DragonsEngine *_vm;
 	Screen *_screen;
 	Common::List<ScreenTextEntry *> _screenTexts;

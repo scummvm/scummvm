@@ -216,7 +216,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	_vm->setFlags(ENGINE_FLAG_200);
 	_actorManager->clearActorFlags(2);
-	_vm->data_800633fc = 0;
+	_vm->_data_800633fc = 0;
 	// TODO 0x8002fff0
 
 	for (int i = 0;i < _dragonINIResource->totalRecords(); i++) {
@@ -290,9 +290,9 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 
 	if (flicker && flicker->sceneId != 0) {
-		flicker->field_20_actor_field_14 = _vm->data_800633fa;
+		flicker->field_20_actor_field_14 = _vm->_data_800633fa;
 		if (flicker->actor) {
-			flicker->actor->_sequenceID2 = _vm->data_800633fa;
+			flicker->actor->_sequenceID2 = _vm->_data_800633fa;
 			flicker->actor->setFlag(ACTOR_FLAG_4);
 		}
 	}
@@ -430,7 +430,7 @@ uint16 Scene::getStageHeight() {
 }
 
 void Scene::loadImageOverlay(uint16 iptId) {
-	IMG *img =_vm->_dragonIMG->getIMG(iptId);
+	Img *img =_vm->_dragonImg->getImg(iptId);
 	if (img->h != 0) {
 		if (img->field_e <= 2) {
 			_stage->overlayImage(img->layerNum - 1, img->data, img->x, img->y, img->w, img->h);
@@ -443,7 +443,7 @@ void Scene::loadImageOverlay(uint16 iptId) {
 }
 
 void Scene::removeImageOverlay(uint16 iptId) {
-	IMG *img =_vm->_dragonIMG->getIMG(iptId);
+	Img *img =_vm->_dragonImg->getImg(iptId);
 	_stage->restoreTiles(img->layerNum - 1, img->x, img->y, img->w, img->h);
 	_stage->restorePriorityTileMap(img->x, img->y, img->w, img->h);
 }

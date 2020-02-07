@@ -100,8 +100,8 @@ void Properties::print(char *prefix) {
 
 DragonFLG::DragonFLG(BigfileArchive *bigfileArchive) {
 	_data = bigfileArchive->load("dragon.flg", _dataSize);
-	properties = new Properties(288);
-	properties->init(_dataSize, _data);
+	_properties = new Properties(288);
+	_properties->init(_dataSize, _data);
 }
 
 DragonFLG::~DragonFLG() {
@@ -109,25 +109,25 @@ DragonFLG::~DragonFLG() {
 }
 
 bool DragonFLG::get(uint32 propertyId) {
-	return properties->get(propertyId);
+	return _properties->get(propertyId);
 }
 
 void DragonFLG::set(uint32 propertyId, bool value) {
-	properties->set(propertyId, value);
+	_properties->set(propertyId, value);
 }
 
 void DragonFLG::saveState(Common::WriteStream *out) {
 	//properties->print("save");
-	properties->save(128, out); // save first 80 flags.
+	_properties->save(128, out); // save first 80 flags.
 }
 
 void DragonFLG::loadState(Common::ReadStream *in) {
 	byte savedState[0x10];
 
-	properties->init(_dataSize, _data);
+	_properties->init(_dataSize, _data);
 
 	in->read(savedState, 0x10);
-	properties->init(0x10, savedState);
+	_properties->init(0x10, savedState);
 	//properties->print("load");
 
 }

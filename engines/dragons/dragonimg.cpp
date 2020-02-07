@@ -25,7 +25,7 @@
 
 namespace Dragons {
 
-DragonIMG::DragonIMG(BigfileArchive *bigfileArchive) {
+DragonImg::DragonImg(BigfileArchive *bigfileArchive) {
 	uint32 fileSize;
 	byte *iptData = bigfileArchive->load("dragon.ipt", fileSize);
 	Common::SeekableReadStream *iptReadStream = new Common::MemoryReadStream(iptData, fileSize, DisposeAfterUse::YES);
@@ -36,7 +36,7 @@ DragonIMG::DragonIMG(BigfileArchive *bigfileArchive) {
 	Common::SeekableReadStream *imgReadStream = new Common::MemoryReadStream(_imgData, fileSize, DisposeAfterUse::NO);
 
 
-	_imgObjects = new IMG[_count];
+	_imgObjects = new Img[_count];
 
 	for (int i = 0; i < _count; i++) {
 		imgReadStream->seek(iptReadStream->readUint32LE());
@@ -55,11 +55,11 @@ DragonIMG::DragonIMG(BigfileArchive *bigfileArchive) {
 	delete imgReadStream;
 }
 
-DragonIMG::~DragonIMG() {
+DragonImg::~DragonImg() {
 	delete _imgData;
 }
 
-IMG *DragonIMG::getIMG(uint32 iptId) {
+Img *DragonImg::getImg(uint32 iptId) {
 	iptId &= 0xffff;
 	assert(iptId < _count);
 	return &_imgObjects[iptId];

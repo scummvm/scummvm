@@ -33,23 +33,23 @@ class CutScene {
 private:
 	DragonsEngine *_vm;
 
-	Actor *DAT_80072de8;
-	Actor *DAT_80072dec;
-	Actor *DAT_800830c0;
-	Actor *DAT_80072df0;
-	Actor *DAT_80072e08;
-	Actor *DAT_80072df4;
-	Actor *DAT_80072df8;
-	Actor *DAT_80072dfc;
-	Actor *DAT_800830bc;
-	Actor *DAT_800830b8;
-	Actor *DAT_80072e0c;
-	Actor *DAT_800830a0;
-	Actor *DAT_800830d4;
-	Actor *DAT_800830dc;
-	Actor *DAT_80072e04;
+	Actor *_actor_80072de8;
+	Actor *_actor_80072dec;
+	Actor *_actor_800830c0;
+	Actor *_actor_80072df0;
+	Actor *_actor_80072e08;
+	Actor *_actor_80072df4;
+	Actor *_actor_80072df8;
+	Actor *_actor_80072dfc;
+	Actor *_actor_800830bc;
+	Actor *_actor_800830b8;
+	Actor *_actor_80072e0c;
+	Actor *_actor_800830a0;
+	Actor *_actor_800830d4;
+	Actor *_actor_800830dc;
+	Actor *_actor_80072e04;
 
-	uint16 DAT_80063514; //flags
+	uint16 _actor_80063514; //flags
 
 	byte *_palettes;
 public:

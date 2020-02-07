@@ -88,12 +88,12 @@ Background::Background() : _priorityLayer(0), _points2(0), _data(0) {
 	_layerSurface[0] = NULL;
 	_layerSurface[1] = NULL;
 	_layerSurface[2] = NULL;
-	layerOffset[0] = Common::Point(0,0);
-	layerOffset[1] = Common::Point(0,0);
-	layerOffset[2] = Common::Point(0,0);
-	layerAlphaMode[0] = NORMAL;
-	layerAlphaMode[1] = NORMAL;
-	layerAlphaMode[2] = NORMAL;
+	_layerOffset[0] = Common::Point(0,0);
+	_layerOffset[1] = Common::Point(0,0);
+	_layerOffset[2] = Common::Point(0,0);
+	_layerAlphaMode[0] = NORMAL;
+	_layerAlphaMode[1] = NORMAL;
+	_layerAlphaMode[2] = NORMAL;
 }
 
 Background::~Background() {
@@ -161,9 +161,9 @@ bool Background::load(byte *dataStart, uint32 size) {
 		loadGfxLayer(_layerSurface[i], _tileMap[i], _tileDataOffset);
 	}
 
-	layerPriority[0] = 1;
-	layerPriority[1] = 2;
-	layerPriority[2] = 3;
+	_layerPriority[0] = 1;
+	_layerPriority[1] = 2;
+	_layerPriority[2] = 3;
 
 	return false;
 }
@@ -281,22 +281,22 @@ void Background::setPalette(byte *newPalette) {
 
 void Background::setLayerOffset(uint8 layerNumber, Common::Point offset) {
 	assert(layerNumber < 4);
-	layerOffset[layerNumber] = offset;
+	_layerOffset[layerNumber] = offset;
 }
 
 Common::Point Background::getLayerOffset(uint8 layerNumber) {
 	assert(layerNumber < 4);
-	return layerOffset[layerNumber];
+	return _layerOffset[layerNumber];
 }
 
 AlphaBlendMode Background::getLayerAlphaMode(uint8 layerNumber) {
 	assert(layerNumber < 4);
-	return layerAlphaMode[layerNumber];
+	return _layerAlphaMode[layerNumber];
 }
 
 void Background::setLayerAlphaMode(uint8 layerNumber, AlphaBlendMode mode) {
 	assert(layerNumber < 4);
-	layerAlphaMode[layerNumber] = mode;
+	_layerAlphaMode[layerNumber] = mode;
 }
 
 BackgroundResourceLoader::BackgroundResourceLoader(BigfileArchive *bigFileArchive, DragonRMS *dragonRMS) : _bigFileArchive(

@@ -50,7 +50,7 @@ class DragonFLG {
 private:
 	byte *_data;
 	uint32 _dataSize;
-	Properties *properties;
+	Properties *_properties;
 public:
 	virtual ~DragonFLG();
 

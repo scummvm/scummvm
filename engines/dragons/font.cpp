@@ -97,7 +97,7 @@ FontManager::FontManager(DragonsEngine *vm, Screen *screen, BigfileArchive *bigf
 
 	delete readStream;
 
-	DAT_80086f48_fontColor_flag = 0;
+	_dat_80086f48_fontColor_flag = 0;
 }
 
 FontManager::~FontManager() {
@@ -211,7 +211,7 @@ void FontManager::updatePalette() {
 		} else {
 			updatePalEntry(palette_f2_font_maybe, 16, 0);
 		}
-		if (_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_4) && DAT_80086f48_fontColor_flag != 0) {
+		if (_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_4) && _dat_80086f48_fontColor_flag != 0) {
 			updatePalEntry(palette_f2_font_maybe, 17, 0x421);
 		} else {
 			updatePalEntry(palette_f2_font_maybe, 17, 0xfff);
@@ -227,7 +227,7 @@ void FontManager::updatePalette() {
 		updatePalEntry(palette_f2_font_maybe, 48, cursor3);
 		updatePalEntry(palette_f2_font_maybe, 50, 0x421);
 		updatePalEntry(palette_f2_font_maybe, 51, 0x3def);
-		//TODO WRITE_LE_INT16(&palette_f2_font_maybe[33], READ_LE_INT16(&palette_f0[DAT_80084f58 >> 8]) & 0x7fff); //DAT_80084f58 is set in ActuallyShowMessage()
+		//TODO WRITE_LE_INT16(&palette_f2_font_maybe[33], READ_LE_INT16(&palette_f0[_dat_80084f58 >> 8]) & 0x7fff); //_dat_80084f58 is set in ActuallyShowMessage()
 		updatePalEntry(palette_f2_font_maybe, 33, 0x3def); //temporarily put in standard gray
 		if (_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
 			updatePalEntry(palette_f2_font_maybe, 17, 0x3bee);

@@ -34,15 +34,15 @@ class DragonINIResource;
 
 class Cursor {
 public:
-	int16 data_800728b0_cursor_seqID;
+	int16 _data_800728b0_cursor_seqID;
 	uint16 _iniUnderCursor;
 	int32 _sequenceID;
-	int16 data_80072890;
+	int16 _data_80072890;
 	int16 _x;
 	int16 _y;
 	int16 data_8007283c;
 	int16 _cursorActivationSeqOffset;
-	uint16 iniItemInHand;
+	uint16 _iniItemInHand;
 private:
 	DragonsEngine *_vm;
 	Actor *_actor;
