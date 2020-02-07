@@ -116,75 +116,75 @@ void DragonsEngine::updateEvents() {
 	while (_eventMan->pollEvent(event)) {
 //		_input->processEvent(event);
 		switch (event.type) {
-			case Common::EVENT_QUIT:
-				quitGame();
-				break;
-			case Common::EVENT_MOUSEMOVE:
-				_cursor->updatePosition(event.mouse.x, event.mouse.y);
-				break;
-			case Common::EVENT_LBUTTONUP:
-				_leftMouseButtonUp = true;
-				_leftMouseButtonDown = false;
-				break;
-			case Common::EVENT_LBUTTONDOWN:
-				_leftMouseButtonDown = true;
-				break;
-			case Common::EVENT_RBUTTONUP:
-				_rightMouseButtonUp = true;
-				break;
-			case Common::EVENT_KEYUP:
-				if (event.kbd.keycode == Common::KEYCODE_i) {
-					_iKeyUp = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
-					_downKeyUp = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_UP) {
-					_upKeyUp = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-							event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-					_enterKeyUp = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
-					_leftKeyUp = true;
-					_leftKeyDown = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
-					_rightKeyUp = true;
-					_rightKeyDown = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_w) {
-					_wKeyDown = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_a) {
-					_aKeyDown = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_s) {
-					_sKeyDown = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_d) {
-					_dKeyDown = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_o) {
-					_oKeyDown = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_p) {
-					_pKeyDown = false;
-				}
-				break;
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_LEFT) {
-					_leftKeyDown = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
-					_rightKeyDown = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_w) {
-					_wKeyDown = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_a) {
-					_aKeyDown = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_s) {
-					_sKeyDown = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_d) {
-					_dKeyDown = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_o) {
-					_oKeyDown = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_p) {
-					_pKeyDown = true;
-				} else if (event.kbd.keycode == Common::KEYCODE_TAB) {
-					_debugMode = !_debugMode;
-				}
-				break;
-			default:
-				break;
+		case Common::EVENT_QUIT:
+			quitGame();
+			break;
+		case Common::EVENT_MOUSEMOVE:
+			_cursor->updatePosition(event.mouse.x, event.mouse.y);
+			break;
+		case Common::EVENT_LBUTTONUP:
+			_leftMouseButtonUp = true;
+			_leftMouseButtonDown = false;
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+			_leftMouseButtonDown = true;
+			break;
+		case Common::EVENT_RBUTTONUP:
+			_rightMouseButtonUp = true;
+			break;
+		case Common::EVENT_KEYUP:
+			if (event.kbd.keycode == Common::KEYCODE_i) {
+				_iKeyUp = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
+				_downKeyUp = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_UP) {
+				_upKeyUp = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+				_enterKeyUp = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
+				_leftKeyUp = true;
+				_leftKeyDown = false;
+			} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
+				_rightKeyUp = true;
+				_rightKeyDown = false;
+			} else if (event.kbd.keycode == Common::KEYCODE_w) {
+				_wKeyDown = false;
+			} else if (event.kbd.keycode == Common::KEYCODE_a) {
+				_aKeyDown = false;
+			} else if (event.kbd.keycode == Common::KEYCODE_s) {
+				_sKeyDown = false;
+			} else if (event.kbd.keycode == Common::KEYCODE_d) {
+				_dKeyDown = false;
+			} else if (event.kbd.keycode == Common::KEYCODE_o) {
+				_oKeyDown = false;
+			} else if (event.kbd.keycode == Common::KEYCODE_p) {
+				_pKeyDown = false;
+			}
+			break;
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_LEFT) {
+				_leftKeyDown = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
+				_rightKeyDown = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_w) {
+				_wKeyDown = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_a) {
+				_aKeyDown = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_s) {
+				_sKeyDown = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_d) {
+				_dKeyDown = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_o) {
+				_oKeyDown = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_p) {
+				_pKeyDown = true;
+			} else if (event.kbd.keycode == Common::KEYCODE_TAB) {
+				_debugMode = !_debugMode;
+			}
+			break;
+		default:
+			break;
 		}
 	}
 }
@@ -237,7 +237,7 @@ Common::Error DragonsEngine::run() {
 }
 
 uint16 DragonsEngine::ipt_img_file_related() {
-    DragonINI *flicker = _dragonINIResource->getFlickerRecord();
+	DragonINI *flicker = _dragonINIResource->getFlickerRecord();
 	assert(flicker);
 
 	int16 tileX = flicker->actor->_x_pos / 32;
@@ -290,8 +290,7 @@ void DragonsEngine::gameLoop() {
 				pDVar8->field_20_actor_field_14 = 2;
 				if (getINI(0xc2)->field_1e == 1) {
 					sequenceId = 0x30;
-				}
-				else {
+				} else {
 					sequenceId = 2;
 				}
 				pDVar8->actor->updateSequence(sequenceId);
@@ -322,8 +321,7 @@ void DragonsEngine::gameLoop() {
 					_counter = 0;
 				}
 			}
-		}
-		else {
+		} else {
 			LAB_80026d34:
 			uVar3 = 0;
 		}
@@ -331,8 +329,7 @@ void DragonsEngine::gameLoop() {
 		if (_cursor->updateINIUnderCursor() == 0 ||
 			(!(_cursor->_iniUnderCursor & 0x8000) && (getINI(_cursor->_iniUnderCursor - 1)->field_1a_flags_maybe & 0x4000) != 0)) { //TODO check this. This logic looks a bit strange.
 			_cursor->_cursorActivationSeqOffset = 0;
-		}
-		else {
+		} else {
 			_cursor->_cursorActivationSeqOffset = 5;
 		}
 
@@ -384,8 +381,7 @@ void DragonsEngine::gameLoop() {
 			}
 
 			performAction();
-			if ((getCurrentSceneId() == 0x1d) && (getINI(0x178)->field_12 != 0)) //cave of dilemma
-			{
+			if ((getCurrentSceneId() == 0x1d) && (getINI(0x178)->field_12 != 0)) { //cave of dilemma
 				clearFlags(ENGINE_FLAG_8);
 			} else {
 				setFlags(ENGINE_FLAG_8);
@@ -402,24 +398,22 @@ void DragonsEngine::gameLoop() {
 						sequenceId = _dragonVAR->getVar(7);
 						uVar7 = _inventory->_old_showing_value;
 						_inventory->_old_showing_value = _inventory->getType();
-						joined_r0x800271d0:
+				joined_r0x800271d0:
 						_inventory->setType(_inventory->_old_showing_value);
 						if (sequenceId == 1) {
 							LAB_800279f4:
 							_inventory->_old_showing_value = uVar7;
 							_inventory->inventoryMissing();
 							actorId = uVar3;
-						}
-						else {
+						} else {
 							_counter = 0;
 							_inventory->setType(1);
 							_inventory->openInventory();
-							joined_r0x80027a38:
+				joined_r0x80027a38:
 							if (_cursor->_iniItemInHand == 0) {
 								_cursor->_sequenceID = 1;
 								actorId = uVar3;
-							}
-							else {
+							} else {
 								_cursor->_sequenceID = 5;
 								actorId = uVar3;
 							}
@@ -439,8 +433,7 @@ void DragonsEngine::gameLoop() {
 										_inventory->_old_showing_value = _inventory->getType();
 										goto joined_r0x800271d0;
 									}
-								}
-								else {
+								} else {
 									if (_inventory->addItem(_cursor->_iniItemInHand)) {
 										_cursor->_sequenceID = 1;
 										waitForFrames(1);
@@ -450,20 +443,19 @@ void DragonsEngine::gameLoop() {
 										continue;
 									}
 								}
-							}
-							else {
+							} else {
 								if (_cursor->_iniUnderCursor != 0x8001) goto LAB_80027ab4;
 								if (_inventory->getSequenceId() == 0) goto LAB_80027294;
 							}
 							if ((_cursor->_iniUnderCursor == 0x8001) && (_inventory->getSequenceId() == 1)) {
 								_inventory->setType(2);
 								_inventory->_old_showing_value = uVar6;
-								FUN_80038890();
+								fun_80038890();
 								actorId = uVar3;
 								continue;
 							}
 						}
-						LAB_80027ab4:
+				LAB_80027ab4:
 						_counter = 0;
 						_cursor->_data_80072890 = _cursor->_iniUnderCursor;
 						if (_cursor->_sequenceID < 5) {
@@ -472,8 +464,7 @@ void DragonsEngine::gameLoop() {
 							if (_bit_flags_8006fbd8 != 0) {
 								clearFlags(ENGINE_FLAG_8);
 							}
-						}
-						else {
+						} else {
 							_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
 							walkFlickerToObject();
 							if (_bit_flags_8006fbd8 != 0) {
@@ -484,23 +475,24 @@ void DragonsEngine::gameLoop() {
 						}
 					}
 				}
-			}
-			else {
+			} else {
 				if (_inventory->getType() == 2) {
 					uVar6 = _inventory->getType();
 					if (checkForInventoryButtonRelease() && isInputEnabled()) {
 						uVar7 = _inventory->_old_showing_value;
-						if (_dragonVAR->getVar(7) == 1) goto LAB_800279f4;
+						if (_dragonVAR->getVar(7) == 1)
+							goto LAB_800279f4;
 						_counter = 0;
 						_inventory->setType(1);
 						_inventory->_old_showing_value = uVar6;
 						_inventory->openInventory();
 						goto joined_r0x80027a38;
 					}
-					if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) goto LAB_80027ab4;
+					if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8))
+						goto LAB_80027ab4;
 				}
 			}
-			LAB_80027b58:
+	LAB_80027b58:
 			runINIScripts();
 			actorId = uVar3;
 			continue;
@@ -523,15 +515,14 @@ void DragonsEngine::gameLoop() {
 					_inventory->closeInventory();
 					_inventory->setType(0);
 					if (_inventory->_old_showing_value == 2) {
-						FUN_80038994();
+						fun_80038994();
 					}
-				}
-				else {
+				} else {
 					if (_cursor->_iniUnderCursor != 0x8002) goto LAB_8002790c;
 					_inventory->closeInventory();
 					_inventory->setType(2);
 					if (_inventory->_old_showing_value != 2) {
-						FUN_80038890();
+						fun_80038890();
 					}
 				}
 				_inventory->_old_showing_value = uVar6;
@@ -572,15 +563,15 @@ void DragonsEngine::gameLoop() {
 				}
 				continue;
 			}
-			if (_cursor->_iniItemInHand == 0) goto LAB_80027b58;
+			if (_cursor->_iniItemInHand == 0)
+				goto LAB_80027b58;
 			//drop item back into inventory
 			if (_inventory->addItemIfPositionIsEmpty(_cursor->_iniItemInHand, _cursor->_x, _cursor->_y)) {
 				Actor *invActor = _inventory->getInventoryItemActor(_cursor->_iniItemInHand);
 				invActor->_flags = 0;
 				invActor->_priorityLayer = 0;
 				invActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-				invActor->updateSequence(
-						 getINI(_cursor->_iniItemInHand - 1)->field_8 * 2 + 10);
+				invActor->updateSequence(getINI(_cursor->_iniItemInHand - 1)->field_8 * 2 + 10);
 				_cursor->_iniItemInHand = 0;
 				invActor->setFlag(ACTOR_FLAG_40);
 				invActor->setFlag(ACTOR_FLAG_80);
@@ -592,7 +583,7 @@ void DragonsEngine::gameLoop() {
 				}
 			}
 		}
-		LAB_8002790c:
+LAB_8002790c:
 		if ((_cursor->_iniItemInHand == 0) ||
 			(((uint16)(_cursor->_x - 10U) < 300 && ((uint16)(_cursor->_y - 10U) < 0xb4))))
 			goto LAB_80027b58;
@@ -718,9 +709,9 @@ void DragonsEngine::updateActorSequences() {
 		}
 
 		if (actor->_flags & ACTOR_FLAG_40 &&
-			!(actor->_flags & ACTOR_FLAG_4) &&
-			!(actor->_flags & ACTOR_FLAG_400) &&
-			(actor->_sequenceTimer == 0 || actor->_flags & ACTOR_FLAG_1)) {
+				!(actor->_flags & ACTOR_FLAG_4) &&
+				!(actor->_flags & ACTOR_FLAG_400) &&
+				(actor->_sequenceTimer == 0 || actor->_flags & ACTOR_FLAG_1)) {
 			debug(5, "Actor[%d] execute sequenceOp", actorId);
 
 			if (actor->_flags & ACTOR_FLAG_1) {
@@ -864,8 +855,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 //			actors[(uint)uVar5]._sequenceID = 8;
 //			actors[(uint)uVar5]._priorityLayer_maybe = 0;
 //		}
-	}
-	else {
+	} else {
 		if (flickerINI->sceneId == currentSceneId) {
 			if ((flickerINI == NULL) || flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
 				if ((flickerINI->sceneId == currentSceneId)
@@ -937,8 +927,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 //			actors[(uint)uVar5]._sequenceID = 8;
 //			actors[(uint)uVar5]._priorityLayer_maybe = 0;
 //		}
-		}
-		else {
+		} else {
 			if (flickerINI->sceneId == currentSceneId) {
 				if (flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
 					if (_inventory->isActorSet()) {
@@ -950,9 +939,9 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 						_bit_flags_8006fbd8 = _bit_flags_8006fbd8 | 2;
 					}
 					if (flickerINI->actor->isFlagClear(ACTOR_FLAG_2000)
-					&& flickerINI->actor->isFlagSet(ACTOR_FLAG_4)
-					&& flickerINI->actor->_sequenceID2 != -1
-					&& flickerINI->actor->_sequenceID2 != flickerINI->actor->_sequenceID) {
+							&& flickerINI->actor->isFlagSet(ACTOR_FLAG_4)
+							&& flickerINI->actor->_sequenceID2 != -1
+							&& flickerINI->actor->_sequenceID2 != flickerINI->actor->_sequenceID) {
 						flickerINI->actor->updateSequence(flickerINI->actor->_sequenceID2);
 					}
 				}
@@ -1094,8 +1083,7 @@ void DragonsEngine::performAction() {
 		if (((uVar4 & 0xffff) == 0) && ((uVar6 & 0xfffd) == 0)) {
 			_talk->flickerRandomDefaultResponse();
 		}
-	}
-	else {
+	} else {
 		_scriptOpcodes->_data_80071f5c--;
 	}
 	_flags |= uVar1 & ENGINE_FLAG_8;
@@ -1134,12 +1122,11 @@ bool DragonsEngine::checkForActionButtonRelease() {
 	return _leftMouseButtonUp || _enterKeyUp;
 }
 
-void DragonsEngine::FUN_80038890() {
-	error("FUN_80038890"); //TODO
+void DragonsEngine::fun_80038890() {
+	error("fun_80038890"); //TODO
 }
 
-void DragonsEngine::walkFlickerToObject()
-{
+void DragonsEngine::walkFlickerToObject() {
 	uint16 targetX;
 	uint16 targetY;
 	uint uVar7;
@@ -1152,7 +1139,7 @@ void DragonsEngine::walkFlickerToObject()
 		if (_cursor->_data_80072890 != 0) {
 
 			if (!(READ_LE_UINT16(_dragonOBD->getFromOpt(_cursor->_data_80072890 - 1) + 4) & 8)
-			&& (_inventory->getType() == 0) && !isFlagSet(ENGINE_FLAG_200000)) {
+					&& (_inventory->getType() == 0) && !isFlagSet(ENGINE_FLAG_200000)) {
 				targetINI = getINI(_cursor->_data_80072890 - 1);
 				if ((targetINI->field_1a_flags_maybe & 1) == 0) {
 					if (targetINI->actorResourceId == -1) {
@@ -1161,8 +1148,7 @@ void DragonsEngine::walkFlickerToObject()
 					Img *img = _dragonImg->getImg(targetINI->field_2);
 					targetX = img->field_a;
 					targetY = img->field_c;
-				}
-				else {
+				} else {
 					targetX = targetINI->actor->_x_pos;
 					targetY = targetINI->actor->_y_pos;
 				}
@@ -1198,8 +1184,7 @@ void DragonsEngine::walkFlickerToObject()
 					(int)((uVar7 + (uint)_scene->_camera.x) * 0x10000) >> 0x10,
 					(int)((uVar8 + (uint)_scene->_camera.y) * 0x10000) >> 0x10,0);
 		}
-	}
-	else {
+	} else {
 		if (_cursor->_data_80072890 != 0) {
 			_bit_flags_8006fbd8 = 3;
 			return;
@@ -1209,8 +1194,8 @@ void DragonsEngine::walkFlickerToObject()
 	return;
 }
 
-void DragonsEngine::FUN_80038994() {
-	error("FUN_80038994"); //TODO
+void DragonsEngine::fun_80038994() {
+	error("fun_80038994"); //TODO
 }
 
 void DragonsEngine::reset_screen_maybe() {
@@ -1253,7 +1238,7 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 	_screen->loadPalette(4, _cursor->getPalette());
 	_screen->updatePaletteTransparency(4, 1, 0xff, true);
 
-	// TODO FUN_80017010_update_actor_texture_maybe();
+	// TODO fun_80017010_update_actor_texture_maybe();
 	if (sceneId > 2) {
 		_dragonVAR->setVar(1, 1);
 	}
@@ -1300,7 +1285,7 @@ void DragonsEngine::reset() {
 
 void DragonsEngine::runSceneUpdaterFunction() {
 	if ((isFlagSet(ENGINE_FLAG_20) && (_run_func_ptr_unk_countdown_timer == 0)) &&
-		(_run_func_ptr_unk_countdown_timer = 1, _sceneUpdateFunction != NULL)) {
+			(_run_func_ptr_unk_countdown_timer = 1, _sceneUpdateFunction != NULL)) {
 		_sceneUpdateFunction();
 	}
 }
@@ -1314,11 +1299,10 @@ void DragonsEngine::setVsyncUpdateFunction(void (*newUpdateFunction)()) {
 }
 
 void DragonsEngine::seedRandom(int32 seed) {
-		_randomState = seed * -0x2b0e2b0f;
+	_randomState = seed * -0x2b0e2b0f;
 }
 
-uint32 DragonsEngine::shuffleRandState()
-{
+uint32 DragonsEngine::shuffleRandState() {
 	uint32 returnBit;
 
 	returnBit = _randomState & 1;
@@ -1415,8 +1399,7 @@ void DragonsEngine::updatePaletteCycling() {
 						}
 						palette[(uint16)_paletteCyclingTbl[loopIndex].startOffset] = uVar11;
 						_paletteCyclingTbl[loopIndex].updateCounter = _paletteCyclingTbl[loopIndex].updateInterval;
-					}
-					else {
+					} else {
 						if (uVar8 < uVar14) {
 							uint16 uVar11 = palette[uVar14];
 							uint16 uVar15 = uVar8;
@@ -1432,8 +1415,7 @@ void DragonsEngine::updatePaletteCycling() {
 									_paletteCyclingTbl[loopIndex].updateInterval;
 						}
 					}
-				}
-				else {
+				} else {
 					_paletteCyclingTbl[loopIndex].updateCounter = _paletteCyclingTbl[loopIndex].updateCounter + -1;
 				}
 			}

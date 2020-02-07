@@ -152,6 +152,7 @@ public:
 
 	Screen *_screen;
 	uint16 _sceneId1; //TODO wire this up. I think it might be where to restore save game from?
+
 private:
 	BigfileArchive *_bigfileArchive;
 	DragonFLG *_dragonFLG;
@@ -295,17 +296,17 @@ private:
 	bool isInputEnabled();
 	bool checkForInventoryButtonRelease();
 
-	void FUN_80038890();
+	void fun_80038890();
 	void walkFlickerToObject();
-	void FUN_80038994();
+	void fun_80038994();
 
 	void seedRandom(int32 seed);
 	uint32 shuffleRandState();
-	void FUN_8002931c();
+	void fun_8002931c();
 
 	void initializeSound();
 
-	void SomeInitSound_FUN_8003f64c();
+	void SomeInitSound_fun_8003f64c();
 };
 
 DragonsEngine *getEngine();

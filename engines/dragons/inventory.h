@@ -55,6 +55,7 @@ private:
 	Common::Point _inventionBookPrevFlickerINIPosition;
 
 	uint16 _inventoryItemTbl[DRAGONS_MAX_INVENTORY_ITEMS];
+
 public:
 	Inventory(DragonsEngine *vm);
 

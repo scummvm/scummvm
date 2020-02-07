@@ -84,8 +84,7 @@ void Minigame4::run() {
 	//call_fade_related_1f();
 	if (_vm->_dragonINIResource->getRecord(0x1f5)->field_12 == 3) {
 		actorTalk(_bruteActor,0x3321,0x4A84);
-	}
-	else {
+	} else {
 		actorTalk(_bruteActor,0x3321,0x49A2);
 		actorTalk(_flickerActor,0,0x4A56);
 	}
@@ -120,8 +119,7 @@ void Minigame4::actorTalk(Actor *actorId,uint16 param_2,uint32 textIndex)
 	actorId->waitUntilFlag8SetThenSet1000AndWaitFor4();
 	if (actorId == _bruteActor) {
 		_bruteActor->updateSequence(9);
-	}
-	else {
+	} else {
 		_flickerActor->updateSequence(9);
 	}
 
@@ -129,8 +127,7 @@ void Minigame4::actorTalk(Actor *actorId,uint16 param_2,uint32 textIndex)
 	actorId->waitUntilFlag8SetThenSet1000AndWaitFor4();
 	if (actorId == _bruteActor) {
 		_bruteActor->updateSequence(0);
-	}
-	else {
+	} else {
 		_flickerActor->updateSequence(0);
 	}
 }
@@ -306,8 +303,7 @@ uint16 Minigame4::fun_8009009c(uint16 unk) {
 	if (unk == 0) {
 		_bruteActor->updateSequence(8);
 		_flickerActor->updateSequence(7);
-	}
-	else {
+	} else {
 		_bruteActor->updateSequence(7);
 		_flickerActor->updateSequence(8);
 	}

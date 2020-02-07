@@ -270,8 +270,7 @@ void SpecialOpcodes::spcCastleGardenLogic() {
 		sceneUpdater.sequenceIDTbl[3][0] = 1;
 		sceneUpdater.iniIDTbl[3][0] = 0x145;
 		sceneUpdater.iniIDTbl[4][0] = 0x144;
-	}
-	else {
+	} else {
 		sceneUpdater.sequenceIDTbl[0][0] = -1;
 		sceneUpdater.sequenceIDTbl[1][0] = -1;
 		sceneUpdater.sequenceIDTbl[2][0] = -1;
@@ -463,8 +462,7 @@ void SpecialOpcodes::spcWalkOnStilts() {
 	while (flickerOnStilts->isFlagSet(ACTOR_FLAG_10)) {
 		if (flickerOnStilts->_frame->field_c == 0) {
 			isInWater = false;
-		}
-		else {
+		} else {
 			if (!isInWater && flickerOnStilts->_y_pos >= 0x6a && flickerOnStilts->_y_pos < 0x96) {
 				isInWater = true;
 				waterRipples->_x_pos = flickerOnStilts->_x_pos - flickerOnStilts->_frame->field_e;
@@ -1243,8 +1241,7 @@ void SpecialOpcodes::pizzaMakerStopWorking() {
 			actorf5->_x_pos = 0xff9c;
 			actorf5->_y_pos = 100;
 			actorf4->updateSequence(3);
-		}
-		else {
+		} else {
 			if (actorf4->_sequenceID == 2) {
 				_vm->waitForFrames(0x78);
 				actorf5->updateSequence(8);
@@ -1252,8 +1249,7 @@ void SpecialOpcodes::pizzaMakerStopWorking() {
 				actorf5->_x_pos = 0xff9c;
 				actorf5->_y_pos = 100;
 				actorf4->updateSequence(3);
-			}
-			else {
+			} else {
 				if (actorf4->_sequenceID != 3) {
 					return;
 				}
@@ -1351,8 +1347,7 @@ void pizzaUpdateFunction() {
 					}
 				}
 			}
-		}
-		else {
+		} else {
 			counter--;
 		}
 }
@@ -1404,8 +1399,7 @@ void castleBuildingBlackDragon2UpdateFunction() {
 			ini->actor->updateSequence(0xb);
 			ini->field_10 = 0x68;
 			ini->field_12 = 1;
-		}
-		else if (ini->field_12 == 1) {
+		} else if (ini->field_12 == 1) {
 			ini->actor->updateSequence(4);
 			ini->field_10 = vm->getRand(0xb4);
 			ini->field_12 = 0;
@@ -1422,8 +1416,7 @@ void shakeScreenUpdateFunction() {
 		shakeDirection = shakeDirection ^ 1u;
 		int16 shakeValue = shakeDirection != 0 ? 1 : -1;
 		vm->_screen->setScreenShakeOffset(shakeValue, shakeValue);
-	}
-	else {
+	} else {
 		counter--;
 	}
 	vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(counter);
@@ -1466,8 +1459,7 @@ void castleFogUpdateFunction() {
 		}
 		vm->_scene->setLayerOffset(2, Common::Point(castleFogXOffset, 0));
 		specialOpCounter = 6;
-	}
-	else {
+	} else {
 		specialOpCounter--;
 	}
 	vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(specialOpCounter);
@@ -1493,8 +1485,7 @@ void menInMinesSceneUpdateFunction() {
 		vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(vm->getRand(5) * 0x3c + 0x708);
 		vm->_talk->playDialogAudioDontWait(sceneUpdateFuncDialogTbl[vm->getRand(4)]);
 		sequenceId = 2;
-	}
-	else {
+	} else {
 		if (vm->_data_800633fc == 0) {
 			return;
 		}
@@ -1717,8 +1708,7 @@ void flameEscapeSceneUpdateFunction() {
 				vm->_talk->playDialogAudioDontWait(dialogTbl[vm->getRand(6)]);
 				specialOpCounter = 0;
 				DAT_800634c0 = 1;
-			}
-			else {
+			} else {
 				if (DAT_800634c0 == 1) {
 					flame->updateSequence(0x10);
 					specialOpCounter = (vm->getRand(0x14) + 10) * 0x3c;
@@ -1727,8 +1717,7 @@ void flameEscapeSceneUpdateFunction() {
 			}
 		}
 		vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(specialOpCounter);
-	}
-	else {
+	} else {
 		if ((vm->_data_800633fc != 0) && flame->_sequenceID != 0x10) {
 			flame->updateSequence(0x10);
 		}
@@ -1760,8 +1749,7 @@ void caveOfDilemmaUpdateFunction() {
 		oldManActor->_y_pos = oldManActor->_y_pos + yOffset;
 		cloudChairActor->_y_pos = cloudChairActor->_y_pos + yOffset;
 		counter = 10;
-	}
-	else {
+	} else {
 		counter--;
 	}
 }

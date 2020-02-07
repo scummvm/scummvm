@@ -301,8 +301,7 @@ void Minigame3::run() {
 	while ((int16)i < 4) {
 		if (goodRabbitPositionTbl[(int16)i] == 0) {
 			bunnyActorTbl[(int16)i]->updateSequence(1);
-		}
-		else {
+		} else {
 			local_16 = i;
 		}
 		i = i + 1;
@@ -363,13 +362,11 @@ void Minigame3::run() {
 						bunnyActorTbl[local_1c]->_y_pos = bunnyPositionsTbl[bunnyInfo[local_1e].positionIdx].y;
 						bunnyActorTbl[local_1a]->_y_pos = bunnyPositionsTbl[bunnyInfo[local_20].positionIdx].y;
 						currentState = 5;
-					}
-					else {
+					} else {
 						if (bunnyActorTbl[local_1a]->_sequenceID == 5) {
 							bunnyActorTbl[local_1a]->updateSequence(6);
 							bunnyActorTbl[local_1c]->updateSequence(0xd);
-						}
-						else {
+						} else {
 							local_56 = local_56 - *(int16 *)&UnkStruct_ARRAY_800931a0[local_50].field_0x14;
 							bunnyInfo[local_20].x = bunnyInfo[local_20].x + UnkStruct_ARRAY_800931a0[local_50].field_0x14 * -0x200;
 							bunnyInfo[local_20].y = bunnyInfo[local_20].y - bunnyInfo[local_20].field_0xc;
@@ -404,8 +401,7 @@ void Minigame3::run() {
 				local_50 = _vm->getRand(4);
 				if (local_50 < 2) {
 					i = _vm->getRand(2);
-				}
-				else {
+				} else {
 					i = 0;
 				}
 				bunnyInfo[(int16)i].positionIdx = (uint)UnkStruct_ARRAY_800931a0[local_50].position1;
@@ -428,8 +424,7 @@ void Minigame3::run() {
 				bunnyActorTbl[local_1c]->updateSequence(0xc);
 				if (hopCounter == 0x1d) {
 					_vm->playOrStopSound(2);
-				}
-				else {
+				} else {
 					_vm->playOrStopSound((uint)local_1c2);
 					local_1c2 = 1 - local_1c2;
 				}
@@ -453,8 +448,7 @@ void Minigame3::run() {
 					local_5c = local_5c + 5;
 					currentState = 3;
 					local_58 = 0x3c;
-				}
-				else {
+				} else {
 					currentState = 2;
 					local_58 = 2;
 				}
@@ -474,8 +468,7 @@ void Minigame3::run() {
 				tearActorTbl[(int16)i]->_y_pos = tearActorTbl[(int16)i]->_y_pos + ((uint16)local_208[(int)(int16)i + 8] >> 6);
 				if (tearActorTbl[(int16)i]->_y_pos < (int16)tearInfo[local_208[(int16)i]].yRelated) {
 					local_208[(int)(int16)i + 8] = local_208[(int)(int16)i + 8] + 8;
-				}
-				else {
+				} else {
 					tearActorTbl[(int16)i]->_priorityLayer = 0;
 					local_1e8 = local_1e8 & ~(1 << ((int)local_208[(int16)i] & 0x1fU));
 					local_208[(int16)i] = -1;
@@ -487,8 +480,7 @@ void Minigame3::run() {
 		if (((local_1e0 < local_1de) && (currentState != 6)) && (sVar2 = _vm->getRand(2), sVar2 == 0)) {
 			if ((local_1e8 & 0x7fff) < local_1e8 >> 0xf) {
 				local_14 = 0;
-			}
-			else {
+			} else {
 				local_14 = 0xf;
 			}
 			do {
@@ -521,15 +513,13 @@ void Minigame3::run() {
 							local_e = 1;
 						}
 					}
-				}
-				else {
+				} else {
 					if (local_1c6 == 0) {
 						if (local_1c8 == 2) {
 							local_1c6 = 3;
 							local_1c8 = 1;
 							updateBackgroundLayerOffset(2, 0x640, 0);
-						}
-						else {
+						} else {
 							if (local_1c8 == 1) {
 								local_1c8 = 0;
 								local_1ba = 0;
@@ -540,13 +530,11 @@ void Minigame3::run() {
 								tearBlinkActorTbl2[1]->updateSequence(1);
 							}
 						}
-					}
-					else {
+					} else {
 						local_1c6 = local_1c6 + -1;
 					}
 				}
-			}
-			else {
+			} else {
 				if (local_1c6 == 0) {
 					i = 0;
 					while ((int16)i < 8) {
@@ -566,13 +554,11 @@ void Minigame3::run() {
 					updateBackgroundLayerOffset(2, 0x780, 0);
 					tearBlinkActorTbl[0]->_y_pos = 0xcc;
 					tearBlinkActorTbl[1]->_y_pos = 0xcc;
-				}
-				else {
+				} else {
 					local_1c6 = local_1c6 + -1;
 				}
 			}
-		}
-		else {
+		} else {
 			if (local_1c6 == 0) {
 				if (local_1c8 == 1) {
 					local_1c6 = 3;
@@ -582,8 +568,7 @@ void Minigame3::run() {
 					tearBlinkActorTbl2[1]->updateSequence(1);
 					tearBlinkActorTbl2[0]->_priorityLayer = 4;
 					tearBlinkActorTbl2[1]->_priorityLayer = 4;
-				}
-				else {
+				} else {
 					if (local_1c8 == 2) {
 						local_1c6 = 0x14;
 						local_1c8 = 3;
@@ -593,8 +578,7 @@ void Minigame3::run() {
 						flags = (flags & 0xfffe) | 2;
 					}
 				}
-			}
-			else {
+			} else {
 				local_1c6 = local_1c6 + -1;
 			}
 		}
@@ -632,16 +616,14 @@ void Minigame3::run() {
 					tmpValue = _vm->getRand(2);
 					if ((tmpValue & 0xffff) == 0) {
 						local_1be = 1;
-					}
-					else {
+					} else {
 						local_1be = 0xffff;
 					}
 					local_1bc = _vm->getRand(3);
 					local_1bc = local_1bc + 3;
 					local_1ba = _vm->getRand(10);
 					local_1ba = local_1ba + 10;
-				}
-				else {
+				} else {
 					if (((local_1be < 0) && (-10 < local_1c0)) || ((0 < local_1be && (local_1c0 < 10)))) {
 						local_1c0 = local_1c0 + local_1be;
 					}
@@ -659,8 +641,7 @@ void Minigame3::run() {
 					updateBackgroundLayerOffset(1, (int) -local_1c0, (int) eyeBgYOffsetTbl[local_1c0 + 10]);
 					updateBackgroundLayerOffset(0, (int) -local_1c0, (int) eyeBgYOffsetTbl[local_1c0 + 10]);
 				}
-			}
-			else {
+			} else {
 				local_1ba = local_1ba + -1;
 			}
 		}
@@ -739,8 +720,7 @@ void Minigame3::run() {
 	if (goodRabbitPositionTbl[local_224] == 1) {
 		bunnyActorTbl[bunnyPositionTbl[local_224]]->updateSequence(2);
 		_vm->_dragonINIResource->getRecord(0x178)->field_14 = 1;
-	}
-	else {
+	} else {
 		bunnyActorTbl[bunnyPositionTbl[local_224]]->updateSequence(3);
 		i = 0;
 		while (((int16)i < 4 && (goodRabbitPositionTbl[(int16)i] != 1))) {
