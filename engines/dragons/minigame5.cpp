@@ -99,7 +99,7 @@ void Minigame5::run() {
 	local_76 = _vm->_scene->getSceneId();
 	local_78 = _vm->_dragonINIResource->getFlickerRecord();
 	local_78->actor->setFlag(ACTOR_FLAG_100);
-	local_78->actor->priorityLayer = 0;
+	local_78->actor->_priorityLayer = 0;
 	savedEngineFlags = _vm->getMultipleFlags(ENGINE_FLAG_8 | ENGINE_FLAG_10 | ENGINE_FLAG_20 | ENGINE_FLAG_80);
 	_vm->clearFlags(ENGINE_FLAG_8);
 	_vm->clearFlags(ENGINE_FLAG_10);
@@ -108,14 +108,14 @@ void Minigame5::run() {
 	_vm->_dragonINIResource->setFlickerRecord(_vm->_dragonINIResource->getRecord(DAT_80063a40 - 1));
 	flickerActor = _vm->_dragonINIResource->getFlickerRecord()->actor;
 	flickerActor->_flags = flickerActor->_flags | 0x380;
-	flickerActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-	flickerActor->priorityLayer = 4;
+	flickerActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	flickerActor->_priorityLayer = 4;
 	flickerActor->_sequenceID2 = -1;
 	flickerActor->updateSequence(0x19);
 	currentState = 0;
 	local_10 = 0;
-	local_850 = flickerActor->x_pos;
-	uVar1 = flickerActor->y_pos;
+	local_850 = flickerActor->_x_pos;
+	uVar1 = flickerActor->_y_pos;
 	local_74 = 0;
 //	DisableVSyncEvent();
 	pusherActor = _vm->_actorManager->loadActor
@@ -125,10 +125,10 @@ void Minigame5::run() {
 		error("Couldn't alloc pusher!");
 	}
 	pusherActor->_flags = pusherActor->_flags | 0x380;
-	pusherActor->x_pos = flickerActor->x_pos + -0xe;
-	pusherActor->y_pos = flickerActor->y_pos + 7;
-	pusherActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-	pusherActor->priorityLayer = 6;
+	pusherActor->_x_pos = flickerActor->_x_pos + -0xe;
+	pusherActor->_y_pos = flickerActor->_y_pos + 7;
+	pusherActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	pusherActor->_priorityLayer = 6;
 //	DisableVSyncEvent();
 	wheelsActor = _vm->_actorManager->loadActor(7,0x11,0,0);
 //	EnableVSyncEvent();
@@ -136,10 +136,10 @@ void Minigame5::run() {
 		error("Couldn't alloc wheels!");
 	}
 	wheelsActor->_flags = wheelsActor->_flags | 0x380;
-	wheelsActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-	wheelsActor->x_pos = flickerActor->x_pos;
-	wheelsActor->y_pos = flickerActor->y_pos;
-	wheelsActor->priorityLayer = 5;
+	wheelsActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	wheelsActor->_x_pos = flickerActor->_x_pos;
+	wheelsActor->_y_pos = flickerActor->_y_pos;
+	wheelsActor->_priorityLayer = 5;
 	wheelsActor->updateSequence(0x11);
 	local_62 = 0;
 //	DisableVSyncEvent();
@@ -149,8 +149,8 @@ void Minigame5::run() {
 		error("Couldn't alloc bomb!");
 	}
 	bombActor->_flags = bombActor->_flags | 0x380;
-	bombActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-	bombActor->priorityLayer = 0;
+	bombActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	bombActor->_priorityLayer = 0;
 //	DisableVSyncEvent();
 	dustActor = _vm->_actorManager->loadActor(8,8,100,100,0);
 //	EnableVSyncEvent();
@@ -158,10 +158,10 @@ void Minigame5::run() {
 		error("Couldn't alloc dust sprite!");
 	}
 	dustActor->_flags = dustActor->_flags | 0x380;
-	dustActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	dustActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	local_4e = _vm->_dragonINIResource->getRecord(DAT_80063a48 + -1)->actor;
 	local_4c = 0;
-	local_4a = local_4e->field_c;
+	local_4a = local_4e->_field_c;
 	_vm->setFlags(ENGINE_FLAG_4000000);
 	currentState = 1;
 	local_66 = 0;
@@ -207,8 +207,8 @@ void Minigame5::run() {
 						local_74 = 0;
 					}
 					else {
-						pusherActor->x_pos = flickerActor->x_pos + -0xe;
-						pusherActor->y_pos = flickerActor->y_pos + 7;
+						pusherActor->_x_pos = flickerActor->_x_pos + -0xe;
+						pusherActor->_y_pos = flickerActor->_y_pos + 7;
 						if (local_74 < 0x168) {
 							local_74 = local_74 + 1;
 							if (local_74 < 0x14) {
@@ -275,14 +275,14 @@ void Minigame5::run() {
 										   (short)((int)((uint)local_850 << 7) / 0x2a);
 							}
 							local_60 = local_850 << 7;
-							bombActor->x_pos = local_850 & 0x1ff;
+							bombActor->_x_pos = local_850 & 0x1ff;
 							local_5e = 0x2d00;
 							local_5a = (local_72 + 3) * 0x80;
-							bombActor->y_pos = 0x5a;
+							bombActor->_y_pos = 0x5a;
 							bombScale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-							bombActor->scale = bombScale;
+							bombActor->_scale = bombScale;
 							_vm->playOrStopSound(10);
-							bombActor->priorityLayer = 3;
+							bombActor->_priorityLayer = 3;
 							flickerActor->updateSequence(8);
 							currentState = 3;
 						}
@@ -310,10 +310,10 @@ void Minigame5::run() {
 							local_5a = 0;
 						}
 					}
-					bombActor->x_pos = local_60 >> 7;
-					bombActor->y_pos = local_5e >> 7;
+					bombActor->_x_pos = local_60 >> 7;
+					bombActor->_y_pos = local_5e >> 7;
 					bombScale = bombScale - 3;
-					bombActor->scale = bombScale;
+					bombActor->_scale = bombScale;
 					if (bombScale == 0x7f) {
 						if (((local_60 >> 7 < local_30[0]) || (local_30[1] < local_60 >> 7)) ||
 							(local_72 != local_30[2])) {
@@ -331,26 +331,26 @@ void Minigame5::run() {
 								((local_72 == 3 &&
 								  (((0x3c < local_60 >> 7 && (local_60 >> 7 < 0x46)) ||
 									((0x101 < local_60 >> 7 && (local_60 >> 7 < 0x10a)))))))) {
-								bombActor->priorityLayer = 0;
-								dustActor->priorityLayer = 4;
-								dustActor->x_pos = bombActor->x_pos;
-								dustActor->y_pos = bombActor->y_pos;
+								bombActor->_priorityLayer = 0;
+								dustActor->_priorityLayer = 4;
+								dustActor->_x_pos = bombActor->_x_pos;
+								dustActor->_y_pos = bombActor->_y_pos;
 								dustActor->updateSequence(9);
 								currentState = 4;
 							}
 						}
 						else {
-							local_4e->field_c = 2;
+							local_4e->_field_c = 2;
 							local_4c = 0x3c;
-							bombActor->priorityLayer = 0;
+							bombActor->_priorityLayer = 0;
 							currentState = 8;
 						}
 					}
 					if (bombScale < 0x7f) {
-						bombActor->priorityLayer = 2;
+						bombActor->_priorityLayer = 2;
 					}
 					if ((0xc < bombScale) && (bombScale < 0x41)) {
-						bombActor->priorityLayer = 0;
+						bombActor->_priorityLayer = 0;
 					}
 					if ((short)bombScale < 2) {
 						currentState = 5;
@@ -382,7 +382,7 @@ void Minigame5::run() {
 				case 7:
 					break;
 				case 8:
-					bombActor->priorityLayer = 0;
+					bombActor->_priorityLayer = 0;
 					pusherActor->updateSequence(0);
 					_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->updateSequence(2);
 					_vm->waitForFrames(0x12);
@@ -402,7 +402,7 @@ void Minigame5::run() {
 				default:
 					debug("undefined state!");
 					currentState = 1;
-					bombActor->priorityLayer = 0;
+					bombActor->_priorityLayer = 0;
 					break;
 				}
 				if ((local_10 == 0) && (currentState != 2)) {
@@ -413,12 +413,12 @@ void Minigame5::run() {
 								  && (pusherActor->_sequenceID != 6)))) {
 								pusherActor->updateSequence((uint)local_66);
 								if (local_50 == 0) {
-									pusherActor->x_pos = flickerActor->x_pos + -0xe;
-									pusherActor->y_pos = flickerActor->y_pos + 7;
+									pusherActor->_x_pos = flickerActor->_x_pos + -0xe;
+									pusherActor->_y_pos = flickerActor->_y_pos + 7;
 								}
 								else {
-									pusherActor->x_pos = flickerActor->x_pos + 2;
-									pusherActor->y_pos = flickerActor->y_pos;
+									pusherActor->_x_pos = flickerActor->_x_pos + 2;
+									pusherActor->_y_pos = flickerActor->_y_pos;
 								}
 							}
 						}
@@ -443,13 +443,13 @@ void Minigame5::run() {
 							else {
 								local_62 = local_62 - 1;
 							}
-							flickerActor->x_pos = local_850;
-							wheelsActor->x_pos = local_850;
+							flickerActor->_x_pos = local_850;
+							wheelsActor->_x_pos = local_850;
 							if ((uint)wheelsActor->_sequenceID != (uint)local_62 / 3 + 0x11) {
 								wheelsActor->updateSequence((uint)local_62 / 3 + 0x11);
 							}
-							pusherActor->x_pos = flickerActor->x_pos + 2;
-							pusherActor->y_pos = flickerActor->y_pos;
+							pusherActor->_x_pos = flickerActor->_x_pos + 2;
+							pusherActor->_y_pos = flickerActor->_y_pos;
 						}
 					}
 					else {
@@ -469,24 +469,24 @@ void Minigame5::run() {
 						}
 						local_62 = (short)((uint)local_62 + 1) +
 								   (short)((int)((uint)local_62 + 1) / 6 >> 1) * -0xc;
-						flickerActor->x_pos = local_850;
-						wheelsActor->x_pos = local_850;
+						flickerActor->_x_pos = local_850;
+						wheelsActor->_x_pos = local_850;
 						if ((uint)wheelsActor->_sequenceID != (uint)local_62 / 3 + 0x11) {
 							wheelsActor->updateSequence((uint)local_62 / 3 + 0x11);
 						}
-						pusherActor->x_pos = flickerActor->x_pos + -2;
-						pusherActor->y_pos = flickerActor->y_pos;
+						pusherActor->_x_pos = flickerActor->_x_pos + -2;
+						pusherActor->_y_pos = flickerActor->_y_pos;
 					}
 				}
 			} while (local_10 == 0);
-			if ((local_10 == 2) || (0x117 < flickerActor->x_pos)) break;
-			flickerActor->x_pos = flickerActor->x_pos + 2;
+			if ((local_10 == 2) || (0x117 < flickerActor->_x_pos)) break;
+			flickerActor->_x_pos = flickerActor->_x_pos + 2;
 			if (pusherActor->_sequenceID != 2) {
 				pusherActor->updateSequence(2);
 			}
-			pusherActor->x_pos = flickerActor->x_pos + 2;
-			pusherActor->y_pos = flickerActor->y_pos;
-			wheelsActor->x_pos = wheelsActor->x_pos + 2;
+			pusherActor->_x_pos = flickerActor->_x_pos + 2;
+			pusherActor->_y_pos = flickerActor->_y_pos;
+			wheelsActor->_x_pos = wheelsActor->_x_pos + 2;
 			if (local_62 == 0) {
 				local_62 = 0xb;
 			}
@@ -512,8 +512,8 @@ void Minigame5::run() {
 			local_44 = 0;
 			if (local_10 == 2) {
 //				DisableVSyncEvent();
-				local_46 = pusherActor->x_pos;
-				local_44 = pusherActor->y_pos;
+				local_46 = pusherActor->_x_pos;
+				local_44 = pusherActor->_y_pos;
 				pusherActor->reset_maybe();
 //				EnableVSyncEvent();
 			}
@@ -527,13 +527,13 @@ void Minigame5::run() {
 			}
 			_vm->_dragonINIResource->setFlickerRecord(local_78);
 			if (local_10 == 2) {
-				local_78->actor->x_pos = local_46;
+				local_78->actor->_x_pos = local_46;
 				local_78->actor->setFlag(ACTOR_FLAG_100);
-				local_78->actor->priorityLayer = 5;
+				local_78->actor->_priorityLayer = 5;
 			}
 			else {
 				local_78->actor->clearFlag(ACTOR_FLAG_100);
-				local_78->actor->priorityLayer = 2;
+				local_78->actor->_priorityLayer = 2;
 			}
 			_vm->clearFlags(ENGINE_FLAG_4000000);
 			_vm->setFlags(savedEngineFlags);

@@ -228,12 +228,12 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 				if (actor) {
 					ini->actor = actor;
 					if (ini->field_1a_flags_maybe & 0x1000) {
-						actor->frame_flags |= 0x10;
+						actor->_frame_flags |= 0x10;
 					} else {
 						if (ini->field_1a_flags_maybe & 0x2000) {
-							actor->frame_flags |= 0x20;
+							actor->_frame_flags |= 0x20;
 						} else {
-							actor->frame_flags &= ~0x10;
+							actor->_frame_flags &= ~0x10;
 						}
 					}
 
@@ -264,8 +264,8 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 					}
 //
 //				Graphics::Surface *s = actor->getCurrentFrame();
-//				int x = ini->x - actor->frame_vram_x;
-//				int y = ini->y - actor->frame_vram_y;
+//				int x = ini->x - actor->_frame_vram_x;
+//				int y = ini->y - actor->_frame_vram_y;
 //				if (x >= 0 && y >= 0 && x + s->w < 320 && y + s->h < 200) {
 //					debug("Actor %d, %d %d (%d, %d)", actor->_actorID, ini->actorResourceId, ini->field_1a_flags_maybe, ini->x, ini->y);
 //					_stage->getFgLayer()->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h));
@@ -285,7 +285,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	DragonINI *ini = _vm->getINI(1);
 	if (ini->actor && _vm->_dragonINIResource->getFlickerRecord() && _vm->_dragonINIResource->getFlickerRecord()->sceneId == _currentSceneId) {
 		ini->actor->setFlag(Dragons::ACTOR_FLAG_100);
-		ini->actor->priorityLayer = 0;
+		ini->actor->_priorityLayer = 0;
 	}
 
 
@@ -358,29 +358,29 @@ void Scene::draw() {
 
 		for (int16 i = 0; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
 			Actor *actor = _actorManager->getActorByDisplayOrder(i);
-			if (actor->x_pos == -100 && actor->y_pos == 100) {
-				actor->priorityLayer = 0;
+			if (actor->_x_pos == -100 && actor->_y_pos == 100) {
+				actor->_priorityLayer = 0;
 				continue;
 			}
 
 			if (actor->_flags & Dragons::ACTOR_FLAG_40 &&
 				!(actor->_flags & Dragons::ACTOR_FLAG_400) &&
-				actor->surface &&
-				actor->frame->width != 0 &&
-				actor->frame->height != 0
+				actor->_surface &&
+				actor->_frame->width != 0 &&
+				actor->_frame->height != 0
 				) {
-				Graphics::Surface *s = actor->surface;
-				if (actor->priorityLayer == priority) { //} && x + s->w < 320 && y + s->h < 200) {
+				Graphics::Surface *s = actor->_surface;
+				if (actor->_priorityLayer == priority) { //} && x + s->w < 320 && y + s->h < 200) {
 					if (!actor->isFlagSet(ACTOR_FLAG_80)) {
-						actor->scale = _stage->getScaleLayer()->getScale(actor->y_pos);
+						actor->_scale = _stage->getScaleLayer()->getScale(actor->_y_pos);
 					}
-					int x = actor->x_pos - (actor->frame->xOffset * actor->scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.x);
-					int y = actor->y_pos - (actor->frame->yOffset * actor->scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.y);
+					int x = actor->_x_pos - (actor->_frame->xOffset * actor->_scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.x);
+					int y = actor->_y_pos - (actor->_frame->yOffset * actor->_scale / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) - (actor->isFlagSet(ACTOR_FLAG_200) ? 0 : _camera.y);
 
 					debug(4, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d Scale: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
 						  y,
-						  s->w, s->h, actor->priorityLayer, actor->scale);
-						_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->frame->flags & Dragons::FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? NONE : NORMAL, actor->scale);
+						  s->w, s->h, actor->_priorityLayer, actor->_scale);
+						_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->_frame->flags & Dragons::FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? NONE : NORMAL, actor->_scale);
 					if (_vm->isDebugMode()) {
 						_screen->drawRect(0x7fff, Common::Rect(x, y, x + s->w, y + s->h), actor->_actorID);
 						drawActorNumber(x + s->w, y + 8, actor->_actorID);
@@ -455,8 +455,8 @@ void Scene::setSceneId(int16 newSceneId) {
 void Scene::resetActorFrameFlags() {
 	for (int i = 0; i < 0x17; i++) {
 		Actor *actor = _vm->_actorManager->getActor(i);
-		actor->frame_flags &= ~ACTOR_FRAME_FLAG_10;
-		actor->frame_flags &= ~ACTOR_FRAME_FLAG_20;
+		actor->_frame_flags &= ~ACTOR_FRAME_FLAG_10;
+		actor->_frame_flags &= ~ACTOR_FRAME_FLAG_20;
 	}
 }
 

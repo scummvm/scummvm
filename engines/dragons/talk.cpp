@@ -506,10 +506,10 @@ Talk::displayDialogAroundPoint(uint16 *dialogText, uint16 x, uint16 y, uint16 pa
 }
 
 void Talk::displayDialogAroundActor(Actor *actor, uint16 param_2, uint16 *dialogText, uint32 textIndex) {
-	int16 frameYOffset = actor->frame ? actor->frame->yOffset : 0;
+	int16 frameYOffset = actor->_frame ? actor->_frame->yOffset : 0;
 	displayDialogAroundPoint
-			(dialogText,(uint16)((int)(((uint)actor->x_pos - _vm->_scene->_camera.x) * 0x10000) >> 0x13),
-			 (short)((int)((((uint)actor->y_pos - (uint)frameYOffset) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13) - 3,
+			(dialogText,(uint16)((int)(((uint)actor->_x_pos - _vm->_scene->_camera.x) * 0x10000) >> 0x13),
+			 (short)((int)((((uint)actor->_y_pos - (uint)frameYOffset) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13) - 3,
 			 param_2,1,textIndex);
 }
 
@@ -638,8 +638,8 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 	} while (_vm->_scriptOpcodes->_data_80071f5c == 0);
 	_vm->_scriptOpcodes->_data_80071f5c--;
 //	LAB_80029bc0:
-//	actors[0].x_pos = cursor_x_var;
-//	actors[0].y_pos = cursor_y_var;
+//	actors[0]._x_pos = cursor_x_var;
+//	actors[0]._y_pos = cursor_y_var;
 
 	exitTalkMenu(isFlag8Set, isFlag100Set, dialogEntries);
 	return true;

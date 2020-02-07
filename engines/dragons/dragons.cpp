@@ -240,8 +240,8 @@ uint16 DragonsEngine::ipt_img_file_related() {
     DragonINI *flicker = _dragonINIResource->getFlickerRecord();
 	assert(flicker);
 
-	int16 tileX = flicker->actor->x_pos / 32;
-	int16 tileY = flicker->actor->y_pos / 8;
+	int16 tileX = flicker->actor->_x_pos / 32;
+	int16 tileY = flicker->actor->_y_pos / 8;
 
 	for (int i=0;i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = getINI(i);
@@ -285,7 +285,7 @@ void DragonsEngine::gameLoop() {
 		_counter++;
 		if (0x4af < _counter) {
 			pDVar8 = _dragonINIResource->getFlickerRecord();
-			if (pDVar8->actor->resourceID == 0xe) {
+			if (pDVar8->actor->_resourceID == 0xe) {
 				pDVar8->actor->_sequenceID2 = 2;
 				pDVar8->field_20_actor_field_14 = 2;
 				if (getINI(0xc2)->field_1e == 1) {
@@ -560,14 +560,14 @@ void DragonsEngine::gameLoop() {
 				actorId = uVar3;
 				if (tmpId != 0) {
 					actor->_flags = 0;
-					actor->priorityLayer = 0;
-					actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+					actor->_priorityLayer = 0;
+					actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 					actor->updateSequence(getINI(tmpId - 1)->field_8 * 2 + 10);
 					actor->setFlag(ACTOR_FLAG_40);
 					actor->setFlag(ACTOR_FLAG_80);
 					actor->setFlag(ACTOR_FLAG_100);
 					actor->setFlag(ACTOR_FLAG_200);
-					actor->priorityLayer = 6;
+					actor->_priorityLayer = 6;
 					actorId = uVar3;
 				}
 				continue;
@@ -577,8 +577,8 @@ void DragonsEngine::gameLoop() {
 			if (_inventory->addItemIfPositionIsEmpty(_cursor->iniItemInHand, _cursor->_x, _cursor->_y)) {
 				Actor *invActor = _inventory->getInventoryItemActor(_cursor->iniItemInHand);
 				invActor->_flags = 0;
-				invActor->priorityLayer = 0;
-				invActor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+				invActor->_priorityLayer = 0;
+				invActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 				invActor->updateSequence(
 						 getINI(_cursor->iniItemInHand - 1)->field_8 * 2 + 10);
 				_cursor->iniItemInHand = 0;
@@ -586,7 +586,7 @@ void DragonsEngine::gameLoop() {
 				invActor->setFlag(ACTOR_FLAG_80);
 				invActor->setFlag(ACTOR_FLAG_100);
 				invActor->setFlag(ACTOR_FLAG_200);
-				invActor->priorityLayer = 6;
+				invActor->_priorityLayer = 6;
 				if (_cursor->_sequenceID == 5) {
 					_cursor->_sequenceID = 4;
 				}
@@ -624,29 +624,29 @@ void DragonsEngine::updateHandler() {
 		Actor *actor = _actorManager->getActor(i);
 		if (actor->_flags & Dragons::ACTOR_FLAG_40) {
 			if (!(actor->_flags & Dragons::ACTOR_FLAG_100)) {
-				int16 priority = _scene->getPriorityAtPosition(Common::Point(actor->x_pos, actor->y_pos));
+				int16 priority = _scene->getPriorityAtPosition(Common::Point(actor->_x_pos, actor->_y_pos));
 				DragonINI *flicker = _dragonINIResource->getFlickerRecord();
 				if (flicker && _scene->contains(flicker) && flicker->actor->_actorID == i) {
 					if (priority < 8 || priority == 0x10) {
-						actor->priorityLayer = priority;
+						actor->_priorityLayer = priority;
 					}
 				} else {
 					if (priority != -1) {
-						actor->priorityLayer = priority;
+						actor->_priorityLayer = priority;
 					}
 				}
 
-				if (actor->priorityLayer >= 0x11) {
-					actor->priorityLayer = 0;
+				if (actor->_priorityLayer >= 0x11) {
+					actor->_priorityLayer = 0;
 				}
 
-				if (actor->priorityLayer >= 9) {
-					actor->priorityLayer -= 8;
+				if (actor->_priorityLayer >= 9) {
+					actor->_priorityLayer -= 8;
 				}
 			}
 
-			if (actor->sequenceTimer != 0) {
-				actor->sequenceTimer--;
+			if (actor->_sequenceTimer != 0) {
+				actor->_sequenceTimer--;
 			}
 		}
 	}
@@ -654,8 +654,8 @@ void DragonsEngine::updateHandler() {
 	if (_flags & Dragons::ENGINE_FLAG_80) {
 		for (uint16 i = 0x17; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
 			Actor *actor = _actorManager->getActor(i);
-			if (actor->sequenceTimer != 0) {
-				actor->sequenceTimer--;
+			if (actor->_sequenceTimer != 0) {
+				actor->_sequenceTimer--;
 			}
 		}
 	}
@@ -720,7 +720,7 @@ void DragonsEngine::updateActorSequences() {
 		if (actor->_flags & Dragons::ACTOR_FLAG_40 &&
 			!(actor->_flags & Dragons::ACTOR_FLAG_4) &&
 			!(actor->_flags & Dragons::ACTOR_FLAG_400) &&
-			(actor->sequenceTimer == 0 || actor->_flags & Dragons::ACTOR_FLAG_1)) {
+			(actor->_sequenceTimer == 0 || actor->_flags & Dragons::ACTOR_FLAG_1)) {
 			debug(5, "Actor[%d] execute sequenceOp", actorId);
 
 			if (actor->_flags & Dragons::ACTOR_FLAG_1) {
@@ -729,7 +729,7 @@ void DragonsEngine::updateActorSequences() {
 				actor->clearFlag(ACTOR_FLAG_1);
 				actor->clearFlag(ACTOR_FLAG_8);
 				actor->clearFlag(ACTOR_FLAG_1000);
-				actor->field_7a = 0;
+				actor->_field_7a = 0;
 			}
 			OpCall opCall;
 			opCall._result = 1;
@@ -803,8 +803,8 @@ void DragonsEngine::setVar(uint16 offset, uint16 value) {
 uint16 DragonsEngine::getIniFromImg() {
 	DragonINI *flicker = _dragonINIResource->getFlickerRecord();
 
-	int16 x = flicker->actor->x_pos / 32;
-	int16 y = flicker->actor->y_pos / 8;
+	int16 x = flicker->actor->_x_pos / 32;
+	int16 y = flicker->actor->_y_pos / 8;
 
 	uint16 currentSceneId = _scene->getSceneId();
 
@@ -862,7 +862,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 //		if ((flickerINI->sceneId == currentSceneId)
 //			&& (uVar5 != 0xffff)) {
 //			actors[(uint)uVar5].﻿_sequenceID = 8;
-//			actors[(uint)uVar5].﻿priorityLayer_maybe = 0;
+//			actors[(uint)uVar5].﻿_priorityLayer_maybe = 0;
 //		}
 	}
 	else {
@@ -871,7 +871,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 				if ((flickerINI->sceneId == currentSceneId)
 					&& (uVar5 != 0xffff)) {
 //					actors[(uint)uVar5].﻿_sequenceID = 8;
-//					actors[(uint)uVar5].﻿priorityLayer_maybe = 0;
+//					actors[(uint)uVar5].﻿_priorityLayer_maybe = 0;
 				}
 			} else {
 				if ((bit_flags_8006fbd8 & 2) == 0) {
@@ -885,7 +885,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 			}
 
 		} else {
-			//actors[(uint)uVar5].﻿priorityLayer_maybe = 0;
+			//actors[(uint)uVar5].﻿_priorityLayer_maybe = 0;
 		}
 
 	}
@@ -935,7 +935,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 //		if ((flickerINI->sceneId == currentSceneId)
 //			&& (uVar5 != 0xffff)) {
 //			actors[(uint)uVar5].﻿_sequenceID = 8;
-//			actors[(uint)uVar5].﻿priorityLayer_maybe = 0;
+//			actors[(uint)uVar5].﻿_priorityLayer_maybe = 0;
 //		}
 		}
 		else {
@@ -1163,8 +1163,8 @@ void DragonsEngine::walkFlickerToObject()
 					targetY = img->field_c;
 				}
 				else {
-					targetX = targetINI->actor->x_pos;
-					targetY = targetINI->actor->y_pos;
+					targetX = targetINI->actor->_x_pos;
+					targetY = targetINI->actor->_y_pos;
 				}
 				flickerINI->actor->_walkSpeed = 0x10000;
 				if (flickerINI->field_20_actor_field_14 == -1) {

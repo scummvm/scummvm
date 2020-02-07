@@ -74,11 +74,11 @@ void Minigame4::run() {
 	flickerActor->setFlag(ACTOR_FLAG_80);
 	flickerActor->setFlag(ACTOR_FLAG_100);
 	flickerActor->setFlag(ACTOR_FLAG_200);
-	flickerActor->priorityLayer = 3;
+	flickerActor->_priorityLayer = 3;
 	bruteActor->setFlag(ACTOR_FLAG_80);
 	bruteActor->setFlag(ACTOR_FLAG_100);
 	bruteActor->setFlag(ACTOR_FLAG_200);
-	bruteActor->priorityLayer = 3;
+	bruteActor->_priorityLayer = 3;
 	//DAT_800830e0_soundRelated = 0xf;
 	//UnkSoundFunc5(0xf);
 	//call_fade_related_1f();
@@ -231,8 +231,8 @@ const static uint16 uint16_t_ARRAY_80090400[6] = { 0x1A, 0x1B, 0x1C, 0x1D, 0x1E,
 const static uint16 uint16_t_ARRAY_800903e8[6] = { 1, 2, 3, 4, 5, 6 };
 
 uint16 Minigame4::singleDanceRound(uint16 currentDancePosition, uint16 duration) {
-	DAT_80090438->x_pos = xDancePosTbl[(uint)currentDancePosition];
-	DAT_80090438->y_pos = yDancePosTbl[(uint)currentDancePosition];
+	DAT_80090438->_x_pos = xDancePosTbl[(uint)currentDancePosition];
+	DAT_80090438->_y_pos = yDancePosTbl[(uint)currentDancePosition];
 	DAT_80090438->updateSequence(10);
 	ps1ControllerActor->updateSequence(uint16_t_ARRAY_80090400[(uint)currentDancePosition]);
 	bruteActor->updateSequence(uint16_t_ARRAY_800903e8[(uint)currentDancePosition]);
@@ -245,10 +245,10 @@ uint16 Minigame4::singleDanceRound(uint16 currentDancePosition, uint16 duration)
 		while (duration = duration + -1, duration != 0) {
 			_vm->waitForFrames(1);
 		}
-		DAT_80090438->x_pos = xDancePosTbl[(uint)currentDancePosition];
-		DAT_8009043c->x_pos = DAT_80090438->x_pos;
-		DAT_80090438->y_pos = yDancePosTbl[(uint)currentDancePosition];
-		DAT_8009043c->y_pos = DAT_80090438->y_pos;
+		DAT_80090438->_x_pos = xDancePosTbl[(uint)currentDancePosition];
+		DAT_8009043c->_x_pos = DAT_80090438->_x_pos;
+		DAT_80090438->_y_pos = yDancePosTbl[(uint)currentDancePosition];
+		DAT_8009043c->_y_pos = DAT_80090438->_y_pos;
 		DAT_8009043c->updateSequence(0xb);
 		ps1ControllerActor->updateSequence(0x16);
 		return 0;

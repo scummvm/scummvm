@@ -118,7 +118,7 @@ void SequenceOpcodes::opSetFramePointer(Actor *actor, OpCall &opCall) {
 	debug(4, "set frame pointer %X", framePointer);
 	actor->loadFrame((uint16)framePointer);
 	actor->_flags |= Dragons::ACTOR_FLAG_2;
-	actor->sequenceTimer = actor->field_c;
+	actor->_sequenceTimer = actor->_field_c;
 	updateReturn(opCall, 1);
 }
 
@@ -141,15 +141,15 @@ void SequenceOpcodes::opJmp(Actor *actor, OpCall &opCall) {
 
 void SequenceOpcodes::opSetFieldC(Actor *actor, OpCall &opCall) {
 	ARG_INT16(newFieldC);
-	actor->field_c = (uint16)newFieldC;
+	actor->_field_c = (uint16)newFieldC;
 	debug(5, "set fieldC: %d", newFieldC);
 	updateReturn(opCall, 1);
 }
 
 void SequenceOpcodes::opSetSequenceTimer(Actor *actor, OpCall &opCall) {
 	ARG_INT16(newSeqTimer);
-	actor->sequenceTimer = (uint16)newSeqTimer;
-	debug(5, "set sequenceTimer: %d", newSeqTimer);
+	actor->_sequenceTimer = (uint16)newSeqTimer;
+	debug(5, "set _sequenceTimer: %d", newSeqTimer);
 	updateReturn(opCall, 1);
 	opCall._result = 0;
 }
@@ -157,11 +157,11 @@ void SequenceOpcodes::opSetSequenceTimer(Actor *actor, OpCall &opCall) {
 void SequenceOpcodes::opUpdateXYResetSeqTimer(Actor *actor, OpCall &opCall) {
 	ARG_INT8(xOffset);
 	ARG_INT8(yOffset);
-	actor->x_pos += xOffset;
-	actor->y_pos += yOffset;
-	actor->sequenceTimer = actor->field_c;
+	actor->_x_pos += xOffset;
+	actor->_y_pos += yOffset;
+	actor->_sequenceTimer = actor->_field_c;
 
-	debug(5, "update actor %d XY offset (%d,%d) new values (%d, %d) %d", actor->_actorID, xOffset, yOffset, actor->x_pos, actor->y_pos, actor->sequenceTimer);
+	debug(5, "update actor %d XY offset (%d,%d) new values (%d, %d) %d", actor->_actorID, xOffset, yOffset, actor->_x_pos, actor->_y_pos, actor->_sequenceTimer);
 	updateReturn(opCall, 1);
 }
 
@@ -195,7 +195,7 @@ void SequenceOpcodes::opChangeSequence(Actor *actor, OpCall &opCall) {
 
 void SequenceOpcodes::opSetField7a(Actor *actor, OpCall &opCall) {
 	ARG_INT16(newValue);
-	actor->field_7a = (uint16)newValue;
+	actor->_field_7a = (uint16)newValue;
 	updateReturn(opCall, 1);
 }
 
@@ -217,8 +217,8 @@ void SequenceOpcodes::opPlaySound(Actor *actor, OpCall &opCall) {
 void SequenceOpcodes::opSetXY(Actor *actor, OpCall &opCall) {
 	ARG_INT16(x);
 	ARG_INT16(y);
-	actor->x_pos = x;
-	actor->y_pos = y;
+	actor->_x_pos = x;
+	actor->_y_pos = y;
 	updateReturn(opCall, 2);
 }
 

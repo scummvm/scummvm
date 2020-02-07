@@ -77,11 +77,11 @@ Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
 
 void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backgroundResourceLoader, Bag *bag, DragonINIResource *dragonIniResource) {
 	_actor = actorManager->loadActor(1, 1); //Load inventory
-	_actor->x_pos = 2;
-	_actor->y_pos = 0;
-	_actor->priorityLayer = 6;
+	_actor->_x_pos = 2;
+	_actor->_y_pos = 0;
+	_actor->_priorityLayer = 6;
 	_actor->_flags = 0;
-	_actor->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+	_actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_actor->updateSequence(0);
 	_actor->_flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
 					   Dragons::ACTOR_FLAG_200);
@@ -113,7 +113,7 @@ void Inventory::loadScene(uint32 sceneId) {
 }
 
 void Inventory::updateVisibility() {
-	_actor->priorityLayer = _vm->isFlagSet(Dragons::ENGINE_FLAG_10) ? (int16)6 : (int16)0;
+	_actor->_priorityLayer = _vm->isFlagSet(Dragons::ENGINE_FLAG_10) ? (int16)6 : (int16)0;
 }
 
 Common::Point Inventory::getPosition() {
@@ -129,7 +129,7 @@ void Inventory::clearActorFlag400() {
 }
 
 void Inventory::setPriority(uint16 priority) {
-	_actor->priorityLayer = priority;
+	_actor->_priorityLayer = priority;
 }
 
 void Inventory::setActorSequenceId(int32 sequenceId) {
@@ -157,11 +157,11 @@ void Inventory::openInventory() {
 	}
 	_actor->updateSequence(_sequenceId);
 	_screenPositionIndex = 1;
-	_actor->x_pos = positionTable[_screenPositionIndex].x;
+	_actor->_x_pos = positionTable[_screenPositionIndex].x;
 	if ((_sequenceId == 0) || (_sequenceId == 2)) {
-		_actor->x_pos = positionTable[_screenPositionIndex].x + 0x32;
+		_actor->_x_pos = positionTable[_screenPositionIndex].x + 0x32;
 	}
-	_actor->y_pos = positionTable[_screenPositionIndex].y;
+	_actor->_y_pos = positionTable[_screenPositionIndex].y;
 	animateBagIn();
 
 	//TODO 0x800310e0 update cursor position.
@@ -169,19 +169,19 @@ void Inventory::openInventory() {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		Actor *item = _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
 
-		item->x_pos = item->_walkDestX = invXPosTable[i] + 0x10;
-		item->y_pos = item->_walkDestY = invYPosTable[i] + 0xc;
+		item->_x_pos = item->_walkDestX = invXPosTable[i] + 0x10;
+		item->_y_pos = item->_walkDestY = invYPosTable[i] + 0xc;
 
 		if (inventoryItemTbl[i]) {
 			item->_flags = 0; //clear all flags
-			item->scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-			item->priorityLayer = 0;
+			item->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+			item->_priorityLayer = 0;
 			item->updateSequence(_vm->getINI(inventoryItemTbl[i] - 1)->field_8 * 2 + 10);
 			item->setFlag(ACTOR_FLAG_200);
 			item->setFlag(ACTOR_FLAG_100);
 			item->setFlag(ACTOR_FLAG_80);
 			item->setFlag(ACTOR_FLAG_40);
-			item->priorityLayer = 6;
+			item->_priorityLayer = 6;
 		}
 	}
 }
@@ -243,11 +243,11 @@ void Inventory::closeInventory() {
 		}
 	}
 	_actor->updateSequence(_sequenceId);
-	_actor->x_pos = positionTable[_screenPositionIndex].x;
+	_actor->_x_pos = positionTable[_screenPositionIndex].x;
 	if (((_sequenceId == 0) || (_sequenceId == 2)) && ((_screenPositionIndex == 1 || (_screenPositionIndex == 3)))) {
-		_actor->x_pos += 0x32;
+		_actor->_x_pos += 0x32;
 	}
-	_actor->y_pos = positionTable[_screenPositionIndex].y;
+	_actor->_y_pos = positionTable[_screenPositionIndex].y;
 	animateBagOut();
 }
 
@@ -261,8 +261,8 @@ uint16 Inventory::getIniAtPosition(int16 x, int16 y) {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		if (inventoryItemTbl[i]) {
 			Actor *item = _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
-			if (item->x_pos - 0x10 <= x && x < item->x_pos + 0x10
-				&& item->y_pos - 0xc <= y && y < item->y_pos + 0xc) {
+			if (item->_x_pos - 0x10 <= x && x < item->_x_pos + 0x10
+				&& item->_y_pos - 0xc <= y && y < item->_y_pos + 0xc) {
 				return inventoryItemTbl[i];
 			}
 		}
@@ -291,7 +291,7 @@ void Inventory::openInventionBook() {
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 	if (flicker && flicker->actor) {
 		inventionBookPrevFlickerINISceneId = flicker->sceneId;
-		inventionBookPrevFlickerINIPosition = Common::Point(flicker->actor->x_pos, flicker->actor->y_pos);
+		inventionBookPrevFlickerINIPosition = Common::Point(flicker->actor->_x_pos, flicker->actor->_y_pos);
 		flicker->sceneId = 0;
 	}
 	_vm->_scene->setSceneId(2);
@@ -306,8 +306,8 @@ void Inventory::closeInventionBook() {
 
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 	if (flicker && flicker->actor) {
-		flicker->actor->x_pos = inventionBookPrevFlickerINIPosition.x;
-		flicker->actor->y_pos = inventionBookPrevFlickerINIPosition.y;
+		flicker->actor->_x_pos = inventionBookPrevFlickerINIPosition.x;
+		flicker->actor->_y_pos = inventionBookPrevFlickerINIPosition.y;
 		flicker->sceneId = inventionBookPrevFlickerINISceneId;
 	}
 	_vm->_scene->setSceneId(inventionBookPrevSceneId);
@@ -338,11 +338,11 @@ void Inventory::closeInventionBook() {
 void Inventory::setPositionFromSceneId(uint32 sceneId) {
 	_screenPositionIndex = _vm->_dragonRMS->getInventoryPosition(sceneId);
 
-	_actor->x_pos = positionTable[_screenPositionIndex].x;
+	_actor->_x_pos = positionTable[_screenPositionIndex].x;
 	if ((_sequenceId == 0 || _sequenceId == 2) && (_screenPositionIndex == 1 || _screenPositionIndex == 3)) {
-		_actor->x_pos += 0x32;
+		_actor->_x_pos += 0x32;
 	}
-	_actor->y_pos = positionTable[_screenPositionIndex].y;
+	_actor->_y_pos = positionTable[_screenPositionIndex].y;
 }
 
 bool Inventory::addItem(uint16 initId) {
@@ -377,10 +377,10 @@ void Inventory::replaceItem(uint16 existingIniId, uint16 newIniId) {
 bool Inventory::addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y) {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		Actor *actor = _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
-		if ((((actor->x_pos - 0x10 <= x) &&
-			  (x < actor->x_pos + 0x10)) &&
-			 (actor->y_pos - 0xc <= y)) &&
-			(y < actor->y_pos + 0xc)) {
+		if ((((actor->_x_pos - 0x10 <= x) &&
+			  (x < actor->_x_pos + 0x10)) &&
+			 (actor->_y_pos - 0xc <= y)) &&
+			(y < actor->_y_pos + 0xc)) {
 			inventoryItemTbl[i] = iniId;
 			return true;
 		}
@@ -405,7 +405,7 @@ void Inventory::inventoryMissing() {
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 	if (flicker->actor != NULL) {
 		flicker->actor->clearFlag(ACTOR_FLAG_10);
-		if ((_vm->getCurrentSceneId() != 0x2e) || (flicker->actor->resourceID != 0x91)) {
+		if ((_vm->getCurrentSceneId() != 0x2e) || (flicker->actor->_resourceID != 0x91)) {
 			flicker->actor->setFlag(ACTOR_FLAG_4);
 		}
 	}
