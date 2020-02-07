@@ -66,7 +66,7 @@ void Bag::load(BigfileArchive *bigFileArchive) {
 	pal[1] = 0x0;
 	for (int i = 1; i < 0x100; i++) {
 		uint c = READ_LE_INT16(&pal[i * 2]);
-		if ( c == 0 ) {
+		if (c == 0) {
 			c = 0x8000;
 		} else {
 			//c = (uint16)(((uint)c & 0x1f) << 10) | (uint16)(((uint)c & 0x7c00) >> 10) | c & 0x3e0;
