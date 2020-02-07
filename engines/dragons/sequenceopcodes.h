@@ -60,6 +60,7 @@ public:
 	SequenceOpcodes(DragonsEngine *vm);
 	~SequenceOpcodes();
 	void execOpcode(Actor *actor, OpCall &opCall);
+
 protected:
 	DragonsEngine *_vm;
 	SequenceOpcode *_opcodes[DRAGONS_NUM_SEQ_OPCODES];

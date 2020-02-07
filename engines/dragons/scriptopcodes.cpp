@@ -238,8 +238,8 @@ void ScriptOpcodes::opUnk1(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field6);
 
 	if ((field2 >> _vm->_cursor->_data_800728b0_cursor_seqID) & 1
-	&& (_vm->_cursor->_data_800728b0_cursor_seqID < 5 || field4 == _scriptTargetINI)
-	&& scriptOpCall._field8 == 1) {
+			&& (_vm->_cursor->_data_800728b0_cursor_seqID < 5 || field4 == _scriptTargetINI)
+			&& scriptOpCall._field8 == 1) {
 		scriptOpCall._code -= 8;
 		scriptOpCall._result |= 1;
 	} else {
@@ -990,21 +990,21 @@ uint16 ScriptOpcodes::getINIField(uint32 iniIndex, uint16 fieldOffset) {
 	DragonINI *ini = _vm->getINI(iniIndex);
 
 	switch (fieldOffset) {
-		case 0 : return ini->iptIndex_maybe;
-		case 4 : return ini->actorResourceId;
-		case 6 : return ini->sequenceId;
-		case 0xC  : return ini->sceneId;
-		case 0xE  : return ini->field_e;
-		case 0x10 : return ini->field_10;
-		case 0x12  : return ini->field_12;
-		case 0x14 : return ini->field_14;
-		case 0x16 : return ini->x;
-		case 0x18 : return ini->y;
-		case 0x1A : return ini->field_1a_flags_maybe;
-		case 0x1C : return ini->field_1c;
-		case 0x1E : return ini->field_1e;
-		case 0x20 : return ini->field_20_actor_field_14;
-		default: error("getINIField() Invalid fieldOffset 0x%X", fieldOffset);
+	case 0 : return ini->iptIndex_maybe;
+	case 4 : return ini->actorResourceId;
+	case 6 : return ini->sequenceId;
+	case 0xC  : return ini->sceneId;
+	case 0xE  : return ini->field_e;
+	case 0x10 : return ini->field_10;
+	case 0x12  : return ini->field_12;
+	case 0x14 : return ini->field_14;
+	case 0x16 : return ini->x;
+	case 0x18 : return ini->y;
+	case 0x1A : return ini->field_1a_flags_maybe;
+	case 0x1C : return ini->field_1c;
+	case 0x1E : return ini->field_1e;
+	case 0x20 : return ini->field_20_actor_field_14;
+	default: error("getINIField() Invalid fieldOffset 0x%X", fieldOffset);
 	}
 }
 
@@ -1012,21 +1012,21 @@ void ScriptOpcodes::setINIField(uint32 iniIndex, uint16 fieldOffset, uint16 valu
 	DragonINI *ini = _vm->getINI(iniIndex);
 
 	switch (fieldOffset) {
-		case 0 : ini->iptIndex_maybe = value; break;
-		case 4 : ini->actorResourceId = value; break;
-		case 6 : ini->sequenceId = value; break;
-		case 0xc : ini->sceneId = value; break;
-		case 0xe : ini->field_e = value; break;
-		case 0x10 : ini->field_10 = value; break;
-		case 0x12 : ini->field_12 = value; break;
-		case 0x14 : ini->field_14 = value; break;
-		case 0x16 : ini->x = value; break;
-		case 0x18 : ini->y = value; break;
-		case 0x1A : ini->field_1a_flags_maybe = value; break;
-		case 0x1C : ini->field_1c = value; break;
-		case 0x1E : ini->field_1e = value; break;
-		case 0x20 : ini->field_20_actor_field_14 = value; break;
-		default: error("setINIField() Invalid fieldOffset 0x%X", fieldOffset);
+	case 0 : ini->iptIndex_maybe = value; break;
+	case 4 : ini->actorResourceId = value; break;
+	case 6 : ini->sequenceId = value; break;
+	case 0xc : ini->sceneId = value; break;
+	case 0xe : ini->field_e = value; break;
+	case 0x10 : ini->field_10 = value; break;
+	case 0x12 : ini->field_12 = value; break;
+	case 0x14 : ini->field_14 = value; break;
+	case 0x16 : ini->x = value; break;
+	case 0x18 : ini->y = value; break;
+	case 0x1A : ini->field_1a_flags_maybe = value; break;
+	case 0x1C : ini->field_1c = value; break;
+	case 0x1E : ini->field_1e = value; break;
+	case 0x20 : ini->field_20_actor_field_14 = value; break;
+	default: error("setINIField() Invalid fieldOffset 0x%X", fieldOffset);
 	}
 
 }

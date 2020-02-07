@@ -46,10 +46,10 @@
 namespace Dragons {
 
 const int16 shakeTbl[16] = {
-		5,      2,     -2,     -5,
-		5,      2,     -2,     -5,
-		-1,      2,     -1,     -1,
-		2,     -1,      1,      0
+	5,      2,     -2,     -5,
+	5,      2,     -2,     -5,
+	-1,      2,     -1,     -1,
+	2,     -1,      1,      0
 };
 
 // SpecialOpcodes
@@ -1084,8 +1084,8 @@ void SpecialOpcodes::spcUnk8b() {
 
 void SpecialOpcodes::spcHedgehogTest() {
 	if (_vm->_dragonINIResource->getRecord(0x168)->actor->_sequenceID == 4 &&
-		_vm->_dragonINIResource->getRecord(0x169)->actor->_sequenceID == 4 &&
-		_vm->_dragonINIResource->getRecord(0x16a)->actor->_sequenceID == 4) {
+			_vm->_dragonINIResource->getRecord(0x169)->actor->_sequenceID == 4 &&
+			_vm->_dragonINIResource->getRecord(0x16a)->actor->_sequenceID == 4) {
 		_vm->_dragonINIResource->getRecord(0x169)->field_12 = 1;
 	} else {
 		_vm->_dragonINIResource->getRecord(0x169)->field_12 = 0;
@@ -1308,48 +1308,48 @@ void SpecialOpcodes::setSpecialOpCounter(int16 newValue) {
 }
 
 void pizzaUpdateFunction() {
-		static int16 counter = 0;
-		DragonsEngine *vm = getEngine();
+	static int16 counter = 0;
+	DragonsEngine *vm = getEngine();
 
-		Actor *actorf4 = vm->getINI(0xf4)->actor;
-		Actor *actorf5 = vm->getINI(0xf5)->actor;
+	Actor *actorf4 = vm->getINI(0xf4)->actor;
+	Actor *actorf5 = vm->getINI(0xf5)->actor;
 
-		if (counter == 0) {
-			if (actorf4->isFlagSet(ACTOR_FLAG_4)) {
-				if (actorf4->_sequenceID == 0) {
-					actorf4->updateSequence(1);
-				} else {
-					if (actorf4->_sequenceID == 1) {
-						actorf4->updateSequence(2);
-						actorf5->_x_pos = 0x115;
-						actorf5->_y_pos = 0x5c;
-						actorf5->updateSequence(7);
-						counter = 0x2d;
-						return;
-					}
-					if (actorf4->_sequenceID == 2) {
-						if ((actorf5->_sequenceID == 8) &&
-							(actorf5->isFlagSet(ACTOR_FLAG_4))) {
-							actorf5->_x_pos = -100;
-							actorf5->_y_pos = 100;
-							actorf4->updateSequence(3);
-						} else {
-							if (actorf5->_sequenceID == 8) {
-								return;
-							}
-							actorf5->updateSequence(8);
-						}
+	if (counter == 0) {
+		if (actorf4->isFlagSet(ACTOR_FLAG_4)) {
+			if (actorf4->_sequenceID == 0) {
+				actorf4->updateSequence(1);
+			} else {
+				if (actorf4->_sequenceID == 1) {
+					actorf4->updateSequence(2);
+					actorf5->_x_pos = 0x115;
+					actorf5->_y_pos = 0x5c;
+					actorf5->updateSequence(7);
+					counter = 0x2d;
+					return;
+				}
+				if (actorf4->_sequenceID == 2) {
+					if ((actorf5->_sequenceID == 8) &&
+						(actorf5->isFlagSet(ACTOR_FLAG_4))) {
+						actorf5->_x_pos = -100;
+						actorf5->_y_pos = 100;
+						actorf4->updateSequence(3);
 					} else {
-						if (actorf4->_sequenceID != 3) {
+						if (actorf5->_sequenceID == 8) {
 							return;
 						}
-						actorf4->updateSequence(0);
+						actorf5->updateSequence(8);
 					}
+				} else {
+					if (actorf4->_sequenceID != 3) {
+						return;
+					}
+					actorf4->updateSequence(0);
 				}
 			}
-		} else {
-			counter--;
 		}
+	} else {
+		counter--;
+	}
 }
 
 void tableBasedSceneUpdateFunction() {
@@ -1467,7 +1467,7 @@ void castleFogUpdateFunction() {
 
 void menInMinesSceneUpdateFunction() {
 	const uint32 sceneUpdateFuncDialogTbl[4] = {
-			0x4590A, 0x45994, 0x459F4, 0x45A60
+		0x4590A, 0x45994, 0x459F4, 0x45A60
 	};
 	DragonsEngine *vm = getEngine();
 	uint16 sequenceId;
@@ -1497,13 +1497,13 @@ void menInMinesSceneUpdateFunction() {
 void monksAtBarSceneUpdateFunction() {
 	static uint8 monksAtBarCurrentState = 0;
 	static const uint32 sceneUpdateFuncDialogTbl[6] = {
-			0x37800, 0x37854, 0x378CA,
-			0x39152, 0x3919A, 0x3922C
+		0x37800, 0x37854, 0x378CA,
+		0x39152, 0x3919A, 0x3922C
 	};
 	static const uint32 barKeeperTextIdTbl[10] = {
-			0x38C68, 0x38CE2, 0x38D4E, 0x38CE2,
-			0x38DC2, 0x38E0C, 0x38C68, 0x38E5C,
-			0x38ED0, 0x38CE2
+		0x38C68, 0x38CE2, 0x38D4E, 0x38CE2,
+		0x38DC2, 0x38E0C, 0x38C68, 0x38E5C,
+		0x38ED0, 0x38CE2
 	};
 	static const uint32 DAT_800832f0[4] = {0x38F2A, 0x39000, 0x39084, 0x390E8};
 
@@ -1534,151 +1534,149 @@ void monksAtBarSceneUpdateFunction() {
 		specialOpCounter = specialOpCounter + -1;
 	}
 	if (specialOpCounter == 0) {
-
-
 		switch (monksAtBarCurrentState) {
-			case 0:
-				if (0x31 < vm->getRand(100)) {
-					sVar2 = vm->getRand(3);
-					specialOpCounter = (sVar2 + 3) * 0x3c;
-					monksAtBarCurrentState = 2;
-					break;
-				}
-				if (bVar1) {
-					barKeeper->updateSequence(0xc);
-					textIndex = sceneUpdateFuncDialogTbl[vm->getRand(3) + 3];
-				} else {
-					barKeeper->updateSequence(2);
-					textIndex = sceneUpdateFuncDialogTbl[vm->getRand(3)];
-				}
-				vm->_talk->playDialogAudioDontWait(textIndex);
-				monksAtBarCurrentState = 1;
-				specialOpCounter = 0;
-				break;
-			case 1:
-				if (bVar1) {
-					sequenceId = 8;
-				} else {
-					sequenceId = 0;
-				}
-				barKeeper->updateSequence(sequenceId);
-				specialOpCounter = 0x168;
+		case 0:
+			if (0x31 < vm->getRand(100)) {
+				sVar2 = vm->getRand(3);
+				specialOpCounter = (sVar2 + 3) * 0x3c;
 				monksAtBarCurrentState = 2;
 				break;
-			case 2: {
-				uint16 randTextId = vm->getRand(10);
-				if ((randTextId & 1) == 0) {
-					monk1->updateSequence(2);
-				} else {
-					monk2->updateSequence(10);
-				}
-				vm->_talk->playDialogAudioDontWait(barKeeperTextIdTbl[randTextId]);
-				monksAtBarCurrentState = 3;
-				specialOpCounter = 0;
+			}
+			if (bVar1) {
+				barKeeper->updateSequence(0xc);
+				textIndex = sceneUpdateFuncDialogTbl[vm->getRand(3) + 3];
+			} else {
+				barKeeper->updateSequence(2);
+				textIndex = sceneUpdateFuncDialogTbl[vm->getRand(3)];
+			}
+			vm->_talk->playDialogAudioDontWait(textIndex);
+			monksAtBarCurrentState = 1;
+			specialOpCounter = 0;
+			break;
+		case 1:
+			if (bVar1) {
+				sequenceId = 8;
+			} else {
+				sequenceId = 0;
+			}
+			barKeeper->updateSequence(sequenceId);
+			specialOpCounter = 0x168;
+			monksAtBarCurrentState = 2;
+			break;
+		case 2: {
+			uint16 randTextId = vm->getRand(10);
+			if ((randTextId & 1) == 0) {
+				monk1->updateSequence(2);
+			} else {
+				monk2->updateSequence(10);
+			}
+			vm->_talk->playDialogAudioDontWait(barKeeperTextIdTbl[randTextId]);
+			monksAtBarCurrentState = 3;
+			specialOpCounter = 0;
+			break;
+		}
+		case 3:
+			monk1->updateSequence(0);
+			monk2->updateSequence(8);
+			specialOpCounter = 0x3c;
+			monksAtBarCurrentState = 4;
+			break;
+		case 4:
+			if (bVar1) {
+				barKeeper->updateSequence(0xc);
+				textIndex = sceneUpdateFuncDialogTbl[vm->getRand(3) + 3];
+			} else {
+				barKeeper->updateSequence(2);
+				textIndex = DAT_800832f0[vm->getRand(4)];
+			}
+			vm->_talk->playDialogAudioDontWait(textIndex);
+			monksAtBarCurrentState = 5;
+			specialOpCounter = 0;
+			break;
+		case 5:
+			if (bVar1) {
+				sequenceId = 8;
+			} else {
+				sequenceId = 0;
+			}
+			barKeeper->updateSequence(sequenceId);
+			specialOpCounter = 0x78;
+			if (!bVar1) {
+				monksAtBarCurrentState = 0x37;
 				break;
 			}
-			case 3:
-				monk1->updateSequence(0);
+			monksAtBarCurrentState = 6;
+			break;
+		case 6:
+			if (bVar1) {
+				barKeeper->updateSequence(0xb);
+				ini->actor->updateSequence(7);
+				monksAtBarCurrentState = 10;
+			} else {
+				barKeeper->updateSequence(0xd);
+				monk1->updateSequence(0x14);
+				monksAtBarCurrentState = 0x41;
+			}
+			specialOpCounter = 0;
+			break;
+		case 7:
+			if (!barKeeper->isFlagSet(ACTOR_FLAG_4)) {
+				break;
+			}
+			barKeeper->updateSequence(0xe);
+			monk2->updateSequence(0x15);
+			monksAtBarCurrentState = 8;
+			specialOpCounter = 0;
+			break;
+		case 8:
+			if (barKeeper->isFlagSet(ACTOR_FLAG_4)) {
 				monk2->updateSequence(8);
-				specialOpCounter = 0x3c;
-				monksAtBarCurrentState = 4;
+				barKeeper->updateSequence(0);
+				monksAtBarCurrentState = 9;
+				specialOpCounter = 300;
+			}
+			break;
+		case 9:
+			sequenceId = 0x10;
+			if (0x31 < vm->getRand(100)) {
+				sequenceId = 0x16;
+			}
+			monk1->updateSequence(sequenceId);
+			sequenceId = 0x11;
+			if (0x31 < vm->getRand(100)) {
+				sequenceId = 0x17;
+			}
+			monk2->updateSequence(sequenceId);
+			monksAtBarCurrentState = 0;
+			sVar2 = vm->getRand(10);
+			specialOpCounter = (sVar2 + 10) * 0x3c;
+			break;
+		case 10:
+			if (!barKeeper->isFlagSet(ACTOR_FLAG_4)) {
 				break;
-			case 4:
-				if (bVar1) {
-					barKeeper->updateSequence(0xc);
-					textIndex = sceneUpdateFuncDialogTbl[vm->getRand(3) + 3];
-				} else {
-					barKeeper->updateSequence(2);
-					textIndex = DAT_800832f0[vm->getRand(4)];
-				}
-				vm->_talk->playDialogAudioDontWait(textIndex);
-				monksAtBarCurrentState = 5;
-				specialOpCounter = 0;
+			}
+			ini->actor->updateSequence(0);
+			sequenceId = 8;
+			monk2 = barKeeper;
+			monk2->updateSequence(sequenceId);
+			monksAtBarCurrentState = 0;
+			sVar2 = vm->getRand(10);
+			specialOpCounter = (sVar2 + 10) * 0x3c;
+			break;
+		case 0x37:
+			barKeeper->updateSequence(0x11);
+			specialOpCounter = 0x14;
+			monksAtBarCurrentState = 6;
+			break;
+		case 0x41:
+			if (!barKeeper->isFlagSet(ACTOR_FLAG_4)) {
 				break;
-			case 5:
-				if (bVar1) {
-					sequenceId = 8;
-				} else {
-					sequenceId = 0;
-				}
-				barKeeper->updateSequence(sequenceId);
-				specialOpCounter = 0x78;
-				if (!bVar1) {
-					monksAtBarCurrentState = 0x37;
-					break;
-				}
-				monksAtBarCurrentState = 6;
-				break;
-			case 6:
-				if (bVar1) {
-					barKeeper->updateSequence(0xb);
-					ini->actor->updateSequence(7);
-					monksAtBarCurrentState = 10;
-				} else {
-					barKeeper->updateSequence(0xd);
-					monk1->updateSequence(0x14);
-					monksAtBarCurrentState = 0x41;
-				}
-				specialOpCounter = 0;
-				break;
-			case 7:
-				if (!barKeeper->isFlagSet(ACTOR_FLAG_4)) {
-					break;
-				}
-				barKeeper->updateSequence(0xe);
-				monk2->updateSequence(0x15);
-				monksAtBarCurrentState = 8;
-				specialOpCounter = 0;
-				break;
-			case 8:
-				if (barKeeper->isFlagSet(ACTOR_FLAG_4)) {
-					monk2->updateSequence(8);
-					barKeeper->updateSequence(0);
-					monksAtBarCurrentState = 9;
-					specialOpCounter = 300;
-				}
-				break;
-			case 9:
-				sequenceId = 0x10;
-				if (0x31 < vm->getRand(100)) {
-					sequenceId = 0x16;
-				}
-				monk1->updateSequence(sequenceId);
-				sequenceId = 0x11;
-				if (0x31 < vm->getRand(100)) {
-					sequenceId = 0x17;
-				}
-				monk2->updateSequence(sequenceId);
-				monksAtBarCurrentState = 0;
-				sVar2 = vm->getRand(10);
-				specialOpCounter = (sVar2 + 10) * 0x3c;
-				break;
-			case 10:
-				if (!barKeeper->isFlagSet(ACTOR_FLAG_4)) {
-					break;
-				}
-				ini->actor->updateSequence(0);
-				sequenceId = 8;
-				monk2 = barKeeper;
-				monk2->updateSequence(sequenceId);
-				monksAtBarCurrentState = 0;
-				sVar2 = vm->getRand(10);
-				specialOpCounter = (sVar2 + 10) * 0x3c;
-				break;
-			case 0x37:
-				barKeeper->updateSequence(0x11);
-				specialOpCounter = 0x14;
-				monksAtBarCurrentState = 6;
-				break;
-			case 0x41:
-				if (!barKeeper->isFlagSet(ACTOR_FLAG_4)) {
-					break;
-				}
-				barKeeper->updateSequence(0xf);
-				monk1->updateSequence(0);
-				monksAtBarCurrentState = 7;
-				specialOpCounter = 0;
-				break;
+			}
+			barKeeper->updateSequence(0xf);
+			monk1->updateSequence(0);
+			monksAtBarCurrentState = 7;
+			specialOpCounter = 0;
+			break;
 		}
 	}
 	vm->_scriptOpcodes->_specialOpCodes->setSpecialOpCounter(specialOpCounter);
@@ -1687,7 +1685,7 @@ void monksAtBarSceneUpdateFunction() {
 
 void flameEscapeSceneUpdateFunction() {
 	static const uint32 dialogTbl[6] = {
-			0x10458, 0x104A0, 0x10500, 0x10500, 0x10550, 0x10578 //TODO support multiple languages
+		0x10458, 0x104A0, 0x10500, 0x10500, 0x10550, 0x10578 //TODO support multiple languages
 	};
 	static bool DAT_800634c0 = false;
 	DragonsEngine *vm = getEngine();
@@ -1756,7 +1754,7 @@ void caveOfDilemmaUpdateFunction() {
 
 void moatDrainedSceneUpdateFunction() {
 	static const uint32 moatDrainedTextIdTbl[4] = {
-			0x3C97A, 0x3C9AC, 0x3C9F8, 0x3CA48
+		0x3C97A, 0x3C9AC, 0x3C9F8, 0x3CA48
 	};
 	static uint16 moatDrainedUpdateCounter = 0;
 	static bool moatDrainedStatus = false;

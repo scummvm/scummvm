@@ -36,7 +36,6 @@ namespace Dragons {
 #define ILLUSIONS_SAVEGAME_VERSION 0
 
 kReadSaveHeaderError DragonsEngine::readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail) {
-
 	header.version = in->readUint32LE();
 	if (header.version > ILLUSIONS_SAVEGAME_VERSION)
 		return kRSHEInvalidVersion;

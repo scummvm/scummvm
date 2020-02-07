@@ -131,7 +131,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	local_256 = 0;
 	screenShakeCounter = 0;
 	local_2e6 = param_2;
-	if (4 < param_2) {
+	if (param_2 > 4) {
 		local_2e6 = 4;
 	}
 	_dat_80093ca4 = unkArray[local_2e6];
@@ -249,7 +249,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	_vm->waitForFrames(2);
 	// call_fade_related_1f();
 
-	LAB_80090188:
+LAB_80090188:
 	do {
 		if (shouldExit) {
 //			fade_related_calls_with_1f();
@@ -732,7 +732,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 			}
 		}
 
-	} while ( true );
+	} while (true);
 
 }
 

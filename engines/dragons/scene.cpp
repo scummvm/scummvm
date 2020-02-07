@@ -219,7 +219,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	_vm->_data_800633fc = 0;
 	// TODO 0x8002fff0
 
-	for (int i = 0;i < _dragonINIResource->totalRecords(); i++) {
+	for (int i = 0; i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _dragonINIResource->getRecord(i);
 		if (ini->sceneId == sceneIdStripped) {
 			if (ini->field_1a_flags_maybe & 1) {
@@ -364,11 +364,10 @@ void Scene::draw() {
 			}
 
 			if (actor->_flags & ACTOR_FLAG_40 &&
-				!(actor->_flags & ACTOR_FLAG_400) &&
-				actor->_surface &&
-				actor->_frame->width != 0 &&
-				actor->_frame->height != 0
-				) {
+					!(actor->_flags & ACTOR_FLAG_400) &&
+					actor->_surface &&
+					actor->_frame->width != 0 &&
+					actor->_frame->height != 0 ) {
 				Graphics::Surface *s = actor->_surface;
 				if (actor->_priorityLayer == priority) { //} && x + s->w < 320 && y + s->h < 200) {
 					if (!actor->isFlagSet(ACTOR_FLAG_80)) {

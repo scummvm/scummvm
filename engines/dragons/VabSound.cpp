@@ -29,12 +29,13 @@
 #include "dragons/dragons.h"
 
 namespace Dragons {
-	VabSound::VabSound(Common::SeekableReadStream *msfData, const DragonsEngine *_vm): _toneAttrs(NULL), _vbData(NULL) {
-		loadHeader(msfData);
 
-		int32 dataSize = msfData->size() - msfData->pos();
-		_vbData = new byte[dataSize];
-		msfData->read(_vbData, dataSize);
+VabSound::VabSound(Common::SeekableReadStream *msfData, const DragonsEngine *_vm): _toneAttrs(NULL), _vbData(NULL) {
+	loadHeader(msfData);
+
+	int32 dataSize = msfData->size() - msfData->pos();
+	_vbData = new byte[dataSize];
+	msfData->read(_vbData, dataSize);
 
 //		_vbData = new Common::MemoryReadStream(newData, dataSize, DisposeAfterUse::YES);
 //
@@ -42,80 +43,80 @@ namespace Dragons {
 //		Audio::SoundHandle _speechHandle;
 //		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speechHandle, str);
 
-		delete msfData;
+	delete msfData;
+}
+
+VabSound::VabSound(Common::SeekableReadStream *vhData, Common::SeekableReadStream *vbData): _toneAttrs(NULL), _vbData(NULL) {
+	loadHeader(vhData);
+
+	assert(vhData->pos() == vhData->size());
+
+	_vbData = new byte[vbData->size()];
+	vbData->read(_vbData, vbData->size());
+
+	delete vhData;
+	delete vbData;
+}
+
+void VabSound::loadHeader(Common::SeekableReadStream *vhData) {
+	vhData->seek(0);
+	vhData->read(&_header.magic, 4);
+	_header.version = vhData->readUint32LE();
+	_header.vabId = vhData->readUint32LE();
+	_header.waveformSize = vhData->readUint32LE();
+
+	_header.reserved0 = vhData->readUint16LE();
+	_header.numPrograms = vhData->readUint16LE();
+	_header.numTones = vhData->readUint16LE();
+	_header.numVAG = vhData->readUint16LE();
+
+	_header.masterVolume = vhData->readByte();
+	_header.masterPan = vhData->readByte();
+	_header.bankAttr1 = vhData->readByte();
+	_header.bankAttr2 = vhData->readByte();
+
+	_header.reserved1 = vhData->readUint32LE();
+
+	if (strncmp(_header.magic, "pBAV", 4) != 0) {
+		error("Invalid VAB file");
 	}
 
-	VabSound::VabSound(Common::SeekableReadStream *vhData, Common::SeekableReadStream *vbData): _toneAttrs(NULL), _vbData(NULL) {
-		loadHeader(vhData);
+	loadProgramAttributes(vhData);
+	loadToneAttributes(vhData);
 
-		assert(vhData->pos() == vhData->size());
-
-		_vbData = new byte[vbData->size()];
-		vbData->read(_vbData, vbData->size());
-
-		delete vhData;
-		delete vbData;
+	uint16 tempOffsets[0x100];
+	for (int i = 0; i < 0x100; i++) {
+		tempOffsets[i] = vhData->readUint16LE();
 	}
+	_vagOffsets[0] = tempOffsets[0] << 3u;
+	for (int j = 1; j < 0x100; ++j) {
+		const int vagSize = tempOffsets[j] << 3u;
+		_vagSizes[j - 1] = vagSize;
+		_vagOffsets[j] = vagSize + _vagOffsets[j - 1];
+	}
+}
 
-	void VabSound::loadHeader(Common::SeekableReadStream *vhData) {
-		vhData->seek(0);
-		vhData->read(&_header.magic, 4);
-		_header.version = vhData->readUint32LE();
-		_header.vabId = vhData->readUint32LE();
-		_header.waveformSize = vhData->readUint32LE();
+VabSound::~VabSound() {
+	delete _toneAttrs;
+	delete _vbData;
+}
 
-		_header.reserved0 = vhData->readUint16LE();
-		_header.numPrograms = vhData->readUint16LE();
-		_header.numTones = vhData->readUint16LE();
-		_header.numVAG = vhData->readUint16LE();
-
-		_header.masterVolume = vhData->readByte();
-		_header.masterPan = vhData->readByte();
-		_header.bankAttr1 = vhData->readByte();
-		_header.bankAttr2 = vhData->readByte();
-
-		_header.reserved1 = vhData->readUint32LE();
-
-		if (strncmp(_header.magic, "pBAV", 4) != 0) {
-			error("Invalid VAB file");
+Audio::AudioStream *VabSound::getAudioStream(uint16 program, uint16 key) {
+	assert(program < _header.numVAG);
+	// TODO
+	uint16 vagID = 0;
+	for (int i = 0; i < _programAttrs[program].tones; i++) {
+		if (_toneAttrs[i].prog == program && _toneAttrs[i].min == key && _toneAttrs[i].max == key) {
+			vagID = _toneAttrs[i].vag - 1;
 		}
-
-		loadProgramAttributes(vhData);
-		loadToneAttributes(vhData);
-
-		uint16 tempOffsets[0x100];
-		for (int i = 0; i < 0x100; i++) {
-			tempOffsets[i] = vhData->readUint16LE();
-		}
-		_vagOffsets[0] = tempOffsets[0] << 3u;
-		for (int j = 1; j < 0x100; ++j) {
-			const int vagSize = tempOffsets[j] << 3u;
-			_vagSizes[j - 1] = vagSize;
-			_vagOffsets[j] = vagSize + _vagOffsets[j - 1];
-		}
 	}
-
-	VabSound::~VabSound() {
-		delete _toneAttrs;
-		delete _vbData;
-	}
-
-	Audio::AudioStream *VabSound::getAudioStream(uint16 program, uint16 key) {
-		assert(program < _header.numVAG);
-		// TODO
-		uint16 vagID = 0;
-		for (int i = 0; i < _programAttrs[program].tones; i++) {
-			if (_toneAttrs[i].prog == program && _toneAttrs[i].min == key && _toneAttrs[i].max == key) {
-				vagID = _toneAttrs[i].vag - 1;
-			}
-		}
-		debug("Playing program %d, numTones: %d, key %d vagID %d, vagOffset: %x, size: %x", program, _programAttrs[program].tones, key, vagID, _vagOffsets[vagID], _vagSizes[vagID]);
-		Audio::AudioStream *str = Audio::makeXAStream(
-				new Common::MemoryReadStream(&_vbData[_vagOffsets[vagID]], _vagSizes[vagID], DisposeAfterUse::NO),
-				11025,
-				DisposeAfterUse::YES);
-		return str;
-	}
+	debug("Playing program %d, numTones: %d, key %d vagID %d, vagOffset: %x, size: %x", program, _programAttrs[program].tones, key, vagID, _vagOffsets[vagID], _vagSizes[vagID]);
+	Audio::AudioStream *str = Audio::makeXAStream(
+			new Common::MemoryReadStream(&_vbData[_vagOffsets[vagID]], _vagSizes[vagID], DisposeAfterUse::NO),
+			11025,
+			DisposeAfterUse::YES);
+	return str;
+}
 
 void VabSound::loadProgramAttributes(Common::SeekableReadStream *vhData) {
 	for (int i = 0; i < DRAGONS_VAB_NUM_PROG_ATTRS; i++) {
