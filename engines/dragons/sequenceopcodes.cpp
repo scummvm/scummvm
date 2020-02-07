@@ -161,7 +161,7 @@ void SequenceOpcodes::opUpdateXYResetSeqTimer(Actor *actor, OpCall &opCall) {
 	actor->_y_pos += yOffset;
 	actor->_sequenceTimer = actor->_field_c;
 
-	debug(5, "update actor %d XY offset (%d,%d) new values (%d, %d) %d", actor->_actorID, xOffset, yOffset, actor->_x_pos, actor->_y_pos, actor->_sequenceTimer);
+	debug(5, "update actor %d XY offset (%d, %d) new values (%d, %d) %d", actor->_actorID, xOffset, yOffset, actor->_x_pos, actor->_y_pos, actor->_sequenceTimer);
 	updateReturn(opCall, 1);
 }
 
@@ -178,7 +178,7 @@ void SequenceOpcodes::opSetActorFlag4AndStop(Actor *actor, OpCall &opCall) {
 }
 
 void SequenceOpcodes::opSetActorFlags404(Actor *actor, OpCall &opCall) {
-	actor->_flags |= (ACTOR_FLAG_4 | Dragons::ACTOR_FLAG_400 );
+	actor->_flags |= (ACTOR_FLAG_4 | Dragons::ACTOR_FLAG_400);
 	updateReturn(opCall, 1);
 }
 

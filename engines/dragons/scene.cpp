@@ -87,18 +87,16 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2 | Dragons::ENGINE_UNK1_FLAG_8);
 
-	for (int i = 0;i < _dragonINIResource->totalRecords(); i++) {
+	for (int i = 0; i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _dragonINIResource->getRecord(i);
 		ini->field_10 = -1;
 		ini->field_1a_flags_maybe &= ~INI_FLAG_10;
 	}
 
 	uint16 sceneIdStripped = (uint16)sceneId & ~0x8000;
-	if ((((((sceneIdStripped == 0x18) || (sceneIdStripped == 0x26)) ||
-		   (sceneIdStripped == 0x7)) ||
-		  ((sceneIdStripped == 0x17 || (sceneIdStripped == 0x5)))) ||
-		 ((sceneIdStripped == 0x19 || ((sceneIdStripped == 0x34 || (sceneIdStripped == 0x1d)))
-		 ))) || (sceneIdStripped == 0x6)) {
+	if (sceneIdStripped == 0x18 || sceneIdStripped == 0x26 || sceneIdStripped == 0x7 ||
+			sceneIdStripped == 0x17 || sceneIdStripped == 0x5 || sceneIdStripped == 0x19 ||
+			sceneIdStripped == 0x34 || sceneIdStripped == 0x1d || sceneIdStripped == 0x6) {
 //		buf2048bytes = buf2048bytes + 0x1800;
 		// error("0x8002f404"); //TODO do we need this logic?
 	}
@@ -367,7 +365,7 @@ void Scene::draw() {
 					!(actor->_flags & ACTOR_FLAG_400) &&
 					actor->_surface &&
 					actor->_frame->width != 0 &&
-					actor->_frame->height != 0 ) {
+					actor->_frame->height != 0) {
 				Graphics::Surface *s = actor->_surface;
 				if (actor->_priorityLayer == priority) { //} && x + s->w < 320 && y + s->h < 200) {
 					if (!actor->isFlagSet(ACTOR_FLAG_80)) {

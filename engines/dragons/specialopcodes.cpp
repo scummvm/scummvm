@@ -233,7 +233,7 @@ void SpecialOpcodes::spcCatapultMiniGame() {
 
 void SpecialOpcodes::spcThumbWrestlingMiniGame() {
 	Minigame2 minigame2(_vm);
-	minigame2.run(0,1,1);
+	minigame2.run(0, 1, 1);
 }
 
 void SpecialOpcodes::spcClearEngineFlag10() {
@@ -293,7 +293,7 @@ void SpecialOpcodes::spcCastleGardenLogic() {
 	sceneUpdater.iniIDTbl[2][0] = sceneUpdater.iniIDTbl[3][0];
 	sceneUpdater.iniIDTbl[2][1] = sceneUpdater.iniIDTbl[4][0];
 	sceneUpdater.iniIDTbl[3][1] = sceneUpdater.iniIDTbl[4][0];
-	setupTableBasedSceneUpdateFunction(1,4,0xb4);
+	setupTableBasedSceneUpdateFunction(1, 4, 0xb4);
 }
 
 void SpecialOpcodes::spcUnk9() {
@@ -332,14 +332,14 @@ void SpecialOpcodes::spcStopLadyOfTheLakeCapturedSceneLogic() {
 	_vm->setSceneUpdateFunction(NULL);
 	_vm->_sound->PauseCDMusic();
 	if ((_dat_80083148 != 0) || (_uint16_t_80083154 != 0)) {
-		//TODO FUN_8001ac5c((uint)_dat_80083148,(uint)DAT_80083150,(uint)_uint16_t_80083154,(uint)DAT_80083158);
+		//TODO FUN_8001ac5c((uint)_dat_80083148, (uint)DAT_80083150, (uint)_uint16_t_80083154, (uint)DAT_80083158);
 	}
 	_dat_80083148 = 0;
 	_uint16_t_80083154 = 0;
 }
 
 void SpecialOpcodes::spc11ShakeScreen() {
-	for (int i = 0; i < 16; i++ ) {
+	for (int i = 0; i < 16; i++) {
 		_vm->_screen->setScreenShakeOffset(0, shakeTbl[i]);
 		_vm->waitForFrames(1);
 	}
@@ -447,7 +447,7 @@ void SpecialOpcodes::spcKnightPoolReflectionLogic() {
 	sceneUpdater.numSteps[3] = 4;
 	sceneUpdater.numSteps[4] = 4;
 	sceneUpdater.numSteps[5] = 3;
-	setupTableBasedSceneUpdateFunction(0x168,6,300);
+	setupTableBasedSceneUpdateFunction(0x168, 6, 300);
 }
 
 void SpecialOpcodes::spcWalkOnStilts() {
@@ -553,7 +553,7 @@ void SpecialOpcodes::spcStopMenInMinesSceneLogic() {
 			_vm->waitForFrames(1);
 		}
 		//TODO
-		//FUN_8001ac5c((uint)_dat_80083148,(uint)DAT_80083150,(uint)_uint16_t_80083154,(uint)DAT_80083158);
+		//FUN_8001ac5c((uint)_dat_80083148, (uint)DAT_80083150, (uint)_uint16_t_80083154, (uint)DAT_80083158);
 	}
 }
 
@@ -580,7 +580,7 @@ void SpecialOpcodes::spcStopMonksAtBarSceneLogic() {
 void SpecialOpcodes::spcFlameBedroomEscapeSceneLogic() {
 	setSpecialOpCounter(-1);
 	if ((_dat_80083148 != 0) && (_uint16_t_80083154 != 0)) {
-		//TODO FUN_8001ac5c((uint)_dat_80083148,(uint)DAT_80083150,(uint)_uint16_t_80083154,(uint)DAT_80083158);
+		//TODO FUN_8001ac5c((uint)_dat_80083148, (uint)DAT_80083150, (uint)_uint16_t_80083154, (uint)DAT_80083158);
 	}
 	_vm->setSceneUpdateFunction(flameEscapeSceneUpdateFunction);
 	_uint16_t_80083154 = 0;
@@ -589,7 +589,7 @@ void SpecialOpcodes::spcFlameBedroomEscapeSceneLogic() {
 
 void SpecialOpcodes::spcStopFlameBedroomEscapeSceneLogic() {
 	setSpecialOpCounter(0);
-//	TODO FUN_8001ac5c((uint)_dat_80083148,(uint)DAT_80083150,(uint)_uint16_t_80083154,(uint)DAT_80083158);
+//	TODO FUN_8001ac5c((uint)_dat_80083148, (uint)DAT_80083150, (uint)_uint16_t_80083154, (uint)DAT_80083158);
 	_uint16_t_80083154 = 0;
 	_dat_80083148 = 0;
 	_vm->_dragonINIResource->getRecord(0x96)->actor->updateSequence(0);
@@ -614,7 +614,7 @@ void SpecialOpcodes::spcCastleMoatUpdateActorSceneScalePoints() {
 void SpecialOpcodes::spcCastleGateMoatDrainedSceneLogic() {
 	setSpecialOpCounter(-1);
 	if ((_dat_80083148 != 0) && (_uint16_t_80083154 != 0)) {
-		//TODO FUN_8001ac5c((uint)_dat_80083148,(uint)DAT_80083150,(uint)_uint16_t_80083154,(uint)DAT_80083158);
+		//TODO FUN_8001ac5c((uint)_dat_80083148, (uint)DAT_80083150, (uint)_uint16_t_80083154, (uint)DAT_80083158);
 	}
 	_vm->setSceneUpdateFunction(moatDrainedSceneUpdateFunction);
 	_uint16_t_80083154 = 0;
@@ -670,11 +670,11 @@ void SpecialOpcodes::spcTownAngryVillagersSceneLogic() {
 	sceneUpdater.numSteps[2] = 2;
 	sceneUpdater.numSteps[3] = 2;
 	sceneUpdater.numSteps[4] = 2;
-	setupTableBasedSceneUpdateFunction(0xf0,5,0x708);
+	setupTableBasedSceneUpdateFunction(0xf0, 5, 0x708);
 }
 
 void SpecialOpcodes::spcBlackDragonCrashThroughGate() {
-	for (int i = 0; i < 16; i++ ) {
+	for (int i = 0; i < 16; i++) {
 		_vm->_screen->setScreenShakeOffset(shakeTbl[i], shakeTbl[i]);
 		_vm->waitForFrames(1);
 	}
@@ -743,7 +743,7 @@ void SpecialOpcodes::spcZigmondFraudSceneLogic() {
 	sceneUpdater.textTbl[7][0] = 0x2D4A8;
 	sceneUpdater.textTbl[7][1] = 0x2D504;
 
-	setupTableBasedSceneUpdateFunction(0x168,8,0xb4);
+	setupTableBasedSceneUpdateFunction(0x168, 8, 0xb4);
 }
 
 void SpecialOpcodes::spcZigmondFraudSceneLogic1() {
@@ -752,7 +752,7 @@ void SpecialOpcodes::spcZigmondFraudSceneLogic1() {
 	sceneUpdater.sequenceIDTbl[0][0] = 0x12;
 	sceneUpdater.textTbl[0][0] = 0x2F422; //TODO this might change between game versions
 
-	setupTableBasedSceneUpdateFunction(300,1,0x708);
+	setupTableBasedSceneUpdateFunction(300, 1, 0x708);
 }
 
 void SpecialOpcodes::spcBrokenBlackDragonSceneLogic() {
@@ -774,7 +774,7 @@ void SpecialOpcodes::spcBrokenBlackDragonSceneLogic() {
 	sceneUpdater.iniIDTbl[1][1] = 0x231;
 	sceneUpdater.iniIDTbl[2][0] = 0x23B;
 	sceneUpdater.iniIDTbl[2][1] = 0x231;
-	setupTableBasedSceneUpdateFunction(300,3,600);
+	setupTableBasedSceneUpdateFunction(300, 3, 600);
 }
 
 void SpecialOpcodes::spcDodoUnderAttackSceneLogic() {
@@ -802,7 +802,7 @@ void SpecialOpcodes::spcDodoUnderAttackSceneLogic() {
 	sceneUpdater.numSteps[3] = 1;
 	sceneUpdater.numSteps[4] = 1;
 	sceneUpdater.numSteps[5] = 1;
-	setupTableBasedSceneUpdateFunction(0x1e0,6,0x1e0);
+	setupTableBasedSceneUpdateFunction(0x1e0, 6, 0x1e0);
 }
 
 void SpecialOpcodes::spcForestWithoutDodoSceneLogic() {
@@ -823,7 +823,7 @@ void SpecialOpcodes::spcForestWithoutDodoSceneLogic() {
 	sceneUpdater.iniIDTbl[1][1] = 0x1C5;
 	sceneUpdater.textTbl[1][2] = 0x34074;
 	sceneUpdater.iniIDTbl[1][2] = 0x1C4;
-	setupTableBasedSceneUpdateFunction(300,2,600);
+	setupTableBasedSceneUpdateFunction(300, 2, 600);
 }
 
 void SpecialOpcodes::spcBlackDragonOnHillSceneLogic() {
@@ -852,7 +852,7 @@ void SpecialOpcodes::spcBlackDragonOnHillSceneLogic() {
 	sceneUpdater.numSteps[1] = 2;
 	sceneUpdater.numSteps[2] = 2;
 	sceneUpdater.numSteps[3] = 1;
-	setupTableBasedSceneUpdateFunction(300,4,300);
+	setupTableBasedSceneUpdateFunction(300, 4, 300);
 }
 
 void SpecialOpcodes::spcUnk4e() {
@@ -967,8 +967,8 @@ void SpecialOpcodes::spcInsideBlackDragonUpdatePalette() {
 }
 
 void SpecialOpcodes::spcCastleGateSceneLogic() {
-	_vm->_screen->updatePaletteTransparency(0, 0xc0,0xff, true);
-	//TODO FUN_80017d68(3,0); sets sprite layer attribute from layers 0 and 1. Doesn't seem to be needed.
+	_vm->_screen->updatePaletteTransparency(0, 0xc0, 0xff, true);
+	//TODO FUN_80017d68(3, 0); sets sprite layer attribute from layers 0 and 1. Doesn't seem to be needed.
 	setSpecialOpCounter(-1);
 	_vm->clearFlags(ENGINE_FLAG_1);
 	_vm->setSceneUpdateFunction(castleFogUpdateFunction);
@@ -1010,7 +1010,7 @@ void SpecialOpcodes::panCamera(int16 mode) {
 void SpecialOpcodes::spcBlackDragonDialogForCamelhot() {
 	uint16 buffer[1024];
 	_vm->_talk->loadText(0x30DD8, buffer, 1024); //TODO might need to check dialog in other game versions
-	_vm->_talk->displayDialogAroundPoint(buffer,0x27,0xc,0xc01,0,0x30DD8);
+	_vm->_talk->displayDialogAroundPoint(buffer, 0x27, 0xc, 0xc01, 0, 0x30DD8);
 	//TODO this isn't quite right. The audio isn't played and it's not waiting long enough.
 }
 
@@ -1123,7 +1123,7 @@ void SpecialOpcodes::spcTransitionToMap() {
 //	cursorSequenceId = 0;
 //	_vm->waitForFrames();
 //	engine_flags_maybe = engine_flags_maybe | 0x20000000;
-//	FUN_80023b34(0,0,1);
+//	FUN_80023b34(0, 0, 1);
 }
 
 void SpecialOpcodes::spcTransitionFromMap() {
@@ -1159,7 +1159,7 @@ void SpecialOpcodes::spcRunCredits() {
 //	iVar1 = file_read_to_buffer(strCredits_txt);
 //	DAT_800728ec = iVar1 + (int)DAT_8007273c;
 //	buf2048bytes = (int32 *)((iVar1 + 3U & 0xfffffffc) + (int)buf2048bytes);
-//	memcpy2((byte *)buf2048bytes,scrFileData_maybe,0x200);
+//	memcpy2((byte *)buf2048bytes, scrFileData_maybe, 0x200);
 //	buf2048bytes = buf2048bytes + 0x80;
 	_vm->_screen->loadPalette(0, _vm->_dragonINIResource->getRecord(0x2C8)->actor->_actorResource->getPalette());
 	_vm->_scene->setMgLayerPriority(0);
@@ -1189,7 +1189,7 @@ void SpecialOpcodes::spcLoadLadyOfTheLakeActor() {
 	//DisableVSyncEvent();
 //	uVar17 = (uint)(uint16)dragon_ini_pointer[DAT_8006398c + -1].field_0x1c;
 //	uVar7 = load_actor_file(0xcc);
-//	file_read_to_buffer(s_s12a6.act_80011740,(&actor_dictionary)[(uVar7 & 0xffff) * 2]);
+//	file_read_to_buffer(s_s12a6.act_80011740, (&actor_dictionary)[(uVar7 & 0xffff) * 2]);
 //	actors[uVar17].﻿actorFileDictionaryIndex = (uint16_t)uVar7;
 //	actors[uVar17].﻿resourceID = 0xcd;
 //	iVar18 = DAT_8006398c;
@@ -1221,7 +1221,7 @@ void SpecialOpcodes::spcJesterInLibrarySceneLogic() {
 	sceneUpdater.iniIDTbl[0][0] = 0xD7;
 	sceneUpdater.iniIDTbl[1][0] = 0xD7;
 	sceneUpdater.iniIDTbl[2][0] = 0xD7;
-	setupTableBasedSceneUpdateFunction(300,3,0x708);
+	setupTableBasedSceneUpdateFunction(300, 3, 0x708);
 }
 
 void SpecialOpcodes::pizzaMakerStopWorking() {

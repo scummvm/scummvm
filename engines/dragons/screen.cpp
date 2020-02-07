@@ -41,16 +41,16 @@ void Screen::updateScreen() {
 	if (_screenShakeOffset.x != 0 || _screenShakeOffset.y != 0) {
 		g_system->fillScreen(0); //TODO this is meant for 8bit screens. we should use system shake here.
 	}
-	Common::Rect clipRect = clipRectToScreen( _screenShakeOffset.x,  _screenShakeOffset.y, Common::Rect(_backSurface->w, _backSurface->h));
+	Common::Rect clipRect = clipRectToScreen(_screenShakeOffset.x,  _screenShakeOffset.y, Common::Rect(_backSurface->w, _backSurface->h));
 	g_system->copyRectToScreen((byte*)_backSurface->getBasePtr(clipRect.left, clipRect.top),
 			_backSurface->pitch,
 			_screenShakeOffset.x < 0 ? 0 : _screenShakeOffset.x, _screenShakeOffset.y < 0 ? 0 : _screenShakeOffset.y,
 			clipRect.width(), clipRect.height());
 //	if (_screenShakeOffset < 0) {
-//		_backSurface->fillRect(Common::Rect(0,_backSurface->h + _screenShakeOffset - 1, _backSurface->w - 1, _backSurface->h - 1), 0);
+//		_backSurface->fillRect(Common::Rect(0, _backSurface->h + _screenShakeOffset - 1, _backSurface->w - 1, _backSurface->h - 1), 0);
 //	}
 //	if (_screenShakeOffset > 0) {
-//		_backSurface->fillRect(Common::Rect(0,0, _backSurface->w - 1, _screenShakeOffset - 1), 0);
+//		_backSurface->fillRect(Common::Rect(0, 0, _backSurface->w - 1, _screenShakeOffset - 1), 0);
 //	}
 	g_system->updateScreen();
 }
@@ -65,7 +65,7 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 }
 
 void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect, bool flipX, AlphaBlendMode alpha) {
-	Common::Rect clipRect = clipRectToScreen( destX,  destY, srcRect);
+	Common::Rect clipRect = clipRectToScreen(destX,  destY, srcRect);
 	if (clipRect.width() == 0 || clipRect.height() == 0) {
 		return;
 	}
@@ -89,7 +89,7 @@ void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *pa
 				palette, flipX, alpha);
 		return;
 	}
-	Common::Rect clipRect = clipRectToScreen( destX,  destY, srcRect);
+	Common::Rect clipRect = clipRectToScreen(destX,  destY, srcRect);
 	if (clipRect.width() == 0 || clipRect.height() == 0) {
 		return;
 	}
@@ -110,15 +110,15 @@ void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, byte *pa
  * @param bg      The background color in uint16 RGB565 format
  * @param alpha   The alpha in range 0-255
  **/
-uint16 alphaBlendRGB555( uint32 fg, uint32 bg, uint8 alpha ){
-	alpha = ( alpha + 4 ) >> 3;
+uint16 alphaBlendRGB555(uint32 fg, uint32 bg, uint8 alpha){
+	alpha = (alpha + 4) >> 3;
 	bg = (bg | (bg << 16)) & 0x3e07c1f;
 	fg = (fg | (fg << 16)) & 0x3e07c1f;
 	uint32 result = ((((fg - bg) * alpha) >> 5) + bg) & 0x3e07c1f;
 	return (uint16)((result >> 16) | result);
 }
 
-uint16 alphaBlendAdditiveRGB555( uint32 fg, uint32 bg){
+uint16 alphaBlendAdditiveRGB555(uint32 fg, uint32 bg){
 	bg = (bg | (bg << 16)) & 0x3e07c1f;
 	fg = (fg | (fg << 16)) & 0x3e07c1f;
 
@@ -373,7 +373,7 @@ byte *Screen::getPalette(uint16 paletteNum) {
 }
 
 void Screen::clearScreen() {
-	_backSurface->fillRect(Common::Rect(0,0, _backSurface->w - 1, _backSurface->h - 1), 0);
+	_backSurface->fillRect(Common::Rect(0, 0, _backSurface->w - 1, _backSurface->h - 1), 0);
 }
 
 void Screen::drawRect(uint16 colour, Common::Rect rect, int id) {

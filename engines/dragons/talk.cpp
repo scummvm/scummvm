@@ -91,11 +91,11 @@ Talk::FUN_8003239c(uint16 *dialog, int16 x, int16 y, int32 param_4, uint16 param
 
 	//TODO dragon_text_related(textId);
 	_vm->_data_800633fc = 1;
-	uint32 uVar4 = 0; //TODO FUN_8001d1ac(0,textId,0);
+	uint32 uVar4 = 0; //TODO FUN_8001d1ac(0, textId, 0);
 
 	actor->updateSequence(startSequenceId);
 	_vm->_sound->playSpeech(textId);
-	conversation_related_maybe(dialog, (int)x, (int)y,param_4 & 0xffff, (uint)param_5, textId, uVar4 & 0xffff);
+	conversation_related_maybe(dialog, (int)x, (int)y, param_4 & 0xffff, (uint)param_5, textId, uVar4 & 0xffff);
 
 	actor->updateSequence(endSequenceId);
 }
@@ -168,7 +168,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 	if (param_5 != 0) {
 		_vm->clearFlags(ENGINE_FLAG_8);
 	}
-	tmpTextPtr = findCharInU16Str(dialogText,0x5c);
+	tmpTextPtr = findCharInU16Str(dialogText, 0x5c);
 	if (tmpTextPtr != NULL) {
 		sVar3 = tmpTextPtr[1];
 		*tmpTextPtr = sVar3;
@@ -299,7 +299,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 				iVar6 = iVar5;
 				if (currentLine[0] == 0) break;
 				iVar6 = iVar5 + 1;
-				UTF16ToUTF16Z(asStack2592 + (int)(short)iVar5 * 0x29,currentLine);
+				UTF16ToUTF16Z(asStack2592 + (int)(short)iVar5 * 0x29, currentLine);
 				uVar9 = strlenUTF16(currentLine);
 				if ((int)sVar20 < (int)(uVar9 & 0xffff)) {
 					maxLineLengthMaybe = strlenUTF16(currentLine);
@@ -371,9 +371,9 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 												   ((uint)_dat_8008e844_dialogBox_y1 + unaff_s4 * (uint)_dat_800726f0_tfont_field2 + 1) * 8,
 								dialogTextLinePtr, wideStrLen(dialogTextLinePtr), 0);
 //							ProbablyShowUTF16Msg3
-//									(dialogTextLinePtr,uVar9 & 0xffff,
+//									(dialogTextLinePtr, uVar9 & 0xffff,
 //									 (uint)_dat_8008e844_dialogBox_y1 + iVar5 * (uint)_dat_800726f0_tfont_field2 + 1
-//									 & 0xffff,(uint)param_4, 0xffffffff);
+//									 & 0xffff, (uint)param_4, 0xffffffff);
 					}
 				}
 			}
@@ -413,8 +413,8 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 			LAB_80032e18:
 			//TODO CheckIfCdShellIsOpen();
 			if (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1)) {
-				FUN_8001a7c4((uint)_dat_8008e7e8_dialogBox_x1,(uint)_dat_8008e844_dialogBox_y1,
-							 (uint)_dat_8008e848_dialogBox_x2,(uint)_dat_8008e874_dialogBox_y2);
+				FUN_8001a7c4((uint)_dat_8008e7e8_dialogBox_x1, (uint)_dat_8008e844_dialogBox_y1,
+							 (uint)_dat_8008e848_dialogBox_x2, (uint)_dat_8008e874_dialogBox_y2);
 			}
 		} while (!_vm->isUnkFlagSet(ENGINE_UNK1_FLAG_1) &&
 				 (((!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED) || (param_7 != 0)) && (*curDialogTextPtr != 0))));
@@ -449,12 +449,12 @@ uint32 Talk::displayDialogAroundINI(uint32 iniId, uint16 *dialogText, uint32 tex
 						((x - _vm->_scene->_camera.x) * 0x10000) >> 0x13,
 				 ((y - _vm->_scene->_camera.y) * 0x10000) >> 0x13,
 				 READ_LE_UINT16(_vm->_dragonOBD->getFromOpt(ini->id) + 6)
-						,1,textIndex);
+						, 1, textIndex);
 	} else {
 		displayDialogAroundActor
 				(ini->actor,
 				 READ_LE_UINT16(_vm->_dragonOBD->getFromOpt(ini->id) + 6),
-				 dialogText,textIndex);
+				 dialogText, textIndex);
 	}
 	return 1;
 }
@@ -488,21 +488,21 @@ void Talk::displayDialogAroundPoint(uint16 *dialogText, uint16 x, uint16 y, uint
 //		puVar8[5] = uVar4;
 		_vm->_data_800633fc = 1;
 
-		// sVar3 = FUN_8001d1ac(0,textId,0);
+		// sVar3 = FUN_8001d1ac(0, textId, 0);
 		_vm->_sound->playSpeech(textId);
 
 //		if (dialogText == (uint16 *)0x0) {
 //			dialogText = (uint16 *)local_58;
 //		}
-	conversation_related_maybe(dialogText,x,y,param_4,param_5,textId,0); // sVar3); TODO I think this is audio status
+	conversation_related_maybe(dialogText, x, y, param_4, param_5, textId, 0); // sVar3); TODO I think this is audio status
 }
 
 void Talk::displayDialogAroundActor(Actor *actor, uint16 param_2, uint16 *dialogText, uint32 textIndex) {
 	int16 frameYOffset = actor->_frame ? actor->_frame->yOffset : 0;
 	displayDialogAroundPoint
-			(dialogText,(uint16)((int)(((uint)actor->_x_pos - _vm->_scene->_camera.x) * 0x10000) >> 0x13),
+			(dialogText, (uint16)((int)(((uint)actor->_x_pos - _vm->_scene->_camera.x) * 0x10000) >> 0x13),
 			 (short)((int)((((uint)actor->_y_pos - (uint)frameYOffset) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13) - 3,
-			 param_2,1,textIndex);
+			 param_2, 1, textIndex);
 }
 
 void Talk::copyTextToBuffer(uint16 *destBuffer, byte *src, uint32 destBufferLength) {
@@ -586,8 +586,8 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 		}
 		_vm->clearFlags(ENGINE_FLAG_8);
 		strcpy((char *)local_990, selectedDialogText->dialogText);
-		UTF16ToUTF16Z(auStack2438,(uint16 *)(selectedDialogText->dialogText + 10));
-//		load_string_from_dragon_txt(selectedDialogText->textIndex1,(char *)local_800);
+		UTF16ToUTF16Z(auStack2438, (uint16 *)(selectedDialogText->dialogText + 10));
+//		load_string_from_dragon_txt(selectedDialogText->textIndex1, (char *)local_800);
 		if (selectedDialogText->hasText) {
 			flickerActor->setFlag(ACTOR_FLAG_2000);
 			sequenceId = flickerActor->_sequenceID;
@@ -677,14 +677,14 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 			if ((talkDialogEntry->flags & 1) == 0) {
 				local_60 = local_60 + 1;
 				talkDialogEntry->yPosMaybe = '\0';
-				strcpy((char *)&local_390,(char *)talkDialogEntry->dialogText);
+				strcpy((char *)&local_390, (char *)talkDialogEntry->dialogText);
 				UTF16ToUTF16Z(local_386, (uint16 *)(&talkDialogEntry->dialogText[10]));
 				_dat_80083104 = local_386;
 				if (*local_386 == 0x20) {
 					_dat_80083104 = &local_386[1];
 				}
 				uVar3 = FindLastPositionOf5cChar(_dat_80083104);
-				sVar2 = FUN_80031c28(_dat_80083104,asStack512,uVar3 & 0xffff,0x20);
+				sVar2 = FUN_80031c28(_dat_80083104, asStack512, uVar3 & 0xffff, 0x20);
 				talkDialogEntry->xPosMaybe = (uint8)local_58;
 				local_58 = local_58 + sVar2;
 				talkDialogEntry->yPosMaybe = talkDialogEntry->yPosMaybe + (char)sVar2;
@@ -693,7 +693,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 			uVar3 = (uint)uVar8;
 		} while (uVar8 < numEntries);
 	}
-	FUN_8001a4e4_draw_dialogbox(1,0x17 - (uint)local_58 & 0xffff,0x26,0x18,1);
+	FUN_8001a4e4_draw_dialogbox(1, 0x17 - (uint)local_58 & 0xffff, 0x26, 0x18, 1);
 	uVar8 = 0;
 	_vm->_cursor->updateSequenceID(3);
 	local_50 = -2;
@@ -773,7 +773,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 						_dat_80083104 = &local_386[1];
 					}
 					uVar4 = FindLastPositionOf5cChar(_dat_80083104);
-					uVar4 = FUN_80031c28(_dat_80083104,local_40,uVar4 & 0xffff,0x20);
+					uVar4 = FUN_80031c28(_dat_80083104, local_40, uVar4 & 0xffff, 0x20);
 					_dat_80083104 = local_40;
 					if ((int)sVar2 == (uint)uVar8) {
 						uVar7 = 0;
@@ -783,7 +783,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 								if ((uVar7 & 0xffff) == 0) {
 									x = 4;
 								}
-								//TODO ProbablyShowUTF16Msg(_dat_80083104,x,y,0,-1);
+								//TODO ProbablyShowUTF16Msg(_dat_80083104, x, y, 0, -1);
 								_vm->_fontManager->addText(x * 8, y * 8, _dat_80083104, wideStrLen(_dat_80083104), 0);
 								sVar2 = *_dat_80083104;
 								while (sVar2 != 0) {
@@ -803,7 +803,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 								if ((uVar7 & 0xffff) == 0) {
 									x = 4;
 								}
-								//TODO ProbablyShowUTF16Msg2(_dat_80083104,x,(uint)y,0x401,0xffffffff);
+								//TODO ProbablyShowUTF16Msg2(_dat_80083104, x, (uint)y, 0x401, 0xffffffff);
 								_vm->_fontManager->addText(x * 8, y * 8, _dat_80083104, wideStrLen(_dat_80083104), 1);
 								sVar2 = *_dat_80083104;
 								while (sVar2 != 0) {
@@ -851,7 +851,7 @@ uint Talk::somethingTextAndSpeechAndAnimRelated(Actor *actor, int16 sequenceId1,
 	if (sequenceId1 != -1) {
 		actor->updateSequence(sequenceId1);
 	}
-	displayDialogAroundActor(actor,param_5, dialog, textIndex);
+	displayDialogAroundActor(actor, param_5, dialog, textIndex);
 	if (sequenceId2 != -1) {
 		actor->updateSequence(sequenceId2);
 	}
@@ -890,7 +890,7 @@ void Talk::talkFromIni(uint32 iniId, uint32 textIndex) {
 
 //	pcVar2 = (char *)0x0;
 //	if (((unkFlags1 & 1) == 0) && (((engine_flags_maybe & 0x1000) == 0 || (sVar1 == -1)))) {
-//		pcVar2 = load_string_from_dragon_txt(textIndex,acStack2016);
+//		pcVar2 = load_string_from_dragon_txt(textIndex, acStack2016);
 //	}
 	_vm->_talk->displayDialogAroundINI(iniId, dialog, textIndex); //TODO need to pass dialog here (pcVar2). not NULL
 	if (iniId == 0) {
@@ -996,7 +996,7 @@ void Talk::initDefaultResponseTable() {
 uint32 Talk::strlenUTF16(uint16 *text) {
 	uint32 i = 0;
 
-	for ( ; text[i] != 0; i++) {
+	for (; text[i] != 0; i++) {
 	}
 	return i;
 }
@@ -1108,8 +1108,8 @@ void Talk::clearDialogEntries() {
 }
 
 void Talk::FUN_8001a7c4_clearDialogBoxMaybe() {
-	FUN_8001a7c4((uint)_dat_8008e7e8_dialogBox_x1,(uint)_dat_8008e844_dialogBox_y1,
-			(uint)_dat_8008e848_dialogBox_x2,(uint)_dat_8008e874_dialogBox_y2);
+	FUN_8001a7c4((uint)_dat_8008e7e8_dialogBox_x1, (uint)_dat_8008e844_dialogBox_y1,
+			(uint)_dat_8008e848_dialogBox_x2, (uint)_dat_8008e874_dialogBox_y2);
 }
 
 void Talk::playDialogAudioDontWait(uint32 textIndex) {

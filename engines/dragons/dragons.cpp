@@ -243,7 +243,7 @@ uint16 DragonsEngine::ipt_img_file_related() {
 	int16 tileX = flicker->actor->_x_pos / 32;
 	int16 tileY = flicker->actor->_y_pos / 8;
 
-	for (int i = 0;i < _dragonINIResource->totalRecords(); i++) {
+	for (int i = 0; i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = getINI(i);
 		if ((ini->sceneId == getCurrentSceneId()) && (ini->field_1a_flags_maybe == 0)) {
 			Img *img = _dragonImg->getImg(ini->field_2);
@@ -870,7 +870,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 //				if (((((actors[actorId]._flags & 0x2000) == 0) && ((actors[actorId]._flags & 4) != 0)) &&
 //					 (actors[actorId]._sequenceID2 != actors[actorId]._sequenceID)) &&
 //				(actors[actorId]._sequenceID2 != -1)) {
-//					actor_update_sequenceID(actorId,actors[actorId]._sequenceID2);
+//					actor_update_sequenceID(actorId, actors[actorId]._sequenceID2);
 //				}
 			}
 
@@ -1157,7 +1157,7 @@ void DragonsEngine::walkFlickerToObject() {
 					flickerINI->actor->setFlag(ACTOR_FLAG_800);
 				}
 				flickerINI->actor->startWalk((int)(((uint)targetX + (uint)targetINI->field_1c) * 0x10000) >> 0x10,
-													(int)(((uint)targetY + (uint)targetINI->field_1e) * 0x10000) >> 0x10,0);
+													(int)(((uint)targetY + (uint)targetINI->field_1e) * 0x10000) >> 0x10, 0);
 				_bit_flags_8006fbd8 = 1;
 				return;
 			}
@@ -1182,7 +1182,7 @@ void DragonsEngine::walkFlickerToObject() {
 			flickerINI->actor->_walkSpeed = 0x10000;
 			flickerINI->actor->startWalk(
 					(int)((uVar7 + (uint)_scene->_camera.x) * 0x10000) >> 0x10,
-					(int)((uVar8 + (uint)_scene->_camera.y) * 0x10000) >> 0x10,0);
+					(int)((uVar8 + (uint)_scene->_camera.y) * 0x10000) >> 0x10, 0);
 		}
 	} else {
 		if (_cursor->_data_80072890 != 0) {
@@ -1358,7 +1358,7 @@ void DragonsEngine::setupPalette1() {
 	memcpy(palette, _cursor->getPalette(), 0x100);
 	memcpy(palette + 0x100, _cursor->getPalette(), 0x100);
 	_screen->loadPalette(1, palette);
-	_screen->updatePaletteTransparency(1,0x40,0x7f,true);
+	_screen->updatePaletteTransparency(1, 0x40, 0x7f, true);
 }
 
 bool DragonsEngine::isDebugMode() {

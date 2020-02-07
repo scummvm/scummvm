@@ -194,13 +194,13 @@ void Minigame3::run() {
 	_vm->setFlags(ENGINE_FLAG_100);
 	_vm->setFlags(ENGINE_FLAG_1000_TEXT_ENABLED);
 // TODO
-//	memcpy2(auStack1584_palette,scrFileData_maybe,0x200);
-//	memcpy2(auStack1072_palette,scrFileData_maybe,0x200);
+//	memcpy2(auStack1584_palette, scrFileData_maybe, 0x200);
+//	memcpy2(auStack1072_palette, scrFileData_maybe, 0x200);
 	local_5b2 = 0x7fff;
 //	DisableVSyncEvent();
 	int i = 0;
 	while ((int16)i < 4) {
-		bunnyActorTbl[(int16)i] = _vm->_actorManager->loadActor(0x15,4,0,0);
+		bunnyActorTbl[(int16)i] = _vm->_actorManager->loadActor(0x15, 4, 0, 0);
 		if (bunnyActorTbl[(int16)i] == NULL) {
 			error("Couldn't_alloc_bunny");
 		}
@@ -216,7 +216,7 @@ void Minigame3::run() {
 	}
 	i = 0;
 	while ((int16)i < 8) {
-		tearActorTbl[(int16)i] = _vm->_actorManager->loadActor(0x15,0x13,0,0);
+		tearActorTbl[(int16)i] = _vm->_actorManager->loadActor(0x15, 0x13, 0, 0);
 		if (tearActorTbl[(int16)i] == NULL) {
 			error("Couldn't alloc tear");
 		}
@@ -229,7 +229,7 @@ void Minigame3::run() {
 	}
 	local_1e0 = 0;
 	local_1e8 = 0;
-	handActorId = _vm->_actorManager->loadActor(0x19,0,0,0);
+	handActorId = _vm->_actorManager->loadActor(0x19, 0, 0, 0);
 	if (handActorId == NULL) {
 		error("Couldn't alloc hand");
 	}
@@ -244,7 +244,7 @@ void Minigame3::run() {
 	handActorId->_walkSpeed = 0x40000;
 	i = 0;
 	while ((int16)i < 2) {
-		tearBlinkActorTbl[(int16)i] = _vm->_actorManager->loadActor(0x34,(uint)i,0,0);
+		tearBlinkActorTbl[(int16)i] = _vm->_actorManager->loadActor(0x34, (uint)i, 0, 0);
 		if (tearBlinkActorTbl[(int16)i] == NULL) {
 			error("Couldn't alloc tear blink");
 		}
@@ -255,7 +255,7 @@ void Minigame3::run() {
 	}
 	i = 0;
 	while ((int16)i < 2) {
-		tearBlinkActorTbl2[(int16)i] = _vm->_actorManager->loadActor(0x16,(uint)i,0,0);
+		tearBlinkActorTbl2[(int16)i] = _vm->_actorManager->loadActor(0x16, (uint)i, 0, 0);
 		if (tearBlinkActorTbl2[(int16)i] == NULL) {
 			error("Couldn't alloc tear blink");
 		}
@@ -294,9 +294,9 @@ void Minigame3::run() {
 	updateBackgroundLayerOffset(0, 0, 0);
 //	call_fade_related_1f();
 	_vm->waitForFrames(0xf);
-	_vm->_talk->loadAndDisplayDialogAroundPoint(0x479A,0x14,3,0x1e01,0);
+	_vm->_talk->loadAndDisplayDialogAroundPoint(0x479A, 0x14, 3, 0x1e01, 0);
 	_vm->waitForFrames(0x1e);
-	// TODO FUN_8001a7c4((uint)DAT_8008e7e8,(uint)DAT_8008e844,(uint)DAT_8008e848,(uint)DAT_8008e874);
+	// TODO FUN_8001a7c4((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
 	i = 0;
 	while ((int16)i < 4) {
 		if (goodRabbitPositionTbl[(int16)i] == 0) {
@@ -325,7 +325,7 @@ void Minigame3::run() {
 	}
 	_vm->waitForFrames(0x1e);
 	_vm->waitForFrames(0x1e);
-	// TODO FUN_8001a7c4((uint)DAT_8008e7e8,(uint)DAT_8008e844,(uint)DAT_8008e848,(uint)DAT_8008e874);
+	// TODO FUN_8001a7c4((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
 	local_56 = 0;
 	local_1c0 = 0;
 	currentState = 2;
@@ -349,7 +349,7 @@ void Minigame3::run() {
 	tearBlinkActorTbl[0]->updateSequence(0);
 	tearBlinkActorTbl[1]->updateSequence(1);
 	local_1c2 = 0;
-	while ( true ) {
+	while (true) {
 		_vm->waitForFrames(1);
 		switch (currentState) {
 		case 1:
@@ -583,7 +583,7 @@ void Minigame3::run() {
 			}
 		}
 		if ((local_e != 0) && (local_10 == 0)) {
-			//TODO implement this. FUN_8001a7c4((uint)DAT_8008e7e8,(uint)DAT_8008e844,(uint)DAT_8008e848,(uint)DAT_8008e874);
+			//TODO implement this. FUN_8001a7c4((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
 			local_e = 0;
 		}
 		if ((local_e != 0) && (local_10 != 0)) {
@@ -688,7 +688,7 @@ void Minigame3::run() {
 	handActorId->_y_pos = handPositionsTbl[local_224].y;
 	handActorId->_priorityLayer = 2;
 	bVar1 = false;
-	_vm->_talk->loadAndDisplayDialogAroundPoint(0x2958A,0x14,3,0x1e01,0);
+	_vm->_talk->loadAndDisplayDialogAroundPoint(0x2958A, 0x14, 3, 0x1e01, 0);
 	while (_vm->isFlagSet(ENGINE_FLAG_8000)) {
 		_vm->waitForFrames(1);
 	}
@@ -739,12 +739,12 @@ void Minigame3::run() {
 	flicker->sceneId = 1;
 	_vm->setAllFlags(oldEngineFlags);
 	_vm->setFlags(ENGINE_FLAG_40);
-//	_vm->_screen->loadPalette(1,(uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
+//	_vm->_screen->loadPalette(1, (uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
 //			   *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
 	_vm->setupPalette1();
-//	_vm->_screen->loadPalette(4,(uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
+//	_vm->_screen->loadPalette(4, (uint)*(uint16 *)(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10) +
 //			   *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
-	_vm->_screen->updatePaletteTransparency(4,1,0xff,true);
+	_vm->_screen->updatePaletteTransparency(4, 1, 0xff, true);
 	_vm->_inventory->setType(origInventoryType);
 	_vm->_scene->setSceneId(origSceneId);
 	_vm->_scene->loadScene(origSceneId, 0);
@@ -762,8 +762,8 @@ void Minigame3::fun_80017f70_paletteRelated(uint16 param_1) {
 //	DisableVSyncEvent();
 	_vm->_screen->loadPalette(0, _vm->_scene->getPalette());
 	_vm->_screen->setPaletteRecord(0, 0x3f, param_1 * 0x421);
-//	load_palette_into_frame_buffer(0,abStack528);
-	_vm->_screen->updatePaletteTransparency(0, 0x3f,0x3f, param_1 == 0x1e ? false : true);
+//	load_palette_into_frame_buffer(0, abStack528);
+	_vm->_screen->updatePaletteTransparency(0, 0x3f, 0x3f, param_1 == 0x1e ? false : true);
 //	if (uVar1 != 0) {
 //		EnableVSyncEvent();
 //	}

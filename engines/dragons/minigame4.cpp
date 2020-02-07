@@ -51,7 +51,7 @@ void Minigame4::run() {
 	_vm->_dragonINIResource->setFlickerRecord(NULL);
 	_vm->_inventory->setType(0);
 	_vm->_scene->setSceneId(7);
-	_vm->_scene->loadSceneData(0x8007,0);
+	_vm->_scene->loadSceneData(0x8007, 0);
 	_vm->clearFlags(ENGINE_FLAG_8);
 	_vm->clearFlags(ENGINE_FLAG_10);
 	_vm->clearFlags(ENGINE_FLAG_20);
@@ -61,15 +61,15 @@ void Minigame4::run() {
 	_layer2XOffset = 0;
 	_vm->setVsyncUpdateFunction(videoUpdaterFunction);
 	_vm->_screen->loadPalette(4, _vm->_scene->getPalette());
-	_vm->_screen->updatePaletteTransparency(4,1,0xff,true);
+	_vm->_screen->updatePaletteTransparency(4, 1, 0xff, true);
 	_vm->_videoFlags |= 4;
 	_vm->_scene->setBgLayerPriority(2);
 	_vm->_scene->setMgLayerPriority(1);
-	_flickerActor = _vm->_actorManager->loadActor(0x18,0,0xcb,0x79,1);
-	_bruteActor = _vm->_actorManager->loadActor(0x17,0,0x68,0x7b,1);
-	_ps1ControllerActor = _vm->_actorManager->loadActor(0x17,0x16,0x9f,0x19,1);
-	_dat_80090438 = _vm->_actorManager->loadActor(0x17,0xb,400,400,1);
-	_dat_8009043c = _vm->_actorManager->loadActor(0x17,0xb,400,400,1);
+	_flickerActor = _vm->_actorManager->loadActor(0x18, 0, 0xcb, 0x79, 1);
+	_bruteActor = _vm->_actorManager->loadActor(0x17, 0, 0x68, 0x7b, 1);
+	_ps1ControllerActor = _vm->_actorManager->loadActor(0x17, 0x16, 0x9f, 0x19, 1);
+	_dat_80090438 = _vm->_actorManager->loadActor(0x17, 0xb, 400, 400, 1);
+	_dat_8009043c = _vm->_actorManager->loadActor(0x17, 0xb, 400, 400, 1);
 	//EnableVSyncEvent();
 	_flickerActor->setFlag(ACTOR_FLAG_80);
 	_flickerActor->setFlag(ACTOR_FLAG_100);
@@ -83,10 +83,10 @@ void Minigame4::run() {
 	//UnkSoundFunc5(0xf);
 	//call_fade_related_1f();
 	if (_vm->_dragonINIResource->getRecord(0x1f5)->field_12 == 3) {
-		actorTalk(_bruteActor,0x3321,0x4A84);
+		actorTalk(_bruteActor, 0x3321, 0x4A84);
 	} else {
-		actorTalk(_bruteActor,0x3321,0x49A2);
-		actorTalk(_flickerActor,0,0x4A56);
+		actorTalk(_bruteActor, 0x3321, 0x49A2);
+		actorTalk(_flickerActor, 0, 0x4A56);
 	}
 	result = runDanceBattle();
 	/* field_0x12 */
@@ -104,14 +104,14 @@ void Minigame4::run() {
 	// EnableVSyncEvent();
 	_vm->_dragonINIResource->setFlickerRecord(flicker);
 	_vm->_inventory->setType(uVar3);
-//	_vm->_screen->loadPalette(4,(uint)*(uint16 *)
+//	_vm->_screen->loadPalette(4, (uint)*(uint16 *)
 //					(*(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8) + 10)
 //			   + *(int *)(&DAT_80071c30 + (uint)actors[0].actorFileDictionaryIndex * 8));
-	_vm->_screen->updatePaletteTransparency(4,1,0xff,true);
+	_vm->_screen->updatePaletteTransparency(4, 1, 0xff, true);
 	_vm->_scene->setSceneId(uVar1);
 	_vm->setAllFlags(uVar4);
 	flicker->sceneId = uVar1;
-	_vm->_scene->loadScene(uVar1,0x1e);
+	_vm->_scene->loadScene(uVar1, 0x1e);
 }
 
 void Minigame4::actorTalk(Actor *actorId, uint16 param_2, uint32 textIndex) {
@@ -176,38 +176,38 @@ uint16 Minigame4::runDanceBattle() {
 	currentStep = 0;
 	while (currentStep < 0xc) {
 		if (singleDanceRound(round1StepPositionTbl[(uint)currentStep], round1DurationTbl[(uint)currentStep])) {
-			actorTalk(_bruteActor,0x3321, 0x4D50);
+			actorTalk(_bruteActor, 0x3321, 0x4D50);
 			return 1;
 		}
 		currentStep = currentStep + 1;
 	}
 	resetActors();
-	actorTalk(_bruteActor,0x3321, 0x4ADE);
+	actorTalk(_bruteActor, 0x3321, 0x4ADE);
 	currentStep = 0;
 	while (currentStep < 0xc) {
 		if (singleDanceRound(round2StepPositionTbl[(uint)currentStep], round2DurationTbl[(uint)currentStep])) {
-			actorTalk(_bruteActor,0x3321,0x4DD4);
+			actorTalk(_bruteActor, 0x3321, 0x4DD4);
 			return 1;
 		}
 		currentStep = currentStep + 1;
 	}
 	resetActors();
-	actorTalk(_bruteActor,0x3321, 0x4B6A);
+	actorTalk(_bruteActor, 0x3321, 0x4B6A);
 	currentStep = 0;
-	while ( true ) {
+	while (true) {
 		if (0x11 < currentStep) {
 			_vm->_talk->loadText(0x4C0C, auStack2192, 1000);
-			_vm->_talk->displayDialogAroundPoint(auStack2192, 0x27,0xc,0x3321,0,0x4C0C);
+			_vm->_talk->displayDialogAroundPoint(auStack2192, 0x27, 0xc, 0x3321, 0, 0x4C0C);
 			_vm->waitForFrames(0x10a);
 			_bruteActor->updateSequence(8);
 			//TODO
 //			if ((((DAT_8008e7e8 != 0) || (DAT_8008e848 != 0)) || (DAT_8008e844 != 0)) ||
 //				(DAT_8008e874 != 0)) {
-//				FUN_8001a7c4((uint)DAT_8008e7e8,(uint)DAT_8008e844,(uint)DAT_8008e848,(uint)DAT_8008e874);
+//				FUN_8001a7c4((uint)DAT_8008e7e8, (uint)DAT_8008e844, (uint)DAT_8008e848, (uint)DAT_8008e874);
 //			}
 			_flickerActor->waitUntilFlag8SetThenSet1000AndWaitFor4();
 			_flickerActor->updateSequence(7);
-			actorTalk(_flickerActor,0, 0x4CC8);
+			actorTalk(_flickerActor, 0, 0x4CC8);
 			return 0;
 		}
 
@@ -216,7 +216,7 @@ uint16 Minigame4::runDanceBattle() {
 		}
 		currentStep = currentStep + 1;
 	}
-	actorTalk(_bruteActor,0x3321, 0x4DEE);
+	actorTalk(_bruteActor, 0x3321, 0x4DEE);
 	return 1;
 }
 

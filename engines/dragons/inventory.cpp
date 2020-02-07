@@ -34,10 +34,10 @@ namespace Dragons {
 
 
 static const Common::Point positionTable[4] = {
-	Common::Point(2,0),
-	Common::Point(0xce,0),
-	Common::Point(2,0x9e),
-	Common::Point(0xce,0x9e)
+	Common::Point(2, 0),
+	Common::Point(0xce, 0),
+	Common::Point(2, 0x9e),
+	Common::Point(0xce, 0x9e)
 };
 
 static const int16 bagBounceTable[4] = {
@@ -72,7 +72,7 @@ Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
 	_inventionBookPrevSceneUpdateFunc = NULL;
 	_inventionBookPrevSceneId = 0;
 	_inventionBookPrevFlickerINISceneId = 0;
-	_inventionBookPrevFlickerINIPosition = Common::Point(0,0);
+	_inventionBookPrevFlickerINIPosition = Common::Point(0, 0);
 }
 
 void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backgroundResourceLoader, Bag *bag, DragonINIResource *dragonIniResource) {
@@ -219,7 +219,7 @@ void Inventory::animateBagOut() {
 	_vm->playOrStopSound(0x8000);
 	Common::Point pos = _bag->getPosition();
 	if (pos.y != 0xc8) {
-		for (;pos.y != 0xc8; pos.y += 0x19) {
+		for (; pos.y != 0xc8; pos.y += 0x19) {
 			_bag->updatePosition(pos);
 			_vm->waitForFrames(1);
 		}
@@ -271,7 +271,7 @@ uint16 Inventory::getIniAtPosition(int16 x, int16 y) {
 void Inventory::loadInventoryItemsFromSave() {
 	memset(_inventoryItemTbl, 0, sizeof(_inventoryItemTbl));
 	int j = 0;
-	for (int i = 0; i < _vm->_dragonINIResource->totalRecords() && j < DRAGONS_MAX_INVENTORY_ITEMS; i++ ) {
+	for (int i = 0; i < _vm->_dragonINIResource->totalRecords() && j < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		DragonINI *ini = _vm->_dragonINIResource->getRecord(i);
 		if (ini->sceneId == 1) {
 			_inventoryItemTbl[j++] = i + 1;
@@ -327,7 +327,7 @@ void Inventory::closeInventionBook() {
 	}
 	uVar1 = (uint)_vm->_scene->getSceneId();
 LAB_80038be8:
-	_vm->_scene->loadScene(uVar1,0x1e);
+	_vm->_scene->loadScene(uVar1, 0x1e);
 	_vm->setSceneUpdateFunction(_inventionBookPrevSceneUpdateFunc);
 	return;
 }
