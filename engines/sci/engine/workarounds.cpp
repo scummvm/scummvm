@@ -586,6 +586,16 @@ const SciWorkaroundEntry kArraySetElements_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kArrayFill_workarounds[] = {
+	// Phantasmagoria Mac calls kArrayFill to zero-initialize new string buffers, but almost
+	//  half of these calls are missing the start-index parameter and so they had no effect.
+	//  Our SCI strings are already zero-initialized and so these calls can be ignored.
+	{ GID_PHANTASMAGORIA, -1,    38,  0,        "SaveManager", "init",                      NULL,     0,     0, { WORKAROUND_IGNORE, 0 } },
+	{ GID_PHANTASMAGORIA, -1,    38,  0,        "SaveManager", "save",                      NULL,     0,     0, { WORKAROUND_IGNORE, 0 } },
+	{ GID_PHANTASMAGORIA, -1,    38,  0,        "SaveManager", "getSaveType",               NULL,     0,     0, { WORKAROUND_IGNORE, 0 } },
+	{ GID_PHANTASMAGORIA, -1,    38,  0,        "SaveManager", "testFlag",                  NULL,     0,     0, { WORKAROUND_IGNORE, 0 } },
+	{ GID_PHANTASMAGORIA, -1,    38,  0,        "SaveManager", "delete",                    NULL,     0,     0, { WORKAROUND_IGNORE, 0 } },
+	{ GID_PHANTASMAGORIA, -1,    90,  0,           "logoRoom", "init",                      NULL,     0,     0, { WORKAROUND_IGNORE, 0 } },
+	{ GID_PHANTASMAGORIA, -1, 45950,  0,            "rm45950", "init",                      NULL,     0,     0, { WORKAROUND_IGNORE, 0 } },
 	{ GID_PQ4,           540, 64918,  0,                "Str", "callKernel",                NULL,     0,     0, { WORKAROUND_STILLCALL, 0 } }, // when clicking on Hate Crimes in the computer on day 2
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
