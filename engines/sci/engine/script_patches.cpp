@@ -8424,8 +8424,33 @@ static const uint16 phant1Video2020CensorPatch[] = {
 	PATCH_END
 };
 
+// The Mac version is hard-coded to use a low video speed value. This defaults
+//  the video size to half-screen and causes low frame-rate versions of several
+//  videos to play, even though better versions are included. PC versions read
+//  config values written by a benchmark in the game's installer. We address
+//  that by returning a high video speed value of 500 in kGetSierraProfileInt
+//  and kGetConfig, and so we patch the Mac value to 500 as well.
+//
+// Applies to: Mac version only
+// Responsible method: Scary:init
+static const uint16 phant1MacVideoQualitySignature[] = {
+	0x34, SIG_UINT16(0x0190),       // ldi 0190
+	SIG_MAGICDWORD,
+	0xa1, 0xb2,                     // sag b2 [ video speed = 400 ]
+	0x36,                           // push
+	0x34, SIG_UINT16(0x01a9),       // ldi 01a9
+	0x1e,                           // gt?
+	SIG_END
+};
+
+static const uint16 phant1MacVideoQualityPatch[] = {
+	0x34, PATCH_UINT16(0x01f4),     // ldi 01f4 [ 500 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
+	{  true,     0, "mac: set high video quality",                 1, phant1MacVideoQualitySignature,  phant1MacVideoQualityPatch },
 	{  true,    23, "make cursor red after clicking quit",         1, phant1RedQuitCursorSignature,    phant1RedQuitCursorPatch },
 	{  true,    26, "fix video 1920 censorship",                   1, phant1Video1920CensorSignature,  phant1Video1920CensorPatch },
 	{  true,    26, "fix video 2020 censorship",                   1, phant1Video2020CensorSignature,  phant1Video2020CensorPatch },
