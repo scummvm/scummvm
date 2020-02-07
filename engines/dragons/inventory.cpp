@@ -273,7 +273,7 @@ uint16 Inventory::getIniAtPosition(int16 x, int16 y) {
 void Inventory::loadInventoryItemsFromSave() {
 	memset(inventoryItemTbl, 0, sizeof(inventoryItemTbl));
 	int j = 0;
-	for (int i=0; i < _vm->_dragonINIResource->totalRecords() && j < DRAGONS_MAX_INVENTORY_ITEMS; i++ ) {
+	for (int i = 0; i < _vm->_dragonINIResource->totalRecords() && j < DRAGONS_MAX_INVENTORY_ITEMS; i++ ) {
 		DragonINI *ini = _vm->_dragonINIResource->getRecord(i);
 		if (ini->sceneId == 1) {
 			inventoryItemTbl[j++] = i + 1;

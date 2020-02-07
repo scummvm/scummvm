@@ -74,7 +74,7 @@ bool ActorResource::load(uint32 id, byte *dataStart, Common::SeekableReadStream 
 	debug("Frame Count: %d", _framesCount);
 
 	_frames = new ActorFrame[_framesCount];
-	for (int i=0; i < _framesCount; i++) {
+	for (int i = 0; i < _framesCount; i++) {
 		stream.seek(frameOffset + i * 2);
 
 		uint16 offset = stream.readUint16LE();

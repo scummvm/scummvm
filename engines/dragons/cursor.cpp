@@ -205,7 +205,7 @@ int16 Cursor::updateIniFromScene() {
 	int16 cursorTileY = cursorY / 8;
 	int16 data_80072890_orig = data_80072890;
 	int16 data_800728b0_cursor_seqID_orig = data_800728b0_cursor_seqID;
-	for (int i=0;i <_vm->_dragonINIResource->totalRecords(); i++) {
+	for (int i = 0;i <_vm->_dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _vm->_dragonINIResource->getRecord(i);
 		if (ini->sceneId != _vm->_scene->getSceneId()) {
 			// 0x80028be4

@@ -37,7 +37,7 @@ DragonRMS::DragonRMS(BigfileArchive *bigfileArchive, DragonOBD *dragonOBD) : _dr
 
 	_rmsObjects = new RMS[_count];
 
-	for (int i=0; i < _count; i++) {
+	for (int i = 0; i < _count; i++) {
 		_rmsObjects[i]._field0 = readStream->readSint32LE();
 		readStream->read(_rmsObjects[i]._sceneName, 4);
 		_rmsObjects[i]._obdOffset = readStream->readSint32LE();

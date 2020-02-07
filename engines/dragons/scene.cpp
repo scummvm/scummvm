@@ -87,7 +87,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2 | Dragons::ENGINE_UNK1_FLAG_8);
 
-	for (int i=0;i < _dragonINIResource->totalRecords(); i++) {
+	for (int i = 0;i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _dragonINIResource->getRecord(i);
 		ini->field_10 = -1;
 		ini->field_1a_flags_maybe &= ~INI_FLAG_10;
@@ -219,7 +219,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	_vm->data_800633fc = 0;
 	// TODO 0x8002fff0
 
-	for (int i=0;i < _dragonINIResource->totalRecords(); i++) {
+	for (int i = 0;i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _dragonINIResource->getRecord(i);
 		if (ini->sceneId == sceneIdStripped) {
 			if (ini->field_1a_flags_maybe & 1) {

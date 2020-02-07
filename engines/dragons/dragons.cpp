@@ -243,7 +243,7 @@ uint16 DragonsEngine::ipt_img_file_related() {
 	int16 tileX = flicker->actor->_x_pos / 32;
 	int16 tileY = flicker->actor->_y_pos / 8;
 
-	for (int i=0;i < _dragonINIResource->totalRecords(); i++) {
+	for (int i = 0;i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = getINI(i);
 		if ((ini->sceneId == getCurrentSceneId()) && (ini->field_1a_flags_maybe == 0)) {
 			IMG *img = _dragonIMG->getIMG(ini->field_2);
