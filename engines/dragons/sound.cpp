@@ -29,7 +29,7 @@
 #include "dragons/sound.h"
 #include "dragons/bigfile.h"
 #include "dragons/dragonrms.h"
-#include "dragons/VabSound.h"
+#include "dragons/vabsound.h"
 
 #define RAW_CD_SECTOR_SIZE 2352
 
