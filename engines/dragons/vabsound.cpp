@@ -25,7 +25,7 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/memstream.h"
-#include "dragons/VabSound.h"
+#include "dragons/vabsound.h"
 #include "dragons/dragons.h"
 
 namespace Dragons {

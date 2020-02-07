@@ -32,7 +32,7 @@ MODULE_OBJS := \
 	specialopcodes.o \
 	sound.o \
 	talk.o \
-	VabSound.o
+	vabsound.o
 
 MODULE_DIRS += \
 	engines/dragons
