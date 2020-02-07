@@ -46,11 +46,11 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	_actor->_flags = 0;
 	_actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	_actor->updateSequence(_sequenceID);
-	_actor->_flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
-					   Dragons::ACTOR_FLAG_200);
+	_actor->_flags |= (ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
+					   ACTOR_FLAG_200);
 
 	dragonINIResource->getFlickerRecord()->actor = _actor; //TODO is this correct?
-	dragonINIResource->getFlickerRecord()->field_1a_flags_maybe |= Dragons::INI_FLAG_1;
+	dragonINIResource->getFlickerRecord()->field_1a_flags_maybe |= INI_FLAG_1;
 	_iniUnderCursor = 0;
 	iniItemInHand = 0;
 	data_8007283c = 0;
@@ -61,7 +61,7 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 
 
 void Cursor::update() {
-	if (!_vm->isFlagSet(Dragons::ENGINE_FLAG_8) || _vm->isFlagSet(Dragons::ENGINE_FLAG_100)) {
+	if (!_vm->isFlagSet(ENGINE_FLAG_8) || _vm->isFlagSet(Dragons::ENGINE_FLAG_100)) {
 		return;
 	}
 	// TODO update cursor from inputs here.
@@ -135,7 +135,7 @@ void Cursor::update() {
 }
 
 void Cursor::updateVisibility() {
-	if (_vm->isFlagSet(Dragons::ENGINE_FLAG_8) && !_vm->isUnkFlagSet(Dragons::ENGINE_UNK1_FLAG_10)) {
+	if (_vm->isFlagSet(ENGINE_FLAG_8) && !_vm->isUnkFlagSet(Dragons::ENGINE_UNK1_FLAG_10)) {
 		_actor->_priorityLayer = 9;
 	} else {
 		_actor->_priorityLayer = 0;
@@ -148,7 +148,7 @@ void Cursor::updatePosition(int16 x, int16 y) {
 }
 
 int16 Cursor::updateINIUnderCursor() {
-	if (_vm->isFlagSet(Dragons::ENGINE_FLAG_10)) {
+	if (_vm->isFlagSet(ENGINE_FLAG_10)) {
 		int16 xOffset = 0;
 		if (_vm->_inventory->getSequenceId() == 0 || _vm->_inventory->getSequenceId() == 2) {
 			if (_vm->_inventory->getPositionIndex() == 1 || _vm->_inventory->getPositionIndex() == 3) {

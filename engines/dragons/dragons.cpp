@@ -622,8 +622,8 @@ void DragonsEngine::updateHandler() {
 	//TODO logic here
 	for (uint16 i = 0; i < 0x17; i++) {
 		Actor *actor = _actorManager->getActor(i);
-		if (actor->_flags & Dragons::ACTOR_FLAG_40) {
-			if (!(actor->_flags & Dragons::ACTOR_FLAG_100)) {
+		if (actor->_flags & ACTOR_FLAG_40) {
+			if (!(actor->_flags & ACTOR_FLAG_100)) {
 				int16 priority = _scene->getPriorityAtPosition(Common::Point(actor->_x_pos, actor->_y_pos));
 				DragonINI *flicker = _dragonINIResource->getFlickerRecord();
 				if (flicker && _scene->contains(flicker) && flicker->actor->_actorID == i) {
@@ -651,7 +651,7 @@ void DragonsEngine::updateHandler() {
 		}
 	}
 
-	if (_flags & Dragons::ENGINE_FLAG_80) {
+	if (_flags & ENGINE_FLAG_80) {
 		for (uint16 i = 0x17; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
 			Actor *actor = _actorManager->getActor(i);
 			if (actor->_sequenceTimer != 0) {
@@ -702,28 +702,28 @@ void DragonsEngine::wait() {
 }
 
 void DragonsEngine::updateActorSequences() {
-	if (!(_flags & Dragons::ENGINE_FLAG_4)) {
+	if (!(_flags & ENGINE_FLAG_4)) {
 		return;
 	}
 
 	//TODO ResetRCnt(0xf2000001);
 
-	int16 actorId = _flags & Dragons::ENGINE_FLAG_80 ? (int16) 64 : (int16) 23;
+	int16 actorId = _flags & ENGINE_FLAG_80 ? (int16) 64 : (int16) 23;
 
 	while (actorId > 0) {
 		actorId--;
 		Actor *actor = _actorManager->getActor((uint16) actorId);
-		if (actorId < 2 && _flags & Dragons::ENGINE_FLAG_40) {
+		if (actorId < 2 && _flags & ENGINE_FLAG_40) {
 			continue;
 		}
 
-		if (actor->_flags & Dragons::ACTOR_FLAG_40 &&
-			!(actor->_flags & Dragons::ACTOR_FLAG_4) &&
-			!(actor->_flags & Dragons::ACTOR_FLAG_400) &&
-			(actor->_sequenceTimer == 0 || actor->_flags & Dragons::ACTOR_FLAG_1)) {
+		if (actor->_flags & ACTOR_FLAG_40 &&
+			!(actor->_flags & ACTOR_FLAG_4) &&
+			!(actor->_flags & ACTOR_FLAG_400) &&
+			(actor->_sequenceTimer == 0 || actor->_flags & ACTOR_FLAG_1)) {
 			debug(5, "Actor[%d] execute sequenceOp", actorId);
 
-			if (actor->_flags & Dragons::ACTOR_FLAG_1) {
+			if (actor->_flags & ACTOR_FLAG_1) {
 				actor->resetSequenceIP();
 				//clear flag mask 0xeff6;
 				actor->clearFlag(ACTOR_FLAG_1);
@@ -828,11 +828,11 @@ void DragonsEngine::runINIScripts() {
 	bool isFlag8Set = isFlagSet(ENGINE_FLAG_8);
 	for (uint16 i = 0; i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = getINI(i);
-		if (ini->field_1a_flags_maybe & Dragons::INI_FLAG_10) {
-			ini->field_1a_flags_maybe &= ~Dragons::INI_FLAG_10;
+		if (ini->field_1a_flags_maybe & INI_FLAG_10) {
+			ini->field_1a_flags_maybe &= ~INI_FLAG_10;
 			byte *data = _dragonOBD->getFromOpt(i);
 			ScriptOpCall scriptOpCall(data + 8, READ_LE_UINT32(data));
-			clearFlags(Dragons::ENGINE_FLAG_8);
+			clearFlags(ENGINE_FLAG_8);
 			_scriptOpcodes->runScript3(scriptOpCall);
 		}
 	}
@@ -916,8 +916,8 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 
 //TODO the logic in this function doesn't match the original. It should be redone.
 void DragonsEngine::engineFlag0x20UpdateFunction() {
-	if (_flags & Dragons::ENGINE_FLAG_20) {
-		if ((_flags & (Dragons::ENGINE_FLAG_80000000 | Dragons::ENGINE_FLAG_8)) == 8) {
+	if (_flags & ENGINE_FLAG_20) {
+		if ((_flags & (ENGINE_FLAG_80000000 | Dragons::ENGINE_FLAG_8)) == 8) {
 			_cursor->update();
 		}
 		//TODO 0x80027be4
@@ -969,7 +969,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 				if (ini->field_10 >= 0 && ini->sceneId == currentSceneId) {
 					ini->field_10--;
 					if (ini->field_10 < 0) {
-						ini->field_1a_flags_maybe |= Dragons::INI_FLAG_10;
+						ini->field_1a_flags_maybe |= INI_FLAG_10;
 					}
 				}
 			}
