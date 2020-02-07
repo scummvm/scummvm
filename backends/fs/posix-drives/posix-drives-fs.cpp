@@ -25,14 +25,22 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/fs/posix-drives/posix-drives-fs.h"
+#include "backends/fs/posix/posix-iostream.h"
+
 #include "common/algorithm.h"
+#include "common/bufferedstream.h"
 
 #include <dirent.h>
 
-DrivePOSIXFilesystemNode::DrivePOSIXFilesystemNode(const Common::String &path, const DrivesArray &drives) :
+DrivePOSIXFilesystemNode::Config::Config() {
+	bufferingMode = kBufferingModeStdio;
+	bufferSize = 0; // Use the default stdio buffer size
+}
+
+DrivePOSIXFilesystemNode::DrivePOSIXFilesystemNode(const Common::String &path, const Config &config) :
 		POSIXFilesystemNode(path),
 		_isPseudoRoot(false),
-		_drives(drives) {
+		_config(config) {
 
 	if (isDrive(path)) {
 		_isDirectory = true;
@@ -46,11 +54,50 @@ DrivePOSIXFilesystemNode::DrivePOSIXFilesystemNode(const Common::String &path, c
 	}
 }
 
-DrivePOSIXFilesystemNode::DrivePOSIXFilesystemNode(const DrivesArray &drives) :
+DrivePOSIXFilesystemNode::DrivePOSIXFilesystemNode(const Config &config) :
 		_isPseudoRoot(true),
-		_drives(drives) {
+		_config(config) {
 	_isDirectory = true;
 	_isValid = false;
+}
+
+void DrivePOSIXFilesystemNode::configureStream(StdioStream *stream) {
+	if (!stream) {
+		return;
+	}
+
+	if (_config.bufferingMode != kBufferingModeStdio) {
+		// Disable stdio buffering
+		stream->setBufferSize(0);
+	} else if (_config.bufferSize) {
+		stream->setBufferSize(_config.bufferSize);
+	}
+}
+
+Common::SeekableReadStream *DrivePOSIXFilesystemNode::createReadStream() {
+	PosixIoStream *readStream = PosixIoStream::makeFromPath(getPath(), false);
+
+	configureStream(readStream);
+
+	if (_config.bufferingMode == kBufferingModeScummVM) {
+		uint32 bufferSize = _config.bufferSize != 0 ? _config.bufferSize : 1024;
+		return Common::wrapBufferedSeekableReadStream(readStream, bufferSize, DisposeAfterUse::YES);
+	}
+
+	return readStream;
+}
+
+Common::WriteStream *DrivePOSIXFilesystemNode::createWriteStream() {
+	PosixIoStream *writeStream = PosixIoStream::makeFromPath(getPath(), true);
+
+	configureStream(writeStream);
+
+	if (_config.bufferingMode == kBufferingModeScummVM) {
+		uint32 bufferSize = _config.bufferSize != 0 ? _config.bufferSize : 1024;
+		return Common::wrapBufferedWriteStream(writeStream, bufferSize);
+	}
+
+	return writeStream;
 }
 
 DrivePOSIXFilesystemNode *DrivePOSIXFilesystemNode::getChildWithKnownType(const Common::String &n, bool isDirectoryFlag) const {
@@ -64,7 +111,7 @@ DrivePOSIXFilesystemNode *DrivePOSIXFilesystemNode::getChildWithKnownType(const 
 		newPath += '/';
 	newPath += n;
 
-	DrivePOSIXFilesystemNode *child = new DrivePOSIXFilesystemNode(_drives);
+	DrivePOSIXFilesystemNode *child = new DrivePOSIXFilesystemNode(_config);
 	child->_path = newPath;
 	child->_isValid = true;
 	child->_isPseudoRoot = false;
@@ -85,8 +132,8 @@ bool DrivePOSIXFilesystemNode::getChildren(AbstractFSList &list, AbstractFSNode:
 	assert(_isDirectory);
 
 	if (_isPseudoRoot) {
-		for (uint i = 0; i < _drives.size(); i++) {
-			list.push_back(makeNode(_drives[i]));
+		for (uint i = 0; i < _config.drives.size(); i++) {
+			list.push_back(makeNode(_config.drives[i]));
 		}
 
 		return true;
@@ -141,7 +188,7 @@ AbstractFSNode *DrivePOSIXFilesystemNode::getParent() const {
 	}
 
 	if (isDrive(_path)) {
-		DrivePOSIXFilesystemNode *root = new DrivePOSIXFilesystemNode(_drives);
+		DrivePOSIXFilesystemNode *root = new DrivePOSIXFilesystemNode(_config);
 		return root;
 	}
 
@@ -150,8 +197,9 @@ AbstractFSNode *DrivePOSIXFilesystemNode::getParent() const {
 
 bool DrivePOSIXFilesystemNode::isDrive(const Common::String &path) const {
 	Common::String normalizedPath = Common::normalizePath(path, '/');
-	DrivesArray::const_iterator drive = Common::find(_drives.begin(), _drives.end(), normalizedPath);
-	return drive != _drives.end();
+	DrivesArray::const_iterator drive = Common::find(_config.drives.begin(), _config.drives.end(), normalizedPath);
+	return drive != _config.drives.end();
 }
+
 
 #endif //#if defined(POSIX)

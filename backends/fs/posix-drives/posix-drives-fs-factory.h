@@ -24,6 +24,7 @@
 #define POSIX_DRIVES_FILESYSTEM_FACTORY_H
 
 #include "backends/fs/fs-factory.h"
+#include "backends/fs/posix-drives/posix-drives-fs.h"
 
 /**
  * A FilesystemFactory implementation for filesystems with a special
@@ -41,6 +42,14 @@ public:
 	 */
 	void addDrive(const Common::String &name);
 
+	/**
+	 * Configure file stream buffering
+	 *
+	 * @param bufferingMode select the buffering implementation to use
+	 * @param bufferSize the size of the IO buffer in bytes. A buffer size of 0 means the default size should be used
+	 */
+	void configureBuffering(DrivePOSIXFilesystemNode::BufferingMode bufferingMode, uint32 bufferSize);
+
 protected:
 	// FilesystemFactory API
 	AbstractFSNode *makeRootFileNode() const override;
@@ -48,7 +57,7 @@ protected:
 	AbstractFSNode *makeFileNodePath(const Common::String &path) const override;
 
 private:
-	Common::Array<Common::String> _drives;
+	DrivePOSIXFilesystemNode::Config _config;
 };
 
 #endif

@@ -30,21 +30,26 @@
 #include <unistd.h>
 
 void DrivesPOSIXFilesystemFactory::addDrive(const Common::String &name) {
-	_drives.push_back(Common::normalizePath(name, '/'));
+	_config.drives.push_back(Common::normalizePath(name, '/'));
+}
+
+void DrivesPOSIXFilesystemFactory::configureBuffering(DrivePOSIXFilesystemNode::BufferingMode bufferingMode, uint32 bufferSize) {
+	_config.bufferingMode = bufferingMode;
+	_config.bufferSize = bufferSize;
 }
 
 AbstractFSNode *DrivesPOSIXFilesystemFactory::makeRootFileNode() const {
-	return new DrivePOSIXFilesystemNode(_drives);
+	return new DrivePOSIXFilesystemNode(_config);
 }
 
 AbstractFSNode *DrivesPOSIXFilesystemFactory::makeCurrentDirectoryFileNode() const {
 	char buf[MAXPATHLEN];
-	return getcwd(buf, MAXPATHLEN) ? new DrivePOSIXFilesystemNode(buf, _drives) : nullptr;
+	return getcwd(buf, MAXPATHLEN) ? new DrivePOSIXFilesystemNode(buf, _config) : nullptr;
 }
 
 AbstractFSNode *DrivesPOSIXFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	assert(!path.empty());
-	return new DrivePOSIXFilesystemNode(path, _drives);
+	return new DrivePOSIXFilesystemNode(path, _config);
 }
 
 #endif

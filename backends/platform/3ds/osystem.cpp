@@ -87,6 +87,20 @@ OSystem_3DS::OSystem_3DS():
 	DrivesPOSIXFilesystemFactory *fsFactory = new DrivesPOSIXFilesystemFactory();
 	fsFactory->addDrive("sdmc:");
 	fsFactory->addDrive("romfs:");
+
+	//
+	// Disable newlib's buffered IO, and use ScummVM's own buffering stream wrappers.
+	//
+	// The newlib version in use in devkitPro has performance issues
+	//  when seeking with a relative offset. See:
+	//  https://sourceware.org/git/gitweb.cgi?p=newlib-cygwin.git;a=commit;h=59362c80e3a02c011fd0ef3d7f07a20098d2a9d5
+	//
+	// devKitPro has a patch to newlib that can cause data corruption when
+	//  seeking back in files and then reading. See:
+	//  https://github.com/devkitPro/newlib/issues/16
+	//
+	fsFactory->configureBuffering(DrivePOSIXFilesystemNode::kBufferingModeScummVM, 2048);
+
 	_fsFactory = fsFactory;
 
 	Posix::assureDirectoryExists("/3ds/scummvm/saves/");

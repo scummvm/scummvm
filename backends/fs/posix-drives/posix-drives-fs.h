@@ -25,6 +25,8 @@
 
 #include "backends/fs/posix/posix-fs.h"
 
+class StdioStream;
+
 /**
  * POSIX file system node where the top-level directory is a hardcoded
  * list of drives.
@@ -32,26 +34,46 @@
 class DrivePOSIXFilesystemNode : public POSIXFilesystemNode {
 protected:
 	AbstractFSNode *makeNode(const Common::String &path) const override {
-		return new DrivePOSIXFilesystemNode(path, _drives);
+		return new DrivePOSIXFilesystemNode(path, _config);
 	}
 
 public:
 	typedef Common::Array<Common::String> DrivesArray;
 
-	DrivePOSIXFilesystemNode(const Common::String &path, const DrivesArray &drives);
-	DrivePOSIXFilesystemNode(const DrivesArray &drives);
+	enum BufferingMode {
+		/** IO buffering is fully disabled */
+		kBufferingModeDisabled,
+		/** IO buffering is enabled and uses the libc implemenation */
+		kBufferingModeStdio,
+		/** IO buffering is enabled and uses ScummVM's buffering stream wraappers */
+		kBufferingModeScummVM
+	};
 
-	// POSIXFilesystemNode API
+	struct Config {
+		DrivesArray drives;
+		BufferingMode bufferingMode;
+		uint32 bufferSize;
+
+		Config();
+	};
+
+	DrivePOSIXFilesystemNode(const Common::String &path, const Config &config);
+	DrivePOSIXFilesystemNode(const Config &config);
+
+	// AbstractFSNode API
+	Common::SeekableReadStream *createReadStream() override;
+	Common::WriteStream *createWriteStream() override;
 	AbstractFSNode *getChild(const Common::String &n) const override;
 	bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const override;
 	AbstractFSNode *getParent() const override;
 
 private:
 	bool _isPseudoRoot;
-	const DrivesArray &_drives;
+	const Config &_config;
 
 	DrivePOSIXFilesystemNode *getChildWithKnownType(const Common::String &n, bool isDirectoryFlag) const;
 	bool isDrive(const Common::String &path) const;
+	void configureStream(StdioStream *stream);
 };
 
 #endif
