@@ -1713,7 +1713,7 @@ void GfxOpenGL::loadEmergFont() {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // 8 bit font bitmaps
 
 	_emergFont = glGenLists(128);
-	for (int i = 32; i < 127; i++) {
+	for (int i = 32; i < 128; i++) {
 		glNewList(_emergFont + i, GL_COMPILE);
 		glBitmap(8, 13, 0, 2, 10, 0, Font::emerFont[i - 32]);
 		glEndList();
