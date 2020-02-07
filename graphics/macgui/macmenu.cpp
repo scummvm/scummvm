@@ -565,8 +565,8 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 	}
 }
 
-const Font *MacMenu::getMenuFont() {
-	return _wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
+const Font *MacMenu::getMenuFont(int slant) {
+	return _wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12, slant));
 }
 
 const Common::String MacMenu::getAcceleratorString(MacMenuItem *item, const char *prefix) {
@@ -802,7 +802,9 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 			_font->drawString(&_screen, it->unicodeText, x, y, it->bbox.width(), color);
 			underlineAccelerator(&_screen, _font, it->unicodeText, x, y, it->shortcutPos, color);
 		} else {
-			_font->drawString(&_screen, it->text, x, y, it->bbox.width(), color);
+			const Font *font = getMenuFont(it->style);
+
+			font->drawString(&_screen, it->text, x, y, it->bbox.width(), color);
 		}
 	}
 

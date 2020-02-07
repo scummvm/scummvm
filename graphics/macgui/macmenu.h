@@ -24,6 +24,7 @@
 #define GRAPHICS_MACGUI_MACMENU_H
 
 #include "common/str-array.h"
+#include "graphics/macgui/macfontmanager.h"
 
 namespace Common {
 class U32String;
@@ -93,7 +94,7 @@ private:
 
 private:
 	bool checkCallback(bool unicode = false);
-	const Font *getMenuFont();
+	const Font *getMenuFont(int slant = kMacFontRegular);
 	const Common::String getAcceleratorString(MacMenuItem *item, const char *prefix);
 	void processTabs();
 	void processSubmenuTabs(MacMenuSubMenu *submenu);
