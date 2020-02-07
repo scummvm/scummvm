@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-12-14 13:24+0000\n"
-"PO-Revision-Date: 2020-02-07 00:17+0000\n"
+"PO-Revision-Date: 2020-02-08 06:17+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -268,7 +268,7 @@ msgstr "Grafica"
 
 #: gui/editgamedialog.cpp:186 gui/options.cpp:1421 gui/options.cpp:1551
 msgid "GFX"
-msgstr "Grafica"
+msgstr "Graf."
 
 #: gui/editgamedialog.cpp:192
 msgid "Override global graphic settings"
@@ -595,7 +595,7 @@ msgstr "Scegli un'azione da mappare"
 
 #: gui/launcher.cpp:144 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:142
 msgid "~Q~uit"
-msgstr "C~h~iudi"
+msgstr "~E~sci"
 
 #: gui/launcher.cpp:144 backends/platform/sdl/macosx/appmenu_osx.mm:209
 msgid "Quit ScummVM"
@@ -829,19 +829,20 @@ msgstr "non è stato possibile modificare la modalità video"
 #: gui/options.cpp:582
 msgid "the stretch mode could not be changed"
 msgstr ""
-"non è stato possibile modificare la modalità di stiramento dell'immagine"
+"non è stato possibile modificare la modalità di ridimensionamento "
+"dell'immagine"
 
 #: gui/options.cpp:588
 msgid "the aspect ratio setting could not be changed"
-msgstr "impossibile modificare l'impostazione proporzioni"
+msgstr "non è stato possibile modificare l'impostazione Correzione Proporzioni"
 
 #: gui/options.cpp:594
 msgid "the fullscreen setting could not be changed"
-msgstr "L'opzione Schermo Intero non può essere modificata"
+msgstr "non è stato possibile modificare l'impostazione Schermo Intero"
 
 #: gui/options.cpp:600
 msgid "the filtering setting could not be changed"
-msgstr "Impossibile modificare le impostazioni del filtro video"
+msgstr "non è stato possibile modificare le impostazioni del filtro video"
 
 #: gui/options.cpp:996
 msgid "Show On-screen control"
@@ -887,16 +888,16 @@ msgstr "Shader Hardware:"
 
 #: gui/options.cpp:1038 gui/options.cpp:1040
 msgid "Different hardware shaders give different visual effects"
-msgstr "Shader differenti danno effetti visivi differenti"
+msgstr "Shader hardware differenti danno effetti visivi differenti"
 
 #: gui/options.cpp:1040
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr "HW Shader:"
+msgstr "Shader HW:"
 
 #: gui/options.cpp:1041
 msgid "Different shaders give different visual effects"
-msgstr "Shader diversi danno diversi effetti grafici"
+msgstr "Shader differenti danno effetti visivi differenti"
 
 #: gui/options.cpp:1058
 msgid "Graphics mode:"
@@ -912,7 +913,7 @@ msgstr "Modalità di resa grafica speciali supportate da alcuni giochi"
 
 #: gui/options.cpp:1085
 msgid "Stretch mode:"
-msgstr "Modalità di stiramento immagine:"
+msgstr "Ridimensionamento:"
 
 #: gui/options.cpp:1096 backends/graphics/sdl/sdl-graphics.cpp:352
 msgid "Fullscreen mode"
@@ -932,15 +933,15 @@ msgstr "Correzione proporzioni"
 
 #: gui/options.cpp:1102
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Correggere il rapporto d'aspetto dei giochi con risoluzione a 320x200"
+msgstr "Corregge il rapporto d'aspetto dei giochi con risoluzione a 320x200"
 
 #: gui/options.cpp:1110
 msgid "Preferred device:"
-msgstr "Dispositivo preferito:"
+msgstr "Dispositivo audio:"
 
 #: gui/options.cpp:1110
 msgid "Music device:"
-msgstr "Dispositivo per la riproduzione musicale:"
+msgstr "Disp. musica:"
 
 #: gui/options.cpp:1110 gui/options.cpp:1112
 msgid "Specifies preferred sound device or sound card emulator"
@@ -960,7 +961,7 @@ msgstr "Disp. preferito:"
 #: gui/options.cpp:1112
 msgctxt "lowres"
 msgid "Music device:"
-msgstr "Dispositivo per la riproduzione musicale:"
+msgstr "Disp. musica:"
 
 #: gui/options.cpp:1139
 msgid "AdLib emulator:"
@@ -1099,7 +1100,7 @@ msgstr "Mostra i sottotitoli e attiva le voci"
 #: gui/options.cpp:1272
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr "Velocità sottotitoli:"
+msgstr "Vel. sottot.:"
 
 #: gui/options.cpp:1288
 msgid "Music volume:"
@@ -1108,7 +1109,7 @@ msgstr "Volume musica:"
 #: gui/options.cpp:1290
 msgctxt "lowres"
 msgid "Music volume:"
-msgstr "Volume musica:"
+msgstr "Musica:"
 
 #: gui/options.cpp:1297
 msgid "Mute all"
@@ -1125,7 +1126,7 @@ msgstr "Volume degli effetti sonori"
 #: gui/options.cpp:1302
 msgctxt "lowres"
 msgid "SFX volume:"
-msgstr "Volume effetti:"
+msgstr "Effetti:"
 
 #: gui/options.cpp:1310
 msgid "Speech volume:"
@@ -1134,7 +1135,7 @@ msgstr "Volume voci:"
 #: gui/options.cpp:1312
 msgctxt "lowres"
 msgid "Speech volume:"
-msgstr "Volume voci:"
+msgstr "Voci:"
 
 #: gui/options.cpp:1562
 msgid "Shader"
@@ -1181,16 +1182,16 @@ msgstr "Tema:"
 
 #: gui/options.cpp:1667
 msgid "GUI renderer:"
-msgstr "Renderer interfaccia grafica:"
+msgstr "Render interfaccia:"
 
 #: gui/options.cpp:1679
 msgid "Autosave:"
-msgstr "Autosalva:"
+msgstr "Autosalvataggio:"
 
 #: gui/options.cpp:1681
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "Salvataggio automatico:"
+msgstr "Autosalva:"
 
 #: gui/options.cpp:1689
 msgid "Keys"
@@ -1198,7 +1199,7 @@ msgstr "Tasti"
 
 #: gui/options.cpp:1696
 msgid "GUI language:"
-msgstr "Lingua interfaccia grafica:"
+msgstr "Lingua interfaccia:"
 
 #: gui/options.cpp:1696
 msgid "Language of ScummVM GUI"
@@ -1216,19 +1217,19 @@ msgid ""
 msgstr ""
 "Quando si avvia un gioco, cambia la lingua dell'interfaccia alla lingua del "
 "gioco. In questo modo, se un gioco utilizza i menu di salvataggio di "
-"ScummVM, esse saranno nella stessa lingua del gioco avviato."
+"ScummVM, essi saranno nella stessa lingua del gioco avviato."
 
 #: gui/options.cpp:1736
 msgid "Use native system file browser"
-msgstr "Usa il selettore file originale"
+msgstr "Usa selettore file nativo del sistema operativo"
 
 #: gui/options.cpp:1737
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
-"Utilizza il selettore di file nativo invece di quello di ScummVM per "
-"scegliere un file o una cartella."
+"Usa il file manager del sistema (anziché quello di ScummVM) per selezionare "
+"files o cartelle."
 
 #: gui/options.cpp:1744 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -1284,7 +1285,7 @@ msgstr "Applica"
 
 #: gui/options.cpp:1915
 msgid "Active storage:"
-msgstr "Servizio di archiviazione attivo:"
+msgstr "Servizio cloud:"
 
 #: gui/options.cpp:1915
 msgid "Active cloud storage"
@@ -1379,7 +1380,7 @@ msgstr "Puoi scaricare i files dei giochi dalla tua cartella cloud di ScummVM:"
 
 #: gui/options.cpp:1946
 msgid "Download game files"
-msgstr "Scarica files del gioco"
+msgstr "Scarica files dei giochi"
 
 #: gui/options.cpp:1946
 msgid "Open downloads manager dialog"
@@ -1417,7 +1418,7 @@ msgstr "Il servizio di archiviazione non è ancora collegato! Per collegarsi,"
 
 #: gui/options.cpp:1958
 msgid "1. Open this link:"
-msgstr "1. Apri questo collegamento:"
+msgstr "1. Apri il link:"
 
 #: gui/options.cpp:1959
 msgid "Open URL"
@@ -1485,8 +1486,8 @@ msgstr "Porta usata dal server"
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
-"Avvia servizio server, permette di gestire i files via browser (nella stessa "
-"rete locale)."
+"Avvia il servizio server per gestire i files via browser (nella stessa rete "
+"locale)."
 
 #: gui/options.cpp:1994
 msgctxt "lowres"
@@ -1496,8 +1497,8 @@ msgstr "Chiudendo la finestra delle opzioni il server si arresterà."
 #: gui/options.cpp:1996
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
-"Avvia servizio server, permette di gestire i files via browser (nella stessa "
-"rete locale)."
+"Avvia il servizio server per gestire i files via browser (nella stessa rete "
+"locale)."
 
 #: gui/options.cpp:1997
 msgid "Closing options dialog will stop the server."
@@ -1749,12 +1750,12 @@ msgstr "Seleziona un tema"
 
 #: gui/ThemeEngine.cpp:259
 msgid "Disabled GFX"
-msgstr "Grafica disattivata"
+msgstr "Graf. disattivata"
 
 #: gui/ThemeEngine.cpp:259
 msgctxt "lowres"
 msgid "Disabled GFX"
-msgstr "Grafica disattivata"
+msgstr "Graf. disattivata"
 
 #: gui/ThemeEngine.cpp:260
 msgid "Standard renderer"
@@ -1824,7 +1825,7 @@ msgid ""
 "in the Options dialog."
 msgstr ""
 "E' possibile cambiare questa impostazione in seguito\n"
-"tramite la sezione Vari del menu Opzioni."
+"tramite la sezione Varie del menu Opzioni."
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
@@ -1939,7 +1940,7 @@ msgstr "Hercules Verde"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
-msgstr "Hercules ambra"
+msgstr "Hercules Ambra"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
@@ -1952,12 +1953,12 @@ msgstr "PC-9801 (16 colori)"
 #: common/rendermode.cpp:73
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr "Hercules verde"
+msgstr "Hercules Verde"
 
 #: common/rendermode.cpp:74
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr "Hercules ambra"
+msgstr "Hercules Ambra"
 
 #: common/updates.cpp:58
 msgid "Daily"
@@ -1977,7 +1978,7 @@ msgstr "<Valore non valido>"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
-msgstr "~R~ipristina"
+msgstr "~R~iprendi gioco"
 
 #: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:140
 msgid "~L~oad"
@@ -2097,11 +2098,11 @@ msgstr "Impossibile passare alla modalità video: '%s'."
 #: engines/engine.cpp:329
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr "Impossibile passare alla visualizzazione estesa '%s'."
+msgstr "Impossibile passare al ridimensionamento '%s'."
 
 #: engines/engine.cpp:336
 msgid "Could not apply aspect ratio setting."
-msgstr "Impossibile applicare l'impostazione proporzioni."
+msgstr "Impossibile applicare la correzione delle proporzioni."
 
 #: engines/engine.cpp:341
 msgid "Could not apply fullscreen setting."
@@ -2109,7 +2110,7 @@ msgstr "Impossibile applicare l'impostazione schermo intero."
 
 #: engines/engine.cpp:346
 msgid "Could not apply filtering setting."
-msgstr "Impossibile applicare l'impostazione di filtraggio."
+msgstr "Impossibile applicare l'impostazione del filtro grafico."
 
 #: engines/engine.cpp:454
 msgid ""
@@ -2434,12 +2435,12 @@ msgstr "OpenGL"
 #: backends/graphics/opengl/opengl-graphics.cpp:235
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:78
 msgid "Center"
-msgstr "Centra"
+msgstr "Centrato"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:236
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:79
 msgid "Pixel-perfect scaling"
-msgstr "Scaling pixel-perfect"
+msgstr "Ridimensionamento pixel-perfect"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:237
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:80
@@ -2479,7 +2480,7 @@ msgstr "Filtro video disattivato"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:678
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2609
 msgid "Stretch mode"
-msgstr "Modalità ridimensionamento immagine"
+msgstr "Ridimensionamento"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:57
 msgid "Normal (no scaling)"
@@ -2738,57 +2739,63 @@ msgstr "Sensibilità Pad scorrevole:"
 
 #: backends/platform/3ds/osystem-events.cpp:147
 msgid "Magnify Mode cannot be activated in menus."
-msgstr ""
+msgstr "La Vista Ingrandita non può essere attivata nei menù."
 
 #: backends/platform/3ds/osystem-events.cpp:150
 msgid ""
 "Magnify Mode can only be activated\n"
 " when both screens are enabled."
 msgstr ""
+"La Vista Ingrandita può essere attivata\n"
+" solo quando entrambi gli schermi sono abilitati."
 
 #: backends/platform/3ds/osystem-events.cpp:152
 msgid "In-game resolution too small to magnify."
-msgstr ""
+msgstr "La risoluzione del gioco è troppo piccola per essere ingrandita."
 
 #: backends/platform/3ds/osystem-events.cpp:158
+#, fuzzy
 msgid "Magnify Mode On. Switching to Hover Mode..."
-msgstr ""
+msgstr "Vista Ingrandita attivata. Passo a Modalità Puntatore..."
 
 #: backends/platform/3ds/osystem-events.cpp:160
 msgid "Magnify Mode On"
-msgstr ""
+msgstr "Vista Ingrandita attivata"
 
 #: backends/platform/3ds/osystem-events.cpp:167
 msgid "Magnify Mode Off. Reactivating Drag Mode..."
-msgstr ""
+msgstr "Vista Ingrandita disabilitata. Riattivo Modalità Trascinamento..."
 
 #: backends/platform/3ds/osystem-events.cpp:169
 msgid "Magnify Mode Off"
-msgstr ""
+msgstr "Vista Ingrandita disattivata"
 
 #: backends/platform/3ds/osystem-events.cpp:177
 #, fuzzy
 msgid "Hover Mode"
-msgstr "Sangue"
+msgstr "Modalità Puntatore"
 
 #: backends/platform/3ds/osystem-events.cpp:181
-#, fuzzy
 msgid "Drag Mode"
-msgstr "Sangue"
+msgstr "Modalità Trascinamento"
 
 #: backends/platform/3ds/osystem-events.cpp:183
 msgid "Cannot Switch to Drag Mode while Magnify Mode is On"
 msgstr ""
+"Impossibile passare alla Modalità Trascinamento quando la Vista Ingrandita è "
+"attivata"
 
 #: backends/platform/3ds/osystem-events.cpp:236
 msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
+"Vista Ingrandita disabilitata. Riattivo Modalità Trascinamento.\n"
+"Ritorno all'elenco dei giochi..."
 
 #: backends/platform/3ds/osystem-events.cpp:238
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr ""
+msgstr "Vista Ingrandita disattivata. Ritorno all'elenco dei giochi..."
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
@@ -3242,7 +3249,7 @@ msgstr ""
 
 #: engines/adl/detection.cpp:91
 msgid "Always use sharp monochrome text"
-msgstr "Usa sempre testo monocromatico definito"
+msgstr "Usa sempre testo monocromatico ad alto contrasto"
 
 #: engines/adl/detection.cpp:92
 msgid "Do not emulate NTSC artifacts for text"
@@ -3268,7 +3275,7 @@ msgstr ""
 
 #: engines/agi/detection.cpp:157
 msgid "Use an alternative palette"
-msgstr "Usa una differente palette di colori"
+msgstr "Usa palette colori alternativa"
 
 #: engines/agi/detection.cpp:158
 msgid ""
@@ -3323,7 +3330,7 @@ msgstr ""
 #: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3452
 #: engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
-msgstr "Ripristina partita:"
+msgstr "Carica partita:"
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1907
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:75
@@ -3339,7 +3346,7 @@ msgstr "Ripristina partita:"
 #: engines/toltecs/menu.cpp:266 engines/toon/toon.cpp:3452
 #: engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
-msgstr "Ripristina"
+msgstr "Carica"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2469
 #, c-format
@@ -3443,13 +3450,15 @@ msgstr ""
 
 #: engines/bladerunner/detection.cpp:75
 msgid "Max frames per second limit"
-msgstr ""
+msgstr "Sblocca limitatore di frame"
 
 #: engines/bladerunner/detection.cpp:76
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
 msgstr ""
+"Questa modalità porta il limitatore di frame a 120 fps. Se disabilitato il "
+"gioco mantiene 60 fps"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
@@ -4420,11 +4429,13 @@ msgstr "Usa il Cartoon-Scaler speciale per disegnare gli sprite dei personaggi"
 
 #: engines/sci/detection.cpp:447
 msgid "Prefer digital sound effects"
-msgstr "Scegli effetti sonori digitali"
+msgstr "Preferisci effetti sonori digitalizzati"
 
 #: engines/sci/detection.cpp:448
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "Scegli gli effetti sonori digitali al posto di quelli sintetizzati"
+msgstr ""
+"Usa preferibilmente gli effetti sonori digitalizzati, anziché quelli "
+"sintetizzati"
 
 #: engines/sci/detection.cpp:467
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
@@ -4774,7 +4785,7 @@ msgstr "Base"
 
 #: engines/scumm/dialogs.cpp:662
 msgid "Expert"
-msgstr "Expert"
+msgstr "Esperto"
 
 #: engines/scumm/help.cpp:74
 msgid "Common keyboard commands:"
@@ -4876,7 +4887,7 @@ msgstr "Esegui in modalità molto veloce (*)"
 
 #: engines/scumm/help.cpp:100
 msgid "Toggle mouse capture"
-msgstr "Attiva/disattiva cattura puntatore del mouse"
+msgstr "Attiva/disattiva cattura puntatore"
 
 #: engines/scumm/help.cpp:101
 msgid "Switch between graphics filters"
@@ -5018,7 +5029,7 @@ msgstr "Viaggio"
 
 #: engines/scumm/help.cpp:176
 msgid "To Henry / To Indy"
-msgstr "A Henry / a Indy"
+msgstr "A Henry / A Indy"
 
 #. I18N: These are different musical notes
 #: engines/scumm/help.cpp:180
@@ -5109,7 +5120,7 @@ msgstr "Oggetto"
 
 #: engines/scumm/help.cpp:230
 msgid "Black and White / Color"
-msgstr "Bianco e nero / Colori"
+msgstr "Bianco e Nero / Colori"
 
 #: engines/scumm/help.cpp:233
 msgid "Eyes"
@@ -5198,23 +5209,23 @@ msgstr "Terzo ragazzo"
 
 #: engines/scumm/help.cpp:292
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Alterna tra visualizzazione Inventario e Punteggio QI"
+msgstr "Alterna tra Inventario e Punti QI"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr "Alterna tra Tastiera o Mouse per le fasi di combattimento (*)"
+msgstr "Alterna Tasti/Mouse per combattimento (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr "* La tastiera è sempre attiva durante i combattimenti,"
+msgstr "* La tastiera è sempre attiva, quindi"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr "  quindi indipendentemente dai messaggi nel gioco,"
+msgstr "  contrariamente al messaggio nel gioco"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr "  questa opzione non fa altro che attivare/disattivare il mouse"
+msgstr "  questo comando altera solo il mouse"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
@@ -5653,7 +5664,7 @@ msgstr "Raddoppia FPS"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr "Aumenta il numero di immagini al secondo da 30 a 60"
+msgstr "Aumenta il numero di frame al secondo da 30 a 60"
 
 #: engines/zvision/detection_tables.h:70
 msgid "Enable Venus"
