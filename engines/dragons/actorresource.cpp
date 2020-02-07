@@ -149,8 +149,7 @@ ActorFrame *ActorResource::getFrameHeader(uint16 frameNumber) {
 	return &_frames[frameNumber];
 }
 
-byte *ActorResource::getSequenceData(int16 sequenceId)
-{
+byte *ActorResource::getSequenceData(int16 sequenceId) {
 	uint16 offset = READ_LE_UINT16(_data + _sequenceTableOffset + (sequenceId * 2));
 	return &_data[offset];
 }

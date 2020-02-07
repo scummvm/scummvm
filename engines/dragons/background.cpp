@@ -66,7 +66,7 @@ int16 PriorityLayer::getPriority(Common::Point pos) {
 void PriorityLayer::overlayTileMap(byte *data, int16 x, int16 y, int16 w, int16 h) {
 	byte *ptr = _map + (x + y * _mapWidth) * 2;
 	byte *src = data;
-	for (int i = 0;i < h; i++) {
+	for (int i = 0; i < h; i++) {
 		memcpy(ptr, src, w * 2);
 		src += w * 2;
 		ptr += _mapWidth * 2;
@@ -76,7 +76,7 @@ void PriorityLayer::overlayTileMap(byte *data, int16 x, int16 y, int16 w, int16 
 void PriorityLayer::restoreTileMap(int16 x, int16 y, int16 w, int16 h) {
 	byte *ptr = _map + (x + y * _mapWidth) * 2;
 	byte *src = _mapBase + (x + y * _mapWidth) * 2;
-	for (int i = 0;i < h; i++) {
+	for (int i = 0; i < h; i++) {
 		memcpy(ptr, src, w * 2);
 		src += _mapWidth * 2;
 		ptr += _mapWidth * 2;
@@ -125,7 +125,7 @@ bool Background::load(byte *dataStart, uint32 size) {
 	stream.seek(0x308);
 
 	uint32 tilemapOffset = 0x324;
-	for (int i = 0;i< 3;i++) {
+	for (int i = 0; i < 3;i++) {
 		_tileMap[i].w = stream.readUint16LE();
 		_tileMap[i].h = stream.readUint16LE();
 		_tileMap[i].size = stream.readUint32LE();
@@ -171,7 +171,7 @@ bool Background::load(byte *dataStart, uint32 size) {
 Common::Point *Background::loadPoints(Common::SeekableReadStream &stream) {
 	Common::Point *points = new Common::Point[0x20];
 
-	for (int i = 0;i < 0x20;i++) {
+	for (int i = 0; i < 0x20; i++) {
 		points[i].x = stream.readUint16LE();
 		points[i].y = stream.readUint16LE();
 	}
@@ -353,7 +353,7 @@ uint16 ScaleLayer::getScale(uint16 y) {
 //		iVar3 = i * 0x10000;
 //	} while (-1 < i * 0x10000);
 	lowerYBandIdx = 32;
-	for (int16 i = 0; i < 32; i++) {
+	for (int i = 0; i < 32; i++) {
 		yBand = _bands[i]._y;
 		if (yBand != -1 && y <= yBand) {
 			lowerYBandIdx = i;
@@ -394,7 +394,7 @@ uint16 ScaleLayer::getScale(uint16 y) {
 			if (local_v0_368 != 0) {
 				iVar3 = ((uVar5 & 0xffffu) - (uVar7 & 0xffffu)) * (uint)(uint16)(y - pSVar6->_y);
 
-				assert (((uint)(uint16)local_v0_368 != 0xffffffff) || (iVar3 != -0x80000000));
+				assert(((uint)(uint16)local_v0_368 != 0xffffffff) || (iVar3 != -0x80000000));
 
 				return uVar7 + iVar3 / (int)(uint)(uint16)local_v0_368 & 0xffff;
 			}
