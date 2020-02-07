@@ -108,7 +108,7 @@ void ActorManager::updateActorDisplayOrder() {
 			int16 curY = curActor->_y_pos > 0 ? curActor->_y_pos : 0;
 			int16 nextY = nextActor->_y_pos > 0 ? nextActor->_y_pos : 0;
 			if (nextActor->_priorityLayer * 0x1000000 + nextY * 0x100 + nextActor->_actorID <
-				curActor->_priorityLayer * 0x1000000 + curY * 0x100 + curActor->_actorID) {
+					curActor->_priorityLayer * 0x1000000 + curY * 0x100 + curActor->_actorID) {
 				_displayOrder[i] = nextActor->_actorID;
 				_displayOrder[i + 1] = curActor->_actorID;
 				shouldContinue = true;
@@ -223,18 +223,18 @@ uint32 calcDistance(int32 x1, int32 y1, int32 x2, int32 y2) {
 
 bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 	static const int kCosTbl[40] = {
-			// cos table
-			256, 251, 236, 212, 181, 142, 97, 49,
-			0, -49, -97, -142, -181, -212, -236, -251,
-			-255, -251, -236, -212, -181, -142, -97, -49,
-			0, 49, 97, 142, 181, 212, 236, 251,
-			11, 0, 0, 0, 0, 0, 0, 0
+		// cos table
+		256, 251, 236, 212, 181, 142, 97, 49,
+		0, -49, -97, -142, -181, -212, -236, -251,
+		-255, -251, -236, -212, -181, -142, -97, -49,
+		0, 49, 97, 142, 181, 212, 236, 251,
+		11, 0, 0, 0, 0, 0, 0, 0
 	};
 	static const int kAdjustXTbl[8] = {
-			1, -1, 0, 0, 1, -1, 1, -1
+		1, -1, 0, 0, 1, -1, 1, -1
 	};
 	static const int kAdjustYTbl[8] = {
-			0, 0, 1, -1, 1, 1, -1, -1
+		0, 0, 1, -1, 1, 1, -1, -1
 	};
 
 	debug("startWalk(%d, %d, %d)", _actorID, destX, destY);
@@ -659,18 +659,20 @@ int Actor::startMoveToPoint(int destX, int destY) {
 	}
 
 	switch (quadrant) {
-		case 0:
-			direction = (absDeltaX < absDeltaY) ? 2 : 0;
-			break;
-		case 1:
-			direction = (absDeltaX < absDeltaY) ? 6 : 0;
-			break;
-		case 2:
-			direction = (absDeltaX < absDeltaY) ? 2 : 4;
-			break;
-		case 3:
-			direction = (absDeltaX < absDeltaY) ? 6 : 4;
-			break;
+	case 0:
+		direction = (absDeltaX < absDeltaY) ? 2 : 0;
+		break;
+	case 1:
+		direction = (absDeltaX < absDeltaY) ? 6 : 0;
+		break;
+	case 2:
+		direction = (absDeltaX < absDeltaY) ? 2 : 4;
+		break;
+	case 3:
+		direction = (absDeltaX < absDeltaY) ? 6 : 4;
+		break;
+	default:
+		break;
 	}
 
 	_walkSlopeY /= 2;
@@ -686,79 +688,79 @@ int Actor::startMoveToPoint(int destX, int destY) {
 	return direction;
 }
 
-	void Actor::walkPath() {
-		if (isFlagClear(Dragons::ACTOR_FLAG_400) && isFlagSet(Dragons::ACTOR_FLAG_40) && isFlagSet(Dragons::ACTOR_FLAG_10)) {
-			_xShl16 += (((_scale * _walkSlopeX) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
-			_yShl16 += (((_scale * _walkSlopeY) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
+void Actor::walkPath() {
+	if (isFlagClear(Dragons::ACTOR_FLAG_400) && isFlagSet(Dragons::ACTOR_FLAG_40) && isFlagSet(Dragons::ACTOR_FLAG_10)) {
+		_xShl16 += (((_scale * _walkSlopeX) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
+		_yShl16 += (((_scale * _walkSlopeY) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
 
-			if ( (_walkSlopeX >= 0 && _walkDestX < (_xShl16 >> 0x10))
-			|| (_walkSlopeX < 0 && (_xShl16 >> 0x10) < _walkDestX)) {
-				_xShl16 = _walkDestX << 0x10;
-			}
+		if ( (_walkSlopeX >= 0 && _walkDestX < (_xShl16 >> 0x10))
+				|| (_walkSlopeX < 0 && (_xShl16 >> 0x10) < _walkDestX)) {
+			_xShl16 = _walkDestX << 0x10;
+		}
 
-			if ( (_walkSlopeY >= 0 && _walkDestY < (_yShl16 >> 0x10))
-				 || (_walkSlopeY < 0 && (_yShl16 >> 0x10) < _walkDestY)) {
-				_yShl16 = _walkDestY << 0x10;
-			}
+		if ( (_walkSlopeY >= 0 && _walkDestY < (_yShl16 >> 0x10))
+				|| (_walkSlopeY < 0 && (_yShl16 >> 0x10) < _walkDestY)) {
+			_yShl16 = _walkDestY << 0x10;
+		}
 
-			_x_pos = _xShl16 >> 0x10;
-			_y_pos = _yShl16 >> 0x10;
+		_x_pos = _xShl16 >> 0x10;
+		_y_pos = _yShl16 >> 0x10;
 
-			if (_x_pos == _walkDestX && _y_pos == _walkDestY) {
-				if (_walkPointsIndex <= 0) {
-					if (_finalWalkDestX < 0) {
-						clearFlag(ACTOR_FLAG_10);
-						if (isFlagClear(ACTOR_FLAG_200)) {
-							clearFlag(ACTOR_FLAG_800);
-						}
-						setFlag(ACTOR_FLAG_4);
-						clearFlag(ACTOR_FLAG_1);
-						return;
-					} else {
-						_walkDestX = _finalWalkDestX;
-						_walkDestY = _finalWalkDestY;
-						_finalWalkDestX = -1;
-						_finalWalkDestY = -1;
+		if (_x_pos == _walkDestX && _y_pos == _walkDestY) {
+			if (_walkPointsIndex <= 0) {
+				if (_finalWalkDestX < 0) {
+					clearFlag(ACTOR_FLAG_10);
+					if (isFlagClear(ACTOR_FLAG_200)) {
+						clearFlag(ACTOR_FLAG_800);
 					}
+					setFlag(ACTOR_FLAG_4);
+					clearFlag(ACTOR_FLAG_1);
+					return;
 				} else {
-					_walkPointsIndex--;
-					Common::Point point = getEngine()->_scene->getPoint(_walkPointsTbl[_walkPointsIndex]);
-					_walkDestX = point.x;
-					_walkDestY = point.y;
+					_walkDestX = _finalWalkDestX;
+					_walkDestY = _finalWalkDestY;
+					_finalWalkDestX = -1;
+					_finalWalkDestY = -1;
 				}
-				// 0x8001bcc8
-				int direction = startMoveToPoint(_walkDestX, _walkDestY);
-				if (direction != -1 && !isFlagSet(ACTOR_FLAG_800)) {
-					_sequenceID2 = direction;
+			} else {
+				_walkPointsIndex--;
+				Common::Point point = getEngine()->_scene->getPoint(_walkPointsTbl[_walkPointsIndex]);
+				_walkDestX = point.x;
+				_walkDestY = point.y;
+			}
+			// 0x8001bcc8
+			int direction = startMoveToPoint(_walkDestX, _walkDestY);
+			if (direction != -1 && !isFlagSet(ACTOR_FLAG_800)) {
+				_sequenceID2 = direction;
+			}
+			if (_sequenceID != _sequenceID2 + 8 && _sequenceID2 != -1 && !isFlagSet(ACTOR_FLAG_800)) {
+				updateSequence(_sequenceID2 + 8);
+			}
+			setFlag(ACTOR_FLAG_10);
+		}
+	}
+}
+
+// 0x80034930
+int16 Actor::pathfindingFindClosestPoint(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y,
+										 int16 unkType, bool *pointsInUseTbl) {
+	int16 pointId = -1;
+	uint32 minDist = 0xffffffff;
+
+	for (int i = 0; i < kPathPointsCount; i++) {
+		Common::Point point = getEngine()->_scene->getPoint(i);
+		if (point.x != -1 && !pointsInUseTbl[i]) {
+			if (canWalkLine(point.x, point.y, target_x, target_y, unkType)) {
+				uint32 dist = abs(point.x - actor_x) * abs(point.x - actor_x) + abs(point.y - actor_y) * abs(point.y - actor_y);
+				if ( dist < minDist) {
+					minDist = dist;
+					pointId = i;
 				}
-				if (_sequenceID != _sequenceID2 + 8 && _sequenceID2 != -1 && !isFlagSet(ACTOR_FLAG_800)) {
-					updateSequence(_sequenceID2 + 8);
-				}
-				setFlag(ACTOR_FLAG_10);
 			}
 		}
 	}
-
-	// 0x80034930
-	int16 Actor::pathfindingFindClosestPoint(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y,
-											 int16 unkType, bool *pointsInUseTbl) {
-		int16 pointId = -1;
-		uint32 minDist = 0xffffffff;
-
-		for (int i = 0; i < kPathPointsCount; i++) {
-			Common::Point point = getEngine()->_scene->getPoint(i);
-			if (point.x != -1 && !pointsInUseTbl[i]) {
-				if (canWalkLine(point.x, point.y, target_x, target_y, unkType)) {
-					uint32 dist = abs(point.x - actor_x) * abs(point.x - actor_x) + abs(point.y - actor_y) * abs(point.y - actor_y);
-					if ( dist < minDist) {
-						minDist = dist;
-						pointId = i;
-					}
-				}
-			}
-		}
-		return pointId;
-	}
+	return pointId;
+}
 
 bool Actor::actorSetSequenceAndWaitAllowSkip(uint16 newSequenceID) {
 	updateSequence(newSequenceID);
