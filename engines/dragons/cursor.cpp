@@ -52,11 +52,11 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	dragonINIResource->getFlickerRecord()->actor = _actor; //TODO is this correct?
 	dragonINIResource->getFlickerRecord()->field_1a_flags_maybe |= INI_FLAG_1;
 	_iniUnderCursor = 0;
-	iniItemInHand = 0;
+	_iniItemInHand = 0;
 	data_8007283c = 0;
 	_cursorActivationSeqOffset = 0;
-	data_800728b0_cursor_seqID = 0;
-	data_80072890 = 0;
+	_data_800728b0_cursor_seqID = 0;
+	_data_80072890 = 0;
 }
 
 
@@ -119,7 +119,7 @@ void Cursor::update() {
 		}
 	}
 
-	if (iniItemInHand == 0) {
+	if (_iniItemInHand == 0) {
 		if (_actor->_sequenceID != 0x84) {
 			_actor->updateSequence(0x84);
 		}
@@ -203,8 +203,8 @@ int16 Cursor::updateIniFromScene() {
 	int16 cursorY = _y + _vm->_scene->_camera.y;
 	int16 cursorTileX = cursorX / 32;
 	int16 cursorTileY = cursorY / 8;
-	int16 data_80072890_orig = data_80072890;
-	int16 data_800728b0_cursor_seqID_orig = data_800728b0_cursor_seqID;
+	int16 _data_80072890_orig = _data_80072890;
+	int16 _data_800728b0_cursor_seqID_orig = _data_800728b0_cursor_seqID;
 	for (int i = 0;i <_vm->_dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _vm->_dragonINIResource->getRecord(i);
 		if (ini->sceneId != _vm->_scene->getSceneId()) {
@@ -225,7 +225,7 @@ int16 Cursor::updateIniFromScene() {
 			} else {
 				// 0x80028a24
 				if (ini->field_2 != -1) {
-					IMG *img = _vm->_dragonIMG->getIMG((uint32)ini->field_2);
+					Img *img = _vm->_dragonImg->getImg((uint32)ini->field_2);
 					if (img->field_e - 1 >= 1) { // TODO this is >= 2 in the original.
 						if (cursorTileX >= img->x && cursorTileX < img->x + img->w && cursorTileY >= img->y && cursorTileY < img->y + img->h) {
 							cursorOverIni = i + 1;
@@ -241,13 +241,13 @@ int16 Cursor::updateIniFromScene() {
 			if (cursorOverIni != 0) {
 				// 0x80028bf0
 				// _iniUnderCursor = cursorOverIni;
-				data_80072890 = _iniUnderCursor;
-				data_800728b0_cursor_seqID = _sequenceID;
+				_data_80072890 = _iniUnderCursor;
+				_data_800728b0_cursor_seqID = _sequenceID;
 				if (ini->field_1a_flags_maybe & 0x800) {
-					data_80072890 = cursorOverIni;
+					_data_80072890 = cursorOverIni;
 					uint32 newSeqId = 1;
 					for (int idx=0; idx < 5; idx++) {
-						data_800728b0_cursor_seqID = idx;
+						_data_800728b0_cursor_seqID = idx;
 						byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getObdDataFieldC(sceneId);
 						ScriptOpCall scriptOpCall(obd + 8, READ_LE_UINT32(obd));
 
@@ -265,14 +265,14 @@ int16 Cursor::updateIniFromScene() {
 
 					_sequenceID = newSeqId;
 					_iniUnderCursor = cursorOverIni;
-					data_80072890 = _iniUnderCursor;
-					data_800728b0_cursor_seqID = _sequenceID;
+					_data_80072890 = _iniUnderCursor;
+					_data_800728b0_cursor_seqID = _sequenceID;
 					return _iniUnderCursor;
 				}
 				if (_sequenceID != 0) {
 					_iniUnderCursor = cursorOverIni;
-					data_80072890 = data_80072890_orig;
-					data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
+					_data_80072890 = _data_80072890_orig;
+					_data_800728b0_cursor_seqID = _data_800728b0_cursor_seqID_orig;
 					return _iniUnderCursor;
 				}
 				byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getObdDataFieldC(sceneId);
@@ -283,16 +283,16 @@ int16 Cursor::updateIniFromScene() {
 //				local_44 = local_44 + local_48;
 				if (executeScript(scriptOpCall, 0)) {
 					_iniUnderCursor = cursorOverIni;
-					data_80072890 = data_80072890_orig;
-					data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
+					_data_80072890 = _data_80072890_orig;
+					_data_800728b0_cursor_seqID = _data_800728b0_cursor_seqID_orig;
 					return _iniUnderCursor;
 				}
 			}
 		}
 	}
 	_iniUnderCursor = 0;
-	data_80072890 = data_80072890_orig;
-	data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
+	_data_80072890 = _data_80072890_orig;
+	_data_800728b0_cursor_seqID = _data_800728b0_cursor_seqID_orig;
 	return 0;
 }
 
@@ -304,7 +304,7 @@ int16 Cursor::executeScript(ScriptOpCall &scriptOpCall, uint16 unkFlag) {
 	_vm->_scriptOpcodes->_data_80071f5c = 0;
 	_vm->_scriptOpcodes->executeScriptLoop(scriptOpCall);
 
-	if (!(scriptOpCall._result & 1) && data_800728b0_cursor_seqID == 5 && unkFlag != 0) {
+	if (!(scriptOpCall._result & 1) && _data_800728b0_cursor_seqID == 5 && unkFlag != 0) {
 		_vm->_scriptOpcodes->_scriptTargetINI = -1;
 		scriptOpCall._code = codeStart;
 		scriptOpCall._field8 = 1;
@@ -333,7 +333,7 @@ void Cursor::selectPreviousCursor() {
 		_sequenceID = 1;
 	}
 	if (_sequenceID == -1) {
-		_sequenceID = iniItemInHand == 0 ? 4 : 5;
+		_sequenceID = _iniItemInHand == 0 ? 4 : 5;
 	}
 }
 

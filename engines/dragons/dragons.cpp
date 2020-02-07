@@ -194,7 +194,7 @@ Common::Error DragonsEngine::run() {
 	_bigfileArchive = new BigfileArchive("bigfile.dat", Common::EN_ANY);
 	_talk = new Talk(this, _bigfileArchive);
 	_dragonFLG = new DragonFLG(_bigfileArchive);
-	_dragonIMG = new DragonIMG(_bigfileArchive);
+	_dragonImg = new DragonImg(_bigfileArchive);
 	_dragonOBD = new DragonOBD(_bigfileArchive);
 	_dragonRMS = new DragonRMS(_bigfileArchive, _dragonOBD);
 	_dragonVAR = new DragonVAR(_bigfileArchive);
@@ -224,7 +224,7 @@ Common::Error DragonsEngine::run() {
 	delete _actorManager;
 	delete _backgroundResourceLoader;
 	delete _dragonFLG;
-	delete _dragonIMG;
+	delete _dragonImg;
 	delete _dragonRMS;
 	delete _dragonVAR;
 	delete _fontManager;
@@ -246,7 +246,7 @@ uint16 DragonsEngine::ipt_img_file_related() {
 	for (int i = 0;i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = getINI(i);
 		if ((ini->sceneId == getCurrentSceneId()) && (ini->field_1a_flags_maybe == 0)) {
-			IMG *img = _dragonIMG->getIMG(ini->field_2);
+			Img *img = _dragonImg->getImg(ini->field_2);
 			if ((img->x <= tileX) && (((tileX <= img->x + img->w && (img->y <= tileY)) && (tileY <= img->y + img->h)))) {
 				return i + 1;
 			}
@@ -346,7 +346,7 @@ void DragonsEngine::gameLoop() {
 //		actorId = CheckButtonMapPress_CycleUp(0);
 //		if (((actorId & 0xffff) != 0) && isInputEnabled()) {
 //			_cursor->_sequenceID = _cursor->_sequenceID + 1;
-//			if (_cursor->iniItemInHand == 0) {
+//			if (_cursor->_iniItemInHand == 0) {
 //				bVar1 = _cursor->_sequenceID < 5;
 //			}
 //			else {
@@ -376,7 +376,7 @@ void DragonsEngine::gameLoop() {
 			if (flicker->sceneId == getCurrentSceneId() && flicker->actor->_sequenceID2 != -1) {
 				uVar6 = _scriptOpcodes->_scriptTargetINI;
 				if (_cursor->_sequenceID != 5) {
-					uVar6 = _cursor->data_80072890;
+					uVar6 = _cursor->_data_80072890;
 				}
 				if (uVar6 > 0) {
 					flicker->actor->_sequenceID2 = getINI(uVar6 - 1)->field_e;
@@ -415,7 +415,7 @@ void DragonsEngine::gameLoop() {
 							_inventory->setType(1);
 							_inventory->openInventory();
 							joined_r0x80027a38:
-							if (_cursor->iniItemInHand == 0) {
+							if (_cursor->_iniItemInHand == 0) {
 								_cursor->_sequenceID = 1;
 								actorId = uVar3;
 							}
@@ -432,7 +432,7 @@ void DragonsEngine::gameLoop() {
 						if ((_cursor->_iniUnderCursor & 0x8000) != 0) {
 							if (_cursor->_iniUnderCursor == 0x8002) {
 								LAB_80027294:
-								if (_cursor->iniItemInHand == 0) {
+								if (_cursor->_iniItemInHand == 0) {
 									if ((bit_flags_8006fbd8 & 3) != 1) {
 										sequenceId = _dragonVAR->getVar(7);
 										uVar7 = _inventory->_old_showing_value;
@@ -441,10 +441,10 @@ void DragonsEngine::gameLoop() {
 									}
 								}
 								else {
-									if (_inventory->addItem(_cursor->iniItemInHand)) {
+									if (_inventory->addItem(_cursor->_iniItemInHand)) {
 										_cursor->_sequenceID = 1;
 										waitForFrames(1);
-										_cursor->iniItemInHand = 0;
+										_cursor->_iniItemInHand = 0;
 										_cursor->_iniUnderCursor = 0;
 										actorId = uVar3;
 										continue;
@@ -465,22 +465,22 @@ void DragonsEngine::gameLoop() {
 						}
 						LAB_80027ab4:
 						_counter = 0;
-						_cursor->data_80072890 = _cursor->_iniUnderCursor;
+						_cursor->_data_80072890 = _cursor->_iniUnderCursor;
 						if (_cursor->_sequenceID < 5) {
-							_cursor->data_800728b0_cursor_seqID = _cursor->_sequenceID;
+							_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
 							walkFlickerToObject();
 							if (bit_flags_8006fbd8 != 0) {
 								clearFlags(ENGINE_FLAG_8);
 							}
 						}
 						else {
-							_cursor->data_800728b0_cursor_seqID = _cursor->_sequenceID;
+							_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
 							walkFlickerToObject();
 							if (bit_flags_8006fbd8 != 0) {
 								clearFlags(ENGINE_FLAG_8);
 							}
-							_scriptOpcodes->_scriptTargetINI = _cursor->data_80072890;
-							_cursor->data_80072890 = _cursor->iniItemInHand;
+							_scriptOpcodes->_scriptTargetINI = _cursor->_data_80072890;
+							_cursor->_data_80072890 = _cursor->_iniItemInHand;
 						}
 					}
 				}
@@ -540,10 +540,10 @@ void DragonsEngine::gameLoop() {
 			}
 			if (_cursor->_iniUnderCursor != 0) {
 				if ((_cursor->_sequenceID != 4) && (_cursor->_sequenceID != 2)) {
-					_cursor->data_800728b0_cursor_seqID = _cursor->_sequenceID;
-					_cursor->data_80072890 = _cursor->_iniUnderCursor;
+					_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
+					_cursor->_data_80072890 = _cursor->_iniUnderCursor;
 					if (4 < _cursor->_sequenceID) {
-						_cursor->data_80072890 = _cursor->iniItemInHand;
+						_cursor->_data_80072890 = _cursor->_iniItemInHand;
 						_scriptOpcodes->_scriptTargetINI = _cursor->_iniUnderCursor;
 					}
 					clearFlags(ENGINE_FLAG_8);
@@ -551,11 +551,11 @@ void DragonsEngine::gameLoop() {
 					goto LAB_8002790c;
 				}
 				Actor *actor = _inventory->getInventoryItemActor(_cursor->_iniUnderCursor);
-				uint16 tmpId = _cursor->iniItemInHand;
-				_inventory->replaceItem(_cursor->_iniUnderCursor, _cursor->iniItemInHand);
+				uint16 tmpId = _cursor->_iniItemInHand;
+				_inventory->replaceItem(_cursor->_iniUnderCursor, _cursor->_iniItemInHand);
 				_cursor->data_8007283c = actor->_sequenceID;
 				actor->clearFlag(ACTOR_FLAG_40);
-				_cursor->iniItemInHand = _cursor->_iniUnderCursor;
+				_cursor->_iniItemInHand = _cursor->_iniUnderCursor;
 				_cursor->_sequenceID = 5;
 				actorId = uVar3;
 				if (tmpId != 0) {
@@ -572,16 +572,16 @@ void DragonsEngine::gameLoop() {
 				}
 				continue;
 			}
-			if (_cursor->iniItemInHand == 0) goto LAB_80027b58;
+			if (_cursor->_iniItemInHand == 0) goto LAB_80027b58;
 			//drop item back into inventory
-			if (_inventory->addItemIfPositionIsEmpty(_cursor->iniItemInHand, _cursor->_x, _cursor->_y)) {
-				Actor *invActor = _inventory->getInventoryItemActor(_cursor->iniItemInHand);
+			if (_inventory->addItemIfPositionIsEmpty(_cursor->_iniItemInHand, _cursor->_x, _cursor->_y)) {
+				Actor *invActor = _inventory->getInventoryItemActor(_cursor->_iniItemInHand);
 				invActor->_flags = 0;
 				invActor->_priorityLayer = 0;
 				invActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 				invActor->updateSequence(
-						 getINI(_cursor->iniItemInHand - 1)->field_8 * 2 + 10);
-				_cursor->iniItemInHand = 0;
+						 getINI(_cursor->_iniItemInHand - 1)->field_8 * 2 + 10);
+				_cursor->_iniItemInHand = 0;
 				invActor->setFlag(ACTOR_FLAG_40);
 				invActor->setFlag(ACTOR_FLAG_80);
 				invActor->setFlag(ACTOR_FLAG_100);
@@ -593,7 +593,7 @@ void DragonsEngine::gameLoop() {
 			}
 		}
 		LAB_8002790c:
-		if ((_cursor->iniItemInHand == 0) ||
+		if ((_cursor->_iniItemInHand == 0) ||
 			(((uint16)(_cursor->_x - 10U) < 300 && ((uint16)(_cursor->_y - 10U) < 0xb4))))
 			goto LAB_80027b58;
 		_cursor->_sequenceID = 5;
@@ -604,7 +604,7 @@ void DragonsEngine::gameLoop() {
 
 
 void DragonsEngine::updateHandler() {
-	videoFlags |= 0x40;
+	_videoFlags |= 0x40;
 	//TODO logic here
 
 	updateActorSequences();
@@ -680,7 +680,7 @@ void DragonsEngine::updateHandler() {
 
 	// TODO data_8006a3a0 logic. @ 0x8001c2f4
 
-	videoFlags &= ~0x40;
+	_videoFlags &= ~0x40;
 }
 
 uint32 DragonsEngine::calulateTimeLeft() {
@@ -811,7 +811,7 @@ uint16 DragonsEngine::getIniFromImg() {
 	for (uint16 i = 0; i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = getINI(i);
 		if (ini->sceneId == currentSceneId && ini->field_1a_flags_maybe == 0) {
-			IMG *img = _dragonIMG->getIMG(ini->field_2);
+			Img *img = _dragonImg->getImg(ini->field_2);
 			if (x >= img->x &&
 				img->x + img->w >= x &&
 				y >= img->y &&
@@ -908,10 +908,10 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 			actorId = (uint)uVar5;
 		} while (uVar5 < uVar1);
 	}
-	if (run_func_ptr_unk_countdown_timer != 0) {
-		run_func_ptr_unk_countdown_timer = run_func_ptr_unk_countdown_timer - 1;
+	if (_run_func_ptr_unk_countdown_timer != 0) {
+		_run_func_ptr_unk_countdown_timer = _run_func_ptr_unk_countdown_timer - 1;
 	}
-	return (uint)run_func_ptr_unk_countdown_timer;
+	return (uint)_run_func_ptr_unk_countdown_timer;
 } */
 
 //TODO the logic in this function doesn't match the original. It should be redone.
@@ -975,8 +975,8 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 			}
 		}
 
-		if (run_func_ptr_unk_countdown_timer != 0) {
-			run_func_ptr_unk_countdown_timer--;
+		if (_run_func_ptr_unk_countdown_timer != 0) {
+			_run_func_ptr_unk_countdown_timer--;
 		}
 	}
 }
@@ -1049,8 +1049,8 @@ void DragonsEngine::performAction() {
 	uVar6 = 0;
 	_scriptOpcodes->_data_80071f5c = 0;
 
-	assert(_cursor->data_80072890 > 0);
-	byte *obd = _dragonOBD->getFromOpt(_cursor->data_80072890 - 1);
+	assert(_cursor->_data_80072890 > 0);
+	byte *obd = _dragonOBD->getFromOpt(_cursor->_data_80072890 - 1);
 
 
 	ScriptOpCall local_48(obd + 8, READ_LE_UINT32(obd));
@@ -1058,11 +1058,11 @@ void DragonsEngine::performAction() {
 	pvVar8 = local_48._codeEnd;
 
 	uVar4 = _cursor->executeScript(local_48, 1);
-	if (_cursor->data_800728b0_cursor_seqID > 4) {
+	if (_cursor->_data_800728b0_cursor_seqID > 4) {
 		_scriptOpcodes->_data_80071f5c = 0;
 
 		obd = _dragonOBD->getFromOpt(_scriptOpcodes->_scriptTargetINI - 1);
-		_scriptOpcodes->_scriptTargetINI = _cursor->data_80072890;
+		_scriptOpcodes->_scriptTargetINI = _cursor->_data_80072890;
 
 		ScriptOpCall local_38(obd + 8, READ_LE_UINT32(obd));
 
@@ -1086,7 +1086,7 @@ void DragonsEngine::performAction() {
 		load_58_result = local_58._result;
 	}
 	if (!load_58_result) {
-		if (_cursor->data_800728b0_cursor_seqID == 3) {
+		if (_cursor->_data_800728b0_cursor_seqID == 3) {
 			ScriptOpCall local_58(pvVar7, pvVar8 - pvVar7);
 			uVar5 = _talk->talkToActor(local_58);
 			uVar4 = uVar4 | uVar5;
@@ -1149,16 +1149,16 @@ void DragonsEngine::walkFlickerToObject()
 
 	flickerINI = _dragonINIResource->getFlickerRecord();
 	if (flickerINI->sceneId == getCurrentSceneId()) {
-		if (_cursor->data_80072890 != 0) {
+		if (_cursor->_data_80072890 != 0) {
 
-			if (!(READ_LE_UINT16(_dragonOBD->getFromOpt(_cursor->data_80072890 - 1) + 4) & 8)
+			if (!(READ_LE_UINT16(_dragonOBD->getFromOpt(_cursor->_data_80072890 - 1) + 4) & 8)
 			&& (_inventory->getType() == 0) && !isFlagSet(ENGINE_FLAG_200000)) {
-				targetINI = getINI(_cursor->data_80072890 - 1);
+				targetINI = getINI(_cursor->_data_80072890 - 1);
 				if ((targetINI->field_1a_flags_maybe & 1) == 0) {
 					if (targetINI->actorResourceId == -1) {
 						return;
 					}
-					IMG *img = _dragonIMG->getIMG(targetINI->field_2);
+					Img *img = _dragonImg->getImg(targetINI->field_2);
 					targetX = img->field_a;
 					targetY = img->field_c;
 				}
@@ -1183,7 +1183,7 @@ void DragonsEngine::walkFlickerToObject()
 			if (flickerINI != NULL && flickerINI->actor != NULL) {
 				flickerINI->actor->clearFlag(ACTOR_FLAG_10);
 				flickerINI->actor->setFlag(ACTOR_FLAG_4);
-				targetINI = getINI(_cursor->data_80072890 - 1);
+				targetINI = getINI(_cursor->_data_80072890 - 1);
 				flickerINI->field_20_actor_field_14 = targetINI->field_e;
 				flickerINI->actor->_sequenceID2 = targetINI->field_e;
 			}
@@ -1200,7 +1200,7 @@ void DragonsEngine::walkFlickerToObject()
 		}
 	}
 	else {
-		if (_cursor->data_80072890 != 0) {
+		if (_cursor->_data_80072890 != 0) {
 			bit_flags_8006fbd8 = 3;
 			return;
 		}
@@ -1214,7 +1214,7 @@ void DragonsEngine::FUN_80038994() {
 }
 
 void DragonsEngine::reset_screen_maybe() {
-	videoFlags &= ~0x10;
+	_videoFlags &= ~0x10;
 	//TODO
 }
 
@@ -1283,9 +1283,9 @@ void DragonsEngine::reset() {
 	_nextUpdatetime = 0;
 	_flags = 0;
 	_unkFlags1 = 0;
-	run_func_ptr_unk_countdown_timer = 0;
-	videoFlags = 0;
-	data_800633fa = 0;
+	_run_func_ptr_unk_countdown_timer = 0;
+	_videoFlags = 0;
+	_data_800633fa = 0;
 
 	for (int i = 0; i < 8; i++) {
 		_paletteCyclingTbl[i].paletteType = 0;
@@ -1299,8 +1299,8 @@ void DragonsEngine::reset() {
 }
 
 void DragonsEngine::runSceneUpdaterFunction() {
-	if ((isFlagSet(ENGINE_FLAG_20) && (run_func_ptr_unk_countdown_timer == 0)) &&
-		(run_func_ptr_unk_countdown_timer = 1, _sceneUpdateFunction != NULL)) {
+	if ((isFlagSet(ENGINE_FLAG_20) && (_run_func_ptr_unk_countdown_timer == 0)) &&
+		(_run_func_ptr_unk_countdown_timer = 1, _sceneUpdateFunction != NULL)) {
 		_sceneUpdateFunction();
 	}
 }

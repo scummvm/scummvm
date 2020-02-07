@@ -32,8 +32,8 @@ class DragonOBD {
 private:
 	byte *_data;
 	uint32 _dataSize;
-	Common::SeekableReadStream *optReadStream;
-	Common::SeekableReadStream *sptReadStream;
+	Common::SeekableReadStream *_optReadStream;
+	Common::SeekableReadStream *_sptReadStream;
 
 public:
 	virtual ~DragonOBD();

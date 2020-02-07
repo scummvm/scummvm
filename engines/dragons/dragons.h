@@ -109,7 +109,7 @@ class BackgroundResourceLoader;
 class Cursor;
 class Credits;
 class DragonFLG;
-class DragonIMG;
+class DragonImg;
 class DragonOBD;
 class DragonRMS;
 class DragonVAR;
@@ -129,14 +129,14 @@ struct DragonINI;
 class DragonsEngine : public Engine {
 public:
 	DragonOBD *_dragonOBD;
-	DragonIMG *_dragonIMG;
+	DragonImg *_dragonImg;
 	DragonRMS *_dragonRMS;
 	ActorManager *_actorManager;
 	DragonINIResource *_dragonINIResource;
 	FontManager *_fontManager;
 	ScriptOpcodes *_scriptOpcodes;
 	Scene *_scene;
-	uint16 data_800633fa;
+	uint16 _data_800633fa;
 	Inventory *_inventory;
 	Cursor *_cursor;
 	Credits *_credits;
@@ -145,8 +145,8 @@ public:
 
 	PaletteCyclingInstruction _paletteCyclingTbl[8];
 
-	uint16 data_800633fc;
-	uint16 videoFlags; // TODO move to screen?
+	uint16 _data_800633fc;
+	uint16 _videoFlags; // TODO move to screen?
 
 	void loadCurrentSceneMsf();
 
@@ -166,7 +166,7 @@ private:
 	uint32 bit_flags_8006fbd8;
 	//unk
 
-	uint16 run_func_ptr_unk_countdown_timer;
+	uint16 _run_func_ptr_unk_countdown_timer;
 
 	uint32 _randomState;
 

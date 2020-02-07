@@ -83,9 +83,9 @@ private:
 	byte _palette[512];
 	Graphics::Surface *_layerSurface[3];
 	Common::Point *_points2;
-	uint8 layerPriority[3];
-	Common::Point layerOffset[3];
-	AlphaBlendMode layerAlphaMode[3];
+	uint8 _layerPriority[3];
+	Common::Point _layerOffset[3];
+	AlphaBlendMode _layerAlphaMode[3];
 
 public:
 	Background();
@@ -97,13 +97,13 @@ public:
 	Graphics::Surface *getBgLayer() { return _layerSurface[0]; }
 	Graphics::Surface *getMgLayer() { return _layerSurface[1]; }
 	Graphics::Surface *getFgLayer() { return _layerSurface[2]; }
-	uint8 getBgLayerPriority() { return layerPriority[0]; }
-	uint8 getMgLayerPriority() { return layerPriority[1]; }
-	uint8 getFgLayerPriority() { return layerPriority[2]; }
+	uint8 getBgLayerPriority() { return _layerPriority[0]; }
+	uint8 getMgLayerPriority() { return _layerPriority[1]; }
+	uint8 getFgLayerPriority() { return _layerPriority[2]; }
 
-	void setBgLayerPriority(uint8 newPriority) { layerPriority[0] = newPriority; }
-	void setMgLayerPriority(uint8 newPriority) { layerPriority[1] = newPriority; }
-	void setFgLayerPriority(uint8 newPriority) { layerPriority[2] = newPriority; }
+	void setBgLayerPriority(uint8 newPriority) { _layerPriority[0] = newPriority; }
+	void setMgLayerPriority(uint8 newPriority) { _layerPriority[1] = newPriority; }
+	void setFgLayerPriority(uint8 newPriority) { _layerPriority[2] = newPriority; }
 
 	int16 getPriorityAtPoint(Common::Point pos);
 	Common::Point getPoint2(uint32 pointIndex);

@@ -62,7 +62,7 @@ void Minigame4::run() {
 	_vm->setVsyncUpdateFunction(videoUpdaterFunction);
 	_vm->_screen->loadPalette(4, _vm->_scene->getPalette());
 	_vm->_screen->updatePaletteTransparency(4,1,0xff,true);
-	_vm->videoFlags |= 4;
+	_vm->_videoFlags |= 4;
 	_vm->_scene->setBgLayerPriority(2);
 	_vm->_scene->setMgLayerPriority(1);
 	flickerActor = _vm->_actorManager->loadActor(0x18,0,0xcb,0x79,1);
@@ -101,7 +101,7 @@ void Minigame4::run() {
 	//DisableVSyncEvent();
 	_vm->setVsyncUpdateFunction(NULL);
 	_vm->setFlags(ENGINE_FLAG_1);
-	_vm->videoFlags &= ~(uint16)4;
+	_vm->_videoFlags &= ~(uint16)4;
 	// EnableVSyncEvent();
 	_vm->_dragonINIResource->setFlickerRecord(flicker);
 	_vm->_inventory->setType(uVar3);

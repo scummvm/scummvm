@@ -90,7 +90,7 @@ Talk::FUN_8003239c(uint16 *dialog, int16 x, int16 y, int32 param_4, uint16 param
 	//TODO 0x800323a4
 
 	//TODO dragon_text_related(textId);
-	_vm->data_800633fc = 1;
+	_vm->_data_800633fc = 1;
 	uint32 uVar4 = 0; //TODO FUN_8001d1ac(0,textId,0);
 
 	actor->updateSequence(startSequenceId);
@@ -381,7 +381,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 					}
 				}
 				if (param_5 == 0) {
-					_vm->data_800633fc = 0;
+					_vm->_data_800633fc = 0;
 					return (uint)returnStatus;
 				}
 				uVar9 = ((int)((int)(short)unaff_s4 * (uint)1 * (int)sVar3) >> 3) * 0x3c;
@@ -430,7 +430,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 				_vm->setFlags(ENGINE_FLAG_8);
 			}
 		}
-		_vm->data_800633fc = 0;
+		_vm->_data_800633fc = 0;
 		return (uint)returnStatus;
 }
 
@@ -440,7 +440,7 @@ uint32 Talk::displayDialogAroundINI(uint32 iniId, uint16 *dialogText, uint32 tex
 	DragonINI *ini = iniId == 0 ? _vm->_dragonINIResource->getFlickerRecord() : _vm->getINI(iniId - 1);
 
 	if ((ini->field_1a_flags_maybe & 1) == 0) {
-		IMG *local_v1_184 = _vm->_dragonIMG->getIMG(ini->field_2);
+		Img *local_v1_184 = _vm->_dragonImg->getImg(ini->field_2);
 		int x, y;
 		if (local_v1_184->field_e == 0) {
 			y = (uint)(uint16)local_v1_184->y;
@@ -494,7 +494,7 @@ Talk::displayDialogAroundPoint(uint16 *dialogText, uint16 x, uint16 y, uint16 pa
 //		uVar4 = puVar7[5];
 //		puVar8[4] = _DAT_80011a80;
 //		puVar8[5] = uVar4;
-		_vm->data_800633fc = 1;
+		_vm->_data_800633fc = 1;
 
 		// sVar3 = FUN_8001d1ac(0,textId,0);
 		_vm->_sound->playSpeech(textId);
@@ -938,7 +938,7 @@ void Talk::flickerRandomDefaultResponse() {
 
 uint32 Talk::getDefaultResponseTextIndex() {
 	uint16 rand = _vm->getRand(9);
-	return defaultResponseTbl[(_vm->_cursor->data_800728b0_cursor_seqID - 1) * 9 + rand];
+	return defaultResponseTbl[(_vm->_cursor->_data_800728b0_cursor_seqID - 1) * 9 + rand];
 }
 
 uint32 extractTextIndex(Common::File *fd, uint16 offset) {

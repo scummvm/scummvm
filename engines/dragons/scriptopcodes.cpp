@@ -237,8 +237,8 @@ void ScriptOpcodes::opUnk1(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field4);
 	ARG_INT16(field6);
 
-	if ((field2 >> _vm->_cursor->data_800728b0_cursor_seqID) & 1
-	&& (_vm->_cursor->data_800728b0_cursor_seqID < 5 || field4 == _scriptTargetINI)
+	if ((field2 >> _vm->_cursor->_data_800728b0_cursor_seqID) & 1
+	&& (_vm->_cursor->_data_800728b0_cursor_seqID < 5 || field4 == _scriptTargetINI)
 	&& scriptOpCall._field8 == 1) {
 		scriptOpCall._code -= 8;
 		scriptOpCall._result |= 1;
@@ -317,8 +317,8 @@ void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
 	}
 
 	int16 uVar6 = _scriptTargetINI;
-	int16 uVar5 = _vm->_cursor->data_800728b0_cursor_seqID;
-	int16 uVar4 = _vm->_cursor->data_80072890;
+	int16 uVar5 = _vm->_cursor->_data_800728b0_cursor_seqID;
+	int16 uVar4 = _vm->_cursor->_data_80072890;
 	int16 uVar3 = _vm->_cursor->_iniUnderCursor;
 	int32 uVar2 = _vm->_cursor->_sequenceID;
 	bool isEngineFlag8Set = _vm->isFlagSet(ENGINE_FLAG_8);
@@ -332,8 +332,8 @@ void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
 	}
 
 	_scriptTargetINI = field6;
-	_vm->_cursor->data_800728b0_cursor_seqID = _vm->_cursor->_sequenceID;
-	_vm->_cursor->data_80072890 = _vm->_cursor->_iniUnderCursor;
+	_vm->_cursor->_data_800728b0_cursor_seqID = _vm->_cursor->_sequenceID;
+	_vm->_cursor->_data_80072890 = _vm->_cursor->_iniUnderCursor;
 //	EnableVSyncEvent();
 	_vm->performAction();
 	if (isEngineFlag8Set) {
@@ -341,8 +341,8 @@ void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
 	}
 	_vm->_cursor->_sequenceID = uVar2;
 	_vm->_cursor->_iniUnderCursor = uVar3;
-	_vm->_cursor->data_80072890 = uVar4;
-	_vm->_cursor->data_800728b0_cursor_seqID = uVar5;
+	_vm->_cursor->_data_80072890 = uVar4;
+	_vm->_cursor->_data_800728b0_cursor_seqID = uVar5;
 	_scriptTargetINI = uVar6;
 }
 
@@ -445,7 +445,7 @@ void ScriptOpcodes::opUnk20(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field2);
 
 	_vm->_sound->PauseCDMusic();
-	_vm->data_800633fc = 1;
+	_vm->_data_800633fc = 1;
 
 	if (field2 >= 2) {
 		//TODO do we need this? It looks like it is pre-loading the next scene's data.
@@ -727,7 +727,7 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 	if (field8 == -1) {
 		if ((firstIni->field_1a_flags_maybe & 1) == 0) {
 			if ((int)firstIni->field_2 != -1) {
-				IMG *firstDragonImg1 = _vm->_dragonIMG->getIMG(firstIni->field_2);
+				Img *firstDragonImg1 = _vm->_dragonImg->getImg(firstIni->field_2);
 				int16 newXPos1 = firstDragonImg1->field_a + firstIni->field_1c;
 				secondIni->x = newXPos1;
 				secondIni->actor->_x_pos = newXPos1;
@@ -773,7 +773,7 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 		if ((int)firstIni->field_2 == -1) {
 			return;
 		}
-		IMG *firstDragonImg2 = _vm->_dragonIMG->getIMG(firstIni->field_2);
+		Img *firstDragonImg2 = _vm->_dragonImg->getImg(firstIni->field_2);
 
 		newXPosAgain = firstDragonImg2->field_a + firstIni->field_1c;
 		newYPosAgain = firstDragonImg2->field_c + firstIni->field_1e;
@@ -834,7 +834,7 @@ void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {
 		// load scene here.
 		_vm->_scene->data_80063392 = _vm->_scene->getSceneId();
 		_vm->_scene->setSceneId(newSceneID);
-		_vm->data_800633fa = field6;
+		_vm->_data_800633fa = field6;
 
 		_vm->_scene->loadScene(newSceneID, cameraPointID);
 	} else {
@@ -868,7 +868,7 @@ void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 	DragonINI *ini = iniId == 0 ? _vm->_dragonINIResource->getFlickerRecord() : _vm->getINI(iniId - 1);
 
 	if ((ini->field_1a_flags_maybe & 1) == 0) {
-		IMG *img = _vm->_dragonIMG->getIMG(ini->field_2);
+		Img *img = _vm->_dragonImg->getImg(ini->field_2);
 
 		int y = img->field_e == 0 ? img->y : img->y << 3;
 
@@ -1218,10 +1218,10 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 		}
 
 		if (ini->sceneId == 1) {
-			if ((uint)_vm->_cursor->iniItemInHand - 1 == ini->id) {
-				_vm->_cursor->data_800728b0_cursor_seqID = 0;
+			if ((uint)_vm->_cursor->_iniItemInHand - 1 == ini->id) {
+				_vm->_cursor->_data_800728b0_cursor_seqID = 0;
 				_vm->_cursor->_sequenceID = 0;
-				_vm->_cursor->iniItemInHand = 0;
+				_vm->_cursor->_iniItemInHand = 0;
 			}
 			else {
 				if (_vm->_inventory->clearItem(ini->id + 1)) {
@@ -1233,14 +1233,14 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 		}
 
 		if (sceneId == 1) {
-			if (_vm->_cursor->iniItemInHand != 0) {
-				_vm->_inventory->addItem(_vm->_cursor->iniItemInHand);
+			if (_vm->_cursor->_iniItemInHand != 0) {
+				_vm->_inventory->addItem(_vm->_cursor->_iniItemInHand);
 				if (_vm->_inventory->getType() == 1) {
-					Actor *actor = _vm->_inventory->getInventoryItemActor(_vm->_cursor->iniItemInHand);
+					Actor *actor = _vm->_inventory->getInventoryItemActor(_vm->_cursor->_iniItemInHand);
 					actor->_flags = 0;
 					actor->_priorityLayer = 0;
 					actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-					actor->updateSequence((_vm->getINI(_vm->_cursor->iniItemInHand - 1)->field_8 * 2 + 10) & 0xfffe);
+					actor->updateSequence((_vm->getINI(_vm->_cursor->_iniItemInHand - 1)->field_8 * 2 + 10) & 0xfffe);
 					actor->setFlag(ACTOR_FLAG_40);
 					actor->setFlag(ACTOR_FLAG_80);
 					actor->setFlag(ACTOR_FLAG_100);
@@ -1251,10 +1251,10 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 			DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 			_vm->_cursor->updatePosition(flicker->actor->_x_pos - _vm->_scene->_camera.x,
 					flicker->actor->_y_pos - (_vm->_scene->_camera.y + 0x1e));
-			_vm->_cursor->data_800728b0_cursor_seqID = 5;
+			_vm->_cursor->_data_800728b0_cursor_seqID = 5;
 			_vm->_cursor->_sequenceID = 5;
 			_vm->_cursor->data_8007283c = _vm->getINI(field2 - 1)->field_8 * 2 + 10;
-			_vm->_cursor->iniItemInHand = field2;
+			_vm->_cursor->_iniItemInHand = field2;
 		}
 	}
 	ini->sceneId = sceneId;
