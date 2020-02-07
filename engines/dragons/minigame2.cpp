@@ -40,7 +40,7 @@ static const uint16 unkArray[5] = {
 };
 
 void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
-	uint16 uVar1;
+	//uint16 uVar1;
 	short sVar2;
 	short sVar3;
 	bool shouldExit;
@@ -58,11 +58,11 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	Actor *uVar13;
 	Actor *uVar14;
 	Actor *uVar15;
-	uint16 uVar16;
-	uint16 uVar17;
+	//uint16 uVar16;
+	//uint16 uVar17;
 	uint uVar18;
-	uint uVar19;
-	int iVar20;
+	//uint uVar19;
+	//int iVar20;
 	bool shouldShakeScreen;
 	uint16 local_2e6;
 	int16 actorSequenceIdTbl [15];

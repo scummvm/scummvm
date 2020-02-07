@@ -112,24 +112,24 @@ Talk::FUN_8003239c(uint16 *dialog, int16 x, int16 y, int32 param_4, uint16 param
 
 uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, uint16 param_4, int16 param_5, uint32 textId,
 									  int16 param_7) {
-		uint32 *puVar1;
-		uint32 *puVar2;
+		//uint32 *puVar1;
+		//uint32 *puVar2;
 		short sVar3;
 		short sVar4;
 		uint16 *tmpTextPtr;
 		int iVar5;
 		int iVar6;
-		int iVar7;
+		//int iVar7;
 		int iVar8;
 		uint uVar9;
 		uint uVar10;
 		uint16 uVar11;
-		uint32 uVar12;
+		//uint32 uVar12;
 		uint16 *puVar13;
-		uint32 uVar14;
-		uint32 uVar15;
-		uint32 *puVar16;
-		uint32 *puVar17;
+		//uint32 uVar14;
+		//uint32 uVar15;
+		//uint32 *puVar16;
+		//uint32 *puVar17;
 		uint16 *dialogTextLinePtr;
 		uint16 *puVar18;
 		uint16 *curDialogTextPtr;
@@ -139,11 +139,11 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 		uint32 maxLineLengthMaybe;
 		uint16 currentLine [44];
 		uint16 asStack2592 [1208];
-		uint32 local_b0 [14];
+		//uint32 local_b0 [14];
 		uint16 local_58;
 		uint16 returnStatus;
-		byte *lineTblPtr;
-		uint oldEngineFlags;
+		//byte *lineTblPtr;
+		//uint oldEngineFlags;
 
 		bool isFlag8Set = _vm->isFlagSet(ENGINE_FLAG_8);
 		returnStatus = 0;
