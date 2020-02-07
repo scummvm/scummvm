@@ -74,6 +74,8 @@ void SciMusic::init() {
 #ifdef ENABLE_SCI32
 	if (g_sci->_features->generalMidiOnly()) {
 		deviceFlags = MDT_MIDI;
+	} else if (platform == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_MIDDLE) {
+		deviceFlags = MDT_MIDI;
 	} else {
 #endif
 		deviceFlags = MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI;
