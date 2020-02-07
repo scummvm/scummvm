@@ -88,9 +88,9 @@ Background::Background() : _priorityLayer(0), _points2(0), _data(0) {
 	_layerSurface[0] = NULL;
 	_layerSurface[1] = NULL;
 	_layerSurface[2] = NULL;
-	_layerOffset[0] = Common::Point(0,0);
-	_layerOffset[1] = Common::Point(0,0);
-	_layerOffset[2] = Common::Point(0,0);
+	_layerOffset[0] = Common::Point(0, 0);
+	_layerOffset[1] = Common::Point(0, 0);
+	_layerOffset[2] = Common::Point(0, 0);
 	_layerAlphaMode[0] = NORMAL;
 	_layerAlphaMode[1] = NORMAL;
 	_layerAlphaMode[2] = NORMAL;
@@ -125,13 +125,13 @@ bool Background::load(byte *dataStart, uint32 size) {
 	stream.seek(0x308);
 
 	uint32 tilemapOffset = 0x324;
-	for (int i = 0; i < 3;i++) {
+	for (int i = 0; i < 3; i++) {
 		_tileMap[i].w = stream.readUint16LE();
 		_tileMap[i].h = stream.readUint16LE();
 		_tileMap[i].size = stream.readUint32LE();
 		_tileMap[i].map = dataStart + tilemapOffset;
 		_tileMap[i].tileIndexOffset = tileindexOffset;
-		debug("Tilemap (%d,%d) map: %X", _tileMap[i].w, _tileMap[i].h, tilemapOffset);
+		debug("Tilemap (%d, %d) map: %X", _tileMap[i].w, _tileMap[i].h, tilemapOffset);
 
 		tilemapOffset += _tileMap[i].size;
 	}
@@ -239,8 +239,8 @@ int16 Background::getPriorityAtPoint(Common::Point pos) {
 }
 
 void Background::overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int16 w, int16 h) {
-	for (int i = 0; i < h; i++ ) {
-		for (int j = 0; j < w; j++ ) {
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
 			int16 idx = READ_LE_UINT16(data) + _tileMap[layerNum].tileIndexOffset;
 			drawTileToSurface(_layerSurface[layerNum],
 					_palette,

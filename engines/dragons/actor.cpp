@@ -591,7 +591,7 @@ uint16 Actor::canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 ta
 			return 1;
 		}
 		int16 priority = getEngine()->_scene->getPriorityAtPosition(Common::Point(x>>0x10, y>>0x10));
-		if ( priority < 0) {
+		if (priority < 0) {
 			priority = 1;
 		}
 		if (!(walkFlags & 0x7fff) && (priority == 0 || priority >= 8)) {
@@ -693,12 +693,12 @@ void Actor::walkPath() {
 		_xShl16 += (((_scale * _walkSlopeX) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
 		_yShl16 += (((_scale * _walkSlopeY) / DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) * 5) / 4;
 
-		if ( (_walkSlopeX >= 0 && _walkDestX < (_xShl16 >> 0x10))
+		if ((_walkSlopeX >= 0 && _walkDestX < (_xShl16 >> 0x10))
 				|| (_walkSlopeX < 0 && (_xShl16 >> 0x10) < _walkDestX)) {
 			_xShl16 = _walkDestX << 0x10;
 		}
 
-		if ( (_walkSlopeY >= 0 && _walkDestY < (_yShl16 >> 0x10))
+		if ((_walkSlopeY >= 0 && _walkDestY < (_yShl16 >> 0x10))
 				|| (_walkSlopeY < 0 && (_yShl16 >> 0x10) < _walkDestY)) {
 			_yShl16 = _walkDestY << 0x10;
 		}
@@ -752,7 +752,7 @@ int16 Actor::pathfindingFindClosestPoint(int16 actor_x, int16 actor_y, int16 tar
 		if (point.x != -1 && !pointsInUseTbl[i]) {
 			if (canWalkLine(point.x, point.y, target_x, target_y, unkType)) {
 				uint32 dist = abs(point.x - actor_x) * abs(point.x - actor_x) + abs(point.y - actor_y) * abs(point.y - actor_y);
-				if ( dist < minDist) {
+				if (dist < minDist) {
 					minDist = dist;
 					pointId = i;
 				}

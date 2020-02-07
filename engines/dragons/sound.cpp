@@ -90,7 +90,7 @@ void SoundManager::playSpeech(uint32 textIndex) {
 	CdIntToPos_0(speechLocation.sectorStart * 32);
 	fd->seek(((speechLocation.sectorStart * 32) + speechLocation.startOffset) * RAW_CD_SECTOR_SIZE);
 	PSXAudioTrack *_audioTrack = new PSXAudioTrack(fd, Audio::Mixer::kSpeechSoundType);
-	for (int i = 0x0; i < speechLocation.sectorEnd - speechLocation.sectorStart;i++) {
+	for (int i = 0x0; i < speechLocation.sectorEnd - speechLocation.sectorStart; i++) {
 		fd->seek(((speechLocation.sectorStart * 32) + speechLocation.startOffset + i * 32) * RAW_CD_SECTOR_SIZE);
 		_audioTrack->queueAudioFromSector(fd);
 	}

@@ -119,7 +119,7 @@ void Minigame5::run() {
 	local_74 = 0;
 //	DisableVSyncEvent();
 	pusherActor = _vm->_actorManager->loadActor
-			(0x26,0,(int)(short)local_850,(int)(((uint)uVar1 + 5) * 0x10000) >> 0x10);
+			(0x26, 0, (int)(short)local_850, (int)(((uint)uVar1 + 5) * 0x10000) >> 0x10);
 //	EnableVSyncEvent();
 	if (pusherActor == NULL) {
 		error("Couldn't alloc pusher!");
@@ -130,7 +130,7 @@ void Minigame5::run() {
 	pusherActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	pusherActor->_priorityLayer = 6;
 //	DisableVSyncEvent();
-	wheelsActor = _vm->_actorManager->loadActor(7,0x11,0,0);
+	wheelsActor = _vm->_actorManager->loadActor(7, 0x11, 0, 0);
 //	EnableVSyncEvent();
 	if (wheelsActor == NULL) {
 		error("Couldn't alloc wheels!");
@@ -143,7 +143,7 @@ void Minigame5::run() {
 	wheelsActor->updateSequence(0x11);
 	local_62 = 0;
 //	DisableVSyncEvent();
-	bombActor = _vm->_actorManager->loadActor(7,0x1c,0,0);
+	bombActor = _vm->_actorManager->loadActor(7, 0x1c, 0, 0);
 //	EnableVSyncEvent();
 	if (bombActor == NULL) {
 		error("Couldn't alloc bomb!");
@@ -152,7 +152,7 @@ void Minigame5::run() {
 	bombActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	bombActor->_priorityLayer = 0;
 //	DisableVSyncEvent();
-	dustActor = _vm->_actorManager->loadActor(8,8,100,100,0);
+	dustActor = _vm->_actorManager->loadActor(8, 8, 100, 100, 0);
 //	EnableVSyncEvent();
 	if (dustActor == NULL) {
 		error("Couldn't alloc dust sprite!");
@@ -175,7 +175,7 @@ void Minigame5::run() {
 					if (local_66 != 8) {
 						local_66 = 0;
 					}
-					//iVar2 = IsButtonBeingPressed((uint)DAT_800728ac,0);
+					//iVar2 = IsButtonBeingPressed((uint)DAT_800728ac, 0);
 					if (!_vm->isActionButtonPressed()) {
 						if (local_74 == 0) {
 							if ((((flickerActor->_sequenceID != 0) &&
@@ -348,12 +348,12 @@ void Minigame5::run() {
 					_vm->waitForFrames(0x3c);
 					pusherActor->updateSequence(0xb);
 					if (_dat_800633e6 == 0) {
-						_vm->_talk->loadText(DAT_8006393c,auStack2120, 1000);
-						_vm->_talk->displayDialogAroundPoint(auStack2120,(int)(short)(local_850 >> 3),0xc,0,1,DAT_8006393c);
+						_vm->_talk->loadText(DAT_8006393c, auStack2120, 1000);
+						_vm->_talk->displayDialogAroundPoint(auStack2120, (int)(short)(local_850 >> 3), 0xc, 0, 1, DAT_8006393c);
 						_dat_800633e6 = 1;
 					} else {
 						_vm->_talk->loadText(DAT_80063938, auStack2120, 1000);
-						_vm->_talk->displayDialogAroundPoint(auStack2120,(int)(short)(local_850 >> 3),0xc,0,1, DAT_80063938);
+						_vm->_talk->displayDialogAroundPoint(auStack2120, (int)(short)(local_850 >> 3), 0xc, 0, 1, DAT_80063938);
 					}
 					_vm->waitForFrames(10);
 					local_10 = 1;
@@ -373,13 +373,13 @@ void Minigame5::run() {
 					_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->updateSequence(2);
 					_vm->waitForFrames(0x12);
 					_vm->_talk->loadText(DAT_80063e38, auStack2120, 1000);
-					_vm->_talk->displayDialogAroundPoint(auStack2120,0xf,2,0x501,0,DAT_80063e38);
+					_vm->_talk->displayDialogAroundPoint(auStack2120, 0xf, 2, 0x501, 0, DAT_80063e38);
 //						TODO	callMaybeResetData();
 					_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->updateSequence(3);
 					_vm->_dragonINIResource->getRecord(DAT_80063bd0 + -1)->actor->waitUntilFlag8And4AreSet();
 					pusherActor->updateSequence(7);
 					_vm->_talk->loadText(DAT_8006391c, auStack2120, 1000);
-					_vm->_talk->displayDialogAroundPoint(auStack2120, (int)(short)(local_850 >> 3),0xc,0,1,DAT_8006391c);
+					_vm->_talk->displayDialogAroundPoint(auStack2120, (int)(short)(local_850 >> 3), 0xc, 0, 1, DAT_8006391c);
 					pusherActor->_flags = pusherActor->_flags | 0x1000;
 					local_10 = 2;
 					local_48 = 1;

@@ -1069,13 +1069,13 @@ void ScriptOpcodes::opUnk18(ScriptOpCall &scriptOpCall) {
 	_vm->_talk->loadText(field2, dialog, 2000);
 
 //	if (((unkFlags1 & 1) == 0) && (((engine_flags_maybe & 0x1000) == 0 || (sVar1 == -1)))) {
-//		dialogText = (uint8 *)load_string_from_dragon_txt(offset,acStack2016);
+//		dialogText = (uint8 *)load_string_from_dragon_txt(offset, acStack2016);
 //	}
 
 	if (fieldA != 0) {
 		fieldA = READ_LE_INT16(_vm->_dragonOBD->getFromOpt(fieldA - 1) + 6);
 	}
-	_vm->_talk->displayDialogAroundPoint(dialog,x,y,fieldA,1,field2);
+	_vm->_talk->displayDialogAroundPoint(dialog, x, y, fieldA, 1, field2);
 }
 
 void ScriptOpcodes::opUnk19(ScriptOpCall &scriptOpCall) {
