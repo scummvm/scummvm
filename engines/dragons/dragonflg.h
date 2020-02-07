@@ -39,6 +39,7 @@ public:
 	void set(uint32 propertyId, bool value);
 	void save(uint numberToWrite, Common::WriteStream *out);
 	void print(char *prefix);
+
 private:
 	uint _count;
 	byte *_properties;
@@ -51,6 +52,7 @@ private:
 	byte *_data;
 	uint32 _dataSize;
 	Properties *_properties;
+
 public:
 	virtual ~DragonFLG();
 

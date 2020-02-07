@@ -72,129 +72,129 @@ void CutScene::scene1() {
 	_vm->waitForFrames(0x5a);
 	closeUpShotOnActor(0xd3, 0, 0x233, 0x17a); //close up on king
 	//playSoundFromTxtIndex(0x4e26);
-	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,4,0,0x4e26,0x2e01) != 2) {
+	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 4, 0, 0x4e26, 0x2e01) != 2) {
 		fadeScreenAndResetActor(_actor_80072de8);
 		closeUpShotOnActor(0xd8, 0, 0xfd, 0x60); // cut to flicker
 		//playSoundFromTxtIndex(0x4ea2);
-		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,2,0,0x4ea2,0x701) != 2) {
+		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 2, 0, 0x4ea2, 0x701) != 2) {
 			fadeScreenAndResetActor(_actor_80072de8);
 			closeUpShotOnActor(0xd3, 0, 0x233, 0x17a); //close up on king
 			//playSoundFromTxtIndex(0x4eec);
-			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,5,0,0x4eec,0x2e01) != 2) {
+			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 5, 0, 0x4eec, 0x2e01) != 2) {
 				fadeScreenAndResetActor(_actor_80072de8);
 				wideAngleEveryoneAtTable();  // shot of whole room
-				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,4,0,0x5000,0x2e01) != 2 &&
-					_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_800830c0,0x1d,0x1c,0x5074,0x501) != 2 &&
-					_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072df0,9,5,0x511c,0xc01) != 2 &&
-					_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_800830c0,0x1d,0x1c,0x5138,0x501) != 2) {
+				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x5000, 0x2e01) != 2 &&
+					_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_800830c0, 0x1d, 0x1c, 0x5074, 0x501) != 2 &&
+					_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072df0, 9, 5, 0x511c, 0xc01) != 2 &&
+					_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_800830c0, 0x1d, 0x1c, 0x5138, 0x501) != 2) {
 					closeUpShotOnActor(0xd7, 0, 0x312, 0x260); //close up on flame
 					//playSoundFromTxtIndex(0x5152);
-					if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,2,0,0x5152,0x3e01) != 2) {
+					if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 2, 0, 0x5152, 0x3e01) != 2) {
 						fadeScreenAndResetActor(_actor_80072de8);
 						closeUpShotOnActor(0xd8, 0, 0xfd, 0x60); //close up flicker
 						//playSoundFromTxtIndex(0x51fc);
-						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,3,0,0x51fc,0x701) != 2) {
+						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 3, 0, 0x51fc, 0x701) != 2) {
 							_vm->playOrStopSound(0x8004);
 							_vm->waitForFrames(0x28);
 							_vm->playOrStopSound(0x8003);
 							fadeScreenAndResetActor(_actor_80072de8);
 							_actor_80063514 = _actor_80063514 | 0x40;
-							FUN_8003d8e8(0xd6,0,0x37a,0x280);
-							_actor_80072dec = _vm->_actorManager->loadActor(0xd5,0,0x2d6,0xc6,3); //load humans
-							_actor_80072df0 = _vm->_actorManager->loadActor(0xd3,2,0x87,199,3);
+							fun_8003d8e8(0xd6, 0, 0x37a, 0x280);
+							_actor_80072dec = _vm->_actorManager->loadActor(0xd5, 0, 0x2d6, 0xc6, 3); //load humans
+							_actor_80072df0 = _vm->_actorManager->loadActor(0xd3, 2, 0x87, 199, 3);
 							_vm->waitForFramesAllowSkip(4);
 							// call_fade_related_1f();
-							if (FUN_8003dab8(0x52d6,0,0,0x701,1) != 2) {
+							if (fun_8003dab8(0x52d6, 0, 0, 0x701, 1) != 2) {
 								// TODO callMaybeResetData();
 								//playSoundFromTxtIndex(0x530c);
-								if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,2,0,0x530c,0x3c01) != 2) {
+								if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 2, 0, 0x530c, 0x3c01) != 2) {
 									while (0x10 < _vm->_scene->_camera.x) {
 										_vm->_scene->_camera.x = _vm->_scene->_camera.x + -0x10;
 										_vm->waitForFrames(1);
 									}
 									_vm->_scene->_camera.x = 0;
 									//playSoundFromTxtIndex(0x54dc);
-									if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072df0,6,2,0x54dc,0x2e01) != 2) {
+									if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072df0, 6, 2, 0x54dc, 0x2e01) != 2) {
 										fadeScreenAndResetActor(_actor_80072de8);
 										fadeScreenAndResetActor(_actor_80072dec);
 										fadeScreenAndResetActor(_actor_80072df0);
 										wideAngleEveryoneAtTable();
-										if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072e08,3,2,0x55d4,0xc01) != 2) {
+										if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072e08, 3, 2, 0x55d4, 0xc01) != 2) {
 											closeUpShotOnActor(0xd4, 0, 0x8a, 0); //close up chancellor
 											//playSoundFromTxtIndex(0x562c);
-											if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,2,0,0x562c,0xc01) != 2) {
+											if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 2, 0, 0x562c, 0xc01) != 2) {
 												fadeScreenAndResetActor(_actor_80072de8);
-												FUN_8003d8e8(0xd6,0,0x37a,0x280);
-												_actor_80072dec = _vm->_actorManager->loadActor(0xd5,4,0x2d6,0xc6,3);
+												fun_8003d8e8(0xd6, 0, 0x37a, 0x280);
+												_actor_80072dec = _vm->_actorManager->loadActor(0xd5, 4, 0x2d6, 0xc6, 3);
 												_vm->waitForFramesAllowSkip(4);
 												// call_fade_related_1f();
-												if (FUN_8003dab8(0x5780,0x14,0,0xc01,1) != 2) {
+												if (fun_8003dab8(0x5780, 0x14, 0, 0xc01, 1) != 2) {
 													_actor_80063514 = _actor_80063514 | 0x40;
 													fadeScreenAndResetActor(_actor_80072de8);
 													fadeScreenAndResetActor(_actor_80072dec);
 													closeUpShotOnActor(0xd7, 0, 0x312, 0x260); // close up flame
 													//playSoundFromTxtIndex(0x581c);
-													if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,3,0,0x581c,0x3e01) != 2) {
+													if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 3, 0, 0x581c, 0x3e01) != 2) {
 														fadeScreenAndResetActor(_actor_80072de8);
 														closeUpShotOnActor(0xd4, 0, 0x8a, 0); //close up chancellor
 														//playSoundFromTxtIndex(0x5942);
-														if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,4,0,0x5942,0xc01) != 2) {
+														if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 4, 0, 0x5942, 0xc01) != 2) {
 															fadeScreenAndResetActor(_actor_80072de8);
 															closeUpShotOnActor(0xd3, 2, 0x87, 0); // close up king
 															//playSoundFromTxtIndex(0x5aaa);
-															if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,7,2,0x5aaa,0x2e01) != 2) {
+															if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 7, 2, 0x5aaa, 0x2e01) != 2) {
 																fadeScreenAndResetActor(_actor_80072de8);
-																FUN_8003d8e8(0xd6,0,0x37a,0x280);
-																_actor_80072dec = _vm->_actorManager->loadActor(0xd5,0,0x2d6,0xc6,3);
+																fun_8003d8e8(0xd6, 0, 0x37a, 0x280);
+																_actor_80072dec = _vm->_actorManager->loadActor(0xd5, 0, 0x2d6, 0xc6, 3);
 																_vm->waitForFramesAllowSkip(4);
 																// call_fade_related_1f();
 																//playSoundFromTxtIndex(0x5afc);
-																if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,3,0,0x5afc,0x3c01) != 2) {
+																if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 3, 0, 0x5afc, 0x3c01) != 2) {
 																	fadeScreenAndResetActor(_actor_80072de8);
 																	fadeScreenAndResetActor(_actor_80072dec);
 																	_actor_80063514 = _actor_80063514 & 0xffbf;
 																	closeUpKnightsAtTable(); // close up of knights at table.
 																	_vm->playOrStopSound(0x8003);
 																	//playSoundFromTxtIndex(0x5b96);
-																	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,8,4,0x5b96,0xc01) != 2) {
+																	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 8, 4, 0x5b96, 0xc01) != 2) {
 																		//playSoundFromTxtIndex(0x5c4a);
-																		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,2,0,0x5c4a,0x2e01) != 2) {
+																		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 2, 0, 0x5c4a, 0x2e01) != 2) {
 																			//playSoundFromTxtIndex(0x5dc8);
 																			_actor_80072df0->updateSequence(0xf);
 																			_actor_80072df4->updateSequence(0xd);
 																			_actor_80072df8->updateSequence(0xe);
-																			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,0xc,4,0x5dc8,0xc01) != 2) {
+																			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 0xc, 4, 0x5dc8, 0xc01) != 2) {
 																				_actor_80072df0->updateSequence(6);
 																				_actor_80072df4->updateSequence(0);
 																				_actor_80072df8->updateSequence(2);
-																				FUN_8003d8e8(0xd3,2,0x28d,0x250);
-																				_actor_80072dec = _vm->_actorManager->loadActor(0xd7,0,0x348,199,3);
+																				fun_8003d8e8(0xd3, 2, 0x28d, 0x250);
+																				_actor_80072dec = _vm->_actorManager->loadActor(0xd7, 0, 0x348, 199, 3);
 																				_vm->waitForFramesAllowSkip(4); // close up of king and flame
 																				//call_fade_related_1f();
 																				//playSoundFromTxtIndex(0x5ef2);
-																				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,4,0,0x5ef2,0x3e01) != 2) {
+																				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x5ef2, 0x3e01) != 2) {
 																					fadeScreenAndResetActor(_actor_80072de8);
 																					fadeScreenAndResetActor(_actor_80072dec);
 																					closeUpShotOnActor(0xd3, 0, 0x233,
 																									   0x17a); // close up of king
 																					//playSoundFromTxtIndex(0x6000);
-																					if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,8,0,0x6000,0x2e01) != 2) {
+																					if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 8, 0, 0x6000, 0x2e01) != 2) {
 																						fadeScreenAndResetActor(_actor_80072de8);
 																						closeUpKnightsAtTable(); // close up knights at table
 																						//playSoundFromTxtIndex(0x7dcc);
 																						_actor_80072df0->updateSequence(0x13);
 																						_actor_80072df4->updateSequence(0x10);
 																						_actor_80072df8->updateSequence(0x11);
-																						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,0x12,6,0x7dcc,0xc01) != 2) {
+																						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 0x12, 6, 0x7dcc, 0xc01) != 2) {
 																							wideAngleEveryoneAtTable(); //whole room shot
-																							if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,0x17,0x16,0x60ee,0x701) != 2) {
+																							if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 0x17, 0x16, 0x60ee, 0x701) != 2) {
 																								closeUpKnightsAtTable();
 																								_actor_80072df0->updateSequence(6);
 																								_actor_80072df4->updateSequence(0);
 																								_actor_80072df8->updateSequence(2);
 																								_actor_80072dec->updateSequence(4);
 																								//playSoundFromTxtIndex(0x5de8);
-																								if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072df8,0xb,2,0x5de8,0xc01) != 2) {
+																								if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072df8, 0xb, 2, 0x5de8, 0xc01) != 2) {
 																									wideAngleEveryoneAtTable();
 																									_vm->playOrStopSound(1);
 																									_actor_80072df0->updateSequence(8);
@@ -220,11 +220,11 @@ void CutScene::scene1() {
 																									changeBackgroundPosition(
 																											2, 0);
 																									_vm->_actorManager->clearActorFlags(2);
-																									_actor_80072de8 = _vm->_actorManager->loadActor(0x82,0,0x60,0x114,1);
-																									_actor_80072dec = _vm->_actorManager->loadActor(0x82,2,0x91,0x113,1);
-																									_actor_80072df0 = _vm->_actorManager->loadActor(0x82,1,0xd0,199,1);
-																									_actor_80072df4 = _vm->_actorManager->loadActor(0x82,3,0xb6,0x113,1);
-																									_actor_80072de8 = _vm->_actorManager->loadActor(0x82,4,0x98,0x40,1);
+																									_actor_80072de8 = _vm->_actorManager->loadActor(0x82, 0, 0x60, 0x114, 1);
+																									_actor_80072dec = _vm->_actorManager->loadActor(0x82, 2, 0x91, 0x113, 1);
+																									_actor_80072df0 = _vm->_actorManager->loadActor(0x82, 1, 0xd0, 199, 1);
+																									_actor_80072df4 = _vm->_actorManager->loadActor(0x82, 3, 0xb6, 0x113, 1);
+																									_actor_80072de8 = _vm->_actorManager->loadActor(0x82, 4, 0x98, 0x40, 1);
 
 																									_actor_80072de8->setFlag(ACTOR_FLAG_100);
 																									_actor_80072de8->setFlag(ACTOR_FLAG_800);
@@ -257,20 +257,20 @@ void CutScene::scene1() {
 
 																									_vm->waitForFramesAllowSkip(0xe);
 																									// call_fade_related_1f();
-																									_actor_80072df0->startWalk(0xe8,0xa8,2);
+																									_actor_80072df0->startWalk(0xe8, 0xa8, 2);
 																									while (_actor_80072df0->isFlagSet(ACTOR_FLAG_10)) {
 																										_vm->waitForFrames(1);
 																									}
-																									_actor_80072de8->startWalk(0x97,0x37,2);
-																									_actor_80072dec->startWalk(0x97,0x37,2);
-																									_actor_80072df4->startWalk(0x97,0x37,2);
+																									_actor_80072de8->startWalk(0x97, 0x37, 2);
+																									_actor_80072dec->startWalk(0x97, 0x37, 2);
+																									_actor_80072df4->startWalk(0x97, 0x37, 2);
 																									_actor_80072df0->waitUntilFlag8SetThenSet1000AndWaitFor4();
 																									_actor_80072df0->updateSequence(6);
 																									uint16 dialog[2000];
 																									dialog[0] = 0;
 																									_vm->_talk->loadText(0x5ea2, dialog, 2000);
 
-																									_vm->_talk->displayDialogAroundPoint(dialog,0x27,0xc,0xc01,0,0x5ea2);
+																									_vm->_talk->displayDialogAroundPoint(dialog, 0x27, 0xc, 0xc01, 0, 0x5ea2);
 																									_actor_80072df0->waitUntilFlag8And4AreSet();
 																									_actor_80072df0->_x_pos = 0xcf;
 																									_actor_80072df0->_y_pos = 0x90;
@@ -288,7 +288,7 @@ void CutScene::scene1() {
 
 																									dialog[0] = 0;
 																									_vm->_talk->loadText(0x5ecc, dialog, 2000);
-																									_vm->_talk->displayDialogAroundPoint(dialog,0x14,6,0xc01,0,0x5ecc);
+																									_vm->_talk->displayDialogAroundPoint(dialog, 0x14, 6, 0xc01, 0, 0x5ecc);
 																									_vm->waitForFrames(0x3c);
 																								}
 																							}
@@ -317,7 +317,7 @@ void CutScene::scene1() {
 	// fade_related_calls_with_1f();
 	_vm->clearFlags(ENGINE_FLAG_20000);
 	// DisableVSyncEvent();
-	//file_read_to_buffer(s_cursor.act_80011c44,actor_dictionary);
+	//file_read_to_buffer(s_cursor.act_80011c44, actor_dictionary);
 	// EnableVSyncEvent();
 	if (isFlag10Set) {
 		_vm->setFlags(ENGINE_FLAG_10);
@@ -341,67 +341,64 @@ void CutScene::fadeScreenAndResetActor(Actor *actor) {
 }
 
 void CutScene::closeUpShotOnActor(uint16 resourceId, uint16 sequenceId, int16 x, uint32 param_4) {
-	FUN_8003d8e8(resourceId, sequenceId, x, param_4);
+	fun_8003d8e8(resourceId, sequenceId, x, param_4);
 	_vm->waitForFrames(5);
 	// TODO call_fade_related_1f();
 }
 
-
-void CutScene::FUN_8003d8e8(uint16 resourceId, uint16 sequenceId, int16 x, uint32 param_4) {
+void CutScene::fun_8003d8e8(uint16 resourceId, uint16 sequenceId, int16 x, uint32 param_4) {
 	// fade_related_calls_with_1f();
 	_vm->_actorManager->clearActorFlags(2);
 	//DisableVSyncEvent();
 	_actor_80072de8 = _vm->_actorManager->loadActor(resourceId, sequenceId, x, 199, 3);
 	//EnableVSyncEvent();
 	changeBackgroundPosition(3, param_4);
-
 }
 
 void CutScene::wideAngleEveryoneAtTable() {
-	FUN_8003d388();
+	fun_8003d388();
 	// call_fade_related_1f();
-
 }
 
-void CutScene::FUN_8003d388() {
+void CutScene::fun_8003d388() {
 	uint sequenceId;
 
 	// fade_related_calls_with_1f();
 	_vm->_actorManager->clearActorFlags(2);
 	if ((_actor_80063514 & 0x80) == 0) {
-		_actor_80072de8 = _vm->_actorManager->loadActor(0x7e,0x16,0x40,0xa0,1);
+		_actor_80072de8 = _vm->_actorManager->loadActor(0x7e, 0x16, 0x40, 0xa0, 1);
 	}
-	_actor_80072dec = _vm->_actorManager->loadActor(0x7e,0,0xbf,0xba,1);
+	_actor_80072dec = _vm->_actorManager->loadActor(0x7e, 0, 0xbf, 0xba, 1);
 	if ((_actor_80063514 & 8) == 0) {
-		_actor_80072df0 = _vm->_actorManager->loadActor(0x7e,5,0x94,0x82,1);
+		_actor_80072df0 = _vm->_actorManager->loadActor(0x7e, 5, 0x94, 0x82, 1);
 	}
 	if ((_actor_80063514 & 0x10) == 0) {
-		_actor_80072df4 = _vm->_actorManager->loadActor(0x7e,10,0x6f,0x95,1);
+		_actor_80072df4 = _vm->_actorManager->loadActor(0x7e, 10, 0x6f, 0x95, 1);
 	}
 	if ((_actor_80063514 & 4) == 0) {
-		_actor_80072df8 = _vm->_actorManager->loadActor(0x7e,0xe,0xa9,0x87,1);
+		_actor_80072df8 = _vm->_actorManager->loadActor(0x7e, 0xe, 0xa9, 0x87, 1);
 	}
 	if ((_actor_80063514 & 0x20) == 0) {
-		_actor_80072dfc = _vm->_actorManager->loadActor(0x7e,0x12,0xcd,0x8e,1);
+		_actor_80072dfc = _vm->_actorManager->loadActor(0x7e, 0x12, 0xcd, 0x8e, 1);
 	}
 	if ((_actor_80063514 & 1) == 0) {
-		_actor_80072e04 = _vm->_actorManager->loadActor(0x7e,0x19,0x10e,0x89,1);
+		_actor_80072e04 = _vm->_actorManager->loadActor(0x7e, 0x19, 0x10e, 0x89, 1);
 	}
 	if ((_actor_80063514 & 2) == 0) {
-		_actor_80072e08 = _vm->_actorManager->loadActor(0x8f,2,100,0xbc,1);
+		_actor_80072e08 = _vm->_actorManager->loadActor(0x8f, 2, 100, 0xbc, 1);
 	}
 	if ((_actor_80063514 & 0x40) != 0) {
-		_actor_80072e0c = _vm->_actorManager->loadActor(0x8f,0,0xd2,100,1);
-		_actor_800830a0 = _vm->_actorManager->loadActor(0x8f,1,0xe6,0x6e,1);
+		_actor_80072e0c = _vm->_actorManager->loadActor(0x8f, 0, 0xd2, 100, 1);
+		_actor_800830a0 = _vm->_actorManager->loadActor(0x8f, 1, 0xe6, 0x6e, 1);
 	}
-	_actor_800830b8 = _vm->_actorManager->loadActor(0xaa,0,0x2e,0x2d,1);
+	_actor_800830b8 = _vm->_actorManager->loadActor(0xaa, 0, 0x2e, 0x2d, 1);
 	_actor_800830b8->setFlag(ACTOR_FLAG_8000);
-	_actor_800830bc = _vm->_actorManager->loadActor(0xaa,1,0x115,0x22,1);
+	_actor_800830bc = _vm->_actorManager->loadActor(0xaa, 1, 0x115, 0x22, 1);
 	_actor_800830bc->setFlag(ACTOR_FLAG_100);
 	_actor_800830bc->setFlag(ACTOR_FLAG_8000);
 	_actor_800830bc->_priorityLayer = 4;
 	if ((_actor_80063514 & 0x100) != 0) {
-		_actor_800830c0 = _vm->_actorManager->loadActor(0x7e,0x1c,0x21,0x87,1);
+		_actor_800830c0 = _vm->_actorManager->loadActor(0x7e, 0x1c, 0x21, 0x87, 1);
 	}
 	if ((_actor_80063514 & 0x200) != 0) {
 		if ((_actor_80063514 & 0x800) == 0) {
@@ -410,11 +407,11 @@ void CutScene::FUN_8003d388() {
 		else {
 			sequenceId = 4;
 		}
-		_actor_800830d4 = _vm->_actorManager->loadActor(0xaa,sequenceId,0xf4,199,1);
+		_actor_800830d4 = _vm->_actorManager->loadActor(0xaa, sequenceId, 0xf4, 199, 1);
 		_actor_800830d4->setFlag(ACTOR_FLAG_8000);
 	}
 	if ((_actor_80063514 & 0x400) != 0) {
-		_actor_800830dc = _vm->_actorManager->loadActor(0xaa,3,0xf4,199,1);
+		_actor_800830dc = _vm->_actorManager->loadActor(0xaa, 3, 0xf4, 199, 1);
 		_actor_800830dc->setFlag(ACTOR_FLAG_8000);
 	}
 	changeBackgroundPosition(0, 0);
@@ -425,24 +422,23 @@ void CutScene::FUN_8003d388() {
 void CutScene::closeUpKnightsAtTable() {
 	//fade_related_calls_with_1f();
 	_vm->_actorManager->clearActorFlags(2);
-	_actor_80072de8 = _vm->_actorManager->loadActor(0x7d,0,2,199,1);
-	_actor_80072dec = _vm->_actorManager->loadActor(0x81,4,2,199,1);
-	_actor_80072df0 = _vm->_actorManager->loadActor(0x81,6,2,199,1);
-	_actor_80072df4 = _vm->_actorManager->loadActor(0x81,0,2,199,1);
-	_actor_80072df8 = _vm->_actorManager->loadActor(0x81,2,2,199,1);
+	_actor_80072de8 = _vm->_actorManager->loadActor(0x7d, 0, 2, 199, 1);
+	_actor_80072dec = _vm->_actorManager->loadActor(0x81, 4, 2, 199, 1);
+	_actor_80072df0 = _vm->_actorManager->loadActor(0x81, 6, 2, 199, 1);
+	_actor_80072df4 = _vm->_actorManager->loadActor(0x81, 0, 2, 199, 1);
+	_actor_80072df8 = _vm->_actorManager->loadActor(0x81, 2, 2, 199, 1);
 	changeBackgroundPosition(1, 0);
 	_vm->waitForFrames(0xf);
 	//call_fade_related_1f();
 
 }
 
-uint16 CutScene::FUN_8003dab8(uint32 textId,uint16 x,uint16 y,uint16 param_4,int16 param_5)
-{
+uint16 CutScene::fun_8003dab8(uint32 textId, uint16 x, uint16 y, uint16 param_4, int16 param_5) {
 	uint16 dialog[2000];
 	dialog[0] = 0;
 	_vm->_talk->loadText(textId, dialog, 2000);
 
-	_vm->_talk->displayDialogAroundPoint(dialog,x,y,param_4,param_5,textId);
+	_vm->_talk->displayDialogAroundPoint(dialog, x, y, param_4, param_5, textId);
 	return 1; //TODO this should return (uint)dialogText & 0xffff;
 }
 
@@ -451,8 +447,7 @@ void CutScene::cursorInventoryClearFlag400() {
 	_vm->_inventory->clearActorFlag400();
 }
 
-void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
-{
+void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2) {
 	if (newPosition == 1) {
 		_vm->_scene->setBgLayerPriority(0); //TODO investigate why this is 0 not 1
 		_vm->_scene->setMgLayerPriority(1); //TODO investigate why this is 1 not 2
@@ -463,8 +458,7 @@ void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
 			Actor *actor = _vm->_actorManager->getActor(i);
 			actor->_x_pos += 0x3c0;
 		}
-	}
-	else {
+	} else {
 		if (newPosition < 2) {
 			if (newPosition != 0) {
 				return;
@@ -473,15 +467,13 @@ void CutScene::changeBackgroundPosition(uint16 newPosition, int16 sParm2)
 			_vm->_scene->setMgLayerPriority(0);
 			_vm->_scene->setFgLayerPriority(0);
 			_vm->_scene->_camera.x = 0;
-		}
-		else {
+		} else {
 			if (newPosition == 2) {
 				_vm->_screen->loadPalette(0, _palettes + 3 * 512);
 				_vm->_scene->setMgLayerPriority(2);
 				_vm->_scene->setFgLayerPriority(3);
 				_vm->_scene->_camera.x = 0;
-			}
-			else {
+			} else {
 				if (newPosition != 3) {
 					return;
 				}
@@ -512,7 +504,7 @@ void CutScene::diamondScene() {
 	actorId_00 = _vm->getINI(0x256)->actor;
 	_vm->setFlags(ENGINE_FLAG_20000);
 	actorId_02 = _vm->getINI(0x25a)->actor;
-	if ((_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_02,1,0,0x4294a,0x2601) != 2) && !actorId->actorSetSequenceAndWaitAllowSkip(2)) {
+	if ((_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_02, 1, 0, 0x4294a, 0x2601) != 2) && !actorId->actorSetSequenceAndWaitAllowSkip(2)) {
 		actorId->updateSequence(3);
 		if (!actorId_01->actorSetSequenceAndWaitAllowSkip(0x18)) {
 			_vm->waitForFramesAllowSkip(0x2c);
@@ -523,7 +515,7 @@ void CutScene::diamondScene() {
 			//TODO call_fade_related_1f();
 			if (!actorId_00->actorSetSequenceAndWaitAllowSkip(0)) {
 				// TODO is this needed playSoundFromTxtIndex(0x42A66);
-				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_00,1,2,0x42a66,0x3c01) != 2) {
+				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_00, 1, 2, 0x42a66, 0x3c01) != 2) {
 					_vm->waitForFramesAllowSkip(0x13);
 					//TODO fade_related_calls_with_1f();
 					_vm->_screen->loadPalette(0, palette);
@@ -539,8 +531,8 @@ void CutScene::diamondScene() {
 					actorId_03->_priorityLayer = 4;
 					if (!actorId->waitUntilFlag4IsSetAllowSkip()) {
 						actorId->updateSequence(5);
-						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_01,0x10,2,0x42ac2,0x3c01) != 2 &&
-							_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_02,1,0,0x42b56,0x2601) != 2) {
+						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_01, 0x10, 2, 0x42ac2, 0x3c01) != 2 &&
+							_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_02, 1, 0, 0x42b56, 0x2601) != 2) {
 							_vm->waitForFramesAllowSkip(0x3b);
 						}
 					}
@@ -578,53 +570,53 @@ void CutScene::knightsSavedBackAtCastle() {
 	_vm->setFlags(ENGINE_FLAG_20000);
 	closeUpKnightsAtTable();
 //	playSoundFromTxtIndex(0x7854);
-	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,10,4,0x7854,0xc01) != 2) {
-		closeUpShotOnActor(0xd8,0,0xfd,0x60);
+	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 10, 4, 0x7854, 0xc01) != 2) {
+		closeUpShotOnActor(0xd8, 0, 0xfd, 0x60);
 //		playSoundFromTxtIndex(0x78c6);
-		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,4,0,0x78c6,0x701) != 2) {
+		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 4, 0, 0x78c6, 0x701) != 2) {
 			fadeScreenAndResetActor(_actor_80072de8);
 			closeUpKnightsAtTable();
 //			playSoundFromTxtIndex(0x78e8);
-			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,3,0,0x78e8,0x2e01) != 2) {
+			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 3, 0, 0x78e8, 0x2e01) != 2) {
 				wideAngleEveryoneAtTable();
-				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072e04,0x1a,0x19,0x7a1e,0x3e01) != 2) {
+				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072e04, 0x1a, 0x19, 0x7a1e, 0x3e01) != 2) {
 					_actor_80072e04->_walkSpeed = 0x10000;
 					_actor_80072e04->setFlag(ACTOR_FLAG_800);
 					_actor_80072e04->updateSequence(0x21);
-					_actor_80072e04->startWalk(0x13f,0x6e,2);
+					_actor_80072e04->startWalk(0x13f, 0x6e, 2);
 					// wait for pathfinding to complete
 					while (_actor_80072e04->isFlagSet(ACTOR_FLAG_10)) { //TODO move to method on Actor waitForPathfinding() ??
 						//empty
 					}
 					_actor_80063514 = _actor_80063514 | 1;
-					closeUpShotOnActor(0xd3,0,0x233,0x17a);
+					closeUpShotOnActor(0xd3, 0, 0x233, 0x17a);
 //					playSoundFromTxtIndex(0x7aba);
-					if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,9,0,0x7aba,0x2e01) != 2) {
+					if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 9, 0, 0x7aba, 0x2e01) != 2) {
 						fadeScreenAndResetActor(_actor_80072de8);
-						closeUpShotOnActor(0xd8,0,0xfd,0x60);
+						closeUpShotOnActor(0xd8, 0, 0xfd, 0x60);
 //						playSoundFromTxtIndex(0x7b60);
-						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,5,0,0x7b60,0x701) != 2) {
+						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 5, 0, 0x7b60, 0x701) != 2) {
 							fadeScreenAndResetActor(_actor_80072de8);
 							wideAngleEveryoneAtTable();
-							if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072df0,9,5,0x7c20,0xc01) != 2) {
-								if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,0x17,0x16,0x7c9c,0x701) != 2) {
+							if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072df0, 9, 5, 0x7c20, 0xc01) != 2) {
+								if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 0x17, 0x16, 0x7c9c, 0x701) != 2) {
 									_vm->playOrStopSound(0x800f);
 									_vm->waitForFrames(10);
-									if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,0x17,0x16,0x7cf2,0x701) != 2) {
+									if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 0x17, 0x16, 0x7cf2, 0x701) != 2) {
 										closeUpKnightsAtTable();
 //										playSoundFromTxtIndex(0x7dcc);
 										_actor_80072df0->updateSequence(0x13);
 										_actor_80072df4->updateSequence(0x10);
 										_actor_80072df8->updateSequence(0x11);
-										actorId = _vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,0x12,6,0x7dcc,0xc01);
+										actorId = _vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 0x12, 6, 0x7dcc, 0xc01);
 										if ((actorId & 0xffff) != 2) {
-											closeUpShotOnActor(0xd3,0,0x233,0x17a);
+											closeUpShotOnActor(0xd3, 0, 0x233, 0x17a);
 //											playSoundFromTxtIndex(0x7e1a);
-											if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,10,0,0x7e1a,0x2e01) != 2) {
+											if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 10, 0, 0x7e1a, 0x2e01) != 2) {
 												fadeScreenAndResetActor(_actor_80072de8);
 												wideAngleEveryoneAtTable();
-												if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,4,0,0x7e96,0x2e01) != 2) {
-													_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,0x17,0x16,0x7f0a,0x701);
+												if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x7e96, 0x2e01) != 2) {
+													_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 0x17, 0x16, 0x7f0a, 0x701);
 												}
 											}
 										}
@@ -639,7 +631,7 @@ void CutScene::knightsSavedBackAtCastle() {
 	}
 	// fade_related_calls_with_1f();
 	//DisableVSyncEvent();
-//	file_read_to_buffer(s_cursor.act_80011c44,actor_dictionary);
+//	file_read_to_buffer(s_cursor.act_80011c44, actor_dictionary);
 	//EnableVSyncEvent();
 	if (isFlag0x10Set) {
 		_vm->setFlags(ENGINE_FLAG_10);
@@ -682,7 +674,7 @@ void CutScene::flameReturnsCutScene() {
 //	load_actor_file(0x8f);
 //	load_actor_file(0xaa);
 	_actor_80063514 = (_actor_80063514 & 0xfffe) | 0x600;
-	FUN_8003d388();
+	fun_8003d388();
 	_actor_80072de8->updateSequence(0x1f);
 	_actor_80072e04->_x_pos = 0x10b;
 	_actor_80072e04->_y_pos = 99;
@@ -694,30 +686,30 @@ void CutScene::flameReturnsCutScene() {
 	_actor_80072e04->setFlag(ACTOR_FLAG_800);
 	//	call_fade_related_1f();
 	_vm->setFlags(ENGINE_FLAG_20000);
-	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,4,0,0x8ab2,0x2e01) != 2) {
+	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x8ab2, 0x2e01) != 2) {
 		_actor_80072de8->updateSequence(0x1e);
-		_actor_80072de8->startWalk(0xb0,0x6b,2);
+		_actor_80072de8->startWalk(0xb0, 0x6b, 2);
 		do {
 		} while (_actor_80072de8->isFlagSet(ACTOR_FLAG_10));
 		_actor_80072de8->updateSequence(0x1f);
-		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,4,0,0x8b40,0x2e01) != 2) {
+		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x8b40, 0x2e01) != 2) {
 			_actor_80072e04->updateSequence(0x1b);
-			_actor_80072e04->startWalk(0xd5,0x6b,2);
+			_actor_80072e04->startWalk(0xd5, 0x6b, 2);
 			do {
 			} while (_actor_80072e04->isFlagSet(ACTOR_FLAG_10));
-			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072e04,0x1a,0x19,0x8bb6,0x3e01) != 2) {
-				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,4,0,0x8bd8,0x2e01) != 2) {
-					closeUpShotOnActor(0xd8,0,0xfd,0x60);
+			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072e04, 0x1a, 0x19, 0x8bb6, 0x3e01) != 2) {
+				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 4, 0, 0x8bd8, 0x2e01) != 2) {
+					closeUpShotOnActor(0xd8, 0, 0xfd, 0x60);
 //					playSoundFromTxtIndex(0x8c70);
-					if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,7,0,0x8c70,0x701) != 2) {
+					if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 7, 0, 0x8c70, 0x701) != 2) {
 						fadeScreenAndResetActor(_actor_80072de8);
-						closeUpShotOnActor(0xd3,0,0x233,0x17a);
+						closeUpShotOnActor(0xd3, 0, 0x233, 0x17a);
 //						playSoundFromTxtIndex(0x8cd2);
-						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,0xc,0,0x8cd2,0x2e01) != 2) {
+						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 0xc, 0, 0x8cd2, 0x2e01) != 2) {
 							fadeScreenAndResetActor(_actor_80072de8);
-							closeUpShotOnActor(0xd7,0,0x312,0x260);
+							closeUpShotOnActor(0xd7, 0, 0x312, 0x260);
 //							playSoundFromTxtIndex(0x8e1e);
-							if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,5,0,0x8e1e,0x3e01) != 2) {
+							if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 5, 0, 0x8e1e, 0x3e01) != 2) {
 								fadeScreenAndResetActor(_actor_80072de8);
 							}
 						}
@@ -728,7 +720,7 @@ void CutScene::flameReturnsCutScene() {
 	}
 //	fade_related_calls_with_1f();
 //	DisableVSyncEvent();
-//	file_read_to_buffer(s_cursor.act_80011c44,actor_dictionary);
+//	file_read_to_buffer(s_cursor.act_80011c44, actor_dictionary);
 //	EnableVSyncEvent();
 	_vm->clearFlags(ENGINE_FLAG_20000);
 	if (engineFlag10Set) {
@@ -765,37 +757,37 @@ void CutScene::knightsSavedAgain() {
 	wideAngleEveryoneAtTable();
 	_vm->setFlags(ENGINE_FLAG_20000);
 	_vm->waitForFramesAllowSkip(0x3b);
-	closeUpShotOnActor(0xd3,0,0x233,0x17a);
+	closeUpShotOnActor(0xd3, 0, 0x233, 0x17a);
 	//playSoundFromTxtIndex(0x9000);
-	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,0xd,0,0x9000,0x2e01) != 2) {
+	if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 0xd, 0, 0x9000, 0x2e01) != 2) {
 		fadeScreenAndResetActor(_actor_80072de8);
 		closeUpKnightsAtTable();
 //		playSoundFromTxtIndex(0x90de);
-		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,4,0,0x90de,0x2e01) != 2) {
-			closeUpShotOnActor(0xd8,0,0xfd,0x60);
+		if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 4, 0, 0x90de, 0x2e01) != 2) {
+			closeUpShotOnActor(0xd8, 0, 0xfd, 0x60);
 //			playSoundFromTxtIndex(0x921c);
-			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,8,0,0x921c,0x701) != 2) {
+			if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 8, 0, 0x921c, 0x701) != 2) {
 				fadeScreenAndResetActor(_actor_80072de8);
 				closeUpKnightsAtTable();
 //				playSoundFromTxtIndex(0x92aa);
-				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,9,4,0x92aa,0xc01) != 2) {
-					closeUpShotOnActor(0xd7,0,0x312,0x260);
+				if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 9, 4, 0x92aa, 0xc01) != 2) {
+					closeUpShotOnActor(0xd7, 0, 0x312, 0x260);
 //					playSoundFromTxtIndex(0x932c);
-					if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,6,0,0x932c,0x3e01) != 2) {
+					if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 6, 0, 0x932c, 0x3e01) != 2) {
 						fadeScreenAndResetActor(_actor_80072de8);
-						closeUpShotOnActor(0xd3,2,0x87,0);
+						closeUpShotOnActor(0xd3, 2, 0x87, 0);
 //						playSoundFromTxtIndex(0x93d6);
-						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,0xe,2,0x93d6,0x2e01) != 2) {
+						if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 0xe, 2, 0x93d6, 0x2e01) != 2) {
 							fadeScreenAndResetActor(_actor_80072de8);
 							closeUpKnightsAtTable();
 //							playSoundFromTxtIndex(0x7dcc);
 							_actor_80072df0->updateSequence(0x13);
 							_actor_80072df4->updateSequence(0x10);
 							_actor_80072df8->updateSequence(0x11);
-							if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec,0x12,6,0x7dcc,0xc01) != 2) {
-								closeUpShotOnActor(0xd8,0,0xfd,0x60);
+							if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072dec, 0x12, 6, 0x7dcc, 0xc01) != 2) {
+								closeUpShotOnActor(0xd8, 0, 0xfd, 0x60);
 //								playSoundFromTxtIndex(0x948c);
-								if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8,9,0,0x948c,0x701) != 2) {
+								if (_vm->_talk->somethingTextAndSpeechAndAnimRelated(_actor_80072de8, 9, 0, 0x948c, 0x701) != 2) {
 									fadeScreenAndResetActor(_actor_80072de8);
 									_vm->waitForFramesAllowSkip(0x3b);
 								}
@@ -808,7 +800,7 @@ void CutScene::knightsSavedAgain() {
 	}
 	//fade_related_calls_with_1f();
 //	DisableVSyncEvent();
-//	file_read_to_buffer(s_cursor.act_80011c44,actor_dictionary);
+//	file_read_to_buffer(s_cursor.act_80011c44, actor_dictionary);
 //	EnableVSyncEvent();
 	_vm->clearFlags(ENGINE_FLAG_20000);
 	if (engineFlag10Set) {
@@ -835,19 +827,19 @@ void CutScene::tournamentCutScene() {
 	tournamentUpdateCameraX = 0x140;
 	_vm->setVsyncUpdateFunction(tournamentUpdateFunction);
 	_vm->_talk->loadText(0x4C40C, dialogText, 1000);
-	_vm->_talk->displayDialogAroundPoint(dialogText,0,0,0x1e01,1,0x4C40C);
+	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, 0x4C40C);
 
 	_vm->_talk->loadText(0x4C530, dialogText, 1000);
-	_vm->_talk->displayDialogAroundPoint(dialogText,0,0,0xc01,1,0x4C530);
+	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0xc01, 1, 0x4C530);
 
 	_vm->_talk->loadText(0x4C588, dialogText, 1000);
-	_vm->_talk->displayDialogAroundPoint(dialogText,0,0,0x1e01,1, 0x4C588);
+	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, 0x4C588);
 
 	_vm->_talk->loadText(0x4C6B0, dialogText, 1000);
-	_vm->_talk->displayDialogAroundPoint(dialogText,0,0,0xc01,1, 0x4C6B0);
+	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0xc01, 1, 0x4C6B0);
 
 	_vm->_talk->loadText(0x4C6E8, dialogText, 1000);
-	_vm->_talk->displayDialogAroundPoint(dialogText,0,0,0x1e01,1, 0x4C6E8);
+	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, 0x4C6E8);
 	_vm->setVsyncUpdateFunction(NULL);
 	_vm->setFlags(ENGINE_FLAG_20000);
 	// fade_related_calls_with_1f();
@@ -866,9 +858,9 @@ void CutScene::tournamentCutScene() {
 	_vm->_scene->_camera.x = 0x3c0;
 //	call_fade_related_1f();
 	_vm->_talk->loadText(0x4C814, dialogText, 1000);
-	_vm->_talk->displayDialogAroundPoint(dialogText,0,0,0xc01,1, 0x4C814);
+	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0xc01, 1, 0x4C814);
 	_vm->_talk->loadText(0x4C852, dialogText, 1000);
-	_vm->_talk->displayDialogAroundPoint(dialogText,0,0,0x1e01,1, 0x4C852);
+	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, 0x4C852);
 	_vm->setFlags(ENGINE_FLAG_20000);
 //	fade_related_calls_with_1f();
 }

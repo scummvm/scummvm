@@ -28,8 +28,7 @@ namespace Dragons {
 
 // Properties
 
-Properties::Properties(uint count)
-		: _count(count) {
+Properties::Properties(uint count) : _count(count) {
 	_properties = (byte *)malloc(getSize());
 	if (!_properties) {
 		error("Failed to allocate mem for properties");
@@ -129,7 +128,6 @@ void DragonFLG::loadState(Common::ReadStream *in) {
 	in->read(savedState, 0x10);
 	_properties->init(0x10, savedState);
 	//properties->print("load");
-
 }
 
 } // End of namespace Dragons
