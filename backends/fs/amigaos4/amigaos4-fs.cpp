@@ -456,7 +456,20 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 }
 
 Common::SeekableReadStream *AmigaOSFilesystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath(), false);
+	StdioStream *readStream = StdioStream::makeFromPath(getPath(), false);
+
+	//
+	// Work around for possibility that someone uses AmigaOS "newlib" build
+	// with SmartFileSystem (blocksize 512 bytes), leading to buffer size
+	// being only 512 bytes. "Clib2" sets the buffer size to 8KB, resulting
+	// smooth movie playback. This forces the buffer to be enough also when
+	// using "newlib" compile on SFS.
+	//
+	if (readStream) {
+		readStream->setBufferSize(8192);
+	}
+
+	return readStream;
 }
 
 Common::WriteStream *AmigaOSFilesystemNode::createWriteStream() {
