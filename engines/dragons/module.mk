@@ -1,21 +1,21 @@
 MODULE := engines/dragons
- 
+
 MODULE_OBJS := \
-    actor.o \
-    actorresource.o \
-    background.o \
-    bag.o \
-    bigfile.o \
-    credits.o \
-    cursor.o \
-    cutscene.o \
+	actor.o \
+	actorresource.o \
+	background.o \
+	bag.o \
+	bigfile.o \
+	credits.o \
+	cursor.o \
+	cutscene.o \
 	detection.o \
-    dragonflg.o \
-    dragonimg.o \
-    dragonini.o \
-    dragonobd.o \
-    dragonrms.o \
-    dragonvar.o \
+	dragonflg.o \
+	dragonimg.o \
+	dragonini.o \
+	dragonobd.o \
+	dragonrms.o \
+	dragonvar.o \
 	dragons.o \
 	font.o \
 	inventory.o \
@@ -36,11 +36,11 @@ MODULE_OBJS := \
 
 MODULE_DIRS += \
 	engines/dragons
- 
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_QUUX), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
- 
-# Include common rules 
+
+# Include common rules
 include $(srcdir)/rules.mk
