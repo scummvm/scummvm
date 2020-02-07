@@ -32,6 +32,7 @@ class DragonVAR {
 private:
 	byte *_data;
 	BigfileArchive *_bigfileArchive;
+
 public:
 	virtual ~DragonVAR();
 

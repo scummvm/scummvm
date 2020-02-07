@@ -29,7 +29,7 @@ DragonVAR::DragonVAR(BigfileArchive *bigfileArchive): _bigfileArchive(bigfileArc
 }
 
 DragonVAR::~DragonVAR() {
-		delete _data;
+	delete _data;
 }
 
 uint16 DragonVAR::getVar(uint16 offset) {

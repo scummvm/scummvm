@@ -36,7 +36,7 @@ namespace Dragons {
 Minigame2::Minigame2(DragonsEngine *vm) : _vm(vm), _dat_80093c70(false), _dat_80093c72(false), _dat_80093c74(0), _dat_80093ca8(false) {}
 
 static const uint16 unkArray[5] = {
-		0xC, 0xA, 0x8, 0x6, 0x4
+	0xC, 0xA, 0x8, 0x6, 0x4
 };
 
 void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
@@ -287,8 +287,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 				uVar14->clearFlag(ACTOR_FLAG_40);
 				uVar15->clearFlag(ACTOR_FLAG_40);
 				_vm->reset_screen_maybe();
-			}
-			else {
+			} else {
 				_vm->reset_screen_maybe();
 				_vm->_scene->setSceneId(0x17);
 				flicker->sceneId = 0x17;
@@ -322,27 +321,23 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 		}
 		if (_dat_80093ca4 == 0) {
 			_dat_80093ca4 = _dat_80093cc8;
-		}
-		else {
+		} else {
 			_dat_80093ca4 = _dat_80093ca4 - 1;
 		}
 		if (_dat_80093c90 == 0) {
 			_dat_80093c90 = _dat_80093c98;
-		}
-		else {
+		} else {
 			_dat_80093c90 = _dat_80093c90 - 1;
 		}
 		if (_dat_80093cc4 == 0) {
 			_dat_80093cc4 = _dat_80093cc8;
-		}
-		else {
+		} else {
 			_dat_80093cc4 = _dat_80093cc4 - 1;
 		}
 
 		if (local_27a == 0) {
 //	TODO		(&DAT_80083178)[(uint)uVar16 * 0xb] = (&DAT_80083178)[(uint)uVar16 * 0xb] & 0xfffe;
-		}
-		else {
+		} else {
 			/* TODO
 			(&DAT_8008316c)[(uint)uVar16 * 0xb] = local_27a + 0x27;
 			(&DAT_80083168)[(uint)uVar16 * 0xb] = local_27a + 0x27;
@@ -355,8 +350,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 		if (local_278 == 0) {
 			//TODO (&DAT_80083178)[(uint)uVar17 * 0xb] = (&DAT_80083178)[(uint)uVar17 * 0xb] & 0xfffe;
 			if ((local_27a != 0) || (local_258 != 0)) goto LAB_800907c4;
-		}
-		else {
+		} else {
 			/*TODO
 			(&DAT_8008316c)[(uint)uVar17 * 0xb] = local_278 + 0x27;
 			(&DAT_80083168)[(uint)uVar17 * 0xb] = local_278 + 0x27;
@@ -408,8 +402,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 							}
 							local_260 = 300;
 						}
-					}
-					else {
+					} else {
 						local_264 = 0;
 						local_260 = 300;
 //						playSoundFromTxtIndex(textIdTbl[local_262]);
@@ -513,8 +506,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 						if ((!_vm->isLeftKeyPressed() && !_vm->isRightKeyPressed()) && (local_288 != 2)) {
 							if (local_288 < 2) {
 								local_288 = local_288 + 1;
-							}
-							else {
+							} else {
 								local_288 = local_288 - 1;
 							}
 						}
@@ -522,8 +514,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 							if (local_286 != 0) {
 								local_286 = local_286 - 1;
 							}
-						}
-						else {
+						} else {
 							if (local_286 < 2) {
 								local_286 = local_286 + 1;
 							}
@@ -532,15 +523,13 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 					if (local_286 == 2) {
 						if (local_256 < 0x14) {
 							local_256 = local_256 + 1;
-						}
-						else {
+						} else {
 							local_256 = 0;
 						}
 					}
 					if (local_256 < 0x14) {
 						local_264 = local_264 + 1;
-					}
-					else {
+					} else {
 						local_264 = 0;
 					}
 					if ((uVar12->_flags & 4) != 0) {
@@ -553,8 +542,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 						if ((!fun_80093520() && !fun_80093248()) && (local_284 != 2)) {
 							if (local_284 < 2) {
 								local_284 = local_284 + 1;
-							}
-							else {
+							} else {
 								local_284 = local_284 - 1;
 							}
 						}
@@ -562,8 +550,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 							if (local_282 != 0) {
 								local_282 = local_282 - 1;
 							}
-						}
-						else {
+						} else {
 							if (local_282 < 2) {
 								local_282 = local_282 + 1;
 							}
@@ -572,15 +559,13 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 					if (((local_286 == 2) && (local_282 == 2)) && (local_288 == local_284)) {
 						if ((_dat_80093cbc == 2) && (_dat_80093cc0 != 2)) {
 							local_258 = 2;
-						}
-						else {
+						} else {
 							if ((_dat_80093cbc == 2) || (_dat_80093cc0 != 2)) {
 								local_288 = _dat_80093cb4;
 								local_286 = _dat_80093cbc;
 								local_284 = _dat_80093cb8;
 								local_282 = _dat_80093cc0;
-							}
-							else {
+							} else {
 								local_258 = 1;
 							}
 						}
@@ -598,47 +583,39 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 							uVar12->updateSequence((uint)(uint16)actorSequenceIdTbl[(uint)local_284 * 3 + (uint)local_282]);
 							uVar13->updateSequence((uint)(uint16)actorSequenceIdTbl[(uint)_dat_80093cb8 * 3 + (uint)_dat_80093cc0]);
 						}
-					}
-					else {
+					} else {
 						if (local_258 == 1) {
 							loungealotHeadActor->updateSequence(1);
 							uVar8->updateSequence(1);
 							if (local_288 == 2) {
 								local_28 = 1;
-							}
-							else {
+							} else {
 								if (local_288 < 3) {
 									if (local_288 == 0) {
 										local_28 = 0;
-									}
-									else {
+									} else {
 										LAB_800926a4:
 										local_28 = 2;
 									}
-								}
-								else {
+								} else {
 									if (local_288 != 4) goto LAB_800926a4;
 									local_28 = 2;
 								}
 							}
-						}
-						else {
+						} else {
 							loungealotHeadActor->updateSequence(3);
 							loungealotRightArm->updateSequence(1);
 							if (local_284 == 2) {
 								local_28 = 4;
-							}
-							else {
+							} else {
 								if (local_284 < 3) {
 									if (local_284 == 0) {
 										local_28 = 3;
-									}
-									else {
+									} else {
 										LAB_80092754:
 										local_28 = 4;
 									}
-								}
-								else {
+								} else {
 									if (local_284 != 4) goto LAB_80092754;
 									local_28 = 5;
 								}
@@ -652,8 +629,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 						_dat_80093c90 = 0x1e;
 					}
 				}
-			}
-			else {
+			} else {
 				if (_dat_80093c94 == 2) {
 					uVar12->_flags = uVar12->_flags | 0x1000;
 					uVar13->_flags = uVar13->_flags | 0x1000;
@@ -669,8 +645,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 						} while (_vm->isFlagSet(ENGINE_FLAG_8000));
 						loungealotHeadActor->updateSequence(2);
 						loungealotRightArm->updateSequence(3);
-					}
-					else {
+					} else {
 //						playSoundFromTxtIndex(DAT_80063ad4);
 						loungealotHeadActor->updateSequence(10);
 						fun_80093aec_dialog(0x4718,0x14,1);
@@ -694,8 +669,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 			if (local_278 != 0) {
 				local_278 = local_278 - 1;
 			}
-		}
-		else {
+		} else {
 			local_272 = local_272 + -1;
 		}
 
@@ -708,16 +682,14 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 		if (fun_80093990()) {
 			if (param_1 == 1) {
 				local_278 = local_278 + 4;
-			}
-			else {
+			} else {
 				local_278 = local_278 + 6;
 			}
 		}
 		if (fun_80093a30()) {
 			if (param_1 == 1) {
 				local_278 = local_278 + 4;
-			}
-			else {
+			} else {
 				local_278 = local_278 + 6;
 			}
 		}
@@ -737,8 +709,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 //					playSoundFromTxtIndex(DAT_80063ad8);
 					loungealotHeadActor->updateSequence(0xb);
 					fun_80093aec_dialog(0x475E,0x14,1);
-				}
-				else {
+				} else {
 //					playSoundFromTxtIndex(DAT_80063adc);
 					loungealotHeadActor->updateSequence(0xc);
 					fun_80093aec_dialog(0x4774,0x14,1);
@@ -756,8 +727,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 				uVar13->updateSequence((uint)(uint16)actorSequenceIdTbl[(uint)_dat_80093cb8 * 3 + (uint)_dat_80093cc0]);
 				_dat_80093c94 = 0;
 				local_26c = 0x1e;
-			}
-			else {
+			} else {
 				_dat_80093c94 = 2;
 			}
 		}
@@ -791,15 +761,13 @@ bool Minigame2::fun_80093520() {
 					_dat_80093c70 = true;
 					_dat_80093cac = 0;
 					uVar2 = false;
-				}
-				else {
+				} else {
 					if (_dat_80093ca4 == 0) {
 						_dat_80093cac = 0;
 						if (_dat_80093cb8 == _dat_80093cb4) {
 							if (_dat_80093cbc < _dat_80093cc0) {
 								_dat_80093cac = (uint16)(_dat_80093cb8 < 4);
-							}
-							else {
+							} else {
 								if (!_dat_80093cb0 && _vm->getRand(8) < 3) {
 									if (_vm->getRand(8) < 3) {
 										_dat_80093c72 = 1;
@@ -815,8 +783,7 @@ bool Minigame2::fun_80093520() {
 									_dat_80093cac = 1;
 								}
 							}
-						}
-						else {
+						} else {
 							if ((_dat_80093cb8 < _dat_80093cb4) && (_dat_80093cb4 != 2)) {
 								_dat_80093cac = 1;
 							}
@@ -824,18 +791,15 @@ bool Minigame2::fun_80093520() {
 					}
 					uVar2 = (uint)_dat_80093cac;
 				}
-			}
-			else {
+			} else {
 				_dat_80093cac = 1;
 				uVar2 = true;
 			}
-		}
-		else {
+		} else {
 			_dat_80093cac = 0;
 			uVar2 = false;
 		}
-	}
-	else {
+	} else {
 		uVar2 = _vm->isLeftKeyPressed();
 	}
 	return uVar2;
@@ -853,15 +817,13 @@ bool Minigame2::fun_80093248() {
 					_dat_80093c72 = true;
 					_dat_80093cb0 = false;
 					uVar2 = false;
-				}
-				else {
+				} else {
 					if (_dat_80093ca4 == 0) {
 						_dat_80093cb0 = false;
 						if (_dat_80093cb8 == _dat_80093cb4) {
 							if (_dat_80093cbc < _dat_80093cc0) {
 								_dat_80093cb0 = (bool)(_dat_80093cb8 != 0);
-							}
-							else {
+							} else {
 								if ((_dat_80093cac == 0) &&  _vm->getRand(8) < 3) {
 									if (_vm->getRand(8) < 3) {
 										_dat_80093c70 = true;
@@ -878,8 +840,7 @@ bool Minigame2::fun_80093248() {
 									_dat_80093cb0 = true;
 								}
 							}
-						}
-						else {
+						} else {
 							if ((_dat_80093cb4 < _dat_80093cb8) && (_dat_80093cb4 != 2)) {
 								_dat_80093cb0 = true;
 							}
@@ -887,18 +848,15 @@ bool Minigame2::fun_80093248() {
 					}
 					uVar2 = _dat_80093cb0;
 				}
-			}
-			else {
+			} else {
 				_dat_80093cb0 = true;
 				uVar2 = true;
 			}
-		}
-		else {
+		} else {
 			_dat_80093cb0 = false;
 			uVar2 = false;
 		}
-	}
-	else {
+	} else {
 		uVar2 = _vm->isRightKeyPressed();
 	}
 	return uVar2;
@@ -912,8 +870,7 @@ bool Minigame2::fun_80093800() {
 			_dat_80093ca8 = false;
 			if ((_dat_80093cb8 == _dat_80093cb4) && (_dat_80093cc0 < _dat_80093cbc)) {
 				_dat_80093ca8 = true;
-			}
-			else {
+			} else {
 				if (_vm->getRand(8) < 3) {
 					_dat_80093ca4 = _vm->getRand(10);
 					_dat_80093ca4 = _dat_80093cc8 + _dat_80093ca4;
@@ -922,8 +879,7 @@ bool Minigame2::fun_80093800() {
 			}
 		}
 		uVar2 = _dat_80093ca8;
-	}
-	else {
+	} else {
 		uVar2 = false;
 		if (_vm->isSquareButtonPressed() || _vm->isCrossButtonPressed() ||
 			 _vm->isCircleButtonPressed() ||
@@ -939,8 +895,7 @@ bool Minigame2::fun_80093a30() {
 
 	if (_dat_80093ca0 == 0) {
 		uVar1 = (uint) _dat_80093c90 == (uint) _dat_80093cc8 / 3;
-	}
-	else {
+	} else {
 		uVar1 = _vm->isL1ButtonPressed(); // TODO || _vm->isL2ButtonPressed();
 	}
 	return uVar1;
@@ -951,8 +906,7 @@ bool Minigame2::fun_80093990() {
 
 	if (_dat_80093ca0 == 0) {
 		uVar1 = _dat_80093c90 == 0;
-	}
-	else {
+	} else {
 		uVar1 = _vm->isR1ButtonPressed(); // TODO || _vm->isR2ButtonPressed();
 	}
 	return uVar1;

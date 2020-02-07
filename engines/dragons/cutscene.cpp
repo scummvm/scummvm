@@ -403,8 +403,7 @@ void CutScene::fun_8003d388() {
 	if ((_actor_80063514 & 0x200) != 0) {
 		if ((_actor_80063514 & 0x800) == 0) {
 			sequenceId = 2;
-		}
-		else {
+		} else {
 			sequenceId = 4;
 		}
 		_actor_800830d4 = _vm->_actorManager->loadActor(0xaa, sequenceId, 0xf4, 199, 1);

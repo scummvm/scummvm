@@ -184,20 +184,17 @@ void Minigame5::run() {
 								((flickerActor->_flags & 4) != 0)) {
 								flickerActor->updateSequence(0x19);
 							}
-						}
-						else {
+						} else {
 							local_66 = 1;
 							local_50 = 0;
 							pusherActor->updateSequence(1);
 							currentState = 2;
 							if (local_74 < 0x14) {
 								local_72 = 1;
-							}
-							else {
+							} else {
 								if (local_74 < 0x2d) {
 									local_72 = 2;
-								}
-								else {
+								} else {
 									if (local_74 < 0x169) {
 										local_72 = 3;
 									}
@@ -205,8 +202,7 @@ void Minigame5::run() {
 							}
 						}
 						local_74 = 0;
-					}
-					else {
+					} else {
 						pusherActor->_x_pos = flickerActor->_x_pos + -0xe;
 						pusherActor->_y_pos = flickerActor->_y_pos + 7;
 						if (local_74 < 0x168) {
@@ -221,8 +217,7 @@ void Minigame5::run() {
 									flickerActor->updateSequence(0x1a);
 									_vm->playOrStopSound(2);
 								}
-							}
-							else {
+							} else {
 								if (local_74 < 0x2d) {
 									if (((pusherActor->_sequenceID != 5) &&
 										 (pusherActor->_sequenceID != 2)) &&
@@ -233,8 +228,7 @@ void Minigame5::run() {
 										flickerActor->updateSequence(0x1e);
 										_vm->playOrStopSound(3);
 									}
-								}
-								else {
+								} else {
 									if (local_74 < 0x169) {
 										if (((pusherActor->_sequenceID != 6) &&
 											 (pusherActor->_sequenceID != 2)) &&
@@ -248,8 +242,7 @@ void Minigame5::run() {
 									}
 								}
 							}
-						}
-						else {
+						} else {
 							if (pusherActor->_sequenceID != 6) {
 								pusherActor->updateSequence(6);
 							}
@@ -265,8 +258,7 @@ void Minigame5::run() {
 							if ((((int)(uint)local_850 < (int)((local_30[0]) - 6)) ||
 								 ((uint)local_30[1] + 6 < (uint)local_850)) || (local_72 != local_30[2])) {
 								local_42 = 8;
-							}
-							else {
+							} else {
 								local_42 = 0;
 							}
 							local_5c = 0;
@@ -286,8 +278,7 @@ void Minigame5::run() {
 							flickerActor->updateSequence(8);
 							currentState = 3;
 						}
-					}
-					else {
+					} else {
 						flickerActor->updateSequence(0x1b);
 						_vm->playOrStopSound(1);
 					}
@@ -300,13 +291,11 @@ void Minigame5::run() {
 						if (local_5a < 0) {
 							local_5a = 0;
 						}
-					}
-					else {
+					} else {
 						if ((int)(uint)bombScale < (int)((uint)local_72 * -4 + 0xba)) {
 							local_5e = local_5e + local_5a;
 							local_5a = local_5a + local_28[((uint)local_72 - 1) * 3 + 2];
-						}
-						else {
+						} else {
 							local_5a = 0;
 						}
 					}
@@ -318,8 +307,7 @@ void Minigame5::run() {
 						if (((local_60 >> 7 < local_30[0]) || (local_30[1] < local_60 >> 7)) ||
 							(local_72 != local_30[2])) {
 							local_42 = 8;
-						}
-						else {
+						} else {
 							local_42 = 0;
 						}
 						if (local_42 == 8) {
@@ -338,8 +326,7 @@ void Minigame5::run() {
 								dustActor->updateSequence(9);
 								currentState = 4;
 							}
-						}
-						else {
+						} else {
 							local_4e->_field_c = 2;
 							local_4c = 0x3c;
 							bombActor->_priorityLayer = 0;
@@ -364,8 +351,7 @@ void Minigame5::run() {
 						_vm->_talk->loadText(DAT_8006393c,auStack2120, 1000);
 						_vm->_talk->displayDialogAroundPoint(auStack2120,(int)(short)(local_850 >> 3),0xc,0,1,DAT_8006393c);
 						_dat_800633e6 = 1;
-					}
-					else {
+					} else {
 						_vm->_talk->loadText(DAT_80063938, auStack2120, 1000);
 						_vm->_talk->displayDialogAroundPoint(auStack2120,(int)(short)(local_850 >> 3),0xc,0,1, DAT_80063938);
 					}
@@ -415,14 +401,12 @@ void Minigame5::run() {
 								if (local_50 == 0) {
 									pusherActor->_x_pos = flickerActor->_x_pos + -0xe;
 									pusherActor->_y_pos = flickerActor->_y_pos + 7;
-								}
-								else {
+								} else {
 									pusherActor->_x_pos = flickerActor->_x_pos + 2;
 									pusherActor->_y_pos = flickerActor->_y_pos;
 								}
 							}
-						}
-						else {
+						} else {
 							local_50 = 1;
 							local_66 = 8;
 							if (pusherActor->_sequenceID != 2) {
@@ -433,14 +417,12 @@ void Minigame5::run() {
 								if (local_850 < 0x36) {
 									local_850 = 0x36;
 								}
-							}
-							else {
+							} else {
 								local_850 = 0x108;
 							}
 							if (local_62 == 0) {
 								local_62 = 0xb;
-							}
-							else {
+							} else {
 								local_62 = local_62 - 1;
 							}
 							flickerActor->_x_pos = local_850;
@@ -451,8 +433,7 @@ void Minigame5::run() {
 							pusherActor->_x_pos = flickerActor->_x_pos + 2;
 							pusherActor->_y_pos = flickerActor->_y_pos;
 						}
-					}
-					else {
+					} else {
 						local_50 = 0;
 						local_66 = (uint16)(currentState != 1);
 						if (pusherActor->_sequenceID != 3) {
@@ -463,8 +444,7 @@ void Minigame5::run() {
 							if (local_850 < 0x36) {
 								local_850 = 0x36;
 							}
-						}
-						else {
+						} else {
 							local_850 = 0x108;
 						}
 						local_62 = (short)((uint)local_62 + 1) +
@@ -489,8 +469,7 @@ void Minigame5::run() {
 			wheelsActor->_x_pos = wheelsActor->_x_pos + 2;
 			if (local_62 == 0) {
 				local_62 = 0xb;
-			}
-			else {
+			} else {
 				local_62 = local_62 - 1;
 			}
 			if ((uint)wheelsActor->_sequenceID != (uint)local_62 / 3 + 0x11) {
@@ -516,8 +495,7 @@ void Minigame5::run() {
 				local_44 = pusherActor->_y_pos;
 				pusherActor->reset_maybe();
 //				EnableVSyncEvent();
-			}
-			else {
+			} else {
 //				DisableVSyncEvent();
 				dustActor->reset_maybe();
 				bombActor->reset_maybe();
@@ -530,8 +508,7 @@ void Minigame5::run() {
 				local_78->actor->_x_pos = local_46;
 				local_78->actor->setFlag(ACTOR_FLAG_100);
 				local_78->actor->_priorityLayer = 5;
-			}
-			else {
+			} else {
 				local_78->actor->clearFlag(ACTOR_FLAG_100);
 				local_78->actor->_priorityLayer = 2;
 			}

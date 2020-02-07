@@ -34,32 +34,32 @@ namespace Dragons {
 
 
 static const Common::Point positionTable[4] = {
-		Common::Point(2,0),
-		Common::Point(0xce,0),
-		Common::Point(2,0x9e),
-		Common::Point(0xce,0x9e)
+	Common::Point(2,0),
+	Common::Point(0xce,0),
+	Common::Point(2,0x9e),
+	Common::Point(0xce,0x9e)
 };
 
 static const int16 bagBounceTable[4] = {
-		-5, -0xa, -5, 0
+	-5, -0xa, -5, 0
 };
 
 static const int16 invXPosTable[41] = {
-				0x0080, 0x00a0, 0x00c0, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
-				0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
-				0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
-				0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
-				0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
-				0x0100
+	0x0080, 0x00a0, 0x00c0, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+	0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+	0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+	0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+	0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+	0x0100
 };
 
 static const int16 invYPosTable[41] = {
-				0x0028, 0x0028, 0x0028, 0x0040, 0x0040, 0x0040, 0x0040, 0x0040,
-				0x0040, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058,
-				0x0058, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070,
-				0x0070, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088,
-				0x0088, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0,
-				0x00a0
+	0x0028, 0x0028, 0x0028, 0x0040, 0x0040, 0x0040, 0x0040, 0x0040,
+	0x0040, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058,
+	0x0058, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070,
+	0x0070, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088,
+	0x0088, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0,
+	0x00a0
 };
 
 Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
@@ -233,12 +233,10 @@ void Inventory::closeInventory() {
 
 	if (!_vm->isFlagSet(ENGINE_FLAG_400000)) {
 		_sequenceId = 0;
-	}
-	else {
+	} else {
 		if (_old_showing_value == 2) {
 			_sequenceId = 3;
-		}
-		else {
+		} else {
 			_sequenceId = 1;
 		}
 	}
@@ -262,7 +260,7 @@ uint16 Inventory::getIniAtPosition(int16 x, int16 y) {
 		if (_inventoryItemTbl[i]) {
 			Actor *item = _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
 			if (item->_x_pos - 0x10 <= x && x < item->_x_pos + 0x10
-				&& item->_y_pos - 0xc <= y && y < item->_y_pos + 0xc) {
+					&& item->_y_pos - 0xc <= y && y < item->_y_pos + 0xc) {
 				return _inventoryItemTbl[i];
 			}
 		}
@@ -319,8 +317,7 @@ void Inventory::closeInventionBook() {
 	if (((((uVar2 == 0x23) || (uVar2 == 0x2d)) || (uVar2 == 0x2e)) || ((uVar2 == 0x31 || (uVar2 == 0x32)))) || (uVar2 == 0x28)) {
 		LAB_80038b9c:
 		if ((uint)_vm->_scene->getSceneId() == 0x27) goto LAB_80038bb8;
-	}
-	else {
+	} else {
 		if (uVar2 != 0x27) {
 			if (((uVar2 != 0x1c) && (uVar2 != 0x1d)) && (uVar1 = uVar2 | 0x8000, uVar2 != 0x21)) goto LAB_80038be8;
 			goto LAB_80038b9c;
@@ -329,7 +326,7 @@ void Inventory::closeInventionBook() {
 		_vm->getINI(0x206)->sceneId = 0;
 	}
 	uVar1 = (uint)_vm->_scene->getSceneId();
-	LAB_80038be8:
+LAB_80038be8:
 	_vm->_scene->loadScene(uVar1,0x1e);
 	_vm->setSceneUpdateFunction(_inventionBookPrevSceneUpdateFunc);
 	return;
@@ -378,9 +375,9 @@ bool Inventory::addItemIfPositionIsEmpty(uint16 iniId, uint16 x, uint16 y) {
 	for (int i = 0; i < DRAGONS_MAX_INVENTORY_ITEMS; i++) {
 		Actor *actor = _vm->_actorManager->getActor(i + ACTOR_INVENTORY_OFFSET);
 		if ((((actor->_x_pos - 0x10 <= x) &&
-			  (x < actor->_x_pos + 0x10)) &&
-			 (actor->_y_pos - 0xc <= y)) &&
-			(y < actor->_y_pos + 0xc)) {
+				(x < actor->_x_pos + 0x10)) &&
+				(actor->_y_pos - 0xc <= y)) &&
+				(y < actor->_y_pos + 0xc)) {
 			_inventoryItemTbl[i] = iniId;
 			return true;
 		}
@@ -413,8 +410,7 @@ void Inventory::inventoryMissing() {
 	_vm->clearFlags(ENGINE_FLAG_8);
 	if (counter == 0) {
 		textIndex = 0x114FA; //Hey!  My bag is missing!
-	}
-	else {
+	} else {
 		textIndex = 0x11538; //The Chancellor snaked my bag!
 	}
 	counter = counter + 1;

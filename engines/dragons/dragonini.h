@@ -41,27 +41,26 @@ enum IniFlags {
 };
 
 
-struct DragonINI
-	{
-		uint16 id;
-		int16 iptIndex_maybe;
-		int16 field_2;
-		int16 actorResourceId;
-		uint16 sequenceId;
-		int16 field_8;
-		Actor *actor;
-		uint16 sceneId;
-		int16 field_e;
-		int16 field_10;
-		int16 field_12;
-		uint16 field_14;
-		int16 x;
-		int16 y;
-		uint16 field_1a_flags_maybe;
-		int16 field_1c;
-		int16 field_1e;
-		int16 field_20_actor_field_14;
-	};
+struct DragonINI {
+	uint16 id;
+	int16 iptIndex_maybe;
+	int16 field_2;
+	int16 actorResourceId;
+	uint16 sequenceId;
+	int16 field_8;
+	Actor *actor;
+	uint16 sceneId;
+	int16 field_e;
+	int16 field_10;
+	int16 field_12;
+	uint16 field_14;
+	int16 x;
+	int16 y;
+	uint16 field_1a_flags_maybe;
+	int16 field_1c;
+	int16 field_1e;
+	int16 field_20_actor_field_14;
+};
 
 class DragonINIResource {
 private:
@@ -69,6 +68,7 @@ private:
 	DragonINI *_dragonINI;
 	uint16 _count;
 	DragonINI *_flickerINI;
+
 public:
 	DragonINIResource(BigfileArchive *bigfileArchive);
 	void reset();

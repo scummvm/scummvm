@@ -735,8 +735,7 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 				secondIni->y = newYPos1;
 				secondIni->actor->_y_pos = newYPos1;
 			}
-		}
-		else {
+		} else {
 			int16 newYPos2 = firstIni->actor->_y_pos + firstIni->field_1e;
 			firstIni->y = newYPos2;
 			secondIni->actor->_y_pos = newYPos2;
@@ -754,8 +753,7 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 	}
 	if ((field8 & 0x8000) == 0) {
 		someBooleanFlag = (uint)field8 << 0x10;
-	}
-	else {
+	} else {
 		someBooleanFlag = ((uint)field8 & 0x7fff) << 7;
 	}
 	if (field6 != -1) {
@@ -780,8 +778,7 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 		if (_vm->_dragonINIResource->isFlicker(secondIni)) {
 			someBooleanFlag = 0;
 		}
-	}
-	else {
+	} else {
 		newXPosAgain = firstIni->actor->_x_pos + firstIni->field_1c;
 		newYPosAgain = firstIni->actor->_y_pos + firstIni->field_1e;
 		if (_vm->_dragonINIResource->isFlicker(secondIni)) {
@@ -878,8 +875,7 @@ void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 				READ_LE_INT16(_vm->_dragonOBD->getFromOpt(iniId) + 6),
 				1,
 				ini->actor, startSequenceId, endSequenceId, textIndex);
-	}
-	else {
+	} else {
 		_vm->_talk->FUN_8003239c(dialog,
 								 (int)(((uint)ini->actor->_x_pos - (uint)_vm->_scene->_camera.x) * 0x10000) >> 0x13,
 								 (int)(((ini->actor->_y_pos - ini->actor->_frame->yOffset) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13,
@@ -1222,8 +1218,7 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 				_vm->_cursor->_data_800728b0_cursor_seqID = 0;
 				_vm->_cursor->_sequenceID = 0;
 				_vm->_cursor->_iniItemInHand = 0;
-			}
-			else {
+			} else {
 				if (_vm->_inventory->clearItem(ini->id + 1)) {
 					if (_vm->_inventory->getType() == 1) {
 						ini->actor->clearFlag(ACTOR_FLAG_40);

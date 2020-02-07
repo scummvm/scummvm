@@ -270,7 +270,7 @@ int16 Cursor::updateIniFromScene() {
 				}
 				if (_sequenceID != 0) {
 					_iniUnderCursor = cursorOverIni;
-					_data_80072890 = _data_80072890_orig;
+					_data_80072890 = data_80072890_orig;
 					_data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
 					return _iniUnderCursor;
 				}
@@ -282,7 +282,7 @@ int16 Cursor::updateIniFromScene() {
 //				local_44 = local_44 + local_48;
 				if (executeScript(scriptOpCall, 0)) {
 					_iniUnderCursor = cursorOverIni;
-					_data_80072890 = _data_80072890_orig;
+					_data_80072890 = data_80072890_orig;
 					_data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
 					return _iniUnderCursor;
 				}

@@ -115,7 +115,6 @@ void FontManager::addText(int16 x, int16 y, uint16 *text, uint16 length, uint8 f
 	screenTextEntry->surface = _fonts[fontType]->render(text, length);
 
 	_screenTexts.push_back(screenTextEntry);
-
 }
 
 void FontManager::draw() {

@@ -272,8 +272,8 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 //							iVar6 = (int)(short)iVar8;
 //							goto LAB_800328f8;
 //						}
-//					}
-					else {
+//					} else
+					{
 						LAB_800328f8:
 						if (-1 < iVar8) {
 							if (currentLine[iVar8] == 0x20) {
@@ -290,8 +290,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 //									*(undefined2 *)(((iVar8 << 0x10) >> 0xf) + (int)currentLine) = 0;
 //									iVar8 = iVar6;
 //								} while (-1 < iVar6 * 0x10000);
-							}
-							else {
+							} else {
 								currentLine[iVar8 + 1] = 0;
 							}
 						}
@@ -347,8 +346,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 				sVar20 = (short)uVar11 >> 1;
 				if ((short)x < 0x14) {
 					_dat_8008e7e8_dialogBox_x1 = (x - sVar20) + 1;
-				}
-				else {
+				} else {
 					_dat_8008e7e8_dialogBox_x1 = x - sVar20;
 				}
 				_dat_8008e848_dialogBox_x2 = (uVar11 + _dat_8008e7e8_dialogBox_x1) - 1;
@@ -364,8 +362,7 @@ uint8 Talk::conversation_related_maybe(uint16 *dialogText, uint16 x, uint16 y, u
 								dialogTextLinePtr = asStack2592 + unaff_s4 * 0x29;
 								uVar9 = strlenUTF16(dialogTextLinePtr);
 								uVar9 = ((uint)x - ((int)((uint)_dat_800726ec_tfont_field0 * (uVar9 & 0xffff) + 1) >> 1)) + 1;
-							}
-							else {
+							} else {
 								dialogTextLinePtr = asStack2592 + unaff_s4 * 0x29;
 								uVar9 = strlenUTF16(dialogTextLinePtr);
 								uVar9 = (uint)x - ((int)((uint)_dat_800726ec_tfont_field0 * (uVar9 & 0xffff) + 1) >> 1);
@@ -445,8 +442,7 @@ uint32 Talk::displayDialogAroundINI(uint32 iniId, uint16 *dialogText, uint32 tex
 		if (local_v1_184->field_e == 0) {
 			y = (uint)(uint16)local_v1_184->y;
 			x = local_v1_184->field_a;
-		}
-		else {
+		} else {
 			x = local_v1_184->field_a;
 			y = (uint)(uint16)local_v1_184->y << 3;
 		}
@@ -456,8 +452,7 @@ uint32 Talk::displayDialogAroundINI(uint32 iniId, uint16 *dialogText, uint32 tex
 				 ((y - _vm->_scene->_camera.y) * 0x10000) >> 0x13,
 				 READ_LE_UINT16(_vm->_dragonOBD->getFromOpt(ini->id) + 6)
 						,1,textIndex);
-	}
-	else {
+	} else {
 		displayDialogAroundActor
 				(ini->actor,
 				 READ_LE_UINT16(_vm->_dragonOBD->getFromOpt(ini->id) + 6),
@@ -614,8 +609,7 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 		if (loadText(selectedDialogText->textIndex1, local_800, 1000)) {
 			if (selectedDialogText->field_26c == -1) {
 				displayDialogAroundINI(_vm->_cursor->_iniUnderCursor, local_800, selectedDialogText->textIndex1);
-			}
-			else {
+			} else {
 				iniId = _vm->_cursor->_iniUnderCursor; //dragon_ini_index_under_active_cursor;
 				if (selectedDialogText->iniId != 0) {
 					iniId = selectedDialogText->iniId;
@@ -804,8 +798,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 								y = y + 1;
 							} while ((uVar7 & 0xffff) < (uVar4 & 0xffff));
 						}
-					}
-					else {
+					} else {
 						uVar7 = 0;
 						if (uVar6 < (uVar4 & 0xffff)) {
 							do {
@@ -881,15 +874,13 @@ void Talk::talkFromIni(uint32 iniId, uint32 textIndex) {
 		if (!_vm->isFlagSet(ENGINE_FLAG_2000000)) {
 			if (_vm->getCurrentSceneId() == 0x32) {
 				_vm->getINI(0x2b1)->actor->updateSequence(2);
-			}
-			else {
+			} else {
 				actor->setFlag(ACTOR_FLAG_2000);
 				if (actor->_sequenceID2 != -1) {
 					actor->updateSequence(actor->_sequenceID2 + 0x10);
 				}
 			}
-		}
-		else {
+		} else {
 			if (actor->_sequenceID == 5) {
 				actor->updateSequence(0x10);
 			}
@@ -915,8 +906,7 @@ void Talk::talkFromIni(uint32 iniId, uint32 textIndex) {
 			}
 			_vm->getINI(0x2b1)->actor->updateSequence(1);
 
-		}
-		else {
+		} else {
 			if (actor->_sequenceID != 0x10) {
 				return;
 			}
@@ -1096,8 +1086,7 @@ uint32 Talk::FUN_80031c28(uint16 *srcText, uint16 *destText, uint32 cutLength, u
 			uVar1 = uVar3;
 			LAB_80031d3c:
 			uVar3 = uVar1;
-		}
-		else {
+		} else {
 			if (((((chr != 0x20) && (chr != 0x2e)) && (chr != 0x3f)) &&
 				 ((chr != 0x21 && (uVar1 = uVar3, chr != 0x2d)))) ||
 				((uVar1 = uVar3, srcText[(srcCurIndex & 0xffff) + 1] == 0 ||
