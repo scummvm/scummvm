@@ -36,6 +36,8 @@ namespace Audio {
 namespace Dragons {
 class DragonsEngine;
 
+#define DRAGONS_VAB_NUM_PROG_ATTRS 128
+
 struct VabHeader {
 	char magic[4];
 
@@ -116,13 +118,15 @@ private:
 	byte *_vbData;
 
 	VabHeader _header;
-	VabProgramAttr _programAttrs[128];
+	VabProgramAttr _programAttrs[DRAGONS_VAB_NUM_PROG_ATTRS];
 	VabToneAttr *_toneAttrs;
 
 	uint32 _vagSizes[0x100];
 	uint32 _vagOffsets[0x100];
 
 	void loadHeader(Common::SeekableReadStream *vhData);
+	void loadProgramAttributes(Common::SeekableReadStream *vhData);
+	void loadToneAttributes(Common::SeekableReadStream *vhData);
 };
 
 } // End of namespace Dragons

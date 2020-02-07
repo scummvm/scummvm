@@ -1767,7 +1767,7 @@ void caveOfDilemmaUpdateFunction() {
 }
 
 void moatDrainedSceneUpdateFunction() {
-	static const uint32 moatDrainedTextIdTbl[4] {
+	static const uint32 moatDrainedTextIdTbl[4] = {
 			0x3C97A, 0x3C9AC, 0x3C9F8, 0x3CA48
 	};
 	static uint16 moatDrainedUpdateCounter = 0;

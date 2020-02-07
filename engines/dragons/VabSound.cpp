@@ -59,19 +59,34 @@ namespace Dragons {
 
 	void VabSound::loadHeader(Common::SeekableReadStream *vhData) {
 		vhData->seek(0);
-		vhData->read(&_header, sizeof(_header)); //TODO this is not endian safe!
+		vhData->read(&_header.magic, 4);
+		_header.version = vhData->readUint32LE();
+		_header.vabId = vhData->readUint32LE();
+		_header.waveformSize = vhData->readUint32LE();
+
+		_header.reserved0 = vhData->readUint16LE();
+		_header.numPrograms = vhData->readUint16LE();
+		_header.numTones = vhData->readUint16LE();
+		_header.numVAG = vhData->readUint16LE();
+
+		_header.masterVolume = vhData->readByte();
+		_header.masterPan = vhData->readByte();
+		_header.bankAttr1 = vhData->readByte();
+		_header.bankAttr2 = vhData->readByte();
+
+		_header.reserved1 = vhData->readUint32LE();
+
 		if (strncmp(_header.magic, "pBAV", 4) != 0) {
 			error("Invalid VAB file");
 		}
-		// TODO: is sizeof(array) the right thing to do here?
-		vhData->read(&_programAttrs, sizeof(_programAttrs));
 
-		const int numTones = 16 * _header.numPrograms;
-		_toneAttrs = new VabToneAttr[numTones];
-		vhData->read(_toneAttrs, sizeof(VabToneAttr) * numTones);
+		loadProgramAttributes(vhData);
+		loadToneAttributes(vhData);
 
 		uint16 tempOffsets[0x100];
-		vhData->read(tempOffsets, sizeof(tempOffsets));
+		for (int i = 0; i < 0x100; i++) {
+			tempOffsets[i] = vhData->readUint16LE();
+		}
 		_vagOffsets[0] = tempOffsets[0] << 3u;
 		for (int j = 1; j < 0x100; ++j) {
 			const int vagSize = tempOffsets[j] << 3u;
@@ -101,4 +116,50 @@ namespace Dragons {
 				DisposeAfterUse::YES);
 		return str;
 	}
+
+void VabSound::loadProgramAttributes(Common::SeekableReadStream *vhData) {
+	for (int i = 0; i < DRAGONS_VAB_NUM_PROG_ATTRS; i++) {
+		_programAttrs[i].tones = vhData->readByte();
+		_programAttrs[i].mvol = vhData->readByte();
+		_programAttrs[i].prior = vhData->readByte();
+		_programAttrs[i].mode = vhData->readByte();
+		_programAttrs[i].mpan = vhData->readByte();
+		_programAttrs[i].reserved0 = vhData->readByte();
+		_programAttrs[i].attr = vhData->readUint16LE();
+		_programAttrs[i].reserved1 = vhData->readUint32LE();
+		_programAttrs[i].reserved2 = vhData->readUint32LE();
+	}
+}
+
+void VabSound::loadToneAttributes(Common::SeekableReadStream *vhData) {
+	const int numTones = 16 * _header.numPrograms;
+	_toneAttrs = new VabToneAttr[numTones];
+	VabToneAttr *pVabToneAttr = _toneAttrs;
+	for (int i = 0; i < numTones; i++, pVabToneAttr++) {
+		pVabToneAttr->prior = vhData->readByte();
+		pVabToneAttr->mode = vhData->readByte();
+		pVabToneAttr->vol = vhData->readByte();
+		pVabToneAttr->pan = vhData->readByte();
+		pVabToneAttr->center = vhData->readByte();
+		pVabToneAttr->shift = vhData->readByte();
+		pVabToneAttr->min = vhData->readByte();
+		pVabToneAttr->max = vhData->readByte();
+		pVabToneAttr->vibW = vhData->readByte();
+		pVabToneAttr->vibT = vhData->readByte();
+		pVabToneAttr->porW = vhData->readByte();
+		pVabToneAttr->porT = vhData->readByte();
+		pVabToneAttr->pbmin = vhData->readByte();
+		pVabToneAttr->pbmax = vhData->readByte();
+		pVabToneAttr->reserved1 = vhData->readByte();
+		pVabToneAttr->reserved2 = vhData->readByte();
+		pVabToneAttr->adsr1 = vhData->readUint16LE();
+		pVabToneAttr->adsr2 = vhData->readUint16LE();
+		pVabToneAttr->prog = vhData->readSint16LE();
+		pVabToneAttr->vag = vhData->readSint16LE();
+		for (int j = 0; j < 4; j++) {
+			pVabToneAttr->reserved[j] = vhData->readSint16LE();
+		}
+	}
+}
+
 } // End of namespace Dragons
