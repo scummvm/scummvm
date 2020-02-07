@@ -38,7 +38,7 @@ DragonIMG::DragonIMG(BigfileArchive *bigfileArchive) {
 
 	_imgObjects = new IMG[_count];
 
-	for (int i=0; i < _count; i++) {
+	for (int i = 0; i < _count; i++) {
 		imgReadStream->seek(iptReadStream->readUint32LE());
 		_imgObjects[i].x = imgReadStream->readUint16LE();
 		_imgObjects[i].y = imgReadStream->readUint16LE();

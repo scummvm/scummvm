@@ -66,7 +66,7 @@ int16 PriorityLayer::getPriority(Common::Point pos) {
 void PriorityLayer::overlayTileMap(byte *data, int16 x, int16 y, int16 w, int16 h) {
 	byte *ptr = _map + (x + y * _mapWidth) * 2;
 	byte *src = data;
-	for (int i=0;i < h; i++) {
+	for (int i = 0;i < h; i++) {
 		memcpy(ptr, src, w * 2);
 		src += w * 2;
 		ptr += _mapWidth * 2;
@@ -76,7 +76,7 @@ void PriorityLayer::overlayTileMap(byte *data, int16 x, int16 y, int16 w, int16 
 void PriorityLayer::restoreTileMap(int16 x, int16 y, int16 w, int16 h) {
 	byte *ptr = _map + (x + y * _mapWidth) * 2;
 	byte *src = _mapBase + (x + y * _mapWidth) * 2;
-	for (int i=0;i < h; i++) {
+	for (int i = 0;i < h; i++) {
 		memcpy(ptr, src, w * 2);
 		src += _mapWidth * 2;
 		ptr += _mapWidth * 2;
@@ -125,7 +125,7 @@ bool Background::load(byte *dataStart, uint32 size) {
 	stream.seek(0x308);
 
 	uint32 tilemapOffset = 0x324;
-	for (int i=0;i< 3;i++) {
+	for (int i = 0;i< 3;i++) {
 		_tileMap[i].w = stream.readUint16LE();
 		_tileMap[i].h = stream.readUint16LE();
 		_tileMap[i].size = stream.readUint32LE();
@@ -171,7 +171,7 @@ bool Background::load(byte *dataStart, uint32 size) {
 Common::Point *Background::loadPoints(Common::SeekableReadStream &stream) {
 	Common::Point *points = new Common::Point[0x20];
 
-	for (int i=0;i < 0x20;i++) {
+	for (int i = 0;i < 0x20;i++) {
 		points[i].x = stream.readUint16LE();
 		points[i].y = stream.readUint16LE();
 	}
