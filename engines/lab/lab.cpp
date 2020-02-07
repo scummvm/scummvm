@@ -178,10 +178,6 @@ Common::Error LabEngine::run() {
 	return Common::kNoError;
 }
 
-Common::String LabEngine::generateSaveFileName(uint slot) {
-	return Common::String::format("%s.%03u", _targetName.c_str(), slot);
-}
-
 void LabEngine::drawStaticMessage(byte index) {
 	_graphics->drawMessage(_resource->getStaticText((StaticText)index), false);
 }

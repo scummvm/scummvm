@@ -216,6 +216,7 @@ public:
 	void saveState(int n, const char *name);
 	void loadState(CORO_PARAM, int n);
 	static Common::String getSaveStateFileName(int n);
+	virtual Common::String getSaveStateName(int slot) const override;
 
 	/**
 	 * Get a thumbnail

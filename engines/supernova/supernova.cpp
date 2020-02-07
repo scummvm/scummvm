@@ -691,6 +691,15 @@ bool SupernovaEngine::deserialize(Common::ReadStream *in, int version) {
 	return true;
 }
 
+Common::String SupernovaEngine::getSaveStateName(int slot) const {
+	if (_MSPart == 1)
+		return Common::String::format("msn_save.%03d", slot);
+	else if (_MSPart == 2)
+		return Common::String::format("ms2_save.%03d", slot);
+
+	return "";
+}
+
 bool SupernovaEngine::loadGame(int slot) {
 	if (slot < 0)
 		return false;
@@ -713,11 +722,7 @@ bool SupernovaEngine::loadGame(int slot) {
 		// continue to try to load it from there.
 	}
 
-	Common::String filename;
-	if (_MSPart == 1)
-		filename = Common::String::format("msn_save.%03d", slot);
-	else if (_MSPart == 2)
-		filename = Common::String::format("ms2_save.%03d", slot);
+	Common::String filename = getSaveStateName(slot);
 	Common::InSaveFile *savefile = _saveFileMan->openForLoading(filename);
 	if (!savefile)
 		return false;
@@ -780,12 +785,7 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 		return true;
 	}
 
-	Common::String filename;
-	if (_MSPart == 1)
-		filename = Common::String::format("msn_save.%03d", slot);
-	else if (_MSPart == 2)
-		filename = Common::String::format("ms2_save.%03d", slot);
-
+	Common::String filename = getSaveStateName(slot);
 	Common::OutSaveFile *savefile = _saveFileMan->openForSaving(filename);
 	if (!savefile)
 		return false;

@@ -95,6 +95,7 @@ public:
 	bool canLoadGameStateCurrently() override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently() override;
+	Common::String getSaveStateName(int slot) const override { return getSavegameFile(slot); }
 	void syncSoundSettings() override;
 
 	const CRUISEGameDescription *_gameDescription;

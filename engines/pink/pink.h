@@ -101,6 +101,9 @@ public:
 
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently() override;
+	virtual Common::String getSaveStateName(int slot) const override {
+		return Common::String::format("%s.s%02d", _targetName.c_str(), slot);
+	}
 
 	static void pauseEngine(void *engine, bool pause); // for MacWndMgr
 

@@ -77,10 +77,6 @@ HopkinsEngine::~HopkinsEngine() {
 	delete _animMan;
 }
 
-Common::String HopkinsEngine::generateSaveName(int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
-}
-
 /**
  * Returns true if it is currently okay to restore a game
  */

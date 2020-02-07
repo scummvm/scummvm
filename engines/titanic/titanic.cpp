@@ -236,14 +236,10 @@ Common::Error TitanicEngine::saveGameState(int slot, const Common::String &desc,
 	return Common::kNoError;
 }
 
-CString TitanicEngine::generateSaveName(int slot) {
-	return CString::format("%s.%03d", _targetName.c_str(), slot);
-}
-
 CString TitanicEngine::getSavegameName(int slot) {
 	// Try and open up the savegame for access
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(
-		generateSaveName(slot));
+		getSaveStateName(slot));
 
 	if (in) {
 		// Read in the savegame header data

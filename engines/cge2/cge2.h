@@ -146,7 +146,6 @@ private:
 	void init();
 	void deinit();
 
-	Common::String generateSaveName(int slot);
 	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
 	void saveGame(int slotNumber, const Common::String &desc);
 	bool loadGame(int slotNumber);

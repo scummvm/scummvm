@@ -225,7 +225,8 @@ void TeenAgentEngine::init() {
 
 Common::Error TeenAgentEngine::loadGameState(int slot) {
 	debug(0, "loading from slot %d", slot);
-	Common::ScopedPtr<Common::InSaveFile> in(_saveFileMan->openForLoading(Common::String::format("teenagent.%02d", slot)));
+	Common::ScopedPtr<Common::InSaveFile> in(_saveFileMan->openForLoading(
+		getSaveStateName(slot)));
 	if (!in)
 		in.reset(_saveFileMan->openForLoading(Common::String::format("teenagent.%d", slot)));
 
@@ -263,9 +264,14 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
+Common::String TeenAgentEngine::getSaveStateName(int slot) const {
+	return Common::String::format("teenagent.%02d", slot);
+}
+
 Common::Error TeenAgentEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	debug(0, "saving to slot %d", slot);
-	Common::ScopedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(Common::String::format("teenagent.%02d", slot)));
+	Common::ScopedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(
+		getSaveStateName(slot)));
 	if (!out)
 		return Common::kWritingFailed;
 

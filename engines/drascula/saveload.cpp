@@ -229,7 +229,7 @@ void DrasculaEngine::saveGame(int slot, const Common::String &desc) {
 	Common::OutSaveFile *out;
 	int l;
 
-	Common::String saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
+	Common::String saveFileName = getSaveStateName(slot);
 	if (!(out = _saveFileMan->openForSaving(saveFileName))) {
 		error("Unable to open the file");
 	}
@@ -271,7 +271,7 @@ bool DrasculaEngine::loadGame(int slot) {
 	if (currentChapter != 1)
 		clearRoom();
 
-	Common::String saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
+	Common::String saveFileName = getSaveStateName(slot);
 	if (!(in = _saveFileMan->openForLoading(saveFileName))) {
 		error("missing savegame file %s", saveFileName.c_str());
 	}

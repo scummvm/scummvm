@@ -233,6 +233,7 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+	Common::String getSaveStateName(int slot) const override;
 
 	Common::String prepareFileName(const Common::String &baseName, const char *extension) const {
 		const char *const extensions[] = { extension, nullptr };

@@ -742,10 +742,8 @@ void HugoEngine::syncSoundSettings() {
 	_sound->syncVolume();
 }
 
-Common::String HugoEngine::getSavegameFilename(int slot) {
+Common::String HugoEngine::getSaveStateName(int slot) const {
 	return _targetName + Common::String::format("-%02d.SAV", slot);
 }
-
-
 
 } // End of namespace Hugo

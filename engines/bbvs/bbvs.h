@@ -412,7 +412,6 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
 	void savegame(const char *filename, const char *description);
 	void loadgame(const char *filename);
-	const char *getSavegameFilename(int num);
 	bool existsSavegame(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	WARN_UNUSED_RESULT static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);

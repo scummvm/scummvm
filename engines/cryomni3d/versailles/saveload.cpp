@@ -45,6 +45,10 @@ Common::String CryOmni3DEngine_Versailles::getSaveFileName(bool visit, uint save
 	return Common::String::format("%s%s.%04u", _targetName.c_str(), visit ? "_visit" : "", saveNum);
 }
 
+Common::String CryOmni3DEngine_Versailles::getSaveStateName(int slot) const {
+	return Common::String::format("%s.%04u", _targetName.c_str(), slot);
+}
+
 bool CryOmni3DEngine_Versailles::canVisit() const {
 	return Common::File::exists("game0001.sav");
 }

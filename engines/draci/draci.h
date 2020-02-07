@@ -68,6 +68,7 @@ public:
 	void handleEvents();
 
 	static Common::String getSavegameFile(int saveGameIdx);
+	Common::String getSaveStateName(int slot) const override { return getSavegameFile(slot); }
 	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;

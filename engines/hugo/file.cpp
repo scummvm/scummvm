@@ -311,7 +311,7 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	if (savegameId < 0)                             // dialog aborted
 		return false;
 
-	Common::String savegameFile = _vm->getSavegameFilename(savegameId);
+	Common::String savegameFile = _vm->getSaveStateName(savegameId);
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::OutSaveFile *out = saveMan->openForSaving(savegameFile);
 
@@ -407,7 +407,7 @@ bool FileManager::restoreGame(const int16 slot) {
 	if (savegameId < 0)                             // dialog aborted
 		return false;
 
-	Common::String savegameFile = _vm->getSavegameFilename(savegameId);
+	Common::String savegameFile = _vm->getSaveStateName(savegameId);
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::InSaveFile *in = saveMan->openForLoading(savegameFile);
 

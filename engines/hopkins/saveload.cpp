@@ -150,7 +150,8 @@ Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName
 	_vm->_globals->_saveData->_mapCarPosY = _vm->_objectsMan->_mapCarPosY;
 
 	/* Create the savegame */
-	Common::OutSaveFile *savefile = g_system->getSavefileManager()->openForSaving(_vm->generateSaveName(slot));
+	Common::OutSaveFile *savefile = g_system->getSavefileManager()->openForSaving(
+		_vm->getSaveStateName(slot));
 	if (!savefile)
 		return Common::kCreatingFileFailed;
 
@@ -176,7 +177,7 @@ Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName
 Common::Error SaveLoadManager::loadGame(int slot) {
 	// Try and open the save file for reading
 	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(
-		_vm->generateSaveName(slot));
+		_vm->getSaveStateName(slot));
 	if (!savefile)
 		return Common::kReadingFailed;
 
@@ -214,7 +215,7 @@ Common::Error SaveLoadManager::loadGame(int slot) {
 WARN_UNUSED_RESULT bool SaveLoadManager::readSavegameHeader(int slot, hopkinsSavegameHeader &header, bool skipThumbnail) {
 	// Try and open the save file for reading
 	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(
-		_vm->generateSaveName(slot));
+		_vm->getSaveStateName(slot));
 	if (!savefile)
 		return false;
 

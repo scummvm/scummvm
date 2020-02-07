@@ -112,7 +112,9 @@ protected:
 	bool canLoadGameStateCurrently() override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently() override;
-
+	virtual Common::String getSaveStateName(int slot) const override {
+		return Common::String::format("sword1.%03d", slot);
+	}
 private:
 	void delay(int32 amount);
 

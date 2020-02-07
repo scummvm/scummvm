@@ -125,7 +125,7 @@ public:
 	Common::Error removeGameState(int slot);
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);
-	const char *getSavegameFilename(int num);
+	Common::String getSaveStateName(int slot) const override;
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	WARN_UNUSED_RESULT static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
 

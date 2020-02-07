@@ -205,7 +205,6 @@ public:
 	bool getIsDemo() const;
 
 	int getRandomNumber(int maxNumber);
-	Common::String generateSaveName(int slotNumber);
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;

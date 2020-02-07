@@ -111,12 +111,6 @@ protected:
 	void doRoom();
 
 	/**
-	* Support method that generates a savegame name
-	* @param slot		Slot number
-	*/
-	Common::String generateSaveName(int slot);
-
-	/**
 	 * Play back an entire video
 	 */
 	void playVideo(int videoNum, const Common::Point &pt);

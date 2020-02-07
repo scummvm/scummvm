@@ -131,7 +131,8 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 	_macroSaveFlag = true;
 
 	// Try and create the save file
-	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(g_vm->generateSaveName(slot));
+	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(
+		g_vm->getSaveStateName(slot));
 	if (!saveFile)
 		return Common::kCreatingFileFailed;
 
@@ -181,7 +182,8 @@ Common::Error Saver::restore(int slot) {
 	_unresolvedPtrs.clear();
 
 	// Set up the serializer
-	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(g_vm->generateSaveName(slot));
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
+		g_vm->getSaveStateName(slot));
 	if (!saveFile)
 		return Common::kReadingFailed;
 
@@ -352,7 +354,7 @@ void Saver::removeObject(SavedObject *obj) {
  * Returns true if any savegames exist
  */
 bool Saver::savegamesExist() const {
-	Common::String slot1Name = g_vm->generateSaveName(1);
+	Common::String slot1Name = g_vm->getSaveStateName(1);
 
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slot1Name);
 	bool result = saveFile != NULL;

@@ -182,12 +182,6 @@ public:
 	double getRandomFloat() { return getRandomNumber(0xfffffffe) * 0.00001525855623540901; } // fffffffe=4294967294 and 0.00001525855623540901 ~= 1/65537.0
 
 	/**
-	 * Support method that generates a savegame name
-	 * @param slot		Slot number
-	 */
-	CString generateSaveName(int slot);
-
-	/**
 	 * Checks whether a savegame exists for the given slot,
 	 * and if it exists, returns it's description
 	 */

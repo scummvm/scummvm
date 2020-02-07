@@ -161,7 +161,6 @@ public:
 	const Common::String &getTargetName() const;
 
 	int getRandomNumber(int maxNumber);
-	Common::String generateSaveName(int slotNumber);
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
