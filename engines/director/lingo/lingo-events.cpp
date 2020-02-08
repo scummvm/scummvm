@@ -200,8 +200,8 @@ void Lingo::runMovieScript(LEvent event) {
 	if (_dontPassEvent)
 		return;
 
-	for (ScriptContextHash::iterator it = _scriptContexts[kMovieScript].begin();
-			it != _scriptContexts[kMovieScript].end(); ++it) {
+	for (ScriptContextHash::iterator it = _archives[_archiveIndex].scriptContexts[kMovieScript].begin();
+			it != _archives[_archiveIndex].scriptContexts[kMovieScript].end(); ++it) {
 		processEvent(event, kMovieScript, it->_key);
 		// TODO: How do know which script handles the message?
 	}
@@ -319,7 +319,7 @@ void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
 	if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
 		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), _eventHandler", _eventHandlerTypes[event], scriptType2str(st), entityId);
 		executeHandler(_eventHandlerTypes[event]); // D4+ Events
-	} else if (_vm->getVersion() < 4 && event == kEventNone && _scriptContexts[st].contains(entityId)) {
+	} else if (_vm->getVersion() < 4 && event == kEventNone && getScriptContext(st, entityId)) {
 		debugC(1, kDebugEvents, "Lingo::processEvent(%s, %s, %d), script", _eventHandlerTypes[event], scriptType2str(st), entityId);
 
 		executeScript(st, entityId, 0); // D3 list of scripts.

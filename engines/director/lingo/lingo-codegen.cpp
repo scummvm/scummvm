@@ -275,6 +275,7 @@ Symbol *Lingo::define(Common::String &name, int nargs, ScriptData *code) {
 	sym->argNames = NULL;
 	sym->varNames = NULL;
 	sym->ctx = NULL;
+	sym->archiveIndex = -1;
 
 	if (debugChannelSet(1, kDebugLingoCompile)) {
 		uint pc = 0;

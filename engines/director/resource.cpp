@@ -305,6 +305,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	debug(0, "@@@@ Loading Shared cast '%s'", filename.c_str());
 	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
+	_lingo->_archiveIndex = 1;
 	_sharedScore = new Score(this);
 	_sharedScore->setArchive(sharedCast);
 
@@ -409,6 +410,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	}
 
 	_sharedScore->loadSpriteImages(true);
+	_lingo->_archiveIndex = 0;
 }
 
 } // End of namespace Director

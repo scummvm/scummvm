@@ -336,7 +336,7 @@ void LC::cb_list() {
 
 void LC::cb_call() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->_namelist[nameId];
+	Common::String name = g_lingo->getName(nameId);
 
 	Datum nargs = g_lingo->pop();
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
@@ -351,7 +351,7 @@ void LC::cb_call() {
 
 void LC::cb_globalpush() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->_namelist[nameId];
+	Common::String name = g_lingo->getName(nameId);
 	Datum result;
 	result.type = VOID;
 
@@ -374,7 +374,7 @@ void LC::cb_globalpush() {
 
 void LC::cb_globalassign() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->_namelist[nameId];
+	Common::String name = g_lingo->getName(nameId);
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (!s) {
@@ -397,7 +397,7 @@ void LC::cb_globalassign() {
 
 void LC::cb_objectpush() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->_namelist[nameId];
+	Common::String name = g_lingo->getName(nameId);
 	warning("STUB: cb_objectpush(%s)", name.c_str());
 	Datum result;
 	result.type = VOID;
@@ -407,7 +407,7 @@ void LC::cb_objectpush() {
 
 void LC::cb_varpush() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->_namelist[nameId];
+	Common::String name = g_lingo->getName(nameId);
 	Datum result;
 	result.type = VOID;
 
@@ -430,7 +430,7 @@ void LC::cb_varpush() {
 
 void LC::cb_varassign() {
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->_namelist[nameId];
+	Common::String name = g_lingo->getName(nameId);
 
 	Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 	if (!s) {
@@ -519,7 +519,7 @@ void LC::cb_v4theentitynamepush() {
 	}
 
 	int nameId = g_lingo->readInt();
-	Common::String name = g_lingo->_namelist[nameId];
+	Common::String name = g_lingo->getName(nameId);
 
 	Datum id;
 	id.u.s = NULL;
@@ -618,7 +618,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	_currentScriptContext = new ScriptContext;
 	_currentScriptType = type;
 	_currentEntityId = id;
-	_scriptContexts[type][id] = _currentScriptContext;
+	_archives[_archiveIndex].scriptContexts[type][id] = _currentScriptContext;
 
 	if (stream.size() < 0x5c) {
 		warning("Lscr header too small");
@@ -667,8 +667,8 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 	stream.seek(globalsOffset);
 	for (uint16 i = 0; i < globalsCount; i++) {
 		uint16 index = stream.readUint16();
-		if (index < _namelist.size()) {
-			const char *name = _namelist[index].c_str();
+		if (index < _archives[_archiveIndex].names.size()) {
+			const char *name = _archives[_archiveIndex].names[index].c_str();
 			debugC(5, kDebugLoading, "%d: %s", i, name);
 			g_lingo->lookupVar(name, true, true);
 		} else {
@@ -866,8 +866,8 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 				uint16 index = (uint16)READ_BE_UINT16(&codeStore[namePointer]);
 				namePointer += 2;
 				Common::String name;
-				if (index < _namelist.size()) {
-					name = _namelist[index];
+				if (index < _archives[_archiveIndex].names.size()) {
+					name = _archives[_archiveIndex].names[index];
 					argMap[j] = index;
 				} else {
 					name = Common::String::format("arg_%d", j);
@@ -892,8 +892,8 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 				uint16 index = (uint16)READ_BE_UINT16(&codeStore[namePointer]);
 				namePointer += 2;
 				Common::String name;
-				if (index < _namelist.size()) {
-					name = _namelist[index];
+				if (index < _archives[_archiveIndex].names.size()) {
+					name = _archives[_archiveIndex].names[index];
 					varMap[j] = index;
 				} else {
 					name = Common::String::format("var_%d", j);
@@ -1081,9 +1081,9 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 
 		// Attach to handlers
 		Symbol *sym = NULL;
-		if (nameIndex < _namelist.size()) {
-			debugC(5, kDebugLoading, "Function %d binding: %s()", i, _namelist[nameIndex].c_str());
-			sym = g_lingo->define(_namelist[nameIndex], argCount, _currentScript);
+		if (nameIndex < _archives[_archiveIndex].names.size()) {
+			debugC(5, kDebugLoading, "Function %d binding: %s()", i, _archives[_archiveIndex].names[nameIndex].c_str());
+			sym = g_lingo->define(_archives[_archiveIndex].names[nameIndex], argCount, _currentScript);
 		} else {
 			warning("Function has unknown name id %d, skipping define", nameIndex);
 			sym = new Symbol;
@@ -1095,6 +1095,7 @@ void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType ty
 		sym->argNames = argNames;
 		sym->varNames = varNames;
 		sym->ctx = _currentScriptContext;
+		sym->archiveIndex = _archiveIndex;
 		_currentScriptContext->functions.push_back(sym);
 
 	}
@@ -1135,7 +1136,7 @@ void Lingo::addNamesV4(Common::SeekableSubReadStreamEndian &stream) {
 
 	stream.seek(offset);
 
-	_namelist.clear();
+	_archives[_archiveIndex].names.clear();
 
 	Common::Array<Common::String> names;
 	for (uint32 i = 0; i < count; i++) {
@@ -1144,7 +1145,7 @@ void Lingo::addNamesV4(Common::SeekableSubReadStreamEndian &stream) {
 		for (uint8 j = 0; j < size; j++) {
 			name += stream.readByte();
 		}
-		_namelist.push_back(name);
+		_archives[_archiveIndex].names.push_back(name);
 		debugC(5, kDebugLoading, "%d: \"%s\"", i, name.c_str());
 	}
 

@@ -88,6 +88,7 @@ struct Symbol {	/* symbol table entry */
 	Common::Array<Common::String> *argNames;
 	Common::Array<Common::String> *varNames;
 	ScriptContext *ctx;		/* optional script context to execute with */
+	int archiveIndex; 		/* optional archive to execute with */
 
 	Symbol();
 };
@@ -140,8 +141,16 @@ struct CFrame {	/* proc/func call stack frame */
 	int		retpc;	/* where to resume after return */
 	ScriptData	*retscript;	 /* which script to resume after return */
 	ScriptContext	*retctx;   /* which script context to use after return */
+	int 	retarchive;	/* which archive to use after return */
 	SymbolHash *localvars;
 };
+
+
+struct LingoArchive {
+	ScriptContextHash scriptContexts[kMaxScriptType + 1];
+	Common::Array<Common::String> names;
+};
+
 
 class Lingo {
 
@@ -182,9 +191,10 @@ private:
 	void runMovieScript(LEvent event);
 	void processSpriteEvent(LEvent event);
 	void processEvent(LEvent event, ScriptType st, int entityId);
-	ScriptContext *getScriptContext(ScriptType type, uint16 id);
 
 public:
+	ScriptContext *getScriptContext(ScriptType type, uint16 id);
+	Common::String getName(uint16 id);
 	ScriptType event2script(LEvent ev);
 	Symbol *getHandler(Common::String &name);
 
@@ -304,7 +314,6 @@ public:
 	int _objectEntityId;
 
 	Common::Array<int> _labelstack;
-	Common::Array<Common::String> _namelist;
 
 	SymbolHash _builtins;
 	Common::HashMap<Common::String, bool> _twoWordBuiltins;
@@ -341,8 +350,6 @@ public:
 	Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _eventHandlerTypeIds;
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
 
-	ScriptContextHash _scriptContexts[kMaxScriptType + 1];
-
 	SymbolHash _globalvars;
 	SymbolHash *_localvars;
 
@@ -350,6 +357,9 @@ public:
 
 	Common::HashMap<int, LingoV4Bytecode *> _lingoV4;
 	Common::HashMap<int, LingoV4TheEntity *> _lingoV4TheEntity;
+
+	LingoArchive _archives[2];
+	int _archiveIndex;
 
 	uint _pc;
 

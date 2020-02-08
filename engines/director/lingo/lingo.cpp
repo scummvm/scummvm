@@ -75,6 +75,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_dontPassEvent = false;
 
+	_archiveIndex = 0;
+
 	initEventHandlerTypes();
 
 	initBuiltIns();
@@ -89,13 +91,23 @@ Lingo::~Lingo() {
 }
 
 ScriptContext *Lingo::getScriptContext(ScriptType type, uint16 id) {
-	if (type >= (int)_scriptContexts->size()) {
+	if (type >= (int)_archives[_archiveIndex].scriptContexts->size()) {
 		return NULL;
 	}
-	if (!_scriptContexts[type].contains(id)) {
+	if (!_archives[_archiveIndex].scriptContexts[type].contains(id)) {
 		return NULL;
 	}
-	return _scriptContexts[type][id];
+	return _archives[_archiveIndex].scriptContexts[type][id];
+}
+
+Common::String Lingo::getName(uint16 id) {
+	Common::String result;
+	if (id >= _archives[_archiveIndex].names.size()) {
+		warning("Name id %d not in list", id);
+		return result;
+	}
+	result = _archives[_archiveIndex].names[id];
+	return result;
 }
 
 const char *Lingo::findNextDefinition(const char *s) {
@@ -149,7 +161,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	_currentScriptContext = new ScriptContext;
 	_currentScriptType = type;
 	_currentEntityId = id;
-	_scriptContexts[type][id] = _currentScriptContext;
+	_archives[_archiveIndex].scriptContexts[type][id] = _currentScriptContext;
 
 	// FIXME: unpack into seperate functions
 	_currentScriptFunction = 0;
@@ -272,14 +284,14 @@ void Lingo::restartLingo() {
 	warning("STUB: restartLingo()");
 
 	for (int i = 0; i <= kMaxScriptType; i++) {
-		for (ScriptContextHash::iterator it = _scriptContexts[i].begin(); it != _scriptContexts[i].end(); ++it) {
+		for (ScriptContextHash::iterator it = _archives[_archiveIndex].scriptContexts[i].begin(); it != _archives[_archiveIndex].scriptContexts[i].end(); ++it) {
 			for (size_t j = 0; j < it->_value->functions.size(); j++) {
 				delete it->_value->functions[j];
 			}
 			delete it->_value;
 		}
 
-		_scriptContexts[i].clear();
+		_archives[_archiveIndex].scriptContexts[i].clear();
 	}
 
 	// TODO

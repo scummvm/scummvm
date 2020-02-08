@@ -270,7 +270,7 @@ void LC::c_symbolpush() {
 void LC::c_namepush() {
 	Datum d;
 	int i = g_lingo->readInt();
-	g_lingo->push(Datum(new Common::String(g_lingo->_namelist[i])));
+	g_lingo->push(Datum(new Common::String(g_lingo->getName(i))));
 }
 
 void LC::c_argcpush() {
@@ -1310,6 +1310,7 @@ void LC::call(Symbol *sym, int nargs) {
 	fp->retpc = g_lingo->_pc;
 	fp->retscript = g_lingo->_currentScript;
 	fp->retctx = g_lingo->_currentScriptContext;
+	fp->retarchive = g_lingo->_archiveIndex;
 	fp->localvars = g_lingo->_localvars;
 
 	// Create new set of local variables
@@ -1356,6 +1357,9 @@ void LC::call(Symbol *sym, int nargs) {
 	if (sym->ctx) {
 		g_lingo->_currentScriptContext = sym->ctx;
 	}
+	if (sym->archiveIndex) {
+		g_lingo->_archiveIndex = sym->archiveIndex;
+	}
 
 	g_lingo->execute(0);
 
@@ -1376,6 +1380,7 @@ void LC::c_procret() {
 
 	g_lingo->_currentScript = fp->retscript;
 	g_lingo->_currentScriptContext = fp->retctx;
+	g_lingo->_archiveIndex = fp->retarchive;
 	g_lingo->_pc = fp->retpc;
 
 	g_lingo->cleanLocalVars();
