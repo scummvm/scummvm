@@ -71,6 +71,18 @@ static const DragonsGameDescription gameDescriptions[] = {
 			},
 			kGameIdDragons
 	},
+	{
+			{
+					"dragons",
+					0,
+					AD_ENTRY1s("bigfile.dat", "9854fed0d2b48522a62973e99b52a0be", 45107200),
+					Common::FR_FRA,
+					Common::kPlatformPSX,
+					ADGF_DROPPLATFORM,
+					GUIO0()
+			},
+			kGameIdDragons
+	},
 
 	{ AD_TABLE_END_MARKER, 0 }
 };

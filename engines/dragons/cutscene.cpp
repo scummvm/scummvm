@@ -646,7 +646,7 @@ void CutScene::loadPalettes() {
 	if (!fd.open("dragon.exe")) {
 		error("Failed to open dragon.exe");
 	}
-	fd.seek(0x5336c); //TODO handle other game variants
+	fd.seek(_vm->getCutscenePaletteOffsetFromDragonEXE());
 
 	_palettes = (byte *)malloc(256 * 2 * 4);
 	fd.read(_palettes, 256 * 2 * 4);
