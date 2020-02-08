@@ -42,7 +42,9 @@ enum HardwareInputType {
 	/** Mouse input that sends -up and -down events */
 	kHardwareInputTypeMouse,
 	/** Joystick input that sends -up and -down events */
-	kHardwareInputTypeJoystick,
+	kHardwareInputTypeJoystickButton,
+	/** Joystick input that sends "analog" values */
+	kHardwareInputTypeJoystickHalfAxis,
 	/** Input that sends single events */
 	kHardwareInputTypeCustom
 };
@@ -91,13 +93,16 @@ struct HardwareInput {
 		return hardwareInput;
 	}
 
-	static HardwareInput createJoystick(const String &i, uint8 button, const String &desc) {
-		return createSimple(kHardwareInputTypeJoystick, i, button, desc);
+	static HardwareInput createJoystickButton(const String &i, uint8 button, const String &desc) {
+		return createSimple(kHardwareInputTypeJoystickButton, i, button, desc);
+	}
+
+	static HardwareInput createJoystickHalfAxis(const String &i, uint8 axis, bool positiveHalf, const String &desc) {
+		return createSimple(kHardwareInputTypeJoystickHalfAxis, i, axis * 2 + (positiveHalf ? 1 : 0), desc);
 	}
 
 	static HardwareInput createMouse(const String &i, uint8 button, const String &desc) {
 		return createSimple(kHardwareInputTypeMouse, i, button, desc);
-
 	}
 
 private:
@@ -155,6 +160,39 @@ struct ModifierTableEntry {
 	const char *id;
 	const char *desc;
 };
+
+enum AxisType {
+	/** An axis that sends "analog" values from JOYAXIS_MIN to JOYAXIS_MAX. e.g. a gamepad stick axis */
+	kAxisTypeFull,
+	/** An axis that sends "analog" values from 0 to JOYAXIS_MAX. e.g. a gamepad trigger */
+	kAxisTypeHalf
+};
+
+struct AxisTableEntry {
+	const char *hwId;
+	HardwareInputCode code;
+	AxisType type;
+	const char *desc;
+
+	static const AxisTableEntry *findWithCode(const AxisTableEntry *_entries, HardwareInputCode code) {
+		for (const AxisTableEntry *hw = _entries;  hw->hwId; hw++) {
+			if (hw->code == code) {
+				return hw;
+			}
+		}
+		return nullptr;
+	}
+
+	static const AxisTableEntry *findWithId(const AxisTableEntry *_entries, const String &id) {
+		for (const AxisTableEntry *hw = _entries;  hw->hwId; hw++) {
+			if (id.equals(hw->hwId)) {
+				return hw;
+			}
+		}
+		return nullptr;
+	}
+};
+
 
 /**
  * Interface for querying information about a hardware input device
@@ -223,7 +261,7 @@ private:
  */
 class JoystickHardwareInputSet : public HardwareInputSet {
 public:
-	JoystickHardwareInputSet(const HardwareInputTableEntry *buttonEntries);
+	JoystickHardwareInputSet(const HardwareInputTableEntry *buttonEntries, const AxisTableEntry *axisEntries);
 
 	// HardwareInputSet API
 	HardwareInput findHardwareInput(const String &id) const override;
@@ -231,6 +269,7 @@ public:
 
 private:
 	const HardwareInputTableEntry *_buttonEntries;
+	const AxisTableEntry *_axisEntries;
 };
 
 /**
@@ -283,6 +322,9 @@ extern const HardwareInputTableEntry defaultMouseButtons[];
 
 /** A standard set of joystick buttons based on the ScummVM event model */
 extern const HardwareInputTableEntry defaultJoystickButtons[];
+
+/** A standard set of joystick axes based on the ScummVM event model */
+extern const AxisTableEntry defaultJoystickAxes[];
 
 } // End of namespace Common
 

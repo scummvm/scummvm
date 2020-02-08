@@ -134,9 +134,15 @@ private:
 	DelayedEventSource *_delayedEventSource;
 
 	enum IncomingEventType {
+		kIncomingEventIgnored,
 		kIncomingEventStart,
 		kIncomingEventEnd,
 		kIncomingEventInstant
+	};
+
+	enum {
+		kJoyAxisPressedTreshold   = Common::JOYAXIS_MAX / 2,
+		kJoyAxisUnpressedTreshold = Common::JOYAXIS_MAX / 4
 	};
 
 	bool _enabled;
@@ -144,12 +150,15 @@ private:
 
 	KeymapArray _keymaps;
 
+	bool _joystickAxisPreviouslyPressed[6];
+
 	Event executeAction(const Action *act, const Event &incomingEvent);
 	EventType convertStartToEnd(EventType eventType);
 	IncomingEventType convertToIncomingEventType(const Event &ev) const;
 	static bool isMouseEvent(const Event &event);
 
 	void hardcodedEventMapping(Event ev);
+	void resetInputState();
 };
 
 class DelayedEventSource : public EventSource {

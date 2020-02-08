@@ -42,6 +42,7 @@ Keymapper::Keymapper(EventManager *eventMan) :
 		_enabled(true),
 		_enabledKeymapType(Keymap::kKeymapTypeGlobal) {
 	_eventMan->getEventDispatcher()->registerSource(_delayedEventSource, true);
+	resetInputState();
 }
 
 Keymapper::~Keymapper() {
@@ -168,6 +169,9 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 		const Keymap::ActionArray &actions = _keymaps[i]->getMappedActions(ev);
 		for (Keymap::ActionArray::const_iterator it = actions.begin(); it != actions.end(); it++) {
 			Event mappedEvent = executeAction(*it, ev);
+			if (mappedEvent.type == EVENT_INVALID) {
+				continue;
+			}
 
 			// In case we mapped a mouse event to something else, we need to generate an artificial
 			// mouse move event so event observers can keep track of the mouse position.
@@ -190,6 +194,14 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 		}
 	}
 
+	if (ev.type == EVENT_JOYAXIS_MOTION && ev.joystick.axis < ARRAYSIZE(_joystickAxisPreviouslyPressed)) {
+		if (ABS<int32>(ev.joystick.position) >= kJoyAxisPressedTreshold) {
+			_joystickAxisPreviouslyPressed[ev.joystick.axis] = true;
+		} else if (ABS<int32>(ev.joystick.position) < kJoyAxisUnpressedTreshold) {
+			_joystickAxisPreviouslyPressed[ev.joystick.axis] = false;
+		}
+	}
+
 	// Ignore keyboard repeat events. Repeat event are meant for text input,
 	// the keymapper / keymaps are supposed to be disabled during text input.
 	// TODO: Add a way to keep repeat events if needed.
@@ -208,6 +220,18 @@ List<Event> Keymapper::mapEvent(const Event &ev) {
 Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &ev) const {
 	if (ev.type == EVENT_CUSTOM_BACKEND_HARDWARE) {
 		return kIncomingEventInstant;
+	} else if (ev.type == EVENT_JOYAXIS_MOTION) {
+		if (ev.joystick.axis >= ARRAYSIZE(_joystickAxisPreviouslyPressed)) {
+			return kIncomingEventIgnored;
+		}
+
+		if (!_joystickAxisPreviouslyPressed[ev.joystick.axis] && ABS<int32>(ev.joystick.position) >= kJoyAxisPressedTreshold) {
+			return kIncomingEventStart;
+		} else if (_joystickAxisPreviouslyPressed[ev.joystick.axis] && ABS<int32>(ev.joystick.position) < kJoyAxisUnpressedTreshold) {
+			return kIncomingEventEnd;
+		} else {
+			return kIncomingEventIgnored;
+		}
 	} else if (ev.type == EVENT_KEYDOWN
 	           || ev.type == EVENT_LBUTTONDOWN
 	           || ev.type == EVENT_RBUTTONDOWN
@@ -230,8 +254,14 @@ bool Keymapper::isMouseEvent(const Event &event) {
 }
 
 Event Keymapper::executeAction(const Action *action, const Event &incomingEvent) {
-	IncomingEventType incomingType = convertToIncomingEventType(incomingEvent);
 	Event outgoingEvent = Event(action->event);
+
+	IncomingEventType incomingType = convertToIncomingEventType(incomingEvent);
+	if (incomingType == kIncomingEventIgnored) {
+		outgoingEvent.type = EVENT_INVALID;
+		return outgoingEvent;
+	}
+
 	EventType convertedType = convertStartToEnd(outgoingEvent.type);
 
 	// hardware keys need to send up instead when they are up
@@ -323,6 +353,12 @@ void Keymapper::hardcodedEventMapping(Event ev) {
 		}
 	}
 #endif
+}
+
+void Keymapper::resetInputState() {
+	for (uint i = 0; i < ARRAYSIZE(_joystickAxisPreviouslyPressed); i++) {
+		_joystickAxisPreviouslyPressed[i] = false;
+	}
 }
 
 void DelayedEventSource::scheduleEvent(const Event &ev, uint32 delayMillis) {

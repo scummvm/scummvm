@@ -117,7 +117,7 @@ struct JoystickState {
 };
 
 /**
- *  The list named buttons available from a joystick
+ *  The list of named buttons available from a joystick
  */
 enum JoystickButton {
 	JOYSTICK_BUTTON_A,
@@ -131,12 +131,22 @@ enum JoystickButton {
 	JOYSTICK_BUTTON_RIGHT_STICK,
 	JOYSTICK_BUTTON_LEFT_SHOULDER,
 	JOYSTICK_BUTTON_RIGHT_SHOULDER,
-	JOYSTICK_BUTTON_LEFT_TRIGGER,
-	JOYSTICK_BUTTON_RIGHT_TRIGGER,
 	JOYSTICK_BUTTON_DPAD_UP,
 	JOYSTICK_BUTTON_DPAD_DOWN,
 	JOYSTICK_BUTTON_DPAD_LEFT,
 	JOYSTICK_BUTTON_DPAD_RIGHT
+};
+
+/**
+ *  The list of named axes available from a joystick
+ */
+enum JoystickAxis {
+	JOYSTICK_AXIS_LEFT_STICK_X,
+	JOYSTICK_AXIS_LEFT_STICK_Y,
+	JOYSTICK_AXIS_RIGHT_STICK_X,
+	JOYSTICK_AXIS_RIGHT_STICK_Y,
+	JOYSTICK_AXIS_LEFT_TRIGGER,
+	JOYSTICK_AXIS_RIGHT_TRIGGER
 };
 
 /**

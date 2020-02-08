@@ -66,6 +66,7 @@ bool InputWatcher::notifyEvent(const Event &event) {
 			return true;
 		case EVENT_KEYUP:
 		case EVENT_JOYBUTTON_UP:
+		case EVENT_JOYAXIS_MOTION:
 		case EVENT_LBUTTONUP:
 		case EVENT_RBUTTONUP:
 		case EVENT_MBUTTONUP:

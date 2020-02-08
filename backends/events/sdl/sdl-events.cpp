@@ -89,7 +89,7 @@ void SdlEventSource::loadGameControllerMappingFile() {
 SdlEventSource::SdlEventSource()
     : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0), _queuedFakeMouseMove(false), _lastHatPosition(SDL_HAT_CENTERED)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-      , _queuedFakeKeyUp(false), _fakeKeyUp(), _controller(nullptr), _leftTriggerDown(false), _rightTriggerDown(false)
+      , _queuedFakeKeyUp(false), _fakeKeyUp(), _controller(nullptr)
 #endif
       {
 	// Reset mouse state
@@ -913,16 +913,8 @@ bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 }
 
 bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
-	// TODO: move handleAxisToMouseMotion to Common?
-#if 0
-	if (!shouldGenerateMouseEvents()) {
-		event.type = Common::EVENT_JOYAXIS_MOTION;
-		event.joystick.axis = ev.jaxis.axis;
-		event.joystick.position = ev.jaxis.value;
-		return true;
-	}
-#endif
 
+	// TODO: Move hardcoded axis to mouse motion code to the keymapper
 	if (ev.jaxis.axis == JOY_XAXIS) {
 		_km.joy_x = ev.jaxis.value;
 		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
@@ -931,7 +923,11 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
 	}
 
-	return false;
+	event.type = Common::EVENT_JOYAXIS_MOTION;
+	event.joystick.axis = ev.jaxis.axis;
+	event.joystick.position = ev.jaxis.value;
+
+	return true;
 }
 
 #define HANDLE_HAT_UP(new, old, mask, joybutton) \
@@ -1046,16 +1042,8 @@ bool SdlEventSource::handleControllerButton(const SDL_Event &ev, Common::Event &
 }
 
 bool SdlEventSource::handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event) {
-	// TODO: move handleAxisToMouseMotion to Common?
-#if 0
-	if (!shouldGenerateMouseEvents()) {
-		event.type = Common::EVENT_JOYAXIS_MOTION;
-		event.joystick.axis = ev.caxis.axis;
-		event.joystick.position = ev.caxis.value;
-		return true;
-	}
-#endif
 
+	// TODO: Move hardcoded axis to mouse motion code to the keymapper
 	if (ev.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX) {
 		_km.joy_x = ev.caxis.value;
 		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
@@ -1064,49 +1052,11 @@ bool SdlEventSource::handleControllerAxisMotion(const SDL_Event &ev, Common::Eve
 		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
 	}
 
-	// Left trigger is treated as axis in SDL
-	if (ev.caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERLEFT) {
-		if (ev.caxis.value < 8192) { // 25% pressed
-			if (_leftTriggerDown) {
-				_leftTriggerDown = false;
-				event.type = Common::EVENT_JOYBUTTON_UP;
-				event.joystick.button = Common::JOYSTICK_BUTTON_LEFT_TRIGGER;
-				return true;
-			} else
-				return false;
-		} else if (ev.caxis.value > 16384) { // 50% pressed
-			if (!_leftTriggerDown) {
-				_leftTriggerDown = true;
-				event.type = Common::EVENT_JOYBUTTON_DOWN;
-				event.joystick.button = Common::JOYSTICK_BUTTON_LEFT_TRIGGER;
-				return true;
-			} else
-				return false;
-		}
-	}
+	event.type = Common::EVENT_JOYAXIS_MOTION;
+	event.joystick.axis = ev.caxis.axis;
+	event.joystick.position = ev.caxis.value;
 
-	// Right trigger is treated as axis in SDL
-	if (ev.caxis.axis == SDL_CONTROLLER_AXIS_TRIGGERRIGHT) {
-		if (ev.caxis.value < 8192) { // 25% pressed
-			if (_rightTriggerDown) {
-				_rightTriggerDown = false;
-				event.type = Common::EVENT_JOYBUTTON_UP;
-				event.joystick.button = Common::JOYSTICK_BUTTON_RIGHT_TRIGGER;
-				return true;
-			} else
-				return false;
-		} else if (ev.caxis.value > 16384) { // 50% pressed
-			if (!_rightTriggerDown) {
-				_rightTriggerDown = true;
-				event.type = Common::EVENT_JOYBUTTON_DOWN;
-				event.joystick.button = Common::JOYSTICK_BUTTON_RIGHT_TRIGGER;
-				return true;
-			} else
-				return false;
-		}
-	}
-
-	return false;
+	return true;
 }
 #endif
 
