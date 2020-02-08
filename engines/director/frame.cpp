@@ -37,13 +37,15 @@
 
 namespace Director {
 
-Frame::Frame(DirectorEngine *vm) {
+Frame::Frame(DirectorEngine *vm, int numChannels) {
 	_vm = vm;
 	_transDuration = 0;
 	_transType = kTransNone;
 	_transArea = 0;
 	_transChunkSize = 0;
 	_tempo = 0;
+
+	_numChannels = numChannels;
 
 	_sound1 = 0;
 	_sound2 = 0;
@@ -56,7 +58,7 @@ Frame::Frame(DirectorEngine *vm) {
 
 	_palette = NULL;
 
-	_sprites.resize(CHANNEL_COUNT + 1);
+	_sprites.resize(_numChannels + 1);
 
 	for (uint16 i = 0; i < _sprites.size(); i++) {
 		Sprite *sp = new Sprite();
@@ -66,6 +68,7 @@ Frame::Frame(DirectorEngine *vm) {
 
 Frame::Frame(const Frame &frame) {
 	_vm = frame._vm;
+	_numChannels = frame._numChannels;
 	_actionId = frame._actionId;
 	_transArea = frame._transArea;
 	_transDuration = frame._transDuration;
@@ -82,9 +85,9 @@ Frame::Frame(const Frame &frame) {
 
 	debugC(1, kDebugLoading, "Frame. action: %d transType: %d transDuration: %d", _actionId, _transType, _transDuration);
 
-	_sprites.resize(CHANNEL_COUNT + 1);
+	_sprites.resize(_numChannels + 1);
 
-	for (uint16 i = 0; i < CHANNEL_COUNT + 1; i++) {
+	for (uint16 i = 0; i < _numChannels + 1; i++) {
 		_sprites[i] = new Sprite(*frame._sprites[i]);
 	}
 }
@@ -190,7 +193,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		}
 	}
 
-	for (int i = 0; i < CHANNEL_COUNT; i++) {
+	for (int i = 0; i < _numChannels; i++) {
 		Sprite &sprite = *_sprites[i + 1];
 
 		if (_vm->getVersion() <= 4) {
@@ -578,7 +581,7 @@ void Frame::playTransition(Score *score) {
 }
 
 void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
-	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
+	for (uint16 i = 0; i < _numChannels; i++) {
 		if (_sprites[i]->_enabled) {
 			if ((_sprites[i]->_trails == 0 && renderTrail) || (_sprites[i]->_trails == 1 && !renderTrail))
 				continue;

@@ -100,6 +100,8 @@ Score::Score(DirectorEngine *vm) {
 
 	_loadedStxts = nullptr;
 	_loadedCast = nullptr;
+
+	_numChannelsDisplayed = 0;
 }
 
 void Score::setArchive(Archive *archive) {
@@ -414,22 +416,23 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 	uint32 size = stream.readUint32();
 	size -= 4;
 
-	if (_vm->getVersion() == 4) {
+	if (_vm->getVersion() < 4) {
+		_numChannelsDisplayed = 30;
+	} else if (_vm->getVersion() == 4) {
 		uint32 frame1Offset = stream.readUint32();
 		uint32 numFrames = stream.readUint32();
 		uint16 version = stream.readUint16();
 		uint16 spriteRecordSize = stream.readUint16();
 		uint16 numChannels = stream.readUint16();
-		uint16 numChannelsDisplayed;
 		size -= 14;
 
 		if (version > 13) {
-			numChannelsDisplayed = stream.readUint16();
+			_numChannelsDisplayed = stream.readUint16();
 		} else {
 			if (version <= 7)	// Director5
-				numChannelsDisplayed = 28;
+				_numChannelsDisplayed = 48;
 			else
-				numChannelsDisplayed = 120;	// D6
+				_numChannelsDisplayed = 120;	// D6
 
 			stream.readUint16(); // Skip
 		}
@@ -437,7 +440,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		size -= 2;
 
 		warning("STUB: Score::loadFrames. frame1Offset: %x numFrames: %x version: %x spriteRecordSize: %x numChannels: %x numChannelsDisplayed: %x",
-			frame1Offset, numFrames, version, spriteRecordSize, numChannels, numChannelsDisplayed);
+			frame1Offset, numFrames, version, spriteRecordSize, numChannels, _numChannelsDisplayed);
 		// Unknown, some bytes - constant (refer to contuinity).
 	} else if (_vm->getVersion() > 4) {
 		//what data is up the top of D5 VWSC?
@@ -476,7 +479,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 channelSize;
 	uint16 channelOffset;
 
-	Frame *initial = new Frame(_vm);
+	Frame *initial = new Frame(_vm, _numChannelsDisplayed);
 	// Push a frame at frame#0 position.
 	// This makes all indexing simpler
 	_frames.push_back(initial);
@@ -493,7 +496,7 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 		debugC(kDebugLoading, 8, "++++++++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
 
 		if (frameSize > 0) {
-			Frame *frame = new Frame(_vm);
+			Frame *frame = new Frame(_vm, _numChannelsDisplayed);
 			size -= frameSize;
 			frameSize -= 2;
 

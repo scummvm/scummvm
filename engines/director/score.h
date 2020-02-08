@@ -147,6 +147,8 @@ public:
 
 	uint16 _castIDoffset;
 
+	int _numChannelsDisplayed;
+
 private:
 	uint16 _versionMinor;
 	uint16 _versionMajor;

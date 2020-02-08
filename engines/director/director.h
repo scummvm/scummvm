@@ -31,8 +31,6 @@
 #include "engines/engine.h"
 #include "director/types.h"
 
-#define CHANNEL_COUNT 30
-
 namespace Common {
 class MacResManager;
 class SeekableReadStream;

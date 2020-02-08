@@ -63,7 +63,7 @@ struct FrameEntity {
 
 class Frame {
 public:
-	Frame(DirectorEngine *vm);
+	Frame(DirectorEngine *vm, int numChannels);
 	Frame(const Frame &frame);
 	~Frame();
 	void readChannels(Common::ReadStreamEndian *stream);
@@ -95,6 +95,7 @@ private:
 	void addDrawRect(uint16 entityId, Common::Rect &rect);
 
 public:
+	int _numChannels;
 	byte _channelData[kChannelDataSize];
 	uint8 _actionId;
 	uint8 _transDuration;
