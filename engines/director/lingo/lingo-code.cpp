@@ -665,15 +665,15 @@ void LC::c_within() {
 }
 
 void LC::c_of() {
-	Datum first_char = g_lingo->pop();
-	Datum last_char = g_lingo->pop();
-	Datum first_word = g_lingo->pop();
-	Datum last_word = g_lingo->pop();
-	Datum first_item = g_lingo->pop();
-	Datum last_item = g_lingo->pop();
-	Datum first_line = g_lingo->pop();
-	Datum last_line = g_lingo->pop();
 	Datum target = g_lingo->pop();
+	Datum last_line = g_lingo->pop();
+	Datum first_line = g_lingo->pop();
+	Datum last_item = g_lingo->pop();
+	Datum first_item = g_lingo->pop();
+	Datum last_word = g_lingo->pop();
+	Datum first_word = g_lingo->pop();
+	Datum last_char = g_lingo->pop();
+	Datum first_char = g_lingo->pop();
 
 	warning("STUB: c_of: %d %d %d %d %d %d %d %d %s",
 		first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
