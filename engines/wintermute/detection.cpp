@@ -25,6 +25,9 @@
 #include "engines/wintermute/game_description.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/fs.h"
@@ -210,6 +213,41 @@ public:
 		pm.getSaveStateDesc(slot, retVal);
 		return retVal;
 	}
+
+	Common::KeymapArray initKeymaps(const char *target) const {
+		using namespace Common;
+
+		Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "wintermute", "WinterMute Engine");
+
+		Action *act;
+		
+		act = new Action("LCLK", _("Left Click"));
+		act->setLeftClickEvent();
+		act->addDefaultInputMapping("MOUSE_LEFT");
+		act->addDefaultInputMapping("JOY_A");
+		engineKeyMap->addAction(act);
+
+		act = new Action("RCLK", _("Right Click"));
+		act->setRightClickEvent();
+		act->addDefaultInputMapping("MOUSE_RIGHT");
+		act->addDefaultInputMapping("JOY_B");
+		engineKeyMap->addAction(act);
+
+		act = new Action("RETURN", _("Confirm"));
+		act->setKeyEvent(KeyState(KEYCODE_RETURN, ASCII_RETURN));
+		act->addDefaultInputMapping("RETURN");
+		//TODO: Joy control? Does
+		engineKeyMap->addAction(act);
+
+		act = new Action("ESCAPE", _("Escape"));
+		act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
+		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_Y");
+		engineKeyMap->addAction(act);
+
+		return Keymap::arrayOf(engineKeyMap);
+	}
+
 };
 
 } // End of namespace Wintermute
