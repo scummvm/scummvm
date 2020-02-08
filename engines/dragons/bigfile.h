@@ -23,21 +23,40 @@
 #define DRAGONS_BIGFILE_H
 
 #include "common/file.h"
-#include "common/language.h"
 
 namespace Dragons {
 
+class DragonsEngine;
+
+#define DRAGONS_BIGFILE_TOTAL_FILES 576
+
+struct FileInfo {
+	Common::String filename;
+	uint32 offset;
+	uint32 size;
+	FileInfo() {
+		offset = 0;
+		size = 0;
+		filename = "";
+	}
+};
+
 class BigfileArchive {
 private:
-	Common::Language _language;
+	DragonsEngine *_vm;
 	Common::File *_fd;
+	FileInfo _fileInfoTbl[DRAGONS_BIGFILE_TOTAL_FILES];
 
 public:
-	BigfileArchive(const char *filename, Common::Language language);
+	BigfileArchive(DragonsEngine *vm, const char *filename);
 	virtual ~BigfileArchive();
 
 	byte *load(const char *filename, uint32 &dataSize);
 	bool doesFileExist(const char *filename);
+
+private:
+	void loadFileInfoTbl();
+	uint32 getResourceId(const char *filename);
 };
 
 } // End of namespace dragons

@@ -141,7 +141,7 @@ Font *FontManager::loadFont(uint16 index, Common::SeekableReadStream &stream) {
 	if (!fd.open("dragon.exe")) {
 		error("Failed to open dragon.exe");
 	}
-	fd.seek(0x4a144); //TODO handle other game variants
+	fd.seek(_vm->getFontOffsetFromDragonEXE());
 	fd.skip((index * 2)  * 28);
 
 //	fd->read(info.filename, 16);

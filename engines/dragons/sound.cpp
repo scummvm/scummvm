@@ -111,9 +111,9 @@ bool SoundManager::getSpeechLocation(uint32 talkId, struct SpeechLocation *locat
 	if (!fd->open("dragon.exe")) {
 		error("Failed to open dragon.exe");
 	}
-	fd->seek(0x4e138);
+	fd->seek(_vm->getSpeechTblOffsetFromDragonEXE());
 	bool foundId = false;
-	for (int i = 0; i < 2272; i++) {
+	for (int i = 0; i < 2272; i++) { //TODO check that the number of speech audio tracks is the same across game variants
 		uint32 id = (fd->readUint32LE() & 0xffffff);
 		fd->seek(-1, SEEK_CUR);
 		int8 startOffset = fd->readSByte();
