@@ -236,13 +236,21 @@ const HardwareInputTableEntry defaultJoystickButtons[] = {
     { "JOY_RIGHT_STICK",    JOYSTICK_BUTTON_RIGHT_STICK,    _s("Right Stick")    },
     { "JOY_LEFT_SHOULDER",  JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("Left Shoulder")  },
     { "JOY_RIGHT_SHOULDER", JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("Right Shoulder") },
-    { "JOY_LEFT_TRIGGER",   JOYSTICK_BUTTON_LEFT_TRIGGER,   _s("Left Trigger")  },
-    { "JOY_RIGHT_TRIGGER",  JOYSTICK_BUTTON_RIGHT_TRIGGER,  _s("Right Trigger") },
     { "JOY_UP",             JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")       },
     { "JOY_DOWN",           JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")     },
     { "JOY_LEFT",           JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")     },
     { "JOY_RIGHT",          JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right")    },
     { nullptr,              0,                              nullptr              }
+};
+
+const AxisTableEntry defaultJoystickAxes[] = {
+    { "JOY_LEFT_TRIGGER",  JOYSTICK_AXIS_LEFT_TRIGGER,  kAxisTypeHalf, _s("Left Trigger")  },
+    { "JOY_RIGHT_TRIGGER", JOYSTICK_AXIS_RIGHT_TRIGGER, kAxisTypeHalf, _s("Right Trigger") },
+    { "JOY_LEFT_STICK_X",  JOYSTICK_AXIS_LEFT_STICK_X,  kAxisTypeFull, _s("Left Stick X")  },
+    { "JOY_LEFT_STICK_Y",  JOYSTICK_AXIS_LEFT_STICK_Y,  kAxisTypeFull, _s("Left Stick Y")  },
+    { "JOY_RIGHT_STICK_X", JOYSTICK_AXIS_RIGHT_STICK_X, kAxisTypeFull, _s("Right Stick X") },
+    { "JOY_RIGHT_STICK_Y", JOYSTICK_AXIS_RIGHT_STICK_Y, kAxisTypeFull, _s("Right Stick Y") },
+    { nullptr,             0,                           kAxisTypeFull, nullptr             }
 };
 
 HardwareInputSet::~HardwareInputSet() {
@@ -384,18 +392,39 @@ HardwareInput MouseHardwareInputSet::findHardwareInput(const Event &event) const
 	return HardwareInput::createMouse(hw->hwId, hw->code, hw->desc);
 }
 
-JoystickHardwareInputSet::JoystickHardwareInputSet(const HardwareInputTableEntry *buttonEntries) :
-		_buttonEntries(buttonEntries) {
+JoystickHardwareInputSet::JoystickHardwareInputSet(const HardwareInputTableEntry *buttonEntries, const AxisTableEntry *axisEntries) :
+		_buttonEntries(buttonEntries),
+		_axisEntries(axisEntries) {
 	assert(_buttonEntries);
+	assert(_axisEntries);
 }
 
 HardwareInput JoystickHardwareInputSet::findHardwareInput(const String &id) const {
 	const HardwareInputTableEntry *hw = HardwareInputTableEntry::findWithId(_buttonEntries, id);
-	if (!hw || !hw->hwId) {
-		return HardwareInput();
+	if (hw && hw->hwId) {
+		return HardwareInput::createJoystickButton(hw->hwId, hw->code, hw->desc);
 	}
 
-	return HardwareInput::createJoystick(hw->hwId, hw->code, hw->desc);
+	bool hasHalfSuffix = id.lastChar() == '-' || id.lastChar() == '+';
+	Common::String tableId = hasHalfSuffix ? Common::String(id.c_str(), id.size() - 1) : id;
+	const AxisTableEntry *axis = AxisTableEntry::findWithId(_axisEntries, tableId);
+	if (axis && axis->hwId) {
+		if (hasHalfSuffix && axis->type == kAxisTypeHalf) {
+			return HardwareInput(); // Half axes can't be split in halves
+		} else if (!hasHalfSuffix && axis->type == kAxisTypeFull) {
+			return HardwareInput(); // For now it's only possible to bind half axes
+		}
+
+		if (axis->type == kAxisTypeHalf) {
+			return HardwareInput::createJoystickHalfAxis(axis->hwId, axis->code, true, axis->desc);
+		} else {
+			bool positiveHalf = id.lastChar() == '+';
+			Common::String desc = String::format("%s%c", axis->desc, id.lastChar());
+			return HardwareInput::createJoystickHalfAxis(id, axis->code, positiveHalf, desc);
+		}
+	}
+
+	return HardwareInput();
 }
 
 HardwareInput JoystickHardwareInputSet::findHardwareInput(const Event &event) const {
@@ -407,8 +436,29 @@ HardwareInput JoystickHardwareInputSet::findHardwareInput(const Event &event) co
 			return HardwareInput();
 		}
 
-		return HardwareInput::createJoystick(hw->hwId, hw->code, hw->desc);
+		return HardwareInput::createJoystickButton(hw->hwId, hw->code, hw->desc);
 	}
+	case EVENT_JOYAXIS_MOTION: {
+		if (ABS(event.joystick.position) < (JOYAXIS_MAX / 2)) {
+			return HardwareInput(); // Ignore incomplete presses for remapping purposes
+		}
+
+		const AxisTableEntry *hw = AxisTableEntry::findWithCode(_axisEntries, event.joystick.axis);
+		if (!hw || !hw->hwId) {
+			return HardwareInput();
+		}
+
+		if (hw->type == kAxisTypeHalf) {
+			return HardwareInput::createJoystickHalfAxis(hw->hwId, hw->code, true, hw->desc);
+		} else {
+			bool positiveHalf = event.joystick.position >= 0;
+			char halfSuffix = positiveHalf ? '+' : '-';
+			Common::String hwId = String::format("%s%c", hw->hwId, halfSuffix);
+			Common::String desc = String::format("%s%c", hw->desc, halfSuffix);
+			return HardwareInput::createJoystickHalfAxis(hwId, hw->code, positiveHalf, desc);
+		}
+	}
+
 	default:
 		return HardwareInput();
 	}

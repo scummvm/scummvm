@@ -44,7 +44,7 @@ static InputMode inputMode = MODE_DRAG;
 static InputMode savedInputMode = MODE_DRAG;
 static aptHookCookie cookie;
 
-const Common::HardwareInputTableEntry ctrJoystickButtons[] = {
+static const Common::HardwareInputTableEntry ctrJoystickButtons[] = {
     { "JOY_A",              Common::JOYSTICK_BUTTON_A,              _s("A")           },
     { "JOY_B",              Common::JOYSTICK_BUTTON_B,              _s("B")           },
     { "JOY_X",              Common::JOYSTICK_BUTTON_X,              _s("X")           },
@@ -60,6 +60,12 @@ const Common::HardwareInputTableEntry ctrJoystickButtons[] = {
     { "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")  },
     { "JOY_RIGHT",          Common::JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right") },
     { nullptr,              0,                                      nullptr           }
+};
+
+static const Common::AxisTableEntry ctrJoystickAxes[] = {
+    { "JOY_LEFT_STICK_X", Common::JOYSTICK_AXIS_LEFT_STICK_X, Common::kAxisTypeFull, _s("C-Pad X") },
+    { "JOY_LEFT_STICK_Y", Common::JOYSTICK_AXIS_LEFT_STICK_Y, Common::kAxisTypeFull, _s("C-Pad Y") },
+    { nullptr,            0,                                  Common::kAxisTypeFull, nullptr       }
 };
 
 const Common::HardwareInputTableEntry ctrMouseButtons[] = {
@@ -248,7 +254,7 @@ Common::HardwareInputSet *OSystem_3DS::getHardwareInputSet() {
 	CompositeHardwareInputSet *inputSet = new CompositeHardwareInputSet();
 	// Touch input sends mouse events for now, so we need to declare we have a mouse...
 	inputSet->addHardwareInputSet(new MouseHardwareInputSet(ctrMouseButtons));
-	inputSet->addHardwareInputSet(new JoystickHardwareInputSet(ctrJoystickButtons));
+	inputSet->addHardwareInputSet(new JoystickHardwareInputSet(ctrJoystickButtons, ctrJoystickAxes));
 
 	return inputSet;
 }

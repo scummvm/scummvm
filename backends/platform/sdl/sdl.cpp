@@ -408,7 +408,7 @@ Common::HardwareInputSet *OSystem_SDL::getHardwareInputSet() {
 
 	bool joystickSupportEnabled = ConfMan.getInt("joystick_num") >= 0;
 	if (joystickSupportEnabled) {
-		inputSet->addHardwareInputSet(new JoystickHardwareInputSet(defaultJoystickButtons));
+		inputSet->addHardwareInputSet(new JoystickHardwareInputSet(defaultJoystickButtons, defaultJoystickAxes));
 	}
 
 	return inputSet;

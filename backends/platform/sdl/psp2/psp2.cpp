@@ -48,8 +48,8 @@ static const Common::HardwareInputTableEntry psp2JoystickButtons[] = {
     { "JOY_Y",              Common::JOYSTICK_BUTTON_Y,              _s("Triangle")    },
     { "JOY_BACK",           Common::JOYSTICK_BUTTON_BACK,           _s("Select")      },
     { "JOY_START",          Common::JOYSTICK_BUTTON_START,          _s("Start")       },
-    { "JOY_LEFT_SHOULDER",  Common::JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("L")          },
-    { "JOY_RIGHT_SHOULDER", Common::JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("R")          },
+    { "JOY_LEFT_SHOULDER",  Common::JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("L")           },
+    { "JOY_RIGHT_SHOULDER", Common::JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("R")           },
     { "JOY_UP",             Common::JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")    },
     { "JOY_DOWN",           Common::JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")  },
     { "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")  },
@@ -57,6 +57,13 @@ static const Common::HardwareInputTableEntry psp2JoystickButtons[] = {
     { nullptr,              0,                                      nullptr           }
 };
 
+static const Common::AxisTableEntry psp2JoystickAxes[] = {
+    { "JOY_LEFT_STICK_X",  Common::JOYSTICK_AXIS_LEFT_STICK_X,  Common::kAxisTypeFull, _s("Left Stick X")  },
+    { "JOY_LEFT_STICK_Y",  Common::JOYSTICK_AXIS_LEFT_STICK_Y,  Common::kAxisTypeFull, _s("Left Stick Y")  },
+    { "JOY_RIGHT_STICK_X", Common::JOYSTICK_AXIS_RIGHT_STICK_X, Common::kAxisTypeFull, _s("Right Stick X") },
+    { "JOY_RIGHT_STICK_Y", Common::JOYSTICK_AXIS_RIGHT_STICK_Y, Common::kAxisTypeFull, _s("Right Stick Y") },
+    { nullptr,             0,                                   Common::kAxisTypeFull, nullptr             }
+};
 
 int access(const char *pathname, int mode) {
 	struct stat sb;
@@ -202,7 +209,7 @@ Common::HardwareInputSet *OSystem_PSP2::getHardwareInputSet() {
 	// Users may use USB / bluetooth mice and keyboards
 	inputSet->addHardwareInputSet(new MouseHardwareInputSet(defaultMouseButtons));
 	inputSet->addHardwareInputSet(new KeyboardHardwareInputSet(defaultKeys, defaultModifiers));
-	inputSet->addHardwareInputSet(new JoystickHardwareInputSet(psp2JoystickButtons));
+	inputSet->addHardwareInputSet(new JoystickHardwareInputSet(psp2JoystickButtons, psp2JoystickAxes));
 
 	return inputSet;
 }

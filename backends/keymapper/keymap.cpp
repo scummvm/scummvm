@@ -148,7 +148,12 @@ Keymap::ActionArray Keymap::getMappedActions(const Event &event) const {
 	}
 	case EVENT_JOYBUTTON_DOWN:
 	case EVENT_JOYBUTTON_UP: {
-		HardwareInput hardwareInput = HardwareInput::createJoystick("", event.joystick.button, "");
+		HardwareInput hardwareInput = HardwareInput::createJoystickButton("", event.joystick.button, "");
+		return _hwActionMap[hardwareInput];
+	}
+	case EVENT_JOYAXIS_MOTION: {
+		bool positiveHalf = event.joystick.position >= 0;
+		HardwareInput hardwareInput = HardwareInput::createJoystickHalfAxis("", event.joystick.axis, positiveHalf, "");
 		return _hwActionMap[hardwareInput];
 	}
 	case EVENT_CUSTOM_BACKEND_HARDWARE: {
