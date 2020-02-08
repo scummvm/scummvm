@@ -69,6 +69,10 @@ public:
 	}
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+
+	virtual int getAutosaveSlot() const override {
+		return 4;
+	}
 };
 
 bool Griffon::GriffonEngine::hasFeature(EngineFeature f) const {

@@ -206,6 +206,10 @@ public:
 		return Tucker::kLastSaveSlot;
 	}
 
+	virtual int getAutosaveSlot() const override {
+		return Tucker::kAutoSaveSlot;
+	}
+
 	void removeSaveState(const char *target, int slot) const override {
 		Common::String filename = Tucker::generateGameStateFileName(target, slot);
 		g_system->getSavefileManager()->removeSavefile(filename);

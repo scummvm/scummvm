@@ -501,6 +501,7 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override { return 99; }
 	void removeSaveState(const char *target, int slot) const override;
+	int getAutosaveSlot() const override { return 99; }
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 };

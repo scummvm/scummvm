@@ -287,6 +287,8 @@ SaveStateList MetaEngine::listSaves(const char *target) const {
 				parseSavegameHeader(&header, &desc);
 
 				desc.setSaveSlot(slotNum);
+				if (slotNum == getAutosaveSlot())
+					desc.setWriteProtectedFlag(true);
 
 				saveList.push_back(desc);
 			}
@@ -297,6 +299,36 @@ SaveStateList MetaEngine::listSaves(const char *target) const {
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
+
+SaveStateList MetaEngine::listSaves(const char *target, bool saveMode) const {
+	SaveStateList saveList = listSaves(target);
+	int autosaveSlot = ConfMan.getInt("autosave_period") ? getAutosaveSlot() : -1;
+	if (!saveMode || autosaveSlot == -1)
+		return saveList;
+
+	// Check to see if an autosave is present
+	for (SaveStateList::iterator it = saveList.begin(); it != saveList.end(); ++it) {
+		int slot = it->getSaveSlot();
+		if (slot == autosaveSlot) {
+			// It has an autosave
+			it->setWriteProtectedFlag(true);
+			return saveList;
+		}
+	}
+
+	// No autosave yet. We want to add a dummy one in so that it can be marked as'
+	// write protected, and thus be prevented from being saved in
+	SaveStateDescriptor desc;
+	desc.setDescription(_("Autosave"));
+	desc.setSaveSlot(autosaveSlot);
+	desc.setWriteProtectedFlag(true);
+
+	saveList.push_back(desc);
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+
+	return saveList;
+}
+
 
 void MetaEngine::removeSaveState(const char *target, int slot) const {
 	if (!hasFeature(kSavesUseExtendedFormat))
@@ -325,6 +357,8 @@ SaveStateDescriptor MetaEngine::querySaveMetaInfos(const char *target, int slot)
 
 		desc.setSaveSlot(slot);
 		desc.setThumbnail(header.thumbnail);
+		if (slot == getAutosaveSlot())
+			desc.setWriteProtectedFlag(true);
 
 		return desc;
 	}
