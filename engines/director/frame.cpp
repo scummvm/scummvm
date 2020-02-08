@@ -627,6 +627,8 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 
 			// this needs precedence to be hit first... D3 does something really tricky with cast IDs for shapes.
 			// I don't like this implementation 100% as the 'cast' above might not actually hit a member and be null?
+			debugC(1, kDebugImages, "Frame::renderSprites(): Channel: %d castType: %d", i, castType);
+
 			if (castType == kCastShape) {
 				renderShape(surface, i);
 			} else if (castType == kCastText || castType == kCastRTE) {
