@@ -294,7 +294,7 @@ Common::String OSystem_Win32::getDefaultLogFileName() {
 	char logFile[MAXPATHLEN];
 
 	// Use the Application Data directory of the user profile.
-	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, logFile) != S_OK) {
+	if (SHGetFolderPathFunc(NULL, CSIDL_LOCAL_APPDATA, NULL, SHGFP_TYPE_CURRENT, logFile) != S_OK) {
 		warning("Unable to access application data directory");
 		return Common::String();
 	}
