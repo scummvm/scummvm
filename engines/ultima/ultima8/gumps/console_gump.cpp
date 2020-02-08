@@ -34,8 +34,6 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(ConsoleGump, Gump)
 
-using Pentagram::istring;
-
 ConsoleGump::ConsoleGump()
 	: Gump() {
 	con->AddConsoleCommand("ConsoleGump::toggle",
@@ -60,7 +58,7 @@ ConsoleGump::~ConsoleGump() {
 
 void ConsoleGump::RenderSurfaceChanged() {
 	// Resize the desktop gump to match the RenderSurface
-	Pentagram::Rect new_dims;
+	Rect new_dims;
 	parent->GetDims(new_dims);
 	con->CheckResize(new_dims.w);
 	dims.w = new_dims.w;

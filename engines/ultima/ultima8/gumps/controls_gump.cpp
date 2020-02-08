@@ -49,7 +49,7 @@ public:
 	virtual void ChildNotify(Gump *child, uint32 message) override;
 	void init();
 protected:
-	Pentagram::istring bindingName;
+	istring bindingName;
 	Std::string displayedName;
 	Gump *button;
 };
@@ -80,7 +80,7 @@ void ControlEntryGump::init() {
 
 	Std::vector<const char *> controls;
 
-	Pentagram::Rect rect;
+	Rect rect;
 	button = new ButtonWidget(0, 0, displayedName, true, font, 0x80D000D0);
 	button->InitGump(this);
 	button->GetDims(rect);
@@ -136,7 +136,7 @@ void ControlsGump::InitGump(Gump *newparent, bool take_focus) {
 }
 
 void ControlsGump::addEntry(const char *binding, const char *name, int &x_, int &y_) {
-	Pentagram::Rect rect;
+	Rect rect;
 	Gump *widget = new ControlEntryGump(x_, y_, dims.w - x_, binding, name);
 	widget->InitGump(this);
 	widget->GetDims(rect);

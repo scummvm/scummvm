@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 namespace Ultima {
 namespace Ultima8 {
 
-using Pentagram::istring;
 using Std::string;
 
 ConfigFileManager *ConfigFileManager::configfilemanager = 0;
@@ -87,7 +86,7 @@ void ConfigFileManager::clear() {
 	inifiles.clear();
 }
 
-void ConfigFileManager::clearRoot(Pentagram::istring root) {
+void ConfigFileManager::clearRoot(istring root) {
 	Std::vector<INIFile *>::iterator i = inifiles.begin();
 
 	while (i != inifiles.end()) {

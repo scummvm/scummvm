@@ -24,7 +24,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 allocFunc palloc = malloc;
 deallocFunc pfree = free;
@@ -34,6 +33,5 @@ void setAllocationFunctions(allocFunc a, deallocFunc d) {
 	pfree = d;
 }
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima

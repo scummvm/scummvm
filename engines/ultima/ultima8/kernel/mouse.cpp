@@ -141,7 +141,7 @@ bool Mouse::isMouseDownEvent(Shared::MouseButton button) {
 }
 
 int Mouse::getMouseLength(int mx, int my) {
-	Pentagram::Rect dims;
+	Rect dims;
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
 
@@ -172,7 +172,7 @@ int Mouse::getMouseLength(int mx, int my) {
 }
 
 int Mouse::getMouseDirection(int mx, int my) {
-	Pentagram::Rect dims;
+	Rect dims;
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
 
@@ -254,7 +254,7 @@ int Mouse::getMouseFrame() {
 }
 
 void Mouse::setMouseCoords(int mx, int my) {
-	Pentagram::Rect dims;
+	Rect dims;
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
 

@@ -27,7 +27,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 void Palette::load(IDataSource &ds, IDataSource &xformds) {
 	load(ds);
@@ -66,6 +65,5 @@ void Palette::load(IDataSource &ds) {
 	transform = Transform_None;
 }
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima

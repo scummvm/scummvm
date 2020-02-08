@@ -26,7 +26,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 RawAudioSample::RawAudioSample(uint8 *buffer_, uint32 size_, uint32 rate_,
                                bool signeddata_, bool stereo_)
@@ -74,6 +73,5 @@ uint32 RawAudioSample::decompressFrame(void *DecompData, void *samples) const {
 	return count;
 }
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima

@@ -107,11 +107,9 @@ namespace Ultima8 {
 typedef void *(*allocFunc)(size_t size);
 typedef void (*deallocFunc)(void *ptr);
 
-namespace Pentagram {
 extern allocFunc palloc;
 extern deallocFunc pfree;
 void setAllocationFunctions(allocFunc a, deallocFunc d);
-} // End of namespace Pentagram
 
 #define ENABLE_CUSTOM_MEMORY_ALLOCATION()                           \
 	static void * operator new(size_t size);                        \
@@ -119,11 +117,11 @@ void setAllocationFunctions(allocFunc a, deallocFunc d);
 
 #define DEFINE_CUSTOM_MEMORY_ALLOCATION(Classname)                  \
 	void * Classname::operator new(size_t size) {                       \
-		return Pentagram::palloc(size);                                 \
+		return palloc(size);                                 \
 	}                                                                   \
 	\
 	void Classname::operator delete(void * ptr) {                       \
-		Pentagram::pfree(ptr);                                          \
+		pfree(ptr);                                          \
 	}
 
 //

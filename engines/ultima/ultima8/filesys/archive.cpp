@@ -34,9 +34,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(NamedArchiveFile, ArchiveFile)
-
-namespace Pentagram {
-
 DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Archive)
 
 Archive::Archive() {
@@ -138,6 +135,5 @@ ArchiveFile *Archive::findArchiveFile(uint32 index) {
 	return 0;
 }
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima

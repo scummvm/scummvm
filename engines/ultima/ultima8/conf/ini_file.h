@@ -24,12 +24,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 namespace Ultima {
 namespace Ultima8 {
 
-typedef Std::map<Pentagram::istring, Std::string, Common::IgnoreCase_Hash> KeyMap;
+typedef Std::map<istring, Std::string, Common::IgnoreCase_Hash> KeyMap;
 
 class INIFile {
 public:
 	INIFile();
-	INIFile(Std::string fname, Pentagram::istring root);
+	INIFile(Std::string fname, istring root);
 	~INIFile();
 
 	bool readConfigFile(Std::string fname);
@@ -37,7 +37,7 @@ public:
 	//! read configuration from a string s. Lines must be separated by \n
 	bool readConfigString(Std::string s);
 
-	void clear(Pentagram::istring root);
+	void clear(istring root);
 
 	Std::string dump();
 	void write();
@@ -49,56 +49,56 @@ public:
 		return readonly;
 	}
 
-	bool hasSection(Pentagram::istring section);
-	bool hasKey(Pentagram::istring key);
-	bool checkRoot(Pentagram::istring key);
+	bool hasSection(istring section);
+	bool hasKey(istring key);
+	bool checkRoot(istring key);
 
 	// get value
-	bool value(Pentagram::istring key, Std::string &ret);
-	bool value(Pentagram::istring key, int &ret);
-	bool value(Pentagram::istring key, bool &ret);
+	bool value(istring key, Std::string &ret);
+	bool value(istring key, int &ret);
+	bool value(istring key, bool &ret);
 
 	// set value
-	void set(Pentagram::istring key, Std::string value);
-	void set(Pentagram::istring key, const char *value);
-	void set(Pentagram::istring key, int value);
-	void set(Pentagram::istring key, bool value);
+	void set(istring key, Std::string value);
+	void set(istring key, const char *value);
+	void set(istring key, int value);
+	void set(istring key, bool value);
 
 	// remove key
-	void unset(Pentagram::istring key);
+	void unset(istring key);
 
-	void listKeys(Std::set<Pentagram::istring> &keys,
-	              Pentagram::istring section,
+	void listKeys(Std::set<istring> &keys,
+	              istring section,
 	              bool longformat = false);
 
-	void listSections(Std::set<Pentagram::istring> &sections,
+	void listSections(Std::set<istring> &sections,
 	                  bool longformat = false);
 
 	void listKeyValues(KeyMap &keyvalues,
-	                   Pentagram::istring section,
+	                   istring section,
 	                   bool longformat = false);
 
 private:
 	Std::string filename;
-	Pentagram::istring root;
+	istring root;
 	bool is_file;
 	bool readonly;
 
 	struct KeyValue {
-		Pentagram::istring key;
+		istring key;
 		Std::string value;
 		Std::string comment;
 	};
 
 	struct Section {
-		Pentagram::istring name;
+		istring name;
 		Std::list<KeyValue> keys;
 		Std::string comment;
 
-		bool hasKey(Pentagram::istring key);
-		KeyValue *getKey(Pentagram::istring key);
-		void setKey(Pentagram::istring key, Std::string value);
-		void unsetKey(Pentagram::istring key);
+		bool hasKey(istring key);
+		KeyValue *getKey(istring key);
+		void setKey(istring key, Std::string value);
+		void unsetKey(istring key);
 
 		Std::string dump();
 	};
@@ -106,10 +106,10 @@ private:
 	Std::list<Section> sections;
 
 
-	bool stripRoot(Pentagram::istring &key);
-	Section *getSection(Pentagram::istring section);
-	bool splitKey(Pentagram::istring key, Pentagram::istring &section,
-	              Pentagram::istring &sectionkey);
+	bool stripRoot(istring &key);
+	Section *getSection(istring section);
+	bool splitKey(istring key, istring &section,
+	              istring &sectionkey);
 
 };
 

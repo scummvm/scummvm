@@ -49,7 +49,7 @@ public:
 
 	void load(PalIndex index, IDataSource &ds, IDataSource &xformds);
 	void load(PalIndex index, IDataSource &ds);
-	Pentagram::Palette *getPalette(PalIndex index);
+	Palette *getPalette(PalIndex index);
 
 	void duplicate(PalIndex src, PalIndex dest);
 
@@ -64,7 +64,7 @@ public:
 
 	// Get a TransformMatrix from a PalTransforms value (-4.11 fixed)
 	static void getTransformMatrix(int16 matrix[12],
-	                               Pentagram::PalTransforms trans);
+	                               PalTransforms trans);
 
 	// Create a custom Transform Matrix from RGBA col32. (-4.11 fixed)
 	// Alpha will set how much of original palette to keep. 0 = keep none
@@ -80,7 +80,7 @@ public:
 	void resetTransforms();
 
 private:
-	Std::vector<Pentagram::Palette *> palettes;
+	Std::vector<Palette *> palettes;
 	RenderSurface *rendersurface;
 
 	static PaletteManager *palettemanager;

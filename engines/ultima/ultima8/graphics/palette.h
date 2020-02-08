@@ -28,8 +28,6 @@ namespace Ultima8 {
 
 class IDataSource;
 
-namespace Pentagram {
-
 enum PalTransforms {
 	// Normal untransformed palette
 	Transform_None      = 0,
@@ -89,7 +87,6 @@ struct Palette {
 	PalTransforms transform;
 };
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

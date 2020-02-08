@@ -206,7 +206,7 @@ enum HID_Key {
 };
 
 const char *HID_GetKeyName(HID_Key key);
-HID_Key HID_GetKeyFromName(Pentagram::istring &name);
+HID_Key HID_GetKeyFromName(istring &name);
 
 HID_Key HID_translateSDLKey(Common::KeyCode key);
 HID_Key HID_translateSDLMouseButton(uint8 button);
@@ -229,7 +229,7 @@ typedef uint16 HID_Events;
 
 HID_Events HID_translateSDLKeyFlags(byte flags);
 const char *HID_GetEventsName(HID_Events event);
-HID_Events HID_GetEventFromName(const Pentagram::istring &name);
+HID_Events HID_GetEventFromName(const istring &name);
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

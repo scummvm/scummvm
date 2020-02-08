@@ -36,10 +36,10 @@ public:
 	// p_dynamic_class stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	GameWidget(int X, int Y, Pentagram::istring &game);
+	GameWidget(int X, int Y, istring &game);
 	virtual ~GameWidget();
 
-	Pentagram::istring getGameName();
+	istring getGameName();
 
 	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
 

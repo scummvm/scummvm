@@ -76,7 +76,7 @@ void FontManager::resetGameFonts() {
 	overrides.clear();
 }
 
-Pentagram::Font *FontManager::getGameFont(unsigned int fontnum,
+Font *FontManager::getGameFont(unsigned int fontnum,
         bool allowOverride) {
 	if (allowOverride && fontnum < overrides.size() && overrides[fontnum])
 		return overrides[fontnum];
@@ -84,7 +84,7 @@ Pentagram::Font *FontManager::getGameFont(unsigned int fontnum,
 	return GameData::get_instance()->getFonts()->getFont(fontnum);
 }
 
-Pentagram::Font *FontManager::getTTFont(unsigned int fontnum) {
+Font *FontManager::getTTFont(unsigned int fontnum) {
 	if (fontnum >= ttfonts.size())
 		return 0;
 	return ttfonts[fontnum];
@@ -128,7 +128,7 @@ Graphics::Font *FontManager::getTTF_Font(Std::string filename, int pointsize) {
 	return font;
 }
 
-void FontManager::setOverride(unsigned int fontnum, Pentagram::Font *newFont) {
+void FontManager::setOverride(unsigned int fontnum, Font *newFont) {
 	if (fontnum >= overrides.size())
 		overrides.resize(fontnum + 1);
 
@@ -175,7 +175,7 @@ bool FontManager::addJPOverride(unsigned int fontnum,
 	PaletteManager::PalIndex fontpal = static_cast<PaletteManager::PalIndex>
 	                                   (PaletteManager::Pal_JPFontStart + fontnum);
 	palman->duplicate(PaletteManager::Pal_Game, fontpal);
-	Pentagram::Palette *pal = palman->getPalette(fontpal);
+	Palette *pal = palman->getPalette(fontpal);
 	// TODO: maybe a small gradient
 	// the main text uses index 3
 	// indices 1,2 and 3 are in use for the bullets for conversation options

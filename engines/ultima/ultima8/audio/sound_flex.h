@@ -28,11 +28,10 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
-class AudioSample;
-}
 
-class SoundFlex : protected Pentagram::Archive {
+class AudioSample;
+
+class SoundFlex : protected Archive {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -40,7 +39,7 @@ public:
 	~SoundFlex();
 
 	//! Get an audiosample
-	Pentagram::AudioSample *getSample(uint32 index) {
+	AudioSample *getSample(uint32 index) {
 		if (index >= count) return 0;
 		cache(index);
 		return samples[index];
@@ -51,7 +50,7 @@ public:
 	virtual bool isCached(uint32 index) override;
 
 private:
-	Pentagram::AudioSample      **samples;
+	AudioSample      **samples;
 };
 
 } // End of namespace Ultima8

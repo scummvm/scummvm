@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class TTFont : public Pentagram::Font {
+class TTFont : public Font {
 public:
 	TTFont(Graphics::Font *font, uint32 rgb, int bordersize,
 	       bool antiAliased, bool SJIS);

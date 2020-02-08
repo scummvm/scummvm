@@ -92,7 +92,7 @@ void BarkGump::InitGump(Gump *newparent, bool take_focus) {
 
 			// We're playing speech, so need to sync the text with the speech.
 			// First we count the total height of all text blocks.
-			Pentagram::Rect d;
+			Rect d;
 			widget->GetDims(d);
 			totaltextheight = d.h;
 			while (widget->setupNextText()) {
@@ -104,7 +104,7 @@ void BarkGump::InitGump(Gump *newparent, bool take_focus) {
 	}
 
 	// This is just a hack
-	Pentagram::Rect d;
+	Rect d;
 	widget->GetDims(d);
 	if (speechlength && totaltextheight) {
 		counter = (d.h * speechlength) / totaltextheight;
@@ -123,7 +123,7 @@ bool BarkGump::NextText() {
 	assert(widget);
 	if (widget->setupNextText()) {
 		// This is just a hack
-		Pentagram::Rect d;
+		Rect d;
 		widget->GetDims(d);
 		if (speechlength && totaltextheight) {
 			counter = (d.h * speechlength) / totaltextheight;
@@ -219,7 +219,7 @@ bool BarkGump::loadData(IDataSource *ids, uint32 version) {
 	SettingManager::get_instance()->get("textdelay", textdelay);
 
 	// This is just a hack
-	Pentagram::Rect d;
+	Rect d;
 	widget->GetDims(d);
 	counter = d.h * textdelay;
 	dims.h = d.h;

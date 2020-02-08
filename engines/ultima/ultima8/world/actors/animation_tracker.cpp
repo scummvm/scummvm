@@ -460,7 +460,7 @@ void AnimationTracker::checkWeaponHit() {
 	assert(a);
 
 
-	Pentagram::Box abox = a->getWorldBox();
+	Box abox = a->getWorldBox();
 	abox.MoveAbs(x, y, z);
 	abox.MoveRel(x_fact[dir] * 32 * range, y_fact[dir] * 32 * range, 0);
 
@@ -487,7 +487,7 @@ void AnimationTracker::checkWeaponHit() {
 		Actor *item = getActor(itemid);
 		if (!item) continue;
 
-		Pentagram::Box ibox = item->getWorldBox();
+		Box ibox = item->getWorldBox();
 
 		if (abox.Overlaps(ibox)) {
 			hit = itemid;

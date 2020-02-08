@@ -59,7 +59,7 @@ bool TreasureLoader::parse(Std::string desc,
 	treasure.clear();
 
 	Std::vector<Std::string> tr;
-	Pentagram::SplitString(desc, ';', tr);
+	SplitString(desc, ';', tr);
 
 	TreasureInfo ti;
 	for (unsigned int i = 0; i < tr.size(); ++i) {
@@ -86,7 +86,7 @@ bool TreasureLoader::internalParse(Std::string desc, TreasureInfo &ti,
 	bool loadedDefault = false;
 
 	Std::vector<Std::pair<Std::string, Std::string> > kv;
-	Pentagram::SplitStringKV(desc, ' ', kv);
+	SplitStringKV(desc, ' ', kv);
 
 	for (unsigned int i = 0; i < kv.size(); ++i) {
 		Std::string key = kv[i].first;

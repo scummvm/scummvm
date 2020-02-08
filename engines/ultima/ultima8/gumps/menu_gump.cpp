@@ -137,7 +137,7 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 			name = av->getName();
 
 		if (!name.empty()) {
-			Pentagram::Rect rect;
+			Rect rect;
 			widget = new TextWidget(0, 0, name, true, 6);
 			widget->InitGump(this, false);
 			widget->GetDims(rect);
@@ -149,7 +149,7 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 		widget->InitGump(this, false);
 		widget->Move(dims.w / 2 + 6, 10);
 
-		Pentagram::Rect textdims;
+		Rect textdims;
 		widget->GetDims(textdims);
 
 		widget = new EditWidget(0, 0, "", true, 6, 110, 40, 15); // CONSTANTS!

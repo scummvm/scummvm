@@ -66,15 +66,15 @@ public:
 	//! loads a single keybinding
 	//! \param control a key or button to bind
 	//! \param bindingName name of the HIDBinding
-	void bind(const Pentagram::istring &control, const Console::ArgvType &argv);
+	void bind(const istring &control, const Console::ArgvType &argv);
 
-	void bind(const Pentagram::istring &control, const Console::ArgsType &args);
+	void bind(const istring &control, const Console::ArgsType &args);
 	void bind(HID_Key key, HID_Events event, const Console::ArgvType &argv);
 	void bind(HID_Key key, HID_Events event, const Console::ArgsType &args);
 
 	//! removes all controls to a HIDBinding or the binding to one specified key
 	//! \param bindingName name of a HIDBinding or the name of key
-	void unbind(const Pentagram::istring &control);
+	void unbind(const istring &control);
 
 	//! "bind" console command
 	static void ConCmd_bind(const Console::ArgvType &argv);

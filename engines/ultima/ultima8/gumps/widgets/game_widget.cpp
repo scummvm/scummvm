@@ -36,7 +36,7 @@ namespace Ultima8 {
 DEFINE_RUNTIME_CLASSTYPE_CODE(GameWidget, Gump)
 
 
-GameWidget::GameWidget(int X, int Y, Pentagram::istring &game)
+GameWidget::GameWidget(int X, int Y, istring &game)
 	: Gump(X, Y, 443, 109), highlight(false) {
 	info = Ultima8Engine::get_instance()->getGameInfo(game);
 	assert(info);
@@ -46,7 +46,7 @@ GameWidget::~GameWidget() {
 
 }
 
-Pentagram::istring GameWidget::getGameName() {
+istring GameWidget::getGameName() {
 	return info->name;
 }
 void GameWidget::InitGump(Gump *newparent, bool take_focus) {
@@ -156,7 +156,7 @@ void GameWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*scaled
 
 
 #if 0
-	Pentagram::Font *font = FontManager::get_instance()->getTTFont(1);
+	Font *font = FontManager::get_instance()->getTTFont(1);
 	assert(font);
 
 	// FIXME: convert these into ButtonWidgets, localize texts,

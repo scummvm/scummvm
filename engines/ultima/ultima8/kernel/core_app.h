@@ -75,7 +75,7 @@ public:
 	}
 
 	//! Get GameInfo for other configured game, or 0 for an invalid name.
-	GameInfo *getGameInfo(Pentagram::istring game) const;
+	GameInfo *getGameInfo(istring game) const;
 
 	virtual void helpMe();
 
@@ -124,7 +124,7 @@ private:
 	//! \param game The id of the game to check (from pentagram.cfg)
 	//! \param gameinfo The GameInfo struct to fill
 	//! \return true if detected all the fields, false if detection failed
-	bool getGameInfo(Pentagram::istring &game, GameInfo *gameinfo);
+	bool getGameInfo(istring &game, GameInfo *gameinfo);
 
 	//! load configuration files
 	void loadConfig();

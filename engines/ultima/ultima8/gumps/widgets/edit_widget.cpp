@@ -55,7 +55,7 @@ EditWidget::~EditWidget(void) {
 void EditWidget::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
-	Pentagram::Font *font = getFont();
+	Font *font = getFont();
 
 	// Y offset is always baseline
 	dims.y = -font->getBaseline();
@@ -69,7 +69,7 @@ void EditWidget::InitGump(Gump *newparent, bool take_focus) {
 	}
 }
 
-Pentagram::Font *EditWidget::getFont() const {
+Font *EditWidget::getFont() const {
 	if (gamefont)
 		return FontManager::get_instance()->getGameFont(fontnum, true);
 	else
@@ -88,7 +88,7 @@ void EditWidget::ensureCursorVisible() {
 }
 
 bool EditWidget::textFits(Std::string &t) {
-	Pentagram::Font *font = getFont();
+	Font *font = getFont();
 
 	unsigned int remaining;
 	int32 width, height;
@@ -102,7 +102,7 @@ bool EditWidget::textFits(Std::string &t) {
 
 	font->getTextSize(t, width, height, remaining,
 	                  max_width, max_height,
-	                  Pentagram::Font::TEXT_LEFT, false);
+	                  Font::TEXT_LEFT, false);
 
 	if (gamefont && font->isHighRes()) {
 		int32 x_ = 0, y_ = 0;
@@ -133,7 +133,7 @@ void EditWidget::renderText() {
 	}
 
 	if (!cached_text) {
-		Pentagram::Font *font = getFont();
+		Font *font = getFont();
 
 		int32 max_width = multiline ? dims.w : 0;
 		int32 max_height = dims.h;
@@ -145,7 +145,7 @@ void EditWidget::renderText() {
 		unsigned int remaining;
 		cached_text = font->renderText(text, remaining,
 		                               max_width, max_height,
-		                               Pentagram::Font::TEXT_LEFT,
+		                               Font::TEXT_LEFT,
 		                               false, cv ? cursor : Std::string::npos);
 	}
 }
@@ -166,7 +166,7 @@ void EditWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 
 // Overloadable method to Paint just this gumps unscaled components that require compositing (RenderSurface is relative to parent).
 void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 sx, int32 sy) {
-	Pentagram::Font *font = getFont();
+	Font *font = getFont();
 
 	if (!gamefont || !font->isHighRes()) return;
 
@@ -241,7 +241,7 @@ bool EditWidget::OnTextInput(int unicode) {
 
 	char c = 0;
 	if (unicode >= 0 && unicode < 256)
-		c = Pentagram::reverse_encoding[unicode];
+		c = reverse_encoding[unicode];
 	if (!c) return true;
 
 	Std::string newtext = text;

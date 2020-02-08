@@ -72,10 +72,7 @@ class AvatarMoverProcess;
 class IDataSource;
 class ODataSource;
 struct Texture;
-
-namespace Pentagram {
 class AudioMixer;
-}
 
 class Ultima8Engine : public Shared::UltimaEngine, public CoreApp {
 private:
@@ -123,7 +120,7 @@ private:
 	bool ttfoverrides;
 
 	// Audio Mixer
-	Pentagram::AudioMixer *audiomixer;
+	AudioMixer *audiomixer;
 private:
 	uint32 save_count;
 
@@ -147,7 +144,7 @@ private:
 
 	// full system
 	Game *game;
-	Pentagram::istring change_gamename;
+	istring change_gamename;
 	Std::string error_message;
 	Std::string error_title;
 
@@ -221,7 +218,7 @@ protected:
 	 */
 	virtual bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
 public:
-	Pentagram::PointScaler point_scaler;
+	PointScaler point_scaler;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -239,11 +236,11 @@ public:
 	void startupGame();
 	void startupPentagramMenu();
 	void shutdownGame(bool reloading = true);
-	void changeGame(Pentagram::istring newgame);
+	void changeGame(istring newgame);
 
 	// When in the Pentagram Menu, load minimal amount of data for the specific game
 	// Used to enable access to the games gumps and shapes
-	void menuInitMinimal(Pentagram::istring game);
+	void menuInitMinimal(istring game);
 
 	void changeVideoMode(int width, int height, int fullscreen = -1); // -1 = no change, -2 = fullscreen toggle
 	RenderSurface *getRenderScreen() {

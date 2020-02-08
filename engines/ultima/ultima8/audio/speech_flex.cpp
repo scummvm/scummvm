@@ -35,13 +35,13 @@ SpeechFlex::SpeechFlex(IDataSource *ds) : SoundFlex(ds) {
 	uint32 size = getRawSize(0);
 	uint8 *buf = getRawObject(0);
 
-	Pentagram::istring strings(reinterpret_cast<char *>(buf), size);
-	Std::vector<Pentagram::istring> s;
-	Pentagram::SplitString(strings, 0, s);
+	istring strings(reinterpret_cast<char *>(buf), size);
+	Std::vector<istring> s;
+	SplitString(strings, 0, s);
 
 	for (unsigned int i = 0; i < s.size(); ++i) {
-		Pentagram::TabsToSpaces(s[i], 1);
-		Pentagram::TrimSpaces(s[i]);
+		TabsToSpaces(s[i], 1);
+		TrimSpaces(s[i]);
 
 //		pout << "Found string: \"" << s[i] << "\"" << Std::endl;
 
@@ -57,11 +57,11 @@ SpeechFlex::~SpeechFlex(void) {
 
 int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
                                   uint32 start, uint32 &end) const {
-	Std::vector<Pentagram::istring>::const_iterator it;
+	Std::vector<istring>::const_iterator it;
 	int i = 1;
 
 	Std::string text = phrase.substr(start);
-	Pentagram::TabsToSpaces(text, 1);
+	TabsToSpaces(text, 1);
 
 	Std::string::size_type pos1 = text.findFirstNotOf(' ');
 	if (pos1 == Std::string::npos) return 0;
@@ -96,7 +96,7 @@ uint32 SpeechFlex::getSpeechLength(const Std::string &phrase) {
 		int index = getIndexForPhrase(phrase, start, end);
 		if (!index) break;
 
-		Pentagram::AudioSample *sample = getSample(index);
+		AudioSample *sample = getSample(index);
 		if (!sample) break;
 
 		uint32 samples_ = sample->getLength();

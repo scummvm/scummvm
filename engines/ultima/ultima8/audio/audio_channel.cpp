@@ -29,7 +29,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 // We divide the data by 2, to prevent overshots. Imagine this _sample pattern:
 // 0, 65535, 65535, 0. Now you want to compute a value between the two 65535.
@@ -125,6 +124,5 @@ void AudioChannel::decompressNextFrame() {
 	(void)_sample->decompressFrame(playData, src2);
 }
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima

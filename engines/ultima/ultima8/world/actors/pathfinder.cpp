@@ -250,7 +250,7 @@ static void drawbox(Item *item) {
 
 	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
 
-	Pentagram::Rect d;
+	Rect d;
 	screen->GetSurfaceDims(d);
 
 	int32 ix, iy, iz;
@@ -290,7 +290,7 @@ static void drawdot(int32 x, int32 y, int32 z, int size, uint32 rgb) {
 
 	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
 
-	Pentagram::Rect d;
+	Rect d;
 	screen->GetSurfaceDims(d);
 	x -= cx;
 	y -= cy;
@@ -307,7 +307,7 @@ static void drawedge(PathNode *from, PathNode *to, uint32 rgb) {
 
 	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
 
-	Pentagram::Rect d;
+	Rect d;
 	screen->GetSurfaceDims(d);
 
 	int32 x0, y0, x1, y1;

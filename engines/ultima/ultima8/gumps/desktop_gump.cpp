@@ -102,7 +102,7 @@ void DesktopGump::StopDraggingChild(Gump *gump) {
 
 void DesktopGump::RenderSurfaceChanged(RenderSurface *surf) {
 	// Resize the desktop gump to match the RenderSurface
-	Pentagram::Rect new_dims;
+	Rect new_dims;
 	surf->GetSurfaceDims(new_dims);
 	dims.w = new_dims.w;
 	dims.h = new_dims.h;
@@ -112,7 +112,7 @@ void DesktopGump::RenderSurfaceChanged(RenderSurface *surf) {
 
 void DesktopGump::RenderSurfaceChanged() {
 	// Resize the desktop gump to match the parent
-	Pentagram::Rect new_dims;
+	Rect new_dims;
 	parent->GetDims(new_dims);
 	dims.w = new_dims.w;
 	dims.h = new_dims.h;

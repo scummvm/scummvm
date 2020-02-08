@@ -28,35 +28,34 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
+
 struct Rect;
-}
 
 class GumpShapeArchive : public ShapeArchive {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	GumpShapeArchive(uint16 id_, Pentagram::Palette *pal_ = 0,
+	GumpShapeArchive(uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(id_, pal_, format_) { }
-	GumpShapeArchive(ArchiveFile *af, uint16 id_, Pentagram::Palette *pal_ = 0,
+	GumpShapeArchive(ArchiveFile *af, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(af, id_, pal_, format_) { }
-	GumpShapeArchive(IDataSource *ds, uint16 id_, Pentagram::Palette *pal_ = 0,
+	GumpShapeArchive(IDataSource *ds, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(ds, id_, pal_, format_) { }
 	GumpShapeArchive(const Std::string &path, uint16 id_,
-	                 Pentagram::Palette *pal_ = 0,
+	                 Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(path, id_, pal_, format_) { }
 
 	virtual ~GumpShapeArchive();
 
 	void loadGumpage(IDataSource *ds);
-	Pentagram::Rect *getGumpItemArea(uint32 shapenum);
+	Rect *getGumpItemArea(uint32 shapenum);
 
 protected:
-	Std::vector<Pentagram::Rect *> gumpItemArea;
+	Std::vector<Rect *> gumpItemArea;
 };
 
 } // End of namespace Ultima8

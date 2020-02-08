@@ -31,7 +31,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 class SpeechFlex : public SoundFlex {
-	Std::vector<Pentagram::istring> phrases;
+	Std::vector<istring> phrases;
 
 public:
 	// p_dynamic_class stuff

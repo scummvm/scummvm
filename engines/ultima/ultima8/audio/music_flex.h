@@ -31,7 +31,7 @@ namespace Ultima8 {
 
 class XMidiFile;
 
-class MusicFlex : public Pentagram::Archive {
+class MusicFlex : public Archive {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -69,7 +69,7 @@ public:
 	virtual bool isCached(uint32 index) override;
 
 	uint8 *getRawObject(uint32 index, uint32 *sizep = 0) {
-		return Pentagram::Archive::getRawObject(index, sizep);
+		return Archive::getRawObject(index, sizep);
 	}
 
 private:

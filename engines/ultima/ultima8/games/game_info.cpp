@@ -193,7 +193,7 @@ bool GameInfo::load(IDataSource *ids, uint32 version_) {
 	Std::vector<Std::string> parts;
 
 	ids->readline(s);
-	Pentagram::SplitString(s, ',', parts);
+	SplitString(s, ',', parts);
 	if (parts.size() != 4) return false;
 
 	int i = 0;

@@ -35,17 +35,17 @@ class FontShapeArchive : public ShapeArchive {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	FontShapeArchive(uint16 id_, Pentagram::Palette *pal_ = 0,
+	FontShapeArchive(uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(id_, pal_, format_) { }
-	FontShapeArchive(ArchiveFile *af, uint16 id_, Pentagram::Palette *pal_ = 0,
+	FontShapeArchive(ArchiveFile *af, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(af, id_, pal_, format_) { }
-	FontShapeArchive(IDataSource *ds, uint16 id_, Pentagram::Palette *pal_ = 0,
+	FontShapeArchive(IDataSource *ds, uint16 id_, Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(ds, id_, pal_, format_) { }
 	FontShapeArchive(const Std::string &path, uint16 id_,
-	                 Pentagram::Palette *pal_ = 0,
+	                 Palette *pal_ = 0,
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(path, id_, pal_, format_) { }
 

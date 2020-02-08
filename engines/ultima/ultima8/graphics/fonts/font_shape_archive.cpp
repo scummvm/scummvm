@@ -73,7 +73,7 @@ void FontShapeArchive::setHVLeads() {
 		Std::string leaddesc = iter->_value;
 
 		Std::vector<Std::string> vals;
-		Pentagram::SplitString(leaddesc, ',', vals);
+		SplitString(leaddesc, ',', vals);
 		if (vals.size() != 2) {
 			perr << "Invalid hlead/vlead description: " << leaddesc
 			     << Std::endl;

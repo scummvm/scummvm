@@ -30,10 +30,8 @@ namespace Ultima {
 namespace Ultima8 {
 
 class ShapeFrame;
-namespace Pentagram {
 struct Palette;
 struct Rect;
-}
 struct ConvertShapeFormat;
 class IDataSource;
 
@@ -46,10 +44,10 @@ public:
 	      const uint16 flexId, const uint32 shapenum);
 	Shape(IDataSource *src, const ConvertShapeFormat *format);
 	virtual ~Shape();
-	void setPalette(const Pentagram::Palette *pal) {
+	void setPalette(const Palette *pal) {
 		palette = pal;
 	}
-	const Pentagram::Palette *getPalette() const {
+	const Palette *getPalette() const {
 		return palette;
 	}
 
@@ -91,7 +89,7 @@ protected:
 
 	Std::vector<ShapeFrame *> frames;
 
-	const Pentagram::Palette *palette;
+	const Palette *palette;
 
 	const uint8 *data;
 	uint32 size;

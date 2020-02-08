@@ -115,8 +115,8 @@ void HIDManager::loadBindings() {
 void HIDManager::saveBindings() {
 	uint16 key, events;
 	SettingManager *settings = SettingManager::get_instance();
-	Pentagram::istring section = "keys/";
-	Pentagram::istring confkey;
+	istring section = "keys/";
+	istring confkey;
 
 	for (Bindings::iterator it = _bindings.begin(); it != _bindings.end(); ++it) {
 		key = it->_key & 0xffff;
@@ -126,18 +126,18 @@ void HIDManager::saveBindings() {
 			HID_GetKeyName((HID_Key) key);
 
 		Console::ArgsType command;
-		Pentagram::ArgvToString(*(it->_value), command);
+		ArgvToString(*(it->_value), command);
 		settings->set(confkey, command);
 //		settings->unset(confkey);
 	}
 }
 
-void HIDManager::bind(const Pentagram::istring &control, const Console::ArgvType &argv) {
+void HIDManager::bind(const istring &control, const Console::ArgvType &argv) {
 	HID_Key key = HID_LAST;
 	HID_Events event = HID_EVENT_DEPRESS;
-	Std::vector<Pentagram::istring> ctrl_argv;
+	Std::vector<istring> ctrl_argv;
 
-	Pentagram::StringToArgv(control, ctrl_argv);
+	StringToArgv(control, ctrl_argv);
 	if (ctrl_argv.size() == 1) {
 		key = HID_GetKeyFromName(ctrl_argv[0]);
 	} else if (ctrl_argv.size() > 1) {
@@ -149,9 +149,9 @@ void HIDManager::bind(const Pentagram::istring &control, const Console::ArgvType
 	bind(key, event, argv);
 }
 
-void HIDManager::bind(const Pentagram::istring &control, const Console::ArgsType &args) {
+void HIDManager::bind(const istring &control, const Console::ArgsType &args) {
 	Console::ArgvType argv;
-	Pentagram::StringToArgv(args, argv);
+	StringToArgv(args, argv);
 	bind(control, argv);
 }
 
@@ -181,11 +181,11 @@ void HIDManager::bind(HID_Key key, HID_Events event, const Console::ArgvType &ar
 
 void HIDManager::bind(HID_Key key, HID_Events event, const Console::ArgsType &args) {
 	Console::ArgvType argv;
-	Pentagram::StringToArgv(args, argv);
+	StringToArgv(args, argv);
 	bind(key, event, argv);
 }
 
-void HIDManager::unbind(const Pentagram::istring &control) {
+void HIDManager::unbind(const istring &control) {
 	// bind to an empty control
 	Console::ArgvType command;
 	bind(control, command);
@@ -201,7 +201,7 @@ void HIDManager::ConCmd_bind(const Console::ArgvType &argv) {
 	}
 	HIDManager *hid = HIDManager::get_instance();
 
-	Pentagram::istring control(argv[1]);
+	istring control(argv[1]);
 
 	it = argv.begin();
 	++it;
@@ -219,7 +219,7 @@ void HIDManager::ConCmd_unbind(const Console::ArgvType &argv) {
 	}
 	HIDManager *hid = HIDManager::get_instance();
 
-	Pentagram::istring control(argv[1]);
+	istring control(argv[1]);
 
 	hid->unbind(control);
 }
@@ -244,7 +244,7 @@ void HIDManager::listBindings() {
 	for (Bindings::iterator it = _bindings.begin(); it != _bindings.end(); ++it) {
 		key = it->_key & 0xffff;
 		event = it->_key >> 16;
-		Pentagram::ArgvToString(*(it->_value), command);
+		ArgvToString(*(it->_value), command);
 
 		if (event == HID_EVENT_DEPRESS) {
 			pout << HID_GetKeyName((HID_Key)key) << " = " << command << Std::endl;

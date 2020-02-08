@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class ShapeFont : public Pentagram::Font, public Shape {
+class ShapeFont : public Font, public Shape {
 	int height;
 	int baseline;
 	int vlead;

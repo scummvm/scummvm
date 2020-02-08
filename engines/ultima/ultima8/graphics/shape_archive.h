@@ -31,25 +31,23 @@ namespace Ultima8 {
 
 class Shape;
 struct ConvertShapeFormat;
-namespace Pentagram {
 struct Palette;
-}
 
-class ShapeArchive : public Pentagram::Archive {
+class ShapeArchive : public Archive {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	ShapeArchive(uint16 id_, Pentagram::Palette *pal_ = 0,
+	ShapeArchive(uint16 id_, Palette *pal_ = 0,
 	             const ConvertShapeFormat *format_ = 0)
 		: Archive(), id(id_), format(format_), palette(pal_) { }
-	ShapeArchive(ArchiveFile *af, uint16 id_, Pentagram::Palette *pal_ = 0,
+	ShapeArchive(ArchiveFile *af, uint16 id_, Palette *pal_ = 0,
 	             const ConvertShapeFormat *format_ = 0)
 		: Archive(af), id(id_), format(format_), palette(pal_) { }
-	ShapeArchive(IDataSource *ds, uint16 id_, Pentagram::Palette *pal_ = 0,
+	ShapeArchive(IDataSource *ds, uint16 id_, Palette *pal_ = 0,
 	             const ConvertShapeFormat *format_ = 0)
 		: Archive(ds), id(id_), format(format_), palette(pal_) { }
 	ShapeArchive(const Std::string &path, uint16 id_,
-	             Pentagram::Palette *pal_ = 0,
+	             Palette *pal_ = 0,
 	             const ConvertShapeFormat *format_ = 0)
 		: Archive(path), id(id_), format(format_), palette(pal_) { }
 
@@ -64,7 +62,7 @@ public:
 protected:
 	uint16 id;
 	const ConvertShapeFormat *format;
-	Pentagram::Palette *palette;
+	Palette *palette;
 	Std::vector<Shape *> shapes;
 };
 

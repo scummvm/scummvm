@@ -95,7 +95,7 @@ void ScalerGump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	}
 }
 
-void ScalerGump::DoScalerBlit(Texture *src, int swidth, int sheight, RenderSurface *dest, int dwidth, int dheight, const Pentagram::Scaler *scaler) {
+void ScalerGump::DoScalerBlit(Texture *src, int swidth, int sheight, RenderSurface *dest, int dwidth, int dheight, const Scaler *scaler) {
 	bool ok = true;
 
 	// Cheap and nasty method to use a 2x scaler to do a 2.4x scale vertically
@@ -161,7 +161,7 @@ void ScalerGump::GumpToParent(int32 &gx, int32 &gy, PointRoundDir r) {
 
 void ScalerGump::RenderSurfaceChanged() {
 	// Resize the gump to match the RenderSurface
-	Pentagram::Rect new_dims;
+	Rect new_dims;
 	parent->GetDims(new_dims);
 
 	width = new_dims.w;
@@ -180,7 +180,7 @@ void ScalerGump::setupScaling() {
 	sheight1 = 200;
 	swidth2 = 0;
 	sheight2 = 0;
-	const Pentagram::Scaler *point = &Ultima8Engine::get_instance()->point_scaler;
+	const Scaler *point = &Ultima8Engine::get_instance()->point_scaler;
 	scaler1 = scaler2 = point;
 
 	if (swidth1 < 0) swidth1 = -swidth1;

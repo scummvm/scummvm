@@ -38,14 +38,14 @@ MemoryManager::MemoryManager() {
 	allocators[0] = new SegmentedAllocator(192, 8500);
 	allocators[1] = new SegmentedAllocator(4224, 25);
 
-	Pentagram::setAllocationFunctions(MemoryManager::allocate,
+	setAllocationFunctions(MemoryManager::allocate,
 	                                  MemoryManager::deallocate);
 }
 
 MemoryManager::~MemoryManager() {
 	memorymanager = 0;
 
-	Pentagram::setAllocationFunctions(malloc, free);
+	setAllocationFunctions(malloc, free);
 	delete allocators[0];
 	delete allocators[1];
 }

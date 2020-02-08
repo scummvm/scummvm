@@ -174,7 +174,7 @@ void CreditsGump::run() {
 		// scroll[nextblock]->Fill32(0xFFFFFFFF,0,0,256,5); // block marker
 		scrollheight[nextblock] = 0;
 
-		Pentagram::Font *redfont, *yellowfont;
+		Font *redfont, *yellowfont;
 
 		redfont = FontManager::get_instance()->getGameFont(6, true);
 		yellowfont = FontManager::get_instance()->getGameFont(8, true);
@@ -208,7 +208,7 @@ void CreditsGump::run() {
 
 				unsigned int remaining;
 				nexttitle = redfont->renderText(titletext, remaining, 192, 0,
-				                                Pentagram::Font::TEXT_CENTER);
+				                                Font::TEXT_CENTER);
 
 				if (!title) {
 					title = nexttitle;
@@ -222,8 +222,8 @@ void CreditsGump::run() {
 
 				int height = 0;
 
-				Pentagram::Font *font = redfont;
-				Pentagram::Font::TextAlign align = Pentagram::Font::TEXT_LEFT;
+				Font *font = redfont;
+				Font::TextAlign align = Font::TEXT_LEFT;
 				int indent = 0;
 
 				while (!line.empty()) {
@@ -237,15 +237,15 @@ void CreditsGump::run() {
 					switch (modifier) {
 					case '&':
 						font = yellowfont;
-						align = Pentagram::Font::TEXT_CENTER;
+						align = Font::TEXT_CENTER;
 						break;
 					case '}':
 						font = redfont;
-						align = Pentagram::Font::TEXT_CENTER;
+						align = Font::TEXT_CENTER;
 						break;
 					case '~':
 						font = yellowfont;
-						align = Pentagram::Font::TEXT_LEFT;
+						align = Font::TEXT_LEFT;
 						indent = 32;
 						break;
 					case '@':

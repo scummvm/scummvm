@@ -736,7 +736,7 @@ void GameMapGump::RenderSurfaceChanged() {
 	dims.y += dims.h / 2;
 
 	// Resize the desktop gump to match the parent
-	Pentagram::Rect new_dims;
+	Rect new_dims;
 	parent->GetDims(new_dims);
 	dims.w = new_dims.w;
 	dims.h = new_dims.h;

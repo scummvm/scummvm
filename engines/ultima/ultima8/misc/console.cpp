@@ -544,7 +544,7 @@ void Console::RemoveConsoleCommand(Console::Function function) {
 }
 void Console::ExecuteConsoleCommand(const Console::ArgsType &args) {
 	Console::ArgvType argv;
-	Pentagram::StringToArgv(args, argv);
+	StringToArgv(args, argv);
 
 	ExecuteConsoleCommand(argv);
 }
@@ -670,7 +670,7 @@ void Console::AddCharacterToCommandBuffer(int ch) {
 					args += '\"';
 
 					ArgvType argv;
-					Pentagram::StringToArgv(args, argv);
+					StringToArgv(args, argv);
 
 					ConCmd_CmdList(argv);
 					commandBuffer = common;

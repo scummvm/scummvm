@@ -53,8 +53,8 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 	PaletteManager *palman = PaletteManager::get_instance();
 	PaletteManager::PalIndex fontpal = static_cast<PaletteManager::PalIndex>
 	                                   (PaletteManager::Pal_JPFontStart + fontnum);
-	Pentagram::Palette *pal = palman->getPalette(fontpal);
-	const Pentagram::Palette *savepal = font->getPalette();
+	Palette *pal = palman->getPalette(fontpal);
+	const Palette *savepal = font->getPalette();
 	font->setPalette(pal);
 
 	Std::list<PositionedText>::iterator iter;
@@ -71,7 +71,7 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 				uint16 t = iter->text[++i] & 0xFF;
 				sjis += (t << 8);
 			}
-			uint16 u8char = Pentagram::shiftjis_to_ultima8(sjis);
+			uint16 u8char = shiftjis_to_ultima8(sjis);
 			surface->Paint(font, u8char, line_x, line_y);
 
 			if (i == iter->cursor) {
@@ -98,8 +98,8 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 	PaletteManager *palman = PaletteManager::get_instance();
 	PaletteManager::PalIndex fontpal = static_cast<PaletteManager::PalIndex>
 	                                   (PaletteManager::Pal_JPFontStart + fontnum);
-	Pentagram::Palette *pal = palman->getPalette(fontpal);
-	const Pentagram::Palette *savepal = font->getPalette();
+	Palette *pal = palman->getPalette(fontpal);
+	const Palette *savepal = font->getPalette();
 	font->setPalette(pal);
 
 	Std::list<PositionedText>::iterator iter;
@@ -116,7 +116,7 @@ void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
 				uint16 t = iter->text[++i] & 0xFF;
 				sjis += (t << 8);
 			}
-			uint16 u8char = Pentagram::shiftjis_to_ultima8(sjis);
+			uint16 u8char = shiftjis_to_ultima8(sjis);
 
 			surface->PaintHighlight(font, u8char, line_x, line_y,
 			                        false, false, col);

@@ -28,8 +28,6 @@ namespace Ultima8 {
 
 class IDataSource;
 
-namespace Pentagram {
-
 class AudioSample {
 protected:
 	uint32  sample_rate;
@@ -72,7 +70,6 @@ public:
 	virtual void rewind(void *DecompData) const = 0;
 };
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

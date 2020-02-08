@@ -25,7 +25,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 extern uint8 reverse_encoding[256];
 extern uint16 encoding[256];
@@ -37,7 +36,6 @@ extern uint16 encoding[256];
 uint16 shiftjis_to_ultima8(uint16 sjis);
 uint32 shiftjis_to_unicode(uint16 sjis);
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

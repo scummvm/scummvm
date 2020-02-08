@@ -60,7 +60,7 @@ TextWidget::~TextWidget(void) {
 void TextWidget::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
-	Pentagram::Font *font = getFont();
+	Font *font = getFont();
 
 	// Y offset is always baseline
 	dims.y = -font->getBaseline();
@@ -104,7 +104,7 @@ int TextWidget::getVlead() {
 	return vlead;
 }
 
-Pentagram::Font *TextWidget::getFont() const {
+Font *TextWidget::getFont() const {
 	if (gamefont)
 		return FontManager::get_instance()->getGameFont(fontnum, true);
 	else
@@ -116,7 +116,7 @@ bool TextWidget::setupNextText() {
 
 	if (current_start >= text.size()) return false;
 
-	Pentagram::Font *font = getFont();
+	Font *font = getFont();
 
 	unsigned int remaining;
 	font->getTextSize(text.substr(current_start), tx, ty, remaining,
@@ -133,7 +133,7 @@ bool TextWidget::setupNextText() {
 	cached_text = 0;
 
 	if (gamefont) {
-		Pentagram::Font *fontP = getFont();
+		Font *fontP = getFont();
 		if (fontP->isHighRes()) {
 			int32 x_ = 0, y_ = 0;
 			ScreenSpaceToGumpRect(x_, y_, dims.w, dims.h, ROUND_OUTSIDE);
@@ -156,7 +156,7 @@ void TextWidget::rewind() {
 
 void TextWidget::renderText() {
 	if (!cached_text) {
-		Pentagram::Font *font = getFont();
+		Font *font = getFont();
 
 		unsigned int remaining;
 		cached_text = font->renderText(text.substr(current_start,
@@ -185,7 +185,7 @@ void TextWidget::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 
 // Overloadable method to Paint just this gumps unscaled components that require compositing (RenderSurface is relative to parent).
 void TextWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 sx, int32 sy) {
-	Pentagram::Font *font = getFont();
+	Font *font = getFont();
 
 	if (!gamefont || !font->isHighRes()) return;
 
@@ -254,7 +254,7 @@ bool TextWidget::loadData(IDataSource *ids, uint32 version) {
 
 	// HACK ALERT: this is to deal with possibly changing font sizes
 	// after loading.
-	Pentagram::Font *font = getFont();
+	Font *font = getFont();
 
 	int32 tx_, ty_;
 	unsigned int remaining;

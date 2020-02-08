@@ -32,10 +32,7 @@ namespace Ultima8 {
 
 class RenderSurface;
 struct Texture;
-
-namespace Pentagram {
 class Scaler;
-}
 
 class ScalerGump : public DesktopGump {
 public:
@@ -67,12 +64,12 @@ public:
 protected:
 	int                     swidth1;
 	int                     sheight1;
-	const Pentagram::Scaler *scaler1;
+	const Scaler *scaler1;
 	RenderSurface           *buffer1;
 
 	int                     swidth2;
 	int                     sheight2;
-	const Pentagram::Scaler *scaler2;
+	const Scaler *scaler2;
 	RenderSurface           *buffer2;
 
 	int32                   width;
@@ -81,7 +78,7 @@ protected:
 private:
 	void setupScaling();
 
-	void DoScalerBlit(Texture *src, int swidth, int sheight, RenderSurface *dest, int dwidth, int dheight, const Pentagram::Scaler *scaler);
+	void DoScalerBlit(Texture *src, int swidth, int sheight, RenderSurface *dest, int dwidth, int dheight, const Scaler *scaler);
 };
 
 } // End of namespace Ultima8

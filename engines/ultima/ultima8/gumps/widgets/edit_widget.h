@@ -35,8 +35,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-using Pentagram::Font;
-
 class RenderedText;
 
 class EditWidget : public Gump {
@@ -84,7 +82,7 @@ protected:
 	void ensureCursorVisible();
 	bool textFits(Std::string &t);
 	void renderText();
-	Pentagram::Font *getFont() const;
+	Font *getFont() const;
 
 	RenderedText *cached_text;
 

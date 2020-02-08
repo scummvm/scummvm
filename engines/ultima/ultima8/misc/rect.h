@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 struct Rect {
 	int32       x, y;
@@ -168,7 +167,6 @@ struct Rect {
 
 };
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

@@ -250,7 +250,7 @@ public:
 	// Console Commands
 	//
 
-	typedef Pentagram::istring ArgsType;
+	typedef istring ArgsType;
 	typedef Std::vector<ArgsType> ArgvType;
 	typedef void (*Function)(const ArgvType &argv);
 

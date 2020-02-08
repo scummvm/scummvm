@@ -423,7 +423,7 @@ void Ultima8Engine::startup() {
 	hidmanager = new HIDManager();
 
 	// Audio Mixer
-	audiomixer = new Pentagram::AudioMixer(_mixer);
+	audiomixer = new AudioMixer(_mixer);
 
 	pout << "-- Pentagram Initialized -- " << Std::endl << Std::endl;
 
@@ -575,7 +575,7 @@ void Ultima8Engine::startupPentagramMenu() {
 	con->SetAutoPaint(0);
 	consoleGump->HideConsole();
 
-	Pentagram::Rect dims;
+	Rect dims;
 	desktopGump->GetDims(dims);
 
 	Gump *menugump = new PentagramMenuGump(0, 0, dims.w, dims.h);
@@ -658,7 +658,7 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 	pout << "-- Game Shutdown -- " << Std::endl;
 
 	if (reloading) {
-		Pentagram::Rect dims;
+		Rect dims;
 		screen->GetSurfaceDims(dims);
 
 		con->Print(MM_INFO, "Creating Desktop...\n");
@@ -670,7 +670,7 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 		scalerGump = new ScalerGump(0, 0, dims.w, dims.h);
 		scalerGump->InitGump(0);
 
-		Pentagram::Rect scaled_dims;
+		Rect scaled_dims;
 		scalerGump->GetDims(scaled_dims);
 
 		con->Print(MM_INFO, "Creating Graphics Console...\n");
@@ -686,11 +686,11 @@ void Ultima8Engine::shutdownGame(bool reloading) {
 	}
 }
 
-void Ultima8Engine::changeGame(Pentagram::istring newgame) {
+void Ultima8Engine::changeGame(istring newgame) {
 	change_gamename = newgame;
 }
 
-void Ultima8Engine::menuInitMinimal(Pentagram::istring gamename) {
+void Ultima8Engine::menuInitMinimal(istring gamename) {
 	// Only if in the pentagram menu
 	if (gameinfo->name != "pentagram") return;
 	GameInfo *info = getGameInfo(gamename);
@@ -839,7 +839,7 @@ void Ultima8Engine::paint() {
 	screen->BeginPainting();
 
 	// We need to get the dims
-	Pentagram::Rect dims;
+	Rect dims;
 	screen->GetSurfaceDims(dims);
 
 	tpaint -= g_system->getMillis();
@@ -913,7 +913,7 @@ void Ultima8Engine::GraphicSysInit() {
 #endif
 
 	if (screen) {
-		Pentagram::Rect old_dims;
+		Rect old_dims;
 		screen->GetSurfaceDims(old_dims);
 		if (new_fullscreen == fullscreen && width == old_dims.w && height == old_dims.h) return;
 		bpp = RenderSurface::format.s_bpp;
@@ -975,7 +975,7 @@ void Ultima8Engine::GraphicSysInit() {
 	consoleGump = new ConsoleGump(0, 0, width, height);
 	consoleGump->InitGump(0);
 
-	Pentagram::Rect scaled_dims;
+	Rect scaled_dims;
 	scalerGump->GetDims(scaled_dims);
 
 	inverterGump = new InverterGump(0, 0, scaled_dims.w, scaled_dims.h);
@@ -1454,7 +1454,7 @@ void Ultima8Engine::resetEngine() {
 void Ultima8Engine::setupCoreGumps() {
 	con->Print(MM_INFO, "Setting up core game gumps...\n");
 
-	Pentagram::Rect dims;
+	Rect dims;
 	screen->GetSurfaceDims(dims);
 
 	con->Print(MM_INFO, "Creating Desktop...\n");
@@ -1466,7 +1466,7 @@ void Ultima8Engine::setupCoreGumps() {
 	scalerGump = new ScalerGump(0, 0, dims.w, dims.h);
 	scalerGump->InitGump(0);
 
-	Pentagram::Rect scaled_dims;
+	Rect scaled_dims;
 	scalerGump->GetDims(scaled_dims);
 
 	con->Print(MM_INFO, "Creating Graphics Console...\n");
@@ -1537,7 +1537,7 @@ void Ultima8Engine::syncSoundSettings() {
 	UltimaEngine::syncSoundSettings();
 
 	// Update music volume
-	Pentagram::AudioMixer *audioMixer = Pentagram::AudioMixer::get_instance();	
+	AudioMixer *audioMixer = AudioMixer::get_instance();	
 	MidiPlayer *midiPlayer = audioMixer ? audioMixer->getMidiPlayer() : nullptr;
 	if (midiPlayer)
 		midiPlayer->setVolume(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
@@ -1760,7 +1760,7 @@ void Ultima8Engine::save(ODataSource *ods) {
 	ods->write4(static_cast<uint32>(absoluteTime));
 	ods->write2(avatarMoverProcess->getPid());
 
-	Pentagram::Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
+	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
 	for (int i = 0; i < 12; i++) ods->write2(pal->matrix[i]);
 	ods->write2(pal->transform);
 
@@ -1789,8 +1789,8 @@ bool Ultima8Engine::load(IDataSource *ids, uint32 version) {
 		matrix[i] = ids->read2();
 
 	PaletteManager::get_instance()->transformPalette(PaletteManager::Pal_Game, matrix);
-	Pentagram::Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
-	pal->transform = static_cast<Pentagram::PalTransforms>(ids->read2());
+	Palette *pal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
+	pal->transform = static_cast<PalTransforms>(ids->read2());
 
 	inversion = ids->read2();
 
@@ -1857,11 +1857,11 @@ void Ultima8Engine::ConCmd_changeGame(const Console::ArgvType &argv) {
 
 void Ultima8Engine::ConCmd_listGames(const Console::ArgvType &argv) {
 	Ultima8Engine *app = Ultima8Engine::get_instance();
-	Std::vector<Pentagram::istring> games;
+	Std::vector<istring> games;
 	games = app->settingman->listGames();
-	Std::vector<Pentagram::istring>::iterator iter;
+	Std::vector<istring>::iterator iter;
 	for (iter = games.begin(); iter != games.end(); ++iter) {
-		Pentagram::istring game = *iter;
+		istring game = *iter;
 		GameInfo *info = app->getGameInfo(game);
 		con->Printf(MM_INFO, "%s: ", game.c_str());
 		if (info) {
@@ -1931,7 +1931,7 @@ void Ultima8Engine::ConCmd_memberVar(const Console::ArgvType &argv) {
 	bool *b = 0;
 	int *i = 0;
 	Std::string *str = 0;
-	Pentagram::istring *istr = 0;
+	istring *istr = 0;
 
 	// ini entry name if supported
 	const char *ini = 0;

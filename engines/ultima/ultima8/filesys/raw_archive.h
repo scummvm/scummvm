@@ -32,7 +32,7 @@ namespace Ultima8 {
 class ArchiveFile;
 class IDataSource;
 
-class RawArchive : public Pentagram::Archive {
+class RawArchive : public Archive {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 

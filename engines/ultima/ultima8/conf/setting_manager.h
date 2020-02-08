@@ -51,7 +51,7 @@ public:
 		DOM_CURRENT  = 100
 	};
 
-	typedef void (*ConfigCallback)(Pentagram::istring key);
+	typedef void (*ConfigCallback)(istring key);
 	typedef Std::map<Common::String, Std::vector<ConfigCallback>, Common::IgnoreCase_Hash > Callbacks;
 
 	//! read a config file. Multiple files may be read. Order is important.
@@ -64,68 +64,68 @@ public:
 	void write();
 
 	//! does the key exist?
-	bool exists(Pentagram::istring key, Domain dom = DOM_CURRENT);
+	bool exists(istring key, Domain dom = DOM_CURRENT);
 
 	//! get value
-	bool get(Pentagram::istring key, Std::string &ret, Domain dom = DOM_CURRENT);
+	bool get(istring key, Std::string &ret, Domain dom = DOM_CURRENT);
 	//! get value
-	bool get(Pentagram::istring key, int &ret, Domain dom = DOM_CURRENT);
+	bool get(istring key, int &ret, Domain dom = DOM_CURRENT);
 	//! get value
-	bool get(Pentagram::istring key, bool &ret, Domain dom = DOM_CURRENT);
+	bool get(istring key, bool &ret, Domain dom = DOM_CURRENT);
 
 	//! set value
-	void set(Pentagram::istring key, Std::string value, Domain dom = DOM_CURRENT);
+	void set(istring key, Std::string value, Domain dom = DOM_CURRENT);
 	//! set value
-	void set(Pentagram::istring key, const char *value, Domain dom = DOM_CURRENT);
+	void set(istring key, const char *value, Domain dom = DOM_CURRENT);
 	//! set value
-	void set(Pentagram::istring key, int value, Domain dom = DOM_CURRENT);
+	void set(istring key, int value, Domain dom = DOM_CURRENT);
 	//! set value
-	void set(Pentagram::istring key, bool value, Domain dom = DOM_CURRENT);
+	void set(istring key, bool value, Domain dom = DOM_CURRENT);
 
 	//! remove key
-	void unset(Pentagram::istring key, Domain dom = DOM_CURRENT);
+	void unset(istring key, Domain dom = DOM_CURRENT);
 
 	//! set default value
-	void setDefault(Pentagram::istring key, Std::string value);
+	void setDefault(istring key, Std::string value);
 	//! set default value
-	void setDefault(Pentagram::istring key, const char *value);
+	void setDefault(istring key, const char *value);
 	//! set default value
-	void setDefault(Pentagram::istring key, int value);
+	void setDefault(istring key, int value);
 	//! set default value
-	void setDefault(Pentagram::istring key, bool value);
+	void setDefault(istring key, bool value);
 
 	//! set the current domain
 	void setCurrentDomain(Domain dom);
 	//! set the configuration section for a domain
-	void setDomainName(Domain dom, Pentagram::istring section);
+	void setDomainName(Domain dom, istring section);
 
 	//! register a function to be called when the key changes
-	void registerCallback(Pentagram::istring key, ConfigCallback callback);
+	void registerCallback(istring key, ConfigCallback callback);
 	//! unregister a callback
-	void unregisterCallback(Pentagram::istring key, ConfigCallback callback);
+	void unregisterCallback(istring key, ConfigCallback callback);
 
 	//! list all games
-	Std::vector<Pentagram::istring> listGames();
+	Std::vector<istring> listGames();
 
 	//! list all keys in a game data section
 	//! \param section The section to return setkeys of
 	//! \return the keys. They have no guaranteed order.
-	Std::vector<Pentagram::istring> listDataKeys(Pentagram::istring section);
+	Std::vector<istring> listDataKeys(istring section);
 
 	//! list all key-value pairs in the given section.
 	//! \param section The section to list
 	//! \return the key-value pairs. They have no guaranteed order.
-	KeyMap listDataValues(Pentagram::istring section);
+	KeyMap listDataValues(istring section);
 
 private:
 
-	bool findKeyDomain(Pentagram::istring key, Domain dom, Domain &keydom);
-	Pentagram::istring getConfigKey(Pentagram::istring key, Domain dom);
-	void callCallbacks(Pentagram::istring key);
+	bool findKeyDomain(istring key, Domain dom, Domain &keydom);
+	istring getConfigKey(istring key, Domain dom);
+	void callCallbacks(istring key);
 	void setupScummVMSettings();
 
 	Callbacks callbacks;
-	Std::vector<Pentagram::istring> domains;
+	Std::vector<istring> domains;
 
 	Domain currentDomain;
 

@@ -38,7 +38,7 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(BindGump, ModalGump)
 
-BindGump::BindGump(Pentagram::istring *b, Gump *g): ModalGump(0, 0, 160, 80), binding(b), invoker(g) {
+BindGump::BindGump(istring *b, Gump *g): ModalGump(0, 0, 160, 80), binding(b), invoker(g) {
 }
 
 BindGump::~BindGump() {
@@ -50,7 +50,7 @@ void BindGump::InitGump(Gump *newparent, bool take_focus) {
 	//! English ! - TODO: Externalize string.
 	Std::string bindtext = "Press any key or button.\n\nPress ESCAPE to cancel\nor BACKSPACE to clear";
 	Gump *widget = new TextWidget(0, 0, bindtext, true, 6, 0, 0,
-	                              Pentagram::Font::TEXT_CENTER);
+	                              Font::TEXT_CENTER);
 	widget->InitGump(this);
 	widget->setRelativePosition(TOP_CENTER, 0, 8);
 }
@@ -69,7 +69,7 @@ bool BindGump::OnKeyDown(int key, int mod) {
 		if (key == Common::KEYCODE_BACKSPACE) {
 			hidmanager->unbind(*binding);
 		} else {
-//			Pentagram::istring control = SDL_GetKeyName(static_cast<SDLKey>(key));
+//			istring control = SDL_GetKeyName(static_cast<SDLKey>(key));
 //			hidmanager->bind(control, *binding);
 		}
 		if (invoker)
@@ -80,7 +80,7 @@ bool BindGump::OnKeyDown(int key, int mod) {
 }
 
 Gump *BindGump::OnMouseDown(int button, int32 mx, int32 my) {
-	//Pentagram::istring control = GetMouseButtonName(static_cast<MouseButton>(button));
+	//istring control = GetMouseButtonName(static_cast<MouseButton>(button));
 //	HIDManager * hidmanager = HIDManager::get_instance();
 //	if (binding)
 //		hidmanager->bind(control, *binding);

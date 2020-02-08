@@ -301,7 +301,7 @@ const char *HID_GetKeyName(HID_Key key) {
 	return "";
 }
 
-HID_Key HID_GetKeyFromName(Pentagram::istring &name) {
+HID_Key HID_GetKeyFromName(istring &name) {
 	int i;
 	for (i = 0; keyNames[i].key != HID_LAST; ++i) {
 		if (name == keyNames[i].name)
@@ -669,15 +669,15 @@ const char *HID_GetEventsName(HID_Events events) {
 	return buffer;
 }
 
-HID_Events HID_GetEventFromName(const Pentagram::istring &name) {
+HID_Events HID_GetEventFromName(const istring &name) {
 	// Split up the name(s)
-	Pentagram::istring str = name;
+	istring str = name;
 	if (name.hasPrefix("<") && name.hasSuffix(">")) {
 		str.deleteChar(0);
 		str.deleteLastChar();
 	}
 
-	Common::Array<Pentagram::istring> events;
+	Common::Array<istring> events;
 	str.split(events);
 
 	HID_Events result = 0;

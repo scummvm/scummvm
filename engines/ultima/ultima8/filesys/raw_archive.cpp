@@ -29,7 +29,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(RawArchive, Pentagram::Archive)
+DEFINE_RUNTIME_CLASSTYPE_CODE(RawArchive, Archive)
 
 RawArchive::~RawArchive() {
 	Archive::uncache();

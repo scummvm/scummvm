@@ -88,7 +88,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 		surf->Paint(shape_, curframe, posx, posy);
 
 	RenderedText *rendtext;
-	Pentagram::Font *font = FontManager::get_instance()->getGameFont(0, true);
+	Font *font = FontManager::get_instance()->getGameFont(0, true);
 	unsigned int remaining;
 
 	char buf1[50];
@@ -267,7 +267,7 @@ void ShapeViewerGump::U8ShapeViewer() {
 	}
 
 	Gump *desktopGump = Ultima8Engine::get_instance()->getDesktopGump();
-	Pentagram::Rect res;
+	Rect res;
 	desktopGump->GetDims(res);
 
 	ModalGump *gump = new ShapeViewerGump((res.w * 3) / 4, (res.h * 3) / 4, flexes);

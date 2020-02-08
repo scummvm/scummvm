@@ -148,7 +148,7 @@ public:
 	virtual void StretchBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, bool clampedges = false);
 
 	// Blit a region from a Texture using a scaler
-	virtual bool ScalerBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Pentagram::Scaler *, bool clampedges = false);
+	virtual bool ScalerBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Scaler *, bool clampedges = false);
 
 	////////////////////////////////////////
 	// TODO: Add in Abstract 3d code Here //

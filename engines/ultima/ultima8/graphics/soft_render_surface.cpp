@@ -143,7 +143,7 @@ template<> void SoftRenderSurface<uint16>::Fill32(uint32 rgb, int32 sx, int32 sy
 	rgb = PACK_RGB8((rgb >> 16) & 0xFF , (rgb >> 8) & 0xFF , rgb & 0xFF);
 
 	while (pixel != end) {
-		Pentagram::memset_16(pixel, rgb, w);
+		memset_16(pixel, rgb, w);
 		pixel += pitch;
 	}
 }
@@ -165,7 +165,7 @@ template<> void SoftRenderSurface<uint32>::Fill32(uint32 rgb, int32 sx, int32 sy
 	rgb = PACK_RGB8((rgb >> 16) & 0xFF , (rgb >> 8) & 0xFF , rgb & 0xFF);
 
 	while (pixel != end) {
-		Pentagram::memset_32(pixel, rgb, w);
+		memset_32(pixel, rgb, w);
 		pixel += pitch;
 	}
 }
@@ -732,12 +732,12 @@ template<class uintX> void SoftRenderSurface<uintX>::StretchBlit(Texture *textur
 }
 
 //
-// bool SoftRenderSurface::ScalerBlit(Texture *texure, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Pentagram::Scaler *scaler, bool clampedges)
+// bool SoftRenderSurface::ScalerBlit(Texture *texure, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Scaler *scaler, bool clampedges)
 //
 // Desc: Blit a region from a Texture using a scaler
 //
 //
-template<class uintX> bool SoftRenderSurface<uintX>::ScalerBlit(Texture *texture, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Pentagram::Scaler *scaler, bool clampedges) {
+template<class uintX> bool SoftRenderSurface<uintX>::ScalerBlit(Texture *texture, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Scaler *scaler, bool clampedges) {
 	// Nothing we can do
 	if ((sh <= 0) || (dh <= 0) || (sw <= 0) || (dw <= 0)) return false;
 

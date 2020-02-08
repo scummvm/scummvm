@@ -147,7 +147,7 @@ void PaperdollGump::PaintStat(RenderSurface *surf, unsigned int n,
                               Std::string text, int val) {
 	assert(n < 7); // constant!
 
-	Pentagram::Font *font, *descfont;
+	Font *font, *descfont;
 
 	font = FontManager::get_instance()->getGameFont(statfont);
 	descfont = FontManager::get_instance()->getGameFont(statdescfont);
@@ -157,7 +157,7 @@ void PaperdollGump::PaintStat(RenderSurface *surf, unsigned int n,
 	if (!cached_text[2 * n])
 		cached_text[2 * n] = descfont->renderText(text, remaining,
 		                     statdescwidth, statheight,
-		                     Pentagram::Font::TEXT_RIGHT);
+		                     Font::TEXT_RIGHT);
 	cached_text[2 * n]->draw(surf, statcoords[n].xd, statcoords[n].y);
 
 	if (!cached_text[2 * n + 1] || cached_val[n] != val) {
@@ -165,7 +165,7 @@ void PaperdollGump::PaintStat(RenderSurface *surf, unsigned int n,
 		sprintf(buf, "%d", val);
 		cached_text[2 * n + 1] = font->renderText(buf, remaining,
 		                         statwidth, statheight,
-		                         Pentagram::Font::TEXT_RIGHT);
+		                         Font::TEXT_RIGHT);
 		cached_val[n] = val;
 	}
 	cached_text[2 * n + 1]->draw(surf, statcoords[n].x, statcoords[n].y);
@@ -396,9 +396,9 @@ void PaperdollGump::ChildNotify(Gump *child, uint32 message) {
 			gump->setRelativePosition(BOTTOM_RIGHT, -5, -5);
 		} else {
 			// check if it is off-screen. If so, move it back
-			Pentagram::Rect rect;
+			Rect rect;
 			desktop->GetDims(rect);
-			Pentagram::Rect sr;
+			Rect sr;
 			statsgump->GetDims(sr);
 			sr.x += 2;
 			sr.w -= 4;

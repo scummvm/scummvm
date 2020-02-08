@@ -30,7 +30,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeArchive, Pentagram::Archive)
+DEFINE_RUNTIME_CLASSTYPE_CODE(ShapeArchive, Archive)
 
 ShapeArchive::~ShapeArchive() {
 	Archive::uncache();

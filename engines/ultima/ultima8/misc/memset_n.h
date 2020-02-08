@@ -26,7 +26,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 //
 // Generic memset_32
@@ -101,7 +100,6 @@ inline void memset_16(void *buf, int32 val, uint32 words) {
 	if (words & 1) *(reinterpret_cast<uint16 *>(buf)) = static_cast<uint16>(val & 0xFFFF);
 }
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

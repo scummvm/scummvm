@@ -176,7 +176,7 @@ Std::string GameData::translate(Std::string text) {
 	// TODO: maybe cache these lookups? config calls may be expensive
 
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-	Pentagram::istring key = "language/text/" + text;
+	istring key = "language/text/" + text;
 	if (!config->exists(key))
 		return text;
 
@@ -191,7 +191,7 @@ FrameID GameData::translate(FrameID f) {
 	// TODO: allow translations to be in another shapeflex
 
 	ConfigFileManager *config = ConfigFileManager::get_instance();
-	Pentagram::istring key = "language/";
+	istring key = "language/";
 	switch (f.flexid) {
 	case GUMPS:
 		key += "gumps/";
@@ -379,7 +379,7 @@ void GameData::setupJPOverrides() {
 		Std::string fontdesc = iter->_value;
 
 		Std::vector<Std::string> vals;
-		Pentagram::SplitString(fontdesc, ',', vals);
+		SplitString(fontdesc, ',', vals);
 		if (vals.size() != 2) {
 			perr << "Invalid jpfont override: " << fontdesc << Std::endl;
 			continue;
@@ -417,7 +417,7 @@ void GameData::setupTTFOverrides(const char *configkey, bool SJIS) {
 		Std::string fontdesc = iter->_value;
 
 		Std::vector<Std::string> vals;
-		Pentagram::SplitString(fontdesc, ',', vals);
+		SplitString(fontdesc, ',', vals);
 		if (vals.size() != 4) {
 			perr << "Invalid ttf override: " << fontdesc << Std::endl;
 			continue;

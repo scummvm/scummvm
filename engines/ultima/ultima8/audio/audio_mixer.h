@@ -34,8 +34,6 @@ namespace Ultima8 {
 #define CHANNEL_COUNT 8
 
 class MidiPlayer;
-
-namespace Pentagram {
 class AudioChannel;
 class AudioSample;
 
@@ -77,7 +75,6 @@ public:
 	void            closeMidiOutput();
 };
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

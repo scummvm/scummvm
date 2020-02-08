@@ -27,7 +27,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 template<class T> T to_uppercase(const T s) {
 	T str = s;
@@ -97,7 +96,7 @@ template<class T> void StringToArgv(const T &args, Std::vector<T> &argv) {
 }
 
 template void StringToArgv<Std::string>(const Std::string &args, Std::vector<Std::string> &argv);
-template void StringToArgv<Pentagram::istring>(const Pentagram::istring &args, Std::vector<Pentagram::istring> &argv);
+template void StringToArgv<istring>(const istring &args, Std::vector<istring> &argv);
 
 template<class T> void ArgvToString(const Std::vector<T> &argv, T &args) {
 	// Clear the string
@@ -134,7 +133,7 @@ template<class T> void ArgvToString(const Std::vector<T> &argv, T &args) {
 }
 
 template void ArgvToString<Std::string>(const Std::vector<Std::string> &argv, Std::string &args);
-template void ArgvToString<Pentagram::istring>(const Std::vector<Pentagram::istring> &argv, Pentagram::istring &args);
+template void ArgvToString<istring>(const Std::vector<istring> &argv, istring &args);
 
 template<class T> void TrimSpaces(T &str) {
 	if (str.empty()) return;
@@ -150,7 +149,7 @@ template<class T> void TrimSpaces(T &str) {
 }
 
 template void TrimSpaces<Std::string>(Std::string &str);
-template void TrimSpaces<Pentagram::istring>(Pentagram::istring &str);
+template void TrimSpaces<istring>(istring &str);
 
 
 template<class T> void TabsToSpaces(T &str, unsigned int n) {
@@ -161,7 +160,7 @@ template<class T> void TabsToSpaces(T &str, unsigned int n) {
 }
 
 template void TabsToSpaces<Std::string>(Std::string &str, unsigned int n);
-template void TabsToSpaces<Pentagram::istring>(Pentagram::istring &str, unsigned int n);
+template void TabsToSpaces<istring>(istring &str, unsigned int n);
 
 
 template<class T> void SplitString(const T &args, char sep,
@@ -187,7 +186,7 @@ template<class T> void SplitString(const T &args, char sep,
 
 
 template void SplitString<Std::string>(const Std::string &args, char sep, Std::vector<Std::string> &argv);
-template void SplitString<Pentagram::istring>(const Pentagram::istring &args, char sep, Std::vector<Pentagram::istring> &argv);
+template void SplitString<istring>(const istring &args, char sep, Std::vector<istring> &argv);
 
 
 
@@ -220,8 +219,7 @@ template<class T> void SplitStringKV(const T &args, char sep,
 }
 
 template void SplitStringKV<Std::string>(const Std::string &args, char sep, Std::vector<Std::pair<Std::string, Std::string> > &argv);
-template void SplitStringKV<Pentagram::istring>(const Pentagram::istring &args, char sep, Std::vector<Std::pair<Pentagram::istring, Pentagram::istring> > &argv);
+template void SplitStringKV<istring>(const istring &args, char sep, Std::vector<Std::pair<istring, istring> > &argv);
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima

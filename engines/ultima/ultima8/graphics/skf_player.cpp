@@ -167,7 +167,7 @@ void SKFPlayer::run() {
 		return;
 	}
 
-	Pentagram::Font *redfont;
+	Font *redfont;
 	redfont = FontManager::get_instance()->getGameFont(6, true);
 
 	MusicProcess *musicproc = MusicProcess::get_instance();
@@ -225,10 +225,10 @@ void SKFPlayer::run() {
 			if (audioproc) {
 				uint8 *buf = skf->get_object(events[curevent]->data);
 				uint32 bufsize = skf->get_size(events[curevent]->data);
-				Pentagram::AudioSample *s;
+				AudioSample *s;
 				uint32 rate = buf[6] + (buf[7] << 8);
 				bool stereo = (buf[8] == 2);
-				s = new Pentagram::RawAudioSample(buf + 34, bufsize - 34,
+				s = new RawAudioSample(buf + 34, bufsize - 34,
 				                                  rate, true, stereo);
 				audioproc->playSample(s, 0x60, 0);
 				// FIXME: memory leak! (sample is never deleted)
@@ -244,7 +244,7 @@ void SKFPlayer::run() {
 				subtitley = textbuf[4] + (textbuf[5] << 8);
 				unsigned int remaining;
 				subs = redfont->renderText(subtitle, remaining, 200, 0,
-				                           Pentagram::Font::TEXT_CENTER);
+				                           Font::TEXT_CENTER);
 			}
 			delete textbuf;
 
@@ -300,7 +300,7 @@ void SKFPlayer::run() {
 	if (objecttype == 2) {
 		object->seek(0);
 		Shape *shape = new Shape(object, &U8SKFShapeFormat);
-		Pentagram::Palette *pal = palman->getPalette(PaletteManager::Pal_Movie);
+		Palette *pal = palman->getPalette(PaletteManager::Pal_Movie);
 		shape->setPalette(pal);
 		buffer->BeginPainting();
 		buffer->Paint(shape, 0, 0, 0);

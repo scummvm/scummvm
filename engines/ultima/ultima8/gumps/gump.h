@@ -53,7 +53,7 @@ protected:
 	int32               x, y;           // Gump's position in parent.
 	// Always the upper left corner!
 
-	Pentagram::Rect     dims;           // The dimensions/coord space of the gump
+	Rect     dims;           // The dimensions/coord space of the gump
 	uint32              flags;          // Gump flags
 	int32               layer;          // gump ordering layer
 
@@ -235,12 +235,12 @@ public:
 	//
 
 	//! Get the dims
-	virtual void        GetDims(Pentagram::Rect &d) {
+	virtual void        GetDims(Rect &d) {
 		d = dims;
 	}
 
 	//! Set the dims
-	virtual void        SetDims(const Pentagram::Rect &d) {
+	virtual void        SetDims(const Rect &d) {
 		dims = d;
 	}
 

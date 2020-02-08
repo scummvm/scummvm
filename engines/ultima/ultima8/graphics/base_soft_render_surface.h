@@ -58,7 +58,7 @@ protected:
 	bool            flipped;
 
 	// Clipping Rectangle
-	Pentagram::Rect clip_window;
+	Rect clip_window;
 
 	// Locking count
 	uint32          lock_count;             // Number of locks on surface
@@ -131,16 +131,16 @@ public:
 	virtual void GetOrigin(int32 &x, int32 &y) const override;
 
 	// Get the Surface Dimensions
-	virtual void GetSurfaceDims(Pentagram::Rect &) const override;
+	virtual void GetSurfaceDims(Rect &) const override;
 
 	// Get Clipping Rectangle
-	virtual void GetClippingRect(Pentagram::Rect &) const override;
+	virtual void GetClippingRect(Rect &) const override;
 
 	// Set Clipping Rectangle
-	virtual void SetClippingRect(const Pentagram::Rect &);
+	virtual void SetClippingRect(const Rect &);
 
 	// Check Clipped. -1 if off screen, 0 if not clipped, 1 if clipped
-	virtual int16 CheckClipped(const Pentagram::Rect &) const override;
+	virtual int16 CheckClipped(const Rect &) const override;
 
 	// Flip the surface
 	virtual void SetFlipped(bool flipped) override;
@@ -164,7 +164,7 @@ public:
 	// Get The Surface Palette
 	// TODO: virtual void GetPalette(uint8 palette[768]);
 
-	virtual void CreateNativePalette(Pentagram::Palette *palette);
+	virtual void CreateNativePalette(Palette *palette);
 
 	Graphics::ManagedSurface *getRawSurface() const override {
 		return sdl_surf;

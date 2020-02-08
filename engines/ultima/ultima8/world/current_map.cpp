@@ -49,7 +49,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 using Std::list; // too messy otherwise
-using Pentagram::Rect;
 typedef list<Item *> item_list;
 
 const int INT_MAX_VALUE = 0x7fffffff;
@@ -346,7 +345,7 @@ static inline bool ChunkOnScreen(int32 cx, int32 cy, int32 sleft, int32 stop, in
 static inline void CalcFastAreaLimits(int32 &sx_limit,
                                       int32 &sy_limit,
                                       int32 &xy_limit,
-                                      const Pentagram::Rect &dims) {
+                                      const Rect &dims) {
 	// By default the fastArea is the screensize plus a border of no more
 	// than 256 pixels wide and 384 pixels high
 	// dims.w and dims.h need to be divided by 2 for crusader
@@ -381,7 +380,7 @@ void CurrentMap::updateFastArea(int32 from_x, int32 from_y, int32 from_z, int32 
 	}
 
 	// Work out Fine (screenspace) Limits of chunks with half chunk border
-	Pentagram::Rect dims;
+	Rect dims;
 	Ultima8Engine::get_instance()->getGameMapGump()->GetDims(dims);
 
 	int32 sleft  = ((x_min - y_min) / 4)         - (dims.w / 2 + mapChunkSize / 4);

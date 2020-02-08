@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 namespace Ultima {
 namespace Ultima8 {
 
-typedef Std::map<Pentagram::istring, TreasureInfo, Common::IgnoreCase_Hash> TreasureMap;
+typedef Std::map<istring, TreasureInfo, Common::IgnoreCase_Hash> TreasureMap;
 
 class TreasureLoader {
 public:

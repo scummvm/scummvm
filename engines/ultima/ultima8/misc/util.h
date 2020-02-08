@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 template<class T> T to_uppercase(const T s);
 
@@ -42,7 +41,6 @@ template<class T> void SplitString(const T &args, char sep, Std::vector<T> &argv
 template<class T> void SplitStringKV(const T &args, char sep,
                                      Std::vector<Std::pair<T, T> > &argv);
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

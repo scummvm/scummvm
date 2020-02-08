@@ -439,10 +439,10 @@ void Item::getCentre(int32 &X, int32 &Y, int32 &Z) const {
 	Z = z + shapeinfo->z * 4;
 }
 
-Pentagram::Box Item::getWorldBox() const {
+Box Item::getWorldBox() const {
 	int32 xd, yd, zd;
 	getFootpadWorld(xd, yd, zd);
-	return Pentagram::Box(x, y, z, xd, yd, zd);
+	return Box(x, y, z, xd, yd, zd);
 }
 
 bool Item::overlaps(Item &item2) const {

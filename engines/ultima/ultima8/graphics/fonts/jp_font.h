@@ -31,7 +31,7 @@ namespace Ultima8 {
 
 class ShapeFont;
 
-class JPFont : public Pentagram::Font {
+class JPFont : public Font {
 public:
 	JPFont(ShapeFont *jpfont, unsigned int fontnum);
 	virtual ~JPFont();

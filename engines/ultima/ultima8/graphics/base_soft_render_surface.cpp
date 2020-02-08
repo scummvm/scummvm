@@ -29,8 +29,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-using Pentagram::Rect;
-
 ///////////////////////////
 //                       //
 // BaseSoftRenderSurface //
@@ -340,7 +338,7 @@ Texture *BaseSoftRenderSurface::GetSurfaceAsTexture() {
 //
 // Desc: Create a palette of colours native to the surface
 //
-void BaseSoftRenderSurface::CreateNativePalette(Pentagram::Palette *palette) {
+void BaseSoftRenderSurface::CreateNativePalette(Palette *palette) {
 	for (int i = 0; i < 256; i++) {
 		int32 r, g, b;
 

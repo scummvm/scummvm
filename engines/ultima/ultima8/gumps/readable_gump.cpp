@@ -80,13 +80,13 @@ void ReadableGump::InitGump(Gump *newparent, bool take_focus) {
 			Std::string jpsub = text.substr(pos + 1);
 			text = text.substr(0, pos);
 
-			Gump *subwidget = new TextWidget(0, 0, jpsub, true, jpsub_font, 0, 0, Pentagram::Font::TEXT_CENTER);
+			Gump *subwidget = new TextWidget(0, 0, jpsub, true, jpsub_font, 0, 0, Font::TEXT_CENTER);
 			subwidget->InitGump(this);
 			subwidget->setRelativePosition(BOTTOM_CENTER, 0, -8);
 		}
 	}
 
-	Gump *widget = new TextWidget(0, 0, text, true, fontnum, dims.w - 16, 0, Pentagram::Font::TEXT_CENTER);
+	Gump *widget = new TextWidget(0, 0, text, true, fontnum, dims.w - 16, 0, Font::TEXT_CENTER);
 	widget->InitGump(this);
 	widget->setRelativePosition(CENTER);
 }

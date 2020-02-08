@@ -31,7 +31,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(JPFont, Pentagram::Font)
+DEFINE_RUNTIME_CLASSTYPE_CODE(JPFont, Font)
 
 
 JPFont::JPFont(ShapeFont *jpfont, unsigned int fontnum_)
@@ -75,7 +75,7 @@ void JPFont::getStringSize(const Std::string &text, int32 &width, int32 &height)
 				uint16 t = text[++i] & 0xFF;
 				sjis += (t << 8);
 			}
-			width += getWidth(Pentagram::shiftjis_to_ultima8(sjis)) - hlead;
+			width += getWidth(shiftjis_to_ultima8(sjis)) - hlead;
 		}
 	}
 }

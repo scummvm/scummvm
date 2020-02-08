@@ -26,7 +26,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 bool SonarcAudioSample::GeneratedOneTable = false;
 int SonarcAudioSample::OneTable[256];
@@ -244,6 +243,5 @@ void SonarcAudioSample::rewind(void *DecompData) const {
 	decomp->sample_pos = 0;
 }
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima

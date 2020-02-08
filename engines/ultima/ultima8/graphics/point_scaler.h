@@ -27,7 +27,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 class PointScaler : public Scaler {
 public:
@@ -37,7 +36,6 @@ public:
 	virtual bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
 };
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

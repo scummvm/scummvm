@@ -27,7 +27,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 class RawAudioSample : public AudioSample {
 public:
@@ -49,7 +48,6 @@ protected:
 
 };
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

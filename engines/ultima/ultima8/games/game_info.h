@@ -35,7 +35,7 @@ class ODataSource;
 struct GameInfo {
 	GameInfo();
 
-	Pentagram::istring name;
+	istring name;
 
 	enum GameType {
 		GAME_UNKNOWN = 0,

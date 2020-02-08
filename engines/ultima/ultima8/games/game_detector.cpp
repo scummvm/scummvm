@@ -55,17 +55,17 @@ bool GameDetector::detect(Std::string path, GameInfo *info) {
 	if (!ids)
 		return false; // all games have usecode
 
-	Pentagram::md5_file(ids, info->md5, 0);
+	md5_file(ids, info->md5, 0);
 	delete ids;
 
 	Std::string md5s = info->getPrintableMD5();
 
 	int i = 0;
-	while (Pentagram::md5table[i].md5) {
-		if (md5s == Pentagram::md5table[i].md5) {
-			info->type = Pentagram::md5table[i].type;
-			info->language = Pentagram::md5table[i].language;
-			info->version = Pentagram::md5table[i].version;
+	while (md5table[i].md5) {
+		if (md5s == md5table[i].md5) {
+			info->type = md5table[i].type;
+			info->language = md5table[i].language;
+			info->version = md5table[i].version;
 			return true;
 		}
 		i++;

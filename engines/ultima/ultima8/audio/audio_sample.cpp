@@ -25,7 +25,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 AudioSample::AudioSample(uint8 *buffer_, uint32 size_) :
 	sample_rate(0), bits(0), stereo(false),
@@ -37,6 +36,5 @@ AudioSample::~AudioSample(void) {
 	delete [] buffer;
 }
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima

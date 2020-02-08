@@ -33,8 +33,6 @@ namespace Ultima8 {
 class ArchiveFile;
 class IDataSource;
 
-namespace Pentagram {
-
 class Archive {
 public:
 	ENABLE_RUNTIME_CLASSTYPE_BASE()
@@ -102,7 +100,6 @@ private:
 	ArchiveFile *findArchiveFile(uint32 index);
 };
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

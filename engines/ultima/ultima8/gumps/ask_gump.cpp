@@ -85,7 +85,7 @@ void AskGump::InitGump(Gump *newparent, bool take_focus) {
 		child->InitGump(this);
 		child->SetIndex(i);
 
-		Pentagram::Rect cd;
+		Rect cd;
 		child->GetDims(cd);
 		if (i + 1 < answers->getSize())
 			cd.h += child->getVlead();
@@ -151,7 +151,7 @@ bool AskGump::loadData(IDataSource *ids, uint32 version) {
 
 		if (!child) return false;
 
-		Pentagram::Rect cd;
+		Rect cd;
 		child->GetDims(cd);
 
 		if (px + cd.w > 160 && px != 0) {

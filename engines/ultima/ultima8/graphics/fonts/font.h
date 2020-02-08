@@ -35,11 +35,9 @@ class RenderedText;
 
 struct PositionedText {
 	Std::string text;
-	Pentagram::Rect dims;
+	Rect dims;
 	Std::string::size_type cursor;
 };
-
-namespace Pentagram {
 
 class Font {
 public:
@@ -134,7 +132,7 @@ protected:
 			return t.size();
 		}
 		static uint32 unicode(Std::string::const_iterator &i) {
-			return Pentagram::encoding[static_cast<uint8>(*i++)];
+			return encoding[static_cast<uint8>(*i++)];
 		}
 	};
 	struct SJISTraits : public Traits {
@@ -161,17 +159,15 @@ protected:
 				uint16 t = static_cast<uint8>(*i++);
 				s |= (t << 8);
 			}
-			return Pentagram::shiftjis_to_unicode(s);
+			return shiftjis_to_unicode(s);
 		}
 	};
 };
 
-}
-
 template<class T>
-Std::list<PositionedText> typesetText(Pentagram::Font *font,
+Std::list<PositionedText> typesetText(Font *font,
 	const Std::string &text, unsigned int &remaining,
-	int32 width, int32 height, Pentagram::Font::TextAlign align,
+	int32 width, int32 height, Font::TextAlign align,
 	bool u8specials, int32 &resultwidth, int32 &resultheight,
 	Std::string::size_type cursor = Std::string::npos);
 

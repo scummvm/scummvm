@@ -63,12 +63,12 @@ void PentagramMenuGump::InitGump(Gump *newparent, bool take_focus) {
 	GameWidget *g;
 	int y_ = 50;
 
-	Std::vector<Pentagram::istring> games;
+	Std::vector<istring> games;
 	// TODO: listGames() should probably be in CoreApp
 	games = SettingManager::get_instance()->listGames();
 	unsigned int gameIndex = 0;
 	for (unsigned int i = 0; i < games.size(); ++i) {
-		Pentagram::istring gameName = games[i];
+		istring gameName = games[i];
 
 		if (gameName == "pentagram") continue;
 		if (!Ultima8Engine::get_instance()->getGameInfo(gameName)) continue;
@@ -124,8 +124,8 @@ void PentagramMenuGump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bo
 	Std::list<Gump *>::iterator it = children.begin();
 	Std::list<Gump *>::iterator end = children.end();
 
-	Pentagram::Rect game_clip_rect(0, 45, SCREEN_WIDTH, dims.h - 58);
-	Pentagram::Rect cur_clip_rect;
+	Rect game_clip_rect(0, 45, SCREEN_WIDTH, dims.h - 58);
+	Rect cur_clip_rect;
 	surf->GetClippingRect(cur_clip_rect);
 
 
@@ -150,7 +150,7 @@ void PentagramMenuGump::ChildNotify(Gump *child, uint32 message) {
 	if (child->IsOfType<GameWidget>()) {
 
 		GameWidget *gw = p_dynamic_cast<GameWidget *>(child);
-		Pentagram::istring gamename = gw->getGameName();
+		istring gamename = gw->getGameName();
 
 		switch (message) {
 		case GameWidget::GAME_PLAY:

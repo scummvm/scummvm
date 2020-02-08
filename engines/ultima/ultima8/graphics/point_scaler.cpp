@@ -26,7 +26,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 // Very very simple point scaler
 template<class uintX, class Manip, class uintS = uintX> class PointScalerInternal {
@@ -302,6 +301,5 @@ bool PointScaler::ScaleArbitrary() const {
 	return true;
 }
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima

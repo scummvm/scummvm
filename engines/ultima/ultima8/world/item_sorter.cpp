@@ -41,8 +41,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-using Pentagram::Rect;
-
 // This does NOT need to be in the header
 struct SortItem {
 	SortItem(SortItem *n) : next(n), prev(0), item_num(0), shape(0), order(-1), depends() { }

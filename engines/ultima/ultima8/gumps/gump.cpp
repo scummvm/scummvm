@@ -226,11 +226,11 @@ void Gump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	surf->SetOrigin(ox + nx, oy + ny);
 
 	// Get Old Clipping Rect
-	Pentagram::Rect old_rect;
+	Rect old_rect;
 	surf->GetClippingRect(old_rect);
 
 	// Set new clipping rect
-	Pentagram::Rect new_rect = dims;
+	Rect new_rect = dims;
 	new_rect.Intersect(old_rect);
 	surf->SetClippingRect(new_rect);
 
@@ -250,7 +250,7 @@ void Gump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 void Gump::PaintThis(RenderSurface *surf, int32 /*lerp_factor*/, bool /*scaled*/) {
 	if (shape) {
 #if 0
-		Pentagram::Rect sr;
+		Rect sr;
 		ShapeFrame *f = shape->getFrame(framenum);
 		sr.h = f->height;
 		sr.w = f->height;
@@ -297,13 +297,13 @@ void Gump::PaintCompositing(RenderSurface *surf, int32 lerp_factor,
 	surf->SetOrigin(0, 0);
 
 	// Get Old Clipping Rect
-	Pentagram::Rect old_rect;
+	Rect old_rect;
 	surf->GetClippingRect(old_rect);
 
 	// Set new clipping rect
 	int32 cx = dims.x, cy = dims.y, cw = dims.w, ch = dims.h;
 	GumpRectToScreenSpace(cx, cy, cw, ch, ROUND_OUTSIDE);
-	Pentagram::Rect new_rect(cx, cy, cw, ch);
+	Rect new_rect(cx, cy, cw, ch);
 	new_rect.Intersect(old_rect);
 	surf->SetClippingRect(new_rect);
 
@@ -359,7 +359,7 @@ Gump *Gump::FindGump(int mx, int my) {
 
 void Gump::setRelativePosition(Gump::Position pos, int xoffset, int yoffset) {
 	if (parent) {
-		Pentagram::Rect rect;
+		Rect rect;
 		parent->GetDims(rect);
 
 		switch (pos) {

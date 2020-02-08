@@ -382,7 +382,7 @@ void MainActor::ConCmd_mark(const Console::ArgvType &argv) {
 	int32 x, y, z;
 	mainactor->getLocation(x, y, z);
 
-	Pentagram::istring confkey = "marks/" + argv[1];
+	istring confkey = "marks/" + argv[1];
 	char buf[100]; // large enough for 4 ints
 	sprintf(buf, "%d %d %d %d", curmap, x, y, z);
 
@@ -404,7 +404,7 @@ void MainActor::ConCmd_recall(const Console::ArgvType &argv) {
 
 	SettingManager *settings = SettingManager::get_instance();
 	MainActor *mainactor = getMainActor();
-	Pentagram::istring confkey = "marks/" + argv[1];
+	istring confkey = "marks/" + argv[1];
 	Std::string target;
 	if (!settings->get(confkey, target)) {
 		pout << "recall: no such mark" << Std::endl;
@@ -423,9 +423,9 @@ void MainActor::ConCmd_recall(const Console::ArgvType &argv) {
 
 void MainActor::ConCmd_listmarks(const Console::ArgvType &argv) {
 	SettingManager *settings = SettingManager::get_instance();
-	Std::vector<Pentagram::istring> marks;
+	Std::vector<istring> marks;
 	marks = settings->listDataKeys("marks");
-	for (Std::vector<Pentagram::istring>::iterator iter = marks.begin();
+	for (Std::vector<istring>::iterator iter = marks.begin();
 	        iter != marks.end(); ++iter) {
 		pout << (*iter) << Std::endl;
 	}

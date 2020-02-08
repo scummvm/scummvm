@@ -27,7 +27,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 struct GameMD5Entry {
 	GameInfo::GameType type;
@@ -133,7 +132,6 @@ static GameMD5Entry md5table[] = {
 	{ GameInfo::GAME_UNKNOWN, GameInfo::GAMELANG_UNKNOWN, 0, 0 }
 };
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

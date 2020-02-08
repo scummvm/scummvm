@@ -37,7 +37,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 extern int strcasecmp(const char *s1, const char *s2);
 extern int strncasecmp(const char *s1, const char *s2, uint32 length);
@@ -80,7 +79,6 @@ public:
 	void split(Common::Array<istring> &arr) const ;
 };
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

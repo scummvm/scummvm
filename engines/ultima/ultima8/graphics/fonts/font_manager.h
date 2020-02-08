@@ -28,10 +28,8 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
-class Font;
-}
 
+class Font;
 
 // This is TTF_Font struct from SDL_ttf
 typedef struct _TTF_Font TTF_Font;
@@ -74,11 +72,11 @@ private:
 	Graphics::Font *getTTF_Font(Std::string filename, int pointsize);
 
 	//! Override fontnum with specified font
-	void setOverride(unsigned int fontnum, Pentagram::Font *newFont);
+	void setOverride(unsigned int fontnum, Font *newFont);
 
-	Std::vector<Pentagram::Font *> overrides;
+	Std::vector<Font *> overrides;
 
-	Std::vector<Pentagram::Font *> ttfonts;
+	Std::vector<Font *> ttfonts;
 
 	static FontManager *fontmanager;
 public:
@@ -92,11 +90,11 @@ public:
 	//! get a Font by fontnum (for game fonts)
 	//! \param fontnum the number of the font
 	//! \param allowOverride if true, allow an override font to be used
-	Pentagram::Font *getGameFont(unsigned int fontnum,
+	Font *getGameFont(unsigned int fontnum,
 	                             bool allowOverride = false);
 
 	//! get a TTF font (for non-game fonts)
-	Pentagram::Font *getTTFont(unsigned int ttfnum);
+	Font *getTTFont(unsigned int ttfnum);
 
 	//! override a game font with a TTF.
 	//! \param fontnum the font to override

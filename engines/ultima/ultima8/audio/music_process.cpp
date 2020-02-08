@@ -245,7 +245,7 @@ bool MusicProcess::loadData(IDataSource *ids, uint32 version) {
 
 	the_music_process = this;
 
-	_midiPlayer = Pentagram::AudioMixer::get_instance()->getMidiPlayer();
+	_midiPlayer = AudioMixer::get_instance()->getMidiPlayer();
 
 	return true;
 }

@@ -29,7 +29,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-DEFINE_RUNTIME_CLASSTYPE_CODE(SoundFlex, Pentagram::Archive)
+DEFINE_RUNTIME_CLASSTYPE_CODE(SoundFlex, Archive)
 
 
 SoundFlex::SoundFlex(IDataSource *ds) : Archive(ds) {
@@ -45,8 +45,8 @@ void SoundFlex::cache(uint32 index) {
 	if (index >= count) return;
 
 	if (!samples) {
-		samples = new Pentagram::AudioSample * [count];
-		Std::memset(samples, 0, sizeof(Pentagram::AudioSample *) * count);
+		samples = new AudioSample * [count];
+		Std::memset(samples, 0, sizeof(AudioSample *) * count);
 	}
 
 	if (samples[index]) return;
@@ -57,7 +57,7 @@ void SoundFlex::cache(uint32 index) {
 
 	if (!buf || !size) return;
 
-	samples[index] = new Pentagram::SonarcAudioSample(buf, size);
+	samples[index] = new SonarcAudioSample(buf, size);
 }
 
 void SoundFlex::uncache(uint32 index) {

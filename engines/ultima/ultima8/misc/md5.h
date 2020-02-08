@@ -24,11 +24,8 @@ namespace Ultima8 {
 
 class IDataSource;
 
-namespace Pentagram {
-
 bool md5_file(IDataSource *input, uint8 digest[16], uint32 length = 0);
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

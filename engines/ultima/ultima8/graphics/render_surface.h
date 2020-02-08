@@ -35,11 +35,9 @@ class Shape;
 class ShapeFont;
 struct FixedWidthFont;
 
-namespace Pentagram {
 struct Palette;
 struct Rect;
 class Scaler;
-}
 
 #define UNPACK_RGB8(pix,r,g,b) { r = (((pix)&RenderSurface::format.r_mask)>>RenderSurface::format.r_shift)<<RenderSurface::format.r_loss; g = (((pix)&RenderSurface::format.g_mask)>>RenderSurface::format.g_shift)<<RenderSurface::format.g_loss; b = (((pix)&RenderSurface::format.b_mask)>>RenderSurface::format.b_shift)<<RenderSurface::format.b_loss; }
 #define PACK_RGB8(r,g,b) ((((r)>>RenderSurface::format.r_loss)<<RenderSurface::format.r_shift) | (((g)>>RenderSurface::format.g_loss)<<RenderSurface::format.g_shift) | (((b)>>RenderSurface::format.b_loss)<<RenderSurface::format.b_shift))
@@ -116,16 +114,16 @@ public:
 	virtual void GetOrigin(int32 &x, int32 &y) const = 0;
 
 	//! Get the Surface Dimensions
-	virtual void GetSurfaceDims(Pentagram::Rect &) const = 0;
+	virtual void GetSurfaceDims(Rect &) const = 0;
 
 	//! Get Clipping Rectangle
-	virtual void GetClippingRect(Pentagram::Rect &) const = 0;
+	virtual void GetClippingRect(Rect &) const = 0;
 
 	//! Set Clipping Rectangle
-	virtual void SetClippingRect(const Pentagram::Rect &) = 0;
+	virtual void SetClippingRect(const Rect &) = 0;
 
 	//! Check Clipped. -1 if off screen, 0 if not clipped, 1 if clipped
-	virtual int16 CheckClipped(const Pentagram::Rect &) const = 0;
+	virtual int16 CheckClipped(const Rect &) const = 0;
 
 	//! Flip the surface
 	virtual void SetFlipped(bool flipped) = 0;
@@ -151,7 +149,7 @@ public:
 	// Get The Surface Palette
 	// TODO: virtual void GetPalette(uint8 palette[768]) = 0;
 
-	virtual void CreateNativePalette(Pentagram::Palette *palette) = 0;
+	virtual void CreateNativePalette(Palette *palette) = 0;
 
 
 	//
@@ -251,7 +249,7 @@ public:
 	virtual void StretchBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, bool clampedges = false) = 0;
 
 	//! Blit a region from a Texture using a scaler
-	virtual bool ScalerBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Pentagram::Scaler *, bool clampedges = false) = 0;
+	virtual bool ScalerBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Scaler *, bool clampedges = false) = 0;
 
 
 	////////////////////////////////////////

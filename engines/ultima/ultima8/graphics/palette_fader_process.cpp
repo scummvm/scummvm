@@ -43,11 +43,11 @@ PaletteFaderProcess::PaletteFaderProcess()
 
 }
 
-PaletteFaderProcess::PaletteFaderProcess(Pentagram::PalTransforms trans,
+PaletteFaderProcess::PaletteFaderProcess(PalTransforms trans,
         int priority_, int frames) : priority(priority_),
 	counter(frames), max_counter(frames) {
 	PaletteManager  *pm = PaletteManager::get_instance();
-	Pentagram::Palette *pal = pm->getPalette(PaletteManager::Pal_Game);
+	Palette *pal = pm->getPalette(PaletteManager::Pal_Game);
 	for (int i = 0; i < 12; i++) old_matrix[i] = pal->matrix[i];
 	pm->getTransformMatrix(new_matrix, trans);
 	pal->transform = trans;
@@ -57,7 +57,7 @@ PaletteFaderProcess::PaletteFaderProcess(uint32 col32, bool from,
         int priority_, int frames, bool current) : priority(priority_),
 	counter(frames), max_counter(frames) {
 	PaletteManager  *pm = PaletteManager::get_instance();
-	Pentagram::Palette *pal = pm->getPalette(PaletteManager::Pal_Game);
+	Palette *pal = pm->getPalette(PaletteManager::Pal_Game);
 	if (!from) {
 		if (current)
 			for (int i = 0; i < 12; i++) old_matrix[i] = pal->matrix[i];
@@ -141,7 +141,7 @@ uint32 PaletteFaderProcess::I_fadeToPaletteTransform(const uint8 *args,
 	if (fader && fader->priority > priority) return 0;
 	else if (fader) fader->terminate();
 
-	fader = new PaletteFaderProcess(static_cast<Pentagram::PalTransforms>(transform),
+	fader = new PaletteFaderProcess(static_cast<PalTransforms>(transform),
 	                                priority, 45);
 
 	return Kernel::get_instance()->addProcess(fader);

@@ -33,9 +33,7 @@ class RawArchive;
 class RenderSurface;
 class RenderedText;
 class IDataSource;
-namespace Pentagram {
 struct Palette;
-}
 
 class SKFPlayer {
 public:

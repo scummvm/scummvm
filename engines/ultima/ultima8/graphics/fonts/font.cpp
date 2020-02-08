@@ -26,7 +26,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE_BASE_CLASS(Font)
 
@@ -148,8 +147,6 @@ bool Font::SJISTraits::canBreakAfter(Std::string::const_iterator &i) {
 	return true;
 }
 
-} // End of namespace Pentagram
-
 template<class T>
 static void findWordEnd(const Std::string &text,
                         Std::string::const_iterator &iter, bool u8specials) {
@@ -184,9 +181,9 @@ CHECKME: any others? (page breaks for books?)
 */
 
 template<class T>
-Std::list<PositionedText> typesetText(Pentagram::Font *font,
+Std::list<PositionedText> typesetText(Font *font,
 	const Std::string &text, unsigned int &remaining, int32 width, int32 height,
-	Pentagram::Font::TextAlign align, bool u8specials, int32 &resultwidth,
+	Font::TextAlign align, bool u8specials, int32 &resultwidth,
 	int32 &resultheight, Std::string::size_type cursor) {
 #if 0
 	pout << "typeset (" << width << "," << height << ") : "
@@ -332,7 +329,7 @@ Std::list<PositionedText> typesetText(Pentagram::Font *font,
 		}
 	}
 
-	if (lines.size() == 1 && align == Pentagram::Font::TEXT_LEFT) {
+	if (lines.size() == 1 && align == Font::TEXT_LEFT) {
 		// only one line, so use the actual text width
 		width = totalwidth;
 	}
@@ -347,12 +344,12 @@ Std::list<PositionedText> typesetText(Pentagram::Font *font,
 	Std::list<PositionedText>::iterator lineiter;
 	for (lineiter = lines.begin(); lineiter != lines.end(); ++lineiter) {
 		switch (align) {
-		case Pentagram::Font::TEXT_LEFT:
+		case Font::TEXT_LEFT:
 			break;
-		case Pentagram::Font::TEXT_RIGHT:
+		case Font::TEXT_RIGHT:
 			lineiter->dims.x = totalwidth - lineiter->dims.w;
 			break;
-		case Pentagram::Font::TEXT_CENTER:
+		case Font::TEXT_CENTER:
 			lineiter->dims.x = (totalwidth - lineiter->dims.w) / 2;
 			break;
 		}
@@ -372,17 +369,17 @@ Std::list<PositionedText> typesetText(Pentagram::Font *font,
 
 // explicit instantiations
 template
-Std::list<PositionedText> typesetText<Pentagram::Font::Traits>
-(Pentagram::Font *font, const Std::string &text,
+Std::list<PositionedText> typesetText<Font::Traits>
+(Font *font, const Std::string &text,
  unsigned int &remaining, int32 width, int32 height,
- Pentagram::Font::TextAlign align, bool u8specials,
+ Font::TextAlign align, bool u8specials,
  int32 &resultwidth, int32 &resultheight, Std::string::size_type cursor);
 
 template
-Std::list<PositionedText> typesetText<Pentagram::Font::SJISTraits>
-(Pentagram::Font *font, const Std::string &text,
+Std::list<PositionedText> typesetText<Font::SJISTraits>
+(Font *font, const Std::string &text,
  unsigned int &remaining, int32 width, int32 height,
- Pentagram::Font::TextAlign align, bool u8specials,
+ Font::TextAlign align, bool u8specials,
  int32 &resultwidth, int32 &resultheight, Std::string::size_type cursor);
 
 } // End of namespace Ultima8

@@ -35,7 +35,7 @@ class BindGump : public ModalGump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	BindGump(Pentagram::istring *b, Gump *g);
+	BindGump(istring *b, Gump *g);
 	virtual ~BindGump(void);
 
 	// Init the gump, call after construction
@@ -55,7 +55,7 @@ public:
 	};
 protected:
 	virtual void saveData(ODataSource *ods) override;
-	Pentagram::istring *binding;
+	istring *binding;
 	Gump *invoker;
 };
 

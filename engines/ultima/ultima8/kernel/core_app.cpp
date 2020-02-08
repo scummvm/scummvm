@@ -144,14 +144,14 @@ void CoreApp::loadConfig() {
 }
 
 void CoreApp::setupGameList() {
-	Std::vector<Pentagram::istring> gamelist;
+	Std::vector<istring> gamelist;
 	gamelist = settingman->listGames();
 	con->Print(MM_INFO, "Scanning config file for games:\n");
-	Std::vector<Pentagram::istring>::iterator iter;
-	Pentagram::istring gamename;
+	Std::vector<istring>::iterator iter;
+	istring gamename;
 
 	for (iter = gamelist.begin(); iter != gamelist.end(); ++iter) {
-		Pentagram::istring game = *iter;
+		istring game = *iter;
 		GameInfo *info = new GameInfo;
 		bool detected = getGameInfo(game, info);
 
@@ -171,7 +171,7 @@ void CoreApp::setupGameList() {
 }
 
 GameInfo *CoreApp::getDefaultGame() {
-	Pentagram::istring gamename;
+	istring gamename;
 
 	Std::string defaultgame;
 	bool defaultset = settingman->get("defaultgame", defaultgame,
@@ -252,7 +252,7 @@ void CoreApp::killGame() {
 }
 
 
-bool CoreApp::getGameInfo(Pentagram::istring &game, GameInfo *ginfo) {
+bool CoreApp::getGameInfo(istring &game, GameInfo *ginfo) {
 	// first try getting the information from the config file
 	// if that fails, try to autodetect it
 
@@ -261,7 +261,7 @@ bool CoreApp::getGameInfo(Pentagram::istring &game, GameInfo *ginfo) {
 	ginfo->version = 0;
 	ginfo->language = GameInfo::GAMELANG_UNKNOWN;
 
-	Pentagram::istring gamekey = "settings/";
+	istring gamekey = "settings/";
 	gamekey += game;
 
 	if (game == "pentagram") {
@@ -304,7 +304,7 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 		return;
 	}
 
-	Pentagram::istring game = ginfo->name;
+	istring game = ginfo->name;
 
 	settingman->setDomainName(SettingManager::DOM_GAME, game);
 	settingman->setCurrentDomain(SettingManager::DOM_GAME);
@@ -357,7 +357,7 @@ void CoreApp::helpMe() {
 	con->Print("\t--game {name}\t- select a game\n");
 }
 
-GameInfo *CoreApp::getGameInfo(Pentagram::istring game) const {
+GameInfo *CoreApp::getGameInfo(istring game) const {
 	GameMap::const_iterator i;
 	i = games.find(game);
 

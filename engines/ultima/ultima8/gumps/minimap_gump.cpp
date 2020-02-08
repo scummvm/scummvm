@@ -142,7 +142,7 @@ uint32 MiniMapGump::sampleAtPoint(int x_, int y_, CurrentMap *currentmap) {
 		ShapeFrame *frame = sh->getFrame(item->getFrame());
 		if (!frame) return 0;
 
-		const Pentagram::Palette *pal = sh->getPalette();
+		const Palette *pal = sh->getPalette();
 		if (!pal) return 0;
 
 		// Screenspace bounding box bottom x_ coord (RNB x_ coord)

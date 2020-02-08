@@ -28,7 +28,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 struct md5_context {
 	uint32 total[2];
@@ -268,6 +267,5 @@ bool md5_file(IDataSource *input, uint8 digest[16], uint32 length) {
 	return true;
 }
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima

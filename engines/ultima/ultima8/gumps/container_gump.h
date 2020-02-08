@@ -41,7 +41,7 @@ public:
 	              uint32 _Flags = FLAG_DRAGGABLE, int32 layer = LAYER_NORMAL);
 	virtual ~ContainerGump(void);
 
-	void setItemArea(Pentagram::Rect *itemarea_) {
+	void setItemArea(Rect *itemarea_) {
 		itemarea = *itemarea_;
 	}
 
@@ -83,7 +83,7 @@ protected:
 
 	void getItemCoords(Item *item, int32 &itemx, int32 &itemy);
 
-	Pentagram::Rect itemarea;
+	Rect itemarea;
 
 	bool display_dragging;
 	uint32 dragging_shape;

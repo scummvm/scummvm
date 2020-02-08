@@ -58,7 +58,7 @@ void ItemRelativeGump::InitGump(Gump *newparent, bool take_focus) {
 
 void ItemRelativeGump::MoveOnScreen() {
 	assert(parent);
-	Pentagram::Rect sd, gd;
+	Rect sd, gd;
 	parent->GetDims(sd);
 
 	// first move back to our desired location

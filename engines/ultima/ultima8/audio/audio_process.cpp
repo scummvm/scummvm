@@ -39,9 +39,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-using Pentagram::AudioSample;
-using Pentagram::AudioMixer;
-
 // p_dynamic_class stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(AudioProcess, Process)
 

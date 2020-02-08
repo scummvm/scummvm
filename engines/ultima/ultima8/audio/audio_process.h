@@ -31,9 +31,8 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
+
 class AudioSample;
-}
 
 class AudioProcess :
 	public Process {
@@ -112,7 +111,7 @@ public:
 
 	//! play a sample (without storing a SampleInfo)
 	//! returns channel sample is played on, or -1
-	int playSample(Pentagram::AudioSample *sample, int priority, int loops,
+	int playSample(AudioSample *sample, int priority, int loops,
 	               uint32 pitch_shift = 0x10000, int16 lvol = 256, int16 rvol = 256);
 
 	//! pause all currently playing samples

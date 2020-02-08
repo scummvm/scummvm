@@ -176,11 +176,11 @@ void TypeFlags::loadWeaponInfo() {
 	ConfigFileManager *config = ConfigFileManager::get_instance();
 
 	// load weapons
-	Std::vector<Pentagram::istring> weaponkeys;
+	Std::vector<istring> weaponkeys;
 	weaponkeys = config->listSections("weapons", true);
-	for (Std::vector<Pentagram::istring>::iterator iter = weaponkeys.begin();
+	for (Std::vector<istring>::iterator iter = weaponkeys.begin();
 	        iter != weaponkeys.end(); ++iter) {
-		Pentagram::istring k = *iter;
+		istring k = *iter;
 		WeaponInfo *wi = new WeaponInfo;
 
 		int val;
@@ -228,11 +228,11 @@ void TypeFlags::loadArmourInfo() {
 	MainShapeArchive *msf = GameData::get_instance()->getMainShapes();
 
 	// load armour
-	Std::vector<Pentagram::istring> armourkeys;
+	Std::vector<istring> armourkeys;
 	armourkeys = config->listSections("armour", true);
-	for (Std::vector<Pentagram::istring>::iterator iter = armourkeys.begin();
+	for (Std::vector<istring>::iterator iter = armourkeys.begin();
 	        iter != armourkeys.end(); ++iter) {
-		Pentagram::istring k = *iter;
+		istring k = *iter;
 		ArmourInfo ai;
 
 		int val;
@@ -285,11 +285,11 @@ void TypeFlags::loadMonsterInfo() {
 	treasureLoader.loadDefaults();
 
 	// load monsters
-	Std::vector<Pentagram::istring> monsterkeys;
+	Std::vector<istring> monsterkeys;
 	monsterkeys = config->listSections("monsters", true);
-	for (Std::vector<Pentagram::istring>::iterator iter = monsterkeys.begin();
+	for (Std::vector<istring>::iterator iter = monsterkeys.begin();
 	        iter != monsterkeys.end(); ++iter) {
-		Pentagram::istring k = *iter;
+		istring k = *iter;
 		MonsterInfo *mi = new MonsterInfo;
 
 		int val;

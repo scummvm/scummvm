@@ -27,7 +27,6 @@
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Pentagram {
 
 class SonarcAudioSample : public AudioSample {
 	struct SonarcDecompData {
@@ -58,7 +57,6 @@ public:
 	virtual void rewind(void *DecompData) const;
 };
 
-} // End of namespace Pentagram
 } // End of namespace Ultima8
 } // End of namespace Ultima
 

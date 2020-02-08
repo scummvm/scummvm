@@ -130,7 +130,7 @@ public:
 	inline void getFootpadData(int32 &x, int32 &y, int32 &z) const;
 
 	//! Get the Box this item occupies in the world. Undef if item is contained
-	Pentagram::Box getWorldBox() const;
+	Box getWorldBox() const;
 
 	//! Get flags
 	inline uint16 getFlags() const {
