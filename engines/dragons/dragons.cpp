@@ -286,7 +286,7 @@ void DragonsEngine::gameLoop() {
 		if (0x4af < _counter) {
 			pDVar8 = _dragonINIResource->getFlickerRecord();
 			if (pDVar8->actor->_resourceID == 0xe) {
-				pDVar8->actor->_sequenceID2 = 2;
+				pDVar8->actor->_direction = 2;
 				pDVar8->field_20_actor_field_14 = 2;
 				if (getINI(0xc2)->field_1e == 1) {
 					sequenceId = 0x30;
@@ -370,13 +370,13 @@ void DragonsEngine::gameLoop() {
 		if (_bit_flags_8006fbd8 == 3) {
 			_bit_flags_8006fbd8 = 0;
 			DragonINI *flicker = _dragonINIResource->getFlickerRecord();
-			if (flicker->sceneId == getCurrentSceneId() && flicker->actor->_sequenceID2 != -1) {
+			if (flicker->sceneId == getCurrentSceneId() && flicker->actor->_direction != -1) {
 				uVar6 = _scriptOpcodes->_scriptTargetINI;
 				if (_cursor->_sequenceID != 5) {
 					uVar6 = _cursor->_data_80072890;
 				}
 				if (uVar6 > 0) {
-					flicker->actor->_sequenceID2 = getINI(uVar6 - 1)->field_e;
+					flicker->actor->_direction = getINI(uVar6 - 1)->field_e;
 				}
 			}
 
@@ -868,9 +868,9 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 					_bit_flags_8006fbd8 = _bit_flags_8006fbd8 | 2;
 				}
 //				if (((((actors[actorId]._flags & 0x2000) == 0) && ((actors[actorId]._flags & 4) != 0)) &&
-//					 (actors[actorId]._sequenceID2 != actors[actorId]._sequenceID)) &&
-//				(actors[actorId]._sequenceID2 != -1)) {
-//					actor_update_sequenceID(actorId, actors[actorId]._sequenceID2);
+//					 (actors[actorId]._direction != actors[actorId]._sequenceID)) &&
+//				(actors[actorId]._direction != -1)) {
+//					actor_update_sequenceID(actorId, actors[actorId]._direction);
 //				}
 			}
 
@@ -940,9 +940,9 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 					}
 					if (flickerINI->actor->isFlagClear(ACTOR_FLAG_2000)
 							&& flickerINI->actor->isFlagSet(ACTOR_FLAG_4)
-							&& flickerINI->actor->_sequenceID2 != -1
-							&& flickerINI->actor->_sequenceID2 != flickerINI->actor->_sequenceID) {
-						flickerINI->actor->updateSequence(flickerINI->actor->_sequenceID2);
+							&& flickerINI->actor->_direction != -1
+							&& flickerINI->actor->_direction != flickerINI->actor->_sequenceID) {
+						flickerINI->actor->updateSequence(flickerINI->actor->_direction);
 					}
 				}
 			} else {
@@ -1171,7 +1171,7 @@ void DragonsEngine::walkFlickerToObject() {
 				flickerINI->actor->setFlag(ACTOR_FLAG_4);
 				targetINI = getINI(_cursor->_data_80072890 - 1);
 				flickerINI->field_20_actor_field_14 = targetINI->field_e;
-				flickerINI->actor->_sequenceID2 = targetINI->field_e;
+				flickerINI->actor->_direction = targetINI->field_e;
 			}
 			_bit_flags_8006fbd8 = 3;
 			return;

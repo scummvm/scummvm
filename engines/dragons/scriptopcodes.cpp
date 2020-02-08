@@ -106,17 +106,17 @@ void ScriptOpcodes::initOpcodes() {
 	}
 	// Register opcodes
 	OPCODE(1, opUnk1);
-	OPCODE(2, opUnk2); //dialog related
+	OPCODE(2, opAddDialogChoice);
 	OPCODE(3, opUnk3); //dialog related
 	OPCODE(4,  opExecuteScript);
-	OPCODE(5,  opActorSetSequenceID2);
+	OPCODE(5, opSetActorDirection);
 	OPCODE(6,  opUnk6);
-	OPCODE(7,  opUnk7);
+	OPCODE(7, opMoveObjectToScene);
 	OPCODE(8,  opActorLoadSequence);
 
-	OPCODE(0xA, opUnkA);
+	OPCODE(0xA, opSetVariable);
 	OPCODE(0xB, opRunSpecialOpCode);
-	OPCODE(0xC, opUnkCSoundRelatedMaybe);
+	OPCODE(0xC, opPlayOrStopSound);
 	OPCODE(0xD, opDelay);
 	OPCODE(0xE, opUnkE);
 	OPCODE(0xF, opUnkF);
@@ -247,7 +247,7 @@ void ScriptOpcodes::opUnk1(ScriptOpCall &scriptOpCall) {
 	}
 }
 
-void ScriptOpcodes::opUnk2(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opAddDialogChoice(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
 	ARG_UINT32(field2);
 	ARG_UINT32(field6);
@@ -295,14 +295,14 @@ void ScriptOpcodes::opExecuteScript(ScriptOpCall &scriptOpCall) {
 	executeScriptLoop(newScriptOpCall);
 }
 
-void ScriptOpcodes::opActorSetSequenceID2(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opSetActorDirection(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
 	ARG_INT16(iniIndex);
 	ARG_SKIP(2);
-	ARG_INT16(sequenceId);
+	ARG_INT16(direction);
 
 	if (scriptOpCall._field8 == 0) {
-		_vm->getINI(iniIndex - 1)->actor->_sequenceID2 = sequenceId;
+		_vm->getINI(iniIndex - 1)->actor->_direction = direction;
 	}
 }
 
@@ -346,13 +346,100 @@ void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
 	_scriptTargetINI = uVar6;
 }
 
-void ScriptOpcodes::opUnk7(ScriptOpCall &scriptOpCall) {
-	if (scriptOpCall._field8 == 0) {
-		opCode_Unk7(scriptOpCall);
-	} else {
-		scriptOpCall._code += 6;
+void ScriptOpcodes::opMoveObjectToScene(ScriptOpCall &scriptOpCall) {
+	ARG_INT16(field0);
+	ARG_INT16(field2);
+	ARG_INT16(sceneId);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
 	}
 
+	uint16 currentScene = _vm->getCurrentSceneId();
+	DragonINI *ini = _vm->getINI(field2 - 1);
+	if (!(field0 & 0x8000)) {
+
+		if (ini->field_1a_flags_maybe & 1) {
+			if (ini->sceneId == currentScene) {
+				assert(ini->actor);
+				ini->actor->reset_maybe();
+			}
+			if (sceneId == currentScene) {
+				ini->actor = _vm->_actorManager->loadActor(ini->actorResourceId, ini->sequenceId, ini->x, ini->y, 0);
+				ini->actor->_direction = ini->field_20_actor_field_14;
+				if (ini->field_1a_flags_maybe & 2) {
+					ini->actor->_flags |= ACTOR_FLAG_80;
+				} else {
+					ini->actor->_flags &= ~ACTOR_FLAG_80;
+				}
+
+				if (ini->field_1a_flags_maybe & 0x20) {
+					ini->actor->_flags |= ACTOR_FLAG_100;
+				} else {
+					ini->actor->_flags &= ~ACTOR_FLAG_100;
+				}
+
+				if (ini->field_1a_flags_maybe & 4) {
+					ini->actor->_flags |= ACTOR_FLAG_8000;
+				} else {
+					ini->actor->_flags &= ~ACTOR_FLAG_8000;
+				}
+
+				if (ini->field_1a_flags_maybe & 0x100) {
+					ini->actor->_flags |= ACTOR_FLAG_4000;
+				} else {
+					ini->actor->_flags &= ~ACTOR_FLAG_4000;
+				}
+			}
+		} else {
+			if (ini->sceneId == currentScene && ini->iptIndex_maybe != -1) {
+				_vm->_scene->removeImageOverlay(ini->iptIndex_maybe);
+			}
+			if (sceneId == currentScene && ini->iptIndex_maybe != -1) {
+				_vm->_scene->loadImageOverlay(ini->iptIndex_maybe);
+			}
+		}
+
+		if (ini->sceneId == 1) {
+			if ((uint)_vm->_cursor->_iniItemInHand - 1 == ini->id) {
+				_vm->_cursor->_data_800728b0_cursor_seqID = 0;
+				_vm->_cursor->_sequenceID = 0;
+				_vm->_cursor->_iniItemInHand = 0;
+			} else {
+				if (_vm->_inventory->clearItem(ini->id + 1)) {
+					if (_vm->_inventory->getType() == 1) {
+						ini->actor->clearFlag(ACTOR_FLAG_40);
+					}
+				}
+			}
+		}
+
+		if (sceneId == 1) {
+			if (_vm->_cursor->_iniItemInHand != 0) {
+				_vm->_inventory->addItem(_vm->_cursor->_iniItemInHand);
+				if (_vm->_inventory->getType() == 1) {
+					Actor *actor = _vm->_inventory->getInventoryItemActor(_vm->_cursor->_iniItemInHand);
+					actor->_flags = 0;
+					actor->_priorityLayer = 0;
+					actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
+					actor->updateSequence((_vm->getINI(_vm->_cursor->_iniItemInHand - 1)->field_8 * 2 + 10) & 0xfffe);
+					actor->setFlag(ACTOR_FLAG_40);
+					actor->setFlag(ACTOR_FLAG_80);
+					actor->setFlag(ACTOR_FLAG_100);
+					actor->setFlag(ACTOR_FLAG_200);
+					actor->_priorityLayer = 6;
+				}
+			}
+			DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
+			_vm->_cursor->updatePosition(flicker->actor->_x_pos - _vm->_scene->_camera.x,
+										 flicker->actor->_y_pos - (_vm->_scene->_camera.y + 0x1e));
+			_vm->_cursor->_data_800728b0_cursor_seqID = 5;
+			_vm->_cursor->_sequenceID = 5;
+			_vm->_cursor->data_8007283c = _vm->getINI(field2 - 1)->field_8 * 2 + 10;
+			_vm->_cursor->_iniItemInHand = field2;
+		}
+	}
+	ini->sceneId = sceneId;
 }
 
 void ScriptOpcodes::opActorLoadSequence(ScriptOpCall &scriptOpCall) {
@@ -549,9 +636,9 @@ bool ScriptOpcodes::evaluateExpression(ScriptOpCall &scriptOpCall) {
 	return (result & 0xffff) != 0;
 }
 
-void ScriptOpcodes::opUnkA(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opSetVariable(ScriptOpCall &scriptOpCall) {
 	if (scriptOpCall._field8 == 0) {
-		opCode_UnkA_setsProperty(scriptOpCall);
+		setVariable(scriptOpCall);
 	} else {
 		scriptOpCall._code += 0xC;
 	}
@@ -573,7 +660,7 @@ void ScriptOpcodes::opRunSpecialOpCode(ScriptOpCall &scriptOpCall) {
 	_specialOpCodes->run(specialOpCode);
 }
 
-void ScriptOpcodes::opUnkCSoundRelatedMaybe(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opPlayOrStopSound(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
 	ARG_INT16(soundId);
 
@@ -792,13 +879,11 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 		}
 	}
 
-	secondIni->actor->_sequenceID2 = firstIni->field_e;
+	secondIni->actor->_direction = firstIni->field_e;
 
 	secondIni->x = newXPosAgain;
 	secondIni->y = newYPosAgain;
 	secondIni->actor->clearFlag(ACTOR_FLAG_800);
-	return;
-
 }
 
 void ScriptOpcodes::opUnk11FlickerTalk(ScriptOpCall &scriptOpCall) {
@@ -878,14 +963,14 @@ void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 	} else {
 		_vm->_talk->FUN_8003239c(dialog,
 								 (int)(((uint)ini->actor->_x_pos - (uint)_vm->_scene->_camera.x) * 0x10000) >> 0x13,
-								 (int)(((ini->actor->_y_pos - ini->actor->_frame->yOffset) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13,
+								 (int)(((ini->actor->_y_pos - ini->actor->getFrameYOffset()) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13,
 								 READ_LE_INT16(_vm->_dragonOBD->getFromOpt(iniId) + 6),
 								 1,
 								 ini->actor, startSequenceId, endSequenceId, textIndex);
 	}
 }
 
-void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::setVariable(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
 	ARG_INT16(field2);
 	ARG_INT16(field4);
@@ -1164,95 +1249,7 @@ void ScriptOpcodes::opSetActorFlag0x1000(ScriptOpCall &scriptOpCall) {
 }
 
 void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
-	ARG_INT16(field0);
-	ARG_INT16(field2);
-	ARG_INT16(sceneId); //sceneId
 
-	uint16 currentScene = _vm->getCurrentSceneId();
-	DragonINI *ini = _vm->getINI(field2 - 1);
-	if (!(field0 & 0x8000)) {
-
-		if (ini->field_1a_flags_maybe & 1) {
-			if (ini->sceneId == currentScene) {
-				assert(ini->actor);
-				ini->actor->reset_maybe();
-			}
-			if (sceneId == currentScene) {
-				ini->actor = _vm->_actorManager->loadActor(ini->actorResourceId, ini->sequenceId, ini->x, ini->y, 0);
-				ini->actor->_sequenceID2 = ini->field_20_actor_field_14;
-				if (ini->field_1a_flags_maybe & 2) {
-					ini->actor->_flags |= ACTOR_FLAG_80;
-				} else {
-					ini->actor->_flags &= ~ACTOR_FLAG_80;
-				}
-
-				if (ini->field_1a_flags_maybe & 0x20) {
-					ini->actor->_flags |= ACTOR_FLAG_100;
-				} else {
-					ini->actor->_flags &= ~ACTOR_FLAG_100;
-				}
-
-				if (ini->field_1a_flags_maybe & 4) {
-					ini->actor->_flags |= ACTOR_FLAG_8000;
-				} else {
-					ini->actor->_flags &= ~ACTOR_FLAG_8000;
-				}
-
-				if (ini->field_1a_flags_maybe & 0x100) {
-					ini->actor->_flags |= ACTOR_FLAG_4000;
-				} else {
-					ini->actor->_flags &= ~ACTOR_FLAG_4000;
-				}
-			}
-		} else {
-			if (ini->sceneId == currentScene && ini->iptIndex_maybe != -1) {
-				_vm->_scene->removeImageOverlay(ini->iptIndex_maybe);
-			}
-			if (sceneId == currentScene && ini->iptIndex_maybe != -1) {
-				_vm->_scene->loadImageOverlay(ini->iptIndex_maybe);
-			}
-		}
-
-		if (ini->sceneId == 1) {
-			if ((uint)_vm->_cursor->_iniItemInHand - 1 == ini->id) {
-				_vm->_cursor->_data_800728b0_cursor_seqID = 0;
-				_vm->_cursor->_sequenceID = 0;
-				_vm->_cursor->_iniItemInHand = 0;
-			} else {
-				if (_vm->_inventory->clearItem(ini->id + 1)) {
-					if (_vm->_inventory->getType() == 1) {
-						ini->actor->clearFlag(ACTOR_FLAG_40);
-					}
-				}
-			}
-		}
-
-		if (sceneId == 1) {
-			if (_vm->_cursor->_iniItemInHand != 0) {
-				_vm->_inventory->addItem(_vm->_cursor->_iniItemInHand);
-				if (_vm->_inventory->getType() == 1) {
-					Actor *actor = _vm->_inventory->getInventoryItemActor(_vm->_cursor->_iniItemInHand);
-					actor->_flags = 0;
-					actor->_priorityLayer = 0;
-					actor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-					actor->updateSequence((_vm->getINI(_vm->_cursor->_iniItemInHand - 1)->field_8 * 2 + 10) & 0xfffe);
-					actor->setFlag(ACTOR_FLAG_40);
-					actor->setFlag(ACTOR_FLAG_80);
-					actor->setFlag(ACTOR_FLAG_100);
-					actor->setFlag(ACTOR_FLAG_200);
-					actor->_priorityLayer = 6;
-				}
-			}
-			DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
-			_vm->_cursor->updatePosition(flicker->actor->_x_pos - _vm->_scene->_camera.x,
-					flicker->actor->_y_pos - (_vm->_scene->_camera.y + 0x1e));
-			_vm->_cursor->_data_800728b0_cursor_seqID = 5;
-			_vm->_cursor->_sequenceID = 5;
-			_vm->_cursor->data_8007283c = _vm->getINI(field2 - 1)->field_8 * 2 + 10;
-			_vm->_cursor->_iniItemInHand = field2;
-		}
-	}
-	ini->sceneId = sceneId;
 }
 
 void ScriptOpcodes::loadTalkDialogEntries(ScriptOpCall &scriptOpCall) {

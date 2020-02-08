@@ -235,7 +235,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 						}
 					}
 
-					actor->_sequenceID2 = ini->field_20_actor_field_14;
+					actor->_direction = ini->field_20_actor_field_14;
 
 					if (ini->field_1a_flags_maybe & 2) {
 						actor->_flags |= ACTOR_FLAG_80;
@@ -290,7 +290,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	if (flicker && flicker->sceneId != 0) {
 		flicker->field_20_actor_field_14 = _vm->_data_800633fa;
 		if (flicker->actor) {
-			flicker->actor->_sequenceID2 = _vm->_data_800633fa;
+			flicker->actor->_direction = _vm->_data_800633fa;
 			flicker->actor->setFlag(ACTOR_FLAG_4);
 		}
 	}
@@ -315,7 +315,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	if (flicker && flicker->sceneId == _currentSceneId) {
 
-		flicker->actor->updateSequence((uint16)flicker->actor->_sequenceID2);
+		flicker->actor->updateSequence((uint16)flicker->actor->_direction);
 	}
 
 	_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);

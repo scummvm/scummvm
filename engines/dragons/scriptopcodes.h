@@ -80,17 +80,17 @@ protected:
 
 	// Opcodes
 	void opUnk1(ScriptOpCall &scriptOpCall);
-	void opUnk2(ScriptOpCall &scriptOpCall);
+	void opAddDialogChoice(ScriptOpCall &scriptOpCall);
 	void opUnk3(ScriptOpCall &scriptOpCall);
 	void opExecuteScript(ScriptOpCall &scriptOpCall); //op 4
-	void opActorSetSequenceID2(ScriptOpCall &scriptOpCall); //op 5
+	void opSetActorDirection(ScriptOpCall &scriptOpCall); //op 5
 	void opUnk6(ScriptOpCall &scriptOpCall);
-	void opUnk7(ScriptOpCall &scriptOpCall);
+	void opMoveObjectToScene(ScriptOpCall &scriptOpCall);
 	void opActorLoadSequence(ScriptOpCall &scriptOpCall);
 
-	void opUnkA(ScriptOpCall &scriptOpCall);
+	void opSetVariable(ScriptOpCall &scriptOpCall);
 	void opRunSpecialOpCode(ScriptOpCall &scriptOpCall); //op B
-	void opUnkCSoundRelatedMaybe(ScriptOpCall &scriptOpCall);
+	void opPlayOrStopSound(ScriptOpCall &scriptOpCall);
 	void opDelay(ScriptOpCall &scriptOpCall); //op D
 	void opUnkE(ScriptOpCall &scriptOpCall);
 	void opUnkF(ScriptOpCall &scriptOpCall);
@@ -114,7 +114,7 @@ protected:
 	void opPauseCurrentSpeechAndFetchNextDialog(ScriptOpCall &scriptOpCall);
 
 	bool evaluateExpression(ScriptOpCall &scriptOpCall);
-	void opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall);
+	void setVariable(ScriptOpCall &scriptOpCall);
 	void opCode_Unk7(ScriptOpCall &scriptOpCall);
 
 	void opCodeActorTalk(ScriptOpCall &scriptOpCall); // 0x22

@@ -160,7 +160,7 @@ void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 	_walkDestX = x;
 	_walkDestY = y;
 	_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
-	_sequenceID2 = 0;
+	_direction = 0;
 	_flags = (ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_4);
 	_frame_width = 0;
 	_frame_height = 0;
@@ -437,7 +437,7 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 			} else {
 				newDirection = (dy <= 0)  ? 2 : 6;
 			}
-			_sequenceID2 = newDirection;
+			_direction = newDirection;
 			if (wasAlreadyWalking) {
 				stopWalk();
 			}
@@ -458,10 +458,10 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 	}
 	int direction = startMoveToPoint(_walkDestX, _walkDestY);
 	if (direction != -1 && !isFlagSet(ACTOR_FLAG_800)) {
-		_sequenceID2 = direction;
+		_direction = direction;
 	}
-	if (_sequenceID != _sequenceID2 + 8 && !isFlagSet(ACTOR_FLAG_800)) {
-		updateSequence(_sequenceID2 + 8);
+	if (_sequenceID != _direction + 8 && !isFlagSet(ACTOR_FLAG_800)) {
+		updateSequence(_direction + 8);
 	}
 	setFlag(ACTOR_FLAG_10);
 	return true;
@@ -731,10 +731,10 @@ void Actor::walkPath() {
 			// 0x8001bcc8
 			int direction = startMoveToPoint(_walkDestX, _walkDestY);
 			if (direction != -1 && !isFlagSet(ACTOR_FLAG_800)) {
-				_sequenceID2 = direction;
+				_direction = direction;
 			}
-			if (_sequenceID != _sequenceID2 + 8 && _sequenceID2 != -1 && !isFlagSet(ACTOR_FLAG_800)) {
-				updateSequence(_sequenceID2 + 8);
+			if (_sequenceID != _direction + 8 && _direction != -1 && !isFlagSet(ACTOR_FLAG_800)) {
+				updateSequence(_direction + 8);
 			}
 			setFlag(ACTOR_FLAG_10);
 		}
@@ -791,6 +791,10 @@ byte *Actor::getPalette() {
 		}
 	}
 	return getEngine()->_screen->getPalette(4);
+}
+
+int16 Actor::getFrameYOffset() {
+	return _frame ? _frame->yOffset : 0;
 }
 
 } // End of namespace Dragons

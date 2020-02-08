@@ -592,8 +592,8 @@ bool Talk::talkToActor(ScriptOpCall &scriptOpCall) {
 			flickerActor->setFlag(ACTOR_FLAG_2000);
 			sequenceId = flickerActor->_sequenceID;
 //			playSoundFromTxtIndex(selectedDialogText->textIndex);
-			if (flickerActor->_sequenceID2 != -1) {
-				flickerActor->updateSequence(flickerActor->_sequenceID2 + 0x10);
+			if (flickerActor->_direction != -1) {
+				flickerActor->updateSequence(flickerActor->_direction + 0x10);
 			}
 			displayDialogAroundINI(0, auStack2438, selectedDialogText->textIndex);
 			flickerActor->updateSequence(sequenceId);
@@ -873,8 +873,8 @@ void Talk::talkFromIni(uint32 iniId, uint32 textIndex) {
 				_vm->getINI(0x2b1)->actor->updateSequence(2);
 			} else {
 				actor->setFlag(ACTOR_FLAG_2000);
-				if (actor->_sequenceID2 != -1) {
-					actor->updateSequence(actor->_sequenceID2 + 0x10);
+				if (actor->_direction != -1) {
+					actor->updateSequence(actor->_direction + 0x10);
 				}
 			}
 		} else {
