@@ -97,7 +97,7 @@ public:
 	int16 _scale; // scale factor 0x100 is 100%
 	uint16 _sequenceTimer;
 	uint16 _sequenceID;
-	int16 _sequenceID2;
+	int16 _direction;
 	int16 _priorityLayer;
 	uint16 _flags;
 	int16 _x_pos;
@@ -148,6 +148,7 @@ public:
 	bool isFlagClear(uint32 flag) { return !isFlagSet(flag); }
 
 	byte *getPalette();
+	int16 getFrameYOffset();
 private:
 	void stopWalk();
 	uint16 canWalkLine(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, uint16 walkFlags);

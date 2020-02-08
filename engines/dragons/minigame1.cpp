@@ -177,7 +177,7 @@ void Minigame1::run() {
 	flickerActor->_flags = flickerActor->_flags | 0x380;
 	flickerActor->_scale = DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE;
 	flickerActor->_priorityLayer = 4;
-	flickerActor->_sequenceID2 = -1;
+	flickerActor->_direction = -1;
 	flickerActor->updateSequence(0x15);
 	hitCounter = 0;
 	local_254 = 0;
