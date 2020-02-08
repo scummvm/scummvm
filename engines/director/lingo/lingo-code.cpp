@@ -567,11 +567,11 @@ void LC::c_ampersand() {
 	g_lingo->push(d1);
 }
 
-void LC::c_after() {
+void LC::c_before() {
 	LC::c_ampersand();
 }
 
-void LC::c_before() {
+void LC::c_after() {
 	Datum d2 = g_lingo->pop();
 	Datum d1 = g_lingo->pop();
 
@@ -665,6 +665,7 @@ void LC::c_within() {
 }
 
 void LC::c_of() {
+	// put char 5 of word 1 of line 2 into field "thing"
 	Datum target = g_lingo->pop();
 	Datum last_line = g_lingo->pop();
 	Datum first_line = g_lingo->pop();
@@ -675,13 +676,111 @@ void LC::c_of() {
 	Datum last_char = g_lingo->pop();
 	Datum first_char = g_lingo->pop();
 
-	warning("STUB: c_of: %d %d %d %d %d %d %d %d %s",
-		first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
-		first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
-		target.u.s->c_str());
+	target.toString();
+	Common::String result = *target.u.s;
+
+	if (first_line.u.i > 0) {
+		Common::String newline("\r");
+		int first = first_line.u.i;
+		int last = first;
+		if (last_line.u.i > 0) {
+			if ((first_item.u.i > 0) || (first_word.u.i > 0) || (first_char.u.i > 0)) {
+				warning("c_of: last_line defined but unused");
+			} else if (last_line.u.i < first_line.u.i) {
+				warning("c_of: last_line before first_line, ignoring");
+			} else {
+				last = last_line.u.i;
+			}
+		}
+		uint32 pointer = 0;
+		int curLine = 0;
+		int firstIndex = -1;
+		int lastIndex = -1;
+		while (pointer < result.size()) {
+			curLine += 1;
+			if (curLine == first) {
+				firstIndex = pointer;
+			}
+			pointer = result.find(newline, pointer);
+			if (curLine == last) {
+				lastIndex = pointer;
+				break;
+			}
+		}
+		if (firstIndex < 0) {
+			warning("c_of: first_line out of range");
+			result = "";
+		} else {
+			result = result.substr(firstIndex, lastIndex);
+		}
+	}
+
+	if (first_item.u.i > 0) {
+		warning("STUB: c_of item indexing");
+	}
+
+	if (first_word.u.i > 0) {
+		int first = first_word.u.i;
+		int last = first;
+		if (last_word.u.i > 0) {
+			if (first_char.u.i > 0) {
+				warning("c_of: last_word defined but unused");
+			} else if (last_word.u.i < first_word.u.i) {
+				warning("c_of: last_word before first_word, ignoring");
+			} else {
+				last = last_word.u.i;
+			}
+		}
+		uint32 pointer = 0;
+		int curWord = 0;
+		int firstIndex = -1;
+		int lastIndex = -1;
+		bool inWord = false;
+		while (pointer < result.size()) {
+			if ((result[pointer] == '\r') || (result[pointer] == '\t') ||
+				(result[pointer] == '\n') || (result[pointer] == ' ')) {
+				if (inWord) {
+					inWord = false;
+					if (last == curWord) {
+						break;
+					}
+				}
+			} else {
+				if (!inWord) {
+					inWord = true;
+					curWord += 1;
+					if (first == curWord) {
+						firstIndex = pointer;
+					}
+				}
+			}
+			pointer += 1;
+		}
+		lastIndex = pointer;
+		if (firstIndex < 0) {
+			warning("c_of: first_word out of range");
+			result = "";
+		} else {
+			result = result.substr(firstIndex, lastIndex - firstIndex);
+		}
+	}
+
+	if (first_char.u.i > 0) {
+		int first = first_char.u.i;
+		int last = first;
+		if (last_char.u.i > 0) {
+			if (last_char.u.i < first_char.u.i) {
+				warning("c_of: last_char before first_char, ignoring");
+			} else {
+				last = last_char.u.i;
+			}
+		}
+		result = result.substr(first - 1, last - first);
+	}
+
+	*target.u.s = result;
 
 	g_lingo->push(target);
-
 }
 
 void LC::c_charOf() {
