@@ -183,6 +183,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
+	virtual int getAutosaveSlot() const override { return 999; }
 };
 
 bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {

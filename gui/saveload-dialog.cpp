@@ -298,7 +298,7 @@ void SaveLoadChooserDialog::updateSaveList() {
 
 void SaveLoadChooserDialog::listSaves() {
 	if (!_metaEngine) return; //very strange
-	_saveList = _metaEngine->listSaves(_target.c_str());
+	_saveList = _metaEngine->listSaves(_target.c_str(), _saveMode);
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	//if there is Cloud support, add currently synced files as "locked" saves in the list
@@ -572,7 +572,8 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 		SaveStateDescriptor desc = (_saveList[selItem].getLocked() ? _saveList[selItem] : _metaEngine->querySaveMetaInfos(_target.c_str(), _saveList[selItem].getSaveSlot()));
 
 		isDeletable = desc.getDeletableFlag() && _delSupport;
-		isWriteProtected = desc.getWriteProtectedFlag();
+		isWriteProtected = desc.getWriteProtectedFlag() ||
+			_saveList[selItem].getWriteProtectedFlag();
 		isLocked = desc.getLocked();
 
 		// Don't allow the user to change the description of write protected games

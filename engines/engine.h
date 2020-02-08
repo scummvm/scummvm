@@ -399,6 +399,7 @@ public:
 
 	/**
 	 * Returns the slot that should be used for autosaves
+	 * @note	This should match the meta engine getAutosaveSlot() method
 	 */
 	virtual int getAutosaveSlot() const {
 		return 0;

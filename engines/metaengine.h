@@ -152,6 +152,26 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 
 	/**
+	 * Return a list of all save states associated with the given target.
+	 *
+	 * This is a wrapper around the basic listSaves virtual method, but which
+	 * has some extra logic for autosave handling
+	 *
+	 * @param target	name of a config manager target
+	 * @param saveMode	If true, getting the list for a save dialog
+	 * @return			a list of save state descriptors
+	 */
+	SaveStateList listSaves(const char *target, bool saveMode) const;
+
+	/**
+	 * Returns the slot number being used for autosaves.
+	 * @note	This should match the engine getAutosaveSlot() method
+	 */
+	virtual int getAutosaveSlot() const {
+		return 0;
+	}
+
+	/**
 	 * Return a list of extra GUI options for the specified target.
 	 * If no target is specified, all of the available custom GUI options are
 	 * Returned for the plugin (used to set default values).
