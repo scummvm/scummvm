@@ -154,6 +154,7 @@ public:
 	uint16 _sceneId1; //TODO wire this up. I think it might be where to restore save game from?
 
 private:
+	Common::Language _language;
 	BigfileArchive *_bigfileArchive;
 	DragonFLG *_dragonFLG;
 	DragonVAR *_dragonVAR;
@@ -199,7 +200,7 @@ private:
 protected:
 	virtual bool hasFeature(EngineFeature f) const;
 public:
-	DragonsEngine(OSystem *syst);
+	DragonsEngine(OSystem *syst, const ADGameDescription *desc);
 	~DragonsEngine();
 
 	void updateEvents();
@@ -279,6 +280,11 @@ public:
 	uint16 getRand(uint16 max);
 
 	void setupPalette1();
+
+	//TODO this logic should probably go in its own class.
+	uint32 getBigFileInfoTblFromDragonEXE();
+	uint32 getFontOffsetFromDragonEXE();
+	uint32 getSpeechTblOffsetFromDragonEXE();
 private:
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);

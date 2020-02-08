@@ -58,7 +58,8 @@ DragonsEngine *getEngine() {
 	return _engine;
 }
 
-DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
+DragonsEngine::DragonsEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst) {
+	_language = desc->language;
 	_bigfileArchive = NULL;
 	_dragonRMS = NULL;
 	_backgroundResourceLoader = NULL;
@@ -191,7 +192,7 @@ void DragonsEngine::updateEvents() {
 
 Common::Error DragonsEngine::run() {
 	_screen = new Screen();
-	_bigfileArchive = new BigfileArchive("bigfile.dat", Common::EN_ANY);
+	_bigfileArchive = new BigfileArchive(this, "bigfile.dat");
 	_talk = new Talk(this, _bigfileArchive);
 	_dragonFLG = new DragonFLG(_bigfileArchive);
 	_dragonImg = new DragonImg(_bigfileArchive);
@@ -1420,6 +1421,37 @@ void DragonsEngine::updatePaletteCycling() {
 				}
 			}
 		}
+	}
+}
+
+uint32 DragonsEngine::getFontOffsetFromDragonEXE() {
+	switch (_language) {
+	case Common::EN_GRB : return 0x4b4fc;
+	case Common::EN_USA : return 0x4a144;
+	case Common::DE_DEU : return 0x4af5c;
+	//TODO FR
+	default : error("Unable to get font offset from dragon.exe for %s", getLanguageCode(_language));
+	}
+}
+
+uint32 DragonsEngine::getSpeechTblOffsetFromDragonEXE() {
+	switch (_language) {
+	case Common::EN_GRB : return 0x4f4f4;
+	case Common::EN_USA : return 0x4e138;
+	case Common::DE_DEU : return 0x4f0a4;
+	//TODO FR
+	default : error("Unable to get speech table offset from dragon.exe for %s", getLanguageCode(_language));
+	}
+}
+
+uint32 DragonsEngine::getBigFileInfoTblFromDragonEXE() {
+	switch (_language) {
+	case Common::EN_USA : return 0x4a238;
+	case Common::EN_GRB : return 0x4b5f4;
+	case Common::DE_DEU : return 0x4b054;
+	//TODO FR
+	default :
+		error("Unable to get speech table offset from dragon.exe for %s", getLanguageCode(_language));
 	}
 }
 

@@ -47,12 +47,23 @@ static const DragonsGameDescription gameDescriptions[] = {
 			},
 			kGameIdDragons
 	},
-
 	{
 			{
 					"dragons",
 					0,
-					AD_ENTRY1s("bigfile.dat", "234234234234", 29779968),
+					AD_ENTRY1s("bigfile.dat", "02c26712bee57266f28235fdc0207725", 44992512),
+					Common::EN_GRB,
+					Common::kPlatformPSX,
+					ADGF_DROPPLATFORM,
+					GUIO0()
+			},
+			kGameIdDragons
+	},
+	{
+			{
+					"dragons",
+					0,
+					AD_ENTRY1s("bigfile.dat", "9854fed0d2b48522a62973e99b52a0be", 45099008),
 					Common::DE_DEU,
 					Common::kPlatformPSX,
 					ADGF_DROPPLATFORM,
@@ -170,7 +181,7 @@ bool DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 	if (gd) {
 		switch (gd->gameId) {
 		case Dragons::kGameIdDragons:
-			*engine = new Dragons::DragonsEngine(syst);
+			*engine = new Dragons::DragonsEngine(syst, desc);
 			break;
 		default:
 			error("Unknown game id");
