@@ -76,8 +76,63 @@ class AudioMixer;
 
 class Ultima8Engine : public Shared::UltimaEngine, public CoreApp {
 private:
-	Std::list<ObjId> textmodes;      //!< Gumps that want text mode
+	Std::list<ObjId> _textModes;      //!< Gumps that want text mode
+	bool _ttfOverrides;
+	// Audio Mixer
+	AudioMixer *_audioMixer;
+	uint32 _saveCount;
 
+	// full system
+	Game *_game;
+	istring _changeGameName;
+	Std::string _errorMessage;
+	Std::string _errorTitle;
+
+	Kernel *_kernel;
+	MemoryManager *_memoryManager;
+	ObjectManager *_objectManager;
+	HIDManager *_hidManager;
+	UCMachine *_ucMachine;
+	RenderSurface *_screen;
+	bool _fullScreen;
+	Mouse *_mouse;
+	PaletteManager *_paletteManager;
+	GameData *_gameData;
+	World *_world;
+	FontManager *_fontManager;
+
+	Gump *_desktopGump;
+	ConsoleGump *_consoleGump;
+	GameMapGump *_gameMapGump;
+	ScalerGump *_scalerGump;
+	InverterGump *_inverterGump;
+	AvatarMoverProcess *_avatarMoverProcess;
+
+	// Various dependancy flags
+	// Timing stuff
+	int32 _lerpFactor;       //!< Interpolation factor for this frame (0-256)
+	bool _inBetweenFrame;    //!< Set true if we are doing an inbetween frame
+
+	bool _frameSkip;         //!< Set to true to enable frame skipping (default false)
+	bool _frameLimit;        //!< Set to true to enable frame limiting (default true)
+	bool _interpolate;       //!< Set to true to enable interpolation (default true)
+	int32 _animationRate;    //!< The animation rate. Affects all processes! (default 100)
+
+	// Sort of Camera Related Stuff, move somewhere else
+
+	bool _avatarInStasis;    //!< If this is set to true, Avatar can't move,
+	//!< nor can Avatar start more usecode
+	bool _paintEditorItems;  //!< If true, paint items with the SI_EDITOR flag
+	bool _painting;          //!< Set true when painting
+	bool _showTouching;          //!< If true, highlight items touching Avatar
+	int32 _timeOffset;
+	bool _hasCheated;
+	bool _cheatsEnabled;
+	uint32 _lastDown[HID_LAST];
+	bool _down[HID_LAST];
+	unsigned int _inversion;
+	bool _drawRenderStats;
+private:
 	/**
 	 * Does engine deinitialization
 	 */
@@ -87,6 +142,8 @@ private:
 	 * Shows the Pentagram splash screen
 	 */
 	void showSplashScreen();
+
+	static void conAutoPaint(void);
 
 	// Load and save games from arbitrary filenames from the console
 	static void ConCmd_saveGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::saveGame <optional filename>" console command
@@ -102,7 +159,6 @@ private:
 	static void ConCmd_setVideoMode(const Console::ArgvType &argv);     //!< "Ultima8Engine::setVideoMode" console command
 
 	// This should be a console variable once they are implemented
-	bool drawRenderStats;
 	static void ConCmd_drawRenderStats(const Console::ArgvType &argv);  //!< "Ultima8Engine::drawRenderStats" console command
 
 	static void ConCmd_engineStats(const Console::ArgvType &argv);  //!< "Ultima8Engine::engineStats" console command
@@ -116,14 +172,7 @@ private:
 	static void ConCmd_toggleCheatMode(const Console::ArgvType &argv);  //!< "Cheat::toggle" console command
 
 	static void ConCmd_memberVar(const Console::ArgvType &argv);    //!< "Ultima8Engine::memberVar <member> [newvalue] [updateini]" console command
-
-	bool ttfoverrides;
-
-	// Audio Mixer
-	AudioMixer *audiomixer;
 private:
-	uint32 save_count;
-
 	//! write savegame info (time, ..., game-specifics)
 	void writeSaveInfo(ODataSource *ods);
 
@@ -142,69 +191,11 @@ private:
 	//! Does a Full reset of the Engine (including shutting down Video)
 //	void fullReset();
 
-	// full system
-	Game *game;
-	istring change_gamename;
-	Std::string error_message;
-	Std::string error_title;
-
-	Kernel *kernel;
-	MemoryManager *_memoryManager;
-	ObjectManager *objectmanager;
-	HIDManager *hidmanager;
-	UCMachine *ucmachine;
-	RenderSurface *screen;
-	bool fullscreen;
-	Mouse *_mouse;
-	PaletteManager *palettemanager;
-	GameData *gamedata;
-	World *world;
-	FontManager *fontmanager;
-
-	Gump *desktopGump;
-	ConsoleGump *consoleGump;
-	GameMapGump *gameMapGump;
-	ScalerGump *scalerGump;
-	InverterGump *inverterGump;
-	AvatarMoverProcess *avatarMoverProcess;
-
 	// called depending upon command line arguments
 	void GraphicSysInit(); // starts/restarts the graphics subsystem
 	bool LoadConsoleFont(Std::string confontini); // loads the console font
 
 	void handleDelayedEvents();
-
-	// Various dependancy flags
-	bool runSDLInit;
-
-	// Timing stuff
-	int32 lerpFactor;       //!< Interpolation factor for this frame (0-256)
-	bool inBetweenFrame;    //!< Set true if we are doing an inbetween frame
-
-	bool frameSkip;         //!< Set to true to enable frame skipping (default false)
-	bool frameLimit;        //!< Set to true to enable frame limiting (default true)
-	bool interpolate;       //!< Set to true to enable interpolation (default true)
-	int32 animationRate;    //!< The animation rate. Affects all processes! (default 100)
-
-	// Sort of Camera Related Stuff, move somewhere else
-
-	bool avatarInStasis;    //!< If this is set to true, Avatar can't move,
-	//!< nor can Avatar start more usecode
-	bool paintEditorItems;  //!< If true, paint items with the SI_EDITOR flag
-
-	bool painting;          //!< Set true when painting
-
-	bool showTouching;          //!< If true, highlight items touching Avatar
-
-	static void conAutoPaint(void);
-private:
-	int32 timeOffset;
-	bool has_cheated;
-	bool cheats_enabled;
-
-	uint32 _lastDown[HID_LAST];
-	bool _down[HID_LAST];
-	unsigned int inversion;
 protected:
 	// Engine APIs
 	virtual Common::Error run() override;
@@ -244,7 +235,7 @@ public:
 
 	void changeVideoMode(int width, int height, int fullscreen = -1); // -1 = no change, -2 = fullscreen toggle
 	RenderSurface *getRenderScreen() {
-		return screen;
+		return _screen;
 	}
 
 	virtual Graphics::Screen *getScreen() const override;
@@ -254,7 +245,7 @@ public:
 
 	virtual void paint() override;
 	virtual bool isPainting() override {
-		return painting;
+		return _painting;
 	}
 
 
@@ -270,37 +261,37 @@ public:
 	INTRINSIC(I_closeItemGumps);
 
 	void setAvatarInStasis(bool stat) {
-		avatarInStasis = stat;
+		_avatarInStasis = stat;
 	}
 	bool isAvatarInStasis() const {
-		return avatarInStasis;
+		return _avatarInStasis;
 	}
 	void toggleAvatarInStasis() {
-		avatarInStasis = !avatarInStasis;
+		_avatarInStasis = !_avatarInStasis;
 	}
 	bool isPaintEditorItems() const {
-		return paintEditorItems;
+		return _paintEditorItems;
 	}
 	void togglePaintEditorItems() {
-		paintEditorItems = !paintEditorItems;
+		_paintEditorItems = !_paintEditorItems;
 	}
 	bool isShowTouchingItems() const {
-		return showTouching;
+		return _showTouching;
 	}
 	void toggleShowTouchingItems() {
-		showTouching = !showTouching;
+		_showTouching = !_showTouching;
 	}
 
 	uint32 getGameTimeInSeconds();
 
 	GameMapGump *getGameMapGump() {
-		return gameMapGump;
+		return _gameMapGump;
 	}
 	ConsoleGump *getConsoleGump() {
-		return consoleGump;
+		return _consoleGump;
 	}
 	Gump *getDesktopGump() {
-		return desktopGump;
+		return _desktopGump;
 	}
 	Gump *getGump(uint16 gumpid);
 
@@ -309,7 +300,7 @@ public:
 	void addGump(Gump *gump);
 
 	AvatarMoverProcess *getAvatarMoverProcess() {
-		return avatarMoverProcess;
+		return _avatarMoverProcess;
 	}
 
 	/**
@@ -368,26 +359,26 @@ public:
 	void Error(Std::string message, Std::string title = Std::string(), bool exit_to_menu = false);
 public:
 	unsigned int getInversion() const {
-		return inversion;
+		return _inversion;
 	}
 	void setInversion(unsigned int i) {
-		inversion = i & 0xFFFF;
+		_inversion = i & 0xFFFF;
 	}
 	bool isInverted() {
-		return (inversion >= 0x4000 && inversion < 0xC000);
+		return (_inversion >= 0x4000 && _inversion < 0xC000);
 	}
 public:
 	bool areCheatsEnabled() const {
-		return cheats_enabled;
+		return _cheatsEnabled;
 	}
 	void setCheatMode(bool enabled) {
-		cheats_enabled = enabled;
+		_cheatsEnabled = enabled;
 	}
 	bool hasCheated() const {
-		return has_cheated;
+		return _hasCheated;
 	}
 	void makeCheater() {
-		has_cheated = true;
+		_hasCheated = true;
 	}
 };
 
