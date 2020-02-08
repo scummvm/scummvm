@@ -144,6 +144,8 @@ static struct FuncDescr {
 	{ LC::cb_globalpush,	"cb_globalpush",	"i" },
 	{ LC::cb_list,			"cb_list",			"" },
 	{ LC::cb_localcall,		"cb_localcall",		"i" },
+	{ LC::cb_methodcall,	"cb_methodcall",	"i" },
+	{ LC::cb_objectpush,	"cb_objectpush",	"i" },
 	{ LC::cb_unk,			"cb_unk",			"i" },
 	{ LC::cb_unk1,			"cb_unk1",			"ii" },
 	{ LC::cb_unk2,			"cb_unk2",			"iii" },

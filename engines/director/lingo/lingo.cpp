@@ -88,6 +88,16 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 Lingo::~Lingo() {
 }
 
+ScriptContext *Lingo::getScriptContext(ScriptType type, uint16 id) {
+	if (type >= (int)_scriptContexts->size()) {
+		return NULL;
+	}
+	if (!_scriptContexts[type].contains(id)) {
+		return NULL;
+	}
+	return _scriptContexts[type][id];
+}
+
 const char *Lingo::findNextDefinition(const char *s) {
 	const char *res = s;
 
@@ -129,11 +139,11 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	debugC(1, kDebugLingoCompile, "Add code for type %s(%d) with id %d\n"
 			"***********\n%s\n\n***********", scriptType2str(type), type, id, code);
 
-	if (_scriptContexts[type].contains(id)) {
-		for (size_t j = 0; j < _scriptContexts[type][id]->functions.size(); j++) {
-			delete _scriptContexts[type][id]->functions[j];
-		}
-		delete _scriptContexts[type][id];
+	if (getScriptContext(type, id)) {
+		// We can't undefine context data because it could be used in e.g. symbols.
+		// Abort on double definitions.
+		error("Script already defined for type %d, id %d", id, type);
+		return;
 	}
 
 	_currentScriptContext = new ScriptContext;
@@ -224,18 +234,19 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 }
 
 void Lingo::executeScript(ScriptType type, uint16 id, uint16 function) {
-	if (!_scriptContexts[type].contains(id)) {
+	ScriptContext *sc = getScriptContext(type, id);
+	if (!sc) {
 		debugC(3, kDebugLingoExec, "Request to execute non-existant script type %d id %d", type, id);
 		return;
 	}
-	if (function >= _scriptContexts[type][id]->functions.size()) {
+	if (function >= sc->functions.size()) {
 		debugC(3, kDebugLingoExec, "Request to execute non-existant function %d in script type %d id %d", function, type, id);
 		return;
 	}
 
 	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d, function: %d", scriptType2str(type), id, function);
 
-	_currentScriptContext = _scriptContexts[type][id];
+	_currentScriptContext = sc;
 	_currentScript = _currentScriptContext->functions[function]->u.defn;
 	_pc = 0;
 	_returning = false;

@@ -66,6 +66,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x43, LC::c_argcpush,		"b" },
 	// 0x44, push a constant
 	{ 0x45, LC::c_namepush,		"b" },
+	{ 0x46, LC::cb_objectpush,  "b" },
 	{ 0x49, LC::cb_globalpush,	"b" },
 	{ 0x4b, LC::cb_varpush,		"bpa" },
 	{ 0x4c, LC::cb_varpush,		"bpv" },
@@ -77,6 +78,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x55, LC::c_jumpifz,		"jb" },
 	{ 0x56, LC::cb_localcall,	"b" },
 	{ 0x57, LC::cb_call,		"b" },
+	{ 0x58, LC::cb_methodcall,  "b" },
 	{ 0x59, LC::cb_v4assign,	"b" },
 	{ 0x5c, LC::cb_v4theentitypush, "b" },
 	{ 0x5d, LC::cb_v4theentityassign, "b" },
@@ -85,6 +87,8 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x82, LC::c_argcnoretpush,"w" },
 	{ 0x83, LC::c_argcpush,		"w" },
 	// 0x84, push a constant
+	{ 0x85, LC::c_namepush,     "w" },
+	{ 0x86, LC::cb_objectpush,  "w" },
 	{ 0x89, LC::cb_globalpush,	"w" },
 	{ 0x8b, LC::cb_varpush,		"wpa" },
 	{ 0x8c, LC::cb_varpush,		"wpv" },
@@ -94,6 +98,13 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x93, LC::c_jump,			"jw" },
 	{ 0x94, LC::c_jump,			"jwn" },
 	{ 0x95, LC::c_jumpifz,		"jw" },
+	{ 0x96, LC::cb_localcall,	"w" },
+	{ 0x97, LC::cb_call,		"w" },
+	{ 0x98, LC::cb_methodcall,  "w" },
+	{ 0x99, LC::cb_v4assign,	"w" },
+	{ 0x9c, LC::cb_v4theentitypush, "w" },
+	{ 0x9d, LC::cb_v4theentityassign, "w" },
+	{ 0xa6, LC::cb_v4theentitynamepush, "w" },
 	{ 0, 0, 0 }
 };
 
@@ -248,6 +259,24 @@ void LC::cb_localcall() {
 }
 
 
+void LC::cb_methodcall() {
+	g_lingo->readInt();
+	Datum obj = g_lingo->pop();
+	obj.toString();
+	warning("STUB: cb_methodcall(%s)", obj.u.s->c_str());
+
+	Datum nargs = g_lingo->pop();
+	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
+		if (debugChannelSet(3, kDebugLingoExec))
+			g_lingo->printSTUBWithArglist("", nargs.u.i, "methodcall:");
+
+	} else {
+		warning("cb_methodcall: second arg should be of type ARGC or ARGCNORET, not %s", nargs.type2str());
+	}
+
+}
+
+
 void LC::cb_v4assign() {
 	int op = g_lingo->readInt();
 
@@ -363,6 +392,16 @@ void LC::cb_globalassign() {
 	target.u.sym = s;
 	Datum source = g_lingo->pop();
 	g_lingo->varAssign(target, source);
+}
+
+
+void LC::cb_objectpush() {
+	int nameId = g_lingo->readInt();
+	Common::String name = g_lingo->_namelist[nameId];
+	warning("STUB: cb_objectpush(%s)", name.c_str());
+	Datum result;
+	result.type = VOID;
+	g_lingo->push(result);
 }
 
 
@@ -569,11 +608,11 @@ void LC::cb_zeropush() {
 void Lingo::addCodeV4(Common::SeekableSubReadStreamEndian &stream, ScriptType type, uint16 id) {
 	debugC(1, kDebugLingoCompile, "Add V4 bytecode for type %s with id %d", scriptType2str(type), id);
 
-	if (_scriptContexts[type].contains(id)) {
-		for (size_t j = 0; j < _scriptContexts[type][id]->functions.size(); j++) {
-			delete _scriptContexts[type][id]->functions[j];
-		}
-		delete _scriptContexts[type][id];
+	if (getScriptContext(type, id)) {
+		// We can't undefine context data because it could be used in e.g. symbols.
+		// Abort on double definitions.
+		error("Script already defined for type %d, id %d", id, type);
+		return;
 	}
 
 	_currentScriptContext = new ScriptContext;

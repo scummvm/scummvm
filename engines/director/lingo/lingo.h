@@ -182,6 +182,7 @@ private:
 	void runMovieScript(LEvent event);
 	void processSpriteEvent(LEvent event);
 	void processEvent(LEvent event, ScriptType st, int entityId);
+	ScriptContext *getScriptContext(ScriptType type, uint16 id);
 
 public:
 	ScriptType event2script(LEvent ev);
