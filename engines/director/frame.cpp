@@ -582,86 +582,87 @@ void Frame::playTransition(Score *score) {
 
 void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 	for (uint16 i = 0; i < _numChannels; i++) {
-		if (_sprites[i]->_enabled) {
-			if ((_sprites[i]->_trails == 0 && renderTrail) || (_sprites[i]->_trails == 1 && !renderTrail))
-				continue;
+		if (!_sprites[i]->_enabled)
+			continue;
 
-			CastType castType = kCastTypeNull;
-			if (_vm->getVersion() < 4) {
-				debugC(1, kDebugImages, "Frame::renderSprites(): Channel: %d type: %d", i, _sprites[i]->_spriteType);
-				switch (_sprites[i]->_spriteType) {
-				case kBitmapSprite:
-					castType = kCastBitmap;
-					break;
-				case kRectangleSprite:
-				case kRoundedRectangleSprite:
-				case kOvalSprite:
-				case kLineTopBottomSprite:
-				case kLineBottomTopSprite:
-				case kOutlinedRectangleSprite:	// this is actually a mouse-over shape? I don't think it's a real button.
-				case kOutlinedRoundedRectangleSprite:
-				case kOutlinedOvalSprite:
-				case kCastMemberSprite: 		// Face kit D3
-					castType = kCastShape;
-					break;
-				case kTextSprite:
-					castType = kCastText;
-					break;
-				default:
-					warning("Frame::renderSprites(): Unhandled sprite type %d", _sprites[i]->_spriteType);
-					break;
-				}
-			} else {
-				if (!_vm->getCurrentScore()->_loadedCast->contains(_sprites[i]->_castId)) {
-					if (!_vm->getSharedScore() || !_vm->getSharedScore()->_loadedCast->contains(_sprites[i]->_castId)) {
-						debugC(1, kDebugImages, "Frame::renderSprites(): Cast id %d not found", _sprites[i]->_castId);
-						continue;
-					} else {
-						debugC(1, kDebugImages, "Frame::renderSprites(): Getting cast id %d from shared cast", _sprites[i]->_castId);
-						castType = _vm->getSharedScore()->_loadedCast->getVal(_sprites[i]->_castId)->_type;
-					}
-				} else {
-					castType = _vm->getCurrentScore()->_loadedCast->getVal(_sprites[i]->_castId)->_type;
-				}
+		if ((_sprites[i]->_trails == 0 && renderTrail) || (_sprites[i]->_trails == 1 && !renderTrail))
+			continue;
+
+		CastType castType = kCastTypeNull;
+		if (_vm->getVersion() < 4) {
+			debugC(1, kDebugImages, "Frame::renderSprites(): Channel: %d type: %d", i, _sprites[i]->_spriteType);
+			switch (_sprites[i]->_spriteType) {
+			case kBitmapSprite:
+				castType = kCastBitmap;
+				break;
+			case kRectangleSprite:
+			case kRoundedRectangleSprite:
+			case kOvalSprite:
+			case kLineTopBottomSprite:
+			case kLineBottomTopSprite:
+			case kOutlinedRectangleSprite:	// this is actually a mouse-over shape? I don't think it's a real button.
+			case kOutlinedRoundedRectangleSprite:
+			case kOutlinedOvalSprite:
+			case kCastMemberSprite: 		// Face kit D3
+				castType = kCastShape;
+				break;
+			case kTextSprite:
+				castType = kCastText;
+				break;
+			default:
+				warning("Frame::renderSprites(): Unhandled sprite type %d", _sprites[i]->_spriteType);
+				break;
 			}
-
-			// this needs precedence to be hit first... D3 does something really tricky with cast IDs for shapes.
-			// I don't like this implementation 100% as the 'cast' above might not actually hit a member and be null?
-			debugC(1, kDebugImages, "Frame::renderSprites(): Channel: %d castType: %d", i, castType);
-
-			if (castType == kCastShape) {
-				renderShape(surface, i);
-			} else if (castType == kCastText || castType == kCastRTE) {
-				renderText(surface, i, NULL);
-			} else if (castType == kCastButton) {
-				renderButton(surface, i);
-			} else {
-				if (!_sprites[i]->_cast || _sprites[i]->_cast->_type != kCastBitmap) {
-					warning("Frame::renderSprites(): No cast ID for sprite %d", i);
+		} else {
+			if (!_vm->getCurrentScore()->_loadedCast->contains(_sprites[i]->_castId)) {
+				if (!_vm->getSharedScore() || !_vm->getSharedScore()->_loadedCast->contains(_sprites[i]->_castId)) {
+					debugC(1, kDebugImages, "Frame::renderSprites(): Cast id %d not found", _sprites[i]->_castId);
 					continue;
+				} else {
+					debugC(1, kDebugImages, "Frame::renderSprites(): Getting cast id %d from shared cast", _sprites[i]->_castId);
+					castType = _vm->getSharedScore()->_loadedCast->getVal(_sprites[i]->_castId)->_type;
 				}
-
-				InkType ink;
-				if (i == _vm->getCurrentScore()->_currentMouseDownSpriteId)
-					ink = kInkTypeReverse;
-				else
-					ink = _sprites[i]->_ink;
-
-				BitmapCast *bc = (BitmapCast *)_sprites[i]->_cast;
-
-				int32 regX = bc->_regX;
-				int32 regY = bc->_regY;
-				int32 rectLeft = bc->_initialRect.left;
-				int32 rectTop = bc->_initialRect.top;
-
-				int x = _sprites[i]->_startPoint.x - regX + rectLeft;
-				int y = _sprites[i]->_startPoint.y - regY + rectTop;
-				int height = _sprites[i]->_height;
-				int width = _vm->getVersion() > 4 ? bc->_initialRect.width() : _sprites[i]->_width;
-				Common::Rect drawRect(x, y, x + width, y + height);
-				addDrawRect(i, drawRect);
-				inkBasedBlit(surface, *(bc->_surface), ink, drawRect);
+			} else {
+				castType = _vm->getCurrentScore()->_loadedCast->getVal(_sprites[i]->_castId)->_type;
 			}
+		}
+
+		// this needs precedence to be hit first... D3 does something really tricky with cast IDs for shapes.
+		// I don't like this implementation 100% as the 'cast' above might not actually hit a member and be null?
+		debugC(1, kDebugImages, "Frame::renderSprites(): Channel: %d castType: %d", i, castType);
+
+		if (castType == kCastShape) {
+			renderShape(surface, i);
+		} else if (castType == kCastText || castType == kCastRTE) {
+			renderText(surface, i, NULL);
+		} else if (castType == kCastButton) {
+			renderButton(surface, i);
+		} else {
+			if (!_sprites[i]->_cast || _sprites[i]->_cast->_type != kCastBitmap) {
+				warning("Frame::renderSprites(): No cast ID for sprite %d", i);
+				continue;
+			}
+
+			InkType ink;
+			if (i == _vm->getCurrentScore()->_currentMouseDownSpriteId)
+				ink = kInkTypeReverse;
+			else
+				ink = _sprites[i]->_ink;
+
+			BitmapCast *bc = (BitmapCast *)_sprites[i]->_cast;
+
+			int32 regX = bc->_regX;
+			int32 regY = bc->_regY;
+			int32 rectLeft = bc->_initialRect.left;
+			int32 rectTop = bc->_initialRect.top;
+
+			int x = _sprites[i]->_startPoint.x - regX + rectLeft;
+			int y = _sprites[i]->_startPoint.y - regY + rectTop;
+			int height = _sprites[i]->_height;
+			int width = _vm->getVersion() > 4 ? bc->_initialRect.width() : _sprites[i]->_width;
+			Common::Rect drawRect(x, y, x + width, y + height);
+			addDrawRect(i, drawRect);
+			inkBasedBlit(surface, *(bc->_surface), ink, drawRect);
 		}
 	}
 }
