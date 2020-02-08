@@ -474,7 +474,6 @@ void U8Game::writeSaveInfo(ODataSource *ods) {
 	}
 }
 
-
 Std::string U8Game::getCreditText(IDataSource *ids) {
 	Std::string text;
 	unsigned int size = ids->getSize();

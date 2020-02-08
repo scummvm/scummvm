@@ -110,14 +110,14 @@ public:
 	// Begin painting to the buffer. MUST BE CALLED BEFORE DOING ANYTHING TO THE SURFACE!
 	// Can be called multiple times
 	// Returns Error Code on error. Check return code.....
-	virtual ECode BeginPainting();
+	virtual ECode BeginPainting() override;
 
 	// Finish paining to the buffer. MUST BE CALLED FOR EACH CALL TO BeginPainting()
 	// Returns Error Code on error. Check return code.....
-	virtual ECode EndPainting();
+	virtual ECode EndPainting() override;
 
 	// Get the surface as a Texture. Only valid for SecondaryRenderSurfaces
-	virtual Texture *GetSurfaceAsTexture();
+	virtual Texture *GetSurfaceAsTexture() override;
 
 
 	//
@@ -128,25 +128,25 @@ public:
 	virtual void SetOrigin(int32 x, int32 y);
 
 	// Set the Origin of the Surface
-	virtual void GetOrigin(int32 &x, int32 &y) const;
+	virtual void GetOrigin(int32 &x, int32 &y) const override;
 
 	// Get the Surface Dimensions
-	virtual void GetSurfaceDims(Pentagram::Rect &) const;
+	virtual void GetSurfaceDims(Pentagram::Rect &) const override;
 
 	// Get Clipping Rectangle
-	virtual void GetClippingRect(Pentagram::Rect &) const;
+	virtual void GetClippingRect(Pentagram::Rect &) const override;
 
 	// Set Clipping Rectangle
 	virtual void SetClippingRect(const Pentagram::Rect &);
 
 	// Check Clipped. -1 if off screen, 0 if not clipped, 1 if clipped
-	virtual int16 CheckClipped(const Pentagram::Rect &) const;
+	virtual int16 CheckClipped(const Pentagram::Rect &) const override;
 
 	// Flip the surface
-	virtual void SetFlipped(bool flipped);
+	virtual void SetFlipped(bool flipped) override;
 
 	// Has the render surface been flipped?
-	virtual bool IsFlipped() const;
+	virtual bool IsFlipped() const override;
 
 	//
 	// Surface Palettes
@@ -166,6 +166,9 @@ public:
 
 	virtual void CreateNativePalette(Pentagram::Palette *palette);
 
+	Graphics::ManagedSurface *getRawSurface() const override {
+		return sdl_surf;
+	}
 };
 
 } // End of namespace Ultima8

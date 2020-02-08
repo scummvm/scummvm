@@ -86,6 +86,11 @@ private:
 	 */
 	void deinitialize() override;
 
+	/**
+	 * Shows the Pentagram splash screen
+	 */
+	void showSplashScreen();
+
 	// Load and save games from arbitrary filenames from the console
 	static void ConCmd_saveGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::saveGame <optional filename>" console command
 	static void ConCmd_loadGame(const Console::ArgvType &argv);         //!< "Ultima8Engine::loadGame <optional filename>" console command
@@ -244,6 +249,8 @@ public:
 	RenderSurface *getRenderScreen() {
 		return screen;
 	}
+
+	virtual Graphics::Screen *getScreen() const override;
 
 	virtual void runGame() override;
 	virtual void handleEvent(const Common::Event &event);

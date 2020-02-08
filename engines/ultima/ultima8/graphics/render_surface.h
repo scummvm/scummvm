@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/graphics/graphics_errors.h"
 #include "graphics/pixelformat.h"
+#include "graphics/managed_surface.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -132,6 +133,8 @@ public:
 	//! Has the render surface been flipped?
 	virtual bool IsFlipped() const = 0;
 
+	//! Get a reference to the underlying surface that's being encapsulated
+	virtual Graphics::ManagedSurface *getRawSurface() const = 0;
 
 	//
 	// Surface Palettes

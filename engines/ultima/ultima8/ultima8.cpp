@@ -24,7 +24,9 @@
 #include "common/translation.h"
 #include "common/unzip.h"
 #include "common/translation.h"
+#include "common/config-manager.h"
 #include "gui/saveload.h"
+#include "image/png.h"
 
 #include "ultima/shared/engine/events.h"
 #include "ultima/ultima8/ultima8.h"
@@ -980,6 +982,11 @@ void Ultima8Engine::GraphicSysInit() {
 	inverterGump->InitGump(0);
 
 	screen = new_screen;
+
+	// Show the splash screen immediately now that the screen has been set up
+	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+	if (saveSlot == -1)
+		showSplashScreen();
 
 	bool ttf_antialiasing = true;
 	settingman->setDefault("ttf_antialiasing", true);
@@ -2045,6 +2052,32 @@ bool Ultima8Engine::isDataRequired(Common::String &folder, int &majorVersion, in
 	majorVersion = 1;
 	minorVersion = 0;
 	return true;
+}
+
+Graphics::Screen *Ultima8Engine::getScreen() const {
+	Graphics::Screen *scr = dynamic_cast<Graphics::Screen *>(screen->getRawSurface());
+	assert(scr);
+	return scr;
+}
+
+void Ultima8Engine::showSplashScreen() {
+	Image::PNGDecoder png;
+	Common::File f;
+
+	// Get splash screen image
+	if (!f.open("data/pentagram.png") || !png.loadStream(f))
+		return;
+
+	// Blit the splash image to the screen
+	Graphics::Screen *scr = Ultima8Engine::get_instance()->getScreen();
+	const Graphics::Surface *srcSurface = png.getSurface();
+
+	scr->transBlitFrom(*srcSurface, Common::Rect(0, 0, srcSurface->w, srcSurface->h),
+		Common::Rect(0, 0, scr->w, scr->h));
+	scr->update();
+
+	// Pause to allow the image to be seen
+	g_system->delayMillis(2000);
 }
 
 } // End of namespace Ultima8
