@@ -285,6 +285,7 @@ public:
 	uint32 getBigFileInfoTblFromDragonEXE();
 	uint32 getFontOffsetFromDragonEXE();
 	uint32 getSpeechTblOffsetFromDragonEXE();
+	uint32 getCutscenePaletteOffsetFromDragonEXE();
 private:
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);

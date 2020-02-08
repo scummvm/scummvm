@@ -1426,20 +1426,20 @@ void DragonsEngine::updatePaletteCycling() {
 
 uint32 DragonsEngine::getFontOffsetFromDragonEXE() {
 	switch (_language) {
-	case Common::EN_GRB : return 0x4b4fc;
 	case Common::EN_USA : return 0x4a144;
+	case Common::EN_GRB : return 0x4b4fc;
 	case Common::DE_DEU : return 0x4af5c;
-	//TODO FR
+	case Common::FR_FRA : return 0x4b158;
 	default : error("Unable to get font offset from dragon.exe for %s", getLanguageCode(_language));
 	}
 }
 
 uint32 DragonsEngine::getSpeechTblOffsetFromDragonEXE() {
 	switch (_language) {
-	case Common::EN_GRB : return 0x4f4f4;
 	case Common::EN_USA : return 0x4e138;
+	case Common::EN_GRB : return 0x4f4f4;
 	case Common::DE_DEU : return 0x4f0a4;
-	//TODO FR
+	case Common::FR_FRA : return 0x4f2a0;
 	default : error("Unable to get speech table offset from dragon.exe for %s", getLanguageCode(_language));
 	}
 }
@@ -1449,7 +1449,18 @@ uint32 DragonsEngine::getBigFileInfoTblFromDragonEXE() {
 	case Common::EN_USA : return 0x4a238;
 	case Common::EN_GRB : return 0x4b5f4;
 	case Common::DE_DEU : return 0x4b054;
-	//TODO FR
+	case Common::FR_FRA : return 0x4b250;
+	default :
+		error("Unable to get speech table offset from dragon.exe for %s", getLanguageCode(_language));
+	}
+}
+
+uint32 DragonsEngine::getCutscenePaletteOffsetFromDragonEXE() {
+	switch (_language) {
+	case Common::EN_USA : return 0x5336c;
+	case Common::EN_GRB : return 0x54628;
+	case Common::DE_DEU : return 0x541d8;
+	case Common::FR_FRA : return 0x543d4;
 	default :
 		error("Unable to get speech table offset from dragon.exe for %s", getLanguageCode(_language));
 	}
