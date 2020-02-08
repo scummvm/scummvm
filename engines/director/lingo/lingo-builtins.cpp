@@ -408,7 +408,7 @@ void LB::b_random(int nargs) {
 
 	max.toInt();
 
-	res.u.i = g_lingo->_vm->_rnd.getRandomNumber(max.u.i);
+	res.u.i = g_lingo->_vm->_rnd.getRandomNumber(max.u.i - 1) + 1;
 	res.type = INT;
 
 	g_lingo->push(res);
