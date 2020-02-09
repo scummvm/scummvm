@@ -20,32 +20,31 @@
  *
  */
 
-#ifndef ULTIMA_SHARED_ENGINE_DEBUGGER_H
-#define ULTIMA_SHARED_ENGINE_DEBUGGER_H
-
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "ultima/ultima1/core/debugger.h"
+#include "ultima/shared/early/game.h"
+#include "ultima/shared/early/ultima_early.h"
+#include "ultima/shared/maps/map.h"
 
 namespace Ultima {
-namespace Shared {
+namespace Ultima1 {
 
-class UltimaEngine;
+Debugger::Debugger() : Shared::Debugger() {
+	registerCmd("spell", WRAP_METHOD(Debugger, cmdSpell));
+}
 
-/**
- * Debugger base class
- */
-class Debugger : public GUI::Debugger {
-protected:
-	/**
-	 * Converts a string to an integer
-	 */
-	int strToInt(const char *s);
-public:
-	Debugger();
-    virtual ~Debugger() {}
-};
+bool Debugger::cmdSpell(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("spell <spell number>\n");
+		return true;
+	} else {
+		int spellId = strToInt(argv[1]);
+		Shared::Game *game = dynamic_cast<Shared::Game *>(g_vm->_game);
+		assert(game);
 
-} // End of namespace Shared
+		game->_map->castSpell(spellId);
+		return false;
+	}
+}
+
+} // End of namespace Ultima1
 } // End of namespace Ultima
-
-#endif

@@ -61,6 +61,7 @@ MODULE_OBJS := \
 	ultima1/actions/quit.o \
 	ultima1/actions/ready.o \
 	ultima1/actions/stats.o \
+	ultima1/core/debugger.o \
 	ultima1/core/party.o \
 	ultima1/core/quests.o \
 	ultima1/core/resources.o \
@@ -150,6 +151,7 @@ MODULE_OBJS := \
 	nuvie/core/converse_speech.o \
 	nuvie/core/cursor.o \
 	nuvie/core/debug.o \
+	nuvie/core/debugger.o \
 	nuvie/core/effect.o \
 	nuvie/core/effect_manager.o \
 	nuvie/core/egg_manager.o \
@@ -451,6 +453,7 @@ MODULE_OBJS := \
 	ultima8/kernel/segmented_pool.o \
 	ultima8/misc/args.o \
 	ultima8/misc/console.o \
+	ultima8/misc/debugger.o \
 	ultima8/misc/encoding.o \
 	ultima8/misc/id_man.o \
 	ultima8/misc/istring.o \

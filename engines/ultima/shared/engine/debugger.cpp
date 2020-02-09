@@ -29,8 +29,6 @@ namespace Ultima {
 namespace Shared {
 
 Debugger::Debugger() : GUI::Debugger() {
-	registerCmd("continue",	     WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("spell", WRAP_METHOD(Debugger, cmdSpell));
 }
 
 int Debugger::strToInt(const char *s) {
@@ -47,20 +45,6 @@ int Debugger::strToInt(const char *s) {
 	if (read < 1)
 		error("strToInt failed on string \"%s\"", s);
 	return (int)tmp;
-}
-
-bool Debugger::cmdSpell(int argc, const char **argv) {
-	if (argc != 2) {
-		debugPrintf("spell <spell number>\n");
-		return true;
-	} else {
-		int spellId = strToInt(argv[1]);
-		Shared::Game *game = dynamic_cast<Shared::Game *>(g_vm->_game);
-		assert(game);
-
-		game->_map->castSpell(spellId);
-		return false;
-	}
 }
 
 } // End of namespace Shared

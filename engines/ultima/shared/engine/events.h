@@ -137,7 +137,7 @@ public:
 	/**
 	 * Get the debugger
 	 */
-	virtual GUI::Debugger *getDebugger() = 0;
+	virtual GUI::Debugger *getDebugger() const = 0;
 
 	/**
 	 * Get the screen

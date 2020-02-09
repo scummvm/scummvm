@@ -32,6 +32,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "gui/debugger.h"
 #include "ultima/detection.h"
 #include "ultima/shared/std/containers.h"
 #include "ultima/shared/engine/ultima.h"
@@ -91,6 +92,7 @@ private:
 	Kernel *_kernel;
 	MemoryManager *_memoryManager;
 	ObjectManager *_objectManager;
+	GUI::Debugger *_debugger;
 	HIDManager *_hidManager;
 	UCMachine *_ucMachine;
 	RenderSurface *_screen;
@@ -238,6 +240,7 @@ public:
 		return _screen;
 	}
 
+	virtual GUI::Debugger *getDebugger() const override;
 	virtual Graphics::Screen *getScreen() const override;
 
 	virtual void runGame() override;

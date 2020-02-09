@@ -25,6 +25,7 @@
 #include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
+#include "ultima/nuvie/core/debugger.h"
 #include "ultima/nuvie/conf/configuration.h"
 #include "ultima/nuvie/misc/u6_misc.h"
 #include "ultima/nuvie/files/nuvie_io_file.h"
@@ -48,7 +49,7 @@ NuvieEngine *g_engine;
 
 NuvieEngine::NuvieEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Ultima::Shared::UltimaEngine(syst, gameDesc),  _config(nullptr), _savegame(nullptr),
-		_screen(nullptr), _script(nullptr), _game(nullptr) {
+		_screen(nullptr), _script(nullptr), _game(nullptr), _debugger(nullptr) {
 	g_engine = this;
 }
 
@@ -59,6 +60,7 @@ NuvieEngine::~NuvieEngine() {
 	delete _screen;
 	delete _script;
 	delete _game;
+	delete _debugger;
 
 	g_engine = nullptr;
 }
@@ -104,6 +106,9 @@ bool NuvieEngine::initialize() {
 
 	// Setup savegame handler
 	_savegame = new SaveGame(_config);
+
+	// Setup debugger
+	_debugger = new Debugger();
 
 	// Setup screen
 	_screen = new Screen(_config);

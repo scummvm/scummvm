@@ -51,6 +51,7 @@
 #include "ultima/ultima8/graphics/palette.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/world/world.h"
+#include "ultima/ultima8/misc/debugger.h"
 #include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/world/get_object.h"
@@ -126,9 +127,9 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(Ultima8Engine, CoreApp)
 
 Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) : 
 		Shared::UltimaEngine(syst, gameDesc), CoreApp(gameDesc), _saveCount(0), _game(0),
-		_kernel(0), _objectManager(0), _hidManager(0), _mouse(0), _ucMachine(0), _screen(0),
-		_fontManager(0), _fullScreen(false), _paletteManager(0), _gameData(0), _world(0),
-		_desktopGump(0), _consoleGump(0), _gameMapGump(0), _avatarMoverProcess(0),
+		_kernel(0), _objectManager(0), _debugger(0), _hidManager(0), _mouse(0), _ucMachine(0),
+		_screen(0), _fontManager(0), _fullScreen(false), _paletteManager(0), _gameData(0),
+		_world(0), _desktopGump(0), _consoleGump(0), _gameMapGump(0), _avatarMoverProcess(0),
 		_frameSkip(false), _frameLimit(true), _interpolate(true), _animationRate(100),
 		_avatarInStasis(false), _paintEditorItems(false), _inversion(0), _painting(false),
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
@@ -156,6 +157,7 @@ Ultima8Engine::~Ultima8Engine() {
 	FORGET_OBJECT(_fontManager);
 	FORGET_OBJECT(_screen);
 	FORGET_OBJECT(_memoryManager);
+	FORGET_OBJECT(_debugger);
 }
 
 Common::Error Ultima8Engine::run() {
@@ -342,6 +344,7 @@ void Ultima8Engine::startup() {
 
 	_kernel = new Kernel();
 	_memoryManager = new MemoryManager();
+	_debugger = new Debugger();
 
 	//!! move this elsewhere
 	_kernel->addProcessLoader("DelayProcess",
@@ -2052,6 +2055,10 @@ bool Ultima8Engine::isDataRequired(Common::String &folder, int &majorVersion, in
 	majorVersion = 1;
 	minorVersion = 0;
 	return true;
+}
+
+GUI::Debugger *Ultima8Engine::getDebugger() const {
+	return _debugger;
 }
 
 Graphics::Screen *Ultima8Engine::getScreen() const {

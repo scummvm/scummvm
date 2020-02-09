@@ -29,6 +29,7 @@
 #include "common/archive.h"
 #include "common/random.h"
 #include "engines/engine.h"
+#include "gui/debugger.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -45,6 +46,7 @@ private:
 	Script *_script;
 	Game *_game;
 	SaveGame *_savegame;
+	::GUI::Debugger *_debugger;
 private:
 	void initConfig();
 	void assignGameConfigValues(uint8 game_type);
@@ -97,6 +99,10 @@ public:
 	 * @return returns kNoError on success, else an error code.
 	 */
 	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
+
+	virtual ::GUI::Debugger *getDebugger() const override {
+		return _debugger;
+	}
 
 	/**
 	 * Either starts the most recently saved game, or falls back on starting a new game
