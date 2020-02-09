@@ -119,8 +119,8 @@ public:
 	// SegaCD specific
 	void sega_selectPalette(int srcPalID, int dstPalID, int brightness = 0, bool set = false);
 	void sega_fadePalette(int delay, int brEnd, int dstPalID = -1);
-	void sega_fadeToBlack(int delay) { sega_fadePalette(delay, -8); }
-	void sega_fadeToWhite(int delay) { sega_fadePalette(delay, 8); }
+	void sega_fadeToBlack(int delay) { sega_fadePalette(delay, -7); }
+	void sega_fadeToWhite(int delay) { sega_fadePalette(delay, 7); }
 	void sega_fadeToNeutral(int delay) { sega_fadePalette(delay, 0); }
 	void sega_paletteOps(int opPal, int par1, int par2);
 	SegaRenderer *sega_getRenderer() const { return _segaRenderer; }
@@ -172,7 +172,7 @@ private:
 	// SegaCD specific
 	SegaRenderer *_segaRenderer;
 	uint16 _segaPalette[64];
-	uint8 _brState[4];
+	int8 _brState[4];
 };
 
 class SegaRenderer {

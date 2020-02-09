@@ -354,6 +354,7 @@ public:
 	enum {
 		SCREEN_W = 320,
 		SCREEN_H = 200,
+		SCREEN_H_SEGA_NTSC = 224,
 		SCREEN_PAGE_SIZE = 320 * 200 + 1024,
 		SCREEN_OVL_SJIS_SIZE = 640 * 400,
 		SCREEN_PAGE_NUM = 16,
@@ -602,9 +603,11 @@ protected:
 	bool _useHiColorScreen;
 	bool _isAmiga;
 	bool _useAmigaExtraColors;
+	bool _isSegaCD;
 	Common::RenderMode _renderMode;
 	int _bytesPerPixel;
 	int _screenPageSize;
+	const int _screenHeight;
 	
 	Common::SharedPtr<Graphics::FontSJIS> _sjisFontShared;
 	uint8 _sjisInvisibleColor;

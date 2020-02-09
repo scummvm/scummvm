@@ -157,6 +157,7 @@ void Screen_EoB::sega_paletteOps(int op, int par1, int par2) {
 		// Force palette update, don't wait
 		break;
 	case 4:
+		// TODO
 		assert(0);
 		break;
 	default:
@@ -334,7 +335,7 @@ void SegaRenderer::render(int destPageNum) {
 	  TODO: implement support if necessary.
 	*/
 
-	_screen->copyBlockToPage(destPageNum, 0, 0, _screenW, Screen::SCREEN_H, _renderBuffer);
+	_screen->copyBlockToPage(destPageNum, 0, 0, _screenW, _screenH, _renderBuffer);
 }
 
 void SegaRenderer::renderTile(uint8 *dst, int destX, uint16 *nameTable, int hScrollTableIndex) {

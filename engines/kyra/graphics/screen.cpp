@@ -39,7 +39,8 @@ namespace Kyra {
 
 Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize)
 	: _system(system), _vm(vm), _sjisInvisibleColor(0), _dimTable(dimTable), _dimTableCount(dimTableSize),
-	_cursorColorKey((vm->game() == GI_KYRA1 || vm->game() == GI_EOB1 || vm->game() == GI_EOB2) ? 0xFF : 0) {
+	_cursorColorKey((vm->game() == GI_KYRA1 || vm->game() == GI_EOB1 || vm->game() == GI_EOB2) ? 0xFF : 0),
+	_screenHeight(vm->gameFlags().platform == Common::kPlatformSegaCD ? SCREEN_H_SEGA_NTSC : SCREEN_H) {
 	_debugEnabled = false;
 	_maskMinY = _maskMaxY = -1;
 
@@ -67,7 +68,8 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_16bitConversionPalette = 0;
 	_16bitShadingLevel = 0;
 	_bytesPerPixel = 1;
-	_4bitPixelPacking = false;
+	_4bitPixelPacking = _useAmigaExtraColors = _isAmiga = _isSegaCD = _use16ColorMode = false;
+	_useSJIS = _useOverlays = false;
 
 	_currentFont = FID_8_FNT;
 	_currentFontType = FTYPE_ASCII;
@@ -112,6 +114,7 @@ bool Screen::init() {
 	_use16ColorMode = _vm->gameFlags().use16ColorMode;
 	_4bitPixelPacking = (_use16ColorMode && _vm->game() == GI_LOL);
 	_isAmiga = (_vm->gameFlags().platform == Common::kPlatformAmiga);
+	_isSegaCD = (_vm->gameFlags().platform == Common::kPlatformSegaCD);
 	// Amiga copper palette magic requires the use of more than 32 colors for some purposes.
 	_useAmigaExtraColors = (_isAmiga && _vm->game() == GI_EOB2);
 
@@ -291,6 +294,9 @@ void Screen::setResolution() {
 			width = 320;
 	}
 
+	if (_vm->gameFlags().platform == Common::kPlatformSegaCD)
+		height = 224;
+
 	if (_useHiColorScreen) {
 		Graphics::PixelFormat px(2, 5, 5, 5, 0, 10, 5, 0, 0);
 		Common::List<Graphics::PixelFormat> tryModes = _system->getSupportedFormats();
@@ -333,7 +339,7 @@ void Screen::enableHiColorMode(bool enabled) {
 		_bytesPerPixel = 1;
 	}
 
-	resetPagePtrsAndBuffers(SCREEN_PAGE_SIZE * _bytesPerPixel);
+	resetPagePtrsAndBuffers(_isSegaCD ? SCREEN_W * _screenHeight : SCREEN_PAGE_SIZE * _bytesPerPixel);
 }
 
 void Screen::updateScreen() {
@@ -362,7 +368,7 @@ void Screen::updateScreen() {
 
 void Screen::updateDirtyRects() {
 	if (_forceFullUpdate) {
-		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, _screenHeight);
 	} else {
 		const byte *page0 = getCPagePtr(0);
 		Common::List<Common::Rect>::iterator it;
@@ -721,7 +727,7 @@ void Screen::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc,
 
 int Screen::getPagePixel(int pageNum, int x, int y) {
 	assert(pageNum < SCREEN_PAGE_NUM);
-	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
+	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < _screenHeight);
 	if (_bytesPerPixel == 1)
 		return _pagePtrs[pageNum][y * SCREEN_W + x];
 	else
@@ -730,7 +736,7 @@ int Screen::getPagePixel(int pageNum, int x, int y) {
 
 void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 	assert(pageNum < SCREEN_PAGE_NUM);
-	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
+	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < _screenHeight);
 
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, 1, 1);
@@ -935,7 +941,7 @@ void Screen::disableDualPaletteMode() {
 }
 
 void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
-	assert(y + h <= SCREEN_H);
+	assert(y + h <= _screenHeight);
 	const uint8 *src = getPagePtr(page) + y * SCREEN_W;
 	uint8 *dstPage = getPagePtr(0) + y * SCREEN_W;
 	for (int i = 0; i < h; ++i) {
@@ -977,10 +983,10 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 		h += y2;
 		y1 -= y2;
 		y2 = 0;
-	} else if (y2 + h >= SCREEN_H) {
-		if (y2 > SCREEN_H)
+	} else if (y2 + h >= _screenHeight) {
+		if (y2 > _screenHeight)
 			return;
-		h = SCREEN_H - y2;
+		h = _screenHeight - y2;
 	}
 
 	const uint8 *src = getPagePtr(srcPage) + y1 * SCREEN_W * _bytesPerPixel + x1 * _bytesPerPixel;
@@ -1023,8 +1029,8 @@ void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *
 		dest += (-y) * w * _bytesPerPixel;
 		h += y;
 		y = 0;
-	} else if (y + h > SCREEN_H) {
-		h = SCREEN_H - y;
+	} else if (y + h > _screenHeight) {
+		h = _screenHeight - y;
 	}
 
 	if (x < 0) {
@@ -1048,8 +1054,8 @@ void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
 	uint8 *src = getPagePtr(srcPage);
 	uint8 *dst = getPagePtr(dstPage);
 	if (src != dst)
-		memcpy(dst, src, SCREEN_W * SCREEN_H * _bytesPerPixel);
-	copyOverlayRegion(0, 0, 0, 0, SCREEN_W, SCREEN_H, srcPage, dstPage);
+		memcpy(dst, src, SCREEN_W * _screenHeight * _bytesPerPixel);
+	copyOverlayRegion(0, 0, 0, 0, SCREEN_W, _screenHeight, srcPage, dstPage);
 
 	if (dstPage == 0 || dstPage == 1)
 		_forceFullUpdate = true;
@@ -1060,8 +1066,8 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 		src += (-y) * w * _bytesPerPixel;
 		h += y;
 		y = 0;
-	} else if (y + h > SCREEN_H) {
-		h = SCREEN_H - y;
+	} else if (y + h > _screenHeight) {
+		h = _screenHeight - y;
 	}
 
 	if (x < 0) {
@@ -1146,7 +1152,7 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 }
 
 void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, bool xored) {
-	assert(x2 < SCREEN_W && y2 < SCREEN_H);
+	assert(x2 < SCREEN_W && y2 < _screenHeight);
 	uint16 color16 = 0;
 	if (pageNum == -1)
 		pageNum = _curPage;
@@ -1413,7 +1419,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	int x_start = x;
 	if (y < 0)
 		y = 0;
-	else if (y >= SCREEN_H)
+	else if (y >= _screenHeight)
 		return;
 
 	while (1) {
@@ -1434,7 +1440,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 			if (x + charWidth > _textMarginRight) {
 				x = x_start;
 				y += (charHeightFnt + _charOffset);
-				if (y >= SCREEN_H)
+				if (y >= _screenHeight)
 					break;
 			}
 
@@ -1467,7 +1473,7 @@ void Screen::drawChar(uint16 c, int x, int y) {
 
 	if (x < 0 || y < 0)
 		return;
-	if (x + charWidth > SCREEN_W || y + charHeight > SCREEN_H)
+	if (x + charWidth > SCREEN_W || y + charHeight > _screenHeight)
 		return;
 
 	if (useOverlay) {
@@ -3364,7 +3370,7 @@ void Screen::addDirtyRect(int x, int y, int w, int h) {
 	Common::Rect r(x, y, x + w, y + h);
 
 	// Clip rectangle
-	r.clip(SCREEN_W, SCREEN_H);
+	r.clip(SCREEN_W, _screenHeight);
 
 	// If it is empty after clipping, we are done
 	if (r.isEmpty())
