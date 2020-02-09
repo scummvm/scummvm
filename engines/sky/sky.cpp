@@ -81,7 +81,7 @@ SkyEngine::~SkyEngine() {
 	delete _skyText;
 	delete _skyMouse;
 	delete _skyScreen;
-	delete _debugger;
+	//_debugger is deleted by Engine
 	delete _skyDisk;
 	delete _skyControl;
 	delete _skyCompact;
@@ -107,10 +107,6 @@ void SkyEngine::syncSoundSettings() {
 	_skyMusic->setVolume(mute ? 0: ConfMan.getInt("music_volume") >> 1);
 }
 
-GUI::Debugger *SkyEngine::getDebugger() {
-	return _debugger;
-}
-
 void SkyEngine::initVirgin() {
 	_skyScreen->setPalette(60111);
 	_skyScreen->showScreen(60110);
@@ -126,8 +122,6 @@ void SkyEngine::handleKey() {
 			_fastMode ^= 1;
 		else if (_keyPressed.keycode == Common::KEYCODE_g)
 			_fastMode ^= 2;
-		else if (_keyPressed.keycode == Common::KEYCODE_d)
-			_debugger->attach();
 	} else if (_keyPressed.keycode) {
 		switch (_keyPressed.keycode) {
 		case Common::KEYCODE_BACKQUOTE:
@@ -196,8 +190,6 @@ Common::Error SkyEngine::go() {
 
 	uint32 delayCount = _system->getMillis();
 	while (!shouldQuit()) {
-		_debugger->onFrame();
-
 		if (shouldPerformAutoSave(_lastSaveTime)) {
 			if (_skyControl->loadSaveAllowed()) {
 				_lastSaveTime = _system->getMillis();
@@ -353,6 +345,7 @@ Common::Error SkyEngine::init() {
 	syncSoundSettings();
 
 	_debugger = new Debugger(_skyLogic, _skyMouse, _skyScreen, _skyCompact);
+	setDebugger(_debugger);
 	return Common::kNoError;
 }
 
