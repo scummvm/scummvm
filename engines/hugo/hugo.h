@@ -239,8 +239,6 @@ public:
 	Maze      _maze;                                // Maze control structure
 	hugoBoot  _boot;                                // Boot info structure
 
-	GUI::Debugger *getDebugger() override;
-
 	Common::RandomSource *_rnd;
 
 	const char *_episode;
@@ -319,8 +317,6 @@ private:
 	uint32 _curTime;
 
 	static HugoEngine *s_Engine;
-
-	HugoConsole *_console;
 
 	GameType _gameType;
 	Common::Platform _platform;
