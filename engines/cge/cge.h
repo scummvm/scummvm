@@ -205,10 +205,7 @@ public:
 	BitmapPtr *_miniShpList;
 	int        _startGameSlot;
 
-	Common::Error run() override;
-	GUI::Debugger *getDebugger() override {
-		return _console;
-	}
+	virtual Common::Error run() override;
 
 	void cge_main();
 	void switchScene(int newScene);
@@ -326,7 +323,6 @@ protected:
 	int _recentStep;
 
 private:
-	CGEConsole *_console;
 	void init();
 	void deinit();
 };
