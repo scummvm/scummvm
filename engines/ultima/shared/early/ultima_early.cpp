@@ -51,7 +51,6 @@ UltimaEarlyEngine::UltimaEarlyEngine(OSystem *syst, const UltimaGameDescription 
 }
 
 UltimaEarlyEngine::~UltimaEarlyEngine() {
-	delete _debugger;
 	delete _events;
 	delete _game;
 	delete _mouseCursor;
@@ -70,7 +69,7 @@ bool UltimaEarlyEngine::initialize() {
 	}
 	SearchMan.add("ultima", res);
 
-	_debugger = new Debugger();
+	setDebugger(new Debugger());
 	_events = new EventsManager(this);
 	_screen = new Gfx::Screen();
 

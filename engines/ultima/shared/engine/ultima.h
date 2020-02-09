@@ -44,7 +44,6 @@ private:
 protected:
 	const UltimaGameDescription *_gameDescription;
 	Common::Archive *_dataArchive;
-	Debugger *_debugger;
 protected:
 	/**
 	 * Initializes needed data for the engine
@@ -136,13 +135,6 @@ public:
 	 * Checks if an auto save should be done, and if so, takes care of it
 	 */
 	bool autoSaveCheck(int lastSaveTime) override;
-
-	/**
-	 * Return the debugger
-	 */
-	GUI::Debugger *getDebugger() override {
-		return _debugger;
-	}
 
 	/**
 	 * Returns a file system node for the game directory

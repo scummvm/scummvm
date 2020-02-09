@@ -36,7 +36,7 @@ UltimaEngine * g_ultima;
 
 UltimaEngine::UltimaEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _randomSource("Ultima"),
-		_dataArchive(nullptr), _debugger(nullptr), _events(nullptr) {
+		_dataArchive(nullptr), _events(nullptr) {
 	g_ultima = this;
 }
 
