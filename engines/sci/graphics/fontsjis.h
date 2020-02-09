@@ -37,13 +37,13 @@ namespace Sci {
 class GfxFontSjis : public GfxFont {
 public:
 	GfxFontSjis(GfxScreen *screen, GuiResourceId resourceId);
-	~GfxFontSjis();
+	~GfxFontSjis() override;
 
-	GuiResourceId getResourceId();
-	byte getHeight();
-	bool isDoubleByte(uint16 chr);
-	byte getCharWidth(uint16 chr);
-	void draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput);
+	GuiResourceId getResourceId() override;
+	byte getHeight() override;
+	bool isDoubleByte(uint16 chr) override;
+	byte getCharWidth(uint16 chr) override;
+	void draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput) override;
 
 private:
 	GfxScreen *_screen;

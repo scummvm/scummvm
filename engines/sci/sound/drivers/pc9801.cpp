@@ -129,13 +129,13 @@ private:
 class SoundChannel_PC9801_FM4OP : public SoundChannel_PC9801 {
 public:
 	SoundChannel_PC9801_FM4OP(uint8 id, PC98AudioCore *pc98a, MidiPart_PC9801 **parts, SciVersion version, SciSpan<const uint8> instrumentData, uint8 patchSize, bool &soundOn);
-	virtual ~SoundChannel_PC9801_FM4OP() {}
+	~SoundChannel_PC9801_FM4OP() override {}
 
 private:
-	void programChange(uint8 program);
-	void sendSoundOnOff(bool soundOn);
-	void sendVolume();
-	void sendFrequency();
+	void programChange(uint8 program) override;
+	void sendSoundOnOff(bool soundOn) override;
+	void sendVolume() override;
+	void sendFrequency() override;
 
 	uint8 _operatorLevel[4];
 	uint8 _carrier;
@@ -149,18 +149,18 @@ private:
 class SoundChannel_PC9801_FM2OP : public SoundChannel_PC9801 {
 public:
 	SoundChannel_PC9801_FM2OP(uint8 id, PC98AudioCore *pc98a, MidiPart_PC9801 **parts,  SciVersion version, SciSpan<const uint8> instrumentData, uint8 patchSize, bool &soundOn);
-	virtual ~SoundChannel_PC9801_FM2OP() {}
+	~SoundChannel_PC9801_FM2OP() override {}
 	
-	void processNoteEvent(uint8 note, bool soundOn);
-	void reset();
+	void processNoteEvent(uint8 note, bool soundOn) override;
+	void reset() override;
 
 private:
-	void programChange(uint8 program);
-	bool prepareFrequencyAndVolume(bool updateVolume);
-	void processSounds();
-	void sendSoundOnOff(bool soundOn);
-	void sendVolume();
-	void sendFrequency();
+	void programChange(uint8 program) override;
+	bool prepareFrequencyAndVolume(bool updateVolume) override;
+	void processSounds() override;
+	void sendSoundOnOff(bool soundOn) override;
+	void sendVolume() override;
+	void sendFrequency() override;
 
 	uint8 _operatorLevel[2];
 	uint8 _operatorFrqIndex[2];
@@ -182,9 +182,9 @@ private:
 class SoundChannel_PC9801_SSG : public SoundChannel_PC9801 {
 public:
 	SoundChannel_PC9801_SSG(uint8 id, PC98AudioCore *pc98a, MidiPart_PC9801 **parts, SciVersion version, SciSpan<const uint8> instrumentData, uint8 patchOffset, uint8 patchSize, bool &soundOn);
-	virtual ~SoundChannel_PC9801_SSG() {}
-	void reset();
-	void toggleNoiseGenerator(bool enable);
+	~SoundChannel_PC9801_SSG() override {}
+	void reset() override;
+	void toggleNoiseGenerator(bool enable) override;
 
 private:
 	enum {
@@ -195,11 +195,11 @@ private:
 		kEnvSSG_keyOn = 0x10	
 	};
 
-	void programChange(uint8 program);
-	void processSounds();
-	void sendSoundOnOff(bool soundOn);
-	void sendVolume();
-	void sendFrequency();
+	void programChange(uint8 program) override;
+	void processSounds() override;
+	void sendSoundOnOff(bool soundOn) override;
+	void sendVolume() override;
+	void sendFrequency() override;
 	void updateNg();
 	void sendActiveChannelsStatus();
 
@@ -278,23 +278,23 @@ public:
 	};
 
 	MidiDriver_PC9801(Audio::Mixer *mixer, SciVersion version);
-	~MidiDriver_PC9801();
+	~MidiDriver_PC9801() override;
 
-	int open();
-	bool isOpen() const { return _isOpen; }
-	void close();
+	int open() override;
+	bool isOpen() const override { return _isOpen; }
+	void close() override;
 
-	void send(uint32 b);
+	void send(uint32 b) override;
 	static void assignFreeChannels(int num);
-	uint32 property(int prop, uint32 param);
+	uint32 property(int prop, uint32 param) override;
 	void initTrack(SciSpan<const byte> &header);
 
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
-	uint32 getBaseTempo();	
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
+	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override;
+	uint32 getBaseTempo() override;	
+	MidiChannel *allocateChannel() override { return 0; }
+	MidiChannel *getPercussionChannel() override { return 0; }
 
-	void timerCallbackB();
+	void timerCallbackB() override;
 
 private:
 	bool loadInstruments(const SciSpan<const uint8> &data);
@@ -341,14 +341,14 @@ public:
 	};
 
 	MidiPlayer_PC9801(SciVersion version);
-	~MidiPlayer_PC9801();
+	~MidiPlayer_PC9801() override;
 
-	bool hasRhythmChannel() const;
-	byte getPlayId() const;
-	int getPolyphony() const;
-	void playSwitch(bool play);
+	bool hasRhythmChannel() const override;
+	byte getPlayId() const override;
+	int getPolyphony() const override;
+	void playSwitch(bool play) override;
 
-	void initTrack(SciSpan<const byte> &trackData);
+	void initTrack(SciSpan<const byte> &trackData) override;
 };
 
 SoundChannel_PC9801::SoundChannel_PC9801(PC98AudioCore *pc98a, MidiPart_PC9801 **parts, SciVersion version, int type, SciSpan<const uint8> instrumentData, bool &soundOn)

@@ -35,7 +35,7 @@ namespace Sci {
 class GfxCursor32 : public Common::Serializable {
 public:
 	GfxCursor32();
-	~GfxCursor32();
+	~GfxCursor32() override;
 
 	/**
 	 * Initialises the cursor system with the given buffer to use as the output
@@ -101,7 +101,7 @@ public:
 	 */
 	void clearRestrictedArea();
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 private:
 	struct DrawRegion {

@@ -217,10 +217,10 @@ struct SCALER_Scale {
 				Copier(READER& souceReader, Buffer& targetBuffer) :
 					_souceReader(souceReader),
 					_targetBuffer(targetBuffer) {}
-				const Graphics::LarryScaleColor* readRow(int y) {
+				const Graphics::LarryScaleColor* readRow(int y) override {
 					return _souceReader.getRow(y);
 				}
-				void writeRow(int y, const Graphics::LarryScaleColor* row) {
+				void writeRow(int y, const Graphics::LarryScaleColor* row) override {
 					memcpy(_targetBuffer.getBasePtr(0, y), row, _targetBuffer.w);
 				}
 			};

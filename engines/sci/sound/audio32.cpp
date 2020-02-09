@@ -130,7 +130,7 @@ public:
 		_stream(stream, dispose),
 		_loop(loop_) {}
 
-	virtual int readBuffer(int16 *buffer, int numSamples) override {
+	int readBuffer(int16 *buffer, int numSamples) override {
 		int totalSamplesRead = 0;
 		int samplesRead;
 		do {
@@ -146,19 +146,19 @@ public:
 		return totalSamplesRead;
 	}
 
-	virtual bool isStereo() const override {
+	bool isStereo() const override {
 		return _stream->isStereo();
 	}
 
-	virtual int getRate() const override {
+	int getRate() const override {
 		return _stream->getRate();
 	}
 
-	virtual bool endOfData() const override {
+	bool endOfData() const override {
 		return !_loop && _stream->endOfData();
 	}
 
-	virtual bool endOfStream() const override {
+	bool endOfStream() const override {
 		return !_loop && _stream->endOfStream();
 	}
 

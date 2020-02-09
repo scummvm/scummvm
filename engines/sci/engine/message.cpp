@@ -71,7 +71,7 @@ class MessageReaderV2 : public MessageReader {
 public:
 	MessageReaderV2(const SciSpan<const byte> &data) : MessageReader(data, 6, 4) { }
 
-	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
+	bool findRecord(const MessageTuple &tuple, MessageRecord &record) override {
 		SciSpan<const byte> recordPtr = _data.subspan(_headerSize);
 
 		for (uint i = 0; i < _messageCount; i++) {
@@ -99,7 +99,7 @@ class MessageReaderV3 : public MessageReader {
 public:
 	MessageReaderV3(const SciSpan<const byte> &data) : MessageReader(data, 8, 10) { }
 
-	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
+	bool findRecord(const MessageTuple &tuple, MessageRecord &record) override {
 		SciSpan<const byte> recordPtr = _data.subspan(_headerSize);
 		for (uint i = 0; i < _messageCount; i++) {
 			if ((recordPtr[0] == tuple.noun) && (recordPtr[1] == tuple.verb)
@@ -127,7 +127,7 @@ class MessageReaderV4 : public MessageReader {
 public:
 	MessageReaderV4(const SciSpan<const byte> &data) : MessageReader(data, 10, 11) { }
 
-	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
+	bool findRecord(const MessageTuple &tuple, MessageRecord &record) override {
 		SciSpan<const byte> recordPtr = _data.subspan(_headerSize);
 		for (uint i = 0; i < _messageCount; i++) {
 			if ((recordPtr[0] == tuple.noun) && (recordPtr[1] == tuple.verb)
@@ -158,7 +158,7 @@ class MessageReaderV4_MacSCI32 : public MessageReader {
 public:
 	MessageReaderV4_MacSCI32(const SciSpan<const byte> &data) : MessageReader(data, 10, 12) { }
 
-	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
+	bool findRecord(const MessageTuple &tuple, MessageRecord &record) override {
 		SciSpan<const byte> recordPtr = _data.subspan(_headerSize);
 		for (uint i = 0; i < _messageCount; i++) {
 			if ((recordPtr[0] == tuple.noun) && (recordPtr[1] == tuple.verb)

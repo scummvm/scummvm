@@ -80,7 +80,7 @@ class ResourcePatcher : public ResourceSource {
 public:
 	ResourcePatcher(const SciGameId gameId, const Common::Language gameLanguage);
 
-	virtual ~ResourcePatcher() {}
+	~ResourcePatcher() override {}
 
 	/**
 	 * Finds and applies a patch to the given resource.
@@ -94,14 +94,14 @@ public:
 	 * is needed since otherwise tests for these resources via `kResCheck`
 	 * would fail, and so they would never actually be loaded.
 	 */
-	virtual void scanSource(ResourceManager *resMan) override;
+	void scanSource(ResourceManager *resMan) override;
 
 	/**
 	 * Load a resource. Since resources using this source are patched explicitly
 	 * after they get loaded by any other resource source, this method does
 	 * nothing.
 	 */
-	virtual void loadResource(ResourceManager *resMan, Resource *res) override {}
+	void loadResource(ResourceManager *resMan, Resource *res) override {}
 
 private:
 	struct PatchSizes {

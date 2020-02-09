@@ -59,23 +59,23 @@ public:
 	};
 
 	MidiPlayer_Fb01(SciVersion version);
-	virtual ~MidiPlayer_Fb01();
+	~MidiPlayer_Fb01() override;
 
-	int open(ResourceManager *resMan);
-	void close();
-	void initTrack(SciSpan<const byte>& header);
-	void send(uint32 b);
-	void sysEx(const byte *msg, uint16 length);
-	bool hasRhythmChannel() const { return false; }
-	byte getPlayId() const;
-	int getPolyphony() const { return _version <= SCI_VERSION_0_LATE ? 8 : 9; }
-	void setVolume(byte volume);
-	int getVolume();
-	void playSwitch(bool play);
+	int open(ResourceManager *resMan) override;
+	void close() override;
+	void initTrack(SciSpan<const byte>& header) override;
+	void send(uint32 b) override;
+	void sysEx(const byte *msg, uint16 length) override;
+	bool hasRhythmChannel() const override { return false; }
+	byte getPlayId() const override;
+	int getPolyphony() const override { return _version <= SCI_VERSION_0_LATE ? 8 : 9; }
+	void setVolume(byte volume) override;
+	int getVolume() override;
+	void playSwitch(bool play) override;
 
 	bool isOpen() const { return _isOpen; }
 
-	const char *reportMissingFiles() { return _missingFiles; }
+	const char *reportMissingFiles() override { return _missingFiles; }
 
 private:
 	void noteOn(int channel, int note, int velocity);
@@ -138,7 +138,7 @@ private:
 	Common::TimerManager::TimerProc _timerProc;
 	void *_timerParam;
 	static void midiTimerCallback(void *p);
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
+	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override;
 
 	const char *_missingFiles;
 	static const char _requiredFiles[2][12];

@@ -279,7 +279,7 @@ public:
 	uint16 getMethodCount() const { return _methodCount; }
 	reg_t getPos() const { return _pos; }
 
-	void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 	void cloneFromObject(const Object *obj) {
 		_name = obj ? obj->_name : NULL_REG;

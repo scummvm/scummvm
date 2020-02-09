@@ -88,7 +88,7 @@ public:
 	}
 	virtual int open(ResourceManager *resMan) { return _driver->open(); }
 	virtual void close() { _driver->close(); }
-	virtual void send(uint32 b) { _driver->send(b); }
+	void send(uint32 b) override { _driver->send(b); }
 	virtual uint32 getBaseTempo() { return _driver->getBaseTempo(); }
 	virtual bool hasRhythmChannel() const = 0;
 	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) { _driver->setTimerCallback(timer_param, timer_proc); }

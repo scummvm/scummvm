@@ -80,20 +80,20 @@ private:
 class CMSVoice_V0 : public CMSVoice {
 public:
 	CMSVoice_V0(uint8 id, MidiDriver_CMS *driver, CMSEmulator *cms, SciSpan<const uint8>& patchData);
-	virtual ~CMSVoice_V0() {}
+	~CMSVoice_V0() override {}
 
-	void noteOn(int note, int);
-	void noteOff();
-	void stop();
-	void programChange(int program);
+	void noteOn(int note, int) override;
+	void noteOff() override;
+	void stop() override;
+	void programChange(int program) override;
 
-	void update();
+	void update() override;
 
-	void reset();
-	void setPanMask(uint8 mask);
+	void reset() override;
+	void setPanMask(uint8 mask) override;
 
 private:
-	void recalculateFrequency(uint8 &frequency, uint8 &octave);
+	void recalculateFrequency(uint8 &frequency, uint8 &octave) override;
 	void recalculateEnvelopeLevels();
 	void selectEnvelope(int id);
 
@@ -143,18 +143,18 @@ private:
 class CMSVoice_V1 : public CMSVoice {
 public:
 	CMSVoice_V1(uint8 id, MidiDriver_CMS *driver, CMSEmulator *cms, SciSpan<const uint8>& patchData);
-	virtual ~CMSVoice_V1() {}
+	~CMSVoice_V1() override {}
 
-	void noteOn(int note, int velocity);
-	void noteOff();
-	void stop();
-	void programChange(int program);
-	void pitchWheel();
+	void noteOn(int note, int velocity) override;
+	void noteOff() override;
+	void stop() override;
+	void programChange(int program) override;
+	void pitchWheel() override;
 
-	void update();
+	void update() override;
 
 private:
-	void recalculateFrequency(uint8 &frequency, uint8 &octave);
+	void recalculateFrequency(uint8 &frequency, uint8 &octave) override;
 
 	void updateVoiceAmplitude();
 	void setupVoiceAmplitude();
@@ -180,23 +180,23 @@ public:
 
 public:
 	MidiDriver_CMS(Audio::Mixer *mixer, ResourceManager *resMan, SciVersion version);
-	~MidiDriver_CMS();
+	~MidiDriver_CMS() override;
 
-	int open();
-	void close();
+	int open() override;
+	void close() override;
 
-	void send(uint32 b);
-	uint32 property(int prop, uint32 param);
+	void send(uint32 b) override;
+	uint32 property(int prop, uint32 param) override;
 
 	void initTrack(SciSpan<const byte>& header);
 
-	void onTimer();
+	void onTimer() override;
 
-	MidiChannel *allocateChannel() { return 0; }
-	MidiChannel *getPercussionChannel() { return 0; }
+	MidiChannel *allocateChannel() override { return 0; }
+	MidiChannel *getPercussionChannel() override { return 0; }
 
-	bool isStereo() const { return true; }
-	int getRate() const { return _rate; }
+	bool isStereo() const override { return true; }
+	int getRate() const override { return _rate; }
 
 private:
 	void noteOn(int channelNr, int note, int velocity);
@@ -213,7 +213,7 @@ private:
 	int findVoiceBasic(int channelNr);
 
 	void writeToChip(int chip, int address, int data);
-	void generateSamples(int16 *buffer, int len);
+	void generateSamples(int16 *buffer, int len) override;
 
 	struct Channel {
 		Channel() : program(0), volume(0), pan(0x40), hold(0), missingVoices(0), lastVoiceUsed(0), pitchWheel(0x2000), isValid(true) {}
@@ -1296,18 +1296,18 @@ class MidiPlayer_CMS : public MidiPlayer {
 public:
 	MidiPlayer_CMS(SciVersion version) : MidiPlayer(version), _filesMissing(false) {}
 
-	int open(ResourceManager *resMan);
-	void close();
+	int open(ResourceManager *resMan) override;
+	void close() override;
 
-	void initTrack(SciSpan<const byte>& header);
+	void initTrack(SciSpan<const byte>& header) override;
 
-	bool hasRhythmChannel() const { return false; }
-	byte getPlayId() const { return _version > SCI_VERSION_0_LATE ? 9 : 4; }
-	int getPolyphony() const { return 12; }
+	bool hasRhythmChannel() const override { return false; }
+	byte getPlayId() const override { return _version > SCI_VERSION_0_LATE ? 9 : 4; }
+	int getPolyphony() const override { return 12; }
 
-	void playSwitch(bool play) { _driver->property(MidiDriver_CMS::MIDI_PROP_PLAYSWITCH, play ? 1 : 0); }
+	void playSwitch(bool play) override { _driver->property(MidiDriver_CMS::MIDI_PROP_PLAYSWITCH, play ? 1 : 0); }
 
-	const char *reportMissingFiles() { return _filesMissing ? _requiredFiles : 0; }
+	const char *reportMissingFiles() override { return _filesMissing ? _requiredFiles : 0; }
 
 private:
 	bool _filesMissing;

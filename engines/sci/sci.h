@@ -251,13 +251,13 @@ class SciEngine : public Engine {
 	friend class Console;
 public:
 	SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gameId);
-	~SciEngine();
+	~SciEngine() override;
 
 	// Engine APIs
-	virtual Common::Error run() override;
+	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 	void pauseEngineIntern(bool pause) override;
-	virtual GUI::Debugger *getDebugger() override;
+	GUI::Debugger *getDebugger() override;
 	Console *getSciDebugger();
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc) override;

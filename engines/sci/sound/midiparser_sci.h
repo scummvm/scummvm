@@ -51,17 +51,17 @@ namespace Sci {
 class MidiParser_SCI : public MidiParser {
 public:
 	MidiParser_SCI(SciVersion soundVersion, SciMusic *music);
-	~MidiParser_SCI();
+	~MidiParser_SCI() override;
 
 	void mainThreadBegin();
 	void mainThreadEnd();
 
 	bool loadMusic(SoundResource::Track *track, MusicEntry *psnd, int channelFilterMask, SciVersion soundVersion);
-	bool loadMusic(byte *, uint32) {
+	bool loadMusic(byte *, uint32) override {
 		return false;
 	}
 	void sendInitCommands();
-	void unloadMusic();
+	void unloadMusic() override;
 	void setMasterVolume(byte masterVolume);
 	void setVolume(byte volume);
 	void stop() {
@@ -74,13 +74,13 @@ public:
 			jumpToTick(0);
 	}
 
-	void allNotesOff();
+	void allNotesOff() override;
 
 	const SciSpan<const byte> &getMixedData() const { return *_mixedData; }
 	byte getSongReverb();
 
 	void sendFromScriptToDriver(uint32 midi);
-	void sendToDriver(uint32 midi);
+	void sendToDriver(uint32 midi) override;
 	void sendToDriver(byte status, byte firstOp, byte secondOp) {
 		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
 	}
@@ -88,8 +88,8 @@ public:
 	void remapChannel(int channel, int devChannel);
 
 protected:
-	void parseNextEvent(EventInfo &info);
-	bool processEvent(const EventInfo &info, bool fireEvents = true);
+	void parseNextEvent(EventInfo &info) override;
+	bool processEvent(const EventInfo &info, bool fireEvents = true) override;
 	void midiMixChannels();
 	void midiFilterChannels(int channelMask);
 	byte midiGetNextChannel(long ticker);

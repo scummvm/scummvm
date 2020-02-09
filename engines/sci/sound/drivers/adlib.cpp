@@ -50,29 +50,29 @@ public:
 
 	MidiDriver_AdLib(SciVersion version) : _version(version), _isSCI0(version < SCI_VERSION_1_EARLY), _playSwitch(true), _masterVolume(15),
 		_numVoiceMax(version == SCI_VERSION_0_EARLY ? 8 : kVoices), _rhythmKeyMap(), _opl(0), _adlibTimerParam(0), _adlibTimerProc(0), _stereo(false), _isOpen(false) { }
-	virtual ~MidiDriver_AdLib() { }
+	~MidiDriver_AdLib() override { }
 
 	// MidiDriver
-	int open() { return -1; } // Dummy implementation (use openAdLib)
+	int open() override { return -1; } // Dummy implementation (use openAdLib)
 	int openAdLib();
-	void close();
-	void send(uint32 b);
+	void close() override;
+	void send(uint32 b) override;
 	void initTrack(SciSpan<const byte> &header);
 
-	MidiChannel *allocateChannel() { return NULL; }
-	MidiChannel *getPercussionChannel() { return NULL; }
-	bool isOpen() const { return _isOpen; }
-	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
+	MidiChannel *allocateChannel() override { return NULL; }
+	MidiChannel *getPercussionChannel() override { return NULL; }
+	bool isOpen() const override { return _isOpen; }
+	uint32 getBaseTempo() override { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
 	// MidiDriver
-	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
+	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override;
 
 	void onTimer();
 
 	void setVolume(byte volume);
 	void playSwitch(bool play);
 	bool loadResource(const SciSpan<const byte> &data);
-	virtual uint32 property(int prop, uint32 param);
+	uint32 property(int prop, uint32 param) override;
 
 	bool useRhythmChannel() const { return _rhythmKeyMap; }
 
@@ -178,21 +178,21 @@ private:
 class MidiPlayer_AdLib : public MidiPlayer {
 public:
 	MidiPlayer_AdLib(SciVersion soundVersion) : MidiPlayer(soundVersion) { _driver = new MidiDriver_AdLib(soundVersion); }
-	~MidiPlayer_AdLib() {
+	~MidiPlayer_AdLib() override {
 		delete _driver;
 		_driver = 0;
 	}
 
-	int open(ResourceManager *resMan);
-	void close();
+	int open(ResourceManager *resMan) override;
+	void close() override;
 
-	byte getPlayId() const;
-	int getPolyphony() const { return MidiDriver_AdLib::kVoices; }
-	bool hasRhythmChannel() const { return false; }
-	void setVolume(byte volume) { static_cast<MidiDriver_AdLib *>(_driver)->setVolume(volume); }
-	void playSwitch(bool play) { static_cast<MidiDriver_AdLib *>(_driver)->playSwitch(play); }
-	void initTrack(SciSpan<const byte> &header) { static_cast<MidiDriver_AdLib *>(_driver)->initTrack(header); }
-	int getLastChannel() const { return (static_cast<const MidiDriver_AdLib *>(_driver)->useRhythmChannel() ? 8 : 15); }
+	byte getPlayId() const override;
+	int getPolyphony() const override { return MidiDriver_AdLib::kVoices; }
+	bool hasRhythmChannel() const override { return false; }
+	void setVolume(byte volume) override { static_cast<MidiDriver_AdLib *>(_driver)->setVolume(volume); }
+	void playSwitch(bool play) override { static_cast<MidiDriver_AdLib *>(_driver)->playSwitch(play); }
+	void initTrack(SciSpan<const byte> &header) override { static_cast<MidiDriver_AdLib *>(_driver)->initTrack(header); }
+	int getLastChannel() const override { return (static_cast<const MidiDriver_AdLib *>(_driver)->useRhythmChannel() ? 8 : 15); }
 };
 
 static const byte registerOffset[MidiDriver_AdLib::kVoices] = {

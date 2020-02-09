@@ -232,7 +232,7 @@ class GfxRemap32 : public Common::Serializable {
 public:
 	GfxRemap32();
 
-	void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 
 	inline uint8 getRemapCount() const { return _numActiveRemaps; }
 	inline uint8 getStartColor() const { return _remapStartColor; }

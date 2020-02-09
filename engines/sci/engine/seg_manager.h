@@ -57,11 +57,11 @@ public:
 	/**
 	 * Deallocate all memory associated with the segment manager.
 	 */
-	~SegManager();
+	~SegManager() override;
 
 	void resetSegMan();
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 	// 1. Scripts
 

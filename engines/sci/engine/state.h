@@ -101,9 +101,9 @@ struct SciCallOrigin {
 struct EngineState : public Common::Serializable {
 public:
 	EngineState(SegManager *segMan);
-	virtual ~EngineState();
+	~EngineState() override;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 public:
 	SegManager *_segMan; /**< The segment manager */

@@ -64,13 +64,13 @@ private:
 	 */
 	Audio::Timestamp _length;
 
-	virtual bool seek(const Audio::Timestamp &where) override;
-	virtual Audio::Timestamp getLength() const override;
-	virtual int readBuffer(int16 *buffer, const int numSamples) override;
-	virtual bool isStereo() const override;
-	virtual int getRate() const override;
-	virtual bool endOfData() const override;
-	virtual bool rewind() override;
+	bool seek(const Audio::Timestamp &where) override;
+	Audio::Timestamp getLength() const override;
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override;
+	int getRate() const override;
+	bool endOfData() const override;
+	bool rewind() override;
 
 public:
 	SOLStream(Common::SeekableReadStream *stream, const DisposeAfterUse::Flag disposeAfterUse, const uint16 sampleRate, const int32 rawDataSize);
