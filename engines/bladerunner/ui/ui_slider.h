@@ -48,11 +48,11 @@ public:
 
 	UISlider(BladeRunnerEngine *vm, UIComponentCallback *valueChangedCallback, void *callbackData, Common::Rect rect, int maxValue, int value);
 
-	void draw(Graphics::Surface &surface);
+	void draw(Graphics::Surface &surface) override;
 
-	void handleMouseMove(int mouseX, int mouseY);
-	void handleMouseDown(bool alternateButton);
-	void handleMouseUp(bool alternateButton);
+	void handleMouseMove(int mouseX, int mouseY) override;
+	void handleMouseDown(bool alternateButton) override;
+	void handleMouseUp(bool alternateButton) override;
 
 	void setValue(int value);
 };

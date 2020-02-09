@@ -54,13 +54,13 @@ class AudStream : public Audio::RewindableAudioStream {
 public:
 	AudStream(byte *data, int overrideFrequency = -1);
 	AudStream(AudioCache *cache, int32 hash, int overrideFrequency = -1);
-	~AudStream();
+	~AudStream() override;
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return false; }
-	int getRate() const { return _overrideFrequency > 0 ? _overrideFrequency : _frequency; };
-	bool endOfData() const { return _p == _end; }
-	bool rewind();
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return false; }
+	int getRate() const override { return _overrideFrequency > 0 ? _overrideFrequency : _frequency; };
+	bool endOfData() const override { return _p == _end; }
+	bool rewind() override;
 	int getLength() const;
 };
 

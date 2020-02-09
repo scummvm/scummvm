@@ -94,7 +94,7 @@ class UIScrollBox : public UIComponent {
 
 public:
 	UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelectedCallback, void *callbackData, int maxLineCount, int style, bool center, Common::Rect rect,Common::Rect scrollBarRect);
-	~UIScrollBox();
+	~UIScrollBox() override;
 
 	void draw(Graphics::Surface &surface) override;
 

@@ -88,7 +88,7 @@ public:
 	bool _showMouseClickInfo;
 
 	Debugger(BladeRunnerEngine *vm);
-	~Debugger();
+	~Debugger() override;
 
 	bool cmdAnimation(int argc, const char **argv);
 	bool cmdHealth(int argc, const char **argv);

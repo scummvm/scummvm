@@ -77,7 +77,7 @@ public:
 
 public:
 	KIASectionCrimes(BladeRunnerEngine *vm, ActorClues *clues);
-	~KIASectionCrimes();
+	~KIASectionCrimes() override;
 
 	void reset();
 

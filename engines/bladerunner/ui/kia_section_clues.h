@@ -64,7 +64,7 @@ class KIASectionClues : public KIASectionBase {
 
 public:
 	KIASectionClues(BladeRunnerEngine *vm, ActorClues *clues);
-	~KIASectionClues();
+	~KIASectionClues() override;
 
 	void reset();
 

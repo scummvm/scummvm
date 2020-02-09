@@ -46,15 +46,15 @@ public:
 
 	UICheckBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedCallback, void *callbackData, Common::Rect rect, int style, bool isChecked);
 
-	void draw(Graphics::Surface &surface);
+	void draw(Graphics::Surface &surface) override;
 
 	void enable();
 	void disable();
 	void setChecked(bool isChecked);
 
-	void handleMouseMove(int mouseX, int mouseY);
-	void handleMouseDown(bool alternateButton);
-	void handleMouseUp(bool alternateButton);
+	void handleMouseMove(int mouseX, int mouseY) override;
+	void handleMouseDown(bool alternateButton) override;
+	void handleMouseUp(bool alternateButton) override;
 };
 
 } // End of namespace BladeRunner

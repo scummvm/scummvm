@@ -57,14 +57,14 @@ class Font : public Graphics::Font {
 	bool                     _useFontColor;
 
 public:
-	~Font();
+	~Font() override;
 
 	static Font* load(BladeRunnerEngine *vm, const Common::String &fileName, int spacing, bool useFontColor);
 
-	int getFontHeight() const;
-	int getMaxCharWidth() const;
-	int getCharWidth(uint32 chr) const;
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	int getFontHeight() const override;
+	int getMaxCharWidth() const override;
+	int getCharWidth(uint32 chr) const override;
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 private:
 	Font();

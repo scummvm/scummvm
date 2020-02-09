@@ -251,7 +251,7 @@ private:
 
 public:
 	BladeRunnerEngine(OSystem *syst, const ADGameDescription *desc);
-	~BladeRunnerEngine();
+	~BladeRunnerEngine() override;
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override;

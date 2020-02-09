@@ -37,14 +37,14 @@ class UIContainer : public UIComponent {
 public:
 	UIContainer(BladeRunnerEngine *vm) : UIComponent(vm) {}
 
-	void draw(Graphics::Surface &surface);
+	void draw(Graphics::Surface &surface) override;
 
-	void handleMouseMove(int mouseX, int mouseY);
-	void handleMouseDown(bool alternateButton);
-	void handleMouseUp(bool alternateButton);
-	void handleMouseScroll(int direction); // Added by ScummVM team
-	void handleKeyUp(const Common::KeyState &kbd);
-	void handleKeyDown(const Common::KeyState &kbd);
+	void handleMouseMove(int mouseX, int mouseY) override;
+	void handleMouseDown(bool alternateButton) override;
+	void handleMouseUp(bool alternateButton) override;
+	void handleMouseScroll(int direction) override; // Added by ScummVM team
+	void handleKeyUp(const Common::KeyState &kbd) override;
+	void handleKeyDown(const Common::KeyState &kbd) override;
 
 	void add(UIComponent *component);
 	void clear();

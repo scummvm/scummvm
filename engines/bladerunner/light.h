@@ -92,26 +92,26 @@ protected:
 };
 
 class Light1 : public Light {
-	float calculate(Vector3 start, Vector3 end) const;
-	void calculateColor(Color *outColor, Vector3 position) const;
+	float calculate(Vector3 start, Vector3 end) const override;
+	void calculateColor(Color *outColor, Vector3 position) const override;
 };
 
 class Light2 : public Light {
-	float calculate(Vector3 start, Vector3 end) const;
-	void calculateColor(Color *outColor, Vector3 position) const;
+	float calculate(Vector3 start, Vector3 end) const override;
+	void calculateColor(Color *outColor, Vector3 position) const override;
 };
 
 class Light3 : public Light {
-	void calculateColor(Color *outColor, Vector3 position) const;
+	void calculateColor(Color *outColor, Vector3 position) const override;
 };
 
 class Light4 : public Light {
-	void calculateColor(Color *outColor, Vector3 position) const;
+	void calculateColor(Color *outColor, Vector3 position) const override;
 };
 
 class LightAmbient : public Light {
-	float calculate(Vector3 start, Vector3 end) const;
-	void calculateColor(Color *outColor, Vector3 position) const;
+	float calculate(Vector3 start, Vector3 end) const override;
+	void calculateColor(Color *outColor, Vector3 position) const override;
 };
 
 } // End of namespace BladeRunner

@@ -86,8 +86,8 @@ private:
 public:
 	FogSphere():_radius(0.0f) {};
 
-	void read(Common::ReadStream *stream, int frameCount);
-	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
+	void read(Common::ReadStream *stream, int frameCount) override;
+	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient) override;
 };
 
 class FogCone : public Fog {
@@ -97,8 +97,8 @@ private:
 public:
 	FogCone():_coneAngle(0.0f) {};
 
-	void read(Common::ReadStream *stream, int frameCount);
-	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
+	void read(Common::ReadStream *stream, int frameCount) override;
+	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient) override;
 };
 
 class FogBox : public Fog {
@@ -108,8 +108,8 @@ private:
 public:
 	FogBox():_size() {};
 
-	void read(Common::ReadStream *stream, int frameCount);
-	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
+	void read(Common::ReadStream *stream, int frameCount) override;
+	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient) override;
 };
 
 } // End of namespace BladeRunner
