@@ -49,7 +49,6 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 
-	_console = 0;
 	_sound = 0;
 	_speed = 1;
 	_turbo = false;
@@ -270,7 +269,6 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 
 DreamWebEngine::~DreamWebEngine() {
 	DebugMan.clearAllDebugChannels();
-	delete _console;
 	delete _sound;
 }
 
@@ -320,11 +318,6 @@ void DreamWebEngine::processEvents(bool processSoundEvents) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.flags & Common::KBD_CTRL) {
 				switch (event.kbd.keycode) {
-
-				case Common::KEYCODE_d:
-					_console->attach();
-					_console->onFrame();
-					break;
 
 				case Common::KEYCODE_f:
 					setSpeed(_speed != 20? 20: 1);
@@ -399,7 +392,7 @@ void DreamWebEngine::processEvents(bool processSoundEvents) {
 
 Common::Error DreamWebEngine::run() {
 	syncSoundSettings();
-	_console = new DreamWebConsole(this);
+	setDebugger(new DreamWebConsole(this));
 	_sound = new DreamWebSound(this);
 
 	_hasSpeech = Common::File::exists(_speechDirName + "/r01c0000.raw") && !ConfMan.getBool("speech_mute");
