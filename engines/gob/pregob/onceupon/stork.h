@@ -54,7 +54,7 @@ public:
 	};
 
 	Stork(GobEngine *vm, const ANIFile &ani);
-	~Stork();
+	~Stork() override;
 
 	/** Has the bundle landed? */
 	bool hasBundleLanded() const;
@@ -63,12 +63,12 @@ public:
 	void dropBundle(const BundleDrop &drop);
 
 	/** Draw the current frame onto the surface and return the affected rectangle. */
-	bool draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	bool draw(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom) override;
 	/** Draw the current frame from the surface and return the affected rectangle. */
-	bool clear(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom);
+	bool clear(Surface &dest, int16 &left, int16 &top, int16 &right, int16 &bottom) override;
 
 	/** Advance the animation to the next frame. */
-	void advance();
+	void advance() override;
 
 private:
 	enum State {

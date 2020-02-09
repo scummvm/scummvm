@@ -34,10 +34,10 @@ namespace Gob {
 class SCNPlayer : public DemoPlayer {
 public:
 	SCNPlayer(GobEngine *vm);
-	virtual ~SCNPlayer();
+	~SCNPlayer() override;
 
 protected:
-	virtual bool playStream(Common::SeekableReadStream &scn);
+	bool playStream(Common::SeekableReadStream &scn) override;
 
 private:
 	typedef Common::HashMap<Common::String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> LabelMap;

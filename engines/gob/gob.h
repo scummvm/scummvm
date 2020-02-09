@@ -180,10 +180,10 @@ private:
 	uint32 _pauseStart;
 
 	// Engine APIs
-	virtual Common::Error run() override;
-	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void pauseEngineIntern(bool pause) override;
-	virtual void syncSoundSettings() override;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
+	void pauseEngineIntern(bool pause) override;
+	void syncSoundSettings() override;
 
 	Common::Error initGameParts();
 	Common::Error initGraphics();
@@ -262,7 +262,7 @@ public:
 	const Graphics::PixelFormat &getPixelFormat() const;
 
 	GobEngine(OSystem *syst);
-	virtual ~GobEngine();
+	~GobEngine() override;
 
 	void initGame(const GOBGameDescription *gd);
 };

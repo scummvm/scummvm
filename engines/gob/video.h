@@ -163,29 +163,29 @@ protected:
 
 class Video_v1 : public Video {
 public:
-	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-			int16 x, int16 y, int16 transp, Surface &destDesc);
+	char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
+			int16 x, int16 y, int16 transp, Surface &destDesc) override;
 
 	Video_v1(GobEngine *vm);
-	virtual ~Video_v1() {}
+	~Video_v1() override {}
 };
 
 class Video_v2 : public Video_v1 {
 public:
-	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-			int16 x, int16 y, int16 transp, Surface &destDesc);
+	char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
+			int16 x, int16 y, int16 transp, Surface &destDesc) override;
 
 	Video_v2(GobEngine *vm);
-	virtual ~Video_v2() {}
+	~Video_v2() override {}
 };
 
 class Video_v6 : public Video_v2 {
 public:
-	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-			int16 x, int16 y, int16 transp, Surface &destDesc);
+	char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
+			int16 x, int16 y, int16 transp, Surface &destDesc) override;
 
 	Video_v6(GobEngine *vm);
-	virtual ~Video_v6() {}
+	~Video_v6() override {}
 
 private:
 	void drawPacked(const byte *sprBuf, int16 x, int16 y, Surface &surfDesc);

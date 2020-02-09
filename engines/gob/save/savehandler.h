@@ -64,7 +64,7 @@ class SlotFileIndexed : public SlotFile {
 public:
 	SlotFileIndexed(GobEngine *vm, uint32 slotCount, const Common::String &base,
 			const Common::String &extStub);
-	~SlotFileIndexed();
+	~SlotFileIndexed() override;
 
 	/** Build the save file name. */
 	Common::String build(int slot) const;
@@ -91,10 +91,10 @@ protected:
 class SlotFileStatic : public SlotFile {
 public:
 	SlotFileStatic(GobEngine *vm, const Common::String &base, const Common::String &ext);
-	~SlotFileStatic();
+	~SlotFileStatic() override;
 
-	int getSlot(int32 offset) const;
-	int getSlotRemainder(int32 offset) const;
+	int getSlot(int32 offset) const override;
+	int getSlotRemainder(int32 offset) const override;
 
 	/** Build the save file name. */
 	Common::String build() const;
@@ -133,11 +133,11 @@ protected:
 class TempSpriteHandler : public SaveHandler {
 public:
 	TempSpriteHandler(GobEngine *vm);
-	~TempSpriteHandler();
+	~TempSpriteHandler() override;
 
-	int32 getSize();
-	bool load(int16 dataVar, int32 size, int32 offset);
-	bool save(int16 dataVar, int32 size, int32 offset);
+	int32 getSize() override;
+	bool load(int16 dataVar, int32 size, int32 offset) override;
+	bool save(int16 dataVar, int32 size, int32 offset) override;
 
 	bool create(uint32 width, uint32 height, bool trueColor);
 	bool createFromSprite(int16 dataVar, int32 size, int32 offset);
@@ -161,17 +161,17 @@ protected:
 class NotesHandler : public SaveHandler {
 public:
 	NotesHandler(uint32 notesSize, GobEngine *vm, const Common::String &target);
-	~NotesHandler();
+	~NotesHandler() override;
 
-	int32 getSize();
-	bool load(int16 dataVar, int32 size, int32 offset);
-	bool save(int16 dataVar, int32 size, int32 offset);
+	int32 getSize() override;
+	bool load(int16 dataVar, int32 size, int32 offset) override;
+	bool save(int16 dataVar, int32 size, int32 offset) override;
 
 private:
 	class File : public SlotFileStatic {
 	public:
 		File(GobEngine *vm, const Common::String &base);
-		~File();
+		~File() override;
 	};
 
 	uint32 _notesSize;
@@ -183,13 +183,13 @@ private:
 class FakeFileHandler : public SaveHandler {
 public:
 	FakeFileHandler(GobEngine *vm);
-	~FakeFileHandler();
+	~FakeFileHandler() override;
 
-	int32 getSize();
-	bool load(int16 dataVar, int32 size, int32 offset);
-	bool save(int16 dataVar, int32 size, int32 offset);
+	int32 getSize() override;
+	bool load(int16 dataVar, int32 size, int32 offset) override;
+	bool save(int16 dataVar, int32 size, int32 offset) override;
 
-	bool deleteFile();
+	bool deleteFile() override;
 
 private:
 	Common::Array<byte> _data;

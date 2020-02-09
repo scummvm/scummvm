@@ -51,67 +51,67 @@ protected:
 class Init_v1 : public Init {
 public:
 	Init_v1(GobEngine *vm);
-	~Init_v1();
+	~Init_v1() override;
 
-	void initVideo();
+	void initVideo() override;
 };
 
 class Init_Geisha : public Init_v1 {
 public:
 	Init_Geisha(GobEngine *vm);
-	~Init_Geisha();
+	~Init_Geisha() override;
 
-	void initVideo();
+	void initVideo() override;
 };
 
 class Init_v2 : public Init_v1 {
 public:
 	Init_v2(GobEngine *vm);
-	~Init_v2();
+	~Init_v2() override;
 
-	void initVideo();
+	void initVideo() override;
 };
 
 class Init_v3 : public Init_v2 {
 public:
 	Init_v3(GobEngine *vm);
-	~Init_v3();
+	~Init_v3() override;
 
-	void initVideo();
-	void updateConfig();
+	void initVideo() override;
+	void updateConfig() override;
 };
 
 class Init_v4 : public Init_v3 {
 public:
 	Init_v4(GobEngine *vm);
-	~Init_v4();
+	~Init_v4() override;
 
-	void updateConfig();
+	void updateConfig() override;
 };
 
 class Init_v6 : public Init_v3 {
 public:
 	Init_v6(GobEngine *vm);
-	~Init_v6();
+	~Init_v6() override;
 
-	void initGame();
+	void initGame() override;
 };
 
 class Init_Fascination : public Init_v2 {
 public:
 	Init_Fascination(GobEngine *vm);
-	~Init_Fascination();
+	~Init_Fascination() override;
 
-	void updateConfig();
-	void initGame();
+	void updateConfig() override;
+	void initGame() override;
 };
 
 class Init_v7 : public Init_v2 {
 public:
 	Init_v7(GobEngine *vm);
-	~Init_v7();
+	~Init_v7() override;
 
-	void initGame();
+	void initGame() override;
 };
 
 } // End of namespace Gob

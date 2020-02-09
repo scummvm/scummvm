@@ -32,12 +32,12 @@ namespace OnceUpon {
 class Abracadabra : public OnceUpon {
 public:
 	Abracadabra(GobEngine *vm);
-	~Abracadabra();
+	~Abracadabra() override;
 
-	void run();
+	void run() override;
 
 protected:
-	const StorkParam &getStorkParameters() const;
+	const StorkParam &getStorkParameters() const override;
 
 private:
 	/** Definition of the menu button that leads to the animal names screen. */

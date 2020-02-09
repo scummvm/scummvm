@@ -45,7 +45,7 @@ public:
 	};
 
 	Submarine(const ANIFile &ani);
-	~Submarine();
+	~Submarine() override;
 
 	Direction getDirection() const;
 
@@ -62,7 +62,7 @@ public:
 	void leave();
 
 	/** Advance the animation to the next frame. */
-	void advance();
+	void advance() override;
 
 	/** Can the submarine move at the moment? */
 	bool canMove() const;

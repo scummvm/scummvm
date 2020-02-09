@@ -47,10 +47,10 @@ public:
 	};
 
 	Oko(const ANIFile &ani, Sound &sound, SoundDesc &breathe);
-	~Oko();
+	~Oko() override;
 
 	/** Advance the animation to the next frame. */
-	void advance();
+	void advance() override;
 
 	/** Oko should sink a level. */
 	void sink();

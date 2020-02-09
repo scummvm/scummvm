@@ -33,12 +33,12 @@ namespace OnceUpon {
 class Title : public SEQFile {
 public:
 	Title(GobEngine *vm);
-	~Title();
+	~Title() override;
 
 	void play();
 
 protected:
-	void handleFrameEvent();
+	void handleFrameEvent() override;
 
 private:
 	void playMusic();        ///< Play the title music.

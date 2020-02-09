@@ -41,13 +41,13 @@ public:
 	Parents(GobEngine *vm, const Common::String &seq, const Common::String &gct,
 	        const Common::String &childName, uint8 house, const Font &font,
 	        const byte *normalPalette, const byte *brightPalette, uint paletteSize);
-	~Parents();
+	~Parents() override;
 
 	void play();
 
 protected:
-	void handleFrameEvent();
-	void handleInput(int16 key, int16 mouseX, int16 mouseY, MouseButtons mouseButtons);
+	void handleFrameEvent() override;
+	void handleInput(int16 key, int16 mouseX, int16 mouseY, MouseButtons mouseButtons) override;
 
 private:
 	static const uint kLoopCount = 7;

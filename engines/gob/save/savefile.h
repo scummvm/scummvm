@@ -106,10 +106,10 @@ public:
 	static const uint32 kID = MKTAG('P','M','E','M');
 
 	SavePartMem(uint32 size);
-	~SavePartMem();
+	~SavePartMem() override;
 
-	bool read(Common::ReadStream &stream);
-	bool write(Common::WriteStream &stream) const;
+	bool read(Common::ReadStream &stream) override;
+	bool write(Common::WriteStream &stream) const override;
 
 	/** Read size bytes of data into the part at the specified offset. */
 	bool readFrom(const byte *data, uint32 offset, uint32 size);
@@ -128,10 +128,10 @@ public:
 	static const uint32 kID = MKTAG('V','A','R','S');
 
 	SavePartVars(GobEngine *vm, uint32 size);
-	~SavePartVars();
+	~SavePartVars() override;
 
-	bool read(Common::ReadStream &stream);
-	bool write(Common::WriteStream &stream) const;
+	bool read(Common::ReadStream &stream) override;
+	bool write(Common::WriteStream &stream) const override;
 
 	/** Read size bytes of variables starting at var into the part at the specified offset. */
 	bool readFrom(uint32 var, uint32 offset, uint32 size);
@@ -155,10 +155,10 @@ public:
 	static const uint32 kID = MKTAG('S','P','R','T');
 
 	SavePartSprite(uint32 width, uint32 height, bool trueColor = false);
-	~SavePartSprite();
+	~SavePartSprite() override;
 
-	bool read(Common::ReadStream &stream);
-	bool write(Common::WriteStream &stream) const;
+	bool read(Common::ReadStream &stream) override;
+	bool write(Common::WriteStream &stream) const override;
 
 	/** Read a palette into the part. */
 	bool readPalette(const byte *palette);
@@ -202,7 +202,7 @@ public:
 	 */
 	SavePartInfo(uint32 descMaxLength, uint32 gameID,
 			uint32 gameVersion, byte endian, uint32 varCount);
-	~SavePartInfo();
+	~SavePartInfo() override;
 
 	/** Return the save's description. */
 	const char *getDesc() const;
@@ -216,8 +216,8 @@ public:
 	/** Set the save's description. */
 	void setDesc(const byte *desc, uint32 size);
 
-	bool read(Common::ReadStream &stream);
-	bool write(Common::WriteStream &stream) const;
+	bool read(Common::ReadStream &stream) override;
+	bool write(Common::WriteStream &stream) const override;
 
 private:
 	char *_desc;
