@@ -67,9 +67,9 @@ class ExCommand : public Message {
 	ExCommand();
 	ExCommand(ExCommand *src);
 	ExCommand(int16 parentId, int messageKind, int messageNum, int x, int y, int a7, int a8, int sceneClickX, int sceneClickY, int a11);
-	virtual ~ExCommand() {}
+	~ExCommand() override {}
 
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 
 	virtual ExCommand *createClone();
 
@@ -89,7 +89,7 @@ class ExCommand2 : public ExCommand {
 	ExCommand2(int messageKind, int parentId, const PointList &points);
 	ExCommand2(ExCommand2 *src);
 
-	virtual ExCommand2 *createClone();
+	ExCommand2 *createClone() override;
 };
 
 class ObjstateCommand : public ExCommand {
@@ -101,9 +101,9 @@ class ObjstateCommand : public ExCommand {
 	ObjstateCommand();
 	ObjstateCommand(ObjstateCommand *src);
 
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 
-	virtual ObjstateCommand *createClone();
+	ObjstateCommand *createClone() override;
 };
 
 class MessageQueue : public CObject {
@@ -126,9 +126,9 @@ class MessageQueue : public CObject {
 	MessageQueue();
 	MessageQueue(int dataId);
 	MessageQueue(MessageQueue *src, int parId, int field_38);
-	virtual ~MessageQueue();
+	~MessageQueue() override;
 
-	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file) override;
 
 	int getFlags() { return _flags; }
 	void setFlags(int flags) { _flags = flags; }

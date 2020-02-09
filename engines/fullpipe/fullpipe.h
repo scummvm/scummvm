@@ -108,7 +108,7 @@ protected:
 
 public:
 	FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	virtual ~FullpipeEngine();
+	~FullpipeEngine() override;
 
 	Console _console;
 	GUI::Debugger *getDebugger() override { return &_console; }
@@ -363,9 +363,9 @@ public:
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &description) override;
 
-	virtual bool canLoadGameStateCurrently() override { return true; }
-	virtual bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
-	virtual bool hasFeature(EngineFeature f) const override;
+	bool canLoadGameStateCurrently() override { return true; }
+	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
+	bool hasFeature(EngineFeature f) const override;
 
 };
 

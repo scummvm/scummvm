@@ -70,13 +70,13 @@ class ModalIntro : public BaseModalObject {
 
  public:
 	ModalIntro();
-	virtual ~ModalIntro();
+	~ModalIntro() override;
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	bool pollEvent() override { return true; }
+	bool handleMessage(ExCommand *message) override;
+	bool init(int counterdiff) override;
+	void update() override;
+	void saveload() override {}
 
 	void finish();
 };
@@ -90,13 +90,13 @@ class ModalIntroDemo : public BaseModalObject {
 
  public:
 	ModalIntroDemo();
-	virtual ~ModalIntroDemo();
+	~ModalIntroDemo() override;
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	bool pollEvent() override { return true; }
+	bool handleMessage(ExCommand *message) override;
+	bool init(int counterdiff) override;
+	void update() override;
+	void saveload() override {}
 
 	void finish();
 };
@@ -104,11 +104,11 @@ class ModalIntroDemo : public BaseModalObject {
 class ModalVideoPlayer : public BaseModalObject {
 public:
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message) { return true; }
-	virtual bool init(int counterdiff) { return false; }
-	virtual void update() {}
-	virtual void saveload() {}
+	bool pollEvent() override { return true; }
+	bool handleMessage(ExCommand *message) override { return true; }
+	bool init(int counterdiff) override { return false; }
+	void update() override {}
+	void saveload() override {}
 
 	void play(const char *fname);
 
@@ -135,14 +135,14 @@ class ModalMap : public BaseModalObject {
 
  public:
 	ModalMap();
-	virtual ~ModalMap();
+	~ModalMap() override;
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
+	bool pollEvent() override { return true; }
+	bool handleMessage(ExCommand *message) override;
+	bool init(int counterdiff) override;
 	virtual bool init2(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	void update() override;
+	void saveload() override {}
 
 	void initMap();
 
@@ -163,13 +163,13 @@ class ModalFinal : public BaseModalObject {
 
  public:
 	ModalFinal();
-	virtual ~ModalFinal();
+	~ModalFinal() override;
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	bool pollEvent() override { return true; }
+	bool handleMessage(ExCommand *message) override;
+	bool init(int counterdiff) override;
+	void update() override;
+	void saveload() override {}
 
 	void unloadScenes();
 };
@@ -187,13 +187,13 @@ class ModalCredits : public BaseModalObject {
 
  public:
 	ModalCredits();
-	virtual ~ModalCredits();
+	~ModalCredits() override;
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	bool pollEvent() override { return true; }
+	bool handleMessage(ExCommand *message) override;
+	bool init(int counterdiff) override;
+	void update() override;
+	void saveload() override {}
 };
 
 struct MenuArea {
@@ -219,13 +219,13 @@ public:
 
 public:
 	ModalMainMenu();
-	virtual ~ModalMainMenu() {}
+	~ModalMainMenu() override {}
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	bool pollEvent() override { return true; }
+	bool handleMessage(ExCommand *message) override;
+	bool init(int counterdiff) override;
+	void update() override;
+	void saveload() override {}
 
 private:
 	bool isSaveAllowed();
@@ -250,13 +250,13 @@ public:
 
 public:
 	ModalHelp();
-	virtual ~ModalHelp();
+	~ModalHelp() override;
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	bool pollEvent() override { return true; }
+	bool handleMessage(ExCommand *message) override;
+	bool init(int counterdiff) override;
+	void update() override;
+	void saveload() override {}
 
 	void launch();
 };
@@ -264,13 +264,13 @@ public:
 class ModalQuery : public BaseModalObject {
 public:
 	ModalQuery();
-	virtual ~ModalQuery();
+	~ModalQuery() override;
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	bool pollEvent() override { return true; }
+	bool handleMessage(ExCommand *message) override;
+	bool init(int counterdiff) override;
+	void update() override;
+	void saveload() override {}
 
 	bool create(Scene *sc, Scene *bgScene, int picId);
 	int getQueryResult() { return _queryResult; }
@@ -288,13 +288,13 @@ private:
 class ModalSaveGame : public BaseModalObject {
 public:
 	ModalSaveGame();
-	virtual ~ModalSaveGame();
+	~ModalSaveGame() override;
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
-	virtual void update();
-	virtual void saveload();
+	bool pollEvent() override { return true; }
+	bool handleMessage(ExCommand *message) override;
+	bool init(int counterdiff) override;
+	void update() override;
+	void saveload() override;
 
 	void processMouse(int x, int y);
 
@@ -336,16 +336,16 @@ class ModalDemo : public BaseModalObject {
 
  public:
 	ModalDemo();
-	virtual ~ModalDemo();
+	~ModalDemo() override;
 
 	bool launch();
 
-	virtual bool pollEvent() { return true; }
-	virtual bool handleMessage(ExCommand *message);
-	virtual bool init(int counterdiff);
+	bool pollEvent() override { return true; }
+	bool handleMessage(ExCommand *message) override;
+	bool init(int counterdiff) override;
 	bool init2(int counterdiff);
-	virtual void update();
-	virtual void saveload() {}
+	void update() override;
+	void saveload() override {}
 };
 
 
