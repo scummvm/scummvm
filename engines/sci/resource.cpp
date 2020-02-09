@@ -809,7 +809,7 @@ void ResourceManager::addScriptChunkSources() {
 #endif
 }
 
-extern void showScummVMDialog(const Common::String &message);
+extern int showScummVMDialog(const Common::String& message, const char* altButton = nullptr, bool alignCenter = true);
 
 void ResourceManager::scanNewSources() {
 	_hasBadResources = false;

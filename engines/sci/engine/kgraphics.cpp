@@ -70,9 +70,10 @@ static int16 adjustGraphColor(int16 color) {
 		return color;
 }
 
-void showScummVMDialog(const Common::String &message) {
-	GUI::MessageDialog dialog(message, _("OK"));
-	dialog.runModal();
+int showScummVMDialog(const Common::String &message, const char *altButton = nullptr, bool alignCenter = true) {
+	Graphics::TextAlign alignment = alignCenter ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
+	GUI::MessageDialog dialog(message, _("OK"), altButton, alignment);
+	return dialog.runModal();
 }
 
 void kDirLoopWorker(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
