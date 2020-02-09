@@ -656,8 +656,7 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 		}
 	}
 
-	// Videos are like music because if you mute music in game it will mute videos soundtracks
-	playHNM(video, Audio::Mixer::kMusicSoundType);
+	playSubtitledVideo(video);
 
 	clearKeys();
 	if (shouldAbort()) {
@@ -1609,6 +1608,81 @@ void CryOmni3DEngine_Versailles::playInGameVideo(const Common::String &filename,
 		// WORKAROUND: Don't mess with mouse when not restoring cursors palette
 		showMouse(true);
 	}
+}
+
+void CryOmni3DEngine_Versailles::playSubtitledVideo(const Common::String &filename) {
+	Common::HashMap<Common::String, Common::Array<SubtitleEntry> >::const_iterator it;
+
+	if (!showSubtitles() ||
+	        (it = _subtitles.find(filename)) == _subtitles.end() ||
+	        it->_value.size() == 0) {
+		// No subtitle, don't try to handle them frame by frame
+		// Videos are like music because if you mute music in game it will mute videos soundtracks
+		playHNM(filename, Audio::Mixer::kMusicSoundType);
+		return;
+	}
+
+	// Keep 2 colors for background and text
+	setPalette(&_cursorPalette[3 * 242], 254, 1);
+	setPalette(&_cursorPalette[3 * 247], 255, 1);
+	lockPalette(0, 253);
+
+	_currentSubtitleSet = &it->_value;
+	_currentSubtitle = _currentSubtitleSet->begin();
+
+	_fontManager.setCurrentFont(8);
+	_fontManager.setTransparentBackground(true);
+	_fontManager.setForeColor(254u);
+	_fontManager.setLineHeight(22);
+	_fontManager.setSpaceWidth(2);
+	_fontManager.setCharSpacing(1);
+
+	// Videos are like music because if you mute music in game it will mute videos soundtracks
+	playHNM(filename, Audio::Mixer::kMusicSoundType,
+	        static_cast<HNMCallback>(&CryOmni3DEngine_Versailles::drawVideoSubtitles), nullptr);
+
+	clearKeys();
+	unlockPalette();
+}
+
+void CryOmni3DEngine_Versailles::drawVideoSubtitles(uint frameNum) {
+	if (_currentSubtitle == _currentSubtitleSet->end()) {
+		// No next subtitle to draw, just return
+		return;
+	}
+
+	if (frameNum < _currentSubtitle->frameStart) {
+		// Not yet the good frame, just return
+		return;
+	}
+
+	const Common::String &text = _currentSubtitle->text;
+	_currentSubtitle++;
+
+	if (text.size() == 0) {
+		// Empty text, reset clipping
+		unsetHNMClipping();
+		return;
+	}
+
+	uint lines = _fontManager.getLinesCount(text, 640 - 8);
+	uint top = 480 - (2 * 4) - _fontManager.lineHeight() * lines;
+
+	Graphics::ManagedSurface tmp(640, 480 - top, Graphics::PixelFormat::createFormatCLUT8());
+
+	tmp.clear(255u);
+
+	_fontManager.setSurface(&tmp);
+	_fontManager.setupBlock(Common::Rect(4, 4, tmp.w - 4,
+	                                     tmp.h - 4)); // +1 because bottom,right is excluded
+
+	_fontManager.displayBlockText(text);
+
+	// Enable clipping to avoid refreshing text at every frame
+	setHNMClipping(Common::Rect(0, 0, 640, top));
+
+	g_system->copyRectToScreen(tmp.getPixels(), tmp.pitch, 0, top, tmp.w, tmp.h);
+	g_system->updateScreen();
 }
 
 void CryOmni3DEngine_Versailles::loadBMPs(const char *pattern, Graphics::Surface *bmps,

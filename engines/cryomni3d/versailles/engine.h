@@ -27,6 +27,7 @@
 #include "common/random.h"
 #include "common/array.h"
 #include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/str.h"
 
 #include "cryomni3d/cryomni3d.h"
@@ -219,6 +220,11 @@ struct MsgBoxParameters {
 	uint timeoutChar;
 };
 
+struct SubtitleEntry {
+	uint32 frameStart;
+	Common::String text;
+};
+
 class CryOmni3DEngine_Versailles : public CryOmni3DEngine {
 	friend class Versailles_DialogsManager;
 protected:
@@ -342,6 +348,7 @@ private:
 	bool showSubtitles() const;
 
 	void playInGameVideo(const Common::String &filename, bool restoreCursorPalette = true);
+	void playSubtitledVideo(const Common::String &filename);
 
 	void loadBMPs(const char *pattern, Graphics::Surface *bmps, uint count);
 
@@ -427,6 +434,12 @@ private:
 	Graphics::ManagedSurface _countdownSurface;
 	bool doCountDown();
 	void doDrawCountdown(Graphics::ManagedSurface *surface);
+
+	// Video subtitles
+	Common::HashMap<Common::String, Common::Array<SubtitleEntry> > _subtitles;
+	const Common::Array<SubtitleEntry> *_currentSubtitleSet;
+	Common::Array<SubtitleEntry>::const_iterator _currentSubtitle;
+	void drawVideoSubtitles(uint frameNum);
 
 	// Objects
 	template<uint ID>
