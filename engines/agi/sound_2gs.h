@@ -150,8 +150,8 @@ public:
 class IIgsMidi : public AgiSound {
 public:
 	IIgsMidi(uint8 *data, uint32 len, int resnum);
-	~IIgsMidi() { if (_data != NULL) free(_data); }
-	virtual uint16 type() { return _type; }
+	~IIgsMidi() override { if (_data != NULL) free(_data); }
+	uint16 type() override { return _type; }
 	virtual const uint8 *getPtr() { return _ptr; }
 	virtual void setPtr(const uint8 *ptr) { _ptr = ptr; }
 	virtual void rewind() { _ptr = _data + 2; _ticks = 0; }
@@ -167,8 +167,8 @@ public:
 class IIgsSample : public AgiSound {
 public:
 	IIgsSample(uint8 *data, uint32 len, int16 resourceNr);
-	~IIgsSample() { delete[] _sample; }
-	virtual uint16 type() { return _header.type; }
+	~IIgsSample() override { delete[] _sample; }
+	uint16 type() override { return _header.type; }
 	const IIgsSampleHeader &getHeader() const { return _header; }
 protected:
 	IIgsSampleHeader _header;   ///< Apple IIGS AGI sample header
@@ -220,16 +220,16 @@ private:
 class SoundGen2GS : public SoundGen, public Audio::AudioStream {
 public:
 	SoundGen2GS(AgiBase *vm, Audio::Mixer *pMixer);
-	~SoundGen2GS();
+	~SoundGen2GS() override;
 
-	void play(int resnum);
-	void stop(void);
+	void play(int resnum) override;
+	void stop(void) override;
 
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool isStereo() const { return true; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _sampleRate; }
+	bool isStereo() const override { return true; }
+	bool endOfData() const override { return false; }
+	int getRate() const override { return _sampleRate; }
 
 private:
 	// Loader methods

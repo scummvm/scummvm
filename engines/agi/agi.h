@@ -622,13 +622,13 @@ private:
 public:
 	AgiLoader_v1(AgiEngine *vm);
 
-	virtual int init();
-	virtual int deinit();
-	virtual int detectGame();
-	virtual int loadResource(int16 resourceType, int16 resourceNr);
-	virtual int unloadResource(int16 resourceType, int16 resourceNr);
-	virtual int loadObjects(const char *);
-	virtual int loadWords(const char *);
+	int init() override;
+	int deinit() override;
+	int detectGame() override;
+	int loadResource(int16 resourceType, int16 resourceNr) override;
+	int unloadResource(int16 resourceType, int16 resourceNr) override;
+	int loadObjects(const char *) override;
+	int loadWords(const char *) override;
 };
 
 class AgiLoader_v2 : public AgiLoader {
@@ -644,13 +644,13 @@ public:
 		_vm = vm;
 	}
 
-	virtual int init();
-	virtual int deinit();
-	virtual int detectGame();
-	virtual int loadResource(int16 resourceType, int16 resourceNr);
-	virtual int unloadResource(int16 resourceType, int16 resourceNr);
-	virtual int loadObjects(const char *);
-	virtual int loadWords(const char *);
+	int init() override;
+	int deinit() override;
+	int detectGame() override;
+	int loadResource(int16 resourceType, int16 resourceNr) override;
+	int unloadResource(int16 resourceType, int16 resourceNr) override;
+	int loadObjects(const char *) override;
+	int loadWords(const char *) override;
 };
 
 class AgiLoader_v3 : public AgiLoader {
@@ -666,13 +666,13 @@ public:
 		_vm = vm;
 	}
 
-	virtual int init();
-	virtual int deinit();
-	virtual int detectGame();
-	virtual int loadResource(int16 resourceType, int16 resourceNr);
-	virtual int unloadResource(int16 resourceType, int16 resourceNr);
-	virtual int loadObjects(const char *);
-	virtual int loadWords(const char *);
+	int init() override;
+	int deinit() override;
+	int detectGame() override;
+	int loadResource(int16 resourceType, int16 resourceNr) override;
+	int unloadResource(int16 resourceType, int16 resourceNr) override;
+	int loadObjects(const char *) override;
+	int loadWords(const char *) override;
 };
 
 class GfxFont;
@@ -713,14 +713,14 @@ protected:
 	// Engine API
 	Common::Error init();
 	virtual Common::Error go() = 0;
-	virtual Common::Error run() override {
+	Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}
-	virtual bool hasFeature(EngineFeature f) const override;
+	bool hasFeature(EngineFeature f) const override;
 
 	virtual void initialize() = 0;
 
@@ -752,7 +752,7 @@ public:
 	virtual void clearKeyQueue() = 0;
 
 	AgiBase(OSystem *syst, const AGIGameDescription *gameDesc);
-	~AgiBase();
+	~AgiBase() override;
 
 	virtual void clearImageStack() = 0;
 	virtual void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
@@ -836,7 +836,7 @@ struct AgiOpCodeDefinitionEntry {
 class AgiEngine : public AgiBase {
 protected:
 	// Engine APIs
-	virtual Common::Error go() override;
+	Common::Error go() override;
 
 	void initialize() override;
 
@@ -844,7 +844,7 @@ protected:
 
 public:
 	AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
-	virtual ~AgiEngine();
+	~AgiEngine() override;
 
 	bool promptIsEnabled() override;
 
@@ -915,9 +915,9 @@ public:
 	int agiUnloadResource(int16 resourceType, int16 resourceNr);
 	void agiUnloadResources();
 
-	virtual int getKeypress() override;
-	virtual bool isKeypress() override;
-	virtual void clearKeyQueue() override;
+	int getKeypress() override;
+	bool isKeypress() override;
+	void clearKeyQueue() override;
 
 	byte getVar(int16 varNr);
 	void setVar(int16 varNr, byte newValue);
