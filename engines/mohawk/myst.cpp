@@ -95,7 +95,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_sound = nullptr;
 	_video = nullptr;
 	_gfx = nullptr;
-	_console = nullptr;
 	_gameState = nullptr;
 	_optionsDialog = nullptr;
 	_rnd = nullptr;
@@ -112,7 +111,6 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	delete _gfx;
 	delete _video;
 	delete _sound;
-	delete _console;
 	delete _gameState;
 	delete _optionsDialog;
 	delete _rnd;
@@ -420,7 +418,7 @@ Common::Error MohawkEngine_Myst::run() {
 	_gfx = new MystGraphics(this);
 	_video = new VideoManager(this);
 	_sound = new MystSound(this);
-	_console = new MystConsole(this);
+	setDebugger(new MystConsole(this));
 	_gameState = new MystGameState(this, _saveFileMan);
 	_optionsDialog = new MystOptionsDialog(this);
 	_cursor = new MystCursorManager(this);
@@ -581,8 +579,7 @@ void MohawkEngine_Myst::doFrame() {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			switch ((MystEventAction)event.customType) {
 			case kMystActionOpenDebugger:
-				_console->attach();
-				_console->onFrame();
+				getDebugger()->attach();
 				break;
 			case kMystActionInteract:
 				_mouseClicked = true;

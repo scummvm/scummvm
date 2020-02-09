@@ -178,8 +178,6 @@ public:
 
 	void playSoundBlocking(uint16 id);
 
-	GUI::Debugger *getDebugger() override { return _console; }
-
 	/**
 	 * Is the game currently interactive
 	 *
@@ -202,7 +200,6 @@ public:
 	void runOptionsDialog();
 
 private:
-	MystConsole *_console;
 	MystOptionsDialog *_optionsDialog;
 	ResourceCache _cache;
 

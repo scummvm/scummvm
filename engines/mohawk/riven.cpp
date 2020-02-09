@@ -71,7 +71,6 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_sound = nullptr;
 	_rnd = nullptr;
 	_scriptMan = nullptr;
-	_console = nullptr;
 	_saveLoad = nullptr;
 	_optionsDialog = nullptr;
 	_card = nullptr;
@@ -104,7 +103,6 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _sound;
 	delete _video;
 	delete _gfx;
-	delete _console;
 	delete _extrasFile;
 	delete _saveLoad;
 	delete _scriptMan;
@@ -113,10 +111,6 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _rnd;
 
 	DebugMan.clearAllDebugChannels();
-}
-
-GUI::Debugger *MohawkEngine_Riven::getDebugger() {
-	return _console;
 }
 
 Common::Error MohawkEngine_Riven::run() {
@@ -138,7 +132,7 @@ Common::Error MohawkEngine_Riven::run() {
 	_gfx = new RivenGraphics(this);
 	_video = new RivenVideoManager(this);
 	_sound = new RivenSoundManager(this);
-	_console = new RivenConsole(this);
+	setDebugger(new RivenConsole(this));
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
 	_optionsDialog = new RivenOptionsDialog();
 	_scriptMan = new RivenScriptManager(this);
@@ -274,8 +268,7 @@ void MohawkEngine_Riven::processInput() {
 				_stack->onMouseDown(_eventMan->getMousePos());
 				break;
 			case kRivenActionOpenDebugger:
-				_console->attach();
-				_console->onFrame();
+				getDebugger()->attach();
 				break;
 			case kRivenActionPause:
 				pauseGame();

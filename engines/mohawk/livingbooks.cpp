@@ -159,7 +159,6 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 MohawkEngine_LivingBooks::~MohawkEngine_LivingBooks() {
 	destroyPage();
 
-	delete _console;
 	delete _sound;
 	delete _video;
 	delete _gfx;
@@ -174,7 +173,7 @@ Common::Error MohawkEngine_LivingBooks::run() {
 		return Common::kAudioDeviceInitFailed;
 	}
 
-	_console = new LivingBooksConsole(this);
+	setDebugger(new LivingBooksConsole(this));
 	// Load the book info from the detected file
 	loadBookInfo(getBookInfoFileName());
 
@@ -235,13 +234,6 @@ Common::Error MohawkEngine_LivingBooks::run() {
 
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
-				case Common::KEYCODE_d:
-					if (event.kbd.flags & Common::KBD_CTRL) {
-						_console->attach();
-						_console->onFrame();
-					}
-					break;
-
 				case Common::KEYCODE_SPACE:
 					pauseGame();
 					break;
