@@ -70,7 +70,6 @@ TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
 	dialog = new Dialog(this);
 	res = new Resources();
 
-	console = 0;
 	scene = 0;
 	inventory = 0;
 	_sceneBusy = false;
@@ -96,7 +95,6 @@ TeenAgentEngine::~TeenAgentEngine() {
 
 	CursorMan.popCursor();
 
-	delete console;
 	DebugMan.clearAllDebugChannels();
 }
 
@@ -545,7 +543,7 @@ Common::Error TeenAgentEngine::run() {
 	Common::EventManager *_event = _system->getEventManager();
 
 	initGraphics(kScreenWidth, kScreenHeight);
-	console = new Console(this);
+	setDebugger(new Console(this));
 
 	scene = new Scene(this);
 	inventory = new Inventory(this);
@@ -600,10 +598,7 @@ Common::Error TeenAgentEngine::run() {
 			debug(5, "event");
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if ((event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) ||
-				        event.kbd.ascii == '~' || event.kbd.ascii == '#') {
-					console->attach();
-				} else if (event.kbd.hasFlags(0) && event.kbd.keycode == Common::KEYCODE_F5) {
+				if (event.kbd.hasFlags(0) && event.kbd.keycode == Common::KEYCODE_F5) {
 					openMainMenuDialog();
 				} if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {
 					_markDelay = _markDelay == 80 ? 40 : 80;
@@ -703,8 +698,6 @@ Common::Error TeenAgentEngine::run() {
 		_system->unlockScreen();
 
 		_system->updateScreen();
-
-		console->onFrame();
 
 		uint32 nextTick = MIN(gameTimer, markTimer);
 		if (nextTick > 0) {

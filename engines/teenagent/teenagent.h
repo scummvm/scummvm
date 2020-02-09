@@ -93,8 +93,6 @@ public:
 	bool canSaveGameStateCurrently() override { return !_sceneBusy; }
 	bool hasFeature(EngineFeature f) const override;
 
-	GUI::Debugger *getDebugger() override { return console; }
-
 	void init();
 
 	enum Action { kActionNone, kActionExamine, kActionUse };
@@ -159,7 +157,6 @@ public:
 	Inventory *inventory;
 	MusicPlayer *music;
 	Dialog *dialog;
-	Console *console;
 
 	void setMusic(byte id);
 
