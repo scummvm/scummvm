@@ -983,10 +983,6 @@ void Penetration::checkInput() {
 				_keys[kKeyRight] = true;
 			else if (event.kbd.keycode == Common::KEYCODE_SPACE)
 				_keys[kKeySpace] = true;
-			else if (event.kbd.keycode == Common::KEYCODE_d) {
-				_vm->getDebugger()->attach();
-				_vm->getDebugger()->onFrame();
-			}
 			break;
 
 		case Common::EVENT_KEYUP:
