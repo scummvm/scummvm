@@ -36,7 +36,7 @@ private:
 
 public:
 	Debugger(HopkinsEngine *vm);
-	virtual ~Debugger() {}
+	~Debugger() override {}
 
 	bool cmd_DirtyRects(int argc, const char **argv);
 	bool cmd_Teleport(int argc, const char **argv);

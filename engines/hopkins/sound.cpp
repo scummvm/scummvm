@@ -48,7 +48,7 @@ public:
 		stream->seek(4, SEEK_CUR);
 	}
 
-	void reset() {
+	void reset() override {
 		DVI_ADPCMStream::reset();
 		_status.ima_ch[0].last = _startValue[0];
 		_status.ima_ch[1].last = _startValue[1];
@@ -97,24 +97,24 @@ public:
 		}
 	}
 
-	~TwaAudioStream() {
+	~TwaAudioStream() override {
 		delete _cueStream;
 		_cueStream = NULL;
 	}
 
-	virtual bool isStereo() const {
+	bool isStereo() const override {
 		return _cueStream ? _cueStream->isStereo() : true;
 	}
 
-	virtual int getRate() const {
+	int getRate() const override {
 		return _cueStream ? _cueStream->getRate() : 22050;
 	}
 
-	virtual bool endOfData() const {
+	bool endOfData() const override {
 		return _cueStream == NULL;
 	}
 
-	virtual int readBuffer(int16 *buffer, const int numSamples) {
+	int readBuffer(int16 *buffer, const int numSamples) override {
 		if (!_cueStream)
 			return 0;
 
