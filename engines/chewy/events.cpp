@@ -32,8 +32,7 @@
 
 namespace Chewy {
 
-Events::Events(ChewyEngine *vm, Console *console) :
-	_vm(vm), _console(console) {
+Events::Events(ChewyEngine *vm) : _vm(vm) {
 
 	_eventManager = g_system->getEventManager();
 }
@@ -47,10 +46,6 @@ void Events::processEvents() {
 				break;
 			case Common::KEYCODE_SPACE:
 				_vm->_cursor->nextCursor();
-				break;
-			case Common::KEYCODE_d:
-				if (_event.kbd.flags & Common::KBD_CTRL)
-					_console->attach();
 				break;
 			default:
 				break;
