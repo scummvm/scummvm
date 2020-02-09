@@ -299,7 +299,7 @@ void LC::c_arraypush() {
 	d.u.farr = new DatumArray;
 
 	for (int i = 0; i < arraySize; i++)
-		d.u.farr->push_back(g_lingo->pop());
+		d.u.farr->insert_at(0, g_lingo->pop());
 
 	g_lingo->push(d);
 }
