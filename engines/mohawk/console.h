@@ -116,7 +116,7 @@ class MohawkEngine_CSTime;
 class CSTimeConsole : public GUI::Debugger {
 public:
 	CSTimeConsole(MohawkEngine_CSTime *vm);
-	virtual ~CSTimeConsole(void);
+	~CSTimeConsole(void) override;
 
 private:
 	MohawkEngine_CSTime *_vm;

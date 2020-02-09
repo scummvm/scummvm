@@ -30,13 +30,13 @@ namespace Mohawk {
 class CSTimeCase1 : public CSTimeCase {
 public:
 	CSTimeCase1(MohawkEngine_CSTime *vm);
-	~CSTimeCase1();
+	~CSTimeCase1() override;
 
-	bool checkConvCondition(uint16 conditionId);
-	bool checkAmbientCondition(uint16 charId, uint16 ambientId);
-	bool checkObjectCondition(uint16 objectId);
-	void selectHelpStrings();
-	void handleConditionalEvent(const CSTimeEvent &event);
+	bool checkConvCondition(uint16 conditionId) override;
+	bool checkAmbientCondition(uint16 charId, uint16 ambientId) override;
+	bool checkObjectCondition(uint16 objectId) override;
+	void selectHelpStrings() override;
+	void handleConditionalEvent(const CSTimeEvent &event) override;
 
 protected:
 	void incorrectBodySequence(uint16 stage, uint16 speech, uint16 feature);
