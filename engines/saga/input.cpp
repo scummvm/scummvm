@@ -41,21 +41,12 @@ int SagaEngine::processInput() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-				if (event.kbd.keycode == Common::KEYCODE_d)
-					_console->attach();
-			}
 			if (_interface->_textInput || _interface->_statusTextInput) {
 				_interface->processAscii(event.kbd);
 				return SUCCESS;
 			}
 
 			switch (event.kbd.keycode) {
-			case Common::KEYCODE_HASH:
-			case Common::KEYCODE_BACKQUOTE:
-			case Common::KEYCODE_TILDE: // tilde ("~")
-				_console->attach();
-				break;
 			case Common::KEYCODE_r:
 				_interface->draw();
 				break;
