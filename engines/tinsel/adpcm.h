@@ -36,7 +36,7 @@ protected:
 		double d0, d1;
 	} _status;
 
-	void reset() {
+	void reset() override {
 		ADPCMStream::reset();
 		memset(&_status, 0, sizeof(_status));
 	}
@@ -64,7 +64,7 @@ public:
 	Tinsel4_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
 		: Tinsel_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
 
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 };
 
 class Tinsel6_ADPCMStream : public Tinsel_ADPCMStream {
@@ -72,7 +72,7 @@ protected:
 	uint8 _chunkPos;
 	uint16 _chunkData;
 
-	void reset() {
+	void reset() override {
 		ADPCMStream::reset();
 		_chunkPos = 0;
 		_chunkData = 0;
@@ -85,7 +85,7 @@ public:
 		_chunkData = 0;
 	}
 
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 };
 
 class Tinsel8_ADPCMStream : public Tinsel_ADPCMStream {
@@ -93,7 +93,7 @@ public:
 	Tinsel8_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
 		: Tinsel_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {}
 
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 };
 
 

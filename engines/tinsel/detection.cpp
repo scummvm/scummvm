@@ -90,22 +90,22 @@ public:
 		return "tinsel";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Tinsel";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Tinsel (C) Psygnosis";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual SaveStateList listSaves(const char *target) const override;
-	virtual int getMaximumSaveSlot() const override;
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	virtual void removeSaveState(const char *target, int slot) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	void removeSaveState(const char *target, int slot) const override;
 };
 
 bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {

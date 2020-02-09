@@ -161,9 +161,9 @@ class TinselEngine : public Engine {
 protected:
 
 	// Engine APIs
-	virtual void initializePath(const Common::FSNode &gamePath) override;
-	virtual Common::Error run() override;
-	virtual bool hasFeature(EngineFeature f) const override;
+	void initializePath(const Common::FSNode &gamePath) override;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 	Common::Error loadGameState(int slot) override;
 #if 0
 	Common::Error saveGameState(int slot, const Common::String &desc);
@@ -175,7 +175,7 @@ protected:
 
 public:
 	TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc);
-	virtual ~TinselEngine();
+	~TinselEngine() override;
 	int getGameId() {
 		return _gameId;
 	}
