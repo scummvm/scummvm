@@ -257,8 +257,6 @@ public:
 
 	void setTrueColor(bool trueColor);
 
-	GUI::Debugger *getDebugger() override { return _console; }
-
 	const Graphics::PixelFormat &getPixelFormat() const;
 
 	GobEngine(OSystem *syst);
