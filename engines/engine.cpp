@@ -86,7 +86,7 @@ static void defaultErrorHandler(const char *msg) {
 	// Unless this error -originated- within the debugger itself, we
 	// now invoke the debugger, if available / supported.
 	if (g_engine) {
-		GUI::Debugger *debugger = g_engine->getDebugger();
+		GUI::Debugger *debugger = g_engine->getOrCreateDebugger();
 
 #if defined(USE_TASKBAR)
 		g_system->getTaskbarManager()->notifyError();
@@ -758,6 +758,15 @@ void Engine::quitGame() {
 bool Engine::shouldQuit() {
 	Common::EventManager *eventMan = g_system->getEventManager();
 	return (eventMan->shouldQuit() || eventMan->shouldRTL());
+}
+
+GUI::Debugger *Engine::getOrCreateDebugger() {
+	if (!_debugger)
+		// Create a bare-bones debugger. This is useful for engines without their own
+		// debugger when an error occurs
+		_debugger = new GUI::Debugger();
+
+	return _debugger;
 }
 
 /*

@@ -112,7 +112,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_currentKeyDown.ascii = Common::KEYCODE_BACKSPACE;
 
 		} else if (event.kbd.keycode == Common::KEYCODE_d && (_modifierState & Common::KBD_CTRL)) {
-			GUI::Debugger *debugger = g_engine->getDebugger();
+			GUI::Debugger *debugger = g_engine->getOrCreateDebugger();
 			if (debugger) {
 				debugger->attach();
 				debugger->onFrame();
