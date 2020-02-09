@@ -41,7 +41,7 @@ public:
 	BasePoint(int initX, int initY);
 	int32 y;
 	int32 x;
-	virtual ~BasePoint();
+	~BasePoint() override;
 
 };
 

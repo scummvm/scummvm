@@ -39,7 +39,7 @@ public:
 	int scCompare(BaseScriptable *Value) override;
 	DECLARE_PERSISTENT(SXDate, BaseScriptable)
 	SXDate(BaseGame *inGame, ScStack *Stack);
-	virtual ~SXDate();
+	~SXDate() override;
 	ScValue *scGetProperty(const Common::String &name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;

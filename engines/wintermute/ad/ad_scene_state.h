@@ -42,7 +42,7 @@ public:
 	const char *getFilename() const;
 	DECLARE_PERSISTENT(AdSceneState, BaseClass)
 	AdSceneState(BaseGame *inGame);
-	virtual ~AdSceneState();
+	~AdSceneState() override;
 private:
 	char *_filename;
 	BaseArray<AdNodeState *> _nodeStates;

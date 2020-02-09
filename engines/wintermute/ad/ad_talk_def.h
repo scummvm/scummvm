@@ -44,13 +44,13 @@ public:
 	DECLARE_PERSISTENT(AdTalkDef, BaseObject)
 
 	AdTalkDef(BaseGame *inGame);
-	virtual ~AdTalkDef();
+	~AdTalkDef() override;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 	BaseArray<AdTalkNode *> _nodes;
 	char *_defaultSpriteFilename;
 	BaseSprite *_defaultSprite;
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0) override;
 };
 
 } // End of namespace Wintermute

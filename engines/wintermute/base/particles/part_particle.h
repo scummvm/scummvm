@@ -47,7 +47,7 @@ public:
 	};
 
 	PartParticle(BaseGame *inGame);
-	virtual ~PartParticle(void);
+	~PartParticle(void) override;
 
 	float _growthRate;
 	bool _exponentialGrowth;
@@ -77,7 +77,7 @@ public:
 	bool fadeIn(uint32 currentTime, int fadeTime);
 	bool fadeOut(uint32 currentTime, int fadeTime);
 
-	bool persist(BasePersistenceManager *PersistMgr);
+	bool persist(BasePersistenceManager *PersistMgr) override;
 private:
 	uint32 _fadeStart;
 	int32 _fadeTime;

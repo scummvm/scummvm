@@ -37,7 +37,7 @@ namespace Wintermute {
 class VideoSubtitler : public BaseClass {
 public:
 	VideoSubtitler(BaseGame *inGame);
-	virtual ~VideoSubtitler(void);
+	~VideoSubtitler(void) override;
 	bool loadSubtitles(const Common::String &filename, const Common::String &subtitleFile);
 	void display();
 	void update(uint32 frame);

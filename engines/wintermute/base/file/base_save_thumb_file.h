@@ -38,11 +38,11 @@ namespace Wintermute {
 class BaseSaveThumbFile : public BaseFile {
 public:
 	BaseSaveThumbFile();
-	virtual ~BaseSaveThumbFile();
-	virtual bool seek(uint32 pos, int whence = SEEK_SET);
-	virtual bool read(void *buffer, uint32 size);
-	virtual bool close();
-	virtual bool open(const Common::String &filename);
+	~BaseSaveThumbFile() override;
+	bool seek(uint32 pos, int whence = SEEK_SET) override;
+	bool read(void *buffer, uint32 size) override;
+	bool close() override;
+	bool open(const Common::String &filename) override;
 private:
 	byte *_data;
 };

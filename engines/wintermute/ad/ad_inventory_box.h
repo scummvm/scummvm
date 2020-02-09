@@ -41,7 +41,7 @@ public:
 	bool _hideSelected;
 	DECLARE_PERSISTENT(AdInventoryBox, BaseObject)
 	bool _visible;
-	virtual bool display() override;
+	bool display() override;
 	UIButton *_closeButton;
 	int32 _spacing;
 	int32 _scrollOffset;
@@ -49,10 +49,10 @@ public:
 	bool listen(BaseScriptHolder *param1, uint32 param2) override;
 	UIWindow *_window;
 	AdInventoryBox(BaseGame *inGame);
-	virtual ~AdInventoryBox();
+	~AdInventoryBox() override;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 private:
 	bool _exclusive;
 	int32 _scrollBy;

@@ -63,7 +63,7 @@ class Error;
 class Console : public GUI::Debugger {
 public:
 	Console(WintermuteEngine *vm);
-	virtual ~Console();
+	~Console() override;
 	/*
 	 * Debug commands
 	 */

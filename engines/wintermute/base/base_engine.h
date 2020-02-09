@@ -115,7 +115,7 @@ class BaseEngine : public Common::Singleton<Wintermute::BaseEngine> {
 	uint32 _flags;
 public:
 	BaseEngine();
-	~BaseEngine();
+	~BaseEngine() override;
 	static void createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, WMETargetExecutable targetExecutable, uint32 flags);
 
 	void setGameRef(BaseGame *gameRef) { _gameRef = gameRef; }

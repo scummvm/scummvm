@@ -46,7 +46,7 @@ class BaseKeyboardState : public BaseScriptable {
 public:
 	DECLARE_PERSISTENT(BaseKeyboardState, BaseScriptable)
 	BaseKeyboardState(BaseGame *inGame);
-	virtual ~BaseKeyboardState();
+	~BaseKeyboardState() override;
 	bool readKey(Common::Event *event);
 
 	void handleKeyPress(Common::Event *event);
@@ -57,10 +57,10 @@ public:
 	bool isCurrentPrintable() const;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 
 private:
 	void init();

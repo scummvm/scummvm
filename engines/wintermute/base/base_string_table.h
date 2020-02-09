@@ -45,9 +45,9 @@ public:
 	const char *expandStatic(const char *string) const;
 	bool addString(const char *key, const char *val, bool reportDuplicities = true);
 	BaseStringTable(BaseGame *inGame);
-	virtual ~BaseStringTable();
+	~BaseStringTable() override;
 	char *getKey(const char *str) const;
-	bool persist(BasePersistenceManager *persistMgr);
+	bool persist(BasePersistenceManager *persistMgr) override;
 private:
 	Common::HashMap<Common::String, Common::String> _strings;
 	Common::Array<Common::String> _filenames;

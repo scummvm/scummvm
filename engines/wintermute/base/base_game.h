@@ -163,7 +163,7 @@ public:
 	BaseSurfaceStorage *_surfaceStorage;
 	BaseFontStorage *_fontStorage;
 	BaseGame(const Common::String &targetName);
-	virtual ~BaseGame();
+	~BaseGame() override;
 
 	bool _debugDebugMode;
 
@@ -178,10 +178,10 @@ public:
 
 	virtual bool externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name);
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 	// compatibility bits
 	bool _compatKillMethodThreads;
 
@@ -195,11 +195,11 @@ public:
 
 	bool getIsLoading() const { return _loading; }
 
-	virtual bool handleMouseWheel(int32 delta) override;
+	bool handleMouseWheel(int32 delta) override;
 	bool _quitting;
 	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const;
 
-	virtual bool handleKeypress(Common::Event *event, bool printable = false) override;
+	bool handleKeypress(Common::Event *event, bool printable = false) override;
 	virtual void handleKeyRelease(Common::Event *event);
 
 	bool unfreeze();
@@ -219,7 +219,7 @@ public:
 	bool loadGame(uint32 slot);
 	bool loadGame(const char *filename);
 	bool saveGame(int32 slot, const char *desc, bool quickSave = false);
-	virtual bool showCursor() override;
+	bool showCursor() override;
 
 	BaseObject *_activeObject;
 
@@ -295,8 +295,8 @@ private:
 
 	int32 _soundBufferSizeSec;
 
-	virtual bool invalidateDeviceObjects() override;
-	virtual bool restoreDeviceObjects() override;
+	bool invalidateDeviceObjects() override;
+	bool restoreDeviceObjects() override;
 
 	// TODO: This can probably be removed completely:
 	bool _saveDirChecked;

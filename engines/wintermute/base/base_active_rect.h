@@ -51,7 +51,7 @@ public:
 	BaseActiveRect(BaseGame *inGameOwner = nullptr);
 	BaseActiveRect(BaseGame *inGameOwner, BaseObject *owner, BaseSubFrame *frame, int x, int y, int width, int height, float zoomX = 100, float zoomY = 100, bool precise = true);
 	BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *region, int offsetX, int offsetY);
-	virtual ~BaseActiveRect();
+	~BaseActiveRect() override;
 
 };
 

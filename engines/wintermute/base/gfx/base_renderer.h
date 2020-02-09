@@ -89,7 +89,7 @@ public:
 	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color); 	// Unused outside indicator-display
 	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1); 	// Unused outside indicator-display
 	BaseRenderer(BaseGame *inGame = nullptr);
-	virtual ~BaseRenderer();
+	~BaseRenderer() override;
 	virtual bool setProjection() {
 		return STATUS_OK;
 	};

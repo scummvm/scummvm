@@ -55,7 +55,7 @@ public:
 	void push(ScValue *val);
 	ScValue *pop();
 	ScStack(BaseGame *inGame);
-	virtual ~ScStack();
+	~ScStack() override;
 	BaseArray<ScValue *> _values;
 	int32 _sP;
 

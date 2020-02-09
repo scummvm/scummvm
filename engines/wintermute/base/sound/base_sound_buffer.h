@@ -46,7 +46,7 @@ class BaseSoundBuffer : public BaseClass {
 public:
 
 	BaseSoundBuffer(BaseGame *inGame);
-	virtual ~BaseSoundBuffer();
+	~BaseSoundBuffer() override;
 
 	bool pause();
 	bool play(bool looping = false, uint32 startSample = 0);

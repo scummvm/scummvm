@@ -69,7 +69,7 @@ public:
 	char *_text;
 	uint32 _duration;
 	AdSentence(BaseGame *inGame);
-	virtual ~AdSentence();
+	~AdSentence() override;
 	AdTalkDef *_talkDef;
 
 	bool canSkip();

@@ -97,7 +97,7 @@ public:
 	ScValue(BaseGame *inGame, int32 Val);
 	ScValue(BaseGame *inGame, double Val);
 	ScValue(BaseGame *inGame, const char *Val);
-	virtual ~ScValue();
+	~ScValue() override;
 	Common::HashMap<Common::String, ScValue *> _valObject;
 	Common::HashMap<Common::String, ScValue *>::iterator _valIter;
 

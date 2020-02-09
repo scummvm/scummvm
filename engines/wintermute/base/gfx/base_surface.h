@@ -46,7 +46,7 @@ public:
 
 	bool _pixelOpReady;
 	BaseSurface(BaseGame *inGame);
-	virtual ~BaseSurface();
+	~BaseSurface() override;
 
 	virtual bool displayHalfTrans(int x, int y, Rect32 rect);
 	virtual bool isTransparentAt(int x, int y);

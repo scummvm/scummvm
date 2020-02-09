@@ -56,18 +56,18 @@ class WintermuteEngine : public Engine {
 public:
 	WintermuteEngine(OSystem *syst, const WMEGameDescription *desc);
 	WintermuteEngine();
-	~WintermuteEngine();
+	~WintermuteEngine() override;
 
 	virtual Wintermute::Console *getConsole() { return _debugger; }
 	void trigDebugger() { _trigDebug = true; }
 
-	virtual Common::Error run() override;
-	virtual bool hasFeature(EngineFeature f) const override;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 	Common::SaveFileManager *getSaveFileMan() { return _saveFileMan; }
-	virtual Common::Error loadGameState(int slot) override;
-	virtual bool canLoadGameStateCurrently() override;
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
-	virtual bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canSaveGameStateCurrently() override;
 	// For detection-purposes:
 	static bool getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption);
 private:

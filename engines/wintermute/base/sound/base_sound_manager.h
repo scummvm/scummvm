@@ -56,7 +56,7 @@ public:
 	bool initialize();
 	bool _soundAvailable;
 	BaseSoundMgr(BaseGame *inGame);
-	virtual ~BaseSoundMgr();
+	~BaseSoundMgr() override;
 	Common::Array<BaseSoundBuffer *> _sounds;
 	void saveSettings();
 private:

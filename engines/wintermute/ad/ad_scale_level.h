@@ -38,8 +38,8 @@ class AdScaleLevel : public BaseObject {
 public:
 	DECLARE_PERSISTENT(AdScaleLevel, BaseObject)
 	AdScaleLevel(BaseGame *inGame);
-	virtual ~AdScaleLevel();
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	~AdScaleLevel() override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 	float getScale() const;

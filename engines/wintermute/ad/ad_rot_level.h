@@ -38,9 +38,9 @@ class AdRotLevel : public BaseObject {
 public:
 	DECLARE_PERSISTENT(AdRotLevel, BaseObject)
 	AdRotLevel(BaseGame *inGame);
-	virtual ~AdRotLevel();
+	~AdRotLevel() override;
 	float getRotation() const { return _rotation; }
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 };

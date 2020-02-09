@@ -44,7 +44,7 @@ public:
 	bool isReady() const;
 	TTransMgrState _state;
 	BaseTransitionMgr(BaseGame *inGame);
-	virtual ~BaseTransitionMgr();
+	~BaseTransitionMgr() override;
 	TTransitionType _type;
 
 };

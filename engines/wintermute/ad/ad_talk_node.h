@@ -45,9 +45,9 @@ public:
 	DECLARE_PERSISTENT(AdTalkNode, BaseClass)
 
 	AdTalkNode(BaseGame *inGame);
-	virtual ~AdTalkNode();
+	~AdTalkNode() override;
 	bool loadBuffer(char *buffer, bool complete = true);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0) override;
 	char *_spriteFilename;
 	BaseSprite *_sprite;
 	uint32 _startTime;

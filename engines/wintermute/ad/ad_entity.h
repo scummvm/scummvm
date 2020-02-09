@@ -40,13 +40,13 @@ public:
 	void setItem(const char *itemName);
 	DECLARE_PERSISTENT(AdEntity, AdTalkHolder)
 	void updatePosition();
-	virtual int32 getHeight() override;
+	int32 getHeight() override;
 	BaseRegion *_region;
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
-	virtual bool update() override;
-	virtual bool display() override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	bool update() override;
+	bool display() override;
 	AdEntity(BaseGame *inGame);
-	virtual ~AdEntity();
+	~AdEntity() override;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 
@@ -61,10 +61,10 @@ public:
 #endif
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 	Common::String debuggerToString() const override;
 private:
 	int32 _walkToX;

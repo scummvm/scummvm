@@ -44,7 +44,7 @@ public:
 	bool update() override;
 	DECLARE_PERSISTENT(BaseFader, BaseObject)
 	BaseFader(BaseGame *inGame);
-	virtual ~BaseFader();
+	~BaseFader() override;
 private:
 	bool _system;
 	bool _active;

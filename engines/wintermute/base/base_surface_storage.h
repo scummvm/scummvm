@@ -47,7 +47,7 @@ public:
 	BaseSurface *addSurface(const Common::String &filename, bool defaultCK = true, byte ckRed = 0, byte ckGreen = 0, byte ckBlue = 0, int lifeTime = -1, bool keepLoaded = false);
 	bool removeSurface(BaseSurface *surface);
 	BaseSurfaceStorage(BaseGame *inGame);
-	virtual ~BaseSurfaceStorage();
+	~BaseSurfaceStorage() override;
 
 	Common::Array<BaseSurface *> _surfaces;
 };

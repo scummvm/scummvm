@@ -105,8 +105,8 @@ public:
 	BaseSprite *_cursor;
 	bool _sharedCursors;
 	BaseSprite *_activeCursor;
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
-	virtual bool listen(BaseScriptHolder *param1, uint32 param2) override;
+	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	bool listen(BaseScriptHolder *param1, uint32 param2) override;
 
 	bool _movable;
 	bool _zoomable;
@@ -118,7 +118,7 @@ public:
 	bool _saveState;
 
 	BaseObject(BaseGame *inGame);
-	virtual ~BaseObject();
+	~BaseObject() override;
 	// base
 	virtual bool update()  {
 		return STATUS_FAILED;
@@ -137,10 +137,10 @@ public:
 
 public:
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 };
 
 } // End of namespace Wintermute

@@ -60,7 +60,7 @@ public:
 	bool setSoundSimple();
 	bool setSound(const Common::String &filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
 	BaseSound(BaseGame *inGame);
-	virtual ~BaseSound();
+	~BaseSound() override;
 
 	bool applyFX(TSFXType type = SFX_NONE, float param1 = 0, float param2 = 0, float param3 = 0, float param4 = 0);
 private:

@@ -41,7 +41,7 @@ public:
 	DECLARE_PERSISTENT(PartEmitter, BaseObject)
 
 	PartEmitter(BaseGame *inGame, BaseScriptHolder *Owner);
-	virtual ~PartEmitter(void);
+	~PartEmitter(void) override;
 
 	int32 _fadeOutTime;
 
@@ -63,10 +63,10 @@ public:
 	BaseArray<PartForce *> _forces;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
 
 
 private:

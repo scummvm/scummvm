@@ -56,16 +56,16 @@ public:
 	bool loadBuffer(char *buffer, int lifeTime, bool keepLoaded);
 
 	BaseFrame(BaseGame *inGame);
-	virtual ~BaseFrame();
+	~BaseFrame() override;
 
 	BaseArray<const char *> _applyEvent;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name) override;
-	virtual bool scSetProperty(const char *name, ScValue *value) override;
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	virtual const char *scToString() override;
-	virtual Common::String debuggerToString() const override;
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
+	Common::String debuggerToString() const override;
 
 private:
 	bool _keyframe;

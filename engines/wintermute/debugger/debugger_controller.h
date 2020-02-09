@@ -66,7 +66,7 @@ class DebuggerController : public ScriptMonitor {
 	bool bytecodeExists(const Common::String &filename);
 public:
 	DebuggerController(WintermuteEngine *vm);
-	~DebuggerController();
+	~DebuggerController() override;
 	Common::Array<TopEntry> getTop() const;
 	/**
 	 * Get the last line # we've stopped at

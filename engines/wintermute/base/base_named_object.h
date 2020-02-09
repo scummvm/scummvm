@@ -39,7 +39,7 @@ class BaseNamedObject : public BaseClass {
 public:
 	BaseNamedObject(BaseGame *inGame);
 	BaseNamedObject();
-	virtual ~BaseNamedObject(void);
+	~BaseNamedObject(void) override;
 	BaseNamedObject(TDynamicConstructor, TDynamicConstructor);
 
 	const char *getName() const { return _name; }

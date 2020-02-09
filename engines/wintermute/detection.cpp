@@ -100,11 +100,11 @@ public:
 		return "wintermute";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Wintermute";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Copyright (C) 2011 Jan Nedoma";
 	}
 
@@ -154,7 +154,7 @@ public:
 		return game;
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		assert(syst);
 		assert(engine);
 		const WMEGameDescription *gd = (const WMEGameDescription *)desc;
@@ -203,7 +203,7 @@ public:
 		pm.deleteSaveSlot(slot);
 	}
 
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
 		Wintermute::BasePersistenceManager pm(target, true);
 		SaveStateDescriptor retVal;
 		retVal.setDescription("Invalid savegame");

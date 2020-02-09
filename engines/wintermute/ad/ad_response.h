@@ -54,7 +54,7 @@ public:
 	const char *getTextOrig() const;
 
 	AdResponse(BaseGame *inGame);
-	virtual ~AdResponse();
+	~AdResponse() override;
 	TResponseType _responseType;
 private:
 	BaseSprite *_icon;

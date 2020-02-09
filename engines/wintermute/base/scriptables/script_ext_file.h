@@ -45,7 +45,7 @@ public:
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
 	SXFile(BaseGame *inGame, ScStack *Stack);
-	virtual ~SXFile();
+	~SXFile() override;
 private:
 	Common::SeekableReadStream *_readFile;
 	Common::WriteStream *_writeFile;

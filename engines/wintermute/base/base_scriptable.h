@@ -45,7 +45,7 @@ public:
 	DECLARE_PERSISTENT(BaseScriptable, BaseNamedObject)
 
 	BaseScriptable(BaseGame *inGame, bool noValue = false, bool persistable = true);
-	virtual ~BaseScriptable();
+	~BaseScriptable() override;
 
 	// high level scripting interface
 	virtual bool canHandleMethod(const char *eventMethod) const;
