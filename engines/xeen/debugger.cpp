@@ -59,7 +59,7 @@ Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm),
 	registerCmd("intangible", WRAP_METHOD(Debugger, cmdIntangible));
 }
 
-void Debugger::update() {
+void Debugger::onFrame() {
 	Party &party = *_vm->_party;
 	Spells &spells = *_vm->_spells;
 
@@ -72,7 +72,7 @@ void Debugger::update() {
 		spells.castSpell(c, spellId);
 	}
 
-	onFrame();
+	GUI::Debugger::onFrame();
 }
 
 bool Debugger::cmdSpell(int argc, const char **argv) {
