@@ -68,8 +68,6 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 
 	MemoryManager _memoryManager;
-	Debugger *_debugger;
-	GUI::Debugger *getDebugger() override { return _debugger; }
 
 	const char *getGameId() const;
 	uint32 getGameID() const;
