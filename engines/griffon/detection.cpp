@@ -52,23 +52,23 @@ public:
 	GriffonMetaEngine() : AdvancedMetaEngine(Griffon::gameDescriptions, sizeof(ADGameDescription), griffonGames) {
 	}
 
-	virtual const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "griffon";
 	}
 
-	virtual const char *getName() const {
+	const char *getName() const override {
 		return "Griffon Engine";
 	}
 
-	virtual int getMaximumSaveSlot() const {
+	int getMaximumSaveSlot() const override {
 		return ConfMan.getInt("autosave_period") ? 4 : 3;
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "The Griffon Legend (c) 2005 Syn9 (Daniel Kennedy)";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool Griffon::GriffonEngine::hasFeature(EngineFeature f) const {

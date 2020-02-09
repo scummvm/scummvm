@@ -38,7 +38,7 @@ public:
 	int _godMode;
 
 	explicit Console();
-	virtual ~Console(void) {}
+	~Console(void) override {}
 
 	bool Cmd_godMode(int argc, const char** argv);
 	bool Cmd_noDamage(int argc, const char** argv);
