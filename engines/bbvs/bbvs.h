@@ -219,10 +219,10 @@ static const int8 kWalkTurnTbl[] = {
 class BbvsEngine : public Engine {
 protected:
 	Common::Error run() override;
-	virtual bool hasFeature(EngineFeature f) const override;
+	bool hasFeature(EngineFeature f) const override;
 public:
 	BbvsEngine(OSystem *syst, const ADGameDescription *gd);
-	~BbvsEngine();
+	~BbvsEngine() override;
 	void newGame();
 	void continueGameFromQuickSave();
 	void setNewSceneNum(int newSceneNum);

@@ -62,10 +62,10 @@ enum {
 class MainMenu : public GUI::Dialog {
 public:
 	MainMenu(BbvsEngine *vm);
-	~MainMenu();
+	~MainMenu() override;
 
-	void reflowLayout();
-	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data);
+	void reflowLayout() override;
+	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data) override;
 
 protected:
 	BbvsEngine *_vm;
