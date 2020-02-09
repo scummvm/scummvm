@@ -73,7 +73,6 @@ class CFilesManager;
 class CMainGameWindow;
 class CString;
 class CTrueTalkManager;
-class Debugger;
 class Events;
 class OSScreenManager;
 class CScriptHandler;
@@ -109,7 +108,6 @@ protected:
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 public:
-	Debugger *_debugger;
 	Events *_events;
 	CFilesManager *_filesManager;
 	CMovieManager _movieManager;

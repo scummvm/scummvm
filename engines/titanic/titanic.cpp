@@ -60,7 +60,6 @@ TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDe
 		: _gameDescription(gameDesc), Engine(syst), _randomSource("Titanic") {
 	g_vm = this;
 	g_language = getLanguage();
-	_debugger = nullptr;
 	_events = nullptr;
 	_filesManager = nullptr;
 	_window = nullptr;
@@ -93,7 +92,7 @@ bool TitanicEngine::initialize() {
 		return false;
 	}
 
-	_debugger = new Debugger(this);
+	setDebugger(new Debugger(this));
 
 	CSaveableObject::initClassList();
 	CEnterExitFirstClassState::init();
@@ -127,7 +126,6 @@ bool TitanicEngine::initialize() {
 }
 
 void TitanicEngine::deinitialize() {
-	delete _debugger;
 	delete _events;
 	delete _window;
 	delete _screenManager;
