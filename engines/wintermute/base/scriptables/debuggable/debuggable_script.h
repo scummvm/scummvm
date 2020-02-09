@@ -40,7 +40,7 @@ class DebuggableScript : public ScScript {
 	void setStepDepth(int depth);
 public:
 	DebuggableScript(BaseGame *inGame, DebuggableScEngine *engine);
-	~DebuggableScript() override override;
+	~DebuggableScript() override;
 	ScValue *resolveName(const Common::String &name);
 	/**
 	 * Return argument to last II_DBG_LINE encountered

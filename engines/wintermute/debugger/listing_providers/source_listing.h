@@ -29,9 +29,9 @@ class SourceListing : public Listing {
 	const Common::Array<Common::String> _strings;
 public:
 	SourceListing(const Common::Array<Common::String> &strings);
-	~SourceListing() override override;
-	uint getLength() const override override;
-	Common::String getLine(uint n) override override;
+	~SourceListing() override;
+	uint getLength() const override;
+	Common::String getLine(uint n) override;
 };
 }
 #endif /* DUMMY_LISTING_H_ */
