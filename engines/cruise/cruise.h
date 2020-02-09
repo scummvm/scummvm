@@ -56,7 +56,6 @@ struct CRUISEGameDescription;
 class CruiseEngine: public Engine {
 private:
 	bool _preLoad;
-	Debugger *_debugger;
 	PCSound *_sound;
 	Common::StringArray _langStrings;
 	CursorType _savedCursor;
@@ -88,7 +87,6 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	PCSound &sound() { return *_sound; }
-	GUI::Debugger *getDebugger() override { return _debugger; }
 	virtual void pauseEngine(bool pause);
 	const char *langString(LangStringId langId) { return _langStrings[(int)langId].c_str(); }
 
