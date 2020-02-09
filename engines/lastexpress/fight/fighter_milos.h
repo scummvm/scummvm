@@ -33,17 +33,17 @@ class FighterPlayerMilos : public Fighter {
 public:
 	FighterPlayerMilos(LastExpressEngine *engine);
 
-	virtual void handleAction(FightAction action);
-	virtual void update();
-	virtual bool canInteract(FightAction action = kFightActionNone);
+	void handleAction(FightAction action) override;
+	void update() override;
+	bool canInteract(FightAction action = kFightActionNone) override;
 };
 
 class FighterOpponentMilos : public Opponent {
 public:
 	FighterOpponentMilos(LastExpressEngine *engine);
 
-	virtual void handleAction(FightAction action);
-	virtual void update();
+	void handleAction(FightAction action) override;
+	void update() override;
 };
 
 } // End of namespace LastExpress

@@ -48,7 +48,7 @@ class LastExpressEngine;
 class Debugger : public GUI::Debugger {
 public:
 	Debugger(LastExpressEngine *engine);
-	~Debugger();
+	~Debugger() override;
 
 	bool hasCommand() const;
 	void callCommand();

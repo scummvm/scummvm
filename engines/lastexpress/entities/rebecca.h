@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Rebecca : public Entity {
 public:
 	Rebecca(LastExpressEngine *engine);
-	~Rebecca() {}
+	~Rebecca() override {}
 
 	/**
 	 * Resets the entity

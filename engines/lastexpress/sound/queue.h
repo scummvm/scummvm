@@ -38,7 +38,7 @@ class SubtitleEntry;
 class SoundQueue : Common::Serializable {
 public:
 	SoundQueue(LastExpressEngine *engine);
-	~SoundQueue();
+	~SoundQueue() override;
 
 	// Queue
 	void addToQueue(SoundEntry *entry);
@@ -76,7 +76,7 @@ public:
 	SubtitleEntry *getCurrentSubtitle() { return _currentSubtitle; }
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 	uint32 count();
 
 	// Accessors

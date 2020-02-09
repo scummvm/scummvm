@@ -336,8 +336,8 @@ public:
 
 	Functor1MemConst(T *t, const FuncType &func) : _t(t), _func(func) {}
 
-	bool isValid() const { return _func != 0 && _t != 0; }
-	Res operator()(Arg v1) const {
+	bool isValid() const override { return _func != 0 && _t != 0; }
+	Res operator()(Arg v1) const override {
 		return (_t->*_func)(v1);
 	}
 private:

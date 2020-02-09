@@ -41,7 +41,7 @@ private:
 
 public:
 	Mertens(LastExpressEngine *engine);
-	~Mertens() {}
+	~Mertens() override {}
 
 	/**
 	 * Resets the entity

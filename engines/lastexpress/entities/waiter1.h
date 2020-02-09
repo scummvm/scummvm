@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Waiter1 : public Entity {
 public:
 	Waiter1(LastExpressEngine *engine);
-	~Waiter1() {}
+	~Waiter1() override {}
 
 	/**
 	 * Call a savepoint (or draw sequence in default case)

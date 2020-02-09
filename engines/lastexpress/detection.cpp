@@ -230,20 +230,20 @@ public:
 		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOSFX);
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "lastexpress";
 	}
 
-	const char *getName() const {
+	const char *getName() const override {
 		return "The Last Express";
 	}
 
-	const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "The Last Express (C) 1997 Smoking Car Productions";
 	}
 
 protected:
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 };
 
 bool LastExpressMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {

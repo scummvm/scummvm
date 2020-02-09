@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Train : public Entity {
 public:
 	Train(LastExpressEngine *engine);
-	~Train() {}
+	~Train() override {}
 
 	/**
 	 * Saves the game

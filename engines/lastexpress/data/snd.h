@@ -78,10 +78,10 @@ protected:
 class StreamedSound : public SimpleSound {
 public:
 	StreamedSound();
-	~StreamedSound();
+	~StreamedSound() override;
 
 	bool load(Common::SeekableReadStream *stream, uint32 volume, bool looped, uint32 startBlock = 0);
-	virtual bool isFinished();
+	bool isFinished() override;
 
 	void setVolume(uint32 newVolume);
 	void setVolumeSmoothly(uint32 newVolume);
@@ -94,13 +94,13 @@ private:
 class AppendableSound : public SimpleSound {
 public:
 	AppendableSound();
-	~AppendableSound();
+	~AppendableSound() override;
 
 	void queueBuffer(const byte *data, uint32 size);
 	void queueBuffer(Common::SeekableReadStream *bufferIn);
 	void finish();
 
-	virtual bool isFinished();
+	bool isFinished() override;
 
 private:
 	Audio::QueuingAudioStream *_as;

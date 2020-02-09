@@ -53,7 +53,7 @@ public:
 		Common::String toString();
 
 		// Serializable
-		void saveLoadWithSerializer(Common::Serializer &s) {
+		void saveLoadWithSerializer(Common::Serializer &s) override {
 			s.syncAsByte(entity);
 			s.syncAsByte(status);
 			s.syncAsByte(windowCursor);
@@ -69,7 +69,7 @@ public:
 	void updateModel(ObjectIndex index, ObjectModel model);
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 
 	/**
 	 * Convert this object into a string representation.

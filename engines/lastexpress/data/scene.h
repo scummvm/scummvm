@@ -226,9 +226,9 @@ public:
 	byte param2;
 	byte param3;
 
-	~Scene();
+	~Scene() override;
 
-	Common::Rect draw(Graphics::Surface *surface);
+	Common::Rect draw(Graphics::Surface *surface) override;
 
 	// Hotspots
 	Common::Array<SceneHotspot *> *getHotspots() { return &_hotspots; }

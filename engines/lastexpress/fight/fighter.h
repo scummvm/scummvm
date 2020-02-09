@@ -109,7 +109,7 @@ public:
 		_field_38 = 0;
 	}
 
-	virtual void update();
+	void update() override;
 
 protected:
 	int32 _field_38;

@@ -32,7 +32,7 @@ class LastExpressEngine;
 class Kronos : public Entity {
 public:
 	Kronos(LastExpressEngine *engine);
-	~Kronos() {}
+	~Kronos() override {}
 
 	/**
 	 * Resets the entity

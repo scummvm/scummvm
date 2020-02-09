@@ -92,7 +92,7 @@ class SubtitleEntry;
 class SoundEntry : Common::Serializable {
 public:
 	SoundEntry(LastExpressEngine *engine);
-	~SoundEntry();
+	~SoundEntry() override;
 
 	void open(Common::String name, SoundFlag flag, int priority);
 	void close();
@@ -117,7 +117,7 @@ public:
 	void setSubtitles(Common::String filename);
 
 	// Serializable
-	void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 	// Accessors
 	void setEntity(EntityIndex entity) { _entity = entity; }
