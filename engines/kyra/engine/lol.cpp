@@ -367,8 +367,7 @@ Common::Error LoLEngine::init() {
 	assert(_screen);
 	_screen->setResolution();
 
-	_debugger = new Debugger_LoL(this);
-	assert(_debugger);
+	setDebugger(new Debugger_LoL(this));
 
 	KyraEngine_v1::init();
 	initStaticResource();
@@ -857,7 +856,7 @@ void LoLEngine::startupNew() {
 
 void LoLEngine::runLoop() {
 	// Initialize debugger since how it should be fully usable
-	_debugger->initialize();
+	static_cast<Debugger_LoL *>(getDebugger())->initialize();
 
 	enableSysTimer(2);
 

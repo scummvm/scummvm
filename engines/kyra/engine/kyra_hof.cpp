@@ -177,8 +177,7 @@ Common::Error KyraEngine_HoF::init() {
 	assert(_screen);
 	_screen->setResolution();
 
-	_debugger = new Debugger_HoF(this);
-	assert(_debugger);
+	setDebugger(new Debugger_HoF(this));
 
 	KyraEngine_v1::init();
 	initStaticResource();
@@ -397,7 +396,7 @@ void KyraEngine_HoF::startup() {
 
 void KyraEngine_HoF::runLoop() {
 	// Initialize debugger since how it should be fully usable
-	_debugger->initialize();
+	static_cast<Debugger_HoF *>(getDebugger())->initialize();
 
 	_screen->updateScreen();
 
