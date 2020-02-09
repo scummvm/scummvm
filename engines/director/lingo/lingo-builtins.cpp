@@ -1064,19 +1064,19 @@ void LB::b_clearGlobals(int nargs) {
 }
 
 void LB::b_cursor(int nargs) {
-	int mask = -1;
-
 	Datum d = g_lingo->pop();
-	d.toInt();
 
-	if (nargs == 2) {
-		d = g_lingo->pop();
+	if (d.type == ARRAY) {
+		Datum sprite = d.u.farr->operator[](0);
+		Datum mask = d.u.farr->operator[](1);
+		sprite.toInt();
+		mask.toInt();
+
+		g_lingo->func_cursor(sprite.u.i, mask.u.i);
+	} else {
 		d.toInt();
-
-		mask = d.u.i;
+		g_lingo->func_cursor(d.u.i, -1);
 	}
-
-	g_lingo->func_cursor(d.u.i, mask);
 }
 
 void LB::b_showGlobals(int nargs) {
