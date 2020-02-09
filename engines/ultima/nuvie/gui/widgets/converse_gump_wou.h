@@ -52,52 +52,52 @@ class ConverseGumpWOU: public MsgScroll {
 public:
 
 	ConverseGumpWOU(Configuration *cfg, Font *f, Screen *s);
-	~ConverseGumpWOU();
+	~ConverseGumpWOU() override;
 
-	virtual void set_talking(bool state, Actor *actor = NULL);
-	virtual void set_font(uint8 font_type) {}
-	virtual void display_converse_prompt();
+	void set_talking(bool state, Actor *actor = NULL) override;
+	void set_font(uint8 font_type) override {}
+	void display_converse_prompt() override;
 
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) {
-		return GUI_YUM;
-	}
-
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) {
-		return GUI_YUM;
-	}
-	GUI_status MouseMotion(int x, int y, uint8 state) {
-		return GUI_YUM;
-	}
-	GUI_status MouseEnter(uint8 state) {
-		return GUI_YUM;
-	}
-	GUI_status MouseLeave(uint8 state) {
-		return GUI_YUM;
-	}
-	GUI_status MouseClick(int x, int y, Shared::MouseButton button) {
-		return GUI_YUM;
-	}
-	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) {
-		return GUI_YUM;
-	}
-	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) {
-		return GUI_YUM;
-	}
-	GUI_status MouseHeld(int x, int y, Shared::MouseButton button) {
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override {
 		return GUI_YUM;
 	}
 
-	virtual bool is_converse_finished() {
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override {
+		return GUI_YUM;
+	}
+	GUI_status MouseMotion(int x, int y, uint8 state) override {
+		return GUI_YUM;
+	}
+	GUI_status MouseEnter(uint8 state) override {
+		return GUI_YUM;
+	}
+	GUI_status MouseLeave(uint8 state) override {
+		return GUI_YUM;
+	}
+	GUI_status MouseClick(int x, int y, Shared::MouseButton button) override {
+		return GUI_YUM;
+	}
+	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) override {
+		return GUI_YUM;
+	}
+	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) override {
+		return GUI_YUM;
+	}
+	GUI_status MouseHeld(int x, int y, Shared::MouseButton button) override {
+		return GUI_YUM;
+	}
+
+	bool is_converse_finished() override {
 		return (is_holding_buffer_empty() && !page_break);
 	}
 
 protected:
 
 	void input_add_string(Std::string token_str);
-	virtual void process_page_break();
-	virtual uint8 get_input_font_color() {
+	void process_page_break() override;
+	uint8 get_input_font_color() override {
 		return FONT_COLOR_WOU_CONVERSE_INPUT;
 	}
 	void display_bg();

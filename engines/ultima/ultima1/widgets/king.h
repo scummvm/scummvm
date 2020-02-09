@@ -38,7 +38,7 @@ protected:
 	/**
 	 * Handles moving creatures
 	 */
-	virtual void movement() override;
+	void movement() override;
 public:
 	DECLARE_WIDGET(King)
 	CLASSDEF;
@@ -59,12 +59,12 @@ public:
 	 * @param amount		Amount to remove
 	 * @returns				Returns true if kills the creature
 	 */
-	virtual bool subtractHitPoints(uint amount) override;
+	bool subtractHitPoints(uint amount) override;
 
 	/**
 	 * Do a talk action
 	 */
-	virtual void talk() override;
+	void talk() override;
 };
 
 } // End of namespace Widgets

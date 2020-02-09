@@ -42,17 +42,17 @@ private:
 	GUI_Button *down_button;
 public:
 	MapEditorView(Configuration *config);
-	virtual ~MapEditorView();
+	~MapEditorView() override;
 
 	bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);
-	void Display(bool full_redraw);
-	GUI_status KeyDown(const Common::KeyState &key);
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	GUI_status MouseMotion(int x, int y, uint8 state);
+	void Display(bool full_redraw) override;
+	GUI_status KeyDown(const Common::KeyState &key) override;
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseMotion(int x, int y, uint8 state) override;
 
-	virtual void close_view();
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+	void close_view() override;
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 protected:
 	void setTile(uint16 x, uint16 y, uint8 level);
 	void toggleGrid();

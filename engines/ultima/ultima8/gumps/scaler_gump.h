@@ -47,13 +47,13 @@ public:
 	//! \param sheight1 height before scaling (usually game-height)
 	//! \param scaler1 scaler to use
 	ScalerGump(int32 x, int32 y, int32 width, int32 height);
-	virtual ~ScalerGump(void);
+	~ScalerGump(void) override;
 
-	virtual void Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
-	virtual void RenderSurfaceChanged() override;
-	virtual void ParentToGump(int32 &px, int32 &py,
+	void Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	void RenderSurfaceChanged() override;
+	void ParentToGump(int32 &px, int32 &py,
 	                          PointRoundDir r = ROUND_TOPLEFT) override;
-	virtual void GumpToParent(int32 &gx, int32 &gy,
+	void GumpToParent(int32 &gx, int32 &gy,
 	                          PointRoundDir r = ROUND_TOPLEFT) override;
 
 	void GetScaledSize(int32 &sw, int32 &sh) const {

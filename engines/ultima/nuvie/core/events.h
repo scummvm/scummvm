@@ -236,14 +236,14 @@ private:
 protected:
 	inline uint32 TimeLeft();
 
-	virtual uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
 	bool handleSDL_KEYDOWN(const Common::Event *event);
 	const char *print_mode(EventMode mode);
 	void try_next_attack();
 
 public:
 	Events(Shared::EventsCallback *callback, Configuration *cfg);
-	virtual ~Events();
+	~Events() override;
 
 	void clear();
 

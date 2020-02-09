@@ -46,7 +46,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Huh() {}
+	~Huh() override {}
 };
 
 } // End of namespace Actions

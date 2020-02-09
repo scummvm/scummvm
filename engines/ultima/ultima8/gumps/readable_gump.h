@@ -39,21 +39,21 @@ public:
 
 	ReadableGump();
 	ReadableGump(ObjId owner, uint16 shape, int font, Std::string msg);
-	virtual ~ReadableGump();
+	~ReadableGump() override;
 
 	// Close on mouse click on key press
-	virtual Gump *OnMouseDown(int button, int32 mx, int32 my) override;
-	virtual bool OnKeyDown(int key, int mod) override;
+	Gump *OnMouseDown(int button, int32 mx, int32 my) override;
+	bool OnKeyDown(int key, int mod) override;
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	INTRINSIC(I_readGrave);
 	INTRINSIC(I_readPlaque);
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

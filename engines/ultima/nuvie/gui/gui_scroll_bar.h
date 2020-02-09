@@ -73,16 +73,16 @@ public:
 	void set_slider_position(float percentage);
 
 	/* Map the color to the display */
-	virtual void SetDisplay(Screen *s);
+	void SetDisplay(Screen *s) override;
 
 	/* Show the widget  */
-	virtual void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
 	/* events, used for dragging the area. */
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	GUI_status MouseMotion(int x, int y, uint8 state);
-	GUI_status MouseWheel(sint32 x, sint32 y);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseMotion(int x, int y, uint8 state) override;
+	GUI_status MouseWheel(sint32 x, sint32 y) override;
 
 protected:
 	void loadButtons();
@@ -90,7 +90,7 @@ protected:
 
 	void send_slider_moved_msg();
 	bool move_slider(int new_slider_y);
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 
 	void send_up_button_msg();
 	void send_down_button_msg();

@@ -42,7 +42,7 @@ protected:
 	int strToInt(const char *s);
 public:
 	Debugger();
-    virtual ~Debugger() {}
+    ~Debugger() override {}
 };
 
 } // End of namespace Shared

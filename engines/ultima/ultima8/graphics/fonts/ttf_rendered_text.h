@@ -37,11 +37,11 @@ class TTFRenderedText : public RenderedText {
 public:
 	TTFRenderedText(Texture *texture, int width, int height, int vlead,
 	                TTFont *font);
-	virtual ~TTFRenderedText();
+	~TTFRenderedText() override;
 
-	virtual void draw(RenderSurface *surface, int x, int y,
+	void draw(RenderSurface *surface, int x, int y,
 	                  bool destmasked = false) override;
-	virtual void drawBlended(RenderSurface *surface, int x, int y, uint32 col,
+	void drawBlended(RenderSurface *surface, int x, int y, uint32 col,
 	                         bool destmasked = false) override;
 
 	ENABLE_RUNTIME_CLASSTYPE()

@@ -54,7 +54,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Action() {}
+	~Action() override {}
 
 	/**
 	 * Jumps up through the parents to find the root game

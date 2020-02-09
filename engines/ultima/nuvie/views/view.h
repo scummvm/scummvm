@@ -58,7 +58,7 @@ protected:
 public:
 
 	View(Configuration *cfg);
-	virtual ~View();
+	~View() override;
 
 	bool init(uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);
 
@@ -76,7 +76,7 @@ public:
 
 protected:
 
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 	GUI_Button *loadButton(Std::string dir, Std::string name, uint16 x, uint16 y);
 };
 

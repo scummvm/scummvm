@@ -34,9 +34,9 @@ protected:
 public:
 
 	MDActor(Map *m, ObjManager *om, GameClock *c);
-	~MDActor();
+	~MDActor() override;
 
-	virtual bool init(uint8 unused = 0) override;
+	bool init(uint8 unused = 0) override;
 	bool will_not_talk() override;
 	uint8 get_maxhp() override {
 		return (((level * 24 + strength * 2) < 255) ? (level * 24 + strength * 2) : 255);
@@ -47,7 +47,7 @@ public:
 	bool is_immobile() override;
 
 	bool check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags = 0) override;
-	virtual uint16 get_downward_facing_tile_num() override;
+	uint16 get_downward_facing_tile_num() override;
 	void set_direction(uint8 d) override;
 	bool is_passable() override;
 

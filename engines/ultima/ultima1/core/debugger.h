@@ -36,7 +36,7 @@ private:
 	bool cmdSpell(int argc, const char **argv);
 public:
 	Debugger();
-    virtual ~Debugger() {}
+    ~Debugger() override {}
 };
 
 } // End of namespace Ultima1

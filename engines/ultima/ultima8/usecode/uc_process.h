@@ -42,14 +42,14 @@ public:
 	UCProcess();
 	UCProcess(uint16 classid_, uint16 offset_, uint32 this_ptr = 0,
 	          int thissize = 0, const uint8 *args = 0, int argsize = 0);
-	~UCProcess();
+	~UCProcess() override;
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void run() override;
+	void run() override;
 
-	virtual void terminate() override;
+	void terminate() override;
 
 	void freeOnTerminate(uint16 index, int type_);
 
@@ -58,11 +58,11 @@ public:
 	}
 
 	//! dump some info about this process to pout
-	virtual void dumpInfo() override;
+	void dumpInfo() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	void load(uint16 classid_, uint16 offset_, uint32 this_ptr = 0,
 	          int thissize = 0, const uint8 *args = 0, int argsize = 0);

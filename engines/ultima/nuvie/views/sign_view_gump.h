@@ -42,16 +42,16 @@ class SignViewGump : public DraggableView {
 
 public:
 	SignViewGump(Configuration *cfg);
-	~SignViewGump();
+	~SignViewGump() override;
 
 	bool init(Screen *tmp_screen, void *view_manager, Font *f, Party *p, TileManager *tm, ObjManager *om, const char *text_string, uint16 length);
 
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	GUI_status KeyDown(const Common::KeyState &key);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status KeyDown(const Common::KeyState &key) override;
 
 protected:
 

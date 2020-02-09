@@ -47,7 +47,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~DungeonCreature() {}
+	~DungeonCreature() override {}
 
 	/**
 	 * Returns true if a monster blocks the background behind him

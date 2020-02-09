@@ -43,12 +43,12 @@ public:
 	                     GUI_Font *font, int alignment,
 	                     GUI_CallBack *callback, int flat = 0);
 
-	~GUI_TextToggleButton();
+	~GUI_TextToggleButton() override;
 
 	virtual int GetSelection() const;
 
-	virtual GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	virtual GUI_status Activate_button(int x = 0, int y = 0, Shared::MouseButton button = Shared::BUTTON_LEFT);
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status Activate_button(int x = 0, int y = 0, Shared::MouseButton button = Shared::BUTTON_LEFT) override;
 
 protected:
 	int selection;

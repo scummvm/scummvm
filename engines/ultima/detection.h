@@ -61,30 +61,30 @@ struct UltimaGameDescription {
 class UltimaMetaEngine : public AdvancedMetaEngine {
 public:
 	UltimaMetaEngine();
-	virtual ~UltimaMetaEngine();
+	~UltimaMetaEngine() override;
 
-	virtual const char *getEngineId() const override {
+	const char *getEngineId() const override {
 		return "ultima";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Ultima";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Ultima Games (C) 1980-1995 Origin Systems Inc.";
 	}
 
-	virtual const char *getSavegamePattern(const char *target = nullptr) const override;
-	virtual const char *getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
+	const char *getSavegamePattern(const char *target = nullptr) const override;
+	const char *getSavegameFile(int saveGameIdx, const char *target = nullptr) const override;
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	virtual int getMaximumSaveSlot() const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	int getMaximumSaveSlot() const override;
 
 	/**
 	 * Return a list of all save states associated with the given target.
 	 */
-	virtual SaveStateList listSaves(const char *target) const override;
+	SaveStateList listSaves(const char *target) const override;
 };
 
 namespace Ultima {

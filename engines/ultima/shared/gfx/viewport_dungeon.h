@@ -70,12 +70,12 @@ protected:
 public:
 	CLASSDEF;
 	ViewportDungeon(TreeItem *parent) : Gfx::VisualItem("ViewportDungeon", Rect(8, 8, 312, 152), parent) {}
-	virtual ~ViewportDungeon() {}
+	~ViewportDungeon() override {}
 
 	/**
 	 * Draws the dungeon
 	 */
-	virtual void draw() override;
+	void draw() override;
 };
 
 } // End of namespace Shared

@@ -45,11 +45,11 @@ protected:
 
 public:
 	SeekPath();
-	~SeekPath();
-	sint32 step_cost(MapCoord &c1, MapCoord &c2) {
+	~SeekPath() override;
+	sint32 step_cost(MapCoord &c1, MapCoord &c2) override {
 		return -1;
 	}
-	bool path_search(MapCoord &start, MapCoord &goal);
+	bool path_search(MapCoord &start, MapCoord &goal) override;
 	void delete_path() {
 		Path::delete_path();
 		delete_nodes();

@@ -36,7 +36,7 @@ namespace Ultima8 {
 class MidiPlayer : public Audio::MidiPlayer {
 public:
 	MidiPlayer();
-	~MidiPlayer();
+	~MidiPlayer() override;
 
 	/**
 	 * Play the specified music

@@ -34,17 +34,17 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	PagedGump(int left, int right, int top, int shape);
-	virtual ~PagedGump(void);
+	~PagedGump(void) override;
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
-	virtual void Close(bool no_del = false) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
+	void Close(bool no_del = false) override;
 
 	// Paint the Gump
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual bool OnKeyDown(int key, int mod) override;
-	virtual void ChildNotify(Gump *child, uint32 message) override;
+	bool OnKeyDown(int key, int mod) override;
+	void ChildNotify(Gump *child, uint32 message) override;
 
 	//! add a page. Note: g already has to be a child gump.
 	void addPage(Gump *g);
@@ -55,7 +55,7 @@ public:
 
 	bool loadData(IDataSource *ids);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 	int leftOff, rightOff, topOff, gumpShape;
 	Std::vector<Gump *> gumps;
 	Gump *nextButton;

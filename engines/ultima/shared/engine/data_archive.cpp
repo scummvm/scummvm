@@ -40,16 +40,16 @@ public:
 		const Common::String &subfolder) :
 		_member(member), _publicFolder("data/"), _innerfolder(subfolder) {
 	}
-	virtual ~UltimaDataArchiveMember() {}
-	virtual Common::SeekableReadStream *createReadStream() const {
+	~UltimaDataArchiveMember() override {}
+	Common::SeekableReadStream *createReadStream() const override {
 		return _member->createReadStream();
 	}
-	virtual Common::String getName() const {
+	Common::String getName() const override {
 		Common::String name = _member->getName();
 		assert(name.hasPrefixIgnoreCase(_innerfolder));
 		return _publicFolder + Common::String(name.c_str() + _innerfolder.size());
 	}
-	virtual Common::String getDisplayName() const {
+	Common::String getDisplayName() const override {
 		return _member->getDisplayName();
 	}
 };

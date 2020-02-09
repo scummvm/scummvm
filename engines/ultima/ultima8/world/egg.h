@@ -32,7 +32,7 @@ class Egg : public Item {
 	friend class ItemFactory;
 public:
 	Egg();
-	virtual ~Egg();
+	~Egg() override;
 
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -56,14 +56,14 @@ public:
 	virtual uint16 hatch();
 
 	//! The item has left the fast area
-	virtual void leaveFastArea() override;
+	void leaveFastArea() override;
 
 	//! clear the 'hatched' flag
 	void reset() {
 		hatched = false;
 	}
 
-	virtual void dumpInfo() override;
+	void dumpInfo() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 
@@ -75,7 +75,7 @@ public:
 	INTRINSIC(I_setEggId);
 
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	bool hatched;
 };

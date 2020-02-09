@@ -44,21 +44,21 @@ public:
 	}
 
 	U6AdPlugDecoderStream(CEmuopl *o, Std::string filename, uint16 song_num);
-	~U6AdPlugDecoderStream();
+	~U6AdPlugDecoderStream() override;
 
-	int readBuffer(sint16 *buffer, const int numSamples);
+	int readBuffer(sint16 *buffer, const int numSamples) override;
 
 	/** Is this a stereo stream? */
-	bool isStereo() const {
+	bool isStereo() const override {
 		return true;
 	}
 
 	/** Sample rate of the stream. */
-	int getRate() const {
+	int getRate() const override {
 		return opl->getRate();
 	}
 
-	bool rewind() {
+	bool rewind() override {
 		if (player) {
 			player->rewind();    //FIXME this would need to be locked if called outside mixer thread.
 			return true;
@@ -73,7 +73,7 @@ public:
 	 * This is used by e.g. a rate converter to decide whether to keep on
 	 * converting data or stop.
 	 */
-	bool endOfData() const {
+	bool endOfData() const override {
 		return false;
 	}
 private:

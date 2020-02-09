@@ -137,7 +137,7 @@ protected:
 
 public:
 	NuvieAnim();
-	~NuvieAnim();
+	~NuvieAnim() override;
 
 	void pause() {
 		paused = true;
@@ -208,13 +208,13 @@ protected:
 
 	vector<PositionedTile *> tiles;
 
-	virtual void display();
+	void display() override;
 
 public:
 	TileAnim();
-	~TileAnim();
+	~TileAnim() override;
 
-	MapCoord get_location() {
+	MapCoord get_location() override {
 		return (MapCoord(tx, ty, 0));
 	}
 	void get_offset(uint32 &x_add, uint32 &y_add) {
@@ -223,13 +223,13 @@ public:
 	}
 	sint32 get_tile_id(PositionedTile *find_tile);
 
-	void move(uint32 x, uint32 y, uint32 add_x = 0, uint32 add_y = 0) {
+	void move(uint32 x, uint32 y, uint32 add_x = 0, uint32 add_y = 0) override {
 		tx = x;
 		ty = y;
 		px = add_x;
 		py = add_y;
 	}
-	void shift(sint32 sx, sint32 sy);
+	void shift(sint32 sx, sint32 sy) override;
 	void shift_tile(uint32 ptile_num, sint32 sx, sint32 sy);
 	void move_tile(PositionedTile *ptile, uint32 x, uint32 y);
 
@@ -249,7 +249,7 @@ public:
 	TimedAnim()  {
 		timer = NULL;
 	}
-	~TimedAnim() {
+	~TimedAnim() override {
 		stop_timer();
 	}
 	void start_timer(uint32 delay) {
@@ -262,7 +262,7 @@ public:
 		}
 	}
 
-	void stop() {
+	void stop() override {
 		stop_timer();
 		NuvieAnim::stop();
 	}
@@ -297,19 +297,19 @@ protected:
 	float x_left, y_left; // when unable to move in a call, fractional movement values are collected here
 	uint16 x_dist, y_dist; // distances from start->target on X-axis & Y-axis
 
-	bool update();
-	MapCoord get_location();
+	bool update() override;
+	MapCoord get_location() override;
 
-	virtual void display();
+	void display() override;
 
 public:
 	TossAnim(Tile *tile, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags = 0);
 	TossAnim(Obj *obj, uint16 degrees, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags = 0);
-	~TossAnim();
+	~TossAnim() override;
 
 	void init(Tile *tile, uint16 degrees, const MapCoord &start, const MapCoord &stop, uint16 pixels_per_sec, uint8 stop_flags);
-	void start();
-	void stop();
+	void start() override;
+	void stop() override;
 	uint32 update_position(uint32 max_move = 0);
 	inline void accumulate_moves(float moves, sint32 &x_move, sint32 &y_move, sint8 xdir, sint8 ydir);
 
@@ -346,9 +346,9 @@ class ExplosiveAnim : public TimedAnim {
 
 public:
 	ExplosiveAnim(MapCoord *start, uint32 size);
-	~ExplosiveAnim();
+	~ExplosiveAnim() override;
 	void start() override;
-	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	bool update() override;
 	bool already_hit(MapEntity ent);
 	void hit_object(Obj *obj);
@@ -380,10 +380,10 @@ class ProjectileAnim : public TileAnim {
 	bool leaveTrailFlag;
 public:
 	ProjectileAnim(uint16 tileNum, MapCoord *start, vector<MapCoord> target, uint8 animSpeed, bool leaveTrailFlag = false, uint16 initialTileRotation = 0, uint16 rotationAmount = 0, uint8 src_y_offset = 0);
-	~ProjectileAnim();
-	void start();
+	~ProjectileAnim() override;
+	void start() override;
 
-	bool update();
+	bool update() override;
 
 protected:
 	void hit_entity(MapEntity entity);
@@ -403,9 +403,9 @@ class WingAnim : public TileAnim {
 
 public:
 	WingAnim(MapCoord target);
-	~WingAnim();
-	void start();
-	bool update();
+	~WingAnim() override;
+	void start() override;
+	bool update() override;
 
 };
 
@@ -427,9 +427,9 @@ class HailstormAnim : public TileAnim {
 
 public:
 	HailstormAnim(MapCoord t);
-	~HailstormAnim();
-	void start();
-	bool update();
+	~HailstormAnim() override;
+	void start() override;
+	bool update() override;
 
 protected:
 	sint8 find_free_hailstone();
@@ -447,7 +447,7 @@ public:
 	HitAnim(MapCoord *loc);
 	HitAnim(Actor *actor);
 
-	virtual uint16 callback(uint16 msg, CallBack *caller, void *msg_data) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *msg_data) override;
 	void start() override {
 		start_timer(300);
 	}
@@ -460,13 +460,13 @@ class TextAnim : public TimedAnim {
 
 public:
 	TextAnim(Std::string text, MapCoord loc, uint32 dur);
-	~TextAnim();
-	uint16 callback(uint16 msg, CallBack *caller, void *msg_data);
-	void start()                    {
+	~TextAnim() override;
+	uint16 callback(uint16 msg, CallBack *caller, void *msg_data) override;
+	void start() override                    {
 		start_timer(duration);
 	}
 
-	void display();
+	void display() override;
 };
 
 class TileFadeAnim : public TileAnim {
@@ -481,9 +481,9 @@ public:
 	TileFadeAnim();
 	TileFadeAnim(MapCoord *loc, Tile *from, Tile *to, uint16 speed);
 	TileFadeAnim(MapCoord *loc, Tile *from, uint8 color_from, uint8 color_to, bool reverse, uint16 speed);
-	~TileFadeAnim();
+	~TileFadeAnim() override;
 
-	bool update();
+	bool update() override;
 protected:
 	void init(uint16 speed);
 };

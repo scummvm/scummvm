@@ -34,15 +34,15 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	QuitGump();
-	virtual ~QuitGump(void);
+	~QuitGump(void) override;
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual bool OnKeyDown(int key, int mod) override;
-	virtual bool OnTextInput(int unicode) override;
-	virtual void ChildNotify(Gump *child, uint32 message) override;
+	bool OnKeyDown(int key, int mod) override;
+	bool OnTextInput(int unicode) override;
+	void ChildNotify(Gump *child, uint32 message) override;
 
 	static void verifyQuit();
 	//! "QuitGump::verifyQuit" console command
@@ -50,7 +50,7 @@ public:
 
 	bool loadData(IDataSource *ids);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 	ObjId yesWidget, noWidget;
 };
 

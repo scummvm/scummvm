@@ -44,17 +44,17 @@ public:
 	EditWidget(int X, int Y, Std::string txt, bool gamefont, int fontnum,
 	           int width, int height, unsigned int maxlength = 0,
 	           bool multiline = false);
-	virtual ~EditWidget(void);
+	~EditWidget(void) override;
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
-	virtual void PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 sx, int32 sy) override;
+	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 sx, int32 sy) override;
 
-	virtual Gump *OnMouseMotion(int32 mx, int32 my) override;
-	virtual bool OnKeyDown(int key, int mod) override;
-	virtual bool OnKeyUp(int key) override;
-	virtual bool OnTextInput(int unicode) override;
+	Gump *OnMouseMotion(int32 mx, int32 my) override;
+	bool OnKeyDown(int key, int mod) override;
+	bool OnKeyUp(int key) override;
+	bool OnTextInput(int unicode) override;
 
 	//! get the current text
 	Std::string getText() const {

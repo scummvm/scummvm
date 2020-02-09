@@ -66,47 +66,47 @@ class ConverseGump: public MsgScroll {
 public:
 
 	ConverseGump(Configuration *cfg, Font *f, Screen *s);
-	~ConverseGump();
+	~ConverseGump() override;
 
 	void set_actor_portrait(Actor *a);
 	unsigned char *create_framed_portrait(Actor *a);
-	virtual bool parse_token(MsgText *token);
-	virtual Std::string get_token_string_at_pos(uint16 x, uint16 y);
-	virtual void display_string(Std::string s, Font *f, bool include_on_map_window);
-	virtual void set_talking(bool state, Actor *actor = NULL);
-	virtual void set_font(uint8 font_type) {}
+	bool parse_token(MsgText *token) override;
+	Std::string get_token_string_at_pos(uint16 x, uint16 y) override;
+	void display_string(Std::string s, Font *f, bool include_on_map_window) override;
+	void set_talking(bool state, Actor *actor = NULL) override;
+	void set_font(uint8 font_type) override {}
 //bool get_solid_bg() { return solid_bg; }
 	void set_solid_bg(bool val) {
 		solid_bg = val;
 	}
 
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
-	GUI_status KeyDown(const Common::KeyState &key);
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button);
+	GUI_status KeyDown(const Common::KeyState &key) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
 
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button) {
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseMotion(int x, int y, uint8 state) {
+	GUI_status MouseMotion(int x, int y, uint8 state) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseEnter(uint8 state) {
+	GUI_status MouseEnter(uint8 state) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseLeave(uint8 state) {
+	GUI_status MouseLeave(uint8 state) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseClick(int x, int y, Shared::MouseButton button) {
+	GUI_status MouseClick(int x, int y, Shared::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) {
+	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) {
+	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseHeld(int x, int y, Shared::MouseButton button) {
+	GUI_status MouseHeld(int x, int y, Shared::MouseButton button) override {
 		return GUI_YUM;
 	}
 
@@ -114,21 +114,21 @@ public:
 		found_break_char = val;
 	}
 
-	virtual bool input_buf_add_char(char c);
-	virtual bool input_buf_remove_char();
+	bool input_buf_add_char(char c) override;
+	bool input_buf_remove_char() override;
 
-	virtual bool is_converse_finished() {
+	bool is_converse_finished() override {
 		return (is_holding_buffer_empty() && msg_buf.size() == 1 && msg_buf.back()->total_length == 0);
 	}
 
-	virtual void drawCursor(uint16 x, uint16 y);
+	void drawCursor(uint16 x, uint16 y) override;
 
 protected:
 	Std::string strip_whitespace_after_break(Std::string s);
 	void add_keyword(Std::string keyword);
 
-	virtual void set_permitted_input(const char *allowed);
-	virtual void clear_permitted_input();
+	void set_permitted_input(const char *allowed) override;
+	void clear_permitted_input() override;
 
 	bool cursor_at_input_section() {
 		return (keyword_list && cursor_position == keyword_list->size());

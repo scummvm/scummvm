@@ -41,7 +41,7 @@ class PentagramMenuGump : public ModalGump {
 			flags |= PROC_RUNPAUSED;
 		}
 
-		virtual void run() {
+		void run() override {
 			pout << "Gump returned: " << result << Std::endl;
 			PentagramMenuGump *menu = p_dynamic_cast<PentagramMenuGump *>(ObjectManager::get_instance()->getObject(getItemNum()));
 			if (menu) menu->ProcessCallback(game, result);
@@ -53,18 +53,18 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	PentagramMenuGump(int x, int y, int w, int h);
-	virtual ~PentagramMenuGump();
+	~PentagramMenuGump() override;
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
-	virtual void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
-	virtual void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 
-	virtual void ChildNotify(Gump *child, uint32 message) override;
+	void ChildNotify(Gump *child, uint32 message) override;
 
-	virtual bool OnKeyDown(int key, int mod) override;
+	bool OnKeyDown(int key, int mod) override;
 
-	virtual void run() override;
+	void run() override;
 
 #if 0
 	virtual uint16 TraceObjId(int32 mx, int32 my);

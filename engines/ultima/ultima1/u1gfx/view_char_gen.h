@@ -146,12 +146,12 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~ViewCharacterGeneration();
+	~ViewCharacterGeneration() override;
 
 	/**
 	 * Draw the game screen
 	 */
-	virtual void draw() override;
+	void draw() override;
 };
 
 } // End of namespace U1Gfx

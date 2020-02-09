@@ -58,7 +58,7 @@ public:
 	/**
 	 * Do a talk action
 	 */
-	virtual void talk() override;
+	void talk() override;
 };
 
 } // End of namespace Widgets

@@ -35,7 +35,7 @@ struct TextureTarga : public Texture {
 	TextureTarga() : Texture() {}
 
 	// False on Error
-	virtual bool Read(IDataSource *ds);
+	bool Read(IDataSource *ds) override;
 };
 
 } // End of namespace Ultima8

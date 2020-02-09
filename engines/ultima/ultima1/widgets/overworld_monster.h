@@ -46,12 +46,12 @@ protected:
 	/**
 	 * Handles attacking the party
 	 */
-	virtual void attackParty() override;
+	void attackParty() override;
 
 	/**
 	 * Handles moving creatures
 	 */
-	virtual void movement() override;
+	void movement() override;
 public:
 	DECLARE_WIDGET(OverworldMonster)
 
@@ -70,7 +70,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~OverworldMonster() {}
+	~OverworldMonster() override {}
 
 	/**
 	 * Returns the monster's type
@@ -80,13 +80,13 @@ public:
 	/**
 	 * Handles loading and saving games
 	 */
-	virtual void synchronize(Common::Serializer &s) override;
+	void synchronize(Common::Serializer &s) override;
 
 	/**
 	 * Returns either the maximum attack distance for a monster, or 0 if the monster is beyond
 	 * that distance from the player
 	 */
-	virtual uint attackDistance() const override;
+	uint attackDistance() const override;
 };
 
 /**

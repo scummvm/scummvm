@@ -75,7 +75,7 @@ public:
 	Gump();
 	Gump(int x, int y, int width, int height, uint16 owner = 0,
 	     uint32 _Flags = 0, int32 layer = LAYER_NORMAL);
-	virtual ~Gump();
+	~Gump() override;
 
 public:
 
@@ -462,7 +462,7 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

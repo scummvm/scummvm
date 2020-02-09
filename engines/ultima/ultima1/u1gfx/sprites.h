@@ -61,12 +61,12 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Sprites() {}
+	~Sprites() override {}
 
 	/**
 	 * Return a specific sprite
 	 */
-	virtual Shared::Gfx::Sprite &operator[](uint idx) override;
+	Shared::Gfx::Sprite &operator[](uint idx) override;
 
 	/**
 	 * Loads the Ultima 1 sprites

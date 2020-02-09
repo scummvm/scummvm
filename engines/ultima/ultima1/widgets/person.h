@@ -76,7 +76,7 @@ public:
 	/**
 	 * Handles loading and saving data
 	 */
-	virtual void synchronize(Common::Serializer &s) override;
+	void synchronize(Common::Serializer &s) override;
 
 	/**
 	 * Talk to an NPC
@@ -88,7 +88,7 @@ public:
 	 * @param amount		Amount to remove
 	 * @returns				Returns true if kills the creature
 	 */
-	virtual bool subtractHitPoints(uint amount) override;
+	bool subtractHitPoints(uint amount) override;
 };
 
 } // End of namespace Widgets

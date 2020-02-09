@@ -112,28 +112,28 @@ protected:
 
 public:
 	NuvieIOBuffer();
-	virtual ~NuvieIOBuffer();
+	~NuvieIOBuffer() override;
 
 	bool open(unsigned char *buf, uint32 buf_size, bool copy_buf = NUVIE_BUF_COPY);
 
-	void close();
+	void close() override;
 
 	unsigned char *get_raw_data() {
 		return data;
 	}; //hehe evil
 
-	uint8 read1();
-	uint16 read2();
-	uint32 read4();
-	bool readToBuf(unsigned char *buf, uint32 buf_size);
+	uint8 read1() override;
+	uint16 read2() override;
+	uint32 read4() override;
+	bool readToBuf(unsigned char *buf, uint32 buf_size) override;
 
-	bool write1(uint8 src);
-	bool write2(uint16 src);
-	bool write4(uint32 src);
-	uint32 writeBuf(const unsigned char *src, uint32 src_size);
-	uint32 write(NuvieIO *src);
+	bool write1(uint8 src) override;
+	bool write2(uint16 src) override;
+	bool write4(uint32 src) override;
+	uint32 writeBuf(const unsigned char *src, uint32 src_size) override;
+	uint32 write(NuvieIO *src) override;
 
-	void seek(uint32 new_pos);
+	void seek(uint32 new_pos) override;
 };
 
 extern char *strgets(char *str, int n, Common::ReadStream *stream);

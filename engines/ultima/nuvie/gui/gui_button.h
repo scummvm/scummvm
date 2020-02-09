@@ -84,18 +84,18 @@ public:
 	           GUI_Font *font, int alignment, int is_checkbutton,
 	           GUI_CallBack *callback, int flat = 0);
 
-	~GUI_Button();
+	~GUI_Button() override;
 
 	/* change features of a text button (if one of the dimensions is negativ, it's ignored) */
 	virtual void ChangeTextButton(int x, int y, int w, int h, const char *text, int alignment);
 
 	/* Show the widget  */
-	virtual void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
 	/* Mouse hits activate us */
-	virtual GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseMotion(int x, int y, uint8 state);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseMotion(int x, int y, uint8 state) override;
 
 	/* Clickable or not ... */
 	virtual void Disable();

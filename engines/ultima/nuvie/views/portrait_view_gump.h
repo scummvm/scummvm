@@ -53,23 +53,23 @@ class PortraitViewGump : public DraggableView {
 
 public:
 	PortraitViewGump(Configuration *cfg);
-	~PortraitViewGump();
+	~PortraitViewGump() override;
 
 	bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om, Portrait *por, Actor *a);
 
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	GUI_status MouseWheel(sint32 x, sint32 y);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseWheel(sint32 x, sint32 y) override;
 
 protected:
 
 	void set_actor(Actor *a);
 	void left_arrow();
 	void right_arrow();
-	GUI_status KeyDown(const Common::KeyState &key);
+	GUI_status KeyDown(const Common::KeyState &key) override;
 	GUI_status set_cursor_pos(gumpCursorPos pos);
 };
 

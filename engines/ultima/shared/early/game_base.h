@@ -90,22 +90,22 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~GameBase();
+	~GameBase() override;
 
 	/**
 	 * Called to handle any regular updates the game requires
 	 */
-	virtual void onIdle() override;
+	void onIdle() override;
 
-	virtual void mouseMove(const Point &mousePos) override;
-	virtual void leftButtonDown(const Point &mousePos) override;
-	virtual void leftButtonUp(const Point &mousePos) override;
-	virtual void middleButtonDown(const Point &mousePos) override;
-	virtual void middleButtonUp(const Point &mousePos) override;
-	virtual void rightButtonDown(const Point &mousePos) override;
-	virtual void rightButtonUp(const Point &mousePos) override;
-	virtual void mouseWheel(const Point &mousePos, bool wheelUp) override;
-	virtual void keyDown(Common::KeyState keyState) override;
+	void mouseMove(const Point &mousePos) override;
+	void leftButtonDown(const Point &mousePos) override;
+	void leftButtonUp(const Point &mousePos) override;
+	void middleButtonDown(const Point &mousePos) override;
+	void middleButtonUp(const Point &mousePos) override;
+	void rightButtonDown(const Point &mousePos) override;
+	void rightButtonUp(const Point &mousePos) override;
+	void mouseWheel(const Point &mousePos, bool wheelUp) override;
+	void keyDown(Common::KeyState keyState) override;
 
 	/**
 	 * Called when the game starts

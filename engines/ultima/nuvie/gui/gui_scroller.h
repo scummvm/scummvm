@@ -48,8 +48,8 @@ public:
 	GUI_Scroller(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, uint16 r_height);
 
 	/* Map the color to the display */
-	virtual void SetDisplay(Screen *s);
-	void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y);
+	void SetDisplay(Screen *s) override;
+	void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) override;
 	void move_up();
 	void move_down();
 	void page_up(bool all = false);
@@ -58,18 +58,18 @@ public:
 	int AddWidget(GUI_Widget *widget);
 
 	/* Show the widget  */
-	virtual void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
 	/* events, used for dragging the area. */
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	GUI_status MouseMotion(int x, int y, uint8 state);
-	GUI_status MouseWheel(sint32 x, sint32 y);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseMotion(int x, int y, uint8 state) override;
+	GUI_status MouseWheel(sint32 x, sint32 y) override;
 
 protected:
 	void update_viewport(bool update_slider);
 	void move_percentage(float offset_percentage);
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 };
 
 } // End of namespace Nuvie

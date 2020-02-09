@@ -33,13 +33,13 @@ public:
 	QuickAvatarMoverProcess();
 
 	QuickAvatarMoverProcess(int x, int y, int z, int _dir);
-	virtual ~QuickAvatarMoverProcess();
+	~QuickAvatarMoverProcess() override;
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void run() override;
-	virtual void terminate() override;
+	void run() override;
+	void terminate() override;
 
 	static bool isQuarterSpeed() {
 		return quarter;
@@ -76,7 +76,7 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	int dx, dy, dz, dir;
 	static ProcId amp[6];

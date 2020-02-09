@@ -33,13 +33,13 @@ namespace Ultima8 {
 class UsecodeFlex : public Usecode, protected RawArchive {
 public:
 	UsecodeFlex(IDataSource *ds) : RawArchive(ds) { }
-	virtual ~UsecodeFlex() { }
+	~UsecodeFlex() override { }
 
-	virtual const uint8 *get_class(uint32 classid);
-	virtual uint32 get_class_size(uint32 classid);
-	virtual const char *get_class_name(uint32 classid);
-	virtual uint32 get_class_base_offset(uint32 classid);
-	virtual uint32 get_class_event_count(uint32 classid);
+	const uint8 *get_class(uint32 classid) override;
+	uint32 get_class_size(uint32 classid) override;
+	const char *get_class_name(uint32 classid) override;
+	uint32 get_class_base_offset(uint32 classid) override;
+	uint32 get_class_event_count(uint32 classid) override;
 };
 
 } // End of namespace Ultima8

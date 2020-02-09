@@ -70,9 +70,9 @@ public:
 	istring(const String &str) : Std::string(str) {}
 	explicit istring(char c) : Std::string(c) {}
 	istring(size_t n, char c) : Std::string(n, c) {}
-	virtual ~istring() {}
+	~istring() override {}
 
-	virtual int Compare(const string &s) const override {
+	int Compare(const string &s) const override {
 		return compareToIgnoreCase(s);
 	}
 

@@ -34,7 +34,7 @@ class InverterProcess : public Process {
 public:
 	InverterProcess();
 	InverterProcess(unsigned int targetstate);
-	virtual ~InverterProcess();
+	~InverterProcess() override;
 
 	// p_dynamic_class stuff
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -43,7 +43,7 @@ public:
 		targetstate = target;
 	}
 
-	virtual void run() override;
+	void run() override;
 
 	static ProcId invertScreen();
 	static void ConCmd_invertScreen(const Console::ArgvType &argv);
@@ -52,7 +52,7 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	static InverterProcess *inverter;
 	unsigned int targetstate;

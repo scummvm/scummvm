@@ -34,10 +34,10 @@ protected:
 public:
 
 	WOUActor(Map *m, ObjManager *om, GameClock *c) : Actor(m, om, c) { }
-	~WOUActor() { }
+	~WOUActor() override { }
 
-	virtual bool can_carry_object(uint16 obj_n, uint32 qty = 0);
-	virtual bool can_carry_object(Obj *obj);
+	bool can_carry_object(uint16 obj_n, uint32 qty = 0) override;
+	bool can_carry_object(Obj *obj) override;
 
 };
 

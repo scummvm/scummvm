@@ -32,8 +32,8 @@ class PointScaler : public Scaler {
 public:
 	PointScaler();
 
-	virtual uint32    ScaleBits() const;          //< bits for supported integer scaling
-	virtual bool      ScaleArbitrary() const;     //< supports arbitrary scaling of any degree
+	uint32    ScaleBits() const override;          //< bits for supported integer scaling
+	bool      ScaleArbitrary() const override;     //< supports arbitrary scaling of any degree
 };
 
 } // End of namespace Ultima8

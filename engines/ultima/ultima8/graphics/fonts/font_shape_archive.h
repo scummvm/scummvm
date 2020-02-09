@@ -49,14 +49,14 @@ public:
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(path, id_, pal_, format_) { }
 
-	virtual ~FontShapeArchive() { }
+	~FontShapeArchive() override { }
 
 	//! load HVLeads from u8.ini
 	void setHVLeads();
 
 	ShapeFont *getFont(uint32 fontnum);
 
-	virtual void cache(uint32 fontnum) override;
+	void cache(uint32 fontnum) override;
 };
 
 } // End of namespace Ultima8

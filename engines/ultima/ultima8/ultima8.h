@@ -201,23 +201,23 @@ private:
 	void handleDelayedEvents();
 protected:
 	// Engine APIs
-	virtual Common::Error run() override;
+	Common::Error run() override;
 
-	virtual bool initialize() override;
+	bool initialize() override;
 
-	virtual void DeclareArgs() override;
+	void DeclareArgs() override;
 
 	/**
 	 * Returns the data archive folder and version that's required
 	 */
-	virtual bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
+	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
 public:
 	PointScaler point_scaler;
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
-	virtual ~Ultima8Engine();
+	~Ultima8Engine() override;
 	void GUIError(const Common::String &msg);
 
 	static Ultima8Engine *get_instance() {
@@ -241,14 +241,14 @@ public:
 		return _screen;
 	}
 
-	virtual GUI::Debugger *getDebugger() override;
-	virtual Graphics::Screen *getScreen() const override;
+	GUI::Debugger *getDebugger() override;
+	Graphics::Screen *getScreen() const override;
 
-	virtual void runGame() override;
+	void runGame() override;
 	virtual void handleEvent(const Common::Event &event);
 
-	virtual void paint() override;
-	virtual bool isPainting() override {
+	void paint() override;
+	bool isPainting() override {
 		return _painting;
 	}
 
@@ -310,22 +310,22 @@ public:
 	/**
 	 * Notifies the engine that the sound settings may have changed
 	 */
-	virtual void syncSoundSettings() override;
+	void syncSoundSettings() override;
 
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	virtual bool canLoadGameStateCurrently(bool isAutosave = false) override { return true; }
+	bool canLoadGameStateCurrently(bool isAutosave = false) override { return true; }
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	virtual bool canSaveGameStateCurrently(bool isAutosave = false) override;
+	bool canSaveGameStateCurrently(bool isAutosave = false) override;
 
 	/**
 	 * Load a game state
 	 */
-	virtual Common::Error loadGameState(int slot) override;
+	Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Save a game state.
@@ -334,7 +334,7 @@ public:
 	 * @param isAutosave If true, autosave is being created
 	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 
 	//! save a game
 	//! \param filename the file to save to

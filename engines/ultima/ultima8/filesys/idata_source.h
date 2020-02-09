@@ -177,7 +177,7 @@ public:
 		_in = data_stream;
 	}
 
-	virtual ~IFileDataSource() {
+	~IFileDataSource() override {
 		delete _in;
 	}
 
@@ -186,22 +186,22 @@ public:
 	}
 
 	//  Read a byte value
-	virtual uint8 read1() override {
+	uint8 read1() override {
 		return static_cast<uint8>(_in->readByte());
 	}
 
 	//  Read a 2-byte value, lsb first.
-	virtual uint16 read2() override {
+	uint16 read2() override {
 		return _in->readUint16LE();
 	}
 
 	//  Read a 2-byte value, hsb first.
-	virtual uint16 read2high() override {
+	uint16 read2high() override {
 		return _in->readUint16BE();
 	}
 
 	//  Read a 3-byte value, lsb first.
-	virtual uint32 read3() override {
+	uint32 read3() override {
 		uint32 val = 0;
 		val |= static_cast<uint32>(_in->readByte());
 		val |= static_cast<uint32>(_in->readByte() << 8);
@@ -210,40 +210,40 @@ public:
 	}
 
 	//  Read a 4-byte long value, lsb first.
-	virtual uint32 read4() override {
+	uint32 read4() override {
 		return _in->readUint32LE();
 	}
 
 	//  Read a 4-byte long value, hsb first.
-	virtual uint32 read4high() override {
+	uint32 read4high() override {
 		return _in->readUint32BE();
 	}
 
-	virtual int32 read(void *b, int32 len) override {
+	int32 read(void *b, int32 len) override {
 		return _in->read(b, len);
 	}
 
-	virtual void seek(uint32 pos) override {
+	void seek(uint32 pos) override {
 		_in->seek(pos);
 	}
 
-	virtual void skip(int32 pos) override {
+	void skip(int32 pos) override {
 		_in->seek(pos, SEEK_CUR);
 	}
 
-	virtual uint32 getSize() const override {
+	uint32 getSize() const override {
 		return _in->size();
 	}
 
-	virtual uint32 getPos() const override {
+	uint32 getPos() const override {
 		return _in->pos();
 	}
 
-	virtual bool eof() const override {
+	bool eof() const override {
 		return _in->eos();
 	}
 
-	virtual Common::SeekableReadStream *GetRawStream() override {
+	Common::SeekableReadStream *GetRawStream() override {
 		return _in;
 	}
 };
@@ -315,33 +315,33 @@ public:
 		if (is_text) ConvertTextBuffer();
 	}
 
-	virtual ~IBufferDataSource() override {
+	~IBufferDataSource() override {
 		if (free_buffer && buf) delete [] const_cast<uint8 *>(buf);
 		free_buffer = false;
 		buf = buf_ptr = 0;
 	}
 
-	virtual uint8 read1() override {
+	uint8 read1() override {
 		uint8 b0;
 		b0 = *buf_ptr++;
 		return (b0);
 	}
 
-	virtual uint16 read2() override {
+	uint16 read2() override {
 		uint8 b0, b1;
 		b0 = *buf_ptr++;
 		b1 = *buf_ptr++;
 		return (b0 | (b1 << 8));
 	}
 
-	virtual uint16 read2high() override {
+	uint16 read2high() override {
 		uint8 b0, b1;
 		b1 = *buf_ptr++;
 		b0 = *buf_ptr++;
 		return (b0 | (b1 << 8));
 	}
 
-	virtual uint32 read3() override {
+	uint32 read3() override {
 		uint8 b0, b1, b2;
 		b0 = *buf_ptr++;
 		b1 = *buf_ptr++;
@@ -349,7 +349,7 @@ public:
 		return (b0 | (b1 << 8) | (b2 << 16));
 	}
 
-	virtual uint32 read4() override {
+	uint32 read4() override {
 		uint8 b0, b1, b2, b3;
 		b0 = *buf_ptr++;
 		b1 = *buf_ptr++;
@@ -358,7 +358,7 @@ public:
 		return (b0 | (b1 << 8) | (b2 << 16) | (b3 << 24));
 	}
 
-	virtual uint32 read4high() override {
+	uint32 read4high() override {
 		uint8 b0, b1, b2, b3;
 		b3 = *buf_ptr++;
 		b2 = *buf_ptr++;
@@ -367,7 +367,7 @@ public:
 		return (b0 | (b1 << 8) | (b2 << 16) | (b3 << 24));
 	}
 
-	virtual int32 read(void *str, int32 num_bytes) override {
+	int32 read(void *str, int32 num_bytes) override {
 		if (buf_ptr >= buf + size) return 0;
 		int32 count = num_bytes;
 		if (buf_ptr + num_bytes > buf + size)
@@ -377,23 +377,23 @@ public:
 		return count;
 	}
 
-	virtual void seek(uint32 pos) override {
+	void seek(uint32 pos) override {
 		buf_ptr = buf + pos;
 	}
 
-	virtual void skip(int32 delta) override {
+	void skip(int32 delta) override {
 		buf_ptr += delta;
 	}
 
-	virtual uint32 getSize() const override {
+	uint32 getSize() const override {
 		return size;
 	}
 
-	virtual uint32 getPos() const override {
+	uint32 getPos() const override {
 		return static_cast<uint32>(buf_ptr - buf);
 	}
 
-	virtual bool eof() const override {
+	bool eof() const override {
 		return (static_cast<uint32>(buf_ptr - buf)) >= size;
 	}
 };

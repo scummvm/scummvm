@@ -101,7 +101,7 @@ protected:
 public:
 
 	// Virtual Destructor
-	virtual ~BaseSoftRenderSurface();
+	~BaseSoftRenderSurface() override;
 
 	//
 	// Being/End Painting
@@ -110,14 +110,14 @@ public:
 	// Begin painting to the buffer. MUST BE CALLED BEFORE DOING ANYTHING TO THE SURFACE!
 	// Can be called multiple times
 	// Returns Error Code on error. Check return code.....
-	virtual ECode BeginPainting() override;
+	ECode BeginPainting() override;
 
 	// Finish paining to the buffer. MUST BE CALLED FOR EACH CALL TO BeginPainting()
 	// Returns Error Code on error. Check return code.....
-	virtual ECode EndPainting() override;
+	ECode EndPainting() override;
 
 	// Get the surface as a Texture. Only valid for SecondaryRenderSurfaces
-	virtual Texture *GetSurfaceAsTexture() override;
+	Texture *GetSurfaceAsTexture() override;
 
 
 	//
@@ -125,28 +125,28 @@ public:
 	//
 
 	// Set the Origin of the Surface
-	virtual void SetOrigin(int32 x, int32 y) override;
+	void SetOrigin(int32 x, int32 y) override;
 
 	// Set the Origin of the Surface
-	virtual void GetOrigin(int32 &x, int32 &y) const override;
+	void GetOrigin(int32 &x, int32 &y) const override;
 
 	// Get the Surface Dimensions
-	virtual void GetSurfaceDims(Rect &) const override;
+	void GetSurfaceDims(Rect &) const override;
 
 	// Get Clipping Rectangle
-	virtual void GetClippingRect(Rect &) const override;
+	void GetClippingRect(Rect &) const override;
 
 	// Set Clipping Rectangle
-	virtual void SetClippingRect(const Rect &) override;
+	void SetClippingRect(const Rect &) override;
 
 	// Check Clipped. -1 if off screen, 0 if not clipped, 1 if clipped
-	virtual int16 CheckClipped(const Rect &) const override;
+	int16 CheckClipped(const Rect &) const override;
 
 	// Flip the surface
-	virtual void SetFlipped(bool flipped) override;
+	void SetFlipped(bool flipped) override;
 
 	// Has the render surface been flipped?
-	virtual bool IsFlipped() const override;
+	bool IsFlipped() const override;
 
 	//
 	// Surface Palettes
@@ -164,7 +164,7 @@ public:
 	// Get The Surface Palette
 	// TODO: virtual void GetPalette(uint8 palette[768]);
 
-	virtual void CreateNativePalette(Palette *palette) override;
+	void CreateNativePalette(Palette *palette) override;
 
 	Graphics::ManagedSurface *getRawSurface() const override {
 		return sdl_surf;

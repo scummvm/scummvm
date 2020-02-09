@@ -33,13 +33,13 @@ struct WeaponOverlayFrame;
 class MainActor : public Actor {
 public:
 	MainActor();
-	virtual ~MainActor();
+	~MainActor() override;
 
-	virtual bool CanAddItem(Item *item, bool checkwghtvol = false) override;
-	virtual bool addItem(Item *item, bool checkwghtvol = false) override;
+	bool CanAddItem(Item *item, bool checkwghtvol = false) override;
+	bool addItem(Item *item, bool checkwghtvol = false) override;
 
 	//! teleport to the given location on the given map
-	virtual void teleport(int mapNum_, int32 x_, int32 y_, int32 z_) override;
+	void teleport(int mapNum_, int32 x_, int32 y_, int32 z_) override;
 
 	//! teleport to a teleport-destination egg
 	//! \param mapnum The map to teleport to
@@ -66,20 +66,20 @@ public:
 	void accumulateInt(int n);
 
 	//! Get the GravityProcess of this Item, creating it if necessary
-	virtual GravityProcess *ensureGravityProcess() override;
+	GravityProcess *ensureGravityProcess() override;
 
-	virtual uint32 getArmourClass() override;
-	virtual uint16 getDefenseType() override;
-	virtual int16 getAttackingDex() override;
-	virtual int16 getDefendingDex() override;
+	uint32 getArmourClass() override;
+	uint16 getDefenseType() override;
+	int16 getAttackingDex() override;
+	int16 getDefendingDex() override;
 
-	virtual uint16 getDamageType() override;
-	virtual int getDamageAmount() override;
+	uint16 getDamageType() override;
+	int getDamageAmount() override;
 
-	virtual void setInCombat() override;
-	virtual void clearInCombat() override;
+	void setInCombat() override;
+	void clearInCombat() override;
 
-	virtual ProcId die(uint16 DamageType) override;
+	ProcId die(uint16 DamageType) override;
 
 	Std::string getName() {
 		return name;
@@ -138,7 +138,7 @@ public:
 
 
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	void useInventoryItem(uint32 shapenum);
 

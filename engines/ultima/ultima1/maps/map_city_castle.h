@@ -76,42 +76,42 @@ public:
 	/**
 	 * Load the map
 	 */
-	virtual void load(Shared::Maps::MapId mapId) override;
+	void load(Shared::Maps::MapId mapId) override;
 
 	/**
 	 * Gets a tile at a given position
 	 */
-	virtual void getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer = true) override;
+	void getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer = true) override;
 
 	/**
 	 * Clears all map data
 	 */
-	virtual void clear() override;
+	void clear() override;
 
 	/**
 	 * Get the viewport position
 	 */
-	virtual Point getViewportPosition(const Point &viewportSize) override;
+	Point getViewportPosition(const Point &viewportSize) override;
 
 	/**
 	 * Cast a spell
 	 */
-	virtual void cast() override;
+	void cast() override;
 
 	/**
 	 * Do a drop action
 	 */
-	virtual void drop() override;
+	void drop() override;
 
 	/**
 	 * Do an inform action
 	 */
-	virtual void inform() override;
+	void inform() override;
 
 	/**
 	 * Do a steal action
 	 */
-	virtual void steal() override;
+	void steal() override;
 
 	/**
 	 * Perform an attack in a direction
@@ -122,7 +122,7 @@ public:
 	 * @param agility		Agility threshold
 	 * @param widgetNa
 	 */
-	virtual void attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) override;
+	void attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) override;
 
 	/**
 	 * Returns true if a wench is on an adjacent tile to the player
@@ -143,32 +143,32 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~MapCity() {}
+	~MapCity() override {}
 
 	/**
 	 * Load the map
 	 */
-	virtual void load(Shared::Maps::MapId mapId) override;
+	void load(Shared::Maps::MapId mapId) override;
 
 	/**
 	 * Handles dropping an amount of coins
 	 */
-	virtual void dropCoins(uint coins) override;
+	void dropCoins(uint coins) override;
 
 	/**
 	 * Do an get action
 	 */
-	virtual void get() override;
+	void get() override;
 
 	/**
 	 * Do a talk action
 	 */
-	virtual void talk() override;
+	void talk() override;
 
 	/**
 	 * Do an unlock action
 	 */
-	virtual void unlock() override;
+	void unlock() override;
 };
 
 /**
@@ -189,32 +189,32 @@ public:
 	/**
 	 * Load the map
 	 */
-	virtual void load(Shared::Maps::MapId mapId) override;
+	void load(Shared::Maps::MapId mapId) override;
 
 	/**
 	 * Handles loading and saving the map's data
 	 */
-	virtual void synchronize(Common::Serializer &s) override;
+	void synchronize(Common::Serializer &s) override;
 
 	/**
 	 * Handles dropping an amount of coins
 	 */
-	virtual void dropCoins(uint coins) override;
+	void dropCoins(uint coins) override;
 
 	/**
 	 * Do an get action
 	 */
-	virtual void get() override;
+	void get() override;
 
 	/**
 	 * Do a talk action
 	 */
-	virtual void talk() override;
+	void talk() override;
 
 	/**
 	 * Do an unlock action
 	 */
-	virtual void unlock() override;
+	void unlock() override;
 
 
 	/**

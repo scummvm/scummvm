@@ -39,25 +39,25 @@ public:
 	SliderGump();
 	SliderGump(int x, int y, int16 min, int16 max,
 	           int16 value, int16 delta = 1);
-	virtual ~SliderGump(void);
+	~SliderGump(void) override;
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
-	virtual void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
-	virtual void Close(bool no_del = false) override;
-	virtual void ChildNotify(Gump *child, uint32 message) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
+	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	void Close(bool no_del = false) override;
+	void ChildNotify(Gump *child, uint32 message) override;
 
 	void setUsecodeNotify(UCProcess *ucp);
 
 	// Dragging
-	virtual bool StartDraggingChild(Gump *gump, int32 mx, int32 my) override;
-	virtual void DraggingChild(Gump *gump, int mx, int my) override;
-	virtual void StopDraggingChild(Gump *gump) override;
+	bool StartDraggingChild(Gump *gump, int32 mx, int32 my) override;
+	void DraggingChild(Gump *gump, int mx, int my) override;
+	void StopDraggingChild(Gump *gump) override;
 
-	virtual bool OnKeyDown(int key, int mod) override;
+	bool OnKeyDown(int key, int mod) override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	int16 min;
 	int16 max;

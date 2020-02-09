@@ -39,14 +39,14 @@ protected:
 	Actor *target;
 	CombatPathFinderMode target_mode;
 
-	bool update_location();
+	bool update_location() override;
 
 	uint8 max_dist;
 
 public:
 	CombatPathFinder(Actor *a);
 	CombatPathFinder(Actor *a, Actor *t);
-	~CombatPathFinder();
+	~CombatPathFinder() override;
 	bool set_flee_mode(Actor *actor);
 	bool set_chase_mode(Actor *actor);
 	bool set_mode(CombatPathFinderMode mode, Actor *actor);
@@ -54,8 +54,8 @@ public:
 		max_dist = dist;
 	}
 
-	bool get_next_move(MapCoord &step);
-	bool reached_goal();
+	bool get_next_move(MapCoord &step) override;
+	bool reached_goal() override;
 };
 
 } // End of namespace Nuvie

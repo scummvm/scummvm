@@ -51,13 +51,13 @@ public:
 	             const ConvertShapeFormat *format_ = 0)
 		: Archive(path), id(id_), format(format_), palette(pal_) { }
 
-	virtual ~ShapeArchive();
+	~ShapeArchive() override;
 
 	Shape *getShape(uint32 shapenum);
 
-	virtual void cache(uint32 shapenum) override;
-	virtual void uncache(uint32 shapenum) override;
-	virtual bool isCached(uint32 shapenum) override;
+	void cache(uint32 shapenum) override;
+	void uncache(uint32 shapenum) override;
+	bool isCached(uint32 shapenum) override;
 
 protected:
 	uint16 id;

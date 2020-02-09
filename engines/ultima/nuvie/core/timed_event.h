@@ -126,7 +126,7 @@ public:
 		: TimedEvent(reltime), msg(m) {
 		repeat_count = repeat ? -1 : 0;
 	}
-	void timed(uint32 evtime) {
+	void timed(uint32 evtime) override {
 		DEBUG(0, LEVEL_NOTIFICATION, "Activate! evtime=%d msg=\"%s\"\n", evtime, msg.c_str());
 	}
 };
@@ -151,11 +151,11 @@ public:
 	TimedPartyMove(MapCoord *d, MapCoord *t, uint32 step_delay = 500);
 	TimedPartyMove(MapCoord *d, MapCoord *t, Obj *use_obj, uint32 step_delay = 500);
 	TimedPartyMove(uint32 step_delay = 500);
-	~TimedPartyMove();
+	~TimedPartyMove() override;
 	void init(MapCoord *d, MapCoord *t, Obj *use_obj);
 	void timed(uint32 evtime) override;
 
-	virtual uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
 
 protected:
 	bool move_party();
@@ -171,7 +171,7 @@ class TimedPartyMoveToVehicle : public TimedPartyMove {
 	Obj *ship_obj; // vehicle center
 public:
 	TimedPartyMoveToVehicle(MapCoord *d, Obj *obj, uint32 step_delay = 125);
-	void timed(uint32 evtime);
+	void timed(uint32 evtime) override;
 };
 
 
@@ -199,7 +199,7 @@ class TimedContainerSearch : public TimedEvent {
 	Obj *prev_obj; // removed from container
 public:
 	TimedContainerSearch(Obj *obj);
-	void timed(uint32 evtime);
+	void timed(uint32 evtime) override;
 };
 
 
@@ -211,8 +211,8 @@ class TimedCallback : public TimedEvent, public CallBack {
 public:
 	TimedCallback(CallBack *t, void *d, uint32 wait_time,
 	              bool repeat = false);
-	virtual ~TimedCallback() {  }
-	virtual void timed(uint32 evtime);
+	~TimedCallback() override {  }
+	void timed(uint32 evtime) override;
 	void clear_target() {
 		set_target(NULL);
 	}
@@ -222,7 +222,7 @@ public:
 class GameTimedCallback : public TimedCallback {
 public:
 	GameTimedCallback(CallBack *t, void *d, uint32 wait_time, bool repeat = false);
-	~GameTimedCallback() {  }
+	~GameTimedCallback() override {  }
 };
 
 
@@ -241,11 +241,11 @@ protected:
 public:
 	TimedAdvance(uint8 hours, uint16 r = 60);
 	TimedAdvance(Std::string timestring, uint16 r = 60); // "HH:MM"
-	virtual ~TimedAdvance() { }
+	~TimedAdvance() override { }
 
 	void init(uint16 min, uint16 r); // start time advance
 
-	virtual void timed(uint32 evtime);
+	void timed(uint32 evtime) override;
 	bool time_passed(); // returns true if stop time has passed
 	void get_time_from_string(uint8 &hour, uint8 &minute, Std::string timestring);
 };
@@ -258,7 +258,7 @@ class TimedRestGather : public TimedPartyMove {
 public:
 	TimedRestGather(uint16 x, uint16 y);
 
-	void timed(uint32 evtime);
+	void timed(uint32 evtime) override;
 
 protected:
 	bool move_party();
@@ -278,9 +278,9 @@ class TimedRest : public TimedAdvance {
 	uint8 number_that_had_food;
 public:
 	TimedRest(uint8 hours, Actor *lookout, Obj *campfire_obj);
-	~TimedRest();
+	~TimedRest() override;
 
-	void timed(uint32 evtime);
+	void timed(uint32 evtime) override;
 	void eat(Actor *actor);
 	void bard_play();
 	void sleep();

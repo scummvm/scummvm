@@ -38,13 +38,13 @@ public:
 	CreateItemProcess(uint32 shape, uint32 frame, uint16 quality,
 	                  uint16 flags, uint16 npcnum, uint16 mapnum,
 	                  uint32 extendedflags, int32 x, int32 y, int32 z);
-	virtual ~CreateItemProcess(void);
+	~CreateItemProcess(void) override;
 
-	virtual void run() override;
+	void run() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	uint32 shape;
 	uint32 frame;

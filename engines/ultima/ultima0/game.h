@@ -33,7 +33,7 @@ class Ultima0Game : public Shared::Game {
 public:
 	CLASSDEF;
 	Ultima0Game();
-	virtual ~Ultima0Game() {}
+	~Ultima0Game() override {}
 
 };
 

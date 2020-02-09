@@ -36,18 +36,18 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	MenuGump(bool nameEntryMode = false);
-	virtual ~MenuGump(void);
+	~MenuGump(void) override;
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
-	virtual void Close(bool no_del = false) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
+	void Close(bool no_del = false) override;
 
 	// Paint the Gump
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual bool OnKeyDown(int key, int mod) override;
-	virtual bool OnTextInput(int unicode) override;
-	virtual void ChildNotify(Gump *child, uint32 message) override;
+	bool OnKeyDown(int key, int mod) override;
+	bool OnTextInput(int unicode) override;
+	void ChildNotify(Gump *child, uint32 message) override;
 
 	static void showMenu();
 	static void ConCmd_showMenu(const Console::ArgvType &argv);

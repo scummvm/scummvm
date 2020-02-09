@@ -67,7 +67,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	AudioProcess(void);
-	virtual ~AudioProcess(void);
+	~AudioProcess(void) override;
 
 	//! Get the current instance of the Audio Processes
 	static AudioProcess *get_instance() {
@@ -85,7 +85,7 @@ public:
 	static void ConCmd_playSFX(const Console::ArgvType &argv);
 
 
-	virtual void run() override;
+	void run() override;
 
 	void playSFX(int sfxnum, int priority, ObjId objid, int loops,
 	             bool no_duplicates, uint32 pitch_shift,
@@ -128,7 +128,7 @@ public:
 	bool loadData(IDataSource *ids, uint32 version);
 
 private:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 	uint32 paused;
 
 	//! play the next speech sample for the text in this SampleInfo

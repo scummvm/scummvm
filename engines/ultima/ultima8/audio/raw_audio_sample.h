@@ -32,11 +32,11 @@ class RawAudioSample : public AudioSample {
 public:
 	RawAudioSample(uint8 *buffer, uint32 size,
 	               uint32 rate, bool signeddata, bool stereo);
-	virtual ~RawAudioSample();
+	~RawAudioSample() override;
 
-	virtual void initDecompressor(void *DecompData) const;
-	virtual uint32 decompressFrame(void *DecompData, void *samples) const;
-	virtual void rewind(void *DecompData) const;
+	void initDecompressor(void *DecompData) const override;
+	uint32 decompressFrame(void *DecompData, void *samples) const override;
+	void rewind(void *DecompData) const override;
 
 protected:
 

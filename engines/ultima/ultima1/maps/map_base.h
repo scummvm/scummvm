@@ -54,17 +54,17 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~MapBase() {}
+	~MapBase() override {}
 
 	/**
 	 * Gets a tile at a given position
 	 */
-	virtual void getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer = true) override;
+	void getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer = true) override;
 
 	/**
 	 * Instantiates a widget type by name
 	 */
-	virtual Shared::Maps::MapWidget *createWidget(const Common::String &name) override;
+	Shared::Maps::MapWidget *createWidget(const Common::String &name) override;
 
 	/**
 	 * Default implementation for actions
@@ -112,7 +112,7 @@ public:
 	/**
 	 * Cast a specific spell
 	 */
-	virtual void castSpell(uint spell) override;
+	void castSpell(uint spell) override;
 
 	/**
 	 * Handles dropping an amount of coins

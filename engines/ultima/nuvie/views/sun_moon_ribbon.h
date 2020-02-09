@@ -38,12 +38,12 @@ private:
 
 public:
 	SunMoonRibbon(Player *p, Weather *w, TileManager *tm);
-	~SunMoonRibbon();
+	~SunMoonRibbon() override;
 
 	void init(Screen *screen);
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
 
 
 	void extend() {
@@ -54,7 +54,7 @@ public:
 	}
 
 protected:
-	void display_sun_moon(Tile *tile, uint8 pos);
+	void display_sun_moon(Tile *tile, uint8 pos) override;
 
 private:
 	void loadBgImage(uint8 num);

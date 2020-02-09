@@ -91,12 +91,12 @@ public:
 	/**
 	 * Draws the visual item on the screen
 	 */
-	virtual void draw() override;
+	void draw() override;
 
 	/**
 	 * Hide the dialog
 	 */
-	virtual void hide() override;
+	void hide() override;
 };
 
 } // End of namespace U1Dialogs

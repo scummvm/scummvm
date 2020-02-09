@@ -48,12 +48,12 @@ public:
 
 	GUI_TextInput(int x, int y, uint8 r, uint8 g, uint8 b,
 	              const char *str, GUI_Font *gui_font, uint16 width, uint16 height, GUI_CallBack *callback);
-	~GUI_TextInput();
+	~GUI_TextInput() override;
 
-	void release_focus();
+	void release_focus() override;
 
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	GUI_status KeyDown(const Common::KeyState &key);
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status KeyDown(const Common::KeyState &key) override;
 
 	void add_char(char c);
 	void remove_char();
@@ -61,11 +61,11 @@ public:
 	char *get_text() {
 		return text;
 	}
-	void SetDisplay(Screen *s);
+	void SetDisplay(Screen *s) override;
 	void display_cursor();
 
 	/* Show the widget  */
-	virtual void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
 };
 

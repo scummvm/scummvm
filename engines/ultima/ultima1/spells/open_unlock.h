@@ -48,7 +48,7 @@ public:
 	/**
 	 * Cast the spell within dungeons
 	 */
-	virtual void dungeonCast(Maps::MapDungeon *map) override;
+	void dungeonCast(Maps::MapDungeon *map) override;
 };
 
 /**

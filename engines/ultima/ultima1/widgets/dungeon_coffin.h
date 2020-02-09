@@ -55,7 +55,7 @@ public:
 	 * Try to open/unlock the item
 	 * @returns		True if item was capable of being opened or unlocked
 	 */
-	virtual bool open() override;
+	bool open() override;
 };
 
 } // End of namespace Widgets

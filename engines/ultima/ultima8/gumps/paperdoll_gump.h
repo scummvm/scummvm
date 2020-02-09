@@ -38,34 +38,34 @@ public:
 	PaperdollGump();
 	PaperdollGump(Shape *shape, uint32 framenum, uint16 owner,
 	              uint32 _Flags = FLAG_DRAGGABLE, int32 layer = LAYER_NORMAL);
-	virtual ~PaperdollGump(void);
+	~PaperdollGump(void) override;
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Close the gump
-	virtual void Close(bool no_del = false) override;
+	void Close(bool no_del = false) override;
 
 	// Paint this Gump
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual void ChildNotify(Gump *child, uint32 message) override;
+	void ChildNotify(Gump *child, uint32 message) override;
 
 	// Trace a click, and return ObjId
-	virtual uint16 TraceObjId(int32 mx, int32 my) override;
+	uint16 TraceObjId(int32 mx, int32 my) override;
 
 	// Get the location of an item in the gump (coords relative to this).
 	// Returns false on failure.
-	virtual bool GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
+	bool GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 	                               int32 lerp_factor = 256) override;
 
-	virtual bool StartDraggingItem(Item *item, int mx, int my) override;
-	virtual bool DraggingItem(Item *item, int mx, int my) override;
-	virtual void DropItem(Item *item, int mx, int my) override;
+	bool StartDraggingItem(Item *item, int mx, int my) override;
+	bool DraggingItem(Item *item, int mx, int my) override;
+	void DropItem(Item *item, int mx, int my) override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	//! Paint the stats
 	void PaintStats(RenderSurface *, int32 lerp_factor);

@@ -45,15 +45,15 @@ class JoystickCursorProcess : public Process {
 public:
 	JoystickCursorProcess();
 	JoystickCursorProcess(Joystick js_, int x_axis_, int y_axis_);
-	virtual ~JoystickCursorProcess();
+	~JoystickCursorProcess() override;
 
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void run() override;
+	void run() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	Joystick js;
 	int x_axis, y_axis;

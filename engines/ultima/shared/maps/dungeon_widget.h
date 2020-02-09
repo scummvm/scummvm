@@ -53,7 +53,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~DungeonWidget() {}
+	~DungeonWidget() override {}
 
 	/**
 	 * Draws an item

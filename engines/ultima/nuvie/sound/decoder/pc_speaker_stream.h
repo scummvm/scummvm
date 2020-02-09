@@ -37,17 +37,17 @@ public:
 		finished = false;
 	}
 
-	~PCSpeakerStream() {
+	~PCSpeakerStream() override {
 		delete pcspkr;
 	}
 
 	/** Is this a stereo stream? */
-	bool isStereo() const {
+	bool isStereo() const override {
 		return false;
 	}
 
 	/** Sample rate of the stream. */
-	int getRate() const {
+	int getRate() const override {
 		return SPKR_OUTPUT_RATE;
 	}
 
@@ -58,11 +58,11 @@ public:
 	 * This is used by e.g. a rate converter to decide whether to keep on
 	 * converting data or stop.
 	 */
-	bool endOfData() const {
+	bool endOfData() const override {
 		return finished;
 	}
 
-	bool rewind() {
+	bool rewind() override {
 		return false;
 	}
 
@@ -79,9 +79,9 @@ public:
 	}
 
 	PCSpeakerFreqStream(uint start, uint16 d);
-	~PCSpeakerFreqStream();
+	~PCSpeakerFreqStream() override;
 	uint32 getLengthInMsec();
-	int readBuffer(sint16 *buffer, const int numSamples);
+	int readBuffer(sint16 *buffer, const int numSamples) override;
 
 protected:
 
@@ -98,9 +98,9 @@ public:
 	}
 
 	PCSpeakerSweepFreqStream(uint start, uint end, uint16 d, uint16 s);
-	~PCSpeakerSweepFreqStream();
+	~PCSpeakerSweepFreqStream() override;
 	uint32 getLengthInMsec();
-	int readBuffer(sint16 *buffer, const int numSamples);
+	int readBuffer(sint16 *buffer, const int numSamples) override;
 
 protected:
 
@@ -126,10 +126,10 @@ public:
 	}
 
 	PCSpeakerRandomStream(uint start, uint16 d, uint16 s);
-	~PCSpeakerRandomStream();
+	~PCSpeakerRandomStream() override;
 	uint32 getLengthInMsec();
 	uint16 getNextFreqValue();
-	int readBuffer(sint16 *buffer, const int numSamples);
+	int readBuffer(sint16 *buffer, const int numSamples) override;
 
 protected:
 
@@ -153,9 +153,9 @@ public:
 	}
 
 	PCSpeakerStutterStream(sint16 a0, uint16 a2, uint16 a4, uint16 a6, uint16 a8);
-	~PCSpeakerStutterStream();
+	~PCSpeakerStutterStream() override;
 	uint32 getLengthInMsec();
-	int readBuffer(sint16 *buffer, const int numSamples);
+	int readBuffer(sint16 *buffer, const int numSamples) override;
 
 protected:
 

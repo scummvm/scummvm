@@ -40,7 +40,7 @@ class MusicProcess : public Process {
 		MUSIC_PLAY_WANTED = 3
 	};
 private:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	//! Play a music track
 	//! \param track The track number to play. Pass 0 to stop music
@@ -59,7 +59,7 @@ private:
 public:
 	MusicProcess();
 	MusicProcess(MidiPlayer *player); // Note that this does NOT delete the driver
-	virtual ~MusicProcess();
+	~MusicProcess() override;
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -84,7 +84,7 @@ public:
 		return _wantedTrack;
 	}
 
-	virtual void run() override;
+	void run() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 

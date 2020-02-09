@@ -71,30 +71,30 @@ private:
 	/**
 	 * Initialize the engine
 	 */
-	virtual bool initialize() override;
+	bool initialize() override;
 
 	/**
 	 * Deinitialize the engine
 	 */
 
-	virtual void deinitialize() override;
+	void deinitialize() override;
 
 	/**
 	 * Returns the data archive folder and version that's required
 	 */
-	virtual bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
+	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
 public:
 	GameBase *_game;
 	MouseCursor *_mouseCursor;
 	Gfx::Screen *_screen;
 public:
 	UltimaEarlyEngine(OSystem *syst, const UltimaGameDescription *gameDesc);
-	virtual ~UltimaEarlyEngine();
+	~UltimaEarlyEngine() override;
 
 	/**
 	 * Main method for running the game
 	 */
-	virtual Common::Error run() override;
+	Common::Error run() override;
 
 	/**
 	 * Play the game
@@ -104,35 +104,35 @@ public:
 	/**
 	 * Get the screen
 	 */
-	virtual Graphics::Screen *getScreen() const override;
+	Graphics::Screen *getScreen() const override;
 	/**
 	 * Indicates whether a game state can be loaded.
 	 * @param isAutosave	Flags whether it's an autosave check
 	 */
-	virtual bool canLoadGameStateCurrently(bool isAutosave) override;
+	bool canLoadGameStateCurrently(bool isAutosave) override;
 
 	/**
 	 * Indicates whether a game state can be saved.
 	 * @param isAutosave	Flags whether it's an autosave check
 	 */
-	virtual bool canSaveGameStateCurrently(bool isAutosave) override;
+	bool canSaveGameStateCurrently(bool isAutosave) override;
 
 	/**
 	 * Load a savegame
 	 */
-	virtual Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	/**
 	 * Save a game state.
 	 */
-	virtual Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 
 	/*
 	 * Creates a new hierarchy for the game, that contains all the logic for playing that particular game.
 	 */
 	Game *createGame() const;
 
-	virtual GUI::Debugger *getDebugger() override { return nullptr; }
+	GUI::Debugger *getDebugger() const override { return nullptr; }
 };
 
 } // End of namespace Shared

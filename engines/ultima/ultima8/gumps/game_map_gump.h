@@ -42,15 +42,15 @@ public:
 
 	GameMapGump();
 	GameMapGump(int x, int y, int w, int h);
-	virtual ~GameMapGump();
+	~GameMapGump() override;
 
-	virtual void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	void        PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 
 	void                GetCameraLocation(int32 &x, int32 &y, int32 &z,
 	                                      int lerp_factor = 256);
 
 	// Trace a click, and return ObjId (parent coord space)
-	virtual uint16      TraceObjId(int32 mx, int32 my) override;
+	uint16      TraceObjId(int32 mx, int32 my) override;
 
 	// Trace a click, return ObjId, and the coordinates of the mouse click (gump coord space)
 	virtual uint16      TraceCoordinates(int mx, int my, int32 coords[3],
@@ -59,19 +59,19 @@ public:
 
 	// Get the location of an item in the gump (coords relative to this).
 	// Returns false on failure
-	virtual bool        GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
+	bool        GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
 	                                      int32 lerp_factor = 256) override;
 
-	virtual bool        StartDraggingItem(Item *item, int mx, int my) override;
-	virtual bool        DraggingItem(Item *item, int mx, int my) override;
-	virtual void        DraggingItemLeftGump(Item *item) override;
-	virtual void        StopDraggingItem(Item *item, bool moved) override;
-	virtual void        DropItem(Item *item, int mx, int my) override;
+	bool        StartDraggingItem(Item *item, int mx, int my) override;
+	bool        DraggingItem(Item *item, int mx, int my) override;
+	void        DraggingItemLeftGump(Item *item) override;
+	void        StopDraggingItem(Item *item, bool moved) override;
+	void        DropItem(Item *item, int mx, int my) override;
 
-	virtual Gump       *OnMouseDown(int button, int32 mx, int32 my) override;
-	virtual void        OnMouseUp(int button, int32 mx, int32 my) override;
-	virtual void        OnMouseClick(int button, int32 mx, int32 my) override;
-	virtual void        OnMouseDouble(int button, int32 mx, int32 my) override;
+	Gump       *OnMouseDown(int button, int32 mx, int32 my) override;
+	void        OnMouseUp(int button, int32 mx, int32 my) override;
+	void        OnMouseClick(int button, int32 mx, int32 my) override;
+	void        OnMouseDouble(int button, int32 mx, int32 my) override;
 
 	void IncSortOrder(int count);
 
@@ -90,10 +90,10 @@ public:
 	static void ConCmd_incrementSortOrder(const Console::ArgvType &argv);
 	static void ConCmd_decrementSortOrder(const Console::ArgvType &argv);
 
-	virtual void        RenderSurfaceChanged() override;
+	void        RenderSurfaceChanged() override;
 
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	bool display_dragging;
 	uint32 dragging_shape;

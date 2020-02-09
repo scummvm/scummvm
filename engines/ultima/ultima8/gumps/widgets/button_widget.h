@@ -41,19 +41,19 @@ public:
 	             int32 layer = LAYER_NORMAL);
 	ButtonWidget(int X, int Y, FrameID frame_up, FrameID frame_down,
 	             bool mouseOver = false, int32 layer = LAYER_NORMAL);
-	virtual ~ButtonWidget(void);
+	~ButtonWidget(void) override;
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
-	virtual uint16 TraceObjId(int32 mx, int32 my) override;
-	virtual bool PointOnGump(int mx, int my) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
+	uint16 TraceObjId(int32 mx, int32 my) override;
+	bool PointOnGump(int mx, int my) override;
 
-	virtual Gump *OnMouseDown(int button, int32 mx, int32 my) override;
-	virtual void OnMouseUp(int button, int32 mx, int32 my) override;
-	virtual void OnMouseClick(int button, int32 mx, int32 my) override;
-	virtual void OnMouseDouble(int button, int32 mx, int32 my) override;
+	Gump *OnMouseDown(int button, int32 mx, int32 my) override;
+	void OnMouseUp(int button, int32 mx, int32 my) override;
+	void OnMouseClick(int button, int32 mx, int32 my) override;
+	void OnMouseDouble(int button, int32 mx, int32 my) override;
 
-	virtual void OnMouseOver() override;
-	virtual void OnMouseLeft() override;
+	void OnMouseOver() override;
+	void OnMouseLeft() override;
 
 	//! return the textwidget's vlead, or 0 for an image button
 	int getVlead();
@@ -80,7 +80,7 @@ protected:
 public:
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

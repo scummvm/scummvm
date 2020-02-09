@@ -55,18 +55,18 @@ protected:
 	                       sint32 &nnode_to_neighbor);
 public:
 	AStarPath();
-	~AStarPath() { }
-	bool path_search(MapCoord &start, MapCoord &goal);
-	virtual uint32 path_cost_est(MapCoord &s, MapCoord &g)  {
+	~AStarPath() override { }
+	bool path_search(MapCoord &start, MapCoord &goal) override;
+	uint32 path_cost_est(MapCoord &s, MapCoord &g) override  {
 		return (Path::path_cost_est(s, g));
 	}
-	virtual uint32 get_max_score(uint32 cost) {
+	uint32 get_max_score(uint32 cost) override {
 		return (Path::get_max_score(cost));
 	}
 	uint32 path_cost_est(astar_node &n1, astar_node &n2) {
 		return (Path::path_cost_est(n1.loc, n2.loc));
 	}
-	sint32 step_cost(MapCoord &c1, MapCoord &c2);
+	sint32 step_cost(MapCoord &c1, MapCoord &c2) override;
 protected:
 	/* FIXME: These node functions can be replaced with a priority_queue and a list. */
 	astar_node *find_open_node(astar_node *ncmp);

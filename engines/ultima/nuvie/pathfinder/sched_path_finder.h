@@ -38,13 +38,13 @@ public:
 	/* Pass 'path_type' to define search rules and methods to be used. The
 	   PathFinder is responsible for deleting it when finished. */
 	SchedPathFinder(Actor *a, MapCoord g, Path *path_type);
-	~SchedPathFinder();
+	~SchedPathFinder() override;
 
-	bool get_next_move(MapCoord &step); /* returns the next step in the path */
-	bool find_path(); /* gets a NEW path from location->goal */
-	void actor_moved(); /* update location and step counters */
+	bool get_next_move(MapCoord &step) override; /* returns the next step in the path */
+	bool find_path() override; /* gets a NEW path from location->goal */
+	void actor_moved() override; /* update location and step counters */
 
-	virtual bool check_loc(const MapCoord &loc); // ignores other actors
+	bool check_loc(const MapCoord &loc) override; // ignores other actors
 protected:
 	bool is_location_in_path();
 	void incr_step();

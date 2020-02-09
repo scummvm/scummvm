@@ -53,7 +53,7 @@ public:
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(path, id_, pal_, format_), typeFlags(0), animdat(0) { }
 
-	virtual ~MainShapeArchive();
+	~MainShapeArchive() override;
 
 	void loadTypeFlags(IDataSource *ds);
 	ShapeInfo *getShapeInfo(uint32 shapenum);

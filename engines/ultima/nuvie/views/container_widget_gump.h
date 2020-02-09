@@ -46,14 +46,14 @@ private:
 
 public:
 	ContainerWidgetGump(Configuration *cfg, GUI_CallBack *callback = NULL);
-	~ContainerWidgetGump();
+	~ContainerWidgetGump() override;
 
 	bool init(Actor *a, uint16 x, uint16 y, uint8 Cols, uint8 Rows, TileManager *tm, ObjManager *om, Font *f, uint8 check_xoff, uint8 check_yoff);
 
-	void Display(bool full_redraw);
-	GUI_status KeyDown(const Common::KeyState &key);
+	void Display(bool full_redraw) override;
+	GUI_status KeyDown(const Common::KeyState &key) override;
 
-	virtual void set_actor(Actor *a);
+	void set_actor(Actor *a) override;
 private:
 
 	void cursor_right();

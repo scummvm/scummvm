@@ -37,19 +37,19 @@ public:
 	PathfinderProcess();
 	PathfinderProcess(Actor *actor, ObjId item, bool hit = false);
 	PathfinderProcess(Actor *actor, int32 x, int32 y, int32 z);
-	virtual ~PathfinderProcess();
+	~PathfinderProcess() override;
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void run() override;
-	virtual void terminate() override;
+	void run() override;
+	void terminate() override;
 
 //	virtual void terminate();
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	int32 targetx, targety, targetz;
 	ObjId targetitem;

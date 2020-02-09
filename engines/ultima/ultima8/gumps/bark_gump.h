@@ -43,16 +43,16 @@ public:
 
 	BarkGump();
 	BarkGump(uint16 owner_, Std::string msg, uint32 speechshapenum = 0);
-	virtual ~BarkGump(void);
+	~BarkGump(void) override;
 
 	// Run the gump (decrement the counter)
-	virtual void        run() override;
+	void        run() override;
 
 	// Got to the next page on mouse click
-	virtual Gump       *OnMouseDown(int button, int32 mx, int32 my) override;
+	Gump       *OnMouseDown(int button, int32 mx, int32 my) override;
 
 	// Init the gump, call after construction
-	virtual void        InitGump(Gump *newparent, bool take_focus = true) override;
+	void        InitGump(Gump *newparent, bool take_focus = true) override;
 
 protected:
 	//! show next text.
@@ -64,7 +64,7 @@ protected:
 public:
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

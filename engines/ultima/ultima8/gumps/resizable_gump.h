@@ -36,7 +36,7 @@ namespace Ultima8 {
 class ResizableGump : public Gump {
 public:
 	ResizableGump(int x, int y, int width, int height);
-	virtual ~ResizableGump();
+	~ResizableGump() override;
 };
 
 } // End of namespace Ultima8

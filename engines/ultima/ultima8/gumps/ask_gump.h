@@ -39,16 +39,16 @@ public:
 
 	AskGump();
 	AskGump(uint16 owner_, UCList *answers_);
-	virtual ~AskGump();
+	~AskGump() override;
 
 	// Init the gump, call after construction
-	virtual void        InitGump(Gump *newparent, bool take_focus = true) override;
+	void        InitGump(Gump *newparent, bool take_focus = true) override;
 
-	virtual void        ChildNotify(Gump *child, uint32 message) override;
+	void        ChildNotify(Gump *child, uint32 message) override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

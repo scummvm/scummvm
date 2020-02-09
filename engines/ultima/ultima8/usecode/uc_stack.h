@@ -166,7 +166,7 @@ public:
 class DynamicUCStack : public BaseUCStack {
 public:
 	DynamicUCStack(uint32 len = 0x1000) : BaseUCStack(len, new uint8[len]) { }
-	virtual ~DynamicUCStack() {
+	~DynamicUCStack() override {
 		delete [] buf;
 	}
 
@@ -182,7 +182,7 @@ class UCStack : public BaseUCStack {
 	uint8   buf_array[0x1000];
 public:
 	UCStack() : BaseUCStack(0x1000, buf_array) { }
-	virtual ~UCStack() { }
+	~UCStack() override { }
 
 	void save(ODataSource *ods);
 	bool load(IDataSource *ids, uint32 version);

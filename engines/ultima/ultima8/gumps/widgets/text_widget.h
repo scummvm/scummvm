@@ -58,17 +58,17 @@ public:
 	TextWidget(int X, int Y, Std::string txt, bool gamefont, int fontnum,
 	           int width = 0, int height = 0,
 	           Font::TextAlign align = Font::TEXT_LEFT);
-	virtual ~TextWidget(void);
+	~TextWidget(void) override;
 
 	// Init the gump, call after construction
-	virtual void            InitGump(Gump *newparent, bool take_focus = true) override;
+	void            InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Overloadable method to Paint just this Gump (RenderSurface is relative to this)
-	virtual void            PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void            PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual void            PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 scalex, int32 scaley) override;
+	void            PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 scalex, int32 scaley) override;
 
-	virtual Gump *OnMouseMotion(int32 mx, int32 my) override;
+	Gump *OnMouseMotion(int32 mx, int32 my) override;
 
 	//! display the next part of the text
 	//! \return false if there is no more text to display
@@ -102,7 +102,7 @@ public:
 	bool loadData(IDataSource *ids, uint32 version);
 
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

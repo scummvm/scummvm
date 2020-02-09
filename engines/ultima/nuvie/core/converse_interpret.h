@@ -320,7 +320,7 @@ public:
 	WOUConverseInterpret(Converse *owner) : ConverseInterpret(owner) { }
 
 protected:
-	virtual bool op_create_new(stack<converse_typed_value> &i);
+	bool op_create_new(stack<converse_typed_value> &i) override;
 };
 
 class SETalkInterpret : public ConverseInterpret {

@@ -64,10 +64,10 @@ class InventoryView : public View {
 
 public:
 	InventoryView(Configuration *cfg);
-	~InventoryView();
+	~InventoryView() override;
 
 	bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);
-	bool set_party_member(uint8 party_member);
+	bool set_party_member(uint8 party_member) override;
 	bool set_actor(Actor *actor, bool pickpocket = false);
 	void set_show_cursor(bool state);
 	void moveCursorToSlot(uint8 slot_num);
@@ -82,9 +82,9 @@ public:
 		return (inventory_widget);
 	};
 
-	void Display(bool full_redraw);
-	void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y);
-	GUI_status KeyDown(const Common::KeyState &key);
+	void Display(bool full_redraw) override;
+	void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) override;
+	GUI_status KeyDown(const Common::KeyState &key) override;
 	void simulate_CB_callback();
 	bool is_picking_pocket() {
 		return picking_pocket;
@@ -102,9 +102,9 @@ protected:
 	void update_cursor();
 	void hide_buttons();
 	void show_buttons();
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	GUI_status MouseWheel(sint32 x, sint32 y);
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseWheel(sint32 x, sint32 y) override;
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 };
 
 } // End of namespace Nuvie

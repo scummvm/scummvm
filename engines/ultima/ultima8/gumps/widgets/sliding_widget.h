@@ -35,14 +35,14 @@ public:
 
 	SlidingWidget();
 	SlidingWidget(int x, int y, Shape *shape, uint32 framenum);
-	virtual ~SlidingWidget();
+	~SlidingWidget() override;
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
-	virtual uint16 TraceObjId(int32 mx, int32 my) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
+	uint16 TraceObjId(int32 mx, int32 my) override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

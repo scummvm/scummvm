@@ -37,15 +37,15 @@ public:
 	uint16 samples_left;
 
 	SongAdPlug(Audio::Mixer *m, CEmuopl *o);
-	~SongAdPlug();
-	bool Init(const char *filename) {
+	~SongAdPlug() override;
+	bool Init(const char *filename) override {
 		return Init(filename, 0);
 	}
 	bool Init(const char *filename, uint16 song_num);
-	bool Play(bool looping = false);
-	bool Stop();
-	bool SetVolume(uint8 volume);
-	bool FadeOut(float seconds) {
+	bool Play(bool looping = false) override;
+	bool Stop() override;
+	bool SetVolume(uint8 volume) override;
+	bool FadeOut(float seconds) override {
 		return false;
 	}
 	CEmuopl *get_opl() {

@@ -44,25 +44,25 @@ struct SegmentedPoolNode;
 class SegmentedPool: public Pool {
 public:
 	SegmentedPool(size_t nodeCapacity, uint32 nodes);
-	virtual ~SegmentedPool();
+	~SegmentedPool() override;
 
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void *allocate(size_t size) override;
-	virtual void deallocate(void *ptr) override;
+	void *allocate(size_t size) override;
+	void deallocate(void *ptr) override;
 
-	virtual bool isFull() override {
+	bool isFull() override {
 		return freeNodeCount == 0;
 	}
-	virtual bool isEmpty() override {
+	bool isEmpty() override {
 		return freeNodeCount == nodes;
 	}
 
-	virtual bool inPool(void *ptr) override {
+	bool inPool(void *ptr) override {
 		return (ptr > startOfPool && ptr < endOfPool);
 	}
 
-	virtual void printInfo() override;
+	void printInfo() override;
 
 	size_t getNodeCapacity() {
 		return nodeCapacity;

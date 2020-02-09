@@ -41,11 +41,11 @@ public:
 	explicit RawArchive(IDataSource *ids) : Archive(ids) { }
 	explicit RawArchive(const Std::string &path) : Archive(path) { }
 
-	virtual ~RawArchive();
+	~RawArchive() override;
 
-	virtual void cache(uint32 index) override;
-	virtual void uncache(uint32 index) override;
-	virtual bool isCached(uint32 index) override;
+	void cache(uint32 index) override;
+	void uncache(uint32 index) override;
+	bool isCached(uint32 index) override;
 
 	//! return object. DON'T delete or modify!
 	virtual const uint8 *get_object_nodel(uint32 index);

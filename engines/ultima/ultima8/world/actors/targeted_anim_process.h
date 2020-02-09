@@ -42,9 +42,9 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
-	virtual bool init() override;
+	bool init() override;
 
 	int32 x, y, z;
 };

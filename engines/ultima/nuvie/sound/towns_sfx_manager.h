@@ -43,10 +43,10 @@ typedef struct {
 class TownsSfxManager : public SfxManager {
 public:
 	TownsSfxManager(Configuration *cfg, Audio::Mixer *m);
-	virtual ~TownsSfxManager();
+	~TownsSfxManager() override;
 
-	bool playSfx(SfxIdType sfx_id, uint8 volume);
-	bool playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume);
+	bool playSfx(SfxIdType sfx_id, uint8 volume) override;
+	bool playSfxLooping(SfxIdType sfx_id, Audio::SoundHandle *handle, uint8 volume) override;
 
 private:
 	Std::string sounds2dat_filepath;

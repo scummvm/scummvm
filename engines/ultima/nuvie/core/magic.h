@@ -94,7 +94,7 @@ private:
 	 */
 public:
 	Magic();
-	~Magic();
+	~Magic() override;
 	bool init(Events *evt);
 
 	bool read_spell_list();
@@ -107,7 +107,7 @@ public:
 	bool cast();
 	void cast_spell_directly(uint8 spell_num);
 
-	virtual uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
 	bool process_script_return(uint8 ret);
 	bool resume(MapCoord location);
 	bool resume(uint8 dir);

@@ -33,7 +33,7 @@ class MonsterEgg : public Item {
 	friend class ItemFactory;
 public:
 	MonsterEgg();
-	virtual ~MonsterEgg();
+	~MonsterEgg() override;
 
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -55,7 +55,7 @@ public:
 	INTRINSIC(I_getMonId);
 
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

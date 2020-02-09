@@ -91,7 +91,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Game();
+	~Game() override;
 
 	/**
 	 * Play a sound effect
@@ -111,12 +111,12 @@ public:
 	/**
 	 * Returns the map
 	 */
-	virtual Maps::Map *getMap() const override { return _map; }
+	Maps::Map *getMap() const override { return _map; }
 
 	/**
 	 * Handles loading and saving games
 	 */
-	virtual void synchronize(Common::Serializer &s) override;
+	void synchronize(Common::Serializer &s) override;
 
 	/**
 	 * Signal an end of turn

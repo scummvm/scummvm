@@ -39,15 +39,15 @@ public:
 	//! create U8SaveFile from datasource; U8SaveFile takes ownership of ds
 	//! and deletes it when destructed
 	explicit U8SaveFile(IDataSource *ds);
-	virtual ~U8SaveFile();
+	~U8SaveFile() override;
 
-	virtual bool exists(const Std::string &name) override;
+	bool exists(const Std::string &name) override;
 
-	virtual uint8 *getObject(const Std::string &name, uint32 *size = 0) override;
+	uint8 *getObject(const Std::string &name, uint32 *size = 0) override;
 
-	virtual uint32 getSize(const Std::string &name) override;
+	uint32 getSize(const Std::string &name) override;
 
-	virtual uint32 getCount() override {
+	uint32 getCount() override {
 		return count;
 	}
 

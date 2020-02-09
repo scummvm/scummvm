@@ -54,7 +54,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Popup();
+	~Popup() override;
 
 	/**
 	 * Show the popup

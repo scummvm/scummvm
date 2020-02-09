@@ -37,16 +37,16 @@ public:
 		songend(0), song_pos(0), loop_position(0), read_delay(0) {
 	}
 
-	~Cu6mPlayer();
+	~Cu6mPlayer() override;
 
 
 
-	bool load(const Std::string &filename);
-	bool update();
-	void rewind(int subsong);
-	float getrefresh();
+	bool load(const Std::string &filename) override;
+	bool update() override;
+	void rewind(int subsong) override;
+	float getrefresh() override;
 
-	Std::string gettype() {
+	Std::string gettype() override {
 		return Std::string("Ultima 6 Music");
 	};
 

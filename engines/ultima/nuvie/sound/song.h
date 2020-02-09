@@ -34,16 +34,16 @@ public:
 	virtual bool Init(const char *filename) {
 		return false;
 	}
-	bool Play(bool looping = false) {
+	bool Play(bool looping = false) override {
 		return false;
 	}
-	bool Stop() {
+	bool Stop() override {
 		return false;
 	}
-	bool SetVolume(uint8 volume) {
+	bool SetVolume(uint8 volume) override {
 		return false;
 	}
-	bool FadeOut(float seconds) {
+	bool FadeOut(float seconds) override {
 		return false;
 	}
 

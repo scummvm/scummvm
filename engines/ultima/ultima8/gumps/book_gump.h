@@ -39,16 +39,16 @@ public:
 
 	BookGump();
 	BookGump(ObjId owner_, Std::string msg);
-	virtual ~BookGump();
+	~BookGump() override;
 
 	// Go to the next page on mouse click
-	virtual void OnMouseClick(int button, int32 mx, int32 my) override;
+	void OnMouseClick(int button, int32 mx, int32 my) override;
 
 	// Close on double click
-	virtual void OnMouseDouble(int button, int32 mx, int32 my) override;
+	void OnMouseDouble(int button, int32 mx, int32 my) override;
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	INTRINSIC(I_readBook);
 
@@ -58,7 +58,7 @@ protected:
 public:
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

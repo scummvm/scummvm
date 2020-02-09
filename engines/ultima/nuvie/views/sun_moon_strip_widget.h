@@ -39,10 +39,10 @@ protected:
 
 public:
 	SunMoonStripWidget(Player *p, TileManager *tm);
-	~SunMoonStripWidget();
+	~SunMoonStripWidget() override;
 
 	void init(sint16 x, sint16 y);
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
 protected:
 	virtual void display_sun_moon(Tile *tile, uint8 pos);

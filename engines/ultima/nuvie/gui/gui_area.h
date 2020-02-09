@@ -45,10 +45,10 @@ public:
 	         uint8 fr, uint8 fg, uint8 fb, int fthick, int aShape = AREA_ANGULAR);
 
 	/* Map the color to the display */
-	virtual void SetDisplay(Screen *s);
+	void SetDisplay(Screen *s) override;
 
 	/* Show the widget  */
-	virtual void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
 
 protected:

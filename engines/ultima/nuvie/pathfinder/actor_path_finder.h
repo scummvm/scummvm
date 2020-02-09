@@ -37,21 +37,21 @@ protected:
 
 public:
 	ActorPathFinder(Actor *a, MapCoord g);
-	virtual ~ActorPathFinder();
+	~ActorPathFinder() override;
 	void set_actor(Actor *a);
 
 	virtual bool update_location(); /* get location from actor (use any time) */
 	virtual void actor_moved(); /* the actor moved ON PATH...
                                    (use after get_next_move()) */
 
-	virtual bool check_loc(const MapCoord &loc);
+	bool check_loc(const MapCoord &loc) override;
 
 	void get_closest_dir(MapCoord &rel_step); // relative dir loc->goal
-	virtual bool get_next_move(MapCoord &step);
+	bool get_next_move(MapCoord &step) override;
 
 protected:
 	bool search_towards_target(const MapCoord &g, MapCoord &rel_step);
-	virtual bool check_dir(const MapCoord &loc, MapCoord &rel, sint8 rot = 0);
+	bool check_dir(const MapCoord &loc, MapCoord &rel, sint8 rot = 0) override;
 	bool check_dir_and_distance(MapCoord loc, MapCoord g, MapCoord &rel_step, sint8 rotate);
 };
 

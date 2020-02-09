@@ -37,9 +37,9 @@ private:
 public:
 
 	U6Bmp();
-	~U6Bmp();
+	~U6Bmp() override;
 
-	bool load(Std::string filename);
+	bool load(Std::string filename) override;
 
 };
 

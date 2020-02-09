@@ -63,7 +63,7 @@ public:
 	/**
 	 * Clears tile data
 	 */
-	virtual void clear();
+	void clear() override;
 
 	/**
 	 * Return true if the tile base is water

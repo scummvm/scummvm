@@ -62,7 +62,7 @@ protected:
 
 public:
 	InventoryWidget(Configuration *cfg, GUI_CallBack *callback = NULL);
-	~InventoryWidget();
+	~InventoryWidget() override;
 
 	bool init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager *om, Font *f);
 	void set_actor(Actor *a);
@@ -82,22 +82,22 @@ public:
 	bool is_showing_container() {
 		return (container_obj != NULL ? true : false);
 	}
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
-	virtual GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseMotion(int x, int y, uint8 state);
-	GUI_status MouseDouble(int x, int y, Shared::MouseButton button);
-	GUI_status MouseClick(int x, int y, Shared::MouseButton button);
-	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button);
-	GUI_status MouseWheel(sint32 x, sint32 y);
-	void drag_drop_success(int x, int y, int message, void *data);
-	void drag_drop_failed(int x, int y, int message, void *data);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseMotion(int x, int y, uint8 state) override;
+	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseClick(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseWheel(sint32 x, sint32 y) override;
+	void drag_drop_success(int x, int y, int message, void *data) override;
+	void drag_drop_failed(int x, int y, int message, void *data) override;
 
-	bool drag_accept_drop(int x, int y, int message, void *data);
-	void drag_perform_drop(int x, int y, int message, void *data);
+	bool drag_accept_drop(int x, int y, int message, void *data) override;
+	void drag_perform_drop(int x, int y, int message, void *data) override;
 
-	void drag_draw(int x, int y, int message, void *data);
+	void drag_draw(int x, int y, int message, void *data) override;
 
 	uint8 get_num_rows() {
 		return game_type == NUVIE_GAME_U6 ? 3 : 4;

@@ -70,7 +70,7 @@ class ScrollWidgetGump: public MsgScroll {
 public:
 
 	ScrollWidgetGump(Configuration *cfg, Screen *s);
-	~ScrollWidgetGump();
+	~ScrollWidgetGump() override;
 
 	bool parse_token(MsgText *token) override;
 
@@ -82,7 +82,7 @@ public:
 
 	void display_prompt() override {}
 	void display_string(Std::string s);
-	virtual void display_string(Std::string s, Font *f, bool include_on_map_window) override {
+	void display_string(Std::string s, Font *f, bool include_on_map_window) override {
 		return MsgScroll::display_string(s, f, include_on_map_window);
 	}
 

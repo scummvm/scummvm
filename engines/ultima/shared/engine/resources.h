@@ -107,15 +107,15 @@ protected:
 	 */
 	bool isSaving() const { return _owner != nullptr; }
 
-	virtual void syncString(const char *&str) override;
-	virtual void syncStrings(const char **str, size_t count) override;
-	virtual void syncStrings2D(const char **str, size_t count1, size_t count2) override;
-	virtual void syncNumber(int &val) override;
-	virtual void syncNumbers(int *vals, size_t count) override;
-	virtual void syncNumbers2D(int *vals, size_t count1, size_t count2) override;
-	virtual void syncNumbers3D(int *vals, size_t count1, size_t count2, size_t count3) override;
-	virtual void syncBytes(byte *vals, size_t count) override;
-	virtual void syncBytes2D(byte *vals, size_t count1, size_t count2) override;
+	void syncString(const char *&str) override;
+	void syncStrings(const char **str, size_t count) override;
+	void syncStrings2D(const char **str, size_t count1, size_t count2) override;
+	void syncNumber(int &val) override;
+	void syncNumbers(int *vals, size_t count) override;
+	void syncNumbers2D(int *vals, size_t count1, size_t count2) override;
+	void syncNumbers3D(int *vals, size_t count1, size_t count2, size_t count3) override;
+	void syncBytes(byte *vals, size_t count) override;
+	void syncBytes2D(byte *vals, size_t count1, size_t count2) override;
 public:
 	/**
 	 * Write out the resource to the in-memory resource store
@@ -168,7 +168,7 @@ public:
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
-	virtual bool hasFile(const Common::String &name) const  override;
+	bool hasFile(const Common::String &name) const  override;
 
 	/**
 	 * Add all members of the Archive to list.
@@ -176,19 +176,19 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	virtual int listMembers(Common::ArchiveMemberList &list) const  override;
+	int listMembers(Common::ArchiveMemberList &list) const  override;
 
 	/**
 	 * Returns a ArchiveMember representation of the given file.
 	 */
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const  override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const  override;
 
 	/**
 	 * Create a stream bound to a member with the specified name in the
 	 * archive. If no member with this name exists, 0 is returned.
 	 * @return the newly created input stream
 	 */
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const  override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const  override;
 };
 
 } // End of namespace Shared

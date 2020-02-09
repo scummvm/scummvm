@@ -50,18 +50,18 @@ class GUI_Dialog : public GUI_Widget {
 public:
 	/* Passed the area, color and shape */
 	GUI_Dialog(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, bool is_moveable);
-	~GUI_Dialog();
+	~GUI_Dialog() override;
 	/* Map the color to the display */
-	virtual void SetDisplay(Screen *s);
+	void SetDisplay(Screen *s) override;
 
 	/* Show the widget  */
-	virtual void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
 	/* events, used for dragging the area. */
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	GUI_status MouseMotion(int x, int y, uint8 state);
-	void MoveRelative(int dx, int dy);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseMotion(int x, int y, uint8 state) override;
+	void MoveRelative(int dx, int dy) override;
 protected:
 	bool can_drag;
 	void loadBorderImages();

@@ -57,7 +57,7 @@ public:
 	 * @param dir			Optional explicit direction to set. If not specified,
 	 *		the direction will be set relative to the position moved from
 	 */
-	virtual void moveTo(const Point &destPos, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) override;
+	void moveTo(const Point &destPos, Shared::Maps::Direction dir = Shared::Maps::DIR_NONE) override;
 };
 
 } // End of namespace Widgets

@@ -43,17 +43,17 @@ class BMPFont : public Font {
 public:
 
 	BMPFont();
-	~BMPFont();
+	~BMPFont() override;
 
 	bool init(Std::string bmp_filename, bool dual_fontmap = false);
 
-	uint16 getCharWidth(uint8 c);
-	uint16 getCharHeight() {
+	uint16 getCharWidth(uint8 c) override;
+	uint16 getCharHeight() override {
 		return 16;
 	}
 	uint16 drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
-	                uint8 color);
-	uint16 getStringWidth(const char *str, uint16 string_len);
+	                uint8 color) override;
+	uint16 getStringWidth(const char *str, uint16 string_len) override;
 protected:
 
 };

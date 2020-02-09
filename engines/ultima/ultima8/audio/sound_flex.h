@@ -36,7 +36,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	SoundFlex(IDataSource *ds);
-	~SoundFlex();
+	~SoundFlex() override;
 
 	//! Get an audiosample
 	AudioSample *getSample(uint32 index) {
@@ -45,9 +45,9 @@ public:
 		return samples[index];
 	}
 
-	virtual void cache(uint32 index) override;
-	virtual void uncache(uint32 index) override;
-	virtual bool isCached(uint32 index) override;
+	void cache(uint32 index) override;
+	void uncache(uint32 index) override;
+	bool isCached(uint32 index) override;
 
 private:
 	AudioSample      **samples;

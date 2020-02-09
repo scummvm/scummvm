@@ -61,7 +61,7 @@ class DollViewGump : public DraggableView {
 
 public:
 	DollViewGump(Configuration *cfg);
-	~DollViewGump();
+	~DollViewGump() override;
 
 	bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Actor *a, Font *f, Party *p, TileManager *tm, ObjManager *om);
 
@@ -70,20 +70,20 @@ public:
 		return actor;
 	}
 
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
-	virtual GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseMotion(int x, int y, uint8 state) {
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseMotion(int x, int y, uint8 state) override {
 		return DraggableView::MouseMotion(x, y, state);
 	}
-	virtual GUI_status MouseWheel(sint32 xpos, sint32 ypos);
-	virtual void MoveRelative(int dx, int dy) {
+	GUI_status MouseWheel(sint32 xpos, sint32 ypos) override;
+	void MoveRelative(int dx, int dy) override {
 		return DraggableView::MoveRelative(dx, dy);
 	}
 
 
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 protected:
 
 	void displayEquipWeight();
@@ -98,7 +98,7 @@ private:
 	void setColorKey(Graphics::ManagedSurface *image);
 	GUI_status set_cursor_pos(gumpCursorPos pos);
 	GUI_status moveCursorRelative(uint8 direction);
-	GUI_status KeyDown(const Common::KeyState &key);
+	GUI_status KeyDown(const Common::KeyState &key) override;
 
 };
 

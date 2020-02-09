@@ -58,7 +58,7 @@ public:
     static UltimaDataArchive *load(const Common::String &subfolder,
 		int reqMajorVersion, int reqMinorVersion, Common::String &errorMsg);
 public:
-	virtual ~UltimaDataArchive() {
+	~UltimaDataArchive() override {
 		delete _zip;
 	}
 
@@ -67,7 +67,7 @@ public:
 	 * Patterns are not allowed, as this is meant to be a quick File::exists()
 	 * replacement.
 	 */
-	virtual bool hasFile(const Common::String &name) const override;
+	bool hasFile(const Common::String &name) const override;
 
 	/**
 	 * Add all members of the Archive matching the specified pattern to list.
@@ -75,7 +75,7 @@ public:
 	 *
 	 * @return the number of members added to list
 	 */
-	virtual int listMatchingMembers(Common::ArchiveMemberList &list,
+	int listMatchingMembers(Common::ArchiveMemberList &list,
 		const Common::String &pattern) const override;
 
 	/**
@@ -84,12 +84,12 @@ public:
 	 *
 	 * @return the number of names added to list
 	 */
-	virtual int listMembers(Common::ArchiveMemberList &list) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
 
 	/**
 	 * Returns a ArchiveMember representation of the given file.
 	 */
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name)
+	const Common::ArchiveMemberPtr getMember(const Common::String &name)
 		const override;
 
 	/**
@@ -97,7 +97,7 @@ public:
 	 * archive. If no member with this name exists, 0 is returned.
 	 * @return the newly created input stream
 	 */
-	virtual Common::SeekableReadStream *createReadStreamForMember(
+	Common::SeekableReadStream *createReadStreamForMember(
 		const Common::String &name) const override;
 };
 

@@ -71,7 +71,7 @@ public:
 public:
 	MapDungeon(Ultima1Game *game, Ultima1Map *map) : MapBase(game, map), _random("UltimaDungeons"),
 		_dungeonLevel(0), _dungeonExitHitPoints(0) {}
-	virtual ~MapDungeon() {}
+	~MapDungeon() override {}
 
 	/**
 	 * Handles loading and saving viewport
@@ -81,24 +81,24 @@ public:
 	/**
 	 * Load the map
 	 */
-	virtual void load(Shared::Maps::MapId mapId) override;
+	void load(Shared::Maps::MapId mapId) override;
 
 	/**
 	 * Gets a tile at a given position
 	 */
-	virtual void getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer = true) override;
+	void getTileAt(const Point &pt, Shared::Maps::MapTile *tile, bool includePlayer = true) override;
 
 	/**
 	 * Changes the dungeon level by a given delta amount, and generates a new map
 	 * @param delta		Delta to change dungeon level by
 	 * @returns			False if dungeon left, true if still within dungeon
 	 */
-	virtual bool changeLevel(int delta) override;
+	bool changeLevel(int delta) override;
 
 	/**
 	 * Get the current map level
 	 */
-	virtual uint getLevel() const override { return _dungeonLevel; }
+	uint getLevel() const override { return _dungeonLevel; }
 
 	/**
 	 * Updates the map at the end of a turn
@@ -125,7 +125,7 @@ public:
 	 * @param direction		Direction
 	 * @param effectId		Sound effect to play
 	 */
-	virtual void attack(int direction, int effectId) override;
+	void attack(int direction, int effectId) override;
 
 	/**
 	 * Perform an attack in a direction
@@ -136,32 +136,32 @@ public:
 	 * @param agility		Agility threshold
 	 * @param widgetNa
 	 */
-	virtual void attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) override;
+	void attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) override;
 
 	/**
 	 * Do an inform action
 	 */
-	virtual void inform() override;
+	void inform() override;
 
 	/**
 	 * Do a climb action
 	 */
-	virtual void climb() override;
+	void climb() override;
 
 	/**
 	 * Do an open action
 	 */
-	virtual void open() override;
+	void open() override;
 
 	/**
 	 * Do an unlock action
 	 */
-	virtual void unlock() override { open(); }
+	void unlock() override { open(); }
 
 	/**
 	 * Cast a specific spell
 	 */
-	virtual void castSpell(uint spell) override;
+	void castSpell(uint spell) override;
 };
 
 } // End of namespace Maps

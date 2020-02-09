@@ -150,7 +150,7 @@ class MapWindow: public GUI_Widget {
 public:
 
 	MapWindow(Configuration *cfg, Map *m);
-	~MapWindow();
+	~MapWindow() override;
 
 	bool init(TileManager *tm, ObjManager *om, ActorManager *am);
 
@@ -289,31 +289,31 @@ public:
 	void updateBlacking();
 	void updateAmbience();
 	void update();
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
-	virtual GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseMotion(int x, int y, uint8 state);
-	GUI_status MouseDouble(int x, int y, Shared::MouseButton button);
-	GUI_status MouseClick(int x, int y, Shared::MouseButton button);
-	GUI_status Idle(void);
-	GUI_status MouseLeave(uint8 state);
-	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button);
-	GUI_status MouseHeld(int x, int y, Shared::MouseButton button);
-	GUI_status KeyDown(const Common::KeyState &key);
-	GUI_status MouseWheel(sint32 x, sint32 y);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseMotion(int x, int y, uint8 state) override;
+	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseClick(int x, int y, Shared::MouseButton button) override;
+	GUI_status Idle(void) override;
+	GUI_status MouseLeave(uint8 state) override;
+	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseHeld(int x, int y, Shared::MouseButton button) override;
+	GUI_status KeyDown(const Common::KeyState &key) override;
+	GUI_status MouseWheel(sint32 x, sint32 y) override;
 
-	void drag_drop_success(int x, int y, int message, void *data);
-	void drag_drop_failed(int x, int y, int message, void *data);
+	void drag_drop_success(int x, int y, int message, void *data) override;
+	void drag_drop_failed(int x, int y, int message, void *data) override;
 
-	bool drag_accept_drop(int x, int y, int message, void *data);
-	void drag_perform_drop(int x, int y, int message, void *data);
+	bool drag_accept_drop(int x, int y, int message, void *data) override;
+	void drag_perform_drop(int x, int y, int message, void *data) override;
 	bool move_on_drop(Obj *obj);
 	void set_interface();
 	InterfaceType get_interface();
 	bool is_interface_fullscreen_in_combat();
 
-	void drag_draw(int x, int y, int message, void *data);
+	void drag_draw(int x, int y, int message, void *data) override;
 
 	void update_mouse_cursor(uint32 mx, uint32 my);
 

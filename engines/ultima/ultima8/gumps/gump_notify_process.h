@@ -39,7 +39,7 @@ public:
 
 	GumpNotifyProcess();
 	GumpNotifyProcess(uint16 it);
-	virtual ~GumpNotifyProcess(void);
+	~GumpNotifyProcess(void) override;
 
 	void setGump(Gump *g);
 	uint16 getGump() const {
@@ -48,15 +48,15 @@ public:
 
 	virtual void notifyClosing(int res);
 
-	virtual void terminate() override;
+	void terminate() override;
 
-	virtual void run() override;
+	void run() override;
 
-	virtual void dumpInfo() override;
+	void dumpInfo() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

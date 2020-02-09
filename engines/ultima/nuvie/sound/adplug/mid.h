@@ -32,29 +32,29 @@ public:
 	static CPlayer *factory(Copl *newopl);
 
 	CmidPlayer(Copl *newopl);
-	~CmidPlayer();
+	~CmidPlayer() override;
 
-	bool load(const Std::string &filename);
+	bool load(const Std::string &filename) override;
 	bool load(Std::string &filename, int song_index);
 	//bool load(const Std::string &filename, const CFileProvider &fp);
-	bool update();
-	void rewind(int subsong);
-	float getrefresh();
+	bool update() override;
+	void rewind(int subsong) override;
+	float getrefresh() override;
 
-	Std::string gettype();
-	Std::string gettitle() {
+	Std::string gettype() override;
+	Std::string gettitle() override {
 		return Std::string(title);
 	}
-	Std::string getauthor() {
+	Std::string getauthor() override {
 		return Std::string(author);
 	}
-	Std::string getdesc() {
+	Std::string getdesc() override {
 		return Std::string(remarks);
 	}
-	unsigned int getinstruments() {
+	unsigned int getinstruments() override {
 		return tins;
 	}
-	unsigned int getsubsongs() {
+	unsigned int getsubsongs() override {
 		return subsongs;
 	}
 

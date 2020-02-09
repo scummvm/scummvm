@@ -49,7 +49,7 @@ protected:
 	/**
 	 * Handles moving creatures
 	 */
-	virtual void movement() override;
+	void movement() override;
 public:
 	/**
 	 * Returns true if the given widget can move to a given position on the map
@@ -72,7 +72,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~DungeonMonster() {}
+	~DungeonMonster() override {}
 
 	/**
 	 * Returns the monster's type
@@ -82,34 +82,34 @@ public:
 	/**
 	 * Returns true if a monster blocks the background behind him
 	 */
-	virtual bool isBlockingView() const override;
+	bool isBlockingView() const override;
 
 	/**
 	 * Handles loading and saving games
 	 */
-	virtual void synchronize(Common::Serializer &s) override;
+	void synchronize(Common::Serializer &s) override;
 
 	/**
 	 * Draw a monster
 	 */
-	virtual void draw(Shared::DungeonSurface &s, uint distance) override;
+	void draw(Shared::DungeonSurface &s, uint distance) override;
 
 	/**
 	 * Called to update the widget at the end of a turn
 	 * @param isPreUpdate		Update is called twice in succesion during the end of turn update.
 	 *		Once with true for all widgets, then with it false
 	 */
-	virtual void update(bool isPreUpdate) override;
+	void update(bool isPreUpdate) override;
 
 	/**
 	 * Returns true if the given widget can move to a given position on the map
 	 */
-	virtual CanMove canMoveTo(const Point &destPos) override;
+	CanMove canMoveTo(const Point &destPos) override;
 
 	/**
 	 * Handles attacking the player
 	 */
-	virtual void attackParty() override;
+	void attackParty() override;
 
 	/**
 	 * Handles the player attacking the monster

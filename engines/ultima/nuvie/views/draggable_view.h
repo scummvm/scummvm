@@ -43,13 +43,13 @@ private:
 
 public:
 	DraggableView(Configuration *config);
-	virtual ~DraggableView();
+	~DraggableView() override;
 
 	/* events, used for dragging the area. */
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	GUI_status MouseMotion(int x, int y, uint8 state);
-	void MoveRelative(int dx, int dy);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseMotion(int x, int y, uint8 state) override;
+	void MoveRelative(int dx, int dy) override;
 
 protected:
 	void set_bg_color_key(uint8 r, uint8 g, uint8 b);

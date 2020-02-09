@@ -50,12 +50,12 @@ protected:
 	Font *font;
 public:
 	CommandBarNewUI(Game *g);
-	~CommandBarNewUI();
+	~CommandBarNewUI() override;
 
-	virtual void Display(bool full_redraw);
-	virtual GUI_status KeyDown(const Common::KeyState &key);
-	virtual GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseUp(int x, int y, Shared::MouseButton button);
+	void Display(bool full_redraw) override;
+	GUI_status KeyDown(const Common::KeyState &key) override;
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
 
 private:
 	const char *get_command_name(sint8 command_num);

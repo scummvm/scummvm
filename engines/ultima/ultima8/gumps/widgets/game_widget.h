@@ -37,21 +37,21 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	GameWidget(int X, int Y, istring &game);
-	virtual ~GameWidget();
+	~GameWidget() override;
 
 	istring getGameName();
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
-	virtual uint16 TraceObjId(int32 mx, int32 my) override;
+	uint16 TraceObjId(int32 mx, int32 my) override;
 
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual Gump *OnMouseDown(int button, int32 mx, int32 my) override;
-	virtual void OnMouseOver() override;
-	virtual void OnMouseLeft() override;
+	Gump *OnMouseDown(int button, int32 mx, int32 my) override;
+	void OnMouseOver() override;
+	void OnMouseLeft() override;
 
-	virtual void ChildNotify(Gump *child, uint32 message) override;
+	void ChildNotify(Gump *child, uint32 message) override;
 
 	enum Message {
 		GAME_PLAY     = 1,

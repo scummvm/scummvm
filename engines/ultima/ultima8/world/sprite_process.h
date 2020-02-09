@@ -61,10 +61,10 @@ public:
 	              bool delayed_init = false);
 
 	//! The SpriteProcess destructor
-	virtual ~SpriteProcess(void);
+	~SpriteProcess(void) override;
 
 	//! The SpriteProcess run function
-	virtual void run() override;
+	void run() override;
 
 	INTRINSIC(I_createSprite);
 //	INTRINSIC(I_createSpriteEx);
@@ -75,7 +75,7 @@ protected:
 public:
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

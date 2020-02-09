@@ -59,7 +59,7 @@ protected:
 
 public:
 	SpellView(Configuration *cfg);
-	~SpellView();
+	~SpellView() override;
 
 	bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);
 
@@ -69,37 +69,37 @@ public:
 			return spell_container->quality;
 		} else return -1;
 	}
-	void Display(bool full_redraw);
-	void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y);
+	void Display(bool full_redraw) override;
+	void PlaceOnScreen(Screen *s, GUI_DragManager *dm, int x, int y) override;
 	void close_look();
-	GUI_status KeyDown(const Common::KeyState &key);
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
+	GUI_status KeyDown(const Common::KeyState &key) override;
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
 
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) {
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseMotion(int x, int y, uint8 state) {
+	GUI_status MouseMotion(int x, int y, uint8 state) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseEnter(uint8 state) {
+	GUI_status MouseEnter(uint8 state) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseLeave(uint8 state) {
+	GUI_status MouseLeave(uint8 state) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseClick(int x, int y, Shared::MouseButton button) {
+	GUI_status MouseClick(int x, int y, Shared::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) {
+	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) {
+	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseHeld(int x, int y, Shared::MouseButton button) {
+	GUI_status MouseHeld(int x, int y, Shared::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status MouseWheel(sint32 x, sint32 y);
+	GUI_status MouseWheel(sint32 x, sint32 y) override;
 
 protected:
 
@@ -128,7 +128,7 @@ protected:
 	GUI_status cancel_spell();
 	uint16 get_available_spell_count(Spell *s);
 
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 };
 
 } // End of namespace Nuvie

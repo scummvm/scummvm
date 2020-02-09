@@ -84,7 +84,7 @@ public:
 		_out = data_stream;
 	}
 
-	virtual ~OFileDataSource() {
+	~OFileDataSource() override {
 		FORGET_OBJECT(_out);
 	}
 
@@ -92,61 +92,61 @@ public:
 		return !_out->err();
 	}
 
-	virtual void write1(uint32 val) override {
+	void write1(uint32 val) override {
 		_out->writeByte(val & 0xff);
 	}
 
-	virtual void write2(uint16 val) override {
+	void write2(uint16 val) override {
 		_out->writeUint16LE(val);
 	}
 
-	virtual void write2high(uint16 val) override {
+	void write2high(uint16 val) override {
 		_out->writeUint16BE(val);
 	}
 
-	virtual void write3(uint32 val) override {
+	void write3(uint32 val) override {
 		_out->writeByte(static_cast<byte>(val & 0xff));
 		_out->writeByte(static_cast<byte>((val >> 8) & 0xff));
 		_out->writeByte(static_cast<byte>((val >> 16) & 0xff));
 	}
 
-	virtual void write4(uint32 val) override {
+	void write4(uint32 val) override {
 		_out->writeUint32LE(val);
 	}
 
-	virtual void write4high(uint32 val) override {
+	void write4high(uint32 val) override {
 		_out->writeUint32BE(val);
 	}
 
-	virtual void write(const void *b, uint32 len) override {
+	void write(const void *b, uint32 len) override {
 		_out->write(static_cast<const char *>(b), len);
 	}
 
-	virtual void seek(uint32 pos) override {
+	void seek(uint32 pos) override {
 		Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_out);
 		assert(ws);
 		ws->seek(pos);
 	}
 
-	virtual void skip(int32 amount) override {
+	void skip(int32 amount) override {
 		Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_out);
 		assert(ws);
 		ws->seek(amount, SEEK_CUR);
 	}
 
-	virtual uint32 getSize() const override {
+	uint32 getSize() const override {
 		Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_out);
 		assert(ws);
 		return ws->size();
 	}
 
-	virtual uint32 getPos() const override {
+	uint32 getPos() const override {
 		Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(_out);
 		assert(ws);
 		return _out->pos();
 	}
 
-	virtual Common::WriteStream *GetRawStream() override {
+	Common::WriteStream *GetRawStream() override {
 		return _out;
 	}
 };
@@ -169,60 +169,60 @@ public:
 		size = len;
 	};
 
-	virtual ~OBufferDataSource() {};
+	~OBufferDataSource() override {};
 
-	virtual void write1(uint32 val) override {
+	void write1(uint32 val) override {
 		*buf_ptr++ = val & 0xff;
 	};
 
-	virtual void write2(uint16 val) override {
+	void write2(uint16 val) override {
 		*buf_ptr++ = val & 0xff;
 		*buf_ptr++ = (val >> 8) & 0xff;
 	};
 
-	virtual void write2high(uint16 val) override {
+	void write2high(uint16 val) override {
 		*buf_ptr++ = (val >> 8) & 0xff;
 		*buf_ptr++ = val & 0xff;
 	};
 
-	virtual void write3(uint32 val) override {
+	void write3(uint32 val) override {
 		*buf_ptr++ = val & 0xff;
 		*buf_ptr++ = (val >> 8) & 0xff;
 		*buf_ptr++ = (val >> 16) & 0xff;
 	};
 
-	virtual void write4(uint32 val) override {
+	void write4(uint32 val) override {
 		*buf_ptr++ = val & 0xff;
 		*buf_ptr++ = (val >> 8) & 0xff;
 		*buf_ptr++ = (val >> 16) & 0xff;
 		*buf_ptr++ = (val >> 24) & 0xff;
 	};
 
-	virtual void write4high(uint32 val) override {
+	void write4high(uint32 val) override {
 		*buf_ptr++ = (val >> 24) & 0xff;
 		*buf_ptr++ = (val >> 16) & 0xff;
 		*buf_ptr++ = (val >> 8) & 0xff;
 		*buf_ptr++ = val & 0xff;
 	};
 
-	virtual void write(const void *b, uint32 len) override {
+	void write(const void *b, uint32 len) override {
 		Common::copy((const byte *)b, (const byte *)b + len, buf_ptr);
 		buf_ptr += len;
 	};
 
-	virtual void seek(uint32 pos) override {
+	void seek(uint32 pos) override {
 		buf_ptr = const_cast<unsigned char *>(buf) + pos;
 	};
 
-	virtual void skip(int32 pos) override {
+	void skip(int32 pos) override {
 		buf_ptr += pos;
 	};
 
-	virtual uint32 getSize() const override {
+	uint32 getSize() const override {
 		return size;
 	};
 
-	virtual uint32 getPos() const override {
+	uint32 getPos() const override {
 		return static_cast<uint32>(buf_ptr - buf);
 	};
 };
@@ -234,47 +234,47 @@ private:
 public:
 	ODequeDataSource() {}
 
-	virtual ~ODequeDataSource() {}
+	~ODequeDataSource() override {}
 
 	const Std::deque<byte> &buf() const {
 		return _out;
 	}
 
-	virtual void write1(uint32 val) override {
+	void write1(uint32 val) override {
 		_out.push_back(static_cast<byte>(val & 0xff));
 	}
 
-	virtual void write2(uint16 val) override {
+	void write2(uint16 val) override {
 		_out.push_back(static_cast<byte>(val & 0xff));
 		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
 	}
 
-	virtual void write2high(uint16 val) override {
+	void write2high(uint16 val) override {
 		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
 		_out.push_back(static_cast<byte>(val & 0xff));
 	}
 
-	virtual void write3(uint32 val) override {
+	void write3(uint32 val) override {
 		_out.push_back(static_cast<byte>(val & 0xff));
 		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
 		_out.push_back(static_cast<byte>((val >> 16) & 0xff));
 	}
 
-	virtual void write4(uint32 val) override {
+	void write4(uint32 val) override {
 		_out.push_back(static_cast<byte>(val & 0xff));
 		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
 		_out.push_back(static_cast<byte>((val >> 16) & 0xff));
 		_out.push_back(static_cast<byte>((val >> 24) & 0xff));
 	}
 
-	virtual void write4high(uint32 val) override {
+	void write4high(uint32 val) override {
 		_out.push_back(static_cast<byte>((val >> 24) & 0xff));
 		_out.push_back(static_cast<byte>((val >> 16) & 0xff));
 		_out.push_back(static_cast<byte>((val >> 8) & 0xff));
 		_out.push_back(static_cast<byte>(val & 0xff));
 	}
 
-	virtual void write(const void *b, uint32 length) override {
+	void write(const void *b, uint32 length) override {
 		write(b, length, length);
 	}
 
@@ -290,18 +290,18 @@ public:
 		_out.clear();
 	}
 
-	virtual void seek(uint32 /*pos*/) override {
+	void seek(uint32 /*pos*/) override {
 		/*_out->seekp(pos); FIXME: Do something here. */
 	}
-	virtual void skip(int32 /*pos*/) override {
+	void skip(int32 /*pos*/) override {
 		/*_out->seekp(pos, Std::ios::cur); FIXME: Do something here. */
 	}
 
-	virtual uint32 getSize() const override {
+	uint32 getSize() const override {
 		return static_cast<uint32>(_out.size());
 	}
 
-	virtual uint32 getPos() const override {
+	uint32 getPos() const override {
 		return static_cast<uint32>(_out.size()); /*return _out->tellp(); FIXME: Do something here. */
 	}
 };
@@ -357,35 +357,35 @@ public:
 		return buf;
 	}
 
-	virtual ~OAutoBufferDataSource() override {
+	~OAutoBufferDataSource() override {
 		delete [] buf_ptr;
 	}
 
-	virtual void write1(uint32 val) override {
+	void write1(uint32 val) override {
 		checkResize(1);
 		*buf_ptr++ = val & 0xff;
 	};
 
-	virtual void write2(uint16 val) override {
+	void write2(uint16 val) override {
 		checkResize(2);
 		*buf_ptr++ = val & 0xff;
 		*buf_ptr++ = (val >> 8) & 0xff;
 	};
 
-	virtual void write2high(uint16 val) override {
+	void write2high(uint16 val) override {
 		checkResize(2);
 		*buf_ptr++ = (val >> 8) & 0xff;
 		*buf_ptr++ = val & 0xff;
 	};
 
-	virtual void write3(uint32 val) override {
+	void write3(uint32 val) override {
 		checkResize(3);
 		*buf_ptr++ = val & 0xff;
 		*buf_ptr++ = (val >> 8) & 0xff;
 		*buf_ptr++ = (val >> 16) & 0xff;
 	};
 
-	virtual void write4(uint32 val) override {
+	void write4(uint32 val) override {
 		checkResize(4);
 		*buf_ptr++ = val & 0xff;
 		*buf_ptr++ = (val >> 8) & 0xff;
@@ -393,7 +393,7 @@ public:
 		*buf_ptr++ = (val >> 24) & 0xff;
 	};
 
-	virtual void write4high(uint32 val) override {
+	void write4high(uint32 val) override {
 		checkResize(4);
 		*buf_ptr++ = (val >> 24) & 0xff;
 		*buf_ptr++ = (val >> 16) & 0xff;
@@ -401,13 +401,13 @@ public:
 		*buf_ptr++ = val & 0xff;
 	};
 
-	virtual void write(const void *b, uint32 len) override {
+	void write(const void *b, uint32 len) override {
 		checkResize(len);
 		Common::copy((const byte *)b, (const byte *)b + len, buf_ptr);
 		buf_ptr += len;
 	};
 
-	virtual void seek(uint32 pos) override {
+	void seek(uint32 pos) override {
 		// No seeking past the end of the buffer
 		if (pos <= size) loc = pos;
 		else loc = size;
@@ -415,7 +415,7 @@ public:
 		buf_ptr = const_cast<unsigned char *>(buf) + loc;
 	};
 
-	virtual void skip(int32 pos) override {
+	void skip(int32 pos) override {
 		// No seeking past the end
 		if (pos >= 0) {
 			loc += pos;
@@ -430,11 +430,11 @@ public:
 		buf_ptr = const_cast<unsigned char *>(buf) + loc;
 	};
 
-	virtual uint32 getSize() const override {
+	uint32 getSize() const override {
 		return size;
 	};
 
-	virtual uint32 getPos() const override {
+	uint32 getPos() const override {
 		return static_cast<uint32>(buf_ptr - buf);
 	};
 

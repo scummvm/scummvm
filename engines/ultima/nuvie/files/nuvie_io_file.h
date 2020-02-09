@@ -35,7 +35,7 @@ namespace Nuvie {
 class NuvieIOFile : public NuvieIO {
 public:
 	NuvieIOFile() {}
-	virtual ~NuvieIOFile() {}
+	~NuvieIOFile() override {}
 
 	virtual bool open(const Common::String &filename) {
 		return false;
@@ -48,18 +48,18 @@ private:
 	Common::File _srcFile;
 public:
 	NuvieIOFileRead() : NuvieIOFile(), _file(nullptr) {}
-	virtual ~NuvieIOFileRead();
+	~NuvieIOFileRead() override;
 
-	virtual bool open(const Common::String &filename) override;
+	bool open(const Common::String &filename) override;
 	virtual bool open(Common::InSaveFile *saveFile);
-	virtual void close() override;
-	virtual void seek(uint32 new_pos) override;
+	void close() override;
+	void seek(uint32 new_pos) override;
 
-	virtual uint8 read1() override;
-	virtual uint16 read2() override;
-	virtual uint32 read4() override;
+	uint8 read1() override;
+	uint16 read2() override;
+	uint32 read4() override;
 
-	virtual bool readToBuf(unsigned char *buf, uint32 buf_size) override;
+	bool readToBuf(unsigned char *buf, uint32 buf_size) override;
 
 	bool isOpen() const {
 		return _file != nullptr;
@@ -86,10 +86,10 @@ protected:
 	}
 public:
 	NuvieIOFileWrite();
-	virtual ~NuvieIOFileWrite();
-	virtual bool open(const Common::String &filename) override;
-	virtual void close() override;
-	virtual void seek(uint32 new_pos) override;
+	~NuvieIOFileWrite() override;
+	bool open(const Common::String &filename) override;
+	void close() override;
+	void seek(uint32 new_pos) override;
 
 	bool write1(uint8 src) override;
 	bool write2(uint16 src) override;
@@ -98,7 +98,7 @@ public:
 		_description = desc;
 	}
 
-	virtual uint32 writeBuf(const unsigned char *src, uint32 src_size) override;
+	uint32 writeBuf(const unsigned char *src, uint32 src_size) override;
 	uint32 write(NuvieIO *src) override;
 };
 

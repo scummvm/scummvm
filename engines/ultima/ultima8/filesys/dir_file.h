@@ -36,15 +36,15 @@ public:
 
 	//! create DirFile from path
 	explicit DirFile(const Std::string &path);
-	virtual ~DirFile();
+	~DirFile() override;
 
-	virtual bool exists(const Std::string &name) override;
+	bool exists(const Std::string &name) override;
 
-	virtual uint8 *getObject(const Std::string &name, uint32 *size = 0) override;
+	uint8 *getObject(const Std::string &name, uint32 *size = 0) override;
 
-	virtual uint32 getSize(const Std::string &name) override;
+	uint32 getSize(const Std::string &name) override;
 
-	virtual uint32 getCount() override {
+	uint32 getCount() override {
 		return count;
 	}
 

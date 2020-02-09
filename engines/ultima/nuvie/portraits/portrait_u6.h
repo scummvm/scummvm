@@ -41,15 +41,15 @@ class PortraitU6 : public Portrait {
 public:
 
 	PortraitU6(Configuration *cfg) : Portrait(cfg) {};
-	~PortraitU6() {};
+	~PortraitU6() override {};
 
-	bool init();
-	bool load(NuvieIO *objlist);
-	unsigned char *get_portrait_data(Actor *actor);
+	bool init() override;
+	bool load(NuvieIO *objlist) override;
+	unsigned char *get_portrait_data(Actor *actor) override;
 
 private:
 
-	uint8 get_portrait_num(Actor *actor);
+	uint8 get_portrait_num(Actor *actor) override;
 
 };
 

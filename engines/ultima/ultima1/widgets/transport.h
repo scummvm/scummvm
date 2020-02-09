@@ -45,7 +45,7 @@ public:
 	/**
 	 * Get the tile for the transport method
 	 */
-	virtual uint getTileNum() const override;
+	uint getTileNum() const override;
 };
 
 /**
@@ -63,7 +63,7 @@ public:
 	/**
 	 * Returns true if the player can move onto a tile the widget occupies
 	 */
-	virtual bool isBlocking() const { return false; }
+	bool isBlocking() const override { return false; }
 
 	/**
 	 * Board a transport
@@ -103,7 +103,7 @@ public:
 	/**
 	 * Get the tile for the transport method
 	 */
-	virtual uint getTileNum() const override { return 9; }
+	uint getTileNum() const override { return 9; }
 };
 
 /**
@@ -123,7 +123,7 @@ public:
 	/**
 	 * Get the tile for the transport method
 	 */
-	virtual uint getTileNum() const override { return 10; }
+	uint getTileNum() const override { return 10; }
 };
 
 /**
@@ -143,7 +143,7 @@ public:
 	/**
 	 * Get the tile for the transport method
 	 */
-	virtual uint getTileNum() const override { return 11; }
+	uint getTileNum() const override { return 11; }
 };
 
 /**
@@ -163,12 +163,12 @@ public:
 	/**
 	 * Get the name of a transport's weapons
 	 */
-	virtual Common::String getWeaponsName() override;
+	Common::String getWeaponsName() override;
 
 	/**
 	 * Get the tile for the transport method
 	 */
-	virtual uint getTileNum() const override { return 12; }
+	uint getTileNum() const override { return 12; }
 };
 
 /**
@@ -188,12 +188,12 @@ public:
 	/**
 	 * Get the name of a transport's weapons
 	 */
-	virtual Common::String getWeaponsName() override;
+	Common::String getWeaponsName() override;
 
 	/**
 	 * Get the tile for the transport method
 	 */
-	virtual uint getTileNum() const override { return 14; }
+	uint getTileNum() const override { return 14; }
 };
 
 /**
@@ -215,12 +215,12 @@ public:
 	/**
 	 * Handles loading and saving data
 	 */
-	virtual void synchronize(Common::Serializer &s) override;
+	void synchronize(Common::Serializer &s) override;
 
 	/**
 	 * Get the tile for the transport method
 	 */
-	virtual uint getTileNum() const override { return 15; }
+	uint getTileNum() const override { return 15; }
 };
 
 /**
@@ -240,12 +240,12 @@ public:
 	/**
 	 * Get the tile for the transport method
 	 */
-	virtual uint getTileNum() const override { return 16; }
+	uint getTileNum() const override { return 16; }
 
 	/**
 	 * Board a transport
 	 */
-	virtual void board() override;
+	void board() override;
 };
 
 } // End of namespace Widgets

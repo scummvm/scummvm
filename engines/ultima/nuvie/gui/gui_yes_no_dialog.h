@@ -47,11 +47,11 @@ private:
 public:
 	GUI_YesNoDialog(GUI *gui, int x, int y, int w, int h, const char *msg,
         CallBack *yesCallback, CallBack *noCallback);
-	~GUI_YesNoDialog();
+	~GUI_YesNoDialog() override;
 
-	GUI_status KeyDown(const Common::KeyState &key);
+	GUI_status KeyDown(const Common::KeyState &key) override;
 
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 };
 
 } // End of namespace Nuvie

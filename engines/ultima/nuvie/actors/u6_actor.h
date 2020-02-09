@@ -69,64 +69,64 @@ protected:
 public:
 
 	U6Actor(Map *m, ObjManager *om, GameClock *c);
-	~U6Actor();
+	~U6Actor() override;
 
-	bool init(uint8 obj_status = NO_OBJ_STATUS);
-	virtual uint16 get_downward_facing_tile_num();
-	bool updateSchedule(uint8 hour, bool teleport = false);
-	void set_worktype(uint8 new_worktype, bool init = false);
-	void revert_worktype();
-	void change_base_obj_n(uint16 val);
-	void set_direction(uint8 d);
-	void face_location(uint16 lx, uint16 ly);
-	void clear();
-	bool move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags = 0);
-	bool check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags = 0);
-	void twitch();
+	bool init(uint8 obj_status = NO_OBJ_STATUS) override;
+	uint16 get_downward_facing_tile_num() override;
+	bool updateSchedule(uint8 hour, bool teleport = false) override;
+	void set_worktype(uint8 new_worktype, bool init = false) override;
+	void revert_worktype() override;
+	void change_base_obj_n(uint16 val) override;
+	void set_direction(uint8 d) override;
+	void face_location(uint16 lx, uint16 ly) override;
+	void clear() override;
+	bool move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags = 0) override;
+	bool check_move(uint16 new_x, uint16 new_y, uint8 new_z, ActorMoveFlags flags = 0) override;
+	void twitch() override;
 	void do_twitch();
-	void die(bool create_body = true);
-	void set_paralyzed(bool paralyzed);
-	void set_protected(bool val);
-	void set_charmed(bool val);
-	void set_corpser_flag(bool val);
-	void set_cursed(bool val);
-	void set_asleep(bool val);
-	void set_ethereal(bool val) {
+	void die(bool create_body = true) override;
+	void set_paralyzed(bool paralyzed) override;
+	void set_protected(bool val) override;
+	void set_charmed(bool val) override;
+	void set_corpser_flag(bool val) override;
+	void set_cursed(bool val) override;
+	void set_asleep(bool val) override;
+	void set_ethereal(bool val) override {
 		current_movetype = val ? MOVETYPE_U6_ETHEREAL : actor_type->movetype;
 		ethereal = val;
 	}
 
-	uint8 get_object_readiable_location(Obj *obj);
-	const CombatType *get_object_combat_type(uint16 objN);
-	ActorTileType get_tile_type() {
+	uint8 get_object_readiable_location(Obj *obj) override;
+	const CombatType *get_object_combat_type(uint16 objN) override;
+	ActorTileType get_tile_type() override {
 		return (actor_type->tile_type);
 	}
-	Obj *inventory_get_food(Obj *container = 0);
-	uint8 get_maxhp() {
+	Obj *inventory_get_food(Obj *container = 0) override;
+	uint8 get_maxhp() override {
 		return (((level * 30) <= 255) ? (level * 30) : 255);    // U6
 	}
-	uint8 get_maxmagic();
+	uint8 get_maxmagic() override;
 
-	bool weapon_can_hit(const CombatType *weapon, Actor *target, uint16 *hit_x, uint16 *hit_y);
+	bool weapon_can_hit(const CombatType *weapon, Actor *target, uint16 *hit_x, uint16 *hit_y) override;
 
-	bool is_immobile(); // frozen by worktype or status
+	bool is_immobile() override; // frozen by worktype or status
 	bool can_twitch();
 
-	bool get_corpser_flag() {
+	bool get_corpser_flag() override {
 		return (movement_flags & ACTOR_MOVEMENT_FLAGS_CORPSER);
 	}
-	bool can_be_passed(Actor *other);
-	bool will_not_talk();
+	bool can_be_passed(Actor *other) override;
+	bool will_not_talk() override;
 
 	void set_actor_obj_n(uint16 new_obj_n);
-	void pathfind_to(MapCoord &d);
-	void handle_lightsource(uint8 hour);
+	void pathfind_to(MapCoord &d) override;
+	void handle_lightsource(uint8 hour) override;
 
-	uint8 get_hp_text_color();
-	uint8 get_str_text_color() {
+	uint8 get_hp_text_color() override;
+	uint8 get_str_text_color() override {
 		return 0x48;
 	}
-	uint8 get_dex_text_color() {
+	uint8 get_dex_text_color() override {
 		return 0x48;
 	}
 
@@ -166,10 +166,10 @@ protected:
 	inline void clear_surrounding_objs_list(bool delete_objs = false);
 	inline void init_surrounding_obj(uint16 x, uint16 y, uint8 z, uint16 actor_obj_n, uint16 obj_frame_n);
 
-	const CombatType *get_hand_combat_type();
+	const CombatType *get_hand_combat_type() override;
 
-	void print();
-	const char *get_worktype_string(uint32 wt);
+	void print() override;
+	const char *get_worktype_string(uint32 wt) override;
 	void inventory_make_all_objs_ok_to_take();
 };
 

@@ -62,11 +62,11 @@ class PortraitView : public View {
 
 public:
 	PortraitView(Configuration *cfg);
-	~PortraitView();
+	~PortraitView() override;
 
 	bool init(uint16 x, uint16 y, Font *f, Party *p, Player *player, TileManager *tm, ObjManager *om, Portrait *port);
-	void Display(bool full_redraw);
-	GUI_status HandleEvent(const Common::Event *event);
+	void Display(bool full_redraw) override;
+	GUI_status HandleEvent(const Common::Event *event) override;
 
 	bool set_portrait(Actor *actor, const char *name);
 	void set_show_cursor(bool state) {

@@ -45,7 +45,7 @@ protected:
 public:
 	TextCursor() : _visible(false) {
 	}
-	virtual ~TextCursor() {
+	~TextCursor() override {
 	}
 
 	/**
@@ -66,7 +66,7 @@ public:
 	/**
 	 * Get the bounds of the cursor
 	 */
-	virtual Common::Rect getBounds() const { return _bounds; }
+	Common::Rect getBounds() const override { return _bounds; }
 
 	/**
 	 * Returns the position of the cursor

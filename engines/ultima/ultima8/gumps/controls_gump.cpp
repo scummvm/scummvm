@@ -44,9 +44,9 @@ class ControlEntryGump : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 	ControlEntryGump(int x_, int y_, int width, const char *binding, const char *name);
-	virtual ~ControlEntryGump(void);
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
-	virtual void ChildNotify(Gump *child, uint32 message) override;
+	~ControlEntryGump(void) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
+	void ChildNotify(Gump *child, uint32 message) override;
 	void init();
 protected:
 	istring bindingName;

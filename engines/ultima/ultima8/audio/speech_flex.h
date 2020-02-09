@@ -38,7 +38,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	SpeechFlex(IDataSource *ds);
-	virtual ~SpeechFlex(void);
+	~SpeechFlex(void) override;
 
 	int getIndexForPhrase(const Std::string &phrase,
 	                      uint32 start, uint32 &end) const;

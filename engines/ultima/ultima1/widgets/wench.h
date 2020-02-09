@@ -35,7 +35,7 @@ protected:
 	/**
 	 * Handles moving creatures
 	 */
-	virtual void movement() override;
+	void movement() override;
 public:
 	DECLARE_WIDGET(Wench)
 	CLASSDEF;
@@ -60,7 +60,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Wench() {}
+	~Wench() override {}
 };
 
 } // End of namespace Widgets

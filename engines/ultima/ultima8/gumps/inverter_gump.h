@@ -37,17 +37,17 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	InverterGump(int32 x, int32 y, int32 width, int32 height);
-	virtual ~InverterGump(void);
+	~InverterGump(void) override;
 
-	virtual void Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
-	virtual void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	void Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 
-	virtual void ParentToGump(int32 &px, int32 &py,
+	void ParentToGump(int32 &px, int32 &py,
 	                          PointRoundDir r = ROUND_TOPLEFT) override;
-	virtual void GumpToParent(int32 &gx, int32 &gy,
+	void GumpToParent(int32 &gx, int32 &gy,
 	                          PointRoundDir r = ROUND_TOPLEFT) override;
 
-	virtual void RenderSurfaceChanged() override;
+	void RenderSurfaceChanged() override;
 
 protected:
 	RenderSurface *buffer;

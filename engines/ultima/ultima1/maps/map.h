@@ -90,22 +90,22 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Ultima1Map();
+	~Ultima1Map() override;
 
 	/**
 	 * Clears all map data
 	 */
-	virtual void clear() override;
+	void clear() override;
 
 	/**
 	 * Load a given map
 	 */
-	virtual void load(Shared::Maps::MapId mapId) override;
+	void load(Shared::Maps::MapId mapId) override;
 
 	/**
 	 * Handles loading and saving the map's data
 	 */
-	virtual void synchronize(Common::Serializer &s) override;
+	void synchronize(Common::Serializer &s) override;
 
 	/**
 	 * Action pass-throughs

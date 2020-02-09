@@ -55,41 +55,41 @@ private:
 
 	bool playIntro();
 protected:
-    virtual bool initialize() override;
+    bool initialize() override;
 
     /**
      * Returns the data archive folder and version that's required
      */
-    virtual bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
+    bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
 public:
 	const Std::string c_empty_string;
 public:
 	NuvieEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
-	~NuvieEngine();
+	~NuvieEngine() override;
 
 	/**
 	 * Play the game
 	 */
-	virtual Common::Error run() override;
+	Common::Error run() override;
 
 	/**
 	 * Indicates whether a game state can be loaded.
 	 * @param isAutosave	Flags whether it's an autosave check
 	 */
-	virtual bool canLoadGameStateCurrently(bool isAutosave) override;
+	bool canLoadGameStateCurrently(bool isAutosave) override;
 
 	/**
 	 * Indicates whether a game state can be saved.
 	 * @param isAutosave	Flags whether it's an autosave check
 	 */
-	virtual bool canSaveGameStateCurrently(bool isAutosave) override;
+	bool canSaveGameStateCurrently(bool isAutosave) override;
 
 	/**
 	 * Load a game state.
 	 * @param slot	the slot from which a savestate should be loaded
 	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual Common::Error loadGameState(int slot) override;
+	Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Save a game state.
@@ -98,9 +98,9 @@ public:
 	 * @param isAutosave If true, autosave is being created
 	 * @return returns kNoError on success, else an error code.
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 
-	virtual ::GUI::Debugger *getDebugger() override {
+	::GUI::Debugger *getDebugger() const override {
 		return _debugger;
 	}
 

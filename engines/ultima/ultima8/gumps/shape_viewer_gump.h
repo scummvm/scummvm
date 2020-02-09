@@ -42,19 +42,19 @@ public:
 	ShapeViewerGump(int width, int height,
 	                Std::vector<Std::pair<Std::string, ShapeArchive *> > &flexes,
 	                uint32 _Flags = 0, int32 layer = LAYER_MODAL);
-	virtual ~ShapeViewerGump(void);
+	~ShapeViewerGump(void) override;
 
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual bool OnKeyDown(int key, int mod) override;
-	virtual bool OnTextInput(int unicode) override;
+	bool OnKeyDown(int key, int mod) override;
+	bool OnTextInput(int unicode) override;
 
 	static void U8ShapeViewer();
 	static void ConCmd_U8ShapeViewer(const Console::ArgvType &argv);
 
 	bool loadData(IDataSource *ids);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	Std::vector<Std::pair<Std::string, ShapeArchive *> > flexes;
 	unsigned int curflex;

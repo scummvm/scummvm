@@ -85,7 +85,7 @@ public:
 
 	GUI_Widget(void *data);
 	GUI_Widget(void *data, int x, int y, int w, int h);
-	virtual ~GUI_Widget();
+	~GUI_Widget() override;
 
 	int AddWidget(GUI_Widget *widget);
 
@@ -184,8 +184,8 @@ public:
 	virtual GUI_status MouseHeld(int x, int y, Shared::MouseButton button);
 	// </SB-X>
 
-	bool drag_accept_drop(int x, int y, int message, void *data);
-	void drag_perform_drop(int x, int y, int message, void *data);
+	bool drag_accept_drop(int x, int y, int message, void *data) override;
+	void drag_perform_drop(int x, int y, int message, void *data) override;
 
 	/* Main event handler function.
 	   This function gets raw SDL events from the GUI.

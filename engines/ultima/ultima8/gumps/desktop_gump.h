@@ -36,14 +36,14 @@ public:
 
 	DesktopGump();
 	DesktopGump(int32 x, int32 y, int32 width, int32 height);
-	virtual ~DesktopGump(void);
+	~DesktopGump(void) override;
 
-	virtual void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
-	virtual void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	void PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 
-	virtual bool StartDraggingChild(Gump *gump, int32 mx, int32 my) override;
-	virtual void DraggingChild(Gump *gump, int mx, int my) override;
-	virtual void StopDraggingChild(Gump *gump) override;
+	bool StartDraggingChild(Gump *gump, int32 mx, int32 my) override;
+	void DraggingChild(Gump *gump, int mx, int my) override;
+	void StopDraggingChild(Gump *gump) override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 
@@ -54,8 +54,8 @@ public:
 	}
 
 protected:
-	virtual void saveData(ODataSource *ods) override;
-	virtual void RenderSurfaceChanged() override;
+	void saveData(ODataSource *ods) override;
+	void RenderSurfaceChanged() override;
 };
 
 } // End of namespace Ultima8

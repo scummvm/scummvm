@@ -41,18 +41,18 @@ private:
 public:
 
 	U6Font();
-	~U6Font();
+	~U6Font() override;
 
 	bool init(unsigned char *data, uint16 num_chars, uint16 char_offset);
 
-	uint16 getCharWidth(uint8 c) {
+	uint16 getCharWidth(uint8 c) override {
 		return 8;
 	}
-	uint16 getCharHeight() {
+	uint16 getCharHeight() override {
 		return 8;
 	}
 	uint16 drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
-	                uint8 color);
+	                uint8 color) override;
 protected:
 
 };

@@ -52,27 +52,27 @@ public:
 public:
 	CLASSDEF;
 	Ultima1Game();
-	virtual ~Ultima1Game();
+	~Ultima1Game() override;
 
 	/**
 	 * Handles loading and saving games
 	 */
-	virtual void synchronize(Common::Serializer &s) override;
+	void synchronize(Common::Serializer &s) override;
 
 	/**
 	 * Returns true if the current video mode is VGA
 	 */
-	virtual bool isVGA() const override { return _videoMode == VIDEOMODE_VGA; }
+	bool isVGA() const override { return _videoMode == VIDEOMODE_VGA; }
 
 	/**
 	 * Called when the game starts
 	 */
-	virtual void starting(bool isLoading) override;
+	void starting(bool isLoading) override;
 
 	/**
 	 * Returns true if the game can currently be saved
 	 */
-	virtual bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 
 	/**
 	 * Give some treasure

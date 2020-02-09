@@ -41,32 +41,32 @@ private:
 	void loadWidgets();
 public:
 	MapOverworld(Ultima1Game *game, Ultima1Map *map) : MapBase(game, map) {}
-	virtual ~MapOverworld() {}
+	~MapOverworld() override {}
 
 	/**
 	 * Load the map
 	 */
-	virtual void load(Shared::Maps::MapId mapId) override;
+	void load(Shared::Maps::MapId mapId) override;
 
 	/**
 	 * Returns whether the map wraps around to the other side at it's edges (i.e. the overworld)
 	 */
-	virtual bool isMapWrapped() const override { return true; }
+	bool isMapWrapped() const override { return true; }
 
 	/**
 	 * Shifts the viewport by a given delta
 	 */
-	virtual void shiftViewport(const Point &delta) override;
+	void shiftViewport(const Point &delta) override;
 
 	/**
 	 * Get the viewport position
 	 */
-	virtual Point getViewportPosition(const Point &viewportSize) override;
+	Point getViewportPosition(const Point &viewportSize) override;
 
 	/**
 	 * Gets a point relative to the current position
 	 */
-	virtual Point getDeltaPosition(const Point &delta) override;
+	Point getDeltaPosition(const Point &delta) override;
 
 	/**
 	 * Perform an attack in a direction
@@ -77,27 +77,27 @@ public:
 	 * @param agility		Agility threshold
 	 * @param widgetNa
 	 */
-	virtual void attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) override;
+	void attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) override;
 
 	/**
 	 * Board a transport
 	 */
-	virtual void board() override;
+	void board() override;
 
 	/**
 	 * Do an enter action
 	 */
-	virtual void enter() override;
+	void enter() override;
 
 	/**
 	 * Do an inform action
 	 */
-	virtual void inform() override;
+	void inform() override;
 
 	/**
 	 * Do an exit transport action
 	 */
-	virtual void disembark() override;
+	void disembark() override;
 
 	/**
 	 * Get the lands number the player is currently within

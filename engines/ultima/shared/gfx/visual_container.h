@@ -54,22 +54,22 @@ public:
 		VisualItem(name, parent), _mouseFocusItem(nullptr) {}
 	VisualContainer(const Common::String &name, const Rect &r, TreeItem *parent = nullptr) :
 		VisualItem(name, r, parent), _mouseFocusItem(nullptr) {}
-	virtual ~VisualContainer() {}
+	~VisualContainer() override {}
 
 	/**
 	 * Draws the container by iterating through each child and letting it draw
 	 */
-	virtual void draw() override;
+	void draw() override;
 
 	/**
 	 * Flags the item as being changed, requiring a redraw
 	 */
-	virtual void setDirty(bool dirty = true) override;
+	void setDirty(bool dirty = true) override;
 
 	/**
 	 * Returns true if the item is dirty, requiring a redraw
 	 */
-	virtual bool isDirty() const override;
+	bool isDirty() const override;
 };
 
 } // End of namespace Gfx

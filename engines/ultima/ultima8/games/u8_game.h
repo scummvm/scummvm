@@ -29,24 +29,24 @@ class IDataSource;
 class U8Game: public Game {
 public:
 	U8Game();
-	virtual ~U8Game();
+	~U8Game() override;
 
 	//! load/init game's data files
-	virtual bool loadFiles();
+	bool loadFiles() override;
 
 	//! initialize new game
-	virtual bool startGame();
+	bool startGame() override;
 
 	//! start initial usecode
-	virtual bool startInitialUsecode(const Std::string &savegame);
+	bool startInitialUsecode(const Std::string &savegame) override;
 
 	//! write game-specific savegame info (avatar stats, equipment, ...)
-	virtual void writeSaveInfo(ODataSource *ods);
+	void writeSaveInfo(ODataSource *ods) override;
 
-	virtual ProcId playIntroMovie();
-	virtual ProcId playEndgameMovie();
-	virtual void playCredits();
-	virtual void playQuotes();
+	ProcId playIntroMovie() override;
+	ProcId playEndgameMovie() override;
+	void playCredits() override;
+	void playQuotes() override;
 
 	static void ConCmd_cheatItems(const Console::ArgvType &argv);
 	static void ConCmd_cheatEquip(const Console::ArgvType &argv);

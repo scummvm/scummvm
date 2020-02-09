@@ -50,13 +50,13 @@ class ActorView : public View {
 
 public:
 	ActorView(Configuration *cfg);
-	~ActorView();
+	~ActorView() override;
 
 	bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om, Portrait *port);
 
-	bool set_party_member(uint8 party_member);
+	bool set_party_member(uint8 party_member) override;
 
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 	void update() {
 		update_display = true;
 	}
@@ -69,9 +69,9 @@ protected:
 	void display_name();
 	void display_actor_stats();
 	bool in_party;
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	GUI_status KeyDown(const Common::KeyState &key);
-	GUI_status MouseWheel(sint32 x, sint32 y);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status KeyDown(const Common::KeyState &key) override;
+	GUI_status MouseWheel(sint32 x, sint32 y) override;
 	void update_cursor();
 	void select_button();
 };

@@ -40,19 +40,19 @@ public:
 
 	FMtownsDecoderStream(unsigned char *buf, uint32 len);
 	FMtownsDecoderStream(Std::string filename, uint16 sample_num, bool isCompressed = true);
-	~FMtownsDecoderStream();
+	~FMtownsDecoderStream() override;
 
 	uint32 getLengthInMsec();
 
-	int readBuffer(sint16 *buffer, const int numSamples);
+	int readBuffer(sint16 *buffer, const int numSamples) override;
 
 	/** Is this a stereo stream? */
-	bool isStereo() const {
+	bool isStereo() const override {
 		return false;
 	}
 
 	/** Sample rate of the stream. */
-	int getRate() const {
+	int getRate() const override {
 		return 14700;
 	}
 
@@ -63,11 +63,11 @@ public:
 	 * This is used by e.g. a rate converter to decide whether to keep on
 	 * converting data or stop.
 	 */
-	bool endOfData() const {
+	bool endOfData() const override {
 		return (buf_pos >= buf_len);
 	}
 
-	bool rewind() {
+	bool rewind() override {
 		buf_pos = 0;
 		return true;
 	}

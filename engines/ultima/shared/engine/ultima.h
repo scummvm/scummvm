@@ -71,12 +71,12 @@ public:
 	EventsManager *_events;
 public:
 	UltimaEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc);
-	~UltimaEngine();
+	~UltimaEngine() override;
 
 	/**
 	 * Returns supported engine features
 	 */
-	virtual bool hasFeature(EngineFeature f) const override;
+	bool hasFeature(EngineFeature f) const override;
 
 	/**
 	 * Returns game features
@@ -135,12 +135,12 @@ public:
 	/**
 	 * Checks if an auto save should be done, and if so, takes care of it
 	 */
-	virtual bool autoSaveCheck(int lastSaveTime) override;
+	bool autoSaveCheck(int lastSaveTime) override;
 
 	/**
 	 * Return the debugger
 	 */
-	virtual GUI::Debugger *getDebugger() override {
+	GUI::Debugger *getDebugger() override {
 		return _debugger;
 	}
 
@@ -158,7 +158,7 @@ public:
 	/**
 	 * Indicates whether a game state can be loaded.
 	 */
-	virtual bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently() override {
 		return canLoadGameStateCurrently(false);
 	}
 
@@ -171,7 +171,7 @@ public:
 	/**
 	 * Indicates whether a game state can be saved.
 	 */
-	virtual bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently() override {
 		return canSaveGameStateCurrently(false);
 	}
 };

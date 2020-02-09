@@ -38,24 +38,24 @@ public:
 	CreditsGump();
 	CreditsGump(const Std::string &text, int parskip = 24,
 	            uint32 _Flags = 0, int32 layer_ = LAYER_MODAL);
-	virtual ~CreditsGump(void);
+	~CreditsGump(void) override;
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Set a configuration option to true when user watches entire sequence
 	void SetFlagWhenFinished(Std::string configkey_) {
 		configkey = configkey_;
 	}
 
-	virtual void Close(bool no_del = false) override;
+	void Close(bool no_del = false) override;
 
-	virtual void run() override;
+	void run() override;
 
 	// Paint the Gump
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual bool OnKeyDown(int key, int mod) override;
+	bool OnKeyDown(int key, int mod) override;
 
 protected:
 

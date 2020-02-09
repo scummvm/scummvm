@@ -65,7 +65,7 @@ public:
 	/**
 	 * Change the quantity by a given amount
 	 */
-	virtual void changeQuantity(int delta) override {
+	void changeQuantity(int delta) override {
 		_quantity = (uint)CLIP((int)_quantity + delta, 0, 255);
 	}
 

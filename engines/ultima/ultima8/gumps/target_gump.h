@@ -39,19 +39,19 @@ public:
 	TargetGump();
 	TargetGump(int x, int y);
 
-	virtual ~TargetGump(void);
+	~TargetGump(void) override;
 
-	virtual bool PointOnGump(int mx, int my) override;
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
-	virtual void Close(bool no_del = false) override;
-	virtual void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
-	virtual void OnMouseUp(int button, int32 mx, int32 my) override;
+	bool PointOnGump(int mx, int my) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
+	void Close(bool no_del = false) override;
+	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	void OnMouseUp(int button, int32 mx, int32 my) override;
 
 	INTRINSIC(I_target);
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 private:
 	bool target_tracing;

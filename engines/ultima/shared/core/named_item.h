@@ -43,7 +43,7 @@ public:
 	/**
 	 * Gets the name of the item, if any
 	 */
-	virtual const Common::String getName() const override { return _name; }
+	const Common::String getName() const override { return _name; }
 };
 
 } // End of namespace Shared

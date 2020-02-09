@@ -45,12 +45,12 @@ protected:
 	GUI_Button *button_index[9]; // add to here when you add a button. Keep buttons in order by height
 public:
 	GameMenuDialog(CallBack *callback);
-	~GameMenuDialog();
+	~GameMenuDialog() override;
 	bool init();
 
 	GUI_status close_dialog();
-	GUI_status KeyDown(const Common::KeyState &key);
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+	GUI_status KeyDown(const Common::KeyState &key) override;
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 };
 
 } // End of namespace Nuvie

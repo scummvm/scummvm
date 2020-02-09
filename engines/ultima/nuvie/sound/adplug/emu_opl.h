@@ -32,7 +32,7 @@ namespace Nuvie {
 class CEmuopl: public Copl {
 public:
 	CEmuopl(int rate, bool bit16, bool usestereo);  // rate = sample rate
-	virtual ~CEmuopl();
+	~CEmuopl() override;
 
 	int getRate() {
 		return oplRate;
@@ -41,8 +41,8 @@ public:
 	void update(short *buf, int samples);   // fill buffer
 
 	// template methods
-	void write(int reg, int val);
-	void init();
+	void write(int reg, int val) override;
+	void init() override;
 
 private:
 	bool    use16bit, stereo;

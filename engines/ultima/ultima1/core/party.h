@@ -69,7 +69,7 @@ public:
 	/**
 	 * Change the quantity by a given amount
 	 */
-	virtual void changeQuantity(int delta) override {
+	void changeQuantity(int delta) override {
 		if (_type != WEAPON_HANDS)
 			_quantity = (uint)CLIP((int)_quantity + delta, 0, 9999);
 	}
@@ -107,7 +107,7 @@ public:
 	/**
 	 * Change the quantity by a given amount
 	 */
-	virtual void changeQuantity(int delta) override {
+	void changeQuantity(int delta) override {
 		if (_type != ARMOR_SKIN)
 			_quantity = (uint)CLIP((int)_quantity + delta, 0, 9999);
 	}

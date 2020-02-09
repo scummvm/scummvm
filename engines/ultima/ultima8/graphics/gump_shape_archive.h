@@ -49,7 +49,7 @@ public:
 	                 const ConvertShapeFormat *format_ = 0)
 		: ShapeArchive(path, id_, pal_, format_) { }
 
-	virtual ~GumpShapeArchive();
+	~GumpShapeArchive() override;
 
 	void loadGumpage(IDataSource *ds);
 	Rect *getGumpItemArea(uint32 shapenum);

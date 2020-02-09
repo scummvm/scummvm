@@ -36,16 +36,16 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	BindGump(istring *b, Gump *g);
-	virtual ~BindGump(void);
+	~BindGump(void) override;
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
 	// Paint the Gump
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual bool OnKeyDown(int key, int mod) override;
-	virtual Gump   *OnMouseDown(int button, int32 mx, int32 my) override;
+	bool OnKeyDown(int key, int mod) override;
+	Gump   *OnMouseDown(int button, int32 mx, int32 my) override;
 
 	bool loadData(IDataSource *ids);
 
@@ -54,7 +54,7 @@ public:
 		UPDATE = 10
 	};
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 	istring *binding;
 	Gump *invoker;
 };

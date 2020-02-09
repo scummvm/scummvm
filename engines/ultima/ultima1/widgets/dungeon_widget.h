@@ -94,7 +94,7 @@ public:
 	/**
 	 * Handles drawing the item
 	 */
-	virtual void draw(Shared::DungeonSurface &s, uint distance);
+	void draw(Shared::DungeonSurface &s, uint distance) override;
 };
 
 } // End of namespace Widgets

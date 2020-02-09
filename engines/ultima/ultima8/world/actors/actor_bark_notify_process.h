@@ -34,13 +34,13 @@ public:
 
 	ActorBarkNotifyProcess();
 	ActorBarkNotifyProcess(uint16 it);
-	virtual ~ActorBarkNotifyProcess(void);
+	~ActorBarkNotifyProcess(void) override;
 
-	virtual void run() override;
+	void run() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

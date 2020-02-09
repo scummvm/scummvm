@@ -408,7 +408,7 @@ private:
 public:
 	ConsoleStream() : Common::WriteStream(), _precision(Std::dec) {}
 
-	virtual int32 pos() const override {
+	int32 pos() const override {
 		return 0;
 	}
 
@@ -447,7 +447,7 @@ public:
 
 template<class T>
 class console_ostream : public ConsoleStream {
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) override {
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
 		Common::String str((const char *)dataPtr, (const char *)dataPtr + dataSize);
 		debugN("%s", str.c_str());
 		return dataSize;
@@ -468,7 +468,7 @@ extern console_ostream<char>        *ppout;
 template<class T>
 class console_err_ostream : public ConsoleStream {
 public:
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) override {
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
 		Common::String str((const char *)dataPtr, dataSize);
 		::warning("%s", str.c_str());
 		return str.size();

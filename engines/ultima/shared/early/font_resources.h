@@ -35,7 +35,7 @@ protected:
 	/**
 	 * Synchronize resource data
 	 */
-	virtual void synchronize() override;
+	void synchronize() override;
 public:
 	byte _font8x8[256][8];
 	byte _fontU6[256][8];

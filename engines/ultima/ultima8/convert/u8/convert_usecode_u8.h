@@ -65,10 +65,10 @@ namespace Ultima8 {
 
 class ConvertUsecodeU8 : public ConvertUsecode {
 public:
-	const char* const *intrinsics()  { return _intrinsics;  };
-	const char* const *event_names() { return _event_names; };
-	void readheader(IDataSource *ucfile, UsecodeHeader &uch, uint32 &curOffset_);
-	void readevents(IDataSource *ucfile, const UsecodeHeader &/*uch*/)
+	const char* const *intrinsics() override  { return _intrinsics;  };
+	const char* const *event_names() override { return _event_names; };
+	void readheader(IDataSource *ucfile, UsecodeHeader &uch, uint32 &curOffset_) override;
+	void readevents(IDataSource *ucfile, const UsecodeHeader &/*uch*/) override
 	{
 #ifndef INCLUDE_CONVERTUSECODEU8_WITHOUT_BRINGING_IN_FOLD
 		EventMap.clear();
@@ -83,9 +83,9 @@ public:
 #endif
 	}
 
-	void readOp(TempOp &op, IDataSource *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done)
+	void readOp(TempOp &op, IDataSource *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done) override
 	{ readOpGeneric(op, ucfile, dbg_symbol_offset, debugSymbols, done, false); };
-	Node *readOp(IDataSource *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done)
+	Node *readOp(IDataSource *ucfile, uint32 &dbg_symbol_offset, Std::vector<DebugSymbol> &debugSymbols, bool &done) override
 	{ return readOpGeneric(ucfile, dbg_symbol_offset, debugSymbols, done, false); };
 
 	

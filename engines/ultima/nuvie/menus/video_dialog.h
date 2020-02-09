@@ -47,12 +47,12 @@ protected:
 	void rebuild_buttons(bool init);
 public:
 	VideoDialog(GUI_CallBack *callback);
-	~VideoDialog();
+	~VideoDialog() override;
 	bool init();
 
 	GUI_status close_dialog();
-	GUI_status KeyDown(const Common::KeyState &key);
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+	GUI_status KeyDown(const Common::KeyState &key) override;
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 };
 
 } // End of namespace Nuvie

@@ -37,10 +37,10 @@ public:
 	JPRenderedText(Std::list<PositionedText> &lines,
 	               int width, int height, int vlead, ShapeFont *font,
 	               unsigned int fontnum);
-	virtual ~JPRenderedText();
+	~JPRenderedText() override;
 
-	virtual void draw(RenderSurface *surface, int x, int y, bool destmasked = false) override;
-	virtual void drawBlended(RenderSurface *surface, int x, int y, uint32 col, bool destmasked = false) override;
+	void draw(RenderSurface *surface, int x, int y, bool destmasked = false) override;
+	void drawBlended(RenderSurface *surface, int x, int y, uint32 col, bool destmasked = false) override;
 
 	ENABLE_RUNTIME_CLASSTYPE()
 

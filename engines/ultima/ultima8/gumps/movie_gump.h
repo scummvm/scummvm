@@ -39,18 +39,18 @@ public:
 	MovieGump();
 	MovieGump(int width, int height, RawArchive *skf, bool introMusicHack = false,
 	          uint32 _Flags = 0, int32 layer = LAYER_MODAL);
-	virtual ~MovieGump(void);
+	~MovieGump(void) override;
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
-	virtual void Close(bool no_del = false) override;
+	void Close(bool no_del = false) override;
 
-	virtual void run() override;
+	void run() override;
 
 	// Paint the Gump
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
-	virtual bool OnKeyDown(int key, int mod) override;
+	bool OnKeyDown(int key, int mod) override;
 
 	static ProcId U8MovieViewer(RawArchive *skf, bool introMusicHack = false);
 
@@ -59,7 +59,7 @@ public:
 
 	bool loadData(IDataSource *ids);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	SKFPlayer *player;
 };

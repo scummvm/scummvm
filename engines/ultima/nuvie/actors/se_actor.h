@@ -35,9 +35,9 @@ protected:
 public:
 
 	SEActor(Map *m, ObjManager *om, GameClock *c);
-	~SEActor();
+	~SEActor() override;
 
-	virtual bool init(uint8 unused = 0) override;
+	bool init(uint8 unused = 0) override;
 	bool will_not_talk() override;
 	uint8 get_maxhp() override {
 		return (((level * 4 + strength * 2) < 255) ? (level * 4 + strength * 2) : 255);

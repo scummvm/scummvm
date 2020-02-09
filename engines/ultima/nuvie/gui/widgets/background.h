@@ -42,15 +42,15 @@ class Background: public GUI_Widget {
 public:
 
 	Background(Configuration *cfg);
-	~Background();
+	~Background() override;
 
 	bool init();
 	uint16 get_border_width() {
 		return border_width;
 	}
-	void Display(bool full_redraw);
-	bool drag_accept_drop(int x, int y, int message, void *data); // needed for original+_full_map
-	void drag_perform_drop(int x, int y, int message, void *data); // needed for original+_full_map
+	void Display(bool full_redraw) override;
+	bool drag_accept_drop(int x, int y, int message, void *data) override; // needed for original+_full_map
+	void drag_perform_drop(int x, int y, int message, void *data) override; // needed for original+_full_map
 	U6Shape *get_bg_shape() {
 		return background;
 	}

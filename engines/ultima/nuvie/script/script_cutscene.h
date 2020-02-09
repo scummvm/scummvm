@@ -81,8 +81,8 @@ private:
 	} stars[STAR_FIELD_NUM_STARS];
 public:
 	CSStarFieldImage(U6Shape *shape);
-	virtual ~CSStarFieldImage() {}
-	virtual void updateEffect();
+	~CSStarFieldImage() override {}
+	void updateEffect() override;
 };
 
 struct CSSprite {
@@ -137,7 +137,7 @@ private:
 
 public:
 	ScriptCutscene(GUI *g, Configuration *cfg, SoundManager *sm);
-	~ScriptCutscene();
+	~ScriptCutscene() override;
 
 	Std::vector<Std::string> load_text(const char *filename, uint8 idx);
 
@@ -164,8 +164,8 @@ public:
 	void update();
 
 	void wait();
-	void Display(bool full_redraw);
-	virtual void Hide();
+	void Display(bool full_redraw) override;
+	void Hide() override;
 
 	void print_text(CSImage *image, const char *string, uint16 *x, uint16 *y, uint16 startx, uint16 width, uint8 color);
 

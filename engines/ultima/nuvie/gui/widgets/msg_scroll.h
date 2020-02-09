@@ -204,7 +204,7 @@ public:
 		discard_whitespace = false;
 		left_margin = 0;
 	}
-	~MsgScroll();
+	~MsgScroll() override;
 
 	void init(Configuration *cfg, Font *f);
 
@@ -278,12 +278,12 @@ public:
 		return (page_break);
 	}
 
-	GUI_status KeyDown(const Common::KeyState &key);
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	GUI_status MouseWheel(sint32 x, sint32 y);
+	GUI_status KeyDown(const Common::KeyState &key) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseWheel(sint32 x, sint32 y) override;
 	virtual Std::string get_token_string_at_pos(uint16 x, uint16 y);
 //void updateScroll();
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
 	void clearCursor(uint16 x, uint16 y);
 	virtual void drawCursor(uint16 x, uint16 y);

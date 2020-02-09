@@ -32,7 +32,7 @@ class TeleportEgg : public Egg {
 	friend class ItemFactory;
 public:
 	TeleportEgg();
-	virtual ~TeleportEgg();
+	~TeleportEgg() override;
 
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -45,9 +45,9 @@ public:
 
 	bool loadData(IDataSource *ids, uint32 version);
 
-	virtual uint16 hatch() override;
+	uint16 hatch() override;
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 };
 

@@ -37,7 +37,7 @@ protected:
 	/**
 	 * Draws a prompt character
 	 */
-	virtual void drawPrompt(Shared::Gfx::VisualSurface &surf, const Point &pt) override;
+	void drawPrompt(Shared::Gfx::VisualSurface &surf, const Point &pt) override;
 public:
 	/**
 	 * Constructor
@@ -47,7 +47,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Info() {}
+	~Info() override {}
 };
 
 } // End of namespace U1Gfx

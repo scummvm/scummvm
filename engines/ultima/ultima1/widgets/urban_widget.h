@@ -56,22 +56,22 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~UrbanWidget() {}
+	~UrbanWidget() override {}
 
 	/**
 	 * Get the tile number for the person
 	 */
-	virtual uint getTileNum() const override { return _tileNum; }
+	uint getTileNum() const override { return _tileNum; }
 
 	/**
 	 * Returns true if the given widget can move to a given position on the map
 	 */
-	virtual CanMove canMoveTo(const Point &destPos) override;
+	CanMove canMoveTo(const Point &destPos) override;
 
 	/**
 	 * Handles loading and saving games
 	 */
-	virtual void synchronize(Common::Serializer &s) override;
+	void synchronize(Common::Serializer &s) override;
 };
 
 } // End of namespace Widgets

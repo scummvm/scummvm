@@ -41,11 +41,11 @@ protected:
 
 public:
 	FpsCounter(Game *g);
-	~FpsCounter();
+	~FpsCounter() override;
 
 	void setFps(float fps);
 
-	virtual void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
 	void update() {
 		update_display = true;

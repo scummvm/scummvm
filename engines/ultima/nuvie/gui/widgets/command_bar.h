@@ -69,11 +69,11 @@ protected:
 public:
 	CommandBar();
 	CommandBar(Game *g);
-	~CommandBar();
+	~CommandBar() override;
 	virtual bool init_buttons();
 
-	virtual void Display(bool full_redraw) override;
-	virtual GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	void Display(bool full_redraw) override;
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
 	void update() {
 		update_display = true;
 	}
@@ -90,10 +90,10 @@ public:
 		return selected_action;
 	}
 
-	virtual GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override {
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override {
 		return GUI_PASS;
 	}
-	virtual uint16 callback(uint16 msg, CallBack *caller, void *data) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data) override;
 	bool load(NuvieIO *objlist);
 	bool save(NuvieIO *objlist);
 	bool drag_accept_drop(int x, int y, int message, void *data) override; // needed for !orig_style

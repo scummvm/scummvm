@@ -37,21 +37,21 @@ public:
 	ModalGump(int x, int y, int width, int height, uint16 owner = 0,
 	          uint32 _Flags = 0, int32 layer = LAYER_MODAL);
 
-	~ModalGump();
+	~ModalGump() override;
 
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
 
-	virtual void Close(bool no_del = false) override;
+	void Close(bool no_del = false) override;
 
-	virtual bool PointOnGump(int mx, int my) override;
-	virtual Gump *FindGump(int mx, int my) override;
-	virtual uint16 TraceObjId(int32 mx, int32 my) override;
+	bool PointOnGump(int mx, int my) override;
+	Gump *FindGump(int mx, int my) override;
+	uint16 TraceObjId(int32 mx, int32 my) override;
 
-	virtual Gump *OnMouseDown(int button, int32 mx, int32 my) override;
+	Gump *OnMouseDown(int button, int32 mx, int32 my) override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

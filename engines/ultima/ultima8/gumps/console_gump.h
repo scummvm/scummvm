@@ -47,7 +47,7 @@ public:
 
 	ConsoleGump();
 	ConsoleGump(int x, int y, int w, int h);
-	virtual ~ConsoleGump();
+	~ConsoleGump() override;
 
 	void ToggleConsole();
 	void ShowConsole();
@@ -55,26 +55,26 @@ public:
 	bool ConsoleIsVisible();
 
 	// ConsoleGump doesn't have any 'effective' area
-	virtual bool PointOnGump(int mx, int my) override {
+	bool PointOnGump(int mx, int my) override {
 		return false;
 	}
 
-	virtual void run() override;
+	void run() override;
 
-	virtual void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) override;
 
-	virtual void RenderSurfaceChanged() override;
+	void RenderSurfaceChanged() override;
 
-	virtual bool        OnTextInput(int unicode) override;
-	virtual void        OnFocus(bool /*gain*/) override;
-	virtual bool        OnKeyDown(int key, int mod) override;
+	bool        OnTextInput(int unicode) override;
+	void        OnFocus(bool /*gain*/) override;
+	bool        OnKeyDown(int key, int mod) override;
 
 	static void         ConCmd_toggle(const Console::ArgvType &argv);   //!< "ConsoleGump::toggle" console command
 
 	bool    loadData(IDataSource *ids, uint32 version);
 
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 private:
 };

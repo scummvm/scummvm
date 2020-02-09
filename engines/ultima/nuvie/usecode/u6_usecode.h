@@ -74,7 +74,7 @@ class U6UseCode: public UseCode, public CallBack {
 public:
 
 	U6UseCode(Game *g, Configuration *cfg);
-	~U6UseCode();
+	~U6UseCode() override;
 
 	bool use_obj(Obj *obj, Actor *actor) override;
 	bool look_obj(Obj *obj, Actor *actor) override;
@@ -142,7 +142,7 @@ public:
 	bool is_container(uint16 obj_n, uint8 frame_n) override;
 	bool is_readable(Obj *obj) override;
 
-	virtual uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
 
 protected:
 	bool uc_event(const U6ObjectType *type, UseCodeEvent ev, Obj *obj);

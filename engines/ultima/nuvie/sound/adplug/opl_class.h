@@ -213,7 +213,7 @@ private:
 
 public:
 	OplClass(int rate, bool bit16, bool usestereo); // rate = sample rate
-	~OplClass() {
+	~OplClass() override {
 		YM3812Shutdown();
 	}
 
@@ -224,8 +224,8 @@ public:
 	void update(short *buf, int samples);   // fill buffer
 
 	// template methods
-	void write(int reg, int val);
-	void init();
+	void write(int reg, int val) override;
+	void init() override;
 
 private:
 	int  YM3812Init(int num, int clock, int rate);

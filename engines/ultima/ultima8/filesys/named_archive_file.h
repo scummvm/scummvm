@@ -34,38 +34,38 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	NamedArchiveFile() : indexCount(0) { }
-	virtual ~NamedArchiveFile() { }
+	~NamedArchiveFile() override { }
 
-	virtual bool exists(uint32 index) override {
+	bool exists(uint32 index) override {
 		Std::string name;
 		return (indexToName(index, name));
 	}
-	virtual bool exists(const Std::string &name) override = 0;
+	bool exists(const Std::string &name) override = 0;
 
-	virtual uint8 *getObject(uint32 index, uint32 *size = 0) override {
+	uint8 *getObject(uint32 index, uint32 *size = 0) override {
 		Std::string name;
 		if (!indexToName(index, name)) return 0;
 		return getObject(name, size);
 	}
-	virtual uint8 *getObject(const Std::string &name, uint32 *size = 0) override = 0;
+	uint8 *getObject(const Std::string &name, uint32 *size = 0) override = 0;
 
-	virtual uint32 getSize(uint32 index) override {
+	uint32 getSize(uint32 index) override {
 		Std::string name;
 		if (!indexToName(index, name)) return 0;
 		return getSize(name);
 	}
-	virtual uint32 getSize(const Std::string &name) override = 0;
+	uint32 getSize(const Std::string &name) override = 0;
 
-	virtual uint32 getCount() override = 0;
+	uint32 getCount() override = 0;
 
-	virtual uint32 getIndexCount() override {
+	uint32 getIndexCount() override {
 		return indexCount;
 	}
 
-	virtual bool isIndexed() const override {
+	bool isIndexed() const override {
 		return false;
 	}
-	virtual bool isNamed() const override {
+	bool isNamed() const override {
 		return true;
 	}
 

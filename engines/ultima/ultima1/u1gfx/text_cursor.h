@@ -48,17 +48,17 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~U1TextCursor() {}
+	~U1TextCursor() override {}
 
 	/**
 	 * Update the cursor
 	 */
-	virtual void update() override;
+	void update() override;
 
 	/**
 	 * Draw the cursor
 	 */
-	virtual void draw() override;
+	void draw() override;
 };
 
 } // End of namespace U1Gfx

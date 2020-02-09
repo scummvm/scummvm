@@ -27,8 +27,8 @@ namespace Nuvie {
 
 class CSilentopl : public Copl {
 public:
-	void write(int reg, int val) { };
-	void init() { };
+	void write(int reg, int val) override { };
+	void init() override { };
 };
 
 } // End of namespace Nuvie

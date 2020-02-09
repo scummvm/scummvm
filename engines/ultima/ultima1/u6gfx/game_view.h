@@ -92,12 +92,12 @@ private:
 public:
 	CLASSDEF;
 	GameView(Shared::TreeItem *parent = nullptr);
-	virtual ~GameView();
+	~GameView() override;
 
 	/**
 	 * Draw the game screen
 	 */
-	virtual void draw() override;
+	void draw() override;
 };
 
 } // End of namespace U6Gfx

@@ -103,18 +103,18 @@ public:
 public:
 	CPressTarget() : _pressed(false) {
 	}
-	virtual ~CPressTarget() {
+	~CPressTarget() override {
 	}
-	virtual void leftButtonDown(const Common::Point &mousePos) {
+	void leftButtonDown(const Common::Point &mousePos) override {
 		_pressed = true;
 	}
-	virtual void middleButtonDown(const Common::Point &mousePos) {
+	void middleButtonDown(const Common::Point &mousePos) override {
 		_pressed = true;
 	}
-	virtual void rightButtonDown(const Common::Point &mousePos) {
+	void rightButtonDown(const Common::Point &mousePos) override {
 		_pressed = true;
 	}
-	virtual void keyDown(Common::KeyState keyState) {
+	void keyDown(Common::KeyState keyState) override {
 		_pressed = true;
 	}
 };

@@ -42,20 +42,20 @@ private:
 public:
 
 	WOUFont();
-	virtual ~WOUFont();
+	~WOUFont() override;
 
 	bool init(const char *filename);
 	bool initWithBuffer(unsigned char *buffer, uint32 buffer_len);
 
 
-	virtual uint16 drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
-	                        uint8 color);
+	uint16 drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
+	                        uint8 color) override;
 
 	uint16 drawStringToShape(U6Shape *shp, const char *str, uint16 x, uint16 y, uint8 color);
 	uint8 drawCharToShape(U6Shape *shp, uint8 char_num, uint16 x, uint16 y, uint8 color);
 
-	virtual uint16 getCharWidth(uint8 c);
-	virtual uint16 getCharHeight() {
+	uint16 getCharWidth(uint8 c) override;
+	uint16 getCharHeight() override {
 		return height;
 	}
 private:

@@ -43,18 +43,18 @@ class GUI_Console : public GUI_Widget {
 
 public:
 	GUI_Console(uint16 x, uint16 y, uint16 w, uint16 h);
-	~GUI_Console();
+	~GUI_Console() override;
 
 	/* Map the color to the display */
-	virtual void SetDisplay(Screen *s);
+	void SetDisplay(Screen *s) override;
 
 	/* Show the widget  */
-	virtual void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
 	/* events, used for dragging the area. */
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	GUI_status MouseMotion(int x, int y, uint8 state);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseMotion(int x, int y, uint8 state) override;
 
 	virtual void AddLine(Std::string line);
 

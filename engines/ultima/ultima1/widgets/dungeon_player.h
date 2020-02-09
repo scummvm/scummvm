@@ -46,17 +46,17 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~DungeonPlayer() {}
+	~DungeonPlayer() override {}
 
 	/**
 	 * The player's viewpoint has no intrinsic drawing
 	 */
-	virtual void draw(Shared::DungeonSurface &s, uint distance) override {}
+	void draw(Shared::DungeonSurface &s, uint distance) override {}
 
 	/**
 	 * Returns true if the given widget can move to a given position on the map
 	 */
-	virtual CanMove canMoveTo(const Point &destPos) override;
+	CanMove canMoveTo(const Point &destPos) override;
 };
 
 } // End of namespace Widgets

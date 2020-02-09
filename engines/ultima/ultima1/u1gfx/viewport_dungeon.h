@@ -39,10 +39,10 @@ protected:
 	/**
 	 * Returns the surface for rendering the dungeon
 	 */
-	virtual Shared::DungeonSurface getSurface() override;
+	Shared::DungeonSurface getSurface() override;
 public:
 	ViewportDungeon(TreeItem *parent) : Shared::ViewportDungeon(parent) {}
-	virtual ~ViewportDungeon() {}
+	~ViewportDungeon() override {}
 };
 
 } // End of namespace U1Gfx

@@ -40,19 +40,19 @@ class ScrollViewGump : public DraggableView {
 
 public:
 	ScrollViewGump(Configuration *cfg);
-	~ScrollViewGump();
+	~ScrollViewGump() override;
 
 	bool init(Screen *tmp_screen, void *view_manager, Font *f, Party *p, TileManager *tm, ObjManager *om, Std::string text_string);
 
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 
-	GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	GUI_status MouseUp(int x, int y, Shared::MouseButton button) {
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override {
 		return GUI_YUM;
 	}
-	GUI_status KeyDown(const Common::KeyState &key);
+	GUI_status KeyDown(const Common::KeyState &key) override;
 
 protected:
 

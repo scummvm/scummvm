@@ -66,7 +66,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Move() {}
+	~Move() override {}
 };
 
 } // End of namespace Actions

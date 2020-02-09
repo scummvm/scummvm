@@ -76,7 +76,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~MapWidget() {}
+	~MapWidget() override {}
 
 	/**
 	 * Return a name for a widget class if it can be synchronized to savegames

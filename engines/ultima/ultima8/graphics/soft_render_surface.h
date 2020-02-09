@@ -55,16 +55,16 @@ public:
 	//
 
 	// Fill buffer (using a palette index)
-	virtual void Fill8(uint8 index, int32 sx, int32 sy, int32 w, int32 h);
+	void Fill8(uint8 index, int32 sx, int32 sy, int32 w, int32 h) override;
 
 	// Fill buffer (using a RGB colour)
-	virtual void Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h);
+	void Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) override;
 
 	//! Fill alpha channel
-	virtual void FillAlpha(uint8 alpha, int32 sx, int32 sy, int32 w, int32 h);
+	void FillAlpha(uint8 alpha, int32 sx, int32 sy, int32 w, int32 h) override;
 
 	// Fill the region doing alpha blending
-	virtual void FillBlended(uint32 rgba, int32 sx, int32 sy, int32 w, int32 h);
+	void FillBlended(uint32 rgba, int32 sx, int32 sy, int32 w, int32 h) override;
 
 	//
 	// The rule for painting methods:
@@ -80,34 +80,34 @@ public:
 
 	// Paint a Shape
 	// TODO: virtual void Paint(CachedShape* s, uint32 frame, int32 x, int32 y);
-	virtual void Paint(Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false);
+	void Paint(Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) override;
 
 	// Paint an Shape without clipping
 	// TODO: virtual void PaintNoClip(CachedShape*s, uint32 frame, int32 x, int32 y);
-	virtual void PaintNoClip(Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false);
+	void PaintNoClip(Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) override;
 
 	// Paint a Translucent Shape.
 	// TODO: virtual void PaintTranslucent(CachedShape* s, uint32 frame, int32 x, int32 y);
-	virtual void PaintTranslucent(Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false);
+	void PaintTranslucent(Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) override;
 
 	// Paint a Mirrored Shape
 	// TODO: virtual void PaintMirrored(CachedShape* s, uint32 frame, int32 x, int32 y, bool trans = false);
-	virtual void PaintMirrored(Shape *s, uint32 frame, int32 x, int32 y, bool trans = false, bool untformed_pal = false);
+	void PaintMirrored(Shape *s, uint32 frame, int32 x, int32 y, bool trans = false, bool untformed_pal = false) override;
 
 	// Paint a Invisible Shape
 	// TODO: virtual void PaintInvisible(CachedShape* s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored);
-	virtual void PaintInvisible(Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, bool untformed_pal = false);
+	void PaintInvisible(Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, bool untformed_pal = false) override;
 
 	// Paint a Highlighted Shape of using the 32 Bit Colour col32 (0xAARRGGBB Alpha is blend level)
 	// TODO: virtual void PaintHighlight(CachedShape* s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32);
-	virtual void PaintHighlight(Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false);
+	void PaintHighlight(Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false) override;
 
 	// Paint a Invisible Highlighted Shape of using the 32 Bit Colour col32 (0xAARRGGBB Alpha is blend level)
 	// TODO: virtual void PaintHighlightInvis(CachedShape* s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32);
-	virtual void PaintHighlightInvis(Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false);
+	void PaintHighlightInvis(Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false) override;
 
 	// Paint a shape masked against destination alpha
-	virtual void PaintMasked(Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, uint32 col32 = 0, bool untformed_pal = false);
+	void PaintMasked(Shape *s, uint32 framenum, int32 x, int32 y, bool trans, bool mirrored, uint32 col32 = 0, bool untformed_pal = false) override;
 
 
 	//
@@ -118,17 +118,17 @@ public:
 	// TODO: virtual void DrawLine8(uint8 index, int32 sx, int32 sy, int32 ex, int32 ey);
 
 	// Draw a RGB Line
-	virtual void DrawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey);
+	void DrawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey) override;
 
 
 	//
 	// Basic Font Drawing
 	//
 	// Draw FixedWidthFont
-	virtual void PrintTextFixed(FixedWidthFont *, const char *text, int x, int y);
+	void PrintTextFixed(FixedWidthFont *, const char *text, int x, int y) override;
 
 	// Draw a fixed width character from a FixedWidthFont
-	virtual void PrintCharFixed(FixedWidthFont *, int character, int x, int y);
+	void PrintCharFixed(FixedWidthFont *, int character, int x, int y) override;
 
 
 	//
@@ -136,19 +136,19 @@ public:
 	//
 
 	// Blit a region from a Texture (Alpha == 0 -> skipped)
-	virtual void Blit(Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend = false);
+	void Blit(Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, bool alpha_blend = false) override;
 
 	// Blit a region from a Texture with a Colour blend (AlphaTex == 0 -> skipped. AlphaCol32 -> Blend Factors)
-	virtual void FadedBlit(Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false);
+	void FadedBlit(Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) override;
 
 	// Blit a region from a Texture with a Colour blend masked based on DestAlpha (AlphaTex == 0 || AlphaDest == 0 -> skipped. AlphaCol32 -> Blend Factors)
-	virtual void MaskedBlit(Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false);
+	void MaskedBlit(Texture *, int32 sx, int32 sy, int32 w, int32 h, int32 dx, int32 dy, uint32 col32, bool alpha_blend = false) override;
 
 	// Blit a stretched region from a Texture (Alpha == 0 -> skipped)
-	virtual void StretchBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, bool clampedges = false);
+	void StretchBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, bool clampedges = false) override;
 
 	// Blit a region from a Texture using a scaler
-	virtual bool ScalerBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Scaler *, bool clampedges = false);
+	bool ScalerBlit(Texture *, int32 sx, int32 sy, int32 sw, int32 sh, int32 dx, int32 dy, int32 dw, int32 dh, const Scaler *, bool clampedges = false) override;
 
 	////////////////////////////////////////
 	// TODO: Add in Abstract 3d code Here //

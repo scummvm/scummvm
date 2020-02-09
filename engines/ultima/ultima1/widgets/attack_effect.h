@@ -55,12 +55,12 @@ public:
 	/**
 	 * Handles loading and saving the widget's data
 	 */
-	virtual void synchronize(Common::Serializer &s) override;
+	void synchronize(Common::Serializer &s) override;
 
 	/**
 	 * Get the tile for the transport method
 	 */
-	virtual uint getTileNum() const override { return _tileId; }
+	uint getTileNum() const override { return _tileId; }
 
 	/**
 	 * Set the details for t

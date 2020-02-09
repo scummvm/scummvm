@@ -58,7 +58,7 @@ class Weather: public CallBack {
 public:
 
 	Weather(Configuration *cfg, GameClock *c, nuvie_game_t type);
-	~Weather();
+	~Weather() override;
 
 	bool load(NuvieIO *objlist);
 	bool save(NuvieIO *objlist);
@@ -79,7 +79,7 @@ public:
 	bool is_eclipse();
 	bool is_moon_visible();
 
-	virtual uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
+	uint16 callback(uint16 msg, CallBack *caller, void *data = NULL) override;
 
 protected:
 

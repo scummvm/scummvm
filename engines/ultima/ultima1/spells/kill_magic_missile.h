@@ -49,7 +49,7 @@ public:
 	/**
 	 * Cast the spell outside a dungeon
 	 */
-	virtual void cast(Maps::MapBase *map) override;
+	void cast(Maps::MapBase *map) override;
 };
 
 /**
@@ -65,7 +65,7 @@ public:
 	/**
 	 * Cast the spell within dungeons
 	 */
-	virtual void dungeonCast(Maps::MapDungeon *map) override;
+	void dungeonCast(Maps::MapDungeon *map) override;
 };
 
 /**
@@ -81,7 +81,7 @@ public:
 	/**
 	 * Cast the spell within dungeons
 	 */
-	virtual void dungeonCast(Maps::MapDungeon *map) override;
+	void dungeonCast(Maps::MapDungeon *map) override;
 };
 
 } // End of  namespace U1Dialogs

@@ -67,12 +67,12 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Info();
+	~Info() override;
 
 	/**
 	 * Draw the contents
 	 */
-	virtual void draw() override;
+	void draw() override;
 };
 
 } // End of namespace Shared

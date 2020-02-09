@@ -43,10 +43,10 @@ protected:
 
 public:
 	MDSkyStripWidget(Configuration *cfg, GameClock *c, Player *p);
-	~MDSkyStripWidget();
+	~MDSkyStripWidget() override;
 
 	void init(sint16 x, sint16 y);
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
 private:
 	void display_surface();

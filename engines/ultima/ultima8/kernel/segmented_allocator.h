@@ -34,21 +34,21 @@ namespace Ultima8 {
 class SegmentedAllocator: public Allocator {
 public:
 	SegmentedAllocator(size_t nodeCapacity, uint32 nodes);
-	virtual ~SegmentedAllocator();
+	~SegmentedAllocator() override;
 
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void *allocate(size_t size) override;
+	void *allocate(size_t size) override;
 
-	virtual Pool *findPool(void *ptr) override;
+	Pool *findPool(void *ptr) override;
 
-	virtual void freeResources() override;
+	void freeResources() override;
 
-	virtual size_t getCapacity() override {
+	size_t getCapacity() override {
 		return nodeCapacity;
 	}
 
-	virtual void printInfo() override;
+	void printInfo() override;
 
 private:
 	Std::vector<SegmentedPool *> pools;

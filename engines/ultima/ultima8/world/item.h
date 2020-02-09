@@ -44,7 +44,7 @@ class Item : public Object {
 
 public:
 	Item();
-	virtual ~Item();
+	~Item() override;
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
@@ -440,7 +440,7 @@ public:
 	virtual void leaveFastArea();
 
 	//! dump some info about this item to pout
-	virtual void dumpInfo() override;
+	void dumpInfo() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 
@@ -561,7 +561,7 @@ protected:
 	ProcId gravitypid;      // Item's GravityTracker (or 0)
 
 	//! save the actual Item data
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 private:
 

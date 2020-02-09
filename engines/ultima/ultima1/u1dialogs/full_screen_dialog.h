@@ -48,7 +48,7 @@ public:
 	/**
 	 * Hide the popup
 	 */
-	virtual void hide();
+	void hide() override;
 };
 
 } // End of namespace U1Dialogs

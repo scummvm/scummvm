@@ -42,15 +42,15 @@ public:
 
 	MessageBoxGump();
 	MessageBoxGump(const Std::string &title, const Std::string &message, uint32 title_colour, Std::vector<Std::string> *buttons);
-	virtual ~MessageBoxGump();
+	~MessageBoxGump() override;
 
 	// Init the gump, call after construction
-	virtual void InitGump(Gump *newparent, bool take_focus = true) override;
-	virtual void Close(bool no_del = false) override;
+	void InitGump(Gump *newparent, bool take_focus = true) override;
+	void Close(bool no_del = false) override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 
-	virtual void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
+	void PaintThis(RenderSurface *, int32 lerp_factor, bool scaled) override;
 
 	//! Create a Message Box
 	//! \param title Title of the message box
@@ -63,10 +63,10 @@ public:
 		return Show(title, message, 0xFF30308F, buttons);
 	}
 
-	virtual void ChildNotify(Gump *child, uint32 msg) override;
+	void ChildNotify(Gump *child, uint32 msg) override;
 
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

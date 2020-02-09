@@ -36,7 +36,7 @@ using Shared::CCharacterInputMsg;
  */
 class Transports : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
-	virtual bool CharacterInputMsg(CCharacterInputMsg &msg) override;
+	bool CharacterInputMsg(CCharacterInputMsg &msg) override;
 private:
 	uint _water, _woods, _grass;
 	bool _hasFreeTiles, _hasShuttle, _isClosed;
@@ -71,7 +71,7 @@ protected:
 	/**
 	 * Set the mode
 	 */
-	virtual void setMode(BuySell mode) override;
+	void setMode(BuySell mode) override;
 public:
 	CLASSDEF;
 
@@ -83,7 +83,7 @@ public:
 	/**
 	 * Draws the visual item on the screen
 	 */
-	virtual void draw() override;
+	void draw() override;
 };
 
 } // End of namespace U1Dialogs

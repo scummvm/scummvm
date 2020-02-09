@@ -68,24 +68,24 @@ public:
 			_currentStream = NULL;
 	}
 
-	~RandomCollectionAudioStreamImpl();
+	~RandomCollectionAudioStreamImpl() override;
 
 	// Implement the AudioStream API
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const {
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override {
 		return _stereo;
 	}
-	virtual int getRate() const {
+	int getRate() const override {
 		return _rate;
 	}
-	virtual bool endOfData() const {
+	bool endOfData() const override {
 		return false;
 	}
-	virtual bool endOfStream() const {
+	bool endOfStream() const override {
 		return _finished;
 	}
 
-	virtual void finish() {
+	void finish() override {
 		_finished = true;
 	}
 };

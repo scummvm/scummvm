@@ -34,17 +34,17 @@ class GlobEgg : public Item {
 	friend class ItemFactory;
 public:
 	GlobEgg();
-	virtual ~GlobEgg();
+	~GlobEgg() override;
 
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! The item has entered the fast area
-	virtual void enterFastArea() override;
+	void enterFastArea() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 };
 
 } // End of namespace Ultima8

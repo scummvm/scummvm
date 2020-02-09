@@ -56,28 +56,28 @@ class DollWidget : public GUI_Widget {
 
 public:
 	DollWidget(Configuration *cfg, GUI_CallBack *callback = NULL);
-	~DollWidget();
+	~DollWidget() override;
 
 	bool init(Actor *a, uint16 x, uint16 y, TileManager *tm, ObjManager *om, bool in_portrat_view = false);
 	void free_doll_shapes();
 	void setColorKey(Graphics::ManagedSurface *image);
 	void set_actor(Actor *a);
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
-	virtual GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseMotion(int x, int y, uint8 state);
-	GUI_status MouseDouble(int x, int y, Shared::MouseButton button);
-	GUI_status MouseClick(int x, int y, Shared::MouseButton button);
-	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button);
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseMotion(int x, int y, uint8 state) override;
+	GUI_status MouseDouble(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseClick(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseDelayed(int x, int y, Shared::MouseButton button) override;
 
-	void drag_drop_success(int x, int y, int message, void *data);
-	void drag_drop_failed(int x, int y, int message, void *data);
+	void drag_drop_success(int x, int y, int message, void *data) override;
+	void drag_drop_failed(int x, int y, int message, void *data) override;
 
-	bool drag_accept_drop(int x, int y, int message, void *data);
-	void drag_perform_drop(int x, int y, int message, void *data);
+	bool drag_accept_drop(int x, int y, int message, void *data) override;
+	void drag_perform_drop(int x, int y, int message, void *data) override;
 
-	void drag_draw(int x, int y, int message, void *data);
+	void drag_draw(int x, int y, int message, void *data) override;
 
 	Common::Rect *get_item_hit_rect(uint8 location);
 

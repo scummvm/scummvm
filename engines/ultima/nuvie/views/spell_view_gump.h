@@ -48,29 +48,29 @@ class SpellViewGump : public SpellView {
 	NuvieBmpFile bmp;
 public:
 	SpellViewGump(Configuration *cfg);
-	~SpellViewGump();
+	~SpellViewGump() override;
 
 	bool init(Screen *tmp_screen, void *view_manager, uint16 x, uint16 y, Font *f, Party *p, TileManager *tm, ObjManager *om);
 
-	void Display(bool full_redraw);
+	void Display(bool full_redraw) override;
 
-	virtual GUI_status MouseDown(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseUp(int x, int y, Shared::MouseButton button);
-	virtual GUI_status MouseMotion(int x, int y, uint8 state) {
+	GUI_status MouseDown(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseUp(int x, int y, Shared::MouseButton button) override;
+	GUI_status MouseMotion(int x, int y, uint8 state) override {
 		return DraggableView::MouseMotion(x, y, state);
 	}
-	virtual GUI_status MouseWheel(sint32 x, sint32 y);
-	virtual void MoveRelative(int dx, int dy) {
+	GUI_status MouseWheel(sint32 x, sint32 y) override;
+	void MoveRelative(int dx, int dy) override {
 		return DraggableView::MoveRelative(dx, dy);
 	}
 
 
-	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data);
+	GUI_status callback(uint16 msg, GUI_CallBack *caller, void *data) override;
 protected:
 
 	sint16 getSpell(int x, int y);
 
-	virtual uint8 fill_cur_spell_list();
+	uint8 fill_cur_spell_list() override;
 	void loadCircleString(Std::string datadir);
 	void loadCircleSuffix(Std::string datadir, Std::string image);
 	void printSpellQty(uint8 spell_num, uint16 x, uint16 y);

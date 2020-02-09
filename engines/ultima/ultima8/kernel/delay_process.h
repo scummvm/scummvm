@@ -36,17 +36,17 @@ namespace Ultima8 {
 class DelayProcess : public Process {
 public:
 	explicit DelayProcess(int count_ = 0);
-	virtual ~DelayProcess();
+	~DelayProcess() override;
 
 	ENABLE_RUNTIME_CLASSTYPE()
 
-	virtual void run() override;
+	void run() override;
 
-	virtual void dumpInfo() override;
+	void dumpInfo() override;
 
 	bool loadData(IDataSource *ids, uint32 version);
 protected:
-	virtual void saveData(ODataSource *ods) override;
+	void saveData(ODataSource *ods) override;
 
 	int count;
 };

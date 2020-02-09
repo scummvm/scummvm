@@ -50,11 +50,11 @@ class SonarcAudioSample : public AudioSample {
 
 public:
 	SonarcAudioSample(uint8 *buffer_, uint32 size_);
-	virtual ~SonarcAudioSample(void);
+	~SonarcAudioSample(void) override;
 
-	virtual void initDecompressor(void *DecompData) const;
-	virtual uint32 decompressFrame(void *DecompData, void *samples) const;
-	virtual void rewind(void *DecompData) const;
+	void initDecompressor(void *DecompData) const override;
+	uint32 decompressFrame(void *DecompData, void *samples) const override;
+	void rewind(void *DecompData) const override;
 };
 
 } // End of namespace Ultima8

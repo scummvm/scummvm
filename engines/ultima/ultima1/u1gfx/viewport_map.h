@@ -48,12 +48,12 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~ViewportMap();
+	~ViewportMap() override;
 
 	/**
 	 * Draws the map
 	 */
-	virtual void draw() override;
+	void draw() override;
 };
 
 } // End of namespace U1Gfx

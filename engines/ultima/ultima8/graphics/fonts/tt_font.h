@@ -34,25 +34,25 @@ class TTFont : public Font {
 public:
 	TTFont(Graphics::Font *font, uint32 rgb, int bordersize,
 	       bool antiAliased, bool SJIS);
-	virtual ~TTFont();
+	~TTFont() override;
 
-	virtual int getHeight() override;
-	virtual int getBaseline() override;
-	virtual int getBaselineSkip() override;
+	int getHeight() override;
+	int getBaseline() override;
+	int getBaselineSkip() override;
 
 	bool isAntialiased() {
 		return antiAliased;
 	}
 
-	virtual void getStringSize(const Std::string &text,
+	void getStringSize(const Std::string &text,
 		int32 &width, int32 &height) override;
 
-	virtual void getTextSize(const Std::string &text,
+	void getTextSize(const Std::string &text,
 		int32 &resultwidth, int32 &resultheight, unsigned int &remaining,
 		int32 width = 0, int32 height = 0, TextAlign align = TEXT_LEFT,
 		bool u8specials = false) override;
 
-	virtual RenderedText *renderText(const Std::string &text,
+	RenderedText *renderText(const Std::string &text,
 		unsigned int &remaining, int32 width = 0, int32 height = 0,
 		TextAlign align = TEXT_LEFT, bool u8specials = false,
 		Std::string::size_type cursor = Std::string::npos) override;

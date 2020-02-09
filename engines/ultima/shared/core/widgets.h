@@ -43,7 +43,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~StandardWidget() {}
+	~StandardWidget() override {}
 };
 
 class Creature : public StandardWidget {
@@ -79,19 +79,19 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Creature() {}
+	~Creature() override {}
 
 	/**
 	 * Handles loading and saving games
 	 */
-	virtual void synchronize(Common::Serializer &s) override;
+	void synchronize(Common::Serializer &s) override;
 
 	/**
 	 * Called to update the widget at the end of a turn
 	 * @param isPreUpdate		Update is called twice in succesion during the end of turn update.
 	 *		Once with true for all widgets, then with it false
 	 */
-	virtual void update(bool isPreUpdate) override;
+	void update(bool isPreUpdate) override;
 
 	/**
 	 * True true if the creature is dead
@@ -116,7 +116,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~DungeonWidget() {}
+	~DungeonWidget() override {}
 
 	/**
 	 * Draws an item

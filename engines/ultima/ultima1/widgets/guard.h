@@ -36,17 +36,17 @@ protected:
 	/**
 	 * Returns the attack distance for the guard
 	 */
-	virtual uint attackDistance() const override;
+	uint attackDistance() const override;
 
 	/**
 	 * Handles moving creatures
 	 */
-	virtual void movement() override;
+	void movement() override;
 
 	/**
 	 * Handles attacking the party
 	 */
-	virtual void attackParty() override;
+	void attackParty() override;
 public:
 	DECLARE_WIDGET(Guard)
 
@@ -65,7 +65,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Guard() {}
+	~Guard() override {}
 };
 
 } // End of namespace Widgets

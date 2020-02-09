@@ -71,12 +71,12 @@ public:
 	/**
 	 * Updates the screen by copying any affected areas to the system
 	 */
-	virtual void update();
+	void update() override;
 
 	/**
 	 * Updates the screen at the end of an update call
 	 */
-	virtual void updateScreen();
+	void updateScreen() override;
 
 	/**
 	 * Sets the currently active cursor
