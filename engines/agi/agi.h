@@ -836,9 +836,9 @@ struct AgiOpCodeDefinitionEntry {
 class AgiEngine : public AgiBase {
 protected:
 	// Engine APIs
-	virtual Common::Error go();
+	virtual Common::Error go() override;
 
-	void initialize();
+	void initialize() override;
 
 	uint32 _lastSaveTime;
 
@@ -846,10 +846,10 @@ public:
 	AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	virtual ~AgiEngine();
 
-	bool promptIsEnabled();
+	bool promptIsEnabled() override;
 
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &description);
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &description) override;
 
 private:
 	int _keyQueue[KEY_QUEUE_SIZE];
@@ -896,17 +896,17 @@ public:
 
 	Common::Stack<ImageStackElement> _imageStack;
 
-	void clearImageStack();
+	void clearImageStack() override;
 	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-	                          int16 p4, int16 p5, int16 p6, int16 p7);
+	                          int16 p4, int16 p5, int16 p6, int16 p7) override;
 	void replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-	                          int16 p4, int16 p5, int16 p6, int16 p7);
-	void releaseImageStack();
+	                          int16 p4, int16 p5, int16 p6, int16 p7) override;
+	void releaseImageStack() override;
 
 	void wait(uint32 msec, bool busy = false);
 
 	Console *_console;
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	int agiInit();
 	int agiDeinit();
@@ -915,9 +915,9 @@ public:
 	int agiUnloadResource(int16 resourceType, int16 resourceNr);
 	void agiUnloadResources();
 
-	virtual int getKeypress();
-	virtual bool isKeypress();
-	virtual void clearKeyQueue();
+	virtual int getKeypress() override;
+	virtual bool isKeypress() override;
+	virtual void clearKeyQueue() override;
 
 	byte getVar(int16 varNr);
 	void setVar(int16 varNr, byte newValue);
@@ -927,7 +927,7 @@ private:
 	void setVolumeViaSystemSetting();
 
 public:
-	void syncSoundSettings();
+	void syncSoundSettings() override;
 
 public:
 	void decrypt(uint8 *mem, int len);
