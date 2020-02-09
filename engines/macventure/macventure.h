@@ -327,7 +327,6 @@ private: // Attributes
 
 	Common::MacResManager *_resourceManager;
 
-	Console *_debugger;
 	Gui *_gui;
 	World *_world;
 	ScriptEngine *_scriptEngine;

@@ -66,7 +66,6 @@ MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameD
 
 	initDebugChannels();
 
-	_debugger = NULL;
 	_resourceManager = NULL;
 	_globalSettings = NULL;
 	_gui = NULL;
@@ -93,9 +92,6 @@ MacVentureEngine::~MacVentureEngine() {
 
 	if (_rnd)
 		delete _rnd;
-
-	if (_debugger)
-		delete _debugger;
 
 	if (_resourceManager)
 		delete _resourceManager;
@@ -150,7 +146,7 @@ Common::Error MacVentureEngine::run() {
 
 	setInitialFlags();
 
-	_debugger = new Console(this);
+	setDebugger(new Console(this));
 
 	// Additional setup.
 	debug("MacVentureEngine::init");
