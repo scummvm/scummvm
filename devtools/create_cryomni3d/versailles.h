@@ -28,6 +28,17 @@
 #define VERSAILLES_GAMEID MKTAG('V', 'R', 'S', 'L')
 #define VERSAILLES_VERSION 1
 
+struct SubtitleEntry {
+	uint32 frameStart;
+	char const *const text;
+};
+
+#define MAX_SUBTITLE_ENTRIES 256
+struct Subtitle {
+	char const *const videoName;
+	SubtitleEntry const entries[MAX_SUBTITLE_ENTRIES];
+};
+
 #define VERSAILLES_LOCALIZED_FILENAMES_COUNT 5
 static char const *const versaillesFRlocalizedFilenames[] = {
 	"DIALOG1.GTO",
