@@ -46,7 +46,7 @@ Graphics::PixelFormat *SludgeEngine::getScreenPixelFormat() const { return _pixe
 Graphics::PixelFormat *SludgeEngine::getOrigPixelFormat() const { return _origFormat; }
 
 SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _console(nullptr) {
+		Engine(syst), _gameDescription(gameDesc) {
 
 	// register your random source
 	_rnd = new Common::RandomSource("sludge");
@@ -98,10 +98,6 @@ SludgeEngine::~SludgeEngine() {
 	// Remove debug levels
 	DebugMan.clearAllDebugChannels();
 
-	// Dispose console
-	delete _console;
-	_console = nullptr;
-
 	// Dispose pixel formats
 	delete _origFormat;
 	_origFormat = nullptr;
@@ -142,7 +138,7 @@ Common::Error SludgeEngine::run() {
 	g_sludge = this;
 
 	// create console
-	_console = new SludgeConsole(this);
+	setDebugger(new SludgeConsole(this));
 
 	// debug log
 	main_loop(getGameFile());
