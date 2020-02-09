@@ -58,23 +58,23 @@ public:
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
 
-	virtual const char *getEngineId() const override {
+	const char *getEngineId() const override {
 		return "wage";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "World Adventure Game Engine";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "World Builder (C) Silicon Beach Software";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual SaveStateList listSaves(const char *target) const override;
-	virtual int getMaximumSaveSlot() const override;
-	virtual void removeSaveState(const char *target, int slot) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
 };
 
 bool WageMetaEngine::hasFeature(MetaEngineFeature f) const {

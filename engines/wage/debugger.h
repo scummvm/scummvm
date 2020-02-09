@@ -39,7 +39,7 @@ protected:
 
 public:
 	Debugger(WageEngine *engine);
-	virtual ~Debugger();
+	~Debugger() override;
 };
 
 } // End of namespace Wage
