@@ -28,6 +28,7 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "access/access.h"
+#include "access/debugger.h"
 
 namespace Access {
 
@@ -44,7 +45,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_animation = nullptr;
 	_bubbleBox = nullptr;
 	_char = nullptr;
-	_debugger = nullptr;
 	_events = nullptr;
 	_files = nullptr;
 	_invBox = nullptr;
@@ -135,7 +135,6 @@ AccessEngine::~AccessEngine() {
 	delete _invBox;
 	delete _aboutBox;
 	delete _char;
-	delete _debugger;
 	delete _events;
 	delete _files;
 	delete _inventory;
@@ -187,7 +186,6 @@ void AccessEngine::initialize() {
 		_aboutBox = nullptr;
 	}
 	_char = new CharManager(this);
-	_debugger = Debugger::init(this);
 	_events = new EventsManager(this);
 	_files = new FileManager(this);
 	_inventory = new InventoryManager(this);
@@ -197,6 +195,7 @@ void AccessEngine::initialize() {
 	_midi = new MusicManager(this);
 	_video = new VideoPlayer(this);
 
+	setDebugger(Debugger::init(this));
 	_buffer1.create(g_system->getWidth() + TILE_WIDTH, g_system->getHeight());
 	_buffer2.create(g_system->getWidth(), g_system->getHeight());
 	_vidBuf.create(160, 101);

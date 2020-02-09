@@ -36,7 +36,6 @@
 #include "access/bubble_box.h"
 #include "access/char.h"
 #include "access/data.h"
-#include "access/debugger.h"
 #include "access/events.h"
 #include "access/files.h"
 #include "access/font.h"
@@ -143,7 +142,6 @@ public:
 	BubbleBox *_invBox;
 	BubbleBox *_aboutBox;
 	CharManager *_char;
-	Debugger *_debugger;
 	EventsManager *_events;
 	FileManager *_files;
 	InventoryManager *_inventory;
