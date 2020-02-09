@@ -1466,6 +1466,17 @@ uint32 DragonsEngine::getCutscenePaletteOffsetFromDragonEXE() {
 	}
 }
 
+uint32 DragonsEngine::defaultResponseOffsetFromDragonEXE() {
+	switch (_language) {
+	case Common::EN_USA : return 0x541b0;
+	case Common::EN_GRB : return 0x55470;
+	case Common::DE_DEU : return 0x55020;
+	case Common::FR_FRA : return 0x5521c;
+	default :
+		error("Unable to get speech table offset from dragon.exe for %s", getLanguageCode(_language));
+	}
+}
+
 void (*DragonsEngine::getSceneUpdateFunction())() {
 	return _sceneUpdateFunction;
 }

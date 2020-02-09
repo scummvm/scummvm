@@ -928,8 +928,8 @@ uint32 Talk::getDefaultResponseTextIndex() {
 	return _defaultResponseTbl[(_vm->_cursor->_data_800728b0_cursor_seqID - 1) * 9 + rand];
 }
 
-uint32 extractTextIndex(Common::File *fd, uint16 offset) {
-	fd->seek(0x541b0 + offset * 4);
+uint32 Talk::extractTextIndex(Common::File *fd, uint16 offset) {
+	fd->seek(_vm->defaultResponseOffsetFromDragonEXE() + offset * 4);
 	return fd->readUint32LE();
 }
 
@@ -939,6 +939,7 @@ void Talk::initDefaultResponseTable() {
 		error("Failed to open dragon.exe");
 	}
 
+	//TODO need to check that other languages follow this pattern
 	_defaultResponseTbl[0] = extractTextIndex(fd, 19);
 	_defaultResponseTbl[1] = extractTextIndex(fd, 20);
 	_defaultResponseTbl[2] = extractTextIndex(fd, 21);
