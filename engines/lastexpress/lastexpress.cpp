@@ -91,7 +91,7 @@ LastExpressEngine::~LastExpressEngine() {
 	SAFE_DELETE(_resMan);
 	SAFE_DELETE(_sceneMan);
 	SAFE_DELETE(_soundMan);
-	SAFE_DELETE(_debugger);
+	//_debugger is deleted by Engine
 
 	// Cleanup event handlers
 	SAFE_DELETE(_eventMouse);
@@ -115,6 +115,7 @@ Common::Error LastExpressEngine::run() {
 
 	// Create debugger. It requires GFX to be initialized
 	_debugger = new Debugger(this);
+	setDebugger(_debugger);
 
 	// Start the resource and graphics managers
 	_resMan = new ResourceManager(isDemo());
@@ -195,19 +196,12 @@ bool LastExpressEngine::handleEvents() {
 		_debugger->attach();
 	}
 
-	// Show the debugger if required
-	_debugger->onFrame();
-
 	// Handle input
 	Common::Event ev;
 	while (_eventMan->pollEvent(ev)) {
 		switch (ev.type) {
 
 		case Common::EVENT_KEYDOWN:
-			// CTRL-D: Attach the debugger
-			if ((ev.kbd.flags & Common::KBD_CTRL) && ev.kbd.keycode == Common::KEYCODE_d)
-				_debugger->attach();
-
 			//// DEBUG: Quit game on escape
 			//if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
 			//	quitGame();

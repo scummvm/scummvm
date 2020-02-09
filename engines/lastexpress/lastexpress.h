@@ -72,7 +72,6 @@ protected:
 	// Engine APIs
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
-	Debugger *getDebugger() override { return _debugger; }
 
 public:
 	LastExpressEngine(OSystem *syst, const ADGameDescription *gd);
