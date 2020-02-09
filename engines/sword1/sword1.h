@@ -108,8 +108,6 @@ protected:
 	bool hasFeature(EngineFeature f) const override;
 	void syncSoundSettings() override;
 
-	GUI::Debugger *getDebugger() override { return _console; }
-
 	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
@@ -124,8 +122,6 @@ private:
 	void flagsToBool(bool *dest, uint8 flags);
 
 	void reinitRes(); //Reinits the resources after a GMM load
-
-	SwordConsole *_console;
 
 	uint8 mainLoop();
 
