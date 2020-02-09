@@ -186,9 +186,6 @@ public:
 
 	const ComposerGameDescription *_gameDescription;
 
-	Console *_console;
-	GUI::Debugger *getDebugger() override { return _console; }
-
 private:
 	Common::RandomSource *_rnd;
 
