@@ -594,7 +594,6 @@ void Graphics::updateScreen() {
 	if (_lockedMousePos.x != -1)
 		_vm->_system->warpMouse(_lockedMousePos.x, _lockedMousePos.y);
 
-	_vm->_console->onFrame();
 	_vm->_system->updateScreen();
 	_vm->_system->delayMillis(10);
 }

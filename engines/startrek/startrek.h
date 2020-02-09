@@ -763,7 +763,6 @@ public:
 
 	Graphics *_gfx;
 	Sound *_sound;
-	Console *_console;
 	IWFile *_iwFile;
 
 private:
