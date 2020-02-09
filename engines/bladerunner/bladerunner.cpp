@@ -502,6 +502,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_sceneScript = new SceneScript(this);
 
 	_debugger = new Debugger(this);
+	setDebugger(_debugger);
 
 	// This is the original startup in the game
 
@@ -933,7 +934,7 @@ void BladeRunnerEngine::shutdown() {
 
 	// These are static objects in original game
 
-	delete _debugger;
+	//delete _debugger;	Debugger deletion is handled by Engine
 	_debugger = nullptr;
 
 	delete _sceneScript;
@@ -1269,12 +1270,6 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 }
 
 void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
-	if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
-		getDebugger()->attach();
-		getDebugger()->onFrame();
-		return;
-	}
-
 	if (_vqaIsPlaying && (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_RETURN)) {
 		_vqaStopIsRequested = true;
 		_vqaIsPlaying = false;
@@ -2317,10 +2312,6 @@ Graphics::Surface BladeRunnerEngine::generateThumbnail() const {
 	}
 
 	return thumbnail;
-}
-
-GUI::Debugger *BladeRunnerEngine::getDebugger() {
-	return _debugger;
 }
 
 Common::String BladeRunnerEngine::getTargetName() const {
