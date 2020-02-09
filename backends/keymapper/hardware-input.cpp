@@ -234,6 +234,8 @@ const HardwareInputTableEntry defaultMouseButtons[] = {
     { "MOUSE_LEFT",   MOUSE_BUTTON_LEFT,   _s("Left Mouse Button")   },
     { "MOUSE_RIGHT",  MOUSE_BUTTON_RIGHT,  _s("Right Mouse Button")  },
     { "MOUSE_MIDDLE", MOUSE_BUTTON_MIDDLE, _s("Middle Mouse Button") },
+    { "MOUSE_WHEEL_UP", MOUSE_WHEEL_UP, _s("Mouse Wheel Up") },
+    { "MOUSE_WHEEL_DOWN", MOUSE_WHEEL_DOWN, _s("Mouse Wheel Down") },
     { nullptr,        0,                   nullptr                   }
 };
 
@@ -433,6 +435,12 @@ HardwareInput MouseHardwareInputSet::findHardwareInput(const Event &event) const
 	case EVENT_MBUTTONDOWN:
 	case EVENT_MBUTTONUP:
 		button = MOUSE_BUTTON_MIDDLE;
+		break;
+	case Common::EVENT_WHEELUP:
+		button = MOUSE_WHEEL_UP;
+		break;
+	case Common::EVENT_WHEELDOWN:
+		button = MOUSE_WHEEL_DOWN;
 		break;
 	default:
 		button = -1;
