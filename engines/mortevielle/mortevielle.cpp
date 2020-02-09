@@ -54,7 +54,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescr
 	DebugMan.addDebugChannel(kMortevielleGraphics, "graphics", "Graphics debugging");
 
 	g_vm = this;
-	_debugger = new Debugger(this);
+	setDebugger(new Debugger(this));
 	_dialogManager = new DialogManager(this);
 	_screenSurface = new ScreenSurface(this);
 	_mouse = new MouseHandler(this);
@@ -161,7 +161,6 @@ MortevielleEngine::~MortevielleEngine() {
 	delete _mouse;
 	delete _screenSurface;
 	delete _dialogManager;
-	delete _debugger;
 
 	free(_curPict);
 	free(_curAnim);

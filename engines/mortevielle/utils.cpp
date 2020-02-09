@@ -51,8 +51,6 @@ bool MortevielleEngine::keyPressed() {
 		_lastGameFrame = g_system->getMillis();
 
 		_screenSurface->updateScreen();
-
-		_debugger->onFrame();
 	}
 
 	// Delay briefly to keep CPU usage down
@@ -118,12 +116,7 @@ void MortevielleEngine::addKeypress(Common::Event &evt) {
 	// Character to add
 	char ch = evt.kbd.ascii;
 
-	// Check for debugger
-	if ((evt.kbd.keycode == Common::KEYCODE_d) && (evt.kbd.flags & Common::KBD_CTRL)) {
-		// Attach to the debugger
-		_debugger->attach();
-		_debugger->onFrame();
-	} else if ((evt.kbd.keycode >= Common::KEYCODE_a) && (evt.kbd.keycode <= Common::KEYCODE_z)) {
+	if ((evt.kbd.keycode >= Common::KEYCODE_a) && (evt.kbd.keycode <= Common::KEYCODE_z)) {
 		// Handle alphabetic keys
 		if (evt.kbd.hasFlags(Common::KBD_CTRL))
 			ch = evt.kbd.keycode - Common::KEYCODE_a + 1;
@@ -239,8 +232,6 @@ void MortevielleEngine::delay(int amount) {
 		if (g_system->getMillis() > (_lastGameFrame + GAME_FRAME_DELAY)) {
 			_lastGameFrame = g_system->getMillis();
 			_screenSurface->updateScreen();
-
-			_debugger->onFrame();
 		}
 
 		g_system->delayMillis(10);
