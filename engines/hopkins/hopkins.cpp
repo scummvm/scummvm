@@ -42,7 +42,7 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 	_animMan = new AnimationManager(this);
 	_computer = new ComputerManager(this);
 	_dialog = new DialogsManager(this);
-	_debug = new Debugger(this);
+	setDebugger(new Debugger(this));
 	_events = new EventsManager(this);
 	_fileIO = new FileManager(this);
 	_fontMan = new FontManager(this);
@@ -72,7 +72,6 @@ HopkinsEngine::~HopkinsEngine() {
 	delete _fontMan;
 	delete _fileIO;
 	delete _events;
-	delete _debug;
 	delete _dialog;
 	delete _computer;
 	delete _animMan;

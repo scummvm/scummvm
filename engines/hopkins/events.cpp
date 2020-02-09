@@ -230,9 +230,6 @@ void EventsManager::checkForNextFrameCounter() {
 		++_gameCounter;
 		_priorFrameTime = milli;
 		_vm->_graphicsMan->updateScreen();
-
-		// Signal the ScummVM debugger
-		_vm->_debug->onFrame();
 	}
 }
 
@@ -295,14 +292,6 @@ void EventsManager::handleKey(const Common::Event &event) {
 		_gameKey = KEY_LOAD;
 	else if (event.kbd.keycode == Common::KEYCODE_F1 || event.kbd.keycode == Common::KEYCODE_o)
 		_gameKey = KEY_OPTIONS;
-
-	// Check for debugger
-	if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
-		// Attach to the debugger
-		_vm->_debug->attach();
-		_vm->_debug->onFrame();
-	}
-
 }
 
 /**

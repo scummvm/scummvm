@@ -131,13 +131,10 @@ protected:
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 
-	GUI::Debugger *getDebugger()  override{ return _debug; }
-
 public:
 	AnimationManager *_animMan;
 	ComputerManager *_computer;
 	DialogsManager *_dialog;
-	Debugger *_debug;
 	EventsManager *_events;
 	FileManager *_fileIO;
 	FontManager *_fontMan;
