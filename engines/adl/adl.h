@@ -453,8 +453,6 @@ private:
 	byte convertKey(uint16 ascii) const;
 	Common::String getWord(const Common::String &line, uint &index) const;
 
-	Console *_console;
-	GUI::Debugger *getDebugger() override { return _console; }
 	byte _saveVerb, _saveNoun, _restoreVerb, _restoreNoun;
 };
 
