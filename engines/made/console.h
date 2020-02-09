@@ -32,7 +32,7 @@ class MadeEngine;
 class MadeConsole : public GUI::Debugger {
 public:
 	MadeConsole(MadeEngine *vm);
-	virtual ~MadeConsole(void);
+	~MadeConsole(void) override;
 
 private:
 	MadeEngine *_vm;

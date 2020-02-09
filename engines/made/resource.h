@@ -78,7 +78,7 @@ public:
 class PictureResource : public Resource {
 public:
 	PictureResource();
-	virtual ~PictureResource();
+	~PictureResource() override;
 	void load(byte *source, int size);
 	Graphics::Surface *getPicture() const { return _picture; }
 	byte *getPalette() const { return _picturePalette; }
@@ -96,7 +96,7 @@ protected:
 class AnimationResource : public Resource {
 public:
 	AnimationResource();
-	virtual ~AnimationResource();
+	~AnimationResource() override;
 	void load(byte *source, int size);
 	int getCount() const { return _frames.size(); }
 	Graphics::Surface *getFrame(int index) const {
@@ -119,7 +119,7 @@ protected:
 class SoundResource : public Resource {
 public:
 	SoundResource();
-	virtual ~SoundResource();
+	~SoundResource() override;
 	virtual void load(byte *source, int size);
 	Audio::AudioStream *getAudioStream(int soundRate, bool loop = false);
 	SoundEnergyArray *getSoundEnergyArray() const { return _soundEnergyArray; }
@@ -132,14 +132,14 @@ protected:
 class SoundResourceV1 : public SoundResource {
 public:
 	SoundResourceV1() {}
-	virtual ~SoundResourceV1() {}
-	void load(byte *source, int size);
+	~SoundResourceV1() override {}
+	void load(byte *source, int size) override;
 };
 
 class MenuResource : public Resource {
 public:
 	MenuResource();
-	virtual ~MenuResource();
+	~MenuResource() override;
 	void load(byte *source, int size);
 	int getCount() const { return _strings.size(); }
 	const char *getString(uint index) const;
@@ -150,7 +150,7 @@ protected:
 class FontResource : public Resource {
 public:
 	FontResource();
-	virtual ~FontResource();
+	~FontResource() override;
 	void load(byte *source, int size);
 	int getHeight() const;
 	int getCharWidth(uint c) const;
@@ -165,7 +165,7 @@ protected:
 class GenericResource : public Resource {
 public:
 	GenericResource();
-	virtual ~GenericResource();
+	~GenericResource() override;
 	void load(byte *source, int size);
 	byte *getData() const { return _data; }
 	int getSize() const { return _size; }

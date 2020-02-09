@@ -72,16 +72,16 @@ class MadeEngine : public ::Engine {
 protected:
 
 	// Engine APIs
-	virtual Common::Error run() override;
+	Common::Error run() override;
 
 public:
 	MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc);
-	virtual ~MadeEngine();
+	~MadeEngine() override;
 
-	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void syncSoundSettings() override;
+	bool hasFeature(EngineFeature f) const override;
+	void syncSoundSettings() override;
 
-	virtual GUI::Debugger *getDebugger() override;
+	GUI::Debugger *getDebugger() override;
 
 	Common::RandomSource *_rnd;
 	const MadeGameDescription *_gameDescription;
