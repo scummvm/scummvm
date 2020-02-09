@@ -100,7 +100,7 @@ public:
 	 */
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
 
-	::GUI::Debugger *getDebugger() const override {
+	::GUI::Debugger *getDebugger() override {
 		return _debugger;
 	}
 

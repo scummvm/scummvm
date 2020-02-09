@@ -132,7 +132,7 @@ public:
 	 */
 	Game *createGame() const;
 
-	GUI::Debugger *getDebugger() const override { return nullptr; }
+	GUI::Debugger *getDebugger() override { return nullptr; }
 };
 
 } // End of namespace Shared
