@@ -118,11 +118,6 @@ void InputEngine::update() {
 
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
-			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d && event.type == Common::EVENT_KEYDOWN) {
-				g_engine->getDebugger()->attach();
-				g_engine->getDebugger()->onFrame();
-			}
-
 			alterKeyboardState(event.kbd.keycode, (event.type == Common::EVENT_KEYDOWN) ? 0x80 : 0);
 			break;
 
