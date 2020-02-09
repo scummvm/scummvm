@@ -82,7 +82,7 @@ class SwordEngine : public Engine {
 	friend class SwordConsole;
 public:
 	SwordEngine(OSystem *syst);
-	virtual ~SwordEngine();
+	~SwordEngine() override;
 	static SystemVars _systemVars;
 	void reinitialize();
 
@@ -98,15 +98,15 @@ protected:
 	// Engine APIs
 	Common::Error init();
 	Common::Error go();
-	virtual Common::Error run() override {
+	Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}
-	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void syncSoundSettings() override;
+	bool hasFeature(EngineFeature f) const override;
+	void syncSoundSettings() override;
 
 	GUI::Debugger *getDebugger() override { return _console; }
 
