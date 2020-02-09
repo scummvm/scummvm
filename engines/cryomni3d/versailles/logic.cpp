@@ -106,7 +106,7 @@ void CryOmni3DEngine_Versailles::setupObjects() {
 	SET_OBJECT_CB(112, 126);
 	SET_OBJECT_GENERIC_CB(90, 127, 17);
 	SET_OBJECT(216, 128);
-	SET_OBJECT_GENERIC_CB(32, 129, 18);
+	SET_OBJECT_CB(32, 129);
 	SET_OBJECT(37, 130); // 35
 	SET_OBJECT_GENERIC_CB(134, 131, 19);
 	SET_OBJECT_GENERIC_CB(150, 132, 20);
@@ -192,6 +192,46 @@ void CryOmni3DEngine_Versailles::obj_126hk(Graphics::ManagedSurface &surface) {
 	for (uint i = 0; i < 28; i++) {
 		bmpLetters[i].free();
 	}
+
+	if (_messages.size() <= 148) {
+		return;
+	}
+
+	Common::String &translation = _messages[148];
+
+	if (translation.size() == 0) {
+		return;
+	}
+
+	_fontManager.setCurrentFont(1);
+	_fontManager.setTransparentBackground(true);
+	_fontManager.setForeColor(0);
+	_fontManager.setSurface(&surface);
+	_fontManager.displayStr(9, 424, translation);
+}
+
+void CryOmni3DEngine_Versailles::obj_129() {
+	displayObject(kImagesObjects[18], &CryOmni3DEngine_Versailles::obj_129hk);
+}
+
+void CryOmni3DEngine_Versailles::obj_129hk(Graphics::ManagedSurface &surface) {
+	if (_messages.size() <= 149) {
+		return;
+	}
+
+	Common::String &translation = _messages[149];
+
+	if (translation.size() == 0) {
+		return;
+	}
+
+	surface.fillRect(Common::Rect(0, 455, 640, 480), 247);
+
+	_fontManager.setCurrentFont(8);
+	_fontManager.setTransparentBackground(true);
+	_fontManager.setForeColor(242);
+	_fontManager.setSurface(&surface);
+	_fontManager.displayStr(10, 460, translation);
 }
 
 void CryOmni3DEngine_Versailles::obj_142() {
@@ -3003,6 +3043,7 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 					}
 				}
 				if (success) {
+					handleBombTranslation(tempSurf);
 					break;
 				}
 			}
@@ -3018,6 +3059,43 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 		bmpLetters[i].free();
 	}
 	return success;
+}
+
+void CryOmni3DEngine_Versailles::handleBombTranslation(Graphics::ManagedSurface &surface) {
+	if (_messages.size() <= 150) {
+		return;
+	}
+
+	Common::String &translation = _messages[150];
+
+	if (translation.size() == 0) {
+		return;
+	}
+
+	surface.fillRect(Common::Rect(0, 430, 640, 480), 247);
+
+	_fontManager.setCurrentFont(1);
+	_fontManager.setTransparentBackground(true);
+	_fontManager.setForeColor(242);
+	_fontManager.setSurface(&surface);
+	uint w = _fontManager.getStrWidth(translation);
+	_fontManager.displayStr((640 - w) / 2, 440, translation);
+
+	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0,
+	                           surface.w, surface.h);
+	g_system->updateScreen();
+
+	uint32 end = g_system->getMillis() + 5000;
+	bool exitImg = false;
+	while (!shouldAbort() && !exitImg && g_system->getMillis() < end) {
+		if (pollEvents()) {
+			if (checkKeysPressed() || getCurrentMouseButton() == 1) {
+				exitImg = true;
+			}
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
 }
 
 const uint16 CryOmni3DEngine_Versailles::kBombLettersPos[2][kBombPasswordMaxLength][2] = {

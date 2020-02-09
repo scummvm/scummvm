@@ -452,6 +452,8 @@ private:
 	void obj_125();
 	void obj_126();
 	void obj_126hk(Graphics::ManagedSurface &surface);
+	void obj_129();
+	void obj_129hk(Graphics::ManagedSurface &surface);
 	void obj_142();
 	void obj_142hk(Graphics::ManagedSurface &surface);
 
@@ -564,6 +566,7 @@ private:
 	static const uint kBombPasswordMaxLength = 60;
 	static const uint16 kBombLettersPos[2][kBombPasswordMaxLength][2];
 	bool handleBomb(ZonFixedImage *fimg);
+	void handleBombTranslation(Graphics::ManagedSurface &surface);
 	void drawBombLetters(Graphics::ManagedSurface &surface, const Graphics::Surface(&bmpLetters)[28],
 	                     const uint bombPasswordLength,
 	                     const uint32(&bombPossibilites)[kBombPasswordMaxLength][5],
