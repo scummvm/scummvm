@@ -78,9 +78,6 @@ void GriffonEngine::checkInputs() {
 		if (_event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 			if (_itemTicks < _ticks)
 				title(1);
-		} else if (_event.kbd.keycode == Common::KEYCODE_d && _event.kbd.hasFlags(Common::KBD_CTRL)) {
-			_console->attach();
-			_event.type = Common::EVENT_INVALID;
 		} else if (_event.kbd.hasFlags(Common::KBD_CTRL)) {
 			if (!_itemSelOn && (_itemTicks < _ticks))
 				attack();

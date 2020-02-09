@@ -106,9 +106,6 @@ void GriffonEngine::mainLoop() {
 		drawView();
 
 		updateMusic();
-
-		 _console->onFrame();
-
 		updateEngine();
 	} while (!_shouldQuit && _gameMode == kGameModePlay);
 }

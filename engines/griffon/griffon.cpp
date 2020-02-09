@@ -98,6 +98,7 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 
 GriffonEngine::~GriffonEngine() {
 	delete _rnd;
+	//delete _console; Debugger is deleted by Engine
 }
 
 void GriffonEngine::syncSoundSettings() {
@@ -134,6 +135,7 @@ Common::Error GriffonEngine::run() {
 	_mixer = g_system->getMixer();
 
 	_console = new Console();
+	setDebugger(_console);
 
 	initialize();
 
