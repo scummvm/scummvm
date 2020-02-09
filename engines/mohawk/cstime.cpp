@@ -52,7 +52,6 @@ MohawkEngine_CSTime::MohawkEngine_CSTime(OSystem *syst, const MohawkGameDescript
 
 	reset();
 
-	_console = 0;
 	_gfx = 0;
 	_video = 0;
 	_sound = 0;
@@ -67,7 +66,6 @@ MohawkEngine_CSTime::MohawkEngine_CSTime(OSystem *syst, const MohawkGameDescript
 MohawkEngine_CSTime::~MohawkEngine_CSTime() {
 	delete _interface;
 	delete _view;
-	delete _console;
 	delete _sound;
 	delete _video;
 	delete _gfx;
@@ -81,7 +79,7 @@ Common::Error MohawkEngine_CSTime::run() {
 		return Common::kAudioDeviceInitFailed;
 	}
 
-	_console = new CSTimeConsole(this);
+	setDebugger(new CSTimeConsole(this));
 	_gfx = new CSTimeGraphics(this);
 	_video = new VideoManager(this);
 	_sound = new Sound(this);
@@ -156,13 +154,6 @@ void MohawkEngine_CSTime::update() {
 
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
-			case Common::KEYCODE_d:
-				if (event.kbd.flags & Common::KBD_CTRL) {
-					_console->attach();
-					_console->onFrame();
-				}
-				break;
-
 			case Common::KEYCODE_SPACE:
 				pauseGame();
 				break;

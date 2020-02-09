@@ -101,8 +101,6 @@ public:
 	// Display debug rectangles around the hotspots
 	bool _showHotspots;
 
-	GUI::Debugger *getDebugger() override;
-
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
@@ -120,7 +118,6 @@ private:
 	void loadLanguageDatafile(char prefix, uint16 stackId);
 	bool checkDatafiles();
 
-	RivenConsole *_console;
 	RivenSaveLoad *_saveLoad;
 	RivenOptionsDialog *_optionsDialog;
 	InstallerArchive _installerArchive;

@@ -725,7 +725,6 @@ public:
 	Common::SeekableSubReadStreamEndian *wrapStreamEndian(uint32 tag, uint16 id);
 	Common::String readString(Common::ReadStream *stream);
 	Common::Rect readRect(Common::ReadStreamEndian *stream);
-	GUI::Debugger *getDebugger() override { return _console; }
 
 	void addArchive(Archive *archive);
 	void removeArchive(Archive *archive);
@@ -761,7 +760,6 @@ public:
 	Archive *createArchive() const;
 
 private:
-	LivingBooksConsole *_console;
 	Common::INIFile _bookInfoFile;
 
 	Common::String getBookInfoFileName() const;
