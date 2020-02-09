@@ -32,7 +32,7 @@ namespace Neverhood {
 class Module3000 : public Module {
 public:
 	Module3000(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Module3000();
+	~Module3000() override;
 protected:
 	int _waterfallSoundVolume;
 	bool _isWaterfallRunning;
@@ -49,7 +49,7 @@ class AsScene3009Symbol;
 class Scene3009 : public Scene {
 public:
 	Scene3009(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Scene3009();
+	~Scene3009() override;
 	bool isTurning();
 protected:
 	int _lockSymbolsPart1Countdown;

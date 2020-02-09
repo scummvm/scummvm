@@ -35,7 +35,7 @@ class Palette;
 class SmackerSurface : public BaseSurface {
 public:
 	SmackerSurface(NeverhoodEngine *vm);
-	virtual void draw();
+	void draw() override;
 	void setSmackerFrame(const Graphics::Surface *smackerFrame);
 	void unsetSmackerFrame();
 protected:
@@ -45,7 +45,7 @@ protected:
 class SmackerDoubleSurface : public SmackerSurface {
 public:
 	SmackerDoubleSurface(NeverhoodEngine *vm);
-	virtual void draw();
+	void draw() override;
 };
 
 class NeverhoodSmackerDecoder : public Video::SmackerDecoder {
@@ -56,7 +56,7 @@ public:
 class SmackerPlayer : public Entity {
 public:
 	SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash, bool doubleSurface, bool flag, bool paused = false);
-	~SmackerPlayer();
+	~SmackerPlayer() override;
 	BaseSurface *getSurface() { return _smackerSurface; }
 	void open(uint32 fileHash, bool keepLastFrame);
 	void close();

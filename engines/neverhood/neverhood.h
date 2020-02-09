@@ -64,7 +64,7 @@ protected:
 
 public:
 	NeverhoodEngine(OSystem *syst, const NeverhoodGameDescription *gameDesc);
-	virtual ~NeverhoodEngine();
+	~NeverhoodEngine() override;
 
 	// Detection related functions
 	const NeverhoodGameDescription *_gameDescription;

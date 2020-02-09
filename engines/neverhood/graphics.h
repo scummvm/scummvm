@@ -126,7 +126,7 @@ protected:
 class ShadowSurface : public BaseSurface {
 public:
 	ShadowSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height, BaseSurface *shadowSurface);
-	virtual void draw();
+	void draw() override;
 protected:
 	BaseSurface *_shadowSurface;
 };
@@ -135,7 +135,7 @@ class FontSurface : public BaseSurface {
 public:
 	FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight);
 	FontSurface(NeverhoodEngine *vm, uint32 fileHash, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight);
-	virtual ~FontSurface();
+	~FontSurface() override;
 	void drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr);
 	void drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string, int stringLen = -1);
 	int16 getStringWidth(const byte *string, int stringLen);

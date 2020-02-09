@@ -34,7 +34,7 @@ class Background : public Entity {
 public:
 	Background(NeverhoodEngine *vm, int objectPriority);
 	Background(NeverhoodEngine *vm, uint32 fileHash, int objectPriority, int surfacePriority);
-	virtual ~Background();
+	~Background() override;
 	BaseSurface *getSurface() { return _surface; }
 	void createSurface(int surfacePriority, int16 width, int16 height);
 	void load(uint32 fileHash);

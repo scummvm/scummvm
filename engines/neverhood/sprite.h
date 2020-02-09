@@ -54,7 +54,7 @@ const int16 kDefPosition = -32768;
 class Sprite : public Entity {
 public:
 	Sprite(NeverhoodEngine *vm, int objectPriority);
-	~Sprite();
+	~Sprite() override;
 	void init() {}
 	BaseSurface *getSurface() { return _surface; }
 	void updateBounds();

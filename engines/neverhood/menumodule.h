@@ -41,7 +41,7 @@ typedef Common::Array<SavegameItem> SavegameList;
 class MenuModule : public Module {
 public:
 	MenuModule(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~MenuModule();
+	~MenuModule() override;
 	void setLoadgameInfo(uint index);
 	void setLoadgameSlot(int slot);
 	void setSavegameInfo(const Common::String &description, uint index, bool newSavegame);
@@ -86,7 +86,7 @@ protected:
 class CreditsScene : public Scene {
 public:
 	CreditsScene(NeverhoodEngine *vm, Module *parentModule, bool canAbort);
-	virtual ~CreditsScene();
+	~CreditsScene() override;
 protected:
 	int _screenIndex;
 	int _countdown;
@@ -126,9 +126,9 @@ public:
 	TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 		int baseObjectPriority, int baseSurfacePriority,
 		const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, FontSurface *fontSurface);
-	virtual void initialize();
-	virtual int16 getWidth();
-	virtual int16 getHeight();
+	void initialize() override;
+	int16 getWidth() override;
+	int16 getHeight() override;
 	void drawString(int maxStringLength);
 	void clear();
 	void setString(const byte *string, int stringLen);
@@ -145,11 +145,11 @@ class TextEditWidget : public Widget {
 public:
 	TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 		int maxStringLength, FontSurface *fontSurface, uint32 fileHash, const NRect &rect);
-	~TextEditWidget();
-	virtual void onClick();
-	virtual void initialize();
-	virtual void enterWidget();
-	virtual void exitWidget();
+	~TextEditWidget() override;
+	void onClick() override;
+	void initialize() override;
+	void enterWidget() override;
+	void exitWidget() override;
 	void setCursor(uint32 cursorFileHash, int16 cursorWidth, int16 cursorHeight);
 	void drawCursor();
 	void updateString();
@@ -184,8 +184,8 @@ class SavegameListBox : public Widget {
 public:
 	SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 		SavegameList *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect);
-	virtual void onClick();
-	virtual void initialize();
+	void onClick() override;
+	void initialize() override;
 	void buildItems();
 	void drawItems();
 	void refresh();
@@ -216,7 +216,7 @@ public:
 		uint32 listBoxBackgroundFileHash, int16 listBoxX, int16 listBoxY, const NRect &listBoxRect,
 		uint32 textEditBackgroundFileHash, uint32 textEditCursorFileHash, int16 textEditX, int16 textEditY, const NRect &textEditRect,
 		uint32 textFileHash1, uint32 textFileHash2);
-	virtual ~GameStateMenu();
+	~GameStateMenu() override;
 	NPoint getMousePos();
 	virtual void setCurrWidget(Widget *newWidget);
 	virtual Widget *getCurrWidget() { return _currWidget; }
@@ -237,21 +237,21 @@ class SaveGameMenu : public GameStateMenu {
 public:
 	SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
 protected:
-	virtual void performAction();
+	void performAction() override;
 };
 
 class LoadGameMenu : public GameStateMenu {
 public:
 	LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
 protected:
-	virtual void performAction();
+	void performAction() override;
 };
 
 class DeleteGameMenu : public GameStateMenu {
 public:
 	DeleteGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
 protected:
-	virtual void performAction();
+	void performAction() override;
 };
 
 class QueryOverwriteMenu : public Scene {

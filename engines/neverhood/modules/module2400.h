@@ -36,7 +36,7 @@ namespace Neverhood {
 class Module2400 : public Module {
 public:
 	Module2400(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Module2400();
+	~Module2400() override;
 protected:
 	int _sceneNum;
 	void createScene(int sceneNum, int which);
@@ -70,7 +70,7 @@ protected:
 class Scene2402 : public Scene {
 public:
 	Scene2402(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Scene2402();
+	~Scene2402() override;
 protected:
 	Sprite *_asDoor;
 	Sprite *_ssButton;

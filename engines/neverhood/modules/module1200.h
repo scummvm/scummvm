@@ -32,7 +32,7 @@ namespace Neverhood {
 class Module1200 : public Module {
 public:
 	Module1200(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Module1200();
+	~Module1200() override;
 protected:
 	int _sceneNum;
 	void createScene(int sceneNum, int which);
@@ -44,7 +44,7 @@ class AsScene1201TntMan;
 class Scene1201 : public Scene {
 public:
 	Scene1201(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Scene1201();
+	~Scene1201() override;
 protected:
 	Sprite *_asMatch;
 	AsScene1201TntMan *_asTntMan;
@@ -62,7 +62,7 @@ protected:
 class Scene1202 : public Scene {
 public:
 	Scene1202(NeverhoodEngine *vm, Module *parentModule);
-	virtual ~Scene1202();
+	~Scene1202() override;
 protected:
 	PaletteResource _paletteResource;
 	Sprite *_asTntItems[18];

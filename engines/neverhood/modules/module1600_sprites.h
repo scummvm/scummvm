@@ -32,7 +32,7 @@ namespace Neverhood {
 class AsCommonCar : public AnimatedSprite {
 public:
 	AsCommonCar(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
-	~AsCommonCar();
+	~AsCommonCar() override;
 	void setPathPoints(NPointArray *pathPoints);
 protected:
 	Scene *_parentScene;
@@ -118,7 +118,7 @@ class KmScene1608 : public Klaymen {
 public:
 	KmScene1608(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y);
 protected:
-	uint32 xHandleMessage(int messageNum, const MessageParam &param);
+	uint32 xHandleMessage(int messageNum, const MessageParam &param) override;
 };
 
 } // End of namespace Neverhood

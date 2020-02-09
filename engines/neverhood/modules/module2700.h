@@ -35,7 +35,7 @@ namespace Neverhood {
 class Module2700 : public Module {
 public:
 	Module2700(NeverhoodEngine *vm, Module *parentModule, int which);
-	virtual ~Module2700();
+	~Module2700() override;
 protected:
 	int _sceneNum;
 	int _soundIndex;

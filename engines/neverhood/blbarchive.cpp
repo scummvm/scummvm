@@ -38,7 +38,7 @@ public:
 		Common::Mutex &mutex)
 		: SafeSeekableSubReadStream(parentStream, begin, end, disposeParentStream), _mutex(mutex) {
 	}
-	virtual uint32 read(void *dataPtr, uint32 dataSize);
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 protected:
 	Common::Mutex &_mutex;
 };
