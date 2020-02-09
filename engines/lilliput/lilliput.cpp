@@ -116,7 +116,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	DebugMan.addDebugChannel(kDebugEngineTBC, "EngineTBC", "Engine debug level");
 	DebugMan.addDebugChannel(kDebugScriptTBC, "ScriptTBC", "Script debug level");
 
-	_console = new LilliputConsole(this);
+	setDebugger(new LilliputConsole(this));
 	_rnd = 0;
 	_mousePos = Common::Point(0, 0);
 	_oldMousePos = Common::Point(0, 0);
@@ -263,14 +263,9 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 
 LilliputEngine::~LilliputEngine() {
 	DebugMan.clearAllDebugChannels();
-	delete _console;
 	delete _soundHandler;
 	delete _scriptHandler;
 	delete _rnd;
-}
-
-GUI::Debugger *LilliputEngine::getDebugger() {
-	return _console;
 }
 
 void LilliputEngine::update() {
