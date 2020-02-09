@@ -73,8 +73,6 @@ public:
 	void quickSaveReset()  { _quickSave = false; }
 	bool quickLoad() const { return _quickLoad; }
 	void quickLoadReset()  { _quickLoad = false; }
-	bool debugger() const { return _debugger; }
-	void debuggerReset() { _debugger = false; }
 
 	bool fastMode() const { return _fastMode; }
 	void fastMode(bool fm)	{ _fastMode = fm; }
@@ -122,9 +120,6 @@ private:
 
 	//! set if quickload requested
 	bool _quickLoad;
-
-	//! set if debugger requested
-	bool _debugger;
 
 	//! set by delay();
 	Common::KeyCode _inKey;

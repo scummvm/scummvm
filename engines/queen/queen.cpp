@@ -50,7 +50,10 @@
 namespace Queen {
 
 QueenEngine::QueenEngine(OSystem *syst)
-	: Engine(syst), _gameStarted(false), _debugger(0), randomizer("queen") {
+	: Engine(syst), _bam(nullptr), _bankMan(nullptr), _command(nullptr), _debugger(nullptr),
+	_display(nullptr), _graphics(nullptr), _grid(nullptr), _input(nullptr), _logic(nullptr),
+	_sound(nullptr), _resource(nullptr), _walk(nullptr), _gameStarted(false),
+	randomizer("queen") {
 }
 
 QueenEngine::~QueenEngine() {
@@ -58,7 +61,6 @@ QueenEngine::~QueenEngine() {
 	delete _resource;
 	delete _bankMan;
 	delete _command;
-	delete _debugger;
 	delete _display;
 	delete _graphics;
 	delete _grid;
@@ -66,6 +68,7 @@ QueenEngine::~QueenEngine() {
 	delete _logic;
 	delete _sound;
 	delete _walk;
+	//_debugger is deleted by Engine
 }
 
 void QueenEngine::registerDefaultSettings() {
@@ -124,8 +127,6 @@ void QueenEngine::writeOptionSettings() {
 }
 
 void QueenEngine::update(bool checkPlayerInput) {
-	_debugger->onFrame();
-
 	_graphics->update(_logic->currentRoom());
 	_logic->update();
 
@@ -143,10 +144,7 @@ void QueenEngine::update(bool checkPlayerInput) {
 	_display->update(joe->active, joe->x, joe->y);
 
 	_input->checkKeys();
-	if (_input->debugger()) {
-		_input->debuggerReset();
-		_debugger->attach();
-	}
+
 	if (canLoadOrSave()) {
 		if (_input->quickSave()) {
 			_input->quickSaveReset();
@@ -311,10 +309,6 @@ void QueenEngine::findGameStateDescriptions(char descriptions[100][32]) {
 	}
 }
 
-GUI::Debugger *QueenEngine::getDebugger() {
-	return _debugger;
-}
-
 bool Queen::QueenEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
@@ -332,6 +326,7 @@ Common::Error QueenEngine::run() {
 	_bankMan = new BankManager(_resource);
 	_command = new Command(this);
 	_debugger = new Debugger(this);
+	setDebugger(_debugger);
 	_display = new Display(this, _system);
 	_graphics = new Graphics(this);
 	_grid = new Grid(this);

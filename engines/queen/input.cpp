@@ -54,7 +54,7 @@ Input::Input(Common::Language language, OSystem *system) :
 	_system(system), _eventMan(system->getEventManager()), _fastMode(false),
 	_keyVerb(VERB_NONE), _cutawayRunning(false), _canQuit(false),
 	_cutawayQuit(false), _dialogueRunning(false), _talkQuit(false),
-	_quickSave(false), _quickLoad(false), _debugger(false), _inKey(Common::KEYCODE_INVALID),
+	_quickSave(false), _quickLoad(false), _inKey(Common::KEYCODE_INVALID),
 	_mouseButton(0), _idleTime(0) {
 
 	switch (language) {
@@ -99,9 +99,7 @@ void Input::delay(uint amount) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-					if (event.kbd.keycode == Common::KEYCODE_d) {
-						_debugger = true;
-					} else if (event.kbd.keycode == Common::KEYCODE_f) {
+					if (event.kbd.keycode == Common::KEYCODE_f) {
 						_fastMode = !_fastMode;
 					}
 				} else {

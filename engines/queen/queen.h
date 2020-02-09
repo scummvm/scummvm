@@ -120,7 +120,6 @@ protected:
 
 	// Engine APIs
 	Common::Error run() override;
-	GUI::Debugger *getDebugger() override;
 	bool hasFeature(EngineFeature f) const override;
 	void syncSoundSettings() override;
 
