@@ -36,10 +36,10 @@ public:
 	MusicPlayer(const char *pathMask);
 
 	void playSMF(int track, bool loop);
-	void stop();
+	void stop() override;
 
 	// Overload Audio::MidiPlayer method
-	virtual void sendToChannel(byte channel, uint32 b);
+	void sendToChannel(byte channel, uint32 b) override;
 
 protected:
 	Common::String _pathMask;

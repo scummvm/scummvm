@@ -107,16 +107,16 @@ public:
 	_path(NULL), _samples(NULL), _sampleCount(0), _defaultFreq(defaultFreq), _opened(false), _f(NULL) {
 		openArchive(path);
 	}
-	virtual ~LegacySoundArchive() { closeArchive(); }
+	~LegacySoundArchive() override { closeArchive(); }
 
 	void openArchive(const char *path);
 	void closeArchive();
 
-	virtual uint size() const { return _sampleCount; }
-	virtual bool isOpen() const { return _opened; }
+	uint size() const override { return _sampleCount; }
+	bool isOpen() const override { return _opened; }
 
-	virtual void clearCache();
-	virtual SoundSample *getSample(int i, uint freq);
+	void clearCache() override;
+	SoundSample *getSample(int i, uint freq) override;
 
 private:
 	const char *_path;    ///< Path to file
@@ -135,16 +135,16 @@ private:
 class ZipSoundArchive : public SoundArchive {
 public:
 	ZipSoundArchive() : _archive(NULL), _path(NULL), _extension(NULL), _format(RAW), _sampleCount(0), _defaultFreq(0), _cache() { }
-	virtual ~ZipSoundArchive() { closeArchive(); }
+	~ZipSoundArchive() override { closeArchive(); }
 
 	void openArchive(const char *path, const char *extension, SoundFormat format, int raw_frequency = 0);
 	void closeArchive();
 
-	virtual uint size() const { return _sampleCount; }
-	virtual bool isOpen() const { return _archive != NULL; }
+	uint size() const override { return _sampleCount; }
+	bool isOpen() const override { return _archive != NULL; }
 
-	virtual void clearCache();
-	virtual SoundSample *getSample(int i, uint freq);
+	void clearCache() override;
+	SoundSample *getSample(int i, uint freq) override;
 
 private:
 	Common::Archive *_archive;

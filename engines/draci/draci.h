@@ -56,24 +56,24 @@ class SoundArchive;
 class DraciEngine : public Engine {
 public:
 	DraciEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	virtual ~DraciEngine();
+	~DraciEngine() override;
 
 	int init();
-	virtual Common::Error run();
+	Common::Error run() override;
 
-	virtual bool hasFeature(Engine::EngineFeature f) const;
-	virtual void pauseEngineIntern(bool pause);
-	virtual void syncSoundSettings();
+	bool hasFeature(Engine::EngineFeature f) const override;
+	void pauseEngineIntern(bool pause) override;
+	void syncSoundSettings() override;
 
 	void handleEvents();
 
 	static Common::String getSavegameFile(int saveGameIdx);
-	virtual Common::Error loadGameState(int slot);
-	virtual bool canLoadGameStateCurrently();
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual bool canSaveGameStateCurrently();
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canSaveGameStateCurrently() override;
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	Screen *_screen;
 	Mouse *_mouse;

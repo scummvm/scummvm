@@ -112,20 +112,20 @@ public:
 	// transposed image.
 	Sprite(const byte *sprite_data, uint16 length, int x, int y, bool columnwise);
 
-	~Sprite();
+	~Sprite() override;
 
-	void draw(Surface *surface, bool markDirty, int relX, int relY) const;
-	void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const;
+	void draw(Surface *surface, bool markDirty, int relX, int relY) const override;
+	void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const override;
 
 	void setMirrorOn() { _mirror = true; }
 	void setMirrorOff() { _mirror = false; }
 
-	Common::Rect getRect(const Displacement &displacement) const;
+	Common::Rect getRect(const Displacement &displacement) const override;
 
 	const byte *getBuffer() const { return _data; }
 	int getPixel(int x, int y, const Displacement &displacement) const;
 
-	DrawableType getType() const { return kDrawableSprite; }
+	DrawableType getType() const override { return kDrawableSprite; }
 
 private:
 	bool _ownsData;
@@ -138,7 +138,7 @@ class Text : public Drawable {
 public:
 	Text(const Common::String &str, const Font *font, byte fontColor,
 	    int x, int y, uint spacing);
-	~Text() {}
+	~Text() override {}
 
 	void setText(const Common::String &str);
 	void setColor(byte fontColor) { _color = fontColor; }
@@ -149,14 +149,14 @@ public:
 
 	uint getLength() const { return _length; }
 
-	void draw(Surface *surface, bool markDirty, int relX, int relY) const;
+	void draw(Surface *surface, bool markDirty, int relX, int relY) const override;
 
 	// drawReScaled just calls draw so that Text can be accessed through a Drawable pointer.
 	// Text scaling does not need to be handled.
-	void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const { draw(surface, markDirty, displacement.relX, displacement.relY); }
-	Common::Rect getRect(const Displacement &displacement) const;
+	void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const override { draw(surface, markDirty, displacement.relX, displacement.relY); }
+	Common::Rect getRect(const Displacement &displacement) const override;
 
-	DrawableType getType() const { return kDrawableText; }
+	DrawableType getType() const override { return kDrawableText; }
 private:
 	void splitLinesLongerThan(uint maxWidth);
 

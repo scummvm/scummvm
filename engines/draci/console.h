@@ -32,7 +32,7 @@ class DraciEngine;
 class DraciConsole : public GUI::Debugger {
 public:
 	DraciConsole(DraciEngine *vm);
-	virtual ~DraciConsole(void);
+	~DraciConsole(void) override;
 
 private:
 	DraciEngine *_vm;
