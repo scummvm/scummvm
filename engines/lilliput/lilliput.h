@@ -90,7 +90,7 @@ struct SmallAnim {
 class LilliputEngine : public Engine {
 public:
 	LilliputEngine(OSystem *syst, const LilliputGameDescription *gd);
-	~LilliputEngine();
+	~LilliputEngine() override;
 
 	OSystem *_system;
 

@@ -32,7 +32,7 @@ private:
 	byte *_orgPtr;
 public:
 	ScriptStream(byte *buf, int bufSize);
-	virtual ~ScriptStream();
+	~ScriptStream() override;
 
 	void writeUint16LE(int value, int relativePos = 0);
 };
