@@ -105,10 +105,6 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 	// Update the last bits
 	_lastRawBits = currentBits;
 
-	// Set the console to be requested or not
-	input.setConsoleRequested(_consoleRequested);
-	_consoleRequested = false;
-
 	// WORKAROUND: The original had this in currentBits, but then
 	// pressing alt would count as an event (and mess up someone
 	// trying to do alt+enter or something). Since it's only used

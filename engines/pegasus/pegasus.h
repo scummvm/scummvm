@@ -78,7 +78,6 @@ public:
 	// Engine stuff
 	const PegasusGameDescription *_gameDescription;
 	bool hasFeature(EngineFeature f) const override;
-	GUI::Debugger *getDebugger() override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
@@ -221,9 +220,6 @@ protected:
 	bool wantsCursor() override;
 
 private:
-	// Console
-	PegasusConsole *_console;
-
 	// Intro
 	void runIntro();
 	void stopIntroTimer();
