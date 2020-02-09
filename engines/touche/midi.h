@@ -42,10 +42,10 @@ public:
 
 	void play(Common::ReadStream &stream, int size, bool loop = false);
 	void adjustVolume(int diff);
-	void setVolume(int volume);
+	void setVolume(int volume) override;
 
 	// MidiDriver_BASE interface
-	virtual void send(uint32 b);
+	void send(uint32 b) override;
 };
 
 } // namespace Touche
