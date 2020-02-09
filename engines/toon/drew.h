@@ -32,14 +32,14 @@ class ToonEngine;
 class CharacterDrew : public Character {
 public:
 	CharacterDrew(ToonEngine *vm);
-	virtual ~CharacterDrew();
-	bool setupPalette();
-	void playStandingAnim();
-	void setPosition(int16 x, int16 y);
-	void resetScale();
-	void update(int32 timeIncrement);
-	void playWalkAnim(int32 start, int32 end);
-	int32 getRandomIdleAnim();
+	~CharacterDrew() override;
+	bool setupPalette() override;
+	void playStandingAnim() override;
+	void setPosition(int16 x, int16 y) override;
+	void resetScale() override;
+	void update(int32 timeIncrement) override;
+	void playWalkAnim(int32 start, int32 end) override;
+	int32 getRandomIdleAnim() override;
 protected:
 	int32 _currentScale;
 };

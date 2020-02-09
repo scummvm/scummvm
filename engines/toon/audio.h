@@ -35,7 +35,7 @@ class AudioStreamInstance : public Audio::AudioStream {
 
 public:
 	AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer, Common::SeekableReadStream *stream, bool looping = false, bool deleteFileStreamAtEnd = false);
-	~AudioStreamInstance();
+	~AudioStreamInstance() override;
 	void play(bool fade = false, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	void stop(bool fade = false);
 
@@ -55,14 +55,14 @@ public:
 
 	void setVolume(int32 volume);
 protected:
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const {
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override {
 		return false;
 	}
-	int getRate() const {
+	int getRate() const override {
 		return 22100;
 	}
-	bool endOfData() const {
+	bool endOfData() const override {
 		return _stopped;
 	}
 	void handleFade(int32 numSamples);
