@@ -41,11 +41,11 @@ typedef struct {
 class GmChannel : public ChannelBase {
 public:
 	GmChannel(uint8 *pMusicData, uint16 startOfData, MidiDriver *pMidiDrv, const byte *pInstMap, const byte *veloTab);
-	~GmChannel() override override;
+	~GmChannel() override;
 	virtual void stopNote();
-	uint8 process(uint16 aktTime) override override;
-	void updateVolume(uint16 pVolume) override override;
-	bool isActive() override override;
+	uint8 process(uint16 aktTime) override;
+	void updateVolume(uint16 pVolume) override;
+	bool isActive() override;
 private:
 	const byte *_instMap;
 	const byte *_veloTab;
