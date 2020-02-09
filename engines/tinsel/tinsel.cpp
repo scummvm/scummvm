@@ -820,7 +820,7 @@ const char *const TinselEngine::_textFiles[][3] = {
 
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _random("tinsel"),
-		_console(0), _sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
+		_sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
 	// Register debug flags
 	DebugMan.addDebugChannel(kTinselDebugAnimations, "animations", "Animations debugging");
 	DebugMan.addDebugChannel(kTinselDebugActions, "actions", "Actions debugging");
@@ -858,7 +858,6 @@ TinselEngine::~TinselEngine() {
 	delete _sound;
 	delete _midiMusic;
 	delete _pcmMusic;
-	delete _console;
 	_screenSurface.free();
 	FreeSaveScenes();
 	FreeTextBuffer();
@@ -910,7 +909,7 @@ Common::Error TinselEngine::run() {
 		_screenSurface.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
 
-	_console = new Console();
+	setDebugger(new Console());
 
 	CoroScheduler.reset();
 
@@ -970,9 +969,6 @@ Common::Error TinselEngine::run() {
 	// Foreground loop
 	uint32 timerVal = 0;
 	while (!shouldQuit()) {
-		assert(_console);
-		_console->onFrame();
-
 		// Check for time to do next game cycle
 		if ((g_system->getMillis() > timerVal + GAME_FRAME_DELAY)) {
 			timerVal = g_system->getMillis();
@@ -1184,22 +1180,6 @@ void TinselEngine::ChopDrivers() {
  * Process a keyboard event
  */
 void TinselEngine::ProcessKeyEvent(const Common::Event &event) {
-
-	// Handle any special keys immediately
-	switch (event.kbd.keycode) {
-	case Common::KEYCODE_d:
-		// Checks for CTRL flag, ignoring all the sticky flags
-		if (event.kbd.hasFlags(Common::KBD_CTRL) && event.type == Common::EVENT_KEYDOWN) {
-			// Activate the debugger
-			assert(_console);
-			_console->attach();
-			return;
-		}
-		break;
-	default:
-		break;
-	}
-
 	// Check for movement keys
 	int idx = 0;
 	switch (event.kbd.keycode) {

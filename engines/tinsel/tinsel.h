@@ -151,8 +151,6 @@ class TinselEngine : public Engine {
 	Graphics::Surface _screenSurface;
 	Common::Point _mousePos;
 	uint8 _dosPlayerDir;
-	Console *_console;
-	GUI::Debugger *getDebugger() override { return _console; }
 
 	static const char *const _sampleIndices[][3];
 	static const char *const _sampleFiles[][3];
