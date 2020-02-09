@@ -42,7 +42,7 @@ class InventoryItem;
 class Interface : public InputHandler, public NotificationReceiver {
 public:
 	Interface();
-	virtual ~Interface();
+	~Interface() override;
 
 	void createInterface();
 
@@ -101,7 +101,7 @@ protected:
 	void throwAwayBiochipPanel();
 	void throwAwayEnergyMonitor();
 
-	void receiveNotification(Notification *, const NotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags) override;
 	void inventoryLidOpen(const bool doCallBacks);
 	void inventoryLidClosed();
 	void inventoryDrawerUp();

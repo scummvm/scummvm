@@ -39,7 +39,7 @@ class Sprite;
 class SpriteDragger : public Tracker {
 public:
 	SpriteDragger();
-	virtual ~SpriteDragger() {}
+	~SpriteDragger() override {}
 
 	void setDragSprite(Sprite *);
 	Sprite *getDragSprite() { return _draggingSprite; }
@@ -47,8 +47,8 @@ public:
 	void setDragConstraints(const Common::Rect &, const Common::Rect &);
 	void getDragConstraints(Common::Rect &, Common::Rect &) const;
 
-	void startTracking(const Input &);
-	void continueTracking(const Input&);
+	void startTracking(const Input &) override;
+	void continueTracking(const Input&) override;
 
 	Hotspot *getLastHotspot() const { return _lastHotspot; }
 
@@ -73,16 +73,16 @@ class PegasusEngine;
 class ItemDragger : public SpriteDragger {
 public:
 	ItemDragger(PegasusEngine *);
-	virtual ~ItemDragger() {}
+	~ItemDragger() override {}
 
 	void setHighlightBounds();
-	void startTracking(const Input &);
-	void stopTracking(const Input &);
-	bool stopTrackingInput(const Input &);
+	void startTracking(const Input &) override;
+	void stopTracking(const Input &) override;
+	bool stopTrackingInput(const Input &) override;
 
 protected:
-	virtual void enterHotspot(Hotspot *);
-	virtual void exitHotspot(Hotspot *);
+	void enterHotspot(Hotspot *) override;
+	void exitHotspot(Hotspot *) override;
 
 	PegasusEngine *_owner;
 	DropHighlight _inventoryHighlight;

@@ -93,7 +93,7 @@ private:
 class PixelImage : public Surface {
 public:
 	PixelImage();
-	virtual ~PixelImage() {}
+	~PixelImage() override {}
 
 	void drawImage(const Common::Rect &, const Common::Rect &);
 
@@ -106,7 +106,7 @@ protected:
 class Frame : public PixelImage {
 public:
 	Frame() {}
-	virtual ~Frame() {}
+	~Frame() override {}
 
 	virtual void initFromPICTFile(const Common::String &fileName, bool transparent = false);
 	virtual void initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool transparent = false);
@@ -117,7 +117,7 @@ class SpriteFrame : public Frame {
 friend class Sprite;
 public:
 	SpriteFrame() { _referenceCount = 0; }
-	virtual ~SpriteFrame() {}
+	~SpriteFrame() override {}
 
 protected:
 	uint32 _referenceCount;
@@ -126,13 +126,13 @@ protected:
 class Picture : public DisplayElement, public Frame {
 public:
 	Picture(const DisplayElementID id) : DisplayElement(id) {}
-	virtual ~Picture() {}
+	~Picture() override {}
 
-	virtual void initFromPICTFile(const Common::String &fileName, bool transparent = false);
-	virtual void initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool transparent = false);
-	virtual void initFromMovieFrame(Video::VideoDecoder *, TimeValue, bool transparent = false);
+	void initFromPICTFile(const Common::String &fileName, bool transparent = false) override;
+	void initFromPICTResource(Common::MacResManager *resFork, uint16 id, bool transparent = false) override;
+	void initFromMovieFrame(Video::VideoDecoder *, TimeValue, bool transparent = false) override;
 
-	virtual void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 };
 
 } // End of namespace Pegasus

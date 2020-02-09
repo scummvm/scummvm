@@ -33,16 +33,16 @@ namespace Pegasus {
 class BiochipItem : public Item {
 public:
 	BiochipItem(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
-	virtual ~BiochipItem();
+	~BiochipItem() override;
 
-	virtual ItemType getItemType();
+	ItemType getItemType() override;
 
 	TimeValue getPanelTime() const { return _biochipInfoPanelTime; }
 	TimeValue getRightAreaTime() const;
 
 	// Must affect images in right area.
-	virtual void select();
-	virtual void deselect();
+	void select() override;
+	void deselect() override;
 
 protected:
 	TimeValue _biochipInfoPanelTime;

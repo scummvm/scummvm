@@ -45,7 +45,7 @@ static const int32 kTractorBeamEnergy = kLowShuttleEnergy;
 class ShuttleEnergyMeter : public FaderAnimation {
 public:
 	ShuttleEnergyMeter();
-	~ShuttleEnergyMeter() {}
+	~ShuttleEnergyMeter() override {}
 
 	void initShuttleEnergyMeter();
 	void disposeShuttleEnergyMeter();
@@ -61,7 +61,7 @@ public:
 
 	bool enoughEnergyForTractorBeam() const;
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 protected:
 	Surface _meterImage;

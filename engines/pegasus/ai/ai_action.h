@@ -63,11 +63,11 @@ typedef Common::List<AIAction *> AIActionList;
 class AICompoundAction : public AIAction {
 public:
 	AICompoundAction() {}
-	virtual ~AICompoundAction();
+	~AICompoundAction() override;
 
 	void addAction(AIAction *action) { _compoundActions.push_back(action); }
 
-	virtual void performAIAction(AIRule *);
+	void performAIAction(AIRule *) override;
 
 protected:
 	AIActionList _compoundActions;
@@ -81,7 +81,7 @@ class AIPlayMessageAction : public AIAction {
 public:
 	AIPlayMessageAction(const Common::String &movieName, bool keepLastFrame, const InputBits = kWarningInterruption);
 
-	virtual void performAIAction(AIRule *);
+	void performAIAction(AIRule *) override;
 
 protected:
 	Common::String _movieName;
@@ -97,7 +97,7 @@ class AIStartTimerAction : public AIAction {
 public:
 	AIStartTimerAction(AITimerCondition *);
 
-	virtual void performAIAction(AIRule *);
+	void performAIAction(AIRule *) override;
 
 protected:
 	AITimerCondition *_timerCondition;
@@ -111,7 +111,7 @@ class AIActivateRuleAction : public AIAction {
 public:
 	AIActivateRuleAction(AIRule *);
 
-	virtual void performAIAction(AIRule *);
+	void performAIAction(AIRule *) override;
 
 protected:
 	AIRule *_rule;
@@ -125,7 +125,7 @@ class AIDeactivateRuleAction : public AIAction {
 public:
 	AIDeactivateRuleAction(AIRule *rule);
 
-	virtual void performAIAction(AIRule *);
+	void performAIAction(AIRule *) override;
 
 protected:
 	AIRule *_rule;

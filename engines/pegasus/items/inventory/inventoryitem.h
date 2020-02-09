@@ -40,9 +40,9 @@ struct JMPInventoryInfo {
 class InventoryItem : public Item {
 public:
 	InventoryItem(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
-	virtual ~InventoryItem();
+	~InventoryItem() override;
 
-	virtual ItemType getItemType();
+	ItemType getItemType() override;
 
 	void getPanelTimes(TimeValue &, TimeValue &) const;
 	TimeValue getLeftAreaTime() const;
@@ -53,8 +53,8 @@ public:
 	virtual void toggleItemState() {}
 
 	// Must affect images in left area.
-	virtual void select();
-	virtual void deselect();
+	void select() override;
+	void deselect() override;
 
 protected:
 	JMPInventoryInfo _inventoryInfo;

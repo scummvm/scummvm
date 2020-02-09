@@ -40,7 +40,7 @@ class Transition;
 class InventoryPicture : public InputHandler, public Picture {
 public:
 	InventoryPicture(const DisplayElementID, InputHandler *, Inventory *);
-	virtual ~InventoryPicture() {}
+	~InventoryPicture() override {}
 
 	void initInventoryImage(Transition *);
 	void throwAwayInventoryImage();
@@ -48,8 +48,8 @@ public:
 	void panelUp();
 	void activateInventoryPicture();
 	void deactivateInventoryPicture();
-	void handleInput(const Input &, const Hotspot *);
-	bool wantsCursor() { return false; }
+	void handleInput(const Input &, const Hotspot *) override;
+	bool wantsCursor() override { return false; }
 
 	InventoryResult addInventoryItem(Item *);
 	InventoryResult removeInventoryItem(Item *);
@@ -63,7 +63,7 @@ public:
 
 protected:
 	void getItemXY(uint32, CoordType &, CoordType &);
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 	void drawItemHighlight(const Common::Rect &);
 	virtual void highlightCurrentItem();
 	virtual void unhighlightCurrentItem() {}
@@ -92,7 +92,7 @@ protected:
 class InventoryItemsPicture : public InventoryPicture {
 public:
 	InventoryItemsPicture(const DisplayElementID, InputHandler *, Inventory *);
-	virtual ~InventoryItemsPicture() {}
+	~InventoryItemsPicture() override {}
 
 	void deactivateInventoryPicture();
 
@@ -101,9 +101,9 @@ public:
 	void playEndMessage(DisplayElement *);
 
 protected:
-	virtual void highlightCurrentItem();
-	virtual void unhighlightCurrentItem();
-	virtual TimeValue getItemPanelTime(Item *);
+	void highlightCurrentItem() override;
+	void unhighlightCurrentItem() override;
+	TimeValue getItemPanelTime(Item *) override;
 	void loopCurrentItem();
 
 	bool _isLooping;
@@ -112,11 +112,11 @@ protected:
 class BiochipPicture : public InventoryPicture {
 public:
 	BiochipPicture(const DisplayElementID, InputHandler *, Inventory *);
-	virtual ~BiochipPicture() {}
+	~BiochipPicture() override {}
 
 protected:
-	virtual void unhighlightCurrentItem();
-	virtual TimeValue getItemPanelTime(Item *);
+	void unhighlightCurrentItem() override;
+	TimeValue getItemPanelTime(Item *) override;
 };
 
 } // End of namespace Pegasus

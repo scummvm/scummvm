@@ -38,18 +38,18 @@ class Neighborhood;
 class NoradElevator : public GameInteraction, private NotificationReceiver {
 public:
 	NoradElevator(Neighborhood *, const RoomID, const RoomID, const HotSpotID, const HotSpotID);
-	virtual ~NoradElevator() {}
+	~NoradElevator() override {}
 
 protected:
-	virtual void openInteraction();
-	virtual void initInteraction();
-	virtual void closeInteraction();
-	virtual void resetInteraction();
+	void openInteraction() override;
+	void initInteraction() override;
+	void closeInteraction() override;
+	void resetInteraction() override;
 
-	virtual void activateHotspots();
-	virtual void clickInHotspot(const Input &, const Hotspot *);
+	void activateHotspots() override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
 
-	virtual void receiveNotification(Notification *, const NotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags) override;
 
 	RoomID _upRoom;
 	RoomID _downRoom;

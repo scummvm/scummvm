@@ -33,10 +33,10 @@ namespace Pegasus {
 class GasCanister : public InventoryItem {
 public:
 	GasCanister(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
-	virtual ~GasCanister() {}
+	~GasCanister() override {}
 
-	void select();
-	void takeSharedArea();
+	void select() override;
+	void takeSharedArea() override;
 };
 
 } // End of namespace Pegasus

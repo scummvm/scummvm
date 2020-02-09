@@ -391,10 +391,10 @@ class Caldoria;
 class SinclairCallBack : public TimeBaseCallBack {
 public:
 	SinclairCallBack(Caldoria *);
-	~SinclairCallBack() {}
+	~SinclairCallBack() override {}
 
 protected:
-	virtual void callBack();
+	void callBack() override;
 
 	Caldoria *_caldoria;
 };
@@ -404,23 +404,23 @@ friend class SinclairCallBack;
 
 public:
 	Caldoria(InputHandler *, PegasusEngine *);
-	virtual ~Caldoria();
+	~Caldoria() override;
 
-	virtual uint16 getDateResID() const;
+	uint16 getDateResID() const override;
 
-	void pickedUpItem(Item *);
+	void pickedUpItem(Item *) override;
 
-	virtual GameInteraction *makeInteraction(const InteractionID);
+	GameInteraction *makeInteraction(const InteractionID) override;
 
-	virtual Common::String getBriefingMovie();
-	virtual Common::String getEnvScanMovie();
-	virtual uint getNumHints();
-	virtual Common::String getHintMovie(uint);
-	void loadAmbientLoops();
-	bool wantsCursor();
-	void flushGameState();
+	Common::String getBriefingMovie() override;
+	Common::String getEnvScanMovie() override;
+	uint getNumHints() override;
+	Common::String getHintMovie(uint) override;
+	void loadAmbientLoops() override;
+	bool wantsCursor() override;
+	void flushGameState() override;
 
-	void checkContinuePoint(const RoomID, const DirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant) override;
 
 protected:
 	enum {
@@ -443,51 +443,51 @@ protected:
 		kNumCaldoriaPrivateFlags
 	};
 
-	void init();
-	void start();
+	void init() override;
+	void start() override;
 
 	void setUpRoofTop();
 
-	void setUpAIRules();
+	void setUpAIRules() override;
 	void doAIRecalibration();
-	TimeValue getViewTime(const RoomID, const DirectionConstant);
-	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &);
-	void startSpotOnceOnly(TimeValue, TimeValue);
-	void startExitMovie(const ExitTable::Entry &);
-	void startZoomMovie(const ZoomTable::Entry &);
-	void startDoorOpenMovie(const TimeValue, const TimeValue);
-	void startTurnPush(const TurnDirection, const TimeValue, const DirectionConstant);
-	void bumpIntoWall();
-	int16 getStaticCompassAngle(const RoomID, const DirectionConstant);
-	void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &);
-	void getZoomCompassMove(const ZoomTable::Entry &, FaderMoveSpec &);
-	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &);
-	void spotCompleted();
-	void arriveAt(const RoomID, const DirectionConstant);
+	TimeValue getViewTime(const RoomID, const DirectionConstant) override;
+	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &) override;
+	void startSpotOnceOnly(TimeValue, TimeValue) override;
+	void startExitMovie(const ExitTable::Entry &) override;
+	void startZoomMovie(const ZoomTable::Entry &) override;
+	void startDoorOpenMovie(const TimeValue, const TimeValue) override;
+	void startTurnPush(const TurnDirection, const TimeValue, const DirectionConstant) override;
+	void bumpIntoWall() override;
+	int16 getStaticCompassAngle(const RoomID, const DirectionConstant) override;
+	void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &) override;
+	void getZoomCompassMove(const ZoomTable::Entry &, FaderMoveSpec &) override;
+	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &) override;
+	void spotCompleted() override;
+	void arriveAt(const RoomID, const DirectionConstant) override;
 	void arriveAtCaldoria00();
 	void arriveAtCaldoriaToilet();
 	void arriveAtCaldoria44();
 	void arriveAtCaldoria49();
 	void arriveAtCaldoria56();
 	void arriveAtCaldoriaDeath();
-	void turnTo(const DirectionConstant);
-	void zoomTo(const Hotspot *);
-	void downButton(const Input &);
-	void receiveNotification(Notification *, const NotificationFlags);
-	InputBits getInputFilter();
-	void activateHotspots();
-	void clickInHotspot(const Input &, const Hotspot *);
-	void newInteraction(const InteractionID);
+	void turnTo(const DirectionConstant) override;
+	void zoomTo(const Hotspot *) override;
+	void downButton(const Input &) override;
+	void receiveNotification(Notification *, const NotificationFlags) override;
+	InputBits getInputFilter() override;
+	void activateHotspots() override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
+	void newInteraction(const InteractionID) override;
 
 	void clickOnDoorbell(const HotSpotID);
 
-	Hotspot *getItemScreenSpot(Item *, DisplayElement *);
-	void dropItemIntoRoom(Item *, Hotspot *);
+	Hotspot *getItemScreenSpot(Item *, DisplayElement *) override;
+	void dropItemIntoRoom(Item *, Hotspot *) override;
 	void takeElevator(uint, uint);
 	void updateElevatorMovie();
 	void openElevatorMovie();
 	void emptyOJGlass();
-	void closeDoorOffScreen(const RoomID, const DirectionConstant);
+	void closeDoorOffScreen(const RoomID, const DirectionConstant) override;
 	void doorBombTimerExpired();
 	void sinclairTimerExpired();
 	void checkSinclairShootsOS();
@@ -496,10 +496,10 @@ protected:
 	void playEndMessage();
 	void checkInterruptSinclair();
 
-	CanOpenDoorReason canOpenDoor(DoorTable::Entry &);
-	void doorOpened();
+	CanOpenDoorReason canOpenDoor(DoorTable::Entry &) override;
+	void doorOpened() override;
 
-	void updateCursor(const Common::Point, const Hotspot *);
+	void updateCursor(const Common::Point, const Hotspot *) override;
 
 	FlagsArray<uint16, kNumCaldoriaPrivateFlags> _privateFlags;
 
@@ -514,8 +514,8 @@ protected:
 
 	SinclairCallBack _sinclairInterrupt;
 
-	Common::String getSoundSpotsName();
-	Common::String getNavMovieName();
+	Common::String getSoundSpotsName() override;
+	Common::String getNavMovieName() override;
 };
 
 } // End of namespace Pegasus

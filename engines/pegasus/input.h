@@ -61,9 +61,9 @@ enum PegasusAction {
 class InputDeviceManager : public Common::Singleton<InputDeviceManager>, public Common::EventObserver {
 public:
 	InputDeviceManager();
-	~InputDeviceManager();
+	~InputDeviceManager() override;
 
-	bool notifyEvent(const Common::Event &event);
+	bool notifyEvent(const Common::Event &event) override;
 
 	void getInput(Input &, const InputBits);
 
@@ -471,9 +471,9 @@ protected:
 class Tracker : public InputHandler {
 public:
 	Tracker() : InputHandler(0), _savedHandler(nullptr) {}
-	virtual ~Tracker() {}
+	~Tracker() override {}
 
-	virtual void handleInput(const Input &, const Hotspot *);
+	void handleInput(const Input &, const Hotspot *) override;
 	virtual bool stopTrackingInput(const Input &) { return false; }
 
 	virtual void startTracking(const Input &);
@@ -481,9 +481,9 @@ public:
 	virtual void continueTracking(const Input &) {}
 
 	bool isTracking() { return this == _currentTracker; }
-	bool isClickInput(const Input &, const Hotspot *);
+	bool isClickInput(const Input &, const Hotspot *) override;
 
-	bool releaseInputFocus() { return !isTracking(); }
+	bool releaseInputFocus() override { return !isTracking(); }
 
 protected:
 	static Tracker *_currentTracker;

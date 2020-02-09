@@ -73,7 +73,7 @@ friend class InputHandler;
 
 public:
 	PegasusEngine(OSystem *syst, const PegasusGameDescription *gamedesc);
-	virtual ~PegasusEngine();
+	~PegasusEngine() override;
 
 	// Engine stuff
 	const PegasusGameDescription *_gameDescription;
@@ -208,11 +208,11 @@ protected:
 	void pauseEngineIntern(bool pause) override;
 
 	Notification _shellNotification;
-	virtual void receiveNotification(Notification *notification, const NotificationFlags flags) override;
+	void receiveNotification(Notification *notification, const NotificationFlags flags) override;
 
 	void handleInput(const Input &input, const Hotspot *cursorSpot) override;
-	virtual bool isClickInput(const Input &, const Hotspot *) override;
-	virtual InputBits getClickFilter() override;
+	bool isClickInput(const Input &, const Hotspot *) override;
+	InputBits getClickFilter() override;
 
 	void clickInHotspot(const Input &, const Hotspot *) override;
 	void activateHotspots(void) override;

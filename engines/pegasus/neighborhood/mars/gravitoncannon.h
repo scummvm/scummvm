@@ -34,18 +34,18 @@ namespace Pegasus {
 class GravitonCannon : public ShuttleWeapon {
 public:
 	GravitonCannon();
-	virtual ~GravitonCannon() {}
+	~GravitonCannon() override {}
 
-	void initShuttleWeapon();
-	void cleanUpShuttleWeapon();
+	void initShuttleWeapon() override;
+	void cleanUpShuttleWeapon() override;
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 protected:
-	virtual void updateWeaponPosition();
-	virtual bool collisionWithJunk(Common::Point &impactPoint);
-	virtual void hitJunk(Common::Point impactPoint);
-	virtual void hitShuttle(Common::Point impactPoint);
+	void updateWeaponPosition() override;
+	bool collisionWithJunk(Common::Point &impactPoint) override;
+	void hitJunk(Common::Point impactPoint) override;
+	void hitShuttle(Common::Point impactPoint) override;
 
 	Surface _gravitonImage;
 	Common::Rect _gravitonBounds;

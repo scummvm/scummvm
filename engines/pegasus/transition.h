@@ -37,12 +37,12 @@ namespace Pegasus {
 class ScreenFader : public Fader {
 public:
 	ScreenFader();
-	virtual ~ScreenFader();
+	~ScreenFader() override;
 
 	void doFadeOutSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, bool isBlack = true);
 	void doFadeInSync(const TimeValue = kHalfSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, bool isBlack = true);
 
-	void setFaderValue(const int32);
+	void setFaderValue(const int32) override;
 
 private:
 	bool _isBlack;
@@ -61,9 +61,9 @@ static const int kTransitionRange = kTransitionTop - kTransitionBottom;
 class Transition : public FaderAnimation {
 public:
 	Transition(const DisplayElementID id);
-	virtual ~Transition() {}
+	~Transition() override {}
 
-	virtual void setBounds(const Common::Rect &);
+	void setBounds(const Common::Rect &) override;
 
 	virtual void setInAndOutElements(DisplayElement *, DisplayElement *);
 	DisplayElement *getInElement() { return _inPicture; }
@@ -79,10 +79,10 @@ protected:
 class Slide : public Transition {
 public:
 	Slide(const DisplayElementID id) : Transition(id) {}
-	virtual ~Slide() {}
+	~Slide() override {}
 
 	virtual void setSlideDirection(SlideDirection dir) { _direction = dir; }
-	virtual void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 	virtual void setDirection(const SlideDirection dir) { _direction = dir; }
 
@@ -97,10 +97,10 @@ protected:
 class Push : public Slide {
 public:
 	Push(const DisplayElementID id) : Slide(id) {}
-	virtual ~Push() {}
+	~Push() override {}
 
 protected:
-	virtual void adjustSlideRects(Common::Rect &, Common::Rect &);
+	void adjustSlideRects(Common::Rect &, Common::Rect &) override;
 };
 
 } // End of namespace Pegasus

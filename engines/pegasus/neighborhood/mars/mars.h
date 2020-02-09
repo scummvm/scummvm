@@ -67,15 +67,15 @@ class Mars : public Neighborhood {
 friend struct MarsTimerEvent;
 public:
 	Mars(InputHandler *, PegasusEngine *);
-	virtual ~Mars();
+	~Mars() override;
 
-	void flushGameState();
+	void flushGameState() override;
 
-	virtual uint16 getDateResID() const;
+	uint16 getDateResID() const override;
 
-	virtual AirQuality getAirQuality(const RoomID);
+	AirQuality getAirQuality(const RoomID) override;
 
-	void checkAirMask();
+	void checkAirMask() override;
 
 	void showBigExplosion(const Common::Rect &, const DisplayOrder);
 	void showLittleExplosion(const Common::Rect &, const DisplayOrder);
@@ -83,20 +83,20 @@ public:
 	void decreaseRobotShuttleEnergy(const int, Common::Point impactPoint);
 	void setUpNextDropTime();
 
-	Common::String getBriefingMovie();
-	Common::String getEnvScanMovie();
-	uint getNumHints();
-	Common::String getHintMovie(uint);
+	Common::String getBriefingMovie() override;
+	Common::String getEnvScanMovie() override;
+	uint getNumHints() override;
+	Common::String getHintMovie(uint) override;
 
-	virtual void shieldOn();
-	virtual void shieldOff();
+	void shieldOn() override;
+	void shieldOff() override;
 
-	void checkContinuePoint(const RoomID, const DirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant) override;
 
-	void setSoundFXLevel(const uint16);
+	void setSoundFXLevel(const uint16) override;
 
-	bool canSolve();
-	void doSolve();
+	bool canSolve() override;
+	void doSolve() override;
 
 	bool inColorMatchingGame();
 
@@ -116,31 +116,31 @@ protected:
 		kNumMarsPrivateFlags
 	};
 
-	void init();
-	void start();
-	void setUpAIRules();
-	void arriveAt(const RoomID, const DirectionConstant);
-	void takeItemFromRoom(Item *);
-	void dropItemIntoRoom(Item *, Hotspot *);
-	void activateHotspots();
-	void activateOneHotspot(HotspotInfoTable::Entry &, Hotspot *);
-	void clickInHotspot(const Input &, const Hotspot *);
-	InputBits getInputFilter();
+	void init() override;
+	void start() override;
+	void setUpAIRules() override;
+	void arriveAt(const RoomID, const DirectionConstant) override;
+	void takeItemFromRoom(Item *) override;
+	void dropItemIntoRoom(Item *, Hotspot *) override;
+	void activateHotspots() override;
+	void activateOneHotspot(HotspotInfoTable::Entry &, Hotspot *) override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
+	InputBits getInputFilter() override;
 
-	TimeValue getViewTime(const RoomID, const DirectionConstant);
-	void getZoomEntry(const HotSpotID, ZoomTable::Entry &);
-	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &);
-	CanOpenDoorReason canOpenDoor(DoorTable::Entry &);
-	void openDoor();
-	void closeDoorOffScreen(const RoomID, const DirectionConstant);
-	int16 getStaticCompassAngle(const RoomID, const DirectionConstant);
-	void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &);
-	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &);
-	void turnTo(const DirectionConstant);
-	void receiveNotification(Notification *, const NotificationFlags);
-	void doorOpened();
+	TimeValue getViewTime(const RoomID, const DirectionConstant) override;
+	void getZoomEntry(const HotSpotID, ZoomTable::Entry &) override;
+	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &) override;
+	CanOpenDoorReason canOpenDoor(DoorTable::Entry &) override;
+	void openDoor() override;
+	void closeDoorOffScreen(const RoomID, const DirectionConstant) override;
+	int16 getStaticCompassAngle(const RoomID, const DirectionConstant) override;
+	void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &) override;
+	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &) override;
+	void turnTo(const DirectionConstant) override;
+	void receiveNotification(Notification *, const NotificationFlags) override;
+	void doorOpened() override;
 	void setUpReactorEnergyDrain();
-	Hotspot *getItemScreenSpot(Item *, DisplayElement *);
+	Hotspot *getItemScreenSpot(Item *, DisplayElement *) override;
 	void lockThawed();
 	void robotTiredOfWaiting();
 
@@ -151,17 +151,17 @@ protected:
 	void doReactorGuess(int32 guess);
 	void bombExplodesInGame();
 	void didntFindBomb();
-	CanMoveForwardReason canMoveForward(ExitTable::Entry &);
-	void cantMoveThatWay(CanMoveForwardReason);
-	void moveForward();
-	void bumpIntoWall();
-	void turnLeft();
-	void turnRight();
+	CanMoveForwardReason canMoveForward(ExitTable::Entry &) override;
+	void cantMoveThatWay(CanMoveForwardReason) override;
+	void moveForward() override;
+	void bumpIntoWall() override;
+	void turnLeft() override;
+	void turnRight() override;
 	void airStageExpired();
-	void loadAmbientLoops();
+	void loadAmbientLoops() override;
 	void checkAirlockDoors();
-	void pickedUpItem(Item *item);
-	void cantOpenDoor(CanOpenDoorReason);
+	void pickedUpItem(Item *item) override;
+	void cantOpenDoor(CanOpenDoorReason) override;
 	void launchMaze007Robot();
 	void launchMaze015Robot();
 	void launchMaze101Robot();
@@ -169,8 +169,8 @@ protected:
 	void launchMaze133Robot();
 	void launchMaze136Robot();
 	void launchMaze184Robot();
-	void timerExpired(const uint32);
-	void spotCompleted();
+	void timerExpired(const uint32) override;
+	void spotCompleted() override;
 
 	void doCanyonChase(void);
 	void startMarsTimer(TimeValue, TimeScale, MarsTimerCode);
@@ -180,10 +180,10 @@ protected:
 	void startUpFromSpaceChase();
 	void transportToRobotShip();
 	void spaceChaseClick(const Input &, const HotSpotID);
-	void updateCursor(const Common::Point, const Hotspot *);
+	void updateCursor(const Common::Point, const Hotspot *) override;
 
-	Common::String getSoundSpotsName();
-	Common::String getNavMovieName();
+	Common::String getSoundSpotsName() override;
+	Common::String getNavMovieName() override;
 
 	InventoryItem *_attackingItem;
 	FuseFunction _bombFuse;

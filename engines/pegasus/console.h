@@ -32,7 +32,7 @@ class PegasusEngine;
 class PegasusConsole : public GUI::Debugger {
 public:
 	PegasusConsole(PegasusEngine *vm);
-	virtual ~PegasusConsole();
+	~PegasusConsole() override;
 
 private:
 	bool Cmd_Die(int argc, const char **argv);

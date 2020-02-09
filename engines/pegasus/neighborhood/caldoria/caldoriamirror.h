@@ -34,17 +34,17 @@ namespace Pegasus {
 class CaldoriaMirror : public GameInteraction, public NotificationReceiver {
 public:
 	CaldoriaMirror(Neighborhood *);
-	virtual ~CaldoriaMirror() {}
+	~CaldoriaMirror() override {}
 
 protected:
-	void openInteraction();
-	void initInteraction();
-	void closeInteraction();
+	void openInteraction() override;
+	void initInteraction() override;
+	void closeInteraction() override;
 
-	void handleInput(const Input &, const Hotspot *);
-	void activateHotspots();
-	void clickInHotspot(const Input &, const Hotspot *);
-	void receiveNotification(Notification *, const NotificationFlags);
+	void handleInput(const Input &, const Hotspot *) override;
+	void activateHotspots() override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
+	void receiveNotification(Notification *, const NotificationFlags) override;
 
 	Notification *_neighborhoodNotification;
 };

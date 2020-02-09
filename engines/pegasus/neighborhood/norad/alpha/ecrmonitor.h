@@ -35,15 +35,15 @@ namespace Pegasus {
 class NoradAlphaECRMonitor : public GameInteraction, public NotificationReceiver {
 public:
 	NoradAlphaECRMonitor(Neighborhood *);
-	virtual ~NoradAlphaECRMonitor() {}
+	~NoradAlphaECRMonitor() override {}
 
-	virtual void handleInput(const Input &, const Hotspot *);
+	void handleInput(const Input &, const Hotspot *) override;
 
 protected:
-	virtual void openInteraction();
-	virtual void closeInteraction();
+	void openInteraction() override;
+	void closeInteraction() override;
 
-	virtual void receiveNotification(Notification *, const NotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags) override;
 
 	void ecrSection1Finished();
 	void ecrPanFinished();

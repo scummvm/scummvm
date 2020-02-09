@@ -74,7 +74,7 @@ protected:
 class Fader : public IdlerTimeBase {
 public:
 	Fader();
-	virtual ~Fader() {}
+	~Fader() override {}
 
 	virtual void setFaderValue(const int32);
 	int32 getFaderValue() const { return _currentValue; }
@@ -91,7 +91,7 @@ public:
 
 protected:
 	bool initFaderMove(const FaderMoveSpec &);
-	virtual void timeChanged(const TimeValue);
+	void timeChanged(const TimeValue) override;
 
 	int32 _currentValue;
 	FaderMoveSpec _currentFaderMove;
@@ -100,9 +100,9 @@ protected:
 class FaderAnimation : public DisplayElement, public Fader {
 public:
 	FaderAnimation(const DisplayElementID id) : DisplayElement(id) {}
-	virtual ~FaderAnimation() {}
+	~FaderAnimation() override {}
 
-	void setFaderValue(const int32);
+	void setFaderValue(const int32) override;
 };
 
 class Sound;
@@ -111,9 +111,9 @@ class SoundFader : public Fader {
 friend class Sound;
 public:
 	SoundFader();
-	virtual ~SoundFader() {}
+	~SoundFader() override {}
 
-	void setFaderValue(const int32);
+	void setFaderValue(const int32) override;
 
 	void setMasterVolume(const uint16);
 	uint16 getMasterVolume() const { return _masterVolume; }

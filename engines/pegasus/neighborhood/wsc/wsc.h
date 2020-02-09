@@ -42,26 +42,26 @@ static const RoomID kWSC62 = 62;
 class WSC : public Neighborhood {
 public:
 	WSC(InputHandler *, PegasusEngine *);
-	virtual ~WSC() {}
+	~WSC() override {}
 
-	void flushGameState();
+	void flushGameState() override;
 
-	virtual uint16 getDateResID() const;
+	uint16 getDateResID() const override;
 
-	bool okayToJump();
+	bool okayToJump() override;
 
-	void checkContinuePoint(const RoomID, const DirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant) override;
 
 	bool inSynthesizerGame();
 
-	bool canSolve();
-	void doSolve();
+	bool canSolve() override;
+	void doSolve() override;
 
-	virtual void prepareForAIHint(const Common::String &);
-	virtual void cleanUpAfterAIHint(const Common::String &);
+	void prepareForAIHint(const Common::String &) override;
+	void cleanUpAfterAIHint(const Common::String &) override;
 
-	void init();
-	void start();
+	void init() override;
+	void start() override;
 
 protected:
 	enum {
@@ -104,52 +104,52 @@ protected:
 		kNumWSCPrivateFlags
 	};
 
-	void arriveAt(const RoomID, const DirectionConstant);
-	void turnTo(const DirectionConstant);
-	void receiveNotification(Notification *, const NotificationFlags);
-	void dropItemIntoRoom(Item *, Hotspot *);
-	void clickInHotspot(const Input &, const Hotspot *);
-	TimeValue getViewTime(const RoomID, const DirectionConstant);
-	void getZoomEntry(const HotSpotID, ZoomTable::Entry &);
-	CanMoveForwardReason canMoveForward(ExitTable::Entry &entry);
-	void cantMoveThatWay(CanMoveForwardReason reason);
-	CanTurnReason canTurn(TurnDirection turn, DirectionConstant &nextDir);
-	void zoomTo(const Hotspot *hotspot);
-	void activateOneHotspot(HotspotInfoTable::Entry &, Hotspot *);
+	void arriveAt(const RoomID, const DirectionConstant) override;
+	void turnTo(const DirectionConstant) override;
+	void receiveNotification(Notification *, const NotificationFlags) override;
+	void dropItemIntoRoom(Item *, Hotspot *) override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
+	TimeValue getViewTime(const RoomID, const DirectionConstant) override;
+	void getZoomEntry(const HotSpotID, ZoomTable::Entry &) override;
+	CanMoveForwardReason canMoveForward(ExitTable::Entry &entry) override;
+	void cantMoveThatWay(CanMoveForwardReason reason) override;
+	CanTurnReason canTurn(TurnDirection turn, DirectionConstant &nextDir) override;
+	void zoomTo(const Hotspot *hotspot) override;
+	void activateOneHotspot(HotspotInfoTable::Entry &, Hotspot *) override;
 	void setUpMoleculeGame();
 	void nextMoleculeGameLevel();
 	void startMoleculeGameLevel();
 	void moleculeGameClick(const HotSpotID);
-	void loadAmbientLoops();
-	CanOpenDoorReason canOpenDoor(DoorTable::Entry &);
-	void cantOpenDoor(CanOpenDoorReason);
-	void pickedUpItem(Item *);
-	void doorOpened();
-	void startExtraSequence(const ExtraID, const NotificationFlags, const InputBits);
-	void getExtraEntry(const uint32, ExtraTable::Entry &);
-	void takeItemFromRoom(Item *item);
+	void loadAmbientLoops() override;
+	CanOpenDoorReason canOpenDoor(DoorTable::Entry &) override;
+	void cantOpenDoor(CanOpenDoorReason) override;
+	void pickedUpItem(Item *) override;
+	void doorOpened() override;
+	void startExtraSequence(const ExtraID, const NotificationFlags, const InputBits) override;
+	void getExtraEntry(const uint32, ExtraTable::Entry &) override;
+	void takeItemFromRoom(Item *item) override;
 	void checkPeopleCrossing();
-	void turnLeft();
-	void turnRight();
-	void moveForward();
-	Hotspot *getItemScreenSpot(Item *, DisplayElement *);
-	int16 getStaticCompassAngle(const RoomID, const DirectionConstant);
-	void getExitCompassMove(const ExitTable::Entry &exitEntry, FaderMoveSpec &compassMove);
-	void getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSpec &compassMove);
-	void bumpIntoWall();
-	void activateHotspots();
-	void setUpAIRules();
-	Common::String getBriefingMovie();
-	Common::String getEnvScanMovie();
-	uint getNumHints();
-	Common::String getHintMovie(uint);
-	void closeDoorOffScreen(const RoomID, const DirectionConstant);
+	void turnLeft() override;
+	void turnRight() override;
+	void moveForward() override;
+	Hotspot *getItemScreenSpot(Item *, DisplayElement *) override;
+	int16 getStaticCompassAngle(const RoomID, const DirectionConstant) override;
+	void getExitCompassMove(const ExitTable::Entry &exitEntry, FaderMoveSpec &compassMove) override;
+	void getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSpec &compassMove) override;
+	void bumpIntoWall() override;
+	void activateHotspots() override;
+	void setUpAIRules() override;
+	Common::String getBriefingMovie() override;
+	Common::String getEnvScanMovie() override;
+	uint getNumHints() override;
+	Common::String getHintMovie(uint) override;
+	void closeDoorOffScreen(const RoomID, const DirectionConstant) override;
 	void setUpPoison();
-	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &);
-	void timerExpired(const uint32);
+	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &) override;
+	void timerExpired(const uint32) override;
 
-	Common::String getSoundSpotsName();
-	Common::String getNavMovieName();
+	Common::String getSoundSpotsName() override;
+	Common::String getNavMovieName() override;
 
 	FlagsArray<byte, kNumWSCPrivateFlags> _privateFlags;
 	const Hotspot *_cachedZoomSpot;

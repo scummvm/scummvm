@@ -46,14 +46,14 @@ class Sprite;
 class PressureTracker : public Tracker {
 public:
 	PressureTracker(PressureDoor *);
-	virtual ~PressureTracker() {}
+	~PressureTracker() override {}
 
 	void setTrackParameters(const Hotspot *, Sprite *);
-	void continueTracking(const Input &);
-	void startTracking(const Input &);
-	void stopTracking(const Input &);
-	void activateHotspots();
-	bool stopTrackingInput(const Input &);
+	void continueTracking(const Input &) override;
+	void startTracking(const Input &) override;
+	void stopTracking(const Input &) override;
+	void activateHotspots() override;
+	bool stopTrackingInput(const Input &) override;
 
 protected:
 	void trackPressure();

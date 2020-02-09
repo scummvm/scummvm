@@ -542,7 +542,7 @@ public:
 	PryDoorMessage() : AIPlayMessageAction("Images/AI/WSC/XW59SD3", false) {}
 
 protected:
-	virtual void performAIAction(AIRule *);
+	void performAIAction(AIRule *) override;
 };
 
 void PryDoorMessage::performAIAction(AIRule *rule) {

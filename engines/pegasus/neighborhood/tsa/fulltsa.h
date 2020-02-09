@@ -33,15 +33,15 @@ namespace Pegasus {
 class RipTimer : public IdlerAnimation {
 public:
 	RipTimer(const DisplayElementID id) : IdlerAnimation(id) {}
-	virtual ~RipTimer() {}
+	~RipTimer() override {}
 
 	void initImage();
 	void releaseImage();
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 protected:
-	void timeChanged(const TimeValue);
+	void timeChanged(const TimeValue) override;
 
 	CoordType _middle;
 	Surface _timerImage;
@@ -56,22 +56,22 @@ static const RoomID kTSA37 = 42;
 class FullTSA : public Neighborhood {
 public:
 	FullTSA(InputHandler *, PegasusEngine *);
-	virtual ~FullTSA() {}
+	~FullTSA() override {}
 
-	virtual void init();
+	void init() override;
 
-	void start();
+	void start() override;
 
-	virtual uint16 getDateResID() const;
+	uint16 getDateResID() const override;
 
-	void flushGameState();
+	void flushGameState() override;
 
-	void checkContinuePoint(const RoomID, const DirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant) override;
 
-	bool canSolve();
-	void doSolve();
+	bool canSolve() override;
+	void doSolve() override;
 
-	void updateCursor(const Common::Point, const Hotspot *);
+	void updateCursor(const Common::Point, const Hotspot *) override;
 
 protected:
 	enum {
@@ -84,36 +84,36 @@ protected:
 		kNumTSAPrivateFlags
 	};
 
-	Common::String getBriefingMovie();
-	Common::String getEnvScanMovie();
-	uint getNumHints();
-	Common::String getHintMovie(uint);
-	void loadAmbientLoops();
-	virtual void clickInHotspot(const Input &, const Hotspot *);
+	Common::String getBriefingMovie() override;
+	Common::String getEnvScanMovie() override;
+	uint getNumHints() override;
+	Common::String getHintMovie(uint) override;
+	void loadAmbientLoops() override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
 
-	virtual int16 getStaticCompassAngle(const RoomID, const DirectionConstant);
-	void activateOneHotspot(HotspotInfoTable::Entry &, Hotspot *spot);
-	virtual void activateHotspots();
-	void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &);
-	void dropItemIntoRoom(Item *, Hotspot *);
-	void downButton(const Input &);
-	void startDoorOpenMovie(const TimeValue, const TimeValue);
-	TimeValue getViewTime(const RoomID, const DirectionConstant);
-	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &);
-	void turnTo(const DirectionConstant);
-	CanMoveForwardReason canMoveForward(ExitTable::Entry &);
-	CanOpenDoorReason canOpenDoor(DoorTable::Entry &);
-	void bumpIntoWall();
+	int16 getStaticCompassAngle(const RoomID, const DirectionConstant) override;
+	void activateOneHotspot(HotspotInfoTable::Entry &, Hotspot *spot) override;
+	void activateHotspots() override;
+	void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &) override;
+	void dropItemIntoRoom(Item *, Hotspot *) override;
+	void downButton(const Input &) override;
+	void startDoorOpenMovie(const TimeValue, const TimeValue) override;
+	TimeValue getViewTime(const RoomID, const DirectionConstant) override;
+	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &) override;
+	void turnTo(const DirectionConstant) override;
+	CanMoveForwardReason canMoveForward(ExitTable::Entry &) override;
+	CanOpenDoorReason canOpenDoor(DoorTable::Entry &) override;
+	void bumpIntoWall() override;
 	void initializeTBPMonitor(const int, const ExtraID);
 	void playTBPMonitor();
-	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &);
-	Hotspot *getItemScreenSpot(Item *, DisplayElement *);
-	void openDoor();
-	void turnRight();
-	void turnLeft();
-	void closeDoorOffScreen(const RoomID, const DirectionConstant);
-	void playExtraMovie(const ExtraTable::Entry &, const NotificationFlags, const InputBits interruptionInput);
-	void handleInput(const Input &, const Hotspot *);
+	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &) override;
+	Hotspot *getItemScreenSpot(Item *, DisplayElement *) override;
+	void openDoor() override;
+	void turnRight() override;
+	void turnLeft() override;
+	void closeDoorOffScreen(const RoomID, const DirectionConstant) override;
+	void playExtraMovie(const ExtraTable::Entry &, const NotificationFlags, const InputBits interruptionInput) override;
+	void handleInput(const Input &, const Hotspot *) override;
 	void arriveAtTSA25Red();
 	void startUpComparisonMonitor();
 	void shutDownComparisonMonitor();
@@ -125,22 +125,22 @@ protected:
 	uint getHistoricalLogIndex();
 	void startUpRobotMonitor();
 	void shutDownRobotMonitor();
-	void pickedUpItem(Item *item);
+	void pickedUpItem(Item *item) override;
 	void arriveFromPrehistoric();
 
 	void arriveFromNorad();
 	void arriveFromMars();
 	void arriveFromWSC();
 
-	InputBits getInputFilter();
-	void arriveAt(const RoomID, const DirectionConstant);
+	InputBits getInputFilter() override;
+	void arriveAt(const RoomID, const DirectionConstant) override;
 	void initializePegasusButtons(bool);
 	void releaseSprites();
 	void showMainJumpMenu();
 	void arriveAtTSA37();
-	void receiveNotification(Notification *, const NotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags) override;
 	void checkRobotLocations(const RoomID, const DirectionConstant);
-	void getExtraEntry(const uint32, ExtraTable::Entry &);
+	void getExtraEntry(const uint32, ExtraTable::Entry &) override;
 
 	Sprite _sprite1, _sprite2, _sprite3;
 	FuseFunction _utilityFuse;
@@ -148,8 +148,8 @@ protected:
 
 	FlagsArray<byte, kNumTSAPrivateFlags> _privateFlags;
 
-	Common::String getNavMovieName();
-	Common::String getSoundSpotsName();
+	Common::String getNavMovieName() override;
+	Common::String getSoundSpotsName() override;
 
 	void dieUncreatedInTSA();
 };

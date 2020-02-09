@@ -91,7 +91,7 @@ protected:
 class DropHighlight : public DisplayElement {
 public:
 	DropHighlight(const DisplayElementID);
-	virtual ~DropHighlight() {}
+	~DropHighlight() override {}
 
 	void setHighlightColor(const uint32 &highlight) { _highlightColor = highlight; }
 	void getHighlightColor(uint32 &highlight) const { highlight = _highlightColor; }
@@ -102,7 +102,7 @@ public:
 	void setHighlightCornerDiameter(const uint16 diameter) { _cornerDiameter = diameter; }
 	uint16 getHighlightCornerDiameter() const { return _cornerDiameter; }
 
-	virtual void draw(const Common::Rect&);
+	void draw(const Common::Rect&) override;
 
 protected:
 	uint32 _highlightColor;
@@ -119,13 +119,13 @@ class IdlerAnimation : public Animation, public Idler {
 public:
 	IdlerAnimation(const DisplayElementID);
 
-	virtual void startDisplaying();
-	virtual void stopDisplaying();
+	void startDisplaying() override;
+	void stopDisplaying() override;
 
 	TimeValue getLastTime() const { return _lastTime; }
 
 protected:
-	virtual void useIdleTime();
+	void useIdleTime() override;
 	virtual void timeChanged(const TimeValue);
 
 	TimeValue _lastTime;
@@ -139,7 +139,7 @@ protected:
 class FrameSequence : public IdlerAnimation {
 public:
 	FrameSequence(const DisplayElementID);
-	virtual ~FrameSequence();
+	~FrameSequence() override;
 
 	void useFileName(const Common::String &fileName);
 
@@ -152,7 +152,7 @@ public:
 	virtual void setFrameNum(const int16);
 
 protected:
-	virtual void timeChanged(const TimeValue);
+	void timeChanged(const TimeValue) override;
 	virtual void newFrame(const uint16) {}
 
 	Common::MacResManager *_resFork;
@@ -170,7 +170,7 @@ class Sprite : public DisplayElement {
 friend class SpriteFrame;
 public:
 	Sprite(const DisplayElementID);
-	virtual ~Sprite();
+	~Sprite() override;
 
 	virtual void addPICTResourceFrame(const ResIDType, const bool, const CoordType, const CoordType);
 	virtual uint32 addFrame(SpriteFrame *, const CoordType, const CoordType);
@@ -186,7 +186,7 @@ public:
 
 	virtual SpriteFrame *getFrame(const int32);
 
-	virtual void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 	uint32 getNumFrames() const { return _numFrames; }
 
@@ -206,19 +206,19 @@ protected:
 class SpriteSequence : public FrameSequence {
 public:
 	SpriteSequence(const DisplayElementID id, const DisplayElementID spriteID);
-	virtual ~SpriteSequence() {}
+	~SpriteSequence() override {}
 
 	void useTransparent(bool transparent) { _transparent = transparent; }
 
-	virtual void openFrameSequence();
-	virtual void closeFrameSequence();
+	void openFrameSequence() override;
+	void closeFrameSequence() override;
 
-	virtual void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
-	virtual void setBounds(const Common::Rect &);
+	void setBounds(const Common::Rect &) override;
 
 protected:
-	virtual void newFrame(const uint16);
+	void newFrame(const uint16) override;
 
 	bool _transparent;
 	Sprite _sprite;
@@ -227,15 +227,15 @@ protected:
 class ScreenDimmer : public DisplayElement {
 public:
 	ScreenDimmer() : DisplayElement(kScreenDimmerID) {}
-	virtual ~ScreenDimmer() {}
+	~ScreenDimmer() override {}
 
-	virtual void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 };
 
 class SoundLevel : public DisplayElement {
 public:
 	SoundLevel(const DisplayElementID);
-	virtual ~SoundLevel() {}
+	~SoundLevel() override {}
 
 	void incrementLevel();
 	void decrementLevel();
@@ -243,7 +243,7 @@ public:
 	uint16 getSoundLevel();
 	void setSoundLevel(uint16);
 
-	void draw(const Common::Rect &);
+	void draw(const Common::Rect &) override;
 
 protected:
 	uint16 _soundLevel;

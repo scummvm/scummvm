@@ -40,25 +40,25 @@ public:
 	PressureDoor(Neighborhood *, bool isUpperDoor, const HotSpotID, const HotSpotID,
 			const HotSpotID, TimeValue pressureSoundIn, TimeValue pressureSoundOut,
 			TimeValue equalizeSoundIn, TimeValue equalizeSoundOut);
-	virtual ~PressureDoor() {}
+	~PressureDoor() override {}
 
 	void incrementPressure(const HotSpotID);
 	void stopChangingPressure();
 
 	void playAgainstRobot();
 
-	bool canSolve();
-	void doSolve();
+	bool canSolve() override;
+	void doSolve() override;
 
 protected:
-	virtual void openInteraction();
-	virtual void initInteraction();
-	virtual void closeInteraction();
+	void openInteraction() override;
+	void initInteraction() override;
+	void closeInteraction() override;
 
-	virtual void activateHotspots();
-	virtual void clickInHotspot(const Input &, const Hotspot *);
+	void activateHotspots() override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
 
-	virtual void receiveNotification(Notification *, const NotificationFlags);
+	void receiveNotification(Notification *, const NotificationFlags) override;
 
 	Movie _levelsMovie;
 	TimeScale _levelsScale;

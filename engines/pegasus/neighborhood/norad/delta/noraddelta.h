@@ -33,44 +33,44 @@ namespace Pegasus {
 class NoradDelta : public Norad {
 public:
 	NoradDelta(InputHandler *, PegasusEngine *);
-	virtual ~NoradDelta() {}
+	~NoradDelta() override {}
 
-	void init();
+	void init() override;
 
-	void start();
+	void start() override;
 
-	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &);
+	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &) override;
 
 	void finishedGlobeGame();
 
-	virtual GameInteraction *makeInteraction(const InteractionID);
+	GameInteraction *makeInteraction(const InteractionID) override;
 
-	void playClawMonitorIntro();
+	void playClawMonitorIntro() override;
 
-	virtual void getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID, HotSpotID &clawControlSpotID,
+	void getClawInfo(HotSpotID &outSpotID, HotSpotID &prepSpotID, HotSpotID &clawControlSpotID,
 			HotSpotID &pinchClawSpotID, HotSpotID &moveClawDownSpotID, HotSpotID &moveClawRightSpotID,
 			HotSpotID &moveClawLeftSpotID, HotSpotID &moveClawUpSpotID, HotSpotID &clawCCWSpotID,
-			HotSpotID &clawCWSpotID, uint32 &, const uint32 *&);
+			HotSpotID &clawCWSpotID, uint32 &, const uint32 *&) override;
 
 	void playerBeatRobotWithClaw();
 	void playerBeatRobotWithDoor();
 
-	void loadAmbientLoops();
+	void loadAmbientLoops() override;
 
-	void setUpAIRules();
-	Common::String getEnvScanMovie();
-	uint getNumHints();
-	Common::String getHintMovie(uint);
-	void closeDoorOffScreen(const RoomID, const DirectionConstant);
+	void setUpAIRules() override;
+	Common::String getEnvScanMovie() override;
+	uint getNumHints() override;
+	Common::String getHintMovie(uint) override;
+	void closeDoorOffScreen(const RoomID, const DirectionConstant) override;
 
-	void checkContinuePoint(const RoomID, const DirectionConstant);
+	void checkContinuePoint(const RoomID, const DirectionConstant) override;
 
-	bool canSolve();
-	void doSolve();
+	bool canSolve() override;
+	void doSolve() override;
 
-	void setSoundFXLevel(const uint16);
+	void setSoundFXLevel(const uint16) override;
 
-	void doorOpened();
+	void doorOpened() override;
 
 protected:
 	enum {
@@ -85,34 +85,34 @@ protected:
 
 	static const uint32 _noradDeltaClawExtras[22];
 
-	void getExitEntry(const RoomID, const DirectionConstant, ExitTable::Entry &);
-	void getZoomEntry(const HotSpotID, ZoomTable::Entry &);
-	virtual void arriveAt(const RoomID, const DirectionConstant);
+	void getExitEntry(const RoomID, const DirectionConstant, ExitTable::Entry &) override;
+	void getZoomEntry(const HotSpotID, ZoomTable::Entry &) override;
+	void arriveAt(const RoomID, const DirectionConstant) override;
 	void arriveAtNorad68West();
 	void arriveAtNorad79West();
-	TimeValue getViewTime(const RoomID, const DirectionConstant);
-	void openDoor();
-	void cantMoveThatWay(CanMoveForwardReason);
-	void activateHotspots();
-	void clickInHotspot(const Input &, const Hotspot *);
-	void receiveNotification(Notification *, const NotificationFlags);
-	void pickedUpItem(Item *item);
-	void takeItemFromRoom(Item *item);
-	void dropItemIntoRoom(Item *item, Hotspot *);
-	Hotspot *getItemScreenSpot(Item *, DisplayElement *);
+	TimeValue getViewTime(const RoomID, const DirectionConstant) override;
+	void openDoor() override;
+	void cantMoveThatWay(CanMoveForwardReason) override;
+	void activateHotspots() override;
+	void clickInHotspot(const Input &, const Hotspot *) override;
+	void receiveNotification(Notification *, const NotificationFlags) override;
+	void pickedUpItem(Item *item) override;
+	void takeItemFromRoom(Item *item) override;
+	void dropItemIntoRoom(Item *item, Hotspot *) override;
+	Hotspot *getItemScreenSpot(Item *, DisplayElement *) override;
 
-	virtual bool playingAgainstRobot();
+	bool playingAgainstRobot() override;
 
 	void failRetinalScan();
 	void succeedRetinalScan();
-	void getDoorEntry(const RoomID, const DirectionConstant, DoorTable::Entry &);
+	void getDoorEntry(const RoomID, const DirectionConstant, DoorTable::Entry &) override;
 
-	void bumpIntoWall();
+	void bumpIntoWall() override;
 
 	FlagsArray<byte, kNumNoradPrivateFlags> _privateFlags;
 
-	Common::String getSoundSpotsName();
-	Common::String getNavMovieName();
+	Common::String getSoundSpotsName() override;
+	Common::String getNavMovieName() override;
 };
 
 } // End of namespace Pegasus
