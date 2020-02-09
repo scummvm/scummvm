@@ -41,14 +41,14 @@ class HLZDecoder;
 class HLZFileDecoder : public ImageDecoder {
 public:
 	HLZFileDecoder();
-	virtual ~HLZFileDecoder();
+	~HLZFileDecoder() override;
 
 	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual const Graphics::Surface *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette; }
-	uint16 getPaletteColorCount() const { return 256; }
+	void destroy() override;
+	bool loadStream(Common::SeekableReadStream &stream) override;
+	const Graphics::Surface *getSurface() const override { return _surface; }
+	const byte *getPalette() const override { return _palette; }
+	uint16 getPaletteColorCount() const override { return 256; }
 
 private:
 	HLZDecoder *_codec;

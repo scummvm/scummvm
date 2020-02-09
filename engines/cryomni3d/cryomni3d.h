@@ -99,11 +99,11 @@ enum DragStatus {
 
 class CryOmni3DEngine : public ::Engine {
 protected:
-	virtual Common::Error run() override;
+	Common::Error run() override;
 
 public:
 	CryOmni3DEngine(OSystem *syst, const CryOmni3DGameDescription *gamedesc);
-	virtual ~CryOmni3DEngine();
+	~CryOmni3DEngine() override;
 
 	// Detection related functions
 	const CryOmni3DGameDescription *_gameDescription;

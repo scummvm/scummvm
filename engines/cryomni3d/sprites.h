@@ -65,17 +65,17 @@ public:
 private:
 	class CryoCursor : public Graphics::Cursor {
 	public:
-		virtual uint16 getWidth() const override { return _width; }
-		virtual uint16 getHeight() const override { return _height; }
-		virtual uint16 getHotspotX() const override { return _offX; }
-		virtual uint16 getHotspotY() const override { return _offY; }
-		virtual byte getKeyColor() const override { return 0; }
+		uint16 getWidth() const override { return _width; }
+		uint16 getHeight() const override { return _height; }
+		uint16 getHotspotX() const override { return _offX; }
+		uint16 getHotspotY() const override { return _offY; }
+		byte getKeyColor() const override { return 0; }
 
-		virtual const byte *getSurface() const override { return _data; }
+		const byte *getSurface() const override { return _data; }
 
-		virtual const byte *getPalette() const override { return nullptr; }
-		virtual byte getPaletteStartIndex() const override { return 0; }
-		virtual uint16 getPaletteCount() const override { return 0; }
+		const byte *getPalette() const override { return nullptr; }
+		byte getPaletteStartIndex() const override { return 0; }
+		uint16 getPaletteCount() const override { return 0; }
 
 		uint setup(uint16 width, uint16 height);
 
@@ -90,7 +90,7 @@ private:
 		uint refCnt;
 
 		CryoCursor();
-		virtual ~CryoCursor();
+		~CryoCursor() override;
 	};
 
 	// Pointer to avoid to mutate Sprites when asking for a cursor

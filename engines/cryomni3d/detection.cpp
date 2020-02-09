@@ -99,19 +99,19 @@ public:
 		return "cryomni3d";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Cryo Omni3D";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Cryo game Engine (C) 1997-2002 Cryo Interactive";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	virtual SaveStateList listSaves(const char *target) const override;
-	virtual int getMaximumSaveSlot() const override { return 999; }
-	virtual void removeSaveState(const char *target, int slot) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override { return 999; }
+	void removeSaveState(const char *target, int slot) const override;
 };
 
 bool CryOmni3DMetaEngine::hasFeature(MetaEngineFeature f) const {

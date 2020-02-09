@@ -44,10 +44,10 @@ namespace Video {
 class HNMDecoder : public VideoDecoder {
 public:
 	HNMDecoder(bool loop = false, byte *initialPalette = nullptr);
-	virtual ~HNMDecoder();
-	bool loadStream(Common::SeekableReadStream *stream);
-	void readNextPacket();
-	void close();
+	~HNMDecoder() override;
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void readNextPacket() override;
+	void close() override;
 
 	void setRegularFrameDelay(uint32 regularFrameDelay) { _regularFrameDelay = regularFrameDelay; }
 
@@ -56,19 +56,19 @@ private:
 	public:
 		HNM4VideoTrack(uint32 width, uint32 height, uint32 frameSize, uint32 frameCount,
 		               uint32 regularFrameDelay, const byte *initialPalette = nullptr);
-		~HNM4VideoTrack();
+		~HNM4VideoTrack() override;
 
 		// When _frameCount is 0, it means we are looping
-		bool endOfTrack() const { return (_frameCount == 0) ? false : VideoTrack::endOfTrack(); }
-		uint16 getWidth() const { return _surface.w; }
-		uint16 getHeight() const { return _surface.h; }
-		Graphics::PixelFormat getPixelFormat() const { return _surface.format; }
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
-		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
-		const Graphics::Surface *decodeNextFrame() { return &_surface; }
-		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
-		bool hasDirtyPalette() const { return _dirtyPalette; }
+		bool endOfTrack() const override { return (_frameCount == 0) ? false : VideoTrack::endOfTrack(); }
+		uint16 getWidth() const override { return _surface.w; }
+		uint16 getHeight() const override { return _surface.h; }
+		Graphics::PixelFormat getPixelFormat() const override { return _surface.format; }
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override { return _frameCount; }
+		uint32 getNextFrameStartTime() const override { return _nextFrameStartTime; }
+		const Graphics::Surface *decodeNextFrame() override { return &_surface; }
+		const byte *getPalette() const override { _dirtyPalette = false; return _palette; }
+		bool hasDirtyPalette() const override { return _dirtyPalette; }
 
 		/** Decode a video chunk. */
 		void decodePalette(Common::SeekableReadStream *stream, uint32 size);
@@ -100,11 +100,11 @@ private:
 	public:
 		DPCMAudioTrack(uint16 channels, uint16 bits, uint sampleRate,
 		               Audio::Mixer::SoundType soundType);
-		~DPCMAudioTrack();
+		~DPCMAudioTrack() override;
 
 		Audio::Timestamp decodeSound(Common::SeekableReadStream *stream, uint32 size);
 	protected:
-		Audio::AudioStream *getAudioStream() const { return _audioStream; }
+		Audio::AudioStream *getAudioStream() const override { return _audioStream; }
 	private:
 		Audio::QueuingAudioStream *_audioStream;
 		bool _gotLUT;
