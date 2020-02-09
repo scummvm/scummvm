@@ -142,15 +142,15 @@ private:
 
 protected:
 	// Engine APIs
-	virtual Common::Error run() override;
-	virtual GUI::Debugger *getDebugger() override;
-	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void syncSoundSettings() override;
-	virtual void pauseEngineIntern(bool pause) override;
+	Common::Error run() override;
+	GUI::Debugger *getDebugger() override;
+	bool hasFeature(EngineFeature f) const override;
+	void syncSoundSettings() override;
+	void pauseEngineIntern(bool pause) override;
 
 public:
 	Sword2Engine(OSystem *syst);
-	~Sword2Engine();
+	~Sword2Engine() override;
 
 	int getFramesPerSecond();
 

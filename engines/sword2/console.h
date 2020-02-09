@@ -80,8 +80,8 @@ public:
 	void drawDebugGraphics();
 
 private:
-	virtual void preEnter();
-	virtual void postEnter();
+	void preEnter() override;
+	void postEnter() override;
 
 private:
 	Sword2Engine *_vm;

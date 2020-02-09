@@ -552,15 +552,15 @@ public:
 		setHitRect(x, y, w, h);
 	}
 
-	virtual void onMouseExit() {
+	void onMouseExit() override {
 		setState(0);
 	}
 
-	virtual void onMouseDown(int x, int y) {
+	void onMouseDown(int x, int y) override {
 		setState(1);
 	}
 
-	virtual void onMouseUp(int x, int y) {
+	void onMouseUp(int x, int y) override {
 		if (getState() != 0) {
 			setState(0);
 			_parent->onAction(this);
@@ -583,21 +583,21 @@ public:
 		setHitRect(x, y, w, h);
 	}
 
-	virtual void onMouseExit() {
+	void onMouseExit() override {
 		setState(0);
 	}
 
-	virtual void onMouseDown(int x, int y) {
+	void onMouseDown(int x, int y) override {
 		setState(1);
 		_parent->onAction(this);
 		_holdCounter = 0;
 	}
 
-	virtual void onMouseUp(int x, int y) {
+	void onMouseUp(int x, int y) override {
 		setState(0);
 	}
 
-	virtual void onTick() {
+	void onTick() override {
 		if (getState() != 0) {
 			_holdCounter++;
 			if (_holdCounter > 16 && (_holdCounter % 4) == 0)
@@ -644,18 +644,18 @@ public:
 		return _value;
 	}
 
-	virtual void onMouseExit() {
+	void onMouseExit() override {
 		if (_holding && !_value)
 			setState(_upState);
 		_holding = false;
 	}
 
-	virtual void onMouseDown(int x, int y) {
+	void onMouseDown(int x, int y) override {
 		_holding = true;
 		setState(_downState);
 	}
 
-	virtual void onMouseUp(int x, int y) {
+	void onMouseUp(int x, int y) override {
 		if (_holding) {
 			_holding = false;
 			_value = !_value;
@@ -706,7 +706,7 @@ public:
 			createSurfaceImages(3406, x, y);
 	}
 
-	virtual void paint(Common::Rect *clipRect = NULL) {
+	void paint(Common::Rect *clipRect = NULL) override {
 		// This will redraw a bit more than is strictly necessary,
 		// but I doubt that will make any noticeable difference.
 
@@ -725,7 +725,7 @@ public:
 		return _value;
 	}
 
-	virtual void onMouseMove(int x, int y) {
+	void onMouseMove(int x, int y) override {
 		if (_dragging) {
 			int newX = x - _dragOffset;
 			int newValue;
@@ -748,7 +748,7 @@ public:
 		}
 	}
 
-	virtual void onMouseDown(int x, int y) {
+	void onMouseDown(int x, int y) override {
 		if (x >= _sprites[0].x && x < _sprites[0].x + 38) {
 			_dragging = true;
 			_dragOffset = x - _sprites[0].x;
@@ -765,12 +765,12 @@ public:
 		}
 	}
 
-	virtual void releaseMouse(int x, int y) {
+	void releaseMouse(int x, int y) override {
 		if (_dragging)
 			_dragging = false;
 	}
 
-	virtual void onTick() {
+	void onTick() override {
 		if (!_dragging) {
 			int target = posFromValue(_targetValue);
 
@@ -1106,7 +1106,7 @@ public:
 		return &_text[0];
 	}
 
-	virtual void paint(Common::Rect *clipRect = NULL) {
+	void paint(Common::Rect *clipRect = NULL) override {
 		Widget::paint();
 
 		// HACK: The main dialog is responsible for drawing the text
@@ -1116,7 +1116,7 @@ public:
 			_fr->drawText(_text, _sprites[0].x + 16, _sprites[0].y + 4 + 2 * getState());
 	}
 
-	virtual void onMouseDown(int x, int y) {
+	void onMouseDown(int x, int y) override {
 		if (_clickable) {
 			if (getState() == 0) {
 				setState(1);
@@ -1130,15 +1130,15 @@ public:
 		}
 	}
 
-	virtual void onWheelUp(int x, int y) {
+	void onWheelUp(int x, int y) override {
 		_parent->onAction(this, kWheelUp);
 	}
 
-	virtual void onWheelDown(int x, int y) {
+	void onWheelDown(int x, int y) override {
 		_parent->onAction(this, kWheelDown);
 	}
 
-	virtual void onKey(KeyboardEvent *ke) {
+	void onKey(KeyboardEvent *ke) override {
 		if (_editable) {
 			if (ke->kbd.keycode == Common::KEYCODE_BACKSPACE)
 				_parent->onAction(this, Common::KEYCODE_BACKSPACE);
@@ -1151,7 +1151,7 @@ public:
 		}
 	}
 
-	virtual void onTick() {
+	void onTick() override {
 		if (_editable)
 			_parent->onAction(this, kCursorTick);
 	}
