@@ -319,19 +319,19 @@ struct RoomHandlers;
 class DrasculaEngine : public Engine {
 protected:
 	// Engine APIs
-	virtual Common::Error run() override;
+	Common::Error run() override;
 
 public:
 	DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc);
-	virtual ~DrasculaEngine();
-	virtual bool hasFeature(EngineFeature f) const override;
+	~DrasculaEngine() override;
+	bool hasFeature(EngineFeature f) const override;
 
-	virtual void syncSoundSettings() override;
+	void syncSoundSettings() override;
 
-	virtual Common::Error loadGameState(int slot) override;
-	virtual bool canLoadGameStateCurrently() override;
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
-	virtual bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canSaveGameStateCurrently() override;
 
 	Common::RandomSource *_rnd;
 	const DrasculaGameDescription *_gameDescription;

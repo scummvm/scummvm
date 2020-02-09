@@ -346,20 +346,20 @@ public:
 		return "drascula";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Drascula: The Vampire Strikes Back";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Drascula: The Vampire Strikes Back (C) 2000 Alcachofa Soft, (C) 1996 Digital Dreams Multimedia, (C) 1994 Emilio de Paz";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
-	virtual SaveStateList listSaves(const char *target) const override;
-	virtual int getMaximumSaveSlot() const override;
-	virtual void removeSaveState(const char *target, int slot) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
