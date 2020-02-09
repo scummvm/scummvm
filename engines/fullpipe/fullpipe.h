@@ -34,8 +34,6 @@
 #include "graphics/surface.h"
 
 #include "engines/engine.h"
-
-#include "gui/debugger.h"
 #include "fullpipe/console.h"
 
 struct ADGameDescription;
@@ -109,9 +107,6 @@ protected:
 public:
 	FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~FullpipeEngine() override;
-
-	Console _console;
-	GUI::Debugger *getDebugger() override { return &_console; }
 
 	void initialize();
 	void restartGame();
