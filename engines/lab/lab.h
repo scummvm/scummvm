@@ -204,9 +204,9 @@ public:
 
 public:
 	LabEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~LabEngine();
+	~LabEngine() override;
 
-	virtual Common::Error run() override;
+	Common::Error run() override;
 	void go();
 
 	const ADGameDescription *_gameDescription;
