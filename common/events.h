@@ -156,7 +156,9 @@ enum JoystickAxis {
 enum MouseButton {
 	MOUSE_BUTTON_LEFT   = 0,
 	MOUSE_BUTTON_RIGHT  = 1,
-	MOUSE_BUTTON_MIDDLE = 2
+	MOUSE_BUTTON_MIDDLE = 2,
+	MOUSE_WHEEL_UP = 3,
+	MOUSE_WHEEL_DOWN = 4
 };
 
 typedef uint32 CustomEventType;
