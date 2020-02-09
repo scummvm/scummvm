@@ -125,7 +125,7 @@ using Std::string;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(Ultima8Engine, CoreApp)
 
-Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) : 
+Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Shared::UltimaEngine(syst, gameDesc), CoreApp(gameDesc), _saveCount(0), _game(0),
 		_kernel(0), _objectManager(0), _debugger(0), _hidManager(0), _mouse(0), _ucMachine(0),
 		_screen(0), _fontManager(0), _fullScreen(false), _paletteManager(0), _gameData(0),
@@ -1210,7 +1210,7 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 
 		_mouse->setMouseCoords(event.mouse.x, event.mouse.y);
 		if (_mouse->buttonDown(button))
-			handled = true;		
+			handled = true;
 		break;
 	}
 
@@ -1540,7 +1540,7 @@ void Ultima8Engine::syncSoundSettings() {
 	UltimaEngine::syncSoundSettings();
 
 	// Update music volume
-	AudioMixer *audioMixer = AudioMixer::get_instance();	
+	AudioMixer *audioMixer = AudioMixer::get_instance();
 	MidiPlayer *midiPlayer = audioMixer ? audioMixer->getMidiPlayer() : nullptr;
 	if (midiPlayer)
 		midiPlayer->setVolume(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
@@ -2057,7 +2057,7 @@ bool Ultima8Engine::isDataRequired(Common::String &folder, int &majorVersion, in
 	return true;
 }
 
-GUI::Debugger *Ultima8Engine::getDebugger() const {
+GUI::Debugger *Ultima8Engine::getDebugger() {
 	return _debugger;
 }
 

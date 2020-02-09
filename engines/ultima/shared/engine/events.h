@@ -48,7 +48,7 @@ enum MouseButton {
 };
 
 enum SpecialButtons {
-	MK_LBUTTON = 1, MK_RBUTTON = 2, MK_MBUTTON = 4, MK_SHIFT = 8, MK_CONTROL = 0x10	
+	MK_LBUTTON = 1, MK_RBUTTON = 2, MK_MBUTTON = 4, MK_SHIFT = 8, MK_CONTROL = 0x10
 };
 
 /**
@@ -137,7 +137,7 @@ public:
 	/**
 	 * Get the debugger
 	 */
-	virtual GUI::Debugger *getDebugger() const = 0;
+	virtual GUI::Debugger *getDebugger() = 0;
 
 	/**
 	 * Get the screen

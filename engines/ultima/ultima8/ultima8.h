@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -240,7 +241,7 @@ public:
 		return _screen;
 	}
 
-	virtual GUI::Debugger *getDebugger() const override;
+	virtual GUI::Debugger *getDebugger() override;
 	virtual Graphics::Screen *getScreen() const override;
 
 	virtual void runGame() override;
