@@ -110,7 +110,6 @@ public:
 	char **_specialInfoLine;
 
 	Common::Error run() override;
-	GUI::Debugger *getDebugger() override { return _console; }
 	bool showMainmenu(bool &loadedGame);
 	bool showOptions();
 	void init();
@@ -437,8 +436,6 @@ protected:
 	bool _showConversationText;
 	bool _useAlternativeFont;
 	bool _needPaletteFlush;
-private:
-	ToonConsole *_console;
 };
 
 } // End of namespace Toon
