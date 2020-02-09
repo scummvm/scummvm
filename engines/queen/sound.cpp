@@ -75,22 +75,22 @@ public:
 		else
 			_rate = rate;
 	}
-	~AudioStreamWrapper() {
+	~AudioStreamWrapper() override {
 		delete _stream;
 	}
-	int readBuffer(int16 *buffer, const int numSamples) {
+	int readBuffer(int16 *buffer, const int numSamples) override {
 		return _stream->readBuffer(buffer, numSamples);
 	}
-	bool isStereo() const {
+	bool isStereo() const override {
 		return _stream->isStereo();
 	}
-	bool endOfData() const {
+	bool endOfData() const override {
 		return _stream->endOfData();
 	}
-	bool endOfStream() const {
+	bool endOfStream() const override {
 		return _stream->endOfStream();
 	}
-	int getRate() const {
+	int getRate() const override {
 		return _rate;
 	}
 };
@@ -99,7 +99,7 @@ class SilentSound : public PCSound {
 public:
 	SilentSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
-	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) override {
 		// Do nothing
 	}
 };
@@ -108,7 +108,7 @@ class SBSound : public PCSound {
 public:
 	SBSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
-	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle);
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) override;
 };
 
 #ifdef USE_MAD
@@ -116,7 +116,7 @@ class MP3Sound : public PCSound {
 public:
 	MP3Sound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
-	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) override {
 		Common::SeekableReadStream *tmp = f->readStream(size);
 		assert(tmp);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeMP3Stream(tmp, DisposeAfterUse::YES)));
@@ -129,7 +129,7 @@ class OGGSound : public PCSound {
 public:
 	OGGSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
-	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) override {
 		Common::SeekableReadStream *tmp = f->readStream(size);
 		assert(tmp);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeVorbisStream(tmp, DisposeAfterUse::YES)));
@@ -142,7 +142,7 @@ class FLACSound : public PCSound {
 public:
 	FLACSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
-	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
+	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) override {
 		Common::SeekableReadStream *tmp = f->readStream(size);
 		assert(tmp);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeFLACStream(tmp, DisposeAfterUse::YES)));

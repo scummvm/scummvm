@@ -64,7 +64,7 @@ class QueenEngine : public Engine {
 public:
 
 	QueenEngine(OSystem *syst);
-	virtual ~QueenEngine();
+	~QueenEngine() override;
 
 	BamScene *bam() const { return _bam; }
 	BankManager *bankMan() const { return _bankMan; }
@@ -119,10 +119,10 @@ public:
 protected:
 
 	// Engine APIs
-	virtual Common::Error run() override;
-	virtual GUI::Debugger *getDebugger() override;
-	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void syncSoundSettings() override;
+	Common::Error run() override;
+	GUI::Debugger *getDebugger() override;
+	bool hasFeature(EngineFeature f) const override;
+	void syncSoundSettings() override;
 
 
 	int _talkSpeed;

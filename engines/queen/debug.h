@@ -32,7 +32,7 @@ class QueenEngine;
 class Debugger : public GUI::Debugger {
 public:
 	Debugger(QueenEngine *vm);
-	virtual ~Debugger(); // we need this here for __SYMBIAN32__ archaic gcc/UIQ
+	~Debugger() override; // we need this here for __SYMBIAN32__ archaic gcc/UIQ
 
 	int flags() const { return _flags; }
 
@@ -41,8 +41,8 @@ public:
 	};
 
 private:
-	virtual void preEnter();
-	virtual void postEnter();
+	void preEnter() override;
+	void postEnter() override;
 
 private:
 	bool Cmd_Areas(int argc, const char **argv);
