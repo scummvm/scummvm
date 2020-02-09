@@ -117,13 +117,6 @@ void EventManager::processInput() {
 			case Common::KEYCODE_RIGHTBRACKET:
 				_vm->changeVolume(1);
 				break;
-			case Common::KEYCODE_d:
-				if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-					// Open debugger console
-					_vm->_console->attach();
-					continue;
-				}
-				// Intentional fall through
 			default:
 				_keyPressed = event.kbd;
 				break;

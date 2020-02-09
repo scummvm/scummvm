@@ -199,8 +199,6 @@ public:
 	TextFont *_msgFont;
 	SpecialLocks *_specialLocks;
 	Utils *_utils;
-	Console *_console;
-	GUI::Debugger *getDebugger() override { return _console; }
 
 public:
 	LabEngine(OSystem *syst, const ADGameDescription *gameDesc);

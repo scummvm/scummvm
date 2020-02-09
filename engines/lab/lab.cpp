@@ -90,7 +90,6 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_roomsFound = nullptr;
 	_specialLocks = nullptr;
 	_utils = nullptr;
-	_console = nullptr;
 	_journalBackImage = nullptr;
 
 	_lastTooLong = false;
@@ -154,7 +153,6 @@ LabEngine::~LabEngine() {
 	delete _graphics;
 	delete _specialLocks;
 	delete _utils;
-	delete _console;
 	delete _journalBackImage;
 }
 
@@ -172,7 +170,7 @@ Common::Error LabEngine::run() {
 	_anim = new Anim(this);
 	_specialLocks = new SpecialLocks(this);
 	_utils = new Utils(this);
-	_console = new Console(this);
+	setDebugger(new Console(this));
 	_journalBackImage = new Image(this);
 
 	go();
