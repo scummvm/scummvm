@@ -34,13 +34,13 @@ namespace Groovie {
 class VDXPlayer : public VideoPlayer {
 public:
 	VDXPlayer(GroovieEngine *vm);
-	~VDXPlayer();
-	void resetFlags();
-	void setOrigin(int16 x, int16 y);
+	~VDXPlayer() override;
+	void resetFlags() override;
+	void setOrigin(int16 x, int16 y) override;
 
 protected:
-	uint16 loadInternal();
-	bool playFrameInternal();
+	uint16 loadInternal() override;
+	bool playFrameInternal() override;
 
 private:
 	Graphics::Surface *_fg, *_bg;

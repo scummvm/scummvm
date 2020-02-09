@@ -31,14 +31,14 @@ namespace Groovie {
 class T7GFont : public Graphics::Font {
 public:
 	T7GFont();
-	~T7GFont();
+	~T7GFont() override;
 
 	bool load(Common::SeekableReadStream &stream);
 
-	int getFontHeight() const { return _maxHeight; }
-	int getMaxCharWidth() const { return _maxWidth; }
-	int getCharWidth(uint32 chr) const { return getGlyph(chr)->width; }
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	int getFontHeight() const override { return _maxHeight; }
+	int getMaxCharWidth() const override { return _maxWidth; }
+	int getCharWidth(uint32 chr) const override { return getGlyph(chr)->width; }
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 private:
 	int _maxHeight, _maxWidth;

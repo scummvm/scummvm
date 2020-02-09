@@ -91,7 +91,7 @@ struct GroovieGameDescription;
 class GroovieEngine : public Engine {
 public:
 	GroovieEngine(OSystem *syst, const GroovieGameDescription *gd);
-	~GroovieEngine();
+	~GroovieEngine() override;
 
 	Common::Platform getPlatform() const;
 
@@ -100,15 +100,15 @@ protected:
 	// Engine APIs
 	Common::Error run() override;
 
-	virtual bool hasFeature(EngineFeature f) const override;
+	bool hasFeature(EngineFeature f) const override;
 
-	virtual bool canLoadGameStateCurrently() override;
-	virtual bool canSaveGameStateCurrently() override;
-	virtual Common::Error loadGameState(int slot) override;
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
-	virtual void syncSoundSettings() override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	void syncSoundSettings() override;
 
-	virtual Debugger *getDebugger() override { return _debugger; }
+	Debugger *getDebugger() override { return _debugger; }
 
 public:
 	void waitForInput();
