@@ -1965,8 +1965,9 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 	_storagePopUpDesc = new StaticTextWidget(boss, prefix + "StoragePopupDesc", _("Active storage:"), _("Active cloud storage"));
 	_storagePopUp = new PopUpWidget(boss, prefix + "StoragePopup");
 	Common::StringArray list = CloudMan.listStorages();
-	for (uint32 i = 0; i < list.size(); ++i)
-		_storagePopUp->appendEntry(list[i], i);
+	for (uint32 i = 0; i < list.size(); ++i) {
+		_storagePopUp->appendEntry(_(list[i]), i);
+	}
 	_storagePopUp->setSelected(_selectedStorageIndex);
 
 	if (lowres)

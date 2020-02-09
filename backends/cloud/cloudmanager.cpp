@@ -94,7 +94,7 @@ void CloudManager::init() {
 	for (uint32 i = 0; i < kStorageTotal; ++i) {
 		Common::String name = getStorageConfigName(i);
 		StorageConfig config;
-		config.name = _(name);
+		config.name = name;
 		config.username = "";
 		config.lastSyncDate = "";
 		config.usedBytes = 0;
@@ -312,7 +312,7 @@ void CloudManager::disconnectStorage(uint32 index) {
 	ConfMan.removeKey(kStoragePrefix + name + "_usedBytes", ConfMan.kCloudDomain);
 
 	StorageConfig config;
-	config.name = _(name);
+	config.name = name;
 	config.username = "";
 	config.lastSyncDate = "";
 	config.usedBytes = 0;
