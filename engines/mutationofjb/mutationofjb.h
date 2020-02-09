@@ -79,7 +79,6 @@ private:
 	void updateCursorPalette();
 
 	const ADGameDescription *_gameDesc;
-	Console *_console;
 	Graphics::Screen *_screen;
 	Game *_game;
 	uint8 _mapObjectId;
