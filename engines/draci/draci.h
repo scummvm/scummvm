@@ -73,8 +73,6 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	bool canSaveGameStateCurrently() override;
 
-	GUI::Debugger *getDebugger() override { return _console; }
-
 	Screen *_screen;
 	Mouse *_mouse;
 	Game *_game;
@@ -107,8 +105,6 @@ public:
 	Common::RandomSource _rnd;
 
 	int32 _pauseStartTime;
-private:
-	DraciConsole *_console;
 };
 
 enum {
