@@ -430,8 +430,6 @@ void AGOSEngine::delay(uint amount) {
 
 	_system->getAudioCDManager()->update();
 
-	_debugger->onFrame();
-
 	vgaPeriod = (_fastMode) ? 10 : _vgaPeriod;
 	if (getGameType() == GType_PP && getGameId() != GID_DIMP) {
 		if (vgaPeriod == 15 && _variableArray[999] == 0)
@@ -484,8 +482,6 @@ void AGOSEngine::delay(uint amount) {
 						_aboutDialog->runModal();
 					} else if (event.kbd.keycode == Common::KEYCODE_f) {
 						_fastMode = !_fastMode;
-					} else if (event.kbd.keycode == Common::KEYCODE_d) {
-						_debugger->attach();
 					}
 				}
 
