@@ -43,7 +43,7 @@ struct RegionInitDataOffset {
 
 class AdlEngine_v4 : public AdlEngine_v3 {
 public:
-	virtual ~AdlEngine_v4();
+	~AdlEngine_v4() override;
 
 protected:
 	AdlEngine_v4(OSystem *syst, const AdlGameDescription *gd);

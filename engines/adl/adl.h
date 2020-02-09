@@ -240,7 +240,7 @@ struct RoomData {
 class AdlEngine : public Engine {
 friend class Console;
 public:
-	virtual ~AdlEngine();
+	~AdlEngine() override;
 
 	bool pollEvent(Common::Event &event) const;
 	void bell(uint count = 1) const;

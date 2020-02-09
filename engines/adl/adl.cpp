@@ -52,7 +52,7 @@ public:
 			_remAct(cmd.numAct) { }
 
 private:
-	kOpType getOpType() const {
+	kOpType getOpType() const override {
 		if (_remCond > 0)
 			return kOpTypeCond;
 		if (_remAct > 0)
@@ -60,7 +60,7 @@ private:
 		return kOpTypeDone;
 	}
 
-	void next(uint numArgs) {
+	void next(uint numArgs) override {
 		_ip += numArgs + 1;
 		if (_remCond > 0)
 			--_remCond;

@@ -92,21 +92,21 @@ public:
 			AdlEngine(syst, gd),
 			_files(nullptr),
 			_messageDelay(true) { }
-	~HiRes1Engine() { delete _files; }
+	~HiRes1Engine() override { delete _files; }
 
 private:
 	// AdlEngine
-	void runIntro();
-	void init();
-	void initGameState();
+	void runIntro() override;
+	void init() override;
+	void initGameState() override;
 	void restartGame();
-	void printString(const Common::String &str);
-	Common::String loadMessage(uint idx) const;
-	void printMessage(uint idx);
-	void drawItems();
-	void drawItem(Item &item, const Common::Point &pos);
-	void loadRoom(byte roomNr);
-	void showRoom();
+	void printString(const Common::String &str) override;
+	Common::String loadMessage(uint idx) const override;
+	void printMessage(uint idx) override;
+	void drawItems() override;
+	void drawItem(Item &item, const Common::Point &pos) override;
+	void loadRoom(byte roomNr) override;
+	void showRoom() override;
 
 	void showInstructions(Common::SeekableReadStream &stream, const uint pages[], bool goHome);
 	void wordWrap(Common::String &str) const;

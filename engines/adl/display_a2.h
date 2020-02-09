@@ -30,7 +30,7 @@ namespace Adl {
 class Display_A2 : public Display {
 public:
 	Display_A2();
-	virtual ~Display_A2();
+	~Display_A2() override;
 
 	enum {
 		kGfxWidth = 280,

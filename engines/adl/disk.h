@@ -132,7 +132,7 @@ public:
 class Files_AppleDOS : public Files {
 public:
 	Files_AppleDOS();
-	~Files_AppleDOS();
+	~Files_AppleDOS() override;
 
 	bool open(const Common::String &filename, uint trackVTOC = 17);
 	const DataBlockPtr getDataBlock(const Common::String &filename, uint offset = 0) const override;
@@ -183,7 +183,7 @@ public:
 			_sector(sector),	
 			_offset(offset) { }
 
-	virtual ~DataBlock_PC() { }
+	~DataBlock_PC() override { }
 
 	Common::SeekableReadStream *createReadStream() const override;
 

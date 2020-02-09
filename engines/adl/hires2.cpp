@@ -39,8 +39,8 @@ public:
 
 private:
 	// AdlEngine
-	void init();
-	void initGameState();
+	void init() override;
+	void initGameState() override;
 
 	const byte _numRooms, _numMsgs, _numItemPics;
 };
@@ -137,7 +137,7 @@ public:
 
 private:
 	// AdlEngine
-	void runIntro();
+	void runIntro() override;
 };
 
 HiRes2Engine::HiRes2Engine(OSystem *syst, const AdlGameDescription *gd) :

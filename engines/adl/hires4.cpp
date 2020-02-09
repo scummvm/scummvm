@@ -55,13 +55,13 @@ public:
 	HiRes4Engine(OSystem *syst, const AdlGameDescription *gd) :
 			AdlEngine_v3(syst, gd),
 			_boot(nullptr) { _brokenRooms.push_back(121); }
-	~HiRes4Engine();
+	~HiRes4Engine() override;
 
 private:
 	// AdlEngine
-	void runIntro();
-	void init();
-	void initGameState();
+	void runIntro() override;
+	void init() override;
+	void initGameState() override;
 
 	void putSpace(uint x, uint y) const;
 	void drawChar(byte c, Common::SeekableReadStream &shapeTable, Common::Point &pos) const;
@@ -549,18 +549,18 @@ public:
 			AdlEngine_v3(syst, gd),
 			_boot(nullptr),
 			_curDisk(0) { _brokenRooms.push_back(121); }
-	~HiRes4Engine_Atari();
+	~HiRes4Engine_Atari() override;
 
 private:
 	// AdlEngine
-	void init();
-	void initGameState();
-	void loadRoom(byte roomNr);
-	Common::String formatVerbError(const Common::String &verb) const;
-	Common::String formatNounError(const Common::String &verb, const Common::String &noun) const;
+	void init() override;
+	void initGameState() override;
+	void loadRoom(byte roomNr) override;
+	Common::String formatVerbError(const Common::String &verb) const override;
+	Common::String formatNounError(const Common::String &verb, const Common::String &noun) const override;
 
 	// AdlEngine_v2
-	void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const;
+	void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const override;
 
 	Common::SeekableReadStream *createReadStream(DiskImage *disk, byte track, byte sector, byte offset = 0, byte size = 0) const;
 	void loadCommonData();

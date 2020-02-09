@@ -349,7 +349,7 @@ template<typename ColorType, typename GfxWriter, typename TextWriter>
 class DisplayImpl_A2 : public Display_A2 {
 public:
 	DisplayImpl_A2();
-	~DisplayImpl_A2();
+	~DisplayImpl_A2() override;
 
 	void renderText() override;
 	void renderGraphics() override;

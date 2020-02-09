@@ -43,16 +43,16 @@ public:
 
 private:
 	// AdlEngine
-	void setupOpcodeTables();
-	void runIntro();
-	void init();
-	void initGameState();
-	void applyRegionWorkarounds();
-	void applyRoomWorkarounds(byte roomNr);
-	Common::String getLine();
+	void setupOpcodeTables() override;
+	void runIntro() override;
+	void init() override;
+	void initGameState() override;
+	void applyRegionWorkarounds() override;
+	void applyRoomWorkarounds(byte roomNr) override;
+	Common::String getLine() override;
 
 	// AdlEngine_v4
-	bool isInventoryFull();
+	bool isInventoryFull() override;
 
 	void loadSong(Common::ReadStream &stream);
 	void drawLight(uint index, byte color) const;
