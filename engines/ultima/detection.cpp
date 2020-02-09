@@ -22,12 +22,14 @@
 
 #include "ultima/detection.h"
 #include "base/plugins.h"
+#include "common/system.h"
+#include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/memstream.h"
-#include "common/system.h"
 #include "common/translation.h"
 #include "ultima/shared/early/ultima_early.h"
+#include "ultima/nuvie/meta_engine.h"
 #include "ultima/nuvie/nuvie.h"
 #include "ultima/ultima8/ultima8.h"
 
@@ -106,6 +108,16 @@ const char *UltimaMetaEngine::getSavegameFile(int saveGameIdx, const char *targe
 	snprintf(buffer, 200, "%s.%.3d", target == nullptr ? getEngineId() : target, saveGameIdx);
 
 	return buffer;
+}
+
+SaveStateList UltimaMetaEngine::listSaves(const char *target) const {
+	SaveStateList saveList = AdvancedMetaEngine::listSaves(target);
+
+	Common::String gameId = ConfMan.get("gameid");
+	if (gameId == "ultima6" || gameId == "ultima6_enh")
+		Ultima::Nuvie::MetaEngine::listSaves(saveList);
+
+	return saveList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ULTIMA)

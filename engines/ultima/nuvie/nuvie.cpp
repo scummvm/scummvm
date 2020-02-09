@@ -21,6 +21,7 @@
  */
 
 #include "ultima/nuvie/nuvie.h"
+#include "ultima/nuvie/meta_engine.h"
 #include "ultima/nuvie/core/events.h"
 #include "ultima/nuvie/actors/actor.h"
 #include "ultima/nuvie/core/nuvie_defs.h"
@@ -42,10 +43,6 @@
 
 namespace Ultima {
 namespace Nuvie {
-
-#define DATA_FILENAME "ultima.dat"
-#define DATA_VERSION_MAJOR 1
-#define DATA_VERSION_MINOR 0
 
 NuvieEngine *g_engine;
 
@@ -293,6 +290,20 @@ bool NuvieEngine::canSaveGameStateCurrently(bool isAutosave) {
 
 Common::Error NuvieEngine::loadGameState(int slot) {
 	Common::String filename = getSaveFilename(slot);
+
+	if (slot == ORIGINAL_SAVE_SLOT) {
+		// For Nuvie, unless a savegame is already present for the slot,
+		// loading it loads in the original game savegame
+		Common::InSaveFile *saveFile = _saveFileMan->openForLoading(filename);
+		bool isPresent = saveFile != nullptr;
+		delete saveFile;
+
+		if (!isPresent) {
+			_savegame->load_original();
+			return Common::kNoError;
+		}
+	}
+
 	return _savegame->load(filename) ? Common::kNoError : Common::kReadingFailed;
 }
 

@@ -131,6 +131,7 @@ MODULE_OBJS := \
 	ultima1/widgets/urban_widget.o \
 	ultima1/widgets/wench.o \
 	ultima1/game.o \
+	nuvie/meta_engine.o \
 	nuvie/nuvie.o \
 	nuvie/actors/actor.o \
 	nuvie/actors/actor_manager.o \

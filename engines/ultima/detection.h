@@ -80,6 +80,11 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	virtual int getMaximumSaveSlot() const override;
+
+	/**
+	 * Return a list of all save states associated with the given target.
+	 */
+	virtual SaveStateList listSaves(const char *target) const override;
 };
 
 namespace Ultima {
