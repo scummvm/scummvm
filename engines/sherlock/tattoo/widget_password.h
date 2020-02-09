@@ -48,7 +48,7 @@ private:
 	void close();
 public:
 	WidgetPassword(SherlockEngine *vm);
-	virtual ~WidgetPassword() {}
+	~WidgetPassword() override {}
 
 	/**
 	 * Show the password entry window
@@ -58,7 +58,7 @@ public:
 	/**
 	 * Handle event processing
 	 */
-	virtual void handleEvents();
+	void handleEvents() override;
 };
 
 } // End of namespace Tattoo

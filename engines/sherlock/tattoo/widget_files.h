@@ -64,7 +64,7 @@ private:
 	/**
 	 * Return the area of a widget that the scrollbar will be drawn in
 	 */
-	virtual Common::Rect getScrollBarBounds() const;
+	Common::Rect getScrollBarBounds() const override;
 public:
 	WidgetFiles(SherlockEngine *vm, const Common::String &target);
 
@@ -76,7 +76,7 @@ public:
 	/**
 	 * Handle event processing
 	 */
-	virtual void handleEvents();
+	void handleEvents() override;
 };
 
 } // End of namespace Tattoo

@@ -74,7 +74,7 @@ public:
 	Common::String _walkVGSName;		// Name of walk library person is using
 public:
 	Person();
-	virtual ~Person() {}
+	~Person() override {}
 
 	/**
 	 * Called to set the character walking to the current cursor location.

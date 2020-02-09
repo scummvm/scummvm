@@ -89,20 +89,20 @@ protected:
 	/**
 	 * Display the talk interface window
 	 */
-	virtual void talkInterface(const byte *&str);
+	void talkInterface(const byte *&str) override;
 
 	/**
 	 * Called when a character being spoken to has no talk options to display
 	 */
-	virtual void nothingToSay();
+	void nothingToSay() override;
 
 	/**
 	 * Show the talk display
 	 */
-	virtual void showTalk();
+	void showTalk() override;
 public:
 	TattooTalk(SherlockEngine *vm);
-	virtual ~TattooTalk() {}
+	~TattooTalk() override {}
 
 	/**
 	 * Called whenever a conversation or item script needs to be run. For standard conversations,
@@ -112,28 +112,28 @@ public:
 	 *	In their case, the conversation display is simply suppressed, and control is passed on to
 	 *	doScript to implement whatever action is required.
 	 */
-	virtual void talkTo(const Common::String filename);
+	void talkTo(const Common::String filename) override;
 
 	/**
 	 * Push the details of a passed object onto the saved sequences stack
 	 */
-	virtual void pushSequenceEntry(Object *obj);
+	void pushSequenceEntry(Object *obj) override;
 
 	/**
 	 * Pulls a background object sequence from the sequence stack and restore's the
 	 * object's sequence
 	 */
-	virtual void pullSequence(int slot = -1);
+	void pullSequence(int slot = -1) override;
 
 	/**
 	 * Returns true if the script stack is empty
 	 */
-	virtual bool isSequencesEmpty() const;
+	bool isSequencesEmpty() const override;
 
 	/**
 	 * Clears the stack of pending object sequences associated with speakers in the scene
 	 */
-	virtual void clearSequences();
+	void clearSequences() override;
 };
 
 } // End of namespace Tattoo

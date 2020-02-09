@@ -80,10 +80,10 @@ public:
 	AllLocations _showAllLocations;
 public:
 	Debugger(SherlockEngine *vm);
-	virtual ~Debugger() {}
+	~Debugger() override {}
 	static Debugger *init(SherlockEngine *vm);
 
-	void postEnter();
+	void postEnter() override;
 };
 
 } // End of namespace Sherlock

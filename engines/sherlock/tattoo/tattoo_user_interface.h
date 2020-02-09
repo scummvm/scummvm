@@ -116,7 +116,7 @@ public:
 	WidgetList _postRenderWidgets;
 public:
 	TattooUserInterface(SherlockEngine *vm);
-	virtual ~TattooUserInterface();
+	~TattooUserInterface() override;
 
 	/**
 	 * Handles restoring any areas of the back buffer that were/are covered by UI elements
@@ -232,29 +232,29 @@ public:
 	/**
 	 * Resets the user interface
 	 */
-	virtual void reset();
+	void reset() override;
 
 	/**
 	 * Main input handler for the user interface
 	 */
-	virtual void handleInput();
+	void handleInput() override;
 
 	/**
 	 * Draw the user interface onto the screen's back buffers
 	 */
-	virtual void drawInterface(int bufferNum = 3);
+	void drawInterface(int bufferNum = 3) override;
 
 	/**
 	 * Clear any active text window
 	 */
-	virtual void clearWindow();
+	void clearWindow() override;
 
 	/**
 	 * Banish any active window
 	 * @remarks		Tattoo doesn't use sliding windows, but the parameter is in the base
 	 * UserInterface class as a convenience for Scalpel UI code
 	 */
-	virtual void banishWindow(bool slideUp = true);
+	void banishWindow(bool slideUp = true) override;
 };
 
 } // End of namespace Tattoo

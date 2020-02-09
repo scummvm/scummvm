@@ -119,7 +119,7 @@ protected:
 	* Override the addDirtyRect from Graphics::Screen, since for standard
 	* surfaces we don't need dirty rects to be tracked
 	*/
-	virtual void addDirtyRect(const Common::Rect &r) {}
+	void addDirtyRect(const Common::Rect &r) override {}
 public:
 	Surface() : BaseSurface() {}
 	Surface(int width_, int height_) : BaseSurface(width_, height_) {}

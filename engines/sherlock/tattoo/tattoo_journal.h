@@ -98,7 +98,7 @@ private:
 	void showSavedDialog();
 public:
 	TattooJournal(SherlockEngine *vm);
-	virtual ~TattooJournal() {}
+	~TattooJournal() override {}
 
 	/**
 	 * Show the journal
@@ -108,13 +108,13 @@ public:
 	/**
 	 * Draw the journal background, frame, and interface buttons
 	 */
-	virtual void drawFrame();
+	void drawFrame() override;
 
 	/**
 	 * Records statements that are said, in the order which they are said. The player
 	 * can then read the journal to review them
 	 */
-	virtual void record(int converseNum, int statementNum, bool replyOnly = false);
+	void record(int converseNum, int statementNum, bool replyOnly = false) override;
 };
 
 } // End of namespace Tattoo

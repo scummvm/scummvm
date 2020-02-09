@@ -32,7 +32,7 @@ namespace Scalpel {
 class ScalpelInventory : public Inventory {
 public:
 	ScalpelInventory(SherlockEngine *vm);
-	~ScalpelInventory();
+	~ScalpelInventory() override;
 
 	Common::String _fixedTextExit;
 	Common::String _fixedTextLook;
@@ -76,7 +76,7 @@ public:
 	 * Load the list of names the inventory items correspond to, if not already loaded,
 	 * and then calls loadGraphics to load the associated graphics
 	 */
-	virtual void loadInv();
+	void loadInv() override;
 
 	/**
 	 * Identifies a button number according to the key, that the user pressed

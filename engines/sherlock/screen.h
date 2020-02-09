@@ -60,7 +60,7 @@ public:
 public:
 	static Screen *init(SherlockEngine *vm);
 	Screen(SherlockEngine *vm);
-	virtual ~Screen();
+	~Screen() override;
 
 	/**
 	 * Obtain the currently active back buffer.

@@ -221,24 +221,24 @@ public:
 		  _adlibTimerProc(0), _adlibTimerParam(0), _isOpen(false) {
 		memset(_voiceChannelMapping, 0, sizeof(_voiceChannelMapping));
 	}
-	virtual ~MidiDriver_SH_AdLib() { }
+	~MidiDriver_SH_AdLib() override { }
 
 	// MidiDriver
-	int open();
-	void close();
-	void send(uint32 b);
-	MidiChannel *allocateChannel() { return NULL; }
-	MidiChannel *getPercussionChannel() { return NULL; }
-	bool isOpen() const { return _isOpen; }
-	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
+	int open() override;
+	void close() override;
+	void send(uint32 b) override;
+	MidiChannel *allocateChannel() override { return NULL; }
+	MidiChannel *getPercussionChannel() override { return NULL; }
+	bool isOpen() const override { return _isOpen; }
+	uint32 getBaseTempo() override { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
 	int getPolyphony() const { return SHERLOCK_ADLIB_VOICES_COUNT; }
 	bool hasRhythmChannel() const { return false; }
 
-	virtual void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
+	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override;
 
 	void setVolume(byte volume);
-	virtual uint32 property(int prop, uint32 param);
+	uint32 property(int prop, uint32 param) override;
 
 	void newMusicData(byte *musicData, int32 musicDataSize);
 

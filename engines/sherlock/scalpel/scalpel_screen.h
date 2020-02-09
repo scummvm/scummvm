@@ -34,7 +34,7 @@ namespace Scalpel {
 class ScalpelScreen : public Screen {
 public:
 	ScalpelScreen(SherlockEngine *vm);
-	virtual ~ScalpelScreen() {}
+	~ScalpelScreen() override {}
 
 	/**
 	 * Draws a button for use in the inventory, talk, and examine dialogs.

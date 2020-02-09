@@ -34,7 +34,7 @@ namespace Tattoo {
 class TattooScreen : public Screen {
 public:
 	TattooScreen(SherlockEngine *vm);
-	virtual ~TattooScreen() {}
+	~TattooScreen() override {}
 };
 
 } // End of namespace Tattoo

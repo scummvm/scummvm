@@ -298,7 +298,7 @@ public:
 	int _oldWalkSequence;
 public:
 	Sprite(): BaseObject() { clear(); }
-	virtual ~Sprite() {}
+	~Sprite() override {}
 
 	static void setVm(SherlockEngine *vm) { _vm = vm; }
 
@@ -324,7 +324,7 @@ public:
 	 * @param seq	Which sequence to use (if there's more than 1)
 	 * @remarks		1: First talk seq, 2: second talk seq, etc.
 	 */
-	virtual void setObjTalkSequence(int seq) {}
+	void setObjTalkSequence(int seq) override {}
 
 	/**
 	* Return frame width
@@ -376,7 +376,7 @@ public:
 	ActionType _aMove;
 
 	Object();
-	virtual ~Object() {}
+	~Object() override {}
 
 	/**
 	 * Load the data for the object
@@ -438,7 +438,7 @@ public:
 	 * @param seq	Which sequence to use (if there's more than 1)
 	 * @remarks		1: First talk seq, 2: second talk seq, etc.
 	 */
-	virtual void setObjTalkSequence(int seq);
+	void setObjTalkSequence(int seq) override;
 };
 
 struct CAnim {

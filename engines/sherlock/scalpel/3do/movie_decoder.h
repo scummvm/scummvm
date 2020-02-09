@@ -44,13 +44,13 @@ namespace Sherlock {
 class Scalpel3DOMovieDecoder : public Video::VideoDecoder {
 public:
 	Scalpel3DOMovieDecoder();
-	~Scalpel3DOMovieDecoder();
+	~Scalpel3DOMovieDecoder() override;
 
-	bool loadStream(Common::SeekableReadStream *stream);
-	void close();
+	bool loadStream(Common::SeekableReadStream *stream) override;
+	void close() override;
 
 protected:
-	void readNextPacket();
+	void readNextPacket() override;
 
 private:
 	int32 _streamVideoOffset; /* current stream offset for video decoding */
@@ -60,18 +60,18 @@ private:
 	class StreamVideoTrack : public VideoTrack  {
 	public:
 		StreamVideoTrack(uint32 width, uint32 height, uint32 codecTag, uint32 frameCount);
-		~StreamVideoTrack();
+		~StreamVideoTrack() override;
 
-		bool endOfTrack() const;
+		bool endOfTrack() const override;
 
-		uint16 getWidth() const { return _width; }
-		uint16 getHeight() const { return _height; }
-		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
+		uint16 getWidth() const override { return _width; }
+		uint16 getHeight() const override { return _height; }
+		Graphics::PixelFormat getPixelFormat() const override;
+		int getCurFrame() const override { return _curFrame; }
+		int getFrameCount() const override { return _frameCount; }
 		void setNextFrameStartTime(uint32 nextFrameStartTime) { _nextFrameStartTime = nextFrameStartTime; }
-		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
-		const Graphics::Surface *decodeNextFrame() { return _surface; }
+		uint32 getNextFrameStartTime() const override { return _nextFrameStartTime; }
+		const Graphics::Surface *decodeNextFrame() override { return _surface; }
 
 		void decodeFrame(Common::SeekableReadStream *stream, uint32 videoTimeStamp);
 
@@ -89,12 +89,12 @@ private:
 	class StreamAudioTrack : public AudioTrack {
 	public:
 		StreamAudioTrack(uint32 codecTag, uint32 sampleRate, uint32 channels, Audio::Mixer::SoundType soundType);
-		~StreamAudioTrack();
+		~StreamAudioTrack() override;
 
 		void queueAudio(Common::SeekableReadStream *stream, uint32 size);
 
 	protected:
-		Audio::AudioStream *getAudioStream() const;
+		Audio::AudioStream *getAudioStream() const override;
 
 	private:
 		Audio::QueuingAudioStream *_audioStream;

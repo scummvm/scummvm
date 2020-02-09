@@ -107,20 +107,20 @@ protected:
 	/**
 	 * Game initialization
 	 */
-	virtual void initialize();
+	void initialize() override;
 
 	/**
 	 * Show the opening sequence
 	 */
-	virtual void showOpening();
+	void showOpening() override;
 
 	/**
 	 * Starting a scene within the game
 	 */
-	virtual void startScene();
+	void startScene() override;
 public:
 	ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
-	virtual ~ScalpelEngine();
+	~ScalpelEngine() override;
 
 	/**
 	 * Takes care of clearing the mirror in scene 12 (mansion drawing room), in case anything drew over it

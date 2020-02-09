@@ -57,7 +57,7 @@ private:
 	void restoreChar();
 public:
 	WidgetFoolscap(TattooEngine *vm);
-	virtual ~WidgetFoolscap();
+	~WidgetFoolscap() override;
 
 	/**
 	 * Show the foolscap puzzle
@@ -72,7 +72,7 @@ public:
 	/**
 	* Handle events whilst the widget is on-screen
 	*/
-	virtual void handleEvents();
+	void handleEvents() override;
 };
 
 } // End of namespace Tattoo

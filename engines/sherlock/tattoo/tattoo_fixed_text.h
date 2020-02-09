@@ -220,17 +220,17 @@ private:
 	const FixedTextLanguageEntry *_curLanguageEntry;
 public:
 	TattooFixedText(SherlockEngine *vm);
-	virtual ~TattooFixedText() {}
+	~TattooFixedText() override {}
 
 	/**
 	 * Gets text
 	 */
-	virtual const char *getText(int fixedTextId);
+	const char *getText(int fixedTextId) override;
 
 	/**
 	 * Get action message
 	 */
-	virtual const Common::String getActionMessage(FixedTextActionId actionId, int messageIndex);
+	const Common::String getActionMessage(FixedTextActionId actionId, int messageIndex) override;
 };
 
 } // End of namespace Tattoo

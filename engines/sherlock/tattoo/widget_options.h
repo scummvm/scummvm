@@ -49,7 +49,7 @@ private:
 	void render(OptionRenderMode mode = OP_ALL);
 public:
 	WidgetOptions(SherlockEngine *vm);
-	virtual ~WidgetOptions() {}
+	~WidgetOptions() override {}
 
 	/**
 	 * Load and then display the options dialog
@@ -59,7 +59,7 @@ public:
 	/**
 	 * Handle event processing
 	 */
-	virtual void handleEvents();
+	void handleEvents() override;
 };
 
 } // End of namespace Tattoo
