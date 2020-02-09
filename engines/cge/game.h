@@ -45,7 +45,7 @@ private:
 public:
 	int _tx, _ty;
 	Fly(CGEEngine *vm, Bitmap **shpl);
-	void tick();
+	void tick() override;
 };
 
 } // End of namespace CGE

@@ -121,21 +121,21 @@ public:
 		return "cge";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "CGE";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Soltys (C) 1994-1996 L.K. Avalon";
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	virtual int getMaximumSaveSlot() const override;
-	virtual SaveStateList listSaves(const char *target) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	int getMaximumSaveSlot() const override;
+	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	virtual void removeSaveState(const char *target, int slot) const override;
+	void removeSaveState(const char *target, int slot) const override;
 };
 
 static ADGameDescription s_fallbackDesc = {
