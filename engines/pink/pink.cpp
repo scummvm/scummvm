@@ -41,7 +41,7 @@
 namespace Pink {
 
 PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
-	: Engine(system), _console(nullptr), _rnd("pink"), _exeResources(nullptr),
+	: Engine(system), _rnd("pink"), _exeResources(nullptr),
 	_desc(desc), _bro(nullptr), _menu(nullptr), _actor(nullptr),
 	_module(nullptr), _director(nullptr), _pdaMgr(this) {
 
@@ -56,7 +56,6 @@ PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 }
 
 PinkEngine::~PinkEngine() {
-	delete _console;
 	delete _exeResources;
 	delete _bro;
 	_pdaMgr.close();
@@ -80,7 +79,7 @@ Common::Error PinkEngine::init() {
 		return Common::kNoGameDataFoundError;
 	}
 
-	_console = new Console(this);
+	setDebugger(new Console(this));
 	_director = new Director();
 
 	initMenu(_exeResources);
@@ -145,12 +144,7 @@ Common::Error Pink::PinkEngine::run() {
 					_actor->onRightButtonClick(event.mouse);
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
-					_console->attach();
-					_console->onFrame();
-				} else {
-					_actor->onKeyboardButtonClick(event.kbd.keycode);
-				}
+				_actor->onKeyboardButtonClick(event.kbd.keycode);
 				break;
 			default:
 				break;

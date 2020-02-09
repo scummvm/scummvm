@@ -144,7 +144,6 @@ private:
 	void removeModule();
 
 private:
-	Console *_console;
 	Common::RandomSource _rnd;
 	Common::Array<Graphics::WinCursorGroup *> _cursors;
 
