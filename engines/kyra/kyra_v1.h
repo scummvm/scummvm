@@ -256,7 +256,6 @@ protected:
 		return go();
 	}
 
-	::GUI::Debugger *getDebugger() override;
 	bool hasFeature(EngineFeature f) const override;
 	void pauseEngineIntern(bool pause) override;
 
@@ -267,7 +266,6 @@ protected:
 	StaticResource *_staticres;
 	TimerManager *_timer;
 	EMCInterpreter *_emc;
-	Debugger *_debugger;
 
 	// input
 	void setupKeyMap();

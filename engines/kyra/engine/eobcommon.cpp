@@ -48,7 +48,6 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 
 	_screen = 0;
 	_gui = 0;
-	_debugger = 0;
 
 	_playFinale = false;
 	_runFlag = true;
@@ -337,8 +336,6 @@ EoBCoreEngine::~EoBCoreEngine() {
 	_inf = 0;
 	delete _timer;
 	_timer = 0;
-	delete _debugger;
-	_debugger = 0;
 	delete _txt;
 	_txt = 0;
 }
@@ -458,8 +455,7 @@ Common::Error EoBCoreEngine::init() {
 	assert(_txt);
 	_inf = new EoBInfProcessor(this, _screen);
 	assert(_inf);
-	_debugger = new Debugger_EoB(this);
-	assert(_debugger);
+	setDebugger(new Debugger_EoB(this));
 	
 	if (_flags.platform == Common::kPlatformAmiga) {
 		if (_res->exists("EOBF6.FONT"))
@@ -571,7 +567,7 @@ Common::Error EoBCoreEngine::init() {
 }
 
 Common::Error EoBCoreEngine::go() {
-	_debugger->initialize();
+	static_cast<Debugger_EoB *>(getDebugger())->initialize();
 	_txt->removePageBreakFlag();
 	_screen->setFont(_flags.platform == Common::kPlatformPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 	loadItemsAndDecorationsShapes();

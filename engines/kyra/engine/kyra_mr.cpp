@@ -205,8 +205,7 @@ Common::Error KyraEngine_MR::init() {
 	assert(_screen);
 	_screen->setResolution();
 
-	_debugger = new Debugger_v2(this);
-	assert(_debugger);
+	setDebugger(new Debugger_v2(this));
 
 	KyraEngine_v1::init();
 	initStaticResource();
@@ -885,7 +884,7 @@ bool KyraEngine_MR::checkCharCollision(int x, int y) {
 
 void KyraEngine_MR::runLoop() {
 	// Initialize debugger since how it should be fully usable
-	_debugger->initialize();
+	static_cast<Debugger_v2 *>(getDebugger())->initialize();
 
 	_eventList.clear();
 
