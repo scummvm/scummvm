@@ -64,15 +64,8 @@ void RMInput::poll() {
 			return;
 
 		case Common::EVENT_KEYDOWN:
-			// Check for debugger
-			if ((_event.kbd.keycode == Common::KEYCODE_d) && (_event.kbd.flags & Common::KBD_CTRL)) {
-				// Attach to the debugger
-				g_vm->_debugger->attach();
-				g_vm->_debugger->onFrame();
-			} else {
-				// Flag the given key as being down
-				_keyDown.push_back(_event.kbd.keycode);
-			}
+			// Flag the given key as being down
+			_keyDown.push_back(_event.kbd.keycode);
 			return;
 
 		case Common::EVENT_KEYUP:
