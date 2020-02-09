@@ -65,38 +65,38 @@ public:
 	/**
 	 * Run the game
 	 */
-	virtual void runGame() override;
+	void runGame() override;
 
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override {
+	InterpreterType getInterpreterType() const override {
 		return INTERPRETER_QUEST;
 	}
 
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	virtual bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently() override {
 		return _runner != nullptr;
 	}
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	virtual bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently() override {
 		return _runner != nullptr;
 	}
 
 	/**
 	 * Savegames aren't supported for Quest games
 	 */
-	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
+	Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
 	/**
 	 * Savegames aren't supported for Quest games
 	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
+	Common::Error writeGameData(Common::WriteStream *ws) override;
 
 	/**
 	 * Returns true if a savegame is being loaded directly from the ScummVM launcher

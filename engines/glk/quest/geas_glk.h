@@ -58,18 +58,18 @@ namespace Quest {
 
 class GeasGlkInterface : public GeasInterface {
 protected:
-	virtual String get_file(const String &fname) const;
-	virtual GeasResult print_normal(const String &s);
-	virtual GeasResult print_newline();
+	String get_file(const String &fname) const override;
+	GeasResult print_normal(const String &s) override;
+	GeasResult print_newline() override;
 
-	virtual void set_foreground(String);
-	virtual void set_background(String);
-	virtual GeasResult set_style(const GeasFontStyle &);
+	void set_foreground(String) override;
+	void set_background(String) override;
+	GeasResult set_style(const GeasFontStyle &) override;
 
-	virtual String get_string();
-	virtual uint make_choice(String, Common::Array<String>);
+	String get_string() override;
+	uint make_choice(String, Common::Array<String>) override;
 
-	virtual String absolute_name(String, String) const;
+	String absolute_name(String, String) const override;
 public:
 	GeasGlkInterface() {
 		;

@@ -42,12 +42,12 @@ public:
 	/**
 	 * Execute the game
 	 */
-	virtual void runGame() override;
+	void runGame() override;
 
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_TADS2; }
+	InterpreterType getInterpreterType() const override { return INTERPRETER_TADS2; }
 };
 
 //typedef TADS2 appctxdef;

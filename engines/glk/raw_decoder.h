@@ -48,13 +48,13 @@ private:
 	int _transColor;
 public:
 	RawDecoder();
-	~RawDecoder();
+	~RawDecoder() override;
 
-	virtual bool loadStream(Common::SeekableReadStream &stream) override;
-	virtual void destroy() override;
-	virtual const Graphics::Surface *getSurface() const override { return &_surface; }
-	virtual const byte *getPalette() const override { return _palette; }
-	virtual uint16 getPaletteColorCount() const override { return _paletteColorCount; }
+	bool loadStream(Common::SeekableReadStream &stream) override;
+	void destroy() override;
+	const Graphics::Surface *getSurface() const override { return &_surface; }
+	const byte *getPalette() const override { return _palette; }
+	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
 	int getTransparentColor() const { return _transColor; }
 };
 

@@ -39,12 +39,12 @@ protected:
 	/**
 	 * Setup the video mode
 	 */
-	virtual void initGraphicsMode() override;
+	void initGraphicsMode() override;
 
 	/**
 	 * Create the screen class
 	 */
-	virtual Screen *createScreen() override;
+	Screen *createScreen() override;
 public:
 	/**
 	 * Constructor
@@ -54,7 +54,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Frotz();
+	~Frotz() override;
 
 	/**
 	 * Initialization
@@ -64,32 +64,32 @@ public:
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_FROTZ; }
+	InterpreterType getInterpreterType() const override { return INTERPRETER_FROTZ; }
 
 	/**
 	 * Execute the game
 	 */
-	virtual void runGame() override;
+	void runGame() override;
 
 	/**
 	 * Load a savegame from a given slot
 	 */
-	virtual Common::Error loadGameState(int slot) override;
+	Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Save the game to a given slot
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	/**
 	 * Loading method not used for Frotz sub-engine
 	 */
-	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override { return Common::kReadingFailed; }
+	Common::Error readSaveData(Common::SeekableReadStream *rs) override { return Common::kReadingFailed; }
 
 	/**
 	 * Saving method not used for Frotz sub-engine
 	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override { return Common::kWritingFailed; }
+	Common::Error writeGameData(Common::WriteStream *ws) override { return Common::kWritingFailed; }
 
 };
 

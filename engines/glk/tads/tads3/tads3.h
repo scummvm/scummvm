@@ -42,12 +42,12 @@ public:
 	/**
 	 * Execute the game
 	 */
-	virtual void runGame() override;
+	void runGame() override;
 
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_TADS3; }
+	InterpreterType getInterpreterType() const override { return INTERPRETER_TADS3; }
 };
 
 } // End of namespace TADS3

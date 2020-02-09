@@ -246,7 +246,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~GlkInterface();
+	~GlkInterface() override;
 
 	/**
 	 * Initialization

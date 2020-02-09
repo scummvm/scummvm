@@ -35,8 +35,8 @@ namespace Quest {
  */
 class ConsoleStream : public Common::WriteStream {
 public:
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) override;
-	virtual int32 pos() const override { return 0; }
+	uint32 write(const void *dataPtr, uint32 dataSize) override;
+	int32 pos() const override { return 0; }
 };
 
 class ostringstream : public Common::MemoryWriteStreamDynamic {

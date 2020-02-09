@@ -87,12 +87,12 @@ class geas_implementation : public GeasRunner {
 public:
 	geas_implementation(GeasInterface *in_gi)
 		: GeasRunner(in_gi), undo_buffer(20), is_running_(true) {}
-	void set_game(const String &fname);
+	void set_game(const String &fname) override;
 
-	bool is_running() const;
-	GeasState *getState() { return &state; }
-	String get_banner();
-	void run_command(String);
+	bool is_running() const override;
+	GeasState *getState() override { return &state; }
+	String get_banner() override;
+	void run_command(String) override;
 	bool try_match(String s, bool, bool);
 	match_rv match_command(String input, String action) const;
 	match_rv match_command(String input, uint ichar,
@@ -168,12 +168,12 @@ public:
 	bool eval_cond(String);
 	GeasState state;
 
-	virtual void tick_timers();
-	virtual v2string get_inventory();
-	virtual v2string get_room_contents();
+	void tick_timers() override;
+	v2string get_inventory() override;
+	v2string get_room_contents() override;
 	v2string get_room_contents(String);
-	virtual vstring get_status_vars();
-	virtual Common::Array<bool> get_valid_exits();
+	vstring get_status_vars() override;
+	Common::Array<bool> get_valid_exits() override;
 
 
 	inline void print_formatted(String s) const {

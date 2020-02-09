@@ -83,12 +83,12 @@ protected:
 	bool _quitFlag;
 
 	// Engine APIs
-	virtual Common::Error run() override;
+	Common::Error run() override;
 
 	/**
 	  * Returns true whether a given feature is supported by the engine
 	  */
-	virtual bool hasFeature(EngineFeature f) const override;
+	bool hasFeature(EngineFeature f) const override;
 
 	/**
 	 * Setup the video mode
@@ -132,19 +132,19 @@ public:
 	void(*gli_unregister_arr)(void *array, uint len, const char *typecode, gidispatch_rock_t objrock);
 public:
 	GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc);
-	virtual ~GlkEngine();
+	~GlkEngine() override;
 
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	virtual bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently() override {
 		return true;
 	}
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	virtual bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently() override {
 		return true;
 	}
 
@@ -205,12 +205,12 @@ public:
 	/**
 	 * Load a savegame from a given slot
 	 */
-	virtual Common::Error loadGameState(int slot) override;
+	Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Save the game to a given slot
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	/**
 	 * Load a savegame from the passed Quetzal file chunk stream
@@ -226,7 +226,7 @@ public:
 	/**
 	 * Updates sound settings
 	 */
-	virtual void syncSoundSettings() override;
+	void syncSoundSettings() override;
 
 	/**
 	 * Generate a beep

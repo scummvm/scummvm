@@ -56,22 +56,22 @@ public:
 	/**
 	 * Get the font height
 	 */
-	virtual int getFontHeight() const override { return _size.y; }
+	int getFontHeight() const override { return _size.y; }
 
 	/**
 	 * Get the maximum character width
 	 */
-	virtual int getMaxCharWidth() const override { return _size.x; }
+	int getMaxCharWidth() const override { return _size.x; }
 
 	/**
 	 * Get the width of the given character
 	 */
-	virtual int getCharWidth(uint32 chr) const override { return _chars[chr - _startingChar].w; }
+	int getCharWidth(uint32 chr) const override { return _chars[chr - _startingChar].w; }
 
 	/**
 	 * Draw a character
 	 */
-	virtual void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 };
 
 /**

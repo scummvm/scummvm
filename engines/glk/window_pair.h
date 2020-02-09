@@ -53,26 +53,26 @@ public:
 	/**
 	 * Destructor
 	 */
-	~PairWindow();
+	~PairWindow() override;
 
 	/**
 	 * Rearranges the window
 	 */
-	virtual void rearrange(const Rect &box) override;
+	void rearrange(const Rect &box) override;
 
 	/**
 	 * Redraw the window
 	 */
-	virtual void redraw() override;
+	void redraw() override;
 
-	virtual void getArrangement(uint *method, uint *size, Window **keyWin) override;
+	void getArrangement(uint *method, uint *size, Window **keyWin) override;
 
-	virtual void setArrangement(uint method, uint size, Window *keyWin) override;
+	void setArrangement(uint method, uint size, Window *keyWin) override;
 
 	/**
 	 * Click the window
 	 */
-	virtual void click(const Point &newPos) override;
+	void click(const Point &newPos) override;
 };
 
 } // End of namespace Glk

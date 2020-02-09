@@ -243,7 +243,7 @@ protected:
 	/**
 	 * Called when the H_FLAGS field of the header has changed
 	 */
-	virtual void flagsChanged(zbyte value) override;
+	void flagsChanged(zbyte value) override;
 
 	/**
 	 * This function does the dirty work for z_save_undo.
@@ -1698,7 +1698,7 @@ public:
 	 * Constructor
 	 */
 	Processor(OSystem *syst, const GlkGameDescription &gameDesc);
-	virtual ~Processor() {}
+	~Processor() override {}
 
 	/**
 	 * Initialization

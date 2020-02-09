@@ -82,8 +82,8 @@ public:
 
 private:
 	class Nullstreambuf : public Common::WriteStream {
-		virtual uint32 write(const void *dataPtr, uint32 dataSize) { return dataSize; }
-		virtual int32 pos() const { return 0; }
+		uint32 write(const void *dataPtr, uint32 dataSize) override { return dataSize; }
+		int32 pos() const override { return 0; }
 	};
 
 	Common::WriteStream *logfilestr_;

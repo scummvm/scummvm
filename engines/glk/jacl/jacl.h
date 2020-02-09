@@ -57,24 +57,24 @@ public:
 	/**
 	 * Run the game
 	 */
-	virtual void runGame() override;
+	void runGame() override;
 
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override {
+	InterpreterType getInterpreterType() const override {
 		return INTERPRETER_JACL;
 	}
 
 	/**
 	 * Savegames aren't supported for JACL games
 	 */
-	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
+	Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
 	/**
 	 * Savegames aren't supported for JACL games
 	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
+	Common::Error writeGameData(Common::WriteStream *ws) override;
 
 	/**
 	 * Returns true if a savegame is being loaded directly from the ScummVM launcher

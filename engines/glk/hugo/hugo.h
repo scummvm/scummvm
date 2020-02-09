@@ -1190,18 +1190,18 @@ public:
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_HUGO; }
+	InterpreterType getInterpreterType() const override { return INTERPRETER_HUGO; }
 
 	/**
 	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
+	Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
 	/**
 	 * Save the game. The passed write stream represents access to the UMem chunk
 	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
+	Common::Error writeGameData(Common::WriteStream *ws) override;
 };
 
 } // End of namespace Hugo

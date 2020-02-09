@@ -299,7 +299,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~WindowStream();
+	~WindowStream() override;
 
 	/**
 	 * Close the stream
@@ -309,49 +309,49 @@ public:
 	/**
 	 * Write a character
 	 */
-	virtual void putChar(unsigned char ch) override;
+	void putChar(unsigned char ch) override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint32 ch) override;
+	void putCharUni(uint32 ch) override;
 
 	/**
 	 * Write a buffer
 	 */
-	virtual void putBuffer(const char *buf, size_t len) override;
+	void putBuffer(const char *buf, size_t len) override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+	void putBufferUni(const uint32 *buf, size_t len) override;
 
 	/**
 	 * Remove a string from the end of the stream, if indeed it is at the end
 	 */
-	virtual void unputBuffer(const char *buf, size_t len) override;
+	void unputBuffer(const char *buf, size_t len) override;
 
 	/**
 	 * Remove a string from the end of the stream, if indeed it is at the end
 	 */
-	virtual void unputBufferUni(const uint32 *buf, size_t len) override;
+	void unputBufferUni(const uint32 *buf, size_t len) override;
 
-	virtual void setStyle(uint val) override;
+	void setStyle(uint val) override;
 
 	/**
 	 * Set a hyperlink
 	 */
-	virtual void setHyperlink(uint linkVal) override;
+	void setHyperlink(uint linkVal) override;
 
 	/**
 	 * Set the style colors
 	 */
-	virtual void setZColors(uint fg, uint bg) override;
+	void setZColors(uint fg, uint bg) override;
 
 	/**
 	 * Set the reverse video style
 	 */
-	virtual void setReverseVideo(bool reverse) override;
+	void setReverseVideo(bool reverse) override;
 };
 
 /**
@@ -374,61 +374,61 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~MemoryStream();
+	~MemoryStream() override;
 
 	/**
 	 * Write a character
 	 */
-	virtual void putChar(unsigned char ch) override;
+	void putChar(unsigned char ch) override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint32 ch) override;
+	void putCharUni(uint32 ch) override;
 
 	/**
 	 * Write a buffer
 	 */
-	virtual void putBuffer(const char *buf, size_t len) override;
+	void putBuffer(const char *buf, size_t len) override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+	void putBufferUni(const uint32 *buf, size_t len) override;
 
-	virtual uint getPosition() const override;
+	uint getPosition() const override;
 
-	virtual void setPosition(int pos, uint seekMode) override;
+	void setPosition(int pos, uint seekMode) override;
 
 	/**
 	 * Get a character from the stream
 	 */
-	virtual int getChar() override;
+	int getChar() override;
 
 	/**
 	 * Get a unicode character from the stream
 	 */
-	virtual int getCharUni() override;
+	int getCharUni() override;
 
 	/**
 	 * Get a buffer
 	 */
-	virtual uint getBuffer(char *buf, uint len) override;
+	uint getBuffer(char *buf, uint len) override;
 
 	/**
 	 * Get a unicode buffer
 	 */
-	virtual uint getBufferUni(uint32 *buf, uint len) override;
+	uint getBufferUni(uint32 *buf, uint len) override;
 
 	/**
 	 * Get a line
 	 */
-	virtual uint getLine(char *buf, uint len) override;
+	uint getLine(char *buf, uint len) override;
 
 	/**
 	 * Get a unicode line
 	 */
-	virtual uint getLineUni(uint32 *ubuf, uint len) override;
+	uint getLineUni(uint32 *ubuf, uint len) override;
 };
 
 /**
@@ -492,66 +492,66 @@ public:
 	/**
 	 * Write a character
 	 */
-	virtual void putChar(unsigned char ch) override;
+	void putChar(unsigned char ch) override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putCharUni(uint32 ch) override;
+	void putCharUni(uint32 ch) override;
 
 	/**
 	 * Write a buffer
 	 */
-	virtual void putBuffer(const char *buf, size_t len) override;
+	void putBuffer(const char *buf, size_t len) override;
 
 	/**
 	 * Write a unicode character
 	 */
-	virtual void putBufferUni(const uint32 *buf, size_t len) override;
+	void putBufferUni(const uint32 *buf, size_t len) override;
 
-	virtual uint getPosition() const override;
+	uint getPosition() const override;
 
-	virtual void setPosition(int pos, uint seekMode) override;
+	void setPosition(int pos, uint seekMode) override;
 
 	/**
 	 * Get a character from the stream
 	 */
-	virtual int getChar() override;
+	int getChar() override;
 
 	/**
 	 * Get a unicode character from the stream
 	 */
-	virtual int getCharUni() override;
+	int getCharUni() override;
 
 	/**
 	 * Get a buffer
 	 */
-	virtual uint getBuffer(char *buf, uint len) override;
+	uint getBuffer(char *buf, uint len) override;
 
 	/**
 	 * Get a unicode buffer
 	 */
-	virtual uint getBufferUni(uint32 *buf, uint len) override;
+	uint getBufferUni(uint32 *buf, uint len) override;
 
 	/**
 	 * Get a line
 	 */
-	virtual uint getLine(char *buf, uint len) override;
+	uint getLine(char *buf, uint len) override;
 
 	/**
 	 * Get a unicode line
 	 */
-	virtual uint getLineUni(uint32 *ubuf, uint len) override;
+	uint getLineUni(uint32 *ubuf, uint len) override;
 
 	/**
 	 * Cast a stream to a ScummVM write stream
 	 */
-	virtual operator Common::WriteStream *() const override { return _outStream; }
+	operator Common::WriteStream *() const override { return _outStream; }
 
 	/**
 	 * Cast a stream to a ScummVM read stream
 	 */
-	virtual operator Common::SeekableReadStream *() const override { return _inStream; }
+	operator Common::SeekableReadStream *() const override { return _inStream; }
 };
 
 /**
@@ -571,7 +571,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~FileStream();
+	~FileStream() override;
 };
 
 /**

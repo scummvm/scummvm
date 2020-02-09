@@ -1379,34 +1379,34 @@ public:
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override {
+	InterpreterType getInterpreterType() const override {
 		return INTERPRETER_MAGNETIC;
 	}
 
 	/**
 	 * The Magnetic engine currently doesn't support loading savegames from the GMM
 	 */
-	virtual bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently() override {
 		return false;
 	}
 
 	/**
 	 * The Magnetic engine currently doesn't support saving games from the GMM
 	 */
-	virtual bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently() override {
 		return false;
 	}
 
 	/**
 	 * Load a savegame from the passed Quetzal file chunk stream
 	 */
-	virtual Common::Error readSaveData(Common::SeekableReadStream *rs) override;
+	Common::Error readSaveData(Common::SeekableReadStream *rs) override;
 
 	/**
 	 * Save the game. The passed write stream represents access to the UMem chunk
 	 * in the Quetzal save file that will be created
 	 */
-	virtual Common::Error writeGameData(Common::WriteStream *ws) override;
+	Common::Error writeGameData(Common::WriteStream *ws) override;
 };
 
 extern Magnetic *g_vm;
