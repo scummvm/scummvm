@@ -98,6 +98,10 @@ private:
 	 */
 	int _saveSlotToLoad;
 
+	/**
+	 * Optional debugger for the engine
+	 */
+	GUI::Debugger *_debugger;
 public:
 
 
@@ -173,7 +177,16 @@ public:
 	 * Return the engine's debugger instance, if any. Used by error() to
 	 * invoke the debugger when a severe error is reported.
 	 */
-	virtual GUI::Debugger *getDebugger() { return 0; }
+	virtual GUI::Debugger *getDebugger() { return _debugger; }
+
+	/**
+	 * Sets the engine's debugger. Once set, the Engine class is responsible for managing
+	 * the debugger, and freeing it on exit
+	 */
+	void setDebugger(GUI::Debugger *debugger) {
+		assert(!_debugger);
+		_debugger = debugger;
+	}
 
 	/**
 	 * Determine whether the engine supports the specified feature.

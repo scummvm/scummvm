@@ -147,7 +147,8 @@ Engine::Engine(OSystem *syst)
 		_pauseStartTime(0),
 		_saveSlotToLoad(-1),
 		_engineStartTime(_system->getMillis()),
-		_mainMenuDialog(NULL) {
+		_mainMenuDialog(NULL),
+		_debugger(NULL) {
 
 	g_engine = this;
 	Common::setErrorOutputFormatter(defaultOutputFormatter);
@@ -181,6 +182,7 @@ Engine::Engine(OSystem *syst)
 Engine::~Engine() {
 	_mixer->stopAll();
 
+	delete _debugger;
 	delete _mainMenuDialog;
 	g_engine = NULL;
 

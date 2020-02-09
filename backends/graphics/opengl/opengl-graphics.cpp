@@ -33,6 +33,8 @@
 #include "common/translation.h"
 #include "common/algorithm.h"
 #include "common/file.h"
+#include "gui/debugger.h"
+#include "engines/engine.h"
 #ifdef USE_OSD
 #include "common/tokenizer.h"
 #include "common/rect.h"
@@ -471,6 +473,11 @@ void OpenGLGraphicsManager::updateScreen() {
 		_osdIconSurface->updateGLTexture();
 	}
 #endif
+
+	// If there's an active debugger, update it
+	GUI::Debugger *debugger = g_engine ? g_engine->getDebugger() : nullptr;
+	if (debugger)
+		debugger->onFrame();
 
 	// We only update the screen when there actually have been any changes.
 	if (   !_forceRedraw

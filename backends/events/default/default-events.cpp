@@ -34,6 +34,7 @@
 #include "backends/vkeybd/virtual-keyboard.h"
 
 #include "engines/engine.h"
+#include "gui/debugger.h"
 #include "gui/message.h"
 
 DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
@@ -109,6 +110,14 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			// making invalid assumptions about ascii values.
 			event.kbd.ascii = Common::KEYCODE_BACKSPACE;
 			_currentKeyDown.ascii = Common::KEYCODE_BACKSPACE;
+
+		} else if (event.kbd.keycode == Common::KEYCODE_d && (_modifierState & Common::KBD_CTRL)) {
+			GUI::Debugger *debugger = g_engine->getDebugger();
+			if (debugger) {
+				debugger->attach();
+				debugger->onFrame();
+				forwardEvent = false;
+			}
 		}
 		break;
 
