@@ -98,7 +98,6 @@ public:
 	~AvalancheEngine() override;
 
 	Common::ErrorCode initialize();
-	GUI::Debugger *getDebugger() override;
 
 	Common::RandomSource *_rnd;
 
@@ -127,9 +126,6 @@ public:
 protected:
 	// Engine APIs
 	Common::Error run() override;
-
-private:
-	AvalancheConsole *_console;
 
 public:
 	// For Thinkabout:

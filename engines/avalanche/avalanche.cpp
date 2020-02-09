@@ -36,7 +36,7 @@ namespace Avalanche {
 
 AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd) : Engine(syst), _gameDescription(gd), _fxHidden(false), _interrogation(0) {
 	_system = syst;
-	_console = new AvalancheConsole(this);
+	setDebugger(new AvalancheConsole(this));
 
 	_rnd = new Common::RandomSource("avalanche");
 	_showDebugLines = false;
@@ -61,7 +61,6 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 }
 
 AvalancheEngine::~AvalancheEngine() {
-	delete _console;
 	delete _rnd;
 
 	delete _graphics;
@@ -172,10 +171,6 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_parser->init();
 
 	return Common::kNoError;
-}
-
-GUI::Debugger *AvalancheEngine::getDebugger() {
-	return _console;
 }
 
 bool AvalancheEngine::hasFeature(EngineFeature f) const {
@@ -503,12 +498,7 @@ void AvalancheEngine::updateEvents() {
 			_holdLeftMouse = false; // Same as above.
 			break;
 		case Common::EVENT_KEYDOWN:
-			if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
-				// Attach to the debugger
-				_console->attach();
-				_console->onFrame();
-			} else
-				handleKeyDown(event);
+			handleKeyDown(event);
 			break;
 		default:
 			break;
