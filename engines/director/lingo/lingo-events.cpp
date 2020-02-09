@@ -258,7 +258,7 @@ void Lingo::processSpriteEvent(LEvent event) {
 	Frame *currentFrame = score->_frames[score->getCurrentFrame()];
 	if (event == kEventBeginSprite) {
 		// TODO: Check if this is also possibly a kSpriteScript?
-		for (uint16 i = 0; i < score->_numChannelsDisplayed; i++)
+		for (uint16 i = 0; i <= score->_numChannelsDisplayed; i++)
 			if (currentFrame->_sprites[i]->_enabled)
 				processEvent(event, kCastScript, currentFrame->_sprites[i]->_scriptId);
 

@@ -601,7 +601,7 @@ void Lingo::runTests() {
 }
 
 void Lingo::executeImmediateScripts(Frame *frame) {
-	for (uint16 i = 0; i < _vm->getCurrentScore()->_numChannelsDisplayed; i++) {
+	for (uint16 i = 0; i <= _vm->getCurrentScore()->_numChannelsDisplayed; i++) {
 		if (_vm->getCurrentScore()->_immediateActions.contains(frame->_sprites[i]->_scriptId)) {
 			g_lingo->processEvent(kEventMouseUp, kFrameScript, frame->_sprites[i]->_scriptId);
 		}

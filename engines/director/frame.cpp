@@ -87,7 +87,7 @@ Frame::Frame(const Frame &frame) {
 
 	_sprites.resize(_numChannels + 1);
 
-	for (uint16 i = 0; i < _numChannels + 1; i++) {
+	for (uint16 i = 0; i <= _numChannels; i++) {
 		_sprites[i] = new Sprite(*frame._sprites[i]);
 	}
 }
@@ -581,7 +581,7 @@ void Frame::playTransition(Score *score) {
 }
 
 void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
-	for (uint16 i = 0; i < _numChannels; i++) {
+	for (uint16 i = 0; i <= _numChannels; i++) {
 		if (!_sprites[i]->_enabled)
 			continue;
 
