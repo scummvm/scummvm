@@ -73,7 +73,6 @@ public:
 	void pauseEngineIntern(bool pause) override;
 
 	GameManager *_gm;
-	Console *_console;
 	Sound *_sound;
 	ResourceManager *_resMan;
 	Screen *_screen;

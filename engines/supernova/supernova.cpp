@@ -77,7 +77,6 @@ ObjectType &operator^=(ObjectType &a, ObjectType b) {
 
 SupernovaEngine::SupernovaEngine(OSystem *syst)
 	: Engine(syst)
-	, _console(nullptr)
 	, _gm(nullptr)
 	, _sound(nullptr)
 	, _resMan(nullptr)
@@ -107,7 +106,6 @@ SupernovaEngine::~SupernovaEngine() {
 	DebugMan.clearAllDebugChannels();
 
 	delete _sleepAutoSave;
-	delete _console;
 	delete _gm;
 	delete _sound;
 	delete _resMan;
@@ -121,7 +119,6 @@ Common::Error SupernovaEngine::run() {
 		uint32 start = _system->getMillis();
 		_gm->updateEvents();
 		_gm->executeRoom();
-		_console->onFrame();
 		_system->updateScreen();
 		int end = _delay - (_system->getMillis() - start);
 		if (end > 0)
@@ -151,7 +148,7 @@ void SupernovaEngine::init() {
 		_gm = new GameManager1(this, _sound);
 	else if (_MSPart == 2)
 		_gm = new GameManager2(this, _sound);
-	_console = new Console(this, _gm);
+	setDebugger(new Console(this, _gm));
 
 	setTotalPlayTime(0);
 
