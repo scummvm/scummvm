@@ -72,24 +72,24 @@ static const SkyVersion skyVersions[] = {
 
 class SkyMetaEngine : public MetaEngine {
 public:
-	virtual const char *getName() const override;
-	virtual const char *getOriginalCopyright() const override;
+	const char *getName() const override;
+	const char *getOriginalCopyright() const override;
 
 	const char *getEngineId() const override {
 		return "sky";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
 	PlainGameList getSupportedGames() const override;
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 
-	virtual SaveStateList listSaves(const char *target) const override;
-	virtual int getMaximumSaveSlot() const override;
-	virtual void removeSaveState(const char *target, int slot) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
 };
 
 const char *SkyMetaEngine::getName() const {

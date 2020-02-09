@@ -79,9 +79,9 @@ protected:
 
 public:
 	SkyEngine(OSystem *syst);
-	virtual ~SkyEngine();
+	~SkyEngine() override;
 
-	virtual void syncSoundSettings() override;
+	void syncSoundSettings() override;
 
 	static bool isDemo();
 	static bool isCDVersion();
@@ -100,15 +100,15 @@ protected:
 	// Engine APIs
 	Common::Error init();
 	Common::Error go();
-	virtual Common::Error run() override {
+	Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}
-	virtual GUI::Debugger *getDebugger() override;
-	virtual bool hasFeature(EngineFeature f) const override;
+	GUI::Debugger *getDebugger() override;
+	bool hasFeature(EngineFeature f) const override;
 
 	byte _fastMode;
 

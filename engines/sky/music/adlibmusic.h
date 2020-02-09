@@ -38,18 +38,18 @@ namespace Sky {
 class AdLibMusic : public MusicBase {
 public:
 	AdLibMusic(Audio::Mixer *pMixer, Disk *pDisk);
-	~AdLibMusic();
+	~AdLibMusic() override;
 
 	// AudioStream API
-	virtual void setVolume(uint16 param);
+	void setVolume(uint16 param) override;
 
 private:
 	OPL::OPL *_opl;
 	uint8 *_initSequence;
 	uint32 _sampleRate;
-	virtual void setupPointers();
-	virtual void setupChannels(uint8 *channelData);
-	virtual void startDriver();
+	void setupPointers() override;
+	void setupChannels(uint8 *channelData) override;
+	void startDriver() override;
 
 	void premixerCall(int16 *buf, uint len);
 

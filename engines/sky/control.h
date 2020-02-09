@@ -155,8 +155,8 @@ private:
 class TextResource : public ConResource {
 public:
 	TextResource(void *pSpData, uint32 pNSprites, uint32 pCurSprite, uint16 pX, uint16 pY, uint32 pText, uint8 pOnClick, OSystem *system, uint8 *screen);
-	virtual ~TextResource();
-	virtual void drawToScreen(bool doMask);
+	~TextResource() override;
+	void drawToScreen(bool doMask) override;
 	void flushForRedraw();
 private:
 	uint16 _oldX, _oldY;
