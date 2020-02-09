@@ -107,6 +107,7 @@ private:
 	uint16 FindLastPositionOf5cChar(uint16 *text);
 	uint32 FUN_80031c28(uint16 *srcText, uint16 *destText, uint32 cutLength, uint16 param_4);
 
+	uint32 extractTextIndex(Common::File *fd, uint16 offset);
 };
 
 } // End of namespace Dragons
