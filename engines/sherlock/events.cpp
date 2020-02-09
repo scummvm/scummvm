@@ -206,14 +206,7 @@ void Events::pollEvents() {
 			return;
 
 		case Common::EVENT_KEYDOWN:
-			// Check for debugger
-			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
-				// Attach to the debugger
-				_vm->_debugger->attach();
-				_vm->_debugger->onFrame();
-			} else {
-				_pendingKeys.push(event.kbd);
-			}
+			_pendingKeys.push(event.kbd);
 			return;
 		case Common::EVENT_KEYUP:
 			return;
@@ -273,9 +266,6 @@ bool Events::checkForNextFrameCounter() {
 	if ((milli - _priorFrameTime) >= (1000 / _frameRate)) {
 		++_frameCounter;
 		_priorFrameTime = milli;
-
-		// Give time to the debugger
-		_vm->_debugger->onFrame();
 
 		// Display the frame
 		_vm->_screen->update();
