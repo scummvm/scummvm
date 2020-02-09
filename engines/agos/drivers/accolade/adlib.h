@@ -44,24 +44,24 @@ struct InstrumentEntry {
 class MidiDriver_Accolade_AdLib : public MidiDriver {
 public:
 	MidiDriver_Accolade_AdLib();
-	virtual ~MidiDriver_Accolade_AdLib();
+	~MidiDriver_Accolade_AdLib() override;
 
 	// MidiDriver
-	int open();
-	void close();
-	void send(uint32 b);
-	MidiChannel *allocateChannel() { return NULL; }
-	MidiChannel *getPercussionChannel() { return NULL; }
+	int open() override;
+	void close() override;
+	void send(uint32 b) override;
+	MidiChannel *allocateChannel() override { return NULL; }
+	MidiChannel *getPercussionChannel() override { return NULL; }
 
-	bool isOpen() const { return _isOpen; }
-	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
+	bool isOpen() const override { return _isOpen; }
+	uint32 getBaseTempo() override { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
 	void setVolume(byte volume);
-	virtual uint32 property(int prop, uint32 param);
+	uint32 property(int prop, uint32 param) override;
 
 	bool setupInstruments(byte *instrumentData, uint16 instrumentDataSize, bool useMusicDrvFile);
 
-	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
+	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override;
 
 private:
 	bool _musicDrvMode;

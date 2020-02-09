@@ -143,11 +143,11 @@ private:
 	uint _loopSound;
 public:
 	LoopingAudioStream(BaseSound *parent, uint sound, uint loopSound, bool loop);
-	~LoopingAudioStream();
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return _stream ? _stream->isStereo() : 0; }
-	bool endOfData() const;
-	int getRate() const { return _stream ? _stream->getRate() : 22050; }
+	~LoopingAudioStream() override;
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return _stream ? _stream->isStereo() : 0; }
+	bool endOfData() const override;
+	int getRate() const override { return _stream ? _stream->getRate() : 22050; }
 };
 
 LoopingAudioStream::LoopingAudioStream(BaseSound *parent, uint sound, uint loopSound, bool loop) {
@@ -253,7 +253,7 @@ public:
 	WavSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base = 0)
 		: BaseSound(mixer, filename, base, false) {}
 	WavSound(Audio::Mixer *mixer, const Common::String &filename, uint32 *offsets) : BaseSound(mixer, filename, offsets) {}
-	Audio::AudioStream *makeAudioStream(uint sound);
+	Audio::AudioStream *makeAudioStream(uint sound) override;
 };
 
 Audio::AudioStream *WavSound::makeAudioStream(uint sound) {
@@ -271,7 +271,7 @@ class VocSound : public BaseSound {
 public:
 	VocSound(Audio::Mixer *mixer, const Common::String &filename, bool isUnsigned, uint32 base = 0, bool bigEndian = false)
 		: BaseSound(mixer, filename, base, bigEndian), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
-	Audio::AudioStream *makeAudioStream(uint sound);
+	Audio::AudioStream *makeAudioStream(uint sound) override;
 };
 
 Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
@@ -290,8 +290,8 @@ class RawSound : public BaseSound {
 public:
 	RawSound(Audio::Mixer *mixer, const Common::String &filename, bool isUnsigned)
 		: BaseSound(mixer, filename, 0, SOUND_BIG_ENDIAN), _flags(isUnsigned ? Audio::FLAG_UNSIGNED : 0) {}
-	Audio::AudioStream *makeAudioStream(uint sound);
-	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0);
+	Audio::AudioStream *makeAudioStream(uint sound) override;
+	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0) override;
 };
 
 Audio::AudioStream *RawSound::makeAudioStream(uint sound) {
@@ -324,7 +324,7 @@ void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 class MP3Sound : public BaseSound {
 public:
 	MP3Sound(Audio::Mixer *mixer, const Common::String &filename, uint32 base = 0) : BaseSound(mixer, filename, base, false) {}
-	Audio::AudioStream *makeAudioStream(uint sound) {
+	Audio::AudioStream *makeAudioStream(uint sound) override {
 		Common::SeekableReadStream *tmp = getSoundStream(sound);
 		if (!tmp)
 			return NULL;
@@ -340,7 +340,7 @@ public:
 class VorbisSound : public BaseSound {
 public:
 	VorbisSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base = 0) : BaseSound(mixer, filename, base, false) {}
-	Audio::AudioStream *makeAudioStream(uint sound) {
+	Audio::AudioStream *makeAudioStream(uint sound) override {
 		Common::SeekableReadStream *tmp = getSoundStream(sound);
 		if (!tmp)
 			return NULL;
@@ -356,7 +356,7 @@ public:
 class FLACSound : public BaseSound {
 public:
 	FLACSound(Audio::Mixer *mixer, const Common::String &filename, uint32 base = 0) : BaseSound(mixer, filename, base, false) {}
-	Audio::AudioStream *makeAudioStream(uint sound) {
+	Audio::AudioStream *makeAudioStream(uint sound) override {
 		Common::SeekableReadStream *tmp = getSoundStream(sound);
 		if (!tmp)
 			return NULL;
