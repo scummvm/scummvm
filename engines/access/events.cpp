@@ -153,13 +153,7 @@ void EventsManager::pollEvents(bool skipTimers) {
 
 		case Common::EVENT_KEYDOWN:
 			// Check for debugger
-			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
-				// Attach to the debugger
-				_vm->_debugger->attach();
-				_vm->_debugger->onFrame();
-			} else {
-				keyControl(event.kbd.keycode, true);
-			}
+			keyControl(event.kbd.keycode, true);
 			return;
 		case Common::EVENT_KEYUP:
 			keyControl(event.kbd.keycode, false);
@@ -278,9 +272,6 @@ bool EventsManager::checkForNextTimerUpdate() {
 }
 
 void EventsManager::nextFrame() {
-	// Give time to the debugger
-	_vm->_debugger->onFrame();
-
 	_vm->_screen->update();
 }
 

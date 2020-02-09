@@ -29,6 +29,7 @@
 #include "access/access.h"
 #include "access/screen.h"
 #include "access/resources.h"
+#include "access/martian/martian_resources.h"
 
 namespace Access {
 
