@@ -349,7 +349,7 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst), _rnd("sword2") {
 }
 
 Sword2Engine::~Sword2Engine() {
-	delete _debugger;
+	//_debugger is deleted by Engine
 	delete _sound;
 	delete _fontRenderer;
 	delete _screen;
@@ -357,10 +357,6 @@ Sword2Engine::~Sword2Engine() {
 	delete _logic;
 	delete _resman;
 	delete _memory;
-}
-
-GUI::Debugger *Sword2Engine::getDebugger() {
-	return _debugger;
 }
 
 void Sword2Engine::registerDefaultSettings() {
@@ -458,6 +454,7 @@ Common::Error Sword2Engine::run() {
 	// visible to the user.
 
 	_debugger = new Debugger(this);
+	setDebugger(_debugger);
 
 	_memory = new MemoryManager();
 	_resman = new ResourceManager(this);
@@ -521,8 +518,6 @@ Common::Error Sword2Engine::run() {
 	_screen->initializeRenderCycle();
 
 	while (1) {
-		_debugger->onFrame();
-
 		// Handle GMM Loading
 		if (_gmmLoadSlot != -1) {
 
@@ -546,9 +541,7 @@ Common::Error Sword2Engine::run() {
 		KeyboardEvent *ke = keyboardEvent();
 
 		if (ke) {
-			if ((ke->kbd.hasFlags(Common::KBD_CTRL) && ke->kbd.keycode == Common::KEYCODE_d) || ke->kbd.ascii == '#' || ke->kbd.ascii == '~') {
-				_debugger->attach();
-			} else if (ke->kbd.hasFlags(0) || ke->kbd.hasFlags(Common::KBD_SHIFT)) {
+			if (ke->kbd.hasFlags(0) || ke->kbd.hasFlags(Common::KBD_SHIFT)) {
 				switch (ke->kbd.keycode) {
 				case Common::KEYCODE_p:
 					if (isPaused()) {
