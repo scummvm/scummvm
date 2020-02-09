@@ -95,8 +95,8 @@ private:
 
 protected:
 	// Engine APIs
-	virtual Common::Error run() override;
-	virtual bool hasFeature(EngineFeature f) const override;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 public:
 	LPCUSTOMFUNCTION _funcList[300];
 	Common::String _funcListStrings[300];
@@ -152,7 +152,7 @@ public:
 	int  _nTimeFreezed;
 public:
 	TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc);
-	virtual ~TonyEngine();
+	~TonyEngine() override;
 
 	const TonyGameDescription *_gameDescription;
 	uint32 getFeatures() const;
@@ -164,8 +164,8 @@ public:
 		return &_theEngine;
 	}
 
-	virtual bool canLoadGameStateCurrently() override;
-	virtual bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
@@ -230,7 +230,7 @@ public:
 	void openInitLoadMenu(CORO_PARAM);
 	void openInitOptions(CORO_PARAM);
 
-	virtual void syncSoundSettings() override;
+	void syncSoundSettings() override;
 	void saveSoundSettings();
 };
 

@@ -91,7 +91,7 @@ protected:
 
 public:
 	RMInventory();
-	virtual ~RMInventory();
+	~RMInventory() override;
 
 	/**
 	 * Prepare a frame
@@ -109,12 +109,12 @@ public:
 	/**
 	 * Overload test for removal from OT list
 	 */
-	virtual void removeThis(CORO_PARAM, bool &result);
+	void removeThis(CORO_PARAM, bool &result) override;
 
 	/**
 	 * Overload the drawing of the inventory
 	 */
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 
 	/**
 	 * Method for determining whether the inventory currently has the focus
@@ -195,7 +195,7 @@ protected:
 
 public:
 	RMInterface();
-	virtual ~RMInterface();
+	~RMInterface() override;
 
 	/**
 	 * The usual DoFrame (poll the graphics engine)
@@ -234,7 +234,7 @@ public:
 	/**
 	 * Overloaded Draw
 	 */
-	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
+	void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) override;
 };
 
 } // End of namespace Tony

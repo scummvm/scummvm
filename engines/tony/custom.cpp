@@ -2221,7 +2221,7 @@ void doCredits(CORO_PARAM, uint32 nMsg, uint32 dwTime, uint32, uint32) {
 	int i;
 	uint32 startTime;
 
-	~CoroContextTag() {
+	~CoroContextTag() override {
 		delete msg;
 		delete[] text;
 	}

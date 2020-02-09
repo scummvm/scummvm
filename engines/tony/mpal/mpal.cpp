@@ -668,7 +668,7 @@ void ActionThread(CORO_PARAM, const void *param) {
 		int j, k;
 		LpMpalItem item;
 
-		~CoroContextTag() {
+		~CoroContextTag() override {
 			if (item)
 				globalDestroy(item);
 		}
@@ -797,7 +797,7 @@ void LocationPollThread(CORO_PARAM, const void *param) {
 		MYACTION *myActions;
 		MYTHREAD *myThreads;
 
-		~CoroContextTag() {
+		~CoroContextTag() override {
 			// Free data blocks
 			if (myThreads)
 				globalDestroy(myThreads);

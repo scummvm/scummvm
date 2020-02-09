@@ -57,7 +57,7 @@ public:
 class RMResRaw : public RMRes {
 public:
 	RMResRaw(uint32 resID);
-	virtual ~RMResRaw();
+	~RMResRaw() override;
 
 	const byte *dataPointer();
 	operator const byte*();
