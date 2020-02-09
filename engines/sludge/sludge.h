@@ -67,7 +67,7 @@ enum {
 class SludgeEngine: public Engine {
 protected:
 	// Engine APIs
-	virtual Common::Error run();
+	Common::Error run() override;
 
 public:
 	// global String variables
@@ -95,7 +95,7 @@ public:
 	FatalMsgManager *_fatalMan;
 
 	SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc);
-	virtual ~SludgeEngine();
+	~SludgeEngine() override;
 
 	uint getLanguageID() const;
 	const char *getGameId() const;

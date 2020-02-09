@@ -86,15 +86,15 @@ public:
 		return "sludge";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Sludge";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Sludge (C) 2000-2014 Hungry Software and contributors";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		const Sludge::SludgeGameDescription *gd = (const Sludge::SludgeGameDescription *)desc;
 			if (gd) {
 				*engine = new Sludge::SludgeEngine(syst, gd);
