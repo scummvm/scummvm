@@ -73,11 +73,11 @@ enum {
 class TopMenu : public GUI::Dialog {
 public:
 	TopMenu(HugoEngine *vm);
-	~TopMenu();
+	~TopMenu() override;
 
-	void reflowLayout();
-	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data);
-	void handleMouseUp(int x, int y, int button, int clickCount);
+	void reflowLayout() override;
+	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data) override;
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
 
 	void loadBmpArr(Common::SeekableReadStream &in);
 
@@ -103,9 +103,9 @@ protected:
 class EntryDialog : public GUI::Dialog {
 public:
 	EntryDialog(const Common::String &title, const Common::String &buttonLabel, const Common::String &defaultValue);
-	virtual ~EntryDialog();
+	~EntryDialog() override;
 
-	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data);
+	void handleCommand(GUI::CommandSender *sender, uint32 command, uint32 data) override;
 
 	const Common::String &getEditString() const	{ return _text->getEditString(); }
 

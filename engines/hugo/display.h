@@ -150,23 +150,23 @@ private:
 class Screen_v1d : public Screen {
 public:
 	Screen_v1d(HugoEngine *vm);
-	~Screen_v1d();
+	~Screen_v1d() override;
 
-	void loadFont(int16 fontId);
-	void loadFontArr(Common::ReadStream &in);
+	void loadFont(int16 fontId) override;
+	void loadFontArr(Common::ReadStream &in) override;
 protected:
-	OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y);
+	OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) override;
 };
 
 class Screen_v1w : public Screen {
 public:
 	Screen_v1w(HugoEngine *vm);
-	~Screen_v1w();
+	~Screen_v1w() override;
 
-	void loadFont(int16 fontId);
-	void loadFontArr(Common::ReadStream &in);
+	void loadFont(int16 fontId) override;
+	void loadFontArr(Common::ReadStream &in) override;
 protected:
-	OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y);
+	OverlayState findOvl(Seq *seqPtr, ImagePtr dstPtr, uint16 y) override;
 };
 
 } // End of namespace Hugo

@@ -69,21 +69,21 @@ protected:
 class intro_v1w : public IntroHandler {
 public:
 	intro_v1w(HugoEngine *vm);
-	~intro_v1w();
+	~intro_v1w() override;
 
-	void preNewGame();
-	void introInit();
-	bool introPlay();
+	void preNewGame() override;
+	void introInit() override;
+	bool introPlay() override;
 };
 
 class intro_v1d : public IntroHandler {
 public:
 	intro_v1d(HugoEngine *vm);
-	~intro_v1d();
+	~intro_v1d() override;
 
-	void preNewGame();
-	void introInit();
-	bool introPlay();
+	void preNewGame() override;
+	void introInit() override;
+	bool introPlay() override;
 private:
 	int _introState;
 };
@@ -91,41 +91,41 @@ private:
 class intro_v2w : public IntroHandler {
 public:
 	intro_v2w(HugoEngine *vm);
-	~intro_v2w();
+	~intro_v2w() override;
 
-	void preNewGame();
-	void introInit();
-	bool introPlay();
+	void preNewGame() override;
+	void introInit() override;
+	bool introPlay() override;
 };
 
 class intro_v2d : public IntroHandler {
 public:
 	intro_v2d(HugoEngine *vm);
-	~intro_v2d();
+	~intro_v2d() override;
 
-	void preNewGame();
-	void introInit();
-	bool introPlay();
+	void preNewGame() override;
+	void introInit() override;
+	bool introPlay() override;
 };
 
 class intro_v3w : public IntroHandler {
 public:
 	intro_v3w(HugoEngine *vm);
-	~intro_v3w();
+	~intro_v3w() override;
 
-	void preNewGame();
-	void introInit();
-	bool introPlay();
+	void preNewGame() override;
+	void introInit() override;
+	bool introPlay() override;
 };
 
 class intro_v3d : public IntroHandler {
 public:
 	intro_v3d(HugoEngine *vm);
-	~intro_v3d();
+	~intro_v3d() override;
 
-	void preNewGame();
-	void introInit();
-	bool introPlay();
+	void preNewGame() override;
+	void introInit() override;
+	bool introPlay() override;
 };
 
 } // End of namespace Hugo

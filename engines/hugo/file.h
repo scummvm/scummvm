@@ -127,26 +127,26 @@ private:
 class FileManager_v1d : public FileManager {
 public:
 	FileManager_v1d(HugoEngine *vm);
-	~FileManager_v1d();
+	~FileManager_v1d() override;
 
-	virtual void closeDatabaseFiles();
-	virtual void instructions() const;
-	virtual void openDatabaseFiles();
-	virtual void readBackground(const int screenIndex);
-	virtual void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType);
-	virtual const char *fetchString(const int index);
+	void closeDatabaseFiles() override;
+	void instructions() const override;
+	void openDatabaseFiles() override;
+	void readBackground(const int screenIndex) override;
+	void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType) override;
+	const char *fetchString(const int index) override;
 };
 
 class FileManager_v2d : public FileManager_v1d {
 public:
 	FileManager_v2d(HugoEngine *vm);
-	~FileManager_v2d();
+	~FileManager_v2d() override;
 
-	virtual void closeDatabaseFiles();
-	virtual void openDatabaseFiles();
-	virtual void readBackground(const int screenIndex);
-	virtual void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType);
-	const   char *fetchString(const int index);
+	void closeDatabaseFiles() override;
+	void openDatabaseFiles() override;
+	void readBackground(const int screenIndex) override;
+	void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType) override;
+	const   char *fetchString(const int index) override;
 private:
 	char *_fetchStringBuf;
 };
@@ -154,12 +154,12 @@ private:
 class FileManager_v3d : public FileManager_v2d {
 public:
 	FileManager_v3d(HugoEngine *vm);
-	~FileManager_v3d();
+	~FileManager_v3d() override;
 
-	void closeDatabaseFiles();
-	void openDatabaseFiles();
-	void readBackground(const int screenIndex);
-	void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType);
+	void closeDatabaseFiles() override;
+	void openDatabaseFiles() override;
+	void readBackground(const int screenIndex) override;
+	void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType) override;
 private:
 	Common::File _sceneryArchive2;                  // Handle for scenery file
 };
@@ -167,17 +167,17 @@ private:
 class FileManager_v2w : public FileManager_v2d {
 public:
 	FileManager_v2w(HugoEngine *vm);
-	~FileManager_v2w();
+	~FileManager_v2w() override;
 
-	void instructions() const;
+	void instructions() const override;
 };
 
 class FileManager_v1w : public FileManager_v2w {
 public:
 	FileManager_v1w(HugoEngine *vm);
-	~FileManager_v1w();
+	~FileManager_v1w() override;
 
-	void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType);
+	void readOverlay(const int screenNum, ImagePtr image, OvlType overlayType) override;
 };
 
 } // End of namespace Hugo

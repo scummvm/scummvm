@@ -212,7 +212,7 @@ class HugoConsole;
 class HugoEngine : public Engine {
 public:
 	HugoEngine(OSystem *syst, const HugoGameDescription *gd);
-	~HugoEngine();
+	~HugoEngine() override;
 
 	OSystem *_system;
 
@@ -263,8 +263,8 @@ public:
 		return *s_Engine;
 	}
 
-	virtual bool canLoadGameStateCurrently() override;
-	virtual bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 	bool loadHugoDat();
 
 	int8 getTPS() const;

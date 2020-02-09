@@ -597,48 +597,48 @@ protected:
 class Scheduler_v1d : public Scheduler {
 public:
 	Scheduler_v1d(HugoEngine *vm);
-	~Scheduler_v1d();
+	~Scheduler_v1d() override;
 
-	virtual void decodeString(char *line);
-	virtual void runScheduler();
+	void decodeString(char *line) override;
+	void runScheduler() override;
 
 protected:
-	virtual const char *getCypher() const;
-	virtual uint32 getTicks();
-	virtual void promptAction(Act *action);
+	const char *getCypher() const override;
+	uint32 getTicks() override;
+	void promptAction(Act *action) override;
 };
 
 class Scheduler_v2d : public Scheduler_v1d {
 public:
 	Scheduler_v2d(HugoEngine *vm);
-	virtual ~Scheduler_v2d();
+	~Scheduler_v2d() override;
 
-	void decodeString(char *line);
+	void decodeString(char *line) override;
 
 protected:
-	virtual const char *getCypher() const;
+	const char *getCypher() const override;
 
-	void promptAction(Act *action);
+	void promptAction(Act *action) override;
 };
 
 class Scheduler_v3d : public Scheduler_v2d {
 public:
 	Scheduler_v3d(HugoEngine *vm);
-	~Scheduler_v3d();
+	~Scheduler_v3d() override;
 
 protected:
-	const char *getCypher() const;
+	const char *getCypher() const override;
 };
 
 class Scheduler_v1w : public Scheduler_v3d {
 public:
 	Scheduler_v1w(HugoEngine *vm);
-	~Scheduler_v1w();
+	~Scheduler_v1w() override;
 
-	void runScheduler();
+	void runScheduler() override;
 
 protected:
-	uint32 getTicks();
+	uint32 getTicks() override;
 
 };
 } // End of namespace Hugo

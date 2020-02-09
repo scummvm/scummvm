@@ -50,13 +50,13 @@ public:
 	// method from the parent class.
 	// FIXME: Maybe the pause(bool p) method should be removed and the
 	// pause/resume methods of the parent class be used instead?
-	virtual void pause() { Audio::MidiPlayer::pause(); }
+	void pause() override { Audio::MidiPlayer::pause(); }
 
 	uint32 getBaseTempo();
 
 	// Overload Audio::MidiPlayer method
-	virtual void sendToChannel(byte channel, uint32 b);
-	virtual void onTimer();
+	void sendToChannel(byte channel, uint32 b) override;
+	void onTimer() override;
 
 private:
 	bool _paused;
