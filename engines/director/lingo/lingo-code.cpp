@@ -295,13 +295,12 @@ void LC::c_arraypush() {
 	Datum d;
 	int arraySize = g_lingo->readInt();
 
-	warning("STUB: c_arraypush()");
+	d.type = ARRAY;
+	d.u.farr = new DatumArray;
 
 	for (int i = 0; i < arraySize; i++)
-		g_lingo->pop();
+		d.u.farr->push_back(g_lingo->pop());
 
-	d.u.i = arraySize;
-	d.type = INT;
 	g_lingo->push(d);
 }
 
