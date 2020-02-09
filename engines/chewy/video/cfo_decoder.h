@@ -36,9 +36,9 @@ class Sound;
 class CfoDecoder : public Video::FlicDecoder {
 public:
 	CfoDecoder(Sound *sound) : Video::FlicDecoder(), _sound(sound) {}
-	virtual ~CfoDecoder() {}
+	~CfoDecoder() override {}
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream) override;
 
 private:
 	Sound *_sound;
@@ -46,17 +46,17 @@ private:
 	class CfoVideoTrack : public Video::FlicDecoder::FlicVideoTrack {
 	public:
 		CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, Sound *sound);
-		virtual ~CfoVideoTrack();
+		~CfoVideoTrack() override;
 
-		void readHeader();
+		void readHeader() override;
 
-		bool isRewindable() const { return false; }
-		bool rewind() { return false; }
+		bool isRewindable() const override { return false; }
+		bool rewind() override { return false; }
 
-		const ::Graphics::Surface *decodeNextFrame();
+		const ::Graphics::Surface *decodeNextFrame() override;
 
 	private:
-		void handleFrame();
+		void handleFrame() override;
 		void handleCustomFrame();
 		void fadeOut();
 

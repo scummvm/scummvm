@@ -149,7 +149,7 @@ protected:
 class SpriteResource : public Resource {
 public:
 	SpriteResource(Common::String filename) : Resource(filename) {}
-	virtual ~SpriteResource() {}
+	~SpriteResource() override {}
 
 	TAFChunk *getSprite(uint num);
 };
@@ -157,7 +157,7 @@ public:
 class BackgroundResource : public Resource {
 public:
 	BackgroundResource(Common::String filename) : Resource(filename) {}
-	virtual ~BackgroundResource() {}
+	~BackgroundResource() override {}
 
 	TBFChunk *getImage(uint num);
 };
@@ -165,7 +165,7 @@ public:
 class SoundResource : public Resource {
 public:
 	SoundResource(Common::String filename) : Resource(filename) {}
-	virtual ~SoundResource() {}
+	~SoundResource() override {}
 
 	SoundChunk *getSound(uint num);
 };
@@ -173,7 +173,7 @@ public:
 class VideoResource : public Resource {
 public:
 	VideoResource(Common::String filename) : Resource(filename) {}
-	virtual ~VideoResource() {}
+	~VideoResource() override {}
 
 	VideoChunk *getVideoHeader(uint num);
 	Common::SeekableReadStream *getVideoStream(uint num);

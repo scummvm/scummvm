@@ -121,18 +121,18 @@ public:
 		return "chewy";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Chewy: Esc from F5";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Chewy: Esc from F5 (C) 1995 New Generation Software";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	SaveStateList listSaves(const char *target) const override;
-	virtual int getMaximumSaveSlot() const override;
+	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
