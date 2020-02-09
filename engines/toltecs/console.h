@@ -32,7 +32,7 @@ class ToltecsEngine;
 class Console : public GUI::Debugger {
 public:
 	Console(ToltecsEngine *vm);
-	virtual ~Console(void);
+	~Console(void) override;
 
 private:
 	ToltecsEngine *_vm;

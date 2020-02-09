@@ -33,7 +33,7 @@ public:
 		_curWidth = _sprite->origWidth;
 		_curHeight = _sprite->origHeight;
 	}
-	SpriteReaderStatus readPacket(PixelPacket &packet) {
+	SpriteReaderStatus readPacket(PixelPacket &packet) override {
 		if (_sprite->flags & 0x40) {
 			// shadow sprite
 			packet.count = _source[0] & 0x7F;
@@ -86,7 +86,7 @@ public:
 		_scalerStatus = 0;
 		_xerror = 0;
 	}
-	SpriteReaderStatus readPacket(PixelPacket &packet) {
+	SpriteReaderStatus readPacket(PixelPacket &packet) override {
 		SpriteReaderStatus status = kSrsPixelsLeft;
 		if (_scalerStatus == 0) {
 			_xerror = _sprite->xdelta;
@@ -139,7 +139,7 @@ public:
 		_sourcep = 0;
 		_xerror = 0;
 	}
-	SpriteReaderStatus readPacket(PixelPacket &packet) {
+	SpriteReaderStatus readPacket(PixelPacket &packet) override {
 		SpriteReaderStatus status;
 		if (_scalerStatus == 0) {
 			_xerror = _sprite->xdelta;

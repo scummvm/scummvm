@@ -38,7 +38,7 @@ const uint kMaxCacheSize = 8 * 1024 * 1024; // 8 MB
 class ArchiveReader : public Common::File {
 public:
 	ArchiveReader();
-	~ArchiveReader();
+	~ArchiveReader() override;
 
 	void openArchive(const char *filename);
 

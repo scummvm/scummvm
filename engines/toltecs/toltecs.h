@@ -101,9 +101,9 @@ protected:
 
 public:
 	ToltecsEngine(OSystem *syst, const ToltecsGameDescription *gameDesc);
-	virtual ~ToltecsEngine();
+	~ToltecsEngine() override;
 
-	virtual bool hasFeature(EngineFeature f) const override;
+	bool hasFeature(EngineFeature f) const override;
 
 	Common::RandomSource *_rnd;
 	const ToltecsGameDescription *_gameDescription;
