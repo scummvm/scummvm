@@ -197,7 +197,7 @@ SagaEngine::~SagaEngine() {
 	delete _gfx;
 	_gfx = NULL;
 
-	delete _console;
+	//_console is deleted by Engine
 	_console = NULL;
 
 	delete _resource;
@@ -280,6 +280,7 @@ Common::Error SagaEngine::run() {
 
 	// Graphics driver should be initialized before console
 	_console = new Console(this);
+	setDebugger(_console);
 
 	// Graphics should be initialized before music
 	_music = new Music(this, _mixer);
@@ -352,8 +353,6 @@ Common::Error SagaEngine::run() {
 	uint32 currentTicks;
 
 	while (!shouldQuit()) {
-		_console->onFrame();
-
 		if (_render->getFlags() & RF_RENDERPAUSE) {
 			// Freeze time while paused
 			_previousTicks = _system->getMillis();
@@ -628,10 +627,6 @@ void SagaEngine::setTalkspeed(int talkspeed) {
 
 int SagaEngine::getTalkspeed() const {
 	return (ConfMan.getInt("talkspeed") * 3 + 255 / 2) / 255;
-}
-
-GUI::Debugger *SagaEngine::getDebugger() {
-	return _console;
 }
 
 void SagaEngine::syncSoundSettings() {

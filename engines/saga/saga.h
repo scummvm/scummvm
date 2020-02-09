@@ -471,8 +471,6 @@ public:
 	void syncSoundSettings() override;
 	void pauseEngineIntern(bool pause) override;
 
-	GUI::Debugger *getDebugger() override;
-
 	SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc);
 	~SagaEngine() override;
 
