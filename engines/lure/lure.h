@@ -116,7 +116,6 @@ public:
 	LureLanguage getLureLanguage() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
-	GUI::Debugger *getDebugger() override;
 	bool isEGA() const { return (getFeatures() & GF_EGA) != 0; }
 
 	Common::Error loadGameState(int slot) override {
