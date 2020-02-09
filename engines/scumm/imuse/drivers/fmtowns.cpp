@@ -118,23 +118,23 @@ class TownsMidiInputChannel : public MidiChannel {
 friend class TownsMidiOutputChannel;
 public:
 	TownsMidiInputChannel(MidiDriver_TOWNS *driver, int chanIndex);
-	~TownsMidiInputChannel();
+	~TownsMidiInputChannel() override;
 
-	MidiDriver *device() { return _driver; }
-	byte getNumber() { return _chanIndex; }
+	MidiDriver *device() override { return _driver; }
+	byte getNumber() override { return _chanIndex; }
 	bool allocate();
-	void release();
+	void release() override;
 
-	void send(uint32 b);
+	void send(uint32 b) override;
 
-	void noteOff(byte note);
-	void noteOn(byte note, byte velocity);
-	void programChange(byte program);
-	void pitchBend(int16 bend);
-	void controlChange(byte control, byte value);
-	void pitchBendFactor(byte value);
-	void priority(byte value);
-	void sysEx_customInstrument(uint32 type, const byte *instr);
+	void noteOff(byte note) override;
+	void noteOn(byte note, byte velocity) override;
+	void programChange(byte program) override;
+	void pitchBend(int16 bend) override;
+	void controlChange(byte control, byte value) override;
+	void pitchBendFactor(byte value) override;
+	void priority(byte value) override;
+	void sysEx_customInstrument(uint32 type, const byte *instr) override;
 
 private:
 	void controlModulationWheel(byte value);

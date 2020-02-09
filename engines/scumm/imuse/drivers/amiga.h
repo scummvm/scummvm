@@ -37,21 +37,21 @@ class IMuseDriver_Amiga : public MidiDriver, public Audio::Paula {
 friend class SoundChannel_Amiga;
 public:
 	IMuseDriver_Amiga(Audio::Mixer *mixer);
-	~IMuseDriver_Amiga();
+	~IMuseDriver_Amiga() override;
 
-	int open();
-	bool isOpen() const { return _isOpen; }
-	void close();
+	int open() override;
+	bool isOpen() const override { return _isOpen; }
+	void close() override;
 
-	void send(uint32 b);
+	void send(uint32 b) override;
 
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
+	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override;
 
-	uint32 getBaseTempo();
-	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel();
+	uint32 getBaseTempo() override;
+	MidiChannel *allocateChannel() override;
+	MidiChannel *getPercussionChannel() override;
 
-	void interrupt();
+	void interrupt() override;
 
 private:
 	void updateParser();

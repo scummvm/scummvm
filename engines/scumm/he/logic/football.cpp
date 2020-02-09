@@ -36,8 +36,8 @@ class LogicHEfootball : public LogicHE {
 public:
 	LogicHEfootball(ScummEngine_v90he *vm) : LogicHE(vm) {}
 
-	int versionID();
-	virtual int32 dispatch(int op, int numArgs, int32 *args);
+	int versionID() override;
+	int32 dispatch(int op, int numArgs, int32 *args) override;
 
 protected:
 	int lineEquation3D(int32 *args);
@@ -293,11 +293,11 @@ public:
                 _minX = 1000000;
 	}
 
-	int32 dispatch(int op, int numArgs, int32 *args);
+	int32 dispatch(int op, int numArgs, int32 *args) override;
 
 private:
-	int translateWorldToScreen(int32 *args);
-	int translateScreenToWorld(int32 *args);
+	int translateWorldToScreen(int32 *args) override;
+	int translateScreenToWorld(int32 *args) override;
 	int getDayOfWeek();
 	int initScreenTranslations();
 	int getPlaybookFiles(int32 *args);

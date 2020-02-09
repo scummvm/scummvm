@@ -39,11 +39,11 @@ class LogicHEmoonbase : public LogicHE {
 public:
 	LogicHEmoonbase(ScummEngine_v100he *vm) : LogicHE(vm) { _vm1 = vm; }
 
-	int versionID();
+	int versionID() override;
 
-	int startOfFrame();
+	int startOfFrame() override;
 
-	int32 dispatch(int op, int numArgs, int32 *args);
+	int32 dispatch(int op, int numArgs, int32 *args) override;
 
 private:
 	void op_create_multi_state_wiz(int op, int numArgs, int32 *args);

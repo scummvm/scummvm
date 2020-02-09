@@ -41,14 +41,14 @@ class ScummEngine;
 class Player_V4A : public MusicEngine {
 public:
 	Player_V4A(ScummEngine *scumm, Audio::Mixer *mixer);
-	virtual ~Player_V4A();
+	~Player_V4A() override;
 
-	virtual void setMusicVolume(int vol);
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
-	virtual int  getSoundStatus(int sound) const;
+	void setMusicVolume(int vol) override;
+	void startSound(int sound) override;
+	void stopSound(int sound) override;
+	void stopAllSounds() override;
+	int  getMusicTimer() override;
+	int  getSoundStatus(int sound) const override;
 
 private:
 	ScummEngine *const _vm;

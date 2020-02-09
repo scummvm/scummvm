@@ -71,23 +71,23 @@ private:
 class Win32ResExtractor : public ResExtractor {
 public:
 	Win32ResExtractor(ScummEngine_v70he *scumm);
-	~Win32ResExtractor();
+	~Win32ResExtractor() override;
 
 private:
 	Common::PEResources *_exe;
 
-	bool extractResource(int id, CachedCursor *cc);
+	bool extractResource(int id, CachedCursor *cc) override;
 };
 
 class MacResExtractor : public ResExtractor {
 public:
 	MacResExtractor(ScummEngine_v70he *scumm);
-	~MacResExtractor() {}
+	~MacResExtractor() override {}
 
 private:
 	Common::MacResManager *_resMgr;
 
-	bool extractResource(int id, CachedCursor *cc);
+	bool extractResource(int id, CachedCursor *cc) override;
 };
 
 } // End of namespace Scumm

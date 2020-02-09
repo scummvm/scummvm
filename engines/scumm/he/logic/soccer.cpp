@@ -37,14 +37,14 @@ private:
 
 public:
 	LogicHEsoccer(ScummEngine_v90he *vm);
-	~LogicHEsoccer();
+	~LogicHEsoccer() override;
 
-	int versionID();
-	int32 dispatch(int op, int numArgs, int32 *args);
+	int versionID() override;
+	int32 dispatch(int op, int numArgs, int32 *args) override;
 
-	void beforeBootScript();
-	void initOnce();
-	int startOfFrame();
+	void beforeBootScript() override;
+	void initOnce() override;
+	int startOfFrame() override;
 
 private:
 	int op_1005(float x1, float y1, float z1, float x2, float y2, float z2, float *nextVelX, float *nextVelY, float *nextVelZ, float *a10);

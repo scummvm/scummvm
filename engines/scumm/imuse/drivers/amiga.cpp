@@ -132,25 +132,25 @@ private:
 class IMusePart_Amiga : public MidiChannel {
 public:
 	IMusePart_Amiga(IMuseDriver_Amiga *driver, int id);
-	~IMusePart_Amiga() {}
+	~IMusePart_Amiga() override {}
 
-	MidiDriver *device() { return _driver; }
-	byte getNumber() { return _id; }
+	MidiDriver *device() override { return _driver; }
+	byte getNumber() override { return _id; }
 	bool allocate();
-	void release();
+	void release() override;
 
-	void send(uint32 b);
+	void send(uint32 b) override;
 
-	void noteOff(byte note);
-	void noteOn(byte note, byte velocity);
-	void controlChange(byte control, byte value);
-	void programChange(byte program);
-	void pitchBend(int16 bend);
-	void pitchBendFactor(byte value);
-	void transpose(int8 value);
+	void noteOff(byte note) override;
+	void noteOn(byte note, byte velocity) override;
+	void controlChange(byte control, byte value) override;
+	void programChange(byte program) override;
+	void pitchBend(int16 bend) override;
+	void pitchBendFactor(byte value) override;
+	void transpose(int8 value) override;
 
-	void priority(byte value);
-	void sysEx_customInstrument(uint32 type, const byte *instr) {}
+	void priority(byte value) override;
+	void sysEx_customInstrument(uint32 type, const byte *instr) override {}
 
 	int getPriority() const { return _priority; }
 	SoundChannel_Amiga *getChannel() const { return _out; }

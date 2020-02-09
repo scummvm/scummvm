@@ -416,29 +416,29 @@ protected:
 public:
 	// Constructor / Destructor
 	ScummEngine(OSystem *syst, const DetectorResult &dr);
-	virtual ~ScummEngine();
+	~ScummEngine() override;
 
 	// Engine APIs
 	Common::Error init();
 	Common::Error go();
-	virtual Common::Error run() override {
+	Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}
-	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size) override;
-	virtual GUI::Debugger *getDebugger() override;
-	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void syncSoundSettings() override;
+	void errorString(const char *buf_input, char *buf_output, int buf_output_size) override;
+	GUI::Debugger *getDebugger() override;
+	bool hasFeature(EngineFeature f) const override;
+	void syncSoundSettings() override;
 
-	virtual Common::Error loadGameState(int slot) override;
-	virtual bool canLoadGameStateCurrently() override;
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
-	virtual bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canSaveGameStateCurrently() override;
 
-	virtual void pauseEngineIntern(bool pause) override;
+	void pauseEngineIntern(bool pause) override;
 
 protected:
 	virtual void setupScumm();
@@ -494,7 +494,7 @@ protected:
 	Dialog *_messageDialog;
 	Dialog *_versionDialog;
 
-	virtual int runDialog(Dialog &dialog) override;
+	int runDialog(Dialog &dialog) override;
 	void confirmExitDialog();
 	void confirmRestartDialog();
 	void pauseDialog();
@@ -610,7 +610,7 @@ protected:
 	bool saveState(int slot, bool compat, Common::String &fileName);
 	bool loadState(int slot, bool compat);
 	bool loadState(int slot, bool compat, Common::String &fileName);
-	virtual void saveLoadWithSerializer(Common::Serializer &s) override;
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 	void saveResource(Common::Serializer &ser, ResType type, ResId idx);
 	void loadResource(Common::Serializer &ser, ResType type, ResId idx);
 	void loadResourceOLD(Common::Serializer &ser, ResType type, ResId idx);	// "Obsolete"

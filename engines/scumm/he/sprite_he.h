@@ -154,7 +154,7 @@ class ScummEngine_v90he;
 class Sprite : public Common::Serializable {
 public:
 	Sprite(ScummEngine_v90he *vm);
-	virtual ~Sprite();
+	~Sprite() override;
 
 	SpriteInfo *_spriteTable;
 	SpriteGroup *_spriteGroups;
@@ -165,7 +165,7 @@ public:
 	int32 _varNumSprites;
 	int32 _varMaxSprites;
 
-	void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 	void resetBackground();
 	void setRedrawFlags(bool checkZOrder);
 	void sortActiveSprites();

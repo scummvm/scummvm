@@ -31,22 +31,22 @@ namespace Scumm {
 class PcSpkDriver : public MidiDriver_Emulated {
 public:
 	PcSpkDriver(Audio::Mixer *mixer);
-	~PcSpkDriver();
+	~PcSpkDriver() override;
 
-	virtual int open();
-	virtual void close();
+	int open() override;
+	void close() override;
 
-	virtual void send(uint32 d);
-	virtual void sysEx_customInstrument(byte channel, uint32 type, const byte *instr);
+	void send(uint32 d) override;
+	void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) override;
 
-	virtual MidiChannel *allocateChannel();
-	virtual MidiChannel *getPercussionChannel() { return 0; }
+	MidiChannel *allocateChannel() override;
+	MidiChannel *getPercussionChannel() override { return 0; }
 
-	bool isStereo() const { return _pcSpk.isStereo(); }
-	int getRate() const { return _pcSpk.getRate(); }
+	bool isStereo() const override { return _pcSpk.isStereo(); }
+	int getRate() const override { return _pcSpk.getRate(); }
 protected:
-	void generateSamples(int16 *buf, int len);
-	void onTimer();
+	void generateSamples(int16 *buf, int len) override;
+	void onTimer() override;
 
 private:
 	Audio::PCSpeaker _pcSpk;
@@ -105,19 +105,19 @@ private:
 	};
 
 	struct MidiChannel_PcSpk : public MidiChannel {
-		virtual MidiDriver *device();
-		virtual byte getNumber();
-		virtual void release();
+		MidiDriver *device() override;
+		byte getNumber() override;
+		void release() override;
 
-		virtual void send(uint32 b);
-		virtual void noteOff(byte note);
-		virtual void noteOn(byte note, byte velocity);
-		virtual void programChange(byte program);
-		virtual void pitchBend(int16 bend);
-		virtual void controlChange(byte control, byte value);
-		virtual void pitchBendFactor(byte value);
-		virtual void priority(byte value);
-		virtual void sysEx_customInstrument(uint32 type, const byte *instr);
+		void send(uint32 b) override;
+		void noteOff(byte note) override;
+		void noteOn(byte note, byte velocity) override;
+		void programChange(byte program) override;
+		void pitchBend(int16 bend) override;
+		void controlChange(byte control, byte value) override;
+		void pitchBendFactor(byte value) override;
+		void priority(byte value) override;
+		void sysEx_customInstrument(uint32 type, const byte *instr) override;
 
 		void init(PcSpkDriver *owner, byte channel);
 		bool allocate();

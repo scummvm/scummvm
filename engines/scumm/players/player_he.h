@@ -38,23 +38,23 @@ class ScummEngine;
 class Player_HE : public MusicEngine, public MidiDriver {
 public:
 	Player_HE(ScummEngine *scumm);
-	~Player_HE();
-	void setMusicVolume(int vol);
-	void startSound(int sound) { startSoundWithTrackID(sound, 0); }
-	void startSoundWithTrackID(int sound, int track);
-	void stopSound(int sound);
-	void stopAllSounds();
-	int  getSoundStatus(int sound) const;
-	int  getMusicTimer();
+	~Player_HE() override;
+	void setMusicVolume(int vol) override;
+	void startSound(int sound) override { startSoundWithTrackID(sound, 0); }
+	void startSoundWithTrackID(int sound, int track) override;
+	void stopSound(int sound) override;
+	void stopAllSounds() override;
+	int  getSoundStatus(int sound) const override;
+	int  getMusicTimer() override;
 
-	int open();
-	bool isOpen() const;
-	void close();
-	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
-	uint32 getBaseTempo();
-	MidiChannel *allocateChannel() { return NULL; };
-	MidiChannel *getPercussionChannel() { return NULL; };
-	void send(uint32 b);
+	int open() override;
+	bool isOpen() const override;
+	void close() override;
+	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override;
+	uint32 getBaseTempo() override;
+	MidiChannel *allocateChannel() override { return NULL; };
+	MidiChannel *getPercussionChannel() override { return NULL; };
+	void send(uint32 b) override;
 
 private:
 	ScummEngine *_vm;

@@ -40,14 +40,14 @@ class V2A_Sound;
 class Player_V2A : public MusicEngine {
 public:
 	Player_V2A(ScummEngine *scumm, Audio::Mixer *mixer);
-	virtual ~Player_V2A();
+	~Player_V2A() override;
 
-	virtual void setMusicVolume(int vol);
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
-	virtual int  getSoundStatus(int sound) const;
+	void setMusicVolume(int vol) override;
+	void startSound(int sound) override;
+	void stopSound(int sound) override;
+	void stopAllSounds() override;
+	int  getMusicTimer() override;
+	int  getSoundStatus(int sound) const override;
 
 private:
 	enum {

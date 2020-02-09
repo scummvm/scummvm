@@ -38,7 +38,7 @@ class ScummEngine_v7 : public ScummEngine_v6 {
 	friend class Insane;
 public:
 	ScummEngine_v7(OSystem *syst, const DetectorResult &dr);
-	~ScummEngine_v7();
+	~ScummEngine_v7() override;
 
 
 protected:
@@ -94,46 +94,46 @@ public:
 	void processSubtitleQueue();
 	void addSubtitleToQueue(const byte *text, const Common::Point &pos, byte color, byte charset);
 	void clearSubtitleQueue();
-	virtual void CHARSET_1();
+	void CHARSET_1() override;
 	bool isSmushActive() { return _smushActive; }
 
 protected:
-	virtual int runDialog(Dialog &dialog);
+	int runDialog(Dialog &dialog) override;
 
-	virtual void scummLoop_handleSound();
-	virtual void scummLoop_handleDrawing();
-	virtual void processInput();
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	void scummLoop_handleSound() override;
+	void scummLoop_handleDrawing() override;
+	void processInput() override;
+	void processKeyboard(Common::KeyState lastKeyHit) override;
 
-	virtual void setupScumm();
+	void setupScumm() override;
 
-	virtual void setupScummVars();
-	virtual void resetScummVars();
+	void setupScummVars() override;
+	void resetScummVars() override;
 
-	virtual void akos_processQueue();
+	void akos_processQueue() override;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 
-	virtual void readMAXS(int blockSize);
-	virtual void readGlobalObjects();
-	virtual void readIndexBlock(uint32 blocktype, uint32 itemsize);
+	void readMAXS(int blockSize) override;
+	void readGlobalObjects() override;
+	void readIndexBlock(uint32 blocktype, uint32 itemsize) override;
 
-	virtual void setCameraAt(int pos_x, int pos_y);
-	virtual void setCameraFollows(Actor *a, bool setCamera = false);
-	virtual void moveCamera();
-	virtual void panCameraTo(int x, int y);
+	void setCameraAt(int pos_x, int pos_y) override;
+	void setCameraFollows(Actor *a, bool setCamera = false) override;
+	void moveCamera() override;
+	void panCameraTo(int x, int y) override;
 
-	virtual int getObjectIdFromOBIM(const byte *obim);
+	int getObjectIdFromOBIM(const byte *obim) override;
 
-	virtual void actorTalk(const byte *msg);
-	virtual void translateText(const byte *text, byte *trans_buff);
-	virtual void loadLanguageBundle();
+	void actorTalk(const byte *msg) override;
+	void translateText(const byte *text, byte *trans_buff) override;
+	void loadLanguageBundle() override;
 	void playSpeech(const byte *ptr);
 
-	virtual void drawVerb(int verb, int mode);
+	void drawVerb(int verb, int mode) override;
 
 
-	virtual void o6_kernelSetFunctions();
+	void o6_kernelSetFunctions() override;
 };
 
 

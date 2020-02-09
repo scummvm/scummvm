@@ -79,15 +79,15 @@ private:
 public:
 	ScummNESFile();
 
-	bool open(const Common::String &filename);
-	bool openSubFile(const Common::String &filename);
+	bool open(const Common::String &filename) override;
+	bool openSubFile(const Common::String &filename) override;
 
-	void close();
-	bool eos() const { return _stream->eos(); }
-	int32 pos() const { return _stream->pos(); }
-	int32 size() const { return _stream->size(); }
-	bool seek(int32 offs, int whence = SEEK_SET) { return _stream->seek(offs, whence); }
-	uint32 read(void *dataPtr, uint32 dataSize);
+	void close() override;
+	bool eos() const override { return _stream->eos(); }
+	int32 pos() const override { return _stream->pos(); }
+	int32 size() const override { return _stream->size(); }
+	bool seek(int32 offs, int whence = SEEK_SET) override { return _stream->seek(offs, whence); }
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 };
 
 } // End of namespace Scumm

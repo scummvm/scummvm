@@ -36,21 +36,21 @@ friend class TownsMidiInputChannel;
 friend class TownsMidiOutputChannel;
 public:
 	MidiDriver_TOWNS(Audio::Mixer *mixer);
-	~MidiDriver_TOWNS();
+	~MidiDriver_TOWNS() override;
 
-	int open();
-	bool isOpen() const { return _isOpen; }
-	void close();
+	int open() override;
+	bool isOpen() const override { return _isOpen; }
+	void close() override;
 
-	void send(uint32 b);
+	void send(uint32 b) override;
 
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
+	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override;
 
-	uint32 getBaseTempo();
-	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel();
+	uint32 getBaseTempo() override;
+	MidiChannel *allocateChannel() override;
+	MidiChannel *getPercussionChannel() override;
 
-	void timerCallback(int timerId);
+	void timerCallback(int timerId) override;
 
 private:
 	void updateParser();

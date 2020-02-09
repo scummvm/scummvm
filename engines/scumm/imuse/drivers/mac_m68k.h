@@ -37,27 +37,27 @@ class MacM68kDriver : public MidiDriver_Emulated {
 	friend class MidiChannel_MacM68k;
 public:
 	MacM68kDriver(Audio::Mixer *mixer);
-	~MacM68kDriver();
+	~MacM68kDriver() override;
 
-	virtual int open();
-	virtual void close();
+	int open() override;
+	void close() override;
 
-	virtual void send(uint32 d);
-	virtual void sysEx_customInstrument(byte channel, uint32 type, const byte *instr);
+	void send(uint32 d) override;
+	void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) override;
 
-	virtual MidiChannel *allocateChannel();
-	virtual MidiChannel *getPercussionChannel() { return 0; }
+	MidiChannel *allocateChannel() override;
+	MidiChannel *getPercussionChannel() override { return 0; }
 
-	virtual bool isStereo() const { return false; }
-	virtual int getRate() const {
+	bool isStereo() const override { return false; }
+	int getRate() const override {
 		// The original is using a frequency of approx. 22254.54546 here.
 		// To be precise it uses the 16.16 fixed point value 0x56EE8BA3.
 		return 22254;
 	}
 
 protected:
-	virtual void generateSamples(int16 *buf, int len);
-	virtual void onTimer() {}
+	void generateSamples(int16 *buf, int len) override;
+	void onTimer() override {}
 
 private:
 	int *_mixBuffer;
@@ -130,19 +130,19 @@ private:
 	class MidiChannel_MacM68k : public MidiChannel {
 		friend class MacM68kDriver;
 	public:
-		virtual MidiDriver *device() { return _owner; }
-		virtual byte getNumber() { return _number; }
-		virtual void release();
+		MidiDriver *device() override { return _owner; }
+		byte getNumber() override { return _number; }
+		void release() override;
 
-		virtual void send(uint32 b);
-		virtual void noteOff(byte note);
-		virtual void noteOn(byte note, byte velocity);
-		virtual void programChange(byte program);
-		virtual void pitchBend(int16 bend);
-		virtual void controlChange(byte control, byte value);
-		virtual void pitchBendFactor(byte value);
-		virtual void priority(byte value);
-		virtual void sysEx_customInstrument(uint32 type, const byte *instr);
+		void send(uint32 b) override;
+		void noteOff(byte note) override;
+		void noteOn(byte note, byte velocity) override;
+		void programChange(byte program) override;
+		void pitchBend(int16 bend) override;
+		void controlChange(byte control, byte value) override;
+		void pitchBendFactor(byte value) override;
+		void priority(byte value) override;
+		void sysEx_customInstrument(uint32 type, const byte *instr) override;
 
 		void init(MacM68kDriver *owner, byte channel);
 		bool allocate();

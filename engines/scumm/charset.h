@@ -104,9 +104,9 @@ protected:
 public:
 	CharsetRendererCommon(ScummEngine *vm);
 
-	void setCurID(int32 id);
+	void setCurID(int32 id) override;
 
-	virtual int getFontHeight();
+	int getFontHeight() override;
 };
 
 class CharsetRendererPC : public CharsetRendererCommon {
@@ -142,10 +142,10 @@ protected:
 public:
 	CharsetRendererClassic(ScummEngine *vm) : CharsetRendererPC(vm) {}
 
-	void printChar(int chr, bool ignoreCharsetMask);
-	void drawChar(int chr, Graphics::Surface &s, int x, int y);
+	void printChar(int chr, bool ignoreCharsetMask) override;
+	void drawChar(int chr, Graphics::Surface &s, int x, int y) override;
 
-	int getCharWidth(uint16 chr);
+	int getCharWidth(uint16 chr) override;
 };
 
 #ifdef USE_RGB_COLOR
@@ -154,12 +154,12 @@ class CharsetRendererTownsClassic : public CharsetRendererClassic {
 public:
 	CharsetRendererTownsClassic(ScummEngine *vm);
 
-	int getCharWidth(uint16 chr);
-	int getFontHeight();
+	int getCharWidth(uint16 chr) override;
+	int getFontHeight() override;
 
 private:
-	void drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height);
-	bool prepareDraw(uint16 chr);
+	void drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height) override;
+	bool prepareDraw(uint16 chr) override;
 	void setupShadowMode();
 	bool useFontRomCharacter(uint16 chr);
 	void processCharsetColors();
@@ -178,12 +178,12 @@ protected:
 public:
 	CharsetRendererNES(ScummEngine *vm) : CharsetRendererCommon(vm) {}
 
-	void setCurID(int32 id) {}
-	void printChar(int chr, bool ignoreCharsetMask);
-	void drawChar(int chr, Graphics::Surface &s, int x, int y);
+	void setCurID(int32 id) override {}
+	void printChar(int chr, bool ignoreCharsetMask) override;
+	void drawChar(int chr, Graphics::Surface &s, int x, int y) override;
 
-	int getFontHeight() { return 8; }
-	int getCharWidth(uint16 chr) { return 8; }
+	int getFontHeight() override { return 8; }
+	int getCharWidth(uint16 chr) override { return 8; }
 };
 
 class CharsetRendererV3 : public CharsetRendererPC {
@@ -197,27 +197,27 @@ protected:
 public:
 	CharsetRendererV3(ScummEngine *vm) : CharsetRendererPC(vm) {}
 
-	void printChar(int chr, bool ignoreCharsetMask);
-	void drawChar(int chr, Graphics::Surface &s, int x, int y);
-	void setCurID(int32 id);
-	void setColor(byte color);
-	virtual int getCharWidth(uint16 chr);
+	void printChar(int chr, bool ignoreCharsetMask) override;
+	void drawChar(int chr, Graphics::Surface &s, int x, int y) override;
+	void setCurID(int32 id) override;
+	void setColor(byte color) override;
+	int getCharWidth(uint16 chr) override;
 };
 
 class CharsetRendererTownsV3 : public CharsetRendererV3 {
 public:
 	CharsetRendererTownsV3(ScummEngine *vm);
 
-	int getCharWidth(uint16 chr);
-	int getFontHeight();
+	int getCharWidth(uint16 chr) override;
+	int getFontHeight() override;
 
 private:
-	void enableShadow(bool enable);
-	void drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height);
+	void enableShadow(bool enable) override;
+	void drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height) override;
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	int getDrawWidthIntern(uint16 chr);
-	int getDrawHeightIntern(uint16 chr);
-	void setDrawCharIntern(uint16 chr);
+	int getDrawWidthIntern(uint16 chr) override;
+	int getDrawHeightIntern(uint16 chr) override;
+	void setDrawCharIntern(uint16 chr) override;
 #endif
 	uint16 _sjisCurChar;
 };
@@ -225,18 +225,18 @@ private:
 #ifdef USE_RGB_COLOR
 class CharsetRendererPCE : public CharsetRendererV3 {
 private:
-	void drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height);
+	void drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height) override;
 
-	int getDrawWidthIntern(uint16 chr);
-	int getDrawHeightIntern(uint16 chr);
-	void setDrawCharIntern(uint16 chr);
+	int getDrawWidthIntern(uint16 chr) override;
+	int getDrawHeightIntern(uint16 chr) override;
+	void setDrawCharIntern(uint16 chr) override;
 
 	uint16 _sjisCurChar;
 
 public:
 	CharsetRendererPCE(ScummEngine *vm) : CharsetRendererV3(vm), _sjisCurChar(0) {}
 
-	void setColor(byte color);
+	void setColor(byte color) override;
 };
 #endif
 
@@ -246,10 +246,10 @@ protected:
 
 public:
 	CharsetRendererV2(ScummEngine *vm, Common::Language language);
-	~CharsetRendererV2();
+	~CharsetRendererV2() override;
 
-	void setCurID(int32 id) {}
-	int getCharWidth(uint16 chr) { return 8; }
+	void setCurID(int32 id) override {}
+	int getCharWidth(uint16 chr) override { return 8; }
 };
 
 #ifdef ENABLE_SCUMM_7_8
@@ -260,15 +260,15 @@ protected:
 
 public:
 	CharsetRendererNut(ScummEngine *vm);
-	~CharsetRendererNut();
+	~CharsetRendererNut() override;
 
-	void printChar(int chr, bool ignoreCharsetMask);
+	void printChar(int chr, bool ignoreCharsetMask) override;
 
-	void setCurID(int32 id);
+	void setCurID(int32 id) override;
 
-	int getFontHeight();
-	int getCharHeight(byte chr);
-	int getCharWidth(uint16 chr);
+	int getFontHeight() override;
+	int getCharHeight(byte chr) override;
+	int getCharWidth(uint16 chr) override;
 };
 #endif
 

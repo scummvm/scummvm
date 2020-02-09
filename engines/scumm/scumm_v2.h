@@ -47,39 +47,39 @@ protected:
 public:
 	ScummEngine_v2(OSystem *syst, const DetectorResult &dr);
 
-	virtual void resetScumm();
+	void resetScumm() override;
 
 	void checkV2MouseOver(Common::Point pos);
 	int checkV2Inventory(int x, int y);
 	void redrawV2Inventory();
 
 protected:
-	virtual void setupOpcodes();
+	void setupOpcodes() override;
 
-	virtual void setupScummVars();
-	virtual void resetScummVars();
-	virtual void decodeParseString();
+	void setupScummVars() override;
+	void resetScummVars() override;
+	void decodeParseString() override;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s) override;
 
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	void processKeyboard(Common::KeyState lastKeyHit) override;
 
-	virtual void readIndexFile();
+	void readIndexFile() override;
 	void readClassicIndexFile();	// V1
 	void readEnhancedIndexFile();	// V2
-	virtual void readGlobalObjects();
-	virtual void loadCharset(int no);
+	void readGlobalObjects() override;
+	void loadCharset(int no) override;
 
-	virtual void runInputScript(int clickArea, int val, int mode);
-	virtual void runInventoryScript(int i);
+	void runInputScript(int clickArea, int val, int mode) override;
+	void runInventoryScript(int i) override;
 
-	virtual int getVar();
+	int getVar() override;
 
 	void getResultPosIndirect();
-	virtual void getResultPos();
+	void getResultPos() override;
 
-	virtual int readVar(uint var);
-	virtual void writeVar(uint var, int value);
+	int readVar(uint var) override;
+	void writeVar(uint var, int value) override;
 
 protected:
 	virtual int getActiveObject();
@@ -92,12 +92,12 @@ protected:
 	void resetSentence();
 	void setUserState(byte state);
 
-	virtual void handleMouseOver(bool updateInventory);
-	virtual void checkExecVerbs();
+	void handleMouseOver(bool updateInventory) override;
+	void checkExecVerbs() override;
 	void initV2MouseOver();
 	void initNESMouseOver();
 
-	virtual void setBuiltinCursor(int index);
+	void setBuiltinCursor(int index) override;
 
 	void drawPreposition(int index);
 

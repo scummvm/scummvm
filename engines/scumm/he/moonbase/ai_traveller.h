@@ -61,14 +61,14 @@ private:
 	AI *_ai;
 
 protected:
-	virtual float calcH();
+	float calcH() override;
 
 public:
 	Traveller(AI *ai);
 	Traveller(int originX, int originY, AI *ai);
-	~Traveller() {}
+	~Traveller() override {}
 
-	IContainedObject *duplicate() { return this; }
+	IContainedObject *duplicate() override { return this; }
 
 	static void setTargetPosX(int posX) { _targetPosX = posX; }
 	static void setTargetPosY(int posY) { _targetPosY = posY; }
@@ -111,11 +111,11 @@ public:
 	void disableWaterFlag() { _waterFlag = 0; }
 	int getWaterFlag() const { return _waterFlag; }
 
-	virtual int numChildrenToGen();
-	virtual IContainedObject *createChildObj(int, int &);
+	int numChildrenToGen() override;
+	IContainedObject *createChildObj(int, int &) override;
 
-	virtual int checkSuccess();
-	virtual float calcT();
+	int checkSuccess() override;
+	float calcT() override;
 };
 
 } // End of namespace Scumm

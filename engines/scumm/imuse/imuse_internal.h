@@ -245,7 +245,7 @@ public:
 
 public:
 	Player();
-	virtual ~Player();
+	~Player() override;
 
 	int addParameterFader(int param, int target, int time);
 	void clear();
@@ -272,7 +272,7 @@ public:
 	void onTimer();
 	void removePart(Part *part);
 	int scan(uint totrack, uint tobeat, uint totick);
-	void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 	int setHook(byte cls, byte value, byte chan) { return _hook.set(cls, value, chan); }
 	void setDetune(int detune);
 	void setOffsetNote(int offset);
@@ -287,9 +287,9 @@ public:
 
 public:
 	// MidiDriver interface
-	void send(uint32 b);
-	void sysEx(const byte *msg, uint16 length);
-	void metaEvent(byte type, byte *data, uint16 length);
+	void send(uint32 b) override;
+	void sysEx(const byte *msg, uint16 length) override;
+	void metaEvent(byte type, byte *data, uint16 length) override;
 };
 
 
@@ -364,7 +364,7 @@ struct Part : public Common::Serializable {
 
 	Part();
 
-	void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 private:
 	void sendPitchBend();
@@ -448,12 +448,12 @@ protected:
 
 protected:
 	IMuseInternal();
-	virtual ~IMuseInternal();
+	~IMuseInternal() override;
 
 	int initialize(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
 
 	static void midiTimerCallback(void *data);
-	void on_timer(MidiDriver *midi);
+	void on_timer(MidiDriver *midi) override;
 
 	enum ChunkType {
 		kMThd = 1,
@@ -491,7 +491,7 @@ protected:
 
 	int enqueue_command(int a, int b, int c, int d, int e, int f, int g);
 	int enqueue_trigger(int sound, int marker);
-	int clear_queue();
+	int clear_queue() override;
 	int query_queue(int param);
 	Player *findActivePlayer(int id);
 
@@ -522,23 +522,23 @@ protected:
 
 public:
 	// IMuse interface
-	void pause(bool paused);
-	void saveLoadIMuse(Common::Serializer &ser, ScummEngine *scumm, bool fixAfterLoad = true);
-	bool get_sound_active(int sound) const;
-	int32 doCommand(int numargs, int args[]);
-	uint32 property(int prop, uint32 value);
-	virtual void addSysexHandler(byte mfgID, sysexfunc handler);
+	void pause(bool paused) override;
+	void saveLoadIMuse(Common::Serializer &ser, ScummEngine *scumm, bool fixAfterLoad = true) override;
+	bool get_sound_active(int sound) const override;
+	int32 doCommand(int numargs, int args[]) override;
+	uint32 property(int prop, uint32 value) override;
+	void addSysexHandler(byte mfgID, sysexfunc handler) override;
 
 public:
-	void startSoundWithNoteOffset(int sound, int offset);
+	void startSoundWithNoteOffset(int sound, int offset) override;
 
 	// MusicEngine interface
-	void setMusicVolume(int vol);
-	void startSound(int sound);
-	void stopSound(int sound);
-	void stopAllSounds();
-	int getSoundStatus(int sound) const;
-	int getMusicTimer();
+	void setMusicVolume(int vol) override;
+	void startSound(int sound) override;
+	void stopSound(int sound) override;
+	void stopAllSounds() override;
+	int getSoundStatus(int sound) const override;
+	int getMusicTimer() override;
 
 public:
 	// Factory function

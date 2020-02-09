@@ -69,14 +69,14 @@ struct channel_data {
 class Player_V2Base : public Audio::AudioStream, public MusicEngine {
 public:
 	Player_V2Base(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr);
-	virtual ~Player_V2Base();
+	~Player_V2Base() override;
 
 	// MusicEngine API
 // 	virtual void setMusicVolume(int vol);
 // 	virtual void startSound(int sound);
 // 	virtual void stopSound(int sound);
 // 	virtual void stopAllSounds();
- 	virtual int  getMusicTimer();
+ 	int  getMusicTimer() override;
 // 	virtual int  getSoundStatus(int sound) const;
 
 	// AudioStream API
@@ -86,9 +86,9 @@ public:
 		return numSamples;
 	}
 */
-	virtual bool isStereo() const { return true; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _sampleRate; }
+	bool isStereo() const override { return true; }
+	bool endOfData() const override { return false; }
+	int getRate() const override { return _sampleRate; }
 
 protected:
 	enum {

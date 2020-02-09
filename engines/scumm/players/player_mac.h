@@ -44,25 +44,25 @@ class ScummEngine;
 class Player_Mac : public Audio::AudioStream, public MusicEngine {
 public:
 	Player_Mac(ScummEngine *scumm, Audio::Mixer *mixer, int numberOfChannels, int channelMask, bool fadeNoteEnds);
-	virtual ~Player_Mac();
+	~Player_Mac() override;
 
 	void init();
 
 	// MusicEngine API
-	virtual void setMusicVolume(int vol);
-	virtual void startSound(int sound);
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual int  getMusicTimer();
-	virtual int  getSoundStatus(int sound) const;
+	void setMusicVolume(int vol) override;
+	void startSound(int sound) override;
+	void stopSound(int sound) override;
+	void stopAllSounds() override;
+	int  getMusicTimer() override;
+	int  getSoundStatus(int sound) const override;
 
 	// AudioStream API
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return false; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _sampleRate; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return false; }
+	bool endOfData() const override { return false; }
+	int getRate() const override { return _sampleRate; }
 
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 private:
 	Common::Mutex _mutex;

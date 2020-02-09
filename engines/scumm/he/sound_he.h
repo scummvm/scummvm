@@ -59,15 +59,15 @@ public: // Used by createSound()
 
 public:
 	SoundHE(ScummEngine *parent, Audio::Mixer *mixer);
-	~SoundHE();
+	~SoundHE() override;
 
-	virtual void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
-	virtual void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
+	void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0) override;
+	void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0) override;
 
-	virtual int isSoundRunning(int sound) const;
-	virtual void stopSound(int sound);
-	virtual void stopAllSounds();
-	virtual void setupSound();
+	int isSoundRunning(int sound) const override;
+	void stopSound(int sound) override;
+	void stopAllSounds() override;
+	void setupSound() override;
 
 	bool getHEMusicDetails(int id, int &musicOffs, int &musicSize);
 	int findFreeSoundChannel();
@@ -84,7 +84,7 @@ public:
 	void stopSoundChannel(int chan);
 
 protected:
-	virtual void processSoundQueues();
+	void processSoundQueues() override;
 };
 
 

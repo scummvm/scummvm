@@ -40,7 +40,7 @@ namespace Scumm {
 class Player_MOD : public Audio::AudioStream {
 public:
 	Player_MOD(Audio::Mixer *mixer);
-	virtual ~Player_MOD();
+	~Player_MOD() override;
 	virtual void setMusicVolume(int vol);
 
 	virtual void startChannel(int id, void *data, int size, int rate, uint8 vol, int loopStart = 0, int loopEnd = 0, int8 pan = 0);
@@ -55,14 +55,14 @@ public:
 	virtual void clearUpdateProc();
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples) {
+	int readBuffer(int16 *buffer, const int numSamples) override {
 		Common::StackLock lock(_mutex);
 		do_mix(buffer, numSamples / 2);
 		return numSamples;
 	}
-	bool isStereo() const { return true; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _sampleRate; }
+	bool isStereo() const override { return true; }
+	bool endOfData() const override { return false; }
+	int getRate() const override { return _sampleRate; }
 
 private:
 	enum {

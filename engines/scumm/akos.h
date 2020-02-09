@@ -38,9 +38,9 @@ protected:
 public:
 	AkosCostumeLoader(ScummEngine *vm) : BaseCostumeLoader(vm) {}
 
-	void loadCostume(int id);
-	byte increaseAnims(Actor *a);
-	void costumeDecodeData(Actor *a, int frame, uint usemask);
+	void loadCostume(int id) override;
+	byte increaseAnims(Actor *a) override;
+	void costumeDecodeData(Actor *a, int frame, uint usemask) override;
 
 	//void animateLimb(int limb, int f);
 	bool hasManyDirections(int id) {
@@ -104,12 +104,12 @@ public:
 	int16 _actorHitX, _actorHitY;
 	bool _actorHitResult;
 
-	void setPalette(uint16 *_palette);
-	void setFacing(const Actor *a);
-	void setCostume(int costume, int shadow);
+	void setPalette(uint16 *_palette) override;
+	void setFacing(const Actor *a) override;
+	void setCostume(int costume, int shadow) override;
 
 protected:
-	byte drawLimb(const Actor *a, int limb);
+	byte drawLimb(const Actor *a, int limb) override;
 
 	byte codec1(int xmoveCur, int ymoveCur);
 	void codec1_genericDecode(Codec1 &v1);

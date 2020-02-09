@@ -33,17 +33,17 @@ namespace Scumm {
 class ScummEngine_v3 : public ScummEngine_v4 {
 public:
 	ScummEngine_v3(OSystem *syst, const DetectorResult &dr);
-	~ScummEngine_v3();
+	~ScummEngine_v3() override;
 
-	virtual void resetScumm();
+	void resetScumm() override;
 
 protected:
-	virtual void setupOpcodes();
+	void setupOpcodes() override;
 
-	virtual void readRoomsOffsets();
-	virtual void loadCharset(int no);
+	void readRoomsOffsets() override;
+	void loadCharset(int no) override;
 
-	virtual void processKeyboard(Common::KeyState lastKeyHit);
+	void processKeyboard(Common::KeyState lastKeyHit) override;
 
 	/* Version 3 script opcodes */
 	void o3_setBoxFlags();
@@ -59,11 +59,11 @@ public:
 	ScummEngine_v3old(OSystem *syst, const DetectorResult &dr);
 
 protected:
-	virtual int readResTypeList(ResType type);
-	virtual void readIndexFile();
-	virtual void setupRoomSubBlocks();
-	virtual void resetRoomSubBlocks();
-	virtual void resetRoomObjects();
+	int readResTypeList(ResType type) override;
+	void readIndexFile() override;
+	void setupRoomSubBlocks() override;
+	void resetRoomSubBlocks() override;
+	void resetRoomObjects() override;
 };
 
 

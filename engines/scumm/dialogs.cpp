@@ -205,9 +205,9 @@ static const ResString string_map_table_v345[] = {
 class HelpDialog : public ScummDialog {
 public:
 	HelpDialog(const GameSettings &game);
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	virtual void reflowLayout();
+	void reflowLayout() override;
 
 protected:
 	typedef Common::String String;
