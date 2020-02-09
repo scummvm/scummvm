@@ -474,9 +474,9 @@ public:
 class SceneInfoPhantom : public SceneInfo {
 	friend class SceneInfo;
 protected:
-	virtual void loadCodes(BaseSurface &depthSurface, int variant);
+	void loadCodes(BaseSurface &depthSurface, int variant) override;
 
-	virtual void loadCodes(BaseSurface &depthSurface, Common::SeekableReadStream *stream);
+	void loadCodes(BaseSurface &depthSurface, Common::SeekableReadStream *stream) override;
 
 	/**
 	* Constructor

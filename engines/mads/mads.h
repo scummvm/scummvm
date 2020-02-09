@@ -89,8 +89,8 @@ private:
 	void loadOptions();
 protected:
 	// Engine APIs
-	virtual Common::Error run() override;
-	virtual bool hasFeature(EngineFeature f) const override;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 public:
 	Debugger *_debugger;
 	Dialogs *_dialogs;
@@ -113,7 +113,7 @@ public:
 	bool _disableFastwalk;
 public:
 	MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc);
-	virtual ~MADSEngine();
+	~MADSEngine() override;
 
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
@@ -145,17 +145,17 @@ public:
 	/**
 	 * Handles loading a game via the GMM
 	 */
-	virtual Common::Error loadGameState(int slot) override;
+	Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Handles saving the game via the GMM
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	/**
 	 * Handles updating sound settings after they're changed in the GMM dialog
 	 */
-	virtual void syncSoundSettings() override;
+	void syncSoundSettings() override;
 
 	void saveOptions();
 };

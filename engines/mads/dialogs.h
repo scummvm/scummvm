@@ -134,7 +134,7 @@ protected:
 	/**
 	 * Calculate the bounds for the dialog
 	 */
-	virtual void calculateBounds();
+	void calculateBounds() override;
 public:
 	/**
 	 * Constructor
@@ -160,12 +160,12 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~TextDialog();
+	~TextDialog() override;
 
 	/**
 	 * Draw the dialog
 	 */
-	virtual void draw();
+	void draw() override;
 
 	/**
 	 * Draw the dialog along with any input box
@@ -224,7 +224,7 @@ class MessageDialog : public TextDialog {
 public:
 	MessageDialog(MADSEngine *vm, int lines, ...);
 
-	virtual ~MessageDialog() {}
+	~MessageDialog() override {}
 };
 
 enum DialogId {
@@ -286,7 +286,7 @@ public:
 	 */
 	FullScreenDialog(MADSEngine *vm);
 
-	virtual ~FullScreenDialog();
+	~FullScreenDialog() override;
 };
 
 } // End of namespace MADS
