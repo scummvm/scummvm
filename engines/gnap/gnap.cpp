@@ -252,6 +252,7 @@ Common::Error GnapEngine::run() {
 	_gameSys = new GameSys(this);
 	_soundMan = new SoundMan(this);
 	_debugger = new Debugger();
+	setDebugger(_debugger);
 	_gnap = new PlayerGnap(this);
 	_plat = new PlayerPlat(this);
 
@@ -268,7 +269,7 @@ Common::Error GnapEngine::run() {
 	delete _soundCache;
 	delete _spriteCache;
 	delete _dat;
-	delete _debugger;
+	//delete _debugger; Debugger is deleted by Engine
 	delete _font;
 	delete _exe;
 
@@ -281,13 +282,6 @@ void GnapEngine::updateEvents() {
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			// Check for debugger
-			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
-				// Attach to the debugger
-				_debugger->attach();
-				_debugger->onFrame();
-			}
-
 			_keyPressState[event.kbd.keycode] = true;
 			_keyDownState[event.kbd.keycode] = true;
 			break;
