@@ -152,13 +152,7 @@ void EventsManager::pollEvents() {
 
 		case Common::EVENT_KEYDOWN:
 			// Check for debugger
-			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
-				// Attach to the debugger
-				_vm->_debugger->attach();
-				_vm->_debugger->onFrame();
-			} else {
-				_pendingKeys.push(event.kbd);
-			}
+			_pendingKeys.push(event.kbd);
 			return;
 		case Common::EVENT_KEYUP:
 			return;
@@ -213,14 +207,8 @@ bool EventsManager::checkForNextFrameCounter() {
 		// Do any palette cycling
 		_vm->_game->_scene.animatePalette();
 
-		// Give time to the debugger
-		_vm->_debugger->onFrame();
-
 		// Display the frame
 		_vm->_screen->update();
-
-		// Signal the ScummVM debugger
-		_vm->_debugger->onFrame();
 
 		return true;
 	}
