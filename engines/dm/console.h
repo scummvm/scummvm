@@ -49,7 +49,7 @@ private:
 
 public:
 	explicit Console(DM::DMEngine *vm);
-	virtual ~Console(void) {}
+	~Console(void) override {}
 
 	bool _debugGodmodeMana;
 	bool _debugGodmodeHP;

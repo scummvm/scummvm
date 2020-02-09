@@ -222,11 +222,11 @@ private:
 
 public:
 	explicit DMEngine(OSystem *syst, const DMADGameDescription *gameDesc);
-	~DMEngine();
-	virtual bool hasFeature(EngineFeature f) const override;
+	~DMEngine() override;
+	bool hasFeature(EngineFeature f) const override;
 
-	virtual Common::Error loadGameState(int slot) override;
-	virtual bool canLoadGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently() override;
 
 	bool isDemo() const;
 
@@ -237,7 +237,7 @@ public:
 	uint16 getRandomNumber(uint32 max) { return _rnd->getRandomNumber(max - 1); }
 	int16 ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
 	int16 indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
-	virtual Common::Error run() override; // @ main
+	Common::Error run() override; // @ main
 	void saveGame(); // @ F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF
 	LoadgameResult loadgame(int16 slot); // @ F0435_STARTEND_LoadGame_CPSF
 	void endGame(bool doNotDrawCreditsOnly); // @ F0444_STARTEND_Endgame

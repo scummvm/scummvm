@@ -100,25 +100,25 @@ public:
 	DMMetaEngine() : AdvancedMetaEngine(DM::gameDescriptions, sizeof(DMADGameDescription), DMGames, optionsList) {
 	}
 
-	virtual const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "dm";
 	}
 
-	virtual const char *getName() const {
+	const char *getName() const override {
 		return "Dungeon Master";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Dungeon Master (C) 1987 FTL Games";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc)
 			*engine = new DM::DMEngine(syst, (const DMADGameDescription*)desc);
 		return desc != nullptr;
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const {
+	bool hasFeature(MetaEngineFeature f) const override {
 		return
 			(f == kSupportsListSaves) ||
 			(f == kSupportsLoadingDuringStartup) ||
@@ -127,9 +127,9 @@ public:
 			(f == kSavesSupportCreationDate);
 	}
 
-	virtual int getMaximumSaveSlot() const { return 99; }
+	int getMaximumSaveSlot() const override { return 99; }
 
-	virtual SaveStateList listSaves(const char *target) const {
+	SaveStateList listSaves(const char *target) const override {
 		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 		SaveGameHeader header;
 		Common::String pattern = target;
@@ -159,7 +159,7 @@ public:
 		return saveList;
 	}
 
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
 		Common::String filename = Common::String::format("%s.%03u", target, slot);
 		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
 
@@ -179,7 +179,7 @@ public:
 		return SaveStateDescriptor();
 	}
 
-	virtual void removeSaveState(const char *target, int slot) const {}
+	void removeSaveState(const char *target, int slot) const override {}
 };
 
 }
