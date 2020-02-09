@@ -414,7 +414,6 @@ void DisplayMan::screenUpdate() {
 	_vm->_event->processInput();
 
 	_vm->_system->copyRectToScreen(_displayBuffer, _screenWidth, 0, 0, _screenWidth, _screenHeight);
-	_vm->_console->onFrame();
 	_vm->_system->updateScreen();
 }
 
