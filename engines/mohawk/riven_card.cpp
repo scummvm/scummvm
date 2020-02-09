@@ -88,6 +88,7 @@ void RivenCard::applyPatches(uint16 id) {
 	applyPropertiesPatch22118(globalId);
 	applyPropertiesPatchE2E(globalId);
 	applyPropertiesPatch1518D(globalId);
+	applyPropertiesPatch2B414(globalId);
 }
 
 void RivenCard::applyPropertiesPatch8EB7(uint32 globalId, const Common::String &var, uint16 hotspotId) {
@@ -467,6 +468,100 @@ void RivenCard::applyPropertiesPatch1518D(uint32 globalId) {
 		loadScript += patchScript;
 
 		debugC(kRivenDebugPatches, "Applied jungle book close loop to card %x", globalId);
+	}
+}
+
+void RivenCard::applyPropertiesPatch2B414(uint32 globalId) {
+	//
+	// When seated in the Jungle Island's gallows control throne,
+	// the right lever opens or closes the gallows' floor.
+	// The issue is that it is possible to click on the position
+	// where the lever would be when the gallow's floor in the
+	// opposite state as it currently is. And thus to trigger the
+	// corresponding sequence. That is to say for example closing
+	// the floor when it is already closed.
+	//
+	// We simply add the missing script instructions to make
+	// the open and close hotspots mutually exclusive.
+	//
+	// Added script part:
+	//   == Script 0 ==
+	//     type: CardLoad
+	//     [...]
+	//   switch (jgallows) {
+	//     case 0:
+	//       activateBLST(1);
+	//       activateBLST(4);
+	//       break;
+	//     case 1:
+	//       activateBLST(2);
+	//       activateBLST(3);
+	//       break;
+	//   }
+	if (globalId == 0x2B414) {
+		HotspotEnableRecord openGallowsEnabled;
+		openGallowsEnabled.index = 1;
+		openGallowsEnabled.hotspotId = 8;
+		openGallowsEnabled.enabled = 1;
+		_hotspotEnableList.push_back(openGallowsEnabled);
+
+		HotspotEnableRecord openGallowsDisabled;
+		openGallowsDisabled.index = 2;
+		openGallowsDisabled.hotspotId = 8;
+		openGallowsDisabled.enabled = 0;
+		_hotspotEnableList.push_back(openGallowsDisabled);
+
+		HotspotEnableRecord closeGallowsEnabled;
+		closeGallowsEnabled.index = 3;
+		closeGallowsEnabled.hotspotId = 9;
+		closeGallowsEnabled.enabled = 1;
+		_hotspotEnableList.push_back(closeGallowsEnabled);
+
+		HotspotEnableRecord closeGallowsDisabled;
+		closeGallowsDisabled.index = 4;
+		closeGallowsDisabled.hotspotId = 9;
+		closeGallowsDisabled.enabled = 0;
+		_hotspotEnableList.push_back(closeGallowsDisabled);
+
+		uint16 jGallowsVariable = _vm->getStack()->getIdFromName(kVariableNames, "jgallows");
+		uint16 patchData[] = {
+		        1, // Command count in script
+		        kRivenCommandSwitch,
+		        2, // Unused
+		        jGallowsVariable,
+		        2, // Branches count
+
+		        0, // jgallows == 0 branch
+		        2, // Command count in sub-script
+
+		        kRivenCommandActivateBLST,
+		        1, // Argument count
+		        openGallowsEnabled.index,
+
+		        kRivenCommandActivateBLST,
+		        1, // Argument count
+		        closeGallowsDisabled.index,
+
+		        1, // jgallows == 1 branch
+		        2, // Command count in sub-script
+
+		        kRivenCommandActivateBLST,
+		        1, // Argument count
+		        openGallowsDisabled.index,
+
+		        kRivenCommandActivateBLST,
+		        1, // Argument count
+		        closeGallowsEnabled.index,
+
+		};
+
+		RivenScriptPtr patchScript = _vm->_scriptMan->readScriptFromData(patchData, ARRAYSIZE(patchData));
+
+		// Append the patch to the existing script
+		RivenScriptPtr loadScript = getScript(kCardLoadScript);
+		loadScript += patchScript;
+
+		debugC(kRivenDebugPatches, "Applied missing jgallows hotspot enable / disable to card %x", globalId);
 	}
 }
 
