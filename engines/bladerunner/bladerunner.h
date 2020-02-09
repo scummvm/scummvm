@@ -322,7 +322,6 @@ public:
 	void blitToScreen(const Graphics::Surface &src) const;
 	Graphics::Surface generateThumbnail() const;
 
-	GUI::Debugger *getDebugger() override;
 	Common::String getTargetName() const;
 };
 
