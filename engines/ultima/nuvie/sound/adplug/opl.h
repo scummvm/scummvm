@@ -23,6 +23,8 @@
 #ifndef NUVIE_SOUND_ADPLUG_OPL
 #define NUVIE_SOUND_ADPLUG_OPL
 
+#include "common/scummsys.h"
+
 namespace Ultima {
 namespace Nuvie {
 
