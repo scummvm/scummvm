@@ -640,8 +640,6 @@ void PrinceEngine::drawScreen() {
 
 		showPower();
 
-		getDebugger()->onFrame();
-
 	} else {
 		displayInventory();
 	}
