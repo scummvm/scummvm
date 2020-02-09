@@ -110,7 +110,6 @@ public:
 	const SludgeGameDescription *_gameDescription;
 
 private:
-	SludgeConsole *_console;
 	Common::RandomSource *_rnd;
 	Graphics::PixelFormat *_pixelFormat;
 	Graphics::PixelFormat *_origFormat;
