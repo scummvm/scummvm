@@ -58,13 +58,13 @@ private:
 	void updatePalette(const byte *pal, int start, int count16);
 public:
 	Screen(XeenEngine *vm);
-	virtual ~Screen() {}
+	~Screen() override {}
 
 	/**
 	 * Base method that descendent classes can override for recording affected
 	 * dirty areas of the surface
 	 */
-	virtual void addDirtyRect(const Common::Rect &r) { Graphics::Screen::addDirtyRect(r); }
+	void addDirtyRect(const Common::Rect &r) override { Graphics::Screen::addDirtyRect(r); }
 
 	/**
 	 * Load a palette resource into the temporary palette

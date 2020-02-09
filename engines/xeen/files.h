@@ -139,17 +139,17 @@ public:
 	File(const Common::String &filename);
 	File(const Common::String &filename, int ccMode);
 	File(const Common::String &filename, Common::Archive &archive);
-	virtual ~File() {}
+	~File() override {}
 
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
 	 */
-	virtual bool open(const Common::String &filename);
+	bool open(const Common::String &filename) override;
 
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
 	 */
-	virtual bool open(const Common::String &filename, Common::Archive &archive);
+	bool open(const Common::String &filename, Common::Archive &archive) override;
 
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
@@ -159,14 +159,14 @@ public:
 	/**
 	 * Opens the given file
 	 */
-	virtual bool open(const Common::FSNode &node) {
+	bool open(const Common::FSNode &node) override {
 		return Common::File::open(node);
 	}
 
 	/**
 	 * Opens the given file
 	 */
-	virtual bool open(SeekableReadStream *stream, const Common::String &name) {
+	bool open(SeekableReadStream *stream, const Common::String &name) override {
 		return Common::File::open(stream, name);
 	}
 
@@ -217,12 +217,12 @@ public:
 		_parentStream(parentStream),  _begin(parentStream->pos()) {
 	}
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize) {
+	uint32 write(const void *dataPtr, uint32 dataSize) override {
 		return _parentStream->write(dataPtr, dataSize);
 	}
-	virtual bool flush() { return _parentStream->flush(); }
-	virtual void finalize() {}
-	virtual int32 pos() const { return _parentStream->pos() - _begin; }
+	bool flush() override { return _parentStream->flush(); }
+	void finalize() override {}
+	int32 pos() const override { return _parentStream->pos() - _begin; }
 };
 
 class StringArray : public Common::StringArray {
@@ -290,9 +290,9 @@ public:
 	BaseCCArchive() {}
 
 	// Archive implementation
-	virtual bool hasFile(const Common::String &name) const;
-	virtual int listMembers(Common::ArchiveMemberList &list) const;
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
+	bool hasFile(const Common::String &name) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
 };
 
 /**
@@ -304,14 +304,14 @@ private:
 	Common::String _prefix;
 	bool _encoded;
 protected:
-	virtual bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const;
+	bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const override;
 public:
 	CCArchive(const Common::String &filename, bool encoded);
 	CCArchive(const Common::String &filename, const Common::String &prefix, bool encoded);
-	virtual ~CCArchive();
+	~CCArchive() override;
 
 	// Archive implementation
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 };
 
 class SaveArchive : public BaseCCArchive {
@@ -323,7 +323,7 @@ private:
 	Common::HashMap<uint16, Common::MemoryWriteStreamDynamic *> _newData;
 public:
 	SaveArchive(Party *party);
-	~SaveArchive();
+	~SaveArchive() override;
 
 	/**
 	* Sets up the dynamic data for the game for a new game
@@ -333,7 +333,7 @@ public:
 	/**
 	 * Archive implementation
 	 */
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 
 	/**
 	 * Archive implementation

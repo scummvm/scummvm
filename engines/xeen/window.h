@@ -98,9 +98,9 @@ public:
 	Window(const Window &src);
 	Window(const Common::Rect &bounds, int a, int border,
 		int xLo, int ycL, int xHi, int ycH);
-	virtual ~Window() {}
+	~Window() override {}
 
-	virtual void addDirtyRect(const Common::Rect &r);
+	void addDirtyRect(const Common::Rect &r) override;
 
 	void setBounds(const Common::Rect &r);
 

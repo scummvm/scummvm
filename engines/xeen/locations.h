@@ -82,7 +82,7 @@ protected:
 	virtual void farewell() {}
 public:
 	BaseLocation(LocationAction action);
-	virtual ~BaseLocation();
+	~BaseLocation() override;
 
 	/**
 	 * Show the town location
@@ -110,20 +110,20 @@ protected:
 	/**
 	 * Generates the display text for the location, for a given character
 	 */
-	virtual Common::String createLocationText(Character &ch);
+	Common::String createLocationText(Character &ch) override;
 
 	/**
 	 * Draw the visual background
 	 */
-	virtual void drawBackground();
+	void drawBackground() override;
 
 	/**
 	 * Handles options for the particular location
 	 */
-	virtual Character *doOptions(Character *c);
+	Character *doOptions(Character *c) override;
 public:
 	BankLocation();
-	virtual ~BankLocation() {}
+	~BankLocation() override {}
 };
 
 class BlacksmithLocation : public BaseLocation {
@@ -131,20 +131,20 @@ protected:
 	/**
 	* Generates the display text for the location, for a given character
 	*/
-	virtual Common::String createLocationText(Character &ch);
+	Common::String createLocationText(Character &ch) override;
 
 	/**
 	 * Handle any farewell
 	 */
-	virtual void farewell();
+	void farewell() override;
 
 	/**
 	 * Handles options for the particular location
 	 */
-	virtual Character *doOptions(Character *c);
+	Character *doOptions(Character *c) override;
 public:
 	BlacksmithLocation();
-	virtual ~BlacksmithLocation() {}
+	~BlacksmithLocation() override {}
 };
 
 class GuildLocation : public BaseLocation {
@@ -152,15 +152,15 @@ protected:
 	/**
 	 * Generates the display text for the location, for a given character
 	 */
-	virtual Common::String createLocationText(Character &ch);
+	Common::String createLocationText(Character &ch) override;
 
 	/**
 	 * Handles options for the particular location
 	 */
-	virtual Character *doOptions(Character *c);
+	Character *doOptions(Character *c) override;
 public:
 	GuildLocation();
-	virtual ~GuildLocation() {}
+	~GuildLocation() override {}
 };
 
 class TavernLocation : public BaseLocation {
@@ -173,20 +173,20 @@ protected:
 	/**
 	* Generates the display text for the location, for a given character
 	*/
-	virtual Common::String createLocationText(Character &ch);
+	Common::String createLocationText(Character &ch) override;
 
 	/**
 	 * Handle any farewell
 	 */
-	virtual void farewell();
+	void farewell() override;
 
 	/**
 	 * Handles options for the particular location
 	 */
-	virtual Character *doOptions(Character *c);
+	Character *doOptions(Character *c) override;
 public:
 	TavernLocation();
-	virtual ~TavernLocation() {}
+	~TavernLocation() override {}
 };
 
 class TempleLocation : public BaseLocation {
@@ -204,15 +204,15 @@ protected:
 	/**
 	* Generates the display text for the location, for a given character
 	*/
-	virtual Common::String createLocationText(Character &ch);
+	Common::String createLocationText(Character &ch) override;
 
 	/**
 	 * Handles options for the particular location
 	 */
-	virtual Character *doOptions(Character *c);
+	Character *doOptions(Character *c) override;
 public:
 	TempleLocation();
-	virtual ~TempleLocation() {}
+	~TempleLocation() override {}
 };
 
 class TrainingLocation : public BaseLocation {
@@ -225,26 +225,26 @@ protected:
 	/**
 	 * Generates the display text for the location, for a given character
 	 */
-	virtual Common::String createLocationText(Character &ch);
+	Common::String createLocationText(Character &ch) override;
 
 	/**
 	 * Handles options for the particular location
 	 */
-	virtual Character *doOptions(Character *c);
+	Character *doOptions(Character *c) override;
 public:
 	TrainingLocation();
-	virtual ~TrainingLocation() {}
+	~TrainingLocation() override {}
 };
 
 class ArenaLocation : public BaseLocation {
 public:
 	ArenaLocation();
-	virtual ~ArenaLocation() {}
+	~ArenaLocation() override {}
 
 	/**
 	 * Show the town location
 	 */
-	virtual int show();
+	int show() override;
 };
 
 class CutsceneLocation : public BaseLocation {
@@ -271,12 +271,12 @@ private:
 	void getNewLocation();
 public:
 	ReaperCutscene();
-	virtual ~ReaperCutscene() {}
+	~ReaperCutscene() override {}
 
 	/**
 	 * Show the town location
 	 */
-	virtual int show();
+	int show() override;
 };
 
 class GolemCutscene : public CutsceneLocation {
@@ -287,12 +287,12 @@ private:
 	void getNewLocation(); 
 public:
 	GolemCutscene();
-	virtual ~GolemCutscene() {}
+	~GolemCutscene() override {}
 
 	/**
 	 * Show the town location
 	 */
-	virtual int show();
+	int show() override;
 };
 
 class DwarfCutscene : public CutsceneLocation {
@@ -303,12 +303,12 @@ private:
 	void getNewLocation();
 public:
 	DwarfCutscene();
-	virtual ~DwarfCutscene() {}
+	~DwarfCutscene() override {}
 
 	/**
 	 * Show the town location
 	 */
-	virtual int show();
+	int show() override;
 };
 
 class SphinxCutscene : public CutsceneLocation {
@@ -319,23 +319,23 @@ private:
 	void getNewLocation();
 public:
 	SphinxCutscene();
-	virtual ~SphinxCutscene() {}
+	~SphinxCutscene() override {}
 
 	/**
 	 * Show the town location
 	 */
-	virtual int show();
+	int show() override;
 };
 
 class PyramidLocation : public BaseLocation {
 public:
 	PyramidLocation();
-	virtual ~PyramidLocation() {}
+	~PyramidLocation() override {}
 
 	/**
 	 * Show the town location
 	 */
-	virtual int show();
+	int show() override;
 };
 
 } // End of namespace Locations

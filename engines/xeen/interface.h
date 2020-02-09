@@ -178,7 +178,7 @@ public:
 public:
 	Interface(XeenEngine *vm);
 
-	virtual ~Interface() {}
+	~Interface() override {}
 
 	void setup();
 

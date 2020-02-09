@@ -106,35 +106,35 @@ private:
 	 */
 	byte calculateLevel(byte level, bool isFx);
 protected:
-	virtual bool musSetInstrument(const byte *&srcP, byte param);
-	virtual bool musSetPitchWheel(const byte *&srcP, byte param);
-	virtual bool musSetPanning(const byte *&srcP, byte param);
-	virtual bool musFade(const byte *&srcP, byte param);
-	virtual bool musStartNote(const byte *&srcP, byte param);
-	virtual bool musSetVolume(const byte *&srcP, byte param);
-	virtual bool musInjectMidi(const byte *&srcP, byte param);
-	virtual bool musPlayInstrument(const byte *&srcP, byte param);
+	bool musSetInstrument(const byte *&srcP, byte param) override;
+	bool musSetPitchWheel(const byte *&srcP, byte param) override;
+	bool musSetPanning(const byte *&srcP, byte param) override;
+	bool musFade(const byte *&srcP, byte param) override;
+	bool musStartNote(const byte *&srcP, byte param) override;
+	bool musSetVolume(const byte *&srcP, byte param) override;
+	bool musInjectMidi(const byte *&srcP, byte param) override;
+	bool musPlayInstrument(const byte *&srcP, byte param) override;
 
-	virtual bool fxSetInstrument(const byte *&srcP, byte param);
-	virtual bool fxSetVolume(const byte *&srcP, byte param);
-	virtual bool fxMidiReset(const byte *&srcP, byte param);
-	virtual bool fxMidiDword(const byte *&srcP, byte param);
-	virtual bool fxSetPanning(const byte *&srcP, byte param);
-	virtual bool fxChannelOff(const byte *&srcP, byte param);
-	virtual bool fxFade(const byte *&srcP, byte param);
-	virtual bool fxStartNote(const byte *&srcP, byte param);
-	virtual bool fxInjectMidi(const byte *&srcP, byte param);
-	virtual bool fxPlayInstrument(const byte *&srcP, byte param);
+	bool fxSetInstrument(const byte *&srcP, byte param) override;
+	bool fxSetVolume(const byte *&srcP, byte param) override;
+	bool fxMidiReset(const byte *&srcP, byte param) override;
+	bool fxMidiDword(const byte *&srcP, byte param) override;
+	bool fxSetPanning(const byte *&srcP, byte param) override;
+	bool fxChannelOff(const byte *&srcP, byte param) override;
+	bool fxFade(const byte *&srcP, byte param) override;
+	bool fxStartNote(const byte *&srcP, byte param) override;
+	bool fxInjectMidi(const byte *&srcP, byte param) override;
+	bool fxPlayInstrument(const byte *&srcP, byte param) override;
 
 	/**
 	 * Post-processing done when a pause countdown starts or is in progress
 	 */
-	virtual void pausePostProcess();
+	void pausePostProcess() override;
 
 	/**
 	 * Does a reset of any sound effect
 	 */
-	virtual void resetFX();
+	void resetFX() override;
 public:
 	/**
 	 * Constructor
@@ -144,22 +144,22 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~SoundDriverAdlib();
+	~SoundDriverAdlib() override;
 
 	/**
 	 * Starts an special effect playing
 	 */
-	virtual void playFX(uint effectId, const byte *data);
+	void playFX(uint effectId, const byte *data) override;
 
 	/**
 	 * Plays a song
 	 */
-	virtual void playSong(const byte *data);
+	void playSong(const byte *data) override;
 
 	/**
 	 * Executes special music command
 	 */
-	virtual int songCommand(uint commandId, byte musicVolume = 0, byte sfxVolume = 0);
+	int songCommand(uint commandId, byte musicVolume = 0, byte sfxVolume = 0) override;
 };
 
 } // End of namespace Xeen

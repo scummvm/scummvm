@@ -81,7 +81,7 @@ public:
 public:
 	FontSurface();
 	FontSurface(int wv, int hv);
-	virtual ~FontSurface() {}
+	~FontSurface() override {}
 
 	/**
 	 * Draws a symbol to the surface.

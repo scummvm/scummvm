@@ -87,12 +87,12 @@ protected:
 	/**
 	 * Called when the menu screen is first shown
 	 */
-	virtual void display();
+	void display() override;
 
 	/**
 	 * Shows the main menu dialog
 	 */
-	virtual void showMenuDialog();
+	void showMenuDialog() override;
 public:
 	CloudsMainMenuContainer();
 };
@@ -104,12 +104,12 @@ protected:
 	/**
 	 * Called when the menu screen is first shown
 	 */
-	virtual void display();
+	void display() override;
 
 	/**
 	* Shows the main menu dialog
 	*/
-	virtual void showMenuDialog();
+	void showMenuDialog() override;
 public:
 	DarkSideMainMenuContainer();
 };
@@ -119,12 +119,12 @@ protected:
 	/**
 	 * Called when the menu screen is first shown
 	 */
-	virtual void display();
+	void display() override;
 
 	/**
 	* Shows the main menu dialog
 	*/
-	virtual void showMenuDialog();
+	void showMenuDialog() override;
 public:
 	WorldOfXeenMainMenuContainer();
 };
@@ -134,12 +134,12 @@ protected:
 	/**
 	 * Called when the menu screen is first shown
 	 */
-	virtual void display();
+	void display() override;
 
 	/**
 	* Shows the main menu dialog
 	*/
-	virtual void showMenuDialog();
+	void showMenuDialog() override;
 public:
 	WorldOfXeenCDMainMenuContainer();
 };
@@ -156,7 +156,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~MenuContainerDialog() {
+	~MenuContainerDialog() override {
 		_owner->setOwner(nullptr);
 	}
 
@@ -181,17 +181,17 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~MainMenuDialog() {}
+	~MainMenuDialog() override {}
 
 	/**
 	 * Draws the dialog
 	 */
-	virtual void draw() = 0;
+	void draw() override = 0;
 
 	/**
 	 * Handles events
 	 */
-	virtual bool handleEvents();
+	bool handleEvents() override;
 
 };
 
@@ -212,17 +212,17 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~CloudsMenuDialog();
+	~CloudsMenuDialog() override;
 
 	/**
 	 * Draws the dialog
 	 */
-	virtual void draw();
+	void draw() override;
 
 	/**
 	 * Handles events
 	 */
-	virtual bool handleEvents();
+	bool handleEvents() override;
 };
 
 class DarkSideMenuDialog : public MainMenuDialog {
@@ -243,17 +243,17 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~DarkSideMenuDialog();
+	~DarkSideMenuDialog() override;
 
 	/**
 	 * Draws the dialog
 	 */
-	virtual void draw();
+	void draw() override;
 
 	/**
 	 * Handles events
 	 */
-	virtual bool handleEvents();
+	bool handleEvents() override;
 };
 
 class WorldMenuDialog : public MainMenuDialog {
@@ -273,17 +273,17 @@ public:
 	/**
 	* Destructor
 	*/
-	virtual ~WorldMenuDialog();
+	~WorldMenuDialog() override;
 
 	/**
 	 * Draws the dialog
 	 */
-	virtual void draw();
+	void draw() override;
 
 	/**
 	 * Handles events
 	 */
-	virtual bool handleEvents();
+	bool handleEvents() override;
 };
 
 class OtherOptionsDialog : public MenuContainerDialog {
@@ -303,17 +303,17 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~OtherOptionsDialog();
+	~OtherOptionsDialog() override;
 
 	/**
 	 * Draws the dialog
 	 */
-	virtual void draw();
+	void draw() override;
 
 	/**
 	 * Handles events
 	 */
-	virtual bool handleEvents();
+	bool handleEvents() override;
 };
 
 } // End of namespace WorldOfXeen

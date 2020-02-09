@@ -88,7 +88,7 @@ protected:
 	 * @param fadeIn	If true, does an initial fade in
 	 * @returns		True if key or mouse pressed
 	 */
-	virtual bool doScroll(bool rollUp, bool fadeIn);
+	bool doScroll(bool rollUp, bool fadeIn) override;
 
 	/**
 	 * Load a set of text strings from the given resource
@@ -144,7 +144,7 @@ protected:
 public:
 	SettingsBaseDialog(XeenEngine *vm) : ButtonContainer(vm) {}
 
-	virtual ~SettingsBaseDialog() {}
+	~SettingsBaseDialog() override {}
 };
 
 } // End of namespace Xeen

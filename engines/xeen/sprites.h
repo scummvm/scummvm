@@ -215,7 +215,7 @@ protected:
 	/**
 	 * Output a pixel
 	 */
-	virtual void drawPixel(byte *dest, byte pixel) override;
+	void drawPixel(byte *dest, byte pixel) override;
 public:
 	/**
 	 * Constructor
@@ -235,7 +235,7 @@ private:
 	/**
 	 * Output a pixel
 	 */
-	virtual void drawPixel(byte *dest, byte pixel) override;
+	void drawPixel(byte *dest, byte pixel) override;
 public:
 	/**
 	 * Constructor
@@ -250,7 +250,7 @@ protected:
 	/**
 	 * Output a pixel
 	 */
-	virtual void drawPixel(byte *dest, byte pixel) override;
+	void drawPixel(byte *dest, byte pixel) override;
 public:
 	/**
 	 * Constructor
@@ -273,7 +273,7 @@ protected:
 	/**
 	 * Output a pixel
 	 */
-	virtual void drawPixel(byte *dest, byte pixel) override;
+	void drawPixel(byte *dest, byte pixel) override;
 public:
 	/**
 	 * Constructor
@@ -288,7 +288,7 @@ protected:
 	/**
 	 * Output a pixel
 	 */
-	virtual void drawPixel(byte *dest, byte pixel) override;
+	void drawPixel(byte *dest, byte pixel) override;
 public:
 	/**
 	 * Constructor

@@ -131,8 +131,8 @@ private:
 	void loadSettings();
 
 	// Engine APIs
-	virtual Common::Error run() override;
-	virtual bool hasFeature(EngineFeature f) const override;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 
 	/**
 	 * Outer gameplay loop responsible for dispatching control to game-specific
@@ -198,7 +198,7 @@ public:
 	ExtendedOptions _extOptions;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
-	virtual ~XeenEngine();
+	~XeenEngine() override;
 
 	/**
 	 * Returns the features
@@ -259,27 +259,27 @@ public:
 	/**
 	 * Load a savegame
 	 */
-	virtual Common::Error loadGameState(int slot) override;
+	Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Save the game
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	/**
 	 * Updates sound settings
 	 */
-	virtual void syncSoundSettings() override;
+	void syncSoundSettings() override;
 
 	/**
 	 * Returns true if a savegame can currently be loaded
 	 */
-	virtual bool canLoadGameStateCurrently() override;
+	bool canLoadGameStateCurrently() override;
 
 	/**
 	* Returns true if the game can currently be saved
 	*/
-	virtual bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 
 	/**
 	 * Show a cutscene
