@@ -115,13 +115,13 @@ private:
 	void sndMidiStop();
 public:
 	explicit MusicPlayer(CGE2Engine *vm);
-	~MusicPlayer() override override;
+	~MusicPlayer() override;
 
 	void loadMidi(int ref);
 	void killMidi();
 
-	void send(uint32 b) override override;
-	void sendToChannel(byte channel, uint32 b) override override;
+	void send(uint32 b) override;
+	void sendToChannel(byte channel, uint32 b) override;
 };
 
 } // End of namespace CGE2
