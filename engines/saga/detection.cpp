@@ -98,7 +98,7 @@ public:
 		return "saga";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "SAGA ["
 
 #if defined(ENABLE_IHNM) && defined(ENABLE_SAGA2)
@@ -120,20 +120,20 @@ public:
 ;
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Inherit the Earth (C) Wyrmkeep Entertainment";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override {
+	Common::Error createInstance(OSystem *syst, Engine **engine) const override {
 		return AdvancedMetaEngine::createInstance(syst, engine);
 	}
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
-	virtual SaveStateList listSaves(const char *target) const override;
-	virtual int getMaximumSaveSlot() const override;
-	virtual void removeSaveState(const char *target, int slot) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
