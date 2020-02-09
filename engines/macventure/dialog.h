@@ -99,31 +99,31 @@ protected:
 class DialogButton : public DialogElement {
 public:
 	DialogButton(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width = 0, uint height = 0);
-	~DialogButton() {}
+	~DialogButton() override {}
 
 private:
-	bool doProcessEvent(Dialog *dialog, Common::Event event);
-	void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target);
+	bool doProcessEvent(Dialog *dialog, Common::Event event) override;
+	void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) override;
 };
 
 class DialogPlainText : public DialogElement {
 public:
 	DialogPlainText(Dialog *dialog, Common::String content, Common::Point position);
-	~DialogPlainText();
+	~DialogPlainText() override;
 
 private:
-	bool doProcessEvent(Dialog *dialog, Common::Event event);
-	void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target);
+	bool doProcessEvent(Dialog *dialog, Common::Event event) override;
+	void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) override;
 };
 
 class DialogTextInput : public DialogElement {
 public:
 	DialogTextInput(Dialog *dialog, Common::Point position, uint width, uint height);
-	~DialogTextInput();
+	~DialogTextInput() override;
 
 private:
-	bool doProcessEvent(Dialog *dialog, Common::Event event);
-	void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target);
+	bool doProcessEvent(Dialog *dialog, Common::Event event) override;
+	void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) override;
 };
 
 } // End of namespace MacVenture
