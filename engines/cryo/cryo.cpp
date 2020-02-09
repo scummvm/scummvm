@@ -42,7 +42,6 @@ CryoEngine *g_ed = nullptr;
 
 CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_rnd = new Common::RandomSource("cryo");
-	_debugger = nullptr;
 
 	_game = nullptr;
 	_video = nullptr;
@@ -59,7 +58,6 @@ CryoEngine::~CryoEngine() {
 	delete _game;
 	delete _video;
 	delete _screenView;
-	delete _debugger;
 
 	DebugMan.clearAllDebugChannels();
 }
@@ -68,7 +66,7 @@ Common::Error CryoEngine::run() {
 	_game = new EdenGame(this);
 	_video = new HnmPlayer(this);
 	_screenView = new View(320, 200);
-	_debugger = new Debugger(this);
+	setDebugger(new Debugger(this));
 
 	///// CLTimer
 	_timerTicks = 0;   // incremented in realtime
