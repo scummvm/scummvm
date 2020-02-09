@@ -105,14 +105,14 @@ private:
 
 protected:
 	// Engine APIs
-	virtual Common::Error run() override;
-	virtual bool hasFeature(EngineFeature f) const override;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 
 	GUI::Debugger *getDebugger() override { return _console; }
 
 public:
 	DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc);
-	virtual ~DreamWebEngine();
+	~DreamWebEngine() override;
 
 	void waitForVSync();
 

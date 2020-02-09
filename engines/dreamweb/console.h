@@ -32,7 +32,7 @@ class DreamWebEngine;
 class DreamWebConsole : public GUI::Debugger {
 public:
 	DreamWebConsole(DreamWebEngine *vm);
-	virtual ~DreamWebConsole(void);
+	~DreamWebConsole(void) override;
 
 private:
 	DreamWebEngine *_vm;
