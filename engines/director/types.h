@@ -231,6 +231,8 @@ enum TransitionType {
 	kTransDissolveBits
 };
 
+struct Datum;
+typedef Common::Array<Datum> DatumArray;
 
 const char *scriptType2str(ScriptType scr);
 

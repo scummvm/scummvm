@@ -218,7 +218,7 @@ void LC::c_printtop(void) {
 		warning("%s", d.u.s->c_str());
 		break;
 	case POINT:
-		warning("point(%d, %d)", (int)((*d.u.farr)[0]), (int)((*d.u.farr)[1]));
+		warning("point(%s, %s", (*d.u.farr)[0].toString()->c_str(), (*d.u.farr)[1].toString()->c_str());
 		break;
 	case SYMBOL:
 		warning("%s", d.type2str(true));

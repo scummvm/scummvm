@@ -1514,10 +1514,10 @@ void LB::b_point(int nargs) {
 	x.toFloat();
 	y.toFloat();
 
-	d.u.farr = new FloatArray;
+	d.u.farr = new DatumArray;
 
-	d.u.farr->push_back(x.u.f);
-	d.u.farr->push_back(y.u.f);
+	d.u.farr->push_back(x);
+	d.u.farr->push_back(y);
 	d.type = POINT;
 
 	g_lingo->push(d);

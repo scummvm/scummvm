@@ -519,7 +519,7 @@ void Lingo::varAssign(Datum &var, Datum &value) {
 			sym->u.s = new Common::String(*value.u.s);
 			delete value.u.s;
 		} else if (value.type == POINT) {
-			sym->u.farr = new FloatArray(*value.u.farr);
+			sym->u.farr = new DatumArray(*value.u.farr);
 			delete value.u.farr;
 		} else if (value.type == SYMBOL) {
 			sym->u.i = value.u.i;

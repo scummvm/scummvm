@@ -245,7 +245,7 @@ union YYSTYPE
 	int e[2];	// Entity + field
 	int code;
 	int narg;	/* number of arguments */
-	Common::Array<double> *arr;
+	Director::DatumArray *arr;
 
 	struct {
 		Common::String *os;

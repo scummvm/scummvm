@@ -57,7 +57,6 @@ typedef void (*inst)(void);
 #define ENTITY_INDEX(t,id) ((t) * 100000 + (id))
 
 typedef Common::Array<inst> ScriptData;
-typedef Common::Array<double> FloatArray;
 
 struct FuncDesc {
 	Common::String name;
@@ -78,7 +77,7 @@ struct Symbol {	/* symbol table entry */
 		void (*func)();		/* OPCODE */
 		void (*bltin)(int);	/* BUILTIN */
 		Common::String	*s;	/* STRING */
-		FloatArray *farr;	/* ARRAY, POINT, RECT */
+		DatumArray *farr;	/* ARRAY, POINT, RECT */
 	} u;
 	int nargs;		/* number of arguments */
 	int maxArgs;	/* maximal number of arguments, for builtins */
@@ -101,7 +100,7 @@ struct Datum {	/* interpreter stack type */
 		double f;			/* FLOAT */
 		Common::String *s;	/* STRING */
 		Symbol	*sym;
-		FloatArray *farr;	/* ARRAY, POINT, RECT */
+		DatumArray *farr;	/* ARRAY, POINT, RECT */
 	} u;
 
 	Datum() { u.sym = NULL; type = VOID; }
