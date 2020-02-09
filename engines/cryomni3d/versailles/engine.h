@@ -330,7 +330,7 @@ private:
 
 	bool canVisit() const;
 	Common::String getSaveFileName(bool visit, uint saveNum) const;
-	void getSavesList(bool visit, Common::Array<Common::String> &saveNames);
+	void getSavesList(bool visit, Common::Array<Common::String> &saveNames, int &nextSaveNum);
 	void saveGame(bool visit, uint saveNum, const Common::String &saveName);
 	bool loadGame(bool visit, uint saveNum);
 

@@ -590,6 +590,8 @@ uint CryOmni3DEngine_Versailles::displayYesNoBox(Graphics::ManagedSurface &surfa
 
 uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFrame,
         bool saveMode, Common::String &saveName) {
+	bool autoName = (_messages.size() >= 148);
+
 	Graphics::ManagedSurface surface(bgFrame->w, bgFrame->h, bgFrame->format);
 	surface.blitFrom(*bgFrame);
 
@@ -609,7 +611,8 @@ uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFr
 	g_system->updateScreen();
 
 	Common::Array<Common::String> savesList;
-	getSavesList(_isVisiting, savesList);
+	int nextSaveNum;
+	getSavesList(_isVisiting, savesList, nextSaveNum);
 	Common::String saveNameBackup;
 
 	showMouse(true);
@@ -750,15 +753,27 @@ uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFr
 					boxSelected = boxHovered;
 					// Backup new one
 					saveNameBackup = savesList[boxSelected + fileListOffset];
-					// Not an existing save clear free name
-					if (!existingSave) {
-						savesList[boxSelected + fileListOffset] = "";
+					if (saveMode) {
+						if (!existingSave) {
+							// Not an existing save clear free name
+							savesList[boxSelected + fileListOffset] = "";
+						}
+						if (autoName) {
+							// Apply autoname to text
+							if (_currentLevel < 8) {
+								savesList[boxSelected + fileListOffset] = Common::String::format(_messages[146].c_str(),
+								        _currentLevel);
+							} else {
+								savesList[boxSelected + fileListOffset] = _messages[147];
+							}
+							savesList[boxSelected + fileListOffset] += Common::String::format(" - %d", nextSaveNum);
+						}
 					}
 					redraw = true;
 				}
 			}
 		}
-		if (boxSelected != uint(-1) && saveMode) {
+		if (boxSelected != uint(-1) && saveMode && !autoName) {
 			if (key.keycode != Common::KEYCODE_INVALID) {
 				// Reference means we edit in place
 				Common::String &selectedSaveName = savesList[boxSelected + fileListOffset];
@@ -837,7 +852,11 @@ uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFr
 		}
 	}
 	if (boxSelected != uint(-1)) {
-		saveName = savesList[boxSelected + fileListOffset];
+		if (autoName) {
+			saveName = Common::String::format("AUTO%04d", nextSaveNum);
+		} else {
+			saveName = savesList[boxSelected + fileListOffset];
+		}
 		ConfMan.setInt(_isVisiting ? "visits_list_off" : "saves_list_off", fileListOffset);
 		return boxSelected + fileListOffset + 1;
 	} else {
