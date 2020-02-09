@@ -131,11 +131,6 @@ void AgiEngine::processScummVMEvents() {
 			}
 			break;
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_SHIFT) && event.kbd.keycode == Common::KEYCODE_d) {
-				_console->attach();
-				break;
-			}
-
 			key = event.kbd.ascii;
 			if (event.kbd.keycode >= Common::KEYCODE_KP0 && event.kbd.keycode <= Common::KEYCODE_KP9) {
 				if (!(event.kbd.flags & Common::KBD_NUM)) {

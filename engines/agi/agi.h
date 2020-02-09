@@ -905,9 +905,6 @@ public:
 
 	void wait(uint32 msec, bool busy = false);
 
-	Console *_console;
-	GUI::Debugger *getDebugger() override { return _console; }
-
 	int agiInit();
 	int agiDeinit();
 	int agiDetectGame();
