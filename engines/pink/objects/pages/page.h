@@ -36,10 +36,10 @@ class Sequencer;
 
 class Page : public NamedObject {
 public:
-	~Page();
-	virtual void toConsole();
+	~Page() override;
+	void toConsole() override;
 
-	void load(Archive &archive);
+	void load(Archive &archive) override;
 	void init();
 	void initPalette();
 

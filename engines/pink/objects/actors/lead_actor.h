@@ -60,7 +60,7 @@ public:
 	void loadState(Archive &archive);
 	void saveState(Archive &archive);
 
-	virtual void init(bool paused) override;
+	void init(bool paused) override;
 
 	void start(bool isHandler);
 
@@ -78,7 +78,7 @@ public:
 	void onMouseOverWithItem(const Common::Point point, const Common::String &itemName, Pink::CursorMgr *cursorMgr) override;
 	void onMouseOver(const Common::Point point, CursorMgr *mgr) override;
 
-	virtual void onLeftClickMessage() override;
+	void onLeftClickMessage() override;
 	virtual void onVariableSet() {}
 	void onInventoryClosed(bool isItemClicked);
 	void onWalkEnd(const Common::String &stopName);

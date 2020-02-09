@@ -29,7 +29,7 @@ namespace Pink {
 
 class CelDecoder : public Video::FlicDecoder {
 public:
-	virtual bool loadStream(Common::SeekableReadStream *stream);
+	bool loadStream(Common::SeekableReadStream *stream) override;
 
 	uint16 getTransparentColourIndex();
 
@@ -43,7 +43,7 @@ protected:
 	class CelVideoTrack : public FlicVideoTrack {
 	public:
 		CelVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader = false);
-		virtual void readHeader() override;
+		void readHeader() override;
 
 		uint16 getTransparentColourIndex();
 

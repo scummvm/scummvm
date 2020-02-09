@@ -33,9 +33,9 @@ class InventoryMgr;
 
 class SupportingActor : public Actor {
 public:
-	virtual void deserialize(Archive &archive) override;
+	void deserialize(Archive &archive) override;
 
-	virtual void toConsole() override;
+	void toConsole() override;
 
 	bool isSupporting() override { return true; }
 

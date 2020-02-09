@@ -90,13 +90,13 @@ enum {
 class PinkEngine : public Engine {
 public:
 	PinkEngine(OSystem *system, const ADGameDescription *desc);
-	~PinkEngine();
+	~PinkEngine() override;
 
 	Common::Error run() override;
 
 	bool hasFeature(EngineFeature f) const override;
 
-	virtual Common::Error loadGameState(int slot) override;
+	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
 
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
@@ -107,7 +107,7 @@ public:
 	friend class Console;
 
 protected:
-	virtual void pauseEngineIntern(bool pause) override;
+	void pauseEngineIntern(bool pause) override;
 
 public:
 	void load(Archive &archive);

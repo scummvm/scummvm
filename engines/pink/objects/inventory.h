@@ -31,9 +31,9 @@ namespace Pink {
 
 class InventoryItem : public NamedObject {
 public:
-	virtual void deserialize(Archive &archive);
+	void deserialize(Archive &archive) override;
 
-	virtual void toConsole();
+	void toConsole() override;
 
 	const Common::String &getCurrentOwner() { return _currentOwner; }
 
@@ -49,9 +49,9 @@ class Actor;
 class InventoryMgr : public Object {
 public:
 	InventoryMgr();
-	virtual ~InventoryMgr();
-	virtual void deserialize(Archive &archive);
-	virtual void toConsole();
+	~InventoryMgr() override;
+	void deserialize(Archive &archive) override;
+	void toConsole() override;
 
 	void loadState(Archive &archive);
 	void saveState(Archive &archive);

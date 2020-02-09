@@ -32,15 +32,15 @@ class Actor;
 
 class SideEffect : public Object {
 public:
-	virtual void deserialize(Archive &archive) = 0;
+	void deserialize(Archive &archive) override = 0;
 	virtual void execute(Actor *actor) = 0;
 };
 
 class SideEffectExit : public SideEffect {
 public:
-	virtual void deserialize(Archive &archive);
-	virtual void toConsole();
-	virtual void execute(Actor *actor);
+	void deserialize(Archive &archive) override;
+	void toConsole() override;
+	void execute(Actor *actor) override;
 
 private:
 	Common::String _nextModule;
@@ -49,9 +49,9 @@ private:
 
 class SideEffectLocation : public SideEffect {
 public:
-	virtual void deserialize(Archive &archive);
-	virtual void execute(Actor *actor);
-	virtual void toConsole();
+	void deserialize(Archive &archive) override;
+	void execute(Actor *actor) override;
+	void toConsole() override;
 
 private:
 	Common::String _location;
@@ -59,9 +59,9 @@ private:
 
 class SideEffectInventoryItemOwner : public SideEffect {
 public:
-	virtual void deserialize(Archive &archive);
-	virtual void execute(Actor *actor);
-	virtual void toConsole();
+	void deserialize(Archive &archive) override;
+	void execute(Actor *actor) override;
+	void toConsole() override;
 
 private:
 	Common::String _item;
@@ -70,8 +70,8 @@ private:
 
 class SideEffectVariable : public SideEffect {
 public:
-	virtual void deserialize(Archive &archive);
-	virtual void execute(Actor *actor) = 0;
+	void deserialize(Archive &archive) override;
+	void execute(Actor *actor) override = 0;
 
 protected:
 	Common::String _name;
@@ -80,27 +80,27 @@ protected:
 
 class SideEffectGameVariable : public SideEffectVariable {
 public:
-	virtual void toConsole();
-	virtual void execute(Actor *actor);
+	void toConsole() override;
+	void execute(Actor *actor) override;
 };
 
 class SideEffectModuleVariable : public SideEffectVariable {
 public:
-	virtual void toConsole();
-	virtual void execute(Actor *actor);
+	void toConsole() override;
+	void execute(Actor *actor) override;
 };
 
 class SideEffectPageVariable : public SideEffectVariable {
 public:
-	virtual void toConsole();
-	virtual void execute(Actor *actor);
+	void toConsole() override;
+	void execute(Actor *actor) override;
 };
 
 class SideEffectRandomPageVariable : public SideEffect {
 public:
-	virtual void deserialize(Archive &archive);
-	virtual void toConsole();
-	virtual void execute(Actor *actor);
+	void deserialize(Archive &archive) override;
+	void toConsole() override;
+	void execute(Actor *actor) override;
 
 private:
 	Common::String _name;

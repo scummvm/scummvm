@@ -44,12 +44,12 @@ class GamePage;
 class Module : public NamedObject {
 public:
 	Module(PinkEngine *game, const Common::String &name);
-	~Module();
+	~Module() override;
 
 	void loadState(Archive &archive);
 	void saveState(Archive &archive);
 
-	void load(Archive &archive);
+	void load(Archive &archive) override;
 	void init(bool isLoadingSave, const Common::String &pageName);
 	void changePage(const Common::String &pageName);
 
