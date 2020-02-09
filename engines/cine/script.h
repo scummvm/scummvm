@@ -344,16 +344,16 @@ public:
  */
 class OSScriptInfo : public FWScriptInfo {
 protected:
-	OpFunc opcodeHandler(byte opcode) const override override;
+	OpFunc opcodeHandler(byte opcode) const override;
 
 public:
-	~OSScriptInfo() override override {}
+	~OSScriptInfo() override {}
 
-	const char *opcodeInfo(byte opcode) const override override;
-	FWScript *create(const RawScript &script, int16 index) const override override;
-	FWScript *create(const RawObjectScript &script, int16 index) const override override;
-	FWScript *create(const RawScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const override override;
-	FWScript *create(const RawObjectScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const override override;
+	const char *opcodeInfo(byte opcode) const override;
+	FWScript *create(const RawScript &script, int16 index) const override;
+	FWScript *create(const RawObjectScript &script, int16 index) const override;
+	FWScript *create(const RawScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const override;
+	FWScript *create(const RawObjectScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const override;
 
 	friend class FWScript;
 };
