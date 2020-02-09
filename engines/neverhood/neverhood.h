@@ -89,8 +89,6 @@ public:
 	ResourceMan *_res;
 	GameModule *_gameModule;
 	StaticData *_staticData;
-	Console *_console;
-	GUI::Debugger *getDebugger() override { return _console; }
 
 	SoundMan *_soundMan;
 	AudioResourceMan *_audioResourceMan;
