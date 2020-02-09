@@ -72,14 +72,6 @@ bool Keyboard::getKey(Common::Event &event) {
 	case Common::KEYCODE_F7:
 		_vm->loadGameDialog();
 		return false;
-	case Common::KEYCODE_d:
-		if (event.kbd.flags & Common::KBD_CTRL) {
-		// Start the debugger
-			_vm->getDebugger()->attach();
-			_vm->getDebugger()->onFrame();
-			return false;
-		}
-		break;
 	case Common::KEYCODE_x:
 		if (event.kbd.flags & Common::KBD_ALT) {
 			_vm->quit();
