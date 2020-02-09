@@ -125,7 +125,7 @@ public:
 	//
 
 	// Set the Origin of the Surface
-	virtual void SetOrigin(int32 x, int32 y);
+	virtual void SetOrigin(int32 x, int32 y) override;
 
 	// Set the Origin of the Surface
 	virtual void GetOrigin(int32 &x, int32 &y) const override;
@@ -137,7 +137,7 @@ public:
 	virtual void GetClippingRect(Rect &) const override;
 
 	// Set Clipping Rectangle
-	virtual void SetClippingRect(const Rect &);
+	virtual void SetClippingRect(const Rect &) override;
 
 	// Check Clipped. -1 if off screen, 0 if not clipped, 1 if clipped
 	virtual int16 CheckClipped(const Rect &) const override;
@@ -164,7 +164,7 @@ public:
 	// Get The Surface Palette
 	// TODO: virtual void GetPalette(uint8 palette[768]);
 
-	virtual void CreateNativePalette(Palette *palette);
+	virtual void CreateNativePalette(Palette *palette) override;
 
 	Graphics::ManagedSurface *getRawSurface() const override {
 		return sdl_surf;
