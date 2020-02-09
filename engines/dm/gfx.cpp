@@ -1143,7 +1143,7 @@ void DisplayMan::updateScreen() {
 	for (uint32 i = 320 * 30; i < 320 * 170; ++i)
 		_bitmapScreen[i] += 16;
 	g_system->copyRectToScreen(_bitmapScreen, _screenWidth, 0, 0, _screenWidth, _screenHeight);
-	_vm->_console->onFrame();
+
 	g_system->updateScreen();
 	for (uint32 i = 320 * 30; i < 320 * 170; ++i)
 		_bitmapScreen[i] -= 16;
