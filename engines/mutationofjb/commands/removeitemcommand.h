@@ -32,15 +32,15 @@ class RemoveItemCommandParser : public SeqCommandParser {
 public:
 	RemoveItemCommandParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class RemoveItemCommand : public SeqCommand {
 public:
 	RemoveItemCommand(const Common::String &item) : _item(item) {}
 
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const override;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 private:
 	Common::String _item;
 };

@@ -230,8 +230,8 @@ void GameScreen::refreshAfterSceneChanged() {
 class InventoryAnimationDecoderCallback : public AnimationDecoderCallback {
 public:
 	InventoryAnimationDecoderCallback(GameScreen &gui) : _gui(gui) {}
-	virtual void onFrame(int frameNo, Graphics::Surface &surface) override;
-	virtual void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
+	void onFrame(int frameNo, Graphics::Surface &surface) override;
+	void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
 private:
 	GameScreen &_gui;
 };
@@ -257,8 +257,8 @@ bool GameScreen::loadInventoryGfx() {
 class HudAnimationDecoderCallback : public AnimationDecoderCallback {
 public:
 	HudAnimationDecoderCallback(GameScreen &gui) : _gui(gui) {}
-	virtual void onFrame(int frameNo, Graphics::Surface &surface) override;
-	virtual void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
+	void onFrame(int frameNo, Graphics::Surface &surface) override;
+	void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
 private:
 	GameScreen &_gui;
 };

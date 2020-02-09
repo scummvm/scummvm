@@ -34,8 +34,8 @@ class SequentialTask : public Task {
 public:
 	SequentialTask(const TaskPtrs &tasks);
 
-	virtual void start() override;
-	virtual void update() override;
+	void start() override;
+	void update() override;
 
 private:
 	void runTasks();

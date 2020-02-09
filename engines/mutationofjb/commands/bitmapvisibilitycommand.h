@@ -32,7 +32,7 @@ class BitmapVisibilityCommandParser : public SeqCommandParser {
 public:
 	BitmapVisibilityCommandParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class BitmapVisibilityCommand : public SeqCommand {
@@ -40,8 +40,8 @@ public:
 	BitmapVisibilityCommand(uint8 sceneId, uint8 bitmapId, bool visible) : _sceneId(sceneId), _bitmapId(bitmapId), _visible(visible) {}
 	const Common::String &getName() const;
 
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const override;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 private:
 	uint8 _sceneId;
 	uint8 _bitmapId;

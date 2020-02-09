@@ -60,7 +60,7 @@ public:
 
 	void setObserver(InventoryObserver *observer);
 
-	virtual void saveLoadWithSerializer(Common::Serializer &sz) override;
+	void saveLoadWithSerializer(Common::Serializer &sz) override;
 
 private:
 	void rotateItemsRight(uint n);

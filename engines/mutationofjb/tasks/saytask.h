@@ -36,9 +36,9 @@ class SayTask : public Task {
 public:
 	SayTask(const Common::String &toSay, uint8 color);
 
-	virtual void start() override;
-	virtual void update() override;
-	virtual void stop() override;
+	void start() override;
+	void update() override;
+	void stop() override;
 
 private:
 	void drawSubtitle(const Common::String &text, int16 talkX, int16 talkY, uint8 color);

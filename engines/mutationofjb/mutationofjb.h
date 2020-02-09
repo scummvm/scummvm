@@ -58,18 +58,18 @@ public:
 	};
 
 	MutationOfJBEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~MutationOfJBEngine();
+	~MutationOfJBEngine() override;
 
-	virtual Common::Error run() override;
+	Common::Error run() override;
 	Graphics::Screen *getScreen() const;
 	Game &getGame();
 	void setCursorState(CursorState cursorState);
 
-	virtual bool hasFeature(EngineFeature f) const override;
-	virtual bool canLoadGameStateCurrently() override;
-	virtual Common::Error loadGameState(int slot) override;
-	virtual bool canSaveGameStateCurrently() override;
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool hasFeature(EngineFeature f) const override;
+	bool canLoadGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	const ADGameDescription *getGameDescription() const;
 

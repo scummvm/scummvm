@@ -32,7 +32,7 @@ class LabelCommandParser : public SeqCommandParser {
 public:
 	LabelCommandParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class LabelCommand : public SeqCommand {
@@ -40,8 +40,8 @@ public:
 	LabelCommand(const Common::String &name) : _name(name) {}
 	const Common::String &getName() const;
 
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const override;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 private:
 	Common::String _name;
 };

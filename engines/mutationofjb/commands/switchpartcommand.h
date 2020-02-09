@@ -32,14 +32,14 @@ class ConversationTask;
 
 class SwitchPartCommandParser : public SeqCommandParser {
 public:
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class SwitchPartCommand : public SeqCommand {
 public:
 	SwitchPartCommand() {}
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const override;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 };
 
 }

@@ -59,19 +59,19 @@ public:
 	friend class HudAnimationDecoderCallback;
 
 	GameScreen(Game &game, Graphics::Screen *screen);
-	~GameScreen();
+	~GameScreen() override;
 
 	bool init();
 
-	virtual void handleEvent(const Common::Event &event) override;
+	void handleEvent(const Common::Event &event) override;
 
-	virtual void onInventoryChanged() override;
-	virtual void onButtonClicked(ButtonWidget *) override;
-	virtual void onInventoryItemHovered(InventoryWidget *widget, int posInWidget) override;
-	virtual void onInventoryItemClicked(InventoryWidget *widget, int posInWidget) override;
-	virtual void onGameDoorClicked(GameWidget *, Door *door) override;
-	virtual void onGameStaticClicked(GameWidget *, Static *stat) override;
-	virtual void onGameEntityHovered(GameWidget *, const Common::String &entity) override;
+	void onInventoryChanged() override;
+	void onButtonClicked(ButtonWidget *) override;
+	void onInventoryItemHovered(InventoryWidget *widget, int posInWidget) override;
+	void onInventoryItemClicked(InventoryWidget *widget, int posInWidget) override;
+	void onGameDoorClicked(GameWidget *, Door *door) override;
+	void onGameStaticClicked(GameWidget *, Static *stat) override;
+	void onGameEntityHovered(GameWidget *, const Common::String &entity) override;
 
 	ConversationWidget &getConversationWidget();
 

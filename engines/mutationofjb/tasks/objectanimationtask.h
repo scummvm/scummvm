@@ -35,8 +35,8 @@ class ObjectAnimationTask : public Task {
 public:
 	ObjectAnimationTask();
 
-	virtual void start() override;
-	virtual void update() override;
+	void start() override;
+	void update() override;
 
 	/**
 	 * Advances every object animation in the current scene to the next frame.

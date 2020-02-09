@@ -34,12 +34,12 @@ class ScriptExecutionContext;
 class ConversationTask : public Task, public ConversationWidgetCallback {
 public:
 	ConversationTask(uint8 sceneId, const ConversationInfo &convInfo, TalkCommand::Mode mode) : _sceneId(sceneId), _convInfo(convInfo), _mode(mode), _currentGroupIndex(0), _currentItem(nullptr), _substate(IDLE), _haveChoices(false), _innerExecCtx(nullptr) {}
-	virtual ~ConversationTask() {}
+	~ConversationTask() override {}
 
-	virtual void start() override;
-	virtual void update() override;
+	void start() override;
+	void update() override;
 
-	virtual void onChoiceClicked(ConversationWidget *, int response, uint32 data) override;
+	void onChoiceClicked(ConversationWidget *, int response, uint32 data) override;
 private:
 	void showChoicesOrPick();
 	const ConversationInfo::ItemGroup &getCurrentGroup() const;

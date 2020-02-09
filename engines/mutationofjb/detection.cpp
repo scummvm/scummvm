@@ -96,22 +96,22 @@ public:
 		return "mutationofjb";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Mutation of J.B.";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Mutation of J.B. (C) 1996 RIKI Computer Games";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc) {
 			*engine = new MutationOfJB::MutationOfJBEngine(syst, desc);
 		}
 		return desc != nullptr;
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override {
+	bool hasFeature(MetaEngineFeature f) const override {
 		if (f == kSupportsListSaves || f == kSimpleSavesNames || f == kSupportsLoadingDuringStartup) {
 			return true;
 		}
@@ -119,11 +119,11 @@ public:
 		return false;
 	}
 
-	virtual int getMaximumSaveSlot() const override {
+	int getMaximumSaveSlot() const override {
 		return 999;
 	}
 
-	virtual SaveStateList listSaves(const char *target) const override {
+	SaveStateList listSaves(const char *target) const override {
 		Common::SaveFileManager *const saveFileMan = g_system->getSavefileManager();
 		Common::StringArray filenames;
 		Common::String pattern = target;

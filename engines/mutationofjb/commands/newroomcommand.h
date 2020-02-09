@@ -33,15 +33,15 @@ class NewRoomCommandParser : public SeqCommandParser {
 public:
 	NewRoomCommandParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class NewRoomCommand : public SeqCommand {
 public:
 	NewRoomCommand(uint8 sceneId, uint16 x, uint16 y, uint8 frame);
 
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Common::String debugString() const override;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Common::String debugString() const override;
 private:
 	uint8 _sceneId;
 	uint16 _x;

@@ -33,15 +33,15 @@ class RandomCommandParser : public CommandParser {
 public:
 	RandomCommandParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class RandomBlockStartParser : public CommandParser {
 public:
 	RandomBlockStartParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
-	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
+	bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
 };
 
 class RandomCommand : public Command {
@@ -52,10 +52,10 @@ public:
 
 	RandomCommand(uint numChoices);
 
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
-	virtual Command *next() const override;
+	ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Command *next() const override;
 
-	virtual Common::String debugString() const override;
+	Common::String debugString() const override;
 
 	const Choices &getChoices() const;
 
