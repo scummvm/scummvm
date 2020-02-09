@@ -36,7 +36,7 @@ private:
 
 public:
 	Debugger(CryoEngine *vm);
-	virtual ~Debugger() {}
+	~Debugger() override {}
 
 protected:
 	bool Cmd_ShowHotspots(int argc, const char **argv);
