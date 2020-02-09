@@ -150,18 +150,12 @@ void EventsManager::checkForNextFrameCounter() {
 		if ((_gameCounter % GAME_FRAME_RATE) == 0)
 			mainVoyeurIntFunc();
 
-		// Give time to the debugger
-		_vm->_debugger->onFrame();
-
 		// If mouse position display is on, display the position
 		if (_vm->_debugger->_showMousePosition)
 			showMousePosition();
 
 		// Display the frame
 		_vm->_screen->update();
-
-		// Signal the ScummVM debugger
-		_vm->_debugger->onFrame();
 	}
 }
 
@@ -254,12 +248,6 @@ void EventsManager::pollEvents() {
 			return;
 
 		case Common::EVENT_KEYDOWN:
-			// Check for debugger
-			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
-				// Attach to the debugger
-				_vm->_debugger->attach();
-				_vm->_debugger->onFrame();
-			}
 			return;
 		case Common::EVENT_LBUTTONDOWN:
 			_newLeftClick = true;
