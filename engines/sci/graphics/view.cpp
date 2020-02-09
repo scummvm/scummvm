@@ -261,7 +261,6 @@ void GfxView::initData(GuiResourceId resourceId) {
 			_isScaleable = false;
 			break;
 		case 0x40:
-		case 0x4F:	// LSL6 Polish, seems to be garbage - bug #6718
 		case 0:
 			break; // don't do anything, we already have _isScaleable set
 		default:
