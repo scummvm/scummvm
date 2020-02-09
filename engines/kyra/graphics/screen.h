@@ -130,14 +130,14 @@ public:
 class DOSFont : public Font {
 public:
 	DOSFont();
-	~DOSFont() { unload(); }
+	~DOSFont() override { unload(); }
 
-	bool load(Common::SeekableReadStream &file);
-	int getHeight() const { return _height; }
-	int getWidth() const { return _width; }
-	int getCharWidth(uint16 c) const;
-	void setColorMap(const uint8 *src) { _colorMap = src; }
-	void drawChar(uint16 c, byte *dst, int pitch, int) const;
+	bool load(Common::SeekableReadStream &file) override;
+	int getHeight() const override { return _height; }
+	int getWidth() const override { return _width; }
+	int getCharWidth(uint16 c) const override;
+	void setColorMap(const uint8 *src) override { _colorMap = src; }
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 private:
 	void unload();
@@ -161,14 +161,14 @@ private:
 class AMIGAFont : public Font {
 public:
 	AMIGAFont();
-	~AMIGAFont() { unload(); }
+	~AMIGAFont() override { unload(); }
 
-	bool load(Common::SeekableReadStream &file);
-	int getHeight() const { return _height; }
-	int getWidth() const { return _width; }
-	int getCharWidth(uint16 c) const;
-	void setColorMap(const uint8 *src) {}
-	void drawChar(uint16 c, byte *dst, int pitch, int) const;
+	bool load(Common::SeekableReadStream &file) override;
+	int getHeight() const override { return _height; }
+	int getWidth() const override { return _width; }
+	int getCharWidth(uint16 c) const override;
+	void setColorMap(const uint8 *src) override {}
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 private:
 	void unload();
@@ -193,17 +193,17 @@ private:
 class SJISFont : public Font {
 public:
 	SJISFont(Common::SharedPtr<Graphics::FontSJIS> &font, const uint8 invisColor, bool is16Color, bool drawOutline, int extraSpacing);
-	virtual ~SJISFont() {}
+	~SJISFont() override {}
 
-	virtual bool usesOverlay() const { return true; }
+	bool usesOverlay() const override { return true; }
 
-	bool load(Common::SeekableReadStream &) { return true; }
-	int getHeight() const;
-	int getWidth() const;
-	virtual int getCharWidth(uint16 c) const;
-	void setColorMap(const uint8 *src);
-	void setStyle(FontStyle style) { _style = style; }
-	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;
+	bool load(Common::SeekableReadStream &) override { return true; }
+	int getHeight() const override;
+	int getWidth() const override;
+	int getCharWidth(uint16 c) const override;
+	void setColorMap(const uint8 *src) override;
+	void setStyle(FontStyle style) override { _style = style; }
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 protected:
 	const uint8 *_colorMap;

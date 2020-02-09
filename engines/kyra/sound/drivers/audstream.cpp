@@ -35,17 +35,17 @@ namespace Kyra {
 class AUDStream : public Audio::SeekableAudioStream {
 public:
 	AUDStream(Common::SeekableReadStream* stream);
-	~AUDStream();
+	~AUDStream() override;
 
-	int readBuffer(int16* buffer, const int numSamples);
+	int readBuffer(int16* buffer, const int numSamples) override;
 
-	bool isStereo() const { return false; }
-	bool endOfData() const { return _endOfData; }
+	bool isStereo() const override { return false; }
+	bool endOfData() const override { return _endOfData; }
 
-	int getRate() const { return _rate; }
+	int getRate() const override { return _rate; }
 
-	bool seek(const Audio::Timestamp& where);
-	Audio::Timestamp getLength() const { return _length; }
+	bool seek(const Audio::Timestamp& where) override;
+	Audio::Timestamp getLength() const override { return _length; }
 private:
 	Common::SeekableReadStream* _stream;
 	uint32 _streamStart;

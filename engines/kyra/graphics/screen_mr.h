@@ -32,15 +32,15 @@ class KyraEngine_MR;
 class Screen_MR : public Screen_v2 {
 public:
 	Screen_MR(KyraEngine_MR *vm, OSystem *system);
-	~Screen_MR();
+	~Screen_MR() override;
 
-	int getLayer(int x, int y);
+	int getLayer(int x, int y) override;
 
-	byte getShapeFlag1(int x, int y);
-	byte getShapeFlag2(int x, int y);
+	byte getShapeFlag1(int x, int y) override;
+	byte getShapeFlag2(int x, int y) override;
 
-	int getDrawLayer(int x, int y);
-	int getDrawLayer2(int x, int y, int height);
+	int getDrawLayer(int x, int y) override;
+	int getDrawLayer2(int x, int y, int height) override;
 
 	void drawFilledBox(int x1, int y1, int x2, int y2, uint8 c1, uint8 c2, uint8 c3);
 private:

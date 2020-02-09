@@ -105,13 +105,13 @@ public:
 
 	virtual void initStaticData() = 0;
 
-	Button *addButtonToList(Button *list, Button *newButton);
+	Button *addButtonToList(Button *list, Button *newButton) override;
 
-	void processButton(Button *button);
-	int processButtonList(Button *button, uint16 inputFlag, int8 mouseWheel);
+	void processButton(Button *button) override;
+	int processButtonList(Button *button, uint16 inputFlag, int8 mouseWheel) override;
 
 protected:
-	void updateButton(Button *button);
+	void updateButton(Button *button) override;
 
 	KyraEngine_v2 *_vm;
 	Screen_v2 *_screen;
@@ -138,17 +138,17 @@ protected:
 	Button _scrollDownButton;
 	Menu _mainMenu, _gameOptions, _audioOptions, _choiceMenu, _loadMenu, _saveMenu, _savenameMenu, _deathMenu;
 
-	Button *getButtonListData() { return _menuButtons; }
+	Button *getButtonListData() override { return _menuButtons; }
 
-	Button *getScrollUpButton() { return &_scrollUpButton; }
-	Button *getScrollDownButton() { return &_scrollDownButton; }
+	Button *getScrollUpButton() override { return &_scrollUpButton; }
+	Button *getScrollDownButton() override { return &_scrollDownButton; }
 
 	int scrollUpButton(Button *button);
 	int scrollDownButton(Button *button);
 	Button::Callback _scrollUpFunctor;
 	Button::Callback _scrollDownFunctor;
-	Button::Callback getScrollUpButtonHandler() const { return _scrollUpFunctor; }
-	Button::Callback getScrollDownButtonHandler() const { return _scrollDownFunctor; }
+	Button::Callback getScrollUpButtonHandler() const override { return _scrollUpFunctor; }
+	Button::Callback getScrollDownButtonHandler() const override { return _scrollDownFunctor; }
 
 	Button _sliderButtons[3][4];
 

@@ -35,29 +35,29 @@ friend class KyraEngine_MR;
 public:
 	GUI_MR(KyraEngine_MR *engine);
 
-	void initStaticData();
+	void initStaticData() override;
 
 	void flagButtonEnable(Button *button);
 	void flagButtonDisable(Button *button);
 
-	int redrawShadedButtonCallback(Button *button);
-	int redrawButtonCallback(Button *button);
+	int redrawShadedButtonCallback(Button *button) override;
+	int redrawButtonCallback(Button *button) override;
 
 	int optionsButton(Button *button);
 
-	void createScreenThumbnail(Graphics::Surface &dst);
+	void createScreenThumbnail(Graphics::Surface &dst) override;
 private:
-	const char *getMenuTitle(const Menu &menu);
-	const char *getMenuItemTitle(const MenuItem &menuItem);
-	const char *getMenuItemLabel(const MenuItem &menuItem);
-	char *getTableString(int id);
+	const char *getMenuTitle(const Menu &menu) override;
+	const char *getMenuItemTitle(const MenuItem &menuItem) override;
+	const char *getMenuItemLabel(const MenuItem &menuItem) override;
+	char *getTableString(int id) override;
 
-	uint8 textFieldColor1() const { return 0xFF; }
-	uint8 textFieldColor2() const { return 0xCF; }
-	uint8 textFieldColor3() const { return 0xBA; }
+	uint8 textFieldColor1() const override { return 0xFF; }
+	uint8 textFieldColor2() const override { return 0xCF; }
+	uint8 textFieldColor3() const override { return 0xBA; }
 
-	uint8 defaultColor1() const { return 0xF0; }
-	uint8 defaultColor2() const { return 0xD0; }
+	uint8 defaultColor1() const override { return 0xF0; }
+	uint8 defaultColor2() const override { return 0xD0; }
 
 	void resetState(int item);
 
@@ -66,11 +66,11 @@ private:
 	int loadSecondChance(Button *button);
 
 	int gameOptions(Button *button);
-	void setupOptionsButtons();
+	void setupOptionsButtons() override;
 
 	int audioOptions(Button *button);
 
-	int sliderHandler(Button *caller);
+	int sliderHandler(Button *caller) override;
 	void drawSliderBar(int slider, const uint8 *shape);
 
 	int changeLanguage(Button *caller);

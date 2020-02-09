@@ -33,32 +33,32 @@ class EoBCoreEngine;
 class Screen_EoB : public Screen {
 public:
 	Screen_EoB(EoBCoreEngine *vm, OSystem *system);
-	virtual ~Screen_EoB();
+	~Screen_EoB() override;
 
-	bool init();
+	bool init() override;
 
 	void setClearScreenDim(int dim);
 	void clearCurDim();
 	void clearCurDimOvl(int pageNum);
 
-	void setMouseCursor(int x, int y, const byte *shape);
+	void setMouseCursor(int x, int y, const byte *shape) override;
 	void setMouseCursor(int x, int y, const byte *shape, const uint8 *ovl);
 
 	void loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size);
 
 	void printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol);
 
-	virtual void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip = false);
+	void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip = false) override;
 	void loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage);
 	void loadShapeSetBitmap(const char *file, int tempPage, int destPage);
 
 	void convertPage(int srcPage, int dstPage, const uint8 *cgaMapping);
 
-	void setScreenPalette(const Palette &pal);
-	void getRealPalette(int num, uint8 *dst);
+	void setScreenPalette(const Palette &pal) override;
+	void getRealPalette(int num, uint8 *dst) override;
 
 	uint8 *encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool encode8bit = false, const uint8 *cgaMapping = 0);
-	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd = -1, int flags = 0, ...);
+	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd = -1, int flags = 0, ...) override;
 	const uint8 *scaleShape(const uint8 *shapeData, int blockDistance);
 	const uint8 *scaleShapeStep(const uint8 *shp);
 	const uint8 *generateShapeOverlay(const uint8 *shp, const uint8 *fadingTable);
@@ -74,8 +74,8 @@ public:
 	void fadeTextColor(Palette *pal, int color, int rate);
 	bool delayedFadePalStep(Palette *fadePal, Palette *destPal, int rate);
 
-	void setTextColorMap(const uint8 *cmap) {}
-	int getRectSize(int w, int h);
+	void setTextColorMap(const uint8 *cmap) override {}
+	int getRectSize(int w, int h) override;
 
 	void setFadeTable(const uint8 *table);
 	void createFadeTable(const uint8 *palData, uint8 *dst, uint8 rootColor, uint8 weight);
@@ -84,7 +84,7 @@ public:
 	const uint16 *getCGADitheringTable(int index);
 	const uint8 *getEGADitheringTable();
 
-	bool loadFont(FontId fontId, const char *filename);
+	bool loadFont(FontId fontId, const char *filename) override;
 
 	// FM-Towns specific
 	void decodeSHP(const uint8 *data, int dstPage);
@@ -115,7 +115,7 @@ public:
 	void setDualPalettes(Palette &top, Palette &bottom);
 
 private:
-	void updateDirtyRects();
+	void updateDirtyRects() override;
 	void ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW, int srcH, int colorKey = -1);
 
 	void drawShapeSetPixel(uint8 *dst, uint8 col);
@@ -170,16 +170,16 @@ private:
 class OldDOSFont : public Font {
 public:
 	OldDOSFont(Common::RenderMode mode, uint8 shadowColor);
-	virtual ~OldDOSFont();
+	~OldDOSFont() override;
 
-	virtual bool load(Common::SeekableReadStream &file);
-	int getHeight() const { return _height; }
-	int getWidth() const { return _width; }
-	int getCharWidth(uint16 c) const;
-	void setColorMap(const uint8 *src);
-	void set16bitColorMap(const uint16 *src) { _colorMap16bit = src; }
-	virtual void setStyle(FontStyle style) { _style = style; }
-	void drawChar(uint16 c, byte *dst, int pitch, int bpp) const;
+	bool load(Common::SeekableReadStream &file) override;
+	int getHeight() const override { return _height; }
+	int getWidth() const override { return _width; }
+	int getCharWidth(uint16 c) const override;
+	void setColorMap(const uint8 *src) override;
+	void set16bitColorMap(const uint16 *src) override { _colorMap16bit = src; }
+	void setStyle(FontStyle style) override { _style = style; }
+	void drawChar(uint16 c, byte *dst, int pitch, int bpp) const override;
 
 protected:
 	void unload();
@@ -209,14 +209,14 @@ class Resource;
 class AmigaDOSFont : public Font {
 public:
 	AmigaDOSFont(Resource *res, bool needsLocalizedFont = false);
-	~AmigaDOSFont() { unload(); }
+	~AmigaDOSFont() override { unload(); }
 
-	bool load(Common::SeekableReadStream &file);
-	int getHeight() const { return _height; }
-	int getWidth() const { return _width; }
-	int getCharWidth(uint16 c) const;
-	void setColorMap(const uint8 *src) { _colorMap = src; }
-	void drawChar(uint16 c, byte *dst, int pitch, int) const;
+	bool load(Common::SeekableReadStream &file) override;
+	int getHeight() const override { return _height; }
+	int getWidth() const override { return _width; }
+	int getCharWidth(uint16 c) const override;
+	void setColorMap(const uint8 *src) override { _colorMap = src; }
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 	static void errorDialog(int index);
 
@@ -279,9 +279,9 @@ private:
 class SJISFontEoB1PC98 : public SJISFont {
 public:
 	SJISFontEoB1PC98(Common::SharedPtr<Graphics::FontSJIS> &font, /*uint8 shadowColor,*/ const uint16 *convTable1, const uint16 *convTable2);
-	virtual ~SJISFontEoB1PC98() {}
-	virtual int getCharWidth(uint16 c) const;
-	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;
+	~SJISFontEoB1PC98() override {}
+	int getCharWidth(uint16 c) const override;
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 private:
 	uint16 convert(uint16 c) const;
@@ -297,15 +297,15 @@ private:
 class Font12x12PC98 : public OldDOSFont{
 public:
 	Font12x12PC98(uint8 shadowColor, const uint16 *convTable1, const uint16 *convTable2, const uint8 *lookupTable);
-	virtual ~Font12x12PC98();
-	bool usesOverlay() const { return true; }
-	int getHeight() const { return _height >> 1; }
-	int getWidth() const { return _width >> 1; }
-	int getCharWidth(uint16 c) const { return _width >> 1; };
-	virtual bool load(Common::SeekableReadStream &file);
+	~Font12x12PC98() override;
+	bool usesOverlay() const override { return true; }
+	int getHeight() const override { return _height >> 1; }
+	int getWidth() const override { return _width >> 1; }
+	int getCharWidth(uint16 c) const override { return _width >> 1; };
+	bool load(Common::SeekableReadStream &file) override;
 
 private:
-	virtual uint16 convert(uint16 c) const;
+	uint16 convert(uint16 c) const override;
 	const uint16 *_convTable1, *_convTable2;
 	uint16 *_bmpOffs;
 };
@@ -316,10 +316,10 @@ private:
 class SJISFontLarge : public SJISFont {
 public:
 	SJISFontLarge(Common::SharedPtr<Graphics::FontSJIS> &font);
-	virtual ~SJISFontLarge() {}
+	~SJISFontLarge() override {}
 
-	virtual bool usesOverlay() const { return false; }
-	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;
+	bool usesOverlay() const override { return false; }
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 };
 
 /**
@@ -328,15 +328,15 @@ public:
 class SJISFont12x12 : public Font {
 public:
 	SJISFont12x12(const uint16 *searchTable);
-	virtual ~SJISFont12x12() { unload(); }
+	~SJISFont12x12() override { unload(); }
 
-	virtual bool load(Common::SeekableReadStream &file);
-	virtual bool usesOverlay() const { return true; }
-	virtual int getHeight() const { return _height; }
-	virtual int getWidth() const { return _width; }
-	virtual int getCharWidth(uint16 c) const { return _width; }
-	virtual void setColorMap(const uint8 *src) { _colorMap = src; }
-	virtual void drawChar(uint16 c, byte *dst, int pitch, int) const;
+	bool load(Common::SeekableReadStream &file) override;
+	bool usesOverlay() const override { return true; }
+	int getHeight() const override { return _height; }
+	int getWidth() const override { return _width; }
+	int getCharWidth(uint16 c) const override { return _width; }
+	void setColorMap(const uint8 *src) override { _colorMap = src; }
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 private:
 	void unload();

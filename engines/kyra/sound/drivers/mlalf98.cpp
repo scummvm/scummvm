@@ -83,7 +83,7 @@ protected:
 			_msg = Common::String::format("%s Channel %d: %s() [ %s]", tpstr[chanType], chanId, dsc, args.c_str());
 			memset(_dt, 0, 7);
 		}
-		~SoundOpcode() {}
+		~SoundOpcode() override {}
 		void run(uint8 *&arg) {
 			assert(arg);
 			memcpy(_dt, arg, _dataLen);
@@ -185,10 +185,10 @@ private:
 class SoundChannelNonSSG : public SoundChannel {
 public:
 	SoundChannelNonSSG(PC98AudioCore *pc98a, int part, int regOffset, int type);
-	virtual ~SoundChannelNonSSG();
+	~SoundChannelNonSSG() override;
 
 protected:
-	virtual void parse() override;
+	void parse() override;
 	uint8 _statusB4;
 
 private:
@@ -197,8 +197,8 @@ private:
 
 	virtual void noteOn(uint8 note) = 0;
 	virtual void reduceVolume() {}
-	virtual void updateVolume() override {}
-	virtual void updateVibrato() override {}
+	void updateVolume() override {}
+	void updateVibrato() override {}
 
 	virtual void op_programChange(uint8 *&data) = 0;
 	virtual void op_setVolume(uint8 *&data) = 0;
@@ -215,18 +215,18 @@ private:
 class MusicChannelFM : public SoundChannelNonSSG {
 public:
 	MusicChannelFM(PC98AudioCore *pc98a, int part, int regOffset);
-	virtual ~MusicChannelFM();
+	~MusicChannelFM() override;
 
-	virtual void restore() override;
-	virtual void keyOff() override;
+	void restore() override;
+	void keyOff() override;
 
 private:
-	virtual void clear() override;
-	virtual void parse() override;
-	virtual void noteOn(uint8 note) override;
-	virtual void updateVolume() override;
-	virtual void reduceVolume() override;
-	virtual void updateVibrato() override;
+	void clear() override;
+	void parse() override;
+	void noteOn(uint8 note) override;
+	void updateVolume() override;
+	void reduceVolume() override;
+	void updateVibrato() override;
 
 	virtual bool usingSpecialMode() const;
 	virtual uint8 getSpecialFrequencyModifier(uint8 index);
@@ -237,13 +237,13 @@ private:
 	void sendTrmVolume(uint8 volume);
 	void keyOn();
 
-	virtual void writeDevice(uint8 reg, uint8 val) override;
+	void writeDevice(uint8 reg, uint8 val) override;
 
-	virtual void op_programChange(uint8 *&data) override;
-	virtual void op_setVolume(uint8 *&data) override;
-	virtual void op_setSpecialMode(uint8 *&data) override;
-	virtual void op_setPanPos(uint8 *&data) override;
-	virtual void op_modifyVolume(uint8 *&data) override;
+	void op_programChange(uint8 *&data) override;
+	void op_setVolume(uint8 *&data) override;
+	void op_setSpecialMode(uint8 *&data) override;
+	void op_setPanPos(uint8 *&data) override;
+	void op_modifyVolume(uint8 *&data) override;
 
 	static uint16 _frequency2;
 	static uint8 _specialModeModifier[4];
@@ -254,9 +254,9 @@ private:
 class MusicChannelSSG : public SoundChannel {
 public:
 	MusicChannelSSG(PC98AudioCore *pc98a, int part, int regOffset);
-	virtual ~MusicChannelSSG();
+	~MusicChannelSSG() override;
 
-	virtual void keyOff() override;
+	void keyOff() override;
 
 private:
 	enum EnvState {
@@ -266,17 +266,17 @@ private:
 		kUpdate = 0x80
 	};
 
-	virtual void parse() override;
+	void parse() override;
 	void noteOff();
 	void noteOn(uint8 note);
 	uint8 processEnvelope();
 	uint8 envGetAttLevel();
 	void envSendAttLevel(uint8 val);
 
-	virtual void updateVolume() override;
-	virtual void updateVibrato() override;
+	void updateVolume() override;
+	void updateVibrato() override;
 
-	virtual void clear() override;
+	void clear() override;
 
 	void op_programChange(uint8 *&data);
 	void op_setVolume(uint8 *&data);
@@ -309,18 +309,18 @@ private:
 class MusicChannelRHY : public SoundChannelNonSSG {
 public:
 	MusicChannelRHY(PC98AudioCore *pc98a, int part, int regOffset);
-	virtual ~MusicChannelRHY();
+	~MusicChannelRHY() override;
 
-	virtual void keyOff() override;
+	void keyOff() override;
 
 private:
-	virtual void noteOn(uint8 note) override;
-	virtual void updateVolume() override;
+	void noteOn(uint8 note) override;
+	void updateVolume() override;
 
-	virtual void op_programChange(uint8 *&data) override;
-	virtual void op_setVolume(uint8 *&data) override;
-	virtual void op_setPanPos(uint8 *&data) override;
-	virtual void op_modifyVolume(uint8 *&data) override;
+	void op_programChange(uint8 *&data) override;
+	void op_setVolume(uint8 *&data) override;
+	void op_setPanPos(uint8 *&data) override;
+	void op_modifyVolume(uint8 *&data) override;
 
 	uint8 _instrLevel[6];
 
@@ -330,22 +330,22 @@ private:
 class MusicChannelEXT : public SoundChannelNonSSG {
 public:
 	MusicChannelEXT(PC98AudioCore *pc98a, int part, int regOffset, MLALF98::ADPCMData *const &data);
-	virtual ~MusicChannelEXT();
+	~MusicChannelEXT() override;
 
-	virtual void keyOff() override;
+	void keyOff() override;
 
 private:
-	virtual void noteOn(uint8 note) override;
-	virtual void updateVibrato() override;
-	virtual void clear() override;
-	virtual void writeDevice(uint8 reg, uint8 val) override;
+	void noteOn(uint8 note) override;
+	void updateVibrato() override;
+	void clear() override;
+	void writeDevice(uint8 reg, uint8 val) override;
 
-	virtual void op_programChange(uint8 *&data) override;
-	virtual void op_setVolume(uint8 *&data) override;
-	virtual void op_setPanPos(uint8 *&data) override;
-	virtual void op_setTranspose(uint8 *&data) override;
+	void op_programChange(uint8 *&data) override;
+	void op_setVolume(uint8 *&data) override;
+	void op_setPanPos(uint8 *&data) override;
+	void op_setTranspose(uint8 *&data) override;
 
-	virtual void op2_setExtPara(uint8 *&data) override;
+	void op2_setExtPara(uint8 *&data) override;
 
 	uint8 _panPos;
 	uint8 _useVolPreset;
@@ -361,21 +361,21 @@ private:
 class SoundEffectChannel : public MusicChannelFM {
 public:
 	SoundEffectChannel(PC98AudioCore *pc98a, int part, int regOffset, SoundChannel *replaceChannel);
-	virtual ~SoundEffectChannel();
+	~SoundEffectChannel() override;
 
 	void setData(uint8 *dataStart, uint8 *loopStart, const uint8 *dataEnd, uint8 *instrBuffer) override;
-	virtual bool checkFinished() override;
+	bool checkFinished() override;
 
 private:
-	virtual void finish() override;
-	virtual bool usingSpecialMode() const override;
-	virtual uint8 getSpecialFrequencyModifier(uint8 index) override;
-	virtual void setSpecialFrequencyModifier(uint8 index, uint8 val) override;
-	virtual void toggleSpecialMode(bool on) override;
-	virtual void clear() override;
-	virtual void writeDevice(uint8 reg, uint8 val) override;
+	void finish() override;
+	bool usingSpecialMode() const override;
+	uint8 getSpecialFrequencyModifier(uint8 index) override;
+	void setSpecialFrequencyModifier(uint8 index, uint8 val) override;
+	void toggleSpecialMode(bool on) override;
+	void clear() override;
+	void writeDevice(uint8 reg, uint8 val) override;
 
-	virtual void op_writeDevice(uint8 *&data) override;
+	void op_writeDevice(uint8 *&data) override;
 	
 	uint8 _specialModeModifier[4];
 	bool _specialMode;
@@ -387,7 +387,7 @@ private:
 class MLALF98Internal : public PC98AudioPluginDriver {
 public:
 	MLALF98Internal(Audio::Mixer *mixer, EmuType emuType);
-	~MLALF98Internal();
+	~MLALF98Internal() override;
 
 	static MLALF98Internal *open(Audio::Mixer *mixer, EmuType emuType);
 	static void close();
@@ -407,8 +407,8 @@ public:
 	void setSoundEffectVolume(int volume);
 
 	// Plugin driver interface
-	virtual void timerCallbackA() override;
-	virtual void timerCallbackB() override;
+	void timerCallbackA() override;
+	void timerCallbackB() override;
 
 private:
 	uint8 *_musicBuffer;

@@ -31,7 +31,7 @@ namespace Kyra {
 class Screen_v2 : public Screen {
 public:
 	Screen_v2(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize);
-	~Screen_v2();
+	~Screen_v2() override;
 
 	// screen page handling
 	void checkedPageUpdate(int srcPage, int dstPage);
@@ -41,7 +41,7 @@ public:
 	void applyOverlay(int x, int y, int w, int h, int pageNum, const uint8 *overlay);
 	int findLeastDifferentColor(const uint8 *paletteEntry, const Palette &pal, uint8 firstColor, uint16 numColors, bool skipSpecialColors = false);
 
-	virtual void getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff);
+	void getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff) override;
 
 	bool timedPaletteFadeStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, uint32 totalTime);
 
@@ -57,11 +57,11 @@ public:
 	uint8 *makeShapeCopy(const uint8 *src, int index);
 
 	// rect handling
-	int getRectSize(int w, int h);
+	int getRectSize(int w, int h) override;
 	bool calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, int &x2, int &y2, int &w2);
 
 	// text display
-	void setTextColorMap(const uint8 *cmap);
+	void setTextColorMap(const uint8 *cmap) override;
 
 	// layer handling
 	virtual int getLayer(int x, int y);

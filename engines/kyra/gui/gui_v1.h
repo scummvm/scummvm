@@ -82,13 +82,13 @@ class TextDisplayer;
 class GUI_v1 : public GUI {
 public:
 	GUI_v1(KyraEngine_v1 *vm);
-	virtual ~GUI_v1() {}
+	~GUI_v1() override {}
 
 	// button specific
 	virtual Button *addButtonToList(Button *list, Button *newButton);
 
-	virtual void processButton(Button *button) = 0;
-	virtual int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel) = 0;
+	void processButton(Button *button) override = 0;
+	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel) override = 0;
 
 	virtual int redrawShadedButtonCallback(Button *button);
 	virtual int redrawButtonCallback(Button *button);
@@ -100,7 +100,7 @@ public:
 	void processHighlights(Menu &menu);
 
 	// utilities for thumbnail creation
-	virtual void createScreenThumbnail(Graphics::Surface &dst) = 0;
+	void createScreenThumbnail(Graphics::Surface &dst) override = 0;
 
 protected:
 	TextDisplayer *_text;

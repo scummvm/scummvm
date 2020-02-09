@@ -49,28 +49,28 @@ friend class GUI_EoB;
 friend class DarkmoonSequenceHelper;
 public:
 	DarkMoonEngine(OSystem *system, const GameFlags &flags);
-	~DarkMoonEngine();
+	~DarkMoonEngine() override;
 
 private:
 	// Init / Release
-	Common::Error init();
+	Common::Error init() override;
 	void initStaticResource();
-	void initSpells();
+	void initSpells() override;
 
 	// Main Menu
-	int mainMenu();
+	int mainMenu() override;
 	int mainMenuLoop();
 	void townsUtilitiesMenu();
 
 	int _menuChoiceInit;
 
 	// Main loop
-	void startupNew();
-	void startupLoad();
+	void startupNew() override;
+	void startupLoad() override;
 
 	// Intro/Outro
 	void seq_playIntro();
-	void seq_playFinale();
+	void seq_playFinale() override;
 	void seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *data, int sd, int backupPage, int tempPage, int speed);
 
 	// Ingame sequence
@@ -82,42 +82,42 @@ private:
 	const char *const *_kheldranStrings;
 
 	// characters
-	void drawNpcScene(int npcIndex);
-	void runNpcDialogue(int npcIndex);
+	void drawNpcScene(int npcIndex) override;
+	void runNpcDialogue(int npcIndex) override;
 
 	const uint8 *_npcShpData;
 	const char *const *_npcStrings[2];
 
 	// items
-	void updateUsedCharacterHandItem(int charIndex, int slot);
+	void updateUsedCharacterHandItem(int charIndex, int slot) override;
 
 	// Monsters
-	void generateMonsterPalettes(const char *file, int16 monsterIndex);
-	void loadMonsterDecoration(Common::SeekableReadStream *stream, int16 monsterIndex);
-	const uint8 *loadMonsterProperties(const uint8 *data);
-	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem);
-	bool killMonsterExtra(EoBMonsterInPlay *m);
+	void generateMonsterPalettes(const char *file, int16 monsterIndex) override;
+	void loadMonsterDecoration(Common::SeekableReadStream *stream, int16 monsterIndex) override;
+	const uint8 *loadMonsterProperties(const uint8 *data) override;
+	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem) override;
+	bool killMonsterExtra(EoBMonsterInPlay *m) override;
 
 	// Level
-	void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) {}
-	const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs);
-	void drawDoorIntern(int type, int, int x, int y, int w, int wall, int mDim, int16, int16);
+	void loadDoorShapes(int doorType1, int shapeId1, int doorType2, int shapeId2) override {}
+	const uint8 *loadDoorShapes(const char *filename, int doorIndex, const uint8 *shapeDefs) override;
+	void drawDoorIntern(int type, int, int x, int y, int w, int wall, int mDim, int16, int16) override;
 
 	const uint8 *_dscDoorType5Offs;
 
 	// Magic
-	void turnUndeadAutoHit();
+	void turnUndeadAutoHit() override;
 
 	// Fight
 	static const uint8 _monsterAcHitChanceTbl1[];
 	static const uint8 _monsterAcHitChanceTbl2[];
 
 	// Rest party
-	void restParty_npc();
-	bool restParty_extraAbortCondition();
+	void restParty_npc() override;
+	bool restParty_extraAbortCondition() override;
 
 	// Sound
-	void snd_loadAmigaSounds(int level, int sub);
+	void snd_loadAmigaSounds(int level, int sub) override;
 
 	const char *const *_amigaSoundFiles2;
 	const char *const *_amigaSoundMapExtra;
@@ -129,14 +129,14 @@ private:
 	int _amigaCurSoundIndex;
 
 	// misc
-	void useHorn(int charIndex, int weaponSlot);
-	bool checkPartyStatusExtra();
-	void drawLightningColumn();
-	int resurrectionSelectDialogue();
-	int charSelectDialogue();
-	void characterLevelGain(int charIndex);
+	void useHorn(int charIndex, int weaponSlot) override;
+	bool checkPartyStatusExtra() override;
+	void drawLightningColumn() override;
+	int resurrectionSelectDialogue() override;
+	int charSelectDialogue() override;
+	void characterLevelGain(int charIndex) override;
 
-	const KyraRpgGUISettings *guiSettings() const;
+	const KyraRpgGUISettings *guiSettings() const override;
 
 	const char *const *_hornStrings;
 	const uint8 *_hornSounds;

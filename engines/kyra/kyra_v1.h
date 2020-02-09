@@ -186,7 +186,7 @@ friend class SeqPlayer_HOF;		// For skipFlag()
 friend class TransferPartyWiz;	// For save state API
 public:
 	KyraEngine_v1(OSystem *system, const GameFlags &flags);
-	virtual ~KyraEngine_v1();
+	~KyraEngine_v1() override;
 
 	uint8 game() const { return _flags.gameID; }
 	const GameFlags &gameFlags() const { return _flags; }
@@ -222,7 +222,7 @@ public:
 	void setVolume(kVolumeEntry vol, uint8 value);
 	uint8 getVolume(kVolumeEntry vol);
 
-	virtual void syncSoundSettings() override;
+	void syncSoundSettings() override;
 
 	// game flag handling
 	int setGameFlag(int flag);
@@ -247,7 +247,7 @@ protected:
 	virtual Common::Error init();
 	virtual Common::Error go() = 0;
 
-	virtual Common::Error run() override {
+	Common::Error run() override {
 		Common::Error err;
 		registerDefaultSettings();
 		err = init();
@@ -256,9 +256,9 @@ protected:
 		return go();
 	}
 
-	virtual ::GUI::Debugger *getDebugger() override;
-	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void pauseEngineIntern(bool pause) override;
+	::GUI::Debugger *getDebugger() override;
+	bool hasFeature(EngineFeature f) const override;
+	void pauseEngineIntern(bool pause) override;
 
 	// intern
 	Resource *_res;
@@ -425,7 +425,7 @@ protected:
 	WARN_UNUSED_RESULT static ReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, SaveHeader &header, bool skipThumbnail = true);
 
 	void loadGameStateCheck(int slot);
-	virtual Common::Error loadGameState(int slot) override = 0;
+	Common::Error loadGameState(int slot) override = 0;
 	Common::Error saveGameState(int slot, const Common::String &desc) override { return saveGameStateIntern(slot, desc.c_str(), 0); }
 	virtual Common::Error saveGameStateIntern(int slot, const char *saveName, const Graphics::Surface *thumbnail) = 0;
 

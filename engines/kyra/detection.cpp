@@ -179,7 +179,7 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	SaveStateList listSaves(const char *target) const override;
-	virtual int getMaximumSaveSlot() const override;
+	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;

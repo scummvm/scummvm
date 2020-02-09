@@ -34,14 +34,14 @@ friend class KyraEngine_MR;
 public:
 	TextDisplayer_MR(KyraEngine_MR *vm, Screen_MR *screen);
 
-	char *preprocessString(const char *str);
+	char *preprocessString(const char *str) override;
 	int dropCRIntoString(char *str, int minOffs, int maxOffs);
 
-	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2);
+	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) override;
 
 	void restoreScreen();
 
-	void calcWidestLineBounds(int &x1, int &x2, int w, int x);
+	void calcWidestLineBounds(int &x1, int &x2, int w, int x) override;
 protected:
 	KyraEngine_MR *_vm;
 	Screen_MR *_screen;

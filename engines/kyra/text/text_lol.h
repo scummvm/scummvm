@@ -39,7 +39,7 @@ struct EMCState;
 class TextDisplayer_LoL : public TextDisplayer_rpg {
 public:
 	TextDisplayer_LoL(LoLEngine *engine, Screen_LoL *screenLoL);
-	~TextDisplayer_LoL();
+	~TextDisplayer_LoL() override;
 
 	void setupField(bool mode);
 	void expandField();
@@ -50,11 +50,11 @@ public:
 	int16 _scriptTextParameter;
 
 private:
-	virtual KyraRpgEngine *vm();
-	virtual Screen *screen();
+	KyraRpgEngine *vm() override;
+	Screen *screen() override;
 
 	void preprocessString(char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
-	void textPageBreak();
+	void textPageBreak() override;
 
 	char *_stringParameters[15];
 	char *_buffer;

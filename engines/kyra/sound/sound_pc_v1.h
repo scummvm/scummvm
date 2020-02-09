@@ -50,31 +50,31 @@ class PCSoundDriver;
 class SoundPC_v1 : public Sound {
 public:
 	SoundPC_v1(KyraEngine_v1 *vm, Audio::Mixer *mixer, kType type);
-	~SoundPC_v1();
+	~SoundPC_v1() override;
 
-	virtual kType getMusicType() const { return _type; }
+	kType getMusicType() const override { return _type; }
 
-	virtual bool init();
-	virtual void process();
+	bool init() override;
+	void process() override;
 
-	virtual void updateVolumeSettings();
+	void updateVolumeSettings() override;
 
-	virtual void initAudioResourceInfo(int set, void *info);
-	virtual void selectAudioResourceSet(int set);
-	virtual bool hasSoundFile(uint file) const;
-	virtual void loadSoundFile(uint file);
-	virtual void loadSoundFile(Common::String file);
+	void initAudioResourceInfo(int set, void *info) override;
+	void selectAudioResourceSet(int set) override;
+	bool hasSoundFile(uint file) const override;
+	void loadSoundFile(uint file) override;
+	void loadSoundFile(Common::String file) override;
 
-	virtual void playTrack(uint8 track);
-	virtual void haltTrack();
-	virtual bool isPlaying() const;
+	void playTrack(uint8 track) override;
+	void haltTrack() override;
+	bool isPlaying() const override;
 
-	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF);
+	void playSoundEffect(uint8 track, uint8 volume = 0xFF) override;
 
-	virtual void beginFadeOut();
+	void beginFadeOut() override;
 
-	virtual int checkTrigger();
-	virtual void resetTrigger();
+	int checkTrigger() override;
+	void resetTrigger() override;
 private:
 	void internalLoadFile(Common::String file);
 

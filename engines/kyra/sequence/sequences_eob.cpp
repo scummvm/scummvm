@@ -62,7 +62,7 @@ private:
 class EoBIntroPlayer : public EoBSeqPlayerCommon {
 public:
 	EoBIntroPlayer(EoBEngine *vm, Screen_EoB *screen);
-	virtual ~EoBIntroPlayer() {}
+	~EoBIntroPlayer() override {}
 
 	enum IntroPart {
 		kOnlyCredits = 0,
@@ -119,7 +119,7 @@ private:
 class EoBPC98FinalePlayer : public EoBSeqPlayerCommon {
 public:
 	EoBPC98FinalePlayer(EoBEngine *vm, Screen_EoB *screen);
-	virtual ~EoBPC98FinalePlayer();
+	~EoBPC98FinalePlayer() override;
 
 	void start(bool xdt);
 
@@ -142,7 +142,7 @@ private:
 	void stopPaletteCycle();
 	void resetPaletteCycle();
 
-	virtual void wait(uint32 millis);
+	void wait(uint32 millis) override;
 
 	const char *const *_strings;
 	const uint8 *_eyesAnimData;
@@ -161,7 +161,7 @@ private:
 class EoBAmigaFinalePlayer : public EoBSeqPlayerCommon {
 public:
 	EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen);
-	virtual ~EoBAmigaFinalePlayer();
+	~EoBAmigaFinalePlayer() override;
 
 	void start();
 

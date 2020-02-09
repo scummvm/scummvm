@@ -31,19 +31,19 @@ namespace Kyra {
 class EndianAwareStreamWrapper : public Common::SeekableReadStreamEndian {
 public:
 	EndianAwareStreamWrapper(Common::SeekableReadStream *stream, bool bigEndian, bool disposeAfterUse = true) : Common::SeekableReadStreamEndian(bigEndian), _stream(stream), _dispose(disposeAfterUse) {}
-	~EndianAwareStreamWrapper() { if (_dispose) delete _stream; }
+	~EndianAwareStreamWrapper() override { if (_dispose) delete _stream; }
 
 	// Common::Stream interface
-	bool err() const { return _stream->err(); }
+	bool err() const override { return _stream->err(); }
 
 	// Common::ReadStream interface
-	bool eos() const { return _stream->eos(); }
-	uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
+	bool eos() const override { return _stream->eos(); }
+	uint32 read(void *dataPtr, uint32 dataSize) override { return _stream->read(dataPtr, dataSize); }
 
 	// Common::SeekableReadStream interface
-	int32 pos() const { return _stream->pos(); }
-	int32 size() const { return _stream->size(); }
-	bool seek(int32 offset, int whence = SEEK_SET) { return _stream->seek(offset, whence); }
+	int32 pos() const override { return _stream->pos(); }
+	int32 size() const override { return _stream->size(); }
+	bool seek(int32 offset, int whence = SEEK_SET) override { return _stream->seek(offset, whence); }
 	
 private:
 	Common::SeekableReadStream *_stream;

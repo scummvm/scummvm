@@ -31,24 +31,24 @@ namespace Kyra {
 class PCSpeakerDriver : public PCSoundDriver, public Audio::AudioStream {
 public:
 	PCSpeakerDriver(Audio::Mixer *mixer, bool pcJRMode);
-	virtual ~PCSpeakerDriver();
+	~PCSpeakerDriver() override;
 
-	virtual void initDriver() override;
-	virtual void setSoundData(uint8 *data, uint32 size) override;
-	virtual void startSound(int id, int) override;
-	virtual bool isChannelPlaying(int channel) const override;
-	virtual void stopAllChannels() override;
+	void initDriver() override;
+	void setSoundData(uint8 *data, uint32 size) override;
+	void startSound(int id, int) override;
+	bool isChannelPlaying(int channel) const override;
+	void stopAllChannels() override;
 
-	virtual void setMusicVolume(uint8 volume) override;
-	virtual void setSfxVolume(uint8) override {}
+	void setMusicVolume(uint8 volume) override;
+	void setSfxVolume(uint8) override {}
 
 	void update();
 
 	// AudioStream interface
-	virtual int readBuffer(int16 *buffer, const int numSamples) override;
-	virtual bool isStereo() const override { return false; }
-	virtual int getRate() const override { return _outputRate; }
-	virtual bool endOfData() const override { return false; }
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override { return false; }
+	int getRate() const override { return _outputRate; }
+	bool endOfData() const override { return false; }
 
 private:
 	void noteOn(int chan, uint16 period);

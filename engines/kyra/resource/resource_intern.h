@@ -49,10 +49,10 @@ public:
 	Entry getFileEntry(const Common::String &name) const;
 
 	// Common::Archive API implementation
-	bool hasFile(const Common::String &name) const;
-	int listMembers(Common::ArchiveMemberList &list) const;
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	bool hasFile(const Common::String &name) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 private:
 	typedef Common::HashMap<Common::String, Entry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 
@@ -63,12 +63,12 @@ private:
 class TlkArchive : public Common::Archive {
 public:
 	TlkArchive(Common::ArchiveMemberPtr file, uint16 entryCount, const uint32 *fileEntries);
-	~TlkArchive();
+	~TlkArchive() override;
 
-	bool hasFile(const Common::String &name) const;
-	int listMembers(Common::ArchiveMemberList &list) const;
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	bool hasFile(const Common::String &name) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 private:
 	Common::ArchiveMemberPtr _file;
 
@@ -90,12 +90,12 @@ public:
 	typedef Common::List<InputEntry> FileInputList;
 
 	CachedArchive(const FileInputList &files);
-	~CachedArchive();
+	~CachedArchive() override;
 
-	bool hasFile(const Common::String &name) const;
-	int listMembers(Common::ArchiveMemberList &list) const;
-	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	bool hasFile(const Common::String &name) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 private:
 	struct Entry {
 		byte *data;
@@ -117,23 +117,23 @@ public:
 
 class ResLoaderPak : public ResArchiveLoader {
 public:
-	bool checkFilename(Common::String filename) const;
-	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
-	Common::Archive *load(Common::ArchiveMemberPtr file, Common::SeekableReadStream &stream) const;
+	bool checkFilename(Common::String filename) const override;
+	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const override;
+	Common::Archive *load(Common::ArchiveMemberPtr file, Common::SeekableReadStream &stream) const override;
 };
 
 class ResLoaderInsMalcolm : public ResArchiveLoader {
 public:
-	bool checkFilename(Common::String filename) const;
-	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
-	Common::Archive *load(Common::ArchiveMemberPtr file, Common::SeekableReadStream &stream) const;
+	bool checkFilename(Common::String filename) const override;
+	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const override;
+	Common::Archive *load(Common::ArchiveMemberPtr file, Common::SeekableReadStream &stream) const override;
 };
 
 class ResLoaderTlk : public ResArchiveLoader {
 public:
-	bool checkFilename(Common::String filename) const;
-	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
-	Common::Archive *load(Common::ArchiveMemberPtr file, Common::SeekableReadStream &stream) const;
+	bool checkFilename(Common::String filename) const override;
+	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const override;
+	Common::Archive *load(Common::ArchiveMemberPtr file, Common::SeekableReadStream &stream) const override;
 };
 
 class InstallerLoader {

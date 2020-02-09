@@ -267,14 +267,14 @@ class TIMInterpreter_LoL : public TIMInterpreter {
 public:
 	TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, OSystem *system);
 
-	int initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int, uint16 wsaCopyParams);
-	int freeAnimStruct(int index);
+	int initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int, uint16 wsaCopyParams) override;
+	int freeAnimStruct(int index) override;
 
-	void resetDialogueState(TIM *tim);
+	void resetDialogueState(TIM *tim) override;
 
 private:
-	void update();
-	void checkSpeechProgress();
+	void update() override;
+	void checkSpeechProgress() override;
 
 	char *getTableString(int id);
 	void advanceToOpcode(int opcode);
@@ -282,7 +282,7 @@ private:
 	LoLEngine *_vm;
 	Screen_LoL *_screen;
 
-	virtual int execCommand(int cmd, const uint16 *param);
+	int execCommand(int cmd, const uint16 *param) override;
 
 	typedef int (TIMInterpreter_LoL::*CommandProc)(const uint16 *);
 	struct CommandEntry {
@@ -294,8 +294,8 @@ private:
 	int _commandsSize;
 
 	int cmd_stopAllFuncs(const uint16 *param);
-	int cmd_setLoopIp(const uint16 *param);
-	int cmd_continueLoop(const uint16 *param);
+	int cmd_setLoopIp(const uint16 *param) override;
+	int cmd_continueLoop(const uint16 *param) override;
 	int cmd_processDialogue(const uint16 *param);
 	int cmd_dialogueBox(const uint16 *param);
 };

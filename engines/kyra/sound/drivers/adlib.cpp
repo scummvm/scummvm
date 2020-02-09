@@ -50,22 +50,22 @@ namespace Kyra {
 class AdLibDriver : public PCSoundDriver {
 public:
 	AdLibDriver(Audio::Mixer *mixer, int version);
-	virtual ~AdLibDriver();
+	~AdLibDriver() override;
 
-	virtual void initDriver() override;
-	virtual void setSoundData(uint8 *data, uint32 size) override;
-	virtual void startSound(int track, int volume) override;
-	virtual bool isChannelPlaying(int channel) const override;
-	virtual void stopAllChannels() override;
+	void initDriver() override;
+	void setSoundData(uint8 *data, uint32 size) override;
+	void startSound(int track, int volume) override;
+	bool isChannelPlaying(int channel) const override;
+	void stopAllChannels() override;
 	int getSoundTrigger() const override { return _soundTrigger; }
 	void resetSoundTrigger() override { _soundTrigger = 0; }
 
 	void callback();
 
-	virtual void setSyncJumpMask(uint16 mask) override { _syncJumpMask = mask; }
+	void setSyncJumpMask(uint16 mask) override { _syncJumpMask = mask; }
 
-	virtual void setMusicVolume(uint8 volume) override;
-	virtual void setSfxVolume(uint8 volume) override;
+	void setMusicVolume(uint8 volume) override;
+	void setSfxVolume(uint8 volume) override;
 
 private:
 	// These variables have not yet been named, but some of them are partly

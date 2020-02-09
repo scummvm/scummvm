@@ -85,7 +85,7 @@ friend class AudioMaster2IOManager;
 private:
 	AudioMaster2Internal(Audio::Mixer *mixer);
 public:
-	~AudioMaster2Internal();
+	~AudioMaster2Internal() override;
 
 	static AudioMaster2Internal *open(Audio::Mixer *mixer);
 	static void close();
@@ -105,7 +105,7 @@ public:
 	void setMusicVolume(int volume);
 	void setSoundEffectVolume(int volume);
 
-	void interrupt();
+	void interrupt() override;
 
 	void resetCounter();
 	int getPlayDuration();
@@ -180,18 +180,18 @@ class SoundResource8SVX : public SoundResource {
 public:
 	SoundResource8SVX(AudioMaster2ResourceManager *res);
 private:
-	virtual ~SoundResource8SVX();
+	~SoundResource8SVX() override;
 public:
 	void loadHeader(Common::ReadStream *stream, uint32 size);
 	void loadData(Common::ReadStream *stream, uint32 size);
 
-	void setupMusicNote(AudioMaster2IOManager::IOUnit *unit, uint8 note, uint16 volume);
-	void setupSoundEffect(AudioMaster2IOManager::IOUnit *unit, uint32 sync, uint32 tempo);
+	void setupMusicNote(AudioMaster2IOManager::IOUnit *unit, uint8 note, uint16 volume) override;
+	void setupSoundEffect(AudioMaster2IOManager::IOUnit *unit, uint32 sync, uint32 tempo) override;
 
 private:
-	void release();
+	void release() override;
 
-	void setupEnvelopes(AudioMaster2IOManager::IOUnit *unit);
+	void setupEnvelopes(AudioMaster2IOManager::IOUnit *unit) override;
 
 	uint32 _numSamplesOnce;
 	uint32 _numSamplesRepeat;
@@ -211,14 +211,14 @@ class SoundResourceINST : public SoundResource {
 public:
 	SoundResourceINST(AudioMaster2ResourceManager *res) : SoundResource(res, 2), _samplesResource(0), _transpose(0), _levelAdjust(0) {}
 private:
-	virtual ~SoundResourceINST();
+	~SoundResourceINST() override;
 public:
 	void loadPitchData(Common::ReadStream *stream, uint32 size);
 	void loadSamples(Common::ReadStream *stream, uint32 size);
 	void loadVolumeData(Common::ReadStream *stream, uint32 size);
 
-	void setupMusicNote(AudioMaster2IOManager::IOUnit *unit, uint8 note, uint16 volume);
-	void setupSoundEffect(AudioMaster2IOManager::IOUnit *unit, uint32 sync, uint32 rate);
+	void setupMusicNote(AudioMaster2IOManager::IOUnit *unit, uint8 note, uint16 volume) override;
+	void setupSoundEffect(AudioMaster2IOManager::IOUnit *unit, uint32 sync, uint32 rate) override;
 
 	struct EnvelopeData {
 		EnvelopeData(const uint8 *data, uint32 size) : volume(0x40), _data(data), _dataSize(size) {}
@@ -229,9 +229,9 @@ public:
 	};
 
 private:
-	void release();
+	void release() override;
 
-	void setupEnvelopes(AudioMaster2IOManager::IOUnit *unit);
+	void setupEnvelopes(AudioMaster2IOManager::IOUnit *unit) override;
 
 	EnvelopeData *_transpose;
 	EnvelopeData *_levelAdjust;
@@ -242,20 +242,20 @@ class SoundResourceSMUS : public SoundResource {
 public:
 	SoundResourceSMUS(AudioMaster2ResourceManager *res) : SoundResource(res, 1), _tempo(0), _songVolume(0), _playFlags(0) {}
 private:
-	virtual ~SoundResourceSMUS();
+	~SoundResourceSMUS() override;
 public:
 	void loadHeader(Common::ReadStream *stream, uint32 size);
 	void loadInstrument(Common::ReadStream *stream, uint32 size);
 	void loadTrack(Common::ReadStream *stream, uint32 size);
 
-	void prepare();
+	void prepare() override;
 	uint16 getTempo() const;
-	void setSync(uint32 sync);
+	void setSync(uint32 sync) override;
 
-	void interrupt(AudioMaster2IOManager *io);
+	void interrupt(AudioMaster2IOManager *io) override;
 
 private:
-	void release();
+	void release() override;
 
 	struct Track {
 		Track() : _dataStart(0), _dataEnd(0), _dataCur(0), _instrument(0), _volume(0), _sync(0) {}

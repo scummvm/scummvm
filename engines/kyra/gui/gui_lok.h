@@ -96,23 +96,23 @@ class GUI_LoK : public GUI_v1 {
 	friend class KyraEngine_LoK;
 public:
 	GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen);
-	~GUI_LoK();
+	~GUI_LoK() override;
 
-	void processButton(Button *button);
-	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel);
+	void processButton(Button *button) override;
+	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel) override;
 
 	int buttonMenuCallback(Button *caller);
 
-	void createScreenThumbnail(Graphics::Surface &dst);
+	void createScreenThumbnail(Graphics::Surface &dst) override;
 private:
 	void initStaticResource();
 
 	Button _menuButtonData[6];
 	Button _scrollUpButton;
 	Button _scrollDownButton;
-	Button *getButtonListData() { return _menuButtonData; }
-	Button *getScrollUpButton() { return &_scrollUpButton; }
-	Button *getScrollDownButton() { return &_scrollDownButton; }
+	Button *getButtonListData() override { return _menuButtonData; }
+	Button *getScrollUpButton() override { return &_scrollUpButton; }
+	Button *getScrollDownButton() override { return &_scrollDownButton; }
 
 	Menu *_menu;
 
@@ -150,12 +150,12 @@ private:
 	void restorePalette();
 	void setupControls(Menu &menu);
 
-	uint8 defaultColor1() const { return 12; }
-	uint8 defaultColor2() const { return 248; }
+	uint8 defaultColor1() const override { return 12; }
+	uint8 defaultColor2() const override { return 248; }
 
-	const char *getMenuTitle(const Menu &menu) { return menu.menuNameString; }
-	const char *getMenuItemTitle(const MenuItem &menuItem) { return menuItem.itemString; }
-	const char *getMenuItemLabel(const MenuItem &menuItem) { return menuItem.labelString; }
+	const char *getMenuTitle(const Menu &menu) override { return menu.menuNameString; }
+	const char *getMenuItemTitle(const MenuItem &menuItem) override { return menuItem.itemString; }
+	const char *getMenuItemLabel(const MenuItem &menuItem) override { return menuItem.labelString; }
 
 	KyraEngine_LoK *_vm;
 	Screen_LoK *_screen;
@@ -169,8 +169,8 @@ private:
 
 	Button::Callback _scrollUpFunctor;
 	Button::Callback _scrollDownFunctor;
-	Button::Callback getScrollUpButtonHandler() const { return _scrollUpFunctor; }
-	Button::Callback getScrollDownButtonHandler() const { return _scrollDownFunctor; }
+	Button::Callback getScrollUpButtonHandler() const override { return _scrollUpFunctor; }
+	Button::Callback getScrollDownButtonHandler() const override { return _scrollDownFunctor; }
 
 	const char *_voiceTextString;
 	const char *_textSpeedString;
