@@ -127,21 +127,21 @@ public:
 		return "cge2";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "CGE2";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Sfinx (C) 1994-1997 Janus B. Wisniewski and L.K. Avalon";
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual int getMaximumSaveSlot() const override;
-	virtual SaveStateList listSaves(const char *target) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	int getMaximumSaveSlot() const override;
+	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	virtual void removeSaveState(const char *target, int slot) const override;
+	void removeSaveState(const char *target, int slot) const override;
 };
 
 static ADGameDescription s_fallbackDesc = {
