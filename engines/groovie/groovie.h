@@ -108,8 +108,6 @@ protected:
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	void syncSoundSettings() override;
 
-	Debugger *getDebugger() override { return _debugger; }
-
 public:
 	void waitForInput();
 
@@ -129,7 +127,6 @@ public:
 
 private:
 	const GroovieGameDescription *_gameDescription;
-	Debugger *_debugger;
 	bool _waitingForInput;
 	T7GFont _sphinxFont;
 };

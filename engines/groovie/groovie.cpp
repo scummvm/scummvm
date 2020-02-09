@@ -48,7 +48,7 @@
 namespace Groovie {
 
 GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
-	Engine(syst), _gameDescription(gd), _debugger(NULL), _script(NULL),
+	Engine(syst), _gameDescription(gd), _script(NULL),
 	_resMan(NULL), _grvCursorMan(NULL), _videoPlayer(NULL), _musicPlayer(NULL),
 	_graphicsMan(NULL), _macResFork(NULL), _waitingForInput(false), _font(NULL),
 	_spookyMode(false) {
@@ -79,7 +79,6 @@ GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 
 GroovieEngine::~GroovieEngine() {
 	// Delete the remaining objects
-	delete _debugger;
 	delete _resMan;
 	delete _grvCursorMan;
 	delete _videoPlayer;
@@ -124,8 +123,9 @@ Common::Error GroovieEngine::run() {
 	}
 
 	// Create debugger. It requires GFX to be initialized
-	_debugger = new Debugger(this);
-	_script->setDebugger(_debugger);
+	Debugger *debugger = new Debugger(this);
+	setDebugger(debugger);
+	_script->setDebugger(debugger);
 
 	// Create the graphics manager
 	_graphicsMan = new GraphicsMan(this);
@@ -262,18 +262,11 @@ Common::Error GroovieEngine::run() {
 	}
 
 	while (!shouldQuit()) {
-		// Give the debugger a chance to act
-		_debugger->onFrame();
-
 		// Handle input
 		Common::Event ev;
 		while (_eventMan->pollEvent(ev)) {
 			switch (ev.type) {
 			case Common::EVENT_KEYDOWN:
-				// CTRL-D: Attach the debugger
-				if ((ev.kbd.flags & Common::KBD_CTRL) && ev.kbd.keycode == Common::KEYCODE_d)
-					_debugger->attach();
-
 				// Send the event to the scripts
 				_script->setKbdChar(ev.kbd.ascii);
 
