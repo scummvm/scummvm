@@ -50,14 +50,14 @@ public:
 	SceneObjectList _bgSceneObjects;
 public:
 	Scene();
-	virtual ~Scene();
+	~Scene() override;
 
-	virtual Common::String getClassName() { return "Scene"; }
-	virtual void synchronize(Serializer &s);
-	virtual void stripCallback(int v) {}
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void process(Event &event);
-	virtual void dispatch();
+	Common::String getClassName() override { return "Scene"; }
+	void synchronize(Serializer &s) override;
+	void stripCallback(int v) override {}
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void process(Event &event) override;
+	void dispatch() override;
 	virtual void loadScene(int sceneNum);
 	virtual void refreshBackground(int xAmount, int yAmount);
 
@@ -87,9 +87,9 @@ public:
 	int _objectCount;
 public:
 	SceneManager();
-	virtual ~SceneManager();
+	~SceneManager() override;
 
-	virtual void listenerSynchronize(Serializer &s);
+	void listenerSynchronize(Serializer &s) override;
 	void setNewScene(int sceneNumber);
 	void checkScene();
 	void sceneChange();

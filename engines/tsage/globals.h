@@ -75,7 +75,7 @@ public:
 	int _gfxEdgeAdjust;
 public:
 	Globals();
-	~Globals();
+	~Globals() override;
 
 	void setFlag(int flagNum) {
 		assert((flagNum >= 0) && (flagNum < MAX_FLAGS));
@@ -91,8 +91,8 @@ public:
 	}
 
 	GfxManager &gfxManager() { return **_gfxManagers.begin(); }
-	virtual Common::String getClassName() { return "Globals"; }
-	virtual void synchronize(Serializer &s);
+	Common::String getClassName() override { return "Globals"; }
+	void synchronize(Serializer &s) override;
 	virtual void reset();
 
 	void dispatchSounds();
@@ -111,8 +111,8 @@ public:
 	ASoundExt _inventorySound;
 
 	TsAGE2Globals();
-	virtual void reset();
-	virtual void synchronize(Serializer &s);
+	void reset() override;
+	void synchronize(Serializer &s) override;
 };
 
 extern Globals *g_globals;
@@ -220,9 +220,9 @@ public:
 	BlueForceGlobals();
 	bool getHasBullets();
 
-	virtual Common::String getClassName() { return "BFGlobals"; }
-	virtual void reset();
-	virtual void synchronize(Serializer &s);
+	Common::String getClassName() override { return "BFGlobals"; }
+	void reset() override;
+	void synchronize(Serializer &s) override;
 	void set2Flags(int flagNum);
 	bool removeFlag(int flagNum);
 };
@@ -297,9 +297,9 @@ public:
 	ScannerDialog *_scannerDialog;
 
 	Ringworld2Globals();
-	virtual ~Ringworld2Globals();
-	virtual void reset();
-	virtual void synchronize(Serializer &s);
+	~Ringworld2Globals() override;
+	void reset() override;
+	void synchronize(Serializer &s) override;
 };
 
 } // End of namespace Ringworld2

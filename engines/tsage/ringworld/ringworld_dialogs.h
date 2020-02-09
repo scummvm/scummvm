@@ -41,9 +41,9 @@ public:
 	int _buttonIndex;
 
 	RightClickButton(int buttonIndex, int xp, int yp);
-	~RightClickButton() { delete _savedButton; }
+	~RightClickButton() override { delete _savedButton; }
 
-	virtual void highlight();
+	void highlight() override;
 };
 
 class RightClickDialog : public GfxDialog {
@@ -56,10 +56,10 @@ private:
 	RightClickButton *findButton(const Common::Point &pt);
 public:
 	RightClickDialog();
-	~RightClickDialog();
+	~RightClickDialog() override;
 
-	virtual void draw();
-	virtual bool process(Event &event);
+	void draw() override;
+	bool process(Event &event) override;
 	void execute();
 };
 
@@ -71,7 +71,7 @@ private:
 	GfxMessage _gfxMessage;
 public:
 	OptionsDialog();
-	virtual ~OptionsDialog() {}
+	~OptionsDialog() override {}
 	GfxButton *execute() { return GfxDialog::execute(&_btnResume); }
 
 	static void show();
@@ -85,7 +85,7 @@ public:
 public:
 	GfxInvImage() : GfxImage(), _invObject(NULL) {}
 
-	virtual bool process(Event &event);
+	bool process(Event &event) override;
 };
 
 #define MAX_INVOBJECT_DISPLAY 20
@@ -96,7 +96,7 @@ private:
 	GfxButton _btnOk, _btnLook;
 public:
 	InventoryDialog();
-	virtual ~InventoryDialog();
+	~InventoryDialog() override;
 	void execute();
 
 	static void show();

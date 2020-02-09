@@ -53,10 +53,10 @@ private:
 	CursorType _previousCursor;
 public:
 	RightClickDialog();
-	~RightClickDialog();
+	~RightClickDialog() override;
 
-	virtual void draw();
-	virtual bool process(Event &event);
+	void draw() override;
+	bool process(Event &event) override;
 	int execute();
 };
 
@@ -67,7 +67,7 @@ private:
 	GfxButton _btnCancel;
 public:
 	CharacterDialog();
-	virtual ~CharacterDialog() {}
+	~CharacterDialog() override {}
 
 	static void show();
 };
@@ -80,11 +80,11 @@ private:
 	GfxButton _btnResume;
 public:
 	HelpDialog();
-	virtual ~HelpDialog() {}
+	~HelpDialog() override {}
 
 	static void show();
 
-	virtual bool handleKeypress(Event &event, GfxButton *&btn);
+	bool handleKeypress(Event &event, GfxButton *&btn) override;
 };
 
 } // End of namespace Ringworld2

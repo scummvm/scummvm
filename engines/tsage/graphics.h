@@ -52,7 +52,7 @@ public:
 	void resize(const GfxSurface &surface, int xp, int yp, int percent);
 	void expandPanes();
 
-	virtual void synchronize(Serializer &s);
+	void synchronize(Serializer &s) override;
 };
 
 class GfxColors {
@@ -89,7 +89,7 @@ private:
 	  * Override the addDirtyRect from Graphics::Screen, since for standard
 	  * surfaces we don't need dirty rects to be tracked
 	  */
-	 virtual void addDirtyRect(const Common::Rect &r) {}
+	 void addDirtyRect(const Common::Rect &r) override {}
 public:
 	Common::Point _centroid;
 	int _transColor;
@@ -98,12 +98,12 @@ public:
 public:
 	GfxSurface();
 	GfxSurface(const GfxSurface &s);
-	virtual ~GfxSurface();
+	~GfxSurface() override;
 
 	Graphics::ManagedSurface &lockSurface();
 	void unlockSurface();
 	void synchronize(Serializer &s);
-	virtual void create(uint16 width, uint16 height);
+	void create(uint16 width, uint16 height) override;
 	void setBounds(const Rect &bounds);
 	const Rect &getBounds() const { return _bounds; }
 
@@ -215,9 +215,9 @@ public:
 
 	void setDetails(int resNum, int rlbNum, int cursorNum);
 
-	virtual void setDefaults();
-	virtual void draw();
-	virtual bool process(Event &event) { return false; }
+	void setDefaults() override;
+	void draw() override;
+	bool process(Event &event) override { return false; }
 };
 
 class GfxMessage : public GfxElement {
@@ -227,12 +227,12 @@ public:
 	int _width;
 public:
 	GfxMessage();
-	virtual ~GfxMessage() {}
+	~GfxMessage() override {}
 
 	void set(const Common::String &s, int width, TextAlign textAlign);
 
-	virtual void setDefaults();
-	virtual void draw();
+	void setDefaults() override;
+	void draw() override;
 };
 
 class GfxButton : public GfxElement {
@@ -242,7 +242,7 @@ public:
 	Common::String _message;
 public:
 	GfxButton() : GfxElement() {}
-	virtual ~GfxButton() {}
+	~GfxButton() override {}
 
 	void setText(const Common::String &s) {
 		_message = s;
@@ -250,9 +250,9 @@ public:
 	}
 
 	// Virtual table method
-	virtual void setDefaults();
-	virtual void draw();
-	virtual bool process(Event &event);
+	void setDefaults() override;
+	void draw() override;
+	bool process(Event &event) override;
 };
 
 class GfxManager {
@@ -324,7 +324,7 @@ public:
 	GfxSurface *_savedArea;
 public:
 	GfxDialog();
-	virtual ~GfxDialog();
+	~GfxDialog() override;
 
 	void add(GfxElement *element);
 	void addElements(GfxElement *ge, ...);
@@ -336,9 +336,9 @@ public:
 	}
 	GfxButton *execute(GfxButton *defaultButton = NULL);
 
-	virtual void setDefaults();
-	virtual void remove();
-	virtual void draw();
+	void setDefaults() override;
+	void remove() override;
+	void draw() override;
 
 	static void setPalette();
 

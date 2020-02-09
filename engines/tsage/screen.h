@@ -41,7 +41,7 @@ class Screen : public GfxSurface {
 	 * Override the addDirtyRect from GfxSurface, since for our screen
 	 * class we need to reintroduce the standard Graphics::Screen implementation
 	 */
-	virtual void addDirtyRect(const Common::Rect &r) {
+	void addDirtyRect(const Common::Rect &r) override {
 		Graphics::Screen::addDirtyRect(r);
 	}
 public:
@@ -53,12 +53,12 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Screen();
+	~Screen() override;
 
 	/**
 	 * Update the screen
 	 */
-	virtual void update();
+	void update() override;
 };
 
 } // End of namespace TsAGE

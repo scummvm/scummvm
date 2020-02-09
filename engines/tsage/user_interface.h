@@ -32,7 +32,7 @@ namespace TsAGE {
 
 class StripProxy: public EventHandler {
 public:
-	virtual void process(Event &event);
+	void process(Event &event) override;
 };
 
 class UIElement: public BackgroundSceneObject {
@@ -40,8 +40,8 @@ public:
 	bool _enabled;
 	int _frameNum;
 
-	virtual Common::String getClassName() { return "UIElement"; }
-	virtual void synchronize(Serializer &s);
+	Common::String getClassName() override { return "UIElement"; }
+	void synchronize(Serializer &s) override;
 
 	void setup(int visage, int stripNum, int frameNum, int posX, int posY, int priority);
 	void setEnabled(bool flag);
@@ -53,7 +53,7 @@ private:
 	void showDescription(CursorType item);
 	void showItem(int resNum, int rlbNum, int frameNum);
 public:
-	virtual void process(Event &event);
+	void process(Event &event) override;
 	void setEnabled(bool flag);
 };
 
@@ -64,8 +64,8 @@ private:
 public:
 	UIElement _digit3, _digit2, _digit1, _digit0;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void draw();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void draw() override;
 
 	void updateScore();
 };
@@ -76,9 +76,9 @@ public:
 	InvObject *_object;
 
 	UIInventorySlot();
-	virtual Common::String getClassName() { return "UIInventorySlot"; }
-	virtual void synchronize(Serializer &s);
-	virtual void process(Event &event);
+	Common::String getClassName() override { return "UIInventorySlot"; }
+	void synchronize(Serializer &s) override;
+	void process(Event &event) override;
 };
 
 class UIInventoryScroll: public UIElement {
@@ -88,9 +88,9 @@ public:
 	bool _isLeft;
 
 	UIInventoryScroll();
-	virtual Common::String getClassName() { return "UIInventoryScroll"; }
-	virtual void synchronize(Serializer &s);
-	virtual void process(Event &event);
+	Common::String getClassName() override { return "UIInventoryScroll"; }
+	void synchronize(Serializer &s) override;
+	void process(Event &event) override;
 };
 
 class UICollection: public EventHandler {
@@ -132,10 +132,10 @@ public:
 	UIElement _character;
 
 	UIElements();
-	virtual Common::String getClassName() { return "UIElements"; }
-	virtual void synchronize(Serializer &s);
-	virtual void postInit(SceneObjectList *OwnerList = NULL) { error("Wrong init() called"); }
-	virtual void process(Event &event);
+	Common::String getClassName() override { return "UIElements"; }
+	void synchronize(Serializer &s) override;
+	void postInit(SceneObjectList *OwnerList = NULL) override { error("Wrong init() called"); }
+	void process(Event &event) override;
 
 	void setup(const Common::Point &pt);
 	void updateInventory(int objectNumber = 0);

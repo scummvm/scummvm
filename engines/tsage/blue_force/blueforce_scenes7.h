@@ -43,25 +43,25 @@ class Scene710: public SceneExt {
 	// Actions
 	class Action1: public ActionExt {
 	public:
-		void signal();
+		void signal() override;
 	};
 	// Timers
 	class Timer1: public Timer {
 	public:
-		void signal();
+		void signal() override;
 	};
 	// Objects
 	class Object3: public NamedObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Object4: public NamedObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Object5: public NamedObject {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 public:
@@ -94,10 +94,10 @@ public:
 	bool _watchCrate;
 	bool _throwStick;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
-	virtual void dispatch();
-	virtual void synchronize(Serializer &s);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
+	void dispatch() override;
+	void synchronize(Serializer &s) override;
 };
 
 } // End of namespace BlueForce

@@ -45,7 +45,7 @@ class Scene20 : public SceneExt {
 	private:
 		ASoundExt _sound;
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 public:
 	Action1 _action1;
@@ -53,7 +53,7 @@ public:
 	SceneObject _tsunamiWave, _letterT, _letterS, _letterU;
 	SceneObject _letterN, _letterA, _letterM, _letterI;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
 };
 
 class Scene50: public SceneExt {
@@ -69,16 +69,16 @@ class Scene50: public SceneExt {
 		void update();
 		void highlight(bool btnDown);
 
-		virtual Common::String getClassName() { return "Scene50_Tooltip"; }
-		virtual void synchronize(Serializer &s);
+		Common::String getClassName() override { return "Scene50_Tooltip"; }
+		void synchronize(Serializer &s) override;
 	};
 	class Tooltip2: public Action {
 	public:
 		Tooltip2(): Action() {}
 
-		virtual Common::String getClassName() { return "Scene50_Tooltip2"; }
-		virtual void signal();
-		virtual void dispatch();
+		Common::String getClassName() override { return "Scene50_Tooltip2"; }
+		void signal() override;
+		void dispatch() override;
 	};
 public:
 	int _sceneNumber;
@@ -90,13 +90,13 @@ public:
 public:
 	Scene50();
 
-	virtual Common::String getClassName() { return "Scene50"; }
-	virtual void synchronize(Serializer &s);
+	Common::String getClassName() override { return "Scene50"; }
+	void synchronize(Serializer &s) override;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void signal();
-	virtual void process(Event &event);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void signal() override;
+	void process(Event &event) override;
 };
 
 class Scene60 : public SceneExt {
@@ -106,34 +106,34 @@ class Scene60 : public SceneExt {
 		bool check1();
 		bool check2();
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Item3: public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Radio: public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Compartment: public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Objects */
 	class MirandaCard: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class TicketBook: public NamedObject {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class CompartmentDoor: public NamedObject {
 	public:
 		bool _flag;
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Actions */
@@ -141,15 +141,15 @@ class Scene60 : public SceneExt {
 	private:
 		int useRadio();
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 	class Action2: public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 	class Action3: public Action {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 public:
 	SequenceManager _sequenceManager;
@@ -176,11 +176,11 @@ public:
 	CursorType _cursorId;
 
 	Scene60();
-	virtual void synchronize(Serializer &s);
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void signal();
-	virtual void dispatch();
+	void synchronize(Serializer &s) override;
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void signal() override;
+	void dispatch() override;
 };
 
 

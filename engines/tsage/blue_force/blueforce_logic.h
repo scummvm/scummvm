@@ -39,13 +39,13 @@ using namespace TsAGE;
 
 class BlueForceGame: public Game {
 public:
-	virtual void start();
-	virtual Scene *createScene(int sceneNumber);
-	virtual void rightClick();
-	virtual void processEvent(Event &event);
-	virtual bool canSaveGameStateCurrently();
-	virtual bool canLoadGameStateCurrently();
-	virtual void restart();
+	void start() override;
+	Scene *createScene(int sceneNumber) override;
+	void rightClick() override;
+	void processEvent(Event &event) override;
+	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently() override;
+	void restart() override;
 };
 
 #define OBJ_ARRAY_SIZE 10
@@ -58,16 +58,16 @@ public:
 	AObjectArray();
 	void clear();
 
-	virtual Common::String getClassName() { return "AObjectArray"; }
-	virtual void synchronize(Serializer &s);
-	virtual void process(Event &event);
-	virtual void dispatch();
+	Common::String getClassName() override { return "AObjectArray"; }
+	void synchronize(Serializer &s) override;
+	void process(Event &event) override;
+	void dispatch() override;
 
 	void add(EventHandler *obj);
 	void remove(EventHandler *obj);
 	// The following line prevents compiler warnings about hiding the remove()
 	// method from the parent class.
-	virtual void remove() { EventHandler::remove(); }
+	void remove() override { EventHandler::remove(); }
 };
 
 class Timer: public EventHandler {
@@ -79,11 +79,11 @@ public:
 	Timer();
 	void set(uint32 delay, EventHandler *endHandler);
 
-	virtual Common::String getClassName() { return "Timer"; }
-	virtual void synchronize(Serializer &s);
-	virtual void remove();
-	virtual void signal();
-	virtual void dispatch();
+	Common::String getClassName() override { return "Timer"; }
+	void synchronize(Serializer &s) override;
+	void remove() override;
+	void signal() override;
+	void dispatch() override;
 };
 
 class TimerExt: public Timer {
@@ -93,10 +93,10 @@ public:
 	TimerExt();
 	void set(uint32 delay, EventHandler *endHandler, Action *action);
 
-	virtual Common::String getClassName() { return "TimerExt"; }
-	virtual void synchronize(Serializer &s);
-	virtual void remove();
-	virtual void signal();
+	Common::String getClassName() override { return "TimerExt"; }
+	void synchronize(Serializer &s) override;
+	void remove() override;
+	void signal() override;
 };
 
 
@@ -105,8 +105,8 @@ public:
 	int _state;
 
 	SceneHotspotExt() { _state = 0; }
-	virtual Common::String getClassName() { return "SceneHotspotExt"; }
-	virtual void synchronize(Serializer &s) {
+	Common::String getClassName() override { return "SceneHotspotExt"; }
+	void synchronize(Serializer &s) override {
 		SceneHotspot::synchronize(s);
 		s.syncAsSint16LE(_state);
 	}
@@ -119,10 +119,10 @@ public:
 
 class NamedObject: public SceneObject {
 public:
-	virtual Common::String getClassName() { return "NamedObject"; }
-	virtual void synchronize(Serializer &s);
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual bool startAction(CursorType action, Event &event);
+	Common::String getClassName() override { return "NamedObject"; }
+	void synchronize(Serializer &s) override;
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	bool startAction(CursorType action, Event &event) override;
 };
 
 class NamedObjectExt: public NamedObject {
@@ -130,8 +130,8 @@ public:
 	int _flag;
 
 	NamedObjectExt() { _flag = 0; }
-	virtual Common::String getClassName() { return "NamedObjectExt"; }
-	virtual void synchronize(Serializer &s) {
+	Common::String getClassName() override { return "NamedObjectExt"; }
+	void synchronize(Serializer &s) override {
 		NamedObject::synchronize(s);
 		s.syncAsSint16LE(_flag);
 	}
@@ -142,8 +142,8 @@ public:
 	int _talkCount;
 
 	NamedObject2() { _talkCount = 0; }
-	virtual Common::String getClassName() { return "NamedObject2"; }
-	virtual void synchronize(Serializer &s) {
+	Common::String getClassName() override { return "NamedObject2"; }
+	void synchronize(Serializer &s) override {
 		NamedObject::synchronize(s);
 		if (s.getVersion() < 12) {
 			int useless = 0;
@@ -159,9 +159,9 @@ public:
 	CountdownObject();
 	void fixCountdown(int mode, ...);
 
-	virtual Common::String getClassName() { return "CountdownObject"; }
-	virtual void synchronize(Serializer &s);
-	virtual void dispatch();
+	Common::String getClassName() override { return "CountdownObject"; }
+	void synchronize(Serializer &s) override;
+	void dispatch() override;
 };
 
 class FollowerObject: public NamedObject {
@@ -169,11 +169,11 @@ public:
 	SceneObject *_object;
 	FollowerObject();
 
-	virtual Common::String getClassName() { return "FollowerObject"; }
-	virtual void synchronize(Serializer &s);
-	virtual void remove();
-	virtual void dispatch();
-	virtual void reposition();
+	Common::String getClassName() override { return "FollowerObject"; }
+	void synchronize(Serializer &s) override;
+	void remove() override;
+	void dispatch() override;
+	void reposition() override;
 
 	void setup(SceneObject *object, int visage, int frameNum, int yDiff);
 };
@@ -183,10 +183,10 @@ public:
 	GfxSurface _img;
 
 	FocusObject();
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void synchronize(Serializer &s);
-	virtual void remove();
-	virtual void process(Event &event);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void synchronize(Serializer &s) override;
+	void remove() override;
+	void process(Event &event) override;
 };
 
 enum ExitFrame { EXITFRAME_N = 1, EXITFRAME_NE = 2, EXITFRAME_E = 3, EXITFRAME_SE = 4,
@@ -207,12 +207,12 @@ public:
 public:
 	SceneExt();
 
-	virtual Common::String getClassName() { return "SceneExt"; }
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void process(Event &event);
-	virtual void dispatch();
-	virtual void loadScene(int sceneNum);
+	Common::String getClassName() override { return "SceneExt"; }
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void process(Event &event) override;
+	void dispatch() override;
+	void loadScene(int sceneNum) override;
 	virtual void checkGun();
 
 	void addTimer(EventHandler *timer) { _timerList.add(timer); }
@@ -230,9 +230,9 @@ public:
 public:
 	PalettedScene();
 
-	virtual void synchronize(Serializer &s);
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
+	void synchronize(Serializer &s) override;
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
 	PaletteFader *addFader(const byte *arrBufferRGB, int step, Action *action);
 	void add2Faders(const byte *arrBufferRGB, int step, int paletteNum, Action *action);
 	void transition(const byte *arrBufferRGB, int arg8, int paletteNum, Action *action, int fromColor1, int fromColor2, int toColor1, int toColor2, bool flag);
@@ -240,11 +240,11 @@ public:
 
 class SceneHandlerExt: public SceneHandler {
 public:
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void process(Event &event);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void process(Event &event) override;
 
-	virtual void playerAction(Event &event);
-	virtual void processEnd(Event &event);
+	void playerAction(Event &event) override;
+	void processEnd(Event &event) override;
 };
 
 class BlueForceInvObjectList : public InvObjectList {
@@ -325,16 +325,16 @@ public:
 	void setObjectScene(int objectNum, int sceneNumber);
 	void alterInventory(int mode);
 
-	virtual Common::String getClassName() { return "BlueForceInvObjectList"; }
+	Common::String getClassName() override { return "BlueForceInvObjectList"; }
 };
 
 class NamedHotspot : public SceneHotspot {
 public:
 	NamedHotspot();
 
-	virtual bool startAction(CursorType action, Event &event);
-	virtual Common::String getClassName() { return "NamedHotspot"; }
-	virtual void synchronize(Serializer &s);
+	bool startAction(CursorType action, Event &event) override;
+	Common::String getClassName() override { return "NamedHotspot"; }
+	void synchronize(Serializer &s) override;
 };
 
 class NamedHotspotExt : public NamedHotspot {
@@ -342,8 +342,8 @@ public:
 	int _flag;
 	NamedHotspotExt() { _flag = 0; }
 
-	virtual Common::String getClassName() { return "NamedHotspot"; }
-	virtual void synchronize(Serializer &s) {
+	Common::String getClassName() override { return "NamedHotspot"; }
+	void synchronize(Serializer &s) override {
 		NamedHotspot::synchronize(s);
 		s.syncAsSint16LE(_flag);
 	}
@@ -358,10 +358,10 @@ private:
 public:
 	void setup(const Common::String &msg) { _message = msg; }
 
-	virtual Common::String getClassName() { return "SceneMessage"; }
-	virtual void remove();
-	virtual void signal();
-	virtual void process(Event &event);
+	Common::String getClassName() override { return "SceneMessage"; }
+	void remove() override;
+	void signal() override;
+	void process(Event &event) override;
 };
 
 class IntroSceneText: public SceneText {
@@ -373,9 +373,9 @@ public:
 	IntroSceneText();
 	void setup(const Common::String &msg, Action *action);
 
-	virtual Common::String getClassName() { return "BFIntroText"; }
-	virtual void synchronize(Serializer &s);
-	virtual void dispatch();
+	Common::String getClassName() override { return "BFIntroText"; }
+	void synchronize(Serializer &s) override;
+	void dispatch() override;
 };
 
 } // End of namespace BlueForce

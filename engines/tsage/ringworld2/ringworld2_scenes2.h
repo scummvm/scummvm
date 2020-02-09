@@ -42,28 +42,28 @@ using namespace TsAGE;
 class Scene2000 : public SceneExt {
 	class Action1 : public ActionExt {
 	public:
-		virtual void signal();
+		void signal() override;
 	};
 
 	class WestExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 	class EastExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 	class SouthExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 	class NorthExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 	class DoorExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 public:
 	bool _exitingFlag;
@@ -81,11 +81,11 @@ public:
 	SequenceManager _sequenceManager;
 
 	Scene2000();
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void signal();
-	virtual void process(Event &event);
-	virtual void synchronize(Serializer &s);
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void signal() override;
+	void process(Event &event) override;
+	void synchronize(Serializer &s) override;
 
 	void initExits();
 	void initPlayer();
@@ -93,17 +93,17 @@ public:
 
 class Scene2350 : public SceneExt {
 	class Companion : public SceneActor {
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Balloon : public SceneActor {
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	class ExitUp : public SceneExit {
-		virtual void changeScene();
+		void changeScene() override;
 	};
 	class ExitWest : public SceneExit {
-		virtual void changeScene();
+		void changeScene() override;
 	};
 public:
 	SpeakerQuinn _quinnSpeaker;
@@ -117,57 +117,57 @@ public:
 	ExitWest _exitWest;
 	SequenceManager _sequenceManager;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void signal() override;
 };
 
 class Scene2400 : public SceneExt {
 	class WestExit : public SceneExit {
-		virtual void changeScene();
+		void changeScene() override;
 	};
 	class EastExit : public SceneExit {
-		virtual void changeScene();
+		void changeScene() override;
 	};
 public:
 	WestExit _westExit;
 	EastExit _eastExit;
 	SequenceManager _sequenceManager;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
 };
 
 class Scene2425 : public SceneExt {
 	class RopeDest1 : public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class RopeDest2 : public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Crevasse : public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Background : public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	class Rope : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Pictographs : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	class SouthEastExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 public:
 	RopeDest1 _ropeDest1;
@@ -180,28 +180,28 @@ public:
 	SouthEastExit _southEastExit;
 	SequenceManager _sequenceManager;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void signal() override;
 };
 
 class Scene2430 : public SceneExt {
 	class Companion : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class GunPowder : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class OilLamp : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	class SouthExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 public:
 	NamedHotspot _background;
@@ -223,23 +223,23 @@ public:
 	SouthExit _southExit;
 	SequenceManager _sequenceManager;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
 };
 
 class Scene2435 : public SceneExt {
 	class Companion : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Astor : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	class SouthExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 public:
 	SpeakerQuinn2435 _quinnSpeaker;
@@ -253,24 +253,24 @@ public:
 	SouthExit _southExit;
 	SequenceManager _sequenceManager;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void signal() override;
 };
 
 class Scene2440 : public SceneExt {
 	class Companion : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class OilLamp : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	class SouthEastExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 public:
 	NamedHotspot _background;
@@ -285,32 +285,32 @@ public:
 	SouthEastExit _southEastExit;
 	SequenceManager _sequenceManager;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void signal() override;
 };
 
 class Scene2445 : public SceneExt {
 public:
 	SequenceManager _sequenceManager;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
 };
 
 class Scene2450 : public SceneExt {
 	class Parker : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class CareTaker : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	class SouthWestExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 public:
 	SpeakerQuinn2450 _quinnSpeaker;
@@ -325,28 +325,28 @@ public:
 	SouthWestExit _southWestExit;
 	SequenceManager _sequenceManager;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void signal() override;
 };
 
 class Scene2455 : public SceneExt {
 	class Lamp : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Pool : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class ScrithKey : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	class NorthExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 public:
 	NamedHotspot _background;
@@ -356,15 +356,15 @@ public:
 	NorthExit _northExit;
 	SequenceManager _sequenceManager;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void signal() override;
 };
 
 class Scene2500 : public SceneExt {
 	class WestExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 public:
 	SpeakerQuinn _quinnSpeaker;
@@ -378,24 +378,24 @@ public:
 	WestExit _westExit;
 	SequenceManager _sequenceManager;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
 };
 
 class Scene2525 : public SceneExt {
 	class StopCock : public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	class GlassDome : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	class SouthExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 public:
 	NamedHotspot _background;
@@ -409,24 +409,24 @@ public:
 	SouthExit _southExit;
 	SequenceManager _sequenceManager;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void signal() override;
 };
 
 class Scene2530 : public SceneExt {
 	class Flask : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Crank : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	class SouthExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 public:
 	NamedHotspot _background;
@@ -440,23 +440,23 @@ public:
 	SouthExit _southExit;
 	SequenceManager _sequenceManager;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
 };
 
 class Scene2535 : public SceneExt {
 	class RebreatherTank : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class TannerMask : public SceneActor {
 	public:
-		bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	class SouthExit : public SceneExit {
 	public:
-		virtual void changeScene();
+		void changeScene() override;
 	};
 public:
 	NamedHotspot _background;
@@ -473,8 +473,8 @@ public:
 	SouthExit _southExit;
 	SequenceManager _sequenceManager;
 
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
 };
 
 class Scene2600 : public SceneExt {
@@ -483,37 +483,37 @@ public:
 	PaletteRotation *_rotation;
 
 	Scene2600();
-	virtual void synchronize(Serializer &s);
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void signal();
+	void synchronize(Serializer &s) override;
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void signal() override;
 };
 
 class Scene2700 : public SceneExt {
 	class Action1: public Action {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action2: public Action {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action3: public Action {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action4: public Action {
 	public:
-		void signal();
+		void signal() override;
 	};
 
 	class SouthExit: public SceneArea {
 	public:
-		void process(Event &event);
+		void process(Event &event) override;
 	};
 	class EastExit: public SceneArea {
 	public:
-		void process(Event &event);
+		void process(Event &event) override;
 	};
 public:
 	SpeakerQuinn2700 _quinnSpeaker;
@@ -541,49 +541,49 @@ public:
 	int _areaMode, _moveMode, _stripNumber;
 
 	Scene2700();
-	virtual void synchronize(Serializer &s);
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
-	virtual void process(Event &event);
+	void synchronize(Serializer &s) override;
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
+	void process(Event &event) override;
 };
 
 class Scene2750 : public SceneExt {
 	class Action1: public Action {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action2: public Action {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action3: public Action {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action4: public Action {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action5: public Action {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action6: public Action {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action7: public Action {
 	public:
-		void signal();
+		void signal() override;
 	};
 
 	class WestExit: public SceneArea {
 	public:
-		void process(Event &event);
+		void process(Event &event) override;
 	};
 	class EastExit: public SceneArea {
 	public:
-		void process(Event &event);
+		void process(Event &event) override;
 	};
 public:
 	SpeakerQuinn2750 _quinnSpeaker;
@@ -618,32 +618,32 @@ public:
 	int _areaMode, _moveMode, _stripNumber;
 
 	Scene2750();
-	virtual void synchronize(Serializer &s);
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
-	virtual void process(Event &event);
+	void synchronize(Serializer &s) override;
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
+	void process(Event &event) override;
 };
 
 class Scene2800 : public SceneExt {
 	class Outpost : public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	class Guard : public SceneActor {
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	class Action1: public Action {
 	public:
-		void signal();
+		void signal() override;
 	};
 	class Action2: public Action {
 		SceneObject _object2;
 		SceneObject _object3;
 		SceneObject _object4;
 	public:
-		void signal();
+		void signal() override;
 	};
 public:
 	SpeakerQuinn2800 _quinnSpeaker;
@@ -661,42 +661,42 @@ public:
 	int _stripNumber;
 
 	Scene2800();
-	virtual void synchronize(Serializer &s);
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void signal();
+	void synchronize(Serializer &s) override;
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void signal() override;
 };
 
 class Scene2900 : public SceneExt {
 	/* Items */
 	class Scenery : public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class ControlPanel : public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Altimeter : public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class KnobLeft : public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class KnobRight : public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 	class Skip : public NamedHotspot {
 	public:
-		virtual bool startAction(CursorType action, Event &event);
+		bool startAction(CursorType action, Event &event) override;
 	};
 
 	/* Actions */
 	class Action1: public Action {
 	public:
-		void signal();
+		void signal() override;
 	};
 
 	/* Miscellaneous */
@@ -749,12 +749,12 @@ public:
 	bool _paletteReloadNeeded;
 
 	Scene2900();
-	virtual void synchronize(Serializer &s);
-	virtual void postInit(SceneObjectList *OwnerList = NULL);
-	virtual void remove();
-	virtual void signal();
-	virtual void dispatch();
-	virtual void refreshBackground(int xAmount, int yAmount);
+	void synchronize(Serializer &s) override;
+	void postInit(SceneObjectList *OwnerList = NULL) override;
+	void remove() override;
+	void signal() override;
+	void dispatch() override;
+	void refreshBackground(int xAmount, int yAmount) override;
 };
 
 } // End of namespace Ringworld2

@@ -64,8 +64,8 @@ private:
 	const tSageGameDescription *_gameDescription;
 public:
 	TSageEngine(OSystem *system, const tSageGameDescription *gameDesc);
-	~TSageEngine();
-	virtual bool hasFeature(EngineFeature f) const override;
+	~TSageEngine() override;
+	bool hasFeature(EngineFeature f) const override;
 
 	MemoryManager _memoryManager;
 	Debugger *_debugger;
@@ -77,12 +77,12 @@ public:
 	Common::String getPrimaryFilename() const;
 
 	virtual Common::Error init();
-	virtual Common::Error run() override;
-	virtual bool canLoadGameStateCurrently() override;
-	virtual bool canSaveGameStateCurrently() override;
-	virtual Common::Error loadGameState(int slot) override;
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
-	virtual void syncSoundSettings() override;
+	Common::Error run() override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	void syncSoundSettings() override;
 	Common::String generateSaveName(int slot);
 
 	void initialize();

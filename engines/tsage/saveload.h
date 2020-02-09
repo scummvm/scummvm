@@ -99,10 +99,10 @@ public:
 class SavedObject : public Serialisable {
 public:
 	SavedObject();
-	virtual ~SavedObject();
+	~SavedObject() override;
 
 	virtual Common::String getClassName() { return "SavedObject"; }
-	virtual void synchronize(Serializer &s) {}
+	void synchronize(Serializer &s) override {}
 
 	static SavedObject *createInstance(const Common::String &className);
 };
