@@ -79,7 +79,7 @@ private:
 		PictureResource *srcPic, PictureResource *destPic);
 public:
 	Screen(VoyeurEngine *vm);
-	virtual ~Screen();
+	~Screen() override;
 
 	void sInitGraphics();
 

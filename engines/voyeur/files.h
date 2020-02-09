@@ -133,7 +133,7 @@ private:
 	void initFont();
 	void initSoundMap();
 protected:
-	virtual void initResource(int resType);
+	void initResource(int resType) override;
 public:
 	BVoyBoltFile(BoltFilesState &state);
 };
@@ -145,7 +145,7 @@ private:
 	void initPtr();
 	void initControl();
 protected:
-	virtual void initResource(int resType);
+	void initResource(int resType) override;
 public:
 	StampBoltFile(BoltFilesState &state);
 };

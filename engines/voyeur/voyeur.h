@@ -157,8 +157,8 @@ private:
 	void centerMansionView();
 protected:
 	// Engine APIs
-	virtual Common::Error run() override;
-	virtual bool hasFeature(EngineFeature f) const override;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 public:
 	BoltFile *_bVoy;
 	Debugger *_debugger;
@@ -195,7 +195,7 @@ public:
 	int _loadGameSlot;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
-	virtual ~VoyeurEngine();
+	~VoyeurEngine() override;
 	void GUIError(const Common::String &msg);
 
 	uint32 getFeatures() const;
@@ -206,10 +206,10 @@ public:
 
 	int getRandomNumber(int maxNumber);
 	Common::String generateSaveName(int slotNumber);
-	virtual bool canLoadGameStateCurrently() override;
-	virtual bool canSaveGameStateCurrently() override;
-	virtual Common::Error loadGameState(int slot) override;
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	void loadGame(int slot);
 
 	void playRL2Video(const Common::String &filename);
