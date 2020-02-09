@@ -35,13 +35,13 @@ namespace Prince {
 class MhwanhDecoder : public Image::ImageDecoder {
 public:
 	MhwanhDecoder();
-	virtual ~MhwanhDecoder();
+	~MhwanhDecoder() override;
 
 	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual Graphics::Surface *getSurface() const { return _surface; }
-	virtual const byte *getPalette() const { return _palette; }
+	void destroy() override;
+	bool loadStream(Common::SeekableReadStream &stream) override;
+	Graphics::Surface *getSurface() const override { return _surface; }
+	const byte *getPalette() const override { return _palette; }
 	uint16 getPaletteCount() const { return kPaletteColorCount; }
 	static const uint16 kPaletteColorCount = 256;
 

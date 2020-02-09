@@ -277,16 +277,16 @@ protected:
 
 public:
 	PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc);
-	virtual ~PrinceEngine();
+	~PrinceEngine() override;
 
 	bool scummVMSaveLoadDialog(bool isSave);
 
-	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void pauseEngineIntern(bool pause) override;
-	virtual bool canSaveGameStateCurrently() override;
-	virtual bool canLoadGameStateCurrently() override;
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
-	virtual Common::Error loadGameState(int slot) override;
+	bool hasFeature(EngineFeature f) const override;
+	void pauseEngineIntern(bool pause) override;
+	bool canSaveGameStateCurrently() override;
+	bool canLoadGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error loadGameState(int slot) override;
 
 	void playVideo(Common::String videoFilename);
 
@@ -340,7 +340,7 @@ public:
 
 	void setVoice(uint16 slot, uint32 sampleSlot, uint16 flag);
 
-	virtual GUI::Debugger *getDebugger() override;
+	GUI::Debugger *getDebugger() override;
 
 	void changeCursor(uint16 curId);
 	void printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y);
