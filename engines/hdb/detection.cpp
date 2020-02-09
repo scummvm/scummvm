@@ -173,20 +173,20 @@ public:
 		return "hdb";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Hyperspace Delivery Boy!";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Hyperspace Delivery Boy! (C) 2001 Monkeystone Games";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual int getMaximumSaveSlot() const override;
-	virtual void removeSaveState(const char *target, int slot) const override;
-	virtual SaveStateList listSaves(const char *target) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool HDBMetaEngine::hasFeature(MetaEngineFeature f) const {

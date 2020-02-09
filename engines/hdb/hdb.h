@@ -138,12 +138,12 @@ struct Save {
 class HDBGame : public Engine {
 public:
 	HDBGame(OSystem *syst, const ADGameDescription *gameDesc);
-	~HDBGame();
+	~HDBGame() override;
 
-	virtual bool hasFeature(Engine::EngineFeature f) const;
-	virtual void initializePath(const Common::FSNode &gamePath);
+	bool hasFeature(Engine::EngineFeature f) const override;
+	void initializePath(const Common::FSNode &gamePath) override;
 
-	virtual Common::Error run();
+	Common::Error run() override;
 
 	// Detection related members;
 	const ADGameDescription *_gameDescription;
@@ -195,10 +195,10 @@ public:
 		_changeLevel = true;
 	}
 
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual Common::Error loadGameState(int slot);
-	virtual bool canLoadGameStateCurrently();
-	virtual bool canSaveGameStateCurrently();
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 	void saveGame(Common::OutSaveFile *out);
 	void loadGame(Common::InSaveFile *in);
 
