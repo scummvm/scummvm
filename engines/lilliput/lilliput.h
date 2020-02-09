@@ -94,8 +94,6 @@ public:
 
 	OSystem *_system;
 
-	GUI::Debugger *getDebugger() override;
-
 	Common::RandomSource *_rnd;
 	LilliputScript *_scriptHandler;
 	LilliputSound *_soundHandler;
@@ -372,7 +370,6 @@ protected:
 private:
 	static LilliputEngine *s_Engine;
 
-	LilliputConsole *_console;
 	GameType _gameType;
 	Common::Platform _platform;
 
