@@ -733,9 +733,6 @@ public:
 	void update_62_pre();
 	void update_102();
 
-	Console *_console;
-	GUI::Debugger *getDebugger() override { return _console; }
-
 private:
 	int _lang;
 

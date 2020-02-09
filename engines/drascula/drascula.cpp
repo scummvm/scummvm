@@ -166,8 +166,6 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 
 	_rnd = new Common::RandomSource("drascula");
 
-	_console = 0;
-
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "audio");
 
@@ -185,8 +183,6 @@ DrasculaEngine::~DrasculaEngine() {
 	stopSound();
 
 	freeRoomsTable();
-
-	delete _console;
 
 	free(_charMap);
 	free(_itemLocations);
@@ -254,7 +250,7 @@ Common::Error DrasculaEngine::run() {
 		_lang = kEnglish;
 	}
 
-	_console = new Console(this);
+	setDebugger(new Console(this));
 
 	if (!loadDrasculaDat())
 		return Common::kUnknownError;
@@ -695,9 +691,6 @@ bool DrasculaEngine::runCurrentChapter() {
 		} else if (key == Common::KEYCODE_ESCAPE) {
 			if (!confirmExit())
 				return false;
-		} else if (key == Common::KEYCODE_TILDE || key == Common::KEYCODE_BACKQUOTE) {
-			_console->attach();
-			_console->onFrame();
 		} else if (currentChapter == 6 && key == Common::KEYCODE_0 && _roomNumber == 61) {
 			loadPic("alcbar.alg", bgSurface, 255);
 		}
@@ -821,11 +814,6 @@ void DrasculaEngine::updateEvents() {
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
-				// Start the debugger
-				getDebugger()->attach();
-				getDebugger()->onFrame();
-			}
 			addKeyToBuffer(event.kbd);
 			break;
 		case Common::EVENT_KEYUP:
