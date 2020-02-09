@@ -33,9 +33,9 @@ class IllusionsEngine;
 class MidiGroupResourceLoader : public BaseResourceLoader {
 public:
 	MidiGroupResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
-	virtual ~MidiGroupResourceLoader() {}
-	virtual void load(Resource *resource);
-	virtual bool isFlag(int flag);
+	~MidiGroupResourceLoader() override {}
+	void load(Resource *resource) override;
+	bool isFlag(int flag) override;
 protected:
 	IllusionsEngine *_vm;
 };
@@ -59,8 +59,8 @@ public:
 class MidiGroupInstance : public ResourceInstance {
 public:
 	MidiGroupInstance(IllusionsEngine *vm);
-	virtual void load(Resource *resource);
-	virtual void unload();
+	void load(Resource *resource) override;
+	void unload() override;
 public:
 	IllusionsEngine *_vm;	
 	MidiGroupResource *_midiGroupResource;

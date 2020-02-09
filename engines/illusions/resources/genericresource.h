@@ -33,9 +33,9 @@ class IllusionsEngine;
 class GenericResourceLoader : public BaseResourceLoader {
 public:
 	GenericResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
-	virtual ~GenericResourceLoader() {}
-	virtual void load(Resource *resource);
-	virtual bool isFlag(int flag);
+	~GenericResourceLoader() override {}
+	void load(Resource *resource) override;
+	bool isFlag(int flag) override;
 protected:
 	IllusionsEngine *_vm;
 };

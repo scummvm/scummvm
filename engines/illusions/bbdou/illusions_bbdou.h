@@ -62,8 +62,8 @@ class IllusionsEngine_BBDOU : public IllusionsEngine {
 public:
 	IllusionsEngine_BBDOU(OSystem *syst, const IllusionsGameDescription *gd);
 protected:
-	virtual Common::Error run() override;
-	virtual bool hasFeature(EngineFeature f) const override;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 public:
 	ScriptMan *_scriptMan;
 	TriggerFunctions *_triggerFunctions;

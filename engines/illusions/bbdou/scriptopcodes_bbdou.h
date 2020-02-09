@@ -34,9 +34,9 @@ class ScriptThread;
 class ScriptOpcodes_BBDOU : public ScriptOpcodes {
 public:
 	ScriptOpcodes_BBDOU(IllusionsEngine_BBDOU *vm);
-	~ScriptOpcodes_BBDOU();
-	void initOpcodes();
-	void freeOpcodes();
+	~ScriptOpcodes_BBDOU() override;
+	void initOpcodes() override;
+	void freeOpcodes() override;
 protected:
 	IllusionsEngine_BBDOU *_vm;
 

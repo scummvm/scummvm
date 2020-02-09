@@ -43,7 +43,7 @@ class IllusionsEngine_BBDOU;
 class BBDOUMenuSystem : public BaseMenuSystem {
 public:
 	BBDOUMenuSystem(IllusionsEngine_BBDOU *vm);
-	~BBDOUMenuSystem();
+	~BBDOUMenuSystem() override;
 	void runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menuChoiceOffset,
 		uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId);
 public://protected:
@@ -51,7 +51,7 @@ public://protected:
 	BaseMenu *_menus[kBBDOULastMenuIndex];
 	void clearMenus();
 	void freeMenus();
-	BaseMenu *getMenuById(int menuId);
+	BaseMenu *getMenuById(int menuId) override;
 	BaseMenu *createMenuById(int menuId);
 	BaseMenu *createMainMenu();
 	BaseMenu *createPauseMenu();
@@ -62,11 +62,11 @@ public://protected:
 	BaseMenu *createLoadFailedMenu();
 	BaseMenu *createOptionsMenu();
 	int convertRootMenuId(uint32 menuId);
-	virtual bool initMenuCursor();
-	virtual int getGameState();
-	virtual void setGameState(int gameState);
-	virtual void setMenuCursorNum(int cursorNum);
-	virtual void playSoundEffect(int sfxId);
+	bool initMenuCursor() override;
+	int getGameState() override;
+	void setGameState(int gameState) override;
+	void setMenuCursorNum(int cursorNum) override;
+	void playSoundEffect(int sfxId) override;
 };
 
 } // End of namespace Illusions

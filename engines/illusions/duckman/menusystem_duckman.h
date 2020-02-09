@@ -55,7 +55,7 @@ class MenuActionUpdateSlider;
 class DuckmanMenuSystem : public BaseMenuSystem {
 public:
 	DuckmanMenuSystem(IllusionsEngine_Duckman *vm);
-	~DuckmanMenuSystem();
+	~DuckmanMenuSystem() override;
 	void runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menuChoiceOffset,
 		uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId);
 public://protected:
@@ -63,7 +63,7 @@ public://protected:
 	BaseMenu *_menus[kDuckmanLastMenuIndex];
 	void clearMenus();
 	void freeMenus();
-	BaseMenu *getMenuById(int menuId);
+	BaseMenu *getMenuById(int menuId) override;
 	BaseMenu *createMenuById(int menuId);
 	BaseMenu *createMainMenu();
 	BaseMenu *createLoadGameMenu();
@@ -77,11 +77,11 @@ public://protected:
 	BaseMenu *createDebugPauseMenu();
 	BaseMenu *createAddRemoveInventoryMenu();
 	int convertRootMenuId(uint32 menuId);
-	virtual bool initMenuCursor();
-	virtual int getGameState();
-	virtual void setGameState(int gameState);
-	virtual void setMenuCursorNum(int cursorNum);
-	virtual void playSoundEffect(int sfxId);
+	bool initMenuCursor() override;
+	int getGameState() override;
+	void setGameState(int gameState) override;
+	void setMenuCursorNum(int cursorNum) override;
+	void playSoundEffect(int sfxId) override;
 private:
 	MenuItem *createOptionsSliderMenuItem(MenuActionUpdateSlider **action, const Common::String &text,
 										  SliderActionType type, BaseMenu *baseMenu);
@@ -90,7 +90,7 @@ private:
 class MenuActionInventoryAddRemove : public BaseMenuAction {
 public:
 	MenuActionInventoryAddRemove(BaseMenuSystem *menuSystem, IllusionsEngine_Duckman *vm, uint choiceIndex);
-	virtual void execute();
+	void execute() override;
 protected:
 	IllusionsEngine_Duckman *_vm;
 	int _choiceIndex;
@@ -103,7 +103,7 @@ public:
 		_menuItem = menuItem;
 	}
 
-	virtual void execute();
+	void execute() override;
 	void setSliderValue(uint8 newValue);
 protected:
 	IllusionsEngine_Duckman *_vm;
@@ -121,7 +121,7 @@ public:
 								 MenuActionUpdateSlider *speechSlider,
 								 MenuActionUpdateSlider *textDurationSlider
 	);
-	virtual void execute();
+	void execute() override;
 protected:
 	MenuActionUpdateSlider *_sfxSlider;
 	MenuActionUpdateSlider *_musiclider;

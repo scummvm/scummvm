@@ -54,8 +54,8 @@ public:
 	CauseThread_BBDOU(IllusionsEngine_BBDOU *vm, uint32 threadId, uint32 callingThreadId,
 		BbdouSpecialCode *bbdou, uint32 cursorObjectId, uint32 sceneId,
 		uint32 verbId, uint32 objectId2, uint32 objectId);
-	virtual void onNotify();
-	virtual void onTerminated();
+	void onNotify() override;
+	void onTerminated() override;
 public:
 	BbdouSpecialCode *_bbdou;
 	uint32 _cursorObjectId;
@@ -74,7 +74,7 @@ class RadarMicrophoneThread : public Thread {
 public:
 	RadarMicrophoneThread(IllusionsEngine_BBDOU *vm, uint32 threadId,
 		uint32 callingThreadId, uint32 cursorObjectId);
-	virtual int onUpdate();
+	int onUpdate() override;
 	void addZone(uint32 threadId);
 	void initZones();
 public:
@@ -107,10 +107,10 @@ protected:
 class BbdouSpecialCode : public SpecialCode {
 public:
 	BbdouSpecialCode(IllusionsEngine_BBDOU *vm);
-	virtual ~BbdouSpecialCode();
-	virtual void init();
-	virtual void run(uint32 specialCodeId, OpCall &opCall);
-	virtual void resetBeforeResumeSavegame();
+	~BbdouSpecialCode() override;
+	void init() override;
+	void run(uint32 specialCodeId, OpCall &opCall) override;
+	void resetBeforeResumeSavegame() override;
 public:
 	typedef Common::HashMap<uint32, SpecialCodeFunction*> Map;
 	typedef Map::iterator MapIterator;

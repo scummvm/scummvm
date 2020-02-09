@@ -83,7 +83,7 @@ enum {
 class IllusionsEngine : public Engine {
 public:
 	IllusionsEngine(OSystem *syst, const IllusionsGameDescription *gd);
-	~IllusionsEngine();
+	~IllusionsEngine() override;
 	const Common::String getTargetName() { return _targetName; }
 private:
 	const IllusionsGameDescription *_gameDescription;
@@ -223,10 +223,10 @@ public:
 
 	bool _isSaveAllowed;
 
-	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &description);
+	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
+	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &description) override;
 	Common::Error removeGameState(int slot);
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);

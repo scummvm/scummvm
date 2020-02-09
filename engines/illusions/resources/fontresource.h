@@ -33,9 +33,9 @@ class IllusionsEngine;
 class FontResourceLoader : public BaseResourceLoader {
 public:
 	FontResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
-	virtual ~FontResourceLoader() {}
-	virtual void load(Resource *resource);
-	virtual bool isFlag(int flag);
+	~FontResourceLoader() override {}
+	void load(Resource *resource) override;
+	bool isFlag(int flag) override;
 protected:
 	IllusionsEngine *_vm;
 };
@@ -81,8 +81,8 @@ public:
 class FontInstance : public ResourceInstance {
 public:
 	FontInstance(IllusionsEngine *vm);
-	virtual void load(Resource *resource);
-	virtual void unload();
+	void load(Resource *resource) override;
+	void unload() override;
 public:
 	IllusionsEngine *_vm;
 	FontResource *_fontResource;

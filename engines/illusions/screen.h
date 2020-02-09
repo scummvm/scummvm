@@ -128,15 +128,15 @@ public:
 class ScreenPalette : public ScreenPaletteBase {
 public:
 	ScreenPalette(IllusionsEngine *vm);
-	void setPalette(byte *colors, uint start, uint count);
-	void setPaletteEntry(int16 index, byte r, byte g, byte b);
-	void getPalette(byte *colors);
-	void shiftPalette(int16 fromIndex, int16 toIndex);
-	void updatePalette();
-	void updateFaderPalette();
-	void setFader(int newValue, int firstIndex, int lastIndex);
-	bool isFaderActive() const { return _isFaderActive; }
-	const byte* getColorTransTbl() const { return _colorTransTbl; }
+	void setPalette(byte *colors, uint start, uint count) override;
+	void setPaletteEntry(int16 index, byte r, byte g, byte b) override;
+	void getPalette(byte *colors) override;
+	void shiftPalette(int16 fromIndex, int16 toIndex) override;
+	void updatePalette() override;
+	void updateFaderPalette() override;
+	void setFader(int newValue, int firstIndex, int lastIndex) override;
+	bool isFaderActive() const override { return _isFaderActive; }
+	const byte* getColorTransTbl() const override { return _colorTransTbl; }
 protected:
 	IllusionsEngine *_vm;
 	bool _needRefreshPalette;
@@ -191,13 +191,13 @@ public:
 class Screen8Bit : public Screen {
 public:
 	Screen8Bit(IllusionsEngine *vm, int16 width, int16 height) : Screen(vm, width, height, 8) {}
-	void decompressSprite(SpriteDecompressQueueItem *item);
-	void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags);
-	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
-	void fillSurface(Graphics::Surface *surface, byte color);
-	void fillSurfaceRect(Graphics::Surface *surface, Common::Rect r, byte color);
+	void decompressSprite(SpriteDecompressQueueItem *item) override;
+	void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags) override;
+	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) override;
+	void fillSurface(Graphics::Surface *surface, byte color) override;
+	void fillSurfaceRect(Graphics::Surface *surface, Common::Rect r, byte color) override;
 	bool isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
-		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels);
+		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) override;
 public:
 	int16 drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);
 	void drawSurfaceUnscaled(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect);
@@ -207,13 +207,13 @@ public:
 class Screen16Bit : public Screen {
 public:
 	Screen16Bit(IllusionsEngine *vm, int16 width, int16 height) : Screen(vm, width, height, 16) {}
-	void decompressSprite(SpriteDecompressQueueItem *item);
-	void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags);
-	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count);
-	void fillSurface(Graphics::Surface *surface, byte color);
-	void fillSurfaceRect(Graphics::Surface *surface, Common::Rect r, byte color);
+	void decompressSprite(SpriteDecompressQueueItem *item) override;
+	void drawSurface(Common::Rect &dstRect, Graphics::Surface *surface, Common::Rect &srcRect, int16 scale, uint32 flags) override;
+	void drawText(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 *text, uint count) override;
+	void fillSurface(Graphics::Surface *surface, byte color) override;
+	void fillSurfaceRect(Graphics::Surface *surface, Common::Rect r, byte color) override;
 	bool isSpritePixelSolid(Common::Point &testPt, Common::Point &drawPosition, Common::Point &drawOffset,
-		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels);
+		const SurfInfo &surfInfo, int16 scale, uint flags, byte *compressedPixels) override;
 public:
 	int16 drawChar(FontResource *font, Graphics::Surface *surface, int16 x, int16 y, uint16 c);
 	void drawSurface10(int16 destX, int16 destY, Graphics::Surface *surface, Common::Rect &srcRect, uint16 colorKey);

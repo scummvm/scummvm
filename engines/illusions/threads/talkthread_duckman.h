@@ -40,13 +40,13 @@ class TalkThread_Duckman : public Thread {
 public:
 	TalkThread_Duckman(IllusionsEngine_Duckman *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 		uint32 objectId, uint32 talkId, uint32 sequenceId1, uint32 sequenceId2);
-	virtual int onUpdate();
-	virtual void onPause();
-	virtual void onUnpause();
-	virtual void onResume();
-	virtual void onTerminated();
-	virtual void onKill();
-	virtual uint32 sendMessage(int msgNum, uint32 msgValue);
+	int onUpdate() override;
+	void onPause() override;
+	void onUnpause() override;
+	void onResume() override;
+	void onTerminated() override;
+	void onKill() override;
+	uint32 sendMessage(int msgNum, uint32 msgValue) override;
 public:
 	IllusionsEngine_Duckman *_vm;
 	//field0 dw

@@ -41,13 +41,13 @@ public:
 	TalkThread(IllusionsEngine *vm, uint32 threadId, uint32 callingThreadId, uint notifyFlags,
 		int16 duration, uint32 objectId, uint32 talkId, uint32 sequenceId1, uint32 sequenceId2,
 		uint32 namedPointId);
-	virtual int onUpdate();
-	virtual void onSuspend();
-	virtual void onPause();
-	virtual void onUnpause();
-	virtual void onTerminated();
-	virtual void onKill();
-	virtual uint32 sendMessage(int msgNum, uint32 msgValue);
+	int onUpdate() override;
+	void onSuspend() override;
+	void onPause() override;
+	void onUnpause() override;
+	void onTerminated() override;
+	void onKill() override;
+	uint32 sendMessage(int msgNum, uint32 msgValue) override;
 public:
 	//field0 dw
 	int _status;

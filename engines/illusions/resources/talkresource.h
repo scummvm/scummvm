@@ -33,9 +33,9 @@ class IllusionsEngine;
 class TalkResourceLoader : public BaseResourceLoader {
 public:
 	TalkResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
-	virtual ~TalkResourceLoader() {}
-	virtual void load(Resource *resource);
-	virtual bool isFlag(int flag);
+	~TalkResourceLoader() override {}
+	void load(Resource *resource) override;
+	bool isFlag(int flag) override;
 protected:
 	IllusionsEngine *_vm;
 };
@@ -62,10 +62,10 @@ public:
 class TalkInstance : public ResourceInstance {
 public:
 	TalkInstance(IllusionsEngine *vm);
-	virtual void load(Resource *resource);
-	virtual void unload();
-	virtual void pause();
-	virtual void unpause();
+	void load(Resource *resource) override;
+	void unload() override;
+	void pause() override;
+	void unpause() override;
 public:
 	IllusionsEngine *_vm;
 	uint32 _talkId;

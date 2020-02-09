@@ -33,9 +33,9 @@ class IllusionsEngine;
 class ScriptResourceLoader : public BaseResourceLoader {
 public:
 	ScriptResourceLoader(IllusionsEngine *vm) : _vm(vm) {}
-	virtual ~ScriptResourceLoader() {}
-	virtual void load(Resource *resource);
-	virtual bool isFlag(int flag);
+	~ScriptResourceLoader() override {}
+	void load(Resource *resource) override;
+	bool isFlag(int flag) override;
 protected:
 	IllusionsEngine *_vm;
 };
@@ -142,8 +142,8 @@ public:
 class ScriptInstance : public ResourceInstance {
 public:
 	ScriptInstance(IllusionsEngine *vm);
-	virtual void load(Resource *resource);
-	virtual void unload();
+	void load(Resource *resource) override;
+	void unload() override;
 public:
 	IllusionsEngine *_vm;
 };

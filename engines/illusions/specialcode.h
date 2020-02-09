@@ -33,11 +33,11 @@ struct OpCall;
 class SpecialCodeLoader : public BaseResourceLoader {
 public:
 	SpecialCodeLoader(IllusionsEngine *vm) : _vm(vm) {}
-	virtual ~SpecialCodeLoader() {}
-	virtual void load(Resource *resource);
+	~SpecialCodeLoader() override {}
+	void load(Resource *resource) override;
 	virtual void unload(Resource *resource);
 	virtual void buildFilename(Resource *resource);
-	virtual bool isFlag(int flag);
+	bool isFlag(int flag) override;
 protected:
 	IllusionsEngine *_vm;
 };

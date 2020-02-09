@@ -39,9 +39,9 @@ typedef Common::Functor1<OpCall&, void> SpecialCodeFunction;
 class DuckmanSpecialCode : public SpecialCode {
 public:
 	DuckmanSpecialCode(IllusionsEngine_Duckman *vm);
-	~DuckmanSpecialCode();
-	virtual void init();
-	virtual void run(uint32 specialCodeId, OpCall &opCall);
+	~DuckmanSpecialCode() override;
+	void init() override;
+	void run(uint32 specialCodeId, OpCall &opCall) override;
 public:
 	typedef Common::HashMap<uint32, SpecialCodeFunction*> SpecialCodeMap;
 	typedef SpecialCodeMap::iterator SpecialCodeMapIterator;

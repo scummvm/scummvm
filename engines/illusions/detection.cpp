@@ -122,20 +122,20 @@ public:
 		return "illusions";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Illusions";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "(C) The Illusions Gaming Company";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	virtual int getMaximumSaveSlot() const override;
-	virtual SaveStateList listSaves(const char *target) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	int getMaximumSaveSlot() const override;
+	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	virtual void removeSaveState(const char *target, int slot) const override;
+	void removeSaveState(const char *target, int slot) const override;
 };
 
 bool IllusionsMetaEngine::hasFeature(MetaEngineFeature f) const {

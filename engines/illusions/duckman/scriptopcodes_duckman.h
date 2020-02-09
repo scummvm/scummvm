@@ -34,9 +34,9 @@ class ScriptThread;
 class ScriptOpcodes_Duckman : public ScriptOpcodes {
 public:
 	ScriptOpcodes_Duckman(IllusionsEngine_Duckman *vm);
-	~ScriptOpcodes_Duckman();
-	void initOpcodes();
-	void freeOpcodes();
+	~ScriptOpcodes_Duckman() override;
+	void initOpcodes() override;
+	void freeOpcodes() override;
 protected:
 	IllusionsEngine_Duckman *_vm;
 

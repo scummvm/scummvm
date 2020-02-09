@@ -34,9 +34,9 @@ public:
 	BBDOU_GameState(IllusionsEngine_BBDOU *vm);
 protected:
 	IllusionsEngine_BBDOU *_vm;
-	uint32 calcWriteBufferSizeInternal();
-	bool readStateInternal(Common::ReadStream *in);
-	void writeStateInternal(Common::WriteStream *out);
+	uint32 calcWriteBufferSizeInternal() override;
+	bool readStateInternal(Common::ReadStream *in) override;
+	void writeStateInternal(Common::WriteStream *out) override;
 };
 
 } // End of namespace Illusions
