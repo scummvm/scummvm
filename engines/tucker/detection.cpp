@@ -131,15 +131,15 @@ public:
 		return "tucker";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Bud Tucker in Double Trouble";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Bud Tucker in Double Trouble (C) Merit Studios";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override {
+	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
 		case kSupportsListSaves:
 		case kSupportsLoadingDuringStartup:
@@ -154,14 +154,14 @@ public:
 		}
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc) {
 			*engine = new Tucker::TuckerEngine(syst, desc->language, desc->flags);
 		}
 		return desc != nullptr;
 	}
 
-	virtual ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
 		for (Common::FSList::const_iterator d = fslist.begin(); d != fslist.end(); ++d) {
 			Common::FSList audiofslist;
 			if (d->isDirectory() && d->getName().equalsIgnoreCase("audio") && d->getChildren(audiofslist, Common::FSNode::kListFilesOnly)) {
@@ -176,7 +176,7 @@ public:
 		return ADDetectedGame();
 	}
 
-	virtual SaveStateList listSaves(const char *target) const override {
+	SaveStateList listSaves(const char *target) const override {
 		Common::String pattern = Tucker::generateGameStateFileName(target, 0, true);
 		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 		Tucker::TuckerEngine::SavegameHeader header;
@@ -202,11 +202,11 @@ public:
 		return saveList;
 	}
 
-	virtual int getMaximumSaveSlot() const override {
+	int getMaximumSaveSlot() const override {
 		return Tucker::kLastSaveSlot;
 	}
 
-	virtual void removeSaveState(const char *target, int slot) const override {
+	void removeSaveState(const char *target, int slot) const override {
 		Common::String filename = Tucker::generateGameStateFileName(target, slot);
 		g_system->getSavefileManager()->removeSavefile(filename);
 	}
