@@ -85,23 +85,23 @@ private:
 
 public:
 	LureEngine(OSystem *system, const LureGameDescription *gameDesc);
-	~LureEngine();
+	~LureEngine() override;
 	static LureEngine &getReference();
 	bool _saveLoadAllowed;
 
 	// Engine APIs
 	Common::Error init();
 	Common::Error go();
-	virtual Common::Error run() override {
+	Common::Error run() override {
 		Common::Error err;
 		err = init();
 		if (err.getCode() != Common::kNoError)
 			return err;
 		return go();
 	}
-	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void syncSoundSettings() override;
-	virtual void pauseEngineIntern(bool pause) override;
+	bool hasFeature(EngineFeature f) const override;
+	void syncSoundSettings() override;
+	void pauseEngineIntern(bool pause) override;
 
 	Disk &disk() { return *_disk; }
 
@@ -116,20 +116,20 @@ public:
 	LureLanguage getLureLanguage() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
-	virtual GUI::Debugger *getDebugger() override;
+	GUI::Debugger *getDebugger() override;
 	bool isEGA() const { return (getFeatures() & GF_EGA) != 0; }
 
-	virtual Common::Error loadGameState(int slot) override {
+	Common::Error loadGameState(int slot) override {
 		return loadGame(slot) ? Common::kNoError : Common::kReadingFailed;
 	}
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override {
+	Common::Error saveGameState(int slot, const Common::String &desc) override {
 		Common::String s(desc);
 		return saveGame(slot, s) ? Common::kNoError : Common::kReadingFailed;
 	}
-	virtual bool canLoadGameStateCurrently() override {
+	bool canLoadGameStateCurrently() override {
 		return _saveLoadAllowed && !Fights.isFighting();
 	}
-	virtual bool canSaveGameStateCurrently() override {
+	bool canSaveGameStateCurrently() override {
 		return _saveLoadAllowed && !Fights.isFighting();
 	}
 };

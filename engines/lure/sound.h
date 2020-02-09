@@ -68,7 +68,7 @@ private:
 public:
 	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 		 uint8 channelNum, uint8 soundNum, bool isMus, uint8 numChannels, void *soundData, uint32 size);
-	~MidiMusic();
+	~MidiMusic() override;
 	void setVolume(int volume);
 	int getVolume() const { return _volume; }
 
@@ -81,8 +81,8 @@ public:
 	void toggleVChange();
 
 	// MidiDriver_BASE interface implementation
-	virtual void send(uint32 b);
-	virtual void metaEvent(byte type, byte *data, uint16 length);
+	void send(uint32 b) override;
+	void metaEvent(byte type, byte *data, uint16 length) override;
 
 	void onTimer();
 
@@ -126,7 +126,7 @@ private:
 
 public:
 	SoundManager();
-	~SoundManager();
+	~SoundManager() override;
 
 	void saveToStream(Common::WriteStream *stream);
 	void loadFromStream(Common::ReadStream *stream);
