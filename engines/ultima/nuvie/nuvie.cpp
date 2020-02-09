@@ -49,7 +49,7 @@ NuvieEngine *g_engine;
 
 NuvieEngine::NuvieEngine(OSystem *syst, const Ultima::UltimaGameDescription *gameDesc) :
 		Ultima::Shared::UltimaEngine(syst, gameDesc),  _config(nullptr), _savegame(nullptr),
-		_screen(nullptr), _script(nullptr), _game(nullptr), _debugger(nullptr) {
+		_screen(nullptr), _script(nullptr), _game(nullptr) {
 	g_engine = this;
 }
 
@@ -60,7 +60,6 @@ NuvieEngine::~NuvieEngine() {
 	delete _screen;
 	delete _script;
 	delete _game;
-	delete _debugger;
 
 	g_engine = nullptr;
 }
@@ -108,7 +107,7 @@ bool NuvieEngine::initialize() {
 	_savegame = new SaveGame(_config);
 
 	// Setup debugger
-	_debugger = new Debugger();
+	setDebugger(new Debugger());
 
 	// Setup screen
 	_screen = new Screen(_config);

@@ -46,7 +46,6 @@ private:
 	Script *_script;
 	Game *_game;
 	SaveGame *_savegame;
-	::GUI::Debugger *_debugger;
 private:
 	void initConfig();
 	void assignGameConfigValues(uint8 game_type);
@@ -99,10 +98,6 @@ public:
 	 * @return returns kNoError on success, else an error code.
 	 */
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
-
-	::GUI::Debugger *getDebugger() override {
-		return _debugger;
-	}
 
 	/**
 	 * Either starts the most recently saved game, or falls back on starting a new game

@@ -135,11 +135,6 @@ public:
 	virtual bool autoSaveCheck(int lastSaveTime) = 0;
 
 	/**
-	 * Get the debugger
-	 */
-	virtual GUI::Debugger *getDebugger() = 0;
-
-	/**
 	 * Get the screen
 	 */
 	virtual Graphics::Screen *getScreen() const {

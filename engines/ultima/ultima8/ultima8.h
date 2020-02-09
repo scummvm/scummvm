@@ -93,7 +93,6 @@ private:
 	Kernel *_kernel;
 	MemoryManager *_memoryManager;
 	ObjectManager *_objectManager;
-	GUI::Debugger *_debugger;
 	HIDManager *_hidManager;
 	UCMachine *_ucMachine;
 	RenderSurface *_screen;
@@ -241,7 +240,6 @@ public:
 		return _screen;
 	}
 
-	GUI::Debugger *getDebugger() override;
 	Graphics::Screen *getScreen() const override;
 
 	void runGame() override;
