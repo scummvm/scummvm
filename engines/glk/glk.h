@@ -28,7 +28,6 @@
 #include "common/system.h"
 #include "common/serializer.h"
 #include "engines/engine.h"
-#include "glk/debugger.h"
 #include "glk/glk_types.h"
 #include "glk/streams.h"
 #include "glk/pc_speaker.h"
@@ -101,13 +100,6 @@ protected:
 	virtual Screen *createScreen();
 
 	/**
-	 * Creates a debugger instance
-	 */
-	virtual Debugger *createDebugger() {
-		return new Debugger();
-	}
-
-	/**
 	 * Main game loop for the individual interpreters
 	 */
 	virtual void runGame() = 0;
@@ -115,7 +107,6 @@ public:
 	Blorb *_blorb;
 	Clipboard *_clipboard;
 	Conf *_conf;
-	Debugger *_debugger;
 	Events *_events;
 	Pictures *_pictures;
 	Screen *_screen;
