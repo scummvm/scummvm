@@ -46,9 +46,8 @@
 
 namespace Plumbers {
 
-PlumbersGame::PlumbersGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-	_image = nullptr;
-	_console = nullptr;
+PlumbersGame::PlumbersGame(OSystem *syst, const ADGameDescription *gameDesc) :
+		Engine(syst), _gameDescription(gameDesc), _console(0), _image(0) {
 	_timerInstalled = false;
 	_showScoreFl = false;
 	_setDurationFl = false;
@@ -66,7 +65,7 @@ PlumbersGame::PlumbersGame(OSystem *syst, const ADGameDescription *gameDesc) : E
 
 PlumbersGame::~PlumbersGame() {
 	delete _image;
-	delete _console;
+	//_console is deleted by Engine
 }
 
 static const byte MOUSECURSOR_SCI[] = {
@@ -96,8 +95,9 @@ static const byte cursorPalette[] = {
 
 Common::Error PlumbersGame::run() {
 	initGraphics(640, 480);
-	_console = new Console();
 	_image = new Image::BitmapDecoder();
+	_console = new Console();
+	setDebugger(_console);
 
 	CursorMan.replaceCursor(MOUSECURSOR_SCI, 11, 16, 0, 0, 0);
 	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
@@ -142,11 +142,6 @@ Common::Error PlumbersGame::run() {
 					// Allows to skip speech by skipping wait delay
 					onTimer(this);
 				}
-				break;
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL))
-					_console->attach();
-
 				break;
 			default:
 				break;
@@ -231,8 +226,6 @@ void PlumbersGame::drawScreen() {
 		g_system->getPaletteManager()->setPalette(_image->getPalette(), 0, 256);
 		g_system->updateScreen();
 	}
-
-	_console->onFrame();
 }
 
 void PlumbersGame::playSound() {
