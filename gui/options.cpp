@@ -2073,7 +2073,7 @@ void GlobalOptionsDialog::addAccessibilityControls(GuiObject *boss, const Common
 		_ttsVoiceSelectionPopUp->appendEntry(voices[i].getDescription(), i);
 	}
 	if (voices.empty())
-		_ttsVoiceSelectionPopUp->appendEntry("None", 0);
+		_ttsVoiceSelectionPopUp->appendEntry(_("None"), 0);
 
 	if (ConfMan.hasKey("tts_voice") && (unsigned) ConfMan.getInt("tts_voice", _domain) < voices.size())
 		_ttsVoiceSelectionPopUp->setSelectedTag(ConfMan.getInt("tts_voice", _domain)) ;
