@@ -40,7 +40,7 @@ protected:
 
 public:
 	Debugger(MortevielleEngine *vm);
-	virtual ~Debugger() {}
+	~Debugger() override {}
 };
 
 } // End of namespace Mortevielle

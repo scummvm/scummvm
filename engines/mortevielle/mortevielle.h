@@ -438,15 +438,15 @@ public:
 	DialogManager *_dialogManager;
 
 	MortevielleEngine(OSystem *system, const MortevielleGameDescription *gameDesc);
-	~MortevielleEngine();
-	virtual bool hasFeature(EngineFeature f) const override;
-	virtual bool canLoadGameStateCurrently() override;
-	virtual bool canSaveGameStateCurrently() override;
-	virtual Common::Error loadGameState(int slot) override;
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
-	virtual Common::Error run() override;
-	virtual void pauseEngineIntern(bool pause) override;
-	virtual GUI::Debugger *getDebugger() override { return _debugger; }
+	~MortevielleEngine() override;
+	bool hasFeature(EngineFeature f) const override;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error run() override;
+	void pauseEngineIntern(bool pause) override;
+	GUI::Debugger *getDebugger() override { return _debugger; }
 	uint32 getGameFlags() const;
 	Common::Language getLanguage() const;
 	Common::Language getOriginalLanguage() const;
