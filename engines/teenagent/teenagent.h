@@ -84,14 +84,14 @@ const uint16 kScreenHeight = 200;
 class TeenAgentEngine : public Engine {
 public:
 	TeenAgentEngine(OSystem *system, const ADGameDescription *gd);
-	~TeenAgentEngine();
+	~TeenAgentEngine() override;
 
-	virtual Common::Error run() override;
-	virtual Common::Error loadGameState(int slot) override;
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
-	virtual bool canLoadGameStateCurrently() override { return true; }
-	virtual bool canSaveGameStateCurrently() override { return !_sceneBusy; }
-	virtual bool hasFeature(EngineFeature f) const override;
+	Common::Error run() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canLoadGameStateCurrently() override { return true; }
+	bool canSaveGameStateCurrently() override { return !_sceneBusy; }
+	bool hasFeature(EngineFeature f) const override;
 
 	GUI::Debugger *getDebugger() override { return console; }
 

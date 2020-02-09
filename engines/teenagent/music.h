@@ -33,7 +33,7 @@ class TeenAgentEngine;
 class MusicPlayer : public Audio::Paula {
 public:
 	MusicPlayer(TeenAgentEngine *vm);
-	~MusicPlayer();
+	~MusicPlayer() override;
 
 	bool load(int id);
 	int getId() const { return _id; }
@@ -78,7 +78,7 @@ private:
 	Common::Array<Row> _rows;
 	uint _currRow;
 
-	void interrupt();
+	void interrupt() override;
 };
 
 } // End of namespace Teen
