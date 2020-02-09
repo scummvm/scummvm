@@ -51,25 +51,25 @@ public:
 		_md5Bytes = 512;
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "testbed";
 	}
 
-	virtual const char *getName() const {
+	const char *getName() const override {
 		return "TestBed: The Backend Testing Framework";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Copyright (C) ScummVM";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription * /* desc */) const {
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription * /* desc */) const override {
 		// Instantiate Engine even if the game data is not found.
 		*engine = new Testbed::TestbedEngine(syst);
 		return true;
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override {
+	bool hasFeature(MetaEngineFeature f) const override {
 		return false;
 	}
 };

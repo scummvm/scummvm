@@ -65,11 +65,11 @@ public:
 	 * @see addTest()
 	 */
 	MiscTestSuite();
-	~MiscTestSuite() {}
-	const char *getName() const {
+	~MiscTestSuite() override {}
+	const char *getName() const override {
 		return "Misc";
 	}
-	const char *getDescription() const {
+	const char *getDescription() const override {
 		return "Miscellaneous: Timers/Mutexes/Datetime/openUrl";
 	}
 };

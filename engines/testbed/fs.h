@@ -58,14 +58,14 @@ public:
 	 * @see addTest()
 	 */
 	FSTestSuite();
-	~FSTestSuite() {}
-	const char *getName() const {
+	~FSTestSuite() override {}
+	const char *getName() const override {
 		return "FS";
 	}
-	const char *getDescription() const {
+	const char *getDescription() const override {
 		return "File system tests (Navigation, Read/Write)";
 	}
-	void enable(bool flag);
+	void enable(bool flag) override;
 };
 
 } // End of namespace Testbed

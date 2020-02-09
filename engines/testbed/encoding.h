@@ -54,12 +54,12 @@ public:
 	 * @see addTest()
 	 */
 	EncodingTestSuite();
-	~EncodingTestSuite() {}
-	const char *getName() const {
+	~EncodingTestSuite() override {}
+	const char *getName() const override {
 		return "Encoding";
 	}
 
-	const char *getDescription() const {
+	const char *getDescription() const override {
 		return "Encoding conversion";
 	}
 

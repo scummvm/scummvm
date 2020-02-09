@@ -67,12 +67,12 @@ public:
 	 * @see addTest()
 	 */
 	CloudTestSuite();
-	~CloudTestSuite() {}
-	const char *getName() const {
+	~CloudTestSuite() override {}
+	const char *getName() const override {
 		return "Cloud";
 	}
 
-	const char *getDescription() const {
+	const char *getDescription() const override {
 		return "CloudMan, Storage API tests";
 	}
 

@@ -58,16 +58,16 @@ public:
 	 * @see addTest()
 	 */
 	MidiTestSuite();
-	~MidiTestSuite() {}
-	const char *getName() const {
+	~MidiTestSuite() override {}
+	const char *getName() const override {
 		return "MIDI";
 	}
 
-	const char *getDescription() const {
+	const char *getDescription() const override {
 		return "Midi Music";
 	}
 
-	void enable(bool flag);
+	void enable(bool flag) override;
 
 private:
 	bool _isMidiDataFound;
