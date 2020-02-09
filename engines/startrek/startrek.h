@@ -227,11 +227,11 @@ protected:
 	// startrek.cpp
 public:
 	StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gamedesc);
-	virtual ~StarTrekEngine();
+	~StarTrekEngine() override;
 
 	friend class Console;
 
-	Common::Error run();
+	Common::Error run() override;
 	Common::Error runGameMode(int mode, bool resume);
 
 	// Transporter room

@@ -32,7 +32,7 @@ class StarTrekEngine;
 class Console : public GUI::Debugger {
 public:
 	Console(StarTrekEngine *vm);
-	virtual ~Console(void);
+	~Console(void) override;
 
 private:
 	StarTrekEngine *_vm;
