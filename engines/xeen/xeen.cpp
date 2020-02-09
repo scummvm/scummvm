@@ -70,7 +70,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 
 XeenEngine::~XeenEngine() {
 	delete _combat;
-	delete _debugger;
+	//_debugger is deleted by Engine
 	delete _events;
 	delete _interface;
 	delete _locations;
@@ -97,6 +97,7 @@ bool XeenEngine::initialize() {
 	_resources = new Resources();
 	_combat = new Combat(this);
 	_debugger = new Debugger(this);
+	setDebugger(_debugger);
 	_events = new EventsManager(this);
 	_interface = new Interface(this);
 	_locations = new LocationManager();
