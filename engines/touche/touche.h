@@ -475,7 +475,6 @@ public:
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 	void syncSoundSettings() override;
-	GUI::Debugger *getDebugger() override { return _console; }
 
 protected:
 
@@ -609,8 +608,6 @@ protected:
 	Common::Error loadGameState(int num) override;
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
-
-	ToucheConsole *_console;
 
 	void setupOpcodes();
 	void op_nop();
