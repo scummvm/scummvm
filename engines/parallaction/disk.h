@@ -103,13 +103,13 @@ protected:
 
 public:
 	Disk_ns(Parallaction *vm);
-	virtual ~Disk_ns();
+	~Disk_ns() override;
 
-	Common::String selectArchive(const Common::String &name);
-	void setLanguage(uint16 language);
+	Common::String selectArchive(const Common::String &name) override;
+	void setLanguage(uint16 language) override;
 
-	virtual Script* loadLocation(const char *name);
-	virtual Script* loadScript(const char* name);
+	Script* loadLocation(const char *name) override;
+	Script* loadScript(const char* name) override;
 };
 
 class DosDisk_ns : public Disk_ns {
@@ -124,27 +124,27 @@ private:
 
 protected:
 	Gfx	 *_gfx;
-	virtual Common::SeekableReadStream *tryOpenFile(const char* name);
-	virtual void decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 height, Common::SeekableReadStream *stream);
+	Common::SeekableReadStream *tryOpenFile(const char* name) override;
+	void decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 height, Common::SeekableReadStream *stream) override;
 
 public:
 	DosDisk_ns(Parallaction *vm);
-	virtual ~DosDisk_ns();
+	~DosDisk_ns() override;
 
-	void init();
+	void init() override;
 
-	GfxObj* loadTalk(const char *name);
-	GfxObj* loadObjects(const char *name, uint8 part = 0);
-	Frames* loadPointer(const char *name);
-	GfxObj* loadHead(const char* name);
-	Font* loadFont(const char* name);
-	GfxObj* loadStatic(const char* name);
-	Frames* loadFrames(const char* name);
-	void loadSlide(BackgroundInfo& info, const char *filename);
-	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
-	Table* loadTable(const char* name);
-	Common::SeekableReadStream* loadMusic(const char* name);
-	Common::SeekableReadStream* loadSound(const char* name);
+	GfxObj* loadTalk(const char *name) override;
+	GfxObj* loadObjects(const char *name, uint8 part = 0) override;
+	Frames* loadPointer(const char *name) override;
+	GfxObj* loadHead(const char* name) override;
+	Font* loadFont(const char* name) override;
+	GfxObj* loadStatic(const char* name) override;
+	Frames* loadFrames(const char* name) override;
+	void loadSlide(BackgroundInfo& info, const char *filename) override;
+	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path) override;
+	Table* loadTable(const char* name) override;
+	Common::SeekableReadStream* loadMusic(const char* name) override;
+	Common::SeekableReadStream* loadSound(const char* name) override;
 };
 
 class AmigaDisk_ns : public Disk_ns {
@@ -153,33 +153,33 @@ protected:
 	void patchFrame(byte *dst, byte *dlta, uint16 bytesPerPlane, uint16 height);
 	void unpackFrame(byte *dst, byte *src, uint16 planeSize);
 	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height);
-	Common::SeekableReadStream *tryOpenFile(const char* name);
+	Common::SeekableReadStream *tryOpenFile(const char* name) override;
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
 	void loadMask_internal(BackgroundInfo& info, const char *name);
 	void loadPath_internal(BackgroundInfo& info, const char *name);
 	void loadBackground(BackgroundInfo& info, const char *name);
 	void buildMask(byte* buf);
 
-	virtual void decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 height, Common::SeekableReadStream *stream);
+	void decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 height, Common::SeekableReadStream *stream) override;
 
 public:
 	AmigaDisk_ns(Parallaction *vm);
-	virtual ~AmigaDisk_ns();
+	~AmigaDisk_ns() override;
 
-	void init();
+	void init() override;
 
-	GfxObj* loadTalk(const char *name);
-	GfxObj* loadObjects(const char *name, uint8 part = 0);
-	Frames* loadPointer(const char *name);
-	GfxObj* loadHead(const char* name);
-	Font* loadFont(const char* name);
-	GfxObj* loadStatic(const char* name);
-	Frames* loadFrames(const char* name);
-	void loadSlide(BackgroundInfo& info, const char *filename);
-	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
-	Table* loadTable(const char* name);
-	Common::SeekableReadStream* loadMusic(const char* name);
-	Common::SeekableReadStream* loadSound(const char* name);
+	GfxObj* loadTalk(const char *name) override;
+	GfxObj* loadObjects(const char *name, uint8 part = 0) override;
+	Frames* loadPointer(const char *name) override;
+	GfxObj* loadHead(const char* name) override;
+	Font* loadFont(const char* name) override;
+	GfxObj* loadStatic(const char* name) override;
+	Frames* loadFrames(const char* name) override;
+	void loadSlide(BackgroundInfo& info, const char *filename) override;
+	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path) override;
+	Table* loadTable(const char* name) override;
+	Common::SeekableReadStream* loadMusic(const char* name) override;
+	Common::SeekableReadStream* loadSound(const char* name) override;
 };
 
 
@@ -201,7 +201,7 @@ protected:
 
 public:
 	Disk_br(Parallaction *vm);
-	virtual ~Disk_br();
+	~Disk_br() override;
 };
 
 //	for the moment DosDisk_br subclasses Disk. When Amiga support will
@@ -218,26 +218,26 @@ protected:
 public:
 	DosDisk_br(Parallaction *vm);
 
-	virtual void init();
+	void init() override;
 
-	Common::String selectArchive(const Common::String &name);
-	void setLanguage(uint16 language);
-	Script* loadLocation(const char *name);
-	Script* loadScript(const char* name);
-	GfxObj* loadTalk(const char *name);
-	GfxObj* loadObjects(const char *name, uint8 part = 0);
-	Frames* loadPointer(const char *name);
-	GfxObj* loadHead(const char* name);
-	Font* loadFont(const char* name);
-	GfxObj* loadStatic(const char* name);
-	Frames* loadFrames(const char* name);
-	void loadSlide(BackgroundInfo& info, const char *filename);
-	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path);
-	Table* loadTable(const char* name);
-	Common::SeekableReadStream* loadMusic(const char* name);
-	Common::SeekableReadStream* loadSound(const char* name);
-	MaskBuffer *loadMask(const char *name, uint32 w, uint32 h);
-	PathBuffer *loadPath(const char *name, uint32 w, uint32 h);
+	Common::String selectArchive(const Common::String &name) override;
+	void setLanguage(uint16 language) override;
+	Script* loadLocation(const char *name) override;
+	Script* loadScript(const char* name) override;
+	GfxObj* loadTalk(const char *name) override;
+	GfxObj* loadObjects(const char *name, uint8 part = 0) override;
+	Frames* loadPointer(const char *name) override;
+	GfxObj* loadHead(const char* name) override;
+	Font* loadFont(const char* name) override;
+	GfxObj* loadStatic(const char* name) override;
+	Frames* loadFrames(const char* name) override;
+	void loadSlide(BackgroundInfo& info, const char *filename) override;
+	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path) override;
+	Table* loadTable(const char* name) override;
+	Common::SeekableReadStream* loadMusic(const char* name) override;
+	Common::SeekableReadStream* loadSound(const char* name) override;
+	MaskBuffer *loadMask(const char *name, uint32 w, uint32 h) override;
+	PathBuffer *loadPath(const char *name, uint32 w, uint32 h) override;
 };
 
 class DosDemoDisk_br : public DosDisk_br {
@@ -245,9 +245,9 @@ class DosDemoDisk_br : public DosDisk_br {
 public:
 	DosDemoDisk_br(Parallaction *vm);
 
-	virtual void init();
+	void init() override;
 
-	Common::String selectArchive(const Common::String& name);
+	Common::String selectArchive(const Common::String& name) override;
 };
 
 class AmigaDisk_br : public DosDisk_br {
@@ -261,19 +261,19 @@ protected:
 public:
 	AmigaDisk_br(Parallaction *vm);
 
-	virtual void init();
+	void init() override;
 
-	Common::String selectArchive(const Common::String& name);
-	GfxObj* loadTalk(const char *name);
-	Font* loadFont(const char* name);
-	GfxObj* loadStatic(const char* name);
-	Frames* loadFrames(const char* name);
-	void loadSlide(BackgroundInfo& info, const char *filename);
-	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path);
-	GfxObj* loadObjects(const char *name, uint8 part = 0);
-	Common::SeekableReadStream* loadMusic(const char* name);
-	Common::SeekableReadStream* loadSound(const char* name);
-	MaskBuffer *loadMask(const char *name, uint32 w, uint32 h);
+	Common::String selectArchive(const Common::String& name) override;
+	GfxObj* loadTalk(const char *name) override;
+	Font* loadFont(const char* name) override;
+	GfxObj* loadStatic(const char* name) override;
+	Frames* loadFrames(const char* name) override;
+	void loadSlide(BackgroundInfo& info, const char *filename) override;
+	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path) override;
+	GfxObj* loadObjects(const char *name, uint8 part = 0) override;
+	Common::SeekableReadStream* loadMusic(const char* name) override;
+	Common::SeekableReadStream* loadSound(const char* name) override;
+	MaskBuffer *loadMask(const char *name, uint32 w, uint32 h) override;
 };
 
 } // namespace Parallaction

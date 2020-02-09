@@ -222,23 +222,23 @@ public:
 		_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 	}
 
-	virtual const char *getEngineId() const override {
+	const char *getEngineId() const override {
 		return "parallaction";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Parallaction";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Nippon Safes Inc. (C) Dynabyte";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	virtual SaveStateList listSaves(const char *target) const override;
-	virtual int getMaximumSaveSlot() const override;
-	virtual void removeSaveState(const char *target, int slot) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
+	int getMaximumSaveSlot() const override;
+	void removeSaveState(const char *target, int slot) const override;
 };
 
 bool ParallactionMetaEngine::hasFeature(MetaEngineFeature f) const {
