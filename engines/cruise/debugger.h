@@ -30,7 +30,7 @@ namespace Cruise {
 class Debugger : public GUI::Debugger {
 public:
 	Debugger();
-	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
+	~Debugger() override {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 private:
 	bool cmd_hotspots(int argc, const char **argv);

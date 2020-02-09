@@ -116,12 +116,12 @@ struct VolumeEntry {
 class AdLibSoundDriver : public PCSoundDriver {
 public:
 	AdLibSoundDriver(Audio::Mixer *mixer);
-	virtual ~AdLibSoundDriver();
+	~AdLibSoundDriver() override;
 
 	// PCSoundDriver interface
-	virtual void setupChannel(int channel, const byte *data, int instrument, int volume);
-	virtual void stopChannel(int channel);
-	virtual void stopAll();
+	void setupChannel(int channel, const byte *data, int instrument, int volume) override;
+	void stopChannel(int channel) override;
+	void stopAll() override;
 
 	void initCard();
 	void onTimer();
@@ -129,7 +129,7 @@ public:
 	void setupInstrument(const AdLibSoundInstrument *ins, int channel);
 	void loadRegisterInstrument(const byte *data, AdLibRegisterSoundInstrument *reg);
 	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi) = 0;
-	virtual void syncSounds();
+	void syncSounds() override;
 
 	void adjustVolume(int channel, int volume);
 
@@ -171,10 +171,10 @@ const int AdLibSoundDriver::_voiceOperatorsTableCount = ARRAYSIZE(_voiceOperator
 class AdLibSoundDriverADL : public AdLibSoundDriver {
 public:
 	AdLibSoundDriverADL(Audio::Mixer *mixer) : AdLibSoundDriver(mixer) {}
-	virtual const char *getInstrumentExtension() const { return ".ADL"; }
-	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi);
-	virtual void setChannelFrequency(int channel, int frequency);
-	virtual void playSample(const byte *data, int size, int channel, int volume);
+	const char *getInstrumentExtension() const override { return ".ADL"; }
+	void loadInstrument(const byte *data, AdLibSoundInstrument *asi) override;
+	void setChannelFrequency(int channel, int frequency) override;
+	void playSample(const byte *data, int size, int channel, int volume) override;
 };
 
 class PCSoundFxPlayer {
