@@ -36,10 +36,10 @@ public:
 	MusicPlayer(const char *filename);
 
 	void playSMF(bool loop);
-	void stop();
+	void stop() override;
 
 	// Overload Audio::MidiPlayer method
-	virtual void sendToChannel(byte channel, uint32 b);
+	void sendToChannel(byte channel, uint32 b) override;
 
 protected:
 	Common::String _filename;

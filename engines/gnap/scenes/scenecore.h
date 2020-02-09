@@ -50,13 +50,13 @@ protected:
 class CutScene : public Scene {
 public:
 	CutScene(GnapEngine *vm);
-	virtual ~CutScene() {};
+	~CutScene() override {};
 
-	virtual int init() = 0;
-	void updateHotspots() {}
-	void run();
-	void updateAnimations() {}
-	void updateAnimationsCb() {}
+	int init() override = 0;
+	void updateHotspots() override {}
+	void run() override;
+	void updateAnimations() override {}
+	void updateAnimationsCb() override {}
 
 protected:
 	int _itemsCount;

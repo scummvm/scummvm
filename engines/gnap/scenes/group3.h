@@ -148,13 +148,13 @@ class CutScene;
 class Scene30: public Scene {
 public:
 	Scene30(GnapEngine *vm);
-	virtual ~Scene30() {}
+	~Scene30() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 
 private:
 	int _kidSequenceId;
@@ -163,13 +163,13 @@ private:
 class Scene31: public Scene {
 public:
 	Scene31(GnapEngine *vm);
-	virtual ~Scene31() {}
+	~Scene31() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 
 private:
 	bool _beerGuyDistracted;
@@ -182,25 +182,25 @@ private:
 class Scene32: public Scene {
 public:
 	Scene32(GnapEngine *vm);
-	virtual ~Scene32() {}
+	~Scene32() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 };
 
 class Scene33: public Scene {
 public:
 	Scene33(GnapEngine *vm);
-	virtual ~Scene33() {}
+	~Scene33() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 
 private:
 	int _currChickenSequenceId;
@@ -210,25 +210,25 @@ private:
 class Scene38: public Scene {
 public:
 	Scene38(GnapEngine *vm);
-	virtual ~Scene38() {}
+	~Scene38() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 };
 
 class Scene39: public Scene {
 public:
 	Scene39(GnapEngine *vm);
-	virtual ~Scene39() {}
+	~Scene39() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 
 private:
 	int _currGuySequenceId;

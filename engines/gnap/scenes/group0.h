@@ -251,13 +251,13 @@ class CutScene;
 class Scene01: public Scene {
 public:
 	Scene01(GnapEngine *vm);
-	virtual ~Scene01();
+	~Scene01() override;
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {}
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {}
 
 private:
 	int _pigsIdCtr;
@@ -268,13 +268,13 @@ private:
 class Scene02: public Scene {
 public:
 	Scene02(GnapEngine *vm);
-	virtual ~Scene02() {}
+	~Scene02() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {}
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {}
 
 private:
 	int _truckGrillCtr;
@@ -286,13 +286,13 @@ private:
 class Scene03: public Scene {
 public:
 	Scene03(GnapEngine *vm);
-	virtual ~Scene03() {}
+	~Scene03() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {}
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {}
 
 private:
 	bool _platypusHypnotized;
@@ -305,13 +305,13 @@ private:
 class Scene04: public Scene {
 public:
 	Scene04(GnapEngine *vm);
-	virtual ~Scene04() {}
+	~Scene04() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {}
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {}
 
 private:
 	bool _triedWindow;
@@ -323,13 +323,13 @@ private:
 class Scene05: public Scene {
 public:
 	Scene05(GnapEngine *vm);
-	virtual ~Scene05() {}
+	~Scene05() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {}
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {}
 
 private:
 	int _nextChickenSequenceId;
@@ -339,13 +339,13 @@ private:
 class Scene06: public Scene {
 public:
 	Scene06(GnapEngine *vm);
-	virtual ~Scene06() {}
+	~Scene06() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {}
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {}
 
 private:
 	bool _horseTurnedBack;
@@ -357,25 +357,25 @@ private:
 class Scene07: public Scene {
 public:
 	Scene07(GnapEngine *vm);
-	virtual ~Scene07() {}
+	~Scene07() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {}
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {}
 };
 
 class Scene08: public Scene {
 public:
 	Scene08(GnapEngine *vm);
-	virtual ~Scene08() {}
+	~Scene08() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb();
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override;
 
 private:
 	int _nextDogSequenceId;
@@ -387,13 +387,13 @@ private:
 class Scene09: public Scene {
 public:
 	Scene09(GnapEngine *vm);
-	virtual ~Scene09() {}
+	~Scene09() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {}
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {}
 };
 
 } // End of namespace Gnap

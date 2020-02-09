@@ -49,13 +49,13 @@ struct ObstacleDef {
 class Scene49: public Scene {
 public:
 	Scene49(GnapEngine *vm);
-	~Scene49() {}
+	~Scene49() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 
 private:
 	int _scoreBarPos;
@@ -80,13 +80,13 @@ private:
 class Scene50: public Scene {
 public:
 	Scene50(GnapEngine *vm);
-	~Scene50() {}
+	~Scene50() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 
 private:
 	bool _fightDone;
@@ -146,13 +146,13 @@ struct Scene51Item {
 class Scene51: public Scene {
 public:
 	Scene51(GnapEngine *vm);
-	~Scene51() {}
+	~Scene51() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations() {};
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override {};
+	void updateAnimationsCb() override {};
 
 private:
 	bool _dropLoseCash;
@@ -204,13 +204,13 @@ private:
 class Scene52: public Scene {
 public:
 	Scene52(GnapEngine *vm);
-	~Scene52() {}
+	~Scene52() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations() {};
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override {};
+	void updateAnimationsCb() override {};
 
 private:
 	int _liveAlienRows;

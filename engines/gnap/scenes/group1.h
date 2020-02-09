@@ -273,13 +273,13 @@ class CutScene;
 class Scene10: public Scene {
 public:
 	Scene10(GnapEngine *vm);
-	virtual ~Scene10() {}
+	~Scene10() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb();
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override;
 
 private:
 	int _nextCookSequenceId;
@@ -289,13 +289,13 @@ private:
 class Scene11: public Scene {
 public:
 	Scene11(GnapEngine *vm);
-	virtual ~Scene11() {}
+	~Scene11() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 
 private:
 	int _billardBallCtr;
@@ -308,13 +308,13 @@ private:
 class Scene12: public Scene {
 public:
 	Scene12(GnapEngine *vm);
-	virtual ~Scene12() {}
+	~Scene12() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 
 private:
 	int _nextBeardGuySequenceId;
@@ -328,13 +328,13 @@ private:
 class Scene13: public Scene {
 public:
 	Scene13(GnapEngine *vm);
-	virtual ~Scene13() {}
+	~Scene13() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 
 private:
 	int _backToiletCtr;
@@ -345,25 +345,25 @@ private:
 class Scene14: public Scene {
 public:
 	Scene14(GnapEngine *vm);
-	virtual ~Scene14() {}
+	~Scene14() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 };
 
 class Scene15: public Scene {
 public:
 	Scene15(GnapEngine *vm);
-	virtual ~Scene15() {}
+	~Scene15() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 
 private:
 	int _nextRecordSequenceId;
@@ -379,13 +379,13 @@ private:
 class Scene17: public Scene {
 public:
 	Scene17(GnapEngine *vm);
-	virtual ~Scene17() {}
+	~Scene17() override {}
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 
 private:
 	bool _canTryGetWrench;
@@ -406,13 +406,13 @@ private:
 class Scene18: public Scene {
 public:
 	Scene18(GnapEngine *vm);
-	virtual ~Scene18();
+	~Scene18() override;
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 
 private:
 	Graphics::Surface *_cowboyHatSurface;
@@ -432,13 +432,13 @@ private:
 class Scene19: public Scene {
 public:
 	Scene19(GnapEngine *vm);
-	virtual ~Scene19();
+	~Scene19() override;
 
-	virtual int init();
-	virtual void updateHotspots();
-	virtual void run();
-	virtual void updateAnimations();
-	virtual void updateAnimationsCb() {};
+	int init() override;
+	void updateHotspots() override;
+	void run() override;
+	void updateAnimations() override;
+	void updateAnimationsCb() override {};
 
 private:
 	int _currShopAssistantSequenceId;
