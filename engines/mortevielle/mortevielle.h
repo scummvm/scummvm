@@ -428,7 +428,6 @@ public:
 	GfxSurface _backgroundSurface;
 	Common::RandomSource _randomSource;
 
-	Debugger *_debugger;
 	ScreenSurface *_screenSurface;
 	SoundManager *_soundManager;
 	SavegameManager *_savegameManager;
@@ -446,7 +445,6 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
 	Common::Error run() override;
 	void pauseEngineIntern(bool pause) override;
-	GUI::Debugger *getDebugger() override { return _debugger; }
 	uint32 getGameFlags() const;
 	Common::Language getLanguage() const;
 	Common::Language getOriginalLanguage() const;
