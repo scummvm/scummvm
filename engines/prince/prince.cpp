@@ -102,7 +102,6 @@ PrinceEngine::~PrinceEngine() {
 	DebugMan.clearAllDebugChannels();
 
 	delete _rnd;
-	delete _debugger;
 	delete _cursor1;
 	delete _cursor3;
 	delete _midiPlayer;
@@ -118,6 +117,7 @@ PrinceEngine::~PrinceEngine() {
 	free(_dialogDat);
 	delete _graph;
 	delete _room;
+	//_debugger is deleted by Engine
 
 	if (_cursor2 != nullptr) {
 		_cursor2->free();
@@ -198,10 +198,6 @@ PrinceEngine::~PrinceEngine() {
 	free(_mobTranslationData);
 }
 
-GUI::Debugger *PrinceEngine::getDebugger() {
-	return _debugger;
-}
-
 void PrinceEngine::init() {
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -272,6 +268,7 @@ void PrinceEngine::init() {
 	_interpreter = new Interpreter(this, _script, _flags);
 
 	_debugger = new Debugger(this, _flags);
+	setDebugger(_debugger);
 
 	_variaTxt = new VariaTxt();
 	if (getFeatures() & GF_TRANSLATED) {
@@ -551,11 +548,6 @@ void PrinceEngine::keyHandler(Common::Event event) {
 	case Common::KEYCODE_F2:
 		if (canSaveGameStateCurrently())
 			scummVMSaveLoadDialog(true);
-		break;
-	case Common::KEYCODE_d:
-		if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-			getDebugger()->attach();
-		}
 		break;
 	case Common::KEYCODE_z:
 		if (_flags->getFlagValue(Flags::POWERENABLED)) {
@@ -926,7 +918,7 @@ void PrinceEngine::dialogRun() {
 			break;
 		}
 
-		getDebugger()->onFrame();
+
 		_graph->update(_graph->_frontScreen);
 		pausePrinceEngine();
 	}

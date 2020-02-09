@@ -340,8 +340,6 @@ public:
 
 	void setVoice(uint16 slot, uint32 sampleSlot, uint16 flag);
 
-	GUI::Debugger *getDebugger() override;
-
 	void changeCursor(uint16 curId);
 	void printAt(uint32 slot, uint8 color, char *s, uint16 x, uint16 y);
 	int calcTextLines(const char *s);
