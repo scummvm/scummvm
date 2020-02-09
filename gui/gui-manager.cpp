@@ -128,6 +128,26 @@ Common::Keymap *GuiManager::getKeymap() const {
 	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
 	guiMap->addAction(act);
 
+	act = new Action(kStandardActionMoveUp, _("Up"));
+	act->setKeyEvent(KEYCODE_UP);
+	act->addDefaultInputMapping("JOY_UP");
+	guiMap->addAction(act);
+
+	act = new Action(kStandardActionMoveDown, _("Down"));
+	act->setKeyEvent(KEYCODE_DOWN);
+	act->addDefaultInputMapping("JOY_DOWN");
+	guiMap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("Left"));
+	act->setKeyEvent(KEYCODE_LEFT);
+	act->addDefaultInputMapping("JOY_LEFT");
+	guiMap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("Right"));
+	act->setKeyEvent(KEYCODE_RIGHT);
+	act->addDefaultInputMapping("JOY_RIGHT");
+	guiMap->addAction(act);
+
 	return guiMap;
 }
 
