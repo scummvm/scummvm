@@ -112,7 +112,6 @@ public:
 	const Graphics::PixelFormat _screenPixelFormat;
 
 private:
-	Console *_console;
 	const ZVisionGameDescription *_gameDescription;
 
 	const int _desiredFrameTime;
@@ -231,7 +230,6 @@ public:
 		return _fps;
 	}
 
-	GUI::Debugger *getDebugger() override;
 	void syncSoundSettings() override;
 
 	void loadSettings();

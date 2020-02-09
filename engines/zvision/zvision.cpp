@@ -90,7 +90,6 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _cursorManager(nullptr),
 	  _midiManager(nullptr),
 	  _rnd(nullptr),
-	  _console(nullptr),
 	  _menu(nullptr),
 	  _searchManager(nullptr),
 	  _textRenderer(nullptr),
@@ -112,7 +111,6 @@ ZVision::~ZVision() {
 	debug(1, "ZVision::~ZVision");
 
 	// Dispose of resources
-	delete _console;
 	delete _cursorManager;
 	delete _stringManager;
 	delete _saveManager;
@@ -234,7 +232,7 @@ void ZVision::initialize() {
 #endif
 
 	// Create debugger console. It requires GFX to be initialized
-	_console = new Console(this);
+	setDebugger(new Console(this));
 	_doubleFPS = ConfMan.getBool("doublefps");
 
 	// Initialize FPS timer callback
@@ -380,10 +378,6 @@ void ZVision::setRenderDelay(uint delay) {
 
 bool ZVision::canRender() {
 	return _frameRenderDelay <= 0;
-}
-
-GUI::Debugger *ZVision::getDebugger() {
-	return _console;
 }
 
 void ZVision::syncSoundSettings() {
