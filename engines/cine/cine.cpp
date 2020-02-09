@@ -57,7 +57,7 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc)
 	// Setup mixer
 	syncSoundSettings();
 
-	_console = new CineConsole(this);
+	setDebugger(new CineConsole(this));
 
 	g_cine = this;
 
@@ -76,7 +76,6 @@ CineEngine::~CineEngine() {
 	}
 
 	DebugMan.clearAllDebugChannels();
-	delete _console;
 }
 
 void CineEngine::syncSoundSettings() {

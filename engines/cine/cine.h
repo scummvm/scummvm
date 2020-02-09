@@ -140,8 +140,6 @@ public:
 	StringPtrHashMap _volumeEntriesMap;
 	TextHandler _textHandler;
 
-	GUI::Debugger *getDebugger() override { return _console; }
-
 	bool _restartRequested;
 
 private:
@@ -157,7 +155,6 @@ private:
 	void mainLoop(int bootScriptIdx);
 	void readVolCnf();
 
-	CineConsole *_console;
 	bool _preLoad;
 	int _timerDelayMultiplier;
 

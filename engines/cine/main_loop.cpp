@@ -166,12 +166,6 @@ static void processEvent(Common::Event &event) {
 		case Common::KEYCODE_KP3:
 			moveUsingKeyboard(+1, -1); // Down & Right
 			break;
-		case Common::KEYCODE_d:
-			if (event.kbd.hasFlags(Common::KBD_CTRL)) {
-				g_cine->getDebugger()->attach();
-				g_cine->getDebugger()->onFrame();
-			}
-			// fall through
 		default:
 			lastKeyStroke = event.kbd.keycode;
 			break;
