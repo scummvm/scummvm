@@ -146,7 +146,6 @@ private:
 	void openLocalWebPage(const Common::String &pageName) const;
 
 private:
-	Console *_console;
 	Common::RandomSource _rnd;
 	Common::Array<Graphics::WinCursorGroup *> _cursors;
 
