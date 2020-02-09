@@ -59,7 +59,6 @@ public:
 	~WintermuteEngine() override;
 
 	virtual Wintermute::Console *getConsole() { return _debugger; }
-	void trigDebugger() { _trigDebug = true; }
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
@@ -71,7 +70,6 @@ public:
 	// For detection-purposes:
 	static bool getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption);
 private:
-	bool _trigDebug;
 	int init();
 	void deinit();
 	int messageLoop();
