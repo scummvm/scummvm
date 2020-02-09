@@ -74,8 +74,6 @@ private:
 
 	bool loadPackages();
 
-	Sword25Console *_console;
-
 protected:
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
@@ -85,8 +83,6 @@ protected:
 // 	Common::Error saveGameState(int slot, const Common::String &desc);	// TODO: Implement this?
 // 	bool canLoadGameStateCurrently();	// TODO: Implement this?
 // 	bool canSaveGameStateCurrently();	// TODO: Implement this?
-
-	GUI::Debugger *getDebugger() override { return _console; }
 
 	void shutdown();
 
