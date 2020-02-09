@@ -106,22 +106,22 @@ public:
 		return "supernova";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Mission Supernova";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Mission Supernova (C) 1994 Thomas and Steffen Dingel";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	virtual SaveStateList listSaves(const char *target) const override;
-	virtual void removeSaveState(const char *target, int slot) const override;
-	virtual int getMaximumSaveSlot() const override {
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
+	void removeSaveState(const char *target, int slot) const override;
+	int getMaximumSaveSlot() const override {
 		return 99;
 	}
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool SupernovaMetaEngine::hasFeature(MetaEngineFeature f) const {

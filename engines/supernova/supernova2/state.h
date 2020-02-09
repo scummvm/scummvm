@@ -71,14 +71,14 @@ struct GameState2 {
 class GameManager2: public GameManager{
 public:
 	GameManager2(SupernovaEngine *vm, Sound *sound);
-	~GameManager2();
+	~GameManager2() override;
 
 	GameState2 _state;
 
-	virtual void updateEvents();
-	virtual void executeRoom();
-	virtual bool serialize(Common::WriteStream *out);
-	virtual bool deserialize(Common::ReadStream *in, int version);
+	void updateEvents() override;
+	void executeRoom() override;
+	bool serialize(Common::WriteStream *out) override;
+	bool deserialize(Common::ReadStream *in, int version) override;
 
 	byte _dials[6];
 
@@ -91,18 +91,18 @@ public:
 	RoomId _securityTab[10];
 	int _restTime;
 
-	virtual void initState();
-	virtual void initRooms();
-	virtual void destroyRooms();
-	virtual bool canSaveGameStateCurrently();
-	virtual bool genericInteract(Action verb, Object &obj1, Object &obj2);
-	virtual void roomBrightness() {}
-	virtual void drawMapExits();
-	virtual void handleInput();
-	virtual void handleTime();
-	virtual void loadTime() {}
-	virtual void saveTime() {}
-	virtual void takeMoney(int amount);
+	void initState() override;
+	void initRooms() override;
+	void destroyRooms() override;
+	bool canSaveGameStateCurrently() override;
+	bool genericInteract(Action verb, Object &obj1, Object &obj2) override;
+	void roomBrightness() override {}
+	void drawMapExits() override;
+	void handleInput() override;
+	void handleTime() override;
+	void loadTime() override {}
+	void saveTime() override {}
+	void takeMoney(int amount) override;
 	void taxi();
 	void leaveTaxi();
 	void taxiUnknownDestination();

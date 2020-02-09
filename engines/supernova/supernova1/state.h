@@ -67,36 +67,36 @@ class GameState {
 class GameManager1: public GameManager {
 public:
 	GameManager1(SupernovaEngine *vm, Sound *sound);
-	virtual ~GameManager1();
+	~GameManager1() override;
 
 	GameState _state;
 
-	virtual void updateEvents();
-	virtual void executeRoom();
-	virtual bool serialize(Common::WriteStream *out);
-	virtual bool deserialize(Common::ReadStream *in, int version);
+	void updateEvents() override;
+	void executeRoom() override;
+	bool serialize(Common::WriteStream *out) override;
+	bool deserialize(Common::ReadStream *in, int version) override;
 
-	virtual void initState();
-	virtual void initRooms();
-	virtual void destroyRooms();
-	virtual bool canSaveGameStateCurrently();
-	virtual bool genericInteract(Action verb, Object &obj1, Object &obj2);
+	void initState() override;
+	void initRooms() override;
+	void destroyRooms() override;
+	bool canSaveGameStateCurrently() override;
+	bool genericInteract(Action verb, Object &obj1, Object &obj2) override;
 	bool isHelmetOff();
 	void great(uint number);
 	bool airless();
 	void shock();
 	void turnOff();
 	void turnOn();
-	virtual void roomBrightness();
+	void roomBrightness() override;
 	void openLocker(const Room *room, Object *obj, Object *lock, int section);
 	void closeLocker(const Room *room, Object *obj, Object *lock, int section);
-	virtual void drawMapExits();
-	virtual void handleInput();
-	virtual void handleTime();
-	virtual void loadTime();
-	virtual void saveTime();
+	void drawMapExits() override;
+	void handleInput() override;
+	void handleTime() override;
+	void loadTime() override;
+	void saveTime() override;
 	void shot(int a, int b);
-	virtual void takeMoney(int amount);
+	void takeMoney(int amount) override;
 	void search(int time);
 	void startSearch();
 	void guardNoticed();

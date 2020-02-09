@@ -37,7 +37,7 @@ enum {
 class Console : public GUI::Debugger {
 public:
 	Console(Supernova::SupernovaEngine *vm, Supernova::GameManager *gm);
-	virtual ~Console() {}
+	~Console() override {}
 
 private:
 	SupernovaEngine *_vm;

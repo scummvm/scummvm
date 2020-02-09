@@ -62,15 +62,15 @@ class Screen;
 class SupernovaEngine : public Engine {
 public:
 	explicit SupernovaEngine(OSystem *syst);
-	~SupernovaEngine();
+	~SupernovaEngine() override;
 
-	virtual Common::Error run() override;
-	virtual Common::Error loadGameState(int slot) override;
-	virtual bool canLoadGameStateCurrently() override;
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
-	virtual bool canSaveGameStateCurrently() override;
-	virtual bool hasFeature(EngineFeature f) const override;
-	virtual void pauseEngineIntern(bool pause) override;
+	Common::Error run() override;
+	Common::Error loadGameState(int slot) override;
+	bool canLoadGameStateCurrently() override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool canSaveGameStateCurrently() override;
+	bool hasFeature(EngineFeature f) const override;
+	void pauseEngineIntern(bool pause) override;
 
 	GameManager *_gm;
 	Console *_console;

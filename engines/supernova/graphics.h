@@ -41,12 +41,12 @@ class SupernovaEngine;
 class MSNImage : public Image::ImageDecoder {
 public:
 	MSNImage(SupernovaEngine *vm);
-	virtual ~MSNImage();
+	~MSNImage() override;
 
-	virtual void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual const Graphics::Surface *getSurface() const { return _sectionSurfaces[0]; }
-	virtual const byte *getPalette() const { return _palette; }
+	void destroy() override;
+	bool loadStream(Common::SeekableReadStream &stream) override;
+	const Graphics::Surface *getSurface() const override { return _sectionSurfaces[0]; }
+	const byte *getPalette() const override { return _palette; }
 
 	bool init(int filenumber);
 
