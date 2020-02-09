@@ -42,27 +42,27 @@ private:
 
 	void roomSet();
 protected:
-	virtual void loadRoom(int roomNumber);
+	void loadRoom(int roomNumber) override;
 
-	virtual void reloadRoom();
+	void reloadRoom() override;
 
-	virtual void reloadRoom1();
+	void reloadRoom1() override;
 
-	virtual void setupRoom();
+	void setupRoom() override;
 
-	virtual void mainAreaClick();
+	void mainAreaClick() override;
 
-	virtual void clearRoom();
+	void clearRoom() override;
 
-	virtual void walkCursor();
+	void walkCursor() override;
 public:
 	AmazonRoom(AccessEngine *vm);
 
-	virtual ~AmazonRoom();
+	~AmazonRoom() override;
 
-	virtual void init4Quads();
+	void init4Quads() override;
 
-	virtual void roomMenu();
+	void roomMenu() override;
 };
 
 } // End of namespace Amazon

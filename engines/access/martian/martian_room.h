@@ -43,21 +43,21 @@ private:
 	int _byte26CD2[30];
 	int _byte26CBC[10];
 protected:
-	virtual void loadRoom(int roomNumber);
+	void loadRoom(int roomNumber) override;
 
-	virtual void reloadRoom();
+	void reloadRoom() override;
 
-	virtual void reloadRoom1();
+	void reloadRoom1() override;
 
-	virtual void mainAreaClick();
+	void mainAreaClick() override;
 public:
 	MartianRoom(AccessEngine *vm);
 
-	virtual ~MartianRoom();
+	~MartianRoom() override;
 
-	virtual void init4Quads() { }
+	void init4Quads() override { }
 
-	virtual void roomMenu();
+	void roomMenu() override;
 };
 
 } // End of namespace Martian

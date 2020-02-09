@@ -84,21 +84,21 @@ public:
 	/**
 	 * Updates the screen
 	 */
-	virtual void update();
+	void update() override;
 
-	virtual void copyBlock(BaseSurface *src, const Common::Rect &bounds);
+	void copyBlock(BaseSurface *src, const Common::Rect &bounds) override;
 
-	virtual void restoreBlock();
+	void restoreBlock() override;
 
-	virtual void drawRect();
+	void drawRect() override;
 
-	virtual void drawBox();
+	void drawBox() override;
 
-	virtual void copyBuffer(Graphics::ManagedSurface *src);
+	void copyBuffer(Graphics::ManagedSurface *src) override;
 public:
 	Screen(AccessEngine *vm);
 
-	virtual ~Screen() {}
+	~Screen() override {}
 
 	void setDisplayScan();
 

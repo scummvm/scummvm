@@ -53,9 +53,9 @@ protected:
 	/**
 	 * Play the game
 	 */
-	virtual void playGame();
+	void playGame() override;
 
-	virtual void dead(int deathId);
+	void dead(int deathId) override;
 
 	void setNoteParams();
 	void displayNote(const Common::String &msg);
@@ -63,11 +63,11 @@ public:
 	SpriteResource *_spec7Objects;
 
 	MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc);
-	virtual ~MartianEngine();
+	~MartianEngine() override;
 
 	void doSpecial5(int param1);
 	void showDeathText(Common::String msg);
-	virtual void establish(int esatabIndex, int sub) {};
+	void establish(int esatabIndex, int sub) override {};
 };
 
 } // End of namespace Martian

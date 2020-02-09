@@ -60,13 +60,13 @@ protected:
 	/**
 	 * Load data from the access.dat file
 	 */
-	virtual void load(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s) override;
 public:
 	MartianFont *_font6x6;
 	MartianFont *_font3x5;
 public:
 	MartianResources(AccessEngine *vm) : Resources(vm), _font6x6(nullptr), _font3x5(nullptr) {}
-	virtual ~MartianResources();
+	~MartianResources() override;
 };
 
 #define MMRES (*((Martian::MartianResources *)_vm->_res))

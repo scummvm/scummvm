@@ -38,7 +38,7 @@ private:
 public:
 	AmazonPlayer(AccessEngine *vm);
 
-	virtual void load();
+	void load() override;
 };
 
 } // End of namespace Amazon

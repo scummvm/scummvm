@@ -127,7 +127,7 @@ protected:
 	/**
 	 * Load data from the access.dat file
 	 */
-	virtual void load(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s) override;
 public:
 	AmazonFont *_font3x5, *_font6x6;
 	Common::String NO_HELP_MESSAGE;
@@ -139,7 +139,7 @@ public:
 	Common::String IQLABELS[9];
 public:
 	AmazonResources(AccessEngine *vm) : Resources(vm), _font3x5(nullptr), _font6x6(nullptr) {}
-	virtual ~AmazonResources();
+	~AmazonResources() override;
 };
 
 #define AMRES (*((Amazon::AmazonResources *)_vm->_res))

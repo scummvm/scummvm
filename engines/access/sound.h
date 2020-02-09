@@ -92,7 +92,7 @@ private:
 	Resource *_tempMusic;
 
 	// MidiDriver_BASE interface implementation
-	virtual void send(uint32 b);
+	void send(uint32 b) override;
 
 public:
 	Resource *_music;
@@ -100,7 +100,7 @@ public:
 
 public:
 	MusicManager(AccessEngine *vm);
-	~MusicManager();
+	~MusicManager() override;
 
 	void midiPlay();
 

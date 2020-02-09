@@ -123,8 +123,8 @@ protected:
 	void playVideo(int videoNum, const Common::Point &pt);
 
 	// Engine APIs
-	virtual Common::Error run() override;
-	virtual bool hasFeature(EngineFeature f) const override;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 protected:
 	/**
 	 * Play the game
@@ -239,7 +239,7 @@ public:
 
 public:
 	AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc);
-	virtual ~AccessEngine();
+	~AccessEngine() override;
 
 	virtual void dead(int deathId) = 0;
 
@@ -286,12 +286,12 @@ public:
 	/**
 	 * Load a savegame
 	 */
-	virtual Common::Error loadGameState(int slot) override;
+	Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Save the game
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	/**
 	 * Returns true if a savegame can currently be loaded

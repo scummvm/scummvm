@@ -37,7 +37,7 @@ private:
 	MartianEngine *_game;
 public:
 	MartianPlayer(AccessEngine *vm);
-	virtual void load();
+	void load() override;
 };
 
 } // End of namespace Martian

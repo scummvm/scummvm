@@ -59,12 +59,12 @@ protected:
 	/**
 	 * Play the game
 	 */
-	virtual void playGame();
+	void playGame() override;
 
 	/**
 	* Synchronize savegame data
 	*/
-	virtual void synchronize(Common::Serializer &s);
+	void synchronize(Common::Serializer &s) override;
 public:
 	InactivePlayer _inactive;
 	bool _charSegSwitch;
@@ -109,9 +109,9 @@ public:
 public:
 	AmazonEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 
-	virtual ~AmazonEngine();
+	~AmazonEngine() override;
 
-	virtual void dead(int deathId);
+	void dead(int deathId) override;
 
 	/**
 	* Free the inactive player data
@@ -120,7 +120,7 @@ public:
 
 	void drawHelp(const Common::String str);
 
-	virtual void establish(int esatabIndex, int sub);
+	void establish(int esatabIndex, int sub) override;
 
 	void tileScreen();
 	void updateSummary(int chap);

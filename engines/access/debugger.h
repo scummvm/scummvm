@@ -42,10 +42,10 @@ protected:
 	bool Cmd_PlayMovie(int argc, const char **argv);
 public:
 	static Debugger *init(AccessEngine *vm);
-	void postEnter();
+	void postEnter() override;
 public:
 	Debugger(AccessEngine *vm);
-	virtual ~Debugger();
+	~Debugger() override;
 };
 
 namespace Amazon {
@@ -55,7 +55,7 @@ protected:
 	bool Cmd_StartChapter(int argc, const char **argv);
 public:
 	AmazonDebugger(AccessEngine *vm);
-	virtual ~AmazonDebugger() {}
+	~AmazonDebugger() override {}
 };
 
 } // End of namespace Amazon
