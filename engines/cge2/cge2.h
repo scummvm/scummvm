@@ -143,7 +143,6 @@ private:
 	uint32 _lastFrame, _lastTick;
 	void tick();
 
-	CGE2Console *_console;
 	void init();
 	void deinit();
 
@@ -164,10 +163,6 @@ public:
 	Common::Error run() override;
 
 	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
-
-	GUI::Debugger *getDebugger() override {
-		return _console;
-	}
 
 	bool showTitle(const char *name);
 	void cge2_main();
