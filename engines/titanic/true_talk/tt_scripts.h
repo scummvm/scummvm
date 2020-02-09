@@ -39,7 +39,7 @@ public:
 	TTnpcScriptListItem() : _npcScript(nullptr), _roomScript(nullptr) {}
 	TTnpcScriptListItem(TTnpcScript *script, TTroomScript *roomScript) :
 		_npcScript(script), _roomScript(roomScript) {}
-	virtual ~TTnpcScriptListItem() { delete _npcScript; }
+	~TTnpcScriptListItem() override { delete _npcScript; }
 };
 
 PTR_LIST_ITEM(TTroomScript);

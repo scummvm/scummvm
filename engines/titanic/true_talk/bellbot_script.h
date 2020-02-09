@@ -90,35 +90,35 @@ public:
 	/**
 	 * Does NPC specific processing of the parsed sentence
 	 */
-	virtual int process(const TTroomScript *roomScript, const TTsentence *sentence);
+	int process(const TTroomScript *roomScript, const TTsentence *sentence) override;
 
 	/**
 	 * Called when the script/id changes
 	 */
-	virtual ScriptChangedResult scriptChanged(const TTroomScript *roomScript, uint id);
+	ScriptChangedResult scriptChanged(const TTroomScript *roomScript, uint id) override;
 
-	virtual int handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint tag1, uint tag2, uint remainder);
+	int handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
+		uint tag1, uint tag2, uint remainder) override;
 
 	/**
 	 * Handles updating NPC state based on specified dialogue Ids and dial positions
 	 */
-	virtual int updateState(uint oldId, uint newId, int index);
+	int updateState(uint oldId, uint newId, int index) override;
 
 	/**
 	 * Handles getting a pre-response
 	 */
-	virtual int preResponse(uint id);
+	int preResponse(uint id) override;
 
 	/**
 	 * Process a sentence fragment entry
 	 */
-	virtual int doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence);
+	int doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) override;
 
 	/**
 	 * Handles a randomzied response
 	 */
-	virtual bool randomResponse(uint index);
+	bool randomResponse(uint index) override;
 };
 
 } // End of namespace Titanic

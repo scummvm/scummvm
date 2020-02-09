@@ -53,28 +53,28 @@ public:
 	/**
 	 * Sets up the section
 	 */
-	virtual bool setup(CPetControl *petControl);
+	bool setup(CPetControl *petControl) override;
 
 	/**
 	 * Sets up the section
 	 */
-	virtual bool reset();
+	bool reset() override;
 
 	/**
 	 * Handles mouse down messages
 	 */
-	virtual bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
-	virtual bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) { return false; }
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg) override;
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg) override { return false; }
 
 	/**
 	 * Returns true if the object is in a valid state
 	 */
-	virtual bool isValid(CPetControl *petControl);
+	bool isValid(CPetControl *petControl) override;
 
 	/**
 	 * Called after a game has been loaded
 	 */
-	virtual void postLoad();
+	void postLoad() override;
 
 	/**
 	 * Called when the current PET area changes

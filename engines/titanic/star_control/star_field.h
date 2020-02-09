@@ -65,12 +65,12 @@ public:
 	/**
 	 * Load the data for the class from file
 	 */
-	void load(SimpleFile *file);
+	void load(SimpleFile *file) override;
 
 	/**
 	 * Save the data for the class to file
 	 */
-	void save(SimpleFile *file, int indent);
+	void save(SimpleFile *file, int indent) override;
 
 	bool initDocument();
 

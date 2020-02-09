@@ -327,21 +327,21 @@ public:
 
 public:
 	QSoundManager(Audio::Mixer *mixer);
-	virtual ~QSoundManager();
+	~QSoundManager() override;
 
 	/**
 	 * Loads a sound
 	 * @param name		Name of sound resource
 	 * @returns			Loaded wave file
 	 */
-	virtual CWaveFile *loadSound(const CString &name);
+	CWaveFile *loadSound(const CString &name) override;
 
 	/**
 	 * Loads a speech resource from a dialogue file
 	 * @param name		Name of sound resource
 	 * @returns			Loaded wave file
 	 */
-	virtual CWaveFile *loadSpeech(CDialogueFile *dialogueFile, int speechId);
+	CWaveFile *loadSpeech(CDialogueFile *dialogueFile, int speechId) override;
 
 	/**
 	 * Loads a music file
@@ -351,29 +351,29 @@ public:
 	 * music room puzzle. For ScummVM, we've reclassified some wave files that
 	 * contain background music as music as well.
 	 */
-	virtual CWaveFile *loadMusic(const CString &name);
+	CWaveFile *loadMusic(const CString &name) override;
 
 	/**
 	 * Loads a music file from a streaming audio buffer
 	 * @param buffer	Audio buffer
 	 * @returns			Loaded wave file
 	 */
-	virtual CWaveFile *loadMusic(CAudioBuffer *buffer, DisposeAfterUse::Flag disposeAfterUse);
+	CWaveFile *loadMusic(CAudioBuffer *buffer, DisposeAfterUse::Flag disposeAfterUse) override;
 
 	/**
 	 * Start playing a previously loaded sound resource
 	 */
-	virtual int playSound(CWaveFile &waveFile, CProximity &prox);
+	int playSound(CWaveFile &waveFile, CProximity &prox) override;
 
 	/**
 	 * Stop playing the specified sound
 	 */
-	virtual void stopSound(int handle);
+	void stopSound(int handle) override;
 
 	/**
 	 * Stops a designated range of channels
 	 */
-	virtual void stopChannel(int channel);
+	void stopChannel(int channel) override;
 
 	/**
 	 * Flags that a sound can be freed if a timeout is set
@@ -383,7 +383,7 @@ public:
 	/**
 	 * Stops sounds on all playing channels
 	 */
-	virtual void stopAllChannels();
+	void stopAllChannels() override;
 
 	/**
 	 * Sets the volume for a sound
@@ -391,7 +391,7 @@ public:
 	 * @param volume	New volume
 	 * @param seconds	Number of seconds to transition to the new volume
 	 */
-	virtual void setVolume(int handle, uint volume, uint seconds);
+	void setVolume(int handle, uint volume, uint seconds) override;
 
 	/**
 	 * Set the position for a sound
@@ -401,7 +401,7 @@ public:
 	 * @param z			z position in metres
 	 * @param panRate	Rate in milliseconds to transition
 	 */
-	virtual void setVectorPosition(int handle, double x, double y, double z, uint panRate);
+	void setVectorPosition(int handle, double x, double y, double z, uint panRate) override;
 
 	/**
 	 * Set the position for a sound
@@ -411,53 +411,53 @@ public:
 	 * @param elevation	Elevation value in degrees
 	 * @param panRate	Rate in milliseconds to transition
 	 */
-	virtual void setPolarPosition(int handle, double range, double azimuth, double elevation, uint panRate);
+	void setPolarPosition(int handle, double range, double azimuth, double elevation, uint panRate) override;
 
 	/**
 	 * Returns true if the given sound is currently active
 	 */
-	virtual bool isActive(int handle);
+	bool isActive(int handle) override;
 
 	/**
 	 * Returns true if the given sound is currently active
 	 */
-	virtual bool isActive(const CWaveFile *waveFile);
+	bool isActive(const CWaveFile *waveFile) override;
 
 	/**
 	 * Handles regularly updating the mixer
 	 */
-	virtual void waveMixPump();
+	void waveMixPump() override;
 
 	/**
 	 * Returns the movie latency
 	 */
-	virtual uint getLatency() const;
+	uint getLatency() const override;
 
 	/**
 	 * Sets the music volume percent
 	 */
-	virtual void setMusicPercent(double percent);
+	void setMusicPercent(double percent) override;
 
 	/**
 	 * Sets the speech volume percent
 	 */
-	virtual void setSpeechPercent(double percent);
+	void setSpeechPercent(double percent) override;
 
 	/**
 	 * Sets the master volume percent
 	 */
-	virtual void setMasterPercent(double percent);
+	void setMasterPercent(double percent) override;
 
 	/**
 	 * Sets the Parrot NPC volume percent
 	 */
-	virtual void setParrotPercent(double percent);
+	void setParrotPercent(double percent) override;
 
 	/**
 	 * Sets the position and orientation for the listener (player)
 	 */
-	virtual void setListenerPosition(double posX, double posY, double posZ,
-		double directionX, double directionY, double directionZ, bool stopSounds);
+	void setListenerPosition(double posX, double posY, double posZ,
+		double directionX, double directionY, double directionZ, bool stopSounds) override;
 
 	/**
 	 * Starts a wave file playing

@@ -46,16 +46,16 @@ public:
 	/**
 	 * Creates a copy of the word
 	 */
-	virtual TTword *copy() const;
+	TTword *copy() const override;
 
-	virtual bool comparePronounTo(int val) const {
+	bool comparePronounTo(int val) const override {
 		return _field30 == val;
 	}
 
 	/**
 	 * Dumps data associated with the word to file
 	 */
-	virtual int save(SimpleFile *file) const {
+	int save(SimpleFile *file) const override {
 		return saveData(file, _field30);
 	}
 };

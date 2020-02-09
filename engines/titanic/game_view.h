@@ -82,12 +82,12 @@ public:
 	/**
 	 * Set the currently active view
 	 */
-	virtual void setView(CViewItem *item);
+	void setView(CViewItem *item) override;
 
 	/**
 	 * Handles drawing the view
 	 */
-	virtual void draw(const Rect &bounds);
+	void draw(const Rect &bounds) override;
 };
 
 } // End of namespace Titanic

@@ -47,25 +47,25 @@ public:
 	/**
 	 * Creates a copy of the word
 	 */
-	virtual TTword *copy() const;
+	TTword *copy() const override;
 
 	/**
 	 * Checks whether the word's tag is a known type
 	 */
-	virtual bool checkTag() const;
+	bool checkTag() const override;
 
 	/**
 	 * Compare the word's tag to a given tag value
 	 */
-	virtual bool compareTagTo(uint tag) const;
+	bool compareTagTo(uint tag) const override;
 
 	/**
 	 * Return the tag associated with the word
 	 */
-	virtual uint getTag() const;
+	uint getTag() const override;
 
-	virtual bool proc9(int val) const;
-	virtual int proc10() const;
+	bool proc9(int val) const override;
+	int proc10() const override;
 
 };
 

@@ -262,37 +262,37 @@ public:
 	STFont _fonts[4];
 public:
 	OSScreenManager(TitanicEngine *vm);
-	virtual ~OSScreenManager();
+	~OSScreenManager() override;
 
 	/**
 	 * Sets the video mode
 	 */
-	virtual void setMode(int width, int height, int bpp, uint numBackSurfaces, bool flag2);
+	void setMode(int width, int height, int bpp, uint numBackSurfaces, bool flag2) override;
 
 	/**
 	 * Handles drawing the cursors
 	 */
-	virtual void drawCursors();
+	void drawCursors() override;
 
 	/**
 	 * Locks a specified surface number for access and returns a pointer to it
 	 */
-	virtual CVideoSurface *lockSurface(SurfaceNum surfaceNum);
+	CVideoSurface *lockSurface(SurfaceNum surfaceNum) override;
 
 	/**
 	 * Unlocks a previously locked surface
 	 */
-	virtual void unlockSurface(CVideoSurface *surface);
+	void unlockSurface(CVideoSurface *surface) override;
 
 	/**
 	 * Gets a specified surface number
 	 */
-	virtual CVideoSurface *getSurface(SurfaceNum surfaceNum) const;
+	CVideoSurface *getSurface(SurfaceNum surfaceNum) const override;
 
 	/**
 	 * Return the front render surface
 	 */
-	virtual CVideoSurface *getFrontRenderSurface() const {
+	CVideoSurface *getFrontRenderSurface() const override {
 		return _frontRenderSurface;
 	}
 
@@ -300,18 +300,18 @@ public:
 	/**
 	 * Fill an area with a specific color
 	 */
-	virtual void fillRect(SurfaceNum surfaceNum, Rect *rect, byte r, byte g, byte b);
+	void fillRect(SurfaceNum surfaceNum, Rect *rect, byte r, byte g, byte b) override;
 
 	/**
 	 * Blits a surface onto one of the screen surfaces
 	 */
-	virtual void blitFrom(SurfaceNum surfaceNum, CVideoSurface *src, const Point *destPos,
-		const Rect *srcRect = nullptr);
+	void blitFrom(SurfaceNum surfaceNum, CVideoSurface *src, const Point *destPos,
+		const Rect *srcRect = nullptr) override;
 
 	/**
 	 * Blits a surface onto one of the screen surfaces
 	 */
-	virtual void blitFrom(SurfaceNum surfaceNum, const Rect *rect, CVideoSurface *src, int v = 0);
+	void blitFrom(SurfaceNum surfaceNum, const Rect *rect, CVideoSurface *src, int v = 0) override;
 
 	/**
 	 * Write a string
@@ -322,8 +322,8 @@ public:
 	 * @param str			Line or lines to write
 	 * @param textCursor	Optional text cursor pointer
 	 */
-	virtual int writeString(int surfaceNum, const Rect &destRect,
-		int yOffset, const CString &str, CTextCursor *textCursor);
+	int writeString(int surfaceNum, const Rect &destRect,
+		int yOffset, const CString &str, CTextCursor *textCursor) override;
 
 	/**
 	 * Write a string
@@ -333,13 +333,13 @@ public:
 	 * @param str			Line or lines to write
 	 * @param lineWidth		Width in pixels of the string, if known.
 	 */
-	virtual void writeString(int surfaceNum, const Point &destPos,
-		const Rect &clipRect, const CString &str, int lineWidth = 0);
+	void writeString(int surfaceNum, const Point &destPos,
+		const Rect &clipRect, const CString &str, int lineWidth = 0) override;
 
 	/**
 	 * Set the font color
 	 */
-	virtual void setFontColor(byte r, byte g, byte b);
+	void setFontColor(byte r, byte g, byte b) override;
 
 	/**
 	 * Get the text area a string will fit into
@@ -348,52 +348,52 @@ public:
 	 * @param sizeOut	Optional pointer to output size
 	 * @returns			Required height
 	 */
-	virtual int getTextBounds(const CString &str, int maxWidth, Point *sizeOut = nullptr) const;
+	int getTextBounds(const CString &str, int maxWidth, Point *sizeOut = nullptr) const override;
 
 	/**
 	 * Get the current font height
 	 */
-	virtual int getFontHeight() const;
+	int getFontHeight() const override;
 
 	/**
 	 * Returns the width of a given string in pixels
 	 */
-	virtual int stringWidth(const CString &str);
+	int stringWidth(const CString &str) override;
 
 	/**
 	 * Draws a frame enclosing the specified area
 	 */
-	virtual void frameRect(SurfaceNum surfaceNum, const Rect &rect, byte r, byte g, byte b);
+	void frameRect(SurfaceNum surfaceNum, const Rect &rect, byte r, byte g, byte b) override;
 
 	/**
 	 * Clear a portion of the screen surface
 	 */
-	virtual void clearSurface(SurfaceNum surfaceNum, Rect *bounds);
+	void clearSurface(SurfaceNum surfaceNum, Rect *bounds) override;
 
 	/**
 	 * Resize the passed surface
 	 */
-	virtual void resizeSurface(CVideoSurface *surface, int width, int height, int bpp = 16);
+	void resizeSurface(CVideoSurface *surface, int width, int height, int bpp = 16) override;
 
 	/**
 	 * Creates a surface of a given size
 	 */
-	virtual CVideoSurface *createSurface(int w, int h, int bpp = 16);
+	CVideoSurface *createSurface(int w, int h, int bpp = 16) override;
 
 	/**
 	 * Creates a surface from a specified resource
 	 */
-	virtual CVideoSurface *createSurface(const CResourceKey &key);
+	CVideoSurface *createSurface(const CResourceKey &key) override;
 
 	/**
 	 * Show the mouse cursor
 	 */
-	virtual void showCursor();
+	void showCursor() override;
 
 	/**
 	 * Hide the mouse cursor
 	 */
-	virtual void hideCursor();
+	void hideCursor() override;
 };
 
 } // End of namespace Titanic

@@ -39,7 +39,7 @@ private:
 	 */
 	void getVectorOnPath(FVector &pos) const;
 public:
-	virtual ~CMarkedAutoMover() {}
+	~CMarkedAutoMover() override {}
 
 	void setFlight(const FVector &oldPos, const FVector &newPos,
 		const FMatrix &oldOrientation, const FMatrix &newOrientation);
@@ -47,7 +47,7 @@ public:
 	/**
 	 * Applys speeds to the mover. More than one application is usually done for several transitions
 	 */
-	virtual MoverState move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
+	MoverState move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) override;
 };
 
 } // End of namespace Titanic

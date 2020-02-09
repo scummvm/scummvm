@@ -36,19 +36,19 @@ private:
 	CMarkedAutoMover _autoMover;
 public:
 	CMotionControlMarked(const CNavigationInfo *src);
-	virtual ~CMotionControlMarked() {}
+	~CMotionControlMarked() override {}
 
 	/**
 	 * Move the mover from an old position and orientation to a new
 	 * position and orientation
 	 */
-	virtual void transitionBetweenPosOrients(const FVector &oldPos, const FVector &newPos,
-		const FMatrix &oldOrientation, const FMatrix &newOrientation);
+	void transitionBetweenPosOrients(const FVector &oldPos, const FVector &newPos,
+		const FMatrix &oldOrientation, const FMatrix &newOrientation) override;
 
 	/**
 	 * Update the passed position and orientation matrix
 	 */
-	virtual void updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
+	void updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) override;
 };
 
 } // End of namespace Titanic

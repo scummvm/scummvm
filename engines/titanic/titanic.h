@@ -105,9 +105,9 @@ protected:
 	const TitanicGameDescription *_gameDescription;
 
 	// Engine APIs
-	virtual void initializePath(const Common::FSNode &gamePath) override;
-	virtual Common::Error run() override;
-	virtual bool hasFeature(EngineFeature f) const override;
+	void initializePath(const Common::FSNode &gamePath) override;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 public:
 	Debugger *_debugger;
 	Events *_events;
@@ -130,33 +130,33 @@ public:
 	int _loadSaveSlot;
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
-	virtual ~TitanicEngine();
+	~TitanicEngine() override;
 
 
 	/**
 	 * Returns true if a savegame can be loaded
 	 */
-	virtual bool canLoadGameStateCurrently() override;
+	bool canLoadGameStateCurrently() override;
 
 	/**
 	 * Returns true if the game can be saved
 	 */
-	virtual bool canSaveGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
 
 	/**
 	 * Called by the GMM to load a savegame
 	 */
-	virtual Common::Error loadGameState(int slot) override;
+	Common::Error loadGameState(int slot) override;
 
 	/**
 	 * Called by the GMM to save the game
 	 */
-	virtual Common::Error saveGameState(int slot, const Common::String &desc) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
 
 	/**
 	 * Handles updates to the sound levels
 	 */
-	virtual void syncSoundSettings() override;
+	void syncSoundSettings() override;
 
 	/**
 	 * Gets the game features

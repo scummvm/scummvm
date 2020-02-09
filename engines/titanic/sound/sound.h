@@ -52,7 +52,7 @@ public:
 	CSoundItem(File *dialogueFile, int speechId) : ListItem(), _waveFile(nullptr),
 		_dialogueFileHandle(dialogueFile), _speechId(speechId), _active(false),
 		_disposeAfterUse(DisposeAfterUse::NO) {}
-	virtual ~CSoundItem();
+	~CSoundItem() override;
 };
 
 class CSoundItemList : public List<CSoundItem> {

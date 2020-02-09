@@ -568,37 +568,37 @@ public:
 public:
 	CLASSDEF;
 	CGameObject();
-	~CGameObject();
+	~CGameObject() override;
 
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent);
+	void save(SimpleFile *file, int indent) override;
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);
+	void load(SimpleFile *file) override;
 
 	/**
 	 * Returns the clip list, if any, associated with the item
 	 */
-	virtual const CMovieClipList *getMovieClips() const { return &_movieClips; }
+	const CMovieClipList *getMovieClips() const override { return &_movieClips; }
 
 	/**
 	 * Allows the item to draw itself
 	 */
-	virtual void draw(CScreenManager *screenManager);
+	void draw(CScreenManager *screenManager) override;
 
 	/**
 	 * Gets the bounds occupied by the item
 	 */
-	virtual Rect getBounds() const;
+	Rect getBounds() const override;
 
 	/**
 	 * Free up any surface the object used
 	 */
-	virtual void freeSurface();
+	void freeSurface() override;
 
 	/**
 	 * Allows the item to draw itself

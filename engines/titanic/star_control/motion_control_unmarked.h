@@ -36,19 +36,19 @@ private:
 	CFlightManagerUnmarked _autoMover;
 public:
 	CMotionControlUnmarked(const CNavigationInfo *src);
-	virtual ~CMotionControlUnmarked() {}
+	~CMotionControlUnmarked() override {}
 
 	/**
 	 * Start a movement to a given specified destination
 	 */
-	virtual void moveTo(const FVector &srcV, const FVector &destV, const FMatrix &orientation);
+	void moveTo(const FVector &srcV, const FVector &destV, const FMatrix &orientation) override;
 
-	virtual void transitionBetweenOrientations(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m);
+	void transitionBetweenOrientations(const FVector &v1, const FVector &v2, const FVector &v3, const FMatrix &m) override;
 
 	/**
 	 * Update the passed position and orientation matrix
 	 */
-	virtual void updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
+	void updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) override;
 };
 
 } // End of namespace Titanic

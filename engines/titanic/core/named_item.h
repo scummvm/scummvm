@@ -41,27 +41,27 @@ public:
 	/**
 	 * Dump the item
 	 */
-	virtual CString dumpItem(int indent) const;
+	CString dumpItem(int indent) const override;
 
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent);
+	void save(SimpleFile *file, int indent) override;
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);
+	void load(SimpleFile *file) override;
 
 	/**
 	 * Gets the name of the item, if any
 	 */
-	virtual const CString getName() const { return _name; }
+	const CString getName() const override { return _name; }
 
 	/**
 	 * Returns true if the item's name matches a passed name
 	 */
-	virtual bool isEquals(const CString &name, bool startsWith = false) const;
+	bool isEquals(const CString &name, bool startsWith = false) const override;
 
 	/**
 	 * Find a parent node for the item

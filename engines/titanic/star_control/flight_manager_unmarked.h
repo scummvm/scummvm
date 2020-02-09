@@ -32,7 +32,7 @@ namespace Titanic {
  */
 class CFlightManagerUnmarked : public CFlightManagerBase {
 public:
-	virtual ~CFlightManagerUnmarked() {}
+	~CFlightManagerUnmarked() override {}
 
 	virtual void setOrientations(const FMatrix &srcOrient, const FMatrix &destOrient);
 
@@ -41,7 +41,7 @@ public:
 	 */
 	void setPathOrient(const FVector &srcV, const FVector &destV, const FMatrix &orientation);
 
-	virtual MoverState move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation);
+	MoverState move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) override;
 };
 
 } // End of namespace Titanic

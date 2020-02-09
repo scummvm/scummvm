@@ -32,37 +32,37 @@ public:
 	/**
 	 * Reset the glyph
 	 */
-	virtual bool reset();
+	bool reset() override;
 
 	/**
 	 * Handles mouse button up messages
 	 */
-	virtual bool MouseButtonUpMsg(const Point &pt);
+	bool MouseButtonUpMsg(const Point &pt) override;
 
 	/**
 	 * Highlight any currently highlighted element
 	 */
-	virtual void highlightCurrent(const Point &pt) { resetSlots(); }
+	void highlightCurrent(const Point &pt) override { resetSlots(); }
 
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
-	virtual void getTooltip(CTextControl *text);
+	void getTooltip(CTextControl *text) override;
 
 	/**
 	 * Highlights a save slot
 	 */
-	virtual void highlightSave(int index) {}
+	void highlightSave(int index) override {}
 
 	/**
 	 * Unhighlight a save slot
 	 */
-	virtual void unhighlightSave(int index) {}
+	void unhighlightSave(int index) override {}
 
 	/**
 	 * Executes the loading or saving
 	 */
-	virtual void execute();
+	void execute() override;
 };
 
 } // End of namespace Titanic

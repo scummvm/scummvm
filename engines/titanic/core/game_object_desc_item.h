@@ -43,17 +43,17 @@ public:
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent);
+	void save(SimpleFile *file, int indent) override;
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);
+	void load(SimpleFile *file) override;
 
 	/**
 	 * Gets the name of the item, if any
 	 */
-	virtual const CString getName() const { return _name; }
+	const CString getName() const override { return _name; }
 };
 
 } // End of namespace Titanic

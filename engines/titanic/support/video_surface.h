@@ -97,7 +97,7 @@ public:
 	TransparencyMode _transparencyMode;
 public:
 	CVideoSurface(CScreenManager *screenManager);
-	virtual ~CVideoSurface();
+	~CVideoSurface() override;
 
 	/**
 	 * Set the underlying surface for this video surface
@@ -107,7 +107,7 @@ public:
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file) {
+	void load(SimpleFile *file) override {
 		ListItem::load(file);
 	}
 
@@ -356,188 +356,188 @@ class OSVideoSurface : public CVideoSurface {
 public:
 	OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
 	OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag = false);
-	~OSVideoSurface();
+	~OSVideoSurface() override;
 
 	/**
 	 * Load the surface with the passed resource
 	 */
-	virtual void loadResource(const CResourceKey &key);
+	void loadResource(const CResourceKey &key) override;
 
 	/**
 	 * Loads a Targa image file specified by the resource key
 	 */
-	virtual void loadTarga(const CResourceKey &key);
+	void loadTarga(const CResourceKey &key) override;
 
 	/**
 	 * Loads a JPEG image file specified by the resource key
 	 */
-	virtual void loadJPEG(const CResourceKey &key);
+	void loadJPEG(const CResourceKey &key) override;
 
 	/**
 	 * Loads a Targa image file specified by the given name
 	 */
-	virtual void loadTarga(const CString &name);
+	void loadTarga(const CString &name) override;
 
 	/**
 	 * Loads a movie file specified by the resource key.
 	 * @param key			Resource key for movie to load
 	 * @param destroyFlag	Immediately destroy movie after decoding first frame
 	 */
-	virtual void loadMovie(const CResourceKey &key, bool destroyFlag = false);
+	void loadMovie(const CResourceKey &key, bool destroyFlag = false) override;
 
 	/**
 	 * Lock the surface for direct access to the pixels
 	 */
-	virtual bool lock();
+	bool lock() override;
 
 	/**
 	 * Unlocks the surface after prior calls to lock()
 	 */
-	virtual void unlock();
+	void unlock() override;
 
 	/**
 	 * Returns true if an underlying raw surface has been set
 	 */
-	virtual bool hasSurface();
+	bool hasSurface() override;
 
 	/**
 	 * Returns the width of the surface
 	 */
-	virtual int getWidth();
+	int getWidth() override;
 
 	/**
 	 * Returns the height of the surface
 	 */
-	virtual int getHeight();
+	int getHeight() override;
 
 	/**
 	 * Returns the pitch of the surface in bytes
 	 */
-	virtual int getPitch();
+	int getPitch() override;
 
 	/**
 	 * Returns the bytes per pixel of the surface
 	 */
-	virtual int getBpp();
+	int getBpp() override;
 
 	/**
 	 * Recreates the surface with the designated size
 	 */
-	virtual void recreate(int width, int height, int bpp = 16);
+	void recreate(int width, int height, int bpp = 16) override;
 
 	/**
 	 * Resizes the surface
 	 */
-	virtual void resize(int width, int height, int bpp = 16);
+	void resize(int width, int height, int bpp = 16) override;
 
 	/**
 	 * Detachs the underlying raw surface
 	 */
-	virtual void detachSurface();
+	void detachSurface() override;
 
 	/**
 	 * Returns the number of bytes per pixel in the surface
 	 */
-	virtual int getPixelDepth();
+	int getPixelDepth() override;
 
 	/**
 	 * Gets the pixel at the specified position within the surface
 	 */
-	virtual uint16 getPixel(const Point &pt);
+	uint16 getPixel(const Point &pt) override;
 
 	/**
 	 * Sets a pixel at a specified position within the surface
 	 */
-	virtual void setPixel(const Point &pt, uint pixel);
+	void setPixel(const Point &pt, uint pixel) override;
 
 	/**
 	 * Shifts the colors of the surface.. maybe greys it out?
 	 */
-	virtual void shiftColors();
+	void shiftColors() override;
 
 	/**
 	 * Clears the entire surface to black
 	 */
-	virtual void clear();
+	void clear() override;
 
 	/**
 	 * Plays a movie, loading it from the specified _resource
 	 * if not already loaded
 	 */
-	virtual void playMovie(uint flags, CGameObject *obj);
+	void playMovie(uint flags, CGameObject *obj) override;
 
 	/**
 	 * Plays a movie, loading it from the specified _resource
 	 * if not already loaded
 	 */
-	virtual void playMovie(uint startFrame, uint endFrame, uint flags, CGameObject *obj);
+	void playMovie(uint startFrame, uint endFrame, uint flags, CGameObject *obj) override;
 
 	/**
 	 * Plays a movie, loading it from the specified _resource
 	 * if not already loaded
 	 */
-	virtual void playMovie(uint startFrame, uint endFrame, uint initialFrame, uint flags, CGameObject *obj);
+	void playMovie(uint startFrame, uint endFrame, uint initialFrame, uint flags, CGameObject *obj) override;
 
 	/**
 	 * Stops any movie currently attached to the surface
 	 */
-	virtual void stopMovie();
+	void stopMovie() override;
 
 	/**
 	 * Sets the movie to the specified frame number
 	 */
-	virtual void setMovieFrame(uint frameNumber);
+	void setMovieFrame(uint frameNumber) override;
 
 	/**
 	 * Adds a movie playback event
 	 */
-	virtual void addMovieEvent(int frameNumber, CGameObject *obj);
+	void addMovieEvent(int frameNumber, CGameObject *obj) override;
 
 	/**
 	 * Set the movie frame rate
 	 */
-	virtual void setMovieFrameRate(double rate);
+	void setMovieFrameRate(double rate) override;
 
 	/**
 	 * Return any movie range info associated with the surface's movie
 	 */
-	virtual const CMovieRangeInfoList *getMovieRangeInfo() const;
+	const CMovieRangeInfoList *getMovieRangeInfo() const override;
 
 	/**
 	 *
 	 */
-	virtual void flipVertically(bool needsLock = true);
+	void flipVertically(bool needsLock = true) override;
 
 	/**
 	 * Loads the surface's resource if there's one pending
 	 */
-	virtual bool loadIfReady();
+	bool loadIfReady() override;
 
 	/**
 	 * Loads the surface data based on the currently set resource key
 	 */
-	virtual bool load();
+	bool load() override;
 
 	/**
 	 * Does a replacement of transparent pixels on certain lines at regular
 	 * intervals. This is totally weird
 	 */
-	virtual void transPixelate();
+	void transPixelate() override;
 
 	/**
 	 * Duplicates movie transparency surface
 	 */
-	virtual Graphics::ManagedSurface *dupMovieTransparency() const;
+	Graphics::ManagedSurface *dupMovieTransparency() const override;
 
 	/**
 	 * Frees the underlying surface
 	 */
-	virtual int freeSurface();
+	int freeSurface() override;
 
 	/**
 	 * Get a pointer into the underlying surface
 	 */
-	virtual uint16 *getBasePtr(int x, int y);
+	uint16 *getBasePtr(int x, int y) override;
 };
 
 } // End of namespace Titanic

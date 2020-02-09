@@ -76,10 +76,10 @@ public:
 	bool _pressed;
 public:
 	CPressTarget() : _pressed(false) {}
-	virtual ~CPressTarget() {}
-	virtual void leftButtonDown(const Point &mousePos) { _pressed = true; }
-	virtual void middleButtonDown(const Point &mousePos) { _pressed = true; }
-	virtual void keyDown(Common::KeyState keyState) {
+	~CPressTarget() override {}
+	void leftButtonDown(const Point &mousePos) override { _pressed = true; }
+	void middleButtonDown(const Point &mousePos) override { _pressed = true; }
+	void keyDown(Common::KeyState keyState) override {
 		if (keyState.ascii)
 			_pressed = true;
 	}
