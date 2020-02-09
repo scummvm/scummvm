@@ -291,11 +291,7 @@ public:
 
 	void debugCurRoom();
 
-	GUI::Debugger *getDebugger() override { return _console; }
-
 private:
-	WinnieConsole *_console;
-
 	WTP_SAVE_GAME _gameStateWinnie;
 	int _room;
 	int _mist;

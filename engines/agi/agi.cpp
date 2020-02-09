@@ -66,7 +66,6 @@ void AgiEngine::wait(uint32 msec, bool busy) {
 
 	do {
 		processScummVMEvents();
-		_console->onFrame();
 		_system->updateScreen();
 		_system->delayMillis(10);
 	} while (_system->getMillis() < endTime);
@@ -409,7 +408,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	memset(_keyQueue, 0, sizeof(_keyQueue));
 
-	_console = nullptr;
 	_font = nullptr;
 	_gfx = nullptr;
 	_sound = nullptr;
@@ -465,7 +463,7 @@ void AgiEngine::initialize() {
 
 	initRenderMode();
 
-	_console = new Console(this);
+	setDebugger(new Console(this));
 	_words = new Words(this);
 	_font = new GfxFont(this);
 	_gfx = new GfxMgr(this, _font);
@@ -531,7 +529,6 @@ AgiEngine::~AgiEngine() {
 	delete _gfx;
 	delete _font;
 	delete _words;
-	delete _console;
 }
 
 Common::Error AgiBase::init() {

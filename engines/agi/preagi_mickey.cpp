@@ -465,12 +465,6 @@ bool MickeyEngine::getMenuSelRow(MSA_MENU &menu, int *sel0, int *sel1, int iRow)
 				}
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL) && _console) {
-					_console->attach();
-					_console->onFrame();
-					continue;
-				}
-
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_2:
 					// Hidden message
@@ -2237,10 +2231,10 @@ void MickeyEngine::waitAnyKey(bool anim) {
 // Console-related functions
 
 void MickeyEngine::debugCurRoom() {
-	_console->debugPrintf("Current Room = %d\n", _gameStateMickey.iRoom);
+	getDebugger()->debugPrintf("Current Room = %d\n", _gameStateMickey.iRoom);
 
 	if (_gameStateMickey.iRmObj[_gameStateMickey.iRoom] != IDI_MSA_OBJECT_NONE) {
-		_console->debugPrintf("Object %d is in the room\n", _gameStateMickey.iRmObj[_gameStateMickey.iRoom]);
+		getDebugger()->debugPrintf("Object %d is in the room\n", _gameStateMickey.iRmObj[_gameStateMickey.iRoom]);
 	}
 }
 
@@ -2250,11 +2244,11 @@ void MickeyEngine::debugGotoRoom(int room) {
 }
 
 MickeyEngine::MickeyEngine(OSystem *syst, const AGIGameDescription *gameDesc) : PreAgiEngine(syst, gameDesc) {
-	_console = new MickeyConsole(this);
+	setDebugger(new MickeyConsole(this));
 }
 
 MickeyEngine::~MickeyEngine() {
-	delete _console;
+	//_console deleted by Engine
 }
 
 void MickeyEngine::init() {

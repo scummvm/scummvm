@@ -906,12 +906,6 @@ void WinnieEngine::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 				incMenuSel(iSel, fCanSel);
 				break;
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL) && _console) {
-					_console->attach();
-					_console->onFrame();
-					continue;
-				}
-
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
 					*iSel = IDI_WTP_SEL_HOME;
@@ -1322,15 +1316,14 @@ void WinnieEngine::printStrWinnie(char *szMsg) {
 // Console-related functions
 
 void WinnieEngine::debugCurRoom() {
-	_console->debugPrintf("Current Room = %d\n", _room);
+	getDebugger()->debugPrintf("Current Room = %d\n", _room);
 }
 
 WinnieEngine::WinnieEngine(OSystem *syst, const AGIGameDescription *gameDesc) : PreAgiEngine(syst, gameDesc) {
-	_console = new WinnieConsole(this);
+	setDebugger(new WinnieConsole(this));
 }
 
 WinnieEngine::~WinnieEngine() {
-	delete _console;
 }
 
 void WinnieEngine::init() {
