@@ -393,7 +393,6 @@ public:
 
 	VerbSlot *_verbs;
 	ObjectData *_objs;
-	ScummDebugger *_debugger;
 
 	// Core variables
 	GameSettings _game;
@@ -428,8 +427,8 @@ public:
 			return err;
 		return go();
 	}
+
 	void errorString(const char *buf_input, char *buf_output, int buf_output_size) override;
-	GUI::Debugger *getDebugger() override;
 	bool hasFeature(EngineFeature f) const override;
 	void syncSoundSettings() override;
 

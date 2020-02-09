@@ -118,7 +118,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _game(dr.game),
 	  _filenamePattern(dr.fp),
 	  _language(dr.language),
-	  _debugger(0),
 	  _currentScript(0xFF), // Let debug() work on init stage
 	  _messageDialog(0), _pauseDialog(0), _versionDialog(0),
 	  _rnd("scumm")
@@ -658,8 +657,6 @@ ScummEngine::~ScummEngine() {
 	delete _cjkFont;
 #endif
 #endif
-
-	delete _debugger;
 
 	delete _res;
 	delete _gdi;
@@ -1324,7 +1321,7 @@ Common::Error ScummEngine::init() {
 	readIndexFile();
 
 	// Create the debugger now that _numVariables has been set
-	_debugger = new ScummDebugger(this);
+	setDebugger(new ScummDebugger(this));
 
 	resetScumm();
 	resetScummVars();
@@ -2121,9 +2118,6 @@ Common::Error ScummEngine::go() {
 	int diff = 0;	// Duration of one loop iteration
 
 	while (!shouldQuit()) {
-
-		_debugger->onFrame();
-
 		// Randomize the PRNG by calling it at regular intervals. This ensures
 		// that it will be in a different state each time you run the program.
 		_rnd.getRandomNumber(2);
@@ -2867,10 +2861,6 @@ char ScummEngine::displayMessage(const char *altButton, const char *message, ...
 #pragma mark -
 #pragma mark --- Miscellaneous ---
 #pragma mark -
-
-GUI::Debugger *ScummEngine::getDebugger() {
-	return _debugger;
-}
 
 void ScummEngine::errorString(const char *buf1, char *buf2, int buf2Size) {
 	if (_currentScript != 0xFF) {
