@@ -249,11 +249,6 @@ void ToonEngine::parseInput() {
 						dialog.runModal();
 					}
 				}
-
-				if (event.kbd.keycode == Common::KEYCODE_d) {
-					_console->attach();
-					_console->onFrame();
-				}
 			}
 			break;
 		default:
@@ -1215,7 +1210,7 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_saveBufferStream = NULL;
 
 	_pathFinding = NULL;
-	_console = new ToonConsole(this);
+	setDebugger(new ToonConsole(this));
 
 	_cursorAnimation = NULL;
 	_cursorAnimationInstance = NULL;
@@ -1378,7 +1373,6 @@ ToonEngine::~ToonEngine() {
 	unloadToonDat();
 
 	DebugMan.clearAllDebugChannels();
-	delete _console;
 }
 
 void ToonEngine::flushPalette(bool deferFlushToNextRender) {
