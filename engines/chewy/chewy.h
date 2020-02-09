@@ -74,7 +74,6 @@ protected:
 	void initialize();
 	void shutdown();
 
-	Console *_console;
 	Events *_events;
 
 	uint _curCursor;

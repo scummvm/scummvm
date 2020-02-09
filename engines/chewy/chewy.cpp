@@ -64,17 +64,16 @@ ChewyEngine::~ChewyEngine() {
 	delete _cursor;
 	delete _scene;
 	delete _graphics;
-	delete _console;
 }
 
 void ChewyEngine::initialize() {
-	_console = new Console(this);
+	setDebugger(new Console(this));
 	_cursor = new Cursor();
 	_graphics = new Graphics(this);
 	_scene = new Scene(this);
 	_sound = new Sound(_mixer);
 	_text = new Text();
-	_events = new Events(this, _console);
+	_events = new Events(this);
 
 	_curCursor = 0;
 	_elapsedFrames = 0;
@@ -103,8 +102,6 @@ Common::Error ChewyEngine::run() {
 	// Run a dummy loop
 	while (!shouldQuit()) {
 		_events->processEvents();
-
-		_console->onFrame();
 
 		// Cursor animation
 		if (_elapsedFrames % 30 == 0)

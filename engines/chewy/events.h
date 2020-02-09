@@ -33,7 +33,7 @@ class Console;
 
 class Events {
 public:
-	Events(ChewyEngine *vm, Console *console);
+	Events(ChewyEngine *vm);
 	virtual ~Events() {}
 
 	void processEvents();
@@ -42,7 +42,6 @@ private:
 	Common::Event _event;
 	Common::EventManager *_eventManager;
 	ChewyEngine *_vm;
-	Console *_console;
 };
 
 } // End of namespace Chewy
