@@ -42,15 +42,15 @@ namespace Director {
 class DIBDecoder : public Image::ImageDecoder {
 public:
 	DIBDecoder();
-	virtual ~DIBDecoder();
+	~DIBDecoder() override;
 
 	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual const Graphics::Surface *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette; }
+	void destroy() override;
+	bool loadStream(Common::SeekableReadStream &stream) override;
+	const Graphics::Surface *getSurface() const override { return _surface; }
+	const byte *getPalette() const override { return _palette; }
 	void loadPalette(Common::SeekableReadStream &stream);
-	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
 
 private:
 	Image::Codec *_codec;
@@ -62,15 +62,15 @@ private:
 class BITDDecoder : public Image::ImageDecoder {
 public:
 	BITDDecoder(int w, int h, uint16 bitsPerPixel, uint16 pitch);
-	virtual ~BITDDecoder();
+	~BITDDecoder() override;
 
 	// ImageDecoder API
-	void destroy();
-	virtual bool loadStream(Common::SeekableReadStream &stream);
-	virtual const Graphics::Surface *getSurface() const { return _surface; }
-	const byte *getPalette() const { return _palette; }
+	void destroy() override;
+	bool loadStream(Common::SeekableReadStream &stream) override;
+	const Graphics::Surface *getSurface() const override { return _surface; }
+	const byte *getPalette() const override { return _palette; }
 	void loadPalette(Common::SeekableReadStream &stream);
-	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
 
 private:
 	Graphics::Surface *_surface;

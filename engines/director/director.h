@@ -89,7 +89,7 @@ struct PaletteV4 {
 class DirectorEngine : public ::Engine {
 public:
 	DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc);
-	~DirectorEngine();
+	~DirectorEngine() override;
 
 	// Detection related functions
 
@@ -145,7 +145,7 @@ public:
 	Common::List<MovieReference> _movieStack;
 
 protected:
-	virtual Common::Error run() override;
+	Common::Error run() override;
 
 private:
 	const DirectorGameDescription *_gameDescription;

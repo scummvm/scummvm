@@ -114,20 +114,20 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual const char *getEngineId() const override {
+	const char *getEngineId() const override {
 		return "director";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Macromedia Director";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Macromedia Director (C) 1990-1995 Macromedia";
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool DirectorMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
