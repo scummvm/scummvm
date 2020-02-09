@@ -103,8 +103,8 @@ class CineEngine : public Engine {
 
 protected:
 	// Engine APIs
-	virtual Common::Error run() override;
-	virtual bool hasFeature(EngineFeature f) const override;
+	Common::Error run() override;
+	bool hasFeature(EngineFeature f) const override;
 
 	void shutdown();
 
@@ -112,9 +112,9 @@ protected:
 
 public:
 	CineEngine(OSystem *syst, const CINEGameDescription *gameDesc);
-	virtual ~CineEngine();
+	~CineEngine() override;
 
-	virtual void syncSoundSettings() override;
+	void syncSoundSettings() override;
 
 	int getGameType() const;
 	uint32 getFeatures() const;
