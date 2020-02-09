@@ -51,7 +51,6 @@ Vars *g_vars = nullptr;
 FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 	Engine(syst),
 	_gameDescription(gameDesc),
-	_console(this),
 	_rnd("fullpipe"),
 	_gameProject(nullptr),
 	_modalObject(nullptr),
@@ -77,6 +76,8 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	syncSoundSettings();
 	_sfxVolume = ConfMan.getInt("sfx_volume") * 39 - 10000;
 	_musicVolume = ConfMan.getInt("music_volume");
+
+	setDebugger(new Console(this));
 
 	_gameProjectVersion = 0;
 	_pictureScale = 8;
@@ -378,11 +379,6 @@ void FullpipeEngine::updateEvents() {
 				return;
 				break;
 			default:
-				if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
-					// Start the debugger
-					getDebugger()->attach();
-					getDebugger()->onFrame();
-				}
 				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
 				ex->_param = event.kbd.keycode;
 				ex->_excFlags |= 3;
