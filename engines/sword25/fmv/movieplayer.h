@@ -53,7 +53,7 @@ public:
 	// -----------------------------------------------------------------------------
 
 	MoviePlayer(Kernel *pKernel);
-	~MoviePlayer();
+	~MoviePlayer() override;
 
 	// -----------------------------------------------------------------------------
 	// Player interface must be implemented by a Movie Player

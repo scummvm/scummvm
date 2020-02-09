@@ -41,7 +41,7 @@ namespace Sword25 {
 class TimedRenderObject : public RenderObject {
 public:
 	TimedRenderObject(RenderObjectPtr<RenderObject> pParent, TYPES type, uint handle = 0);
-	~TimedRenderObject();
+	~TimedRenderObject() override;
 
 	/**
 	    @brief Teilt dem Objekt mit, dass ein neuer Frame begonnen wird.

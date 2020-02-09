@@ -156,7 +156,7 @@ private:
 class VectorImage : public Image {
 public:
 	VectorImage(const byte *pFileData, uint fileSize, bool &success, const Common::String &fname);
-	~VectorImage();
+	~VectorImage() override;
 
 	uint getElementCount() const {
 		return _elements.size();
@@ -172,48 +172,48 @@ public:
 	//
 	// Die abstrakten Methoden von BS_Image
 	//
-	virtual int getWidth() const {
+	int getWidth() const override {
 		return _boundingBox.width();
 	}
-	virtual int getHeight() const {
+	int getHeight() const override {
 		return _boundingBox.height();
 	}
-	virtual GraphicEngine::COLOR_FORMATS getColorFormat() const {
+	GraphicEngine::COLOR_FORMATS getColorFormat() const override {
 		return GraphicEngine::CF_ARGB32;
 	}
-	virtual bool fill(const Common::Rect *pFillRect = 0, uint color = BS_RGB(0, 0, 0));
+	bool fill(const Common::Rect *pFillRect = 0, uint color = BS_RGB(0, 0, 0)) override;
 
 	void render(int width, int height);
 
-	virtual uint getPixel(int x, int y);
-	virtual bool isBlitSource() const {
+	uint getPixel(int x, int y) override;
+	bool isBlitSource() const override {
 		return true;
 	}
-	virtual bool isBlitTarget() const {
+	bool isBlitTarget() const override {
 		return false;
 	}
-	virtual bool isScalingAllowed() const {
+	bool isScalingAllowed() const override {
 		return true;
 	}
-	virtual bool isFillingAllowed() const {
+	bool isFillingAllowed() const override {
 		return false;
 	}
-	virtual bool isAlphaAllowed() const {
+	bool isAlphaAllowed() const override {
 		return true;
 	}
-	virtual bool isColorModulationAllowed() const {
+	bool isColorModulationAllowed() const override {
 		return true;
 	}
-	virtual bool isSetContentAllowed() const {
+	bool isSetContentAllowed() const override {
 		return false;
 	}
-	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride);
-	virtual bool blit(int posX = 0, int posY = 0,
+	bool setContent(const byte *pixeldata, uint size, uint offset, uint stride) override;
+	bool blit(int posX = 0, int posY = 0,
 	                  int flipping = Graphics::FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
-					  RectangleList *updateRects = 0);
+					  RectangleList *updateRects = 0) override;
 
 	class SWFBitStream;
 

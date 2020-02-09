@@ -83,8 +83,8 @@ public:
 		return _colorModulationAllowed;
 	}
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	bool persist(OutputPersistenceBlock &writer) override;
+	bool unpersist(InputPersistenceBlock &reader) override;
 
 protected:
 	Animation::ANIMATION_TYPES   _animationType;

@@ -48,24 +48,24 @@ private:
 	StaticBitmap(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parentPtr, uint handle);
 
 public:
-	virtual ~StaticBitmap();
+	~StaticBitmap() override;
 
-	virtual uint getPixel(int x, int y) const;
+	uint getPixel(int x, int y) const override;
 
-	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride);
+	bool setContent(const byte *pixeldata, uint size, uint offset, uint stride) override;
 
-	virtual bool isScalingAllowed() const;
-	virtual bool isAlphaAllowed() const;
-	virtual bool isColorModulationAllowed() const;
-	virtual bool isSetContentAllowed() const {
+	bool isScalingAllowed() const override;
+	bool isAlphaAllowed() const override;
+	bool isColorModulationAllowed() const override;
+	bool isSetContentAllowed() const override {
 		return false;
 	}
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	bool persist(OutputPersistenceBlock &writer) override;
+	bool unpersist(InputPersistenceBlock &reader) override;
 
 protected:
-	virtual bool doRender(RectangleList *updateRects);
+	bool doRender(RectangleList *updateRects) override;
 
 private:
 	Common::String _resourceFilename;

@@ -46,15 +46,15 @@ class PackageManager;
 class AnimationResource : public Resource, public AnimationDescription, public Common::XMLParser {
 public:
 	AnimationResource(const Common::String &filename);
-	virtual ~AnimationResource();
+	~AnimationResource() override;
 
-	virtual const Frame &getFrame(uint index) const override {
+	const Frame &getFrame(uint index) const override {
 		return _frames[index];
 	}
-	virtual uint getFrameCount() const override {
+	uint getFrameCount() const override {
 		return _frames.size();
 	}
-	virtual void unlock() override {
+	void unlock() override {
 		release();
 	}
 

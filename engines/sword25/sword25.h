@@ -77,7 +77,7 @@ private:
 	Sword25Console *_console;
 
 protected:
-	virtual Common::Error run() override;
+	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 // 	void pauseEngineIntern(bool pause);	// TODO: Implement this!!!
 // 	void syncSoundSettings();	// TODO: Implement this!!!
@@ -92,7 +92,7 @@ protected:
 
 public:
 	Sword25Engine(OSystem *syst, const ADGameDescription *gameDesc);
-	virtual ~Sword25Engine();
+	~Sword25Engine() override;
 
 	uint32 getGameFlags() const;
 

@@ -48,7 +48,7 @@ public:
 		pResource->registerResourceService(this);
 	}
 
-	virtual ~ResourceService() {}
+	~ResourceService() override {}
 
 	/**
 	 * Loads a resource

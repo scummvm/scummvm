@@ -48,8 +48,8 @@ class AnimationTemplateRegistry :
 			public Common::Singleton<AnimationTemplateRegistry> {
 public:
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	bool persist(OutputPersistenceBlock &writer) override;
+	bool unpersist(InputPersistenceBlock &reader) override;
 };
 
 } // End of namespace Sword25

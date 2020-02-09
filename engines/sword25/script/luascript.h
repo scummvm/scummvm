@@ -46,33 +46,33 @@ class Kernel;
 class LuaScriptEngine : public ScriptEngine {
 public:
 	LuaScriptEngine(Kernel *KernelPtr);
-	virtual ~LuaScriptEngine();
+	~LuaScriptEngine() override;
 
 	/**
 	 * Initializes the scripting engine
 	 * @return              Returns true if successful, otherwise false.
 	*/
-	virtual bool init();
+	bool init() override;
 
 	/**
 	 * Loads a script file and executes it
 	 * @param FileName      The filename of the script
 	 * @return              Returns true if successful, otherwise false.
 	 */
-	virtual bool executeFile(const Common::String &fileName);
+	bool executeFile(const Common::String &fileName) override;
 
 	/**
 	 * Execute a string of script code
 	 * @param Code          A string of script code
 	 * @return              Returns true if successful, otherwise false.
 	 */
-	virtual bool executeString(const Common::String &code);
+	bool executeString(const Common::String &code) override;
 
 	/**
 	 * Returns a pointer to the main object of the scripting language
 	 * @remark              Using this method breaks the encapsulation of the language
 	 */
-	virtual void *getScriptObject() {
+	void *getScriptObject() override {
 		return _state;
 	}
 
@@ -82,16 +82,16 @@ public:
 	 * @remark              How the command line parameters will be used by scripts is
 	 * dependant on the particular implementation.
 	 */
-	virtual void setCommandLine(const Common::StringArray &commandLineParameters);
+	void setCommandLine(const Common::StringArray &commandLineParameters) override;
 
 	/**
 	 * @remark              The Lua stack is cleared by this method
 	 */
-	virtual bool persist(OutputPersistenceBlock &writer);
+	bool persist(OutputPersistenceBlock &writer) override;
 	/**
 	 * @remark              The Lua stack is cleared by this method
 	 */
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	bool unpersist(InputPersistenceBlock &reader) override;
 
 private:
 	lua_State *_state;

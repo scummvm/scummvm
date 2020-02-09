@@ -47,7 +47,7 @@ namespace Sword25 {
 class SoundResource : public Resource {
 public:
 	SoundResource(const Common::String &fileName) : Resource(fileName, Resource::TYPE_SOUND), _fname(fileName) {}
-	virtual ~SoundResource() {
+	~SoundResource() override {
 		debugC(1, kDebugSound, "SoundResource: Unloading file %s", _fname.c_str());
 	}
 

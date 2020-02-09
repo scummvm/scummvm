@@ -95,7 +95,7 @@ public:
 	typedef void (*DynamicSoundReadCallback)(void *UserData, void *Data, uint DataLength);
 
 	SoundEngine(Kernel *pKernel);
-	~SoundEngine() {}
+	~SoundEngine() override {}
 
 	/**
 	 * Initializes the sound engine
@@ -245,11 +245,11 @@ public:
 	 */
 	float getSoundPanning(uint handle);
 
-	Resource    *loadResource(const Common::String &fileName);
-	bool         canLoadResource(const Common::String &fileName);
+	Resource    *loadResource(const Common::String &fileName) override;
+	bool         canLoadResource(const Common::String &fileName) override;
 
-	bool persist(OutputPersistenceBlock &writer);
-	bool unpersist(InputPersistenceBlock &reader);
+	bool persist(OutputPersistenceBlock &writer) override;
+	bool unpersist(InputPersistenceBlock &reader) override;
 
 private:
 	bool registerScriptBindings();

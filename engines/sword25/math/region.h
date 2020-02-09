@@ -70,7 +70,7 @@ public:
 	static uint create(REGION_TYPE type);
 	static uint create(InputPersistenceBlock &reader, uint handle = 0);
 
-	virtual ~Region();
+	~Region() override;
 
 	/**
 	 * Initializes a BS_Region object
@@ -197,8 +197,8 @@ public:
 	// Manipulation Methods
 	//
 
-	virtual bool persist(OutputPersistenceBlock &writer);
-	virtual bool unpersist(InputPersistenceBlock &reader);
+	bool persist(OutputPersistenceBlock &writer) override;
+	bool unpersist(InputPersistenceBlock &reader) override;
 
 protected:
 	/// This specifies the type of object
