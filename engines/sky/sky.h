@@ -107,7 +107,7 @@ protected:
 			return err;
 		return go();
 	}
-	GUI::Debugger *getDebugger() override;
+
 	bool hasFeature(EngineFeature f) const override;
 
 	byte _fastMode;
