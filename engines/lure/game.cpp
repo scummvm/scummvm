@@ -47,7 +47,7 @@ Game &Game::getReference() {
 
 Game::Game() {
 	int_game = this;
-	_debugger = new Debugger();
+	g_engine->setDebugger(new Debugger());
 	_fastTextFlag = false;
 	_preloadFlag = false;
 	_debugFlag = gDebugLevel >= ERROR_BASIC;
@@ -56,7 +56,6 @@ Game::Game() {
 }
 
 Game::~Game() {
-	delete _debugger;
 }
 
 void Game::tick() {
@@ -190,13 +189,6 @@ void Game::execute() {
 				if (events.type() == Common::EVENT_KEYDOWN) {
 					uint16 roomNum = room.roomNumber();
 
-					if ((events.event().kbd.hasFlags(Common::KBD_CTRL)) &&
-						(events.event().kbd.keycode == Common::KEYCODE_d)) {
-						// Activate the debugger
-						_debugger->attach();
-						break;
-					}
-
 					// Handle special keys
 					bool handled = true;
 					switch (events.event().kbd.keycode) {
@@ -276,8 +268,6 @@ void Game::execute() {
 
 			system.updateScreen();
 			system.delayMillis(10);
-
-			_debugger->onFrame();
 		}
 
 		room.leaveRoom();
