@@ -358,6 +358,7 @@ static void setupKeymapper(OSystem &system) {
 	using namespace Common;
 
 	Keymapper *mapper = system.getEventManager()->getKeymapper();
+	mapper->clear();
 
 	// Query the backend for hardware keys and default bindings and register them
 	HardwareInputSet *inputSet = system.getHardwareInputSet();
@@ -568,6 +569,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
 			// reallocate the config manager to get rid of any fragmentation
 			ConfMan.defragment();
+			// The keymapper keeps pointers to the configuration domains. It needs to be reinitialized.
+			setupKeymapper(system);
 #endif
 
 			// Did an error occur ?

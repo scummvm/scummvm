@@ -121,6 +121,11 @@ public:
 	void setEnabled(bool enabled) { _enabled = enabled; }
 
 	/**
+	 * Clear all the keymaps and hardware input sets
+	 */
+	void clear();
+
+	/**
 	 * Return a HardwareInput pointer for the given event
 	 */
 	HardwareInput findHardwareInput(const Event &event);

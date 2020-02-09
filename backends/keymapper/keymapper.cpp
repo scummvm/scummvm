@@ -45,11 +45,20 @@ Keymapper::Keymapper(EventManager *eventMan) :
 }
 
 Keymapper::~Keymapper() {
+	clear();
+}
+
+void Keymapper::clear() {
 	for (KeymapArray::iterator it = _keymaps.begin(); it != _keymaps.end(); it++) {
 		delete *it;
 	}
+	_keymaps.clear();
+
 	delete _backendDefaultBindings;
+	_backendDefaultBindings = nullptr;
+
 	delete _hardwareInputs;
+	_hardwareInputs = nullptr;
 }
 
 void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {
@@ -142,6 +151,7 @@ void Keymapper::reloadAllMappings() {
 void Keymapper::setEnabledKeymapType(Keymap::KeymapType type) {
 	_enabledKeymapType = type;
 }
+
 
 List<Event> Keymapper::mapEvent(const Event &ev) {
 	if (!_enabled) {
