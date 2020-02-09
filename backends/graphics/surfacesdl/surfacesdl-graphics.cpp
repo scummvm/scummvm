@@ -56,11 +56,6 @@
 #define SDL_FULLSCREEN  0x40000000
 #endif
 
-static const OSystem::GraphicsMode s_supportedShaders[] = {
-	{"NONE", "Normal (no shader)", 0},
-	{0, 0, 0}
-};
-
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
 #ifdef USE_SCALERS
@@ -209,13 +204,6 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_videoMode.stretchMode = STRETCH_FIT;
 #endif
-
-	// the default backend has no shaders
-	// shader number 0 is the entry NONE (no shader)
-	// for an example on shader support,
-	// consult the psp2sdl backend which inherits from this class
-	_currentShader = 0;
-	_numShaders = 1;
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
@@ -730,8 +718,6 @@ ScalerProc *SurfaceSdlGraphicsManager::getGraphicsScalerProc(int mode) const {
 void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 	Common::StackLock lock(_graphicsMutex);
 
-	updateShader();
-
 	ScalerProc *newScalerProc = getGraphicsScalerProc(_videoMode.mode);
 
 	if (!newScalerProc) {
@@ -763,21 +749,6 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 int SurfaceSdlGraphicsManager::getGraphicsMode() const {
 	assert(_transactionMode == kTransactionNone);
 	return _videoMode.mode;
-}
-
-const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedShaders() const {
-	return s_supportedShaders;
-}
-
-int SurfaceSdlGraphicsManager::getShader() const {
-	return _currentShader;
-}
-
-bool SurfaceSdlGraphicsManager::setShader(int id) {
-	assert(id >= 0 && id < _numShaders);
-	_currentShader = id;
-	updateShader();
-	return true;
 }
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -1190,17 +1161,6 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
 	internUpdateScreen();
-}
-
-void SurfaceSdlGraphicsManager::updateShader() {
-	// shader init code goes here
-	// currently only used on Vita port
-	// the user-selected shaderID should be obtained via ConfMan.getInt("shader")
-	// and the corresponding shader should then be activated here
-	// this way the user can combine any software scaling (scalers)
-	// with any hardware shading (shaders). The shaders could provide
-	// scanline masks, overlays, but could also serve for
-	// hardware-based up-scaling (sharp-bilinear-simple, etc.)
 }
 
 void SurfaceSdlGraphicsManager::internUpdateScreen() {

@@ -141,6 +141,17 @@ int PSP2SdlGraphicsManager::getDefaultShader() const {
 	return GFX_SHADER_SHARP;
 }
 
+int PSP2SdlGraphicsManager::getShader() const {
+	return _currentShader;
+}
+
+bool PSP2SdlGraphicsManager::setShader(int id) {
+	assert(id >= 0 && id < _numShaders);
+	_currentShader = id;
+	updateShader();
+	return true;
+}
+
 void PSP2SdlGraphicsManager::unloadGFXMode() {
 	if (_screen) {
 		SDL_FreeSurface(_screen);
