@@ -84,7 +84,7 @@ VoyeurEngine::~VoyeurEngine() {
 	delete _screen;
 	delete _filesManager;
 	delete _eventsManager;
-	delete _debugger;
+	//_debugger is deleted by Engine
 }
 
 Common::Error VoyeurEngine::run() {
@@ -120,6 +120,7 @@ void VoyeurEngine::ESP_Init() {
 
 void VoyeurEngine::globalInitBolt() {
 	_debugger = new Debugger(this);
+	setDebugger(_debugger);
 	_eventsManager = new EventsManager(this);
 	_filesManager = new FilesManager(this);
 	_screen = new Screen(this);
