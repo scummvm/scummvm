@@ -77,16 +77,16 @@ public:
 		return "plumbers";
 	}
 
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "Plumbers Don't Wear Ties";
 	}
 
-	virtual const char *getOriginalCopyright() const override {
+	const char *getOriginalCopyright() const override {
 		return "Plumbers Don't Wear Ties (C) 1993-94 Kirin Entertainment";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool PlumbersMetaEngine::hasFeature(MetaEngineFeature f) const {

@@ -49,9 +49,9 @@ enum PlumbersDebugChannels {
 class PlumbersGame : public Engine {
 public:
 	PlumbersGame(OSystem *syst, const ADGameDescription *gameDesc);
-	~PlumbersGame();
+	~PlumbersGame() override;
 
-	virtual Common::Error run();
+	Common::Error run() override;
 
 	// Detection related functions
 	const ADGameDescription *_gameDescription;
