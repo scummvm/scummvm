@@ -53,7 +53,6 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 	_dithering = false;
 	_disableFastwalk = false;
 
-	_debugger = nullptr;
 	_dialogs = nullptr;
 	_events = nullptr;
 	_font = nullptr;
@@ -67,7 +66,6 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 }
 
 MADSEngine::~MADSEngine() {
-	delete _debugger;
 	delete _dialogs;
 	delete _events;
 	delete _font;
@@ -78,6 +76,7 @@ MADSEngine::~MADSEngine() {
 	delete _resources;
 	delete _sound;
 	delete _audio;
+	//_debugger Debugger is deleted by Engine
 
 	_mixer->stopAll();
 }
@@ -90,6 +89,7 @@ void MADSEngine::initialize() {
 	Resources::init(this);
 	Conversation::init(this);
 	_debugger = new Debugger(this);
+	setDebugger(_debugger);
 	_dialogs = Dialogs::init(this);
 	_events = new EventsManager(this);
 	_palette = new Palette(this);
