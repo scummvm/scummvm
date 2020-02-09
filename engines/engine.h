@@ -174,8 +174,7 @@ public:
 	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size);
 
 	/**
-	 * Return the engine's debugger instance, if any. Used by error() to
-	 * invoke the debugger when a severe error is reported.
+	 * Return the engine's debugger instance, if any.
 	 */
 	virtual GUI::Debugger *getDebugger() { return _debugger; }
 
@@ -187,6 +186,12 @@ public:
 		assert(!_debugger);
 		_debugger = debugger;
 	}
+
+	/**
+	 * Return the engine's debugger instance, or create one if none is present.
+	 * Used by error() to invoke the debugger when a severe error is reported.
+	 */
+	GUI::Debugger *getOrCreateDebugger();
 
 	/**
 	 * Determine whether the engine supports the specified feature.
