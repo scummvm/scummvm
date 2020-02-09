@@ -43,7 +43,7 @@ namespace Tucker {
 
 TuckerEngine::TuckerEngine(OSystem *system, Common::Language language, uint32 flags)
 	: Engine(system), _gameLang(language), _gameFlags(flags), _rnd("tucker") {
-	_console = new TuckerConsole(this);
+	setDebugger(new TuckerConsole(this));
 
 	resetVariables();
 
@@ -75,7 +75,6 @@ TuckerEngine::TuckerEngine(OSystem *system, Common::Language language, uint32 fl
 }
 
 TuckerEngine::~TuckerEngine() {
-	delete _console;
 }
 
 bool TuckerEngine::hasFeature(EngineFeature f) const {
@@ -679,12 +678,6 @@ void TuckerEngine::parseEvents() {
 			case Common::KEYCODE_ESCAPE:
 				_inputKeys[kInputKeyEscape] = true;
 				_inputKeys[kInputKeySkipSpeech] = true;
-				break;
-			case Common::KEYCODE_d:
-				if (ev.kbd.hasFlags(Common::KBD_CTRL)) {
-					this->getDebugger()->attach();
-					this->getDebugger()->onFrame();
-				}
 				break;
 			default:
 				break;

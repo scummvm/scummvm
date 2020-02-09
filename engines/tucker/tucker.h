@@ -450,7 +450,6 @@ public:
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
-	GUI::Debugger *getDebugger() override { return _console; }
 
 	WARN_UNUSED_RESULT static SavegameError readSavegameHeader(Common::InSaveFile *file, SavegameHeader &header, bool skipThumbnail = true);
 	WARN_UNUSED_RESULT static SavegameError readSavegameHeader(const char *target, int slot, SavegameHeader &header);
@@ -752,8 +751,6 @@ protected:
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	virtual bool existsSavegame();
-
-	TuckerConsole *_console;
 
 	void handleIntroSequence();
 	void handleCreditsSequence();
