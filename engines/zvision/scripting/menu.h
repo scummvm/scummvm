@@ -63,10 +63,10 @@ protected:
 class MenuZGI: public MenuHandler {
 public:
 	MenuZGI(ZVision *engine);
-	~MenuZGI();
-	void onMouseMove(const Common::Point &Pos);
-	void onMouseUp(const Common::Point &Pos);
-	void process(uint32 deltaTimeInMillis);
+	~MenuZGI() override;
+	void onMouseMove(const Common::Point &Pos) override;
+	void onMouseUp(const Common::Point &Pos) override;
+	void process(uint32 deltaTimeInMillis) override;
 private:
 	Graphics::Surface menuBack[3][2];
 	Graphics::Surface menuBar[4][2];
@@ -92,10 +92,10 @@ private:
 class MenuNemesis: public MenuHandler {
 public:
 	MenuNemesis(ZVision *engine);
-	~MenuNemesis();
-	void onMouseMove(const Common::Point &Pos);
-	void onMouseUp(const Common::Point &Pos);
-	void process(uint32 deltaTimeInMillis);
+	~MenuNemesis() override;
+	void onMouseMove(const Common::Point &Pos) override;
+	void onMouseUp(const Common::Point &Pos) override;
+	void process(uint32 deltaTimeInMillis) override;
 private:
 	Graphics::Surface but[4][6];
 	Graphics::Surface menuBar;

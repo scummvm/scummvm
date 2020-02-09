@@ -32,7 +32,7 @@ class ZVision;
 class Console : public GUI::Debugger {
 public:
 	Console(ZVision *engine);
-	virtual ~Console() {}
+	~Console() override {}
 
 private:
 	ZVision *_engine;

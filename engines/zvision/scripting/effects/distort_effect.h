@@ -32,9 +32,9 @@ class ZVision;
 class DistortNode : public ScriptingEffect {
 public:
 	DistortNode(ZVision *engine, uint32 key, int16 speed, float startAngle, float endAngle, float startLineScale, float endLineScale);
-	~DistortNode();
+	~DistortNode() override;
 
-	bool process(uint32 deltaTimeInMillis);
+	bool process(uint32 deltaTimeInMillis) override;
 
 private:
 	int16 _speed;

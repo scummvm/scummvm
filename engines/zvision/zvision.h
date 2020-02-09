@@ -99,7 +99,7 @@ enum ZVisionFeatures {
 class ZVision : public Engine {
 public:
 	ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc);
-	~ZVision();
+	~ZVision() override;
 
 public:
 	/**

@@ -38,7 +38,7 @@ namespace ZVision {
 class ttyTextNode : public ScriptingEffect {
 public:
 	ttyTextNode(ZVision *engine, uint32 key, const Common::String &file, const Common::Rect &r, int32 delay);
-	~ttyTextNode();
+	~ttyTextNode() override;
 
 	/**
 	 * Decrement the timer by the delta time. If the timer is finished, set the status
@@ -47,7 +47,7 @@ public:
 	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
-	bool process(uint32 deltaTimeInMillis);
+	bool process(uint32 deltaTimeInMillis) override;
 private:
 	Common::Rect _r;
 

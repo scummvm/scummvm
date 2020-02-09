@@ -86,7 +86,7 @@ class RawZorkStream : public Audio::RewindableAudioStream {
 public:
 	RawZorkStream(uint32 rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream);
 
-	~RawZorkStream() {
+	~RawZorkStream() override {
 	}
 
 public:
@@ -103,23 +103,23 @@ private:
 	RawChunkStream _streamReader;
 
 public:
-	int readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples) override;
 
-	bool isStereo() const {
+	bool isStereo() const override {
 		return _stereo;
 	}
-	bool endOfData() const {
+	bool endOfData() const override {
 		return _endOfData;
 	}
 
-	int getRate() const {
+	int getRate() const override {
 		return _rate;
 	}
 	Audio::Timestamp getLength() const {
 		return _playtime;
 	}
 
-	bool rewind();
+	bool rewind() override;
 };
 
 /**

@@ -46,7 +46,7 @@ private:
 
 public:
 
-	bool process(uint32 deltaTimeInMillis);
+	bool process(uint32 deltaTimeInMillis) override;
 
 };
 

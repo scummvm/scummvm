@@ -38,7 +38,7 @@ namespace ZVision {
 class SafeControl : public Control {
 public:
 	SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
-	~SafeControl();
+	~SafeControl() override;
 
 private:
 	int16  _statesCount;
@@ -55,9 +55,9 @@ private:
 	int16  _targetFrame;
 
 public:
-	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	bool process(uint32 deltaTimeInMillis);
+	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
+	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
+	bool process(uint32 deltaTimeInMillis) override;
 };
 
 } // End of namespace ZVision

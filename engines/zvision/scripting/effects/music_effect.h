@@ -36,7 +36,7 @@ namespace ZVision {
 class MusicNodeBASE : public ScriptingEffect {
 public:
 	MusicNodeBASE(ZVision *engine, uint32 key, ScriptingEffectType type) : ScriptingEffect(engine, key, type) {}
-	~MusicNodeBASE() {}
+	~MusicNodeBASE() override {}
 
 	/**
 	 * Decrement the timer by the delta time. If the timer is finished, set the status
@@ -45,7 +45,7 @@ public:
 	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
-	virtual bool process(uint32 deltaTimeInMillis) = 0;
+	bool process(uint32 deltaTimeInMillis) override = 0;
 
 	virtual void setVolume(uint8 volume) = 0;
 	virtual uint8 getVolume() = 0;
@@ -58,7 +58,7 @@ public:
 class MusicNode : public MusicNodeBASE {
 public:
 	MusicNode(ZVision *engine, uint32 key, Common::String &file, bool loop, uint8 volume);
-	~MusicNode();
+	~MusicNode() override;
 
 	/**
 	 * Decrement the timer by the delta time. If the timer is finished, set the status
@@ -67,14 +67,14 @@ public:
 	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
-	bool process(uint32 deltaTimeInMillis);
+	bool process(uint32 deltaTimeInMillis) override;
 
-	void setVolume(uint8 volume);
-	uint8 getVolume();
-	void setDeltaVolume(uint8 volume);
-	void setBalance(int8 balance);
+	void setVolume(uint8 volume) override;
+	uint8 getVolume() override;
+	void setDeltaVolume(uint8 volume) override;
+	void setBalance(int8 balance) override;
 
-	void setFade(int32 time, uint8 target);
+	void setFade(int32 time, uint8 target) override;
 
 private:
 	uint8 _volume;
@@ -94,7 +94,7 @@ private:
 class MusicMidiNode : public MusicNodeBASE {
 public:
 	MusicMidiNode(ZVision *engine, uint32 key, int8 program, int8 note, int8 volume);
-	~MusicMidiNode();
+	~MusicMidiNode() override;
 
 	/**
 	 * Decrement the timer by the delta time. If the timer is finished, set the status
@@ -103,14 +103,14 @@ public:
 	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
-	bool process(uint32 deltaTimeInMillis);
+	bool process(uint32 deltaTimeInMillis) override;
 
-	void setVolume(uint8 volume);
-	uint8 getVolume();
-	void setDeltaVolume(uint8 volume);
-	void setBalance(int8 balance);
+	void setVolume(uint8 volume) override;
+	uint8 getVolume() override;
+	void setDeltaVolume(uint8 volume) override;
+	void setBalance(int8 balance) override;
 
-	void setFade(int32 time, uint8 target);
+	void setFade(int32 time, uint8 target) override;
 
 private:
 	int8 _chan;
@@ -123,9 +123,9 @@ private:
 class PanTrackNode : public ScriptingEffect {
 public:
 	PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos);
-	~PanTrackNode();
+	~PanTrackNode() override;
 
-	bool process(uint32 deltaTimeInMillis);
+	bool process(uint32 deltaTimeInMillis) override;
 
 private:
 	uint32 _slot;

@@ -33,11 +33,11 @@ class LightFx : public GraphicsEffect {
 public:
 
 	LightFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, int8 delta, int8 minD = -127, int8 maxD = 127);
-	~LightFx();
+	~LightFx() override;
 
-	const Graphics::Surface *draw(const Graphics::Surface &srcSubRect);
+	const Graphics::Surface *draw(const Graphics::Surface &srcSubRect) override;
 
-	void update();
+	void update() override;
 
 private:
 	EffectMap *_map;

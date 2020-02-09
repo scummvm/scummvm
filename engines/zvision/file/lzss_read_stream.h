@@ -54,8 +54,8 @@ private:
 	bool _eosFlag;
 
 public:
-	bool eos() const;
-	uint32 read(void *dataPtr, uint32 dataSize);
+	bool eos() const override;
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 
 private:
 	/**

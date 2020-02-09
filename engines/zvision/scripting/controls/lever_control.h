@@ -38,7 +38,7 @@ namespace ZVision {
 class LeverControl : public Control {
 public:
 	LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
-	~LeverControl();
+	~LeverControl() override;
 
 private:
 
@@ -81,10 +81,10 @@ private:
 	uint32 _accumulatedTime;
 
 public:
-	bool onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	bool process(uint32 deltaTimeInMillis);
+	bool onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
+	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
+	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) override;
+	bool process(uint32 deltaTimeInMillis) override;
 
 private:
 	void parseLevFile(const Common::String &fileName);
