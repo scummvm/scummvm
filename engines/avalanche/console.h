@@ -37,7 +37,7 @@ class AvalancheEngine;
 class AvalancheConsole : public GUI::Debugger {
 public:
 	AvalancheConsole(AvalancheEngine *vm);
-	virtual ~AvalancheConsole(void);
+	~AvalancheConsole(void) override;
 
 protected:
 	bool Cmd_MagicLines(int argc, const char **argv);
