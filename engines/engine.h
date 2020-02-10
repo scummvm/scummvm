@@ -31,6 +31,7 @@
 #include "common/singleton.h"
 
 class OSystem;
+class MetaEngine;
 
 namespace Audio {
 class Mixer;
@@ -322,6 +323,8 @@ public:
 	 * launcher.
 	 */
 	static bool shouldQuit();
+
+	static MetaEngine &getMetaEngine();
 
 	/**
 	 * Pause or resume the engine. This should stop/resume any audio playback
