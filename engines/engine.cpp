@@ -495,13 +495,23 @@ void Engine::handleAutoSave() {
 
 void Engine::saveAutosaveIfEnabled() {
 	if (_autosaveInterval != 0) {
-		bool canSave = canSaveAutosaveCurrently();
+		bool saveFlag = canSaveAutosaveCurrently();
+		Common::String saveName = _("Autosave");
 
-		if (!canSave || saveGameState(getAutosaveSlot(), _("Autosave"), true).getCode() != Common::kNoError) {
+		if (saveFlag) {
+			// First check for an existing savegame in the slot, and if present, if it's an autosave
+			SaveStateDescriptor desc = getMetaEngine().querySaveMetaInfos(
+				_targetName.c_str(), getAutosaveSlot());
+			saveFlag = desc.getSaveSlot() == -1 || desc.getDescription() == saveName;
+		}
+
+		if (saveFlag && saveGameState(getAutosaveSlot(), saveName, true).getCode() != Common::kNoError) {
 			// Couldn't autosave at the designated time
-			if (!canSave)
-				g_system->displayMessageOnOSD(_("Error occurred making autosave"));
+			g_system->displayMessageOnOSD(_("Error occurred making autosave"));
+			saveFlag = false;
+		}
 
+		if (!saveFlag) {
 			// Set the next autosave interval to be in 5 minutes, rather than whatever
 			// full autosave interval the user has selected
 			_lastAutosaveTime = _system->getMillis() + (5 * 60 * 1000) - _autosaveInterval;
@@ -799,3 +809,9 @@ EnginePlugin *Engine::getMetaEnginePlugin() const {
 }
 
 */
+
+MetaEngine &Engine::getMetaEngine() {
+	const Plugin *plugin = EngineMan.findPlugin(ConfMan.get("engineid"));
+	assert(plugin);
+	return plugin->get<MetaEngine>();
+}
