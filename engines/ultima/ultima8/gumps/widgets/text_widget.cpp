@@ -38,9 +38,9 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(TextWidget, Gump)
 
-TextWidget::TextWidget()
-	: Gump(), cached_text(0) {
-
+TextWidget::TextWidget() : Gump(), gamefont(false), fontnum(0), blendColour(0),
+		tx(0), ty(0), current_start(0), current_end(0), targetwidth(0), targetheight(0),
+		cached_text(0), textalign(Font::TEXT_LEFT) {
 }
 
 TextWidget::TextWidget(int X, int Y, Std::string txt, bool gamefont_, int font,
@@ -48,7 +48,6 @@ TextWidget::TextWidget(int X, int Y, Std::string txt, bool gamefont_, int font,
 	Gump(X, Y, w, h), text(txt), gamefont(gamefont_), fontnum(font),
 	blendColour(0), current_start(0), current_end(0),
 	targetwidth(w), targetheight(h), cached_text(0), textalign(align) {
-
 }
 
 TextWidget::~TextWidget(void) {

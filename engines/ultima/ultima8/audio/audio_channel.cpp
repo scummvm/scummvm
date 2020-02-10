@@ -43,7 +43,7 @@ namespace Ultima8 {
 
 AudioChannel::AudioChannel(Audio::Mixer *mixer, uint32 sampleRate, bool stereo) :
 		_mixer(mixer), _decompressorSize(0), _frameSize(0), _loop(0), _sample(0),
-		_frameEvenOdd(0), _paused(false) {
+		_frameEvenOdd(0), _paused(false), _priority(0) {
 }
 
 AudioChannel::~AudioChannel(void) {

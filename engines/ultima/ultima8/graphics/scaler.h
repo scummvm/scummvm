@@ -48,7 +48,8 @@ protected:
 	ScalerFunc  Scale32_A888;
 	ScalerFunc  Scale32_888A;
 
-	Scaler() {}
+	Scaler() : Scale16Nat(0), Scale16Sta(0), Scale32Nat(0), Scale32Sta(0),
+		Scale32_A888(0), Scale32_888A(0) {}
 public:
 	//
 	// Scaler Capabilites
