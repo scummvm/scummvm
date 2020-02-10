@@ -494,8 +494,17 @@ void Engine::handleAutoSave() {
 }
 
 void Engine::saveAutosaveIfEnabled() {
-	if (_autosaveInterval != 0 && canSaveAutosaveCurrently())
-		saveGameState(getAutosaveSlot(), _("Autosave"), true);
+	if (_autosaveInterval != 0) {
+		bool canSave = canSaveAutosaveCurrently();
+
+		if (!canSave || saveGameState(getAutosaveSlot(), _("Autosave"), true).getCode() != Common::kNoError) {
+			// Couldn't autosave at the designated time. Rather than wait until
+			// the next autosave interval, which may be some time, set the next
+			// interval to be in five minutes time
+			_lastAutosaveTime = _system->getMillis() + (5 * 60 * 1000) - _autosaveInterval;
+			return;
+		}
+	}
 
 	// Reset the last autosave time
 	_lastAutosaveTime = _system->getMillis();
