@@ -108,35 +108,35 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(1, opUnk1);
 	OPCODE(2, opAddDialogChoice);
 	OPCODE(3, opUnk3); //dialog related
-	OPCODE(4,  opExecuteScript);
+	OPCODE(4, opExecuteScript);
 	OPCODE(5, opSetActorDirection);
-	OPCODE(6,  opUnk6);
+	OPCODE(6, opUnk6);
 	OPCODE(7, opMoveObjectToScene);
-	OPCODE(8,  opActorLoadSequence);
+	OPCODE(8, opActorLoadSequence);
 
 	OPCODE(0xA, opSetVariable);
 	OPCODE(0xB, opRunSpecialOpCode);
 	OPCODE(0xC, opPlayOrStopSound);
 	OPCODE(0xD, opDelay);
-	OPCODE(0xE, opUnkE);
-	OPCODE(0xF, opUnkF);
-	OPCODE(0x10, opUnk10);
+	OPCODE(0xE, opMoveActorToPoint);
+	OPCODE(0xF, opMoveActorToXY);
+	OPCODE(0x10, opMoveActorToObject);
 	OPCODE(0x11, opUnk11FlickerTalk);
-	OPCODE(0x12, opUnk12LoadScene);
-	OPCODE(0x13, opUnk13PropertiesRelated);
-	OPCODE(0x14, opUnk14PropertiesRelated);
-	OPCODE(0x15, opUnk15PropertiesRelated);
+	OPCODE(0x12, opLoadScene);
+	OPCODE(0x13, opIfStatement);
+	OPCODE(0x14, opIfElseStatement);
+	OPCODE(0x15, opUnk15PropertiesRelated); //Is this used?
 	OPCODE(0x16, opUnk16);
-	OPCODE(0x17, opUnk17);
-	OPCODE(0x18, opUnk18);
-	OPCODE(0x19, opUnk19);
+	OPCODE(0x17, opWaitForActorSequenceToFinish);
+	OPCODE(0x18, opDialogAtPoint);
+	OPCODE(0x19, opExecuteObjectSceneScript);
 	OPCODE(0x1A, opUpdatePaletteCycling);
-	OPCODE(0x1B, opUnk1B);
+	OPCODE(0x1B, opWaitForActorToFinishWalking);
 	OPCODE(0x1C, opSetActorFlag0x1000);
-	OPCODE(0x1D, opUnk1DClearActorFlag0x400);
-	OPCODE(0x1E, opUnk1ESetActorFlag0x400);
+	OPCODE(0x1D, opShowActor);
+	OPCODE(0x1E, opHideActor);
 	OPCODE(0x1F, opPlayMusic);
-	OPCODE(0x20, opUnk20);
+	OPCODE(0x20, opPreLoadSceneData);
 	OPCODE(0x21, opPauseCurrentSpeechAndFetchNextDialog);
 	OPCODE(0x22, opCodeActorTalk);
 }
@@ -481,7 +481,7 @@ void ScriptOpcodes::opPlayMusic(ScriptOpCall &scriptOpCall) {
 	}
 }
 
-void ScriptOpcodes::opUnk13PropertiesRelated(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opIfStatement(ScriptOpCall &scriptOpCall) {
 	if (evaluateExpression(scriptOpCall)) {
 		scriptOpCall._code += 4;
 	} else {
@@ -489,7 +489,7 @@ void ScriptOpcodes::opUnk13PropertiesRelated(ScriptOpCall &scriptOpCall) {
 	}
 }
 
-void ScriptOpcodes::opUnk14PropertiesRelated(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opIfElseStatement(ScriptOpCall &scriptOpCall) {
 	if (evaluateExpression(scriptOpCall)) {
 		ScriptOpCall localScriptOpCall(scriptOpCall._code + 4, READ_LE_UINT16(scriptOpCall._code));
 		localScriptOpCall._field8 = scriptOpCall._field8;
@@ -527,14 +527,14 @@ void ScriptOpcodes::opUnk15PropertiesRelated(ScriptOpCall &scriptOpCall) {
 	scriptOpCall._code += 4 + READ_LE_UINT16(scriptOpCall._code);
 }
 
-void ScriptOpcodes::opUnk20(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opPreLoadSceneData(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
-	ARG_INT16(field2);
+	ARG_INT16(sceneId);
 
 	_vm->_sound->PauseCDMusic();
 	_vm->_data_800633fc = 1;
 
-	if (field2 >= 2) {
+	if (sceneId >= 2) {
 		//TODO do we need this? It looks like it is pre-loading the next scene's data.
 	}
 }
@@ -680,40 +680,40 @@ void ScriptOpcodes::opDelay(ScriptOpCall &scriptOpCall) {
 	_vm->waitForFrames((uint16)delay);
 }
 
-void ScriptOpcodes::opUnkE(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opMoveActorToPoint(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
-	ARG_INT16(field2);
-	ARG_INT16(field4);
-	ARG_INT16(field6);
-	ARG_INT16(field8);
+	ARG_INT16(iniId);
+	ARG_INT16(walkSpeed);
+	ARG_INT16(sequenceId);
+	ARG_INT16(pointIndex);
 
 	if (scriptOpCall._field8 != 0) {
 		return;
 	}
 
-	int32 s3 = 0;
-	DragonINI *ini = _vm->getINI(field2 - 1);
+	bool waitForWalkToComplete = true;
+	DragonINI *ini = _vm->getINI(iniId - 1);
 
-	if (field6 & 0x8000) {
-		s3 = 0 > (field6 ^ 0xffff) ? 1 : 0;
+	if (sequenceId & 0x8000) {
+		waitForWalkToComplete = sequenceId == -1;
 	}
-	Common::Point point = _vm->_scene->getPoint(field8);
+	Common::Point point = _vm->_scene->getPoint(pointIndex);
 
-	if (field4 != -1) {
-		if (field6 != -1) {
+	if (walkSpeed != -1) {
+		if (sequenceId != -1) {
 			if (!(field0 & 0x8000)) {
 				assert(ini->actor);
 				ini->actor->_flags |= ACTOR_FLAG_800;
-				ini->actor->updateSequence(field6 & 0x7fff);
+				ini->actor->updateSequence(sequenceId & 0x7fff);
 			}
-			ini->actor->_walkSpeed = field4 & 0x8000 ? (field4 & 0x7fff) << 7 : field4 << 0x10;
+			ini->actor->_walkSpeed = walkSpeed & 0x8000 ? (walkSpeed & 0x7fff) << 7 : walkSpeed << 0x10;
 		}
 
 		bool isFlicker = _vm->_dragonINIResource->isFlicker(ini);
 		ini->actor->startWalk(point.x, point.y, isFlicker ? 0 : 1);
 
-		if (s3 == 0) {
-			while (ini->actor->_flags & ACTOR_FLAG_10) {
+		if (waitForWalkToComplete) {
+			while (ini->actor->isFlagSet(ACTOR_FLAG_10)) {
 				_vm->waitForFrames(1);
 			}
 		}
@@ -727,68 +727,68 @@ void ScriptOpcodes::opUnkE(ScriptOpCall &scriptOpCall) {
 		ini->y = point.y;
 		ini->actor->_y_pos = point.y;
 
-		if (field4 != field6) {
-			ini->actor->_walkSpeed = field4;
-			ini->actor->updateSequence(field6 & 0x7fff);
+		if (sequenceId != -1) {
+			ini->actor->_walkSpeed = -1;
+			ini->actor->updateSequence(sequenceId & 0x7fff);
 		}
 	}
 }
 
-void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opMoveActorToXY(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
-	ARG_INT16(field2);
-	ARG_INT16(field4);
-	ARG_INT16(field6);
-	ARG_INT16(field8);
-	ARG_INT16(fieldA);
+	ARG_INT16(iniId);
+	ARG_INT16(walkSpeed);
+	ARG_INT16(sequenceId);
+	ARG_INT16(destX);
+	ARG_INT16(destY);
 
 	if (scriptOpCall._field8 != 0) {
 		return;
 	}
 
-	int32 s3 = 0;
-	DragonINI *ini = _vm->getINI(field2 - 1);
+	bool waitForWalkToComplete = true;
+	DragonINI *ini = _vm->getINI(iniId - 1);
 
-	if (field6 & 0x8000) {
-		s3 = 0 > (field6 ^ 0xffff) ? 1 : 0;
+	if (sequenceId & 0x8000) {
+		waitForWalkToComplete = sequenceId == -1;
 	}
 
-	if (field4 != -1) {
-		if (field6 != -1) {
+	if (walkSpeed != -1) {
+		if (sequenceId != -1) {
 			if (!(field0 & 0x8000)) {
 				assert(ini->actor);
-				ini->actor->_flags |= ACTOR_FLAG_800;
-				ini->actor->updateSequence(field6 & 0x7fff);
+				ini->actor->setFlag(ACTOR_FLAG_800);
+				ini->actor->updateSequence(sequenceId & 0x7fff);
 			}
-			ini->actor->_walkSpeed = field4 & 0x8000 ? (field4 & 0x7fff) << 7 : field4 << 0x10;
+			ini->actor->_walkSpeed = walkSpeed & 0x8000 ? (walkSpeed & 0x7fff) << 7 : walkSpeed << 0x10;
 		}
 		bool isFlicker = _vm->_dragonINIResource->isFlicker(ini);
-		ini->actor->startWalk(field8, fieldA, isFlicker ? 0 : 1);
+		ini->actor->startWalk(destX, destY, isFlicker ? 0 : 1);
 
-		if (s3 == 0) {
-			while (ini->actor->_flags & ACTOR_FLAG_10) {
+		if (waitForWalkToComplete) {
+			while (ini->actor->isFlagSet(ACTOR_FLAG_10)) {
 				_vm->waitForFrames(1);
 			}
 		}
-		ini->x = field8;
-		ini->y = fieldA;
+		ini->x = destX;
+		ini->y = destY;
 		ini->actor->_flags &= ~ACTOR_FLAG_800;
 
 	} else {
 		assert(ini->actor);
-		ini->x = field8;
-		ini->actor->_x_pos = field8;
-		ini->y = fieldA;
-		ini->actor->_y_pos = fieldA;
+		ini->x = destX;
+		ini->actor->_x_pos = destX;
+		ini->y = destY;
+		ini->actor->_y_pos = destY;
 
-		if (field4 != field6) {
-			ini->actor->_walkSpeed = field4;
-			ini->actor->updateSequence(field6 & 0x7fff);
+		if (sequenceId != -1) {
+			ini->actor->_walkSpeed = -1;
+			ini->actor->updateSequence(sequenceId & 0x7fff);
 		}
 	}
 }
 
-void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opMoveActorToObject(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
 	ARG_INT16(field2);
 	ARG_INT16(field4);
@@ -898,7 +898,7 @@ void ScriptOpcodes::opUnk11FlickerTalk(ScriptOpCall &scriptOpCall) {
 	_vm->_talk->talkFromIni(iniId, textIndex);
 }
 
-void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opLoadScene(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
 	ARG_INT16(newSceneID);
 	ARG_INT16(cameraPointID);
@@ -1124,7 +1124,7 @@ void ScriptOpcodes::opUnk16(ScriptOpCall &scriptOpCall) {
 	}
 }
 
-void ScriptOpcodes::opUnk17(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opWaitForActorSequenceToFinish(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
 	ARG_INT16(iniId);
 
@@ -1138,7 +1138,7 @@ void ScriptOpcodes::opUnk17(ScriptOpCall &scriptOpCall) {
 }
 
 
-void ScriptOpcodes::opUnk18(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opDialogAtPoint(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
 	ARG_UINT32(field2);
 	ARG_INT16(x);
@@ -1163,7 +1163,7 @@ void ScriptOpcodes::opUnk18(ScriptOpCall &scriptOpCall) {
 	_vm->_talk->displayDialogAroundPoint(dialog, x, y, fieldA, 1, field2);
 }
 
-void ScriptOpcodes::opUnk19(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opExecuteObjectSceneScript(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
 	ARG_INT16(size);
 
@@ -1196,7 +1196,7 @@ void ScriptOpcodes::opUpdatePaletteCycling(ScriptOpCall &scriptOpCall) {
 	_vm->_paletteCyclingTbl[index].updateCounter = 0;
 }
 
-void ScriptOpcodes::opUnk1B(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opWaitForActorToFinishWalking(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
 	ARG_INT16(iniId);
 
@@ -1212,7 +1212,7 @@ void ScriptOpcodes::opUnk1B(ScriptOpCall &scriptOpCall) {
 	}
 }
 
-void ScriptOpcodes::opUnk1DClearActorFlag0x400(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opShowActor(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
 	ARG_INT16(iniId);
 
@@ -1224,7 +1224,7 @@ void ScriptOpcodes::opUnk1DClearActorFlag0x400(ScriptOpCall &scriptOpCall) {
 	ini->actor->setFlag(ACTOR_FLAG_400);
 }
 
-void ScriptOpcodes::opUnk1ESetActorFlag0x400(ScriptOpCall &scriptOpCall) {
+void ScriptOpcodes::opHideActor(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
 	ARG_INT16(iniId);
 

@@ -92,25 +92,25 @@ protected:
 	void opRunSpecialOpCode(ScriptOpCall &scriptOpCall); //op B
 	void opPlayOrStopSound(ScriptOpCall &scriptOpCall);
 	void opDelay(ScriptOpCall &scriptOpCall); //op D
-	void opUnkE(ScriptOpCall &scriptOpCall);
-	void opUnkF(ScriptOpCall &scriptOpCall);
-	void opUnk10(ScriptOpCall &scriptOpCall);
+	void opMoveActorToPoint(ScriptOpCall &scriptOpCall);
+	void opMoveActorToXY(ScriptOpCall &scriptOpCall);
+	void opMoveActorToObject(ScriptOpCall &scriptOpCall);
 	void opUnk11FlickerTalk(ScriptOpCall &scriptOpCall);
-	void opUnk12LoadScene(ScriptOpCall &scriptOpCall);
-	void opUnk13PropertiesRelated(ScriptOpCall &scriptOpCall);
-	void opUnk14PropertiesRelated(ScriptOpCall &scriptOpCall);
+	void opLoadScene(ScriptOpCall &scriptOpCall);
+	void opIfStatement(ScriptOpCall &scriptOpCall);
+	void opIfElseStatement(ScriptOpCall &scriptOpCall);
 	void opUnk15PropertiesRelated(ScriptOpCall &scriptOpCall);
 	void opUnk16(ScriptOpCall &scriptOpCall);
-	void opUnk17(ScriptOpCall &scriptOpCall);
-	void opUnk18(ScriptOpCall &scriptOpCall);
-	void opUnk19(ScriptOpCall &scriptOpCall);
+	void opWaitForActorSequenceToFinish(ScriptOpCall &scriptOpCall);
+	void opDialogAtPoint(ScriptOpCall &scriptOpCall);
+	void opExecuteObjectSceneScript(ScriptOpCall &scriptOpCall);
 	void opUpdatePaletteCycling(ScriptOpCall &scriptOpCall);
-	void opUnk1B(ScriptOpCall &scriptOpCall);
-	void opUnk1DClearActorFlag0x400(ScriptOpCall &scriptOpCall);
-	void opUnk1ESetActorFlag0x400(ScriptOpCall &scriptOpCall);
+	void opWaitForActorToFinishWalking(ScriptOpCall &scriptOpCall);
+	void opShowActor(ScriptOpCall &scriptOpCall);
+	void opHideActor(ScriptOpCall &scriptOpCall);
 	void opSetActorFlag0x1000(ScriptOpCall &scriptOpCall);
 	void opPlayMusic(ScriptOpCall &scriptOpCall);
-	void opUnk20(ScriptOpCall &scriptOpCall);
+	void opPreLoadSceneData(ScriptOpCall &scriptOpCall);
 	void opPauseCurrentSpeechAndFetchNextDialog(ScriptOpCall &scriptOpCall);
 
 	bool evaluateExpression(ScriptOpCall &scriptOpCall);
