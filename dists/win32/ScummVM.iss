@@ -186,7 +186,6 @@ Name: dutch; MessagesFile: compiler:Languages\Dutch.isl
 Name: finnish; MessagesFile: compiler:Languages\Finnish.isl
 Name: galician; MessagesFile: compiler:Languages\Galician.isl
 Name: greek; MessagesFile: compiler:Languages\Greek.isl
-Name: polish; MessagesFile: compiler:Languages\Polish.isl
 Name: ukrainian; MessagesFile: compiler:Languages\Ukrainian.isl
 Name: hebrew; MessagesFile: compiler:Languages\Hebrew.isl
 
