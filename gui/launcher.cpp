@@ -357,7 +357,7 @@ void LauncherDialog::addGame() {
 					bannedDirectory += '/';
 				}
 			}
-			if (selectedDirectory.equalsIgnoreCase(bannedDirectory)) {
+			if (selectedDirectory.size() && bannedDirectory.size() && selectedDirectory.equalsIgnoreCase(bannedDirectory)) {
 				MessageDialog alert(_("This directory cannot be used yet, it is being downloaded into!"));
 				alert.runModal();
 				return;
