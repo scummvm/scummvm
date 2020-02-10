@@ -164,7 +164,7 @@ private:
 	uint32 _flags;
 	uint32 _unkFlags1;
 	Common::Point _cursorPosition;
-	uint32 _counter;
+	uint32 _flickerIdleCounter;
 	uint32 _bit_flags_8006fbd8;
 	//unk
 
