@@ -284,12 +284,12 @@ void DragonsEngine::gameLoop() {
 		}
 
 		_counter++;
-		if (0x4af < _counter) {
+		if (_counter >= 0x4af) {
 			pDVar8 = _dragonINIResource->getFlickerRecord();
 			if (pDVar8->actor->_resourceID == 0xe) {
 				pDVar8->actor->_direction = 2;
 				pDVar8->field_20_actor_field_14 = 2;
-				if (getINI(0xc2)->field_1e == 1) {
+				if (getINI(0xc2)->sceneId == 1) {
 					sequenceId = 0x30;
 				} else {
 					sequenceId = 2;
