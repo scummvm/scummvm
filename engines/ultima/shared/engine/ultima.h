@@ -62,10 +62,6 @@ protected:
 		return false;
 	}
 
-	/**
-	 * Returns the Ultima meta engine
-	 */
-	UltimaMetaEngine *getMetaEngine() const;
 public:
 	EventsManager *_events;
 public:
@@ -98,13 +94,6 @@ public:
 	 */
 	bool isEnhanced() const {
 		return getFeatures() & GF_VGA_ENHANCED;
-	}
-
-	/**
-	 * Returns the filename for a savegame given it's slot
-	 */
-	Common::String getSaveFilename(int slotNumber) {
-		return getMetaEngine()->getSavegameFile(slotNumber, _targetName.c_str());
 	}
 
 	/**

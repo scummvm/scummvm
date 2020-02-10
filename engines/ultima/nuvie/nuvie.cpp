@@ -293,7 +293,7 @@ bool NuvieEngine::canSaveGameStateCurrently(bool isAutosave) {
 }
 
 Common::Error NuvieEngine::loadGameState(int slot) {
-	Common::String filename = getSaveFilename(slot);
+	Common::String filename = getSaveStateName(slot);
 
 	if (slot == ORIGINAL_SAVE_SLOT) {
 		// For Nuvie, unless a savegame is already present for the slot,
@@ -312,7 +312,7 @@ Common::Error NuvieEngine::loadGameState(int slot) {
 }
 
 Common::Error NuvieEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	Common::String filename = getSaveFilename(slot);
+	Common::String filename = getSaveStateName(slot);
 	if (_savegame->save(filename, desc)) {
 		if (!isAutosave) {
 			// Store which savegame was most recently saved
