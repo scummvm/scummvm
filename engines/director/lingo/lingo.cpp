@@ -510,6 +510,17 @@ Common::String *Datum::toString() {
 			*s = ((TextCast *)score->_loadedCast->getVal(idx))->_ptext;
 		}
 		break;
+	case ARRAY:
+		*s = "[";
+
+		for (int i = 0; i < u.farr->size(); i++) {
+			if (i > 0)
+				*s += ", ";
+			*s += *u.farr->operator[](i).toString();
+		}
+
+		*s += "]";
+		break;
 	default:
 		warning("Incorrect operation toString() for type: %s", type2str());
 	}
