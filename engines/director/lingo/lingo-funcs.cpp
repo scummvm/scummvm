@@ -352,24 +352,33 @@ void Lingo::func_cursor(int c, int m) {
 			const byte *cursor, *mask;
 			bool nocursor = false;
 
-			if (y >= ((BitmapCast *)score->_loadedCast->getVal(c))->_surface->h ||
-					y >= ((BitmapCast *)score->_loadedCast->getVal(m))->_surface->h )
+			if (y >= score->_loadedCast->getVal(c)->_surface->h ||
+					y >= score->_loadedCast->getVal(m)->_surface->h )
 				nocursor = true;
 
 			if (!nocursor) {
-				cursor = (const byte *)((BitmapCast *)score->_loadedCast->getVal(c))->_surface->getBasePtr(0, y);
-				mask = (const byte *)((BitmapCast *)score->_loadedCast->getVal(m))->_surface->getBasePtr(0, y);
+				cursor = (const byte *)score->_loadedCast->getVal(c)->_surface->getBasePtr(0, y);
+				mask = (const byte *)score->_loadedCast->getVal(m)->_surface->getBasePtr(0, y);
 			}
 
 			for (int x = 0; x < 16; x++) {
-				*dst = (*cursor ? 1 : 0) || (*mask ? 0 : 3);
+				if (x >= score->_loadedCast->getVal(c)->_surface->w ||
+						x >= score->_loadedCast->getVal(m)->_surface->w )
+					nocursor = true;
+
+				if (nocursor) {
+					*dst = 3;
+				} else {
+					*dst = (*cursor ? 1 : 0) || (*mask ? 0 : 3);
+					cursor++;
+					mask++;
+				}
 				dst++;
-				cursor++;
-				mask++;
 			}
 		}
 
-		warning("STUB: func_cursor(%d, %d)", c, m);
+		_vm->getMacWindowManager()->pushCustomCursor(assembly, 16, 16, 3);
+
 		return;
 	}
 
