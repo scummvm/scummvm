@@ -189,7 +189,10 @@ void BrowserDialog::updateListing() {
 	_currentPath->setEditString(_node.getPath());
 
 	// We memorize the last visited path.
-	ConfMan.set("browser_lastpath", _node.getPath());
+	// Don't memorize a path that is not a directory
+	if (_node.isDirectory()) {
+		ConfMan.set("browser_lastpath", _node.getPath());
+	}
 
 	// Read in the data from the file system
 	if (!_node.getChildren(_nodeContent, Common::FSNode::kListAll, _showHidden))
