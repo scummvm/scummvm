@@ -346,9 +346,9 @@ void Lingo::func_cursor(int c, int m) {
 		}
 
 		byte *assembly = (byte *)malloc(16 * 16);
+		byte *dst = assembly;
 
 		for (int y = 0; y < 16; y++) {
-			byte *dst = assembly;
 			const byte *cursor, *mask;
 			bool nocursor = false;
 
@@ -369,7 +369,7 @@ void Lingo::func_cursor(int c, int m) {
 				if (nocursor) {
 					*dst = 3;
 				} else {
-					*dst = (*cursor ? 1 : 0) || (*mask ? 0 : 3);
+					*dst = *mask ? 3 : (*cursor ? 1 : 0);
 					cursor++;
 					mask++;
 				}
