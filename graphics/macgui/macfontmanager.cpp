@@ -337,6 +337,10 @@ void MacFontManager::clearFontMapping() {
 	_extraFontIds.clear();
 }
 
+void MacFont::setName(const char *name) {
+	_name = name;
+}
+
 const Common::String MacFontManager::getFontName(int id, int size, int slant, bool tryGen) {
 	Common::String n;
 

@@ -81,8 +81,8 @@ public:
 	int getSize() const { return _size; }
 	int getSlant() const { return _slant; }
 	Common::String getName() { return _name; }
-	void setName(Common::String &name) { _name = name; }
-	void setName(const char *name) { _name = name; }
+	void setName(Common::String &name) { setName(name.c_str()); }
+	void setName(const char *name);
 	FontManager::FontUsage getFallback() { return _fallback; }
 	bool isGenerated() { return _generated; }
 	void setGenerated(bool gen) { _generated = gen; }
