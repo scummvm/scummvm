@@ -52,22 +52,11 @@ static const PlainGameDescriptor ULTIMA_GAMES[] = {
 
 #include "ultima/detection_tables.h"
 
-namespace Ultima {
-UltimaMetaEngine *g_metaEngine;
-} // End of namespace Ultima
-
-
 UltimaMetaEngine::UltimaMetaEngine() : AdvancedMetaEngine(Ultima::GAME_DESCRIPTIONS,
 	        sizeof(Ultima::UltimaGameDescription), Ultima::ULTIMA_GAMES) {
-	Ultima::g_metaEngine = this;
-
 	static const char *const DIRECTORY_GLOBS[2] = { "usecode", 0 };
 	_maxScanDepth = 2;
 	_directoryGlobs = DIRECTORY_GLOBS;
-}
-
-UltimaMetaEngine::~UltimaMetaEngine() {
-	Ultima::g_metaEngine = nullptr;
 }
 
 bool UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

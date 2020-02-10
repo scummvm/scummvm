@@ -97,9 +97,5 @@ Common::FSNode UltimaEngine::getGameDirectory() const {
 	return Common::FSNode(ConfMan.get("path"));
 }
 
-UltimaMetaEngine *UltimaEngine::getMetaEngine() const {
-	return g_metaEngine;
-}
-
 } // End of namespace Shared
 } // End of namespace Ultima
