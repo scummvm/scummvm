@@ -267,7 +267,7 @@ void DragonsEngine::gameLoop() {
 
 	_cursor->_cursorActivationSeqOffset = 0;
 	_bit_flags_8006fbd8 = 0;
-	_counter = 0;
+	_flickerIdleCounter = 0;
 	setFlags(ENGINE_FLAG_8);
 	actorId = 0;
 
@@ -283,8 +283,8 @@ void DragonsEngine::gameLoop() {
 			_sceneId1 = getCurrentSceneId();
 		}
 
-		_counter++;
-		if (_counter >= 0x4af) {
+		_flickerIdleCounter++;
+		if (_flickerIdleCounter >= 0x4af) {
 			pDVar8 = _dragonINIResource->getFlickerRecord();
 			if (pDVar8->actor->_resourceID == 0xe) {
 				pDVar8->actor->_direction = 2;
@@ -295,13 +295,13 @@ void DragonsEngine::gameLoop() {
 					sequenceId = 2;
 				}
 				pDVar8->actor->updateSequence(sequenceId);
-				_counter = 0;
+				_flickerIdleCounter = 0;
 				setFlags(ENGINE_FLAG_80000000);
 			}
 		}
 		if (isFlagSet(ENGINE_FLAG_80000000)
 			&& _dragonINIResource->getFlickerRecord()->actor->isFlagSet(ACTOR_FLAG_4)) {
-			_counter = 0;
+			_flickerIdleCounter = 0;
 			clearFlags(ENGINE_FLAG_80000000);
 		}
 		if (_bit_flags_8006fbd8 == 0) {
@@ -310,8 +310,9 @@ void DragonsEngine::gameLoop() {
 		if (_dragonINIResource->getFlickerRecord()->sceneId == getCurrentSceneId()) {
 			uVar3 = ipt_img_file_related();
 			actorId_00 = uVar3 & 0xffff;
-			if (actorId_00 == 0) goto LAB_80026d34;
-			if (actorId_00 != (actorId & 0xffff)) {
+			if (actorId_00 == 0) {
+				uVar3 = 0;
+			} else if (actorId_00 != (actorId & 0xffff)) {
 				byte *obd = _dragonOBD->getFromOpt(actorId_00 - 1);
 				ScriptOpCall scriptOpCall(obd + 8, READ_LE_UINT32(obd));
 
@@ -319,11 +320,10 @@ void DragonsEngine::gameLoop() {
 					scriptOpCall._codeEnd = scriptOpCall._code + 4 + READ_LE_UINT16(scriptOpCall._code + 2);
 					scriptOpCall._code += 4;
 					_scriptOpcodes->runScript(scriptOpCall);
-					_counter = 0;
+					_flickerIdleCounter = 0;
 				}
 			}
 		} else {
-			LAB_80026d34:
 			uVar3 = 0;
 		}
 
@@ -336,7 +336,7 @@ void DragonsEngine::gameLoop() {
 
 		if (_rightMouseButtonUp && isInputEnabled()) {
 			_cursor->selectPreviousCursor();
-			_counter = 0;
+			_flickerIdleCounter = 0;
 			actorId = uVar3;
 			continue;
 		}
@@ -363,7 +363,7 @@ void DragonsEngine::gameLoop() {
 //				uVar6 = 3;
 //				if (_cursor->_sequenceID == 2) goto LAB_80026fb0;
 //			}
-//			_counter = 0;
+//			_flickerIdleCounter = 0;
 //			actorId = uVar3;
 //			continue;
 //		}
@@ -387,7 +387,7 @@ void DragonsEngine::gameLoop() {
 			} else {
 				setFlags(ENGINE_FLAG_8);
 			}
-			_counter = 0;
+			_flickerIdleCounter = 0;
 			actorId = uVar3;
 			continue;
 		}
@@ -407,7 +407,7 @@ void DragonsEngine::gameLoop() {
 							_inventory->inventoryMissing();
 							actorId = uVar3;
 						} else {
-							_counter = 0;
+							_flickerIdleCounter = 0;
 							_inventory->setType(1);
 							_inventory->openInventory();
 				joined_r0x80027a38:
@@ -423,7 +423,7 @@ void DragonsEngine::gameLoop() {
 					}
 					uVar6 = _inventory->getType();
 					if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) {
-						_counter = 0;
+						_flickerIdleCounter = 0;
 						if ((_cursor->_iniUnderCursor & 0x8000) != 0) {
 							if (_cursor->_iniUnderCursor == 0x8002) {
 								LAB_80027294:
@@ -457,7 +457,7 @@ void DragonsEngine::gameLoop() {
 							}
 						}
 				LAB_80027ab4:
-						_counter = 0;
+						_flickerIdleCounter = 0;
 						_cursor->_data_80072890 = _cursor->_iniUnderCursor;
 						if (_cursor->_sequenceID < 5) {
 							_cursor->_data_800728b0_cursor_seqID = _cursor->_sequenceID;
@@ -483,7 +483,7 @@ void DragonsEngine::gameLoop() {
 						uVar7 = _inventory->_old_showing_value;
 						if (_dragonVAR->getVar(7) == 1)
 							goto LAB_800279f4;
-						_counter = 0;
+						_flickerIdleCounter = 0;
 						_inventory->setType(1);
 						_inventory->_old_showing_value = uVar6;
 						_inventory->openInventory();
@@ -499,7 +499,7 @@ void DragonsEngine::gameLoop() {
 			continue;
 		}
 		if (checkForInventoryButtonRelease()) {
-			_counter = 0;
+			_flickerIdleCounter = 0;
 			LAB_80027970:
 			_inventory->closeInventory();
 			uVar6 = _inventory->_old_showing_value;
@@ -510,7 +510,7 @@ void DragonsEngine::gameLoop() {
 		}
 		uVar6 = _inventory->getType();
 		if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) {
-			_counter = 0;
+			_flickerIdleCounter = 0;
 			if ((_cursor->_iniUnderCursor & 0x8000) != 0) {
 				if (_cursor->_iniUnderCursor == 0x8001) {
 					_inventory->closeInventory();
