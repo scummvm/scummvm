@@ -235,8 +235,8 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 				break;
 		}
 	}
-	free(str);
-	free(format);
+	delete[] str;
+	delete[] format;
 
 	if (count < field_count) {
 		error("Expected line of format '%s', got '%s'", fmt, line);
