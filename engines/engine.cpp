@@ -498,9 +498,12 @@ void Engine::saveAutosaveIfEnabled() {
 		bool canSave = canSaveAutosaveCurrently();
 
 		if (!canSave || saveGameState(getAutosaveSlot(), _("Autosave"), true).getCode() != Common::kNoError) {
-			// Couldn't autosave at the designated time. Rather than wait until
-			// the next autosave interval, which may be some time, set the next
-			// interval to be in five minutes time
+			// Couldn't autosave at the designated time
+			if (!canSave)
+				g_system->displayMessageOnOSD(_("Error occurred making autosave"));
+
+			// Set the next autosave interval to be in 5 minutes, rather than whatever
+			// full autosave interval the user has selected
 			_lastAutosaveTime = _system->getMillis() + (5 * 60 * 1000) - _autosaveInterval;
 			return;
 		}
