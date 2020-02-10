@@ -29,6 +29,7 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/cast.h"
 #include "director/score.h"
 #include "director/sound.h"
 #include "director/util.h"
@@ -326,14 +327,49 @@ void Lingo::func_playdone() {
 	func_goto(f, m);
 }
 
-void Lingo::func_cursor(int c, int mask) {
+void Lingo::func_cursor(int c, int m) {
 	if (_cursorOnStack) {
 		// pop cursor
 		_vm->getMacWindowManager()->popCursor();
 	}
 
-	if (mask != -1) {
-		warning("STUB: func_cursor(%d, %d)", c, mask);
+	if (m != -1) {
+		Score *score = _vm->getCurrentScore();
+		if (!score->_loadedCast->contains(c) || !score->_loadedCast->contains(m)) {
+			warning("cursor: non-existent cast reference");
+			return;
+		}
+
+		if (score->_loadedCast->getVal(c)->_type != kCastBitmap || score->_loadedCast->getVal(m)->_type != kCastBitmap) {
+			warning("cursor: wrong cast reference type");
+			return;
+		}
+
+		byte *assembly = (byte *)malloc(16 * 16);
+
+		for (int y = 0; y < 16; y++) {
+			byte *dst = assembly;
+			const byte *cursor, *mask;
+			bool nocursor = false;
+
+			if (y >= ((BitmapCast *)score->_loadedCast->getVal(c))->_surface->h ||
+					y >= ((BitmapCast *)score->_loadedCast->getVal(m))->_surface->h )
+				nocursor = true;
+
+			if (!nocursor) {
+				cursor = (const byte *)((BitmapCast *)score->_loadedCast->getVal(c))->_surface->getBasePtr(0, y);
+				mask = (const byte *)((BitmapCast *)score->_loadedCast->getVal(m))->_surface->getBasePtr(0, y);
+			}
+
+			for (int x = 0; x < 16; x++) {
+				*dst = (*cursor ? 1 : 0) || (*mask ? 0 : 3);
+				dst++;
+				cursor++;
+				mask++;
+			}
+		}
+
+		warning("STUB: func_cursor(%d, %d)", c, m);
 		return;
 	}
 
