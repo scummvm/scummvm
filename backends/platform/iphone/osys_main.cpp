@@ -36,6 +36,8 @@
 
 #include "base/main.h"
 
+#include "backends/audiocd/default/default-audiocd.h"
+#include "backends/events/default/default-events.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "audio/mixer.h"
@@ -104,7 +106,10 @@ void OSystem_IPHONE::initBackend() {
 
 	setTimerCallback(&OSystem_IPHONE::timerHandler, 10);
 
-	EventsBaseBackend::initBackend();
+	_eventManager = new DefaultEventManager(this);
+	_audiocdManager = new DefaultAudioCDManager();
+
+	BaseBackend::initBackend();
 }
 
 bool OSystem_IPHONE::hasFeature(Feature f) {

@@ -62,9 +62,10 @@ void OSystem_Dreamcast::initBackend()
   _mixer = new Audio::MixerImpl(sampleRate);
   _mixer->setReady(true);
 
+  _eventManager = new DefaultEventManager(this);
   _audiocdManager = new DCCDManager();
 
-  EventsBaseBackend::initBackend();
+  BaseBackend::initBackend();
 }
 
 

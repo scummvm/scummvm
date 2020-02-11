@@ -26,6 +26,7 @@
 #include <ronin/soundcommon.h>
 #include "backends/timer/default/default-timer.h"
 #include "backends/audiocd/default/default-audiocd.h"
+#include "backends/events/default/default-events.h"
 #include "backends/fs/fs-factory.h"
 #include "audio/mixer_intern.h"
 #include "common/language.h"
@@ -69,7 +70,7 @@ public:
 	void stop() override;
 };
 
-class OSystem_Dreamcast : private DCHardware, public EventsBaseBackend, public PaletteManager, public FilesystemFactory
+class OSystem_Dreamcast : private DCHardware, public BaseBackend, Common::EventSource, public PaletteManager, public FilesystemFactory
 #ifdef DYNAMIC_MODULES
   , public FilePluginProvider
 #endif

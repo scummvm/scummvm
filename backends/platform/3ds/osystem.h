@@ -92,7 +92,7 @@ struct GfxState {
 };
 
 
-class OSystem_3DS : public EventsBaseBackend, public PaletteManager, public Common::EventObserver {
+class OSystem_3DS : public BaseBackend, Common::EventSource, public PaletteManager, public Common::EventObserver {
 public:
 	OSystem_3DS();
 	virtual ~OSystem_3DS();

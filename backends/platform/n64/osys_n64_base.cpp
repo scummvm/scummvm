@@ -30,6 +30,8 @@
 #include "pakfs_save_manager.h"
 #include "framfs_save_manager.h"
 #include "backends/fs/n64/n64-fs-factory.h"
+#include "backends/audiocd/default/default-audiocd.h"
+#include "backends/events/default/default-events.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 
@@ -192,7 +194,10 @@ void OSystem_N64::initBackend() {
 
 	setupMixer();
 
-	EventsBaseBackend::initBackend();
+	_eventManager = new DefaultEventManager(this);
+	_audiocdManager = new DefaultAudioCDManager();
+
+	BaseBackend::initBackend();
 }
 
 bool OSystem_N64::hasFeature(Feature f) {

@@ -38,6 +38,8 @@
 
 #include "base/main.h"
 
+#include "backends/audiocd/default/default-audiocd.h"
+#include "backends/events/default/default-events.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "backends/fs/chroot/chroot-fs-factory.h"
@@ -164,7 +166,10 @@ void OSystem_iOS7::initBackend() {
 
 	setTimerCallback(&OSystem_iOS7::timerHandler, 10);
 
-	EventsBaseBackend::initBackend();
+	_eventManager = new DefaultEventManager(this);
+	_audiocdManager = new DefaultAudioCDManager();
+
+	BaseBackend::initBackend();
 }
 
 bool OSystem_iOS7::hasFeature(Feature f) {

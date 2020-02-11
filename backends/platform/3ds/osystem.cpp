@@ -31,6 +31,7 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "backends/events/default/default-events.h"
+#include "backends/audiocd/default/default-audiocd.h"
 #include "audio/mixer_intern.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -141,7 +142,11 @@ void OSystem_3DS::initBackend() {
 
 	init3DSGraphics();
 	initAudio();
-	EventsBaseBackend::initBackend();
+
+	_eventManager = new DefaultEventManager(this);
+	_audiocdManager = new DefaultAudioCDManager();
+
+	BaseBackend::initBackend();
 	initEvents();
 }
 

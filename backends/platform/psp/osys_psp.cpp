@@ -38,6 +38,8 @@
 #include "backends/platform/psp/powerman.h"
 #include "backends/platform/psp/rtc.h"
 
+#include "backends/audiocd/default/default-audiocd.h"
+#include "backends/events/default/default-events.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/psp/timer.h"
 #include "graphics/surface.h"
@@ -98,7 +100,10 @@ void OSystem_PSP::initBackend() {
 
 	setupMixer();
 
-	EventsBaseBackend::initBackend();
+	_eventManager = new DefaultEventManager(this);
+	_audiocdManager = new DefaultAudioCDManager();
+
+	BaseBackend::initBackend();
 }
 
 // Let's us know an engine

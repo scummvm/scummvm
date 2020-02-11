@@ -46,6 +46,7 @@
 #include "backends/fs/ds/ds-fs-factory.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
+#include "backends/events/default/default-events.h"
 #include "backends/timer/default/default-timer.h"
 
 #ifdef ENABLE_AGI
@@ -133,12 +134,15 @@ void OSystem_DS::initBackend() {
 	_mixer = new Audio::MixerImpl(DS::getSoundFrequency());
 	_mixer->setReady(true);
 
+	_eventManager = new DefaultEventManager(this);
+	_audiocdManager = new DefaultAudioCDManager();
+
 	/* TODO/FIXME: The NDS should use a custom AudioCD manager instance!
 	if (!_audiocdManager)
 		_audiocdManager = new DSAudioCDManager();
 	*/
 
-	EventsBaseBackend::initBackend();
+	BaseBackend::initBackend();
 }
 
 bool OSystem_DS::hasFeature(Feature f) {

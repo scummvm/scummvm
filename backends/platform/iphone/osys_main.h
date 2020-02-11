@@ -52,7 +52,7 @@ struct AQCallbackStruct {
 	AudioStreamBasicDescription dataFormat;
 };
 
-class OSystem_IPHONE : public EventsBaseBackend, public PaletteManager {
+class OSystem_IPHONE : public BaseBackend, Common::EventSource, public PaletteManager {
 protected:
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[];
 	static AQCallbackStruct s_AudioQueue;

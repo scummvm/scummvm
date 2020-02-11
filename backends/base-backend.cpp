@@ -22,37 +22,12 @@
 
 #include "backends/base-backend.h"
 
-#ifndef DISABLE_DEFAULT_EVENT_MANAGER
-#include "backends/events/default/default-events.h"
-#endif
-
-#ifndef DISABLE_DEFAULT_AUDIOCD_MANAGER
-#include "backends/audiocd/default/default-audiocd.h"
-#endif
-
-
 #include "gui/message.h"
 
 void BaseBackend::displayMessageOnOSD(const char *msg) {
 	// Display the message for 1.5 seconds
 	GUI::TimedMessageDialog dialog(msg, 1500);
 	dialog.runModal();
-}
-
-void EventsBaseBackend::initBackend() {
-	// Init Event manager
-#ifndef DISABLE_DEFAULT_EVENT_MANAGER
-	if (!_eventManager)
-		_eventManager = new DefaultEventManager(this);
-#endif
-
-	// Init audio CD manager
-#ifndef DISABLE_DEFAULT_AUDIOCD_MANAGER
-	if (!_audiocdManager)
-		_audiocdManager = new DefaultAudioCDManager();
-#endif
-
-	OSystem::initBackend();
 }
 
 void BaseBackend::fillScreen(uint32 col) {
