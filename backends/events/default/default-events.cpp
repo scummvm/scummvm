@@ -305,6 +305,10 @@ void DefaultEventManager::purgeMouseEvents() {
 		case Common::EVENT_WHEELDOWN:
 		case Common::EVENT_MBUTTONDOWN:
 		case Common::EVENT_MBUTTONUP:
+		case Common::EVENT_X1BUTTONDOWN:
+		case Common::EVENT_X1BUTTONUP:
+		case Common::EVENT_X2BUTTONDOWN:
+		case Common::EVENT_X2BUTTONUP:
 		case Common::EVENT_MOUSEMOVE:
 			// do nothing
 			break;

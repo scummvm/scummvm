@@ -231,12 +231,14 @@ const ModifierTableEntry defaultModifiers[] = {
 };
 
 const HardwareInputTableEntry defaultMouseButtons[] = {
-    { "MOUSE_LEFT",   MOUSE_BUTTON_LEFT,   _s("Left Mouse Button")   },
-    { "MOUSE_RIGHT",  MOUSE_BUTTON_RIGHT,  _s("Right Mouse Button")  },
-    { "MOUSE_MIDDLE", MOUSE_BUTTON_MIDDLE, _s("Middle Mouse Button") },
-    { "MOUSE_WHEEL_UP", MOUSE_WHEEL_UP, _s("Mouse Wheel Up") },
-    { "MOUSE_WHEEL_DOWN", MOUSE_WHEEL_DOWN, _s("Mouse Wheel Down") },
-    { nullptr,        0,                   nullptr                   }
+    { "MOUSE_LEFT",       MOUSE_BUTTON_LEFT,   _s("Left Mouse Button")   },
+    { "MOUSE_RIGHT",      MOUSE_BUTTON_RIGHT,  _s("Right Mouse Button")  },
+    { "MOUSE_MIDDLE",     MOUSE_BUTTON_MIDDLE, _s("Middle Mouse Button") },
+    { "MOUSE_WHEEL_UP",   MOUSE_WHEEL_UP,      _s("Mouse Wheel Up")      },
+    { "MOUSE_WHEEL_DOWN", MOUSE_WHEEL_DOWN,    _s("Mouse Wheel Down")    },
+    { "MOUSE_X1",         MOUSE_BUTTON_X1,     _s("X1 Mouse Button")     },
+    { "MOUSE_X2",         MOUSE_BUTTON_X2,     _s("X2 Mouse Button")     },
+    { nullptr,            0,                   nullptr                   }
 };
 
 const HardwareInputTableEntry defaultJoystickButtons[] = {
@@ -441,6 +443,14 @@ HardwareInput MouseHardwareInputSet::findHardwareInput(const Event &event) const
 		break;
 	case Common::EVENT_WHEELDOWN:
 		button = MOUSE_WHEEL_DOWN;
+		break;
+	case EVENT_X1BUTTONDOWN:
+	case EVENT_X1BUTTONUP:
+		button = MOUSE_BUTTON_X1;
+		break;
+	case EVENT_X2BUTTONDOWN:
+	case EVENT_X2BUTTONUP:
+		button = MOUSE_BUTTON_X2;
 		break;
 	default:
 		button = -1;

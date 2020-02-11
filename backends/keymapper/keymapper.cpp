@@ -248,6 +248,8 @@ Keymapper::IncomingEventType Keymapper::convertToIncomingEventType(const Event &
 	           || ev.type == EVENT_LBUTTONDOWN
 	           || ev.type == EVENT_RBUTTONDOWN
 	           || ev.type == EVENT_MBUTTONDOWN
+	           || ev.type == EVENT_X1BUTTONDOWN
+	           || ev.type == EVENT_X2BUTTONDOWN
 	           || ev.type == EVENT_JOYBUTTON_DOWN) {
 		return kIncomingEventStart;
 	} else {
@@ -264,6 +266,10 @@ bool Keymapper::isMouseEvent(const Event &event) {
 	        || event.type == EVENT_MBUTTONUP
 	        || event.type == EVENT_WHEELDOWN
 	        || event.type == EVENT_WHEELUP
+	        || event.type == EVENT_X1BUTTONDOWN
+	        || event.type == EVENT_X1BUTTONUP
+	        || event.type == EVENT_X2BUTTONDOWN
+	        || event.type == EVENT_X2BUTTONUP
 	        || event.type == EVENT_MOUSEMOVE;
 }
 
@@ -323,6 +329,12 @@ EventType Keymapper::convertStartToEnd(EventType type) {
 		break;
 	case EVENT_MBUTTONDOWN:
 		result = EVENT_MBUTTONUP;
+		break;
+	case EVENT_X1BUTTONDOWN:
+		result = EVENT_X1BUTTONUP;
+		break;
+	case EVENT_X2BUTTONDOWN:
+		result = EVENT_X2BUTTONUP;
 		break;
 	case EVENT_JOYBUTTON_DOWN:
 		result = EVENT_JOYBUTTON_UP;
