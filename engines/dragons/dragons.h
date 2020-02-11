@@ -82,7 +82,7 @@ enum Flags {
 	ENGINE_FLAG_4000000  =  0x4000000,
 	ENGINE_FLAG_8000000  =  0x8000000,
 	ENGINE_FLAG_20000000 = 0x20000000,
-	ENGINE_FLAG_80000000 = 0x80000000
+	ENGINE_FLAG_80000000 = 0x80000000   //Flicker idle animation running.
 };
 
 enum UnkFlags {
@@ -294,6 +294,8 @@ private:
 	void updateHandler();
 	void updatePathfindingActors();
 	void updatePaletteCycling();
+	void updateFlickerIdleAnimation();
+
 	uint32 calulateTimeLeft();
 	void wait();
 	uint16 getIniFromImg();
