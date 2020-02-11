@@ -124,8 +124,6 @@ protected:
 	 */
 	SdlWindow *_window;
 
-	virtual Common::EventSource *getDefaultEventSource() override { return _eventSource; }
-
 	/**
 	 * Initialze the SDL library.
 	 */

@@ -39,11 +39,11 @@ void BaseBackend::displayMessageOnOSD(const char *msg) {
 	dialog.runModal();
 }
 
-void BaseBackend::initBackend() {
+void EventsBaseBackend::initBackend() {
 	// Init Event manager
 #ifndef DISABLE_DEFAULT_EVENT_MANAGER
 	if (!_eventManager)
-		_eventManager = new DefaultEventManager(getDefaultEventSource());
+		_eventManager = new DefaultEventManager(this);
 #endif
 
 	// Init audio CD manager
