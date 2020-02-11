@@ -496,16 +496,15 @@ void Engine::handleAutoSave() {
 void Engine::saveAutosaveIfEnabled() {
 	if (_autosaveInterval != 0) {
 		bool saveFlag = canSaveAutosaveCurrently();
-		Common::String saveName = _("Autosave");
 
 		if (saveFlag) {
 			// First check for an existing savegame in the slot, and if present, if it's an autosave
 			SaveStateDescriptor desc = getMetaEngine().querySaveMetaInfos(
 				_targetName.c_str(), getAutosaveSlot());
-			saveFlag = desc.getSaveSlot() == -1 || desc.getDescription() == saveName;
+			saveFlag = desc.getSaveSlot() == -1 || desc.isAutosave();
 		}
 
-		if (saveFlag && saveGameState(getAutosaveSlot(), saveName, true).getCode() != Common::kNoError) {
+		if (saveFlag && saveGameState(getAutosaveSlot(), _("Autosave"), true).getCode() != Common::kNoError) {
 			// Couldn't autosave at the designated time
 			g_system->displayMessageOnOSD(_("Error occurred making autosave"));
 			saveFlag = false;
