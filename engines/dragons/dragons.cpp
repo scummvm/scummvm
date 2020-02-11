@@ -257,8 +257,7 @@ uint16 DragonsEngine::ipt_img_file_related() {
 }
 
 void DragonsEngine::gameLoop() {
-	uint uVar3;
-	uint actorId;
+	uint16 prevImgIniId = 0;
 	uint16 uVar6;
 	uint16 uVar7;
 	uint16 sequenceId;
@@ -267,7 +266,6 @@ void DragonsEngine::gameLoop() {
 	_bit_flags_8006fbd8 = 0;
 	_flickerIdleCounter = 0;
 	setFlags(ENGINE_FLAG_8);
-	actorId = 0;
 
 	while (!shouldQuit()) {
 		_scene->draw();
@@ -287,9 +285,9 @@ void DragonsEngine::gameLoop() {
 			setFlags(ENGINE_FLAG_8);
 		}
 		if (_dragonINIResource->getFlickerRecord()->sceneId == getCurrentSceneId()) {
-			uVar3 = ipt_img_file_related();
-			if (uVar3 != 0 && uVar3 != (actorId & 0xffff)) {
-				byte *obd = _dragonOBD->getFromOpt(uVar3 - 1);
+			uint16 imgIniId = ipt_img_file_related();
+			if (imgIniId != 0 && imgIniId != (prevImgIniId & 0xffff)) {
+				byte *obd = _dragonOBD->getFromOpt(imgIniId - 1);
 				ScriptOpCall scriptOpCall(obd + 8, READ_LE_UINT32(obd));
 
 				if (_scriptOpcodes->runScript4(scriptOpCall)) {
@@ -299,8 +297,9 @@ void DragonsEngine::gameLoop() {
 					_flickerIdleCounter = 0;
 				}
 			}
+			prevImgIniId = imgIniId;
 		} else {
-			uVar3 = 0;
+			prevImgIniId = 0;
 		}
 
 		if (_cursor->updateINIUnderCursor() == 0 ||
@@ -313,7 +312,6 @@ void DragonsEngine::gameLoop() {
 		if (_rightMouseButtonUp && isInputEnabled()) {
 			_cursor->selectPreviousCursor();
 			_flickerIdleCounter = 0;
-			actorId = uVar3;
 			continue;
 		}
 		// TODO implement cycle cursor up.
@@ -364,7 +362,6 @@ void DragonsEngine::gameLoop() {
 				setFlags(ENGINE_FLAG_8);
 			}
 			_flickerIdleCounter = 0;
-			actorId = uVar3;
 			continue;
 		}
 		if (_inventory->getType() != 1) {
@@ -381,7 +378,6 @@ void DragonsEngine::gameLoop() {
 							LAB_800279f4:
 							_inventory->_old_showing_value = uVar7;
 							_inventory->inventoryMissing();
-							actorId = uVar3;
 						} else {
 							_flickerIdleCounter = 0;
 							_inventory->setType(1);
@@ -389,10 +385,8 @@ void DragonsEngine::gameLoop() {
 				joined_r0x80027a38:
 							if (_cursor->_iniItemInHand == 0) {
 								_cursor->_sequenceID = 1;
-								actorId = uVar3;
 							} else {
 								_cursor->_sequenceID = 5;
-								actorId = uVar3;
 							}
 						}
 						continue;
@@ -416,7 +410,6 @@ void DragonsEngine::gameLoop() {
 										waitForFrames(1);
 										_cursor->_iniItemInHand = 0;
 										_cursor->_iniUnderCursor = 0;
-										actorId = uVar3;
 										continue;
 									}
 								}
@@ -428,7 +421,6 @@ void DragonsEngine::gameLoop() {
 								_inventory->setType(2);
 								_inventory->_old_showing_value = uVar6;
 								fun_80038890();
-								actorId = uVar3;
 								continue;
 							}
 						}
@@ -470,7 +462,6 @@ void DragonsEngine::gameLoop() {
 				}
 			}
 			runINIScripts();
-			actorId = uVar3;
 			continue;
 		}
 		if (checkForInventoryButtonRelease()) {
@@ -479,7 +470,6 @@ void DragonsEngine::gameLoop() {
 			_inventory->closeInventory();
 			uVar6 = _inventory->_old_showing_value;
 			_inventory->_old_showing_value = _inventory->getType();
-			actorId = uVar3;
 			_inventory->setType(uVar6);
 			continue;
 		}
@@ -502,7 +492,6 @@ void DragonsEngine::gameLoop() {
 					}
 				}
 				_inventory->_old_showing_value = uVar6;
-				actorId = uVar3;
 				continue;
 			}
 			if (_cursor->_iniUnderCursor != 0) {
@@ -524,7 +513,6 @@ void DragonsEngine::gameLoop() {
 				actor->clearFlag(ACTOR_FLAG_40);
 				_cursor->_iniItemInHand = _cursor->_iniUnderCursor;
 				_cursor->_sequenceID = 5;
-				actorId = uVar3;
 				if (tmpId != 0) {
 					actor->_flags = 0;
 					actor->_priorityLayer = 0;
@@ -540,7 +528,6 @@ void DragonsEngine::gameLoop() {
 			}
 			if (_cursor->_iniItemInHand == 0) {
 				runINIScripts();
-				actorId = uVar3;
 				continue;
 			}
 			//drop item back into inventory
@@ -565,7 +552,6 @@ LAB_8002790c:
 		if ((_cursor->_iniItemInHand == 0) ||
 			(((uint16)(_cursor->_x - 10U) < 300 && ((uint16)(_cursor->_y - 10U) < 0xb4)))) {
 			runINIScripts();
-			actorId = uVar3;
 			continue;
 		}
 		_cursor->_sequenceID = 5;
