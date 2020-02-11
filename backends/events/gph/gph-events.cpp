@@ -174,38 +174,26 @@ void GPHEventSource::ToggleTapMode() {
 /* Custom handleMouseButtonDown/handleMouseButtonUp to deal with 'Tap Mode' for the touchscreen */
 
 bool GPHEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
-	if (ev.button.button == SDL_BUTTON_LEFT) {
-		if (_buttonStateL == true) /* _buttonStateL = Left Trigger Held, force Right Click */
-			event.type = Common::EVENT_RBUTTONDOWN;
-		else if (_tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
-			event.type = Common::EVENT_LBUTTONDOWN;
-		else if (_tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
-			event.type = Common::EVENT_RBUTTONDOWN;
-		else if (_tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
-			event.type = Common::EVENT_MOUSEMOVE;
-		else
-			event.type = Common::EVENT_LBUTTONDOWN; /* For normal mice etc. */
-	} else if (ev.button.button == SDL_BUTTON_RIGHT)
-		event.type = Common::EVENT_RBUTTONDOWN;
-#if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
-	else if (ev.button.button == SDL_BUTTON_WHEELUP)
-		event.type = Common::EVENT_WHEELUP;
-	else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
-		event.type = Common::EVENT_WHEELDOWN;
-#endif
-#if defined(SDL_BUTTON_MIDDLE)
-	else if (ev.button.button == SDL_BUTTON_MIDDLE)
-		event.type = Common::EVENT_MBUTTONDOWN;
-#endif
-	else
-		return false;
+	if (ev.button.button != SDL_BUTTON_LEFT)
+		return SdlEventSource::handleMouseButtonDown(ev, event);
 
-	processMouseEvent(event, ev.button.x, ev.button.y);
+	if (_buttonStateL == true) /* _buttonStateL = Left Trigger Held, force Right Click */
+		event.type = Common::EVENT_RBUTTONDOWN;
+	else if (_tapmodeLevel == TAPMODE_LEFT) /* TAPMODE_LEFT = Left Click Tap Mode */
+		event.type = Common::EVENT_LBUTTONDOWN;
+	else if (_tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
+		event.type = Common::EVENT_RBUTTONDOWN;
+	else if (_tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
+		event.type = Common::EVENT_MOUSEMOVE;
+	else
+		event.type = Common::EVENT_LBUTTONDOWN; /* For normal mice etc. */
+
+
 	// update KbdMouse
 	_km.x = ev.button.x * MULTIPLIER;
 	_km.y = ev.button.y * MULTIPLIER;
 
-	return true;
+	return processMouseEvent(event, ev.button.x, ev.button.y);
 }
 
 bool GPHEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
