@@ -456,6 +456,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.
 	system.initBackend();
+	assert(system.backendInitialized());
 
 	// If we received an invalid graphics mode parameter via command line
 	// we check this here. We can't do it until after the backend is inited,

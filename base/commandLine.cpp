@@ -858,6 +858,7 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 
 	// FIXME HACK
 	g_system->initBackend();
+	assert(g_system->backendInitialized());
 
 	Common::String oldDomain = ConfMan.getActiveDomainName();
 
