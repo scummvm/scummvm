@@ -261,9 +261,7 @@ void DragonsEngine::gameLoop() {
 	uint actorId;
 	uint16 uVar6;
 	uint16 uVar7;
-	uint actorId_00;
 	uint16 sequenceId;
-	DragonINI *pDVar8;
 
 	_cursor->_cursorActivationSeqOffset = 0;
 	_bit_flags_8006fbd8 = 0;
@@ -283,37 +281,15 @@ void DragonsEngine::gameLoop() {
 			_sceneId1 = getCurrentSceneId();
 		}
 
-		_flickerIdleCounter++;
-		if (_flickerIdleCounter >= 0x4af) {
-			pDVar8 = _dragonINIResource->getFlickerRecord();
-			if (pDVar8->actor->_resourceID == 0xe) {
-				pDVar8->actor->_direction = 2;
-				pDVar8->field_20_actor_field_14 = 2;
-				if (getINI(0xc2)->sceneId == 1) {
-					sequenceId = 0x30;
-				} else {
-					sequenceId = 2;
-				}
-				pDVar8->actor->updateSequence(sequenceId);
-				_flickerIdleCounter = 0;
-				setFlags(ENGINE_FLAG_80000000);
-			}
-		}
-		if (isFlagSet(ENGINE_FLAG_80000000)
-			&& _dragonINIResource->getFlickerRecord()->actor->isFlagSet(ACTOR_FLAG_4)) {
-			_flickerIdleCounter = 0;
-			clearFlags(ENGINE_FLAG_80000000);
-		}
+		updateFlickerIdleAnimation();
+
 		if (_bit_flags_8006fbd8 == 0) {
 			setFlags(ENGINE_FLAG_8);
 		}
 		if (_dragonINIResource->getFlickerRecord()->sceneId == getCurrentSceneId()) {
 			uVar3 = ipt_img_file_related();
-			actorId_00 = uVar3 & 0xffff;
-			if (actorId_00 == 0) {
-				uVar3 = 0;
-			} else if (actorId_00 != (actorId & 0xffff)) {
-				byte *obd = _dragonOBD->getFromOpt(actorId_00 - 1);
+			if (uVar3 != 0 && uVar3 != (actorId & 0xffff)) {
+				byte *obd = _dragonOBD->getFromOpt(uVar3 - 1);
 				ScriptOpCall scriptOpCall(obd + 8, READ_LE_UINT32(obd));
 
 				if (_scriptOpcodes->runScript4(scriptOpCall)) {
@@ -493,7 +469,6 @@ void DragonsEngine::gameLoop() {
 						goto LAB_80027ab4;
 				}
 			}
-	LAB_80027b58:
 			runINIScripts();
 			actorId = uVar3;
 			continue;
@@ -560,12 +535,14 @@ void DragonsEngine::gameLoop() {
 					actor->setFlag(ACTOR_FLAG_100);
 					actor->setFlag(ACTOR_FLAG_200);
 					actor->_priorityLayer = 6;
-					actorId = uVar3;
 				}
 				continue;
 			}
-			if (_cursor->_iniItemInHand == 0)
-				goto LAB_80027b58;
+			if (_cursor->_iniItemInHand == 0) {
+				runINIScripts();
+				actorId = uVar3;
+				continue;
+			}
 			//drop item back into inventory
 			if (_inventory->addItemIfPositionIsEmpty(_cursor->_iniItemInHand, _cursor->_x, _cursor->_y)) {
 				Actor *invActor = _inventory->getInventoryItemActor(_cursor->_iniItemInHand);
@@ -586,8 +563,11 @@ void DragonsEngine::gameLoop() {
 		}
 LAB_8002790c:
 		if ((_cursor->_iniItemInHand == 0) ||
-			(((uint16)(_cursor->_x - 10U) < 300 && ((uint16)(_cursor->_y - 10U) < 0xb4))))
-			goto LAB_80027b58;
+			(((uint16)(_cursor->_x - 10U) < 300 && ((uint16)(_cursor->_y - 10U) < 0xb4)))) {
+			runINIScripts();
+			actorId = uVar3;
+			continue;
+		}
 		_cursor->_sequenceID = 5;
 		waitForFrames(2);
 		goto LAB_80027970;
@@ -907,8 +887,8 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 
 //TODO the logic in this function doesn't match the original. It should be redone.
 void DragonsEngine::engineFlag0x20UpdateFunction() {
-	if (_flags & ENGINE_FLAG_20) {
-		if ((_flags & (ENGINE_FLAG_80000000 | Dragons::ENGINE_FLAG_8)) == 8) {
+	if (isFlagSet(ENGINE_FLAG_20)) {
+		if (isFlagSet(ENGINE_FLAG_8) && !isFlagSet(ENGINE_FLAG_80000000)) {
 			_cursor->update();
 		}
 		//TODO 0x80027be4
@@ -936,8 +916,8 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 						_inventory->setPriority(0);
 					}
 				} else {
-					if ((_bit_flags_8006fbd8 & 2) == 0) {
-						_bit_flags_8006fbd8 = _bit_flags_8006fbd8 | 2;
+					if ((_bit_flags_8006fbd8 & 2u) == 0) {
+						_bit_flags_8006fbd8 |= 2u;
 					}
 					if (flickerINI->actor->isFlagClear(ACTOR_FLAG_2000)
 							&& flickerINI->actor->isFlagSet(ACTOR_FLAG_4)
@@ -1474,6 +1454,29 @@ uint32 DragonsEngine::defaultResponseOffsetFromDragonEXE() {
 	case Common::FR_FRA : return 0x5521c;
 	default :
 		error("Unable to get speech table offset from dragon.exe for %s", getLanguageCode(_language));
+	}
+}
+
+void DragonsEngine::updateFlickerIdleAnimation() {
+	_flickerIdleCounter++;
+	if (_flickerIdleCounter >= 0x4af) {
+		DragonINI *flicker = _dragonINIResource->getFlickerRecord();
+		if (flicker->actor->_resourceID == 0xe) {
+			flicker->actor->_direction = 2;
+			flicker->field_20_actor_field_14 = 2;
+			if (getINI(0xc2)->sceneId == 1) {
+				flicker->actor->updateSequence(0x30);
+			} else {
+				flicker->actor->updateSequence(2);
+			}
+			_flickerIdleCounter = 0;
+			setFlags(ENGINE_FLAG_80000000);
+		}
+	}
+	if (isFlagSet(ENGINE_FLAG_80000000)
+		&& _dragonINIResource->getFlickerRecord()->actor->isFlagSet(ACTOR_FLAG_4)) {
+		_flickerIdleCounter = 0;
+		clearFlags(ENGINE_FLAG_80000000);
 	}
 }
 
