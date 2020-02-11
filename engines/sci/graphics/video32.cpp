@@ -66,7 +66,6 @@ bool VideoPlayer::open(const Common::String &fileName) {
 	// KQ7 2.00b videos are compressed in 24bpp Cinepak, so cannot play on a
 	// system with no RGB support
 	if (_decoder->getPixelFormat().bytesPerPixel != 1) {
-		void showScummVMDialog(const Common::String &message);
 		showScummVMDialog(Common::String::format(_("Cannot play back %dbpp video on a system with maximum color depth of 8bpp"), _decoder->getPixelFormat().bpp()));
 		_decoder->close();
 		return false;
@@ -597,7 +596,7 @@ void VMDPlayer::init(int16 x, int16 y, const PlayFlags flags, const int16 boostP
 	if (getSciVersion() < SCI_VERSION_3) {
 		x &= ~1;
 	}
-	
+
 	if (upscaleVideos) {
 		x = (screenWidth - width) / 2;
 		y = (screenHeight - height) / 2;
@@ -776,7 +775,7 @@ int16 VMDPlayer::addBlob(int16 blockSize, int16 top, int16 left, int16 bottom, i
 	if (_blobs.size() >= kMaxBlobs) {
 		return -1;
 	}
-	
+
 	int16 blobNumber = 0;
 	Common::List<Blob>::iterator prevBlobIterator = _blobs.begin();
 	for (; prevBlobIterator != _blobs.end(); ++prevBlobIterator, ++blobNumber) {
