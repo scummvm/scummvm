@@ -313,7 +313,7 @@ Common::Error NuvieEngine::loadGameState(int slot) {
 
 Common::Error NuvieEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::String filename = getSaveStateName(slot);
-	if (_savegame->save(filename, desc)) {
+	if (_savegame->save(filename, desc, isAutosave)) {
 		if (!isAutosave) {
 			// Store which savegame was most recently saved
 			ConfMan.setInt("latest_save", slot);

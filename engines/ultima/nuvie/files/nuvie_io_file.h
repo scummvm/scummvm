@@ -80,6 +80,7 @@ private:
 	Common::OutSaveFile *_saveFile;
 	Common::MemoryWriteStreamDynamic _saveFileData;
 	Common::String _description;
+	bool _isAutosave;
 protected:
 	bool isOpen() const {
 		return _file != nullptr;
@@ -88,6 +89,7 @@ public:
 	NuvieIOFileWrite();
 	~NuvieIOFileWrite() override;
 	bool open(const Common::String &filename) override;
+	bool open(const Common::String &filename, bool isAutosave);
 	void close() override;
 	void seek(uint32 new_pos) override;
 

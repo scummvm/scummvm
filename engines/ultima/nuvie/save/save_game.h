@@ -81,7 +81,7 @@ public:
 
 	bool check_version(NuvieIOFileRead *loadfile, uint16 gameType);
 
-	bool save(const Common::String &filename, const Common::String &save_description);
+	bool save(const Common::String &filename, const Common::String &save_description, bool isAutosave);
 };
 
 } // End of namespace Nuvie

@@ -114,7 +114,7 @@ bool NuvieIOFileRead::readToBuf(unsigned char *buf, uint32 buf_size) {
 //
 
 NuvieIOFileWrite::NuvieIOFileWrite() : _saveFileData(DisposeAfterUse::YES),
-		_file(nullptr), _saveFile(nullptr) {
+		_file(nullptr), _saveFile(nullptr), _isAutosave(false) {
 }
 
 NuvieIOFileWrite::~NuvieIOFileWrite() {
@@ -126,23 +126,31 @@ bool NuvieIOFileWrite::open(const Common::String &filename) {
 		// We already have an open file
 		return false;
 
-	if (filename.contains("/")) {
-		// It's a relative path, so we open it using a DumpFile
-		if (!_dumpFile.open(filename, true)) {
-			DEBUG(0, LEVEL_ERROR, "Failed opening '%s'\n", filename.c_str());
-			return false;
-		}
+	// Ensure it's a relative path, that we can open for writing using a DumpFile
+	assert(filename.contains("/"));
 
-		_file = &_dumpFile;
-	} else {
-		// Singular file, so open it as a save file
-		_saveFile = g_system->getSavefileManager()->openForSaving(filename, false);
-		assert(_saveFile);
-
-		// Point _file to the _saveFileData member for initial writing,
-		// since save files don't allow seeking
-		_file = &_saveFileData;
+	if (!_dumpFile.open(filename, true)) {
+		DEBUG(0, LEVEL_ERROR, "Failed opening '%s'\n", filename.c_str());
+		return false;
 	}
+
+	_file = &_dumpFile;
+	return true;
+}
+
+bool NuvieIOFileWrite::open(const Common::String &filename, bool isAutosave) {
+	if (isOpen())
+		// We already have an open file
+		return false;
+
+	// Singular file, so open it as a save file
+	_saveFile = g_system->getSavefileManager()->openForSaving(filename, false);
+	assert(_saveFile);
+
+	// Point _file to the _saveFileData member for initial writing,
+	// since save files don't allow seeking
+	_file = &_saveFileData;
+	_isAutosave = isAutosave;
 
 	size = 0;
 	pos = 0;
@@ -151,10 +159,12 @@ bool NuvieIOFileWrite::open(const Common::String &filename) {
 }
 
 void NuvieIOFileWrite::close() {
-	if (_saveFile) {
+	if (!isOpen()) {
+		// Nothing needed
+	} else if (_saveFile) {
 		// Writing using savefile interface, so flush out data
 		_saveFile->write(_saveFileData.getData(), _saveFileData.size());
-		MetaEngine::appendExtendedSave(_saveFile, Shared::g_ultima->getTotalPlayTime(), _description, false);
+		MetaEngine::appendExtendedSave(_saveFile, Shared::g_ultima->getTotalPlayTime(), _description, _isAutosave);
 
 		_saveFile->finalize();
 		delete _saveFile;
