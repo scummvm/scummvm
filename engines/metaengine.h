@@ -61,7 +61,7 @@ struct ExtraGuiOption {
 
 typedef Common::Array<ExtraGuiOption> ExtraGuiOptions;
 
-#define EXTENDED_SAVE_VERSION 3
+#define EXTENDED_SAVE_VERSION 4
 
 struct ExtendedSavegameHeader {
 	char id[6];
@@ -72,6 +72,7 @@ struct ExtendedSavegameHeader {
 	uint16 time;
 	uint32 playtime;
 	Graphics::Surface *thumbnail;
+	bool isAutosave;
 
 	ExtendedSavegameHeader() {
 		memset(id, 0, 6);
@@ -80,6 +81,7 @@ struct ExtendedSavegameHeader {
 		time = 0;
 		playtime = 0;
 		thumbnail = nullptr;
+		isAutosave = false;
 	}
 };
 
@@ -340,7 +342,8 @@ public:
 	 */
 	virtual bool hasFeature(MetaEngineFeature f) const;
 
-	static void appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime, Common::String desc);
+	static void appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime,
+		Common::String desc, bool isAutosave);
 	static void parseSavegameHeader(ExtendedSavegameHeader *header, SaveStateDescriptor *desc);
 	static void fillDummyHeader(ExtendedSavegameHeader *header);
 	static WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, ExtendedSavegameHeader *header, bool skipThumbnail = true);

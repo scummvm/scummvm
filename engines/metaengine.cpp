@@ -141,7 +141,8 @@ bool MetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesUseExtendedFormat);
 }
 
-void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime, Common::String desc) {
+void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playtime,
+		Common::String desc, bool isAutosave) {
 	ExtendedSavegameHeader header;
 
 	uint headerPos = saveFile->pos();
@@ -163,8 +164,10 @@ void MetaEngine::appendExtendedSave(Common::OutSaveFile *saveFile, uint32 playti
 
 	saveFile->writeByte(desc.size());
 	saveFile->writeString(desc);
+	saveFile->writeByte(isAutosave);
 
 	saveScreenThumbnail(saveFile);
+
 	saveFile->writeUint32LE(headerPos);	// Store where the header starts
 
 	saveFile->finalize();
@@ -242,6 +245,9 @@ WARN_UNUSED_RESULT bool MetaEngine::readSavegameHeader(Common::InSaveFile *in, E
 
 	if (header->description.empty())
 		header->description = header->saveName;
+
+	// Get the flag for whether it's an autosave
+	header->isAutosave = (header->version >= 4) ? in->readByte() : false;
 
 	// Get the thumbnail
 	if (!Graphics::loadThumbnail(*in, header->thumbnail, skipThumbnail)) {
@@ -357,6 +363,7 @@ SaveStateDescriptor MetaEngine::querySaveMetaInfos(const char *target, int slot)
 
 		desc.setSaveSlot(slot);
 		desc.setThumbnail(header.thumbnail);
+		desc.setAutosave(header.isAutosave);
 		if (slot == getAutosaveSlot())
 			desc.setWriteProtectedFlag(true);
 
