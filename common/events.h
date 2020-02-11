@@ -92,7 +92,18 @@ enum EventType {
 	EVENT_CLIPBOARD_UPDATE = 27,
 
 	EVENT_CUSTOM_BACKEND_HARDWARE = 28,
-	EVENT_DEBUGGER = 29
+	EVENT_DEBUGGER = 29,
+
+	/**
+	 * Additional mouse events, details in Event::mouse.
+	 *
+	 * Note that X1 and X2 are usually back and forward, however
+	 * this can't be guaranteed on all platforms.
+	 */
+	EVENT_X1BUTTONDOWN = 30,
+	EVENT_X1BUTTONUP = 31,
+	EVENT_X2BUTTONDOWN = 32,
+	EVENT_X2BUTTONUP = 33
 };
 
 const int16 JOYAXIS_MIN = -32768;
@@ -157,8 +168,10 @@ enum MouseButton {
 	MOUSE_BUTTON_LEFT   = 0,
 	MOUSE_BUTTON_RIGHT  = 1,
 	MOUSE_BUTTON_MIDDLE = 2,
-	MOUSE_WHEEL_UP = 3,
-	MOUSE_WHEEL_DOWN = 4
+	MOUSE_WHEEL_UP      = 3,
+	MOUSE_WHEEL_DOWN    = 4,
+	MOUSE_BUTTON_X1     = 5,
+	MOUSE_BUTTON_X2     = 6
 };
 
 typedef uint32 CustomEventType;

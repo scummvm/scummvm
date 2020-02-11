@@ -100,6 +100,14 @@ public:
 		setEvent(EVENT_WHEELDOWN);
 	}
 
+	void setX1ClickEvent() {
+		setEvent(EVENT_X1BUTTONDOWN);
+	}
+
+	void setX2ClickEvent() {
+		setEvent(EVENT_X2BUTTONDOWN);
+	}
+
 	/**
 	 * Add a default input mapping for the action
 	 *

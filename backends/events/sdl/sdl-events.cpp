@@ -820,6 +820,14 @@ bool SdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) 
 	else if (ev.button.button == SDL_BUTTON_MIDDLE)
 		event.type = Common::EVENT_MBUTTONDOWN;
 #endif
+#if defined(SDL_BUTTON_X1)
+	else if (ev.button.button == SDL_BUTTON_X1)
+		event.type = Common::EVENT_X1BUTTONDOWN;
+#endif
+#if defined(SDL_BUTTON_X2)
+	else if (ev.button.button == SDL_BUTTON_X2)
+		event.type = Common::EVENT_X2BUTTONDOWN;
+#endif
 	else
 		return false;
 
@@ -838,6 +846,14 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 #if defined(SDL_BUTTON_MIDDLE)
 	else if (ev.button.button == SDL_BUTTON_MIDDLE)
 		event.type = Common::EVENT_MBUTTONUP;
+#endif
+#if defined(SDL_BUTTON_X1)
+	else if (ev.button.button == SDL_BUTTON_X1)
+		event.type = Common::EVENT_X1BUTTONUP;
+#endif
+#if defined(SDL_BUTTON_X2)
+	else if (ev.button.button == SDL_BUTTON_X2)
+		event.type = Common::EVENT_X2BUTTONUP;
 #endif
 	else
 		return false;
