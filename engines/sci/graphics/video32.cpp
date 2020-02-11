@@ -66,6 +66,7 @@ bool VideoPlayer::open(const Common::String &fileName) {
 	// KQ7 2.00b videos are compressed in 24bpp Cinepak, so cannot play on a
 	// system with no RGB support
 	if (_decoder->getPixelFormat().bytesPerPixel != 1) {
+		void showScummVMDialog(const Common::String &message, const char* altButton = nullptr, bool alignCenter = true);
 		showScummVMDialog(Common::String::format(_("Cannot play back %dbpp video on a system with maximum color depth of 8bpp"), _decoder->getPixelFormat().bpp()));
 		_decoder->close();
 		return false;
