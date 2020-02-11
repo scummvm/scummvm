@@ -47,6 +47,12 @@ const keyCodeMapping wmeOriginalMapping[] = {
 	{ Common::KEYCODE_ESCAPE,       27 },
 	{ Common::KEYCODE_SPACE,        32 },
 
+	{ Common::KEYCODE_LSHIFT,       16 },
+	{ Common::KEYCODE_RSHIFT,       16 },
+	{ Common::KEYCODE_LCTRL,        17 },
+	{ Common::KEYCODE_RCTRL,        17 },
+	// WME 1.x does not produce events for LALT & RALT
+
 	{ Common::KEYCODE_PAUSE,        19 },
 	{ Common::KEYCODE_PAGEUP,       33 },
 	{ Common::KEYCODE_PAGEDOWN,     34 },
@@ -143,6 +149,13 @@ const keyCodeMapping wmeSdlMapping[] = {
 	{ Common::KEYCODE_ESCAPE,       27 },
 	{ Common::KEYCODE_SPACE,        32 },
 	{ Common::KEYCODE_CAPSLOCK,     1073741881 },
+
+	{ Common::KEYCODE_LCTRL,        1073742048 },
+	{ Common::KEYCODE_LSHIFT,       1073742049 },
+	{ Common::KEYCODE_LALT,         1073742050 },
+	{ Common::KEYCODE_RCTRL,        1073742052 },
+	{ Common::KEYCODE_RSHIFT,       1073742053 },
+	{ Common::KEYCODE_RALT,         1073742054 },
 
 	{ Common::KEYCODE_DELETE,       127 },
 	{ Common::KEYCODE_PRINT,        1073741894 },
@@ -325,6 +338,16 @@ bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *
             if (vKeyCode == Common::KEYCODE_INVALID) {
 				warning("Unknown VKEY: %d", temp);
 			}
+
+			if (BaseEngine::instance().getTargetExecutable() < WME_LITE && temp == 16) {
+				stack->pushBool(_keyStates[Common::KEYCODE_LSHIFT] || _keyStates[Common::KEYCODE_RSHIFT]);
+				return STATUS_OK;
+			}
+
+			if (BaseEngine::instance().getTargetExecutable() < WME_LITE && temp == 17) {
+				stack->pushBool(_keyStates[Common::KEYCODE_LCTRL] || _keyStates[Common::KEYCODE_RCTRL]);
+				return STATUS_OK;
+			}
 		}
 
 		bool isDown = _keyStates[vKeyCode];
@@ -490,9 +513,9 @@ bool BaseKeyboardState::readKey(Common::Event *event) {
 		}
 	}
 
-	_currentControl = isControlDown();
-	_currentAlt     = isAltDown();
-	_currentShift   = isShiftDown();
+	_currentControl = event->kbd.flags & Common::KBD_CTRL;
+	_currentAlt     = event->kbd.flags & Common::KBD_ALT;
+	_currentShift   = event->kbd.flags & Common::KBD_SHIFT;
 
 	return STATUS_OK;
 }
