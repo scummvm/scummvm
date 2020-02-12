@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macmenu.h"
 
@@ -361,7 +363,10 @@ void PinkEngine::executeMenuCommand(uint id) {
 }
 
 void PinkEngine::openLocalWebPage(const Common::String &pageName) {
-	warning("Trying to open local webpage \"%s\", but webpage opening isn't implemented yet",pageName.c_str());
+	Common::FSNode gameFolder= Common::FSNode(ConfMan.get("path"));
+	Common::FSNode filePath = gameFolder.getChild("INSTALL").getChild(pageName);
+	Common::String fullUrl = Common::String::format("file://%s", filePath.getPath().c_str());
+	_system->openUrl(fullUrl);
 }
 
 } // End of namespace Pink
