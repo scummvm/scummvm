@@ -320,10 +320,12 @@ SaveStateDescriptor MystGameState::querySaveMetaInfos(int slot) {
 	}
 
 	// Set the save description
+	desc.setSaveSlot(slot);
 	desc.setDescription(metadata.saveDescription);
 	desc.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
 	desc.setSaveTime(metadata.saveHour, metadata.saveMinute);
 	desc.setPlayTime(metadata.totalPlayTime);
+	desc.setAutosave(metadata.autoSave);
 	if (metadata.autoSave) // Allow non-saves to be deleted, but not autosaves
 		desc.setDeletableFlag(slot != kAutoSaveSlot);
 
