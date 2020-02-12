@@ -338,10 +338,30 @@ void PinkEngine::executeMenuCommand(uint id) {
 		_actor->loadPDA("SIBOVER");
 		break;
 
+	case kShowGameWebPage:
+		openLocalWebPage("PINK.HTM");
+		break;
+	case kShowTechSupport:
+		openLocalWebPage("SUPPORT.HTM");
+		break;
+	case kShowWinnnerPage:
+		openLocalWebPage("WINNER.HTM");
+		break;
+	case kShowWanderLustWebPage:
+		openLocalWebPage("LUST.HTM");
+		break;
+	case kShowOnlineHints:
+		openLocalWebPage("HINTS.HTM");
+		break;
+
 	default:
 		warning("Unprocessed command id %d", id);
 		break;
 	}
+}
+
+void PinkEngine::openLocalWebPage(const Common::String &pageName) {
+	warning("Trying to open local webpage \"%s\", but webpage opening isn't implemented yet",pageName.c_str());
 }
 
 } // End of namespace Pink
