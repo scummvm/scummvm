@@ -365,7 +365,7 @@ void PinkEngine::executeMenuCommand(uint id) {
 void PinkEngine::openLocalWebPage(const Common::String &pageName) const {
 	Common::FSNode gameFolder= Common::FSNode(ConfMan.get("path"));
 	Common::FSNode filePath = gameFolder.getChild("INSTALL").getChild(pageName);
-	Common::String fullUrl = Common::String::format("file://%s", filePath.getPath().c_str());
+	Common::String fullUrl = Common::String::format("file:///%s", filePath.getPath().c_str());
 	_system->openUrl(fullUrl);
 }
 
