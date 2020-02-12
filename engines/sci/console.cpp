@@ -3527,12 +3527,14 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 		debugPrintf("Valid options are:\n");
 		debugPrintf(" bwt  : Print byte/word tag\n");
 		debugPrintf(" bc   : Print bytecode\n");
+		debugPrintf(" bcc  : Print bytecode, formatted to use in C code\n");
 		return true;
 	}
 
 	reg_t objAddr = NULL_REG;
 	bool printBytecode = false;
 	bool printBWTag = false;
+	bool printCSyntax = false;
 
 	if (parse_reg_t(_engine->_gamestate, argv[1], &objAddr)) {
 		debugPrintf("Invalid address passed.\n");
@@ -3564,6 +3566,10 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 			printBWTag = true;
 		else if (!scumm_stricmp(argv[i], "bc"))
 			printBytecode = true;
+		else if (!scumm_stricmp(argv[i], "bcc")) {
+			printBytecode = true;
+			printCSyntax = true;
+		}
 	}
 
 	reg_t farthestTarget = addr;
@@ -3574,7 +3580,7 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 			if (jumpTarget > farthestTarget)
 				farthestTarget = jumpTarget;
 		}
-		addr = disassemble(_engine->_gamestate, make_reg32(addr.getSegment(), addr.getOffset()), obj, printBWTag, printBytecode);
+		addr = disassemble(_engine->_gamestate, make_reg32(addr.getSegment(), addr.getOffset()), obj, printBWTag, printBytecode, printCSyntax);
 		if (addr.isNull() && prevAddr < farthestTarget)
 			addr = prevAddr + 1; // skip past the ret
 	} while (addr.getOffset() > 0);
@@ -3590,6 +3596,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 		debugPrintf(" bwt  : Print byte/word tag\n");
 		debugPrintf(" c<x> : Disassemble <x> bytes\n");
 		debugPrintf(" bc   : Print bytecode\n");
+		debugPrintf(" bcc  : Print bytecode, formatted to use in C code\n");
 		return true;
 	}
 
@@ -3597,6 +3604,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	uint opCount = 1;
 	bool printBWTag = false;
 	bool printBytes = false;
+	bool printCSyntax = false;
 	uint32 size;
 
 	if (parse_reg_t(_engine->_gamestate, argv[1], &vpc)) {
@@ -3622,7 +3630,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	}
 
 	do {
-		vpc = disassemble(_engine->_gamestate, make_reg32(vpc.getSegment(), vpc.getOffset()), nullptr, printBWTag, printBytes);
+		vpc = disassemble(_engine->_gamestate, make_reg32(vpc.getSegment(), vpc.getOffset()), nullptr, printBWTag, printBytes, printCSyntax);
 	} while ((vpc.getOffset() > 0) && (vpc.getOffset() + 6 < size) && (--opCount));
 
 	return true;
