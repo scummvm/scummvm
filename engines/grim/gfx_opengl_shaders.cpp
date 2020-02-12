@@ -239,6 +239,7 @@ GfxOpenGLS::GfxOpenGLS() {
 }
 
 GfxOpenGLS::~GfxOpenGLS() {
+	releaseMovieFrame();
 	for (unsigned int i = 0; i < _numSpecialtyTextures; i++) {
 		destroyTexture(&_specialtyTextures[i]);
 	}

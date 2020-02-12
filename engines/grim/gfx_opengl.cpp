@@ -111,6 +111,7 @@ GfxOpenGL::GfxOpenGL() : _smushNumTex(0),
 }
 
 GfxOpenGL::~GfxOpenGL() {
+	releaseMovieFrame();
 	delete[] _storedDisplay;
 
 	if (_emergFont && glIsList(_emergFont))
