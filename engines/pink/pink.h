@@ -143,6 +143,8 @@ private:
 	void addModule(const Common::String &moduleName);
 	void removeModule();
 
+	void openLocalWebPage(const Common::String &pageName);
+
 private:
 	Console *_console;
 	Common::RandomSource _rnd;
