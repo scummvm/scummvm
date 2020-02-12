@@ -143,7 +143,7 @@ private:
 	void addModule(const Common::String &moduleName);
 	void removeModule();
 
-	void openLocalWebPage(const Common::String &pageName);
+	void openLocalWebPage(const Common::String &pageName) const;
 
 private:
 	Console *_console;
