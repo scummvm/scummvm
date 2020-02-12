@@ -35,6 +35,9 @@
 #include "zvision/text/truetype_font.h"
 #include "zvision/sound/midi.h"
 
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/keymapper.h"
+
 #include "common/config-manager.h"
 #include "common/str.h"
 #include "common/debug.h"
@@ -75,6 +78,9 @@ struct zvisionIniSettings {
 	{"subtitles", StateKey_Subtitles, -1, true, true},
 	{"mpegmovies", StateKey_MPEGMovies, -1, true, true}		// Zork: Grand Inquisitor DVD hi-res MPEG movies (0 = normal, 1 = hires, 2 = disable option)
 };
+
+const char *mainKeymapId = "zvision";
+const char *cutscenesKeymapId = "zvision-cutscenes";
 
 ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	: Engine(syst),
@@ -199,6 +205,12 @@ void ZVision::initialize() {
 	initGraphicsModes(modes);
 
 	initScreen();
+
+	Common::Keymapper *keymapper = _system->getEventManager()->getKeymapper();
+	_mainKeymap = keymapper->getKeymap(mainKeymapId);
+	_mainKeymap->setEnabled(true);
+	_cutscenesKeymap = keymapper->getKeymap(cutscenesKeymapId);
+	_cutscenesKeymap->setEnabled(false);
 
 	// Register random source
 	_rnd = new Common::RandomSource("zvision");

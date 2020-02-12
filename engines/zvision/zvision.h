@@ -36,6 +36,10 @@
 
 #include "gui/debugger.h"
 
+namespace Common {
+class Keymap;
+}
+
 namespace Video {
 class VideoDecoder;
 }
@@ -96,6 +100,22 @@ enum ZVisionFeatures {
 	GF_DVD = (1 << 0) // ZGI DVD version
 };
 
+enum ZVisionAction {
+	kZVisionActionNone,
+	kZVisionActionUp,
+	kZVisionActionDown,
+	kZVisionActionLeft,
+	kZVisionActionRight,
+	kZVisionActionShowFPS,
+	kZVisionActionSkipCutscene,
+	kZVisionActionQuit,
+
+	kZVisionActionCount
+};
+
+extern const char *mainKeymapId;
+extern const char *cutscenesKeymapId;
+
 class ZVision : public Engine {
 public:
 	ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc);
@@ -138,6 +158,8 @@ private:
 
 	// To prevent allocation every time we process events
 	Common::Event _event;
+
+	Common::Keymap *_mainKeymap, *_cutscenesKeymap;
 
 	int _frameRenderDelay;
 	int _renderedFrameCount;
