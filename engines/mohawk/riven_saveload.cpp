@@ -135,10 +135,12 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 		return descriptor;
 	}
 
+	descriptor.setSaveSlot(slot);
 	descriptor.setDescription(metadata.saveDescription);
 	descriptor.setPlayTime(metadata.totalPlayTime);
 	descriptor.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
 	descriptor.setSaveTime(metadata.saveHour, metadata.saveMinute);
+	descriptor.setAutosave(metadata.autoSave);
 
 	delete metaStream;
 

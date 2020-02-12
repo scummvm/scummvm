@@ -967,7 +967,7 @@ Common::Error MohawkEngine_Myst::saveGameState(int slot, const Common::String &d
 		thumbnail = _gfx->getThumbnailForMainMenu();
 	}
 
-	return _gameState->save(slot, desc, thumbnail, false) ? Common::kNoError : Common::kUnknownError;
+	return _gameState->save(slot, desc, thumbnail, isAutosave) ? Common::kNoError : Common::kUnknownError;
 }
 
 bool MohawkEngine_Myst::canSaveAutosaveCurrently() {
