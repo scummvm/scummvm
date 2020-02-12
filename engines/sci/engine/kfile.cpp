@@ -1334,6 +1334,11 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 #ifdef ENABLE_SCI32
 
 reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
+	// fix bug #9752 - make sure that control panel (in case of QFG4),
+	// keyboard (in case of Shivers), or any other obstacle (in other unknown SCI32 games...)
+	// will be hidden before saving
+	kFrameOut(s, 0, NULL);
+
 	const Common::String gameName = s->_segMan->getString(argv[0]);
 	int16 saveNo = argv[1].toSint16();
 	Common::String saveDescription = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
