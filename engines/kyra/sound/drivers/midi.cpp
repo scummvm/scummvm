@@ -178,6 +178,11 @@ void MidiOutput::sendIntern(const byte event, const byte channel, byte param1, c
 		// MT32 -> GM conversion
 		if (!_isMT32 && _defaultMT32)
 			param1 = MidiDriver::_mt32ToGm[param1];
+		// Program change on rhythm channel (drumkit selection)
+		else if (!_isMT32 && channel == 0x09) {
+			// Apply GS drumkit fallback to correct invalid drumkit numbers.
+			param1 = MidiDriver::_gsDrumkitFallbackMap[param1];
+		}
 	}
 
 	_output->send(event | channel, param1, param2);
