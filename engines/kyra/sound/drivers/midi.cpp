@@ -174,18 +174,20 @@ void MidiOutput::send(uint32 b) {
 }
 
 void MidiOutput::sendIntern(const byte event, const byte channel, byte param1, const byte param2) {
+	byte param1ToSend = param1;
 	if (event == 0xC0) {
 		// MT32 -> GM conversion
 		if (!_isMT32 && _defaultMT32)
-			param1 = MidiDriver::_mt32ToGm[param1];
+			param1ToSend = MidiDriver::_mt32ToGm[param1];
 		// Program change on rhythm channel (drumkit selection)
 		else if (!_isMT32 && channel == 0x09) {
 			// Apply GS drumkit fallback to correct invalid drumkit numbers.
-			param1 = MidiDriver::_gsDrumkitFallbackMap[param1];
+			param1ToSend = MidiDriver::_gsDrumkitFallbackMap[param1];
+			debugC(kDebugLevelSound, "[Midi] Selected drumkit %i (requested %i)", param1ToSend, param1);
 		}
 	}
 
-	_output->send(event | channel, param1, param2);
+	_output->send(event | channel, param1ToSend, param2);
 }
 
 void MidiOutput::sysEx(const byte *msg, uint16 length) {
