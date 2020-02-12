@@ -1151,6 +1151,17 @@ Common::List<ResourceId> ResourceManager::listResources(ResourceType type, int m
 	return resources;
 }
 
+bool ResourceManager::hasResourceType(ResourceType type) {
+	ResourceMap::iterator itr = _resMap.begin();
+	while (itr != _resMap.end()) {
+		if (itr->_value->getType() == type) {
+			return true;
+		}
+		++itr;
+	}
+	return false;
+}
+
 Resource *ResourceManager::findResource(ResourceId id, bool lock) {
 	// remap known incorrect audio36 and sync36 resource ids
 	if (id.getType() == kResourceTypeAudio36) {

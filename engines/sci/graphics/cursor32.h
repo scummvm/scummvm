@@ -52,39 +52,39 @@ public:
 	 * Called by GfxFrameout once for each show rectangle that is going to be
 	 * drawn to hardware.
 	 */
-	void gonnaPaint(Common::Rect paintRect);
+	virtual void gonnaPaint(Common::Rect paintRect);
 
 	/**
 	 * Called by GfxFrameout when the rendering to hardware begins.
 	 */
-	void paintStarting();
+	virtual void paintStarting();
 
 	/**
 	 * Called by GfxFrameout when the output buffer has finished rendering to
 	 * hardware.
 	 */
-	void donePainting();
+	virtual void donePainting();
 
 	/**
 	 * Hides the cursor. Each call to `hide` will increment a hide counter,
 	 * which must be returned to 0 before the cursor will be shown again.
 	 */
-	void hide();
+	virtual void hide();
 
 	/**
 	 * Shows the cursor, if the hide counter is returned to 0.
 	 */
-	void unhide();
+	virtual void unhide();
 
 	/**
 	 * Shows the cursor regardless of the state of the hide counter.
 	 */
-	void show();
+	virtual void show();
 
 	/**
 	 * Sets the view used to render the cursor.
 	 */
-	void setView(const GuiResourceId viewId, const int16 loopNo, const int16 celNo);
+	virtual void setView(const GuiResourceId viewId, const int16 loopNo, const int16 celNo);
 
 	/**
 	 * Explicitly sets the position of the cursor, in game script coordinates.
@@ -103,6 +103,18 @@ public:
 
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
+protected:
+	/**
+	 * Information about the current cursor. Used to restore cursor when loading
+	 * a savegame.
+	 */
+	CelInfo32 _cursorInfo;
+
+	/**
+	 * The number of times the cursor has been hidden.
+	 */
+	int _hideCount;
+
 private:
 	struct DrawRegion {
 		Common::Rect rect;
@@ -111,12 +123,6 @@ private:
 
 		DrawRegion() : data(nullptr) {}
 	};
-
-	/**
-	 * Information about the current cursor. Used to restore cursor when loading
-	 * a savegame.
-	 */
-	CelInfo32 _cursorInfo;
 
 	/**
 	 * The content of the frame buffer which was behind the cursor prior to its
@@ -159,11 +165,6 @@ private:
 	 * The output buffer where the cursor is rendered.
 	 */
 	Buffer _screen;
-
-	/**
-	 * The number of times the cursor has been hidden.
-	 */
-	int _hideCount;
 
 	/**
 	 * The rendered position of the cursor, in screen coordinates.
@@ -217,14 +218,10 @@ private:
 	/**
 	 * Renders the cursor at its new location.
 	 */
-	void move();
+	virtual void move();
 
 public:
-	void setMacCursorRemapList(int cursorCount, reg_t *cursors);
-
-private:
-	// Mac versions of games use a remap list to remap their cursors
-	Common::Array<uint16> _macCursorRemap;
+	virtual void setMacCursorRemapList(int cursorCount, reg_t *cursors) {}
 };
 
 } // End of namespace Sci

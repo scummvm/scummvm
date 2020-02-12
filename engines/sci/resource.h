@@ -391,6 +391,11 @@ public:
 	 */
 	Common::List<ResourceId> listResources(ResourceType type, int mapNumber = -1);
 
+	/**
+	 * Returns if there are any resources of the specified type.
+	 */
+	bool hasResourceType(ResourceType type);
+
 	void setAudioLanguage(int language);
 	int getAudioLanguage() const;
 	void changeAudioDirectory(Common::String path);

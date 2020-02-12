@@ -196,48 +196,7 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 	_cursorInfo.loopNo = loopNo;
 	_cursorInfo.celNo = celNo;
 
-	if (!_macCursorRemap.empty() && viewId != -1) {
-		// Mac cursor handling
-		GuiResourceId viewNum = viewId;
-
-		// Remap cursor view based on what the scripts have given us.
-		for (uint32 i = 0; i < _macCursorRemap.size(); i++) {
-			if (viewNum == _macCursorRemap[i]) {
-				viewNum = (i + 1) * 0x100 + loopNo * 0x10 + celNo;
-				break;
-			}
-		}
-
-		_cursorInfo.resourceId = viewNum;
-
-		Resource *resource = g_sci->getResMan()->findResource(ResourceId(kResourceTypeCursor, viewNum), false);
-
-		if (!resource) {
-			// The cursor resources often don't exist, this is normal behavior
-			debug(0, "Mac cursor %d not found", viewNum);
-			return;
-		}
-		Common::MemoryReadStream resStream(resource->toStream());
-		Graphics::MacCursor *macCursor = new Graphics::MacCursor();
-
-		if (!macCursor->readFromStream(resStream)) {
-			warning("Failed to load Mac cursor %d", viewNum);
-			delete macCursor;
-			return;
-		}
-
-		_hotSpot = Common::Point(macCursor->getHotspotX(), macCursor->getHotspotY());
-		_width = macCursor->getWidth();
-		_height = macCursor->getHeight();
-
-		_cursor.data = (byte *)realloc(_cursor.data, _width * _height);
-		memcpy(_cursor.data, macCursor->getSurface(), _width * _height);
-		_cursor.rect = Common::Rect(_width, _height);
-		_cursor.skipColor = macCursor->getKeyColor();
-
-		// The cursor will be drawn on next refresh
-		delete macCursor;
-	} else if (viewId != -1) {
+	if (viewId != -1) {
 		CelObjView view(viewId, loopNo, celNo);
 
 		_hotSpot = view._origin;
@@ -441,11 +400,6 @@ void GfxCursor32::move() {
 		copy<true>(_scratch2, _cursor);
 		drawToScreen(_scratch2);
 	}
-}
-
-void GfxCursor32::setMacCursorRemapList(int cursorCount, reg_t *cursors) {
-	for (int i = 0; i < cursorCount; i++)
-		_macCursorRemap.push_back(cursors[i].toUint16());
 }
 
 } // End of namespace Sci
