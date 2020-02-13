@@ -110,14 +110,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			// making invalid assumptions about ascii values.
 			event.kbd.ascii = Common::KEYCODE_BACKSPACE;
 			_currentKeyDown.ascii = Common::KEYCODE_BACKSPACE;
-
-		} else if (event.kbd.keycode == Common::KEYCODE_d && (_modifierState & Common::KBD_CTRL)) {
-			GUI::Debugger *debugger = g_engine->getOrCreateDebugger();
-			if (debugger) {
-				debugger->attach();
-				debugger->onFrame();
-				forwardEvent = false;
-			}
 		}
 		break;
 
@@ -206,10 +198,20 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			if (g_engine)
 				g_engine->pauseEngine(false);
 			_confirmExitDialogActive = false;
-		} else
+		} else {
 			_shouldQuit = true;
-
+		}
 		break;
+
+	case Common::EVENT_DEBUGGER: {
+		GUI::Debugger *debugger = g_engine ? g_engine->getOrCreateDebugger() : nullptr;
+		if (debugger) {
+			debugger->attach();
+			debugger->onFrame();
+			forwardEvent = false;
+		}
+		break;
+	}
 
 	default:
 		break;
@@ -354,6 +356,11 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 #endif
 #endif
 
+	globalKeymap->addAction(act);
+
+	act = new Action("DEBUGGER", _("Open Debugger"));
+	act->addDefaultInputMapping("C+A+d");
+	act->setEvent(EVENT_DEBUGGER);
 	globalKeymap->addAction(act);
 
 	return globalKeymap;
